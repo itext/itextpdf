@@ -185,7 +185,8 @@ class PdfString extends PdfObject implements PdfPrintable {
 			// we look for a 'space'-character in order to split the line
 			if ((++split > 150) && (character == ' ')) {
 				split = -1;
-				pdfString.append("\\\n");
+				// 2001/01/19 space character added; bugfix by Roman (rfzabick)
+				pdfString.append(" \\\n");
 				continue;
 			}
 			// once we reach the limit of 250 characters on 1 line (without encountering
