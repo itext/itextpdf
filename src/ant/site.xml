@@ -30,6 +30,10 @@
 		<copy todir="${itext.lowagie}/images" overwrite="no">
 			<fileset dir="${itext.xml.lowagie}/images" />
 		</copy>
+		<copy todir="${itext.lowagie}/ant" overwrite="no">
+			<fileset dir="${itext.src}/ant" />
+		</copy>
+		<copy file="${itext.src}/build.xml" todir="${itext.lowagie}" overwrite="no" />
 		<copy file="${itext.xml.lowagie}/style.css" todir="${itext.lowagie}" overwrite="no" />
 		<copy file="${itext.xml.lowagie}/MPL-1.1.txt" todir="${itext.lowagie}" overwrite="no" />
 		<copy file="${itext.xml.lowagie}/lgpl.txt" todir="${itext.lowagie}" overwrite="no" />
