@@ -303,6 +303,7 @@ public class PdfAnnotation extends PdfDictionary {
     }
     
     /**
+     * Add some free text to the document.
      * @param writer
      * @param rect
      * @param contents
@@ -317,6 +318,17 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
+    /**
+     * Adds a line to the document. Move over the line and a tooltip is shown.
+     * @param writer
+     * @param rect
+     * @param contents
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createLine(PdfWriter writer, Rectangle rect, String contents, float x1, float y1, float x2, float y2) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.LINE);
@@ -329,6 +341,14 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
+    /**
+     * Adds a circle or a square that shows a tooltip when you pass over it.
+     * @param writer
+     * @param rect
+     * @param contents The tooltip
+     * @param square true if you want a square, false if you want a circle
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createSquareCircle(PdfWriter writer, Rectangle rect, String contents, boolean square) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         if (square)
@@ -359,6 +379,14 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
+    /**
+     * Adds a Stamp to your document. Move over the stamp and a tooltip is shown
+     * @param writer
+     * @param rect
+     * @param contents
+     * @param name
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createStamp(PdfWriter writer, Rectangle rect, String contents, String name) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.STAMP);
@@ -390,7 +418,7 @@ public class PdfAnnotation extends PdfDictionary {
      * @param fileStore an array with the file. If it's <CODE>null</CODE>
      * the file will be read from the disk
      * @param file the path to the file. It will only be used if
-     * <CODE>fileStore</CODE> in not <CODE>null</CODE>
+     * <CODE>fileStore</CODE> is not <CODE>null</CODE>
      * @param fileDisplay the actual file name stored in the pdf
      * @throws IOException on error
      * @return the annotation
@@ -407,6 +435,14 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
     
+    /**
+     * Adds a popup to your document.
+     * @param writer
+     * @param rect
+     * @param contents
+     * @param open
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createPopup(PdfWriter writer, Rectangle rect, String contents, boolean open) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.POPUP);
