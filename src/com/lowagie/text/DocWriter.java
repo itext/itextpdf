@@ -283,6 +283,22 @@ public abstract class DocWriter implements DocListener {
 
 // methods
 
+    /** Converts a <CODE>String</CODE> into a <CODE>Byte</CODE> array
+     * according to the ISO-8859-1 codepage.
+     * @param text the text to be converted
+     * @return the conversion result
+     */    
+    public static final byte[] getISOBytes(String text)
+    {
+        try {
+            return text.getBytes("ISO8859_1");
+        }
+        catch (Exception e) {
+            System.err.println("ISO8859_1 conversion error " + e.getMessage());
+            return text.getBytes();
+        }
+    }
+    
 	/**
 	 * Let the writer know that all writing has to be paused.
 	 */
@@ -318,6 +334,6 @@ public abstract class DocWriter implements DocListener {
 	 */
 
 	public final void write(String string) throws IOException {
-		os.write(string.getBytes());
+		os.write(DocWriter.getISOBytes(string));
 	}
 }

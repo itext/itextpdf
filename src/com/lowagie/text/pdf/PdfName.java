@@ -572,7 +572,12 @@ public class PdfName extends PdfObject implements Comparable {
 	 */
 
 	public final String toString() {
-		return new String(bytes);
+        try {
+            return new String(bytes, PdfObject.ENCODING);
+        }
+        catch (Exception e) {
+            return new String(bytes);
+        }
     }
 
 // implementation of the Comparable-method

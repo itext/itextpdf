@@ -34,6 +34,7 @@ package com.lowagie.text.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import com.lowagie.text.DocWriter;
 
 /**
  * A <CODE>PdfDashPattern</CODE> defines a dash pattern as described in
@@ -120,18 +121,18 @@ class PdfDashPattern extends PdfArray {
     final public byte[] toPdf() {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			stream.write("[".getBytes());
+			stream.write(DocWriter.getISOBytes("["));
 			
 			if (dash >= 0) {
 				stream.write(new PdfNumber(dash).toPdf());
 				if (gap >= 0) {
-					stream.write(" ".getBytes());
+					stream.write(DocWriter.getISOBytes(" "));
 					stream.write(new PdfNumber(gap).toPdf());
 				}
 			}
-			stream.write("]".getBytes());
+			stream.write(DocWriter.getISOBytes("]"));
 			if (phase >=0) {
-				stream.write(" ".getBytes());
+				stream.write(DocWriter.getISOBytes(" "));
 				stream.write(new PdfNumber(phase).toPdf());
 			}
 

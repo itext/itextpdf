@@ -106,79 +106,79 @@ public class HtmlWriter extends DocWriter implements DocListener {
     public static final byte ENDTAG = (byte)'/';
     
         /** This is a possible HTML-tag. */
-    public static final byte[] BEGINCOMMENT = "<!--".getBytes();
+    public static final byte[] BEGINCOMMENT = getISOBytes("<!--");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] ENDCOMMENT = "-->".getBytes();
+    public static final byte[] ENDCOMMENT = getISOBytes("-->");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] A = "A".getBytes();
+    public static final byte[] A = getISOBytes("A");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] B = "B".getBytes();
+    public static final byte[] B = getISOBytes("B");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] BR = "BR".getBytes();
+    public static final byte[] BR = getISOBytes("BR");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] BODY = "BODY".getBytes();
+    public static final byte[] BODY = getISOBytes("BODY");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] FONT = "FONT".getBytes();
+    public static final byte[] FONT = getISOBytes("FONT");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] HEAD = "HEAD".getBytes();
+    public static final byte[] HEAD = getISOBytes("HEAD");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] HTML = "HTML".getBytes();
+    public static final byte[] HTML = getISOBytes("HTML");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] I = "I".getBytes();
+    public static final byte[] I = getISOBytes("I");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] IMG = "IMG".getBytes();
+    public static final byte[] IMG = getISOBytes("IMG");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] LI = "LI".getBytes();
+    public static final byte[] LI = getISOBytes("LI");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] LINK = "LINK".getBytes();
+    public static final byte[] LINK = getISOBytes("LINK");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] META = "META".getBytes();
+    public static final byte[] META = getISOBytes("META");
     
         /** This is a non breaking space. */
-    public static final byte[] NBSP = "&nbsp;".getBytes();
+    public static final byte[] NBSP = getISOBytes("&nbsp;");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] OL = "OL".getBytes();
+    public static final byte[] OL = getISOBytes("OL");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] PARAGRAPH = "P".getBytes();
+    public static final byte[] PARAGRAPH = getISOBytes("P");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] S = "S".getBytes();
+    public static final byte[] S = getISOBytes("S");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] TABLE = "TABLE".getBytes();
+    public static final byte[] TABLE = getISOBytes("TABLE");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] TD = "TD".getBytes();
+    public static final byte[] TD = getISOBytes("TD");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] TH = "TH".getBytes();
+    public static final byte[] TH = getISOBytes("TH");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] TITLE = "TITLE".getBytes();
+    public static final byte[] TITLE = getISOBytes("TITLE");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] TR = "TR".getBytes();
+    public static final byte[] TR = getISOBytes("TR");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] U = "U".getBytes();
+    public static final byte[] U = getISOBytes("U");
     
         /** This is a possible HTML-tag. */
-    public static final byte[] UL = "UL".getBytes();
+    public static final byte[] UL = getISOBytes("UL");
     
     // static membervariables (attributes)
     
@@ -356,7 +356,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             return false;
         }
         try {
-            os.write("<HR>\n".getBytes());
+            os.write(getISOBytes("<HR>\n"));
             return true;
         }
         catch(IOException ioe) {

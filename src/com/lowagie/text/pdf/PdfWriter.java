@@ -141,10 +141,10 @@ public class PdfWriter extends DocWriter {
 				StringBuffer gen = new StringBuffer(s.substring(s.length() - 5));
 
 				if (generation == 65535) {
-					return off.append(' ').append(gen).append(" f \n").toString().getBytes();
+					return getISOBytes(off.append(' ').append(gen).append(" f \n").toString());
 				}
 
-				return off.append(' ').append(gen).append(" n \n").toString().getBytes();
+				return getISOBytes(off.append(' ').append(gen).append(" n \n").toString());
 			}
 		}
 
@@ -280,9 +280,9 @@ public class PdfWriter extends DocWriter {
 		final byte[] getCrossReferenceTable() {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			try {
-				stream.write("xref\n0 ".getBytes());
-				stream.write(String.valueOf(size()).getBytes());
-				stream.write("\n".getBytes());
+				stream.write(getISOBytes("xref\n0 "));
+				stream.write(getISOBytes(String.valueOf(size())));
+				stream.write(getISOBytes("\n"));
 				// we set the ROOT object
 				xrefs.set(PdfWriter.ROOT, new PdfCrossReference(rootOffset));
 				// all the other objects
@@ -331,7 +331,7 @@ public class PdfWriter extends DocWriter {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 			try {
-				stream.write("trailer\n".getBytes());
+				stream.write(getISOBytes("trailer\n"));
 											 
 				PdfDictionary dictionary = new PdfDictionary();
 				dictionary.put(PdfName.SIZE, new PdfNumber(size));
@@ -341,9 +341,9 @@ public class PdfWriter extends DocWriter {
 				}
 
 				stream.write(dictionary.toPdf());
-				stream.write("\nstartxref\n".getBytes());
-				stream.write(String.valueOf(offset).getBytes());
-				stream.write("\n%%EOF".getBytes());
+				stream.write(getISOBytes("\nstartxref\n"));
+				stream.write(getISOBytes(String.valueOf(offset)));
+				stream.write(getISOBytes("\n%%EOF"));
 			}
 			catch (IOException ioe) {
 				throw new RuntimeException("Error in PdfTrailer!  Error was: " + ioe);
@@ -366,7 +366,7 @@ public class PdfWriter extends DocWriter {
 // static membervariables
 
 	/** this is the header of a PDF document */
-	private static final byte[] HEADER = "%PDF-1.3\n%рсту\n".getBytes();
+	private static byte[] HEADER = getISOBytes("%PDF-1.3\n%\u00e0\u00e1\u00e2\u00e3\n");
 
 	/** byte offset of the Body */
 	private static final int OFFSET = HEADER.length;						   

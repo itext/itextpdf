@@ -46,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.TreeMap;
+import com.lowagie.text.DocWriter;
 
 /**
  * <CODE>PdfDictionary</CODE> is the Pdf dictionary object.
@@ -139,7 +140,7 @@ class PdfDictionary extends PdfObject {
     public byte[] toPdf() {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			stream.write("<<\n".getBytes());
+			stream.write(DocWriter.getISOBytes("<<\n"));
 
 			// loop over all the object-pairs in the TreeMap
 			PdfName key;
@@ -148,11 +149,11 @@ class PdfDictionary extends PdfObject {
 				key = (PdfName) i.next();
 				value = (PdfObject) treeMap.get(key);
 				stream.write(key.toPdf());
-				stream.write(" ".getBytes());
+				stream.write(DocWriter.getISOBytes(" "));
 				stream.write(value.toPdf());
-				stream.write("\n".getBytes());
+				stream.write(DocWriter.getISOBytes("\n"));
 			}
-			stream.write(">>".getBytes());
+			stream.write(DocWriter.getISOBytes(">>"));
 
 			return stream.toByteArray();
 		}
