@@ -86,8 +86,6 @@ import com.lowagie.text.*;
  * // this will close the document and all the OutputStreams listening to it
  * <STRONG>document.close();</CODE>
  * </PRE></BLOCKQUOTE>
- *
- * @author  bruno@lowagie.com
  */
 
 public class XmlWriter extends DocWriter implements DocListener {
@@ -158,6 +156,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             os.write(NEWLINE);
         }
         catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -182,6 +181,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             os.write(NEWLINE);
         }
         catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -269,6 +269,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             os.write(NEWLINE);
         }
         catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -304,6 +305,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             super.close();
         }
         catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -329,6 +331,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                     return;
                 }
                 catch(NullPointerException npe) {
+                    // empty on purpose
                 }
                 
                 addTabs(indent);

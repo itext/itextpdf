@@ -66,8 +66,6 @@ import com.lowagie.text.Phrase;
  * document.setHeader(header);
  * document.setFooter(footer);
  * </PRE></BLOCKQUOTE>
- *
- * @author  bruno@lowagie.com
  */
 
 public class HeaderFooter extends Rectangle {

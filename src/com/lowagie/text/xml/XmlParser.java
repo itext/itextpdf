@@ -62,6 +62,7 @@ import org.xml.sax.helpers.ParserFactory;
 
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * This class can be used to parse an XML file.
@@ -84,13 +85,13 @@ public class XmlParser {
             parser = ParserFactory.makeParser(PARSER);
         }
         catch(ClassNotFoundException cnfe) {
-            throw new DocumentException(cnfe.getMessage());
+            throw new ExceptionConverter(cnfe);
         }
         catch(IllegalAccessException iae) {
-            throw new DocumentException(iae.getMessage());
+            throw new ExceptionConverter(iae);
         }
         catch(InstantiationException ie) {
-            throw new DocumentException(ie.getMessage());
+            throw new ExceptionConverter(ie);
         }
     }
     
@@ -104,10 +105,10 @@ public class XmlParser {
             parser.parse(is);
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+                    throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+                    throw new ExceptionConverter(ioe);
         }
     }
     
@@ -121,10 +122,10 @@ public class XmlParser {
             parser.parse(is);
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+                    throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+                    throw new ExceptionConverter(ioe);
         }
     }
     
@@ -138,10 +139,10 @@ public class XmlParser {
             parser.parse(is);
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+                    throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+                    throw new ExceptionConverter(ioe);
         }
     }
     
@@ -155,10 +156,10 @@ public class XmlParser {
             parser.parse(file);
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+                    throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+                    throw new ExceptionConverter(ioe);
         }
     }
     
@@ -172,10 +173,10 @@ public class XmlParser {
             parser.parse(file);
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+                    throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+                    throw new ExceptionConverter(ioe);
         }
     }
     
@@ -189,10 +190,10 @@ public class XmlParser {
             parser.parse(file);
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+                    throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+                    throw new ExceptionConverter(ioe);
         }
     }
     

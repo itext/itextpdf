@@ -54,8 +54,6 @@ import java.awt.Color;
 
 /**
  * A class that contains all the possible tagnames and their attributes.
- *
- * @author  bruno@lowagie.com
  */
 
 public class HtmlTags {

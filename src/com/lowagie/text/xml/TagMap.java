@@ -61,8 +61,6 @@ import com.lowagie.text.*;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
- *
- * @author  bruno@lowagie.com
  */
 
 public class TagMap extends HashMap {
@@ -182,7 +180,7 @@ public class TagMap extends HashMap {
             parser.parse(tagfile);
         }
         catch(Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ExceptionConverter(e);
         }
     }
 }

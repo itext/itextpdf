@@ -57,8 +57,6 @@ import java.util.EventListener;
  * actions when an <CODE>Element</CODE> is added.
  *
  * @see		DocListener
- *
- * @author  bruno@lowagie.com
  */
 
 public interface ElementListener extends EventListener {

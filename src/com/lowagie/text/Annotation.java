@@ -60,8 +60,6 @@ import java.util.Properties;
  *
  * @see		Element
  * @see		Anchor
- *
- * @author  bruno@lowagie.com
  */
 
 public class Annotation implements Element {

@@ -67,8 +67,6 @@ import java.util.ArrayList;
  * @see		Element
  * @see		Cell
  * @see		Table
- *
- * @author  bruno@lowagie.com
  */
 
 public class Row implements Element {

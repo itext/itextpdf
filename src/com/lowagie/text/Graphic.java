@@ -64,8 +64,6 @@ import com.lowagie.text.pdf.PdfContentByte;
  * the PDF Reference Manual version 1.3 first.
  *
  * @see		Element
- *
- * @author  bruno@lowagie.com
  */
 
 public class Graphic extends PdfContentByte implements Element {

@@ -64,8 +64,6 @@ import java.net.URL;
  * @see		Image
  * @see		Jpeg
  * @see		Png
- *
- * @author  bruno@lowagie.com
  */
 
 public class Gif extends Image implements Element {

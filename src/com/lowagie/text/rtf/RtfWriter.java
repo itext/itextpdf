@@ -1606,7 +1606,7 @@ public class RtfWriter extends DocWriter implements DocListener
         }
         catch(DocumentException e)
         {
-            throw new IOException("DocumentException - "+e.getMessage());
+            throw new ExceptionConverter(e);
         }
     }
     
@@ -1669,7 +1669,7 @@ public class RtfWriter extends DocWriter implements DocListener
         }
         catch(IOException e)
         {
-            System.out.println("InitDefaultsError" + e);
+            throw new ExceptionConverter(e);
         }
     }
 }

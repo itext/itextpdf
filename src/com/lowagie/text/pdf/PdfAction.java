@@ -56,8 +56,6 @@ import java.net.URL;
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.
  *
  * @see		PdfDictionary
- *
- * @author  bruno@lowagie.com
  */
 
 public class PdfAction extends PdfDictionary {

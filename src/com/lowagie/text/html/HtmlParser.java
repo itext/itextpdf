@@ -59,6 +59,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.ParserFactory;
 
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.xml.XmlParser;
@@ -87,10 +88,10 @@ public class HtmlParser extends XmlParser {
             parser.parse(is);
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -113,10 +114,10 @@ public class HtmlParser extends XmlParser {
             parser.parse(file);
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -139,10 +140,10 @@ public class HtmlParser extends XmlParser {
             parser.parse(new InputSource(is));
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -165,10 +166,10 @@ public class HtmlParser extends XmlParser {
             parser.parse(new InputSource(is));
         }
         catch(SAXException se) {
-            throw new DocumentException(se.getMessage());
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     

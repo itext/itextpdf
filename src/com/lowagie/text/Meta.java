@@ -63,8 +63,6 @@ import java.util.ArrayList;
  *
  * @see		Element
  * @see		Header
- *
- * @author  bruno@lowagie.com
  */
 
 public class Meta implements Element {

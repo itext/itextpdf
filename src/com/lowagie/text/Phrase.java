@@ -80,8 +80,6 @@ import java.util.Properties;
  * @see		Chunk
  * @see		Paragraph
  * @see		Anchor
- *
- * @author  bruno@lowagie.com
  */
 
 public class Phrase extends ArrayList implements TextElementArray {

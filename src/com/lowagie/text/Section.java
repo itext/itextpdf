@@ -79,8 +79,6 @@ import java.util.Properties;
  * <STRONG>Section section11 = section1.addSection(40, title211, 2);<STRONG>
  * <STRONG>section11.add(someSectionText);<STRONG>
  * </PRE></BLOCKQUOTE>
- *
- * @author  bruno@lowagie.com
  */
 
 public class Section extends ArrayList implements TextElementArray {

@@ -73,8 +73,6 @@ import com.lowagie.text.Watermark;
  *
  * @see		Document
  * @see		DocListener
- *
- * @author  bruno@lowagie.com
  */
 
 public abstract class DocWriter implements DocListener {

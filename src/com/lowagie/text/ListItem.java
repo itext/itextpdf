@@ -98,8 +98,6 @@ import java.util.Properties;
  * @see	Element
  * @see List
  * @see	Paragraph
- *
- * @author  bruno@lowagie.com
  */
 
 public class ListItem extends Paragraph implements TextElementArray {

@@ -84,8 +84,6 @@ import java.util.ArrayList;
  * @see		Row
  * @see		Section
  * @see		Table
- *
- * @author  bruno@lowagie.com
  */
 
 public interface Element {

@@ -56,8 +56,6 @@ package com.lowagie.text;
  * @see		DocumentException
  * @see		Cell
  * @see		Table
- *
- * @author  bruno@lowagie.com
  */
 
 public class BadElementException extends DocumentException {

@@ -57,8 +57,6 @@ package com.lowagie.text;
  * @see		ElementListener
  * @see		Document
  * @see		DocWriter
- *
- * @author  bruno@lowagie.com
  */
 
 public interface DocListener extends ElementListener {

@@ -54,8 +54,6 @@ import java.awt.Color;
 
 /**
  * A class that contains all the possible tagnames and their attributes.
- *
- * @author  bruno@lowagie.com
  */
 
 public class ElementTags {
@@ -448,6 +446,7 @@ public class ElementTags {
             blue = Integer.parseInt(string.substring(5), 16);
         }
         catch(Exception sioobe) {
+            // empty on purpose
         }
         return new Color(red, green, blue);
     }

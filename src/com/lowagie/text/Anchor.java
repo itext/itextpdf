@@ -53,6 +53,7 @@ package com.lowagie.text;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -241,28 +242,23 @@ public class Anchor extends Phrase implements TextElementArray {
  */
     
     public ArrayList getChunks() {
-        try {
-            ArrayList tmp = new ArrayList();
-            Chunk chunk;
-            Iterator i = getChunks().iterator();
-            boolean localDestination = (reference != null && reference.startsWith("#"));
-            boolean notGotoOK = true;
-            while (i.hasNext()) {
-                chunk = (Chunk) i.next();
-                if (name != null && notGotoOK && !chunk.isEmpty()) {
-                    chunk.setLocalDestination(name);
-                    notGotoOK = false;
-                }
-                if (localDestination) {
-                    chunk.setLocalGoto(reference.substring(1));
-                }
-                tmp.add(chunk);
+        ArrayList tmp = new ArrayList();
+        Chunk chunk;
+        Iterator i = getChunks().iterator();
+        boolean localDestination = (reference != null && reference.startsWith("#"));
+        boolean notGotoOK = true;
+        while (i.hasNext()) {
+            chunk = (Chunk) i.next();
+            if (name != null && notGotoOK && !chunk.isEmpty()) {
+                chunk.setLocalDestination(name);
+                notGotoOK = false;
             }
-            return tmp;
+            if (localDestination) {
+                chunk.setLocalGoto(reference.substring(1));
+            }
+            tmp.add(chunk);
         }
-        catch(DocumentException de) {
-            return false;
-        }
+        return tmp;
     }
     
 /**

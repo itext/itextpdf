@@ -60,7 +60,7 @@ package com.lowagie.text;
  *
  * @see		Phrase
  *
- * @author  bruno@lowagie.com
+ * @author  Bruno Lowagie
  * @author  Evelyne De Cordier
  */
 

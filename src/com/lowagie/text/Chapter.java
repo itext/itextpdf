@@ -75,8 +75,6 @@ import java.util.Properties;
  * Paragraph someSectionText = new Paragraph("This is some silly paragraph in a chapter and/or section. It contains some text to test the functionality of Chapters and Section.");
  * section1.add(someSectionText);
  * </PRE></BLOCKQUOTE>
- *
- * @author  bruno@lowagie.com
  */
 
 public class Chapter extends Section implements TextElementArray {

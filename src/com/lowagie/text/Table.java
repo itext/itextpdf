@@ -149,8 +149,6 @@ import com.lowagie.text.pdf.PdfWriter;
  * @see         Element
  * @see         Row
  * @see         Cell
- *
- * @author  bruno@lowagie.com
  */
 
 public class Table extends Rectangle implements Element {
