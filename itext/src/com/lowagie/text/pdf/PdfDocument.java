@@ -1219,7 +1219,6 @@ class PdfDocument extends Document implements DocListener {
                             lines = cell.getLines(pagetop, indentBottom());
                             // if there are lines to add, add them
                             if (lines != null && lines.size() > 0) {
-
                                 // we paint the borders of the cells
                                 cellsShown = true;
                                 graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
