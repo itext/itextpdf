@@ -203,7 +203,7 @@ public class PdfCell extends Rectangle {
             lines.add(line);
         }
         // we set some additional parameters
-        setBottom(top - leading * lines.size() - 2 * cellpadding - (leading / 2.5f));
+        setBottom(top - leading * lines.size() - 2 * cellpadding);
         this.cellpadding = cellpadding;
         this.cellspacing = cellspacing;
         
