@@ -1005,14 +1005,16 @@ class PdfDocument extends Document implements DocListener {
                     // we adjust the parameters of the document
                     alignment = paragraph.alignment();
                     leading = paragraph.leading();
+                    
                     carriageReturn();
                     // we don't want to make orphans/widows
                     if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
                         newPage();
                     }
-                    
                     indentLeft += paragraph.indentationLeft();
                     indentRight += paragraph.indentationRight();
+                    
+                    carriageReturn();
                     
                     //add by Jin-Hsia Yang
                     isParagraphE = true;
