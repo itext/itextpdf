@@ -90,4 +90,8 @@ public class PdfSignature extends PdfDictionary {
     public void setReason(String name) {
         put(PdfName.REASON, new PdfString(name, PdfObject.TEXT_UNICODE));
     }
+    
+    public void setContact(String name) {
+        put(PdfName.CONTACTINFO, new PdfString(name, PdfObject.TEXT_UNICODE));
+    }
 }

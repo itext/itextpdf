@@ -726,96 +726,6 @@ class PdfDocument extends Document implements DocListener {
         return array;
     }
     
-    protected PdfDictionary codeTransition(PdfTransition transition) {
-        PdfDictionary trans = new PdfDictionary(PdfName.TRANS);
-        switch (transition.getType()) {
-            case PdfTransition.SPLITVOUT:
-                trans.put(PdfName.S,PdfName.SPLIT);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,PdfName.V);
-                trans.put(PdfName.M,PdfName.O);
-                break;
-            case PdfTransition.SPLITHOUT:
-                trans.put(PdfName.S,PdfName.SPLIT);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,PdfName.H);
-                trans.put(PdfName.M,PdfName.O);
-                break;
-            case PdfTransition.SPLITVIN:
-                trans.put(PdfName.S,PdfName.SPLIT);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,PdfName.V);
-                trans.put(PdfName.M,PdfName.I);
-                break;
-            case PdfTransition.SPLITHIN:
-                trans.put(PdfName.S,PdfName.SPLIT);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,PdfName.H);
-                trans.put(PdfName.M,PdfName.I);
-                break;
-            case PdfTransition.BLINDV:
-                trans.put(PdfName.S,PdfName.BLINDS);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,PdfName.V);
-                break;
-            case PdfTransition.BLINDH:
-                trans.put(PdfName.S,PdfName.BLINDS);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,PdfName.H);
-                break;
-            case PdfTransition.INBOX:
-                trans.put(PdfName.S,PdfName.BOX);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.M,PdfName.I);
-                break;
-            case PdfTransition.OUTBOX:
-                trans.put(PdfName.S,PdfName.BOX);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.M,PdfName.O);
-                break;
-            case PdfTransition.LRWIPE:
-                trans.put(PdfName.S,PdfName.WIPE);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DI,new PdfNumber(0));
-                break;
-            case PdfTransition.RLWIPE:
-                trans.put(PdfName.S,PdfName.WIPE);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DI,new PdfNumber(180));
-                break;
-            case PdfTransition.BTWIPE:
-                trans.put(PdfName.S,PdfName.WIPE);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DI,new PdfNumber(90));
-                break;
-            case PdfTransition.TBWIPE:
-                trans.put(PdfName.S,PdfName.WIPE);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DI,new PdfNumber(270));
-                break;
-            case PdfTransition.DISSOLVE:
-                trans.put(PdfName.S,PdfName.DISSOLVE);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                break;
-            case PdfTransition.LRGLITTER:
-                trans.put(PdfName.S,PdfName.GLITTER);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DI,new PdfNumber(0));
-                break;
-            case PdfTransition.TBGLITTER:
-                trans.put(PdfName.S,PdfName.GLITTER);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DI,new PdfNumber(270));
-                break;
-            case PdfTransition.DGLITTER:
-                trans.put(PdfName.S,PdfName.GLITTER);
-                trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DI,new PdfNumber(315));
-                break;
-        }
-        return trans;
-    }
-    
     /**
      * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
      *
@@ -863,7 +773,7 @@ class PdfDocument extends Document implements DocListener {
         page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
         // we add the transitions
         if (this.transition!=null) {
-            page.put(PdfName.TRANS,codeTransition(this.transition));
+            page.put(PdfName.TRANS, this.transition.getTransitionDictionary());
             transition = null;
         }
         if (this.duration>0) {
@@ -1744,10 +1654,13 @@ class PdfDocument extends Document implements DocListener {
                     break;
                 }
                 case Element.PTABLE: {
+                    PdfPTable ptable = (PdfPTable)element;
+                    if (ptable.size() <= ptable.getHeaderRows())
+                        break; //nothing to do
+
                     // before every table, we add a new line and flush all lines
                     ensureNewLine();
                     flushLines();
-                    PdfPTable ptable = (PdfPTable)element;
                     addPTable(ptable);                    
                     pageEmpty = false;
                     break;

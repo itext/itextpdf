@@ -159,5 +159,95 @@ public class PdfTransition {
     public int getType() {
         return type;
     }
+    
+    public PdfDictionary getTransitionDictionary() {
+        PdfDictionary trans = new PdfDictionary(PdfName.TRANS);
+        switch (type) {
+            case SPLITVOUT:
+                trans.put(PdfName.S,PdfName.SPLIT);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DM,PdfName.V);
+                trans.put(PdfName.M,PdfName.O);
+                break;
+            case SPLITHOUT:
+                trans.put(PdfName.S,PdfName.SPLIT);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DM,PdfName.H);
+                trans.put(PdfName.M,PdfName.O);
+                break;
+            case SPLITVIN:
+                trans.put(PdfName.S,PdfName.SPLIT);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DM,PdfName.V);
+                trans.put(PdfName.M,PdfName.I);
+                break;
+            case SPLITHIN:
+                trans.put(PdfName.S,PdfName.SPLIT);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DM,PdfName.H);
+                trans.put(PdfName.M,PdfName.I);
+                break;
+            case BLINDV:
+                trans.put(PdfName.S,PdfName.BLINDS);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DM,PdfName.V);
+                break;
+            case BLINDH:
+                trans.put(PdfName.S,PdfName.BLINDS);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DM,PdfName.H);
+                break;
+            case INBOX:
+                trans.put(PdfName.S,PdfName.BOX);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.M,PdfName.I);
+                break;
+            case OUTBOX:
+                trans.put(PdfName.S,PdfName.BOX);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.M,PdfName.O);
+                break;
+            case LRWIPE:
+                trans.put(PdfName.S,PdfName.WIPE);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DI,new PdfNumber(0));
+                break;
+            case RLWIPE:
+                trans.put(PdfName.S,PdfName.WIPE);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DI,new PdfNumber(180));
+                break;
+            case BTWIPE:
+                trans.put(PdfName.S,PdfName.WIPE);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DI,new PdfNumber(90));
+                break;
+            case TBWIPE:
+                trans.put(PdfName.S,PdfName.WIPE);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DI,new PdfNumber(270));
+                break;
+            case DISSOLVE:
+                trans.put(PdfName.S,PdfName.DISSOLVE);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                break;
+            case LRGLITTER:
+                trans.put(PdfName.S,PdfName.GLITTER);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DI,new PdfNumber(0));
+                break;
+            case TBGLITTER:
+                trans.put(PdfName.S,PdfName.GLITTER);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DI,new PdfNumber(270));
+                break;
+            case DGLITTER:
+                trans.put(PdfName.S,PdfName.GLITTER);
+                trans.put(PdfName.D,new PdfNumber(duration));
+                trans.put(PdfName.DI,new PdfNumber(315));
+                break;
+        }
+        return trans;
+    }
 }
 

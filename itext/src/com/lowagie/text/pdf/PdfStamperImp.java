@@ -756,6 +756,78 @@ class PdfStamperImp extends PdfWriter {
         sigFlags |= f;
     }
     
+    /** Always throws an <code>UnsupportedOperationException</code>.
+     * @param actionType ignore
+     * @param action ignore
+     * @throws PdfException ignore
+     * @see PdfStamper#setPageAction(PdfName, PdfAction, int)
+     */    
+    public void setPageAction(PdfName actionType, PdfAction action) throws PdfException {
+        throw new UnsupportedOperationException("Use setPageAction(PdfName actionType, PdfAction action, int page)");
+    }
+
+    /**
+     * Sets the open and close page additional action.
+     * @param actionType the action type. It can be <CODE>PdfWriter.PAGE_OPEN</CODE>
+     * or <CODE>PdfWriter.PAGE_CLOSE</CODE>
+     * @param action the action to perform
+     * @param page the page where the action will be applied. The first page is 1
+     * @throws PdfException if the action type is invalid
+     */    
+    void setPageAction(PdfName actionType, PdfAction action, int page) throws PdfException {
+        if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
+            throw new PdfException("Invalid page additional action type: " + actionType.toString());
+        PdfDictionary pg = reader.getPageN(page);
+        PdfDictionary aa = (PdfDictionary)PdfReader.getPdfObject(pg.get(PdfName.AA));
+        if (aa == null) {
+            aa = new PdfDictionary();
+            pg.put(PdfName.AA, aa);
+        }
+        aa.put(actionType, action);
+    }
+
+    /**
+     * Always throws an <code>UnsupportedOperationException</code>.
+     * @param seconds ignore
+     */
+    public void setDuration(int seconds) {
+        throw new UnsupportedOperationException("Use setPageAction(PdfName actionType, PdfAction action, int page)");
+    }
+    
+    /**
+     * Always throws an <code>UnsupportedOperationException</code>.
+     * @param transition ignore
+     */
+    public void setTransition(PdfTransition transition) {
+        throw new UnsupportedOperationException("Use setPageAction(PdfName actionType, PdfAction action, int page)");
+    }
+
+    /**
+     * Sets the display duration for the page (for presentations)
+     * @param seconds   the number of seconds to display the page. A negative value removes the entry
+     * @param page the page where the duration will be applied. The first page is 1
+     */
+    void setDuration(int seconds, int page) {
+        PdfDictionary pg = reader.getPageN(page);
+        if (seconds < 0)
+            pg.remove(PdfName.DUR);
+        else
+            pg.put(PdfName.DUR, new PdfNumber(seconds));
+    }
+    
+    /**
+     * Sets the transition for the page
+     * @param transition   the transition object. A <code>null</code> removes the transition
+     * @param page the page where the transition will be applied. The first page is 1
+     */
+    void setTransition(PdfTransition transition, int page) {
+        PdfDictionary pg = reader.getPageN(page);
+        if (transition == null)
+            pg.remove(PdfName.TRANS);
+        else
+            pg.put(PdfName.TRANS, transition.getTransitionDictionary());
+    }
+
     static class PageStamp {
         
         int pageNumber;

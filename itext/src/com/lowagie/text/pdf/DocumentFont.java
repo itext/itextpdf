@@ -402,4 +402,12 @@ public class DocumentFont extends BaseFont {
     public boolean setKerning(char char1, char char2, int kern) {
         return false;
     }
+    
+    public int[] getCharBBox(char c) {
+        return null;
+    }
+    
+    protected int[] getRawCharBBox(int c, String name) {
+        return null;
+    }
 }
