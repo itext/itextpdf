@@ -170,8 +170,6 @@ public class PdfWriter extends DocWriter {
         
         /**
          * Constructs a new <CODE>PdfBody</CODE>.
-         *
-         * @param	offset	the offset of the body
          */
         
         PdfBody(PdfWriter writer) {
@@ -555,6 +553,9 @@ public class PdfWriter extends DocWriter {
     
     // constructor
     
+    protected PdfWriter() {
+    }
+    
     /**
      * Constructs a <CODE>PdfWriter</CODE>.
      * <P>
@@ -670,7 +671,7 @@ public class PdfWriter extends DocWriter {
                         wmf.readWMF(getDirectContent().createTemplate(0, 0));
                     }
                     catch (Exception e) {
-                        throw new DocumentException(e.getMessage());
+                        throw new DocumentException(e);
                     }
                 }
             }
@@ -1404,7 +1405,7 @@ public class PdfWriter extends DocWriter {
         return currentPdfReaderInstance.getReaderFile();
     }
     
-    int getNewObjectNumber(PdfReader reader, int number, int generation) {
+    protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
         return currentPdfReaderInstance.getNewObjectNumber(number, generation);
     }
     
@@ -1519,6 +1520,10 @@ public class PdfWriter extends DocWriter {
      */
     public void addAnnotation(PdfAnnotation annot) {
         pdf.addAnnotation(annot);
+    }
+    
+    void addAnnotation(PdfAnnotation annot, int page) {
+        addAnnotation(annot);
     }
     
     /** Sets the PDF version. Must be used right before the document

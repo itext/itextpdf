@@ -1250,7 +1250,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     }
     
     /** Inverts the meaning of the bits of a mask.
-     * @param invertMask <CODE>true</CODE> to invert the meaning of the bits of a mask
+     * @param invert <CODE>true</CODE> to invert the meaning of the bits of a mask
      */
     public void setInvertMask(boolean invert) {
         this.invert = invert;

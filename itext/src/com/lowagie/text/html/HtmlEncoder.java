@@ -194,6 +194,7 @@ public class HtmlEncoder {
             case Element.ALIGN_RIGHT:
                 return HtmlTags.ALIGN_RIGHT;
             case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
                 return HtmlTags.ALIGN_JUSTIFIED;
             case Element.ALIGN_TOP:
                 return HtmlTags.ALIGN_TOP;

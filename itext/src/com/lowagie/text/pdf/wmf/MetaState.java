@@ -100,6 +100,7 @@ public class MetaState {
         currentPoint = new Point(0, 0);
         currentPen = new MetaPen();
         currentBrush = new MetaBrush();
+        currentFont = new MetaFont();
     }
 
     public MetaState(MetaState state) {
@@ -247,6 +248,11 @@ public class MetaState {
     
     public void setExtentWy(int extentWy) {
         this.extentWy = extentWy;
+    }
+    
+    public float transformAngle(float angle) {
+        float ta = extentWy < 0 ? -angle : angle;
+        return extentWx < 0 ? 180 - ta : ta;
     }
     
     public void setCurrentPoint(Point p) {

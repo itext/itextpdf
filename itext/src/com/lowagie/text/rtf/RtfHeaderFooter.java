@@ -64,7 +64,7 @@ import com.lowagie.text.Phrase;
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
  * @author <a href="mailto:mhall@myrealbox.com">Mark.Hall@myrealbox.com</a>
- * @version $Revision$Date: 2002/04/30 11:38:58 $
+ * @version $Revision$Date: 2003/02/25 13:56:17 $
  */
 public class RtfHeaderFooter extends HeaderFooter {
 

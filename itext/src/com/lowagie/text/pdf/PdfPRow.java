@@ -147,6 +147,8 @@ public class PdfPRow {
                     throw new ExceptionConverter(e);
                 }
                 float yLine = ct.getYLine();
+                if (cell.isUseDescender())
+                    yLine += ct.getDescender();
                 cell.setBottom(yLine - cell.getPaddingBottom());
             }
             else {

@@ -121,7 +121,7 @@ public class Hyphenator {
             hTree = new HyphenationTree();
             hTree.loadInternalPatterns(is);
         } catch (Exception e) {
-            e.printStackTrace();
+            // empty on purpose
         }
         finally {
             if (is != null) {
@@ -155,7 +155,7 @@ public class Hyphenator {
                 ois = new ObjectInputStream(new FileInputStream(hyphenFile));
                 hTree = (HyphenationTree)ois.readObject();
             } catch (Exception e) {
-                e.printStackTrace();
+                // empty on purpose
             }
             finally {
                 if (ois != null) {

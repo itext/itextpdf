@@ -1242,7 +1242,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         float[][] lDummyColumnWidths = new float[columns][]; // bugfix Tony Copping
         int [] lDummyHeights = new int[rows.size()]; // to keep track in how many new rows this one will be split
         ArrayList newRows = null;
-
+				boolean isTable=false;
         int lTotalRows  = 0, lTotalColumns      = 0;
         int lNewMaxRows = 0, lNewMaxColumns     = 0;
 
@@ -1254,6 +1254,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             lNewMaxColumns = 1; // value to hold in how many columns the current one will be split
             for (i=0; i < rows.size(); i++) {
                 if ( Table.class.isInstance(((Row) rows.get(i)).getCell(j)) ) {
+										isTable=true;
                     lDummyTable = ((Table) ((Row) rows.get(i)).getCell(j));
                     if ( lDummyTable.getDimension().width > lNewMaxColumns ) {
                         lNewMaxColumns = lDummyTable.getDimension().width;
@@ -1270,6 +1271,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             lNewMaxRows = 1;    // holds value in how many rows the current one will be split
             for (j=0; j < columns; j++) {
                 if ( Table.class.isInstance(((Row) rows.get(i)).getCell(j)) ) {
+										isTable=true;
                     lDummyTable = (Table) ((Row) rows.get(i)).getCell(j);
                     if ( lDummyTable.getDimension().height > lNewMaxRows ) {
                         lNewMaxRows = lDummyTable.getDimension().height;
@@ -1280,7 +1282,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             lDummyHeights [i] = lNewMaxRows;
         }
 
-        if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) )    // NO ADJUSTMENT
+        if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) || isTable)    // NO ADJUSTMENT
         {
             // ** WIDTH
             // set correct width for new columns

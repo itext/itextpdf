@@ -253,7 +253,7 @@ class Type1Font extends BaseFont
             throw re;
         }
         catch (Exception e) {
-            throw new DocumentException(e.getMessage());
+            throw new DocumentException(e);
         }
     }
     
@@ -503,7 +503,7 @@ class Type1Font extends BaseFont
             return new StreamFont(st, lengths);
         }
         catch (Exception e) {
-            throw new DocumentException(e.getMessage());
+            throw new DocumentException(e);
         }
         finally {
             if (rf != null) {

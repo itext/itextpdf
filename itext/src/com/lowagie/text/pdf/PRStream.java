@@ -81,7 +81,12 @@ public class PRStream extends PdfStream {
         else
             hashMap.putAll(stream.hashMap);
     }
-    
+
+    public PRStream(PRStream stream, PdfDictionary newDic, PdfReader reader) {
+        this(stream, newDic);
+        this.reader = reader;
+    }
+
     public PRStream(PdfReader reader, int offset) {
         this.reader = reader;
         this.offset = offset;

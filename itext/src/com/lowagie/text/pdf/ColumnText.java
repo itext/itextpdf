@@ -55,6 +55,7 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Element;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -82,8 +83,11 @@ import com.lowagie.text.DocumentException;
  */
 
 public class ColumnText {
+    /** Eliminate the arabic vowels */    
     public static final int AR_NOVOWEL = 1;
+    /** Compose the tashkeel in the ligatures. */    
     public static final int AR_COMPOSEDTASHKEEL = 4;
+    /** Do some extra double ligatures. */    
     public static final int AR_LIG = 8;
 
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
@@ -153,15 +157,6 @@ public class ColumnText {
     /** The extra space between paragraphs. */
     protected float extraParagraphSpace = 0;
     
-    /** Marks the chunks to be eliminated when the line is written. */
-    protected int currentChunkMarker = -1;
-    
-    /** The chunk created by the splitting. */
-    protected PdfChunk currentStandbyChunk;
-    
-    /** The chunk created by the splitting. */
-    protected String splittedChunkText;
-    
     /** The width of the line when the column is defined as a simple rectangle. */
     protected float rectangularWidth = -1;
     
@@ -176,6 +171,8 @@ public class ColumnText {
     /** Holds value of property arabicOptions. */
     private int arabicOptions = 0;
     
+    protected float descender;
+    
     /**
      * Creates a <CODE>ColumnText</CODE>.
      * @param canvas the place where the text will be written to. Can
@@ -183,6 +180,55 @@ public class ColumnText {
      */
     public ColumnText(PdfContentByte canvas) {
         this.canvas = canvas;
+    }
+    
+    /** Creates an independent duplicated of the instance <CODE>org</CODE>.
+     * @param org the original <CODE>ColumnText</CODE>
+     * @return the duplicated
+     */    
+    public static ColumnText duplicate(ColumnText org) {
+        ColumnText ct = new ColumnText(null);
+        ct.setSimpleVars(org);
+        ct.bidiLine = new BidiLine(org.bidiLine);
+        return ct;
+    }
+    
+    /** Makes this instance an independent copy of <CODE>org</CODE>.
+     * @param org the original <CODE>ColumnText</CODE>
+     * @return itself
+     */    
+    public ColumnText setACopy(ColumnText org) {
+        setSimpleVars(org);
+        bidiLine = new BidiLine(org.bidiLine);
+        return this;
+    }
+    
+    protected void setSimpleVars(ColumnText org) {
+        maxY = org.maxY;
+        minY = org.minY;
+        alignment = org.alignment;
+        leftWall = null;
+        if (org.leftWall != null)
+            leftWall = new ArrayList(org.leftWall);
+        rightWall = null;
+        if (org.rightWall != null)
+            rightWall = new ArrayList(org.rightWall);
+        yLine = org.yLine;
+        currentLeading = org.currentLeading;
+        fixedLeading = org.fixedLeading;
+        multipliedLeading = org.multipliedLeading;
+        canvas = org.canvas;
+        lineStatus = org.lineStatus;
+        indent = org.indent;
+        followingIndent = org.followingIndent;
+        rightIndent = org.rightIndent;
+        extraParagraphSpace = org.extraParagraphSpace;
+        rectangularWidth = org.rectangularWidth;
+        spaceCharRatio = org.spaceCharRatio;
+        lastWasNewline = org.lastWasNewline;
+        linesWritten = org.linesWritten;
+        arabicOptions = org.arabicOptions;
+        descender = org.descender;
     }
     
     /**
@@ -268,15 +314,13 @@ public class ColumnText {
      * @return a <CODE>float[2]</CODE>with the x coordinates of the intersection
      */
     protected float[] findLimitsOneLine() {
-        for (;;) {
-            float x1 = findLimitsPoint(leftWall);
-            if (lineStatus == LINE_STATUS_OFFLIMITS || lineStatus == LINE_STATUS_NOLINE)
-                return null;
-            float x2 = findLimitsPoint(rightWall);
-            if (lineStatus == LINE_STATUS_NOLINE)
-                return null;
-            return new float[]{x1, x2};
-        }
+        float x1 = findLimitsPoint(leftWall);
+        if (lineStatus == LINE_STATUS_OFFLIMITS || lineStatus == LINE_STATUS_NOLINE)
+            return null;
+        float x2 = findLimitsPoint(rightWall);
+        if (lineStatus == LINE_STATUS_NOLINE)
+            return null;
+        return new float[]{x1, x2};
     }
     
     /**
@@ -286,7 +330,11 @@ public class ColumnText {
      * @return a <CODE>float[4]</CODE>with the x coordinates of the intersection
      */
     protected float[] findLimitsTwoLines() {
+        boolean repeat = false;
         for (;;) {
+            if (repeat && currentLeading == 0)
+                return null;
+            repeat = true;
             float x1[] = findLimitsOneLine();
             if (lineStatus == LINE_STATUS_OFFLIMITS)
                 return null;
@@ -500,6 +548,7 @@ public class ColumnText {
      * @throws DocumentException on error
      */
     public int go(boolean simulate) throws DocumentException {
+        descender = 0;
         linesWritten = 0;
         boolean dirty = false;
         float ratio = spaceCharRatio;
@@ -571,6 +620,7 @@ public class ColumnText {
                 lastWasNewline = line.isNewlineSplit();
                 yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
                 ++linesWritten;
+                descender = line.getDescender();
             }
         }
         else {
@@ -614,6 +664,7 @@ public class ColumnText {
                 lastWasNewline = line.isNewlineSplit();
                 yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
                 ++linesWritten;
+                descender = line.getDescender();
             }
         }
         if (dirty) {
@@ -704,4 +755,97 @@ public class ColumnText {
         this.arabicOptions = arabicOptions;
     }
     
+    /** Gets the biggest descender value of the last line written.
+     * @return the biggest descender value of the last line written
+     */    
+    public float getDescender() {
+        return descender;
+    }
+    
+    /** Gets the width that the line will occupy after writing.
+     * Only the width of the first line is returned.
+     * @param phrase the <CODE>Phrase</CODE> containing the line
+     * @param runDirection the run direction
+     * @param arabicOptions the options for the arabic shaping
+     * @return the width of the line
+     */    
+    public static float getWidth(Phrase phrase, int runDirection, int arabicOptions) {
+        ColumnText ct = new ColumnText(null);
+        ct.addText(phrase);
+        PdfLine line = ct.bidiLine.processLine(20000, Element.ALIGN_LEFT, runDirection, arabicOptions);
+        if (line == null)
+            return 0;
+        else
+            return 20000 - line.widthLeft();
+    }
+    
+    /** Gets the width that the line will occupy after writing.
+     * Only the width of the first line is returned.
+     * @param phrase the <CODE>Phrase</CODE> containing the line
+     * @return the width of the line
+     */    
+    public static float getWidth(Phrase phrase) {
+        return getWidth(phrase, PdfWriter.RUN_DIRECTION_NO_BIDI, 0);
+    }
+    
+    /** Shows a line of text. Only the first line is written.
+     * @param canvas where the text is to be written to
+     * @param alignment the alignment. It is not influenced by the run direction
+     * @param phrase the <CODE>Phrase</CODE> with the text
+     * @param x the x reference position
+     * @param y the y reference position
+     * @param rotation the rotation to be applied in degrees counterclockwise
+     * @param runDirection the run direction
+     * @param arabicOptions the options for the arabic shaping
+     */    
+    public static void showTextAligned(PdfContentByte canvas, int alignment, Phrase phrase, float x, float y, float rotation, int runDirection, int arabicOptions) {
+        if (alignment != Element.ALIGN_LEFT && alignment != Element.ALIGN_CENTER
+            && alignment != Element.ALIGN_RIGHT)
+            alignment = Element.ALIGN_LEFT;
+        canvas.saveState();
+        if (rotation == 0)
+            canvas.concatCTM(1, 0, 0, 1, x, y);
+        else {
+            double alpha = rotation * Math.PI / 180.0;
+            float cos = (float)Math.cos(alpha);
+            float sin = (float)Math.sin(alpha);
+            canvas.concatCTM(cos, sin, -sin, cos, x, y);
+        }
+        ColumnText ct = new ColumnText(canvas);
+        if (alignment == Element.ALIGN_LEFT)
+            ct.setSimpleColumn(phrase, 0, -1, 20000, 2, 2, alignment);
+        else if (alignment == Element.ALIGN_RIGHT)
+            ct.setSimpleColumn(phrase, -20000, -1, 0, 2, 2, alignment);
+        else
+            ct.setSimpleColumn(phrase, -20000, -1, 20000, 2, 2, alignment);
+        if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
+            if (alignment == Element.ALIGN_LEFT)
+                alignment = Element.ALIGN_RIGHT;
+            else if (alignment == Element.ALIGN_RIGHT)
+                alignment = Element.ALIGN_LEFT;
+        }
+        ct.setAlignment(alignment);
+        ct.setArabicOptions(arabicOptions);
+        ct.setRunDirection(runDirection);
+        try {
+            ct.go();
+        }
+        catch (DocumentException e) {
+            throw new ExceptionConverter(e);
+        }
+        canvas.restoreState();
+    }
+
+    /** Shows a line of text. Only the first line is written.
+     * @param canvas where the text is to be written to
+     * @param alignment the alignment
+     * @param phrase the <CODE>Phrase</CODE> with the text
+     * @param x the x reference position
+     * @param y the y reference position
+     * @param rotation the rotation to be applied in degrees counterclockwise
+     */    
+    public static void showTextAligned(PdfContentByte canvas, int alignment, Phrase phrase, float x, float y, float rotation) {
+        showTextAligned(canvas, alignment, phrase, x, y, rotation, PdfWriter.RUN_DIRECTION_NO_BIDI, 0);
+    }
+
 }

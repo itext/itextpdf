@@ -90,7 +90,7 @@ public class MetaFont extends MetaObject {
     boolean strikeout;
     int charset;
     int pitchAndFamily;
-    String faceName;
+    String faceName = "arial";
     BaseFont font = null;
 
     public MetaFont() {

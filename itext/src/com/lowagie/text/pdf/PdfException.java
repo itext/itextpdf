@@ -62,7 +62,11 @@ public class PdfException extends DocumentException {
     
     // constructors
     
-/**
+    public PdfException(Exception ex) {
+        super(ex);
+    }
+
+ /**
  * Constructs a <CODE>PdfException</CODE> whithout a message.
  */
     

@@ -502,7 +502,7 @@ class PdfDocument extends Document implements DocListener {
     
     //add by Jin-Hsia Yang
     private boolean isNewpage = false;
-    private boolean isParagraphE = false;
+    
     private float paraIndent = 0;
     //end add by Jin-Hsia Yang
     
@@ -1274,13 +1274,21 @@ class PdfDocument extends Document implements DocListener {
                     if (currentHeight + line.height() + leading > indentTop() - indentBottom()) {
                         newPage();
                     }
+
+                    // Begin added: Bonf (Marc Schneider) 2003-07-29
+                    //carriageReturn();
+                    // End added: Bonf (Marc Schneider) 2003-07-29
+
                     indentLeft += paragraph.indentationLeft();
                     indentRight += paragraph.indentationRight();
                     
+                    // Begin removed: Bonf (Marc Schneider) 2003-07-29
                     carriageReturn();
+                    // End removed: Bonf (Marc Schneider) 2003-07-29
+
                     
                     //add by Jin-Hsia Yang
-                    isParagraphE = true;
+                    
                     paraIndent += paragraph.indentationLeft();
                     //end add by Jin-Hsia Yang
                     
@@ -1312,7 +1320,9 @@ class PdfDocument extends Document implements DocListener {
                     paraIndent -= paragraph.indentationLeft();
                     //end add by Jin-Hsia Yang and blowagie
                     
-                    carriageReturn();
+                    // Begin removed: Bonf (Marc Schneider) 2003-07-29
+                    //       carriageReturn();
+                    // End removed: Bonf (Marc Schneider) 2003-07-29
                     
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
@@ -1321,8 +1331,12 @@ class PdfDocument extends Document implements DocListener {
                     indentLeft -= paragraph.indentationLeft();
                     indentRight -= paragraph.indentationRight();
                     
+                    // Begin added: Bonf (Marc Schneider) 2003-07-29
+                    carriageReturn();
+                    // End added: Bonf (Marc Schneider) 2003-07-29
+
                     //add by Jin-Hsia Yang
-                    isParagraphE = false;
+                    
                     //end add by Jin-Hsia Yang
                     
                     break;
@@ -1761,8 +1775,7 @@ class PdfDocument extends Document implements DocListener {
             return true;
         }
         catch(Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            throw new DocumentException(e.getMessage());
+            throw new DocumentException(e);
         }
     }
     
@@ -1839,7 +1852,7 @@ class PdfDocument extends Document implements DocListener {
         float lowerleft = indentTop() - currentHeight - image.scaledHeight() -diff;
         float mt[] = image.matrix();
         float startPosition = indentLeft() - mt[4];
-        if ((image.alignment() & Image.MIDDLE) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
+        if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
         if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.scaledWidth()) / 2) - mt[4];
         if (image.hasAbsoluteX()) startPosition = image.absoluteX();
         addImage(graphics, image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
@@ -1929,8 +1942,18 @@ class PdfDocument extends Document implements DocListener {
 			// Avoid footer identation
 			float tmpIndentLeft = indentLeft;
 			float tmpIndentRight = indentRight;
+                        // Begin added: Bonf (Marc Schneider) 2003-07-29
+                        float tmpListIndentLeft = listIndentLeft;
+                        float tmpImageIndentLeft = imageIndentLeft;
+                        float tmpImageIndentRight = imageIndentRight;
+                        // End added: Bonf (Marc Schneider) 2003-07-29
 
 			indentLeft = indentRight = 0;
+                        // Begin added: Bonf (Marc Schneider) 2003-07-29
+                        listIndentLeft = 0;
+                        imageIndentLeft = 0;
+                        imageIndentRight = 0;
+                        // End added: Bonf (Marc Schneider) 2003-07-29
 			/*
 				End Added by Edgar Leonardo Prieto Perilla
 			*/
@@ -1956,6 +1979,11 @@ class PdfDocument extends Document implements DocListener {
 			*/
 			indentLeft = tmpIndentLeft;
 			indentRight = tmpIndentRight;
+                        // Begin added: Bonf (Marc Schneider) 2003-07-29
+                        listIndentLeft = tmpListIndentLeft;
+                        imageIndentLeft = tmpImageIndentLeft;
+                        imageIndentRight = tmpImageIndentRight;
+                        // End added: Bonf (Marc Schneider) 2003-07-29
 			/*
 				End Added by Edgar Leonardo Prieto Perilla
 			*/
@@ -1972,8 +2000,18 @@ class PdfDocument extends Document implements DocListener {
 			// Avoid header identation
 			float tmpIndentLeft = indentLeft;
 			float tmpIndentRight = indentRight;
+                        // Begin added: Bonf (Marc Schneider) 2003-07-29
+                        float tmpListIndentLeft = listIndentLeft;
+                        float tmpImageIndentLeft = imageIndentLeft;
+                        float tmpImageIndentRight = imageIndentRight;
+                        // End added: Bonf (Marc Schneider) 2003-07-29
 
 			indentLeft = indentRight = 0;
+                        //  Added: Bonf
+                        listIndentLeft = 0;
+                        imageIndentLeft = 0;
+                        imageIndentRight = 0;
+                        // End added: Bonf
 			/*
 				End Added by Edgar Leonardo Prieto Perilla
 			*/
@@ -1998,6 +2036,11 @@ class PdfDocument extends Document implements DocListener {
 			// Restore identation
 			indentLeft = tmpIndentLeft;
 			indentRight = tmpIndentRight;
+                        // Begin added: Bonf (Marc Schneider) 2003-07-29
+                        listIndentLeft = tmpListIndentLeft;
+                        imageIndentLeft = tmpImageIndentLeft;
+                        imageIndentRight = tmpImageIndentRight;
+                        // End added: Bonf (Marc Schneider) 2003-07-29
 			/*
 				End Added by Edgar Leonardo Prieto Perilla
 			*/
@@ -2127,7 +2170,7 @@ class PdfDocument extends Document implements DocListener {
             // this is a line in the loop
             l = (PdfLine) i.next();
             
-            if(isParagraphE && isNewpage && newline) {
+            if(isNewpage && newline) { // fix Ken@PDI
                 newline=false;
                 text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
             }
@@ -2434,7 +2477,7 @@ class PdfDocument extends Document implements DocListener {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        annotations.add(new PdfAnnotation(writer, xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
+                        text.addAnnotation(new PdfAnnotation(writer, xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
                     }
                     if (chunk.isAttribute(Chunk.REMOTEGOTO)) {
                         float subtract = lastBaseFactor;
@@ -2485,8 +2528,13 @@ class PdfDocument extends Document implements DocListener {
                         float fontSize = chunk.font().size();
                         float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
                         float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
-                        graphics.setColorFill((Color)chunk.getAttribute(Chunk.BACKGROUND));
-                        graphics.rectangle(xMarker, yMarker + descender, width - subtract, ascender - descender);
+                        Object bgr[] = (Object[])chunk.getAttribute(Chunk.BACKGROUND);
+                        graphics.setColorFill((Color)bgr[0]);
+                        float extra[] = (float[])bgr[1];
+                        graphics.rectangle(xMarker - extra[0],
+                            yMarker + descender - extra[1],
+                            width - subtract + extra[0] + extra[2],
+                            ascender - descender + extra[1] + extra[3]);
                         graphics.fill();
                         graphics.setGrayFill(0);
                     }
@@ -2501,7 +2549,7 @@ class PdfDocument extends Document implements DocListener {
                         float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
                         PdfAnnotation annot = PdfFormField.shallowDuplicate((PdfAnnotation)chunk.getAttribute(Chunk.PDFANNOTATION));
                         annot.put(PdfName.RECT, new PdfRectangle(xMarker, yMarker + descender, xMarker + width - subtract, yMarker + ascender));
-                        addAnnotation(annot);
+                        text.addAnnotation(annot);
                     }
                     if (chunk.isAttribute(Chunk.SKEW)) {
                         float params[] = (float[])chunk.getAttribute(Chunk.SKEW);
@@ -2687,7 +2735,7 @@ class PdfDocument extends Document implements DocListener {
      * @param ury the upper right y corner of the activation area
      */
     void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury) {
-        annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, page)));
+        writer.addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, page)));
     }
     
     /** Sets the viewer preferences as the sum of several constants.
@@ -2707,7 +2755,7 @@ class PdfDocument extends Document implements DocListener {
      * @param ury the upper right y corner of the activation area
      */
     void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
-        annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, action));
+        writer.addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, action));
     }
     
     void setOpenAction(String name) {

@@ -62,9 +62,6 @@ package com.lowagie.text.pdf;
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.5 (page 195-197).
  *
- * @see		PdfResource
- * @see		PdfProcSet
- * @see		PdfFontDictionary
  * @see		PdfPage
  */
 
@@ -85,7 +82,7 @@ class PdfResources extends PdfDictionary {
     void add(PdfName key, PdfDictionary resource) {
         if (resource.size() == 0)
             return;
-        PdfDictionary dic = (PdfDictionary)get(key);
+        PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObject(get(key));
         if (dic == null)
             put(key, resource);
         else

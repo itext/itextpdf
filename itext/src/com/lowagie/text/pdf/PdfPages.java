@@ -172,9 +172,9 @@ public class PdfPages {
         if (order == null)
             return pages.size();
         if (parents.size() > 1)
-            throw new DocumentException("Page reordering requires a single parent in the page tree.");
+            throw new DocumentException("Page reordering requires a single parent in the page tree. Call PdfWriter.setLinearMode() after open.");
         if (order.length != pages.size())
-            throw new DocumentException("Page reordering requires and array with the same size as the number of pages.");
+            throw new DocumentException("Page reordering requires an array with the same size as the number of pages.");
         int max = pages.size();
         boolean temp[] = new boolean[max];
         for (int k = 0; k < max; ++k) {

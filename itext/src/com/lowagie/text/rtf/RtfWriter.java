@@ -53,10 +53,15 @@ package com.lowagie.text.rtf;
 import com.lowagie.text.*;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.ListIterator;
+import java.util.Iterator;
+import java.util.Calendar;
+import java.util.Date;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.text.ParsePosition;
+import com.lowagie.text.pdf.wmf.MetaDo;
 
 /**
  * A <CODE>DocWriter</CODE> class for Rich Text Files (RTF).
@@ -537,11 +542,11 @@ public class RtfWriter extends DocWriter implements DocListener {
      * stored and is only written to the actual OutputStream at the end.
      */
 
-    /** This <code>Vector</code> contains all fonts used in the document. */
-    private Vector fontList = new Vector();
+    /** This <code>ArrayList</code> contains all fonts used in the document. */
+    private ArrayList fontList = new ArrayList();
 
-    /** This <code>Vector</code> contains all colours used in the document. */
-    private Vector colorList = new Vector();
+    /** This <code>ArrayList</code> contains all colours used in the document. */
+    private ArrayList colorList = new ArrayList();
 
     /** This <code>ByteArrayOutputStream</code> contains the main body of the document. */
     private ByteArrayOutputStream content = null;
@@ -586,7 +591,7 @@ public class RtfWriter extends DocWriter implements DocListener {
     private int currentListID = 1;
 
     /** List of current Lists. */
-    private Vector listIds = null;
+    private ArrayList listIds = null;
 
     /** Current List Level. */
     private int listLevel = 0;
@@ -719,6 +724,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      */
     public void setFooter(HeaderFooter footer) {
         this.footer = footer;
+        processHeaderFooter(this.footer);
     }
 
     /**
@@ -726,6 +732,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      */
     public void setHeader(HeaderFooter header) {
         this.header = header;
+        processHeaderFooter(this.header);
     }
 
     /**
@@ -867,8 +874,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 case Element.IMGTEMPLATE:
                 case Element.JPEG:
                     Image img = (Image)element;
-                    if (img.url() != null)
-                        writeImage(img, out);
+                    writeImage(img, out);
                     break;
 
                 case Element.AUTHOR:
@@ -963,6 +969,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 out.write(alignCenter);
                 break;
             case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
                 out.write(escape);
                 out.write(alignJustify);
                 break;
@@ -1439,9 +1446,9 @@ public class RtfWriter extends DocWriter implements DocListener {
      */
     private void writeImage(Image image, ByteArrayOutputStream out) throws IOException, DocumentException {
         int type = image.getOriginalType();
-        if (!(type == Image.ORIGINAL_JPEG
+        if (!(type == Image.ORIGINAL_JPEG || type == Image.ORIGINAL_BMP
             || type == Image.ORIGINAL_PNG || type == Image.ORIGINAL_WMF))
-            throw new DocumentException("Only PNG, WMF and JPEG images are supported by the RTF Writer");
+            throw new DocumentException("Only BMP, PNG, WMF and JPEG images are supported by the RTF Writer");
         switch (image.alignment()) {
             case Element.ALIGN_LEFT:
                 out.write(escape);
@@ -1475,6 +1482,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 out.write(picturePNG);
                 break;
             case Image.ORIGINAL_WMF:
+            case Image.ORIGINAL_BMP:
                 out.write(pictureWMF);
                 break;
         }
@@ -1508,13 +1516,18 @@ public class RtfWriter extends DocWriter implements DocListener {
         }
         out.write(delimiter);
         InputStream imgIn;
-        if (image.getOriginalData() == null) {
-            imgIn = image.url().openStream();
-        } else {
-            imgIn = new ByteArrayInputStream(image.getOriginalData());
+        if (type == Image.ORIGINAL_BMP) {
+            imgIn = new ByteArrayInputStream(MetaDo.wrapBMP(image));
         }
-        if (type == Image.ORIGINAL_WMF) //remove the placeable header
-            imgIn.skip(22);
+        else {
+            if (image.getOriginalData() == null) {
+                imgIn = image.url().openStream();
+            } else {
+                imgIn = new ByteArrayInputStream(image.getOriginalData());
+            }
+            if (type == Image.ORIGINAL_WMF) //remove the placeable header
+                imgIn.skip(22);
+        }
         int buffer = -1;
         int count = 0;
         out.write((byte) '\n');
@@ -1528,6 +1541,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 count = 0;
             }
         }
+        imgIn.close();
         out.write(closeGroup);
         out.write(closeGroup);
         out.write((byte) '\n');
@@ -1674,7 +1688,7 @@ public class RtfWriter extends DocWriter implements DocListener {
     }
 
     /**
-     * Merge all the different <code>Vector</code>s and <code>ByteArrayOutputStream</code>s
+     * Merge all the different <code>ArrayList</code>s and <code>ByteArrayOutputStream</code>s
      * to the final <code>ByteArrayOutputStream</code>
      *
      * @return <code>true</code> if all information was sucessfully written to the <code>ByteArrayOutputStream</code>
@@ -2006,7 +2020,7 @@ public class RtfWriter extends DocWriter implements DocListener {
         addFont(new Font(Font.TIMES_ROMAN, 10, Font.NORMAL));
         addColor(new Color(0, 0, 0));
         addColor(new Color(255, 255, 255));
-        listIds = new Vector();
+        listIds = new ArrayList();
         try {
             listtable.write(openGroup);
             listtable.write(extendedEscape);
@@ -2030,7 +2044,7 @@ public class RtfWriter extends DocWriter implements DocListener {
         if (header instanceof RtfHeaderFooters || footer instanceof RtfHeaderFooters) {
             RtfHeaderFooters rtfHeader = (RtfHeaderFooters) header;
             RtfHeaderFooters rtfFooter = (RtfHeaderFooters) footer;
-            if (rtfHeader.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfHeader.get(RtfHeaderFooters.RIGHT_PAGES) != null || rtfFooter.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfFooter.get(RtfHeaderFooters.RIGHT_PAGES) != null) {
+            if ((rtfHeader != null && (rtfHeader.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfHeader.get(RtfHeaderFooters.RIGHT_PAGES) != null)) || (rtfFooter != null && (rtfFooter.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfFooter.get(RtfHeaderFooters.RIGHT_PAGES) != null))) {
                 out.write(escape);
                 out.write(facingPages);
             }
@@ -2161,12 +2175,55 @@ public class RtfWriter extends DocWriter implements DocListener {
             } else if (ch == '\n') {
                 ret.append("\\par ");
             } else if (((int) ch) > z) {
-                ret.append("\\u").append((long) ch).append('G');
+                ret.append("\\u").append((long) ch).append('?');
             } else {
                 ret.append(ch);
             }
         }
         return ret.toString();
+    }
+
+    private void addHeaderFooterFontColor(HeaderFooter hf) {
+        if(hf instanceof RtfHeaderFooter) {
+            RtfHeaderFooter rhf = (RtfHeaderFooter) hf;
+            if(rhf.content() instanceof Chunk) {
+                addFont(((Chunk) rhf.content()).font());
+                addColor(((Chunk) rhf.content()).font().color());
+            } else if(rhf.content() instanceof Phrase) {
+                addFont(((Phrase) rhf.content()).font());
+                addColor(((Phrase) rhf.content()).font().color());
+            }
+        }
+        if(hf.getBefore() != null) {
+            addFont(hf.getBefore().font());
+            addColor(hf.getBefore().font().color());
+        }
+        if(hf.getAfter() != null) {
+            addFont(hf.getAfter().font());
+            addColor(hf.getAfter().font().color());
+        }
+    }
+
+    private void processHeaderFooter(HeaderFooter hf) {
+        if(hf != null) {
+            if(hf instanceof RtfHeaderFooters) {
+                RtfHeaderFooters rhf = (RtfHeaderFooters) hf;
+                if(rhf.get(RtfHeaderFooters.ALL_PAGES) != null) {
+                    addHeaderFooterFontColor(rhf.get(RtfHeaderFooters.ALL_PAGES));
+                }
+                if(rhf.get(RtfHeaderFooters.LEFT_PAGES) != null) {
+                    addHeaderFooterFontColor(rhf.get(RtfHeaderFooters.LEFT_PAGES));
+                }
+                if(rhf.get(RtfHeaderFooters.RIGHT_PAGES) != null) {
+                    addHeaderFooterFontColor(rhf.get(RtfHeaderFooters.RIGHT_PAGES));
+                }
+                if(rhf.get(RtfHeaderFooters.FIRST_PAGE) != null) {
+                    addHeaderFooterFontColor(rhf.get(RtfHeaderFooters.FIRST_PAGE));
+                }
+            } else {
+                addHeaderFooterFontColor(hf);
+            }
+        }
     }
 }
 

@@ -50,6 +50,9 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Element;
 import com.lowagie.text.Rectangle;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Canvas;
+import java.awt.image.MemoryImageSource;
 
 /** Implements the code interleaved 2 of 5. The text can include
  * non numeric characters that are printed but do not generate bars.
@@ -139,6 +142,8 @@ public class BarcodeInter25 extends Barcode{
      */    
     public static byte[] getBarsInter25(String text) {
         text = keepNumbers(text);
+        if ((text.length() & 1) != 0)
+            throw new IllegalArgumentException("The text length must be even.");
         byte bars[] = new byte[text.length() * 5 + 7];
         int pb = 0;
         bars[pb++] = 0;
@@ -273,7 +278,7 @@ public class BarcodeInter25 extends Barcode{
         for (int k = 0; k < bars.length; ++k) {
             float w = (bars[k] == 0 ? x : x * n);
             if (print)
-                cb.rectangle(barStartX, barStartY, w, barHeight);
+                cb.rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
             print = !print;
             barStartX += w;
         }
@@ -289,4 +294,43 @@ public class BarcodeInter25 extends Barcode{
         }
         return getBarcodeSize();
     }   
+    
+    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+     * contains the bars without any text.
+     * @param foreground the color of the bars
+     * @param background the color of the background
+     * @return the image
+     */    
+    public java.awt.Image createAwtImage(Color foreground, Color background) {
+        int f = foreground.getRGB();
+        int g = background.getRGB();
+        Canvas canvas = new Canvas();
+
+        String bCode = keepNumbers(code);
+        if (generateChecksum)
+            bCode += getChecksum(bCode);
+        int len = bCode.length();
+        int nn = (int)n;
+        int fullWidth = len * (3 + 2 * nn) + (6 + nn );
+        byte bars[] = getBarsInter25(bCode);
+        boolean print = true;
+        int ptr = 0;
+        int height = (int)barHeight;
+        int pix[] = new int[fullWidth * height];
+        for (int k = 0; k < bars.length; ++k) {
+            int w = (bars[k] == 0 ? 1 : nn);
+            int c = g;
+            if (print)
+                c = f;
+            print = !print;
+            for (int j = 0; j < w; ++j)
+                pix[ptr++] = c;
+        }
+        for (int k = fullWidth; k < pix.length; k += fullWidth) {
+            System.arraycopy(pix, 0, pix, k, fullWidth); 
+        }
+        Image img = canvas.createImage(new MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
+        
+        return img;
+    }    
 }

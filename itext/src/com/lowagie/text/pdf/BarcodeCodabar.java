@@ -50,6 +50,9 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Element;
 import com.lowagie.text.Rectangle;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Canvas;
+import java.awt.image.MemoryImageSource;
 
 /** Implements the code codabar. The default parameters are:
  * <pre>
@@ -277,7 +280,7 @@ public class BarcodeCodabar extends Barcode{
         for (int k = 0; k < bars.length; ++k) {
             float w = (bars[k] == 0 ? x : x * n);
             if (print)
-                cb.rectangle(barStartX, barStartY, w, barHeight);
+                cb.rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
             print = !print;
             barStartX += w;
         }
@@ -292,5 +295,49 @@ public class BarcodeCodabar extends Barcode{
             cb.endText();
         }
         return getBarcodeSize();
+    }
+
+    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+     * contains the bars without any text.
+     * @param foreground the color of the bars
+     * @param background the color of the background
+     * @return the image
+     */    
+    public java.awt.Image createAwtImage(Color foreground, Color background) {
+        int f = foreground.getRGB();
+        int g = background.getRGB();
+        Canvas canvas = new Canvas();
+
+        String fullCode = code;
+        if (generateChecksum && checksumText)
+            fullCode = calculateChecksum(code);
+        if (!startStopText)
+            fullCode = fullCode.substring(1, fullCode.length() - 1);
+        byte bars[] = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
+        int wide = 0;
+        for (int k = 0; k < bars.length; ++k) {
+            wide += (int)bars[k];
+        }
+        int narrow = bars.length - wide;
+        int fullWidth = narrow + wide * (int)n;
+        boolean print = true;
+        int ptr = 0;
+        int height = (int)barHeight;
+        int pix[] = new int[fullWidth * height];
+        for (int k = 0; k < bars.length; ++k) {
+            int w = (bars[k] == 0 ? 1 : (int)n);
+            int c = g;
+            if (print)
+                c = f;
+            print = !print;
+            for (int j = 0; j < w; ++j)
+                pix[ptr++] = c;
+        }
+        for (int k = fullWidth; k < pix.length; k += fullWidth) {
+            System.arraycopy(pix, 0, pix, k, fullWidth); 
+        }
+        Image img = canvas.createImage(new MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
+        
+        return img;
     }
 }

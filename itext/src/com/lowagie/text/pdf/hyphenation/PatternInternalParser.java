@@ -9,7 +9,7 @@ package com.lowagie.text.pdf.hyphenation;
 
 import com.lowagie.text.ExceptionConverter;
 import java.io.*;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class PatternInternalParser implements PatternConsumer {
@@ -87,7 +87,7 @@ public class PatternInternalParser implements PatternConsumer {
             if (token.equals("*"))
                 break;
             String word = token;
-            Vector vec = new Vector();
+            ArrayList vec = new ArrayList();
             while (tk.hasMoreTokens()) {
                 token = tk.nextToken();
                 if (token.equals("{")) {
@@ -101,13 +101,13 @@ public class PatternInternalParser implements PatternConsumer {
                     if (t3.equals("N"))
                         t3 = null;
                     Hyphen hy = new Hyphen(t2, t1, t3);
-                    vec.addElement(hy);
+                    vec.add(hy);
                 }
                 else if (token.equals("#")) {
                     break;
                 }
                 else
-                    vec.addElement(token);
+                    vec.add(token);
             }
             consumer.addException(word, vec);
         }
@@ -126,7 +126,7 @@ public class PatternInternalParser implements PatternConsumer {
         System.out.println("class: " + c);
     }
 
-    public void addException(String w, Vector e) {
+    public void addException(String w, ArrayList e) {
         System.out.println("exception: " + w + " : " + e.toString());
     }
 

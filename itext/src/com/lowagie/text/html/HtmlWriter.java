@@ -187,7 +187,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             os.write(GT);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+            throw new DocumentException(ioe);
         }
         return true;
     }
@@ -464,7 +464,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Changes the standardfont.
  *
- * @param standardFont  The font
+ * @param standardfont  The font
  */
     
     public void setStandardFont(Font standardfont) {

@@ -245,7 +245,7 @@ public class PdfLine {
      */
     
     public boolean hasToBeJustified() {
-        return (alignment == Element.ALIGN_JUSTIFIED && width != 0);
+        return ((alignment == Element.ALIGN_JUSTIFIED || alignment == Element.ALIGN_JUSTIFIED_ALL) && width != 0);
     }
     
     /**
@@ -341,7 +341,7 @@ public class PdfLine {
      * @return <CODE>true</CODE> if a newline caused the line split
      */
     public boolean isNewlineSplit() {
-        return newlineSplit;
+        return newlineSplit && (alignment != Element.ALIGN_JUSTIFIED_ALL);
     }
     
     /**
@@ -427,5 +427,19 @@ public class PdfLine {
             total += ck.getWidthCorrected(charSpacing, wordSpacing);
         }
         return total;
+    }
+    
+    public float getDescender() {
+        float descender = 0;
+        for (int k = 0; k < line.size(); ++k) {
+            PdfChunk ck = (PdfChunk)line.get(k);
+            if (ck.isImage())
+                descender = Math.min(descender, ck.getImageOffsetY());
+            else {
+                PdfFont font = ck.font();
+                descender = Math.min(descender, font.getFont().getFontDescriptor(BaseFont.DESCENT, font.size()));
+            }
+        }
+        return descender;
     }
 }

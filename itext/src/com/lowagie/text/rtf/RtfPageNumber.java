@@ -62,7 +62,7 @@ import com.lowagie.text.Font;
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
  * @author <a href="mailto:mhall@myrealbox.com">mhall@myrealbox.com</a>
- * @version $Revision$Date: 2003/05/02 09:01:35 $
+ * @version $Revision$Date: 2003/05/02 17:47:06 $
  */
 public class RtfPageNumber extends GenericRtfField implements RtfField {
     private String content;

@@ -70,7 +70,6 @@ import java.util.ArrayList;
  * @see		Cell
  * @see		Chapter
  * @see		Chunk
- * @see		Gif
  * @see		Graphic
  * @see		Header
  * @see		Image
@@ -242,6 +241,11 @@ public interface Element {
  * A possible value for vertical alignment.
  */
     public static final int ALIGN_BASELINE = 7;
+
+/**
+ * Does the same as ALIGN_JUSTIFIED but the last line is also spread out.
+ */
+    public static final int ALIGN_JUSTIFIED_ALL = 8;
 
     // static member variables for CCITT compression
     

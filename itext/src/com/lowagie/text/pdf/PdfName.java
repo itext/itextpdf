@@ -460,6 +460,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName LENGTH = new PdfName("Length");
     /** A name */
+    public static final PdfName LENGTH1 = new PdfName("Length1");
+    /** A name */
     public static final PdfName LIMITS = new PdfName("Limits");
     /** A name */
     public static final PdfName LINE = new PdfName("Line");
@@ -487,6 +489,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName METADATA = new PdfName("Metadata");
     /** A name */
     public static final PdfName MK = new PdfName("MK");
+    /** A name */
+    public static final PdfName MMTYPE1 = new PdfName("MMType1");
     /** A name */
     public static final PdfName MODDATE = new PdfName("ModDate");
     /** A name */

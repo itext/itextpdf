@@ -49,6 +49,9 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Canvas;
+import java.awt.image.MemoryImageSource;
 
 /** Implements the code 128 and UCC/EAN-128. Other symbologies are allowed in raw mode.<p>
  * The code types allowed are:<br>
@@ -541,7 +544,7 @@ public class Barcode128 extends Barcode{
         for (int k = 0; k < bars.length; ++k) {
             float w = bars[k] * x;
             if (print)
-                cb.rectangle(barStartX, barStartY, w, barHeight);
+                cb.rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
             print = !print;
             barStartX += w;
         }
@@ -556,5 +559,51 @@ public class Barcode128 extends Barcode{
             cb.endText();
         }
         return getBarcodeSize();
+    }
+    
+    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+     * contains the bars without any text.
+     * @param foreground the color of the bars
+     * @param background the color of the background
+     * @return the image
+     */    
+    public java.awt.Image createAwtImage(Color foreground, Color background) {
+        int f = foreground.getRGB();
+        int g = background.getRGB();
+        Canvas canvas = new Canvas();
+        String bCode;
+        if (codeType == CODE128_RAW) {
+            int idx = code.indexOf('\uffff');
+            if (idx >= 0)
+                bCode = code.substring(0, idx);
+            else
+                bCode = code;
+        }
+        else {
+            bCode = getRawText(code, codeType == CODE128_UCC);
+        }
+        int len = bCode.length();
+        int fullWidth = (len + 2) * 11 + 2;
+        byte bars[] = getBarsCode128Raw(bCode);
+        
+        boolean print = true;
+        int ptr = 0;
+        int height = (int)barHeight;
+        int pix[] = new int[fullWidth * height];
+        for (int k = 0; k < bars.length; ++k) {
+            int w = bars[k];
+            int c = g;
+            if (print)
+                c = f;
+            print = !print;
+            for (int j = 0; j < w; ++j)
+                pix[ptr++] = c;
+        }
+        for (int k = fullWidth; k < pix.length; k += fullWidth) {
+            System.arraycopy(pix, 0, pix, k, fullWidth); 
+        }
+        Image img = canvas.createImage(new MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
+        
+        return img;
     }    
 }

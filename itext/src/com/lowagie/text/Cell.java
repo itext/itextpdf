@@ -132,9 +132,6 @@ public class Cell extends Rectangle implements TextElementArray {
 /** Is this <CODE>Cell</CODE> a header? */
 	protected boolean header;
 
-/** Will the element have to be wrapped? */
-	protected boolean noWrap;
-
 	// constructors
 
 /**
@@ -500,6 +497,10 @@ public class Cell extends Rectangle implements TextElementArray {
 			this.horizontalAlignment = Element.ALIGN_JUSTIFIED;
 			return;
 		}
+		if (ElementTags.ALIGN_JUSTIFIED_ALL.equalsIgnoreCase(alignment)) {
+			this.horizontalAlignment = Element.ALIGN_JUSTIFIED_ALL;
+			return;
+		}
 		this.horizontalAlignment = Element.ALIGN_LEFT;
 	}
 
@@ -582,7 +583,7 @@ public class Cell extends Rectangle implements TextElementArray {
  */
 
 	public void setNoWrap(boolean value) {
-		noWrap = value;
+		maxLines = 1;
 	}
 
 	// methods to retrieve information
@@ -735,7 +736,7 @@ public class Cell extends Rectangle implements TextElementArray {
  */
 
 	public boolean noWrap() {
-		return noWrap;
+		return maxLines == 1;
 	}
 
 /**
@@ -862,4 +863,32 @@ public class Cell extends Rectangle implements TextElementArray {
 	public void setGroupChange(boolean value) {
 		groupChange = value;
 	}
+	
+	/**Getter for {@link #maxLines}*/
+	public int getMaxLines() {
+		return maxLines;
+	}
+	/**Setter for {@link #maxLines}*/
+	public void setMaxLines(int value) {
+		maxLines = value;
+	}
+	/**Maximum number of lines allowed in the cell.  
+	 * The default value of this property is not to limit the maximum number of lines
+	 * @author dperezcar@fcc.es*/
+	protected int maxLines = Integer.MAX_VALUE;
+	/**Setter for {@link #showTruncation}
+	 * @param value	Can be null for avoiding marking the truncation.*/
+	public void setShowTruncation(String value) {
+		showTruncation = value;
+	}
+	/**Getter for {@link #showTruncation}*/
+	public String getShowTruncation() {
+		return showTruncation;
+	}
+	/**If a truncation happens due to the {@link #maxLines} property, then this text will 
+	 * be added to indicate a truncation has happened.
+	 * Default value is null, and means avoiding marking the truncation.  
+	 * A useful value of this property could be e.g. "..."
+	 * @author dperezcar@fcc.es*/
+	String showTruncation;
 }

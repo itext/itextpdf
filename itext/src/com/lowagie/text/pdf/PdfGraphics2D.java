@@ -150,6 +150,12 @@ public class PdfGraphics2D extends Graphics2D {
 
     // Added by Jurij Bilas
     protected boolean underline;          // indicates if the font style is underlined
+    
+    protected PdfGState fillGState[] = new PdfGState[256];
+    protected PdfGState strokeGState[] = new PdfGState[256];
+    protected int currentFillGState = 255;
+    protected int currentStrokeGState = 255;
+    
     public static int AFM_DIVISOR = 1000; // used to calculate coordinates
 
     private PdfGraphics2D() {
@@ -710,6 +716,8 @@ public class PdfGraphics2D extends Graphics2D {
         g2.fontMapper = this.fontMapper;
         g2.kids = this.kids;
         g2.paint = this.paint;
+        g2.fillGState = this.fillGState;
+        g2.strokeGState = this.strokeGState;
         g2.background = this.background;
         g2.mediaTracker = this.mediaTracker;
         g2.setFont(this.font);
@@ -888,6 +896,7 @@ public class PdfGraphics2D extends Graphics2D {
             followPath(s, CLIP);
         }
         paintFill = paintStroke = null;
+        currentFillGState = currentStrokeGState = 255;
         oldStroke = strokeOne;
     }
     
@@ -1256,10 +1265,34 @@ public class PdfGraphics2D extends Graphics2D {
     
     private void setPaint(boolean invert, double xoffset, double yoffset, boolean fill) {
         if (paint instanceof Color) {
-            if (fill)
-                cb.setColorFill((Color)paint);
-            else
-                cb.setColorStroke((Color)paint);
+            Color color = (Color)paint;
+            int alpha = color.getAlpha();
+            if (fill) {
+                if (alpha != currentFillGState) {
+                    currentFillGState = alpha;
+                    PdfGState gs = fillGState[alpha];
+                    if (gs == null) {
+                        gs = new PdfGState();
+                        gs.setFillOpacity((float)alpha / 255f);
+                        fillGState[alpha] = gs;
+                    }
+                    cb.setGState(gs);
+                }
+                cb.setColorFill(color);
+            }
+            else {
+                if (alpha != currentStrokeGState) {
+                    currentStrokeGState = alpha;
+                    PdfGState gs = strokeGState[alpha];
+                    if (gs == null) {
+                        gs = new PdfGState();
+                        gs.setStrokeOpacity((float)alpha / 255f);
+                        strokeGState[alpha] = gs;
+                    }
+                    cb.setGState(gs);
+                }
+                cb.setColorStroke(color);
+            }
         }
         else if (paint instanceof GradientPaint) {
             GradientPaint gp = (GradientPaint)paint;

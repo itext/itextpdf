@@ -874,7 +874,7 @@ public class PdfContentByte {
             }
         }
         catch (Exception ee) {
-            throw new DocumentException(ee.getMessage());
+            throw new DocumentException(ee);
         }
     }
     
@@ -1245,18 +1245,18 @@ public class PdfContentByte {
     
     /**
      * Shows text right, left or center aligned with rotation.
-     * @param alignement the alignment can be ALIGN_CENTER, ALIGN_RIGHT or ALIGN_LEFT
+     * @param alignment the alignment can be ALIGN_CENTER, ALIGN_RIGHT or ALIGN_LEFT
      * @param text the text to show
      * @param x the x pivot position
      * @param y the y pivot position
      * @param rotation the rotation to be applied in degrees counterclockwise
      */
-    public void showTextAligned(int alignement, String text, float x, float y, float rotation) {
+    public void showTextAligned(int alignment, String text, float x, float y, float rotation) {
         if (state.fontDetails == null)
             throw new NullPointerException("Font and size must be set before writing any text");
         BaseFont bf = state.fontDetails.getBaseFont();
         if (rotation == 0) {
-            switch (alignement) {
+            switch (alignment) {
                 case ALIGN_CENTER:
                     x -= bf.getWidthPoint(text, state.size) / 2;
                     break;
@@ -1272,7 +1272,7 @@ public class PdfContentByte {
             float cos = (float)Math.cos(alpha);
             float sin = (float)Math.sin(alpha);
             float len;
-            switch (alignement) {
+            switch (alignment) {
                 case ALIGN_CENTER:
                     len = bf.getWidthPoint(text, state.size) / 2;
                     x -=  len * cos;
@@ -2335,5 +2335,9 @@ public class PdfContentByte {
         af.getMatrix(arr);
         content.append(arr[0]).append(' ').append(arr[1]).append(' ').append(arr[2]).append(' ');
         content.append(arr[3]).append(' ').append(arr[4]).append(' ').append(arr[5]).append(" cm").append_i(separator);
+    }
+    
+    void addAnnotation(PdfAnnotation annot) {
+        writer.addAnnotation(annot);
     }
 }

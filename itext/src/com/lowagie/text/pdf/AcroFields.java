@@ -145,30 +145,30 @@ public class AcroFields {
                     if (operator.equals("Tf")) {
                         if (stack.size() >= 2) {
                             fontName = (String)stack.get(stack.size() - 2);
-                            tx.setFontSize(Float.parseFloat((String)stack.get(stack.size() - 1)));
+                            tx.setFontSize(new Float((String)stack.get(stack.size() - 1)).floatValue());
                         }
                     }
                     else if (operator.equals("g")) {
                         if (stack.size() >= 1) {
-                            float gray = Float.parseFloat((String)stack.get(stack.size() - 1));
+                            float gray = new Float((String)stack.get(stack.size() - 1)).floatValue();
                             if (gray != 0)
                                 tx.setTextColor(new GrayColor(gray));
                         }
                     }
                     else if (operator.equals("rg")) {
                         if (stack.size() >= 3) {
-                            float red = Float.parseFloat((String)stack.get(stack.size() - 3));
-                            float green = Float.parseFloat((String)stack.get(stack.size() - 2));
-                            float blue = Float.parseFloat((String)stack.get(stack.size() - 1));
+                            float red = new Float((String)stack.get(stack.size() - 3)).floatValue();
+                            float green = new Float((String)stack.get(stack.size() - 2)).floatValue();
+                            float blue = new Float((String)stack.get(stack.size() - 1)).floatValue();
                             tx.setTextColor(new Color(red, green, blue));
                         }
                     }
                     else if (operator.equals("k")) {
                         if (stack.size() >= 4) {
-                            float cyan = Float.parseFloat((String)stack.get(stack.size() - 4));
-                            float magenta = Float.parseFloat((String)stack.get(stack.size() - 3));
-                            float yellow = Float.parseFloat((String)stack.get(stack.size() - 2));
-                            float black = Float.parseFloat((String)stack.get(stack.size() - 1));
+                            float cyan = new Float((String)stack.get(stack.size() - 4)).floatValue();
+                            float magenta = new Float((String)stack.get(stack.size() - 3)).floatValue();
+                            float yellow = new Float((String)stack.get(stack.size() - 2)).floatValue();
+                            float black = new Float((String)stack.get(stack.size() - 1)).floatValue();
                             tx.setTextColor(new CMYKColor(cyan, magenta, yellow, black));
                         }
                     }
