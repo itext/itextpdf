@@ -484,7 +484,7 @@ public class Cell extends Rectangle implements TextElementArray {
     }
 
 /**
- * Sets the alignment of this paragraph.
+ * Sets the alignment of this cell.
  *
  * @param	alignment		the new alignment as a <CODE>String</CODE>
  */
