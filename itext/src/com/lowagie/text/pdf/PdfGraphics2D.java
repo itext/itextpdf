@@ -81,6 +81,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.renderable.RenderableImage;
+import java.awt.geom.NoninvertibleTransformException;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -91,6 +92,8 @@ public class PdfGraphics2D extends Graphics2D {
     private final static int FILL = 1;
     private final static int STROKE = 2;
     private final static int CLIP = 3;
+    
+    private static AffineTransform IDENTITY = new AffineTransform();
     
     private Font font;
     private BaseFont baseFont;
@@ -127,7 +130,7 @@ public class PdfGraphics2D extends Graphics2D {
         this.fontMapper = fontMapper;
         if (this.fontMapper == null)
             this.fontMapper = new DefaultFontMapper();
-        font = new Font("Ariel", Font.PLAIN, 12);
+        font = new Font("Arial", Font.PLAIN, 12);
         paint = Color.black;
         background = Color.white;
         setFont(font);
@@ -138,6 +141,7 @@ public class PdfGraphics2D extends Graphics2D {
         clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         clip(clip);
         cb.saveState();
+        clip = null;
     }
     
     /**
@@ -224,7 +228,6 @@ public class PdfGraphics2D extends Graphics2D {
         cb.endText();
         setTransform(at);
     }
-    
     /**
      * @see Graphics#drawString(AttributedCharacterIterator, int, int)
      */
@@ -266,8 +269,10 @@ public class PdfGraphics2D extends Graphics2D {
         if (onStroke) {
             s = stroke.createStrokedShape(s);
         }
-        Area area = new Area(transform.createTransformedShape(s));
-        area.intersect(clip);
+        s = transform.createTransformedShape(s);
+        Area area = new Area(s);
+        if (clip != null)
+            area.intersect(clip);
         return area.intersects(rect.x, rect.y, rect.width, rect.height);
     }
     
@@ -300,14 +305,14 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
-     * @see Graphics2D
+     * @see Graphics2D#setRenderingHint(Key, Object)
      */
     public void setRenderingHint(Key arg0, Object arg1) {
         rhints.put(arg0, arg1);
     }
     
     /**
-     * @see Graphics2D
+     * @see Graphics2D#getRenderingHint(Key)
      */
     public Object getRenderingHint(Key arg0) {
         return rhints.get(arg0);
@@ -517,7 +522,9 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#getClipBounds()
      */
     public Rectangle getClipBounds() {
-        return clip.getBounds();
+        if (clip == null)
+            return null;
+        return getClip().getBounds();
     }
     
     /**
@@ -540,7 +547,12 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#clip(Shape)
      */
     public void clip(Shape s) {
-        clip.intersect(new Area(s));
+        if (s != null)
+            s = transform.createTransformedShape(s);
+        if (clip == null)
+            clip = new Area(s);
+        else
+            clip.intersect(new Area(s));
         followPath(s, CLIP);
     }
     
@@ -548,17 +560,29 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#getClip()
      */
     public Shape getClip() {
-        return clip;
+        try {
+            return transform.createInverse().createTransformedShape(clip);
+        }
+        catch (NoninvertibleTransformException e) {
+            return null;
+        }
     }
     
     /**
      * @see Graphics#setClip(Shape)
      */
     public void setClip(Shape s) {
-        clip = new Area(s);
         cb.restoreState();
         cb.saveState();
-        followPath(s, CLIP);
+        if (s != null)
+            s = transform.createTransformedShape(s);
+        if (s == null) {
+            clip = null;
+        }
+        else {
+            clip = new Area(s);
+            followPath(s, CLIP);
+        }
         setPaint(paint);
     }
     
@@ -778,7 +802,11 @@ public class PdfGraphics2D extends Graphics2D {
         }
         
         cb.newPath();
-        PathIterator points = s.getPathIterator(transform);
+        PathIterator points;
+        if (drawType == CLIP)
+            points = s.getPathIterator(IDENTITY);
+        else
+            points = s.getPathIterator(transform);
         float[] coords = new float[6];
         while(!points.isDone()) {
             int segtype = points.currentSegment(coords);
@@ -881,7 +909,7 @@ public class PdfGraphics2D extends Graphics2D {
         
         return true;
     }
-    
+        
     private void setPaint(Paint paint, boolean invert, double xoffset, double yoffset) {
         this.paint = paint;
         if (paint instanceof Color) {
@@ -911,12 +939,10 @@ public class PdfGraphics2D extends Graphics2D {
                 pattern.addImage(image);
                 cb.setPatternFill(pattern);
             } catch (Exception ex) {
-                throw(new IllegalArgumentException());
+                cb.setColorFill(Color.gray);
             }
         }
     }
-    
-    
     
     ///////////////////////////////////////////////
     //
@@ -946,25 +972,25 @@ public class PdfGraphics2D extends Graphics2D {
                 ascent = (int)bf.getFontDescriptor(BaseFont.AWT_ASCENT, fontSize);
             return ascent;
         }
-        
+         
         public int getDescent() {
             if (descent < 0)
                 descent =  -(int)bf.getFontDescriptor(BaseFont.AWT_DESCENT, fontSize);
             return descent;
         }
-        
+         
         public int getLeading() {
             if (leading < 0)
                 leading = (int)bf.getFontDescriptor(BaseFont.AWT_LEADING, fontSize);
             return leading;
         }
-        
+         
         public int getMaxAdvance() {
             if (maxAdvance < 0)
                 maxAdvance = (int)bf.getFontDescriptor(BaseFont.AWT_MAXADVANCE, fontSize);
             return maxAdvance;
         }
-        
+
         public int[] getWidths() {
             if (widths == null) {
                 widths = new int[256];
@@ -974,7 +1000,7 @@ public class PdfGraphics2D extends Graphics2D {
             }
             return widths;
         }
-        
+
         public int charWidth(char c) {
             return (int)bf.getWidthPoint(c, fontSize);
         }
