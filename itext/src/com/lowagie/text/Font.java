@@ -481,9 +481,14 @@ public class Font implements Comparable {
         }
         int style1 = this.style;
         int style2 = font.style();
-        if (style1 == UNDEFINED) style1 = 0;
-        if (style2 == UNDEFINED) style2 = 0;
-        difference.style = style1 | style2;
+        if (style1 == UNDEFINED && style2 == UNDEFINED) {
+            difference.style = UNDEFINED;
+        }
+        else {
+            if (style1 == UNDEFINED) style1 = 0;
+            if (style2 == UNDEFINED) style2 = 0;
+            difference.style = style1 | style2;
+        }
         if (font.size() == UNDEFINED) {
             difference.size = this.size;
         }

@@ -81,6 +81,9 @@ public class HtmlTags {
 
 /** This is used for inline css style information */
     public static final String STYLE = "style";
+
+/** This is used for inline css style information */
+    public static final String SPAN = "span";
     
 /** This is a possible HTML attribute for the LINK tag. */
     public static final String TYPE = "type";
