@@ -164,7 +164,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     private int columns;
 
 // this is the current Position in the table
-    private Point curPosition;
+    private Point curPosition = new Point(0, 0);
 
 /** This is the list of <CODE>Row</CODE>s. */
     private ArrayList rows = new ArrayList();
