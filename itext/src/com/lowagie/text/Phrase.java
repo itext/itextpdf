@@ -221,7 +221,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public Phrase(Properties attributes) {
-        this("", new Font(attributes));
+        this("", FontFactory.getFont(attributes));
         clear();
         String value = (String)attributes.remove(ElementTags.LEADING);
         if (value != null) {

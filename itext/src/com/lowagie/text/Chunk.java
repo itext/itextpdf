@@ -179,7 +179,7 @@ public class Chunk implements Element, MarkupAttributes {
  */
     
     public Chunk(Properties attributes) {
-        this("", new Font(attributes));
+        this("", FontFactory.getFont(attributes));
         String value;
         if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             append(value);
