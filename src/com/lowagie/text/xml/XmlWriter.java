@@ -86,6 +86,34 @@ public class XmlWriter extends DocWriter implements DocListener {
 /** This is the place where the DTD is located. */
     public final static byte[] DTD = getISOBytes("http://www.lowagie.com/iText/itext.dtd");
     
+/** This is an array containing character to XML translations. */
+    private static final String[] xmlCode = new String[256];
+    
+    static {
+        for (int i = 0; i < 10; i++) {
+            xmlCode[i] = "&#00" + i + ";";
+        }
+        
+        for (int i = 10; i < 32; i++) {
+            xmlCode[i] = "&#0" + i + ";";
+        }
+        
+        for (int i = 32; i < 128; i++) {
+            xmlCode[i] = String.valueOf((char)i);
+        }
+        
+        // Special characters
+        xmlCode['\n'] = "<" + ElementTags.NEWLINE + " />\n";
+        xmlCode['\"'] = "&quot;"; // double quote
+        xmlCode['\''] = "&apos;"; // single quote
+        xmlCode['&'] = "&amp;"; // ampersand
+        xmlCode['<'] = "&lt;"; // lower than
+        xmlCode['>'] = "&gt;"; // greater than
+        
+        for (int i = 128; i < 256; i++) {
+            xmlCode[i] = "&#" + i + ";";
+        }
+    }    
     // membervariables
     
 /** This is the meta information of the document. */
@@ -793,27 +821,8 @@ public class XmlWriter extends DocWriter implements DocListener {
         // loop over all the characters of the String.
         for (int i = 0; i < n; i++) {
             character = string.charAt(i);
-            // the Htmlcode of these characters are added to a StringBuffer one by one
+            // the Xmlcode of these characters are added to a StringBuffer one by one
             switch(character) {
-                case '\n':
-                    buf.append("<").append(ElementTags.NEWLINE).append(" />\n");
-                    addTabs(buf, indent);
-                    break;
-                case '"':
-                    buf.append("&quot;");
-                    break;
-                case '\'':
-                    buf.append("&apos;");
-                    break;
-                case '<':
-                    buf.append("&lt;");
-                    break;
-                case '>':
-                    buf.append("&gt;");
-                    break;
-                case '&':
-                    buf.append("&amp;");
-                    break;
                 case ' ':
                     if ((i - pos) > 60) {
                         pos = i;
@@ -822,7 +831,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                         break;
                     }
                     default:
-                        buf.append(character);
+                        buf.append(xmlCode[(int) character]);
             }
         }
         return buf.toString();
