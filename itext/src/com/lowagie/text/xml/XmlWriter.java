@@ -630,7 +630,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.TABLE:
             {
                 Table table = (Table) element;
-                
+                table.complete();
                 addTabs(indent);
                 writeStart(ElementTags.TABLE);
                 write(ElementTags.COLUMNS, String.valueOf(table.columns()));
