@@ -255,7 +255,7 @@ class PdfDocument extends Document implements DocListener {
 	/** This is the PdfContent object, containing the borders and other Graphics. */
 	private PdfContent graphics;
 
-	/** The lines that iare written untill now. */
+	/** The lines that are written until now. */
 	private ArrayList lines = new ArrayList();
 
 	/** This represents the leading of the lines. */
