@@ -250,21 +250,36 @@ public class SAXiTextHandler extends HandlerBase {
         if (Image.isTag(name)) {
             try {
                 Image img = Image.getInstance(attributes);
-                TextElementArray current;
+                Object current;
                 try {
                     // if there is an element on the stack...
-                    current = (TextElementArray) stack.pop();
+                    current = stack.pop();
                     // ...and it's a Chapter or a Section, the Image can be added directly
-                    if ((current instanceof Chapter) || (current instanceof Section) || (current instanceof Cell)) {
-                        current.add(img);
+                    if (current instanceof Chapter || current instanceof Section || current instanceof Cell) {
+                        ((TextElementArray)current).add(img);
                         stack.push(current);
                         return;
                     }
                     // ...if not, the Image is wrapped in a Chunk before it's added
                     else {
-                        Chunk chunk = new Chunk(img, 0, 0);
-                        current.add(chunk);
-                        stack.push(current);
+                        Stack newStack = new Stack();
+                        try {
+                            while (! (current instanceof Chapter || current instanceof Section || current instanceof Cell)) {
+                                newStack.push(current);
+                                if (current instanceof Anchor) {
+                                    img.setAnnotation(new Annotation(0, 0, 0, 0, ((Anchor)current).reference()));
+                                }
+                                current = stack.pop();
+                            }
+                            ((TextElementArray)current).add(img);
+                            stack.push(current);
+                        }
+                        catch(EmptyStackException ese) {
+                            document.add(img);
+                        }
+                        while (!newStack.empty()) {
+                            stack.push(newStack.pop());
+                        }
                         return;
                     }
                 }
