@@ -52,14 +52,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfWriter;
 
 
 /**
@@ -105,7 +102,7 @@ public abstract class XmlToXXX
  * specified <CODE>OutputStream</CODE>.
  * @param in    the <CODE>InputStream</CODE> from which the XML is read.
  * @param out   the <CODE>OutputStream</CODE> to which the result is written.
- * @throws <CODE>DocumentException</CODE> if document errors occur.
+ * @throws DocumentException if document errors occur.
  */
 	public final void parse(InputStream in, OutputStream out)
 	 throws DocumentException
@@ -140,7 +137,7 @@ public abstract class XmlToXXX
 /**
  * Add a <CODE>DocWriter</CODE> for the specified <CODE>Document</CODE> and
  * <CODE>OutputStream</CODE>.
- * @throws <CODE>DocumentException</CODE> if document errors occur.
+ * @throws DocumentException if document errors occur.
  */	
 	protected abstract void addWriter(Document doc, OutputStream out)
 	 throws DocumentException;

@@ -54,9 +54,7 @@ package com.lowagie.text.rtf;
 import com.lowagie.text.*;
 import com.lowagie.text.rtf.*;
 
-import java.util.*;
 import java.io.*;
-import java.awt.Color;
 
 /**
  * This class can be used to insert entries for a table of contents into 
@@ -64,7 +62,7 @@ import java.awt.Color;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2002/02/12 14:30:35 $
+ * @version $Revision$Date: 2002/03/06 13:29:37 $
  */
 public class RtfTOCEntry extends Chunk implements RtfField {
 

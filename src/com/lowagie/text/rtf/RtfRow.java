@@ -157,7 +157,7 @@ public class RtfRow
    * Create a new <code>RtfRow</code>.
    *
    * @param writer The <code>RtfWriter</code> that this <code>RtfRow</code> belongs to
-   * @param table The <code>RtfTable</code> that created this
+   * @param mainTable The <code>RtfTable</code> that created this
    * <code>RtfRow</code>
    */
     public RtfRow(RtfWriter writer, RtfTable mainTable)
@@ -186,8 +186,8 @@ public class RtfRow
    * <P>
    * All the parameters are taken from the <code>RtfTable</code> which contains
    * this <code>RtfRow</code> and they do exactely what they say
-   * @param propWiths in percent   
-   * @param tableWith in percent
+   * @param propWidths in percent
+   * @param tableWidth in percent
    */
     public boolean importRow(Row row, float[] propWidths, int tableWidth, int pageWidth, int cellpadding,
     int cellspacing, int borders, java.awt.Color borderColor, float borderWidth,

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.xml;
 
-import java.awt.Color;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -140,7 +139,7 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Constructs an <CODE>XmlWriter</CODE>.
  *
- * @param document  The <CODE>Document</CODE> that has to be written as XML
+ * @param doc     The <CODE>Document</CODE> that has to be written as XML
  * @param os      The <CODE>OutputStream</CODE> the writer has to write to.
  */
     
@@ -164,9 +163,9 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Constructs an <CODE>XmlWriter</CODE>.
  *
- * @param document  The <CODE>Document</CODE> that has to be written as XML
+ * @param doc     The <CODE>Document</CODE> that has to be written as XML
  * @param os      The <CODE>OutputStream</CODE> the writer has to write to.
- * @param   dtd         The DTD to use
+ * @param dtd     The DTD to use
  */
     
     protected XmlWriter(Document doc, OutputStream os, String dtd) {
@@ -752,7 +751,7 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Writes the XML representation of this <CODE>Rectangle</CODE>.
  *
- * @param a <CODE>Rectangle</CODE>
+ * @param rectangle     a <CODE>Rectangle</CODE>
  */
     
     private void write(Rectangle rectangle) throws IOException {
@@ -833,7 +832,7 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Writes the XML representation of a <CODE>Font</CODE>.
  *
- * @param a <CODE>Font</CODE>
+ * @param font  a <CODE>Font</CODE>
  */
     
     private void write(Font font) throws IOException {

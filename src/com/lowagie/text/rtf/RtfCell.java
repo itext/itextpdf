@@ -94,14 +94,6 @@ public class RtfCell
     private static final byte[] cellMergePrev = "clmrg".getBytes();
   /** Merge cell with previous vertical cell */
     private static final byte[] cellVMergePrev = "clvmrg".getBytes();
-  /** Cell content horizontal alignment left */
-    private static final byte[] cellHorizontalAlignLeft = "ql".getBytes();
-  /** Cell content horizontal alignment center */
-    private static final byte[] cellHorizontalAlignCenter = "qc".getBytes();
-  /** Cell content horizontal alignment right */
-    private static final byte[] cellHorizontalAlignRight = "qr".getBytes();
-  /** Cell content horizontal alignment justified */
-    private static final byte[] cellHorizontalAlignJustified = "qj".getBytes();
   /** Cell content vertical alignment bottom */
     private static final byte[] cellVerticalAlignBottom = "clvertalb".getBytes();
   /** Cell content vertical alignment center */
@@ -170,7 +162,7 @@ public class RtfCell
    * Create a new <code>RtfCell</code>.
    *
    * @param writer The <code>RtfWriter</code> that this <code>RtfCell</code> belongs to
-   * @param table The <code>RtfTable</code> that created the
+   * @param mainTable The <code>RtfTable</code> that created the
    * <code>RtfRow</code> that created the <code>RtfCell</code> :-)
    */
     public RtfCell(RtfWriter writer, RtfTable mainTable)

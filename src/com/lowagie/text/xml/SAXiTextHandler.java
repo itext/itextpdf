@@ -486,7 +486,6 @@ public class SAXiTextHandler extends DefaultHandler {
  * This method deals with the starting tags.
  *
  * @param       name        the name of the tag
- * @param       attributes  the list of attributes
  */
     
     public void handleEndingTags(String name) {

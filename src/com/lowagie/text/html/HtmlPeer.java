@@ -50,9 +50,6 @@
 
 package com.lowagie.text.html;
 
-import java.util.Properties;
-import org.xml.sax.AttributeList;
-
 import com.lowagie.text.xml.XmlPeer;
 
 /**
