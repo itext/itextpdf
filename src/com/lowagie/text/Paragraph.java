@@ -169,7 +169,7 @@ public class Paragraph extends Phrase implements TextElementArray {
     
     public Paragraph(Phrase phrase) {
         super(phrase.leading());
-        add(phrase);
+        super.add(phrase);
     }
     
 /**
@@ -229,6 +229,11 @@ public class Paragraph extends Phrase implements TextElementArray {
         }
         else if (o instanceof Image) {
             super.addSpecial((Image) o);
+            return true;
+        }
+        else if (o instanceof Paragraph) {
+            super.add(o);
+			super.add(Chunk.NEWLINE);
             return true;
         }
         return super.add(o);

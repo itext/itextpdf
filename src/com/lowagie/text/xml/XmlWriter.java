@@ -36,6 +36,7 @@ package com.lowagie.text.xml;
 import java.awt.Color;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.HashMap;
@@ -212,6 +213,7 @@ public class XmlWriter extends DocWriter implements DocListener {
         super.open();
         try {
             itext.put(ElementTags.PRODUCER, "iTextXML by lowagie.com");
+            itext.put(ElementTags.CREATIONDATE, new Date().toString());
             writeStart(ElementTags.ITEXT);
             String key;
             for (java.util.Iterator i = itext.keySet().iterator(); i.hasNext(); ) {
@@ -654,10 +656,15 @@ public class XmlWriter extends DocWriter implements DocListener {
             if (section.title().indentationRight() != 0) {
                 write(ElementTags.INDENTATIONRIGHT, String.valueOf(section.title().indentationRight()));
             }
+			write(section.title().font());
             os.write(GT);
             os.write(NEWLINE);
-            for (Iterator i = section.title().iterator(); i.hasNext(); ) {
-                write((Element)i.next(), indent + 2);
+			Iterator i = section.title().iterator();
+			if (section.depth() > 0) {
+				i.next();
+			}
+            while (i.hasNext()) {
+				write((Element) i.next(), indent + 2);
             }
             addTabs(indent + 1);
             writeEnd(ElementTags.TITLE);

@@ -196,16 +196,28 @@ public class SAXiTextHandler extends HandlerBase {
         if (Image.isTag(name)) {
             try {
                 Image img = Image.getInstance(attributes);
-                Chunk chunk = new Chunk(img, 0, 0);
                 TextElementArray current;
                 try {
                     current = (TextElementArray) stack.pop();
+					if (current instanceof Cell) {
+	                	Chunk chunk = new Chunk(img, 0, 0);
+                		current.add(chunk);
+                		stack.push(current);
+						return;
+					}
+					else {
+		                current.add(img);
+        		        stack.push(current);
+					}
                 }
                 catch(EmptyStackException ese) {
-                    current = new Paragraph();
+					try {
+						document.add(img);
+					}
+					catch(DocumentException de) {
+					}
+					return;
                 }
-                current.add(chunk);
-                stack.push(current);
             }
             catch(Exception e) {
                 System.err.println(e.toString());
@@ -236,12 +248,15 @@ public class SAXiTextHandler extends HandlerBase {
             TextElementArray current;
             try {
                 current = (TextElementArray) stack.pop();
-                current.add(new Chunk("\n"));
+                current.add(Chunk.NEWLINE);
                 stack.push(current);
             }
             catch(EmptyStackException ese) {
                 if (currentChunk == null) {
-                    currentChunk = new Chunk("\n");
+					try {
+	                    document.add(Chunk.NEWLINE);
+					}
+					catch(DocumentException de) {}
                 }
                 else {
                     currentChunk.append("\n");

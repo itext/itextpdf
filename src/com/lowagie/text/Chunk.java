@@ -62,6 +62,9 @@ import com.lowagie.text.pdf.PdfAction;
 public class Chunk implements Element {
     
     // membervariables
+	
+/** This is a Chunk containing a newline. */
+	public static final Chunk NEWLINE = new Chunk("\n");
     
 /** This is the content of this chunk of text. */
     private StringBuffer content;
@@ -164,6 +167,9 @@ public class Chunk implements Element {
         }
         if ((value = attributes.getProperty(ElementTags.LOCALDESTINATION)) != null) {
             setLocalDestination(value);
+        }
+        if ((value = attributes.getProperty(ElementTags.SUBSUPSCRIPT)) != null) {
+            setTextRise(Float.parseFloat(value + "f"));
         }
     }
     
