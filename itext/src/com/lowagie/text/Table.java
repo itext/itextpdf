@@ -439,11 +439,15 @@ public class Table extends Rectangle implements Element {
  * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>.
  *
  * @param       cell         a <CODE>Cell</CODE>
- * @throws      BadElementException this should never happen
  */
     
-    public final void addCell(Cell cell) throws BadElementException {
-        addCell(cell, new Point(currentRow, currentColumn));
+    public final void addCell(Cell cell) {
+        try {
+            addCell(cell, new Point(currentRow, currentColumn));
+        }
+        catch(BadElementException bee) {
+            // don't add the cell
+        }
     }
     
 /**
