@@ -142,7 +142,9 @@ public class TiffImage {
                 dpiX = 0;
                 dpiY = 0;
             }
-            long tstrip = dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
+            long tstrip = 0xFFFFFFFFL;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ROWSPERSTRIP))
+                tstrip = dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             int rowsStrip = (int)Math.min((long)h, tstrip);
             TIFFField field = dir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);

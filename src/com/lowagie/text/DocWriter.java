@@ -119,6 +119,9 @@ public abstract class DocWriter implements DocListener {
     protected boolean closeStream = true;
 
     // constructor
+    
+    protected DocWriter()  {
+    }
 
 /**
  * Constructs a <CODE>DocWriter</CODE>.

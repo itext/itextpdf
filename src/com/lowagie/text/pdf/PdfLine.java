@@ -245,7 +245,7 @@ public class PdfLine {
      */
     
     public boolean hasToBeJustified() {
-        return (alignment == Element.ALIGN_JUSTIFIED && width != 0);
+        return ((alignment == Element.ALIGN_JUSTIFIED || alignment == Element.ALIGN_JUSTIFIED_ALL) && width != 0);
     }
     
     /**
@@ -341,7 +341,7 @@ public class PdfLine {
      * @return <CODE>true</CODE> if a newline caused the line split
      */
     public boolean isNewlineSplit() {
-        return newlineSplit;
+        return newlineSplit && (alignment != Element.ALIGN_JUSTIFIED_ALL);
     }
     
     /**

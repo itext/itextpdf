@@ -387,6 +387,9 @@ public class ElementTags {
     public static final String ALIGN_JUSTIFIED = "Justify";
     
 /** the possible value of an alignment attribute */
+    public static final String ALIGN_JUSTIFIED_ALL = "JustifyAll";
+    
+/** the possible value of an alignment attribute */
     public static final String ALIGN_TOP = "Top";
     
 /** the possible value of an alignment attribute */
@@ -434,6 +437,7 @@ public class ElementTags {
             case Element.ALIGN_RIGHT:
                 return ALIGN_RIGHT;
             case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
                 return ALIGN_JUSTIFIED;
             case Element.ALIGN_TOP:
                 return ALIGN_TOP;

@@ -243,6 +243,8 @@ class CJKFont extends BaseFont {
             if (w != null)
                 dic.put(PdfName.W2, new PdfLiteral(w));
         }
+        else
+            dic.put(PdfName.DW, new PdfNumber(1000));
         PdfDictionary cdic = new PdfDictionary();
         cdic.put(PdfName.REGISTRY, new PdfString((String)fontDesc.get("Registry"), null));
         cdic.put(PdfName.ORDERING, new PdfString((String)fontDesc.get("Ordering"), null));
