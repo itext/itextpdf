@@ -2807,7 +2807,12 @@ class PdfDocument extends Document implements DocListener {
         if (additionalActions == null)  {
             additionalActions = new PdfDictionary();
         }
-        additionalActions.put(actionType, action);
+        if (action == null)
+            additionalActions.remove(actionType);
+        else
+            additionalActions.put(actionType, action);
+        if (additionalActions.size() == 0)
+            additionalActions = null;
     }
     
     void setPageLabels(PdfPageLabels pageLabels) {

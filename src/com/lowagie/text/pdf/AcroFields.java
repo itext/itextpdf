@@ -75,6 +75,38 @@ public class AcroFields {
     static private final int DA_FONT = 0;
     static private final int DA_SIZE = 1;
     static private final int DA_COLOR = 2;
+    /**
+     * A field type invalid or not found.
+     */    
+    public static final int FIELD_TYPE_NONE = 0;
+    /**
+     * A field type.
+     */    
+    public static final int FIELD_TYPE_PUSHBUTTON = 1;
+    /**
+     * A field type.
+     */    
+    public static final int FIELD_TYPE_CHECKBOX = 2;
+    /**
+     * A field type.
+     */    
+    public static final int FIELD_TYPE_RADIOBUTTON = 3;
+    /**
+     * A field type.
+     */    
+    public static final int FIELD_TYPE_TEXT = 4;
+    /**
+     * A field type.
+     */    
+    public static final int FIELD_TYPE_LIST = 5;
+    /**
+     * A field type.
+     */    
+    public static final int FIELD_TYPE_COMBO = 6;
+    /**
+     * A field type.
+     */    
+    public static final int FIELD_TYPE_SIGNATURE = 7;
     
     private boolean lastWasString;
     
@@ -179,10 +211,10 @@ public class AcroFields {
         ArrayList wd = fd.widgets;
         for (int k = 0; k < wd.size(); ++k) {
             PdfDictionary dic = (PdfDictionary)wd.get(k);
-            dic = (PdfDictionary)dic.get(PdfName.AP);
+            dic = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.AP));
             if (dic == null)
                 continue;
-            PdfObject ob = dic.get(PdfName.N);
+            PdfObject ob = PdfReader.getPdfObject(dic.get(PdfName.N));
             if (ob == null || !ob.isDictionary())
                 continue;
             dic = (PdfDictionary)ob;
@@ -193,6 +225,51 @@ public class AcroFields {
         }
         String out[] = new String[names.size()];
         return (String[])names.keySet().toArray(out);
+    }
+    
+    /**
+     * Gets the field type. The type can be one of: <CODE>FIELD_TYPE_PUSHBUTTON</CODE>,
+     * <CODE>FIELD_TYPE_CHECKBOX</CODE>, <CODE>FIELD_TYPE_RADIOBUTTON</CODE>,
+     * <CODE>FIELD_TYPE_TEXT</CODE>, <CODE>FIELD_TYPE_LIST</CODE>,
+     * <CODE>FIELD_TYPE_COMBO</CODE> or <CODE>FIELD_TYPE_SIGNATURE</CODE>.
+     * <p>
+     * If the field does not exist or is invalid it returns
+     * <CODE>FIELD_TYPE_NONE</CODE>.
+     * @param fieldName the field name
+     * @return the field type
+     */    
+    public int getFieldType(String fieldName) {
+        Item fd = (Item)fields.get(fieldName);
+        if (fd == null)
+            return FIELD_TYPE_NONE;
+        PdfObject type = PdfReader.getPdfObject(((PdfDictionary)fd.merged.get(0)).get(PdfName.FT));
+        if (type == null)
+            return FIELD_TYPE_NONE;
+        int ff = 0;
+        PdfObject ffo = PdfReader.getPdfObject(((PdfDictionary)fd.merged.get(0)).get(PdfName.FF));
+        if (ffo != null && ffo.type() == PdfObject.NUMBER)
+            ff = ((PdfNumber)ffo).intValue();
+        if (PdfName.BTN.equals(type)) {
+            if ((ff & PdfFormField.FF_PUSHBUTTON) != 0)
+                return FIELD_TYPE_PUSHBUTTON;
+            if ((ff & PdfFormField.FF_RADIO) != 0)
+                return FIELD_TYPE_RADIOBUTTON;
+            else
+                return FIELD_TYPE_CHECKBOX;
+        }
+        else if (PdfName.TX.equals(type)) {
+            return FIELD_TYPE_TEXT;
+        }
+        else if (PdfName.CH.equals(type)) {
+            if ((ff & PdfFormField.FF_COMBO) != 0)
+                return FIELD_TYPE_COMBO;
+            else
+                return FIELD_TYPE_LIST;
+        }
+        else if (PdfName.SIG.equals(type)) {
+            return FIELD_TYPE_SIGNATURE;
+        }
+        return FIELD_TYPE_NONE;
     }
     
     /**
