@@ -408,16 +408,16 @@ public abstract class Image extends Rectangle implements Element {
         String y;
         if (((x = attributes.getProperty(ElementTags.ABSOLUTEX)) != null)
         && ((y = attributes.getProperty(ElementTags.ABSOLUTEX)) != null)) {
-            image.setAbsolutePosition(Float.parseFloat(x + "f"), Float.parseFloat(y + "f"));
+            image.setAbsolutePosition(Float.valueOf(x + "f").floatValue(), Float.valueOf(y + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.PLAINWIDTH)) != null) {
-            image.scaleAbsoluteWidth(Float.parseFloat(value + "f"));
+            image.scaleAbsoluteWidth(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.PLAINHEIGHT)) != null) {
-            image.scaleAbsoluteHeight(Float.parseFloat(value + "f"));
+            image.scaleAbsoluteHeight(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.ROTATION)) != null) {
-            image.setRotation(Float.parseFloat(value + "f"));
+            image.setRotation(Float.valueOf(value + "f").floatValue());
         }
         return image;
     }

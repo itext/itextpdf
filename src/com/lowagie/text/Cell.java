@@ -195,7 +195,7 @@ public class Cell extends Rectangle implements TextElementArray {
             setRowspan(Integer.parseInt(value));
         }
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
-            setLeading(Float.parseFloat(value + "f"));
+            setLeading(Float.valueOf(value + "f").floatValue());
         }
         else {
             setLeading(16);
@@ -207,7 +207,7 @@ public class Cell extends Rectangle implements TextElementArray {
             setNoWrap(new Boolean(value).booleanValue());
         }
         if ((value = attributes.getProperty(ElementTags.BORDERWIDTH)) != null) {
-            setBorderWidth(Float.parseFloat(value + "f"));
+            setBorderWidth(Float.valueOf(value + "f").floatValue());
         }
         int border = 0;
         if ((value = attributes.getProperty(ElementTags.LEFT)) != null) {
@@ -255,7 +255,7 @@ public class Cell extends Rectangle implements TextElementArray {
             setBackgroundColor(ElementTags.decodeColor(value));
         }
         if ((value = attributes.getProperty(ElementTags.GRAYFILL)) != null) {
-            setGrayFill(Float.parseFloat(value + "f"));
+            setGrayFill(Float.valueOf(value + "f").floatValue());
         }
     }
     

@@ -156,10 +156,10 @@ public class List implements TextElementArray {
             setFirst(Integer.parseInt(value));
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.parseFloat(value + "f"));
+            setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.parseFloat(value + "f"));
+            setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
     }
     

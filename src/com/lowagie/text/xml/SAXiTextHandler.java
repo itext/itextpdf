@@ -527,7 +527,7 @@ public class SAXiTextHandler extends HandlerBase {
                     && cell.colspan() == 1
                     && width.endsWith("%")) {
                         try {
-                            cellWidths[j] = Float.parseFloat(width.substring(0, width.length() - 1) + "f");
+                            cellWidths[j] = Float.valueOf(width.substring(0, width.length() - 1) + "f").floatValue();
                             total += cellWidths[j];
                         }
                         catch(Exception e) {

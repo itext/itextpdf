@@ -169,7 +169,7 @@ public class Chunk implements Element {
             setLocalDestination(value);
         }
         if ((value = attributes.getProperty(ElementTags.SUBSUPSCRIPT)) != null) {
-            setTextRise(Float.parseFloat(value + "f"));
+            setTextRise(Float.valueOf(value + "f").floatValue());
         }
     }
     

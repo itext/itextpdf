@@ -384,13 +384,13 @@ public class Section extends ArrayList implements TextElementArray {
             section.setNumberDepth(Integer.parseInt(value));
         }
         if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {
-            section.setIndentation(Float.parseFloat(value + "f"));
+            section.setIndentation(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
-            section.setIndentationLeft(Float.parseFloat(value + "f"));
+            section.setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
-            section.setIndentationRight(Float.parseFloat(value + "f"));
+            section.setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
         
         add(section);
@@ -412,13 +412,13 @@ public class Section extends ArrayList implements TextElementArray {
             setNumberDepth(Integer.parseInt(value));
         }
         if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {
-            setIndentation(Float.parseFloat(value + "f"));
+            setIndentation(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.parseFloat(value + "f"));
+            setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.parseFloat(value + "f"));
+            setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
     }
     

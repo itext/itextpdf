@@ -134,7 +134,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
                 Properties p = peer.getAttributes(attrs);
                 String value;
                 if (Table.isTag(peer.getTag()) && (value = p.getProperty(ElementTags.BORDERWIDTH)) != null) {
-                    if (Float.parseFloat(value + "f") > 0) {
+                    if (Float.valueOf(value + "f").floatValue() > 0) {
                         tableBorder = true;
                     }
                 }

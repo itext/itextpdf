@@ -175,7 +175,7 @@ public class Anchor extends Phrase implements TextElementArray {
             add(new Chunk(value));
         }
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
-            setLeading(Float.parseFloat(value + "f"));
+            setLeading(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.NAME)) != null) {
             setName(value);

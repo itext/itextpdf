@@ -265,14 +265,14 @@ public class Table extends Rectangle implements Element {
             setAlignment(value);
         }
         if ((value = attributes.getProperty(ElementTags.CELLSPACING)) != null) {
-            setCellspacing(Float.parseFloat(value + "f"));
+            setCellspacing(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.CELLPADDING)) != null) {
-            setCellpadding(Float.parseFloat(value + "f"));
+            setCellpadding(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.WIDTH)) != null) {
             if (value.endsWith("%"))
-                setWidth(Float.parseFloat(value.substring(0, value.length() - 1) + "f"));
+                setWidth(Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue());
             else
                 setAbsWidth(value);
         }
@@ -285,13 +285,13 @@ public class Table extends Rectangle implements Element {
             int i = 0;
             while (widthTokens.hasMoreTokens()) {
                 value = (String) widthTokens.nextToken();
-                widths[i] = Float.parseFloat(value + "f");
+                widths[i] = Float.valueOf(value + "f").floatValue();
                 i++;
             }
             columns = i;
         }
         if ((value = attributes.getProperty(ElementTags.BORDERWIDTH)) != null) {
-            setBorderWidth(Float.parseFloat(value + "f"));
+            setBorderWidth(Float.valueOf(value + "f").floatValue());
         }
         int border = 0;
         if ((value = attributes.getProperty(ElementTags.LEFT)) != null) {
@@ -339,7 +339,7 @@ public class Table extends Rectangle implements Element {
             setBackgroundColor(ElementTags.decodeColor(value));
         }
         if ((value = attributes.getProperty(ElementTags.GRAYFILL)) != null) {
-            setGrayFill(Float.parseFloat(value + "f"));
+            setGrayFill(Float.valueOf(value + "f").floatValue());
         }
     }
     
