@@ -349,6 +349,9 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName FREETEXT = new PdfName("FreeText");
     
     /** This is a static final PdfName */
+    public static final PdfName FS = new PdfName("FS");
+    
+    /** This is a static final PdfName */
     public static final PdfName FT = new PdfName("FT");
     
     /** This is a static final PdfName */
@@ -776,6 +779,9 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName URI = new PdfName("URI");
+    
+    /** This is a static final PdfName */
+    public static final PdfName URL = new PdfName("URL");
     
     /** This is a static final PdfName */
     public static final PdfName USENONE = new PdfName("UseNone");
