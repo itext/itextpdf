@@ -115,6 +115,10 @@ public class RtfRow {
     private static final byte[] rowPaddingLeftStyle = "trpaddfl3".getBytes();
     /* Default cell padding format right */
     private static final byte[] rowPaddingRightStyle = "trpaddfr3".getBytes();
+    /* Row width format */
+    private static final byte[] rowWidthStyle = "trftsWidth3".getBytes();
+    /* Row width */
+    private static final byte[] rowWidth = "trwWidth".getBytes();
     /**
      * Table row header. This row should appear at the top of every
      * page the current table appears on.
@@ -264,7 +268,12 @@ public class RtfRow {
         os.write(rowBegin);
         os.write((byte) '\n');
         os.write(RtfWriter.escape);
-        os.write(rowAutofit);
+        os.write(rowWidthStyle);
+        os.write(RtfWriter.escape);
+        os.write(rowWidth);
+        writeInt(os, width);
+//        os.write(RtfWriter.escape);
+//        os.write(rowAutofit);
         if (mainTable.getOriginalTable().hasToFitPageCells()) {
             os.write(RtfWriter.escape);
             os.write(rowKeep);
