@@ -58,6 +58,8 @@ import java.net.MalformedURLException;
  *
  * @see		Element
  * @see		Jpeg
+ * @see		Gif
+ * @see		Png
  */
 
 public class Watermark extends Image implements Element {

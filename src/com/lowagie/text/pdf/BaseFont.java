@@ -432,6 +432,7 @@ public abstract class BaseFont {
     
     /**
      * Creates the <CODE>widths</CODE> and the <CODE>differences</CODE> arrays
+     * @throws UnsupportedEncodingException the encoding is not supported
      */
     protected void createEncoding() {
         if (fontSpecific) {

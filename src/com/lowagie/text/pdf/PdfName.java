@@ -488,6 +488,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName MK = new PdfName("MK");
     /** A name */
+    public static final PdfName MMTYPE1 = new PdfName("MMType1");
+    /** A name */
     public static final PdfName MODDATE = new PdfName("ModDate");
     /** A name */
     public static final PdfName N = new PdfName("N");

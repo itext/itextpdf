@@ -125,6 +125,10 @@ public class PdfPCell extends Rectangle{
     /** Holds value of property cellEvent. */
     private PdfPCellEvent cellEvent;
     private int arabicOptions = 0;
+    
+    /** Holds value of property useDescender. */
+    private boolean useDescender;
+    
     /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
      * The default padding is 2.
      * @param phrase the text
@@ -229,6 +233,7 @@ public class PdfPCell extends Rectangle{
         image = Image.getInstance(cell.image);
         cellEvent = cell.cellEvent;
         arabicOptions = cell.arabicOptions;
+        useDescender = cell.useDescender;
     }
     
     /** Gets the <CODE>Phrase</CODE> from this cell.
@@ -593,4 +598,21 @@ public class PdfPCell extends Rectangle{
     public void setArabicOptions(int arabicOptions) {
         this.arabicOptions = arabicOptions;
     }
+    
+    /** Getter for property useDescender.
+     * @return Value of property useDescender.
+     *
+     */
+    public boolean isUseDescender() {
+        return this.useDescender;
+    }
+    
+    /** Setter for property useDescender.
+     * @param useDescender New value of property useDescender.
+     *
+     */
+    public void setUseDescender(boolean useDescender) {
+        this.useDescender = useDescender;
+    }
+    
 }

@@ -428,4 +428,18 @@ public class PdfLine {
         }
         return total;
     }
+    
+    public float getDescender() {
+        float descender = 0;
+        for (int k = 0; k < line.size(); ++k) {
+            PdfChunk ck = (PdfChunk)line.get(k);
+            if (ck.isImage())
+                descender = Math.min(descender, ck.getImageOffsetY());
+            else {
+                PdfFont font = ck.font();
+                descender = Math.min(descender, font.getFont().getFontDescriptor(BaseFont.DESCENT, font.size()));
+            }
+        }
+        return descender;
+    }
 }

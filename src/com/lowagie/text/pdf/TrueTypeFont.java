@@ -793,6 +793,8 @@ class TrueTypeFont extends BaseFont {
                 }
                 else {
                     int idx = k + idRO[k] / 2 - segCount + j - startCount[k];
+                    if (idx >= glyphId.length)
+                        continue;
                     glyph = (glyphId[idx] + idDelta[k]) & 0xFFFF;
                 }
                 int r[] = new int[2];

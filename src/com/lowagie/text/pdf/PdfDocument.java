@@ -2485,8 +2485,13 @@ class PdfDocument extends Document implements DocListener {
                         float fontSize = chunk.font().size();
                         float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
                         float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
-                        graphics.setColorFill((Color)chunk.getAttribute(Chunk.BACKGROUND));
-                        graphics.rectangle(xMarker, yMarker + descender, width - subtract, ascender - descender);
+                        Object bgr[] = (Object[])chunk.getAttribute(Chunk.BACKGROUND);
+                        graphics.setColorFill((Color)bgr[0]);
+                        float extra[] = (float[])bgr[1];
+                        graphics.rectangle(xMarker - extra[0],
+                            yMarker + descender - extra[1],
+                            width - subtract + extra[0] + extra[2],
+                            ascender - descender + extra[1] + extra[3]);
                         graphics.fill();
                         graphics.setGrayFill(0);
                     }

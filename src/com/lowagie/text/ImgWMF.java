@@ -64,6 +64,8 @@ import com.lowagie.text.pdf.*;
  *
  * @see		Element
  * @see		Image
+ * @see		Gif
+ * @see		Png
  */
 
 public class ImgWMF extends Image implements Element {

@@ -264,9 +264,10 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
-     * Calculates position and/or stroke thickness depending on the font size
+     * @calculates position and/or stroke thickness depending on the font size
      * @param d value to be converted
      * @param i font size
+     * @return
      */
     public static double asPoints(double d, int i) {
         return (d * (double)i) / (double)AFM_DIVISOR;
@@ -554,18 +555,21 @@ public class PdfGraphics2D extends Graphics2D {
     
     
     /**
+     * @see Graphics2D#setRenderingHint(Key, Object)
      */
     public void setRenderingHint(Key arg0, Object arg1) {
         rhints.put(arg0, arg1);
     }
     
     /**
+     * @see Graphics2D#getRenderingHint(Key)
      */
     public Object getRenderingHint(Key arg0) {
         return rhints.get(arg0);
     }
     
     /**
+     * @see Graphics2D#setRenderingHints(Map)
      */
     public void setRenderingHints(Map hints) {
         rhints.clear();
