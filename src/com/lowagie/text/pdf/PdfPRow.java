@@ -285,19 +285,24 @@ public class PdfPRow {
                 }
             }
             else {
-
+                float remainingHeight = 0;
+                float maxLastRow = 0;
                 //add by Jin-Hsia Yang, to add remaining height to last row
                 if (table.size() > 0) {
                     PdfPRow row = table.getRow(table.size()-1);
-                    float remainingHeight=maxHeight-table.getTotalHeight()-cell.getPaddingBottom()-cell.getPaddingTop();
+                    remainingHeight = maxHeight-table.getTotalHeight()-cell.getPaddingBottom()-cell.getPaddingTop();
                     if (remainingHeight > 0) {
+                        maxLastRow = row.getMaxHeights();
                         row.setMaxHeights(row.getMaxHeights()+ remainingHeight );
+                        //table.setTotalHeight(table.getTotalHeight() + remainingHeight);
                     }
                 }
                 //end add
 
                 table.writeSelectedRows(0, -1, cell.left() + xPos + cell.getPaddingLeft(),
                     tly, canvases);
+                if (remainingHeight > 0)
+                    table.getRow(table.size()-1).setMaxHeights(maxLastRow);
             }
         }
     }
