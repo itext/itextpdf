@@ -1358,6 +1358,11 @@ class PdfDocument extends Document implements DocListener {
                                     cell = (PdfCell) iterator.previous();
                                 }
                             }
+                            ArrayList images = cell.getImages(indentTop() - currentHeight, indentBottom());
+                            for (Iterator i = images.iterator(); i.hasNext(); ) {
+                                Image image = (Image) i.next();
+                                addImage(image, 0, 0, 0, 0, 0, 0);
+                            }
                             lines = cell.getLines(pagetop, indentBottom());
                             // if there are lines to add, add them
                             if (lines != null && lines.size() > 0) {
@@ -1578,7 +1583,27 @@ class PdfDocument extends Document implements DocListener {
         return name;
     }
     
+    /**
+     * Adds an image to the Graphics object.
+     *
+     * @image   the image
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @throws DocumentException
+     */
     
+    private void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
+        if (image.hasAbsolutePosition()) {
+            graphics.addImage(image);
+        }
+        else {
+            graphics.addImage(image, a, b, c, d, e, f);
+        }
+    }
     
     /**
      * Adds an image to the document.
@@ -1591,7 +1616,7 @@ class PdfDocument extends Document implements DocListener {
         pageEmpty = false;
         
         if (image.hasAbsolutePosition()) {
-            graphics.addImage(image);
+            addImage(image, 0, 0, 0, 0, 0, 0);
             return;
         }
         
@@ -1621,15 +1646,15 @@ class PdfDocument extends Document implements DocListener {
         float mt[] = image.matrix();
         switch(image.alignment() & Image.MIDDLE) {
             case Image.RIGHT:
-                graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentRight() - image.scaledWidth() - mt[4], lowerleft - mt[5]);
+                addImage(image, mt[0], mt[1], mt[2], mt[3], indentRight() - image.scaledWidth() - mt[4], lowerleft - mt[5]);
                 break;
             case Image.MIDDLE:
                 float middle = indentRight() - indentLeft() - image.scaledWidth();
-                graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() + (middle / 2) - mt[4], lowerleft - mt[5]);
+                addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() + (middle / 2) - mt[4], lowerleft - mt[5]);
                 break;
             case Image.LEFT:
                 default:
-                    graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
+                    addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
         }
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
@@ -1698,7 +1723,7 @@ class PdfDocument extends Document implements DocListener {
         // if there is a watermark, the watermark is added
         if (watermark != null) {
             float mt[] = watermark.matrix();
-            graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
+            addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
         
         // if there is a footer, the footer is added
@@ -1865,15 +1890,13 @@ class PdfDocument extends Document implements DocListener {
             // this is a line in the loop
             l = (PdfLine) i.next();
             
-            //add by Jin-Hsia Yang
             if(isParagraphE && isNewpage && newline) {
                 newline=false;
                 text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
-            } else
-                //end add by Jin-Hsia Yang
-                
-                // aligning the line
+            }
+            else {
                 text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
+            }
             
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
@@ -1896,7 +1919,7 @@ class PdfDocument extends Document implements DocListener {
                     float yMarker = text.getYTLM();
                     matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                     matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
-                    graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+                    addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                 }
                 else {
                     text.showText(chunk);
@@ -2266,7 +2289,7 @@ class PdfDocument extends Document implements DocListener {
                         float matrix[] = image.matrix();
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
-                        graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+                        addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                         text.setTextMatrix(xMarker + lastBaseFactor + image.scaledWidth(), yMarker);
                     }
                     if (isStroked) {

@@ -372,12 +372,14 @@ public class Cell extends Rectangle implements TextElementArray {
             case Element.LISTITEM:
             case Element.ROW:
             case Element.CELL:
+                throw new BadElementException("You can't add listitems, rows, cells, jpgs, gifs or pngs to a cell.");
             case Element.JPEG:
             case Element.IMGRAW:
             case Element.IMGTEMPLATE:
             case Element.GIF:
             case Element.PNG:
-                throw new BadElementException("You can't add listitems, rows, cells, jpgs, gifs or pngs to a cell.");
+                arrayList.add(element);
+                break;
             case Element.LIST:
                 if (leading < 0) {
                     leading = ((List) element).leading();
