@@ -72,7 +72,10 @@ public class Phrase extends ArrayList implements TextElementArray {
     // membervariables
     
 /** This is the leading of this phrase. */
-    protected float leading;
+    protected float leading;  
+    
+/** This is the font of this phrase. */
+    protected Font font = new Font();
     
     // constructors
     
@@ -137,6 +140,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     
     public Phrase(String string, Font font) {
         this(font.leading(1.5f), string, font);
+        this.font = font;
     }
     
 /**
@@ -161,6 +165,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     
     public Phrase(float leading, String string, Font font) {
         this(leading);
+        this.font = font;
         if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS) {
             int i = 0;
             int index;
@@ -263,7 +268,9 @@ public class Phrase extends ArrayList implements TextElementArray {
             Element element = (Element) o;
             if (element.type() == Element.CHUNK) {
                 Chunk chunk = (Chunk) element;
-                chunk.setFont(font().difference(chunk.font()));
+                if (!font.isStandardFont()) {
+                    chunk.setFont(font.difference(chunk.font()));
+                }
                 super.add(index, chunk);
             }
             else if (element.type() == Element.PHRASE ||
@@ -292,15 +299,17 @@ public class Phrase extends ArrayList implements TextElementArray {
     
     public boolean add(Object o) {
         if (o instanceof String) {
-            return super.add(new Chunk((String) o, font()));
+            return super.add(new Chunk((String) o, font));
         }
         try {
             Element element = (Element) o;
             switch(element.type()) {
                 case Element.CHUNK:
                     Chunk chunk = (Chunk) o;
-                    chunk.setFont(font().difference(chunk.font()));
-                    if (! chunk.isEmpty()) {
+                    if (!font.isStandardFont()) {
+                        chunk.setFont(font.difference(chunk.font()));
+                    }
+                    if (!chunk.isEmpty()) {
                         return super.add(chunk);
                     }
                     return false;
@@ -411,24 +420,7 @@ public class Phrase extends ArrayList implements TextElementArray {
  */
     
     public final Font font() {
-        if (size() < 1) {
-            return new Font();
-        }
-        try {
-            Element element = (Element) get(0);
-            switch(element.type()) {
-                case Element.CHUNK:
-                    return ((Chunk) element).font();
-                case Element.PHRASE:
-                case Element.ANCHOR:
-                    return ((Phrase) element).font();
-                    default:
-                        return new Font();
-            }
-        }
-        catch(ClassCastException cce) {
-            return new Font();
-        }
+        return font;
     }
     
 /**
@@ -451,7 +443,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     public String toString() {
         StringBuffer buf = new StringBuffer("<").append(ElementTags.PHRASE).append(" ").append(ElementTags.LEADING).append("=\"");
         buf.append(leading);
-        buf.append("\"").append(font().toString()).append(">");
+        buf.append("\"").append(font.toString()).append(">");
         for (Iterator i = iterator(); i.hasNext(); ) {
             buf.append(i.next().toString());
         }

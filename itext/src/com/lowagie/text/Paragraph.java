@@ -172,13 +172,13 @@ public class Paragraph extends Phrase implements TextElementArray {
         add(phrase);
     }
     
-        /**
-         * Returns a <CODE>Paragraph</CODE> that has been constructed taking in account
-         * the value of some <VAR>attributes</VAR>.
-         *
-         * @param	attributes		Some attributes
-         * @return	a <CODE>Paragraph</CODE>
-         */
+/**
+ * Returns a <CODE>Paragraph</CODE> that has been constructed taking in account
+ * the value of some <VAR>attributes</VAR>.
+ *
+ * @param	attributes		Some attributes
+ * @return	a <CODE>Paragraph</CODE>
+ */
     
     public Paragraph(Properties attributes) {
         this("", new Font(attributes));
@@ -336,7 +336,7 @@ public class Paragraph extends Phrase implements TextElementArray {
     
     public String toString() {
         StringBuffer buf = new StringBuffer("<").append(ElementTags.PARAGRAPH).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading).append(font().toString());
+        buf.append(leading).append(font.toString());
         buf.append("\" ").append(ElementTags.ALIGN).append("=\"");
         buf.append(ElementTags.getAlignment(alignment));
         if (indentationLeft != 0) {
