@@ -1313,7 +1313,12 @@ class PdfDocument extends Document implements DocListener {
                             while (i < size) {
                                 cell = (PdfCell) cells.get(i);
                                 if (cell.top(-table.cellspacing()) > lostTableBottom) {
-                                    difference = Math.max(difference, lostTableBottom + cell.compensatingHeight(lostTableBottom));
+                                    newBottom = pagetop - difference + cell.bottom();
+                                    float neededHeight = cell.remainingLines() * cell.leading() + 2 * cell.cellpadding();
+                                    System.out.println("remaininglines " + cell.remainingLines() + " newBottom " + newBottom + " pagetop " + pagetop + " neededHeight " + neededHeight);
+                                    if (newBottom > pagetop - neededHeight) {
+                                        difference += newBottom - (pagetop - neededHeight);
+                                    }
                                 }
                                 i++;
                             }
