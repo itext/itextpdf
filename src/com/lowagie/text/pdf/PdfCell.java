@@ -255,13 +255,20 @@ public class PdfCell extends Rectangle {
                         line = new PdfLine(currentLeft, currentRight, alignment, currentLineLeading);
                     }
                     // we loop over the chunks
-                    for (Iterator j = element.getChunks().iterator(); j.hasNext();) {
-                        Chunk c = (Chunk) j.next();
-                        chunk = new PdfChunk(c, (PdfAction) (allActions.get(aCounter++)));
-                        while ((overflow = line.add(chunk)) != null) {
-                            addLine(line);
-                            line = new PdfLine(currentLeft, currentRight, alignment, currentLineLeading);
-                            chunk = overflow;
+                    ArrayList chunks = element.getChunks();
+                    if (chunks.isEmpty()) {
+                       addLine(line); // add empty line - all cells need some lines even if they are empty
+                       line = new PdfLine(currentLeft, currentRight, alignment, currentLineLeading);
+                    }
+                    else {
+                        for (Iterator j = chunks.iterator(); j.hasNext();) {
+                            Chunk c = (Chunk) j.next();
+                            chunk = new PdfChunk(c, (PdfAction) (allActions.get(aCounter++)));
+                            while ((overflow = line.add(chunk)) != null) {
+                                addLine(line);
+                                line = new PdfLine(currentLeft, currentRight, alignment, currentLineLeading);
+                                chunk = overflow;
+                            }
                         }
                     }
                     // if the element is a paragraph, section or chapter, we reset the alignment and add the line
