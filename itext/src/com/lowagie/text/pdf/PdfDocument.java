@@ -492,6 +492,9 @@ class PdfDocument extends Document implements DocListener {
 			return false;
 		}
 
+		//Added to inform any listeners that we are moving to a new page (added by David Freels)
+		super.newPage();
+
 		// we flush the arraylist with recently written lines
 		flushLines();
 		// we assemble the resources of this pages
