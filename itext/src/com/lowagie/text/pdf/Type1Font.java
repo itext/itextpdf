@@ -62,99 +62,95 @@ import java.io.*;
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
-class Type1Font extends BaseFont {
-/** The PFB file if the input was made with a <CODE>byte</CODE> array. */    
+class Type1Font extends BaseFont
+{
+    /** The PFB file if the input was made with a <CODE>byte</CODE> array.
+     */    
     protected byte pfb[];
-    
-/** The Postscript font name. */
-    private String FontName = null;
-    
-/** The full name of the font. */
-    private String FullName = null;
-    
-/** The family name of the font. */
-    private String FamilyName = null;
-    
-/** The weight of the font: normal, bold, etc. */
+/** The Postscript font name.
+ */
+    private String FontName;
+/** The full name of the font.
+ */
+    private String FullName;
+/** The family name of the font.
+ */
+    private String FamilyName;
+/** The weight of the font: normal, bold, etc.
+ */
     private String Weight = "";
-    
-/** The italic angle of the font, usually 0.0 or negative. */
+/** The italic angle of the font, usually 0.0 or negative.
+ */
     private float ItalicAngle = 0.0f;
-    
-/** <CODE>true</CODE> if all the characters have the same width. */
+/** <CODE>true</CODE> if all the characters have the same
+ *  width.
+ */
     private boolean IsFixedPitch = false;
-    
-/** The character set of the font. */
+/** The character set of the font.
+ */
     private String CharacterSet;
-    
-/** The llx of the FontBox. */
+/** The llx of the FontBox.
+ */
     private int llx = -50;
-    
-/** The lly of the FontBox. */
+/** The lly of the FontBox.
+ */
     private int lly = -200;
-    
-/** The lurx of the FontBox. */
+/** The lurx of the FontBox.
+ */
     private int urx = 1000;
-    
-/** The ury of the FontBox. */
+/** The ury of the FontBox.
+ */
     private int ury = 900;
-    
-/** The underline position. */
+/** The underline position.
+ */
     private int UnderlinePosition = -100;
-    
-/** The underline thickness. */
+/** The underline thickness.
+ */
     private int UnderlineThickness = 50;
-    
-/**
- * The font's encoding name. This encoding is 'StandardEncoding' or
+/** The font's encoding name. This encoding is 'StandardEncoding' or
  *  'AdobeStandardEncoding' for a font that can be totally encoded
  *  according to the characters names. For all other names the
  *  font is treated as symbolic.
  */
     private String EncodingScheme = "FontSpecific";
-    
-/** A variable. */
+/** A variable.
+ */
     private int CapHeight = 700;
-    
-/** A variable. */
+/** A variable.
+ */
     private int XHeight = 480;
-    
-/** A variable. */
+/** A variable.
+ */
     private int Ascender = 800;
-    
-/** A variable. */
+/** A variable.
+ */
     private int Descender = -200;
-    
-/** A variable. */
+/** A variable.
+ */
     private int StdHW;
-    
-/** A variable. */
+/** A variable.
+ */
     private int StdVW = 80;
     
-/**
- * Represents the section CharMetrics in the AFM file. Each
- * element of this array contains a <CODE>Object[3]</CODE> with an
- * Integer, Integer and String. This is the code, width and name.
+/** Represents the section CharMetrics in the AFM file. Each
+ *  element of this array contains a <CODE>Object[3]</CODE> with an
+ *  Integer, Integer and String. This is the code, width and name.
  */
     private ArrayList CharMetrics = new ArrayList();
-    
-/**
- * Represents the section KernPairs in the AFM file. The key is
- * the name of the first character and the value is a <CODE>Object[]</CODE>
- * with 2 elements for each kern pair. Position 0 is the name of
- * the second character and position 1 is the kerning distance. This is
- * repeated for all the pairs.
+/** Represents the section KernPairs in the AFM file. The key is
+ *  the name of the first character and the value is a <CODE>Object[]</CODE>
+ *  with 2 elements for each kern pair. Position 0 is the name of
+ *  the second character and position 1 is the kerning distance. This is
+ *  repeated for all the pairs.
  */
     private HashMap KernPairs = new HashMap();
-    
-/** The file in use. */
-    private String fileName = null;
-    
-/** <CODE>true</CODE> if this font is one of the 14 built in fonts. */
+/** The file in use.
+ */
+    private String fileName;
+/** <CODE>true</CODE> if this font is one of the 14 built in fonts.
+ */
     private boolean builtinFont = false;
-    
-/**
- * Types of records in a PFB file. ASCII is 1 and BINARY is 2.
+/** Types of records in a PFB file. ASCII is 1 and BINARY is 2.
  *  They have to appear in the PFB file in this sequence.
  */
     private final static int pfbTypes[] = {1, 2, 1};
@@ -635,6 +631,12 @@ class Type1Font extends BaseFont {
         int firstChar = ((Integer)params[0]).intValue();
         int lastChar = ((Integer)params[1]).intValue();
         byte shortTag[] = (byte[])params[2];
+        if (!subset) {
+            firstChar = 0;
+            lastChar = shortTag.length - 1;
+            for (int k = 0; k < shortTag.length; ++k)
+                shortTag[k] = 1;
+        }
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
         PdfIndirectObject obj = null;
@@ -699,6 +701,18 @@ class Type1Font extends BaseFont {
      */
     public String[][] getFullFontName() {
         return new String[][]{{"", "", "", FullName}};
+    }
+    
+    /** Gets the family name of the font. If it is a True Type font
+     * each array element will have {Platform ID, Platform Encoding ID,
+     * Language ID, font name}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * For the other fonts the array has a single element with {"", "", "",
+     * font name}.
+     * @return the family name of the font
+     */
+    public String[][] getFamilyFontName() {
+        return new String[][]{{"", "", "", FamilyName}};
     }
     
 }
