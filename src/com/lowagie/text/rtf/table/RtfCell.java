@@ -254,8 +254,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                             RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
                             rtfElement.setInTable(true);
                             this.content.add(rtfElement);
-                            container =null;
-                            container =null;
+                            container = null;
                         }
                         // if horizontal alignment is undefined overwrite
                         // with that of enclosing cell
@@ -273,6 +272,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             }
             if(container != null) {
                 try {
+                    System.out.println("fred");
                     RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
                     rtfElement.setInTable(true);
                     this.content.add(rtfElement);
