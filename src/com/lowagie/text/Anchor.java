@@ -265,6 +265,8 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
             if (localDestination) {
                 chunk.setLocalGoto(reference.substring(1));
             }
+            else if (reference != null)
+                chunk.setAnchor(reference);
             tmp.add(chunk);
         }
         return tmp;

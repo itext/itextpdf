@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Formats content into one or more columns bounded by a
  * rectangle.  The columns may be simple rectangles or
  * more complicated shapes. Add all of the columns before
- * adding content.  A MultiColumnText object may be added to
+ * adding content. Column continuation is supported. A MultiColumnText object may be added to
  * a document using <CODE>Document.add</CODE>.
  * @author Steve Appling
  */
@@ -59,6 +59,11 @@ public class MultiColumnText implements Element {
      */
     private boolean simple = true;
 
+    private int currentColumn = 0;
+    
+    private float nextY = AUTOMATIC;
+    
+    private PdfDocument document;
     /**
      * Default constructor.  Sets height to <CODE>AUTOMATIC</CODE>.
      * Columns will repeat on each page as necessary to accomodate content length.
@@ -176,25 +181,28 @@ public class MultiColumnText implements Element {
     /**
      * Write out the columns.  After writing, use
      * {@link #isOverflow()} to see if all text was written.
-     *
-     * @param canvas    PdfContentByte to write with
-     * @param document  document to write to (only used to get page limit info)
+     * @param canvas PdfContentByte to write with
+     * @param document document to write to (only used to get page limit info)
      * @param documentY starting y position to begin writing at
      * @return the current height (y position) after writing the columns
-     * @throws DocumentException
+     * @throws DocumentException on error
      */
     public float write(PdfContentByte canvas, PdfDocument document, float documentY) throws DocumentException {
-        columnText.canvas = canvas;
+        this.document = document;
+        columnText.setCanvas(canvas);
+        if (nextY == AUTOMATIC) {
+            nextY = documentY;
+        }
         if (top == AUTOMATIC) {
             top = documentY;  // shouldn't I be able to get this from the document?
         }
         if (columnDefs.size() == 0) {
             throw new DocumentException("MultiColumnText has no columns");
         }
-        columnText.setYLine(top);
+        //columnText.setYLine(top);
         pageBottom = document.bottom();
         float currentHeight = 0;
-        int currentColumn = 0;
+        //int currentColumn = 0;
         boolean done = false;
         try {
             while (!done) {
@@ -214,8 +222,10 @@ public class MultiColumnText implements Element {
                 int result = columnText.go();
                 if ((result & ColumnText.NO_MORE_TEXT) != 0) {
                     done = true;
+                    top = columnText.getYLine();
                 } else if (currentColumn + 1 < columnDefs.size()) {
                     currentColumn++;
+                    top = nextY;
                 } else {  // check if we are done because of height
                     totalHeight += currentHeight;
 
@@ -225,7 +235,7 @@ public class MultiColumnText implements Element {
                     } else {  // need to start new page and reset the columns
                         document.newPage();
                         currentColumn = 0;
-                        top = document.top();
+                        top = nextY = document.top();
                         currentHeight = 0;
                     }
                 }
@@ -237,6 +247,20 @@ public class MultiColumnText implements Element {
         return currentHeight;
     }
 
+    /**
+     * Moves the text insertion point to the beginning of the next column, issuing a page break if
+     * needed.
+     * @throws DocumentException on error
+     */    
+    public void nextColumn() throws DocumentException {
+        currentColumn = (currentColumn + 1) % columnDefs.size();
+        top = nextY;
+        if (currentColumn == 0 && document != null) {
+            top = nextY = AUTOMATIC;
+            document.newPage();
+        }
+    }
+    
     /**
      * Figure out the height of a column from the border extents
      *
@@ -308,6 +332,14 @@ public class MultiColumnText implements Element {
         }
     }
 
+    /**
+     * Gets the current column.
+     * @return the current column
+     */
+    public int getCurrentColumn() {
+        return currentColumn;
+    }
+    
     /**
      * Inner class used to define a column
      */

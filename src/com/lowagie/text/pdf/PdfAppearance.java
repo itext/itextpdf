@@ -55,7 +55,7 @@ import java.util.HashMap;
 
 public class PdfAppearance extends PdfTemplate {
     
-    protected static final HashMap stdFieldFontNames = new HashMap();
+    public static final HashMap stdFieldFontNames = new HashMap();
     static {
         stdFieldFontNames.put("Courier-BoldOblique", new PdfName("CoBO"));
         stdFieldFontNames.put("Courier-Bold", new PdfName("CoBo"));

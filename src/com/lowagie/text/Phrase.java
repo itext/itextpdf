@@ -194,7 +194,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     public Phrase(float leading, String string, Font font) {
         this(leading);
         this.font = font;
-        if (string.length() != 0) {
+        if (string != null && string.length() != 0) {
             super.add(new Chunk(string, font));
         }
     }
@@ -250,7 +250,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
                 ((ArrayList)p).add(new Chunk(buf.toString(), symbol));
             }
         }
-        if (string.length() != 0) {
+        if (string != null && string.length() != 0) {
         	((ArrayList)p).add(new Chunk(string, font));
         }
     	return p;

@@ -375,7 +375,7 @@ public abstract class BaseFont {
             if (fontFound != null)
                 return fontFound;
         }
-        if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm")) {
+        if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm") || name.toLowerCase().endsWith(".pfm")) {
             fontBuilt = new Type1Font(name, encoding, embedded, ttfAfm, pfb);
             fontBuilt.fastWinansi = encoding.equals(CP1252);
         }

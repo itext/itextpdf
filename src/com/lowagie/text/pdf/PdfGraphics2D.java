@@ -348,7 +348,7 @@ public class PdfGraphics2D extends Graphics2D {
             cb.beginText();
             cb.setFontAndSize(baseFont, fontSize);
             cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
-            double width = font.getStringBounds(s, getFontRenderContext()).getWidth();
+            double width = font.deriveFont(IDENTITY).getStringBounds(s, getFontRenderContext()).getWidth();
             if (s.length() > 1) {
                 float adv = ((float)width - baseFont.getWidthPoint(s, fontSize)) / (s.length() - 1);
                 cb.setCharacterSpacing(adv);
@@ -373,6 +373,7 @@ public class PdfGraphics2D extends Graphics2D {
             }
         }
     }
+
     /**
      * @see Graphics#drawString(AttributedCharacterIterator, int, int)
      */
@@ -1348,6 +1349,7 @@ public class PdfGraphics2D extends Graphics2D {
                 com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(img, null);
                 PdfPatternPainter pattern = cb.createPattern(image.width(), image.height());
                 AffineTransform inverse = this.normalizeMatrix();
+                inverse.translate(rect.getX(), rect.getY());
                 inverse.scale(rect.getWidth() / image.width(), -rect.getHeight() / image.height());
                 double[] mx = new double[6];
                 inverse.getMatrix(mx);
