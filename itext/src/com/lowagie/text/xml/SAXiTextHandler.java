@@ -57,8 +57,8 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Stack;
 
-import org.xml.sax.HandlerBase;
-import org.xml.sax.AttributeList;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.Attributes;
 
 import com.lowagie.text.*;
 
@@ -66,7 +66,7 @@ import com.lowagie.text.*;
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
  */
 
-public class SAXiTextHandler extends HandlerBase {
+public class SAXiTextHandler extends DefaultHandler {
     
 /** This is the resulting document. */
     protected DocListener document;
@@ -103,12 +103,12 @@ public class SAXiTextHandler extends HandlerBase {
  * @param	attrs		the list of attributes
  */
     
-    public void startElement(String name, AttributeList attrs) {
+    public void startElement(String uri, String lname, String name, Attributes attrs) {
         
         Properties attributes = new Properties();
         if (attrs != null) {
             for (int i = 0; i < attrs.getLength(); i++) {
-                String attribute = attrs.getName(i);
+                String attribute = attrs.getQName(i);
                 attributes.setProperty(attribute, attrs.getValue(i));
             }
         }
@@ -123,7 +123,7 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void handleStartingTags(String name, Properties attributes) {
-        System.err.println("Start: " + name);
+        //System.err.println("Start: " + name);
         if (ignore || ElementTags.IGNORE.equals(name)) {
             ignore = true;
             return;
@@ -432,7 +432,7 @@ public class SAXiTextHandler extends HandlerBase {
         if (ignore) return;
         
         String content = new String(ch, start, length);
-        System.err.println("'" + content + "'");
+        //System.err.println("'" + content + "'");
         
         if (content.trim().length() == 0) {
             return;
@@ -478,7 +478,7 @@ public class SAXiTextHandler extends HandlerBase {
  * @param	name		the name of the tag that ends
  */
     
-    public void endElement(String name) {
+    public void endElement(String uri, String lname, String name) {
         handleEndingTags(name);
     }
     
@@ -491,7 +491,7 @@ public class SAXiTextHandler extends HandlerBase {
     
     public void handleEndingTags(String name) {
         
-        System.err.println("Stop: " + name);
+        //System.err.println("Stop: " + name);
         
         if (ElementTags.IGNORE.equals(name)) {
             ignore = false;
