@@ -5,7 +5,7 @@
 <!-- $Id$         -->
 <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-<project name="iText.site" default="help">
+<project name="iText.site" default="help" basedir=".">
 	
 	<property file=".ant.properties" />
 	
@@ -50,12 +50,12 @@
     <!-- Building the tutorial                                            -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
-    <target name="examples.build" description="--> building the pages for lowagie.com">
+    <target name="tutorial" description="--> building the pages for lowagie.com">
         <mkdir dir="${itext.tutorial}" />
 		<copy file="${itext.xml.tutorial}/style.css" todir="${itext.tutorial}" overwrite="no" />
 		<java classname="com.lowagie.tools.BuildTutorial">
-			<arg value="${itext.xml.tutorial}" />
-			<arg value="${itext.tutorial}" />
+			<arg value="${basedir}/${itext.xml.tutorial}" />
+			<arg value="${basedir}/${itext.build}" />
 			<arg value="examples.xsl" />
 			<arg value="tutorial.xsl" />
 	        <classpath>
