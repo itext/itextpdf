@@ -63,6 +63,7 @@ import java.io.*;
  *
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
+ * Updates Benoit WIART <b.wiart@proxiad.com>
  */
 public class RtfTable {
     /** Stores the different rows. */
@@ -127,6 +128,14 @@ public class RtfTable {
      * @param os The <code>OutputStream</code> that the content of the <code>RtfTable</code> is to be written to
      */
     public boolean writeTable(ByteArrayOutputStream os) throws DocumentException, IOException {
+    	
+        if(!this.writer.writingHeaderFooter()) {
+            // Added by Benoit WIART <b.wiart@proxiad.com>
+            // Add a new line before each table
+            os.write(RtfWriter.escape);
+            os.write(RtfWriter.paragraph);
+        }
+            
         int size = rowsList.size();
         for (int i = 0; i < size; i++) {
             RtfRow row = (RtfRow) rowsList.get(i);
