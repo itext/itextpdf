@@ -72,8 +72,6 @@ import com.lowagie.text.pdf.PdfAction;
  * <STRONG>Chunk chunk = new Chunk("Hello world", new Font(Font.COURIER, 20, Font.ITALIC, new Color(255, 0, 0)));</STRONG>
  * document.add(chunk);
  * </PRE></BLOCKQUOTE>
- *
- * @author  bruno@lowagie.com
  */
 
 public class Chunk implements Element {

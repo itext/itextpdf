@@ -60,8 +60,6 @@ package com.lowagie.text;
  * @see		Chapter
  * @see		Anchor
  * @see		Cell
- *
- * @author  bruno@lowagie.com
  */
 
 public interface TextElementArray extends Element {

@@ -94,8 +94,6 @@ import java.util.Iterator;
  * @see		com.lowagie.text.Document
  * @see		com.lowagie.text.DocListener
  * @see		PdfWriter
- *
- * @author  bruno@lowagie.com
  */
 
 class PdfDocument extends Document implements DocListener {
@@ -108,8 +106,6 @@ class PdfDocument extends Document implements DocListener {
      * should be strings.<BR>
      * This object is described in the 'Portable Document Format Reference Manual version 1.3'
      * section 6.10 (page 120-121)
-     *
-     * @author  bruno@lowagie.com
      */
     
     public class PdfInfo extends PdfDictionary {
@@ -222,8 +218,6 @@ class PdfDocument extends Document implements DocListener {
      * In this class however, only the reference to the tree of pages is implemented.<BR>
      * This object is described in the 'Portable Document Format Reference Manual version 1.3'
      * section 6.2 (page 67-71)
-     *
-     * @author  bruno@lowagie.com
      */
     
     class PdfCatalog extends PdfDictionary {

@@ -97,8 +97,6 @@ import java.util.Properties;
  *
  * @see		Element
  * @see		ListItem
- *
- * @author  bruno@lowagie.com
  */
 
 public class List implements TextElementArray {

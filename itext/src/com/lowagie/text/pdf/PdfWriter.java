@@ -73,8 +73,6 @@ import com.lowagie.text.ExceptionConverter;
  * When this <CODE>PdfWriter</CODE> is added
  * to a certain <CODE>PdfDocument</CODE>, the PDF representation of every Element
  * added to this Document will be written to the outputstream.</P>
- *
- * @author  bruno@lowagie.com
  */
 
 public class PdfWriter extends DocWriter {

@@ -54,9 +54,6 @@ import java.util.HashMap;
 
 /**
  * This class contains entities that can be used in an entity tag.
- * <P>
- *
- * @author  bruno@lowagie.com
  */
 
 public class Entities {

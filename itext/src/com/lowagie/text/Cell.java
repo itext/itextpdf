@@ -88,8 +88,6 @@ import java.util.Properties;
  * @see		Element
  * @see		Table
  * @see		Row
- *
- * @author  bruno@lowagie.com
  */
 
 public class Cell extends Rectangle implements TextElementArray {
@@ -146,7 +144,7 @@ public class Cell extends Rectangle implements TextElementArray {
             addElement(new Paragraph(0));
         }
         catch(BadElementException bee) {
-            // this will never happen
+            throw new ExceptionConverter(bee);
         }
     }
     
@@ -194,6 +192,7 @@ public class Cell extends Rectangle implements TextElementArray {
             leading = p.leading();
         }
         catch(Exception e) {
+            // empty on purpose
         }
         
         // initializes the arraylist and adds an element

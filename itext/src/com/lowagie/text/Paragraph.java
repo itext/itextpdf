@@ -72,8 +72,6 @@ import java.util.Properties;
  * @see		Element
  * @see		Phrase
  * @see		ListItem
- *
- * @author  bruno@lowagie.com
  */
 
 public class Paragraph extends Phrase implements TextElementArray {

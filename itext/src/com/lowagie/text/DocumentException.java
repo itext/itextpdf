@@ -47,13 +47,6 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  *
- * ir-arch Bruno Lowagie,
- * Adolf Baeyensstraat 121
- * 9040 Sint-Amandsberg
- * BELGIUM
- * tel. +32 (0)9 228.10.97
- * bruno@lowagie.com
- *
  */
 
 package com.lowagie.text;
@@ -65,8 +58,6 @@ package com.lowagie.text;
  * @see		Document
  * @see		DocWriter
  * @see		DocListener
- *
- * @author  bruno@lowagie.com
  */
 
 public class DocumentException extends Exception {

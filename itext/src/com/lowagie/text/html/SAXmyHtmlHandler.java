@@ -61,8 +61,6 @@ import com.lowagie.text.*;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
- *
- * @author  bruno@lowagie.com
  */
 
 public class SAXmyHtmlHandler extends SAXmyHandler {
@@ -191,6 +189,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
                                 value = value.substring(0, value.length() - 2);
                             }
                             catch(Exception e) {
+                                // empty on purpose
                             }
                         }
                         p.put(ElementTags.SIZE, value);

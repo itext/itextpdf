@@ -60,8 +60,6 @@ import java.util.ArrayList;
  * @see		Table
  * @see		Cell
  * @see		HeaderFooter
- *
- * @author  bruno@lowagie.com
  */
 
 public class Rectangle implements Element {

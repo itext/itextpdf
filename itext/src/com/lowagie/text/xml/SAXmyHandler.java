@@ -60,8 +60,6 @@ import com.lowagie.text.*;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
- *
- * @author  bruno@lowagie.com
  */
 
 public class SAXmyHandler extends SAXiTextHandler {

@@ -56,8 +56,6 @@ package com.lowagie.text.pdf;
  * <P>
  * With this class you can construct several types of barcode
  * in different sizes, representing any 'product' or 'article' number.
- *
- * @author  bruno@lowagie.com
  */
 
 public class PdfBarcode extends com.lowagie.text.Chunk {

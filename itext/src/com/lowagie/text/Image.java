@@ -65,8 +65,6 @@ import com.lowagie.text.pdf.CCITTG4Encoder;
  *
  * @see		Element
  * @see		Rectangle
- *
- * @author  bruno@lowagie.com
  */
 
 public abstract class Image extends Rectangle implements Element {

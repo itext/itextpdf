@@ -94,7 +94,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
     public static final byte[] BEGINCOMMENT = getISOBytes("\t<!-- ");
     
 /** This is a possible HTML-tag. */
-    public static final byte[] ENDCOMMENT = getISOBytes(" -->\n");    
+    public static final byte[] ENDCOMMENT = getISOBytes(" -->\n");
     
 /** This is a possible HTML-tag. */
     public static final String NBSP = "&nbsp;";
@@ -145,6 +145,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             os.write(NEWLINE);
         }
         catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -252,7 +253,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             }
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -292,6 +293,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             initHeader(); // line added by David Freels
         }
         catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -309,6 +311,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             super.close();
         }
         catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -326,6 +329,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 add(header.paragraph());
             }
             catch(Exception e) {
+                throw new ExceptionConverter(e);
             }
         }
     }
@@ -345,6 +349,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 add(footer.paragraph());
             }
             catch(Exception e) {
+                throw new ExceptionConverter(e);
             }
         }
     }
@@ -486,7 +491,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             return true;
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -509,6 +514,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     return;
                 }
                 catch(NullPointerException npe) {
+                    // empty on purpose
                 }
                 
                 if (chunk.isEmpty()) return;
@@ -908,7 +914,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
         addTabs(indent);
     }
-        
+    
     /**
      * Writes the HTML representation of a <CODE>Font</CODE>.
      *
@@ -921,46 +927,46 @@ public class HtmlWriter extends DocWriter implements DocListener {
         write(HtmlTags.STYLE);
         write("=\"");
         switch (font.family()) {
-        case Font.COURIER:
-            writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.COURIER);
-            break;
-        case Font.HELVETICA:
-            writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.HELVETICA);
-            break;
-        case Font.TIMES_NEW_ROMAN:
-            writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.TIMES_NEW_ROMAN);
-            break;
-        case Font.SYMBOL:
-            writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.SYMBOL);
-            break;
-        case Font.ZAPFDINGBATS:
-            writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.ZAPFDINGBATS);
-            break;
-        default:
+            case Font.COURIER:
+                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.COURIER);
+                break;
+            case Font.HELVETICA:
+                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.HELVETICA);
+                break;
+            case Font.TIMES_NEW_ROMAN:
+                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.TIMES_NEW_ROMAN);
+                break;
+            case Font.SYMBOL:
+                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.SYMBOL);
+                break;
+            case Font.ZAPFDINGBATS:
+                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.ZAPFDINGBATS);
+                break;
+                default:
         }
-
+        
         if (font.size() != Font.UNDEFINED) {
             writeCssProperty(HtmlTags.CSS_FONTSIZE, String.valueOf(font.size()) + "px");
         }
         if (font.color() != null) {
             writeCssProperty(HtmlTags.CSS_COLOR, HtmlEncoder.encode(font.color()));
         }
-    
+        
         int fontstyle = font.style();
         if (fontstyle != Font.UNDEFINED && fontstyle != Font.NORMAL) {
             switch (fontstyle & Font.BOLDITALIC) {
-            case Font.BOLD:
-                writeCssProperty(HtmlTags.CSS_FONTWEIGHT, ElementTags.BOLD);
-                break;
-            case Font.ITALIC:
-                writeCssProperty(HtmlTags.CSS_FONTSTYLE, ElementTags.ITALIC);
-                break;
-            case Font.BOLDITALIC:
-                writeCssProperty(HtmlTags.CSS_FONTWEIGHT, ElementTags.BOLD);
-                writeCssProperty(HtmlTags.CSS_FONTSTYLE, ElementTags.ITALIC);
-                break;
+                case Font.BOLD:
+                    writeCssProperty(HtmlTags.CSS_FONTWEIGHT, ElementTags.BOLD);
+                    break;
+                case Font.ITALIC:
+                    writeCssProperty(HtmlTags.CSS_FONTSTYLE, ElementTags.ITALIC);
+                    break;
+                case Font.BOLDITALIC:
+                    writeCssProperty(HtmlTags.CSS_FONTWEIGHT, ElementTags.BOLD);
+                    writeCssProperty(HtmlTags.CSS_FONTSTYLE, ElementTags.ITALIC);
+                    break;
             }
-
+            
             // CSS only supports one decoration tag so if both are specified
             // only one of the two will display
             if ((fontstyle & Font.UNDERLINE) > 0) {
@@ -970,7 +976,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 writeCssProperty(HtmlTags.CSS_TEXTDECORATION, HtmlTags.CSS_LINETHROUGH);
             }
         }
-
+        
         write("\"");
     }
     

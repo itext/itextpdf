@@ -61,8 +61,6 @@ package com.lowagie.text;
  *
  * @see		Element
  * @see		Meta
- *
- * @author  bruno@lowagie.com
  */
 
 public class Header extends Meta implements Element {

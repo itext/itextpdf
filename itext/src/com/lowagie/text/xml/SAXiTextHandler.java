@@ -64,8 +64,6 @@ import com.lowagie.text.*;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
- *
- * @author  bruno@lowagie.com
  */
 
 public class SAXiTextHandler extends HandlerBase {
@@ -213,6 +211,7 @@ public class SAXiTextHandler extends HandlerBase {
                 table.setWidths(widths);
             }
             catch(BadElementException bee) {
+                throw new ExceptionConverter(bee);
             }
             stack.push(table);
             return;
@@ -258,14 +257,14 @@ public class SAXiTextHandler extends HandlerBase {
                         document.add(img);
                     }
                     catch(DocumentException de) {
+                        throw new ExceptionConverter(de);
                     }
                     return;
                 }
             }
             catch(Exception e) {
-                System.err.println(e.toString());
+                throw new ExceptionConverter(e);
             }
-            return;
         }
         
         // annotations
@@ -281,6 +280,7 @@ public class SAXiTextHandler extends HandlerBase {
                     document.add(new Annotation(attributes));
                 }
                 catch(DocumentException de) {
+                    throw new ExceptionConverter(de);
                 }
             }
             return;
@@ -299,7 +299,9 @@ public class SAXiTextHandler extends HandlerBase {
                     try {
                         document.add(Chunk.NEWLINE);
                     }
-                    catch(DocumentException de) {}
+                    catch(DocumentException de) {
+                        throw new ExceptionConverter(de);
+                    }
                 }
                 else {
                     currentChunk.append("\n");
@@ -323,6 +325,7 @@ public class SAXiTextHandler extends HandlerBase {
                     document.newPage();
                 }
                 catch(DocumentException de) {
+                    throw new ExceptionConverter(de);
                 }
             }
             return;
@@ -343,6 +346,7 @@ public class SAXiTextHandler extends HandlerBase {
                     document.add(hr);
                 }
                 catch(DocumentException de) {
+                    throw new ExceptionConverter(de);
                 }
             }
             return;
@@ -359,7 +363,7 @@ public class SAXiTextHandler extends HandlerBase {
                     document.add(new Meta(key, value));
                 }
                 catch(DocumentException de) {
-                    // do nothing
+                    throw new ExceptionConverter(de);
                 }
             }
             document.open();
@@ -570,6 +574,7 @@ public class SAXiTextHandler extends HandlerBase {
                                 total += cellWidths[j];
                             }
                             catch(Exception e) {
+                                // empty on purpose
                             }
                         }
                         else if (cell.colspan() == 1) {
@@ -582,6 +587,7 @@ public class SAXiTextHandler extends HandlerBase {
                             total += cellWidths[j];
                         }
                         catch(Exception e) {
+                            // empty on purpose
                         }
                     }
                     j += cell.colspan();
@@ -641,13 +647,14 @@ public class SAXiTextHandler extends HandlerBase {
                     }
                 }
                 catch(EmptyStackException ese) {
+                    // empty on purpose
                 }
                 document.close();
                 return;
             }
         }
         catch(DocumentException de) {
-            de.printStackTrace();
+            throw new ExceptionConverter(de);
         }
     }
     

@@ -63,8 +63,6 @@ import com.lowagie.text.pdf.BaseFont;
  * Paragraph p = new Paragraph("This is a paragraph",
  *               <STRONG>new Font(Font.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255))</STRONG>);
  * </PRE></BLOCKQUOTE>
- *
- * @author  bruno@lowagie.com
  */
 
 public class Font implements Comparable {

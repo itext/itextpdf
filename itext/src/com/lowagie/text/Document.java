@@ -99,8 +99,6 @@ import java.util.Date;
  * }
  * <STRONG>document.close();</CODE>
  * </PRE></BLOCKQUOTE>
- *
- * @author  bruno@lowagie.com
  */
 
 public class Document implements DocListener {
