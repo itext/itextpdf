@@ -224,10 +224,6 @@ public abstract class BaseFont {
 /** list of the 14 built in fonts. */
     protected static final HashMap BuiltinFonts14 = new HashMap();
     
-    /** The subset prefix to be added to the font name when the font is embedded.
-     */    
-    protected static char subsetPrefix[] = {'A', 'B', 'C', 'D', 'E', 'E', '+'};
-    
     /** Forces the output of the width array. Only matters for the 14
      * built-in fonts.
      */
@@ -627,19 +623,11 @@ public abstract class BaseFont {
     /** Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
      * @return the subset prefix
      */
-    String createSubsetPrefix() {
-        synchronized(subsetPrefix) {
-            for (int k = 0; k < subsetPrefix.length - 1; ++k) {
-                int c = subsetPrefix[k];
-                if (c == 'Z')
-                    subsetPrefix[k] = 'A';
-                else {
-                    subsetPrefix[k] = (char)(c + 1);
-                    break;
-                }
-            }
-            return new String(subsetPrefix);
-        }
+    public static String createSubsetPrefix() {
+        String s = "";
+        for (int k = 0; k < 6; ++k)
+            s += (char)(Math.random() * 26 + 'A');
+        return s + "+";
     }
     
     /** Gets the Unicode character corresponding to the byte output to the pdf stream.
