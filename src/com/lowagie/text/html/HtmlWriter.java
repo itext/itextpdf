@@ -194,7 +194,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
 /**
  * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
- *
+ * 
+ * @param element a high level object that has to be translated to HTML
  * @return  <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
  * @throws  DocumentException when a document isn't open yet, or has been closed
  */
@@ -536,7 +537,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
 /**
  * Signals that a <CODE>String</CODE> was added to the <CODE>Document</CODE>.
- *
+ * 
+ * @param string a String to add to the HTML
  * @return  <CODE>true</CODE> if the string was added, <CODE>false</CODE> if not.
  * @throws  DocumentException when a document isn't open yet, or has been closed
  */
@@ -560,6 +562,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  *
  * @param   element     the element
  * @param   indent      the indentation
+ * @throws IOException
  */
     
     protected void write(Element element, int indent) throws IOException {
@@ -974,6 +977,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  *
  * @param   section     the section to write
  * @param   indent      the indentation
+ * @throws IOException
  */
     
     protected void writeSection(Section section, int indent) throws IOException {
@@ -1016,6 +1020,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
      *
      * @param font              a <CODE>Font</CODE>
      * @param styleAttributes   the style of the font
+     * @throws IOException
      */
     
     protected void write(Font font, Properties styleAttributes) throws IOException {
@@ -1070,6 +1075,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     /**
      * Writes out a CSS property.
+     * @param prop a CSS property
+     * @param value the value of the CSS property
+     * @throws IOException
      */
     protected void writeCssProperty(String prop, String value) throws IOException {
         write(new StringBuffer(prop).append(": ").append(value).append("; ").toString());
