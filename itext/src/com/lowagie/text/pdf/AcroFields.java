@@ -1125,8 +1125,8 @@ public class AcroFields {
     }
     
     /**
-     * Gets the field names that have signatures.
-     * @return the field names that have signatures
+     * Gets the field names that have signatures and are signed.
+     * @return the field names that have signatures and are signed
      */    
     public ArrayList getSignatureNames() {
         if (sigNames != null)
@@ -1170,6 +1170,26 @@ public class AcroFields {
             }
         }
         return new ArrayList(sigNames.keySet());
+    }
+    
+    /**
+     * Gets the field names that have blank signatures.
+     * @return the field names that have blank signatures
+     */    
+    public ArrayList getBlankSignatureNames() {
+        getSignatureNames();
+        ArrayList sigs = new ArrayList();
+        for (Iterator it = fields.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry)it.next();
+            Item item = (Item)entry.getValue();
+            PdfDictionary merged = (PdfDictionary)item.merged.get(0);
+            if (!PdfName.SIG.equals(merged.get(PdfName.FT)))
+                continue;
+            if (sigNames.containsKey(entry.getKey()))
+                continue;
+            sigs.add(entry.getKey());
+        }
+        return sigs;
     }
     
     /**

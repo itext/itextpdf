@@ -67,6 +67,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.security.KeyStore;
 import java.io.File;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collection;
@@ -103,7 +104,9 @@ import com.lowagie.bc.asn1.ASN1OutputStream;
  * It's based in code found at org.bouncycastle.
  */
 public class PdfPKCS7 {
-    
+
+    private byte sigAttr[];
+    private byte digestAttr[];
     private int version, signerversion;
     private Set digestalgos;
     private Collection certs, crls;
@@ -282,13 +285,37 @@ public class PdfPKCS7 {
         }
         digestAlgorithm = ((DERObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(2)).getObjectAt(0)).getId();
         next = 3;
-        if (signerInfo.getObjectAt(next) instanceof ASN1TaggedObject)
+        if (signerInfo.getObjectAt(next) instanceof ASN1TaggedObject) {
+            ASN1TaggedObject tagsig = (ASN1TaggedObject)signerInfo.getObjectAt(next);
+            ASN1Sequence sseq = (ASN1Sequence)tagsig.getObject();
+            ByteArrayOutputStream bOut = new ByteArrayOutputStream();            
+            ASN1OutputStream dout = new ASN1OutputStream(bOut);
+            try {
+                ASN1EncodableVector attribute = new ASN1EncodableVector();
+                for (int k = 0; k < sseq.size(); ++k) {
+                    attribute.add(sseq.getObjectAt(k));
+                }
+                dout.writeObject(new DERSet(attribute));
+                dout.close();
+            }
+            catch (IOException ioe){}
+            sigAttr = bOut.toByteArray();
+            
+            for (int k = 0; k < sseq.size(); ++k) {
+                ASN1Sequence seq2 = (ASN1Sequence)sseq.getObjectAt(k);
+                if (((DERObjectIdentifier)seq2.getObjectAt(0)).getId().equals(ID_MESSAGE_DIGEST)) {
+                    ASN1Set set = (ASN1Set)seq2.getObjectAt(1);
+                    digestAttr = ((DEROctetString)set.getObjectAt(0)).getOctets();
+                    break;
+                }
+            }
+            if (digestAttr == null)
+                throw new SecurityException("Authenticated attribute is missing the digest.");
             ++next;
-        if (next > 3)
-            throw new SecurityException("Verifying authenticated attributes is not supported.");
+        }
         digestEncryptionAlgorithm = ((DERObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
         digest = ((DEROctetString)signerInfo.getObjectAt(next)).getOctets();
-        if (RSAdata != null) {
+        if (RSAdata != null || digestAttr != null) {
             if (provider == null || provider.startsWith("SunPKCS11"))
                 messageDigest = MessageDigest.getInstance(getHashAlgorithm());
             else
@@ -398,7 +425,7 @@ public class PdfPKCS7 {
      * @throws SignatureException on error
      */
     public void update(byte[] buf, int off, int len) throws SignatureException {
-        if (RSAdata != null)
+        if (RSAdata != null || digestAttr != null)
             messageDigest.update(buf, off, len);
         else
             sig.update(buf, off, len);
@@ -412,9 +439,19 @@ public class PdfPKCS7 {
     public boolean verify() throws SignatureException {
         if (verified)
             return verifyResult;
-        if (RSAdata != null)
-            sig.update(messageDigest.digest());
-        verifyResult = sig.verify(digest);
+        if (sigAttr != null) {
+            sig.update(sigAttr);
+            if (RSAdata != null) {
+                byte msd[] = messageDigest.digest();
+                messageDigest.update(msd);
+            }
+            verifyResult = (Arrays.equals(messageDigest.digest(), digestAttr) && sig.verify(digest));
+        }
+        else {
+            if (RSAdata != null)
+                sig.update(messageDigest.digest());
+            verifyResult = sig.verify(digest);
+        }
         verified = true;
         return verifyResult;
     }

@@ -98,7 +98,7 @@ import java.util.Stack;
  * <ul>
  * <li>"File" - "the_file_to_open_or_execute"
  * </ul>
- * @author Paulo Soares 
+ * @author Paulo Soares (psoares@consiste.pt)
  */
 public class SimpleBookmark implements SimpleXMLDocHandler {
     

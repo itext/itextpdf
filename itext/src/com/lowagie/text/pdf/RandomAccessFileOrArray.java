@@ -263,6 +263,10 @@ public class RandomAccessFileOrArray implements DataInput {
         }
     }
     
+    public boolean isOpen() {
+        return (filename == null || rf != null);
+    }
+    
     public void close() throws IOException {
         isBack = false;
         if (rf != null) {

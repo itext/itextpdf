@@ -539,7 +539,7 @@ public class BarcodePDF417 {
                 boolean redo = false;
                 if ((checkSegmentType(vp, 'B') && getSegmentLength(vp) == 1) || checkSegmentType(vp, 'T')) {
                     redo = true;
-                    v.start = v.start;
+                    v.start = vp.start;
                     segmentList.remove(k - 1);
                     --k;
                 }

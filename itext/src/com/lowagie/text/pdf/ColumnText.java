@@ -1033,43 +1033,54 @@ public class ColumnText {
         linesWritten = 0;
         descender = 0;
         boolean firstPass = true;
+        main_loop:
         while (true) {
             if (compositeElements.isEmpty())
                 return NO_MORE_TEXT;
             Element element = (Element)compositeElements.getFirst();
             if (element.type() == Element.PARAGRAPH) {
                 Paragraph para = (Paragraph)element;
-                float lastY = yLine;
-                boolean createHere = false;
-                if (compositeColumn == null) {
-                    compositeColumn = new ColumnText(canvas);
-                    compositeColumn.setUseAscender(firstPass ? useAscender : false);
-                    compositeColumn.setAlignment(para.alignment());
-                    compositeColumn.setIndent(para.indentationLeft() + para.getFirstLineIndent());
-                    compositeColumn.setExtraParagraphSpace(para.getExtraParagraphSpace());
-                    compositeColumn.setFollowingIndent(para.indentationLeft());
-                    compositeColumn.setRightIndent(para.indentationRight());
-                    compositeColumn.setLeading(para.leading(), para.getMultipliedLeading());
-                    compositeColumn.setRunDirection(runDirection);
-                    compositeColumn.setArabicOptions(arabicOptions);
-                    compositeColumn.setSpaceCharRatio(spaceCharRatio);
-                    compositeColumn.addText(para);
-                    if (!firstPass) {
-                        yLine -= para.spacingBefore();
+                int status = 0;
+                for (int keep = 0; keep < 2; ++keep) {
+                    float lastY = yLine;
+                    boolean createHere = false;
+                    if (compositeColumn == null) {
+                        compositeColumn = new ColumnText(canvas);
+                        compositeColumn.setUseAscender(firstPass ? useAscender : false);
+                        compositeColumn.setAlignment(para.alignment());
+                        compositeColumn.setIndent(para.indentationLeft() + para.getFirstLineIndent());
+                        compositeColumn.setExtraParagraphSpace(para.getExtraParagraphSpace());
+                        compositeColumn.setFollowingIndent(para.indentationLeft());
+                        compositeColumn.setRightIndent(para.indentationRight());
+                        compositeColumn.setLeading(para.leading(), para.getMultipliedLeading());
+                        compositeColumn.setRunDirection(runDirection);
+                        compositeColumn.setArabicOptions(arabicOptions);
+                        compositeColumn.setSpaceCharRatio(spaceCharRatio);
+                        compositeColumn.addText(para);
+                        if (!firstPass) {
+                            yLine -= para.spacingBefore();
+                        }
+                        createHere = true;
                     }
-                    createHere = true;
-                }
-                compositeColumn.leftX = leftX;
-                compositeColumn.rightX = rightX;
-                compositeColumn.yLine = yLine;
-                compositeColumn.rectangularWidth = rectangularWidth;
-                compositeColumn.minY = minY;
-                compositeColumn.maxY = maxY;
-                int status = compositeColumn.go(simulate);
-                if ((status & NO_MORE_TEXT) == 0 && para.getKeepTogether() && createHere && !firstPass) {
-                    compositeColumn = null;
-                    yLine = lastY;
-                    return NO_MORE_COLUMN;
+                    compositeColumn.leftX = leftX;
+                    compositeColumn.rightX = rightX;
+                    compositeColumn.yLine = yLine;
+                    compositeColumn.rectangularWidth = rectangularWidth;
+                    compositeColumn.minY = minY;
+                    compositeColumn.maxY = maxY;
+                    boolean keepCandidate = (para.getKeepTogether() && createHere && !firstPass);
+                    status = compositeColumn.go(simulate || (keepCandidate && keep == 0));
+                    if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
+                        compositeColumn = null;
+                        yLine = lastY;
+                        return NO_MORE_COLUMN;
+                    }
+                    if (simulate || !keepCandidate)
+                        break;
+                    if (keep == 0) {
+                        compositeColumn = null;
+                        yLine = lastY;
+                    }
                 }
                 firstPass = false;
                 yLine = compositeColumn.yLine;
@@ -1118,42 +1129,52 @@ public class ColumnText {
                         }
                     }
                 }
-                float lastY = yLine;
-                boolean createHere = false;
-                if (compositeColumn == null) {
-                    if (item == null) {
-                        listIdx = 0;
-                        compositeElements.removeFirst();
-                        continue;
+                int status = 0;
+                for (int keep = 0; keep < 2; ++keep) {
+                    float lastY = yLine;
+                    boolean createHere = false;
+                    if (compositeColumn == null) {
+                        if (item == null) {
+                            listIdx = 0;
+                            compositeElements.removeFirst();
+                            continue main_loop;
+                        }
+                        compositeColumn = new ColumnText(canvas);
+                        compositeColumn.setUseAscender(firstPass ? useAscender : false);
+                        compositeColumn.setAlignment(item.alignment());
+                        compositeColumn.setIndent(item.indentationLeft() + listIndentation + item.getFirstLineIndent());
+                        compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
+                        compositeColumn.setFollowingIndent(compositeColumn.getIndent());
+                        compositeColumn.setRightIndent(item.indentationRight() + list.indentationRight());
+                        compositeColumn.setLeading(item.leading(), item.getMultipliedLeading());
+                        compositeColumn.setRunDirection(runDirection);
+                        compositeColumn.setArabicOptions(arabicOptions);
+                        compositeColumn.setSpaceCharRatio(spaceCharRatio);
+                        compositeColumn.addText(item);
+                        if (!firstPass) {
+                            yLine -= item.spacingBefore();
+                        }
+                        createHere = true;
                     }
-                    compositeColumn = new ColumnText(canvas);
-                    compositeColumn.setUseAscender(firstPass ? useAscender : false);
-                    compositeColumn.setAlignment(item.alignment());
-                    compositeColumn.setIndent(item.indentationLeft() + listIndentation + item.getFirstLineIndent());
-                    compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
-                    compositeColumn.setFollowingIndent(compositeColumn.getIndent());
-                    compositeColumn.setRightIndent(item.indentationRight() + list.indentationRight());
-                    compositeColumn.setLeading(item.leading(), item.getMultipliedLeading());
-                    compositeColumn.setRunDirection(runDirection);
-                    compositeColumn.setArabicOptions(arabicOptions);
-                    compositeColumn.setSpaceCharRatio(spaceCharRatio);
-                    compositeColumn.addText(item);
-                    if (!firstPass) {
-                        yLine -= item.spacingBefore();
+                    compositeColumn.leftX = leftX;
+                    compositeColumn.rightX = rightX;
+                    compositeColumn.yLine = yLine;
+                    compositeColumn.rectangularWidth = rectangularWidth;
+                    compositeColumn.minY = minY;
+                    compositeColumn.maxY = maxY;
+                    boolean keepCandidate = (item.getKeepTogether() && createHere && !firstPass);
+                    status = compositeColumn.go(simulate || (keepCandidate && keep == 0));
+                    if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
+                        compositeColumn = null;
+                        yLine = lastY;
+                        return NO_MORE_COLUMN;
                     }
-                    createHere = true;
-                }
-                compositeColumn.leftX = leftX;
-                compositeColumn.rightX = rightX;
-                compositeColumn.yLine = yLine;
-                compositeColumn.rectangularWidth = rectangularWidth;
-                compositeColumn.minY = minY;
-                compositeColumn.maxY = maxY;
-                int status = compositeColumn.go(simulate);
-                if ((status & NO_MORE_TEXT) == 0 && item.getKeepTogether() && createHere && !firstPass) {
-                    compositeColumn = null;
-                    yLine = lastY;
-                    return NO_MORE_COLUMN;
+                    if (simulate || !keepCandidate)
+                        break;
+                    if (keep == 0) {
+                        compositeColumn = null;
+                        yLine = lastY;
+                    }
                 }
                 firstPass = false;
                 yLine = compositeColumn.yLine;
