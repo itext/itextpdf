@@ -1169,21 +1169,32 @@ class PdfDocument extends Document implements DocListener {
                             /* start patch sep 8 2001 Francesco De Milato */
                             // Get the border's width
                             graphics.setLineWidth(table.borderWidth());
-                            
+
+														/* start patch Sep 13 2001 Matt Benson */
+														if ((table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
+														{
                             // Draw the bottom line
-                            graphics.moveTo(table.left(),lostTableBottom);
-                            graphics.lineTo(table.right(), lostTableBottom);
-                            graphics.stroke();
+															graphics.moveTo(table.left(),lostTableBottom);
+															graphics.lineTo(table.right(), lostTableBottom);
+															graphics.stroke();
+														}//end if bottom border should be drawn
                             
+														if ((table.border() & Rectangle.LEFT) == Rectangle.LEFT)
+														{
                             // Connect the bottom line with the left table's border
-                            graphics.moveTo(table.left(),lostTableBottom);
-                            graphics.lineTo(table.left(), lostTableTop);
-                            graphics.stroke();
-                            
-                            // Connect the bottom line with the right table's border
-                            graphics.moveTo(table.right(), lostTableBottom);
-                            graphics.lineTo(table.right(), lostTableTop);
-                            graphics.stroke();
+															graphics.moveTo(table.left(),lostTableBottom);
+															graphics.lineTo(table.left(), lostTableTop);
+															graphics.stroke();
+														}//end if left border should be drawn
+
+														if ((table.border() & Rectangle.RIGHT) == Rectangle.RIGHT)
+														{
+															// Connect the bottom line with the right table's border
+															graphics.moveTo(table.right(), lostTableBottom);
+															graphics.lineTo(table.right(), lostTableTop);
+															graphics.stroke();
+														}//end if right border should be drawn
+														/* end patch Sep 13 2001 Matt Benson */
                             /* end patch sep 8 2001 Francesco De Milato */
                             
                             float difference = indentBottom() + leading;
