@@ -137,7 +137,7 @@ public class PdfContentByte {
  * @return		a <CODE>String</CODE>
  */
     
-    public byte[] toPdf() {
+    public byte[] toPdf(PdfEncryption crypto) {
         return content.toByteArray();
     }
     
@@ -952,7 +952,7 @@ public class PdfContentByte {
         state.font = bf;
         state.size = size;
         PdfName name = writer.add(bf);
-        content.append(name.toPdf()).append(' ').append(size).append(" Tf\n");
+        content.append(name.toPdf(null)).append(' ').append(size).append(" Tf\n");
     }
     
 /**
@@ -1566,7 +1566,7 @@ public class PdfContentByte {
     void showText(PdfTextArray text) {
         if (state.font == null)
             throw new NullPointerException("Font and size must be set before writing any text");
-        content.append(text.toPdf()).append(" TJ\n");
+        content.append(text.toPdf(null)).append(" TJ\n");
     }
     
 /**

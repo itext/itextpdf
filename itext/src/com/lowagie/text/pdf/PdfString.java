@@ -162,13 +162,17 @@ class PdfString extends PdfObject implements PdfPrintable {
  * @return		an array of <CODE>byte</CODE>s
  */
     
-    final public byte[] toPdf() {
+    final public byte[] toPdf(PdfEncryption crypto) {
         byte b[];
         try {
             b = value.getBytes(encoding);
         }
         catch(UnsupportedEncodingException uee) {
             b = value.getBytes();
+        }
+        if (crypto != null) {
+            crypto.prepareKey();
+            crypto.encryptRC4(b);
         }
         return PdfContentByte.escapeString(b);
     }
@@ -191,8 +195,8 @@ class PdfString extends PdfObject implements PdfPrintable {
  * @return		a <CODE>String</CODE>
  */
     
-    byte[] get() {
-        return toPdf();
+    byte[] get(PdfEncryption crypto) {
+        return toPdf(crypto);
         // we create the StringBuffer that will be the PDF representation of the content
     }
     

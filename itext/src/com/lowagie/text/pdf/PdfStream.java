@@ -166,8 +166,8 @@ class PdfStream extends PdfObject {
  * @return		an array of <CODE>byte</CODE>s
  */
     
-    final public byte[] toPdf() {
-        dicBytes = dictionary.toPdf();
+    final public byte[] toPdf(PdfEncryption crypto) {
+        dicBytes = dictionary.toPdf(crypto);
         return null;
     }
     
@@ -231,24 +231,39 @@ class PdfStream extends PdfObject {
         }
     }
 
-    int getStreamLength() {
+    int getStreamLength(PdfEncryption crypto) {
         if (dicBytes == null)
-            toPdf();
+            toPdf(crypto);
         if (streamBytes != null)
             return streamBytes.size() + dicBytes.length + SIZESTREAM;
         else
             return bytes.length + dicBytes.length + SIZESTREAM;
     }
     
-    void writeTo(OutputStream out) throws IOException{
+    void writeTo(OutputStream out, PdfEncryption crypto) throws IOException{
         if (dicBytes == null)
-            toPdf();
+            toPdf(crypto);
         out.write(dicBytes);
         out.write(STARTSTREAM);
-        if (streamBytes != null)
-            streamBytes.writeTo(out);
-        else
-            out.write(bytes);
+        if (crypto == null) {
+            if (streamBytes != null)
+                streamBytes.writeTo(out);
+            else
+                out.write(bytes);
+        }
+        else {
+            crypto.prepareKey();
+            byte b[];
+            if (streamBytes != null) {
+                b = streamBytes.toByteArray();
+                crypto.encryptRC4(b);
+            }
+            else {
+                b = new byte[bytes.length];
+                crypto.encryptRC4(bytes, b);
+            }
+            out.write(b);
+        }
         out.write(ENDSTREAM);
     }
 }

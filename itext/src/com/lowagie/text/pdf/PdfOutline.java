@@ -274,7 +274,7 @@ public class PdfOutline extends PdfDictionary {
  * @return		an array of <CODE>byte</CODE>
  */
     
-    final public byte[] toPdf() {
+    final public byte[] toPdf(PdfEncryption crypto) {
         if (parent != null) {
             put(PdfName.PARENT, parent.indirectReference());
         }
@@ -284,6 +284,6 @@ public class PdfOutline extends PdfDictionary {
         if ((isOpen || parent.isOpen) && count > 0) {
             put(PdfName.COUNT, new PdfNumber(count));
         }
-        return super.toPdf();
+        return super.toPdf(crypto);
     }
 }

@@ -105,22 +105,22 @@ class PdfDashPattern extends PdfArray {
  * @return		an array of <CODE>byte</CODE>s
  */
     
-    final public byte[] toPdf() {
+    final public byte[] toPdf(PdfEncryption crypto) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             stream.write(DocWriter.getISOBytes("["));
             
             if (dash >= 0) {
-                stream.write(new PdfNumber(dash).toPdf());
+                stream.write(new PdfNumber(dash).toPdf(null));
                 if (gap >= 0) {
                     stream.write(DocWriter.getISOBytes(" "));
-                    stream.write(new PdfNumber(gap).toPdf());
+                    stream.write(new PdfNumber(gap).toPdf(null));
                 }
             }
             stream.write(DocWriter.getISOBytes("]"));
             if (phase >=0) {
                 stream.write(DocWriter.getISOBytes(" "));
-                stream.write(new PdfNumber(phase).toPdf());
+                stream.write(new PdfNumber(phase).toPdf(null));
             }
             
             return stream.toByteArray();

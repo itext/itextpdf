@@ -117,7 +117,7 @@ class PdfDictionary extends PdfObject {
  * @return		an array of <CODE>byte</CODE>
  */
     
-    public byte[] toPdf() {
+    public byte[] toPdf(PdfEncryption crypto) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             stream.write(DocWriter.getISOBytes("<<\n"));
@@ -128,9 +128,9 @@ class PdfDictionary extends PdfObject {
             for (Iterator i = hashMap.keySet().iterator(); i.hasNext(); ) {
                 key = (PdfName) i.next();
                 value = (PdfObject) hashMap.get(key);
-                stream.write(key.toPdf());
+                stream.write(key.toPdf(crypto));
                 stream.write(DocWriter.getISOBytes(" "));
-                stream.write(value.toPdf());
+                stream.write(value.toPdf(crypto));
                 stream.write(DocWriter.getISOBytes("\n"));
             }
             stream.write(DocWriter.getISOBytes(">>"));

@@ -121,7 +121,7 @@ public class PdfWriter extends DocWriter {
  * @return		an array of <CODE>byte</CODE>s
  */
             
-            final byte[] toPdf() {
+            final byte[] toPdf(PdfEncryption crypto) {
                 // This code makes it more difficult to port the lib to JDK1.1.x:
                 // StringBuffer off = new StringBuffer("0000000000").append(offset);
                 // off.delete(0, off.length() - 10);
@@ -149,7 +149,7 @@ public class PdfWriter extends DocWriter {
         
 /** the current byteposition in the body. */
         private int position;
-        
+        private PdfEncryption crypto;
         // constructors
         
 /**
@@ -167,6 +167,10 @@ public class PdfWriter extends DocWriter {
         
         // methods
         
+        void setCrypto(PdfEncryption crypto) {
+            this.crypto = crypto;
+        }
+        
 /**
  * Adds a <CODE>PdfObject</CODE> to the body.
  * <P>
@@ -181,7 +185,7 @@ public class PdfWriter extends DocWriter {
  */
         
         final PdfIndirectObject add(PdfObject object) {
-            PdfIndirectObject indirect = new PdfIndirectObject(size(), object);
+            PdfIndirectObject indirect = new PdfIndirectObject(size(), object, crypto);
             xrefs.add(new PdfCrossReference(position));
             position += indirect.length();
             return indirect;
@@ -214,7 +218,7 @@ public class PdfWriter extends DocWriter {
  */
         
         final PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) {
-            PdfIndirectObject indirect = new PdfIndirectObject(ref.getNumber(), object);
+            PdfIndirectObject indirect = new PdfIndirectObject(ref.getNumber(), object, crypto);
             xrefs.set(ref.getNumber(), new PdfCrossReference(position));
             position += indirect.length();
             return indirect;
@@ -239,7 +243,7 @@ public class PdfWriter extends DocWriter {
  */
         
         final PdfIndirectObject add(PdfPages object) {
-            PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object);
+            PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object, crypto);
             rootOffset = position;
             position += indirect.length();
             return indirect;
@@ -283,7 +287,7 @@ public class PdfWriter extends DocWriter {
                 PdfCrossReference entry;
                 for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
                     entry = (PdfCrossReference) i.next();
-                    stream.write(entry.toPdf());
+                    stream.write(entry.toPdf(null));
                 }
             }
             catch (IOException ioe) {
@@ -318,7 +322,7 @@ public class PdfWriter extends DocWriter {
  * @param		info		an indirect reference to the info object of the PDF document
  */
         
-        public PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info) {
+        public PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID) {
             
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             try {
@@ -330,7 +334,11 @@ public class PdfWriter extends DocWriter {
                 if (info != null) {
                     dictionary.put(PdfName.INFO, info);
                 }
-                stream.write(dictionary.toPdf());
+                if (encryption != null)
+                    dictionary.put(PdfName.ENCRYPT, encryption);
+                if (fileID != null)
+                    dictionary.put(PdfName.ID, fileID);
+                stream.write(dictionary.toPdf(null));
                 stream.write(getISOBytes("\nstartxref\n"));
                 stream.write(getISOBytes(String.valueOf(offset)));
                 stream.write(getISOBytes("\n%%EOF\n"));
@@ -347,7 +355,7 @@ public class PdfWriter extends DocWriter {
  * @return		an array of <CODE>byte</CODE>s
  */
         
-        final byte[] toPdf() {
+        final byte[] toPdf(PdfEncryption crypto) {
             return bytes;
         }
     }
@@ -395,9 +403,25 @@ public class PdfWriter extends DocWriter {
     public static final int DirectionR2L = 131072;
 /** The mask to decide if a ViewerPreferences dictionary is needed */
     static final int ViewerPreferencesMask = 0x3ff00;
-    
+/** The operation permitted when the document is opened with the user password */
+    public static final int AllowPrinting = 4 + 2048;
+/** The operation permitted when the document is opened with the user password */
+    public static final int AllowModifyContents = 8;
+/** The operation permitted when the document is opened with the user password */
+    public static final int AllowCopy = 16;
+/** The operation permitted when the document is opened with the user password */
+    public static final int AllowModifyAnnotations = 32;
+/** The operation permitted when the document is opened with the user password */
+    public static final int AllowFillIn = 256;
+/** The operation permitted when the document is opened with the user password */
+    public static final int AllowScreenReaders = 512;
+/** The operation permitted when the document is opened with the user password */
+    public static final int AllowAssembly = 1024;
+/** The operation permitted when the document is opened with the user password */
+    public static final int AllowDegradedPrinting = 4;
+
 /** this is the header of a PDF document */
-    private static byte[] HEADER = getISOBytes("%PDF-1.3\n%\u00e0\u00e1\u00e2\u00e3\n");
+    private static byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e0\u00e1\u00e2\u00e3\n");
     
 /** byte offset of the Body */
     private static final int OFFSET = HEADER.length;
@@ -443,6 +467,7 @@ public class PdfWriter extends DocWriter {
 /** The <CODE>PdfPageEvent</CODE> for this document. */
     private PdfPageEvent pageEvent;
     
+    private PdfEncryption crypto;
     // constructor
     
 /**
@@ -642,6 +667,14 @@ public class PdfWriter extends DocWriter {
                 // add the info-object to the body
                 PdfIndirectObject info = body.add(((PdfDocument)document).getInfo());
                 info.writeTo(os);
+                PdfIndirectReference encryption = null;
+                PdfLiteral fileID = null;
+                if (crypto != null) {
+                    PdfIndirectObject encryptionObject = body.add(crypto.getEncryptionDictionary());
+                    encryptionObject.writeTo(os);
+                    encryption = encryptionObject.getIndirectReference();
+                    fileID = crypto.getFileID();
+                }
                 
                 // write the cross-reference table of the body
                 os.write(body.getCrossReferenceTable());
@@ -649,8 +682,10 @@ public class PdfWriter extends DocWriter {
                 PdfTrailer trailer = new PdfTrailer(body.size(),
                 body.offset(),
                 indirectCatalog.getIndirectReference(),
-                info.getIndirectReference());
-                os.write(trailer.toPdf());
+                info.getIndirectReference(),
+                encryption,
+                fileID);
+                os.write(trailer.toPdf(crypto));
                 super.close();
             }
             catch(IOException ioe) {
@@ -962,5 +997,25 @@ public class PdfWriter extends DocWriter {
     
     public void setViewerPreferences(int preferences) {
         pdf.setViewerPreferences(preferences);
+    }
+    
+    /** Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations, 
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
+     * @throws DocumentException if document is already open
+     */    
+    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
+        if (pdf.isOpen())
+            throw new DocumentException("Encryption can only be added before opening the document.");
+        crypto = new PdfEncryption();
+        crypto.setupAllKeys(userPassword, ownerPassword, permissions, strength128Bits);
+        body.setCrypto(crypto);
     }
 }
