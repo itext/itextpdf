@@ -184,7 +184,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  */
     
     public Anchor(Properties attributes) {
-        this("", new Font(attributes));
+        this("", FontFactory.getFont(attributes));
         String value;
         if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             Chunk chunk = new Chunk(value);

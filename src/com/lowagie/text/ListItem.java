@@ -214,7 +214,7 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
          */
     
     public ListItem(Properties attributes) {
-        super("", new Font(attributes));
+        super("", FontFactory.getFont(attributes));
         String value;
         if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             add(new Chunk(value));

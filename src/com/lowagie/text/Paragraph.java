@@ -195,7 +195,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  */
     
     public Paragraph(Properties attributes) {
-        this("", new Font(attributes));
+        this("", FontFactory.getFont(attributes));
         String value;
         if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             Chunk chunk = new Chunk(value);

@@ -169,7 +169,7 @@ public class List implements TextElementArray, MarkupAttributes {
         if (value == null) {
             value = "-";
         }
-        symbol = new Chunk(value, new Font(attributes));
+        symbol = new Chunk(value, FontFactory.getFont(attributes));
         
         this.numbered = false;
         if ((value = (String)attributes.remove(ElementTags.NUMBERED)) != null) {
