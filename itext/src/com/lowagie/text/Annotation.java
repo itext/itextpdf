@@ -261,7 +261,7 @@ public class Annotation implements Element, MarkupAttributes {
         }
         annotationAttributes.put(TITLE, title);
         annotationAttributes.put(CONTENT, text);
-        setMarkupAttributes(attributes);
+        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

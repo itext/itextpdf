@@ -234,7 +234,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
             }
             add(chunk);
         }
-        setMarkupAttributes(attributes);
+        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

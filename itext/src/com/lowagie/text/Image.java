@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -568,7 +568,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         if ((value = (String)attributes.remove(ElementTags.ROTATION)) != null) {
             image.setRotation(Float.valueOf(value + "f").floatValue());
         }
-        image.setMarkupAttributes(attributes);
+        if (attributes.size() > 0) image.setMarkupAttributes(attributes);
         return image;
     }
     

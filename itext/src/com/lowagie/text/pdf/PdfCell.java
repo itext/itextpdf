@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -321,6 +321,16 @@ public class PdfCell extends Rectangle {
             }
         }
         return result;
+    }
+    
+/**
+ * Checks if this cell belongs to the header of a <CODE>PdfTable</CODE>.
+ *
+ * @return	<CODE>void</CODE>
+ */
+    
+    final boolean isHeader() {
+        return header;
     }
     
 /**

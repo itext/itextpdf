@@ -212,8 +212,11 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  */
     boolean mAutoFillEmptyCells = true;
     
-/** If true this table may not split a cell over two pages. */
-    boolean hasToFitPage = false;
+/** If true this table may not be split over two pages. */
+    boolean tableFitsPage = false;
+    
+/** If true cells may not be split over two pages. */
+    boolean cellsFitPage = false;
     
 /** contains the attributes that are added to each odd (or even) row */
     protected Hashtable alternatingRowAttributes;
@@ -326,8 +329,11 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             }
             columns = i;
         }
-        if ((value = (String)attributes.remove(ElementTags.FITPAGE)) != null) {
-            hasToFitPage = new Boolean(value).booleanValue();
+        if ((value = (String)attributes.remove(ElementTags.TABLEFITSPAGE)) != null) {
+            tableFitsPage = new Boolean(value).booleanValue();
+        }
+        if ((value = (String)attributes.remove(ElementTags.CELLSFITPAGE)) != null) {
+            cellsFitPage = new Boolean(value).booleanValue();
         }
         if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
             setBorderWidth(Float.valueOf(value + "f").floatValue());
@@ -380,7 +386,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
         }
-        setMarkupAttributes(attributes);
+        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -421,22 +427,41 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     public void setAutoFillEmptyCells(boolean aDoAutoFill) {
         mAutoFillEmptyCells = aDoAutoFill;
     }
+   
+/**
+ * Allows you to control when a page break occurs.
+ * <P>
+ * When a table doesn't fit a page, it is split in two parts.
+ * If you want to avoid this, you should set the <VAR>tableFitsPage</VAR> value to true.
+ *
+ * @param   fitPage    enter true if you don't want to split cells
+ */
+ 
+    public void setTableFitsPage(boolean fitPage) {
+        this.tableFitsPage = fitPage;
+    }
 
-
-    
-
-    
 /**
  * Allows you to control when a page break occurs.
  * <P>
  * When a cell doesn't fit a page, it is split in two parts.
- * If you want to avoid this, you should set the hasToFitPage value to true.
+ * If you want to avoid this, you should set the <VAR>cellsFitPage</VAR> value to true.
  *
- * @param   hasToFitPage    enter true if you don't want to split cells
+ * @param   fitPage    enter true if you don't want to split cells
  */
  
-    public void setHasToFitPage(boolean hasToFitPage) {
-        this.hasToFitPage = hasToFitPage;
+    public void setCellsFitPage(boolean fitPage) {
+        this.cellsFitPage = fitPage;
+    }
+    
+/**
+ * Checks if this <CODE>Table</CODE> has to fit a page.
+ *
+ * @return  true if the table may not be split
+ */
+ 
+    public boolean hasToFitPageTable() {
+        return tableFitsPage;
     }
     
 /**
@@ -445,8 +470,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return  true if the cells may not be split
  */
  
-    public boolean hasToFitPage() {
-        return hasToFitPage;
+    public boolean hasToFitPageCells() {
+        return cellsFitPage;
     }
     
 /**
@@ -589,19 +614,33 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
 /**
  * To put a table within the existing table at the current position
- * generateTable will of course re-arrange the widths of the columns
+ * generateTable will of course re-arrange the widths of the columns.
  *
  * @param   aTable      the table you want to insert
  */
     
     public void insertTable(Table aTable) {
         if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
-        insertTable(aTable, new Point(currentRow,currentColumn));
+        insertTable(aTable, new Point(currentRow, currentColumn));
     }
     
 /**
  * To put a table within the existing table at the given position
- * generateTable will of course re-arrange the widths of the columns
+ * generateTable will of course re-arrange the widths of the columns.
+ *
+ * @param       aTable  The <CODE>Table</CODE> to add
+ * @param       row     The row where the <CODE>Cell</CODE> will be added
+ * @param       column  The column where the <CODE>Cell</CODE> will be added
+ */
+    
+    public void insertTable(Table aTable, int row, int column) {
+        if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
+        insertTable(aTable, new Point(row, column));
+    }
+    
+/**
+ * To put a table within the existing table at the given position
+ * generateTable will of course re-arrange the widths of the columns.
  *
  * @param   aTable      the table you want to insert
  * @param   aLocation   a <CODE>Point</CODE>
@@ -1705,4 +1744,88 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         value[1] = value1;
         alternatingRowAttributes.put(name, value);
     }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float top() {
+       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float bottom() {
+       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float left() {
+       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float right() {
+       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float top(int margin) {
+       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float bottom(int margin) {
+       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float left(int margin) {
+       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float right(int margin) {
+       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public void setTop(int value) {
+       throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public void setBottom(int value) {
+       throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public void setLeft(int value) {
+       throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public void setRight(int value) {
+       throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
+   }
 }
