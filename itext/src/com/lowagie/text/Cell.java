@@ -410,11 +410,11 @@ public class Cell extends Rectangle implements TextElementArray {
                         widths[0] = 0f;
                         widths[2] = 100f - widths[1];
                         break;
-                    case Element.ALIGN_RIGHT:
+                    case Element.ALIGN_CENTER:
                         widths[0] = (100f - widths[1]) / 2f;
                         widths[2] = widths[0];
                         break;
-                    case Element.ALIGN_CENTER:
+                    case Element.ALIGN_RIGHT:
                         widths[0] = 100f - widths[1];
                         widths[2] = 0f;
                 }
