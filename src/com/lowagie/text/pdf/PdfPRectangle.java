@@ -10,8 +10,7 @@ import com.lowagie.text.Rectangle;
 
 /**
  *
- * @author  Administrator
- * @version
+ * @author  Paulo Soares
  */
 public class PdfPRectangle extends Rectangle {
     
