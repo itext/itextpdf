@@ -286,6 +286,7 @@ class PdfChunk implements SplitCharacter{
             image = (Image)obj[0];
             offsetX = ((Float)obj[1]).floatValue();
             offsetY = ((Float)obj[2]).floatValue();
+            changeLeading = ((Boolean)obj[3]).booleanValue();
         }
         font.setImage(image);
         encoding = font.getFont().getEncoding();
