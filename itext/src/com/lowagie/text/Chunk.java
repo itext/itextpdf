@@ -63,6 +63,7 @@ import com.lowagie.text.pdf.PdfAction;
 import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.markup.MarkupParser;
 
 /**
  * This is the smallest significant part of text that can be added to a document.
@@ -243,6 +244,9 @@ public class Chunk implements Element, MarkupAttributes {
         }
         if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
             setGenericTag(value);
+        }
+        if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
+            setBackground(MarkupParser.decodeColor(value));
         }
         if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
