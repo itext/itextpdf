@@ -268,9 +268,9 @@ public class Cell extends Rectangle implements TextElementArray {
         String r = null;
         String g = null;
         String b = null;
-        if ((r = (String)attributes.remove(ElementTags.RED)) != null ||
-        (g = (String)attributes.remove(ElementTags.GREEN)) != null ||
-        (b = (String)attributes.remove(ElementTags.BLUE)) != null) {
+        if (!(r = (String)attributes.remove(ElementTags.RED)) == null &&
+        (g = (String)attributes.remove(ElementTags.GREEN)) == null &&
+        (b = (String)attributes.remove(ElementTags.BLUE)) == null) {
             int red = 0;
             int green = 0;
             int blue = 0;
@@ -282,9 +282,9 @@ public class Cell extends Rectangle implements TextElementArray {
         else if ((value = (String)attributes.remove(ElementTags.BORDERCOLOR)) != null) {
             setBorderColor(MarkupParser.decodeColor(value));
         }
-        if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
-        (g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
-        (b = (String)attributes.remove(ElementTags.BGBLUE)) != null) {
+        if (!(r = (String)attributes.remove(ElementTags.BGRED)) == null &&
+        (g = (String)attributes.remove(ElementTags.BGGREEN)) == null &&
+        (b = (String)attributes.remove(ElementTags.BGBLUE)) == null) {
             int red = 0;
             int green = 0;
             int blue = 0;
