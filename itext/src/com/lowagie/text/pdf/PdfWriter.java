@@ -64,7 +64,6 @@ import com.lowagie.text.Table;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
-import com.lowagie.text.Image;
 import java.awt.Color;
 import com.lowagie.text.ExceptionConverter;
 

@@ -116,7 +116,7 @@ class PdfDate extends PdfString {
  * Adds a number of leading zeros to a given <CODE>String</CODE> in order to get a <CODE>String</CODE>
  * of a certain length.
  *
- * @param		tmp			a given <CODE>String</CODE>
+ * @param		i   		a given number
  * @param		length		the length of the resulting <CODE>String</CODE>
  * @return		the resulting <CODE>String</CODE>
  */

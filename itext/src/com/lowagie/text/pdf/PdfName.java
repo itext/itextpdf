@@ -49,7 +49,6 @@
  */
 
 package com.lowagie.text.pdf;
-import com.lowagie.text.ExceptionConverter;
 
 /**
  * <CODE>PdfName</CODE> is an object that can be used as a name in a PDF-file.

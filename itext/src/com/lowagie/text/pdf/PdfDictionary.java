@@ -55,7 +55,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Set;
-import com.lowagie.text.DocWriter;
 import com.lowagie.text.ExceptionConverter;
 
 /**

@@ -50,7 +50,6 @@
 
 package com.lowagie.text;
 
-import java.util.Iterator;
 import java.util.Properties;
 
 import com.lowagie.text.markup.MarkupTags;

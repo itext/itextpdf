@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
@@ -466,7 +465,7 @@ public class Rectangle implements Element, MarkupAttributes {
 /**
  * Indicates if the table has a some type of border.
  *
- * @param	the type of border
+ * @param	type    the type of border
  * @return	a boolean
  */
     

@@ -50,9 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.UnsupportedEncodingException;
-import com.lowagie.text.ExceptionConverter;
-
 /**
  * <CODE>PdfObject</CODE> is the abstract superclass of all PDF objects.
  * <P>
@@ -219,7 +216,6 @@ public abstract class PdfObject {
  * Changes the content of this <CODE>PdfObject</CODE>.
  *
  * @param		content			the new content of this <CODE>PdfObject</CODE>
- * @return		<CODE>void</CODE>
  */
     
     protected void setContent(String content) {

@@ -75,7 +75,7 @@ public class Header extends Meta implements Element {
 /**
  * Constructs a <CODE>Meta</CODE>.
  *
- * @param	type		the type of meta-information
+ * @param	name		the name of the meta-information
  * @param	content		the content
  */
     

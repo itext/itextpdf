@@ -221,9 +221,6 @@ public class CCITTG4Encoder {
     
     /**
      * Constructs a <code>TIFFFaxEncoder</code> for CCITT bilevel encoding.
-     *
-     * @param inverseFill Whether bits are inserted in reverse order
-     *        (TIFF FillOrder 2).
      */
     public CCITTG4Encoder() {
     }
@@ -442,11 +439,8 @@ public class CCITTG4Encoder {
      * Group 4 facsimile compression.
      *
      * @param data        The row of data to compress.
-     * @param lineStride  Byte step between the same sample in different rows.
-     * @param colOffset   Bit offset within first <code>data[rowOffset]</code>.
      * @param width       Number of bits in the row.
      * @param height      Number of rows in the buffer.
-     * @param compData    The compressed data.
      *
      * @return The number of bytes saved in the compressed data array.
      */

@@ -68,16 +68,16 @@ package com.lowagie.text.pdf;
  */
 
 public class PRName extends PRObject implements Comparable{
-    
+
     private int hash = 0;
     // constructors
-    
+
     /**
      * Constructs a <CODE>PdfName</CODE>-object.
      *
      * @param		name		the new Name.
      */
-    
+
     PRName(String name) {
         super(NAME);
         // every special character has to be substituted
@@ -110,9 +110,9 @@ public class PRName extends PRObject implements Comparable{
         }
         setContent(pdfName.toString());
     }
-    
+
     // methods
-    
+
     /**
      * Compares the names alfabetically.
      *
@@ -122,17 +122,17 @@ public class PRName extends PRObject implements Comparable{
      *				a value greater than 0 if the argument's name is less than the name of this object
      *
      */
-    
+
     public final int compareTo(Object object) {
         PRName name = (PRName) object;
-        
+
         byte myBytes[] = bytes;
         byte objBytes[] = name.bytes;
         int len = Math.min(myBytes.length, objBytes.length);
         for(int i=0; i<len; i++) {
             if(myBytes[i] > objBytes[i])
                 return 1;
-            
+
             if(myBytes[i] < objBytes[i])
                 return -1;
         }
@@ -142,17 +142,17 @@ public class PRName extends PRObject implements Comparable{
             return 1;
         return 0;
     }
-    
+
     public final boolean equals(Object obj) {
         return compareTo(obj) == 0;
     }
-    
+
     public final int hashCode() {
         int h = hash;
         if (h == 0) {
             int ptr = 0;
             int len = bytes.length;
-            
+
             for (int i = 0; i < len; i++)
                 h = 31*h + (bytes[ptr++] & 0xff);
             hash = h;

@@ -52,12 +52,9 @@ package com.lowagie.text.html;
 
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 import org.xml.sax.Attributes;
 
-import com.lowagie.text.markup.MarkupTags;
-import com.lowagie.text.markup.MarkupParser;
 import com.lowagie.text.xml.*;
 import com.lowagie.text.*;
 

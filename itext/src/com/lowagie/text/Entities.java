@@ -364,8 +364,8 @@ public class Entities {
  * @return	the corresponding symbol in font Symbol
  */
     
-    public static int getCorrespondingSymbol(String e) {
-        Integer integer = (Integer) map.get(e);
+    public static int getCorrespondingSymbol(String c) {
+        Integer integer = (Integer) map.get(c);
         if (integer == null) {
             return -1;
         }

@@ -102,7 +102,6 @@ class CJKFont extends BaseFont {
     private boolean cidDirect = false;
     
     private char[] translationMap;
-    private char[] ciduni;
     private IntHashtable vMetrics;
     private IntHashtable hMetrics;
     private HashMap fontDesc;
@@ -213,7 +212,7 @@ class CJKFont extends BaseFont {
         return 0;
     }
 
-    private PdfDictionary getFontDescriptor() throws DocumentException {
+    private PdfDictionary getFontDescriptor() {
         PdfDictionary dic = new PdfDictionary(new PdfName("FontDescriptor"));
         dic.put(new PdfName("Ascent"), new PdfLiteral((String)fontDesc.get("Ascent")));
         dic.put(new PdfName("CapHeight"), new PdfLiteral((String)fontDesc.get("CapHeight")));
@@ -229,7 +228,7 @@ class CJKFont extends BaseFont {
         return dic;
     }
     
-    private PdfDictionary getCIDFont(PdfIndirectReference fontDescriptor, IntHashtable cjkTag) throws DocumentException {
+    private PdfDictionary getCIDFont(PdfIndirectReference fontDescriptor, IntHashtable cjkTag) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("CIDFontType0"));
         dic.put(new PdfName("BaseFont"), new PdfName(fontName + style));
@@ -251,7 +250,7 @@ class CJKFont extends BaseFont {
         return dic;
     }
     
-    private PdfDictionary getFontBaseType(PdfIndirectReference CIDFont) throws DocumentException {
+    private PdfDictionary getFontBaseType(PdfIndirectReference CIDFont) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("Type0"));
         String name = fontName;

@@ -50,10 +50,8 @@
 
 package com.lowagie.text.pdf;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.net.URL;
 
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
@@ -423,8 +421,6 @@ public class PdfCell extends Rectangle {
     
 /**
  * Indicates that this cell belongs to the header of a <CODE>PdfTable</CODE>.
- *
- * @return	<CODE>void</CODE>
  */
     
     void setHeader() {

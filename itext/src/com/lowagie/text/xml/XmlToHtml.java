@@ -90,7 +90,7 @@ public class XmlToHtml
 /**
  * Add a <CODE>DocWriter</CODE> for the specified <CODE>Document</CODE> and
  * <CODE>OutputStream</CODE>.
- * @throws <CODE>DocumentException</CODE> if document errors occur.
+ * @throws DocumentException if document errors occur.
  */	
 	protected final void addWriter(Document doc, OutputStream out)
 	 throws DocumentException

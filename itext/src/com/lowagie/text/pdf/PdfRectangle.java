@@ -50,8 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.awt.Color;
-
 import com.lowagie.text.Rectangle;
 
 /**

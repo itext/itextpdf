@@ -473,12 +473,6 @@ public class RtfWriter extends DocWriter implements DocListener
   /** Picture height */
     private static final byte[] pictureHeight = "pich".getBytes();
     
-  /** Picture width after scaling */
-    private static final byte[] pictureIntendedWidth = "picwgoal".getBytes();
-
-  /** Picture height after scaling */
-    private static final byte[] pictureIntendedHeight = "pichgoal".getBytes();
-    
   /** Picture scale horizontal percent */
     private static final byte[] pictureScaleX = "picscalex".getBytes();
 
@@ -530,9 +524,6 @@ public class RtfWriter extends DocWriter implements DocListener
   /** This <code>ByteArrayOutputStream</code> contains the list override table. */
     private ByteArrayOutputStream listoverride = null;
     
-  /** Which font is currently being used. */
-    private int listFont = 0;
-    
   /** Document header. */
     private HeaderFooter header = null;
     
@@ -559,9 +550,6 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Factor to use when converting. */
     public final static double twipsFactor = 20;//20.57140;
-    
-  /** Current annotation ID. */
-    private int currentAnnotationID = 0;
     
   /** Current list ID. */
     private int currentListID = 1;
@@ -595,7 +583,7 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Constructs a <CODE>RtfWriter</CODE>.
    *
-   * @param document    The <CODE>Document</CODE> that is to be written as RTF
+   * @param doc         The <CODE>Document</CODE> that is to be written as RTF
    * @param os          The <CODE>OutputStream</CODE> the writer has to write to.
    */
 
@@ -921,9 +909,9 @@ public class RtfWriter extends DocWriter implements DocListener
    * @param paragraphElement The <code>Paragraph</code> to be written
    * @param out The <code>ByteArrayOutputStream</code> to write to
    *
-   * @throws IOException, DocumentExceptipn
+   * @throws IOException
    */
-    private void writeParagraph(Paragraph paragraphElement, ByteArrayOutputStream out) throws IOException, DocumentException
+    private void writeParagraph(Paragraph paragraphElement, ByteArrayOutputStream out) throws IOException
     {
         out.write(escape);
         out.write(paragraphDefaults);
@@ -962,12 +950,12 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Write a <code>Phrase</code>.
    *
-   * @param chunk The <code>Phrase</code> item to be written
-   * @param out The <code>ByteArrayOutputStream</code> to write to
+   * @param phrase  The <code>Phrase</code> item to be written
+   * @param out     The <code>ByteArrayOutputStream</code> to write to
    *
-   * @throws IOException, DocumentException
+   * @throws IOException
    */
-    private void writePhrase(Phrase phrase, ByteArrayOutputStream out) throws IOException, DocumentException
+    private void writePhrase(Phrase phrase, ByteArrayOutputStream out) throws IOException
     {
       out.write(escape);
       out.write(paragraphDefaults);
@@ -991,12 +979,12 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Write an <code>Anchor</code>. Anchors are treated like Phrases.
    *
-   * @param chunk The <code>Chunk</code> item to be written
-   * @param out The <code>ByteArrayOutputStream</code> to write to
+   * @param anchor  The <code>Chunk</code> item to be written
+   * @param out     The <code>ByteArrayOutputStream</code> to write to
    *
    * @throws IOException
    */
-    private void writeAnchor(Anchor anchor, ByteArrayOutputStream out) throws IOException, DocumentException
+    private void writeAnchor(Anchor anchor, ByteArrayOutputStream out) throws IOException
     {
         if (anchor.url() != null) {
             out.write(openGroup);
@@ -1137,7 +1125,8 @@ public class RtfWriter extends DocWriter implements DocListener
    * @param list The <code>List</code> to be written
    * @param out The <code>ByteArrayOutputStream</code> to write to
    *
-   * @throws IOException, DocumentException
+   * @throws    IOException
+   * @throws    DocumentException
    */
     private void writeList(com.lowagie.text.List list, ByteArrayOutputStream out) throws IOException, DocumentException
     {
@@ -1329,7 +1318,8 @@ public class RtfWriter extends DocWriter implements DocListener
    *
    * Currently no nesting of tables is supported. If a cell contains anything but a Cell Object it is ignored.
    *
-   * @throws IOException, DocumentException
+   * @throws IOException
+   * @throws DocumentException
    */
     private void writeTable(Table table, ByteArrayOutputStream out) throws IOException, DocumentException
     {
@@ -1350,7 +1340,8 @@ public class RtfWriter extends DocWriter implements DocListener
    *
    * At the moment only PNG and JPEG Images are supported.
    *
-   * @throws IOException, DocumentException
+   * @throws IOException
+   * @throws DocumentException
    */
     private void writeImage(Image image, ByteArrayOutputStream out) throws IOException, DocumentException
     {
@@ -1428,7 +1419,7 @@ public class RtfWriter extends DocWriter implements DocListener
    *
    * @throws IOException
    */
-    private void writeAnnotation(Annotation annotationElement, ByteArrayOutputStream out) throws IOException, DocumentException
+    private void writeAnnotation(Annotation annotationElement, ByteArrayOutputStream out) throws IOException
     {
         int id = getRandomInt();
         out.write(openGroup);
@@ -1599,8 +1590,6 @@ public class RtfWriter extends DocWriter implements DocListener
     }
     
   /** Write the Rich Text file settings
-   *
-   * @return <code>true</code if the writing operation succeded
    */
     private void writeDocumentIntro() throws IOException
     {

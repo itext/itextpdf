@@ -52,10 +52,8 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * A <CODE>Section</CODE> is a part of a <CODE>Document</CODE> containing
@@ -115,9 +113,6 @@ public class Section extends ArrayList implements TextElementArray {
     
 /**
  * Constructs a new <CODE>Section</CODE>.
- *
- * @param	title			a <CODE>Paragraph</CODE>
- * @param	numberDepth		the numberDepth
  */
     
     protected Section() {
@@ -144,7 +139,6 @@ public class Section extends ArrayList implements TextElementArray {
  *
  * @param	number		the number of this section
  * @param	numbers		an <CODE>ArrayList</CODE>, containing the numbers of the Parent
- * @return	<CODE>void</CODE>
  */
     
     private void setNumbers(int number, ArrayList numbers) {
@@ -206,8 +200,7 @@ public class Section extends ArrayList implements TextElementArray {
  * to this <CODE>Section</CODE>.
  *
  * @param	index	index at which the specified element is to be inserted
- * @param	object	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
- * @return	<CODE>void</CODE>
+ * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
  * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
  */
     
@@ -242,7 +235,7 @@ public class Section extends ArrayList implements TextElementArray {
  * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
  * to this <CODE>Section</CODE>.
  *
- * @param	object	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
+ * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
  * @return	a boolean
  * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or <CODE>Section</CODE>
  */

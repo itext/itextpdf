@@ -50,8 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.Iterator;
-
 /**
  * <CODE>PdfXObjectDictionary</CODE> is a <CODE>PdfResource</CODE>, containing a dictionary of XObjects.
  *

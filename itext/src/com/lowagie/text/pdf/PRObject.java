@@ -49,7 +49,6 @@
  */
 
 package com.lowagie.text.pdf;
-import com.lowagie.text.pdf.PdfEncryption;
 
 /**
  * <CODE>PdfObject</CODE> is the abstract superclass of all PDF objects.
@@ -72,63 +71,62 @@ import com.lowagie.text.pdf.PdfEncryption;
  */
 
 abstract class PRObject extends PdfObject {
-    
-    static final int INDIRECT = 10;    
+
+    static final int INDIRECT = 10;
     // constructors
-    
+
 /**
  * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> without any <VAR>content</VAR>.
  *
  * @param		type			type of the new <CODE>PdfObject</CODE>
  */
-    
+
     protected PRObject(int type) {
         super(type);
     }
-    
+
 /**
  * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> with a certain <VAR>content</VAR>.
  *
  * @param		type			type of the new <CODE>PdfObject</CODE>
  * @param		content			content of the new <CODE>PdfObject</CODE> as a <CODE>String</CODE>.
  */
-    
+
     protected PRObject(int type, String content) {
         super(type);
         setContent(content);
     }
-    
+
 /**
  * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> with a certain <VAR>content</VAR>.
  *
  * @param		type			type of the new <CODE>PdfObject</CODE>
  * @param		bytes			content of the new <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>.
  */
-    
+
     protected PRObject(int type, byte[] bytes) {
         super(type, bytes);
     }
-    
+
     // methods dealing with the content of this object
-    
+
     public String toString() {
         char c[] = new char[bytes.length];
         for (int k = 0; k < bytes.length; ++k)
             c[k] = (char)(bytes[k] & 0xff);
         return new String(c);
     }
-    
+
 /**
  * Changes the content of this <CODE>PdfObject</CODE>.
  *
  * @param		content			the new content of this <CODE>PdfObject</CODE>
- * @return		<CODE>void</CODE>
  */
-    
+
     protected void setContent(String content) {
         bytes = stringToByte(content);
     }
-    
+
     static byte[] stringToByte(String content) {
         int len = content.length();
         byte bytes[] = new byte[len];

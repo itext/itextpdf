@@ -55,7 +55,6 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Element;
 import com.lowagie.text.ElementListener;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.BadElementException;
 
 /** This is a table that can be put at an absolute position but can also
  * be added to the document as the class <CODE>Table</CODE>.

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 import java.awt.Color;
 import java.io.IOException;
 /**

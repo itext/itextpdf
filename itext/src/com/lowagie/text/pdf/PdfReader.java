@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;

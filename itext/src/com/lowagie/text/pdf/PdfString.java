@@ -50,9 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
-import java.io.UnsupportedEncodingException;
-
 /**
  * A <CODE>PdfString</CODE>-class is the PDF-equivalent of a JAVA-<CODE>String</CODE>-object.
  * <P>
@@ -93,7 +90,7 @@ public class PdfString extends PdfObject {
     /**
      * Constructs a <CODE>PdfString</CODE>-object.
      *
-     * @param		content		the content of the string
+     * @param		value		the content of the string
      */
     
     public PdfString(String value) {
@@ -104,7 +101,7 @@ public class PdfString extends PdfObject {
     /**
      * Constructs a <CODE>PdfString</CODE>-object.
      *
-     * @param		content		the content of the string
+     * @param		value		the content of the string
      * @param		encoding	an encoding
      */
     

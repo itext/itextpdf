@@ -1,5 +1,5 @@
 package com.lowagie.text.pdf;
-import java.util.HashMap;
+
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;

@@ -56,7 +56,6 @@ import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.SplitCharacter;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -641,7 +640,7 @@ class PdfChunk implements SplitCharacter{
     
 /**
  * Sets the image offset in the x direction
- * @rparam  offsetX the image offset in the x direction
+ * @param  offsetX the image offset in the x direction
  */
     
     void setImageOffsetX(float offsetX)
@@ -661,7 +660,7 @@ class PdfChunk implements SplitCharacter{
     
 /**
  * Sets the image offset in the y direction
- * @rparam  offsetY the image offset in the y direction
+ * @param  offsetY the image offset in the y direction
  */
     
     void setImageOffsetY(float offsetY)

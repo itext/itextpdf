@@ -517,9 +517,8 @@ class Type1Font extends BaseFont
  * one of the 14 built in fonts.
  * @param fontStream the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
  * @return the PdfDictionary containing the font descriptor or <CODE>null</CODE>
- * @throws DocumentException if there is an error
  */
-    private PdfDictionary getFontDescriptor(PdfIndirectReference fontStream) throws DocumentException
+    private PdfDictionary getFontDescriptor(PdfIndirectReference fontStream)
     {
         if (builtinFont)
             return null;
@@ -554,9 +553,8 @@ class Type1Font extends BaseFont
      * @param lastChar the last valid character
      * @param shortTag a 256 bytes long <CODE>byte</CODE> array where each unused byte is represented by 0
      * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor or <CODE>null</CODE>
-     * @throws DocumentException if there is an error
      */
-    private PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, int firstChar, int lastChar, byte shortTag[]) throws DocumentException
+    private PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, int firstChar, int lastChar, byte shortTag[])
     {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, PdfName.TYPE1);

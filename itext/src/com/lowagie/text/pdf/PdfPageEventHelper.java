@@ -138,9 +138,10 @@ public class PdfPageEventHelper implements PdfPageEvent {
  * <CODE>position</CODE> will hold the height at which the
  * chapter will be written to.
  *
- * @param writer the <CODE>PdfWriter</CODE> for this document
- * @param document the document
- * @param position the position the chapter will be written to
+ * @param writer            the <CODE>PdfWriter</CODE> for this document
+ * @param document          the document
+ * @param paragraphPosition the position the chapter will be written to
+ * @param title             the title of the Chapter
  */
     public void onChapter(PdfWriter writer,Document document,float paragraphPosition,Paragraph title) {
     }
@@ -163,10 +164,10 @@ public class PdfPageEventHelper implements PdfPageEvent {
  * <CODE>position</CODE> will hold the height at which the
  * section will be written to.
  *
- * @param writer the <CODE>PdfWriter</CODE> for this document
- * @param document the document
- * @param position the position the section will be written to
- * @param depth the depth of the section
+ * @param writer            the <CODE>PdfWriter</CODE> for this document
+ * @param document          the document
+ * @param paragraphPosition the position the chapter will be written to
+ * @param title             the title of the Chapter
  */
     public void onSection(PdfWriter writer,Document document,float paragraphPosition,int depth,Paragraph title) {
     }

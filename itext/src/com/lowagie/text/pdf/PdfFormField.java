@@ -47,7 +47,6 @@
 
 package com.lowagie.text.pdf;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.ExceptionConverter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.awt.Color;

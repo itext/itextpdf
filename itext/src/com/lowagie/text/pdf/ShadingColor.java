@@ -46,7 +46,7 @@
  */
 
 package com.lowagie.text.pdf;
-import java.awt.Color;
+
 /** Implements a shading pattern as a <code>Color</code>.
  *
  * @author Paulo Soares (psoares@consiste.pt)

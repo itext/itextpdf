@@ -64,63 +64,56 @@ import com.lowagie.text.pdf.ByteBuffer;
  */
 
 class PRNumber extends PRObject{
-    
-    // static membervariables (possible types of a number object)
-    
-    
-    // constructors
-    
-    /**
-     * Constructs a <CODE>PdfNumber</CODE>-object.
-     *
-     * @param		type			one of the following types: <CODE>INTEGER</CODE> or <CODE>REAL</CODE>
-     * @param		content			value of the new <CODE>PdfNumber</CODE>-object
-     *
-     */
-    
+
+   // constructors
+   /**
+    * Constructs a <CODE>PdfNumber</CODE>-object.
+    *
+    * @param		content			value of the new <CODE>PdfNumber</CODE>-object
+    */
+
     PRNumber(String content) {
         super(NUMBER, content);
     }
-    
+
     /**
      * Constructs a new INTEGER <CODE>PdfNumber</CODE>-object.
      *
      * @param		value				value of the new <CODE>PdfNumber</CODE>-object
      */
-    
+
     PRNumber(int value) {
         super(NUMBER, String.valueOf(value));
     }
-    
+
     /**
      * Constructs a new REAL <CODE>PdfNumber</CODE>-object.
      *
      * @param		value				value of the new <CODE>PdfNumber</CODE>-object
      */
-    
+
     PRNumber(float value) {
         super(NUMBER, ByteBuffer.formatDouble(value));
     }
-    
+
     // methods returning the value of this object
-    
-    
+
     /**
      * Returns the primitive <CODE>int</CODE> value of this object.
      *
      * @return		a value
      */
-    
+
     final int intValue() {
         return (int)floatValue();
     }
-    
+
     /**
      * Returns the primitive <CODE>double</CODE> value of this object.
      *
      * @return		a value
      */
-    
+
     final float floatValue() {
         return Float.valueOf(toString()).floatValue();
     }

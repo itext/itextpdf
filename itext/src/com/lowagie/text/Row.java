@@ -50,9 +50,7 @@
 
 package com.lowagie.text;
 
-import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
@@ -237,10 +235,8 @@ public class Row implements Element, MarkupAttributes {
 /**
  * Puts <CODE>Cell</CODE> to the <CODE>Row</CODE> at the position given, doesn't reserve colspan.
  *
- * @param   cell    the cell to add.
+ * @param   aElement    the cell to add.
  * @param   column  the position where to add the cell.
- * @return  the column position the <CODE>Cell</CODE> was added,
- *                  or <CODE>-1</CODE> if the <CODE>Cell</CODE> couldn't be added.
  */
     
     void setElement(Object aElement, int column) {
@@ -340,7 +336,7 @@ public class Row implements Element, MarkupAttributes {
 /**
  * Returns the type-id of an Object.
  *
- * @param       object the object of which you'd like to know the type-id, -1 if invalid
+ * @param       element the object of which you'd like to know the type-id, -1 if invalid
  */
     
     int getObjectID(Object element) {

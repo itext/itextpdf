@@ -556,7 +556,6 @@ public class ColumnText {
                     break;
                 }
                 float x1 = Math.max(xx[0], xx[2]);
-                float x2 = Math.min(xx[1], xx[3]);
                 if (!simulate && !dirty) {
                     text.beginText();
                     dirty = true;

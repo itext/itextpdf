@@ -1,5 +1,4 @@
 package com.lowagie.text.pdf;
-import java.awt.Color;
 
 /** Represents a pattern. Can be used in high-level constructs (Paragraph, Cell, etc.).
  */

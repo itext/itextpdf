@@ -50,7 +50,6 @@
 
 package com.lowagie.text;
 
-import java.util.Iterator;
 import java.util.Properties;
 
 import com.lowagie.text.markup.MarkupTags;
@@ -251,7 +250,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
 /**
  * Adds an <CODE>Object</CODE> to the <CODE>Paragraph</CODE>.
  *
- * @param	object		the object to add.
+ * @param	o   object		the object to add.
  */
     
     public boolean add(Object o) {

@@ -66,7 +66,6 @@ public class LZWDecoder {
      *
      * @param data            The compressed data.
      * @param uncompData      Array to return the uncompressed data in.
-     * @param h               The number of rows the compressed data contains.
      */
     public void decode(byte data[], OutputStream uncompData) {
         

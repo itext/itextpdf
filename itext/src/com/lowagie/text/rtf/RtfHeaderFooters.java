@@ -51,8 +51,6 @@
 
 package com.lowagie.text.rtf;
 
-import java.awt.Color;
-
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Phrase;
 
@@ -67,7 +65,7 @@ import com.lowagie.text.Phrase;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2002/02/12 14:30:35 $
+ * @version $Revision$Date: 2002/04/30 11:38:58 $
  */
 public class RtfHeaderFooters extends HeaderFooter {
 

@@ -77,8 +77,8 @@ public class StringCompare implements Comparator {
 /**
  * Compares 2 strings.
  *
- * @param   string1  a first string
- * @param   string2  a second string
+ * @param   s1  a first string
+ * @param   s2  a second string
  * @return  a value
  */
     

@@ -124,8 +124,6 @@ public interface DocListener extends ElementListener {
     
 /**
  * Resets the header of this document.
- *
- * @param	header		the new header
  */
     
     public void resetHeader();

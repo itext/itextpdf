@@ -62,8 +62,7 @@ interface PdfPageElement {
 /**
  * Set the value for the <B>Parent</B> key in the Page or Pages Dictionary.
  *
- * @param	parent			an indirect reference to a <CODE>PdfPages</CODE>-object
- * @return	<CODE>void</CODE>
+ * @param	reference			an indirect reference to a <CODE>PdfPages</CODE>-object
  */
     
     public void setParent(PdfIndirectReference reference);

@@ -152,7 +152,7 @@ public class XmlPeer {
 /**
  * Returns the iText attribute name.
  *
- * @param   alias   the custom attribute name
+ * @param   name   the custom attribute name
  */
     
     public String getName(String name) {

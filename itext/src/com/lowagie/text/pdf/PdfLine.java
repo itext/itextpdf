@@ -54,7 +54,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.lowagie.text.Element;
-import com.lowagie.text.Chunk;
 import com.lowagie.text.ListItem;
 
 /**
