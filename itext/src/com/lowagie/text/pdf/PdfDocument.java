@@ -315,6 +315,9 @@ class PdfDocument extends Document implements DocListener {
 /** Signals that OnOpenDocument should be called. */
     private boolean firstPageEvent = true;
     
+/** Signals that onParagraph is valid. */
+    private boolean isParagraph = true;
+    
     // Horizontal line
     
 /** The line that is currently being written. */
@@ -406,11 +409,10 @@ class PdfDocument extends Document implements DocListener {
  */
     private TreeMap localDestinations = new TreeMap(new StringCompare());
     
-/**
- * Stores the destinations for the current page.
- */
+/** Stores the destinations for the current page. */
     private HashMap localPageDestinations = new HashMap();
     
+/** these are the viewerpreferences of the document */
     private int viewerPreferences = 0;
     
     // constructors
@@ -872,7 +874,7 @@ class PdfDocument extends Document implements DocListener {
                         newPage();
                     }
                     PdfPageEvent pageEvent = writer.getPageEvent();
-                    if (pageEvent != null)
+                    if (pageEvent != null && isParagraph)
                         pageEvent.onParagraph(writer, this, indentTop() - currentHeight);
                     
                     // we process the paragraph
@@ -884,7 +886,7 @@ class PdfDocument extends Document implements DocListener {
                     // some parameters are set back to normal again
                     carriageReturn();
                     
-                    if (pageEvent != null)
+                    if (pageEvent != null && isParagraph)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
                     
                     alignment = Element.ALIGN_LEFT;
@@ -921,7 +923,9 @@ class PdfDocument extends Document implements DocListener {
                     
                     // the title of the section (if any has to be printed)
                     if (section.title() != null) {
+                        isParagraph = false;
                         add(section.title());
+                        isParagraph = true;
                     }
                     indentLeft += section.indentation();
                     // we process the section
