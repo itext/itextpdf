@@ -139,21 +139,11 @@ public class Cell extends Rectangle implements TextElementArray {
  * The <CODE>String</CODE> will be converted into a <CODE>Paragraph</CODE>.
  *
  * @param	content		a <CODE>String</CODE>
+ * @throws	BadElementException this can never happen with this creator
  */
     
-    public Cell(String content) {
-        // creates a Rectangle with BY DEFAULT a border of 0.5
-        super(0, 0, 0, 0);
-        setBorder(BOX);
-        setBorderWidth(0.5f);
-        
-        // initializes the arraylist and adds an element
-        arrayList = new ArrayList();
-        try {
-            addElement(new Paragraph(content));
-        }
-        catch(BadElementException bee) {
-        }
+    public Cell(String content) throws BadElementException {
+        this(new Paragraph(content));
     }
     
 /**
@@ -331,6 +321,8 @@ public class Cell extends Rectangle implements TextElementArray {
             case Element.CELL:
             case Element.TABLE:
             case Element.JPEG:
+            case Element.IMGRAW:
+            case Element.IMGTEMPLATE:
             case Element.GIF:
             case Element.PNG:
                 throw new BadElementException("You can't add listitems, rows, tables, cells, jpgs, gifs or pngs to a cell.");
@@ -428,8 +420,8 @@ public class Cell extends Rectangle implements TextElementArray {
  */
     
     public final void setVerticalAlignment(String alignment) {
-        if (ElementTags.ALIGN_MIDDLE.equals(alignment)) {
-            this.verticalAlignment = Element.ALIGN_MIDDLE;
+        if (ElementTags.ALIGN_TOP.equals(alignment)) {
+            this.verticalAlignment = Element.ALIGN_TOP;
             return;
         }
         if (ElementTags.ALIGN_BOTTOM.equals(alignment)) {
@@ -440,7 +432,7 @@ public class Cell extends Rectangle implements TextElementArray {
             this.verticalAlignment = Element.ALIGN_BASELINE;
             return;
         }
-        this.verticalAlignment = Element.ALIGN_TOP;
+        this.verticalAlignment = Element.ALIGN_MIDDLE;
     }
     
 /**

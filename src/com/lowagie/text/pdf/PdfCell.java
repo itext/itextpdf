@@ -74,10 +74,10 @@ public class PdfCell extends Rectangle {
     private int rowspan;
     
 /** This is the cellspacing of the cell. */
-    private float cellspacing;
+    private float cellpadding;
     
 /** This is the cellpadding of the cell. */
-    private float cellpadding;
+    private float cellspacing;
     
 /** Indicates if this cell belongs to the header of a <CODE>PdfTable</CODE> */
     private boolean header = false;
@@ -134,6 +134,12 @@ public class PdfCell extends Rectangle {
             case Element.ALIGN_MIDDLE:
                 height *= (rowSpan / 1.5);
                 break;
+                default:   //Alignment will be top
+                    if(rowSpan < 2)
+                    {
+                        height -= (height / 2.5);
+                    }
+                    break;
         }
         
         PdfLine line = new PdfLine(left, right, alignment, height);
@@ -202,8 +208,12 @@ public class PdfCell extends Rectangle {
         if (line.size() > 0) {
             lines.add(line);
         }
+/*		if (lines.size() > 0) {
+                        ((PdfLine)lines.get(lines.size() - 1)).resetAlignment();
+                }
+ */
         // we set some additional parameters
-        setBottom(top - leading * lines.size() - 2 * cellpadding);
+        setBottom(top - leading * lines.size() - 2 * cellpadding - 6);
         this.cellpadding = cellpadding;
         this.cellspacing = cellspacing;
         
@@ -280,25 +290,23 @@ public class PdfCell extends Rectangle {
         
         // we loop over the lines
         int size = lines.size();
-        boolean aboveBottom = true;
-        for (int i = 0; i < size && aboveBottom; i++) {
+        for (int i = 0; i < size; i++) {
             line = (PdfLine) lines.get(i);
             lineHeight = line.height();
             currentPosition -= lineHeight;
             // if the currentPosition is higher than the bottom, we add the line to the result
-            if (currentPosition > (bottom + cellpadding)) { // bugfix by Tom Ring and Veerendra Namineni
+            if (currentPosition > (bottom + 2.0f * cellpadding + 0.4f * leading)) { // bugfix by Tom Ring and Veerendra Namineni
                 result.add(line);
                 // as soon as a line is part of the result, we blank it out, except for table headers
                 if (!header) {
                     lines.set(i, new PdfLine(left(-cellpadding - cellspacing), right(-cellpadding - cellspacing), Element.ALIGN_LEFT, leading));
                 }
             }
-            else {
-                aboveBottom = false;
-            }
         }
         // if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
-        if (!header && aboveBottom) {
+        
+        // bugfix solving an endless loop problem by Leslie Baski
+        if (!header && bottom <= bottom()) {
             lines = new ArrayList();
         }
         return result;
@@ -356,13 +364,27 @@ public class PdfCell extends Rectangle {
     }
     
 /**
- * Returns the height needed to draw the remaining text.
- *
- * @return  a height
+ * Returns the height that can be used to draw text.
  */
     
-    public float remainingHeight() {
-        return remainingLines() * leading + 2 * cellpadding + cellspacing + leading / 2.5f;
+    public float availableHeight() {
+        return height() - 2 * cellpadding;
+    }
+    
+/**
+ * Returns the height that needs to be added if the remaining lines don't fit in the remaining height.
+ */
+    
+    public float compensatingHeight(float lostTableBottom) {
+        int remainingLines = remainingLines();
+        if (remainingLines == 0) return 0f;
+        int usedLines = lines.size() - remainingLines;
+        float neededHeight = remainingLines * leading;
+        float remainingHeight = availableHeight() - (usedLines * leading) - (lostTableBottom % leading);
+        if (neededHeight > remainingHeight) {
+            return 6 + neededHeight - remainingHeight;
+        }
+        return 0f;
     }
     
     // methods to retrieve membervariables

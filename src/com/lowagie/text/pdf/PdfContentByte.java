@@ -210,7 +210,7 @@ public class PdfContentByte {
  */
     
     public final void setLineCap(int style) {
-        if (style == 1 || style == 2 || style == 3) {
+        if (style >= 0 && style <= 2) {
             content.append(style).append(" J\n");
         }
     }
@@ -274,7 +274,7 @@ public class PdfContentByte {
  */
     
     public final void setLineJoin(int style) {
-        if (style == 1 || style == 2 || style == 3) {
+        if (style >= 0 && style <= 2) {
             content.append(style).append(" j\n");
         }
     }
@@ -1685,5 +1685,17 @@ public class PdfContentByte {
  */
     public void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
         pdf.setAction(action, llx, lly, urx, ury);
+    }
+    
+    public void setLiteral(String s) {
+        content.append(s);
+    }
+
+    public void setLiteral(char c) {
+        content.append(c);
+    }
+
+    public void setLiteral(float n) {
+        content.append(n);
     }
 }

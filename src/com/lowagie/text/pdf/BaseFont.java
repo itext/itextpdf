@@ -61,6 +61,10 @@ public abstract class BaseFont {
      * negative for fonts that slope to the right, as almost all italic fonts do.
      */    
     public final static int ITALICANGLE = 4;
+    public final static int BBOXLLX = 5;
+    public final static int BBOXLLY = 6;
+    public final static int BBOXURX = 7;
+    public final static int BBOXURY = 8;
 /** if the font has to be embedded */
     public final static boolean EMBEDDED = true;
     
