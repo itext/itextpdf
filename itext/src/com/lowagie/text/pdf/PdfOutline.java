@@ -326,7 +326,8 @@ public class PdfOutline extends PdfDictionary {
         writer = parent.writer;
         put(PdfName.TITLE, new PdfString(title, PdfObject.TEXT_UNICODE));
         parent.addKid(this);
-        setDestinationPage(writer.getCurrentPage());
+        if (destination != null && !destination.hasPage()) // bigfix Finn Bock
+            setDestinationPage(writer.getCurrentPage());
     }
     
     /**

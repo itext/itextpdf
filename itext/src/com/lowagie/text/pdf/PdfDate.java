@@ -121,13 +121,13 @@ class PdfDate extends PdfString {
  * @return		the resulting <CODE>String</CODE>
  */
     
-    private StringBuffer setLength(int i, int length) {
+    private String setLength(int i, int length) { // 1.3-1.4 problem fixed by Finn Bock
         StringBuffer tmp = new StringBuffer();
         tmp.append(i);
         while (tmp.length() < length) {
             tmp.insert(0, "0");
         }
         tmp.setLength(length);
-        return tmp;
+        return tmp.toString();
     }
 }
