@@ -1276,14 +1276,14 @@ class PdfDocument extends Document implements DocListener {
                     }
 
                     // Begin added: Bonf (Marc Schneider) 2003-07-29
-                    carriageReturn();
+                    //carriageReturn();
                     // End added: Bonf (Marc Schneider) 2003-07-29
 
                     indentLeft += paragraph.indentationLeft();
                     indentRight += paragraph.indentationRight();
 
                     // Begin removed: Bonf (Marc Schneider) 2003-07-29
-                    //       carriageReturn();
+                           carriageReturn();
                     // End removed: Bonf (Marc Schneider) 2003-07-29
 
 
