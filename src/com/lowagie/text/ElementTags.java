@@ -406,6 +406,15 @@ public class ElementTags {
 /** the possible value of an alignment attribute */
     public static final String UNKNOWN = "unknown";
     
+/** the possible value of an alignment attribute */
+    public static final String FONT = "font";
+    
+/** the possible value of an alignment attribute */
+    public static final String SIZE = "size";
+    
+/** the possible value of an alignment attribute */
+    public static final String STYLE = "fontstyle";
+    
 /** the possible value of a tag */
     public static final String HORIZONTALRULE = "horizontalrule";
     

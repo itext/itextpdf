@@ -67,7 +67,7 @@ import com.lowagie.text.markup.MarkupParser;
  */
 
 public class FontFactory extends java.lang.Object {
-
+    
 /** This is a possible value of a base 14 type 1 font */
     public static final String COURIER = BaseFont.COURIER;
     
@@ -175,7 +175,7 @@ public class FontFactory extends java.lang.Object {
             // the font is registered as a true type font, but the path was wrong
             return new Font(Font.UNDEFINED, size, style, color);
         }
-        catch(NullPointerException ioe) {
+        catch(NullPointerException npe) {
             // null was entered as fontname and/or encoding
             return new Font(Font.UNDEFINED, size, style, color);
         }
@@ -189,29 +189,47 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(Properties attributes) {
+        
+        String fontname = null;
+        String encoding = defaultEncoding;
+        boolean embedded = defaultEmbedding;
+        float size = Font.UNDEFINED;
+        int style = Font.NORMAL;
+        Color color = null;
         String value = (String) attributes.remove(MarkupTags.STYLE);
-        if (value != null) {
-            attributes.putAll(MarkupParser.parseAttributes(value));
+        if (value != null && value.length() > 0) {
+            Properties styleAttributes = MarkupParser.parseAttributes(value);
+            fontname = (String)styleAttributes.remove(MarkupTags.CSS_FONTFAMILY);
+            if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
+                if (value.endsWith("px")) value = value.substring(0, value.length() - 2);
+                size = Float.valueOf(value + "f").floatValue();
+            }
+            if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
+                style |= Font.getStyleValue(value);
+            }
+            if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
+                style |= Font.getStyleValue(value);
+            }
+            if ((value = (String)styleAttributes.remove(MarkupTags.CSS_COLOR)) != null) {
+                color = MarkupParser.decodeColor(value);
+            }
+            attributes.putAll(styleAttributes);
         }
-        String fontname = (String)attributes.remove(MarkupTags.CSS_FONTFAMILY);
-        String encoding = (String)attributes.remove(ElementTags.ENCODING);
-        boolean embedded = true;
+        if ((value = (String)attributes.remove(ElementTags.ENCODING)) != null) {
+            encoding = value;
+        }
         if ("false".equals((String) attributes.remove(ElementTags.EMBEDDED))) {
             embedded = false;
         }
-        float size = Font.UNDEFINED;
-        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
-            if (value.endsWith("px")) value = value.substring(0, value.length() - 2);
+        if ((value = (String)attributes.remove(ElementTags.FONT)) != null) {
+            fontname = value;
+        }
+        if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
             size = Float.valueOf(value + "f").floatValue();
         }
-        int style = Font.NORMAL;
-        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
-            style = Font.getStyleValue(value);
+        if ((value = (String)attributes.remove(ElementTags.STYLE)) != null) {
+            style |= Font.getStyleValue(value);
         }
-        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
-            style = Font.getStyleValue(value);
-        }
-        Color color = null;
         String r = (String)attributes.remove(ElementTags.RED);
         String g = (String)attributes.remove(ElementTags.GREEN);
         String b = (String)attributes.remove(ElementTags.BLUE);
@@ -227,8 +245,7 @@ public class FontFactory extends java.lang.Object {
         else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
             color = MarkupParser.decodeColor(value);
         }
-        if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
-        if (encoding == null) encoding = defaultEncoding;
+        if (fontname == null) return getFont(null, encoding, embedded, size, style, color);
         return getFont(fontname, encoding, embedded, size, style, color);
     }
     
@@ -396,7 +413,7 @@ public class FontFactory extends java.lang.Object {
             else if (path.toLowerCase().endsWith(".ttc")) {
                 String[] names = BaseFont.enumerateTTCNames(path);
                 for (int i = 0; i < names.length; i++) {
-                    trueTypeFonts.setProperty(names[i], path + "," + (i + 1));                
+                    trueTypeFonts.setProperty(names[i], path + "," + (i + 1));
                 }
                 if (alias != null) {
                     System.err.println("class FontFactory: You can't define an alias for a true type collection.");

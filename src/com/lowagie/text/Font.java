@@ -236,49 +236,6 @@ public class Font implements Comparable {
         this(UNDEFINED, UNDEFINED, UNDEFINED, null);
     }
     
-/**
- * Constructs a Font.
- */
-    
-    public Font(Properties attributes) {
-        this(UNDEFINED, UNDEFINED, UNDEFINED, null);
-        String value = (String) attributes.remove(MarkupTags.STYLE);
-        if (value != null) {
-            attributes.putAll(MarkupParser.parseAttributes(value));
-        }
-        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTFAMILY)) != null) {
-            setFamily(value);
-        }
-        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
-            if (value.endsWith("px")) value = value.substring(0, value.length() - 2);
-            setSize(Float.valueOf(value + "f").floatValue());
-        }
-        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
-            setStyle(value);
-        }
-        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
-            setStyle(value);
-        }
-        if ((value = (String)attributes.remove(MarkupTags.CSS_TEXTDECORATION)) != null) {
-            setStyle(value);
-        }
-        String r = (String)attributes.remove(ElementTags.RED);
-        String g = (String)attributes.remove(ElementTags.GREEN);
-        String b = (String)attributes.remove(ElementTags.BLUE);
-        if (r != null || g != null || b != null) {
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            if (r != null) red = Integer.parseInt(r);
-            if (g != null) green = Integer.parseInt(g);
-            if (b != null) blue = Integer.parseInt(b);
-            setColor(new Color(red, green, blue));
-        }
-        else if ((value = (String)attributes.remove(MarkupTags.CSS_COLOR)) != null) {
-            setColor(MarkupParser.decodeColor(value));
-        }
-    }
-    
     // implementation of the Comparable interface
     
 /**

@@ -51,6 +51,7 @@
 package com.lowagie.text.pdf;
 import java.awt.Color;
 import com.lowagie.text.Image;
+import com.lowagie.text.Annotation;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
 import java.io.UnsupportedEncodingException;
@@ -172,6 +173,19 @@ public class PdfContentByte {
         if (other.writer != null && writer != other.writer)
             throw new RuntimeException("Inconsistent writers. Are you mixing two documents?");
         content.append(other.content);
+    }
+    
+    /**
+     * Adds the content of another <CODE>PdfContent</CODE>-object to this object.
+     *
+     * @param		other		another <CODE>PdfByteContent</CODE>-object
+     */
+    
+    public final void add(Annotation a) throws DocumentException {
+        if (writer == null)
+            throw new DocumentException("You can't add annotations to a PdfContentByte-object that is not owned by a writer");
+        a.setDimensions(a.llx(getXTLM()), a.lly(getYTLM() - 10f), a.urx(getXTLM() + 10f), a.ury(getYTLM()));
+        writer.addAnnotation(a);
     }
     
     /**

@@ -64,6 +64,7 @@ import com.lowagie.text.Table;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.Annotation;
 import com.lowagie.text.Image;
 import java.awt.Color;
 import com.lowagie.text.ExceptionConverter;
@@ -675,6 +676,16 @@ public class PdfWriter extends DocWriter {
             throw new ExceptionConverter(ioe);
         }
         return object.getIndirectReference();
+    }
+    
+    /**
+     * Adds an <CODE>Annotation</CODE> to the PdfDocument that is linked to this writer.
+     *
+     * @param   an annotation
+     */
+    
+    public void addAnnotation(Annotation a) throws DocumentException {
+        pdf.add(a);
     }
     
     // methods to open and close the writer
