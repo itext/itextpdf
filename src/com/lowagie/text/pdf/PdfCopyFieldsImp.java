@@ -159,7 +159,7 @@ class PdfCopyFieldsImp extends PdfWriter {
             }
             case PdfObject.ARRAY: {
                 ArrayList list = ((PdfArray)obj).getArrayList();
-                PdfArray arr = new PdfArray();
+                //PdfArray arr = new PdfArray();
                 for (Iterator it = list.iterator(); it.hasNext();) {
                     PdfObject ob = (PdfObject)it.next();
                     if (ob != null && ob.isIndirect()) {
@@ -277,6 +277,19 @@ class PdfCopyFieldsImp extends PdfWriter {
         form.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
         tabOrder = new HashMap();
         form.put(PdfName.FIELDS, branchForm(fieldTree, null));
+//        PdfArray co = new PdfArray();
+//        for (int k = 0; k < readers.size(); ++k) {
+//            PdfReader reader = (PdfReader)readers.get(k);
+//            PdfDictionary dic = reader.getCatalog();
+//            dic = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.ACROFORM));
+//            if (dic == null)
+//                continue;
+//            co.add((PdfArray)PdfReader.getPdfObject(dic.get(PdfName.CO)));
+//        }
+//        if (co.size() > 0) {
+//            form.put(PdfName.CO, co);
+//            propagate(co, null, false);
+//        }
     }
     
     public void close() {

@@ -121,6 +121,11 @@ public abstract class PdfObject {
 /** the type of this <CODE>PdfObject</CODE> */
     protected int type;
     
+    /**
+     * Holds value of property indRef.
+     */
+    protected PRIndirectReference indRef;
+    
     // constructors
     
 /**
@@ -335,4 +340,21 @@ public abstract class PdfObject {
     public boolean isIndirect() {
         return (this.type == INDIRECT);
     }
+    
+    /**
+     * Getter for property indRef.
+     * @return Value of property indRef.
+     */
+    public PRIndirectReference getIndRef() {
+        return this.indRef;
+    }
+    
+    /**
+     * Setter for property indRef.
+     * @param indRef New value of property indRef.
+     */
+    public void setIndRef(PRIndirectReference indRef) {
+        this.indRef = indRef;
+    }
+    
 }

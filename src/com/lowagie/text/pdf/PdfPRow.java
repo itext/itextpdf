@@ -117,7 +117,6 @@ public class PdfPRow {
             PdfPCell cell = cells[k];
             if (cell == null)
                 continue;
-            PdfPTable table = cell.getTable();
             Image img = cell.getImage();
             if (img != null) {
                 img.scalePercent(100);
@@ -408,10 +407,12 @@ public class PdfPRow {
             else {
                 float rightLimit = cell.isNoWrap() ? 20000 : cell.right() - cell.getEffectivePaddingRight();
                 ColumnText ct = ColumnText.duplicate(cell.getColumn());
-                float y = cell.top() - cell.getEffectivePaddingTop();
+                float y1 = cell.top() - newHeight + cell.getEffectivePaddingBottom();
+                float y2 = cell.top() - cell.getEffectivePaddingTop();
+                float y = Math.max(y1, y2);
                 int status;
                 ct.setSimpleColumn(cell.left() + cell.getEffectivePaddingLeft(),
-                    cell.top() - newHeight + cell.getEffectivePaddingBottom(), rightLimit, y);
+                    y1, rightLimit, y2);
                 try {
                     status = ct.go(true);
                 }

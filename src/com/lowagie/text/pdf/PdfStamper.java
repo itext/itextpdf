@@ -87,7 +87,7 @@ public class PdfStamper {
      * @throws IOException on error
      */
     public PdfStamper(PdfReader reader, OutputStream os) throws DocumentException, IOException {
-        stamper = new PdfStamperImp(reader, os, '\0');
+        stamper = new PdfStamperImp(reader, os, '\0', false);
     }
 
     /**
@@ -101,7 +101,23 @@ public class PdfStamper {
      * @throws IOException on error
      */
     public PdfStamper(PdfReader reader, OutputStream os, char pdfVersion) throws DocumentException, IOException {
-        stamper = new PdfStamperImp(reader, os, pdfVersion);
+        stamper = new PdfStamperImp(reader, os, pdfVersion, false);
+    }
+
+    /**
+     * Starts the process of adding extra content to an existing PDF
+     * document, possibly as a new revision.
+     * @param reader the original document. It cannot be reused
+     * @param os the output stream
+     * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
+     * document
+     * @param append if <CODE>true</CODE> appends the document changes as a new revision. This is
+     * only useful for multiple signatures as nothing is gained in speed or memory
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */
+    public PdfStamper(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
+        stamper = new PdfStamperImp(reader, os, pdfVersion, append);
     }
 
     /** Gets the optional <CODE>String</CODE> map to add or change values in
@@ -271,6 +287,8 @@ public class PdfStamper {
      * @throws DocumentException if anything was already written to the output
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
+        if (stamper.isAppend())
+            throw new DocumentException("Append mode does not support encryption.");
         if (stamper.isContentWritten())
             throw new DocumentException("Content was already written to the output.");
         stamper.setEncryption(userPassword, ownerPassword, permissions, strength128Bits);
@@ -397,6 +415,8 @@ public class PdfStamper {
      * streams. It can be set at any time but once set it can't be unset.
      */
     public void setFullCompression() {
+        if (stamper.isAppend())
+            return;
         stamper.setFullCompression();
     }
 
@@ -431,10 +451,11 @@ public class PdfStamper {
     }
 
     /**
-     * Applies a digital signature to a document. The returned PdfStamper
+     * Applies a digital signature to a document, possibly as a new revision, making
+     * possible multiple signatures. The returned PdfStamper
      * can be used normally as the signature is only applied when closing.
      * <p>
-     * A possible use is:
+     * A possible use for adding a signature without invalidating an existing one is:
      * <p>
      * <pre>
      * KeyStore ks = KeyStore.getInstance("pkcs12");
@@ -444,7 +465,8 @@ public class PdfStamper {
      * Certificate[] chain = ks.getCertificateChain(alias);
      * PdfReader reader = new PdfReader("original.pdf");
      * FileOutputStream fout = new FileOutputStream("signed.pdf");
-     * PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', new File("/temp"));
+     * PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', new
+     * File("/temp"), true);
      * PdfSignatureAppearance sap = stp.getSignatureAppearance();
      * sap.setCrypto(key, chain, null, PdfSignatureAppearance.WINCER_SIGNED);
      * sap.setReason("I'm the author");
@@ -461,15 +483,17 @@ public class PdfStamper {
      *     If it's a file it will be used directly. The file will be deleted on exit unless <CODE>os</CODE> is null.
      *     In that case the document can be retrieved directly from the temporary file. If it's <CODE>null</CODE>
      *     no temporary file will be created and memory will be used
+     * @param append if <CODE>true</CODE> the signature and all the other content will be added as a
+     * new revision thus not invalidating existing signatures
      * @return a <CODE>PdfStamper</CODE>
      * @throws DocumentException on error
      * @throws IOException on error
      */
-    public static PdfStamper createSignature(PdfReader reader, OutputStream os, char pdfVersion, File tempFile) throws DocumentException, IOException {
+    public static PdfStamper createSignature(PdfReader reader, OutputStream os, char pdfVersion, File tempFile, boolean append) throws DocumentException, IOException {
         PdfStamper stp;
         if (tempFile == null) {
             ByteBuffer bout = new ByteBuffer();
-            stp = new PdfStamper(reader, bout, pdfVersion);
+            stp = new PdfStamper(reader, bout, pdfVersion, append);
             stp.sigApp = new PdfSignatureAppearance(stp.stamper);
             stp.sigApp.setSigout(bout);
         }
@@ -477,7 +501,7 @@ public class PdfStamper {
             if (tempFile.isDirectory())
                 tempFile = File.createTempFile("pdf", null, tempFile);
             FileOutputStream fout = new FileOutputStream(tempFile);
-            stp = new PdfStamper(reader, fout, pdfVersion);
+            stp = new PdfStamper(reader, fout, pdfVersion, append);
             stp.sigApp = new PdfSignatureAppearance(stp.stamper);
             stp.sigApp.setTempFile(tempFile);
         }
@@ -520,8 +544,47 @@ public class PdfStamper {
      * @throws IOException on error
      * @return a <CODE>PdfStamper</CODE>
      */
-    public static PdfStamper createSignature(PdfReader reader, OutputStream os, char pdfVersion) throws DocumentException, IOException 
+    public static PdfStamper createSignature(PdfReader reader, OutputStream os, char pdfVersion) throws DocumentException, IOException {
+        return createSignature(reader, os, pdfVersion, null, false);
+    }
+    
+    /**
+     * Applies a digital signature to a document. The returned PdfStamper
+     * can be used normally as the signature is only applied when closing.
+     * <p>
+     * A possible use is:
+     * <p>
+     * <pre>
+     * KeyStore ks = KeyStore.getInstance("pkcs12");
+     * ks.load(new FileInputStream("my_private_key.pfx"), "my_password".toCharArray());
+     * String alias = (String)ks.aliases().nextElement();
+     * PrivateKey key = (PrivateKey)ks.getKey(alias, "my_password".toCharArray());
+     * Certificate[] chain = ks.getCertificateChain(alias);
+     * PdfReader reader = new PdfReader("original.pdf");
+     * FileOutputStream fout = new FileOutputStream("signed.pdf");
+     * PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', new File("/temp"));
+     * PdfSignatureAppearance sap = stp.getSignatureAppearance();
+     * sap.setCrypto(key, chain, null, PdfSignatureAppearance.WINCER_SIGNED);
+     * sap.setReason("I'm the author");
+     * sap.setLocation("Lisbon");
+     * // comment next line to have an invisible signature
+     * sap.setVisibleSignature(new Rectangle(100, 100, 200, 200), 1, null);
+     * stp.close();
+     * </pre>
+     * @param reader the original document
+     * @param os the output stream or <CODE>null</CODE> to keep the document in the temporary file
+     * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
+     * document
+     * @param tempFile location of the temporary file. If it's a directory a temporary file will be created there.
+     *     If it's a file it will be used directly. The file will be deleted on exit unless <CODE>os</CODE> is null.
+     *     In that case the document can be retrieved directly from the temporary file. If it's <CODE>null</CODE>
+     *     no temporary file will be created and memory will be used
+     * @return a <CODE>PdfStamper</CODE>
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */
+    public static PdfStamper createSignature(PdfReader reader, OutputStream os, char pdfVersion, File tempFile) throws DocumentException, IOException 
     {
-        return createSignature(reader, os, pdfVersion, null);
+        return createSignature(reader, os, pdfVersion, tempFile, false);
     }
 }

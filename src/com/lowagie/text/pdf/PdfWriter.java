@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
@@ -100,7 +101,7 @@ public class PdfWriter extends DocWriter {
          * <CODE>PdfCrossReference</CODE> is an entry in the PDF Cross-Reference table.
          */
         
-        static class PdfCrossReference {
+        static class PdfCrossReference implements Comparable {
             
             // membervariables
             private int type;
@@ -108,6 +109,7 @@ public class PdfWriter extends DocWriter {
             /**	Byte offset in the PDF file. */
             private int offset;
             
+            private int refnum;
             /**	generation of the object. */
             private int generation;
             
@@ -119,9 +121,10 @@ public class PdfWriter extends DocWriter {
              * @param	generation	generationnumber of the object
              */
             
-            PdfCrossReference(int offset, int generation) {
+            PdfCrossReference(int refnum, int offset, int generation) {
                 type = 0;
                 this.offset = offset;
+                this.refnum = refnum;
                 this.generation = generation;
             }
             
@@ -131,16 +134,22 @@ public class PdfWriter extends DocWriter {
              * @param	offset		byte offset of the object
              */
             
-            PdfCrossReference(int offset) {
+            PdfCrossReference(int refnum, int offset) {
                 type = 1;
                 this.offset = offset;
+                this.refnum = refnum;
                 this.generation = 0;
             }
             
-            PdfCrossReference(int type, int offset, int generation) {
+            PdfCrossReference(int type, int refnum, int offset, int generation) {
                 this.type = type;
                 this.offset = offset;
+                this.refnum = refnum;
                 this.generation = generation;
+            }
+            
+            int getRefnum() {
+                return refnum;
             }
             
             /**
@@ -174,13 +183,28 @@ public class PdfWriter extends DocWriter {
                 os.write((byte)((generation >>> 8) & 0xff));
                 os.write((byte)(generation & 0xff));
             }
+            
+            public int compareTo(Object o) {
+                PdfCrossReference other = (PdfCrossReference)o;
+                return (refnum < other.refnum ? -1 : (refnum==other.refnum ? 0 : 1));
+            }
+            
+            public boolean equals(Object obj) {
+                if (obj instanceof PdfCrossReference) {
+                    PdfCrossReference other = (PdfCrossReference)obj;
+                    return (refnum == other.refnum);
+                }
+                else
+                    return false;
+            }
+            
         }
         
         // membervariables
         
         /** array containing the cross-reference table of the normal objects. */
-        private ArrayList xrefs;
-        
+        private TreeSet xrefs;
+        private int refnum;
         /** the current byteposition in the body. */
         private int position;
         private PdfWriter writer;
@@ -191,10 +215,15 @@ public class PdfWriter extends DocWriter {
          */
         
         PdfBody(PdfWriter writer) {
-            xrefs = new ArrayList();
-            xrefs.add(new PdfCrossReference(0, 65535));
+            xrefs = new TreeSet();
+            xrefs.add(new PdfCrossReference(0, 0, 65535));
             position = writer.getOs().getCounter();
+            refnum = 1;
             this.writer = writer;
+        }
+        
+        void setRefnum(int refnum) {
+            this.refnum = refnum;
         }
         
         // methods
@@ -223,7 +252,7 @@ public class PdfWriter extends DocWriter {
             writer.crypto = enc;
             streamObjects.append(' ');
             index.append(nObj).append(' ').append(p).append(' ');
-            return new PdfWriter.PdfBody.PdfCrossReference(2, currentObjNum, idx);
+            return new PdfWriter.PdfBody.PdfCrossReference(2, nObj, currentObjNum, idx);
         }
         
         private void flushObjStm() throws IOException {
@@ -273,8 +302,9 @@ public class PdfWriter extends DocWriter {
         }
         
         int getIndirectReferenceNumber() {
-            xrefs.add(new PdfCrossReference(0, 65535));
-            return size() - 1;
+            int n = refnum++;
+            xrefs.add(new PdfCrossReference(n, 0, 65536));
+            return n;
         }
         
         /**
@@ -308,12 +338,19 @@ public class PdfWriter extends DocWriter {
             if (inObjStm && object.canBeInObjStm() && writer.isFullCompression()) {
                 PdfCrossReference pxref = addToObjStm(object, refNumber);
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
-                xrefs.set(refNumber, pxref);
+                if (!xrefs.add(pxref)) {
+                    xrefs.remove(pxref);
+                    xrefs.add(pxref);
+                }
                 return indirect;
             }
             else {
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
-                xrefs.set(refNumber, new PdfCrossReference(position));
+                PdfCrossReference pxref = new PdfCrossReference(refNumber, position);
+                if (!xrefs.add(pxref)) {
+                    xrefs.remove(pxref);
+                    xrefs.add(pxref);
+                }
                 indirect.writeTo(writer.getOs());
                 position = writer.getOs().getCounter();
                 return indirect;
@@ -363,7 +400,7 @@ public class PdfWriter extends DocWriter {
          */
         
         int size() {
-            return xrefs.size();
+            return Math.max(((PdfCrossReference)xrefs.last()).getRefnum() + 1, refnum);
         }
         
         /**
@@ -372,11 +409,28 @@ public class PdfWriter extends DocWriter {
          * @return	an array of <CODE>byte</CODE>s
          */
         
-        void writeCrossReferenceTable(OutputStream os, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID) throws IOException {
+        void writeCrossReferenceTable(OutputStream os, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID, int prevxref) throws IOException {
+            PdfCrossReference entry = (PdfCrossReference)xrefs.first();
+            int first = entry.getRefnum();
+            int len = 0;
+            ArrayList sections = new ArrayList();
+            for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
+                entry = (PdfCrossReference)i.next();
+                if (first + len == entry.getRefnum())
+                    ++len;
+                else {
+                    sections.add(new Integer(first));
+                    sections.add(new Integer(len));
+                    first = entry.getRefnum();
+                    len = 1;
+                }
+            }
+            sections.add(new Integer(first));
+            sections.add(new Integer(len));
             if (writer.isFullCompression()) {
                 flushObjStm();
                 int refNumber = getIndirectReferenceNumber();
-                xrefs.set(refNumber, new PdfCrossReference(position));
+                xrefs.add(new PdfCrossReference(refNumber, position));
                 int mid = 4;
                 int mask = 0xff000000;
                 for (; mid > 1; --mid) {
@@ -386,7 +440,6 @@ public class PdfWriter extends DocWriter {
                 }
                 ByteBuffer buf = new ByteBuffer();
                 
-                PdfCrossReference entry;
                 for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
                     entry = (PdfCrossReference) i.next();
                     entry.toPdf(mid, buf);
@@ -405,6 +458,12 @@ public class PdfWriter extends DocWriter {
                     xr.put(PdfName.ID, fileID);
                 xr.put(PdfName.W, new PdfArray(new int[]{1, mid, 2}));
                 xr.put(PdfName.TYPE, PdfName.XREF);
+                PdfArray idx = new PdfArray();
+                for (int k = 0; k < sections.size(); ++k)
+                    idx.add(new PdfNumber(((Integer)sections.get(k)).intValue()));
+                xr.put(PdfName.INDEX, idx);
+                if (prevxref > 0)
+                    xr.put(PdfName.PREV, new PdfNumber(prevxref));
                 PdfEncryption enc = writer.crypto;
                 writer.crypto = null;
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, xr, writer);
@@ -412,14 +471,19 @@ public class PdfWriter extends DocWriter {
                 writer.crypto = enc;
             }
             else {
-                os.write(getISOBytes("xref\n0 "));
-                os.write(getISOBytes(String.valueOf(size())));
-                os.write('\n');
-                // all the other objects
-                PdfCrossReference entry;
-                for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
-                    entry = (PdfCrossReference) i.next();
-                    entry.toPdf(os);
+                os.write(getISOBytes("xref\n"));
+                Iterator i = xrefs.iterator();
+                for (int k = 0; k < sections.size(); k += 2) {
+                    first = ((Integer)sections.get(k)).intValue();
+                    len = ((Integer)sections.get(k + 1)).intValue();
+                    os.write(getISOBytes(String.valueOf(first)));
+                    os.write(getISOBytes(" "));
+                    os.write(getISOBytes(String.valueOf(len)));
+                    os.write('\n');
+                    while (len-- > 0) {
+                        entry = (PdfCrossReference) i.next();
+                        entry.toPdf(os);
+                    }
                 }
             }
         }
@@ -449,7 +513,7 @@ public class PdfWriter extends DocWriter {
          * @param		info		an indirect reference to the info object of the PDF document
          */
         
-        PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID) {
+        PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID, int prevxref) {
             this.offset = offset;
             put(PdfName.SIZE, new PdfNumber(size));
             put(PdfName.ROOT, root);
@@ -460,6 +524,8 @@ public class PdfWriter extends DocWriter {
                 put(PdfName.ENCRYPT, encryption);
             if (fileID != null)
                 put(PdfName.ID, fileID);
+            if (prevxref > 0)
+                put(PdfName.PREV, new PdfNumber(prevxref));
         }
         
         /**
@@ -563,10 +629,13 @@ public class PdfWriter extends DocWriter {
     public static final char VERSION_1_3 = '3';
     public static final char VERSION_1_4 = '4';
     public static final char VERSION_1_5 = '5';
+    public static final char VERSION_1_6 = '6';
     
     private static final int VPOINT = 7;
     /** this is the header of a PDF document */
     protected byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e2\u00e3\u00cf\u00d3\n");
+
+    protected int prevxref = 0;
     
     protected PdfPages root = new PdfPages(this);
     
@@ -771,7 +840,7 @@ public class PdfWriter extends DocWriter {
         }
         PdfIndirectObject object;
         try {
-            object = body.add(contents);
+            object = addToBody(contents);
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -859,7 +928,7 @@ public class PdfWriter extends DocWriter {
             checkPDFXConformance(this, PDFXKEY_IMAGE, pdfImage);
             PdfIndirectObject object;
             try {
-                object = body.add(pdfImage);
+                object = addToBody(pdfImage);
             }
             catch(IOException ioe) {
                 throw new ExceptionConverter(ioe);
@@ -873,7 +942,7 @@ public class PdfWriter extends DocWriter {
     protected PdfIndirectReference add(PdfICCBased icc) throws PdfException {
         PdfIndirectObject object;
         try {
-            object = body.add(icc);
+            object = addToBody(icc);
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -940,7 +1009,7 @@ public class PdfWriter extends DocWriter {
             if (template != null && template.getIndirectReference() instanceof PRIndirectReference)
                 continue;
             if (template != null && template.getType() == PdfTemplate.TYPE_TEMPLATE) {
-                PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
+                PdfIndirectObject obj = addToBody(template.getFormXObject(), template.getIndirectReference());
             }
         }
         // add all the dependencies in the imported pages
@@ -952,12 +1021,12 @@ public class PdfWriter extends DocWriter {
         // add the color
         for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
             ColorDetails color = (ColorDetails)it.next();
-            PdfIndirectObject cobj = body.add(color.getSpotColor(this), color.getIndirectReference());
+            PdfIndirectObject cobj = addToBody(color.getSpotColor(this), color.getIndirectReference());
         }
         // add the pattern
         for (Iterator it = documentPatterns.keySet().iterator(); it.hasNext();) {
             PdfPatternPainter pat = (PdfPatternPainter)it.next();
-            PdfIndirectObject pobj = body.add(pat.getPattern(), pat.getIndirectReference());
+            PdfIndirectObject pobj = addToBody(pat.getPattern(), pat.getIndirectReference());
         }
         // add the shading patterns
         for (Iterator it = documentShadingPatterns.keySet().iterator(); it.hasNext();) {
@@ -1033,14 +1102,14 @@ public class PdfWriter extends DocWriter {
                 if (extraCatalog != null) {
                     catalog.mergeDifferent(extraCatalog);
                 }
-                PdfIndirectObject indirectCatalog = body.add(catalog, false);
+                PdfIndirectObject indirectCatalog = addToBody(catalog, false);
                 // add the info-object to the body
-                PdfIndirectObject infoObj = body.add(info, false);
+                PdfIndirectObject infoObj = addToBody(info, false);
                 PdfIndirectReference encryption = null;
                 PdfObject fileID = null;
                 body.flushObjStm();
                 if (crypto != null) {
-                    PdfIndirectObject encryptionObject = body.add(crypto.getEncryptionDictionary(), false);
+                    PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
                     encryption = encryptionObject.getIndirectReference();
                     fileID = crypto.getFileID();
                 }
@@ -1049,7 +1118,7 @@ public class PdfWriter extends DocWriter {
                 
                 // write the cross-reference table of the body
                 body.writeCrossReferenceTable(os, indirectCatalog.getIndirectReference(),
-                    infoObj.getIndirectReference(), encryption,  fileID);
+                    infoObj.getIndirectReference(), encryption,  fileID, prevxref);
 
                 // make the trailer
                 if (fullCompression) {
@@ -1063,7 +1132,7 @@ public class PdfWriter extends DocWriter {
                     indirectCatalog.getIndirectReference(),
                     infoObj.getIndirectReference(),
                     encryption,
-                    fileID);
+                    fileID, prevxref);
                     trailer.toPdf(this, os);
                 }
                 super.close();
@@ -1075,16 +1144,6 @@ public class PdfWriter extends DocWriter {
     }
     
     // methods
-    
-    /**
-     * Returns the number of the next object that can be added to the body.
-     *
-     * @return	the size of the body-object
-     */
-    
-    int size() {
-        return body.size();
-    }
     
     /**
      * Sometimes it is necessary to know where the just added <CODE>Table</CODE> ends.
@@ -1304,7 +1363,7 @@ public class PdfWriter extends DocWriter {
                         patternColorspaceRGB = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICERGB);
-                        PdfIndirectObject cobj = body.add(array, patternColorspaceRGB.getIndirectReference());
+                        PdfIndirectObject cobj = addToBody(array, patternColorspaceRGB.getIndirectReference());
                     }
                     return patternColorspaceRGB;
                 case ExtendedColor.TYPE_CMYK:
@@ -1312,7 +1371,7 @@ public class PdfWriter extends DocWriter {
                         patternColorspaceCMYK = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICECMYK);
-                        PdfIndirectObject cobj = body.add(array, patternColorspaceCMYK.getIndirectReference());
+                        PdfIndirectObject cobj = addToBody(array, patternColorspaceCMYK.getIndirectReference());
                     }
                     return patternColorspaceCMYK;
                 case ExtendedColor.TYPE_GRAY:
@@ -1320,7 +1379,7 @@ public class PdfWriter extends DocWriter {
                         patternColorspaceGRAY = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICEGRAY);
-                        PdfIndirectObject cobj = body.add(array, patternColorspaceGRAY.getIndirectReference());
+                        PdfIndirectObject cobj = addToBody(array, patternColorspaceGRAY.getIndirectReference());
                     }
                     return patternColorspaceGRAY;
                 case ExtendedColor.TYPE_SEPARATION: {
@@ -1330,7 +1389,7 @@ public class PdfWriter extends DocWriter {
                         patternDetails = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(details.getIndirectReference());
-                        PdfIndirectObject cobj = body.add(array, patternDetails.getIndirectReference());
+                        PdfIndirectObject cobj = addToBody(array, patternDetails.getIndirectReference());
                         documentSpotPatterns.put(details, patternDetails);
                     }
                     return patternDetails;
@@ -1472,7 +1531,7 @@ public class PdfWriter extends DocWriter {
                 throw new RuntimeException("The name '" + name + "' has no local destination.");
             if (obj[1] == null)
                 obj[1] = getPdfIndirectReference();
-            PdfIndirectObject iob = body.add(destination, (PdfIndirectReference)obj[1]);
+            PdfIndirectObject iob = addToBody(destination, (PdfIndirectReference)obj[1]);
         }
     }
     

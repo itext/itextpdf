@@ -282,7 +282,7 @@ public class PdfFormField extends PdfAnnotation {
         put(PdfName.Q, new PdfNumber(v));
     }
     
-    static void mergeResources(PdfDictionary result, PdfDictionary source) {
+    static void mergeResources(PdfDictionary result, PdfDictionary source, PdfStamperImp writer) {
         PdfDictionary dic = null;
         PdfDictionary res = null;
         PdfName target = null;
@@ -290,15 +290,21 @@ public class PdfFormField extends PdfAnnotation {
             target = mergeTarget[k];
             PdfDictionary pdfDict = (PdfDictionary)PdfReader.getPdfObject(source.get(target));
             if ((dic = pdfDict) != null) {
-                if ((res = (PdfDictionary)result.get(target)) == null) {
+                if ((res = (PdfDictionary)PdfReader.getPdfObject(result.get(target), result)) == null) {
                     res = new PdfDictionary();
                 }
                 res.mergeDifferent(dic);
                 result.put(target, res);
+                if (writer != null)
+                    writer.markUsed(res);
             }
         }
     }
-    
+
+    static void mergeResources(PdfDictionary result, PdfDictionary source) {
+        mergeResources(result, source, null);
+    }
+
     void setUsed() {
         used = true;
         if (parent != null)

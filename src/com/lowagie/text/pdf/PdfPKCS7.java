@@ -284,6 +284,8 @@ public class PdfPKCS7 {
         next = 3;
         if (signerInfo.getObjectAt(next) instanceof ASN1TaggedObject)
             ++next;
+        if (next > 3)
+            throw new SecurityException("Verifying authenticated attributes is not supported.");
         digestEncryptionAlgorithm = ((DERObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
         digest = ((DEROctetString)signerInfo.getObjectAt(next)).getOctets();
         if (RSAdata != null) {
@@ -1133,76 +1135,62 @@ public class PdfPKCS7 {
      * lightweight Java environment don't support classes like
      * StringTokenizer.
      */
-    public static class X509NameTokenizer
-    {
+    public static class X509NameTokenizer {
         private String          oid;
         private int             index;
         private StringBuffer    buf = new StringBuffer();
-
+        
         public X509NameTokenizer(
-            String oid)
-        {
+        String oid) {
             this.oid = oid;
             this.index = -1;
         }
-
-        public boolean hasMoreTokens()
-        {
+        
+        public boolean hasMoreTokens() {
             return (index != oid.length());
         }
-
-        public String nextToken()
-        {
-            if (index == oid.length())
-            {
+        
+        public String nextToken() {
+            if (index == oid.length()) {
                 return null;
             }
-
+            
             int     end = index + 1;
             boolean quoted = false;
             boolean escaped = false;
-
+            
             buf.setLength(0);
-
-            while (end != oid.length())
-            {
+            
+            while (end != oid.length()) {
                 char    c = oid.charAt(end);
-
-                if (c == '"')
-                {
-                    if (!escaped)
-                    {
+                
+                if (c == '"') {
+                    if (!escaped) {
                         quoted = !quoted;
                     }
-                    else
-                    {
+                    else {
                         buf.append(c);
                     }
                     escaped = false;
                 }
-                else
-                {
-                    if (escaped || quoted)
-                    {
+                else {
+                    if (escaped || quoted) {
                         buf.append(c);
                         escaped = false;
                     }
-                    else if (c == '\\')
-                    {
+                    else if (c == '\\') {
                         escaped = true;
                     }
-                    else if (c == ',')
-                    {
+                    else if (c == ',') {
                         break;
                     }
-                    else
-                    {
+                    else {
                         buf.append(c);
                     }
                 }
                 end++;
             }
-
+            
             index = end;
             return buf.toString().trim();
         }
