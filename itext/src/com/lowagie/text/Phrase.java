@@ -209,7 +209,11 @@ public class Phrase extends ArrayList implements TextElementArray {
             setLeading(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
-            add(new Chunk(value));
+            Chunk chunk = new Chunk(value);
+            if ((value = attributes.getProperty(ElementTags.GENERICTAG)) != null) {
+                chunk.setGenericTag(value);
+            }
+            add(chunk);
         }
     }
     

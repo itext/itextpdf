@@ -34,6 +34,7 @@
 package com.lowagie.text.pdf;
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.Paragraph;
 
 /**
  * Helps the use of <CODE>PdfPageEvent</CODE> by implementing all the interface methods.
@@ -124,7 +125,7 @@ public class PdfPageEventHelper implements PdfPageEvent {
  * @param document the document
  * @param position the position the chapter will be written to
  */
-    public void onChapter(PdfWriter writer,Document document,float position) {
+    public void onChapter(PdfWriter writer,Document document,float paragraphPosition,Paragraph title) {
     }
     
 /**
@@ -150,7 +151,7 @@ public class PdfPageEventHelper implements PdfPageEvent {
  * @param position the position the section will be written to
  * @param depth the depth of the section
  */
-    public void onSection(PdfWriter writer,Document document,float position, int depth) {
+    public void onSection(PdfWriter writer,Document document,float paragraphPosition,int depth,Paragraph title) {
     }
     
 /**

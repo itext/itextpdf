@@ -1066,9 +1066,9 @@ class PdfDocument extends Document implements DocListener {
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
-                            pageEvent.onChapter(writer, this, indentTop() - currentHeight);
+                            pageEvent.onChapter(writer, this, indentTop() - currentHeight, section.title());
                         else
-                            pageEvent.onSection(writer, this, indentTop() - currentHeight, section.depth());
+                            pageEvent.onSection(writer, this, indentTop() - currentHeight, section.depth(), section.title());
                     
                     // the title of the section (if any has to be printed)
                     if (section.title() != null) {

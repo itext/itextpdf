@@ -184,7 +184,11 @@ public class Paragraph extends Phrase implements TextElementArray {
         this("", new Font(attributes));
         String value;
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
-            add(new Chunk(value));
+            Chunk chunk = new Chunk(value);
+            if ((value = attributes.getProperty(ElementTags.GENERICTAG)) != null) {
+                chunk.setGenericTag(value);
+            }
+            add(chunk);
         }
         if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
             setAlignment(value);
