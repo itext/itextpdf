@@ -58,6 +58,47 @@ import com.lowagie.text.Image;
 
 class PdfFont implements Comparable {
     
+/** This is a possible value of a base 14 type 1 font */
+    public static final int COURIER = 0;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int COURIER_BOLD = 1;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int COURIER_OBLIQUE = 2;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int COURIER_BOLDOBLIQUE = 3;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int HELVETICA = 4;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int HELVETICA_BOLD = 5;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int HELVETICA_OBLIQUE = 6;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int HELVETICA_BOLDOBLIQUE = 7;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int SYMBOL = 8;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int TIMES_ROMAN = 9;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int TIMES_BOLD = 10;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int TIMES_ITALIC = 11;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int TIMES_BOLDITALIC = 12;
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final int ZAPFDINGBATS = 13;
     // membervariables
     
 /** the name of this font. */
@@ -88,46 +129,46 @@ class PdfFont implements Comparable {
         String fontName = "Helvetica";
         size = s;
         switch (f) {
-            case PdfFontMetrics.COURIER:
+            case COURIER:
                 fontName = "Courier";
                 break;
-            case PdfFontMetrics.COURIER_BOLD:
+            case COURIER_BOLD:
                 fontName = "Courier-Bold";
                 break;
-            case PdfFontMetrics.COURIER_OBLIQUE:
+            case COURIER_OBLIQUE:
                 fontName = "Courier-Oblique";
                 break;
-            case PdfFontMetrics.COURIER_BOLDOBLIQUE:
+            case COURIER_BOLDOBLIQUE:
                 fontName = "Courier-BoldOblique";
                 break;
-            case PdfFontMetrics.HELVETICA:
+            case HELVETICA:
                 fontName = "Helvetica";
                 break;
-            case PdfFontMetrics.HELVETICA_BOLD:
+            case HELVETICA_BOLD:
                 fontName = "Helvetica-Bold";
                 break;
-            case PdfFontMetrics.HELVETICA_OBLIQUE:
+            case HELVETICA_OBLIQUE:
                 fontName = "Helvetica-Oblique";
                 break;
-            case PdfFontMetrics.HELVETICA_BOLDOBLIQUE:
+            case HELVETICA_BOLDOBLIQUE:
                 fontName = "Helvetica-BoldOblique";
                 break;
-            case PdfFontMetrics.SYMBOL:
+            case SYMBOL:
                 fontName = "Symbol";
                 break;
-            case PdfFontMetrics.TIMES_ROMAN:
+            case TIMES_ROMAN:
                 fontName = "Times-Roman";
                 break;
-            case PdfFontMetrics.TIMES_BOLD:
+            case TIMES_BOLD:
                 fontName = "Times-Bold";
                 break;
-            case PdfFontMetrics.TIMES_ITALIC:
+            case TIMES_ITALIC:
                 fontName = "Times-Italic";
                 break;
-            case PdfFontMetrics.TIMES_BOLDITALIC:
+            case TIMES_BOLDITALIC:
                 fontName = "Times-BoldItalic";
                 break;
-            case PdfFontMetrics.ZAPFDINGBATS:
+            case ZAPFDINGBATS:
                 fontName = "ZapfDingbats";
                 break;
         }

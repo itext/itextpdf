@@ -91,8 +91,11 @@ abstract class PdfObject {
 /** This is an empty string used for the <CODE>PdfNull</CODE>-object and for an empty <CODE>PdfString</CODE>-object. */
     public static final String NOTHING = "";
     
-/** This is the encoding to be used for transferring Strings into bytes and vice versa. */
-    public static final String ENCODING = "ISO8859_1";
+/** This is the default encoding to be used for converting Strings into bytes and vice versa. */
+    public static final String ENCODING = "Cp1252";
+    
+/** This is the encoding to be used to output text in Unicode. */
+    public static final String TEXT_UNICODE = "UnicodeBig";
     
     // membervariables
     

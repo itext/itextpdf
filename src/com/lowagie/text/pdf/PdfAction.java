@@ -81,7 +81,7 @@ public class PdfAction extends PdfDictionary {
         put(PdfName.S, PdfName.GOTO);
         put(PdfName.D, destination);
     }
-    
+  
 /**
  * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
  * @param filename the file name to go to

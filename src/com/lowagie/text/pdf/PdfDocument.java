@@ -1,5 +1,4 @@
 /*
- * $Id$
  * $Name$
  *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
@@ -150,7 +149,7 @@ class PdfDocument extends Document implements DocListener {
  */
         
         void addKeywords(String keywords) {
-            put(PdfName.KEYWORDS, new PdfString(keywords));
+            put(PdfName.KEYWORDS, new PdfString(keywords, PdfObject.TEXT_UNICODE));
         }
         
 /**
@@ -160,7 +159,7 @@ class PdfDocument extends Document implements DocListener {
  */
         
         void addAuthor(String author) {
-            put(PdfName.AUTHOR, new PdfString(author));
+            put(PdfName.AUTHOR, new PdfString(author, PdfObject.TEXT_UNICODE));
         }
         
 /**
@@ -170,7 +169,7 @@ class PdfDocument extends Document implements DocListener {
  */
         
         void addCreator(String creator) {
-            put(PdfName.CREATOR, new PdfString(creator));
+            put(PdfName.CREATOR, new PdfString(creator, PdfObject.TEXT_UNICODE));
         }
         
 /**
@@ -178,7 +177,7 @@ class PdfDocument extends Document implements DocListener {
  */
         
         void addProducer() {
-            put(PdfName.PRODUCER, new PdfString("itext0.71 - based on paulo-84"));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 85", PdfObject.TEXT_UNICODE));
         }
         
 /**
@@ -308,6 +307,10 @@ class PdfDocument extends Document implements DocListener {
                 vp.put(PdfName.DIRECTION, PdfName.R2L);
             put(PdfName.VIEWERPREFERENCES, vp);
         }
+        
+        void setOpenAction(PdfAction action) {
+            put(PdfName.OPENACTION, action);
+        }
     }
     
     // membervariables
@@ -429,6 +432,9 @@ class PdfDocument extends Document implements DocListener {
     
 /** these are the viewerpreferences of the document */
     private int viewerPreferences = 0;
+    
+    private String openActionName;
+    private PdfAction openActionAction;
 
     //add by Jin-Hsia Yang
     private boolean isNewpage = false;
@@ -773,20 +779,6 @@ class PdfDocument extends Document implements DocListener {
         }
         
         writer.close();
-    }
-    
-/**
- * Signals that a <CODE>PdfFont</CODE> was added to the <CODE>PdfDocument</CODE>.
- *
- * @param	font		the <CODE>PdfFont</CODE> to add
- * @throws	PdfException	when a document isn't open yet, or has been closed
- */
-    
-    private void add(PdfFont font) throws PdfException {
-        if (!open || close) {
-            throw new PdfException("The document isn't open.");
-        }
-        font.setName(writer.add(font.getFont()));
     }
     
 /** Adds a font to the current page.
@@ -1778,6 +1770,12 @@ class PdfDocument extends Document implements DocListener {
         }
         else
             catalog = new PdfCatalog(pages);
+        if (openActionName != null) {
+            PdfAction action = getLocalGotoAction(openActionName);
+            catalog.setOpenAction(action);
+        }
+        else if (openActionAction != null)
+            catalog.setOpenAction(openActionAction);
         catalog.addNames(localDestinations);
         catalog.setViewerPreferences(viewerPreferences);
         return catalog;
@@ -2120,6 +2118,11 @@ class PdfDocument extends Document implements DocListener {
  * @param ury the upper right y corner of the activation area
  */
     void localGoto(String name, float llx, float lly, float urx, float ury) {
+        PdfAction action = getLocalGotoAction(name);
+        annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
+    }
+
+    PdfAction getLocalGotoAction(String name) {
         PdfAction action;
         Object obj[] = (Object[])localDestinations.get(name);
         if (obj == null)
@@ -2135,7 +2138,7 @@ class PdfDocument extends Document implements DocListener {
         else {
             action = (PdfAction)obj[0];
         }
-        annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
+        return action;
     }
     
 /**
@@ -2203,5 +2206,15 @@ class PdfDocument extends Document implements DocListener {
  */
     void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
+    }
+
+    public void setOpenAction(String name) {
+        openActionName = name;
+        openActionAction = null;
+    }
+
+    public void setOpenAction(PdfAction action) {
+        openActionAction = action;
+        openActionName = null;
     }
 }
