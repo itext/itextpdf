@@ -122,8 +122,6 @@ class PdfDocument extends Document implements DocListener {
 		 * Adds the title of the document.
 		 *
 		 * @param	title		the title of the document
-		 *
-		 * @return	<CODE>void</CODE>
 		 */
 
 		void addTitle(String title) {
@@ -134,8 +132,6 @@ class PdfDocument extends Document implements DocListener {
 		 * Adds the subject to the document.
 		 *
 		 * @param	subject		the subject of the document
-		 *
-		 * @return	<CODE>void</CODE>
 		 */
 
 		void addSubject(String subject) {
@@ -146,8 +142,6 @@ class PdfDocument extends Document implements DocListener {
 		 * Adds some keywords to the document.
 		 *
 		 * @param	keywords		the keywords of the document
-		 *
-		 * @return	<CODE>void</CODE>
 		 */
 
 		void addKeywords(String keywords) {
@@ -158,8 +152,6 @@ class PdfDocument extends Document implements DocListener {
 		 * Adds the name of the author to the document.
 		 *
 		 * @param	author		the name of the author
-		 *
-		 * @return	<CODE>void</CODE>
 		 */
 
 		void addAuthor(String author) {
@@ -168,8 +160,6 @@ class PdfDocument extends Document implements DocListener {
 
 		/**
 		 * Adds the name of the producer to the document.
-		 *
-		 * @return	<CODE>void</CODE>
 		 */
 
 		void addProducer() {
@@ -178,8 +168,6 @@ class PdfDocument extends Document implements DocListener {
 
 		/**
 		 * Adds the date of creation to the document.
-		 *
-		 * @return	<CODE>void</CODE>
 		 */
 
 		void addCreationDate() {
@@ -342,7 +330,6 @@ class PdfDocument extends Document implements DocListener {
 	 *
 	 * @param	writer		the <CODE>PdfWriter</CODE> that writes everything
 	 *                      what is added to this document to an outputstream.
-	 * @return	<CODE>void</CODE>
 	 */
 
 	public final void addWriter(PdfWriter writer) throws DocumentException {
@@ -357,10 +344,12 @@ class PdfDocument extends Document implements DocListener {
 	 * Sets the pagesize.
 	 *
 	 * @param	pageSize	the new pagesize
-	 * @return	a <CODE>boolean</CODE>
 	 */
 
 	public boolean setPageSize(Rectangle pageSize) {
+		if (writer.isPaused()) {
+			return false;
+		}
 		this.pageSize = pageSize;
 		return true;
 	}
@@ -372,6 +361,9 @@ class PdfDocument extends Document implements DocListener {
      */
 
     public boolean add(Watermark watermark) {
+		if (writer.isPaused()) {
+			return false;
+		}
 		this.watermark = watermark;
 		return true;
 	}
@@ -381,6 +373,9 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public void removeWatermark() {
+		if (writer.isPaused()) {
+			return;
+		}
 		this.watermark = null;
 	}
 
@@ -395,6 +390,9 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom) {
+		if (writer.isPaused()) {
+			return false;
+		}
 		this.marginLeft = marginLeft;
 		this.marginRight = marginRight;
 		this.marginTop = marginTop;
@@ -409,7 +407,7 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public boolean newPage() throws DocumentException {
-		if (pageEmpty) {
+		if (pageEmpty || writer.isPaused()) {
 			return false;
 		}
 		// we flush the arraylist with recently written lines
@@ -453,8 +451,6 @@ class PdfDocument extends Document implements DocListener {
 	 * <B>
 	 * You have to open the document before you can begin to add content
 	 * to the body of the document.
-	 *
-	 * @return	<CODE>void</CODE>
 	 */
 
 	public void open() {
@@ -567,6 +563,9 @@ class PdfDocument extends Document implements DocListener {
      */
 
     public boolean add(Element element) throws DocumentException {
+		if (writer.isPaused()) {
+			return false;
+		}
 		try {
 			switch(element.type()) {
 
@@ -981,8 +980,6 @@ class PdfDocument extends Document implements DocListener {
 	
 	/**
 	 * Adds an image to the document.
-	 *
-	 * @param	image	the <CODE>Image</CODE> to add.
 	 */
 
 	private void add(Image image) throws PdfException, DocumentException {
@@ -1056,8 +1053,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Initializes a page.
 	 * <P>
 	 * If the footer/header is set, it is printed.
-	 *
-	 * @return	<CODE>void</CODE>
 	 */			
 
 	private void initPage() throws DocumentException {
@@ -1169,9 +1164,7 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * If the current line is not empty or null, it is added to the arraylist
-	 * of lines and a new empty line is added.  
-	 *
-	 * @return	<CODE>void</CODE>
+	 * of lines and a new empty line is added.
 	 */
 
 	private void carriageReturn() throws DocumentException {
@@ -1204,9 +1197,7 @@ class PdfDocument extends Document implements DocListener {
 	}
 
 	/**
-	 * Adds the current line to the list of lines and also adds an empty line.  
-	 *
-	 * @return	<CODE>void</CODE>
+	 * Adds the current line to the list of lines and also adds an empty line.
 	 */
 
 	private void newLine() throws DocumentException {
