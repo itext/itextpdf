@@ -80,7 +80,7 @@ public class RtfRow
     private static final byte[] rowEnd = "row".getBytes();
   /* Table row autofit */
     private static final byte[] rowAutofit = "trautofit1".getBytes();
-    private static final byte[] graphLeft = "trgraph".getBytes();
+    private static final byte[] graphLeft = "trgaph".getBytes();
   /* Row border left */
     private static final byte[] rowBorderLeft = "trbrdrl".getBytes();
   /* Row border right */
