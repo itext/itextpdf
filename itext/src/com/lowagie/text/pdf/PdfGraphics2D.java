@@ -698,36 +698,37 @@ public class PdfGraphics2D extends Graphics2D {
     /**
      * @see Graphics#create()
      */
-    public Graphics create() {
-        PdfGraphics2D g2 = new PdfGraphics2D();
-        g2.onlyShapes = this.onlyShapes;
-        g2.transform = IDENTITY;
-        g2.baseFonts = this.baseFonts;
-        g2.fontMapper = this.fontMapper;
-        g2.kids = this.kids;
-        g2.paint = this.paint;
-        g2.background = this.background;
-        g2.setFont(this.font);
-        g2.cb = this.cb.getDuplicate();
-        g2.cb.saveState();
-        g2.width = this.width;
-        g2.height = this.height;
-        g2.clip = new Area(new Rectangle2D.Float(0, 0, width, height));
-        g2.clip(g2.clip);
-        g2.transform = new AffineTransform(this.transform);
-        g2.stroke = stroke;
-        g2.originalStroke = originalStroke;
-        g2.strokeOne = (BasicStroke)g2.transformStroke(g2.strokeOne);
-        g2.oldStroke = g2.strokeOne;
-        g2.setStrokeDiff(g2.oldStroke, null);
-        g2.cb.saveState();
-        g2.followPath(this.clip, CLIP);
-        g2.kid = true;
-        synchronized (kids) {
-            kids.add(g2);
-        }
-        return g2;
-    }
+	public Graphics create() {
+		PdfGraphics2D g2 = new PdfGraphics2D();
+		g2.onlyShapes = this.onlyShapes;
+		g2.transform = new AffineTransform(this.transform);
+		g2.baseFonts = this.baseFonts;
+		g2.fontMapper = this.fontMapper;
+		g2.kids = this.kids;
+		g2.paint = this.paint;
+		g2.background = this.background;
+		g2.setFont(this.font);
+		g2.cb = this.cb.getDuplicate();
+		g2.cb.saveState();
+		g2.width = this.width;
+		g2.height = this.height;
+		g2.followPath(new Area(new Rectangle2D.Float(0, 0, width, height)), CLIP);
+		if (this.clip != null)
+			g2.clip = new Area(this.clip);
+		g2.stroke = stroke;
+		g2.originalStroke = originalStroke;
+		g2.strokeOne = (BasicStroke)g2.transformStroke(g2.strokeOne);
+		g2.oldStroke = g2.strokeOne;
+		g2.setStrokeDiff(g2.oldStroke, null);
+		g2.cb.saveState();
+		if (g2.clip != null)
+			g2.followPath(g2.clip, CLIP);
+		g2.kid = true;
+		synchronized (kids) {
+			kids.add(g2);
+		}
+		return g2;
+	}
     
     /**
      * @see Graphics#getColor()
