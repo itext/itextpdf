@@ -59,7 +59,7 @@
                 <include name="**/*.java"/>
             </fileset>
         </copy>
-		<java classname="com.lowagie.tools.BuildTutorial">
+		<java classname="com.lowagie.tools.BuildTutorial" dir="${basedir}/${itext.src.tutorial}" fork="true">
 			<arg value="${basedir}/${itext.src.tutorial}" />
 			<arg value="${basedir}/${itext.build}" />
 			<arg value="examples.xsl" />
