@@ -321,7 +321,9 @@ public class FontFactory extends java.lang.Object {
         else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
             color = MarkupParser.decodeColor(value);
         }
-        if (fontname == null) return getFont(null, encoding, embedded, size, style, color);
+        if (fontname == null) {
+            return getFont(null, encoding, embedded, size, style, color);
+        }
         return getFont(fontname, encoding, embedded, size, style, color);
     }
     

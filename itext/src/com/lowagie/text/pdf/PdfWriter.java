@@ -1377,7 +1377,7 @@ public class PdfWriter extends DocWriter {
      * array.
      * @param annot the <CODE>PdfAnnotation</CODE> to be added
      */    
-    public void addCalculationOrder(PdfAnnotation annot) {
+    public void addCalculationOrder(PdfFormField annot) {
         pdf.addCalculationOrder(annot);
     }
     

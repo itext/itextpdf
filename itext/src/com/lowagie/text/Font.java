@@ -475,44 +475,42 @@ public class Font implements Comparable {
  */
     
     public Font difference(Font font) {
-        Font difference = new Font();
-        if (font.baseFont != null) {
-            difference.baseFont = font.baseFont;
+        // size
+        float dSize = font.size;
+        if (dSize == UNDEFINED) {
+            dSize = this.size;
         }
-        else {
-            if (font.family() != UNDEFINED) {
-                difference.family = font.family;
-            }
-            else if (this.baseFont != null) {
-                difference.baseFont = this.baseFont;
-            }
-            else {
-                difference.family = this.family;
-            }
-        }
+        // style
+        int dStyle = UNDEFINED;
         int style1 = this.style;
         int style2 = font.style();
-        if (style1 == UNDEFINED && style2 == UNDEFINED) {
-            difference.style = UNDEFINED;
-        }
-        else {
+        if (style1 != UNDEFINED || style2 != UNDEFINED) {
             if (style1 == UNDEFINED) style1 = 0;
             if (style2 == UNDEFINED) style2 = 0;
-            difference.style = style1 | style2;
+            dStyle = style1 | style2;
         }
-        if (font.size() == UNDEFINED) {
-            difference.size = this.size;
+        // color
+        Color dColor = font.color;
+        if (dColor == null) {
+            dColor = this.color;
         }
-        else {
-            difference.size = font.size;
+        // family
+        String dFamily = null;
+        if (font.baseFont != null) {
+            return new Font(font.baseFont, dSize, dStyle, dColor);
         }
-        if (font.color == null) {
-            difference.color = this.color;
+        if (font.family() != UNDEFINED) {
+            return new Font(font.family, dSize, dStyle, dColor);
         }
-        else {
-            difference.color = font.color();
+        if (this.baseFont != null) {
+            if (dStyle == style1) {
+                return new Font(this.baseFont, dSize, dStyle, dColor);
+            }
+            else {
+                return FontFactory.getFont(this.getFamilyname(), dSize, dStyle, dColor);
+            }
         }
-        return difference;
+        return new Font(this.family, dSize, dStyle, dColor);
     }
     
     // methods to retrieve the membervariables
@@ -613,8 +611,7 @@ public class Font implements Comparable {
   * @return the <CODE>BaseFont</CODE>
   */
     
-    public BaseFont getBaseFont()
-    {
+    public BaseFont getBaseFont() {
         return baseFont;
     }
 }

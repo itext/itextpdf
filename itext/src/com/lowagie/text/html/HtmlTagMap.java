@@ -73,7 +73,7 @@ public class HtmlTagMap extends HashMap {
         peer = new HtmlPeer(ElementTags.ITEXT, HtmlTags.HTML);
         put(peer.getAlias(), peer);
         
-        peer = new HtmlPeer(ElementTags.CHUNK, MarkupTags.SPAN);
+        peer = new HtmlPeer(ElementTags.PHRASE, MarkupTags.SPAN);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.CHUNK);

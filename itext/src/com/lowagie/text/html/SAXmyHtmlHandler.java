@@ -103,7 +103,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
  */
     
     public void startElement(String name, AttributeList attrs) {
-        //System.err.println(name);
+       //System.err.println("Start: " + name);
         
         if (((HtmlTagMap)myTags).isHtml(name)) {
             // we do nothing

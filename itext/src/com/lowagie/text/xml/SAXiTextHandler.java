@@ -124,7 +124,6 @@ public class SAXiTextHandler extends HandlerBase {
     
     public void handleStartingTags(String name, Properties attributes) {
         //System.err.println("Start: " + name);
-        
         if (ignore || ElementTags.IGNORE.equals(name)) {
             ignore = true;
             return;
