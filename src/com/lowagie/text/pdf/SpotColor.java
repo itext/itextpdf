@@ -53,7 +53,6 @@ import java.awt.Color;
 /**
  *
  * @author  psoares
- * @version 
  */
 public class SpotColor extends ExtendedColor {
 
