@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * $Name$
  *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
@@ -177,7 +178,7 @@ class PdfDocument extends Document implements DocListener {
  */
         
         void addProducer() {
-            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 85", PdfObject.TEXT_UNICODE));
+            put(PdfName.PRODUCER, new PdfString("itext0.72", PdfObject.TEXT_UNICODE));
         }
         
 /**
@@ -1275,8 +1276,8 @@ class PdfDocument extends Document implements DocListener {
                                 for (int i = 0; i < size; i++) {
                                     cell = (PdfCell) headercells.get(i);
                                     // calculation of the new cellpositions
-                                    cell.setTop(indentTop() - oldTop + cell.top() + table.cellspacing());
-                                    cell.setBottom(indentTop() - oldTop + cell.bottom() - table.cellspacing());
+                                    cell.setTop(indentTop() - oldTop + cell.top());
+                                    cell.setBottom(indentTop() - oldTop + cell.bottom() - 2f * table.cellspacing());
                                     pagetop = cell.bottom();
                                     // we paint the borders of the cell
                                     graphics.rectangle(cell.rectangle(indentTop(), indentBottom()));
