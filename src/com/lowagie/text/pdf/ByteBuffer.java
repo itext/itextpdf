@@ -126,9 +126,9 @@ public class ByteBuffer {
                 step = 10;
                 break;
         }
-        for (int i = 0; i < LONG_CACHE_SIZE; i += step) {
+        for (int i = 1; i < LONG_CACHE_SIZE; i += step) {
             if (longCache[i] != null) continue;
-            int size = (int)Math.floor(Math.log(i) / Math.log(10)) - 1;
+            int size = (int)Math.floor(Math.log(i) / Math.log(10));
             if (i % 100 != 0) {
                 size += 2;
             }
