@@ -1717,7 +1717,7 @@ class PdfDocument extends Document implements DocListener {
             //add by Jin-Hsia Yang
             if(isParagraphE && isNewpage && newline) {
 	        newline=false;
-	        text.moveText(listIndentLeft + paraIndent,-l.height());
+	        text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
             } else
             //end add by Jin-Hsia Yang
 
