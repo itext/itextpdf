@@ -172,19 +172,24 @@ public class MarkupTable
  */
 	protected Row createRow(int columns)
 	{
-		MarkupRow result = new MarkupRow(columns);
+		Row result;
 		if (alternatingRowAttributes != null)
 		{
+			result = new MarkupRow(columns);
 			Iterator iterator = alternatingRowAttributes.keySet().iterator();
 			while (iterator.hasNext())
 			{
 				String name = String.valueOf(iterator.next());
-				result.setMarkupAttribute(
+				((MarkupAttributes)(result)).setMarkupAttribute(
 				 name, ((String[])(alternatingRowAttributes.get(name)))[rowSwitch]);
 			}//end while iterator has next
+	//flip rowSwitch
+			rowSwitch ^= 1;
 		}//end if there are any alternating attributes
-		//flip rowSwitch
-		rowSwitch ^= 1;
+		else
+		{
+			result = super.createRow(columns);
+		}//end else, no row attributes, so why use a MarkupRow?
 		return result;
 	}//end createRow
 		
