@@ -715,11 +715,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 os.write(GT);
                 os.write(NEWLINE);
-                for (Iterator i = cell.getElements(); i.hasNext(); ) {
-                    write((Element) i.next(), indent + 1);
-                }
                 if (cell.isEmpty()) {
                     write(NBSP);
+                } else {
+                    for (Iterator i = cell.getElements(); i.hasNext(); ) {
+                        write((Element) i.next(), indent + 1);
+                    }
                 }
                 addTabs(indent);
                 if (cell.header()) {
