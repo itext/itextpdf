@@ -201,10 +201,11 @@ public class FontFactory extends java.lang.Object {
             int s = style == Font.UNDEFINED ? Font.NORMAL : style;
             for (Iterator i = tmp.iterator(); i.hasNext(); ) {
                 String f = (String) i.next();
+                f = f.toLowerCase();
                 int fs = Font.NORMAL;
                 if (f.toLowerCase().indexOf("bold") != -1) fs |= Font.BOLD;
                 if (f.toLowerCase().indexOf("italic") != -1 || f.toLowerCase().indexOf("oblique") != -1) fs |= Font.ITALIC;
-                if ((s & Font.BOLDITALIC) == fs) {
+                if ((s & Font.BOLDITALIC) == fs && f.indexOf(fontname) != -1) {
                     fontname = f;
                     break;
                 }
