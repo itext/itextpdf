@@ -186,7 +186,9 @@ public class Phrase extends ArrayList implements TextElementArray {
                 super.add(new Chunk(buf.toString(), symbol));
             }
         }
-        super.add(new Chunk(string, font));
+        if (string.length() != 0) {
+            super.add(new Chunk(string, font));
+        }
     }
     
 /**
@@ -202,6 +204,10 @@ public class Phrase extends ArrayList implements TextElementArray {
         String value = attributes.getProperty(ElementTags.LEADING);
         if (value != null) {
             setLeading(Float.parseFloat(value + "f"));
+        }
+        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+            remove(0);
+            add(new Chunk(value));
         }
     }
     

@@ -151,6 +151,9 @@ public class Chunk implements Element {
     public Chunk(Properties attributes) {
         this("", new Font(attributes));
         String value;
+        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+            append(value);
+        }
         if ((value = attributes.getProperty(ElementTags.LOCALGOTO)) != null) {
             setLocalGoto(value);
         }

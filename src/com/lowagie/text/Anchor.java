@@ -171,6 +171,10 @@ public class Anchor extends Phrase implements TextElementArray {
     public Anchor(Properties attributes) {
         this("", new Font(attributes));
         String value;
+        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+            remove(0);
+            add(new Chunk(value));
+        }
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
             setLeading(Float.parseFloat(value + "f"));
         }
@@ -315,16 +319,16 @@ public class Anchor extends Phrase implements TextElementArray {
     
     public String toString() {
         StringBuffer buf = new StringBuffer("<").append(ElementTags.ANCHOR).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading).append(font.toString());
+        buf.append(leading).append("\"").append(font.toString());
         if (name != null) {
-            buf.append("\" ").append(ElementTags.NAME).append("=\"");
-            buf.append(name);
+            buf.append(" ").append(ElementTags.NAME).append("=\"");
+            buf.append(name).append("\"");
         }
         if (reference != null) {
-            buf.append("\" ").append(ElementTags.REFERENCE).append("=\"");
-            buf.append(reference);
+            buf.append(" ").append(ElementTags.REFERENCE).append("=\"");
+            buf.append(reference).append("\"");
         }
-        buf.append("\">");
+        buf.append(">");
         for (Iterator i = iterator(); i.hasNext(); ) {
             buf.append(i.next().toString());
         }

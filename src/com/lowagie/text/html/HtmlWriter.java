@@ -185,7 +185,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
     static {
         FONTS[0] = "Courier";
         FONTS[1] = "Helvetica, Arial";
-        FONTS[2] = "'Times New Roman, Times";
+        FONTS[2] = "Times New Roman, Times";
         FONTS[3] = "Symbol";
         FONTS[4] = "ZapfDingbats, WingDings";
     }
