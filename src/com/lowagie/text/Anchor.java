@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- * (check) 	  
+ * 	  
  */
 
 package com.lowagie.text;
