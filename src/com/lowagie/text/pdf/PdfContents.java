@@ -57,12 +57,16 @@ class PdfContents extends PdfStream {
 	 * @since		rugPdf0.10
 	 */
 
-	PdfContents(PdfContent content, PdfText text) throws BadPdfFormatException {
-		super(new PdfDictionary(), content.toPdf() + text.toPdf());
-		try {
+	PdfContents(PdfContent content, PdfText text, byte[] secondContent) throws BadPdfFormatException {
+		super(new PdfDictionary(), "q\n" + content.toPdf() + text.toPdf() + "\nQ\n");
+        ByteBuffer buf = new ByteBuffer();
+        buf.append(bytes).append(secondContent);
+        bytes = buf.toByteArray();
+        dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+/*		try {
 			flateCompress();
 		}
 		catch(PdfException pe) {
-		}  
+		}  */
 	}
 }

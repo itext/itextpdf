@@ -38,6 +38,7 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.HashMap;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Table;
@@ -352,6 +353,12 @@ public class PdfWriter extends DocWriter {
 
 	/** Dictionary, containing all the images of the PDF document */
 	protected PdfXObjectDictionary imageDictionary = new PdfXObjectDictionary();
+    
+    protected final static int FONTNUMBERSTART = 100;
+    protected int fontNumber = FONTNUMBERSTART;
+    protected PdfContentByte directContent;
+    protected HashMap secondFonts = new HashMap();
+    protected PdfDocument document;
 
 // membervariables
 
@@ -376,6 +383,7 @@ public class PdfWriter extends DocWriter {
 	protected PdfWriter(PdfDocument document, OutputStream os) {
 		super(document, os);
 		pdf = document;
+        directContent = new PdfContentByte(this);
 	}		 
 
 // get an instance of the PdfWriter
@@ -641,4 +649,49 @@ public class PdfWriter extends DocWriter {
 	boolean isPaused() {
 		return pause;
 	}
+    
+    public PdfContentByte getDirectContent()
+    {
+        return directContent;
+    }
+    
+    void resetContent()
+    {
+        directContent.reset();
+    }
+    
+    PdfName add(BaseFont bf)
+    {
+        Object ret[] = (Object[])secondFonts.get(bf);
+		if (ret == null) {
+            PdfIndirectReference ind_font = null;
+			try {
+                for (int k = 0; k < 3; ++k) {
+                    PdfObject pobj = bf.getFontInfo(ind_font, k);
+                    if (pobj != null){
+                        PdfIndirectObject obj = body.add(pobj);
+                        ind_font = obj.getIndirectReference();
+                        os.write(obj.toPdf());
+                    }
+                }
+			}
+			catch(Exception e) {
+				System.err.println(e.getMessage());
+			}
+            String fontName = "F" + (fontNumber++);
+            try {
+                ret = new Object[]{new PdfName(fontName), ind_font};
+            }
+            catch (BadPdfFormatException e) {
+            }
+            secondFonts.put(bf, ret);
+		}
+        document.addFont((PdfName)ret[0], (PdfIndirectReference)ret[1]);
+        return (PdfName)ret[0];
+    }
+    
+    void setDocument(PdfDocument doc)
+    {
+        document = doc;
+    }
 }

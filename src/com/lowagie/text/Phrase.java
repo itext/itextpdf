@@ -269,38 +269,64 @@ public class Phrase extends ArrayList implements TextElementArray {
 	 */
 
 	public boolean add(Object o) {
-            if (o instanceof String) {
-		return super.add(new Chunk((String) o, font()));
-            }
-	    try {
-                Element element = (Element) o;
-                switch(element.type()) {
-                    case Element.CHUNK:
-                        Chunk chunk = (Chunk) o;
-                        return super.add(chunk);
-                    case Element.PHRASE:
-                        Phrase phrase = (Phrase) o;
-                        boolean success = true;
-                        for (Iterator i = phrase.iterator(); i.hasNext(); ) {
-                            success &= super.add(i.next());
-                        }
-                        return success;
-                    case Element.ANCHOR:
-                        return super.add((Anchor) o);
-                    case Element.TABLE: // case added by David Freels
-                        Table table = (Table) o;
-                        return super.add(o);
-                    case Element.LIST:
-                        List list = (List) o;
-                        return super.add(list);
-                    default:
-                        throw new ClassCastException(String.valueOf(element.type()));
-                    }
-            }
-            catch(ClassCastException cce) {
-                throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
-            }
-        }
+		try {
+			Element element = (Element) o;
+			switch(element.type()) {
+			case Element.CHUNK:
+				Chunk chunk = (Chunk) o;
+				return super.add(chunk);
+			case Element.PHRASE:
+				Phrase phrase = (Phrase) o;
+				return this.add(phrase);
+			case Element.ANCHOR:
+				Anchor anchor = (Anchor) o;
+				return this.add(anchor);
+			case Element.TABLE: // case added by David Freels
+				Table table = (Table) o;
+				return super.add(o);
+			case Element.LIST:
+				List list = (List) o;
+				return super.add(list);
+			default:
+				throw new ClassCastException(String.valueOf(element.type()));
+			}
+		}
+		catch(ClassCastException cce) {
+			throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
+		}
+	}
+
+	/**
+	 * Adds a <CODE>Phrase</CODE> to this <CODE>Phrase</CODE>.
+	 *
+	 * @param	phrase		a <CODE>Phrase</CODE>
+	 * @return	a boolean
+	 */
+
+	public boolean add(Phrase phrase) {
+		if (phrase.type() == Element.ANCHOR) {
+			return super.add(phrase);
+		}
+		Chunk chunk;
+		boolean success = true;
+		for (Iterator i = phrase.iterator(); i.hasNext(); ) {
+			success &= super.add(i.next());
+		}
+		return success;
+	}
+
+	/**
+	 * Adds a <CODE>String</CODE> to this <CODE>Phrase</CODE>.
+	 * <P>
+	 * The <CODE>String</CODE> is first converted to a Chunk with the font of the phrase.
+	 *
+	 * @param	string		a <CODE>String</CODE>
+	 * @return	a boolean
+	 */
+
+	public boolean add(String string) {
+		return super.add(new Chunk(string, font()));
+	}
 
 	/**
 	 * Adds a collection of <CODE>Chunk</CODE>s
