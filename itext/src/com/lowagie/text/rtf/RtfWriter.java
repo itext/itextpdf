@@ -1385,6 +1385,8 @@ public class RtfWriter extends DocWriter implements DocListener {
             listoverride.write(closeGroup);
             listoverride.write((byte) '\n');
         }
+        out.write(escape);
+        out.write(paragraphDefaults);
     }
 
     /**
