@@ -56,6 +56,15 @@
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/iTextAnt.zip" tofile="${itext.sf}/iTextAnt-${releasenumber}.zip" overwrite="yes"/>
 	</target>
+	
+	<target name="earlyaccess.sf" description="--> makes a complete iText release ready to publish on SourceForge">
+		<mkdir dir="${itext.sf}"/>
+		<copy file="${itext.dist}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
+		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.zip" overwrite="yes"/>
+		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.tar.gz" overwrite="yes"/>
+		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${earlyaccesslowagie}.tar.gz" overwrite="yes"/>
+		<copy file="${itext.dist}/iTextAnt.zip" tofile="${itext.sf}/itext-ant-${earlyaccesslowagie}.zip" overwrite="yes"/>
+	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Making the jars with the Asian Fontfiles                         -->

@@ -17,12 +17,12 @@
         <echo>DOWNLOADING iText (download.xml)</echo>
         <echo>ant download: downloads the source code needed to create iText.jar</echo>
         <echo>ant download.bin: downloads some precompiled jars and zips</echo>
+        <echo>ant getFromCvs: downloads the complete CVS repository</echo>
         <echo />
 	</target>
 	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Getting the most recent code from CVS                            -->
-    <!-- This should work, but it doesn't...                              -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="getFromCvs" description="--> gets the source code form CVS">

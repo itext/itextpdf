@@ -33,6 +33,16 @@
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
 	</target>
+	
+	<target name="earlyaccess" description="--> builds a release after you have exported the src and www module from CVS">
+		<ant antfile="ant/download.xml" inheritAll="false" target="download.bin" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
+		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="earlyaccess.sf" />
+	</target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Forwarding targetcalls to subscripts                             -->
@@ -46,8 +56,8 @@
 		<ant antfile="ant/download.xml" inheritAll="false" target="download.bin" />
 	</target>
 	
-	<target name="download.site">
-		<ant antfile="ant/download.xml" inheritAll="false" target="download.site" />
+	<target name="getFromCvs">
+		<ant antfile="ant/download.xml" inheritAll="false" target="getFromCvs" />
 	</target>
 	
 	<target name="compile">
