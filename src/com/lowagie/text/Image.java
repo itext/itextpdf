@@ -143,12 +143,17 @@ public abstract class Image extends Rectangle implements Element {
 /** this is the colorspace of a jpeg-image. */
     protected int colorspace = -1;
     
-/** this is the bits per component of the raw image. */
+/** this is the bits per component of the raw image. It also flags a CCITT image.*/
     protected int bpc = 1;
     
 /** this is the transparency information of the raw image*/
     protected int transparency[];
     
+    // serial stamping
+    
+    protected Long mySerialId = getSerialId();
+    
+    static long serialId = 0;
     // constructors
     
 /**
@@ -184,6 +189,11 @@ public abstract class Image extends Rectangle implements Element {
         this.scaledHeight = image.scaledHeight;
         this.rotation = image.rotation;
         this.colorspace = image.colorspace;
+        this.rawData = image.rawData;
+        this.template = image.template;
+        this.bpc = image.bpc;
+        this.transparency = image.transparency;
+        this.mySerialId = image.mySerialId;
     }
     
     // gets an instance of an Image
@@ -250,7 +260,7 @@ public abstract class Image extends Rectangle implements Element {
         if (forceBW) {
             int byteWidth = (w / 8) + ((w & 7) != 0 ? 1 : 0);
             byte[] pixelsByte = new byte[byteWidth * h];
-            
+
             int index = 0;
             int size = h * w;
             int transColor = 1;
@@ -309,7 +319,7 @@ public abstract class Image extends Rectangle implements Element {
         }
         else {
             byte[] pixelsByte = new byte[w * h * 3];
-            
+
             int index = 0;
             int size = h * w;
             int red = 255;
@@ -438,6 +448,17 @@ public abstract class Image extends Rectangle implements Element {
         return new ImgTemplate(template);
     }
     
+    public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data) throws BadElementException {
+        return new ImgCCITT(width, height, reverseBits, typeCCITT, parameters, data);
+    }
+
+    public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data, int transparency[]) throws BadElementException {
+        if (transparency != null && transparency.length != 2)
+            throw new BadElementException("transparency length must be equal to 2 with CCITT images");
+        Image img = new ImgCCITT(width, height, reverseBits, typeCCITT, parameters, data);
+        img.transparency = transparency;
+        return img;
+    }
 /**
  * Gets an instance of an Image in raw mode.
  *
@@ -779,12 +800,12 @@ public abstract class Image extends Rectangle implements Element {
         return type == IMGRAW;
     }
  /**
-  * Returns <CODE>true</CODE> if the image is an <CODE>ImgTemplate</CODE>-object.
-  *
-  * @return		a <CODE>boolean</CODE>
-  *
-  * @author		Paulo Soares
-  */
+ * Returns <CODE>true</CODE> if the image is an <CODE>ImgTemplate</CODE>-object.
+ *
+ * @return		a <CODE>boolean</CODE>
+ *
+ * @author		Paulo Soares
+ */
     
     public boolean isImgTemplate() {
         return type == IMGTEMPLATE;
@@ -882,13 +903,13 @@ public abstract class Image extends Rectangle implements Element {
             matrix[DX] = 0;
             matrix[DY] = matrix[AY];
         }
-        else if (rotation < Math.PI / 1.5f) {
+        else if (rotation < Math.PI * 1.5f) {
             matrix[CX] = matrix[AX];
             matrix[CY] = matrix[AY] + matrix[BY];
             matrix[DX] = matrix[BX];
             matrix[DY] = 0;
         }
-        else if (rotation < Math.PI / 2f) {
+        else {
             matrix[CX] = 0;
             matrix[CY] = matrix[AY];
             matrix[DX] = matrix[AX] + matrix[BX];
@@ -907,7 +928,7 @@ public abstract class Image extends Rectangle implements Element {
  * @author		Paulo Soares
  */
     
-    public void skip(InputStream is, int size) throws IOException {
+    static public void skip(InputStream is, int size) throws IOException {
         while (size > 0) {
             size -= is.skip(size);
         }
@@ -983,5 +1004,14 @@ public abstract class Image extends Rectangle implements Element {
     
     public float plainHeight() {
         return plainHeight;
+    }
+    
+    static protected synchronized Long getSerialId() {
+        ++serialId;
+        return new Long(serialId);
+    }
+    
+    public Long getMySerialId() {
+        return mySerialId;
     }
 }

@@ -33,6 +33,8 @@
 
 package com.lowagie.text.pdf;
 import java.io.UnsupportedEncodingException;
+import java.io.OutputStream;
+import java.io.IOException;
 import com.lowagie.text.DocWriter;
 
 /**
@@ -289,5 +291,17 @@ public class ByteBuffer
     {
         return new String(buf, 0, count, enc);
     }
-    
+
+    /**
+     * Writes the complete contents of this byte buffer output to
+     * the specified output stream argument, as if by calling the output
+     * stream's write method using <code>out.write(buf, 0, count)</code>.
+     *
+     * @param      out   the output stream to which to write the data.
+     * @exception  IOException  if an I/O error occurs.
+     */
+    public void writeTo(OutputStream out) throws IOException {
+        out.write(buf, 0, count);
+    }
+
 }

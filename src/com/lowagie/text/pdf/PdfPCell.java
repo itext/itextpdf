@@ -86,6 +86,9 @@ public class PdfPCell extends Rectangle{
 /** Holds value of property table. */
     private PdfPTable table;
     
+    /** Holds value of property minimumHeight. */
+    private float minimumHeight;
+    
     public PdfPCell(Phrase phrase)
     {
         super(0, 0, 0, 0);
@@ -105,13 +108,14 @@ public class PdfPCell extends Rectangle{
         setPadding(0);
     }
     
-    PdfPCell(PdfPTable table)
+    public PdfPCell(PdfPTable table)
     {
         super(0, 0, 0, 0);
         borderWidth = 0.5f;
         border = BOX;
         fixedLeading = 0;
         multipliedLeading = 1;
+        setPadding(0);
         this.table = table;
     }
     
@@ -135,6 +139,7 @@ public class PdfPCell extends Rectangle{
         indent = cell.indent;
         phrase = cell.phrase;
         fixedHeight = cell.fixedHeight;
+        minimumHeight = cell.minimumHeight;
         noWrap = cell.noWrap;
         if (cell.table != null)
             table = new PdfPTable(cell.table);
@@ -332,6 +337,7 @@ public class PdfPCell extends Rectangle{
  */
     public void setFixedHeight(float fixedHeight) {
         this.fixedHeight = fixedHeight;
+        minimumHeight = 0;
     }
     
 /**
@@ -360,6 +366,21 @@ public class PdfPCell extends Rectangle{
     
     void setTable(PdfPTable table) {
         this.table = table;
+    }
+    
+    /** Getter for property minimumHeight.
+     * @return Value of property minimumHeight.
+     */
+    public float getMinimumHeight() {
+        return minimumHeight;
+    }
+    
+    /** Setter for property minimumHeight.
+     * @param minimumHeight New value of property minimumHeight.
+     */
+    public void setMinimumHeight(float minimumHeight) {
+        this.minimumHeight = minimumHeight;
+        fixedHeight = 0;
     }
     
 }

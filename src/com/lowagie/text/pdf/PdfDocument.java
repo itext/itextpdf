@@ -167,7 +167,7 @@ class PdfDocument extends Document implements DocListener {
  */
         
         void addProducer() {
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com"));
+            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com - build 81"));
         }
         
 /**
@@ -275,17 +275,16 @@ class PdfDocument extends Document implements DocListener {
             if ((preferences & PdfWriter.ViewerPreferencesMask) == 0)
                 return;
             PdfDictionary vp = new PdfDictionary();
-            PdfBoolean PTRUE = new PdfBoolean(true);
             if ((preferences & PdfWriter.HideToolbar) != 0)
-                vp.put(PdfName.HIDETOOLBAR, PTRUE);
+                vp.put(PdfName.HIDETOOLBAR, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.HideMenubar) != 0)
-                vp.put(PdfName.HIDEMENUBAR, PTRUE);
+                vp.put(PdfName.HIDEMENUBAR, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.HideWindowUI) != 0)
-                vp.put(PdfName.HIDEWINDOWUI, PTRUE);
+                vp.put(PdfName.HIDEWINDOWUI, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.FitWindow) != 0)
-                vp.put(PdfName.FITWINDOW, PTRUE);
+                vp.put(PdfName.FITWINDOW, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.CenterWindow) != 0)
-                vp.put(PdfName.CENTERWINDOW, PTRUE);
+                vp.put(PdfName.CENTERWINDOW, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.NonFullScreenPageModeUseNone) != 0)
                 vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USENONE);
             else if ((preferences & PdfWriter.NonFullScreenPageModeUseOutlines) != 0)
@@ -896,7 +895,7 @@ class PdfDocument extends Document implements DocListener {
                 case Element.ANCHOR:
                 {
                     Anchor anchor = (Anchor) element;
-                    URL url = anchor.url();
+                    String url = anchor.reference();
                     leading = anchor.leading();
                     if (url != null) {
                         currentAction = new PdfAction(url);
@@ -1300,7 +1299,7 @@ class PdfDocument extends Document implements DocListener {
     }
     
 /** Adds an image to the document but not to the page resources. It is used with
- * templates.
+ * templates and <CODE>Document.add(Image)</CODE>.
  * @param image the <CODE>Image</CODE> to add
  * @return the name of the image added
  * @throws PdfException on error
@@ -1309,17 +1308,21 @@ class PdfDocument extends Document implements DocListener {
     PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
         PdfName name;
         // if the images is already added, just retrieve the name
-        if (images.containsKey(image)) {
-            name = (PdfName) images.get(image);
+        if (images.containsKey(image.getMySerialId())) {
+            name = (PdfName) images.get(image.getMySerialId());
         }
         // if it's a new image, add it to the document
         else {
-            PdfImage i = new PdfImage(image, "img" + images.size());
-            writer.add(i);
-            name = i.name();
-            images.put(image, name);
-        }
-        
+            if (image.isImgTemplate()) {
+                name = new PdfName("img" + images.size());   
+            }
+            else {
+                PdfImage i = new PdfImage(image, "img" + images.size());
+                writer.add(i);
+                name = i.name();
+            }
+            images.put(image.getMySerialId(), name);
+        }        
         return name;
     }
     
@@ -1334,23 +1337,7 @@ class PdfDocument extends Document implements DocListener {
     
     private void add(Image image) throws PdfException, DocumentException {
         pageEmpty = false;
-        PdfName name;
-        // if the images is already added, just retrieve the name
-        if (images.containsKey(image)) {
-            name = (PdfName) images.get(image);
-        }
-        // if it's a new image, add it to the document
-        else {
-            if (image.isImgTemplate()) {
-                name = new PdfName("img" + images.size());
-            }
-            else {
-                PdfImage i = new PdfImage(image, "img" + images.size());
-                writer.add(i);
-                name = i.name();
-            }
-            images.put(image, name);
-        }
+        PdfName name = addDirectImageSimple(image);
         
         if (image.hasAbsolutePosition()) {
             graphics.addImage(image);
@@ -1369,6 +1356,8 @@ class PdfDocument extends Document implements DocListener {
                 return;
             }
         }
+        // avoid endless loops
+        imageWait = null;
         boolean textwrap = (image.alignment() & Image.TEXTWRAP) == Image.TEXTWRAP
         && !((image.alignment() & Image.MIDDLE) == Image.MIDDLE);
         boolean underlying = (image.alignment() & Image.UNDERLYING) == Image.UNDERLYING;
@@ -1452,20 +1441,7 @@ class PdfDocument extends Document implements DocListener {
         }
         
         // if there is a watermark, the watermark is added
-        if (watermark != null) {
-            
-            PdfName name;
-            // if the watermark is already added, just retrieve the name
-            if (images.containsKey(watermark)) {
-                name = (PdfName) images.get(watermark);
-            }
-            // if it's a new image, add it to the document
-            else {
-                PdfImage i = new PdfImage(watermark, "img" + images.size());
-                writer.add(i);
-                name = i.name();
-                images.put(watermark, name);
-            }
+        if (watermark != null) {            
             float mt[] = watermark.matrix();
             graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }

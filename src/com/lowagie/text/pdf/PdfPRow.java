@@ -85,7 +85,7 @@ public class PdfPRow {
         for (int k = 0; k < cells.length; ++k) {
             PdfPCell cell = cells[k];
             PdfPTable table = cell.getTable();
-            if (table == null) {
+            if (table == null ) {
                 float rightLimit = cell.isNoWrap() ? 20000 : cell.right() - cell.getPaddingRight();
                 ColumnText ct = new ColumnText(null);
                 ct.setSimpleColumn(cell.getPhrase(),
@@ -109,9 +109,13 @@ public class PdfPRow {
                 table.setTotalWidth(cell.right() - cell.getPaddingRight() - cell.getPaddingLeft() - cell.left());
                 cell.setBottom(cell.top() - cell.getPaddingTop() - cell.getPaddingBottom() - table.getTotalHeight());
             }
-            float height = cell.height();
+            float height = cell.getFixedHeight();
+            if (height <= 0)
+                height = cell.height();
             if (height < cell.getFixedHeight())
                 height = cell.getFixedHeight();
+            else if (height < cell.getMinimumHeight())
+                height = cell.getMinimumHeight();
             if (height > maxHeight)
                 maxHeight = height;
         }
@@ -206,13 +210,21 @@ public class PdfPRow {
                     break;
             }
             if (table == null) {
+                float fixedHeight = cell.getFixedHeight();
                 float rightLimit = cell.isNoWrap() ? 20000 : cell.right() + xPos - cell.getPaddingRight();
                 ColumnText ct = new ColumnText(canvases[PdfPTable.TEXTCANVAS]);
+                float bry = -20000;
+                if (fixedHeight > 0) {
+                    if (cell.height() > maxHeight) {
+                        tly = cell.top() + yPos - cell.getPaddingTop();
+                        bry = cell.top() + yPos - maxHeight + cell.getPaddingBottom();
+                    }
+                }
                 ct.setSimpleColumn(cell.getPhrase(),
                     cell.left() + xPos + cell.getPaddingLeft(),
                     tly,
                     rightLimit,
-                    -20000,
+                    bry,
                     0, cell.getHorizontalAlignment());
                 ct.setLeading(cell.getLeading(), cell.getMultipliedLeading());
                 ct.setIndent(cell.getIndent());

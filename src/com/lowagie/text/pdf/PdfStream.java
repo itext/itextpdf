@@ -40,6 +40,7 @@
 package com.lowagie.text.pdf;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.DeflaterOutputStream;
@@ -75,8 +76,16 @@ class PdfStream extends PdfObject {
     protected PdfDictionary dictionary;
     
 /** is the stream compressed? */
-    private boolean compressed = false;
+    protected boolean compressed = false;
     
+    protected ByteArrayOutputStream streamBytes = null;
+    
+    protected byte dicBytes[] = null;
+    
+    static final byte STARTSTREAM[] = DocWriter.getISOBytes("\nstream\n");
+    static final byte ENDSTREAM[] = DocWriter.getISOBytes("\nendstream");
+    static final int SIZESTREAM = STARTSTREAM.length + ENDSTREAM.length;
+
     // constructors
     
 /**
@@ -158,17 +167,8 @@ class PdfStream extends PdfObject {
  */
     
     final public byte[] toPdf() {
-        try {
-            ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
-            pdfStream.write(dictionary.toPdf());
-            pdfStream.write(DocWriter.getISOBytes("\nstream\n"));
-            pdfStream.write(bytes);
-            pdfStream.write(DocWriter.getISOBytes("\nendstream"));
-            return pdfStream.toByteArray();
-        }
-        catch(IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
-        }
+        dicBytes = dictionary.toPdf();
+        return null;
     }
     
     // methods
@@ -207,11 +207,15 @@ class PdfStream extends PdfObject {
             // compress
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             DeflaterOutputStream zip = new DeflaterOutputStream(stream);
-            zip.write(bytes);
+            if (streamBytes != null)
+                streamBytes.writeTo(zip);
+            else
+                zip.write(bytes);
             zip.close();
             // update the object
-            bytes = stream.toByteArray();
-            dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+            streamBytes = stream;
+            bytes = null;
+            dictionary.put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
             if (filter == null) {
                 dictionary.put(PdfName.FILTER, PdfName.FLATEDECODE);
             }
@@ -225,5 +229,26 @@ class PdfStream extends PdfObject {
         catch(IOException ioe) {
             System.err.println("The stream was not compressed: " + ioe.getMessage());
         }
+    }
+
+    int getStreamLength() {
+        if (dicBytes == null)
+            toPdf();
+        if (streamBytes != null)
+            return streamBytes.size() + dicBytes.length + SIZESTREAM;
+        else
+            return bytes.length + dicBytes.length + SIZESTREAM;
+    }
+    
+    void writeTo(OutputStream out) throws IOException{
+        if (dicBytes == null)
+            toPdf();
+        out.write(dicBytes);
+        out.write(STARTSTREAM);
+        if (streamBytes != null)
+            streamBytes.writeTo(out);
+        else
+            out.write(bytes);
+        out.write(ENDSTREAM);
     }
 }

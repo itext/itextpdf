@@ -292,6 +292,16 @@ public class Chunk implements Element {
  */
     
     public Chunk setAnchor(URL url) {
+        return setAttribute(LINK, new PdfAction(url.toExternalForm()));
+    }
+    
+/**
+ * Sets an anchor for this <CODE>Chunk</CODE>.
+ * @param url the url to link to
+ * @return this <CODE>Chunk</CODE>
+ */
+    
+    public Chunk setAnchor(String url) {
         return setAttribute(LINK, new PdfAction(url));
     }
     

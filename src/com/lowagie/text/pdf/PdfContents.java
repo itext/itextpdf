@@ -33,12 +33,20 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.Document;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.zip.DeflaterOutputStream;
+
 /**
  * <CODE>PdfContents</CODE> is a <CODE>PdfStream</CODE> containing the contents (text + graphics) of a <CODE>PdfPage</CODE>.
  */
 
 class PdfContents extends PdfStream {
     
+    static final byte SAVESTATE[] = DocWriter.getISOBytes("q\n");
+    static final byte RESTORESTATE[] = DocWriter.getISOBytes("Q\n");
     // constructor
     
 /**
@@ -52,30 +60,40 @@ class PdfContents extends PdfStream {
  */
     
     PdfContents(PdfContentByte under, PdfContentByte content, PdfContentByte text, PdfContentByte secondContent) throws BadPdfFormatException {
-        super(new PdfDictionary(), " ");
-        ByteBuffer buf = new ByteBuffer();
-        if (under.size() > 0) {
-            buf.append("q\n");
-            buf.append(under.getInternalBuffer());
-            buf.append("Q\n");
-        }
-        if (content.size() > 0) {
-            buf.append("q\n");
-            buf.append(content.getInternalBuffer());
-            buf.append("Q\n");
-        }
-        buf.append("q\n");
-        buf.append(text.getInternalBuffer());
-        buf.append("Q\n");
-        if (secondContent.size() > 0) {
-            buf.append(secondContent.getInternalBuffer());
-        }
-        bytes = buf.toByteArray();
-        dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+        super();
         try {
-            flateCompress();
+            OutputStream out = null;
+            streamBytes = new ByteArrayOutputStream();
+            if (Document.compress)
+            {
+                compressed = true;
+                out = new DeflaterOutputStream(streamBytes);
+            }
+            else
+                out = streamBytes;
+            if (under.size() > 0) {
+                out.write(SAVESTATE);
+                under.getInternalBuffer().writeTo(out);
+                out.write(RESTORESTATE);
+            }
+            if (content.size() > 0) {
+                out.write(SAVESTATE);
+                content.getInternalBuffer().writeTo(out);
+                out.write(RESTORESTATE);
+            }
+            out.write(SAVESTATE);
+            text.getInternalBuffer().writeTo(out);
+            out.write(RESTORESTATE);
+            if (secondContent.size() > 0) {
+                secondContent.getInternalBuffer().writeTo(out);
+            }
+            out.close();
         }
-        catch(PdfException pe) {
+        catch (Exception e) {
+            throw new BadPdfFormatException(e.getMessage());
         }
+        dictionary.put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
+        if (compressed)
+            dictionary.put(PdfName.FILTER, PdfName.FLATEDECODE);
     }
 }
