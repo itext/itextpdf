@@ -1164,7 +1164,9 @@ class PdfDocument extends Document implements DocListener {
                 }
                 case Element.GRAPHIC:
                 {
-                    graphics.add((Graphic) element);
+                    Graphic graphic = (Graphic) element;
+                    graphic.processAttributes(indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
+                    graphics.add(graphic);
                     pageEmpty = false;
                     break;
                 }
