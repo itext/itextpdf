@@ -150,6 +150,10 @@ public class FontFactory extends java.lang.Object {
             // the font is registered as a true type font, but the path was wrong
             return new Font(Font.UNDEFINED, size, style, color);
         }
+        catch(NullPointerException ioe) {
+            // null was entered as fontname and/or encoding
+            return new Font(Font.UNDEFINED, size, style, color);
+        }
         return new Font(basefont, size, style, color);
     }
     
