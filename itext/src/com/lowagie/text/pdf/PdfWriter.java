@@ -775,7 +775,7 @@ public class PdfWriter extends DocWriter {
     
     protected PdfDictionary group;
     
-    /** The defaukt space-char ratio. */    
+    /** The default space-char ratio. */    
     public static final float SPACE_CHAR_RATIO_DEFAULT = 2.5f;
     /** Disable the inter-character spacing. */    
     public static final float NO_SPACE_CHAR_RATIO = 10000000f;
