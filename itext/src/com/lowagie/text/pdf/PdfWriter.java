@@ -1023,7 +1023,7 @@ public class PdfWriter extends DocWriter {
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations, 
      *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      *  The permissions can be combined by ORing them.
-     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
+     * @param strength true for 128 bit key length. false for 40 bit key length
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
@@ -1059,5 +1059,12 @@ public class PdfWriter extends DocWriter {
      */    
     public void setOpenAction(PdfAction action) {
         pdf.setOpenAction(action);
+    }
+
+    /** Sets the page labels
+     * @param pageLabels the page labels
+     */    
+    public void setPageLabels(PdfPageLabels pageLabels) {
+        pdf.setPageLabels(pageLabels);
     }
 }

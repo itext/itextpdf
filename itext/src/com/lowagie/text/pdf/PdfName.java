@@ -405,6 +405,9 @@ public class PdfName extends PdfObject {
 	public static final PdfName PAGE = new PdfName("/Page", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName PAGELABELS = new PdfName("/PageLabels", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName PAGELAYOUT = new PdfName("/PageLayout", 0);
  
 	/** This is a static final PdfName */

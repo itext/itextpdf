@@ -54,6 +54,15 @@ class TrueTypeFont extends BaseFont {
     /** The file name.
      */
     protected String fileName;
+    
+    /** The offset from the start of the file to the table directory.
+     * It is 0 for TTF and may vary for TTC depending on the chosen font.
+     */    
+    protected int directoryOffset;
+    /** The index for the TTC font. It is an empty <CODE>String</CODE> for a
+     * TTF file.
+     */    
+    protected String ttcIndex;
     /** The style modifier */
     protected String style = "";
     /** The content of table 'head'.
@@ -207,14 +216,14 @@ class TrueTypeFont extends BaseFont {
         int sCapHeight;
     }
     
-    /** This constructor is present to allow the derivation of this class.
+    /** This constructor is present to allow extending the class.
      */
     protected TrueTypeFont() {
     }
     
     /** Creates a new TrueType font.
-     * @param ttFile the location of the font on file. The file must end in '.ttf' but
-     * can have modifiers after the name
+     * @param ttFile the location of the font on file. The file must end in '.ttf' or
+     * '.ttc' but can have modifiers after the name
      * @param enc the encoding to be applied to this font
      * @param emb true if the font is to be embedded in the PDF
      * @throws DocumentException the font is invalid
@@ -222,19 +231,22 @@ class TrueTypeFont extends BaseFont {
      */
     TrueTypeFont(String ttFile, String enc, boolean emb) throws DocumentException, IOException {
         String nameBase = getBaseName(ttFile);
+        String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
             style = ttFile.substring(nameBase.length());
-            ttFile = nameBase;
         }
         encoding = enc;
         embedded = emb;
-        fileName = ttFile;
+        fileName = ttcName;
         fontType = FONT_TYPE_TT;
-        if (fileName.toLowerCase().endsWith(".ttf")) {
+        ttcIndex = "";
+        if (ttcName.length() < nameBase.length())
+            ttcIndex = nameBase.substring(ttcName.length() + 1);
+        if (fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".ttc")) {
             process();
         }
         else
-            throw new DocumentException(fileName + style + " is not a TTF font file.");
+            throw new DocumentException(fileName + style + " is not a TTF or TTC font file.");
         try {
             " ".getBytes(enc); // check if the encoding exists
             createEncoding();
@@ -242,6 +254,20 @@ class TrueTypeFont extends BaseFont {
         catch (UnsupportedEncodingException e) {
             throw new DocumentException(e.getMessage());
         }
+    }
+    
+    /** Gets the name from a composed TTC file name.
+     * If I have for input "myfont.ttc,2" the return will
+     * be "myfont.ttc".
+     * @param name the full name
+     * @return the simple file name
+     */    
+    protected static String getTTCName(String name) {
+        int idx = name.toLowerCase().indexOf(".ttc,");
+        if (idx < 0)
+            return name;
+        else
+            return name.substring(0, idx + 4);
     }
     
     
@@ -375,9 +401,25 @@ class TrueTypeFont extends BaseFont {
         
         try {
             rf = new RandomAccessFile(fileName, "r");
-            rf.seek(4);
+            if (ttcIndex.length() > 0) {
+                int dirIdx = Integer.parseInt(ttcIndex);
+                if (dirIdx < 0)
+                    throw new DocumentException("The font index for " + fileName + " must be positive.");
+                String mainTag = readStandardString(4);
+                if (!mainTag.equals("ttcf"))
+                    throw new DocumentException(fileName + " is not a valid TTC file.");
+                rf.skipBytes(4);
+                int dirCount = rf.readInt();
+                if (dirIdx >= dirCount)
+                    throw new DocumentException("The font index for " + fileName + " must be between 0 and " + (dirCount - 1) + ". It was " + dirIdx + ".");
+                rf.skipBytes(dirIdx * 4);
+                directoryOffset = rf.readInt();
+            }
+            rf.seek(directoryOffset);
+            if (rf.readInt() != 0x00010000)
+                throw new DocumentException(fileName + " is not a valid TTF file.");
             int num_tables = rf.readUnsignedShort();
-            rf.seek(12);
+            rf.skipBytes(6);
             for (int k = 0; k < num_tables; ++k) {
                 String tag = readStandardString(4);
                 rf.skipBytes(4);
@@ -824,7 +866,7 @@ class TrueTypeFont extends BaseFont {
                         glyphs.put(new Integer(metrics[0]), null);
                 }
             }
-            TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, glyphs, true);
+            TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, glyphs, directoryOffset, true);
             byte b[] = sb.process();
             int lengths[] = new int[]{b.length};
             pobj = new StreamFont(b, lengths);
