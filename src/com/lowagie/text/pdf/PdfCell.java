@@ -193,20 +193,7 @@ public class PdfCell extends Rectangle {
                     line = new PdfLine(left, right, alignment, leading);
                     break;
                     // if the element is something else
-                    default:          				// flush the current line
-				        if (line.size() > 0) {
-					        line.resetAlignment();
-					        lines.add(line);
-				        }
-				        int parAlignment = 0;
-				        float parLeading = 0;
-				        if (element.type() == Element.PARAGRAPH) {
-					        Paragraph para = (Paragraph)element;
-					        parAlignment = (para.alignment() == Element.ALIGN_UNDEFINED ? alignment : para.alignment()) ;
-					        parLeading = (Float.isNaN(para.leading()) ? leading : para.leading());
-				        } // end of if (element.type == Element.PARAGRAPH)
-
-				        line = new PdfLine(left, right, parAlignment, parLeading);
+                    default:
                         allActions = new ArrayList();
                         processActions(element, null, allActions);
                         aCounter = 0;
