@@ -117,7 +117,6 @@ public class PdfCell extends Rectangle {
     public PdfCell(Cell cell, int rownumber, float left, float right, float top, float cellspacing, float cellpadding) {
         // constructs a Rectangle (the bottomvalue will be changed afterwards)
         super(left, top, right, top);
-        
         // copying the attributes from class Cell
         setBorder(cell.border());
         setBorderWidth(cell.borderWidth());
