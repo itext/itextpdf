@@ -311,11 +311,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             Element element = (Element) o;
             switch(element.type()) {
                 case Element.CHUNK:
-                    Chunk chunk = (Chunk) o;
-                    if (!font.isStandardFont()) {
-                        chunk.setFont(font.difference(chunk.font()));
-                    }
-                    return addChunk(chunk);
+                    return addChunk((Chunk) o);
                 case Element.PHRASE:
                 case Element.PARAGRAPH:
                     Phrase phrase = (Phrase) o;
@@ -356,6 +352,9 @@ public class Phrase extends ArrayList implements TextElementArray {
  */
     
     private synchronized boolean addChunk(Chunk chunk) {
+        if (!font.isStandardFont()) {
+            chunk.setFont(font.difference(chunk.font()));
+        }
         if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
