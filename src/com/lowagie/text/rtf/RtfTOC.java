@@ -68,7 +68,7 @@ import com.lowagie.text.ExceptionConverter;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2003/05/02 09:01:36 $
+ * @version $Revision$Date: 2004/02/07 10:29:03 $
  */
 public class RtfTOC extends Chunk implements RtfField {
 
@@ -93,7 +93,7 @@ public class RtfTOC extends Chunk implements RtfField {
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
 
         writer.writeInitialFontSignature( out, this );
-        out.write( RtfWriter.filterSpecialChar( content() ).getBytes() );
+        out.write( RtfWriter.filterSpecialChar( content(), false).getBytes() );
         writer.writeFinishingFontSignature( out, this );
         
         if (addTOCAsTOCEntry) {
