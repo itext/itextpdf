@@ -130,8 +130,12 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
             par.add(headerFooter.getAfter());
         }
         try {
-            content = doc.getMapper().mapElement(par);
-            ((RtfBasicElement) this.content).setInHeader(true);
+            if(this.document != null) {
+                content = this.document.getMapper().mapElement(par);
+                ((RtfBasicElement) this.content).setInHeader(true);
+            } else {
+                content = par;
+            }
         } catch(DocumentException de) {
             de.printStackTrace();
         }
@@ -210,8 +214,10 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
             try {
                 if(this.content instanceof Element) {
                     this.content = this.document.getMapper().mapElement((Element) this.content);
+                    ((RtfBasicElement) this.content).setInHeader(true);
                 } else if(this.content instanceof RtfBasicElement){
                     ((RtfBasicElement) this.content).setRtfDocument(this.document);
+                    ((RtfBasicElement) this.content).setInHeader(true);
                 }
             } catch(DocumentException de) {
                 de.printStackTrace();
