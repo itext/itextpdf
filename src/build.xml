@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- iText, a JAVA - PDF library                                      -->
+<!-- $Id$         -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<project name="iText" default="help" basedir=".">
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Help                                                             -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="help" description="--> shows the help screen">
+        <echo>Using ANT for ${ant.project.name}</echo>
+        <echo />
+		<ant antfile="ant/download.xml" inheritAll="false" />
+		<ant antfile="ant/compile.xml" inheritAll="false" />
+		<ant antfile="ant/site.xml" inheritAll="false" />
+		<ant antfile="ant/release.xml" inheritAll="false" />
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Make a new release after exporting the modules src/www from CVS  -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	<target name="release" description="--> builds a release after you have exported the src and www module from CVS">
+		<ant antfile="ant/download.xml" inheritAll="false" target="download.bin" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
+		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
+		<ant antfile="ant/release.xml" inheritAll="false" target="release.sf" />
+	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Forwarding targetcalls to subscripts                             -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	<target name="download">
+		<ant antfile="ant/download.xml" inheritAll="false" target="download" />
+	</target>
+	
+	<target name="download.bin">
+		<ant antfile="ant/download.xml" inheritAll="false" target="download.bin" />
+	</target>
+	
+	<target name="download.site">
+		<ant antfile="ant/download.xml" inheritAll="false" target="download.site" />
+	</target>
+	
+	<target name="compile">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="compile" />
+	</target>
+	
+	<target name="compile.debug">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="compile.debug" />
+	</target>
+	
+	<target name="jar">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar" />
+	</target>
+	
+	<target name="jar.debug">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
+	</target>
+	
+	<target name="javadoc">
+		<ant antfile="ant/site.xml" inheritAll="false" target="javadoc" />
+	</target>
+	
+	<target name="docs.tar.gz">
+		<ant antfile="ant/site.xml" inheritAll="false" target="docs.tar.gz" />
+	</target>
+	
+	<target name="lowagie.com">
+		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
+	</target>
+	
+	<target name="archive.src">
+		<ant antfile="ant/release.xml" inheritAll="false" target="archive.src" />
+	</target>
+	
+	<target name="ant.zip">
+		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
+	</target>
+	
+</project>

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- iText, a JAVA - PDF library                                      -->
+<!-- $Id$         -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<project name="iText.release" default="help">
+	
+	<property file=".ant.properties" />
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Help                                                             -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="help" description="--> shows the help screen">
+        <echo>MAKING A NEW RELEASE (release.xml)</echo>
+        <echo>archive.src: archiving the source</echo>
+        <echo>ant.zip: makes a zip file with the ANT scripts</echo>
+        <echo>release.sf: making the release for SourceForge</echo>
+        <echo />
+	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Archiving the code                                               -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	<target name="src.zip" description="--> makes a zipfile with the source code">
+		<mkdir dir="${itext.dist}"/>
+		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties" />
+	</target>
+	
+	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
+		<mkdir dir="${itext.dist}"/>
+		<tar tarfile="${itext.dist}/src.tar" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties" />
+		<gzip zipfile="${itext.dist}/src.tar.gz" src="${itext.dist}/src.tar"/>
+		<delete file="${itext.dist}/src.tar"/>
+	</target>
+	
+	<target name="archive.src" depends="src.zip, src.tar.gz" description="--> archives the source code" />
+
+	<target name="ant.zip" description="--> makes a zipfile with the ANT scripts">
+		<mkdir dir="${itext.dist}"/>
+		<zip zipfile="${itext.dist}/iTextAnt.zip" basedir="${itext.src}" includes="build.xml, ant/**" />
+	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Making a release, ready for upload to SourceForge                -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
+	
+	<target name="release.sf" description="--> makes a complete iText release ready to publish on SourceForge">
+		<mkdir dir="${itext.sf}"/>
+		<copy file="${itext.dist}/iText.jar" tofile="${itext.sf}/itext-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${releasenumber}.zip" overwrite="yes"/>
+		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/itext-src-${releasenumber}.tar.gz" overwrite="yes"/>
+		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${releasenumber}.tar.gz" overwrite="yes"/>
+		<copy file="${itext.dist}/iTextAnt.zip" tofile="${itext.sf}/iTextAnt-${releasenumber}.zip" overwrite="yes"/>
+	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Making the jars with the Asian Fontfiles                         -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->	
+	<target name="asian.jar" description="--> makes iTextAsian.jar and iTextAsianCmaps.jar">
+        <jar jarfile="${itext.bin}/iTextAsian.jar" basedir="${itext.src}" includes="**/*.cmap,**/*.properties" />
+        <jar jarfile="${itext.bin}/iTextAsianCmaps.jar" basedir="${itext.src}" excludes="**/*.java,**/*.txt,**/*.afm,**/*.cmap,**/*.properties" />
+	</target>
+</project>
