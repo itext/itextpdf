@@ -293,7 +293,7 @@ public class PdfCell extends Rectangle {
         line = new PdfLine(left, right, alignment, image.scaledHeight() + 0.4f * leading);
         lines.add(line);
         line = new PdfLine(left, right, alignment, leading);
-        switch (image.alignment() & Image.MIDDLE) {
+        switch (image.alignment() & (Image.MIDDLE | Image.RIGHT)) { // fix Uwe Zimmerman
             case Image.RIGHT:
                 left = right - image.scaledWidth();
                 break;

@@ -502,7 +502,7 @@ class PdfDocument extends Document implements DocListener {
     
     //add by Jin-Hsia Yang
     private boolean isNewpage = false;
-    private boolean isParagraphE = false;
+    
     private float paraIndent = 0;
     //end add by Jin-Hsia Yang
     
@@ -1288,7 +1288,7 @@ class PdfDocument extends Document implements DocListener {
 
                     
                     //add by Jin-Hsia Yang
-                    isParagraphE = true;
+                    
                     paraIndent += paragraph.indentationLeft();
                     //end add by Jin-Hsia Yang
                     
@@ -1336,7 +1336,7 @@ class PdfDocument extends Document implements DocListener {
                     // End added: Bonf (Marc Schneider) 2003-07-29
 
                     //add by Jin-Hsia Yang
-                    isParagraphE = false;
+                    
                     //end add by Jin-Hsia Yang
                     
                     break;
@@ -2170,7 +2170,7 @@ class PdfDocument extends Document implements DocListener {
             // this is a line in the loop
             l = (PdfLine) i.next();
             
-            if(isParagraphE && isNewpage && newline) {
+            if(isNewpage && newline) { // fix Ken@PDI
                 newline=false;
                 text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
             }
