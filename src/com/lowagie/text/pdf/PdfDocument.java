@@ -1587,6 +1587,12 @@ class PdfDocument extends Document implements DocListener {
                             PdfContentByte under = writer.getDirectContentUnder();
                             under.rectangle(tablerec.rectangle(top(), indentBottom()));
                             under.add(cellGraphics);
+                            // bugfix by Gerald Fehringer: now again add the border for the table
+                            // since it might have been covered by cell backgrounds
+                            tablerec.setGrayFill(0);
+                            tablerec.setBackgroundColor(null);
+                            under.rectangle(tablerec.rectangle(top(), indentBottom()));
+                            // end bugfix
                         }
                         cellGraphics = new PdfContentByte(null);
                         // if the table continues on the next page
