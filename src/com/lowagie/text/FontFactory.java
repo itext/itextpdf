@@ -67,46 +67,46 @@ import com.lowagie.text.pdf.BaseFont;
 public class FontFactory extends java.lang.Object {
 
 /** This is a possible value of a base 14 type 1 font */
-    public static final String COURIER = "Courier";
+    public static final String COURIER = BaseFont.COURIER;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String COURIER_BOLD = "Courier-Bold";
+    public static final String COURIER_BOLD = BaseFont.COURIER_BOLD;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String COURIER_OBLIQUE = "Courier-Oblique";
+    public static final String COURIER_OBLIQUE = BaseFont.COURIER_OBLIQUE;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String COURIER_BOLDOBLIQUE = "Courier-BoldOblique";
+    public static final String COURIER_BOLDOBLIQUE = BaseFont.COURIER_BOLDOBLIQUE;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String HELVETICA = "Helvetica";
+    public static final String HELVETICA = BaseFont.HELVETICA;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String HELVETICA_BOLD = "Helvetica-Bold";
+    public static final String HELVETICA_BOLD = BaseFont.HELVETICA_BOLD;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String HELVETICA_OBLIQUE = "Helvetica-Oblique";
+    public static final String HELVETICA_OBLIQUE = BaseFont.HELVETICA_OBLIQUE;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String HELVETICA_BOLDOBLIQUE = "Helvetica-BoldOblique";
+    public static final String HELVETICA_BOLDOBLIQUE = BaseFont.HELVETICA_BOLDOBLIQUE;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String SYMBOL = "Symbol";
+    public static final String SYMBOL = BaseFont.SYMBOL;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_ROMAN = "Times-Roman";
+    public static final String TIMES_ROMAN = BaseFont.TIMES_ROMAN;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_BOLD = "Times-Bold";
+    public static final String TIMES_BOLD = BaseFont.TIMES_BOLD;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_ITALIC = "Times-Italic";
+    public static final String TIMES_ITALIC = BaseFont.TIMES_ITALIC;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_BOLDITALIC = "Times-BoldItalic";
+    public static final String TIMES_BOLDITALIC = BaseFont.TIMES_BOLDITALIC;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String ZAPFDINGBATS = "ZapfDingbats";
+    public static final String ZAPFDINGBATS = BaseFont.ZAPFDINGBATS;
     
 /** This is a map of postscriptfontnames of True Type fonts and the path of their ttf- or ttc-file. */
     private static Properties trueTypeFonts = new Properties();
