@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * $Name$
  *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
@@ -178,7 +179,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 86", PdfObject.TEXT_UNICODE));
+            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.73)", PdfObject.TEXT_UNICODE));
             // Do not edit the line above!
         }
         
