@@ -125,7 +125,7 @@ public class RtfCell
   /** Cell right border position */
     private static final byte[] cellRightBorder = "cellx".getBytes();
   /** Cell is part of table */
-    private static final byte[] cellInTable= "intbl".getBytes();
+    protected static final byte[] cellInTable= "intbl".getBytes();
   /** End of cell */
     private static final byte[] cellEnd = "cell".getBytes();
     
@@ -269,37 +269,44 @@ public class RtfCell
             }
             switch(mergeType)
             {
-//                case MERGE_HORIZ_FIRST : os.write(RtfWriter.escape);
-//                        os.write(cellMergeFirst); break;
-                case MERGE_VERT_FIRST  : os.write(RtfWriter.escape);
-                os.write(cellVMergeFirst); break;
-                case MERGE_BOTH_FIRST  : 
-//                        os.write(RtfWriter.escape);
-//                        os.write(cellMergeFirst); 
-                        os.write(RtfWriter.escape);
-                        os.write(cellVMergeFirst); 
-                        break;
-                case MERGE_HORIZ_PREV  : os.write(RtfWriter.escape);
-                os.write(cellMergePrev); break;
-                case MERGE_VERT_PREV   : os.write(RtfWriter.escape);
-                os.write(cellVMergePrev); break;
-                case MERGE_BOTH_PREV   : os.write(RtfWriter.escape);
-                os.write(cellMergeFirst); 
-//                os.write(RtfWriter.escape); os.write(cellVMergePrev);
-                break;
+                case MERGE_VERT_FIRST  :
+                    os.write(RtfWriter.escape);
+                    os.write(cellVMergeFirst);
+                    break;
+                case MERGE_BOTH_FIRST  :
+                    os.write(RtfWriter.escape);
+                    os.write(cellVMergeFirst);
+                    break;
+                case MERGE_HORIZ_PREV  :
+                    os.write(RtfWriter.escape);
+                    os.write(cellMergePrev);
+                    break;
+                case MERGE_VERT_PREV   :
+                    os.write(RtfWriter.escape);
+                    os.write(cellVMergePrev);
+                    break;
+                case MERGE_BOTH_PREV   :
+                    os.write(RtfWriter.escape);
+                    os.write(cellMergeFirst);
+                    break;
             }
             // -->
-//            System.err.println( this.getClass().getName() + " valign: " + store.verticalAlignment() );
             switch(store.verticalAlignment())
             {
-                case Element.ALIGN_BOTTOM : os.write(RtfWriter.escape);
-                os.write(cellVerticalAlignBottom); break;
-                case Element.ALIGN_CENTER : os.write(RtfWriter.escape);
-                os.write(cellVerticalAlignCenter); break;
-                case Element.ALIGN_TOP    : os.write(RtfWriter.escape);
-                os.write(cellVerticalAlignTop); break;
+                case Element.ALIGN_BOTTOM :
+                    os.write(RtfWriter.escape);
+                    os.write(cellVerticalAlignBottom);
+                    break;
+                case Element.ALIGN_CENTER :
+                    os.write(RtfWriter.escape);
+                    os.write(cellVerticalAlignCenter);
+                    break;
+                case Element.ALIGN_TOP    :
+                    os.write(RtfWriter.escape);
+                    os.write(cellVerticalAlignTop);
+                    break;
             }
-//            System.err.println( this.getClass().getName() + " border: " + store.border() );
+
             if(((store.border() & Rectangle.LEFT) == Rectangle.LEFT) &&
             (store.borderWidth() > 0))
             {
@@ -404,9 +411,6 @@ public class RtfCell
             os.write(RtfWriter.escape);
             os.write(cellRightBorder);
             writeInt(os, cellRight);
-	    //            System.err.println( this.getClass().getName() + " writing in cell border: " + cellRight 
-	    //                    + " width: " + cellWidth + " mergeType: " + mergeType );            
-            os.write((byte) '\n');
         }
         catch(IOException e)
         {
@@ -430,8 +434,8 @@ public class RtfCell
                 return true;                
             }
             // --> 
-//            System.err.println( this.getClass().getName() + " valign: " + store.horizontalAlignment() );
-            switch(store.horizontalAlignment())
+
+/*            switch(store.horizontalAlignment())
             {
                 case Element.ALIGN_LEFT      : os.write(RtfWriter.escape);
                 os.write(cellHorizontalAlignLeft); break;
@@ -441,16 +445,9 @@ public class RtfCell
                 os.write(cellHorizontalAlignRight); break;
                 case Element.ALIGN_JUSTIFIED : os.write(RtfWriter.escape);
                 os.write(cellHorizontalAlignJustified); break;
-            }
-            os.write(RtfWriter.escape);
-            os.write(cellInTable);
+            }*/
             if(!emptyCell)
             {
-//                os.write(RtfWriter.openGroup);
-//            }
-//            else
-//            {
-//                os.write(RtfWriter.openGroup);
                 Iterator cellIterator = store.getElements();
                 while(cellIterator.hasNext())
                 {
@@ -463,10 +460,16 @@ public class RtfCell
                     }
                 }
             }
+            else
+            {
+                os.write(RtfWriter.escape);
+                os.write(RtfWriter.paragraphDefaults);
+                os.write(RtfWriter.escape);
+                os.write(cellInTable);
+            }
             os.write(RtfWriter.escape);
             os.write(cellEnd);
-//            os.write(RtfWriter.closeGroup);
-            os.write((byte)'\n');
+//            os.write((byte)'\n');
         }
         catch(IOException e)
         {

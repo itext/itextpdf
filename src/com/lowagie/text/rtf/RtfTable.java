@@ -145,6 +145,7 @@ public class RtfTable
       {
         RtfRow row = (RtfRow)rowsList.get( i );
         row.writeRow( os, i, origTable );
+        os.write((byte) '\n');
       }
     // -->
     if(!writer.writingHeaderFooter())
