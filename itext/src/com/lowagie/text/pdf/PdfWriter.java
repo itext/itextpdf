@@ -45,6 +45,7 @@ import com.lowagie.text.Table;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.Image;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -192,7 +193,37 @@ public class PdfWriter extends DocWriter {
 			xrefs.add(new PdfCrossReference(position));
 			position += indirect.length();
 			return indirect;
-		} 
+		}
+        
+        /** Gets a PdfIndirectReference for an object that will be created in the future.
+         * @return a PdfIndirectReference
+         */
+        final PdfIndirectReference getPdfIndirectReference()
+        {
+            xrefs.add(new PdfCrossReference(0));
+            return new PdfIndirectReference(0, size() - 1);
+        }
+        
+		/**
+		 * Adds a <CODE>PdfObject</CODE> to the body given an already existing
+         * PdfIndirectReference.
+		 * <P>
+		 * This methods creates a <CODE>PdfIndirectObject</CODE> with the number given by 
+         * <CODE>ref</CODE>, containing the given <CODE>PdfObject</CODE>.
+		 * It also adds a <CODE>PdfCrossReference</CODE> for this object
+		 * to an <CODE>ArrayList</CODE> that will be used to build the
+		 * Cross-reference Table.
+		 *
+		 * @param		object			a <CODE>PdfObject</CODE>
+		 * @param		ref		        a <CODE>PdfIndirectReference</CODE>
+		 * @return		a <CODE>PdfIndirectObject</CODE>
+		 */
+		final PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) {
+			PdfIndirectObject indirect = new PdfIndirectObject(ref.getNumber(), object);			   
+			xrefs.set(ref.getNumber(), new PdfCrossReference(position));
+			position += indirect.length();
+			return indirect;
+		}
 
 		/**
 		 * Adds a <CODE>PdfResources</CODE> object to the body.
@@ -348,17 +379,25 @@ public class PdfWriter extends DocWriter {
 	/** Indirect reference to the root of the document. */
 	protected PdfPages root = new PdfPages();
 
-	/** fontDictionary of the PDF document */
-	protected PdfFontDictionary fontDictionary = new PdfFontDictionary(); 
 
 	/** Dictionary, containing all the images of the PDF document */
 	protected PdfXObjectDictionary imageDictionary = new PdfXObjectDictionary();
     
-    protected final static int FONTNUMBERSTART = 100;
-    protected int fontNumber = FONTNUMBERSTART;
+/** The form XObjects in this document.
+ */    
+    protected HashMap formXObjects = new HashMap();
+/** The name counter for the form XObjects name.
+ */    
+    protected int formXObjectsCounter = 1;
+    
+/** The font number counter for the fonts in the document.
+ */    
+    protected int fontNumber = 1;
+/** The direct content in this document.
+ */    
     protected PdfContentByte directContent;
-    protected HashMap secondFonts = new HashMap();
-    protected PdfDocument document;
+    /** The fonts of this document */
+    protected HashMap documentFonts = new HashMap();
 
 // membervariables
 
@@ -368,6 +407,9 @@ public class PdfWriter extends DocWriter {
 	/** the pdfdocument object. */
 	private PdfDocument pdf;
 
+/** The <CODE>PdfPageEvent</CODE> for this document.
+ */    
+    private PdfPageEvent pageEvent;
 // constructor
 
 	/**
@@ -395,7 +437,7 @@ public class PdfWriter extends DocWriter {
 	 * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
 	 * @return	a new <CODE>PdfWriter</CODE> 
 	 *
-	 * @throws	DocumentException
+	 * @throws	DocumentException on error
 	 */
 
 	public static PdfWriter getInstance(Document document, OutputStream os)
@@ -407,18 +449,14 @@ public class PdfWriter extends DocWriter {
 		return writer;
 	}
 
-	/**
-	 * Gets an instance of the <CODE>PdfWriter</CODE>.
-	 *
-	 * @param	document	The <CODE>Document</CODE> that has to be written
-	 * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
-	 * @param	listener	A <CODE>DocListener</CODE> to pass to the PdfDocument.
-	 * @return	a new <CODE>PdfWriter</CODE>
-	 *
-	 * @throws	DocumentException
-	 *
-	 * @author	David Freels
-	 */
+	/** Gets an instance of the <CODE>PdfWriter</CODE>.
+     *
+     * @return a new <CODE>PdfWriter</CODE>
+     * @param document The <CODE>Document</CODE> that has to be written
+     * @param os The <CODE>OutputStream</CODE> the writer has to write to.
+     * @param listener A <CODE>DocListener</CODE> to pass to the PdfDocument.
+     * @throws DocumentException on error
+ */
 
 	public static PdfWriter getInstance(Document document, OutputStream os, DocListener listener)
 		throws DocumentException {
@@ -433,15 +471,16 @@ public class PdfWriter extends DocWriter {
 // methods to write objects to the outputstream
 
 	/**
-	 * Adds some <CODE>PdfContents</CODE> to this Writer.
-	 * <P>
-	 * The document has to be open before you can begin to add content
-	 * to the body of the document.
-	 *
-	 * @param	page		the <CODE>PdfPage</CODE> to add
-	 * @param	contents	the <CODE>PdfContents</CODE> of the page
-	 * @return	a <CODE>PdfIndirectReference</CODE>
-	 */
+     * Adds some <CODE>PdfContents</CODE> to this Writer.
+     * <P>
+     * The document has to be open before you can begin to add content
+     * to the body of the document.
+     *
+     * @return a <CODE>PdfIndirectReference</CODE>
+     * @param page the <CODE>PdfPage</CODE> to add
+     * @param contents the <CODE>PdfContents</CODE> of the page
+     * @throws PdfException on error
+ */
 
 	public PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException {
 		if (!open) {
@@ -450,7 +489,7 @@ public class PdfWriter extends DocWriter {
 
 		PdfIndirectObject object = body.add(contents);
 		try {
-			os.write(object.toPdf());
+			object.writeTo(os);
 			os.flush();
 		}
 		catch(IOException ioe) {
@@ -460,7 +499,7 @@ public class PdfWriter extends DocWriter {
 		page.setParent(ROOTREFERENCE);
 		PdfIndirectObject pageObject = body.add(page);
 		try {
-			os.write(pageObject.toPdf());
+			pageObject.writeTo(os);
 			os.flush();
 		}
 		catch(IOException ioe) {
@@ -470,42 +509,20 @@ public class PdfWriter extends DocWriter {
 		return pageObject.getIndirectReference();
 	}
 
-    /**
-     * Writes a <CODE>PdfFont</CODE> to the outputstream. 
-     *
-	 * @param	font		the <CODE>PdfFont</CODE> to add
-	 * @return	a <CODE>PdfIndirectReference</CODE> to the encapsulated font
-	 * @throws	PdfException	when a document isn't open yet, or has been closed
-     */
-
-    public PdfIndirectReference add(PdfFont font) throws PdfException {
-		if (! fontDictionary.contains(font)) {
-			PdfIndirectObject object = body.add(font);
-			try {
-				os.write(object.toPdf());
-			}
-			catch(IOException ioe) {
-				System.err.println(ioe.getMessage());
-			}
-			fontDictionary.put(font.getName(), object.getIndirectReference());
-			return object.getIndirectReference();
-		}
-		return (PdfIndirectReference) fontDictionary.get(font.getName());	
-	}
 
     /**
      * Writes a <CODE>PdfImage</CODE> to the outputstream. 
      *
-	 * @param	image		the <CODE>PdfImage</CODE> to add
-	 * @return	a <CODE>PdfIndirectReference</CODE> to the encapsulated image
-	 * @throws	PdfException	when a document isn't open yet, or has been closed
-     */
+     * @param pdfImage the image to be added
+     * @return a <CODE>PdfIndirectReference</CODE> to the encapsulated image
+     * @throws PdfException when a document isn't open yet, or has been closed
+ */
 
     public PdfIndirectReference add(PdfImage pdfImage) throws PdfException {
 		if (! imageDictionary.contains(pdfImage)) {
 			PdfIndirectObject object = body.add(pdfImage);
 			try {
-				os.write(object.toPdf());
+				object.writeTo(os);
 			}
 			catch(IOException ioe) {
 				System.err.println(ioe.getMessage());
@@ -518,11 +535,11 @@ public class PdfWriter extends DocWriter {
 	}
 
 	/**
-	 * return the <CODE>PdfIndirectReference</CODE> to the image with a given name.
-	 *
-	 * @param		the name of an image.
-	 * @return		a <CODE>PdfIndirectReference</CODE>
-	 */
+     * return the <CODE>PdfIndirectReference</CODE> to the image with a given name.
+     *
+     * @param name the name of the image
+     * @return a <CODE>PdfIndirectReference</CODE>
+ */
 
 	public PdfIndirectReference getImageReference(PdfName name) {
 		return (PdfIndirectReference) imageDictionary.get(name);
@@ -531,15 +548,15 @@ public class PdfWriter extends DocWriter {
     /**
      * Writes a <CODE>PdfOutline</CODE> to the outputstream. 
      *
-	 * @param	image		the <CODE>PdfImage</CODE> to add
-	 * @return	a <CODE>PdfIndirectReference</CODE> to the encapsulated outline
-	 * @throws	PdfException	when a document isn't open yet, or has been closed
-     */
+     * @return a <CODE>PdfIndirectReference</CODE> to the encapsulated outline
+     * @param outline the outline to be written
+     * @throws PdfException when a document isn't open yet, or has been closed
+ */
 
     public PdfIndirectReference add(PdfOutline outline) throws PdfException {
 		PdfIndirectObject object = body.add(outline);
 		try {
-			os.write(object.toPdf());
+			object.writeTo(os);
 		}
 		catch(IOException ioe) {
 			System.err.println(ioe.getMessage());
@@ -578,17 +595,23 @@ public class PdfWriter extends DocWriter {
     public void close() {
 		pdf.close();
 		try {
+            // add the form XObjects
+            for (Iterator it = formXObjects.keySet().iterator(); it.hasNext();) {
+                PdfTemplate template = (PdfTemplate)it.next();
+                PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
+                obj.writeTo(os);
+            }
 			// add the root to the body
 			PdfIndirectObject rootObject = body.add(root);
-			os.write(rootObject.toPdf());
+			rootObject.writeTo(os);
 
 			// make the catalog-object and add it to the body
 			PdfIndirectObject indirectCatalog = body.add(((PdfDocument)document).getCatalog(rootObject.getIndirectReference()));
-			os.write(indirectCatalog.toPdf());
+			indirectCatalog.writeTo(os);
 
 			// add the info-object to the body
 			PdfIndirectObject info = body.add(((PdfDocument)document).getInfo());
-			os.write(info.toPdf());
+			info.writeTo(os);
 							   
 			// write the cross-reference table of the body
 			os.write(body.getCrossReferenceTable());
@@ -625,7 +648,7 @@ public class PdfWriter extends DocWriter {
 	 * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
 	 */
 
-	public boolean fitsPage(Table table, int margin) {
+	public boolean fitsPage(Table table, float margin) {
 		 return pdf.bottom(table) > pdf.indentBottom() + margin;
 	}
 
@@ -650,19 +673,42 @@ public class PdfWriter extends DocWriter {
 		return pause;
 	}
     
+/** Gets the direct content for this document. There is only one direct content,
+ * multiple calls to this method will allways retrieve the same.
+ * @return the direct content
+ */    
     public PdfContentByte getDirectContent()
     {
         return directContent;
     }
     
+/** Resets the direct content to empty. This happens when a new page is started.
+ */    
     void resetContent()
     {
         directContent.reset();
     }
     
+/** Adds a <CODE>BaseFont</CODE> to the document and to the page resources.
+ * @param bf the <CODE>BaseFont</CODE> to add
+ * @return the name of the font in the document
+ */    
     PdfName add(BaseFont bf)
     {
-        Object ret[] = (Object[])secondFonts.get(bf);
+        Object ret[] = (Object[])addSimple(bf);
+        pdf.addFont((PdfName)ret[0], (PdfIndirectReference)ret[1]);
+        return (PdfName)ret[0];
+    }
+        
+/** Adds a <CODE>BaseFont</CODE> to the document but not to the page resources.
+ * It is used for templates.
+ * @param bf the <CODE>BaseFont</CODE> to add
+ * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
+ * and position 1 is an <CODE>PdfIndirectReference</CODE>
+ */    
+    Object[] addSimple(BaseFont bf)
+    {
+        Object ret[] = (Object[])documentFonts.get(bf);
 		if (ret == null) {
             PdfIndirectReference ind_font = null;
 			try {
@@ -671,7 +717,7 @@ public class PdfWriter extends DocWriter {
                     if (pobj != null){
                         PdfIndirectObject obj = body.add(pobj);
                         ind_font = obj.getIndirectReference();
-                        os.write(obj.toPdf());
+                        obj.writeTo(os);
                     }
                 }
 			}
@@ -684,14 +730,81 @@ public class PdfWriter extends DocWriter {
             }
             catch (BadPdfFormatException e) {
             }
-            secondFonts.put(bf, ret);
+            documentFonts.put(bf, ret);
 		}
-        document.addFont((PdfName)ret[0], (PdfIndirectReference)ret[1]);
-        return (PdfName)ret[0];
+        return ret;
+    }
+        
+/** Gets the <CODE>PdfDocument</CODE> associated with this writer.
+ * @return the <CODE>PdfDocument</CODE>
+ */    
+    PdfDocument getPdfDocument()
+    {
+        return pdf;
     }
     
-    void setDocument(PdfDocument doc)
+/** Gets a <CODE>PdfIndirectReference</CODE> for an object that
+ * will be created in the future.
+ * @return the <CODE>PdfIndirectReference</CODE>
+ */    
+    PdfIndirectReference getPdfIndirectReference()
     {
-        document = doc;
+        return body.getPdfIndirectReference();
     }
+    
+/** Adds a template to the document but not to the page resources.
+ * @param template the template to add
+ * @return the <CODE>PdfName</CODE> for this template
+ */    
+    PdfName addDirectTemplateSimple(PdfTemplate template)
+    {
+        PdfName name = (PdfName)formXObjects.get(template);
+        try {
+            if (name == null) {
+                name = new PdfName("Xf" + formXObjectsCounter);
+                ++formXObjectsCounter;
+                formXObjects.put(template, name);
+            }
+        }
+        catch (Exception e) {}
+        return name;
+    }
+    
+/** Sets the <CODE>PdfPageEvent</CODE> for this document.
+ * @param pageEvent the <CODE>PdfPageEvent</CODE> for this document
+ */    
+    public void setPageEvent(PdfPageEvent pageEvent)
+    {
+        this.pageEvent = pageEvent;
+    }
+    
+/** Gets the <CODE>PdfPageEvent</CODE> for this document or <CODE>null</CODE>
+ * if none is set.
+ * @return the <CODE>PdfPageEvent</CODE> for this document or <CODE>null</CODE>
+ * if none is set
+ */    
+    public PdfPageEvent getPageEvent()
+    {
+        return pageEvent;
+    }
+    
+/** Adds the local destinations to the body of the document.
+ * @param dest the <CODE>HashMap</CODE> containing the destinations
+ * @throws IOException on error
+ */    
+    void addLocalDestinations(HashMap dest) throws IOException
+    {
+        for (Iterator i = dest.keySet().iterator(); i.hasNext();) {
+            String name = (String)i.next();
+            Object obj[] = (Object[])dest.get(name);
+            PdfDestination destination = (PdfDestination)obj[2];
+            if (destination == null)
+                throw new RuntimeException("The name '" + name + "' has no local destination.");
+            if (obj[1] != null) {
+                PdfIndirectObject iob = body.add(destination, (PdfIndirectReference)obj[1]);
+                iob.writeTo(os);
+            }
+        }
+    }
+    
 }

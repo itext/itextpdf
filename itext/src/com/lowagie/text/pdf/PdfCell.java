@@ -36,6 +36,7 @@ package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.net.URL;
 
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
@@ -43,6 +44,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.Anchor;
 
 /**
  * A <CODE>PdfCell</CODE> is the PDF translation of a <CODE>Cell</CODE>.
@@ -65,7 +67,7 @@ public class PdfCell extends Rectangle {
 	private ArrayList lines;
 
 	/** This is the leading of the lines. */
-	private int leading;
+	private float leading;
 
 	/** This is the number of the row the cell is in. */
 	private int rownumber;
@@ -74,10 +76,10 @@ public class PdfCell extends Rectangle {
 	private int rowspan;
 
 	/** This is the cellspacing of the cell. */
-	private int cellpadding;
+	private float cellpadding;
 
 	/** This is the cellpadding of the cell. */
-	private int cellspacing;
+	private float cellspacing;
 
 	/** Indicates if this cell belongs to the header of a <CODE>PdfTable</CODE> */
 	private boolean header = false;
@@ -97,7 +99,7 @@ public class PdfCell extends Rectangle {
 	 * @param	cellpadding	the cellpadding	of the <CODE>Table</CODE>
 	 */
 
-	public PdfCell(Cell cell, int rownumber, int left, int right, int top, int cellspacing, int cellpadding) {
+	public PdfCell(Cell cell, int rownumber, float left, float right, float top, float cellspacing, float cellpadding) {
 		// initialisation of the Rectangle
 		super(left, top, right, top);
 		setBorder(cell.border());
@@ -145,7 +147,9 @@ public class PdfCell extends Rectangle {
 
 		PdfLine line = new PdfLine(left, right, alignment, height);
 
-		// we loop over all the elements of the cell
+        ArrayList allActions;
+        int aCounter;
+// we loop over all the elements of the cell
 		for (Iterator i = cell.getElements(); i.hasNext(); ) {
 			element = (Element) i.next();
 
@@ -156,6 +160,9 @@ public class PdfCell extends Rectangle {
 					line.resetAlignment();
 					lines.add(line);
 				}
+                allActions = new ArrayList();
+                processActions(element, null, allActions);
+                aCounter = 0;
 				ListItem item;
 				// we loop over all the listitems
 				for (Iterator items = ((List)element).getItems().iterator(); items.hasNext(); ) {
@@ -163,7 +170,7 @@ public class PdfCell extends Rectangle {
 					line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
 					line.setListItem(item);
 					for (Iterator j = item.getChunks().iterator(); j.hasNext(); ) {
-						chunk = new PdfChunk((Chunk) j.next());
+						chunk = new PdfChunk((Chunk) j.next(), (PdfAction)(allActions.get(aCounter++)));
 						while ((overflow = line.add(chunk)) != null) {
 							lines.add(line);
 							line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
@@ -178,9 +185,12 @@ public class PdfCell extends Rectangle {
 				break;
 			// if the element is something else
 			default:
+                allActions = new ArrayList();
+                processActions(element, null, allActions);
+                aCounter = 0;
 				// we loop over the chunks
 				for (Iterator j = element.getChunks().iterator(); j.hasNext(); ) {
-					chunk = new PdfChunk((Chunk) j.next());
+					chunk = new PdfChunk((Chunk) j.next(), (PdfAction)(allActions.get(aCounter++)));
 					while ((overflow = line.add(chunk)) != null) {
 						lines.add(line);
 						line = new PdfLine(left, right, alignment, leading);
@@ -201,10 +211,10 @@ public class PdfCell extends Rectangle {
 		if (line.size() > 0) {
 			lines.add(line);
 		}
-		if (lines.size() > 0) {
+/*		if (lines.size() > 0) {
 			((PdfLine)lines.get(lines.size() - 1)).resetAlignment();
 		}
-
+*/
 		// we set some additional parameters
 		setBottom(top - leading * lines.size() - 5 * cellspacing / 2);
 		this.cellpadding = cellpadding;
@@ -222,7 +232,7 @@ public class PdfCell extends Rectangle {
 	 * @return		the lower left x-coordinaat
 	 */
 
-	public int left() {
+	public float left() {
 		return super.left(cellpadding);
 	}
 
@@ -232,7 +242,7 @@ public class PdfCell extends Rectangle {
 	 * @return		the upper right x-coordinate
 	 */
 
-	public int right() {
+	public float right() {
 		return super.right(cellpadding);
 	}
 
@@ -242,7 +252,7 @@ public class PdfCell extends Rectangle {
 	 * @return		the upper right y-coordinate
 	 */
 
-	public int top() {
+	public float top() {
 		return super.top(cellpadding);
 	}
 
@@ -252,7 +262,7 @@ public class PdfCell extends Rectangle {
 	 * @return		the lower left y-coordinate
 	 */
 
-	public int bottom() {
+	public float bottom() {
 		return super.bottom(cellpadding);
 	}
 
@@ -268,7 +278,7 @@ public class PdfCell extends Rectangle {
 	 * @return	an <CODE>ArrayList</CODE> of <CODE>PdfLine</CODE>s
 	 */
 
-	public ArrayList getLines(int top, int bottom) {
+	public ArrayList getLines(float top, float bottom) {
 		// if the bottom of the page is higher than the top of the cell: do nothing
 		if (top() < bottom) {
 			return null;
@@ -345,7 +355,7 @@ public class PdfCell extends Rectangle {
 	 * @return	the leading of the lines is the cell.
 	 */
 
-	public int leading() {
+	public float leading() {
 		return leading;
 	}
 
@@ -375,7 +385,7 @@ public class PdfCell extends Rectangle {
 	 * @return	a value
 	 */
 
-	public int cellspacing() {
+	public float cellspacing() {
 		return cellspacing;
 	}
 
@@ -385,7 +395,44 @@ public class PdfCell extends Rectangle {
 	 * @return	a value
 	 */
 
-	public int cellpadding() {
+	public float cellpadding() {
 		return cellpadding;
 	}
+    
+    protected void processActions(Element element, PdfAction action, ArrayList allActions)
+    {
+        if (element.type() == Element.ANCHOR) {
+            URL url = ((Anchor)element).url();
+            if (url != null) {
+                action = new PdfAction(url);
+            }
+        }
+        Iterator i;
+        switch (element.type()) {
+            case Element.PHRASE:
+            case Element.SECTION:
+            case Element.ANCHOR:
+            case Element.CHAPTER:
+            case Element.LISTITEM:
+            case Element.PARAGRAPH:
+                for (i = ((ArrayList)element).iterator(); i.hasNext(); ) {
+                    processActions((Element)i.next(), action, allActions);
+                }
+                break;
+            case Element.CHUNK:
+                allActions.add(action);
+                break;
+            case Element.LIST:
+                for (i = ((List)element).getItems().iterator(); i.hasNext(); ) {
+                    processActions((Element)i.next(), action, allActions);
+                }
+                break;
+            default:
+                ArrayList tmp = element.getChunks();
+                int n = element.getChunks().size();
+                while (n-- > 0)
+                    allActions.add(action);
+                break;
+        }
+    }
 }

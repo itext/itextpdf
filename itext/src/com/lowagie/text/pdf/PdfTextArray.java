@@ -118,4 +118,10 @@ class PdfTextArray extends PdfArray {
 		arrayList.add(new PdfString(text));
 		return true;
 	}
+    
+    final boolean add(PdfNumber number)
+    {
+		arrayList.add(number);
+		return true;
+    }
 }

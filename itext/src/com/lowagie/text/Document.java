@@ -108,16 +108,16 @@ public class Document implements DocListener {
 	protected Watermark watermark = null;
 
 	/** margin in x direction starting from the left */
-	protected int marginLeft = 0;
+	protected float marginLeft = 0;
 
 	/** margin in x direction starting from the right */
-	protected int marginRight = 0;
+	protected float marginRight = 0;
 
 	/** margin in y direction starting from the top */
-	protected int marginTop = 0;
+	protected float marginTop = 0;
 
 	/** margin in y direction starting from the bottom */
-	protected int marginBottom = 0;
+	protected float marginBottom = 0;
 
 	// headers, footers
 
@@ -160,7 +160,7 @@ public class Document implements DocListener {
 	 * @param	marginBottom	the margin on the bottom
 	 */
 
-	public Document(Rectangle pageSize, int marginLeft, int marginRight, int marginTop, int marginBottom) {
+	public Document(Rectangle pageSize, float marginLeft, float marginRight, float marginTop, float marginBottom) {
 		this.pageSize = pageSize;		
 		this.marginLeft = marginLeft;
 		this.marginRight = marginRight;
@@ -200,12 +200,12 @@ public class Document implements DocListener {
 
 // methods implementing the DocListener interface
 
-    /**
-     * Adds an <CODE>Element</CODE> to the <CODE>Document</CODE>. 
+    /** Adds an <CODE>Element</CODE> to the <CODE>Document</CODE>. 
      *
-	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not
-	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-     */
+     * @param element the <CODE>Element</CODE> to add
+     * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not
+     * @throws DocumentException when a document isn't open yet, or has been closed
+ */
 
     public boolean add(Element element) throws DocumentException {
 		if (close) {
@@ -294,11 +294,11 @@ public class Document implements DocListener {
 		return true;
 	}
 
-    /**
-     * Sets the <CODE>Watermark</CODE>. 
+    /** Sets the <CODE>Watermark</CODE>. 
      *
-	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-     */
+     * @param watermark the watermark to add
+     * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+ */
 
     public boolean add(Watermark watermark) {
 		this.watermark = watermark;
@@ -333,7 +333,7 @@ public class Document implements DocListener {
 	 * @return	a <CODE>boolean</CODE>
 	 */
 
-	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom) {
+	public boolean setMargins(float marginLeft,float marginRight,float marginTop,float marginBottom) {
 		this.marginLeft = marginLeft;
 		this.marginRight = marginRight;
 		this.marginTop = marginTop;
@@ -380,11 +380,8 @@ public class Document implements DocListener {
 		}
 	}
 
-	/**
-	 * Resets the header of this document.
-	 * 
-	 * @param	header		the new header
-	 */
+	/** Resets the header of this document.
+ */
 
 	public void resetHeader() {
 		this.header = null;			 
@@ -451,13 +448,10 @@ public class Document implements DocListener {
 		}
 	}
 
-	/**
-	 * Returns the current page number.
-	 *
-	 * @return	the current page number
-	 *
-	 * @author	David Freels
-	 */
+	/** Returns the current page number.
+     *
+     * @return the current page number
+ */
 
 	public int getPageNumber() {
 		return this.pageN;
@@ -534,11 +528,11 @@ public class Document implements DocListener {
 	}
 
 	/**
-	 * Adds the keywords to a Document.
-	 *
-	 * @param	keuwords	the keywords
-	 * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
-	 */
+     * Adds the keywords to a Document.
+     *
+     * @param keywords adds the keywords to the document
+     * @return <CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
+ */
 
 	public boolean addKeywords(String keywords) {
 		try {
@@ -603,7 +597,7 @@ public class Document implements DocListener {
 	 * @return	the left margin
 	 */
 
-	public int leftMargin() {
+	public float leftMargin() {
 		return marginLeft;
 	}
 
@@ -613,7 +607,7 @@ public class Document implements DocListener {
 	 * @return	the right margin
 	 */
 
-	public int rightMargin() {
+	public float rightMargin() {
 		return marginRight;
 	}
 
@@ -623,7 +617,7 @@ public class Document implements DocListener {
 	 * @return	the top margin
 	 */
 
-	public int topMargin() {
+	public float topMargin() {
 		return marginTop;
 	}
 
@@ -633,7 +627,7 @@ public class Document implements DocListener {
 	 * @return	the bottom margin
 	 */
 
-	public int bottomMargin() {
+	public float bottomMargin() {
 		return marginBottom;
 	}
 
@@ -643,7 +637,7 @@ public class Document implements DocListener {
 	 * @return	the lower left x-coordinate
 	 */
 
-	public int left() {
+	public float left() {
 		return pageSize.left(marginLeft);
 	}
 
@@ -653,7 +647,7 @@ public class Document implements DocListener {
 	 * @return	the upper right x-coordinate
 	 */
 
-	public int right() {
+	public float right() {
 		return pageSize.right(marginRight);
 	}
 
@@ -663,7 +657,7 @@ public class Document implements DocListener {
 	 * @return	the upper right y-coordinate
 	 */
 
-	public int top() {
+	public float top() {
 		return pageSize.top(marginTop);
 	}
 
@@ -673,7 +667,7 @@ public class Document implements DocListener {
 	 * @return	the lower left y-coordinate
 	 */
 
-	public int bottom() {
+	public float bottom() {
 		return pageSize.bottom(marginBottom);
 	}
 
@@ -684,7 +678,7 @@ public class Document implements DocListener {
 	 * @return	the lower left x-coordinate
 	 */
 
-	public int left(int margin) {
+	public float left(float margin) {
 		return pageSize.left(marginLeft + margin);
 	}
 
@@ -695,7 +689,7 @@ public class Document implements DocListener {
 	 * @return	the upper right x-coordinate
 	 */
 
-	public int right(int margin) {
+	public float right(float margin) {
 		return pageSize.right(marginRight + margin);
 	}
 
@@ -706,7 +700,7 @@ public class Document implements DocListener {
 	 * @return	the upper right y-coordinate
 	 */
 
-	public int top(int margin) {
+	public float top(float margin) {
 		return pageSize.top(marginTop + margin);
 	}
 
@@ -717,7 +711,15 @@ public class Document implements DocListener {
 	 * @return	the lower left y-coordinate
 	 */
 
-	public int bottom(int margin) {
+	public float bottom(float margin) {
 		return pageSize.bottom(marginBottom + margin);
 	}
+    
+    /** Gets the pagesize.
+     * @return the page size
+ */
+    public Rectangle getPageSize()
+    {
+        return this.pageSize;
+    }
 }

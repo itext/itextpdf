@@ -195,11 +195,11 @@ class PdfImage extends PdfStream {
 							colorspace.add(PdfName.INDEXED);
 							colorspace.add(PdfName.DEVICERGB);
 							colorspace.add(new PdfNumber(len / 3 - 1));
-							ByteArrayOutputStream colortable = new ByteArrayOutputStream();
+							ByteBuffer colortable = new ByteBuffer();
 							while ((len--) > 0) {
-								colortable.write(is.read());
+								colortable.append_i(is.read());
 							}
-							colorspace.add(new PdfGifColorTable(colortable.toByteArray()));
+							colorspace.add(new PdfLiteral(PdfContentByte.escapeString(colortable.toByteArray())));
 							dictionary.put(PdfName.COLORSPACE, colorspace);
 							Png.getInt(is);
 						}
@@ -274,13 +274,13 @@ class PdfImage extends PdfStream {
 				// Byte 12: Pixel aspect ratio
 				is.read();
 				// Byte 13-...: Global color table
-				ByteArrayOutputStream colortable = new ByteArrayOutputStream();
+				ByteBuffer colortable = new ByteBuffer();
 				for (int j = 0; j < nColors; j++) {
-					colortable.write(is.read());	// red
-					colortable.write(is.read());	// green
-					colortable.write(is.read());	// blue
+					colortable.append_i(is.read());	// red
+					colortable.append_i(is.read());	// green
+					colortable.append_i(is.read());	// blue
 				}
-				colorspace.add(new PdfGifColorTable(colortable.toByteArray()));
+				colorspace.add(new PdfLiteral(PdfContentByte.escapeString(colortable.toByteArray())));
 				dictionary.put(PdfName.COLORSPACE, colorspace);
 				dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(8));
 

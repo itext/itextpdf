@@ -172,7 +172,7 @@ class PdfStream extends PdfObject {
 	 * @since		rugPdf0.10
      */
 
-    final byte[] toPdf() {
+    final public byte[] toPdf() {
 		try {
 			ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
 			pdfStream.write(dictionary.toPdf());

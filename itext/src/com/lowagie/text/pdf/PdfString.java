@@ -71,6 +71,8 @@ class PdfString extends PdfObject implements PdfPrintable {
 
 	/** De value of this object. */
 	protected String value = NOTHING;
+    
+    protected String encoding = ENCODING;
 
 // constructors
 
@@ -95,6 +97,18 @@ class PdfString extends PdfObject implements PdfPrintable {
 	PdfString(String value) {
 		super(STRING, value);
 		this.value = value;
+	}
+
+	PdfString(String value, BaseFont bf) {
+		super(STRING, value);
+		this.value = value;
+        encoding = bf.getEncoding();
+	}
+
+	PdfString(String value, String encoding) {
+		super(STRING, value);
+		this.value = value;
+        this.encoding = encoding;
 	}
 
 	/**
@@ -128,6 +142,12 @@ class PdfString extends PdfObject implements PdfPrintable {
 		this.value = printable.toString();
 	}
 
+	PdfString(PdfPrintable printable, BaseFont bf) {
+		super(STRING, printable.toString());
+		this.value = printable.toString();
+        encoding = bf.getEncoding();
+	}
+
 // methods overriding some methods in PdfObject
 
 	/**
@@ -138,13 +158,15 @@ class PdfString extends PdfObject implements PdfPrintable {
 	 * @since		rugPdf0.10
      */
 
-    final byte[] toPdf() {
+    final public byte[] toPdf() {
+        byte b[];
 		try {
-			return get().getBytes(ENCODING);
+            b = value.getBytes(encoding);
 		}
 		catch(UnsupportedEncodingException uee) {
-			return get().getBytes();
+            b = value.getBytes();
 		}
+        return PdfContentByte.escapeString(b);
     }
 
 	/**
@@ -169,75 +191,18 @@ class PdfString extends PdfObject implements PdfPrintable {
 	 * @since		rugPdf0.20
 	 */
 
-	 String get() {
+	 byte[] get() {
+         return toPdf();
 		// we create the StringBuffer that will be the PDF representation of the content
-		StringBuffer pdfString = new StringBuffer("(");
-
-		// we have to control all the characters in the content
-		int length = value.length();
-		int index = -1;
-		int split = -1;
-		char character;
-		// loop over all the characters
-		while (++index < length) {
-			character = value.charAt(index);
-			// as soon as we reach the (arbitrary chosen) limit of 150 characters on 1 line,
-			// we look for a 'space'-character in order to split the line
-			if ((++split > 150) && (character == ' ')) {
-				split = -1;
-				// 2001/01/19 space character added; bugfix by Roman Zabicki
-				pdfString.append(" \\\n");
-				continue;
-			}
-			// once we reach the limit of 250 characters on 1 line (without encountering
-			// a 'space' character), we split the line anyway
-			if (split > 250) {
-				split = -1;
-				pdfString.append("\\\n");
-			}
-			// escape of the characters outside the representable ASCII characters set
-			if (character > 255 && character < 512) {		
-				// since character > 255 and < 512, the octal representation is always 3 characters long
-				pdfString.append('\\');
-				pdfString.append(Integer.toString((int) character, 8));
-				continue;
-			}
-			// characters that can't be represented as an octal are changed into a question mark
-			if (character > 511) {
-				pdfString.append("?");
-			}
-			// special characters are escaped (reference manual: p38 Table 4.1)
-			switch (character) {
-			case '\n':
-				pdfString.append("\\n");
-				break;
-			case '\r':
-				pdfString.append("\\r");
-				break;
-			case '\t':
-				pdfString.append("\\t");
-				break;
-			case '\b':
-				pdfString.append("\\b");
-				break;
-			case '\f':
-				pdfString.append("\\f");
-				break;
-			case '\\':
-				pdfString.append("\\\\");
-				break;
-			case '(':
-				pdfString.append("\\(");
-				break;
-			case ')':
-				pdfString.append("\\)");
-				break;
-			default:
-				pdfString.append(character);
-			}
-		}
-		pdfString.append(')');
-		// de StringBuffer is completed, we can return the String
-		return pdfString.toString();
 	}
+    
+    boolean isCJKEncoding()
+    {
+        return encoding.equals(CJKFont.CJK_ENCODING);
+    }
+    
+    String getEncoding()
+    {
+        return encoding;
+    }
 }

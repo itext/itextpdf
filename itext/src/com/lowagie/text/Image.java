@@ -115,25 +115,25 @@ public abstract class Image extends Rectangle implements Element {
 	protected String alt;
 
 	/** This is the absolute X-position of the image. */
-	protected int absoluteX = Integer.MIN_VALUE;
+	protected float absoluteX = Float.NaN;
 
 	/** This is the absolute Y-position of the image. */
-	protected int absoluteY = Integer.MIN_VALUE;
+	protected float absoluteY = Float.NaN;
 
 	/** This is the width of the image without rotation. */
-	protected double plainWidth;
+	protected float plainWidth;
 
 	/** This is the width of the image without rotation. */
-	protected double plainHeight;
+	protected float plainHeight;
 
 	/** This is the scaled width of the image taking rotation into account. */
-	protected double scaledWidth;
+	protected float scaledWidth;
 
 	/** This is the original height of the image taking rotation into account. */
-	protected double scaledHeight;
+	protected float scaledHeight;
 
 	/** This is the rotation of the image. */
-	protected double rotation;
+	protected float rotation;
 
 	/** this is the colorspace of a jpeg-image. */
 	protected int colorspace = -1;
@@ -306,7 +306,7 @@ public abstract class Image extends Rectangle implements Element {
 	 * @param	absoluteY
 	 */
 
-	public void setAbsolutePosition(int absoluteX, int absoluteY) {
+	public void setAbsolutePosition(float absoluteX, float absoluteY) {
 		this.absoluteX = absoluteX;
 		this.absoluteY = absoluteY;
 	}
@@ -320,12 +320,12 @@ public abstract class Image extends Rectangle implements Element {
 	 * @author		Paulo Soares
 	 */
 
-	public void scaleAbsolute(int newWidth, int newHeight) {
+	public void scaleAbsolute(float newWidth, float newHeight) {
 		plainWidth = newWidth;
 		plainHeight = newHeight;
-		double[] matrix = matrix();
-		scaledWidth = (int) (matrix[DX] - matrix[CX]);
-		scaledHeight = (int) (matrix[DY] - matrix[CY]);
+		float[] matrix = matrix();
+		scaledWidth = matrix[DX] - matrix[CX];
+		scaledHeight = matrix[DY] - matrix[CY];
 	}
 
 	/**
@@ -336,7 +336,7 @@ public abstract class Image extends Rectangle implements Element {
 	 * @author		Paulo Soares
 	 */
 
-	public void scalePercent(int percent) {
+	public void scalePercent(float percent) {
 		scalePercent(percent, percent);
 	}
 
@@ -349,12 +349,12 @@ public abstract class Image extends Rectangle implements Element {
 	 * @author		Paulo Soares
 	 */
 
-	public void scalePercent(int percentX, int percentY) {
-		plainWidth = (width() * percentX) / 100.0;
-		plainHeight = (height() * percentY) / 100.0;
-		double[] matrix = matrix();
-		scaledWidth = (int) (matrix[DX] - matrix[CX]);
-		scaledHeight = (int) (matrix[DY] - matrix[CY]);
+	public void scalePercent(float percentX, float percentY) {
+		plainWidth = (width() * percentX) / 100f;
+		plainHeight = (height() * percentY) / 100f;
+		float[] matrix = matrix();
+		scaledWidth = matrix[DX] - matrix[CX];
+		scaledHeight = matrix[DY] - matrix[CY];
 	}
 
 	/**
@@ -364,9 +364,9 @@ public abstract class Image extends Rectangle implements Element {
 	 * @param		fitHeight		the height to fit
 	 */
 
-	public void scaleToFit(int fitWidth, int fitHeight) {
-		int percentX = (fitWidth * 100) / width();
-		int percentY = (fitHeight * 100) / height();
+	public void scaleToFit(float fitWidth, float fitHeight) {
+		float percentX = (fitWidth * 100) / width();
+		float percentY = (fitHeight * 100) / height();
 		scalePercent(percentX < percentY ? percentX : percentY);
 	}
 
@@ -378,20 +378,21 @@ public abstract class Image extends Rectangle implements Element {
 	 * @author		Paulo Soares 
 	 */
 
-	public void setRotation(double r) {
-		 rotation = r % (2.0 * Math.PI);
+	public void setRotation(float r) {
+		 rotation = (float)(r % (2.0 * Math.PI));
 		 if (rotation < 0) {
 			 rotation += 2.0 * Math.PI;
 		 }	
-		double[] matrix = matrix();
-		scaledWidth = (int) (matrix[DX] - matrix[CX]);
-		scaledHeight = (int) (matrix[DY] - matrix[CY]);
+		float[] matrix = matrix();
+		scaledWidth = matrix[DX] - matrix[CX];
+		scaledHeight = matrix[DY] - matrix[CY];
 	}
 
 // methods to retrieve information
 
 	/**
 	 * Gets the bpc for the image.
+     * <P>
 	 * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
 	 *
 	 * @return		a bpc value
@@ -405,6 +406,7 @@ public abstract class Image extends Rectangle implements Element {
 
 	/**
 	 * Gets the raw data for the image.
+     * <P>
 	 * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
 	 *
 	 * @return		the raw data
@@ -423,7 +425,7 @@ public abstract class Image extends Rectangle implements Element {
 	 */
 
 	public boolean hasAbsolutePosition() {
-		return absoluteX > Integer.MIN_VALUE && absoluteY > Integer.MIN_VALUE;
+		return !Float.isNaN(absoluteX) && !Float.isNaN(absoluteY);
 	}
 
 	/**
@@ -432,7 +434,7 @@ public abstract class Image extends Rectangle implements Element {
 	 * @return		a position
 	 */
 
-	public int absoluteX() {
+	public float absoluteX() {
 		return absoluteX;
 	}
 
@@ -442,7 +444,7 @@ public abstract class Image extends Rectangle implements Element {
 	 * @return		a position
 	 */
 
-	public int absoluteY() {
+	public float absoluteY() {
 		return absoluteY;
 	}
 
@@ -534,8 +536,8 @@ public abstract class Image extends Rectangle implements Element {
 	 * @return		a value
 	 */
 
-	public int scaledWidth() {
-		return (int) scaledWidth;
+	public float scaledWidth() {
+		return scaledWidth;
 	}
 
 	/**
@@ -544,12 +546,13 @@ public abstract class Image extends Rectangle implements Element {
 	 * @return		a value
 	 */
 
-	public int scaledHeight() {
-		return (int) scaledHeight;
+	public float scaledHeight() {
+		return scaledHeight;
 	}
 
 	/**
 	 * Gets the colorspace for the image.
+     * <P>
 	 * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
 	 *
 	 * @return		a colorspace value
@@ -571,15 +574,15 @@ public abstract class Image extends Rectangle implements Element {
 	 * @author		Paulo Soares
 	 */
 
-	public double[] matrix() {
-		double[] matrix = new double[8];
-		double cosX = Math.cos(rotation);
-		double sinX = Math.sin(rotation);
+	public float[] matrix() {
+		float[] matrix = new float[8];
+		float cosX = (float)Math.cos(rotation);
+		float sinX = (float)Math.sin(rotation);
 		matrix[AX] = plainWidth * cosX;
 		matrix[AY] = plainWidth * sinX;
 		matrix[BX] = (- plainHeight) * sinX;
 		matrix[BY] = plainHeight * cosX;
-		if (rotation < Math.PI / 2.0) {
+		if (rotation < Math.PI / 2f) {
 			matrix[CX] = matrix[BX];
 			matrix[CY] = 0;
 			matrix[DX] = matrix[AX];
@@ -591,13 +594,13 @@ public abstract class Image extends Rectangle implements Element {
 			matrix[DX] = 0;
 			matrix[DY] = matrix[AY];
 		}
-		else if (rotation < Math.PI / 1.5) {
+		else if (rotation < Math.PI / 1.5f) {
 			matrix[CX] = matrix[AX];
 			matrix[CY] = matrix[AY] + matrix[BY];
 			matrix[DX] = matrix[BX];
 			matrix[DY] = 0;
 		}
-		else if (rotation < Math.PI / 2.0) {
+		else if (rotation < Math.PI / 2f) {
 			matrix[CX] = 0;
 			matrix[CY] = matrix[AY];
 			matrix[DX] = matrix[AX] + matrix[BX];
@@ -608,7 +611,7 @@ public abstract class Image extends Rectangle implements Element {
 
 	/**
 	 * This method is an alternative for the <CODE>InputStream.skip()</CODE>-method
-	 * that doesn't seem to work properly.
+	 * that doesn't seem to work properly for big values of <CODE>size</CODE>.
 	 *
 	 * @param	is		the <CODE>InputStream</CODE>
 	 * @param	size	the number of bytes to skip

@@ -65,9 +65,9 @@ public class ImgRaw extends Image implements Element {
 		super((URL)null);
 		type = IMGRAW;
 		scaledHeight = height;
-		setTop((int) scaledHeight);
+		setTop(scaledHeight);
 		scaledWidth = width;
-		setRight((int) scaledWidth);
+		setRight(scaledWidth);
 		if (components != 1 && components != 3 && components != 4)
 			throw new BadElementException("Components must be 1, 3, or 4.");
 		if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8) 

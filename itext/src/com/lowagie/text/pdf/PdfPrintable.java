@@ -134,4 +134,6 @@ public interface PdfPrintable {
 	 */
 
 	public boolean isString();
+    
+	public byte[] toPdf();
 }

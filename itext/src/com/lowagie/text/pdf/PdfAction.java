@@ -1,7 +1,7 @@
 /*
  * @(#)PdfAnnotation.java			0.37 2000/10/05
  *       release iText0.37:         0.37 2000/10/05
- * 
+ *
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -45,19 +45,25 @@ import java.net.URL;
  * @since   rugPdf0.37
  */
 
-class PdfAction extends PdfDictionary {
-
-// constructors
-
-	/**
-	 * Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
-	 *
-	 * @since		iText0.37
-	 */
-
-	PdfAction(URL url) {
-		super(PdfName.ACTION);
-		put(PdfName.S, PdfName.URI);
-		put(PdfName.URI, new PdfString(url.toExternalForm()));
-	}
+public class PdfAction extends PdfDictionary {
+    
+    // constructors
+    
+    /**
+     * Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
+     *
+     * @since		iText0.37
+     */
+    
+    public PdfAction(URL url) {
+        super(PdfName.ACTION);
+        put(PdfName.S, PdfName.URI);
+        put(PdfName.URI, new PdfString(url.toExternalForm()));
+    }
+    
+    PdfAction(PdfIndirectReference destination) {
+        super(PdfName.ACTION);
+        put(PdfName.S, PdfName.GOTO);
+        put(PdfName.D, destination);
+    }
 }

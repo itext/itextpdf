@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- * 	  
+ *  	  
  */
 
 package com.lowagie.text;
@@ -83,7 +83,7 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * @param	leading		the leading
 	 */
 
-	public Anchor(int leading) {
+	public Anchor(float leading) {
 		super(leading);
 	}
 
@@ -127,7 +127,7 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * @param	chunk		a <CODE>Chunk</CODE>
 	 */
 
-	public Anchor(int leading, Chunk chunk) {
+	public Anchor(float leading, Chunk chunk) {
 		super(leading, chunk);
 	}
 
@@ -139,7 +139,7 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * @param	string		a <CODE>String</CODE>
 	 */
 
-	public Anchor(int leading, String string) {
+	public Anchor(float leading, String string) {
 		super(leading, string);
 	}
 
@@ -152,7 +152,7 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * @param	font		a <CODE>Font</CODE>
 	 */
 
-	public Anchor(int leading, String string, Font font) {
+	public Anchor(float leading, String string, Font font) {
 		super(leading, string, font);
 	}
 

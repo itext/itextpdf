@@ -100,10 +100,10 @@ public class List implements Element {
 	private Chunk symbol = new Chunk("-");
 
 	/** The indentation of this list on the left side. */
-	private int indentationLeft;
+	private float indentationLeft;
 
 	/** The indentation of this list on the right side. */
-	private int indentationRight;
+	private float indentationRight;
 
 	/** The indentation of the listitems. */
 	private int symbolIndent;
@@ -224,7 +224,7 @@ public class List implements Element {
 	 * @param	indentation		the new indentation
 	 */
 
-	public final void setIndentationLeft(int indentation) {
+	public final void setIndentationLeft(float indentation) {
 		this.indentationLeft = indentation;
 	}
 
@@ -234,7 +234,7 @@ public class List implements Element {
 	 * @param	indentation		the new indentation
 	 */
 
-	public final void setIndentationRight(int indentation) {
+	public final void setIndentationRight(float indentation) {
 		this.indentationRight = indentation;
 	}
 
@@ -298,7 +298,7 @@ public class List implements Element {
 	 * @return	a <CODE>leading</CODE>
 	 */
 
-	public int leading() {
+	public float leading() {
 		if (list.size() < 1) {
 			return -1;
 		}
@@ -322,7 +322,7 @@ public class List implements Element {
 	 * @return	the indentation
 	 */
 
-	public final int indentationLeft() {
+	public final float indentationLeft() {
 		return indentationLeft;
 	}
 
@@ -332,7 +332,7 @@ public class List implements Element {
 	 * @return	the indentation
 	 */
 
-	public final int indentationRight() {
+	public final float indentationRight() {
 		return indentationRight;
 	}
 

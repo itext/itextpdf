@@ -43,7 +43,7 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.pdf.font.*;
+//import com.lowagie.text.pdf.font.*;
 
 /**
  * <CODE>PdfFontMetrics</CODE> is an abstract superclass containing methods to retrieve
@@ -131,22 +131,22 @@ public abstract class PdfFontMetrics {
 // static membervariables for some standard fontsizes (not necessary)
 
 	/** This is a possible value of a fontsize */
-	public static final int SIZE_8 = 8;
+	public static final float SIZE_8 = 8;
 
 	/** This is a possible value of a fontsize */
-	public static final int SIZE_10 = 10;
+	public static final float SIZE_10 = 10;
 
 	/** This is a possible value of a fontsize */
-	public static final int SIZE_12 = 12;
+	public static final float SIZE_12 = 12;
 
 	/** This is a possible value of a fontsize */
-	public static final int SIZE_14 = 14;
+	public static final float SIZE_14 = 14;
 
 	/** This is a possible value of a fontsize */
-	public static final int SIZE_18 = 18;
+	public static final float SIZE_18 = 18;
 
 	/** This is a possible value of a fontsize */
-	public static final int SIZE_24 = 24;
+	public static final float SIZE_24 = 24;
 
 // static membervariables for the different encodings
 
@@ -211,7 +211,7 @@ public abstract class PdfFontMetrics {
 	private int encoding;
 
 	/** The size of the font. */
-	private int size;
+	private float size;
 
 	/** Array containing the width of each character. */
 	private int[] width;
@@ -228,57 +228,13 @@ public abstract class PdfFontMetrics {
 	 * @since   iText0.30
 	 */
 
-	protected PdfFontMetrics(int encoding, int size) {
+	protected PdfFontMetrics(int encoding, float size) {
 		this.encoding = checkEncoding(encoding);
 		this.size = checkFontsize(size);
 	}
 
 // methods
 
-	/**
-	 * Returns the a <CODE>PdfFontMetrics</CODE>-object of a certain font
-	 * with a certain encoding and a certain size.
-	 *
-	 * @param	fonttype	the fonttype
-	 * @param	encoding	the fontencoding
-	 * @param	fontsize	the fontsize
-	 * @since   iText0.30
-	 */
-
-	static final PdfFontMetrics getFont(int fonttype, int encoding, int fontsize) {
-		switch(fonttype) {
-		case COURIER:
-			return new Courier(encoding, fontsize);
-		case COURIER_BOLD:
-			return new CourierBold(encoding, fontsize);
-		case COURIER_OBLIQUE:
-			return new CourierOblique(encoding, fontsize);
-		case COURIER_BOLDOBLIQUE:
-			return new CourierBoldOblique(encoding, fontsize);
-		case HELVETICA:
-			return new Helvetica(encoding, fontsize);
-		case HELVETICA_BOLD:
-			return new HelveticaBold(encoding, fontsize);
-		case HELVETICA_OBLIQUE:
-			return new HelveticaOblique(encoding, fontsize);
-		case HELVETICA_BOLDOBLIQUE:
-			return new HelveticaBoldOblique(encoding, fontsize);
-		case SYMBOL:
-			return new Symbol(encoding, fontsize);
-		case TIMES_ROMAN:
-			return new TimesRoman(encoding, fontsize);
-		case TIMES_BOLD:
-			return new TimesBold(encoding, fontsize);
-		case TIMES_ITALIC:
-			return new TimesItalic(encoding, fontsize);
-		case TIMES_BOLDITALIC:
-			return new TimesBoldItalic(encoding, fontsize);
-		case ZAPFDINGBATS:
-			return new ZapfDingbats(encoding, fontsize);
-		default:
-			return new Courier(encoding, fontsize);
-		}
-	}
 	
 	/**
 	 * Sets the array containing the width of each character.
@@ -329,7 +285,7 @@ public abstract class PdfFontMetrics {
 	 * @since   iText0.30
 	 */
 
-	final int size() {
+	final float size() {
 		return size;
 	}
 
@@ -501,7 +457,7 @@ public abstract class PdfFontMetrics {
 	 * @since		rugPdf0.10
 	 */
 
-	static final int checkFontsize(int fontsize) {
+	static final float checkFontsize(float fontsize) {
 		if (fontsize < 0 || fontsize > 1000) return SIZE_12;
 		return fontsize;
 	}									   

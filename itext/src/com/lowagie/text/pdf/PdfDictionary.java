@@ -136,7 +136,7 @@ class PdfDictionary extends PdfObject {
 	 * @since		rugPdf0.10
      */
 
-    byte[] toPdf() {
+    public byte[] toPdf() {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			stream.write("<<\n".getBytes());

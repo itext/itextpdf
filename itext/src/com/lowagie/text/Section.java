@@ -76,13 +76,13 @@ public class Section extends ArrayList implements TextElementArray {
 	protected int numberDepth;
 
 	/** The indentation of this section on the left side. */
-	protected int indentationLeft;
+	protected float indentationLeft;
 
 	/** The indentation of this section on the right side. */
-	protected int indentationRight;
+	protected float indentationRight;
 
 	/** The additional indentation of the content of this section. */
-	protected int sectionIndent;
+	protected float sectionIndent;
 
 	/** This is the number of subsections. */
 	protected transient int subsections = 0;
@@ -266,7 +266,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @param	numberDepth	the numberDepth of the section
 	 */
 
-	public final Section addSection(int indentation, Paragraph title, int numberDepth) {
+	public final Section addSection(float indentation, Paragraph title, int numberDepth) {
 		Section section = new Section(title, numberDepth);
 		section.setIndentation(indentation);
 		add(section);
@@ -280,7 +280,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @param	title		the title of the new section
 	 */
 
-	public final Section addSection(int indentation, Paragraph title) {
+	public final Section addSection(float indentation, Paragraph title) {
 		Section section = new Section(title, 1);
 		section.setIndentation(indentation);
 		add(section);
@@ -320,7 +320,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @param	numberDepth	the numberDepth of the section
 	 */
 
-	public final Section addSection(int indentation, String title, int numberDepth) {
+	public final Section addSection(float indentation, String title, int numberDepth) {
 		Section section = new Section(new Paragraph(title), numberDepth);
 		section.setIndentation(indentation);
 		add(section);
@@ -347,7 +347,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @param	title		the title of the new section
 	 */
 
-	public final Section addSection(int indentation, String title) {
+	public final Section addSection(float indentation, String title) {
 		Section section = new Section(new Paragraph(title), 1);
 		section.setIndentation(indentation);
 		add(section);
@@ -399,7 +399,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @param	indentation		the indentation
 	 */
 
-	public final void setIndentationLeft(int indentation) {
+	public final void setIndentationLeft(float indentation) {
 		indentationLeft = indentation;
 	}
 
@@ -409,7 +409,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @param	indentation		the indentation
 	 */
 
-	public final void setIndentationRight(int indentation) {
+	public final void setIndentationRight(float indentation) {
 		indentationRight = indentation;
 	}
 
@@ -419,7 +419,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @param	indentation		the indentation
 	 */
 
-	public final void setIndentation(int indentation) {
+	public final void setIndentation(float indentation) {
 		sectionIndent = indentation;
 	}
 
@@ -453,7 +453,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @return	the indentation
 	 */
 
-	public final int indentationLeft() {
+	public final float indentationLeft() {
 		return indentationLeft;
 	}
 
@@ -463,7 +463,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @return	the indentation
 	 */
 
-	public final int indentationRight() {
+	public final float indentationRight() {
 		return indentationRight;
 	}
 
@@ -473,7 +473,7 @@ public class Section extends ArrayList implements TextElementArray {
 	 * @return	the indentation
 	 */
 
-	public final int indentation() {
+	public final float indentation() {
 		return sectionIndent;
 	}
 

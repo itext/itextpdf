@@ -173,7 +173,7 @@ public abstract class DocWriter implements DocListener {
 	 * @return	<CODE>false</CODE>
 	 */
 
-	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom) {
+	public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
 		return false;
 	}
 

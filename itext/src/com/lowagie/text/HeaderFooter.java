@@ -84,7 +84,7 @@ public class HeaderFooter extends Rectangle {
 	public HeaderFooter(Phrase before, Phrase after) {
 		super(0, 0, 0, 0);
 		setBorder(TOP + BOTTOM);
-		setBorderWidth(1.0);
+		setBorderWidth(1);
 
 		numbered = true;
 		this.before = before;
@@ -101,7 +101,7 @@ public class HeaderFooter extends Rectangle {
 	public HeaderFooter(Phrase before, boolean numbered) {
 		super(0, 0, 0, 0);
 		setBorder(TOP + BOTTOM);
-		setBorderWidth(1.0);
+		setBorderWidth(1);
 
 		this.numbered = numbered;
 		this.before = before;

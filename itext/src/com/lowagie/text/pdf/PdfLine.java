@@ -58,10 +58,10 @@ public class PdfLine {
 	protected ArrayList line = new ArrayList();
 
 	/** The left indentation of the line. */
-	protected int left;
+	protected float left;
 
 	/** The width of the line. */
-	protected int width;
+	protected float width;
 
 	/** The alignment of the line. */
 	protected int alignment;
@@ -73,7 +73,15 @@ public class PdfLine {
 	protected PdfChunk listSymbol = null;
 
 	/** The listsymbol (if necessary). */
-	protected int symbolIndent;
+	protected float symbolIndent;
+    
+/** <CODE>true</CODE> if the chunk splitting was caused by a newline.
+ */    
+    protected boolean newlineSplit = false;
+    
+/** The original width.
+ */    
+    protected float originalWidth;
 
 // constructors
 
@@ -88,9 +96,10 @@ public class PdfLine {
 	 * @since   iText0.30
 	 */
 
-	PdfLine(int left, int right, int alignment, float height) {
+	PdfLine(float left, float right, int alignment, float height) {
 		this.left = left;
 		this.width = right - left;
+        this.originalWidth = this.width;
 		this.alignment = alignment;
 		this.height = height;
 	}
@@ -116,10 +125,15 @@ public class PdfLine {
 
 		// we split the chunk to be added
 		PdfChunk overflow = chunk.split(width);
+        newlineSplit = (chunk.isNewlineSplit() || overflow == null);
+//        if (chunk.isNewlineSplit() && alignment == Element.ALIGN_JUSTIFIED)
+//            alignment = Element.ALIGN_LEFT;
 
 
 		// if the length of the chunk > 0 we add it to the line
 		if (chunk.length() > 0) {
+            if (overflow != null)
+                chunk.trimLastSpace();
 			width -= chunk.width();
 			line.add(chunk);
 		}
@@ -140,6 +154,9 @@ public class PdfLine {
 				return null;
 			}
 		}
+        else {
+            width += ((PdfChunk)(line.get(line.size() - 1))).trimLastSpace();
+        }
 		return overflow;
 	}
 
@@ -189,12 +206,12 @@ public class PdfLine {
 	 * @since	iText0.30
 	 */
 
-	final int indentLeft() {
+	final float indentLeft() {
 		switch (alignment) {
 		case Element.ALIGN_RIGHT:
 			return left + width;
 		case Element.ALIGN_CENTER:
-			return left + (width / 2);
+			return left + (width / 2f);
 		default:
 			return left;
 		}
@@ -213,15 +230,13 @@ public class PdfLine {
 	}
 
 	/**
-	 * Resets the alignment of this line.
-	 * <P>
-	 * The alignment of the last line of for instance a <CODE>Paragraph</CODE>
-	 * that has to be justified, has to be reset to <VAR>ALIGN_LEFT</VAR>.
-	 *
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
-	 */
+     * Resets the alignment of this line.
+     * <P>
+     * The alignment of the last line of for instance a <CODE>Paragraph</CODE>
+     * that has to be justified, has to be reset to <VAR>ALIGN_LEFT</VAR>.
+     *
+     * @since iText0.30
+ */
 
 	public void resetAlignment() {
 		if (alignment == Element.ALIGN_JUSTIFIED) {
@@ -237,7 +252,7 @@ public class PdfLine {
 	 * @since	iText0.30
 	 */
 
-	final int widthLeft() {
+	final float widthLeft() {
 		return width;
 	}
 
@@ -260,19 +275,18 @@ public class PdfLine {
 		}
 		return numberOfSpaces;
 	}
-
+    
 	/**
-	 * Sets the listsymbol of this line.
-	 * <P>
-	 * This is only necessary for the first line of a <CODE>ListItem</CODE>.
-	 *
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
-	 */
+     * Sets the listsymbol of this line.
+     * <P>
+     * This is only necessary for the first line of a <CODE>ListItem</CODE>.
+     *
+     * @param listItem the list symbol
+     * @since iText0.30
+ */
 
 	public void setListItem(ListItem listItem) {
-		this.listSymbol = new PdfChunk(listItem.listSymbol());
+		this.listSymbol = new PdfChunk(listItem.listSymbol(), null);
 		this.symbolIndent = listItem.indentationLeft();
 	}
 
@@ -296,7 +310,7 @@ public class PdfLine {
 	 * @since	iText0.30
 	 */
 
-	public int listIndent() {
+	public float listIndent() {
 		return symbolIndent;
 	}
 
@@ -315,4 +329,45 @@ public class PdfLine {
 		}
 		return tmp.toString();
 	}
+
+/** Checks if a newline caused the line split.
+ * @return <CODE>true</CODE> if a newline caused the line split
+ */    
+    public boolean isNewlineSplit()
+    {
+        return newlineSplit;
+    }
+    
+/** Gets the index of the last <CODE>PdfChunk</CODE> with metric attributes
+ * @return the last <CODE>PdfChunk</CODE> with metric attributes
+ */    
+    public int getLastStrokeChunk()
+    {
+        int lastIdx = line.size() - 1;
+        for (; lastIdx >= 0; --lastIdx) {
+            PdfChunk chunk = (PdfChunk)line.get(lastIdx);
+            if (chunk.isStroked())
+                break;
+        }
+        return lastIdx;
+    }
+    
+/** Gets a <CODE>PdfChunk</CODE> by index.
+ * @param idx the index
+ * @return the <CODE>PdfChunk</CODE> or null if beyond the array
+ */    
+    public PdfChunk getChunk(int idx)
+    {
+        if (idx < 0 || idx >= line.size())
+            return null;
+        return (PdfChunk)line.get(idx);
+    }
+    
+/** Gets the original width of the line.
+ * @return the original width of the line
+ */    
+    public float getOriginalWidth()
+    {
+        return originalWidth;
+    }
 }
