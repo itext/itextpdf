@@ -1034,6 +1034,14 @@ class TrueTypeFont extends BaseFont {
                 return fontSize * (int)head.xMax / head.unitsPerEm;
             case BBOXURY:
                 return fontSize * (int)head.yMax / head.unitsPerEm;
+            case AWT_ASCENT:
+                return fontSize * (int)hhea.Ascender / head.unitsPerEm;
+            case AWT_DESCENT:
+                return fontSize * (int)hhea.Descender / head.unitsPerEm;
+            case AWT_LEADING:
+                return fontSize * (int)hhea.LineGap / head.unitsPerEm;
+            case AWT_MAXADVANCE:
+                return fontSize * (int)hhea.advanceWidthMax / head.unitsPerEm;
         }
         return 0;
     }

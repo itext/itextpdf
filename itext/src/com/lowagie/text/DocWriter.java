@@ -100,7 +100,6 @@ public abstract class DocWriter implements DocListener {
 /** This is some byte that is often used. */
     public static final byte FORWARD = (byte)'/';
     
-    public static byte[][] valueOfCharByteCache = new byte[256][];
     // membervariables
     
 /** The pageSize. */
@@ -318,7 +317,8 @@ public abstract class DocWriter implements DocListener {
  * @return the conversion result
  */
     
-    public static final byte[] getISOBytes(String text) {
+    public static final byte[] getISOBytes(String text)
+    {
         if (text == null)
             return null;
         int len = text.length();
@@ -326,19 +326,6 @@ public abstract class DocWriter implements DocListener {
         for (int k = 0; k < len; ++k)
             b[k] = (byte)text.charAt(k);
         return b;
-    }
-    
-    public static final byte[] getISOBytes(char c) {
-        //david teran
-        //now we build up a cache for all characters that are one byte long
-        if (c < 256) {
-            if (valueOfCharByteCache[c] == null) {
-                valueOfCharByteCache[c] = getISOBytes(String.valueOf(c));
-            }
-            return valueOfCharByteCache[c];
-        } else {
-            return getISOBytes(String.valueOf(c));
-        }
     }
     
 /**
@@ -377,7 +364,7 @@ public abstract class DocWriter implements DocListener {
  */
     
     protected final void write(String string) throws IOException {
-        os.write(DocWriter.getISOBytes(string));
+        os.write(getISOBytes(string));
     }
     
 /**
@@ -455,15 +442,15 @@ public abstract class DocWriter implements DocListener {
  * @param mAtt   the <CODE>MarkupAttributes</CODE> to write.
  */
     protected boolean writeMarkupAttributes(MarkupAttributes mAtt)
-    throws IOException
+     throws IOException
     {
-        Iterator attributeIterator = mAtt.getMarkupAttributeNames().iterator();
-        boolean result = attributeIterator.hasNext();
-        while (attributeIterator.hasNext()) {
-            String name = String.valueOf(attributeIterator.next());
-            write(name, mAtt.getMarkupAttribute(name));
-        }
-        return result;
+      Iterator attributeIterator = mAtt.getMarkupAttributeNames().iterator();
+      boolean result = attributeIterator.hasNext();
+      while (attributeIterator.hasNext()) {
+        String name = String.valueOf(attributeIterator.next());
+        write(name, mAtt.getMarkupAttribute(name));
+      }
+      return result;
     }
     
     
@@ -474,8 +461,8 @@ public abstract class DocWriter implements DocListener {
  * @return <CODE>boolean</CODE>.
  */
     protected static boolean hasMarkupAttributes(Element element) {
-        return (element instanceof MarkupAttributes &&
-        !(((MarkupAttributes)element).getMarkupAttributeNames().isEmpty()));
+      return (element instanceof MarkupAttributes &&
+       !(((MarkupAttributes)element).getMarkupAttributeNames().isEmpty()));
     }
     
 }

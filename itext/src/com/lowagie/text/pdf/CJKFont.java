@@ -486,10 +486,12 @@ class CJKFont extends BaseFont {
      */
     public float getFontDescriptor(int key, float fontSize) {
         switch (key) {
+            case AWT_ASCENT:
             case ASCENT:
                 return fdescInt[0] * fontSize / 1000;
             case CAPHEIGHT:
                 return fdescInt[1] * fontSize / 1000;
+            case AWT_DESCENT:
             case DESCENT:
                 return fdescInt[2] * fontSize / 1000;
             case ITALICANGLE:
@@ -502,6 +504,10 @@ class CJKFont extends BaseFont {
                 return fontSize * fdescInt[6] / 1000;
             case BBOXURY:
                 return fontSize * fdescInt[7] / 1000;
+            case AWT_LEADING:
+                return 0;
+            case AWT_MAXADVANCE:
+                return fontSize * (fdescInt[6] - fdescInt[4]) / 1000;
         }
         return 0;
     }

@@ -55,50 +55,46 @@ import java.io.IOException;
 import com.lowagie.text.DocWriter;
 
 /**
-* Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
+ * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
  * Floating point is converted to a format suitable to the PDF.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 
-public class ByteBuffer
-{
+public class ByteBuffer {
     /** The count of bytes in the buffer. */
     protected int count;
-
+    
     /** The buffer where the bytes are stored. */
     protected byte buf[];
-
-    private static final int LONG_CACHE_SIZE = 100010;
+    
+    private static final int LONG_CACHE_SIZE = 0;
     private static final int MAX_STRINGITERATOR = 10;
     private static byte[][] longCache = new byte[LONG_CACHE_SIZE][];
     public static byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private static final byte[] bytes = new byte[] {(byte)'0', (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'7', (byte)'8', (byte)'9'};
-
+    
     /** Creates new ByteBuffer with capacity 128 */
-    public ByteBuffer()
-    {
+    public ByteBuffer() {
         this(128);
     }
-
+    
     /**
-        * Creates a byte buffer with a certain capacity.
+     * Creates a byte buffer with a certain capacity.
      * @param size the initial capacity
      */
-    public ByteBuffer(int size)
-    {
+    public ByteBuffer(int size) {
         if (size < 1)
             size = 128;
         buf = new byte[size];
     }
-
+    
     /**
-        * Appends an <CODE>int</CODE>. The size of the array will grow by one.
+     * Appends an <CODE>int</CODE>. The size of the array will grow by one.
      * @param b the int to be appended
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append_i(int b)
-    {
+    public ByteBuffer append_i(int b) {
         int newcount = count + 1;
         if (newcount > buf.length) {
             byte newbuf[] = new byte[Math.max(buf.length << 1, newcount)];
@@ -109,19 +105,18 @@ public class ByteBuffer
         count = newcount;
         return this;
     }
-
+    
     /**
-        * Appends the subarray of the <CODE>byte</CODE> array. The buffer will grow by
+     * Appends the subarray of the <CODE>byte</CODE> array. The buffer will grow by
      * <CODE>len</CODE> bytes.
      * @param b the array to be appended
      * @param off the offset to the start of the array
      * @param len the length of bytes to append
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append(byte b[], int off, int len)
-    {
+    public ByteBuffer append(byte b[], int off, int len) {
         if ((off < 0) || (off > b.length) || (len < 0) ||
-            ((off + len) > b.length) || ((off + len) < 0) || len == 0)
+        ((off + len) > b.length) || ((off + len) < 0) || len == 0)
             return this;
         int newcount = count + len;
         if (newcount > buf.length) {
@@ -133,124 +128,98 @@ public class ByteBuffer
         count = newcount;
         return this;
     }
-
+    
     /**
-        * Appends an array of bytes.
+     * Appends an array of bytes.
      * @param b the array to be appended
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append(byte b[])
-    {
+    public ByteBuffer append(byte b[]) {
         return append(b, 0, b.length);
     }
-
+    
     /**
-        * Appends a <CODE>String</CODE> to the buffer. The <CODE>String</CODE> is
+     * Appends a <CODE>String</CODE> to the buffer. The <CODE>String</CODE> is
      * converted according to the encoding ISO-8859-1.
      * @param str the <CODE>String</CODE> to be appended
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append(String str)
-    {
-        if (str != null) {
-            int length = str.length();
-            if (length < MAX_STRINGITERATOR) {
-                for (int i = 0; i < length; i++) {
-                    char c = str.charAt(i);
-                    if (c < 128) {
-                        append((byte)c);
-                    } else {
-                        append(DocWriter.getISOBytes(c));
-                    }
-                }
-                return this;
-            } else {
-                return append(DocWriter.getISOBytes(str));
-            }
-        } else {
-            return this;
-        }
+    public ByteBuffer append(String str) {
+        if (str != null)
+            return append(DocWriter.getISOBytes(str));
+        return this;
     }
-
+    
     /**
-        * Appends a <CODE>char</CODE> to the buffer. The <CODE>char</CODE> is
+     * Appends a <CODE>char</CODE> to the buffer. The <CODE>char</CODE> is
      * converted according to the encoding ISO-8859-1.
      * @param c the <CODE>char</CODE> to be appended
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append(char c)
-    {
-        if (c == ' ') // common case
-            return append_i(32);
-
-        return append(DocWriter.getISOBytes(c));
+    public ByteBuffer append(char c) {
+        return append_i(c);
     }
-
+    
     /**
-        * Appends another <CODE>ByteBuffer</CODE> to this buffer.
+     * Appends another <CODE>ByteBuffer</CODE> to this buffer.
      * @param buf the <CODE>ByteBuffer</CODE> to be appended
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append(ByteBuffer buf)
-    {
+    public ByteBuffer append(ByteBuffer buf) {
         return append(buf.buf, 0, buf.count);
     }
-
+    
     /**
-        * Appends the string representation of an <CODE>int</CODE>.
+     * Appends the string representation of an <CODE>int</CODE>.
      * @param i the <CODE>int</CODE> to be appended
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append(int i)
-    {
+    public ByteBuffer append(int i) {
         return append((double)i);
     }
-
+    
     public ByteBuffer append(byte b) {
         return append_i(b);
     }
-
+    
     /**
-        * Appends a string representation of a <CODE>float</CODE> according
+     * Appends a string representation of a <CODE>float</CODE> according
      * to the Pdf conventions.
      * @param i the <CODE>float</CODE> to be appended
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append(float i)
-    {
+    public ByteBuffer append(float i) {
         return append((double)i);
     }
-
+    
     /**
-        * Appends a string representation of a <CODE>double</CODE> according
+     * Appends a string representation of a <CODE>double</CODE> according
      * to the Pdf conventions.
      * @param d the <CODE>double</CODE> to be appended
      * @return a reference to this <CODE>ByteBuffer</CODE> object
      */
-    public ByteBuffer append(double d)
-    {
+    public ByteBuffer append(double d) {
         append(formatDouble(d, this));
         return this;
     }
-
+    
     /**
-        * Outputs a <CODE>double</CODE> into a format suitable for the PDF.
+     * Outputs a <CODE>double</CODE> into a format suitable for the PDF.
      * @param d a double
      * @return the <CODE>String</CODE> representation of the <CODE>double</CODE>
      */
     public static String formatDouble(double d) {
         return formatDouble(d, null);
     }
-
+    
     /**
-        * Outputs a <CODE>double</CODE> into a format suitable for the PDF.
+     * Outputs a <CODE>double</CODE> into a format suitable for the PDF.
      * @param d a double
      * @return the <CODE>String</CODE> representation of the <CODE>double</CODE> if
      * <CODE>d</CODE> is <CODE>null</CODE>. If <CODE>d</CODE> is <B>not</B> <CODE>null</CODE>,
      * then the double is appended directly to the buffer and this methods returns <CODE>null</CODE>.
      */
-    public static String formatDouble(double d, ByteBuffer buf)
-    {
+    public static String formatDouble(double d, ByteBuffer buf) {
         boolean negative = false;
         if (Math.abs(d) < 0.000015) {
             if (buf != null) {
@@ -459,52 +428,48 @@ public class ByteBuffer
             return res.append(v).toString();
         }
     }
-
+    
     /**
-        * Sets the size to zero.
+     * Sets the size to zero.
      */
-    public void reset()
-    {
+    public void reset() {
         count = 0;
     }
-
+    
     /**
-        * Creates a newly allocated byte array. Its size is the current
+     * Creates a newly allocated byte array. Its size is the current
      * size of this output stream and the valid contents of the buffer
      * have been copied into it.
      *
      * @return  the current contents of this output stream, as a byte array.
      */
-    public byte[] toByteArray()
-    {
+    public byte[] toByteArray() {
         byte newbuf[] = new byte[count];
         System.arraycopy(buf, 0, newbuf, 0, count);
         return newbuf;
     }
-
+    
     /**
-        * Returns the current size of the buffer.
+     * Returns the current size of the buffer.
      *
      * @return the value of the <code>count</code> field, which is the number of valid bytes in this byte buffer.
      */
-    public int size()
-    {
+    public int size() {
         return count;
     }
-
+    
     /**
-        * Converts the buffer's contents into a string, translating bytes into
+     * Converts the buffer's contents into a string, translating bytes into
      * characters according to the platform's default character encoding.
      *
      * @return String translated from the buffer's contents.
      */
-    public String toString()
-    {
+    public String toString() {
         return new String(buf, 0, count);
     }
-
+    
     /**
-        * Converts the buffer's contents into a string, translating bytes into
+     * Converts the buffer's contents into a string, translating bytes into
      * characters according to the specified character encoding.
      *
      * @param   enc  a character-encoding name.
@@ -512,13 +477,12 @@ public class ByteBuffer
      * @throws UnsupportedEncodingException
      *         If the named encoding is not supported.
      */
-    public String toString(String enc) throws UnsupportedEncodingException
-    {
+    public String toString(String enc) throws UnsupportedEncodingException {
         return new String(buf, 0, count, enc);
     }
-
+    
     /**
-        * Writes the complete contents of this byte buffer output to
+     * Writes the complete contents of this byte buffer output to
      * the specified output stream argument, as if by calling the output
      * stream's write method using <code>out.write(buf, 0, count)</code>.
      *
@@ -528,5 +492,5 @@ public class ByteBuffer
     public void writeTo(OutputStream out) throws IOException {
         out.write(buf, 0, count);
     }
-
+    
 }
