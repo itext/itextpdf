@@ -172,6 +172,13 @@ public class Cell extends Rectangle implements TextElementArray {
         setBorder(BOX);
         setBorderWidth(0.5f);
         
+        try {
+            Phrase p = (Phrase)element;
+            leading = p.leading();
+        }
+        catch(Exception e) {
+        }
+        
         // initializes the arraylist and adds an element
         arrayList = new ArrayList();
         addElement(element);

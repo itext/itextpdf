@@ -1282,8 +1282,8 @@ class PdfDocument extends Document implements DocListener {
                                 for (int i = 0; i < size; i++) {
                                     cell = (PdfCell) headercells.get(i);
                                     // calculation of the new cellpositions
-                                    cell.setTop(indentTop() + cell.top(-table.cellspacing()) - oldTop);
-                                    cell.setBottom(indentTop() + cell.bottom() - oldTop);
+                                    cell.setTop(indentTop() - oldTop + cell.top() + cell.cellspacing());
+                                    cell.setBottom(indentTop() - oldTop + cell.bottom() - cell.cellspacing());
                                     pagetop = cell.bottom();
                                     // we paint the borders of the cell
                                     graphics.rectangle(cell.rectangle(indentTop(), indentBottom()));
@@ -1319,8 +1319,12 @@ class PdfDocument extends Document implements DocListener {
                             table.setBottom(pagetop - difference + table.bottom(table.cellspacing()));
                             for (i = 0; i < size; i++) {
                                 cell = (PdfCell) cells.get(i);
-                                float newTop = pagetop - difference + cell.top(-table.cellspacing());
                                 float newBottom = pagetop - difference + cell.bottom();
+                                float newTop = pagetop - difference + cell.top(-table.cellspacing());
+                                if (newTop > indentTop() - currentHeight - table.cellspacing()) {
+                                    newTop = indentTop() - currentHeight - table.cellspacing();
+                                    //newTop = newBottom + cell.remainingHeight();
+                                }
                                 cell.setTop(newTop);
                                 cell.setBottom(newBottom);
                             }
