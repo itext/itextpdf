@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -65,62 +65,61 @@ import java.awt.Color;
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
  */
-public class RtfCell
-{
-  /** Constants for merging Cells */
-    
-  /** A possible value for merging */
+public class RtfCell {
+    /** Constants for merging Cells */
+
+    /** A possible value for merging */
     private static final int MERGE_HORIZ_FIRST = 1;
-  /** A possible value for merging */
+    /** A possible value for merging */
     private static final int MERGE_VERT_FIRST = 2;
-  /** A possible value for merging */
+    /** A possible value for merging */
     private static final int MERGE_BOTH_FIRST = 3;
-  /** A possible value for merging */
+    /** A possible value for merging */
     private static final int MERGE_HORIZ_PREV = 4;
-  /** A possible value for merging */
+    /** A possible value for merging */
     private static final int MERGE_VERT_PREV = 5;
-  /** A possible value for merging */
+    /** A possible value for merging */
     private static final int MERGE_BOTH_PREV = 6;
-    
-  /**
-   * RTF Tags
-   */
-    
-  /** First cell to merge with - Horizontal */
+
+    /**
+     * RTF Tags
+     */
+
+    /** First cell to merge with - Horizontal */
     private static final byte[] cellMergeFirst = "clmgf".getBytes();
-  /** First cell to merge with - Vertical */
+    /** First cell to merge with - Vertical */
     private static final byte[] cellVMergeFirst = "clvmgf".getBytes();
-  /** Merge cell with previous horizontal cell */
+    /** Merge cell with previous horizontal cell */
     private static final byte[] cellMergePrev = "clmrg".getBytes();
-  /** Merge cell with previous vertical cell */
+    /** Merge cell with previous vertical cell */
     private static final byte[] cellVMergePrev = "clvmrg".getBytes();
-  /** Cell content vertical alignment bottom */
+    /** Cell content vertical alignment bottom */
     private static final byte[] cellVerticalAlignBottom = "clvertalb".getBytes();
-  /** Cell content vertical alignment center */
+    /** Cell content vertical alignment center */
     private static final byte[] cellVerticalAlignCenter = "clvertalc".getBytes();
-  /** Cell content vertical alignment top */
+    /** Cell content vertical alignment top */
     private static final byte[] cellVerticalAlignTop = "clvertalt".getBytes();
-  /** Cell border left */
+    /** Cell border left */
     private static final byte[] cellBorderLeft = "clbrdrl".getBytes();
-  /** Cell border right */
+    /** Cell border right */
     private static final byte[] cellBorderRight = "clbrdrr".getBytes();
-  /** Cell border top */
+    /** Cell border top */
     private static final byte[] cellBorderTop = "clbrdrt".getBytes();
-  /** Cell border bottom */
+    /** Cell border bottom */
     private static final byte[] cellBorderBottom = "clbrdrb".getBytes();
-  /** Cell background color */
+    /** Cell background color */
     private static final byte[] cellBackgroundColor = "clcbpat".getBytes();
-  /** Cell width format */
+    /** Cell width format */
     private static final byte[] cellWidthStyle = "clftsWidth3".getBytes();
-  /** Cell width */
+    /** Cell width */
     private static final byte[] cellWidthTag = "clwWidth".getBytes();
-  /** Cell right border position */
+    /** Cell right border position */
     private static final byte[] cellRightBorder = "cellx".getBytes();
-  /** Cell is part of table */
-    protected static final byte[] cellInTable= "intbl".getBytes();
-  /** End of cell */
+    /** Cell is part of table */
+    protected static final byte[] cellInTable = "intbl".getBytes();
+    /** End of cell */
     private static final byte[] cellEnd = "cell".getBytes();
-    
+
     /** padding top */
     private static final byte[] cellPaddingTop = "clpadt".getBytes();
     /** padding top unit */
@@ -137,72 +136,68 @@ public class RtfCell
     private static final byte[] cellPaddingRight = "clpadr".getBytes();
     /** padding right unit */
     private static final byte[] cellPaddingRightUnit = "clpadfr3".getBytes();
-    
-  /** The <code>RtfWriter</code> to which this <code>RtfCell</code> belongs. */
+
+    /** The <code>RtfWriter</code> to which this <code>RtfCell</code> belongs. */
     private RtfWriter writer = null;
-  /** The <code>RtfTable</code> to which this <code>RtfCell</code> belongs. */
+    /** The <code>RtfTable</code> to which this <code>RtfCell</code> belongs. */
     private RtfTable mainTable = null;
-    
-  /** Cell width */
+
+    /** Cell width */
     private int cellWidth = 0;
-  /** Cell right border position */
+    /** Cell right border position */
     private int cellRight = 0;
-  /** <code>Cell</code> containing the actual data */
+    /** <code>Cell</code> containing the actual data */
     private Cell store = null;
-  /** Is this an empty cell */
+    /** Is this an empty cell */
     private boolean emptyCell = true;
-  /** Type of merging to do */
+    /** Type of merging to do */
     private int mergeType = 0;
-  /** cell padding, because the table only renders the left and right cell padding 
-   * and not the top and bottom one 
-   */
+    /** cell padding, because the table only renders the left and right cell padding
+     * and not the top and bottom one
+     */
     private int cellpadding = 0;
 
-  /**
-   * Create a new <code>RtfCell</code>.
-   *
-   * @param writer The <code>RtfWriter</code> that this <code>RtfCell</code> belongs to
-   * @param mainTable The <code>RtfTable</code> that created the
-   * <code>RtfRow</code> that created the <code>RtfCell</code> :-)
-   */
-    public RtfCell(RtfWriter writer, RtfTable mainTable)
-    {
+    /**
+     * Create a new <code>RtfCell</code>.
+     *
+     * @param writer The <code>RtfWriter</code> that this <code>RtfCell</code> belongs to
+     * @param mainTable The <code>RtfTable</code> that created the
+     * <code>RtfRow</code> that created the <code>RtfCell</code> :-)
+     */
+    public RtfCell(RtfWriter writer, RtfTable mainTable) {
         super();
         this.writer = writer;
         this.mainTable = mainTable;
     }
-    
-  /**
-   * Import a <code>Cell</code>.
-   * <P>
-   * @param cell The <code>Cell</code> containing the data for this
-   * <code>RtfCell</code>
-   * @param cellLeft The position of the left border
-   * @param cellWidth The default width of a cell
-   * @param x The column index of this <code>RtfCell</code>
-   * @param y The row index of this <code>RtfCell</code>
-   */
-    public int importCell(Cell cell, int cellLeft, int cellWidth, int x, int y, int cellpadding)
-    {
-      //        System.err.println( this.getClass().getName() + "Cell: " + cell + " left: " 
-      //                + cellLeft + " width: " 
-      //                + cellWidth + " x: " + x + " y: " + y );
+
+    /**
+     * Import a <code>Cell</code>.
+     * <P>
+     * @param cell The <code>Cell</code> containing the data for this
+     * <code>RtfCell</code>
+     * @param cellLeft The position of the left border
+     * @param cellWidth The default width of a cell
+     * @param x The column index of this <code>RtfCell</code>
+     * @param y The row index of this <code>RtfCell</code>
+     */
+    public int importCell(Cell cell, int cellLeft, int cellWidth, int x, int y, int cellpadding) {
+        //        System.err.println( this.getClass().getName() + "Cell: " + cell + " left: "
+        //                + cellLeft + " width: "
+        //                + cellWidth + " x: " + x + " y: " + y );
         this.cellpadding = cellpadding;
 
         // set this value in any case
         this.cellWidth = cellWidth;
-        if(cell == null)
-        {
+        if (cell == null) {
             cellRight = cellLeft + cellWidth;
             return cellRight;
         }
-        if(cell.cellWidth() != null && !cell.cellWidth().equals(""))
-        {
-	  //            System.err.println( this.getClass().getName() + "Cell.cellWidth: " 
-	  //                + cell.cellWidth() );
+        if (cell.cellWidth() != null && !cell.cellWidth().equals("")) {
+            //            System.err.println( this.getClass().getName() + "Cell.cellWidth: "
+            //                + cell.cellWidth() );
 
             this.cellWidth = (int) (Integer.parseInt(cell.cellWidth()) *
-            writer.twipsFactor);
+                    writer.twipsFactor);
         }
 //        else
 //        {
@@ -211,55 +206,43 @@ public class RtfCell
         cellRight = cellLeft + this.cellWidth;
         store = cell;
         emptyCell = false;
-        if(cell.colspan() > 1)
-        {
-            if(cell.rowspan() > 1)
-            {
+        if (cell.colspan() > 1) {
+            if (cell.rowspan() > 1) {
                 mergeType = MERGE_BOTH_FIRST;
-                for(int i = y; i < y + cell.rowspan(); i++)
-                {
-                    if(i > y) mainTable.setMerge(x, i, MERGE_VERT_PREV, this);
-                    for(int j = x + 1; j < x + cell.colspan(); j++)
-                    {
+                for (int i = y; i < y + cell.rowspan(); i++) {
+                    if (i > y) mainTable.setMerge(x, i, MERGE_VERT_PREV, this);
+                    for (int j = x + 1; j < x + cell.colspan(); j++) {
                         mainTable.setMerge(j, i, MERGE_BOTH_PREV, this);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 mergeType = MERGE_HORIZ_FIRST;
-                for(int i = x + 1; i < x + cell.colspan(); i++)
-                {
+                for (int i = x + 1; i < x + cell.colspan(); i++) {
                     mainTable.setMerge(i, y, MERGE_HORIZ_PREV, this);
                 }
             }
-        }
-        else if(cell.rowspan() > 1)
-        {
+        } else if (cell.rowspan() > 1) {
             mergeType = MERGE_VERT_FIRST;
-            for(int i = y + 1; i < y + cell.rowspan(); i++)
-            {
+            for (int i = y + 1; i < y + cell.rowspan(); i++) {
                 mainTable.setMerge(x, i, MERGE_VERT_PREV, this);
             }
         }
         return cellRight;
     }
-    
-  /**
-   * Write the properties of the <code>RtfCell</code>.
-   *
-   * @param os The <code>OutputStream</code> to which to write the properties
-   * of the <code>RtfCell</code> to.
-   */
-    public boolean writeCellSettings(ByteArrayOutputStream os) throws DocumentException
-    {
-        try
-        {
+
+    /**
+     * Write the properties of the <code>RtfCell</code>.
+     *
+     * @param os The <code>OutputStream</code> to which to write the properties
+     * of the <code>RtfCell</code> to.
+     */
+    public boolean writeCellSettings(ByteArrayOutputStream os) throws DocumentException {
+        try {
             float lWidth, tWidth, rWidth, bWidth;
             byte[] lStyle, tStyle, rStyle, bStyle;
 
             if (store instanceof RtfTableCell) {
-                RtfTableCell c = (RtfTableCell)store;
+                RtfTableCell c = (RtfTableCell) store;
                 lWidth = c.leftBorderWidth();
                 tWidth = c.topBorderWidth();
                 rWidth = c.rightBorderWidth();
@@ -275,51 +258,48 @@ public class RtfCell
 
             // <!-- steffen
             if (mergeType == MERGE_HORIZ_PREV || mergeType == MERGE_BOTH_PREV) {
-                return true;                
+                return true;
             }
-            switch(mergeType)
-            {
-                case MERGE_VERT_FIRST  :
+            switch (mergeType) {
+                case MERGE_VERT_FIRST:
                     os.write(RtfWriter.escape);
                     os.write(cellVMergeFirst);
                     break;
-                case MERGE_BOTH_FIRST  :
+                case MERGE_BOTH_FIRST:
                     os.write(RtfWriter.escape);
                     os.write(cellVMergeFirst);
                     break;
-                case MERGE_HORIZ_PREV  :
+                case MERGE_HORIZ_PREV:
                     os.write(RtfWriter.escape);
                     os.write(cellMergePrev);
                     break;
-                case MERGE_VERT_PREV   :
+                case MERGE_VERT_PREV:
                     os.write(RtfWriter.escape);
                     os.write(cellVMergePrev);
                     break;
-                case MERGE_BOTH_PREV   :
+                case MERGE_BOTH_PREV:
                     os.write(RtfWriter.escape);
                     os.write(cellMergeFirst);
                     break;
             }
             // -->
-            switch(store.verticalAlignment())
-            {
-                case Element.ALIGN_BOTTOM :
+            switch (store.verticalAlignment()) {
+                case Element.ALIGN_BOTTOM:
                     os.write(RtfWriter.escape);
                     os.write(cellVerticalAlignBottom);
                     break;
-                case Element.ALIGN_CENTER :
+                case Element.ALIGN_CENTER:
                     os.write(RtfWriter.escape);
                     os.write(cellVerticalAlignCenter);
                     break;
-                case Element.ALIGN_TOP    :
+                case Element.ALIGN_TOP:
                     os.write(RtfWriter.escape);
                     os.write(cellVerticalAlignTop);
                     break;
             }
 
-            if(((store.border() & Rectangle.LEFT) == Rectangle.LEFT) &&
-            (lWidth > 0))
-            {
+            if (((store.border() & Rectangle.LEFT) == Rectangle.LEFT) &&
+                    (lWidth > 0)) {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderLeft);
                 os.write(RtfWriter.escape);
@@ -329,12 +309,14 @@ public class RtfCell
                 writeInt(os, (int) (lWidth * writer.twipsFactor));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
-                if(store.borderColor() == null) writeInt(os, writer.addColor(new
-                Color(0,0,0))); else writeInt(os, writer.addColor(store.borderColor()));
+                if (store.borderColor() == null)
+                    writeInt(os, writer.addColor(new
+                            Color(0, 0, 0)));
+                else
+                    writeInt(os, writer.addColor(store.borderColor()));
                 os.write((byte) '\n');
             }
-            if(((store.border() & Rectangle.TOP) == Rectangle.TOP) && (tWidth> 0))
-            {
+            if (((store.border() & Rectangle.TOP) == Rectangle.TOP) && (tWidth > 0)) {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderTop);
                 os.write(RtfWriter.escape);
@@ -344,13 +326,15 @@ public class RtfCell
                 writeInt(os, (int) (tWidth * writer.twipsFactor));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
-                if(store.borderColor() == null) writeInt(os, writer.addColor(new
-                Color(0,0,0))); else writeInt(os, writer.addColor(store.borderColor()));
+                if (store.borderColor() == null)
+                    writeInt(os, writer.addColor(new
+                            Color(0, 0, 0)));
+                else
+                    writeInt(os, writer.addColor(store.borderColor()));
                 os.write((byte) '\n');
             }
-            if(((store.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) &&
-            (bWidth > 0))
-            {
+            if (((store.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) &&
+                    (bWidth > 0)) {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderBottom);
                 os.write(RtfWriter.escape);
@@ -360,13 +344,15 @@ public class RtfCell
                 writeInt(os, (int) (bWidth * writer.twipsFactor));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
-                if(store.borderColor() == null) writeInt(os, writer.addColor(new
-                Color(0,0,0))); else writeInt(os, writer.addColor(store.borderColor()));
+                if (store.borderColor() == null)
+                    writeInt(os, writer.addColor(new
+                            Color(0, 0, 0)));
+                else
+                    writeInt(os, writer.addColor(store.borderColor()));
                 os.write((byte) '\n');
             }
-            if(((store.border() & Rectangle.RIGHT) == Rectangle.RIGHT) &&
-            (rWidth > 0))
-            {
+            if (((store.border() & Rectangle.RIGHT) == Rectangle.RIGHT) &&
+                    (rWidth > 0)) {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderRight);
                 os.write(RtfWriter.escape);
@@ -376,15 +362,23 @@ public class RtfCell
                 writeInt(os, (int) (rWidth * writer.twipsFactor));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
-                if(store.borderColor() == null) writeInt(os, writer.addColor(new
-                Color(0,0,0))); else writeInt(os, writer.addColor(store.borderColor()));
+                if (store.borderColor() == null)
+                    writeInt(os, writer.addColor(new
+                            Color(0, 0, 0)));
+                else
+                    writeInt(os, writer.addColor(store.borderColor()));
                 os.write((byte) '\n');
             }
             os.write(RtfWriter.escape);
             os.write(cellBackgroundColor);
-            if(store.backgroundColor() == null) writeInt(os, writer.addColor(new
-            Color(255,255,255))); else writeInt(os,
-            writer.addColor(store.backgroundColor()));
+            if ((store.backgroundColor() == null) && (store.grayFill() == 0)) {
+                writeInt(os, writer.addColor(new Color(255, 255, 255)));
+            } else if (store.backgroundColor() != null) {
+                writeInt(os, writer.addColor(store.backgroundColor()));
+            } else {
+                int shadeColor = (int) (store.grayFill() * 255);
+                writeInt(os, writer.addColor(new Color(shadeColor, shadeColor, shadeColor)));
+            }
             os.write((byte) '\n');
             os.write(RtfWriter.escape);
             os.write(cellWidthStyle);
@@ -395,54 +389,50 @@ public class RtfCell
             os.write((byte) '\n');
             if (cellpadding > 0) {
                 // values
-                os.write( RtfWriter.escape );
-                os.write( cellPaddingLeft );
-                writeInt( os, cellpadding / 2 );
-                os.write( RtfWriter.escape );
-                os.write( cellPaddingTop );
-                writeInt( os, cellpadding / 2 );
-                os.write( RtfWriter.escape );
-                os.write( cellPaddingRight );
-                writeInt( os, cellpadding / 2 );
-                os.write( RtfWriter.escape );
-                os.write( cellPaddingBottom );
-                writeInt( os, cellpadding / 2 );
+                os.write(RtfWriter.escape);
+                os.write(cellPaddingLeft);
+                writeInt(os, cellpadding / 2);
+                os.write(RtfWriter.escape);
+                os.write(cellPaddingTop);
+                writeInt(os, cellpadding / 2);
+                os.write(RtfWriter.escape);
+                os.write(cellPaddingRight);
+                writeInt(os, cellpadding / 2);
+                os.write(RtfWriter.escape);
+                os.write(cellPaddingBottom);
+                writeInt(os, cellpadding / 2);
                 // unit
-                os.write( RtfWriter.escape );
-                os.write( cellPaddingLeftUnit );
-                os.write( RtfWriter.escape );
-                os.write( cellPaddingTopUnit );
-                os.write( RtfWriter.escape );
-                os.write( cellPaddingRightUnit );
-                os.write( RtfWriter.escape );
-                os.write( cellPaddingBottomUnit );
+                os.write(RtfWriter.escape);
+                os.write(cellPaddingLeftUnit);
+                os.write(RtfWriter.escape);
+                os.write(cellPaddingTopUnit);
+                os.write(RtfWriter.escape);
+                os.write(cellPaddingRightUnit);
+                os.write(RtfWriter.escape);
+                os.write(cellPaddingBottomUnit);
             }
             os.write(RtfWriter.escape);
             os.write(cellRightBorder);
             writeInt(os, cellRight);
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             return false;
         }
         return true;
     }
-    
-  /**
-   * Write the content of the <code>RtfCell</code>.
-   *
-   * @param os The <code>OutputStream</code> to which to write the content of
-   * the <code>RtfCell</code> to.
-   */
-    public boolean writeCellContent(ByteArrayOutputStream os) throws DocumentException
-    {
-        try
-        {
+
+    /**
+     * Write the content of the <code>RtfCell</code>.
+     *
+     * @param os The <code>OutputStream</code> to which to write the content of
+     * the <code>RtfCell</code> to.
+     */
+    public boolean writeCellContent(ByteArrayOutputStream os) throws DocumentException {
+        try {
             // <!-- steffen
             if (mergeType == MERGE_HORIZ_PREV || mergeType == MERGE_BOTH_PREV) {
-                return true;                
+                return true;
             }
-            // --> 
+            // -->
 
 /*            switch(store.horizontalAlignment())
             {
@@ -456,28 +446,23 @@ public class RtfCell
                 os.write(cellHorizontalAlignJustified); break;
             }*/
 
-            if(!emptyCell)
-            {
+            if (!emptyCell) {
                 Iterator cellIterator = store.getElements();
-                while(cellIterator.hasNext())
-                {
+                while (cellIterator.hasNext()) {
                     Element element = (Element) cellIterator.next();
 
                     // if horizontal alignment is undefined overwrite
                     // with that of enclosing cell
-                    if (element instanceof Paragraph && ((Paragraph)element).alignment() == Element.ALIGN_UNDEFINED) {
-                        ((Paragraph)element).setAlignment(store.horizontalAlignment());
+                    if (element instanceof Paragraph && ((Paragraph) element).alignment() == Element.ALIGN_UNDEFINED) {
+                        ((Paragraph) element).setAlignment(store.horizontalAlignment());
                     }
                     writer.addElement(element, os);
-                    if(element.type() == Element.PARAGRAPH && cellIterator.hasNext())
-                    {
+                    if (element.type() == Element.PARAGRAPH && cellIterator.hasNext()) {
                         os.write(RtfWriter.escape);
                         os.write(RtfWriter.paragraph);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 os.write(RtfWriter.escape);
                 os.write(RtfWriter.paragraphDefaults);
                 os.write(RtfWriter.escape);
@@ -486,80 +471,71 @@ public class RtfCell
             os.write(RtfWriter.escape);
             os.write(cellEnd);
 //            os.write((byte)'\n');
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             return false;
         }
         return true;
     }
-    
-  /**
-   * Sets the merge type and the <code>RtfCell</code> with which this
-   * <code>RtfCell</code> is to be merged.
-   *
-   * @param mergeType The merge type specifies the kind of merge to be applied
-   * (MERGE_HORIZ_PREV, MERGE_VERT_PREV, MERGE_BOTH_PREV)
-   * @param mergeCell The <code>RtfCell</code> that the cell at x and y is to
-   * be merged with
-   */
-    public void setMerge(int mergeType, RtfCell mergeCell)
-    {
+
+    /**
+     * Sets the merge type and the <code>RtfCell</code> with which this
+     * <code>RtfCell</code> is to be merged.
+     *
+     * @param mergeType The merge type specifies the kind of merge to be applied
+     * (MERGE_HORIZ_PREV, MERGE_VERT_PREV, MERGE_BOTH_PREV)
+     * @param mergeCell The <code>RtfCell</code> that the cell at x and y is to
+     * be merged with
+     */
+    public void setMerge(int mergeType, RtfCell mergeCell) {
         this.mergeType = mergeType;
         store = mergeCell.getStore();
         // XXX i think that this is false here, because the width must be set in importCell
         // in an colspan, not all cells have the same width
 //        cellWidth = mergeCell.getCellWidth();
     }
-    
-  /**
-   * Get the <code>Cell</code> with the actual content.
-   *
-   * @return <code>Cell</code> which is contained in the <code>RtfCell</code>
-   */
-    public Cell getStore()
-    {
+
+    /**
+     * Get the <code>Cell</code> with the actual content.
+     *
+     * @return <code>Cell</code> which is contained in the <code>RtfCell</code>
+     */
+    public Cell getStore() {
         return store;
     }
-    
-  /**
-   * Get the with of this <code>RtfCell</code>
-   *
-   * @return Width of the current <code>RtfCell</code>
-   */
-    public int getCellWidth()
-    {
+
+    /**
+     * Get the with of this <code>RtfCell</code>
+     *
+     * @return Width of the current <code>RtfCell</code>
+     */
+    public int getCellWidth() {
         return cellWidth;
     }
 
 
-    public void setCellWidth( int value )
-    {
+    public void setCellWidth(int value) {
         cellWidth = value;
     }
-    
-  /**
-   * Get the position of the right border of this <code>RtfCell</code>.
-   */
-    public int getCellRight()
-    {
+
+    /**
+     * Get the position of the right border of this <code>RtfCell</code>.
+     */
+    public int getCellRight() {
         return cellRight;
     }
 
 
-    public void setCellRight( int value )
-    {
+    public void setCellRight(int value) {
         cellRight = value;
     }
-    
-  /*
-   * Write an Integer to the Outputstream.
-   *
-   * @param out The <code>OutputStream</code> to be written to.
-   * @param i The int to be written.
-   */
-    private void writeInt(ByteArrayOutputStream out, int i) throws IOException
-    {
+
+    /*
+     * Write an Integer to the Outputstream.
+     *
+     * @param out The <code>OutputStream</code> to be written to.
+     * @param i The int to be written.
+     */
+    private void writeInt(ByteArrayOutputStream out, int i) throws IOException {
         out.write(Integer.toString(i).getBytes());
     }
 }
