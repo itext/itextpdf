@@ -200,7 +200,12 @@ public class PdfCell extends Rectangle {
                     for (Iterator j = element.getChunks().iterator(); j.hasNext(); ) {
                         Chunk c = (Chunk) j.next();
                         chunk = new PdfChunk(c, (PdfAction)(allActions.get(aCounter++)));
-                        while ((overflow = line.add(chunk)) != null) {
+                        while (((overflow = line.add(chunk)) != null)
+                        // this line was added by Andreas Kniest 20010209 + 20030429
+                        // it can change the functionality of existing programs
+                        // (but I guess very few use NOWRAP)
+                            && (!cell.noWrap())
+                        ) {
                             lines.add(line);
                             line = new PdfLine(left, right, alignment, leading);
                             chunk = overflow;
