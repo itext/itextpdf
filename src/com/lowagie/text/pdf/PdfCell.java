@@ -207,7 +207,7 @@ public class PdfCell extends Rectangle {
                     break;
                     // if the element is a list
                 case Element.LIST:
-                    if (line.size() > 0) {
+                    if (line != null && line.size() > 0) {
                         line.resetAlignment();
                         addLine(line);
                     }
