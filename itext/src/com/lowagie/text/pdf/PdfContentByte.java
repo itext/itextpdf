@@ -2074,35 +2074,35 @@ public class PdfContentByte {
         setColorStroke(new Color(0x00, 0x00, 0x00));
         setLineWidth(1);
         setLineCap(0);
-        rectangle(llx - 0.5f, lly - 0.5f, urx - llx + 1f, ury - lly + 1f);
+        rectangle(llx, lly, urx - llx, ury - lly);
         stroke();
         // silver rectangle filled
         setLineWidth(1);
         setLineCap(0);
         setColorFill(new Color(0xC0, 0xC0, 0xC0));
-        rectangle(llx, lly, urx - llx, ury -lly);
+        rectangle(llx + 0.5f, lly + 0.5f, urx - llx - 1f, ury -lly - 1f);
         fill();
         // white lines
         setColorStroke(new Color(0xFF, 0xFF, 0xFF));
         setLineWidth(1);
         setLineCap(0);
-        moveTo(llx, lly + 0.5f);
-        lineTo(llx, ury);
-        lineTo(urx - 0.5f, ury);
+        moveTo(llx + 1f, lly + 1f);
+        lineTo(llx + 1f, ury - 1f);
+        lineTo(urx - 1f, ury - 1f);
         stroke();
         // dark grey lines
         setColorStroke(new Color(0xA0, 0xA0, 0xA0));
         setLineWidth(1);
         setLineCap(0);
-        moveTo(llx + 0.5f, lly + 0.5f);
-        lineTo(urx - 0.5f, lly + 0.5f);
-        lineTo(urx - 0.5f, ury - 0.5f);
+        moveTo(llx + 1f, lly + 1f);
+        lineTo(urx - 1f, lly + 1f);
+        lineTo(urx - 1f, ury - 1f);
         stroke();
         // text
         resetRGBColorFill();
         beginText();
         setFontAndSize(bf, size);
-        showTextAligned(PdfContentByte.ALIGN_CENTER, text, llx + (urx - llx) / 2, lly + (ury - lly) / 2, 0);
+        showTextAligned(PdfContentByte.ALIGN_CENTER, text, llx + (urx - llx) / 2, lly + (ury - lly - size) / 2, 0);
         endText();
     }
     
