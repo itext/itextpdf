@@ -25,7 +25,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -62,8 +62,9 @@ import com.lowagie.text.Phrase;
  * as header or footer content.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
- * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2002/03/06 13:29:37 $
+ * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
+ * @author <a href="mailto:mhall@myrealbox.com">Mark.Hall@myrealbox.com</a>
+ * @version $Revision$Date: 2002/04/30 11:38:58 $
  */
 public class RtfHeaderFooter extends HeaderFooter {
 
@@ -82,7 +83,7 @@ public class RtfHeaderFooter extends HeaderFooter {
 
 
     public RtfHeaderFooter( Element content ) {
-        super( new Phrase(""), false );	// Modified by Mark Hall (mhall@austromail.at) 01.04.2002
+        super(new Phrase(content.toString()), false);
         this.content = content;
     }    
 
