@@ -337,6 +337,16 @@ public class Phrase extends ArrayList implements TextElementArray {
 			this.add(iterator.next());
 		}
 		return true;
+	}	
+
+	/**
+	 * Adds a <CODE>Image</CODE> to the <CODE>Paragraph</CODE>.
+	 * 
+	 * @param	image		the image to add.
+	 */
+
+	protected void addSpecial(Object object) {
+		super.add(object);
 	}
 
 // methods
