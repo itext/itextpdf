@@ -67,7 +67,7 @@ import com.lowagie.text.pdf.PdfWriter;
 /**
  * This class controls the DocBook XML to PDF conversion.
  */
-public class DocBookHandler extends DefaultHandler {
+public class DocBookHandler extends DefaultHandler implements DocBookTags {
 
 	/** Locator of the original XML Document. */
 	protected Locator locator;

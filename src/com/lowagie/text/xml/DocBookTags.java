@@ -53,7 +53,7 @@ package com.lowagie.text.xml;
 /**
  * A class that contains all DocBook tags.
  */
-public class DocBookTags {
+public interface DocBookTags {
 	/** An abbreviation, especially one followed by a period. */
 	public static final String ABBREV = "abbrev";
 
