@@ -180,6 +180,12 @@ public class Annotation implements Element, MarkupAttributes {
     
 /**
  * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       url     the external reference
  */
     
     public Annotation(float llx, float lly, float urx, float ury, URL url) {
@@ -190,6 +196,12 @@ public class Annotation implements Element, MarkupAttributes {
     
 /**
  * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       url     the external reference
  */
     
     public Annotation(float llx, float lly, float urx, float ury, String url) {
@@ -199,7 +211,14 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
- * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       file    an external PDF file
+ * @param       dest    the destination in this file
  */
     
     public Annotation(float llx, float lly, float urx, float ury, String file, String dest) {
@@ -210,7 +229,14 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
- * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       file    an external PDF file
+ * @param       page    a page number in this file
  */
     
     public Annotation(float llx, float lly, float urx, float ury, String file, int page) {
@@ -221,7 +247,13 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
- * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       named   a named destination in this file
  */
     
     public Annotation(float llx, float lly, float urx, float ury, int named) {
@@ -231,7 +263,16 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
- * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       application     an external application
+ * @param       parameters      parameters to pass to this application
+ * @param       operation       the operation to pass to this application
+ * @param       defaultdir      the default directory to run this application in
  */
     
     public Annotation(float llx, float lly, float urx, float ury, String application, String parameters, String operation, String defaultdir) {
@@ -352,6 +393,24 @@ public class Annotation implements Element, MarkupAttributes {
     
     public ArrayList getChunks() {
         return new ArrayList();
+    }
+   
+    // methods
+    
+/**
+ * Sets the dimensions of this annotation.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ */    
+    
+    public void setDimensions (float llx, float lly, float urx, float ury) {
+        this.llx = llx;
+        this.lly = lly;
+        this.urx = urx;
+        this.ury = ury;
     }
     
     // methods to retrieve information

@@ -185,6 +185,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     /** Holds value of property interpolation. */
     protected boolean interpolation;
+    
+/** if the annotation is not null the image will be clickable. */
+    protected Annotation annotation = null;
 
 /** Contains extra markupAttributes */
     protected Properties markupAttributes;
@@ -712,6 +715,26 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     public void setRotationDegrees(float deg) {
         double d=Math.PI;                  //__IDS__
         setRotation(deg / 180 * (float)d); //__IDS__
+    }
+    
+/**
+ * Sets the annotation of this Image.
+ *
+ * @param   annotation  the annotation
+ */
+
+    public void setAnnotation(Annotation annotation) {
+        this.annotation = annotation;
+    }
+    
+/**
+ * Gets the annotation.
+ *
+ * @return  the annotation that is linked to this image
+ */
+    
+    public Annotation annotation() {
+        return annotation;
     }
     
     // methods to retrieve information

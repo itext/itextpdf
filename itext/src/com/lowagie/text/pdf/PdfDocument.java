@@ -1604,11 +1604,20 @@ class PdfDocument extends Document implements DocListener {
      */
     
     private void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
+        Annotation annotation = image.annotation();
         if (image.hasAbsolutePosition()) {
             graphics.addImage(image);
+            if (annotation != null) {
+                annotation.setDimensions(image.absoluteX(), image.absoluteY(), image.absoluteX() + image.scaledWidth(), image.absoluteY() + image.scaledHeight());
+                add(annotation);
+            }
         }
         else {
             graphics.addImage(image, a, b, c, d, e, f);
+            if (annotation != null) {
+                annotation.setDimensions(e, f, e + image.scaledWidth(), f + image.scaledHeight());
+                add(annotation);
+            }
         }
     }
     
