@@ -580,7 +580,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Phrase phrase = (Phrase) element;
                 styleAttributes = new Properties();
-                styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(phrase.leading()) + "pt");
+                if (phrase.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(phrase.leading()) + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -605,7 +605,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Anchor anchor = (Anchor) element;
                 styleAttributes = new Properties();
-                styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(anchor.leading()) + "pt");
+                if (anchor.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(anchor.leading()) + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -636,7 +636,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Paragraph paragraph = (Paragraph) element;
                 styleAttributes = new Properties();
-                styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(paragraph.leading()) + "pt");
+                if (paragraph.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(paragraph.leading()) + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -701,7 +701,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 ListItem listItem = (ListItem) element;
                 styleAttributes = new Properties();
-                styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(listItem.leading()) + "pt");
+                if (listItem.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(listItem.leading()) + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -930,7 +930,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 depth = 5;
             }
             Properties styleAttributes = new Properties();
-            styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(section.title().leading()) + "pt");
+            if (section.title().leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(section.title().leading()) + "pt");
             // start tag
             addTabs(indent);
             writeStart(HtmlTags.H[depth]);
@@ -965,7 +965,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
      */
     
     protected void write(Font font, Properties styleAttributes) throws IOException {
-        if (font == null) return;
+        if (font == null || !isOtherFont(font) || styleAttributes == null) return;
         write(" ");
         write(MarkupTags.STYLE);
         write("=\"");

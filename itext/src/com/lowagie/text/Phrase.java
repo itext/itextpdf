@@ -92,7 +92,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     // membervariables
     
 /** This is the leading of this phrase. */
-    protected float leading;
+    protected float leading = Float.NaN;
     
 /** This is the font of this phrase. */
     protected Font font = new Font();
@@ -127,7 +127,6 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public Phrase(Chunk chunk) {
-        this(chunk.font().leading(1.5f));
         super.add(chunk);
     }
     
@@ -151,7 +150,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public Phrase(String string) {
-        this(new Font().leading(1.5f), string, new Font());
+        this(Float.NaN, string, new Font());
     }
     
 /**
@@ -162,7 +161,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public Phrase(String string, Font font) {
-        this(font.leading(1.5f), string, font);
+        this(Float.NaN, string, font);
         this.font = font;
     }
     
@@ -466,12 +465,28 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     }
     
 /**
+ * Checks you if the leading of this phrase is defined.
+ *
+ * @return	true if the leading is defined
+ */
+    
+    public final boolean leadingDefined() {
+        if (Float.isNaN(leading)) {
+            return false;
+        }
+        return true;
+    }
+    
+/**
  * Gets the leading of this phrase.
  *
  * @return	the linespacing
  */
     
     public final float leading() {
+        if (Float.isNaN(leading)) {
+            return font.leading(1.5f);
+        }
         return leading;
     }
     

@@ -220,7 +220,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     boolean cellsFitPage = false;
     
 /** This is the offset of the table. */
-    float offset = Float.MIN_VALUE;
+    float offset = Float.NaN;
     
 /** contains the attributes that are added to each odd (or even) row */
     protected Hashtable alternatingRowAttributes = null;

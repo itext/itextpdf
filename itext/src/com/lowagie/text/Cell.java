@@ -127,7 +127,7 @@ public class Cell extends Rectangle implements TextElementArray {
     protected int rowspan = 1;
     
 /** This is the leading. */
-    float leading = -1;
+    float leading = Float.NaN;
     
 /** Is this <CODE>Cell</CODE> a header? */
     protected boolean header;
@@ -159,7 +159,6 @@ public class Cell extends Rectangle implements TextElementArray {
     
     public Cell(boolean dummy) {
         this();
-        leading = 16;
         arrayList.add(new Paragraph(0));
     }
     
@@ -242,9 +241,6 @@ public class Cell extends Rectangle implements TextElementArray {
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
-        }
-        else {
-            setLeading(16);
         }
         if ((value = (String)attributes.remove(ElementTags.HEADER)) != null) {
             setHeader(new Boolean(value).booleanValue());
@@ -383,7 +379,7 @@ public class Cell extends Rectangle implements TextElementArray {
                 arrayList.add(element);
                 break;
             case Element.LIST:
-                if (leading < 0) {
+                if (Float.isNaN(leading)) {
                     leading = ((List) element).leading();
                 }
                 if (((List) element).size() == 0) return;
@@ -392,7 +388,7 @@ public class Cell extends Rectangle implements TextElementArray {
             case Element.ANCHOR:
             case Element.PARAGRAPH:
             case Element.PHRASE:
-                if (leading < 0) {
+                if (Float.isNaN(leading)) {
                     leading = ((Phrase) element).leading();
                 }
                 if (((Phrase) element).isEmpty()) return;
@@ -719,7 +715,7 @@ public class Cell extends Rectangle implements TextElementArray {
  */
     
     public final float leading() {
-        if (leading < 0) {
+        if (Float.isNaN(leading)) {
             return 16;
         }
         return leading;
