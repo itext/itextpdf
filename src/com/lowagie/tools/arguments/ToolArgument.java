@@ -47,7 +47,7 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.tools;
+package com.lowagie.tools.arguments;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -75,8 +75,10 @@ public class ToolArgument implements ActionListener {
 	private String classname;
 	/** value of the argument. */
 	private String value = null;
+	
 	/** Constructs a ToolArgument. */
 	public ToolArgument() {}
+	
 	/**
 	 * Constructs a ToolArgument. 
 	 * @param f	the internal frame of the tool
@@ -90,66 +92,7 @@ public class ToolArgument implements ActionListener {
 		this.description = description;
 		this.classname = classname;
 	}
-	/**
-	 * Give you a String that can be used in a usage description.
-	 * @return a String
-	 */
-	public String getUsage() {
-		StringBuffer buf = new StringBuffer("  ");
-		buf.append(name);
-		buf.append(" -  ");
-		buf.append(description);
-		buf.append("\n");
-		return buf.toString();
-	}
-	/**
-	 * @return Returns the classname.
-	 */
-	public String getClassname() {
-		return classname;
-	}
-	/**
-	 * @param classname The classname to set.
-	 */
-	public void setClassname(String classname) {
-		this.classname = classname;
-	}
-	/**
-	 * @return Returns the description.
-	 */
-	public String getDescription() {
-		return description;
-	}
-	/**
-	 * @param description The description to set.
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	/**
-	 * @return Returns the name.
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	/**
-	 * @return Returns the value.
-	 */
-	public String getValue() {
-		return value;
-	}
-	/**
-	 * @param value The value to set.
-	 */
-	public void setValue(String value) {
-		this.value = value;
-	}
+	
 	/**
 	 * Gets the argument as an object.
 	 * @return an object
@@ -167,6 +110,7 @@ public class ToolArgument implements ActionListener {
 		}
 		return value;
 	}
+	
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -194,5 +138,74 @@ public class ToolArgument implements ActionListener {
 			Color newColor = JColorChooser.showDialog(f, "Choose Color", initialColor);
 			value = "0x" + Integer.toHexString((newColor.getRed() << 16) | (newColor.getGreen() << 8) | (newColor.getBlue() << 0)).toUpperCase();
 		}
+	}
+	
+	/**
+	 * Give you a String that can be used in a usage description.
+	 * @return a String
+	 */
+	public String getUsage() {
+		StringBuffer buf = new StringBuffer("  ");
+		buf.append(name);
+		buf.append(" -  ");
+		buf.append(description);
+		buf.append("\n");
+		return buf.toString();
+	}
+	
+	/**
+	 * @return Returns the classname.
+	 */
+	public String getClassname() {
+		return classname;
+	}
+	
+	/**
+	 * @param classname The classname to set.
+	 */
+	public void setClassname(String classname) {
+		this.classname = classname;
+	}
+	
+	/**
+	 * @return Returns the description.
+	 */
+	public String getDescription() {
+		return description;
+	}
+	
+	/**
+	 * @param description The description to set.
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	/**
+	 * @return Returns the name.
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	/**
+	 * @param name The name to set.
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	/**
+	 * @return Returns the value.
+	 */
+	public String getValue() {
+		return value;
+	}
+	
+	/**
+	 * @param value The value to set.
+	 */
+	public void setValue(String value) {
+		this.value = value;
 	}
 }

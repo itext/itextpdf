@@ -61,6 +61,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import com.lowagie.tools.arguments.ToolArgument;
+
 /**
  * Every iText tool has to implement this interface.
  */

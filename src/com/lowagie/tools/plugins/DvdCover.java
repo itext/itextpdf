@@ -47,7 +47,7 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.tools;
+package com.lowagie.tools.plugins;
 
 import java.awt.Color;
 import java.io.File;
@@ -65,6 +65,8 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.tools.AbstractTool;
+import com.lowagie.tools.arguments.ToolArgument;
 
 /**
  * This is a simple tool that generates a cover for a DVD.
