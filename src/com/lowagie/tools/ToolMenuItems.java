@@ -68,5 +68,11 @@ public interface ToolMenuItems {
 	public static final String ARGUMENTS = "Arguments";
 	/** An item in the menubar. */
 	public static final String EXECUTE = "Execute";
+	/** An item in the menubar. */
+	public static final String EXECUTESHOW = "Execute+Open";
+	/** An item in the menubar. */
+	public static final String EXECUTEPRINT = "Execute+Printdialog";
+	/** An item in the menubar. */
+	public static final String EXECUTEPRINTSILENT = "Execute+Print";
 
 }

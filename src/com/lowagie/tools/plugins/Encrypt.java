@@ -178,4 +178,11 @@ public class Encrypt extends AbstractTool {
         tool.execute();
     }
 
+	/**
+	 * @see com.lowagie.tools.plugins.AbstractTool#getDestPathPDF()
+	 */
+	protected File getDestPathPDF() throws InstantiationException {
+		return (File)getValue("destfile");
+	}
+
 }

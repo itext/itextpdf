@@ -77,6 +77,7 @@ public class Txt2Pdf extends AbstractTool {
 	 * Constructs a Tiff2Pdf object.
 	 */
 	public Txt2Pdf() {
+		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW | MENU_EXECUTE_PRINT_SILENT;
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to convert", false));
 		arguments.add(new FileArgument(this, "destfile", "The file to which the converted text has to be written", true, new PdfFilter()));
 		OptionArgument oa1 = new OptionArgument(this, "pagesize", "Pagesize");
@@ -160,5 +161,12 @@ public class Txt2Pdf extends AbstractTool {
     	}
     	tool.setArguments(args);
         tool.execute();
+	}
+
+	/**
+	 * @see com.lowagie.tools.plugins.AbstractTool#getDestPathPDF()
+	 */
+	protected File getDestPathPDF() throws InstantiationException {
+		return (File)getValue("destfile");
 	}
 }

@@ -78,6 +78,7 @@ public class DvdCover extends AbstractTool {
 	 * Constructs a DvdCover object.
 	 */
 	public DvdCover() {
+		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW | MENU_EXECUTE_PRINT;
 		arguments.add(new FileArgument(this, "destfile", "The file to which the PDF has to be written", true, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "title", "The title of the DVD", String.class.getName()));
 		arguments.add(new ToolArgument(this, "backgroundcolor", "The backgroundcolor of the DVD Cover (for instance 0xFFFFFF)", Color.class.getName()));
@@ -101,7 +102,7 @@ public class DvdCover extends AbstractTool {
     public void execute() {   
         try {
             // step 1: creation of a document-object
-            Rectangle pageSize = new Rectangle(780, 525);
+            Rectangle pageSize = new Rectangle(792, 525);
             if (getValue("backgroundcolor") != null) pageSize.setBackgroundColor((Color)getValue("backgroundcolor"));
             Document document = new Document(pageSize);
             // step 2:
@@ -119,34 +120,34 @@ public class DvdCover extends AbstractTool {
             	cb.setFontAndSize(BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, false), 24);
             	cb.beginText();
             	if (getValue("front") == null) {
-            		cb.showTextAligned(Element.ALIGN_CENTER, (String)getValue("title"), 595f, 262f, 0f);
+            		cb.showTextAligned(Element.ALIGN_CENTER, (String)getValue("title"), 600f, 262f, 0f);
             	}
             	if (getValue("side") == null) {
-            		cb.showTextAligned(Element.ALIGN_CENTER, (String)getValue("title"), 385f, 262f, 270f);
+            		cb.showTextAligned(Element.ALIGN_CENTER, (String)getValue("title"), 390f, 262f, 270f);
             	}
             	cb.endText(); 
             }
-            cb.moveTo(370, 0);
-            cb.lineTo(370, 525);
-            cb.moveTo(410, 525);
-            cb.lineTo(410, 0);
+            cb.moveTo(376, 0);
+            cb.lineTo(376, 525);
+            cb.moveTo(416, 525);
+            cb.lineTo(416, 0);
             cb.stroke();
             if (getValue("front") != null) {
             	Image front = (Image)getValue("front");
-            	front.scaleToFit(370, 525);
-            	front.setAbsolutePosition(410f + (370f - front.scaledWidth()) / 2f, (525f - front.scaledHeight()) / 2f);
+            	front.scaleToFit(376, 525);
+            	front.setAbsolutePosition(410f + (376f - front.scaledWidth()) / 2f, (525f - front.scaledHeight()) / 2f);
             	document.add(front);
             }
             if (getValue("back") != null) {
             	Image back = (Image)getValue("back");
-            	back.scaleToFit(370, 525);
-            	back.setAbsolutePosition((370f - back.scaledWidth()) / 2f, (525f - back.scaledHeight()) / 2f);
+            	back.scaleToFit(376, 525);
+            	back.setAbsolutePosition((376f - back.scaledWidth()) / 2f, (525f - back.scaledHeight()) / 2f);
             	document.add(back);
             }
             if (getValue("side") != null) {
             	Image side = (Image)getValue("side");
             	side.scaleToFit(40, 525);
-            	side.setAbsolutePosition(370 + (40f - side.scaledWidth()) / 2f, (525f - side.scaledHeight()) / 2f);
+            	side.setAbsolutePosition(376 + (40f - side.scaledWidth()) / 2f, (525f - side.scaledHeight()) / 2f);
             	document.add(side);
             }
             
@@ -185,4 +186,11 @@ public class DvdCover extends AbstractTool {
     	tool.setArguments(args);
         tool.execute();
     }
+
+	/**
+	 * @see com.lowagie.tools.plugins.AbstractTool#getDestPathPDF()
+	 */
+	protected File getDestPathPDF() throws InstantiationException {
+		return (File)getValue("destfile");
+	}
 }

@@ -52,6 +52,7 @@ package com.lowagie.tools.plugins;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -67,6 +68,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.lowagie.tools.Executable;
 import com.lowagie.tools.ToolMenuItems;
 import com.lowagie.tools.arguments.ToolArgument;
 
@@ -75,6 +77,9 @@ import com.lowagie.tools.arguments.ToolArgument;
  */
 public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	   
+    /**
+     * A Class that redirects output to System.out and System.err.
+     */
     public class Console {
         PipedInputStream piOut;
         PipedInputStream piErr;
@@ -82,6 +87,12 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
         PipedOutputStream poErr;
         JTextArea textArea = new JTextArea();
     
+        /**
+         * Creates a new Console object.
+         * @param columns
+         * @param rows
+         * @throws IOException
+         */
         public Console(int columns, int rows) throws IOException {
             // Set up System.out
             piOut = new PipedInputStream();
@@ -110,6 +121,9 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
                 this.pi = pi;
             }
     
+            /**
+             * @see java.lang.Thread#run()
+             */
             public void run() {
                 final byte[] buf = new byte[1024];
                 try {
@@ -132,6 +146,16 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	protected JInternalFrame internalFrame = null;
 	/** The list of arguments needed by the tool. */
 	protected ArrayList arguments = new ArrayList();
+	/** Execute menu options */
+	protected int menuoptions = MENU_EXECUTE;
+	/** a menu option */
+	public static final int MENU_EXECUTE = 1;
+	/** a menu option */
+	public static final int MENU_EXECUTE_SHOW = 2;
+	/** a menu option */
+	public static final int MENU_EXECUTE_PRINT = 4;
+	/** a menu option */
+	public static final int MENU_EXECUTE_PRINT_SILENT = 8;
 	
 	/**
 	 * Sets the arguments.
@@ -220,10 +244,27 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		args.setMnemonic(KeyEvent.VK_A);
 		args.addActionListener(this);
 		tool.add(args);
-		JMenuItem execute = new JMenuItem(EXECUTE);
-		execute.setMnemonic(KeyEvent.VK_E);
-		execute.addActionListener(this);
-		tool.add(execute);
+		if ((menuoptions & MENU_EXECUTE) > 0) {
+			JMenuItem execute = new JMenuItem(EXECUTE);
+			execute.setMnemonic(KeyEvent.VK_E);
+			execute.addActionListener(this);
+			tool.add(execute);
+		}
+		if ((menuoptions & MENU_EXECUTE_SHOW) > 0) {
+			JMenuItem execute = new JMenuItem(EXECUTESHOW);
+			execute.addActionListener(this);
+			tool.add(execute);
+		}
+		if ((menuoptions & MENU_EXECUTE_PRINT) > 0) {
+			JMenuItem execute = new JMenuItem(EXECUTEPRINT);
+			execute.addActionListener(this);
+			tool.add(execute);
+		}
+		if ((menuoptions & MENU_EXECUTE_PRINT_SILENT) > 0) {
+			JMenuItem execute = new JMenuItem(EXECUTEPRINTSILENT);
+			execute.addActionListener(this);
+			tool.add(execute);
+		}
 		JMenuItem close = new JMenuItem(CLOSE);
 		close.setMnemonic(KeyEvent.VK_C);
 		close.addActionListener(this);
@@ -248,6 +289,9 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	
 	/**
 	 * Gets a console JScrollPanel that listens to the System.err and System.out.
+	 * @param columns a number of columns for the console
+	 * @param rows	 a number of rows for the console
+	 * @return a JScrollPane with a Console that shows everything that was written to System.out or System.err
 	 */
 	public JScrollPane getConsole(int columns, int rows) {
 		try {
@@ -320,7 +364,38 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		if (EXECUTE.equals(evt.getActionCommand())) {
 			this.execute();
 		}
+		if (EXECUTESHOW.equals(evt.getActionCommand())) {
+			this.execute();
+			try {
+				Executable.openDocument(getDestPathPDF());
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+		}
+		if (EXECUTEPRINT.equals(evt.getActionCommand())) {
+			this.execute();
+			try {
+				Executable.printDocument(getDestPathPDF());
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+		}
+		if (EXECUTEPRINTSILENT.equals(evt.getActionCommand())) {
+			this.execute();
+			try {
+				Executable.printDocumentSilent(getDestPathPDF());
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+			}
+		}
 	}
+	
+	/**
+	 * Gets the PDF file that should be generated (or null if the output isn't a PDF file).
+	 * @return the PDF file that should be generated 
+	 * @throws InstantiationException
+	 */
+	protected abstract File getDestPathPDF() throws InstantiationException;
 	
 	/**
 	 * Creates the internal frame.
