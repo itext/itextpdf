@@ -281,7 +281,8 @@ public class PdfCell extends Rectangle {
 			}
 		}
 		// if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
-		if (!header && bottom < bottom()) {
+		// bugfix solving an endless loop problem by Leslie Baski
+		if (!header && bottom <= bottom()) {
 			lines = new ArrayList();
 		}
 		return result;
