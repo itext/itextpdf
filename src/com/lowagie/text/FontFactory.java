@@ -195,6 +195,8 @@ public class FontFactory extends java.lang.Object {
         else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
             color = ElementTags.decodeColor(value);
         }
+        if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
+        if (encoding == null) encoding = BaseFont.WINANSI;
         return getFont(fontname, encoding, embedded, size, style, color);
     }
     
