@@ -103,9 +103,9 @@ public class RtfTable extends RtfElement {
      */
     private int alignment = Element.ALIGN_CENTER;
     /**
-     * Whether this RtfTable must fit in a page
+     * Whether the cells in this RtfTable must fit in a page
      */
-    private boolean fitToPage = false;
+    private boolean cellsFitToPage = false;
     /**
      * The number of header rows in this RtfTable
      */
@@ -148,6 +148,7 @@ public class RtfTable extends RtfElement {
             ((RtfRow) this.rows.get(i)).handleCellSpanning();
         }
         this.headerRows = table.lastHeaderRow();
+        this.cellsFitToPage = table.hasToFitPageCells();
     }
     
     /**
@@ -253,12 +254,12 @@ public class RtfTable extends RtfElement {
     }
     
     /**
-     * Gets the fit to page setting of this RtfTable
+     * Gets the cells fit to page setting of this RtfTable
      * 
-     * @return The fit to page setting of this RtfTable
+     * @return The cells fit to page setting of this RtfTable
      */
-    protected boolean getFitToPage() {
-        return this.fitToPage;
+    protected boolean getCellsFitToPage() {
+        return this.cellsFitToPage;
     }
     
     /**
