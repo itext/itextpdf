@@ -58,7 +58,7 @@ import java.io.InputStream;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
-import com.lowagie.text.pdf.wmf.MetaDo;
+import com.lowagie.text.pdf.codec.wmf.MetaDo;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.text.RtfParagraph;

@@ -486,6 +486,19 @@ public class PdfAnnotation extends PdfDictionary {
         putDel(PdfName.BS, border);
     }
     
+    /**
+     * Sets the annotation's highlighting mode. The values can be
+     * <CODE>HIGHLIGHT_NONE</CODE>, <CODE>HIGHLIGHT_INVERT</CODE>,
+     * <CODE>HIGHLIGHT_OUTLINE</CODE> and <CODE>HIGHLIGHT_PUSH</CODE>;
+     * @param highlight the annotation's highlighting mode
+     */    
+    public void setHighlighting(PdfName highlight) {
+        if (highlight.equals(HIGHLIGHT_INVERT))
+            remove(PdfName.H);
+        else
+            put(PdfName.H, highlight);
+    }
+    
     public void setAppearance(PdfName ap, PdfTemplate template) {
         PdfDictionary dic = (PdfDictionary)get(PdfName.AP);
         if (dic == null)
@@ -698,7 +711,7 @@ public class PdfAnnotation extends PdfDictionary {
         getMK().put(PdfName.IX, template.getIndirectReference());
     }
     
-    public void setMKIconFit(PdfName scale, PdfName scalingType, float leftoverLeft, float leftoverBottom) {
+    public void setMKIconFit(PdfName scale, PdfName scalingType, float leftoverLeft, float leftoverBottom, boolean fitInBounds) {
         PdfDictionary dic = new PdfDictionary();
         if (!scale.equals(PdfName.A))
             dic.put(PdfName.SW, scale);
@@ -709,6 +722,8 @@ public class PdfAnnotation extends PdfDictionary {
             array.add(new PdfNumber(leftoverBottom));
             dic.put(PdfName.A, array);
         }
+        if (fitInBounds)
+            dic.put(PdfName.FB, PdfBoolean.PDFTRUE);
         getMK().put(PdfName.IF, dic);
     }
     

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2001, 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,57 +48,50 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.pdf.codec.postscript;
 
-import com.lowagie.text.ExceptionConverter;
-/**
- * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
- */
+import java.io.*;
+import java.awt.*;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.*;
 
-public class PdfFormXObject extends PdfStream {
-    
-    // public static final variables
-    
-/** This is a PdfNumber representing 0. */
-    public static final PdfNumber ZERO = new PdfNumber(0);
-    
-/** This is a PdfNumber representing 1. */
-    public static final PdfNumber ONE = new PdfNumber(1);
-    
-/** This is the 1 - matrix. */
-    public static final PdfLiteral MATRIX = new PdfLiteral("[1 0 0 1 0 0]");
-    
-    // membervariables
-    
-    
-    // constructor
-    
-/**
- * Constructs a <CODE>PdfFormXObject</CODE>-object.
- *
- * @param		template		the template
- */
-    
-    PdfFormXObject(PdfTemplate template) // throws BadPdfFormatException
-    {
-        super();
-        put(PdfName.TYPE, PdfName.XOBJECT);
-        put(PdfName.SUBTYPE, PdfName.FORM);
-        put(PdfName.RESOURCES, template.getResources());
-        put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
-        put(PdfName.FORMTYPE, ONE);
-        if (template.getLayer() != null)
-            put(PdfName.OC, template.getLayer().getRef());
-        if (template.getGroup() != null)
-            put(PdfName.GROUP, template.getGroup());
-        PdfArray matrix = template.getMatrix();
-        if (matrix == null)
-            put(PdfName.MATRIX, MATRIX);
-        else
-            put(PdfName.MATRIX, matrix);
-        bytes = template.toPdf(null);
-        put(PdfName.LENGTH, new PdfNumber(bytes.length));
-        flateCompress();
+public class MetaDoPS {
+
+  public PdfContentByte cb;
+  InputStream in;
+  int left;
+  int top;
+  int right;
+  int bottom;
+  int inch;
+
+  public MetaDoPS(InputStream in, PdfContentByte cb) {
+    this.cb = cb;
+    this.in = in;
+  }
+
+  public void readAll() throws IOException, DocumentException {
+
+    cb.saveState();
+    java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
+        width(), PageSize.A4.height());
+    try {
+      PAContext context = new PAContext( (Graphics2D) g2,
+                                        new Dimension( (int) PageSize.A4.width(),
+          (int) PageSize.A4.height()));
+      context.draw(new BufferedInputStream(in));
+      // ( (Graphics2D) backBuffer.getGraphics()).dispose();
+      in.close();
     }
-    
+    catch (IOException ex) {
+      ex.printStackTrace();
+    }
+    catch (PainterException ex) {
+      ex.printStackTrace();
+    }
+
+    cb.restoreState();
+
+  }
+
 }

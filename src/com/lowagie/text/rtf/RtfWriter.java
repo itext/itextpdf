@@ -61,7 +61,7 @@ import java.util.Date;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.text.ParsePosition;
-import com.lowagie.text.pdf.wmf.MetaDo;
+import com.lowagie.text.pdf.codec.wmf.MetaDo;
 
 /**
  * If you are creating a new project using the rtf part of iText, please

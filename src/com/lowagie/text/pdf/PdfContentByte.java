@@ -1711,6 +1711,19 @@ public class PdfContentByte {
     }
     
     /**
+     * Adds a PostScript XObject to this content.
+     *
+     * @param psobject the object
+     */
+    public void addPSXObject(PdfPSXObject psobject) {
+        checkWriter();
+        PdfName name = writer.addDirectTemplateSimple(psobject, null);
+        PageResources prs = getPageResources();
+        name = prs.addXObject(name, psobject.getIndirectReference());
+        content.append(name.getBytes()).append(" Do").append_i(separator);
+    }
+    
+    /**
      * Adds a template to this content.
      *
      * @param template the template

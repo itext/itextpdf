@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2001, 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,57 +48,47 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.pdf.codec.wmf;
+import java.io.IOException;
+import java.awt.Color;
 
-import com.lowagie.text.ExceptionConverter;
-/**
- * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
- */
+public class MetaBrush extends MetaObject {
 
-public class PdfFormXObject extends PdfStream {
-    
-    // public static final variables
-    
-/** This is a PdfNumber representing 0. */
-    public static final PdfNumber ZERO = new PdfNumber(0);
-    
-/** This is a PdfNumber representing 1. */
-    public static final PdfNumber ONE = new PdfNumber(1);
-    
-/** This is the 1 - matrix. */
-    public static final PdfLiteral MATRIX = new PdfLiteral("[1 0 0 1 0 0]");
-    
-    // membervariables
-    
-    
-    // constructor
-    
-/**
- * Constructs a <CODE>PdfFormXObject</CODE>-object.
- *
- * @param		template		the template
- */
-    
-    PdfFormXObject(PdfTemplate template) // throws BadPdfFormatException
-    {
-        super();
-        put(PdfName.TYPE, PdfName.XOBJECT);
-        put(PdfName.SUBTYPE, PdfName.FORM);
-        put(PdfName.RESOURCES, template.getResources());
-        put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
-        put(PdfName.FORMTYPE, ONE);
-        if (template.getLayer() != null)
-            put(PdfName.OC, template.getLayer().getRef());
-        if (template.getGroup() != null)
-            put(PdfName.GROUP, template.getGroup());
-        PdfArray matrix = template.getMatrix();
-        if (matrix == null)
-            put(PdfName.MATRIX, MATRIX);
-        else
-            put(PdfName.MATRIX, matrix);
-        bytes = template.toPdf(null);
-        put(PdfName.LENGTH, new PdfNumber(bytes.length));
-        flateCompress();
+    public static final int BS_SOLID = 0;
+    public static final int BS_NULL = 1;
+    public static final int BS_HATCHED = 2;
+    public static final int BS_PATTERN = 3;
+    public static final int BS_DIBPATTERN = 5;
+    public static final int HS_HORIZONTAL = 0;
+    public static final int HS_VERTICAL = 1;
+    public static final int HS_FDIAGONAL = 2;
+    public static final int HS_BDIAGONAL = 3;
+    public static final int HS_CROSS = 4;
+    public static final int HS_DIAGCROSS = 5;
+
+    int style = BS_SOLID;
+    int hatch;
+    Color color = Color.white;
+
+    public MetaBrush() {
+        type = META_BRUSH;
+    }
+
+    public void init(InputMeta in) throws IOException {
+        style = in.readWord();
+        color = in.readColor();
+        hatch = in.readWord();
     }
     
+    public int getStyle() {
+        return style;
+    }
+    
+    public int getHatch() {
+        return hatch;
+    }
+    
+    public Color getColor() {
+        return color;
+    }
 }

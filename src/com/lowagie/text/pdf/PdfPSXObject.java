@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2005 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,58 +44,51 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
-/**
- * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
- */
+import java.io.IOException;
 
-public class PdfFormXObject extends PdfStream {
-    
-    // public static final variables
-    
-/** This is a PdfNumber representing 0. */
-    public static final PdfNumber ZERO = new PdfNumber(0);
-    
-/** This is a PdfNumber representing 1. */
-    public static final PdfNumber ONE = new PdfNumber(1);
-    
-/** This is the 1 - matrix. */
-    public static final PdfLiteral MATRIX = new PdfLiteral("[1 0 0 1 0 0]");
-    
-    // membervariables
-    
-    
-    // constructor
-    
 /**
- * Constructs a <CODE>PdfFormXObject</CODE>-object.
- *
- * @param		template		the template
+ * Implements the PostScript XObject.
  */
+public class PdfPSXObject extends PdfTemplate {
     
-    PdfFormXObject(PdfTemplate template) // throws BadPdfFormatException
-    {
+    /** Creates a new instance of PdfPSXObject */
+    protected PdfPSXObject() {
         super();
-        put(PdfName.TYPE, PdfName.XOBJECT);
-        put(PdfName.SUBTYPE, PdfName.FORM);
-        put(PdfName.RESOURCES, template.getResources());
-        put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
-        put(PdfName.FORMTYPE, ONE);
-        if (template.getLayer() != null)
-            put(PdfName.OC, template.getLayer().getRef());
-        if (template.getGroup() != null)
-            put(PdfName.GROUP, template.getGroup());
-        PdfArray matrix = template.getMatrix();
-        if (matrix == null)
-            put(PdfName.MATRIX, MATRIX);
-        else
-            put(PdfName.MATRIX, matrix);
-        bytes = template.toPdf(null);
-        put(PdfName.LENGTH, new PdfNumber(bytes.length));
-        flateCompress();
     }
     
+    public PdfPSXObject(PdfWriter wr) {
+        super(wr);
+    }
+
+    /**
+     * Gets the stream representing this object.
+     *
+     * @return the stream representing this object
+     */
+    
+    PdfStream getFormXObject() throws IOException {
+        PdfStream s = new PdfStream(content.toByteArray());
+        s.put(PdfName.TYPE, PdfName.XOBJECT);
+        s.put(PdfName.SUBTYPE, PdfName.PS);
+        s.flateCompress();
+        return s;
+    }
+        
+    /**
+     * Gets a duplicate of this <CODE>PdfPSXObject</CODE>. All
+     * the members are copied by reference but the buffer stays different.
+     * @return a copy of this <CODE>PdfPSXObject</CODE>
+     */
+    
+    public PdfContentByte getDuplicate() {
+        PdfPSXObject tpl = new PdfPSXObject();
+        tpl.writer = writer;
+        tpl.pdf = pdf;
+        tpl.thisReference = thisReference;
+        tpl.pageResources = pageResources;
+        tpl.separator = separator;
+        return tpl;
+    }
 }

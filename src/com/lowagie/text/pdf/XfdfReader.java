@@ -161,13 +161,21 @@ public class XfdfReader implements SimpleXMLDocHandler {
      * Called when an end tag is found.
      * @param tag the tag name
      */    
-    public void endElement(String tag)
-    {
-    	if ( tag.equals("value") ) {
-    		String	fName = (String) fieldNames.pop();
-    		String	fVal = (String) fieldValues.pop();  
-    		fields.put( fName, fVal );
-    	}
+    public void endElement(String tag) {
+        if ( tag.equals("value") ) {
+            String	fName = "";
+            for (int k = 0; k < fieldNames.size(); ++k) {
+                fName += "." + (String)fieldNames.elementAt(k);
+            }
+            if (fName.startsWith("."))
+                fName = fName.substring(1);
+            String	fVal = (String) fieldValues.pop();
+            fields.put( fName, fVal );
+        }
+        else if (tag.equals("field") ) {
+            if (!fieldNames.isEmpty())
+                fieldNames.pop();
+        }
     }
     
     /**
