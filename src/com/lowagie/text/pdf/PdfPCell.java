@@ -435,7 +435,7 @@ public class PdfPCell extends Rectangle{
     }
     
     /**
-     * Sets the extra space between paragraphs.
+     * Gets the extra space between paragraphs.
      * @return the extra space between paragraphs
      */
     public float getExtraParagraphSpace() {
