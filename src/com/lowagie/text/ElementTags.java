@@ -125,6 +125,9 @@ public class ElementTags {
 /** attribute of list tag */
     public static final String NUMBERED = "numbered";
     
+/** attribute of the list tag */
+    public static final String LETTERED = "lettered";
+
 /** attribute of list tag */
     public static final String FIRST = "first";
     
@@ -421,3 +424,4 @@ public class ElementTags {
     }
     
 }
+

@@ -93,9 +93,12 @@ public class List implements TextElementArray {
     
 /** This variable indicates if the list has to be numbered. */
     private boolean numbered;
+    private boolean lettered;
     
 /** This variable indicates the first number of a numbered list. */
     private int first = 1;
+    private char firstCh = 'A';
+    private char lastCh  = 'Z';
     
 /** This is the listsymbol of a list that is not numbered. */
     private Chunk symbol = new Chunk("-");
@@ -124,9 +127,15 @@ public class List implements TextElementArray {
     
     public List(boolean numbered, int symbolIndent) {
         this.numbered = numbered;
+        this.lettered = false;
         this.symbolIndent = symbolIndent;
     }
     
+    public List(boolean numbered, boolean lettered, int symbolIndent ) {
+        this.numbered = numbered;
+        this.lettered = lettered;
+        this.symbolIndent = symbolIndent;
+    }
     
         /**
          * Returns a <CODE>List</CODE> that has been constructed taking in account
@@ -146,6 +155,13 @@ public class List implements TextElementArray {
         this.numbered = false;
         if ((value = attributes.getProperty(ElementTags.NUMBERED)) != null) {
             this.numbered = new Boolean(value).booleanValue();
+            if ( this.lettered && this.numbered )
+                this.lettered = false;
+        }
+        if ((value = attributes.getProperty(ElementTags.LETTERED)) != null) {
+            this.lettered = new Boolean(value).booleanValue();
+            if ( this.numbered && this.lettered )
+                this.numbered = false;
         }
         this.symbolIndent = 0;
         if ((value = attributes.getProperty(ElementTags.SYMBOLINDENT)) != null) {
@@ -153,13 +169,19 @@ public class List implements TextElementArray {
         }
         
         if ((value = attributes.getProperty(ElementTags.FIRST)) != null) {
-            setFirst(Integer.parseInt(value));
+            char khar = value.charAt(0);
+            if ( Character.isLetter( khar ) ) {
+                setFirst( khar );
+            }
+            else {
+                setFirst(Integer.parseInt(value));
+            }
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.valueOf(value + "f").floatValue());
+            setIndentationLeft(Float.parseFloat(value + "f"));
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.valueOf(value + "f").floatValue());
+            setIndentationRight(Float.parseFloat(value + "f"));
         }
     }
     
@@ -220,8 +242,12 @@ public class List implements TextElementArray {
     public boolean add(Object o) {
         if (o instanceof ListItem) {
             ListItem item = (ListItem) o;
-            if (numbered) {
-                Chunk chunk = new Chunk(String.valueOf(first + list.size()), symbol.font());
+            if (numbered || lettered) {
+                Chunk chunk;
+                if ( numbered )
+                    chunk = new Chunk(String.valueOf(first + list.size()), symbol.font());
+                else
+                    chunk = new Chunk(nextLetter(), symbol.font());
                 chunk.append(".");
                 item.setListSymbol(chunk);
             }
@@ -272,6 +298,23 @@ public class List implements TextElementArray {
     
     public final void setFirst(int first) {
         this.first = first;
+    }
+    
+    
+/**
+ * Sets the Letter that has to come first in the list.
+ *
+ * @param	first		a letter
+ */
+    
+    public final void setFirst(char first) {
+        this.firstCh = first;
+        if ( Character.isLowerCase( this.firstCh )) {
+            this.lastCh = 'z';
+        }
+        else {
+            this.lastCh = 'Z';
+        }
     }
     
 /**
@@ -406,5 +449,24 @@ public class List implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.LIST.equals(tag);
+    }
+
+/**
+ * Retrieves the next letter in the sequence
+ *
+ * @return  String contains the next character (A-Z or a-z)
+ */
+    private String nextLetter() {
+
+         int num_in_list = list.size();
+         int max_ival = (lastCh + 0);
+         int ival = (firstCh + num_in_list);
+         while ( ival > max_ival ) {
+             ival -= 26;
+         }
+         char[] new_char = new char[1];
+         new_char[0] = (char) ival;
+         String ret = new String( new_char );
+         return ret;
     }
 }
