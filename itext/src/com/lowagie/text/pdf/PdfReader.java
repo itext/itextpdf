@@ -66,6 +66,7 @@ import com.lowagie.text.Rectangle;
  * document. This class is thread safe; this means that
  * a single instance can serve as many output documents as needed and can even be static.
  * @author Paulo Soares (psoares@consiste.pt)
+ * @author Kazuya Ujihara
  */
 public class PdfReader {
     
@@ -325,7 +326,6 @@ public class PdfReader {
     }
     
     /**
-     * @author Kazuya Ujihara
      */
     private void readDecryptedDocObj() throws IOException {
         PdfObject encDic = trailer.get(PdfName.ENCRYPT);

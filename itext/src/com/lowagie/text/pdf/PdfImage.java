@@ -70,8 +70,6 @@ package com.lowagie.text.pdf;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
-import com.lowagie.text.pdf.codec.GifImage;
-import com.lowagie.text.pdf.codec.PngImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;

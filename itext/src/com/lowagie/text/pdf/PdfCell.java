@@ -279,7 +279,7 @@ public class PdfCell extends Rectangle {
     /**
      * Adds an image to this Cell.
      *
-     * @param   image   the image to add
+     * @param   imageOrg   the image to add
      * @param   left    the left border
      * @param   right   the right border
      */
