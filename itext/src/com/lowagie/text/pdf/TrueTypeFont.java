@@ -864,7 +864,15 @@ class TrueTypeFont extends BaseFont {
      * @return the kerning to be applied
      */
     public int getKerning(char char1, char char2) {
-        Integer v = (Integer)kerning.get(new Integer((((int)char1) << 16) + ((int)char2)));
+        int metrics[] = getMetricsTT(char1);
+        if (metrics == null)
+            return 0;
+        int c1 = metrics[0];
+        metrics = getMetricsTT(char2);
+        if (metrics == null)
+            return 0;
+        int c2 = metrics[0];
+        Integer v = (Integer)kerning.get(new Integer((c1 << 16) + c2));
         if (v == null)
             return 0;
         else

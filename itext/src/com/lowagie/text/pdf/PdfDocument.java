@@ -1262,7 +1262,19 @@ class PdfDocument extends Document implements DocListener {
                     // so we cast both to a Section
                     Section section = (Section) element;
 
-                    PdfDestination destination = new PdfDestination(PdfDestination.FITH, indentTop() - currentHeight);
+                    // if the section is a chapter, we begin a new page
+                    if (section.isChapter()) {
+                        newPage();
+                    }
+                    // otherwise, we begin a new line
+                    else {
+                        newLine();
+                    }
+                    float fith = indentTop() - currentHeight;
+                    int rotation = thisPageSize.getRotation();
+                    if (rotation == 90 || rotation == 180)
+                        fith = thisPageSize.height() - fith;
+                    PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
                     while (currentOutline.level() >= section.depth()) {
                         currentOutline = currentOutline.parent();
                     }
@@ -1283,9 +1295,9 @@ class PdfDocument extends Document implements DocListener {
 
                     // the title of the section (if any has to be printed)
                     if (section.title() != null) {
-                        isParagraph = false;
-                        add(section.title());
-                        isParagraph = true;
+                       isParagraph = false;
+                       add(section.title());
+                       isParagraph = true;
                     }
                     indentLeft += section.indentation();
                     // we process the section
@@ -1300,14 +1312,6 @@ class PdfDocument extends Document implements DocListener {
                         else
                             pageEvent.onSectionEnd(writer, this, indentTop() - currentHeight);
 
-                    // if the section is a chapter, we begin a new page
-                    if (section.isChapter()) {
-                        newPage();
-                    }
-                    // otherwise, we begin a new line
-                    else {
-                        newLine();
-                    }
                     break;
                 }
                 case Element.LIST: {
