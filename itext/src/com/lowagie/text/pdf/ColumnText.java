@@ -79,7 +79,9 @@ import com.lowagie.text.DocumentException;
 
 public class ColumnText {
     
-    /** Signals that there are no more text available. */
+    public static final float GLOBAL_SPACE_CHAR_RATIO = 0;
+    
+    /** Signals that there is no more text available. */
     public static final int NO_MORE_TEXT = 1;
     
     /** Signals that there is no more column. */
@@ -88,7 +90,7 @@ public class ColumnText {
     /** The column is valid. */
     protected static final int LINE_STATUS_OK = 0;
     
-    /** The line is out outhe column limits. */
+    /** The line is out the column limits. */
     protected static final int LINE_STATUS_OFFLIMITS = 1;
     
     /** The line cannot fit this column position. */
@@ -153,6 +155,9 @@ public class ColumnText {
     
     /** The width of the line when the column is defined as a simple rectangle. */
     protected float rectangularWidth = -1;
+    
+    /** Holds value of property spaceCharRatio. */
+    private float spaceCharRatio = GLOBAL_SPACE_CHAR_RATIO;
     
     /**
      * Creates a <CODE>ColumnText</CODE>.
@@ -518,6 +523,7 @@ public class ColumnText {
      */
     public int go(boolean simulate) throws DocumentException {
         boolean dirty = false;
+        float ratio = spaceCharRatio;
         Object currentValues[] = new Object[2];
         PdfFont currentFont = null;
         Float lastBaseFactor = new Float(0);
@@ -528,8 +534,14 @@ public class ColumnText {
             pdf = text.getPdfDocument();
             graphics = text.getDuplicate();
         }
-        else if (simulate == false)
+        else if (!simulate)
             throw new NullPointerException("ColumnText.go with simulate==false and text==null.");
+        if (!simulate) {
+            if (ratio == GLOBAL_SPACE_CHAR_RATIO)
+                ratio = text.getPdfWriter().getSpaceCharRatio();
+            else if (ratio < 0.001f)
+                ratio = 0.001f;
+        }
         float firstIndent = indent;
         
         int status = 0;
@@ -564,7 +576,7 @@ public class ColumnText {
                 if (!simulate) {
                     currentValues[0] = currentFont;
                     text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
-                    pdf.writeLineToContent(line, text, graphics, currentValues);
+                    pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
                     currentFont = (PdfFont)currentValues[0];
                 }
                 firstIndent = line.isNewlineSplit() ? indent : followingIndent;
@@ -601,7 +613,7 @@ public class ColumnText {
                 if (!simulate) {
                     currentValues[0] = currentFont;
                     text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
-                    pdf.writeLineToContent(line, text, graphics, currentValues);
+                    pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
                     currentFont = (PdfFont)currentValues[0];
                 }
                 firstIndent = line.isNewlineSplit() ? indent : followingIndent;
@@ -637,6 +649,25 @@ public class ColumnText {
      */
     public void clearChunks() {
         chunks.clear();
+    }
+    
+    /** Gets the space/character extra spacing ratio for
+     * fully justified text.
+     * @return the space/character extra spacing ratio
+     */    
+    public float getSpaceCharRatio() {
+        return spaceCharRatio;
+    }
+    
+    /** Sets the ratio between the extra word spacing and the extra character spacing
+     * when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
+     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
+     * will be zero.
+     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
+     */
+    public void setSpaceCharRatio(float spaceCharRatio) {
+        this.spaceCharRatio = spaceCharRatio;
     }
     
 }

@@ -66,6 +66,7 @@ import java.awt.Stroke;
 import java.awt.Transparency;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
@@ -89,6 +90,7 @@ import java.text.AttributedCharacterIterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.ArrayList;
 
 public class PdfGraphics2D extends Graphics2D {
     
@@ -124,6 +126,17 @@ public class PdfGraphics2D extends Graphics2D {
     
     private PdfFontMetrics fontMetrics;
     
+    private ArrayList kids;
+    
+    private boolean kid = false;
+    
+    private Graphics dg2 = new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB).getGraphics();
+    
+    private boolean onlyShapes = false;
+
+    private PdfGraphics2D() {
+    }
+    
     /**
      * Constructor for PDFGraphics2D.
      *
@@ -133,6 +146,7 @@ public class PdfGraphics2D extends Graphics2D {
         this.transform = new AffineTransform();
         this.baseFonts = new HashMap();
         this.fontMapper = fontMapper;
+        this.kids = new ArrayList();
         if (this.fontMapper == null)
             this.fontMapper = new DefaultFontMapper();
         paint = Color.black;
@@ -140,6 +154,25 @@ public class PdfGraphics2D extends Graphics2D {
         setFont(new Font("sanserif", Font.PLAIN, 12));
         stroke = new BasicStroke(1);
         this.cb = cb;
+        cb.saveState();
+        this.width = width;
+        this.height = height;
+        clip = new Area(new Rectangle2D.Float(0, 0, width, height));
+        clip(clip);
+        cb.saveState();
+    }
+    
+    PdfGraphics2D(PdfContentByte cb, float width, float height) {
+        super();
+        this.onlyShapes = true;
+        this.transform = new AffineTransform();
+        this.kids = new ArrayList();
+        paint = Color.black;
+        background = Color.white;
+        setFont(new Font("sanserif", Font.PLAIN, 12));
+        stroke = new BasicStroke(1);
+        this.cb = cb;
+        cb.saveState();
         this.width = width;
         this.height = height;
         clip = new Area(new Rectangle2D.Float(0, 0, width, height));
@@ -214,22 +247,28 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#drawString(String, float, float)
      */
     public void drawString(String s, float x, float y) {
-        AffineTransform at = getTransform();
-        AffineTransform at2 = getTransform();
-        at2.translate(x, y);
-        at2.concatenate(font.getTransform());
-        setTransform(at2);
-        AffineTransform inverse = this.normalizeMatrix();
-        AffineTransform flipper = AffineTransform.getScaleInstance(1,-1);
-        inverse.concatenate(flipper);
-        double[] mx = new double[6];
-        inverse.getMatrix(mx);
-        cb.beginText();
-        cb.setFontAndSize(baseFont, fontSize);
-        cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
-        cb.showText(s);
-        cb.endText();
-        setTransform(at);
+        if (onlyShapes) {
+            TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
+            tl.draw(this, x, y);
+        }
+        else {
+            AffineTransform at = getTransform();
+            AffineTransform at2 = getTransform();
+            at2.translate(x, y);
+            at2.concatenate(font.getTransform());
+            setTransform(at2);
+            AffineTransform inverse = this.normalizeMatrix();
+            AffineTransform flipper = AffineTransform.getScaleInstance(1,-1);
+            inverse.concatenate(flipper);
+            double[] mx = new double[6];
+            inverse.getMatrix(mx);
+            cb.beginText();
+            cb.setFontAndSize(baseFont, fontSize);
+            cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
+            cb.showText(s);
+            cb.endText();
+            setTransform(at);
+        }
     }
     /**
      * @see Graphics#drawString(AttributedCharacterIterator, int, int)
@@ -453,7 +492,29 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#create()
      */
     public Graphics create() {
-        return this;
+        PdfGraphics2D g2 = new PdfGraphics2D();
+        g2.onlyShapes = this.onlyShapes;
+        g2.transform = new AffineTransform(this.transform);
+        g2.baseFonts = this.baseFonts;
+        g2.fontMapper = this.fontMapper;
+        g2.kids = this.kids;
+        g2.paint = this.paint;
+        g2.background = this.background;
+        g2.setFont(this.font);
+        g2.stroke = this.stroke;
+        g2.cb = new PdfContentByte(this.cb.getPdfWriter());
+        g2.cb.saveState();
+        g2.width = this.width;
+        g2.height = this.height;
+        g2.clip = new Area(new Rectangle2D.Float(0, 0, width, height));
+        g2.clip(g2.clip);
+        g2.cb.saveState();
+        g2.followPath(this.clip, CLIP);
+        g2.kid = true;
+        synchronized (kids) {
+            kids.add(g2);
+        }
+        return g2;
     }
     
     /**
@@ -500,6 +561,10 @@ public class PdfGraphics2D extends Graphics2D {
      * Sets the current font.
      */
     public void setFont(Font f) {
+        if (onlyShapes) {
+            font = f;
+            return;
+        }
         if (f == font)
             return;
         fontMetrics = null;
@@ -509,18 +574,23 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     private BaseFont getCachedBaseFont(Font f) {
-        BaseFont bf = (BaseFont)baseFonts.get(f.getFontName());
-        if (bf == null) {
-            bf = fontMapper.awtToPdf(f);
-            baseFonts.put(f.getFontName(), bf);
+        synchronized (baseFonts) {
+            BaseFont bf = (BaseFont)baseFonts.get(f.getFontName());
+            if (bf == null) {
+                bf = fontMapper.awtToPdf(f);
+                baseFonts.put(f.getFontName(), bf);
+            }
+            return bf;
         }
-        return bf;
     }
     
     /**
      * @see Graphics#getFontMetrics(Font)
      */
     public FontMetrics getFontMetrics(Font f) {
+        if (onlyShapes) {
+            return dg2.getFontMetrics(f);
+        }
         if (f == font) {
             if (fontMetrics == null)
                 fontMetrics = new PdfFontMetrics(f, getCachedBaseFont(f));
@@ -786,13 +856,20 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#dispose()
      */
     public void dispose() {
+        if (kid)
+            return;
         if (!disposeCalled) {
             disposeCalled = true;
             cb.restoreState();
+            cb.restoreState();
+            for (int k = 0; k < kids.size(); ++k) {
+                PdfGraphics2D g2 = (PdfGraphics2D)kids.get(k);
+                g2.cb.restoreState();
+                g2.cb.restoreState();
+                cb.add(g2.cb);
+            }
         }
     }
-    
-    
     
     ///////////////////////////////////////////////
     //

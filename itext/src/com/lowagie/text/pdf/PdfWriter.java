@@ -551,6 +551,15 @@ public class PdfWriter extends DocWriter {
     
     private int currentPageNumber = 1;
     
+    public static final float SPACE_CHAR_RATIO_DEFAULT = 2.5f;
+    public static final float NO_SPACE_CHAR_RATIO = 10000000f;
+    
+    /**
+     * The ratio between the extra word spacing and the extra character spacing.
+     * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
+     */
+    private float spaceCharRatio = SPACE_CHAR_RATIO_DEFAULT;
+    
     // constructor
     
     /**
@@ -1463,4 +1472,26 @@ public class PdfWriter extends DocWriter {
     public int reorderPages(int order[]) throws DocumentException {
         return root.reorderPages(order);
     }
+    
+    /** Gets the space/character extra spacing ratio for
+     * fully justified text.
+     * @return the space/character extra spacing ratio
+     */    
+    public float getSpaceCharRatio() {
+        return spaceCharRatio;
+    }    
+    
+    /** Sets the ratio between the extra word spacing and the extra character spacing
+     * when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
+     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
+     * will be zero.
+     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
+     */
+    public void setSpaceCharRatio(float spaceCharRatio) {
+        if (spaceCharRatio < 0.001f)
+            this.spaceCharRatio = 0.001f;
+        else
+            this.spaceCharRatio = spaceCharRatio;
+    }    
 }

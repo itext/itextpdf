@@ -277,6 +277,7 @@ public class PdfPRow {
                 ct.setExtraParagraphSpace(cell.getExtraParagraphSpace());
                 ct.setFollowingIndent(cell.getFollowingIndent());
                 ct.setRightIndent(cell.getRightIndent());
+                ct.setSpaceCharRatio(cell.getSpaceCharRatio());
                 try {
                     ct.go();
                 }
