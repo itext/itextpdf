@@ -121,6 +121,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** This represents a coordinate in the transformation matrix. */
     public static final int DY = 7;
     
+    public static final int ORIGINAL_NONE = 0;
+    public static final int ORIGINAL_JPEG = 1;
+    public static final int ORIGINAL_PNG = 2;
+    public static final int ORIGINAL_GIF = 3;
+    public static final int ORIGINAL_BMP = 4;
+    public static final int ORIGINAL_TIFF = 5;
+    public static final int ORIGINAL_WMF = 6;
     // membervariables
     
     /** Image color inversion */
@@ -177,9 +184,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     // for the moment these variables are only used for Images in class Table
     // code contributed by Pelikan Stephan
     /** the indentation to the left. */
-	protected float indentationLeft = 0;
-	/** the indentation to the right. */
-	protected float indentationRight = 0;
+    protected float indentationLeft = 0;
+    /** the indentation to the right. */
+    protected float indentationRight = 0;
  
     // serial stamping
     
@@ -219,6 +226,12 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     /** Holds value of property XYRatio. */
     private float XYRatio = 0;
+    
+    /** Holds value of property originalType. */
+    protected int originalType = ORIGINAL_NONE;
+    
+    /** Holds value of property originalData. */
+    protected byte[] originalData;
     
     // constructors
     
@@ -273,6 +286,8 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.additional = image.additional;
         this.smask = image.smask;
         this.XYRatio = image.XYRatio;
+        this.originalData = image.originalData;
+        this.originalType = image.originalType;
     }
     
     // gets an instance of an Image
@@ -311,7 +326,6 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
             if (c1 == 'G' && c2 == 'I' && c3 == 'F') {
                 GifImage gif = new GifImage(url);
                 Image img = gif.getImage(1);
-                img.url = url;
                 return img;
             }
             if (c1 == 0xFF && c2 == 0xD8) {
@@ -319,17 +333,14 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
             }
             if (c1 == PngImage.PNGID[0] && c2 == PngImage.PNGID[1] && c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
                 Image img = PngImage.getImage(url);
-                img.url = url;
                 return img;
             }
             if (c1 == 0xD7 && c2 == 0xCD) {
                 Image img = new ImgWMF(url);
-                img.url = url;
                 return img;
             }
             if (c1 == 'B' && c2 == 'M') {
                 Image img = BmpImage.getImage(url);
-                img.url = url;
                 return img;
             }
             if ((c1 == 'M' && c2 == 'M' && c3 == 0 && c4 == 42) || (c1 == 'I' && c2 == 'I' && c3 == 42 && c4 == 0)) {
@@ -391,7 +402,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
                 RandomAccessFileOrArray ra = null;
                 try {
                     ra = new RandomAccessFileOrArray(imgb);
-                    return TiffImage.getTiffImage(ra, 1);
+                    Image img = TiffImage.getTiffImage(ra, 1);
+                    img.setOriginalData(imgb);
+                    return img;
                 }
                 finally {
                     if (ra != null)
@@ -1394,36 +1407,71 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.XYRatio = XYRatio;
     }
     
-	/**
-	 * Gets the left indentation.
-	 * @return the left indentation
-	 */
-	public float indentationLeft() {
-		return indentationLeft;
-	}
+    /**
+     * Gets the left indentation.
+     * @return the left indentation
+     */
+    public float indentationLeft() {
+            return indentationLeft;
+    }
 
-	/**
-	 * Gets the right indentation.
-	 * @return the right indentation
-	 */
-	public float indentationRight() {
-		return indentationRight;
-	}
+    /**
+     * Gets the right indentation.
+     * @return the right indentation
+     */
+    public float indentationRight() {
+            return indentationRight;
+    }
 
-	/**
-	 * Sets the left indentation.
-	 * @param f
-	 */
-	public void setIndentationLeft(float f) {
-		indentationLeft = f;
-	}
+    /**
+     * Sets the left indentation.
+     * @param f
+     */
+    public void setIndentationLeft(float f) {
+            indentationLeft = f;
+    }
 
-	/**
-	 * Sets the right indentation.
-	 * @param f
-	 */
-	public void setIndentationRight(float f) {
-		indentationRight = f;
-	}
+    /**
+     * Sets the right indentation.
+     * @param f
+     */
+    public void setIndentationRight(float f) {
+            indentationRight = f;
+    }
 
+    /** Getter for property originalType.
+     * @return Value of property originalType.
+     *
+     */
+    public int getOriginalType() {
+        return this.originalType;
+    }
+
+    /** Setter for property originalType.
+     * @param originalType New value of property originalType.
+     *
+     */
+    public void setOriginalType(int originalType) {
+        this.originalType = originalType;
+    }
+
+    /** Getter for property originalData.
+     * @return Value of property originalData.
+     *
+     */
+    public byte[] getOriginalData() {
+        return this.originalData;
+    }
+
+    /** Setter for property originalData.
+     * @param originalData New value of property originalData.
+     *
+     */
+    public void setOriginalData(byte[] originalData) {
+        this.originalData = originalData;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 }

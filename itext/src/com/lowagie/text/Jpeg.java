@@ -155,6 +155,7 @@ public class Jpeg extends Image implements Element {
     public Jpeg(byte[] img) throws BadElementException, IOException {
         super((URL)null);
         rawData = img;
+        originalData = img;
         processParameters();
     }
     
@@ -219,6 +220,7 @@ public class Jpeg extends Image implements Element {
     
     private void processParameters() throws BadElementException, IOException {
         type = JPEG;
+        originalType = ORIGINAL_JPEG;
         InputStream is = null;
         try {
             String errorID;

@@ -239,6 +239,7 @@ public class TiffImage {
                 TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
                 img.tagICC(ICC_Profile.getInstance(fd.getAsBytes()));
             }
+            img.setOriginalType(Image.ORIGINAL_TIFF);
             return img;
         }
         catch (Exception e) {
@@ -396,6 +397,7 @@ public class TiffImage {
             }
             if (photometric == TIFFConstants.PHOTOMETRIC_MINISWHITE)
                 img.setInverted(true);
+            img.setOriginalType(Image.ORIGINAL_TIFF);
             return img;
         }
         catch (Exception e) {

@@ -97,6 +97,8 @@ public class GifImage {
     protected byte m_local_table[];
     protected byte m_curr_table[];
     protected int m_line_stride;
+    protected byte fromData[];
+    protected URL fromUrl;
 
 
     protected ArrayList frames = new ArrayList();     // frames read from current file
@@ -106,6 +108,7 @@ public class GifImage {
      * @throws IOException on error
      */    
     public GifImage(URL url) throws IOException {
+        fromUrl = url;
         InputStream is = null;
         try {
             is = url.openStream();
@@ -131,6 +134,7 @@ public class GifImage {
      * @throws IOException on error
      */    
     public GifImage(byte data[]) throws IOException {
+        fromData = data;
         InputStream is = null;
         try {
             is = new ByteArrayInputStream(data);
@@ -370,6 +374,9 @@ public class GifImage {
         catch (Exception e) {
             throw new ExceptionConverter(e);
         }
+        img.setOriginalType(Image.ORIGINAL_GIF);
+        img.setOriginalData(fromData);
+        img.setUrl(fromUrl);
         GifFrame gf = new GifFrame();
         gf.image = img;
         gf.ix = ix;

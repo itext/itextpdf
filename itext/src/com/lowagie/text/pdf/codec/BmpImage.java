@@ -157,7 +157,9 @@ public class BmpImage {
         InputStream is = null;
         try {
             is = url.openStream();
-            return getImage(is);
+            Image img = getImage(is);
+            img.setUrl(url);
+            return img;
         }
         finally {
             if (is != null) {
@@ -176,6 +178,7 @@ public class BmpImage {
         try {
             Image img = bmp.getImage();
             img.setDpi((int)((double)bmp.xPelsPerMeter * 0.0254), (int)((double)bmp.xPelsPerMeter * 0.0254));
+            img.setOriginalType(Image.ORIGINAL_BMP);
             return img;
         }
         catch (BadElementException be) {
@@ -201,7 +204,9 @@ public class BmpImage {
         InputStream is = null;
         try {
             is = new ByteArrayInputStream(data);
-            return getImage(is);
+            Image img = getImage(is);
+            img.setOriginalData(data);
+            return img;
         }
         finally {
             if (is != null) {
