@@ -170,10 +170,10 @@ public class RtfWriter extends DocWriter implements DocListener
   private static final byte[] section = "sect".getBytes();
   
   /** Reset paragraph defaults tag. */
-  private static final byte[] paragraphDefaults = "pard".getBytes();
+  public static final byte[] paragraphDefaults = "pard".getBytes();
   
   /** Begin new paragraph tag. */
-  private static final byte[] paragraph = "par".getBytes();
+  public static final byte[] paragraph = "par".getBytes();
 
   /**
    * Lists
@@ -439,8 +439,11 @@ public class RtfWriter extends DocWriter implements DocListener
   /** PAGE numbers */
   private static final byte[] fieldPage = "PAGE".getBytes();
 
+  /** HYPERLINK field */
+  private static final byte[] fieldHyperlink = "HYPERLINK".getBytes();
+
   /** Last page number (not used) */
-  private static final byte[] fieldMax = "fldrslt".getBytes();
+  private static final byte[] fieldDisplay = "fldrslt".getBytes();
   
 
   /** Class variables */
@@ -788,14 +791,25 @@ public class RtfWriter extends DocWriter implements DocListener
    */
   private void writeAnchor(Anchor anchor, ByteArrayOutputStream out) throws IOException, DocumentException
   {
+    out.write(openGroup);
+    out.write(escape);
+    out.write(field);
+    out.write(openGroup);
+    out.write(extendedEscape);
+    out.write(fieldContent);
+    out.write(openGroup);
+    out.write(fieldHyperlink);
+    out.write(delimiter);
+    out.write(anchor.url().toString().getBytes());
+    out.write(closeGroup);
+    out.write(closeGroup);
+    out.write(openGroup);
+    out.write(escape);
+    out.write(fieldDisplay);
+    out.write(delimiter);
     writePhrase(anchor, out);
-    Font urlFont = anchor.font();
-    urlFont.setColor(new Color(0,0,255));
-    urlFont.setStyle("underline");
-    Chunk href = new Chunk("(" + anchor.url().toString() + ")", urlFont);
-    out.write(delimiter);
-    writeChunk(href, out);
-    out.write(delimiter);
+    out.write(closeGroup);
+    out.write(closeGroup);
   }
   
   /** 
@@ -1531,7 +1545,7 @@ public class RtfWriter extends DocWriter implements DocListener
 			out.write(closeGroup);
 			out.write(openGroup);
 			out.write(escape);
-			out.write(fieldMax);
+			out.write(fieldDisplay);
 			out.write(openGroup);
 			out.write(closeGroup);
 			out.write(closeGroup);
@@ -1618,7 +1632,7 @@ public class RtfWriter extends DocWriter implements DocListener
       }
     catch(IOException e)
       {
-	System.out.println(e);
+	System.out.println("InitDefaultsError" + e);
       }
   }
 }
