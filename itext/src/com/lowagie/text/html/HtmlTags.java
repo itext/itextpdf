@@ -346,4 +346,8 @@ public class HtmlTags {
 
 /** the CSS tag for background color */
     public static final String CSS_LINETHROUGH = "line-through";
+ 
+/** the CSS tag for adding a page break when the document is printed */
+    public static final String PAGE_BREAK_BEFORE = "page-break-before";
+
 }

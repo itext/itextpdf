@@ -172,7 +172,20 @@ public class HtmlWriter extends DocWriter implements DocListener {
  */
     
     public boolean newPage() throws DocumentException {
-        return false;
+        try {
+            writeStart(HtmlTags.DIV);
+            write(" ");
+            write(HtmlTags.STYLE);
+            write("=\"");
+            writeCssProperty(HtmlTags.PAGE_BREAK_BEFORE, ElementTags.ALWAYS);
+            write("\" /");
+            os.write(GT);
+            os.write(NEWLINE);
+        }
+        catch(IOException ioe) {
+            throw new DocumentException(ioe.getMessage());
+        }
+        return true;
     }
     
 /**

@@ -396,6 +396,9 @@ public class ElementTags {
 /** the possible value of a tag */
     public static final String HORIZONTALRULE = "horizontalrule";
     
+/** the possible value of a tag */
+    public static final String ALWAYS = "always";
+    
     // methods
     
 /**
