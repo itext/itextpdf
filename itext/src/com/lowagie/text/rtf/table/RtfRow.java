@@ -274,7 +274,7 @@ public class RtfRow extends RtfElement {
             if(this.parentTable.getFitToPage()) {
                 result.write(ROW_KEEP_TOGETHER);
             }
-            if(this.rowNumber < this.parentTable.getHeaderRows()) {
+            if(this.rowNumber <= this.parentTable.getHeaderRows()) {
                 result.write(ROW_HEADER_ROW);
             }
             switch (this.parentTable.getAlignment()) {
