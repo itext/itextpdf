@@ -360,7 +360,8 @@ public class XmlWriter extends DocWriter implements DocListener {
                         String key = (String) i.next();
                         if (key.equals(Chunk.LOCALGOTO)
                         || key.equals(Chunk.LOCALDESTINATION)
-                        || key.equals(Chunk.GENERICTAG)) {
+                        || key.equals(Chunk.GENERICTAG)
+                        || key.equals(Chunk.SUBSUPSCRIPT)) {
                             String value = (String) attributes.get(key);
                             buf.append(" ").append(key.toLowerCase()).append("=\"").append(value).append("\"");
                             tag = true;
@@ -882,52 +883,4 @@ public class XmlWriter extends DocWriter implements DocListener {
         }
         return buf.toString();
     }
-    
-/**
- * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>Color</CODE>.
- *
- * @param	color	the <CODE>Color</CODE> that has to be converted.
- * @return	the HTML representation of this <COLOR>Color</COLOR>
- */
-    
-    public static String encode(Color color) {
-        StringBuffer buffer = new StringBuffer("#");
-        if (color.getRed() < 16) {
-            buffer.append('0');
-        }
-        buffer.append(Integer.toString(color.getRed(), 16));
-        if (color.getGreen() < 16) {
-            buffer.append('0');
-        }
-        buffer.append(Integer.toString(color.getGreen(), 16));
-        if (color.getBlue() < 16) {
-            buffer.append('0');
-        }
-        buffer.append(Integer.toString(color.getBlue(), 16));
-        return buffer.toString();
-    }
-    
-/**
- * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>Color</CODE>.
- *
- * @param	color	the <CODE>Color</CODE> that has to be converted.
- * @return	the HTML representation of this <COLOR>Color</COLOR>
- */
-    
-    /*public static Color decode encode(String string) {
-        StringBuffer buffer = new StringBuffer("#");
-        if (color.getRed() < 16) {
-            buffer.append('0');
-        }
-        buffer.append(Integer.toString(color.getRed(), 16));
-        if (color.getGreen() < 16) {
-            buffer.append('0');
-        }
-        buffer.append(Integer.toString(color.getGreen(), 16));
-        if (color.getBlue() < 16) {
-            buffer.append('0');
-        }
-        buffer.append(Integer.toString(color.getBlue(), 16));
-        return buffer.toString();
-    }*/
 }
