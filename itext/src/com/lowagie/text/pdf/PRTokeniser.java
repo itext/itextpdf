@@ -277,12 +277,16 @@ class PRTokeniser {
                 type = TK_STRING;
                 int v2 = 0;
                 while (true) {
+                    while (isWhitespace(v1))
+                        v1 = file.read();
                     if (v1 == '>')
                         break;
                     v1 = getHex(v1);
                     if (v1 < 0)
                         break;
                     v2 = file.read();
+                    while (isWhitespace(v2))
+                        v2 = file.read();
                     if (v2 == '>') {
                         ch = v1 << 4;
                         outBuf.append((char)ch);
