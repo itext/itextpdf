@@ -63,7 +63,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfListTable manages all RtfLists in one RtfDocument. It also generates
  * the list and list override tables in the document header.
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfListTable extends RtfElement implements RtfExtendedElement {

@@ -62,7 +62,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfAnnotation provides support for adding Annotations to the rtf document.
  * Only simple Annotations with Title / Content are supported.
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfAnnotation extends RtfElement {

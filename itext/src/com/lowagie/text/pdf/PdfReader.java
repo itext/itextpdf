@@ -54,6 +54,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
@@ -181,6 +182,29 @@ public class PdfReader {
         password = ownerPassword;
         tokens = new PRTokeniser(new RandomAccessFileOrArray(url));
         readPdf();
+    }
+    
+    /**
+     * Reads and parses a PDF document.
+     * @param is the <CODE>InputStream</CODE> containing the document. The stream is read to the
+     * end but is not closed
+     * @param ownerPassword the password to read the document
+     * @throws IOException on error
+     */
+    public PdfReader(InputStream is, byte ownerPassword[]) throws IOException {
+        password = ownerPassword;
+        tokens = new PRTokeniser(new RandomAccessFileOrArray(is));
+        readPdf();
+    }
+    
+    /**
+     * Reads and parses a PDF document.
+     * @param is the <CODE>InputStream</CODE> containing the document. The stream is read to the
+     * end but is not closed
+     * @throws IOException on error
+     */
+    public PdfReader(InputStream is) throws IOException {
+        this(is, null);
     }
     
     /** Creates an independent duplicate.

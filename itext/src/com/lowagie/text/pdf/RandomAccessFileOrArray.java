@@ -82,24 +82,11 @@ public class RandomAccessFileOrArray implements DataInput {
             if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("https://") || filename.startsWith("jar:")) {
                 InputStream is = new URL(filename).openStream();
                 try {
-                    byte b[] = new byte[4096];
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    for (;;) {
-                        int read = is.read(b);
-                        if (read < 1)
-                            break;
-                        out.write(b, 0, read);
-                    }
-                    this.arrayIn = out.toByteArray();
+                    this.arrayIn = InputStreamToArray(is);
                     return;
                 }
                 finally {
-                    try {
-                        is.close();
-                    }
-                    catch (IOException ioe) {
-                        // empty on purpose
-                    }
+                    try {is.close();}catch(IOException ioe){}
                 }
             }
             else {
@@ -107,24 +94,11 @@ public class RandomAccessFileOrArray implements DataInput {
                 if (is == null)
                     throw new IOException(filename + " not found as file or resource.");
                 try {
-                    byte b[] = new byte[4096];
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    for (;;) {
-                        int read = is.read(b);
-                        if (read < 1)
-                            break;
-                        out.write(b, 0, read);
-                    }
-                    this.arrayIn = out.toByteArray();
+                    this.arrayIn = InputStreamToArray(is);
                     return;
                 }
                 finally {
-                    try {
-                        is.close();
-                    }
-                    catch (IOException ioe) {
-                        // empty on purpose
-                    }
+                    try {is.close();}catch(IOException ioe){}
                 }
             }
         }
@@ -135,25 +109,27 @@ public class RandomAccessFileOrArray implements DataInput {
     public RandomAccessFileOrArray(URL url) throws IOException {
         InputStream is = url.openStream();
         try {
-            byte b[] = new byte[4096];
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            for (;;) {
-                int read = is.read(b);
-                if (read < 1)
-                    break;
-                out.write(b, 0, read);
-            }
-            this.arrayIn = out.toByteArray();
-            return;
+            this.arrayIn = InputStreamToArray(is);
         }
         finally {
-            try {
-                is.close();
-            }
-            catch (IOException ioe) {
-                // empty on purpose
-            }
+            try {is.close();}catch(IOException ioe){}
         }
+    }
+
+    public RandomAccessFileOrArray(InputStream is) throws IOException {
+        this.arrayIn = InputStreamToArray(is);
+    }
+    
+    public byte[] InputStreamToArray(InputStream is) throws IOException {
+        byte b[] = new byte[8192];
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        while (true) {
+            int read = is.read(b);
+            if (read < 1)
+                break;
+            out.write(b, 0, read);
+        }
+        return out.toByteArray();
     }
 
     public RandomAccessFileOrArray(byte arrayIn[]) {

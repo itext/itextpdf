@@ -478,7 +478,7 @@ class PdfStamperImp extends PdfWriter {
                 }
             }
         }
-        if (partialFlattening.isEmpty()) {
+        if (!fieldsAdded && partialFlattening.isEmpty()) {
             for (int page = 1; page <= reader.getNumberOfPages(); ++page) {
                 PdfDictionary pageDic = reader.getPageN(page);
                 PdfArray annots = (PdfArray)PdfReader.getPdfObject(pageDic.get(PdfName.ANNOTS));
@@ -486,7 +486,10 @@ class PdfStamperImp extends PdfWriter {
                     continue;
                 ArrayList ar = annots.getArrayList();
                 for (int idx = 0; idx < ar.size(); ++idx) {
-                    PdfDictionary annot = (PdfDictionary)PdfReader.getPdfObject((PdfObject)ar.get(idx));
+                    PdfObject annoto = PdfReader.getPdfObject((PdfObject)ar.get(idx));
+                        if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect())
+                            continue;
+                    PdfDictionary annot = (PdfDictionary)annoto;
                     if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE))) {
                         ar.remove(idx);
                         --idx;
@@ -498,10 +501,6 @@ class PdfStamperImp extends PdfWriter {
                 }
             }
             eliminateAcroformObjects();
-        }
-        else {
-            if (acroFds.isEmpty())
-                reader.getCatalog().remove(PdfName.ACROFORM);
         }
     }
 
@@ -516,8 +515,8 @@ class PdfStamperImp extends PdfWriter {
             kids.put(PdfName.KIDS, iFields);
             sweepKids(kids);
         }
-        PdfReader.killIndirect(acro);
-        reader.getCatalog().remove(PdfName.ACROFORM);
+//        PdfReader.killIndirect(acro);
+//        reader.getCatalog().remove(PdfName.ACROFORM);
     }
     
     void sweepKids(PdfObject obj) {

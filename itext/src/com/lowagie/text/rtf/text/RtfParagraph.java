@@ -64,7 +64,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfParagraph is an extension of the RtfPhrase that adds alignment and
  * indentation properties. It wraps a Paragraph.
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfParagraph extends RtfPhrase {
