@@ -193,21 +193,18 @@ public class Paragraph extends Phrase implements TextElementArray {
 	 * @param	list		the list to add.
 	 */
 
-	public void add(List list) {
+	public boolean add(Object o) {
+            if (o instanceof List) {
+                List list = (List) o;
 		list.setIndentationLeft(list.indentationLeft() + indentationLeft);
 		list.setIndentationRight(indentationRight);
 		super.add(list);
-	}	
-
-	/**
-	 * Adds a <CODE>Image</CODE> to the <CODE>Paragraph</CODE>.
-	 * 
-	 * @param	image		the image to add.
-	 */
-
-	public void add(Image image) {
-		super.addSpecial(image);
-	}			
+            }
+            else if (o instanceof Image) {
+                super.addSpecial((Image) o);
+            }
+            return super.add(o);
+	}		
 
 // setting the membervariables 
 
