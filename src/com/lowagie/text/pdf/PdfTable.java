@@ -106,7 +106,7 @@ class PdfTable extends Rectangle {
         int rows = table.size() + 1;
         float[] offsets = new float[rows];
         for (int i = 0; i < rows; i++) {
-            offsets[i] = top - cellspacing;
+            offsets[i] = top - cellpadding;
         }
         
         // loop over all the rows
