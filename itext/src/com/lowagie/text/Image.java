@@ -1484,7 +1484,7 @@ public abstract class Image extends Rectangle implements Element,
 	public void setImageMask(Image mask) throws DocumentException {
 		if (this.mask)
 			throw new DocumentException(
-					"An image mask can not contain another image mask.");
+					"An image mask cannot contain another image mask.");
 		if (!mask.mask)
 			throw new DocumentException(
 					"The image mask is not a mask. Did you do makeMask()?");
