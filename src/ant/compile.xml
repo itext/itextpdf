@@ -37,7 +37,7 @@
 
     <target name="compile.debug" description="--> compiles the iText code for debugging">
         <mkdir dir="${itext.classes}" />
-        <javac srcdir="${itext.src}" destdir="${itext.classes}" debug="true" debuglevel="lines,vars,source" />
+        <javac srcdir="${itext.src}" destdir="${itext.classes}" listfiles="yes" debug="true" debuglevel="lines,vars,source" />
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
