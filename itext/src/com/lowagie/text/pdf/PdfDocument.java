@@ -1432,7 +1432,8 @@ class PdfDocument extends Document implements DocListener {
         if (maskImage != null)
             addDirectImage(maskImage);
         PdfName name = addDirectImageSimple(image);
-        xObjectDictionary.put(name, writer.getImageReference(name));
+        if (!image.isImgTemplate())
+            xObjectDictionary.put(name, writer.getImageReference(name));
         return name;
     }
     

@@ -198,7 +198,9 @@ public class PdfTemplate extends PdfContentByte {
     
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
         try {
+            PdfName name;
             if (image.isImgTemplate()) {
+                name = pdf.addDirectImageSimple(image);
                 PdfTemplate template = image.templateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
@@ -210,7 +212,7 @@ public class PdfTemplate extends PdfContentByte {
                     PdfName mname = pdf.addDirectImageSimple(maskImage);
                     xObjectDictionary.put(mname, writer.getImageReference(mname));
                 }
-                PdfName name = pdf.addDirectImageSimple(image);
+                name = pdf.addDirectImageSimple(image);
                 content.append("q ");
                 content.append(a).append(' ');
                 content.append(b).append(' ');
@@ -219,8 +221,9 @@ public class PdfTemplate extends PdfContentByte {
                 content.append(e).append(' ');
                 content.append(f).append(" cm ");
                 content.append(name.toString()).append(" Do Q\n");
-                xObjectDictionary.put(name, writer.getImageReference(name));
             }
+            if (!image.isImgTemplate())
+                xObjectDictionary.put(name, writer.getImageReference(name));
         }
         catch (Exception ee) {
             throw new DocumentException(ee.getMessage());

@@ -845,6 +845,7 @@ public class PdfContentByte {
         checkWriter();
         try {
             if (image.isImgTemplate()) {
+                pdf.addDirectImage(image);
                 PdfTemplate template = image.templateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
