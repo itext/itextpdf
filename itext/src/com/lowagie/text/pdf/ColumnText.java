@@ -133,6 +133,12 @@ public class ColumnText {
 /** The first paragraph line indent. */    
     protected float indent = 0;
 	
+/** The following paragraph lines indent. */    
+    protected float followingIndent = 0;
+    
+/** The right paragraph lines indent. */    
+    protected float rightIndent = 0;
+    
 /** The extra space between paragraphs. */    
     protected float extraParagraphSpace = 0;
 	
@@ -439,7 +445,39 @@ public class ColumnText {
     {
         return indent;
     }
+
+    /**
+     * Sets the following paragraph lines indent.
+     * @param indent the indent
+     */
+    public void setFollowingIndent(float indent) {
+        this.followingIndent = indent;
+    }
     
+    /**
+     * Gets the following paragraph lines indent.
+     * @return the indent
+     */
+    public float getFollowingIndent() {
+        return followingIndent;
+    }
+
+    /**
+     * Sets the right paragraph lines indent.
+     * @param indent the indent
+     */
+    public void setRightIndent(float indent) {
+        this.rightIndent = indent;
+    }
+    
+    /**
+     * Gets the right paragraph lines indent.
+     * @return the indent
+     */
+    public float getRightIndent() {
+        return rightIndent;
+    }
+
 /**
  * Creates a line from the chunk array.
  * @param width the width of the line
@@ -522,7 +560,7 @@ public class ColumnText {
         int status = 0;
         if (rectangularWidth > 0) {
             for (;;) {
-                if (rectangularWidth <= firstIndent) {
+                if (rectangularWidth <= firstIndent + rightIndent) {
                     status = NO_MORE_COLUMN;
                     if (chunks.size() == 0)
                         status |= NO_MORE_TEXT;
@@ -533,7 +571,7 @@ public class ColumnText {
                     break;
                 }
                 float yTemp = yLine;
-                PdfLine line = createLine(rectangularWidth - firstIndent);
+                PdfLine line = createLine(rectangularWidth - firstIndent - rightIndent);
                 float maxSize = line.getMaxSize();
                 currentLeading = fixedLeading + maxSize * multipliedLeading;
                 float xx[] = findLimitsTwoLines();
@@ -555,7 +593,7 @@ public class ColumnText {
                     pdf.writeLineToContent(line, text, graphics, currentValues);            
                     currentFont = (PdfFont)currentValues[0];
                 }
-                firstIndent = line.isNewlineSplit() ? indent : 0;
+                firstIndent = line.isNewlineSplit() ? indent : followingIndent;
                 yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
             }
         }
@@ -578,13 +616,13 @@ public class ColumnText {
                 }
                 float x1 = Math.max(xx[0], xx[2]);
                 float x2 = Math.min(xx[1], xx[3]);
-                if (x2 - x1 <= firstIndent)
+                if (x2 - x1 <= firstIndent + rightIndent)
                     continue;
                 if (!simulate && !dirty) {
                     text.beginText();
                     dirty = true;
                 }
-                PdfLine line = createLine(x2 - x1 - firstIndent);
+                PdfLine line = createLine(x2 - x1 - firstIndent - rightIndent);
                 shortenChunkArray();
                 if (!simulate) {
                     currentValues[0] = currentFont;
@@ -592,7 +630,7 @@ public class ColumnText {
                     pdf.writeLineToContent(line, text, graphics, currentValues);            
                     currentFont = (PdfFont)currentValues[0];
                 }
-                firstIndent = line.isNewlineSplit() ? indent : 0;
+                firstIndent = line.isNewlineSplit() ? indent : followingIndent;
                 yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
             }
         }

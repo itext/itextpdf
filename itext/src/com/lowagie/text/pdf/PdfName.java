@@ -350,7 +350,7 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName FS = new PdfName("FS");
-    
+
     /** This is a static final PdfName */
     public static final PdfName FT = new PdfName("FT");
     
@@ -782,7 +782,7 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName URL = new PdfName("URL");
-    
+
     /** This is a static final PdfName */
     public static final PdfName USENONE = new PdfName("UseNone");
     

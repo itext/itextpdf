@@ -197,7 +197,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.90)"));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 95"));
             // Do not edit the line above!
         }
         
@@ -951,6 +951,7 @@ class PdfDocument extends Document implements DocListener {
     void addPTable(PdfPTable ptable, float xWidth) throws DocumentException {
         if (ptable.getHeaderRows() >= ptable.size())
             return;
+        boolean skipHeader = ptable.getSkipFirstHeader();
         float headerHeight = ptable.getHeaderHeight();
         float bottom = indentBottom();
         float baseY = indentTop() - currentHeight;
@@ -977,6 +978,7 @@ class PdfDocument extends Document implements DocListener {
                     bottom = indentBottom();
                     baseY = indentTop() - currentHeight;
                     currentY = baseY;
+                    skipHeader = false;
                 }
                 continue;
             }
@@ -1002,7 +1004,7 @@ class PdfDocument extends Document implements DocListener {
             else {
                 if (cv == null) {
                     cv = PdfPTable.beginWritingRows(writer.getDirectContent());
-                    if (event != null) {
+                    if (event != null && !skipHeader) {
                         heightsIdx = 0;
                         eventHeader = ptable.getHeaderRows();
                         for (int k = 0; k < eventHeader; ++k)
@@ -1010,7 +1012,10 @@ class PdfDocument extends Document implements DocListener {
                         eventY = currentY;
                         eventRow = currentRow;
                     }
-                    currentY = ptable.writeSelectedRows(0, ptable.getHeaderRows(), xWidth, currentY, cv);
+                    if (!skipHeader)
+                        currentY = ptable.writeSelectedRows(0, ptable.getHeaderRows(), xWidth, currentY, cv);
+                    else
+                        skipHeader = false;
                 }
                 if (event != null) {
                     heights[heightsIdx++] = ptable.getRowHeight(currentRow);
@@ -2257,7 +2262,7 @@ class PdfDocument extends Document implements DocListener {
             }
             // If it is a CJK chunk we will have to simulate the
             // space adjustment.
-            else if (isJustified && numberOfSpaces > 0 && chunk.isCJKEncoding()) {
+            else if (isJustified && numberOfSpaces > 0 && chunk.isSpecialEncoding()) {
                 String s = chunk.toString();
                 int idx = s.indexOf(' ');
                 if (idx < 0)
@@ -2368,6 +2373,33 @@ class PdfDocument extends Document implements DocListener {
                         PdfPageEvent pev = writer.getPageEvent();
                         if (pev != null)
                             pev.onGenericTag(writer, this, rect, (String)chunk.getAttribute(Chunk.GENERICTAG));
+                    }
+                    if (chunk.isAttribute(Chunk.BACKGROUND)) {
+                        float subtract = lastBaseFactor;
+                        if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND))
+                            subtract = 0;
+                        if (nextChunk == null)
+                            subtract += hangingCorrection;
+                        float fontSize = chunk.font().size();
+                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+                        graphics.setColorFill((Color)chunk.getAttribute(Chunk.BACKGROUND));
+                        graphics.rectangle(xMarker, yMarker + descender, width - subtract, ascender - descender);
+                        graphics.fill();
+                        graphics.setGrayFill(0);
+                    }
+                    if (chunk.isAttribute(Chunk.PDFANNOTATION)) {
+                        float subtract = lastBaseFactor;
+                        if (nextChunk != null && nextChunk.isAttribute(Chunk.PDFANNOTATION))
+                            subtract = 0;
+                        if (nextChunk == null)
+                            subtract += hangingCorrection;
+                        float fontSize = chunk.font().size();
+                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+                        PdfAnnotation annot = PdfFormField.shallowDuplicate((PdfAnnotation)chunk.getAttribute(Chunk.PDFANNOTATION));
+                        annot.put(PdfName.RECT, new PdfRectangle(xMarker, yMarker + descender, xMarker + width - subtract, yMarker + ascender));
+                        addAnnotation(annot);
                     }
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();

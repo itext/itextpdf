@@ -73,7 +73,7 @@ import java.util.Iterator;
  */
 
 class PdfChunk extends PdfString implements SplitCharacter{
-    
+
 /** The allowed attributes in variable <CODE>attributes</CODE>. */
     private static final HashMap keysAttributes = new HashMap();
     
@@ -90,8 +90,11 @@ class PdfChunk extends PdfString implements SplitCharacter{
         keysAttributes.put(Chunk.GENERICTAG, null);
         keysAttributes.put(Chunk.NEWPAGE, null);
         keysAttributes.put(Chunk.IMAGE, null);
+        keysAttributes.put(Chunk.BACKGROUND, null);
+        keysAttributes.put(Chunk.PDFANNOTATION, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
         keysNoStroke.put(Chunk.SPLITCHARACTER, null);
+        keysNoStroke.put(Chunk.HYPHENATION, null);
     }
     
     // membervariables
@@ -280,6 +283,16 @@ class PdfChunk extends PdfString implements SplitCharacter{
     
     // methods
     
+    protected int getWord(String text, int start) {
+        int len = text.length();
+        while (start < len) {
+            if (!Character.isLetter(text.charAt(start)))
+                break;
+            ++start;
+        }
+        return start;
+    }
+    
 /**
  * Splits this <CODE>PdfChunk</CODE> if it's too long for the given width.
  * <P>
@@ -306,12 +319,15 @@ class PdfChunk extends PdfString implements SplitCharacter{
         SplitCharacter splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
         if (splitCharacter == null)
             splitCharacter = this;
+        HyphenationEvent hyphenationEvent = (HyphenationEvent)noStroke.get(Chunk.HYPHENATION);
         int currentPosition = 0;
         int splitPosition = -1;
         float currentWidth = 0;
         
         // loop over all the characters of a string
         // or until the totalWidth is reached
+        int lastSpace = -1;
+        float lastSpaceWidth = 0;
         int length = value.length();
         char character = 0;
         while (currentPosition < length) {
@@ -333,6 +349,10 @@ class PdfChunk extends PdfString implements SplitCharacter{
                 return pc;
             }
             currentWidth += font.width(character);
+            if (character == ' ') {
+                lastSpace = currentPosition + 1;
+                lastSpaceWidth = currentWidth;
+            }
             if (currentWidth > width)
                 break;
             // if a split-character is encountered, the splitPosition is altered
@@ -352,6 +372,22 @@ class PdfChunk extends PdfString implements SplitCharacter{
             setContent(value);
             PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
             return pc;
+        }
+        if (lastSpace > splitPosition && splitCharacter.isSplitCharacter(' '))
+            splitPosition = lastSpace;
+        if (hyphenationEvent != null && lastSpace < currentPosition) {
+            int wordIdx = getWord(value, lastSpace);
+            if (wordIdx > lastSpace) {
+                String pre = hyphenationEvent.getHyphenatedWordPre(value.substring(lastSpace, wordIdx), font.getFont(), font.size(), width - lastSpaceWidth);
+                String post = hyphenationEvent.getHyphenatedWordPost();
+                if (post.length() > 0) {
+                    String returnValue = post + value.substring(wordIdx);
+                    value = trim(value.substring(0, lastSpace) + pre);
+                    setContent(value);
+                    PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
+                    return pc;
+                }
+            }
         }
         String returnValue = value.substring(splitPosition);
         value = trim(value.substring(0, splitPosition));
