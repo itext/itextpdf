@@ -789,6 +789,26 @@ public class Table extends Rectangle implements Element {
  * @param       value   the new value
  */
     
+    public final void setSpaceInsideCell(float value) {
+        cellpadding = value;
+    }
+    
+/**
+ * Sets the cellspacing.
+ *
+ * @param       value   the new value
+ */
+    
+    public final void setSpaceBetweenCells(float value) {
+        cellspacing = value;
+    }
+    
+/**
+ * Sets the cellpadding.
+ *
+ * @param       value   the new value
+ */
+    
     public final void setPadding(float value) {
         cellpadding = value;
     }
@@ -804,7 +824,7 @@ public class Table extends Rectangle implements Element {
     }
     
 /**
- * Sets the cellpadding.
+ * Sets the cellspacing (the meaning of cellpadding and cellspacing was inverted by mistake).
  *
  * @param       value   the new value
  * @deprecated  use setSpacing instead
@@ -815,7 +835,7 @@ public class Table extends Rectangle implements Element {
     }
     
 /**
- * Sets the cellspacing.
+ * Sets the cellpadding (the meaning of cellpadding and cellspacing was inverted by mistake).
  *
  * @param       value   the new value
  * @deprecated  use setPadding instead
