@@ -42,6 +42,7 @@
 package com.lowagie.text.pdf;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 
 /**
@@ -72,9 +73,12 @@ class PdfIndirectObject {
 
 	/** the generation number */
 	protected int generation = 0;
+    
+    /** The object type */
+    protected int type;
 
-	/** A direct object that has to be labeled */
-	protected PdfObject object;
+	/** The object ready to stream out */
+	ByteArrayOutputStream bytes;
 
 // constructors
 
@@ -88,8 +92,7 @@ class PdfIndirectObject {
 	 */
 
 	PdfIndirectObject(int number, PdfObject object) {
-		this.number = number;
-		this.object = object;
+        this(number, 0, object);
 	}
 
 	/**
@@ -105,7 +108,19 @@ class PdfIndirectObject {
 	PdfIndirectObject(int number, int generation, PdfObject object) {
 		this.number = number;
 		this.generation = generation;
-		this.object = object;
+        type = object.type();
+		try {
+			bytes = new ByteArrayOutputStream();
+			bytes.write(String.valueOf(number).getBytes());
+			bytes.write(" ".getBytes());
+			bytes.write(String.valueOf(generation).getBytes());
+			bytes.write(" obj\n".getBytes());
+			bytes.write(object.toPdf());
+			bytes.write("\nendobj\n".getBytes());
+		}
+		catch (IOException ioe) {
+			throw new RuntimeException(ioe.getMessage());
+		}
 	}
 
 // methods 
@@ -119,20 +134,9 @@ class PdfIndirectObject {
 	 */
 
 	public final int length() {
-		return toPdf().length;
+		return bytes.size();
 	} 
 
-	/**
-	 * Returns the direct <CODE>PdfObject</CODE> that is referenced by this <CODE>PdfIndirectObject</CODE>.
-	 *
-	 * @return		a <CODE>PdfObject</CODE>
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	final PdfObject getObject() {
-		return object;
-	} 
 
 	/**
 	 * Returns a <CODE>PdfIndirectReference</CODE> to this <CODE>PdfIndirectObject</CODE>.
@@ -143,32 +147,16 @@ class PdfIndirectObject {
 	 */
 
 	final PdfIndirectReference getIndirectReference() {
-		return new PdfIndirectReference(object.type(), number, generation);
+		return new PdfIndirectReference(type, number, generation);
 	}
 
-	/**
-     * Returns the PDF-representation of this <CODE>PdfIndirectObject</CODE>.
-	 *
-	 * @return		a <CODE>String</CODE>
+    /** Writes eficiently to a stream
      *
-	 * @since		rugPdf0.10
-	 * @author		Troy Harrison
-     */
-
-	final byte[] toPdf() {
-		ByteArrayOutputStream bytes;
-		try {
-			bytes = new ByteArrayOutputStream();
-			bytes.write(String.valueOf(number).getBytes());
-			bytes.write(" ".getBytes());
-			bytes.write(String.valueOf(generation).getBytes());
-			bytes.write(" obj\n".getBytes());
-			bytes.write(object.toPdf());
-			bytes.write("\nendobj\n".getBytes());
-		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe.getMessage());
-		}
-		return bytes.toByteArray();
-   }
+     * @param out the stream to write to
+     * @throws IOException on write error
+ */
+    final void writeTo(OutputStream out) throws IOException
+    {
+        bytes.writeTo(out);
+    }
 }
