@@ -196,6 +196,7 @@ public class Chunk implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
             setGenericTag(value);
         }
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

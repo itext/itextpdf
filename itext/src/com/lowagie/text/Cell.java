@@ -289,6 +289,7 @@ public class Cell extends Rectangle implements TextElementArray {
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
         }
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

@@ -445,6 +445,7 @@ public class Section extends ArrayList implements TextElementArray {
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
+        setMarkupAttributes(attributes);
     }
     
 /**

@@ -374,6 +374,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
         }
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -591,6 +592,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         ((Row) rows.get(aLocation.x)).setElement(aTable,aLocation.y);
         
         setCurrentLocationToNextValidPosition(aLocation);
+        complete();
     }
     
 /*
@@ -617,7 +619,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 odd.setProperty(name, value[1]);
             }
             Row row;
-            for (int i = 0; i < rows.size(); i++) {
+            for (int i = lastHeaderRow + 1; i < rows.size(); i++) {
                 row = (Row) rows.get(i);
                 row.setMarkupAttributes(i % 2 == 0 ? even : odd);
             }
