@@ -1918,8 +1918,8 @@ class PdfDocument extends Document implements DocListener {
         }
         // If the current line is not null
         if (line != null) {
-            // we check if the end of the page is reached
-            if (currentHeight + line.height() < indentTop() - indentBottom()) {
+            // we check if the end of the page is reached (bugfix by Francois Gravel)
+            if (currentHeight + line.height() + leading < indentTop() - indentBottom()) {
                 // if so nonempty lines are added and the heigt is augmented
                 if (line.size() > 0) {
                     currentHeight += line.height();
