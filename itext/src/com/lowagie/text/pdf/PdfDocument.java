@@ -1408,6 +1408,7 @@ class PdfDocument extends Document implements DocListener {
                     float cellDisplacement;
                     PdfCell cell;
                     PdfContentByte cellGraphics = new PdfContentByte(writer);
+                    PdfContentByte imageGraphics = new PdfContentByte(writer);
                     
                     // constructing the PdfTable
                     PdfTable table = new PdfTable((Table) element, indentLeft(), indentRight(), currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
@@ -1469,7 +1470,7 @@ class PdfDocument extends Document implements DocListener {
                             for (Iterator i = images.iterator(); i.hasNext(); ) {
                                 cellsShown = true;
                                 Image image = (Image) i.next();
-                                addImage(graphics, image, 0, 0, 0, 0, 0, 0);
+                                addImage(imageGraphics, image, 0, 0, 0, 0, 0, 0);
                             }
                             // if a cell is allready added completely, remove it
                             if (cell.mayBeRemoved()) {
@@ -1485,10 +1486,13 @@ class PdfDocument extends Document implements DocListener {
                             tablerec.setBorderColor(table.borderColor());
                             tablerec.setBackgroundColor(table.backgroundColor());
                             tablerec.setGrayFill(table.grayFill());
-                            graphics.rectangle(tablerec.rectangle(top(), indentBottom()));
-                            graphics.add(cellGraphics);
+                            PdfContentByte under = writer.getDirectContentUnder();
+                            under.rectangle(tablerec.rectangle(top(), indentBottom()));
+                            under.add(cellGraphics);
+                            under.add(imageGraphics);
                         }
                         cellGraphics = new PdfContentByte(null);
+                        imageGraphics = new PdfContentByte(null);
                         // if the table continues on the next page
                         if (! cells.isEmpty()) {
                             
@@ -1538,7 +1542,7 @@ class PdfDocument extends Document implements DocListener {
                                     for (Iterator im = images.iterator(); im.hasNext(); ) {
                                         cellsShown = true;
                                         Image image = (Image) im.next();
-                                        addImage(graphics, image, 0, 0, 0, 0, 0, 0);
+                                        addImage(imageGraphics, image, 0, 0, 0, 0, 0, 0);
                                     }
                                     lines = cell.getLines(indentTop(), indentBottom());
                                     float cellTop = cell.top(indentTop());
