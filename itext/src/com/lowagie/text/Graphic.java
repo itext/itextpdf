@@ -33,7 +33,10 @@
 
 package com.lowagie.text;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.HashMap;
 
 import com.lowagie.text.pdf.PdfContentByte;
 
@@ -49,6 +52,15 @@ import com.lowagie.text.pdf.PdfContentByte;
  */
 
 public class Graphic extends PdfContentByte implements Element {
+    
+/** This is a type of Graphic. */
+    public static final String HORIZONTAL_LINE = "HORIZONTAL";
+    
+/** This is a type of Graphic. */
+    public static final String BORDER = "BORDER";
+    
+/** Contains some of the attributes for this Graphic. */
+    private HashMap attributes;
     
     // constructor
     
@@ -97,5 +109,92 @@ public class Graphic extends PdfContentByte implements Element {
     
     public ArrayList getChunks() {
         return new ArrayList();
+    }
+    
+/**
+ * Orders this graphic to draw a horizontal line.
+ */
+    
+    public void setHorizontalLine(float linewidth, float percentage) {
+        if (attributes == null) attributes = new HashMap();
+        attributes.put(HORIZONTAL_LINE, new Object[]{new Float(linewidth), new Float(percentage), new Color(0, 0, 0)});
+    }
+    
+/**
+ * Orders this graphic to draw a horizontal line.
+ */
+    
+    public void setHorizontalLine(float linewidth, float percentage, Color color) {
+        if (attributes == null) attributes = new HashMap();
+        attributes.put(HORIZONTAL_LINE, new Object[]{new Float(linewidth), new Float(percentage), color});
+    }
+    
+/**
+ * draws a horizontal line.
+ */
+    
+    public void drawHorizontalLine(float lineWidth, Color color, float x1, float x2, float y) {
+        setLineWidth(lineWidth);
+        setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+        moveTo(x1, y);
+        lineTo(x2, y);
+        resetRGBColorStroke();
+        stroke();
+    }
+    
+/**
+ * Orders this graphic to draw a horizontal line.
+ */
+    
+    public void setBorder(float linewidth, float extraSpace) {
+        if (attributes == null) attributes = new HashMap();
+        attributes.put(BORDER, new Object[]{new Float(linewidth), new Float(extraSpace), new Color(0, 0, 0)});
+    }
+    
+/**
+ * Orders this graphic to draw a horizontal line.
+ */
+    
+    public void setBorder(float linewidth, float extraSpace, Color color) {
+        if (attributes == null) attributes = new HashMap();
+        attributes.put(BORDER, new Object[]{new Float(linewidth), new Float(extraSpace), color});
+    }
+    
+/**
+ * Draws a border
+ */
+    public void drawBorder(float lineWidth, Color color, float llx, float lly, float urx, float ury) {
+        setLineWidth(lineWidth);
+        setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+        moveTo(llx, lly);
+        lineTo(llx, ury);
+        lineTo(urx, ury);
+        lineTo(urx, lly);
+        lineTo(lly, lly);
+        resetRGBColorStroke();
+        stroke();
+    }
+    
+/**
+ * Processes the attributes of this object.
+ */
+    
+    public void processAttributes(float llx, float lly, float urx, float ury, float y) {
+        if (attributes == null) return;
+        String attribute;
+        Object[] o;
+        for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
+            attribute = (String) i.next();
+            o = (Object[]) attributes.get(attribute);
+            if (HORIZONTAL_LINE.equals(attribute)) {
+                float p = ((Float)o[1]).floatValue();
+                float w = (urx - llx) * (100.0f - p) / 200.0f;
+                drawHorizontalLine(((Float)o[0]).floatValue(), (Color)o[2], llx + w, urx - w, y);
+            }
+            if (BORDER.equals(attribute)) {
+                float extra = ((Float)o[1]).floatValue();
+                drawBorder(((Float)o[0]).floatValue(), (Color)o[2], llx - extra, lly - extra, urx + extra, ury + extra);
+            }
+        }
     }
 }
