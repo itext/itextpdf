@@ -423,8 +423,8 @@ public class PdfAction extends PdfDictionary {
      * Creates a GoToR action to a named destination.
      * @param filename the file name to go to
      * @param dest the destination name
-     * @param newWindow open the document in a new window if <CODE>true</CODE>
      * @param isName if true sets the destination as a name, if false sets it as a String
+     * @param newWindow open the document in a new window if <CODE>true</CODE>, if false the current document is replaced by the new document.
      * @return a GoToR action
      */
     public static PdfAction gotoRemotePage(String filename, String dest, boolean isName, boolean newWindow) {
