@@ -59,7 +59,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import com.lowagie.text.Image;
-import com.lowagie.tools.AbstractTool;
+import com.lowagie.tools.plugins.AbstractTool;
 
 /**
  * This is an argument of one of the tools in the toolbox.

@@ -55,7 +55,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import com.lowagie.text.Image;
-import com.lowagie.tools.AbstractTool;
+import com.lowagie.tools.plugins.AbstractTool;
 
 /**
  * ToolArgument class if the argument is a com.lowagie.text.Image.

@@ -63,6 +63,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import com.lowagie.tools.plugins.AbstractTool;
+
 /**
  * This is a utility that allows you to use a number of iText tools.
  */

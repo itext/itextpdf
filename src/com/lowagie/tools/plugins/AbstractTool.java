@@ -47,7 +47,7 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.tools;
+package com.lowagie.tools.plugins;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,6 +61,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import com.lowagie.tools.ToolMenuItems;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**

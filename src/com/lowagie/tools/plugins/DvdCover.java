@@ -65,7 +65,6 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.tools.AbstractTool;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.ImageArgument;
 import com.lowagie.tools.arguments.PdfFilter;
@@ -118,7 +117,7 @@ public class DvdCover extends AbstractTool {
     }
     
     /**
-     * @see com.lowagie.tools.AbstractTool#execute()
+     * @see com.lowagie.tools.plugins.AbstractTool#execute()
      */
     public void execute() {   
         try {
@@ -185,10 +184,10 @@ public class DvdCover extends AbstractTool {
     }
 
 	/**
-	 * @see com.lowagie.tools.AbstractTool#valueHasChanged(com.lowagie.tools.arguments.ToolArgument)
+	 * @see com.lowagie.tools.plugins.AbstractTool#valueHasChanged(com.lowagie.tools.arguments.ToolArgument)
 	 */
 	public void valueHasChanged(ToolArgument arg) {
-		// do nothing
+		System.out.println(arg.getValue());
 	}	
 
 }
