@@ -49,7 +49,6 @@ import com.lowagie.text.Rectangle;
  *
  * @see		com.lowagie.text.Rectangle
  * @see		PdfArray
- * @see         PageSize
  */
 
 class PdfRectangle extends PdfArray {
