@@ -368,7 +368,7 @@ public abstract class DocWriter implements DocListener {
             // the Htmlcode of these characters are added to a StringBuffer one by one
             switch(character) {
                 case '\n':
-                    buf.append("<").append(ElementTags.NEWLINE).append(">");
+                    buf.append("<").append(ElementTags.NEWLINE).append(" />");
                     break;
                 case '"':
                     buf.append("&quot;");
