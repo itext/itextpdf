@@ -337,34 +337,66 @@ class PdfChunk implements SplitCharacter{
         float lastSpaceWidth = 0;
         int length = value.length();
         char character = 0;
-        while (currentPosition < length) {
-            // the width of every character is added to the currentWidth
-            character = value.charAt(currentPosition);
-            // if a newLine or carriageReturn is encountered
-            if (character == '\r' || character == '\n') {
-                newlineSplit = true;
-                int inc = 1;
-                if (character == '\r' && currentPosition + 1 < length && value.charAt(currentPosition + 1) == '\n')
-                    inc = 2;
-                String returnValue = value.substring(currentPosition + inc);
-                value = value.substring(0, currentPosition);
-                if (value.length() < 1) {
-                    value = " ";
+        BaseFont ft = font.getFont();
+        if (ft.getFontType() == BaseFont.FONT_TYPE_CJK && ft.getUnicodeEquivalent(' ') != ' ') {
+            while (currentPosition < length) {
+                // the width of every character is added to the currentWidth
+                char cidChar = value.charAt(currentPosition);
+                character = ft.getUnicodeEquivalent(cidChar);
+                // if a newLine or carriageReturn is encountered
+                if (character == '\n') {
+                    newlineSplit = true;
+                    String returnValue = value.substring(currentPosition + 1);
+                    value = value.substring(0, currentPosition);
+                    if (value.length() < 1) {
+                        value = "\u0001";
+                    }
+                    PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
+                    return pc;
                 }
-                PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
-                return pc;
+                currentWidth += font.width(cidChar);
+                if (character == ' ') {
+                    lastSpace = currentPosition + 1;
+                    lastSpaceWidth = currentWidth;
+                }
+                if (currentWidth > width)
+                    break;
+                // if a split-character is encountered, the splitPosition is altered
+                if (splitCharacter.isSplitCharacter(character))
+                    splitPosition = currentPosition + 1;
+                currentPosition++;
             }
-            currentWidth += font.width(character);
-            if (character == ' ') {
-                lastSpace = currentPosition + 1;
-                lastSpaceWidth = currentWidth;
+        }
+        else {
+            while (currentPosition < length) {
+                // the width of every character is added to the currentWidth
+                character = value.charAt(currentPosition);
+                // if a newLine or carriageReturn is encountered
+                if (character == '\r' || character == '\n') {
+                    newlineSplit = true;
+                    int inc = 1;
+                    if (character == '\r' && currentPosition + 1 < length && value.charAt(currentPosition + 1) == '\n')
+                        inc = 2;
+                    String returnValue = value.substring(currentPosition + inc);
+                    value = value.substring(0, currentPosition);
+                    if (value.length() < 1) {
+                        value = " ";
+                    }
+                    PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
+                    return pc;
+                }
+                currentWidth += font.width(character);
+                if (character == ' ') {
+                    lastSpace = currentPosition + 1;
+                    lastSpaceWidth = currentWidth;
+                }
+                if (currentWidth > width)
+                    break;
+                // if a split-character is encountered, the splitPosition is altered
+                if (splitCharacter.isSplitCharacter(character))
+                    splitPosition = currentPosition + 1;
+                currentPosition++;
             }
-            if (currentWidth > width)
-                break;
-            // if a split-character is encountered, the splitPosition is altered
-            if (splitCharacter.isSplitCharacter(character))
-                splitPosition = currentPosition + 1;
-            currentPosition++;
         }
         
         // if all the characters fit in the total width, null is returned (there is no overflow)
@@ -534,9 +566,18 @@ class PdfChunk implements SplitCharacter{
     
     public float trimLastSpace()
     {
-        if (value.length() > 1 && value.endsWith(" ")) {
-            value = value.substring(0, value.length() - 1);
-            return font.width(' ');
+        BaseFont ft = font.getFont();
+        if (ft.getFontType() == BaseFont.FONT_TYPE_CJK && ft.getUnicodeEquivalent(' ') != ' ') {
+            if (value.length() > 1 && value.endsWith("\u0001")) {
+                value = value.substring(0, value.length() - 1);
+                return font.width('\u0001');
+            }
+        }
+        else {
+            if (value.length() > 1 && value.endsWith(" ")) {
+                value = value.substring(0, value.length() - 1);
+                return font.width(' ');
+            }
         }
         return 0;
     }
@@ -699,9 +740,17 @@ class PdfChunk implements SplitCharacter{
  * @param	string		the <CODE>String<CODE> that has to be trimmed.
  * @return	the trimmed <CODE>String</CODE>
  */    
-    static String trim(String string) {
-        while (string.endsWith(" ") || string.endsWith("\t")) {
-            string = string.substring(0, string.length() - 1);
+    String trim(String string) {
+        BaseFont ft = font.getFont();
+        if (ft.getFontType() == BaseFont.FONT_TYPE_CJK && ft.getUnicodeEquivalent(' ') != ' ') {
+            while (string.endsWith("\u0001")) {
+                string = string.substring(0, string.length() - 1);
+            }
+        }
+        else {
+            while (string.endsWith(" ") || string.endsWith("\t")) {
+                string = string.substring(0, string.length() - 1);
+            }
         }
         return string;
     }

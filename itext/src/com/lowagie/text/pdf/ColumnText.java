@@ -76,126 +76,121 @@ import com.lowagie.text.DocumentException;
  * each time.
  * @author Paulo Soares (psoares@consiste.pt)
  */
- 
-public class ColumnText {
 
-/** Signals that there are no more text available. */    
+public class ColumnText {
+    
+    /** Signals that there are no more text available. */
     public static final int NO_MORE_TEXT = 1;
-	
-/** Signals that there is no more column. */    
+    
+    /** Signals that there is no more column. */
     public static final int NO_MORE_COLUMN = 2;
     
-/** The column is valid. */    
+    /** The column is valid. */
     protected static final int LINE_STATUS_OK = 0;
-	
-/** The line is out outhe column limits. */    
+    
+    /** The line is out outhe column limits. */
     protected static final int LINE_STATUS_OFFLIMITS = 1;
-	
-/** The line cannot fit this column position. */    
+    
+    /** The line cannot fit this column position. */
     protected static final int LINE_STATUS_NOLINE = 2;
     
-/** Upper bound of the column. */    
+    /** Upper bound of the column. */
     protected float maxY;
-	
-/** Lower bound of the column. */    
+    
+    /** Lower bound of the column. */
     protected float minY;
-	
-/** The column alignment. Default is left alignment. */    
+    
+    /** The column alignment. Default is left alignment. */
     protected int alignment = Element.ALIGN_LEFT;
-	
-/** The left column bound. */    
+    
+    /** The left column bound. */
     protected ArrayList leftWall;
-	
-/** The right column bound. */    
+    
+    /** The right column bound. */
     protected ArrayList rightWall;
-	
-/** The chunks that form the text. */    
+    
+    /** The chunks that form the text. */
     protected ArrayList chunks = new ArrayList();
-	
-/** The current y line location. Text will be written at this line minus the leading. */    
+    
+    /** The current y line location. Text will be written at this line minus the leading. */
     protected float yLine;
-	
-/** The leading for the current line. */    
+    
+    /** The leading for the current line. */
     protected float currentLeading = 16;
-	
-/** The fixed text leading. */    
+    
+    /** The fixed text leading. */
     protected float fixedLeading = 16;
-	
-/** The text leading that is multiplied by the biggest font size in the line. */    
+    
+    /** The text leading that is multiplied by the biggest font size in the line. */
     protected float multipliedLeading = 0;
-	
-/** The <CODE>PdfContent</CODE> where the text will be written to. */    
+    
+    /** The <CODE>PdfContent</CODE> where the text will be written to. */
     protected PdfContentByte text;
-	
-/** The line status when trying to fit a line to a column. */    
+    
+    /** The line status when trying to fit a line to a column. */
     protected int lineStatus;
-	
-/** The first paragraph line indent. */    
+    
+    /** The first paragraph line indent. */
     protected float indent = 0;
-	
-/** The following paragraph lines indent. */    
+    
+    /** The following paragraph lines indent. */
     protected float followingIndent = 0;
     
-/** The right paragraph lines indent. */    
+    /** The right paragraph lines indent. */
     protected float rightIndent = 0;
     
-/** The extra space between paragraphs. */    
+    /** The extra space between paragraphs. */
     protected float extraParagraphSpace = 0;
-	
-/** Marks the chunks to be eliminated when the line is written. */    
+    
+    /** Marks the chunks to be eliminated when the line is written. */
     protected int currentChunkMarker = -1;
-	
-/** The chunk created by the splitting. */    
+    
+    /** The chunk created by the splitting. */
     protected PdfChunk currentStandbyChunk;
-	
-/** The chunk created by the splitting. */    
+    
+    /** The chunk created by the splitting. */
     protected String splittedChunkText;
     
-/** The width of the line when the column is defined as a simple rectangle. */    
+    /** The width of the line when the column is defined as a simple rectangle. */
     protected float rectangularWidth = -1;
     
-/**
- * Creates a <CODE>ColumnText</CODE>.
- * @param text the place where the text will be written to. Can
- * be a template.
- */    
-    public ColumnText(PdfContentByte text)
-    {
+    /**
+     * Creates a <CODE>ColumnText</CODE>.
+     * @param text the place where the text will be written to. Can
+     * be a template.
+     */
+    public ColumnText(PdfContentByte text) {
         this.text = text;
     }
     
-/**
- * Adds a <CODE>Phrase</CODE> to the current text array.
- * @param phrase the text
- */    
-    public void addText(Phrase phrase)
-    {
-        for (Iterator j = phrase.getChunks().iterator(); j.hasNext();)
-        {
+    /**
+     * Adds a <CODE>Phrase</CODE> to the current text array.
+     * @param phrase the text
+     */
+    public void addText(Phrase phrase) {
+        for (Iterator j = phrase.getChunks().iterator(); j.hasNext();) {
             chunks.add(new PdfChunk((Chunk)j.next(), null));
         }
     }
     
-/**
- * Adds a <CODE>Chunk</CODE> to the current text array.
- * @param chunk the text
- */    
-    public void addText(Chunk chunk)
-    {
+    /**
+     * Adds a <CODE>Chunk</CODE> to the current text array.
+     * @param chunk the text
+     */
+    public void addText(Chunk chunk) {
         chunks.add(new PdfChunk(chunk, null));
     }
     
-/**
- * Converts a sequence of lines representing one of the column bounds into
- * an internal format.
- * <p>
- * Each array element will contain a <CODE>float[4]</CODE> representing
- * the line x = ax + b.
- * @param cLine the column array
- * @return the converted array
- */    
-    protected ArrayList convertColumn(float cLine[])
-    {
+    /**
+     * Converts a sequence of lines representing one of the column bounds into
+     * an internal format.
+     * <p>
+     * Each array element will contain a <CODE>float[4]</CODE> representing
+     * the line x = ax + b.
+     * @param cLine the column array
+     * @return the converted array
+     */
+    protected ArrayList convertColumn(float cLine[]) {
         if (cLine.length < 4)
             throw new RuntimeException("No valid column line found.");
         ArrayList cc = new ArrayList();
@@ -223,14 +218,13 @@ public class ColumnText {
         return cc;
     }
     
-/**
- * Finds the intersection between the <CODE>yLine</CODE> and the column. It will
- * set the <CODE>lineStatus</CODE> apropriatly.
- * @param wall the column to intersect
- * @return the x coordinate of the intersection
- */    
-    protected float findLimitsPoint(ArrayList wall)
-    {
+    /**
+     * Finds the intersection between the <CODE>yLine</CODE> and the column. It will
+     * set the <CODE>lineStatus</CODE> apropriatly.
+     * @param wall the column to intersect
+     * @return the x coordinate of the intersection
+     */
+    protected float findLimitsPoint(ArrayList wall) {
         lineStatus = LINE_STATUS_OK;
         if (yLine < minY || yLine > maxY) {
             lineStatus = LINE_STATUS_OFFLIMITS;
@@ -246,13 +240,12 @@ public class ColumnText {
         return 0;
     }
     
-/**
- * Finds the intersection between the <CODE>yLine</CODE> and the two
- * column bounds. It will set the <CODE>lineStatus</CODE> apropriatly.
- * @return a <CODE>float[2]</CODE>with the x coordinates of the intersection
- */    
-    protected float[] findLimitsOneLine()
-    {
+    /**
+     * Finds the intersection between the <CODE>yLine</CODE> and the two
+     * column bounds. It will set the <CODE>lineStatus</CODE> apropriatly.
+     * @return a <CODE>float[2]</CODE>with the x coordinates of the intersection
+     */
+    protected float[] findLimitsOneLine() {
         for (;;) {
             float x1 = findLimitsPoint(leftWall);
             if (lineStatus == LINE_STATUS_OFFLIMITS || lineStatus == LINE_STATUS_NOLINE)
@@ -264,14 +257,13 @@ public class ColumnText {
         }
     }
     
-/**
- * Finds the intersection between the <CODE>yLine</CODE>,
- * the <CODE>yLine-leading</CODE>and the two
- * column bounds. It will set the <CODE>lineStatus</CODE> apropriatly.
- * @return a <CODE>float[4]</CODE>with the x coordinates of the intersection
- */    
-    protected float[] findLimitsTwoLines()
-    {
+    /**
+     * Finds the intersection between the <CODE>yLine</CODE>,
+     * the <CODE>yLine-leading</CODE>and the two
+     * column bounds. It will set the <CODE>lineStatus</CODE> apropriatly.
+     * @return a <CODE>float[4]</CODE>with the x coordinates of the intersection
+     */
+    protected float[] findLimitsTwoLines() {
         for (;;) {
             float x1[] = findLimitsOneLine();
             if (lineStatus == LINE_STATUS_OFFLIMITS)
@@ -293,47 +285,44 @@ public class ColumnText {
         }
     }
     
-/**
- * Sets the columns bounds. Each column bound is described by a
- * <CODE>float[]</CODE> with the line points [x1,y1,x2,y2,...].
- * The array must have at least 4 elements.
- * @param leftLine the left column bound
- * @param rightLine the right column bound
- */    
-    public void setColumns(float leftLine[], float rightLine[])
-    {
+    /**
+     * Sets the columns bounds. Each column bound is described by a
+     * <CODE>float[]</CODE> with the line points [x1,y1,x2,y2,...].
+     * The array must have at least 4 elements.
+     * @param leftLine the left column bound
+     * @param rightLine the right column bound
+     */
+    public void setColumns(float leftLine[], float rightLine[]) {
         rightWall = convertColumn(rightLine);
         leftWall = convertColumn(leftLine);
         rectangularWidth = -1;
     }
     
-/**
- * Simplified method for rectangular columns.
- * @param phrase a <CODE>Phrase</CODE>
- * @param llx the lower left x corner
- * @param lly the lower left y corner
- * @param urx the upper right x corner
- * @param ury the upper right y corner
- * @param leading the leading
- * @param alignment the column alignment
- */    
-    public void setSimpleColumn(Phrase phrase, float llx, float lly, float urx, float ury, float leading, int alignment)
-    {
+    /**
+     * Simplified method for rectangular columns.
+     * @param phrase a <CODE>Phrase</CODE>
+     * @param llx the lower left x corner
+     * @param lly the lower left y corner
+     * @param urx the upper right x corner
+     * @param ury the upper right y corner
+     * @param leading the leading
+     * @param alignment the column alignment
+     */
+    public void setSimpleColumn(Phrase phrase, float llx, float lly, float urx, float ury, float leading, int alignment) {
         addText(phrase);
         setSimpleColumn(llx, lly, urx, ury, leading, alignment);
     }
     
-/**
- * Simplified method for rectangular columns.
- * @param llx the lower left x corner
- * @param lly the lower left y corner
- * @param urx the upper right x corner
- * @param ury the upper right y corner
- * @param leading the leading
- * @param alignment the column alignment
- */    
-    public void setSimpleColumn(float llx, float lly, float urx, float ury, float leading, int alignment)
-    {
+    /**
+     * Simplified method for rectangular columns.
+     * @param llx the lower left x corner
+     * @param lly the lower left y corner
+     * @param urx the upper right x corner
+     * @param ury the upper right y corner
+     * @param leading the leading
+     * @param alignment the column alignment
+     */
+    public void setSimpleColumn(float llx, float lly, float urx, float ury, float leading, int alignment) {
         float leftLine[] = new float[4];
         float rightLine[] = new float[4];
         leftLine[0] = Math.min(llx, urx);
@@ -351,101 +340,91 @@ public class ColumnText {
         rectangularWidth = Math.abs(llx - urx);
     }
     
-/**
- * Sets the leading to fixed
- * @param leading the leading
- */    
-    public void setLeading(float leading)
-    {
+    /**
+     * Sets the leading to fixed
+     * @param leading the leading
+     */
+    public void setLeading(float leading) {
         fixedLeading = leading;
         multipliedLeading = 0;
     }
     
-/**
- * Sets the leading fixed and variable. The resultant leading will be
- * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
- * size of the bigest font in the line.
- * @param fixedLeading the fixed leading
- * @param multipliedLeading the variable leading
- */    
-    public void setLeading(float fixedLeading, float multipliedLeading)
-    {
+    /**
+     * Sets the leading fixed and variable. The resultant leading will be
+     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
+     * size of the bigest font in the line.
+     * @param fixedLeading the fixed leading
+     * @param multipliedLeading the variable leading
+     */
+    public void setLeading(float fixedLeading, float multipliedLeading) {
         this.fixedLeading = fixedLeading;
         this.multipliedLeading = multipliedLeading;
     }
     
-/**
- * Gets the fixed leading
- * @return the leading
- */    
-    public float getLeading()
-    {
+    /**
+     * Gets the fixed leading
+     * @return the leading
+     */
+    public float getLeading() {
         return fixedLeading;
     }
     
-/**
- * Gets the variable leading
- * @return the leading
- */    
-    public float getMultipliedLeading()
-    {
+    /**
+     * Gets the variable leading
+     * @return the leading
+     */
+    public float getMultipliedLeading() {
         return multipliedLeading;
     }
     
-/**
- * Sets the yLine. The line will be written to yLine-leading.
- * @param yLine the yLine
- */    
-    public void setYLine(float yLine)
-    {
+    /**
+     * Sets the yLine. The line will be written to yLine-leading.
+     * @param yLine the yLine
+     */
+    public void setYLine(float yLine) {
         this.yLine = yLine;
     }
-	
-/**
- * Gets the yLine.
- * @return the yLine
- */    
-    public float getYLine()
-    {
+    
+    /**
+     * Gets the yLine.
+     * @return the yLine
+     */
+    public float getYLine() {
         return yLine;
     }
     
-/**
- * Sets the alignment.
- * @param alignment the alignment
- */    
-    public void setAlignment(int alignment)
-    {
+    /**
+     * Sets the alignment.
+     * @param alignment the alignment
+     */
+    public void setAlignment(int alignment) {
         this.alignment = alignment;
     }
     
-/**
- * Gets the alignment.
- * @return the alignment
- */    
-    public int getAlignment()
-    {
+    /**
+     * Gets the alignment.
+     * @return the alignment
+     */
+    public int getAlignment() {
         return alignment;
     }
     
-/**
- * Sets the first paragraph line indent.
- * @param indent the indent
- */    
-    public void setIndent(float indent)
-    {
+    /**
+     * Sets the first paragraph line indent.
+     * @param indent the indent
+     */
+    public void setIndent(float indent) {
         this.indent = indent;
     }
     
-/**
- * Gets the first paragraph line indent.
- * @return the indent
- */    
-    public float getIndent()
-    {
+    /**
+     * Gets the first paragraph line indent.
+     * @return the indent
+     */
+    public float getIndent() {
         return indent;
     }
-
+    
     /**
      * Sets the following paragraph lines indent.
      * @param indent the indent
@@ -461,7 +440,7 @@ public class ColumnText {
     public float getFollowingIndent() {
         return followingIndent;
     }
-
+    
     /**
      * Sets the right paragraph lines indent.
      * @param indent the indent
@@ -477,14 +456,13 @@ public class ColumnText {
     public float getRightIndent() {
         return rightIndent;
     }
-
-/**
- * Creates a line from the chunk array.
- * @param width the width of the line
- * @return the line or null if no more chunks
- */    
-    protected PdfLine createLine(float width)
-    {
+    
+    /**
+     * Creates a line from the chunk array.
+     * @param width the width of the line
+     * @return the line or null if no more chunks
+     */
+    protected PdfLine createLine(float width) {
         if (chunks.size() == 0)
             return null;
         splittedChunkText = null;
@@ -504,11 +482,10 @@ public class ColumnText {
         return line;
     }
     
-/**
- * Normalizes the list of chunks when the line is accepted.
- */    
-    protected void shortenChunkArray()
-    {
+    /**
+     * Normalizes the list of chunks when the line is accepted.
+     */
+    protected void shortenChunkArray() {
         if (currentChunkMarker < 0)
             return;
         if (currentChunkMarker >= chunks.size()) {
@@ -521,27 +498,25 @@ public class ColumnText {
         for (int j = currentChunkMarker - 1; j >= 0; --j)
             chunks.remove(j);
     }
-	
-/**
- * Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
- * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
- * and/or <CODE>NO_MORE_COLUMN</CODE>
- * @throws DocumentException on error
- */    
-    public int go() throws DocumentException
-    {
+    
+    /**
+     * Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
+     * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
+     * and/or <CODE>NO_MORE_COLUMN</CODE>
+     * @throws DocumentException on error
+     */
+    public int go() throws DocumentException {
         return go(false);
     }
     
-/**
- * Outputs the lines to the document. The output can be simulated.
- * @param simulate <CODE>true</CODE> to simulate the writting to the document
- * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
- * and/or <CODE>NO_MORE_COLUMN</CODE>
- * @throws DocumentException on error
- */    
-    public int go(boolean simulate) throws DocumentException
-    {
+    /**
+     * Outputs the lines to the document. The output can be simulated.
+     * @param simulate <CODE>true</CODE> to simulate the writting to the document
+     * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
+     * and/or <CODE>NO_MORE_COLUMN</CODE>
+     * @throws DocumentException on error
+     */
+    public int go(boolean simulate) throws DocumentException {
         boolean dirty = false;
         Object currentValues[] = new Object[2];
         PdfFont currentFont = null;
@@ -590,7 +565,7 @@ public class ColumnText {
                 if (!simulate) {
                     currentValues[0] = currentFont;
                     text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
-                    pdf.writeLineToContent(line, text, graphics, currentValues);            
+                    pdf.writeLineToContent(line, text, graphics, currentValues);
                     currentFont = (PdfFont)currentValues[0];
                 }
                 firstIndent = line.isNewlineSplit() ? indent : followingIndent;
@@ -627,7 +602,7 @@ public class ColumnText {
                 if (!simulate) {
                     currentValues[0] = currentFont;
                     text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
-                    pdf.writeLineToContent(line, text, graphics, currentValues);            
+                    pdf.writeLineToContent(line, text, graphics, currentValues);
                     currentFont = (PdfFont)currentValues[0];
                 }
                 firstIndent = line.isNewlineSplit() ? indent : followingIndent;
@@ -641,28 +616,27 @@ public class ColumnText {
         return status;
     }
     
-/**
- * Sets the extra space between paragraphs.
- * @return the extra space between paragraphs
- */    
+    /**
+     * Sets the extra space between paragraphs.
+     * @return the extra space between paragraphs
+     */
     public float getExtraParagraphSpace() {
         return extraParagraphSpace;
     }
     
-/**
- * Sets the extra space between paragraphs.
- * @param extraParagraphSpace the extra space between paragraphs
- */    
+    /**
+     * Sets the extra space between paragraphs.
+     * @param extraParagraphSpace the extra space between paragraphs
+     */
     public void setExtraParagraphSpace(float extraParagraphSpace) {
         this.extraParagraphSpace = extraParagraphSpace;
     }
     
-/**
- * Clears the chunk array. A call to <CODE>go()</CODE> will always return
- * NO_MORE_TEXT.
- */    
-    public void clearChunks()
-    {
+    /**
+     * Clears the chunk array. A call to <CODE>go()</CODE> will always return
+     * NO_MORE_TEXT.
+     */
+    public void clearChunks() {
         chunks.clear();
     }
     

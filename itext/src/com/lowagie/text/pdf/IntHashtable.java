@@ -7,7 +7,7 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.*;
+import java.util.Arrays;
 
 /// A Hashtable that uses ints as the keys.
 // <P>
@@ -215,12 +215,28 @@ public class IntHashtable {
         count = 0;
     }
     
+    public int[] toOrderedKeys() {
+        int res[] = new int[count];
+        int ptr = 0;
+        int index = table.length;
+        IntHashtableEntry entry = null;
+        while (true) {
+            if (entry == null)
+                while ((index-- > 0) && ((entry = table[index]) == null));
+            if (entry == null)
+                break;
+            IntHashtableEntry e = entry;
+            entry = e.next;
+            res[ptr++] = e.key;
+        }
+        Arrays.sort(res);
+        return res;
+    }
+    
     class IntHashtableEntry {
         int hash;
         int key;
         int value;
         IntHashtableEntry next;
-    }
-    
-    
+    }    
 }

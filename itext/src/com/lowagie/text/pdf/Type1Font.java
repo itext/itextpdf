@@ -52,7 +52,6 @@ package com.lowagie.text.pdf;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.afm.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -175,50 +174,38 @@ class Type1Font extends BaseFont
         fileName = afmFile;
         fontType = FONT_TYPE_T1;
         RandomAccessFileOrArray rf = null;
+        InputStream is = null;
         if (BuiltinFonts14.containsKey(afmFile)) {
             embedded = false;
             builtinFont = true;
+            byte buf[] = new byte[1024];
             try {
-                String afm = null;
-                if (afmFile.equals(COURIER))
-                    afm = Courier.afm;
-                else if (afmFile.equals(COURIER_BOLD))
-                    afm = CourierBold.afm;
-                else if (afmFile.equals(COURIER_BOLDOBLIQUE))
-                    afm = CourierBoldOblique.afm;
-                else if (afmFile.equals(COURIER_OBLIQUE))
-                    afm = CourierOblique.afm;
-                else if (afmFile.equals(HELVETICA_BOLD)) {
-                    afm = HelveticaBold1.afm;
-                    afm += HelveticaBold2.afm;
+                is = getResourceStream(afmFile + ".afm");
+                if (is == null) {
+                    System.err.println(afmFile + " not found as resource.");
+                    throw new DocumentException(afmFile + " not found as resource.");
                 }
-                else if (afmFile.equals(HELVETICA_BOLDOBLIQUE)) {
-                    afm = HelveticaBoldOblique1.afm;
-                    afm += HelveticaBoldOblique2.afm;
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                while (true) {
+                    int size = is.read(buf);
+                    if (size < 0)
+                        break;
+                    out.write(buf, 0, size);
                 }
-                else if (afmFile.equals(HELVETICA_OBLIQUE)) {
-                    afm = HelveticaOblique1.afm;
-                    afm += HelveticaOblique2.afm;
+                buf = out.toByteArray();
+            }
+            finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    }
+                    catch (Exception e) {
+                        // empty on purpose
+                    }
                 }
-                else if (afmFile.equals(SYMBOL))
-                    afm = Symbol.afm;
-                else if (afmFile.equals(TIMES_ROMAN))
-                    afm = TimesRoman.afm;
-                else if (afmFile.equals(TIMES_BOLD))
-                    afm = TimesBold.afm;
-                else if (afmFile.equals(TIMES_BOLDITALIC))
-                    afm = TimesBoldItalic.afm;
-                else if (afmFile.equals(TIMES_ITALIC)) {
-                    afm = TimesItalic1.afm;
-                    afm += TimesItalic2.afm;
-                }
-                else if (afmFile.equals(ZAPFDINGBATS))
-                    afm = ZapfDingbats.afm;
-                else {
-                    afm = Helvetica1.afm;
-                    afm += Helvetica2.afm;
-                }
-                rf = new RandomAccessFileOrArray(PdfEncodings.convertToBytes(afm, WINANSI));
+            }
+            try {
+                rf = new RandomAccessFileOrArray(buf);
                 process(rf);
             }
             finally {

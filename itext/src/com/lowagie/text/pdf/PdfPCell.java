@@ -92,6 +92,12 @@ public class PdfPCell extends Rectangle{
 /** The first paragraph line indent. */
     protected float indent = 0;
     
+    /** The following paragraph lines indent. */
+    protected float followingIndent = 0;
+    
+    /** The right paragraph lines indent. */
+    protected float rightIndent = 0;
+
     /** The text in the cell.
      */    
     protected Phrase phrase;
@@ -175,6 +181,8 @@ public class PdfPCell extends Rectangle{
         multipliedLeading = cell.multipliedLeading;
         extraParagraphSpace = cell.extraParagraphSpace;
         indent = cell.indent;
+        followingIndent = cell.followingIndent;
+        rightIndent = cell.rightIndent;
         phrase = cell.phrase;
         fixedHeight = cell.fixedHeight;
         minimumHeight = cell.minimumHeight;
@@ -438,5 +446,38 @@ public class PdfPCell extends Rectangle{
     public void setColspan(int colspan) {
         this.colspan = colspan;
     }
+    
+    /**
+     * Sets the following paragraph lines indent.
+     * @param indent the indent
+     */
+    public void setFollowingIndent(float indent) {
+        this.followingIndent = indent;
+    }
+    
+    /**
+     * Gets the following paragraph lines indent.
+     * @return the indent
+     */
+    public float getFollowingIndent() {
+        return followingIndent;
+    }
+    
+    /**
+     * Sets the right paragraph lines indent.
+     * @param indent the indent
+     */
+    public void setRightIndent(float indent) {
+        this.rightIndent = indent;
+    }
+    
+    /**
+     * Gets the right paragraph lines indent.
+     * @return the indent
+     */
+    public float getRightIndent() {
+        return rightIndent;
+    }
+    
     
 }
