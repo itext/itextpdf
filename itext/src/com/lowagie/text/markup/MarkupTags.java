@@ -117,6 +117,12 @@ public class MarkupTags {
 /** the CSS tag for text decorations */
     public static final String CSS_TEXTDECORATION = "text-decoration";
 
+/** the CSS tag for text decorations */
+    public static final String CSS_LINEHEIGHT = "line-height";
+    
+/** the CSS tag for text decorations */
+    public static final String CSS_VERTICALALIGN = "vertical-align";
+
 /** a CSS value for text decoration */
     public static final String CSS_UNDERLINE = "underline";
 

@@ -59,7 +59,7 @@ import java.util.TreeMap;
 import java.util.HashMap;
 
 import com.lowagie.text.*;
-import com.lowagie.text.MarkupAttributes;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * A <CODE>DocWriter</CODE> class for XML (Remark: this class is not finished yet!).
@@ -365,12 +365,9 @@ public class XmlWriter extends DocWriter implements DocListener {
                             }
                         }
                     }
-// patch by Matt Benson 02/21/2002
-                    if (hasMarkupAttributes(chunk))
-                    {
+                    if (hasMarkupAttributes(chunk)) {
                       writeMarkupAttributes((MarkupAttributes)chunk);
-                    }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                    }
                     os.write(GT);
                     write(encode(chunk.content(), indent));
                     writeEnd(ElementTags.CHUNK);
@@ -468,12 +465,9 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(ElementTags.CHAPTER);
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(chapter))
-                {
+                if (hasMarkupAttributes(chapter)) {
                   writeMarkupAttributes((MarkupAttributes)chapter);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 writeSection(chapter, indent);
                 writeEnd(ElementTags.CHAPTER);
                 return;
@@ -654,12 +648,9 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (annotation.content() != null) {
                     write(ElementTags.CONTENT, annotation.content());
                 }
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(annotation))
-                {
+                if (hasMarkupAttributes(annotation)) {
                   writeMarkupAttributes((MarkupAttributes)annotation);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 writeEnd();
                 return;
             }
@@ -699,12 +690,9 @@ public class XmlWriter extends DocWriter implements DocListener {
                 }
                 write(ElementTags.PLAINWIDTH, String.valueOf(image.plainWidth()));
                 write(ElementTags.PLAINHEIGHT, String.valueOf(image.plainHeight()));
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(image))
-                {
+                if (hasMarkupAttributes(image)) {
                   writeMarkupAttributes((MarkupAttributes)image);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 writeEnd();
                 return;
             }
@@ -839,6 +827,76 @@ public class XmlWriter extends DocWriter implements DocListener {
     static final void addTabs(StringBuffer buf, int indent) {
         for (int i = 0; i < indent; i++) {
             buf.append("\t");
+        }
+    }
+    
+/**
+ * Writes the XML representation of a <CODE>Font</CODE>.
+ *
+ * @param a <CODE>Font</CODE>
+ */
+    
+    private void write(Font font) throws IOException {
+        switch(font.family()) {
+            case Font.COURIER:
+                write(ElementTags.FONT, "Courier");
+                break;
+            case Font.HELVETICA:
+                write(ElementTags.FONT, "Helvetica");
+                break;
+            case Font.TIMES_NEW_ROMAN:
+                write(ElementTags.FONT, "Times New Roman");
+                break;
+            case Font.SYMBOL:
+                write(ElementTags.FONT, "Symbol");
+                break;
+            case Font.ZAPFDINGBATS:
+                write(ElementTags.FONT, "ZapfDingbats");
+                break;
+            default:
+                com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
+                if (bf != null) {
+                    write(ElementTags.FONT, bf.getPostscriptFontName());
+                }
+        }
+        if (font.size() != Font.UNDEFINED) {
+            write(ElementTags.SIZE, String.valueOf(font.size()));
+        }
+        if (font.style() != Font.UNDEFINED) {
+            os.write(SPACE);
+            write(ElementTags.STYLE);
+            os.write(EQUALS);
+            os.write(QUOTE);
+            switch(font.style() & Font.BOLDITALIC) {
+                case Font.NORMAL:
+                    write(MarkupTags.CSS_NORMAL);
+                    break;
+                case Font.BOLD:
+                    write(MarkupTags.CSS_BOLD);
+                    break;
+                case Font.ITALIC:
+                    write(MarkupTags.CSS_ITALIC);
+                    break;
+                case Font.BOLDITALIC:
+                    write(MarkupTags.CSS_BOLD);
+                    write(", ");
+                    write(MarkupTags.CSS_ITALIC);
+                    break;
+            }
+            if ((font.style() & Font.UNDERLINE) > 0) {
+                write(", ");
+                write(MarkupTags.CSS_UNDERLINE);
+            }
+            if ((font.style() & Font.STRIKETHRU) > 0) {
+                write(", ");
+                write(MarkupTags.CSS_LINETHROUGH);
+            }
+            os.write(QUOTE);
+        }
+        if (font.color() != null) {
+            write(ElementTags.RED, String.valueOf(font.color().getRed()));
+            write(ElementTags.GREEN, String.valueOf(font.color().getGreen()));
+            write(ElementTags.BLUE, String.valueOf(font.color().getBlue()));
         }
     }
 }

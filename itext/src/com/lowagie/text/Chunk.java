@@ -63,6 +63,7 @@ import java.util.Set;
 import java.net.URL;
 
 import com.lowagie.text.pdf.PdfAction;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * This is the smallest significant part of text that can be added to a document.
@@ -205,6 +206,10 @@ public class Chunk implements Element, MarkupAttributes {
         }
         if ((value = (String)attributes.remove(ElementTags.SUBSUPSCRIPT)) != null) {
             setTextRise(Float.valueOf(value + "f").floatValue());
+        }
+        if ((value = (String)attributes.remove(MarkupTags.CSS_VERTICALALIGN)) != null && value.endsWith("%")) {
+            float p = Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue() / 100f;
+            setTextRise(p * font.size());
         }
         if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
             setGenericTag(value);
@@ -477,6 +482,7 @@ public class Chunk implements Element, MarkupAttributes {
  */
     
     public Image getImage() {
+        if (attributes == null) return null;
         Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
         if (obj == null)
             return null;
