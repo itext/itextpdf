@@ -1,7 +1,6 @@
 /*
- * @(#)Jpeg.java				0.37 2000/10/05
- *       release iText0.35:		0.33 2000/08/11
- *       release iText0.37:		0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -49,10 +48,9 @@ import java.net.URL;
  * @see		Element
  * @see		Image
  * @see		Gif
+ * @see		Png
  * 
  * @author  bruno@lowagie.com
- * @version 0.37 2000/10/05
- * @since   iText0.31
  */
 
 public class Jpeg extends Image implements Element {
@@ -81,44 +79,6 @@ public class Jpeg extends Image implements Element {
 	public static final int[] NOPARAM_MARKERS = {0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0x01};
 
 // Constructors
-
-	/**
-	 * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
-	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-	 *
-	 * @since		iText0.36
-	 */
-
-	public Jpeg(String filename) throws BadElementException, MalformedURLException, IOException {
-		this(new File(filename).toURL());
-	}
-
-	/**
-	 * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
-	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-	 *
-	 * @since		iText0.31
-	 */
-
-	public Jpeg(String filename, int width, int height) throws BadElementException, MalformedURLException, IOException {
-		this(new File(filename).toURL(), width, height);
-	}
-
-	/**
-	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
-	 *
-	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 *
-	 * @since		iText0.31
-	 */
-
-	public Jpeg(URL url, int width, int height) throws BadElementException, IOException {
-		this(url);
-		scaledWidth = width;
-		scaledHeight = height;
-	}
     
     /**
 	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
@@ -129,6 +89,41 @@ public class Jpeg extends Image implements Element {
 	public Jpeg(URL url) throws BadElementException, IOException {
 		 super(url);
          processParameters();
+	}
+
+	/**
+	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
+	 *
+	 * @param		url			the <CODE>URL</CODE> where the image can be found.
+	 * @deprecated	use Image.getInstance(...) to create an Image
+	 */
+
+	public Jpeg(URL url, int width, int height) throws BadElementException, IOException {
+		this(url);
+		scaledWidth = width;
+		scaledHeight = height;
+	}
+
+	/**
+	 * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
+	 *
+	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 * @deprecated	use Image.getInstance(...) to create an Image
+	 */
+
+	public Jpeg(String filename) throws BadElementException, MalformedURLException, IOException {
+		this(new File(filename).toURL());
+	}
+
+	/**
+	 * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
+	 *
+	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 * @deprecated	use Image.getInstance(...) to create an Image
+	 */
+
+	public Jpeg(String filename, int width, int height) throws BadElementException, MalformedURLException, IOException {
+		this(new File(filename).toURL(), width, height);
 	}
 
 	/**
@@ -262,8 +257,6 @@ public class Jpeg extends Image implements Element {
 	 * Returns a representation of this <CODE>Rectangle</CODE>.
 	 *
 	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public String toString() {

@@ -1,7 +1,6 @@
 /*
- * @(#)ImgRaw.java				0.37 2000/10/05
- *       release iText0.35:		0.33 2000/08/11
- *       release iText0.37:		0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie, Paulo Soares
  *
@@ -79,6 +78,7 @@ public class ImgRaw extends Image implements Element {
 		plainWidth = width();
 		plainHeight = height();
 	}
+
 // methods to retrieve information
 
 	/**
