@@ -512,6 +512,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                         attributes.put(HEIGHT, String.valueOf(image.scaledHeight()));
                     }
                     writeBeginTag(IMG, attributes);
+                    indent--;
                     break;
                 case Element.TABLE:
                     Table table = (Table) element;
