@@ -347,7 +347,7 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public boolean setPageSize(Rectangle pageSize) {
-		if (writer.isPaused()) {
+		if (writer != null && writer.isPaused()) {
 			return false;
 		}
 		this.pageSize = pageSize;
@@ -361,7 +361,7 @@ class PdfDocument extends Document implements DocListener {
      */
 
     public boolean add(Watermark watermark) {
-		if (writer.isPaused()) {
+		if (writer != null && writer.isPaused()) {
 			return false;
 		}
 		this.watermark = watermark;
@@ -373,7 +373,7 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public void removeWatermark() {
-		if (writer.isPaused()) {
+		if (writer != null && writer.isPaused()) {
 			return;
 		}
 		this.watermark = null;
@@ -390,7 +390,7 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom) {
-		if (writer.isPaused()) {
+		if (writer != null && writer.isPaused()) {
 			return false;
 		}
 		this.marginLeft = marginLeft;
@@ -407,7 +407,7 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public boolean newPage() throws DocumentException {
-		if (pageEmpty || writer.isPaused()) {
+		if (pageEmpty || (writer != null && writer.isPaused())) {
 			return false;
 		}
 		// we flush the arraylist with recently written lines
@@ -563,7 +563,7 @@ class PdfDocument extends Document implements DocListener {
      */
 
     public boolean add(Element element) throws DocumentException {
-		if (writer.isPaused()) {
+		if (writer != null && writer.isPaused()) {
 			return false;
 		}
 		try {
