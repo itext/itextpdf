@@ -970,7 +970,6 @@ public class RtfWriter extends DocWriter implements DocListener
     protected void writeInitialFontSignature( OutputStream out, Font font ) throws IOException {
         out.write(escape);
         out.write(fontNumber);
-	System.out.println(font.family());
         if (font.family() != Font.UNDEFINED) {
             writeInt(out, addFont( font ));
         } else {
