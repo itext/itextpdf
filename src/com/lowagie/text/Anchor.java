@@ -244,7 +244,7 @@ public class Anchor extends Phrase implements TextElementArray {
     public ArrayList getChunks() {
         ArrayList tmp = new ArrayList();
         Chunk chunk;
-        Iterator i = getChunks().iterator();
+        Iterator i = iterator();
         boolean localDestination = (reference != null && reference.startsWith("#"));
         boolean notGotoOK = true;
         while (i.hasNext()) {
