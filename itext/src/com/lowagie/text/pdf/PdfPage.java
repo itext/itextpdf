@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 import com.lowagie.text.Rectangle;
+import java.util.HashMap;
 /**
  * <CODE>PdfPage</CODE> is the PDF Page-object.
  * <P>
@@ -63,7 +64,9 @@ import com.lowagie.text.Rectangle;
  */
 
 public class PdfPage extends PdfDictionary {
-    
+
+    private static final String boxStrings[] = {"crop", "trim", "art", "bleed"};
+    private static final PdfName boxNames[] = {PdfName.CROPBOX, PdfName.TRIMBOX, PdfName.ARTBOX, PdfName.BLEEDBOX};
     // membervariables
     
 /** value of the <B>Rotate</B> key for a page in PORTRAIT */
@@ -91,17 +94,17 @@ public class PdfPage extends PdfDictionary {
  * @param		rotate			a value for the <B>Rotate</B> key
  */
     
-    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfIndirectReference resources, PdfNumber rotate) {
-        super(PAGE);
-        this.mediaBox = mediaBox;
-        put(PdfName.MEDIABOX, mediaBox);
-        put(PdfName.RESOURCES, resources);
-        if (rotate != null) {
-            put(PdfName.ROTATE, rotate);
-        }
-        if (cropBox != null)
-            put(PdfName.CROPBOX, new PdfRectangle(cropBox));
-    }
+//    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfIndirectReference resources, PdfNumber rotate) {
+//        super(PAGE);
+//        this.mediaBox = mediaBox;
+//        put(PdfName.MEDIABOX, mediaBox);
+//        put(PdfName.RESOURCES, resources);
+//        if (rotate != null) {
+//            put(PdfName.ROTATE, rotate);
+//        }
+//        if (cropBox != null)
+//            put(PdfName.CROPBOX, new PdfRectangle(cropBox));
+//    }
     
 /**
  * Constructs a <CODE>PdfPage</CODE>.
@@ -111,16 +114,19 @@ public class PdfPage extends PdfDictionary {
  * @param		rotate			a value for the <B>Rotate</B> key
  */
     
-    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfDictionary resources, PdfNumber rotate) {
+    PdfPage(PdfRectangle mediaBox, HashMap boxSize, PdfDictionary resources, int rotate) {
         super(PAGE);
         this.mediaBox = mediaBox;
         put(PdfName.MEDIABOX, mediaBox);
         put(PdfName.RESOURCES, resources);
-        if (rotate != null) {
-            put(PdfName.ROTATE, rotate);
+        if (rotate != 0) {
+            put(PdfName.ROTATE, new PdfNumber(rotate));
         }
-        if (cropBox != null)
-            put(PdfName.CROPBOX, new PdfRectangle(cropBox));
+        for (int k = 0; k < boxStrings.length; ++k) {
+            PdfObject rect = (PdfObject)boxSize.get(boxStrings[k]);
+            if (rect != null)
+                put(boxNames[k], rect);
+        }
     }
     
 /**
@@ -130,9 +136,9 @@ public class PdfPage extends PdfDictionary {
  * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
  */
     
-    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfIndirectReference resources) {
-        this(mediaBox, cropBox, resources, null);
-    }
+//    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfIndirectReference resources) {
+//        this(mediaBox, cropBox, resources, null);
+//    }
     
 /**
  * Constructs a <CODE>PdfPage</CODE>.
@@ -141,8 +147,8 @@ public class PdfPage extends PdfDictionary {
  * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
  */
     
-    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfDictionary resources) {
-        this(mediaBox, cropBox, resources, null);
+    PdfPage(PdfRectangle mediaBox, HashMap boxSize, PdfDictionary resources) {
+        this(mediaBox, boxSize, resources, 0);
     }
     
 /**

@@ -58,11 +58,13 @@ import com.lowagie.text.Font;
 
 /**
  * A rtf page number field.
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
  * @author <a href="mailto:mhall@myrealbox.com">mhall@myrealbox.com</a>
- * @version $Revision$Date: 2003/05/02 17:47:06 $
+ * @version $Id$
  */
 public class RtfPageNumber extends GenericRtfField implements RtfField {
     private String content;
@@ -87,12 +89,12 @@ public class RtfPageNumber extends GenericRtfField implements RtfField {
      */
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
         writer.writeInitialFontSignature( out, this );
-        out.write(content.toString().getBytes());
+        out.write(content.getBytes());
         writer.writeFinishingFontSignature( out, this );
         super.write(writer, out);
     }
 
     public String toString() {
-        return content.toString();
+        return content;
     }
 }

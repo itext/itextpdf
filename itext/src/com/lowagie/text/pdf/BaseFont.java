@@ -52,6 +52,8 @@ package com.lowagie.text.pdf;
 import java.io.*;
 import com.lowagie.text.DocumentException;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Base class for the several font types supported
@@ -261,7 +263,7 @@ public abstract class BaseFont {
     /** Generates the PDF stream with the Type1 and Truetype fonts returning
      * a PdfStream.
      */
-    class StreamFont extends PdfStream {
+    static class StreamFont extends PdfStream {
         
         /** Generates the PDF stream with the Type1 and Truetype fonts returning
          * a PdfStream.
@@ -345,7 +347,7 @@ public abstract class BaseFont {
      * @param encoding the encoding to be applied to this font
      * @param embedded true if the font is to be embedded in the PDF
      * @param cached true if the font comes from the cache or is added to
-     * the cache if new. false if the font is always created new
+     * the cache if new, false if the font is always created new
      * @param ttfAfm the true type font or the afm in a byte array
      * @param pfb the pfb in a byte array
      * @return returns a new font. This font may come from the cache but only if cached
@@ -397,6 +399,16 @@ public abstract class BaseFont {
             }
         }
         return fontBuilt;
+    }
+    
+    /**
+     * Creates a font based on an existing document font. The created font font may not
+     * behave as expected, depending on the encoding or subset.
+     * @param fontRef the reference to the document font
+     * @return the font
+     */    
+    public static BaseFont createFont(PRIndirectReference fontRef) {
+        return new DocumentFont(fontRef);
     }
     
     /**
@@ -476,9 +488,18 @@ public abstract class BaseFont {
      * Gets the kerning between two Unicode chars.
      * @param char1 the first char
      * @param char2 the second char
-     * @return the kerning to be applied
+     * @return the kerning to be applied in normalized 1000 units
      */
     public abstract int getKerning(char char1, char char2);
+
+    /**
+     * Sets the kerning between two Unicode chars.
+     * @param char1 the first char
+     * @param char2 the second char
+     * @paran kern the kerning to apply in normalized 1000 units
+     * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
+     */
+    public abstract boolean setKerning(char char1, char char2, int kern);
     
     /**
      * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
@@ -642,6 +663,13 @@ public abstract class BaseFont {
      * @return the postscript font name
      */
     public abstract String getPostscriptFontName();
+    
+    /**
+     * Sets the font name that will appear in the pdf font dictionary.
+     * Use with care as it can easily make a font unreadable if not embedded.
+     * @param name the new font name
+     */    
+    public abstract void setPostscriptFontName(String name);
     
     /** Gets the full name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
@@ -899,5 +927,76 @@ public abstract class BaseFont {
             return false;
         widths[0xff & b[0]] = advance;
         return true;
+    }
+    
+    private static void addFont(PRIndirectReference fontRef, IntHashtable hits, ArrayList fonts) {
+        PdfObject obj = PdfReader.getPdfObject(fontRef);
+        if (!obj.isDictionary())
+            return;
+        PdfDictionary font = (PdfDictionary)obj;
+        PdfName subtype = (PdfName)PdfReader.getPdfObject(font.get(PdfName.SUBTYPE));
+        if (!PdfName.TYPE1.equals(subtype) && !PdfName.TRUETYPE.equals(subtype))
+            return;
+        PdfName name = (PdfName)PdfReader.getPdfObject(font.get(PdfName.BASEFONT));
+        fonts.add(new Object[]{PdfName.decodeName(name.toString()), fontRef});
+        hits.put(fontRef.getNumber(), 1);
+    }
+    
+    private static void recourseFonts(PdfDictionary page, IntHashtable hits, ArrayList fonts, int level) {
+        ++level;
+        if (level > 50) // in case we have an endless loop
+            return;
+        PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(page.get(PdfName.RESOURCES));
+        if (resources == null)
+            return;
+        PdfDictionary font = (PdfDictionary)PdfReader.getPdfObject(resources.get(PdfName.FONT));
+        if (font != null) {
+            for (Iterator it = font.getKeys().iterator(); it.hasNext();) {
+                PdfObject ft = font.get((PdfName)it.next());        
+                if (ft == null || !ft.isIndirect())
+                    continue;
+                int hit = ((PRIndirectReference)ft).getNumber();
+                if (hits.containsKey(hit))
+                    continue;
+                addFont((PRIndirectReference)ft, hits, fonts);
+            }
+        }
+        PdfDictionary xobj = (PdfDictionary)PdfReader.getPdfObject(resources.get(PdfName.XOBJECT));
+        if (xobj != null) {
+            for (Iterator it = xobj.getKeys().iterator(); it.hasNext();) {
+                recourseFonts((PdfDictionary)PdfReader.getPdfObject(xobj.get((PdfName)it.next())), hits, fonts, level);
+            }
+        }
+    }
+    
+    /**
+     * Gets a list of all document fonts. Each element of the <CODE>ArrayList</CODE>
+     * contains a <CODE>Object[]{String,PRIndirectReference}</CODE> with the font name
+     * and the indirect reference to it.
+     * @param reader the document where the fonts are to be listed from
+     * @return the list of fonts and references
+     */    
+    public static ArrayList getDocumentFonts(PdfReader reader) {
+        IntHashtable hits = new IntHashtable();
+        ArrayList fonts = new ArrayList();
+        int npages = reader.getNumberOfPages();
+        for (int k = 1; k <= npages; ++k)
+            recourseFonts(reader.getPageN(k), hits, fonts, 1);
+        return fonts;
+    }
+    
+    /**
+     * Gets a list of the document fonts in a particular page. Each element of the <CODE>ArrayList</CODE>
+     * contains a <CODE>Object[]{String,PRIndirectReference}</CODE> with the font name
+     * and the indirect reference to it.
+     * @param reader the document where the fonts are to be listed from
+     * @param page the page to list the fonts from
+     * @return the list of fonts and references
+     */    
+    public static ArrayList getDocumentFonts(PdfReader reader, int page) {
+        IntHashtable hits = new IntHashtable();
+        ArrayList fonts = new ArrayList();
+        recourseFonts(reader.getPageN(page), hits, fonts, 1);
+        return fonts;
     }
 }

@@ -48,8 +48,10 @@ package com.lowagie.text.pdf;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.DocWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Concatenates PDF documents including form fields. The rules for the form field
@@ -92,9 +94,116 @@ public class PdfCopyFields {
     }
     
     /**
+     * Concatenates a PDF document selecting the pages to keep. The pages are described as a
+     * <CODE>List</CODE> of <CODE>Integer</CODE>. The page ordering can be changed but
+     * no page repetitions are allowed.
+     * @param reader the PDF document
+     * @param pagesToKeep the pages to keep
+     * @throws DocumentException on error
+     */    
+    public void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException {
+        fc.addDocument(reader, pagesToKeep);
+    }
+
+    /**
+     * Concatenates a PDF document selecting the pages to keep. The pages are described as
+     * ranges. The page ordering can be changed but
+     * no page repetitions are allowed.
+     * @param reader the PDF document
+     * @param ranges the comma separated ranges as described in {@link SequenceList}
+     * @throws DocumentException on error
+     */    
+    public void addDocument(PdfReader reader, String ranges) throws DocumentException {
+        fc.addDocument(reader, SequenceList.expand(ranges, reader.getNumberOfPages()));
+    }
+
+    /** Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
+     * @throws DocumentException if the document is already open
+     */
+    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
+        fc.setEncryption(userPassword, ownerPassword, permissions, strength128Bits);
+    }
+    
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param strength true for 128 bit key length. false for 40 bit key length
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @throws DocumentException if the document is already open
+     */
+    public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(DocWriter.getISOBytes(userPassword), DocWriter.getISOBytes(ownerPassword), permissions, strength);
+    }
+ 
+    /**
      * Closes the output document.
      */    
     public void close() {
         fc.close();
     }
+
+    /**
+     * Opens the document. This is usually not needed as addDocument() will do it
+     * automatically.
+     */    
+    public void open() {
+        fc.openDoc();
+    }
+
+    /**
+     * Adds JavaScript to the global document
+     * @param js the JavaScript
+     */    
+    public void addJavaScript(String js) {
+        fc.addJavaScript(js, !PdfEncodings.isPdfDocEncoding(js));
+    }
+
+    /**
+     * Sets the bookmarks. The list structure is defined in
+     * <CODE>SimpleBookmark#</CODE>.
+     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
+     */    
+    public void setOutlines(List outlines) {
+        fc.setOutlines(outlines);
+    }
+    
+    /** Gets the underlying PdfWriter.
+     * @return the underlying PdfWriter
+     */    
+    public PdfWriter getWriter() {
+        return fc;
+    }
+
+    /**
+     * Gets the 1.5 compression status.
+     * @return <code>true</code> if the 1.5 compression is on
+     */
+    public boolean isFullCompression() {
+        return fc.isFullCompression();
+    }
+    
+    /**
+     * Sets the document's compression to the new 1.5 mode with object streams and xref
+     * streams. It can be set at any time but once set it can't be unset.
+     * <p>
+     * If set before opening the document it will also set the pdf version to 1.5.
+     */
+    public void setFullCompression() {
+        fc.setFullCompression();
+    }    
 }

@@ -133,13 +133,16 @@ public class PdfArray extends PdfObject {
 
         Iterator i = arrayList.iterator();
         PdfObject object;
+        int type = 0;
         if (i.hasNext()) {
             object = (PdfObject) i.next();
             object.toPdf(writer, os);
         }
         while (i.hasNext()) {
             object = (PdfObject) i.next();
-            os.write(' ');
+            type = object.type();
+            if (type != PdfObject.ARRAY && type != PdfObject.DICTIONARY && type != PdfObject.NAME && type != PdfObject.STRING)
+                os.write(' ');
             object.toPdf(writer, os);
         }
         os.write(']');

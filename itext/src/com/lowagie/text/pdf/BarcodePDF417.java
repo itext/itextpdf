@@ -1456,7 +1456,7 @@ public class BarcodePDF417 {
     /** Holds value of property yHeight. */
     private float yHeight;
     
-    protected class Segment {
+    protected static class Segment {
         public char type;
         public int start;
         public int end;
@@ -1468,7 +1468,7 @@ public class BarcodePDF417 {
         }
     }
     
-    protected class SegmentList {
+    protected static class SegmentList {
         protected ArrayList list = new ArrayList();
         
         public void add(char type, int start, int end) {

@@ -62,6 +62,8 @@ import com.lowagie.text.Font;
  * This class implements a generic RtfField.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * @author <a href="mailto:Dirk.Weigenand@smb-tec.com">Dirk Weigenand</a>
  * @version $Id$

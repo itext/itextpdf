@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 public class PdfGState extends PdfDictionary {
     
     public static final PdfName BM_NORMAL = new PdfName("Normal");
+    public static final PdfName BM_COMPATIBLE = new PdfName("Compatible");
     public static final PdfName BM_MULTIPLY = new PdfName("Multiply");
     public static final PdfName BM_SCREEN = new PdfName("Screen");
     public static final PdfName BM_OVERLAY = new PdfName("Overlay");

@@ -51,9 +51,11 @@ package com.lowagie.text;
 public class ExceptionConverter extends RuntimeException {
     /** we keep a handle to the wrapped exception */
     private Exception ex;
+    private String prefix;
 
     public ExceptionConverter(Exception ex) {
         this.ex = ex;
+        prefix = (ex instanceof RuntimeException) ? "" : "ExceptionConverter: ";
     }
 
     /** and allow the user of ExceptionConverter to get a handle to it. */
@@ -73,7 +75,7 @@ public class ExceptionConverter extends RuntimeException {
 
     /** The toString() is changed to be prefixed with ExceptionConverter */
     public String toString() {
-        return "ExceptionConverter: " + ex;
+        return prefix + ex;
     }
 
     /** we have to override this as well */
@@ -85,7 +87,7 @@ public class ExceptionConverter extends RuntimeException {
      * trace with "ExceptionConverter:" */
     public void printStackTrace(java.io.PrintStream s) {
         synchronized (s) {
-            s.print("ExceptionConverter: ");
+            s.print(prefix);
             ex.printStackTrace(s);
         }
     }
@@ -93,7 +95,7 @@ public class ExceptionConverter extends RuntimeException {
     /** Again, we prefix the stack trace with "ExceptionConverter:" */
     public void printStackTrace(java.io.PrintWriter s) {
         synchronized (s) {
-            s.print("ExceptionConverter: ");
+            s.print(prefix);
             ex.printStackTrace(s);
         }
     }

@@ -60,7 +60,7 @@ import com.lowagie.text.DocWriter;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 
-public class ByteBuffer {
+public class ByteBuffer extends OutputStream {
     /** The count of bytes in the buffer. */
     protected int count;
     
@@ -72,8 +72,7 @@ public class ByteBuffer {
     private static byte[][] byteCache = new byte[byteCacheSize][];
     public static byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    private static final byte[] bytes = new byte[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final byte[] bytes = new byte[] {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
     
     /** Creates new ByteBuffer with capacity 128 */
     public ByteBuffer() {
@@ -584,4 +583,15 @@ public class ByteBuffer {
         out.write(buf, 0, count);
     }
     
+    public void write(int b) throws IOException {
+        append((byte)b);
+    }
+    
+    public void write(byte[] b, int off, int len) {
+        append(b, off, len);
+    }
+    
+    public byte[] getBuffer() {
+        return buf;
+    }
 }

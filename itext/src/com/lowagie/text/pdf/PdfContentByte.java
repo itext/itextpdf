@@ -70,7 +70,7 @@ public class PdfContentByte {
      * This class keeps the graphic state of the current page
      */
     
-    class GraphicState {
+    static class GraphicState {
         
         /** This is the font in use */
         FontDetails fontDetails;
@@ -163,7 +163,7 @@ public class PdfContentByte {
      * Gets the internal buffer.
      * @return the internal buffer
      */
-    ByteBuffer getInternalBuffer() {
+    public ByteBuffer getInternalBuffer() {
         return content;
     }
     
@@ -297,6 +297,15 @@ public class PdfContentByte {
         content.append("[").append(unitsOn).append(' ').append(unitsOff).append("] ").append(phase).append(" d").append_i(separator);
     }
     
+    public final void setLineDash(float[] array, float phase) {
+        content.append("[");
+        for (int i = 0; i < array.length; i++) {
+            content.append(array[i]);
+            if (i < array.length - 1) content.append(' ');
+        }
+        content.append("] ").append(phase).append(" d").append_i(separator);
+    }
+
     /**
      * Changes the <VAR>Line join style</VAR>.
      * <P>
@@ -411,6 +420,7 @@ public class PdfContentByte {
      * @param	blue	the intensity of blue. A value between 0 and 1
      */
     private void HelperRGB(float red, float green, float blue) {
+        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_RGB, null);
         if (red < 0)
             red = 0.0f;
         else if (red > 1.0f)
@@ -450,7 +460,7 @@ public class PdfContentByte {
      */
     
     public void resetRGBColorFill() {
-        content.append("0 0 0 rg").append_i(separator);
+        content.append("0 g").append_i(separator);
     }
     
     /**
@@ -478,7 +488,7 @@ public class PdfContentByte {
      */
     
     public void resetRGBColorStroke() {
-        content.append("0 0 0 RG").append_i(separator);
+        content.append("0 G").append_i(separator);
     }
     
     /**
@@ -661,6 +671,97 @@ public class PdfContentByte {
         content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re").append_i(separator);
     }
     
+
+    // Contribution by Barry Richards and Prabhakar Chaganti
+    /**
+     * Adds a variable width border to the current path.
+     * Only use if {@link com.lowagie.text.Rectangle#isUseVariableBorders() Rectangle.isUseVariableBorders}
+     * = true.
+     * @param		rect		a <CODE>Rectangle</CODE>
+     */
+    public void variableRectangle(Rectangle rect) {
+        float limit = 0f;
+        float startX = rect.left();
+        float startY = rect.bottom();
+        
+        // start at the origin
+        // draw bottom
+        if (rect.getBorderWidthBottom() > limit) {
+            moveTo(startX, startY);
+            if (rect.getBorderColorBottom() == null)
+                resetRGBColorFill();
+            else
+                setColorFill(rect.getBorderColorBottom());
+            // DRAW BOTTOM EDGE.
+            lineTo(startX + rect.width(), startY);
+            // DRAW RIGHT EDGE.
+            lineTo((startX + rect.width()) - rect.getBorderWidthRight(), startY + rect.getBorderWidthBottom());
+            //DRAW TOP EDGE.
+            lineTo((startX + rect.getBorderWidthLeft()), startY + rect.getBorderWidthBottom());
+            lineTo(startX, startY);
+            fill();
+        }
+
+        // Draw left
+        if (rect.getBorderWidthLeft() > limit) {
+            moveTo(startX, startY);
+            if (rect.getBorderColorLeft() == null)
+                resetRGBColorFill();
+            else
+                setColorFill(rect.getBorderColorLeft());
+            // DRAW BOTTOM EDGE.
+            lineTo(startX, startY + rect.height());
+            // DRAW RIGHT EDGE.
+            lineTo(startX + rect.getBorderWidthLeft(), (startY + rect.height()) - rect.getBorderWidthTop());
+            //DRAW TOP EDGE.
+            lineTo(startX + rect.getBorderWidthLeft(), startY + rect.getBorderWidthBottom());
+
+            lineTo(startX, startY);
+            fill();
+        }
+
+
+        startX = startX + rect.width();
+        startY = startY + rect.height();
+
+        // Draw top
+        if (rect.getBorderWidthTop() > limit) {
+            moveTo(startX, startY);
+            if (rect.getBorderColorTop() == null)
+                resetRGBColorFill();
+            else
+                setColorFill(rect.getBorderColorTop());
+            // DRAW LONG EDGE.
+            lineTo(startX - rect.width(), startY);
+            // DRAW LEFT EDGE.
+            lineTo(startX - rect.width() + rect.getBorderWidthLeft(), startY - rect.getBorderWidthTop());
+            //DRAW SHORT EDGE.
+            lineTo(startX - rect.getBorderWidthRight(), startY - rect.getBorderWidthTop());
+
+            lineTo(startX, startY);
+            fill();
+        }
+
+        // Draw Right
+        if (rect.getBorderWidthRight() > limit) {
+            moveTo(startX, startY);
+            if (rect.getBorderColorRight() == null)
+                resetRGBColorFill();
+            else
+                setColorFill(rect.getBorderColorRight());
+            // DRAW LONG EDGE.
+            lineTo(startX, startY - rect.height());
+            // DRAW LEFT EDGE.
+            lineTo(startX - rect.getBorderWidthRight(), startY - rect.height() + rect.getBorderWidthBottom());
+            //DRAW SHORT EDGE.
+            lineTo(startX - rect.getBorderWidthRight(), startY - rect.getBorderWidthTop());
+
+            lineTo(startX, startY);
+            fill();
+        }
+        resetRGBColorFill();
+    }
+
     /**
      * Adds a border (complete or partially) to the current path..
      *
@@ -668,13 +769,12 @@ public class PdfContentByte {
      */
     
     public void rectangle(Rectangle rectangle) {
-        
         // the coordinates of the border are retrieved
         float x1 = rectangle.left();
         float y1 = rectangle.bottom();
         float x2 = rectangle.right();
         float y2 = rectangle.top();
-        
+
         // the backgroundcolor is set
         Color background = rectangle.backgroundColor();
         if (background != null) {
@@ -689,55 +789,63 @@ public class PdfContentByte {
             fill();
             resetGrayFill();
         }
-        
-        
+
+
         // if the element hasn't got any borders, nothing is added
         if (! rectangle.hasBorders()) {
             return;
         }
-        
-        // the width is set to the width of the element
-        if (rectangle.borderWidth() != Rectangle.UNDEFINED) {
-            setLineWidth((float)rectangle.borderWidth());
+
+        // if any of the individual border colors are set
+        // we draw the borders all around using the
+        // different colors
+        if (rectangle.isUseVariableBorders()) {
+            variableRectangle(rectangle);
         }
-        
-        // the color is set to the color of the element
-        Color color = rectangle.borderColor();
-        if (color != null) {
-            setColorStroke(color);
-        }
-        
-        // if the box is a rectangle, it is added as a rectangle
-        if (rectangle.hasBorder(Rectangle.BOX)) {
-            rectangle(x1, y1, x2 - x1, y2 - y1);
-        }
-        // if the border isn't a rectangle, the different sides are added apart
         else {
-            if (rectangle.hasBorder(Rectangle.RIGHT)) {
-                moveTo(x2, y1);
-                lineTo(x2, y2);
+            // the width is set to the width of the element
+            if (rectangle.borderWidth() != Rectangle.UNDEFINED) {
+                setLineWidth((float)rectangle.borderWidth());
             }
-            if (rectangle.hasBorder(Rectangle.LEFT)) {
-                moveTo(x1, y1);
-                lineTo(x1, y2);
+
+            // the color is set to the color of the element
+            Color color = rectangle.borderColor();
+            if (color != null) {
+                setColorStroke(color);
             }
-            if (rectangle.hasBorder(Rectangle.BOTTOM)) {
-                moveTo(x1, y1);
-                lineTo(x2, y1);
+
+            // if the box is a rectangle, it is added as a rectangle
+            if (rectangle.hasBorder(Rectangle.BOX)) {
+               rectangle(x1, y1, x2 - x1, y2 - y1);
             }
-            if (rectangle.hasBorder(Rectangle.TOP)) {
-                moveTo(x1, y2);
-                lineTo(x2, y2);
+            // if the border isn't a rectangle, the different sides are added apart
+            else {
+                if (rectangle.hasBorder(Rectangle.RIGHT)) {
+                    moveTo(x2, y1);
+                    lineTo(x2, y2);
+                }
+                if (rectangle.hasBorder(Rectangle.LEFT)) {
+                    moveTo(x1, y1);
+                    lineTo(x1, y2);
+                }
+                if (rectangle.hasBorder(Rectangle.BOTTOM)) {
+                    moveTo(x1, y1);
+                    lineTo(x2, y1);
+                }
+                if (rectangle.hasBorder(Rectangle.TOP)) {
+                    moveTo(x1, y2);
+                    lineTo(x2, y2);
+                }
             }
-        }
-        
-        stroke();
-        
-        if (color != null) {
-            resetRGBColorStroke();
+
+            stroke();
+
+            if (color != null) {
+                resetRGBColorStroke();
+            }
         }
     }
-    
+
     /**
      * Closes the current subpath by appending a straight line segment from the current point
      * to the starting point of the subpath.
@@ -1562,11 +1670,15 @@ public class PdfContentByte {
      * @return the templated created
      */
     public PdfTemplate createTemplate(float width, float height) {
+        return createTemplate(width, height, null);
+    }
+    
+    PdfTemplate createTemplate(float width, float height, PdfName forcedName) {
         checkWriter();
         PdfTemplate template = new PdfTemplate(writer);
         template.setWidth(width);
         template.setHeight(height);
-        writer.addDirectTemplateSimple(template);
+        writer.addDirectTemplateSimple(template, forcedName);
         return template;
     }
     
@@ -1578,11 +1690,15 @@ public class PdfContentByte {
      * @return the appearance created
      */
     public PdfAppearance createAppearance(float width, float height) {
+        return createAppearance(width, height, null);
+    }
+    
+    PdfAppearance createAppearance(float width, float height, PdfName forcedName) {
         checkWriter();
         PdfAppearance template = new PdfAppearance(writer);
         template.setWidth(width);
         template.setHeight(height);
-        writer.addDirectTemplateSimple(template);
+        writer.addDirectTemplateSimple(template, forcedName);
         return template;
     }
     
@@ -1600,7 +1716,7 @@ public class PdfContentByte {
     public void addTemplate(PdfTemplate template, float a, float b, float c, float d, float e, float f) {
         checkWriter();
         checkNoPattern(template);
-        PdfName name = writer.addDirectTemplateSimple(template);
+        PdfName name = writer.addDirectTemplateSimple(template, null);
         PageResources prs = getPageResources();
         name = prs.addXObject(name, template.getIndirectReference());
         content.append("q ");
@@ -1698,11 +1814,7 @@ public class PdfContentByte {
      */
     
     public void setRGBColorFill(int red, int green, int blue) {
-        content.append((float)(red & 0xFF) / 0xFF);
-        content.append(' ');
-        content.append((float)(green & 0xFF) / 0xFF);
-        content.append(' ');
-        content.append((float)(blue & 0xFF) / 0xFF);
+        HelperRGB((float)(red & 0xFF) / 0xFF, (float)(green & 0xFF) / 0xFF, (float)(blue & 0xFF) / 0xFF);
         content.append(" rg").append_i(separator);
     }
     
@@ -1723,11 +1835,7 @@ public class PdfContentByte {
      */
     
     public void setRGBColorStroke(int red, int green, int blue) {
-        content.append((float)(red & 0xFF) / 0xFF);
-        content.append(' ');
-        content.append((float)(green & 0xFF) / 0xFF);
-        content.append(' ');
-        content.append((float)(blue & 0xFF) / 0xFF);
+        HelperRGB((float)(red & 0xFF) / 0xFF, (float)(green & 0xFF) / 0xFF, (float)(blue & 0xFF) / 0xFF);
         content.append(" RG").append_i(separator);
     }
     
@@ -1736,6 +1844,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorStroke(Color color) {
+        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -1772,6 +1881,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorFill(Color color) {
+        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -1852,6 +1962,7 @@ public class PdfContentByte {
      * @param tint the tint if it is a spot color, ignored otherwise
      */
     void outputColorNumbers(Color color, float tint) {
+        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_RGB:
@@ -2110,6 +2221,16 @@ public class PdfContentByte {
      * @param r radius of the arc corner
      */
     public void roundRectangle(float x, float y, float w, float h, float r) {
+        if (w < 0) {
+            x += w;
+            w = -w;
+        }
+        if (h < 0) {
+            y += h;
+            h = -h;
+        }
+        if (r < 0)
+            r = -r;
         float b = 0.4477f;
         moveTo(x + r, y);
         lineTo(x + w - r, y);
@@ -2292,7 +2413,7 @@ public class PdfContentByte {
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createGraphicsShapes(float width, float height) {
-        return new PdfGraphics2D(this, width, height);
+        return new PdfGraphics2D(this, width, height, null, true, false, 0);
     }
     
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
@@ -2302,9 +2423,23 @@ public class PdfContentByte {
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createGraphics(float width, float height) {
-        return createGraphics(width, height, null);
+        return new PdfGraphics2D(this, width, height, null, false, false, 0);
     }
     
+    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createGraphics(float width, float height, boolean convertImagesToJPEG, float quality) {
+        return new PdfGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality);
+    }
+
+    public java.awt.Graphics2D createGraphicsShapes(float width, float height, boolean convertImagesToJPEG, float quality) {
+        return new PdfGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality);
+    }
+
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
      * are translated to PDF commands.
      * @param width the width of the panel
@@ -2313,9 +2448,22 @@ public class PdfContentByte {
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createGraphics(float width, float height, FontMapper fontMapper) {
-        return new PdfGraphics2D(this, width, height, fontMapper);
+        return new PdfGraphics2D(this, width, height, fontMapper, false, false, 0);
     }
     
+    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
+     * @param convertImagesToJPEG converts awt images to jpeg before inserting in pdf
+     * @param quality the quality of the jpeg
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createGraphics(float width, float height, FontMapper fontMapper, boolean convertImagesToJPEG, float quality) {
+        return new PdfGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality);
+    }
+
     PageResources getPageResources() {
         return pdf.getPageResources();
     }
@@ -2343,5 +2491,16 @@ public class PdfContentByte {
     
     void addAnnotation(PdfAnnotation annot) {
         writer.addAnnotation(annot);
+    }
+    
+    /**
+     * Sets the default colorspace.
+     * @param name the name of the colorspace. It can be <CODE>PdfName.DEFAULTGRAY</CODE>, <CODE>PdfName.DEFAULTRGB</CODE>
+     * or <CODE>PdfName.DEFAULTCMYK</CODE>
+     * @param obj the colorspace. A <CODE>null</CODE> or <CODE>PdfNull</CODE> removes any colorspace with the same name
+     */    
+    public void setDefaultColorspace(PdfName name, PdfObject obj) {
+        PageResources prs = getPageResources();
+        prs.addDefaultColor(name, obj);
     }
 }

@@ -61,9 +61,12 @@ import java.awt.Color;
  * A Helper Class for the <CODE>RtfWriter</CODE>.
  * <P>
  * Do not use it directly
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
+ * Code added by c
  */
 public class RtfRow {
     /* Table border solid */
@@ -239,7 +242,10 @@ public class RtfRow {
         for (int i = 0; i < columns; i++) {
             RtfCell firstCell = (RtfCell) cells.get(i);
             Cell cell = firstCell.getStore();
-            int cols = cell.colspan();
+            int cols = 0;
+            if(cell != null) {
+                cols = cell.colspan();
+            }
             if (cols > 1) {
                 RtfCell lastCell = (RtfCell) cells.get(i + cols - 1);
                 firstCell.setCellRight(lastCell.getCellRight());
@@ -358,6 +364,9 @@ public class RtfRow {
             RtfCell cell = (RtfCell) cellIterator.next();
             cell.writeCellSettings(os);
         }
+
+        os.write(RtfWriter.escape);
+        os.write("intbl".getBytes());
 
         cellIterator = cells.iterator();
         while (cellIterator.hasNext()) {

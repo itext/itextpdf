@@ -88,7 +88,7 @@ public class PdfStream extends PdfDictionary {
     
     protected ByteArrayOutputStream streamBytes = null;
         
-    static final byte STARTSTREAM[] = DocWriter.getISOBytes("\nstream\n");
+    static final byte STARTSTREAM[] = DocWriter.getISOBytes("stream\n");
     static final byte ENDSTREAM[] = DocWriter.getISOBytes("\nendstream");
     static final int SIZESTREAM = STARTSTREAM.length + ENDSTREAM.length;
 
@@ -137,7 +137,7 @@ public class PdfStream extends PdfDictionary {
  * @throws PdfException if a filter is already defined
  */
     
-    public void flateCompress() throws PdfException {
+    public void flateCompress() {
         if (!Document.compress)
             return;
         // check if the flateCompress-method has already been
@@ -154,7 +154,7 @@ public class PdfStream extends PdfDictionary {
                 return;
             }
             else {
-                throw new PdfException("Stream could not be compressed: filter is not a name or array.");
+                throw new RuntimeException("Stream could not be compressed: filter is not a name or array.");
             }
         }
         try {

@@ -65,7 +65,7 @@ import com.lowagie.text.markup.MarkupParser;
  * A <CODE>Phrase</CODE> has a main <CODE>Font</CODE>, but some chunks
  * within the phrase can have a <CODE>Font</CODE> that differs from the
  * main <CODE>Font</CODE>. All the <CODE>Chunk</CODE>s in a <CODE>Phrase</CODE>
- * have the same <VAR>leading</CODE>.
+ * have the same <CODE>leading</CODE>.
  * <P>
  * Example:
  * <BLOCKQUOTE><PRE>
@@ -364,6 +364,8 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
                     return super.add((Table) o);
                 case Element.LIST:
                     return super.add((List) o);
+                case Element.GRAPHIC: // suggested by Steven Balthazor
+                	return super.add((Graphic) o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
             }

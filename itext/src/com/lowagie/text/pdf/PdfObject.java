@@ -177,6 +177,10 @@ public abstract class PdfObject {
     public byte[] getBytes() {
         return bytes;
     }
+
+    public boolean canBeInObjStm() {
+        return (type >= 1 && type <= 6) || type == 8;
+    }
     
 /**
  * Returns the length of the PDF representation of the <CODE>PdfObject</CODE>.

@@ -321,13 +321,19 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 					// empty on purpose
 				}
 			}
-			
+			/*
 			CFFFont cffFont = new CFFFont(new RandomAccessFileOrArray(b));
 			// test if we can find the font by name and if it's a type1 CFF
 			if (cffFont.exists(fontName) && !cffFont.isCID(fontName)) {
 				byte[] cid = cffFont.getCID( (cffFont.getNames())[0] );
 				if (cid != null) b=cid;
 			}
+			
+			*/
+			
+			CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
+			b = cff.Process( (cff.getNames())[0] );
+			
 			// if the font is already CID, or not found by name, or 
 			// getCID returned null, we just use the data in the CFF
 			// table and hope for the best.
@@ -347,7 +353,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 			obj = writer.addToBody(pobj);
 			ind_font = obj.getIndirectReference();
         } else {
-          TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, longTag, directoryOffset, false);
+          TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), longTag, directoryOffset, false);
           byte b[] = sb.process();
           int lengths[] = new int[]{b.length};
           pobj = new StreamFont(b, lengths);

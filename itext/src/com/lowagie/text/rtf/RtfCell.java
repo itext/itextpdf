@@ -60,9 +60,12 @@ import java.awt.Color;
  * A Helper Class for the <CODE>RtfWriter</CODE>.
  * <P>
  * Do not use it directly
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
+ * Updates by Benoit WIART <b.wiart@proxiad.com>
  */
 public class RtfCell {
     /** Constants for merging Cells */
@@ -419,22 +422,44 @@ public class RtfCell {
             if (mergeType == MERGE_HORIZ_PREV || mergeType == MERGE_BOTH_PREV) {
                 return true;
             }
-
+            
             if (!emptyCell) {
                 Iterator cellIterator = store.getElements();
+                Paragraph container = null;
                 while (cellIterator.hasNext()) {
                     Element element = (Element) cellIterator.next();
-
-                    // if horizontal alignment is undefined overwrite
-                    // with that of enclosing cell
-                    if (element instanceof Paragraph && ((Paragraph) element).alignment() == Element.ALIGN_UNDEFINED) {
-                        ((Paragraph) element).setAlignment(store.horizontalAlignment());
+                    // should we wrap it in a paragraph
+                    if(!(element instanceof Paragraph)) {
+                        if(container != null) {
+                            container.add(element);
+                        } else {
+                            container = new Paragraph();
+                            container.setAlignment(store.horizontalAlignment());
+                            container.add(element);
+                        }
+                    } else {
+                        if(container != null) {
+                            writer.addElement(container, os);
+                            container =null;
+                            container =null;
+                        }
+                        
+                        
+                        // if horizontal alignment is undefined overwrite
+                        // with that of enclosing cell
+                        if (element instanceof Paragraph && ((Paragraph) element).alignment() == Element.ALIGN_UNDEFINED) {
+                            ((Paragraph) element).setAlignment(store.horizontalAlignment());
+                        }
+                        writer.addElement(element, os);
+                        if (element.type() == Element.PARAGRAPH && cellIterator.hasNext()) {
+                            os.write(RtfWriter.escape);
+                            os.write(RtfWriter.paragraph);
+                        }
                     }
-                    writer.addElement(element, os);
-                    if (element.type() == Element.PARAGRAPH && cellIterator.hasNext()) {
-                        os.write(RtfWriter.escape);
-                        os.write(RtfWriter.paragraph);
-                    }
+                }
+                if(container != null) {
+                    writer.addElement(container, os);
+                    container =null;
                 }
             } else {
                 os.write(RtfWriter.escape);

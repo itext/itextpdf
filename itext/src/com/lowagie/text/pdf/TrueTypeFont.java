@@ -186,13 +186,13 @@ class TrueTypeFont extends BaseFont {
      * units.
      */
     protected HashMap cmap31;
-    /** The map containig the kerning information. It represents the content of
+    /** The map containing the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
-     * are the Unicode for the first character and the lower 16 bits are the
-     * Unicode for the second character. The value is the amount of kerning in
+     * are the glyph number for the first character and the lower 16 bits are the
+     * glyph number for the second character. The value is the amount of kerning in
      * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative.
      */
-    protected HashMap kerning = new HashMap();
+    protected IntHashtable kerning = new IntHashtable();
     /**
      * The font name.
      * This name is usually extracted from the table 'name' with
@@ -221,7 +221,7 @@ class TrueTypeFont extends BaseFont {
     
     /** The components of table 'head'.
      */
-    protected class FontHeader {
+    protected static class FontHeader {
         /** A variable. */
         int flags;
         /** A variable. */
@@ -240,7 +240,7 @@ class TrueTypeFont extends BaseFont {
     
     /** The components of table 'hhea'.
      */
-    protected class HorizontalHeader {
+    protected static class HorizontalHeader {
         /** A variable. */
         short Ascender;
         /** A variable. */
@@ -265,7 +265,7 @@ class TrueTypeFont extends BaseFont {
     
     /** The components of table 'OS/2'.
      */
-    protected class WindowsMetrics {
+    protected static class WindowsMetrics {
         /** A variable. */
         short xAvgCharWidth;
         /** A variable. */
@@ -446,6 +446,8 @@ class TrueTypeFont extends BaseFont {
         os_2.usLastCharIndex = rf.readUnsignedShort();
         os_2.sTypoAscender = rf.readShort();
         os_2.sTypoDescender = rf.readShort();
+        if (os_2.sTypoDescender > 0)
+            os_2.sTypoDescender = (short)(-os_2.sTypoDescender);
         os_2.sTypoLineGap = rf.readShort();
         os_2.usWinAscent = rf.readUnsignedShort();
         os_2.usWinDescent = rf.readUnsignedShort();
@@ -858,8 +860,8 @@ class TrueTypeFont extends BaseFont {
                 int nPairs = rf.readUnsignedShort();
                 rf.skipBytes(6);
                 for (int j = 0; j < nPairs; ++j) {
-                    Integer pair = new Integer(rf.readInt());
-                    Integer value = new Integer(((int)rf.readShort() * 1000) / head.unitsPerEm);
+                    int pair = rf.readInt();
+                    int value = ((int)rf.readShort() * 1000) / head.unitsPerEm;
                     kerning.put(pair, value);
                 }
             }
@@ -880,11 +882,7 @@ class TrueTypeFont extends BaseFont {
         if (metrics == null)
             return 0;
         int c2 = metrics[0];
-        Integer v = (Integer)kerning.get(new Integer((c1 << 16) + c2));
-        if (v == null)
-            return 0;
-        else
-            return v.intValue();
+        return kerning.get((c1 << 16) + c2);
     }
     
     /** Gets the width from the font according to the unicode char <CODE>c</CODE>.
@@ -895,7 +893,7 @@ class TrueTypeFont extends BaseFont {
      */
     int getRawWidth(int c, String name) {
         HashMap map = null;
-        if (name == null)
+        if (name == null || cmap31 == null)
             map = cmap10;
         else
             map = cmap31;
@@ -1144,6 +1142,10 @@ class TrueTypeFont extends BaseFont {
             return (int[])cmap31.get(new Integer(c));
         if (fontSpecific && cmap10 != null) 
             return (int[])cmap10.get(new Integer(c));
+        if (cmap31 != null) 
+            return (int[])cmap31.get(new Integer(c));
+        if (cmap10 != null) 
+            return (int[])cmap10.get(new Integer(c));
         return null;
     }
 
@@ -1207,5 +1209,33 @@ class TrueTypeFont extends BaseFont {
     public boolean hasKernPairs() {
         return kerning.size() > 0;
     }    
+    
+    /**
+     * Sets the font name that will appear in the pdf font dictionary.
+     * Use with care as it can easily make a font unreadable if not embedded.
+     * @param name the new font name
+     */    
+    public void setPostscriptFontName(String name) {
+        fontName = name;
+    }
+    
+    /**
+     * Sets the kerning between two Unicode chars.
+     * @param char1 the first char
+     * @param char2 the second char
+     * @paran kern the kerning to apply in normalized 1000 units
+     * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
+     */
+    public boolean setKerning(char char1, char char2, int kern) {
+        int metrics[] = getMetricsTT(char1);
+        if (metrics == null)
+            return false;
+        int c1 = metrics[0];
+        metrics = getMetricsTT(char2);
+        if (metrics == null)
+            return false;
+        int c2 = metrics[0];
+        kerning.put((c1 << 16) + c2, kern);
+        return true;
+    }
 }
-

@@ -382,6 +382,16 @@ public class Font implements Comparable {
     }
     
 /**
+ * Sets the style.
+ * @param	style	the style.
+ */
+    
+    public void setStyle(int style) {
+        if (this.style == UNDEFINED) this.style = NORMAL;
+        this.style |= style;
+    }
+    
+/**
  * Translates a <CODE>String</CODE>-value of a certain style
  * into the index value is used for this style in this class.
  *

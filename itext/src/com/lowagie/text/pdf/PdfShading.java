@@ -66,6 +66,8 @@ public class PdfShading {
     
     protected PdfIndirectReference shadingReference;
     
+    private Color cspace;
+    
     /** Holds value of property bBox. */
     protected float[] bBox;
     
@@ -78,6 +80,7 @@ public class PdfShading {
     }
     
     protected void setColorSpace(Color color) {
+        cspace = color;
         int type = ExtendedColor.getType(color);
         PdfObject colorSpace = null;
         switch (type) {
@@ -104,6 +107,10 @@ public class PdfShading {
                 break;
         }
         shading.put(PdfName.COLORSPACE, colorSpace);
+    }
+    
+    Color getColorSpace() {
+        return cspace;
     }
     
     public static void throwColorSpaceError() {

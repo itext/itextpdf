@@ -75,6 +75,7 @@ public class PdfString extends PdfObject {
     
     /** The value of this object. */
     protected String value = NOTHING;
+    protected String originalValue = null;
     
     /** The encoding. */
     protected String encoding = TEXT_PDFDOCENCODING;
@@ -199,6 +200,7 @@ public class PdfString extends PdfObject {
     void decrypt(PdfReader reader) {
         PdfEncryption decrypt = reader.getDecrypt();
         if (decrypt != null) {
+            originalValue = value;
             decrypt.setHashKey(objNum, objGen);
             decrypt.prepareKey();
             bytes = PdfEncodings.convertToBytes(value, null);
@@ -206,7 +208,7 @@ public class PdfString extends PdfObject {
             value = PdfEncodings.convertToString(bytes, null);
         }
     }
-    
+   
     public byte[] getBytes() {
         if (bytes == null) {
             if (encoding != null && encoding.equals(TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
@@ -217,8 +219,18 @@ public class PdfString extends PdfObject {
         return bytes;
     }
     
-    public PdfString setWritingMode(boolean hexWriting) {
+    public byte[] getOriginalBytes() {
+        if (originalValue == null)
+            return getBytes();
+        return PdfEncodings.convertToBytes(originalValue, null);
+    }
+    
+    public PdfString setHexWriting(boolean hexWriting) {
         this.hexWriting = hexWriting;
         return this;
+    }
+    
+    public boolean isHexWriting() {
+        return hexWriting;
     }
 }

@@ -139,97 +139,102 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
             PdfNumber count = (PdfNumber)PdfReader.getPdfObject(outline.get(PdfName.COUNT));
             if (count != null && count.intValue() < 0)
                 map.put("Open", "false");
-            PdfObject dest = PdfReader.getPdfObject(outline.get(PdfName.DEST));
-            if (dest != null) {
-                if (dest.isString())
-                    map.put("Named", dest.toString());
-                else if (dest.isName())
-                    map.put("Named", PdfName.decodeName(dest.toString()));
-                else if (dest.isArray()) {
-                    ArrayList arr = ((PdfArray)dest).getArrayList();
-                    StringBuffer s = new StringBuffer();
-                    s.append(pages.get(((PdfIndirectReference)arr.get(0)).getNumber()));
-                    s.append(' ').append(arr.get(1).toString().substring(1));
-                    for (int k = 2; k < arr.size(); ++k)
-                        s.append(' ').append(arr.get(k).toString());
-                    map.put("Page", s.toString());
+            try {
+                PdfObject dest = PdfReader.getPdfObject(outline.get(PdfName.DEST));
+                if (dest != null) {
+                    if (dest.isString())
+                        map.put("Named", dest.toString());
+                    else if (dest.isName())
+                        map.put("Named", PdfName.decodeName(dest.toString()));
+                    else if (dest.isArray()) {
+                        ArrayList arr = ((PdfArray)dest).getArrayList();
+                        StringBuffer s = new StringBuffer();
+                        s.append(pages.get(((PdfIndirectReference)arr.get(0)).getNumber()));
+                        s.append(' ').append(arr.get(1).toString().substring(1));
+                        for (int k = 2; k < arr.size(); ++k)
+                            s.append(' ').append(arr.get(k).toString());
+                        map.put("Page", s.toString());
+                    }
+                    map.put("Action", "GoTo");
                 }
-                map.put("Action", "GoTo");
+                else {
+                    PdfDictionary action = (PdfDictionary)PdfReader.getPdfObject(outline.get(PdfName.A));
+                    if (action != null) {
+                        if (PdfName.GOTO.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
+                            dest = PdfReader.getPdfObject(action.get(PdfName.D));
+                            if (dest != null) {
+                                if (dest.isString())
+                                    map.put("Named", dest.toString());
+                                else if (dest.isName())
+                                    map.put("Named", PdfName.decodeName(dest.toString()));
+                                else if (dest.isArray()) {
+                                    ArrayList arr = ((PdfArray)dest).getArrayList();
+                                    StringBuffer s = new StringBuffer();
+                                    s.append(pages.get(((PdfIndirectReference)arr.get(0)).getNumber()));
+                                    s.append(' ').append(arr.get(1).toString().substring(1));
+                                    for (int k = 2; k < arr.size(); ++k)
+                                        s.append(' ').append(arr.get(k).toString());
+                                    map.put("Page", s.toString());
+                                }
+                                map.put("Action", "GoTo");
+                            }
+                        }
+                        else if (PdfName.URI.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
+                            map.put("Action", "URI");
+                            map.put("URI", ((PdfString)PdfReader.getPdfObject(action.get(PdfName.URI))).toUnicodeString());
+                        }
+                        else if (PdfName.GOTOR.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
+                            dest = PdfReader.getPdfObject(action.get(PdfName.D));
+                            if (dest != null) {
+                                if (dest.isString())
+                                    map.put("Named", dest.toString());
+                                else if (dest.isName())
+                                    map.put("NamedN", PdfName.decodeName(dest.toString()));
+                                else if (dest.isArray()) {
+                                    ArrayList arr = ((PdfArray)dest).getArrayList();
+                                    StringBuffer s = new StringBuffer();
+                                    s.append(arr.get(0).toString());
+                                    s.append(' ').append(arr.get(1).toString());
+                                    for (int k = 2; k < arr.size(); ++k)
+                                        s.append(' ').append(arr.get(k).toString());
+                                    map.put("Page", s.toString());
+                                }
+                            }
+                            map.put("Action", "GoToR");
+                            PdfObject file = PdfReader.getPdfObject(action.get(PdfName.F));
+                            if (file != null) {
+                                if (file.isString())
+                                    map.put("File", ((PdfString)file).toUnicodeString());
+                                else if (file.isDictionary()) {
+                                    file = PdfReader.getPdfObject(((PdfDictionary)file).get(PdfName.F));
+                                    if (file.isString())
+                                        map.put("File", ((PdfString)file).toUnicodeString());
+                                }
+                            }
+                            PdfObject newWindow = PdfReader.getPdfObject(action.get(PdfName.NEWWINDOW));
+                            if (newWindow != null)
+                                map.put("NewWindow", newWindow.toString());
+                        }
+                        else if (PdfName.LAUNCH.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
+                            map.put("Action", "Launch");
+                            PdfObject file = PdfReader.getPdfObject(action.get(PdfName.F));
+                            if (file == null)
+                                file = PdfReader.getPdfObject(action.get(PdfName.WIN));
+                            if (file != null) {
+                                if (file.isString())
+                                    map.put("File", ((PdfString)file).toUnicodeString());
+                                else if (file.isDictionary()) {
+                                    file = PdfReader.getPdfObject(((PdfDictionary)file).get(PdfName.F));
+                                    if (file.isString())
+                                        map.put("File", ((PdfString)file).toUnicodeString());
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            else {
-                PdfDictionary action = (PdfDictionary)PdfReader.getPdfObject(outline.get(PdfName.A));
-                if (action != null) {
-                    if (PdfName.GOTO.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
-                        dest = PdfReader.getPdfObject(action.get(PdfName.D));
-                        if (dest != null) {
-                            if (dest.isString())
-                                map.put("Named", dest.toString());
-                            else if (dest.isName())
-                                map.put("Named", PdfName.decodeName(dest.toString()));
-                            else if (dest.isArray()) {
-                                ArrayList arr = ((PdfArray)dest).getArrayList();
-                                StringBuffer s = new StringBuffer();
-                                s.append(pages.get(((PdfIndirectReference)arr.get(0)).getNumber()));
-                                s.append(' ').append(arr.get(1).toString().substring(1));
-                                for (int k = 2; k < arr.size(); ++k)
-                                    s.append(' ').append(arr.get(k).toString());
-                                map.put("Page", s.toString());
-                            }
-                            map.put("Action", "GoTo");
-                        }
-                    }
-                    else if (PdfName.URI.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
-                        map.put("Action", "URI");
-                        map.put("URI", ((PdfString)PdfReader.getPdfObject(action.get(PdfName.URI))).toUnicodeString());
-                    }
-                    else if (PdfName.GOTOR.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
-                        dest = PdfReader.getPdfObject(action.get(PdfName.D));
-                        if (dest != null) {
-                            if (dest.isString())
-                                map.put("Named", dest.toString());
-                            else if (dest.isName())
-                                map.put("NamedN", PdfName.decodeName(dest.toString()));
-                            else if (dest.isArray()) {
-                                ArrayList arr = ((PdfArray)dest).getArrayList();
-                                StringBuffer s = new StringBuffer();
-                                s.append(arr.get(0).toString());
-                                s.append(' ').append(arr.get(1).toString());
-                                for (int k = 2; k < arr.size(); ++k)
-                                    s.append(' ').append(arr.get(k).toString());
-                                map.put("Page", s.toString());
-                            }
-                        }
-                        map.put("Action", "GoToR");
-                        PdfObject file = PdfReader.getPdfObject(action.get(PdfName.F));
-                        if (file != null) {
-                            if (file.isString())
-                                map.put("File", ((PdfString)file).toUnicodeString());
-                            else if (file.isDictionary()) {
-                                file = PdfReader.getPdfObject(((PdfDictionary)file).get(PdfName.F));
-                                if (file.isString())
-                                    map.put("File", ((PdfString)file).toUnicodeString());
-                            }
-                        }
-                        PdfObject newWindow = PdfReader.getPdfObject(action.get(PdfName.NEWWINDOW));
-                        if (newWindow != null)
-                            map.put("NewWindow", newWindow.toString());
-                    }
-                    else if (PdfName.LAUNCH.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
-                        map.put("Action", "Launch");
-                        PdfObject file = PdfReader.getPdfObject(action.get(PdfName.F));
-                        if (file == null)
-                            file = PdfReader.getPdfObject(action.get(PdfName.WIN));
-                        if (file != null) {
-                            if (file.isString())
-                                map.put("File", ((PdfString)file).toUnicodeString());
-                            else if (file.isDictionary()) {
-                                file = PdfReader.getPdfObject(((PdfDictionary)file).get(PdfName.F));
-                                if (file.isString())
-                                    map.put("File", ((PdfString)file).toUnicodeString());
-                            }
-                        }
-                    }
-                }
+            catch (Exception e) {
+                //empty on purpose
             }
             PdfDictionary first = (PdfDictionary)PdfReader.getPdfObject(outline.get(PdfName.FIRST));
             if (first != null) {

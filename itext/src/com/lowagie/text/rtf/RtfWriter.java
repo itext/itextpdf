@@ -64,6 +64,10 @@ import java.text.ParsePosition;
 import com.lowagie.text.pdf.wmf.MetaDo;
 
 /**
+ * If you are creating a new project using the rtf part of iText, please
+ * consider using the new RtfWriter2. The RtfWriter is in bug-fix-only mode,
+ * will be deprecated end of 2005 and removed end of 2007.
+ * 
  * A <CODE>DocWriter</CODE> class for Rich Text Files (RTF).
  * <P>
  * A <CODE>RtfWriter</CODE> can be added as a <CODE>DocListener</CODE>
@@ -1071,7 +1075,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 writeImage(chunk.getImage(), out);
             } else {
                 writeInitialFontSignature(out, chunk);
-                out.write(filterSpecialChar(chunk.content()).getBytes());
+                out.write(filterSpecialChar(chunk.content(), false).getBytes());
                 writeFinishingFontSignature(out, chunk);
             }
         }
@@ -1525,8 +1529,12 @@ public class RtfWriter extends DocWriter implements DocListener {
             } else {
                 imgIn = new ByteArrayInputStream(image.getOriginalData());
             }
-            if (type == Image.ORIGINAL_WMF) //remove the placeable header
-                imgIn.skip(22);
+            if (type == Image.ORIGINAL_WMF) { //remove the placeable header
+                long skipLength = 22;
+            	while(skipLength > 0) {
+            	    skipLength = skipLength - imgIn.skip(skipLength);
+            	}
+            }
         }
         int buffer = -1;
         int count = 0;
@@ -1696,7 +1704,6 @@ public class RtfWriter extends DocWriter implements DocListener {
     private boolean writeDocument() {
         try {
             writeDocumentIntro();
-            os.write((byte) '\n');
             writeFontList();
             os.write((byte) '\n');
             writeColorList();
@@ -1731,6 +1738,7 @@ public class RtfWriter extends DocWriter implements DocListener {
         os.write(escape);
         os.write(ansiCodepage);
         writeInt(os, 1252);
+        os.write((byte)'\n');
         os.write(escape);
         os.write(defaultFont);
         writeInt(os, 0);
@@ -1799,7 +1807,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                     os.write(fontCharset);
                     writeInt(os, 0);
                     os.write(delimiter);
-                    os.write(fnt.getFamilyname().getBytes());
+                    os.write(filterSpecialChar(fnt.getFamilyname(), true).getBytes());
             }
             os.write(commaDelimiter);
             os.write(closeGroup);
@@ -2065,6 +2073,13 @@ public class RtfWriter extends DocWriter implements DocListener {
             out.write(escape);
             out.write(sectionPageHeight);
             writeInt(out, pageHeight);
+        } else {
+            out.write(escape);
+            out.write(sectionPageWidth);
+            writeInt(out, pageWidth);
+            out.write(escape);
+            out.write(sectionPageHeight);
+            writeInt(out, pageHeight);
         }
     }
 
@@ -2163,7 +2178,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @param str The original <code>String</code>
      * @return The converted String
      */
-    public final static String filterSpecialChar(String str) {
+    public final static String filterSpecialChar(String str, boolean useHex) {
         int length = str.length();
         int z = (int) 'z';
         StringBuffer ret = new StringBuffer(length);
@@ -2175,12 +2190,25 @@ public class RtfWriter extends DocWriter implements DocListener {
             } else if (ch == '\n') {
                 ret.append("\\par ");
             } else if (((int) ch) > z) {
+                if(useHex) {
+                    ret.append("\\\'").append(Long.toHexString((long) ch));
+                } else {
                 ret.append("\\u").append((long) ch).append('?');
+                }
             } else {
                 ret.append(ch);
             }
         }
-        return ret.toString();
+        String s = ret.toString();
+        if(s.indexOf("$newpage$") >= 0) {
+            String before = s.substring(0, s.indexOf("$newpage$"));
+            String after = s.substring(s.indexOf("$newpage$") + 9);
+            ret = new StringBuffer(before);
+            ret.append("\\page\\par ");
+            ret.append(after);
+            return ret.toString();
+        }
+        return s;
     }
 
     private void addHeaderFooterFontColor(HeaderFooter hf) {
@@ -2225,5 +2253,10 @@ public class RtfWriter extends DocWriter implements DocListener {
             }
         }
     }
+    
+    public boolean setMarginMirroring(boolean MarginMirroring) {
+        return false;
+    }
+    
 }
 

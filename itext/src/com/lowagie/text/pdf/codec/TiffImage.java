@@ -238,8 +238,15 @@ public class TiffImage {
             img.setDpi(dpiX, dpiY);
             img.setXYRatio(XYRatio);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
-                TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
-                img.tagICC(ICC_Profile.getInstance(fd.getAsBytes()));
+                try {
+                    TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
+                    ICC_Profile icc_prof = ICC_Profile.getInstance(fd.getAsBytes());
+                    if (icc_prof.getNumComponents() == 1)
+                        img.tagICC(icc_prof);
+                }
+                catch (Exception e) {
+                    //empty
+                }
             }
             img.setOriginalType(Image.ORIGINAL_TIFF);
             return img;
@@ -304,7 +311,7 @@ public class TiffImage {
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_RESOLUTIONUNIT))
                 resolutionUnit = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_RESOLUTIONUNIT);
             dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
-            dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
+            dpiY = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
             int rowsStrip = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
@@ -374,8 +381,15 @@ public class TiffImage {
             }
             img.setDpi(dpiX, dpiY);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
-                TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
-                img.tagICC(ICC_Profile.getInstance(fd.getAsBytes()));
+                try {
+                    TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
+                    ICC_Profile icc_prof = ICC_Profile.getInstance(fd.getAsBytes());
+                    if (samplePerPixel == icc_prof.getNumComponents())
+                        img.tagICC(icc_prof);
+                }
+                catch (Exception e) {
+                    //empty
+                }
             }
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_COLORMAP)) {
                 TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_COLORMAP);

@@ -235,7 +235,13 @@ public class DefaultFontMapper implements FontMapper {
             return p;
     }
     
-    protected void insertNames(String names[][], String path) {
+    /**
+     * Inserts the names in this map.
+     * @param allNames the returned value of calling {@link BaseFont#getAllFontNames(String, String, byte[])}
+     * @param path the full path to the font
+     */    
+    public void insertNames(Object allNames[], String path) {
+        String names[][] = (String[][])allNames[2];
         String main = null;
         for (int k = 0; k < names.length; ++k) {
             String name[] = names[k];
@@ -251,6 +257,7 @@ public class DefaultFontMapper implements FontMapper {
         for (int k = 0; k < names.length; ++k) {
             aliases.put(names[k][3], main);
         }
+        aliases.put((String)allNames[0], main);
     }
     
     /** Inserts all the fonts recognized by iText in the
@@ -271,16 +278,16 @@ public class DefaultFontMapper implements FontMapper {
             String name = file.getPath().toLowerCase();
             try {
                 if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm")) {
-                    String names[][] = BaseFont.getFullFontName(file.getPath(), BaseFont.CP1252, null);
-                    insertNames(names, file.getPath());
+                    Object allNames[] = BaseFont.getAllFontNames(file.getPath(), BaseFont.CP1252, null);
+                    insertNames(allNames, file.getPath());
                     ++count;
                 }
                 else if (name.endsWith(".ttc")) {
                     String ttcs[] = BaseFont.enumerateTTCNames(file.getPath());
                     for (int j = 0; j < ttcs.length; ++j) {
                         String nt = file.getPath() + "," + j;
-                        String names[][] = BaseFont.getFullFontName(nt, BaseFont.CP1252, null);
-                        insertNames(names, nt);
+                        Object allNames[] = BaseFont.getAllFontNames(nt, BaseFont.CP1252, null);
+                        insertNames(allNames, nt);
                     }
                     ++count;
                 }

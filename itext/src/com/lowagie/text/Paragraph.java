@@ -89,8 +89,27 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
 /** The indentation of this paragraph on the right side. */
     protected float indentationRight;
     
+/** The spacing before the paragraph. */
+    protected float spacingBefore;
+    
+/** The spacing after the paragraph. */
+    protected float spacingAfter;
+    
 /** Does the paragraph has to be kept together on 1 page. */
     protected boolean keeptogether = false;
+    
+    /** The text leading that is multiplied by the biggest font size in the line. */
+    protected float multipliedLeading = 0;
+    
+    /**
+     * Holds value of property firstLineIndent.
+     */
+    private float firstLineIndent = 0;
+    
+    /**
+     * Holds value of property extraParagraphSpace.
+     */
+    private float extraParagraphSpace = 0;
     
     // constructors
     
@@ -331,6 +350,26 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     }
     
 /**
+ * Sets the spacing before this paragraph.
+ *
+ * @param	spacing		the new spacing
+ */
+    
+    public void setSpacingBefore(float spacing) {
+        this.spacingBefore = spacing;
+    }
+    
+/**
+ * Sets the spacing after this paragraph.
+ *
+ * @param	spacing		the new spacing
+ */
+    
+    public void setSpacingAfter(float spacing) {
+        this.spacingAfter = spacing;
+    }
+    
+/**
  * Indicates that the paragraph has to be kept together on one page.
  *
  * @param   keeptogether    true of the paragraph may not be split over 2 pages
@@ -383,6 +422,26 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     }
     
 /**
+ * Gets the spacing before this paragraph.
+ *
+ * @return	the spacing
+ */
+    
+    public float spacingBefore() {
+        return spacingBefore;
+    }
+    
+/**
+ * Gets the spacing before this paragraph.
+ *
+ * @return	the spacing
+ */
+    
+    public float spacingAfter() {
+        return spacingAfter;
+    }
+    
+/**
  * Checks if a given tag corresponds with this object.
  *
  * @param   tag     the given tag
@@ -392,4 +451,62 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     public static boolean isTag(String tag) {
         return ElementTags.PARAGRAPH.equals(tag);
     }
+    
+    /**
+     * Sets the leading fixed and variable. The resultant leading will be
+     * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
+     * size of the bigest font in the line.
+     * @param fixedLeading the fixed leading
+     * @param multipliedLeading the variable leading
+     */
+    public void setLeading(float fixedLeading, float multipliedLeading) {
+        this.leading = fixedLeading;
+        this.multipliedLeading = multipliedLeading;
+    }
+    
+    public void setLeading(float fixedLeading) {
+        this.leading = fixedLeading;
+        this.multipliedLeading = 0;
+    }
+    
+    /**
+     * Gets the variable leading
+     * @return the leading
+     */
+    public float getMultipliedLeading() {
+        return multipliedLeading;
+    }
+    
+    /**
+     * Getter for property firstLineIndent.
+     * @return Value of property firstLineIndent.
+     */
+    public float getFirstLineIndent() {
+        return this.firstLineIndent;
+    }
+    
+    /**
+     * Setter for property firstLineIndent.
+     * @param firstLineIndent New value of property firstLineIndent.
+     */
+    public void setFirstLineIndent(float firstLineIndent) {
+        this.firstLineIndent = firstLineIndent;
+    }
+    
+    /**
+     * Getter for property extraParagraphSpace.
+     * @return Value of property extraParagraphSpace.
+     */
+    public float getExtraParagraphSpace() {
+        return this.extraParagraphSpace;
+    }
+    
+    /**
+     * Setter for property extraParagraphSpace.
+     * @param extraParagraphSpace New value of property extraParagraphSpace.
+     */
+    public void setExtraParagraphSpace(float extraParagraphSpace) {
+        this.extraParagraphSpace = extraParagraphSpace;
+    }
+    
 }
