@@ -62,7 +62,7 @@ import java.io.*;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2002/03/06 13:29:37 $
+ * @version $Revision$Date: 2002/07/09 10:52:22 $
  */
 public class RtfTOCEntry extends Chunk implements RtfField {
 
@@ -98,19 +98,19 @@ public class RtfTOCEntry extends Chunk implements RtfField {
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
 
         if (!hideText) {
-            writer.writeInitialFontSignature( out, contentFont );
+            writer.writeInitialFontSignature( out, new Chunk("", contentFont) );
             out.write( RtfWriter.filterSpecialChar( content() ).getBytes() );
-            writer.writeFinishingFontSignature( out, contentFont );
+            writer.writeFinishingFontSignature( out, new Chunk("", contentFont) );
         }
 
         if (!entryFont.equals( contentFont )) {
-            writer.writeInitialFontSignature( out, entryFont );
+            writer.writeInitialFontSignature(out, new Chunk("", entryFont) );
             writeField( out );
-            writer.writeFinishingFontSignature( out, entryFont );
+            writer.writeFinishingFontSignature(out, new Chunk("", entryFont) );
         } else {
-            writer.writeInitialFontSignature( out, contentFont );
+            writer.writeInitialFontSignature(out, new Chunk("", contentFont) );
             writeField( out );
-            writer.writeFinishingFontSignature( out, contentFont );
+            writer.writeFinishingFontSignature(out, new Chunk("", contentFont) );
         }
     }
 
