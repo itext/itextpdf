@@ -89,10 +89,6 @@ public class RtfRow extends RtfElement {
      */
     private static final byte[] ROW_KEEP_TOGETHER = "\\trkeep".getBytes();
     /**
-     * Constant to specify that this RtfRow must not be split from the next row.
-     */
-    private static final byte[] ROW_KEEP_FOLLOWING_ROW = "\\trkeepfollow".getBytes();
-    /**
      * Constant to specify that this is a header RtfRow
      */
     private static final byte[] ROW_HEADER_ROW = "\\trhdr".getBytes();
