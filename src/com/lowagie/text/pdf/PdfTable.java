@@ -73,7 +73,7 @@ class PdfTable extends Rectangle {
 	private ArrayList cells;
 
 	/** this is the cellpadding of the table. */
-	private int cellpadding;
+	private float cellpadding;
 
 // constructors
 
@@ -88,7 +88,7 @@ class PdfTable extends Rectangle {
 	 * @since	rugPdf0.10
 	 */
 
-	PdfTable(Table table, int left, int right, int top) {
+	PdfTable(Table table, float left, float right, float top) {
 
 		// constructs a Rectangle (the bottomvalue will be changed afterwards)
 		super(left, top, right, top);
@@ -100,7 +100,7 @@ class PdfTable extends Rectangle {
 
 		// initialisation of some parameters
 		this.cellpadding = table.cellpadding();
-		int[] positions = table.getWidths(left, right - left);
+		float[] positions = table.getWidths(left, right - left);
 		setLeft(positions[0]);
 		setRight(positions[positions.length - 1]);
 
@@ -112,7 +112,7 @@ class PdfTable extends Rectangle {
 		headercells = new ArrayList();
 		cells = new ArrayList();
 		int rows = table.size() + 1;
-		int[] offsets = new int[rows];
+		float[] offsets = new float[rows];
 		for (int i = 0; i < rows; i++) {
 			offsets[i] = top - cellpadding;
 		}
@@ -207,7 +207,7 @@ class PdfTable extends Rectangle {
 	 * @since	iText0.30
 	 */
 
-	int cellpadding() {
+	float cellpadding() {
 		return cellpadding;
 	}
 }

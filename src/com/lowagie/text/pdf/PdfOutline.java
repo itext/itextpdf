@@ -60,13 +60,16 @@ public class PdfOutline extends PdfDictionary {
 	private PdfIndirectReference reference;
 
 	/** value of the <B>Count</B>-key */
-	private PdfNumber count;
+	private int count = 0;
 
 	/** value of the <B>Parent</B>-key */
 	private PdfOutline parent;
 
 	/** value of the <B>Parent</B>-key */
 	private PdfDestination destination;
+    
+    /** <CODE>true</CODE> if it's children are visible */
+    private boolean isOpen;
 
 // constructors
 
@@ -78,11 +81,58 @@ public class PdfOutline extends PdfDictionary {
 	 * @since		iText0.39
 	 */
 
-	PdfOutline() {
-		super(OUTLINES);
-		count = new PdfNumber(0);
-		put(PdfName.COUNT, count);
-		parent = null;
+    PdfOutline() {
+        super(OUTLINES);
+        isOpen = true;
+        parent = null;
+    }
+
+	/**
+	 * Constructs a <CODE>PdfOutline</CODE>.
+	 * <P>
+	 * This is the constructor for an <CODE>outline entry</CODE>. The open mode is
+     * <CODE>true</CODE>.
+	 *
+     * @param parent the parent of this outline item
+     * @param destination the destination for this outline item
+     * @param title the title of this outline item
+	 * @since		iText0.39
+	 */
+
+	public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title) {
+        this(parent, destination, title, true);
+	}
+
+	/**
+	 * Constructs a <CODE>PdfOutline</CODE>.
+	 * <P>
+	 * This is the constructor for an <CODE>outline entry</CODE>. The open mode is
+     * <CODE>true</CODE>.
+     *
+     * @param parent the parent of this outline item
+     * @param destination the destination for this outline item
+     * @param title the title of this outline item
+	 * @since		iText0.39
+	 */
+
+	public PdfOutline(PdfOutline parent, PdfDestination destination, String title) {
+        this(parent, destination, title, true);
+	}
+
+	/**
+	 * Constructs a <CODE>PdfOutline</CODE>.
+	 * <P>
+	 * This is the constructor for an <CODE>outline entry</CODE>. The open mode is
+     * <CODE>true</CODE>.
+	 *
+     * @param parent the parent of this outline item
+     * @param destination the destination for this outline item
+     * @param title the title of this outline item
+	 * @since		iText0.39
+	 */
+
+	public PdfOutline(PdfOutline parent, PdfDestination destination, Paragraph title) {
+        this(parent, destination, title, true);
 	}
 
 	/**
@@ -90,53 +140,74 @@ public class PdfOutline extends PdfDictionary {
 	 * <P>
 	 * This is the constructor for an <CODE>outline entry</CODE>.
 	 *
-	 * @since		iText0.39
+     * @param parent the parent of this outline item
+     * @param destination the destination for this outline item
+     * @param title the title of this outline item
+     * @param open <CODE>true</CODE> if the children are visible
 	 */
-
-	PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title) {
-		super();
-		count = new PdfNumber(0);
-		put(PdfName.COUNT, count);
-		this.parent = parent;
-		parent.add();
-		this.destination = destination;
-		put(PdfName.TITLE, title);
-	}
-
+    public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title, boolean open)
+    {
+        this(parent, destination, title.toString(), true);
+    }
+    
 	/**
 	 * Constructs a <CODE>PdfOutline</CODE>.
 	 * <P>
 	 * This is the constructor for an <CODE>outline entry</CODE>.
 	 *
-	 * @since		iText0.39
+     * @param parent the parent of this outline item
+     * @param destination the destination for this outline item
+     * @param title the title of this outline item
+     * @param open <CODE>true</CODE> if the children are visible
 	 */
-
-	PdfOutline(PdfOutline parent, PdfDestination destination, Paragraph title) {
-		super();
-		count = new PdfNumber(0);
-		put(PdfName.COUNT, count);
-		this.parent = parent;
-		parent.add();
-		this.destination = destination;
-		StringBuffer buf = new StringBuffer();
-		for (Iterator i = title.getChunks().iterator(); i.hasNext(); ) {
-			Chunk chunk = (Chunk) i.next();
-			buf.append(chunk.content());
-		}
-		put(PdfName.TITLE, new PdfString(buf.toString()));
-	}
-
+    public PdfOutline(PdfOutline parent, PdfDestination destination, String title, boolean open) {
+        super();
+        isOpen = open && parent.isOpen;
+        if (isOpen || parent.isOpen) {
+            parent.add();
+        }
+        this.parent = parent;
+        this.destination = destination;
+        put(PdfName.TITLE, new PdfString(title, "UnicodeBig"));
+    }
+    
+	/**
+	 * Constructs a <CODE>PdfOutline</CODE>.
+	 * <P>
+	 * This is the constructor for an <CODE>outline entry</CODE>.
+	 *
+     * @param parent the parent of this outline item
+     * @param destination the destination for this outline item
+     * @param title the title of this outline item
+     * @param open <CODE>true</CODE> if the children are visible
+	 */
+    public PdfOutline(PdfOutline parent, PdfDestination destination, Paragraph title, boolean open) {
+        super();
+        isOpen = open && parent.isOpen;
+        if (isOpen || parent.isOpen) {
+            parent.add();
+        }
+        this.parent = parent;
+        this.destination = destination;
+        StringBuffer buf = new StringBuffer();
+        for (Iterator i = title.getChunks().iterator(); i.hasNext(); ) {
+            Chunk chunk = (Chunk) i.next();
+            buf.append(chunk.content());
+        }
+        put(PdfName.TITLE, new PdfString(buf.toString(), "UnicodeBig"));
+    }
+    
+    
 // methods
 
 	/**
-	 * Sets the indirect reference of this <CODE>PdfOutline</CODE>.
-	 *
-	 * @param		the <CODE>PdfIndirectReference</CODE> to this outline.
-	 *
-	 * @since		iText0.39
-	 */
+     * Sets the indirect reference of this <CODE>PdfOutline</CODE>.
+     *
+     * @param reference the <CODE>PdfIndirectReference</CODE> to this outline.
+     * @since iText0.39
+ */
 
-	void setIndirectReference(PdfIndirectReference reference) {
+	public void setIndirectReference(PdfIndirectReference reference) {
 		this.reference = reference;
 	}
 
@@ -148,7 +219,7 @@ public class PdfOutline extends PdfDictionary {
 	 * @since		iText0.39
 	 */
 
-	PdfIndirectReference indirectReference() {
+	public PdfIndirectReference indirectReference() {
 		return reference;
 	}
 
@@ -160,54 +231,34 @@ public class PdfOutline extends PdfDictionary {
 	 * @since		iText0.39
 	 */
 
-	PdfOutline parent() {
+	public PdfOutline parent() {
 		return parent;
 	}
 
-	/**	 
-	 * Set the page of the <CODE>PdfDestination</CODE>-object.
-	 *
-	 * @param		the indirect reference to the page
-	 * @return		<CODE>true</CODE> if this page was set as the <CODE>PdfDestination</CODE>-page.
-	 *
-	 * @since		iText0.39
-	 */
+	/** Set the page of the <CODE>PdfDestination</CODE>-object.
+     *
+     * @param pageReference indirect reference to the page
+     * @return <CODE>true</CODE> if this page was set as the <CODE>PdfDestination</CODE>-page.
+     * @since iText0.39
+ */
 
-	boolean setDestinationPage(PdfIndirectReference pageReference) {
+	public boolean setDestinationPage(PdfIndirectReference pageReference) {
 		if (destination == null) {
 			return false;
 		}
 		return destination.addPage(pageReference);
 	}
 
-	/**
-	 * Checks if this page element is a tree of pages.
-	 * <P>
-	 * This method allways returns <CODE>true</CODE>.
-	 *
-	 * @return	<CODE>true</CODE> because this object is a tree of pages
-	 *
-	 * @since		iText0.39
-	 */
+	/** Increments the count.
+     *
+     * @since iText0.39
+ */
 
-	boolean isParent() {
-		return (count.intValue() > 0);
-	}
-
-	/**
-	 * Increments the count.
-	 *
-	 * @return		<CODE>void</CODE>
-	 *
-	 * @since		iText0.39
-	 */
-
-	void add() {
+	public void add() {
 		if (parent != null) {
 			parent.add();
 		}
-		count.increment();
-		put(PdfName.COUNT, count);
+		++count;
 	}
 
 	/**
@@ -218,7 +269,7 @@ public class PdfOutline extends PdfDictionary {
 	 * @since		iText0.39
 	 */
 
-	int level() {
+	public int level() {
 		if (parent == null) {
 			return 0;
 		}
@@ -233,15 +284,15 @@ public class PdfOutline extends PdfDictionary {
 	 * @since		rugPdf0.39
      */
 
-    final byte[] toPdf() {
+    final public byte[] toPdf() {
 		if (parent != null) {
 			put(PdfName.PARENT, parent.indirectReference());
 		}
 		if (destination != null && destination.hasPage()) {
 			put(PdfName.DEST, destination);
 		}
-		if (!isParent()) {
-			remove(PdfName.COUNT);
+		if ((isOpen || parent.isOpen) && count > 0) {
+			put(PdfName.COUNT, new PdfNumber(count));
 		}
 		return super.toPdf();
 	}

@@ -62,15 +62,17 @@ import java.util.Iterator;
  * @since   rugPdf0.10
  */
 
-class PdfFont extends PdfDictionary implements Comparable {
+class PdfFont implements Comparable {
 
 // membervariables
 
-	/** the name of this font (defined by the user). */
+	/** the name of this font. */
 	private PdfName name;
 
 	/** the font metrics. */
-	private PdfFontMetrics font;
+	private BaseFont font;
+    
+    private float size;
 
 // constructors
 
@@ -85,27 +87,60 @@ class PdfFont extends PdfDictionary implements Comparable {
 	 * @since		rugPdf0.10
 	 */
 
-	PdfFont(String name, int f, int s, int e) {
-		super(FONT);
-		e = PdfFontMetrics.checkEncoding(e);
-		font = PdfFontMetrics.getFont(f, e, s);
-		try {
-			this.name = new PdfName(name);
-		}
-		catch(BadPdfFormatException bpfe) {
-			try {
-				this.name = new PdfName(new StringBuffer("F").append(f).append("_").append(e).toString());
-			}
-			catch(BadPdfFormatException bpfg) {
-				this.name = font.name();
-			}
-		}
-		put(PdfName.SUBTYPE, PdfName.TYPE1);
-		put(PdfName.NAME, this.name);
-		put(PdfName.BASEFONT, font.name());
-		if (e != PdfFontMetrics.STANDARD) {
-			put(PdfName.ENCODING, font.encoding());
-		}
+	PdfFont(String name, int f, float s, int e)
+    {
+        String fontName = "Helvetica";
+        size = s;
+        switch (f) {
+            case PdfFontMetrics.COURIER:
+                fontName = "Courier";
+                break;
+            case PdfFontMetrics.COURIER_BOLD:
+                fontName = "Courier-Bold";
+                break;
+            case PdfFontMetrics.COURIER_OBLIQUE:
+                fontName = "Courier-Oblique";
+                break;
+            case PdfFontMetrics.COURIER_BOLDOBLIQUE:
+                fontName = "Courier-BoldOblique";
+                break;
+            case PdfFontMetrics.HELVETICA:
+                fontName = "Helvetica";
+                break;
+            case PdfFontMetrics.HELVETICA_BOLD:
+                fontName = "Helvetica-Bold";
+                break;
+            case PdfFontMetrics.HELVETICA_OBLIQUE:
+                fontName = "Helvetica-Oblique";
+                break;
+            case PdfFontMetrics.HELVETICA_BOLDOBLIQUE:
+                fontName = "Helvetica-BoldOblique";
+                break;
+            case PdfFontMetrics.SYMBOL:
+                fontName = "Symbol";
+                break;
+            case PdfFontMetrics.TIMES_ROMAN:
+                fontName = "Times-Roman";
+                break;
+            case PdfFontMetrics.TIMES_BOLD:
+                fontName = "Times-Bold";
+                break;
+            case PdfFontMetrics.TIMES_ITALIC:
+                fontName = "Times-Italic";
+                break;
+            case PdfFontMetrics.TIMES_BOLDITALIC:
+                fontName = "Times-BoldItalic";
+                break;
+            case PdfFontMetrics.ZAPFDINGBATS:
+                fontName = "ZapfDingbats";
+                break;
+        }
+        try {
+            font = BaseFont.createFont(fontName, "winansi", false);
+        }
+        catch (Exception ee) {
+            throw new NullPointerException(ee.getMessage());
+        }
 	}
 
 	/**
@@ -118,7 +153,7 @@ class PdfFont extends PdfDictionary implements Comparable {
 	 * @since		rugPdf0.10
 	 */
 
-	PdfFont(int f, int s, int e) {
+	PdfFont(int f, float s, int e) {
 		this(new StringBuffer("F").append(f).toString(), f, s, e);
 	}
 	 
@@ -131,9 +166,15 @@ class PdfFont extends PdfDictionary implements Comparable {
 	 * @since		rugPdf0.10
 	 */
 
-	PdfFont(int f, int s) {
+	PdfFont(int f, float s) {
 		this(new StringBuffer("F").append(f).toString(), f, s, -1);
 	}
+    
+    PdfFont(BaseFont bf, float size)
+    {
+        this.size = size;
+        font = bf;
+    }
 
 // methods
 
@@ -152,7 +193,7 @@ class PdfFont extends PdfDictionary implements Comparable {
 		PdfFont pdfFont;
 		try {
 			pdfFont = (PdfFont) object;
-			if (this.name.compareTo(pdfFont.getName()) != 0) {
+			if (font != pdfFont.font) {
 				return 1;
 			}
 			if (this.size() != pdfFont.size()) {
@@ -173,8 +214,8 @@ class PdfFont extends PdfDictionary implements Comparable {
 	 * @since		rugPdf0.10
 	 */
 
-	int size() {
-		return font.size();
+	float size() {
+		return size;
 	}
 
 	/**
@@ -189,16 +230,20 @@ class PdfFont extends PdfDictionary implements Comparable {
 		return name;
 	}
 
+	void setName(PdfName name) {
+		this.name = name;
+	}
+
 	/**
-	 * Returns the appriximative width of 1 character of this font.
+	 * Returns the approximative width of 1 character of this font.
 	 *
 	 * @return		a width in Text Space
 	 *
 	 * @since		rugPdf0.10
 	 */
 
-	double width() {
-		return font.widthTextSpace();
+	float width() {
+		return font.getWidthPoint(" ", size);
 	} 
 
 	/**
@@ -210,14 +255,12 @@ class PdfFont extends PdfDictionary implements Comparable {
 	 * @since		rugPdf0.10
 	 */
 
-	double width(char character) {
-		return font.widthTextSpace(character);
+	float width(char character) {
+		return font.getWidthPoint(character, size);
 	}
 
 	/**
 	 * Returns the width (user space) of a <CODE>PdfPrintable</CODE>-object.
-	 * <P>
-	 * Since iText0.30, the width is incremented with the width of 1 space character.
 	 *
 	 * @param		text		a <CODE>PdfPrintable</CODE>-object
 	 * @return		a width
@@ -225,14 +268,8 @@ class PdfFont extends PdfDictionary implements Comparable {
 	 * @since		rugPdf0.10
 	 */
 
-	double width(PdfPrintable text) {
-		String string = text.toString();
-		int n = string.length();
-		double width = 0.0;
-		for (int i = 0; i < n; i++) {
-			width += font.widthTextSpace(string.charAt(i));
-		}		
-		return width + font.widthTextSpace();			   
+	float width(PdfPrintable text) {
+		return font.getWidthPoint(text.toString(), size);
 	}
 					   
 	/**
@@ -295,13 +332,17 @@ class PdfFont extends PdfDictionary implements Comparable {
 	 */
 
 	PdfString truncate(PdfPrintable text, double totalWidth, double factor) {
-		char ellipsis = font.ellipsis();
+		char ellipsis = '\u2016';
 		int currentPosition = 0;
-		double currentWidth = font.widthTextSpace(ellipsis) * factor;
+		double currentWidth = font.getWidthPoint(ellipsis, size) * factor;
+        if (currentWidth == 0.0) {
+            ellipsis = ' ';
+            currentWidth = font.getWidthPoint(ellipsis, size) * factor;
+        }
 
 		// it's no use trying to truncate if there isn't even enough place for an ellipsis
 		if (totalWidth < currentWidth) {
-			return new PdfString(String.valueOf(ellipsis));
+			return new PdfString(String.valueOf(ellipsis), font);
 		}
 
 		// loop over all the characters of a string
@@ -311,21 +352,21 @@ class PdfFont extends PdfDictionary implements Comparable {
 		int length = string.length();
 		while (currentPosition < length && currentWidth < totalWidth) {
 				character = string.charAt(currentPosition);
-				currentWidth += font.widthTextSpace(character) * factor;
+				currentWidth += font.getWidthPoint(character, size) * factor;
 				currentPosition++;
 		}		
 
 		// if all the characters fit in the total width, the whole PdfPrintable is returned
 		if (currentPosition == length) {
-			return new PdfString(text);
+			return new PdfString(text, font);
 		}
 
 		// otherwise, the string has to be truncated
 		currentPosition -= 2;
 		if (currentPosition < 0) {
-			return new PdfString(String.valueOf(ellipsis));
+			return new PdfString(String.valueOf(ellipsis), font);
 		}
-		return new PdfString(string.substring(0, currentPosition) + ellipsis);			   
+		return new PdfString(string.substring(0, currentPosition) + ellipsis, font);
 	}
 
 	/**
@@ -356,7 +397,7 @@ class PdfFont extends PdfDictionary implements Comparable {
 		int length = string.length();
 
 		char character;
-		double currentWidth = font.widthTextSpace() * factor;
+		double currentWidth = font.getWidthPoint(" ", size) * factor;
 
 		while (currentPosition < length) {
 			character = string.charAt(currentPosition);
@@ -364,14 +405,14 @@ class PdfFont extends PdfDictionary implements Comparable {
 
 			// if the end of the string is reached
 			if (currentPosition >= length) {
-				array.add(new PdfString(string.substring(previousPosition)));
+				array.add(new PdfString(string.substring(previousPosition), font));
 				break;
 			}
 
 			// if a newLine or carriageReturn is encountered
 			if (character == '\r' || character == '\n') {
-				array.add(new PdfString(string.substring(previousPosition, currentPosition - 1)));
-				currentWidth = font.widthTextSpace() * factor;
+				array.add(new PdfString(string.substring(previousPosition, currentPosition - 1), font));
+				currentWidth = font.getWidthPoint(" ", size) * factor;
 				previousPosition = currentPosition;
 				continue;
 			}
@@ -382,14 +423,14 @@ class PdfFont extends PdfDictionary implements Comparable {
 			}
 
 			// checks if the totalWidth is reached
-			currentWidth += font.widthTextSpace(character) * factor;
+			currentWidth += font.getWidthPoint(" ", size) * factor;
 			if (currentWidth > totalWidth) {
 				if (previousPosition >= splitPosition) {
 					splitPosition = Math.max(previousPosition + 1, currentPosition - 2);
 				}
-				array.add(new PdfString(PdfFontMetrics.trim(string.substring(previousPosition, splitPosition))));
+				array.add(new PdfString(PdfFontMetrics.trim(string.substring(previousPosition, splitPosition)), font));
 				currentPosition = splitPosition;
-				currentWidth = font.widthTextSpace() * factor;
+				currentWidth = font.getWidthPoint(" ", size) * factor;
 				previousPosition = currentPosition;
 				continue;
 			}
@@ -397,4 +438,9 @@ class PdfFont extends PdfDictionary implements Comparable {
 
 		return array.iterator();			   
 	}
+    
+    BaseFont getFont()
+    {
+        return font;
+    }
 }

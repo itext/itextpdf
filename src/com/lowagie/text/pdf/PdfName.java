@@ -160,6 +160,9 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName CROPBOX = new PdfName("/CropBox", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName D = new PdfName("/D", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName DCTDECODE = new PdfName("/DCTDecode", 0);
  
 	/** This is a static final PdfName */
@@ -248,6 +251,9 @@ public class PdfName extends PdfObject implements Comparable {
  
 	/** This is a static final PdfName */
 	public static final PdfName FULLSCREEN = new PdfName("/FullScreen", 0);
+
+	/** This is a static final PdfName of an attribute. */
+	public static final PdfName GOTO = new PdfName("/GoTo", 0);
 
 	/** This is a static final PdfName of an attribute. */
 	public static final PdfName HEIGHT = new PdfName("/Height", 0);

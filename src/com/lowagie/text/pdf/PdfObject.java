@@ -167,7 +167,7 @@ abstract class PdfObject {
 	 * @since		rugPdf0.10
      */
 
-    byte[] toPdf() {
+    public byte[] toPdf() {
 		return bytes;
     } 
 

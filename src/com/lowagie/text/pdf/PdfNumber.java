@@ -147,6 +147,18 @@ class PdfNumber extends PdfObject implements PdfPrintable {
 		numberType = REAL;
 	}
 	
+	/**
+	 * Constructs a new REAL <CODE>PdfNumber</CODE>-object.
+	 *
+	 * @param		value				value of the new <CODE>PdfNumber</CODE>-object
+	 *
+	 * @since		rugPdf0.10
+	 */
+
+	PdfNumber(float value) {
+        this((double)value);
+	}
+	
 // methods returning the value of this object
 
 	/**
@@ -202,15 +214,6 @@ class PdfNumber extends PdfObject implements PdfPrintable {
 
 	void increment() {
 		value += 1.0;
-		if (numberType == REAL) {
-			setContent(ByteBuffer.formatDouble(value));
-		}
-		else {
-			// this is wrong:
-			// setContent(String.valueOf(value));
-			// it should be:
-			setContent(String.valueOf((int) value));
-			// bug fixed by Gerhard Mueller (16 Aug 2000)
-		}
+		setContent(ByteBuffer.formatDouble(value));
 	}
 }
