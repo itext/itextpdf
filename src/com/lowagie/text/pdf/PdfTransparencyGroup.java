@@ -52,11 +52,18 @@ package com.lowagie.text.pdf;
  */
 public class PdfTransparencyGroup extends PdfDictionary {
     
+    /**
+     * Constructs a transparencyGroup.
+     */
     public PdfTransparencyGroup() {
         super();
         put(PdfName.S, PdfName.TRANSPARENCY);
     }
  
+    /**
+     * Determining the initial backdrop against which its stack is composited.
+     * @param isolated
+     */
     public void setIsolated(boolean isolated) {
         if (isolated)
             put(PdfName.I, PdfBoolean.PDFTRUE);
@@ -64,6 +71,10 @@ public class PdfTransparencyGroup extends PdfDictionary {
             remove(PdfName.I);
     }
     
+    /**
+     * Determining whather the objects within the stack are composited with one another or only with the group's backdrop.
+     * @param knockout
+     */
     public void setKnockout(boolean knockout) {
         if (knockout)
             put(PdfName.K, PdfBoolean.PDFTRUE);
