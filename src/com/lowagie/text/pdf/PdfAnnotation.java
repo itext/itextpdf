@@ -374,7 +374,6 @@ public class PdfAnnotation extends PdfDictionary {
     }
     
     /** Setter for property used.
-     * @param used New value of property used.
      */
     void setUsed() {
         used = true;

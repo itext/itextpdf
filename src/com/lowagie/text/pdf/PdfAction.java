@@ -51,7 +51,6 @@
 package com.lowagie.text.pdf;
 
 import java.net.URL;
-import java.io.IOException;
 import com.lowagie.text.ExceptionConverter;
 
 /**
