@@ -111,6 +111,7 @@ public class PdfAnnotation extends PdfDictionary {
     
     public PdfAnnotation(PdfWriter writer, float llx, float lly, float urx, float ury, PdfString title, PdfString content) {
         this.writer = writer;
+        put(PdfName.TYPE, PdfName.ANNOT);
         put(PdfName.SUBTYPE, PdfName.TEXT);
         put(PdfName.T, title);
         put(PdfName.RECT, new PdfRectangle(llx, lly, urx, ury));
@@ -123,6 +124,7 @@ public class PdfAnnotation extends PdfDictionary {
     
     public PdfAnnotation(PdfWriter writer, float llx, float lly, float urx, float ury, PdfAction action) {
         this.writer = writer;
+        put(PdfName.TYPE, PdfName.ANNOT);
         put(PdfName.SUBTYPE, PdfName.LINK);
         put(PdfName.RECT, new PdfRectangle(llx, lly, urx, ury));
         put(PdfName.A, action);
