@@ -103,7 +103,7 @@ public class SAXiTextHandler extends DefaultHandler {
  * @param	attrs		the list of attributes
  */
     
-    public void startElement(String name, AttributeList attrs) {
+    public void startElement(String uri, String name, String qname, AttributeList attrs) {
         
         Properties attributes = new Properties();
         if (attrs != null) {
@@ -478,7 +478,7 @@ public class SAXiTextHandler extends DefaultHandler {
  * @param	name		the name of the tag that ends
  */
     
-    public void endElement(String name) {
+    public void endElement(String uri, String name, String qname) {
         handleEndingTags(name);
     }
     
