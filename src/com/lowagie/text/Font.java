@@ -269,15 +269,8 @@ public class Font implements Comparable {
         Font font;
         try {
             font = (Font) object;
-            if (baseFont != null && font.getBaseFont() == null) {
+            if (!baseFont.equals(font.getBaseFont())) {
                 return -2;
-            }
-            if (baseFont == null && font.getBaseFont() != null) {
-                return -3;
-            }
-            if (baseFont != null && font.getBaseFont() != null) {
-                // this has to be completed later
-                return -4;
             }
             if (this.family != font.family()) {
                 return 1;
@@ -303,7 +296,7 @@ public class Font implements Comparable {
             return 4;
         }
         catch(ClassCastException cce) {
-            return -4;
+            return -3;
         }
     }
     
