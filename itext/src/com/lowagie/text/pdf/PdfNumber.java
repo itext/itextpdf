@@ -107,7 +107,7 @@ class PdfNumber extends PdfObject implements PdfPrintable {
 		case REAL:
 			try {
 				double d = Double.valueOf(content.trim()).doubleValue();
-				setContent(String.valueOf(d));
+				setContent(ByteBuffer.formatDouble(d));
 				value = d;
 			}
 			catch (NumberFormatException nfe){
@@ -142,7 +142,7 @@ class PdfNumber extends PdfObject implements PdfPrintable {
 	 */
 
 	PdfNumber(double value) {
-		super(NUMBER, String.valueOf(value));
+		super(NUMBER, ByteBuffer.formatDouble(value));
 		this.value = value;
 		numberType = REAL;
 	}
@@ -162,7 +162,7 @@ class PdfNumber extends PdfObject implements PdfPrintable {
 			return String.valueOf((int) value);
 		}
 		else {
-			return String.valueOf(value);
+			return ByteBuffer.formatDouble(value);
 		}
 	}
 
@@ -203,7 +203,7 @@ class PdfNumber extends PdfObject implements PdfPrintable {
 	void increment() {
 		value += 1.0;
 		if (numberType == REAL) {
-			setContent(String.valueOf(value));
+			setContent(ByteBuffer.formatDouble(value));
 		}
 		else {
 			// this is wrong:

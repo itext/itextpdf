@@ -336,6 +336,7 @@ class PdfDocument extends Document implements DocListener {
 	public final void addWriter(PdfWriter writer) throws DocumentException {
 		if (this.writer == null) {
 			this.writer = writer;
+            writer.setDocument(this);
 			return;
 		}
 		throw new DocumentException("You can only add a writer to a PdfDocument once.");
@@ -486,7 +487,7 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public boolean newPage() throws DocumentException {
-		if (pageEmpty || (writer != null && writer.isPaused())) {
+		if (writer.getDirectContent().size() == 0 && (pageEmpty || (writer != null && writer.isPaused()))) {
 			return false;
 		}
 
@@ -516,7 +517,7 @@ class PdfDocument extends Document implements DocListener {
 		if (!open || close) {
 			throw new PdfException("The document isn't open.");
 		}
-		PdfIndirectReference pageReference = writer.add(page, new PdfContents(graphics, text));
+		PdfIndirectReference pageReference = writer.add(page, new PdfContents(graphics, text, writer.getDirectContent().toPdf()));
 		// we update the outlines
 		for (Iterator i = outlines.iterator(); i.hasNext(); ) {
 			PdfOutline outline = (PdfOutline) i.next();
@@ -638,6 +639,11 @@ class PdfDocument extends Document implements DocListener {
 		fontDictionary.put(font.getName(), writer.add(font));
 	}
 
+    public void addFont(PdfName name, PdfIndirectReference ref)
+    {
+        fontDictionary.put(name, ref);
+    }
+    
 	/**
 	 * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
 	 *
@@ -1142,6 +1148,7 @@ class PdfDocument extends Document implements DocListener {
 		annotations = new PdfArray();
 		fontDictionary = new PdfFontDictionary();
 		xObjectDictionary = new PdfXObjectDictionary();
+        writer.resetContent();
 
 		// the pagenumber is incremented
 		pageN++;
