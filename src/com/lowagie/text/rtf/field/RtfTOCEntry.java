@@ -98,7 +98,6 @@ public class RtfTOCEntry extends RtfField {
     /**
      * Constructs a RtfTOCEntry with a certain entry text.
      * 
-     * @param doc The RtfDocument this RtfTOCEntry belongs to
      * @param entry The entry text to display
      * @param font The Font to use
      */
@@ -145,6 +144,8 @@ public class RtfTOCEntry extends RtfField {
     
     /**
      * UNUSED
+     * @return null
+     * @throws IOException never thrown
      */
     protected byte[] writeFieldInstContent() throws IOException {
         return null;
@@ -152,6 +153,8 @@ public class RtfTOCEntry extends RtfField {
 
     /**
      * UNUSED
+     * @return null
+     * @throws IOException never thrown
      */
     protected byte[] writeFieldResultContent() throws IOException {
         return null;

@@ -225,6 +225,7 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
     /**
      * Tests if this RtfColor is equal to another RtfColor.
      * 
+     * @param obj another RtfColor
      * @return <code>True</code> if red, green and blue values of the two colours match,
      *   <code>false</code> otherwise.
      */

@@ -60,6 +60,7 @@ public class RtfPageNumber extends RtfField {
      * Writes the field instruction content
      * 
      * @return A byte array containing "PAGE"
+     * @throws IOException
      */
     protected byte[] writeFieldInstContent() throws IOException {
         return "PAGE".getBytes();
@@ -69,6 +70,7 @@ public class RtfPageNumber extends RtfField {
      * Writes the field result content
      * 
      * @return An empty byte array
+     * @throws IOException
      */
     protected byte[] writeFieldResultContent() throws IOException {
         return new byte[0];
