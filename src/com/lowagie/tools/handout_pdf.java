@@ -25,9 +25,13 @@ import java.io.*;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 
+/**
+ * Takes an existing PDF file and makes handouts.
+ */
 public class handout_pdf extends java.lang.Object {
     
 	/**
+	 * Makes handouts based on an existing PDF file.
 	 * @param args the command line arguments
 	 */
 	public static void main (String args[]) {

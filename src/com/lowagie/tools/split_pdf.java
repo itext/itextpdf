@@ -13,11 +13,6 @@
  *
  * itext@lowagie.com
  */
-
-/**
- * This class demonstrates how to splot a PDF file using iText.
- * @author Bruno Lowagie
- */
 package com.lowagie.tools;
 
 import java.io.*;
@@ -25,6 +20,10 @@ import java.io.*;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 
+/**
+ * This class demonstrates how to split a PDF file using iText.
+ * @author Bruno Lowagie
+ */
 public class split_pdf extends java.lang.Object {
     
     /**
