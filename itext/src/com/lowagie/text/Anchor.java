@@ -334,7 +334,7 @@ public class Anchor extends Phrase implements TextElementArray {
             buf.append(((Element)i.next()).toXml(indent + 1));
         }
         DocWriter.addTabs(buf, indent);
-        buf.append("</").append(ElementTags.ANCHOR).append(">");
+        buf.append("</").append(ElementTags.ANCHOR).append(">\n");
         return buf.toString();
     }
     

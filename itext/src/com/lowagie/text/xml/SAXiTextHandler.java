@@ -102,21 +102,18 @@ public class SAXiTextHandler extends HandlerBase {
  * @param       attributes  the list of attributes
  */
     
-    public void handleStartingTags(String name, Properties attributes) {
-        
+    public void handleStartingTags(String name, Properties attributes) {   
         // maybe there is some meaningful data that wasn't between tags
         if (currentChunk != null) {
-            if (currentChunk.content().trim().length() > 0) {
-                TextElementArray current;
-                try {
-                    current = (TextElementArray) stack.pop();
-                }
-                catch(EmptyStackException ese) {
-                    current = new Paragraph();
-                }
-                current.add(currentChunk);
-                stack.push(current);
+            TextElementArray current;
+            try {
+                current = (TextElementArray) stack.pop();
             }
+            catch(EmptyStackException ese) {
+                current = new Paragraph();
+            }
+            current.add(currentChunk);
+            stack.push(current);
             currentChunk = null;
         }
         
@@ -233,12 +230,17 @@ public class SAXiTextHandler extends HandlerBase {
             TextElementArray current;
             try {
                 current = (TextElementArray) stack.pop();
+                current.add(new Chunk("\n"));
+                stack.push(current);
             }
             catch(EmptyStackException ese) {
-                current = new Paragraph();
+                if (currentChunk == null) {
+                    currentChunk = new Chunk("\n");
+                }
+                else {
+                    currentChunk.append("\n");
+                }
             }
-            current.add(new Chunk("\n"));
-            stack.push(current);
             return;
         }
         
@@ -293,10 +295,28 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void characters(char[] ch, int start, int length) {
-        if (currentChunk == null) {
-            currentChunk = new Chunk("");
+        String content = new String(ch, start, length);
+        if (content.trim().length() == 0) {
+            return;
         }
-        currentChunk.append(new String(ch, start, length));
+        if (content.endsWith("\n") || content.endsWith(" ")) {
+            content = content.substring(0, content.length() - 1).trim() + " ";
+        }
+        else {
+            content = content.trim();
+        }
+        int newline;
+        while ((newline = content.indexOf("\n")) > -1) {
+            StringBuffer buf = new StringBuffer(content.substring(0, newline));
+            buf.append(" ");
+            buf.append(content.substring(newline + 1));
+        }
+        if (currentChunk == null) {
+            currentChunk = new Chunk(content);
+        }
+        else {
+            currentChunk.append(content);
+        }
     }
     
 /**
@@ -317,7 +337,6 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void handleEndingTags(String name) {
-
         try {
             // tags that don't have any content
             if (isNewpage(name) || Annotation.isTag(name) || Image.isTag(name) || isNewline(name)) {
@@ -338,7 +357,7 @@ public class SAXiTextHandler extends HandlerBase {
             }
             
             // chunks or other endtags
-            if (Chunk.isTag(name) || currentChunk != null) {
+            if (currentChunk != null) {
                 TextElementArray current;
                 try {
                     current = (TextElementArray) stack.pop();

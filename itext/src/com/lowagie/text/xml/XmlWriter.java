@@ -215,10 +215,8 @@ public class XmlWriter extends DocWriter implements DocListener {
                 case Element.AUTHOR:
                     itext.put(ElementTags.AUTHOR, ((Meta)element).content());
                     return true;
-                case Element.RECTANGLE:
-                    return false;
                     default:
-                        os.write(getISOBytes(element.toString()));
+                        os.write(getISOBytes(element.toXml(1)));
                         return true;
             }
         }
