@@ -1852,7 +1852,7 @@ class PdfDocument extends Document implements DocListener {
         float lowerleft = indentTop() - currentHeight - image.scaledHeight() -diff;
         float mt[] = image.matrix();
         float startPosition = indentLeft() - mt[4];
-        if ((image.alignment() & Image.MIDDLE) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
+        if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
         if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.scaledWidth()) / 2) - mt[4];
         if (image.hasAbsoluteX()) startPosition = image.absoluteX();
         addImage(graphics, image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);

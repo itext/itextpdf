@@ -198,12 +198,7 @@ public class PdfCell extends Rectangle {
                     for (Iterator j = element.getChunks().iterator(); j.hasNext(); ) {
                         Chunk c = (Chunk) j.next();
                         chunk = new PdfChunk(c, (PdfAction)(allActions.get(aCounter++)));
-                        while (((overflow = line.add(chunk)) != null)
-                        // this line was added by Andreas Kniest 20010209 + 20030429
-                        // it can change the functionality of existing programs
-                        // (but I guess very few use NOWRAP)
-                            && (!cell.noWrap())
-                        ) {
+                        while ((overflow = line.add(chunk)) != null) {
                             lines.add(line);
                             line = new PdfLine(left, right, alignment, leading);
                             chunk = overflow;
@@ -223,6 +218,29 @@ public class PdfCell extends Rectangle {
         if (line.size() > 0) {
             lines.add(line);
         }
+		if (lines.size() > cell.getMaxLines()) {
+			while (lines.size() > cell.getMaxLines()) {
+				lines.remove(lines.size()-1);
+			}
+			if (cell.getMaxLines() > 0) {
+				String more = cell.getShowTruncation();
+				if (more != null && more.length() > 0) {
+					// Denote that the content has been truncated
+					PdfLine lastLine = (PdfLine)lines.get(lines.size()-1);
+					if (lastLine.size() >= 0) {
+						PdfChunk lastChunk = lastLine.getChunk(lastLine.size()-1);
+						float moreWidth = new PdfChunk(more, lastChunk).width();
+						while (lastChunk.toString().length() > 0 && lastChunk.width()+moreWidth > right-left) {
+							// Remove characters to leave room for the 'more' indicator
+							lastChunk.setValue(lastChunk.toString().substring(0, lastChunk.length()-1));
+						}
+						lastChunk.setValue(lastChunk.toString()+more);
+					} else {
+						lastLine.add(new PdfChunk(new Chunk(more), null)); 
+					}
+				}
+			}
+		}
         // we set some additional parameters
         setBottom(top - leading * (lines.size() - 1) - cellpadding - height - 2 * cellspacing);
         this.cellpadding = cellpadding;
@@ -279,13 +297,13 @@ public class PdfCell extends Rectangle {
     /**
      * Adds an image to this Cell.
      *
-     * @param   imageOrg   the image to add
+     * @param   image   the image to add
      * @param   left    the left border
      * @param   right   the right border
      */
     
-    private float addImage(Image imageOrg, float left, float right, float height, int alignment) {
-        Image image = Image.getInstance(imageOrg);
+    private float addImage(Image image, float left, float right, float height, int alignment) {
+        Image image = Image.getInstance(image);
         if (image.scaledWidth() > right - left) {
             image.scaleToFit(right - left, Float.MAX_VALUE);
         }
