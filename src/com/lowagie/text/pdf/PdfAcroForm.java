@@ -150,19 +150,46 @@ public class PdfAcroForm extends PdfDictionary {
         writer.addAnnotation(formField);
     }
     
-    public void addHtmlPostButton(String name, String caption, String url, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
+    public void addHtmlPostButton(String name, String caption, String value, String url, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
         PdfAction action = PdfAction.createSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT);
         PdfFormField button = new PdfFormField(writer, llx, lly, urx, ury, action);
-        button.setButton(PdfFormField.FF_PUSHBUTTON);
-        button.setFieldName(name);
+        setButtonParams(button, PdfFormField.FF_PUSHBUTTON, name, value);
+        drawButton(button, caption, font, fontSize, llx, lly, urx, ury);
+        addFormField(button);
+    }
+    
+    public void addResetButton(String name, String caption, String value, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
+        PdfAction action = PdfAction.createResetForm(null, 0);
+        PdfFormField button = new PdfFormField(writer, llx, lly, urx, ury, action);
+        setButtonParams(button, PdfFormField.FF_PUSHBUTTON, name, value);
+        drawButton(button, caption, font, fontSize, llx, lly, urx, ury);
+        addFormField(button);
+    }
+    
+    public void addMap(String name, String value, String url, PdfContentByte appearance, float llx, float lly, float urx, float ury) {
+        PdfAction action = PdfAction.createSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT | PdfAction.SUBMIT_COORDINATES);
+        PdfFormField button = new PdfFormField(writer, llx, lly, urx, ury, action);
+        setButtonParams(button, PdfFormField.FF_PUSHBUTTON, name, null);
+        PdfContentByte cb = writer.getDirectContent();
+        PdfAppearance pa = cb.createAppearance(urx - llx, ury - lly);
+        pa.add(appearance);
+        button.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, pa);
+        addFormField(button);
+    }
+    
+    public void setButtonParams(PdfFormField button, int characteristics, String name, String value) {
+        button.setButton(characteristics);
         button.setFlags(PdfAnnotation.FLAGS_PRINT);
         button.setPage();
-        button.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
+        button.setFieldName(name);
+        if (value != null) button.setValueAsString(value);
+    }
+    
+    public void drawButton(PdfFormField button, String caption, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
         PdfContentByte cb = writer.getDirectContent();
         PdfAppearance pa = cb.createAppearance(urx - llx, ury - lly);
         pa.drawButton(0f, 0f, urx - llx, ury - lly, caption, font, fontSize);
         button.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, pa);
-        addFormField(button);
     }
     
     public void addSingleLineTextField(String name, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
@@ -193,7 +220,6 @@ public class PdfAcroForm extends PdfDictionary {
         field.setFieldName(name);
         field.setFlags(PdfAnnotation.FLAGS_PRINT);
         field.setPage();
-        field.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
     }
     
     public void drawSingleLineOfText(PdfFormField field, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
