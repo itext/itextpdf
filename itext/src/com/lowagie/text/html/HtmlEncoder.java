@@ -90,7 +90,8 @@ public class HtmlEncoder {
         }
         
         // Special characters
-        htmlCode['\n'] = "<BR>\n";
+        htmlCode['\t'] = "";
+        htmlCode['\n'] = "<" + HtmlTags.NEWLINE + " />\n";
         htmlCode['\"'] = "&quot;"; // double quote
         htmlCode['&'] = "&amp;"; // ampersand
         htmlCode['<'] = "&lt;"; // lower than
@@ -136,7 +137,7 @@ public class HtmlEncoder {
                 buffer.append(character);
             }
         }
-        return buffer.toString();
+        return buffer.toString().trim();
     }
     
 /**
@@ -164,32 +165,32 @@ public class HtmlEncoder {
     }
     
 /**
- * Gets the HTML value for the align-key.
+ * Translates the alignment value.
  *
- * @param	align	the alignment
- * @return	a value
+ * @param   alignment   the alignment value
+ * @return  the translated value
  */
     
-    public static String getAlignment(int align) {
-        switch(align) {
-            case Element.ALIGN_LEFT:
-                return "Left";
-            case Element.ALIGN_CENTER:
-                return "Center";
-            case Element.ALIGN_RIGHT:
-                return "Right";
-            case Element.ALIGN_JUSTIFIED:
-                return "Justify";
-            case Element.ALIGN_TOP:
-                return "Top";
-            case Element.ALIGN_MIDDLE:
-                return "Middle";
-            case Element.ALIGN_BOTTOM:
-                return "Bottom";
-            case Element.ALIGN_BASELINE:
-                return "Baseline";
-                default:
-                    return "Left";
+    public static String getAlignment(int alignment) {
+        switch(alignment) {
+        case Element.ALIGN_LEFT:
+            return HtmlTags.ALIGN_LEFT;
+        case Element.ALIGN_CENTER:
+            return HtmlTags.ALIGN_CENTER;
+        case Element.ALIGN_RIGHT:
+            return HtmlTags.ALIGN_RIGHT;
+        case Element.ALIGN_JUSTIFIED:
+            return HtmlTags.ALIGN_JUSTIFIED;
+        case Element.ALIGN_TOP:
+            return HtmlTags.ALIGN_TOP;
+        case Element.ALIGN_MIDDLE:
+            return HtmlTags.ALIGN_MIDDLE;
+        case Element.ALIGN_BOTTOM:
+            return HtmlTags.ALIGN_BOTTOM;
+        case Element.ALIGN_BASELINE:
+            return HtmlTags.ALIGN_BASELINE;
+        default:
+            return HtmlTags.DEFAULT;
         }
     }
 }

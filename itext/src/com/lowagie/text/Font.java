@@ -236,12 +236,19 @@ public class Font implements Comparable {
         if ((value = attributes.getProperty(ElementTags.STYLE)) != null) {
             setStyle(value);
         }
-        if (attributes.getProperty(ElementTags.RED) != null &&
-        attributes.getProperty(ElementTags.GREEN) != null &&
-        attributes.getProperty(ElementTags.BLUE) != null) {
-            setColor(Integer.parseInt(attributes.getProperty(ElementTags.RED)),
-            Integer.parseInt(attributes.getProperty(ElementTags.GREEN)),
-            Integer.parseInt(attributes.getProperty(ElementTags.BLUE)));
+        String r = null;
+        String g = null;
+        String b = null;
+        if ((r = attributes.getProperty(ElementTags.RED)) != null ||
+        (g = attributes.getProperty(ElementTags.GREEN)) != null ||
+        (b = attributes.getProperty(ElementTags.BLUE)) != null) {
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            if (r != null) red = Integer.parseInt(r);
+            if (g != null) green = Integer.parseInt(g);
+            if (b != null) blue = Integer.parseInt(b);
+            setColor(new Color(red, green, blue));
         }
         else if ((value = attributes.getProperty(ElementTags.COLOR)) != null) {
             setColor(ElementTags.decodeColor(value));

@@ -61,6 +61,30 @@ import com.lowagie.text.Watermark;
  */
 
 public abstract class DocWriter implements DocListener {
+        
+/** This is some byte that is often used. */
+    public static final byte NEWLINE = (byte)'\n';
+    
+/** This is some byte that is often used. */
+    public static final byte TAB = (byte)'\t';
+    
+/** This is some byte that is often used. */
+    public static final byte LT = (byte)'<';
+    
+/** This is some byte that is often used. */
+    public static final byte SPACE = (byte)' ';
+    
+/** This is some byte that is often used. */
+    public static final byte EQUALS = (byte)'=';
+    
+/** This is some byte that is often used. */
+    public static final byte QUOTE = (byte)'\"';
+    
+/** This is some byte that is often used. */
+    public static final byte GT = (byte)'>';
+    
+/** This is some byte that is often used. */
+    public static final byte FORWARD = (byte)'/';
     
     // membervariables
     
@@ -334,7 +358,77 @@ public abstract class DocWriter implements DocListener {
  * @param	string		the <CODE>String</CODE> to write
  */
     
-    public final void write(String string) throws IOException {
+    protected final void write(String string) throws IOException {
         os.write(DocWriter.getISOBytes(string));
+    }
+    
+/**
+ * Writes a number of tabs.
+ *
+ * @param   indent  the number of tabs to add
+ */
+    
+    protected final void addTabs(int indent) throws IOException {
+        for (int i = 0; i < indent; i++) {
+            os.write(TAB);
+        }
+    }
+    
+/**
+ * Writes a key-value pair to the outputstream.
+ *
+ * @param   key     the name of an attribute
+ * @param   value   the value of an attribute
+ */
+ 
+    protected void write(String key, String value)
+    throws IOException {
+        os.write(SPACE);
+        write(key);
+        os.write(EQUALS);
+        os.write(QUOTE);
+        write(value);
+        os.write(QUOTE);
+    }
+    
+/**
+ * Writes a starttag to the outputstream.
+ *
+ * @param   tag     the name of the tag
+ */
+ 
+    protected void writeStart(String tag)
+    throws IOException {
+        os.write(LT);
+        write(tag);
+    }
+    
+/**
+ * Writes an endtag to the outputstream.
+ *
+ * @param   tag     the name of the tag
+ */
+ 
+    protected void writeEnd(String tag)
+    throws IOException {
+        os.write(LT);
+        os.write(FORWARD);
+        write(tag);
+        os.write(GT);
+        os.write(NEWLINE);
+    }
+    
+/**
+ * Writes an endtag to the outputstream.
+ *
+ * @param   tag     the name of the tag
+ */
+ 
+    protected void writeEnd()
+    throws IOException {
+        os.write(SPACE);
+        os.write(FORWARD);
+        os.write(GT);
+        os.write(NEWLINE);
     }
 }

@@ -992,7 +992,6 @@ class PdfDocument extends Document implements DocListener {
                     // before every table, we add a new line and flush all lines
                     newLine();
                     flushLines();
-                    
                     // initialisation of parameters
                     boolean newPage = false;
                     float pagetop = indentTop();
@@ -1008,7 +1007,7 @@ class PdfDocument extends Document implements DocListener {
                     PdfTable table = new PdfTable((Table) element,
                     indentLeft(), indentRight(),
                     currentHeight > 0 ? pagetop - currentHeight : pagetop);
-                    
+
                     // drawing the table
                     ArrayList cells = table.getCells();
                     ArrayList headercells = null;
