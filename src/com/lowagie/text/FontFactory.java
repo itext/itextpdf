@@ -201,8 +201,7 @@ public class FontFactory extends java.lang.Object {
             Properties styleAttributes = MarkupParser.parseAttributes(value);
             fontname = (String)styleAttributes.remove(MarkupTags.CSS_FONTFAMILY);
             if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
-                if (value.endsWith("pt")) value = value.substring(0, value.length() - 2);
-                size = Float.valueOf(value + "f").floatValue();
+                size = MarkupParser.parseLength(value);
             }
             if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
                 style |= Font.getStyleValue(value);
@@ -435,5 +434,13 @@ public class FontFactory extends java.lang.Object {
     
     public static Set getRegisteredFonts() {
         return Chunk.getKeySet(trueTypeFonts);
+    }
+    
+/**
+ * Gets a set of registered fontnames.
+ */
+    
+    public static boolean contains(String fontname) {
+        return trueTypeFonts.containsKey(fontname);
     }
 }

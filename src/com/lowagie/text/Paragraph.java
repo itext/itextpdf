@@ -53,6 +53,9 @@ package com.lowagie.text;
 import java.util.Iterator;
 import java.util.Properties;
 
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.markup.MarkupParser;
+
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
  * <P>
@@ -212,6 +215,9 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
+        }
+        else if ((value = (String)attributes.remove(MarkupTags.CSS_LINEHEIGHT)) != null) {
+            setLeading(MarkupParser.parseLength(value));
         }
         else {
             setLeading(16);

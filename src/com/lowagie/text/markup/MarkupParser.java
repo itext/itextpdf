@@ -54,13 +54,15 @@ import java.awt.Color;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import com.lowagie.text.FontFactory;
+
 /**
  * This class contains several static methods that can be used to parse markup.
  *
  * @author  blowagie
  */
 public class MarkupParser {
-
+    
 /** Creates new MarkupParser */
     private MarkupParser() {
     }
@@ -71,7 +73,7 @@ public class MarkupParser {
  * @param   string   a String of this form: 'key1="value1"; key2="value2";... keyN="valueN" '
  * @return  a Properties object
  */
-
+    
     public static Properties parseAttributes(String string) {
         Properties result = new Properties();
         if (string == null) return result;
@@ -97,12 +99,13 @@ public class MarkupParser {
  * @param   string   a String of this form: 'style1 ... styleN size/leading font1 ... fontN'
  * @return  a Properties object
  */
-
+    
     public static Properties parseFont(String string) {
         Properties result = new Properties();
         if (string == null) return result;
         int pos = 0;
         String value;
+        string = string.trim();
         while (string.length() > 0) {
             pos = string.indexOf(" ", pos);
             if (pos == -1) {
@@ -110,7 +113,7 @@ public class MarkupParser {
                 string = "";
             }
             else {
-                value = string.substring(0, pos); 
+                value = string.substring(0, pos);
                 string = string.substring(pos).trim();
             }
             if (value.equalsIgnoreCase("bold")) {
@@ -125,8 +128,82 @@ public class MarkupParser {
                 result.setProperty(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_OBLIQUE);
                 continue;
             }
+            float f;
+            if ((f = parseLength(value)) > 0) {
+                result.setProperty(MarkupTags.CSS_FONTSIZE, String.valueOf(f) + "pt");
+                int p = value.indexOf("/");
+                if (p > -1 && p < value.length() - 1) {
+                    result.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(value.substring(p + 1)) + "pt");
+                }
+            }
+            if (value.endsWith(",")) {
+                value = value.substring(0, value.length() - 1);
+                if (FontFactory.contains(value)) {
+                    result.setProperty(MarkupTags.CSS_FONTFAMILY, value);
+                    return result;
+                }
+            }
+            if ("".equals(string) && FontFactory.contains(value)) {
+                result.setProperty(MarkupTags.CSS_FONTFAMILY, value);
+            }
         }
         return result;
+    }
+    
+/**
+ * Parses a length.
+ *
+ * @param   string  a length in the form of an optional + or -, followed by a number and a unit.
+ * @return  a float
+ */
+    
+    public static float parseLength(String string) {
+        int pos = 0;
+        int length = string.length();
+        boolean ok = true;
+        while (ok && pos < length) {
+            switch(string.charAt(pos)) {
+                case '+':
+                case '-':
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '.':
+                    pos++;
+                    break;
+                    default:
+                        ok = false;
+            }
+        }
+        if (pos == 0) return 0f;
+        if (pos == length) return Float.valueOf(string + "f").floatValue();
+        float f = Float.valueOf(string.substring(0, pos) + "f").floatValue();
+        string = string.substring(pos);
+        // inches
+        if (string.startsWith("in")) {
+            return f * 72f;
+        }
+        // centimeters
+        if (string.startsWith("cm")) {
+            return (f / 2.54f) * 72f;
+        }
+        // millimeters
+        if (string.startsWith("mm")) {
+            return (f / 25.4f) * 72f;
+        }
+        // picas
+        if (string.startsWith("pc")) {
+            return f * 12f;
+        }
+        // default: we assume the length was measured in points
+        return f;
     }
     
 /**
