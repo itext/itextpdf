@@ -63,7 +63,7 @@ import com.lowagie.text.Phrase;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2002/02/12 14:30:35 $
+ * @version $Revision$Date: 2002/03/06 13:29:37 $
  */
 public class RtfHeaderFooter extends HeaderFooter {
 
@@ -82,7 +82,7 @@ public class RtfHeaderFooter extends HeaderFooter {
 
 
     public RtfHeaderFooter( Element content ) {
-        super( null, null );
+        super( new Phrase(""), false );	// Modified by Mark Hall (mhall@austromail.at) 01.04.2002
         this.content = content;
     }    
 

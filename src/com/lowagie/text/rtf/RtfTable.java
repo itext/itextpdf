@@ -1,4 +1,4 @@
-/** 
+/**
  * $Id$
  * $Name$
  *
@@ -137,7 +137,7 @@ public class RtfTable
    *
    * @param os The <code>OutputStream</code> that the content of the <code>RtfTable</code> is to be written to
    */
-  public boolean writeTable(OutputStream os) throws DocumentException, IOException
+  public boolean writeTable(ByteArrayOutputStream os) throws DocumentException, IOException
   {
     // <!-- steffen
     int size = rowsList.size();
@@ -146,10 +146,14 @@ public class RtfTable
         RtfRow row = (RtfRow)rowsList.get( i );
         row.writeRow( os, i, origTable );
       }
-    // -->    
-    os.write(RtfWriter.escape);
-    os.write(RtfWriter.paragraphDefaults);
-    os.write(RtfWriter.paragraph);
+    // -->
+    if(!writer.writingHeaderFooter())
+    {
+      os.write(RtfWriter.escape);
+      os.write(RtfWriter.paragraphDefaults);
+      os.write(RtfWriter.escape);
+      os.write(RtfWriter.paragraph);
+    }
     return true;
   }
 
