@@ -746,6 +746,8 @@ public class RtfWriter extends DocWriter implements DocListener
         {
             content.write(escape);
             content.write(newPage);
+            content.write(escape);
+            content.write(paragraph);
         }
         catch(IOException e)
         {
@@ -792,7 +794,7 @@ public class RtfWriter extends DocWriter implements DocListener
     }
 
   /**
-   * Sets the page margins
+   * Write the table of contents.
    *
    * @param tocTitle The title that will be displayed above the TOC
    * @param titleFont The <code>Font</code> that will be used for the tocTitle
@@ -943,7 +945,7 @@ public class RtfWriter extends DocWriter implements DocListener
         while(chunks.hasNext())
         {
             Chunk ch = (Chunk) chunks.next();
-            ch.setFont(ch.font().difference(paragraphElement.font()));
+            ch.setFont(paragraphElement.font().difference(ch.font()));
         }
 	ByteArrayOutputStream save = content;
 	content = out;
@@ -977,7 +979,7 @@ public class RtfWriter extends DocWriter implements DocListener
       while(chunks.hasNext())
       {
         Chunk ch = (Chunk) chunks.next();
-        ch.setFont(ch.font().difference(phrase.font()));
+        ch.setFont(phrase.font().difference(ch.font()));
       }
       ByteArrayOutputStream save = content;
       content = out;
@@ -2148,19 +2150,23 @@ public class RtfWriter extends DocWriter implements DocListener
        StringBuffer ret = new StringBuffer( length );
        for(int i = 0; i < length; i++) {
            char ch = str.charAt( i );
-	   if(ch == '\\')
-	     {
-	       ret.append("\\\\");
-	     }
-	   else if(ch == '\n')
-	     {
-	       ret.append("\\par ");
-	     }
-           else if( ((int)ch) > z ) {
+
+           if(ch == '\\')
+             {
+               ret.append("\\\\");
+             }
+           else if(ch == '\n')
+             {
+               ret.append("\\par ");
+             }
+           else if( ((int)ch) > z )
+             {
                ret.append( "\\u" ).append( (long)ch ).append( 'G' );
-           } else {
+             }
+           else
+             {
                ret.append( ch );
-           }
+             }
        }
        return ret.toString();
   }

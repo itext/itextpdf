@@ -193,7 +193,7 @@ public class RtfRow
     int cellspacing, int borders, java.awt.Color borderColor, float borderWidth,
     int y)
     {
-        // the with of this row is the absolute witdh, calculated from the
+        // the width of this row is the absolute witdh, calculated from the
         // proportional with of the table and the total width of the page
         this.width = pageWidth / 100 * tableWidth;
         this.cellpadding = cellpadding;
