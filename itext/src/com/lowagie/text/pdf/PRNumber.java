@@ -26,7 +26,6 @@ class PRNumber extends PRObject{
      * @param		type			one of the following types: <CODE>INTEGER</CODE> or <CODE>REAL</CODE>
      * @param		content			value of the new <CODE>PdfNumber</CODE>-object
      *
-     * @exception	BadPdfFormatException	Signals that a given type doesn't exist of that a given value isn't a number.
      */
     
     PRNumber(String content) {

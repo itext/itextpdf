@@ -13,7 +13,6 @@ import com.lowagie.text.DocumentException;
 /**
  *
  * @author  Administrator
- * @version 
  */
 class EnumerateTTC extends TrueTypeFont{
 

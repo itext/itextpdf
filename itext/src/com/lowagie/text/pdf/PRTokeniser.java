@@ -10,7 +10,6 @@ import java.io.*;
 /**
  *
  * @author  psoares
- * @version 
  */
 class PRTokeniser {
     
