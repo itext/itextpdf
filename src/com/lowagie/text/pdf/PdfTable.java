@@ -134,19 +134,22 @@ class PdfTable extends Rectangle {
         // loop over all the rows
         for (Iterator rowIterator = table.iterator(); rowIterator.hasNext(); ) {
             row = (Row) rowIterator.next();
-            if (! row.isEmpty()) {
+            if (row.isEmpty()) {
+                if (rowNumber < rows - 1) offsets[rowNumber + 1] = offsets[rowNumber];
+            }
+            else {
                 for(int i = 0; i < row.columns(); i++) {
                     cell = (Cell) row.getCell(i);
                     if (cell != null) {
-                        currentCell = new PdfCell(cell, rowNumber, positions[i], positions[i + cell.colspan()], offsets[rowNumber], cellspacing, cellpadding);
+                        currentCell = new PdfCell(cell, rowNumber, positions[i], positions[i + cell.colspan()], offsets[rowNumber], cellspacing, cellpadding);                        
                         try {
                             if (offsets[rowNumber] - currentCell.height() - cellpadding < offsets[rowNumber + currentCell.rowspan()]) {
                                 offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() - cellpadding;
                             }
                         }
                         catch(ArrayIndexOutOfBoundsException aioobe) {
-                            if (offsets[rowNumber] - currentCell.height() < offsets[offsets.length - 1]) {
-                                offsets[offsets.length - 1] = offsets[rowNumber] - currentCell.height();
+                            if (offsets[rowNumber] - currentCell.height() < offsets[rows - 1]) {
+                                offsets[rows - 1] = offsets[rowNumber] - currentCell.height();
                             }
                         }
                         if (rowNumber < firstDataRow) {
@@ -168,10 +171,10 @@ class PdfTable extends Rectangle {
                 currentCell.setBottom(offsets[currentCell.rownumber() + currentCell.rowspan()]);
             }
             catch(ArrayIndexOutOfBoundsException aioobe) {
-                currentCell.setBottom(offsets[offsets.length - 1]);
+                currentCell.setBottom(offsets[rows - 1]);
             }
         }
-        setBottom(offsets[offsets.length - 1]);
+        setBottom(offsets[rows - 1]);
     }
     
     // methods
