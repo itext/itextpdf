@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * $Name$
  *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
