@@ -103,7 +103,7 @@ public class HtmlEncoder {
         }
         
         // Special characters
-        htmlCode['\t'] = "";
+        htmlCode['\t'] = "\t";
         htmlCode['\n'] = "<" + HtmlTags.NEWLINE + " />\n";
         htmlCode['\"'] = "&quot;"; // double quote
         htmlCode['&'] = "&amp;"; // ampersand
