@@ -574,7 +574,7 @@ public abstract class BaseFont {
         for (int k = 0; k < chars.length; ++k) {
             int bbox[] = getCharBBox(chars[k]);
             if (bbox != null && bbox[3] > max)
-                max = bbox[1];
+                max = bbox[3];
         }
         return max;
     }
