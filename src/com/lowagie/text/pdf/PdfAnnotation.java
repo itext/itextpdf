@@ -98,6 +98,9 @@ public class PdfAnnotation extends PdfDictionary {
     /** Holds value of property used. */
     protected boolean used = false;
     
+    /** Holds value of property placeInPage. */
+    private int placeInPage = -1;
+    
     // constructors
     protected PdfAnnotation(PdfWriter writer, Rectangle rect) {
         this.writer = writer;
@@ -401,4 +404,20 @@ public class PdfAnnotation extends PdfDictionary {
     public void setPage() {
         put(PdfName.P, writer.getCurrentPage());
     }
+    
+    /** Getter for property placeInPage.
+     * @return Value of property placeInPage.
+     */
+    public int getPlaceInPage() {
+        return placeInPage;
+    }
+    
+    /** Places the annotation in a specified page that must be greater
+     * or equal to the current one. The first page is 1.
+     * @param placeInPage New value of property placeInPage.
+     */
+    public void setPlaceInPage(int placeInPage) {
+        this.placeInPage = placeInPage;
+    }
+    
 }

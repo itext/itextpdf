@@ -1361,6 +1361,10 @@ public class PdfWriter extends DocWriter {
         return getPageReference(currentPageNumber);
     }
     
+    int getCurrentPageNumber() {
+        return currentPageNumber;
+    }
+    
     /** Adds the <CODE>PdfAnnotation</CODE> to the calculation order
      * array.
      * @param annot the <CODE>PdfAnnotation</CODE> to be added
