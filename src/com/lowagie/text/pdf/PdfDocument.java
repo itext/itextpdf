@@ -313,6 +313,9 @@ class PdfDocument extends Document implements DocListener {
 
 	// resources
 
+	/** This is the size of the current Page. */
+	protected Rectangle thisPageSize = null;
+
 	/** This is the FontDictionary of the current Page. */
 	protected PdfFontDictionary fontDictionary;
 
@@ -465,7 +468,7 @@ class PdfDocument extends Document implements DocListener {
 		}
 		resources.add(new PdfProcSet(procset));
 		// we make a new page and add it to the document
-		PdfPage page = new PdfPage(new PdfRectangle(pageSize), resources);
+		PdfPage page = new PdfPage(new PdfRectangle(thisPageSize), resources);
 		// we add the annotations
 		if (annotations.size() > 0) {
 			page.put(PdfName.ANNOTS, annotations);
@@ -1113,6 +1116,7 @@ class PdfDocument extends Document implements DocListener {
 		int oldAlignment = alignment;
 
 		// backgroundcolors, etc...
+		thisPageSize = pageSize;
 		if (pageSize.backgroundColor() != null
 			|| pageSize.hasBorders()
 			|| pageSize.borderColor() != null
