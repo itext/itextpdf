@@ -60,7 +60,7 @@ import com.lowagie.text.rtf.text.RtfPhrase;
 
 /**
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfAnchor extends RtfField {

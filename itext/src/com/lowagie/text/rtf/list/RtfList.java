@@ -74,7 +74,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfList stores one List. It also provides the methods to write the
  * list declaration and the list data.
  *  
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfList extends RtfElement implements RtfExtendedElement {

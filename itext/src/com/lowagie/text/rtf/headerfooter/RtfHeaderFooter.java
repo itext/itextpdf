@@ -23,7 +23,7 @@ import com.lowagie.text.rtf.field.RtfPageNumber;
  * The RtfHeaderFooter represents one header or footer. This class can be used
  * directly.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {

@@ -78,7 +78,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Date;
-import java.math.BigInteger;
 import com.lowagie.text.ExceptionConverter;
 
 import com.lowagie.bc.asn1.ASN1InputStream;
@@ -92,10 +91,8 @@ import com.lowagie.bc.asn1.DERInteger;
 import com.lowagie.bc.asn1.ASN1TaggedObject;
 import com.lowagie.bc.asn1.DERConstructedSet;
 import com.lowagie.bc.asn1.DERSequence;
-import com.lowagie.bc.asn1.DERObjectIdentifier;
 import com.lowagie.bc.asn1.DERNull;
 import com.lowagie.bc.asn1.ASN1EncodableVector;
-import com.lowagie.bc.asn1.DERNull;
 import com.lowagie.bc.asn1.DERSet;
 import com.lowagie.bc.asn1.DERString;
 import com.lowagie.bc.asn1.ASN1OutputStream;

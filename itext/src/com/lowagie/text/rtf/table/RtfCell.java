@@ -73,7 +73,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * The RtfCell is an extension of Cell, that supports a multitude of different
  * borderstyles.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
  * @author Benoit WIART <b.wiart@proxiad.com>

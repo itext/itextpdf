@@ -63,7 +63,7 @@ import com.lowagie.text.rtf.RtfExtendedElement;
  * The RtfPageSetting stores the page size / page margins for a RtfDocument.
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *  
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfPageSetting extends RtfElement implements RtfExtendedElement {

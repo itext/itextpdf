@@ -69,7 +69,7 @@ import com.lowagie.text.rtf.style.RtfFontList;
  * The RtfDocumentHeader contains all classes required for the generation of
  * the document header area.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfDocumentHeader extends RtfElement {

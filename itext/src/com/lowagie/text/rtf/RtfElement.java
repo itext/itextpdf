@@ -55,7 +55,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
 /**
  * RtfElement is the base class for all RTF Element classes
  *
- * Version: $Revision$
+ * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfElement implements RtfBasicElement {

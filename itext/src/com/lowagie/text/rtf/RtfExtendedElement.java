@@ -53,7 +53,7 @@ package com.lowagie.text.rtf;
 /**
  * The RtfExtendedElement interface is to be used for elements that also
  * write data into the definition part of the rtf document
- * Version: $Revision$
+ * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public interface RtfExtendedElement extends RtfBasicElement {

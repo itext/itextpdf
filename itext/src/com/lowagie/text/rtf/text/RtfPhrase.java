@@ -53,7 +53,6 @@ package com.lowagie.text.rtf.text;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -65,7 +64,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
 
 /**
  * The RtfPhrase contains multiple RtfChunks
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfPhrase extends RtfElement {

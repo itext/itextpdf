@@ -100,8 +100,6 @@ import java.util.Set;
 import java.util.Iterator;
 import java.awt.font.TextAttribute;
 
-import java.awt.image.BufferedImage;
-
 public class PdfGraphics2D extends Graphics2D {
     
     private static final int FILL = 1;

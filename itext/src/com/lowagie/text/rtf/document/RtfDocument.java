@@ -62,7 +62,7 @@ import java.util.ArrayList;
  * The RtfDocument stores all document related data and also the main data stream.
  * INTERNAL CLASS - NOT TO BE USED DIRECTLY
  *
- * Version: $Revision$
+ * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Todd Bush (Todd.Bush@canopysystems.com) [Tab support]
  */

@@ -65,7 +65,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfBorderGroup represents a collection of RtfBorders to use in a RtfCell
  * or RtfTable.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfBorderGroup extends RtfElement {

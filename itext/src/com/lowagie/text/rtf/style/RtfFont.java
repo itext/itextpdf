@@ -62,7 +62,7 @@ import java.io.IOException;
  * The RtfFont class stores one font for an rtf document. It extends Font,
  * so can be set as a font, to allow adding of fonts with arbitrary names.
  *
- * Version: $Revision$
+ * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfFont extends Font implements RtfExtendedElement {

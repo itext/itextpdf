@@ -60,7 +60,7 @@ import java.io.OutputStream;
 /**
  * The RtfWriter allows the creation of rtf documents via the iText system
  *
- * Version: $Revision$
+ * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfWriter2 extends DocWriter implements DocListener {

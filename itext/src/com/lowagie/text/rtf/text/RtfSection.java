@@ -70,7 +70,7 @@ import com.lowagie.text.rtf.field.RtfTOCEntry;
  * The RtfSection wraps a Section element.
  * INTERNAL CLASS
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfSection extends RtfElement {
