@@ -58,21 +58,18 @@ public class BuildTutorial {
 	 */
 	public static void action(File current, File destination, File xsl_examples, File xsl_site) {
 		if (current.isDirectory()) {
-			File[] xmlFiles = current.listFiles();
-			File cursor;
 			File dest = new File(destination, current.getName());
 			dest.mkdir();
+			File cursor;
+			File[] xmlFiles = current.listFiles();
 			for (int i = 0; i < xmlFiles.length; i++) {
 				cursor = xmlFiles[i];
 				action(cursor, dest, xsl_examples, xsl_site);
 			}
 		}
-		else if (current.getName().endsWith(".xml")) {
-			if (current.getName().equals("index.xml")) {
-				convert(current, xsl_examples, new File(destination, "build.xml"));
-			}
-			String htmlFile = current.getName().substring(0, current.getName().length() - 4) + ".html";
-			convert(current, xsl_site, new File(destination, htmlFile));
+		else if (current.getName().equals("index.xml")) {
+			convert(current, xsl_examples, new File(destination, "build.xml"));
+			convert(current, xsl_site, new File(destination, "index.html"));
 		}
 	}
 	
