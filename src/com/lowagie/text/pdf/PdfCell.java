@@ -278,6 +278,7 @@ public class PdfCell extends Rectangle {
         PdfLine line;
         float lineHeight;
         float currentPosition = Math.min(top(), top);
+        setTop(currentPosition + cellspacing);
         ArrayList result = new ArrayList();
         
         // we loop over the lines
@@ -290,18 +291,22 @@ public class PdfCell extends Rectangle {
             // if the currentPosition is higher than the bottom, we add the line to the result
             if (currentPosition > (bottom + cellpadding)) { // bugfix by Tom Ring and Veerendra Namineni
                 result.add(line);
-                // as soon as a line is part of the result, we blank it out, except for table headers
-                if (!header) {
-                    lines.set(i, new PdfLine(left(-cellpadding - cellspacing), right(-cellpadding - cellspacing), Element.ALIGN_LEFT, leading));
-                }
             }
             else {
                 aboveBottom = false;
             }
         }
         // if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
-        if (!header && aboveBottom) {
-            lines = new ArrayList();
+        if (!header) {
+            if (aboveBottom) {
+                lines = new ArrayList();
+            }
+            else {
+                size = result.size();
+                for (int i = 0; i < size; i++) {
+                    line = (PdfLine) lines.remove(0);
+                }
+            }
         }
         return result;
     }
