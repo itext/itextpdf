@@ -323,7 +323,7 @@ public class PdfReader {
     }
     
     /**
-     * @author Kazuya Ujihara
+     * author Kazuya Ujihara
      */
     private void readDecryptedDocObj() throws IOException {
         PdfObject encDic = trailer.get(PdfName.ENCRYPT);

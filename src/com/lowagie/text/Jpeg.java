@@ -61,8 +61,6 @@ import java.net.URL;
  *
  * @see		Element
  * @see		Image
- * @see		Gif
- * @see		Png
  */
 
 public class Jpeg extends Image implements Element {
