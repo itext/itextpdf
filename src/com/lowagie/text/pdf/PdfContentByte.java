@@ -2102,7 +2102,7 @@ public class PdfContentByte {
         resetRGBColorFill();
         beginText();
         setFontAndSize(bf, size);
-        showTextAligned(PdfContentByte.ALIGN_CENTER, text, llx + (urx - llx) / 2, lly + 0.2f * (ury - lly), 0);
+        showTextAligned(PdfContentByte.ALIGN_CENTER, text, llx + (urx - llx) / 2, lly + (ury - lly) / 2, 0);
         endText();
     }
     
