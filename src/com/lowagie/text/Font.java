@@ -454,7 +454,7 @@ public class Font implements Comparable {
             difference.baseFont = font.baseFont;
         }
         else {
-            if (font.family() != UNDEFINED) { 
+            if (font.family() != UNDEFINED) {
                 difference.family = font.family;
             }
             else if (this.baseFont != null) {
@@ -463,12 +463,12 @@ public class Font implements Comparable {
             else {
                 difference.family = this.family;
             }
-            int style1 = this.style;
-            int style2 = font.style();
-            if (style1 == UNDEFINED) style1 = 0;
-            if (style2 == UNDEFINED) style2 = 0;
-            difference.style = style1 | style2;
         }
+        int style1 = this.style;
+        int style2 = font.style();
+        if (style1 == UNDEFINED) style1 = 0;
+        if (style2 == UNDEFINED) style2 = 0;
+        difference.style = style1 | style2;
         if (font.size() == UNDEFINED) {
             difference.size = this.size;
         }
