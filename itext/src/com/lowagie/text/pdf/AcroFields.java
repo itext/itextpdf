@@ -295,6 +295,7 @@ public class AcroFields {
     PdfAppearance getAppearance(PdfDictionary merged, String text) throws IOException, DocumentException {
         topFirst = 0;
         TextField tx = new TextField(writer, null, null);
+        tx.setBorderWidth(0);
         // the text size and color
         PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
         if (da != null) {

@@ -261,11 +261,16 @@ public class TextField {
         BaseFont ufont = getRealFont();
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
         float h = box.height() - borderWidth * 2;
-        if (borderExtra)
+        float bw2 = borderWidth;
+        if (borderExtra) {
             h -= borderWidth * 2;
+            bw2 *= 2;
+        }
         float offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
+        offsetX = Math.max(offsetX, 1);
+        float offX = Math.min(bw2, offsetX);
         app.saveState();
-        app.rectangle(offsetX, offsetX, box.width() - 2 * offsetX, box.height() - 2 * offsetX);
+        app.rectangle(offX, offX, box.width() - 2 * offX, box.height() - 2 * offX);
         app.clip();
         app.newPath();
         if (textColor == null)
@@ -345,9 +350,14 @@ public class TextField {
                     usize = 4;
             }
             app.setFontAndSize(ufont, usize);
-            float offsetY = offsetX + (h - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
-            if (offsetY < offsetX)
-                offsetY = offsetX;
+            float offsetY = offX + ((box.height() - 2*offX) - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
+            if (offsetY < offX)
+                offsetY = offX;
+            if (offsetY - offX < -ufont.getFontDescriptor(BaseFont.DESCENT, usize)) {
+                float ny = -ufont.getFontDescriptor(BaseFont.DESCENT, usize) + offX;
+                float dy = box.height() - offX - ufont.getFontDescriptor(BaseFont.ASCENT, usize);
+                offsetY = Math.min(ny, Math.max(offsetY, dy));
+            }
             if ((options & COMB) != 0 && maxCharacterLength > 0) {
                 int textLen = Math.min(maxCharacterLength, text.length());
                 int position = 0;

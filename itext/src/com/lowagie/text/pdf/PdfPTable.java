@@ -176,28 +176,7 @@ public class PdfPTable implements Element{
      * @param table the <CODE>PdfPTable</CODE> to be copied
      */    
     public PdfPTable(PdfPTable table) {
-        relativeWidths = new float[table.relativeWidths.length];
-        absoluteWidths = new float[table.relativeWidths.length];
-        System.arraycopy(table.relativeWidths, 0, relativeWidths, 0, relativeWidths.length);
-        System.arraycopy(table.absoluteWidths, 0, absoluteWidths, 0, relativeWidths.length);
-        totalWidth = table.totalWidth;
-        totalHeight = table.totalHeight;
-        currentRowIdx = table.currentRowIdx;
-        tableEvent = table.tableEvent;
-        runDirection = table.runDirection;
-        defaultCell = new PdfPCell(table.defaultCell);
-        currentRow = new PdfPCell[table.currentRow.length];
-        isColspan = table.isColspan;
-        splitRows = table.splitRows;
-        spacingAfter = table.spacingAfter;
-        spacingBefore = table.spacingBefore;
-        headerRows = table.headerRows;
-        lockedWidth = table.lockedWidth;
-        extendLastRow = table.extendLastRow;
-        headersInEvent = table.headersInEvent;
-        widthPercentage = table.widthPercentage;
-        splitLate = table.splitLate;
-        skipFirstHeader = this.skipFirstHeader;
+        copyFormat(table);
         for (int k = 0; k < currentRow.length; ++k) {
             if (table.currentRow[k] == null)
                 break;
@@ -213,31 +192,40 @@ public class PdfPTable implements Element{
     
     public static PdfPTable shallowCopy(PdfPTable table) {
         PdfPTable nt = new PdfPTable();
-        nt.relativeWidths = new float[table.relativeWidths.length];
-        nt.absoluteWidths = new float[table.relativeWidths.length];
-        System.arraycopy(table.relativeWidths, 0, nt.relativeWidths, 0, nt.relativeWidths.length);
-        System.arraycopy(table.absoluteWidths, 0, nt.absoluteWidths, 0, nt.relativeWidths.length);
-        nt.totalWidth = table.totalWidth;
-        nt.totalHeight = table.totalHeight;
-        nt.currentRowIdx = 0;
-        nt.tableEvent = table.tableEvent;
-        nt.runDirection = table.runDirection;
-        nt.defaultCell = new PdfPCell(table.defaultCell);
-        nt.currentRow = new PdfPCell[table.currentRow.length];
-        nt.isColspan = table.isColspan;
-        nt.splitRows = table.splitRows;
-        nt.spacingAfter = table.spacingAfter;
-        nt.spacingBefore = table.spacingBefore;
-        nt.headerRows = table.headerRows;
-        nt.lockedWidth = table.lockedWidth;
-        nt.extendLastRow = table.extendLastRow;
-        nt.headersInEvent = table.headersInEvent;
-        nt.widthPercentage = table.widthPercentage;
-        nt.splitLate = table.splitLate;
-        nt.skipFirstHeader = table.skipFirstHeader;
+        nt.copyFormat(table);
         return nt;
     }
-    
+
+    /**
+     * Copies the format of the sourceTable without copying the content. 
+     * @param sourceTable
+     */
+    private void copyFormat(PdfPTable sourceTable) {
+        relativeWidths = new float[sourceTable.relativeWidths.length];
+        absoluteWidths = new float[sourceTable.relativeWidths.length];
+        System.arraycopy(sourceTable.relativeWidths, 0, relativeWidths, 0, relativeWidths.length);
+        System.arraycopy(sourceTable.absoluteWidths, 0, absoluteWidths, 0, relativeWidths.length);
+        totalWidth = sourceTable.totalWidth;
+        totalHeight = sourceTable.totalHeight;
+        currentRowIdx = 0;
+        tableEvent = sourceTable.tableEvent;
+        runDirection = sourceTable.runDirection;
+        defaultCell = new PdfPCell(sourceTable.defaultCell);
+        currentRow = new PdfPCell[sourceTable.currentRow.length];
+        isColspan = sourceTable.isColspan;
+        splitRows = sourceTable.splitRows;
+        spacingAfter = sourceTable.spacingAfter;
+        spacingBefore = sourceTable.spacingBefore;
+        headerRows = sourceTable.headerRows;
+        lockedWidth = sourceTable.lockedWidth;
+        extendLastRow = sourceTable.extendLastRow;
+        headersInEvent = sourceTable.headersInEvent;
+        widthPercentage = sourceTable.widthPercentage;
+        splitLate = sourceTable.splitLate;
+        skipFirstHeader = sourceTable.skipFirstHeader;
+        horizontalAlignment = sourceTable.horizontalAlignment;
+    }
+
     /** Sets the relative widths of the table.
      * @param relativeWidths the relative widths of the table.
      * @throws DocumentException if the number of widths is different than the number

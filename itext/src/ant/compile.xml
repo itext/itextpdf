@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- iText, a JAVA - PDF library                                      -->
+<!-- $Id$         -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<project name="iText.compile" default="help">
+	
+	<property file=".ant.properties" />
+	
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Help                                                             -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="help" description="--> shows the help screen">
+        <echo>COMPILING AND JARRING THE CODE (compile.xml)</echo>
+        <echo>ant compile: compiles iText</echo>
+        <echo>ant compile.debug: compiles iText and allows you to debug the code</echo>
+        <echo>ant jar: compiles and jars iText</echo>
+        <echo>ant jar.debug: compiles for debugging and jars iText</echo>
+        <echo />
+	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Compiling the code                                               -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="compile" description="--> compiles the iText code">
+        <mkdir dir="${itext.classes}" />
+        <javac srcdir="${itext.src}" destdir="${itext.classes}" />
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Compiling the code for debugging                                 -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="compile.debug" description="--> compiles the iText code for debugging">
+        <mkdir dir="${itext.classes}" />
+        <javac srcdir="${itext.src}" destdir="${itext.classes}" debug="true" debuglevel="lines,vars,source" />
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Jarring the code                                                 -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="make.jar" description="--> makes a jarfile from the iText code">
+        <mkdir dir="${itext.dist}" />
+        <mkdir dir="${itext.bin}" />
+        <mkdir dir="${itext.classes}/com/lowagie/text/pdf/fonts" />
+        <copy todir="${itext.classes}/com/lowagie/text/pdf/fonts" overwrite="yes">
+            <fileset dir="${itext.src}/com/lowagie/text/pdf/fonts">
+                <include name="**/*.afm"/>
+            </fileset>
+            <fileset dir="${itext.src}/com/lowagie/text/">
+                <include name="**/*.txt"/>
+            </fileset>
+        </copy>
+        <jar jarfile="${itext.dist}/iText.jar" basedir="${itext.classes}" />
+        <copy file="${itext.dist}/iText.jar" todir="${itext.bin}" overwrite="yes" />
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Compiling and Jarring the code                                   -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+    <target name="jar"  depends="compile, make.jar" description="--> makes a jarfile from the iText code" />
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Jarring the code (debug)                                         -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+    <target name="jar.debug"  depends="compile.debug, make.jar" description="--> makes a jarfile from the iText code" />
+
+</project>

@@ -410,6 +410,36 @@ public class PdfStamper {
     }
 
     /**
+     * Sets the open and close page additional action.
+     * @param actionType the action type. It can be <CODE>PdfWriter.PAGE_OPEN</CODE>
+     * or <CODE>PdfWriter.PAGE_CLOSE</CODE>
+     * @param action the action to perform
+     * @param page the page where the action will be applied. The first page is 1
+     * @throws PdfException if the action type is invalid
+     */    
+    public void setPageAction(PdfName actionType, PdfAction action, int page) throws PdfException {
+        stamper.setPageAction(actionType, action, page);
+    }
+
+    /**
+     * Sets the display duration for the page (for presentations)
+     * @param seconds   the number of seconds to display the page. A negative value removes the entry
+     * @param page the page where the duration will be applied. The first page is 1
+     */
+    public void setDuration(int seconds, int page) {
+        stamper.setDuration(seconds, page);
+    }
+    
+    /**
+     * Sets the transition for the page
+     * @param transition   the transition object. A <code>null</code> removes the transition
+     * @param page the page where the transition will be applied. The first page is 1
+     */
+    public void setTransition(PdfTransition transition, int page) {
+        stamper.setTransition(transition, page);
+    }
+
+    /**
      * Applies a digital signature to a document. The returned PdfStamper
      * can be used normally as the signature is only applied when closing.
      * <p>

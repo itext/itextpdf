@@ -714,6 +714,8 @@ public class PdfSignatureAppearance {
                 sigStandard.setReason(getReason());
             if (getLocation() != null)
                 sigStandard.setLocation(getLocation());
+            if (getContact() != null)
+                sigStandard.setContact(getContact());
             sigStandard.put(PdfName.M, new PdfDate(getSignDate()));
             sigStandard.setSignInfo(getPrivKey(), getCertChain(), getCrlList());
             PdfString contents = (PdfString)sigStandard.get(PdfName.CONTENTS);
@@ -942,6 +944,22 @@ public class PdfSignatureAppearance {
     }
     
     /**
+     * Gets the signing contact.
+     * @return the signing contact
+     */
+    public String getContact() {
+        return this.contact;
+    }
+    
+    /**
+     * Sets the signing contact.
+     * @param contact the signing contact
+     */
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+    
+    /**
      * Commands to draw a yellow question mark in a stream content
      */    
     public static final String questionMark = 
@@ -987,6 +1005,11 @@ public class PdfSignatureAppearance {
         "282 240 170 -164 re\n" +
         "B\n" +
         "Q\n";
+    
+    /**
+     * Holds value of property contact.
+     */
+    private String contact;
     
     public class RangeStream extends InputStream {
         private byte b[] = new byte[1];

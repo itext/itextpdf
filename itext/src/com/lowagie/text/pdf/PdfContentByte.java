@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.awt.geom.AffineTransform;
+import java.awt.print.PrinterJob;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -2416,6 +2417,16 @@ public class PdfContentByte {
         return new PdfGraphics2D(this, width, height, null, true, false, 0);
     }
     
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands as shapes. No PDF fonts will appear.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphicsShapes(float width, float height, PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, null, true, false, 0, printerJob);
+    }
+
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
      * are translated to PDF commands.
      * @param width the width of the panel
@@ -2426,6 +2437,16 @@ public class PdfContentByte {
         return new PdfGraphics2D(this, width, height, null, false, false, 0);
     }
     
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphics(float width, float height, PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, null, false, false, 0, printerJob);
+    }
+
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
      * are translated to PDF commands.
      * @param width the width of the panel
@@ -2436,10 +2457,24 @@ public class PdfContentByte {
         return new PdfGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality);
     }
 
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphics(float width, float height, boolean convertImagesToJPEG, float quality, PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality, printerJob);
+    }
+
     public java.awt.Graphics2D createGraphicsShapes(float width, float height, boolean convertImagesToJPEG, float quality) {
         return new PdfGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality);
     }
 
+    public java.awt.Graphics2D createPrinterGraphicsShapes(float width, float height, boolean convertImagesToJPEG, float quality, PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality, printerJob);
+    }
+    
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
      * are translated to PDF commands.
      * @param width the width of the panel
@@ -2449,6 +2484,17 @@ public class PdfContentByte {
      */
     public java.awt.Graphics2D createGraphics(float width, float height, FontMapper fontMapper) {
         return new PdfGraphics2D(this, width, height, fontMapper, false, false, 0);
+    }
+    
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphics(float width, float height, FontMapper fontMapper, PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, false, 0, printerJob);
     }
     
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
@@ -2462,6 +2508,19 @@ public class PdfContentByte {
      */
     public java.awt.Graphics2D createGraphics(float width, float height, FontMapper fontMapper, boolean convertImagesToJPEG, float quality) {
         return new PdfGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
+     * @param convertImagesToJPEG converts awt images to jpeg before inserting in pdf
+     * @param quality the quality of the jpeg
+     * @return a <CODE>Graphics2D</CODE>
+     */
+    public java.awt.Graphics2D createPrinterGraphics(float width, float height, FontMapper fontMapper, boolean convertImagesToJPEG, float quality, PrinterJob printerJob) {
+        return new PdfPrinterGraphics2D(this, width, height, fontMapper, false, convertImagesToJPEG, quality, printerJob);
     }
 
     PageResources getPageResources() {
