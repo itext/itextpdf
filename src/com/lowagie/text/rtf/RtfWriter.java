@@ -725,6 +725,7 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * Adds the footer to the bottom of the <CODE>Document</CODE>.
+     * @param footer
      */
     public void setFooter(HeaderFooter footer) {
         this.footer = footer;
@@ -733,6 +734,7 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * Adds the header to the top of the <CODE>Document</CODE>.
+     * @param header
      */
     public void setHeader(HeaderFooter header) {
         this.header = header;
@@ -830,7 +832,8 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
-     *
+     * 
+     * @param element A high level object to add
      * @return    <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
      * @throws    DocumentException   if a document isn't open yet, or has been closed
      */
@@ -843,6 +846,8 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * Adds an <CODE>Element</CODE> to the <CODE>Document</CODE>.
+     * @param element the high level element to add
+     * @param out the outputstream to which the RTF data is sent
      * @return    <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
      * @throws    DocumentException   if a document isn't open yet, or has been closed
      */
@@ -913,6 +918,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @param out The <code>ByteArrayOutputStream</code> to write to
      *
      * @throws IOException
+     * @throws DocumentException
      */
     private void writeSection(Section sectionElement, ByteArrayOutputStream out) throws IOException, DocumentException {
         if (sectionElement.type() == Element.CHAPTER) {
@@ -1066,6 +1072,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @param out The <code>ByteArrayOutputStream</code> to write to
      *
      * @throws IOException
+     * @throws DocumentException
      */
     private void writeChunk(Chunk chunk, ByteArrayOutputStream out) throws IOException, DocumentException {
         if (chunk instanceof RtfField) {
@@ -1182,6 +1189,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @param out The <code>ByteArrayOutputStream</code> to write to
      *
      * @throws IOException
+     * @throws DocumentException
      */
     private void writeListElement(ListItem listItem, ByteArrayOutputStream out) throws IOException, DocumentException {
         Iterator chunks = listItem.getChunks().iterator();
@@ -1728,6 +1736,7 @@ public class RtfWriter extends DocWriter implements DocListener {
     }
 
     /** Write the Rich Text file settings
+     * @throws IOException
      */
     private void writeDocumentIntro() throws IOException {
         os.write(openGroup);
@@ -1746,6 +1755,7 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * Write the font list to the final <code>ByteArrayOutputStream</code>
+     * @throws IOException
      */
     private void writeFontList() throws IOException {
         Font fnt;
@@ -1817,6 +1827,7 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * Write the colour list to the final <code>ByteArrayOutputStream</code>
+     * @throws IOException
      */
     private void writeColorList() throws IOException {
         Color color = null;
@@ -1842,6 +1853,7 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * Write the Information Group to the final <code>ByteArrayOutputStream</code>
+     * @throws IOException
      */
     private void writeInfoGroup() throws IOException {
         os.write(openGroup);
@@ -1853,6 +1865,7 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * Write the listtable and listoverridetable to the final <code>ByteArrayOutputStream</code>
+     * @throws IOException
      */
     private void writeList() throws IOException {
         listtable.write(closeGroup);
@@ -1867,6 +1880,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      *
      * @param out The <code>OuputStream</code> to which the <code>int</code> value is to be written
      * @param i The <code>int</code> value to be written
+     * @throws IOException
      */
     public final static void writeInt(OutputStream out, int i) throws IOException {
         out.write(Integer.toString(i).getBytes());
@@ -1900,6 +1914,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * Write the current header and footer to a <code>ByteArrayOutputStream</code>
      *
      * @param os		The <code>ByteArrayOutputStream</code> to which the header and footer will be written.
+     * @throws IOException
      */
     public void writeHeadersFooters(ByteArrayOutputStream os) throws IOException {
         if (this.footer instanceof RtfHeaderFooters) {
@@ -1952,6 +1967,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @param headerFooter	The <code>HeaderFooter</code> object to be written.
      * @param hfType		The type of header or footer to be added.
      * @param target		The <code>ByteArrayOutputStream</code> to which the <code>HeaderFooter</code> will be written.
+     * @throws IOException
      */
     private void writeHeaderFooter(HeaderFooter headerFooter, byte[] hfType, ByteArrayOutputStream target) throws IOException {
         inHeaderFooter = true;
@@ -1988,6 +2004,7 @@ public class RtfWriter extends DocWriter implements DocListener {
     /**
      *  Write the <code>Document</code>'s Paper and Margin Size
      *  to the final <code>ByteArrayOutputStream</code>
+     * @throws IOException
      */
     private void writeDocumentFormat() throws IOException {
 //        os.write(openGroup);
@@ -2047,6 +2064,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * Writes the default values for the current Section
      *
      * @param out The <code>ByteArrayOutputStream</code> to be written to
+     * @throws IOException
      */
     private void writeSectionDefaults(ByteArrayOutputStream out) throws IOException {
         if (header instanceof RtfHeaderFooters || footer instanceof RtfHeaderFooters) {
@@ -2088,6 +2106,9 @@ public class RtfWriter extends DocWriter implements DocListener {
      * If a match is found the pageWidth and pageHeight will be set according to values determined from files
      * generated by MS Word2000 and OpenOffice 641. If no match is found the method will try to match the rotated
      * Rectangle by calling itself with the parameter rotate set to true.
+     * @param pageSize a rectangle defining the size of the page
+     * @param rotate portrait or lanscape?
+     * @return true if the format parsing succeeded
      */
     private boolean parseFormat(Rectangle pageSize, boolean rotate) {
         if (rotate) {
@@ -2158,6 +2179,9 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /**
      * This method compares to Rectangles. They are considered equal if width and height are the same
+     * @param rect1
+     * @param rect2
+     * @return true if rect1 and rect2 represent the same rectangle
      */
     private boolean rectEquals(Rectangle rect1, Rectangle rect2) {
         return (rect1.width() == rect2.width()) && (rect1.height() == rect2.height());
@@ -2176,6 +2200,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * Replaces special characters with their unicode values
      *
      * @param str The original <code>String</code>
+     * @param useHex
      * @return The converted String
      */
     public final static String filterSpecialChar(String str, boolean useHex) {
@@ -2254,6 +2279,9 @@ public class RtfWriter extends DocWriter implements DocListener {
         }
     }
     
+    /**
+     * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
+     */
     public boolean setMarginMirroring(boolean MarginMirroring) {
         return false;
     }

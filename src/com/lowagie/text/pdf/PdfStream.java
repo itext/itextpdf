@@ -152,7 +152,7 @@ public class PdfStream extends PdfDictionary {
      * This method must be called and can only be called if the contructor {@link #PdfStream(InputStream,PdfWriter)}
      * is used to create the stream.
      * @throws IOException on error
-     * @see PdfStream(InputStream,PdfWriter)
+     * @see #PdfStream(InputStream,PdfWriter)
      */
     public void writeLength() throws IOException {
         if (inputStream == null)

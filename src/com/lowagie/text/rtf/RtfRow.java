@@ -69,59 +69,59 @@ import java.awt.Color;
  * Code added by c
  */
 public class RtfRow {
-    /* Table border solid */
+    /** Table border solid */
     public static final byte[] tableBorder = "brdrs".getBytes();
-    /* Table border width */
+    /** Table border width */
     public static final byte[] tableBorderWidth = "brdrw".getBytes();
-    /* Table border color */
+    /** Table border color */
     public static final byte[] tableBorderColor = "brdrcf".getBytes();
 
-    /* Table row defaults */
+    /** Table row defaults */
     private static final byte[] rowBegin = "trowd".getBytes();
-    /* End of table row */
+    /** End of table row */
     private static final byte[] rowEnd = "row".getBytes();
-    /* Table row autofit */
+    /** Table row autofit */
     private static final byte[] rowAutofit = "trautofit1".getBytes();
     private static final byte[] graphLeft = "trgaph".getBytes();
-    /* Row border left */
+    /** Row border left */
     private static final byte[] rowBorderLeft = "trbrdrl".getBytes();
-    /* Row border right */
+    /** Row border right */
     private static final byte[] rowBorderRight = "trbrdrr".getBytes();
-    /* Row border top */
+    /** Row border top */
     private static final byte[] rowBorderTop = "trbrdrt".getBytes();
-    /* Row border bottom */
+    /** Row border bottom */
     private static final byte[] rowBorderBottom = "trbrdrb".getBytes();
-    /* Row border horiz inline */
+    /** Row border horiz inline */
     private static final byte[] rowBorderInlineHorizontal = "trbrdrh".getBytes();
-    /* Row border bottom */
+    /** Row border bottom */
     private static final byte[] rowBorderInlineVertical = "trbrdrv".getBytes();
-    /* Default cell spacing left */
+    /** Default cell spacing left */
     private static final byte[] rowSpacingLeft = "trspdl".getBytes();
-    /* Default cell spacing right */
+    /** Default cell spacing right */
     private static final byte[] rowSpacingRight = "trspdr".getBytes();
-    /* Default cell spacing top */
+    /** Default cell spacing top */
     private static final byte[] rowSpacingTop = "trspdt".getBytes();
-    /* Default cell spacing bottom */
+    /** Default cell spacing bottom */
     private static final byte[] rowSpacingBottom = "trspdb".getBytes();
-    /* Default cell spacing format left */
+    /** Default cell spacing format left */
     private static final byte[] rowSpacingLeftStyle = "trspdfl3".getBytes();
-    /* Default cell spacing format right */
+    /** Default cell spacing format right */
     private static final byte[] rowSpacingRightStyle = "trspdfr3".getBytes();
-    /* Default cell spacing format top */
+    /** Default cell spacing format top */
     private static final byte[] rowSpacingTopStyle = "trspdft3".getBytes();
-    /* Default cell spacing format bottom */
+    /** Default cell spacing format bottom */
     private static final byte[] rowSpacingBottomStyle = "trspdfb3".getBytes();
-    /* Default cell padding left */
+    /** Default cell padding left */
     private static final byte[] rowPaddingLeft = "trpaddl".getBytes();
-    /* Default cell padding right */
+    /** Default cell padding right */
     private static final byte[] rowPaddingRight = "trpaddr".getBytes();
-    /* Default cell padding format left */
+    /** Default cell padding format left */
     private static final byte[] rowPaddingLeftStyle = "trpaddfl3".getBytes();
-    /* Default cell padding format right */
+    /** Default cell padding format right */
     private static final byte[] rowPaddingRightStyle = "trpaddfr3".getBytes();
-    /* Row width format */
+    /** Row width format */
     private static final byte[] rowWidthStyle = "trftsWidth3".getBytes();
-    /* Row width */
+    /** Row width */
     private static final byte[] rowWidth = "trwWidth".getBytes();
     /**
      * Table row header. This row should appear at the top of every
@@ -134,11 +134,11 @@ public class RtfRow {
      * present.
      */
     private static final byte[] rowKeep = "trkeep".getBytes();
-    /* Table alignment left */
+    /** Table alignment left */
     private static final byte[] rowAlignLeft = "trql".getBytes();
-    /* Table alignment center */
+    /** Table alignment center */
     private static final byte[] rowAlignCenter = "trqc".getBytes();
-    /* Table alignment right */
+    /** Table alignment right */
     private static final byte[] rowAlignRight = "trqr".getBytes();
 
     /** List of <code>RtfCell</code>s in this <code>RtfRow</code> */
@@ -196,8 +196,17 @@ public class RtfRow {
      * <P>
      * All the parameters are taken from the <code>RtfTable</code> which contains
      * this <code>RtfRow</code> and they do exactely what they say
+     * @param row
      * @param propWidths in percent
      * @param tableWidth in percent
+     * @param pageWidth
+     * @param cellpadding
+     * @param cellspacing
+     * @param borders
+     * @param borderColor
+     * @param borderWidth
+     * @param y
+     * @return true if importing the row succeeded
      */
     public boolean importRow(Row row, float[] propWidths, int tableWidth, int pageWidth, int cellpadding,
                              int cellspacing, int borders, java.awt.Color borderColor, float borderWidth,
@@ -268,6 +277,9 @@ public class RtfRow {
      * should be written to.
      * @param rowNum The <code>index</code> of this row in the containing table.
      * @param table The <code>Table</code> which contains the original <code>Row</code>.
+     * @return true if writing the row succeeded
+     * @throws DocumentException
+     * @throws IOException
      */
     public boolean writeRow(ByteArrayOutputStream os, int rowNum, Table table) throws DocumentException,
             IOException {

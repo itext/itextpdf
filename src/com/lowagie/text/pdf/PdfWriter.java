@@ -1165,8 +1165,8 @@ public class PdfWriter extends DocWriter {
     
     /**
 	 * Gets a pre-rendered table.
+	 * (Contributed by dperezcar@fcc.es) 
 	 * @param table		Contains the table definition.  Its contents are deleted, after being pre-rendered.
-	 * @author dperezcar
 	 */
 	
 	public PdfTable getPdfTable(Table table) {
@@ -1178,11 +1178,11 @@ public class PdfWriter extends DocWriter {
 	 * and then the contents are deleted. 
 	 * If the pre-rendered table doesn't fit, then it is fully rendered and its data discarded.  
 	 * There shouldn't be any column change in the underlying {@link Table} object.
+	 * (Contributed by dperezcar@fcc.es) 
 	 *
 	 * @param	table		The pre-rendered table obtained from {@link #getPdfTable(Table)} 
 	 * @return	true if the table is rendered and emptied.
 	 * @see #getPdfTable(Table)
-	 * @author dperezcar
 	 */
 	
 	public boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {

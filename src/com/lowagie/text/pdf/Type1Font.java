@@ -743,7 +743,7 @@ class Type1Font extends BaseFont
      * Sets the kerning between two Unicode chars.
      * @param char1 the first char
      * @param char2 the second char
-     * @paran kern the kerning to apply in normalized 1000 units
+     * @param kern the kerning to apply in normalized 1000 units
      * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
      */
     public boolean setKerning(char char1, char char2, int kern) {

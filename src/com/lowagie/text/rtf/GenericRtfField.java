@@ -105,6 +105,7 @@ public class GenericRtfField extends AbstractRtfField implements RtfField {
      * Initialization Stuff part of the RtfField.
      * @param fieldResult data to be written into the Field Result
      * part of the RtfField.
+     * @param font
      */
     public GenericRtfField(final String fieldInst, final String fieldResult, Font font) {
         super("x", font);
@@ -115,6 +116,8 @@ public class GenericRtfField extends AbstractRtfField implements RtfField {
     /**
      * method for writing custom stuff to the Field Initialization
      * Stuff part of an RtfField.
+     * @param out
+     * @throws IOException
      */
     public void writeRtfFieldInitializationStuff(OutputStream out) throws IOException {
         out.write(fieldInst.trim().getBytes());
@@ -124,6 +127,8 @@ public class GenericRtfField extends AbstractRtfField implements RtfField {
     /**
      * method for writing custom stuff to the Field Result part of an
      * RtfField.
+     * @param out
+     * @throws IOException
      */
     public void writeRtfFieldResultStuff(OutputStream out) throws IOException {
         if (null != fieldResult) {

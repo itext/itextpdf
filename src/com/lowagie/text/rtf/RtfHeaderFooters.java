@@ -65,40 +65,59 @@ import com.lowagie.text.Phrase;
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
  * @author <a href="mailto:mhall@myrealbox.com">Mark.Hall@myrealbox.com</a>
- * @version $Revision$Date: 2004/09/24 15:23:46 $
+ * @version $Revision$Date: 2004/12/14 10:05:46 $
  */
 public class RtfHeaderFooters extends HeaderFooter {
-
+	/** an attribute value */
     public final static int ALL_PAGES = 0;
-
+	/** an attribute value */
     public final static int LEFT_PAGES = 1;
-
+	/** an attribute value */
     public final static int RIGHT_PAGES = 2;
-
+	/** an attribute value */
     public final static int FIRST_PAGE = 3;
     
 //    public int defaultHeader = ALL_PAGES;
 
+	/** header or footer placeholder */
     private HeaderFooter allPages = null;
-
+	/** header or footer placeholder */
     private HeaderFooter leftPages = null;
-
+	/** header or footer placeholder */
     private HeaderFooter rightPages = null;
-
+	/** header or footer placeholder */
     private HeaderFooter firstPage = null;
 
+    /**
+     * Contructs a HeaderFooters object
+     */
     public RtfHeaderFooters() {
         super( new Phrase(""), false );
     }
 
+    /**
+     * Contructs a HeaderFooters object
+     * @param before
+     * @param after
+     */
     public RtfHeaderFooters( Phrase before, Phrase after ) {
         super( before, after );
     }
 
+    /**
+     * Contructs a HeaderFooters object
+     * @param before
+     * @param numbered
+     */
     public RtfHeaderFooters( Phrase before, boolean numbered ) {
         super( before, numbered );
     }
 
+    /**
+     * Adds a HeaderFooter to this HeaderFooters object
+     * @param type
+     * @param hf
+     */
     public void set( int type, HeaderFooter hf ) {
         switch (type) {
             case ALL_PAGES:
@@ -118,7 +137,11 @@ public class RtfHeaderFooters extends HeaderFooter {
         }
     }
 
-    
+    /**
+     * Returns a type of HeaderFooter object registered in this HeaderFooters object.
+     * @param type type of the HeaderFooter object
+     * @return a HeaderFooter object
+     */
     public HeaderFooter get( int type ) {
         switch (type) {
             case ALL_PAGES:

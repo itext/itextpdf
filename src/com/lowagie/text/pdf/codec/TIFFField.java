@@ -48,7 +48,6 @@ import java.io.Serializable;
  * <p><b> This class is not a committed part of the JAI API.  It may
  * be removed or changed in future releases of JAI.</b>
  *
- * @see javax.media.jai.operator.TIFFDescriptor
  * @see TIFFDirectory
  */
 public class TIFFField extends Object implements Comparable, Serializable {

@@ -66,11 +66,17 @@ import java.io.IOException;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2004/09/24 15:23:46 $
+ * @version $Revision$Date: 2004/12/14 10:05:46 $
  */
 public interface RtfField {
 
 
+    /**
+     * Writes an RTF field.
+     * @param writer
+     * @param out
+     * @throws IOException
+     */
     public void write( RtfWriter writer, OutputStream out ) throws IOException;
 }
 

@@ -924,7 +924,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * Deletes all rows in this table.
-     * @author dperezcar
+	 * (contributed by dperezcar@fcc.es)
      */
     
     public void deleteAllRows() {
@@ -1801,8 +1801,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * Returns the next row 0-based index where a new cell would be added.
+	 * (contributed by dperezcar@fcc.es)
      * @return x coordinate for the next row
-     * @author dperezcar
      */
     public int getNextRow() {
         return curPosition.x;
@@ -1810,8 +1810,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * Returns the next column 0-based index where a new cell would be added.
+	 * (contributed by dperezcar@fcc.es)
      * @return y coordinate for the next row
-     * @author dperezcar
      */
     public int getNextColumn() {
         return curPosition.y;

@@ -237,6 +237,7 @@ class PdfDocument extends Document implements DocListener {
          * Constructs a <CODE>PdfCatalog</CODE>.
          *
          * @param		pages		an indirect reference to the root of the document's Pages tree.
+         * @param writer the writer the catalog applies to
          */
         
         PdfCatalog(PdfIndirectReference pages, PdfWriter writer) {
@@ -250,6 +251,7 @@ class PdfDocument extends Document implements DocListener {
          *
          * @param		pages		an indirect reference to the root of the document's Pages tree.
          * @param		outlines	an indirect reference to the outline tree.
+         * @param writer the writer the catalog applies to
          */
         
         PdfCatalog(PdfIndirectReference pages, PdfIndirectReference outlines, PdfWriter writer) {
@@ -263,6 +265,8 @@ class PdfDocument extends Document implements DocListener {
         /**
          * Adds the names of the named destinations to the catalog.
          * @param localDestinations the local destinations
+         * @param documentJavaScript the javascript used in the document
+         * @param writer the writer the catalog applies to
          */
         void addNames(TreeMap localDestinations, ArrayList documentJavaScript, PdfWriter writer) {
             if (localDestinations.size() == 0 && documentJavaScript.size() == 0)
@@ -971,8 +975,12 @@ class PdfDocument extends Document implements DocListener {
     }
     
 	/**
+	 * Gets a PdfTable object
+	 * (contributed by dperezcar@fcc.es)
+	 * @param table a high level table object
+	 * @param supportRowAdditions
+	 * @return returns a PdfTable object
 	 * @see PdfWriter#getPdfTable(Table)
-	 * @author dperezcar
 	 */
 
 	PdfTable getPdfTable(Table table, boolean supportRowAdditions) {
@@ -982,8 +990,10 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * @see PdfWriter#breakTableIfDoesntFit(PdfTable)
+	 * (contributed by dperezcar@fcc.es)
 	 * @param table				Table to add
-	 * @author dperezcar
+	 * @return true if the table will be broken
+	 * @throws DocumentException
 	 */
 	
 	boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {
@@ -1001,6 +1011,7 @@ class PdfDocument extends Document implements DocListener {
 	 * Adds a new table to 
 	 * @param table				Table to add.  Rendered rows will be deleted after processing.
 	 * @param onlyFirstPage		Render only the first full page
+	 * @throws DocumentException
 	 */
 	
     private void add(PdfTable table, boolean onlyFirstPage) throws DocumentException {
@@ -1736,7 +1747,8 @@ class PdfDocument extends Document implements DocListener {
         
     /**
      * Adds an image to the Graphics object.
-     *
+     * 
+     * @param graphics the PdfContentByte holding the graphics layer of this PdfDocument
      * @param image the image
      * @param a an element of the transformation matrix
      * @param b an element of the transformation matrix
@@ -2353,6 +2365,7 @@ class PdfDocument extends Document implements DocListener {
     
     /**
      * Gets the AcroForm object.
+     * @return the PdfAcroform object of the PdfDocument
      */
     
     public PdfAcroForm getAcroForm() {
@@ -2377,6 +2390,7 @@ class PdfDocument extends Document implements DocListener {
      * @param text the <CODE>PdfContentByte</CODE> where the text will be written to
      * @param graphics the <CODE>PdfContentByte</CODE> where the graphics will be written to
      * @param currentValues the current font and extra spacing values
+     * @param ratio
      * @throws DocumentException on error
      */
     void writeLineToContent(PdfLine line, PdfContentByte text, PdfContentByte graphics, Object currentValues[], float ratio)  throws DocumentException {
@@ -2915,6 +2929,9 @@ class PdfDocument extends Document implements DocListener {
         return documentJavaScript;
     }
 
+    /**
+     * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
+     */
     public boolean setMarginMirroring(boolean MarginMirroring) {
         if (writer != null && writer.isPaused()) {
             return false;

@@ -910,9 +910,11 @@ public class Cell extends Rectangle implements TextElementArray {
 	public void setMaxLines(int value) {
 		maxLines = value;
 	}
-	/**Maximum number of lines allowed in the cell.  
+	/**
+	 * Maximum number of lines allowed in the cell.  
 	 * The default value of this property is not to limit the maximum number of lines
-	 * @author dperezcar@fcc.es*/
+	 * (contributed by dperezcar@fcc.es)
+	 */
 	protected int maxLines = Integer.MAX_VALUE;
 	/**Setter for {@link #showTruncation}
 	 * @param value	Can be null for avoiding marking the truncation.*/
@@ -926,11 +928,13 @@ public class Cell extends Rectangle implements TextElementArray {
 	public String getShowTruncation() {
 		return showTruncation;
 	}
-	/**If a truncation happens due to the {@link #maxLines} property, then this text will 
+	/**
+	 * If a truncation happens due to the {@link #maxLines} property, then this text will 
 	 * be added to indicate a truncation has happened.
 	 * Default value is null, and means avoiding marking the truncation.  
 	 * A useful value of this property could be e.g. "..."
-	 * @author dperezcar@fcc.es*/
+	 * (contributed by dperezcar@fcc.es)
+	 */
 	String showTruncation;
 
 
