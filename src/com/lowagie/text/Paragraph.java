@@ -189,7 +189,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  */
     
     public Paragraph(Phrase phrase) {
-        super(phrase.leading(), "", phrase.font());
+        super(phrase.leading, "", phrase.font());
         super.add(phrase);
     }
     
