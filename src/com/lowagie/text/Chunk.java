@@ -465,6 +465,7 @@ public class Chunk implements Element, MarkupAttributes {
      * @return a percentage in float
      */
     public float getHorizontalScaling() {
+    	if (attributes == null) return 1f;
     	Float f = (Float)attributes.get(HSCALE);
     	if (f == null) return 1f;
     	return f.floatValue();
