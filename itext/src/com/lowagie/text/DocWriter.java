@@ -318,32 +318,29 @@ public abstract class DocWriter implements DocListener {
  * @return the conversion result
  */
     
-    public static final byte[] getISOBytes(String text)
-    {
-        if (text == null) {
+    public static final byte[] getISOBytes(String text) {
+        if (text == null)
             return null;
-        }
-        try {
-            return text.getBytes("ISO-8859-1");
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
+        int len = text.length();
+        byte b[] = new byte[len];
+        for (int k = 0; k < len; ++k)
+            b[k] = (byte)text.charAt(k);
+        return b;
+    }
+    
+    public static final byte[] getISOBytes(char c) {
+        //david teran
+        //now we build up a cache for all characters that are one byte long
+        if (c < 256) {
+            if (valueOfCharByteCache[c] == null) {
+                valueOfCharByteCache[c] = getISOBytes(String.valueOf(c));
+            }
+            return valueOfCharByteCache[c];
+        } else {
+            return getISOBytes(String.valueOf(c));
         }
     }
     
-public static final byte[] getISOBytes(char c) {
-    //david teran
-    //now we build up a cache for all characters that are one byte long
-    if (c < 256) {
-        if (valueOfCharByteCache[c] == null) {
-            valueOfCharByteCache[c] = getISOBytes(String.valueOf(c));
-        }
-        return valueOfCharByteCache[c];
-    } else {
-        return getISOBytes(String.valueOf(c));
-    }
-}
-
 /**
  * Let the writer know that all writing has to be paused.
  */
@@ -458,15 +455,15 @@ public static final byte[] getISOBytes(char c) {
  * @param mAtt   the <CODE>MarkupAttributes</CODE> to write.
  */
     protected boolean writeMarkupAttributes(MarkupAttributes mAtt)
-     throws IOException
+    throws IOException
     {
-      Iterator attributeIterator = mAtt.getMarkupAttributeNames().iterator();
-      boolean result = attributeIterator.hasNext();
-      while (attributeIterator.hasNext()) {
-        String name = String.valueOf(attributeIterator.next());
-        write(name, mAtt.getMarkupAttribute(name));
-      }
-      return result;
+        Iterator attributeIterator = mAtt.getMarkupAttributeNames().iterator();
+        boolean result = attributeIterator.hasNext();
+        while (attributeIterator.hasNext()) {
+            String name = String.valueOf(attributeIterator.next());
+            write(name, mAtt.getMarkupAttribute(name));
+        }
+        return result;
     }
     
     
@@ -477,8 +474,8 @@ public static final byte[] getISOBytes(char c) {
  * @return <CODE>boolean</CODE>.
  */
     protected static boolean hasMarkupAttributes(Element element) {
-      return (element instanceof MarkupAttributes &&
-       !(((MarkupAttributes)element).getMarkupAttributeNames().isEmpty()));
+        return (element instanceof MarkupAttributes &&
+        !(((MarkupAttributes)element).getMarkupAttributeNames().isEmpty()));
     }
     
 }
