@@ -408,16 +408,16 @@ public abstract class Image extends Rectangle implements Element {
         String y;
         if (((x = attributes.getProperty(ElementTags.ABSOLUTEX)) != null)
         && ((y = attributes.getProperty(ElementTags.ABSOLUTEX)) != null)) {
-            image.setAbsolutePosition(Float.valueOf(x + "f").floatValue(), Float.valueOf(y + "f").floatValue());
+            image.setAbsolutePosition(Float.parseFloat(x + "f"), Float.parseFloat(y + "f"));
         }
         if ((value = attributes.getProperty(ElementTags.PLAINWIDTH)) != null) {
-            image.scaleAbsoluteWidth(Float.valueOf(value + "f").floatValue());
+            image.scaleAbsoluteWidth(Float.parseFloat(value + "f"));
         }
         if ((value = attributes.getProperty(ElementTags.PLAINHEIGHT)) != null) {
-            image.scaleAbsoluteHeight(Float.valueOf(value + "f").floatValue());
+            image.scaleAbsoluteHeight(Float.parseFloat(value + "f"));
         }
         if ((value = attributes.getProperty(ElementTags.ROTATION)) != null) {
-            image.setRotation(Float.valueOf(value + "f").floatValue());
+            image.setRotation(Float.parseFloat(value + "f"));
         }
         return image;
     }
@@ -699,6 +699,26 @@ public abstract class Image extends Rectangle implements Element {
     }
     
 /**
+ * Gets the plain width of the image.
+ *
+ * @return		a value
+ */
+    
+    public float plainWidth() {
+        return plainWidth;
+    }
+    
+/**
+ * Gets the plain height of the image.
+ *
+ * @return		a value
+ */
+    
+    public float plainHeight() {
+        return plainHeight;
+    }
+    
+/**
  * Gets the scaled width of the image.
  *
  * @return		a value
@@ -804,6 +824,9 @@ public abstract class Image extends Rectangle implements Element {
  */
     
     public static URL toURL(String filename) throws MalformedURLException {
+        if (filename.startsWith("file:/") || filename.startsWith("http://")) {
+            return new URL(filename);
+        }
         File f = new File(filename);
         String path = f.getAbsolutePath();
         if (File.separatorChar != '/') {
@@ -838,45 +861,5 @@ public abstract class Image extends Rectangle implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.IMAGE.equals(tag);
-    }
-    
-/**
- * Returns a representation of this <CODE>Rectangle</CODE>.
- *
- * @return		a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        if (url == null) {
-            return "";
-        }
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.IMAGE).append(" ").append(ElementTags.URL).append("=\"");
-        buf.append(url.toString()).append("\"");
-        if ((alignment & LEFT) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_LEFT).append("\"");
-        }
-        else if ((alignment & RIGHT) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_RIGHT).append("\"");
-        }
-        else if ((alignment & MIDDLE) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_MIDDLE).append("\"");
-        }
-        if ((alignment & UNDERLYING) > 0) {
-            buf.append(" ").append(ElementTags.UNDERLYING).append("=\"").append(true).append("\"");
-        }
-        if ((alignment & TEXTWRAP) > 0) {
-            buf.append(" ").append(ElementTags.TEXTWRAP).append("=\"").append(true).append("\"");
-        }
-        if (alt != null) {
-            buf.append(" ").append(ElementTags.ALT).append("=\"").append(alt).append("\"");
-        }
-        if (hasAbsolutePosition()) {
-            buf.append(" ").append(ElementTags.ABSOLUTEX).append("=\"").append(absoluteX).append("\"");
-            buf.append(" ").append(ElementTags.ABSOLUTEY).append("=\"").append(absoluteY).append("\"");
-        }
-        buf.append(" ").append(ElementTags.PLAINWIDTH).append("=\"").append(plainWidth).append("\"");
-        buf.append(" ").append(ElementTags.PLAINHEIGHT).append("=\"").append(plainHeight).append("\"");
-        buf.append(" />");
-        return buf.toString();
     }
 }

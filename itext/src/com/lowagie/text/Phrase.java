@@ -72,7 +72,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     // membervariables
     
 /** This is the leading of this phrase. */
-    protected float leading;  
+    protected float leading;
     
 /** This is the font of this phrase. */
     protected Font font = new Font();
@@ -201,12 +201,12 @@ public class Phrase extends ArrayList implements TextElementArray {
     
     public Phrase(Properties attributes) {
         this("", new Font(attributes));
+        clear();
         String value = attributes.getProperty(ElementTags.LEADING);
         if (value != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
-            remove(0);
             add(new Chunk(value));
         }
     }
@@ -280,9 +280,9 @@ public class Phrase extends ArrayList implements TextElementArray {
                 super.add(index, chunk);
             }
             else if (element.type() == Element.PHRASE ||
-                element.type() == Element.ANCHOR ||
-                element.type() == Element.ANNOTATION ||
-                element.type() == Element.TABLE) { // line added by David Freels
+            element.type() == Element.ANCHOR ||
+            element.type() == Element.ANNOTATION ||
+            element.type() == Element.TABLE) { // line added by David Freels
                 super.add(index, element);
             }
             else {
@@ -315,16 +315,20 @@ public class Phrase extends ArrayList implements TextElementArray {
                     if (!font.isStandardFont()) {
                         chunk.setFont(font.difference(chunk.font()));
                     }
-                    if (!chunk.isEmpty()) {
-                        return super.add(chunk);
-                    }
-                    return false;
+                    return super.add(chunk);
                 case Element.PHRASE:
                 case Element.PARAGRAPH:
                     Phrase phrase = (Phrase) o;
                     boolean success = true;
+                    Element e;
                     for (Iterator i = phrase.iterator(); i.hasNext(); ) {
-                        success &= this.add(i.next());
+                        e = (Element) i.next();
+                        if (e instanceof Chunk) {
+                            success &= super.add(e);
+                        }
+                        else {
+                            success &= this.add(e);
+                        }
                     }
                     return success;
                 case Element.ANCHOR:
@@ -332,11 +336,9 @@ public class Phrase extends ArrayList implements TextElementArray {
                 case Element.ANNOTATION:
                     return super.add((Annotation) o);
                 case Element.TABLE: // case added by David Freels
-                    Table table = (Table) o;
-                    return super.add(o);
+                    return super.add((Table) o);
                 case Element.LIST:
-                    List list = (List) o;
-                    return super.add(list);
+                    return super.add((List) o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
             }
@@ -438,22 +440,5 @@ public class Phrase extends ArrayList implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.PHRASE.equals(tag);
-    }
-    
-/**
- * Returns a representation of this <CODE>Phrase</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.PHRASE).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading);
-        buf.append("\"").append(font.toString()).append(">");
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            buf.append(i.next().toString());
-        }
-        buf.append("</").append(ElementTags.PHRASE).append(">");
-        return buf.toString();
     }
 }

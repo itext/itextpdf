@@ -231,17 +231,25 @@ public class Font implements Comparable {
             setFamily(value);
         }
         if ((value = attributes.getProperty(ElementTags.SIZE)) != null) {
-            setSize(Float.valueOf(value + "f").floatValue());
+            setSize(Float.parseFloat(value + "f"));
         }
         if ((value = attributes.getProperty(ElementTags.STYLE)) != null) {
             setStyle(value);
         }
-        if (attributes.getProperty(ElementTags.RED) != null &&
-        attributes.getProperty(ElementTags.GREEN) != null &&
-        attributes.getProperty(ElementTags.BLUE) != null) {
-            setColor(Integer.parseInt(attributes.getProperty(ElementTags.RED)),
-            Integer.parseInt(attributes.getProperty(ElementTags.GREEN)),
-            Integer.parseInt(attributes.getProperty(ElementTags.BLUE)));
+        String r = attributes.getProperty(ElementTags.RED);
+        String g = attributes.getProperty(ElementTags.GREEN);
+        String b = attributes.getProperty(ElementTags.BLUE);
+        if (r != null || g != null || b != null) {
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            if (r != null) red = Integer.parseInt(r);
+            if (g != null) green = Integer.parseInt(g);
+            if (b != null) blue = Integer.parseInt(b);
+            setColor(new Color(red, green, blue));
+        }
+        else if ((value = attributes.getProperty(ElementTags.COLOR)) != null) {
+            setColor(ElementTags.decodeColor(value));
         }
     }
     
@@ -311,19 +319,19 @@ public class Font implements Comparable {
  */
     
     public static int getFamilyIndex(String family) {
-        if (family.equalsIgnoreCase("Courier")) {
+        if (family.equalsIgnoreCase(ElementTags.COURIER)) {
             return COURIER;
         }
-        if (family.equalsIgnoreCase("Helvetica")) {
+        if (family.equalsIgnoreCase(ElementTags.HELVETICA)) {
             return HELVETICA;
         }
-        if (family.equalsIgnoreCase("Times New Roman")) {
+        if (family.equalsIgnoreCase(ElementTags.TIMES_NEW_ROMAN)) {
             return TIMES_NEW_ROMAN;
         }
-        if (family.equalsIgnoreCase("Symbol")) {
+        if (family.equalsIgnoreCase(ElementTags.SYMBOL)) {
             return SYMBOL;
         }
-        if (family.equalsIgnoreCase("ZapfDingBats")) {
+        if (family.equalsIgnoreCase(ElementTags.ZAPFDINGBATS)) {
             return ZAPFDINGBATS;
         }
         return UNDEFINED;
@@ -360,19 +368,19 @@ public class Font implements Comparable {
     
     public static int getStyleValue(String style) {
         int s = 0;
-        if (style.indexOf("normal") != -1) {
+        if (style.indexOf(ElementTags.NORMAL) != -1) {
             s |= NORMAL;
         }
-        if (style.indexOf("bold") != -1) {
+        if (style.indexOf(ElementTags.BOLD) != -1) {
             s |= BOLD;
         }
-        if (style.indexOf("italic") != -1) {
+        if (style.indexOf(ElementTags.ITALIC) != -1) {
             s |= ITALIC;
         }
-        if (style.indexOf("underline") != -1) {
+        if (style.indexOf(ElementTags.UNDERLINE) != -1) {
             s |= UNDERLINE;
         }
-        if (style.indexOf("strike") != -1) {
+        if (style.indexOf(ElementTags.STRIKETHRU) != -1) {
             s |= STRIKETHRU;
         }
         return s;
@@ -440,22 +448,28 @@ public class Font implements Comparable {
     
     public Font difference(Font font) {
         Font difference = new Font();
-        if (font.family() != UNDEFINED) {
-            difference.family = font.family;
-        }
-        else {
+        if (font.family() == UNDEFINED) {
             difference.family = this.family;
         }
-        if (this.size != font.size()) {
+        else {
+            difference.family = font.family;
+        }
+        if (font.size() == UNDEFINED) {
             difference.size = this.size;
+        }
+        else {
+            difference.size = font.size;
         }
         int style1 = this.style;
         int style2 = font.style();
         if (style1 == UNDEFINED) style1 = 0;
         if (style2 == UNDEFINED) style2 = 0;
         difference.style = style1 | style2;
-        if (this.color == null || ! this.color.equals(font.color())) {
+        if (font.color == null) {
             difference.color = this.color;
+        }
+        else {
+            difference.color = font.color();
         }
         return difference;
     }
@@ -561,70 +575,5 @@ public class Font implements Comparable {
     public BaseFont getBaseFont()
     {
         return baseFont;
-    }
-    
-/**
- * Gives the String representation of a <CODE>Font</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buffer = new StringBuffer(" ").append(ElementTags.FONT).append("=\"");
-        switch(family) {
-            case COURIER:
-                buffer.append("Courier");
-                break;
-            case HELVETICA:
-                buffer.append("Helvetica");
-                break;
-            case TIMES_NEW_ROMAN:
-                buffer.append("Times New Roman");
-                break;
-            case SYMBOL:
-                buffer.append("Symbol");
-                break;
-            case ZAPFDINGBATS:
-                buffer.append("ZapfDingbats");
-                break;
-                default:
-                    buffer.append("default");
-        }
-        if (size != UNDEFINED) {
-            buffer.append("\" ").append(ElementTags.SIZE).append("=\"");
-            buffer.append(size);
-        }
-        if (style != UNDEFINED) {
-            buffer.append("\" ").append(ElementTags.STYLE).append("=\"");
-            switch(style & BOLDITALIC) {
-                case NORMAL:
-                    buffer.append("normal");
-                    break;
-                case BOLD:
-                    buffer.append("bold");
-                    break;
-                case ITALIC:
-                    buffer.append("italic");
-                    break;
-                case BOLDITALIC:
-                    buffer.append("bold, italic");
-                    break;
-            }
-            if ((style & UNDERLINE) > 0) {
-                buffer.append(", underline");
-            }
-            if ((style & STRIKETHRU) > 0) {
-                buffer.append(", strike");
-            }
-        }
-        if (color != null) {
-            buffer.append("\" ").append(ElementTags.RED).append("=\"");
-            buffer.append(color.getRed());
-            buffer.append("\" ").append(ElementTags.GREEN).append("=\"");
-            buffer.append(color.getGreen());
-            buffer.append("\" ").append(ElementTags.BLUE).append("=\"");
-            buffer.append(color.getBlue());
-        }
-        return buffer.append("\"").toString();
     }
 }

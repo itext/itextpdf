@@ -33,11 +33,13 @@
 
 package com.lowagie.text;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 import java.net.URL;
+
 import com.lowagie.text.pdf.PdfAction;
 
 /**
@@ -60,6 +62,9 @@ import com.lowagie.text.pdf.PdfAction;
 public class Chunk implements Element {
     
     // membervariables
+    
+/** This is a Chunk containing a newline. */
+    public static final Chunk NEWLINE = new Chunk("\n");
     
 /** This is the content of this chunk of text. */
     private StringBuffer content;
@@ -102,6 +107,9 @@ public class Chunk implements Element {
     
 /** Key for generic tag. */
     public static final String GENERICTAG = "GENERICTAG";
+    
+/** Key for newpage. */
+    public static final String NEWPAGE = "NEWPAGE";
     
     // constructors
     
@@ -159,6 +167,9 @@ public class Chunk implements Element {
         }
         if ((value = attributes.getProperty(ElementTags.LOCALDESTINATION)) != null) {
             setLocalDestination(value);
+        }
+        if ((value = attributes.getProperty(ElementTags.SUBSUPSCRIPT)) != null) {
+            setTextRise(Float.parseFloat(value + "f"));
         }
     }
     
@@ -255,7 +266,7 @@ public class Chunk implements Element {
  */
     
     public final boolean isEmpty() {
-        return (content.toString().length() == 0);
+        return (content.toString().length() == 0) && (attributes == null);
     }
     
 /**
@@ -335,6 +346,17 @@ public class Chunk implements Element {
     }
     
 /**
+ * Sets the generic tag <CODE>Chunk</CODE>.
+ * The text for this tag can be retrieved with <CODE>PdfPageEvent</CODE>.
+ * @param text the text for the tag
+ * @return this <CODE>Chunk</CODE>
+ */
+    
+    public Chunk setNewPage() {
+        return setAttribute(NEWPAGE, null);
+    }
+    
+/**
  * Sets an arbitrary attribute.
  * @param name the key for the attribute
  * @param obj the value of the attribute
@@ -359,6 +381,19 @@ public class Chunk implements Element {
     }
     
 /**
+ * Returns the image.
+ */
+    
+    public Image getImage() {
+        Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
+        if (obj == null)
+            return null;
+        else {
+            return (Image)obj[0];
+        }
+    }
+    
+/**
  * Checks if a given tag corresponds with this object.
  *
  * @param   tag     the given tag
@@ -367,29 +402,5 @@ public class Chunk implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.CHUNK.equals(tag);
-    }
-    
-/**
- * Returns a representation of this <CODE>Chunk</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.CHUNK);
-        buf.append(font.toString());
-        if (attributes != null) {
-            for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
-                String key = (String) i.next();
-                if (key.equals(LOCALGOTO) || key.equals(LOCALDESTINATION) || key.equals(GENERICTAG)) {
-                    String value = (String) attributes.get(key);
-                    buf.append(" ").append(key.toLowerCase()).append("=\"").append(value).append("\"");
-                }
-            }
-        }
-        buf.append(">");
-        buf.append(content());
-        buf.append("</").append(ElementTags.CHUNK).append(">");
-        return buf.toString();
     }
 }
