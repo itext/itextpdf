@@ -87,17 +87,22 @@ import java.text.ParsePosition;
  * <P>
  * <STRONG>LIMITATIONS</STRONG><BR>
  * There are currently still a few limitations on what the RTF Writer can do:
- * <UL>
- *  <LI>Only PNG / JPEG Images are supported.</LI>
- *  <LI>Rotating of Images is not supported.</LI>
- *  <LI>Nested Tables are not supported.</LI>
- *  <LI>The <CODE>Leading</CODE> is not supported.</LI>
- * </UL>
+ * <ul>
+ *    <li>Watermarks</li>
+ *    <li>Viewer preferences</li>
+ *    <li>Encryption</li>
+ *    <li>Embedded fonts</li>
+ *    <li>Phrases with a leading</li>
+ *    <li>Lists with non-bullet symbols</li>
+ *    <li>Nested tables</li>
+ *    <li>Images other than JPEG and PNG</li>
+ *    <li>Rotated images</li>
+ * </ul>
  * <br />
- * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
- * improvements.
  *
  * @author <a href="mailto:mhall@myrealbox.com">Mark.Hall@myrealbox.com</a>
+ * @author Steffen Stundzig
+ * @author <a href="ericmattes@yahoo.com">Eric Mattes</a>
  */
 public class RtfWriter extends DocWriter implements DocListener {
     /**
@@ -191,8 +196,11 @@ public class RtfWriter extends DocWriter implements DocListener {
     /** First indent tag. */
     private static final byte[] firstIndent = "fi".getBytes();
 
-    /** List indent tag. */
+    /** Left indent tag. */
     private static final byte[] listIndent = "li".getBytes();
+
+    /** Right indent tag. */
+    private static final byte[] rightIndent = "ri".getBytes();
 
     /**
      * Sections / Paragraphs
@@ -946,6 +954,9 @@ public class RtfWriter extends DocWriter implements DocListener {
         out.write(escape);
         out.write(listIndent);
         writeInt(out, (int) (paragraphElement.indentationLeft() * twipsFactor));
+        out.write(escape);
+        out.write(rightIndent);
+        writeInt(out, (int) (paragraphElement.indentationRight() * twipsFactor));
         Iterator chunks = paragraphElement.getChunks().iterator();
         while (chunks.hasNext()) {
             Chunk ch = (Chunk) chunks.next();
@@ -1242,6 +1253,9 @@ public class RtfWriter extends DocWriter implements DocListener {
             listtable.write(listIndent);
             writeInt(listtable, (int) ((list.indentationLeft() + list.symbolIndent()) * twipsFactor));
             listtable.write(escape);
+            listtable.write(rightIndent);
+            writeInt(listtable, (int) (list.indentationRight() * twipsFactor));
+            listtable.write(escape);
             listtable.write(tabStop);
             writeInt(listtable, (int) (list.symbolIndent() * twipsFactor));
             listtable.write(closeGroup);
@@ -1258,6 +1272,9 @@ public class RtfWriter extends DocWriter implements DocListener {
         out.write(escape);
         out.write(listIndent);
         writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * twipsFactor));
+        out.write(escape);
+        out.write(rightIndent);
+        writeInt(out, (int) (list.indentationRight() * twipsFactor));
         out.write(escape);
         out.write(fontSize);
         writeInt(out, 20);
@@ -1297,6 +1314,9 @@ public class RtfWriter extends DocWriter implements DocListener {
                 out.write(escape);
                 out.write(listIndent);
                 writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * twipsFactor));
+                out.write(escape);
+                out.write(rightIndent);
+                writeInt(out, (int) (list.indentationRight() * twipsFactor));
                 out.write(delimiter);
                 if (list.isNumbered()) {
                     writeInt(out, count);
@@ -1324,6 +1344,9 @@ public class RtfWriter extends DocWriter implements DocListener {
                 out.write(escape);
                 out.write(listIndent);
                 writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * twipsFactor));
+                out.write(escape);
+                out.write(rightIndent);
+                writeInt(out, (int) (list.indentationRight() * twipsFactor));
                 out.write(escape);
                 out.write(fontSize);
                 writeInt(out, 20);
