@@ -1024,7 +1024,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
      */
     
     protected void write(Font font, Properties styleAttributes) throws IOException {
-        if (font == null || !isOtherFont(font) || styleAttributes == null) return;
+        if (font == null || !isOtherFont(font) /* || styleAttributes == null*/) return;
         write(" ");
         write(MarkupTags.STYLE);
         write("=\"");
