@@ -63,6 +63,9 @@ public class HtmlTags {
     
 /** This is a possible HTML attribute for the TD tag. */
     public static final String STYLESHEET = "stylesheet";
+
+/** This is used for inline css style information */
+    public static final String STYLE = "style";
     
 /** This is a possible HTML attribute for the LINK tag. */
     public static final String TYPE = "type";
@@ -100,10 +103,10 @@ public class HtmlTags {
     // Phrases, Anchors, Lists and Paragraphs
     
 /** the chunk tag */
-    public static final String CHUNK = "font";
+    public static final String CHUNK = "span";
     
 /** the phrase tag */
-    public static final String PHRASE = "font";
+    public static final String PHRASE = "span";
     
 /** the phrase tag */
     public static final String CODE = "code";
@@ -297,5 +300,27 @@ public class HtmlTags {
     
 /** the possible value of an alignment attribute */
     public static final String DEFAULT = "Default";
+
+    // CSS related
+
+/** the CSS tag for the font size */
+    public static final String CSS_FONTSIZE = "font-size";
+
+/** the CSS tag for the font style */
+    public static final String CSS_FONTSTYLE = "font-style";
+
+/** the CSS tag for the font weight */
+    public static final String CSS_FONTWEIGHT = "font-weight";
     
+/** the CSS tag for the font family */
+    public static final String CSS_FONTFAMILY = "font-family";
+
+/** the CSS tag for text decorations */
+    public static final String CSS_TEXTDECORATION = "text-decoration";
+
+/** the CSS tag for text color */
+    public static final String CSS_COLOR = "color";
+
+/** the CSS tag for background color */
+    public static final String CSS_BGCOLOR = "background-color";
 }
