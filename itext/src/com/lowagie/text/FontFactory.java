@@ -199,7 +199,7 @@ public class FontFactory extends java.lang.Object {
         HashSet tmp = (HashSet) fontFamilies.get(fontname);
         if (tmp != null) {
             // some bugs were fixed here by Daniel Marczisovszky
-            String lowercaseFontname = fontname.toLowerCase();
+            String lowercasefontname = fontname.toLowerCase();
             int s = style == Font.UNDEFINED ? Font.NORMAL : style;
             for (Iterator i = tmp.iterator(); i.hasNext(); ) {
                 String f = (String) i.next();
