@@ -184,6 +184,9 @@ public class ElementTags {
 /** attribute of the chunk tag */
     public static final String LOCALDESTINATION = Chunk.LOCALDESTINATION.toLowerCase();
     
+/** attribute of the chunk tag */
+    public static final String GENERICTAG = Chunk.GENERICTAG.toLowerCase();
+    
     // tables/cells
     
 /** the table tag */

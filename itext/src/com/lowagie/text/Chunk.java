@@ -171,6 +171,9 @@ public class Chunk implements Element {
         if ((value = attributes.getProperty(ElementTags.SUBSUPSCRIPT)) != null) {
             setTextRise(Float.valueOf(value + "f").floatValue());
         }
+        if ((value = attributes.getProperty(ElementTags.GENERICTAG)) != null) {
+            setGenericTag(value);
+        }
     }
     
     // implementation of the Element-methods
