@@ -671,7 +671,6 @@ public class SAXiTextHandler extends DefaultHandler {
             
             // the documentroot
             if (isDocumentRoot(name)) {
-        System.err.println("End of the document");
                 try {
                     while (true) {
                         Element element = (Element) stack.pop();
@@ -688,7 +687,6 @@ public class SAXiTextHandler extends DefaultHandler {
                 catch(EmptyStackException ese) {
                     // empty on purpose
                 }
-        System.err.println("Closing it");
                 document.close();
                 return;
             }
