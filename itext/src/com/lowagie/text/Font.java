@@ -311,7 +311,7 @@ public class Font implements Comparable {
         if (family.equalsIgnoreCase(FontFactory.HELVETICA)) {
             return HELVETICA;
         }
-        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN) || family.equalsIgnoreCase("Times New Roman")) {
+        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN) || family.equalsIgnoreCase(FontFactory.TIMES_NEW_ROMAN)) {
             return TIMES_NEW_ROMAN;
         }
         if (family.equalsIgnoreCase(FontFactory.SYMBOL)) {
@@ -337,7 +337,7 @@ public class Font implements Comparable {
             case Font.HELVETICA:
                 return FontFactory.HELVETICA;
             case Font.TIMES_NEW_ROMAN:
-                return "Times New Roman";
+                return FontFactory.TIMES_NEW_ROMAN;
             case Font.SYMBOL:
                 return FontFactory.SYMBOL;
             case Font.ZAPFDINGBATS:
@@ -346,10 +346,13 @@ public class Font implements Comparable {
                 if (baseFont != null) {
                     String[][] names = baseFont.getFamilyFontName();
                     for (int i = 0; i < names.length; i++) {
-                        if ("0".equals(names[i][0]) && "0".equals(names[i][2])) {
+                        if ("0".equals(names[i][2])) {
                             return names[i][3];
                         }
-                        if ("3".equals(names[i][0]) && "1033".equals(names[i][2])) {
+                        if ("1033".equals(names[i][2])) {
+                            tmp = names[i][3];
+                        }
+                        if ("".equals(names[i][2])) {
                             tmp = names[i][3];
                         }
                     }

@@ -837,28 +837,7 @@ public class XmlWriter extends DocWriter implements DocListener {
  */
     
     private void write(Font font) throws IOException {
-        switch(font.family()) {
-            case Font.COURIER:
-                write(ElementTags.FONT, "Courier");
-                break;
-            case Font.HELVETICA:
-                write(ElementTags.FONT, "Helvetica");
-                break;
-            case Font.TIMES_NEW_ROMAN:
-                write(ElementTags.FONT, "Times New Roman");
-                break;
-            case Font.SYMBOL:
-                write(ElementTags.FONT, "Symbol");
-                break;
-            case Font.ZAPFDINGBATS:
-                write(ElementTags.FONT, "ZapfDingbats");
-                break;
-            default:
-                com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
-                if (bf != null) {
-                    write(ElementTags.FONT, bf.getPostscriptFontName());
-                }
-        }
+        write(ElementTags.FONT, font.getFamilyname());
         if (font.size() != Font.UNDEFINED) {
             write(ElementTags.SIZE, String.valueOf(font.size()));
         }
