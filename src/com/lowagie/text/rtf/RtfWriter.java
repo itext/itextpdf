@@ -2065,6 +2065,13 @@ public class RtfWriter extends DocWriter implements DocListener {
             out.write(escape);
             out.write(sectionPageHeight);
             writeInt(out, pageHeight);
+        } else {
+            out.write(escape);
+            out.write(sectionPageWidth);
+            writeInt(out, pageWidth);
+            out.write(escape);
+            out.write(sectionPageHeight);
+            writeInt(out, pageHeight);
         }
     }
 
