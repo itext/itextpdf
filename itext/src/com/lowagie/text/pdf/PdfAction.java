@@ -287,7 +287,10 @@ public class PdfAction extends PdfDictionary {
     public static PdfAction createSubmitForm(String file, Object names[], int flags) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.SUBMITFORM);
-        action.put(PdfName.F, new PdfString(file));
+        PdfDictionary dic = new PdfDictionary();
+        dic.put(PdfName.F, new PdfString(file));
+        dic.put(PdfName.FS, PdfName.URL);
+        action.put(PdfName.F, dic);
         if (names != null)
             action.put(PdfName.FIELDS, buildArray(names));
         action.put(PdfName.FLAGS, new PdfNumber(flags));
