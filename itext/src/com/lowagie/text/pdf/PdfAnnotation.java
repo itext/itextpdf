@@ -1,7 +1,7 @@
 /*
  * @(#)PdfAnnotation.java			0.38 2000/10/06
  *       release iText0.37:         0.37 2000/10/05
- * 
+ *
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -53,7 +53,7 @@ class PdfAnnotation extends PdfDictionary {
 	 * @since		iText0.37
 	 */
 
-	PdfAnnotation(int llx, int lly, int urx, int ury, PdfString title, PdfString content) { 
+	PdfAnnotation(float llx, float lly, float urx, float ury, PdfString title, PdfString content) {
 		super(PdfName.ANNOT);
 		put(PdfName.SUBTYPE, PdfName.TEXT);
 		put(PdfName.T, title);
@@ -67,7 +67,7 @@ class PdfAnnotation extends PdfDictionary {
 	 * @since		iText0.37
 	 */
 
-	PdfAnnotation(int llx, int lly, int urx, int ury, PdfAction action) { 
+	PdfAnnotation(float llx, float lly, float urx, float ury, PdfAction action) {
 		super(PdfName.ANNOT);
 		put(PdfName.SUBTYPE, PdfName.LINK);
 		put(PdfName.RECT, new PdfRectangle(llx, lly, urx, ury));
