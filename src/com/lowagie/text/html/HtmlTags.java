@@ -100,10 +100,7 @@ public class HtmlTags {
     // Phrases, Anchors, Lists and Paragraphs
     
 /** the chunk tag */
-    public static final String CHUNK = "span";
-    
-/** the phrase tag */
-    public static final String PHRASE = "span";
+    public static final String CHUNK = "font";
     
 /** the phrase tag */
     public static final String CODE = "code";

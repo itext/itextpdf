@@ -57,6 +57,7 @@ import java.util.StringTokenizer;
 import org.xml.sax.AttributeList;
 
 import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.markup.MarkupParser;
 import com.lowagie.text.xml.*;
 import com.lowagie.text.*;
 
@@ -166,56 +167,8 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
             }
             if (attrs.getValue(MarkupTags.STYLE) != null) {
                 Properties p = peer.getAttributes(attrs);
-                String style = p.getProperty(ElementTags.STYLE);
-                if (style == null) {
-                    style = "";
-                }
-                StringTokenizer tokens = new StringTokenizer(attrs.getValue(MarkupTags.STYLE), ";");
-                while (tokens.hasMoreTokens()) {
-                    StringTokenizer attr = new StringTokenizer(tokens.nextToken(), ":");
-                    String key = "";
-                    String value = "";
-                    if (attr.hasMoreTokens()) {
-                        key = attr.nextToken().trim();
-                    }
-                    if (attr.hasMoreTokens()) {
-                        value = attr.nextToken().trim();
-                    }
-                    if (MarkupTags.CSS_FONTFAMILY.equals(key)) {
-                        p.put(ElementTags.FONT, value);
-                    }
-                    else if (MarkupTags.CSS_FONTSIZE.equals(key)) {
-                        if (value.endsWith("px")) {
-                            try {
-                                value = value.substring(0, value.length() - 2);
-                            }
-                            catch(Exception e) {
-                                // empty on purpose
-                            }
-                        }
-                        p.put(ElementTags.SIZE, value);
-                    }
-                    else if (MarkupTags.CSS_COLOR.equals(key)) { 
-                        p.put(ElementTags.COLOR, value);
-                    }
-                    if (MarkupTags.CSS_FONTWEIGHT.equals(key) || MarkupTags.CSS_FONTSTYLE.equals(key)) {
-                        if (style.length() > 0) style += ",";
-                        style += value;
-                    }
-                    else if (MarkupTags.CSS_TEXTDECORATION.equals(key)) { 
-                        if (MarkupTags.CSS_UNDERLINE.equals(value)) { 
-                            if (style.length() > 0) style += ",";
-                            style += ElementTags.UNDERLINE;
-                        }
-                        else if (MarkupTags.CSS_LINETHROUGH.equals(value)) {
-                            if (style.length() > 0) style += ",";
-                            style += ElementTags.STRIKETHRU;
-                        }
-                    }
-                    if (style.length() > 0) {
-                        p.put(ElementTags.STYLE, style);
-                    }
-                }
+                p.addAll(MarkupParser.parseAttributes(p.remove(MarkupTags.STYLE)));
+                p.addAll(MarkupParser.parseAttributes(attrs.getValue(MarkupTags.STYLE)));
                 super.handleStartingTags(peer.getTag(), p);
                 return;
             }

@@ -57,6 +57,11 @@ import java.awt.Color;
  */
 
 public class MarkupTags {
+
+/** a CSS value */
+    public static final String CSS_NORMAL = "normal";
+/** a CSS value */
+    public static final String CSS_NONE = "none";
     
 /** This is a possible HTML-tag. */
     public static final String LINK = "link";
@@ -86,13 +91,25 @@ public class MarkupTags {
     public static final String DIV = "div";
 
 /** the CSS tag for the font size */
+    public static final String CSS_FONT = "font";
+
+/** the CSS tag for the font size */
     public static final String CSS_FONTSIZE = "font-size";
 
 /** the CSS tag for the font style */
     public static final String CSS_FONTSTYLE = "font-style";
 
+/** a CSS value for text font style */
+    public static final String CSS_ITALIC = "italic";
+
+/** a CSS value for text font style */
+    public static final String CSS_OBLIQUE = "oblique";
+
 /** the CSS tag for the font weight */
     public static final String CSS_FONTWEIGHT = "font-weight";
+
+/** a CSS value for text font weight */
+    public static final String CSS_BOLD = "bold";
     
 /** the CSS tag for the font family */
     public static final String CSS_FONTFAMILY = "font-family";
@@ -100,19 +117,22 @@ public class MarkupTags {
 /** the CSS tag for text decorations */
     public static final String CSS_TEXTDECORATION = "text-decoration";
 
+/** a CSS value for text decoration */
+    public static final String CSS_UNDERLINE = "underline";
+
+/** a CSS value for text decoration */
+    public static final String CSS_LINETHROUGH = "line-through";
+
 /** the CSS tag for text color */
     public static final String CSS_COLOR = "color";
 
 /** the CSS tag for background color */
     public static final String CSS_BGCOLOR = "background-color";
-
-/** the CSS tag for text color */
-    public static final String CSS_UNDERLINE = "underline";
-
-/** the CSS tag for background color */
-    public static final String CSS_LINETHROUGH = "line-through";
  
 /** the CSS tag for adding a page break when the document is printed */
     public static final String PAGE_BREAK_BEFORE = "page-break-before";
+ 
+/** value for the CSS tag for adding a page break when the document is printed */
+    public static final String ALWAYS = "always";
 
 }

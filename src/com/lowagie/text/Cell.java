@@ -55,6 +55,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
+import com.lowagie.text.markup.*;
+
 /**
  * A <CODE>Cell</CODE> is a <CODE>Rectangle</CODE> containing other
  * <CODE>Element</CODE>s.
@@ -282,7 +284,7 @@ public class Cell extends Rectangle implements TextElementArray {
             setBorderColor(new Color(red, green, blue));
         }
         else if ((value = (String)attributes.remove(ElementTags.BORDERCOLOR)) != null) {
-            setBorderColor(ElementTags.decodeColor(value));
+            setBorderColor(MarkupParser.decodeColor(value));
         }
         if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
         (g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
@@ -296,7 +298,7 @@ public class Cell extends Rectangle implements TextElementArray {
             setBackgroundColor(new Color(red, green, blue));
         }
         else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
-            setBackgroundColor(ElementTags.decodeColor(value));
+            setBackgroundColor(MarkupParser.decodeColor(value));
         }
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());

@@ -94,10 +94,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
     // static membervariables (tags)
     
 /** This is a possible HTML-tag. */
-    public static final byte[] BEGINCOMMENT = getISOBytes("\t<!-- ");
+    public static final byte[] BEGINCOMMENT = getISOBytes("<!-- ");
     
 /** This is a possible HTML-tag. */
-    public static final byte[] ENDCOMMENT = getISOBytes(" -->\n");
+    public static final byte[] ENDCOMMENT = getISOBytes(" -->");
     
 /** This is a possible HTML-tag. */
     public static final String NBSP = "&nbsp;";
@@ -180,7 +180,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             write(" ");
             write(MarkupTags.STYLE);
             write("=\"");
-            writeCssProperty(MarkupTags.PAGE_BREAK_BEFORE, ElementTags.ALWAYS);
+            writeCssProperty(MarkupTags.PAGE_BREAK_BEFORE, MarkupTags.ALWAYS);
             write("\" /");
             os.write(GT);
         }
@@ -300,6 +300,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             initFooter(); // line added by David Freels
             addTabs(1);
             writeEnd(HtmlTags.BODY);
+            os.write(NEWLINE);
             writeEnd(HtmlTags.HTML);
             super.close();
         }
@@ -397,6 +398,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  */
     
     protected void writeComment(String comment) throws IOException {
+        addTabs(2);
         os.write(BEGINCOMMENT);
         write(comment);
         os.write(ENDCOMMENT);
@@ -950,81 +952,5 @@ public class HtmlWriter extends DocWriter implements DocListener {
             write((Element) i.next(), indent + 1);
         }
         addTabs(indent);
-    }
-    
-    /**
-     * Writes the HTML representation of a <CODE>Font</CODE>.
-     *
-     * @param a <CODE>Font</CODE>
-     */
-    
-    protected void write(Font font) throws IOException {
-        if (font == null) return;
-        write(" ");
-        write(MarkupTags.STYLE);
-        write("=\"");
-        switch (font.family()) {
-            case Font.COURIER:
-                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.COURIER);
-                break;
-            case Font.HELVETICA:
-                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.HELVETICA);
-                break;
-            case Font.TIMES_NEW_ROMAN:
-                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.TIMES_ROMAN);
-                break;
-            case Font.SYMBOL:
-                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.SYMBOL);
-                break;
-            case Font.ZAPFDINGBATS:
-                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.ZAPFDINGBATS);
-                break;
-                default:
-                    com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
-                    if (bf != null) {
-                        writeCssProperty(MarkupTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
-                    }
-        }
-        
-        if (font.size() != Font.UNDEFINED) {
-            writeCssProperty(MarkupTags.CSS_FONTSIZE, String.valueOf(font.size()) + "px");
-        }
-        if (font.color() != null) {
-            writeCssProperty(MarkupTags.CSS_COLOR, HtmlEncoder.encode(font.color()));
-        }
-        
-        int fontstyle = font.style();
-        if (fontstyle != Font.UNDEFINED && fontstyle != Font.NORMAL) {
-            switch (fontstyle & Font.BOLDITALIC) {
-                case Font.BOLD:
-                    writeCssProperty(MarkupTags.CSS_FONTWEIGHT, ElementTags.BOLD);
-                    break;
-                case Font.ITALIC:
-                    writeCssProperty(MarkupTags.CSS_FONTSTYLE, ElementTags.ITALIC);
-                    break;
-                case Font.BOLDITALIC:
-                    writeCssProperty(MarkupTags.CSS_FONTWEIGHT, ElementTags.BOLD);
-                    writeCssProperty(MarkupTags.CSS_FONTSTYLE, ElementTags.ITALIC);
-                    break;
-            }
-            
-            // CSS only supports one decoration tag so if both are specified
-            // only one of the two will display
-            if ((fontstyle & Font.UNDERLINE) > 0) {
-                writeCssProperty(MarkupTags.CSS_TEXTDECORATION, MarkupTags.CSS_UNDERLINE);
-            }
-            if ((fontstyle & Font.STRIKETHRU) > 0) {
-                writeCssProperty(MarkupTags.CSS_TEXTDECORATION, MarkupTags.CSS_LINETHROUGH);
-            }
-        }
-        
-        write("\"");
-    }
-    
-    /**
-     * Writes out a CSS property.
-     */
-    private void writeCssProperty(String prop, String value) throws IOException {
-        write(new StringBuffer(prop).append(": ").append(value).append("; ").toString());
     }
 }

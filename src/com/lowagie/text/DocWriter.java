@@ -55,6 +55,9 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.HtmlEncoder;
+
 /**
  * An abstract <CODE>Writer</CODE> class for documents.
  * <P>
@@ -435,8 +438,6 @@ public abstract class DocWriter implements DocListener {
         os.write(GT);
     }
     
-// patch by Matt Benson 02/21/2002
-    
 /**
  * Writes the markup attributes of the specified <CODE>MarkupAttributes</CODE>
  * object to the <CODE>OutputStream</CODE>.
@@ -447,13 +448,12 @@ public abstract class DocWriter implements DocListener {
     {
       Iterator attributeIterator = mAtt.getMarkupAttributeNames().iterator();
       boolean result = attributeIterator.hasNext();
-      while (attributeIterator.hasNext())
-      {
+      while (attributeIterator.hasNext()) {
         String name = String.valueOf(attributeIterator.next());
         write(name, mAtt.getMarkupAttribute(name));
-      }//end while attributeIterator has next
+      }
       return result;
-    }//end writeMarkupAttributes
+    }
     
     
 /**
@@ -462,11 +462,85 @@ public abstract class DocWriter implements DocListener {
  * @param element   the <CODE>Element</CODE> to check.
  * @return <CODE>boolean</CODE>.
  */
-    protected static boolean hasMarkupAttributes(Element element)
-    {
+    protected static boolean hasMarkupAttributes(Element element) {
       return (element instanceof MarkupAttributes &&
        !(((MarkupAttributes)element).getMarkupAttributeNames().isEmpty()));
-    }//end hasMarkupAttributes
-// end patch by Matt Benson 02/21/2002
+    }
+    
+    /**
+     * Writes the representation of a <CODE>Font</CODE>.
+     *
+     * @param a <CODE>Font</CODE>
+     */
+    
+    protected void write(Font font) throws IOException {
+        if (font == null) return;
+        write(" ");
+        write(MarkupTags.STYLE);
+        write("=\"");
+        switch (font.family()) {
+            case Font.COURIER:
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.COURIER);
+                break;
+            case Font.HELVETICA:
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.HELVETICA);
+                break;
+            case Font.TIMES_NEW_ROMAN:
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.TIMES_ROMAN);
+                break;
+            case Font.SYMBOL:
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.SYMBOL);
+                break;
+            case Font.ZAPFDINGBATS:
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.ZAPFDINGBATS);
+                break;
+                default:
+                    com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
+                    if (bf != null) {
+                        writeCssProperty(MarkupTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
+                    }
+        }
+        
+        if (font.size() != Font.UNDEFINED) {
+            writeCssProperty(MarkupTags.CSS_FONTSIZE, String.valueOf(font.size()) + "px");
+        }
+        if (font.color() != null) {
+            writeCssProperty(MarkupTags.CSS_COLOR, HtmlEncoder.encode(font.color()));
+        }
+        
+        int fontstyle = font.style();
+        if (fontstyle != Font.UNDEFINED && fontstyle != Font.NORMAL) {
+            switch (fontstyle & Font.BOLDITALIC) {
+                case Font.BOLD:
+                    writeCssProperty(MarkupTags.CSS_FONTWEIGHT, MarkupTags.CSS_BOLD);
+                    break;
+                case Font.ITALIC:
+                    writeCssProperty(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_ITALIC);
+                    break;
+                case Font.BOLDITALIC:
+                    writeCssProperty(MarkupTags.CSS_FONTWEIGHT, MarkupTags.CSS_BOLD);
+                    writeCssProperty(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_ITALIC);
+                    break;
+            }
+            
+            // CSS only supports one decoration tag so if both are specified
+            // only one of the two will display
+            if ((fontstyle & Font.UNDERLINE) > 0) {
+                writeCssProperty(MarkupTags.CSS_TEXTDECORATION, MarkupTags.CSS_UNDERLINE);
+            }
+            if ((fontstyle & Font.STRIKETHRU) > 0) {
+                writeCssProperty(MarkupTags.CSS_TEXTDECORATION, MarkupTags.CSS_LINETHROUGH);
+            }
+        }
+        
+        write("\"");
+    }
+    
+    /**
+     * Writes out a CSS property.
+     */
+    protected void writeCssProperty(String prop, String value) throws IOException {
+        write(new StringBuffer(prop).append(": ").append(value).append("; ").toString());
+    }
     
 }

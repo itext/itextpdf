@@ -54,6 +54,8 @@ import java.awt.Color;
 import java.util.Properties;
 
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.markup.MarkupParser;
 
 /**
  * Contains all the specifications of a font: fontfamily, size, style and color.
@@ -240,14 +242,24 @@ public class Font implements Comparable {
     
     public Font(Properties attributes) {
         this(UNDEFINED, UNDEFINED, UNDEFINED, null);
-        String value;
-        if ((value = (String)attributes.remove(ElementTags.FONT)) != null) {
+        String value = (String) attributes.remove(MarkupTags.STYLE);
+        if (value != null) {
+            attributes.putAll(MarkupParser.parseAttributes(value));
+        }
+        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTFAMILY)) != null) {
             setFamily(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
+        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
+            if (value.endsWith("px")) value = value.substring(0, value.length() - 2);
             setSize(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.STYLE)) != null) {
+        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
+            setStyle(value);
+        }
+        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
+            setStyle(value);
+        }
+        if ((value = (String)attributes.remove(MarkupTags.CSS_TEXTDECORATION)) != null) {
             setStyle(value);
         }
         String r = (String)attributes.remove(ElementTags.RED);
@@ -262,8 +274,8 @@ public class Font implements Comparable {
             if (b != null) blue = Integer.parseInt(b);
             setColor(new Color(red, green, blue));
         }
-        else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
-            setColor(ElementTags.decodeColor(value));
+        else if ((value = (String)attributes.remove(MarkupTags.CSS_COLOR)) != null) {
+            setColor(MarkupParser.decodeColor(value));
         }
     }
     
@@ -372,7 +384,8 @@ public class Font implements Comparable {
  */
     
     public void setStyle(String style) {
-        this.style = getStyleValue(style);
+        if (this.style == UNDEFINED) this.style = NORMAL;
+        this.style |= getStyleValue(style);
     }
     
 /**
@@ -385,19 +398,22 @@ public class Font implements Comparable {
     
     public static int getStyleValue(String style) {
         int s = 0;
-        if (style.indexOf(ElementTags.NORMAL) != -1) {
+        if (style.indexOf(MarkupTags.CSS_NORMAL) != -1) {
             s |= NORMAL;
         }
-        if (style.indexOf(ElementTags.BOLD) != -1) {
+        if (style.indexOf(MarkupTags.CSS_BOLD) != -1) {
             s |= BOLD;
         }
-        if (style.indexOf(ElementTags.ITALIC) != -1) {
+        if (style.indexOf(MarkupTags.CSS_ITALIC) != -1) {
             s |= ITALIC;
         }
-        if (style.indexOf(ElementTags.UNDERLINE) != -1) {
+        if (style.indexOf(MarkupTags.CSS_OBLIQUE) != -1) {
+            s |= ITALIC;
+        }
+        if (style.indexOf(MarkupTags.CSS_UNDERLINE) != -1) {
             s |= UNDERLINE;
         }
-        if (style.indexOf(ElementTags.STRIKETHRU) != -1) {
+        if (style.indexOf(MarkupTags.CSS_LINETHROUGH) != -1) {
             s |= STRIKETHRU;
         }
         return s;

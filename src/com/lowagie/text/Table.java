@@ -64,6 +64,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.markup.*;
 
 /**
  * A <CODE>Table</CODE> is a <CODE>Rectangle</CODE> that contains <CODE>Cell</CODE>s,
@@ -373,7 +374,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             setBorderColor(new Color(red, green, blue));
         }
         else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
-            setBorderColor(ElementTags.decodeColor(value));
+            setBorderColor(MarkupParser.decodeColor(value));
         }
         if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
         (g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
@@ -387,14 +388,14 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             setBackgroundColor(new Color(red, green, blue));
         }
         else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
-            setBackgroundColor(ElementTags.decodeColor(value));
+            setBackgroundColor(MarkupParser.decodeColor(value));
         }
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
         }
         if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
-    
+
     // implementation of the Element-methods
     
 /**
