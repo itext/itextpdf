@@ -49,7 +49,6 @@
 package com.lowagie.text.pdf;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.lowagie.text.Chunk;
 
