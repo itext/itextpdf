@@ -51,6 +51,7 @@
 package com.lowagie.text;
 
 import java.net.URL;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,7 +67,7 @@ import java.util.Set;
  * @see		Anchor
  */
 
-public class Annotation implements Element, MarkupAttributes {
+public class Annotation implements Element, MarkupAttributes, Serializable {
     
     // membervariables
     
@@ -123,7 +124,7 @@ public class Annotation implements Element, MarkupAttributes {
     protected HashMap annotationAttributes = new HashMap();
 
 /** Contains extra markupAttributes */
-    protected Properties markupAttributes;
+    protected Properties markupAttributes = null;
     
 /** This is the lower left x-value */
     protected float llx = Float.MIN_VALUE;

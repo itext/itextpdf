@@ -51,6 +51,7 @@
 package com.lowagie.text;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -109,7 +110,7 @@ public class Cell extends Rectangle implements TextElementArray {
     // membervariables
     
 /** This is the <CODE>ArrayList</CODE> of <CODE>Element</CODE>s. */
-    protected ArrayList arrayList;
+    protected ArrayList arrayList = null;
     
 /** This is the horizontal alignment. */
     protected int horizontalAlignment = Element.ALIGN_UNDEFINED;

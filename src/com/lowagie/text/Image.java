@@ -53,6 +53,7 @@ package com.lowagie.text;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Collections;
@@ -69,7 +70,7 @@ import com.lowagie.text.pdf.CCITTG4Encoder;
  * @see		Rectangle
  */
 
-public abstract class Image extends Rectangle implements Element, MarkupAttributes {
+public abstract class Image extends Rectangle implements Element, MarkupAttributes, Serializable {
     
     // static membervariables (concerning the presence of borders)
     
@@ -121,19 +122,19 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     protected int type;
     
 /** The URL of the image. */
-    protected URL url;
+    protected URL url = null;
     
 /** The raw data of the image. */
     protected byte rawData[];
     
 /** The template to be treated as an image. */
-    protected PdfTemplate template;
+    protected PdfTemplate template = null;
     
 /** The alignment of the Image. */
     protected int alignment;
     
 /** Text that can be shown instead of the image. */
-    protected String alt;
+    protected String alt = null;
     
 /** This is the absolute X-position of the image. */
     protected float absoluteX = Float.NaN;

@@ -57,6 +57,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -156,7 +157,7 @@ import com.lowagie.text.markup.*;
  * @see         Cell
  */
 
-public class Table extends Rectangle implements Element, MarkupAttributes {
+public class Table extends Rectangle implements Element, MarkupAttributes, Serializable {
     
     // membervariables
     
@@ -223,7 +224,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     float offset = Float.MIN_VALUE;
     
 /** contains the attributes that are added to each odd (or even) row */
-    protected Hashtable alternatingRowAttributes;
+    protected Hashtable alternatingRowAttributes = null;
     
     // constructors
     

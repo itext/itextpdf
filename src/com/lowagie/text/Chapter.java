@@ -51,6 +51,7 @@
 
 package com.lowagie.text;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -77,7 +78,7 @@ import java.util.Properties;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Chapter extends Section implements TextElementArray {
+public class Chapter extends Section implements TextElementArray, Serializable {
     
     // constructors
     

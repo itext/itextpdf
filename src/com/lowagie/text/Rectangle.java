@@ -51,6 +51,7 @@
 package com.lowagie.text;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
@@ -65,7 +66,7 @@ import java.util.Set;
  * @see		HeaderFooter
  */
 
-public class Rectangle implements Element, MarkupAttributes {
+public class Rectangle implements Element, MarkupAttributes, Serializable {
     
     // static membervariables (concerning the presence of borders)
     

@@ -50,6 +50,7 @@
 
 package com.lowagie.text;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -77,7 +78,7 @@ import com.lowagie.text.markup.MarkupParser;
  * @see		ListItem
  */
 
-public class Paragraph extends Phrase implements TextElementArray, MarkupAttributes {
+public class Paragraph extends Phrase implements TextElementArray, MarkupAttributes, Serializable {
     
     // membervariables
     

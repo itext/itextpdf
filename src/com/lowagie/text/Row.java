@@ -51,6 +51,7 @@
 package com.lowagie.text;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
@@ -72,7 +73,7 @@ import java.util.Set;
  * @see   Table
  */
 
-public class Row implements Element, MarkupAttributes {
+public class Row implements Element, MarkupAttributes, Serializable {
     
     // membervariables
     
