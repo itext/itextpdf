@@ -272,7 +272,7 @@ public class Chunk implements Element {
  */
     
     public final boolean isEmpty() {
-        return (content.toString().length() == 0) && (attributes == null);
+        return (content.toString().trim().length() == 0) && (attributes == null);
     }
     
 /**
