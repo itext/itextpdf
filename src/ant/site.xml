@@ -52,7 +52,7 @@
 
     <target name="examples.build" description="--> building the pages for lowagie.com">
         <mkdir dir="${itext.tutorial}" />
-		<java classname="com.lowagie.tools.BuildSite">
+		<java classname="com.lowagie.tools.BuildTutorial">
 			<arg value="${itext.xml.tutorial}" />
 			<arg value="${itext.tutorial}" />
 			<arg value="examples.xsl" />
