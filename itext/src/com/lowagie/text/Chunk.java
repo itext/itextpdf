@@ -391,7 +391,7 @@ public class Chunk implements Element {
         }
         buf.append(">");
         buf.append(DocWriter.encode(content()));
-        buf.append("</").append(ElementTags.CHUNK).append(">");
+        buf.append("</").append(ElementTags.CHUNK).append(">\n");
         return buf.toString();
     }
     

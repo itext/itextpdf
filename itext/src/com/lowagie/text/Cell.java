@@ -600,6 +600,7 @@ public class Cell extends Rectangle implements TextElementArray {
         DocWriter.addTabs(buf, indent);
         buf.append("<").append(ElementTags.CELL);
         
+        buf.append(super.toString());
         buf.append(" ").append(ElementTags.HORIZONTALALIGN).append("=\"").append(ElementTags.getAlignment(horizontalAlignment));
         buf.append("\" ").append(ElementTags.VERTICALALIGN).append("=\"").append(ElementTags.getAlignment(verticalAlignment));
         if (colspan != 1) {
@@ -617,10 +618,11 @@ public class Cell extends Rectangle implements TextElementArray {
         if (leading != -1) {
             buf.append(" ").append(ElementTags.LEADING).append("=\"").append(leading).append("\"");
         }
-        buf.append(">");
+        buf.append(">\n");
         for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
             buf.append(((Element) i.next()).toXml(indent + 1));
         }
+        DocWriter.addTabs(buf, indent);
         buf.append("</").append(ElementTags.CELL).append(">\n");
         return buf.toString();
     }
