@@ -200,6 +200,18 @@ public class FontFactory extends java.lang.Object {
         if (value != null && value.length() > 0) {
             Properties styleAttributes = MarkupParser.parseAttributes(value);
             fontname = (String)styleAttributes.remove(MarkupTags.CSS_FONTFAMILY);
+            if (fontname != null) {
+                String tmp;
+                while (fontname.indexOf(",") != -1) {
+                    tmp = fontname.substring(0, fontname.indexOf(","));
+                    if (trueTypeFonts.containsKey(tmp)) {
+                        fontname = tmp;
+                    }
+                    else {
+                        fontname = fontname.substring(fontname.indexOf(",") + 1);
+                    }
+                }
+            }
             if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
                 size = MarkupParser.parseLength(value);
             }
