@@ -69,10 +69,8 @@ public class RtfTable {
     private ArrayList rowsList = new ArrayList();
     /** Stores the RtfWriter, which created this RtfTable. */
     private RtfWriter writer = null;
-    // <!-- steffen
     /** Stores the Table, which this RtfTable is based on. */
     private Table origTable = null;
-    // -->
 
 
 
@@ -93,9 +91,7 @@ public class RtfTable {
      * @param pageWidth An <code>int</code> specifying the page width
      */
     public boolean importTable(Table table, int pageWidth) {
-        // <!-- steffen
         origTable = table;
-        // -->
         // All Cells are pregenerated first, so that cell and rowspanning work
         Iterator rows = table.iterator();
         Row row = null;
@@ -117,11 +113,9 @@ public class RtfTable {
         int i = 0;
         while (rows.hasNext()) {
             row = (Row) rows.next();
+            row.setHorizontalAlignment(table.alignment());
             RtfRow rtfRow = (RtfRow) rowsList.get(i);
-            // steffen
-            // <---
             rtfRow.importRow(row, propWidths, tableWidth, pageWidth, cellpadding, cellspacing, borders, borderColor, borderWidth, i);
-            // -->
             i++;
         }
         return true;
@@ -133,14 +127,12 @@ public class RtfTable {
      * @param os The <code>OutputStream</code> that the content of the <code>RtfTable</code> is to be written to
      */
     public boolean writeTable(ByteArrayOutputStream os) throws DocumentException, IOException {
-        // <!-- steffen
         int size = rowsList.size();
         for (int i = 0; i < size; i++) {
             RtfRow row = (RtfRow) rowsList.get(i);
             row.writeRow(os, i, origTable);
             os.write((byte) '\n');
         }
-        // -->
         if (!writer.writingHeaderFooter()) {
             os.write(RtfWriter.escape);
             os.write(RtfWriter.paragraphDefaults);
