@@ -54,8 +54,9 @@ import java.util.HashMap;
 
 import org.xml.sax.HandlerBase;
 import org.xml.sax.AttributeList;
-import org.xml.sax.Parser;
-import org.xml.sax.helpers.ParserFactory;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import java.io.InputStream;
 import org.xml.sax.InputSource;
@@ -172,9 +173,6 @@ public class TagMap extends HashMap {
         }
     }
     
-/** We use this parser to parse the tagfile. */
-    private static final String PARSER = "org.apache.xerces.parsers.SAXParser";
-    
     public TagMap(String tagfile) {
         super();
         try {
@@ -191,9 +189,8 @@ public class TagMap extends HashMap {
 
     protected void init(InputStream in) {
         try {
-            Parser parser = ParserFactory.makeParser(PARSER);
-            parser.setDocumentHandler(new AttributeHandler(this));
-            parser.parse(new InputSource(in));
+            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+            parser.parse(new InputSource(in), new AttributeHandler(this));
         }
         catch(Exception e) {
             throw new ExceptionConverter(e);
