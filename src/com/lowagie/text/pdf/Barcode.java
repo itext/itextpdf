@@ -180,8 +180,8 @@ public abstract class Barcode {
         return font;
     }
     
-    /** Sets the text font. <CODE>null</CODE> if no text.
-     * @param font the text font. <CODE>null</CODE> if no text
+    /** Sets the text font.
+     * @param font the text font. Set to <CODE>null</CODE> to suppress any text
      */
     public void setFont(BaseFont font) {
         this.font = font;

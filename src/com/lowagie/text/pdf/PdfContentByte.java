@@ -98,6 +98,10 @@ public class PdfContentByte {
     
     /** The alignement is right */
     public static final int ALIGN_RIGHT = Element.ALIGN_RIGHT;
+
+    public static final int LINE_CAP_BUTT = 0;
+    public static final int LINE_CAP_ROUND = 1;
+    public static final int LINE_CAP_PROJECTING_SQUARE = 2;
     
     public static final int TEXT_RENDER_MODE_FILL = 0;
     public static final int TEXT_RENDER_MODE_STROKE = 1;
@@ -234,7 +238,7 @@ public class PdfContentByte {
      * <P>
      * The <VAR>line cap style</VAR> specifies the shape to be used at the end of open subpaths
      * when they are stroked.<BR>
-     * Allowed values are 0 (Butt end caps), 1 (Round end caps) and 2 (Projecting square end caps).<BR>
+     * Allowed values are LINE_CAP_BUTT, LINE_CAP_ROUND and LINE_CAP_PROJECTING_SQUARE.<BR>
      *
      * @param		style		a value
      */
@@ -2023,7 +2027,7 @@ public class PdfContentByte {
      * Gets the <CODE>PdfWriter</CODE> in use by this object.
      * @return the <CODE>PdfWriter</CODE> in use by this object
      */
-    PdfWriter getPdfWriter() {
+    public PdfWriter getPdfWriter() {
         return writer;
     }
     
@@ -2031,7 +2035,7 @@ public class PdfContentByte {
      * Gets the <CODE>PdfDocument</CODE> in use by this object.
      * @return the <CODE>PdfDocument</CODE> in use by this object
      */
-    PdfDocument getPdfDocument() {
+    public PdfDocument getPdfDocument() {
         return pdf;
     }
     

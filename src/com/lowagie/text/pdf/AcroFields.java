@@ -120,12 +120,76 @@ public class AcroFields {
                 else
                     item.values.add(value);
                 item.widgets.add(widget);
+                item.widget_refs.add(arr.get(j)); // must be a reference
                 if (top != null)
                     dic.mergeDifferent(top);
                 item.merged.add(dic);
                 item.page.add(new Integer(k));
             }
         }
+    }
+    
+    /** Gets the list of appearance names. Use it to get the names allowed
+     * with radio and checkbox fields. The name 'Off' may also be valid
+     * even if not returned in the list.
+     * @param fieldName the fully qualified field name
+     * @return the list of names or <CODE>null</CODE> if the field does not exist
+     */    
+    public String[] getAppearanceStates(String fieldName) {
+        Item fd = (Item)fields.get(fieldName);
+        if (fd == null)
+            return null;
+        HashMap names = new HashMap();
+        ArrayList wd = fd.widgets;
+        for (int k = 0; k < wd.size(); ++k) {
+            PdfDictionary dic = (PdfDictionary)wd.get(k);
+            dic = (PdfDictionary)dic.get(PdfName.AP);
+            if (dic == null)
+                continue;
+            PdfObject ob = dic.get(PdfName.N);
+            if (ob == null || !ob.isDictionary())
+                continue;
+            dic = (PdfDictionary)ob;
+            for (Iterator it = dic.getKeys().iterator(); it.hasNext();) {
+                String name = PdfName.decodeName(((PdfName)it.next()).toString());
+                names.put(name, null);
+            }
+        }
+        String out[] = new String[names.size()];
+        return (String[])names.keySet().toArray(out);
+    }
+    
+    /**
+     * Renames a field. Only the last part of the name can be renamed. For example,
+     * if the original field is "ab.cd.ef" only the "ef" part can be renamed.
+     * @param oldName the old field name
+     * @param newName the new field name
+     * @return <CODE>true</CODE> if the renaming was successful, <CODE>false</CODE>
+     * otherwise
+     */    
+    public boolean renameField(String oldName, String newName) {
+        int idx1 = oldName.lastIndexOf('.') + 1;
+        int idx2 = newName.lastIndexOf('.') + 1;
+        if (idx1 != idx2)
+            return false;
+        if (!oldName.substring(0, idx1).equals(newName.substring(0, idx2)))
+            return false;
+        if (fields.containsKey(newName))
+            return false;
+        Item item = (Item)fields.get(oldName);
+        if (item == null)
+            return false;
+        newName = newName.substring(idx2);
+        PdfString ss = new PdfString(newName, PdfObject.TEXT_UNICODE);
+        for (int k = 0; k < item.merged.size(); ++k) {
+            PdfDictionary dic = (PdfDictionary)item.values.get(k);
+            dic.put(PdfName.T, ss);
+            dic = (PdfDictionary)item.merged.get(k);
+            dic.put(PdfName.T, ss);
+        }
+        fields.remove(oldName);
+        fields.put(newName, item);
+        return true;
     }
     
     PdfAppearance getAppearance(PdfDictionary merged, String text) throws IOException, DocumentException {
@@ -247,10 +311,6 @@ public class AcroFields {
             box = box.rotate();
         tx.setBox(box);
         PdfName fieldType = (PdfName)PdfReader.getPdfObject(merged.get(PdfName.FT));
-//        PdfString value = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.V));
-//        String text = "";
-////        if (value != null)
-////            text = value.toUnicodeString();
         if (PdfName.TX.equals(fieldType)) {
             PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.MAXLEN));
             int len = 0;
@@ -275,7 +335,7 @@ public class AcroFields {
             String choicesExp[] = new String[op.size()];
             for (int k = 0; k < op.size(); ++k) {
                 PdfObject obj = (PdfObject)op.get(k);
-                if (obj.type() == PdfObject.STRING) {
+                if (obj.isString()) {
                     choices[k] = choicesExp[k] = ((PdfString)obj).toUnicodeString();
                 }
                 else {
@@ -327,7 +387,7 @@ public class AcroFields {
         PdfObject v = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.V));
         if (v == null)
             return "";
-        if (v.type() == PdfObject.STRING)
+        if (v.isString())
             return ((PdfString)v).toUnicodeString();
         return PdfName.decodeName(v.toString());
     }
@@ -372,6 +432,8 @@ public class AcroFields {
      * @throws DocumentException on error
      */    
     public boolean setField(String name, String value, String display) throws IOException, DocumentException {
+        if (writer == null)
+            throw new DocumentException("This AcroFields instance is read-only.");
         Item item = (Item)fields.get(name);
         if (item == null)
             return false;
@@ -460,6 +522,153 @@ public class AcroFields {
         return fields;
     }
     
+    /**
+     * Gets the field structure.
+     * @param name the name of the field
+     * @return the field structure or <CODE>null</CODE> if the field
+     * does not exist
+     */    
+    public Item getFieldItem(String name) {
+        return (Item)fields.get(name);
+    }
+    
+    /**
+     * Gets the field box positions in the document. The return is an array of <CODE>float</CODE>
+     * multiple of 5. For each of this groups the values are: [page, llx, lly, urx,
+     * ury].
+     * @param name the field name
+     * @return the positions or <CODE>null</CODE> if field does not exist
+     */    
+    public float[] getFieldPositions(String name) {
+        Item item = (Item)fields.get(name);
+        if (item == null)
+            return null;
+        float ret[] = new float[item.page.size() * 5];
+        int ptr = 0;
+        for (int k = 0; k < item.page.size(); ++k) {
+            try {
+                PdfDictionary wd = (PdfDictionary)item.widgets.get(k);
+                PdfArray rect = (PdfArray)wd.get(PdfName.RECT);
+                if (rect == null)
+                    continue;
+                Rectangle r = PdfReader.getNormalizedRectangle(rect);
+                ret[ptr] = ((Integer)item.page.get(k)).floatValue();
+                ++ptr;
+                ret[ptr++] = r.left();
+                ret[ptr++] = r.bottom();
+                ret[ptr++] = r.right();
+                ret[ptr++] = r.top();
+            }
+            catch (Exception e) {
+                // empty on purpose
+            }
+        }
+        if (ptr < ret.length) {
+            float ret2[] = new float[ptr];
+            System.arraycopy(ret, 0, ret2, 0, ptr);
+            return ret2;
+        }
+        return ret;
+    }
+    
+    private int removeRefFromArray(PdfArray array, PdfObject refo) {
+        ArrayList ar = array.getArrayList();
+        if (refo == null || !refo.isIndirect())
+            return ar.size();
+        PdfIndirectReference ref = (PdfIndirectReference)refo;
+        for (int j = 0; j < ar.size(); ++j) {
+            PdfObject obj = (PdfObject)ar.get(j);
+            if (!obj.isIndirect())
+                continue;
+            if (((PdfIndirectReference)obj).getNumber() == ref.getNumber())
+                ar.remove(j--);
+        }
+        return ar.size();
+    }
+    
+    /**
+     * Removes all the fields from <CODE>page</CODE>.
+     * @param page the page to remove the fields from
+     * @return <CODE>true</CODE> if any field was removed, <CODE>false otherwise</CODE>
+     */    
+    public boolean removeFieldsFromPage(int page) {
+        if (page < 1)
+            return false;
+        boolean found = false;
+        for (Iterator it = fields.keySet().iterator(); it.hasNext();) {
+            boolean fr = removeField((String)it.next(), page);
+            found = (found || fr);
+        }
+        return found;
+    }
+    
+    /**
+     * Removes a field from the document. If page equals -1 all the fields with this
+     * <CODE>name</CODE> are removed from the document otherwise only the fields in
+     * that particular page are removed.
+     * @param name the field name
+     * @param page the page to remove the field from or -1 to remove it from all the pages
+     * @return <CODE>true</CODE> if the field exists, <CODE>false otherwise</CODE>
+     */    
+    public boolean removeField(String name, int page) {
+        Item item = (Item)fields.get(name);
+        if (item == null)
+            return false;
+        PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM));
+        
+        if (acroForm == null)
+            return false;
+        PdfArray arrayf = (PdfArray)PdfReader.getPdfObject(acroForm.get(PdfName.FIELDS));
+        if (arrayf == null)
+            return false;
+        for (int k = 0; k < item.widget_refs.size(); ++k) {
+            int pageV = ((Integer)item.page.get(k)).intValue();
+            if (page != -1 && page != pageV)
+                continue;
+            PdfIndirectReference ref = (PdfIndirectReference)item.widget_refs.get(k);
+            PdfDictionary wd = (PdfDictionary)PdfReader.getPdfObject(ref);
+            PdfDictionary pageDic = reader.getPageN(pageV);
+            PdfArray annots = (PdfArray)PdfReader.getPdfObject(pageDic.get(PdfName.ANNOTS));
+            if (annots != null) {
+                if (removeRefFromArray(annots, ref) == 0)
+                    pageDic.remove(PdfName.ANNOTS);
+            }
+            PdfReader.killIndirect(ref);
+            PdfIndirectReference kid = ref;
+            while ((ref = (PdfIndirectReference)wd.get(PdfName.PARENT)) != null) {
+                wd = (PdfDictionary)PdfReader.getPdfObject(ref);
+                PdfArray kids = (PdfArray)PdfReader.getPdfObject(wd.get(PdfName.KIDS));
+                if (removeRefFromArray(kids, kid) != 0)
+                    break;
+                kid = ref;
+                PdfReader.killIndirect(ref);
+            }
+            if (ref == null) {
+                removeRefFromArray(arrayf, kid);
+            }
+            if (page != -1) {
+                item.merged.remove(k);
+                item.page.remove(k);
+                item.values.remove(k);
+                item.widget_refs.remove(k);
+                item.widgets.remove(k);
+                --k;
+            }
+        }
+        if (page == -1 || item.merged.size() == 0)
+            fields.remove(name);
+        return true;
+    }
+    
+    /**
+     * Removes a field from the document.
+     * @param name the field name
+     * @return <CODE>true</CODE> if the field exists, <CODE>false otherwise</CODE>
+     */    
+    public boolean removeField(String name) {
+        return removeField(name, -1);
+    }
+    
     /** Gets the property generateAppearances.
      * @return the property generateAppearances
      */
@@ -483,7 +692,7 @@ public class AcroFields {
     }
     
     /** The field representations for retrieval and modification. */    
-    public class Item {
+    public static class Item {
         /** An array of <CODE>PdfDictionary</CODE> where the value tag /V
          * is present.
          */        
@@ -491,6 +700,9 @@ public class AcroFields {
         /** An array of <CODE>PdfDictionary</CODE> with the widgets.
          */        
         public ArrayList widgets = new ArrayList();
+        /** An array of <CODE>PdfDictionary</CODE> with the widget references.
+         */
+        public ArrayList widget_refs = new ArrayList();
         /** An array of <CODE>PdfDictionary</CODE> with all the field
          * and widget tags merged.
          */        

@@ -101,6 +101,18 @@ public class PdfPages {
         }
     }
     
+    PdfIndirectReference addPageRef(PdfIndirectReference pageRef) {
+        try {
+            if ((pages.size() % leafSize) == 0)
+                parents.add(writer.getPdfIndirectReference());
+            pages.add(pageRef);
+            return (PdfIndirectReference)parents.get(parents.size() - 1);
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    
     // returns the top parent to include in the catalog
     PdfIndirectReference writePageTree() throws IOException {
         if (pages.size() == 0)

@@ -59,13 +59,15 @@ class PageResources {
     protected PdfDictionary extGStateDictionary = new PdfDictionary();
     protected HashMap forbiddenNames;
     protected PdfDictionary originalResources;
-    protected int namePtr = 0;
+    protected int namePtr[] = {0};
     protected HashMap usedNames;
 
     PageResources() {
     }
     
-    void setOriginalResources(PdfDictionary resources, PdfReader reader) {
+    void setOriginalResources(PdfDictionary resources, int newNamePtr[]) {
+        if (newNamePtr != null)
+            namePtr = newNamePtr;
         originalResources = resources;
         forbiddenNames = new HashMap();
         usedNames = new HashMap();
@@ -73,7 +75,7 @@ class PageResources {
             return;
         for (Iterator i = resources.getKeys().iterator(); i.hasNext();) {
             PdfObject sub = PdfReader.getPdfObject(resources.get((PdfName)i.next()));
-            if (sub.type() == PdfObject.DICTIONARY) {
+            if (sub.isDictionary()) {
                 PdfDictionary dic = (PdfDictionary)sub;
                 for (Iterator j = dic.getKeys().iterator(); j.hasNext();) {
                     forbiddenNames.put(j.next(), null);
@@ -88,7 +90,7 @@ class PageResources {
             translated = (PdfName)usedNames.get(name);
             if (translated == null) {
                 while (true) {
-                    translated = new PdfName("Xi" + (namePtr++));
+                    translated = new PdfName("Xi" + (namePtr[0]++));
                     if (!forbiddenNames.containsKey(translated))
                         break;
                 }

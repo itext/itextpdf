@@ -120,7 +120,7 @@ class PdfReaderInstance {
         byte bout[] = null;
         ArrayList filters = null;
         if (contents != null) {
-            if (contents.type() == PdfObject.STREAM) {
+            if (contents.isStream()) {
                 dic.putAll((PRStream)contents);
             }
             else {

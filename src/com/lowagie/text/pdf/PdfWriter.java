@@ -690,7 +690,7 @@ public class PdfWriter extends DocWriter {
                     iccArray.add(PdfName.ICCBASED);
                     iccArray.add(iccRef);
                     PdfObject colorspace = i.get(PdfName.COLORSPACE);
-                    if (colorspace != null && colorspace.type() == PdfObject.ARRAY) {
+                    if (colorspace != null && colorspace.isArray()) {
                         ArrayList ar = ((PdfArray)colorspace).getArrayList();
                         if (ar.size() > 1 && PdfName.INDEXED.equals(ar.get(0)))
                             ar.set(1, iccArray);

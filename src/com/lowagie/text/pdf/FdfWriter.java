@@ -197,7 +197,7 @@ public class FdfWriter {
                 if (obj instanceof HashMap)
                     return null;
                 else {
-                    if (((PdfObject)obj).type() == PdfObject.STRING)
+                    if (((PdfObject)obj).isString())
                         return ((PdfString)obj).toUnicodeString();
                     else
                         return PdfName.decodeName(obj.toString());

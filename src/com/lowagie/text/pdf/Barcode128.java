@@ -202,7 +202,7 @@ public class Barcode128 extends Barcode{
     public static final char CODE_BC_TO_A = 101;
     /** The code for UCC/EAN-128.
      */
-    public static final char FNC1 = 102;
+    public static final char FNC1_INDEX = 102;
     /** The start code.
      */
     public static final char START_A = 103;
@@ -213,6 +213,17 @@ public class Barcode128 extends Barcode{
      */
     public static final char START_C = 105;
 
+    public static final char FNC1 = '\u00ca';
+    public static final char DEL = '\u00c3';
+    public static final char FNC3 = '\u00c4';
+    public static final char FNC2 = '\u00c5';
+    public static final char SHIFT = '\u00c6';
+    public static final char CODE_C = '\u00c7';
+    public static final char CODE_A = '\u00c8';
+    public static final char FNC4 = '\u00c8';
+    public static final char STARTA = '\u00cb';
+    public static final char STARTB = '\u00cc';
+    public static final char STARTC = '\u00cd';
     
     /** Creates new Barcode128 */
     public Barcode128() {
@@ -279,7 +290,7 @@ public class Barcode128 extends Barcode{
         if (tLen == 0) {
             out += START_B;
             if (ucc)
-                out += FNC1;
+                out += FNC1_INDEX;
             return out;
         }
         int c = 0;
@@ -295,7 +306,7 @@ public class Barcode128 extends Barcode{
             currentCode = START_C;
             out += currentCode;
             if (ucc)
-                out += FNC1;
+                out += FNC1_INDEX;
             out += getPackedRawDigits(text, index, 2);
             index += 2;
         }
@@ -303,14 +314,14 @@ public class Barcode128 extends Barcode{
             currentCode = START_A;
             out += currentCode;
             if (ucc)
-                out += FNC1;
+                out += FNC1_INDEX;
             out += (char)(c + 64);
             ++index;
         }
         else {
             out += currentCode;
             if (ucc)
-                out += FNC1;
+                out += FNC1_INDEX;
             out += (char)(c - ' ');
             ++index;
         }

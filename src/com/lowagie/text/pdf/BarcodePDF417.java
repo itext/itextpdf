@@ -911,8 +911,8 @@ public class BarcodePDF417 {
      * @param s the text that will form the barcode
      * @throws UnsupportedEncodingException if the encoding Cp437 is not supported
      */    
-    public void setText(String s) throws UnsupportedEncodingException {
-        this.text = s.getBytes("Cp437");
+    public void setText(String s) {
+        this.text = PdfEncodings.convertToBytes(s, "cp437");
     }
     
     /** Gets the options to generate the barcode.

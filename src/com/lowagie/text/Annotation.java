@@ -82,7 +82,8 @@ public class Annotation implements Element, MarkupAttributes {
     public static final int NAMED_DEST = 5;    
 /** This is a possible annotation type. */
     public static final int LAUNCH = 6;
-    
+    /** This is a possible annotation type. */
+    public static final int SCREEN = 7;
 /** This is a possible attribute. */
     public static String TITLE = "title";
 /** This is a possible attribute. */
@@ -113,6 +114,8 @@ public class Annotation implements Element, MarkupAttributes {
     public static String URX = "urx";
 /** This is a possible attribute. */
     public static String URY = "ury";
+    /** This is a possible attribute. */
+    public static String MIMETYPE = "mime";
     
 /** This is the type of annotation. */
     protected int annotationtype;
@@ -227,6 +230,24 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
+     * Creates a Screen anotation to embed media clips
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @param moviePath path to the media clip file
+     * @param mimeType mime type of the media
+     * @param showOnDisplay if true play on display of the page
+     */
+    public Annotation(float llx, float lly, float urx, float ury, String moviePath, String mimeType, boolean showOnDisplay) {
+        this(llx, lly, urx, ury);
+        annotationtype = SCREEN;
+        annotationAttributes.put(FILE, moviePath);
+        annotationAttributes.put(MIMETYPE, mimeType);
+        annotationAttributes.put(PARAMETERS, new boolean[]{false /*embedded*/, showOnDisplay});
+    }
+
+    /**
  * Constructs an <CODE>Annotation</CODE>.
  *
  * @param       llx     the lower left x-value

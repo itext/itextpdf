@@ -216,6 +216,12 @@ public class IntHashtable {
     }
     
     public int[] toOrderedKeys() {
+        int res[] = getKeys();
+        Arrays.sort(res);
+        return res;
+    }
+    
+    public int[] getKeys() {
         int res[] = new int[count];
         int ptr = 0;
         int index = table.length;
@@ -229,7 +235,6 @@ public class IntHashtable {
             entry = e.next;
             res[ptr++] = e.key;
         }
-        Arrays.sort(res);
         return res;
     }
     

@@ -22,10 +22,12 @@ package com.lowagie.tools;
 
 import java.io.*;
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
 import com.lowagie.text.pdf.*;
+import java.util.List;
+import java.util.ArrayList;
 
-public class concat_pdf extends java.lang.Object {
+public class concat_pdf {
     
     /**
      * This class can be used to concatenate existing PDF files.
@@ -38,6 +40,8 @@ public class concat_pdf extends java.lang.Object {
         }
         else {
             try {
+                int pageOffset = 0;
+                ArrayList master = new ArrayList();
                 int f = 0;
                 String outFile = args[args.length-1];
                 Document document = null;
@@ -48,6 +52,13 @@ public class concat_pdf extends java.lang.Object {
                     reader.consolidateNamedDestinations();
                     // we retrieve the total number of pages
                     int n = reader.getNumberOfPages();
+                    List bookmarks = SimpleBookmark.getBookmark(reader);
+                    if (bookmarks != null) {
+                        if (pageOffset != 0)
+                            SimpleBookmark.shiftPageNumbers(bookmarks, pageOffset, null);
+                        master.addAll(bookmarks);
+                    }
+                    pageOffset += n;
                     System.out.println("There are " + n + " pages in " + args[f]);
                     
                     if (f == 0) {
@@ -71,6 +82,8 @@ public class concat_pdf extends java.lang.Object {
                         writer.copyAcroForm(reader);
                     f++;
                 }
+                if (master.size() > 0)
+                    writer.setOutlines(master);
                 // step 5: we close the document
                 document.close();
             }
