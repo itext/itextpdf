@@ -388,6 +388,17 @@ public class Chunk implements Element, MarkupAttributes {
     }
 
 /**
+ * Gets the width of the Chunk in points.
+ * @return a width in points
+ */
+    public float getWidthPoint() {
+        if (getImage() != null) {
+            return getImage().scaledWidth();
+        }
+    	return font.getCalculatedBaseFont(true).getWidthPoint(content(), font.getCalculatedSize()) * getHorizontalScaling();
+    }
+    
+/**
  * Sets the text displacement relative to the baseline. Positive values rise the text,
  * negative values lower the text.
  * <P>
@@ -440,13 +451,23 @@ public class Chunk implements Element, MarkupAttributes {
     }
 
     /**
-     * Sets the text horizontal scaling. A vaue of 1 is normal and a value of 0.5f
+     * Sets the text horizontal scaling. A value of 1 is normal and a value of 0.5f
      * shrinks the text to half it's width.
      * @param scale the horizontal scaling factor
      * @return this <CODE>Chunk</CODE>
      */    
     public Chunk setHorizontalScaling(float scale) {
         return setAttribute(HSCALE, new Float(scale));
+    }
+    
+    /**
+     * Gets the horizontal scaling.
+     * @return a percentage in float
+     */
+    public float getHorizontalScaling() {
+    	Float f = (Float)attributes.get(HSCALE);
+    	if (f == null) return 1f;
+    	return f.floatValue();
     }
     
 /**
