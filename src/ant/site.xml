@@ -39,7 +39,10 @@
 		<copy file="${itext.xml.lowagie}/lgpl.txt" todir="${itext.lowagie}" overwrite="no" />
         <xslt basedir="${itext.xml.lowagie}" destdir="${itext.lowagie}" extension=".html" style="${itext.xml.lowagie}/lowagie.xsl" includes="*.xml">
 			<param name="releasenumber" expression="${releasenumber}"/>
+			<param name="releasedate" expression="${releasedate}"/>
 			<param name="earlyaccessnumber" expression="${earlyaccessnumber}"/>
+			<param name="earlyaccesspaulo" expression="${earlyaccesspaulo}"/>
+			<param name="earlyaccesslowagie" expression="${earlyaccesslowagie}"/>
 		</xslt>
     </target>
 
