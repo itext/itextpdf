@@ -500,7 +500,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** PAGE numbers */
     protected static final byte[] fieldPage = "PAGE".getBytes();
-    
+
   /** HYPERLINK field */
     protected static final byte[] fieldHyperlink = "HYPERLINK".getBytes();
     
