@@ -1395,7 +1395,9 @@ class PdfDocument extends Document implements DocListener {
                             tablerec.setBorderColor(table.borderColor());
                             tablerec.setBackgroundColor(table.backgroundColor());
                             tablerec.setGrayFill(table.grayFill());
-                            graphics.rectangle(tablerec.rectangle(top(), indentBottom()));
+                            PdfContentByte cb = writer.getDirectContentUnder();
+                            cb.rectangle(tablerec.rectangle(top(), indentBottom()));
+                            cb.stroke();
                         }
                         
                         // if the table continues on the next page
