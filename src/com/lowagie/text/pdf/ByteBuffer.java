@@ -3,12 +3,9 @@
  *
  * Created on March 13, 2001, 5:40 PM
  */
-
 package com.lowagie.text.pdf;
-
 import java.io.UnsupportedEncodingException;
 import com.lowagie.text.DocWriter;
-
 /** Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
  * Floating point is converted to a format suitable to the PDF.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -29,7 +26,6 @@ public class ByteBuffer
     {
         this(128);
     }
-
 /** Creates a byte buffer with a certain capacity.
  * @param size the initial capacity
  */    
@@ -39,7 +35,6 @@ public class ByteBuffer
             size = 128;
         buf = new byte[size];
     }
-
 /** Appends an <CODE>int</CODE>. The size of the array will grow by one.
  * @param b the int to be appended
  * @return a reference to this <CODE>ByteBuffer</CODE> object
@@ -56,7 +51,6 @@ public class ByteBuffer
         count = newcount;
         return this;
     }
-
 /** Appends the subarray of the <CODE>byte</CODE> array. The buffer will grow by
  * <CODE>len</CODE> bytes.
  * @param b the array to be appended
@@ -79,7 +73,6 @@ public class ByteBuffer
         count = newcount;
         return this;
     }
-
 /** Appends an array of bytes.
  * @param b the array to be appended
  * @return a reference to this <CODE>ByteBuffer</CODE> object
@@ -203,7 +196,6 @@ public class ByteBuffer
     {
         count = 0;
     }
-
     /**
      * Creates a newly allocated byte array. Its size is the current 
      * size of this output stream and the valid contents of the buffer 
@@ -217,7 +209,6 @@ public class ByteBuffer
         System.arraycopy(buf, 0, newbuf, 0, count);
         return newbuf;
     }
-
     /** Returns the current size of the buffer.
      *
      * @return the value of the <code>count</code> field, which is the number of valid bytes in this byte buffer.
@@ -226,7 +217,6 @@ public class ByteBuffer
     {
         return count;
     }
-
     /**
      * Converts the buffer's contents into a string, translating bytes into
      * characters according to the platform's default character encoding.
@@ -237,7 +227,6 @@ public class ByteBuffer
     {
         return new String(buf, 0, count);
     }
-
     /**
      * Converts the buffer's contents into a string, translating bytes into
      * characters according to the specified character encoding.
@@ -251,6 +240,5 @@ public class ByteBuffer
     {
         return new String(buf, 0, count, enc);
     }
-
 
 }

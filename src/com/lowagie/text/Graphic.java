@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text;
@@ -44,58 +44,68 @@ import com.lowagie.text.pdf.PdfContentByte;
  * the PDF Reference Manual version 1.3 first.
  *
  * @see		Element
- * 
+ *
  * @author  bruno@lowagie.com
  */
 
 public class Graphic extends PdfContentByte implements Element {
-
-// constructor
-
-	/**
-	 * Constructs a <CODE>Graphic</CODE>-object.
-	 */
-
-	public Graphic() {
-		super(null);
-	}
-
-// implementation of the Element interface
-
-    /**
-     * Processes the element by adding it (or the different parts) to an
-	 * <CODE>ElementListener</CODE>. 
-     *
-	 * @param	listener	an <CODE>ElementListener</CODE>
-	 * <CODE>true</CODE> if the element was processed successfully
-     */
-
+    
+    // constructor
+    
+/**
+ * Constructs a <CODE>Graphic</CODE>-object.
+ */
+    
+    public Graphic() {
+        super(null);
+    }
+    
+    // implementation of the Element interface
+    
+/**
+ * Processes the element by adding it (or the different parts) to an
+ * <CODE>ElementListener</CODE>.
+ *
+ * @param	listener	an <CODE>ElementListener</CODE>
+ * <CODE>true</CODE> if the element was processed successfully
+ */
+    
     public boolean process(ElementListener listener) {
-		try {
-			return listener.add(this);
-		}
-		catch(DocumentException de) {
-			return false;
-		}
-	}
-
-    /**
-     * Gets the type of the text element. 
-     *
-     * @return	a type
-     */
-
+        try {
+            return listener.add(this);
+        }
+        catch(DocumentException de) {
+            return false;
+        }
+    }
+    
+/**
+ * Gets the type of the text element.
+ *
+ * @return	a type
+ */
+    
     public int type() {
-		return Element.GRAPHIC;
-	}		
-
-    /**
-     * Gets all the chunks in this element. 
-     *
-     * @return	an <CODE>ArrayList</CODE>
-     */
-
+        return Element.GRAPHIC;
+    }
+    
+/**
+ * Gets all the chunks in this element.
+ *
+ * @return	an <CODE>ArrayList</CODE>
+ */
+    
     public ArrayList getChunks() {
-		 return new ArrayList();
-	}
+        return new ArrayList();
+    }
+    
+/**
+ * Returns the name and content of the meta information.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public final String toString() {
+        return "";
+    }
 }

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -45,15 +45,15 @@ import java.util.EventListener;
  */
 
 public interface ElementListener extends EventListener {
-
-// methods
-
-    /**
-     * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>. 
-     *
-	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-     */
-
+    
+    // methods
+    
+/**
+ * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
+ *
+ * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+ * @throws	DocumentException	when a document isn't open yet, or has been closed
+ */
+    
     public boolean add(Element element) throws DocumentException;
 }

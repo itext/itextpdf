@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -37,6 +37,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 
 import java.util.Iterator;
+import java.util.Properties;
 
 /**
  * An <CODE>Anchor</CODE> can be a reference or a destination of a reference.
@@ -58,208 +59,276 @@ import java.util.Iterator;
  */
 
 public class Anchor extends Phrase implements TextElementArray {
-
-// membervariables
-
-	/** This is the name of the <CODE>Anchor</CODE>. */
-	private String name;
-
-	/** This is the reference of the <CODE>Anchor</CODE>. */
-	private String reference;
-
-// constructors
-
-	/**
-	 * Constructs an <CODE>Anchor</CODE> without specifying a leading.
-	 */
-
-	public Anchor() {
-		super(16);
-	}
-
-	/**
-	 * Constructs an <CODE>Anchor</CODE> with a certain leading.
-	 *
-	 * @param	leading		the leading
-	 */
-
-	public Anchor(float leading) {
-		super(leading);
-	}
-
-	/**
-	 * Constructs an <CODE>Anchor</CODE> with a certain <CODE>Chunk</CODE>.
-	 *
-	 * @param	chunk		a <CODE>Chunk</CODE>
-	 */
-
-	public Anchor(Chunk chunk) {
-		super(chunk);
-	}
-
-	/**
-	 * Constructs an <CODE>Anchor</CODE> with a certain <CODE>String</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 */
-
-	public Anchor(String string) {
-		super(string);
-	}
-
-	/**
-	 * Constructs an <CODE>Anchor</CODE> with a certain <CODE>String</CODE>
-	 * and a certain <CODE>Font</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 * @param	font		a <CODE>Font</CODE>
-	 */
-
-	public Anchor(String string, Font font) {
-		super(string, font);
-	}
-
-	/**
-	 * Constructs an <CODE>Anchor</CODE> with a certain <CODE>Chunk</CODE>
-	 * and a certain leading.
-	 *
-	 * @param	leading		the leading
-	 * @param	chunk		a <CODE>Chunk</CODE>
-	 */
-
-	public Anchor(float leading, Chunk chunk) {
-		super(leading, chunk);
-	}
-
-	/**
-	 * Constructs an <CODE>Anchor</CODE> with a certain leading
-	 * and a certain <CODE>String</CODE>.
-	 *
-	 * @param	leading		the leading
-	 * @param	string		a <CODE>String</CODE>
-	 */
-
-	public Anchor(float leading, String string) {
-		super(leading, string);
-	}
-
-	/**
-	 * Constructs an <CODE>Anchor</CODE> with a certain leading,
-	 * a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
-	 *
-	 * @param	leading		the leading
-	 * @param	string		a <CODE>String</CODE>
-	 * @param	font		a <CODE>Font</CODE>
-	 */
-
-	public Anchor(float leading, String string, Font font) {
-		super(leading, string, font);
-	}
-
-// implementation of the Element-methods
-
-    /**
-     * Gets the type of the text element. 
-     *
-     * @return	a type
-     */
-
+    
+    // membervariables
+    
+/** This is the anchor tag. */
+    public static final String ANCHOR = "anchor";
+    
+/** This is the name of the <CODE>Anchor</CODE>. */
+    private String name = null;
+    
+/** This is the reference of the <CODE>Anchor</CODE>. */
+    private String reference = null;
+    
+    // constructors
+    
+/**
+ * Constructs an <CODE>Anchor</CODE> without specifying a leading.
+ */
+    
+    public Anchor() {
+        super(16);
+    }
+    
+/**
+ * Constructs an <CODE>Anchor</CODE> with a certain leading.
+ *
+ * @param	leading		the leading
+ */
+    
+    public Anchor(float leading) {
+        super(leading);
+    }
+    
+/**
+ * Constructs an <CODE>Anchor</CODE> with a certain <CODE>Chunk</CODE>.
+ *
+ * @param	chunk		a <CODE>Chunk</CODE>
+ */
+    
+    public Anchor(Chunk chunk) {
+        super(chunk);
+    }
+    
+/**
+ * Constructs an <CODE>Anchor</CODE> with a certain <CODE>String</CODE>.
+ *
+ * @param	string		a <CODE>String</CODE>
+ */
+    
+    public Anchor(String string) {
+        super(string);
+    }
+    
+/**
+ * Constructs an <CODE>Anchor</CODE> with a certain <CODE>String</CODE>
+ * and a certain <CODE>Font</CODE>.
+ *
+ * @param	string		a <CODE>String</CODE>
+ * @param	font		a <CODE>Font</CODE>
+ */
+    
+    public Anchor(String string, Font font) {
+        super(string, font);
+    }
+    
+/**
+ * Constructs an <CODE>Anchor</CODE> with a certain <CODE>Chunk</CODE>
+ * and a certain leading.
+ *
+ * @param	leading		the leading
+ * @param	chunk		a <CODE>Chunk</CODE>
+ */
+    
+    public Anchor(float leading, Chunk chunk) {
+        super(leading, chunk);
+    }
+    
+/**
+ * Constructs an <CODE>Anchor</CODE> with a certain leading
+ * and a certain <CODE>String</CODE>.
+ *
+ * @param	leading		the leading
+ * @param	string		a <CODE>String</CODE>
+ */
+    
+    public Anchor(float leading, String string) {
+        super(leading, string);
+    }
+    
+/**
+ * Constructs an <CODE>Anchor</CODE> with a certain leading,
+ * a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
+ *
+ * @param	leading		the leading
+ * @param	string		a <CODE>String</CODE>
+ * @param	font		a <CODE>Font</CODE>
+ */
+    
+    public Anchor(float leading, String string, Font font) {
+        super(leading, string, font);
+    }
+    
+/**
+ * Returns an <CODE>Anchor</CODE> that has been constructed taking in account
+ * the value of some <VAR>attributes</VAR>.
+ *
+ * @param	attributes		Some attributes
+ * @return	an <CODE>Anchor</CODE>
+ */
+    
+    public Anchor(Properties attributes) {
+        this("", new Font(attributes));
+        String value;
+        if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
+            setLeading(Float.parseFloat(value + "f"));
+        }
+        if ((value = attributes.getProperty(ElementTags.NAME)) != null) {
+            setName(value);
+        }
+        if ((value = attributes.getProperty(ElementTags.REFERENCE)) != null) {
+            setReference(value);
+        }
+    }
+    
+    // implementation of the Element-methods
+    
+/**
+ * Processes the element by adding it (or the different parts) to an
+ * <CODE>ElementListener</CODE>.
+ *
+ * @param	listener	an <CODE>ElementListener</CODE>
+ * @return	<CODE>true</CODE> if the element was processed successfully
+ */
+    
+    public final boolean process(ElementListener listener) {
+        try {
+            Chunk chunk;
+            Iterator i = getChunks().iterator();
+            if (i.hasNext() && name != null) {
+                chunk = (Chunk) i.next();
+                chunk.setLocalDestination(name);
+                listener.add(chunk);
+            }
+            boolean localDestination = (reference != null && reference.startsWith("#"));
+            while (i.hasNext()) {
+                chunk = (Chunk) i.next();
+                if (localDestination) {
+                    chunk.setLocalGoto(reference.substring(1));
+                }
+                listener.add(chunk);
+            }
+            return true;
+        }
+        catch(DocumentException de) {
+            return false;
+        }
+    }
+    
+/**
+ * Gets the type of the text element.
+ *
+ * @return	a type
+ */
+    
     public final int type() {
-		return Element.ANCHOR;
-	}
-
-// methods
-
-	/**
-	 * Gets an iterator of <CODE>Element</CODE>s. 
-     *
-     * @return	an <CODE>Iterator</CODE>
-	 */
-
-	// suggestion by by Curt Thompson
-	public final Iterator getElements() {
-		return this.iterator();
-	}
-
-	/**
-	 * Sets the name of this <CODE>Anchor</CODE>.
-	 *
-	 * @param	name		a new name
-	 */
-
-	public final void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * Sets the reference of this <CODE>Anchor</CODE>.
-	 *
-	 * @param	reference		a new reference
-	 */
-
-	public final void setReference(String reference) {
-		this.reference = reference;
-	}
-
-// methods to retrieve information
-
-	/**
-	 * Returns the name of this <CODE>Anchor</CODE>.
-	 *
-	 * @return	a name
-	 */
-
-	public final String name() {
-		return name;
-	}
-
-	/**
-	 * Gets the reference of this <CODE>Anchor</CODE>.
-	 *
-	 * @return	a reference
-	 */
-
-	public final String reference() {
-		return reference;			  	
-	}
-
-	/**
-	 * Gets the reference of this <CODE>Anchor</CODE>.
-	 *
-	 * @return	an <CODE>URL</CODE>
-	 */
-
-	public final URL url() {
-		try {
-			return new URL(reference);
-		}
-		catch(MalformedURLException mue) {
-			return null;
-		}
-	}
-
-	/**
-	 * Returns a representation of this <CODE>Anchor</CODE>.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 */
-
-	public String toString() {
-		StringBuffer buf = new StringBuffer("<ANCHOR LEADING=\"");
-		buf.append(leading);
-		if (name != null) {
-			buf.append("\" NAME=\"");
-			buf.append(name);
-		}
-		if (reference != null) {
-			buf.append("\" REFERENCE=\"");
-			buf.append(reference);
-		}
-		buf.append("\">\n");
-		for (Iterator i = iterator(); i.hasNext(); ) {
-			buf.append(i.next().toString());
-		}
-		buf.append("</ANCHOR>\n");								
-		return buf.toString();
-	}
+        return Element.ANCHOR;
+    }
+    
+    // methods
+    
+/**
+ * Gets an iterator of <CODE>Element</CODE>s.
+ *
+ * @return	an <CODE>Iterator</CODE>
+ */
+    
+    // suggestion by by Curt Thompson
+    public final Iterator getElements() {
+        return this.iterator();
+    }
+    
+/**
+ * Sets the name of this <CODE>Anchor</CODE>.
+ *
+ * @param	name		a new name
+ */
+    
+    public final void setName(String name) {
+        this.name = name;
+    }
+    
+/**
+ * Sets the reference of this <CODE>Anchor</CODE>.
+ *
+ * @param	reference		a new reference
+ */
+    
+    public final void setReference(String reference) {
+        this.reference = reference;
+    }
+    
+    // methods to retrieve information
+    
+/**
+ * Returns the name of this <CODE>Anchor</CODE>.
+ *
+ * @return	a name
+ */
+    
+    public final String name() {
+        return name;
+    }
+    
+/**
+ * Gets the reference of this <CODE>Anchor</CODE>.
+ *
+ * @return	a reference
+ */
+    
+    public final String reference() {
+        return reference;
+    }
+    
+/**
+ * Gets the reference of this <CODE>Anchor</CODE>.
+ *
+ * @return	an <CODE>URL</CODE>
+ */
+    
+    public final URL url() {
+        try {
+            return new URL(reference);
+        }
+        catch(MalformedURLException mue) {
+            return null;
+        }
+    }
+    
+/**
+ * Checks if a given tag corresponds with this object.
+ *
+ * @param   tag     the given tag
+ * @return  true if the tag corresponds
+ */
+    
+    public static boolean isTag(String tag) {
+        return ElementTags.ANCHOR.equals(tag);
+    }
+    
+/**
+ * Returns a representation of this <CODE>Anchor</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        StringBuffer buf = new StringBuffer("<").append(ElementTags.ANCHOR).append(" ").append(ElementTags.LEADING).append("=\"");
+        buf.append(leading).append(font().toString());
+        if (name != null) {
+            buf.append("\" ").append(ElementTags.NAME).append("=\"");
+            buf.append(name);
+        }
+        if (reference != null) {
+            buf.append("\" ").append(ElementTags.REFERENCE).append("=\"");
+            buf.append(reference);
+        }
+        buf.append("\">");
+        for (Iterator i = iterator(); i.hasNext(); ) {
+            buf.append(i.next().toString());
+        }
+        buf.append("</").append(ElementTags.ANCHOR).append(">");
+        return buf.toString();
+    }
 }

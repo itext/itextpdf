@@ -3,9 +3,7 @@
  *
  * Created on March 10, 2001, 7:07 PM
  */
-
 package com.lowagie.text.pdf;
-
 import java.io.*;
 import com.lowagie.text.DocumentException;
 import java.util.HashMap;
@@ -38,7 +36,6 @@ public abstract class BaseFont
 /** cache for the fonts already used.
  */    
     protected static HashMap fontCache = new HashMap();
-
 /** list of the 14 built in fonts.
  */    
     protected static final HashMap BuiltinFonts14 = new HashMap();
@@ -59,7 +56,6 @@ public abstract class BaseFont
         BuiltinFonts14.put("Times-Italic", PdfName.TIMES_ITALIC);
         BuiltinFonts14.put("ZapfDingbats", PdfName.ZAPFDINGBATS);
     }
-
 /** An helper to generate a PdfStream.
  */    
     class StreamFont extends PdfStream
@@ -85,11 +81,9 @@ public abstract class BaseFont
             }
         }
     }
-
     /** Creates new BaseFont */
     protected BaseFont() {
     }
-
 /** Creates a new font. This font can be one of the 14 built in types,
  * a Type1 font referred by an AFM file, a TrueType font or a CJK font from the
  * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier
@@ -259,7 +253,6 @@ public abstract class BaseFont
     {
         return getWidth(char1) * 0.001f * fontSize;
     }
-
 	/**
 	 * Checks if a character can be used to split a <CODE>PdfString</CODE>.
 	 * <P>

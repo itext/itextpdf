@@ -3,12 +3,9 @@
  *
  * Created on March 15, 2001, 5:21 PM
  */
-
 package com.lowagie.text.pdf;
-
 import com.lowagie.text.DocumentException;
 import java.io.*;
-
 /** Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
  *
  * @author  psoares
@@ -77,7 +74,6 @@ public class CJKFont extends BaseFont
         96,500,97,500,98,500,99,500,100,500,101,500,102,500,103,500,104,500,105,500,106,500,107,500,108,500,109,500,110,500,111,500,
         112,500,113,500,114,500,115,500,116,500,117,500,118,500,119,500,120,500,121,500,122,500,123,500,124,500,125,500,126,500,165,500
     };
-
     /** Metrics for the font HeiseiKakuGo-W5 with the encoding UniJIS-UCS2-HW-V */
     private static final int HeiseiKakuGo_W5_UniJIS_UCS2_HW_V[] = {
         32,500,33,500,34,500,35,500,36,500,37,500,38,500,39,500,40,500,41,500,42,500,43,500,44,500,45,500,46,500,47,500,
@@ -87,7 +83,6 @@ public class CJKFont extends BaseFont
         96,500,97,500,98,500,99,500,100,500,101,500,102,500,103,500,104,500,105,500,106,500,107,500,108,500,109,500,110,500,111,500,
         112,500,113,500,114,500,115,500,116,500,117,500,118,500,119,500,120,500,121,500,122,500,123,500,124,500,125,500,126,500,165,500
     };
-
     /** Metrics for the font HeiseiMin-W3 with the encoding UniJIS-UCS2-H */
     private static final int HeiseiMin_W3_UniJIS_UCS2_H[] = {
         32,250,33,333,34,408,35,500,36,500,37,833,38,778,39,180,40,333,41,333,42,500,43,564,44,250,45,333,46,250,47,278,
@@ -129,7 +124,6 @@ public class CJKFont extends BaseFont
         96,500,97,500,98,500,99,500,100,500,101,500,102,500,103,500,104,500,105,500,106,500,107,500,108,500,109,500,110,500,111,500,
         112,500,113,500,114,500,115,500,116,500,117,500,118,500,119,500,120,500,121,500,122,500,123,500,124,500,125,500,126,500,165,500
     };
-
     /** Metrics for the font HYGoThic-Medium with the encoding UniKS-UCS2-H */
     private static final int HYGoThic_Medium_UniKS_UCS2_H[] = {
         32,333,33,416,34,416,35,833,36,666,37,916,38,750,39,250,40,416,41,416,42,583,43,833,44,375,45,833,46,375,47,375,
@@ -149,7 +143,6 @@ public class CJKFont extends BaseFont
         98,583,99,541,100,583,101,583,102,375,103,583,104,583,105,291,106,333,107,583,108,291,109,875,110,583,111,583,112,583,113,583,
         114,458,115,541,116,375,117,583,118,583,119,833,120,625,121,625,122,500,123,583,124,583,125,583,126,750
     };
-
     /** Array of font/encoding combinations allowed and information to build the font descriptors */
     private static final  Object cjk[] =
     {
@@ -227,7 +220,6 @@ public class CJKFont extends BaseFont
     private int metrics1[];
     /** The second metric array to search if the search failled on the first */
     private int metrics2[];
-
     public CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException
     {
         String nameBase = getBaseName(fontName);
@@ -258,7 +250,6 @@ public class CJKFont extends BaseFont
             }
         }
     }
-
     public static boolean isCJKFont(String fontName, String enc)
     {
         for (int k = 0; k < cjk.length; ++k) {
@@ -307,16 +298,13 @@ public class CJKFont extends BaseFont
     {
         return 0;
     }
-
     private int getSingleWidth(int a[], int key)
     {
         int low = 0;
         int high = a.length / 2 -1;
-
         while (low <= high) {
             int mid =(low + high)/2;
             int midVal = a[mid << 1];
-
             if (midVal < key)
                 low = mid + 1;
             else if (midVal > key)
@@ -326,7 +314,6 @@ public class CJKFont extends BaseFont
         }
         return -1;  // key not found.
     }
-
     private PdfDictionary getFontDescriptor() throws DocumentException
     {
         PdfDictionary dic = new PdfDictionary(new PdfName("FontDescriptor"));
@@ -388,5 +375,4 @@ public class CJKFont extends BaseFont
         }
         return null;
     }
-
 }

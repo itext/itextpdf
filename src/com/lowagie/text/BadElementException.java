@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -44,24 +44,24 @@ package com.lowagie.text;
  */
 
 public class BadElementException extends DocumentException {
-
-// constructors
-
-    /**
-     * Constructs a <CODE>BadElementException</CODE> whithout a message.
-     */
-
+    
+    // constructors
+    
+/**
+ * Constructs a <CODE>BadElementException</CODE> whithout a message.
+ */
+    
     BadElementException() {
-		super();
+        super();
     }
-
-    /**
-     * Constructs a <code>BadElementException</code> with a message. 
-     *
-     * @param		message			a message describing the exception
-     */
-
+    
+/**
+ * Constructs a <code>BadElementException</code> with a message.
+ *
+ * @param		message			a message describing the exception
+ */
+    
     public BadElementException(String message) {
-		super(message);
+        super(message);
     }
 }

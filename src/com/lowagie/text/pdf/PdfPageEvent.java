@@ -3,11 +3,9 @@
  *
  * Created on April 10, 2001, 11:21 AM
  */
-
 package com.lowagie.text.pdf;
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
-
 /** Allows a class to catch several document events.
  *
  * @author  Paulo Soares (psoares@consiste.pt)
@@ -20,7 +18,6 @@ public interface PdfPageEvent
      * @param document the document
      */
     public void onOpenDocument(PdfWriter writer, Document document);
-
     /** Called when a page is initialized.
      * <P>
      * Note that if even if a page is not written this method is still
@@ -31,14 +28,12 @@ public interface PdfPageEvent
      * @param document the document
      */
     public void onStartPage(PdfWriter writer, Document document);
-
     /** Called when a page is finished, just before being written to the document.
      *
      * @param writer the <CODE>PdfWriter</CODE> for this document
      * @param document the document
      */
     public void onEndPage(PdfWriter writer, Document document);
-
     /** Called when the document is closed.
      * <P>
      * Note that this method is called with the page number equal
@@ -73,4 +68,3 @@ public interface PdfPageEvent
      */
     public void onGenericTag(PdfWriter writer, Document document, Rectangle rect, String text);
 }
-

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,12 +28,13 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
 
 import java.util.Iterator;
+import java.util.Properties;
 
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
@@ -45,7 +46,7 @@ import java.util.Iterator;
  * list.add(<STRONG>new ListItem("First line")</STRONG>);
  * list.add(<STRONG>new ListItem("The second line is longer to see what happens once the end of the line is reached. Will it start on a new line?")</STRONG>);
  * list.add(<STRONG>new ListItem("Third line")</STRONG>);
- * </PRE></BLOCKQUOTE> 
+ * </PRE></BLOCKQUOTE>
  *
  * The result of this code looks like this:
  *	<OL>
@@ -59,7 +60,7 @@ import java.util.Iterator;
  *			Third line
  *		</LI>
  *	</OL>
- *	
+ *
  * <B>Example 2:</B>
  * <BLOCKQUOTE><PRE>
  * List overview = new List(false, 10);
@@ -85,168 +86,209 @@ import java.util.Iterator;
  */
 
 public class ListItem extends Paragraph implements TextElementArray {
-
-// membervariables
-
-	/** this is the symbol that wil proceed the listitem. */
-	private Chunk symbol;
-
-// constructors
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE>.
-	 */
-
-	public ListItem() {
-		super();
-	}
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE> with a certain leading.
-	 *
-	 * @param	leading		the leading
-	 */
-
-	public ListItem(float leading) {
-		super(leading);
-	}
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>.
-	 *
-	 * @param	chunk		a <CODE>Chunk</CODE>
-	 */
-
-	public ListItem(Chunk chunk) {
-		super(chunk);
-	}
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 */
-
-	public ListItem(String string) {
-		super(string);
-	}
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>
-	 * and a certain <CODE>Font</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 * @param	font		a <CODE>String</CODE>
-	 */
-
-	public ListItem(String string, Font font) {
-		super(string, font);						 	
-	}
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>
-	 * and a certain leading.
-	 *
-	 * @param	leading		the leading
-	 * @param	chunk		a <CODE>Chunk</CODE>
-	 */
-
-	public ListItem(float leading, Chunk chunk) {
-		super(leading, chunk);
-	}
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>
-	 * and a certain leading.
-	 *
-	 * @param	leading		the leading
-	 * @param	string		a <CODE>String</CODE>
-	 */
-
-	public ListItem(float leading, String string) {
-		super(leading, string);
-	}
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE> with a certain leading, <CODE>String</CODE>
-	 * and <CODE>Font</CODE>.
-	 *
-	 * @param	leading		the leading
-	 * @param	string		a <CODE>String</CODE>
-	 * @param	font		a <CODE>Font</CODE>
-	 */
-
-	public ListItem(float leading, String string, Font font) {
-		super(leading, string, font);
-	}
-
-	/**
-	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Phrase</CODE>.
-	 *
-	 * @param	phrase		a <CODE>Phrase</CODE>
-	 */
-
-	public ListItem(Phrase phrase) {
-		super(phrase);
-	}
-
-// implementation of the Element-methods
-
-    /**
-     * Gets the type of the text element. 
-     *
-     * @return	a type
-     */
-
+    
+    // membervariables
+    
+/** this is the symbol that wil proceed the listitem. */
+    private Chunk symbol;
+    
+    // constructors
+    
+/**
+ * Constructs a <CODE>ListItem</CODE>.
+ */
+    
+    public ListItem() {
+        super();
+    }
+    
+/**
+ * Constructs a <CODE>ListItem</CODE> with a certain leading.
+ *
+ * @param	leading		the leading
+ */
+    
+    public ListItem(float leading) {
+        super(leading);
+    }
+    
+/**
+ * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>.
+ *
+ * @param	chunk		a <CODE>Chunk</CODE>
+ */
+    
+    public ListItem(Chunk chunk) {
+        super(chunk);
+    }
+    
+/**
+ * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>.
+ *
+ * @param	string		a <CODE>String</CODE>
+ */
+    
+    public ListItem(String string) {
+        super(string);
+    }
+    
+/**
+ * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>
+ * and a certain <CODE>Font</CODE>.
+ *
+ * @param	string		a <CODE>String</CODE>
+ * @param	font		a <CODE>String</CODE>
+ */
+    
+    public ListItem(String string, Font font) {
+        super(string, font);
+    }
+    
+/**
+ * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>
+ * and a certain leading.
+ *
+ * @param	leading		the leading
+ * @param	chunk		a <CODE>Chunk</CODE>
+ */
+    
+    public ListItem(float leading, Chunk chunk) {
+        super(leading, chunk);
+    }
+    
+/**
+ * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>
+ * and a certain leading.
+ *
+ * @param	leading		the leading
+ * @param	string		a <CODE>String</CODE>
+ */
+    
+    public ListItem(float leading, String string) {
+        super(leading, string);
+    }
+    
+/**
+ * Constructs a <CODE>ListItem</CODE> with a certain leading, <CODE>String</CODE>
+ * and <CODE>Font</CODE>.
+ *
+ * @param	leading		the leading
+ * @param	string		a <CODE>String</CODE>
+ * @param	font		a <CODE>Font</CODE>
+ */
+    
+    public ListItem(float leading, String string, Font font) {
+        super(leading, string, font);
+    }
+    
+/**
+ * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Phrase</CODE>.
+ *
+ * @param	phrase		a <CODE>Phrase</CODE>
+ */
+    
+    public ListItem(Phrase phrase) {
+        super(phrase);
+    }
+    
+        /**
+         * Returns a <CODE>ListItem</CODE> that has been constructed taking in account
+         * the value of some <VAR>attributes</VAR>.
+         *
+         * @param	attributes		Some attributes
+         * @return	a <CODE>ListItem</CODE>
+         */
+    
+    public ListItem(Properties attributes) {
+        super("", new Font(attributes));
+        String value;
+        if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
+            setLeading(Float.parseFloat(value + "f"));
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
+            setIndentationLeft(Float.parseFloat(value + "f"));
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
+            setIndentationRight(Float.parseFloat(value + "f"));
+        }
+        if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
+            setAlignment(value);
+        }
+    }
+    
+    // implementation of the Element-methods
+    
+/**
+ * Gets the type of the text element.
+ *
+ * @return	a type
+ */
+    
     public int type() {
-		return Element.LISTITEM;
-	}
-
-// methods
-
-	/**
-	 * Sets the listsymbol.
-	 *
-	 * @param	symbol	a <CODE>Chunk</CODE>
-	 */
-
-	public final void setListSymbol(Chunk symbol) {
-		this.symbol = symbol;
-		if (this.symbol.font().isStandardFont()) {
-			this.symbol.setFont(font());
-		}
-	}
-
-// methods to retrieve information
-
-	/**
-	 * Returns the listsymbol.
-	 *
-	 * @return	a <CODE>Chunk</CODE>
-	 */
-
-	public final Chunk listSymbol() {
-		return symbol;
-	}
-
-	/**
-	 * Returns a representation of this <CODE>ListItem</CODE>.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 */
-
-	public String toString() {
-		StringBuffer buf = new StringBuffer("\t<LISTITEM LEADING=\"");
-		buf.append(leading);
-		if (indentationLeft != 0) {
-			buf.append("\" LEFTINDENTATION=\"");
-			buf.append(indentationLeft);
-		}
-		buf.append("\">\n");
-		for (Iterator i = iterator(); i.hasNext(); ) {
-			buf.append(i.next().toString());
-		}
-		buf.append("\n\t</LISTITEM>\n");								
-		return buf.toString();
-	}
+        return Element.LISTITEM;
+    }
+    
+    // methods
+    
+/**
+ * Sets the listsymbol.
+ *
+ * @param	symbol	a <CODE>Chunk</CODE>
+ */
+    
+    public final void setListSymbol(Chunk symbol) {
+        this.symbol = symbol;
+        if (this.symbol.font().isStandardFont()) {
+            this.symbol.setFont(font());
+        }
+    }
+    
+    // methods to retrieve information
+    
+/**
+ * Returns the listsymbol.
+ *
+ * @return	a <CODE>Chunk</CODE>
+ */
+    
+    public final Chunk listSymbol() {
+        return symbol;
+    }
+    
+/**
+ * Checks if a given tag corresponds with this object.
+ *
+ * @param   tag     the given tag
+ * @return  true if the tag corresponds
+ */
+    
+    public static boolean isTag(String tag) {
+        return ElementTags.LISTITEM.equals(tag);
+    }
+    
+/**
+ * Returns a representation of this <CODE>ListItem</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        StringBuffer buf = new StringBuffer("\n<").append(ElementTags.LISTITEM).append(" ").append(ElementTags.LEADING).append("=\"");
+        buf.append(leading);
+        buf.append("\"").append(font().toString()).append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
+        if (indentationLeft != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
+            buf.append(indentationLeft);
+        }
+        if (indentationRight != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
+            buf.append(indentationRight);
+        }
+        buf.append("\">");
+        for (Iterator i = iterator(); i.hasNext(); ) {
+            buf.append(i.next().toString());
+        }
+        buf.append("</").append(ElementTags.LISTITEM).append(">");
+        return buf.toString();
+    }
 }

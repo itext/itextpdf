@@ -1,8 +1,8 @@
 /*
  * $Id$
  * $Name$
- * 
- * Copyright 2000 by Bruno Lowagie.
+ *
+ * Copyright 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text;
@@ -40,83 +40,80 @@ import java.net.MalformedURLException;
  * that is shown on a certain position on each page.
  *
  * @see		Element
- * @see		Jpeg  
- * @see		Gif  
+ * @see		Jpeg
+ * @see		Gif
  * @see		Png
- * 
+ *
  * @author  bruno@lowagie.com
  */
 
 public class Watermark extends Image implements Element {
-
-// membervariables
-
-	/** This is the offset in x-direction of the Watermark. */
-	private float offsetX = 0;
-
-	/** This is the offset in y-direction of the Watermark. */
-	private float offsetY = 0;
-
-// Constructors
-
-	/**
-	 * Constructs a <CODE>Watermark</CODE>-object, using an <CODE>Image</CODE>.
-	 *
-	 * @param		image		an <CODE>Image</CODE>-object
-	 * @param		offsetX		the offset in x-direction
-	 * @param		offsetY		the offset in y-direction
-	 */
-
-	public Watermark(Image image, float offsetX, float offsetY) throws MalformedURLException {
-		super(image);
-		this.offsetX = offsetX;
-		this.offsetY = offsetY;
-	}
-
-// implementation of the Element interface
-
-    /**
-     * Gets the type of the text element. 
-     *
-     * @return	a type
-     */
-
+    
+    // membervariables
+    
+/** This is the offset in x-direction of the Watermark. */
+    private float offsetX = 0;
+    
+/** This is the offset in y-direction of the Watermark. */
+    private float offsetY = 0;
+    
+    // Constructors
+    
+/**
+ * Constructs a <CODE>Watermark</CODE>-object, using an <CODE>Image</CODE>.
+ *
+ * @param		image		an <CODE>Image</CODE>-object
+ * @param		offsetX		the offset in x-direction
+ * @param		offsetY		the offset in y-direction
+ */
+    
+    public Watermark(Image image, float offsetX, float offsetY) throws MalformedURLException {
+        super(image);
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+    }
+    
+    // implementation of the Element interface
+    
+/**
+ * Gets the type of the text element.
+ *
+ * @return	a type
+ */
+    
     public int type() {
-		return type;
-	}
-
-// methods to retrieve information
-
-	/**
-	 * Returns the offset in x direction.
-	 *
-	 * @return		an offset
-	 */
-
-	public float offsetX() {
-		return offsetX;
-	}
-
-	/**
-	 * Returns the offset in y direction.
-	 *
-	 * @return		an offset 
-	 */
-
-	public float offsetY() {
-		return offsetY;
-	}
-
-	/**
-	 * Returns a representation of this <CODE>Rectangle</CODE>.
-	 *
-	 * @return		a <CODE>String</CODE>
-	 */
-
-	public String toString() {
-		StringBuffer buf = new StringBuffer("<WATERMARK>");
-		buf.append(super.toString());
-		buf.append("</WATERMARK>");
-		return buf.toString();
-	}
+        return type;
+    }
+    
+    // methods to retrieve information
+    
+/**
+ * Returns the offset in x direction.
+ *
+ * @return		an offset
+ */
+    
+    public float offsetX() {
+        return offsetX;
+    }
+    
+/**
+ * Returns the offset in y direction.
+ *
+ * @return		an offset
+ */
+    
+    public float offsetY() {
+        return offsetY;
+    }
+    
+/**
+ * Returns a representation of this <CODE>Rectangle</CODE>.
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        return "";
+    }
 }

@@ -1,8 +1,8 @@
 /*
- * @(#)PdfAnnotation.java			0.37 2000/10/05
- *       release iText0.37:         0.37 2000/10/05
+ * $Id$
+ * $Name$
  *
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -41,18 +41,16 @@ import java.net.URL;
  * @see		PdfDictionary
  *
  * @author  bruno@lowagie.com
- * @version 0.37 2000/10/05
- * @since   rugPdf0.37
  */
 
 public class PdfAction extends PdfDictionary {
     
     // constructors
     
-    /** Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
-     *
-     * @since iText0.37
-     * @param url the Url to go to
+/**
+ * Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
+ *
+ * @param url the Url to go to
  */
     
     public PdfAction(URL url) {
@@ -61,19 +59,23 @@ public class PdfAction extends PdfDictionary {
         put(PdfName.URI, new PdfString(url.toExternalForm()));
     }
     
-/** Constructs a new <CODE>PdfAction</CODE> of Subtype GoTo.
+/**
+ * Constructs a new <CODE>PdfAction</CODE> of Subtype GoTo.
  * @param destination the destination to go to
- */    
+ */
+    
     PdfAction(PdfIndirectReference destination) {
         super(PdfName.ACTION);
         put(PdfName.S, PdfName.GOTO);
         put(PdfName.D, destination);
     }
     
-/** Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
+/**
+ * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
  * @param filename the file name to go to
  * @param name the named destination to go to
- */    
+ */ 
+    
     PdfAction(String filename, String name)
     {
         super(PdfName.ACTION);
@@ -82,15 +84,17 @@ public class PdfAction extends PdfDictionary {
         put(PdfName.D, new PdfString(name));
     }
 
-/** Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
+/**
+ * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
  * @param filename the file name to go to
  * @param page the page destination to go to
- */    
+ */ 
+    
     PdfAction(String filename, int page)
     {
         super(PdfName.ACTION);
         put(PdfName.S, PdfName.GOTOR);
         put(PdfName.F, new PdfString(filename));
-        put(PdfName.D, new PdfLiteral("[" + (page - 1) + " /XYZ null null 0]"));
+        put(PdfName.D, new PdfLiteral("[" + (page - 1) + " /Fit]"));
     }
 }

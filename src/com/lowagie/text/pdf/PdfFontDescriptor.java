@@ -3,16 +3,13 @@
  *
  * Created on December 30, 2000, 11:20 AM
  */
-
 package com.lowagie.text.pdf;
-
 /**
  *
  * @author  Administrator
  * @version 
  */
 public class PdfFontDescriptor{
-
 	public final static int TYPE1_BUILTIN = 0;
 	public final static int TYPE1_EXTERNAL = 1;
 	public final static int TRUETYPE = 2;
@@ -38,14 +35,12 @@ public class PdfFontDescriptor{
 	int ury;
     double ItalicAngle;
     int StemV;
-
     int fontType;  // type1 or truetype
 	boolean embedded;
 	boolean subset;
     int Glyphs[] = new int[256];
 	boolean CharsInUse[] = new boolean[256];
 	PdfWriter writer;
-
     /** Creates new PdfFontDescriptor */
     public PdfFontDescriptor() {
 		for (int k = 0; k < 256; ++k)
@@ -55,5 +50,4 @@ public class PdfFontDescriptor{
 			CharsInUse[k] = false;
 		}
     }
-
 }

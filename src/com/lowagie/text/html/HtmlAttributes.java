@@ -1,9 +1,8 @@
 /*
- * @(#)HtmlAttributes.java			0.22 2000/02/02
- *       release iText0.3:			0.22 2000/02/14
- *       release iText0.35:         0.22 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -29,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text.html;
@@ -41,54 +40,46 @@ import java.util.Iterator;
  * This class contains a series of attributes of a Tag.
  *
  * @author  bruno@lowagie.com
- * @version 0.02, 2000/02/02
- *
- * @since   iText0.30
  */
 
 class HtmlAttributes extends TreeMap {
-
-// constructor
-
-	/**
-	 * Constructs this object.
-	 *
-	 * @since	iText0.39
-	 * @author	Paulo Soares
-	 */
-
-	public HtmlAttributes() {
-		super(new com.lowagie.text.StringCompare());
-	}
-
-// methods
-
-	/**
-	 * Shows all the attributes as a <CODE>String</CODE> that can be
-	 * inserted into a tag.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
-	 */
-
-	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		String key;
-		String value;
-		for (java.util.Iterator i = keySet().iterator(); i.hasNext(); ) {
-			key = (String) i.next();
-			value = (String) get(key);
-			buffer.append(' ');
-			buffer.append(key);
-			if (value != null) {
-				buffer.append('=');
-				buffer.append('"');
-				buffer.append(value);
-				buffer.append('"');
-			}
-		}
-		return buffer.toString();
-	}
-
+    
+    // constructor
+    
+/**
+ * Constructs this object.
+ */
+    
+    public HtmlAttributes() {
+        super(new com.lowagie.text.StringCompare());
+    }
+    
+    // methods
+    
+/**
+ * Shows all the attributes as a <CODE>String</CODE> that can be
+ * inserted into a tag.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        String key;
+        String value;
+        for (java.util.Iterator i = keySet().iterator(); i.hasNext(); ) {
+            key = (String) i.next();
+            value = (String) get(key);
+            buffer.append(' ');
+            buffer.append(key);
+            if (value != null) {
+                buffer.append('=');
+                buffer.append('"');
+                buffer.append(value);
+                buffer.append('"');
+            }
+        }
+        return buffer.toString();
+    }
+    
 }

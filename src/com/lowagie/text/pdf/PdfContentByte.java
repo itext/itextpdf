@@ -1,5 +1,8 @@
 /*
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -29,9 +32,7 @@
  */
 
 package com.lowagie.text.pdf;
-
 import java.awt.Color;
-
 import com.lowagie.text.Image;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
@@ -43,7 +44,6 @@ import java.util.ArrayList;
  * text and graphic contents of a page. It knows how to apply the proper
  * font encoding.
  */
-
 public class PdfContentByte {
     
 /** This class keeps the graphic state of the current page
@@ -294,23 +294,27 @@ public class PdfContentByte {
         }
     }
     
-    /** Modify the current clipping path by intersecting it with the current path, using the
+    /** 
+     * Modify the current clipping path by intersecting it with the current path, using the
      * nonzero winding number rule to determine which regions lie inside the clipping
      * path.
      */
+    
     public final void clip() {
         content.append("W\n");
     }
 
-    /** Modify the current clipping path by intersecting it with the current path, using the
+    /**
+     * Modify the current clipping path by intersecting it with the current path, using the
      * even-odd rule to determine which regions lie inside the clipping path.
      */
+    
     public final void eoClip() {
       content.append("W*\n");
     }
-
+    
     /**
-     * Changes the current gray tint for filling paths (device dependent colors!).
+     * Changes the currentgray tint for filling paths (device dependent colors!).
      * <P>
      * Sets the color space to <B>DeviceGray</B> (or the <B>DefaultGray</B> color space),
      * and sets the gray tint to use for filling paths.</P>
@@ -821,7 +825,6 @@ public class PdfContentByte {
         stateList.clear();
         state = new GraphicState();
     }
-
     /** Starts the writing of text.
      */
     public void beginText()
@@ -1089,7 +1092,6 @@ public class PdfContentByte {
     {
         return content.size();
     }
-
     /** Escapes a <CODE>byte</CODE> array according to the PDF conventions.
      *
      * @param b the <CODE>byte</CODE> array to escape
@@ -1130,7 +1132,6 @@ public class PdfContentByte {
         checkWriter();
         pdf.addOutline(outline);
     }
-
     /** Adds a named outline to the document.
      *
      * @param outline the outline
@@ -1141,7 +1142,6 @@ public class PdfContentByte {
         checkWriter();
         pdf.addOutline(outline, name);
     }
-
     /** Gets the root outline.
      *
      * @return the root outline
@@ -1197,7 +1197,6 @@ public class PdfContentByte {
             setTextMatrix(0f, 0f);
         }
     }
-
     /** Concatenate a matrix to the current transformation matrix.
      * @param a an element of the transformation matrix
      * @param b an element of the transformation matrix
@@ -1265,9 +1264,7 @@ public class PdfContentByte {
         float ry = (y2-y1)/2f;
         float halfAng = (float)(fragAngle * Math.PI / 360.);
         float kappa = (float)(Math.abs(4. / 3. * (1. - Math.cos(halfAng)) / Math.sin(halfAng)));
-
         ArrayList pointList = new ArrayList();
-
         for (int i = 0; i < Nfrag; ++i) {
             float theta0 = (float)((startAng + i*fragAngle) * Math.PI / 180.);
             float theta1 = (float)((startAng + (i+1)*fragAngle) * Math.PI / 180.);
@@ -1298,7 +1295,6 @@ public class PdfContentByte {
         }
         return pointList;
     }
-
 /** Draws a partial ellipse inscribed within the rectangle x1,y1,x2,y2,
  * starting at startAng degrees and covering extent degrees. Angles
  * start with 0 to the right (+x) and increase counter-clockwise.
@@ -1322,7 +1318,6 @@ public class PdfContentByte {
             curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
         }
     }
-
 /** Draws an ellipse inscribed within the rectangle x1,y1,x2,y2.
  *
  * @param x1 a corner of the enclosing rectangle
@@ -1379,7 +1374,6 @@ public class PdfContentByte {
         content.append(f).append(" cm ");
         content.append(name.toString()).append(" Do Q\n");
     }
-
     /** Adds a template to this content.
      *
      * @param template the template
@@ -1420,7 +1414,6 @@ public class PdfContentByte {
         content.append((float)(black & 0xFF) / 0xFF);
         content.append(" k\n");
     }
-
     /**
      * Changes the current color for stroking paths (device dependent colors!).
      * <P>
@@ -1502,7 +1495,6 @@ public class PdfContentByte {
         content.append((float)(blue & 0xFF) / 0xFF);
         content.append(" RG\n");
     }
-
     /** Check if we have a valid PdfWriter.
      *
      * @throw NullPointerException the writer is invalid
@@ -1521,7 +1513,6 @@ public class PdfContentByte {
             throw new NullPointerException("Font and size must be set before writing any text");
 		content.append(text.toPdf()).append(" TJ\n");
 	}
-
 /** Gets the <CODE>PdfWriter</CODE> in use by this object.
  * @return the <CODE>PdfWriter</CODE> in use by this object
  */    
@@ -1529,7 +1520,6 @@ public class PdfContentByte {
     {
         return writer;
     }
-
 /** Gets the <CODE>PdfDocument</CODE> in use by this object.
  * @return the <CODE>PdfDocument</CODE> in use by this object
  */    
@@ -1585,7 +1575,6 @@ public class PdfContentByte {
         remoteGoto(filename, name, llx, lly, urx, ury);        
     }
 
-
 /** Implements a link to another document.
  * @param filename the filename for the remote document
  * @param page the page to jump to
@@ -1598,7 +1587,6 @@ public class PdfContentByte {
     {
         pdf.remoteGoto(filename, page, llx, lly, urx, ury);
     }
-
     /**
      * Adds a round rectangle to the current path.
      *

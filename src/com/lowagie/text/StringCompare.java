@@ -1,10 +1,8 @@
 /*
- * @(#)StringCompare.java
+ * $Id$
+ * $Name$
  *
- * This class was used in the 1.1-version of iText (by Volker Richert).
- * Paulo Soares suggested I should add it to the original library, so
- * that in the future it would be easier to port it to the JDK1.1.x.
- * 
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  * Copyright (c) 2000 Volker Richert
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -31,24 +29,53 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
 
 import java.util.Comparator;
 
+/**
+ * This class was used in the 1.1-version of iText (by Volker Richert).
+ * Paulo Soares suggested I should add it to the original library, so
+ * that in the future it would be easier to port it to the JDK1.1.x.
+ */
+
 public class StringCompare implements Comparator {
 
-	public int compare(Object o1, Object o2) {
-		return compare((String)o1, (String)o2);
-	}
-
-	public int compare(String s1, String s2) {
-		return s1.compareTo(s2);
-	}
-
-	public boolean equals(Object o) {
-		return true;
-	}
+/**
+ * Compares 2 objects.
+ *
+ * @param   o1  a first object
+ * @param   o2  a second object
+ * @return  a value
+ * @throws  ClassCastException  if the objects aren't Strings
+ */
+    
+    public int compare(Object o1, Object o2) {
+        return compare((String)o1, (String)o2);
+    }
+    
+/**
+ * Compares 2 strings.
+ *
+ * @param   string1  a first string
+ * @param   string2  a second string
+ * @return  a value
+ */
+    
+    public int compare(String s1, String s2) {
+        return s1.compareTo(s2);
+    }
+    
+/**
+ * We need this function if we want to implement the Comparable interface, but we don't use this method.
+ *
+ * @return  always true
+ */
+    
+    public boolean equals(Object o) {
+        return true;
+    }
 }
