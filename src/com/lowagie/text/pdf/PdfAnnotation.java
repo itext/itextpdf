@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.Rectangle;
 import java.util.HashMap;
 import java.awt.Color;
+import java.io.*;
 /**
  * A <CODE>PdfAnnotation</CODE> is a note that is associated with a page.
  *
@@ -243,7 +244,7 @@ public class PdfAnnotation extends PdfDictionary {
 
     public static PdfAnnotation createInk(PdfWriter writer, Rectangle rect, String contents, float inkList[][]) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
-        annot.put(PdfName.SUBTYPE, PdfName.STAMP);
+        annot.put(PdfName.SUBTYPE, PdfName.INK);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         PdfArray outer = new PdfArray();
         for (int k = 0; k < inkList.length; ++k) {
@@ -254,6 +255,65 @@ public class PdfAnnotation extends PdfDictionary {
             outer.add(inner);
         }
         annot.put(PdfName.INKLIST, outer);
+        return annot;
+    }
+
+    /** Creates a file attachment annotation.
+     * @param writer the <CODE>PdfWriter</CODE>
+     * @param rect the dimensions in the page of the annotation
+     * @param contents the file description
+     * @param fileStore an array with the file. If it's <CODE>null</CODE>
+     * the file will be read from the disk
+     * @param file the path to the file. It will only be used if
+     * <CODE>fileStore</CODE> in not <CODE>null</CODE>
+     * @param fileDisplay the actual file name stored in the pdf
+     * @throws IOException on error
+     * @return the annotation
+     */    
+    public static PdfAnnotation createFileAttachment(PdfWriter writer, Rectangle rect, String contents, byte fileStore[], String file, String fileDisplay) throws IOException {
+        PdfAnnotation annot = new PdfAnnotation(writer, rect);
+        annot.put(PdfName.SUBTYPE, PdfName.FILEATTACHMENT);
+        annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
+        PdfStream stream;
+        if (fileStore == null) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte buf[] = new byte[4192];
+            FileInputStream in = new FileInputStream(file);
+            try {
+                while (true) {
+                    int r = in.read(buf);
+                    if (r < 0)
+                        break;
+                    out.write(buf, 0, r);
+                }
+            }
+            finally {
+                try {
+                    in.close();
+                }
+                catch (Exception e) {
+                    // empty on purpose
+                }
+            }
+            stream = new PdfStream(out.toByteArray());
+        }
+        else
+            stream = new PdfStream(fileStore);
+        stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
+        try {
+            stream.flateCompress();
+        }
+        catch (PdfException e) {
+            //empty on purpose
+        }
+        PdfIndirectReference ref = writer.addToBody(stream).getIndirectReference();
+        PdfDictionary fs = new PdfDictionary(PdfName.FILESPEC);
+        fs.put(PdfName.F, new PdfString(fileDisplay, PdfObject.TEXT_UNICODE));
+        PdfDictionary f = new PdfDictionary();
+        f.put(PdfName.F, ref);
+        fs.put(PdfName.EF, f);
+        ref = writer.addToBody(fs).getIndirectReference();
+        annot.put(PdfName.FS, ref);
         return annot;
     }
 

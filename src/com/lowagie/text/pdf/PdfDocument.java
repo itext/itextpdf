@@ -204,7 +204,9 @@ class PdfDocument extends Document implements DocListener {
          */
         
         void addCreationDate() {
-            put(PdfName.CREATIONDATE, new PdfDate());
+            PdfString date = new PdfDate();
+            put(PdfName.CREATIONDATE, date);
+            put(PdfName.MODDATE, date);
         }
         
         void addkey(String key, String value) {

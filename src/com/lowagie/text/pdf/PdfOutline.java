@@ -57,6 +57,8 @@ import com.lowagie.text.Paragraph;
 import java.util.ArrayList;
 import java.awt.Color;
 import com.lowagie.text.Font;
+import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * <CODE>PdfOutline</CODE> is an object that represents a PDF outline entry.
@@ -407,7 +409,7 @@ public class PdfOutline extends PdfDictionary {
      * @return an array of <CODE>byte</CODE>
      */
     
-    public byte[] toPdf(PdfWriter writer) {
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         if (color != null && !color.equals(Color.black)) {
             put(PdfName.C, new PdfArray(color.getRGBColorComponents(null)));
         }
@@ -429,7 +431,7 @@ public class PdfOutline extends PdfDictionary {
         if (count != 0) {
             put(PdfName.COUNT, new PdfNumber(count));
         }
-        return super.toPdf(writer);
+        super.toPdf(writer, os);
     }
     
     public void addKid(PdfOutline outline) {

@@ -119,7 +119,7 @@ public class PdfAcroForm extends PdfDictionary {
         put(PdfName.DR, dic);
         PdfDictionary fonts = (PdfDictionary)dic.get(PdfName.FONT);
         if (fonts != null) {
-            put(PdfName.DA, new PdfString("/F1 0 Tf 0 g "));
+            put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
             writer.eliminateFontSubset(fonts);
         }
         return true;
@@ -236,12 +236,12 @@ public class PdfAcroForm extends PdfDictionary {
     }
 
     public void drawSingleLineOfText(PdfFormField field, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
-        PdfContentByte da = new PdfContentByte(writer);
-        da.setFontAndSize(font, fontSize);
-        da.resetRGBColorFill();
-        field.setDefaultAppearanceString(da);
         PdfContentByte cb = writer.getDirectContent();
         PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tp2 = (PdfAppearance)tp.getDuplicate();
+        tp2.setFontAndSize(font, fontSize);
+        tp2.resetRGBColorFill();
+        field.setDefaultAppearanceString(tp2);
         tp.drawTextField(0f, 0f, urx - llx, ury - lly);
         tp.beginVariableText();
         tp.saveState();
@@ -260,12 +260,12 @@ public class PdfAcroForm extends PdfDictionary {
     }
 
     public void drawMultiLineOfText(PdfFormField field, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
-        PdfContentByte da = new PdfContentByte(writer);
-        da.setFontAndSize(font, fontSize);
-        da.resetRGBColorFill();
-        field.setDefaultAppearanceString(da);
         PdfContentByte cb = writer.getDirectContent();
         PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tp2 = (PdfAppearance)tp.getDuplicate();
+        tp2.setFontAndSize(font, fontSize);
+        tp2.resetRGBColorFill();
+        field.setDefaultAppearanceString(tp2);
         tp.drawTextField(0f, 0f, urx - llx, ury - lly);
         tp.beginVariableText();
         tp.saveState();
@@ -321,12 +321,12 @@ public class PdfAcroForm extends PdfDictionary {
             throw new ExceptionConverter(e);
         }
         float size = (ury - lly);
-        PdfContentByte da = new PdfContentByte(writer);
-        da.setFontAndSize(font, size);
-        da.resetRGBColorFill();
-        field.setDefaultAppearanceString(da);
         PdfContentByte cb = writer.getDirectContent();
         PdfAppearance tpOn = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tp2 = (PdfAppearance)tpOn.getDuplicate();
+        tp2.setFontAndSize(font, size);
+        tp2.resetRGBColorFill();
+        field.setDefaultAppearanceString(tp2);
         tpOn.drawTextField(0f, 0f, urx - llx, ury - lly);
         tpOn.saveState();
         tpOn.resetRGBColorFill();

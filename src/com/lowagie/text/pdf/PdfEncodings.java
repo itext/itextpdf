@@ -167,6 +167,8 @@ public class PdfEncodings {
      * @param text the <CODE>String</CODE> to be converted
      */
     public static final byte[] convertToBytes(String text, String encoding) {
+        if (text == null)
+            return new byte[0];
         if (encoding == null || encoding.length() == 0) {
             int len = text.length();
             byte b[] = new byte[len];
@@ -223,6 +225,8 @@ public class PdfEncodings {
      * @return the converted <CODE>String</CODE>
      */    
     public static final String convertToString(byte bytes[], String encoding) {
+        if (bytes == null)
+            return PdfObject.NOTHING;
         if (encoding == null || encoding.length() == 0) {
             char c[] = new char[bytes.length];
             for (int k = 0; k < bytes.length; ++k)
@@ -255,6 +259,8 @@ public class PdfEncodings {
      * @return <CODE>true</CODE> if only PdfDocEncoding characters are present
      */    
     public static boolean isPdfDocEncoding(String text) {
+        if (text == null)
+            return true;
         int len = text.length();
         for (int k = 0; k < len; ++k) {
             char char1 = text.charAt(k);

@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.ExceptionConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -129,29 +130,21 @@ public class PdfArray extends PdfObject {
  * @return		an array of <CODE>byte</CODE>s
  */
     
-    public byte[] toPdf(PdfWriter writer) {
-        try {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            stream.write('[');
-            
-            Iterator i = arrayList.iterator();
-            PdfObject object;
-            if (i.hasNext()) {
-                object = (PdfObject) i.next();
-                stream.write(object.toPdf(writer));
-            }
-            while (i.hasNext()) {
-                object = (PdfObject) i.next();
-                stream.write(' ');
-                stream.write(object.toPdf(writer));
-            }
-            stream.write(']');
-            
-            return stream.toByteArray();
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        os.write('[');
+
+        Iterator i = arrayList.iterator();
+        PdfObject object;
+        if (i.hasNext()) {
+            object = (PdfObject) i.next();
+            object.toPdf(writer, os);
         }
-        catch(IOException ioe) {
-            throw new ExceptionConverter(ioe);
+        while (i.hasNext()) {
+            object = (PdfObject) i.next();
+            os.write(' ');
+            object.toPdf(writer, os);
         }
+        os.write(']');
     }
     
     // methods concerning the ArrayList-membervalue

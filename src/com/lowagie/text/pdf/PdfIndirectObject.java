@@ -71,7 +71,7 @@ import com.lowagie.text.DocWriter;
  * @see		PdfIndirectReference
  */
 
-class PdfIndirectObject {
+public class PdfIndirectObject {
     
     // membervariables
     
@@ -81,17 +81,10 @@ class PdfIndirectObject {
 /** the generation number */
     protected int generation = 0;
     
-/** The object type */
-    protected int type;
-    
-/** The object ready to stream out */
-    protected ByteArrayOutputStream bytes;
-    
     static final byte STARTOBJ[] = DocWriter.getISOBytes(" obj\n");
     static final byte ENDOBJ[] = DocWriter.getISOBytes("\nendobj\n");
     static final int SIZEOBJ = STARTOBJ.length + ENDOBJ.length;
-    boolean isStream = false;
-    PdfStream stream;
+    PdfObject object;
     PdfWriter writer;
     
     // constructors
@@ -122,27 +115,12 @@ class PdfIndirectObject {
         this.writer = writer;
         this.number = number;
         this.generation = generation;
-        type = object.type();
-        isStream = (object.type() == object.STREAM);
-        PdfEncryption crypto = writer.getEncryption();
+        this.object = object;
+        PdfEncryption crypto = null;
+        if (writer != null)
+            crypto = writer.getEncryption();
         if (crypto != null) {
             crypto.setHashKey(number, generation);
-        }
-        try {
-            bytes = new ByteArrayOutputStream();
-            bytes.write(DocWriter.getISOBytes(String.valueOf(number)));
-            bytes.write(32);
-            bytes.write(DocWriter.getISOBytes(String.valueOf(generation)));
-            if (!isStream) {
-                bytes.write(STARTOBJ);
-                bytes.write(object.toPdf(writer));
-                bytes.write(ENDOBJ);
-            }
-            else
-                stream = (PdfStream)object;
-        }
-        catch (IOException ioe) {
-            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -154,12 +132,12 @@ class PdfIndirectObject {
  * @return		the length of the PDF-representation of this indirect object.
  */
     
-    public int length() {
-        if (isStream)
-            return bytes.size() + SIZEOBJ + stream.getStreamLength(writer);
-        else
-            return bytes.size();
-    }
+//    public int length() {
+//        if (isStream)
+//            return bytes.size() + SIZEOBJ + stream.getStreamLength(writer);
+//        else
+//            return bytes.size();
+//    }
     
     
 /**
@@ -168,8 +146,8 @@ class PdfIndirectObject {
  * @return		a <CODE>PdfIndirectReference</CODE>
  */
     
-    PdfIndirectReference getIndirectReference() {
-        return new PdfIndirectReference(type, number, generation);
+    public PdfIndirectReference getIndirectReference() {
+        return new PdfIndirectReference(object.type(), number, generation);
     }
     
 /**
@@ -178,13 +156,13 @@ class PdfIndirectObject {
  * @param out the stream to write to
  * @throws IOException on write error
  */
-    void writeTo(OutputStream out) throws IOException
+    void writeTo(OutputStream os) throws IOException
     {
-        bytes.writeTo(out);
-        if (isStream) {
-            out.write(STARTOBJ);
-            stream.writeTo(out, writer);
-            out.write(ENDOBJ);
-        }
+        os.write(DocWriter.getISOBytes(String.valueOf(number)));
+        os.write(' ');
+        os.write(DocWriter.getISOBytes(String.valueOf(generation)));
+        os.write(STARTOBJ);
+        object.toPdf(writer, os);
+        os.write(ENDOBJ);
     }
 }

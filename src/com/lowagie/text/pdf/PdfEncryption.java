@@ -86,6 +86,7 @@ public class PdfEncryption {
     byte userKey[] = new byte[32];
     int permissions;
     byte documentID[];
+    static long seq = System.currentTimeMillis();
     
     public PdfEncryption() {
         try {
@@ -103,8 +104,6 @@ public class PdfEncryption {
             permissions |= 0xffffffc0;
         permissions &= 0xfffffffc;
         this.permissions = permissions;
-        long time;
-        long mem;
         byte userPad[] = new byte[32];
         if (userPassword == null)
             System.arraycopy(pad, 0, userPad, 0, 32);
@@ -116,10 +115,7 @@ public class PdfEncryption {
         byte ownerPad[] = new byte[32];
         if (ownerPassword == null || ownerPassword.length == 0) {
             System.arraycopy(pad, 0, ownerPad, 0, 32);
-            time = System.currentTimeMillis();
-            mem = Runtime.getRuntime().freeMemory();
-            String s = time + "-" + mem;
-            System.arraycopy(md5.digest(s.getBytes()), 0, ownerPad, 0, 16);
+            System.arraycopy(md5.digest(createDocumentId()), 0, ownerPad, 0, 16);
         }
         else {
             System.arraycopy(ownerPassword, 0, ownerPad, 0, Math.min(ownerPassword.length, 32));
@@ -143,10 +139,7 @@ public class PdfEncryption {
             prepareRC4Key(digest, 0, mkey.length);
             encryptRC4(userPad, ownerKey);
         }
-        time = System.currentTimeMillis();
-        mem = Runtime.getRuntime().freeMemory();
-        String s = time + "+" + mem;
-        documentID = md5.digest(s.getBytes());
+        documentID = createDocumentId();
         md5.update(userPad);
         md5.update(ownerKey);
         extra[0] = (byte)permissions;
@@ -199,13 +192,8 @@ public class PdfEncryption {
             keySize = 16;
     }
     
-    public PdfLiteral getFileID() {
-        ByteBuffer b = new ByteBuffer();
-        b.append('[');
-        b.append(PdfContentByte.escapeString(documentID));
-        b.append(PdfContentByte.escapeString(documentID));
-        b.append(']');
-        return new PdfLiteral(b.toByteArray());
+    public PdfObject getFileID() {
+        return createInfoId(documentID);
     }
     
     public PdfDictionary getEncryptionDictionary() {
@@ -270,5 +258,31 @@ public class PdfEncryption {
     
     public void encryptRC4(byte data[]) {
         encryptRC4(data, 0, data.length, data);
+    }
+    
+    public static byte[] createDocumentId() {
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        }
+        catch (Exception e) {
+             throw new ExceptionConverter(e);
+       }
+        long time = System.currentTimeMillis();
+        long mem = Runtime.getRuntime().freeMemory();
+        String s = time + "+" + mem + "+" + (seq++);
+        return md5.digest(s.getBytes());
+    }
+    
+    public static PdfObject createInfoId(byte id[]) {
+        ByteBuffer buf = new ByteBuffer(90);
+        buf.append('[').append('<');
+        for (int k = 0; k < 16; ++k)
+            buf.appendHex(id[k]);
+        buf.append('>').append('<');
+        for (int k = 0; k < 16; ++k)
+            buf.appendHex(id[k]);
+        buf.append('>').append(']');
+        return new PdfLiteral(buf.toByteArray());
     }
 }

@@ -50,10 +50,9 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 import com.lowagie.text.DocWriter;
-import com.lowagie.text.ExceptionConverter;
 
 /**
  * A <CODE>PdfDashPattern</CODE> defines a dash pattern as described in
@@ -127,28 +126,20 @@ public class PdfDashPattern extends PdfArray {
  * @return		an array of <CODE>byte</CODE>s
  */
     
-    public byte[] toPdf(PdfWriter writer) {
-        try {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            stream.write(DocWriter.getISOBytes("["));
-            
-            if (dash >= 0) {
-                stream.write(new PdfNumber(dash).toPdf(null));
-                if (gap >= 0) {
-                    stream.write(DocWriter.getISOBytes(" "));
-                    stream.write(new PdfNumber(gap).toPdf(null));
-                }
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        os.write('[');
+
+        if (dash >= 0) {
+            new PdfNumber(dash).toPdf(writer, os);
+            if (gap >= 0) {
+                os.write(' ');
+                new PdfNumber(gap).toPdf(writer, os);
             }
-            stream.write(DocWriter.getISOBytes("]"));
-            if (phase >=0) {
-                stream.write(DocWriter.getISOBytes(" "));
-                stream.write(new PdfNumber(phase).toPdf(null));
-            }
-            
-            return stream.toByteArray();
         }
-        catch(IOException ioe) {
-            throw new ExceptionConverter(ioe);
+        os.write(']');
+        if (phase >=0) {
+            os.write(' ');
+            new PdfNumber(phase).toPdf(writer, os);
         }
     }
 }

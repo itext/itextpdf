@@ -869,7 +869,7 @@ public class PdfContentByte {
                 content.append(d).append(' ');
                 content.append(e).append(' ');
                 content.append(f).append(" cm ");
-                content.append(name.toPdf(null)).append(" Do Q").append_i(separator);
+                content.append(name.getBytes()).append(" Do Q").append_i(separator);
             }
         }
         catch (Exception ee) {
@@ -977,7 +977,7 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = state.fontDetails.getFontName();
         name = prs.addFont(name, state.fontDetails.getIndirectReference());
-        content.append(name.toPdf(null)).append(' ').append(size).append(" Tf").append_i(separator);
+        content.append(name.getBytes()).append(' ').append(size).append(" Tf").append_i(separator);
     }
     
     /**
@@ -1605,7 +1605,7 @@ public class PdfContentByte {
         content.append(d).append(' ');
         content.append(e).append(' ');
         content.append(f).append(" cm ");
-        content.append(name.toPdf(null)).append(" Do Q").append_i(separator);
+        content.append(name.getBytes()).append(" Do Q").append_i(separator);
     }
     
     /**
@@ -1809,7 +1809,7 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = state.colorDetails.getColorName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
-        content.append(name.toPdf(null)).append(" cs ").append(tint).append(" scn").append_i(separator);
+        content.append(name.getBytes()).append(" cs ").append(tint).append(" scn").append_i(separator);
     }
     
     /** Sets the stroke color to a spot color.
@@ -1823,7 +1823,7 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = state.colorDetails.getColorName();
         name = prs.addColor(name, state.colorDetails.getIndirectReference());
-        content.append(name.toPdf(null)).append(" CS ").append(tint).append(" SCN").append_i(separator);
+        content.append(name.getBytes()).append(" CS ").append(tint).append(" SCN").append_i(separator);
     }
     
     /** Sets the fill color to a pattern. The pattern can be
@@ -1839,7 +1839,7 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = writer.addSimplePattern(p);
         name = prs.addPattern(name, p.getIndirectReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn").append_i(separator);
+        content.append(PdfName.PATTERN.getBytes()).append(" cs ").append(name.getBytes()).append(" scn").append_i(separator);
     }
     
     /** Outputs the color values to the content.
@@ -1898,9 +1898,9 @@ public class PdfContentByte {
         name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
         PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(cName.toPdf(null)).append(" cs").append_i(separator);
+        content.append(cName.getBytes()).append(" cs").append_i(separator);
         outputColorNumbers(color, tint);
-        content.append(' ').append(name.toPdf(null)).append(" scn").append_i(separator);
+        content.append(' ').append(name.getBytes()).append(" scn").append_i(separator);
     }
     
     /** Sets the stroke color to an uncolored pattern.
@@ -1928,9 +1928,9 @@ public class PdfContentByte {
         name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
         PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(cName.toPdf(null)).append(" CS").append_i(separator);
+        content.append(cName.getBytes()).append(" CS").append_i(separator);
         outputColorNumbers(color, tint);
-        content.append(' ').append(name.toPdf(null)).append(" SCN").append_i(separator);
+        content.append(' ').append(name.getBytes()).append(" SCN").append_i(separator);
     }
     
     /** Sets the stroke color to a pattern. The pattern can be
@@ -1946,14 +1946,14 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = writer.addSimplePattern(p);
         name = prs.addPattern(name, p.getIndirectReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN").append_i(separator);
+        content.append(PdfName.PATTERN.getBytes()).append(" CS ").append(name.getBytes()).append(" SCN").append_i(separator);
     }
     
     public void paintShading(PdfShading shading) {
         writer.addSimpleShading(shading);
         PageResources prs = getPageResources();
         PdfName name = prs.addShading(shading.getShadingName(), shading.getShadingReference());
-        content.append(name.toPdf(null)).append(" sh").append_i(separator);
+        content.append(name.getBytes()).append(" sh").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
             prs.addColor(details.getColorName(), details.getIndirectReference());
@@ -1967,7 +1967,7 @@ public class PdfContentByte {
         writer.addSimpleShadingPattern(shading);
         PageResources prs = getPageResources();
         PdfName name = prs.addPattern(shading.getPatternName(), shading.getPatternReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn").append_i(separator);
+        content.append(PdfName.PATTERN.getBytes()).append(" cs ").append(name.getBytes()).append(" scn").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
             prs.addColor(details.getColorName(), details.getIndirectReference());
@@ -1977,7 +1977,7 @@ public class PdfContentByte {
         writer.addSimpleShadingPattern(shading);
         PageResources prs = getPageResources();
         PdfName name = prs.addPattern(shading.getPatternName(), shading.getPatternReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN").append_i(separator);
+        content.append(PdfName.PATTERN.getBytes()).append(" CS ").append(name.getBytes()).append(" SCN").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
             prs.addColor(details.getColorName(), details.getIndirectReference());

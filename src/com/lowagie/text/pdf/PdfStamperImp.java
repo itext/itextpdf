@@ -103,8 +103,9 @@ class PdfStamperImp extends PdfWriter {
             if (iInfo != null)
                 skip = iInfo.getNumber();
             for (int k = 1; k < xb.length; ++k) {
-                if (xb[k] != null && skip != k)
+                if (xb[k] != null && skip != k) {
                     addToBody(xb[k], getNewObjectNumber(reader, k, 0));
+                }
             }
         }
         finally {
@@ -116,7 +117,7 @@ class PdfStamperImp extends PdfWriter {
             }
         }
         PdfIndirectReference encryption = null;
-        PdfLiteral fileID = null;
+        PdfObject fileID = null;
         if (crypto != null) {
             PdfIndirectObject encryptionObject = body.add(crypto.getEncryptionDictionary());
             encryptionObject.writeTo(os);
@@ -149,14 +150,14 @@ class PdfStamperImp extends PdfWriter {
         if (!newInfo.getKeys().isEmpty())
             info = addToBody(newInfo).getIndirectReference();
         // write the cross-reference table of the body
-        os.write(body.getCrossReferenceTable());
+        body.writeCrossReferenceTable(os);
         PdfTrailer trailer = new PdfTrailer(body.size(),
         body.offset(),
         root,
         info,
         encryption,
         fileID);
-        os.write(trailer.toPdf(this));
+        trailer.toPdf(this, os);
         os.flush();
         if (isCloseStream())
             os.close();
@@ -204,6 +205,7 @@ class PdfStamperImp extends PdfWriter {
                 out.append(PdfContents.SAVESTATE);
             out.append(reader.getPageContent(pageNumber.intValue(), file));
             if (ps.over != null) {
+                out.append(' ');
                 out.append(PdfContents.RESTORESTATE);
                 out.append(PdfContents.SAVESTATE);
                 applyRotation(pageNumber.intValue(), out);

@@ -50,12 +50,11 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Set;
-import com.lowagie.text.ExceptionConverter;
 
 /**
  * <CODE>PdfDictionary</CODE> is the Pdf dictionary object.
@@ -135,31 +134,23 @@ public class PdfDictionary extends PdfObject {
  * @return		an array of <CODE>byte</CODE>
  */
     
-    public byte[] toPdf(PdfWriter writer) {
-        try {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            stream.write('<');
-            stream.write('<');
-            
-            // loop over all the object-pairs in the HashMap
-            PdfName key;
-            PdfObject value;
-            for (Iterator i = hashMap.keySet().iterator(); i.hasNext(); ) {
-                key = (PdfName) i.next();
-                value = (PdfObject) hashMap.get(key);
-                stream.write(key.toPdf(writer));
-                stream.write(' ');
-                stream.write(value.toPdf(writer));
-                stream.write('\n');
-            }
-            stream.write('>');
-            stream.write('>');
-            
-            return stream.toByteArray();
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        os.write('<');
+        os.write('<');
+
+        // loop over all the object-pairs in the HashMap
+        PdfName key;
+        PdfObject value;
+        for (Iterator i = hashMap.keySet().iterator(); i.hasNext(); ) {
+            key = (PdfName) i.next();
+            value = (PdfObject) hashMap.get(key);
+            key.toPdf(writer, os);
+            os.write(' ');
+            value.toPdf(writer, os);
+            os.write('\n');
         }
-        catch(IOException ioe) {
-            throw new ExceptionConverter(ioe);
-        }
+        os.write('>');
+        os.write('>');
     }
     
     // methods concerning the HashMap member value

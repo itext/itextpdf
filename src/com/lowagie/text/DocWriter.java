@@ -54,6 +54,7 @@ import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import com.lowagie.text.pdf.OutputStreamCounter;
 
 /**
  * An abstract <CODE>Writer</CODE> class for documents.
@@ -106,7 +107,7 @@ public abstract class DocWriter implements DocListener {
     protected Document document;
 
 /** The outputstream of this writer. */
-    protected BufferedOutputStream os;
+    protected OutputStreamCounter os;
 
 /** Is the writer open for writing? */
     protected boolean open = false;
@@ -128,7 +129,7 @@ public abstract class DocWriter implements DocListener {
 
     protected DocWriter(Document document, OutputStream os)  {
         this.document = document;
-        this.os = new BufferedOutputStream(os);
+        this.os = new OutputStreamCounter(new BufferedOutputStream(os));
         open = true;
     }
 
@@ -473,7 +474,7 @@ public abstract class DocWriter implements DocListener {
     }
     
     /** Sets the close state of the stream after document close
-     * @param closeStream true if the stream is close on document close
+     * @param closeStream true if the stream is closed on document close
      *
      */
     public void setCloseStream(boolean closeStream) {
