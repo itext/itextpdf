@@ -55,7 +55,7 @@ public class PdfContentByte {
     class GraphicState {
         
 /** This is the font in use */
-        BaseFont font;
+        FontDetails fontDetails;
         
 /** This is the font size in use */
         float size;
@@ -950,10 +950,9 @@ public class PdfContentByte {
     public void setFontAndSize(BaseFont bf, float size)
     {
         checkWriter();
-        state.font = bf;
         state.size = size;
-        PdfName name = writer.add(bf);
-        content.append(name.toPdf(null)).append(' ').append(size).append(" Tf\n");
+        state.fontDetails = writer.add(bf);
+        content.append(state.fontDetails.getFontName().toPdf(null)).append(' ').append(size).append(" Tf\n");
     }
     
 /**
@@ -986,9 +985,9 @@ public class PdfContentByte {
  */
     private void showText2(String text)
     {
-        if (state.font == null)
+        if (state.fontDetails == null)
             throw new NullPointerException("Font and size must be set before writing any text");
-        byte b[] = state.font.convertToBytes(text);
+        byte b[] = state.fontDetails.convertToBytes(text);
         content.append(escapeString(b));
     }
     
@@ -1208,15 +1207,16 @@ public class PdfContentByte {
  */
     public void showTextAligned(int alignement, String text, float x, float y, float rotation)
     {
-        if (state.font == null)
+        if (state.fontDetails == null)
             throw new NullPointerException("Font and size must be set before writing any text");
+        BaseFont bf = state.fontDetails.getBaseFont();
         if (rotation == 0) {
             switch (alignement) {
                 case ALIGN_CENTER:
-                    x -= state.font.getWidthPoint(text, state.size) / 2;
+                    x -= bf.getWidthPoint(text, state.size) / 2;
                     break;
                 case ALIGN_RIGHT:
-                    x -= state.font.getWidthPoint(text, state.size);
+                    x -= bf.getWidthPoint(text, state.size);
                     break;
             }
             setTextMatrix(x, y);
@@ -1229,12 +1229,12 @@ public class PdfContentByte {
             float len;
             switch (alignement) {
                 case ALIGN_CENTER:
-                    len = state.font.getWidthPoint(text, state.size) / 2;
+                    len = bf.getWidthPoint(text, state.size) / 2;
                     x -=  len * cos;
                     y -=  len * sin;
                     break;
                 case ALIGN_RIGHT:
-                    len = state.font.getWidthPoint(text, state.size);
+                    len = bf.getWidthPoint(text, state.size);
                     x -=  len * cos;
                     y -=  len * sin;
                     break;
@@ -1557,7 +1557,7 @@ public class PdfContentByte {
     protected void checkWriter()
     {
         if (writer == null)
-            throw new NullPointerException("The writer at PdfContentByte is null.");
+            throw new NullPointerException("The writer in PdfContentByte is null.");
     }
     
 /**
@@ -1565,9 +1565,26 @@ public class PdfContentByte {
  * @param text array of text
  */
     void showText(PdfTextArray text) {
-        if (state.font == null)
+        if (state.fontDetails == null)
             throw new NullPointerException("Font and size must be set before writing any text");
-        content.append(text.toPdf(null)).append(" TJ\n");
+        content.append("[");
+        ArrayList arrayList = text.getArrayList();
+        boolean lastWasNumber = false;
+        for (int k = 0; k < arrayList.size(); ++k) {
+            PdfObject obj = (PdfObject)arrayList.get(k);
+            if (obj.isString()) {
+                showText2(obj.toString());
+                lastWasNumber = false;
+            }
+            else {
+                if (lastWasNumber)
+                    content.append(' ');
+                else
+                    lastWasNumber = true;
+                content.append(obj.toString());
+            }
+        }
+        content.append("]TJ\n");
     }
     
 /**

@@ -292,7 +292,7 @@ public class PdfOutline extends PdfDictionary {
             parent.add();
         }
         this.parent = parent;
-        put(PdfName.TITLE, new PdfString(title, "UnicodeBig"));
+        put(PdfName.TITLE, new PdfString(title, PdfObject.TEXT_UNICODE));
     }
     
 /**

@@ -71,7 +71,7 @@ public class PdfTemplate extends PdfContentByte {
  * @param wr the <CODE>PdfWriter</CODE>
  */
     
-    public PdfTemplate(PdfWriter wr) {
+    PdfTemplate(PdfWriter wr) {
         super(wr);
         fontDictionary = new PdfFontDictionary();
         xObjectDictionary = new PdfXObjectDictionary();
@@ -233,12 +233,11 @@ public class PdfTemplate extends PdfContentByte {
  */
     
     public void setFontAndSize(BaseFont bf, float size) {
-        state.font = bf;
         state.size = size;
-        Object[] obj = writer.addSimple(bf);
-        PdfName name = (PdfName)obj[0];
+        state.fontDetails = writer.addSimple(bf);
+        PdfName name = state.fontDetails.getFontName();
         content.append(name.toPdf(null)).append(' ').append(size).append(" Tf\n");
-        fontDictionary.put(name, (PdfIndirectReference)obj[1]);
+        fontDictionary.put(name, state.fontDetails.getIndirectReference());
     }
     
 /**

@@ -42,7 +42,7 @@ import java.io.*;
  * @author  psoares
  */
 
-public class CJKFont extends BaseFont
+class CJKFont extends BaseFont
 {
     /** The encoding used in the PDF document for CJK fonts
      */    
@@ -270,8 +270,9 @@ public class CJKFont extends BaseFont
      * @throws DocumentException on error
      * @throws IOException on error
      */    
-    public CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException
+    CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException
     {
+        fontType = FONT_TYPE_CJK;
         String nameBase = getBaseName(fontName);
         if (!isCJKFont(nameBase, enc))
             throw new DocumentException("Font '" + fontName + "' with '" + enc + "' encoding is not a CJK font.");
@@ -324,12 +325,39 @@ public class CJKFont extends BaseFont
         return false;
     }
     
+    public static boolean isCJKEncoding(String enc)
+    {
+        for (int k = 0; k < cjk.length; ++k) {
+            Object obj[] = (Object[])cjk[k];
+            String tenc[] = (String[])obj[4];
+            for (int j = 0; j < tenc.length; ++j) {
+                if (enc.equals(tenc[j]))
+                    return true;
+            }
+        }
+        return false;
+    }
+    
+    public static Object[] getCharacterCollection(String enc) {
+        for (int k = 0; k < cjk.length; ++k) {
+            Object obj[] = (Object[])cjk[k];
+            String tenc[] = (String[])obj[4];
+            for (int j = 0; j < tenc.length; ++j) {
+                if (enc.equals(tenc[j])) {
+                    tenc = (String[])obj[2];
+                    return new Object[]{tenc[0], tenc[1], new Integer(((int[])obj[1])[10])};
+                }
+            }
+        }
+        return null;
+    }
+    
     public int getWidth(String text)
     {
         int total = 0;
         for (int k = 0; k < text.length(); ++k) {
             int c = text.charAt(k);
-            int v = getSingleWidth(metrics1, c);
+            int v = getValueByKey(metrics1, c);
             if (v >= 0) {
                 total += v;
                 continue;
@@ -337,7 +365,7 @@ public class CJKFont extends BaseFont
             if (metrics2 == null)
                 total += 1000;
             else {
-                v = getSingleWidth(metrics2, c);
+                v = getValueByKey(metrics2, c);
                 if (v >= 0)
                     total += v;
                 else
@@ -355,7 +383,7 @@ public class CJKFont extends BaseFont
     {
         return 0;
     }
-    private int getSingleWidth(int a[], int key)
+    public static int getValueByKey(int a[], int key)
     {
         int low = 0;
         int high = a.length / 2 -1;
@@ -404,7 +432,7 @@ public class CJKFont extends BaseFont
         return dic;
     }
     
-    private PdfDictionary getFontType(PdfIndirectReference CIDFont) throws DocumentException
+    private PdfDictionary getFontBaseType(PdfIndirectReference CIDFont) throws DocumentException
     {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("Type0"));
@@ -426,17 +454,22 @@ public class CJKFont extends BaseFont
  * @return the object requested
  * @throws DocumentException error in generating the object
  */
-    PdfObject getFontInfo(PdfIndirectReference iobj, int index) throws DocumentException
-    {
-        switch (index) {
-            case 0:
-                return getFontDescriptor();
-            case 1:
-                return getCIDFont(iobj);
-            case 2:
-                return getFontType(iobj);
+    void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
+        PdfIndirectReference ind_font = null;
+        PdfObject pobj = null;
+        PdfIndirectObject obj = null;
+        pobj = getFontDescriptor();
+        if (pobj != null){
+            obj = writer.addToBody(pobj);
+            ind_font = obj.getIndirectReference();
         }
-        return null;
+        pobj = getCIDFont(ind_font);
+        if (pobj != null){
+            obj = writer.addToBody(pobj);
+            ind_font = obj.getIndirectReference();
+        }
+        pobj = getFontBaseType(ind_font);
+        writer.addToBody(pobj, ref);
     }
     
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values

@@ -44,7 +44,7 @@ import java.io.*;
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
-public class Type1Font extends BaseFont
+class Type1Font extends BaseFont
 {
 /** The Postscript font name.
  */
@@ -141,11 +141,12 @@ public class Type1Font extends BaseFont
  * @throws DocumentException the AFM file is invalid
  * @throws IOException the AFM file could not be read
  */
-    public Type1Font(String afmFile, String enc, boolean emb) throws DocumentException, IOException
+    Type1Font(String afmFile, String enc, boolean emb) throws DocumentException, IOException
     {
         encoding = enc;
         embedded = emb;
         fileName = afmFile;
+        fontType = FONT_TYPE_T1;
         BufferedReader fin = null;
         if (BuiltinFonts14.containsKey(afmFile)) {
             embedded = false;
@@ -525,21 +526,22 @@ public class Type1Font extends BaseFont
         return dic;
     }
     
-/** Generates the font dictionary for this font.
- * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor
- *   or <CODE>null</CODE>
- * @return the PdfDictionary containing the font dictionary
- * @throws DocumentException if there is an error
- */
-    private PdfDictionary getFontType(PdfIndirectReference fontDescriptor) throws DocumentException
+    /** Generates the font dictionary for this font.
+     * @return the PdfDictionary containing the font dictionary
+     * @param firstChar the first valid character
+     * @param lastChar the last valid character
+     * @param shortTag a 256 bytes long <CODE>byte</CODE> array where each unused byte is represented by 0
+     * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor or <CODE>null</CODE>
+     * @throws DocumentException if there is an error
+     */
+    private PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, int firstChar, int lastChar, byte shortTag[]) throws DocumentException
     {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
         dic.put(PdfName.BASEFONT, new PdfName(FontName));
         boolean stdEncoding = encoding.equals("Cp1252") || encoding.equals("MacRoman");
-        int firstChar = 0;
         if (!fontSpecific) {
-            for (int k = 0; k < 256; ++k) {
+            for (int k = firstChar; k <= lastChar; ++k) {
                 if (!differences[k].equals(notdef)) {
                     firstChar = k;
                     break;
@@ -550,9 +552,17 @@ public class Type1Font extends BaseFont
             else {
                 PdfDictionary enc = new PdfDictionary(new PdfName("Encoding"));
                 PdfArray dif = new PdfArray();
-                dif.add(new PdfNumber(firstChar));
-                for (int k = firstChar; k < 256; ++k) {
-                    dif.add(new PdfName(differences[k]));
+                boolean gap = true;                
+                for (int k = firstChar; k <= lastChar; ++k) {
+                    if (shortTag[k] != 0) {
+                        if (gap) {
+                            dif.add(new PdfNumber(k));
+                            gap = false;
+                        }
+                        dif.add(new PdfName(differences[k]));
+                    }
+                    else
+                        gap = true;
                 }
                 enc.put(new PdfName("Differences"), dif);
                 dic.put(PdfName.ENCODING, enc);
@@ -560,10 +570,13 @@ public class Type1Font extends BaseFont
         }
         if (!(builtinFont && (fontSpecific || stdEncoding))) {
             dic.put(new PdfName("FirstChar"), new PdfNumber(firstChar));
-            dic.put(new PdfName("LastChar"), new PdfNumber(255));
+            dic.put(new PdfName("LastChar"), new PdfNumber(lastChar));
             PdfArray wd = new PdfArray();
-            for (int k = firstChar; k < 256; ++k) {
-                wd.add(new PdfNumber(widths[k]));
+            for (int k = firstChar; k <= lastChar; ++k) {
+                if (shortTag[k] == 0)
+                    wd.add(new PdfNumber(0));
+                else
+                    wd.add(new PdfNumber(widths[k]));
             }
             dic.put(new PdfName("Widths"), wd);
         }
@@ -572,36 +585,38 @@ public class Type1Font extends BaseFont
         return dic;
     }
     
-/** Generates the dictionary or stream required to represent the font.
- *  <CODE>index</CODE> will cycle from 0 to 2 with the next cycle beeing fed
- *  with the indirect reference from the previous cycle.
- * <P>
- *  A 0 generates the font stream.
- * <P>
- *  A 1 generates the font descriptor.
- * <P>
- *  A 2 generates the font dictionary.
- * @param iobj an indirect reference to a Pdf object. May be null
- * @param index the type of object to generate. It may be 0, 1 or 2
- * @return the object requested
- * @throws DocumentException error in generating the object
- */
-    PdfObject getFontInfo(PdfIndirectReference iobj, int index) throws DocumentException
-    {
-        switch (index) {
-            case 0:
-                return getFontStream();
-            case 1:
-                return getFontDescriptor(iobj);
-            case 2:
-                return getFontType(iobj);
+    /** Outputs to the writer the font dictionaries and streams.
+     * @param writer the writer for this document
+     * @param ref the font indirect reference
+     * @param params several parameters that depend on the font type
+     * @throws IOException on error
+     * @throws DocumentException error in generating the object
+     */
+    void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
+        int firstChar = ((Integer)params[0]).intValue();
+        int lastChar = ((Integer)params[1]).intValue();
+        byte shortTag[] = (byte[])params[2];
+        PdfIndirectReference ind_font = null;
+        PdfObject pobj = null;
+        PdfIndirectObject obj = null;
+        pobj = getFontStream();
+        if (pobj != null){
+            obj = writer.addToBody(pobj);
+            ind_font = obj.getIndirectReference();
         }
-        return null;
+        pobj = getFontDescriptor(ind_font);
+        if (pobj != null){
+            obj = writer.addToBody(pobj);
+            ind_font = obj.getIndirectReference();
+        }
+        pobj = getFontBaseType(ind_font, firstChar, lastChar, shortTag);
+        writer.addToBody(pobj, ref);
     }
     
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
-     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
-     * and <CODE>ITALICANGLE</CODE>.
+     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>,
+     * <CODE>ITALICANGLE</CODE>, <CODE>BBOXLLX</CODE>, <CODE>BBOXLLY</CODE>, <CODE>BBOXURX</CODE>
+     * and <CODE>BBOXURY</CODE>.
      * @param key the parameter to be extracted
      * @param fontSize the font size in points
      * @return the parameter in points

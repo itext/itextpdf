@@ -472,6 +472,7 @@ public class PdfWriter extends DocWriter {
     private PdfPageEvent pageEvent;
     
     private PdfEncryption crypto;
+
     // constructor
     
 /**
@@ -656,6 +657,12 @@ public class PdfWriter extends DocWriter {
         if (open) {
             pdf.close();
             try {
+                // add the fonts
+                for (Iterator it = documentFonts.values().iterator(); it.hasNext();) {
+                    FontDetails details = (FontDetails)it.next();
+                    details.writeFont(this);
+                }
+                
                 // add the form XObjects
                 for (Iterator it = formXObjects.keySet().iterator(); it.hasNext();) {
                     PdfTemplate template = (PdfTemplate)it.next();
@@ -811,9 +818,9 @@ public class PdfWriter extends DocWriter {
         directContentUnder.reset();
     }
     
-/**
- * Gets the root outline.
- */
+    /** Gets the root outline.
+     * @return the root outline
+     */
     
     public PdfOutline getRootOutline() {
         return directContent.getRootOutline();
@@ -825,10 +832,10 @@ public class PdfWriter extends DocWriter {
  * @return the name of the font in the document
  */
     
-    PdfName add(BaseFont bf) {
-        Object ret[] = (Object[])addSimple(bf);
-        pdf.addFont((PdfName)ret[0], (PdfIndirectReference)ret[1]);
-        return (PdfName)ret[0];
+    FontDetails add(BaseFont bf) {
+        FontDetails ret = (FontDetails)addSimple(bf);
+        pdf.addFont(ret.getFontName(), ret.getIndirectReference());
+        return ret;
     }
     
 /**
@@ -839,26 +846,11 @@ public class PdfWriter extends DocWriter {
  * and position 1 is an <CODE>PdfIndirectReference</CODE>
  */
     
-    Object[] addSimple(BaseFont bf) {
-        Object ret[] = (Object[])documentFonts.get(bf);
+    FontDetails addSimple(BaseFont bf) {
+        FontDetails ret = (FontDetails)documentFonts.get(bf);
         if (ret == null) {
-            PdfIndirectReference ind_font = null;
             try {
-                for (int k = 0; k < 3; ++k) {
-                    PdfObject pobj = bf.getFontInfo(ind_font, k);
-                    if (pobj != null){
-                        PdfIndirectObject obj = body.add(pobj);
-                        ind_font = obj.getIndirectReference();
-                        obj.writeTo(os);
-                    }
-                }
-            }
-            catch(Exception e) {
-                System.err.println(e.getMessage());
-            }
-            String fontName = "F" + (fontNumber++);
-            try {
-                ret = new Object[]{new PdfName(fontName), ind_font};
+                ret = new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
             }
             catch (BadPdfFormatException e) {
             }
@@ -1003,8 +995,7 @@ public class PdfWriter extends DocWriter {
         pdf.setViewerPreferences(preferences);
     }
     
-    /**
-     * Sets the encryption options for this document. The userPassword and the
+    /** Sets the encryption options for this document. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
      *  is replaced by a random string. The open permissions for the document can be
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations, 
@@ -1014,7 +1005,7 @@ public class PdfWriter extends DocWriter {
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
      * @param strength128Bits true for 128 bit key length. false for 40 bit key length
-     * @throws DocumentException if document is already open
+     * @throws DocumentException if the document is already open
      */    
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
         if (pdf.isOpen())
@@ -1031,14 +1022,41 @@ public class PdfWriter extends DocWriter {
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations, 
      *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      *  The permissions can be combined by ORing them.
+     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
-     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
-     * @throws DocumentException if document is already open
-     */  
-    
+     * @throws DocumentException if the document is already open
+     */    
     public void setEncryption(boolean strength128Bits, String userPassword, String ownerPassword, int permissions) throws DocumentException {
         setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength128Bits);
+    }
+
+    PdfIndirectObject addToBody(PdfObject object) throws IOException {
+        PdfIndirectObject iobj = body.add(object);
+        iobj.writeTo(os);
+        return iobj;
+    }
+
+    PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref) throws IOException {
+        PdfIndirectObject iobj = body.add(object, ref);
+        iobj.writeTo(os);
+        return iobj;
+    }
+    
+    /** When the document opens it will jump to the destination with
+     * this name.
+     * @param name the name of the destination to jump to
+     */    
+    public void setOpenAction(String name) {
+        pdf.setOpenAction(name);
+    }
+
+    /** When the document opens this <CODE>action</CODE> will be
+     * invoked.
+     * @param action the action to be invoked
+     */    
+    public void setOpenAction(PdfAction action) {
+        pdf.setOpenAction(action);
     }
 }

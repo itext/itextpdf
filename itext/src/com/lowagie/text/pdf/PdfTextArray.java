@@ -44,8 +44,8 @@ import java.util.Iterator;
  * see reference manual version 1.3 section 8.7.5, pages 346-347.
  */
 
-class PdfTextArray extends PdfArray {
-    
+final class PdfTextArray{
+    ArrayList arrayList;
     // constructors
     
     
@@ -53,53 +53,9 @@ class PdfTextArray extends PdfArray {
  * Constructs an <CODE>PdfArray</CODE>-object, containing 1 <CODE>PdfObject</CODE>.
  */
     
-    PdfTextArray(PdfObject object) throws PdfException {
-        super(object);
-        if (! object.isString()) {
-            throw new PdfException("The first object in a TextArray has to be a PdfString.");
-        }
-    }
-    
-/**
- * This constructor may never be used.
- *
- * @param	object		a <CODE>PdfArray</CODE> that has to be added to the array
- */
-    
-    private PdfTextArray(PdfArray array) {
-    }
-    
-    // methods
-    
-/**
- * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
- *
- * @param		object			<CODE>PdfObject</CODE> to add
- * @return		<CODE>true</CODE> if the object is a <CODE>PdfString</CODE>; <CODE>false</CODE> otherwise
- */
-    
-    final boolean add(PdfObject object) {
-        if (! object.isString()) return false;
-        return arrayList.add(object);
-    }
-    
-/**
- * Adds a <CODE>PdfNumber</CODE> and a <CODE>PdfPrintable</CODE> to the <CODE>PdfArray</CODE>.
- *
- * @param		number			displacement of the string
- * @param		text			the text
- *
- * @return		<CODE>true</CODE> if there is allready a <CODE>PdfString</CODE> present in the array,
- *				<CODE>false</CODE> otherwise
- */
-    
-    final boolean add(PdfNumber number, PdfPrintable text) {
-        if (arrayList.size() == 0) {
-            return false;
-        }
-        arrayList.add(number);
-        arrayList.add(new PdfString(text));
-        return true;
+    PdfTextArray(PdfString str) {
+        arrayList = new ArrayList();
+        arrayList.add(str);
     }
     
 /**
@@ -110,9 +66,17 @@ class PdfTextArray extends PdfArray {
  * @return		<CODE>true</CODE>
  */
     
-    final boolean add(PdfNumber number)
+    void add(PdfString str)
+    {
+        arrayList.add(str);
+    }
+    
+    void add(PdfNumber number)
     {
         arrayList.add(number);
-        return true;
+    }
+    
+    ArrayList getArrayList() {
+        return arrayList;
     }
 }

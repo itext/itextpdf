@@ -132,13 +132,14 @@ class PdfStream extends PdfObject {
  *
  * @param		bytes			content of the new <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>.
  */
- /*
-        protected PdfStream(int type, byte[] bytes) {
-                super(STREAM);
-                this.bytes = bytes;
-                dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
-        }
-  */
+ 
+    PdfStream(byte[] bytes) {
+        super(STREAM);
+        dictionary = new PdfDictionary();
+        this.bytes = bytes;
+        dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+    }
+  
 /**
  * Constructs a <CODE>PdfStream</CODE>-object.
  *

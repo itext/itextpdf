@@ -111,6 +111,9 @@ public class Chunk implements Element {
 /** Key for newpage. */
     public static final String NEWPAGE = "NEWPAGE";
     
+/** Key for split character. */
+    public static final String SPLITCHARACTER = "SPLITCHARACTER";
+    
     // constructors
     
 /**
@@ -356,6 +359,16 @@ public class Chunk implements Element {
     
     public Chunk setGenericTag(String text) {
         return setAttribute(GENERICTAG, text);
+    }
+    
+/**
+ * Sets the split characters.
+ * @param splitCharacter the <CODE>SplitCharacter</CODE> interface
+ * @return this <CODE>Chunk</CODE>
+ */
+    
+    public Chunk setSplitCharacter(SplitCharacter splitCharacter) {
+        return setAttribute(SPLITCHARACTER, splitCharacter);
     }
     
 /**

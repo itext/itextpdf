@@ -34,7 +34,6 @@
 package com.lowagie.text.pdf;
 
 import java.io.*;
-import java.util.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import com.lowagie.text.DocumentException;
@@ -42,7 +41,7 @@ import com.lowagie.text.DocumentException;
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
-public class TrueTypeFont extends BaseFont {
+class TrueTypeFont extends BaseFont {
     /** Contains the location of the several tables. The key is the name of
      * the table and the value is an <CODE>int[2]</CODE> where position 0
      * is the offset from the start of the file and position 1 is the length
@@ -221,7 +220,7 @@ public class TrueTypeFont extends BaseFont {
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
      */
-    public TrueTypeFont(String ttFile, String enc, boolean emb) throws DocumentException, IOException {
+    TrueTypeFont(String ttFile, String enc, boolean emb) throws DocumentException, IOException {
         String nameBase = getBaseName(ttFile);
         if (nameBase.length() < ttFile.length()) {
             style = ttFile.substring(nameBase.length());
@@ -230,6 +229,7 @@ public class TrueTypeFont extends BaseFont {
         encoding = enc;
         embedded = emb;
         fileName = ttFile;
+        fontType = FONT_TYPE_TT;
         if (fileName.toLowerCase().endsWith(".ttf")) {
             process();
         }
@@ -398,7 +398,7 @@ public class TrueTypeFont extends BaseFont {
         }
     }
     
-    /** Reads a <CODE>String</CODE> from the font file as bytes using the default platform
+    /** Reads a <CODE>String</CODE> from the font file as bytes using the Cp1252
      *  encoding.
      * @param length the length of bytes to read
      * @return the <CODE>String</CODE> read
@@ -670,7 +670,7 @@ public class TrueTypeFont extends BaseFont {
      * @return the PdfStream containing the font or <CODE>null</CODE>
      * @throws DocumentException if there is an error reading the font
      */
-    private PdfStream getFontStream() throws DocumentException {
+    protected PdfStream getFontStream() throws DocumentException {
         if (!embedded)
             return null;
         InputStream is = null;
@@ -706,11 +706,12 @@ public class TrueTypeFont extends BaseFont {
     }
     
     /** Generates the font descriptor for this font.
-     * @param fontStream the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
      * @return the PdfDictionary containing the font descriptor or <CODE>null</CODE>
+     * @param subsetPrefix the subset prefix
+     * @param fontStream the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
      * @throws DocumentException if there is an error
      */
-    private PdfDictionary getFontDescriptor(PdfIndirectReference fontStream) throws DocumentException {
+    protected PdfDictionary getFontDescriptor(PdfIndirectReference fontStream, String subsetPrefix) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(new PdfName("FontDescriptor"));
         dic.put(new PdfName("Ascent"), new PdfNumber((int)os_2.sTypoAscender * 1000 / head.unitsPerEm));
         dic.put(new PdfName("CapHeight"), new PdfNumber((int)os_2.sCapHeight * 1000 / head.unitsPerEm));
@@ -720,7 +721,7 @@ public class TrueTypeFont extends BaseFont {
         (int)head.yMin * 1000 / head.unitsPerEm,
         (int)head.xMax * 1000 / head.unitsPerEm,
         (int)head.yMax * 1000 / head.unitsPerEm));
-        dic.put(new PdfName("FontName"), new PdfName(fontName + style));
+        dic.put(new PdfName("FontName"), new PdfName(subsetPrefix + fontName + style));
         dic.put(new PdfName("ItalicAngle"), new PdfNumber(italicAngle));
         dic.put(new PdfName("StemV"), new PdfNumber(80));
         if (fontStream != null)
@@ -739,41 +740,54 @@ public class TrueTypeFont extends BaseFont {
     }
     
     /** Generates the font dictionary for this font.
-     * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor
-     *   or <CODE>null</CODE>
      * @return the PdfDictionary containing the font dictionary
+     * @param subsetPrefix the subset prefx
+     * @param firstChar the first valid character
+     * @param lastChar the last valid character
+     * @param shortTag a 256 bytes long <CODE>byte</CODE> array where each unused byte is represented by 0
+     * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor or <CODE>null</CODE>
      * @throws DocumentException if there is an error
      */
-    private PdfDictionary getFontType(PdfIndirectReference fontDescriptor) throws DocumentException {
+    private PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("TrueType"));
-        dic.put(PdfName.BASEFONT, new PdfName(fontName + style));
-        int firstChar = 0;
+        dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         if (!fontSpecific) {
-            for (int k = 0; k < 256; ++k) {
+            for (int k = firstChar; k <= lastChar; ++k) {
                 if (!differences[k].equals(notdef)) {
                     firstChar = k;
                     break;
                 }
             }
-            if (encoding.equals("Cp1252") || encoding.equals("MacRoman"))
+        if (encoding.equals("Cp1252") || encoding.equals("MacRoman"))
                 dic.put(PdfName.ENCODING, encoding.equals("Cp1252") ? PdfName.WIN_ANSI_ENCODING : PdfName.MAC_ROMAN_ENCODING);
             else {
                 PdfDictionary enc = new PdfDictionary(new PdfName("Encoding"));
                 PdfArray dif = new PdfArray();
-                dif.add(new PdfNumber(firstChar));
-                for (int k = firstChar; k < 256; ++k) {
-                    dif.add(new PdfName(differences[k]));
+                boolean gap = true;                
+                for (int k = firstChar; k <= lastChar; ++k) {
+                    if (shortTag[k] != 0) {
+                        if (gap) {
+                            dif.add(new PdfNumber(k));
+                            gap = false;
+                        }
+                        dif.add(new PdfName(differences[k]));
+                    }
+                    else
+                        gap = true;
                 }
                 enc.put(new PdfName("Differences"), dif);
                 dic.put(PdfName.ENCODING, enc);
             }
         }
         dic.put(new PdfName("FirstChar"), new PdfNumber(firstChar));
-        dic.put(new PdfName("LastChar"), new PdfNumber(255));
+        dic.put(new PdfName("LastChar"), new PdfNumber(lastChar));
         PdfArray wd = new PdfArray();
-        for (int k = firstChar; k < 256; ++k) {
-            wd.add(new PdfNumber(widths[k]));
+        for (int k = firstChar; k <= lastChar; ++k) {
+            if (shortTag[k] == 0)
+                wd.add(new PdfNumber(0));
+            else
+                wd.add(new PdfNumber(widths[k]));
         }
         dic.put(new PdfName("Widths"), wd);
         if (fontDescriptor != null)
@@ -781,30 +795,49 @@ public class TrueTypeFont extends BaseFont {
         return dic;
     }
     
-    /** Generates the dictionary or stream required to represent the font.
-     *  <CODE>index</CODE> will cycle from 0 to 2 with the next cycle beeing fed
-     *  with the indirect reference from the previous cycle.
-     * <P>
-     *  A 0 generates the font stream.
-     * <P>
-     *  A 1 generates the font descriptor.
-     * <P>
-     *  A 2 generates the font dictionary.
-     * @param iobj an indirect reference to a Pdf object. May be null
-     * @param index the type of object to generate. It may be 0, 1 or 2
-     * @return the object requested
+    /** Outputs to the writer the font dictionaries and streams.
+     * @param writer the writer for this document
+     * @param ref the font indirect reference
+     * @param params several parameters that depend on the font type
+     * @throws IOException on error
      * @throws DocumentException error in generating the object
      */
-    PdfObject getFontInfo(PdfIndirectReference iobj, int index) throws DocumentException {
-        switch (index) {
-            case 0:
-                return getFontStream();
-            case 1:
-                return getFontDescriptor(iobj);
-            case 2:
-                return getFontType(iobj);
+    void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
+        int firstChar = ((Integer)params[0]).intValue();
+        int lastChar = ((Integer)params[1]).intValue();
+        byte shortTag[] = (byte[])params[2];
+        PdfIndirectReference ind_font = null;
+        PdfObject pobj = null;
+        PdfIndirectObject obj = null;
+        String subsetPrefix = "";
+        if (embedded) {
+            subsetPrefix = createSubsetPrefix();
+            HashMap glyphs = new HashMap();
+            for (int k = firstChar; k <= lastChar; ++k) {
+                if (shortTag[k] != 0) {
+                    int metrics[];
+                    if (fontSpecific)
+                        metrics = getMetricsTT(k);
+                    else
+                        metrics = getMetricsTT(unicodeDifferences[k]);
+                    if (metrics != null)
+                        glyphs.put(new Integer(metrics[0]), null);
+                }
+            }
+            TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, glyphs, true);
+            byte b[] = sb.process();
+            int lengths[] = new int[]{b.length};
+            pobj = new StreamFont(b, lengths);
+            obj = writer.addToBody(pobj);
+            ind_font = obj.getIndirectReference();
         }
-        return null;
+        pobj = getFontDescriptor(ind_font, subsetPrefix);
+        if (pobj != null){
+            obj = writer.addToBody(pobj);
+            ind_font = obj.getIndirectReference();
+        }
+        pobj = getFontBaseType(ind_font, subsetPrefix, firstChar, lastChar, shortTag);
+        writer.addToBody(pobj, ref);
     }
     
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
@@ -836,5 +869,16 @@ public class TrueTypeFont extends BaseFont {
         return 0;
     }
     
+    /** Gets the glyph index and metrics for a character.
+     * @param c the character
+     * @return an <CODE>int</CODE> array with {glyph index, width}
+     */    
+    public int[] getMetricsTT(int c) {
+        if (!fontSpecific && cmap31 != null) 
+            return (int[])cmap31.get(new Integer(c));
+        if (fontSpecific && cmap10 != null) 
+            return (int[])cmap10.get(new Integer(c));
+        return null;
+    }
 }
 

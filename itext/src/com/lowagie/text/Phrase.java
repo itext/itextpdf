@@ -166,7 +166,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     public Phrase(float leading, String string, Font font) {
         this(leading);
         this.font = font;
-        if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS) {
+        if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
             int i = 0;
             int index;
             while((index = Greek.index(string)) > -1) {

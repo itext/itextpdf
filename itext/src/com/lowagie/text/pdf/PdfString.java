@@ -92,19 +92,6 @@ class PdfString extends PdfObject implements PdfPrintable {
  * Constructs a <CODE>PdfString</CODE>-object.
  *
  * @param		content		the content of the string
- * @param		bf			a basefont
- */
-    
-    PdfString(String value, BaseFont bf) {
-        super(STRING, value);
-        this.value = value;
-        encoding = bf.getEncoding();
-    }
-    
-/**
- * Constructs a <CODE>PdfString</CODE>-object.
- *
- * @param		content		the content of the string
  * @param		encoding	an encoding
  */
     
@@ -128,30 +115,6 @@ class PdfString extends PdfObject implements PdfPrintable {
         catch(UnsupportedEncodingException uee) {
             this.value = new String(bytes);
         }
-    }
-    
-/**
- * Constructs a <CODE>PdfString</CODE>-object.
- *
- * @param		printable	a <CODE>PdfPrintable</CODE>
- */
-    
-    PdfString(PdfPrintable printable) {
-        super(STRING, printable.toString());
-        this.value = printable.toString();
-    }
-    
-/**
- * Constructs a <CODE>PdfString</CODE>-object.
- *
- * @param		printable	a <CODE>PdfPrintable</CODE>
- * @param		bf			a <CODE>BaseFont</CODE>
- */
-    
-    PdfString(PdfPrintable printable, BaseFont bf) {
-        super(STRING, printable.toString());
-        this.value = printable.toString();
-        encoding = bf.getEncoding();
     }
     
     // methods overriding some methods in PdfObject

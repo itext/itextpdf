@@ -38,6 +38,7 @@ import java.awt.Color;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
+import com.lowagie.text.SplitCharacter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,7 +55,7 @@ import java.util.Iterator;
  * @see		com.lowagie.text.Font
  */
 
-class PdfChunk extends PdfString {
+class PdfChunk extends PdfString implements SplitCharacter{
     
 /** The allowed attributes in variable <CODE>attributes</CODE>. */
     private static final HashMap keysAttributes = new HashMap();
@@ -73,6 +74,7 @@ class PdfChunk extends PdfString {
         keysAttributes.put(Chunk.NEWPAGE, null);
         keysAttributes.put(Chunk.IMAGE, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
+        keysNoStroke.put(Chunk.SPLITCHARACTER, null);
     }
     
     // membervariables
@@ -161,58 +163,58 @@ class PdfChunk extends PdfString {
                 case Font.COURIER:
                     switch(style & Font.BOLDITALIC) {
                         case Font.BOLD:
-                            family = PdfFontMetrics.COURIER_BOLD;
+                            family = PdfFont.COURIER_BOLD;
                             break;
                         case Font.ITALIC:
-                            family = PdfFontMetrics.COURIER_OBLIQUE;
+                            family = PdfFont.COURIER_OBLIQUE;
                             break;
                         case Font.BOLDITALIC:
-                            family = PdfFontMetrics.COURIER_BOLDOBLIQUE;
+                            family = PdfFont.COURIER_BOLDOBLIQUE;
                             break;
                             default:
                         case Font.NORMAL:
-                            family = PdfFontMetrics.COURIER;
+                            family = PdfFont.COURIER;
                             break;
                     }
                     break;
                 case Font.TIMES_NEW_ROMAN:
                     switch(style & Font.BOLDITALIC) {
                         case Font.BOLD:
-                            family = PdfFontMetrics.TIMES_BOLD;
+                            family = PdfFont.TIMES_BOLD;
                             break;
                         case Font.ITALIC:
-                            family = PdfFontMetrics.TIMES_ITALIC;
+                            family = PdfFont.TIMES_ITALIC;
                             break;
                         case Font.BOLDITALIC:
-                            family = PdfFontMetrics.TIMES_BOLDITALIC;
+                            family = PdfFont.TIMES_BOLDITALIC;
                             break;
                             default:
                         case Font.NORMAL:
-                            family = PdfFontMetrics.TIMES_ROMAN;
+                            family = PdfFont.TIMES_ROMAN;
                             break;
                     }
                     break;
                 case Font.SYMBOL:
-                    family = PdfFontMetrics.SYMBOL;
+                    family = PdfFont.SYMBOL;
                     break;
                 case Font.ZAPFDINGBATS:
-                    family = PdfFontMetrics.ZAPFDINGBATS;
+                    family = PdfFont.ZAPFDINGBATS;
                     break;
                     default:
                 case Font.HELVETICA:
                     switch(style & Font.BOLDITALIC) {
                         case Font.BOLD:
-                            family = PdfFontMetrics.HELVETICA_BOLD;
+                            family = PdfFont.HELVETICA_BOLD;
                             break;
                         case Font.ITALIC:
-                            family = PdfFontMetrics.HELVETICA_OBLIQUE;
+                            family = PdfFont.HELVETICA_OBLIQUE;
                             break;
                         case Font.BOLDITALIC:
-                            family = PdfFontMetrics.HELVETICA_BOLDOBLIQUE;
+                            family = PdfFont.HELVETICA_BOLDOBLIQUE;
                             break;
                             default:
                         case Font.NORMAL:
-                            family = PdfFontMetrics.HELVETICA;
+                            family = PdfFont.HELVETICA;
                             break;
                     }
                     break;
@@ -272,19 +274,21 @@ class PdfChunk extends PdfString {
     
     PdfChunk split(float width) {
         newlineSplit = false;
-        boolean cjkFont = font.getFont() instanceof CJKFont;
         if (image != null) {
             if (image.scaledWidth() > width) {
                 PdfChunk pc = new PdfChunk("*", font, attributes, noStroke);
                 value = "";
                 attributes = new HashMap();
                 image = null;
-                font = new PdfFont(PdfFontMetrics.HELVETICA, 12);
+                font = new PdfFont(PdfFont.HELVETICA, 12);
                 return pc;
             }
             else
                 return null;
         }
+        SplitCharacter splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
+        if (splitCharacter == null)
+            splitCharacter = this;
         int currentPosition = 0;
         int splitPosition = -1;
         float currentWidth = 0;
@@ -315,7 +319,7 @@ class PdfChunk extends PdfString {
             if (currentWidth > width)
                 break;
             // if a split-character is encountered, the splitPosition is altered
-            if (PdfFontMetrics.isSplitCharacter(character) || (cjkFont && isCJKSplit(character)))
+            if (splitCharacter.isSplitCharacter(character))
                 splitPosition = currentPosition + 1;
             currentPosition++;
         }
@@ -323,13 +327,6 @@ class PdfChunk extends PdfString {
         // if all the characters fit in the total width, null is returned (there is no overflow)
         if (currentPosition == length) {
             return null;
-        }
-        if (currentPosition > 0 && (isCJKSplit(character) || ((currentPosition < length - 1) && isCJKSplit(value.charAt(currentPosition + 1))))) {
-            String returnValue = value.substring(currentPosition);
-            value = PdfFontMetrics.trim(value.substring(0, currentPosition));
-            setContent(value);
-            PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
-            return pc;
         }
         // otherwise, the string has to be truncated
         if (splitPosition < 0) {
@@ -340,7 +337,7 @@ class PdfChunk extends PdfString {
             return pc;
         }
         String returnValue = value.substring(splitPosition);
-        value = PdfFontMetrics.trim(value.substring(0, splitPosition));
+        value = trim(value.substring(0, splitPosition));
         setContent(value);
         PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
         return pc;
@@ -362,7 +359,7 @@ class PdfChunk extends PdfString {
                 value = "";
                 attributes.remove(Chunk.IMAGE);
                 image = null;
-                font = new PdfFont(PdfFontMetrics.HELVETICA, 12);
+                font = new PdfFont(PdfFont.HELVETICA, 12);
                 return pc;
             }
             else
@@ -577,15 +574,38 @@ class PdfChunk extends PdfString {
         this.value = value;
         setContent(value);
     }
-    
- /**
-  * checks for the CJK splitcharacter.
-  */
-    
-    boolean isCJKSplit(char c) {
+
+/**
+ * Checks if a character can be used to split a <CODE>PdfString</CODE>.
+ * <P>
+ * for the moment every character less than or equal to SPACE and the character '-' are 'splitCharacters'.
+ *
+ * @param	c		the character that has to be checked
+ * @return	<CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
+ */
+    public boolean isSplitCharacter(char c)
+    {
+        if (c <= ' ' || c == '-') {
+            return true;
+        }
+        if (c < 0x2e80)
+            return false;
         return ((c >= 0x2e80 && c < 0xd7a0)
         || (c >= 0xf900 && c < 0xfb00)
         || (c >= 0xfe30 && c < 0xfe50)
         || (c >= 0xff61 && c < 0xffa0));
+    }
+    
+/**
+ * Removes all the <VAR>' '</VAR> and <VAR>'-'</VAR>-characters on the right of a <CODE>String</CODE>.
+ * <P>
+ * @param	string		the <CODE>String<CODE> that has to be trimmed.
+ * @return	the trimmed <CODE>String</CODE>
+ */    
+    static String trim(String string) {
+        while (string.endsWith(" ") || string.endsWith("\t")) {
+            string = string.substring(0, string.length() - 1);
+        }
+        return string;
     }
 }

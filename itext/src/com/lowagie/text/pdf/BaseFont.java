@@ -61,24 +61,56 @@ public abstract class BaseFont {
      * negative for fonts that slope to the right, as almost all italic fonts do.
      */    
     public final static int ITALICANGLE = 4;
+    /** The lower left x glyph coordinate.
+     */    
     public final static int BBOXLLX = 5;
+    /** The lower left y glyph coordinate.
+     */    
     public final static int BBOXLLY = 6;
+    /** The upper right x glyph coordinate.
+     */    
     public final static int BBOXURX = 7;
+    /** The upper right y glyph coordinate.
+     */    
     public final static int BBOXURY = 8;
+    
+    /** The font is Type 1.
+     */    
+    public final static int FONT_TYPE_T1 = 0;
+    /** The font is True Type with a standard encoding.
+     */    
+    public final static int FONT_TYPE_TT = 1;
+    /** The font is CJK.
+     */    
+    public final static int FONT_TYPE_CJK = 2;
+    /** The font is True Type with a Unicode encoding.
+     */    
+    public final static int FONT_TYPE_TTUNI = 3;
+    /** The Unicode encoding with horizontal writing.
+     */    
+    public static final String IDENTITY_H = "Identity-H";
+    /** The Unicode encoding with vertical writing.
+     */    
+    public static final String IDENTITY_V = "Identity-V";
 /** if the font has to be embedded */
     public final static boolean EMBEDDED = true;
     
 /** if the font doesn't have to be embedded */
     public final static boolean NOT_EMBEDDED = false;
-    
+
+    /** The font type.
+     */    
+    int fontType;
 /** a not defined character in a custom PDF encoding */
-    public final static String notdef = new String(".notdef");
+    public final static String notdef = ".notdef";
     
 /** table of characters widths for this encoding */
     protected int widths[] = new int[256];
     
 /** encoding names */
     protected String differences[] = new String[256];
+/** same as differences but with the unicode codes */
+    protected char unicodeDifferences[] = new char[256];
     
 /** encoding used with this font */
     protected String encoding;
@@ -99,6 +131,10 @@ public abstract class BaseFont {
 /** list of the 14 built in fonts. */
     protected static final HashMap BuiltinFonts14 = new HashMap();
     
+    /** The subset prefix to be added to the font name when the font is embedded.
+     */    
+    protected static char subsetPrefix[] = {'A', 'B', 'C', 'D', 'E', 'E', '+'};
+    
     static
     {
         BuiltinFonts14.put("Courier", PdfName.COURIER);
@@ -117,15 +153,17 @@ public abstract class BaseFont {
         BuiltinFonts14.put("ZapfDingbats", PdfName.ZAPFDINGBATS);
     }
     
+    /** Generates the PDF stream with the Type1 and Truetype fonts returning
+     * a PdfStream.
+     */    
     class StreamFont extends PdfStream {
         
-/**
- * Generates the PDF stream with the Type1 and Truetype fonts returning
- * a PdfStream.
- * @param contents the content of the stream
- * @param lengths an array of int that describes the several lengths of each part of the font
- * @throws DocumentException error in the stream compression
- */
+        /** Generates the PDF stream with the Type1 and Truetype fonts returning
+         * a PdfStream.
+         * @param contents the content of the stream
+         * @param lengths an array of int that describes the several lengths of each part of the font
+         * @throws DocumentException error in the stream compression
+         */
         public StreamFont(byte contents[], int lengths[]) throws DocumentException
         {
             try {
@@ -173,6 +211,8 @@ public abstract class BaseFont {
         boolean isCJKFont = isBuiltinFonts14 ? false : CJKFont.isCJKFont(nameBase, encoding);
         if (isBuiltinFonts14 || isCJKFont)
             embedded = false;
+        else if (encoding.equals(IDENTITY_H) || encoding.equals(IDENTITY_V))
+            embedded = true;
         BaseFont fontFound = null;
         BaseFont fontBuilt = null;
         String key = name + "\n" + encoding + "\n" + embedded;
@@ -185,7 +225,10 @@ public abstract class BaseFont {
             fontBuilt = new Type1Font(name, encoding, embedded);
         }
         else if (nameBase.toLowerCase().endsWith(".ttf")) {
-            fontBuilt = new TrueTypeFont(name, encoding, embedded);
+            if (encoding.equals(IDENTITY_H) || encoding.equals(IDENTITY_V))
+                fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded);
+            else
+                fontBuilt = new TrueTypeFont(name, encoding, embedded);
         }
         else if (isCJKFont)
             fontBuilt = new CJKFont(name, encoding, embedded);
@@ -262,6 +305,7 @@ public abstract class BaseFont {
                 if (name == null)
                     name = notdef;
                 differences[k] = name;
+                unicodeDifferences[k] = c;
                 widths[k] = getRawWidth((int)c, name);
             }
         }
@@ -335,29 +379,6 @@ public abstract class BaseFont {
     }
     
 /**
- * Checks if a character can be used to split a <CODE>PdfString</CODE>.
- * <P>
- * for the moment every character less than or equal to SPACE and the character '-' are 'splitCharacters'.
- *
- * @param	c		the character that has to be checked
- * @return	<CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
- */
-    public static boolean isSplitCharacter(char c)
-    {
-        if (c <= ' ') {
-            return true;
-        }
-        switch(c) {
-            case ' ':
-            case '-':
-            case '\t':
-                return true;
-                default:
-                    return false;
-        }
-    }
-    
-/**
  * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
  * to the font's encoding.
  * @param text the <CODE>String</CODE> to be converted
@@ -370,23 +391,21 @@ public abstract class BaseFont {
         }
         catch (UnsupportedEncodingException e) {
             // Panic! We should not be here
+            e.printStackTrace();
             return text.getBytes();
         }
     }
     
-/**
- * Generates the dictionary or stream required to represent the font.
- *  <CODE>index</CODE> will cycle from 0 to 2 with the next cycle beeing fed
- *  with the indirect reference from the previous cycle.
- * @param iobj an indirect reference to a Pdf object. May be null
- * @param index the type of object to generate. It may be 0, 1 or 2
- * @return the object requested
- * @throws DocumentException error in generating the object
- */
-    abstract PdfObject getFontInfo(PdfIndirectReference iobj, int index) throws DocumentException;
+    /** Outputs to the writer the font dictionaries and streams.
+     * @param writer the writer for this document
+     * @param ref the font indirect reference
+     * @param params several parameters that depend on the font type
+     * @throws IOException on error
+     * @throws DocumentException error in generating the object
+     */
+    abstract void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException;
     
-    /**
-     * Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
+    /** Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
      * @return the encoding name
      */
     public String getEncoding()
@@ -395,11 +414,60 @@ public abstract class BaseFont {
     }
     
     /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
-     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
-     * and <CODE>ITALICANGLE</CODE>.
+     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>,
+     * <CODE>ITALICANGLE</CODE>, <CODE>BBOXLLX</CODE>, <CODE>BBOXLLY</CODE>, <CODE>BBOXURX</CODE>
+     * and <CODE>BBOXURY</CODE>.
      * @param key the parameter to be extracted
      * @param fontSize the font size in points
      * @return the parameter in points
      */    
     public abstract float getFontDescriptor(int key, float fontSize);
+    
+    /** Gets the font type. The font types can be: FONT_TYPE_T1,
+     * FONT_TYPE_TT, FONT_TYPE_CJK and FONT_TYPE_TTUNI.
+     * @return the font type
+     */    
+    public int getFontType() {
+        return fontType;
+    }
+
+    /** Gets the embedded flag.
+     * @return <CODE>true</CODE> if the font is embedded.
+     */    
+    public boolean isEmbedded() {
+        return embedded;
+    }
+    
+    /** Gets the symbolic flag of the font.
+     * @return <CODE>true</CODE> if the font is symbolic
+     */    
+    public boolean isFontSpecific() {
+        return fontSpecific;
+    }
+    
+    /** Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
+     * @return the subset prefix
+     */    
+    String createSubsetPrefix() {
+        synchronized(subsetPrefix) {
+            for (int k = 0; k < subsetPrefix.length - 1; ++k) {
+                int c = subsetPrefix[k];
+                if (c == 'Z')
+                    subsetPrefix[k] = 'A';
+                else {
+                    subsetPrefix[k] = (char)(c + 1);
+                    break;
+                }
+            }
+            return new String(subsetPrefix);
+        }
+    }
+    
+    /** Gets the Unicode character corresponding to the byte output to the pdf stream.
+     * @param index the byte index
+     * @return the Unicode character
+     */    
+    char getUnicodeDifferences(int index) {
+        return unicodeDifferences[index];
+    }
 }
