@@ -61,8 +61,12 @@ import java.awt.Color;
  * A Helper Class for the <CODE>RtfWriter</CODE>
  * <P>
  * Do not use it directly
+ *
+ * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
+ * improvements.
  */
-public class RtfCell {
+public class RtfCell
+{
   /** Constants for merging Cells */
     
   /** A possible value for merging */
@@ -148,7 +152,8 @@ public class RtfCell {
    * @param table The <code>RtfTable</code> that created the
    * <code>RtfRow</code> that created the <code>RtfCell</code> :-)
    */
-    public RtfCell(RtfWriter writer, RtfTable mainTable) {
+    public RtfCell(RtfWriter writer, RtfTable mainTable)
+    {
         super();
         this.writer = writer;
         this.mainTable = mainTable;
@@ -164,40 +169,61 @@ public class RtfCell {
    * @param x The column index of this <code>RtfCell</code>
    * @param y The row index of this <code>RtfCell</code>
    */
-    public int importCell(Cell cell, int cellLeft, int cellWidth, int x, int y) {
-        if(cell == null) {
+    public int importCell(Cell cell, int cellLeft, int cellWidth, int x, int y)
+    {
+      //        System.err.println( this.getClass().getName() + "Cell: " + cell + " left: " 
+      //                + cellLeft + " width: " 
+      //                + cellWidth + " x: " + x + " y: " + y );
+        // set this value in any case
+        this.cellWidth = cellWidth;
+        if(cell == null)
+        {
             cellRight = cellLeft + cellWidth;
             return cellRight;
         }
-        if(cell.cellWidth() != null && !cell.cellWidth().equals("")) {
-            this.cellWidth = (int) (Integer.parseInt(cell.cellWidth()) * writer.twipsFactor);
+        if(cell.cellWidth() != null && !cell.cellWidth().equals(""))
+        {
+	  //            System.err.println( this.getClass().getName() + "Cell.cellWidth: " 
+	  //                + cell.cellWidth() );
+
+            this.cellWidth = (int) (Integer.parseInt(cell.cellWidth()) *
+            writer.twipsFactor);
         }
-        else {
-            this.cellWidth = cellWidth;
-        }
+//        else
+//        {
+//            this.cellWidth = cellWidth;
+//        }
         cellRight = cellLeft + this.cellWidth;
         store = cell;
         emptyCell = false;
-        if(cell.colspan() > 1) {
-            if(cell.rowspan() > 1) {
+        if(cell.colspan() > 1)
+        {
+            if(cell.rowspan() > 1)
+            {
                 mergeType = MERGE_BOTH_FIRST;
-                for(int i = y; i < y + cell.rowspan(); i++) {
-                    if(i > y) mainTable.setMerge(x, i, MERGE_BOTH_PREV, this);
-                    for(int j = x + 1; j < x + cell.colspan(); j++) {
-                        mainTable.setMerge(j, i, MERGE_HORIZ_PREV, this);
+                for(int i = y; i < y + cell.rowspan(); i++)
+                {
+                    if(i > y) mainTable.setMerge(x, i, MERGE_VERT_PREV, this);
+                    for(int j = x + 1; j < x + cell.colspan(); j++)
+                    {
+                        mainTable.setMerge(j, i, MERGE_BOTH_PREV, this);
                     }
                 }
             }
-            else {
+            else
+            {
                 mergeType = MERGE_HORIZ_FIRST;
-                for(int i = x + 1; i < x + cell.colspan(); i++) {
+                for(int i = x + 1; i < x + cell.colspan(); i++)
+                {
                     mainTable.setMerge(i, y, MERGE_HORIZ_PREV, this);
                 }
             }
         }
-        else if(cell.rowspan() > 1) {
+        else if(cell.rowspan() > 1)
+        {
             mergeType = MERGE_VERT_FIRST;
-            for(int i = y + 1; i < y + cell.rowspan(); i++) {
+            for(int i = y + 1; i < y + cell.rowspan(); i++)
+            {
                 mainTable.setMerge(x, i, MERGE_VERT_PREV, this);
             }
         }
@@ -210,25 +236,39 @@ public class RtfCell {
    * @param os The <code>OutputStream</code> to which to write the properties
    * of the <code>RtfCell</code> to.
    */
-    public boolean writeCellSettings(OutputStream os) throws DocumentException {
-        try {
-            switch(mergeType) {
-                case MERGE_HORIZ_FIRST : os.write(RtfWriter.escape);
-                os.write(cellMergeFirst); break;
+    public boolean writeCellSettings(OutputStream os) throws DocumentException
+    {
+        try
+        {
+            // <!-- steffen
+            if (mergeType == MERGE_HORIZ_PREV || mergeType == MERGE_BOTH_PREV) {
+                return true;                
+            }
+            switch(mergeType)
+            {
+//                case MERGE_HORIZ_FIRST : os.write(RtfWriter.escape);
+//                        os.write(cellMergeFirst); break;
                 case MERGE_VERT_FIRST  : os.write(RtfWriter.escape);
                 os.write(cellVMergeFirst); break;
-                case MERGE_BOTH_FIRST  : os.write(RtfWriter.escape);
-                os.write(cellMergeFirst); os.write(RtfWriter.escape);
-                os.write(cellVMergeFirst); break;
+                case MERGE_BOTH_FIRST  : 
+//                        os.write(RtfWriter.escape);
+//                        os.write(cellMergeFirst); 
+                        os.write(RtfWriter.escape);
+                        os.write(cellVMergeFirst); 
+                        break;
                 case MERGE_HORIZ_PREV  : os.write(RtfWriter.escape);
                 os.write(cellMergePrev); break;
                 case MERGE_VERT_PREV   : os.write(RtfWriter.escape);
                 os.write(cellVMergePrev); break;
                 case MERGE_BOTH_PREV   : os.write(RtfWriter.escape);
-                os.write(cellMergeFirst); os.write(RtfWriter.escape); os.write(cellVMergePrev);
+                os.write(cellMergeFirst); 
+//                os.write(RtfWriter.escape); os.write(cellVMergePrev);
                 break;
             }
-            switch(store.verticalAlignment()) {
+            // -->
+//            System.err.println( this.getClass().getName() + " valign: " + store.verticalAlignment() );
+            switch(store.verticalAlignment())
+            {
                 case Element.ALIGN_BOTTOM : os.write(RtfWriter.escape);
                 os.write(cellVerticalAlignBottom); break;
                 case Element.ALIGN_CENTER : os.write(RtfWriter.escape);
@@ -236,7 +276,10 @@ public class RtfCell {
                 case Element.ALIGN_TOP    : os.write(RtfWriter.escape);
                 os.write(cellVerticalAlignTop); break;
             }
-            if(((store.border() & Rectangle.LEFT) == Rectangle.LEFT) && (store.borderWidth() > 0)) {
+//            System.err.println( this.getClass().getName() + " border: " + store.border() );
+            if(((store.border() & Rectangle.LEFT) == Rectangle.LEFT) &&
+            (store.borderWidth() > 0))
+            {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderLeft);
                 os.write(RtfWriter.escape);
@@ -250,7 +293,9 @@ public class RtfCell {
                 Color(0,0,0))); else writeInt(os, writer.addColor(store.borderColor()));
                 os.write((byte) '\n');
             }
-            if(((store.border() & Rectangle.TOP) == Rectangle.TOP) && (store.borderWidth() > 0)) {
+            if(((store.border() & Rectangle.TOP) == Rectangle.TOP) && (store.borderWidth()
+            > 0))
+            {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderTop);
                 os.write(RtfWriter.escape);
@@ -264,7 +309,9 @@ public class RtfCell {
                 Color(0,0,0))); else writeInt(os, writer.addColor(store.borderColor()));
                 os.write((byte) '\n');
             }
-            if(((store.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) && (store.borderWidth() > 0)) {
+            if(((store.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) &&
+            (store.borderWidth() > 0))
+            {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderBottom);
                 os.write(RtfWriter.escape);
@@ -278,7 +325,9 @@ public class RtfCell {
                 Color(0,0,0))); else writeInt(os, writer.addColor(store.borderColor()));
                 os.write((byte) '\n');
             }
-            if(((store.border() & Rectangle.RIGHT) == Rectangle.RIGHT) && (store.borderWidth() > 0)) {
+            if(((store.border() & Rectangle.RIGHT) == Rectangle.RIGHT) &&
+            (store.borderWidth() > 0))
+            {
                 os.write(RtfWriter.escape);
                 os.write(cellBorderRight);
                 os.write(RtfWriter.escape);
@@ -308,9 +357,12 @@ public class RtfCell {
             os.write(RtfWriter.escape);
             os.write(cellRightBorder);
             writeInt(os, cellRight);
+	    //            System.err.println( this.getClass().getName() + " writing in cell border: " + cellRight 
+	    //                    + " width: " + cellWidth + " mergeType: " + mergeType );            
             os.write((byte) '\n');
         }
-        catch(IOException e) {
+        catch(IOException e)
+        {
             return false;
         }
         return true;
@@ -322,9 +374,18 @@ public class RtfCell {
    * @param os The <code>OutputStream</code> to which to write the content of
    * the <code>RtfCell</code> to.
    */
-    public boolean writeCellContent(OutputStream os) throws DocumentException {
-        try {
-            switch(store.horizontalAlignment()) {
+    public boolean writeCellContent(OutputStream os) throws DocumentException
+    {
+        try
+        {
+            // <!-- steffen
+            if (mergeType == MERGE_HORIZ_PREV || mergeType == MERGE_BOTH_PREV) {
+                return true;                
+            }
+            // --> 
+//            System.err.println( this.getClass().getName() + " valign: " + store.horizontalAlignment() );
+            switch(store.horizontalAlignment())
+            {
                 case Element.ALIGN_LEFT      : os.write(RtfWriter.escape);
                 os.write(cellHorizontalAlignLeft); break;
                 case Element.ALIGN_CENTER    : os.write(RtfWriter.escape);
@@ -336,23 +397,32 @@ public class RtfCell {
             }
             os.write(RtfWriter.escape);
             os.write(cellInTable);
-            if(emptyCell) {
-                os.write(RtfWriter.openGroup);
-            }
-            else {
-                os.write(RtfWriter.openGroup);
-                Iterator cellIterator = store.getChunks().iterator();
-                while(cellIterator.hasNext()) {
+            if(!emptyCell)
+            {
+//                os.write(RtfWriter.openGroup);
+//            }
+//            else
+//            {
+//                os.write(RtfWriter.openGroup);
+                Iterator cellIterator = store.getElements();
+                while(cellIterator.hasNext())
+                {
                     Element element = (Element) cellIterator.next();
                     element.process(writer);
+                    if(element.type() == Element.PARAGRAPH && cellIterator.hasNext())
+                    {
+                        os.write(RtfWriter.escape);
+                        os.write(RtfWriter.paragraph);
+                    }
                 }
             }
             os.write(RtfWriter.escape);
             os.write(cellEnd);
-            os.write(RtfWriter.closeGroup);
+//            os.write(RtfWriter.closeGroup);
             os.write((byte)'\n');
         }
-        catch(IOException e) {
+        catch(IOException e)
+        {
             return false;
         }
         return true;
@@ -367,10 +437,13 @@ public class RtfCell {
    * @param mergeCell The <code>RtfCell</code> that the cell at x and y is to
    * be merged with
    */
-    public void setMerge(int mergeType, RtfCell mergeCell) {
+    public void setMerge(int mergeType, RtfCell mergeCell)
+    {
         this.mergeType = mergeType;
         store = mergeCell.getStore();
-        cellWidth = mergeCell.getCellWidth();
+        // XXX i think that this is false here, because the width must be set in importCell
+        // in an colspan, not all cells have the same width
+//        cellWidth = mergeCell.getCellWidth();
     }
     
   /**
@@ -378,7 +451,8 @@ public class RtfCell {
    *
    * @return <code>Cell</code> which is contained in the <code>RtfCell</code>
    */
-    public Cell getStore() {
+    public Cell getStore()
+    {
         return store;
     }
     
@@ -387,8 +461,29 @@ public class RtfCell {
    *
    * @return Width of the current <code>RtfCell</code>
    */
-    public int getCellWidth() {
+    public int getCellWidth()
+    {
         return cellWidth;
+    }
+
+
+    public void setCellWidth( int value )
+    {
+        cellWidth = value;
+    }
+    
+  /**
+   * Get the position of the right border of this <code>RtfCell</code>
+   */
+    public int getCellRight()
+    {
+        return cellRight;
+    }
+
+
+    public void setCellRight( int value )
+    {
+        cellRight = value;
     }
     
   /*
@@ -397,7 +492,9 @@ public class RtfCell {
    * @param out The <code>OutputStream</code> to be written to.
    * @param i The int to be written.
    */
-    private void writeInt(OutputStream out, int i) throws IOException {
+    private void writeInt(OutputStream out, int i) throws IOException
+    {
         out.write(Integer.toString(i).getBytes());
     }
 }
+

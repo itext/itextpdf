@@ -94,6 +94,10 @@ import java.text.ParsePosition;
  *  <LI>Nested Tables are not supported.</LI>
  *  <LI>The <CODE>Leading</CODE> is not supported.</LI>
  * </UL>
+ * <br /><br />
+ *
+ * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
+ * improvements.
  */
 public class RtfWriter extends DocWriter implements DocListener
 {
@@ -306,7 +310,7 @@ public class RtfWriter extends DocWriter implements DocListener
     private static final byte[] strikethrough = "strike".getBytes();
     
   /** Text alignment left tag. */
-    private static final byte[] alignLeft = "ql".getBytes();
+    public static final byte[] alignLeft = "ql".getBytes();
     
   /** Text alignment center tag. */
     private static final byte[] alignCenter = "qc".getBytes();
@@ -553,8 +557,8 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Constructs a <CODE>RtfWriter</CODE>.
    *
-   * @param	document	The <CODE>Document</CODE> that is to be written as RTF
-   * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
+   * @param document    The <CODE>Document</CODE> that is to be written as RTF
+   * @param os          The <CODE>OutputStream</CODE> the writer has to write to.
    */
     
     protected RtfWriter(Document doc, OutputStream os)
@@ -569,9 +573,9 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Gets an instance of the <CODE>RtfWriter</CODE>.
    *
-   * @param	document	The <CODE>Document</CODE> that has to be written
-   * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
-   * @return	a new <CODE>RtfWriter</CODE>
+   * @param document    The <CODE>Document</CODE> that has to be written
+   * @param os  The <CODE>OutputStream</CODE> the writer has to write to.
+   * @return    a new <CODE>RtfWriter</CODE>
    */
     public static RtfWriter getInstance(Document document, OutputStream os)
     {
@@ -688,20 +692,21 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
    *
-   * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-   * @throws	DocumentException	if a document isn't open yet, or has been closed
+   * @return    <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+   * @throws    DocumentException   if a document isn't open yet, or has been closed
    */
     public boolean add(Element element) throws DocumentException
     {
         return addElement(element, content);
     }
     
+
   /** Private functions */
     
   /**
    * Adds an <CODE>Element</CODE> to the <CODE>Document</CODE>.
-   * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-   * @throws	DocumentException	if a document isn't open yet, or has been closed
+   * @return    <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+   * @throws    DocumentException   if a document isn't open yet, or has been closed
    */
     private boolean addElement(Element element, ByteArrayOutputStream out) throws DocumentException
     {
@@ -716,7 +721,7 @@ public class RtfWriter extends DocWriter implements DocListener
                 case Element.CHAPTER      :
                 case Element.SECTION      : writeSection((Section) element, out);            break;
                 case Element.LIST         : writeList((com.lowagie.text.List) element, out); break;
-                case Element.TABLE        : writeTable((Table) element, out);	               break;
+                case Element.TABLE        : writeTable((Table) element, out);                  break;
                 case Element.ANNOTATION   : writeAnnotation((Annotation) element, out);      break;
                 case Element.PNG          :
                 case Element.JPEG         : writeImage((Image) element, out);                break;
@@ -787,8 +792,8 @@ public class RtfWriter extends DocWriter implements DocListener
         {
             Chunk ch = (Chunk) chunks.next();
             ch.setFont(ch.font().difference(paragraphElement.font()));
-            addElement(ch, out);
         }
+	paragraphElement.process(this);
         out.write(escape);
         out.write(paragraph);
     }
@@ -809,8 +814,9 @@ public class RtfWriter extends DocWriter implements DocListener
         while(chunks.hasNext())
         {
             Chunk ch = (Chunk) chunks.next();
-            addElement(ch, out);
+            ch.setFont(ch.font().difference(phrase.font()));
         }
+	phrase.process(this);
     }
     
   /**
@@ -873,7 +879,7 @@ public class RtfWriter extends DocWriter implements DocListener
         if(chunk.font().isUnderlined()) { out.write(escape); out.write(underline); }
         if(chunk.font().isStrikethru()) { out.write(escape); out.write(strikethrough); }
         out.write(delimiter);
-        out.write(chunk.content().getBytes());
+        out.write(filterSpecialChar(chunk.content()).getBytes());
         if(chunk.font().isBold()) { out.write(escape); out.write(bold); writeInt(out, 0); }
         if(chunk.font().isItalic()) { out.write(escape); out.write(italic); writeInt(out, 0); }
         if(chunk.font().isUnderlined()) { out.write(escape); out.write(underline); writeInt(out, 0); }
@@ -1606,7 +1612,7 @@ public class RtfWriter extends DocWriter implements DocListener
         }
         catch(DocumentException e)
         {
-            throw new ExceptionConverter(e);
+            throw new IOException("DocumentException - "+e.getMessage());
         }
     }
     
@@ -1669,7 +1675,30 @@ public class RtfWriter extends DocWriter implements DocListener
         }
         catch(IOException e)
         {
-            throw new ExceptionConverter(e);
+            System.out.println("InitDefaultsError" + e);
         }
     }
+
+  /**
+   * Replaces special characters with their unicode values
+   *
+   * @param str The original <code>String</code>
+   * @return The converted String
+   */
+  private String filterSpecialChar(String str)
+  {
+       int length = str.length();
+       int z = (int)'z';
+       StringBuffer ret = new StringBuffer( length );
+       for(int i = 0; i < length; i++) {
+           char ch = str.charAt( i );
+           if( ((int)ch) > z ) {
+               ret.append( "\\u" ).append( (long)ch ).append( 'G' );
+           } else {
+               ret.append( ch );
+           }
+       }
+       return ret.toString();
+  }
 }
+
