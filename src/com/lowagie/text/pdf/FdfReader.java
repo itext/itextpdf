@@ -48,7 +48,7 @@ package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
-/** Reads an FDF form and makes fields available
+/** Reads an FDF form and makes the fields available
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class FdfReader extends PdfReader {
