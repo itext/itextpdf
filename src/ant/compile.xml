@@ -55,7 +55,7 @@
                 <include name="**/*.txt"/>
             </fileset>
         </copy>
-        <jar jarfile="${itext.bin}/iText.jar" basedir="${itext.classes}" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**" />
+        <jar jarfile="${itext.bin}/iText.jar" basedir="${itext.classes}" manifest="../META-INF/MANIFEST.MF" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**" />
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

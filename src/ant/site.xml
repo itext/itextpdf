@@ -37,6 +37,7 @@
 		<copy file="${itext.src.lowagie}/style.css" todir="${itext.lowagie}" overwrite="no" />
 		<copy file="${itext.src.lowagie}/MPL-1.1.txt" todir="${itext.lowagie}" overwrite="no" />
 		<copy file="${itext.src.lowagie}/lgpl.txt" todir="${itext.lowagie}" overwrite="no" />
+		<copy file="${itext.src.lowagie}/itext.jnlp" todir="${itext.lowagie}" overwrite="no" />
         <xslt basedir="${itext.src.lowagie}" destdir="${itext.lowagie}" extension=".html" style="${itext.src.lowagie}/lowagie.xsl" includes="*.xml">
 			<param name="releasenumber" expression="${releasenumber}"/>
 			<param name="releasedate" expression="${releasedate}"/>
