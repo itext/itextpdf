@@ -378,7 +378,7 @@ class PdfFont extends PdfDictionary implements Comparable {
 
 			// if a split-character is encountered, the splitPosition is altered
 			if (font.isSplitCharacter(character)) {
-				splitPosition = currentPosition;
+				splitPosition = currentPosition + 1;
 			}
 
 			// checks if the totalWidth is reached
@@ -387,7 +387,7 @@ class PdfFont extends PdfDictionary implements Comparable {
 				if (previousPosition >= splitPosition) {
 					splitPosition = Math.max(previousPosition + 1, currentPosition - 2);
 				}
-				array.add(new PdfString(string.substring(previousPosition, splitPosition)));
+				array.add(new PdfString(PdfFontMetrics.trim(string.substring(previousPosition, splitPosition))));
 				currentPosition = splitPosition;
 				currentWidth = font.widthTextSpace() * factor;
 				previousPosition = currentPosition;

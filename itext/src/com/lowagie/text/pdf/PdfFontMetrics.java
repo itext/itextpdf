@@ -462,6 +462,20 @@ public abstract class PdfFontMetrics {
 		}
 	}
 
+	/**
+	 * Removes all the <VAR>' '</VAR> and <VAR>'-'</VAR>-characters on the right of a <CODE>String</CODE>.
+	 * <P>
+	 * @param	string		the <CODE>String<CODE> that has to be trimmed.
+	 * @return	the trimmed <CODE>String</CODE>
+	 */
+
+	static String trim(String string) {
+		while (string.endsWith(" ") || string.endsWith("\t")) {
+			string = string.substring(0, string.length() - 1);
+		}
+		return string;
+	}
+
 // methods to check the parameters of a font
 
 	/**

@@ -220,7 +220,7 @@ class PdfChunk extends PdfString {
 			} 
 			// if a split-character is encountered, the splitPosition is altered
 			if (PdfFontMetrics.isSplitCharacter(character)) {
-				splitPosition = currentPosition;
+				splitPosition = currentPosition + 1;
 			}
 			currentPosition++;
 		}		
@@ -237,8 +237,8 @@ class PdfChunk extends PdfString {
 			setContent(value);
 			return new PdfChunk(returnValue, font, color);
 		}
-		String returnValue = value.substring(splitPosition + 1);
-		value = value.substring(0, splitPosition);
+		String returnValue = value.substring(splitPosition);
+		value = PdfFontMetrics.trim(value.substring(0, splitPosition));
 		setContent(value);
 		return new PdfChunk(returnValue, font, color);			   
 	}
