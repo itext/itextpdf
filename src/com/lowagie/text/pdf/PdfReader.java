@@ -464,7 +464,7 @@ public class PdfReader {
             case PRTokeniser.TK_NAME:
                 return new PdfName(tokens.getStringValue());
             case PRTokeniser.TK_REF:
-                return new PRIndirectReference(this, tokens.getReference(), tokens.getReference());
+                return new PRIndirectReference(this, tokens.getReference(), tokens.getGeneration());
             default:
                 return new PdfLiteral(-type, tokens.getStringValue());
         }
