@@ -180,7 +180,18 @@ public class Table extends Rectangle implements Element {
     
 /** This is an array containing the widths (in percentages) of every column. */
     private float[] widths;
-    
+
+/** Boolean to track errors (some checks will be performed) */
+    boolean mDebug = false;
+
+/** Boolean to track if a table was inserted (to avoid unnecessary computations afterwards) */
+    boolean mTableInserted = false;
+
+/** Boolean to automatically fill empty cells before a table is rendered
+ *  (takes CPU so may be set to false in case of certainty)
+ */
+    boolean mAutoFillEmptyCells = true;
+
     // constructors
     
 /**
@@ -361,7 +372,29 @@ public class Table extends Rectangle implements Element {
             return false;
         }
     }
+
+/**
+ * Performs extra checks when executing table code (currently only when cells are added)
+ * @author Geert Poels  -  Geert.Poels@skynet.be
+ */
+    public void setDebug(boolean aDebug) {
+            mDebug = aDebug;
+    }
+
+/**
+ * Enables/disables automatic insertion of empty cells before table is rendered. (default = true)
+ * As some people may want to create a table, fill only a couple of the cells and don't bother with
+ * investigating which empty ones need to be added, this default behaviour may be very welcome.
+ * Disabling is recommended to increase speed. (empty cells should be added through extra code then)
+ *
+ * @param       aDoAutoFill   enable/disable autofill
+ * @author Geert Poels  -  Geert.Poels@skynet.be
+ */
     
+    public void setAutoFillEmptyCells(boolean aDoAutoFill) {
+        mAutoFillEmptyCells = aDoAutoFill;
+    }
+
 /**
  * Gets the type of the text element.
  *
@@ -408,10 +441,11 @@ public class Table extends Rectangle implements Element {
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
         if (aCell == null) throw new NullPointerException("addCell - cell has null-value");
         if (aLocation == null) throw new NullPointerException("addCell - point has null-value");
-        Assert.assert(aLocation.x >= 0,"row coordinate of location must be >= 0)");
-        Assert.assert((aLocation.y > 0) || (aLocation.y <= columns),"column coordinate of location must be >= 0 and < nr of columns)");
-        Assert.assert(isValidLocation(aCell, aLocation) == true,"Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
-        
+        if (mDebug == true) {
+            Assert.assert(aLocation.x >= 0,"row coordinate of location must be >= 0)");
+            Assert.assert((aLocation.y > 0) || (aLocation.y <= columns),"column coordinate of location must be >= 0 and < nr of columns)");
+            Assert.assert(isValidLocation(aCell, aLocation) == true,"Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
+        }        
         placeCell(rows, aCell, aLocation);
         setCurrentLocationToNextValidPosition(aLocation);
         
@@ -528,8 +562,10 @@ public class Table extends Rectangle implements Element {
 //      if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("InsertTable(Table, Point)");
         if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
         if (aLocation == null) throw new NullPointerException("insertTable - point has null-value");
-        
-        Assert.assert(aLocation.y <= columns,"insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
+        mTableInserted = true;
+        if (mDebug == true) {
+            Assert.assert(aLocation.y <= columns,"insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
+        }
 //      if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("insertTable - " + aLocation.x + "," + aLocation.y);
     
         int rowCount = aLocation.x + 1 - rows.size();
@@ -553,9 +589,18 @@ public class Table extends Rectangle implements Element {
     
     public final void complete() throws BadElementException, DocumentException {
 //      if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("Begin complete");
-        mergeInsertedTables();  // integrate tables in the table
-        fillEmptyMatrixCells();
-        checkIllegalRowspan();
+        if (mTableInserted == true) {
+            mergeInsertedTables();  // integrate tables in the table
+            mTableInserted = false;
+        }
+        if (mAutoFillEmptyCells == true) {
+            fillEmptyMatrixCells();
+        }
+        if (false == true) {
+            checkIllegalRowspan();
+        }
+        
+
 //      if (Logging.INCLUDE_LOG_IN_BUILD)  printTableMatrix();
 //      if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("End complete");
     }
@@ -1299,9 +1344,9 @@ public class Table extends Rectangle implements Element {
  * the lowest row, targetted by the rowspan.<BR>
  *
  * This library will throw a warning in case such a situation is detected.
- * It will replace the rowspan with several empty cells in case of an empty row with rowspan.
+ * It will replace a row consisting of only empty cells because of several rowspans.
  *
- * @author  Kris Jespers
+ * @author  Kris Jespers  kris.jespers@pandora.be
  */
     protected void checkIllegalRowspan() throws BadElementException {
 //      if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("begin checkIllegalRowspan()");
