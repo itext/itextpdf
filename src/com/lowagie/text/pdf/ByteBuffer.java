@@ -67,8 +67,8 @@ public class ByteBuffer {
     /** The buffer where the bytes are stored. */
     protected byte buf[];
     
-    private static final int LONG_CACHE_SIZE = 0;
-    private static final int MAX_STRINGITERATOR = 10;
+    public static int LONG_CACHE_SIZE = 0;
+    
     private static byte[][] longCache = new byte[LONG_CACHE_SIZE][];
     public static byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
