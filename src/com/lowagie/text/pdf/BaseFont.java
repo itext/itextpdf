@@ -62,8 +62,6 @@ import java.util.HashMap;
 
 public abstract class BaseFont {
     
-// static final membervariables
-    
     /** This is a possible value of a base 14 type 1 font */
     public static final String COURIER = "Courier";
     
@@ -176,18 +174,63 @@ public abstract class BaseFont {
     
 /** if the font doesn't have to be embedded */
     public final static boolean NOT_EMBEDDED = false;
-    
 /** if the font has to be cached */
     public final static boolean CACHED = true;
-    
 /** if the font doesn't have to be cached */
     public final static boolean NOT_CACHED = false;
     
+    /** The font type.
+     */    
+    int fontType;
 /** a not defined character in a custom PDF encoding */
     public final static String notdef = ".notdef";
     
+/** table of characters widths for this encoding */
+    protected int widths[] = new int[256];
+    
+/** encoding names */
+    protected String differences[] = new String[256];
+/** same as differences but with the unicode codes */
+    protected char unicodeDifferences[] = new char[256];
+    
+/** encoding used with this font */
+    protected String encoding;
+    
+/** true if the font is to be embedded in the PDF */
+    protected boolean embedded;
+    
+/**
+ * true if the font must use it's built in encoding. In that case the
+ * <CODE>encoding</CODE> is only used to map a char to the position inside
+ * the font, not to the expected char name.
+ */
+    protected boolean fontSpecific = true;
+    
+/** cache for the fonts already used. */
+    protected static HashMap fontCache = new HashMap();
+    
 /** list of the 14 built in fonts. */
     protected static final HashMap BuiltinFonts14 = new HashMap();
+    
+    /** The subset prefix to be added to the font name when the font is embedded.
+     */    
+    protected static char subsetPrefix[] = {'A', 'B', 'C', 'D', 'E', 'E', '+'};
+    
+    /** Forces the output of the width array. Only matters for the 14
+     * built-in fonts.
+     */
+    protected boolean forceWidthsOutput = false;
+    
+    /** Converts <CODE>char</CODE> directly to <CODE>byte</CODE>
+     * by casting.
+     */
+    protected boolean directTextToByte = false;
+    
+    /** Indicates if all the glyphs and widths for that particular
+     * encoding should be included in the document.
+     */
+    protected boolean subset = true;
+    
     static {
         BuiltinFonts14.put(COURIER, PdfName.COURIER);
         BuiltinFonts14.put(COURIER_BOLD, PdfName.COURIER_BOLD);
@@ -204,51 +247,13 @@ public abstract class BaseFont {
         BuiltinFonts14.put(TIMES_ITALIC, PdfName.TIMES_ITALIC);
         BuiltinFonts14.put(ZAPFDINGBATS, PdfName.ZAPFDINGBATS);
     }
-
-// membervariables
     
-/** The font type. */    
-    int fontType;
-    
-/** table of characters widths for this encoding */
-    protected int widths[] = new int[256];
-    
-/** encoding names */
-    protected String differences[] = new String[256];
-    
-/** same as differences but with the unicode codes */
-    protected char unicodeDifferences[] = new char[256];
-    
-/** encoding used with this font */
-    protected String encoding;
-    
-/** true if the font is to be embedded in the PDF */
-    protected boolean embedded;
-    
-/** Forces the output of the width array. */
-    protected boolean forceWidthsOutput = false;
-    
-/**
- * true if the font must use it's built in encoding. In that case the
- * <CODE>encoding</CODE> is only used to map a char to the position inside
- * the font, not to the expected char name.
- */
-    protected boolean fontSpecific = true;
-    
-/** cache for the fonts already used. */
-    protected static HashMap fontCache = new HashMap();
-    
-/** The subset prefix to be added to the font name when the font is embedded. */    
-    protected static char subsetPrefix[] = {'A', 'B', 'C', 'D', 'E', 'E', '+'};
-    
-    /**
-     * Generates the PDF stream with the Type1 and Truetype fonts returning
+    /** Generates the PDF stream with the Type1 and Truetype fonts returning
      * a PdfStream.
      */
     class StreamFont extends PdfStream {
         
-        /**
-         * Generates the PDF stream with the Type1 and Truetype fonts returning
+        /** Generates the PDF stream with the Type1 and Truetype fonts returning
          * a PdfStream.
          * @param contents the content of the stream
          * @param lengths an array of int that describes the several lengths of each part of the font
@@ -465,14 +470,9 @@ public abstract class BaseFont {
      */
     public int getWidth(String text) {
         int total = 0;
-        try {
-            byte mbytes[] = text.getBytes(encoding);
-            for (int k = 0; k < mbytes.length; ++k)
-                total += widths[0xff & mbytes[k]];
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new ExceptionConverter(e);
-        }
+        byte mbytes[] = convertToBytes(text);
+        for (int k = 0; k < mbytes.length; ++k)
+            total += widths[0xff & mbytes[k]];
         return total;
     }
     
@@ -503,6 +503,13 @@ public abstract class BaseFont {
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
     byte[] convertToBytes(String text) {
+        if (directTextToByte) {
+            int len = text.length();
+            byte b[] = new byte[len];
+            for (int k = 0; k < len; ++k)
+                b[k] = (byte)text.charAt(k);
+            return b;
+        }
         try {
             return text.getBytes(encoding);
         }
@@ -600,6 +607,16 @@ public abstract class BaseFont {
      */
     public abstract String[][] getFullFontName();
     
+    /** Gets the family name of the font. If it is a True Type font
+     * each array element will have {Platform ID, Platform Encoding ID,
+     * Language ID, font name}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * For the other fonts the array has a single element with {"", "", "",
+     * font name}.
+     * @return the family name of the font
+     */
+    public abstract String[][] getFamilyFontName();
+    
     /** Gets the code pages supported by the font. This has only meaning
      * with True Type fonts.
      * @return the code pages supported by the font
@@ -665,6 +682,40 @@ public abstract class BaseFont {
      */
     public void setForceWidthsOutput(boolean forceWidthsOutput) {
         this.forceWidthsOutput = forceWidthsOutput;
+    }
+    
+    /** Gets the direct conversion of <CODE>char</CODE> to <CODE>byte</CODE>.
+     * @return value of property directTextToByte.
+     * @see #setDirectTextToByte(boolean directTextToByte)
+     */
+    public boolean isDirectTextToByte() {
+        return directTextToByte;
+    }
+    
+    /** Sets the conversion of <CODE>char</CODE> directly to <CODE>byte</CODE>
+     * by casting. This is a low level feature to put the bytes directly in
+     * the content stream without passing through String.getBytes().
+     * @param directTextToByte New value of property directTextToByte.
+     */
+    public void setDirectTextToByte(boolean directTextToByte) {
+        this.directTextToByte = directTextToByte;
+    }
+    
+    /** Indicates if all the glyphs and widths for that particular
+     * encoding should be included in the document.
+     * @return <CODE>false</CODE> to include all the glyphs and widths.
+     */
+    public boolean isSubset() {
+        return subset;
+    }
+    
+    /** Indicates if all the glyphs and widths for that particular
+     * encoding should be included in the document. Set to <CODE>false</CODE>
+     * to include all.
+     * @param subset new value of property subset
+     */
+    public void setSubset(boolean subset) {
+        this.subset = subset;
     }
     
 }
