@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -79,7 +79,7 @@ public class Jpeg extends Image implements Element {
 	public static final int[] NOPARAM_MARKERS = {0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0x01};
 
 // Constructors
-    
+
     /**
 	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
 	 *
@@ -139,14 +139,14 @@ public class Jpeg extends Image implements Element {
         rawData = img;
         processParameters();
     }
-    
+
 	/**
 	 * Constructs a <CODE>Jpeg</CODE>-object from memory.
 	 *
 	 * @param		img			the memory image.
 	 * @param		width		the width you want the image to have
 	 * @param		height		the height you want the image to have
-	 * 
+	 *
 	 * @author		Paulo Soares
 	 */
 
@@ -194,7 +194,7 @@ public class Jpeg extends Image implements Element {
 		}
 		return NOT_A_MARKER;
 	}
-    
+
 // private methods
 
 	/**
@@ -250,7 +250,7 @@ public class Jpeg extends Image implements Element {
 			plainHeight = height();
 		 }
     }
-
+	
 // methods to retrieve information
 
 	/**

@@ -1,8 +1,8 @@
 /*
- * @(#)Graphic.java					0.37 2000/10/05
- *       release iText0.35:			0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -46,8 +46,6 @@ import com.lowagie.text.pdf.PdfContent;
  * @see		Element
  * 
  * @author  bruno@lowagie.com
- * @version 0.37 2000/10/05
- * @since   iText0.37
  */
 
 public class Graphic extends PdfContent implements Element {
@@ -56,8 +54,6 @@ public class Graphic extends PdfContent implements Element {
 
 	/**
 	 * Constructs a <CODE>Graphic</CODE>-object.
-	 *
-	 * @since		iText0.37
 	 */
 
 	public Graphic() {
@@ -67,14 +63,14 @@ public class Graphic extends PdfContent implements Element {
 // implementation of the Element interface
 
     /**
-     * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+     * Processes the element by adding it (or the different parts) to an
+	 * <CODE>ElementListener</CODE>. 
      *
+	 * @param	listener	an <CODE>ElementListener</CODE>
 	 * <CODE>true</CODE> if the element was processed successfully
-     * @since   iText0.37
      */
 
-    public boolean process(DocListener listener) {
+    public boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
 		}
@@ -87,7 +83,6 @@ public class Graphic extends PdfContent implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-     * @since	iText0.37
      */
 
     public int type() {
@@ -98,8 +93,6 @@ public class Graphic extends PdfContent implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.37
      */
 
     public ArrayList getChunks() {

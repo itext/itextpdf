@@ -1,9 +1,8 @@
 /*
- * @(#)List.java					0.38 2000/10/09
- *       release iText0.3:			0.25 2000/02/14
- *       release iText0.35:			0.25 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -82,9 +81,6 @@ import java.util.Iterator;
  * @see		ListItem
  *
  * @author  bruno@lowagie.com
- * @version 0.38, 2000/10/09
- *
- * @since   iText0.30
  */
 
 public class List implements Element {
@@ -123,8 +119,6 @@ public class List implements Element {
 	 *
 	 * @param	numbered		a boolean
 	 * @param	symbolIndent	the indentation that has to be used for the listsymbol
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public List(boolean numbered, int symbolIndent) {
@@ -135,15 +129,14 @@ public class List implements Element {
 // implementation of the Element-methods
 
     /**
-     * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+     * Processes the element by adding it (or the different parts) to an
+	 * <CODE>ElementListener</CODE>. 
      *
+	 * @param	listener	an <CODE>ElementListener</CODE>
 	 * @return	<CODE>true</CODE> if the element was processed successfully
-	 *
-     * @since   iText0.30
      */
 
-    public boolean process(DocListener listener) {
+    public boolean process(ElementListener listener) {
 		try {
 			for (Iterator i = list.iterator(); i.hasNext(); ) {
 				listener.add((Element) i.next());
@@ -159,8 +152,6 @@ public class List implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public int type() {
@@ -171,8 +162,6 @@ public class List implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public ArrayList getChunks() {
@@ -189,9 +178,6 @@ public class List implements Element {
 	 * Adds a <CODE>ListItem</CODE> to the <CODE>List</CODE>.
 	 * 
 	 * @param	item	the item to add.
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void add(ListItem item) {
@@ -212,9 +198,6 @@ public class List implements Element {
 	 * Adds a (nested) <CODE>List</CODE> to the <CODE>List</CODE>.
 	 * 
 	 * @param	nested		the list to add.
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.38
 	 */
 
 	public void add(List nested) {
@@ -229,9 +212,6 @@ public class List implements Element {
 	 * This is a shortcut for <CODE>add(ListItem item)</CODE>.
 	 *
 	 * @param	item	a <CODE>String</CODE>
-	 * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
 	 */
 
 	public void add(String item) {
@@ -242,9 +222,6 @@ public class List implements Element {
 	 * Sets the indentation of this paragraph on the left side.
 	 *
 	 * @param	indentation		the new indentation
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setIndentationLeft(int indentation) {
@@ -255,9 +232,6 @@ public class List implements Element {
 	 * Sets the indentation of this paragraph on the right side.
 	 *
 	 * @param	indentation		the new indentation
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setIndentationRight(int indentation) {
@@ -268,9 +242,6 @@ public class List implements Element {
 	 * Sets the number that has to come first in the list.
 	 *
 	 * @param	first		a number
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setFirst(int first) {
@@ -281,9 +252,6 @@ public class List implements Element {
 	 * Sets the listsymbol.
 	 *
 	 * @param	symbol		a <CODE>Chunk</CODE>
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setListSymbol(Chunk symbol) {
@@ -296,9 +264,6 @@ public class List implements Element {
 	 * This is a shortcut for <CODE>setListSymbol(Chunk symbol)</CODE>.
 	 *
 	 * @param	symbol		a <CODE>String</CODE>
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setListSymbol(String symbol) {
@@ -311,8 +276,6 @@ public class List implements Element {
 	 * Gets all the items in the list.
 	 *
 	 * @return	an <CODE>ArrayList</CODE> containing <CODE>ListItem</CODE>s.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ArrayList getItems() {
@@ -323,8 +286,6 @@ public class List implements Element {
 	 * Gets the size of the list.
 	 *
 	 * @return	a <CODE>size</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int size() {
@@ -335,8 +296,6 @@ public class List implements Element {
 	 * Gets the leading of the first listitem.
 	 *
 	 * @return	a <CODE>leading</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int leading() {
@@ -351,8 +310,6 @@ public class List implements Element {
 	 * Checks if the list is numbered.
 	 * 
 	 * @return	<CODE>true</CODE> if the list is numbered, <CODE>false</CODE> otherwise.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final boolean isNumbered() {
@@ -363,8 +320,6 @@ public class List implements Element {
 	 * Gets the indentation of this paragraph on the left side.
 	 *
 	 * @return	the indentation
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int indentationLeft() {
@@ -375,8 +330,6 @@ public class List implements Element {
 	 * Gets the indentation of this paragraph on the right side.
 	 *
 	 * @return	the indentation
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int indentationRight() {
@@ -387,8 +340,6 @@ public class List implements Element {
 	 * Returns a representation of this <CODE>Paragraph</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public String toString() {

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie, Paulo Soares
+ * Copyright 2000, 2001 by Bruno Lowagie and Paulo Soares.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -85,8 +85,6 @@ public class ImgRaw extends Image implements Element {
 	 * Returns a representation of this <CODE>Rectangle</CODE>.
 	 *
 	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public String toString() {

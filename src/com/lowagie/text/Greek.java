@@ -1,8 +1,8 @@
 /*
- * @(#)Greek.java					0.40 2000/12/01
- *       release iText0.40			0.40 2000/??/??
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -45,9 +45,6 @@ package com.lowagie.text;
  *
  * @author  bruno@lowagie.com
  * @author  Evelyne De Cordier
- * @version 0.40, 2000/12/01
- *
- * @since   iText0.40
  */
 
 public class Greek {
@@ -57,8 +54,6 @@ public class Greek {
 	 *
 	 * @param	string		a <CODE>String</CODE>
 	 * @return	an index of -1 if no Greek symbol was found
-	 *
-	 * @since	iText0.40 
 	 */
 
 	public static int index(String string) {
@@ -76,8 +71,6 @@ public class Greek {
 	 *
 	 * @param	c	the original ASCII-char
 	 * @return	the corresponding symbol in font Symbol
-	 *
-	 * @since	iText0.40
 	 */
 
 	public static char getCorrespondingSymbol(char c) {

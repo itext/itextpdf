@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -321,7 +321,7 @@ public class Font implements Comparable {
 	public void setColor(int red, int green, int blue) {
 		this.color = new Color(red, green, blue);
 	}
-
+	
     /**
      * Gets the leading that can be used with this font. 
      *
@@ -463,7 +463,7 @@ public class Font implements Comparable {
 		}
 		return (style &	STRIKETHRU) == STRIKETHRU;
 	}
-
+	
     /**
      * Gets the color of this font. 
      *

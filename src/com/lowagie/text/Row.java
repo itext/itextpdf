@@ -1,9 +1,8 @@
 /*
- * @(#)Row.java						0.25 2000/02/09
- *       release iText0.3:			0.25 2000/02/14
- *       release iText0.35:			0.25 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -53,9 +52,6 @@ import java.util.ArrayList;
  * @see		Table
  *
  * @author  bruno@lowagie.com
- * @version 0.25, 2000/02/09
- *
- * @since   iText0.30
  */
 
 public class Row implements Element {
@@ -83,8 +79,6 @@ public class Row implements Element {
 	 * Constructs a <CODE>Row</CODE> with a certain number of <VAR>columns</VAR>.
 	 *
 	 * @param	columns		a number of columns
-	 * 
-	 * @since	iText0.30
 	 */
 
 	Row(int columns) {
@@ -97,14 +91,13 @@ public class Row implements Element {
 
     /**
      * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+	 * <CODE>ElementListener</CODE>. 
      *
-	 * <CODE>true</CODE> if the element was processed successfully
-	 *
-     * @since   iText0.30
+	 * @param	listener	an <CODE>ElementListener</CODE>
+	 * @return	<CODE>true</CODE> if the element was processed successfully
      */
 
-    public final boolean process(DocListener listener) {
+    public final boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
 		}
@@ -117,8 +110,6 @@ public class Row implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public final int type() {
@@ -129,8 +120,6 @@ public class Row implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final ArrayList getChunks() {
@@ -142,9 +131,6 @@ public class Row implements Element {
 	 * in which a certain column has been deleted.
 	 *
 	 * @param	column	the number of the column to delete
-	 * @return	a <CODE>Row</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	final void deleteColumn(int column) {
@@ -179,8 +165,6 @@ public class Row implements Element {
 	 * @param	cell	the cell to add.
 	 * @return	the column position the <CODE>Cell</CODE> was added,
 	 *			or <CODE>-1</CODE> if the <CODE>Cell</CODE> couldn't be added.
-	 *
-	 * @since	iText0.30
 	 */
 
 	final int addCell(Cell cell) {
@@ -202,8 +186,6 @@ public class Row implements Element {
 	 *
 	 * @param	column	the column that has to be reserved.
 	 * @return	<CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
-	 *
-	 * @since	iText0.30
 	 */
 
 	final boolean reserve(int column) {
@@ -220,9 +202,6 @@ public class Row implements Element {
      * Sets the horizontal alignment. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public void setHorizontalAlignment(int value) {
@@ -233,9 +212,6 @@ public class Row implements Element {
      * Sets the vertical alignment. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public void setVerticalAlignment(int value) {
@@ -250,8 +226,6 @@ public class Row implements Element {
 	 * @param	column	the column the <CODE>Cell</CODE> is in.
 	 * @return	the <CODE>Cell</CODE> or <VAR>null</VAR> if the column was
 	 *			reserved or empty.
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public final Cell getCell(int column) {
@@ -264,9 +238,7 @@ public class Row implements Element {
 	/**
 	 * Checks if the row is empty.
 	 *
-	 * @return	<CODE>true</CODE> if none of the columns is reserved.					  
-	 *
-	 * @since	iText0.30
+	 * @return	<CODE>true</CODE> if none of the columns is reserved.
 	 */
 
 	public final boolean isEmpty() {
@@ -282,8 +254,6 @@ public class Row implements Element {
      * Gets the number of columns. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final int columns() {
@@ -294,8 +264,6 @@ public class Row implements Element {
      * Gets the horizontal alignment. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public int horizontalAlignment() {
@@ -306,8 +274,6 @@ public class Row implements Element {
      * Gets the vertical alignment. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public int verticalAlignment() {
@@ -318,7 +284,6 @@ public class Row implements Element {
 	 * Returns a representation of this <CODE>Row</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-     * @since	iText0.30
 	 */
 
 	public String toString() {

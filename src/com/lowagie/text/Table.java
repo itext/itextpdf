@@ -1,9 +1,8 @@
 /*
- * @(#)Table.java					0.31 2000/02/19
- *       release iText0.3:			0.27 2000/02/14
- *       release iText0.35:         0.31 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -128,9 +127,6 @@ import java.util.Iterator;
  * @see		Cell
  *
  * @author  bruno@lowagie.com
- * @version 0.28, 2000/02/13
- *
- * @since   iText0.30
  */
 
 public class Table extends Rectangle implements Element {
@@ -178,8 +174,6 @@ public class Table extends Rectangle implements Element {
 	 *
 	 * @param	columns		The number of columns in the table
 	 * @throws	BadElementException if the creator was called with less than 1 column
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Table(int columns) throws BadElementException {
@@ -193,8 +187,6 @@ public class Table extends Rectangle implements Element {
 	 * @param	columns		The number of columns in the table
 	 * @param	rows		The number of rows
 	 * @throws	BadElementException if the creator was called with less than 1 column
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Table(int columns, int rows) throws BadElementException {
@@ -226,15 +218,14 @@ public class Table extends Rectangle implements Element {
 // implementation of the Element-methods
 
     /**
-     * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+     * Processes the element by adding it (or the different parts) to an
+	 * <CODE>ElementListener</CODE>. 
      *
-	 * <CODE>true</CODE> if the element was processed successfully
-	 *
-     * @since   iText0.30
+	 * @param	listener	an <CODE>ElementListener</CODE>
+	 * @return <CODE>true</CODE> if the element was processed successfully
      */
 
-    public final boolean process(DocListener listener) {
+    public final boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
 		}
@@ -247,8 +238,6 @@ public class Table extends Rectangle implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public final int type() {
@@ -259,8 +248,6 @@ public class Table extends Rectangle implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final ArrayList getChunks() {
@@ -273,9 +260,6 @@ public class Table extends Rectangle implements Element {
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>. 
      *
 	 * @param	cell	The <CODE>Cell</CODE> to add
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
 	 */
 
 	public final void addCell(Cell cell) {
@@ -316,10 +300,7 @@ public class Table extends Rectangle implements Element {
 	 * The <CODE>Phrase</CODE> will be converted to a <CODE>Cell</CODE>.
      *
 	 * @param	content		a <CODE>Phrase</CODE>
-     * @return	<CODE>void</CODE>
 	 * @throws	BadElementException this should never happen
-	 *
-     * @since	iText0.30
 	 */
 
 	public final void addCell(Phrase content) throws BadElementException {
@@ -343,10 +324,7 @@ public class Table extends Rectangle implements Element {
 	 * The <CODE>String</CODE> will be converted to a <CODE>Cell</CODE>.
      *
 	 * @param	content		a <CODE>String</CODE>
-     * @return	<CODE>void</CODE>
 	 * @throws	BadElementException this should never happen
-	 *
-     * @since	iText0.30
 	 */
 
 	public final void addCell(String content) throws BadElementException {
@@ -358,9 +336,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	value	the new border value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultCellBorder(int value) {
@@ -372,9 +347,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	value	the new width
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultCellBorderWidth(int value) {
@@ -386,9 +358,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	color	the new color
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultCellBorderColor(Color color) {
@@ -400,9 +369,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	color	the new color
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultCellBackgroundColor(Color color) {
@@ -414,9 +380,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	value	the new value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultCellGrayFill(double value) {
@@ -430,9 +393,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	value	the new alignment value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultHorizontalAlignment(int value) {
@@ -444,9 +404,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	value	the new alignment value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultVerticalAlignment(int value) {
@@ -458,9 +415,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	value	the new rowspan value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultRowspan(int value) {
@@ -472,9 +426,6 @@ public class Table extends Rectangle implements Element {
 	 * added with method <CODE>addCell(String content)</CODE>.
 	 *
 	 * @param	value	the new colspan value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setDefaultColspan(int value) {
@@ -487,9 +438,6 @@ public class Table extends Rectangle implements Element {
 	 * Deletes a column in this table.
 	 *
 	 * @param	column	the number of the column that has to be deleted
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void deleteColumn(int column) throws DocumentException {
@@ -519,8 +467,6 @@ public class Table extends Rectangle implements Element {
 	 * 
 	 * @param	row		the number of the row to delete
 	 * @return	boolean	<CODE>true</CODE> if the row was deleted; <CODE>false</CODE> if not
-	 * 
-	 * @since	iText0.31
 	 */
 
 	public final boolean deleteRow(int row) {
@@ -535,8 +481,6 @@ public class Table extends Rectangle implements Element {
 	 * Deletes the last row in this table.
 	 *
 	 * @return	boolean	<CODE>true</CODE> if the row was deleted; <CODE>false</CODE> if not
-	 * 
-	 * @since	iText0.31
 	 */
 
 	public final boolean deleteLastRow() {
@@ -547,8 +491,6 @@ public class Table extends Rectangle implements Element {
 	 * Marks the last row of the table headers.
 	 *
 	 * @return	the number of the last row of the table headers
-	 *
-	 * @since	rugPdf0.30
 	 */
 
 	public int endHeaders() {
@@ -562,9 +504,6 @@ public class Table extends Rectangle implements Element {
      * Sets the horizontal alignment.  
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setAlignment(int value) {
@@ -575,9 +514,6 @@ public class Table extends Rectangle implements Element {
      * Sets the cellpadding. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setCellpadding(int value) {
@@ -588,9 +524,6 @@ public class Table extends Rectangle implements Element {
      * Sets the cellspacing. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setCellspacing(int value) {
@@ -601,9 +534,6 @@ public class Table extends Rectangle implements Element {
 	 * Sets the width of this table (in percentage of the available space).
 	 *
 	 * @param	width		the width
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setWidth(int width) {
@@ -626,9 +556,6 @@ public class Table extends Rectangle implements Element {
 	 * 25% for the second and third column.
 	 *
 	 * @param	an array with values
-	 * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
 	 */
 
 	public final void setWidths(int[] widths) throws DocumentException {
@@ -658,8 +585,6 @@ public class Table extends Rectangle implements Element {
 	 * Gets the number of rows in this <CODE>Table</CODE>.
 	 *
 	 * @return	the number of rows in this <CODE>Table</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int size() {
@@ -670,8 +595,6 @@ public class Table extends Rectangle implements Element {
 	 * Gets an <CODE>Iterator</CODE> of all the <CODE>Row</CODE>s.
 	 *
 	 * @return	an <CODE>Iterator</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Iterator iterator() {
@@ -682,8 +605,6 @@ public class Table extends Rectangle implements Element {
      * Gets the horizontal alignment. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public int alignment() {
@@ -694,8 +615,6 @@ public class Table extends Rectangle implements Element {
      * Gets the cellpadding. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public int cellpadding() {
@@ -706,8 +625,6 @@ public class Table extends Rectangle implements Element {
      * Gets the cellspacing. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public int cellspacing() {
@@ -729,8 +646,6 @@ public class Table extends Rectangle implements Element {
 	 * Gets the first number of the row that doesn't contain headers.
 	 *
 	 * @return	a rownumber
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int firstDataRow() {
@@ -747,8 +662,6 @@ public class Table extends Rectangle implements Element {
 	 * @param	totalWidth	this is the space between the first border at the left
 	 *						and the last border at the right (cellpadding not included)
 	 * @return	an array with borderpositions
-	 *
-     * @since	iText0.30
 	 */
 
 	public int[] getWidths(int left, int totalWidth) {
@@ -781,8 +694,6 @@ public class Table extends Rectangle implements Element {
 	 * Returns a representation of this <CODE>Row</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-     * @since	iText0.30
 	 */
 
 	public String toString() {

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -82,8 +82,6 @@ public class Chapter extends Section implements TextElementArray {
 	 *
 	 * @param	title		the Chapter title (as a <CODE>String</CODE>)
 	 * @param	number		the Chapter number
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Chapter(String title, int number) {
