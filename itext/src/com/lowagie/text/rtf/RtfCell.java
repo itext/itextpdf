@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -129,6 +129,23 @@ public class RtfCell
   /** End of cell */
     private static final byte[] cellEnd = "cell".getBytes();
     
+    /** padding top */
+    private static final byte[] cellPaddingTop = "clpadt".getBytes();
+    /** padding top unit */
+    private static final byte[] cellPaddingTopUnit = "clpadft3".getBytes();
+    /** padding bottom */
+    private static final byte[] cellPaddingBottom = "clpadb".getBytes();
+    /** padding bottom unit */
+    private static final byte[] cellPaddingBottomUnit = "clpadfb3".getBytes();
+    /** padding left */
+    private static final byte[] cellPaddingLeft = "clpadl".getBytes();
+    /** padding left unit */
+    private static final byte[] cellPaddingLeftUnit = "clpadfl3".getBytes();
+    /** padding right */
+    private static final byte[] cellPaddingRight = "clpadr".getBytes();
+    /** padding right unit */
+    private static final byte[] cellPaddingRightUnit = "clpadfr3".getBytes();
+    
   /** The <code>RtfWriter</code> to which this <code>RtfCell</code> belongs. */
     private RtfWriter writer = null;
   /** The <code>RtfTable</code> to which this <code>RtfCell</code> belongs. */
@@ -144,6 +161,10 @@ public class RtfCell
     private boolean emptyCell = true;
   /** Type of merging to do */
     private int mergeType = 0;
+  /** cell padding, because the table only renders the left and right cell padding 
+   * and not the top and bottom one 
+   */
+    private int cellpadding = 0;
     
   /**
    * Create a new <code>RtfCell</code>.
@@ -169,11 +190,13 @@ public class RtfCell
    * @param x The column index of this <code>RtfCell</code>
    * @param y The row index of this <code>RtfCell</code>
    */
-    public int importCell(Cell cell, int cellLeft, int cellWidth, int x, int y)
+    public int importCell(Cell cell, int cellLeft, int cellWidth, int x, int y, int cellpadding)
     {
       //        System.err.println( this.getClass().getName() + "Cell: " + cell + " left: " 
       //                + cellLeft + " width: " 
       //                + cellWidth + " x: " + x + " y: " + y );
+        this.cellpadding = cellpadding;
+
         // set this value in any case
         this.cellWidth = cellWidth;
         if(cell == null)
@@ -354,6 +377,30 @@ public class RtfCell
             os.write(cellWidthTag);
             writeInt(os, cellWidth);
             os.write((byte) '\n');
+            if (cellpadding > 0) {
+                // values
+                os.write( RtfWriter.escape );
+                os.write( cellPaddingLeft );
+                writeInt( os, cellpadding / 2 );
+                os.write( RtfWriter.escape );
+                os.write( cellPaddingTop );
+                writeInt( os, cellpadding / 2 );
+                os.write( RtfWriter.escape );
+                os.write( cellPaddingRight );
+                writeInt( os, cellpadding / 2 );
+                os.write( RtfWriter.escape );
+                os.write( cellPaddingBottom );
+                writeInt( os, cellpadding / 2 );
+                // unit
+                os.write( RtfWriter.escape );
+                os.write( cellPaddingLeftUnit );
+                os.write( RtfWriter.escape );
+                os.write( cellPaddingTopUnit );
+                os.write( RtfWriter.escape );
+                os.write( cellPaddingRightUnit );
+                os.write( RtfWriter.escape );
+                os.write( cellPaddingBottomUnit );
+            }
             os.write(RtfWriter.escape);
             os.write(cellRightBorder);
             writeInt(os, cellRight);

@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -89,6 +89,10 @@ public class RtfRow
     private static final byte[] rowBorderTop = "trbrdrt".getBytes();
   /* Row border bottom */
     private static final byte[] rowBorderBottom = "trbrdrb".getBytes();
+  /* Row border horiz inline */
+    private static final byte[] rowBorderInlineHorizontal = "trbrdrh".getBytes();
+  /* Row border bottom */
+    private static final byte[] rowBorderInlineVertical = "trbrdrv".getBytes();
   /* Default cell spacing left */
     private static final byte[] rowSpacingLeft = "trspdl".getBytes();
   /* Default cell spacing right */
@@ -216,13 +220,13 @@ public class RtfRow
                 if(cell.type() == Element.CELL)
                 {
                     RtfCell rtfCell = (RtfCell) cells.get(i);
-                    cellLeft = rtfCell.importCell((Cell) cell, cellLeft, cellWidth, i, y);
+                    cellLeft = rtfCell.importCell((Cell) cell, cellLeft, cellWidth, i, y, cellpadding);
                 }
             }
             else
             {
                 RtfCell rtfCell = (RtfCell) cells.get(i);
-                cellLeft = rtfCell.importCell(null, cellLeft, cellWidth, i, y);
+                cellLeft = rtfCell.importCell(null, cellLeft, cellWidth, i, y, cellpadding);
             }
         }
 
@@ -295,84 +299,48 @@ public class RtfRow
         writeInt(os, 10);
         if(((borders & Rectangle.LEFT) == Rectangle.LEFT) && (borderWidth > 0))
         {
-            os.write(RtfWriter.escape);
-            os.write(rowBorderLeft);
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorder);
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorderWidth);
-            writeInt(os, (int) (borderWidth * writer.twipsFactor));
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorderColor);
-            if(borderColor == null) writeInt(os, writer.addColor(new Color(0,0,0))); else
-                writeInt(os, writer.addColor(borderColor));
-            os.write((byte) '\n');
+            writeBorder( os, rowBorderLeft );
         }
         if(((borders & Rectangle.TOP) == Rectangle.TOP) && (borderWidth > 0))
         {
-            os.write(RtfWriter.escape);
-            os.write(rowBorderTop);
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorder);
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorderWidth);
-            writeInt(os, (int) (borderWidth * writer.twipsFactor));
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorderColor);
-            if(borderColor == null) writeInt(os, writer.addColor(new Color(0,0,0))); else
-                writeInt(os, writer.addColor(borderColor));
-            os.write((byte) '\n');
+            writeBorder( os, rowBorderTop );
         }
         if(((borders & Rectangle.BOTTOM) == Rectangle.BOTTOM) && (borderWidth > 0))
         {
-            os.write(RtfWriter.escape);
-            os.write(rowBorderBottom);
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorder);
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorderWidth);
-            writeInt(os, (int) (borderWidth * writer.twipsFactor));
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorderColor);
-            if(borderColor == null) writeInt(os, writer.addColor(new Color(0,0,0))); else
-                writeInt(os, writer.addColor(borderColor));
-            os.write((byte) '\n');
+            writeBorder( os, rowBorderBottom );
         }
         if(((borders & Rectangle.RIGHT) == Rectangle.RIGHT) && (borderWidth > 0))
         {
-            os.write(RtfWriter.escape);
-            os.write(rowBorderRight);
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorder);
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorderWidth);
-            writeInt(os, (int) (borderWidth * writer.twipsFactor));
-            os.write(RtfWriter.escape);
-            os.write(RtfRow.tableBorderColor);
-            if(borderColor == null) writeInt(os, writer.addColor(new Color(0,0,0))); else
-                writeInt(os, writer.addColor(borderColor));
-            os.write((byte) '\n');
+            writeBorder( os, rowBorderRight );
         }
-        os.write(RtfWriter.escape);
-        os.write(rowSpacingLeft);
-        writeInt(os, cellspacing / 2);
-        os.write(RtfWriter.escape);
-        os.write(rowSpacingLeftStyle);
-        os.write(RtfWriter.escape);
-        os.write(rowSpacingTop);
-        writeInt(os, cellspacing / 2);
-        os.write(RtfWriter.escape);
-        os.write(rowSpacingTopStyle);
-        os.write(RtfWriter.escape);
-        os.write(rowSpacingBottom);
-        writeInt(os, cellspacing / 2);
-        os.write(RtfWriter.escape);
-        os.write(rowSpacingBottomStyle);
-        os.write(RtfWriter.escape);
-        os.write(rowSpacingRight);
-        writeInt(os, cellspacing / 2);
-        os.write(RtfWriter.escape);
-        os.write(rowSpacingRightStyle);
+        if(((borders & Rectangle.BOX) == Rectangle.BOX) && (borderWidth > 0))
+        {
+            writeBorder( os, rowBorderInlineHorizontal );
+            writeBorder( os, rowBorderInlineVertical );
+        }
+        
+        if (cellspacing > 0) {
+            os.write(RtfWriter.escape);
+            os.write(rowSpacingLeft);
+            writeInt(os, cellspacing / 2);
+            os.write(RtfWriter.escape);
+            os.write(rowSpacingLeftStyle);
+            os.write(RtfWriter.escape);
+            os.write(rowSpacingTop);
+            writeInt(os, cellspacing / 2);
+            os.write(RtfWriter.escape);
+            os.write(rowSpacingTopStyle);
+            os.write(RtfWriter.escape);
+            os.write(rowSpacingBottom);
+            writeInt(os, cellspacing / 2);
+            os.write(RtfWriter.escape);
+            os.write(rowSpacingBottomStyle);
+            os.write(RtfWriter.escape);
+            os.write(rowSpacingRight);
+            writeInt(os, cellspacing / 2);
+            os.write(RtfWriter.escape);
+            os.write(rowSpacingRightStyle);
+        }
         os.write(RtfWriter.escape);
         os.write(rowPaddingLeft);
         writeInt(os, cellpadding / 2);
@@ -401,7 +369,31 @@ public class RtfRow
         os.write(rowEnd);
         return true;
     }
-    
+
+
+    private void writeBorder( OutputStream os, byte[] borderType ) throws IOException {
+        // horizontal and vertical, top, left, bottom, right
+        os.write(RtfWriter.escape);
+        os.write( borderType );
+        // line style        
+        os.write( RtfWriter.escape );
+        os.write( RtfRow.tableBorder );
+        // borderwidth
+        os.write( RtfWriter.escape );        
+        os.write( RtfRow.tableBorderWidth );
+        writeInt( os, (int)(borderWidth * writer.twipsFactor) );
+        // border color        
+        os.write( RtfWriter.escape );
+        os.write( RtfRow.tableBorderColor );
+        if (borderColor == null) {
+            writeInt( os, writer.addColor( new Color( 0, 0, 0 ) ) ); 
+        } else {
+            writeInt( os, writer.addColor( borderColor ) );
+        }    
+        os.write((byte) '\n');        
+    }
+
+
   /**
    * <code>RtfTable</code>s call this method from their own setMerge() to
    * specify that a certain other cell is to be merged with it.
