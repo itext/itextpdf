@@ -50,8 +50,11 @@
 
 package com.lowagie.text.pdf;
 
+import java.awt.Color;
 import java.util.Iterator;
 import java.util.HashMap;
+
+import com.lowagie.text.Rectangle;
 
 /**
  * Each PDF document can contain maximum 1 AcroForm.
@@ -148,16 +151,51 @@ public class PdfAcroForm extends PdfDictionary {
     
     public void addHtmlPostButton(String caption, BaseFont font, float fontSize, String name, String url, float llx, float lly, float urx, float ury) {
         PdfAction action = PdfAction.createSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT);
-        PdfFormField annotation = new PdfFormField(writer, llx, lly, urx, ury, action);
-        annotation.setFieldName(name);
-        annotation.setButton(PdfFormField.FF_PUSHBUTTON);
-        annotation.setFlags(PdfAnnotation.FLAGS_PRINT);
-        annotation.setPage();
-        annotation.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
+        PdfFormField button = new PdfFormField(writer, llx, lly, urx, ury, action);
+        button.setButton(PdfFormField.FF_PUSHBUTTON);
+        button.setFieldName(name);
+        button.setFlags(PdfAnnotation.FLAGS_PRINT);
+        button.setPage();
+        button.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
         PdfContentByte cb = writer.getDirectContent();
         PdfAppearance pa = cb.createAppearance(urx - llx, ury - lly);
-        pa.drawButton(0, 0, urx - llx, ury - lly, caption, font, fontSize);
-        annotation.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, pa);
-        addFormField(annotation);
+        pa.drawButton(0f, 0f, urx - llx, ury - lly, caption, font, fontSize);
+        button.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, pa);
+        addFormField(button);
+    }
+    
+    public void addSingleLineTextField(String text, BaseFont font, float fontSize, String name, float llx, float lly, float urx, float ury) {
+        PdfFormField field = PdfFormField.createTextField(writer, PdfFormField.SINGLELINE, PdfFormField.PLAINTEXT, 0);
+        field.setWidget(new Rectangle(llx, lly, urx, ury), PdfAnnotation.HIGHLIGHT_INVERT);
+        field.setValueAsString(text);
+        field.setDefaultValueAsString(text);
+        field.setFieldName(name);
+        field.setFlags(PdfAnnotation.FLAGS_PRINT);
+        field.setPage();
+        field.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
+        PdfContentByte da = new PdfContentByte(writer);
+        da.setFontAndSize(font, fontSize);
+        da.resetRGBColorFill();
+        field.setDefaultAppearanceString(da);
+        PdfContentByte cb = writer.getDirectContent();
+        cb.moveTo(0, 0);
+        PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
+        tp.drawTextField(0f, 0f, urx - llx, ury - lly);
+        tp.beginVariableText();
+        tp.saveState();
+        tp.rectangle(3f, 3f, urx - llx - 6f, ury - lly - 6f);
+        tp.clip();
+        tp.newPath();
+        tp.beginText();
+        tp.setFontAndSize(font, fontSize);
+        tp.resetRGBColorFill();
+        tp.setTextMatrix(4, 5);
+        tp.showText(text);
+        tp.endText();
+        tp.restoreState();
+        tp.endVariableText();
+        field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, tp);
+        field.setAppearance(PdfAnnotation.APPEARANCE_DOWN, tp);
+        addFormField(field);
     }
 }
