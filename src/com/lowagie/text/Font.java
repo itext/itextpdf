@@ -236,12 +236,10 @@ public class Font implements Comparable {
         if ((value = attributes.getProperty(ElementTags.STYLE)) != null) {
             setStyle(value);
         }
-        String r = null;
-        String g = null;
-        String b = null;
-        if ((r = attributes.getProperty(ElementTags.RED)) != null ||
-        (g = attributes.getProperty(ElementTags.GREEN)) != null ||
-        (b = attributes.getProperty(ElementTags.BLUE)) != null) {
+        String r = attributes.getProperty(ElementTags.RED);
+        String g = attributes.getProperty(ElementTags.GREEN);
+        String b = attributes.getProperty(ElementTags.BLUE);
+        if (r != null || g != null || b != null) {
             int red = 0;
             int green = 0;
             int blue = 0;
@@ -449,27 +447,30 @@ public class Font implements Comparable {
  */
     
     public Font difference(Font font) {
-		if (font.isStandardFont()) {
-			return this;
-		}
         Font difference = new Font();
-        if (font.family() != UNDEFINED) {
-            difference.family = font.family;
-        }
-        else {
+        if (font.family() == UNDEFINED) {
             difference.family = this.family;
         }
-        if (this.size != font.size()) {
-            difference.size = this.size;
+        else {
+            difference.family = font.family;
         }
+		if (font.size() == UNDEFINED) {
+			difference.size = this.size;
+		}
+		else {
+	        difference.size = font.size;
+		}
         int style1 = this.style;
         int style2 = font.style();
         if (style1 == UNDEFINED) style1 = 0;
         if (style2 == UNDEFINED) style2 = 0;
         difference.style = style1 | style2;
-        if (this.color == null || ! this.color.equals(font.color())) {
+        if (font.color == null) {
             difference.color = this.color;
         }
+		else {
+			difference.color = font.color();
+		}
         return difference;
     }
     

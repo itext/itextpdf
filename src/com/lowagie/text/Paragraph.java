@@ -168,7 +168,7 @@ public class Paragraph extends Phrase implements TextElementArray {
  */
     
     public Paragraph(Phrase phrase) {
-        super(phrase.leading());
+        super(phrase.leading(), "", phrase.font());
         super.add(phrase);
     }
     
