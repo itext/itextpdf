@@ -900,6 +900,14 @@ public class PdfWriter extends DocWriter {
         directContentUnder.reset();
     }
     
+    /**
+     * Gets the AcroForm object.
+     */
+    
+    public PdfAcroForm getAcroForm() {
+        return pdf.getAcroForm();
+    }
+    
     /** Gets the root outline.
      * @return the root outline
      */

@@ -351,9 +351,9 @@ class PdfDocument extends Document implements DocListener {
         void setPageLabels(PdfPageLabels pageLabels) {
             put(PdfName.PAGELABELS, pageLabels.getDictionary());
         }
-
+        
         void setAcroForm(PdfObject fields) {
-           put(PdfName.ACROFORM, fields);
+            put(PdfName.ACROFORM, fields);
         }
     }
     
@@ -469,15 +469,12 @@ class PdfDocument extends Document implements DocListener {
     /** This is the array containing the references to the annotations. */
     private ArrayList annotations;
     
+    /** This is an array containg references to some delayed annotations. */
     private ArrayList delayedAnnotations = new ArrayList();
     
-    private HashMap fieldTemplates = new HashMap();
+    /** This is the AcroForm object. */
+    PdfAcroForm acroForm;
     
-    private PdfArray documentFields = new PdfArray();
-
-    private PdfArray calculationOrder = new PdfArray();
-    
-    private int sigFlags = 0;
     /** This is the <CODE>ArrayList</CODE> with the outlines of the document. */
     private ArrayList outlines;
     
@@ -537,6 +534,7 @@ class PdfDocument extends Document implements DocListener {
     public final void addWriter(PdfWriter writer) throws DocumentException {
         if (this.writer == null) {
             this.writer = writer;
+            acroForm = new PdfAcroForm(writer);
             return;
         }
         throw new DocumentException("You can only add a writer to a PdfDocument once.");
@@ -691,11 +689,11 @@ class PdfDocument extends Document implements DocListener {
                 if (!dic.isUsed()) {
                     HashMap templates = dic.getTemplates();
                     if (templates != null)
-                        fieldTemplates.putAll(templates);
+                        acroForm.addFieldTemplates(templates);
                 }
                 PdfFormField field = (PdfFormField)dic;
                 if (field.getParent() == null)
-                    documentFields.add(field.getIndirectReference());
+                    acroForm.addDocumentField(field.getIndirectReference());
             }
             if (dic.isAnnotation()) {
                 array.add(dic.getIndirectReference());
@@ -704,24 +702,24 @@ class PdfDocument extends Document implements DocListener {
                     switch (rotation) {
                         case 90:
                             dic.put(PdfName.RECT, new PdfRectangle(
-                                thisPageSize.top() - rect.bottom(),
-                                rect.left(),
-                                thisPageSize.top() - rect.top(),
-                                rect.right()));
+                            thisPageSize.top() - rect.bottom(),
+                            rect.left(),
+                            thisPageSize.top() - rect.top(),
+                            rect.right()));
                             break;
                         case 180:
                             dic.put(PdfName.RECT, new PdfRectangle(
-                                thisPageSize.right() - rect.left(),
-                                thisPageSize.top() - rect.bottom(),
-                                thisPageSize.right() - rect.right(),
-                                thisPageSize.top() - rect.top()));
+                            thisPageSize.right() - rect.left(),
+                            thisPageSize.top() - rect.bottom(),
+                            thisPageSize.right() - rect.right(),
+                            thisPageSize.top() - rect.top()));
                             break;
                         case 270:
                             dic.put(PdfName.RECT, new PdfRectangle(
-                                rect.bottom(),
-                                thisPageSize.right() - rect.left(),
-                                rect.top(),
-                                thisPageSize.right() - rect.right()));
+                            rect.bottom(),
+                            thisPageSize.right() - rect.left(),
+                            rect.top(),
+                            thisPageSize.right() - rect.right()));
                             break;
                     }
                 }
@@ -1153,8 +1151,8 @@ class PdfDocument extends Document implements DocListener {
                         case Annotation.LAUNCH:
                             annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR))));
                             break;
-                        default:
-                            annotations.add(new PdfAnnotation(writer, annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content())));
+                            default:
+                                annotations.add(new PdfAnnotation(writer, annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content())));
                     }
                     pageEmpty = false;
                     break;
@@ -1207,8 +1205,8 @@ class PdfDocument extends Document implements DocListener {
                         break;
                     }
                     else
-                    // we process the paragraph
-                    element.process(this);
+                        // we process the paragraph
+                        element.process(this);
                     
                     //add by Jin-Hsia Yang and blowagie
                     paraIndent -= paragraph.indentationLeft();
@@ -2056,31 +2054,12 @@ class PdfDocument extends Document implements DocListener {
             catalog.setPageLabels(pageLabels);
         catalog.addNames(localDestinations, documentJavaScript, writer);
         catalog.setViewerPreferences(viewerPreferences);
-        if (documentFields.size() > 0) {
-            PdfDictionary acroForm = new PdfDictionary();
-            acroForm.put(PdfName.FIELDS, documentFields);
-            if (sigFlags != 0)
-                acroForm.put(PdfName.SIGFLAGS, new PdfNumber(sigFlags));
-            if (calculationOrder.size() > 0)
-                acroForm.put(PdfName.CO, calculationOrder);
-            if (fieldTemplates.size() > 0) {
-                PdfDictionary dic = new PdfDictionary();
-                for (Iterator it = fieldTemplates.keySet().iterator(); it.hasNext();) {
-                    PdfTemplate template = (PdfTemplate)it.next();
-                    PdfFormField.mergeResources(dic, (PdfDictionary)template.getResources());
-                }
-                acroForm.put(PdfName.DR, dic);
-                PdfDictionary fonts = (PdfDictionary)dic.get(PdfName.FONT);
-                if (fonts != null) {
-                    acroForm.put(PdfName.DA, new PdfString("/F1 0 Tf 0 g "));
-                    writer.eliminateFontSubset(fonts);
-                }
-                try {
-                    catalog.setAcroForm(writer.addToBody(acroForm).getIndirectReference());
-                }
-                catch (IOException e) {
-                    throw new ExceptionConverter(e);
-                }
+        if (acroForm.isValid()) {
+            try {
+                catalog.setAcroForm(writer.addToBody(acroForm).getIndirectReference());
+            }
+            catch (IOException e) {
+                throw new ExceptionConverter(e);
             }
         }
         return catalog;
@@ -2176,6 +2155,14 @@ class PdfDocument extends Document implements DocListener {
     }
     
     /**
+     * Gets the AcroForm object.
+     */
+    
+    public PdfAcroForm getAcroForm() {
+        return acroForm;
+    }
+    
+    /**
      * Gets the root outline. All the outlines must be created with a parent.
      * The first level is created with this outline.
      * @return the root outline
@@ -2194,7 +2181,7 @@ class PdfDocument extends Document implements DocListener {
         xObjectDictionary.put(name, template.getIndirectReference());
         return name;
     }
-
+    
     /**
      * Writes a text line to the document. It takes care of all the attributes.
      * <P>
@@ -2564,17 +2551,17 @@ class PdfDocument extends Document implements DocListener {
             throw new ExceptionConverter(e);
         }
     }
-
+    
     void setCropBoxSize(Rectangle crop) {
         cropSize = new Rectangle(crop);
     }
     
     void addCalculationOrder(PdfAnnotation annot) {
-        calculationOrder.add(annot.getIndirectReference());
+        acroForm.addCalculationOrder(annot.getIndirectReference());
     }
     
     void setSigFlags(int f) {
-        sigFlags |= f;
+        acroForm.setSigFlags(f);
     }
     
     void addFormFieldRaw(PdfFormField field) {
