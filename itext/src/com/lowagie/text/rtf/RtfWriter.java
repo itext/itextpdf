@@ -1750,7 +1750,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                     os.write(fontWindings);
                     break;
                 default:
-                    os.write(fnt.getFamilyname().getBytes());
+                    os.write(fontRoman);
                     os.write(escape);
                     os.write(fontCharset);
                     writeInt(os, 0);
