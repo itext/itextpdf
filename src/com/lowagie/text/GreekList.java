@@ -113,6 +113,7 @@ public class GreekList extends List {
 	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
 	 *
 	 * @param	o	the object to add.
+	 * @return true if adding the object succeeded
 	 */
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {

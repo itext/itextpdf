@@ -131,6 +131,10 @@ public class Font implements Comparable {
     
 // constructors
  
+    /**
+     * Copy constructor of a Font
+     * @param other the font that has to be copied
+     */
     public Font(Font other) {
         this.color = other.color;
         this.family = other.family;

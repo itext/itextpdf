@@ -322,6 +322,7 @@ public class Row implements Element, MarkupAttributes {
  * Returns the type-id of the element in a Row.
  *
  * @param       column  the column of which you'd like to know the type
+ * @return the type-id of the element in the row
  */
     
     int getElementID(int column) {
@@ -337,6 +338,7 @@ public class Row implements Element, MarkupAttributes {
  * Returns the type-id of an Object.
  *
  * @param       element the object of which you'd like to know the type-id, -1 if invalid
+ * @return the type-id of an object
  */
     
     int getObjectID(Object element) {

@@ -103,6 +103,7 @@ public class RomanList extends List {
 	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
 	 *
 	 * @param	o	the object to add.
+	 * @return true if adding the object succeeded
 	 */
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {
@@ -146,7 +147,6 @@ public class RomanList extends List {
 	 *
 	 * 3. Maximal drei gleiche Ziffern stehen nebeneinander (Ausnahme: IIII auf Zifferblaettern von Uhren):
 	 * 
-	 *  XXX = 30 
 	 *  XL = 40 (und nicht XXXX) 
 	 *  IX = 9 (und nicht VIIII) 
 	 *  Diese "Subtraktionsschreibweise" ist erst im Mittelalter allgemein gebräuchlich geworden. 
@@ -185,6 +185,8 @@ public class RomanList extends List {
 
 	/** 
 	 * Wandelt eine Integerzahl in römische Kleinbuchstaben um.
+	 * @param number the original number
+	 * @return the roman number (lower case)
 	 */
 	public static String toRoman(int number) {
 		return toRomanLowerCase(number);
@@ -192,6 +194,8 @@ public class RomanList extends List {
 
 	/** 
 	 * Wandelt eine Integerzahl in römische Großbuchstaben um.
+	 * @param number the original number
+	 * @return the roman number (upper case)
 	 */
 	public static String toRomanUppercase(int number) {
 		return toRomanLowerCase(number).toUpperCase();
@@ -199,6 +203,8 @@ public class RomanList extends List {
 
 	/** 
 	 * Wandelt eine Integerzahl in römische Kleinbuchstaben um.
+	 * @param number the original number
+	 * @return the roman number (lower case)
 	 */
 	public static String toRomanLowerCase(int number) {
 
@@ -260,16 +266,21 @@ public class RomanList extends List {
 	 */
 	private static class RomanDigit {
 
-		// Zeichen
+		/** part of a roman number */
 		public char digit;
 
-		// Wert
+		/** value of the roman digit */
 		public int value;
 
-		// kann Vorangestellt werden
+		/** can the digit be used as a prefix */
 		public boolean pre;
 
-		// Initialisierung
+		/**
+		 * Constructs a roman digit
+		 * @param digit the roman digit
+		 * @param value the value
+		 * @param pre can it be used as a prefix
+		 */
 		RomanDigit(char digit, int value, boolean pre) {
 			this.digit = digit;
 			this.value = value;

@@ -270,6 +270,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * Adds an <CODE>Object</CODE> to the <CODE>Paragraph</CODE>.
  *
  * @param	o   object		the object to add.
+ * @return true is adding the object succeeded
  */
     
     public boolean add(Object o) {
@@ -464,6 +465,9 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
         this.multipliedLeading = multipliedLeading;
     }
     
+    /**
+     * @see com.lowagie.text.Phrase#setLeading(float)
+     */
     public void setLeading(float fixedLeading) {
         this.leading = fixedLeading;
         this.multipliedLeading = 0;

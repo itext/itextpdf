@@ -83,9 +83,12 @@ public class Greek {
         return -1;
     }
     
- /**
-  * Gets a chunk with a symbol character.
-  */
+/**
+ * Gets a chunk with a symbol character.
+ * @param c a character that has to be changed into a symbol
+ * @param font Font if there is no SYMBOL character corresponding with c
+ * @return a SYMBOL version of a character
+ */
     
     public static Chunk get(char c, Font font) {
         char greek = Greek.getCorrespondingSymbol(c);
