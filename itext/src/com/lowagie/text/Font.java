@@ -311,7 +311,7 @@ public class Font implements Comparable {
         if (family.equalsIgnoreCase(FontFactory.HELVETICA)) {
             return HELVETICA;
         }
-        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN)) {
+        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN) || family.equalsIgnoreCase("Times New Roman")) {
             return TIMES_NEW_ROMAN;
         }
         if (family.equalsIgnoreCase(FontFactory.SYMBOL)) {
@@ -321,6 +321,41 @@ public class Font implements Comparable {
             return ZAPFDINGBATS;
         }
         return UNDEFINED;
+    }
+    
+/**
+ * Gets the familyname as a String.
+ *
+ * @return  the familyname
+ */
+    
+    public String getFamilyname() {
+        String tmp = "unknown";
+        switch(family()) {
+            case Font.COURIER:
+                return FontFactory.COURIER;
+            case Font.HELVETICA:
+                return FontFactory.HELVETICA;
+            case Font.TIMES_NEW_ROMAN:
+                return "Times New Roman";
+            case Font.SYMBOL:
+                return FontFactory.SYMBOL;
+            case Font.ZAPFDINGBATS:
+                return FontFactory.ZAPFDINGBATS;
+            default:
+                if (baseFont != null) {
+                    String[][] names = baseFont.getFamilyFontName();
+                    for (int i = 0; i < names.length; i++) {
+                        if ("0".equals(names[i][0]) && "0".equals(names[i][2])) {
+                            return names[i][3];
+                        }
+                        if ("3".equals(names[i][0]) && "1033".equals(names[i][2])) {
+                            tmp = names[i][3];
+                        }
+                    }
+                }
+        }
+        return tmp;
     }
     
 /**

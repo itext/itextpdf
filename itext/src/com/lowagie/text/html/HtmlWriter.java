@@ -977,28 +977,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             }
         }
         if (isOtherFont(font)) {
-            switch (font.family()) {
-                case Font.COURIER:
-                    writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.COURIER);
-                    break;
-                case Font.HELVETICA:
-                    writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.HELVETICA);
-                    break;
-                case Font.TIMES_NEW_ROMAN:
-                    writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.TIMES_ROMAN);
-                    break;
-                case Font.SYMBOL:
-                    writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.SYMBOL);
-                    break;
-                case Font.ZAPFDINGBATS:
-                    writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.ZAPFDINGBATS);
-                    break;
-                    default:
-                        com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
-                        if (bf != null) {
-                            writeCssProperty(MarkupTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
-                        }
-            }
+            writeCssProperty(MarkupTags.CSS_FONTFAMILY, font.getFamilyname());
             
             if (font.size() != Font.UNDEFINED) {
                 writeCssProperty(MarkupTags.CSS_FONTSIZE, String.valueOf(font.size()) + "pt");

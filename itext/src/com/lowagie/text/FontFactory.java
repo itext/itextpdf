@@ -115,20 +115,21 @@ public class FontFactory extends java.lang.Object {
     private static Properties trueTypeFonts = new Properties();
     
     static {
-        trueTypeFonts.setProperty(COURIER, "");
-        trueTypeFonts.setProperty(COURIER_BOLD, "");
-        trueTypeFonts.setProperty(COURIER_OBLIQUE, "");
-        trueTypeFonts.setProperty(COURIER_BOLDOBLIQUE, "");
-        trueTypeFonts.setProperty(HELVETICA, "");
-        trueTypeFonts.setProperty(HELVETICA_BOLD, "");
-        trueTypeFonts.setProperty(HELVETICA_OBLIQUE, "");
-        trueTypeFonts.setProperty(HELVETICA_BOLDOBLIQUE, "");
-        trueTypeFonts.setProperty(SYMBOL, "");
-        trueTypeFonts.setProperty(TIMES_ROMAN, "");
-        trueTypeFonts.setProperty(TIMES_BOLD, "");
-        trueTypeFonts.setProperty(TIMES_ITALIC, "");
-        trueTypeFonts.setProperty(TIMES_BOLDITALIC, "");
-        trueTypeFonts.setProperty(ZAPFDINGBATS, "");
+        trueTypeFonts.setProperty(COURIER, COURIER);
+        trueTypeFonts.setProperty(COURIER_BOLD, COURIER_BOLD);
+        trueTypeFonts.setProperty(COURIER_OBLIQUE, COURIER_OBLIQUE);
+        trueTypeFonts.setProperty(COURIER_BOLDOBLIQUE, COURIER_BOLDOBLIQUE);
+        trueTypeFonts.setProperty(HELVETICA, HELVETICA);
+        trueTypeFonts.setProperty(HELVETICA_BOLD, HELVETICA_BOLD);
+        trueTypeFonts.setProperty(HELVETICA_OBLIQUE, HELVETICA_OBLIQUE);
+        trueTypeFonts.setProperty(HELVETICA_BOLDOBLIQUE, HELVETICA_BOLDOBLIQUE);
+        trueTypeFonts.setProperty(SYMBOL, SYMBOL);
+        trueTypeFonts.setProperty("Times New Roman", TIMES_ROMAN);
+        trueTypeFonts.setProperty(TIMES_ROMAN, TIMES_ROMAN);
+        trueTypeFonts.setProperty(TIMES_BOLD, TIMES_BOLD);
+        trueTypeFonts.setProperty(TIMES_ITALIC, TIMES_ITALIC);
+        trueTypeFonts.setProperty(TIMES_BOLDITALIC, TIMES_BOLDITALIC);
+        trueTypeFonts.setProperty(ZAPFDINGBATS, ZAPFDINGBATS);
     }
     
 /** This is the default encoding to use. */
@@ -205,7 +206,7 @@ public class FontFactory extends java.lang.Object {
                 String tmp;
                 while (fontname.indexOf(",") != -1) {
                     tmp = fontname.substring(0, fontname.indexOf(","));
-                    if (trueTypeFonts.containsKey(tmp)) {
+                    if (isRegistered(tmp)) {
                         fontname = tmp;
                     }
                     else {
@@ -425,6 +426,13 @@ public class FontFactory extends java.lang.Object {
                 if (alias != null) {
                     trueTypeFonts.setProperty(alias, path);
                 }
+                String[][] names = bf.getFullFontName();
+                for (int i = 0; i < names.length; i++) {
+                    if ("0".equals(names[i][0]) && "0".equals(names[i][2])) {
+                       trueTypeFonts.setProperty(names[i][3], path);
+                       break;
+                    }
+                }
             }
             else if (path.toLowerCase().endsWith(".ttc")) {
                 String[] names = BaseFont.enumerateTTCNames(path);
@@ -459,5 +467,23 @@ public class FontFactory extends java.lang.Object {
     
     public static boolean contains(String fontname) {
         return trueTypeFonts.containsKey(fontname);
+    }
+    
+/**
+ * Checks if a certain font is registered.
+ *
+ * @param   fontname    the name of the font that has to be checked.
+ * @return  true if the font is found
+ */
+    
+    public static boolean isRegistered(String fontname) {
+        String tmp;
+        for (Enumeration e = trueTypeFonts.propertyNames(); e.hasMoreElements(); ) {
+            tmp = (String) e.nextElement();
+            if (fontname.equalsIgnoreCase(tmp)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
