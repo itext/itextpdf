@@ -91,6 +91,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.ArrayList;
+//
+import java.util.Set;
+import java.util.Iterator;
+import java.awt.font.TextAttribute;
 
 public class PdfGraphics2D extends Graphics2D {
     
@@ -138,6 +142,10 @@ public class PdfGraphics2D extends Graphics2D {
     private Stroke oldStroke;
     private Paint paintFill;
     private Paint paintStroke;
+
+    // Added by Jurij Bilas
+    protected boolean underline;          // indicates if the font style is underlined
+    public static int AFM_DIVISOR = 1000; // used to calculate coordinates
 
     private PdfGraphics2D() {
     }
@@ -251,6 +259,64 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
+     * @calculates position and/or stroke thickness depending on the font size
+     * @param d value to be converted
+     * @param i font size
+     * @return
+     */
+    public static double asPoints(double d, int i) {
+        return (d * (double)i) / (double)AFM_DIVISOR;
+    }
+    /**
+     * This routine goes through the attributes and sets the font
+     * before calling the actual string drawing routine
+     * @param iter
+     */
+    protected void doAttributes(AttributedCharacterIterator iter) {
+        underline = false;
+        Set set = iter.getAttributes().keySet();
+        for(Iterator iterator = set.iterator(); iterator.hasNext();) {
+            TextAttribute textattribute = (TextAttribute)iterator.next();
+            if(textattribute.equals(TextAttribute.FONT)) {
+                Font font = (Font)iter.getAttributes().get(textattribute);
+                setFont(font);
+            }
+            else if(textattribute.equals(TextAttribute.UNDERLINE)) {
+                if(iter.getAttributes().get(textattribute) == TextAttribute.UNDERLINE_ON)
+                    underline = true;
+            }
+            else if(textattribute.equals(TextAttribute.SUPERSCRIPT)) {
+                /*
+                iter.getAttributes().get(textattribute);
+                Integer _tmp = TextAttribute.SUPERSCRIPT_SUPER;
+                subscript = true;
+                 */
+            }
+            else if(textattribute.equals(TextAttribute.SIZE)) {
+                Object obj = iter.getAttributes().get(textattribute);
+                Font font1 = null;
+                if(obj instanceof Integer) {
+                    int i = ((Integer)obj).intValue();
+                    font1 = getFont().deriveFont(getFont().getStyle(), i);
+                }
+                else if(obj instanceof Float) {
+                    float f = ((Float)obj).floatValue();
+                    font1 = getFont().deriveFont(getFont().getStyle(), f);
+                }
+                else {
+                    //System.out.println("Unknown type for attribute SIZE");
+                    return;
+                }
+                setFont(font1);
+            }
+            else {
+                String s = "only FONT/SIZE/UNDERLINE/SUPERSCRIPT supported";
+                throw new RuntimeException(s);
+            }
+        }
+    }
+
+    /**
      * @see Graphics2D#drawString(String, float, float)
      */
     public void drawString(String s, float x, float y) {
@@ -276,6 +342,20 @@ public class PdfGraphics2D extends Graphics2D {
             cb.showText(s);
             cb.endText();
             setTransform(at);
+            if(underline)
+            {
+                // These two are supposed to be taken from the .AFM file
+                int UnderlinePosition = -100;
+                int UnderlineThickness = 50;
+                //
+                FontMetrics fm = getFontMetrics();
+                double width = fm.stringWidth(s);
+                double d = asPoints((double)UnderlineThickness, (int)fontSize);
+                setStroke(new BasicStroke((float)d));
+                y = (float)((double)(y) + asPoints((double)(-UnderlineThickness), (int)fontSize));
+                Line2D line = new Line2D.Double((double)x, (double)y, (double)(width+x), (double)y);
+                draw(line);
+            }
         }
     }
     /**
@@ -289,12 +369,32 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#drawString(AttributedCharacterIterator, float, float)
      */
     public void drawString(AttributedCharacterIterator iter, float x, float y) {
+/*
         StringBuffer sb = new StringBuffer();
         for(char c = iter.first(); c != AttributedCharacterIterator.DONE; c = iter.next()) {
             sb.append(c);
         }
         drawString(sb.toString(),x,y);
+*/
+        StringBuffer stringbuffer = new StringBuffer(iter.getEndIndex());
+        for(char c = iter.first(); c != '\uFFFF'; c = iter.next())
+        {
+            if(iter.getIndex() == iter.getRunStart())
+            {
+                if(stringbuffer.length() > 0)
+                {
+                    drawString(stringbuffer.toString(), x, y);
+                    FontMetrics fontmetrics = getFontMetrics();
+                    x = (float)((double)x + fontmetrics.getStringBounds(stringbuffer.toString(), this).getWidth());
+                    stringbuffer.delete(0, stringbuffer.length());
+                }
+                doAttributes(iter);
+            }
+            stringbuffer.append(c);
+        }
         
+        drawString(stringbuffer.toString(), x, y);
+        underline = false;
     }
     
     /**

@@ -150,6 +150,9 @@ public abstract class BaseFont {
     /** The font is True Type with a Unicode encoding.
      */    
     public static final int FONT_TYPE_TTUNI = 3;
+    /** A font already inside the document.
+     */    
+    public static final int FONT_TYPE_DOCUMENT = 4;
     /** The Unicode encoding with horizontal writing.
      */    
     public static final String IDENTITY_H = "Identity-H";
@@ -183,7 +186,10 @@ public abstract class BaseFont {
 /** if the font doesn't have to be cached */
     public static final boolean NOT_CACHED = false;
     
+    /** The path to the font resources. */    
     public static final String RESOURCE_PATH = "fonts/";
+    /** The fake CID code that represents a newline. */    
+    public static final char CID_NEWLINE = '\u7fff';
     
     /** The font type.
      */    
@@ -472,7 +478,7 @@ public abstract class BaseFont {
      * @param name the glyph name
      * @return the width of the char
      */
-    protected abstract int getRawWidth(int c, String name);
+    abstract int getRawWidth(int c, String name);
     
     /**
      * Gets the kerning between two Unicode chars.

@@ -106,7 +106,7 @@ class PdfChunk implements SplitCharacter{
     protected String value = PdfObject.NOTHING;
     
     /** The encoding. */
-    protected String encoding = PdfObject.ENCODING;
+    protected String encoding = BaseFont.WINANSI;
     
     
 /** The font for this <CODE>PdfChunk</CODE>. */
@@ -218,7 +218,7 @@ class PdfChunk implements SplitCharacter{
                             break;
                     }
                     break;
-                case Font.TIMES_NEW_ROMAN:
+                case Font.TIMES_ROMAN:
                     switch(style & Font.BOLDITALIC) {
                         case Font.BOLD:
                             fontName = BaseFont.TIMES_BOLD;

@@ -100,9 +100,6 @@ public class FontFactory extends java.lang.Object {
     public static final String SYMBOL = BaseFont.SYMBOL;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_NEW_ROMAN = "Times New Roman";
-    
-/** This is a possible value of a base 14 type 1 font */
     public static final String TIMES = "Times";
     
 /** This is a possible value of a base 14 type 1 font */
@@ -165,7 +162,6 @@ public class FontFactory extends java.lang.Object {
         tmp.add(TIMES_BOLD);
         tmp.add(TIMES_ITALIC);
         tmp.add(TIMES_BOLDITALIC);
-        fontFamilies.put(TIMES_NEW_ROMAN, tmp);
         fontFamilies.put(TIMES, tmp);
         tmp = new HashSet();
         tmp.add(ZAPFDINGBATS);
@@ -201,16 +197,22 @@ public class FontFactory extends java.lang.Object {
             // some bugs were fixed here by Daniel Marczisovszky
             String lowercasefontname = fontname.toLowerCase();
             int s = style == Font.UNDEFINED ? Font.NORMAL : style;
+            int fs = Font.NORMAL;
+            boolean found = false;
             for (Iterator i = tmp.iterator(); i.hasNext(); ) {
                 String f = (String) i.next();
                 String lcf = f.toLowerCase();
-                int fs = Font.NORMAL;
+                fs = Font.NORMAL;
                 if (lcf.toLowerCase().indexOf("bold") != -1) fs |= Font.BOLD;
                 if (lcf.toLowerCase().indexOf("italic") != -1 || lcf.toLowerCase().indexOf("oblique") != -1) fs |= Font.ITALIC;
-                if ((s & Font.BOLDITALIC) == fs && lcf.indexOf(lowercasefontname) != -1) {
+                if ((s & Font.BOLDITALIC) == fs) {
                     fontname = f;
+                    found = true;
                     break;
                 }
+            }
+            if (style != Font.UNDEFINED && found) {
+                style &= ~fs;
             }
         }
         BaseFont basefont = null;

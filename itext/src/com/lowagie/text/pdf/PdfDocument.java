@@ -447,24 +447,10 @@ class PdfDocument extends Document implements DocListener {
      * the next page. */
     protected Rectangle cropSize = null;
     
-    /** This is the FontDictionary of the current Page. */
-    protected PdfFontDictionary fontDictionary;
+    /** This are the page resources of the current Page. */
+    protected PageResources pageResources;
     
-    /** This is the XObjectDictionary of the current Page. */
-    protected PdfXObjectDictionary xObjectDictionary;
-    
-    /** This is the ColorSpaceDictionary of the current Page. */
-    protected PdfColorDictionary colorDictionary;
-    
-    /** This is the PatternDictionary of the current Page. */
-    protected PdfPatternDictionary patternDictionary;
-    
-    /** This is the ShadingDictionary of the current Page. */
-    protected PdfShadingDictionary shadingDictionary;
     // images
-    
-    /** This is the list with all the images in the document. */
-    private HashMap images = new HashMap();
     
     /** This is the image that could not be shown on a previous page. */
     private Image imageWait = null;
@@ -776,85 +762,85 @@ class PdfDocument extends Document implements DocListener {
         PdfDictionary trans = new PdfDictionary(PdfName.TRANS);
         switch (transition.getType()) {
             case PdfTransition.SPLITVOUT:
-                trans.put(PdfName.S,new PdfName("Split"));
+                trans.put(PdfName.S,PdfName.SPLIT);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,new PdfName("V"));
-                trans.put(PdfName.M,new PdfName("O"));
+                trans.put(PdfName.DM,PdfName.V);
+                trans.put(PdfName.M,PdfName.O);
                 break;
             case PdfTransition.SPLITHOUT:
-                trans.put(PdfName.S,new PdfName("Split"));
+                trans.put(PdfName.S,PdfName.SPLIT);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,new PdfName("H"));
-                trans.put(PdfName.M,new PdfName("O"));
+                trans.put(PdfName.DM,PdfName.H);
+                trans.put(PdfName.M,PdfName.O);
                 break;
             case PdfTransition.SPLITVIN:
-                trans.put(PdfName.S,new PdfName("Split"));
+                trans.put(PdfName.S,PdfName.SPLIT);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,new PdfName("V"));
-                trans.put(PdfName.M,new PdfName("I"));
+                trans.put(PdfName.DM,PdfName.V);
+                trans.put(PdfName.M,PdfName.I);
                 break;
             case PdfTransition.SPLITHIN:
-                trans.put(PdfName.S,new PdfName("Split"));
+                trans.put(PdfName.S,PdfName.SPLIT);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,new PdfName("H"));
-                trans.put(PdfName.M,new PdfName("I"));
+                trans.put(PdfName.DM,PdfName.H);
+                trans.put(PdfName.M,PdfName.I);
                 break;
             case PdfTransition.BLINDV:
-                trans.put(PdfName.S,new PdfName("Blinds"));
+                trans.put(PdfName.S,PdfName.BLINDS);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,new PdfName("V"));
+                trans.put(PdfName.DM,PdfName.V);
                 break;
             case PdfTransition.BLINDH:
-                trans.put(PdfName.S,new PdfName("Blinds"));
+                trans.put(PdfName.S,PdfName.BLINDS);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.DM,new PdfName("H"));
+                trans.put(PdfName.DM,PdfName.H);
                 break;
             case PdfTransition.INBOX:
-                trans.put(PdfName.S,new PdfName("Box"));
+                trans.put(PdfName.S,PdfName.BOX);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.M,new PdfName("I"));
+                trans.put(PdfName.M,PdfName.I);
                 break;
             case PdfTransition.OUTBOX:
-                trans.put(PdfName.S,new PdfName("Box"));
+                trans.put(PdfName.S,PdfName.BOX);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
-                trans.put(PdfName.M,new PdfName("O"));
+                trans.put(PdfName.M,PdfName.O);
                 break;
             case PdfTransition.LRWIPE:
-                trans.put(PdfName.S,new PdfName("Wipe"));
+                trans.put(PdfName.S,PdfName.WIPE);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
                 trans.put(PdfName.DI,new PdfNumber(0));
                 break;
             case PdfTransition.RLWIPE:
-                trans.put(PdfName.S,new PdfName("Wipe"));
+                trans.put(PdfName.S,PdfName.WIPE);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
                 trans.put(PdfName.DI,new PdfNumber(180));
                 break;
             case PdfTransition.BTWIPE:
-                trans.put(PdfName.S,new PdfName("Wipe"));
+                trans.put(PdfName.S,PdfName.WIPE);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
                 trans.put(PdfName.DI,new PdfNumber(90));
                 break;
             case PdfTransition.TBWIPE:
-                trans.put(PdfName.S,new PdfName("Wipe"));
+                trans.put(PdfName.S,PdfName.WIPE);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
                 trans.put(PdfName.DI,new PdfNumber(270));
                 break;
             case PdfTransition.DISSOLVE:
-                trans.put(PdfName.S,new PdfName("Dissolve"));
+                trans.put(PdfName.S,PdfName.DISSOLVE);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
                 break;
             case PdfTransition.LRGLITTER:
-                trans.put(PdfName.S,new PdfName("Glitter"));
+                trans.put(PdfName.S,PdfName.GLITTER);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
                 trans.put(PdfName.DI,new PdfNumber(0));
                 break;
             case PdfTransition.TBGLITTER:
-                trans.put(PdfName.S,new PdfName("Glitter"));
+                trans.put(PdfName.S,PdfName.GLITTER);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
                 trans.put(PdfName.DI,new PdfNumber(270));
                 break;
             case PdfTransition.DGLITTER:
-                trans.put(PdfName.S,new PdfName("Glitter"));
+                trans.put(PdfName.S,PdfName.GLITTER);
                 trans.put(PdfName.D,new PdfNumber(transition.getDuration()));
                 trans.put(PdfName.DI,new PdfNumber(315));
                 break;
@@ -886,23 +872,7 @@ class PdfDocument extends Document implements DocListener {
         // we flush the arraylist with recently written lines
         flushLines();
         // we assemble the resources of this pages
-        PdfResources resources = new PdfResources();
-        int procset = PdfProcSet.PDF;
-        if (fontDictionary.containsFont()) {
-            resources.add(fontDictionary);
-            procset |= PdfProcSet.TEXT;
-        }
-        if (xObjectDictionary.containsXObject()) {
-            resources.add(xObjectDictionary);
-            procset |= PdfProcSet.IMAGEC;
-        }
-        resources.add(new PdfProcSet(procset));
-        if (colorDictionary.containsColorSpace())
-            resources.add(colorDictionary);
-        if (patternDictionary.containsPattern())
-            resources.add(patternDictionary);
-        if (shadingDictionary.containsShading())
-            resources.add(shadingDictionary);
+        PdfResources resources = pageResources.getResources();
         // we make a new page and add it to the document
         PdfPage page;
         int rotation = pageSize.getRotation();
@@ -1068,33 +1038,9 @@ class PdfDocument extends Document implements DocListener {
         
         writer.close();
     }
-    
-    /** Adds a font to the current page.
-     * @param name the name of the font
-     * @param ref the indirect reference to this font
-     */
-    public void addFont(PdfName name, PdfIndirectReference ref) {
-        fontDictionary.put(name, ref);
-    }
-    
-    public void addColor(PdfName name, PdfIndirectReference ref) {
-        colorDictionary.put(name, ref);
-    }
-    
-    public PdfName addPatternToPage(PdfPatternPainter painter) {
-        PdfName name = writer.addSimplePattern(painter);
-        patternDictionary.put(name, painter.getIndirectReference());
-        return name;
-    }
-    
-    public void addShadingPatternToPage(PdfShadingPattern shading) {
-        writer.addSimpleShadingPattern(shading);
-        patternDictionary.put(shading.getPatternName(), shading.getPatternReference());
-    }
-    
-    public void addShadingToPage(PdfShading shading) {
-        writer.addSimpleShading(shading);
-        shadingDictionary.put(shading.getShadingName(), shading.getShadingReference());
+
+    PageResources getPageResources() {
+        return pageResources;
     }
     
     /** Adds a <CODE>PdfPTable</CODE> to the document.
@@ -1212,7 +1158,7 @@ class PdfDocument extends Document implements DocListener {
                 
                 // Information (headers)
                 case Element.HEADER:
-                    info.addkey(((Header)element).name(), ((Header)element).content());
+                    info.addkey(((Meta)element).name(), ((Meta)element).content());
                     break;
                 case Element.TITLE:
                     info.addTitle(((Meta)element).content());
@@ -1816,76 +1762,7 @@ class PdfDocument extends Document implements DocListener {
     }
     
     // methods to add Content
-    
-    /**
-     * Adds an image to the document and to the page resources.
-     * @param image the <CODE>Image</CODE> to add
-     * @return the name of the image added
-     * @throws PdfException on error
-     * @throws DocumentException on error
-     */
-    
-    PdfName addDirectImage(Image image) throws PdfException, DocumentException {
-        Image maskImage = image.getImageMask();
-        if (maskImage != null)
-            addDirectImage(maskImage);
-        PdfName name = addDirectImageSimple(image);
-        if (!image.isImgTemplate())
-            xObjectDictionary.put(name, writer.getImageReference(name));
-        return name;
-    }
-    
-    /** Adds an image to the document but not to the page resources. It is used with
-     * templates and <CODE>Document.add(Image)</CODE>.
-     * @param image the <CODE>Image</CODE> to add
-     * @return the name of the image added
-     * @throws PdfException on error
-     * @throws DocumentException on error
-     */
-    PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
-        PdfName name;
-        // if the images is already added, just retrieve the name
-        if (images.containsKey(image.getMySerialId())) {
-            name = (PdfName) images.get(image.getMySerialId());
-        }
-        // if it's a new image, add it to the document
-        else {
-            if (image.isImgTemplate()) {
-                name = new PdfName("img" + images.size());
-                if (image.templateData() == null) {
-                    try {
-                        ImgWMF wmf = (ImgWMF)image;
-                        wmf.readWMF(writer.getDirectContent().createTemplate(0, 0));
-                    }
-                    catch (Exception e) {
-                        throw new DocumentException(e.getMessage());
-                    }
-                }
-            }
-            else {
-                Image maskImage = image.getImageMask();
-                PdfIndirectReference maskRef = null;
-                if (maskImage != null) {
-                    PdfName mname = (PdfName)images.get(maskImage.getMySerialId());
-                    maskRef = writer.getImageReference(mname);
-                }
-                PdfImage i = new PdfImage(image, "img" + images.size(), maskRef);
-                if (image.hasICCProfile()) {
-                    PdfICCBased icc = new PdfICCBased(image.getICCProfile());
-                    PdfIndirectReference iccRef = writer.add(icc);
-                    PdfArray iccArray = new PdfArray();
-                    iccArray.add(PdfName.ICCBASED);
-                    iccArray.add(iccRef);
-                    i.put(PdfName.COLORSPACE, iccArray);
-                }
-                writer.add(i);
-                name = i.name();
-            }
-            images.put(image.getMySerialId(), name);
-        }
-        return name;
-    }
-    
+        
     /**
      * Adds an image to the Graphics object.
      *
@@ -1992,11 +1869,7 @@ class PdfDocument extends Document implements DocListener {
         // initialisation of some page objects
         annotations = delayedAnnotations;
         delayedAnnotations = new ArrayList();
-        fontDictionary = new PdfFontDictionary();
-        xObjectDictionary = new PdfXObjectDictionary();
-        colorDictionary = new PdfColorDictionary();
-        patternDictionary = new PdfPatternDictionary();
-        shadingDictionary = new PdfShadingDictionary();
+        pageResources = new PageResources();
         writer.resetContent();
         
         // the pagenumber is incremented
@@ -2043,7 +1916,19 @@ class PdfDocument extends Document implements DocListener {
         
         // if there is a footer, the footer is added
         if (footer != null) {
-            footer.setPageNumber(pageN);
+			/*
+				Added by Edgar Leonardo Prieto Perilla
+			*/
+			// Avoid footer identation
+			float tmpIndentLeft = indentLeft;
+			float tmpIndentRight = indentRight;
+
+			indentLeft = indentRight = 0;
+			/*
+				End Added by Edgar Leonardo Prieto Perilla
+			*/
+
+			footer.setPageNumber(pageN);
             leading = footer.paragraph().leading();
             add(footer.paragraph());
             // adding the footer limits the height
@@ -2058,6 +1943,15 @@ class PdfDocument extends Document implements DocListener {
             graphics.rectangle(footer);
             indentBottom = currentHeight + leading * 2;
             currentHeight = 0;
+
+			/*
+				Added by Edgar Leonardo Prieto Perilla
+			*/
+			indentLeft = tmpIndentLeft;
+			indentRight = tmpIndentRight;
+			/*
+				End Added by Edgar Leonardo Prieto Perilla
+			*/
         }
         
         // we move to the left/top position of the page
@@ -2065,7 +1959,19 @@ class PdfDocument extends Document implements DocListener {
         
         // if there is a header, the header = added
         if (header != null) {
-            header.setPageNumber(pageN);
+			/*
+				Added by Edgar Leonardo Prieto Perilla
+			*/
+			// Avoid header identation
+			float tmpIndentLeft = indentLeft;
+			float tmpIndentRight = indentRight;
+
+			indentLeft = indentRight = 0;
+			/*
+				End Added by Edgar Leonardo Prieto Perilla
+			*/
+			
+			header.setPageNumber(pageN);
             leading = header.paragraph().leading();
             text.moveText(0, leading);
             add(header.paragraph());
@@ -2078,6 +1984,16 @@ class PdfDocument extends Document implements DocListener {
             graphics.rectangle(header);
             flushLines();
             currentHeight = 0;
+
+			/*
+				Added by Edgar Leonardo Prieto Perilla
+			*/
+			// Restore identation
+			indentLeft = tmpIndentLeft;
+			indentRight = tmpIndentRight;
+			/*
+				End Added by Edgar Leonardo Prieto Perilla
+			*/
         }
         
         pageEmpty = true;
@@ -2405,18 +2321,7 @@ class PdfDocument extends Document implements DocListener {
     public PdfOutline getRootOutline() {
         return rootOutline;
     }
-    
-    /**
-     * Adds a template to the page dictionary.
-     * @param template the template to be added
-     * @return the name by which this template is identified
-     */
-    PdfName addTemplateToPage(PdfTemplate template) {
-        PdfName name = writer.addDirectTemplateSimple(template);
-        xObjectDictionary.put(name, template.getIndirectReference());
-        return name;
-    }
-    
+        
     /**
      * Writes a text line to the document. It takes care of all the attributes.
      * <P>
@@ -2852,6 +2757,7 @@ class PdfDocument extends Document implements DocListener {
     }
     
     void addAnnotation(PdfAnnotation annot) {
+        pageEmpty = false;
         if (annot.isForm()) {
             PdfFormField field = (PdfFormField)annot;
             if (field.getParent() == null)
@@ -2902,5 +2808,8 @@ class PdfDocument extends Document implements DocListener {
     void setStrictImageSequence(boolean strictImageSequence) {
         this.strictImageSequence = strictImageSequence;
     }
-    
+ 
+    void setPageEmpty(boolean pageEmpty) {
+        this.pageEmpty = pageEmpty;
+    }
 }

@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2003 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,83 +44,34 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
-/**
- * <CODE>PdfIndirectReference</CODE> contains a reference to a <CODE>PdfIndirectObject</CODE>.
- * <P>
- * Any object used as an element of an array or as a value in a dictionary may be specified
- * by either a direct object of an indirect reference. An <I>indirect reference</I> is a reference
- * to an indirect object, and consists of the indirect object's object number, generation number
- * and the <B>R</B> keyword.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.11 (page 54).
- *
- * @see		PdfObject
- * @see		PdfIndirectObject
- */
+import com.lowagie.text.Image;
+import com.lowagie.text.DocumentException;
 
-class PdfIndirectReference extends PdfObject {
+
+public class StampContent extends PdfContentByte {
+    int pageNumber;
+    PageResources pageResources;
     
-    // membervariables
-    
-/** the object number */
-    protected int number;
-    
-/** the generation number */
-    protected int generation = 0;
-    
-    // constructors
-    
-    protected PdfIndirectReference() {
-        super(0);
+    /** Creates a new instance of StampContent */
+    StampContent(PdfStamperImp stamper, int pageNumber) {
+        super(stamper);
+        this.pageNumber = pageNumber;
+        pageResources = stamper.getPageStamp(pageNumber).pageResources;
     }
-    
-/**
- * Constructs a <CODE>PdfIndirectReference</CODE>.
- *
- * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
- * @param		number			the object number.
- * @param		generation		the generation number.
- */
-    
-    PdfIndirectReference(int type, int number, int generation) {
-        super(type, new StringBuffer().append(number).append(" ").append(generation).append(" R").toString());
-        this.number = number;
-        this.generation = generation;
+
+    /**
+     * Gets a duplicate of this <CODE>PdfContentByte</CODE>. All
+     * the members are copied by reference but the buffer stays different.
+     *
+     * @return a copy of this <CODE>PdfContentByte</CODE>
+     */
+    public PdfContentByte getDuplicate() {
+        return new StampContent((PdfStamperImp)writer, pageNumber);
     }
-    
-/**
- * Constructs a <CODE>PdfIndirectReference</CODE>.
- *
- * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
- * @param		number			the object number.
- */
-    
-    PdfIndirectReference(int type, int number) {
-        this(type, number, 0);
-    }
-    
-    // methods
-    
-/**
- * Returns the number of the object.
- *
- * @return		a number.
- */
-    
-    int getNumber() {
-        return number;
-    }
-    
-/**
- * Returns the generation of the object.
- *
- * @return		a number.
- */
-    
-    int getGeneration() {
-        return generation;
+
+    PageResources getPageResources() {
+        return pageResources;
     }
 }

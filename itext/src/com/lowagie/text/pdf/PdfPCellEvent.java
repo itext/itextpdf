@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2003 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,83 +44,31 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
-/**
- * <CODE>PdfIndirectReference</CODE> contains a reference to a <CODE>PdfIndirectObject</CODE>.
- * <P>
- * Any object used as an element of an array or as a value in a dictionary may be specified
- * by either a direct object of an indirect reference. An <I>indirect reference</I> is a reference
- * to an indirect object, and consists of the indirect object's object number, generation number
- * and the <B>R</B> keyword.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.11 (page 54).
- *
- * @see		PdfObject
- * @see		PdfIndirectObject
- */
+import com.lowagie.text.Rectangle;
 
-class PdfIndirectReference extends PdfObject {
-    
-    // membervariables
-    
-/** the object number */
-    protected int number;
-    
-/** the generation number */
-    protected int generation = 0;
-    
-    // constructors
-    
-    protected PdfIndirectReference() {
-        super(0);
-    }
-    
-/**
- * Constructs a <CODE>PdfIndirectReference</CODE>.
- *
- * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
- * @param		number			the object number.
- * @param		generation		the generation number.
+/** An event called for a single cell.
+ * @author Paulo Soares (psoares@consiste.pt)
  */
-    
-    PdfIndirectReference(int type, int number, int generation) {
-        super(type, new StringBuffer().append(number).append(" ").append(generation).append(" R").toString());
-        this.number = number;
-        this.generation = generation;
-    }
-    
-/**
- * Constructs a <CODE>PdfIndirectReference</CODE>.
- *
- * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
- * @param		number			the object number.
- */
-    
-    PdfIndirectReference(int type, int number) {
-        this(type, number, 0);
-    }
-    
-    // methods
-    
-/**
- * Returns the number of the object.
- *
- * @return		a number.
- */
-    
-    int getNumber() {
-        return number;
-    }
-    
-/**
- * Returns the generation of the object.
- *
- * @return		a number.
- */
-    
-    int getGeneration() {
-        return generation;
-    }
+public interface PdfPCellEvent {
+    /** This method is called at the end of the cell rendering. The text or graphics are added to
+     * one of the 4 <CODE>PdfContentByte</CODE> contained in
+     * <CODE>canvases</CODE>.<br>
+     * The indexes to <CODE>canvases</CODE> are:<p>
+     * <ul>
+     * <li><CODE>PdfPTable.BASECANVAS</CODE> - the original <CODE>PdfContentByte</CODE>. Anything placed here
+     * will be under the cell.
+     * <li><CODE>PdfPTable.BACKGROUNDCANVAS</CODE> - the layer where the background goes to.
+     * <li><CODE>PdfPTable.LINECANVAS</CODE> - the layer where the lines go to.
+     * <li><CODE>PdfPTable.TEXTCANVAS</CODE> - the layer where the text go to. Anything placed here
+     * will be over the cell.
+     * </ul>
+     * The layers are placed in sequence on top of each other.
+     * <p>
+     * @param cell the cell
+     * @param position the coordinates of the cell
+     * @param canvases an array of <CODE>PdfContentByte</CODE>
+     */    
+    public void cellLayout(PdfPCell cell, Rectangle position, PdfContentByte[] canvases);
 }

@@ -54,6 +54,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Image;
+import com.lowagie.text.Element;
 import java.util.ArrayList;
 
 /**
@@ -89,13 +90,13 @@ public class PdfContentByte {
     }
     
     /** The alignement is center */
-    public static final int ALIGN_CENTER = 0;
+    public static final int ALIGN_CENTER = Element.ALIGN_CENTER;
     
     /** The alignement is left */
-    public static final int ALIGN_LEFT = 1;
+    public static final int ALIGN_LEFT = Element.ALIGN_LEFT;
     
     /** The alignement is right */
-    public static final int ALIGN_RIGHT = 2;
+    public static final int ALIGN_RIGHT = Element.ALIGN_RIGHT;
     
     public static final int TEXT_RENDER_MODE_FILL = 0;
     public static final int TEXT_RENDER_MODE_STROKE = 1;
@@ -665,27 +666,23 @@ public class PdfContentByte {
         
         // the coordinates of the border are retrieved
         float x1 = rectangle.left();
-        float y1 = rectangle.top();
+        float y1 = rectangle.bottom();
         float x2 = rectangle.right();
-        float y2 = rectangle.bottom();
+        float y2 = rectangle.top();
         
         // the backgroundcolor is set
         Color background = rectangle.backgroundColor();
         if (background != null) {
-            setColorStroke(background);
             setColorFill(background);
             rectangle(x1, y1, x2 - x1, y2 - y1);
-            closePathFillStroke();
+            fill();
             resetRGBColorFill();
-            resetRGBColorStroke();
         }
         else if (rectangle.grayFill() > 0.0) {
-            setGrayStroke((float)rectangle.grayFill());
             setGrayFill((float)rectangle.grayFill());
             rectangle(x1, y1, x2 - x1, y2 - y1);
-            closePathFillStroke();
+            fill();
             resetGrayFill();
-            resetGrayStroke();
         }
         
         
@@ -720,12 +717,12 @@ public class PdfContentByte {
                 lineTo(x1, y2);
             }
             if (rectangle.hasBorder(Rectangle.BOTTOM)) {
-                moveTo(x1, y2);
-                lineTo(x2, y2);
-            }
-            if (rectangle.hasBorder(Rectangle.TOP)) {
                 moveTo(x1, y1);
                 lineTo(x2, y1);
+            }
+            if (rectangle.hasBorder(Rectangle.TOP)) {
+                moveTo(x1, y2);
+                lineTo(x2, y2);
             }
         }
         
@@ -846,17 +843,25 @@ public class PdfContentByte {
      * @throws DocumentException on error
      */
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
-        checkWriter();
         try {
+            
             if (image.isImgTemplate()) {
-                pdf.addDirectImage(image);
+                writer.addDirectImageSimple(image);
                 PdfTemplate template = image.templateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
             }
             else {
-                PdfName name = pdf.addDirectImage(image);
+                PdfName name;
+                PageResources prs = getPageResources();
+                Image maskImage = image.getImageMask();
+                if (maskImage != null) {
+                    name = writer.addDirectImageSimple(maskImage);
+                    prs.addXObject(name, writer.getImageReference(name));
+                }
+                name = writer.addDirectImageSimple(image);
+                name = prs.addXObject(name, writer.getImageReference(name));
                 content.append("q ");
                 content.append(a).append(' ');
                 content.append(b).append(' ');
@@ -864,7 +869,7 @@ public class PdfContentByte {
                 content.append(d).append(' ');
                 content.append(e).append(' ');
                 content.append(f).append(" cm ");
-                content.append(name.toString()).append(" Do Q").append_i(separator);
+                content.append(name.toPdf(null)).append(" Do Q").append_i(separator);
             }
         }
         catch (Exception ee) {
@@ -968,8 +973,11 @@ public class PdfContentByte {
     public void setFontAndSize(BaseFont bf, float size) {
         checkWriter();
         state.size = size;
-        state.fontDetails = writer.add(bf);
-        content.append(state.fontDetails.getFontName().toPdf(null)).append(' ').append(size).append(" Tf").append_i(separator);
+        state.fontDetails = writer.addSimple(bf);
+        PageResources prs = getPageResources();
+        PdfName name = state.fontDetails.getFontName();
+        name = prs.addFont(name, state.fontDetails.getIndirectReference());
+        content.append(name.toPdf(null)).append(' ').append(size).append(" Tf").append_i(separator);
     }
     
     /**
@@ -1587,7 +1595,9 @@ public class PdfContentByte {
     public void addTemplate(PdfTemplate template, float a, float b, float c, float d, float e, float f) {
         checkWriter();
         checkNoPattern(template);
-        PdfName name = pdf.addTemplateToPage(template);
+        PdfName name = writer.addDirectTemplateSimple(template);
+        PageResources prs = getPageResources();
+        name = prs.addXObject(name, template.getIndirectReference());
         content.append("q ");
         content.append(a).append(' ');
         content.append(b).append(' ');
@@ -1595,7 +1605,7 @@ public class PdfContentByte {
         content.append(d).append(' ');
         content.append(e).append(' ');
         content.append(f).append(" cm ");
-        content.append(name.toString()).append(" Do Q").append_i(separator);
+        content.append(name.toPdf(null)).append(" Do Q").append_i(separator);
     }
     
     /**
@@ -1795,8 +1805,11 @@ public class PdfContentByte {
      */
     public void setColorFill(PdfSpotColor sp, float tint) {
         checkWriter();
-        state.colorDetails = writer.add(sp);
-        content.append(state.colorDetails.getColorName().toPdf(null)).append(" cs ").append(tint).append(" scn").append_i(separator);
+        state.colorDetails = writer.addSimple(sp);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        content.append(name.toPdf(null)).append(" cs ").append(tint).append(" scn").append_i(separator);
     }
     
     /** Sets the stroke color to a spot color.
@@ -1806,8 +1819,11 @@ public class PdfContentByte {
      */
     public void setColorStroke(PdfSpotColor sp, float tint) {
         checkWriter();
-        state.colorDetails = writer.add(sp);
-        content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN").append_i(separator);
+        state.colorDetails = writer.addSimple(sp);
+        PageResources prs = getPageResources();
+        PdfName name = state.colorDetails.getColorName();
+        name = prs.addColor(name, state.colorDetails.getIndirectReference());
+        content.append(name.toPdf(null)).append(" CS ").append(tint).append(" SCN").append_i(separator);
     }
     
     /** Sets the fill color to a pattern. The pattern can be
@@ -1820,7 +1836,9 @@ public class PdfContentByte {
             return;
         }
         checkWriter();
-        PdfName name = pdf.addPatternToPage(p);
+        PageResources prs = getPageResources();
+        PdfName name = writer.addSimplePattern(p);
+        name = prs.addPattern(name, p.getIndirectReference());
         content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn").append_i(separator);
     }
     
@@ -1875,10 +1893,12 @@ public class PdfContentByte {
         checkWriter();
         if (!p.isStencil())
             throw new RuntimeException("An uncolored pattern was expected.");
-        PdfName name = pdf.addPatternToPage(p);
+        PageResources prs = getPageResources();
+        PdfName name = writer.addSimplePattern(p);
+        name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
-        pdf.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(csDetail.getColorName().toPdf(null)).append(" cs").append_i(separator);
+        PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
+        content.append(cName.toPdf(null)).append(" cs").append_i(separator);
         outputColorNumbers(color, tint);
         content.append(' ').append(name.toPdf(null)).append(" scn").append_i(separator);
     }
@@ -1903,10 +1923,12 @@ public class PdfContentByte {
         checkWriter();
         if (!p.isStencil())
             throw new RuntimeException("An uncolored pattern was expected.");
-        PdfName name = pdf.addPatternToPage(p);
+        PageResources prs = getPageResources();
+        PdfName name = writer.addSimplePattern(p);
+        name = prs.addPattern(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
-        pdf.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(csDetail.getColorName().toPdf(null)).append(" CS").append_i(separator);
+        PdfName cName = prs.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
+        content.append(cName.toPdf(null)).append(" CS").append_i(separator);
         outputColorNumbers(color, tint);
         content.append(' ').append(name.toPdf(null)).append(" SCN").append_i(separator);
     }
@@ -1921,16 +1943,20 @@ public class PdfContentByte {
             return;
         }
         checkWriter();
-        PdfName name = pdf.addPatternToPage(p);
+        PageResources prs = getPageResources();
+        PdfName name = writer.addSimplePattern(p);
+        name = prs.addPattern(name, p.getIndirectReference());
         content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN").append_i(separator);
     }
     
     public void paintShading(PdfShading shading) {
-        pdf.addShadingToPage(shading);
-        content.append(shading.getShadingName().toPdf(null)).append(" sh").append_i(separator);
+        writer.addSimpleShading(shading);
+        PageResources prs = getPageResources();
+        PdfName name = prs.addShading(shading.getShadingName(), shading.getShadingReference());
+        content.append(name.toPdf(null)).append(" sh").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            pdf.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorName(), details.getIndirectReference());
     }
     
     public void paintShading(PdfShadingPattern shading) {
@@ -1938,19 +1964,23 @@ public class PdfContentByte {
     }
     
     public void setShadingFill(PdfShadingPattern shading) {
-        pdf.addShadingPatternToPage(shading);
-        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(shading.getPatternName().toPdf(null)).append(" scn").append_i(separator);
+        writer.addSimpleShadingPattern(shading);
+        PageResources prs = getPageResources();
+        PdfName name = prs.addPattern(shading.getPatternName(), shading.getPatternReference());
+        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            pdf.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorName(), details.getIndirectReference());
     }
     
     public void setShadingStroke(PdfShadingPattern shading) {
-        pdf.addShadingPatternToPage(shading);
-        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(shading.getPatternName().toPdf(null)).append(" SCN").append_i(separator);
+        writer.addSimpleShadingPattern(shading);
+        PageResources prs = getPageResources();
+        PdfName name = prs.addPattern(shading.getPatternName(), shading.getPatternReference());
+        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN").append_i(separator);
         ColorDetails details = shading.getColorDetails();
         if (details != null)
-            pdf.addColor(details.getColorName(), details.getIndirectReference());
+            prs.addColor(details.getColorName(), details.getIndirectReference());
     }
     
     /** Check if we have a valid PdfWriter.
@@ -2279,5 +2309,9 @@ public class PdfContentByte {
      */
     public java.awt.Graphics2D createGraphics(float width, float height, FontMapper fontMapper) {
         return new PdfGraphics2D(this, width, height, fontMapper);
+    }
+    
+    PageResources getPageResources() {
+        return pdf.getPageResources();
     }
 }

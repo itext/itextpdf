@@ -67,6 +67,9 @@ public class PdfFormField extends PdfAnnotation {
     public static final int FF_PASSWORD = 8192;
     public static final int FF_COMBO = 131072;
     public static final int FF_EDIT = 262144;
+    public static final int FF_FILESELECT = 1048576;
+    public static final int FF_DONOTSPELLCHECK = 4194304;
+    public static final int FF_DONOTSCROLL = 8388608;
     public static final int Q_LEFT = 0;
     public static final int Q_CENTER = 1;
     public static final int Q_RIGHT = 2;
@@ -171,54 +174,36 @@ public class PdfFormField extends PdfAnnotation {
         return field;
     }
     
-    public static PdfFormField createList(PdfWriter writer, String options[], int topIndex, boolean unicode) {
-        return createChoice(writer, 0, processOptions(options, unicode), topIndex);
-    }
-
     public static PdfFormField createList(PdfWriter writer, String options[], int topIndex) {
-        return createList(writer, options, topIndex, false);
-    }
-
-    public static PdfFormField createList(PdfWriter writer, String options[][], int topIndex, boolean unicode) {
-        return createChoice(writer, 0, processOptions(options, unicode), topIndex);
+        return createChoice(writer, 0, processOptions(options), topIndex);
     }
 
     public static PdfFormField createList(PdfWriter writer, String options[][], int topIndex) {
-        return createList(writer, options, topIndex, false);
+        return createChoice(writer, 0, processOptions(options), topIndex);
     }
 
-    public static PdfFormField createCombo(PdfWriter writer, boolean edit, String options[], int topIndex, boolean unicode) {
-        return createChoice(writer, FF_COMBO + (edit ? FF_EDIT : 0), processOptions(options, unicode), topIndex);
-    }
-    
     public static PdfFormField createCombo(PdfWriter writer, boolean edit, String options[], int topIndex) {
-        return createCombo(writer, edit, options, topIndex, false);
-    }
-    
-    public static PdfFormField createCombo(PdfWriter writer, boolean edit, String options[][], int topIndex, boolean unicode) {
-        return createChoice(writer, FF_COMBO + (edit ? FF_EDIT : 0), processOptions(options, unicode), topIndex);
+        return createChoice(writer, FF_COMBO + (edit ? FF_EDIT : 0), processOptions(options), topIndex);
     }
     
     public static PdfFormField createCombo(PdfWriter writer, boolean edit, String options[][], int topIndex) {
-        return createCombo(writer, edit, options, topIndex, false);
+        return createChoice(writer, FF_COMBO + (edit ? FF_EDIT : 0), processOptions(options), topIndex);
     }
     
-    protected static PdfArray processOptions(String options[], boolean unicode) {
-        String encoding = (unicode ? PdfObject.TEXT_UNICODE : PdfObject.ENCODING);
+    protected static PdfArray processOptions(String options[]) {
         PdfArray array = new PdfArray();
         for (int k = 0; k < options.length; ++k) {
-            array.add(new PdfString(options[k], encoding));
+            array.add(new PdfString(options[k], PdfObject.TEXT_UNICODE));
         }
         return array;
     }
     
-    protected static PdfArray processOptions(String options[][], boolean unicode) {
-        String encoding = (unicode ? PdfObject.TEXT_UNICODE : PdfObject.ENCODING);
+    protected static PdfArray processOptions(String options[][]) {
         PdfArray array = new PdfArray();
         for (int k = 0; k < options.length; ++k) {
             String subOption[] = options[k];
-            PdfArray ar2 = new PdfArray(new PdfString(subOption[0], encoding));
-            ar2.add(new PdfString(subOption[1], encoding));
+            PdfArray ar2 = new PdfArray(new PdfString(subOption[0], PdfObject.TEXT_UNICODE));
+            ar2.add(new PdfString(subOption[1], PdfObject.TEXT_UNICODE));
             array.add(ar2);
         }
         return array;
@@ -262,12 +247,8 @@ public class PdfFormField extends PdfAnnotation {
         return old;
     }
     
-    public void setValueAsStringUnicode(String s) {
-        put(PdfName.V, new PdfString(s, PdfObject.TEXT_UNICODE));
-    }
-
     public void setValueAsString(String s) {
-        put(PdfName.V, new PdfString(s));
+        put(PdfName.V, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
 
     public void setValueAsName(String s) {
@@ -279,10 +260,6 @@ public class PdfFormField extends PdfAnnotation {
     }
 
     public void setDefaultValueAsString(String s) {
-        put(PdfName.DV, new PdfString(s));
-    }
-
-    public void setDefaultValueAsStringUnicode(String s) {
         put(PdfName.DV, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
 
@@ -291,26 +268,14 @@ public class PdfFormField extends PdfAnnotation {
     }
     
     public void setFieldName(String s) {
-        put(PdfName.T, new PdfString(s));
-    }
-    
-    public void setUserName(String s) {
-        put(PdfName.TU, new PdfString(s));
-    }
-    
-    public void setMappingName(String s) {
-        put(PdfName.TM, new PdfString(s));
-    }
-    
-    public void setFieldNameUnicode(String s) {
         put(PdfName.T, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
     
-    public void setUserNameUnicode(String s) {
+    public void setUserName(String s) {
         put(PdfName.TU, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
     
-    public void setMappingNameUnicode(String s) {
+    public void setMappingName(String s) {
         put(PdfName.TM, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
     
@@ -410,26 +375,14 @@ public class PdfFormField extends PdfAnnotation {
     }
     
     public void setMKNormalCaption(String caption) {
-        getMK().put(PdfName.CA, new PdfString(caption));
-    }
-    
-    public void setMKRolloverCaption(String caption) {
-        getMK().put(PdfName.RC, new PdfString(caption));
-    }
-    
-    public void setMKAlternateCaption(String caption) {
-        getMK().put(PdfName.AC, new PdfString(caption));
-    }
-    
-    public void setMKNormalCaptionUnicode(String caption) {
         getMK().put(PdfName.CA, new PdfString(caption, PdfObject.TEXT_UNICODE));
     }
     
-    public void setMKRolloverCaptionUnicode(String caption) {
+    public void setMKRolloverCaption(String caption) {
         getMK().put(PdfName.RC, new PdfString(caption, PdfObject.TEXT_UNICODE));
     }
     
-    public void setMKAlternateCaptionUnicode(String caption) {
+    public void setMKAlternateCaption(String caption) {
         getMK().put(PdfName.AC, new PdfString(caption, PdfObject.TEXT_UNICODE));
     }
     

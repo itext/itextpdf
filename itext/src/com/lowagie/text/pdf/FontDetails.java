@@ -167,6 +167,10 @@ class FontDetails {
                 b = baseFont.convertToBytes(text);
                 break;
             }
+            case BaseFont.FONT_TYPE_DOCUMENT: {
+                b = baseFont.convertToBytes(text);
+                break;
+            }
             case BaseFont.FONT_TYPE_TTUNI: {
                 try {
                     int len = text.length();

@@ -358,6 +358,8 @@ class TrueTypeFont extends BaseFont {
             ttcIndex = nameBase.substring(ttcName.length() + 1);
         if (fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) {
             process(ttfAfm);
+            if (!justNames && embedded && os_2.fsType == 2)
+                throw new DocumentException(fileName + style + " - license restrictions does not permit embedding.");
         }
         else
             throw new DocumentException(fileName + style + " is not a TTF, OTF or TTC font file.");
@@ -885,7 +887,7 @@ class TrueTypeFont extends BaseFont {
      * @param name the glyph name
      * @return the width of the char
      */
-    protected int getRawWidth(int c, String name) {
+    int getRawWidth(int c, String name) {
         HashMap map = null;
         if (name == null)
             map = cmap10;
@@ -906,23 +908,23 @@ class TrueTypeFont extends BaseFont {
      * @throws DocumentException if there is an error
      */
     protected PdfDictionary getFontDescriptor(PdfIndirectReference fontStream, String subsetPrefix) throws DocumentException {
-        PdfDictionary dic = new PdfDictionary(new PdfName("FontDescriptor"));
-        dic.put(new PdfName("Ascent"), new PdfNumber((int)os_2.sTypoAscender * 1000 / head.unitsPerEm));
-        dic.put(new PdfName("CapHeight"), new PdfNumber((int)os_2.sCapHeight * 1000 / head.unitsPerEm));
-        dic.put(new PdfName("Descent"), new PdfNumber((int)os_2.sTypoDescender * 1000 / head.unitsPerEm));
-        dic.put(new PdfName("FontBBox"), new PdfRectangle(
+        PdfDictionary dic = new PdfDictionary(PdfName.FONTDESCRIPTOR);
+        dic.put(PdfName.ASCENT, new PdfNumber((int)os_2.sTypoAscender * 1000 / head.unitsPerEm));
+        dic.put(PdfName.CAPHEIGHT, new PdfNumber((int)os_2.sCapHeight * 1000 / head.unitsPerEm));
+        dic.put(PdfName.DESCENT, new PdfNumber((int)os_2.sTypoDescender * 1000 / head.unitsPerEm));
+        dic.put(PdfName.FONTBBOX, new PdfRectangle(
         (int)head.xMin * 1000 / head.unitsPerEm,
         (int)head.yMin * 1000 / head.unitsPerEm,
         (int)head.xMax * 1000 / head.unitsPerEm,
         (int)head.yMax * 1000 / head.unitsPerEm));
-        dic.put(new PdfName("FontName"), new PdfName(subsetPrefix + fontName + style));
-        dic.put(new PdfName("ItalicAngle"), new PdfNumber(italicAngle));
-        dic.put(new PdfName("StemV"), new PdfNumber(80));
+        dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName + style));
+        dic.put(PdfName.ITALICANGLE, new PdfNumber(italicAngle));
+        dic.put(PdfName.STEMV, new PdfNumber(80));
         if (fontStream != null) {
             if (cff)
-                dic.put(new PdfName("FontFile3"), fontStream);
+                dic.put(PdfName.FONTFILE3, fontStream);
             else
-                dic.put(new PdfName("FontFile2"), fontStream);
+                dic.put(PdfName.FONTFILE2, fontStream);
         }
         int flags = 0;
         if (isFixedPitch)
@@ -932,7 +934,7 @@ class TrueTypeFont extends BaseFont {
             flags |= 64;
         if ((head.macStyle & 1) != 0)
             flags |= 262144;
-        dic.put(new PdfName("Flags"), new PdfNumber(flags));
+        dic.put(PdfName.FLAGS, new PdfNumber(flags));
         
         return dic;
     }
@@ -949,9 +951,9 @@ class TrueTypeFont extends BaseFont {
     protected PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         if (cff)
-            dic.put(PdfName.SUBTYPE, new PdfName("Type1"));
+            dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
         else
-            dic.put(PdfName.SUBTYPE, new PdfName("TrueType"));
+            dic.put(PdfName.SUBTYPE, PdfName.TRUETYPE);
         dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         if (!fontSpecific) {
             for (int k = firstChar; k <= lastChar; ++k) {
@@ -963,7 +965,7 @@ class TrueTypeFont extends BaseFont {
         if (encoding.equals("Cp1252") || encoding.equals("MacRoman"))
                 dic.put(PdfName.ENCODING, encoding.equals("Cp1252") ? PdfName.WIN_ANSI_ENCODING : PdfName.MAC_ROMAN_ENCODING);
             else {
-                PdfDictionary enc = new PdfDictionary(new PdfName("Encoding"));
+                PdfDictionary enc = new PdfDictionary(PdfName.ENCODING);
                 PdfArray dif = new PdfArray();
                 boolean gap = true;                
                 for (int k = firstChar; k <= lastChar; ++k) {
@@ -977,12 +979,12 @@ class TrueTypeFont extends BaseFont {
                     else
                         gap = true;
                 }
-                enc.put(new PdfName("Differences"), dif);
+                enc.put(PdfName.DIFFERENCES, dif);
                 dic.put(PdfName.ENCODING, enc);
             }
         }
-        dic.put(new PdfName("FirstChar"), new PdfNumber(firstChar));
-        dic.put(new PdfName("LastChar"), new PdfNumber(lastChar));
+        dic.put(PdfName.FIRSTCHAR, new PdfNumber(firstChar));
+        dic.put(PdfName.LASTCHAR, new PdfNumber(lastChar));
         PdfArray wd = new PdfArray();
         for (int k = firstChar; k <= lastChar; ++k) {
             if (shortTag[k] == 0)
@@ -990,9 +992,9 @@ class TrueTypeFont extends BaseFont {
             else
                 wd.add(new PdfNumber(widths[k]));
         }
-        dic.put(new PdfName("Widths"), wd);
+        dic.put(PdfName.WIDTHS, wd);
         if (fontDescriptor != null)
-            dic.put(new PdfName("FontDescriptor"), fontDescriptor);
+            dic.put(PdfName.FONTDESCRIPTOR, fontDescriptor);
         return dic;
     }
     
@@ -1038,7 +1040,8 @@ class TrueTypeFont extends BaseFont {
                 ind_font = obj.getIndirectReference();
             }
             else {
-                subsetPrefix = createSubsetPrefix();
+                if (subset)
+                    subsetPrefix = createSubsetPrefix();
                 HashMap glyphs = new HashMap();
                 for (int k = firstChar; k <= lastChar; ++k) {
                     if (shortTag[k] != 0) {

@@ -50,16 +50,10 @@
 
 package com.lowagie.text.pdf;
 
-public class PRIndirectReference extends PdfObject {
+public class PRIndirectReference extends PdfIndirectReference {
     
     protected PdfReader reader;
     // membervariables
-    
-/** the object number */
-    protected int number;
-    
-/** the generation number */
-    protected int generation;
     
     // constructors
     
@@ -72,7 +66,7 @@ public class PRIndirectReference extends PdfObject {
  */
     
     PRIndirectReference(PdfReader reader, int number, int generation) {
-        super(INDIRECT, new StringBuffer().append(number).append(" ").append(generation).append(" R").toString());
+        type = INDIRECT;
         this.number = number;
         this.generation = generation;
         this.reader = reader;
@@ -91,29 +85,12 @@ public class PRIndirectReference extends PdfObject {
     
     // methods
     
-/**
- * Returns the number of the object.
- *
- * @return		a number.
- */
-    
-    public int getNumber() {
-        return number;
-    }
-    
-/**
- * Returns the generation of the object.
- *
- * @return		a number.
- */
-    
-    public int getGeneration() {
-        return generation;
-    }
-    
     public byte[] toPdf(PdfWriter writer) {
         int n = writer.getNewObjectNumber(reader, number, generation);
         return PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" 0 R").toString(), null);
     }
 
+    public PdfReader getReader() {
+        return reader;
+    }
 }

@@ -109,6 +109,10 @@ public class PRStream extends PdfStream {
         return reader;
     }
     
+    public byte[] getBytes() {
+        return bytes;
+    }
+    
     public int getStreamLength(PdfWriter writer) {
         if (dicBytes == null)
             toPdf(writer);

@@ -261,7 +261,7 @@ class Type1Font extends BaseFont
  * @param name the glyph name
  * @return the width of the char
  */
-    protected int getRawWidth(int c, String name)
+    int getRawWidth(int c, String name)
     {
         try {
             if (name == null) { // font specific
@@ -523,16 +523,16 @@ class Type1Font extends BaseFont
     {
         if (builtinFont)
             return null;
-        PdfDictionary dic = new PdfDictionary(new PdfName("FontDescriptor"));
-        dic.put(new PdfName("Ascent"), new PdfNumber(Ascender));
-        dic.put(new PdfName("CapHeight"), new PdfNumber(CapHeight));
-        dic.put(new PdfName("Descent"), new PdfNumber(Descender));
-        dic.put(new PdfName("FontBBox"), new PdfRectangle(llx, lly, urx, ury));
-        dic.put(new PdfName("FontName"), new PdfName(FontName));
-        dic.put(new PdfName("ItalicAngle"), new PdfNumber(ItalicAngle));
-        dic.put(new PdfName("StemV"), new PdfNumber(StdVW));
+        PdfDictionary dic = new PdfDictionary(PdfName.FONTDESCRIPTOR);
+        dic.put(PdfName.ASCENT, new PdfNumber(Ascender));
+        dic.put(PdfName.CAPHEIGHT, new PdfNumber(CapHeight));
+        dic.put(PdfName.DESCENT, new PdfNumber(Descender));
+        dic.put(PdfName.FONTBBOX, new PdfRectangle(llx, lly, urx, ury));
+        dic.put(PdfName.FONTNAME, new PdfName(FontName));
+        dic.put(PdfName.ITALICANGLE, new PdfNumber(ItalicAngle));
+        dic.put(PdfName.STEMV, new PdfNumber(StdVW));
         if (fontStream != null)
-            dic.put(new PdfName("FontFile"), fontStream);
+            dic.put(PdfName.FONTFILE, fontStream);
         int flags = 0;
         if (IsFixedPitch)
             flags |= 1;
@@ -543,7 +543,7 @@ class Type1Font extends BaseFont
             flags |= 131072;
         if (Weight.equals("Bold"))
             flags |= 262144;
-        dic.put(new PdfName("Flags"), new PdfNumber(flags));
+        dic.put(PdfName.FLAGS, new PdfNumber(flags));
         
         return dic;
     }
@@ -571,7 +571,7 @@ class Type1Font extends BaseFont
             if (stdEncoding)
                 dic.put(PdfName.ENCODING, encoding.equals("Cp1252") ? PdfName.WIN_ANSI_ENCODING : PdfName.MAC_ROMAN_ENCODING);
             else {
-                PdfDictionary enc = new PdfDictionary(new PdfName("Encoding"));
+                PdfDictionary enc = new PdfDictionary(PdfName.ENCODING);
                 PdfArray dif = new PdfArray();
                 boolean gap = true;                
                 for (int k = firstChar; k <= lastChar; ++k) {
@@ -585,13 +585,13 @@ class Type1Font extends BaseFont
                     else
                         gap = true;
                 }
-                enc.put(new PdfName("Differences"), dif);
+                enc.put(PdfName.DIFFERENCES, dif);
                 dic.put(PdfName.ENCODING, enc);
             }
         }
         if (forceWidthsOutput || !(builtinFont && (fontSpecific || stdEncoding))) {
-            dic.put(new PdfName("FirstChar"), new PdfNumber(firstChar));
-            dic.put(new PdfName("LastChar"), new PdfNumber(lastChar));
+            dic.put(PdfName.FIRSTCHAR, new PdfNumber(firstChar));
+            dic.put(PdfName.LASTCHAR, new PdfNumber(lastChar));
             PdfArray wd = new PdfArray();
             for (int k = firstChar; k <= lastChar; ++k) {
                 if (shortTag[k] == 0)
@@ -599,10 +599,10 @@ class Type1Font extends BaseFont
                 else
                     wd.add(new PdfNumber(widths[k]));
             }
-            dic.put(new PdfName("Widths"), wd);
+            dic.put(PdfName.WIDTHS, wd);
         }
         if (!builtinFont && fontDescriptor != null)
-            dic.put(new PdfName("FontDescriptor"), fontDescriptor);
+            dic.put(PdfName.FONTDESCRIPTOR, fontDescriptor);
         return dic;
     }
     

@@ -241,7 +241,6 @@ public class PdfAcroForm extends PdfDictionary {
         da.resetRGBColorFill();
         field.setDefaultAppearanceString(da);
         PdfContentByte cb = writer.getDirectContent();
-        cb.moveTo(0, 0);
         PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
         tp.drawTextField(0f, 0f, urx - llx, ury - lly);
         tp.beginVariableText();
@@ -266,7 +265,6 @@ public class PdfAcroForm extends PdfDictionary {
         da.resetRGBColorFill();
         field.setDefaultAppearanceString(da);
         PdfContentByte cb = writer.getDirectContent();
-        cb.moveTo(0, 0);
         PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
         tp.drawTextField(0f, 0f, urx - llx, ury - lly);
         tp.beginVariableText();
@@ -328,7 +326,6 @@ public class PdfAcroForm extends PdfDictionary {
         da.resetRGBColorFill();
         field.setDefaultAppearanceString(da);
         PdfContentByte cb = writer.getDirectContent();
-        cb.moveTo(0, 0);
         PdfAppearance tpOn = cb.createAppearance(urx - llx, ury - lly);
         tpOn.drawTextField(0f, 0f, urx - llx, ury - lly);
         tpOn.saveState();
@@ -372,7 +369,6 @@ public class PdfAcroForm extends PdfDictionary {
 
     public void drawRadioAppearences(PdfFormField field, String value, float llx, float lly, float urx, float ury) {
         PdfContentByte cb = writer.getDirectContent();
-        cb.moveTo(0, 0);
         PdfAppearance tpOn = cb.createAppearance(urx - llx, ury - lly);
         tpOn.drawRadioField(0f, 0f, urx - llx, ury - lly, true);
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, value, tpOn);
@@ -444,5 +440,43 @@ public class PdfAcroForm extends PdfDictionary {
         field.setFlags(PdfAnnotation.FLAGS_PRINT);
         field.setPage();
         field.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
+    }
+
+    public PdfFormField addSignature(String name, 
+                    float llx, float lly, float urx, float ury) {
+        PdfFormField signature = PdfFormField.createSignature(writer);
+        setSignatureParams(signature, name, llx, lly, urx, ury);
+        drawSignatureAppearences(signature, llx, lly, urx, ury);
+        addFormField(signature);
+        return signature;
+    }
+    
+    public void setSignatureParams(PdfFormField field, String name,
+                    float llx, float lly, float urx, float ury) {
+        field.setWidget(new Rectangle(llx, lly, urx, ury), PdfAnnotation.HIGHLIGHT_INVERT);
+        field.setFieldName(name);
+        field.setFlags(PdfAnnotation.FLAGS_PRINT);
+        field.setPage();
+        field.setMKBorderColor(java.awt.Color.black);
+        field.setMKBackgroundColor(java.awt.Color.white);
+    }
+
+    public void drawSignatureAppearences(PdfFormField field, 
+                    float llx, float lly, float urx, float ury) {
+        PdfContentByte cb = writer.getDirectContent();
+        PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
+        tp.setGrayFill(1.0f);
+        tp.rectangle(0, 0, urx - llx, ury - lly);
+        tp.fill();
+        tp.setGrayStroke(0);
+        tp.setLineWidth(1);
+        tp.rectangle(0.5f, 0.5f, urx - llx - 0.5f, ury - lly - 0.5f);
+        tp.closePathStroke();
+        tp.saveState();
+        tp.rectangle(1, 1, urx - llx - 2, ury - lly - 2);
+        tp.clip();
+        tp.newPath();
+        tp.restoreState();
+        field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, tp);
     }
 }

@@ -76,7 +76,7 @@ public class Font implements Comparable {
     public static final int HELVETICA = 1;
     
 /** a possible value of a font family. */
-    public static final int TIMES_NEW_ROMAN = 2;
+    public static final int TIMES_ROMAN = 2;
     
 /** a possible value of a font family. */
     public static final int SYMBOL = 3;
@@ -309,8 +309,8 @@ public class Font implements Comparable {
         if (family.equalsIgnoreCase(FontFactory.HELVETICA)) {
             return HELVETICA;
         }
-        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN) || family.equalsIgnoreCase(FontFactory.TIMES_NEW_ROMAN)) {
-            return TIMES_NEW_ROMAN;
+        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN)) {
+            return TIMES_ROMAN;
         }
         if (family.equalsIgnoreCase(FontFactory.SYMBOL)) {
             return SYMBOL;
@@ -334,8 +334,8 @@ public class Font implements Comparable {
                 return FontFactory.COURIER;
             case Font.HELVETICA:
                 return FontFactory.HELVETICA;
-            case Font.TIMES_NEW_ROMAN:
-                return FontFactory.TIMES_NEW_ROMAN;
+            case Font.TIMES_ROMAN:
+                return FontFactory.TIMES_ROMAN;
             case Font.SYMBOL:
                 return FontFactory.SYMBOL;
             case Font.ZAPFDINGBATS:

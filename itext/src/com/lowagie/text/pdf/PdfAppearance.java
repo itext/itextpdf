@@ -47,12 +47,43 @@
 
 package com.lowagie.text.pdf;
 import com.lowagie.text.Rectangle;
+import java.util.HashMap;
 
 /**
  * Implements the appearance stream to be used with form fields..
  */
 
 public class PdfAppearance extends PdfTemplate {
+    
+    protected static final HashMap stdFieldFontNames = new HashMap();
+    static {
+        stdFieldFontNames.put("Courier-BoldOblique", new PdfName("CoBO"));
+        stdFieldFontNames.put("Courier-Bold", new PdfName("CoBo"));
+        stdFieldFontNames.put("Courier-Oblique", new PdfName("CoOb"));
+        stdFieldFontNames.put("Courier", new PdfName("Cour"));
+        stdFieldFontNames.put("Helvetica-BoldOblique", new PdfName("HeBO"));
+        stdFieldFontNames.put("Helvetica-Bold", new PdfName("HeBo"));
+        stdFieldFontNames.put("Helvetica-Oblique", new PdfName("HeOb"));
+        stdFieldFontNames.put("Helvetica", new PdfName("Helv"));
+        stdFieldFontNames.put("Symbol", new PdfName("Symb"));
+        stdFieldFontNames.put("Times-BoldItalic", new PdfName("TiBI"));
+        stdFieldFontNames.put("Times-Bold", new PdfName("TiBo"));
+        stdFieldFontNames.put("Times-Italic", new PdfName("TiIt"));
+        stdFieldFontNames.put("Times-Roman", new PdfName("TiRo"));
+        stdFieldFontNames.put("ZapfDingbats", new PdfName("ZaDb"));
+        stdFieldFontNames.put("HYSMyeongJo-Medium", new PdfName("HySm"));
+        stdFieldFontNames.put("HYGoThic-Medium", new PdfName("HyGo"));
+        stdFieldFontNames.put("HeiseiKakuGo-W5", new PdfName("KaGo"));
+        stdFieldFontNames.put("HeiseiMin-W3", new PdfName("KaMi"));
+        stdFieldFontNames.put("MHei-Medium", new PdfName("MHei"));
+        stdFieldFontNames.put("MSung-Light", new PdfName("MSun"));
+        stdFieldFontNames.put("STSong-Light", new PdfName("STSo"));
+        stdFieldFontNames.put("MSungStd-Light", new PdfName("MSun"));
+        stdFieldFontNames.put("STSongStd-Light", new PdfName("STSo"));
+        stdFieldFontNames.put("HYSMyeongJoStd-Medium", new PdfName("HySm"));
+        stdFieldFontNames.put("KozMinPro-Regular", new PdfName("KaMi"));
+    }
+    
     /**
      *Creates a <CODE>PdfAppearance</CODE>.
      */
@@ -60,6 +91,10 @@ public class PdfAppearance extends PdfTemplate {
     protected PdfAppearance() {
         super();
         separator = ' ';
+    }
+    
+    PdfAppearance(PdfIndirectReference iref) {
+        thisReference = iref;
     }
     
     /**
@@ -73,15 +108,37 @@ public class PdfAppearance extends PdfTemplate {
         separator = ' ';
     }
     
+    /**
+     * Set the font and the size for the subsequent text writing.
+     *
+     * @param bf the font
+     * @param size the font size in points
+     */
+    public void setFontAndSize(BaseFont bf, float size) {
+        checkWriter();
+        state.size = size;
+        if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
+            state.fontDetails = new FontDetails(null, ((DocumentFont)bf).getIndirectReference(), bf);
+        }
+        else
+            state.fontDetails = writer.addSimple(bf);
+        PdfName psn = (PdfName)stdFieldFontNames.get(bf.getPostscriptFontName());
+        if (psn == null) {
+            psn = new PdfName(bf.getPostscriptFontName());
+            bf.setSubset(false);
+        }
+        PageResources prs = getPageResources();
+//        PdfName name = state.fontDetails.getFontName();
+        prs.addFont(psn, state.fontDetails.getIndirectReference());
+        content.append(psn.toPdf(null)).append(' ').append(size).append(" Tf").append_i(separator);
+    }
+
     public PdfContentByte getDuplicate() {
         PdfAppearance tpl = new PdfAppearance();
         tpl.writer = writer;
         tpl.pdf = pdf;
         tpl.thisReference = thisReference;
-        tpl.fontDictionary = fontDictionary;
-        tpl.xObjectDictionary = xObjectDictionary;
-        tpl.colorDictionary = colorDictionary;
-        tpl.patternDictionary = patternDictionary;
+        tpl.pageResources = pageResources;
         tpl.bBox = new Rectangle(bBox);
         if (matrix != null) {
             tpl.matrix = new PdfArray(matrix);

@@ -94,10 +94,6 @@ public class PdfSignature extends PdfDictionary {
     }
 
     public void setString(String name, String value) {
-        put(new PdfName(name), new PdfString(value));
-    }
-
-    public void setStringUnicode(String name, String value) {
         put(new PdfName(name), new PdfString(value, PdfObject.TEXT_UNICODE));
     }
 

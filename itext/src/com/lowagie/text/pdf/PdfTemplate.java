@@ -67,17 +67,9 @@ public class PdfTemplate extends PdfContentByte {
     /** The indirect reference to this template */
     protected PdfIndirectReference thisReference;
     
-    /** The fonts used by this template */
-    protected PdfFontDictionary fontDictionary;
+    /** The resources used by this template */
+    protected PageResources pageResources;
     
-    /** The images and other templates used by this template */
-    protected PdfXObjectDictionary xObjectDictionary;
-    
-    protected PdfColorDictionary colorDictionary;
-    
-    protected PdfPatternDictionary patternDictionary;
-    
-    protected PdfShadingDictionary shadingDictionary;
     
     /** The bounding box of this template */
     protected Rectangle bBox = new Rectangle(0, 0);
@@ -102,11 +94,7 @@ public class PdfTemplate extends PdfContentByte {
     PdfTemplate(PdfWriter wr) {
         super(wr);
         type = TYPE_TEMPLATE;
-        fontDictionary = new PdfFontDictionary();
-        xObjectDictionary = new PdfXObjectDictionary();
-        colorDictionary = new PdfColorDictionary();
-        patternDictionary = new PdfPatternDictionary();
-        shadingDictionary = new PdfShadingDictionary();
+        pageResources = new PageResources();
         thisReference = writer.getPdfIndirectReference();
     }
     
@@ -182,168 +170,7 @@ public class PdfTemplate extends PdfContentByte {
     PdfIndirectReference getIndirectReference() {
         return thisReference;
     }
-    
-    /**
-     * Adds a template to this template.
-     *
-     * @param template the template
-     * @param a an element of the transformation matrix
-     * @param b an element of the transformation matrix
-     * @param c an element of the transformation matrix
-     * @param d an element of the transformation matrix
-     * @param e an element of the transformation matrix
-     * @param f an element of the transformation matrix
-     */
-    
-    public void addTemplate(PdfTemplate template, float a, float b, float c, float d, float e, float f) {
-        checkNoPattern(template);
-        PdfName name = writer.addDirectTemplateSimple(template);
-        content.append("q ");
-        content.append(a).append(' ');
-        content.append(b).append(' ');
-        content.append(c).append(' ');
-        content.append(d).append(' ');
-        content.append(e).append(' ');
-        content.append(f).append(" cm ");
-        content.append(name.toString()).append(" Do Q").append_i(separator);
-        xObjectDictionary.put(name, template.getIndirectReference());
-    }
-    
-    /**
-     * Adds an <CODE>Image</CODE> to this template. The positioning of the <CODE>Image</CODE>
-     * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
-     * use addImage(image, image_width, 0, 0, image_height, x, y).
-     * @param image the <CODE>Image</CODE> object
-     * @param a an element of the transformation matrix
-     * @param b an element of the transformation matrix
-     * @param c an element of the transformation matrix
-     * @param d an element of the transformation matrix
-     * @param e an element of the transformation matrix
-     * @param f an element of the transformation matrix
-     * @throws DocumentException on error
-     */
-    
-    public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
-        try {
-            PdfName name;
-            if (image.isImgTemplate()) {
-                name = pdf.addDirectImageSimple(image);
-                PdfTemplate template = image.templateData();
-                float w = template.getWidth();
-                float h = template.getHeight();
-                addTemplate(template, a / w, b / w, c / h, d / h, e, f);
-            }
-            else {
-                Image maskImage = image.getImageMask();
-                if (maskImage != null) {
-                    PdfName mname = pdf.addDirectImageSimple(maskImage);
-                    xObjectDictionary.put(mname, writer.getImageReference(mname));
-                }
-                name = pdf.addDirectImageSimple(image);
-                content.append("q ");
-                content.append(a).append(' ');
-                content.append(b).append(' ');
-                content.append(c).append(' ');
-                content.append(d).append(' ');
-                content.append(e).append(' ');
-                content.append(f).append(" cm ");
-                content.append(name.toString()).append(" Do Q").append_i(separator);
-            }
-            if (!image.isImgTemplate())
-                xObjectDictionary.put(name, writer.getImageReference(name));
-        }
-        catch (Exception ee) {
-            throw new DocumentException(ee.getMessage());
-        }
-    }
-    
-    public void setColorFill(PdfSpotColor sp, float tint) {
-        state.colorDetails = writer.addSimple(sp);
-        colorDictionary.put(state.colorDetails.getColorName(), state.colorDetails.getIndirectReference());
-        content.append(state.colorDetails.getColorName().toPdf(null)).append(" cs ").append(tint).append(" scn").append_i(separator);
-    }
-    
-    public void setColorStroke(PdfSpotColor sp, float tint) {
-        state.colorDetails = writer.addSimple(sp);
-        colorDictionary.put(state.colorDetails.getColorName(), state.colorDetails.getIndirectReference());
-        content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN").append_i(separator);
-    }
-    
-    public void setPatternFill(PdfPatternPainter p) {
-        if (p.isStencil()) {
-            setPatternFill(p, p.getDefaultColor());
-            return;
-        }
-        checkWriter();
-        PdfName name = writer.addSimplePattern(p);
-        patternDictionary.put(name, p.getIndirectReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn").append_i(separator);
-    }
-    
-    public void setPatternStroke(PdfPatternPainter p) {
-        if (p.isStencil()) {
-            setPatternStroke(p, p.getDefaultColor());
-            return;
-        }
-        checkWriter();
-        PdfName name = writer.addSimplePattern(p);
-        patternDictionary.put(name, p.getIndirectReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN").append_i(separator);
-    }
-
-    public void setPatternFill(PdfPatternPainter p, Color color, float tint) {
-        checkWriter();
-        if (!p.isStencil())
-            throw new RuntimeException("An uncolored pattern was expected.");
-        PdfName name = writer.addSimplePattern(p);
-        patternDictionary.put(name, p.getIndirectReference());
-        ColorDetails csDetail = writer.addSimplePatternColorspace(color);
-        colorDictionary.put(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(csDetail.getColorName().toPdf(null)).append(" cs").append_i(separator);
-        outputColorNumbers(color, tint);
-        content.append(' ').append(name.toPdf(null)).append(" scn").append_i(separator);
-    }
-    
-    public void setPatternStroke(PdfPatternPainter p, Color color, float tint) {
-        checkWriter();
-        if (!p.isStencil())
-            throw new RuntimeException("An uncolored pattern was expected.");
-        PdfName name = writer.addSimplePattern(p);
-        patternDictionary.put(name, p.getIndirectReference());
-        ColorDetails csDetail = writer.addSimplePatternColorspace(color);
-        colorDictionary.put(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(csDetail.getColorName().toPdf(null)).append(" CS").append_i(separator);
-        outputColorNumbers(color, tint);
-        content.append(' ').append(name.toPdf(null)).append(" SCN").append_i(separator);
-    }
-
-    public void paintShading(PdfShading shading) {
-        writer.addSimpleShading(shading);
-        shadingDictionary.put(shading.getShadingName(), shading.getShadingReference());
-        content.append(shading.getShadingName().toPdf(null)).append(" sh").append_i(separator);
-        ColorDetails details = shading.getColorDetails();
-        if (details != null)
-            colorDictionary.put(details.getColorName(), details.getIndirectReference());
-    }
-    
-    public void setShadingFill(PdfShadingPattern shading) {
-        writer.addSimpleShadingPattern(shading);
-        patternDictionary.put(shading.getPatternName(), shading.getPatternReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(shading.getPatternName().toPdf(null)).append(" scn").append_i(separator);
-        ColorDetails details = shading.getColorDetails();
-        if (details != null)
-            colorDictionary.put(details.getColorName(), details.getIndirectReference());
-    }
-
-    public void setShadingStroke(PdfShadingPattern shading) {
-        writer.addSimpleShadingPattern(shading);
-        patternDictionary.put(shading.getPatternName(), shading.getPatternReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(shading.getPatternName().toPdf(null)).append(" SCN").append_i(separator);
-        ColorDetails details = shading.getColorDetails();
-        if (details != null)
-            colorDictionary.put(details.getColorName(), details.getIndirectReference());
-    }
-    
+        
     public void beginVariableText() {
         content.append("/Tx BMC ");
     }
@@ -359,24 +186,7 @@ public class PdfTemplate extends PdfContentByte {
      */
     
     PdfObject getResources() {
-        PdfResources resources = new PdfResources();
-        int procset = PdfProcSet.PDF;
-        if (fontDictionary.containsFont()) {
-            resources.add(fontDictionary);
-            procset |= PdfProcSet.TEXT;
-        }
-        if (xObjectDictionary.containsXObject()) {
-            resources.add(xObjectDictionary);
-            procset |= PdfProcSet.IMAGEC;
-        }
-        if (colorDictionary.containsColorSpace())
-            resources.add(colorDictionary);
-        if (patternDictionary.containsPattern())
-            resources.add(patternDictionary);
-        if (shadingDictionary.containsShading())
-            resources.add(shadingDictionary);
-        resources.add(new PdfProcSet(procset));
-        return resources;
+        return getPageResources().getResources();
     }
     
     /**
@@ -388,22 +198,7 @@ public class PdfTemplate extends PdfContentByte {
     PdfStream getFormXObject() throws IOException {
         return new PdfFormXObject(this);
     }
-    
-    /**
-     * Set the font and the size for the subsequent text writing.
-     *
-     * @param bf the font
-     * @param size the font size in points
-     */
-    
-    public void setFontAndSize(BaseFont bf, float size) {
-        state.size = size;
-        state.fontDetails = writer.addSimple(bf);
-        PdfName name = state.fontDetails.getFontName();
-        content.append(name.toPdf(null)).append(' ').append(size).append(" Tf").append_i(separator);
-        fontDictionary.put(name, state.fontDetails.getIndirectReference());
-    }
-    
+        
     /**
      * Gets a duplicate of this <CODE>PdfTemplate</CODE>. All
      * the members are copied by reference but the buffer stays different.
@@ -415,11 +210,7 @@ public class PdfTemplate extends PdfContentByte {
         tpl.writer = writer;
         tpl.pdf = pdf;
         tpl.thisReference = thisReference;
-        tpl.fontDictionary = fontDictionary;
-        tpl.xObjectDictionary = xObjectDictionary;
-        tpl.colorDictionary = colorDictionary;
-        tpl.patternDictionary = patternDictionary;
-        tpl.shadingDictionary = shadingDictionary;
+        tpl.pageResources = pageResources;
         tpl.bBox = new Rectangle(bBox);
         if (matrix != null) {
             tpl.matrix = new PdfArray(matrix);
@@ -429,5 +220,9 @@ public class PdfTemplate extends PdfContentByte {
     
     public int getType() {
         return type;
+    }
+    
+    PageResources getPageResources() {
+        return pageResources;
     }
 }

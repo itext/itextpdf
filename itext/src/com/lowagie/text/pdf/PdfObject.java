@@ -75,9 +75,6 @@ public abstract class PdfObject {
     // static membervariables (all the possible types of a PdfObject)
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    public static final int NULL = 0;
-    
-/** a possible type of <CODE>PdfObject</CODE> */
     public static final int BOOLEAN = 1;
     
 /** a possible type of <CODE>PdfObject</CODE> */
@@ -98,15 +95,18 @@ public abstract class PdfObject {
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int STREAM = 7;
 
+/** a possible type of <CODE>PdfObject</CODE> */
+    public static final int NULL = 8;
+    
     public static final int INDIRECT = 10;    
 
 /** This is an empty string used for the <CODE>PdfNull</CODE>-object and for an empty <CODE>PdfString</CODE>-object. */
     public static final String NOTHING = "";
     
 /** This is the default encoding to be used for converting Strings into bytes and vice versa.
- * The default encoding is PdfDocEcoding.
+ * The default encoding is PdfDocEncoding.
  */
-    public static final String ENCODING = "PDF";
+    public static final String TEXT_PDFDOCENCODING = "PDF";
     
 /** This is the encoding to be used to output text in Unicode. */
     public static final String TEXT_UNICODE = "UnicodeBig";

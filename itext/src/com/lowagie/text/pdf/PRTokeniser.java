@@ -147,8 +147,9 @@ public class PRTokeniser {
         return generation;
     }
     
-    public void backOnePosition() throws IOException {
-        file.seek(file.getFilePointer() - 1);
+    public void backOnePosition(int ch) throws IOException {
+        if (ch != -1)
+            file.seek(file.getFilePointer() - 1);
     }
     
     public void throwError(String error) throws IOException {
@@ -265,7 +266,7 @@ public class PRTokeniser {
                     }
                     outBuf.append((char)ch);
                 }
-                backOnePosition();
+                backOnePosition(ch);
                 break;
             }
             case '>':
@@ -359,7 +360,7 @@ public class PRTokeniser {
                                 lineBreak = true;
                                 ch = file.read();
                                 if (ch != '\n')
-                                    backOnePosition();
+                                    backOnePosition(ch);
                                 break;
                             case '\n':
                                 lineBreak = true;
@@ -372,15 +373,15 @@ public class PRTokeniser {
                                 int octal = ch - '0';
                                 ch = file.read();
                                 if (ch < '0' || ch > '7') {
+                                    backOnePosition(ch);
                                     ch = octal;
-                                    backOnePosition();
                                     break;
                                 }
                                 octal = (octal << 3) + ch - '0';
                                 ch = file.read();
                                 if (ch < '0' || ch > '7') {
+                                    backOnePosition(ch);
                                     ch = octal;
-                                    backOnePosition();
                                     break;
                                 }
                                 octal = (octal << 3) + ch - '0';
@@ -399,7 +400,7 @@ public class PRTokeniser {
                             break;
                         if (ch != '\n') {
                             ch = '\n';
-                            backOnePosition();
+                            backOnePosition(ch);
                         }
                     }
                     if (nesting == -1)
@@ -427,7 +428,7 @@ public class PRTokeniser {
                         ch = file.read();
                     } while (ch != -1 && !isDelimiter(ch) && !isWhitespace(ch));
                 }
-                backOnePosition();
+                backOnePosition(ch);
                 break;
             }
         }

@@ -61,11 +61,11 @@ public interface PdfPTableEvent {
      * <CODE>canvases</CODE>.<br>
      * The indexes to <CODE>canvases</CODE> are:<p>
      * <ul>
-     * <li><CODE>PdfPtable.BASECANVAS</CODE> - the original <CODE>PdfContentByte</CODE>. Anything placed here
+     * <li><CODE>PdfPTable.BASECANVAS</CODE> - the original <CODE>PdfContentByte</CODE>. Anything placed here
      * will be under the table.
-     * <li><CODE>PdfPtable.BACKGROUNDCANVAS</CODE> - the layer where the background goes to.
-     * <li><CODE>PdfPtable.LINECANVAS</CODE> - the layer where the lines go to.
-     * <li><CODE>PdfPtable.TEXTCANVAS</CODE> - the layer where the text go to. Anything placed here
+     * <li><CODE>PdfPTable.BACKGROUNDCANVAS</CODE> - the layer where the background goes to.
+     * <li><CODE>PdfPTable.LINECANVAS</CODE> - the layer where the lines go to.
+     * <li><CODE>PdfPTable.TEXTCANVAS</CODE> - the layer where the text go to. Anything placed here
      * will be over the table.
      * </ul>
      * The layers are placed in sequence on top of each other.

@@ -75,7 +75,7 @@ public class PdfString extends PdfObject {
     protected String value = NOTHING;
     
     /** The encoding. */
-    protected String encoding = ENCODING;
+    protected String encoding = TEXT_PDFDOCENCODING;
     
     // constructors
     
@@ -133,7 +133,10 @@ public class PdfString extends PdfObject {
     
     public byte[] toPdf(PdfWriter writer) {
         byte b[];
-        b = PdfEncodings.convertToBytes(value, encoding);
+        if (encoding != null && encoding.equals(TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
+            b = PdfEncodings.convertToBytes(value, TEXT_PDFDOCENCODING);
+        else
+            b = PdfEncodings.convertToBytes(value, encoding);
         PdfEncryption crypto = writer.getEncryption();
         if (crypto != null) {
             crypto.prepareKey();
@@ -155,17 +158,6 @@ public class PdfString extends PdfObject {
     // other methods
     
     /**
-     * Gets the PDF representation of this <CODE>String</CODE> as a <CODE>String</CODE>
-     *
-     * @return		a <CODE>String</CODE>
-     */
-    
-    byte[] get(PdfWriter writer) {
-        return toPdf(writer);
-        // we create the StringBuffer that will be the PDF representation of the content
-    }
-    
-    /**
      * Gets the encoding of this string.
      *
      * @return		a <CODE>String</CODE>
@@ -173,5 +165,13 @@ public class PdfString extends PdfObject {
     
     public String getEncoding() {
         return encoding;
+    }
+    
+    public String toUnicodeString() {
+        byte b[] = PdfEncodings.convertToBytes(value, null);
+        if (b.length >= 2 && b[0] == (byte)254 && b[1] == (byte)255)
+            return PdfEncodings.convertToString(b, PdfObject.TEXT_UNICODE);
+        else
+            return PdfEncodings.convertToString(b, PdfObject.TEXT_PDFDOCENCODING);
     }
 }

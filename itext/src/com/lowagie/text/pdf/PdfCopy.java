@@ -132,8 +132,21 @@ public class PdfCopy extends PdfWriter {
      * @return the page
      */
     public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
-        PdfReaderInstance inst = reader.getPdfReaderInstance(this);
-        return inst.getImportedPage(pageNumber);
+        if (currentPdfReaderInstance != null) {
+            if (currentPdfReaderInstance.getReader() != reader) {
+                try {
+                    currentPdfReaderInstance.getReaderFile().close();
+                }
+                catch (IOException ioe) {
+                    // empty on purpose
+                }
+                currentPdfReaderInstance = reader.getPdfReaderInstance(this);
+            }
+        }
+        else {
+            currentPdfReaderInstance = reader.getPdfReaderInstance(this);
+        }
+        return currentPdfReaderInstance.getImportedPage(pageNumber);            
     }
     
     
@@ -239,6 +252,8 @@ public class PdfCopy extends PdfWriter {
             case PdfObject.NUMBER:
             case PdfObject.NAME:
             case PdfObject.STRING:
+            case PdfObject.NULL:
+            case PdfObject.BOOLEAN:
                 return in;
             case PdfObject.STREAM:
                 return copyStream((PRStream)in);
@@ -372,12 +387,21 @@ public class PdfCopy extends PdfWriter {
     
     public synchronized void close() {
         if (open) {
+            PdfReaderInstance ri = currentPdfReaderInstance;
             pdf.close();
             super.close();
+            if (ri != null) {
+                try {
+                    ri.getReaderFile().close();
+                }
+                catch (IOException ioe) {
+                    // empty on purpose
+                }
+            }
         }
     }
-    public PdfIndirectReference add(PdfImage pdfImage)  { return null; }
+    PdfIndirectReference add(PdfImage pdfImage) throws PdfException  { return null; }
     public PdfIndirectReference add(PdfOutline outline) { return null; }
     public void addAnnotation(PdfAnnotation annot) {  }
-    public PdfIndirectReference add(PdfPage page, PdfContents contents) { return null; }
+    PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException { return null; }
 }

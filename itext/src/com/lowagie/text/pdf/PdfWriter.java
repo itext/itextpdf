@@ -59,6 +59,8 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.Image;
+import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.DocumentException;
@@ -493,6 +495,9 @@ public class PdfWriter extends DocWriter {
     /** Dictionary, containing all the images of the PDF document */
     protected PdfXObjectDictionary imageDictionary = new PdfXObjectDictionary();
     
+    /** This is the list with all the images in the document. */
+    private HashMap images = new HashMap();
+    
     /** The form XObjects in this document. The key is the xref and the value
         is Object[]{PdfName, template}.*/
     protected HashMap formXObjects = new HashMap();
@@ -546,7 +551,7 @@ public class PdfWriter extends DocWriter {
     
     protected PdfEncryption crypto;
     
-    private HashMap importedPages = new HashMap();
+    protected HashMap importedPages = new HashMap();
     
     protected PdfReaderInstance currentPdfReaderInstance;
     
@@ -652,7 +657,7 @@ public class PdfWriter extends DocWriter {
      * @throws PdfException on error
      */
     
-    public PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException {
+    PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException {
         if (!open) {
             throw new PdfException("The document isn't open.");
         }
@@ -676,6 +681,57 @@ public class PdfWriter extends DocWriter {
         return pageObject.getIndirectReference();
     }
     
+    /** Adds an image to the document but not to the page resources. It is used with
+     * templates and <CODE>Document.add(Image)</CODE>.
+     * @param image the <CODE>Image</CODE> to add
+     * @return the name of the image added
+     * @throws PdfException on error
+     * @throws DocumentException on error
+     */
+    PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
+        PdfName name;
+        // if the images is already added, just retrieve the name
+        if (images.containsKey(image.getMySerialId())) {
+            name = (PdfName) images.get(image.getMySerialId());
+        }
+        // if it's a new image, add it to the document
+        else {
+            if (image.isImgTemplate()) {
+                name = new PdfName("img" + images.size());
+                if (image.templateData() == null) {
+                    try {
+                        ImgWMF wmf = (ImgWMF)image;
+                        wmf.readWMF(getDirectContent().createTemplate(0, 0));
+                    }
+                    catch (Exception e) {
+                        throw new DocumentException(e.getMessage());
+                    }
+                }
+            }
+            else {
+                Image maskImage = image.getImageMask();
+                PdfIndirectReference maskRef = null;
+                if (maskImage != null) {
+                    PdfName mname = (PdfName)images.get(maskImage.getMySerialId());
+                    maskRef = getImageReference(mname);
+                }
+                PdfImage i = new PdfImage(image, "img" + images.size(), maskRef);
+                if (image.hasICCProfile()) {
+                    PdfICCBased icc = new PdfICCBased(image.getICCProfile());
+                    PdfIndirectReference iccRef = add(icc);
+                    PdfArray iccArray = new PdfArray();
+                    iccArray.add(PdfName.ICCBASED);
+                    iccArray.add(iccRef);
+                    i.put(PdfName.COLORSPACE, iccArray);
+                }
+                add(i);
+                name = i.name();
+            }
+            images.put(image.getMySerialId(), name);
+        }
+        return name;
+    }
+
     /**
      * Writes a <CODE>PdfImage</CODE> to the outputstream.
      *
@@ -684,7 +740,7 @@ public class PdfWriter extends DocWriter {
      * @throws PdfException when a document isn't open yet, or has been closed
      */
     
-    public PdfIndirectReference add(PdfImage pdfImage) throws PdfException {
+    PdfIndirectReference add(PdfImage pdfImage) throws PdfException {
         if (! imageDictionary.contains(pdfImage)) {
             PdfIndirectObject object = body.add(pdfImage);
             try {
@@ -717,7 +773,7 @@ public class PdfWriter extends DocWriter {
      * @return a <CODE>PdfIndirectReference</CODE>
      */
     
-    public PdfIndirectReference getImageReference(PdfName name) {
+    PdfIndirectReference getImageReference(PdfName name) {
         return (PdfIndirectReference) imageDictionary.get(name);
     }
     
@@ -745,6 +801,53 @@ public class PdfWriter extends DocWriter {
         return ((PdfDocument)document).getCatalog(rootObj);
     }
 
+    protected void addSharedObjectsToBody() throws IOException {
+        // add the fonts
+        for (Iterator it = documentFonts.values().iterator(); it.hasNext();) {
+            FontDetails details = (FontDetails)it.next();
+            details.writeFont(this);
+        }
+        // add the form XObjects
+        for (Iterator it = formXObjects.values().iterator(); it.hasNext();) {
+            Object objs[] = (Object[])it.next();
+            PdfTemplate template = (PdfTemplate)objs[1];
+            if (template != null && template.getIndirectReference() instanceof PRIndirectReference)
+                continue;
+            if (template != null && template.getType() == PdfTemplate.TYPE_TEMPLATE) {
+                PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
+                obj.writeTo(os);
+            }
+        }
+        // add all the dependencies in the imported pages
+        for (Iterator it = importedPages.values().iterator(); it.hasNext();) {
+            currentPdfReaderInstance = (PdfReaderInstance)it.next();
+            currentPdfReaderInstance.writeAllPages();
+        }
+        currentPdfReaderInstance = null;
+        // add the color
+        for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
+            ColorDetails color = (ColorDetails)it.next();
+            PdfIndirectObject cobj = body.add(color.getSpotColor(this), color.getIndirectReference());
+            cobj.writeTo(os);
+        }
+        // add the pattern
+        for (Iterator it = documentPatterns.keySet().iterator(); it.hasNext();) {
+            PdfPatternPainter pat = (PdfPatternPainter)it.next();
+            PdfIndirectObject pobj = body.add(pat.getPattern(), pat.getIndirectReference());
+            pobj.writeTo(os);
+        }
+        // add the shading patterns
+        for (Iterator it = documentShadingPatterns.keySet().iterator(); it.hasNext();) {
+            PdfShadingPattern shadingPattern = (PdfShadingPattern)it.next();
+            shadingPattern.addToBody();
+        }
+        // add the shadings
+        for (Iterator it = documentShadings.keySet().iterator(); it.hasNext();) {
+            PdfShading shading = (PdfShading)it.next();
+            shading.addToBody();
+        }
+    }
+    
     /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
      * <CODE>Elements</CODE> will be added.
@@ -762,53 +865,12 @@ public class PdfWriter extends DocWriter {
                 " was requested but the document has only " + (currentPageNumber - 1) + " pages.");
             pdf.close();
             try {
-                // add the fonts
-                for (Iterator it = documentFonts.values().iterator(); it.hasNext();) {
-                    FontDetails details = (FontDetails)it.next();
-                    details.writeFont(this);
-                }
-                
-                // add the form XObjects
-                for (Iterator it = formXObjects.values().iterator(); it.hasNext();) {
-                    Object objs[] = (Object[])it.next();
-                    PdfTemplate template = (PdfTemplate)objs[1];
-                    if (template != null && template.getType() == PdfTemplate.TYPE_TEMPLATE) {
-                        PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
-                        obj.writeTo(os);
-                    }
-                }
-                // add all the dependencies in the imported pages
-                for (Iterator it = importedPages.values().iterator(); it.hasNext();) {
-                    currentPdfReaderInstance = (PdfReaderInstance)it.next();
-                    currentPdfReaderInstance.writeAllPages();
-                }
-                // add the color
-                for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
-                    ColorDetails color = (ColorDetails)it.next();
-                    PdfIndirectObject cobj = body.add(color.getSpotColor(this), color.getIndirectReference());
-                    cobj.writeTo(os);
-                }
-                // add the pattern
-                for (Iterator it = documentPatterns.keySet().iterator(); it.hasNext();) {
-                    PdfPatternPainter pat = (PdfPatternPainter)it.next();
-                    PdfIndirectObject pobj = body.add(pat.getPattern(), pat.getIndirectReference());
-                    pobj.writeTo(os);
-                }
-                // add the shading patterns
-                for (Iterator it = documentShadingPatterns.keySet().iterator(); it.hasNext();) {
-                    PdfShadingPattern shadingPattern = (PdfShadingPattern)it.next();
-                    shadingPattern.addToBody();
-                }
-                // add the shadings
-                for (Iterator it = documentShadings.keySet().iterator(); it.hasNext();) {
-                    PdfShading shading = (PdfShading)it.next();
-                    shading.addToBody();
-                }
+                addSharedObjectsToBody();
                 // add the root to the body
                 PdfIndirectObject rootObject = body.add(root);
                 rootObject.writeTo(os);
                 // make the catalog-object and add it to the body
-                PdfIndirectObject indirectCatalog = body.add(((PdfDocument)document).getCatalog(rootObject.getIndirectReference()));
+                PdfIndirectObject indirectCatalog = body.add(getCatalog(rootObject.getIndirectReference()));
                 indirectCatalog.writeTo(os);
                 // add the info-object to the body
                 PdfIndirectObject info = body.add(((PdfDocument)document).getInfo());
@@ -968,19 +1030,7 @@ public class PdfWriter extends DocWriter {
     public PdfOutline getRootOutline() {
         return directContent.getRootOutline();
     }
-    
-    /**
-     * Adds a <CODE>BaseFont</CODE> to the document and to the page resources.
-     * @param bf the <CODE>BaseFont</CODE> to add
-     * @return the name of the font in the document
-     */
-    
-    FontDetails add(BaseFont bf) {
-        FontDetails ret = (FontDetails)addSimple(bf);
-        pdf.addFont(ret.getFontName(), ret.getIndirectReference());
-        return ret;
-    }
-    
+        
     /**
      * Adds a <CODE>BaseFont</CODE> to the document but not to the page resources.
      * It is used for templates.
@@ -990,6 +1040,9 @@ public class PdfWriter extends DocWriter {
      */
     
     FontDetails addSimple(BaseFont bf) {
+        if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
+            return new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
+        }
         FontDetails ret = (FontDetails)documentFonts.get(bf);
         if (ret == null) {
             ret = new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
@@ -1004,18 +1057,6 @@ public class PdfWriter extends DocWriter {
             if (fonts.get(ft.getFontName()) != null)
                 ft.setSubset(false);
         }
-    }
-    
-    /**
-     * Adds a <CODE>SpotColor</CODE> to the document and to the page resources.
-     * @param spc the <CODE>PdfSpotColor</CODE> to add
-     * @return the name of the spotcolor in the document
-     */
-    
-    ColorDetails add(PdfSpotColor spc) {
-        ColorDetails ret = (ColorDetails)addSimple(spc);
-        pdf.addColor(ret.getColorName(), ret.getIndirectReference());
-        return ret;
     }
     
     /**
@@ -1037,7 +1078,7 @@ public class PdfWriter extends DocWriter {
     ColorDetails addSimplePatternColorspace(Color color) {
         int type = ExtendedColor.getType(color);
         if (type == ExtendedColor.TYPE_PATTERN || type == ExtendedColor.TYPE_SHADING)
-            throw new RuntimeException("An uncolored tile pattern can not have another pattern or shding as color.");
+            throw new RuntimeException("An uncolored tile pattern can not have another pattern or shading as color.");
         try {
             switch (type) {
                 case ExtendedColor.TYPE_RGB:
@@ -1622,4 +1663,8 @@ public class PdfWriter extends DocWriter {
         pdf.setStrictImageSequence(strictImageSequence);
     }
     
+    public void setPageEmpty(boolean pageEmpty) {
+        pdf.setPageEmpty(pageEmpty);
+    }
+
 }
