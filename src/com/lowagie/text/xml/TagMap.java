@@ -52,8 +52,8 @@ package com.lowagie.text.xml;
 
 import java.util.HashMap;
 
-import org.xml.sax.HandlerBase;
-import org.xml.sax.AttributeList;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.Attributes;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -69,7 +69,7 @@ import com.lowagie.text.*;
 
 public class TagMap extends HashMap {
     
-    class AttributeHandler extends HandlerBase {
+    class AttributeHandler extends DefaultHandler {
         
 /** This is a tag */
         public static final String TAG = "tag";
@@ -114,7 +114,7 @@ public class TagMap extends HashMap {
  * @param	attrs		the list of attributes
  */
         
-        public void startElement(String tag, AttributeList attrs) {
+        public void startElement(String uri, String lname, String tag, Attributes attrs) {
             String name = attrs.getValue(NAME);
             String alias = attrs.getValue(ALIAS);
             String value = attrs.getValue(VALUE);
@@ -167,7 +167,7 @@ public class TagMap extends HashMap {
  * @param	tag		the name of the tag that ends
  */
         
-        public void endElement(String tag) {
+        public void endElement(String uri, String lname, String tag) {
             if (TAG.equals(tag))
                 tagMap.put(currentPeer.getAlias(), currentPeer);
         }
