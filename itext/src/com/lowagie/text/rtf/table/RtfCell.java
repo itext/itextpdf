@@ -500,6 +500,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     
     /**
      * Unused
+     * @param inTable
      */
     public void setInTable(boolean inTable) {
     }
@@ -507,7 +508,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     /**
      * Sets whether this RtfCell is in a header
      * 
-     * @param isInHeader <code>True</code> if this RtfCell is in a header, <code>false</code> otherwise
+     * @param inHeader <code>True</code> if this RtfCell is in a header, <code>false</code> otherwise
      */
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;

@@ -300,12 +300,14 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
 
     /**
      * Unused
+     * @param inTable
      */
     public void setInTable(boolean inTable) {
     }
     
     /**
      * Unused
+     * @param inHeader
      */
     public void setInHeader(boolean inHeader) {
     }

@@ -132,7 +132,7 @@ public class RtfElement implements RtfBasicElement {
     /**
      * Sets whether this RtfElement is in a table
      * 
-     * @param isInTable <code>True</code> if this RtfElement is in a table, <code>false</code> otherwise
+     * @param inTable <code>True</code> if this RtfElement is in a table, <code>false</code> otherwise
      */
     public void setInTable(boolean inTable) {
         this.inTable = inTable;
@@ -141,7 +141,7 @@ public class RtfElement implements RtfBasicElement {
     /**
      * Sets whether this RtfElement is in a header
      * 
-     * @param isInHeader <code>True</code> if this RtfElement is in a header, <code>false</code> otherwise
+     * @param inHeader <code>True</code> if this RtfElement is in a header, <code>false</code> otherwise
      */
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;

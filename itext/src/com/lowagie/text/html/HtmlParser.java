@@ -77,6 +77,8 @@ public class HtmlParser extends XmlParser {
     
 /**
  * Parses a given file.
+ * @param document the document the parser will write to
+ * @param is the InputSource with the content
  */
     
     public void go(DocListener document, InputSource is) {
@@ -93,6 +95,8 @@ public class HtmlParser extends XmlParser {
     
 /**
  * Parses a given file that validates with the iText DTD and writes the content to a document.
+ * @param document the document the parser will write to
+ * @param is the InputSource with the content
  */
     
     public static void parse(DocListener document, InputSource is) {
@@ -102,6 +106,8 @@ public class HtmlParser extends XmlParser {
     
 /**
  * Parses a given file.
+ * @param document the document the parser will write to
+ * @param file the file with the content
  */
     
     public void go(DocListener document, String file) {
@@ -118,6 +124,8 @@ public class HtmlParser extends XmlParser {
     
 /**
  * Parses a given file that validates with the iText DTD and writes the content to a document.
+ * @param document the document the parser will write to
+ * @param file the file with the content
  */
     
     public static void parse(DocListener document, String file) {
@@ -127,6 +135,8 @@ public class HtmlParser extends XmlParser {
     
 /**
  * Parses a given file.
+ * @param document the document the parser will write to
+ * @param is the InputStream with the content
  */
     
     public void go(DocListener document, InputStream is) {
@@ -143,6 +153,8 @@ public class HtmlParser extends XmlParser {
     
 /**
  * Parses a given file that validates with the iText DTD and writes the content to a document.
+ * @param document the document the parser will write to
+ * @param is the InputStream with the content
  */
     
     public static void parse(DocListener document, InputStream is) {
@@ -152,6 +164,8 @@ public class HtmlParser extends XmlParser {
     
 /**
  * Parses a given file.
+ * @param document the document the parser will write to
+ * @param is the Reader with the content
  */
     
     public void go(DocListener document, Reader is) {
@@ -168,6 +182,8 @@ public class HtmlParser extends XmlParser {
     
 /**
  * Parses a given file that validates with the iText DTD and writes the content to a document.
+ * @param document the document the parser will write to
+ * @param is the Reader with the content
  */
     
     public static void parse(DocListener document, Reader is) {

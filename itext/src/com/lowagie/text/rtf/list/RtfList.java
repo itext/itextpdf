@@ -449,7 +449,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Sets whether this RtfList is in a table. Sets the correct inTable setting for all
      * child elements.
      * 
-     * @param isInTable <code>True</code> if this RtfList is in a table, <code>false</code> otherwise
+     * @param inTable <code>True</code> if this RtfList is in a table, <code>false</code> otherwise
      */
     public void setInTable(boolean inTable) {
         super.setInTable(inTable);
@@ -462,7 +462,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Sets whether this RtfList is in a header. Sets the correct inTable setting for all
      * child elements.
      * 
-     * @param isInHeader <code>True</code> if this RtfList is in a header, <code>false</code> otherwise
+     * @param inHeader <code>True</code> if this RtfList is in a header, <code>false</code> otherwise
      */
     public void setInHeader(boolean inHeader) {
         super.setInHeader(inHeader);

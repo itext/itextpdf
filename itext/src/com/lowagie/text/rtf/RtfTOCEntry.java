@@ -65,7 +65,7 @@ import com.lowagie.text.Font;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2004/09/24 15:23:46 $
+ * @version $Revision$Date: 2004/12/14 10:05:47 $
  */
 public class RtfTOCEntry extends Chunk implements RtfField {
 
@@ -81,6 +81,11 @@ public class RtfTOCEntry extends Chunk implements RtfField {
     private Font      contentFont;    
 
 
+    /**
+     * Constructs an entry for the Table of Contents
+     * @param content the content of the entry
+     * @param contentFont the font
+     */
     public RtfTOCEntry( String content, Font contentFont ) {
         this( content, contentFont, content, contentFont );
 //        super( content, font );
@@ -89,6 +94,13 @@ public class RtfTOCEntry extends Chunk implements RtfField {
     }
 
 
+    /**
+     * Constructs an entry for the Table of Contents
+     * @param content the content of the entry
+     * @param contentFont the font
+     * @param entryName name of the entry
+     * @param entryFont font of the entryname
+     */
     public RtfTOCEntry( String content, Font contentFont, String entryName, Font entryFont ) {
         super( content, contentFont );
         // hide the text of the entry, because it is printed  
@@ -97,7 +109,9 @@ public class RtfTOCEntry extends Chunk implements RtfField {
         this.contentFont = contentFont;
     }
 
-
+    /**
+     * @see com.lowagie.text.rtf.RtfField#write(com.lowagie.text.rtf.RtfWriter, java.io.OutputStream)
+     */
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
 
         if (!hideText) {
@@ -141,12 +155,16 @@ public class RtfTOCEntry extends Chunk implements RtfField {
         out.write( RtfWriter.closeGroup );        
     }
 
-
+    /**
+     * sets the hideText value to true 
+     */
     public void hideText() {
         hideText = true;
     }
 
-
+    /**
+     * sets the hidePageNumber value to true 
+     */
     public void hidePageNumber() {
         hidePageNumber = true;
     }

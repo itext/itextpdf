@@ -180,7 +180,7 @@ public class MultiColumnText implements Element {
      * @param canvas    PdfContentByte to write with
      * @param document  document to write to (only used to get page limit info)
      * @param documentY starting y position to begin writing at
-     * @return
+     * @return the current height (y position) after writing the columns
      * @throws DocumentException
      */
     public float write(PdfContentByte canvas, PdfDocument document, float documentY) throws DocumentException {
@@ -298,7 +298,7 @@ public class MultiColumnText implements Element {
      * Calculates the appropriate y position for the bottom
      * of the columns on this page.
      *
-     * @return
+     * @return the y position of the bottom of the columns
      */
     private float getColumnBottom() {
         if (desiredHeight == AUTOMATIC) {

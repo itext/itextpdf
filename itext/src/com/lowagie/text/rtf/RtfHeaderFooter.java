@@ -66,7 +66,7 @@ import com.lowagie.text.Phrase;
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
  * @author <a href="mailto:mhall@myrealbox.com">Mark.Hall@myrealbox.com</a>
- * @version $Revision$Date: 2004/09/24 15:23:46 $
+ * @version $Revision$Date: 2004/12/14 10:05:46 $
  */
 public class RtfHeaderFooter extends HeaderFooter {
 
@@ -74,16 +74,30 @@ public class RtfHeaderFooter extends HeaderFooter {
     private Element content = null;
 
         
+    /**
+     * Constructs a new header
+     * @param before
+     * @param after
+     */
     public RtfHeaderFooter( Phrase before, Phrase after ) {
         super( before, after );    
     }    
 
 
+    /**
+     * Constructs a new header
+     * @param before
+     * @param numbered
+     */
     public RtfHeaderFooter( Phrase before, boolean numbered ) {
         super( before, numbered );
     }    
 
 
+    /**
+     * Constructs a new header
+     * @param content
+     */
     public RtfHeaderFooter( Element content ) {
         super(new Phrase(content.toString()), false);
         this.content = content;

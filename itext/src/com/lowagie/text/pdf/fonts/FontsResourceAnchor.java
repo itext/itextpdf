@@ -53,6 +53,9 @@ package com.lowagie.text.pdf.fonts;
  */
 public class FontsResourceAnchor {
     
+    /**
+     * Creates a FontsResourceAnchor
+     */
     public FontsResourceAnchor() {
     }
     

@@ -294,6 +294,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	indentation	the indentation of the new section
  * @param	title		the title of the new section
  * @param	numberDepth	the numberDepth of the section
+ * @return  a new Section object
  */
     
     public Section addSection(float indentation, Paragraph title, int numberDepth) {
@@ -308,6 +309,7 @@ public class Section extends ArrayList implements TextElementArray {
  *
  * @param	indentation	the indentation of the new section
  * @param	title		the title of the new section
+ * @return  a new Section object
  */
     
     public Section addSection(float indentation, Paragraph title) {
@@ -322,6 +324,7 @@ public class Section extends ArrayList implements TextElementArray {
  *
  * @param	title		the title of the new section
  * @param	numberDepth	the numberDepth of the section
+ * @return  a new Section object
  */
     
     public Section addSection(Paragraph title, int numberDepth) {
@@ -334,6 +337,7 @@ public class Section extends ArrayList implements TextElementArray {
  * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
  *
  * @param	title		the title of the new section
+ * @return  a new Section object
  */
     
     public Section addSection(Paragraph title) {
@@ -348,6 +352,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	indentation	the indentation of the new section
  * @param	title		the title of the new section
  * @param	numberDepth	the numberDepth of the section
+ * @return  a new Section object
  */
     
     public Section addSection(float indentation, String title, int numberDepth) {
@@ -362,6 +367,7 @@ public class Section extends ArrayList implements TextElementArray {
  *
  * @param	title		the title of the new section
  * @param	numberDepth	the numberDepth of the section
+ * @return  a new Section object
  */
     
     public Section addSection(String title, int numberDepth) {
@@ -375,6 +381,7 @@ public class Section extends ArrayList implements TextElementArray {
  *
  * @param	indentation	the indentation of the new section
  * @param	title		the title of the new section
+ * @return  a new Section object
  */
     
     public Section addSection(float indentation, String title) {
@@ -388,6 +395,7 @@ public class Section extends ArrayList implements TextElementArray {
  * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
  *
  * @param	title		the title of the new section
+ * @return  a new Section object
  */
     
     public Section addSection(String title) {

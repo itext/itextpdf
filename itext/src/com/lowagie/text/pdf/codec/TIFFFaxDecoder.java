@@ -563,7 +563,6 @@ public class TIFFFaxDecoder {
     
     /**
      * @param fillOrder   The fill order of the compressed data bytes.
-     * @param compData    Array containing compressed data.
      * @param w
      * @param h
      */

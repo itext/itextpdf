@@ -27,6 +27,9 @@ import com.lowagie.text.pdf.*;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * Tool that can be used to concatenate existing PDF files.
+ */
 public class concat_pdf {
     
     /**

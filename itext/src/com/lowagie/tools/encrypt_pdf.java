@@ -27,7 +27,8 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 
-/** Encrypts a PDF document. It needs iText (http://www.lowagie.com/iText).
+/**
+ * Encrypts a PDF document. It needs iText (http://www.lowagie.com/iText).
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class encrypt_pdf {
@@ -64,6 +65,11 @@ public class encrypt_pdf {
         System.out.println("Example permissions to copy and print would be: 10100000");
     }
     
+    /**
+     * Encrypts a PDF document.
+     * 
+     * @param args input_file output_file user_password owner_password permissions 128|40 [new info string pairs]
+     */
     public static void main (String args[]) {
         System.out.println("PDF document encryptor");
         if (args.length <= STRENGTH || args[PERMISSIONS].length() != 8) {

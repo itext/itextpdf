@@ -112,7 +112,7 @@ abstract public class ASN1Set
     /**
      * return the object at the set postion indicated by index.
      *
-     * @param the set number (starting at zero) of the object
+     * @param index the set number (starting at zero) of the object
      * @return the object at the set postion indicated by index.
      */
     public DEREncodable getObjectAt(

@@ -973,10 +973,8 @@ public class CFFFont {
         return names;
     }
     /**
-     * 
-     * @author orly manor
-     *
-     * TODO Changed to protected 
+     * A random Access File or an array
+     * (contributed by orly manor)
      */
     protected RandomAccessFileOrArray buf;
     private int offSize;

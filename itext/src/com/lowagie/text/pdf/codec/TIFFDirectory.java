@@ -58,7 +58,6 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  * <p><b> This class is not a committed part of the JAI API.  It may
  * be removed or changed in future releases of JAI.</b>
  *
- * @see javax.media.jai.operator.TIFFDescriptor
  * @see TIFFField
  */
 public class TIFFDirectory extends Object implements Serializable {

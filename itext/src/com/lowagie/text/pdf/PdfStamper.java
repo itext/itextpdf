@@ -344,7 +344,7 @@ public class PdfStamper {
     }
 
     /** Determines if the fields are flattened on close. The fields added with
-     * {@link addAnnotation(PdfAnnotation,int)} will never be flattened.
+     * {@link #addAnnotation(PdfAnnotation,int)} will never be flattened.
      * @param flat <CODE>true</CODE> to flatten the fields, <CODE>false</CODE>
      * to keep the fields
      */

@@ -178,6 +178,7 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      *
      * @param element The element to be added
      * @return <code>false</code>
+     * @throws DocumentException
      */
     public boolean add(Element element) throws DocumentException {
         RtfBasicElement rtfElement = rtfDoc.getMapper().mapElement(element);

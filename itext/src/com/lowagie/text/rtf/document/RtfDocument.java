@@ -177,6 +177,7 @@ public class RtfDocument extends RtfElement {
      * Replaces special characters with their unicode values
      *
      * @param str The original <code>String</code>
+     * @param useHex indicated if the hexadecimal value has to be used
      * @return The converted String
      */
     public String filterSpecialChar(String str, boolean useHex) {

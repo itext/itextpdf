@@ -92,6 +92,7 @@ public class RtfTable {
      * <P>
      * @param table A <code>Table</code> specifying the <code>Table</code> to be imported
      * @param pageWidth An <code>int</code> specifying the page width
+     * @return true if importing the table succeeded
      */
     public boolean importTable(Table table, int pageWidth) {
         origTable = table;
@@ -128,6 +129,9 @@ public class RtfTable {
      * Output the content of the <CODE>RtfTable</CODE> to an OutputStream.
      *
      * @param os The <code>OutputStream</code> that the content of the <code>RtfTable</code> is to be written to
+     * @return true if writing the table succeeded
+     * @throws DocumentException
+     * @throws IOException
      */
     public boolean writeTable(ByteArrayOutputStream os) throws DocumentException, IOException {
     	

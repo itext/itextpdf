@@ -380,6 +380,8 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * <p>
  * This method is a hack to solve a problem I had with phrases that were split between chunks
  * in the wrong place.
+ * @param chunk a Chunk to add to the Phrase
+ * @return true if adding the Chunk succeeded
  */
     
     private synchronized boolean addChunk(Chunk chunk) {

@@ -78,6 +78,8 @@ public class XmlPeer {
     
 /**
  * Creates a XmlPeer.
+ * @param name the iText name of a tag
+ * @param alias the userdefined name of a tag
  */
     
     public XmlPeer(String name, String alias) {
@@ -87,6 +89,7 @@ public class XmlPeer {
     
 /**
  * Gets the tagname of the peer.
+ * @return the iText name of a tag
  */
     
     public String getTag() {
@@ -95,13 +98,17 @@ public class XmlPeer {
     
 /**
  * Gets the tagname of the peer.
+ * @return the userdefined tagname
  */
     
     public String getAlias() {
         return customTagname;
     }
     
-/** Gets the list of attributes of the peer. */
+/** Gets the list of attributes of the peer. 
+ * @param attrs the userdefined set of attributes
+ * @return the set of attributes translated to iText attributes
+ */
     public Properties getAttributes(Attributes attrs) {
         Properties attributes = new Properties();
         attributes.putAll(attributeValues);
@@ -153,6 +160,7 @@ public class XmlPeer {
  * Returns the iText attribute name.
  *
  * @param   name   the custom attribute name
+ * @return  iText translated attribute name
  */
     
     public String getName(String name) {
@@ -165,10 +173,10 @@ public class XmlPeer {
     
 /**
  * Returns the default values.
+ * @return A set of default (userdefined) values
  */
     
     public Properties getDefaultValues() {
         return attributeValues;
     }
 }
-

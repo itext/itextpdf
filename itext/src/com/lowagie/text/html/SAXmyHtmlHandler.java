@@ -86,6 +86,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
  * triggered by the parser to actions on the <CODE>Document</CODE>-object.
  *
  * @param	document	this is the document on which events must be triggered
+ * @param htmlTags a tagmap translating HTML tags to iText tags
  */
     
     public SAXmyHtmlHandler(DocListener document, HashMap htmlTags) {
@@ -95,6 +96,8 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
 /**
  * This method gets called when a start tag is encountered.
  *
+ * @param   uri 		the Uniform Resource Identifier
+ * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
  * @param	name		the name of the tag that is encountered
  * @param	attrs		the list of attributes
  */
@@ -181,6 +184,8 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
 /**
  * This method gets called when an end tag is encountered.
  *
+ * @param   uri 		the Uniform Resource Identifier
+ * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
  * @param	name		the name of the tag that ends
  */
     

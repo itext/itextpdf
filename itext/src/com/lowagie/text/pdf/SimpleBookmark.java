@@ -98,7 +98,7 @@ import java.util.Stack;
  * <ul>
  * <li>"File" - "the_file_to_open_or_execute"
  * </ul>
- * @author Paulo Soares (psoares@consiste.pt)
+ * @author Paulo Soares 
  */
 public class SimpleBookmark implements SimpleXMLDocHandler {
     
@@ -244,7 +244,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
 	
 	/**
 	 * Gets number of indirect. If type of directed indirect is PAGES, it refers PAGE object through KIDS.
-	 * @author Kazuya Ujihara
+	 * (Contributed by Kazuya Ujihara)
 	 * @param indirect 
 	 * 2004-06-13
 	 */
