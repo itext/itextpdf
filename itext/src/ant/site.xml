@@ -75,7 +75,6 @@
     	        <pathelement location="${itext.bin}/crimson.jar" />
         	</classpath>
 		</java>
-		<ant antfile="${itext.tutorial}/build.xml" inheritAll="false" />
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -83,6 +82,7 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="tutorial.tar.gz" depends="tutorial" description="--> makes a tar.gz-file with the complete javadoc documentation">
+		<ant antfile="${itext.tutorial}/build.xml" inheritAll="false" />
         <mkdir dir="${itext.dist}" />
         <mkdir dir="${itext.downloads}" />
         <tar tarfile="${itext.downloads}/tutorial.tar" basedir="${itext.build}" includes="tutorial/**, examples/**" />

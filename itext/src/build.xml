@@ -88,6 +88,10 @@
 		<ant antfile="ant/site.xml" inheritAll="false" target="lowagie.com" />
 	</target>
 	
+	<target name="tutorial">
+		<ant antfile="ant/site.xml" inheritAll="false" target="tutorial" />
+	</target>
+	
 	<target name="tutorial.tar.gz">
 		<ant antfile="ant/site.xml" inheritAll="false" target="tutorial.tar.gz" />
 	</target>
