@@ -73,6 +73,11 @@ public class PdfAction extends PdfDictionary {
     /** A named action to go to the last page.
      */
     public static final int LASTPAGE = 4;
+
+    /** A named action to open a print dialog.
+     */
+    public static final int PRINTDIALOG = 5;
+
     // constructors
     public static final int SUBMIT_EXCLUDE = 1;
     public static final int SUBMIT_INCLUDE_NO_VALUE_FIELDS = 2;
@@ -162,9 +167,7 @@ public class PdfAction extends PdfDictionary {
                 put(PdfName.N, PdfName.FIRSTPAGE);
                 break;
             case LASTPAGE:
-                put(PdfName.S, PdfName.JAVASCRIPT);
-                put(PdfName.JS, new PdfString("this.print(true);\r"));
-                //put(PdfName.N, PdfName.LASTPAGE);
+                put(PdfName.N, PdfName.LASTPAGE);
                 break;
             case NEXTPAGE:
                 put(PdfName.N, PdfName.NEXTPAGE);
@@ -172,6 +175,9 @@ public class PdfAction extends PdfDictionary {
             case PREVPAGE:
                 put(PdfName.N, PdfName.PREVPAGE);
                 break;
+            case PRINTDIALOG:
+                put(PdfName.S, PdfName.JAVASCRIPT);
+                put(PdfName.JS, new PdfString("this.print(true);\r"));
             default:
                 throw new RuntimeException("Invalid named action.");
         }
