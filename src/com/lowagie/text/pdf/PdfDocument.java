@@ -415,7 +415,7 @@ class PdfDocument extends Document implements DocListener {
     
 /** This is the <CODE>ArrayList</CODE> with the outlines of the document. */
     private ArrayList outlines;
-   
+    
 /** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
     private PdfOutline currentOutline;
     
@@ -436,7 +436,7 @@ class PdfDocument extends Document implements DocListener {
     
     private String openActionName;
     private PdfAction openActionAction;
-
+    
     //add by Jin-Hsia Yang
     private boolean isNewpage = false;
     private boolean isParagraphE = false;
@@ -667,11 +667,11 @@ class PdfDocument extends Document implements DocListener {
         localPageDestinations.clear();
         // we initialize the new page
         initPage();
-
+        
         //add by Jin-Hsia Yang
         isNewpage = false;
         //end add by Jin-Hsia Yang
-
+        
         return true;
     }
     
@@ -887,7 +887,7 @@ class PdfDocument extends Document implements DocListener {
             currentHeight = indentTop() - currentY;
         }
         ptable.setTableEvent(event);
-
+        
     }
     
 /**
@@ -1162,7 +1162,7 @@ class PdfDocument extends Document implements DocListener {
                 }
                 case Element.TABLE:
                 {
-
+                    
                     /**
                      * This is a list of people who worked on the Table functionality.
                      * To see who did what, please check the CVS repository:
@@ -1177,35 +1177,35 @@ class PdfDocument extends Document implements DocListener {
                      * Tom Ring
                      * Paulo Soares
                      */
-
+                    
                     // before every table, we add a new line and flush all lines
                     newLine();
                     flushLines();
-
+                    
                     // initialisation of parameters
                     float pagetop = indentTop();
                     float oldHeight = currentHeight;
                     float cellDisplacement;
                     PdfCell cell;
                     Color color;
-
+                    
                     // correct table : fill empty cells/ parse table in table
                     ((Table) element).complete();
-
+                    
                     // constructing the PdfTable
                     PdfTable table = new PdfTable((Table) element,
-                        indentLeft(), indentRight(),
-                        currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
-
+                    indentLeft(), indentRight(),
+                    currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
+                    
                     // drawing the table
                     ArrayList cells = table.getCells();
                     ArrayList headercells = null;
                     while (! cells.isEmpty()) {
-
+                        
                         // initialisation of some extra parameters;
                         float lostTableBottom = 0;
                         float lostTableTop = 0;
-
+                        
                         // loop over the cells
                         boolean cellsShown = false;
                         for (Iterator iterator = cells.iterator(); iterator.hasNext(); ) {
@@ -1218,7 +1218,7 @@ class PdfDocument extends Document implements DocListener {
                                 graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
                                 lostTableBottom = Math.max(cell.bottom(), indentBottom());
                                 lostTableTop = cell.top();
-
+                                
                                 // we write the text
                                 float cellTop = cell.top(pagetop - oldHeight);
                                 text.moveText(0, cellTop);
@@ -1233,7 +1233,7 @@ class PdfDocument extends Document implements DocListener {
                                 iterator.remove();
                             }
                         }
-
+                        
                         // we paint the graphics of the table after looping through all the cells
                         if (cellsShown) {
                             Rectangle tablerec = new Rectangle(table);
@@ -1244,27 +1244,36 @@ class PdfDocument extends Document implements DocListener {
                             tablerec.setGrayFill(table.grayFill());
                             graphics.rectangle(tablerec.rectangle(top(), indentBottom()));
                         }
-
+                        
                         // if the table continues on the next page
                         if (! cells.isEmpty()) {
-
+                            
                             graphics.setLineWidth(table.borderWidth());
                             if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
                             {
                                 // Draw the bottom line
+                                
+                                // the color is set to the color of the element
+                                Color tColor = table.borderColor();
+                                if (tColor != null) {
+                                    graphics.setRGBColorStroke(tColor.getRed(), tColor.getGreen(), tColor.getBlue());
+                                }
                                 graphics.moveTo(table.left(), Math.max(table.bottom(), indentBottom()));
                                 graphics.lineTo(table.right(),  Math.max(table.bottom(), indentBottom()));
                                 graphics.stroke();
+                                if (tColor != null) {
+                                    graphics.resetRGBColorStroke();
+                                }
                             }
-
+                            
                             // old page
                             pageEmpty = false;
                             float difference = lostTableBottom;
-
+                            
                             // new page
                             newPage();
                             flushLines();
-
+                            
                             // this part repeats the table headers (if any)
                             headercells = table.getHeaderCells();
                             int size = headercells.size();
@@ -1288,12 +1297,12 @@ class PdfDocument extends Document implements DocListener {
                                     cellDisplacement = flushLines() - cellTop;
                                     text.moveText(0, cellDisplacement);
                                 }
-
+                                
                                 currentHeight =  indentTop() - pagetop - table.cellspacing();
                                 text.moveText(0, pagetop - indentTop() + table.cellspacing() - currentHeight);
                             }
                             oldHeight = currentHeight;
-
+                            
                             // calculating the new positions of the table and the cells
                             size = Math.min(cells.size(), table.columns());
                             int i = 0;
@@ -1324,7 +1333,7 @@ class PdfDocument extends Document implements DocListener {
                             }
                         }
                     }
-
+                    
                     text.moveText(0, oldHeight - currentHeight);
                     lines.add(line);
                     currentHeight += line.height() - pagetop + indentTop();
@@ -1410,7 +1419,7 @@ class PdfDocument extends Document implements DocListener {
                 name = i.name();
             }
             images.put(image.getMySerialId(), name);
-        }        
+        }
         return name;
     }
     
@@ -1529,7 +1538,7 @@ class PdfDocument extends Document implements DocListener {
         }
         
         // if there is a watermark, the watermark is added
-        if (watermark != null) {            
+        if (watermark != null) {
             float mt[] = watermark.matrix();
             graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
@@ -1700,13 +1709,13 @@ class PdfDocument extends Document implements DocListener {
             
             //add by Jin-Hsia Yang
             if(isParagraphE && isNewpage && newline) {
-	        newline=false;
-	        text.moveText(listIndentLeft + paraIndent,-l.height());
+                newline=false;
+                text.moveText(listIndentLeft + paraIndent,-l.height());
             } else
-            //end add by Jin-Hsia Yang
-
-            // aligning the line
-            text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
+                //end add by Jin-Hsia Yang
+                
+                // aligning the line
+                text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
             
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
@@ -2122,7 +2131,7 @@ class PdfDocument extends Document implements DocListener {
         PdfAction action = getLocalGotoAction(name);
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
     }
-
+    
     PdfAction getLocalGotoAction(String name) {
         PdfAction action;
         Object obj[] = (Object[])localDestinations.get(name);
@@ -2208,12 +2217,12 @@ class PdfDocument extends Document implements DocListener {
     void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
     }
-
+    
     public void setOpenAction(String name) {
         openActionName = name;
         openActionAction = null;
     }
-
+    
     public void setOpenAction(PdfAction action) {
         openActionAction = action;
         openActionName = null;
