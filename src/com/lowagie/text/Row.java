@@ -113,10 +113,8 @@ public class Row implements Element, MarkupAttributes {
  *
  * @param columns   a number of columns
  */
-// patch by Matt Benson 02/21/2002
-// changed access modifier to protected for MarkupRow
+ 
     protected Row(int columns) {
-// end patch by Matt Benson 02/21/2002
         this.columns = columns;
         reserved = new boolean[columns];
         cells = new Object[columns];
@@ -201,7 +199,7 @@ public class Row implements Element, MarkupAttributes {
 /**
  * Adds a <CODE>Cell</CODE> to the <CODE>Row</CODE>.
  *
- * @param       element the element to add. (currently only Cells and Tables supported)
+ * @param       element the element to add (currently only Cells and Tables supported)
  * @return      the column position the <CODE>Cell</CODE> was added,
  *                      or <CODE>-1</CODE> if the <CODE>element</CODE> couldn't be added.
  */
@@ -330,7 +328,7 @@ public class Row implements Element, MarkupAttributes {
  * @param       column  the column of which you'd like to know the type
  */
     
-    public int getElementID(int column) {
+    int getElementID(int column) {
         if (cells[column] == null) return NULL;
         else if (Cell.class.isInstance(cells[column])) return CELL;
         else if (Table.class.isInstance(cells[column])) return TABLE;
@@ -345,7 +343,7 @@ public class Row implements Element, MarkupAttributes {
  * @param       object the object of which you'd like to know the type-id, -1 if invalid
  */
     
-    public int getObjectID(Object element) {
+    int getObjectID(Object element) {
         if (element == null) return NULL;
         else if (Cell.class.isInstance(element)) return CELL;
         else if (Table.class.isInstance(element)) return TABLE;
@@ -390,7 +388,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  a value
  */
     
-    public final int validPosition() {
+    final int validPosition() {
         return currentColumn;
     }
     

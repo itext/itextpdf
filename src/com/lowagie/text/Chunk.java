@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -53,12 +53,12 @@ package com.lowagie.text;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Enumeration;
 import java.util.Set;
 import java.net.URL;
 
@@ -74,7 +74,7 @@ import com.lowagie.text.pdf.PdfAction;
  * <P>
  * Example:
  * <BLOCKQUOTE><PRE>
- * <STRONG>Chunk chunk = new Chunk("Hello world", new Font(Font.COURIER, 20, Font.ITALIC, new Color(255, 0, 0)));</STRONG>
+ * <STRONG>Chunk chunk = new Chunk("Hello world", FontFactory.getFont(FontFactory.COURIER, 20, Font.ITALIC, new Color(255, 0, 0)));</STRONG>
  * document.add(chunk);
  * </PRE></BLOCKQUOTE>
  */
@@ -182,13 +182,23 @@ public class Chunk implements Element, MarkupAttributes {
  */
     
     public Chunk(Properties attributes) {
-        this("", new Font(attributes));
+        this("", FontFactory.getFont(attributes));
         String value;
         if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             append(value);
         }
         if ((value = (String)attributes.remove(ElementTags.LOCALGOTO)) != null) {
             setLocalGoto(value);
+        }
+        if ((value = (String)attributes.remove(ElementTags.REMOTEGOTO)) != null) {
+            String destination = (String) attributes.remove(ElementTags.DESTINATION);
+            String page = (String) attributes.remove(ElementTags.PAGE);
+            if (page != null) { 
+                setRemoteGoto(value, Integer.valueOf(page).intValue());
+            }
+            else if (destination != null) {
+                setRemoteGoto(value, destination);
+            }
         }
         if ((value = (String)attributes.remove(ElementTags.LOCALDESTINATION)) != null) {
             setLocalDestination(value);
@@ -199,7 +209,7 @@ public class Chunk implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
             setGenericTag(value);
         }
-        setMarkupAttributes(attributes);
+        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -528,11 +538,10 @@ public class Chunk implements Element, MarkupAttributes {
         return (table == null) ? Collections.EMPTY_SET : table.keySet();
         // for jdk1.1.x
         /*
-        if (table == null)
-            return Collections.EMPTY_SET;
+        if (table == null) return Collections.EMPTY_SET;
         HashSet hash = new HashSet();
-        for (Enumeration e = table.keys(); e.hasMoreElements();)
-            hash.add(e.nextElement());
-        return hash;*/
+        for (Enumeration e = table.keys(); e.hasMoreElements();) hash.add(e.nextElement());
+        return hash;
+        */
     }
 }

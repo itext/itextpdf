@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -112,7 +112,7 @@ public class Annotation implements Element, MarkupAttributes {
 /** This is a possible attribute. */
     public static String LLY = "lly";
 /** This is a possible attribute. */
-    public static String urX = "urx";
+    public static String URX = "urx";
 /** This is a possible attribute. */
     public static String URY = "ury";
     
@@ -180,6 +180,12 @@ public class Annotation implements Element, MarkupAttributes {
     
 /**
  * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       url     the external reference
  */
     
     public Annotation(float llx, float lly, float urx, float ury, URL url) {
@@ -190,6 +196,12 @@ public class Annotation implements Element, MarkupAttributes {
     
 /**
  * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       url     the external reference
  */
     
     public Annotation(float llx, float lly, float urx, float ury, String url) {
@@ -199,7 +211,14 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
- * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       file    an external PDF file
+ * @param       dest    the destination in this file
  */
     
     public Annotation(float llx, float lly, float urx, float ury, String file, String dest) {
@@ -210,7 +229,14 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
- * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       file    an external PDF file
+ * @param       page    a page number in this file
  */
     
     public Annotation(float llx, float lly, float urx, float ury, String file, int page) {
@@ -221,7 +247,13 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
- * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       named   a named destination in this file
  */
     
     public Annotation(float llx, float lly, float urx, float ury, int named) {
@@ -231,7 +263,16 @@ public class Annotation implements Element, MarkupAttributes {
     }
     
 /**
- * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * Constructs an <CODE>Annotation</CODE>.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ * @param       application     an external application
+ * @param       parameters      parameters to pass to this application
+ * @param       operation       the operation to pass to this application
+ * @param       defaultdir      the default directory to run this application in
  */
     
     public Annotation(float llx, float lly, float urx, float ury, String application, String parameters, String operation, String defaultdir) {
@@ -251,17 +292,66 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public Annotation(Properties attributes) {
+        String value = (String)attributes.remove(ElementTags.LLX);
+        if (value != null) {
+            llx = Float.valueOf(value + "f").floatValue();
+        }
+        value = (String)attributes.remove(ElementTags.LLY);
+        if (value != null) {
+            lly = Float.valueOf(value + "f").floatValue();
+        }
+        value = (String)attributes.remove(ElementTags.URX);
+        if (value != null) {
+            urx = Float.valueOf(value + "f").floatValue();
+        }
+        value = (String)attributes.remove(ElementTags.URY);
+        if (value != null) {
+            ury = Float.valueOf(value + "f").floatValue();
+        }
         String title = (String)attributes.remove(ElementTags.TITLE);
         String text = (String)attributes.remove(ElementTags.CONTENT);
-        if (title == null) {
-            title = "";
+        if (title != null || text != null) {
+            annotationtype = TEXT;
         }
-        if (text == null) {
-            text = "";
+        else if ((value = (String)attributes.remove(ElementTags.URL)) != null) {
+            annotationtype = URL_AS_STRING;
+            annotationAttributes.put(FILE, value);
         }
-        annotationAttributes.put(TITLE, title);
-        annotationAttributes.put(CONTENT, text);
-        setMarkupAttributes(attributes);
+        else if ((value = (String)attributes.remove(ElementTags.NAMED)) != null) {
+            annotationtype = NAMED_DEST;
+            annotationAttributes.put(NAMED, Integer.valueOf(value));
+        }
+        else {
+            String file = (String)attributes.remove(ElementTags.FILE);
+            String destination = (String)attributes.remove(ElementTags.DESTINATION);
+            String page = (String)attributes.remove(ElementTags.PAGE);
+            if (file != null) {
+                annotationAttributes.put(FILE, file);
+                if (destination != null) {
+                    annotationtype = FILE_DEST;
+                    annotationAttributes.put(DESTINATION, destination);
+                }
+                else if (page != null) {
+                    annotationtype = FILE_PAGE;
+                    annotationAttributes.put(FILE, file);
+                    annotationAttributes.put(PAGE, Integer.valueOf(page));
+                }
+            }
+            else if ((value = (String)attributes.remove(ElementTags.NAMED)) != null) {
+                annotationtype = LAUNCH;
+                annotationAttributes.put(APPLICATION, value);
+                annotationAttributes.put(PARAMETERS, (String)attributes.remove(ElementTags.PARAMETERS));
+                annotationAttributes.put(OPERATION, (String)attributes.remove(ElementTags.OPERATION));
+                annotationAttributes.put(DEFAULTDIR, (String)attributes.remove(ElementTags.DEFAULTDIR));
+            }
+        }
+        if (annotationtype == TEXT) {
+            if (title == null) title = "";
+            if (text == null) text = "";
+            annotationAttributes.put(TITLE, title);
+            annotationAttributes.put(CONTENT, text);
+        }
+        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -303,6 +393,24 @@ public class Annotation implements Element, MarkupAttributes {
     
     public ArrayList getChunks() {
         return new ArrayList();
+    }
+   
+    // methods
+    
+/**
+ * Sets the dimensions of this annotation.
+ *
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ */    
+    
+    public void setDimensions (float llx, float lly, float urx, float ury) {
+        this.llx = llx;
+        this.lly = lly;
+        this.urx = urx;
+        this.ury = ury;
     }
     
     // methods to retrieve information

@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -185,6 +185,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     /** Holds value of property interpolation. */
     protected boolean interpolation;
+    
+/** if the annotation is not null the image will be clickable. */
+    protected Annotation annotation = null;
 
 /** Contains extra markupAttributes */
     protected Properties markupAttributes;
@@ -535,13 +538,14 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
  */
     
     public static Image getInstance(Properties attributes) throws BadElementException, MalformedURLException, IOException {
-        String value;
-        Image image = Image.getInstance((String)attributes.remove(ElementTags.URL));
+        String value = (String)attributes.remove(ElementTags.URL);
+        if (value == null) throw new MalformedURLException("The URL of the image is missing.");
+        Image image = Image.getInstance(value);
         int align = 0;
         if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
-            if (ElementTags.ALIGN_LEFT.equals(value)) align |= Image.LEFT;
-            else if (ElementTags.ALIGN_RIGHT.equals(value)) align |= Image.RIGHT;
-            else if (ElementTags.ALIGN_MIDDLE.equals(value)) align |= Image.MIDDLE;
+            if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(value)) align |= Image.LEFT;
+            else if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(value)) align |= Image.RIGHT;
+            else if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(value)) align |= Image.MIDDLE;
         }
         if ((value = (String)attributes.remove(ElementTags.UNDERLYING)) != null) {
             if (new Boolean(value).booleanValue()) align |= Image.UNDERLYING;
@@ -556,7 +560,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         String x;
         String y;
         if (((x = (String)attributes.remove(ElementTags.ABSOLUTEX)) != null)
-        && ((y = (String)attributes.remove(ElementTags.ABSOLUTEX)) != null)) {
+        && ((y = (String)attributes.remove(ElementTags.ABSOLUTEY)) != null)) {
             image.setAbsolutePosition(Float.valueOf(x + "f").floatValue(), Float.valueOf(y + "f").floatValue());
         }
         if ((value = (String)attributes.remove(ElementTags.PLAINWIDTH)) != null) {
@@ -568,7 +572,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         if ((value = (String)attributes.remove(ElementTags.ROTATION)) != null) {
             image.setRotation(Float.valueOf(value + "f").floatValue());
         }
-        image.setMarkupAttributes(attributes);
+        if (attributes.size() > 0) image.setMarkupAttributes(attributes);
         return image;
     }
     
@@ -711,6 +715,26 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     public void setRotationDegrees(float deg) {
         double d=Math.PI;                  //__IDS__
         setRotation(deg / 180 * (float)d); //__IDS__
+    }
+    
+/**
+ * Sets the annotation of this Image.
+ *
+ * @param   annotation  the annotation
+ */
+
+    public void setAnnotation(Annotation annotation) {
+        this.annotation = annotation;
+    }
+    
+/**
+ * Gets the annotation.
+ *
+ * @return  the annotation that is linked to this image
+ */
+    
+    public Annotation annotation() {
+        return annotation;
     }
     
     // methods to retrieve information
