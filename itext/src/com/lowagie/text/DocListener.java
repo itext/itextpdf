@@ -1,9 +1,8 @@
 /*
- * @(#)DocListener.java				0.23 2000/02/02
- *       release iText0.3:			0.23 2000/02/14
- *       release iText0.35:			0.23 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright (c) 1999, 2000, 2001 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -34,51 +33,30 @@
 
 package com.lowagie.text;
 
-import java.util.EventListener;
-
 /**
  * A class that implements <CODE>DocListener</CODE> will perform some
- * actions when an <CODE>Element</CODE> is added to a <CODE>Document</CODE>.
+ * actions when some actions are performed on a <CODE>Document</CODE>.
  *
+ * @see		ElementListener
  * @see		Document
  * @see		DocWriter
  *
  * @author  bruno@lowagie.com
- * @version 0.23, 2000/02/02
- *
- * @since   iText0.30
  */
 
-public interface DocListener extends EventListener {
+public interface DocListener extends ElementListener {
 
 // methods
 
 	/**
 	 * Closes the <CODE>DocListener</CODE> when gc is invoked.
-	 *
-     * @since   iText0.30
 	 */
 
 	public void finalize();
 
     /**
-     * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>. 
-     *
-	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
-     */
-
-    public boolean add(Element element) throws DocumentException;
-
-    /**
      * Signals that the <CODE>Document</CODE> has been opened and that
 	 * <CODE>Elements</CODE> can be added.
-	 *
-	 * @return	<CODE>void</CODE>
-	 *
-     * @since   iText0.30
      */
 
     public void open();
@@ -88,8 +66,6 @@ public interface DocListener extends EventListener {
 	 *
 	 * @param	pageSize	the new pagesize
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean setPageSize(Rectangle pageSize);
@@ -98,16 +74,12 @@ public interface DocListener extends EventListener {
      * Signals that a <CODE>Watermark</CODE> was added to the <CODE>Document</CODE>. 
      *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-	 *
-     * @since   iText0.31
      */
 
     public boolean add(Watermark watermark);
 
     /**
      * Signals that a <CODE>Watermark</CODE> was removed from the <CODE>Document</CODE>.
-	 *
-     * @since   iText0.31
      */
 
     public void removeWatermark();
@@ -120,8 +92,6 @@ public interface DocListener extends EventListener {
 	 * @param	marginTop		the margin on the top
 	 * @param	marginBottom	the margin on the bottom
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom);	
@@ -131,8 +101,6 @@ public interface DocListener extends EventListener {
      *
 	 * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
      */
 
     public boolean newPage() throws DocumentException;
@@ -141,9 +109,6 @@ public interface DocListener extends EventListener {
 	 * Changes the header of this document.
 	 * 
 	 * @param	header		the new header
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setHeader(HeaderFooter header);
@@ -152,9 +117,6 @@ public interface DocListener extends EventListener {
 	 * Resets the header of this document.
 	 * 
 	 * @param	header		the new header
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void resetHeader();
@@ -163,29 +125,18 @@ public interface DocListener extends EventListener {
 	 * Changes the footer of this document.
 	 * 
 	 * @param	footer		the new footer
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setFooter(HeaderFooter footer);
 
 	/**
 	 * Resets the footer of this document.
-	 *
-	 * @return	<CODE>void</CODE>
-	 *			
-	 * @since	iText0.30
 	 */
 
 	public void resetFooter();
 	
 	/**
 	 * Sets the page number to 0.
-	 *
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void resetPageCount();
@@ -194,9 +145,6 @@ public interface DocListener extends EventListener {
 	 * Sets the page number.
 	 *
 	 * @param	pageN		the new page number
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setPageCount(int pageN);
@@ -205,11 +153,7 @@ public interface DocListener extends EventListener {
      * Signals that the <CODE>Document</CODE> was closed and that no other
 	 * <CODE>Elements</CODE> will be added.
 	 * <P>
-	 * The outputstream of every writer implementing <CODE>DocListener</CODE> will be closed. 
-     *
-	 * @return	<CODE>void</CODE>
-	 *
-     * @since   iText0.30
+	 * The outputstream of every writer implementing <CODE>DocListener</CODE> will be closed.
      */
 
     public void close();
