@@ -55,10 +55,10 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.HashMap;
 
-import org.xml.sax.Parser;
+import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.ParserFactory;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.lowagie.text.DocListener;
 import com.lowagie.text.ExceptionConverter;
@@ -73,7 +73,7 @@ public class XmlParser {
     public static final String PARSER = "org.apache.xerces.parsers.SAXParser";
     
 /** This is the instance of the parser. */
-    protected Parser parser;
+    protected XMLReader parser;
     
 /**
  * Constructs an XmlParser.
@@ -81,16 +81,10 @@ public class XmlParser {
     
     public XmlParser() {
         try {
-            parser = ParserFactory.makeParser(PARSER);
+            parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
         }
-        catch(ClassNotFoundException cnfe) {
-            throw new ExceptionConverter(cnfe);
-        }
-        catch(IllegalAccessException iae) {
-            throw new ExceptionConverter(iae);
-        }
-        catch(InstantiationException ie) {
-            throw new ExceptionConverter(ie);
+        catch(SAXException se) {
+            throw new ExceptionConverter(se);
         }
     }
     
@@ -100,14 +94,14 @@ public class XmlParser {
     
     public void go(DocListener document, InputSource is) {
         try {
-            parser.setDocumentHandler(new SAXiTextHandler(document));
+            parser.setContentHandler(new SAXiTextHandler(document));
             parser.parse(is);
         }
         catch(SAXException se) {
-                    throw new ExceptionConverter(se);
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-                    throw new ExceptionConverter(ioe);
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -117,14 +111,14 @@ public class XmlParser {
     
     public void go(DocListener document, InputSource is, String tagmap) {
         try {
-            parser.setDocumentHandler(new SAXmyHandler(document, new TagMap(tagmap)));
+            parser.setContentHandler(new SAXmyHandler(document, new TagMap(tagmap)));
             parser.parse(is);
         }
         catch(SAXException se) {
-                    throw new ExceptionConverter(se);
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-                    throw new ExceptionConverter(ioe);
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -134,14 +128,14 @@ public class XmlParser {
     
     public void go(DocListener document, InputSource is, HashMap tagmap) {
         try {
-            parser.setDocumentHandler(new SAXmyHandler(document, tagmap));
+            parser.setContentHandler(new SAXmyHandler(document, tagmap));
             parser.parse(is);
         }
         catch(SAXException se) {
-                    throw new ExceptionConverter(se);
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-                    throw new ExceptionConverter(ioe);
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -151,14 +145,14 @@ public class XmlParser {
     
     public void go(DocListener document, String file) {
         try {
-            parser.setDocumentHandler(new SAXiTextHandler(document));
+            parser.setContentHandler(new SAXiTextHandler(document));
             parser.parse(file);
         }
         catch(SAXException se) {
-                    throw new ExceptionConverter(se);
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-                    throw new ExceptionConverter(ioe);
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -168,14 +162,14 @@ public class XmlParser {
     
     public void go(DocListener document, String file, String tagmap) {
         try {
-            parser.setDocumentHandler(new SAXmyHandler(document, new TagMap(tagmap)));
+            parser.setContentHandler(new SAXmyHandler(document, new TagMap(tagmap)));
             parser.parse(file);
         }
         catch(SAXException se) {
-                    throw new ExceptionConverter(se);
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-                    throw new ExceptionConverter(ioe);
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -185,14 +179,14 @@ public class XmlParser {
     
     public void go(DocListener document, String file, HashMap tagmap) {
         try {
-            parser.setDocumentHandler(new SAXmyHandler(document, tagmap));
+            parser.setContentHandler(new SAXmyHandler(document, tagmap));
             parser.parse(file);
         }
         catch(SAXException se) {
-                    throw new ExceptionConverter(se);
+            throw new ExceptionConverter(se);
         }
         catch(IOException ioe) {
-                    throw new ExceptionConverter(ioe);
+            throw new ExceptionConverter(ioe);
         }
     }
     

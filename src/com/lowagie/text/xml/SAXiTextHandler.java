@@ -57,7 +57,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Stack;
 
-import org.xml.sax.HandlerBase;
+import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.AttributeList;
 
 import com.lowagie.text.*;
@@ -66,7 +66,7 @@ import com.lowagie.text.*;
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
  */
 
-public class SAXiTextHandler extends HandlerBase {
+public class SAXiTextHandler extends DefaultHandler {
     
 /** This is the resulting document. */
     protected DocListener document;

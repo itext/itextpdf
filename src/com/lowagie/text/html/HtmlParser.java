@@ -54,10 +54,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 
-import org.xml.sax.Parser;
+import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.ParserFactory;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocListener;
@@ -83,7 +83,7 @@ public class HtmlParser extends XmlParser {
     
     public void go(DocListener document, InputSource is) {
         try {
-            parser.setDocumentHandler(new SAXmyHtmlHandler(document));
+            parser.setContentHandler(new SAXmyHtmlHandler(document));
             parser.parse(is);
         }
         catch(SAXException se) {
@@ -109,7 +109,7 @@ public class HtmlParser extends XmlParser {
     
     public void go(DocListener document, String file) {
         try {
-            parser.setDocumentHandler(new SAXmyHtmlHandler(document));
+            parser.setContentHandler(new SAXmyHtmlHandler(document));
             parser.parse(file);
         }
         catch(SAXException se) {
@@ -135,7 +135,7 @@ public class HtmlParser extends XmlParser {
     
     public void go(DocListener document, InputStream is) {
         try {
-            parser.setDocumentHandler(new SAXmyHtmlHandler(document));
+            parser.setContentHandler(new SAXmyHtmlHandler(document));
             parser.parse(new InputSource(is));
         }
         catch(SAXException se) {
@@ -161,7 +161,7 @@ public class HtmlParser extends XmlParser {
     
     public void go(DocListener document, Reader is) {
         try {
-            parser.setDocumentHandler(new SAXmyHtmlHandler(document));
+            parser.setContentHandler(new SAXmyHtmlHandler(document));
             parser.parse(new InputSource(is));
         }
         catch(SAXException se) {
