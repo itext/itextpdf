@@ -543,9 +543,17 @@ public class SAXiTextHandler extends HandlerBase {
                 int j = 0;
                 for (Iterator i = cells.iterator(); i.hasNext(); ) {
                     cell = (Cell) i.next();
-                    if ((width = cell.cellWidth()) != null
-                    && cell.colspan() == 1
-                    && width.endsWith("%")) {
+                    if ((width = cell.cellWidth()) == null) {
+                        if (cell.colspan() == 1 && cellWidths[j] == 0) {
+                            try {
+                                cellWidths[j] = 100f / columns;
+                                total += cellWidths[j];
+                            }
+                            catch(Exception e) {
+                            }
+                        }
+                    }
+                    else if (cell.colspan() == 1 && width.endsWith("%")) {
                         try {
                             cellWidths[j] = Float.valueOf(width.substring(0, width.length() - 1) + "f").floatValue();
                             total += cellWidths[j];
