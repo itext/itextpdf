@@ -52,6 +52,9 @@ package com.lowagie.text;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Enumeration;
@@ -97,6 +100,9 @@ public class FontFactory extends java.lang.Object {
     public static final String SYMBOL = BaseFont.SYMBOL;
     
 /** This is a possible value of a base 14 type 1 font */
+    public static final String TIMES_NEW_ROMAN = "Times New Roman";
+    
+/** This is a possible value of a base 14 type 1 font */
     public static final String TIMES_ROMAN = BaseFont.TIMES_ROMAN;
     
 /** This is a possible value of a base 14 type 1 font */
@@ -124,13 +130,44 @@ public class FontFactory extends java.lang.Object {
         trueTypeFonts.setProperty(HELVETICA_OBLIQUE, HELVETICA_OBLIQUE);
         trueTypeFonts.setProperty(HELVETICA_BOLDOBLIQUE, HELVETICA_BOLDOBLIQUE);
         trueTypeFonts.setProperty(SYMBOL, SYMBOL);
-        trueTypeFonts.setProperty("Times New Roman", TIMES_ROMAN);
         trueTypeFonts.setProperty(TIMES_ROMAN, TIMES_ROMAN);
         trueTypeFonts.setProperty(TIMES_BOLD, TIMES_BOLD);
         trueTypeFonts.setProperty(TIMES_ITALIC, TIMES_ITALIC);
         trueTypeFonts.setProperty(TIMES_BOLDITALIC, TIMES_BOLDITALIC);
         trueTypeFonts.setProperty(ZAPFDINGBATS, ZAPFDINGBATS);
     }
+    
+/** This is a map of fontfamilies. */
+    private static Hashtable fontFamilies = new Hashtable();
+    
+    static {
+        HashSet tmp;
+        tmp = new HashSet();
+        tmp.add(COURIER);
+        tmp.add(COURIER_BOLD);
+        tmp.add(COURIER_OBLIQUE);
+        tmp.add(COURIER_BOLDOBLIQUE);
+        fontFamilies.put(COURIER, tmp);
+        tmp = new HashSet();
+        tmp.add(HELVETICA);
+        tmp.add(HELVETICA_BOLD);
+        tmp.add(HELVETICA_OBLIQUE);
+        tmp.add(HELVETICA_BOLDOBLIQUE);
+        fontFamilies.put(HELVETICA, tmp);
+        tmp = new HashSet();
+        tmp.add(SYMBOL);
+        fontFamilies.put(SYMBOL, tmp);
+        tmp = new HashSet();
+        tmp.add(TIMES_ROMAN);
+        tmp.add(TIMES_BOLD);
+        tmp.add(TIMES_ITALIC);
+        tmp.add(TIMES_BOLDITALIC);
+        fontFamilies.put(TIMES_NEW_ROMAN, tmp);
+        tmp = new HashSet();
+        tmp.add(ZAPFDINGBATS);
+        fontFamilies.put(ZAPFDINGBATS, tmp);
+    }
+    
     
 /** This is the default encoding to use. */
     public static String defaultEncoding = BaseFont.WINANSI;
@@ -154,6 +191,20 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color) {
+        if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
+        HashSet tmp = (HashSet) fontFamilies.get(fontname);
+        if (tmp != null) {
+            for (Iterator i = tmp.iterator(); i.hasNext(); ) {
+                String f = (String) i.next();
+                int fs = Font.NORMAL;
+                if (f.toLowerCase().indexOf("bold") != -1) fs |= Font.BOLD;
+                if (f.toLowerCase().indexOf("italic") != -1 || f.toLowerCase().indexOf("oblique") != -1) fs |= Font.ITALIC;
+                if ((style & Font.BOLDITALIC) == fs) {
+                    fontname = f;
+                    break;
+                }
+            }
+        }
         BaseFont basefont = null;
         try {
             try {
@@ -426,11 +477,29 @@ public class FontFactory extends java.lang.Object {
                 if (alias != null) {
                     trueTypeFonts.setProperty(alias, path);
                 }
+                String fullName = null;
+                String familyName = null;
                 String[][] names = bf.getFullFontName();
                 for (int i = 0; i < names.length; i++) {
-                    if ("0".equals(names[i][0]) && "0".equals(names[i][2])) {
-                       trueTypeFonts.setProperty(names[i][3], path);
-                       break;
+                    if ("0".equals(names[i][2])) {
+                        fullName = names[i][3];
+                        trueTypeFonts.setProperty(fullName, path);
+                        break;
+                    }
+                }
+                if (fullName != null) {
+                    names = bf.getFamilyFontName();
+                    for (int i = 0; i < names.length; i++) {
+                        if ("0".equals(names[i][2])) {
+                           familyName = names[i][3];
+                           HashSet tmp = (HashSet) fontFamilies.get(familyName);
+                           if (tmp == null) {
+                               tmp = new HashSet();
+                           }
+                           tmp.add(fullName);
+                           fontFamilies.put(familyName, tmp);
+                           break;
+                        }
                     }
                 }
             }
@@ -459,6 +528,14 @@ public class FontFactory extends java.lang.Object {
     
     public static Set getRegisteredFonts() {
         return Chunk.getKeySet(trueTypeFonts);
+    }
+    
+/**
+ * Gets a set of registered fontnames.
+ */
+    
+    public static Set getRegisteredFamilies() {
+        return Chunk.getKeySet(fontFamilies);
     }
     
 /**

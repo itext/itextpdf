@@ -311,7 +311,7 @@ public class Font implements Comparable {
         if (family.equalsIgnoreCase(FontFactory.HELVETICA)) {
             return HELVETICA;
         }
-        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN) || family.equalsIgnoreCase("Times New Roman")) {
+        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN) || family.equalsIgnoreCase(FontFactory.TIMES_NEW_ROMAN)) {
             return TIMES_NEW_ROMAN;
         }
         if (family.equalsIgnoreCase(FontFactory.SYMBOL)) {
@@ -337,7 +337,7 @@ public class Font implements Comparable {
             case Font.HELVETICA:
                 return FontFactory.HELVETICA;
             case Font.TIMES_NEW_ROMAN:
-                return "Times New Roman";
+                return FontFactory.TIMES_NEW_ROMAN;
             case Font.SYMBOL:
                 return FontFactory.SYMBOL;
             case Font.ZAPFDINGBATS:
