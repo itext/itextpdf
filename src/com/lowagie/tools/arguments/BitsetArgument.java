@@ -67,8 +67,8 @@ public class BitsetArgument extends ToolArgument {
 	 * Constructs an BitsetArgument.
 	 * @param tool the tool that needs this argument
 	 * @param name the name of the argument
-	 * @param the description of the argument
-	 * @param the different options that can be true or false
+	 * @param description the description of the argument
+	 * @param options the different options that can be true or false
 	 */
 	public BitsetArgument(AbstractTool tool, String name, String description, String[] options) {
 		super(tool, name, description, String.class.getName());
