@@ -52,6 +52,7 @@
 
     <target name="examples.build" description="--> building the pages for lowagie.com">
         <mkdir dir="${itext.tutorial}" />
+		<copy file="${itext.xml.tutorial}/style.css" todir="${itext.tutorial}" overwrite="no" />
 		<java classname="com.lowagie.tools.BuildTutorial">
 			<arg value="${itext.xml.tutorial}" />
 			<arg value="${itext.tutorial}" />
