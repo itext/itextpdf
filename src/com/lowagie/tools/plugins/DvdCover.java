@@ -52,7 +52,6 @@ package com.lowagie.tools.plugins;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Iterator;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -79,42 +78,22 @@ public class DvdCover extends AbstractTool {
 	 * Constructs a DvdCover object.
 	 */
 	public DvdCover() {
-		internalFrame = new JInternalFrame("Make your own DVD Cover", true, true, true);
-		
 		arguments.add(new FileArgument(this, "destfile", "The file to which the PDF has to be written", true, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "title", "The title of the DVD", String.class.getName()));
 		arguments.add(new ToolArgument(this, "backgroundcolor", "The backgroundcolor of the DVD Cover (for instance 0xFFFFFF)", Color.class.getName()));
 		arguments.add(new ImageArgument(this, "front", "The front image of the DVD Cover"));
 		arguments.add(new ImageArgument(this, "back", "The back image of the DVD Cover"));
 		arguments.add(new ImageArgument(this, "side", "The side image of the DVD Cover"));
-		
+	}
+
+	/**
+	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
+	 */
+	protected void createFrame() {
+		internalFrame = new JInternalFrame("Make your own DVD Cover", true, true, true);
 		internalFrame.setSize(500, 300);
 		internalFrame.setJMenuBar(getMenubar());
 	}
-	
-    /**
-     * Generates a DVD Cover in PDF.
-     * @param args	an array containing [0] a filename [1] a title [2] a backgroundcolor [3] a front image [4] a back image [5] a side image
-     */
-    public static void main(String[] args) {
-    	DvdCover cover = new DvdCover();
-    	if (args.length == 0) {
-    		System.err.println(cover.getUsage());
-    	}
-    	int counter = 0;
-    	ToolArgument argument;
-        for (Iterator i = cover.getArguments().iterator(); i.hasNext(); ) {
-        	argument = (ToolArgument) i.next();
-        	if (args.length > counter) {
-        		argument.setValue(args[counter]);
-        	}
-        	else {
-        		break;
-        	}
-        	counter++;
-        }
-        cover.execute();
-    }
     
     /**
      * @see com.lowagie.tools.plugins.AbstractTool#execute()
@@ -187,7 +166,23 @@ public class DvdCover extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#valueHasChanged(com.lowagie.tools.arguments.ToolArgument)
 	 */
 	public void valueHasChanged(ToolArgument arg) {
-		System.out.println(arg.getValue());
+		if (internalFrame == null) {
+			// if the internal frame is null, the tool was called from the commandline
+			return;
+		}
+		// represent the changes of the argument in the internal frame
 	}
-
+	
+    /**
+     * Generates a DVD Cover in PDF.
+     * @param args	an array containing [0] a filename [1] a title [2] a backgroundcolor [3] a front image [4] a back image [5] a side image
+     */
+    public static void main(String[] args) {
+    	DvdCover tool = new DvdCover();
+    	if (args.length == 0) {
+    		System.err.println(tool.getUsage());
+    	}
+    	tool.setArguments(args);
+        tool.execute();
+    }
 }

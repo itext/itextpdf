@@ -51,7 +51,6 @@ package com.lowagie.tools.plugins;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Iterator;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -76,11 +75,15 @@ public class Tiff2Pdf extends AbstractTool {
 	 * Constructs a Tiff2Pdf object.
 	 */
 	public Tiff2Pdf() {
-		internalFrame = new JInternalFrame("Tiff2Pdf", true, true, true);
-
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to encrypt", false, new ImageFilter(false, false, false, false, false, true)));
 		arguments.add(new FileArgument(this, "destfile", "The file to which the encrypted PDF has to be written", true, new PdfFilter()));
-		
+	}
+
+	/**
+	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
+	 */
+	protected void createFrame() {
+		internalFrame = new JInternalFrame("Tiff2Pdf", true, true, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
@@ -131,7 +134,11 @@ public class Tiff2Pdf extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#valueHasChanged(com.lowagie.tools.arguments.ToolArgument)
 	 */
 	public void valueHasChanged(ToolArgument arg) {
-		// do nothing
+		if (internalFrame == null) {
+			// if the internal frame is null, the tool was called from the commandline
+			return;
+		}
+		// represent the changes of the argument in the internal frame
 	}
 
 	
@@ -144,18 +151,7 @@ public class Tiff2Pdf extends AbstractTool {
     	if (args.length < 2) {
     		System.err.println(tool.getUsage());
     	}
-    	int counter = 0;
-    	ToolArgument argument;
-        for (Iterator i = tool.getArguments().iterator(); i.hasNext(); ) {
-        	argument = (ToolArgument) i.next();
-        	if (args.length > counter) {
-        		argument.setValue(args[counter]);
-        	}
-        	else {
-        		break;
-        	}
-        	counter++;
-        }
+    	tool.setArguments(args);
         tool.execute();
 	}
 }

@@ -51,7 +51,6 @@ package com.lowagie.tools.plugins;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Iterator;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -94,8 +93,6 @@ public class Encrypt extends AbstractTool {
 	 * Constructs an Encrypt object.
 	 */
 	public Encrypt() {
-		internalFrame = new JInternalFrame("Encrypt", true, true, true);
-
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to encrypt", false, new PdfFilter()));
 		arguments.add(new FileArgument(this, "destfile", "The file to which the encrypted PDF has to be written", true, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "userpassword", "The userpassword you want to add to the PDF file", String.class.getName()));
@@ -105,7 +102,13 @@ public class Encrypt extends AbstractTool {
 		oa.addOption("40 bit encryption", "40");
 		oa.addOption("128 bit encryption", "128");
 		arguments.add(oa);
-		
+	}
+
+	/**
+	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
+	 */
+	protected void createFrame() {
+		internalFrame = new JInternalFrame("Encrypt", true, true, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
@@ -155,7 +158,11 @@ public class Encrypt extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#valueHasChanged(com.lowagie.tools.arguments.ToolArgument)
 	 */
 	public void valueHasChanged(ToolArgument arg) {
-		// do nothing
+		if (internalFrame == null) {
+			// if the internal frame is null, the tool was called from the commandline
+			return;
+		}
+		// represent the changes of the argument in the internal frame
 	}
 	
     /**
@@ -167,18 +174,7 @@ public class Encrypt extends AbstractTool {
     	if (args.length < 2) {
     		System.err.println(tool.getUsage());
     	}
-    	int counter = 0;
-    	ToolArgument argument;
-        for (Iterator i = tool.getArguments().iterator(); i.hasNext(); ) {
-        	argument = (ToolArgument) i.next();
-        	if (args.length > counter) {
-        		argument.setValue(args[counter]);
-        	}
-        	else {
-        		break;
-        	}
-        	counter++;
-        }
+    	tool.setArguments(args);
         tool.execute();
     }
 

@@ -70,9 +70,80 @@ import com.lowagie.tools.arguments.ToolArgument;
 public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	
 	/** The internal frame of the tool. */
-	protected JInternalFrame internalFrame;
+	protected JInternalFrame internalFrame = null;
 	/** The list of arguments needed by the tool. */
 	protected ArrayList arguments = new ArrayList();
+	
+	/**
+	 * Sets the arguments.
+	 * @param arguments The arguments to set.
+	 */
+	public void setArguments(ArrayList arguments) {
+		this.arguments = arguments;
+	}
+	
+	/**
+	 * Sets the arguments.
+	 * @param args the arguments as String-array.
+	 */
+	public void setArguments(String[] args) {
+    	int counter = 0;
+    	ToolArgument argument;
+        for (Iterator i = arguments.iterator(); i.hasNext(); ) {
+        	argument = (ToolArgument) i.next();
+        	if (args.length > counter) {
+        		argument.setValue(args[counter]);
+        	}
+        	else {
+        		break;
+        	}
+        	counter++;
+        }
+	}
+	
+	/**
+	 * Gets the arguments.
+	 * @return Returns the arguments.
+	 */
+	public ArrayList getArguments() {
+		return arguments;
+	}
+	
+	/**
+	 * Gets the value of a given argument.
+	 * @param name the name of the argument
+	 * @return the value of an argument as an Object.
+	 * @throws InstantiationException
+	 */
+	public Object getValue(String name) throws InstantiationException {
+		ToolArgument argument;
+		for (Iterator i = arguments.iterator(); i.hasNext(); ) {
+			argument = (ToolArgument) i.next();
+			if (name.equals(argument.getName())) {
+				return argument.getArgument();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Sets the internal frame.
+	 * @param internalFrame The internalFrame to set.
+	 */
+	public void setInternalFrame(JInternalFrame internalFrame) {
+		this.internalFrame = internalFrame;
+	}
+	
+	/**
+	 * Returns the internal frame. Creates one if it's null.
+	 * @return Returns the internalFrame.
+	 */
+	public JInternalFrame getInternalFrame() {
+		if (internalFrame == null) {
+			createFrame();
+		}
+		return internalFrame;
+	}
 	
 	/**
 	 * Gets the menubar.
@@ -115,11 +186,6 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		}
 		return menubar;
 	}
-
-	/**
-	 * Executes the tool (in most cases this generates a PDF file).
-	 */
-	public abstract void execute();
 	
 	/**
 	 * Gets the usage of the tool.
@@ -164,23 +230,6 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		}
 		return buf.toString();
 	}
-	
-	/**
-	 * Gets the value of a given argument.
-	 * @param name the name of the argument
-	 * @return the value of an argument as an Object.
-	 * @throws InstantiationException
-	 */
-	public Object getValue(String name) throws InstantiationException {
-		ToolArgument argument;
-		for (Iterator i = arguments.iterator(); i.hasNext(); ) {
-			argument = (ToolArgument) i.next();
-			if (name.equals(argument.getName())) {
-				return argument.getArgument();
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -201,33 +250,18 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	}
 	
 	/**
+	 * Creates the internal frame.
+	 */
+	protected abstract void createFrame();
+
+	/**
+	 * Executes the tool (in most cases this generates a PDF file).
+	 */
+	public abstract void execute();
+	
+	/**
 	 * Indicates that the value of an argument has changed.
 	 * @param arg the argument that has changed
 	 */
 	public abstract void valueHasChanged(ToolArgument arg);
-	
-	/**
-	 * @return Returns the arguments.
-	 */
-	public ArrayList getArguments() {
-		return arguments;
-	}
-	/**
-	 * @param arguments The arguments to set.
-	 */
-	public void setArguments(ArrayList arguments) {
-		this.arguments = arguments;
-	}
-	/**
-	 * @return Returns the internalFrame.
-	 */
-	public JInternalFrame getInternalFrame() {
-		return internalFrame;
-	}
-	/**
-	 * @param internalFrame The internalFrame to set.
-	 */
-	public void setInternalFrame(JInternalFrame internalFrame) {
-		this.internalFrame = internalFrame;
-	}
 }
