@@ -216,6 +216,10 @@ public abstract class BaseFont {
      */    
     protected static char subsetPrefix[] = {'A', 'B', 'C', 'D', 'E', 'E', '+'};
     
+    /** Forces the output of the width array.
+     */
+    protected boolean forceWidthsOutput = false;
+    
     static {
         BuiltinFonts14.put(COURIER, PdfName.COURIER);
         BuiltinFonts14.put(COURIER_BOLD, PdfName.COURIER_BOLD);
@@ -619,4 +623,42 @@ public abstract class BaseFont {
     public static String[] enumerateTTCNames(byte ttcArray[]) throws DocumentException, IOException {
         return new EnumerateTTC(ttcArray).getNames();
     }
+    
+    /** Gets the font width array.
+     * @return the font width array
+     */    
+    public int[] getWidths() {
+        return widths;
+    }
+
+    /** Gets the array with the names of the characters.
+     * @return the array with the names of the characters
+     */    
+    public String[] getDifferences() {
+        return differences;
+    }
+
+    /** Gets the array with the unicode characters.
+     * @return the array with the unicode characters
+     */    
+    public char[] getUnicodeDifferences() {
+        return unicodeDifferences;
+    }
+    
+    /** Gets the state of the property.
+     * @return value of property forceWidthsOutput
+     */
+    public boolean isForceWidthsOutput() {
+        return forceWidthsOutput;
+    }
+    
+    /** Set to <CODE>true</CODE> to force the generation of the
+     * widths array.
+     * @param forceWidthsOutput <CODE>true</CODE> to force the generation of the
+     * widths array
+     */
+    public void setForceWidthsOutput(boolean forceWidthsOutput) {
+        this.forceWidthsOutput = forceWidthsOutput;
+    }
+    
 }

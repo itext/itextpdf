@@ -603,7 +603,7 @@ class Type1Font extends BaseFont
                 dic.put(PdfName.ENCODING, enc);
             }
         }
-        if (!(builtinFont && (fontSpecific || stdEncoding))) {
+        if (forceWidthsOutput || !(builtinFont && (fontSpecific || stdEncoding))) {
             dic.put(new PdfName("FirstChar"), new PdfNumber(firstChar));
             dic.put(new PdfName("LastChar"), new PdfNumber(lastChar));
             PdfArray wd = new PdfArray();
