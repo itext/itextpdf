@@ -315,7 +315,7 @@ public class Anchor extends Phrase implements TextElementArray {
     
     public String toString() {
         StringBuffer buf = new StringBuffer("<").append(ElementTags.ANCHOR).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading).append(font().toString());
+        buf.append(leading).append(font.toString());
         if (name != null) {
             buf.append("\" ").append(ElementTags.NAME).append("=\"");
             buf.append(name);

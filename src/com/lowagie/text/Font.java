@@ -439,7 +439,10 @@ public class Font implements Comparable {
     
     public Font difference(Font font) {
         Font difference = new Font();
-        if (this.family != font.family()) {
+        if (font.family() != UNDEFINED) {
+            difference.family = font.family;
+        }
+        else {
             difference.family = this.family;
         }
         if (this.size != font.size()) {
@@ -449,7 +452,7 @@ public class Font implements Comparable {
         int style2 = font.style();
         if (style1 == UNDEFINED) style1 = 0;
         if (style2 == UNDEFINED) style2 = 0;
-        difference.style = (style1 | style2) - (style1 & style2);
+        difference.style = style1 | style2;
         if (this.color == null || ! this.color.equals(font.color())) {
             difference.color = this.color;
         }

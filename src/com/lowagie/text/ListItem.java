@@ -239,7 +239,7 @@ public class ListItem extends Paragraph implements TextElementArray {
     public final void setListSymbol(Chunk symbol) {
         this.symbol = symbol;
         if (this.symbol.font().isStandardFont()) {
-            this.symbol.setFont(font());
+            this.symbol.setFont(font);
         }
     }
     
@@ -275,7 +275,7 @@ public class ListItem extends Paragraph implements TextElementArray {
     public String toString() {
         StringBuffer buf = new StringBuffer("\n<").append(ElementTags.LISTITEM).append(" ").append(ElementTags.LEADING).append("=\"");
         buf.append(leading);
-        buf.append("\"").append(font().toString()).append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
+        buf.append("\"").append(font.toString()).append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
         if (indentationLeft != 0) {
             buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
             buf.append(indentationLeft);
