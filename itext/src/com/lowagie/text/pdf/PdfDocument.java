@@ -864,7 +864,7 @@ class PdfDocument extends Document implements DocListener {
         }
         try {
             newPage();
-            newPage();
+            if (imageWait != null) newPage();
             PdfPageEvent pageEvent = writer.getPageEvent();
             if (pageEvent != null)
                 pageEvent.onCloseDocument(writer, this);
