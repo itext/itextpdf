@@ -56,14 +56,17 @@ import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.style.RtfFont;
 
 
 /**
  * The RtfPhrase contains multiple RtfChunks
+ * 
  * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
@@ -96,10 +99,12 @@ public class RtfPhrase extends RtfElement {
             return;
         }
         
-        ArrayList origChunks = phrase.getChunks();
-        for(int i = 0; i < origChunks.size(); i++) {
-            Chunk chunk = (Chunk) origChunks.get(i);
-            chunk.setFont(phrase.font().difference(chunk.font()));
+        RtfFont phraseFont = new RtfFont(null, phrase.font(), 0);
+        for(int i = 0; i < phrase.size(); i++) {
+            Element chunk = (Element) phrase.get(i);
+            if(chunk instanceof Chunk) {
+                ((Chunk) chunk).setFont(phraseFont.difference(((Chunk) chunk).font()));
+            }
             try {
                 chunks.add(doc.getMapper().mapElement(chunk));
             } catch(DocumentException de) {
