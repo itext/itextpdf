@@ -144,8 +144,6 @@ public class ITextOutputFilter extends OutputFilterBase {
     private String docWriter   = null;
     private String contentType = CONTENT_TYPES[PDF_OUTPUT_INT];
     
-    private final SAXParserFactory spf = SAXParserFactory.newInstance();
-    
     private static final String PAGE_SIZE   = "pageSize";
     private static final String OUTPUT_TYPE = "defaultOutput";
     private static final String CUSTOM_WRITER = "writer";
@@ -338,7 +336,7 @@ public class ITextOutputFilter extends OutputFilterBase {
                 break;
         }
                 
-        SAXParser parser = spf.newSAXParser();
+        SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
         Object tagmap = request.getAttribute(TAGMAP_KEY);
         if (tagmap != null) {
             if (tagmap instanceof HashMap) {
