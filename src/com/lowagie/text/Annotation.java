@@ -246,8 +246,8 @@ public class Annotation implements Element {
  */
     
     public Annotation(Properties attrs) {
-        String title = (String)attrs.remove(ElementTags.TITLE);
-        String text = (String)attrs.remove(ElementTags.CONTENT);
+        String title = attrs.getProperty(ElementTags.TITLE);
+        String text = attrs.getProperty(ElementTags.CONTENT);
         if (title == null) {
             title = "";
         }

@@ -186,20 +186,16 @@ public class Anchor extends Phrase implements TextElementArray {
     public Anchor(Properties attributes) {
         this("", new Font(attributes));
         String value;
-        if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
-            Chunk chunk = new Chunk(value);
-            if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
-                chunk.setGenericTag(value);
-            }
-            add(chunk);
+        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+            add(new Chunk(value));
         }
-        if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
+        if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.NAME)) != null) {
+        if ((value = attributes.getProperty(ElementTags.NAME)) != null) {
             setName(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.REFERENCE)) != null) {
+        if ((value = attributes.getProperty(ElementTags.REFERENCE)) != null) {
             setReference(value);
         }
     }

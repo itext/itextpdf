@@ -59,6 +59,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.DocListener;
@@ -1312,6 +1313,15 @@ public class PdfWriter extends DocWriter {
      */    
     public void addJavaScript(String code) {
         addJavaScript(code, false);
+    }
+    
+    /** Sets the crop box. The crop box should not be rotated even if the
+     * page is rotated. This change only takes effect in the next
+     * page.
+     * @param crop the crop box
+     */    
+    public void setCropBoxSize(Rectangle crop) {
+        pdf.setCropBoxSize(crop);
     }
 
     /** Gets a reference to a page existing or not. If the page does not exist

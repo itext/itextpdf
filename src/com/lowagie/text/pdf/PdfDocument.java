@@ -195,7 +195,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("itext by lowagie.com (r0.85)", PdfObject.ENCODING));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 91", PdfObject.ENCODING));
             // Do not edit the line above!
         }
         
@@ -422,6 +422,13 @@ class PdfDocument extends Document implements DocListener {
     
     /** This is the size of the current Page. */
     protected Rectangle thisPageSize = null;
+    
+    /** This is the size of the crop box of the current Page. */
+    protected Rectangle thisCropSize = null;
+    
+    /** This is the size of the crop box that will be used in
+     * the next page. */
+    protected Rectangle cropSize = null;
     
     /** This is the FontDictionary of the current Page. */
     protected PdfFontDictionary fontDictionary;
@@ -655,6 +662,41 @@ class PdfDocument extends Document implements DocListener {
         return true;
     }
     
+    protected void rotateAnnotations() {
+        int rotation = thisPageSize.getRotation() % 360;
+        if (rotation == 0)
+            return;
+        ArrayList list = annotations.getArrayList();
+        for (int k = 0; k < list.size(); ++k) {
+            PdfDictionary dic = (PdfDictionary)list.get(k);
+            PdfRectangle rect = (PdfRectangle)dic.get(PdfName.RECT);
+            switch (rotation) {
+                case 90:
+                    dic.put(PdfName.RECT, new PdfRectangle(
+                        thisPageSize.right() - rect.bottom(),
+                        rect.left(),
+                        thisPageSize.right() - rect.top(),
+                        rect.right()));
+                    break;
+                case 180:
+                    dic.put(PdfName.RECT, new PdfRectangle(
+                        thisPageSize.right() - rect.left(),
+                        thisPageSize.top() - rect.bottom(),
+                        thisPageSize.right() - rect.right(),
+                        thisPageSize.top() - rect.top()));
+                    break;
+                case 270:
+                    dic.put(PdfName.RECT, new PdfRectangle(
+                        rect.bottom(),
+                        thisPageSize.top() - rect.left(),
+                        rect.top(),
+                        thisPageSize.top() - rect.right()));
+                    break;
+            }
+        }
+    }
+    
+    
     /**
      * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
      *
@@ -698,11 +740,12 @@ class PdfDocument extends Document implements DocListener {
         PdfPage page;
         int rotation = thisPageSize.getRotation();
         if (rotation == 0)
-            page = new PdfPage(new PdfRectangle(thisPageSize, rotation), resources);
+            page = new PdfPage(new PdfRectangle(thisPageSize, rotation), thisCropSize, resources);
         else
-            page = new PdfPage(new PdfRectangle(thisPageSize, rotation), resources, new PdfNumber(rotation));
+            page = new PdfPage(new PdfRectangle(thisPageSize, rotation), thisCropSize, resources, new PdfNumber(rotation));
         // we add the annotations
         if (annotations.size() > 0) {
+            rotateAnnotations();
             page.put(PdfName.ANNOTS, annotations);
         }
         if (!open || close) {
@@ -892,11 +935,7 @@ class PdfDocument extends Document implements DocListener {
                         finalHeights[0] = eventY;
                         for (int k = 0; k < heightsIdx; ++k)
                             finalHeights[k + 1] = finalHeights[k] - heights[k];
-                        float widths[] = new float[absoluteWidths.length + 1];
-                        widths[0] = xWidth;
-                        for (int k = 0; k < absoluteWidths.length; ++k)
-                            widths[k + 1] = widths[k] + absoluteWidths[k];
-                        event.tableLayout(ptable, widths, finalHeights, eventHeader, eventRow, cv);
+                        event.tableLayout(ptable, ptable.getEventWidths(xWidth, eventRow, eventRow + heightsIdx - eventHeader, true), finalHeights, eventHeader, eventRow, cv);
                     }
                     PdfPTable.endWritingRows(cv);
                     cv = null;
@@ -933,11 +972,7 @@ class PdfDocument extends Document implements DocListener {
                 finalHeights[0] = eventY;
                 for (int k = 0; k < heightsIdx; ++k)
                     finalHeights[k + 1] = finalHeights[k] - heights[k];
-                float widths[] = new float[absoluteWidths.length + 1];
-                widths[0] = xWidth;
-                for (int k = 0; k < absoluteWidths.length; ++k)
-                    widths[k + 1] = widths[k] + absoluteWidths[k];
-                event.tableLayout(ptable, widths, finalHeights, eventHeader, eventRow, cv);
+                event.tableLayout(ptable, ptable.getEventWidths(xWidth, eventRow, eventRow + heightsIdx - eventHeader, true), finalHeights, eventHeader, eventRow, cv);
             }
             PdfPTable.endWritingRows(cv);
             text.moveText(0, currentY - baseY);
@@ -1517,7 +1552,6 @@ class PdfDocument extends Document implements DocListener {
     
     private void add(Image image) throws PdfException, DocumentException {
         pageEmpty = false;
-        PdfName name = addDirectImageSimple(image);
         
         if (image.hasAbsolutePosition()) {
             graphics.addImage(image);
@@ -1537,7 +1571,8 @@ class PdfDocument extends Document implements DocListener {
             }
         }
         // avoid endless loops
-        imageWait = null;
+        if (image == imageWait)
+            imageWait = null;
         boolean textwrap = (image.alignment() & Image.TEXTWRAP) == Image.TEXTWRAP
         && !((image.alignment() & Image.MIDDLE) == Image.MIDDLE);
         boolean underlying = (image.alignment() & Image.UNDERLYING) == Image.UNDERLYING;
@@ -1615,6 +1650,7 @@ class PdfDocument extends Document implements DocListener {
         
         // backgroundcolors, etc...
         thisPageSize = pageSize;
+        thisCropSize = cropSize;
         if (pageSize.backgroundColor() != null
         || pageSize.hasBorders()
         || pageSize.borderColor() != null
@@ -2344,5 +2380,9 @@ class PdfDocument extends Document implements DocListener {
     void addAcroForm(PdfObject form, PdfObject annot) {
         acroForm = form;
         annotations.add(annot);
+    }
+
+    void setCropBoxSize(Rectangle crop) {
+        cropSize = new Rectangle(crop);
     }
 }

@@ -241,18 +241,18 @@ public class Font implements Comparable {
     public Font(Properties attributes) {
         this(UNDEFINED, UNDEFINED, UNDEFINED, null);
         String value;
-        if ((value = (String)attributes.remove(ElementTags.FONT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.FONT)) != null) {
             setFamily(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
+        if ((value = attributes.getProperty(ElementTags.SIZE)) != null) {
             setSize(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.STYLE)) != null) {
+        if ((value = attributes.getProperty(ElementTags.STYLE)) != null) {
             setStyle(value);
         }
-        String r = (String)attributes.remove(ElementTags.RED);
-        String g = (String)attributes.remove(ElementTags.GREEN);
-        String b = (String)attributes.remove(ElementTags.BLUE);
+        String r = attributes.getProperty(ElementTags.RED);
+        String g = attributes.getProperty(ElementTags.GREEN);
+        String b = attributes.getProperty(ElementTags.BLUE);
         if (r != null || g != null || b != null) {
             int red = 0;
             int green = 0;
@@ -262,7 +262,7 @@ public class Font implements Comparable {
             if (b != null) blue = Integer.parseInt(b);
             setColor(new Color(red, green, blue));
         }
-        else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
+        else if ((value = attributes.getProperty(ElementTags.COLOR)) != null) {
             setColor(ElementTags.decodeColor(value));
         }
     }

@@ -274,7 +274,7 @@ public class Table extends Rectangle implements Element {
         setBorder(BOX);
         setBorderWidth(1);
         
-        String value = (String)attributes.remove(ElementTags.COLUMNS);
+        String value = attributes.getProperty(ElementTags.COLUMNS);
         if (value == null) {
             columns = 1;
         }
@@ -290,19 +290,19 @@ public class Table extends Rectangle implements Element {
 // end patch by Matt Benson 02/21/2002
         currentRow = 0;
         
-        if ((value = (String)attributes.remove(ElementTags.LASTHEADERROW)) != null) {
+        if ((value = attributes.getProperty(ElementTags.LASTHEADERROW)) != null) {
             setLastHeaderRow(Integer.parseInt(value));
         }
-        if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
+        if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
             setAlignment(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.CELLSPACING)) != null) {
+        if ((value = attributes.getProperty(ElementTags.CELLSPACING)) != null) {
             setSpacing(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.CELLPADDING)) != null) {
+        if ((value = attributes.getProperty(ElementTags.CELLPADDING)) != null) {
             setPadding(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.WIDTH)) != null) {
             if (value.endsWith("%"))
                 setWidth(Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue());
             else
@@ -312,7 +312,7 @@ public class Table extends Rectangle implements Element {
         for (int i = 0; i < columns; i++) {
             widths[i] = 0;
         }
-        if ((value = (String)attributes.remove(ElementTags.WIDTHS)) != null) {
+        if ((value = attributes.getProperty(ElementTags.WIDTHS)) != null) {
             StringTokenizer widthTokens = new StringTokenizer(value, ";");
             int i = 0;
             while (widthTokens.hasMoreTokens()) {
@@ -322,29 +322,29 @@ public class Table extends Rectangle implements Element {
             }
             columns = i;
         }
-        if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.BORDERWIDTH)) != null) {
             setBorderWidth(Float.valueOf(value + "f").floatValue());
         }
         int border = 0;
-        if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.LEFT)) != null) {
             if (new Boolean(value).booleanValue()) border |= Rectangle.LEFT;
         }
-        if ((value = (String)attributes.remove(ElementTags.RIGHT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.RIGHT)) != null) {
             if (new Boolean(value).booleanValue()) border |= Rectangle.RIGHT;
         }
-        if ((value = (String)attributes.remove(ElementTags.TOP)) != null) {
+        if ((value = attributes.getProperty(ElementTags.TOP)) != null) {
             if (new Boolean(value).booleanValue()) border |= Rectangle.TOP;
         }
-        if ((value = (String)attributes.remove(ElementTags.BOTTOM)) != null) {
+        if ((value = attributes.getProperty(ElementTags.BOTTOM)) != null) {
             if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
         }
         setBorder(border);
         String r = null;
         String g = null;
         String b = null;
-        if ((r = (String)attributes.remove(ElementTags.RED)) != null ||
-        (g = (String)attributes.remove(ElementTags.GREEN)) != null ||
-        (b = (String)attributes.remove(ElementTags.BLUE)) != null) {
+        if ((r = attributes.getProperty(ElementTags.RED)) != null ||
+        (g = attributes.getProperty(ElementTags.GREEN)) != null ||
+        (b = attributes.getProperty(ElementTags.BLUE)) != null) {
             int red = 0;
             int green = 0;
             int blue = 0;
@@ -356,9 +356,9 @@ public class Table extends Rectangle implements Element {
         else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
             setBorderColor(ElementTags.decodeColor(value));
         }
-        if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
-        (g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
-        (b = (String)attributes.remove(ElementTags.BGBLUE)) != null) {
+        if ((r = attributes.getProperty(ElementTags.BGRED)) != null ||
+        (g = attributes.getProperty(ElementTags.BGGREEN)) != null ||
+        (b = attributes.getProperty(ElementTags.BGBLUE)) != null) {
             int red = 0;
             int green = 0;
             int blue = 0;
@@ -367,10 +367,10 @@ public class Table extends Rectangle implements Element {
             if (b != null) blue = Integer.parseInt(b);
             setBackgroundColor(new Color(red, green, blue));
         }
-        else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
+        else if ((value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR)) != null) {
             setBackgroundColor(ElementTags.decodeColor(value));
         }
-        if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
+        if ((value = attributes.getProperty(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
         }
     }

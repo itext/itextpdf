@@ -73,6 +73,12 @@ public abstract class Barcode {
     public static final int POSTNET = 7;
     /** A type of barcode */
     public static final int PLANET = 8;
+    /** A type of barcode */
+    public static final int CODE128 = 9;
+    /** A type of barcode */
+    public static final int CODE128_UCC = 10;
+    /** A type of barcode */
+    public static final int CODE128_RAW = 10;
 
     /** The minimum bar width.
      */

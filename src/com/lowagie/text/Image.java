@@ -531,36 +531,36 @@ public abstract class Image extends Rectangle implements Element {
     
     public static Image getInstance(Properties attributes) throws BadElementException, MalformedURLException, IOException {
         String value;
-        Image image = Image.getInstance((String)attributes.remove(ElementTags.URL));
+        Image image = Image.getInstance(attributes.getProperty(ElementTags.URL));
         int align = 0;
-        if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
+        if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
             if (ElementTags.ALIGN_LEFT.equals(value)) align |= Image.LEFT;
             else if (ElementTags.ALIGN_RIGHT.equals(value)) align |= Image.RIGHT;
             else if (ElementTags.ALIGN_MIDDLE.equals(value)) align |= Image.MIDDLE;
         }
-        if ((value = (String)attributes.remove(ElementTags.UNDERLYING)) != null) {
+        if ((value = attributes.getProperty(ElementTags.UNDERLYING)) != null) {
             if (new Boolean(value).booleanValue()) align |= Image.UNDERLYING;
         }
-        if ((value = (String)attributes.remove(ElementTags.TEXTWRAP)) != null) {
+        if ((value = attributes.getProperty(ElementTags.TEXTWRAP)) != null) {
             if (new Boolean(value).booleanValue()) align |= Image.TEXTWRAP;
         }
         image.setAlignment(align);
-        if ((value = (String)attributes.remove(ElementTags.ALT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.ALT)) != null) {
             image.setAlt(value);
         }
         String x;
         String y;
-        if (((x = (String)attributes.remove(ElementTags.ABSOLUTEX)) != null)
-        && ((y = (String)attributes.remove(ElementTags.ABSOLUTEX)) != null)) {
+        if (((x = attributes.getProperty(ElementTags.ABSOLUTEX)) != null)
+        && ((y = attributes.getProperty(ElementTags.ABSOLUTEX)) != null)) {
             image.setAbsolutePosition(Float.valueOf(x + "f").floatValue(), Float.valueOf(y + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.PLAINWIDTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.PLAINWIDTH)) != null) {
             image.scaleAbsoluteWidth(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.PLAINHEIGHT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.PLAINHEIGHT)) != null) {
             image.scaleAbsoluteHeight(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.ROTATION)) != null) {
+        if ((value = attributes.getProperty(ElementTags.ROTATION)) != null) {
             image.setRotation(Float.valueOf(value + "f").floatValue());
         }
         return image;

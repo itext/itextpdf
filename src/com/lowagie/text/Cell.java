@@ -211,56 +211,56 @@ public class Cell extends Rectangle implements TextElementArray {
         this();
         arrayList.clear();
         String value;
-        if ((value = (String)attributes.remove(ElementTags.HORIZONTALALIGN)) != null) {
+        if ((value = attributes.getProperty(ElementTags.HORIZONTALALIGN)) != null) {
             setHorizontalAlignment(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.VERTICALALIGN)) != null) {
+        if ((value = attributes.getProperty(ElementTags.VERTICALALIGN)) != null) {
             setVerticalAlignment(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.WIDTH)) != null) {
             setWidth(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.COLSPAN)) != null) {
+        if ((value = attributes.getProperty(ElementTags.COLSPAN)) != null) {
             setColspan(Integer.parseInt(value));
         }
-        if ((value = (String)attributes.remove(ElementTags.ROWSPAN)) != null) {
+        if ((value = attributes.getProperty(ElementTags.ROWSPAN)) != null) {
             setRowspan(Integer.parseInt(value));
         }
-        if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
+        if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
         }
         else {
             setLeading(16);
         }
-        if ((value = (String)attributes.remove(ElementTags.HEADER)) != null) {
+        if ((value = attributes.getProperty(ElementTags.HEADER)) != null) {
             setHeader(new Boolean(value).booleanValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.NOWRAP)) != null) {
+        if ((value = attributes.getProperty(ElementTags.NOWRAP)) != null) {
             setNoWrap(new Boolean(value).booleanValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.BORDERWIDTH)) != null) {
             setBorderWidth(Float.valueOf(value + "f").floatValue());
         }
         int border = 0;
-        if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.LEFT)) != null) {
             if (new Boolean(value).booleanValue()) border |= Rectangle.LEFT;
         }
-        if ((value = (String)attributes.remove(ElementTags.RIGHT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.RIGHT)) != null) {
             if (new Boolean(value).booleanValue()) border |= Rectangle.RIGHT;
         }
-        if ((value = (String)attributes.remove(ElementTags.TOP)) != null) {
+        if ((value = attributes.getProperty(ElementTags.TOP)) != null) {
             if (new Boolean(value).booleanValue()) border |= Rectangle.TOP;
         }
-        if ((value = (String)attributes.remove(ElementTags.BOTTOM)) != null) {
+        if ((value = attributes.getProperty(ElementTags.BOTTOM)) != null) {
             if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
         }
         setBorder(border);
         String r = null;
         String g = null;
         String b = null;
-        if ((r = (String)attributes.remove(ElementTags.RED)) != null ||
-        (g = (String)attributes.remove(ElementTags.GREEN)) != null ||
-        (b = (String)attributes.remove(ElementTags.BLUE)) != null) {
+        if ((r = attributes.getProperty(ElementTags.RED)) != null ||
+        (g = attributes.getProperty(ElementTags.GREEN)) != null ||
+        (b = attributes.getProperty(ElementTags.BLUE)) != null) {
             int red = 0;
             int green = 0;
             int blue = 0;
@@ -269,12 +269,12 @@ public class Cell extends Rectangle implements TextElementArray {
             if (b != null) blue = Integer.parseInt(b);
             setBorderColor(new Color(red, green, blue));
         }
-        else if ((value = (String)attributes.remove(ElementTags.BORDERCOLOR)) != null) {
+        else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
             setBorderColor(ElementTags.decodeColor(value));
         }
-        if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
-        (g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
-        (b = (String)attributes.remove(ElementTags.BGBLUE)) != null) {
+        if ((r = attributes.getProperty(ElementTags.BGRED)) != null ||
+        (g = attributes.getProperty(ElementTags.BGGREEN)) != null ||
+        (b = attributes.getProperty(ElementTags.BGBLUE)) != null) {
             int red = 0;
             int green = 0;
             int blue = 0;
@@ -283,10 +283,10 @@ public class Cell extends Rectangle implements TextElementArray {
             if (b != null) blue = Integer.parseInt(b);
             setBackgroundColor(new Color(red, green, blue));
         }
-        else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
+        else if ((value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR)) != null) {
             setBackgroundColor(ElementTags.decodeColor(value));
         }
-        if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
+        if ((value = attributes.getProperty(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
         }
     }

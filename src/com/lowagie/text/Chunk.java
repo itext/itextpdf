@@ -176,19 +176,19 @@ public class Chunk implements Element {
     public Chunk(Properties attributes) {
         this("", new Font(attributes));
         String value;
-        if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
             append(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.LOCALGOTO)) != null) {
+        if ((value = attributes.getProperty(ElementTags.LOCALGOTO)) != null) {
             setLocalGoto(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.LOCALDESTINATION)) != null) {
+        if ((value = attributes.getProperty(ElementTags.LOCALDESTINATION)) != null) {
             setLocalDestination(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.SUBSUPSCRIPT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.SUBSUPSCRIPT)) != null) {
             setTextRise(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
+        if ((value = attributes.getProperty(ElementTags.GENERICTAG)) != null) {
             setGenericTag(value);
         }
     }

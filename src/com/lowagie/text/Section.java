@@ -118,18 +118,6 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	numberDepth		the numberDepth
  */
     
-    protected Section() {
-        title = new Paragraph();
-        numberDepth = 1;
-    }
-    
-/**
- * Constructs a new <CODE>Section</CODE>.
- *
- * @param	title			a <CODE>Paragraph</CODE>
- * @param	numberDepth		the numberDepth
- */
-    
     Section(Paragraph title, int numberDepth) {
         this.numberDepth = numberDepth;
         this.title = title;
@@ -412,7 +400,21 @@ public class Section extends ArrayList implements TextElementArray {
     
     public Section addSection(Properties attributes) {
         Section section = new Section(new Paragraph(""), 1);
-        section.set(attributes);
+        
+        String value;
+        if ((value = attributes.getProperty(ElementTags.NUMBERDEPTH)) != null) {
+            section.setNumberDepth(Integer.parseInt(value));
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {
+            section.setIndentation(Float.valueOf(value + "f").floatValue());
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
+            section.setIndentationLeft(Float.valueOf(value + "f").floatValue());
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
+            section.setIndentationRight(Float.valueOf(value + "f").floatValue());
+        }
+        
         add(section);
         return section;
     }
@@ -428,16 +430,16 @@ public class Section extends ArrayList implements TextElementArray {
     
     public void set(Properties attributes) {
         String value;
-        if ((value = (String)attributes.remove(ElementTags.NUMBERDEPTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.NUMBERDEPTH)) != null) {
             setNumberDepth(Integer.parseInt(value));
         }
-        if ((value = (String)attributes.remove(ElementTags.INDENT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {
             setIndentation(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
     }

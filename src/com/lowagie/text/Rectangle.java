@@ -237,7 +237,7 @@ public class Rectangle implements Element {
     
     public Rectangle rotate() {
         Rectangle rect = new Rectangle(lly, llx, ury, urx);
-        rect.rotation += 90;
+        rect.rotation = rotation + 90;
         rect.rotation %= 360;
         return rect;
     }
@@ -513,20 +513,6 @@ public class Rectangle implements Element {
         return grayFill;
     }
     
-/**
- * Sets the rotation.
- *
- * @param   rotation  the rotation value (0, 90, 180 or 270)
- */
-    public final void setRotation(int rotation) {
-        this.rotation = rotation;
-    }
-    
-/**
- * Gets the rotation.
- *
- * @return  the rotation value
- */
     public final int getRotation() {
         return rotation;
     }
