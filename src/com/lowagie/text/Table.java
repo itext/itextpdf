@@ -271,7 +271,7 @@ public class Table extends Rectangle implements Element {
         }
         if ((value = attributes.getProperty(ElementTags.WIDTH)) != null) {
             if (value.endsWith("%"))
-                setWidth(Integer.parseInt(value.substring(0, value.length() - 1)));
+                setWidth(Float.parseFloat(value.substring(0, value.length() - 1) + "f"));
             else
                 setAbsWidth(value);
         }
