@@ -43,7 +43,49 @@ import java.util.HashMap;
  */
 
 public abstract class BaseFont {
-
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String COURIER = "Courier";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String COURIER_BOLD = "Courier-Bold";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String COURIER_OBLIQUE = "Courier-Oblique";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String COURIER_BOLDOBLIQUE = "Courier-BoldOblique";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String HELVETICA = "Helvetica";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String HELVETICA_BOLD = "Helvetica-Bold";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String HELVETICA_OBLIQUE = "Helvetica-Oblique";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String HELVETICA_BOLDOBLIQUE = "Helvetica-BoldOblique";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String SYMBOL = "Symbol";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String TIMES_ROMAN = "Times-Roman";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String TIMES_BOLD = "Times-Bold";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String TIMES_ITALIC = "Times-Italic";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String TIMES_BOLDITALIC = "Times-BoldItalic";
+    
+    /** This is a possible value of a base 14 type 1 font */
+    public static final String ZAPFDINGBATS = "ZapfDingbats";
+    
     /** The maximum height above the baseline reached by glyphs in this
      * font, excluding the height of glyphs for accented characters.
      */    
@@ -148,20 +190,20 @@ public abstract class BaseFont {
     
     static
     {
-        BuiltinFonts14.put("Courier", PdfName.COURIER);
-        BuiltinFonts14.put("Courier-Bold", PdfName.COURIER_BOLD);
-        BuiltinFonts14.put("Courier-BoldOblique", PdfName.COURIER_BOLDOBLIQUE);
-        BuiltinFonts14.put("Courier-Oblique", PdfName.COURIER_OBLIQUE);
-        BuiltinFonts14.put("Helvetica", PdfName.HELVETICA);
-        BuiltinFonts14.put("Helvetica-Bold", PdfName.HELVETICA_BOLD);
-        BuiltinFonts14.put("Helvetica-BoldOblique", PdfName.HELVETICA_BOLDOBLIQUE);
-        BuiltinFonts14.put("Helvetica-Oblique", PdfName.HELVETICA_OBLIQUE);
-        BuiltinFonts14.put("Symbol", PdfName.SYMBOL);
-        BuiltinFonts14.put("Times-Roman", PdfName.TIMES_ROMAN);
-        BuiltinFonts14.put("Times-Bold", PdfName.TIMES_BOLD);
-        BuiltinFonts14.put("Times-BoldItalic", PdfName.TIMES_BOLDITALIC);
-        BuiltinFonts14.put("Times-Italic", PdfName.TIMES_ITALIC);
-        BuiltinFonts14.put("ZapfDingbats", PdfName.ZAPFDINGBATS);
+        BuiltinFonts14.put(COURIER, PdfName.COURIER);
+        BuiltinFonts14.put(COURIER_BOLD, PdfName.COURIER_BOLD);
+        BuiltinFonts14.put(COURIER_BOLDOBLIQUE, PdfName.COURIER_BOLDOBLIQUE);
+        BuiltinFonts14.put(COURIER_OBLIQUE, PdfName.COURIER_OBLIQUE);
+        BuiltinFonts14.put(HELVETICA, PdfName.HELVETICA);
+        BuiltinFonts14.put(HELVETICA_BOLD, PdfName.HELVETICA_BOLD);
+        BuiltinFonts14.put(HELVETICA_BOLDOBLIQUE, PdfName.HELVETICA_BOLDOBLIQUE);
+        BuiltinFonts14.put(HELVETICA_OBLIQUE, PdfName.HELVETICA_OBLIQUE);
+        BuiltinFonts14.put(SYMBOL, PdfName.SYMBOL);
+        BuiltinFonts14.put(TIMES_ROMAN, PdfName.TIMES_ROMAN);
+        BuiltinFonts14.put(TIMES_BOLD, PdfName.TIMES_BOLD);
+        BuiltinFonts14.put(TIMES_BOLDITALIC, PdfName.TIMES_BOLDITALIC);
+        BuiltinFonts14.put(TIMES_ITALIC, PdfName.TIMES_ITALIC);
+        BuiltinFonts14.put(ZAPFDINGBATS, PdfName.ZAPFDINGBATS);
     }
     
     /** Generates the PDF stream with the Type1 and Truetype fonts returning
