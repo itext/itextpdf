@@ -1100,7 +1100,11 @@ class PdfDocument extends Document implements DocListener {
 		boolean textwrap = (image.alignment() & Image.TEXTWRAP) == Image.TEXTWRAP
 						&& !((image.alignment() & Image.MIDDLE) == Image.MIDDLE);
 		boolean underlying = (image.alignment() & Image.UNDERLYING) == Image.UNDERLYING;
-		int lowerleft = indentTop() - currentHeight - image.scaledHeight();
+		int diff = leading / 2;
+		if (textwrap) {
+			diff += leading;
+		}
+		int lowerleft = indentTop() - currentHeight - image.scaledHeight() -diff;
 		switch(image.alignment() & Image.MIDDLE) {
 		case Image.RIGHT:
 			graphics.doImage(name, image.matrix(), indentRight() - image.scaledWidth(), lowerleft);
@@ -1114,8 +1118,8 @@ class PdfDocument extends Document implements DocListener {
 			graphics.doImage(name, image.matrix(), indentLeft(), lowerleft);			
 		}
 		if (textwrap) {
-			if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight()) {
-				imageEnd = currentHeight + image.scaledHeight();
+			if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
+				imageEnd = currentHeight + image.scaledHeight() + diff;
 			}
 			if ((image.alignment() & Image.RIGHT) == Image.RIGHT) {
 				imageIndentRight += image.scaledWidth();
@@ -1125,10 +1129,11 @@ class PdfDocument extends Document implements DocListener {
 			}
 		}
 		if (!(textwrap || underlying)) {
-			currentHeight += image.scaledHeight();
+			currentHeight += image.scaledHeight() + diff;
 			flushLines();
-			text.move(0, -image.scaledHeight());
-		}
+			text.move(0, - (image.scaledHeight() + diff));
+			newLine();
+		}	
 	}
 
 	/**

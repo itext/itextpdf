@@ -182,8 +182,15 @@ public class Section extends ArrayList implements TextElementArray {
 		try {
 			Element element = (Element) o;
 			if (element.type() == Element.PARAGRAPH ||
-				element.type() == Element.LIST ||
-				element.type() == Element.TABLE) {
+				element.type() == Element.LIST ||  
+				element.type() == Element.CHUNK ||
+				element.type() == Element.PHRASE ||
+				element.type() == Element.ANCHOR ||
+				element.type() == Element.TABLE ||
+				element.type() == Element.GIF ||
+				element.type() == Element.JPEG ||
+				element.type() == Element.PNG ||
+				element.type() == Element.IMGRAW) {
 				super.add(index, element);
 			}
 			else {
@@ -208,8 +215,15 @@ public class Section extends ArrayList implements TextElementArray {
 		try {
 			Element element = (Element) o;
 			if (element.type() == Element.PARAGRAPH ||
-				element.type() == Element.LIST ||
-				element.type() == Element.TABLE) {
+				element.type() == Element.LIST ||  
+				element.type() == Element.CHUNK ||
+				element.type() == Element.PHRASE ||
+				element.type() == Element.ANCHOR ||
+				element.type() == Element.TABLE ||
+				element.type() == Element.GIF ||
+				element.type() == Element.JPEG ||
+				element.type() == Element.PNG ||
+				element.type() == Element.IMGRAW) {
 				return super.add(o);
 			}
 			else if (element.type() == Element.SECTION) {
