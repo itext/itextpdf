@@ -1,5 +1,5 @@
 /*
- * Copyright 2002 by Matt Benson.
+ * Copyright 2002 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,86 +47,21 @@
 
 package com.lowagie.text.markup;
 
-
-import java.util.Set;
 import java.util.Properties;
-import java.util.Collections;
 
-import com.lowagie.text.Font;
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Chapter;
 import com.lowagie.text.Paragraph;
 
-
 /**
- * A <CODE>Chapter</CODE> that implements <CODE>MarkupAttributes</CODE>.
- *
- * @author <a href="mailto:orangeherbert@users.sourceforge.net">Matt Benson</a>
+ *  An interface implemented by MarkupSection and MarkupChapter.
  */
-public class MarkupChapter extends Chapter implements MarkupAttributes, MarkupSectionChapter {
-    
-    // to be lazily instantiated
-    private Properties markupAttributes;
-    
-/**
- * @see com.lowagie.text.Chapter#Chapter(com.lowagie.text.Paragraph, int)
- */
-    public MarkupChapter(Paragraph title, int number) {
-        super(title, number);
-    }//end constructor(Paragraph, int)
-    
-    
-/**
- * @see com.lowagie.text.Chapter#Chapter(java.util.Properties, int)
- */
-    public MarkupChapter(Properties attributes, int number) {
-        super(attributes, number);
-    }//end constructor(Properties, int)
-    
-    
-/**
- * @see com.lowagie.text.Chapter#Chapter(java.lang.String, int)
- */
-    public MarkupChapter(String title, int number) {
-        super(title, number);
-    }//end constructor(String, int)
-    
+public interface MarkupSectionChapter {
 /**
  * @see com.lowagie.text.Section#addSection(java.util.Properties)
  */
-    public MarkupSection addMarkupSection(Properties attributes) {
-        MarkupSection section = new MarkupSection(new Paragraph(""), 1);
-        section.set(attributes);
-        add(section);
-        return section;
-    }
-    
-    
+    public MarkupSection addMarkupSection(Properties attributes);
 /**
- * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.Section#setTitle(Paragraph Title)
  */
-    public Set getMarkupAttributeNames() {
-        return (markupAttributes == null) ?
-        Collections.EMPTY_SET : markupAttributes.keySet();
-    }//end getMarkupAttributeNames
-    
-    
-/**
- * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
-    public void setMarkupAttribute(String name, String value) {
-        markupAttributes = (markupAttributes == null) ?
-        new Properties() : markupAttributes;
-        markupAttributes.put(name, value);
-    }//end setMarkupAttribute
-    
-    
-/**
- * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
-    public String getMarkupAttribute(String name) {
-        return (markupAttributes == null) ?
-        null : String.valueOf(markupAttributes.get(name));
-    }//end getMarkupAttribute
-    
-}//end class MarkupChapter
+    public void setTitle(Paragraph title);
+}
+

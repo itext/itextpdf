@@ -218,13 +218,13 @@ public class Phrase extends ArrayList implements TextElementArray {
     public Phrase(Properties attributes) {
         this("", new Font(attributes));
         clear();
-        String value = attributes.getProperty(ElementTags.LEADING);
+        String value = (String)attributes.remove(ElementTags.LEADING);
         if (value != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             Chunk chunk = new Chunk(value);
-            if ((value = attributes.getProperty(ElementTags.GENERICTAG)) != null) {
+            if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
                 chunk.setGenericTag(value);
             }
             add(chunk);

@@ -115,16 +115,16 @@ public class Chapter extends Section implements TextElementArray {
         this(new Paragraph(""), number);
         
         String value;
-        if ((value = attributes.getProperty(ElementTags.NUMBERDEPTH)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.NUMBERDEPTH)) != null) {
             setNumberDepth(Integer.parseInt(value));
         }
-        if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENT)) != null) {
             setIndentation(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
     }

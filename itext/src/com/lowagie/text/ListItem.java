@@ -216,19 +216,19 @@ public class ListItem extends Paragraph implements TextElementArray {
     public ListItem(Properties attributes) {
         super("", new Font(attributes));
         String value;
-        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             add(new Chunk(value));
         }
-        if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
             setAlignment(value);
         }
     }
