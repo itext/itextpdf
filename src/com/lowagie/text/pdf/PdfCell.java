@@ -392,7 +392,6 @@ public class PdfCell extends Rectangle {
         if (top() < bottom) {
             return new ArrayList();
         }
-        System.err.print("cellTop: " + top() + " pagetop: " + top);
         top = Math.min(top(), top);
         // initialisations
         Image image;
@@ -402,7 +401,6 @@ public class PdfCell extends Rectangle {
         for (Iterator i = images.iterator(); i.hasNext() && !header; ) {
             image = (Image) i.next();
             height = image.absoluteY();
-            System.err.println(" height: " + height);
             // if the currentPosition is higher than the bottom, we add the line to the result
             if (top - height > (bottom + cellpadding)) {
                 image.setAbsolutePosition(image.absoluteX(), top - height);
