@@ -56,6 +56,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import com.lowagie.text.markup.*;
+import java.lang.Thread;
 
 /**
  * A <CODE>Cell</CODE> is a <CODE>Rectangle</CODE> containing other
@@ -102,8 +103,8 @@ public class Cell extends Rectangle implements TextElementArray {
     /** This constant can be used as empty cell. */
     public static final Cell DUMMY_CELL = new Cell(true);
     static {
-        DUMMY_CELL.setColspan(3);
-        DUMMY_CELL.setBorder(NO_BORDER);
+		DUMMY_CELL.setColspan(3);
+		DUMMY_CELL.setBorder(NO_BORDER);
     }
 
     // membervariables
@@ -142,13 +143,13 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public Cell() {
-        // creates a Rectangle with BY DEFAULT a border of 0.5
-        super(0, 0, 0, 0);
-        setBorder(UNDEFINED);
-        setBorderWidth(0.5f);
+		// creates a Rectangle with BY DEFAULT a border of 0.5
+		super(0, 0, 0, 0);
+		setBorder(UNDEFINED);
+		setBorderWidth(0.5f);
 
-        // initializes the arraylist and adds an element
-        arrayList = new ArrayList();
+		// initializes the arraylist and adds an element
+		arrayList = new ArrayList();
     }
 
     /**
@@ -158,8 +159,8 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public Cell(boolean dummy) {
-        this();
-        arrayList.add(new Paragraph(0));
+		this();
+		arrayList.add(new Paragraph(0));
     }
 
     /**
@@ -171,18 +172,18 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public Cell(String content) {
-        // creates a Rectangle with BY DEFAULT a border of 0.5
-        super(0, 0, 0, 0);
-        setBorder(UNDEFINED);
-        setBorderWidth(0.5f);
+		// creates a Rectangle with BY DEFAULT a border of 0.5
+		super(0, 0, 0, 0);
+		setBorder(UNDEFINED);
+		setBorderWidth(0.5f);
 
-        // initializes the arraylist and adds an element
-        arrayList = new ArrayList();
-        try {
-            addElement(new Paragraph(content));
-        }
-        catch(BadElementException bee) {
-        }
+		// initializes the arraylist and adds an element
+		arrayList = new ArrayList();
+		try {
+			addElement(new Paragraph(content));
+		}
+		catch(BadElementException bee) {
+		}
     }
 
     /**
@@ -196,22 +197,22 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public Cell(Element element) throws BadElementException {
-        // creates a Rectangle with BY DEFAULT a border of 0.5
-        super(0, 0, 0, 0);
-        setBorder(UNDEFINED);
-        setBorderWidth(0.5f);
+		// creates a Rectangle with BY DEFAULT a border of 0.5
+		super(0, 0, 0, 0);
+		setBorder(UNDEFINED);
+		setBorderWidth(0.5f);
 
-        try {
-            Phrase p = (Phrase)element;
-            leading = p.leading();
-        }
-        catch(Exception e) {
-            // empty on purpose
-        }
+		try {
+			Phrase p = (Phrase)element;
+			leading = p.leading();
+		}
+		catch(Exception e) {
+			// empty on purpose
+		}
 
-        // initializes the arraylist and adds an element
-        arrayList = new ArrayList();
-        addElement(element);
+		// initializes the arraylist and adds an element
+		arrayList = new ArrayList();
+		addElement(element);
     }
 
     /**
@@ -222,84 +223,84 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public Cell(Properties attributes) {
-        this();
-        String value;
-        if ((value = (String)attributes.remove(ElementTags.HORIZONTALALIGN)) != null) {
-            setHorizontalAlignment(value);
-        }
-        if ((value = (String)attributes.remove(ElementTags.VERTICALALIGN)) != null) {
-            setVerticalAlignment(value);
-        }
-        if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
-            setWidth(value);
-        }
-        if ((value = (String)attributes.remove(ElementTags.COLSPAN)) != null) {
-            setColspan(Integer.parseInt(value));
-        }
-        if ((value = (String)attributes.remove(ElementTags.ROWSPAN)) != null) {
-            setRowspan(Integer.parseInt(value));
-        }
-        if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
-        }
-        if ((value = (String)attributes.remove(ElementTags.HEADER)) != null) {
-            setHeader(new Boolean(value).booleanValue());
-        }
-        if ((value = (String)attributes.remove(ElementTags.NOWRAP)) != null) {
-            setNoWrap(new Boolean(value).booleanValue());
-        }
-        if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
-            setBorderWidth(Float.valueOf(value + "f").floatValue());
-        }
-        int border = 0;
-        if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
-            if (new Boolean(value).booleanValue()) border |= Rectangle.LEFT;
-        }
-        if ((value = (String)attributes.remove(ElementTags.RIGHT)) != null) {
-            if (new Boolean(value).booleanValue()) border |= Rectangle.RIGHT;
-        }
-        if ((value = (String)attributes.remove(ElementTags.TOP)) != null) {
-            if (new Boolean(value).booleanValue()) border |= Rectangle.TOP;
-        }
-        if ((value = (String)attributes.remove(ElementTags.BOTTOM)) != null) {
-            if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
-        }
-        setBorder(border);
-        String r = null;
-        String g = null;
-        String b = null;
-        if ((r = (String)attributes.remove(ElementTags.RED)) != null ||
-            (g = (String)attributes.remove(ElementTags.GREEN)) != null ||
-            (b = (String)attributes.remove(ElementTags.BLUE)) != null) {
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            if (r != null) red = Integer.parseInt(r);
-            if (g != null) green = Integer.parseInt(g);
-            if (b != null) blue = Integer.parseInt(b);
-            setBorderColor(new Color(red, green, blue));
-        }
-        else if ((value = (String)attributes.remove(ElementTags.BORDERCOLOR)) != null) {
-            setBorderColor(MarkupParser.decodeColor(value));
-        }
-        if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
-            (g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
-            (b = (String)attributes.remove(ElementTags.BGBLUE)) != null) {
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            if (r != null) red = Integer.parseInt(r);
-            if (g != null) green = Integer.parseInt(g);
-            if (b != null) blue = Integer.parseInt(b);
-            setBackgroundColor(new Color(red, green, blue));
-        }
-        else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
-            setBackgroundColor(MarkupParser.decodeColor(value));
-        }
-        if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
-            setGrayFill(Float.valueOf(value + "f").floatValue());
-        }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
+		this();
+		String value;
+		if ((value = (String)attributes.remove(ElementTags.HORIZONTALALIGN)) != null) {
+			setHorizontalAlignment(value);
+		}
+		if ((value = (String)attributes.remove(ElementTags.VERTICALALIGN)) != null) {
+			setVerticalAlignment(value);
+		}
+		if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
+			setWidth(value);
+		}
+		if ((value = (String)attributes.remove(ElementTags.COLSPAN)) != null) {
+			setColspan(Integer.parseInt(value));
+		}
+		if ((value = (String)attributes.remove(ElementTags.ROWSPAN)) != null) {
+			setRowspan(Integer.parseInt(value));
+		}
+		if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
+			setLeading(Float.valueOf(value + "f").floatValue());
+		}
+		if ((value = (String)attributes.remove(ElementTags.HEADER)) != null) {
+			setHeader(new Boolean(value).booleanValue());
+		}
+		if ((value = (String)attributes.remove(ElementTags.NOWRAP)) != null) {
+			setNoWrap(new Boolean(value).booleanValue());
+		}
+		if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
+			setBorderWidth(Float.valueOf(value + "f").floatValue());
+		}
+		int border = 0;
+		if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
+			if (new Boolean(value).booleanValue()) border |= Rectangle.LEFT;
+		}
+		if ((value = (String)attributes.remove(ElementTags.RIGHT)) != null) {
+			if (new Boolean(value).booleanValue()) border |= Rectangle.RIGHT;
+		}
+		if ((value = (String)attributes.remove(ElementTags.TOP)) != null) {
+			if (new Boolean(value).booleanValue()) border |= Rectangle.TOP;
+		}
+		if ((value = (String)attributes.remove(ElementTags.BOTTOM)) != null) {
+			if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
+		}
+		setBorder(border);
+		String r = null;
+		String g = null;
+		String b = null;
+		if ((r = (String)attributes.remove(ElementTags.RED)) != null ||
+			(g = (String)attributes.remove(ElementTags.GREEN)) != null ||
+			(b = (String)attributes.remove(ElementTags.BLUE)) != null) {
+			int red = 0;
+			int green = 0;
+			int blue = 0;
+			if (r != null) red = Integer.parseInt(r);
+			if (g != null) green = Integer.parseInt(g);
+			if (b != null) blue = Integer.parseInt(b);
+			setBorderColor(new Color(red, green, blue));
+		}
+		else if ((value = (String)attributes.remove(ElementTags.BORDERCOLOR)) != null) {
+			setBorderColor(MarkupParser.decodeColor(value));
+		}
+		if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
+			(g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
+			(b = (String)attributes.remove(ElementTags.BGBLUE)) != null) {
+			int red = 0;
+			int green = 0;
+			int blue = 0;
+			if (r != null) red = Integer.parseInt(r);
+			if (g != null) green = Integer.parseInt(g);
+			if (b != null) blue = Integer.parseInt(b);
+			setBackgroundColor(new Color(red, green, blue));
+		}
+		else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
+			setBackgroundColor(MarkupParser.decodeColor(value));
+		}
+		if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
+			setGrayFill(Float.valueOf(value + "f").floatValue());
+		}
+		if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
 
     // implementation of the Element-methods
@@ -313,12 +314,12 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public boolean process(ElementListener listener) {
-        try {
-            return listener.add(this);
-        }
-        catch(DocumentException de) {
-            return false;
-        }
+		try {
+			return listener.add(this);
+		}
+		catch(DocumentException de) {
+			return false;
+		}
     }
 
     /**
@@ -328,7 +329,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public int type() {
-        return Element.CELL;
+		return Element.CELL;
     }
 
     /**
@@ -338,11 +339,11 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public ArrayList getChunks() {
-        ArrayList tmp = new ArrayList();
-        for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
-            tmp.addAll(((Element) i.next()).getChunks());
-        }
-        return tmp;
+		ArrayList tmp = new ArrayList();
+		for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
+			tmp.addAll(((Element) i.next()).getChunks());
+		}
+		return tmp;
     }
 
     // methods to set the membervariables
@@ -358,100 +359,102 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void addElement(Element element) throws BadElementException {
-        if (isTable()) {
-            System.out.println(" !! addElement to inner table!! ");
-            Table table = (Table) arrayList.get(0);
-            Cell tmp = new Cell(element);
-            tmp.setBorder(NO_BORDER);
-            tmp.setColspan(table.columns());
-            table.addCell(tmp);
-            return;
-        }
-        switch(element.type()) {
-        case Element.LISTITEM:
-        case Element.ROW:
-        case Element.CELL:
-            throw new BadElementException("You can't add listitems, rows or cells to a cell.");
-        case Element.JPEG:
-        case Element.IMGRAW:
-        case Element.IMGTEMPLATE:
-        case Element.GIF:
-        case Element.PNG:
-            arrayList.add(element);
-            break;
-        case Element.LIST:
-            if (Float.isNaN(leading)) {
-                leading = ((List) element).leading();
-            }
-            if (((List) element).size() == 0) return;
-            arrayList.add(element);
-            return;
-        case Element.ANCHOR:
-        case Element.PARAGRAPH:
-        case Element.PHRASE:
-            if (Float.isNaN(leading)) {
-                leading = ((Phrase) element).leading();
-            }
-            if (((Phrase) element).isEmpty()) return;
-            arrayList.add(element);
-            return;
-        case Element.CHUNK:
-            if (((Chunk) element).isEmpty()) return;
-            arrayList.add(element);
-            return;
-        case Element.TABLE:
-            // System.out.println("Cell.addElement(TABLE)");
-            /* <ea> i do not understand what happens here??
-              Table table = new Table(3);
-              float[] widths = new float[3];
-              widths[1] = ((Table)element).widthPercentage();
+		if (isTable()) {
+			System.out.println(" !! addElement to inner table!! ");
+			Thread.dumpStack();
 
-              switch(((Table)element).alignment()) {
-              case Element.ALIGN_LEFT:
-              widths[0] = 0f;
-              widths[2] = 100f - widths[1];
-              break;
-              case Element.ALIGN_CENTER:
-              widths[0] = (100f - widths[1]) / 2f;
-              widths[2] = widths[0];
-              break;
-              case Element.ALIGN_RIGHT:
-              widths[0] = 100f - widths[1];
-              widths[2] = 0f;
-              }
-              table.setWidths(widths);
-              Cell tmp;
-              if (arrayList.size() == 0) {
-              table.addCell(DUMMY_CELL);
-              }
-              else {
-              tmp = new Cell();
-              tmp.setBorder(NO_BORDER);
-              tmp.setColspan(3);
-              for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
-              tmp.add((Element) i.next());
-              }
-              table.addCell(tmp);
-              }
-              tmp = new Cell();
-              tmp.setBorder(NO_BORDER);
-              table.addCell(tmp);
-              table.insertTable((Table)element);
-              table.addCell(tmp);
-              table.addCell(DUMMY_CELL);
-              clear();
-              arrayList.add(table);
-            */
-            if (arrayList.size() > 0) {
-                System.out.println(" dropping old cell content!!");
-            } // end of if (arrayList.size() > 0)
+			Table table = (Table) arrayList.get(0);
+			Cell tmp = new Cell(element);
+			tmp.setBorder(NO_BORDER);
+			tmp.setColspan(table.columns());
+			table.addCell(tmp);
+			return;
+		}
+		switch(element.type()) {
+		case Element.LISTITEM:
+		case Element.ROW:
+		case Element.CELL:
+			throw new BadElementException("You can't add listitems, rows or cells to a cell.");
+		case Element.JPEG:
+		case Element.IMGRAW:
+		case Element.IMGTEMPLATE:
+		case Element.GIF:
+		case Element.PNG:
+			arrayList.add(element);
+			break;
+		case Element.LIST:
+			if (Float.isNaN(leading)) {
+				leading = ((List) element).leading();
+			}
+			if (((List) element).size() == 0) return;
+			arrayList.add(element);
+			return;
+		case Element.ANCHOR:
+		case Element.PARAGRAPH:
+		case Element.PHRASE:
+			if (Float.isNaN(leading)) {
+				leading = ((Phrase) element).leading();
+			}
+			if (((Phrase) element).isEmpty()) return;
+			arrayList.add(element);
+			return;
+		case Element.CHUNK:
+			if (((Chunk) element).isEmpty()) return;
+			arrayList.add(element);
+			return;
+		case Element.TABLE:
+			// System.out.println("Cell.addElement(TABLE)");
+			/* <ea> i do not understand what happens here??
+			   Table table = new Table(3);
+			   float[] widths = new float[3];
+			   widths[1] = ((Table)element).widthPercentage();
 
-            clear();
-            arrayList.add((Table)element);
-            return;
-        default:
-            arrayList.add(element);
-        }
+			   switch(((Table)element).alignment()) {
+			   case Element.ALIGN_LEFT:
+			   widths[0] = 0f;
+			   widths[2] = 100f - widths[1];
+			   break;
+			   case Element.ALIGN_CENTER:
+			   widths[0] = (100f - widths[1]) / 2f;
+			   widths[2] = widths[0];
+			   break;
+			   case Element.ALIGN_RIGHT:
+			   widths[0] = 100f - widths[1];
+			   widths[2] = 0f;
+			   }
+			   table.setWidths(widths);
+			   Cell tmp;
+			   if (arrayList.size() == 0) {
+			   table.addCell(DUMMY_CELL);
+			   }
+			   else {
+			   tmp = new Cell();
+			   tmp.setBorder(NO_BORDER);
+			   tmp.setColspan(3);
+			   for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
+			   tmp.add((Element) i.next());
+			   }
+			   table.addCell(tmp);
+			   }
+			   tmp = new Cell();
+			   tmp.setBorder(NO_BORDER);
+			   table.addCell(tmp);
+			   table.insertTable((Table)element);
+			   table.addCell(tmp);
+			   table.addCell(DUMMY_CELL);
+			   clear();
+			   arrayList.add(table);
+			*/
+			if (arrayList.size() > 0) {
+				System.out.println(" dropping old cell content!!");
+			} // end of if (arrayList.size() > 0)
+
+			clear();
+			arrayList.add((Table)element);
+			return;
+		default:
+			arrayList.add(element);
+		}
     }
 
     /**
@@ -462,16 +465,16 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public boolean add(Object o) {
-        try {
-            this.addElement((Element) o);
-            return true;
-        }
-        catch(ClassCastException cce) {
-            throw new ClassCastException("You can only add objects that implement the Element interface.");
-        }
-        catch(BadElementException bee) {
-            throw new ClassCastException(bee.getMessage());
-        }
+		try {
+			this.addElement((Element) o);
+			return true;
+		}
+		catch(ClassCastException cce) {
+			throw new ClassCastException("You can only add objects that implement the Element interface.");
+		}
+		catch(BadElementException bee) {
+			throw new ClassCastException(bee.getMessage());
+		}
     }
 
     /**
@@ -481,7 +484,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setLeading(float value) {
-        leading = value;
+		leading = value;
     }
 
     /**
@@ -491,7 +494,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setHorizontalAlignment(int value) {
-        horizontalAlignment = value;
+		horizontalAlignment = value;
     }
 
     /**
@@ -501,19 +504,19 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setHorizontalAlignment(String alignment) {
-        if (ElementTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
-            this.horizontalAlignment = Element.ALIGN_CENTER;
-            return;
-        }
-        if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(alignment)) {
-            this.horizontalAlignment = Element.ALIGN_RIGHT;
-            return;
-        }
-        if (ElementTags.ALIGN_JUSTIFIED.equalsIgnoreCase(alignment)) {
-            this.horizontalAlignment = Element.ALIGN_JUSTIFIED;
-            return;
-        }
-        this.horizontalAlignment = Element.ALIGN_LEFT;
+		if (ElementTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
+			this.horizontalAlignment = Element.ALIGN_CENTER;
+			return;
+		}
+		if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(alignment)) {
+			this.horizontalAlignment = Element.ALIGN_RIGHT;
+			return;
+		}
+		if (ElementTags.ALIGN_JUSTIFIED.equalsIgnoreCase(alignment)) {
+			this.horizontalAlignment = Element.ALIGN_JUSTIFIED;
+			return;
+		}
+		this.horizontalAlignment = Element.ALIGN_LEFT;
     }
 
     /**
@@ -523,7 +526,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setVerticalAlignment(int value) {
-        verticalAlignment = value;
+		verticalAlignment = value;
     }
 
     /**
@@ -533,19 +536,19 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setVerticalAlignment(String alignment) {
-        if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(alignment)) {
-            this.verticalAlignment = Element.ALIGN_MIDDLE;
-            return;
-        }
-        if (ElementTags.ALIGN_BOTTOM.equalsIgnoreCase(alignment)) {
-            this.verticalAlignment = Element.ALIGN_BOTTOM;
-            return;
-        }
-        if (ElementTags.ALIGN_BASELINE.equalsIgnoreCase(alignment)) {
-            this.verticalAlignment = Element.ALIGN_BASELINE;
-            return;
-        }
-        this.verticalAlignment = Element.ALIGN_TOP;
+		if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(alignment)) {
+			this.verticalAlignment = Element.ALIGN_MIDDLE;
+			return;
+		}
+		if (ElementTags.ALIGN_BOTTOM.equalsIgnoreCase(alignment)) {
+			this.verticalAlignment = Element.ALIGN_BOTTOM;
+			return;
+		}
+		if (ElementTags.ALIGN_BASELINE.equalsIgnoreCase(alignment)) {
+			this.verticalAlignment = Element.ALIGN_BASELINE;
+			return;
+		}
+		this.verticalAlignment = Element.ALIGN_TOP;
     }
 
     /**
@@ -555,7 +558,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setWidth(String value) {
-        width = value;
+		width = value;
     }
 
     /**
@@ -565,7 +568,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setColspan(int value) {
-        colspan = value;
+		colspan = value;
     }
 
     /**
@@ -575,7 +578,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setRowspan(int value) {
-        rowspan = value;
+		rowspan = value;
     }
 
     /**
@@ -585,7 +588,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setHeader(boolean value) {
-        header = value;
+		header = value;
     }
 
     /**
@@ -595,7 +598,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public void setNoWrap(boolean value) {
-        noWrap = value;
+		noWrap = value;
     }
 
     // methods to retrieve information
@@ -607,7 +610,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public int size() {
-        return arrayList.size();
+		return arrayList.size();
     }
 
     /**
@@ -617,25 +620,25 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public boolean isEmpty() {
-        switch(size()) {
-        case 0:
-            return true;
-        case 1:
-            Element element = (Element) arrayList.get(0);
-            switch (element.type()) {
-            case Element.CHUNK:
-                return ((Chunk) element).isEmpty();
-            case Element.ANCHOR:
-            case Element.PHRASE:
-            case Element.PARAGRAPH:
-                return ((Phrase) element).isEmpty();
-            case Element.LIST:
-                return ((List) element).size() == 0;
-            }
-            return false;
-        default:
-            return false;
-        }
+		switch(size()) {
+		case 0:
+			return true;
+		case 1:
+			Element element = (Element) arrayList.get(0);
+			switch (element.type()) {
+			case Element.CHUNK:
+				return ((Chunk) element).isEmpty();
+			case Element.ANCHOR:
+			case Element.PHRASE:
+			case Element.PARAGRAPH:
+				return ((Phrase) element).isEmpty();
+			case Element.LIST:
+				return ((List) element).size() == 0;
+			}
+			return false;
+		default:
+			return false;
+		}
     }
 
     /**
@@ -645,7 +648,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     void fill() {
-        if (size() == 0) arrayList.add(new Paragraph(0));
+		if (size() == 0) arrayList.add(new Paragraph(0));
     }
 
     /**
@@ -656,7 +659,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public boolean isTable() {
-        return (size() == 1) && (((Element)arrayList.get(0)).type() == Element.TABLE);
+		return (size() == 1) && (((Element)arrayList.get(0)).type() == Element.TABLE);
     }
 
     /**
@@ -666,7 +669,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public Iterator getElements() {
-        return arrayList.iterator();
+		return arrayList.iterator();
     }
 
     /**
@@ -676,7 +679,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public int horizontalAlignment() {
-        return horizontalAlignment;
+		return horizontalAlignment;
     }
 
     /**
@@ -686,7 +689,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public int verticalAlignment() {
-        return verticalAlignment;
+		return verticalAlignment;
     }
 
     /**
@@ -696,7 +699,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public String cellWidth() {
-        return width;
+		return width;
     }
 
     /**
@@ -706,7 +709,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public int colspan() {
-        return colspan;
+		return colspan;
     }
 
     /**
@@ -716,7 +719,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public int rowspan() {
-        return rowspan;
+		return rowspan;
     }
 
     /**
@@ -726,10 +729,10 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public float leading() {
-        if (Float.isNaN(leading)) {
-            return 16;
-        }
-        return leading;
+		if (Float.isNaN(leading)) {
+			return 16;
+		}
+		return leading;
     }
 
     /**
@@ -739,7 +742,7 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public boolean header() {
-        return header;
+		return header;
     }
 
     /**
@@ -749,98 +752,98 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public boolean noWrap() {
-        return noWrap;
+		return noWrap;
     }
 
     /**
      * Clears all the <CODE>Element</CODE>s of this <CODE>Cell</CODE>.
      */
     public void clear() {
-        arrayList.clear();
+		arrayList.clear();
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float top() {
-        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float bottom() {
-        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float left() {
-        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float right() {
-        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float top(int margin) {
-        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float bottom(int margin) {
-        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float left(int margin) {
-        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float right(int margin) {
-        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public void setTop(int value) {
-        throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public void setBottom(int value) {
-        throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public void setLeft(int value) {
-        throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public void setRight(int value) {
-        throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
     }
 
     /**
@@ -851,6 +854,6 @@ public class Cell extends Rectangle implements TextElementArray {
      */
 
     public static boolean isTag(String tag) {
-        return ElementTags.CELL.equals(tag);
+		return ElementTags.CELL.equals(tag);
     }
 }
