@@ -91,7 +91,7 @@ public class Png extends Image implements Element {
 	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
-	public Png(URL url, int width, int height) throws BadElementException, IOException {
+	public Png(URL url, float width, float height) throws BadElementException, IOException {
 		this(url);
 		scaledWidth = width;
 		scaledHeight = height;
@@ -115,7 +115,7 @@ public class Png extends Image implements Element {
 	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
-	public Png(String filename, int width, int height) throws MalformedURLException, BadElementException, IOException {
+	public Png(String filename, float width, float height) throws MalformedURLException, BadElementException, IOException {
 		this(Image.toURL(filename), width, height);
 	}
 
@@ -137,7 +137,7 @@ public class Png extends Image implements Element {
 	 * @param		img			the memory image.
 	 */
 
-	public Png(byte[] img, int width, int height) throws BadElementException, IOException {
+	public Png(byte[] img, float width, float height) throws BadElementException, IOException {
         this(img);
 		scaledWidth = width;
 		scaledHeight = height;
@@ -201,9 +201,9 @@ public class Png extends Image implements Element {
 				int len = getInt(is);
 				if (IHDR.equals(getString(is))) {
 					scaledWidth = getInt(is);
-					setRight((int) scaledWidth);
+					setRight(scaledWidth);
 					scaledHeight = getInt(is);
-					setTop((int) scaledHeight);
+					setTop(scaledHeight);
 					break;
 				}
 				if (IEND.equals(getString(is))) {

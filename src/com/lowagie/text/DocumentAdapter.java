@@ -121,7 +121,7 @@ public abstract class DocumentAdapter implements DocListener {
 	 * @param	marginBottom	the height of the margin at the bottom
 	 */
 
-	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom) {
+	public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
 		return false;
 	}							
 

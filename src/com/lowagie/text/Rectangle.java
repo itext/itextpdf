@@ -75,22 +75,22 @@ public class Rectangle implements Element {
 // membervariables
 	
 	/** the lower left x-coordinate. */
-	protected int llx;
+	protected float llx;
 	
 	/** the lower left y-coordinate. */
-	protected int lly;
+	protected float lly;
 	
 	/** the upper right x-coordinate. */
-	protected int urx;
+	protected float urx;
 	
 	/** the upper right y-coordinate. */
-	protected int ury;
+	protected float ury;
 
 	/** This represents the status of the 4 sides of the rectangle. */
 	protected int border = UNDEFINED;	
 
 	/** This is the width of the border around this rectangle. */
-	protected double borderWidth = UNDEFINED;
+	protected float borderWidth = UNDEFINED;
 
 	/** This is the color of the border of this rectangle. */
 	protected Color color = null;
@@ -99,7 +99,7 @@ public class Rectangle implements Element {
 	protected Color background = null;
 
 	/** This is the grayscale value of the background of this rectangle. */
-	protected double grayFill = 0.0;
+	protected float grayFill = 0;
 
 // constructors
 
@@ -112,7 +112,7 @@ public class Rectangle implements Element {
 	 * @param		ury			upper right y
 	 */
 
-	public Rectangle(int llx, int lly, int urx, int ury) {
+	public Rectangle(float llx, float lly, float urx, float ury) {
 		this.llx = llx;
 		this.lly = lly;
 		this.urx = urx;
@@ -126,7 +126,7 @@ public class Rectangle implements Element {
 	 * @param		ury			upper right y
 	 */
 
-	public Rectangle(int urx, int ury) {
+	public Rectangle(float urx, float ury) {
 		this(0, 0, urx, ury);
 	}
 
@@ -189,7 +189,7 @@ public class Rectangle implements Element {
 	 * @return	a <CODE>Rectangle</CODE>
 	 */
 
-	public Rectangle rectangle(int top, int bottom) {
+	public Rectangle rectangle(float top, float bottom) {
 		Rectangle tmp = new Rectangle(this);
 		tmp.setBorder(border);
 		tmp.setBorderWidth(borderWidth);
@@ -225,7 +225,7 @@ public class Rectangle implements Element {
 	 * @param	value	the new value
 	 */
 
-	public void setLeft(int value) {
+	public void setLeft(float value) {
 		llx = value;
 	}
 
@@ -235,7 +235,7 @@ public class Rectangle implements Element {
 	 * @param	value	the new value
 	 */
 
-	public void setRight(int value) {
+	public void setRight(float value) {
 		urx = value;
 	}
 
@@ -245,7 +245,7 @@ public class Rectangle implements Element {
 	 * @param	value	the new value
 	 */
 
-	public void setTop(int value) {
+	public void setTop(float value) {
 		ury = value;
 	}
 
@@ -255,7 +255,7 @@ public class Rectangle implements Element {
 	 * @param	value	the new value
 	 */
 
-	public void setBottom(int value) {
+	public void setBottom(float value) {
 		lly = value;
 	}							
 
@@ -275,7 +275,7 @@ public class Rectangle implements Element {
 	 * @param	value	the new value
      */
 
-    public void setBorderWidth(double value) {
+    public void setBorderWidth(float value) {
 		borderWidth = value;
 	}							
 
@@ -305,7 +305,7 @@ public class Rectangle implements Element {
 	 * @param	value	the new value
      */
 
-    public void setGrayFill(double value) {
+    public void setGrayFill(float value) {
 		if (value >= 0 && value <= 1.0) {
 			grayFill = value;
 		}
@@ -319,7 +319,7 @@ public class Rectangle implements Element {
 	 * @return		the lower left x-coordinate
 	 */
 
-	public int left() {
+	public float left() {
 		return llx;
 	}
 
@@ -329,7 +329,7 @@ public class Rectangle implements Element {
 	 * @return		the upper right x-coordinate
 	 */
 
-	public int right() {
+	public float right() {
 		return urx;
 	}
 
@@ -339,7 +339,7 @@ public class Rectangle implements Element {
 	 * @return		the upper right y-coordinate
 	 */
 
-	public int top() {
+	public float top() {
 		return ury;
 	}
 
@@ -349,7 +349,7 @@ public class Rectangle implements Element {
 	 * @return		the lower left y-coordinate
 	 */
 
-	public int bottom() {
+	public float bottom() {
 		return lly;
 	}
 
@@ -360,7 +360,7 @@ public class Rectangle implements Element {
 	 * @return		the lower left x-coordinate
 	 */
 
-	public int left(int margin) {
+	public float left(float margin) {
 		return llx + margin;
 	}
 
@@ -371,7 +371,7 @@ public class Rectangle implements Element {
 	 * @return		the upper right x-coordinate
 	 */
 
-	public int right(int margin) {
+	public float right(float margin) {
 		return urx - margin;
 	}
 
@@ -382,7 +382,7 @@ public class Rectangle implements Element {
 	 * @return		the upper right y-coordinate
 	 */
 
-	public int top(int margin) {
+	public float top(float margin) {
 		return ury - margin;
 	}
 
@@ -393,7 +393,7 @@ public class Rectangle implements Element {
 	 * @return		the lower left y-coordinate
 	 */
 
-	public int bottom(int margin) {
+	public float bottom(float margin) {
 		return lly + margin;
 	}
 
@@ -403,7 +403,7 @@ public class Rectangle implements Element {
 	 * @return		a width
 	 */
 
-	public int width() {
+	public float width() {
 		return urx - llx;
 	}
 
@@ -413,7 +413,7 @@ public class Rectangle implements Element {
 	 * @return		a height
 	 */
 
-	public int height() {
+	public float height() {
 		return ury - lly;
 	}
 
@@ -454,7 +454,7 @@ public class Rectangle implements Element {
      * @return	a value
      */
 
-    public double borderWidth() {
+    public float borderWidth() {
 		return borderWidth;
 	}		
 
@@ -484,7 +484,7 @@ public class Rectangle implements Element {
      * @return	a value
      */
 
-    public final double grayFill() {
+    public final float grayFill() {
 		return grayFill;
 	}
 

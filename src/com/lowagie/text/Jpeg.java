@@ -98,7 +98,7 @@ public class Jpeg extends Image implements Element {
 	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
-	public Jpeg(URL url, int width, int height) throws BadElementException, IOException {
+	public Jpeg(URL url, float width, float height) throws BadElementException, IOException {
 		this(url);
 		scaledWidth = width;
 		scaledHeight = height;
@@ -122,7 +122,7 @@ public class Jpeg extends Image implements Element {
 	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
-	public Jpeg(String filename, int width, int height) throws BadElementException, MalformedURLException, IOException {
+	public Jpeg(String filename, float width, float height) throws BadElementException, MalformedURLException, IOException {
 		this(Image.toURL(filename), width, height);
 	}
 
@@ -150,7 +150,7 @@ public class Jpeg extends Image implements Element {
 	 * @author		Paulo Soares
 	 */
 
-	public Jpeg(byte[] img, int width, int height) throws BadElementException, IOException {
+	public Jpeg(byte[] img, float width, float height) throws BadElementException, IOException {
         this(img);
 		scaledWidth = width;
 		scaledHeight = height;
@@ -227,9 +227,9 @@ public class Jpeg extends Image implements Element {
 							throw new BadElementException(errorID + " must have 8 bits per component.");
 						}
 						scaledHeight = getShort(is);
-						setTop((int) scaledHeight);
+						setTop(scaledHeight);
 						scaledWidth = getShort(is);
-						setRight((int) scaledWidth);
+						setRight(scaledWidth);
 						colorspace = is.read();
 						break;
 					}

@@ -76,7 +76,7 @@ public class Gif extends Image implements Element {
 	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
-	public Gif(URL url, int width, int height) throws BadElementException, IOException {
+	public Gif(URL url, float width, float height) throws BadElementException, IOException {
 		this(url);
 		scaledWidth = width;
 		scaledHeight = height;
@@ -102,7 +102,7 @@ public class Gif extends Image implements Element {
 	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
-	public Gif(String filename, int width, int height)  throws BadElementException, MalformedURLException, IOException {
+	public Gif(String filename, float width, float height)  throws BadElementException, MalformedURLException, IOException {
 		this(Image.toURL(filename), width, height);
 	}
 
@@ -130,7 +130,7 @@ public class Gif extends Image implements Element {
 	 * @author		Paulo Soares
 	 */
 
-	public Gif(byte[] img, int width, int height) throws BadElementException, IOException {
+	public Gif(byte[] img, float width, float height) throws BadElementException, IOException {
 		this(img);
 		scaledWidth = width;
 		scaledHeight = height;
@@ -160,9 +160,9 @@ public class Gif extends Image implements Element {
 			}
 			skip(is, 3);
 			scaledWidth = is.read() + (is.read() << 8);
-			setRight((int) scaledWidth);
+			setRight(scaledWidth);
 			scaledHeight = is.read() + (is.read() << 8);
-			setTop((int) scaledHeight);
+			setTop(scaledHeight);
 		 }
 		 finally {
 			if (is != null) {

@@ -35,7 +35,7 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 
-import com.lowagie.text.pdf.PdfContent;
+import com.lowagie.text.pdf.PdfContentByte;
 
 /**
  * A <CODE>Graphic</CODE> element can contain several geometric figures (curves, lines,...).
@@ -48,7 +48,7 @@ import com.lowagie.text.pdf.PdfContent;
  * @author  bruno@lowagie.com
  */
 
-public class Graphic extends PdfContent implements Element {
+public class Graphic extends PdfContentByte implements Element {
 
 // constructor
 
@@ -57,7 +57,7 @@ public class Graphic extends PdfContent implements Element {
 	 */
 
 	public Graphic() {
-		super();
+		super(null);
 	}
 
 // implementation of the Element interface

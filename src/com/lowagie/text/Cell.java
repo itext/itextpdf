@@ -99,7 +99,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	private int rowspan = 1;
 
 	/** This is the leading. */
-	int leading = -1;
+	float leading = -1;
 
 	/** Is this <CODE>Cell</CODE> a header? */
 	private boolean header;
@@ -117,7 +117,7 @@ public class Cell extends Rectangle implements TextElementArray {
 		// creates a Rectangle with BY DEFAULT a border of 0.5
 		super(0, 0, 0, 0);
 		setBorder(BOX);
-		setBorderWidth(0.5);
+		setBorderWidth(0.5f);
 
 		// initializes the arraylist and adds an element
 		arrayList = new ArrayList();
@@ -156,7 +156,7 @@ public class Cell extends Rectangle implements TextElementArray {
 		// creates a Rectangle with BY DEFAULT a border of 0.5
 		super(0, 0, 0, 0);
 		setBorder(BOX);
-		setBorderWidth(0.5);
+		setBorderWidth(0.5f);
 
 		// initializes the arraylist and adds an element
 		arrayList = new ArrayList();
@@ -208,14 +208,14 @@ public class Cell extends Rectangle implements TextElementArray {
 
 // methods to set the membervariables
 
-	/**
-	 * Adds an element to this <CODE>Cell</CODE>. 
+	/** Adds an element to this <CODE>Cell</CODE>. 
      * <P>
-	 * Remark: you can't add <CODE>ListItem</CODE>s, <CODE>Row</CODE>s, <CODE>Cell</CODE>s,
-	 * <CODE>JPEG</CODE>s, <CODE>GIF</CODE>s or <CODE>PNG</CODE>s to a <CODE>Cell</CODE>.
-	 *
-	 * @throws	BadElementException if the method was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
-	 */
+     * Remark: you can't add <CODE>ListItem</CODE>s, <CODE>Row</CODE>s, <CODE>Cell</CODE>s,
+     * <CODE>JPEG</CODE>s, <CODE>GIF</CODE>s or <CODE>PNG</CODE>s to a <CODE>Cell</CODE>.
+     *
+     * @param element The <CODE>Element</CODE> to add
+     * @throws BadElementException if the method was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
+ */
 
 	public final void addElement(Element element) throws BadElementException {
 		switch(element.type()) {
@@ -241,11 +241,11 @@ public class Cell extends Rectangle implements TextElementArray {
 		}
 	}
 
-	/**
-	 * Add an <CODE>Object</CODE> to this cell.
-	 *
-	 * @param	o		the object to add
-	 */
+	/** Add an <CODE>Object</CODE> to this cell.
+     *
+     * @param o the object to add
+     * @return always <CODE>true</CODE>
+ */
 
 	public boolean add(Object o) {
 		try {
@@ -266,7 +266,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * @param	value	the new value
      */
 
-    public final void setLeading(int value) {
+    public final void setLeading(float value) {
 		leading = value;
 	}
 
@@ -423,7 +423,7 @@ public class Cell extends Rectangle implements TextElementArray {
      * @return	a value
      */
 
-    public final int leading() {
+    public final float leading() {
 		if (leading < 0) {
 			return 16;
 		}
@@ -549,4 +549,11 @@ public class Cell extends Rectangle implements TextElementArray {
 		buf.append("\n\t\t</CELL>\n");								
 		return buf.toString();
 	}
+    
+/** Clears all the <CODE>Element</CODE>s of this <CODE>Cell</CODE>.
+ */    
+    public final void clear()
+    {
+        arrayList.clear();
+    }
 }

@@ -34,6 +34,7 @@
 package com.lowagie.text;
 
 import java.awt.Color;
+import com.lowagie.text.pdf.BaseFont;
 
 /**
  * Contains all the specifications of a font: fontfamily, size, style and color.
@@ -100,7 +101,7 @@ public class Font implements Comparable {
 	private int family = UNDEFINED;
 
 	/** the value of the fontsize. */
-	private int size = UNDEFINED;
+	private float size = UNDEFINED;
 
 	/** the value of the style. */
 	private int style = UNDEFINED;
@@ -108,6 +109,8 @@ public class Font implements Comparable {
 	/** the value of the color. */
 	private Color color = null;
 
+    /** the external font */
+    private BaseFont baseFont = null;
 // constructors
 
 	/**
@@ -116,14 +119,61 @@ public class Font implements Comparable {
 	 * @param	family	the family to which this font belongs
 	 * @param	size	the size of this font
 	 * @param	style	the style of this font
-	 * @paran	color	the <CODE>Color</CODE> of this font.
+	 * @param	color	the <CODE>Color</CODE> of this font.
 	 */
 
-	public Font(int family, int size, int style, Color color) {
+	public Font(int family, float size, int style, Color color) {
 		 this.family = family;
 		 this.size = size;
 		 this.style = style;
 		 this.color = color;
+	}
+
+	/**
+	 * Constructs a Font.
+	 *
+	 * @param	bf	    the external font
+	 * @param	size	the size of this font
+	 * @param	style	the style of this font
+	 * @param	color	the <CODE>Color</CODE> of this font.
+	 */
+
+	public Font(BaseFont bf, float size, int style, Color color) {
+		 this.family = family;
+		 this.size = size;
+		 this.style = style;
+		 this.color = color;
+         this.baseFont = bf;
+	}
+
+	/**
+	 * Constructs a Font.
+	 *
+	 * @param	bf	    the external font
+	 * @param	size	the size of this font
+	 * @param	style	the style of this font
+	 */
+	public Font(BaseFont bf, float size, int style) {
+        this(bf, size, style, null);
+	}
+
+	/**
+	 * Constructs a Font.
+	 *
+	 * @param	bf	    the external font
+	 * @param	size	the size of this font
+	 */
+	public Font(BaseFont bf, float size) {
+        this(bf, size, UNDEFINED, null);
+	}
+
+	/**
+	 * Constructs a Font.
+	 *
+	 * @param	bf	    the external font
+	 */
+	public Font(BaseFont bf) {
+        this(bf, UNDEFINED, UNDEFINED, null);
 	}
 
 	/**
@@ -134,7 +184,7 @@ public class Font implements Comparable {
 	 * @param	style	the style of this font
 	 */
 
-	public Font(int family, int size, int style) {
+	public Font(int family, float size, int style) {
 		 this(family, size, style, null);
 	}
 
@@ -145,7 +195,7 @@ public class Font implements Comparable {
 	 * @param	size	the size of this font
 	 */
 
-	public Font(int family, int size) {
+	public Font(int family, float size) {
 		 this(family, size, UNDEFINED, null);
 	}
 
@@ -257,7 +307,7 @@ public class Font implements Comparable {
 	 * @param	size		The new size of the font.
 	 */
 
-	public void setSize(int size) {
+	public void setSize(float size) {
 		this.size = size;
 	}
 
@@ -265,7 +315,7 @@ public class Font implements Comparable {
 	 * Sets the style using a <CODE>String</CODE> containing one of
 	 * more of the following values: normal, bold, italic, underline, strike.
 	 *
-	 * @param	family		A <CODE>String</CODE> representing a certain font-family.
+	 * @param	style	A <CODE>String</CODE> representing a certain style.
 	 */
 
 	public void setStyle(String style) {
@@ -329,11 +379,11 @@ public class Font implements Comparable {
      * @return	the height of a line
      */
 
-    public int leading(double linespacing) {
+    public float leading(float linespacing) {
 		if (size == UNDEFINED) {
-			return (int) (linespacing * (double) DEFAULTSIZE + 0.5);
+			return linespacing * DEFAULTSIZE;
 		}
-		return (int) (linespacing * (double) size + 0.5);
+		return linespacing * size;
 	}
 
 	/**
@@ -347,7 +397,8 @@ public class Font implements Comparable {
 	public boolean isStandardFont() {
 		return (family == UNDEFINED
 				&& size == UNDEFINED
-				&& color == null);
+				&& color == null
+                && baseFont == null);
 	}
 
 	/**
@@ -398,7 +449,7 @@ public class Font implements Comparable {
      * @return	a size
      */
 
-    public int size() {
+    public float size() {
 		return size;
 	}
 
@@ -532,4 +583,12 @@ public class Font implements Comparable {
 		}
 		return buffer.append("\"").toString();
 	}
+    
+    /** Gets the <CODE>BaseFont</CODE> inside this object.
+     * @return the <CODE>BaseFont</CODE>
+     */
+    public BaseFont getBaseFont()
+    {
+        return baseFont;
+    }
 }

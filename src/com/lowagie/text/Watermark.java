@@ -47,16 +47,15 @@ import java.net.MalformedURLException;
  * @author  bruno@lowagie.com
  */
 
-
 public class Watermark extends Image implements Element {
 
 // membervariables
 
 	/** This is the offset in x-direction of the Watermark. */
-	private int offsetX = 0;
+	private float offsetX = 0;
 
 	/** This is the offset in y-direction of the Watermark. */
-	private int offsetY = 0;
+	private float offsetY = 0;
 
 // Constructors
 
@@ -68,7 +67,7 @@ public class Watermark extends Image implements Element {
 	 * @param		offsetY		the offset in y-direction
 	 */
 
-	public Watermark(Image image, int offsetX, int offsetY) throws MalformedURLException {
+	public Watermark(Image image, float offsetX, float offsetY) throws MalformedURLException {
 		super(image);
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
@@ -94,7 +93,7 @@ public class Watermark extends Image implements Element {
 	 * @return		an offset
 	 */
 
-	public int offsetX() {
+	public float offsetX() {
 		return offsetX;
 	}
 
@@ -104,7 +103,7 @@ public class Watermark extends Image implements Element {
 	 * @return		an offset 
 	 */
 
-	public int offsetY() {
+	public float offsetY() {
 		return offsetY;
 	}
 

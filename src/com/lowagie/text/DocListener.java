@@ -94,7 +94,7 @@ public interface DocListener extends ElementListener {
 	 * @return	a <CODE>boolean</CODE>
 	 */
 
-	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom);	
+	public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom);	
 
     /**
      * Signals that an new page has to be started. 

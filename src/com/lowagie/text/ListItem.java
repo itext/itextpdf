@@ -107,7 +107,7 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * @param	leading		the leading
 	 */
 
-	public ListItem(int leading) {
+	public ListItem(float leading) {
 		super(leading);
 	}
 
@@ -151,7 +151,7 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * @param	chunk		a <CODE>Chunk</CODE>
 	 */
 
-	public ListItem(int leading, Chunk chunk) {
+	public ListItem(float leading, Chunk chunk) {
 		super(leading, chunk);
 	}
 
@@ -163,7 +163,7 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * @param	string		a <CODE>String</CODE>
 	 */
 
-	public ListItem(int leading, String string) {
+	public ListItem(float leading, String string) {
 		super(leading, string);
 	}
 
@@ -176,7 +176,7 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * @param	font		a <CODE>Font</CODE>
 	 */
 
-	public ListItem(int leading, String string, Font font) {
+	public ListItem(float leading, String string, Font font) {
 		super(leading, string, font);
 	}
 
