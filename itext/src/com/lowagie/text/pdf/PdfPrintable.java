@@ -110,5 +110,5 @@ public interface PdfPrintable {
     
     public boolean isString();
     
-    public byte[] toPdf(PdfEncryption crypto);
+    public byte[] toPdf(PdfWriter writer);
 }

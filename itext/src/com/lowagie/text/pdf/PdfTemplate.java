@@ -35,6 +35,8 @@ package com.lowagie.text.pdf;
 import java.util.HashMap;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
+import java.io.IOException;
 
 /**
  * Implements the form XObject.
@@ -51,17 +53,14 @@ public class PdfTemplate extends PdfContentByte {
 /** The images and other templates used by this template */
     protected PdfXObjectDictionary xObjectDictionary;
     
-/** The bounding width of this template */
-    protected float width;
-    
-/** The bounding heigth of this template */
-    protected float height;
+/** The bounding box of this template */
+    protected Rectangle bBox = new Rectangle(0, 0);
     
 /**
  *Creates a <CODE>PdfTemplate</CODE>.
  */
     
-    private PdfTemplate() {
+    protected PdfTemplate() {
         super(null);
     }
     
@@ -85,7 +84,8 @@ public class PdfTemplate extends PdfContentByte {
  */
     
     public void setWidth(float width) {
-        this.width = width;
+        bBox.setLeft(0);
+        bBox.setRight(width);
     }
     
 /**
@@ -95,7 +95,8 @@ public class PdfTemplate extends PdfContentByte {
  */
     
     public void setHeight(float height) {
-        this.height = height;
+        bBox.setBottom(0);
+        bBox.setTop(height);
     }
     
 /**
@@ -105,7 +106,7 @@ public class PdfTemplate extends PdfContentByte {
  */
     public float getWidth()
     {
-        return width;
+        return bBox.width();
     }
     
 /**
@@ -116,7 +117,15 @@ public class PdfTemplate extends PdfContentByte {
     
     public float getHeight()
     {
-        return height;
+        return bBox.height();
+    }
+    
+    public Rectangle getBoundingBox() {
+        return bBox;
+    }
+    
+    public void setBoundingBox(Rectangle bBox) {
+        this.bBox = bBox;
     }
     
 /**
@@ -177,6 +186,11 @@ public class PdfTemplate extends PdfContentByte {
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
             }
             else {
+                Image maskImage = image.getImageMask();
+                if (maskImage != null) {
+                    PdfName mname = pdf.addDirectImageSimple(maskImage);
+                    xObjectDictionary.put(mname, writer.getImageReference(mname));
+                }
                 PdfName name = pdf.addDirectImageSimple(image);
                 content.append("q ");
                 content.append(a).append(' ');
@@ -200,7 +214,7 @@ public class PdfTemplate extends PdfContentByte {
  * @return the resources used by this template
  */
     
-    PdfResources getResources() {
+    PdfObject getResources() {
         PdfResources resources = new PdfResources();
         int procset = PdfProcSet.PDF;
         if (fontDictionary.containsFont()) {
@@ -221,7 +235,7 @@ public class PdfTemplate extends PdfContentByte {
  * @return the stream representing this template
  */
     
-    PdfFormXObject getFormXObject() {
+    PdfStream getFormXObject() throws IOException {
         return new PdfFormXObject(this);
     }
     
@@ -253,9 +267,11 @@ public class PdfTemplate extends PdfContentByte {
         tpl.thisReference = thisReference;
         tpl.fontDictionary = fontDictionary;
         tpl.xObjectDictionary = xObjectDictionary;
-        tpl.width = width;
-        tpl.height = height;
+        tpl.bBox = new Rectangle(bBox);
         return tpl;
     }
     
+    public boolean isImportedPage() {
+        return false;
+    }
 }

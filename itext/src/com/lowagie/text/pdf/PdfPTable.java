@@ -40,17 +40,29 @@ import com.lowagie.text.ElementListener;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.BadElementException;
 
-/**
- * This is a table that can be put at an absolute position.
- *
+/** This is a table that can be put at an absolute position but can also
+ * be added to the document as the class <CODE>Table</CODE>.
+ * In the last case when crossing pages the table always break at full rows; if a
+ * row is bigger than the page it is dropped silently to avoid infinite loops.
+ * <P>
+ * A PdfPTableEvent can be associated to the table to do custom drawing
+ * when the table is rendered.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 
 public class PdfPTable implements Element{
     
+    /** The index of the original <CODE>PdfcontentByte</CODE>.
+     */    
     public static final int BASECANVAS = 0;
+    /** The index of the duplicate <CODE>PdfContentByte</CODE> where the backgroung will be drawn.
+     */    
     public static final int BACKGROUNDCANVAS = 1;
+    /** The index of the duplicate <CODE>PdfContentByte</CODE> where the border lines will be drawn.
+     */    
     public static final int LINECANVAS = 2;
+    /** The index of the duplicate <CODE>PdfContentByte</CODE> where the text will be drawn.
+     */    
     public static final int TEXTCANVAS = 3;
     
     protected ArrayList rows = new ArrayList();
@@ -72,6 +84,9 @@ public class PdfPTable implements Element{
 /** Holds value of property horizontalAlignment. */
     private int horizontalAlignment = Element.ALIGN_CENTER;
     
+    /** Constructs a <CODE>PdfPTable</CODE> with the relative column widths.
+     * @param relativeWidths the relative column widths
+     */    
     public PdfPTable(float relativeWidths[]) {
         if (relativeWidths == null)
             throw new NullPointerException("The widths array in PdfPTable constructor can not be null.");
@@ -84,6 +99,9 @@ public class PdfPTable implements Element{
         currentRow = new PdfPCell[absoluteWidths.length];
     }
     
+    /** Constructs a <CODE>PdfPTable</CODE> with <CODE>numColumns</CODE> columns.
+     * @param numColumns the number of columns
+     */    
     public PdfPTable(int numColumns) {
         if (numColumns <= 0)
             throw new IllegalArgumentException("The number of columns in PdfPTable constructor must be greater than zero.");
@@ -95,6 +113,9 @@ public class PdfPTable implements Element{
         currentRow = new PdfPCell[absoluteWidths.length];
     }
     
+    /** Constructs a copy of a <CODE>PdfPTable</CODE>.
+     * @param table the <CODE>PdfPTable</CODE> to be copied
+     */    
     public PdfPTable(PdfPTable table) {
         relativeWidths = new float[table.relativeWidths.length];
         absoluteWidths = new float[table.relativeWidths.length];
@@ -116,6 +137,11 @@ public class PdfPTable implements Element{
         }
     }
     
+    /** Sets the relative widths of the table.
+     * @param relativeWidths the relative widths of the table.
+     * @throws DocumentException if the number of widths is different than tne number
+     * of columns
+     */    
     public void setWidths(float relativeWidths[]) throws DocumentException {
         if (relativeWidths.length != this.relativeWidths.length)
             throw new DocumentException("Wrong number of columns.");
@@ -127,6 +153,11 @@ public class PdfPTable implements Element{
         calculateHeights();
     }
 
+    /** Sets the relative widths of the table.
+     * @param relativeWidths the relative widths of the table.
+     * @throws DocumentException if the number of widths is different than tne number
+     * of columns
+     */    
     public void setWidths(int relativeWidths[]) throws DocumentException {
         float tb[] = new float[relativeWidths.length];
         for (int k = 0; k < relativeWidths.length; ++k)
@@ -146,6 +177,9 @@ public class PdfPTable implements Element{
         }
     }
     
+    /** Sets the full width of the table.
+     * @param totalWidth the full width of the table.
+     */    
     public void setTotalWidth(float totalWidth) {
         if (this.totalWidth == totalWidth)
             return;
@@ -155,11 +189,14 @@ public class PdfPTable implements Element{
         calculateHeights();
     }
 
+    /** Gets the full width of the table.
+     * @return the full width of the table
+     */    
     public float getTotalWidth() {
         return totalWidth;
     }
 
-    public void calculateHeights() {
+    void calculateHeights() {
         if (totalWidth <= 0)
             return;
         totalHeight = 0;
@@ -170,10 +207,18 @@ public class PdfPTable implements Element{
         }
     }
     
+    /** Gets the default <CODE>PdfPCell</CODE> that will be used as
+     * reference for all the <CODE>addCell</CODE> methods except
+     * <CODE>addCell(PdfPCell)</CODE>.
+     * @return default <CODE>PdfPCell</CODE>
+     */    
     public PdfPCell getDefaultCell() {
         return defaultCell;
     }
     
+    /** Adds a cell element.
+     * @param cell the cell element
+     */    
     public void addCell(PdfPCell cell) {
         PdfPCell ncell = new PdfPCell(cell);
         currentRow[currentRowIdx++] = ncell;
@@ -189,22 +234,43 @@ public class PdfPTable implements Element{
         }
     }
     
+    /** Adds a cell element.
+     * @param text the text for the cell
+     */    
     public void addCell(String text) {
         addCell(new Phrase(text));
     }
     
+    /** Adds a cell element.
+     * @param table the table to be added to the cell
+     */    
     public void addCell(PdfPTable table) {
         defaultCell.setTable(table);
         addCell(defaultCell);
         defaultCell.setTable(null);
     }
     
+    /** Adds a cell element.
+     * @param phrase the <CODE>Phrase</CODE> to be added to the cell
+     */    
     public void addCell(Phrase phrase) {
         defaultCell.setPhrase(phrase);
         addCell(defaultCell);
         defaultCell.setPhrase(null);
     }
     
+    /** Writes the selected rows to the document.<br>
+     * <CODE>canvases</CODE> is obtained from <CODE>beginWrittingRows()</CODE>.
+     * @param rowStart the first row to be written, zero index
+     * @param rowEnd the last row to be written - 1. If it is -1 all the
+     * rows to the end are written
+     * @param xPos the x write coodinate
+     * @param yPos the y write coodinate
+     * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
+     * <CODE>beginWrittingRows()</CODE>
+     * @return the y coordinate position of the bottom of the last row
+     * @see #beginWritingRows(com.lowagie.text.pdf.PdfContentByte)
+     */    
     public float writeSelectedRows(int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases) {
         if (totalWidth <= 0)
             throw new RuntimeException("The width must be greater than zero.");
@@ -236,6 +302,16 @@ public class PdfPTable implements Element{
         return yPos;
     }
     
+    /** Writes the selected rows to the document.
+     * @param rowStart the first row to be written, zero index
+     * @param rowEnd the last row to be written - 1. If it is -1 all the
+     * rows to the end are written
+     * @param xPos the x write coodinate
+     * @param yPos the y write coodinate
+     * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
+     * be written to
+     * @return the y coordinate position of the bottom of the last row
+     */    
     public float writeSelectedRows(int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte canvas) {
         PdfContentByte[] canvases = beginWritingRows(canvas);
         float y = writeSelectedRows(rowStart, rowEnd, xPos, yPos, canvases);
@@ -243,6 +319,22 @@ public class PdfPTable implements Element{
         return y;
     }
     
+    /** Gets and initializes the 4 layers where the table is written to. The text or graphics are added to
+     * one of the 4 <CODE>PdfContentByte</CODE> returned with the following order:<p>
+     * <ul>
+     * <li><CODE>PdfPtable.BASECANVAS</CODE> - the original <CODE>PdfContentByte</CODE>. Anything placed here
+     * will be under the table.
+     * <li><CODE>PdfPtable.BACKGROUNDCANVAS</CODE> - the layer where the background goes to.
+     * <li><CODE>PdfPtable.LINECANVAS</CODE> - the layer where the lines go to.
+     * <li><CODE>PdfPtable.TEXTCANVAS</CODE> - the layer where the text go to. Anything placed here
+     * will be over the table.
+     * </ul><p>
+     * The layers are placed in sequence on top of each other.
+     * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
+     * be written to
+     * @return an array of 4 <CODE>PdfContentByte</CODE>
+     * @see #writeSelectedRows(int, int, float, float, PdfContentByte[])
+     */    
     public static PdfContentByte[] beginWritingRows(PdfContentByte canvas) {
         return new PdfContentByte[]{
             canvas,
@@ -252,6 +344,9 @@ public class PdfPTable implements Element{
         };
     }
     
+    /** Finishes writing the table.
+     * @param canvases the array returned by <CODE>beginWritingRows()</CODE>
+     */    
     public static void endWritingRows(PdfContentByte[] canvases) {
         PdfContentByte canvas = canvases[BASECANVAS];
         canvas.saveState();
@@ -265,14 +360,24 @@ public class PdfPTable implements Element{
         canvas.add(canvases[TEXTCANVAS]);
     }
     
+    /** Gets the number of rows in this table.
+     * @return the number of rows in this table
+     */    
     public int size() {
         return rows.size();
     }
     
+    /** Gets the total height of the table.
+     * @return the total height of the table
+     */    
     public float getTotalHeight() {
         return totalHeight;
     }
     
+    /** Gets the height of a particular row.
+     * @param idx the row index (starts at 0)
+     * @return the height of a particular row
+     */    
     public float getRowHeight(int idx) {
         if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
             return 0;
@@ -280,6 +385,10 @@ public class PdfPTable implements Element{
         return row.getMaxHeights();
     }
     
+    /** Gets the height of the rows that constitute the header as defined by
+     * <CODE>setHeaderRows()</CODE>.
+     * @return the height of the rows that constitute the header
+     */    
     public float getHeaderHeight() {
         float total = 0;
         int size = Math.min(rows.size(), headerRows);
@@ -290,6 +399,10 @@ public class PdfPTable implements Element{
         return total;
     }
     
+    /** Deletes a row from the table.
+     * @param rowNumber the row to be deleted
+     * @return <CODE>true</CODE> if the row was deleted
+     */    
     public boolean deleteRow(int rowNumber) {
         if (rowNumber < 0 || rowNumber >= rows.size()) {
             return false;
@@ -302,19 +415,24 @@ public class PdfPTable implements Element{
         return true;
     }
     
+    /** Deletes the last row in the table.
+     * @return <CODE>true</CODE> if the last row was deleted
+     */    
     public boolean deleteLastRow() {
         return deleteRow(rows.size() - 1);
     }
     
-    /** Getter for property headerRows.
-     * @return Value of property headerRows.
+    /** Gets the number of the rows that constitute the header.
+     * @return the number of the rows that constitute the header
      */
     public int getHeaderRows() {
         return headerRows;
     }
     
-    /** Setter for property headerRows.
-     * @param headerRows New value of property headerRows.
+    /** Sets the number of the top rows that constitute the header.
+     * This header has only meaning if the table is added to <CODE>Document</CODE>
+     * and the table crosses pages.
+     * @param headerRows the number of the top rows that constitute the header
      */
     public void setHeaderRows(int headerRows) {
         if (headerRows < 0)
@@ -356,29 +474,31 @@ public class PdfPTable implements Element{
         }
     }
     
-    /** Getter for property widthPercentage.
-     * @return Value of property widthPercentage.
+    /** Gets the width percentage that the table will occupy in the page.
+     * @return the width percentage that the table will occupy in the page
      */
     public float getWidthPercentage() {
         return widthPercentage;
     }
     
-    /** Setter for property widthPercentage.
-     * @param widthPercentage New value of property widthPercentage.
+    /** Sets the width percentage that the table will occupy in the page.
+     * @param widthPercentage the width percentage that the table will occupy in the page
      */
     public void setWidthPercentage(float widthPercentage) {
         this.widthPercentage = widthPercentage;
     }
     
-    /** Getter for property horizontalAlignment.
-     * @return Value of property horizontalAlignment.
+    /** Gets the horizontal alignment of the table relative to the page.
+     * @return the horizontal alignment of the table relative to the page
      */
     public int getHorizontalAlignment() {
         return horizontalAlignment;
     }
     
-    /** Setter for property horizontalAlignment.
-     * @param horizontalAlignment New value of property horizontalAlignment.
+    /** Sets the horizontal alignment of the table relative to the page.
+     * It only has meaning if the width precentage is less than
+     * 100%.
+     * @param horizontalAlignment the horizontal alignment of the table relative to the page
      */
     public void setHorizontalAlignment(int horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
@@ -390,10 +510,16 @@ public class PdfPTable implements Element{
     }
     //end add
 
+    /** Sets the table event for this table.
+     * @param event the table event for this table
+     */    
     public void setTableEvent(PdfPTableEvent event) {
         tableEvent = event;
     }
     
+    /** Gets the table event for this page.
+     * @return the table event for this page
+     */    
     public PdfPTableEvent getTableEvent() {
         return tableEvent;
     }

@@ -74,7 +74,7 @@ class PdfIndirectObject {
     static final int SIZEOBJ = STARTOBJ.length + ENDOBJ.length;
     boolean isStream = false;
     PdfStream stream;
-    PdfEncryption crypto;
+    PdfWriter writer;
     
     // constructors
     
@@ -85,8 +85,8 @@ class PdfIndirectObject {
  * @param		object			the direct object
  */
     
-    PdfIndirectObject(int number, PdfObject object, PdfEncryption crypto) {
-        this(number, 0, object, crypto);
+    PdfIndirectObject(int number, PdfObject object, PdfWriter writer) {
+        this(number, 0, object, writer);
     }
     
 /**
@@ -97,12 +97,13 @@ class PdfIndirectObject {
  * @param		object			the direct object
  */
     
-    PdfIndirectObject(int number, int generation, PdfObject object, PdfEncryption crypto) {
-        this.crypto = crypto;
+    PdfIndirectObject(int number, int generation, PdfObject object, PdfWriter writer) {
+        this.writer = writer;
         this.number = number;
         this.generation = generation;
         type = object.type();
         isStream = (object.type() == object.STREAM);
+        PdfEncryption crypto = writer.getEncryption();
         if (crypto != null) {
             crypto.setHashKey(number, generation);
         }
@@ -113,7 +114,7 @@ class PdfIndirectObject {
             bytes.write(DocWriter.getISOBytes(String.valueOf(generation)));
             if (!isStream) {
                 bytes.write(STARTOBJ);
-                bytes.write(object.toPdf(crypto));
+                bytes.write(object.toPdf(writer));
                 bytes.write(ENDOBJ);
             }
             else
@@ -134,7 +135,7 @@ class PdfIndirectObject {
     
     public final int length() {
         if (isStream)
-            return bytes.size() + SIZEOBJ + stream.getStreamLength(crypto);
+            return bytes.size() + SIZEOBJ + stream.getStreamLength(writer);
         else
             return bytes.size();
     }
@@ -161,7 +162,7 @@ class PdfIndirectObject {
         bytes.writeTo(out);
         if (isStream) {
             out.write(STARTOBJ);
-            stream.writeTo(out, crypto);
+            stream.writeTo(out, writer);
             out.write(ENDOBJ);
         }
     }

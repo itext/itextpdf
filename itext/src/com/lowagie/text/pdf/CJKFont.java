@@ -501,4 +501,7 @@ class CJKFont extends BaseFont
         return 0;
     }
     
+    public String getPostscriptFontName() {
+        return fontName;
+    }
 }

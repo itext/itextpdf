@@ -83,7 +83,7 @@ class PdfImage extends PdfStream {
      * @throws BadPdfFormatException on error
      */
     
-    public PdfImage(Image image, String name) throws BadPdfFormatException {
+    public PdfImage(Image image, String name, PdfIndirectReference maskRef) throws BadPdfFormatException {
         super();
         this.name = new PdfName(name);
         dictionary.put(PdfName.TYPE, PdfName.XOBJECT);
@@ -91,6 +91,12 @@ class PdfImage extends PdfStream {
         dictionary.put(PdfName.NAME, this.name);
         dictionary.put(PdfName.WIDTH, new PdfNumber(image.width()));
         dictionary.put(PdfName.HEIGHT, new PdfNumber(image.height()));
+        if (maskRef != null)
+            dictionary.put(PdfName.MASK, maskRef);
+        if (image.isMask() && image.isInvertMask())
+            dictionary.put(PdfName.DECODE, new PdfLiteral("[1 0]"));
+        if (image.isInterpolation())
+            dictionary.put(PdfName.INTERPOLATE, PdfBoolean.PDFTRUE);
         InputStream is = null;
         try {
             
@@ -99,7 +105,7 @@ class PdfImage extends PdfStream {
                 // will also have the CCITT parameters
                 int colorspace = image.colorspace();
                 int transparency[] = image.getTransparency();
-                if (transparency != null) {
+                if (transparency != null && !image.isMask() && maskRef == null) {
                     String s = "[";
                     for (int k = 0; k < transparency.length; ++k)
                         s += transparency[k] + " ";
@@ -110,7 +116,8 @@ class PdfImage extends PdfStream {
                 dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
                 int bpc = image.bpc();
                 if (bpc > 0xff) {
-                    dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
+                    if (!image.isMask())
+                        dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
                     dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(1));
                     dictionary.put(PdfName.FILTER, PdfName.CCITTFAXDECODE);
                     int k = bpc - Image.CCITTG3_1D;
@@ -130,16 +137,18 @@ class PdfImage extends PdfStream {
                     dictionary.put(PdfName.DECODEPARMS, decodeparms);
                 }
                 else {
-                    switch(colorspace) {
-                        case 1:
-                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
-                            break;
-                        case 3:
-                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICERGB);
-                            break;
-                        case 4:
-                        default:
-                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+                    if (!image.isMask()) {
+                        switch(colorspace) {
+                            case 1:
+                                dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
+                                break;
+                            case 3:
+                                dictionary.put(PdfName.COLORSPACE, PdfName.DEVICERGB);
+                                break;
+                            case 4:
+                            default:
+                                dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+                        }
                     }
                     dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
                     try {
@@ -148,6 +157,8 @@ class PdfImage extends PdfStream {
                     catch(PdfException pe) {
                     }
                 }
+                if (image.isMask())
+                    dictionary.put(PdfName.IMAGEMASK, PdfBoolean.PDFTRUE);
                 return;
             }
             
@@ -179,7 +190,7 @@ class PdfImage extends PdfStream {
                             transferBytes(is, streamBytes, len);
                             Png.getInt(is);
                         }
-                        else if (Png.tRNS.equals(marker)) {
+                        else if (Png.tRNS.equals(marker) && !image.isMask() && maskRef == null) {
                             switch (colorType) {
                                 case 0:
                                     if (len >= 2) {

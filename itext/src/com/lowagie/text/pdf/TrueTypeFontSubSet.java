@@ -44,7 +44,7 @@ class TrueTypeFontSubSet {
     protected HashMap tableDirectory;
     /** The file in use.
      */
-    protected RandomAccessFile rf;
+    protected RandomAccessFileOrArray rf;
     /** The file name.
      */
     protected String fileName;
@@ -69,8 +69,9 @@ class TrueTypeFontSubSet {
      * @param glyphsUsed the glyphs used
      * @param includeCmap <CODE>true</CODE> if the table cmap is to be included in the generated font
      */
-    TrueTypeFontSubSet(String fileName, HashMap glyphsUsed, int directoryOffset, boolean includeCmap) {
+    TrueTypeFontSubSet(String fileName, RandomAccessFileOrArray rf, HashMap glyphsUsed, int directoryOffset, boolean includeCmap) {
         this.fileName = fileName;
+        this.rf = rf;
         this.glyphsUsed = glyphsUsed;
         this.includeCmap = includeCmap;
         this.directoryOffset = directoryOffset;
@@ -83,9 +84,8 @@ class TrueTypeFontSubSet {
      * @return the subset font
      */    
     byte[] process() throws IOException, DocumentException {
-        rf = null;
         try {
-            rf = new RandomAccessFile(fileName, "r");
+            rf.reOpen();
             createTableDirectory();
             readLoca();
             flatGlyphs();
@@ -95,12 +95,10 @@ class TrueTypeFontSubSet {
             return outFont;
         }
         finally {
-            if (rf != null) {
-                try {
-                    rf.close();
-                }
-                catch (Exception e) {
-                }
+            try {
+                rf.close();
+            }
+            catch (Exception e) {
             }
         }
     }

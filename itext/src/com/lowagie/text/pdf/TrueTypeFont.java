@@ -42,6 +42,75 @@ import com.lowagie.text.DocumentException;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 class TrueTypeFont extends BaseFont {
+
+    /** The code pages possible for a True Type font.
+     */    
+    static final String codePages[] = {
+        "1252 Latin 1",
+        "1250 Latin 2: Eastern Europe",
+        "1251 Cyrillic",
+        "1253 Greek",
+        "1254 Turkish",
+        "1255 Hebrew",
+        "1256 Arabic",
+        "1257 Windows Baltic",
+        "1258 Vietnamese",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "874 Thai",
+        "932 JIS/Japan",
+        "936 Chinese: Simplified chars--PRC and Singapore",
+        "949 Korean Wansung",
+        "950 Chinese: Traditional chars--Taiwan and Hong Kong",
+        "1361 Korean Johab",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "Macintosh Character Set (US Roman)",
+        "OEM Character Set",
+        "Symbol Character Set",
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        "869 IBM Greek",
+        "866 MS-DOS Russian",
+        "865 MS-DOS Nordic",
+        "864 Arabic",
+        "863 MS-DOS Canadian French",
+        "862 Hebrew",
+        "861 MS-DOS Icelandic",
+        "860 MS-DOS Portuguese",
+        "857 IBM Turkish",
+        "855 IBM Cyrillic; primarily Russian",
+        "852 Latin 2",
+        "775 MS-DOS Baltic",
+        "737 Greek; former 437 G",
+        "708 Arabic; ASMO 708",
+        "850 WE/Latin 1",
+        "437 US"};
+    
     /** Contains the location of the several tables. The key is the name of
      * the table and the value is an <CODE>int[2]</CODE> where position 0
      * is the offset from the start of the file and position 1 is the length
@@ -50,7 +119,7 @@ class TrueTypeFont extends BaseFont {
     protected HashMap tables;
     /** The file in use.
      */
-    protected RandomAccessFile rf;
+    protected RandomAccessFileOrArray rf;
     /** The file name.
      */
     protected String fileName;
@@ -213,6 +282,10 @@ class TrueTypeFont extends BaseFont {
         /** A variable. */
         int usWinDescent;
         /** A variable. */
+        int ulCodePageRange1;
+        /** A variable. */
+        int ulCodePageRange2;
+        /** A variable. */
         int sCapHeight;
     }
     
@@ -226,10 +299,11 @@ class TrueTypeFont extends BaseFont {
      * '.ttc' but can have modifiers after the name
      * @param enc the encoding to be applied to this font
      * @param emb true if the font is to be embedded in the PDF
+     * @param ttfAfm the font as a <CODE>byte</CODE> array
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
      */
-    TrueTypeFont(String ttFile, String enc, boolean emb) throws DocumentException, IOException {
+    TrueTypeFont(String ttFile, String enc, boolean emb, byte ttfAfm[]) throws DocumentException, IOException {
         String nameBase = getBaseName(ttFile);
         String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
@@ -243,7 +317,7 @@ class TrueTypeFont extends BaseFont {
         if (ttcName.length() < nameBase.length())
             ttcIndex = nameBase.substring(ttcName.length() + 1);
         if (fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".ttc")) {
-            process();
+            process(ttfAfm);
         }
         else
             throw new DocumentException(fileName + style + " is not a TTF or TTC font file.");
@@ -338,8 +412,14 @@ class TrueTypeFont extends BaseFont {
         os_2.sTypoLineGap = rf.readShort();
         os_2.usWinAscent = rf.readUnsignedShort();
         os_2.usWinDescent = rf.readUnsignedShort();
+        os_2.ulCodePageRange1 = 0;
+        os_2.ulCodePageRange2 = 0;
+        if (version > 0) {
+            os_2.ulCodePageRange1 = rf.readInt();
+            os_2.ulCodePageRange2 = rf.readInt();
+        }
         if (version > 1) {
-            rf.skipBytes(10);
+            rf.skipBytes(2);
             os_2.sCapHeight = rf.readShort();
         }
         else
@@ -393,14 +473,18 @@ class TrueTypeFont extends BaseFont {
     }
     
     /** Reads the font data.
+     * @param ttfAfm the font as a <CODE>byte</CODE> array, possibly <CODE>null</CODE>
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
      */
-    void process() throws DocumentException, IOException {
+    void process(byte ttfAfm[]) throws DocumentException, IOException {
         tables = new HashMap();
         
         try {
-            rf = new RandomAccessFile(fileName, "r");
+            if (ttfAfm == null)
+                rf = new RandomAccessFileOrArray(fileName);
+            else
+                rf = new RandomAccessFileOrArray(ttfAfm);
             if (ttcIndex.length() > 0) {
                 int dirIdx = Integer.parseInt(ttcIndex);
                 if (dirIdx < 0)
@@ -446,7 +530,7 @@ class TrueTypeFont extends BaseFont {
      * @return the <CODE>String</CODE> read
      * @throws IOException the font file could not be read
      */
-    private String readStandardString(int length) throws IOException {
+    protected String readStandardString(int length) throws IOException {
         byte buf[] = new byte[length];
         rf.readFully(buf);
         try {
@@ -464,7 +548,7 @@ class TrueTypeFont extends BaseFont {
      * @return the <CODE>String</CODE> read
      * @throws IOException the font file could not be read
      */
-    private String readUnicodeString(int length) throws IOException {
+    protected String readUnicodeString(int length) throws IOException {
         StringBuffer buf = new StringBuffer();
         length /= 2;
         for (int k = 0; k < length; ++k) {
@@ -707,46 +791,6 @@ class TrueTypeFont extends BaseFont {
         return metric[1];
     }
     
-    /** If the embedded flag is <CODE>false</CODE> it returns <CODE>null</CODE>,
-     * otherwise the font is read and output in a PdfStream object.
-     * @return the PdfStream containing the font or <CODE>null</CODE>
-     * @throws DocumentException if there is an error reading the font
-     */
-    protected PdfStream getFontStream() throws DocumentException {
-        if (!embedded)
-            return null;
-        InputStream is = null;
-        try {
-            File file = new File(fileName);
-            int fileLength = (int)file.length();
-            byte st[] = new byte[fileLength];
-            is = new FileInputStream(file);
-            int lengths[] = new int[]{fileLength};
-            int bytePtr = 0;
-            int size = fileLength;
-            while (size != 0) {
-                int got = is.read(st, bytePtr, size);
-                if (got < 0)
-                    throw new DocumentException("Premature end in " + file.getName());
-                bytePtr += got;
-                size -= got;
-            }
-            return new StreamFont(st, lengths);
-        }
-        catch (Exception e) {
-            throw new DocumentException(e.getMessage());
-        }
-        finally {
-            if (is != null) {
-                try {
-                    is.close();
-                }
-                catch (Exception e) {
-                }
-            }
-        }
-    }
-    
     /** Generates the font descriptor for this font.
      * @return the PdfDictionary containing the font descriptor or <CODE>null</CODE>
      * @param subsetPrefix the subset prefix
@@ -790,7 +834,7 @@ class TrueTypeFont extends BaseFont {
      * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor or <CODE>null</CODE>
      * @throws DocumentException if there is an error
      */
-    private PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) throws DocumentException {
+    protected PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("TrueType"));
         dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
@@ -866,7 +910,7 @@ class TrueTypeFont extends BaseFont {
                         glyphs.put(new Integer(metrics[0]), null);
                 }
             }
-            TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, glyphs, directoryOffset, true);
+            TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, glyphs, directoryOffset, true);
             byte b[] = sb.process();
             int lengths[] = new int[]{b.length};
             pobj = new StreamFont(b, lengths);
@@ -921,6 +965,36 @@ class TrueTypeFont extends BaseFont {
         if (fontSpecific && cmap10 != null) 
             return (int[])cmap10.get(new Integer(c));
         return null;
+    }
+
+    /** Gets the postscript font name.
+     * @return the postscript font name
+     */
+    public String getPostscriptFontName() {
+        return fontName;
+    }
+
+    /** Gets the code pages supported by the font.
+     * @return the code pages supported by the font
+     */
+    public String[] getCodePagesSupported() {
+        long cp = (((long)os_2.ulCodePageRange2) << 32) + ((long)os_2.ulCodePageRange1 & 0xffffffffL);
+        int count = 0;
+        long bit = 1;
+        for (int k = 0; k < 64; ++k) {
+            if ((cp & bit) != 0 && codePages[k] != null)
+                ++count;
+            bit <<= 1;
+        }
+        String ret[] = new String[count];
+        count = 0;
+        bit = 1;
+        for (int k = 0; k < 64; ++k) {
+            if ((cp & bit) != 0 && codePages[k] != null)
+                ret[count++] = codePages[k];
+            bit <<= 1;
+        }
+        return ret;
     }
 }
 

@@ -26,15 +26,16 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     boolean vertical = false;
 
     /** Creates a new TrueType font addressed by Unicode characters. The font
-     * will always be embedded. 
+     * will always be embedded.
      * @param ttFile the location of the font on file. The file must end in '.ttf'.
      * The modifiers after the name are ignored.
      * @param enc the encoding to be applied to this font
      * @param emb true if the font is to be embedded in the PDF
+     * @param ttfAfm the font as a <CODE>byte</CODE> array
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
      */
-    TrueTypeFontUnicode(String ttFile, String enc, boolean emb) throws DocumentException, IOException {
+    TrueTypeFontUnicode(String ttFile, String enc, boolean emb, byte ttfAfm[]) throws DocumentException, IOException {
         String nameBase = getBaseName(ttFile);
         String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
@@ -48,7 +49,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             ttcIndex = nameBase.substring(ttcName.length() + 1);
         fontType = FONT_TYPE_TTUNI;
         if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
-            process();
+            process(ttfAfm);
             if ((cmap31 == null && !fontSpecific) || (cmap10 == null && fontSpecific))
                 throw new DocumentException(fileName + " " + style + " does not contain an usable cmap.");
             if (fontSpecific) {
@@ -259,7 +260,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
         PdfIndirectObject obj = null;
-        TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, longTag, directoryOffset, false);
+        TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, longTag, directoryOffset, false);
         byte b[] = sb.process();
         int lengths[] = new int[]{b.length};
         pobj = new StreamFont(b, lengths);

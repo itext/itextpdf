@@ -179,10 +179,9 @@ public class PdfPCell extends Rectangle{
         this.phrase = phrase;
     }
     
-/**
- * Getter for property horizontalAlignment.
- * @return Value of property horizontalAlignment.
- */
+    /** Gets the horizontal alignment for the cell.
+     * @return the horizontal alignment for the cell
+     */
     public int getHorizontalAlignment() {
         return horizontalAlignment;
     }
@@ -195,10 +194,9 @@ public class PdfPCell extends Rectangle{
         this.horizontalAlignment = horizontalAlignment;
     }
     
-/**
- * Getter for property verticalAlignment.
- * @return Value of property verticalAlignment.
- */
+    /** Gets the vertical alignment for the cell.
+     * @return the vertical alignment for the cell
+     */
     public int getVerticalAlignment() {
         return verticalAlignment;
     }
@@ -211,10 +209,9 @@ public class PdfPCell extends Rectangle{
         this.verticalAlignment = verticalAlignment;
     }
     
-/**
- * Getter for property paddingLeft.
- * @return Value of property paddingLeft.
- */
+    /**
+     * @return Value of property paddingLeft.
+     */
     public float getPaddingLeft() {
         return paddingLeft;
     }

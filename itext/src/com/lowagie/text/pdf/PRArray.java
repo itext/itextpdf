@@ -1,43 +1,10 @@
-/*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001 by Bruno Lowagie.
- *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or any
- * later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
- * details.
- *
- * You should have received a copy of the GNU Library General Public License along
- * with this library; if not, write to the Free Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA.
- *
- * If you didn't download this code from the following link, you should check if
- * you aren't using an obsolete version:
- * http://www.lowagie.com/iText/
- *
- * ir-arch Bruno Lowagie,
- * Adolf Baeyensstraat 121
- * 9040 Sint-Amandsberg
- * BELGIUM
- * tel. +32 (0)9 228.10.97
- * bruno@lowagie.com
- *
- */
-
 package com.lowagie.text.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import com.lowagie.text.DocWriter;
+import com.lowagie.text.pdf.PdfEncryption;
 
 /**
  * <CODE>PdfArray</CODE> is the PDF Array object.
@@ -48,10 +15,10 @@ import com.lowagie.text.DocWriter;
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 4.6 (page 40).
  *
- * @see		PdfObject
+ * @see		PRObject
  */
 
-class PdfArray extends PdfObject {
+class PRArray extends PRObject {
     
     // membervariables
     
@@ -64,35 +31,35 @@ class PdfArray extends PdfObject {
  * Constructs an empty <CODE>PdfArray</CODE>-object.
  */
     
-    PdfArray() {
+    PRArray() {
         super(ARRAY);
         arrayList = new ArrayList();
     }
     
 /**
- * Constructs an <CODE>PdfArray</CODE>-object, containing 1 <CODE>PdfObject</CODE>.
+ * Constructs an <CODE>PdfArray</CODE>-object, containing 1 <CODE>PRObject</CODE>.
  *
- * @param	object		a <CODE>PdfObject</CODE> that has to be added to the array
+ * @param	object		a <CODE>PRObject</CODE> that has to be added to the array
  */
     
-    PdfArray(PdfObject object) {
+    PRArray(PdfObject object) {
         super(ARRAY);
         arrayList = new ArrayList();
         arrayList.add(object);
     }
     
 /**
- * Constructs an <CODE>PdfArray</CODE>-object, containing all the <CODE>PdfObject</CODE>s in a given <CODE>PdfArray</CODE>.
+ * Constructs an <CODE>PdfArray</CODE>-object, containing all the <CODE>PRObject</CODE>s in a given <CODE>PdfArray</CODE>.
  *
  * @param	object		a <CODE>PdfArray</CODE> that has to be added to the array
  */
     
-    PdfArray(PdfArray array) {
+    PRArray(PRArray array) {
         super(ARRAY);
         arrayList = new ArrayList(array.getArrayList());
     }
     
-    // methods overriding some methods in PdfObject
+    // methods overriding some methods in PRObject
     
 /**
  * Returns the PDF representation of this <CODE>PdfArray</CODE>.
@@ -103,7 +70,7 @@ class PdfArray extends PdfObject {
     public byte[] toPdf(PdfWriter writer) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            stream.write(DocWriter.getISOBytes("["));
+            stream.write('[');
             
             Iterator i = arrayList.iterator();
             PdfObject object;
@@ -113,10 +80,10 @@ class PdfArray extends PdfObject {
             }
             while (i.hasNext()) {
                 object = (PdfObject) i.next();
-                stream.write(DocWriter.getISOBytes(" "));
+                stream.write(' ');
                 stream.write(object.toPdf(writer));
             }
-            stream.write(DocWriter.getISOBytes("]"));
+            stream.write(']');
             
             return stream.toByteArray();
         }
@@ -128,7 +95,7 @@ class PdfArray extends PdfObject {
     // methods concerning the ArrayList-membervalue
     
 /**
- * Returns an ArrayList containing <CODE>PdfObject</CODE>s.
+ * Returns an ArrayList containing <CODE>PRObject</CODE>s.
  *
  * @return		an ArrayList
  */
@@ -148,9 +115,9 @@ class PdfArray extends PdfObject {
     }
     
 /**
- * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
+ * Adds a <CODE>PRObject</CODE> to the <CODE>PdfArray</CODE>.
  *
- * @param		object			<CODE>PdfObject</CODE> to add
+ * @param		object			<CODE>PRObject</CODE> to add
  * @return		<CODE>true</CODE>
  */
     
@@ -159,33 +126,33 @@ class PdfArray extends PdfObject {
     }
     
 /**
- * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
+ * Adds a <CODE>PRObject</CODE> to the <CODE>PdfArray</CODE>.
  * <P>
  * The newly added object will be the first element in the <CODE>ArrayList</CODE>.
  *
- * @param		object			<CODE>PdfObject</CODE> to add
+ * @param		object			<CODE>PRObject</CODE> to add
  * @return		<CODE>true</CODE>
  */
     
-    void addFirst(PdfObject object) {
+    void addFirst(PRObject object) {
         arrayList.add(0, object);
     }
     
 /**
- * Checks if the <CODE>PdfArray</CODE> allready contains a certain <CODE>PdfObject</CODE>.
+ * Checks if the <CODE>PdfArray</CODE> allready contains a certain <CODE>PRObject</CODE>.
  *
- * @param		object			<CODE>PdfObject</CODE> to check
+ * @param		object			<CODE>PRObject</CODE> to check
  * @return		<CODE>true</CODE>
  */
     
-    final boolean contains(PdfObject object) {
+    final boolean contains(PRObject object) {
         return arrayList.contains(object);
     }
     
     // deprecated methods
     
 /**
- * Returns an array containing <CODE>PdfObject</CODE>s.
+ * Returns an array containing <CODE>PRObject</CODE>s.
  *
  * @return		an array
  * @deprecated	this method was never used

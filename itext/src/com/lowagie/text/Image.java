@@ -161,6 +161,15 @@ public abstract class Image extends Rectangle implements Element {
     /** Holds value of property dpiY. */
     protected int dpiY = 0;
     
+    protected boolean mask = false;
+    
+    protected Image imageMask;
+    
+    protected boolean invertMask = false;
+    
+    /** Holds value of property interpolation. */
+    protected boolean interpolation;
+    
     // constructors
     
 /**
@@ -669,10 +678,10 @@ public abstract class Image extends Rectangle implements Element {
  */
     
     public void setRotation(float r) {
-		double d=Math.PI;							//__IDS__	
-        rotation = (float)(r % (2.0 * d));	        //__IDS__	
+        double d=Math.PI;                  //__IDS__	
+        rotation = (float)(r % (2.0 * d)); //__IDS__
         if (rotation < 0) {
-            rotation += 2.0 * d;                	//__IDS__	
+            rotation += 2.0 * d;           //__IDS__	
         }
         float[] matrix = matrix();
         scaledWidth = matrix[DX] - matrix[CX];
@@ -688,8 +697,8 @@ public abstract class Image extends Rectangle implements Element {
  */
     
     public void setRotationDegrees(float deg) {
-		double d=Math.PI;							//__IDS__
-        setRotation(deg / 180 * (float)d);			//__IDS__
+        double d=Math.PI;                  //__IDS__
+        setRotation(deg / 180 * (float)d); //__IDS__
     }
     
     // methods to retrieve information
@@ -1046,6 +1055,84 @@ public abstract class Image extends Rectangle implements Element {
      */
     public int getDpiY() {
         return dpiY;
+    }
+    
+    /** Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
+     * requisites to be a mask.
+     * @return <CODE>true</CODE> if this <CODE>Image</CODE> can ba a mask
+     */    
+    public boolean isMaskCandidate() {
+        if (type == IMGRAW) {
+            if (bpc > 0xff)
+                return true;
+            return bpc == 1 && colorspace == 1;
+        }
+        return type == PNG && bpc == 1 && colorspace == 1;
+    }
+    
+    /** Make this <CODE>Image</CODE> a mask.
+     * @throws DocumentException if this <CODE>Image</CODE> can not be a mask
+     */    
+    public void makeMask() throws DocumentException {
+        if (!isMaskCandidate())
+            throw new DocumentException("This image can not be an image mask.");
+        mask = true;
+    }
+    
+    /** Sets the explicit masking.
+     * @param mask the mask to be applied
+     * @throws DocumentException on error
+     */    
+    public void setImageMask(Image mask) throws DocumentException {
+        if (this.mask)
+            throw new DocumentException("An image mask can not contain another image mask.");
+        if (!mask.mask)
+            throw new DocumentException("The image mask is not a mask. Did you do makeMask()?");
+        imageMask = mask;
+    }
+    
+    /** Gets the explicit masking.
+     * @return the explicit masking
+     */    
+    public Image getImageMask() {
+        return imageMask;
+    }
+    
+    /** Returns <CODE>true</CODE> if this <CODE>Image</CODE> is a mask.
+     * @return <CODE>true</CODE> if this <CODE>Image</CODE> is a mask
+     */    
+    public boolean isMask() {
+        return mask;
+    }
+    
+    /** Inverts the meaning of the bits of a mask.
+     * @param invertMask <CODE>true</CODE> to invert the meaning of the bits of a mask
+     */    
+    public void setInvertMask(boolean invertMask) {
+        this.invertMask = invertMask;
+    }
+    
+    /** Returns <CODE>true</CODE> if the bits are to be inverted
+     * in the mask.
+     * @return <CODE>true</CODE> if the bits are to be inverted in the mask
+     */    
+    public boolean isInvertMask() {
+        return invertMask;
+    }
+    
+    /** Getter for property interpolation.
+     * @return Value of property interpolation.
+     */
+    public boolean isInterpolation() {
+        return interpolation;
+    }
+    
+    /** Sets the image interpolation. Image interpolation attempts to
+     * produce a smooth transition between adjacent sample values.
+     * @param interpolation New value of property interpolation.
+     */
+    public void setInterpolation(boolean interpolation) {
+        this.interpolation = interpolation;
     }
     
 }
