@@ -61,7 +61,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.ParserFactory;
 
 import com.lowagie.text.DocListener;
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 
 /**
@@ -80,7 +79,7 @@ public class XmlParser {
  * Constructs an XmlParser.
  */
     
-    public XmlParser() throws DocumentException {
+    public XmlParser() {
         try {
             parser = ParserFactory.makeParser(PARSER);
         }
@@ -99,7 +98,7 @@ public class XmlParser {
  * Parses a given file.
  */
     
-    public void go(DocListener document, InputSource is) throws DocumentException {
+    public void go(DocListener document, InputSource is) {
         try {
             parser.setDocumentHandler(new SAXiTextHandler(document));
             parser.parse(is);
@@ -116,7 +115,7 @@ public class XmlParser {
  * Parses a given file.
  */
     
-    public void go(DocListener document, InputSource is, String tagmap) throws DocumentException {
+    public void go(DocListener document, InputSource is, String tagmap) {
         try {
             parser.setDocumentHandler(new SAXmyHandler(document, new TagMap(tagmap)));
             parser.parse(is);
@@ -133,7 +132,7 @@ public class XmlParser {
  * Parses a given file.
  */
     
-    public void go(DocListener document, InputSource is, HashMap tagmap) throws DocumentException {
+    public void go(DocListener document, InputSource is, HashMap tagmap) {
         try {
             parser.setDocumentHandler(new SAXmyHandler(document, tagmap));
             parser.parse(is);
@@ -150,7 +149,7 @@ public class XmlParser {
  * Parses a given file.
  */
     
-    public void go(DocListener document, String file) throws DocumentException {
+    public void go(DocListener document, String file) {
         try {
             parser.setDocumentHandler(new SAXiTextHandler(document));
             parser.parse(file);
@@ -167,7 +166,7 @@ public class XmlParser {
  * Parses a given file.
  */
     
-    public void go(DocListener document, String file, String tagmap) throws DocumentException {
+    public void go(DocListener document, String file, String tagmap) {
         try {
             parser.setDocumentHandler(new SAXmyHandler(document, new TagMap(tagmap)));
             parser.parse(file);
@@ -184,7 +183,7 @@ public class XmlParser {
  * Parses a given file.
  */
     
-    public void go(DocListener document, String file, HashMap tagmap) throws DocumentException {
+    public void go(DocListener document, String file, HashMap tagmap) {
         try {
             parser.setDocumentHandler(new SAXmyHandler(document, tagmap));
             parser.parse(file);
@@ -201,7 +200,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
     
-    public static void parse(DocListener document, InputSource is) throws DocumentException {
+    public static void parse(DocListener document, InputSource is) {
         XmlParser p = new XmlParser();
         p.go(document, is);
     }
@@ -210,7 +209,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
     
-    public static void parse(DocListener document, InputSource is, String tagmap) throws DocumentException {
+    public static void parse(DocListener document, InputSource is, String tagmap) {
         XmlParser p = new XmlParser();
         p.go(document, is, tagmap);
     }
@@ -219,7 +218,7 @@ public class XmlParser {
  * Parses a given file and writes the content to a document, using a certain tagmap.
  */
     
-    public static void parse(DocListener document, InputSource is, HashMap tagmap) throws DocumentException {
+    public static void parse(DocListener document, InputSource is, HashMap tagmap) {
         XmlParser p = new XmlParser();
         p.go(document, is, tagmap);
     }
@@ -228,7 +227,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
     
-    public static void parse(DocListener document, String file) throws DocumentException {
+    public static void parse(DocListener document, String file) {
         XmlParser p = new XmlParser();
         p.go(document, file);
     }
@@ -237,7 +236,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
     
-    public static void parse(DocListener document, String file, String tagmap) throws DocumentException {
+    public static void parse(DocListener document, String file, String tagmap) {
         XmlParser p = new XmlParser();
         p.go(document, file, tagmap);
     }
@@ -246,7 +245,7 @@ public class XmlParser {
  * Parses a given file and writes the content to a document, using a certain tagmap.
  */
     
-    public static void parse(DocListener document, String file, HashMap tagmap) throws DocumentException {
+    public static void parse(DocListener document, String file, HashMap tagmap) {
         XmlParser p = new XmlParser();
         p.go(document, file, tagmap);
     }
@@ -255,7 +254,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
     
-    public static void parse(DocListener document, InputStream is) throws DocumentException {
+    public static void parse(DocListener document, InputStream is) {
         XmlParser p = new XmlParser();
         p.go(document, new InputSource(is));
     }
@@ -264,7 +263,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
     
-    public static void parse(DocListener document, InputStream is, String tagmap) throws DocumentException {
+    public static void parse(DocListener document, InputStream is, String tagmap) {
         XmlParser p = new XmlParser();
         p.go(document, new InputSource(is), tagmap);
     }
@@ -273,7 +272,7 @@ public class XmlParser {
  * Parses a given file and writes the content to a document, using a certain tagmap.
  */
     
-    public static void parse(DocListener document, InputStream is, HashMap tagmap) throws DocumentException {
+    public static void parse(DocListener document, InputStream is, HashMap tagmap) {
         XmlParser p = new XmlParser();
         p.go(document, new InputSource(is), tagmap);
     }
@@ -282,7 +281,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
     
-    public static void parse(DocListener document, Reader is) throws DocumentException {
+    public static void parse(DocListener document, Reader is) {
         XmlParser p = new XmlParser();
         p.go(document, new InputSource(is));
     }
@@ -291,7 +290,7 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
     
-    public static void parse(DocListener document, Reader is, String tagmap) throws DocumentException {
+    public static void parse(DocListener document, Reader is, String tagmap) {
         XmlParser p = new XmlParser();
         p.go(document, new InputSource(is), tagmap);
     }
@@ -300,7 +299,7 @@ public class XmlParser {
  * Parses a given file and writes the content to a document, using a certain tagmap.
  */
     
-    public static void parse(DocListener document, Reader is, HashMap tagmap) throws DocumentException {
+    public static void parse(DocListener document, Reader is, HashMap tagmap) {
         XmlParser p = new XmlParser();
         p.go(document, new InputSource(is), tagmap);
     }
