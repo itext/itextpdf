@@ -504,6 +504,8 @@ public class AcroFields {
             String value = "";
             if (v.isName())
                 value = PdfName.decodeName(v.toString());
+            else if (v.isString())
+                value = ((PdfString)v).toUnicodeString();
             PdfObject opts = PdfReader.getPdfObject(((PdfDictionary)item.values.get(0)).get(PdfName.OPT));
             if (opts != null && opts.isArray()) {
                 ArrayList list = ((PdfArray)opts).getArrayList();

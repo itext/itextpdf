@@ -75,7 +75,14 @@ public class XfdfReader implements SimpleXMLDocHandler {
      * @throws IOException on error
      */    
     public XfdfReader(String filename) throws IOException {
-        SimpleXMLParser.parse( this, new FileInputStream( filename ) );
+        FileInputStream fin = null;
+        try {
+            fin = new FileInputStream(filename);
+            SimpleXMLParser.parse(this, fin);
+        }
+        finally {
+            try{fin.close();}catch(Exception e){}
+        }
     }
     
     /** Reads an XFDF form.

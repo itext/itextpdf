@@ -692,6 +692,7 @@ public class PdfWriter extends DocWriter {
     protected HashSet documentOCG = new HashSet();
     protected ArrayList documentOCGorder = new ArrayList();
     protected PdfOCProperties OCProperties;
+    protected PdfArray OCGRadioGroup = new PdfArray();
     
     protected PdfDictionary defaultColorspace = new PdfDictionary();
     
@@ -998,31 +999,102 @@ public class PdfWriter extends DocWriter {
         }
     }
     
-    protected PdfDictionary getCatalog(PdfIndirectReference rootObj)
-    {
-        PdfDictionary catalog = ((PdfDocument)document).getCatalog(rootObj);
-        if (documentLayers.size() == 0)
-            return catalog;
-        getOCProperties();
-        catalog.put(PdfName.OCPROPERTIES, OCProperties);
+    private static void getOCGOrder(PdfArray order, PdfLayer layer) {
+        if (!layer.isOnPanel())
+            return;
+        if (layer.getTitle() == null)
+            order.add(layer.getRef());
+        ArrayList children = layer.getChildren();
+        if (children == null)
+            return;
+        PdfArray kids = new PdfArray();
+        if (layer.getTitle() != null)
+            kids.add(new PdfString(layer.getTitle(), PdfObject.TEXT_UNICODE));
+        for (int k = 0; k < children.size(); ++k) {
+            getOCGOrder(kids, (PdfLayer)children.get(k));
+        }
+        if (kids.size() > 0)
+            order.add(kids);
+    }
+    
+    private void addASEvent(PdfName event, PdfName category) {
+        PdfArray arr = new PdfArray();
+        for (Iterator it = documentOCG.iterator(); it.hasNext();) {
+            PdfLayer layer = (PdfLayer)it.next();
+            PdfDictionary usage = (PdfDictionary)layer.get(PdfName.USAGE);
+            if (usage != null && usage.get(category) != null)
+                arr.add(layer.getRef());
+        }
+        if (arr.size() == 0)
+            return;
+        PdfDictionary d = (PdfDictionary)OCProperties.get(PdfName.D);
+        PdfArray arras = (PdfArray)d.get(PdfName.AS);
+        if (arras == null) {
+            arras = new PdfArray();
+            d.put(PdfName.AS, arras);
+        }
+        PdfDictionary as = new PdfDictionary();
+        as.put(PdfName.EVENT, event);
+        as.put(PdfName.CATEGORY, new PdfArray(category));
+        as.put(PdfName.OCGS, arr);
+        arras.add(as);
+    }
+    
+    private void fillOCProperties(boolean erase) {
+        if (OCProperties == null)
+            OCProperties = new PdfOCProperties();
+        if (erase) {
+            OCProperties.remove(PdfName.OCGS);
+            OCProperties.remove(PdfName.D);
+        }
         if (OCProperties.get(PdfName.OCGS) == null) {
             PdfArray gr = new PdfArray();
-            for (Iterator it = documentOCGorder.iterator(); it.hasNext();) {
-                PdfOCG layer = (PdfOCG)it.next();
+            for (Iterator it = documentOCG.iterator(); it.hasNext();) {
+                PdfLayer layer = (PdfLayer)it.next();
                 gr.add(layer.getRef());
             }
             OCProperties.put(PdfName.OCGS, gr);
         }
         if (OCProperties.get(PdfName.D) != null)
-            return catalog;
+            return;
+        ArrayList docOrder = new ArrayList(documentOCGorder);
+        for (Iterator it = docOrder.iterator(); it.hasNext();) {
+            PdfLayer layer = (PdfLayer)it.next();
+            if (layer.getParent() != null)
+                it.remove();
+        }
         PdfArray order = new PdfArray();
-        for (Iterator it = documentOCGorder.iterator(); it.hasNext();) {
-            PdfOCG layer = (PdfOCG)it.next();
-            order.add(layer.getRef());
+        for (Iterator it = docOrder.iterator(); it.hasNext();) {
+            PdfLayer layer = (PdfLayer)it.next();
+            getOCGOrder(order, layer);
         }
         PdfDictionary d = new PdfDictionary();
-        d.put(PdfName.ORDER, order);
         OCProperties.put(PdfName.D, d);
+        d.put(PdfName.ORDER, order);
+        PdfArray gr = new PdfArray();
+        for (Iterator it = documentOCG.iterator(); it.hasNext();) {
+            PdfLayer layer = (PdfLayer)it.next();
+            if (!layer.isOn())
+                gr.add(layer.getRef());
+        }
+        if (gr.size() > 0)
+            d.put(PdfName.OFF, gr);
+        if (OCGRadioGroup.size() > 0)
+            d.put(PdfName.RBGROUPS, OCGRadioGroup);
+        addASEvent(PdfName.VIEW, PdfName.ZOOM);
+        addASEvent(PdfName.VIEW, PdfName.VIEW);
+        addASEvent(PdfName.PRINT, PdfName.PRINT);
+        addASEvent(PdfName.EXPORT, PdfName.EXPORT);
+        d.put(PdfName.LISTMODE, PdfName.VISIBLEPAGES);
+    }
+    
+    protected PdfDictionary getCatalog(PdfIndirectReference rootObj)
+    {
+        PdfDictionary catalog = ((PdfDocument)document).getCatalog(rootObj);
+        if (documentOCG.size() == 0)
+            return catalog;
+        fillOCProperties(false);
+        catalog.put(PdfName.OCPROPERTIES, OCProperties);
         return catalog;
     }
 
@@ -1468,9 +1540,16 @@ public class PdfWriter extends DocWriter {
     }
     
     void registerLayer(PdfOCG layer) {
+        checkPDFXConformance(this, PDFXKEY_LAYER, null);
         if (layer instanceof PdfLayer) {
-            if (!documentOCG.contains(layer)) {
-                documentOCG.add(layer);
+            PdfLayer la = (PdfLayer)layer;
+            if (la.getTitle() == null) {
+                if (!documentOCG.contains(layer)) {
+                    documentOCG.add(layer);
+                    documentOCGorder.add(layer);
+                }
+            }
+            else {
                 documentOCGorder.add(layer);
             }
         }
@@ -2312,14 +2391,32 @@ public class PdfWriter extends DocWriter {
     }
     
     /**
-     * Gets the <B>Optional Content Properties Dictionary</B>. The /OCGs key will be
-     * filled automatically. If the /D key doesn't exist the layers will appear in the
-     * order they were created.
+     * Gets the <B>Optional Content Properties Dictionary</B>. Each call fills the dictionary with the current layer
+     * state. It's advisable to only call this method right before close and do any modifications
+     * at that time.
      * @return the Optional Content Properties Dictionary
      */    
     public PdfOCProperties getOCProperties() {
-        if (OCProperties == null)
-            OCProperties = new PdfOCProperties();
+        fillOCProperties(true);
         return OCProperties;
+    }
+    
+    /**
+     * Sets a collection of optional content groups whose states are intended to follow
+     * a "radio button" paradigm. That is, the state of at most one optional
+     * content group in the array should be ON at a time: if one group is turned
+     * ON, all others must be turned OFF.
+     * @param group the radio group
+     */    
+    public void addOCGRadioGroup(ArrayList group) {
+        PdfArray ar = new PdfArray();
+        for (int k = 0; k < group.size(); ++k) {
+            PdfLayer layer = (PdfLayer)group.get(k);
+            if (layer.getTitle() == null)
+                ar.add(layer.getRef());
+        }
+        if (ar.size() == 0)
+            return;
+        OCGRadioGroup.add(ar);
     }
 }
