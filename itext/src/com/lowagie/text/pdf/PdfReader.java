@@ -73,6 +73,8 @@ public class PdfReader {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
     };
     
+    static final byte endstream[] = {'e','n','d','s','t','r','e','a','m'};
+    static final byte endobj[] = {'e','n','d','o','b','j'};
     protected PRTokeniser tokens;
     protected int xref[];
     protected PdfObject xrefObj[];
@@ -323,7 +325,7 @@ public class PdfReader {
     }
     
     /**
-     * author Kazuya Ujihara
+     * @author Kazuya Ujihara
      */
     private void readDecryptedDocObj() throws IOException {
         PdfObject encDic = trailer.get(PdfName.ENCRYPT);
@@ -467,10 +469,47 @@ public class PdfReader {
                 streams.add(obj);
             }
         }
+        int fileLength = tokens.length();
+        byte tline[] = new byte[16];
         for (int k = 0; k < streams.size(); ++k) {
             PRStream stream = (PRStream)streams.get(k);
             PdfNumber length = (PdfNumber)killIndirect(stream.get(PdfName.LENGTH));
-            stream.setLength(length.intValue());
+            int start = stream.getOffset();
+            int streamLength = length.intValue();
+            boolean calc = false;
+            if (streamLength + start > fileLength - 20)
+                calc = true;
+            else {
+                tokens.seek(start + streamLength);
+                String line = tokens.readString(20);
+                if (!line.startsWith("\nendstream") &&
+                    !line.startsWith("\r\nendstream") &&
+                    !line.startsWith("\rendstream") &&
+                    !line.startsWith("endstream"))
+                    calc = true;
+            }
+            if (calc) {
+                tokens.seek(start);
+                while (true) {
+                    int pos = tokens.getFilePointer();
+                    if (!tokens.readLineSegment(tline))
+                        break;
+                    if (equalsn(tline, endstream)) {
+                        streamLength = pos - start;
+                        break;
+                    }
+                    if (equalsn(tline, endobj)) {
+                        tokens.seek(pos - 16);
+                        String s = tokens.readString(16);
+                        int index = s.indexOf("endstream");
+                        if (index >= 0)
+                            pos = pos - 16 + index;
+                        streamLength = pos - start;
+                        break;
+                    }
+                }
+            }
+            stream.setLength(streamLength);
         }
         xref = null;
     }
@@ -1072,5 +1111,92 @@ public class PdfReader {
     
     PdfEncryption getDecrypt() {
         return decrypt;
+    }
+    
+    static boolean equalsn(byte a1[], byte a2[]) {
+        int length = a2.length;
+        for (int k = 0; k < length; ++k) {
+            if (a1[k] != a2[k])
+                return false;
+        }
+        return true;
+    }
+    
+    static boolean existsName(PdfDictionary dic, PdfName key, PdfName value) {
+        PdfObject type = getPdfObject(dic.get(key));
+        if (type == null || type.type() != PdfObject.NAME)
+            return false;
+        PdfName name = (PdfName)type;
+        return name.equals(value);
+    }
+    
+    static String getSubsetPrefix(PdfDictionary dic) {
+        PdfObject type = getPdfObject(dic.get(PdfName.BASEFONT));
+        if (type == null || type.type() != PdfObject.NAME)
+            return null;
+        String s = PdfName.decodeName(type.toString());
+        if (s.length() < 8 || s.charAt(6) != '+')
+            return null;
+        for (int k = 0; k < 6; ++k) {
+            char c = s.charAt(k);
+            if (c < 'A' || c > 'Z')
+                return null;
+        }
+        return s;
+    }
+    
+    /** Finds all the font subsets and changes the prefixes to some
+     * random values.
+     * @return the number of font subsets altered
+     */    
+    public int shuffleSubsetNames() {
+        int total = 0;
+        for (int k = 1; k < xrefObj.length; ++k) {
+            PdfObject obj = xrefObj[k];
+            if (obj == null || obj.type() != PdfObject.DICTIONARY)
+                continue;
+            PdfDictionary dic = (PdfDictionary)obj;
+            if (!existsName(dic, PdfName.TYPE, PdfName.FONT))
+                continue;
+            if (existsName(dic, PdfName.SUBTYPE, PdfName.TYPE1)
+                || existsName(dic, PdfName.SUBTYPE, PdfName.MMTYPE1)
+                || existsName(dic, PdfName.SUBTYPE, PdfName.TRUETYPE)) {
+                String s = getSubsetPrefix(dic);
+                if (s == null)
+                    continue;
+                String ns = BaseFont.createSubsetPrefix() + s.substring(7);
+                PdfName newName = new PdfName(ns);
+                dic.put(PdfName.BASEFONT, newName);
+                ++total;
+                PdfDictionary fd = (PdfDictionary)getPdfObject(dic.get(PdfName.FONTDESCRIPTOR));
+                if (fd == null)
+                    continue;
+                fd.put(PdfName.BASEFONT, newName);
+            }
+            else if (existsName(dic, PdfName.SUBTYPE, PdfName.TYPE0)) {
+                String s = getSubsetPrefix(dic);
+                PdfArray arr = (PdfArray)getPdfObject(dic.get(PdfName.DESCENDANTFONTS));
+                if (arr == null)
+                    continue;
+                ArrayList list = arr.getArrayList();
+                if (list.size() == 0)
+                    continue;
+                PdfDictionary desc = (PdfDictionary)getPdfObject((PdfObject)list.get(0));
+                String sde = getSubsetPrefix(desc);
+                if (sde == null)
+                    continue;
+                String ns = BaseFont.createSubsetPrefix();
+                if (s != null)
+                    dic.put(PdfName.BASEFONT, new PdfName(ns + s.substring(7)));
+                PdfName newName = new PdfName(ns + sde.substring(7));
+                desc.put(PdfName.BASEFONT, newName);
+                ++total;
+                PdfDictionary fd = (PdfDictionary)getPdfObject(desc.get(PdfName.FONTDESCRIPTOR));
+                if (fd == null)
+                    continue;
+                fd.put(PdfName.BASEFONT, newName);
+            }
+        }
+        return total;
     }
 }

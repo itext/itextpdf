@@ -50,7 +50,7 @@ package com.lowagie.text;
  * 
  * A special-version of <CODE>LIST</CODE> whitch use roman-letters.
  * 
- * @see com.lowagie.text.List
+ * @see com.lowagie.List
  * @version 2003-06-22
  * @author Michael Niedermair
  */

@@ -468,7 +468,19 @@ public class Chunk implements Element, MarkupAttributes {
  * @return this <CODE>Chunk</CODE>
  */
     public Chunk setBackground(Color color) {
-        return setAttribute(BACKGROUND, color);
+        return setBackground(color, 0, 0, 0, 0);
+    }
+
+    /** Sets the color of the background <CODE>Chunk</CODE>.
+     * @param color the color of the background
+     * @param extraLeft increase the size of the rectangle in the left
+     * @param extraBottom increase the size of the rectangle in the bottom
+     * @param extraRight increase the size of the rectangle in the right
+     * @param extraTop increase the size of the rectangle in the top
+     * @return this <CODE>Chunk</CODE>
+     */
+    public Chunk setBackground(Color color, float extraLeft, float extraBottom, float extraRight, float extraTop) {
+        return setAttribute(BACKGROUND, new Object[]{color, new float[]{extraLeft, extraBottom, extraRight, extraTop}});
     }
 
 /**
