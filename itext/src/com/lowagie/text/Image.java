@@ -669,9 +669,10 @@ public abstract class Image extends Rectangle implements Element {
  */
     
     public void setRotation(float r) {
-        rotation = (float)(r % (2.0 * Math.PI));
+		double d=Math.PI;							//__IDS__	
+        rotation = (float)(r % (2.0 * d));	        //__IDS__	
         if (rotation < 0) {
-            rotation += 2.0 * Math.PI;
+            rotation += 2.0 * d;                	//__IDS__	
         }
         float[] matrix = matrix();
         scaledWidth = matrix[DX] - matrix[CX];
@@ -687,7 +688,8 @@ public abstract class Image extends Rectangle implements Element {
  */
     
     public void setRotationDegrees(float deg) {
-        setRotation(deg / 180 * (float)Math.PI);
+		double d=Math.PI;							//__IDS__
+        setRotation(deg / 180 * (float)d);			//__IDS__
     }
     
     // methods to retrieve information
