@@ -209,11 +209,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 case Element.HEADER:
                     try {
                         Header h = (Header) element;
-                        if (!MarkupTags.STYLESHEET.equals(h.name())) {
-                            writeHeader(h);
+                        if (MarkupTags.STYLESHEET.equals(h.name())) {
+                            writeLink(h);
+                        }
+                        else if (HtmlTags.JAVASCRIPT.equals(h.name())) {
+                            writeJavaScript(h);
                         }
                         else {
-                            writeLink(h);
+                            writeHeader(h);
                         }
                     }
                     catch(ClassCastException cce) {
@@ -283,6 +286,15 @@ public class HtmlWriter extends DocWriter implements DocListener {
             }
             if (pageSize.backgroundColor() != null) {
                 write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(pageSize.backgroundColor()));
+            }
+            if (document.getJavaScript_onLoad() != null) {
+                write(HtmlTags.JAVASCRIPT_ONLOAD, HtmlEncoder.encode(document.getJavaScript_onLoad()));
+            }
+            if (document.getJavaScript_onUnLoad() != null) {
+                write(HtmlTags.JAVASCRIPT_ONUNLOAD, HtmlEncoder.encode(document.getJavaScript_onUnLoad()));
+            }
+            if (document.getHtmlStyleClass() != null) {
+                write(MarkupTags.CLASS, document.getHtmlStyleClass());
             }
             os.write(GT);
             initHeader(); // line added by David Freels
@@ -388,6 +400,47 @@ public class HtmlWriter extends DocWriter implements DocListener {
         write(MarkupTags.TYPE, MarkupTags.CSS);
         write(HtmlTags.REFERENCE, header.content());
         writeEnd();
+    }
+    
+/**
+ * Writes a JavaScript section or, if the markup attribute HtmlTags.URL is set, a JavaScript reference in the header.
+ *
+ * @param   header   the element that has to be written
+ * @throws  IOException
+ */
+    
+    protected void writeJavaScript(Header header) throws IOException {
+        addTabs(2);
+        writeStart(HtmlTags.SCRIPT);
+        write(HtmlTags.LANGUAGE, HtmlTags.JAVASCRIPT);
+        if (header.getMarkupAttribute(HtmlTags.URL) != null) {
+          /* JavaScript reference example:
+           *
+           * <script language="JavaScript" src="/myPath/MyFunctions.js"/>
+           */ 
+          write(HtmlTags.URL, header.getMarkupAttribute(HtmlTags.URL));
+          os.write(GT);
+          writeEnd(HtmlTags.SCRIPT);
+        }
+        else {
+          /* JavaScript coding convention:
+           *
+           * <script language="JavaScript" type="text/javascript">
+           * <!--
+           * // ... JavaScript methods ...
+           * //-->
+           * </script>
+           */ 
+          write(MarkupTags.TYPE, MarkupTags.JAVASCRIPT);
+          os.write(GT);
+          addTabs(2);
+          write(new String(BEGINCOMMENT) + "\n");
+          write(header.content());
+          addTabs(2);
+          write("//" + new String(ENDCOMMENT));
+          addTabs(2);
+          writeEnd(HtmlTags.SCRIPT);
+        }
     }
     
 /**

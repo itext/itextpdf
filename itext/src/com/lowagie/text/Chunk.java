@@ -83,6 +83,8 @@ import com.lowagie.text.markup.MarkupParser;
 public class Chunk implements Element, MarkupAttributes {
 
 // public static membervariables
+    
+    public static final String OBJECT_REPLACEMENT_CHARACTER = "\ufffc";
 
 /** This is a Chunk containing a newline. */
     public static final Chunk NEWLINE = new Chunk("\n");
@@ -188,8 +190,10 @@ public class Chunk implements Element, MarkupAttributes {
  */
 
     public Chunk(Image image, float offsetX, float offsetY) {
-        this("*", new Font());
-        setAttribute(IMAGE, new Object[]{image, new Float(offsetX), new Float(offsetY), new Boolean(false)});
+        this(OBJECT_REPLACEMENT_CHARACTER, new Font());
+        Image copyImage = Image.getInstance(image);
+        copyImage.setAbsolutePosition(Float.NaN, Float.NaN);
+        setAttribute(IMAGE, new Object[]{copyImage, new Float(offsetX), new Float(offsetY), new Boolean(false)});
     }
 
 /**
@@ -202,7 +206,7 @@ public class Chunk implements Element, MarkupAttributes {
  */
 
     public Chunk(Image image, float offsetX, float offsetY, boolean changeLeading) {
-        this("*", new Font());
+        this(OBJECT_REPLACEMENT_CHARACTER, new Font());
         setAttribute(IMAGE, new Object[]{image, new Float(offsetX), new Float(offsetY), new Boolean(changeLeading)});
     }
 
