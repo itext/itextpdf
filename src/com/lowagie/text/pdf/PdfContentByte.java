@@ -874,7 +874,7 @@ public class PdfContentByte {
             }
         }
         catch (Exception ee) {
-            throw new DocumentException(ee.getMessage());
+            throw new DocumentException(ee);
         }
     }
     
@@ -2335,5 +2335,9 @@ public class PdfContentByte {
         af.getMatrix(arr);
         content.append(arr[0]).append(' ').append(arr[1]).append(' ').append(arr[2]).append(' ');
         content.append(arr[3]).append(' ').append(arr[4]).append(' ').append(arr[5]).append(" cm").append_i(separator);
+    }
+    
+    void addAnnotation(PdfAnnotation annot) {
+        writer.addAnnotation(annot);
     }
 }

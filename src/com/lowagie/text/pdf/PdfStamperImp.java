@@ -54,6 +54,7 @@ import java.util.Iterator;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.ExceptionConverter;
 
 class PdfStamperImp extends PdfWriter {
     RandomAccessFileOrArray file;
@@ -398,6 +399,62 @@ class PdfStamperImp extends PdfWriter {
         }
     }
     
+    public PdfIndirectReference getPageReference(int page) {
+        PdfIndirectReference ref = reader.getPageOrigRef(page);
+        if (ref == null)
+            throw new IllegalArgumentException("Invalid page number " + page);
+        return ref;
+    }
+    
+    public void addAnnotation(PdfAnnotation annot) {
+        throw new RuntimeException("Unsupported in this context. Use PdfStamper.addAnnotation()");
+    }
+
+    void addAnnotation(PdfAnnotation annot, int page) {
+        try {
+            if (annot.isForm())
+                throw new RuntimeException("Form fields not yet supported.");
+            PdfRectangle rect = (PdfRectangle)annot.get(PdfName.RECT);
+            int rotation = reader.getPageRotation(page);
+            Rectangle pageSize = reader.getPageSizeWithRotation(page);
+            switch (rotation) {
+                case 90:
+                    annot.put(PdfName.RECT, new PdfRectangle(
+                    pageSize.top() - rect.bottom(),
+                    rect.left(),
+                    pageSize.top() - rect.top(),
+                    rect.right()));
+                    break;
+                case 180:
+                    annot.put(PdfName.RECT, new PdfRectangle(
+                    pageSize.right() - rect.left(),
+                    pageSize.top() - rect.bottom(),
+                    pageSize.right() - rect.right(),
+                    pageSize.top() - rect.top()));
+                    break;
+                case 270:
+                    annot.put(PdfName.RECT, new PdfRectangle(
+                    rect.bottom(),
+                    pageSize.right() - rect.left(),
+                    rect.top(),
+                    pageSize.right() - rect.right()));
+                    break;
+            }
+            PdfDictionary dic = reader.getPageN(page);
+            PdfArray annots = (PdfArray)reader.getPdfObject(dic.get(PdfName.ANNOTS));
+            if (annots == null) {
+                annots = new PdfArray();
+                dic.put(PdfName.ANNOTS, annots);
+            }
+            PdfIndirectReference ref = addToBody(annot).getIndirectReference();
+            annots.add(ref);
+            annot.put(PdfName.RECT, rect);
+        }
+        catch (IOException e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+
     class PageStamp {
         
         int pageNumber;

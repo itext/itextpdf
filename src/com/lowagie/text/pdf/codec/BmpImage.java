@@ -83,7 +83,7 @@ package com.lowagie.text.pdf.codec;
 import com.lowagie.text.pdf.*;
 import com.lowagie.text.*;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
 import java.net.URL;
 
 /** Reads a BMP image. All types of BMP can be read.
@@ -95,7 +95,7 @@ import java.net.URL;
 public class BmpImage {
     
     // BMP variables
-    private BufferedInputStream inputStream;
+    private InputStream inputStream;
     private long bitmapFileSize;
     private long bitmapOffset;
     private long compression;
@@ -144,8 +144,10 @@ public class BmpImage {
     int width;
     int height;
     
-    BmpImage(InputStream is) throws IOException {
-        process(is);
+    BmpImage(InputStream is, boolean noHeader, int size) throws IOException {
+        bitmapFileSize = size;
+        bitmapOffset = 0;
+        process(is, noHeader);
     }
     
     /** Reads a BMP from an url.
@@ -168,13 +170,25 @@ public class BmpImage {
         }
     }
     
-    /** Reads a BMP from a stream.
+    /** Reads a BMP from a stream. The stream is not closed.
      * @param is the stream
      * @throws IOException on error
      * @return the image
      */    
     public static Image getImage(InputStream is) throws IOException {
-        BmpImage bmp = new BmpImage(is);
+        return getImage(is, false, 0);
+    }
+    
+    /** Reads a BMP from a stream. The stream is not closed.
+     * The BMP may not have a header and be considered as a plain DIB.
+     * @param is the stream
+     * @param noHeader true to process a plain DIB
+     * @param size the size of the DIB. Not used for a BMP
+     * @throws IOException on error
+     * @return the image
+     */    
+    public static Image getImage(InputStream is, boolean noHeader, int size) throws IOException {
+        BmpImage bmp = new BmpImage(is, noHeader, size);
         try {
             Image img = bmp.getImage();
             img.setDpi((int)((double)bmp.xPelsPerMeter * 0.0254), (int)((double)bmp.xPelsPerMeter * 0.0254));
@@ -216,31 +230,32 @@ public class BmpImage {
     }
 
     
-    protected void process(InputStream stream) throws IOException {
-        if (stream instanceof BufferedInputStream) {
-            inputStream = (BufferedInputStream)stream;
+    protected void process(InputStream stream, boolean noHeader) throws IOException {
+        if (noHeader || stream instanceof BufferedInputStream) {
+            inputStream = stream;
         } else {
             inputStream = new BufferedInputStream(stream);
         }
-        // Start File Header
-        if (!(readUnsignedByte(inputStream) == 'B' &&
-        readUnsignedByte(inputStream) == 'M')) {
-            throw new
-            RuntimeException("Invalid magic value for BMP file.");
+        if (!noHeader) {
+            // Start File Header
+            if (!(readUnsignedByte(inputStream) == 'B' &&
+            readUnsignedByte(inputStream) == 'M')) {
+                throw new
+                RuntimeException("Invalid magic value for BMP file.");
+            }
+
+            // Read file size
+            bitmapFileSize = readDWord(inputStream);
+
+            // Read the two reserved fields
+            readWord(inputStream);
+            readWord(inputStream);
+
+            // Offset to the bitmap from the beginning
+            bitmapOffset = readDWord(inputStream);
+
+            // End File Header
         }
-        
-        // Read file size
-        bitmapFileSize = readDWord(inputStream);
-        
-        // Read the two reserved fields
-        readWord(inputStream);
-        readWord(inputStream);
-        
-        // Offset to the bitmap from the beginning
-        bitmapOffset = readDWord(inputStream);
-        
-        // End File Header
-        
         // Start BitmapCoreHeader
         long size = readDWord(inputStream);
         
@@ -261,7 +276,8 @@ public class BmpImage {
         // As BMP always has 3 rgb bands, except for Version 5,
         // which is bgra
         numBands = 3;
-        
+        if (bitmapOffset == 0)
+            bitmapOffset = size;
         if (size == 12) {
             // Windows 2.x and OS/2 1.x
             properties.put("bmp_version", "BMP v. 2.x");
@@ -280,6 +296,23 @@ public class BmpImage {
             // Read in the palette
             int numberOfEntries = (int)((bitmapOffset-14-size) / 3);
             int sizeOfPalette = numberOfEntries*3;
+            if (bitmapOffset == size) {
+                switch (imageType) {
+                    case VERSION_2_1_BIT:
+                        sizeOfPalette = 2 * 3;
+                        break;
+                    case VERSION_2_4_BIT:
+                        sizeOfPalette = 16 * 3;
+                        break;
+                    case VERSION_2_8_BIT:
+                        sizeOfPalette = 256 * 3;
+                        break;
+                    case VERSION_2_24_BIT:
+                        sizeOfPalette = 0;
+                        break;
+                }
+                bitmapOffset = size + sizeOfPalette;
+            }
             palette = new byte[sizeOfPalette];
             inputStream.read(palette, 0, sizeOfPalette);
             properties.put("palette", palette);
@@ -323,13 +356,6 @@ public class BmpImage {
                     case BI_RLE8:  // 8-bit RLE compression
                     case BI_RLE4:  // 4-bit RLE compression
                         
-                        // Read in the palette
-                        int numberOfEntries = (int)((bitmapOffset-14-size) / 4);
-                        int sizeOfPalette = numberOfEntries*4;
-                        palette = new byte[sizeOfPalette];
-                        inputStream.read(palette, 0, sizeOfPalette);
-                        properties.put("palette", palette);
-                        
                         if (bitsPerPixel == 1) {
                             imageType = VERSION_3_1_BIT;
                         } else if (bitsPerPixel == 4) {
@@ -355,7 +381,31 @@ public class BmpImage {
                             properties.put("green_mask", new Integer(greenMask));
                             properties.put("blue_mask", new Integer(blueMask));
                         }
-                        
+
+                        // Read in the palette
+                        int numberOfEntries = (int)((bitmapOffset-14-size) / 4);
+                        int sizeOfPalette = numberOfEntries*4;
+                        if (bitmapOffset == size) {
+                            switch (imageType) {
+                                case VERSION_3_1_BIT:
+                                    sizeOfPalette = (int)(colorsUsed == 0 ? 2 : colorsUsed) * 4;
+                                    break;
+                                case VERSION_3_4_BIT:
+                                    sizeOfPalette = (int)(colorsUsed == 0 ? 16 : colorsUsed) * 4;
+                                    break;
+                                case VERSION_3_8_BIT:
+                                    sizeOfPalette = (int)(colorsUsed == 0 ? 256 : colorsUsed) * 4;
+                                    break;
+                                default:
+                                    sizeOfPalette = 0;
+                                    break;
+                            }
+                            bitmapOffset = size + sizeOfPalette;
+                        }
+                        palette = new byte[sizeOfPalette];
+                        inputStream.read(palette, 0, sizeOfPalette);
+                        properties.put("palette", palette);
+                                                
                         properties.put("bmp_version", "BMP v. 3.x");
                         break;
                         
@@ -416,9 +466,55 @@ public class BmpImage {
                 long gammaGreen = readDWord(inputStream);
                 long gammaBlue = readDWord(inputStream);
                 
+                if (bitsPerPixel == 1) {
+                    imageType = VERSION_4_1_BIT;
+                } else if (bitsPerPixel == 4) {
+                    imageType = VERSION_4_4_BIT;
+                } else if (bitsPerPixel == 8) {
+                    imageType = VERSION_4_8_BIT;
+                } else if (bitsPerPixel == 16) {
+                    imageType = VERSION_4_16_BIT;
+                    if ((int)compression == BI_RGB) {
+                        redMask = 0x7C00;
+                        greenMask = 0x3E0;
+                        blueMask = 0x1F;
+                    }
+                } else if (bitsPerPixel == 24) {
+                    imageType = VERSION_4_24_BIT;
+                } else if (bitsPerPixel == 32) {
+                    imageType = VERSION_4_32_BIT;
+                    if ((int)compression == BI_RGB) {
+                        redMask   = 0x00FF0000;
+                        greenMask = 0x0000FF00;
+                        blueMask  = 0x000000FF;
+                    }
+                }
+                
+                properties.put("red_mask", new Integer(redMask));
+                properties.put("green_mask", new Integer(greenMask));
+                properties.put("blue_mask", new Integer(blueMask));
+                properties.put("alpha_mask", new Integer(alphaMask));
+
                 // Read in the palette
                 int numberOfEntries = (int)((bitmapOffset-14-size) / 4);
                 int sizeOfPalette = numberOfEntries*4;
+                if (bitmapOffset == size) {
+                    switch (imageType) {
+                        case VERSION_4_1_BIT:
+                            sizeOfPalette = (int)(colorsUsed == 0 ? 2 : colorsUsed) * 4;
+                            break;
+                        case VERSION_4_4_BIT:
+                            sizeOfPalette = (int)(colorsUsed == 0 ? 16 : colorsUsed) * 4;
+                            break;
+                        case VERSION_4_8_BIT:
+                            sizeOfPalette = (int)(colorsUsed == 0 ? 256 : colorsUsed) * 4;
+                            break;
+                        default:
+                            sizeOfPalette = 0;
+                            break;
+                    }
+                    bitmapOffset = size + sizeOfPalette;
+                }
                 palette = new byte[sizeOfPalette];
                 inputStream.read(palette, 0, sizeOfPalette);
                 
@@ -459,34 +555,6 @@ public class BmpImage {
                         RuntimeException("Not implemented yet.");
                 }
                 
-                if (bitsPerPixel == 1) {
-                    imageType = VERSION_4_1_BIT;
-                } else if (bitsPerPixel == 4) {
-                    imageType = VERSION_4_4_BIT;
-                } else if (bitsPerPixel == 8) {
-                    imageType = VERSION_4_8_BIT;
-                } else if (bitsPerPixel == 16) {
-                    imageType = VERSION_4_16_BIT;
-                    if ((int)compression == BI_RGB) {
-                        redMask = 0x7C00;
-                        greenMask = 0x3E0;
-                        blueMask = 0x1F;
-                    }
-                } else if (bitsPerPixel == 24) {
-                    imageType = VERSION_4_24_BIT;
-                } else if (bitsPerPixel == 32) {
-                    imageType = VERSION_4_32_BIT;
-                    if ((int)compression == BI_RGB) {
-                        redMask   = 0x00FF0000;
-                        greenMask = 0x0000FF00;
-                        blueMask  = 0x000000FF;
-                    }
-                }
-                
-                properties.put("red_mask", new Integer(redMask));
-                properties.put("green_mask", new Integer(greenMask));
-                properties.put("blue_mask", new Integer(blueMask));
-                properties.put("alpha_mask", new Integer(alphaMask));
             } else {
                 properties.put("bmp_version", "BMP v. 5.x");
                 throw new
@@ -826,8 +894,7 @@ public class BmpImage {
         byte values[] = new byte[imSize];
         int bytesRead = 0;
         while (bytesRead < imSize) {
-            bytesRead += inputStream.read(values, bytesRead,
-            imSize - bytesRead);
+            bytesRead += inputStream.read(values, bytesRead, imSize - bytesRead);
         }
         
         if (isBottomUp) {

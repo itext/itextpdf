@@ -45,6 +45,7 @@ public class concat_pdf extends java.lang.Object {
                 while (f < args.length-1) {
                     // we create a reader for a certain document
                     PdfReader reader = new PdfReader(args[f]);
+                    reader.consolidateNamedDestinations();
                     // we retrieve the total number of pages
                     int n = reader.getNumberOfPages();
                     System.out.println("There are " + n + " pages in " + args[f]);

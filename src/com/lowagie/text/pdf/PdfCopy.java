@@ -51,7 +51,8 @@
  */
 package com.lowagie.text.pdf;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.io.*;
 import com.lowagie.text.*;
 
@@ -215,8 +216,7 @@ public class PdfCopy extends PdfWriter {
      * Translate a PRStream to a PdfStream. The data part copies itself.
      */
     protected PdfStream copyStream(PRStream in) throws IOException, BadPdfFormatException {
-        PRStream out = new PRStream(in.getReader(),in.getOffset());
-        out.setLength(in.getLength());
+        PRStream out = new PRStream(in, null);
         
         for (Iterator it = in.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName) it.next();

@@ -100,6 +100,7 @@ public class MetaState {
         currentPoint = new Point(0, 0);
         currentPen = new MetaPen();
         currentBrush = new MetaBrush();
+        currentFont = new MetaFont();
     }
 
     public MetaState(MetaState state) {

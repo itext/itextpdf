@@ -369,7 +369,7 @@ class CJKFont extends BaseFont {
             return c;
         }
         catch (Exception e) {
-            e.printStackTrace();
+            // empty on purpose
         }
         return null;
     }
@@ -545,7 +545,7 @@ class CJKFont extends BaseFont {
             return map;
         }
         catch (Exception e) {
-            e.printStackTrace();
+            // empty on purpose
         }
         return null;
     }

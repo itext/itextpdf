@@ -221,4 +221,13 @@ public class PdfStamper {
     public void setFormFlattening(boolean flat) {
         stamper.setFormFlattening(flat);
     }
+
+    /** Adds an annotation in a specific page.
+     * @param annot the annotation
+     * @param page the page
+     */    
+    public void addAnnotation(PdfAnnotation annot, int page) {
+        stamper.addAnnotation(annot, page);
+    }
+    
 }

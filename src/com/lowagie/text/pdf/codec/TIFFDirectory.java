@@ -36,7 +36,7 @@ import java.io.EOFException;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.ArrayList;
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 /**
@@ -263,7 +263,7 @@ public class TIFFDirectory extends Object implements Serializable {
                         
                         // Can be multiple strings
                         int index = 0, prevIndex = 0;
-                        Vector v = new Vector();
+                        ArrayList v = new ArrayList();
                         
                         while (index < count) {
                             
@@ -278,7 +278,7 @@ public class TIFFDirectory extends Object implements Serializable {
                         count = v.size();
                         String strings[] = new String[count];
                         for (int c = 0 ; c < count; c++) {
-                            strings[c] = (String)v.elementAt(c);
+                            strings[c] = (String)v.get(c);
                         }
                         
                         obj = strings;

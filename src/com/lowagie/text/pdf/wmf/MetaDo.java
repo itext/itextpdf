@@ -51,6 +51,7 @@
 package com.lowagie.text.pdf.wmf;
 import java.io.*;
 import com.lowagie.text.pdf.*;
+import com.lowagie.text.pdf.codec.BmpImage;
 import com.lowagie.text.*;
 import java.awt.Point;
 import java.awt.Color;
@@ -416,6 +417,20 @@ public class MetaDo {
                     strokeAndFill();
                     break;
                 }
+                case META_ROUNDRECT:
+                {
+                    if (isNullStrokeFill(true))
+                        break;
+                    float h = state.transformY(0) - state.transformY(in.readShort());
+                    float w = state.transformX(in.readShort()) - state.transformX(0);
+                    float b = state.transformY(in.readShort());
+                    float r = state.transformX(in.readShort());
+                    float t = state.transformY(in.readShort());
+                    float l = state.transformX(in.readShort());
+                    cb.roundRectangle(l, b, r - l, t - b, (h + w) / 4);
+                    strokeAndFill();
+                    break;
+                }
                 case META_INTERSECTCLIPRECT:
                 {
                     float b = state.transformY(in.readShort());
@@ -511,6 +526,40 @@ public class MetaDo {
                     cb.rectangle(state.transformX(x), state.transformY(y), .2f, .2f);
                     cb.fill();
                     cb.restoreState();
+                    break;
+                }
+                case META_DIBSTRETCHBLT:
+                case META_STRETCHDIB: {
+                    int rop = in.readInt();
+                    if (function == META_STRETCHDIB) {
+                        /*int usage = */ in.readWord();
+                    }
+                    int srcHeight = in.readShort();
+                    int srcWidth = in.readShort();
+                    int ySrc = in.readShort();
+                    int xSrc = in.readShort();
+                    float destHeight = state.transformY(in.readShort()) - state.transformY(0);
+                    float destWidth = state.transformX(in.readShort()) - state.transformX(0);
+                    float yDest = state.transformY(in.readShort());
+                    float xDest = state.transformX(in.readShort());
+                    byte b[] = new byte[(tsize * 2) - (in.getLength() - lenMarker)];
+                    for (int k = 0; k < b.length; ++k)
+                        b[k] = (byte)in.readByte();
+                    try {
+                        ByteArrayInputStream inb = new ByteArrayInputStream(b);
+                        Image bmp = BmpImage.getImage(inb, true, b.length);
+                        cb.saveState();
+                        cb.rectangle(xDest, yDest, destWidth, destHeight);
+                        cb.clip();
+                        cb.newPath();
+                        bmp.scaleAbsolute(destWidth * bmp.width() / srcWidth, -destHeight * bmp.height() / srcHeight);
+                        bmp.setAbsolutePosition(xDest - destWidth * xSrc / srcWidth, yDest + destHeight * ySrc / srcHeight - bmp.scaledHeight());
+                        cb.addImage(bmp);
+                        cb.restoreState();
+                    }
+                    catch (Exception e) {
+                        // empty on purpose
+                    }
                     break;
                 }
             }
@@ -619,5 +668,92 @@ public class MetaDo {
         if (s < 0)
             s += Math.PI * 2;
         return (float)(s / Math.PI * 180);
+    }
+    
+    public static byte[] wrapBMP(Image image) throws IOException {
+        if (image.getOriginalType() != Image.ORIGINAL_BMP)
+            throw new IOException("Only BMP can be wrapped in WMF.");
+        InputStream imgIn;
+        byte data[] = null;
+        if (image.getOriginalData() == null) {
+            imgIn = image.url().openStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            int b = 0;
+            while ((b = imgIn.read()) != -1)
+                out.write(b);
+            imgIn.close();
+            data = out.toByteArray();
+        }
+        else
+            data = image.getOriginalData();
+        int sizeBmpWords = (data.length - 14 + 1) >>> 1;
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        // write metafile header
+        writeWord(os, 1);
+        writeWord(os, 9);
+        writeWord(os, 0x0300);
+        writeDWord(os, 9 + 4 + 5 + 5 + (13 + sizeBmpWords) + 3); // total metafile size
+        writeWord(os, 1);
+        writeDWord(os, 14 + sizeBmpWords); // max record size
+        writeWord(os, 0);
+        // write records
+        writeDWord(os, 4);
+        writeWord(os, META_SETMAPMODE);
+        writeWord(os, 8);
+
+        writeDWord(os, 5);
+        writeWord(os, META_SETWINDOWORG);
+        writeWord(os, 0);
+        writeWord(os, 0);
+
+        writeDWord(os, 5);
+        writeWord(os, META_SETWINDOWEXT);
+        writeWord(os, (int)image.height());
+        writeWord(os, (int)image.width());
+
+        writeDWord(os, 13 + sizeBmpWords);
+        writeWord(os, META_DIBSTRETCHBLT);
+        writeDWord(os, 0x00cc0020);
+        writeWord(os, (int)image.height());
+        writeWord(os, (int)image.width());
+        writeWord(os, 0);
+        writeWord(os, 0);
+        writeWord(os, (int)image.height());
+        writeWord(os, (int)image.width());
+        writeWord(os, 0);
+        writeWord(os, 0);
+        os.write(data, 14, data.length - 14);
+        if ((data.length & 1) == 1)
+            os.write(0);
+//        writeDWord(os, 14 + sizeBmpWords);
+//        writeWord(os, META_STRETCHDIB);
+//        writeDWord(os, 0x00cc0020);
+//        writeWord(os, 0);
+//        writeWord(os, (int)image.height());
+//        writeWord(os, (int)image.width());
+//        writeWord(os, 0);
+//        writeWord(os, 0);
+//        writeWord(os, (int)image.height());
+//        writeWord(os, (int)image.width());
+//        writeWord(os, 0);
+//        writeWord(os, 0);
+//        os.write(data, 14, data.length - 14);
+//        if ((data.length & 1) == 1)
+//            os.write(0);
+
+        writeDWord(os, 3);
+        writeWord(os, 0);
+        os.close();
+        return os.toByteArray();
+    }
+
+    public static void writeWord(OutputStream os, int v) throws IOException {
+        os.write(v & 0xff);
+        os.write((v >>> 8) & 0xff);
+    }
+    
+    public static void writeDWord(OutputStream os, int v) throws IOException {
+        writeWord(os, v & 0xffff);
+        writeWord(os, (v >>> 16) & 0xffff);
     }
 }
