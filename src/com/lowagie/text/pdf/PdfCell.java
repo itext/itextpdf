@@ -591,4 +591,30 @@ public class PdfCell extends Rectangle {
     void setGroupNumber(int number) {
         groupNumber = number;
     }
+    
+	/**
+	 * Gets a Rectangle that is altered to fit on the page.
+	 *
+	 * @param	top		the top position
+	 * @param	bottom	the bottom position
+	 * @return	a <CODE>Rectangle</CODE>
+	 */
+    
+	public Rectangle rectangle(float top, float bottom) {
+		Rectangle tmp = new Rectangle(left(), bottom(), right(), top());
+		tmp.setBorder(border);
+		tmp.setBorderWidth(borderWidth);
+		tmp.setBorderColor(color);
+		tmp.setBackgroundColor(background);
+		tmp.setGrayFill(grayFill);
+		if (top() > top) {
+			tmp.setTop(top);
+			tmp.setBorder(border - (border & TOP));
+		}
+		if (bottom() < bottom) {
+			tmp.setBottom(bottom);
+			tmp.setBorder(border - (border & BOTTOM));
+		}
+		return tmp;
+	}
 }
