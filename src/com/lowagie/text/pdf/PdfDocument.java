@@ -1309,6 +1309,9 @@ class PdfDocument extends Document implements DocListener {
                     indentLeft(), indentRight(),
                     currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
                     
+                    boolean tableHasToFit = ((Table) element).hasToFitPageTable() ? table.bottom() > indentBottom() : false;
+                    boolean cellsHaveToFit = ((Table) element).hasToFitPageCells();
+                    
                     // drawing the table
                     ArrayList cells = table.getCells();
                     ArrayList headercells = null;
@@ -1321,9 +1324,9 @@ class PdfDocument extends Document implements DocListener {
                         // loop over the cells
                         boolean cellsShown = false;
                         int currentRownumber = 0;
-                        for (ListIterator iterator = cells.listIterator(); iterator.hasNext(); ) {
+                        for (ListIterator iterator = cells.listIterator(); iterator.hasNext() && !tableHasToFit; ) {
                             cell = (PdfCell) iterator.next();
-                            if (cell.rownumber() != currentRownumber && !cell.isHeader() && ((Table) element).hasToFitPage()) {
+                            if (cell.rownumber() != currentRownumber && !cell.isHeader() && cellsHaveToFit) {
                                 currentRownumber = cell.rownumber();
                                 int cellCount = 0;
                                 boolean cellsFit = true;
@@ -1336,7 +1339,6 @@ class PdfDocument extends Document implements DocListener {
                                     cellCount++;
                                 }
                                 if (!cellsFit) {
-                                    System.err.println("OeiOei");
                                     break;
                                 }
                                 for (int i = cellCount; i >= 0; i--) {

@@ -289,7 +289,7 @@ public class Cell extends Rectangle implements TextElementArray {
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
         }
-        setMarkupAttributes(attributes);
+        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -348,6 +348,14 @@ public class Cell extends Rectangle implements TextElementArray {
  */
     
     public final void addElement(Element element) throws BadElementException {
+        if (isTable()) {
+            Table table = (Table) arrayList.get(0);
+            Cell tmp = new Cell(element);
+            tmp.setBorder(NO_BORDER);
+            tmp.setColspan(table.columns());
+            table.addCell(tmp);
+            return;
+        }
         switch(element.type()) {
             case Element.LISTITEM:
             case Element.ROW:
@@ -357,7 +365,7 @@ public class Cell extends Rectangle implements TextElementArray {
             case Element.IMGTEMPLATE:
             case Element.GIF:
             case Element.PNG:
-                throw new BadElementException("You can't add listitems, rows, tables, cells, jpgs, gifs or pngs to a cell.");
+                throw new BadElementException("You can't add listitems, rows, cells, jpgs, gifs or pngs to a cell.");
             case Element.LIST:
                 if (leading < 0) {
                     leading = ((List) element).leading();
@@ -376,6 +384,35 @@ public class Cell extends Rectangle implements TextElementArray {
                 return;
             case Element.CHUNK:
                 if (((Chunk) element).isEmpty()) return;
+                arrayList.add(element);
+                return;
+            case Element.TABLE:
+                if (arrayList.size() == 0) {
+                    arrayList.add(element);
+                    return;
+                }
+                Table table = new Table(3);
+                Cell tmp = new Cell();
+                tmp.setBorder(NO_BORDER);
+                tmp.setColspan(3);
+                float[] widths = new float[3];
+                widths[1] = ((Table)element).widthPercentage();
+                widths[0] = (100f - widths[1]) / 2f;
+                widths[2] = widths[0];
+                table.setWidths(widths);
+                for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
+                    tmp.add((Element) i.next());
+                }
+                table.addCell(tmp);
+                tmp = new Cell();
+                tmp.setBorder(NO_BORDER);
+                table.addCell(tmp, 1, 0);
+                table.addCell(tmp, 1, 2);
+                table.insertTable((Table)element, 1, 1);
+                table.complete();
+                clear();
+                arrayList.add(table);
+                return;
             default:
                 arrayList.add(element);
         }
