@@ -1,11 +1,8 @@
 /*
- * @(#)PdfString.java				0.23 2000/02/02
- *       release rugPdf0.10:		0.04 99/03/30
- *               rugPdf0.20:		0.15 99/12/01
- *               iText0.3:			0.23 2000/02/14
- *               iText0.35:         0.23 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -31,8 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  			   
- *     
+ *
  * Very special thanks to Troy Harrison, Systems Consultant
  * of CNA Life Department-Information Technology
  * Troy.Harrison@cnalife.com <mailto:Troy.Harrison@cnalife.com>
@@ -59,147 +55,161 @@ import java.io.UnsupportedEncodingException;
  *
  * @see		PdfObject
  * @see		BadPdfFormatException
- *
- * @author  bruno@lowagie.com
- * @version 0.23 2000/02/02
- * @since   rugPdf0.10
  */
 
 class PdfString extends PdfObject implements PdfPrintable {
-
-// membervariables
-
-	/** De value of this object. */
-	protected String value = NOTHING;
     
+    // membervariables
+    
+/** The value of this object. */
+    protected String value = NOTHING;
+    
+/** The encoding. */
     protected String encoding = ENCODING;
-
-// constructors
-
-	/**
-	 * Constructs an empty <CODE>PdfString</CODE>-object.
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	PdfString() {
-		super(STRING, NOTHING);
-	}
-
-	/**
-	 * Constructs a <CODE>PdfString</CODE>-object.
-	 *
-	 * @param		content		the content of the string
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	PdfString(String value) {
-		super(STRING, value);
-		this.value = value;
-	}
-
-	PdfString(String value, BaseFont bf) {
-		super(STRING, value);
-		this.value = value;
+    
+    // constructors
+    
+/**
+ * Constructs an empty <CODE>PdfString</CODE>-object.
+ */
+    
+    PdfString() {
+        super(STRING, NOTHING);
+    }
+    
+/**
+ * Constructs a <CODE>PdfString</CODE>-object.
+ *
+ * @param		content		the content of the string
+ */
+    
+    PdfString(String value) {
+        super(STRING, value);
+        this.value = value;
+    }
+    
+/**
+ * Constructs a <CODE>PdfString</CODE>-object.
+ *
+ * @param		content		the content of the string
+ * @param		bf			a basefont
+ */
+    
+    PdfString(String value, BaseFont bf) {
+        super(STRING, value);
+        this.value = value;
         encoding = bf.getEncoding();
-	}
-
-	PdfString(String value, String encoding) {
-		super(STRING, value);
-		this.value = value;
+    }
+    
+/**
+ * Constructs a <CODE>PdfString</CODE>-object.
+ *
+ * @param		content		the content of the string
+ * @param		encoding	an encoding
+ */
+    
+    PdfString(String value, String encoding) {
+        super(STRING, value);
+        this.value = value;
         this.encoding = encoding;
-	}
-
-	/**
-	 * Constructs a <CODE>PdfString</CODE>-object.
-	 *
-	 * @param		bytes	an array of <CODE>byte</CODE>
-	 *
-	 * @since		iText0.30
-	 */
-
-	PdfString(byte[] bytes) {
-		super(STRING, bytes);
-		try {
-			this.value = new String(bytes, ENCODING);
-		}
-		catch(UnsupportedEncodingException uee) {
-			this.value = new String(bytes);
-		}
-	}
-
-	/**
-	 * Constructs a <CODE>PdfString</CODE>-object.
-	 *
-	 * @param		printable	a <CODE>PdfPrintable</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	PdfString(PdfPrintable printable) {
-		super(STRING, printable.toString());
-		this.value = printable.toString();
-	}
-
-	PdfString(PdfPrintable printable, BaseFont bf) {
-		super(STRING, printable.toString());
-		this.value = printable.toString();
+    }
+    
+/**
+ * Constructs a <CODE>PdfString</CODE>-object.
+ *
+ * @param		bytes	an array of <CODE>byte</CODE>
+ */
+    
+    PdfString(byte[] bytes) {
+        super(STRING, bytes);
+        try {
+            this.value = new String(bytes, ENCODING);
+        }
+        catch(UnsupportedEncodingException uee) {
+            this.value = new String(bytes);
+        }
+    }
+    
+/**
+ * Constructs a <CODE>PdfString</CODE>-object.
+ *
+ * @param		printable	a <CODE>PdfPrintable</CODE>
+ */
+    
+    PdfString(PdfPrintable printable) {
+        super(STRING, printable.toString());
+        this.value = printable.toString();
+    }
+    
+/**
+ * Constructs a <CODE>PdfString</CODE>-object.
+ *
+ * @param		printable	a <CODE>PdfPrintable</CODE>
+ * @param		bf			a <CODE>BaseFont</CODE>
+ */
+    
+    PdfString(PdfPrintable printable, BaseFont bf) {
+        super(STRING, printable.toString());
+        this.value = printable.toString();
         encoding = bf.getEncoding();
-	}
-
-// methods overriding some methods in PdfObject
-
-	/**
-     * Returns the PDF representation of this <CODE>PdfString</CODE>.
-	 *
-	 * @return		an array of <CODE>byte</CODE>s
-     *
-	 * @since		rugPdf0.10
-     */
-
+    }
+    
+    // methods overriding some methods in PdfObject
+    
+/**
+ * Returns the PDF representation of this <CODE>PdfString</CODE>.
+ *
+ * @return		an array of <CODE>byte</CODE>s
+ */
+    
     final public byte[] toPdf() {
         byte b[];
-		try {
+        try {
             b = value.getBytes(encoding);
-		}
-		catch(UnsupportedEncodingException uee) {
+        }
+        catch(UnsupportedEncodingException uee) {
             b = value.getBytes();
-		}
+        }
         return PdfContentByte.escapeString(b);
     }
-
-	/**
-	 * Returns the <CODE>String</CODE> value of the <CODE>PdfString</CODE>-object.
-	 *
-	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	public String toString() {
-		return value;
-	}
-
-// other methods
-
-	/**
-	 * Gets the PDF representation of this <CODE>String</CODE> as a <CODE>String</CODE>
-	 *
-	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	 byte[] get() {
-         return toPdf();
-		// we create the StringBuffer that will be the PDF representation of the content
-	}
+    
+/**
+ * Returns the <CODE>String</CODE> value of the <CODE>PdfString</CODE>-object.
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        return value;
+    }
+    
+    // other methods
+    
+/**
+ * Gets the PDF representation of this <CODE>String</CODE> as a <CODE>String</CODE>
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
+    byte[] get() {
+        return toPdf();
+        // we create the StringBuffer that will be the PDF representation of the content
+    }
+    
+/**
+ * Tells you if this string is in Chinese, Japanese or Korean.
+ */
     
     boolean isCJKEncoding()
     {
         return encoding.equals(CJKFont.CJK_ENCODING);
     }
+    
+/**
+ * Gets the encoding of this string.
+ *
+ * @return		a <CODE>String</CODE>
+ */
     
     String getEncoding()
     {

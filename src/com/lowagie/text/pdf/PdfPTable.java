@@ -54,13 +54,13 @@ public class PdfPTable implements Element {
     protected float relativeWidths[];
     protected float absoluteWidths[];
     
-    /** Holds value of property headerRows. */
+/** Holds value of property headerRows. */
     protected int headerRows;
     
-    /** Holds value of property widthPercentage. */
+/** Holds value of property widthPercentage. */
     protected float widthPercentage = 80;
     
-    /** Holds value of property horizontalAlignment. */
+/** Holds value of property horizontalAlignment. */
     private int horizontalAlignment = Element.ALIGN_CENTER;
     
     public PdfPTable(float relativeWidths[]) {
@@ -246,63 +246,64 @@ public class PdfPTable implements Element {
         }
     }
     
-    /** Getter for property headerRows.
-     * @return Value of property headerRows.
-     */
+/**
+ * Getter for property headerRows.
+ * @return Value of property headerRows.
+ */
     public int getHeaderRows() {
         return headerRows;
     }
     
-    /** Setter for property headerRows.
-     * @param headerRows New value of property headerRows.
-     */
+/** Setter for property headerRows.
+ * @param headerRows New value of property headerRows.
+ */
     public void setHeaderRows(int headerRows) {
         this.headerRows = headerRows;
     }
     
-    /**
-     * Gets all the chunks in this element.
-     *
-     * @return	an <CODE>ArrayList</CODE>
-     */
+/**
+ * Gets all the chunks in this element.
+ *
+ * @return	an <CODE>ArrayList</CODE>
+ */
     public ArrayList getChunks() {
         return new ArrayList();
     }
     
-    /**
-     * Gets the content of the text element.
-     *
-     * @return	a type
-     */
+/**
+ * Gets the content of the text element.
+ *
+ * @return	a type
+ */
     public String toXml(int indent) {
         return "";
     }
     
-    /**
-     * Gets the content of the text element.
-     *
-     * @return	a type
-     */
+/**
+ * Gets the content of the text element.
+ *
+ * @return	a type
+ */
     public String toString() {
         return "PdfPTable instance";
     }
     
-    /**
-     * Gets the type of the text element.
-     *
-     * @return	a type
-     */
+/**
+ * Gets the type of the text element.
+ *
+ * @return	a type
+ */
     public int type() {
         return Element.PTABLE;
     }
     
-    /**
-     * Processes the element by adding it (or the different parts) to an
-     * <CODE>ElementListener</CODE>.
-     *
-     * @param	listener	an <CODE>ElementListener</CODE>
-     * @return	<CODE>true</CODE> if the element was processed successfully
-     */
+/**
+ * Processes the element by adding it (or the different parts) to an
+ * <CODE>ElementListener</CODE>.
+ *
+ * @param	listener	an <CODE>ElementListener</CODE>
+ * @return	<CODE>true</CODE> if the element was processed successfully
+ */
     public boolean process(ElementListener listener) {
         try {
             return listener.add(this);
@@ -312,30 +313,34 @@ public class PdfPTable implements Element {
         }
     }
     
-    /** Getter for property widthPercentage.
-     * @return Value of property widthPercentage.
-     */
+/**
+ * Getter for property widthPercentage.
+ * @return Value of property widthPercentage.
+ */
     public float getWidthPercentage() {
         return widthPercentage;
     }
     
-    /** Setter for property widthPercentage.
-     * @param widthPercentage New value of property widthPercentage.
-     */
+/**
+ * Setter for property widthPercentage.
+ * @param widthPercentage New value of property widthPercentage.
+ */
     public void setWidthPercentage(float widthPercentage) {
         this.widthPercentage = widthPercentage;
     }
     
-    /** Getter for property horizontalAlignment.
-     * @return Value of property horizontalAlignment.
-     */
+/**
+ * Getter for property horizontalAlignment.
+ * @return Value of property horizontalAlignment.
+ */
     public int getHorizontalAlignment() {
         return horizontalAlignment;
     }
     
-    /** Setter for property horizontalAlignment.
-     * @param horizontalAlignment New value of property horizontalAlignment.
-     */
+/**
+ * Setter for property horizontalAlignment.
+ * @param horizontalAlignment New value of property horizontalAlignment.
+ */
     public void setHorizontalAlignment(int horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
     }

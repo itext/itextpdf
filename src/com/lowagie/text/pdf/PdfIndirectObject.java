@@ -1,11 +1,8 @@
 /*
- * @(#)PdfIndirectObject.java		0.22 2000/02/02
- *       release rugPdf0.10:		0.02 99/03/29
- *               rugPdf0.20:		0.14 99/11/30
- *               iText0.3:			0.22 2000/02/14
- *               iText0.35:         0.22 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -31,12 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- * 
- * Very special thanks to Troy Harrison, Systems Consultant
- * of CNA Life Department-Information Technology
- * Troy.Harrison@cnalife.com <mailto:Troy.Harrison@cnalife.com>
- * His input concerning the changes in version rugPdf0.20 was
- * really very important.  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -59,102 +51,91 @@ import com.lowagie.text.DocWriter;
  *
  * @see		PdfObject
  * @see		PdfIndirectReference
- *
- * @author  bruno@lowagie.com
- * @version 0.22 2000/02/02
- * @since   rugPdf0.10
  */
 
 class PdfIndirectObject {
-
-// membervariables
-
-	/** The object number */
-	protected int number;
-
-	/** the generation number */
-	protected int generation = 0;
     
-    /** The object type */
+    // membervariables
+    
+/** The object number */
+    protected int number;
+    
+/** the generation number */
+    protected int generation = 0;
+    
+/** The object type */
     protected int type;
-
-	/** The object ready to stream out */
-	ByteArrayOutputStream bytes;
-
-// constructors
-
-	/**
-	 * Constructs a <CODE>PdfIndirectObject</CODE>.
-	 *
-	 * @param		number			the object number
-	 * @param		object			the direct object
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	PdfIndirectObject(int number, PdfObject object) {
+    
+/** The object ready to stream out */
+    ByteArrayOutputStream bytes;
+    
+    // constructors
+    
+/**
+ * Constructs a <CODE>PdfIndirectObject</CODE>.
+ *
+ * @param		number			the object number
+ * @param		object			the direct object
+ */
+    
+    PdfIndirectObject(int number, PdfObject object) {
         this(number, 0, object);
-	}
-
-	/**
-	 * Constructs a <CODE>PdfIndirectObject</CODE>.
-	 *
-	 * @param		number			the object number
-	 * @param		generation		the generation number
-	 * @param		object			the direct object
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	PdfIndirectObject(int number, int generation, PdfObject object) {
-		this.number = number;
-		this.generation = generation;
+    }
+    
+/**
+ * Constructs a <CODE>PdfIndirectObject</CODE>.
+ *
+ * @param		number			the object number
+ * @param		generation		the generation number
+ * @param		object			the direct object
+ */
+    
+    PdfIndirectObject(int number, int generation, PdfObject object) {
+        this.number = number;
+        this.generation = generation;
         type = object.type();
-		try {
-			bytes = new ByteArrayOutputStream();
-			bytes.write(DocWriter.getISOBytes(String.valueOf(number)));
-			bytes.write(DocWriter.getISOBytes(" "));
-			bytes.write(DocWriter.getISOBytes(String.valueOf(generation)));
-			bytes.write(DocWriter.getISOBytes(" obj\n"));
-			bytes.write(object.toPdf());
-			bytes.write(DocWriter.getISOBytes("\nendobj\n"));
-		}
-		catch (IOException ioe) {
-			throw new RuntimeException(ioe.getMessage());
-		}
-	}
-
-// methods 
-
-	/**
-	 * Return the length of this <CODE>PdfIndirectObject</CODE>.
-	 *
-	 * @return		the length of the PDF-representation of this indirect object.
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	public final int length() {
-		return bytes.size();
-	} 
-
-
-	/**
-	 * Returns a <CODE>PdfIndirectReference</CODE> to this <CODE>PdfIndirectObject</CODE>.
-	 *
-	 * @return		a <CODE>PdfIndirectReference</CODE>
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	final PdfIndirectReference getIndirectReference() {
-		return new PdfIndirectReference(type, number, generation);
-	}
-
-    /** Writes eficiently to a stream
-     *
-     * @param out the stream to write to
-     * @throws IOException on write error
+        try {
+            bytes = new ByteArrayOutputStream();
+            bytes.write(DocWriter.getISOBytes(String.valueOf(number)));
+            bytes.write(DocWriter.getISOBytes(" "));
+            bytes.write(DocWriter.getISOBytes(String.valueOf(generation)));
+            bytes.write(DocWriter.getISOBytes(" obj\n"));
+            bytes.write(object.toPdf());
+            bytes.write(DocWriter.getISOBytes("\nendobj\n"));
+        }
+        catch (IOException ioe) {
+            throw new RuntimeException(ioe.getMessage());
+        }
+    }
+    
+    // methods
+    
+/**
+ * Return the length of this <CODE>PdfIndirectObject</CODE>.
+ *
+ * @return		the length of the PDF-representation of this indirect object.
+ */
+    
+    public final int length() {
+        return bytes.size();
+    }
+    
+    
+/**
+ * Returns a <CODE>PdfIndirectReference</CODE> to this <CODE>PdfIndirectObject</CODE>.
+ *
+ * @return		a <CODE>PdfIndirectReference</CODE>
+ */
+    
+    final PdfIndirectReference getIndirectReference() {
+        return new PdfIndirectReference(type, number, generation);
+    }
+    
+/**
+ * Writes eficiently to a stream
+ *
+ * @param out the stream to write to
+ * @throws IOException on write error
  */
     final void writeTo(OutputStream out) throws IOException
     {

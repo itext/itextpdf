@@ -43,60 +43,60 @@ import java.util.Iterator;
  */
 
 class PdfXObjectDictionary extends PdfDictionary implements PdfResource {
-
-// constructors
-
+    
+    // constructors
+    
 /**
-* Constructs a new <CODE>PdfFontDictionary</CODE>.
-*/
-
-	PdfXObjectDictionary() { 
-		super();
-	}
-
-// methods
-
+ * Constructs a new <CODE>PdfFontDictionary</CODE>.
+ */
+    
+    PdfXObjectDictionary() {
+        super();
+    }
+    
+    // methods
+    
 /**
-* Returns the name of a resource.
-*
-* @return		a <CODE>PdfName</CODE>.
-*/
-
-	public PdfName key() {
-		return PdfName.XOBJECT;
-	}
-
+ * Returns the name of a resource.
+ *
+ * @return		a <CODE>PdfName</CODE>.
+ */
+    
+    public PdfName key() {
+        return PdfName.XOBJECT;
+    }
+    
 /**
-* Returns the object that represents the resource.
-*
-* @return		a <CODE>PdfObject</CODE>
-*/
-
-	public PdfObject value() {
-		return this;
-	}
-
+ * Returns the object that represents the resource.
+ *
+ * @return		a <CODE>PdfObject</CODE>
+ */
+    
+    public PdfObject value() {
+        return this;
+    }
+    
 /**
-* Checks if the <CODE>XObjectDictionary</CODE> allready contains a
-* <CODE>PdfImage</CODE> with this name.
-*
-* @return		<CODE>true</CODE> if a font with this name allready exists,
-*				<CODE>false</CODE> otherwise
-*/
-
-	boolean contains(PdfImage image) {
-		return hashMap.containsKey(image.name());
-	}
-
+ * Checks if the <CODE>XObjectDictionary</CODE> allready contains a
+ * <CODE>PdfImage</CODE> with this name.
+ *
+ * @return		<CODE>true</CODE> if a font with this name allready exists,
+ *				<CODE>false</CODE> otherwise
+ */
+    
+    boolean contains(PdfImage image) {
+        return hashMap.containsKey(image.name());
+    }
+    
 /**
-* Checks if the <CODE>PdfXObjectDictionary</CODE> contains at least
-* one object.
-*
-* @return		<CODE>true</CODE> if an object was found
-*				<CODE>false</CODE> otherwise
-*/
-
-	boolean containsXObject() {
-		return hashMap.size() > 0;
-	}
+ * Checks if the <CODE>PdfXObjectDictionary</CODE> contains at least
+ * one object.
+ *
+ * @return		<CODE>true</CODE> if an object was found
+ *				<CODE>false</CODE> otherwise
+ */
+    
+    boolean containsXObject() {
+        return hashMap.size() > 0;
+    }
 }

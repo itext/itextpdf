@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -42,60 +42,60 @@ import java.util.Iterator;
  */
 
 class PdfFontDictionary extends PdfDictionary implements PdfResource {
-
-// constructors
-
+    
+    // constructors
+    
 /**
-* Constructs a new <CODE>PdfFontDictionary</CODE>.
-*/
-
-	PdfFontDictionary() { 
-		super();
-	}
-
-// methods
-
+ * Constructs a new <CODE>PdfFontDictionary</CODE>.
+ */
+    
+    PdfFontDictionary() {
+        super();
+    }
+    
+    // methods
+    
 /**
-* Returns the name of a resource.
-*
-* @return		a <CODE>PdfName</CODE>.
-*/
-
-	public PdfName key() {
-		return PdfName.FONT;
-	}
-
+ * Returns the name of a resource.
+ *
+ * @return		a <CODE>PdfName</CODE>.
+ */
+    
+    public PdfName key() {
+        return PdfName.FONT;
+    }
+    
 /**
-* Returns the object that represents the resource.
-*
-* @return		a <CODE>PdfObject</CODE>
-*/
-
-	public PdfObject value() {
-		return this;
-	}
-
+ * Returns the object that represents the resource.
+ *
+ * @return		a <CODE>PdfObject</CODE>
+ */
+    
+    public PdfObject value() {
+        return this;
+    }
+    
 /**
-* Checks if the <CODE>FontDictionary</CODE> allready contains a
-* <CODE>PdfFont</CODE> with this name.
-*
-* @return		<CODE>true</CODE> if a font with this name allready exists,
-*				<CODE>false</CODE> otherwise
-*/
-
-	boolean contains(PdfFont font) {
-		return hashMap.containsKey(font.getName());
-	}
-
+ * Checks if the <CODE>FontDictionary</CODE> allready contains a
+ * <CODE>PdfFont</CODE> with this name.
+ *
+ * @return		<CODE>true</CODE> if a font with this name allready exists,
+ *				<CODE>false</CODE> otherwise
+ */
+    
+    boolean contains(PdfFont font) {
+        return hashMap.containsKey(font.getName());
+    }
+    
 /**
-* Checks if the <CODE>PdfFontDictionary</CODE> contains at least
-* one object.
-*
-* @return		<CODE>true</CODE> if an object was found
-*				<CODE>false</CODE> otherwise
-*/
-
-	boolean containsFont() {
-		return hashMap.size() > 0;
-	}
+ * Checks if the <CODE>PdfFontDictionary</CODE> contains at least
+ * one object.
+ *
+ * @return		<CODE>true</CODE> if an object was found
+ *				<CODE>false</CODE> otherwise
+ */
+    
+    boolean containsFont() {
+        return hashMap.size() > 0;
+    }
 }

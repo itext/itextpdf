@@ -1,11 +1,8 @@
 /*
- * @(#)PdfNull.java					0.22 2000/02/02
- *       release rugPdf0.10:		0.04 99/03/30
- *               rugPdf0.20:		0.14 99/11/30
- *               iText0.3:			0.22 2000/02/14
- *               iText0.35:         0.22 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -31,13 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  		 
- *     
- * Very special thanks to Troy Harrison, Systems Consultant
- * of CNA Life Department-Information Technology
- * Troy.Harrison@cnalife.com <mailto:Troy.Harrison@cnalife.com>
- * His input concerning the changes in version rugPdf0.20 was
- * really very important.
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -49,48 +40,39 @@ package com.lowagie.text.pdf;
  * section 4.9 (page 53).
  *
  * @see		PdfObject
- *
- * @author  bruno@lowagie.com
- * @version 0.22 2000/02/02
- *
- * @since   rugPdf0.10
  */
 
 class PdfNull extends PdfObject implements PdfPrintable {
-
-// static membervariables
-
-	/** This is an instance of the <CODE>PdfNull</CODE>-object. */
-	public static final PdfNull	PDFNULL = new PdfNull();
-
-	/** This is the content of a <CODE>PdfNull</CODE>-object. */
-	private static final String CONTENT = "null";
-
-// constructors
-
-	/**
-	 * Constructs a <CODE>PdfNull</CODE>-object.
-	 * <P>
-	 * You never need to do this yourself, you can always use the static final object <VAR>PDFNULL</VAR>.
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	private PdfNull() {
-		super(NULL, CONTENT);
-	}
-
-// implementation of the PdfPrintable method(s)
-
-	/**
-     * Returns the <CODE>String</CODE>-representation of this <CODE>PdfObject</CODE>.
-	 *
-	 * @return		a <CODE>String</CODE>
-     *
-	 * @since		rugPdf0.10
-     */
-
+    
+    // static membervariables
+    
+/** This is an instance of the <CODE>PdfNull</CODE>-object. */
+    public static final PdfNull	PDFNULL = new PdfNull();
+    
+/** This is the content of a <CODE>PdfNull</CODE>-object. */
+    private static final String CONTENT = "null";
+    
+    // constructors
+    
+/**
+ * Constructs a <CODE>PdfNull</CODE>-object.
+ * <P>
+ * You never need to do this yourself, you can always use the static final object <VAR>PDFNULL</VAR>.
+ */
+    
+    private PdfNull() {
+        super(NULL, CONTENT);
+    }
+    
+    // implementation of the PdfPrintable method(s)
+    
+/**
+ * Returns the <CODE>String</CODE>-representation of this <CODE>PdfObject</CODE>.
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
     public final String toString() {
-		return NOTHING;
+        return NOTHING;
     }
 }

@@ -74,7 +74,7 @@ public class PdfAction extends PdfDictionary {
  * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
  * @param filename the file name to go to
  * @param name the named destination to go to
- */ 
+ */
     
     PdfAction(String filename, String name)
     {
@@ -83,12 +83,12 @@ public class PdfAction extends PdfDictionary {
         put(PdfName.F, new PdfString(filename));
         put(PdfName.D, new PdfString(name));
     }
-
+    
 /**
  * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
  * @param filename the file name to go to
  * @param page the page destination to go to
- */ 
+ */
     
     PdfAction(String filename, int page)
     {

@@ -1,11 +1,8 @@
 /*
- * @(#)PdfProcSet.java				0.22 2000/02/02
- *       release rugPdf0.10:		0.02 99/03/29
- *               rugPdf0.20:		0.12 99/11/30
- *               iText0.3:			0.22 2000/02/14
- *               iText0.35:         0.22 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -31,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -49,129 +46,115 @@ package com.lowagie.text.pdf;
  * contained in this class as static membervariables.<BR>
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.6 (page 198).
- * 
+ *
  * @see		PdfResource
  * @see		PdfResources
- *
- * @author  bruno@lowagie.com
- * @version 0.22 2000/02/02
- * @since   rugPdf0.10
  */
 
 class PdfProcSet implements PdfResource {
-
-// membervariables
-
-	/**	This is a possible type procset */
-	public static final int PDF = 1;
-
-	/**	This is a possible type procset */
-	public static final int TEXT = 2;
-
-	/**	This is a possible type procset */
-	public static final int IMAGEB = 4;
-
-	/**	This is a possible type procset */
-	public static final int IMAGEC = 8;
-
-	/**	This is a possible type procset */
-	public static final int IMAGEI = 16;
-
-	/** This is the array containing all the possible procsettypes */
-	private static int[] types;
-
-	/** This is the array containing all the possible procsetnames */
-	private static PdfName[] names;
-
-	/** This is the number of possible procsettypes */
-	private static final int N = 5;
-
-	static {
-		types = new int[N];
-		names = new PdfName[N];
-		types[0] = PDF;
-		names[0] = PdfName.PDF;
-		types[1] = TEXT;
-		names[1] = PdfName.TEXT;
-		types[2] = IMAGEB;
-		names[2] = PdfName.IMAGEB;
-		types[3] = IMAGEC;
-		names[3] = PdfName.IMAGEC;
-		types[4] = IMAGEI;
-		names[4] = PdfName.IMAGEI;
-	}		   
-
-	/** This is the value of this resource */
-	private PdfObject value;
-
-// constructors
-
-	/**
-	 * Constructs a <CODE>PdfResource</CODE> with the procset as a direct object.
-	 *
-	 * @param		procset		a number that represents the different procset-types in this resource
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	PdfProcSet(int procset) {
-		value = getProcSet(procset);
-	}
-
-	/**
-	 * Constructs a <CODE>PdfResource</CODE> with the procset as an indirect object.
-	 *
-	 * @param		procset		a <CODE>PdfIndirectReference</CODE> to a ProcSet
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	PdfProcSet(PdfIndirectReference procset) { 
-		value = procset;
-	}
-
-// methods
-
-	/**
-	 * Returns the name of a resource.
-	 *
-	 * @return		a <CODE>PdfName</CODE>.
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	public final PdfName key() {
-		return PdfName.PROCSET;
-	}
-
-	/**
-	 * Returns the object that represents the resource.
-	 *
-	 * @return		a <CODE>PdfObject</CODE>
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	public final PdfObject value() {
-		return value;
-	}
-
-	/**
-	 * Constructs a <CODE>PdfArray</CODE> with a number of procsettypes.
-	 * 
-	 * @param		procset		a number that represents the different procset-types in this resource
-	 * @return		a <CODE>PdfArray</CODE>
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	final static PdfArray getProcSet(int procset) { 
-		PdfArray tmp = new PdfArray();
-		for (int i = 0; i < N; i++) {
-			if ((procset & types[i]) > 0) {
-				tmp.add(names[i]);
-			}
-		}
-		return tmp;
-	}
+    
+    // membervariables
+    
+/**	This is a possible type procset */
+    public static final int PDF = 1;
+    
+/**	This is a possible type procset */
+    public static final int TEXT = 2;
+    
+/**	This is a possible type procset */
+    public static final int IMAGEB = 4;
+    
+/**	This is a possible type procset */
+    public static final int IMAGEC = 8;
+    
+/**	This is a possible type procset */
+    public static final int IMAGEI = 16;
+    
+/** This is the array containing all the possible procsettypes */
+    private static int[] types;
+    
+/** This is the array containing all the possible procsetnames */
+    private static PdfName[] names;
+    
+/** This is the number of possible procsettypes */
+    private static final int N = 5;
+    
+    static {
+        types = new int[N];
+        names = new PdfName[N];
+        types[0] = PDF;
+        names[0] = PdfName.PDF;
+        types[1] = TEXT;
+        names[1] = PdfName.TEXT;
+        types[2] = IMAGEB;
+        names[2] = PdfName.IMAGEB;
+        types[3] = IMAGEC;
+        names[3] = PdfName.IMAGEC;
+        types[4] = IMAGEI;
+        names[4] = PdfName.IMAGEI;
+    }
+    
+/** This is the value of this resource */
+    private PdfObject value;
+    
+    // constructors
+    
+/**
+ * Constructs a <CODE>PdfResource</CODE> with the procset as a direct object.
+ *
+ * @param		procset		a number that represents the different procset-types in this resource
+ */
+    
+    PdfProcSet(int procset) {
+        value = getProcSet(procset);
+    }
+    
+/**
+ * Constructs a <CODE>PdfResource</CODE> with the procset as an indirect object.
+ *
+ * @param		procset		a <CODE>PdfIndirectReference</CODE> to a ProcSet
+ */
+    
+    PdfProcSet(PdfIndirectReference procset) {
+        value = procset;
+    }
+    
+    // methods
+    
+/**
+ * Returns the name of a resource.
+ *
+ * @return		a <CODE>PdfName</CODE>.
+ */
+    
+    public final PdfName key() {
+        return PdfName.PROCSET;
+    }
+    
+/**
+ * Returns the object that represents the resource.
+ *
+ * @return		a <CODE>PdfObject</CODE>
+ */
+    
+    public final PdfObject value() {
+        return value;
+    }
+    
+/**
+ * Constructs a <CODE>PdfArray</CODE> with a number of procsettypes.
+ *
+ * @param		procset		a number that represents the different procset-types in this resource
+ * @return		a <CODE>PdfArray</CODE>
+ */
+    
+    final static PdfArray getProcSet(int procset) {
+        PdfArray tmp = new PdfArray();
+        for (int i = 0; i < N; i++) {
+            if ((procset & types[i]) > 0) {
+                tmp.add(names[i]);
+            }
+        }
+        return tmp;
+    }
 }
