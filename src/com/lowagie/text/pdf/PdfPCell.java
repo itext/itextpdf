@@ -117,6 +117,7 @@ public class PdfPCell extends Rectangle{
     /** Holds value of property colspan. */
     private int colspan = 1;
     private float spaceCharRatio = ColumnText.GLOBAL_SPACE_CHAR_RATIO;
+    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
     /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
      * The default padding is 2.
      * @param phrase the text
@@ -189,6 +190,7 @@ public class PdfPCell extends Rectangle{
         noWrap = cell.noWrap;
         colspan = cell.colspan;
         spaceCharRatio = cell.spaceCharRatio;
+        runDirection = cell.runDirection;
         if (cell.table != null)
             table = new PdfPTable(cell.table);
     }
@@ -498,4 +500,14 @@ public class PdfPCell extends Rectangle{
     public void setSpaceCharRatio(float spaceCharRatio) {
         this.spaceCharRatio = spaceCharRatio;
     }    
+
+    public void setRunDirection(int runDirection) {
+        if (runDirection < PdfWriter.RUN_DIRECTION_DEFAULT || runDirection > PdfWriter.RUN_DIRECTION_RTL)
+            throw new RuntimeException("Invalid run direction: " + runDirection);
+        this.runDirection = runDirection;
+    }
+    
+    public int getRunDirection() {
+        return runDirection;
+    }
 }

@@ -67,6 +67,9 @@ public class MarkupTags {
 /** This is a possible HTML attribute for the LINK tag. */
     public static final String CSS = "text/css";
 
+/** This is a possible value for the language attribute (SCRIPT tag). */
+    public static final String JAVASCRIPT = "text/javascript";
+
 /** attribute for specifying externally defined CSS class */
     public static final String CLASS = "class";
     

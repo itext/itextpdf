@@ -457,13 +457,13 @@ public class PdfWriter extends DocWriter {
     public static final boolean STRENGTH40BITS = false;
     /** Type of encryption */
     public static final boolean STRENGTH128BITS = true;
-
+    
     public static final PdfName DOCUMENT_CLOSE = PdfName.DC;
     public static final PdfName WILL_SAVE = PdfName.WS;
     public static final PdfName DID_SAVE = PdfName.DS;
     public static final PdfName WILL_PRINT = PdfName.WP;
     public static final PdfName DID_PRINT = PdfName.DP;
-
+    
     public static final int SIGNATURE_EXISTS = 1;
     public static final int SIGNATURE_APPEND_ONLY = 2;
     
@@ -546,14 +546,29 @@ public class PdfWriter extends DocWriter {
     
     private PdfReaderInstance currentPdfReaderInstance;
     
-/** The PdfIndirectReference to the pages. */
+    /** The PdfIndirectReference to the pages. */
     private ArrayList pageReferences = new ArrayList();
     
     private int currentPageNumber = 1;
     
+    /** The defaukt space-char ratio. */    
     public static final float SPACE_CHAR_RATIO_DEFAULT = 2.5f;
+    /** Disable the inter-character spacing. */    
     public static final float NO_SPACE_CHAR_RATIO = 10000000f;
     
+    /** Use the default run direction. */    
+    public static final int RUN_DIRECTION_DEFAULT = 0;
+    /** Do not use bidirectional reordering. */    
+    public static final int RUN_DIRECTION_NO_BIDI = 1;
+    /** Use bidirectional reordering with left-to-right
+     * preferential run direction.
+     */    
+    public static final int RUN_DIRECTION_LTR = 2;
+    /** Use bidirectional reordering with right-to-left
+     * preferential run direction.
+     */    
+    public static final int RUN_DIRECTION_RTL = 3;
+    protected int runDirection = RUN_DIRECTION_NO_BIDI;
     /**
      * The ratio between the extra word spacing and the extra character spacing.
      * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
@@ -680,6 +695,17 @@ public class PdfWriter extends DocWriter {
         return (PdfIndirectReference) imageDictionary.get(pdfImage.name());
     }
     
+    protected PdfIndirectReference add(PdfICCBased icc) throws PdfException {
+        PdfIndirectObject object = body.add(icc);
+        try {
+            object.writeTo(os);
+        }
+        catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
+        }
+        return object.getIndirectReference();
+    }
+    
     /**
      * return the <CODE>PdfIndirectReference</CODE> to the image with a given name.
      *
@@ -723,7 +749,7 @@ public class PdfWriter extends DocWriter {
     public synchronized void close() {
         if (open) {
             if ((currentPageNumber - 1) != pageReferences.size())
-                throw new RuntimeException("The page " + pageReferences.size() + 
+                throw new RuntimeException("The page " + pageReferences.size() +
                 " was requested but the document has only " + (currentPageNumber - 1) + " pages.");
             pdf.close();
             try {
@@ -827,8 +853,8 @@ public class PdfWriter extends DocWriter {
      * Added on September 8th, 2001
      * by Francesco De Milato
      * francesco.demilato@tiscalinet.it
-     *
-     * @return	the bottom height of the just added table
+     * @param table the <CODE>Table</CODE>
+     * @return the bottom height of the just added table
      */
     
     public float getTableBottom(Table table) {
@@ -918,14 +944,14 @@ public class PdfWriter extends DocWriter {
         directContentUnder.reset();
     }
     
-    /**
-     * Gets the AcroForm object.
+    /** Gets the AcroForm object.
+     * @return the <CODE>PdfAcroForm</CODE>
      */
     
     public PdfAcroForm getAcroForm() {
         return pdf.getAcroForm();
     }
-
+    
     /** Gets the root outline.
      * @return the root outline
      */
@@ -1032,8 +1058,7 @@ public class PdfWriter extends DocWriter {
                         cobj.writeTo(os);
                     }
                     return patternColorspaceGRAY;
-                case ExtendedColor.TYPE_SEPARATION:
-                {
+                case ExtendedColor.TYPE_SEPARATION: {
                     ColorDetails details = addSimple(((SpotColor)color).getPdfSpotColor());
                     ColorDetails patternDetails = (ColorDetails)documentSpotPatterns.get(details);
                     if (patternDetails == null) {
@@ -1299,18 +1324,18 @@ public class PdfWriter extends DocWriter {
      * @param actionType the action type
      * @param action the action to execute in response to the trigger
      * @throws PdfException on invalid action type
-     */    
+     */
     public void setAdditionalAction(PdfName actionType, PdfAction action) throws PdfException {
-        if (!(actionType.equals(DOCUMENT_CLOSE) ||        
-            actionType.equals(WILL_SAVE) ||            
-            actionType.equals(DID_SAVE) ||            
-            actionType.equals(WILL_PRINT) ||            
-            actionType.equals(DID_PRINT))) {                
-                throw new PdfException("Invalid additional action type.");
-        }        
-        pdf.addAdditionalAction(actionType, action);        
+        if (!(actionType.equals(DOCUMENT_CLOSE) ||
+        actionType.equals(WILL_SAVE) ||
+        actionType.equals(DID_SAVE) ||
+        actionType.equals(WILL_PRINT) ||
+        actionType.equals(DID_PRINT))) {
+            throw new PdfException("Invalid additional action type.");
+        }
+        pdf.addAdditionalAction(actionType, action);
     }
-
+    
     /** When the document opens this <CODE>action</CODE> will be
      * invoked.
      * @param action the action to be invoked
@@ -1353,11 +1378,11 @@ public class PdfWriter extends DocWriter {
         }
         return inst.getImportedPage(pageNumber);
     }
-
+    
     /** Adds a JavaScript action at the document level. When the document
      * opens all this JavaScript runs.
      * @param js The JavaScrip action
-     */    
+     */
     public void addJavaScript(PdfAction js) {
         pdf.addJavaScript(js);
     }
@@ -1368,15 +1393,15 @@ public class PdfWriter extends DocWriter {
      * @param unicode select JavaScript unicode. Note that the internal
      * Acrobat JavaScript engine does not support unicode,
      * so this may or may not work for you
-     */    
+     */
     public void addJavaScript(String code, boolean unicode) {
         addJavaScript(PdfAction.javaScript(code, this, unicode));
     }
-
+    
     /** Adds a JavaScript action at the document level. When the document
      * opens all this JavaScript runs.
      * @param code the JavaScript code
-     */    
+     */
     public void addJavaScript(String code) {
         addJavaScript(code, false);
     }
@@ -1385,18 +1410,18 @@ public class PdfWriter extends DocWriter {
      * page is rotated. This change only takes effect in the next
      * page.
      * @param crop the crop box
-     */    
+     */
     public void setCropBoxSize(Rectangle crop) {
         pdf.setCropBoxSize(crop);
     }
-
+    
     /** Gets a reference to a page existing or not. If the page does not exist
      * yet the reference will be created in advance. If on closing the document, a
      * page number greater than the total number of pages was requested, an
      * exception is thrown.
      * @param page the page number. The first page is 1
      * @return the reference to the page
-     */    
+     */
     PdfIndirectReference getPageReference(int page) {
         --page;
         if (page < 0)
@@ -1430,14 +1455,14 @@ public class PdfWriter extends DocWriter {
     /** Adds the <CODE>PdfAnnotation</CODE> to the calculation order
      * array.
      * @param annot the <CODE>PdfAnnotation</CODE> to be added
-     */    
+     */
     public void addCalculationOrder(PdfFormField annot) {
         pdf.addCalculationOrder(annot);
     }
     
     /** Set the signature flags.
      * @param f the flags. This flags are ORed with current ones
-     */    
+     */
     public void setSigFlags(int f) {
         pdf.setSigFlags(f);
     }
@@ -1446,7 +1471,7 @@ public class PdfWriter extends DocWriter {
      * to the document. Only the top parent of a <CODE>PdfFormField</CODE>
      * needs to be added.
      * @param annot the <CODE>PdfAnnotation</CODE> or the <CODE>PdfFormField</CODE> to add
-     */    
+     */
     public void addAnnotation(PdfAnnotation annot) {
         pdf.addAnnotation(annot);
     }
@@ -1455,7 +1480,7 @@ public class PdfWriter extends DocWriter {
      * is opened. Valid options are VERSION_1_2, VERSION_1_3 and
      * VERSION_1_4. VERSION_1_4 is the default.
      * @param version the version number
-     */    
+     */
     public void setPdfVersion(char version) {
         HEADER[VPOINT] = (byte)version;
     }
@@ -1468,7 +1493,7 @@ public class PdfWriter extends DocWriter {
      * @param order an array with the new page sequence. It must have the
      * same size as the number of pages.
      * @throws DocumentException if all the pages are not present in the array
-     */    
+     */
     public int reorderPages(int order[]) throws DocumentException {
         return root.reorderPages(order);
     }
@@ -1476,10 +1501,10 @@ public class PdfWriter extends DocWriter {
     /** Gets the space/character extra spacing ratio for
      * fully justified text.
      * @return the space/character extra spacing ratio
-     */    
+     */
     public float getSpaceCharRatio() {
         return spaceCharRatio;
-    }    
+    }
     
     /** Sets the ratio between the extra word spacing and the extra character spacing
      * when the text is fully justified.
@@ -1493,5 +1518,38 @@ public class PdfWriter extends DocWriter {
             this.spaceCharRatio = 0.001f;
         else
             this.spaceCharRatio = spaceCharRatio;
-    }    
+    }
+    
+    /** Sets the run direction. This is only used as a placeholder
+     * as it does not affect anything.
+     * @param runDirection the run direction
+     */    
+    public void setRunDirection(int runDirection) {
+        if (runDirection < RUN_DIRECTION_NO_BIDI || runDirection > RUN_DIRECTION_RTL)
+            throw new RuntimeException("Invalid run direction: " + runDirection);
+        this.runDirection = runDirection;
+    }
+    
+    /** Gets the run direction.
+     * @return the run direction
+     */    
+    public int getRunDirection() {
+        return runDirection;
+    }
+
+    /**
+     * Sets the display duration for the page (for presentations)
+     * @param seconds   the number of seconds to display the page
+     */
+    public void setDuration(int seconds) {
+        pdf.setDuration(seconds);
+    }
+    
+    /**
+     * Sets the transition for the page
+     * @param transition   the Transition object
+     */
+    public void setTransition(PdfTransition transition) {
+        pdf.setTransition(transition);
+    }
 }

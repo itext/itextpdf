@@ -105,6 +105,8 @@ public class PdfPTable implements Element{
 
     protected boolean isColspan = false;
     
+    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+
     /** Constructs a <CODE>PdfPTable</CODE> with the relative column widths.
      * @param relativeWidths the relative column widths
      */    
@@ -146,6 +148,7 @@ public class PdfPTable implements Element{
         totalHeight = table.totalHeight;
         currentRowIdx = table.currentRowIdx;
         tableEvent = table.tableEvent;
+        runDirection = table.runDirection;
         defaultCell = new PdfPCell(table.defaultCell);
         currentRow = new PdfPCell[table.currentRow.length];
         isColspan = table.isColspan;
@@ -249,9 +252,24 @@ public class PdfPTable implements Element{
         ncell.setColspan(colspan);
         if (colspan != 1)
             isColspan = true;
+        int rdir = ncell.getRunDirection();
+        if (rdir == PdfWriter.RUN_DIRECTION_DEFAULT)
+            ncell.setRunDirection(runDirection);
         currentRow[currentRowIdx] = ncell;
         currentRowIdx += colspan;
         if (currentRowIdx >= currentRow.length) {
+            if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
+                PdfPCell rtlRow[] = new PdfPCell[absoluteWidths.length];
+                int rev = currentRow.length;
+                for (int k = 0; k < currentRow.length; ++k) {
+                    PdfPCell rcell = currentRow[k];
+                    int cspan = rcell.getColspan();
+                    rev -= cspan;
+                    rtlRow[rev] = rcell;
+                    k += cspan - 1;
+                }
+                currentRow = rtlRow;
+            }
             PdfPRow row = new PdfPRow(currentRow);
             if (totalWidth > 0) {
                 row.setWidths(absoluteWidths);
@@ -593,5 +611,15 @@ public class PdfPTable implements Element{
      */
     public void setSkipFirstHeader(boolean skipFirstHeader) {
         this.skipFirstHeader = skipFirstHeader;
+    }
+
+    public void setRunDirection(int runDirection) {
+        if (runDirection < PdfWriter.RUN_DIRECTION_DEFAULT || runDirection > PdfWriter.RUN_DIRECTION_RTL)
+            throw new RuntimeException("Invalid run direction: " + runDirection);
+        this.runDirection = runDirection;
+    }
+    
+    public int getRunDirection() {
+        return runDirection;
     }
 }

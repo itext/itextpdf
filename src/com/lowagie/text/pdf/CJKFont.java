@@ -88,7 +88,9 @@ class CJKFont extends BaseFont {
             is.close();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            cjkFonts = new Properties();
+            cjkEncodings = new Properties();
+            System.err.println("Missing configuration files for CJK fonts");
         }
     }
     

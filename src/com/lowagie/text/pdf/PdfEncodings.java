@@ -183,6 +183,21 @@ public class PdfEncodings {
             }
             return b;
         }
+        if (encoding.equals(PdfObject.TEXT_UNICODE)) {
+            // workaround for jdk 1.2.2 bug
+            char cc[] = text.toCharArray();
+            int len = cc.length;
+            byte b[] = new byte[cc.length * 2 + 2];
+            b[0] = -2;
+            b[1] = -1;
+            int bptr = 2;
+            for (int k = 0; k < len; ++k) {
+                char c = cc[k];
+                b[bptr++] = (byte)(c >> 8);
+                b[bptr++] = (byte)(c & 0xff);
+            }
+            return b;
+        }
         try {
             return text.getBytes(encoding);
         }
