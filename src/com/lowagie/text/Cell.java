@@ -139,11 +139,21 @@ public class Cell extends Rectangle implements TextElementArray {
  * The <CODE>String</CODE> will be converted into a <CODE>Paragraph</CODE>.
  *
  * @param	content		a <CODE>String</CODE>
- * @throws	BadElementException this can never happen with this creator
  */
     
-    public Cell(String content) throws BadElementException {
-        this(new Paragraph(content));
+    public Cell(String content) {
+        // creates a Rectangle with BY DEFAULT a border of 0.5
+        super(0, 0, 0, 0);
+        setBorder(BOX);
+        setBorderWidth(0.5f);
+        
+        // initializes the arraylist and adds an element
+        arrayList = new ArrayList();
+        try {
+            addElement(new Paragraph(content));
+        }
+        catch(BadElementException bee) {
+        }
     }
     
 /**
