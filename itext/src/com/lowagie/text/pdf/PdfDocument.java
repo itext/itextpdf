@@ -1317,7 +1317,7 @@ class PdfDocument extends Document implements DocListener {
                     float cellDisplacement;
                     PdfCell cell;
                     Color color;
-                    PdfContentByte cellGraphics = new PdfContentByte(null);
+                    PdfContentByte cellGraphics = new PdfContentByte(writer);
                     
                     // constructing the PdfTable
                     PdfTable table = new PdfTable((Table) element, indentLeft(), indentRight(), currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
