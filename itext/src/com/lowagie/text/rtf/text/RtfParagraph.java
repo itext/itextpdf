@@ -97,6 +97,14 @@ public class RtfParagraph extends RtfPhrase {
      * Constant for right indentation
      */
     public static final byte[] INDENT_RIGHT = "\\ri".getBytes();
+    /**
+     * Constant for keeping the paragraph together on one page
+     */
+    public static final byte[] KEEP_TOGETHER = "\\keep".getBytes();
+    /**
+     * Constant for keeping the paragraph toghether with the next one on one page
+     */
+    public static final byte[] KEEP_TOGETHER_WITH_NEXT = "\\keepn".getBytes();
     
     /**
      * The alignment of this RtfParagraph
@@ -110,6 +118,14 @@ public class RtfParagraph extends RtfPhrase {
      * The right indentation of this RtfParagraph
      */
     private int indentRight = 0;
+    /**
+     * Whether this RtfParagraph must stay on one page.
+     */
+    private boolean keepTogether = false;
+    /**
+     * Whether this RtfParagraph must stay on the same page as the next paragraph.
+     */
+    private boolean keepTogetherWithNext = false;
     
     /**
      * Constructs a RtfParagraph belonging to a RtfDocument based on a Paragraph.
@@ -123,6 +139,16 @@ public class RtfParagraph extends RtfPhrase {
         this.alignment = paragraph.alignment();
         this.indentLeft = (int) (paragraph.indentationLeft() * RtfElement.TWIPS_FACTOR);
         this.indentRight = (int) (paragraph.indentationRight() * RtfElement.TWIPS_FACTOR);
+        this.keepTogether = paragraph.getKeepTogether();
+    }
+    
+    /**
+     * Set whether this RtfParagraph must stay on the same page as the next one.
+     *  
+     * @param keepTogetherWithNext Whether this RtfParagraph must keep together with the next.
+     */
+    public void setKeepTogetherWithNext(boolean keepTogetherWithNext) {
+        this.keepTogetherWithNext = keepTogetherWithNext;
     }
     
     /**
@@ -135,6 +161,12 @@ public class RtfParagraph extends RtfPhrase {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(PARAGRAPH_DEFAULTS);
+            if(this.keepTogether) {
+                result.write(KEEP_TOGETHER);
+            }
+            if(this.keepTogetherWithNext) {
+                result.write(KEEP_TOGETHER_WITH_NEXT);
+            }
             if(inTable) {
                 result.write(IN_TABLE);
             }
