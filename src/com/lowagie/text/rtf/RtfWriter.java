@@ -100,7 +100,7 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     
   /** This is the escape character which introduces RTF tags. */
-    private static final byte escape = (byte) '\\';
+    static final byte escape = (byte) '\\';
     
   /** This is another escape character which introduces RTF tags. */
     private static final byte[] extendedEscape = "\\*\\".getBytes();
@@ -190,10 +190,10 @@ public class RtfWriter extends DocWriter implements DocListener
     private static final byte[] section = "sect".getBytes();
     
   /** Reset paragraph defaults tag. */
-    private static final byte[] paragraphDefaults = "pard".getBytes();
+    static final byte[] paragraphDefaults = "pard".getBytes();
     
   /** Begin new paragraph tag. */
-    private static final byte[] paragraph = "par".getBytes();
+    static final byte[] paragraph = "par".getBytes();
     
     
   /**
@@ -514,7 +514,7 @@ public class RtfWriter extends DocWriter implements DocListener
     private static int pageHeight = 15840;
     
   /** Factor to use when converting. */
-    private static double twipsFactor = 20.5714;
+    static double twipsFactor = 20.5714;
     
   /** Current annotation ID. */
     private static int currentAnnotationID = 0;
@@ -1284,7 +1284,7 @@ public class RtfWriter extends DocWriter implements DocListener
    *
    * @return The index of the <code>color</code> in the colour list
    */
-    private int addColor(Color newColor) {
+    int addColor(Color newColor) {
         int cn = 0;
         if(newColor == null) { return cn; }
         cn = colorList.indexOf(newColor);
