@@ -44,7 +44,7 @@ import java.util.Iterator;
  * see reference manual version 1.3 section 8.7.5, pages 346-347.
  */
 
-final class PdfTextArray{
+public final class PdfTextArray{
     ArrayList arrayList;
     // constructors
     
@@ -53,7 +53,7 @@ final class PdfTextArray{
  * Constructs an <CODE>PdfArray</CODE>-object, containing 1 <CODE>PdfObject</CODE>.
  */
     
-    PdfTextArray(PdfString str) {
+    public PdfTextArray(PdfString str) {
         arrayList = new ArrayList();
         arrayList.add(str);
     }
@@ -66,12 +66,12 @@ final class PdfTextArray{
  * @return		<CODE>true</CODE>
  */
     
-    void add(PdfString str)
+    public void add(PdfString str)
     {
         arrayList.add(str);
     }
     
-    void add(PdfNumber number)
+    public void add(PdfNumber number)
     {
         arrayList.add(number);
     }

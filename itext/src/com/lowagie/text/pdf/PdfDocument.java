@@ -1,5 +1,4 @@
 /*
- * $Id$
  * $Name$
  *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
@@ -179,7 +178,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.80 based on paulo build 87)", PdfObject.TEXT_UNICODE));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 88", PdfObject.TEXT_UNICODE));
             // Do not edit the line above!
         }
         
@@ -397,6 +396,8 @@ class PdfDocument extends Document implements DocListener {
 /** This is the XObjectDictionary of the current Page. */
     protected PdfXObjectDictionary xObjectDictionary;
     
+/** This is the ColorSpaceDictionary of the current Page. */
+    protected PdfColorDictionary colorDictionary;
     // images
     
 /** This is the list with all the images in the document. */
@@ -492,7 +493,7 @@ class PdfDocument extends Document implements DocListener {
         if (writer != null && writer.isPaused()) {
             return false;
         }
-        this.pageSize = pageSize;
+        this.pageSize = new Rectangle(pageSize);
         return true;
     }
     
@@ -650,8 +651,15 @@ class PdfDocument extends Document implements DocListener {
             procset |= PdfProcSet.IMAGEC;
         }
         resources.add(new PdfProcSet(procset));
+        if (colorDictionary.containsColorSpace())
+            resources.add(colorDictionary);
         // we make a new page and add it to the document
-        PdfPage page = new PdfPage(new PdfRectangle(thisPageSize), resources);
+        PdfPage page;
+        int rotation = thisPageSize.getRotation();
+        if (rotation == 0)
+            page = new PdfPage(new PdfRectangle(thisPageSize, rotation), resources);
+        else
+            page = new PdfPage(new PdfRectangle(thisPageSize, rotation), resources, new PdfNumber(rotation));
         // we add the annotations
         if (annotations.size() > 0) {
             page.put(PdfName.ANNOTS, annotations);
@@ -660,7 +668,7 @@ class PdfDocument extends Document implements DocListener {
             throw new PdfException("The document isn't open.");
         }
         text.endText();
-        PdfIndirectReference pageReference = writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent()));
+        PdfIndirectReference pageReference = writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), thisPageSize));
         // we update the outlines
         for (Iterator i = outlines.iterator(); i.hasNext(); ) {
             PdfOutline outline = (PdfOutline) i.next();
@@ -797,7 +805,11 @@ class PdfDocument extends Document implements DocListener {
     public void addFont(PdfName name, PdfIndirectReference ref) {
         fontDictionary.put(name, ref);
     }
-    
+
+    public void addColor(PdfName name, PdfIndirectReference ref) {
+        colorDictionary.put(name, ref);
+    }
+
 /** Adds a <CODE>PdfPTable</CODE> to the document.
  * @param ptable the <CODE>PdfPTable</CODE> to be added to the document.
  * @param xWidth the width the <CODE>PdfPTable</CODE> occupies in the page
@@ -1273,7 +1285,7 @@ class PdfDocument extends Document implements DocListener {
                                 // the color is set to the color of the element
                                 Color tColor = table.borderColor();
                                 if (tColor != null) {
-                                    graphics.setRGBColorStroke(tColor.getRed(), tColor.getGreen(), tColor.getBlue());
+                                    graphics.setColorStroke(tColor);
                                 }
                                 graphics.moveTo(table.left(), Math.max(table.bottom(), indentBottom()));
                                 graphics.lineTo(table.right(),  Math.max(table.bottom(), indentBottom()));
@@ -1534,6 +1546,7 @@ class PdfDocument extends Document implements DocListener {
         annotations = new PdfArray();
         fontDictionary = new PdfFontDictionary();
         xObjectDictionary = new PdfXObjectDictionary();
+        colorDictionary = new PdfColorDictionary();
         writer.resetContent();
         
         // the pagenumber is incremented
@@ -1753,7 +1766,7 @@ class PdfDocument extends Document implements DocListener {
                 }
                 if (chunk.color() != null) {
                     Color color = chunk.color();
-                    text.setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+                    text.setColorFill(color);
                     text.showText(chunk);
                     text.resetRGBColorFill();
                 }
@@ -2006,7 +2019,7 @@ class PdfDocument extends Document implements DocListener {
             if (fr != null)
                 rise = fr.floatValue();
             if (color != null)
-                text.setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+                text.setColorFill(color);
             if (rise != 0)
                 text.setTextRise(rise);
             
@@ -2056,7 +2069,7 @@ class PdfDocument extends Document implements DocListener {
                     if (isStroked) {
                         graphics.setLineWidth(chunk.font().size() / 15);
                         if (color != null)
-                            graphics.setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+                            graphics.setColorStroke(color);
                     }
                     float shift = chunk.font().size() / 3;
                     if (chunk.isAttribute(Chunk.STRIKETHRU)) {

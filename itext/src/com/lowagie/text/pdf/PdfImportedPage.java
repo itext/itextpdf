@@ -57,8 +57,12 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
         return null;
     }
     
-    PdfStream getFormXObject() throws IOException {
-        return readerInstance.getFormXObject(pageNumber);
+    public void setColorFill(PdfSpotColor sp, float tint) {
+        throwError();
+    }
+    
+    public void setColorStroke(PdfSpotColor sp, float tint) {
+        throwError();
     }
     
     PdfObject getResources() {

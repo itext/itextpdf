@@ -35,6 +35,7 @@ package com.lowagie.text.pdf;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import com.lowagie.text.DocumentException;
 /** Reads a Truetype font
@@ -172,6 +173,10 @@ class TrueTypeFont extends BaseFont {
      * the 'Name ID' 6.
      */
     protected String fontName;
+    
+    /** The full name of the font
+     */    
+    protected String fullName[][];
     /** The italic angle. It is usually extracted from the 'post' table or in it's
      * absence with the code:
      * <P>
@@ -472,6 +477,47 @@ class TrueTypeFont extends BaseFont {
         return file.getName().replace(' ', '-');
     }
     
+    /** Extracts the full name of the font in all the languages available.
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */    
+    void getFullName() throws DocumentException, IOException {
+        int table_location[];
+        table_location = (int[])tables.get("name");
+        if (table_location == null)
+            throw new DocumentException("Table 'name' does not exist in " + fileName + style);
+        rf.seek(table_location[0] + 2);
+        int numRecords = rf.readUnsignedShort();
+        int startOfStorage = rf.readUnsignedShort();
+        String postscriptName;
+        ArrayList names = new ArrayList();
+        for (int k = 0; k < numRecords; ++k) {
+            int platformID = rf.readUnsignedShort();
+            int platformEncodingID = rf.readUnsignedShort();
+            int languageID = rf.readUnsignedShort();
+            int nameID = rf.readUnsignedShort();
+            int length = rf.readUnsignedShort();
+            int offset = rf.readUnsignedShort();
+            if (nameID == 4) {
+                int pos = rf.getFilePointer();
+                rf.seek(table_location[0] + startOfStorage + offset);
+                String name;
+                if (platformID == 0 || platformID == 3 || (platformID == 2 && platformEncodingID == 1)){
+                    name = readUnicodeString(length);
+                }
+                else {
+                    name = readStandardString(length);
+                }
+                names.add(new String[]{String.valueOf(platformID),
+                    String.valueOf(platformEncodingID), String.valueOf(languageID), name});
+                rf.seek(pos);
+            }
+        }
+        fullName = new String[names.size()][];
+        for (int k = 0; k < names.size(); ++k)
+            fullName[k] = (String[])names.get(k);
+    }
+
     /** Reads the font data.
      * @param ttfAfm the font as a <CODE>byte</CODE> array, possibly <CODE>null</CODE>
      * @throws DocumentException the font is invalid
@@ -513,14 +559,18 @@ class TrueTypeFont extends BaseFont {
                 tables.put(tag, table_location);
             }
             fontName = getBaseFont();
+            getFullName();
             fillTables();
             readGlyphWidths();
             readCMaps();
             readKerning();
         }
         finally {
-            if (rf != null)
+            if (rf != null) {
                 rf.close();
+                if (!embedded)
+                    rf = null;
+            }
         }
     }
     
@@ -996,5 +1046,18 @@ class TrueTypeFont extends BaseFont {
         }
         return ret;
     }
+    
+    /** Gets the full name of the font. If it is a True Type font
+     * each array element will have {Platform ID, Platform Encoding ID,
+     * Language ID, font name}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * For the other fonts the array has a single element with {"", "", "",
+     * font name}.
+     * @return the full name of the font
+     */
+    public String[][] getFullFontName() {
+        return fullName;
+    }
+    
 }
 

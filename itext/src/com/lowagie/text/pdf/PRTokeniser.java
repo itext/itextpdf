@@ -1,15 +1,9 @@
-/*
- * PRTokeniser.java
- *
- * Created on December 13, 2001, 5:22 PM
- */
-
 package com.lowagie.text.pdf;
 
 import java.io.*;
 /**
  *
- * @author  psoares
+ * @author  Paulo Soares (psoares@consiste.pt)
  */
 class PRTokeniser {
     
@@ -110,8 +104,8 @@ class PRTokeniser {
     }
     
     void checkPdfHeader() throws IOException {
-        String str = readString(1024);
-        if (str.indexOf("%PDF-1.") < 0)
+        String str = readString(7);
+        if (!str.equals("%PDF-1."))
             throw new IOException("PDF header signature not found.");
     }
     

@@ -5,7 +5,7 @@ import com.lowagie.text.DocWriter;
 
 /**
  *
- * @author  psoares
+ * @author  Paulo Soares (psoares@consiste.pt)
  */
 public final class PdfEncryption {
 

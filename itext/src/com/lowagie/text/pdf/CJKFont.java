@@ -39,7 +39,7 @@ import java.io.*;
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
  *
- * @author  psoares
+ * @author  Paulo Soares (psoares@consiste.pt)
  */
 
 class CJKFont extends BaseFont
@@ -504,4 +504,17 @@ class CJKFont extends BaseFont
     public String getPostscriptFontName() {
         return fontName;
     }
+    
+    /** Gets the full name of the font. If it is a True Type font
+     * each array element will have {Platform ID, Platform Encoding ID,
+     * Language ID, font name}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * For the other fonts the array has a single element with {"", "", "",
+     * font name}.
+     * @return the full name of the font
+     */
+    public String[][] getFullFontName() {
+        return new String[][]{{"", "", "", fontName}};
+    }
+    
 }

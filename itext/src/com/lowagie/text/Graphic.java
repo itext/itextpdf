@@ -135,7 +135,7 @@ public class Graphic extends PdfContentByte implements Element {
     
     public void drawHorizontalLine(float lineWidth, Color color, float x1, float x2, float y) {
         setLineWidth(lineWidth);
-        setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+        setColorStroke(color);
         moveTo(x1, y);
         lineTo(x2, y);
         stroke();
@@ -165,7 +165,7 @@ public class Graphic extends PdfContentByte implements Element {
  */
     public void drawBorder(float lineWidth, Color color, float llx, float lly, float urx, float ury) {
         setLineWidth(lineWidth);
-        setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+        setColorStroke(color);
         moveTo(llx, lly);
         lineTo(llx, ury);
         lineTo(urx, ury);

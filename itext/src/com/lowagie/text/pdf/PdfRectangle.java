@@ -80,18 +80,30 @@ class PdfRectangle extends PdfArray {
  * @since		rugPdf0.10
  */
     
-    PdfRectangle(float llx, float lly, float urx, float ury) {
+    PdfRectangle(float llx, float lly, float urx, float ury, int rotation) {
         super();
-        this.llx = llx;
-        this.lly = lly;
-        this.urx = urx;
-        this.ury = ury;
-        super.add(new PdfNumber(llx));
-        super.add(new PdfNumber(lly));
-        super.add(new PdfNumber(urx));
-        super.add(new PdfNumber(ury));
+        if (rotation == 90 || rotation == 270) {
+            this.llx = lly;
+            this.lly = llx;
+            this.urx = ury;
+            this.ury = urx;
+        }
+        else {
+            this.llx = llx;
+            this.lly = lly;
+            this.urx = urx;
+            this.ury = ury;
+        }
+        super.add(new PdfNumber(this.llx));
+        super.add(new PdfNumber(this.lly));
+        super.add(new PdfNumber(this.urx));
+        super.add(new PdfNumber(this.ury));
     }
-    
+
+    PdfRectangle(float llx, float lly, float urx, float ury) {
+        this(llx, lly, urx, ury, 0);
+    }
+
 /**
  * Constructs a <CODE>PdfRectangle</CODE>-object starting from the origin (0, 0).
  *
@@ -99,8 +111,12 @@ class PdfRectangle extends PdfArray {
  * @param		ury			upper right y
  */
     
+    PdfRectangle(float urx, float ury, int rotation) {
+        this(0, 0, urx, ury, rotation);
+    }
+
     PdfRectangle(float urx, float ury) {
-        this(0, 0, urx, ury);
+        this(0, 0, urx, ury, 0);
     }
     
 /**
@@ -109,8 +125,12 @@ class PdfRectangle extends PdfArray {
  * @param	rectangle	a <CODE>Rectangle</CODE>
  */
     
+    PdfRectangle(Rectangle rectangle, int rotation) {
+        this(rectangle.left(), rectangle.bottom(), rectangle.right(), rectangle.top(), rotation);
+    }
+    
     PdfRectangle(Rectangle rectangle) {
-        this(rectangle.left(), rectangle.bottom(), rectangle.right(), rectangle.top());
+        this(rectangle.left(), rectangle.bottom(), rectangle.right(), rectangle.top(), 0);
     }
     
     // methods
@@ -237,6 +257,6 @@ class PdfRectangle extends PdfArray {
  */
     
     final PdfRectangle rotate() {
-        return new PdfRectangle(lly, llx, ury, urx);
+        return new PdfRectangle(lly, llx, ury, urx, 0);
     }
 }
