@@ -199,14 +199,14 @@ public class Anchor extends Phrase implements TextElementArray {
         try {
             Chunk chunk;
             Iterator i = getChunks().iterator();
-            if (i.hasNext() && name != null) {
-                chunk = (Chunk) i.next();
-                chunk.setLocalDestination(name);
-                listener.add(chunk);
-            }
             boolean localDestination = (reference != null && reference.startsWith("#"));
+            boolean notGotoOK = true;
             while (i.hasNext()) {
                 chunk = (Chunk) i.next();
+                if (name != null && notGotoOK && !chunk.isEmpty()) {
+                    chunk.setLocalDestination(name);
+                    notGotoOK = false;
+                }
                 if (localDestination) {
                     chunk.setLocalGoto(reference.substring(1));
                 }

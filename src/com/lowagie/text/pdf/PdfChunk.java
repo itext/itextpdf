@@ -227,10 +227,12 @@ class PdfChunk extends PdfString {
         if (attr != null) {
             for (Iterator i = attr.keySet().iterator(); i.hasNext();) {
                 Object name = i.next();
-                if (keysAttributes.containsKey(name))
+                if (keysAttributes.containsKey(name)) {
                     attributes.put(name, attr.get(name));
-                else if (keysNoStroke.containsKey(name))
+                }
+                else if (keysNoStroke.containsKey(name)) {
                     noStroke.put(name, attr.get(name));
+                }
             }
             if ("".equals(attr.get(Chunk.GENERICTAG))) {
                 attributes.put(Chunk.GENERICTAG, chunk.content());
@@ -448,7 +450,7 @@ class PdfChunk extends PdfString {
  * Checks if the <CODE>PdfChunk</CODE> split was caused by a newline.
  * @return <CODE>true</CODE> if the <CODE>PdfChunk</CODE> split was caused by a newline.
  */
- 
+    
     public boolean isNewlineSplit()
     {
         return newlineSplit;
@@ -461,7 +463,7 @@ class PdfChunk extends PdfString {
  * @param wordSpacing the extra word spacing
  * @return the calculated width
  */
- 
+    
     public float getWidthCorrected(float charSpacing, float wordSpacing)
     {
         if (image != null) {
@@ -478,7 +480,7 @@ class PdfChunk extends PdfString {
  * Trims the last space.
  * @return the width of the space trimmed, otherwise 0
  */
- 
+    
     public float trimLastSpace()
     {
         if (value.length() > 1 && value.endsWith(" ")) {
@@ -495,7 +497,7 @@ class PdfChunk extends PdfString {
  * @param name the attribute key
  * @return the attribute value or null if not found
  */
- 
+    
     Object getAttribute(String name)
     {
         if (attributes.containsKey(name))
@@ -508,7 +510,7 @@ class PdfChunk extends PdfString {
  * @param name the attribute key
  * @return <CODE>true</CODE> if the attribute exists
  */
- 
+    
     boolean isAttribute(String name)
     {
         if (attributes.containsKey(name))
@@ -520,7 +522,7 @@ class PdfChunk extends PdfString {
  * Checks if this <CODE>PdfChunk</CODE> needs some special metrics handling.
  * @return <CODE>true</CODE> if this <CODE>PdfChunk</CODE> needs some special metrics handling.
  */
- 
+    
     boolean isStroked()
     {
         return (attributes.size() > 0);
@@ -530,7 +532,7 @@ class PdfChunk extends PdfString {
  * Checks if there is an image in the <CODE>PdfChunk</CODE>.
  * @return <CODE>true</CODE> if an image is present
  */
- 
+    
     boolean isImage()
     {
         return image != null;
@@ -540,7 +542,7 @@ class PdfChunk extends PdfString {
  * Gets the image in the <CODE>PdfChunk</CODE>.
  * @return the image or <CODE>null</CODE>
  */
- 
+    
     Image getImage()
     {
         return image;
@@ -550,7 +552,7 @@ class PdfChunk extends PdfString {
  * Gets the image offset in the x direction
  * @return the image offset in the x direction
  */
- 
+    
     float getImageOffsetX()
     {
         return offsetX;
@@ -560,7 +562,7 @@ class PdfChunk extends PdfString {
  * Gets the image offset in the y direction
  * @return Gets the image offset in the y direction
  */
- 
+    
     float getImageOffsetY()
     {
         return offsetY;
@@ -569,13 +571,13 @@ class PdfChunk extends PdfString {
 /**
  * sets the value.
  */
- 
+    
     void setValue(String value)
     {
         this.value = value;
         setContent(value);
     }
- 
+    
  /**
   * checks for the CJK splitcharacter.
   */

@@ -58,33 +58,33 @@ import com.lowagie.text.Anchor;
  */
 
 public class PdfCell extends Rectangle {
-
-// membervariables
-
+    
+    // membervariables
+    
 /** These are the PdfLines in the Cell. */
-	private ArrayList lines;
-
+    private ArrayList lines;
+    
 /** This is the leading of the lines. */
-	private float leading;
-
+    private float leading;
+    
 /** This is the number of the row the cell is in. */
-	private int rownumber;
-
+    private int rownumber;
+    
 /** This is the rowspan of the cell. */
-	private int rowspan;
-
+    private int rowspan;
+    
 /** This is the cellspacing of the cell. */
-	private float cellpadding;
-
+    private float cellpadding;
+    
 /** This is the cellpadding of the cell. */
-	private float cellspacing;
-
+    private float cellspacing;
+    
 /** Indicates if this cell belongs to the header of a <CODE>PdfTable</CODE> */
-	private boolean header = false;
-
-
-// constructors
-
+    private boolean header = false;
+    
+    
+    // constructors
+    
 /**
  * Constructs a <CODE>PdfCell</CODE>-object.
  *
@@ -96,26 +96,26 @@ public class PdfCell extends Rectangle {
  * @param	cellspacing	the cellspacing of the <CODE>Table</CODE>
  * @param	cellpadding	the cellpadding	of the <CODE>Table</CODE>
  */
-
-	public PdfCell(Cell cell, int rownumber, float left, float right, float top, float cellspacing, float cellpadding) {
-		// initialisation of the Rectangle
-		super(left, top, right, top);
-		setBorder(cell.border());
-		setBorderWidth(cell.borderWidth());
-		setBorderColor(cell.borderColor());
-		setBackgroundColor(cell.backgroundColor());
-		setGrayFill(cell.grayFill());
-
-		// initialisation of the lines
-		PdfChunk chunk;
-		Element element;
-		PdfChunk overflow;
-		lines = new ArrayList();
-		leading = cell.leading();
-		int alignment = cell.horizontalAlignment();
-		left += cellspacing + cellpadding;
-		right -= cellspacing + cellpadding;
-
+    
+    public PdfCell(Cell cell, int rownumber, float left, float right, float top, float cellspacing, float cellpadding) {
+        // initialisation of the Rectangle
+        super(left, top, right, top);
+        setBorder(cell.border());
+        setBorderWidth(cell.borderWidth());
+        setBorderColor(cell.borderColor());
+        setBackgroundColor(cell.backgroundColor());
+        setGrayFill(cell.grayFill());
+        
+        // initialisation of the lines
+        PdfChunk chunk;
+        Element element;
+        PdfChunk overflow;
+        lines = new ArrayList();
+        leading = cell.leading();
+        int alignment = cell.horizontalAlignment();
+        left += cellspacing + cellpadding;
+        right -= cellspacing + cellpadding;
+        
 /*
  * Fixes bug 224848
  * 03/01/3001 David Freels
@@ -123,148 +123,148 @@ public class PdfCell extends Rectangle {
  * allowing the text to be rendered accordingly. The ALIGN_MIDDLE calculation
  * will be a little off for single row cells.
  */
-		float height = leading + cellspacing;
-		float rowSpan = (float)cell.rowspan();
-
-		switch(cell.verticalAlignment())
-		{
-			case Element.ALIGN_BOTTOM:
-					 height *= rowSpan;
-					 break;
-			case Element.ALIGN_MIDDLE:
-					 height *= (rowSpan / 1.5);
-					 break;
-			default:   //Alignment will be top
-					 if(rowSpan < 2)
-					 {
-						height -= (height / 2.5);
-					 }
-					break;
-		}
-
-		PdfLine line = new PdfLine(left, right, alignment, height);
-
+        float height = leading + cellspacing;
+        float rowSpan = (float)cell.rowspan();
+        
+        switch(cell.verticalAlignment())
+        {
+            case Element.ALIGN_BOTTOM:
+                height *= rowSpan;
+                break;
+            case Element.ALIGN_MIDDLE:
+                height *= (rowSpan / 1.5);
+                break;
+                default:   //Alignment will be top
+                    if(rowSpan < 2)
+                    {
+                        height -= (height / 2.5);
+                    }
+                    break;
+        }
+        
+        PdfLine line = new PdfLine(left, right, alignment, height);
+        
         ArrayList allActions;
         int aCounter;
-// we loop over all the elements of the cell
-		for (Iterator i = cell.getElements(); i.hasNext(); ) {
-			element = (Element) i.next();
-			switch(element.type()) {
-			// if the element is a list
-			case Element.LIST:
-				if (line.size() > 0) {
-					line.resetAlignment();
-					lines.add(line);
-				}
-                allActions = new ArrayList();
-                processActions(element, null, allActions);
-                aCounter = 0;
-				ListItem item;
-				// we loop over all the listitems
-				for (Iterator items = ((List)element).getItems().iterator(); items.hasNext(); ) {
-					item = (ListItem) items.next();
-					line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
-					line.setListItem(item);
-					for (Iterator j = item.getChunks().iterator(); j.hasNext(); ) {
-						chunk = new PdfChunk((Chunk) j.next(), (PdfAction)(allActions.get(aCounter++)));
-						while ((overflow = line.add(chunk)) != null) {
-							lines.add(line);
-							line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
-							chunk = overflow;
-						}
-						line.resetAlignment();
-						lines.add(line);
-						line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
-					}
-				}
-				line = new PdfLine(left, right, alignment, leading);
-				break;
-			// if the element is something else
-			default:
-                allActions = new ArrayList();
-                processActions(element, null, allActions);
-                aCounter = 0;
-				// we loop over the chunks
-				for (Iterator j = element.getChunks().iterator(); j.hasNext(); ) {
-                    Chunk c = (Chunk) j.next();
-					chunk = new PdfChunk(c, (PdfAction)(allActions.get(aCounter++)));
-					while ((overflow = line.add(chunk)) != null) {
-						lines.add(line);
-						line = new PdfLine(left, right, alignment, leading);
-						chunk = overflow;
-					}
-				}
-				// if the element is a paragraph, section or chapter, we reset the alignment and add the line
-				switch (element.type()) {
-				case Element.PARAGRAPH:
-				case Element.SECTION:
-				case Element.CHAPTER:
-					line.resetAlignment();
-					lines.add(line);
-					line = new PdfLine(left, right, alignment, leading);
-				}
-			}
-		}
-		if (line.size() > 0) {
-			lines.add(line);
-		}
+        // we loop over all the elements of the cell
+        for (Iterator i = cell.getElements(); i.hasNext(); ) {
+            element = (Element) i.next();
+            switch(element.type()) {
+                // if the element is a list
+                case Element.LIST:
+                    if (line.size() > 0) {
+                        line.resetAlignment();
+                        lines.add(line);
+                    }
+                    allActions = new ArrayList();
+                    processActions(element, null, allActions);
+                    aCounter = 0;
+                    ListItem item;
+                    // we loop over all the listitems
+                    for (Iterator items = ((List)element).getItems().iterator(); items.hasNext(); ) {
+                        item = (ListItem) items.next();
+                        line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
+                        line.setListItem(item);
+                        for (Iterator j = item.getChunks().iterator(); j.hasNext(); ) {
+                            chunk = new PdfChunk((Chunk) j.next(), (PdfAction)(allActions.get(aCounter++)));
+                            while ((overflow = line.add(chunk)) != null) {
+                                lines.add(line);
+                                line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
+                                chunk = overflow;
+                            }
+                            line.resetAlignment();
+                            lines.add(line);
+                            line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
+                        }
+                    }
+                    line = new PdfLine(left, right, alignment, leading);
+                    break;
+                    // if the element is something else
+                    default:
+                        allActions = new ArrayList();
+                        processActions(element, null, allActions);
+                        aCounter = 0;
+                        // we loop over the chunks
+                        for (Iterator j = element.getChunks().iterator(); j.hasNext(); ) {
+                            Chunk c = (Chunk) j.next();
+                            chunk = new PdfChunk(c, (PdfAction)(allActions.get(aCounter++)));
+                            while ((overflow = line.add(chunk)) != null) {
+                                lines.add(line);
+                                line = new PdfLine(left, right, alignment, leading);
+                                chunk = overflow;
+                            }
+                        }
+                        // if the element is a paragraph, section or chapter, we reset the alignment and add the line
+                        switch (element.type()) {
+                            case Element.PARAGRAPH:
+                            case Element.SECTION:
+                            case Element.CHAPTER:
+                                line.resetAlignment();
+                                lines.add(line);
+                                line = new PdfLine(left, right, alignment, leading);
+                        }
+            }
+        }
+        if (line.size() > 0) {
+            lines.add(line);
+        }
 /*		if (lines.size() > 0) {
-			((PdfLine)lines.get(lines.size() - 1)).resetAlignment();
-		}
-*/
-		// we set some additional parameters
-		setBottom(top - leading * lines.size() - 5 * cellspacing / 2);
-		this.cellpadding = cellpadding;
-		this.cellspacing = cellspacing;
-
-		rowspan = cell.rowspan();
-		this.rownumber = rownumber;
-	}
-
-// overriding of the Rectangle methods
-
+                        ((PdfLine)lines.get(lines.size() - 1)).resetAlignment();
+                }
+ */
+        // we set some additional parameters
+        setBottom(top - leading * lines.size() - 5 * cellspacing / 2);
+        this.cellpadding = cellpadding;
+        this.cellspacing = cellspacing;
+        
+        rowspan = cell.rowspan();
+        this.rownumber = rownumber;
+    }
+    
+    // overriding of the Rectangle methods
+    
 /**
  * Returns the lower left x-coordinaat.
  *
  * @return		the lower left x-coordinaat
  */
-
-	public float left() {
-		return super.left(cellpadding);
-	}
-
+    
+    public float left() {
+        return super.left(cellpadding);
+    }
+    
 /**
  * Returns the upper right x-coordinate.
  *
  * @return		the upper right x-coordinate
  */
-
-	public float right() {
-		return super.right(cellpadding);
-	}
-
+    
+    public float right() {
+        return super.right(cellpadding);
+    }
+    
 /**
  * Returns the upper right y-coordinate.
  *
  * @return		the upper right y-coordinate
  */
-
-	public float top() {
-		return super.top(cellpadding);
-	}
-
+    
+    public float top() {
+        return super.top(cellpadding);
+    }
+    
 /**
  * Returns the lower left y-coordinate.
  *
  * @return		the lower left y-coordinate
  */
-
-	public float bottom() {
-		return super.bottom(cellpadding);
-	}
-
-// methods
-
+    
+    public float bottom() {
+        return super.bottom(cellpadding);
+    }
+    
+    // methods
+    
 /**
  * Gets the lines of a cell that can be drawn between certain limits.
  * <P>
@@ -274,53 +274,53 @@ public class PdfCell extends Rectangle {
  * @param	bottom	the bottom of the part of the table that can be drawn
  * @return	an <CODE>ArrayList</CODE> of <CODE>PdfLine</CODE>s
  */
-
-	public ArrayList getLines(float top, float bottom) {
-		// if the bottom of the page is higher than the top of the cell: do nothing
-		if (top() < bottom) {
-			return null;
-		}
-
-		// initialisations
-		PdfLine line;
-		float lineHeight;
-		float currentPosition = Math.min(top(), top);
-		ArrayList result = new ArrayList();
-
-		// we loop over the lines
-		int size = lines.size();
-		for (int i = 0; i < size; i++) {
-			line = (PdfLine) lines.get(i);
-			lineHeight = line.height();
-			currentPosition -= lineHeight;
-			// if the currentPosition is higher than the bottom, we add the line to the result
-			if (currentPosition > bottom) {
-				result.add(line);
-				// as soon as a line is part of the result, we blank it out, except for table headers
-				if (!header) {
-					lines.set(i, new PdfLine(left(-cellpadding - cellspacing), right(-cellpadding - cellspacing), Element.ALIGN_LEFT, leading));
-				}
-			}
-		}
-		// if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
-
-		// bugfix solving an endless loop problem by Leslie Baski
-		if (!header && bottom <= bottom()) {
-			lines = new ArrayList();
-		}
-		return result;
-	}
-
+    
+    public ArrayList getLines(float top, float bottom) {
+        // if the bottom of the page is higher than the top of the cell: do nothing
+        if (top() < bottom) {
+            return null;
+        }
+        
+        // initialisations
+        PdfLine line;
+        float lineHeight;
+        float currentPosition = Math.min(top(), top);
+        ArrayList result = new ArrayList();
+        
+        // we loop over the lines
+        int size = lines.size();
+        for (int i = 0; i < size; i++) {
+            line = (PdfLine) lines.get(i);
+            lineHeight = line.height();
+            currentPosition -= lineHeight;
+            // if the currentPosition is higher than the bottom, we add the line to the result
+            if (currentPosition > bottom) {
+                result.add(line);
+                // as soon as a line is part of the result, we blank it out, except for table headers
+                if (!header) {
+                    lines.set(i, new PdfLine(left(-cellpadding - cellspacing), right(-cellpadding - cellspacing), Element.ALIGN_LEFT, leading));
+                }
+            }
+        }
+        // if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
+        
+        // bugfix solving an endless loop problem by Leslie Baski
+        if (!header && bottom <= bottom()) {
+            lines = new ArrayList();
+        }
+        return result;
+    }
+    
 /**
  * Indicates that this cell belongs to the header of a <CODE>PdfTable</CODE>.
  *
  * @return	<CODE>void</CODE>
  */
-
-	final void setHeader() {
-		header = true;
-	}
-
+    
+    final void setHeader() {
+        header = true;
+    }
+    
 /**
  * Checks if the cell may be removed.
  * <P>
@@ -329,72 +329,72 @@ public class PdfCell extends Rectangle {
  *
  * @return	<CODE>true</CODE> if all the lines are allready drawn; <CODE>false</CODE> otherwise.
  */
-
-	final boolean mayBeRemoved() {
-		return (header || lines.size() < 1);
-	}
-
+    
+    final boolean mayBeRemoved() {
+        return (header || lines.size() < 1);
+    }
+    
 /**
  * Returns the number of lines in the cell.
  *
  * @return	a value
  */
-
-	public int size() {
-		return lines.size();
-	}
-
-// methods to retrieve membervariables
-
+    
+    public int size() {
+        return lines.size();
+    }
+    
+    // methods to retrieve membervariables
+    
 /**
  * Gets the leading of a cell.
  *
  * @return	the leading of the lines is the cell.
  */
-
-	public float leading() {
-		return leading;
-	}
-
+    
+    public float leading() {
+        return leading;
+    }
+    
 /**
  * Gets the number of the row this cell is in..
  *
  * @return	a number
  */
-
-	public int rownumber() {
-		return rownumber;
-	}
-
+    
+    public int rownumber() {
+        return rownumber;
+    }
+    
 /**
  * Gets the rowspan of a cell.
  *
  * @return	the rowspan of the cell
  */
-
-	public int rowspan() {
-		return rowspan;
-	}
-
+    
+    public int rowspan() {
+        return rowspan;
+    }
+    
 /**
  * Gets the cellspacing of a cell. .
  *
  * @return	a value
  */
-
-	public float cellspacing() {
-		return cellspacing;
-	}
-
+    
+    public float cellspacing() {
+        return cellspacing;
+    }
+    
 /**
  * Gets the cellpadding of a cell..
  *
  * @return	a value
  */
-
-	public float cellpadding() {
-		return cellpadding;
-	}
+    
+    public float cellpadding() {
+        return cellpadding;
+    }
     
 /**
  * Processes all actions contained in the cell.
@@ -428,12 +428,12 @@ public class PdfCell extends Rectangle {
                     processActions((Element)i.next(), action, allActions);
                 }
                 break;
-            default:
-                ArrayList tmp = element.getChunks();
-                int n = element.getChunks().size();
-                while (n-- > 0)
-                    allActions.add(action);
-                break;
+                default:
+                    ArrayList tmp = element.getChunks();
+                    int n = element.getChunks().size();
+                    while (n-- > 0)
+                        allActions.add(action);
+                    break;
         }
     }
 }

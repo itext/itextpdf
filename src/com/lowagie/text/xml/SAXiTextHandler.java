@@ -167,13 +167,20 @@ public class SAXiTextHandler extends HandlerBase {
         
         // tables
         if (Table.isTag(name)) {
-            //try {
-            stack.push(new Table(attributes));
+            Table table = new Table(attributes);
+            float widths[] = table.getProportionalWidths();
+            for (int i = 0; i < widths.length; i++) {
+                if (widths[i] == 0) {
+                    widths[i] = 100.0f / (float)widths.length;
+                }
+            }
+            try {
+                table.setWidths(widths);
+            }
+            catch(BadElementException bee) {
+            }
+            stack.push(table);
             return;
-            //}
-            //catch(BadElementException bee) {
-            //    throw new RuntimeException(bee.getMessage());
-            //}
         }
         
         // sections
@@ -199,24 +206,24 @@ public class SAXiTextHandler extends HandlerBase {
                 TextElementArray current;
                 try {
                     current = (TextElementArray) stack.pop();
-					if (current instanceof Cell) {
-	                	Chunk chunk = new Chunk(img, 0, 0);
-                		current.add(chunk);
-                		stack.push(current);
-						return;
-					}
-					else {
-		                current.add(img);
-        		        stack.push(current);
-					}
+                    if (current instanceof Cell) {
+                        Chunk chunk = new Chunk(img, 0, 0);
+                        current.add(chunk);
+                        stack.push(current);
+                        return;
+                    }
+                    else {
+                        current.add(img);
+                        stack.push(current);
+                    }
                 }
                 catch(EmptyStackException ese) {
-					try {
-						document.add(img);
-					}
-					catch(DocumentException de) {
-					}
-					return;
+                    try {
+                        document.add(img);
+                    }
+                    catch(DocumentException de) {
+                    }
+                    return;
                 }
             }
             catch(Exception e) {
@@ -253,10 +260,10 @@ public class SAXiTextHandler extends HandlerBase {
             }
             catch(EmptyStackException ese) {
                 if (currentChunk == null) {
-					try {
-	                    document.add(Chunk.NEWLINE);
-					}
-					catch(DocumentException de) {}
+                    try {
+                        document.add(Chunk.NEWLINE);
+                    }
+                    catch(DocumentException de) {}
                 }
                 else {
                     currentChunk.append("\n");
@@ -446,13 +453,7 @@ public class SAXiTextHandler extends HandlerBase {
             // tables
             if (Table.isTag(name)) {
                 Table table = (Table) stack.pop();
-                float widths[] = table.getProportionalWidths();
-                for (int i = 0; i < widths.length; i++) {
-                    if (widths[i] == 0) {
-                        widths[i] = 100.0f / (float)widths.length;
-                    }
-                }
-                table.setWidths(widths);
+                
                 try {
                     TextElementArray previous = (TextElementArray) stack.pop();
                     previous.add(table);

@@ -454,12 +454,12 @@ public class Font implements Comparable {
         else {
             difference.family = font.family;
         }
-		if (font.size() == UNDEFINED) {
-			difference.size = this.size;
-		}
-		else {
-	        difference.size = font.size;
-		}
+        if (font.size() == UNDEFINED) {
+            difference.size = this.size;
+        }
+        else {
+            difference.size = font.size;
+        }
         int style1 = this.style;
         int style2 = font.style();
         if (style1 == UNDEFINED) style1 = 0;
@@ -468,9 +468,9 @@ public class Font implements Comparable {
         if (font.color == null) {
             difference.color = this.color;
         }
-		else {
-			difference.color = font.color();
-		}
+        else {
+            difference.color = font.color();
+        }
         return difference;
     }
     

@@ -48,9 +48,12 @@ import com.lowagie.text.*;
  */
 
 public class SAXmyHtmlHandler extends SAXmyHandler {
-
+    
 /** These are the properties of the body section. */
-	private Properties bodyAttributes = new Properties();
+    private Properties bodyAttributes = new Properties();
+    
+/** This is the status of the table border. */
+    private boolean tableBorder = false;
     
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
@@ -85,50 +88,67 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
         //System.err.println(name);
         
         if (((HtmlTagMap)myTags).isHtml(name)) {
-			// we do nothing
-			return;
-		}        
+            // we do nothing
+            return;
+        }
         if (((HtmlTagMap)myTags).isHead(name)) {
-			// we do nothing
-			return;
-		}          
+            // we do nothing
+            return;
+        }
         if (((HtmlTagMap)myTags).isTitle(name)) {
-			// we do nothing
-			return;
-		}        
+            // we do nothing
+            return;
+        }
         if (((HtmlTagMap)myTags).isMeta(name)) {
-			// we look if we can change the body attributes
-			String meta = null;
-			String content = null;
+            // we look if we can change the body attributes
+            String meta = null;
+            String content = null;
             if (attrs != null) {
                 for (int i = 0; i < attrs.getLength(); i++) {
                     String attribute = attrs.getName(i);
-					if (attribute.equalsIgnoreCase(HtmlTags.CONTENT))
-						content = attrs.getValue(i);
-					else if (attribute.equalsIgnoreCase(HtmlTags.NAME))
-						meta = attrs.getValue(i);
+                    if (attribute.equalsIgnoreCase(HtmlTags.CONTENT))
+                        content = attrs.getValue(i);
+                    else if (attribute.equalsIgnoreCase(HtmlTags.NAME))
+                        meta = attrs.getValue(i);
                 }
             }
-			if (meta != null && content != null) {
-				bodyAttributes.put(meta, content);
-			}
-			return;
-		}        
+            if (meta != null && content != null) {
+                bodyAttributes.put(meta, content);
+            }
+            return;
+        }
         if (((HtmlTagMap)myTags).isLink(name)) {
-			// we do nothing for the moment, in a later version we could extract the style sheet
-			return;
-		}
+            // we do nothing for the moment, in a later version we could extract the style sheet
+            return;
+        }
         if (((HtmlTagMap)myTags).isBody(name)) {
-			// maybe we could extract some info about the document: color, margins,...
-			// but that's for a later version...
+            // maybe we could extract some info about the document: color, margins,...
+            // but that's for a later version...
             XmlPeer peer = new XmlPeer(ElementTags.ITEXT, name);
             super.handleStartingTags(peer.getTag(), bodyAttributes);
-			return;
+            return;
         }
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
+            if (Table.isTag(peer.getTag()) || Cell.isTag(peer.getTag())) {
+                Properties p = peer.getAttributes(attrs);
+                String value;
+                if (Table.isTag(peer.getTag()) && (value = p.getProperty(ElementTags.BORDERWIDTH)) != null) {
+                    if (Float.parseFloat(value + "f") > 0) {
+                        tableBorder = true;
+                    }
+                }
+                if (tableBorder) {
+                    p.put(ElementTags.LEFT, String.valueOf(true));
+                    p.put(ElementTags.RIGHT, String.valueOf(true));
+                    p.put(ElementTags.TOP, String.valueOf(true));
+                    p.put(ElementTags.BOTTOM, String.valueOf(true));
+                }
+                super.handleStartingTags(peer.getTag(), p);
+                return;
+            }
             super.handleStartingTags(peer.getTag(), peer.getAttributes(attrs));
-			return;
+            return;
         }
         Properties attributes = new Properties();
         attributes.setProperty(ElementTags.TAGNAME, name);
@@ -138,7 +158,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
                 attributes.setProperty(attribute, attrs.getValue(i));
             }
         }
-        super.handleStartingTags(name, attributes);        
+        super.handleStartingTags(name, attributes);
     }
     
 /**
@@ -149,33 +169,36 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
     
     public void endElement(String name) {
         //System.err.println("End: " + name);
-
+        
         if (((HtmlTagMap)myTags).isHead(name)) {
-			// we do nothing
-			return;
-		}          
+            // we do nothing
+            return;
+        }
         if (((HtmlTagMap)myTags).isTitle(name)) {
-			if (currentChunk != null) {
-				bodyAttributes.put(ElementTags.TITLE, currentChunk.content());
-			}
-			return;
-		}        
+            if (currentChunk != null) {
+                bodyAttributes.put(ElementTags.TITLE, currentChunk.content());
+            }
+            return;
+        }
         if (((HtmlTagMap)myTags).isMeta(name)) {
-			// we do nothing
-			return;
-		}        
+            // we do nothing
+            return;
+        }
         if (((HtmlTagMap)myTags).isLink(name)) {
-			// we do nothing
-			return;
-		}
+            // we do nothing
+            return;
+        }
         if (((HtmlTagMap)myTags).isBody(name)) {
-			// we do nothing
-			return;
-		} 
+            // we do nothing
+            return;
+        }
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
+            if (Table.isTag(peer.getTag())) {
+                tableBorder = false;
+            }
             super.handleEndingTags(peer.getTag());
-			return;
+            return;
         }
         super.handleEndingTags(name);
     }

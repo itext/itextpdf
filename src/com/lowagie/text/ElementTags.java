@@ -369,24 +369,24 @@ public class ElementTags {
     
     public static String getAlignment(int alignment) {
         switch(alignment) {
-        case Element.ALIGN_LEFT:
-            return ALIGN_LEFT;
-        case Element.ALIGN_CENTER:
-            return ALIGN_CENTER;
-        case Element.ALIGN_RIGHT:
-            return ALIGN_RIGHT;
-        case Element.ALIGN_JUSTIFIED:
-            return ALIGN_JUSTIFIED;
-        case Element.ALIGN_TOP:
-            return ALIGN_TOP;
-        case Element.ALIGN_MIDDLE:
-            return ALIGN_MIDDLE;
-        case Element.ALIGN_BOTTOM:
-            return ALIGN_BOTTOM;
-        case Element.ALIGN_BASELINE:
-            return ALIGN_BASELINE;
-        default:
-            return DEFAULT;
+            case Element.ALIGN_LEFT:
+                return ALIGN_LEFT;
+            case Element.ALIGN_CENTER:
+                return ALIGN_CENTER;
+            case Element.ALIGN_RIGHT:
+                return ALIGN_RIGHT;
+            case Element.ALIGN_JUSTIFIED:
+                return ALIGN_JUSTIFIED;
+            case Element.ALIGN_TOP:
+                return ALIGN_TOP;
+            case Element.ALIGN_MIDDLE:
+                return ALIGN_MIDDLE;
+            case Element.ALIGN_BOTTOM:
+                return ALIGN_BOTTOM;
+            case Element.ALIGN_BASELINE:
+                return ALIGN_BASELINE;
+                default:
+                    return DEFAULT;
         }
     }
     
@@ -402,13 +402,13 @@ public class ElementTags {
         int green = 0;
         int blue = 0;
         try {
-            red = Integer.parseInt("0x" + string.substring(1, 3));
-            green = Integer.parseInt("0x" + string.substring(3, 5));
-            blue = Integer.parseInt("0x" + string.substring(5));
+            red = Integer.parseInt(string.substring(1, 3), 16);
+            green = Integer.parseInt(string.substring(3, 5), 16);
+            blue = Integer.parseInt(string.substring(5), 16);
         }
         catch(Exception sioobe) {
         }
         return new Color(red, green, blue);
     }
-        
+    
 }
