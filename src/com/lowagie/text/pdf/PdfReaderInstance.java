@@ -120,13 +120,13 @@ class PdfReaderInstance {
         byte bout[] = null;
         ArrayList filters = null;
         if (contents != null) {
-            if (contents.isStream()) {
+            if (contents.isStream())
                 dic.putAll((PRStream)contents);
-            }
-            else {
+            else
                 bout = reader.getPageContent(pageNumber, file);
-            }
         }
+        else
+            bout = new byte[0];
         dic.put(PdfName.RESOURCES, PdfReader.getPdfObject(page.get(PdfName.RESOURCES)));
         dic.put(PdfName.TYPE, PdfName.XOBJECT);
         dic.put(PdfName.SUBTYPE, PdfName.FORM);

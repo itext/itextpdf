@@ -103,7 +103,7 @@ public class PRStream extends PdfStream {
                 zip.close();
                 bytes = stream.toByteArray();
             }
-            catch(IOException ioe) {
+            catch (IOException ioe) {
                 throw new ExceptionConverter(ioe);
             }
             put(PdfName.FILTER, PdfName.FLATEDECODE);
@@ -113,6 +113,30 @@ public class PRStream extends PdfStream {
         setLength(bytes.length);
     }
     
+    /**Sets the data associated with the stream
+     * @param data raw data, decrypted and uncompressed.
+     */
+    public void setData(byte[] data) {
+        remove(PdfName.FILTER);
+        this.offset = -1;
+        if (Document.compress) {
+            try {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                DeflaterOutputStream zip = new DeflaterOutputStream(stream);
+                zip.write(data);
+                zip.close();
+                bytes = stream.toByteArray();
+            }
+            catch (IOException ioe) {
+                throw new ExceptionConverter(ioe);
+            }
+            put(PdfName.FILTER, PdfName.FLATEDECODE);
+        }
+        else
+            bytes = data;
+        setLength(bytes.length);
+    }
+
     public void setLength(int length) {
         this.length = length;
         put(PdfName.LENGTH, new PdfNumber(length));

@@ -52,7 +52,7 @@ package com.lowagie.text.rtf.table;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.lowagie.text.Cell;
 import com.lowagie.text.Element;
@@ -172,7 +172,7 @@ public class RtfRow extends RtfElement {
     /**
      * The cells of this RtfRow
      */
-    private Vector cells = null;
+    private ArrayList cells = null;
     /**
      * The width of this row
      */
@@ -203,7 +203,7 @@ public class RtfRow extends RtfElement {
      * @param row The Row to import
      */
     private void importRow(Row row) {
-        this.cells = new Vector();
+        this.cells = new ArrayList();
         this.width  = (int) (this.document.getDocumentHeader().getPageSetting().getPageWidth() / 100 * this.parentTable.getTableWidthPercent());
         
         int cellRight = 0;
@@ -239,7 +239,7 @@ public class RtfRow extends RtfElement {
                 }
             }
             if(rtfCell.getRowspan() > 1) {
-                Vector rows = this.parentTable.getRows();
+                ArrayList rows = this.parentTable.getRows();
                 for(int j = 1; j < rtfCell.getRowspan(); j++) {
                     RtfRow mergeRow = (RtfRow) rows.get(this.rowNumber + j);
                     if(this.rowNumber + j < rows.size()) {
@@ -353,7 +353,7 @@ public class RtfRow extends RtfElement {
      * 
      * @return The cells of this RtfRow
      */
-    protected Vector getCells() {
+    protected ArrayList getCells() {
         return this.cells;
     }
 }

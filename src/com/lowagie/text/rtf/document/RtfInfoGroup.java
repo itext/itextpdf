@@ -52,7 +52,7 @@ package com.lowagie.text.rtf.document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.lowagie.text.rtf.RtfElement;
 
@@ -72,7 +72,7 @@ public class RtfInfoGroup extends RtfElement {
     /**
      * The RtfInfoElements that belong to this RtfInfoGroup
      */
-    Vector infoElements = null;
+    ArrayList infoElements = null;
     
     /**
      * Constructs a RtfInfoGroup belonging to a RtfDocument
@@ -81,7 +81,7 @@ public class RtfInfoGroup extends RtfElement {
      */
     public RtfInfoGroup(RtfDocument doc) {
         super(doc);
-        infoElements = new Vector();
+        infoElements = new ArrayList();
     }
     
     /**

@@ -53,7 +53,7 @@ package com.lowagie.text.rtf.text;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -82,7 +82,7 @@ public class RtfSection extends RtfElement {
     /**
      * The sub-items of this RtfSection
      */
-    protected Vector items = null;
+    protected ArrayList items = null;
     
     /**
      * Constructs a RtfSection for a given Section. If the autogenerateTOCEntries
@@ -94,7 +94,7 @@ public class RtfSection extends RtfElement {
      */
     public RtfSection(RtfDocument doc, Section section) {
         super(doc);
-        items = new Vector();
+        items = new ArrayList();
         try {
             if(section.title() != null) {
                 this.title = (RtfParagraph) doc.getMapper().mapElement(section.title());

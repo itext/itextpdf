@@ -347,7 +347,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 			obj = writer.addToBody(pobj);
 			ind_font = obj.getIndirectReference();
         } else {
-          TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, longTag, directoryOffset, false);
+          TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), longTag, directoryOffset, false);
           byte b[] = sb.process();
           int lengths[] = new int[]{b.length};
           pobj = new StreamFont(b, lengths);

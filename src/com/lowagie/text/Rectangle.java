@@ -58,6 +58,11 @@ import java.util.Set;
 /**
  * A <CODE>Rectangle</CODE> is the representation of a geometric figure.
  *
+ * Rectangles support constant width borders using {@link #setBorderWidth(float)}
+ * and {@link #setBorder(int)}.  They also support borders that vary in
+ * width/color on each side using methods like {@link #setBorderWidthLeft(float)}
+ * or {@link #setBorderColorLeft(java.awt.Color)}.
+ *
  * @see		Element
  * @see		Table
  * @see		Cell
@@ -109,9 +114,37 @@ public class Rectangle implements Element, MarkupAttributes {
 /** This is the width of the border around this rectangle. */
     protected float borderWidth = UNDEFINED;
     
-/** This is the color of the border of this rectangle. */
+/** The color of the border of this rectangle. */
     protected Color color = null;
-    
+
+/** The color of the left border of this rectangle. */
+    protected Color borderColorLeft = null;
+
+/** The color of the right border of this rectangle. */
+    protected Color borderColorRight = null;
+
+/** The color of the top border of this rectangle. */
+    protected Color borderColorTop = null;
+
+/** The color of the bottom border of this rectangle. */
+    protected Color borderColorBottom = null;
+
+
+/** The width of the left border of this rectangle. */
+    protected float borderWidthLeft = UNDEFINED;
+
+/** The width of the right border of this rectangle. */
+    protected float borderWidthRight = UNDEFINED;
+
+/** The width of the top border of this rectangle. */
+    protected float borderWidthTop = UNDEFINED;
+
+/** The width of the bottom border of this rectangle. */
+    protected float borderWidthBottom = UNDEFINED;
+
+/** Whether variable width borders are used. */
+    protected boolean useVariableBorders = false;
+
 /** This is the color of the background of this rectangle. */
     protected Color background = null;
     
@@ -122,7 +155,7 @@ public class Rectangle implements Element, MarkupAttributes {
 
 /** Contains extra markupAttributes */
     protected Properties markupAttributes;
-    
+
     // constructors
     
 /**
@@ -133,7 +166,7 @@ public class Rectangle implements Element, MarkupAttributes {
  * @param		urx			upper right x
  * @param		ury			upper right y
  */
-    
+
     public Rectangle(float llx, float lly, float urx, float ury) {
         this.llx = llx;
         this.lly = lly;
@@ -147,7 +180,7 @@ public class Rectangle implements Element, MarkupAttributes {
  * @param		urx			upper right x
  * @param		ury			upper right y
  */
-    
+
     public Rectangle(float urx, float ury) {
         this(0, 0, urx, ury);
     }
@@ -160,18 +193,34 @@ public class Rectangle implements Element, MarkupAttributes {
     
     public Rectangle(Rectangle rect) {
         this(rect.left(), rect.bottom(), rect.right(), rect.top());
-        this.llx = rect.llx;
-        this.lly = rect.lly;
-        this.urx = rect.urx;
-        this.ury = rect.ury;
-        this.rotation = rect.rotation;
-        this.border = rect.border;
-        this.borderWidth = rect.borderWidth;
-        this.color = rect.color;
-        this.background = rect.background;
-        this.grayFill = rect.grayFill;
+        cloneNonPositionParameters(rect);
     }
-    
+
+/**
+ * Copies all of the parameters from a <CODE>Rectangle</CODE>
+ * object except the position.
+ *
+ * @param		rect	<CODE>Rectangle</CODE> to copy from
+ */
+
+    public void cloneNonPositionParameters(Rectangle rect) {
+       this.rotation = rect.rotation;
+       this.border = rect.border;
+       this.borderWidth = rect.borderWidth;
+       this.color = rect.color;
+       this.background = rect.background;
+       this.grayFill = rect.grayFill;
+       this.borderColorLeft = rect.borderColorLeft;
+       this.borderColorRight = rect.borderColorRight;
+       this.borderColorTop = rect.borderColorTop;
+       this.borderColorBottom = rect.borderColorBottom;
+       this.borderWidthLeft = rect.borderWidthLeft;
+       this.borderWidthRight = rect.borderWidthRight;
+       this.borderWidthTop = rect.borderWidthTop;
+       this.borderWidthBottom = rect.borderWidthBottom;
+       this.useVariableBorders = rect.useVariableBorders;
+    }
+
     // implementation of the Element interface
     
 /**
@@ -223,11 +272,6 @@ public class Rectangle implements Element, MarkupAttributes {
     
     public Rectangle rectangle(float top, float bottom) {
         Rectangle tmp = new Rectangle(this);
-        tmp.setBorder(border);
-        tmp.setBorderWidth(borderWidth);
-        tmp.setBorderColor(color);
-        tmp.setBackgroundColor(background);
-        tmp.setGrayFill(grayFill);
         if (top() > top) {
             tmp.setTop(top);
             tmp.setBorder(border - (border & TOP));
@@ -238,7 +282,7 @@ public class Rectangle implements Element, MarkupAttributes {
         }
         return tmp;
     }
-    
+
 /**
  * Swaps the values of urx and ury and of lly and llx in order to rotate the rectangle.
  *
@@ -295,15 +339,42 @@ public class Rectangle implements Element, MarkupAttributes {
     }
     
 /**
- * Sets the border.
- *
+ * Enables/Disables the border on the specified sides.  The border is specified
+ * as an integer bitwise combination of the constants:
+ * <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>.
+ * @see #enableBorderSide(int)
+ * @see #disableBorderSide(int)
  * @param	value	the new value
  */
     
     public void setBorder(int value) {
         border = value;
     }
-    
+
+/**
+* Enables the border on the specified side.
+*
+* @param	side the side to enable. One of <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>
+*/
+    public void enableBorderSide(int side) {
+        if (border == UNDEFINED) {
+            border = 0;
+        }
+        border |= side;
+    }
+
+/**
+* Disables the border on the specified side.
+*
+* @param	side the side to disable. One of <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>
+*/
+    public void disableBorderSide(int side) {
+        if (border == UNDEFINED) {
+            border = 0;
+        }
+        border &= ~side;
+    }
+
 /**
  * Sets the borderwidth of the table.
  *
@@ -313,8 +384,10 @@ public class Rectangle implements Element, MarkupAttributes {
     public void setBorderWidth(float value) {
         borderWidth = value;
     }
-    
-/**
+
+
+
+ /**
  * Sets the color of the border.
  *
  * @param	value	the new value
@@ -323,7 +396,28 @@ public class Rectangle implements Element, MarkupAttributes {
     public void setBorderColor(Color value) {
         color = value;
     }
-    
+
+   public void setBorderColorRight(Color value)
+   {
+      borderColorRight = value;
+   }
+
+   public void setBorderColorLeft(Color value)
+   {
+      borderColorLeft = value;
+   }
+
+   public void setBorderColorTop(Color value)
+   {
+      borderColorTop = value;
+   }
+
+   public void setBorderColorBottom(Color value)
+   {
+      borderColorBottom = value;
+   }
+
+
 /**
  * Sets the backgroundcolor of the rectangle.
  *
@@ -459,7 +553,12 @@ public class Rectangle implements Element, MarkupAttributes {
  */
     
     public boolean hasBorders() {
-        return border > 0 && borderWidth > 0;
+        return (border > 0) &&
+              ((borderWidth > 0)      ||
+               (borderWidthLeft > 0)  ||
+               (borderWidthRight > 0) ||
+               (borderWidthTop > 0)   ||
+               (borderWidthBottom > 0));
     }
     
 /**
@@ -512,13 +611,13 @@ public class Rectangle implements Element, MarkupAttributes {
     public Color backgroundColor() {
         return background;
     }
-    
+
 /**
  * Gets the grayscale.
  *
  * @return	a value
  */
-    
+
     public float grayFill() {
         return grayFill;
     }
@@ -563,4 +662,120 @@ public class Rectangle implements Element, MarkupAttributes {
     public Properties getMarkupAttributes() {
         return markupAttributes;
     }
+
+   public Color getBorderColorLeft()
+   {
+      return borderColorLeft;
+   }
+
+   public Color getBorderColorRight()
+   {
+      return borderColorRight;
+   }
+
+   public Color getBorderColorTop()
+   {
+      return borderColorTop;
+   }
+
+   public Color getBorderColorBottom()
+   {
+      return borderColorBottom;
+   }
+
+   public float getBorderWidthLeft()
+   {
+      return getVariableBorderWidth( borderWidthLeft, LEFT );
+   }
+
+   public void setBorderWidthLeft( float borderWidthLeft )
+   {
+      this.borderWidthLeft = borderWidthLeft;
+      updateBorderBasedOnWidth(borderWidthLeft, LEFT);
+   }
+
+   public float getBorderWidthRight()
+   {
+      return getVariableBorderWidth( borderWidthRight, RIGHT );
+   }
+
+   public void setBorderWidthRight( float borderWidthRight )
+   {
+      this.borderWidthRight = borderWidthRight;
+      updateBorderBasedOnWidth(borderWidthRight, RIGHT);
+   }
+
+   public float getBorderWidthTop()
+   {
+      return getVariableBorderWidth( borderWidthTop, TOP );
+   }
+
+   public void setBorderWidthTop( float borderWidthTop )
+   {
+      this.borderWidthTop = borderWidthTop;
+      updateBorderBasedOnWidth(borderWidthTop, TOP);
+   }
+
+   public float getBorderWidthBottom()
+   {
+      return getVariableBorderWidth( borderWidthBottom, BOTTOM );
+   }
+
+   public void setBorderWidthBottom( float borderWidthBottom )
+   {
+      this.borderWidthBottom = borderWidthBottom;
+      updateBorderBasedOnWidth(borderWidthBottom, BOTTOM);
+   }
+
+/**
+ * Updates the border flag for a side based on the specified
+ * width.  A width of 0 will disable the border on that side.
+ * Any other width enables it.
+ * @param width  width of border
+ * @param side   border side constant
+ */
+
+   private void updateBorderBasedOnWidth(float width, int side)
+   {
+      useVariableBorders = true;
+      if (width > 0)
+      {
+         enableBorderSide(side);
+      }
+      else
+      {
+         disableBorderSide(side);
+      }
+   }
+
+   private float getVariableBorderWidth( float variableWidthValue, int side )
+   {
+      if ((border & side) != 0)
+      {
+         return  variableWidthValue != UNDEFINED ? variableWidthValue : borderWidth;
+      }
+      else
+      {
+         return 0;
+      }
+   }
+
+/**
+ * Indicates whether variable width borders are being used.
+ * Returns true if <CODE>setBorderWidthLeft, setBorderWidthRight,
+ * setBorderWidthTop, or setBorderWidthBottom</CODE> has been called.
+ *
+ * @return true if variable width borders are in use
+ *
+ */
+   public boolean isUseVariableBorders()
+   {
+      return useVariableBorders;
+   }
+
+   public void setUseVariableBorders(boolean useVariableBorders)
+   {
+      this.useVariableBorders = useVariableBorders;
+   }
+
 }

@@ -96,14 +96,13 @@ public class Cell extends Rectangle implements TextElementArray {
 
 	// static final membervariable
 
-/** This constant can be used as empty cell. */
-	public static final Cell EMPTY_CELL = new Cell(true);
-
-/** This constant can be used as empty cell. */
-	public static final Cell DUMMY_CELL = new Cell(true);
-	static {
-		DUMMY_CELL.setColspan(3);
-		DUMMY_CELL.setBorder(NO_BORDER);
+    // This accessor replaces the dangerous static member DUMMY_CELL
+    /** Get dummy cell used when merging inner tables. */
+    public static Cell getDummyCell() {
+        Cell cell = new Cell(true);
+        cell.setColspan(3);
+        cell.setBorder(NO_BORDER);
+        return cell;
 	}
 
 	// membervariables
@@ -131,6 +130,22 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /** Is this <CODE>Cell</CODE> a header? */
 	protected boolean header;
+
+    /** Indicates that the largest ascender height should be used to determine the
+     * height of the first line.  Note that this only has an effect when rendered
+     * to PDF.  Setting this to true can help with vertical alignment problems. */
+    protected boolean useAscender = false;
+
+    /** Indicates that the largest descender height should be added to the height of
+     * the last line (so characters like y don't dip into the border).   Note that
+     * this only has an effect when rendered to PDF. */
+    protected boolean useDescender = false;
+
+    /**
+     * Adjusts the cell contents to compensate for border widths.  Note that
+     * this only has an effect when rendered to PDF.
+     */
+    protected boolean useBorderPadding;
 
 	// constructors
 
@@ -198,10 +213,12 @@ public class Cell extends Rectangle implements TextElementArray {
 		setBorder(UNDEFINED);
 		setBorderWidth(0.5f);
 
-		// Update by Benoit WIART <b.wiart@proxiad.com>
-		if(element instanceof Phrase) {
+		try {
 			Phrase p = (Phrase)element;
 			leading = p.leading();
+		}
+		catch(Exception e) {
+			// empty on purpose
 		}
 
 		// initializes the arraylist and adds an element
@@ -411,7 +428,7 @@ public class Cell extends Rectangle implements TextElementArray {
 				table.setWidths(widths);
 				Cell tmp;
 				if (arrayList.size() == 0) {
-					table.addCell(DUMMY_CELL);
+					table.addCell(getDummyCell());
 				}
 				else {
 					tmp = new Cell();
@@ -427,7 +444,7 @@ public class Cell extends Rectangle implements TextElementArray {
 				table.addCell(tmp);
 				table.insertTable((Table)element);
 				table.addCell(tmp);
-				table.addCell(DUMMY_CELL);
+				table.addCell(getDummyCell());
 				clear();
 				arrayList.add(table);
 				return;
@@ -889,4 +906,53 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * A useful value of this property could be e.g. "..."
 	 * @author dperezcar@fcc.es*/
 	String showTruncation;
+
+
+    /**
+     * Sets the value of {@link #useAscender}.
+     * @param use use ascender height if true
+     */
+    public void setUseAscender(boolean use) {
+        useAscender = use;
+    }
+
+    /**
+     * Gets the value of {@link #useAscender}
+     * @return useAscender
+     */
+    public boolean isUseAscender() {
+        return useAscender;
+    }
+
+    /**
+     * Sets the value of {@link #useDescender}.
+     * @param use use descender height if true
+     */
+    public void setUseDescender(boolean use) {
+        useDescender = use;
+    }
+
+    /**
+     * gets the value of {@link #useDescender }
+     * @return useDescender
+     */
+    public boolean isUseDescender() {
+        return useDescender;
+    }
+
+    /**
+     * Sets the value of {@link #useBorderPadding}.
+     * @param use adjust layour for borders if true
+     */
+    public void setUseBorderPadding(boolean use) {
+        useBorderPadding = use;
+    }
+
+    /**
+     * Gets the value of {@link #useBorderPadding}.
+     * @return useBorderPadding
+     */
+    public boolean isUseBorderPadding() {
+        return useBorderPadding;
+    }
 }

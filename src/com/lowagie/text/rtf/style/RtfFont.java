@@ -291,7 +291,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
             result.write(FONT_CHARSET);
             result.write(intToByteArray(charset));
             result.write(DELIMITER);
-            result.write(document.filterSpecialChar(fontName, true).getBytes());
+            result.write(fontName.getBytes());
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }

@@ -109,6 +109,8 @@ public class TextField {
      */    
     public static final int EDIT = 128;
 
+    public static final int COMB = 256;
+
     protected float borderWidth = BORDER_WIDTH_THIN;
     protected int borderStyle = PdfBorderDictionary.STYLE_SOLID;
     protected Color borderColor;
@@ -187,16 +189,7 @@ public class TextField {
             app.fill();
         }
         // border
-        if (borderStyle == PdfBorderDictionary.STYLE_DASHED) {
-            if (borderWidth != 0 && borderColor != null) {
-                app.setLineDash(3, 0);
-                app.setColorStroke(borderColor);
-                app.setLineWidth(borderWidth);
-                app.rectangle(borderWidth / 2, borderWidth / 2, box.width() - borderWidth, box.height() - borderWidth);
-                app.stroke();
-            }
-        }
-        else if (borderStyle == PdfBorderDictionary.STYLE_UNDERLINE) {
+        if (borderStyle == PdfBorderDictionary.STYLE_UNDERLINE) {
             if (borderWidth != 0 && borderColor != null) {
                 app.setColorStroke(borderColor);
                 app.setLineWidth(borderWidth);
@@ -236,10 +229,23 @@ public class TextField {
         }
         else {
             if (borderWidth != 0 && borderColor != null) {
+                if (borderStyle == PdfBorderDictionary.STYLE_DASHED)
+                    app.setLineDash(3, 0);
                 app.setColorStroke(borderColor);
                 app.setLineWidth(borderWidth);
                 app.rectangle(borderWidth / 2, borderWidth / 2, box.width() - borderWidth, box.height() - borderWidth);
                 app.stroke();
+                if ((options & COMB) != 0 && maxCharacterLength > 1) {
+                    float step = box.width() / maxCharacterLength;
+                    float yb = borderWidth / 2;
+                    float yt = box.height() - borderWidth / 2;
+                    for (int k = 1; k < maxCharacterLength; ++k) {
+                        float x = step * k;
+                        app.moveTo(x, yb);
+                        app.lineTo(x, yt);
+                    }
+                    app.stroke();
+                }
             }
         }
         return app;
@@ -342,17 +348,38 @@ public class TextField {
             float offsetY = offsetX + (h - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
             if (offsetY < offsetX)
                 offsetY = offsetX;
-            if (alignment == Element.ALIGN_RIGHT) {
-                float wd = ufont.getWidthPoint(text, usize);
-                app.moveText(box.width() - 2 * offsetX - wd, offsetY);
+            if ((options & COMB) != 0 && maxCharacterLength > 0) {
+                int textLen = Math.min(maxCharacterLength, text.length());
+                int position = 0;
+                if (alignment == Element.ALIGN_RIGHT) {
+                    position = maxCharacterLength - textLen;
+                }
+                else if (alignment == Element.ALIGN_CENTER) {
+                    position = (maxCharacterLength - textLen) / 2;
+                }
+                float step = box.width() / maxCharacterLength;
+                float start = step / 2 + position * step;
+                for (int k = 0; k < textLen; ++k) {
+                    String c = text.substring(k, k + 1);
+                    float wd = ufont.getWidthPoint(c, usize);
+                    app.setTextMatrix(start - wd / 2, offsetY);
+                    app.showText(c);
+                    start += step;
+                }
             }
-            else if (alignment == Element.ALIGN_CENTER) {
-                float wd = ufont.getWidthPoint(text, usize);
-                app.moveText(box.width() / 2  - wd / 2, offsetY);
+            else {
+                if (alignment == Element.ALIGN_RIGHT) {
+                    float wd = ufont.getWidthPoint(text, usize);
+                    app.moveText(box.width() - 2 * offsetX - wd, offsetY);
+                }
+                else if (alignment == Element.ALIGN_CENTER) {
+                    float wd = ufont.getWidthPoint(text, usize);
+                    app.moveText(box.width() / 2  - wd / 2, offsetY);
+                }
+                else
+                    app.moveText(2 * offsetX, offsetY);
+                app.showText(text);
             }
-            else
-                app.moveText(2 * offsetX, offsetY);
-            app.showText(text);
         }
         app.endText();
         app.restoreState();
@@ -553,6 +580,10 @@ public class TextField {
      * @return a new text field
      */    
     public PdfFormField getTextField() throws IOException, DocumentException {
+        if (maxCharacterLength <= 0)
+            options &= ~COMB;
+        if ((options & COMB) != 0)
+            options &= ~MULTILINE;
         PdfFormField field = PdfFormField.createTextField(writer, false, false, maxCharacterLength);
         field.setWidget(box, PdfAnnotation.HIGHLIGHT_INVERT);
         field.setFieldName(fieldName);
@@ -610,6 +641,8 @@ public class TextField {
             field.setFieldFlags(PdfFormField.FF_FILESELECT);
         if ((options & DO_NOT_SPELL_CHECK) != 0)
             field.setFieldFlags(PdfFormField.FF_DONOTSPELLCHECK);
+        if ((options & COMB) != 0)
+            field.setFieldFlags(PdfFormField.FF_COMB);
         return field;
     }
     
@@ -632,7 +665,7 @@ public class TextField {
     }
 
     protected PdfFormField getChoiceField(boolean isList) throws IOException, DocumentException {
-        options &= ~MULTILINE;
+        options &= (~MULTILINE) & (~COMB);
         String uchoices[] = choices;
         if (uchoices == null)
             uchoices = new String[0];

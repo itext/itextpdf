@@ -430,6 +430,30 @@ public class PdfLine {
         return total;
     }
     
+/**
+ * Gets the maximum size of the ascender for all the fonts used
+ * in this line.
+ * @return maximum size of all the ascenders used in this line
+ */
+   public float getAscender() {
+       float ascender = 0;
+       for (int k = 0; k < line.size(); ++k) {
+           PdfChunk ck = (PdfChunk)line.get(k);
+           if (ck.isImage())
+               ascender = Math.max(ascender, ck.getImageOffsetY());
+           else {
+               PdfFont font = ck.font();
+               ascender = Math.max(ascender, font.getFont().getFontDescriptor(BaseFont.ASCENT, font.size()));
+           }
+       }
+       return ascender;
+   }
+
+/**
+ * Gets the biggest descender for all the fonts used 
+ * in this line.  Note that this is a negative number.
+ * @return maximum size of all the ascenders used in this line
+ */
     public float getDescender() {
         float descender = 0;
         for (int k = 0; k < line.size(); ++k) {

@@ -54,7 +54,7 @@ import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -83,7 +83,7 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
     /**
      * The list of fonts
      */
-    private Vector fontList = new Vector();
+    private ArrayList fontList = new ArrayList();
 
     /**
      * Creates a RtfFontList

@@ -54,7 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
@@ -101,7 +101,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     /**
      * The content of this RtfCell
      */
-    private Vector content = null;
+    private ArrayList content = null;
     /**
      * The right margin of this RtfCell
      */
@@ -205,7 +205,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * @param cell The Cell to import
      */
     private void importCell(Cell cell) {
-        this.content = new Vector();
+        this.content = new ArrayList();
         
         if(cell == null) {
             this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, this.parentRow.getParentTable().getBorders());

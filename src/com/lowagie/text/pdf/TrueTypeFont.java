@@ -893,7 +893,7 @@ class TrueTypeFont extends BaseFont {
      */
     int getRawWidth(int c, String name) {
         HashMap map = null;
-        if (name == null)
+        if (name == null || cmap31 == null)
             map = cmap10;
         else
             map = cmap31;
@@ -1141,6 +1141,10 @@ class TrueTypeFont extends BaseFont {
         if (!fontSpecific && cmap31 != null) 
             return (int[])cmap31.get(new Integer(c));
         if (fontSpecific && cmap10 != null) 
+            return (int[])cmap10.get(new Integer(c));
+        if (cmap31 != null) 
+            return (int[])cmap31.get(new Integer(c));
+        if (cmap10 != null) 
             return (int[])cmap10.get(new Integer(c));
         return null;
     }

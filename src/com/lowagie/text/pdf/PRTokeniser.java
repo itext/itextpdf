@@ -143,6 +143,10 @@ public class PRTokeniser {
         return new RandomAccessFileOrArray(file);
     }
     
+    public RandomAccessFileOrArray getFile() {
+        return file;
+    }
+    
     public String readString(int size) throws IOException {
         StringBuffer buf = new StringBuffer();
         int ch;
@@ -491,8 +495,14 @@ public class PRTokeniser {
         boolean eol = false;
         int ptr = 0;
         int len = input.length;
-        while (!eol && ptr < len) {
-            switch (c = read()) {
+	// ssteward, pdftk-1.10, 040922: 
+	// skip initial whitespace; added this because PdfReader.rebuildXref()
+	// assumes that line provided by readLineSegment does not have init. whitespace;
+	if ( ptr < len ) {
+	    while ( isWhitespace( (c = read()) ) );
+	}
+	while ( !eol && ptr < len ) {
+	    switch (c) {
                 case -1:
                 case '\n':
                     eol = true;
@@ -508,6 +518,14 @@ public class PRTokeniser {
                     input[ptr++] = (byte)c;
                     break;
             }
+
+	    // break loop? do it before we read() again
+	    if( eol || len <= ptr ) {
+		break;
+	    }
+	    else {
+		c = read();
+	    }
         }
         if (ptr >= len) {
             eol = false;

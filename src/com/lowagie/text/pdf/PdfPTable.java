@@ -114,6 +114,35 @@ public class PdfPTable implements Element{
      */
     private boolean lockedWidth = false;
     
+    /**
+     * Holds value of property splitRows.
+     */
+    private boolean splitRows = false;
+    
+/** The spacing before the table. */
+    protected float spacingBefore;
+    
+/** The spacing after the table. */
+    protected float spacingAfter;
+    
+    /**
+     * Holds value of property extendLastRow.
+     */
+    private boolean extendLastRow;
+    
+    /**
+     * Holds value of property headersInEvent.
+     */
+    private boolean headersInEvent;
+    
+    /**
+     * Holds value of property splitLate.
+     */
+    private boolean splitLate;
+    
+    protected PdfPTable() {
+    }
+    
     /** Constructs a <CODE>PdfPTable</CODE> with the relative column widths.
      * @param relativeWidths the relative column widths
      */    
@@ -159,14 +188,54 @@ public class PdfPTable implements Element{
         defaultCell = new PdfPCell(table.defaultCell);
         currentRow = new PdfPCell[table.currentRow.length];
         isColspan = table.isColspan;
+        splitRows = table.splitRows;
+        spacingAfter = table.spacingAfter;
+        spacingBefore = table.spacingBefore;
+        headerRows = table.headerRows;
+        lockedWidth = table.lockedWidth;
+        extendLastRow = table.extendLastRow;
+        headersInEvent = table.headersInEvent;
+        widthPercentage = table.widthPercentage;
+        splitLate = table.splitLate;
+        skipFirstHeader = this.skipFirstHeader;
         for (int k = 0; k < currentRow.length; ++k) {
             if (table.currentRow[k] == null)
                 break;
             currentRow[k] = new PdfPCell(table.currentRow[k]);
         }
         for (int k = 0; k < table.rows.size(); ++k) {
-            rows.add(new PdfPRow((PdfPRow)(table.rows.get(k))));
+            PdfPRow row = (PdfPRow)(table.rows.get(k));
+            if (row != null)
+                row = new PdfPRow(row);
+            rows.add(row);
         }
+    }
+    
+    public static PdfPTable shallowCopy(PdfPTable table) {
+        PdfPTable nt = new PdfPTable();
+        nt.relativeWidths = new float[table.relativeWidths.length];
+        nt.absoluteWidths = new float[table.relativeWidths.length];
+        System.arraycopy(table.relativeWidths, 0, nt.relativeWidths, 0, nt.relativeWidths.length);
+        System.arraycopy(table.absoluteWidths, 0, nt.absoluteWidths, 0, nt.relativeWidths.length);
+        nt.totalWidth = table.totalWidth;
+        nt.totalHeight = table.totalHeight;
+        nt.currentRowIdx = 0;
+        nt.tableEvent = table.tableEvent;
+        nt.runDirection = table.runDirection;
+        nt.defaultCell = new PdfPCell(table.defaultCell);
+        nt.currentRow = new PdfPCell[table.currentRow.length];
+        nt.isColspan = table.isColspan;
+        nt.splitRows = table.splitRows;
+        nt.spacingAfter = table.spacingAfter;
+        nt.spacingBefore = table.spacingBefore;
+        nt.headerRows = table.headerRows;
+        nt.lockedWidth = table.lockedWidth;
+        nt.extendLastRow = table.extendLastRow;
+        nt.headersInEvent = table.headersInEvent;
+        nt.widthPercentage = table.widthPercentage;
+        nt.splitLate = table.splitLate;
+        nt.skipFirstHeader = table.skipFirstHeader;
+        return nt;
     }
     
     /** Sets the relative widths of the table.
@@ -262,8 +331,21 @@ public class PdfPTable implements Element{
         totalHeight = 0;
         for (int k = 0; k < rows.size(); ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
-            row.setWidths(absoluteWidths);
-            totalHeight += row.getMaxHeights();
+            if (row != null) {
+                row.setWidths(absoluteWidths);
+                totalHeight += row.getMaxHeights();
+            }
+        }
+    }
+    
+    public void calculateHeightsFast() {
+        if (totalWidth <= 0)
+            return;
+        totalHeight = 0;
+        for (int k = 0; k < rows.size(); ++k) {
+            PdfPRow row = (PdfPRow)rows.get(k);
+            if (row != null)
+                totalHeight += row.getMaxHeights();
         }
     }
     
@@ -408,17 +490,22 @@ public class PdfPTable implements Element{
         float yPosStart = yPos;
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
-            row.writeCells(colStart, colEnd, xPos, yPos, canvases);
-            yPos -= row.getMaxHeights();
+            if (row != null) {
+                row.writeCells(colStart, colEnd, xPos, yPos, canvases);
+                yPos -= row.getMaxHeights();
+            }
         }
         if (tableEvent != null && colStart == 0 && colEnd == absoluteWidths.length) {
             float heights[] = new float[rowEnd - rowStart + 1];
             heights[0] = yPosStart;
             for (int k = rowStart; k < rowEnd; ++k) {
                 PdfPRow row = (PdfPRow)rows.get(k);
-                heights[k - rowStart + 1] = heights[k - rowStart] - row.getMaxHeights();
+                float hr = 0;
+                if (row != null)
+                    hr = row.getMaxHeights();
+                heights[k - rowStart + 1] = heights[k - rowStart] - hr;
             }
-            tableEvent.tableLayout(this, getEventWidths(xPos, rowStart, rowEnd, false), heights, 0, rowStart, canvases);
+            tableEvent.tableLayout(this, getEventWidths(xPos, rowStart, rowEnd, headersInEvent), heights, headersInEvent ? headerRows : 0, rowStart, canvases);
         }
         return yPos;
     }
@@ -550,6 +637,8 @@ public class PdfPTable implements Element{
         if (totalWidth <= 0 || idx < 0 || idx >= rows.size())
             return 0;
         PdfPRow row = (PdfPRow)rows.get(idx);
+        if (row == null)
+            return 0;
         return row.getMaxHeights();
     }
     
@@ -562,7 +651,8 @@ public class PdfPTable implements Element{
         int size = Math.min(rows.size(), headerRows);
         for (int k = 0; k < size; ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
-            total += row.getMaxHeights();
+            if (row != null)
+                total += row.getMaxHeights();
         }
         return total;
     }
@@ -577,7 +667,8 @@ public class PdfPTable implements Element{
         }
         if (totalWidth > 0) {
             PdfPRow row = (PdfPRow)rows.get(rowNumber);
-            totalHeight -= row.getMaxHeights();
+            if (row != null)
+                totalHeight -= row.getMaxHeights();
         }
         rows.remove(rowNumber);
         return true;
@@ -590,6 +681,19 @@ public class PdfPTable implements Element{
         return deleteRow(rows.size() - 1);
     }
     
+    /**
+     * Removes all of the rows except headers
+     */
+    public void deleteBodyRows() {
+        ArrayList rows2 = new ArrayList();
+        for (int k = 0; k < headerRows; ++k)
+            rows2.add(rows.get(k));
+        rows = rows2;
+        totalHeight = 0;
+        if (totalWidth > 0)
+            totalHeight = getHeaderHeight();
+    }
+
     /** Gets the number of the rows that constitute the header.
      * @return the number of the rows that constitute the header
      */
@@ -664,7 +768,7 @@ public class PdfPTable implements Element{
     }
     
     /** Sets the horizontal alignment of the table relative to the page.
-     * It only has meaning if the width precentage is less than
+     * It only has meaning if the width percentage is less than
      * 100%.
      * @param horizontalAlignment the horizontal alignment of the table relative to the page
      */
@@ -673,10 +777,14 @@ public class PdfPTable implements Element{
     }
     
     //add by Jin-Hsia Yang
-    PdfPRow getRow(int idx) {
+    public PdfPRow getRow(int idx) {
         return (PdfPRow)rows.get(idx);
     }
     //end add
+
+    public ArrayList getRows() {
+        return rows;
+    }
 
     /** Sets the table event for this table.
      * @param event the table event for this table
@@ -704,11 +812,21 @@ public class PdfPTable implements Element{
         if (isColspan) {
             int n = 0;
             if (includeHeaders) {
-                for (int k = 0; k < headerRows; ++k)
-                    widths[n++] = ((PdfPRow)rows.get(k)).getEventWidth(xPos);
+                for (int k = 0; k < headerRows; ++k) {
+                    PdfPRow row = (PdfPRow)rows.get(k);
+                    if (row == null)
+                        ++n;
+                    else
+                        widths[n++] = row.getEventWidth(xPos);
+                }
             }
-            for (; firstRow < lastRow; ++firstRow)
-                widths[n++] = ((PdfPRow)rows.get(firstRow)).getEventWidth(xPos);
+            for (; firstRow < lastRow; ++firstRow) {
+                    PdfPRow row = (PdfPRow)rows.get(firstRow);
+                    if (row == null)
+                        ++n;
+                    else
+                        widths[n++] = row.getEventWidth(xPos);
+            }
         }
         else {
             float width[] = new float[absoluteWidths.length + 1];
@@ -725,7 +843,7 @@ public class PdfPTable implements Element{
     /** Getter for property skipFirstHeader.
      * @return Value of property skipFirstHeader.
      */
-    public boolean getSkipFirstHeader() {
+    public boolean isSkipFirstHeader() {
         return skipFirstHeader;
     }
     
@@ -762,125 +880,115 @@ public class PdfPTable implements Element{
     public void setLockedWidth(boolean lockedWidth) {
         this.lockedWidth = lockedWidth;
     }
-
-    /** This function tries to split the cells in a PdfPTable to fit the given
-     * page size. It does so by dividing up any sub tables within the table
-     * into seperate rows within the table. This function adds rows to the
-     * table. The top row after a breakup contains all of the cells on the same
-     * row as the broken up cell plus whatever could fit on a page for the
-     * broken up cell. The subsequent rows contain blank cells plus the
-     * remaining content of the cells. 
+    
+    /**
+     * Gets the split value.
+     * @return true to split; false otherwise
      */
-
-    public void fitCellsToPageSize(float maxWidth, float maxHeight)
-    {
-        setTotalWidth(maxWidth);
-        maxHeight -= getHeaderHeight();
-        for(int i = getHeaderRows(); i < size(); i++) {
-            float rowHeight = getRowHeight(i);
-            if(rowHeight > maxHeight) {
-                PdfPRow oversizedRow = getRow(i);
-                ArrayList dividedRows = oversizedRow.splitToPageSize(maxWidth, maxHeight);
-                rows.remove(i);
-                rows.addAll(i, dividedRows);
-            }
-        }
-
-        calculateWidths();
-        calculateHeights();
+    public boolean isSplitRows() {
+        return this.splitRows;
     }
-
-    /** Split the table up into smaller tables that each fit on a page.
-     * this function is primarily used for nested tables. If 
-     * we call fitCellsToPageSize on a table with a nested table inside
-     * we need to split that table into pieces that each fit on a page
+    
+    /**
+     * When set the rows that won't fit in the page will be split. 
+     * Note that it takes at least twice the memory to handle a split table
+     * than a normal table.
+     * @param splitRows true to split; false otherwise
      */
-    protected ArrayList splitToPageSize(float maxWidth, float maxHeight)
-    {
-        ArrayList splitTables = new ArrayList();
-
-        //first split up the cells to the size of a page
-        fitCellsToPageSize(maxWidth, maxHeight);
-        if(getTotalHeight() < maxHeight) {
-            splitTables.add(this);
-            return splitTables;
-        }
-        else {
-            float height = getHeaderHeight();
-            int startIndex = 0;
-            for(int i = getHeaderRows(); i < rows.size(); i++) {
-                height += ((PdfPRow)rows.get(i)).getMaxHeights();
-                //if the height up to this point is larger than the size of a page
-                //break up the table at the last cell
-                if(height > maxHeight - 1) {
-                    PdfPTable table = subTable(startIndex, i);
-                    splitTables.add(table);
-                    height = ((PdfPRow)rows.get(i)).getMaxHeights() + getHeaderHeight();
-                    startIndex = i;
-                }
-            }
-            if(startIndex != rows.size()) {
-                PdfPTable table = subTable(startIndex, rows.size());
-                splitTables.add(table);
-            }
-        }
-
-        return splitTables;
+    public void setSplitRows(boolean splitRows) {
+        this.splitRows = splitRows;
     }
+    
+/**
+ * Sets the spacing before this table.
+ *
+ * @param	spacing		the new spacing
+ */
+    
+    public void setSpacingBefore(float spacing) {
+        this.spacingBefore = spacing;
+    }
+    
+/**
+ * Sets the spacing after this table.
+ *
+ * @param	spacing		the new spacing
+ */
+    
+    public void setSpacingAfter(float spacing) {
+        this.spacingAfter = spacing;
+    }    
 
-    /** Returns a new table containing the rows between fromIndex inclusive and
-     * toIndex exclusive. Header rows are copied into the new table.  Unlike
-     * the java.util.List subList function, changes to this table are not
-     * reflected in the original table.
+/**
+ * Gets the spacing before this table.
+ *
+ * @return	the spacing
+ */
+    
+    public float spacingBefore() {
+        return spacingBefore;
+    }
+    
+/**
+ * Gets the spacing before this table.
+ *
+ * @return	the spacing
+ */
+    
+    public float spacingAfter() {
+        return spacingAfter;
+    }    
+    
+    /**
+     *  Gets the value of the last row extension.
+     * @return true if the last row will extend; false otherwise
      */
-
-    protected PdfPTable subTable(int fromIndex, int toIndex)
-    {
-        if(toIndex < fromIndex) {
-            throw new IllegalArgumentException("From Index must be less than toIndex.");
-        }
-        if(toIndex < 0 || fromIndex > rows.size() + 1) {
-            throw new IndexOutOfBoundsException("endpoints out of range fromIndex < 0 || toIndex > size");
-        }
-
-        PdfPTable newTable = new PdfPTable(relativeWidths);
-
-        newTable.setTotalWidth(totalWidth);
-        newTable.setHeaderRows(headerRows);
-        newTable.tableEvent = tableEvent;
-        newTable.runDirection = runDirection;
-        newTable.defaultCell = new PdfPCell(defaultCell);
-
-        //if we are including the last row, lets include the current row
-        if(fromIndex == rows.size() + 1) {
-            newTable.isColspan = isColspan;
-            newTable.currentRowIdx = currentRowIdx;
-
-            for (int k = 0; k < currentRow.length; ++k) {
-                if (currentRow[k] == null)
-                    break;
-                newTable.currentRow[k] = new PdfPCell(currentRow[k]);
-            }
-        }
-
-        //copy the header rows into the new table
-        if(fromIndex < getHeaderRows()) {
-            fromIndex = getHeaderRows();
-        }
-        else {
-            for (int k = 0; k < getHeaderRows(); ++k) {
-                newTable.rows.add(new PdfPRow((PdfPRow)(rows.get(k))));
-            }
-        }
-
-        //copy the selected rows into the new table
-        for (int k = fromIndex; k < toIndex; ++k) {
-            newTable.rows.add(new PdfPRow((PdfPRow)(rows.get(k))));
-        }
-
-        newTable.calculateWidths();
-        newTable.calculateHeights();
-
-        return newTable;
+    public boolean isExtendLastRow() {
+        return this.extendLastRow;
     }
+    
+    /**
+     * When set the last row will be extended to fill all the remaining space to the
+     * bottom boundary.
+     * @param extendLastRow true to extend the last row; false otherwise
+     */
+    public void setExtendLastRow(boolean extendLastRow) {
+        this.extendLastRow = extendLastRow;
+    }
+    
+    /**
+     * Gets the header status inclusion in PdfPTableEvent.
+     * @return true if the headers are included; false otherwise
+     */
+    public boolean isHeadersInEvent() {
+        return this.headersInEvent;
+    }
+    
+    /**
+     * When set the PdfPTableEvent will include the headers.
+     * @param headersInEvent true to include the headers; false otherwise
+     */
+    public void setHeadersInEvent(boolean headersInEvent) {
+        this.headersInEvent = headersInEvent;
+    }
+    
+    /**
+     * Gets the property splitLate.
+     * @return the property splitLate
+     */
+    public boolean isSplitLate() {
+        return this.splitLate;
+    }
+    
+    /**
+     * If true the row will only split if it's the first one in an empty page.
+     * It's false by default.
+     *<p>
+     * It's only meaningful if setSplitRows(true).
+     * @param splitLate the property value
+     */
+    public void setSplitLate(boolean splitLate) {
+        this.splitLate = splitLate;
+    }
+    
 }

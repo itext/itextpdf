@@ -158,11 +158,11 @@ public class PdfDestination extends PdfArray {
     public PdfDestination(int type, float left, float top, float zoom) {
         super(PdfName.XYZ);
         if (left < 0)
-            add(new PdfLiteral("null"));
+            add(PdfNull.PDFNULL);
         else
             add(new PdfNumber(left));
         if (top < 0)
-            add(new PdfLiteral("null"));
+            add(PdfNull.PDFNULL);
         else
             add(new PdfNumber(top));
         add(new PdfNumber(zoom));
