@@ -877,7 +877,7 @@ class PdfDocument extends Document implements DocListener {
             currentHeight = indentTop() - currentY;
         }
         ptable.setTableEvent(event);
-
+        
     }
     
 /**
@@ -1173,12 +1173,13 @@ class PdfDocument extends Document implements DocListener {
                         }
                         
                         // we paint the graphics of the table
+                        /* bugfix by Tom Ring and Veerendra Namineni
                         if (table.hasHeader()) {
                             graphics.rectangle(table.rectangle(top(), indentBottom()));
                         }
                         else {
                             graphics.rectangle(table.rectangle(indentTop(), indentBottom()));
-                        }
+                        } */
                         
                         /* start patch sep 8 2001 Francesco De Milato */
                         float lostTableBottom = 0;
@@ -1192,20 +1193,23 @@ class PdfDocument extends Document implements DocListener {
                             // if there are lines to add, add them
                             if (lines != null && lines.size() > 0) {
                                 // we paint the borders of the cells
+                                
+                        /* start bugfix by Tom Ring and Veerendra Namineni
                                 if (pagetop == indentTop()) {
                                     graphics.rectangle(cell.rectangle(pagetop - leading / 2, indentBottom()));
                                 }
-                                else {
+                                else {*/
                                     graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
-                                }
+                        /*      } */
                                 
                                 /* start patch sep 8 2001 Francesco De Milato */
-                                lostTableBottom = cell.bottom();
+                                /* extra patch by Tom Ring and Veerendra Namineni */
+                                lostTableBottom = Math.max(cell.bottom(), indentBottom());
                                 lostTableTop = cell.top();
                                 /* stop patch sep 8 2001 Francesco De Milato */
                                 
                                 // we write the text
-                                float cellTop = cell.top(pagetop - oldHeight) - 6;
+                                float cellTop = cell.top(pagetop - oldHeight) + 2; // bugfix by Tom Ring and Veerendra Namineni
                                 text.moveText(0, cellTop);
                                 cellDisplacement = flushLines() - cellTop;
                                 text.moveText(0, cellDisplacement);
@@ -1219,37 +1223,49 @@ class PdfDocument extends Document implements DocListener {
                             }
                         }
                         
+                        /* start bugfix by Tom Ring and Veerendra Namineni */
+                        // we paint the graphics of the table after looping through all the cells
+                        Rectangle tablerec = new Rectangle(table);
+                        tablerec.setBottom(lostTableBottom);
+                        tablerec.setBorder(table.border());
+                        tablerec.setBorderWidth(table.borderWidth());
+                        tablerec.setBorderColor(table.borderColor());
+                        tablerec.setBackgroundColor(table.backgroundColor());
+                        tablerec.setGrayFill(table.grayFill());
+                        graphics.rectangle(tablerec.rectangle(top(), indentBottom()));
+                        /* end bugfix by Tom Ring and Veerendra Namineni */
+                        
                         // if the table continues on the next page
                         if (newPage && ! cells.isEmpty()) {
                             /* start patch sep 8 2001 Francesco De Milato */
                             // Get the border's width
                             graphics.setLineWidth(table.borderWidth());
-
-														/* start patch Sep 13 2001 Matt Benson */
-														if ((table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
-														{
-                            // Draw the bottom line
-															graphics.moveTo(table.left(),lostTableBottom);
-															graphics.lineTo(table.right(), lostTableBottom);
-															graphics.stroke();
-														}//end if bottom border should be drawn
                             
-														if ((table.border() & Rectangle.LEFT) == Rectangle.LEFT)
-														{
-                            // Connect the bottom line with the left table's border
-															graphics.moveTo(table.left(),lostTableBottom);
-															graphics.lineTo(table.left(), lostTableTop);
-															graphics.stroke();
-														}//end if left border should be drawn
-
-														if ((table.border() & Rectangle.RIGHT) == Rectangle.RIGHT)
-														{
-															// Connect the bottom line with the right table's border
-															graphics.moveTo(table.right(), lostTableBottom);
-															graphics.lineTo(table.right(), lostTableTop);
-															graphics.stroke();
-														}//end if right border should be drawn
-														/* end patch Sep 13 2001 Matt Benson */
+                            /* start patch Sep 13 2001 Matt Benson */
+                            if ((table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
+                            {
+                                // Draw the bottom line
+                                graphics.moveTo(table.left(),lostTableBottom);
+                                graphics.lineTo(table.right(), lostTableBottom);
+                                graphics.stroke();
+                            }//end if bottom border should be drawn
+                            
+                            if ((table.border() & Rectangle.LEFT) == Rectangle.LEFT)
+                            {
+                                // Connect the bottom line with the left table's border
+                                graphics.moveTo(table.left(),lostTableBottom);
+                                graphics.lineTo(table.left(), lostTableTop);
+                                graphics.stroke();
+                            }//end if left border should be drawn
+                            
+                            if ((table.border() & Rectangle.RIGHT) == Rectangle.RIGHT)
+                            {
+                                // Connect the bottom line with the right table's border
+                                graphics.moveTo(table.right(), lostTableBottom);
+                                graphics.lineTo(table.right(), lostTableTop);
+                                graphics.stroke();
+                            }//end if right border should be drawn
+                                                                                                                /* end patch Sep 13 2001 Matt Benson */
                             /* end patch sep 8 2001 Francesco De Milato */
                             
                             float difference = indentBottom() + leading;
@@ -1370,7 +1386,7 @@ class PdfDocument extends Document implements DocListener {
         // if it's a new image, add it to the document
         else {
             if (image.isImgTemplate()) {
-                name = new PdfName("img" + images.size());   
+                name = new PdfName("img" + images.size());
             }
             else {
                 PdfImage i = new PdfImage(image, "img" + images.size());
@@ -1378,7 +1394,7 @@ class PdfDocument extends Document implements DocListener {
                 name = i.name();
             }
             images.put(image.getMySerialId(), name);
-        }        
+        }
         return name;
     }
     
@@ -1497,7 +1513,7 @@ class PdfDocument extends Document implements DocListener {
         }
         
         // if there is a watermark, the watermark is added
-        if (watermark != null) {            
+        if (watermark != null) {
             float mt[] = watermark.matrix();
             graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
