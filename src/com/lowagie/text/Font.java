@@ -225,6 +225,18 @@ public class Font implements Comparable {
 
 // methods
 
+	/**
+	 * Sets the color.
+	 *
+	 * @param	color	th enew color of the font
+	 *
+	 * @since	iText0.40
+	 */
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
     /**
      * Gets the leading that can be used with this font. 
      *
