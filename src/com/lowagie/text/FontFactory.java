@@ -213,7 +213,7 @@ public class FontFactory extends java.lang.Object {
                 BaseFont bf = BaseFont.createFont(path, BaseFont.WINANSI, false);
                 trueTypeFonts.setProperty(bf.getPostscriptFontName(), path);
             }
-            else if (path.toLowerCase().indexOf(".ttc,") > 0) {
+            else if (path.toLowerCase().endsWith(".ttc") > 0) {
                 String[] names = BaseFont.enumerateTTCNames(path);
                 for (int i = 0; i < names.length; i++) {
                     trueTypeFonts.setProperty(names[i], path + "," + (i + 1));                
