@@ -614,6 +614,7 @@ public class Cell extends Rectangle implements TextElementArray {
         if (leading != -1) {
             buf.append(" ").append(ElementTags.LEADING).append("=\"").append(leading).append("\"");
         }
+        buf.append(">");
         for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
             buf.append(((Element) i.next()).toString());
         }
