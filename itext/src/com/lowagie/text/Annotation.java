@@ -50,6 +50,8 @@
 
 package com.lowagie.text;
 
+import java.net.URL;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -66,13 +68,79 @@ public class Annotation implements Element {
     
     // membervariables
     
-/** This is the title of the <CODE>Annotation</CODE>. */
-    private String title;
+/** This is a possible annotation type. */
+    public static final int TEXT = 0;    
+/** This is a possible annotation type. */
+    public static final int URL_NET = 1;    
+/** This is a possible annotation type. */
+    public static final int URL_AS_STRING = 2;    
+/** This is a possible annotation type. */
+    public static final int FILE_DEST = 3;    
+/** This is a possible annotation type. */
+    public static final int FILE_PAGE = 4;    
+/** This is a possible annotation type. */
+    public static final int NAMED_DEST = 5;    
+/** This is a possible annotation type. */
+    public static final int LAUNCH = 6;
     
-/** This is the content of the <CODE>Annotation</CODE>. */
-    private String text;
+/** This is a possible attribute. */
+    public static String TITLE = "title";
+/** This is a possible attribute. */
+    public static String CONTENT = "content";
+/** This is a possible attribute. */
+    public static String URL = "url";
+/** This is a possible attribute. */
+    public static String FILE = "file";
+/** This is a possible attribute. */
+    public static String DESTINATION = "destination";
+/** This is a possible attribute. */
+    public static String PAGE = "page";
+/** This is a possible attribute. */
+    public static String NAMED = "named";
+/** This is a possible attribute. */
+    public static String APPLICATION = "application";
+/** This is a possible attribute. */
+    public static String PARAMETERS = "parameters";
+/** This is a possible attribute. */
+    public static String OPERATION = "operation";
+/** This is a possible attribute. */
+    public static String DEFAULTDIR = "defaultdir";
+/** This is a possible attribute. */
+    public static String LLX = "llx";
+/** This is a possible attribute. */
+    public static String LLY = "lly";
+/** This is a possible attribute. */
+    public static String urX = "urx";
+/** This is a possible attribute. */
+    public static String URY = "ury";
+    
+/** This is the type of annotation. */
+    private int annotationtype;
+    
+/** This is the title of the <CODE>Annotation</CODE>. */
+    private HashMap attributes = new HashMap();
+    
+/** This is the lower left x-value */
+    private float llx = Float.MIN_VALUE;
+/** This is the lower left y-value */
+    private float lly = Float.MIN_VALUE;
+/** This is the upper right x-value */
+    private float urx = Float.MIN_VALUE;
+/** This is the upper right y-value */
+    private float ury = Float.MIN_VALUE;
     
     // constructors
+    
+/**
+ * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ */
+    
+    private Annotation(float llx, float lly, float urx, float ury) {
+        this.llx = llx;
+        this.lly = lly;
+        this.urx = urx;
+        this.ury = ury;
+    }
     
 /**
  * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
@@ -82,8 +150,92 @@ public class Annotation implements Element {
  */
     
     public Annotation(String title, String text) {
-        this.title = title;
-        this.text = text;
+        annotationtype = TEXT;
+        attributes.put(TITLE, title);
+        attributes.put(CONTENT, text);
+    }
+    
+/**
+ * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ *
+ * @param	title	the title of the annotation
+ * @param	text	the content of the annotation
+ * @param       llx     the lower left x-value
+ * @param       lly     the lower left y-value
+ * @param       urx     the upper right x-value
+ * @param       ury     the upper right y-value
+ */
+    
+    public Annotation(String title, String text, float llx, float lly, float urx, float ury) {
+        this(llx, lly, urx, ury);
+        annotationtype = TEXT;
+        attributes.put(TITLE, title);
+        attributes.put(CONTENT, text);
+    }
+    
+/**
+ * Constructs an <CODE>Annotation</CODE>.
+ */
+    
+    public Annotation(float llx, float lly, float urx, float ury, URL url) {
+        this(llx, lly, urx, ury);
+        annotationtype = URL_NET;
+        attributes.put(URL, url);
+    }
+    
+/**
+ * Constructs an <CODE>Annotation</CODE>.
+ */
+    
+    public Annotation(float llx, float lly, float urx, float ury, String url) {
+        this(llx, lly, urx, ury);
+        annotationtype = URL_AS_STRING;
+        attributes.put(FILE, url);
+    }
+    
+/**
+ * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ */
+    
+    public Annotation(float llx, float lly, float urx, float ury, String file, String dest) {
+        this(llx, lly, urx, ury);
+        annotationtype = FILE_DEST;
+        attributes.put(FILE, file);
+        attributes.put(DESTINATION, dest);
+    }
+    
+/**
+ * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ */
+    
+    public Annotation(float llx, float lly, float urx, float ury, String file, int page) {
+        this(llx, lly, urx, ury);
+        annotationtype = FILE_PAGE;
+        attributes.put(FILE, file);
+        attributes.put(PAGE, new Integer(page));
+    }
+    
+/**
+ * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ */
+    
+    public Annotation(float llx, float lly, float urx, float ury, int named) {
+        this(llx, lly, urx, ury);
+        annotationtype = NAMED_DEST;
+        attributes.put(NAMED, new Integer(named));
+    }
+    
+/**
+ * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ */
+    
+    public Annotation(float llx, float lly, float urx, float ury, String application, String parameters, String operation, String defaultdir) {
+        this(llx, lly, urx, ury);
+        annotationtype = LAUNCH;
+        attributes.put(APPLICATION, application);
+        attributes.put(PARAMETERS, parameters);
+        attributes.put(OPERATION, operation);
+        attributes.put(DEFAULTDIR, defaultdir);
     }
     
 /**
@@ -94,15 +246,17 @@ public class Annotation implements Element {
  * @return	an <CODE>Annotation</CODE>
  */
     
-    public Annotation(Properties attributes) {
-        title = attributes.getProperty(ElementTags.TITLE);
-        text = attributes.getProperty(ElementTags.CONTENT);
+    public Annotation(Properties attrs) {
+        String title = attrs.getProperty(ElementTags.TITLE);
+        String text = attrs.getProperty(ElementTags.CONTENT);
         if (title == null) {
             title = "";
         }
         if (text == null) {
             text = "";
         }
+        attributes.put(TITLE, title);
+        attributes.put(CONTENT, text);
     }
     
     // implementation of the Element-methods
@@ -149,13 +303,113 @@ public class Annotation implements Element {
     // methods to retrieve information
     
 /**
+ * Returns the lower left x-value.
+ *
+ * @return	a value
+ */
+    
+    public final float llx() {
+        return llx;
+    }
+    
+/**
+ * Returns the lower left y-value.
+ *
+ * @return	a value
+ */
+    
+    public final float lly() {
+        return lly;
+    }
+    
+/**
+ * Returns the uppper right x-value.
+ *
+ * @return	a value
+ */
+    
+    public final float urx() {
+        return urx;
+    }
+    
+/**
+ * Returns the uppper right y-value.
+ *
+ * @return	a value
+ */
+    
+    public final float ury() {
+        return ury;
+    }
+    
+/**
+ * Returns the lower left x-value.
+ *
+ * @param       the default value
+ * @return	a value
+ */
+    
+    public final float llx(float def) {
+        if (llx == Float.MIN_VALUE) return def;
+        return llx;
+    }
+    
+/**
+ * Returns the lower left y-value.
+ *
+ * @param       def     the default value
+ * @return	a value
+ */
+    
+    public final float lly(float def) {
+        if (lly == Float.MIN_VALUE) return def;
+        return lly;
+    }
+    
+/**
+ * Returns the upper right x-value.
+ *
+ * @param       the default value
+ * @return	a value
+ */
+    
+    public final float urx(float def) {
+        if (urx == Float.MIN_VALUE) return def;
+        return urx;
+    }
+    
+/**
+ * Returns the upper right y-value.
+ *
+ * @param       the default value
+ * @return	a value
+ */
+    
+    public final float ury(float def) {
+        if (ury == Float.MIN_VALUE) return def;
+        return ury;
+    }
+    
+/**
+ * Returns the type of this <CODE>Annotation</CODE>.
+ *
+ * @return	a type
+ */
+    
+    public final int annotationType() {
+        return annotationtype;
+    }
+    
+/**
  * Returns the title of this <CODE>Annotation</CODE>.
  *
  * @return	a name
  */
     
     public final String title() {
-        return title;
+        String s = (String)attributes.get(TITLE);
+        if (s == null) s = "";
+        return s;
     }
     
 /**
@@ -165,7 +419,19 @@ public class Annotation implements Element {
  */
     
     public final String content() {
-        return text;
+        String s = (String)attributes.get(CONTENT);
+        if (s == null) s = "";
+        return s;
+    }
+    
+/**
+ * Gets the content of this <CODE>Annotation</CODE>.
+ *
+ * @return	a reference
+ */
+    
+    public final HashMap attributes() {
+        return attributes;
     }
     
 /**

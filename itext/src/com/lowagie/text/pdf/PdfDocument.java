@@ -1009,7 +1009,28 @@ class PdfDocument extends Document implements DocListener {
                         carriageReturn();
                     }
                     Annotation annot = (Annotation) element;
-                    annotations.add(new PdfAnnotation(indentRight() - line.widthLeft(), indentTop() - currentHeight, indentRight() - line.widthLeft() + 20, indentTop() - currentHeight - 20, new PdfString(annot.title()), new PdfString(annot.content())));
+                    switch(annot.annotationType()) {
+                        case Annotation.URL_NET:
+                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((URL) annot.attributes().get(Annotation.URL))));
+                            break;
+                        case Annotation.URL_AS_STRING:
+                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE))));
+                            break;
+                        case Annotation.FILE_DEST:
+                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), (String) annot.attributes().get(Annotation.DESTINATION))));
+                            break;
+                        case Annotation.FILE_PAGE:
+                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), ((Integer) annot.attributes().get(Annotation.PAGE)).intValue())));
+                            break;
+                        case Annotation.NAMED_DEST:
+                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction(((Integer) annot.attributes().get(Annotation.NAMED)).intValue())));
+                            break;
+                        case Annotation.LAUNCH:
+                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR))));
+                            break;
+                        default:
+                            annotations.add(new PdfAnnotation(annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content())));
+                    }
                     pageEmpty = false;
                     break;
                 }
@@ -1185,8 +1206,8 @@ class PdfDocument extends Document implements DocListener {
                         case Element.ALIGN_RIGHT:
                             xWidth = indentRight() - totalWidth;
                             break;
-                        default:
-                            xWidth = (indentRight() + indentLeft() - totalWidth) / 2;
+                            default:
+                                xWidth = (indentRight() + indentLeft() - totalWidth) / 2;
                     }
                     ptable.setTotalWidth(totalWidth);
                     addPTable(ptable, xWidth);
@@ -1512,8 +1533,8 @@ class PdfDocument extends Document implements DocListener {
                 graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() + (middle / 2) - mt[4], lowerleft - mt[5]);
                 break;
             case Image.LEFT:
-            default:
-                graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
+                default:
+                    graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
         }
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
