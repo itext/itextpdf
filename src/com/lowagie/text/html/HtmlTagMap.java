@@ -51,6 +51,9 @@ public class HtmlTagMap extends HashMap {
         super();
         HtmlPeer peer;
 
+        peer = new HtmlPeer(ElementTags.ITEXT, HtmlTags.HTML);
+        put(peer.getAlias(), peer);
+
         peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.CHUNK);
         peer.addAlias(ElementTags.FONT, HtmlTags.FONT);
         peer.addAlias(ElementTags.SIZE, HtmlTags.SIZE);
@@ -74,6 +77,30 @@ public class HtmlTagMap extends HashMap {
 
         peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.DIV);
         peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[0]);
+        peer.addValue(ElementTags.SIZE, "20");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[1]);
+        peer.addValue(ElementTags.SIZE, "18");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[2]);
+        peer.addValue(ElementTags.SIZE, "16");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[3]);
+        peer.addValue(ElementTags.SIZE, "14");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[4]);
+        peer.addValue(ElementTags.SIZE, "12");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[5]);
+        peer.addValue(ElementTags.SIZE, "10");
         put(peer.getAlias(), peer);
 
         peer = new HtmlPeer(ElementTags.LIST, HtmlTags.ORDEREDLIST);
@@ -200,6 +227,14 @@ public class HtmlTagMap extends HashMap {
  
     public boolean isLink(String tag) {
         return HtmlTags.LINK.equalsIgnoreCase(tag);
+    }
+    
+/**
+ * Checks if this is the root tag.
+ */
+ 
+    public boolean isTitle(String tag) {
+        return HtmlTags.TITLE.equalsIgnoreCase(tag);
     }
     
 /**
