@@ -65,7 +65,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfRow wraps one Row for a RtfTable.
  * INTERNAL USE ONLY
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
  * @author Lorenz Maierhofer <larry@sbox.tugraz.at>

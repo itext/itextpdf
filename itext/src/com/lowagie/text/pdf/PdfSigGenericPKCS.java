@@ -113,7 +113,6 @@ public abstract class PdfSigGenericPKCS extends PdfSignature {
                 put(PdfName.NAME, new PdfString(name, PdfObject.TEXT_UNICODE));
             pkcs = new PdfPKCS7(privKey, certChain, crlList, hashAlgorithm, provider, PdfName.ADBE_PKCS7_SHA1.equals(get(PdfName.SUBFILTER)));
             pkcs.setExternalDigest(externalDigest, externalRSAdata, digestEncryptionAlgorithm);
-            put(PdfName.BYTERANGE, new PdfLiteral("[0                                 "));
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -121,9 +120,12 @@ public abstract class PdfSigGenericPKCS extends PdfSignature {
     }
 
     /**
-     * Sets the digest to an external calculated value.
-     * @param digest the digest
-     * @param RSAdata the extra data
+     * Sets the digest/signature to an external calculated value.
+     * @param digest the digest. This is the actual signature
+     * @param RSAdata the extra data that goes into the data tag in PKCS#7
+     * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the <CODE>digest</CODE>
+     * is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
+     * then it may be "RSA" or "DSA"
      */    
     public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
         externalDigest = digest;

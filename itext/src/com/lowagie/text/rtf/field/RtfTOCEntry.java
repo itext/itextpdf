@@ -63,7 +63,7 @@ import com.lowagie.text.Font;
  * contents. Add the RtfTOCEntry in those locations in the document where table of
  * contents entries should link to 
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
  */

@@ -56,6 +56,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
@@ -70,6 +73,7 @@ import java.io.IOException;
 import java.io.EOFException;
 import java.io.RandomAccessFile;
 import java.io.File;
+import java.io.InputStream;
 
 import java.io.IOException;
 
@@ -122,10 +126,10 @@ public class PdfSignatureAppearance {
     private int rangePosition = 0;
     private byte bout[];
     private int boutLen;
-    private int contentsLength;
     private byte externalDigest[];
     private byte externalRSAdata[];
     private String digestEncryptionAlgorithm;
+    private HashMap exclusionLocations;
         
     PdfSignatureAppearance(PdfStamperImp writer) {
         this.writer = writer;
@@ -437,9 +441,12 @@ public class PdfSignatureAppearance {
     }
     
     /**
-     * Sets the digest to an external calculated value.
-     * @param digest the digest
-     * @param RSAdata the extra data
+     * Sets the digest/signature to an external calculated value.
+     * @param digest the digest. This is the actual signature
+     * @param RSAdata the extra data that goes into the data tag in PKCS#7
+     * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the <CODE>digest</CODE>
+     * is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
+     * then it may be "RSA" or "DSA"
      */    
     public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
         externalDigest = digest;
@@ -481,7 +488,7 @@ public class PdfSignatureAppearance {
         
     /**
      * Returns the Cryptographic Service Provider that will sign the document.
-     * @return provider the name of the provider, for example <code>SUN<code>,
+     * @return provider the name of the provider, for example "SUN",
      * or <code>null</code> to use the default provider.
      */
     public String getProvider() {
@@ -491,7 +498,7 @@ public class PdfSignatureAppearance {
     /**
      * Sets the Cryptographic Service Provider that will sign the document.
      *
-     * @param provider the name of the provider, for example <code>SUN<code>, or
+     * @param provider the name of the provider, for example "SUN", or
      * <code>null</code> to use the default provider.
      */
     public void setProvider(String provider) {
@@ -640,10 +647,31 @@ public class PdfSignatureAppearance {
      * preClose(), getDocumentBytes() and close().
      * <p>
      * If calling preClose() <B>dont't</B> call PdfStamper.close().
+     * <p>
+     * No external signatures are allowed if this methos is called.
      * @throws IOException on error
      * @throws DocumentException on error
      */    
     public void preClose() throws IOException, DocumentException {
+        preClose(null);
+    }
+    /**
+     * This is the first method to be called when using external signatures. The general sequence is:
+     * preClose(), getDocumentBytes() and close().
+     * <p>
+     * If calling preClose() <B>dont't</B> call PdfStamper.close().
+     * <p>
+     * If using an external signature <CODE>exclusionSizes</CODE> must contain at least
+     * the <CODE>PdfName.CONTENTS</CODE> key with the size that it will take in the
+     * document. Note that due to the hex string coding this size should be
+     * byte_size*2+2.
+     * @param exclusionSizes a <CODE>HashMap</CODE> with names and sizes to be excluded in the signature
+     * calculation. The key is a <CODE>PdfName</CODE> and the value an
+     * <CODE>Integer</CODE>. At least the <CODE>PdfName.CONTENTS</CODE> must be present
+     * @throws IOException on error
+     * @throws DocumentException on error
+     */    
+    public void preClose(HashMap exclusionSizes) throws IOException, DocumentException {
         if (preClosed)
             throw new DocumentException("Document already pre closed.");
         preClosed = true;
@@ -671,7 +699,7 @@ public class PdfSignatureAppearance {
         sigField.setPage(pagen);
         writer.addAnnotation(sigField, pagen);
 
-        int position;
+        exclusionLocations = new HashMap();
         if (cryptoDictionary == null) {
             if (PdfName.ADOBE_PPKLITE.equals(getFilter()))
                 sigStandard = new PdfSigGenericPKCS.PPKLite(getProvider());
@@ -689,48 +717,66 @@ public class PdfSignatureAppearance {
             sigStandard.put(PdfName.M, new PdfDate(getSignDate()));
             sigStandard.setSignInfo(getPrivKey(), getCertChain(), getCrlList());
             PdfString contents = (PdfString)sigStandard.get(PdfName.CONTENTS);
-            contentsLength = contents.toString().length();
-            position = writer.getOs().getCounter();
+            PdfLiteral lit = new PdfLiteral(contents.toString().length() * 2 + 2);
+            exclusionLocations.put(PdfName.CONTENTS, lit);
+            sigStandard.put(PdfName.CONTENTS, lit);
+            lit = new PdfLiteral(80);
+            exclusionLocations.put(PdfName.BYTERANGE, lit);
+            sigStandard.put(PdfName.BYTERANGE, lit);
             writer.addToBody(sigStandard, refSig, false);
         }
         else {
-            position = writer.getOs().getCounter();
-            cryptoDictionary.put(PdfName.BYTERANGE, new PdfLiteral("[0                                 "));
-            PdfObject obj = cryptoDictionary.get(PdfName.CONTENTS);
-            if (obj == null || obj.type() != PdfObject.STRING)
-                throw new DocumentException("Invalid /Contents value in the signature dictionary");
-            PdfString contents = (PdfString)obj;
-            if (!contents.isHexWriting())
-                throw new DocumentException("The /Contents value in the signature dictionary must be a PdfString with setHexWriting(true)");
-            contentsLength = contents.toString().length();
+            PdfLiteral lit = new PdfLiteral(80);
+            exclusionLocations.put(PdfName.BYTERANGE, lit);
+            cryptoDictionary.put(PdfName.BYTERANGE, lit);
+            for (Iterator it = exclusionSizes.entrySet().iterator(); it.hasNext();) {
+                Map.Entry entry = (Map.Entry)it.next();
+                PdfName key = (PdfName)entry.getKey();
+                Integer v = (Integer)entry.getValue();
+                lit = new PdfLiteral(v.intValue());
+                exclusionLocations.put(key, lit);
+                cryptoDictionary.put(key, lit);
+            }
             writer.addToBody(cryptoDictionary, refSig, false);
         }
         writer.close(stamper.getMoreInfo());
         
+        range = new int[exclusionLocations.size() * 2];
+        int byteRangePosition = ((PdfLiteral)exclusionLocations.get(PdfName.BYTERANGE)).getPosition();
+        exclusionLocations.remove(PdfName.BYTERANGE);
+        int idx = 1;
+        for (Iterator it = exclusionLocations.values().iterator(); it.hasNext();) {
+            PdfLiteral lit = (PdfLiteral)it.next();
+            int n = lit.getPosition();
+            range[idx++] = n;
+            range[idx++] = lit.getPosLength() + n;
+        }
+        Arrays.sort(range, 1, range.length - 1);
+        for (int k = 3; k < range.length - 2; k += 2)
+            range[k] -= range[k - 1];
+        
         if (tempFile == null) {
             bout = sigout.getBuffer();
             boutLen = sigout.size();
-            int br = indexArray(bout, position, "/ByteRange");
-            int cr = indexArray(bout, position, "/Contents");
-            cr = indexArray(bout, cr, "<");
-            int ecr = indexArray(bout, cr, ">");
+            range[range.length - 1] = boutLen - range[range.length - 2];
             ByteBuffer bf = new ByteBuffer();
-            range = new int[]{0, cr, ecr + 1, boutLen - ecr - 1};
-            bf.append("/ByteRange[0 ").append(range[1]).append(' ').append(range[2]).append(' ').append(range[3]).append(']');
-            System.arraycopy(bf.getBuffer(), 0, bout, br, bf.size());
+            bf.append('[');
+            for (int k = 0; k < range.length; ++k)
+                bf.append(range[k]).append(' ');
+            bf.append(']');
+            System.arraycopy(bf.getBuffer(), 0, bout, byteRangePosition, bf.size());
         }
         else {
             try {
                 raf = new RandomAccessFile(tempFile, "rw");
                 int boutLen = (int)raf.length();
-                int br = indexFile(raf, position, "/ByteRange");
-                int cr = indexFile(raf, position, "/Contents");
-                cr = indexFile(raf, cr, "<");
-                int ecr = indexFile(raf, cr, ">");
+                range[range.length - 1] = boutLen - range[range.length - 2];
                 ByteBuffer bf = new ByteBuffer();
-                range = new int[]{0, cr, ecr + 1, boutLen - ecr - 1};
-                bf.append("/ByteRange[0 ").append(range[1]).append(' ').append(range[2]).append(' ').append(range[3]).append(']');
-                raf.seek(br);
+                bf.append('[');
+                for (int k = 0; k < range.length; ++k)
+                    bf.append(range[k]).append(' ');
+                bf.append(']');
+                raf.seek(byteRangePosition);
                 raf.write(bf.getBuffer(), 0, bf.size());
             }
             catch (IOException e) {
@@ -739,34 +785,47 @@ public class PdfSignatureAppearance {
                 throw e;
             }
         }
-        
     }
     
     /**
      * This is the last method to be called when using external signatures. The general sequence is:
      * preClose(), getDocumentBytes() and close().
      * <p>
-     * The parameter corresponds to the /Contents key and must be exactly the same
-     * size as the /Contents key when preClosed() was called.
-     * @param signerContents the new /Contents key that is generally a PKCS#7 object
+     * <CODE>update</CODE> is a <CODE>PdfDictionary</CODE> that must have exactly the
+     * same keys as the ones provided in {@link #preClose(HashMap)}.
+     * @param update a <CODE>PdfDictionary</CODE> with the key/value that will fill the holes defined
+     * in {@link #preClose(HashMap)}
+     * @throws DocumentException on error
      * @throws IOException on error
      */    
-    public void close(byte signerContents[]) throws IOException, DocumentException {
+    public void close(PdfDictionary update) throws IOException, DocumentException {
         try {
             if (!preClosed)
                 throw new DocumentException("preClose() must be called first.");
-            if (signerContents.length != contentsLength)
-                throw new IllegalArgumentException("The signer content must be the same size as in pre close.");
-            PdfString cout = new PdfString(signerContents).setHexWriting(true);
             ByteBuffer bf = new ByteBuffer();
-            cout.toPdf(null, bf);
+            for (Iterator it = update.getKeys().iterator(); it.hasNext();) {
+                PdfName key = (PdfName)it.next();
+                PdfObject obj = update.get(key);
+                PdfLiteral lit = (PdfLiteral)exclusionLocations.get(key);
+                if (lit == null)
+                    throw new IllegalArgumentException("The key " + key.toString() + " didn't reserve space in preClose().");
+                bf.reset();
+                obj.toPdf(null, bf);
+                if (bf.size() > lit.getPosLength())
+                    throw new IllegalArgumentException("The key " + key.toString() + " is too big.");
+                if (tempFile == null)
+                    System.arraycopy(bf.getBuffer(), 0, bout, lit.getPosition(), bf.size());
+                else {
+                    raf.seek(lit.getPosition());
+                    raf.write(bf.getBuffer(), 0, bf.size());
+                }
+            }
+            if (update.size() != exclusionLocations.size())
+                throw new IllegalArgumentException("The update dictionary has less keys than required.");
             if (tempFile == null) {
-                System.arraycopy(bf.getBuffer(), 0, bout, range[1], bf.size());
                 originalout.write(bout, 0, boutLen);
             }
             else {
-                raf.seek(range[1]);
-                raf.write(bf.getBuffer(), 0, bf.size());
                 if (originalout != null) {
                     raf.seek(0);
                     int length = (int)raf.length();
@@ -823,42 +882,15 @@ public class PdfSignatureAppearance {
             ++position;
         }
     }
-
+    
     /**
-     * Gets the document bytes when using external signatures. The general sequence is:
-     * preClose(), getDocumentBytes() and close().
+     * Gets the document bytes that are hashable when using external signatures. The general sequence is:
+     * preClose(), getRangeStream() and close().
      * <p>
-     * This method should be called until it return -1.
-     * @param store the returned bytes
-     * @return the number of bytes read or -1 if finished. After returning -1 another
-     * call will begin a new sequence from the beginning
-     * @throws IOException on error
+     * @return the document bytes that are hashable
      */    
-    public int getDocumentBytes(byte store[]) throws IOException, DocumentException {
-        if (!preClosed)
-            throw new DocumentException("preClose() must be called first.");
-        if (rangePosition >= range[range.length - 2] + range[range.length - 1]) {
-            rangePosition = 0;
-            return -1;
-        }
-        for (int k = 0; k < range.length; k += 2) {
-            int start = range[k];
-            int end = start + range[k + 1];
-            if (rangePosition < start)
-                rangePosition = start;
-            if (rangePosition >= start && rangePosition < end) {
-                int len = Math.min(store.length, end - rangePosition);
-                if (tempFile == null)
-                    System.arraycopy(bout, rangePosition, store, 0, len);
-                else {
-                    raf.seek(rangePosition);
-                    raf.readFully(store, 0, len);
-                }
-                rangePosition += len;
-                return len;
-            }
-        }
-        return -1;
+    public InputStream getRangeStream() {
+        return new PdfSignatureAppearance.RangeStream(raf, bout, range);
     }
     
     /**
@@ -955,4 +987,57 @@ public class PdfSignatureAppearance {
         "282 240 170 -164 re\n" +
         "B\n" +
         "Q\n";
+    
+    public class RangeStream extends InputStream {
+        private byte b[] = new byte[1];
+        private RandomAccessFile raf;
+        private byte bout[];
+        private int range[];
+        private int rangePosition = 0;
+        
+        private RangeStream(RandomAccessFile raf, byte bout[], int range[]) {
+            this.raf = raf;
+            this.bout = bout;
+            this.range = range;
+        }
+        
+        public int read() throws IOException {
+            int n = read(b);
+            if (n != 1)
+                return -1;
+            return b[0] & 0xff;
+        }
+        
+        public int read(byte[] b, int off, int len) throws IOException {
+            if (b == null) {
+                throw new NullPointerException();
+            } else if ((off < 0) || (off > b.length) || (len < 0) ||
+            ((off + len) > b.length) || ((off + len) < 0)) {
+                throw new IndexOutOfBoundsException();
+            } else if (len == 0) {
+                return 0;
+            }
+            if (rangePosition >= range[range.length - 2] + range[range.length - 1]) {
+                return -1;
+            }
+            for (int k = 0; k < range.length; k += 2) {
+                int start = range[k];
+                int end = start + range[k + 1];
+                if (rangePosition < start)
+                    rangePosition = start;
+                if (rangePosition >= start && rangePosition < end) {
+                    int lenf = Math.min(len, end - rangePosition);
+                    if (raf == null)
+                        System.arraycopy(bout, rangePosition, b, off, lenf);
+                    else {
+                        raf.seek(rangePosition);
+                        raf.readFully(b, off, lenf);
+                    }
+                    rangePosition += lenf;
+                    return lenf;
+                }
+            }
+            return -1;
+        }
+    }
 }

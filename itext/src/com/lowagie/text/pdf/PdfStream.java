@@ -52,8 +52,10 @@ package com.lowagie.text.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.Deflater;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.ExceptionConverter;
@@ -87,6 +89,10 @@ public class PdfStream extends PdfDictionary {
     protected boolean compressed = false;
     
     protected ByteArrayOutputStream streamBytes = null;
+    protected InputStream inputStream;
+    protected PdfIndirectReference ref;
+    protected int inputStreamLength = -1;
+    protected PdfWriter writer;
         
     static final byte STARTSTREAM[] = DocWriter.getISOBytes("stream\n");
     static final byte ENDSTREAM[] = DocWriter.getISOBytes("\nendstream");
@@ -107,6 +113,30 @@ public class PdfStream extends PdfDictionary {
         put(PdfName.LENGTH, new PdfNumber(bytes.length));
     }
   
+    /**
+     * Creates an efficient stream. No temporary array is ever created. The <CODE>InputStream</CODE>
+     * is totally consumed but is not closed. The general usage is:
+     * <p>
+     * <pre>
+     * InputStream in = ...;
+     * PdfStream stream = new PdfStream(in, writer);
+     * stream.flateCompress();
+     * writer.addToBody(stream);
+     * stream.writeLength();
+     * in.close();
+     * </pre>
+     * @param inputStream the data to write to this stream
+     * @param writer the <CODE>PdfWriter</CODE> for this stream
+     */    
+    public PdfStream(InputStream inputStream, PdfWriter writer) {
+        super();
+        type = STREAM;
+        this.inputStream = inputStream;
+        this.writer = writer;
+        ref = writer.getPdfIndirectReference();
+        put(PdfName.LENGTH, ref);
+    }
+  
 /**
  * Constructs a <CODE>PdfStream</CODE>-object.
  */
@@ -116,32 +146,35 @@ public class PdfStream extends PdfDictionary {
         type = STREAM;
     }
     
-    // methods overriding some methods of PdfObject
+    /**
+     * Writes the stream length to the <CODE>PdfWriter</CODE>.
+     * <p>
+     * This method must be called and can only be called if the contructor {@link #PdfStream(InputStream,PdfWriter)}
+     * is used to create the stream.
+     * @throws IOException on error
+     * @see PdfStream(InputStream,PdfWriter)
+     */
+    public void writeLength() throws IOException {
+        if (inputStream == null)
+            throw new UnsupportedOperationException("writeLength() can only be called in a contructed PdfStream(InputStream,PdfWriter).");
+        if (inputStreamLength == -1)
+            throw new IOException("writeLength() can only be called after output of the stream body.");
+        writer.addToBody(new PdfNumber(inputStreamLength), ref);
+    }
     
-/**
- * Returns the PDF representation of this <CODE>PdfObject</CODE> as an array of <CODE>bytes</CODE>s.
- *
- * @return		an array of <CODE>byte</CODE>s
- */
-    
-//    public byte[] toPdf(PdfWriter writer) {
-//        dicBytes = super.toPdf(writer);
-//        return null;
-//    }
-    
-    // methods
-    
-/**
- * Compresses the stream.
- *
- * @throws PdfException if a filter is already defined
- */
+    /**
+     * Compresses the stream.
+     */
     
     public void flateCompress() {
         if (!Document.compress)
             return;
         // check if the flateCompress-method has already been
         if (compressed) {
+            return;
+        }
+        if (inputStream != null) {
+            compressed = true;
             return;
         }
         // check if a filter already exists
@@ -199,29 +232,55 @@ public class PdfStream extends PdfDictionary {
     }
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        if (inputStream != null && compressed)
+            put(PdfName.FILTER, PdfName.FLATEDECODE);
         superToPdf(writer, os);
         os.write(STARTSTREAM);
         PdfEncryption crypto = null;
         if (writer != null)
             crypto = writer.getEncryption();
-        if (crypto == null) {
-            if (streamBytes != null)
-                streamBytes.writeTo(os);
-            else
-                os.write(bytes);
+        if (crypto != null)
+            crypto.prepareKey();
+        if (inputStream != null) {
+            DeflaterOutputStream def = null;
+            PdfEncryptionStream encs = null;
+            OutputStreamCounter osc = new OutputStreamCounter(os);
+            OutputStream fout = osc;
+            if (crypto != null)
+                fout = encs = new PdfEncryptionStream(fout, crypto);
+            if (compressed)    
+                fout = def = new DeflaterOutputStream(fout, new Deflater(Deflater.BEST_COMPRESSION), 0x8000);
+            
+            byte buf[] = new byte[0x10000];
+            while (true) {
+                int n = inputStream.read(buf);
+                if (n <= 0)
+                    break;
+                fout.write(buf, 0, n);
+            }
+            if (def != null)
+                def.finish();
+            inputStreamLength = osc.getCounter();
         }
         else {
-            crypto.prepareKey();
-            byte b[];
-            if (streamBytes != null) {
-                b = streamBytes.toByteArray();
-                crypto.encryptRC4(b);
+            if (crypto == null) {
+                if (streamBytes != null)
+                    streamBytes.writeTo(os);
+                else
+                    os.write(bytes);
             }
             else {
-                b = new byte[bytes.length];
-                crypto.encryptRC4(bytes, b);
+                byte b[];
+                if (streamBytes != null) {
+                    b = streamBytes.toByteArray();
+                    crypto.encryptRC4(b);
+                }
+                else {
+                    b = new byte[bytes.length];
+                    crypto.encryptRC4(bytes, b);
+                }
+                os.write(b);
             }
-            os.write(b);
         }
         os.write(ENDSTREAM);
     }
