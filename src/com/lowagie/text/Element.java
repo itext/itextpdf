@@ -165,6 +165,14 @@ public interface Element {
     public static final int GRAPHIC = 39;
     
     // static membervariables (alignment)
+       
+/**
+ * A possible value for paragraph alignment.  This
+ * specifies that the text is aligned to the left
+ * indent and extra whitespace should be placed on
+ * the right.
+ */
+    public static final int ALIGN_UNDEFINED = -1;
     
 /**
  * A possible value for paragraph alignment.  This
