@@ -148,8 +148,9 @@ public class PdfPageEventHelper implements PdfPageEvent {
  * @param writer the <CODE>PdfWriter</CODE> for this document
  * @param document the document
  * @param position the position the section will be written to
+ * @param depth the depth of the section
  */
-    public void onSection(PdfWriter writer,Document document,float position) {
+    public void onSection(PdfWriter writer,Document document,float position, int depth) {
     }
     
 /**

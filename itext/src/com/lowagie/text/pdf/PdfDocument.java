@@ -696,6 +696,7 @@ class PdfDocument extends Document implements DocListener {
         }
         catch(Exception pe) {
         }
+        
         if (outlines.size() > 1) {
             int objectNumber = writer.size();
             int level = 0;
@@ -734,6 +735,7 @@ class PdfDocument extends Document implements DocListener {
                     }
                 }
             }
+
             // write everything to the PdfWriter
             try {
                 for (Iterator i = outlines.iterator(); i.hasNext(); ) {
@@ -741,9 +743,11 @@ class PdfDocument extends Document implements DocListener {
                 }
             }
             catch(Exception pe) {
-                System.err.println(pe.getMessage());
+                System.err.println("Error: " + pe.getMessage());
             }
+            
         }
+
         writer.close();
     }
     
@@ -837,6 +841,7 @@ class PdfDocument extends Document implements DocListener {
             return false;
         }
         try {
+            
             switch(element.type()) {
                 
                 // Information (headers)
@@ -871,6 +876,7 @@ class PdfDocument extends Document implements DocListener {
                     if (line == null) {
                         carriageReturn();
                     }
+                    
                     // we cast the element to a chunk
                     PdfChunk chunk = new PdfChunk((Chunk) element, currentAction);
                     // we try to add the chunk to the line, until we succeed
@@ -979,7 +985,7 @@ class PdfDocument extends Document implements DocListener {
                         if (element.type() == Element.CHAPTER)
                             pageEvent.onChapter(writer, this, indentTop() - currentHeight);
                         else
-                            pageEvent.onSection(writer, this, indentTop() - currentHeight);
+                            pageEvent.onSection(writer, this, indentTop() - currentHeight, section.depth());
                     
                     // the title of the section (if any has to be printed)
                     if (section.title() != null) {
