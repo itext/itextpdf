@@ -193,7 +193,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("itext by lowagie.com (r0.82)", PdfObject.ENCODING));
+            put(PdfName.PRODUCER, new PdfString("itext by lowagie.com (r0.83)", PdfObject.ENCODING));
             // Do not edit the line above!
         }
         
