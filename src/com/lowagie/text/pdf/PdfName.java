@@ -165,6 +165,9 @@ public class PdfName extends PdfObject {
 	public static final PdfName DCTDECODE = new PdfName("/DCTDecode", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName DECODE = new PdfName("/Decode", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName DECODEPARMS = new PdfName("/DecodeParms", 0);
  
 	/** This is a static final PdfName */
@@ -318,10 +321,16 @@ public class PdfName extends PdfObject {
 	public static final PdfName IMAGEI = new PdfName("/ImageI", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName IMAGEMASK = new PdfName("/ImageMask", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName INDEXED = new PdfName("/Indexed", 0);
  
 	/** This is a static final PdfName */
 	public static final PdfName INFO = new PdfName("/Info", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName INTERPOLATE = new PdfName("/Interpolate", 0);
  
 	/** This is a static final PdfName */
 	public static final PdfName K = new PdfName("/K", 0);

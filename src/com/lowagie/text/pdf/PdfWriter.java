@@ -121,7 +121,7 @@ public class PdfWriter extends DocWriter {
  * @return		an array of <CODE>byte</CODE>s
  */
             
-            final byte[] toPdf(PdfEncryption crypto) {
+            final byte[] toPdf(PdfWriter writer) {
                 // This code makes it more difficult to port the lib to JDK1.1.x:
                 // StringBuffer off = new StringBuffer("0000000000").append(offset);
                 // off.delete(0, off.length() - 10);
@@ -149,7 +149,7 @@ public class PdfWriter extends DocWriter {
         
 /** the current byteposition in the body. */
         private int position;
-        private PdfEncryption crypto;
+        private PdfWriter writer;
         // constructors
         
 /**
@@ -158,18 +158,15 @@ public class PdfWriter extends DocWriter {
  * @param	offset	the offset of the body
  */
         
-        PdfBody(int offset) {
+        PdfBody(int offset, PdfWriter writer) {
             xrefs = new ArrayList();
             xrefs.add(new PdfCrossReference(0, 65535));
             xrefs.add(new PdfCrossReference(0));
             position = offset;
+            this.writer = writer;
         }
         
         // methods
-        
-        void setCrypto(PdfEncryption crypto) {
-            this.crypto = crypto;
-        }
         
 /**
  * Adds a <CODE>PdfObject</CODE> to the body.
@@ -185,7 +182,7 @@ public class PdfWriter extends DocWriter {
  */
         
         final PdfIndirectObject add(PdfObject object) {
-            PdfIndirectObject indirect = new PdfIndirectObject(size(), object, crypto);
+            PdfIndirectObject indirect = new PdfIndirectObject(size(), object, writer);
             xrefs.add(new PdfCrossReference(position));
             position += indirect.length();
             return indirect;
@@ -200,6 +197,11 @@ public class PdfWriter extends DocWriter {
         {
             xrefs.add(new PdfCrossReference(0));
             return new PdfIndirectReference(0, size() - 1);
+        }
+        
+        final int getIndirectReferenceNumber() {
+            xrefs.add(new PdfCrossReference(0));
+            return size() - 1;
         }
         
 /**
@@ -218,8 +220,15 @@ public class PdfWriter extends DocWriter {
  */
         
         final PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) {
-            PdfIndirectObject indirect = new PdfIndirectObject(ref.getNumber(), object, crypto);
+            PdfIndirectObject indirect = new PdfIndirectObject(ref.getNumber(), object, writer);
             xrefs.set(ref.getNumber(), new PdfCrossReference(position));
+            position += indirect.length();
+            return indirect;
+        }
+        
+        final PdfIndirectObject add(PdfObject object, int refNumber) {
+            PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
+            xrefs.set(refNumber, new PdfCrossReference(position));
             position += indirect.length();
             return indirect;
         }
@@ -243,7 +252,7 @@ public class PdfWriter extends DocWriter {
  */
         
         final PdfIndirectObject add(PdfPages object) {
-            PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object, crypto);
+            PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object, writer);
             rootOffset = position;
             position += indirect.length();
             return indirect;
@@ -322,7 +331,7 @@ public class PdfWriter extends DocWriter {
  * @param		info		an indirect reference to the info object of the PDF document
  */
         
-        public PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID) {
+        PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID) {
             
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             try {
@@ -355,7 +364,7 @@ public class PdfWriter extends DocWriter {
  * @return		an array of <CODE>byte</CODE>s
  */
         
-        final byte[] toPdf(PdfEncryption crypto) {
+        final byte[] toPdf(PdfWriter writer) {
             return bytes;
         }
     }
@@ -463,7 +472,7 @@ public class PdfWriter extends DocWriter {
     // membervariables
     
 /** body of the PDF document */
-    private PdfBody body = new PdfBody(OFFSET);
+    private PdfBody body = new PdfBody(OFFSET, this);
     
 /** the pdfdocument object. */
     private PdfDocument pdf;
@@ -472,6 +481,10 @@ public class PdfWriter extends DocWriter {
     private PdfPageEvent pageEvent;
     
     private PdfEncryption crypto;
+    
+    private HashMap importedPages = new HashMap();
+    
+    private PdfReaderInstance currentPdfReaderInstance;
 
     // constructor
     
@@ -666,9 +679,17 @@ public class PdfWriter extends DocWriter {
                 // add the form XObjects
                 for (Iterator it = formXObjects.keySet().iterator(); it.hasNext();) {
                     PdfTemplate template = (PdfTemplate)it.next();
-                    PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
-                    obj.writeTo(os);
+                    if (!template.isImportedPage()) {
+                        PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
+                        obj.writeTo(os);
+                    }
                 }
+                // add all the dependencies in the imported pages
+                for (Iterator it = importedPages.values().iterator(); it.hasNext();) {
+                    currentPdfReaderInstance = (PdfReaderInstance)it.next();
+                    currentPdfReaderInstance.writeAllPages();
+                }
+                
                 // add the root to the body
                 PdfIndirectObject rootObject = body.add(root);
                 rootObject.writeTo(os);
@@ -696,10 +717,11 @@ public class PdfWriter extends DocWriter {
                 info.getIndirectReference(),
                 encryption,
                 fileID);
-                os.write(trailer.toPdf(crypto));
+                os.write(trailer.toPdf(this));
                 super.close();
             }
             catch(IOException ioe) {
+                ioe.printStackTrace();
             }
         }
     }
@@ -877,7 +899,11 @@ public class PdfWriter extends DocWriter {
     PdfIndirectReference getPdfIndirectReference() {
         return body.getPdfIndirectReference();
     }
-    
+ 
+    int getIndirectReferenceNumber() {
+        return body.getIndirectReferenceNumber();
+    }
+
 /**
  * Adds a template to the document but not to the page resources.
  * @param template the template to add
@@ -1013,7 +1039,6 @@ public class PdfWriter extends DocWriter {
             throw new DocumentException("Encryption can only be added before opening the document.");
         crypto = new PdfEncryption();
         crypto.setupAllKeys(userPassword, ownerPassword, permissions, strength128Bits);
-        body.setCrypto(crypto);
     }
     
     /**
@@ -1045,6 +1070,12 @@ public class PdfWriter extends DocWriter {
         return iobj;
     }
     
+    PdfIndirectObject addToBody(PdfObject object, int refNumber) throws IOException {
+        PdfIndirectObject iobj = body.add(object, refNumber);
+        iobj.writeTo(os);
+        return iobj;
+    }
+    
     /** When the document opens it will jump to the destination with
      * this name.
      * @param name the name of the destination to jump to
@@ -1066,5 +1097,33 @@ public class PdfWriter extends DocWriter {
      */    
     public void setPageLabels(PdfPageLabels pageLabels) {
         pdf.setPageLabels(pageLabels);
+    }
+    
+    PdfEncryption getEncryption() {
+        return crypto;
+    }
+    
+    RandomAccessFileOrArray getReaderFile(PdfReader reader) {
+        return currentPdfReaderInstance.getReaderFile();
+    }
+    
+    int getNewObjectNumber(PdfReader reader, int number, int generation) {
+        return currentPdfReaderInstance.getNewObjectNumber(number, generation);
+    }
+    
+    /** Gets a page from other PDF document. The page can be used as
+     * any other PdfTemplate. Note that calling this method more than
+     * once with the same parameters will retrieve the same object.
+     * @param reader the PDF document where the page is
+     * @param pageNumber the page number. The first page is 1
+     * @return the template representing the imported page
+     */    
+    public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
+        PdfReaderInstance inst = (PdfReaderInstance)importedPages.get(reader);
+        if (inst == null) {
+            inst = reader.getPdfReaderInstance(this);
+            importedPages.put(reader, inst);
+        }
+        return inst.getImportedPage(pageNumber);
     }
 }

@@ -33,6 +33,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.Rectangle;
 /**
  * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
  */
@@ -76,7 +77,7 @@ public class PdfFormXObject extends PdfStream {
         dictionary.put(PdfName.TYPE, PdfName.XOBJECT);
         dictionary.put(PdfName.SUBTYPE, PdfName.FORM);
         dictionary.put(PdfName.RESOURCES, template.getResources());
-        dictionary.put(PdfName.BBOX, new PdfRectangle(0, 0, template.getWidth(), template.getHeight()));
+        dictionary.put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
         dictionary.put(PdfName.FORMTYPE, ONE);
         dictionary.put(PdfName.MATRIX, MATRIX);
         bytes = template.toPdf(null);

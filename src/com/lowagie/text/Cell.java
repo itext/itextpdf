@@ -118,9 +118,10 @@ public class Cell extends Rectangle implements TextElementArray {
  */
     
     public Cell() {
-        // creates a Rectangle
+        // creates a Rectangle with BY DEFAULT a border of 0.5
         super(0, 0, 0, 0);
         setBorder(BOX);
+        setBorderWidth(0.5f);
         
         // initializes the arraylist and adds an element
         arrayList = new ArrayList();
@@ -144,6 +145,7 @@ public class Cell extends Rectangle implements TextElementArray {
         // creates a Rectangle with BY DEFAULT a border of 0.5
         super(0, 0, 0, 0);
         setBorder(BOX);
+        setBorderWidth(0.5f);
         
         // initializes the arraylist and adds an element
         arrayList = new ArrayList();

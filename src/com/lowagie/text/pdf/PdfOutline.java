@@ -375,11 +375,11 @@ public class PdfOutline extends PdfDictionary {
     /**
      * Returns the PDF representation of this <CODE>PdfOutline</CODE>.
      *
-     * @param crypto the encryption information
+     * @param writer the encryption information
      * @return an array of <CODE>byte</CODE>
      */
     
-    final public byte[] toPdf(PdfEncryption crypto) {
+    final public byte[] toPdf(PdfWriter writer) {
         if (parent != null) {
             put(PdfName.PARENT, parent.indirectReference());
         }
@@ -391,6 +391,6 @@ public class PdfOutline extends PdfDictionary {
         if ((isOpen || parent.isOpen) && count > 0) {
             put(PdfName.COUNT, new PdfNumber(count));
         }
-        return super.toPdf(crypto);
+        return super.toPdf(writer);
     }
 }

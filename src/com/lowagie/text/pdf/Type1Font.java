@@ -46,6 +46,9 @@ import java.io.*;
  */
 class Type1Font extends BaseFont
 {
+    /** The PFB file if the input was made with a <CODE>byte</CODE> array.
+     */    
+    protected byte pfb[];
 /** The Postscript font name.
  */
     private String FontName;
@@ -134,70 +137,75 @@ class Type1Font extends BaseFont
  */
     private final static int pfbTypes[] = {1, 2, 1};
     
-/** Creates a new Type1 font.
- * @param afmFile the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
- * @param enc the encoding to be applied to this font
- * @param emb true if the font is to be embedded in the PDF
- * @throws DocumentException the AFM file is invalid
- * @throws IOException the AFM file could not be read
- */
-    Type1Font(String afmFile, String enc, boolean emb) throws DocumentException, IOException
+    /** Creates a new Type1 font.
+     * @param ttfAfm the AFM file if the input is made with a <CODE>byte</CODE> array
+     * @param pfb the PFB file if the input is made with a <CODE>byte</CODE> array
+     * @param afmFile the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
+     * @param enc the encoding to be applied to this font
+     * @param emb true if the font is to be embedded in the PDF
+     * @throws DocumentException the AFM file is invalid
+     * @throws IOException the AFM file could not be read
+     */
+    Type1Font(String afmFile, String enc, boolean emb, byte ttfAfm[], byte pfb[]) throws DocumentException, IOException
     {
+        if (emb && ttfAfm != null && pfb == null)
+            throw new DocumentException("Two byte arrays are needed if the Type1 font is embedded.");
+        this.pfb = pfb;
         encoding = enc;
         embedded = emb;
         fileName = afmFile;
         fontType = FONT_TYPE_T1;
-        BufferedReader fin = null;
+        RandomAccessFileOrArray rf = null;
         if (BuiltinFonts14.containsKey(afmFile)) {
             embedded = false;
             builtinFont = true;
             try {
                 String afm = null;
-                if (afmFile.equals(BaseFont.COURIER))
+                if (afmFile.equals(COURIER))
                     afm = Courier.afm;
-                else if (afmFile.equals(BaseFont.COURIER_BOLD))
+                else if (afmFile.equals(COURIER_BOLD))
                     afm = CourierBold.afm;
-                else if (afmFile.equals(BaseFont.COURIER_BOLDOBLIQUE))
+                else if (afmFile.equals(COURIER_BOLDOBLIQUE))
                     afm = CourierBoldOblique.afm;
-                else if (afmFile.equals(BaseFont.COURIER_OBLIQUE))
+                else if (afmFile.equals(COURIER_OBLIQUE))
                     afm = CourierOblique.afm;
-                else if (afmFile.equals(BaseFont.HELVETICA_BOLD)) {
+                else if (afmFile.equals(HELVETICA_BOLD)) {
                     afm = HelveticaBold1.afm;
                     afm += HelveticaBold2.afm;
                 }
-                else if (afmFile.equals(BaseFont.HELVETICA_BOLDOBLIQUE)) {
+                else if (afmFile.equals(HELVETICA_BOLDOBLIQUE)) {
                     afm = HelveticaBoldOblique1.afm;
                     afm += HelveticaBoldOblique2.afm;
                 }
-                else if (afmFile.equals(BaseFont.HELVETICA_OBLIQUE)) {
+                else if (afmFile.equals(HELVETICA_OBLIQUE)) {
                     afm = HelveticaOblique1.afm;
                     afm += HelveticaOblique2.afm;
                 }
-                else if (afmFile.equals(BaseFont.SYMBOL))
+                else if (afmFile.equals(SYMBOL))
                     afm = Symbol.afm;
-                else if (afmFile.equals(BaseFont.TIMES_ROMAN))
+                else if (afmFile.equals(TIMES_ROMAN))
                     afm = TimesRoman.afm;
-                else if (afmFile.equals(BaseFont.TIMES_BOLD))
+                else if (afmFile.equals(TIMES_BOLD))
                     afm = TimesBold.afm;
-                else if (afmFile.equals(BaseFont.TIMES_BOLDITALIC))
+                else if (afmFile.equals(TIMES_BOLDITALIC))
                     afm = TimesBoldItalic.afm;
-                else if (afmFile.equals(BaseFont.TIMES_ITALIC)) {
+                else if (afmFile.equals(TIMES_ITALIC)) {
                     afm = TimesItalic1.afm;
                     afm += TimesItalic2.afm;
                 }
-                else if (afmFile.equals(BaseFont.ZAPFDINGBATS))
+                else if (afmFile.equals(ZAPFDINGBATS))
                     afm = ZapfDingbats.afm;
                 else {
                     afm = Helvetica1.afm;
                     afm += Helvetica2.afm;
                 }
-                fin = new BufferedReader(new StringReader(afm));
-                process(fin);
+                rf = new RandomAccessFileOrArray(afm.getBytes(PdfObject.ENCODING));
+                process(rf);
             }
             finally {
-                if (fin != null) {
+                if (rf != null) {
                     try {
-                        fin.close();
+                        rf.close();
                     }
                     catch (Exception e) {
                     }
@@ -206,15 +214,16 @@ class Type1Font extends BaseFont
         }
         else if (afmFile.toLowerCase().endsWith(".afm")) {
             try {
-                fin = new BufferedReader(new InputStreamReader(new FileInputStream(afmFile), PdfObject.ENCODING));
-                if (fin == null)
-                    throw new DocumentException(afmFile + " not found as file.");
-                process(fin);
+                if (ttfAfm == null)
+                    rf = new RandomAccessFileOrArray(afmFile);
+                else
+                    rf = new RandomAccessFileOrArray(ttfAfm);
+                process(rf);
             }
             finally {
-                if (fin != null) {
+                if (rf != null) {
                     try {
-                        fin.close();
+                        rf.close();
                     }
                     catch (Exception e) {
                     }
@@ -294,16 +303,16 @@ class Type1Font extends BaseFont
     }
     
     
- /** Reads the font metrics
-  * @param fin AFM file with the font metrics
-  * @throws DocumentException the AFM file is invalid
-  * @throws IOException the AFM file could not be read
-  */
-    public void process(BufferedReader fin) throws DocumentException, IOException
+    /** Reads the font metrics
+     * @param rf the AFM file
+     * @throws DocumentException the AFM file is invalid
+     * @throws IOException the AFM file could not be read
+     */
+    public void process(RandomAccessFileOrArray rf) throws DocumentException, IOException
     {
         String line;
         boolean isMetrics = false;
-        while ((line = fin.readLine()) != null)
+        while ((line = rf.readLine()) != null)
         {
             StringTokenizer tok = new StringTokenizer(line);
             if (!tok.hasMoreTokens())
@@ -356,7 +365,7 @@ class Type1Font extends BaseFont
         }
         if (!isMetrics)
             throw new DocumentException("Missing StartCharMetrics in " + fileName);
-        while ((line = fin.readLine()) != null)
+        while ((line = rf.readLine()) != null)
         {
             StringTokenizer tok = new StringTokenizer(line);
             if (!tok.hasMoreTokens())
@@ -388,7 +397,7 @@ class Type1Font extends BaseFont
         }
         if (isMetrics)
             throw new DocumentException("Missing EndCharMetrics in " + fileName);
-        while ((line = fin.readLine()) != null)
+        while ((line = rf.readLine()) != null)
         {
             StringTokenizer tok = new StringTokenizer(line);
             if (!tok.hasMoreTokens())
@@ -404,7 +413,7 @@ class Type1Font extends BaseFont
         }
         if (!isMetrics)
             throw new DocumentException("Missing EndFontMetrics in " + fileName);
-        while ((line = fin.readLine()) != null)
+        while ((line = rf.readLine()) != null)
         {
             StringTokenizer tok = new StringTokenizer(line);
             if (!tok.hasMoreTokens())
@@ -436,7 +445,7 @@ class Type1Font extends BaseFont
         }
         if (isMetrics)
             throw new DocumentException("Missing EndKernPairs in " + fileName);
-        fin.close();
+        rf.close();
     }
     
 /** If the embedded flag is <CODE>false</CODE> or if the font is
@@ -449,28 +458,31 @@ class Type1Font extends BaseFont
     {
         if (builtinFont || !embedded)
             return null;
-        InputStream is = null;
+        RandomAccessFileOrArray rf = null;
         try {
-            File file = new File(fileName.substring(0, fileName.length() - 3) + "pfb");
-            int fileLength = (int)file.length();
+            String filePfb = fileName.substring(0, fileName.length() - 3) + "pfb";
+            if (pfb == null)
+                rf = new RandomAccessFileOrArray(filePfb);
+            else
+                rf = new RandomAccessFileOrArray(pfb);
+            int fileLength = rf.length();
             byte st[] = new byte[fileLength - 18];
-            is = new FileInputStream(file);
             int lengths[] = new int[3];
             int bytePtr = 0;
             for (int k = 0; k < 3; ++k) {
-                if (is.read() != 0x80)
-                    throw new DocumentException("Start marker missing in " + file.getName());
-                if (is.read() != pfbTypes[k])
-                    throw new DocumentException("Incorrect segment type in " + file.getName());
-                int size = is.read();
-                size += is.read() << 8;
-                size += is.read() << 16;
-                size += is.read() << 24;
+                if (rf.read() != 0x80)
+                    throw new DocumentException("Start marker missing in " + filePfb);
+                if (rf.read() != pfbTypes[k])
+                    throw new DocumentException("Incorrect segment type in " + filePfb);
+                int size = rf.read();
+                size += rf.read() << 8;
+                size += rf.read() << 16;
+                size += rf.read() << 24;
                 lengths[k] = size;
                 while (size != 0) {
-                    int got = is.read(st, bytePtr, size);
+                    int got = rf.read(st, bytePtr, size);
                     if (got < 0)
-                        throw new DocumentException("Premature end in " + file.getName());
+                        throw new DocumentException("Premature end in " + filePfb);
                     bytePtr += got;
                     size -= got;
                 }
@@ -481,9 +493,9 @@ class Type1Font extends BaseFont
             throw new DocumentException(e.getMessage());
         }
         finally {
-            if (is != null) {
+            if (rf != null) {
                 try {
-                    is.close();
+                    rf.close();
                 }
                 catch (Exception e) {
                 }
@@ -643,4 +655,10 @@ class Type1Font extends BaseFont
         return 0;
     }
     
+    /** Gets the postscript font name.
+     * @return the postscript font name
+     */
+    public String getPostscriptFontName() {
+        return FontName;
+    }
 }

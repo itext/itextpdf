@@ -154,7 +154,7 @@ abstract class PdfObject {
  * @return		an array of <CODE>byte</CODE>
  */
     
-    public byte[] toPdf(PdfEncryption crypto) {
+    public byte[] toPdf(PdfWriter writer) {
         return bytes;
     }
     

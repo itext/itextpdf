@@ -697,38 +697,6 @@ public class Table extends Rectangle implements Element {
     }
     
     // methods
-
-    /**
-     * Sets the unset cell properties to be the table defaults.
-     *
-     * @param aCell The cell to set to table defaults as necessary.
-     * @author  Steve Ogryzek <steve@ogryzek.com>
-     */
-    
-    private void assumeTableDefaults(Cell aCell) {
-
-        if (aCell.border() == Rectangle.UNDEFINED) {
-            aCell.setBorder(defaultLayout.border());
-        }
-        if (aCell.borderWidth() == Rectangle.UNDEFINED) {
-            aCell.setBorderWidth(defaultLayout.borderWidth());
-        }
-        if (aCell.borderColor() == null) {
-            aCell.setBorderColor(defaultLayout.borderColor());
-        }
-        if (aCell.backgroundColor() == null) {
-            aCell.setBackgroundColor(defaultLayout.backgroundColor());
-        }
-        if (aCell.grayFill() == Rectangle.UNDEFINED) {
-            aCell.setGrayFill(defaultLayout.grayFill());
-        }
-        if (aCell.horizontalAlignment() == Element.ALIGN_UNDEFINED) {
-            aCell.setHorizontalAlignment(defaultLayout.horizontalAlignment());
-        }
-        if (aCell.verticalAlignment() == Element.ALIGN_UNDEFINED) {
-            aCell.setVerticalAlignment(defaultLayout.verticalAlignment());
-        }
-    }
     
 /**
  * Deletes a column in this table.
@@ -1296,11 +1264,12 @@ public class Table extends Rectangle implements Element {
  */
     
     private void placeCell(ArrayList someRows, Cell aCell, Point aPosition) {
+        printTableMatrix(someRows);
         int i,j;
         Row row = null;
         int lColumns = ((Row) someRows.get(0)).columns();
         int rowCount = aPosition.x + aCell.rowspan() - someRows.size();
-        assumeTableDefaults(aCell);
+        
         if ( (aPosition.x + aCell.rowspan()) > someRows.size() )        //create new rows ?
         {
             for (i = 0; i < rowCount; i++) {

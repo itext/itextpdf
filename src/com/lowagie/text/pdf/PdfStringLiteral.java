@@ -48,7 +48,8 @@ class PdfStringLiteral extends PdfObject
         super(0, b);
     }
     
-    final public byte[] toPdf(PdfEncryption crypto) {
+    final public byte[] toPdf(PdfWriter writer) {
+        PdfEncryption crypto = writer.getEncryption();
         if (crypto != null) {
             byte b[] = new byte[bytes.length];
             crypto.prepareKey();

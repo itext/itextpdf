@@ -138,7 +138,7 @@ public class PdfContentByte {
      * @return a <CODE>String</CODE>
      */
     
-    public byte[] toPdf(PdfEncryption crypto) {
+    public byte[] toPdf(PdfWriter writer) {
         return content.toByteArray();
     }
     
@@ -151,6 +151,8 @@ public class PdfContentByte {
  */
     
     public final void add(PdfContentByte other) {
+        if (other.writer != null && writer != other.writer)
+            throw new RuntimeException("Inconsistent writers. Are you mixing two documents?");
         content.append(other.content);
     }
     

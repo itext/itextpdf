@@ -156,7 +156,11 @@ public abstract class BaseFont {
     
 /** if the font doesn't have to be embedded */
     public final static boolean NOT_EMBEDDED = false;
-
+/** if the font has to be cached */
+    public final static boolean CACHED = true;
+/** if the font doesn't have to be cached */
+    public final static boolean NOT_CACHED = false;
+    
     /** The font type.
      */    
     int fontType;
@@ -194,8 +198,7 @@ public abstract class BaseFont {
      */    
     protected static char subsetPrefix[] = {'A', 'B', 'C', 'D', 'E', 'E', '+'};
     
-    static
-    {
+    static {
         BuiltinFonts14.put(COURIER, PdfName.COURIER);
         BuiltinFonts14.put(COURIER_BOLD, PdfName.COURIER_BOLD);
         BuiltinFonts14.put(COURIER_BOLDOBLIQUE, PdfName.COURIER_BOLDOBLIQUE);
@@ -214,7 +217,7 @@ public abstract class BaseFont {
     
     /** Generates the PDF stream with the Type1 and Truetype fonts returning
      * a PdfStream.
-     */    
+     */
     class StreamFont extends PdfStream {
         
         /** Generates the PDF stream with the Type1 and Truetype fonts returning
@@ -223,8 +226,7 @@ public abstract class BaseFont {
          * @param lengths an array of int that describes the several lengths of each part of the font
          * @throws DocumentException error in the stream compression
          */
-        public StreamFont(byte contents[], int lengths[]) throws DocumentException
-        {
+        public StreamFont(byte contents[], int lengths[]) throws DocumentException {
             try {
                 bytes = contents;
                 dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
@@ -239,9 +241,9 @@ public abstract class BaseFont {
         }
     }
     
-/**
- *Creates new BaseFont
- */
+    /**
+     *Creates new BaseFont
+     */
     protected BaseFont() {
     }
     
@@ -255,6 +257,11 @@ public abstract class BaseFont {
      * <P>
      * The fonts are cached and if they already exist they are extracted from the cache,
      * not parsed again.
+     * <P>
+     * This method calls:<br>
+     * <PRE>
+     * createFont(name, encoding, embedded, true, null, null);
+     * </PRE>
      * @param name the name of the font or it's location on file
      * @param encoding the encoding to be applied to this font
      * @param embedded true if the font is to be embedded in the PDF
@@ -262,8 +269,35 @@ public abstract class BaseFont {
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
      */
-    public static BaseFont createFont(String name, String encoding, boolean embedded) throws DocumentException, IOException
-    {
+    public static BaseFont createFont(String name, String encoding, boolean embedded) throws DocumentException, IOException {
+        return createFont(name, encoding, embedded, true, null, null);
+    }
+    
+    /** Creates a new font. This font can be one of the 14 built in types,
+     * a Type1 font referred by an AFM file, a TrueType font (simple or collection) or a CJK font from the
+     * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier
+     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
+     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
+     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
+     * This would get the second font (indexes start at 0), in this case "MS PGothic".
+     * <P>
+     * The fonts may or may not be cached depending on the flag <CODE>cached</CODE>.
+     * If the <CODE>byte</CODE> arrays are present the font will be
+     * read from them instead of the name. The name is still required to identify
+     * the font type.
+     * @param name the name of the font or it's location on file
+     * @param encoding the encoding to be applied to this font
+     * @param embedded true if the font is to be embedded in the PDF
+     * @param cached true if the font comes from the cache or is added to
+     * the cache if new. false if the font is always created new
+     * @param ttfAfm the true type font or the afm in a byte array
+     * @param pfb the pfb in a byte array
+     * @return returns a new font. This font may come from the cache but only if cached
+     * is true, otherwise it will always be created new
+     * @throws DocumentException the font is invalid
+     * @throws IOException the font file could not be read
+     */
+    public static BaseFont createFont(String name, String encoding, boolean embedded, boolean cached, byte ttfAfm[], byte pfb[]) throws DocumentException, IOException {
         String nameBase = getBaseName(name);
         encoding = normalizeEncoding(encoding);
         boolean isBuiltinFonts14 = BuiltinFonts14.containsKey(name);
@@ -275,29 +309,33 @@ public abstract class BaseFont {
         BaseFont fontFound = null;
         BaseFont fontBuilt = null;
         String key = name + "\n" + encoding + "\n" + embedded;
-        synchronized (fontCache) {
-            fontFound = (BaseFont)fontCache.get(key);
+        if (cached) {
+            synchronized (fontCache) {
+                fontFound = (BaseFont)fontCache.get(key);
+            }
+            if (fontFound != null)
+                return fontFound;
         }
-        if (fontFound != null)
-            return fontFound;
         if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm")) {
-            fontBuilt = new Type1Font(name, encoding, embedded);
+            fontBuilt = new Type1Font(name, encoding, embedded, ttfAfm, pfb);
         }
         else if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().indexOf(".ttc,") > 0) {
             if (encoding.equals(IDENTITY_H) || encoding.equals(IDENTITY_V))
-                fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded);
+                fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded, ttfAfm);
             else
-                fontBuilt = new TrueTypeFont(name, encoding, embedded);
+                fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm);
         }
         else if (isCJKFont)
             fontBuilt = new CJKFont(name, encoding, embedded);
         else
             throw new DocumentException("Font '" + name + "' with '" + encoding + "' is not recognized.");
-        synchronized (fontCache) {
-            fontFound = (BaseFont)fontCache.get(key);
-            if (fontFound != null)
-                return fontFound;
-            fontCache.put(key, fontBuilt);
+        if (cached) {
+            synchronized (fontCache) {
+                fontFound = (BaseFont)fontCache.get(key);
+                if (fontFound != null)
+                    return fontFound;
+                fontCache.put(key, fontBuilt);
+            }
         }
         return fontBuilt;
     }
@@ -307,8 +345,7 @@ public abstract class BaseFont {
      * @param name the full name of the font
      * @return the name without the modifiers Bold, Italic or BoldItalic
      */
-    protected static String getBaseName(String name)
-    {
+    protected static String getBaseName(String name) {
         if (name.endsWith(",Bold"))
             return name.substring(0, name.length() - 5);
         else if (name.endsWith(",Italic"))
@@ -319,14 +356,13 @@ public abstract class BaseFont {
             return name;
     }
     
-/**
- * Normalize the encoding names. "winansi" is changed to "Cp1252" and
- * "macroman" is changed to "MacRoman".
- * @param enc the encoding to be normalized
- * @return the normalized encoding
- */
-    protected static String normalizeEncoding(String enc)
-    {
+    /**
+     * Normalize the encoding names. "winansi" is changed to "Cp1252" and
+     * "macroman" is changed to "MacRoman".
+     * @param enc the encoding to be normalized
+     * @return the normalized encoding
+     */
+    protected static String normalizeEncoding(String enc) {
         if (enc.equals("winansi") || enc.equals(""))
             return CP1252;
         else if (enc.equals("macroman"))
@@ -335,12 +371,11 @@ public abstract class BaseFont {
             return enc;
     }
     
-/**
- * Creates the <CODE>widths</CODE> and the <CODE>differences</CODE> arrays
- * @throws UnsupportedEncodingException the encoding is not supported
- */
-    protected void createEncoding() throws UnsupportedEncodingException
-    {
+    /**
+     * Creates the <CODE>widths</CODE> and the <CODE>differences</CODE> arrays
+     * @throws UnsupportedEncodingException the encoding is not supported
+     */
+    protected void createEncoding() throws UnsupportedEncodingException {
         if (fontSpecific) {
             for (int k = 0; k < 256; ++k)
                 widths[k] = getRawWidth(k, null);
@@ -350,14 +385,13 @@ public abstract class BaseFont {
             String name;
             char c;
             byte b[] = new byte[1];
-            for (int k = 0; k < 256; ++k)
-            {
+            for (int k = 0; k < 256; ++k) {
                 b[0] = (byte)k;
                 s = new String(b, encoding);
                 if (s.length() > 0) {
                     c = s.charAt(0);
                 }
-                else {   
+                else {
                     c = '?';
                 }
                 name = GlyphList.unicodeToName((int)c);
@@ -370,40 +404,38 @@ public abstract class BaseFont {
         }
     }
     
-/**
- * Gets the width from the font according to the Unicode char <CODE>c</CODE>
- * or the <CODE>name</CODE>. If the <CODE>name</CODE> is null it's a symbolic font.
- * @param c the unicode char
- * @param name the glyph name
- * @return the width of the char
- */
+    /**
+     * Gets the width from the font according to the Unicode char <CODE>c</CODE>
+     * or the <CODE>name</CODE>. If the <CODE>name</CODE> is null it's a symbolic font.
+     * @param c the unicode char
+     * @param name the glyph name
+     * @return the width of the char
+     */
     protected abstract int getRawWidth(int c, String name);
     
-/**
- * Gets the kerning between two Unicode chars.
- * @param char1 the first char
- * @param char2 the second char
- * @return the kerning to be applied
- */
+    /**
+     * Gets the kerning between two Unicode chars.
+     * @param char1 the first char
+     * @param char2 the second char
+     * @return the kerning to be applied
+     */
     public abstract int getKerning(char char1, char char2);
     
-/**
- * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
- * @param char1 the unicode <CODE>char</CODE> to get the width of
- * @return the width in normalized 1000 units
- */
-    public int getWidth(char char1)
-    {
+    /**
+     * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
+     * @param char1 the unicode <CODE>char</CODE> to get the width of
+     * @return the width in normalized 1000 units
+     */
+    public int getWidth(char char1) {
         return getWidth(new String(new char[]{char1}));
     }
     
-/**
- * Gets the width of a <CODE>String</CODE> in normalized 1000 units.
- * @param text the <CODE>String</CODE> to get the witdth of
- * @return the width in normalized 1000 units
- */
-    public int getWidth(String text)
-    {
+    /**
+     * Gets the width of a <CODE>String</CODE> in normalized 1000 units.
+     * @param text the <CODE>String</CODE> to get the witdth of
+     * @return the width in normalized 1000 units
+     */
+    public int getWidth(String text) {
         int total = 0;
         try {
             byte mbytes[] = text.getBytes(encoding);
@@ -415,36 +447,33 @@ public abstract class BaseFont {
         return total;
     }
     
-/**
- * Gets the width of a <CODE>String</CODE> in points.
- * @param text the <CODE>String</CODE> to get the witdth of
- * @param fontSize the font size
- * @return the width in points
- */
-    public float getWidthPoint(String text, float fontSize)
-    {
+    /**
+     * Gets the width of a <CODE>String</CODE> in points.
+     * @param text the <CODE>String</CODE> to get the witdth of
+     * @param fontSize the font size
+     * @return the width in points
+     */
+    public float getWidthPoint(String text, float fontSize) {
         return (float)getWidth(text) * 0.001f * fontSize;
     }
     
-/**
- * Gets the width of a <CODE>char</CODE> in points.
- * @param char1 the <CODE>char</CODE> to get the witdth of
- * @param fontSize the font size
- * @return the width in points
- */
-    public float getWidthPoint(char char1, float fontSize)
-    {
+    /**
+     * Gets the width of a <CODE>char</CODE> in points.
+     * @param char1 the <CODE>char</CODE> to get the witdth of
+     * @param fontSize the font size
+     * @return the width in points
+     */
+    public float getWidthPoint(char char1, float fontSize) {
         return getWidth(char1) * 0.001f * fontSize;
     }
     
-/**
- * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
- * to the font's encoding.
- * @param text the <CODE>String</CODE> to be converted
- * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
- */
-    byte[] convertToBytes(String text)
-    {
+    /**
+     * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
+     * to the font's encoding.
+     * @param text the <CODE>String</CODE> to be converted
+     * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     */
+    byte[] convertToBytes(String text) {
         try {
             return text.getBytes(encoding);
         }
@@ -467,8 +496,7 @@ public abstract class BaseFont {
     /** Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
      * @return the encoding name
      */
-    public String getEncoding()
-    {
+    public String getEncoding() {
         return encoding;
     }
     
@@ -479,34 +507,34 @@ public abstract class BaseFont {
      * @param key the parameter to be extracted
      * @param fontSize the font size in points
      * @return the parameter in points
-     */    
+     */
     public abstract float getFontDescriptor(int key, float fontSize);
     
     /** Gets the font type. The font types can be: FONT_TYPE_T1,
      * FONT_TYPE_TT, FONT_TYPE_CJK and FONT_TYPE_TTUNI.
      * @return the font type
-     */    
+     */
     public int getFontType() {
         return fontType;
     }
-
+    
     /** Gets the embedded flag.
      * @return <CODE>true</CODE> if the font is embedded.
-     */    
+     */
     public boolean isEmbedded() {
         return embedded;
     }
     
     /** Gets the symbolic flag of the font.
      * @return <CODE>true</CODE> if the font is symbolic
-     */    
+     */
     public boolean isFontSpecific() {
         return fontSpecific;
     }
     
     /** Creates a unique subset prefix to be added to the font name when the font is embedded and subset.
      * @return the subset prefix
-     */    
+     */
     String createSubsetPrefix() {
         synchronized(subsetPrefix) {
             for (int k = 0; k < subsetPrefix.length - 1; ++k) {
@@ -525,8 +553,43 @@ public abstract class BaseFont {
     /** Gets the Unicode character corresponding to the byte output to the pdf stream.
      * @param index the byte index
      * @return the Unicode character
-     */    
+     */
     char getUnicodeDifferences(int index) {
         return unicodeDifferences[index];
+    }
+    
+    /** Gets the postscript font name.
+     * @return the postscript font name
+     */
+    public abstract String getPostscriptFontName();
+    
+    /** Gets the code pages supported by the font. This has only meaning
+     * with True Type fonts.
+     * @return the code pages supported by the font
+     */
+    public String[] getCodePagesSupported() {
+        return new String[0];
+    }
+    
+    /** Enumerates the postscript font names present inside a
+     * True Type Collection.
+     * @param ttcFile the file name of the font
+     * @throws DocumentException on error
+     * @throws IOException on error
+     * @return the postscript font names
+     */    
+    public static String[] enumerateTTCNames(String ttcFile) throws DocumentException, IOException {
+        return new EnumerateTTC(ttcFile).getNames();
+    }
+
+    /** Enumerates the postscript font names present inside a
+     * True Type Collection.
+     * @param ttcArray the font as a <CODE>byte</CODE> array
+     * @throws DocumentException on error
+     * @throws IOException on error
+     * @return the postscript font names
+     */    
+    public static String[] enumerateTTCNames(byte ttcArray[]) throws DocumentException, IOException {
+        return new EnumerateTTC(ttcArray).getNames();
     }
 }

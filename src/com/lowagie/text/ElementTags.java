@@ -310,9 +310,6 @@ public class ElementTags {
     
 /** attribute of the annotation tag */
     public static final String CONTENT = "content";
-
-/** attribute for specifying externally defined CSS class (only recognized by HTML generator) */
-    public static final String CLASS = "class";
     
     // alignment attribute values
     
