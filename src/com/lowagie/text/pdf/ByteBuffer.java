@@ -329,15 +329,13 @@ public class ByteBuffer
             d += 0.005;
             int v = (int) (d * 100);
 
+
             if (v < LONG_CACHE_SIZE && longCache[v] != null) {
                 if (buf != null) {
-                    if (negative) buf.append((byte)'-');
                     buf.append(longCache[v]);
                     return null;
                 } else {
-                    String tmp = new String(longCache[v]);
-                    if (negative) tmp = "-" + tmp;
-                    return tmp;
+                    return new String(longCache[v]);
                 }
             }
             if (buf != null) {
@@ -345,6 +343,7 @@ public class ByteBuffer
                     //create the cachebyte[]
                     byte[] cache;
                     int size = 0;
+                    int n = negative ? 1 : 0;
                     if (v >= 1000000) {
                         //the original number is >=10000, we need 5 more bytes
                         size += 5;
@@ -370,8 +369,17 @@ public class ByteBuffer
                     if (v % 10 != 0) {
                         size++;
                     }
+                    if (negative) {
+                        size++;
+                    }
                     cache = new byte[size];
-                    int add = 0;
+                    int add = n;
+                    //do not forget to add the '-' if a number is negative
+                    if (negative) {
+                        cache[0] = '-';
+                    }
+
+                    int add = n;
                     if (v >= 1000000) {
                         cache[add++] = bytes[(v / 1000000)];
                     }
