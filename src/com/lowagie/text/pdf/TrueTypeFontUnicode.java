@@ -445,4 +445,28 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             m[1] = advance;
         return true;
     }
+    
+    public int[] getCharBBox(char c) {
+        if (bboxes == null)
+            return null;
+        HashMap map = null;
+        if (fontSpecific)
+            map = cmap10;
+        else
+            map = cmap31;
+        if (map == null)
+            return null;
+        int m[] = null;
+        if (fontSpecific) {
+            if ((c & 0xff00) == 0 || (c & 0xff00) == 0xf000)
+                m = (int[])map.get(new Integer(c & 0xff));
+            else
+                return null;
+        }
+        else
+            m = (int[])map.get(new Integer(c));
+        if (m == null)
+            return null;
+        return bboxes[m[0]];
+    }
 }

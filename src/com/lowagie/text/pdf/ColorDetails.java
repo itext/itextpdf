@@ -95,7 +95,7 @@ class ColorDetails {
     /** Gets the <CODE>SpotColor</CODE> object.
      * @return the <CODE>PdfSpotColor</CODE>
      */
-    PdfArray getSpotColor(PdfWriter writer) throws IOException {
-        return spotcolor.getPdfArray(writer);
+    PdfObject getSpotColor(PdfWriter writer) throws IOException {
+        return spotcolor.getSpotObject(writer);
     }
 }

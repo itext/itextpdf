@@ -95,6 +95,7 @@ import com.lowagie.bc.asn1.DERNull;
 import com.lowagie.bc.asn1.ASN1EncodableVector;
 import com.lowagie.bc.asn1.DERSet;
 import com.lowagie.bc.asn1.DERString;
+import com.lowagie.bc.asn1.DERUTCTime;
 import com.lowagie.bc.asn1.ASN1OutputStream;
 
 /**
@@ -127,6 +128,9 @@ public class PdfPKCS7 {
     private static final String ID_SHA1 = "1.3.14.3.2.26";
     private static final String ID_RSA = "1.2.840.113549.1.1.1";
     private static final String ID_DSA = "1.2.840.10040.4.1";
+    private static final String ID_CONTENT_TYPE = "1.2.840.113549.1.9.3";
+    private static final String ID_MESSAGE_DIGEST = "1.2.840.113549.1.9.4";
+    private static final String ID_SIGNING_TIME = "1.2.840.113549.1.9.5";
     
     /**
      * Holds value of property reason.
@@ -705,8 +709,20 @@ public class PdfPKCS7 {
     
     /**
      * Gets the bytes for the PKCS7SignedData object.
+     * @return the bytes for the PKCS7SignedData object
      */
     public byte[] getEncodedPKCS7() {
+        return getEncodedPKCS7(null, null);
+    }
+    
+    /**
+     * Gets the bytes for the PKCS7SignedData object. Optionally the authenticatedAttributes
+     * in the signerInfo can also be set. If either of the parameters is <CODE>null</CODE>, none will be used.
+     * @param secondDigest the digest in the authenticatedAttributes
+     * @param signingTime the signing time in the authenticatedAttributes
+     * @return the bytes for the PKCS7SignedData object
+     */
+    public byte[] getEncodedPKCS7(byte secondDigest[], Calendar signingTime) {
         try {
             if (externalDigest != null) {
                 digest = externalDigest;
@@ -771,6 +787,23 @@ public class PdfPKCS7 {
             v.add(new DERNull());
             signerinfo.add(new DERSequence(v));
             
+            // add the authenticated attribute if present
+            if (secondDigest != null && signingTime != null) {
+                ASN1EncodableVector attribute = new ASN1EncodableVector();
+                v = new ASN1EncodableVector();
+                v.add(new DERObjectIdentifier(ID_CONTENT_TYPE));
+                v.add(new DERSet(new DERObjectIdentifier(ID_PKCS7_DATA)));
+                attribute.add(new DERSequence(v));
+                v = new ASN1EncodableVector();
+                v.add(new DERObjectIdentifier(ID_SIGNING_TIME));
+                v.add(new DERSet(new DERUTCTime(signingTime.getTime())));
+                attribute.add(new DERSequence(v));
+                v = new ASN1EncodableVector();
+                v.add(new DERObjectIdentifier(ID_MESSAGE_DIGEST));
+                v.add(new DERSet(new DEROctetString(secondDigest)));
+                attribute.add(new DERSequence(v));
+                signerinfo.add(new DERTaggedObject(false, 0, new DERSet(attribute)));
+            }
             // Add the digestEncryptionAlgorithm
             v = new ASN1EncodableVector();
             v.add(new DERObjectIdentifier(digestEncryptionAlgorithm));
@@ -821,6 +854,61 @@ public class PdfPKCS7 {
         }
     }
     
+    
+    /**
+     * When using authenticatedAttributes the authentication process is different.
+     * The document digest is generated and put inside the attribute. The signing is done over the DER encoded
+     * authenticatedAttributes. This method provides that encoding and the parameters must be
+     * exactly the same as in {@link #getEncodedPKCS7(byte[],Calendar)}.
+     * <p>
+     * A simple example:
+     * <p>
+     * <pre>
+     * Calendar cal = Calendar.getInstance();
+     * PdfPKCS7 pk7 = new PdfPKCS7(key, chain, null, "SHA1", null, false);
+     * MessageDigest messageDigest = MessageDigest.getInstance("SHA1");
+     * byte buf[] = new byte[8192];
+     * int n;
+     * InputStream inp = sap.getRangeStream();
+     * while ((n = inp.read(buf)) &gt; 0) {
+     *    messageDigest.update(buf, 0, n);
+     * }
+     * byte hash[] = messageDigest.digest();
+     * byte sh[] = pk7.getAuthenticatedAttributeBytes(hash, cal);
+     * pk7.update(sh, 0, sh.length);
+     * byte sg[] = pk7.getEncodedPKCS7(hash, cal);
+     * </pre>
+     * @param secondDigest the content digest
+     * @param signingTime the signing time
+     * @return the byte array representation of the authenticatedAttributes ready to be signed
+     */    
+    public byte[] getAuthenticatedAttributeBytes(byte secondDigest[], Calendar signingTime) {
+        try {
+            ASN1EncodableVector attribute = new ASN1EncodableVector();
+            ASN1EncodableVector v = new ASN1EncodableVector();
+            v.add(new DERObjectIdentifier(ID_CONTENT_TYPE));
+            v.add(new DERSet(new DERObjectIdentifier(ID_PKCS7_DATA)));
+            attribute.add(new DERSequence(v));
+            v = new ASN1EncodableVector();
+            v.add(new DERObjectIdentifier(ID_SIGNING_TIME));
+            v.add(new DERSet(new DERUTCTime(signingTime.getTime())));
+            attribute.add(new DERSequence(v));
+            v = new ASN1EncodableVector();
+            v.add(new DERObjectIdentifier(ID_MESSAGE_DIGEST));
+            v.add(new DERSet(new DEROctetString(secondDigest)));
+            attribute.add(new DERSequence(v));
+            ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
+            
+            ASN1OutputStream dout = new ASN1OutputStream(bOut);
+            dout.writeObject(new DERSet(attribute));
+            dout.close();
+            
+            return bOut.toByteArray();
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
     /**
      * Getter for property reason.
      * @return Value of property reason.

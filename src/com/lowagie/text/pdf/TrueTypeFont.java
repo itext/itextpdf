@@ -172,6 +172,8 @@ class TrueTypeFont extends BaseFont {
      * 'hmtx' normalized to 1000 units.
      */
     protected int GlyphWidths[];
+    
+    protected int bboxes[][];
     /** The map containing the code information for the table 'cmap', encoding 1.0.
      * The key is the code and the value is an <CODE>int[2]</CODE> where position 0
      * is the glyph number and position 1 is the glyph width normalized to 1000
@@ -612,6 +614,8 @@ class TrueTypeFont extends BaseFont {
                 readGlyphWidths();
                 readCMaps();
                 readKerning();
+                readBbox();
+                GlyphWidths = null;
             }
         }
         finally {
@@ -678,10 +682,52 @@ class TrueTypeFont extends BaseFont {
      * @param glyph the glyph to get the width of
      * @return the width of the glyph in normalized 1000 units
      */
-    public int getGlyphWidth(int glyph) {
+    protected int getGlyphWidth(int glyph) {
         if (glyph >= GlyphWidths.length)
             glyph = GlyphWidths.length - 1;
         return GlyphWidths[glyph];
+    }
+    
+    private void readBbox() throws DocumentException, IOException {
+        int tableLocation[];
+        tableLocation = (int[])tables.get("head");
+        if (tableLocation == null)
+            throw new DocumentException("Table 'head' does not exist in " + fileName + style);
+        rf.seek(tableLocation[0] + TrueTypeFontSubSet.HEAD_LOCA_FORMAT_OFFSET);
+        boolean locaShortTable = (rf.readUnsignedShort() == 0);
+        tableLocation = (int[])tables.get("loca");
+        if (tableLocation == null)
+            return;
+        rf.seek(tableLocation[0]);
+        int locaTable[];
+        if (locaShortTable) {
+            int entries = tableLocation[1] / 2;
+            locaTable = new int[entries];
+            for (int k = 0; k < entries; ++k)
+                locaTable[k] = rf.readUnsignedShort() * 2;
+        }
+        else {
+            int entries = tableLocation[1] / 4;
+            locaTable = new int[entries];
+            for (int k = 0; k < entries; ++k)
+                locaTable[k] = rf.readInt();
+        }
+        tableLocation = (int[])tables.get("glyf");
+        if (tableLocation == null)
+            throw new DocumentException("Table 'glyf' does not exist in " + fileName + style);
+        int tableGlyphOffset = tableLocation[0];
+        bboxes = new int[locaTable.length - 1][];
+        for (int glyph = 0; glyph < locaTable.length - 1; ++glyph) {
+            int start = locaTable[glyph];
+            if (start != locaTable[glyph + 1]) {
+                rf.seek(tableGlyphOffset + start + 2);
+                bboxes[glyph] = new int[]{
+                    (rf.readShort() * 1000) / head.unitsPerEm,
+                    (rf.readShort() * 1000) / head.unitsPerEm,
+                    (rf.readShort() * 1000) / head.unitsPerEm,
+                    (rf.readShort() * 1000) / head.unitsPerEm};
+            }
+        }
     }
     
     /** Reads the several maps from the table 'cmap'. The maps of interest are 1.0 for symbolic
@@ -1237,5 +1283,19 @@ class TrueTypeFont extends BaseFont {
         int c2 = metrics[0];
         kerning.put((c1 << 16) + c2, kern);
         return true;
+    }
+    
+    protected int[] getRawCharBBox(int c, String name) {
+        HashMap map = null;
+        if (name == null || cmap31 == null)
+            map = cmap10;
+        else
+            map = cmap31;
+        if (map == null)
+            return null;
+        int metric[] = (int[])map.get(new Integer(c));
+        if (metric == null || bboxes == null)
+            return null;
+        return bboxes[metric[0]];
     }
 }

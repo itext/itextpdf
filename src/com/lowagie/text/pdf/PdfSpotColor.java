@@ -92,7 +92,7 @@ public class PdfSpotColor{
         return altcs;
     }
     
-    PdfArray getPdfArray(PdfWriter writer) throws IOException {
+    protected PdfObject getSpotObject(PdfWriter writer) throws IOException {
         PdfArray array = new PdfArray(PdfName.SEPARATION);
         array.add(name);
         PdfFunction func = null;

@@ -440,7 +440,7 @@ public class PdfLine {
        for (int k = 0; k < line.size(); ++k) {
            PdfChunk ck = (PdfChunk)line.get(k);
            if (ck.isImage())
-               ascender = Math.max(ascender, ck.getImageOffsetY());
+               ascender = Math.max(ascender, ck.getImage().scaledHeight() + ck.getImageOffsetY());
            else {
                PdfFont font = ck.font();
                ascender = Math.max(ascender, font.getFont().getFontDescriptor(BaseFont.ASCENT, font.size()));

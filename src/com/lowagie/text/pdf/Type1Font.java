@@ -135,8 +135,8 @@ class Type1Font extends BaseFont
     private int StdVW = 80;
     
 /** Represents the section CharMetrics in the AFM file. Each
- *  element of this array contains a <CODE>Object[3]</CODE> with an
- *  Integer, Integer and String. This is the code, width and name.
+ *  element of this array contains a <CODE>Object[4]</CODE> with an
+ *  Integer, Integer, String and int[]. This is the code, width, name and char bbox.
  */
     private ArrayList CharMetrics = new ArrayList();
 /** Represents the section KernPairs in the AFM file. The key is
@@ -397,6 +397,8 @@ class Type1Font extends BaseFont
             Integer C = new Integer(-1);
             Integer WX = new Integer(250);
             String N = "";
+            int B[] = null;
+
             tok = new StringTokenizer(line, ";");
             while (tok.hasMoreTokens())
             {
@@ -410,8 +412,14 @@ class Type1Font extends BaseFont
                     WX = new Integer(Float.valueOf(tokc.nextToken()).intValue());
                 else if (ident.equals("N"))
                     N = tokc.nextToken();
+                else if (ident.equals("B")) {
+                    B = new int[]{Integer.parseInt(tokc.nextToken()), 
+                                         Integer.parseInt(tokc.nextToken()),
+                                         Integer.parseInt(tokc.nextToken()),
+                                         Integer.parseInt(tokc.nextToken())};
+                }
             }
-            CharMetrics.add(new Object[]{C, WX, N});
+            CharMetrics.add(new Object[]{C, WX, N, B});
         }
         if (isMetrics)
             throw new DocumentException("Missing EndCharMetrics in " + fileName);
@@ -765,4 +773,25 @@ class Type1Font extends BaseFont
         KernPairs.put(first, obj2);
         return true;
     }
+    
+    protected int[] getRawCharBBox(int c, String name) {
+        if (name == null) { // font specific
+            for (int k = 0; k < CharMetrics.size(); ++k) {
+                Object metrics[] = (Object[])CharMetrics.get(k);
+                if (((Integer)(metrics[0])).intValue() == c)
+                    return (int[])(metrics[3]);
+            }
+        }
+        else {
+            if (name.equals(".notdef"))
+                return null;
+            for (int k = 0; k < CharMetrics.size(); ++k) {
+                Object metrics[] = (Object[])CharMetrics.get(k);
+                if (name.equals(metrics[2]))
+                    return (int[])(metrics[3]);
+            }
+        }
+        return null;
+    }
+    
 }

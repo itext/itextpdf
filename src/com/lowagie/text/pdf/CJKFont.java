@@ -616,4 +616,11 @@ class CJKFont extends BaseFont {
         return false;
     }
     
+    public int[] getCharBBox(char c) {
+        return null;
+    }
+    
+    protected int[] getRawCharBBox(int c, String name) {
+        return null;
+    }
 }

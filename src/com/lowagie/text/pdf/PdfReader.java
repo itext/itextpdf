@@ -555,7 +555,10 @@ public class PdfReader {
         pageInh.remove(pageInh.size() - 1);
     }
     
-    protected void iteratePages(PdfDictionary page) throws IOException {
+    protected void iteratePages(PRIndirectReference rpage) throws IOException {
+        if (pagesCount >= pages.length) // just in case we have more pages than declared
+            return;
+        PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
         PdfArray kidsPR = (PdfArray)getPdfObject(page.get(PdfName.KIDS));
         if (kidsPR == null) {
             page.put(PdfName.TYPE, PdfName.PAGE);
@@ -570,16 +573,15 @@ public class PdfReader {
                 PdfArray arr = new PdfArray(new float[]{0,0,PageSize.LETTER.right(),PageSize.LETTER.top()});
                 page.put(PdfName.MEDIABOX, arr);
             }
-            pages[pagesCount++] = page;
+            pages[pagesCount] = page;
+            pageRefs[pagesCount++] = rpage;
         }
         else {
             page.put(PdfName.TYPE, PdfName.PAGES);
             pushPageAttributes(page);
             ArrayList kids = kidsPR.getArrayList();
             for (int k = 0; k < kids.size(); ++k){
-                pageRefs[pagesCount] = (PRIndirectReference)kids.get(k);
-                PdfDictionary kid = (PdfDictionary)getPdfObject(pageRefs[pagesCount]);
-                iteratePages(kid);
+                iteratePages((PRIndirectReference)kids.get(k));
             }
             popPageAttributes();
         }
@@ -593,7 +595,7 @@ public class PdfReader {
         pages = new PdfDictionary[count.intValue()];
         pageRefs = new PRIndirectReference[pages.length];
         pagesCount = 0;
-        iteratePages(rootPages);
+        iteratePages((PRIndirectReference)catalog.get(PdfName.PAGES));
         pageInh = null;
     }
     

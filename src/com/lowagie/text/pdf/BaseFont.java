@@ -207,6 +207,7 @@ public abstract class BaseFont {
 /** same as differences but with the unicode codes */
     protected char unicodeDifferences[] = new char[256];
     
+    protected int charBBoxes[][] = new int[256][];
 /** encoding used with this font */
     protected String encoding;
     
@@ -448,8 +449,10 @@ public abstract class BaseFont {
      */
     protected void createEncoding() {
         if (fontSpecific) {
-            for (int k = 0; k < 256; ++k)
+            for (int k = 0; k < 256; ++k) {
                 widths[k] = getRawWidth(k, null);
+                charBBoxes[k] = getRawCharBBox(k, null);
+            }
         }
         else {
             String s;
@@ -471,6 +474,7 @@ public abstract class BaseFont {
                 differences[k] = name;
                 unicodeDifferences[k] = c;
                 widths[k] = getRawWidth((int)c, name);
+                charBBoxes[k] = getRawCharBBox((int)c, name);
             }
         }
     }
@@ -540,6 +544,63 @@ public abstract class BaseFont {
         }
         return total;
     }
+    
+/**
+ * Gets the descent of a <CODE>String</CODE> in normalized 1000 units. The descent will always be
+ * less than or equal to zero even if all the characters have an higher descent.
+ * @param text the <CODE>String</CODE> to get the descent of
+ * @return the dexcent in normalized 1000 units
+ */
+    public int getDescent(String text) {
+        int min = 0;
+        char chars[] = text.toCharArray();
+        for (int k = 0; k < chars.length; ++k) {
+            int bbox[] = getCharBBox(chars[k]);
+            if (bbox != null && bbox[1] < min)
+                min = bbox[1];
+        }
+        return min;
+    }
+    
+/**
+ * Gets the ascent of a <CODE>String</CODE> in normalized 1000 units. The ascent will always be
+ * greater than or equal to zero even if all the characters have a lower ascent.
+ * @param text the <CODE>String</CODE> to get the ascent of
+ * @return the ascent in normalized 1000 units
+ */
+    public int getAscent(String text) {
+        int max = 0;
+        char chars[] = text.toCharArray();
+        for (int k = 0; k < chars.length; ++k) {
+            int bbox[] = getCharBBox(chars[k]);
+            if (bbox != null && bbox[3] > max)
+                max = bbox[1];
+        }
+        return max;
+    }
+
+/**
+ * Gets the descent of a <CODE>String</CODE> in points. The descent will always be
+ * less than or equal to zero even if all the characters have an higher descent.
+ * @param text the <CODE>String</CODE> to get the descent of
+ * @return the dexcent in points
+ */
+    public float getDescentPoint(String text, float fontSize)
+    {
+        return (float)getDescent(text) * 0.001f * fontSize;
+    }
+    
+/**
+ * Gets the ascent of a <CODE>String</CODE> in points. The ascent will always be
+ * greater than or equal to zero even if all the characters have a lower ascent.
+ * @param text the <CODE>String</CODE> to get the ascent of
+ * @return the ascent in points
+ */
+    public float getAscentPoint(String text, float fontSize)
+    {
+        return (float)getAscent(text) * 0.001f * fontSize;
+    }
+// ia>    
     
     /**
      * Gets the width of a <CODE>String</CODE> in points taking kerning
@@ -999,4 +1060,23 @@ public abstract class BaseFont {
         recourseFonts(reader.getPageN(page), hits, fonts, 1);
         return fonts;
     }
+    
+    /**
+     * Gets the smallest box enclosing the character contours. It will return
+     * <CODE>null</CODE> if the font has not the information or the character has no
+     * contours, as in the case of the space, for example. Characters with no contours may
+     * also return [0,0,0,0].
+     * @param c the character to get the contour bounding box from
+     * @return an array of four floats with the bounding box in the format [llx,lly,urx,ury] or
+     * <code>null</code>
+     */    
+    public int[] getCharBBox(char c) {
+        byte b[] = convertToBytes(new String(new char[]{c}));
+        if (b.length == 0)
+            return null;
+        else
+            return charBBoxes[b[0] & 0xff];
+    }
+    
+    protected abstract int[] getRawCharBBox(int c, String name);
 }
