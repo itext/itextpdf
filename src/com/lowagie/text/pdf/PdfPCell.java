@@ -209,6 +209,10 @@ public class PdfPCell extends Rectangle{
         useBorderPadding = cell.useBorderPadding;
     }
     
+    /**
+     * Adds an iText element to the cell.
+     * @param element
+     */
     public void addElement(Element element) {
         if (table != null) {
             table = null;
@@ -360,6 +364,10 @@ public class PdfPCell extends Rectangle{
         this.paddingBottom = paddingBottom;
     }
     
+    /**
+     * Sets the padding of the contents in the cell (space between content and border).
+     * @param padding
+     */
     public void setPadding(float padding) {
         paddingBottom = padding;
         paddingTop = padding;
@@ -574,10 +582,18 @@ public class PdfPCell extends Rectangle{
         column.setSpaceCharRatio(spaceCharRatio);
     }
     
+    /**
+     * Sets the run direction of the text content in the cell (PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI, PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL).
+     * @param runDirection
+     */
     public void setRunDirection(int runDirection) {
         column.setRunDirection(runDirection);
     }
     
+    /**
+     * Gets the run direction of the text content in the cell
+     * @return One of the following values: PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI, PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
+     */
     public int getRunDirection() {
         return column.getRunDirection();
     }
@@ -632,6 +648,7 @@ public class PdfPCell extends Rectangle{
     }
 
     /** Gets state of first line height based on max ascender
+     * @return true if an ascender is to be used.
      */
     public boolean isUseAscender() {
         return column.isUseAscender();
@@ -662,10 +679,18 @@ public class PdfPCell extends Rectangle{
         this.useDescender = useDescender;
     }
 
+    /**
+     * Gets the ColumnText with the content of the cell.
+     * @return a columntext object
+     */
     public ColumnText getColumn() {
         return column;
     }
     
+    /**
+     * Sets the columntext in the cell.
+     * @param column
+     */
     public void setColumn(ColumnText column) {
         this.column = column;
     }
