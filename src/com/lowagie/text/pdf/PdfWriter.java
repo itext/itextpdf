@@ -150,7 +150,7 @@ public class PdfWriter extends DocWriter {
                 String s = "0000000000" + offset;
                 StringBuffer off = new StringBuffer(s.substring(s.length() - 10));
                 s = "00000" + generation;
-                StringBuffer gen = new StringBuffer(s.substring(s.length() - 5));
+                String gen = s.substring(s.length() - 5);
                 if (generation == 65535) {
                     os.write(getISOBytes(off.append(' ').append(gen).append(" f \n").toString()));
                 }
