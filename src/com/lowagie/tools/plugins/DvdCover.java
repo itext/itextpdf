@@ -93,7 +93,7 @@ public class DvdCover extends AbstractTool {
 	}
 	
     /**
-     * Example that generates a DVD Cover in PDF.
+     * Generates a DVD Cover in PDF.
      * @param args	an array containing [0] a filename [1] a title [2] a backgroundcolor [3] a front image [4] a back image [5] a side image
      */
     public static void main(String[] args) {
@@ -188,6 +188,6 @@ public class DvdCover extends AbstractTool {
 	 */
 	public void valueHasChanged(ToolArgument arg) {
 		System.out.println(arg.getValue());
-	}	
+	}
 
 }

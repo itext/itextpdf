@@ -105,7 +105,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	private JMenuBar getMenubar() {
 		if (toolmap.size() == 0) {
 			try {
-				toolmap.load(Toolbox.class.getClassLoader().getResourceAsStream("com/lowagie/tools/tools.txt"));
+				toolmap.load(Toolbox.class.getClassLoader().getResourceAsStream("com/lowagie/tools/plugins/tools.txt"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

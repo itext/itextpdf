@@ -5,3 +5,4 @@
 
 # Allows you to create a DVD Cover in PDF
 DvdCover: com.lowagie.tools.plugins.DvdCover
+Encrypt: com.lowagie.tools.plugins.Encrypt
