@@ -1218,6 +1218,7 @@ class PdfDocument extends Document implements DocListener {
                         else newPage = false;
 
                         // loop over the cells
+                        boolean cellsShown = false;
                         for (Iterator iterator = cells.iterator(); iterator.hasNext(); ) {
                             cell = (PdfCell) iterator.next();
                             lines = cell.getLines(pagetop, indentBottom());
@@ -1225,6 +1226,7 @@ class PdfDocument extends Document implements DocListener {
                             if (lines != null && lines.size() > 0) {
 
                                 // we paint the borders of the cells
+                                cellsShown = true;
                                 graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
                                 lostTableBottom = Math.max(cell.bottom(), indentBottom());
                                 lostTableTop = cell.top();
@@ -1245,13 +1247,15 @@ class PdfDocument extends Document implements DocListener {
                         }
 
                         // we paint the graphics of the table after looping through all the cells
-                        Rectangle tablerec = new Rectangle(table);
-                        tablerec.setBorder(table.border());
-                        tablerec.setBorderWidth(table.borderWidth());
-                        tablerec.setBorderColor(table.borderColor());
-                        tablerec.setBackgroundColor(table.backgroundColor());
-                        tablerec.setGrayFill(table.grayFill());
-                        graphics.rectangle(tablerec.rectangle(top(), indentBottom()));
+                        if (cellsShown) {
+                            Rectangle tablerec = new Rectangle(table);
+                            tablerec.setBorder(table.border());
+                            tablerec.setBorderWidth(table.borderWidth());
+                            tablerec.setBorderColor(table.borderColor());
+                            tablerec.setBackgroundColor(table.backgroundColor());
+                            tablerec.setGrayFill(table.grayFill());
+                            graphics.rectangle(tablerec.rectangle(top(), indentBottom()));
+                        }
 
                         // if the table continues on the next page
                         if (newPage && ! cells.isEmpty()) {
