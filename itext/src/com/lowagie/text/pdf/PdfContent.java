@@ -64,6 +64,8 @@ public class PdfContent {
 	/** This is the actual content */
 	protected StringBuffer content = new StringBuffer("");
 
+
+
 // constructors
 
 	/**
@@ -78,68 +80,68 @@ public class PdfContent {
 // methods to get the content of this object
 
 	/**
-		 * Returns the <CODE>String</CODE> representation of this <CODE>PdfContent</CODE>-object.
+	 * Returns the <CODE>String</CODE> representation of this <CODE>PdfContent</CODE>-object.
 	 *
 	 * @return		a <CODE>String</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public String toString() {
+	public String toString() {
 		return content.toString();
-		}
+	}
 
 	/**
-		 * Returns the PDF representation of this <CODE>PdfContent</CODE>-object.
+	 * Returns the PDF representation of this <CODE>PdfContent</CODE>-object.
 	 *
 	 * @return		a <CODE>String</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		String toPdf() {
+	String toPdf() {
 		return toString();
-		}
+	}
 
 // methods to add graphical content
 
 	/**
-		 * Adds the content of another <CODE>PdfContent</CODE>-object to this object.
+	 * Adds the content of another <CODE>PdfContent</CODE>-object to this object.
 	 *
 	 * @param		other		another <CODE>PdfContent</CODE>-object
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void add(PdfContent other) {
+	public final void add(PdfContent other) {
 		content.append(other.toString());
-		}
+	}
 
 	/**
 	 * Changes the <VAR>Flatness</VAR>.
 	 * <P>
-		 * <VAR>Flatness</VAR> sets the maximum permitted distance in device pixels between the
+	 * <VAR>Flatness</VAR> sets the maximum permitted distance in device pixels between the
 	 * mathematically correct path and an approximation constructed from straight line segments.<BR>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.4.1 (page 323).
 	 *
 	 * @param		flatness		a value
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void setFlatness(int flatness) {
+	public final void setFlatness(int flatness) {
 		if (flatness > -1 && flatness < 101) {
 			content.append(flatness).append(" i\n");
 		}
-		}
+	}
 
 	/**
 	 * Changes the <VAR>Line cap style</VAR>.
 	 * <P>
-		 * The <VAR>line cap style</VAR> specifies the shape to be used at the end of open subpaths
+	 * The <VAR>line cap style</VAR> specifies the shape to be used at the end of open subpaths
 	 * when they are stroked.<BR>
 	 * Allowed values are 0 (Butt end caps), 1 (Round end caps) and 2 (Projecting square end caps).<BR>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
@@ -147,18 +149,18 @@ public class PdfContent {
 	 *
 	 * @param		style		a value
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void setLineCap(int style) {
+	public final void setLineCap(int style) {
 		if (style == 1 || style == 2 || style == 3) {
 			content.append(style).append(" J\n");
 		}
-		}
+	}
 
 	/**
-		 * Changes the value of the <VAR>line dash pattern</VAR>.
+	 * Changes the value of the <VAR>line dash pattern</VAR>.
 	 * <P>
 	 * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
 	 * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
@@ -169,17 +171,17 @@ public class PdfContent {
 	 *
 	 * @param		phase		the value of the phase
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void setLineDash(int phase) {
+	public final void setLineDash(int phase) {
 		PdfArray array = new PdfArray();
 		content.append(array.toPdf()).append(" ").append(phase).append(" d\n");
-		}
+	}
 
 	/**
-		 * Changes the value of the <VAR>line dash pattern</VAR>.
+	 * Changes the value of the <VAR>line dash pattern</VAR>.
 	 * <P>
 	 * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
 	 * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
@@ -191,18 +193,18 @@ public class PdfContent {
 	 * @param		phase		the value of the phase
 	 * @param		unitsOn		the number of units that must be 'on' (equals the number of units that must be 'off').
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void setLineDash(int unitsOn, int phase) {
+	public final void setLineDash(int unitsOn, int phase) {
 		PdfArray array = new PdfArray();
 		array.add(new PdfNumber(unitsOn));
 		content.append(array.toPdf()).append(" ").append(phase).append(" d\n");
-		}
+	}
 
 	/**
-		 * Changes the value of the <VAR>line dash pattern</VAR>.
+	 * Changes the value of the <VAR>line dash pattern</VAR>.
 	 * <P>
 	 * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
 	 * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
@@ -215,21 +217,21 @@ public class PdfContent {
 	 * @param		unitsOn		the number of units that must be 'on'
 	 * @param		unitsOff	the number of units that must be 'off'
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void setLineDash(int unitsOn, int unitsOff, int phase) {
+	public final void setLineDash(int unitsOn, int unitsOff, int phase) {
 		PdfArray array = new PdfArray();
 		array.add(new PdfNumber(unitsOn));
 		array.add(new PdfNumber(unitsOff));
 		content.append(array.toPdf()).append(" ").append(phase).append(" d\n");
-		}
+	}
 
 	/**
 	 * Changes the <VAR>Line join style</VAR>.
 	 * <P>
-		 * The <VAR>line join style</VAR> specifies the shape to be used at the corners of paths
+	 * The <VAR>line join style</VAR> specifies the shape to be used at the corners of paths
 	 * that are stroked.<BR>
 	 * Allowed values are 0 (Miter joins), 1 (Round joins) and 2 (Bevel joins).<BR>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
@@ -237,38 +239,38 @@ public class PdfContent {
 	 *
 	 * @param		style		a value
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void setLineJoin(int style) {
+	public final void setLineJoin(int style) {
 		if (style == 1 || style == 2 || style == 3) {
 			content.append(style).append(" j\n");
 		}
-		}
+	}
 
 	/**
 	 * Changes the <VAR>line width</VAR>.
 	 * <P>
-		 * The line width specifies the thickness of the line used to stroke a path and is measured
+	 * The line width specifies the thickness of the line used to stroke a path and is measured
 	 * in used space units.<BR>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.4.5 (page 326).
 	 *
 	 * @param		w			a width
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void setLineWidth(double w) {
+	public final void setLineWidth(double w) {
 		content.append(w).append(" w\n");
-		}
+	}
 
 	/**
 	 * Changes the <VAR>Miter limit</VAR>.
 	 * <P>
-		 * When two line segments meet at a sharp angle and mitered joins have been specified as the
+	 * When two line segments meet at a sharp angle and mitered joins have been specified as the
 	 * line join style, it is possible for the miter to extend far beyond the thickness of the line
 	 * stroking path. The miter limit imposes a maximum on the ratio of the miter length to the line
 	 * witdh. When the limit is exceeded, the join is converted from a miter to a bevel.<BR>
@@ -277,15 +279,15 @@ public class PdfContent {
 	 *
 	 * @param		miterLimit		a miter limit
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void setMiterLimit(double miterLimit) {
+	public final void setMiterLimit(double miterLimit) {
 		 if (miterLimit > 1) {
 			 content.append(miterLimit).append(" M\n");
 		 }
-		}
+	}
 
 	/**
 	 * Changes the currentgray tint for filling paths (device dependent colors!).
@@ -298,7 +300,7 @@ public class PdfContent {
 	 *
 	 * @param	gray	a value between 0 (black) and 1 (white)
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -311,7 +313,7 @@ public class PdfContent {
 	 * Changes the current gray tint for filling paths to black.
 	 *
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -330,7 +332,7 @@ public class PdfContent {
 	 *
 	 * @param	gray	a value between 0 (black) and 1 (white)
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -343,7 +345,7 @@ public class PdfContent {
 	 * Changes the current gray tint for stroking paths to black.
 	 *
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -367,7 +369,7 @@ public class PdfContent {
 	 * @param	green	the intensity of green
 	 * @param	blue	the intensity of blue
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -384,7 +386,7 @@ public class PdfContent {
 	 * Changes the current color for filling paths to black.
 	 *
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -407,7 +409,7 @@ public class PdfContent {
 	 * @param	green	the intensity of green
 	 * @param	blue	the intensity of blue
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -424,7 +426,7 @@ public class PdfContent {
 	 * Changes the current color for stroking paths to black.
 	 *
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -449,7 +451,7 @@ public class PdfContent {
 	 * @param	yellow	the intensity of yellow
 	 * @param	black	the intensity of black
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -468,7 +470,7 @@ public class PdfContent {
 	 * Changes the current color for filling paths to black.
 	 *
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -492,7 +494,7 @@ public class PdfContent {
 	 * @param	yellow	the intensity of blue
 	 * @param	black	the intensity of black
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -511,7 +513,7 @@ public class PdfContent {
 	 * Changes the current color for stroking paths to black.
 	 *
 	 * @return	<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
 	 */
 
@@ -531,7 +533,7 @@ public class PdfContent {
 	 *
 	 * @since		rugPdf0.10
 	*/
-	
+
 	public final void moveTo(int x, int y) {
 		content.append(x).append(" ").append(y).append(" m\n");
 	}
@@ -590,7 +592,7 @@ public class PdfContent {
 	}
 
 	/**
-		 * Appends a Bêzier curve to the path, starting from the current point.
+	 * Appends a Bêzier curve to the path, starting from the current point.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.1 (page 334-336).
@@ -602,16 +604,16 @@ public class PdfContent {
 	 * @param		x3		x-coordinaat of the ending point (= new current point)
 	 * @param		y3		y-coordinaat of the ending point (= new current point)
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void curveTo(int x1, int y1, int x2, int y2, int x3, int y3) {
+	public final void curveTo(int x1, int y1, int x2, int y2, int x3, int y3) {
 		content.append(x1).append(' ').append(y1).append(' ').append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" c\n");
-		}
+	}
 
 	/**
-		 * Appends a Bêzier curve to the path, starting from the current point.
+	 * Appends a Bêzier curve to the path, starting from the current point.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.1 (page 334-336).
@@ -621,16 +623,16 @@ public class PdfContent {
 	 * @param		x3		x-coordinaat of the ending point (= new current point)
 	 * @param		y3		y-coordinaat of the ending point (= new current point)
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void curveTo(int x2, int y2, int x3, int y3) {
+	public final void curveTo(int x2, int y2, int x3, int y3) {
 		content.append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" v\n");
-		}
+	}
 
 	/**
-		 * Appends a Bêzier curve to the path, starting from the current point.
+	 * Appends a Bêzier curve to the path, starting from the current point.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.1 (page 334-336).
@@ -640,16 +642,16 @@ public class PdfContent {
 	 * @param		x3		x-coordinaat of the ending point (= new current point)
 	 * @param		y3		y-coordinaat of the ending point (= new current point)
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void curveFromTo(int x1, int y1, int x3, int y3) {
+	public final void curveFromTo(int x1, int y1, int x3, int y3) {
 		content.append(x1).append(' ').append(y1).append(' ').append(x3).append(' ').append(y3).append(" y\n");
-		}
+	}
 
 	/**
-		 * Adds a rectangle to the current path.
+	 * Adds a rectangle to the current path.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.1 (page 334-336).
@@ -659,25 +661,25 @@ public class PdfContent {
 	 * @param		w		width
 	 * @param		h		height
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void rectangle(int x, int y, int w, int h) {
+	public final void rectangle(int x, int y, int w, int h) {
 		content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re\n");
-		}
+	}
 
 	/**
-		 * Adds a border (complete or partially) to the current path..
+	 * Adds a border (complete or partially) to the current path..
 	 *
 	 * @param		element		a <CODE>Rectangle</CODE>
 	 * @param		relativeY	the value that has to be substrated from the y-coordinates
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		iText0.30
-		 */
+	 */
 
-		public final void rectangle(Rectangle rectangle) {
+	public final void rectangle(Rectangle rectangle) {
 
 		// the coordinates of the border are retrieved
 		int x1 = rectangle.left();
@@ -745,163 +747,164 @@ public class PdfContent {
 			}
 		}
 
+
 		stroke();
 
 		if (color != null) {
 			resetRGBColorStroke();
 		}
-		}
+	}
 
 	/**
-		 * Closes the current subpath by appending a straight line segment from the current point
+	 * Closes the current subpath by appending a straight line segment from the current point
 	 * to the starting point of the subpath.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.1 (page 334-336).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void closePath() {
+	public final void closePath() {
 		content.append("h\n");
-		}
+	}
 
 	/**
-		 * Ends the path without filling or stroking it.
+	 * Ends the path without filling or stroking it.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void newPath() {
+	public final void newPath() {
 		content.append("n\n");
-		}
+	}
 
 	/**
-		 * Strokes the path.
+	 * Strokes the path.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void stroke() {
+	public final void stroke() {
 		content.append("S\n");
-		}
+	}
 
 	/**
-		 * Closes the path and strokes it.
+	 * Closes the path and strokes it.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void closePathStroke() {
+	public final void closePathStroke() {
 		content.append("s\n");
-		}
+	}
 
 	/**
-		 * Fills the path, using the non-zero winding number rule to determine the region to fill.
+	 * Fills the path, using the non-zero winding number rule to determine the region to fill.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void fill() {
+	public final void fill() {
 		content.append("f\n");
-		}
+	}
 
 	/**
-		 * Fills the path, using the even-odd rule to determine the region to fill.
+	 * Fills the path, using the even-odd rule to determine the region to fill.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void eoFill() {
+	public final void eoFill() {
 		content.append("f*\n");
-		}
+	}
 
 	/**
-		 * Fills the path using the non-zero winding number rule to determine the region to fill and strokes it.
+	 * Fills the path using the non-zero winding number rule to determine the region to fill and strokes it.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void fillStroke() {
+	public final void fillStroke() {
 		content.append("B\n");
-		}
+	}
 
 	/**
-		 * Closes the path, fills it using the non-zero winding number rule to determine the region to fill and strokes it.
+	 * Closes the path, fills it using the non-zero winding number rule to determine the region to fill and strokes it.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void closePathFillStroke() {
+	public final void closePathFillStroke() {
 		content.append("b\n");
-		}
+	}
 
 	/**
-		 * Fills the path, using the even-odd rule to determine the region to fill and strokes it.
+	 * Fills the path, using the even-odd rule to determine the region to fill and strokes it.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void eoFillStroke() {
+	public final void eoFillStroke() {
 		content.append("B*\n");
-		}
+	}
 
 	/**
-		 * Closes the path, fills it using the even-odd rule to determine the region to fill and strokes it.
+	 * Closes the path, fills it using the even-odd rule to determine the region to fill and strokes it.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.2 (page 336-338).
 	 *
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void closePathEoFillStroke() {
+	public final void closePathEoFillStroke() {
 		content.append("b*\n");
-		}
+	}
 
 	/**
 	 * Adds an image to the content.
