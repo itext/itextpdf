@@ -315,7 +315,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                     if (!font.isStandardFont()) {
                         chunk.setFont(font.difference(chunk.font()));
                     }
-                    return super.add(chunk);
+                    return addChunk(chunk);
                 case Element.PHRASE:
                 case Element.PARAGRAPH:
                     Phrase phrase = (Phrase) o;
@@ -324,7 +324,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                     for (Iterator i = phrase.iterator(); i.hasNext(); ) {
                         e = (Element) i.next();
                         if (e instanceof Chunk) {
-                            success &= super.add(e);
+                            success &= addChunk((Chunk)e);
                         }
                         else {
                             success &= this.add(e);
@@ -346,6 +346,28 @@ public class Phrase extends ArrayList implements TextElementArray {
         catch(ClassCastException cce) {
             throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
         }
+    }
+    
+/**
+ * Adds a Chunk.
+ * <p>
+ * This method is a hack to solve a problem I had with phrases that were split between chunks
+ * in the wrong place.
+ */
+    
+    private synchronized boolean addChunk(Chunk chunk) {
+        if (size() > 0) {
+            try {
+                Chunk previous = (Chunk) get(size() - 1);
+                if (previous.font().compareTo(chunk.font()) == 0 && !"".equals(previous.content().trim()) && !"".equals(chunk.content().trim())) {
+                    previous.append(chunk.content());
+                    return true;
+                }
+            }
+            catch(ClassCastException cce) {
+            }
+        }
+        return super.add(chunk);
     }
     
 /**
