@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * $Name$
  *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
@@ -1277,13 +1278,13 @@ class PdfDocument extends Document implements DocListener {
                             if (size > 0) {
                                 // this is the top of the headersection
                                 cell = (PdfCell) headercells.get(0);
-                                float oldTop = cell.top(-table.cellspacing());
+                                float oldTop = cell.top(-table.cellpadding());
                                 // loop over all the cells of the table header
                                 for (int i = 0; i < size; i++) {
                                     cell = (PdfCell) headercells.get(i);
                                     // calculation of the new cellpositions
-                                    cell.setTop(indentTop() - oldTop + cell.top() + cell.cellspacing());
-                                    cell.setBottom(indentTop() - oldTop + cell.bottom() - cell.cellspacing());
+                                    cell.setTop(indentTop() - oldTop + cell.top() + table.cellspacing());
+                                    cell.setBottom(indentTop() - oldTop + cell.bottom() - table.cellspacing());
                                     pagetop = cell.bottom();
                                     // we paint the borders of the cell
                                     graphics.rectangle(cell.rectangle(indentTop(), indentBottom()));

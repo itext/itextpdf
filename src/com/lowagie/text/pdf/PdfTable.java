@@ -111,7 +111,7 @@ class PdfTable extends Rectangle {
         int rows = table.size() + 1;
         float[] offsets = new float[rows];
         for (int i = 0; i < rows; i++) {
-            offsets[i] = top - cellspacing;
+            offsets[i] = top;
         }
         
         // loop over all the rows
@@ -154,7 +154,7 @@ class PdfTable extends Rectangle {
                 currentCell.setBottom(offsets[offsets.length - 1]);
             }
         }
-        setBottom(offsets[offsets.length - 1] - cellspacing);
+        setBottom(offsets[offsets.length - 1]);
     }
     
     // methods
