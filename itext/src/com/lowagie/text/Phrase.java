@@ -356,10 +356,10 @@ public class Phrase extends ArrayList implements TextElementArray {
  */
     
     private synchronized boolean addChunk(Chunk chunk) {
-        if (size() > 0) {
+        if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
-                if (previous.font().compareTo(chunk.font()) == 0 && !"".equals(previous.content().trim()) && !"".equals(chunk.content().trim())) {
+                if (!previous.hasAttributes() && previous.font().compareTo(chunk.font()) == 0 && !"".equals(previous.content().trim()) && !"".equals(chunk.content().trim())) {
                     previous.append(chunk.content());
                     return true;
                 }

@@ -381,6 +381,16 @@ public class Chunk implements Element {
     }
     
 /**
+ * Checks the attributes of this <CODE>Chunk</CODE>.<BR>
+ *
+ * @return false if there aren't any.
+ */
+    
+    public boolean hasAttributes() {
+        return attributes != null;
+    }
+    
+/**
  * Returns the image.
  */
     
