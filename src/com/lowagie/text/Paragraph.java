@@ -168,8 +168,8 @@ public class Paragraph extends Phrase implements TextElementArray {
  */
     
     public Paragraph(Phrase phrase) {
-        super(phrase.leading());
-        add(phrase);
+        super(phrase.leading(), "", phrase.font());
+        super.add(phrase);
     }
     
 /**
@@ -184,20 +184,22 @@ public class Paragraph extends Phrase implements TextElementArray {
         this("", new Font(attributes));
         String value;
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
-            remove(0);
             add(new Chunk(value));
         }
         if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
             setAlignment(value);
         }
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
-        if ((value = attributes.getProperty(ElementTags.LEFT)) != null) {
-            setIndentationLeft(Float.valueOf(value + "f").floatValue());
+        else {
+            setLeading(16);
         }
-        if ((value = attributes.getProperty(ElementTags.RIGHT)) != null) {
-            setIndentationRight(Float.valueOf(value + "f").floatValue());
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
+            setIndentationLeft(Float.parseFloat(value + "f"));
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
+            setIndentationRight(Float.parseFloat(value + "f"));
         }
     }
     
@@ -230,6 +232,11 @@ public class Paragraph extends Phrase implements TextElementArray {
         }
         else if (o instanceof Image) {
             super.addSpecial((Image) o);
+            return true;
+        }
+        else if (o instanceof Paragraph) {
+            super.add(o);
+            super.add(Chunk.NEWLINE);
             return true;
         }
         return super.add(o);
@@ -330,32 +337,5 @@ public class Paragraph extends Phrase implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.PARAGRAPH.equals(tag);
-    }
-    
-/**
- * Returns a representation of this <CODE>Paragraph</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.PARAGRAPH).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading).append("\"").append(font.toString());
-        buf.append(" ").append(ElementTags.ALIGN).append("=\"");
-        buf.append(ElementTags.getAlignment(alignment));
-        if (indentationLeft != 0) {
-            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
-            buf.append(indentationLeft);
-        }
-        if (indentationRight != 0) {
-            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
-            buf.append(indentationRight);
-        }
-        buf.append("\">");
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            buf.append(i.next().toString());
-        }
-        buf.append("</").append(ElementTags.PARAGRAPH).append(">\n");
-        return buf.toString();
     }
 }
