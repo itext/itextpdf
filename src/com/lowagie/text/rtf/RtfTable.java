@@ -138,6 +138,25 @@ public class RtfTable {
             os.write(RtfWriter.paragraphDefaults);
             os.write(RtfWriter.escape);
             os.write(RtfWriter.paragraph);
+            switch (origTable.alignment()) {
+                case Element.ALIGN_LEFT:
+                    os.write(RtfWriter.escape);
+                	os.write(RtfWriter.alignLeft);
+                    break;
+                case Element.ALIGN_RIGHT:
+                    os.write(RtfWriter.escape);
+                    os.write(RtfWriter.alignRight);
+                    break;
+                case Element.ALIGN_CENTER:
+                    os.write(RtfWriter.escape);
+                    os.write(RtfWriter.alignCenter);
+                    break;
+                case Element.ALIGN_JUSTIFIED:
+                case Element.ALIGN_JUSTIFIED_ALL:
+                    os.write(RtfWriter.escape);
+                    os.write(RtfWriter.alignJustify);
+                    break;
+            }
         }
         return true;
     }
