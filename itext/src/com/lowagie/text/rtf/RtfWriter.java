@@ -90,7 +90,6 @@ import java.text.ParsePosition;
  * <UL>
  *  <LI>Only PNG / JPEG Images are supported.</LI>
  *  <LI>Rotating of Images is not supported.</LI>
- *  <LI>Only one Header and one Footer are possible.</LI>
  *  <LI>Nested Tables are not supported.</LI>
  *  <LI>The <CODE>Leading</CODE> is not supported.</LI>
  * </UL>
@@ -585,6 +584,9 @@ public class RtfWriter extends DocWriter implements DocListener
   /** Currently writing either Header or Footer */
     private boolean inHeaderFooter = false;
 
+    /** Currently writing a Table */
+    private boolean inTable = false;
+
   /** Landscape or Portrait Document */
     private boolean landscape = false;
 
@@ -925,6 +927,11 @@ public class RtfWriter extends DocWriter implements DocListener
     {
         out.write(escape);
         out.write(paragraphDefaults);
+        if(inTable)
+        {
+            out.write(escape);
+            out.write(RtfCell.cellInTable);
+        }
         switch(paragraphElement.alignment())
         {
             case Element.ALIGN_LEFT      : out.write(escape); out.write(alignLeft); break;
@@ -945,8 +952,11 @@ public class RtfWriter extends DocWriter implements DocListener
 	content = out;
         paragraphElement.process(this);
 	content = save;
+      if(!inTable)
+      {
         out.write(escape);
         out.write(paragraph);
+      }
     }
 
   /**
@@ -961,6 +971,11 @@ public class RtfWriter extends DocWriter implements DocListener
     {
       out.write(escape);
       out.write(paragraphDefaults);
+      if(inTable)
+      {
+          out.write(escape);
+          out.write(RtfCell.cellInTable);
+      }
       Iterator chunks = phrase.getChunks().iterator();
       while(chunks.hasNext())
       {
@@ -1318,10 +1333,12 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     private void writeTable(Table table, ByteArrayOutputStream out) throws IOException, DocumentException
     {
+      inTable = true;
         table.complete();
         RtfTable rtfTable = new RtfTable(this);
         rtfTable.importTable(table, pageWidth);
         rtfTable.writeTable(out);
+      inTable = false;
     }
     
     
@@ -1356,16 +1373,22 @@ public class RtfWriter extends DocWriter implements DocListener
         if(image.isJpeg())  out.write(pictureJPEG);
         out.write(escape);
         out.write(pictureWidth);
-        writeInt(out, (int) (image.width() * twipsFactor));
-        out.write(escape);
-        out.write(pictureHeight);
-        writeInt(out, (int) (image.height() * twipsFactor));
-        out.write(escape);
-        out.write(pictureIntendedWidth);
         writeInt(out, (int) (image.plainWidth() * twipsFactor));
         out.write(escape);
-        out.write(pictureIntendedHeight);
+        out.write(pictureHeight);
         writeInt(out, (int) (image.plainHeight() * twipsFactor));
+
+
+// For some reason this messes up the intended image size. It makes it too big. Weird
+//
+//        out.write(escape);
+//        out.write(pictureIntendedWidth);
+//        writeInt(out, (int) (image.plainWidth() * twipsFactor));
+//        out.write(escape);
+//        out.write(pictureIntendedHeight);
+//        writeInt(out, (int) (image.plainHeight() * twipsFactor));
+
+
         if(image.width() > 0)
         {
             out.write(escape);
@@ -1961,7 +1984,7 @@ public class RtfWriter extends DocWriter implements DocListener
       if(header instanceof RtfHeaderFooters || footer  instanceof RtfHeaderFooters)
       {
         out.write(escape);
-	out.write(facingPages);
+	    out.write(facingPages);
       }
       if(hasTitlePage)
       {

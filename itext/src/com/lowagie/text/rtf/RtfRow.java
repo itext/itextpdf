@@ -276,8 +276,8 @@ public class RtfRow
     // -->
     IOException
     {
-        os.write(RtfWriter.escape);
-        os.write(RtfWriter.paragraphDefaults);
+/*        os.write(RtfWriter.escape);
+        os.write(RtfWriter.paragraphDefaults); */
         os.write(RtfWriter.escape);
         os.write(rowBegin);
         os.write((byte) '\n');
@@ -318,7 +318,7 @@ public class RtfRow
             writeBorder( os, rowBorderInlineHorizontal );
             writeBorder( os, rowBorderInlineVertical );
         }
-        
+
         if (cellspacing > 0) {
             os.write(RtfWriter.escape);
             os.write(rowSpacingLeft);
@@ -359,14 +359,20 @@ public class RtfRow
             RtfCell cell = (RtfCell) cellIterator.next();
             cell.writeCellSettings(os);
         }
+
+        os.write(RtfWriter.openGroup);
         cellIterator = cells.iterator();
         while(cellIterator.hasNext())
         {
             RtfCell cell = (RtfCell) cellIterator.next();
             cell.writeCellContent(os);
         }
+        os.write(RtfWriter.closeGroup);
+        os.write(RtfWriter.delimiter);
+        os.write(RtfWriter.openGroup);
         os.write(RtfWriter.escape);
         os.write(rowEnd);
+        os.write(RtfWriter.closeGroup);
         return true;
     }
 
@@ -390,7 +396,7 @@ public class RtfRow
         } else {
             writeInt( os, writer.addColor( borderColor ) );
         }    
-        os.write((byte) '\n');        
+        os.write((byte) '\n');
     }
 
 
