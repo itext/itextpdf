@@ -38,11 +38,11 @@ public class PdfPCell extends Rectangle{
     
 /** The fixed text leading.
  */    
-    protected float fixedLeading = 16;
+    protected float fixedLeading = 0;
 /** The text leading that is multiplied by the biggest font
  * size in the line.
  */    
-    protected float multipliedLeading = 0;
+    protected float multipliedLeading = 1;
 
 /** The extra space between paragraphs.
  */    
@@ -60,6 +60,9 @@ public class PdfPCell extends Rectangle{
     /** Holds value of property noWrap. */
     private boolean noWrap = false;
     
+    /** Holds value of property table. */
+    private PdfPTable table;
+    
     public PdfPCell(Phrase phrase)
     {
         super(0, 0, 0, 0);
@@ -76,6 +79,17 @@ public class PdfPCell extends Rectangle{
         phrase = new Phrase(new Chunk(image, 0, 0));
         fixedLeading = 0;
         multipliedLeading = 1;
+        setPadding(0);
+    }
+    
+    PdfPCell(PdfPTable table)
+    {
+        super(0, 0, 0, 0);
+        borderWidth = 0.5f;
+        border = BOX;
+        fixedLeading = 0;
+        multipliedLeading = 1;
+        this.table = table;
     }
     
     public PdfPCell(PdfPCell cell)
@@ -99,11 +113,18 @@ public class PdfPCell extends Rectangle{
         phrase = cell.phrase;
         fixedHeight = cell.fixedHeight;
         noWrap = cell.noWrap;
+        if (cell.table != null)
+            table = new PdfPTable(cell.table);
     }
     
     public Phrase getPhrase()
     {
         return phrase;
+    }
+
+    public void setPhrase(Phrase phrase)
+    {
+        this.phrase = phrase;
     }
 
     /** Getter for property horizontalAlignment.
@@ -281,6 +302,17 @@ public class PdfPCell extends Rectangle{
      */
     public void setNoWrap(boolean noWrap) {
         this.noWrap = noWrap;
+    }
+    
+    /** Getter for property table.
+     * @return Value of property table.
+     */
+    PdfPTable getTable() {
+        return table;
+    }
+    
+     void setTable(PdfPTable table) {
+        this.table = table;
     }
     
 }

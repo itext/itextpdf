@@ -275,9 +275,9 @@ class PdfChunk extends PdfString {
         newlineSplit = false;
         if (image != null) {
             if (image.scaledWidth() > width) {
-                PdfChunk pc = new PdfChunk("", font, attributes, noStroke);
+                PdfChunk pc = new PdfChunk("*", font, attributes, noStroke);
                 value = "";
-                attributes.remove(Chunk.IMAGE);
+                attributes = new HashMap();
                 image = null;
                 font = new PdfFont(PdfFontMetrics.HELVETICA, 12);
                 return pc;
@@ -292,7 +292,7 @@ class PdfChunk extends PdfString {
         // loop over all the characters of a string
         // or until the totalWidth is reached
         int length = value.length();
-        char character;
+        char character = 0;
         while (currentPosition < length) {
             // the width of every character is added to the currentWidth
             character = value.charAt(currentPosition);
@@ -325,7 +325,13 @@ class PdfChunk extends PdfString {
         if (currentPosition == length) {
             return null;
         }
-        
+        if (currentPosition > 0 && (isCJKSplit(character) || ((currentPosition < length - 1) && isCJKSplit(value.charAt(currentPosition + 1))))) {
+            String returnValue = value.substring(currentPosition);
+            value = PdfFontMetrics.trim(value.substring(0, currentPosition));
+            setContent(value);
+            PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
+            return pc;
+        }
         // otherwise, the string has to be truncated
         if (splitPosition < 0) {
             String returnValue = value;
@@ -397,9 +403,9 @@ class PdfChunk extends PdfString {
         }
         
         // otherwise, the string has to be truncated
-        currentPosition -= 2;
+        //currentPosition -= 2;
         // we have to chop off minimum 1 character from the chunk
-        if (currentPosition < 0) {
+        if (currentPosition == 0) {
             currentPosition = 1;
         }
         String returnValue = value.substring(currentPosition);
@@ -555,5 +561,12 @@ class PdfChunk extends PdfString {
     {
         this.value = value;
         setContent(value);
+    }
+    
+    boolean isCJKSplit(char c) {
+        return ((c >= 0x2e80 && c < 0xd7a0)
+            || (c >= 0xf900 && c < 0xfb00)
+            || (c >= 0xfe30 && c < 0xfe50)
+            || (c >= 0xff61 && c < 0xffa0));
     }
 }

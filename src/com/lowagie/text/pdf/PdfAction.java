@@ -91,6 +91,6 @@ public class PdfAction extends PdfDictionary {
         super(PdfName.ACTION);
         put(PdfName.S, PdfName.GOTOR);
         put(PdfName.F, new PdfString(filename));
-        put(PdfName.D, new PdfLiteral("[" + (page - 1) + " /Fit]"));
+        put(PdfName.D, new PdfLiteral("[" + (page - 1) + " /XYZ null null 0]"));
     }
 }

@@ -191,8 +191,10 @@ public class Type1Font extends BaseFont
             throw new DocumentException(afmFile + " is not an AFM font file.");
         try {
             EncodingScheme = EncodingScheme.trim();
-            if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding"))
+            if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
                 fontSpecific = false;
+            }
+            " ".getBytes(enc); // check if the encoding exists
             createEncoding();
         }
         catch (Exception e) {

@@ -446,9 +446,15 @@ public class ColumnText
         PdfFont currentFont = null;
         Float lastBaseFactor = new Float(0);
         currentValues[1] = lastBaseFactor;
-        PdfDocument pdf = text.getPdfDocument();
+        PdfDocument pdf = null;
+        PdfContentByte graphics = null;
+        if (text != null) {
+            pdf = text.getPdfDocument();
+            graphics = text.getDuplicate();
+        }
+        else if (simulate == false)
+            throw new NullPointerException("ColumnText.go with simulate==false and text==null.");
         float firstIndent = indent;
-        PdfContentByte graphics = text.getDuplicate();
         
         int status = 0;
         if (rectangularWidth > 0) {

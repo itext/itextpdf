@@ -90,99 +90,99 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     // static membervariables (tags)
     
-        /** This is some byte that is often used. */
+    /** This is some byte that is often used. */
     public static final byte NEWLINE = (byte)'\n';
     
-        /** This is some byte that is often used. */
+    /** This is some byte that is often used. */
     public static final byte TAB = (byte)'\t';
     
-        /** This is some byte that is often used. */
+    /** This is some byte that is often used. */
     public static final byte START = (byte)'<';
     
-        /** This is some byte that is often used. */
+    /** This is some byte that is often used. */
     public static final byte END = (byte)'>';
     
-        /** This is some byte that is often used. */
+    /** This is some byte that is often used. */
     public static final byte ENDTAG = (byte)'/';
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] BEGINCOMMENT = getISOBytes("<!--");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] ENDCOMMENT = getISOBytes("-->");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] A = getISOBytes("A");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] B = getISOBytes("B");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] BR = getISOBytes("BR");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] BODY = getISOBytes("BODY");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] FONT = getISOBytes("FONT");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] HEAD = getISOBytes("HEAD");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] HTML = getISOBytes("HTML");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] I = getISOBytes("I");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] IMG = getISOBytes("IMG");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] LI = getISOBytes("LI");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] LINK = getISOBytes("LINK");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] META = getISOBytes("META");
     
-        /** This is a non breaking space. */
+    /** This is a non breaking space. */
     public static final byte[] NBSP = getISOBytes("&nbsp;");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] OL = getISOBytes("OL");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] PARAGRAPH = getISOBytes("P");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] S = getISOBytes("S");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] TABLE = getISOBytes("TABLE");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] TD = getISOBytes("TD");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] TH = getISOBytes("TH");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] TITLE = getISOBytes("TITLE");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] TR = getISOBytes("TR");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] U = getISOBytes("U");
     
-        /** This is a possible HTML-tag. */
+    /** This is a possible HTML-tag. */
     public static final byte[] UL = getISOBytes("UL");
     
     // static membervariables (attributes)
     
-        /** This is a possible HTML attribute for the HEAD tag. */
+    /** This is a possible HTML attribute for the HEAD tag. */
     public static final String FONTS[] = new String[5];
     
     static {
@@ -193,124 +193,124 @@ public class HtmlWriter extends DocWriter implements DocListener {
         FONTS[4] = "ZapfDingbats, WingDings";
     }
     
-        /** This is a possible HTML attribute for the P, TABLE tag. */
+    /** This is a possible HTML attribute for the P, TABLE tag. */
     public static final String ALIGN = "ALIGN";
     
-        /** This is a possible HTML attribute for the P, TABLE tag. */
+    /** This is a possible HTML attribute for the P, TABLE tag. */
     public static final String ALT = "ALT";
     
-        /** This is a possible HTML attribute for the TABLE tag. */
+    /** This is a possible HTML attribute for the TABLE tag. */
     public static final String BGCOLOR = "BGCOLOR";
     
-        /** This is a possible HTML attribute for the BODY tag. */
+    /** This is a possible HTML attribute for the BODY tag. */
     public static final String BOTTOMMARGIN = "BOTTOMMARGIN";
     
-        /** This is a possible HTML attribute for the TABLE tag. */
+    /** This is a possible HTML attribute for the TABLE tag. */
     public static final String BORDER = "BORDER";
     
-        /** This is a possible HTML attribute for the TABLE tag. */
+    /** This is a possible HTML attribute for the TABLE tag. */
     public static final String BORDERCOLOR = "BORDERCOLOR";
     
-        /** This is a possible HTML attribute for the TABLE tag. */
+    /** This is a possible HTML attribute for the TABLE tag. */
     public static final String CELLPADDING = "CELLPADDING";
     
-        /** This is a possible HTML attribute for the TABLE tag. */
+    /** This is a possible HTML attribute for the TABLE tag. */
     public static final String CELLSPACING = "CELLSPACING";
     
-        /** This is a possible HTML attribute for the TD tag. */
+    /** This is a possible HTML attribute for the TD tag. */
     public static final String COLSPAN = "COLSPAN";
     
-        /** This is a possible HTML attribute for the HEAD tag. */
+    /** This is a possible HTML attribute for the HEAD tag. */
     public static final String CONTENT = "CONTENT";
     
-        /** This is a possible HTML attribute for the HEAD tag. */
+    /** This is a possible HTML attribute for the HEAD tag. */
     public static final String COLOR = "COLOR";
     
-        /** This is a possible HTML attribute for the LINK tag. */
+    /** This is a possible HTML attribute for the LINK tag. */
     public static final String CSS = "text/css";
     
-        /** This is a possible HTML attribute for the HEAD tag. */
+    /** This is a possible HTML attribute for the HEAD tag. */
     public static final String FACE = "FACE";
     
-        /** This is a possible HTML attribute for the A tag. */
+    /** This is a possible HTML attribute for the A tag. */
     public static final String HEIGHT = "HEIGHT";
     
-        /** This is a possible HTML attribute for the A tag. */
+    /** This is a possible HTML attribute for the A tag. */
     public static final String HREF = "HREF";
     
-        /** This is a possible HTML attribute for the BODY tag. */
+    /** This is a possible HTML attribute for the BODY tag. */
     public static final String LEFTMARGIN = "LEFTMARGIN";
     
-        /** This is a possible HTML attribute for the A, HEAD tag. */
+    /** This is a possible HTML attribute for the A, HEAD tag. */
     public static final String NAME = "NAME";
     
-        /** This is a possible HTML attribute for the NOWRAP tag. */
+    /** This is a possible HTML attribute for the NOWRAP tag. */
     public static final String NOWRAP = "NOWRAP";
     
-        /** This is a possible HTML attribute for the HEAD tag. */
+    /** This is a possible HTML attribute for the HEAD tag. */
     public static final String POINTSIZE = "POINT-SIZE";
     
-        /** This is a possible HTML attribute for the LINK tag. */
+    /** This is a possible HTML attribute for the LINK tag. */
     public static final String REL = "rel";
     
-        /** This is a possible HTML attribute for the BODY tag. */
+    /** This is a possible HTML attribute for the BODY tag. */
     public static final String RIGHTMARGIN = "RIGHTMARGIN";
     
-        /** This is a possible HTML attribute for the TD tag. */
+    /** This is a possible HTML attribute for the TD tag. */
     public static final String ROWSPAN = "ROWSPAN";
     
-        /** This is a possible HTML attribute for the TD tag. */
+    /** This is a possible HTML attribute for the TD tag. */
     public static final String SRC = "SRC";
     
-        /** This is a possible HTML attribute for the TD tag. */
+    /** This is a possible HTML attribute for the TD tag. */
     public static final String STYLESHEET = "STYLESHEET";
     
-        /** This is a possible HTML attribute for the BODY tag. */
+    /** This is a possible HTML attribute for the BODY tag. */
     public static final String TEXT = "TEXT";
     
-        /** This is a possible HTML attribute for the BODY tag. */
+    /** This is a possible HTML attribute for the BODY tag. */
     public static final String TOPMARGIN = "TOPMARGIN";
     
-        /** This is a possible HTML attribute for the LINK tag. */
+    /** This is a possible HTML attribute for the LINK tag. */
     public static final String TYPE = "TYPE";
     
-        /** This is a possible HTML attribute for the TD tag. */
+    /** This is a possible HTML attribute for the TD tag. */
     public static final String VALIGN = "VALIGN";
     
-        /** This is a possible HTML attribute for the A tag. */
+    /** This is a possible HTML attribute for the A tag. */
     public static final String WIDTH = "WIDTH";
     
     // membervariables
     
-        /** This represents the indentation of the HTML. */
+    /** This represents the indentation of the HTML. */
     private int indent = 0;
     
-        /** This is the current font of the HTML. */
+    /** This is the current font of the HTML. */
     private Font font = new Font();
     
-        /** This is the standard font of the HTML. */
+    /** This is the standard font of the HTML. */
     private Font standardFont = new Font();
     
-        /** This is a path for images. */
+    /** This is a path for images. */
     private String imagepath = null;
     
-        /** Stores the page number. */
+    /** Stores the page number. */
     private static int pageN = 0;
     
-        /** This is the textual part of a header */
+    /** This is the textual part of a header */
     private HeaderFooter header = null;
     
-        /** This is the textual part of the footer */
+    /** This is the textual part of the footer */
     private HeaderFooter footer = null;
     
     // constructor
     
-        /**
-         * Constructs a <CODE>HtmlWriter</CODE>.
-         *
-         * @param	document	The <CODE>Document</CODE> that has to be written as HTML
-         * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
-         */
+    /**
+     * Constructs a <CODE>HtmlWriter</CODE>.
+     *
+     * @param	document	The <CODE>Document</CODE> that has to be written as HTML
+     * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
+     */
     
     protected HtmlWriter(Document doc, OutputStream os) {
         super(doc, os);
@@ -328,13 +328,13 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     // get an instance of the HtmlWriter
     
-        /**
-         * Gets an instance of the <CODE>HtmlWriter</CODE>.
-         *
-         * @param	document	The <CODE>Document</CODE> that has to be written
-         * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
-         * @return	a new <CODE>HtmlWriter</CODE>
-         */
+    /**
+     * Gets an instance of the <CODE>HtmlWriter</CODE>.
+     *
+     * @param	document	The <CODE>Document</CODE> that has to be written
+     * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
+     * @return	a new <CODE>HtmlWriter</CODE>
+     */
     
     public static HtmlWriter getInstance(Document document, OutputStream os) {
         return new HtmlWriter(document, os);
@@ -342,14 +342,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     // implementation of the DocListener methods
     
-                /**
-                 * Signals that an new page has to be started.
-                 * <P>
-                 * Writes a horizontal rule.
-                 *
-                 * @return	<CODE>true</CODE> if this action succeeded, <CODE>false</CODE> if not.
-                 * @throws	DocumentException	when a document isn't open yet, or has been closed
-                 */
+    /**
+     * Signals that an new page has to be started.
+     * <P>
+     * Writes a horizontal rule.
+     *
+     * @return	<CODE>true</CODE> if this action succeeded, <CODE>false</CODE> if not.
+     * @throws	DocumentException	when a document isn't open yet, or has been closed
+     */
     
     public boolean newPage() throws DocumentException {
         if (pause || !open) {
@@ -364,12 +364,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
     }
     
-                /**
-                 * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
-                 *
-                 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-                 * @throws	DocumentException	when a document isn't open yet, or has been closed
-                 */
+    /**
+     * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
+     *
+     * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+     * @throws	DocumentException	when a document isn't open yet, or has been closed
+     */
     
     public boolean add(Element element) throws DocumentException {
         if (pause) {
@@ -475,7 +475,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                         attributes.put(NAME, anchor.name());
                     }
                     writeBeginTag(A, attributes);
-                    element.process(this);
+                    element.process(this);                    
                     writeEndTag(A);
                     break;
                 case Element.GIF:
@@ -518,6 +518,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     break;
                 case Element.TABLE:
                     Table table = (Table) element;
+                    table.complete();	// correct table : fill empty cells/ parse table in table
                     attributes.put(ALIGN, HtmlEncoder.getAlignment(table.alignment()));
                     if (table.cellpadding() > 0) {
                         attributes.put(CELLPADDING, String.valueOf(table.cellpadding()));
@@ -556,7 +557,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                         writeBeginTag(TR, attributes);
                         for(int i = 0; i < row.columns(); i++) {
                             if (row.getCell(i) != null) {
-                                row.getCell(i).process(this);
+                                ((Element)(row.getCell(i))).process(this);
                             }
                         }
                         writeEndTag(TR);
@@ -601,7 +602,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                                 el.process(this);
                                 writeEndTag(PARAGRAPH);
                             }
-							// bugfix by Paulo (july 2001)
                             else if (el.type() == Element.ANCHOR) {
                                 add(el);
                             }
@@ -617,8 +617,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
                         writeEndTag(TD);
                     }
                     break;
-                    default:
-                        return false;
+                default:
+                    return false;
             }
             if (difference != null) {
                 resetFont(difference);
@@ -630,12 +630,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
     }
     
-                /**
-                 * Signals that the <CODE>Document</CODE> has been opened and that
-                 * <CODE>Elements</CODE> can be added.
-                 * <P>
-                 * The <CODE>HEAD</CODE>-section of the HTML-document is written.
-                 */
+    /**
+     * Signals that the <CODE>Document</CODE> has been opened and that
+     * <CODE>Elements</CODE> can be added.
+     * <P>
+     * The <CODE>HEAD</CODE>-section of the HTML-document is written.
+     */
     
     public void open() {
         super.open();
@@ -669,10 +669,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
     }
     
-                /**
-                 * Signals that the <CODE>Document</CODE> was closed and that no other
-                 * <CODE>Elements</CODE> will be added.
-                 */
+    /**
+     * Signals that the <CODE>Document</CODE> was closed and that no other
+     * <CODE>Elements</CODE> will be added.
+     */
     
     public void close() {
         try {
@@ -687,11 +687,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     // some private methods
     
-        /**
-         * Adds the header to the top of the </CODE>Document</CODE>
-         *
-         * @author	David Freels
-         */
+    /**
+     * Adds the header to the top of the </CODE>Document</CODE>
+     *
+     * @author	David Freels
+     */
     
     private void initHeader() {
         if (header != null) {
@@ -704,11 +704,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
     }
     
-        /**
-         *  Adds the header to the top of the </CODE>Document</CODE>
-         *
-         * @author	David Freels
-         */
+    /**
+     *  Adds the header to the top of the </CODE>Document</CODE>
+     *
+     * @author	David Freels
+     */
     
     private void initFooter() {
         if (footer != null)	{
@@ -723,21 +723,21 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
     }
     
-        /**
-         * Writes a new line to the outputstream.
-         *
-         * @throws	IOException
-         */
+    /**
+     * Writes a new line to the outputstream.
+     *
+     * @throws	IOException
+     */
     
     private void newLine() throws IOException {
         os.write(NEWLINE);
     }
     
-        /**
-         * Writes a number of tabs to the outputstream.
-         *
-         * @throws	IOException
-         */
+    /**
+     * Writes a number of tabs to the outputstream.
+     *
+     * @throws	IOException
+     */
     
     private void tab() throws IOException {
         for (int i = 0; i < indent; i++) {
@@ -745,11 +745,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
     }
     
-        /**
-         * Writes a linebreak.
-         *
-         * @throws	IOException
-         */
+    /**
+     * Writes a linebreak.
+     *
+     * @throws	IOException
+     */
     
     private void writeBreak() throws IOException {
         tab();
@@ -759,14 +759,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
         newLine();
     }
     
-        /**
-         * Writes a begin tag.
-         * <P>
-         * This method writes a given tag between brackets.
-         *
-         * @param	tag		the tag that has to be written
-         * @throws	IOException
-         */
+    /**
+     * Writes a begin tag.
+     * <P>
+     * This method writes a given tag between brackets.
+     *
+     * @param	tag		the tag that has to be written
+     * @throws	IOException
+     */
     
     private void writeBeginTag(byte[] tag) throws IOException {
         tab();
@@ -777,15 +777,15 @@ public class HtmlWriter extends DocWriter implements DocListener {
         newLine();
     }
     
-        /**
-         * Writes a begin tag.
-         * <P>
-         * This method writes a given tag between brackets.
-         *
-         * @param	tag			the tag that has to be written
-         * @param	attributes	the attributes of the tag
-         * @throws	IOException
-         */
+    /**
+     * Writes a begin tag.
+     * <P>
+     * This method writes a given tag between brackets.
+     *
+     * @param	tag			the tag that has to be written
+     * @param	attributes	the attributes of the tag
+     * @throws	IOException
+     */
     
     private void writeBeginTag(byte[] tag, HtmlAttributes attributes) throws IOException {
         tab();
@@ -797,14 +797,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
         newLine();
     }
     
-        /**
-         * Writes an end tag.
-         * <P>
-         * This method writes a given tag between brackets.
-         *
-         * @param	tag		the tag that has to be written
-         * @throws	IOException
-         */
+    /**
+     * Writes an end tag.
+     * <P>
+     * This method writes a given tag between brackets.
+     *
+     * @param	tag		the tag that has to be written
+     * @throws	IOException
+     */
     
     private void writeEndTag(byte[] tag) throws IOException {
         indent--;
@@ -816,12 +816,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
         newLine();
     }
     
-        /**
-         * Writes a Metatag in the header.
-         *
-         * @param	element		the element that has to be written
-         * @throws	IOException
-         */
+    /**
+     * Writes a Metatag in the header.
+     *
+     * @param	element		the element that has to be written
+     * @throws	IOException
+     */
     
     private void writeHeader(Meta meta) throws IOException {
         HtmlAttributes attributes = new HtmlAttributes();
@@ -844,12 +844,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
         indent--;
     }
     
-        /**
-         * Writes a link in the header.
-         *
-         * @param	element		the element that has to be written
-         * @throws	IOException
-         */
+    /**
+     * Writes a link in the header.
+     *
+     * @param	element		the element that has to be written
+     * @throws	IOException
+     */
     
     private void writeLink(Header header) throws IOException {
         HtmlAttributes attributes = new HtmlAttributes();
@@ -860,14 +860,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
         indent--;
     }
     
-        /**
-         * Writes some comment.
-         * <P>
-         * This method writes some comment.
-         *
-         * @param	comment		the comment that has to be written
-         * @throws	IOException
-         */
+    /**
+     * Writes some comment.
+     * <P>
+     * This method writes some comment.
+     *
+     * @param	comment		the comment that has to be written
+     * @throws	IOException
+     */
     
     private void writeComment(String comment) throws IOException {
         tab();
@@ -877,13 +877,13 @@ public class HtmlWriter extends DocWriter implements DocListener {
         newLine();
     }
     
-        /**
-         * Changes the font.
-         *
-         * @param	font	The font
-         *
-         * @throws	IOException
-         */
+    /**
+     * Changes the font.
+     *
+     * @param	font	The font
+     *
+     * @throws	IOException
+     */
     
     private void setFont(Font difference) throws IOException {
         if (! difference.isStandardFont()) {
@@ -913,11 +913,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
     }
     
-        /**
-         * Closes the tags that changed the font.
-         *
-         * @param	font	The font
-         */
+    /**
+     * Closes the tags that changed the font.
+     *
+     * @param	font	The font
+     */
     
     private void resetFont(Font difference) throws IOException {
         if (difference.isItalic()) {
@@ -939,59 +939,59 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     // public methods
     
-        /**
-         * Changes the standardfont.
-         *
-         * @param	standardfont	The font
-         */
+    /**
+     * Changes the standardfont.
+     *
+     * @param	standardfont	The font
+     */
     
     public void setStandardFont(Font standardFont) {
         this.standardFont = standardFont;
     }
     
-        /**
-         * Sets the basepath for images.
-         * <P>
-         * This is especially useful if you add images using a file,
-         * rather than an URL. In PDF there is no problem, since
-         * the images are added inline, but in HTML it is sometimes
-         * necessary to use a relative path or a special path to some
-         * images directory.
-         *
-         * @param	the new imagepath
-         */
+    /**
+     * Sets the basepath for images.
+     * <P>
+     * This is especially useful if you add images using a file,
+     * rather than an URL. In PDF there is no problem, since
+     * the images are added inline, but in HTML it is sometimes
+     * necessary to use a relative path or a special path to some
+     * images directory.
+     *
+     * @param	the new imagepath
+     */
     
     public void setImagepath(String imagepath) {
         this.imagepath = imagepath;
     }
     
-        /**
-         * Resets the imagepath.
-         */
+    /**
+     * Resets the imagepath.
+     */
     
     public void resetImagepath() {
         imagepath = null;
     }
     
-        /**
-         * Changes the header of this document.
-         *
-         * @param	header		the new header
-         *
-         * @author	David Freels
-         */
+    /**
+     * Changes the header of this document.
+     *
+     * @param	header		the new header
+     *
+     * @author	David Freels
+     */
     
     public void setHeader(HeaderFooter header) {
         this.header = header;
     }
     
-        /**
-         * Changes the footer of this document.
-         *
-         * @param	footer		the new footer
-         *
-         * @author	David Freels
-         */
+    /**
+     * Changes the footer of this document.
+     *
+     * @param	footer		the new footer
+     *
+     * @author	David Freels
+     */
     
     public void setFooter(HeaderFooter footer) {
         this.footer = footer;
@@ -1009,8 +1009,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
         if (pause) {
             return false;
         }
-        try
-        {
+        try {
             write(string);
             return true;
         }

@@ -133,6 +133,9 @@ public interface Element {
 	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int TABLE = 22;
 
+	/** This is a possible type of <CODE>Element</CODE>. */
+	public static final int PTABLE = 23;
+
 // static membervariables (annotations)
 
 	/** This is a possible type of <CODE>Element</CODE>. */
