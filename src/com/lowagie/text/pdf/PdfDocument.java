@@ -984,8 +984,7 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	PdfTable getPdfTable(Table table, boolean supportRowAdditions) {
-		return new PdfTable(table, indentLeft(), indentRight(), 
-			currentHeight > 0 ? indentTop() - currentHeight - 2f * leading : indentTop(), supportRowAdditions);
+        return new PdfTable(table, indentLeft(), indentRight(), indentTop() - currentHeight, supportRowAdditions);
 	}
 
 	/**
@@ -1015,15 +1014,9 @@ class PdfDocument extends Document implements DocListener {
 	 */
 	
     private void add(PdfTable table, boolean onlyFirstPage) throws DocumentException {
-		// before every table, we add a new line and flush all lines
-		float offset = table.getOffset();
-		if (Float.isNaN(offset))
-			offset = leading;
-		carriageReturn();
-		lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
-		currentHeight += offset;
-		flushLines();
-	                    
+        // before every table, we flush all lines
+        flushLines();
+
 		// initialisation of parameters
 		float pagetop = indentTop();
 		float oldHeight = currentHeight;
@@ -1274,11 +1267,10 @@ class PdfDocument extends Document implements DocListener {
 			}
 		}
                     
-		text.moveText(0, oldHeight - currentHeight - table.cellspacing() );
-		lines.add(line);
-		currentHeight += line.height() - pagetop + indentTop();
-		line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
-		pageEmpty = false;
+        float tableHeight = table.top() - table.bottom();
+        currentHeight = oldHeight + tableHeight;
+        text.moveText(0, -tableHeight );
+        pageEmpty = false;
     }
 
     /**
@@ -1702,6 +1694,7 @@ class PdfDocument extends Document implements DocListener {
                      * Tom Ring
                      * Paulo Soares
                      * Gerald Fehringer
+                     * Steve Appling
                      */
 	                    
 					PdfTable table;
@@ -1710,7 +1703,14 @@ class PdfDocument extends Document implements DocListener {
                     	table = (PdfTable)element;
 						table.updateRowAdditions();
                     } else if (element instanceof Table) {
-	                    // constructing the PdfTable
+                        // constructing the PdfTable
+                        // Before the table, add a blank line using offset or default leading
+                        float offset = ((Table)element).getOffset();
+                        if (Float.isNaN(offset))
+                            offset = leading;
+                        carriageReturn();
+                        lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
+                        currentHeight += offset;
 	                    table = getPdfTable((Table)element, false);
 					} else {
 						return false;
