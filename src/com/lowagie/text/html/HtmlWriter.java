@@ -498,6 +498,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
 				if (table.borderColor() != null) {
 					attributes.put(BORDERCOLOR, HtmlEncoder.encode(table.borderColor()));
 				}
+				if (table.widthPercentage() > 0) { // bugfix Leslie Baski
+					attributes.put(WIDTH, String.valueOf(table.widthPercentage()) + "%"); 
+                }
 				writeBeginTag(TABLE, attributes);
 				for (Iterator rowIterator = table.iterator(); rowIterator.hasNext(); ) {
 					((Row) rowIterator.next()).process(this);
