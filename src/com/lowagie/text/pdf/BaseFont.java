@@ -521,6 +521,26 @@ public abstract class BaseFont {
     }
     
     /**
+     * Gets the width of a <CODE>String</CODE> in points taking kerning
+     * into account.
+     * @param text the <CODE>String</CODE> to get the witdth of
+     * @param fontSize the font size
+     * @return the width in points
+     */
+    public float getWidthPointKerned(String text, float fontSize) {
+        float size = (float)getWidth(text) * 0.001f * fontSize;
+        if (!hasKernPairs())
+            return size;
+        int len = text.length() - 1;
+        int kern = 0;
+        char c[] = text.toCharArray();
+        for (int k = 0; k < len; ++k) {
+            kern += getKerning(c[k], c[k + 1]);
+        }
+        return size + kern * 0.001f * fontSize;
+    }
+    
+    /**
      * Gets the width of a <CODE>String</CODE> in points.
      * @param text the <CODE>String</CODE> to get the witdth of
      * @param fontSize the font size
@@ -819,4 +839,8 @@ public abstract class BaseFont {
         return c;
     }
 
+    /** Checks if the font has any kerning pairs.
+     * @return <CODE>true</CODE> if the font has any kerning pairs
+     */    
+    public abstract boolean hasKernPairs();
 }

@@ -107,6 +107,9 @@ class PdfIndirectObject {
         this(number, 0, object, writer);
     }
     
+    PdfIndirectObject(PdfIndirectReference ref, PdfObject object, PdfWriter writer) {
+        this(ref.getNumber(),ref.getGeneration(),object,writer);
+    }
 /**
  * Constructs a <CODE>PdfIndirectObject</CODE>.
  *

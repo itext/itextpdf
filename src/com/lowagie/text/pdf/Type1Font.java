@@ -182,8 +182,9 @@ class Type1Font extends BaseFont
             try {
                 is = getResourceStream(afmFile + ".afm");
                 if (is == null) {
-                    System.err.println(afmFile + " not found as resource.");
-                    throw new DocumentException(afmFile + " not found as resource.");
+                    String msg = afmFile + " not found as resource. (The *.afm files must exist as resources in the package com.lowagie.text.pdf.fonts)";
+                    System.err.println(msg);
+                    throw new DocumentException(msg);
                 }
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 while (true) {
@@ -704,6 +705,13 @@ class Type1Font extends BaseFont
      */
     public String[][] getFamilyFontName() {
         return new String[][]{{"", "", "", FamilyName}};
+    }
+    
+    /** Checks if the font has any kerning pairs.
+     * @return <CODE>true</CODE> if the font has any kerning pairs
+     */    
+    public boolean hasKernPairs() {
+        return KernPairs.size() > 0;
     }
     
 }

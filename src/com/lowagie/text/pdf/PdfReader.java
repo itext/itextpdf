@@ -67,13 +67,18 @@ public class PdfReader {
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX};
 
-    PRTokeniser tokens;
-    int xref[];
-    PdfObject xrefObj[];
-    PdfDictionary trailer;
-    PdfDictionary pages[];
-    ArrayList pageInh;
-    int pagesCount;
+    protected PRTokeniser tokens;
+    protected int xref[];
+    protected PdfObject xrefObj[];
+    protected PdfDictionary trailer;
+    protected PdfDictionary pages[];
+    protected PdfDictionary catalog;
+    protected PRIndirectReference pageRefs[];
+    protected PRAcroForm acroForm = null;
+    protected ArrayList pageInh;
+    protected int pagesCount;
+    protected boolean encrypted = false;
+    protected boolean rebuilt = false;
     
     /** Reads and parses a PDF document.
      * @param filename the file name of the document
@@ -108,6 +113,19 @@ public class PdfReader {
         return pages.length;
     }
     
+    /**
+     * Returns the document's catalog
+     */
+    public PdfDictionary getCatalog() {
+        return catalog;
+    }
+
+    /**
+     * Returns the document's acroform, if it has one
+     */
+     public PRAcroForm getAcroForm() {
+	    return acroForm;
+     }
     /**
      * Gets the page rotation. This value can be 0, 90, 180 or 270.
      * @param index the page number. The first page is 1
@@ -210,9 +228,27 @@ public class PdfReader {
     protected void readPdf() throws IOException {
         try {
             tokens.checkPdfHeader();
-            readXref();
+            try {
+                readXref();
+            }
+            catch (Exception e) {
+                if (encrypted)
+                    throw (IOException)e;
+                try {
+                    rebuilt = true;
+                    rebuildXref();
+                }
+                catch (Exception ne) {
+                    throw new IOException("Rebuild failed: " + ne.getMessage() + "; Original message: " + e.getMessage());
+                }
+            }
             readDocObj();
             readPages();
+            PdfObject form = catalog.get(PdfName.ACROFORM);
+            if (form != null) {
+	      acroForm = new PRAcroForm(this);
+	      acroForm.readAcroForm((PdfDictionary)getPdfObject(form));
+            }
         }
         finally {
             try {
@@ -224,7 +260,7 @@ public class PdfReader {
         }
     }
 
-    protected PdfObject getPdfObject(PdfObject obj) {
+    public PdfObject getPdfObject(PdfObject obj) {
         if (obj == null)
             return null;
         if (obj.type() != PdfObject.INDIRECT)
@@ -271,7 +307,8 @@ public class PdfReader {
             PdfArray kidsPR = (PdfArray)getPdfObject(page.get(PdfName.KIDS));
             ArrayList kids = kidsPR.getArrayList();
             for (int k = 0; k < kids.size(); ++k){
-                PdfDictionary kid = (PdfDictionary)getPdfObject((PdfObject)kids.get(k));
+                pageRefs[pagesCount] = (PRIndirectReference)kids.get(k);
+                PdfDictionary kid = (PdfDictionary)getPdfObject(pageRefs[pagesCount]);
                 iteratePages(kid);
             }
             popPageAttributes();
@@ -280,10 +317,11 @@ public class PdfReader {
     
     protected void readPages() throws IOException {
         pageInh = new ArrayList();
-        PdfDictionary catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
+        catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
         PdfDictionary rootPages = (PdfDictionary)getPdfObject(catalog.get(PdfName.PAGES));
         PdfNumber count = (PdfNumber)getPdfObject(rootPages.get(PdfName.COUNT));
         pages = new PdfDictionary[count.intValue()];
+        pageRefs = new PRIndirectReference[pages.length];
         pagesCount = 0;
         iteratePages(rootPages);
         pageInh = null;
@@ -341,8 +379,10 @@ public class PdfReader {
         if (!tokens.getStringValue().equals("trailer"))
             throw new IOException("trailer not found.");
         trailer = (PdfDictionary)readPRObject();
-        if (trailer.get(PdfName.ENCRYPT) != null)
+        if (trailer.get(PdfName.ENCRYPT) != null) {
+            encrypted = true;
             throw new IOException("Encrypted files are not supported.");
+        }
         PdfNumber xrefSize = (PdfNumber)trailer.get(PdfName.SIZE);
         xref = new int[xrefSize.intValue()];
         tokens.seek(startxref);
@@ -377,6 +417,23 @@ public class PdfReader {
             if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
                 tokens.throwError("Number of entries in this xref subsection not found");
             end = tokens.intValue() + start;
+            if (start == 1) { // fix incorrect start number
+                int back = tokens.getFilePointer();
+                tokens.nextValidToken();
+                pos = tokens.intValue();
+                tokens.nextValidToken();
+                gen = tokens.intValue();
+                if (pos == 0 && gen == 65535) {
+                    --start;
+                    --end;
+                }
+                tokens.seek(back);
+            }
+            if (xref.length < end) { // fix incorrect size
+                int xref2[] = new int[end];
+                System.arraycopy(xref, 0, xref2, 0, xref.length);
+                xref = xref2;
+            }
             for (int k = start; k < end; ++k) {
                 tokens.nextValidToken();
                 pos = tokens.intValue();
@@ -396,7 +453,64 @@ public class PdfReader {
             }
         }
     }
-    
+
+    protected void rebuildXref() throws IOException {
+        tokens.seek(0);
+        int xr[][] = new int[1024][];
+        int top = 0;
+        trailer = null;
+        byte line[] = new byte[64];
+        for (;;) {
+            int pos = tokens.getFilePointer();
+            if (!tokens.readLineSegment(line))
+                break;
+            if (line[0] == 't') {
+                if (!PdfEncodings.convertToString(line, null).startsWith("trailer"))
+                    continue;
+                pos = tokens.getFilePointer();
+                try {
+                    PdfDictionary dic = (PdfDictionary)readPRObject();
+                    if (dic.get(PdfName.ROOT) != null)
+                        trailer = dic;
+                    else
+                        tokens.seek(pos);
+                }
+                catch (Exception e) {
+                    tokens.seek(pos);
+                }
+            }
+            else if (line[0] >= '0' && line[0] <= '9') {
+                int obj[] = PRTokeniser.checkObjectStart(line);
+                if (obj == null)
+                    continue;
+                int num = obj[0];
+                int gen = obj[1];
+                if (num >= xr.length) {
+                    int newLength = num * 2;
+                    int xr2[][] = new int[newLength][];
+                    System.arraycopy(xr, 0, xr2, 0, top);
+                    xr = xr2;
+                }
+                if (num >= top)
+                    top = num + 1;
+                if (xr[num] == null || gen >= xr[num][1]) {
+                    obj[0] = pos;
+                    xr[num] = obj;
+                }
+            }
+        }
+        if (trailer == null)
+            throw new IOException("trailer not found.");
+        if (trailer.get(PdfName.ENCRYPT) != null)
+            throw new IOException("Encrypted files are not supported.");
+        xref = new int[top];
+        for (int k = 0; k < top; ++k) {
+            int obj[] = xr[k];
+            if (obj != null)
+                xref[k] = obj[0];
+        }
+    }
+
     protected PdfDictionary readDictionary() throws IOException {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
@@ -439,8 +553,8 @@ public class PdfReader {
             {
                 PdfDictionary dic = readDictionary();
                 int pos = tokens.getFilePointer();
-                tokens.nextValidToken();
-                if (tokens.getStringValue().equals("stream")) {
+		// be careful in the trailer. May not be a "next" token.
+                if (tokens.nextToken() && tokens.getStringValue().equals("stream")) {
                     int ch = tokens.read();
                     if (ch == '\r')
                         ch = tokens.read();
@@ -581,4 +695,27 @@ public class PdfReader {
         lzw.decode(in, out);
         return out.toByteArray();
     }
+    
+    /** Checks if the document had errors and was rebuilt.
+     * @return true if rebuilt.
+     *
+     */
+    public boolean isRebuilt() {
+        return this.rebuilt;
+    }
+
+    public PdfDictionary getPageN(int pageNum)
+    {
+        if (pageNum > pages.length) return null;
+        return pages[pageNum - 1];
+
+
+    }
+
+    public PRIndirectReference getPageOrigRef(int pageNum)
+    {
+        if (pageNum > pageRefs.length) return null;
+        return pageRefs[pageNum - 1];
+    }
+    
 }

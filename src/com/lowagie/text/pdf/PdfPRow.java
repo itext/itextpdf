@@ -230,6 +230,7 @@ public class PdfPRow {
             writeBorderAndBackgroung(xPos, yPos, cell, canvases);
             PdfPTable table = cell.getTable();
             float tly = 0;
+            boolean alignTop = false;
             switch (cell.getVerticalAlignment()) {
                 case Element.ALIGN_BOTTOM:
                     tly = cell.top() + yPos - maxHeight + cell.height() - cell.getPaddingTop();
@@ -238,6 +239,7 @@ public class PdfPRow {
                     tly = cell.top() + yPos + (cell.height() - maxHeight) / 2 - cell.getPaddingTop();
                     break;
                 default:
+                    alignTop = true;
                     tly = cell.top() + yPos - cell.getPaddingTop();
                     break;
             }
@@ -290,21 +292,23 @@ public class PdfPRow {
             else {
                 float remainingHeight = 0;
                 float maxLastRow = 0;
-                //add by Jin-Hsia Yang, to add remaining height to last row
-                if (table.size() > 0) {
-                    PdfPRow row = table.getRow(table.size()-1);
-                    remainingHeight = maxHeight-table.getTotalHeight()-cell.getPaddingBottom()-cell.getPaddingTop();
-                    if (remainingHeight > 0) {
-                        maxLastRow = row.getMaxHeights();
-                        row.setMaxHeights(row.getMaxHeights()+ remainingHeight );
-                        //table.setTotalHeight(table.getTotalHeight() + remainingHeight);
+                if (alignTop) {
+                    //add by Jin-Hsia Yang, to add remaining height to last row
+                    if (table.size() > 0) {
+                        PdfPRow row = table.getRow(table.size()-1);
+                        remainingHeight = maxHeight-table.getTotalHeight()-cell.getPaddingBottom()-cell.getPaddingTop();
+                        if (remainingHeight > 0) {
+                            maxLastRow = row.getMaxHeights();
+                            row.setMaxHeights(row.getMaxHeights()+ remainingHeight );
+                            //table.setTotalHeight(table.getTotalHeight() + remainingHeight);
+                        }
                     }
+                    //end add
                 }
-                //end add
 
                 table.writeSelectedRows(0, -1, cell.left() + xPos + cell.getPaddingLeft(),
                     tly, canvases);
-                if (remainingHeight > 0)
+                if (alignTop && remainingHeight > 0)
                     table.getRow(table.size()-1).setMaxHeights(maxLastRow);
             }
         }

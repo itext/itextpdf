@@ -136,17 +136,17 @@ public class PdfStream extends PdfDictionary {
 /**
  * Compresses the stream.
  *
- * @throws PdfException if a filter is allready defined
+ * @throws PdfException if a filter is already defined
  */
     
     public void flateCompress() throws PdfException {
         if (!Document.compress)
             return;
-        // check if the flateCompress-method has allready been
+        // check if the flateCompress-method has already been
         if (compressed) {
             return;
         }
-        // check if a filter allready exists
+        // check if a filter already exists
         PdfObject filter = get(PdfName.FILTER);
         if (filter != null) {
             if (filter.isName() && ((PdfName) filter).compareTo(PdfName.FLATEDECODE) == 0) {

@@ -70,51 +70,6 @@ import com.lowagie.text.ExceptionConverter;
 
 class PdfFont implements Comparable {
     
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int COURIER = 0;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int COURIER_BOLD = 1;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int COURIER_OBLIQUE = 2;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int COURIER_BOLDOBLIQUE = 3;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int HELVETICA = 4;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int HELVETICA_BOLD = 5;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int HELVETICA_OBLIQUE = 6;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int HELVETICA_BOLDOBLIQUE = 7;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int SYMBOL = 8;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int TIMES_ROMAN = 9;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int TIMES_BOLD = 10;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int TIMES_ITALIC = 11;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int TIMES_BOLDITALIC = 12;
-    
-    /** This is a possible value of a base 14 type 1 font */
-    public static final int ZAPFDINGBATS = 13;
-    // membervariables
-    
-    /** the name of this font. */
-    private PdfName name;
     
     /** the font metrics. */
     private BaseFont font;
@@ -126,93 +81,6 @@ class PdfFont implements Comparable {
     protected Image image;
     
     // constructors
-    
-    /**
-     * Constructs a new <CODE>PdfFont</CODE>-object.
-     *
-     * @param		name		name of the font
-     * @param		f			the base 14 type
-     * @param		s			value of the size
-     * @param		e			value of the encodingtype
-     */
-    
-    PdfFont(String name, int f, float s, int e) {
-        String fontName = BaseFont.HELVETICA;
-        size = s;
-        switch (f) {
-            case COURIER:
-                fontName = BaseFont.COURIER;
-                break;
-            case COURIER_BOLD:
-                fontName = BaseFont.COURIER_BOLD;
-                break;
-            case COURIER_OBLIQUE:
-                fontName = BaseFont.COURIER_OBLIQUE;
-                break;
-            case COURIER_BOLDOBLIQUE:
-                fontName = BaseFont.COURIER_BOLDOBLIQUE;
-                break;
-            case HELVETICA:
-                fontName = BaseFont.HELVETICA;
-                break;
-            case HELVETICA_BOLD:
-                fontName = BaseFont.HELVETICA_BOLD;
-                break;
-            case HELVETICA_OBLIQUE:
-                fontName = BaseFont.HELVETICA_OBLIQUE;
-                break;
-            case HELVETICA_BOLDOBLIQUE:
-                fontName = BaseFont.HELVETICA_BOLDOBLIQUE;
-                break;
-            case SYMBOL:
-                fontName = BaseFont.SYMBOL;
-                break;
-            case TIMES_ROMAN:
-                fontName = BaseFont.TIMES_ROMAN;
-                break;
-            case TIMES_BOLD:
-                fontName = BaseFont.TIMES_BOLD;
-                break;
-            case TIMES_ITALIC:
-                fontName = BaseFont.TIMES_ITALIC;
-                break;
-            case TIMES_BOLDITALIC:
-                fontName = BaseFont.TIMES_BOLDITALIC;
-                break;
-            case ZAPFDINGBATS:
-                fontName = BaseFont.ZAPFDINGBATS;
-                break;
-        }
-        try {
-            font = BaseFont.createFont(fontName, BaseFont.WINANSI, false);
-        }
-        catch (Exception ee) {
-            throw new ExceptionConverter(ee);
-        }
-    }
-    
-    /**
-     * Constructs a new <CODE>PdfFont</CODE>-object.
-     *
-     * @param		f			the base 14 type
-     * @param		s			value of the size
-     * @param		e			value of the encodingtype
-     */
-    
-    PdfFont(int f, float s, int e) {
-        this(new StringBuffer("F").append(f).toString(), f, s, e);
-    }
-    
-    /**
-     * Constructs a new <CODE>PdfFont</CODE>-object.
-     *
-     * @param		f			the base 14 type
-     * @param		s			value of the size
-     */
-    
-    PdfFont(int f, float s) {
-        this(new StringBuffer("F").append(f).toString(), f, s, -1);
-    }
     
     PdfFont(BaseFont bf, float size) {
         this.size = size;
@@ -265,20 +133,6 @@ class PdfFont implements Comparable {
     }
     
     /**
-     * Returns the name of this font.
-     *
-     * @return		a <CODE>PdfName</CODE>
-     */
-    
-    PdfName getName() {
-        return name;
-    }
-    
-    void setName(PdfName name) {
-        this.name = name;
-    }
-    
-    /**
      * Returns the approximative width of 1 character of this font.
      *
      * @return		a width in Text Space
@@ -311,5 +165,15 @@ class PdfFont implements Comparable {
     
     void setImage(Image image) {
         this.image = image;
+    }
+    
+    static PdfFont getDefaultFont() {
+        try {
+            BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, false);
+            return new PdfFont(bf, 12);
+        }
+        catch (Exception ee) {
+            throw new ExceptionConverter(ee);
+        }
     }
 }

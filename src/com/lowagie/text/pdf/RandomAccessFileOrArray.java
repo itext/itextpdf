@@ -155,6 +155,12 @@ public class RandomAccessFileOrArray implements DataInput {
         }
     }
     
+    protected void insureOpen() throws IOException {
+        if (filename != null && rf == null) {
+            reOpen();
+        }
+    }
+
     public void close() throws IOException {
         if (rf != null) {
             rf.close();
@@ -170,8 +176,10 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public void seek(int pos) throws IOException {
-        if (arrayIn == null)
+        if (arrayIn == null) {
+            insureOpen();
             rf.seek(pos);
+        }
         else
             arrayInPtr = pos;
     }

@@ -63,14 +63,14 @@ class PdfReaderInstance {
     static final PdfNumber ONE = new PdfNumber(1);
     PdfObject xrefObj[];
     PdfDictionary pages[];
-    int myXref[]; 
+    int myXref[];
     PdfReader reader;
     RandomAccessFileOrArray file;
     HashMap importedPages = new HashMap();
     PdfWriter writer;
     HashMap visited = new HashMap();
     ArrayList nextRound = new ArrayList();
-
+    
     PdfReaderInstance(PdfReader reader, PdfWriter writer, PdfObject xrefObj[], PdfDictionary pages[]) {
         this.reader = reader;
         this.xrefObj = xrefObj;
@@ -79,7 +79,7 @@ class PdfReaderInstance {
         file = reader.getSafeFile();
         myXref = new int[xrefObj.length];
     }
-
+    
     PdfReader getReader() {
         return reader;
     }
@@ -112,6 +112,37 @@ class PdfReaderInstance {
         return reader.getPdfObject(pages[pageNumber - 1].get(PdfName.RESOURCES));
     }
     
+    public byte[] getStreamBytes(PRStream stream) throws IOException {
+        PdfObject filter = stream.get(PdfName.FILTER);
+        byte b[] = new byte[stream.getLength()];
+        file.seek(stream.getOffset());
+        file.readFully(b);
+        ArrayList filters = new ArrayList();
+        if (filter != null) {
+            if (filter.type() == PdfObject.NAME) {
+                filters.add(filter);
+            }
+            else if (filter.type() == PdfObject.ARRAY) {
+                filters = ((PdfArray)filter).getArrayList();
+            }
+        }
+        String name;
+        for (int j = 0; j < filters.size(); ++j) {
+            name = ((PdfName)filters.get(j)).toString();
+            if (name.equals("/FlateDecode") || name.equals("/Fl"))
+                b = PdfReader.FlateDecode(b);
+            else if (name.equals("/ASCIIHexDecode") || name.equals("/AHx"))
+                b = PdfReader.ASCIIHexDecode(b);
+            else if (name.equals("/ASCII85Decode") || name.equals("/A85"))
+                b = PdfReader.ASCII85Decode(b);
+            else if (name.equals("/LZWDecode"))
+                b = PdfReader.LZWDecode(b);
+            else
+                throw new IOException("The filter " + name + " is not supported.");
+        }
+        return b;
+    }
+    
     PdfStream getFormXObject(int pageNumber) throws IOException {
         PdfDictionary page = pages[pageNumber - 1];
         PdfObject contents = reader.getPdfObject(page.get(PdfName.CONTENTS));
@@ -133,36 +164,10 @@ class PdfReaderInstance {
                 bout = new ByteArrayOutputStream();
                 for (int k = 0; k < list.size(); ++k) {
                     PRStream stream = (PRStream)reader.getPdfObject((PdfObject)list.get(k));
-                    PdfObject filter = stream.get(PdfName.FILTER);
-                    byte b[] = new byte[stream.getLength()];
-                    file.seek(stream.getOffset());
-                    file.readFully(b);
-                    filters = new ArrayList();
-                    if (filter != null) {
-                        if (filter.type() == PdfObject.NAME) {
-                            filters.add(filter);
-                        }
-                        else if (filter.type() == PdfObject.ARRAY) {
-                            filters = ((PdfArray)filter).getArrayList();
-                        }
-                    }
-                    String name;
-                    for (int j = 0; j < filters.size(); ++j) {
-                        name = ((PdfName)filters.get(j)).toString();
-                        if (name.equals("/FlateDecode") || name.equals("/Fl"))
-                            b = PdfReader.FlateDecode(b);
-                        else if (name.equals("/ASCIIHexDecode") || name.equals("/AHx"))
-                            b = PdfReader.ASCIIHexDecode(b);
-                        else if (name.equals("/ASCII85Decode") || name.equals("/A85"))
-                            b = PdfReader.ASCII85Decode(b);
-                        else if (name.equals("/LZWDecode"))
-                            b = PdfReader.LZWDecode(b);
-                        else
-                            throw new IOException("The filter " + name + " is not supported.");
-                    }
+                    byte[] b = getStreamBytes(stream);
                     bout.write(b);
                     if (k != list.size() - 1)
-                       bout.write('\n');
+                        bout.write('\n');
                 }
             }
         }

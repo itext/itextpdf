@@ -55,6 +55,8 @@ import java.util.Iterator;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Paragraph;
 import java.util.ArrayList;
+import java.awt.Color;
+import com.lowagie.text.Font;
 
 /**
  * <CODE>PdfOutline</CODE> is an object that represents a PDF outline entry.
@@ -95,6 +97,12 @@ public class PdfOutline extends PdfDictionary {
     
     /** Holds value of property open. */
     private boolean open;
+    
+    /** Holds value of property color. */
+    private Color color;
+    
+    /** Holds value of property style. */
+    private int style = 0;
     
     // constructors
     
@@ -400,6 +408,16 @@ public class PdfOutline extends PdfDictionary {
      */
     
     public byte[] toPdf(PdfWriter writer) {
+        if (color != null && !color.equals(Color.black)) {
+            put(PdfName.C, new PdfArray(color.getRGBColorComponents(null)));
+        }
+        int flag = 0;
+        if ((style & Font.BOLD) != 0)
+            flag |= 2;
+        if ((style & Font.ITALIC) != 0)
+            flag |= 1;
+        if (flag != 0)
+            put(PdfName.F, new PdfNumber(flag));
         if (parent != null) {
             put(PdfName.PARENT, parent.indirectReference());
         }
@@ -461,6 +479,38 @@ public class PdfOutline extends PdfDictionary {
      */
     public void setOpen(boolean open) {
         this.open = open;
+    }
+    
+    /** Getter for property color.
+     * @return Value of property color.
+     *
+     */
+    public Color getColor() {
+        return this.color;
+    }
+    
+    /** Setter for property color.
+     * @param color New value of property color.
+     *
+     */
+    public void setColor(Color color) {
+        this.color = color;
+    }
+    
+    /** Getter for property style.
+     * @return Value of property style.
+     *
+     */
+    public int getStyle() {
+        return this.style;
+    }
+    
+    /** Setter for property style.
+     * @param style New value of property style.
+     *
+     */
+    public void setStyle(int style) {
+        this.style = style;
     }
     
 }

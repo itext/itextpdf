@@ -76,6 +76,8 @@ public class PRTokeniser {
     protected String stringValue;
     protected int reference;
     protected int generation;
+    
+    private static final int LINE_SEGMENT_SIZE = 256;
 
     public PRTokeniser(String filename) throws IOException {
         file = new RandomAccessFileOrArray(filename);
@@ -149,7 +151,7 @@ public class PRTokeniser {
         file.seek(file.getFilePointer() - 1);
     }
     
-    protected void throwError(String error) throws IOException {
+    public void throwError(String error) throws IOException {
         throw new IOException(error + " at file pointer " + file.getFilePointer());
     }
     
@@ -159,6 +161,12 @@ public class PRTokeniser {
             throw new IOException("PDF header signature not found.");
     }
     
+    public void checkFdfHeader() throws IOException {
+        String str = readString(8);
+        if (!str.equals("%FDF-1.2"))
+            throw new IOException("FDF header signature not found.");
+    }
+
     public int getStartxref() throws IOException {
         int size = Math.min(1024, file.length());
         int pos = file.length() - size;
@@ -307,7 +315,7 @@ public class PRTokeniser {
                 type = TK_COMMENT;
                 do {
                     ch = file.read();
-                } while (ch != -1 && ch != 'r' && ch != 'n');
+                } while (ch != -1 && ch != '\r' && ch != '\n');
                 break;
             case '(':
             {
@@ -430,5 +438,80 @@ public class PRTokeniser {
     
     public int intValue() {
         return Integer.valueOf(stringValue).intValue();
+    }
+    
+    public boolean readLineSegment(byte input[]) throws IOException {
+        int c = -1;
+        boolean eol = false;
+        int ptr = 0;
+        int len = input.length;
+        while (!eol && ptr < len) {
+            switch (c = read()) {
+                case -1:
+                case '\n':
+                    eol = true;
+                    break;
+                case '\r':
+                    eol = true;
+                    int cur = getFilePointer();
+                    if ((read()) != '\n') {
+                        seek(cur);
+                    }
+                    break;
+                default:
+                    input[ptr++] = (byte)c;
+                    break;
+            }
+        }
+        if (ptr >= len) {
+            eol = false;
+            while (!eol) {
+                switch (c = read()) {
+                    case -1:
+                    case '\n':
+                        eol = true;
+                        break;
+                    case '\r':
+                        eol = true;
+                        int cur = getFilePointer();
+                        if ((read()) != '\n') {
+                            seek(cur);
+                        }
+                        break;
+                }
+            }
+        }
+        
+        if ((c == -1) && (ptr == 0)) {
+            return false;
+        }
+        if (ptr + 2 <= len) {
+            input[ptr++] = ' ';
+            input[ptr] = 'X';
+        }
+        return true;
+    }
+    
+    public static int[] checkObjectStart(byte line[]) {
+        try {
+            PRTokeniser tk = new PRTokeniser(line);
+            int num = 0;
+            int gen = 0;
+            if (!tk.nextToken() || tk.getTokenType() != TK_NUMBER)
+                return null;
+            num = tk.intValue();
+            if (!tk.nextToken() || tk.getTokenType() != TK_NUMBER)
+                return null;
+            gen = tk.intValue();
+            if (!tk.nextToken())
+                return null;
+            if (!tk.getStringValue().equals("obj"))
+                return null;
+            return new int[]{num, gen};
+        }
+        catch (Exception ioe) {
+            // empty on purpose
+        }
+        return null;
     }
 }

@@ -92,10 +92,10 @@ class PdfXObjectDictionary extends PdfDictionary implements PdfResource {
     }
     
 /**
- * Checks if the <CODE>XObjectDictionary</CODE> allready contains a
+ * Checks if the <CODE>XObjectDictionary</CODE> already contains a
  * <CODE>PdfImage</CODE> with this name.
  *
- * @return		<CODE>true</CODE> if a font with this name allready exists,
+ * @return		<CODE>true</CODE> if a font with this name already exists,
  *				<CODE>false</CODE> otherwise
  */
     

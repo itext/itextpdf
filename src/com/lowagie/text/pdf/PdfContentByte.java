@@ -115,7 +115,7 @@ public class PdfContentByte {
     protected ArrayList stateList = new ArrayList();
     
     /** The separator between commands.
-     */    
+     */
     protected int separator = '\n';
     
     // constructors
@@ -1006,7 +1006,46 @@ public class PdfContentByte {
         showText2(text);
         content.append("Tj").append_i(separator);
     }
-        
+    
+    public static PdfTextArray getKernArray(String text, BaseFont font) {
+        PdfTextArray pa = new PdfTextArray();
+        StringBuffer acc = new StringBuffer();
+        int len = text.length() - 1;
+        char c[] = text.toCharArray();
+        if (len >= 0)
+            acc.append(c, 0, 1);
+        for (int k = 0; k < len; ++k) {
+            char c2 = c[k + 1];
+            int kern = font.getKerning(c[k], c2);
+            if (kern == 0) {
+                acc.append(c2);
+            }
+            else {
+                pa.add(acc.toString());
+                acc.setLength(0);
+                acc.append(c, k + 1, 1);
+                pa.add(-kern);
+            }
+        }
+        pa.add(acc.toString());
+        return pa;
+    }
+    
+    /**
+     * Shows the <CODE>text</CODE> kerned.
+     *
+     * @param text the text to write
+     */
+    public void showTextKerned(String text) {
+        if (state.fontDetails == null)
+            throw new NullPointerException("Font and size must be set before writing any text");
+        BaseFont bf = state.fontDetails.getBaseFont();
+        if (bf.hasKernPairs())
+            showText(getKernArray(text, bf));
+        else
+            showText(text);
+    }
+    
     /**
      * Moves to the next line and shows <CODE>text</CODE>.
      *
@@ -1017,7 +1056,7 @@ public class PdfContentByte {
         showText2(text);
         content.append("'").append_i(separator);
     }
-        
+    
     /**
      * Moves to the next line and shows text string, using the given values of the character and word spacing parameters.
      *
@@ -1134,7 +1173,16 @@ public class PdfContentByte {
                     content.append("\\r");
                     break;
                 case '\n':
-                    content.append("\n");
+                    content.append("\\n");
+                    break;
+                case '\t':
+                    content.append("\\t");
+                    break;
+                case '\b':
+                    content.append("\\b");
+                    break;
+                case '\f':
+                    content.append("\\f");
                     break;
                 case '(':
                 case ')':
@@ -1224,6 +1272,54 @@ public class PdfContentByte {
             setTextMatrix(0f, 0f);
         }
     }
+    
+    /**
+     * Shows text kerned right, left or center aligned with rotation.
+     * @param alignement the alignment can be ALIGN_CENTER, ALIGN_RIGHT or ALIGN_LEFT
+     * @param text the text to show
+     * @param x the x pivot position
+     * @param y the y pivot position
+     * @param rotation the rotation to be applied in degrees counterclockwise
+     */
+    public void showTextAlignedKerned(int alignement, String text, float x, float y, float rotation) {
+        if (state.fontDetails == null)
+            throw new NullPointerException("Font and size must be set before writing any text");
+        BaseFont bf = state.fontDetails.getBaseFont();
+        if (rotation == 0) {
+            switch (alignement) {
+                case ALIGN_CENTER:
+                    x -= bf.getWidthPointKerned(text, state.size) / 2;
+                    break;
+                case ALIGN_RIGHT:
+                    x -= bf.getWidthPointKerned(text, state.size);
+                    break;
+            }
+            setTextMatrix(x, y);
+            showTextKerned(text);
+        }
+        else {
+            double alpha = rotation * Math.PI / 180.0;
+            float cos = (float)Math.cos(alpha);
+            float sin = (float)Math.sin(alpha);
+            float len;
+            switch (alignement) {
+                case ALIGN_CENTER:
+                    len = bf.getWidthPointKerned(text, state.size) / 2;
+                    x -=  len * cos;
+                    y -=  len * sin;
+                    break;
+                case ALIGN_RIGHT:
+                    len = bf.getWidthPointKerned(text, state.size);
+                    x -=  len * cos;
+                    y -=  len * sin;
+                    break;
+            }
+            setTextMatrix(cos, sin, -sin, cos, x, y);
+            showTextKerned(text);
+            setTextMatrix(0f, 0f);
+        }
+    }
+    
     /**
      * Concatenate a matrix to the current transformation matrix.
      * @param a an element of the transformation matrix
@@ -1615,7 +1711,7 @@ public class PdfContentByte {
     /** Sets the stroke color. <CODE>color</CODE> can be an
      * <CODE>ExtendedColor</CODE>.
      * @param color the color
-     */    
+     */
     public void setColorStroke(Color color) {
         int type = ExtendedColor.getType(color);
         switch (type) {
@@ -1651,7 +1747,7 @@ public class PdfContentByte {
     /** Sets the fill color. <CODE>color</CODE> can be an
      * <CODE>ExtendedColor</CODE>.
      * @param color the color
-     */    
+     */
     public void setColorFill(Color color) {
         int type = ExtendedColor.getType(color);
         switch (type) {
@@ -1688,7 +1784,7 @@ public class PdfContentByte {
      * @param sp the spot color
      * @param tint the tint for the spot color. 0 is no color and 1
      * is 100% color
-     */    
+     */
     public void setColorFill(PdfSpotColor sp, float tint) {
         checkWriter();
         state.colorDetails = writer.add(sp);
@@ -1699,7 +1795,7 @@ public class PdfContentByte {
      * @param sp the spot color
      * @param tint the tint for the spot color. 0 is no color and 1
      * is 100% color
-     */    
+     */
     public void setColorStroke(PdfSpotColor sp, float tint) {
         checkWriter();
         state.colorDetails = writer.add(sp);
@@ -1709,7 +1805,7 @@ public class PdfContentByte {
     /** Sets the fill color to a pattern. The pattern can be
      * colored or uncolored.
      * @param p the pattern
-     */    
+     */
     public void setPatternFill(PdfPatternPainter p) {
         if (p.isStencil()) {
             setPatternFill(p, p.getDefaultColor());
@@ -1723,7 +1819,7 @@ public class PdfContentByte {
     /** Outputs the color values to the content.
      * @param color The color
      * @param tint the tint if it is a spot color, ignored otherwise
-     */    
+     */
     void outputColorNumbers(Color color, float tint) {
         int type = ExtendedColor.getType(color);
         switch (type) {
@@ -1747,14 +1843,14 @@ public class PdfContentByte {
                 content.append(tint);
                 break;
             default:
-                throw new RuntimeException("Invalid color type.");                
+                throw new RuntimeException("Invalid color type.");
         }
     }
     
     /** Sets the fill color to an uncolored pattern.
      * @param p the pattern
      * @param color the color of the pattern
-     */    
+     */
     public void setPatternFill(PdfPatternPainter p, Color color) {
         if (ExtendedColor.getType(color) == ExtendedColor.TYPE_SEPARATION)
             setPatternFill(p, color, ((SpotColor)color).getTint());
@@ -1766,7 +1862,7 @@ public class PdfContentByte {
      * @param p the pattern
      * @param color the color of the pattern
      * @param tint the tint if the color is a spot color, ignored otherwise
-     */    
+     */
     public void setPatternFill(PdfPatternPainter p, Color color, float tint) {
         checkWriter();
         if (!p.isStencil())
@@ -1782,7 +1878,7 @@ public class PdfContentByte {
     /** Sets the stroke color to an uncolored pattern.
      * @param p the pattern
      * @param color the color of the pattern
-     */    
+     */
     public void setPatternStroke(PdfPatternPainter p, Color color) {
         if (ExtendedColor.getType(color) == ExtendedColor.TYPE_SEPARATION)
             setPatternStroke(p, color, ((SpotColor)color).getTint());
@@ -1794,7 +1890,7 @@ public class PdfContentByte {
      * @param p the pattern
      * @param color the color of the pattern
      * @param tint the tint if the color is a spot color, ignored otherwise
-     */    
+     */
     public void setPatternStroke(PdfPatternPainter p, Color color, float tint) {
         checkWriter();
         if (!p.isStencil())
@@ -1810,7 +1906,7 @@ public class PdfContentByte {
     /** Sets the stroke color to a pattern. The pattern can be
      * colored or uncolored.
      * @param p the pattern
-     */    
+     */
     public void setPatternStroke(PdfPatternPainter p) {
         if (p.isStencil()) {
             setPatternStroke(p, p.getDefaultColor());
@@ -1840,7 +1936,7 @@ public class PdfContentByte {
         if (details != null)
             pdf.addColor(details.getColorName(), details.getIndirectReference());
     }
-
+    
     public void setShadingStroke(PdfShadingPattern shading) {
         pdf.addShadingPatternToPage(shading);
         content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(shading.getPatternName().toPdf(null)).append(" SCN").append_i(separator);
@@ -1848,7 +1944,7 @@ public class PdfContentByte {
         if (details != null)
             pdf.addColor(details.getColorName(), details.getIndirectReference());
     }
-
+    
     /** Check if we have a valid PdfWriter.
      *
      */
@@ -1996,36 +2092,36 @@ public class PdfContentByte {
     
     /** Outputs a <CODE>String</CODE> directly to the content.
      * @param s the <CODE>String</CODE>
-     */    
+     */
     public void setLiteral(String s) {
         content.append(s);
     }
     
     /** Outputs a <CODE>char</CODE> directly to the content.
      * @param c the <CODE>char</CODE>
-     */    
+     */
     public void setLiteral(char c) {
         content.append(c);
     }
     
     /** Outputs a <CODE>float</CODE> directly to the content.
      * @param n the <CODE>float</CODE>
-     */    
+     */
     public void setLiteral(float n) {
         content.append(n);
     }
     
     /** Throws an error if it is a pattern.
      * @param t the object to check
-     */    
+     */
     void checkNoPattern(PdfTemplate t) {
         if (t.getType() == PdfTemplate.TYPE_PATTERN)
             throw new RuntimeException("Invalid use of a pattern. A template was expected.");
     }
     
-/**
- * Draws a TextField.
- */
+    /**
+     * Draws a TextField.
+     */
     
     public void drawRadioField(float llx, float lly, float urx, float ury, boolean on) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
@@ -2058,9 +2154,9 @@ public class PdfContentByte {
         }
     }
     
-/**
- * Draws a TextField.
- */
+    /**
+     * Draws a TextField.
+     */
     
     public void drawTextField(float llx, float lly, float urx, float ury) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
@@ -2103,9 +2199,9 @@ public class PdfContentByte {
         stroke();
     }
     
-/**
- * Draws a button.
- */
+    /**
+     * Draws a button.
+     */
     
     public void drawButton(float llx, float lly, float urx, float ury, String text, BaseFont bf, float size) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
@@ -2151,28 +2247,28 @@ public class PdfContentByte {
      * @param width the width of the panel
      * @param height the height of the panel
      * @return a <CODE>Graphics2D</CODE>
-     */    
+     */
     public java.awt.Graphics2D createGraphicsShapes(float width, float height) {
         return new PdfGraphics2D(this, width, height);
     }
-
+    
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
      * are translated to PDF commands.
      * @param width the width of the panel
      * @param height the height of the panel
      * @return a <CODE>Graphics2D</CODE>
-     */    
+     */
     public java.awt.Graphics2D createGraphics(float width, float height) {
         return createGraphics(width, height, null);
     }
-
+    
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
      * are translated to PDF commands.
      * @param width the width of the panel
      * @param height the height of the panel
      * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
      * @return a <CODE>Graphics2D</CODE>
-     */    
+     */
     public java.awt.Graphics2D createGraphics(float width, float height, FontMapper fontMapper) {
         return new PdfGraphics2D(this, width, height, fontMapper);
     }

@@ -71,31 +71,31 @@ class PdfTable extends Rectangle {
     
     // membervariables
     
-/** this is the number of columns in the table. */
+    /** this is the number of columns in the table. */
     private int columns;
     
-/** this is the ArrayList with all the cell of the table header. */
+    /** this is the ArrayList with all the cell of the table header. */
     private ArrayList headercells;
     
-/** this is the ArrayList with all the cells in the table. */
+    /** this is the ArrayList with all the cells in the table. */
     private ArrayList cells;
     
-/** this is the cellpadding of the table. */
+    /** this is the cellpadding of the table. */
     private float cellpadding;
     
-/** this is the cellspacing of the table. */
+    /** this is the cellspacing of the table. */
     private float cellspacing;
     
     // constructors
     
-/**
- * Constructs a <CODE>PdfTable</CODE>-object.
- *
- * @param	table	a <CODE>Table</CODE>
- * @param	left	the left border on the page
- * @param	right	the right border on the page
- * @param	top		the start position of the top of the table
- */
+    /**
+     * Constructs a <CODE>PdfTable</CODE>-object.
+     *
+     * @param	table	a <CODE>Table</CODE>
+     * @param	left	the left border on the page
+     * @param	right	the right border on the page
+     * @param	top		the start position of the top of the table
+     */
     
     PdfTable(Table table, float left, float right, float top) {
         // constructs a Rectangle (the bottomvalue will be changed afterwards)
@@ -118,6 +118,8 @@ class PdfTable extends Rectangle {
         
         Row row;
         int rowNumber = 0;
+        int groupNumber = 0;
+        boolean groupChange;
         int firstDataRow = table.firstDataRow();
         Cell cell;
         PdfCell currentCell;
@@ -131,6 +133,7 @@ class PdfTable extends Rectangle {
         
         // loop over all the rows
         for (Iterator rowIterator = table.iterator(); rowIterator.hasNext(); ) {
+            groupChange = false;
             row = (Row) rowIterator.next();
             if (row.isEmpty()) {
                 if (rowNumber < rows - 1 && offsets[rowNumber + 1] > offsets[rowNumber]) offsets[rowNumber + 1] = offsets[rowNumber];
@@ -139,7 +142,7 @@ class PdfTable extends Rectangle {
                 for(int i = 0; i < row.columns(); i++) {
                     cell = (Cell) row.getCell(i);
                     if (cell != null) {
-                        currentCell = new PdfCell(cell, rowNumber, positions[i], positions[i + cell.colspan()], offsets[rowNumber], cellspacing, cellpadding);                        
+                        currentCell = new PdfCell(cell, rowNumber, positions[i], positions[i + cell.colspan()], offsets[rowNumber], cellspacing, cellpadding);
                         try {
                             if (offsets[rowNumber] - currentCell.height() - cellpadding < offsets[rowNumber + currentCell.rowspan()]) {
                                 offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() - cellpadding;
@@ -154,11 +157,14 @@ class PdfTable extends Rectangle {
                             currentCell.setHeader();
                             headercells.add(currentCell);
                         }
+                        currentCell.setGroupNumber(groupNumber);
+                        groupChange |= cell.getGroupChange();
                         cells.add(currentCell);
                     }
                 }
             }
             rowNumber++;
+            if( groupChange ) groupNumber++;
         }
         
         // loop over all the cells
@@ -177,61 +183,61 @@ class PdfTable extends Rectangle {
     
     // methods
     
-/**
- * Returns the arraylist with the cells of the table header.
- *
- * @return	an <CODE>ArrayList</CODE>
- */
+    /**
+     * Returns the arraylist with the cells of the table header.
+     *
+     * @return	an <CODE>ArrayList</CODE>
+     */
     
     ArrayList getHeaderCells() {
         return headercells;
     }
     
-/**
- * Checks if there is a table header.
- *
- * @return	an <CODE>ArrayList</CODE>
- */
+    /**
+     * Checks if there is a table header.
+     *
+     * @return	an <CODE>ArrayList</CODE>
+     */
     
     boolean hasHeader() {
         return headercells.size() > 0;
     }
     
-/**
- * Returns the arraylist with the cells of the table.
- *
- * @return	an <CODE>ArrayList</CODE>
- */
+    /**
+     * Returns the arraylist with the cells of the table.
+     *
+     * @return	an <CODE>ArrayList</CODE>
+     */
     
     ArrayList getCells() {
         return cells;
     }
     
-/**
- * Returns the number of columns of the table.
- *
- * @return	the number of columns
- */
+    /**
+     * Returns the number of columns of the table.
+     *
+     * @return	the number of columns
+     */
     
     int columns() {
         return columns;
     }
     
-/**
- * Returns the cellpadding of the table.
- *
- * @return	the cellpadding
- */
+    /**
+     * Returns the cellpadding of the table.
+     *
+     * @return	the cellpadding
+     */
     
     float cellpadding() {
         return cellpadding;
     }
     
-/**
- * Returns the cellspacing of the table.
- *
- * @return	the cellspacing
- */
+    /**
+     * Returns the cellspacing of the table.
+     *
+     * @return	the cellspacing
+     */
     
     float cellspacing() {
         return cellspacing;

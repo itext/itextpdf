@@ -61,13 +61,15 @@ import java.util.ArrayList;
  */
 
 public class PdfTextArray{
-    ArrayList arrayList;
+    ArrayList arrayList = new ArrayList();
     // constructors
     
     
     public PdfTextArray(String str) {
-        arrayList = new ArrayList();
         arrayList.add(str);
+    }
+    
+    public PdfTextArray() {
     }
     
 /**

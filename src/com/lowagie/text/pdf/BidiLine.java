@@ -295,26 +295,7 @@ public class BidiLine {
                 dest += size;
         }
     }
-    
-    public String processLineTT(float width) {
-        reorder(0, totalTextLength);
-        String res = "";
-        for (int k = 0; k < totalTextLength; ++k) {
-            char c = text[indexChars[k]];
-            if (!PdfChunk.noPrint(c))
-                res += c;
-        }
-        return res;
-/*        while (currentStartLine < totalTextLength) {
-            if (text[currentStartLine] != ' ')
-                break;
-            currentStartLine++;
-        }
-        if (currentStartLine >= totalTextLength)
-            return null;
-        return null;*/
-    }
-    
+       
     public PdfLine processLine(float width, int alignment, int runDirection) {
         save();
         if (currentChar >= totalTextLength) {
@@ -533,39 +514,6 @@ public class BidiLine {
     public static boolean isWS(char c) {
         return (c <= ' ');
     }
-
-//    public static void main(String args[]) {
-//        ArrayList ar = new ArrayList();
-//        ar.add(new PdfChunk(new Chunk("This text has \u200f(\u0634\u0627\u062f\u062c\u0645\u0647\u0648\u0631] 123,456 \u0645\u0646 (Arabic)"), null));
-////        ar.add(new PdfChunk(new Chunk("This text has \u200e(] 123,456 (Arabic)"), null));
-///*        ar.add(new PdfChunk(new Chunk("\u0644\u0627"), null));
-//        ar.add(new PdfChunk(new Chunk("b"), null));
-//        ar.add(new PdfChunk(new Chunk("\u0645"), null));
-//        ar.add(new PdfChunk(new Chunk("c"), null));*/
-//        BidiLine bidi = new BidiLine();
-//        bidi.addChunks(ar);
-//        bidi.getParagraph();
-//        String text = bidi.processLineTT(0);
-//        Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-//        Document.compress = false;
-//        try
-//        {
-//            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("c:\\arabic_bidi.pdf"));
-//            //writer.setEncryption(PdfWriter.STRENGTH128BITS, null, null,PdfWriter.AllowPrinting);             document.open();
-//            BaseFont bf = BaseFont.createFont("c:\\winnt\\fonts\\arialuni.ttf", BaseFont.IDENTITY_H, true);
-//            document.open();
-//            Font font = new Font(bf, 16);
-//            Chunk ck = new Chunk(text, font);
-//            ck.setAnchor("file:///c:/consis_dump.txt");
-//            document.add(new Paragraph(ck));
-//            document.close();
-//            System.out.println("Finished.");
-//        }
-//        catch (Exception de)
-//        {
-//            de.printStackTrace();
-//        }
-//    }
 
     static {
         mirrorChars.put(0x0028, 0x0029); // LEFT PARENTHESIS

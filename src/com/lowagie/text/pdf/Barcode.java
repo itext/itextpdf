@@ -78,6 +78,8 @@ public abstract class Barcode {
     public static final int CODE128_UCC = 10;
     /** A type of barcode */
     public static final int CODE128_RAW = 10;
+    /** A type of barcode */
+    public static final int CODABAR = 11;
 
     /** The minimum bar width.
      */
@@ -120,7 +122,7 @@ public abstract class Barcode {
     protected boolean checksumText;
     
     /** Show the start and stop character '*' in the text for
-     * the barcode 39.
+     * the barcode 39 or 'ABCD' for codabar.
      */
     protected boolean startStopText;
     

@@ -58,6 +58,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.SplitCharacter;
 import java.util.HashMap;
 import java.util.Iterator;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * A <CODE>PdfChunk</CODE> is the PDF translation of a <CODE>Chunk</CODE>.
@@ -188,7 +189,7 @@ class PdfChunk implements SplitCharacter{
         BaseFont bf = f.getBaseFont();
         if (bf == null) {
             // translation of the font-family to a PDF font-family
-            int family;
+            String fontName = BaseFont.HELVETICA;
             int style = f.style();
             if (style == Font.UNDEFINED) {
                 style = Font.NORMAL;
@@ -197,67 +198,70 @@ class PdfChunk implements SplitCharacter{
                 case Font.COURIER:
                     switch(style & Font.BOLDITALIC) {
                         case Font.BOLD:
-                            family = PdfFont.COURIER_BOLD;
+                            fontName = BaseFont.COURIER_BOLD;
                             break;
                         case Font.ITALIC:
-                            family = PdfFont.COURIER_OBLIQUE;
+                            fontName = BaseFont.COURIER_OBLIQUE;
                             break;
                         case Font.BOLDITALIC:
-                            family = PdfFont.COURIER_BOLDOBLIQUE;
+                            fontName = BaseFont.COURIER_BOLDOBLIQUE;
                             break;
                             default:
                         case Font.NORMAL:
-                            family = PdfFont.COURIER;
+                            fontName = BaseFont.COURIER;
                             break;
                     }
                     break;
                 case Font.TIMES_NEW_ROMAN:
                     switch(style & Font.BOLDITALIC) {
                         case Font.BOLD:
-                            family = PdfFont.TIMES_BOLD;
+                            fontName = BaseFont.TIMES_BOLD;
                             break;
                         case Font.ITALIC:
-                            family = PdfFont.TIMES_ITALIC;
+                            fontName = BaseFont.TIMES_ITALIC;
                             break;
                         case Font.BOLDITALIC:
-                            family = PdfFont.TIMES_BOLDITALIC;
+                            fontName = BaseFont.TIMES_BOLDITALIC;
                             break;
                             default:
                         case Font.NORMAL:
-                            family = PdfFont.TIMES_ROMAN;
+                            fontName = BaseFont.TIMES_ROMAN;
                             break;
                     }
                     break;
                 case Font.SYMBOL:
-                    family = PdfFont.SYMBOL;
+                    fontName = BaseFont.SYMBOL;
                     break;
                 case Font.ZAPFDINGBATS:
-                    family = PdfFont.ZAPFDINGBATS;
+                    fontName = BaseFont.ZAPFDINGBATS;
                     break;
                     default:
                 case Font.HELVETICA:
                     switch(style & Font.BOLDITALIC) {
                         case Font.BOLD:
-                            family = PdfFont.HELVETICA_BOLD;
+                            fontName = BaseFont.HELVETICA_BOLD;
                             break;
                         case Font.ITALIC:
-                            family = PdfFont.HELVETICA_OBLIQUE;
+                            fontName = BaseFont.HELVETICA_OBLIQUE;
                             break;
                         case Font.BOLDITALIC:
-                            family = PdfFont.HELVETICA_BOLDOBLIQUE;
+                            fontName = BaseFont.HELVETICA_BOLDOBLIQUE;
                             break;
                             default:
                         case Font.NORMAL:
-                            family = PdfFont.HELVETICA;
+                            fontName = BaseFont.HELVETICA;
                             break;
                     }
                     break;
             }
-            // creation of the PdfFont with the right size
-            font = new PdfFont(family, size);
+            try {
+                bf = BaseFont.createFont(fontName, BaseFont.WINANSI, false);
+            }
+            catch (Exception ee) {
+                throw new ExceptionConverter(ee);
+            }
         }
-        else
-            font = new PdfFont(bf, size);
+        font = new PdfFont(bf, size);
         // other style possibilities
         HashMap attr = chunk.getAttributes();
         if (attr != null) {
@@ -328,7 +332,7 @@ class PdfChunk implements SplitCharacter{
                 value = "";
                 attributes = new HashMap();
                 image = null;
-                font = new PdfFont(PdfFont.HELVETICA, 12);
+                font = PdfFont.getDefaultFont();
                 return pc;
             }
             else
@@ -455,7 +459,7 @@ class PdfChunk implements SplitCharacter{
                 value = "";
                 attributes.remove(Chunk.IMAGE);
                 image = null;
-                font = new PdfFont(PdfFont.HELVETICA, 12);
+                font = PdfFont.getDefaultFont();
                 return pc;
             }
             else
