@@ -54,6 +54,8 @@ package com.lowagie.text.xml;
  * A class that contains all DocBook tags.
  */
 public interface DocBookTags {
+	public static final String DOCBOOKTAGNAME = "iTextDocBookTagName";
+	
 	/** An abbreviation, especially one followed by a period. */
 	public static final String ABBREV = "abbrev";
 

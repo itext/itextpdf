@@ -50,6 +50,8 @@
 
 package com.lowagie.text.xml;
 
+import java.util.EmptyStackException;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Stack;
 
@@ -59,9 +61,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.lowagie.text.Chapter;
 import com.lowagie.text.Chunk;
-import com.lowagie.text.DocListener;
+import com.lowagie.text.Document;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Section;
+import com.lowagie.text.TextElementArray;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
@@ -72,7 +81,7 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 	/** Locator of the original XML Document. */
 	protected Locator locator;
 	/** A listener that will invoke all kinds of actions on a Document. */
-	protected DocListener document;
+	protected Document document;
 	/** If you are converting to PDF, the PDF writer that writes the actual PDF file. */
 	protected PdfWriter pdfWriter;
 
@@ -95,11 +104,13 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 	 * Constructs a new DocBookHandler that will translate all the events
 	 * triggered by the parser to actions on the <CODE>Document</CODE>-object.
 	 */
-	public DocBookHandler(DocListener document, DocWriter writer) {
+	public DocBookHandler(Document document, DocWriter writer) {
 		this.document = document;
 		if (writer instanceof PdfWriter) {
 			pdfWriter = (PdfWriter) writer;
 		}
+		tagStack = new Stack();
+		iTextObjectStack = new Stack();
 	}
 	/**
 	 * This method gets called when a start tag is encountered.
@@ -115,6 +126,7 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 		Attributes attrs)
 		throws SAXException {
 		Properties attributes = new Properties();
+		attributes.setProperty(DOCBOOKTAGNAME, name);
 		if (attrs != null) {
 			for (int i = 0; i < attrs.getLength(); i++) {
 				String attribute = attrs.getQName(i);
@@ -133,8 +145,58 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 
 	public void handleStartingTags(String name, Properties attributes) {
 		tagStack.push(name);
-	}
+		
+System.err.println("Start: " + tagStack.peek());		
 
+		if (tagStack.size() == 1) return; 
+
+		// maybe there is some meaningful data that wasn't between tags
+		if (currentChunk != null) {
+			TextElementArray current;
+			try {
+				current = (TextElementArray) pop();
+			} catch (Exception e) {
+				current = getNewParagraph(new Properties());
+			}
+			current.add(currentChunk);
+			push(current);
+			currentChunk = null;
+		}
+		
+		if (PARA.equals(name)) {
+			push(getNewParagraph(attributes));
+			return;
+		}
+		if (APPENDIX.equals(name) ||
+			ARTICLE.equals(name) ||
+			BIBLIOGRAPHY.equals(name) ||
+			BOOK.equals(name) ||
+			CHAPTER.equals(name) ||
+			COLOPHON.equals(name) ||
+			DEDICATION.equals(name) ||
+			GLOSSARY.equals(name) ||
+			INDEX.equals(name) ||
+			LOT.equals(name) ||
+			PART.equals(name) ||
+			PREFACE.equals(name) ||
+			REFERENCE.equals(name) ||
+			SECTION.equals(name) ||
+			SECT1.equals(name) ||
+			SECT2.equals(name) ||
+			SECT3.equals(name) ||
+			SECT4.equals(name) ||
+			SECT5.equals(name) ||
+			SETINDEX.equals(name) ||
+			TOC.equals(name)) {
+			getSection(attributes);
+			return;	
+		}
+		if (TITLE.equals(name)) {
+			push(getTitleParagraph(attributes));
+			return;
+		}
+	}
+	
 	/**
 	 * This method gets called when ignorable white space encountered.
 	 *
@@ -154,17 +216,18 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 	 * @param	ch		an array of characters
 	 * @param	start	the start position in the array
 	 * @param	length	the number of characters to read from the array
-
+     *
 	 * @see org.xml.sax.ContentHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] ch, int start, int length)
 		throws SAXException {
 		String content = new String(ch, start, length);
-		//System.err.println("'" + content + "'");
 
 		if (content.trim().length() == 0) {
 			return;
 		}
+		
+System.err.println("'" + content + "'");
 
 		StringBuffer buf = new StringBuffer();
 		int len = content.length();
@@ -218,9 +281,94 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 
 	public void handleEndingTags(String name) throws SAXParseException {
 		String openTag = (String) tagStack.pop();
-		if (!name.equals(openTag)) { throw new SAXParseException("Closing tag " + name + " doesn't match opentag " + openTag, locator); } 
+		
+System.err.println("Stop: " + name);
+
+		if (tagStack.size() == 1) return;
+		
+		if (!name.equals(openTag)) { throw new SAXParseException("Closing tag " + name + " doesn't match opentag " + openTag, locator); }
+		try {
+			if (PARA.equals(name) || SUBTITLE.equals(name)) {
+				Element current = getTextElementArray();
+				try {
+					TextElementArray previous = (TextElementArray) pop();
+					previous.add(current);
+					push(previous);
+				} catch (Exception e) {
+					document.add(current);
+				}
+				return;
+			}
+			if (APPENDIX.equals(name) ||
+				ARTICLE.equals(name) ||
+				BIBLIOGRAPHY.equals(name) ||
+				BOOK.equals(name) ||
+				CHAPTER.equals(name) ||
+				COLOPHON.equals(name) ||
+				DEDICATION.equals(name) ||
+				GLOSSARY.equals(name) ||
+				INDEX.equals(name) ||
+				LOT.equals(name) ||
+				PART.equals(name) ||
+				PREFACE.equals(name) ||
+				REFERENCE.equals(name) ||
+				SECTION.equals(name) ||
+				SECT1.equals(name) ||
+				SECT2.equals(name) ||
+				SECT3.equals(name) ||
+				SECT4.equals(name) ||
+				SECT5.equals(name) ||
+				SETINDEX.equals(name) ||
+				TOC.equals(name)) {
+				if (peek() instanceof Chapter) {
+System.err.println("pop chapter");
+					document.add(pop());
+				}	
+				else {
+System.err.println("pop section");
+					pop();
+				}
+			}
+			if (TITLE.equals(name)) {
+				if (isInfo(tagStack.peek())) {
+					if (!document.isOpen()) {
+						TextElementArray current = getTextElementArray();
+						StringBuffer title = new StringBuffer();
+						Chunk chunk;
+						for (Iterator i = current.getChunks().iterator(); i.hasNext(); ) {
+							chunk = (Chunk)i.next();
+							title.append(chunk.content());
+						}
+						document.addTitle(title.toString());
+					}
+				}
+				else {
+					open();
+					Paragraph current = (Paragraph) pop();
+					if (currentChunk != null) {
+						current.add(currentChunk);
+					}
+					if (peek() instanceof Section) {
+						Section previous = (Section) pop();
+						previous.setTitle(current);
+						push(previous);
+					}
+					else {
+						document.add(current);
+					}
+				}
+				currentChunk = null;
+				return;
+			}
+			if (COPYRIGHT.equals(name) && !document.isOpen() && currentChunk != null && ARTICLEINFO.equals(tagStack.peek())) {
+				document.addCreator(currentChunk.content());
+				return;
+			}
+		}
+		catch(DocumentException de) {
+			throw new ExceptionConverter(de);
+		}
 	}
-	
 	/**
 	 * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
@@ -228,4 +376,159 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 		this.locator = locator;
 	}
 
+	/**
+	 * @see org.xml.sax.ContentHandler#endDocument()
+	 */
+	public void endDocument() throws SAXException {
+		try {
+			while (peek() != null) document.add(pop());
+		}
+		catch (DocumentException e) {
+			e.printStackTrace();
+		}
+		document.close();
+	}
+	
+	/**
+	 * 
+	 */
+	private TextElementArray getTextElementArray() {
+System.err.println("getTextElementArray");
+		if (currentChunk != null) {
+			TextElementArray current;
+			try {
+				current = (TextElementArray) pop();
+			} catch (Exception e) {
+				current = getNewParagraph(new Properties());
+			}
+			current.add(currentChunk);
+			currentChunk = null;
+			return current;
+		}
+		return getNewParagraph(new Properties());
+	}
+	/**
+	 * @return
+	 */
+	protected Paragraph getNewParagraph(Properties attributes) {
+		return new Paragraph();
+	}
+	/**
+	 * @return
+	 */
+	protected Paragraph getTitleParagraph(Properties attributes) {
+		return new Paragraph();
+	}
+	
+	/**
+	 * @return
+	 */
+	protected Section getSection(Properties attributes) {
+		Element previous = (Element) pop();
+		if (previous != null) { 
+System.err.println("nieuwe sectie");
+			Section section;
+			try { 
+				section = ((Section) previous).addSection(attributes);
+			} catch (ClassCastException cce) { 
+				throw new ExceptionConverter(cce);
+			}
+			push(previous);
+			section.setNumberDepth(0);
+			return (Section) push(section);
+		}
+		else { 
+System.err.println("nieuwe chapter");
+			chapters++;
+			Chapter chapter = new Chapter(attributes, chapters);
+			chapter.setNumberDepth(0);
+			return (Chapter) push(chapter);
+		}
+	}
+	
+	/**
+	 * @param object
+	 * @return
+	 */
+	private boolean isInfo(Object object) {
+		if (ARTICLEINFO.equals(object)) return true;
+		if (BOOKINFO.equals(object)) return true;
+		if (APPENDIXINFO.equals(object)) return true;
+		if (INDEXINFO.equals(object)) return true;
+		if (BIBLIOGRAPHYINFO.equals(object)) return true;
+		if (CHAPTERINFO.equals(object)) return true;
+		if (CLASSSYNOPSISINFO.equals(object)) return true;
+		if (FUNCSYNOPSISINFO.equals(object)) return true;
+		if (GLOSSARYINFO.equals(object)) return true;
+		if (MSGINFO.equals(object)) return true;
+		if (OBJECTINFO.equals(object)) return true;
+		if (PARTINFO.equals(object)) return true;
+		if (PREFACEINFO.equals(object)) return true;
+		if (REFENTRYINFO.equals(object)) return true;
+		if (REFERENCEINFO.equals(object)) return true;
+		if (REFMISCINFO.equals(object)) return true;
+		if (REFSECT1INFO.equals(object)) return true;
+		if (REFSECT2INFO.equals(object)) return true;
+		if (REFSECT3INFO.equals(object)) return true;
+		if (REFSYNOPSISDIVINFO.equals(object)) return true;
+		if (RELEASEINFO.equals(object)) return true;
+		if (SCREENINFO.equals(object)) return true;
+		if (PARTINFO.equals(object)) return true;
+		if (SECT1INFO.equals(object)) return true;
+		if (SECT2INFO.equals(object)) return true;
+		if (SECT3INFO.equals(object)) return true;
+		if (SECT4INFO.equals(object)) return true;
+		if (SECT5INFO.equals(object)) return true;
+		if (SECTIONINFO.equals(object)) return true;
+		if (SETINDEXINFO.equals(object)) return true;
+		if (SETINFO.equals(object)) return true;
+		if (SIDEBARINFO.equals(object)) return true;
+		return false;
+	}
+	
+	/**
+	 * @return
+	 */
+	private Element push(Element element) {
+		return (Element) iTextObjectStack.push(element);
+	}
+	
+	/**
+	 * @return
+	 */
+	private Element pop() {
+		try {
+if (peek() == null) {
+	System.err.println("pop null");
+}
+else {
+
+	System.err.println(peek().getClass().getName());
+}
+		    return (Element) iTextObjectStack.pop();
+		}
+		catch(EmptyStackException ese) {
+			return null;
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private Element peek() {
+		try {
+			return (Element) iTextObjectStack.peek();
+		}
+		catch(EmptyStackException ese) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Opent het document mocht dit nog niet gebeurd zijn.
+	 */
+	private void open() {
+		if (document.isOpen()) return;
+		document.open();
+	}
 }
