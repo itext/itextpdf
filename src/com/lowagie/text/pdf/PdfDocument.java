@@ -1168,75 +1168,69 @@ class PdfDocument extends Document implements DocListener {
                 }
                 case Element.TABLE:
                 {
+
+                    /**
+                     * This is a list of people who worked on the Table functionality.
+                     * To see who did what, please check the CVS repository:
+                     *
+                     * Leslie Baski
+                     * Matt Benson
+                     * Francesco De Milato
+                     * David Freels
+                     * Bruno Lowagie
+                     * Veerendra Namineni
+                     * Geert Poels
+                     * Tom Ring
+                     * Paulo Soares
+                     */
+
                     // before every table, we add a new line and flush all lines
                     newLine();
                     flushLines();
+
                     // initialisation of parameters
                     boolean newPage = false;
                     float pagetop = indentTop();
-                    float	oldHeight = currentHeight;
+                    float oldHeight = currentHeight;
                     float cellDisplacement;
                     PdfCell cell;
                     Color color;
-                    
+
                     // correct table : fill empty cells/ parse table in table
                     ((Table) element).complete();
-                    
+
                     // constructing the PdfTable
                     PdfTable table = new PdfTable((Table) element,
-                    indentLeft(), indentRight(),
-                    currentHeight > 0 ? pagetop - currentHeight : pagetop);
-                    
+                        indentLeft(), indentRight(),
+                        currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
+
                     // drawing the table
                     ArrayList cells = table.getCells();
                     ArrayList headercells = null;
-                    while (! cells.isEmpty()) {            
-           
-                        // does the table fit on one page?
-                        newPage = false;
-                        
-                        if (table.bottom() < indentBottom()) {
-                            newPage = true;
-                        }
-                        
-                        // we paint the graphics of the table
-                        /* bugfix by Tom Ring and Veerendra Namineni
-                        if (table.hasHeader()) {
-                            graphics.rectangle(table.rectangle(top(), indentBottom()));
-                        }
-                        else {
-                            graphics.rectangle(table.rectangle(indentTop(), indentBottom()));
-                        } */
-                        
-                        /* start patch sep 8 2001 Francesco De Milato */
+                    while (! cells.isEmpty()) {
+
+                        // initialisation of some extra parameters;
                         float lostTableBottom = 0;
                         float lostTableTop = 0;
-                        /* end patch sep 8 2001 Francesco De Milato */
-                        
+
+                        // does the table fit on this page?
+                        if (table.bottom() < indentBottom())  newPage = true;
+                        else newPage = false;
+
                         // loop over the cells
                         for (Iterator iterator = cells.iterator(); iterator.hasNext(); ) {
                             cell = (PdfCell) iterator.next();
                             lines = cell.getLines(pagetop, indentBottom());
                             // if there are lines to add, add them
                             if (lines != null && lines.size() > 0) {
+
                                 // we paint the borders of the cells
-                                
-                        /* start bugfix by Tom Ring and Veerendra Namineni
-                                if (pagetop == indentTop()) {
-                                    graphics.rectangle(cell.rectangle(pagetop - leading / 2, indentBottom()));
-                                }
-                                else {*/
-                                    graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
-                        /*      } */
-                                
-                                /* start patch sep 8 2001 Francesco De Milato */
-                                /* extra patch by Tom Ring and Veerendra Namineni */
+                                graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
                                 lostTableBottom = Math.max(cell.bottom(), indentBottom());
                                 lostTableTop = cell.top();
-                                /* stop patch sep 8 2001 Francesco De Milato */
-                                
+
                                 // we write the text
-                                float cellTop = cell.top(pagetop - oldHeight) - 6; // bugfix by Tom Ring and Veerendra Namineni
+                                float cellTop = cell.top(pagetop - oldHeight);
                                 text.moveText(0, cellTop);
                                 cellDisplacement = flushLines() - cellTop;
                                 text.moveText(0, cellDisplacement);
@@ -1249,60 +1243,36 @@ class PdfDocument extends Document implements DocListener {
                                 iterator.remove();
                             }
                         }
-                        
-                        /* start bugfix by Tom Ring and Veerendra Namineni */
+
                         // we paint the graphics of the table after looping through all the cells
                         Rectangle tablerec = new Rectangle(table);
-                        tablerec.setBottom(lostTableBottom);
                         tablerec.setBorder(table.border());
                         tablerec.setBorderWidth(table.borderWidth());
                         tablerec.setBorderColor(table.borderColor());
                         tablerec.setBackgroundColor(table.backgroundColor());
                         tablerec.setGrayFill(table.grayFill());
                         graphics.rectangle(tablerec.rectangle(top(), indentBottom()));
-                        /* end bugfix by Tom Ring and Veerendra Namineni */
-                        
+
                         // if the table continues on the next page
                         if (newPage && ! cells.isEmpty()) {
-                            /* start patch sep 8 2001 Francesco De Milato */
-                            // Get the border's width
+
                             graphics.setLineWidth(table.borderWidth());
-                            
-                            /* start patch Sep 13 2001 Matt Benson */
                             if ((table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
                             {
                                 // Draw the bottom line
-                                graphics.moveTo(table.left(),lostTableBottom);
-                                graphics.lineTo(table.right(), lostTableBottom);
+                                graphics.moveTo(table.left(), Math.max(table.bottom(), indentBottom()));
+                                graphics.lineTo(table.right(),  Math.max(table.bottom(), indentBottom()));
                                 graphics.stroke();
-                            }//end if bottom border should be drawn
-                            
-                            if ((table.border() & Rectangle.LEFT) == Rectangle.LEFT)
-                            {
-                                // Connect the bottom line with the left table's border
-                                graphics.moveTo(table.left(),lostTableBottom);
-                                graphics.lineTo(table.left(), lostTableTop);
-                                graphics.stroke();
-                            }//end if left border should be drawn
-                            
-                            if ((table.border() & Rectangle.RIGHT) == Rectangle.RIGHT)
-                            {
-                                // Connect the bottom line with the right table's border
-                                graphics.moveTo(table.right(), lostTableBottom);
-                                graphics.lineTo(table.right(), lostTableTop);
-                                graphics.stroke();
-                            }//end if right border should be drawn
-                            /* end patch Sep 13 2001 Matt Benson */
-                            /* end patch sep 8 2001 Francesco De Milato */
-                            
-                            /* start bugfix by Tom Ring and Veerendra Namineni */
-                            float difference = lostTableBottom;
-                            /* end bugfix by Tom Ring and Veerendra Namineni */
+                            }
+
+                            // old page
                             pageEmpty = false;
+                            float difference = lostTableBottom;
+
+                            // new page
                             newPage();
                             flushLines();
-                            float newTop;
-                            float newBottom;
+
                             // this part repeats the table headers (if any)
                             headercells = table.getHeaderCells();
                             int size = headercells.size();
@@ -1314,48 +1284,51 @@ class PdfDocument extends Document implements DocListener {
                                 for (int i = 0; i < size; i++) {
                                     cell = (PdfCell) headercells.get(i);
                                     // calculation of the new cellpositions
-                                    newTop = indentTop() + cell.top(-table.cellspacing()) - oldTop;
-                                    cell.setTop(newTop);
-                                    newBottom = indentTop() + cell.bottom() - oldTop;
-                                    cell.setBottom(newBottom);
+                                    cell.setTop(indentTop() + cell.top(-table.cellspacing()) - oldTop);
+                                    cell.setBottom(indentTop() + cell.bottom() - oldTop);
                                     pagetop = cell.bottom();
                                     // we paint the borders of the cell
-                                    graphics.rectangle(cell.rectangle(indentTop() - leading / 2, indentBottom()));
+                                    graphics.rectangle(cell.rectangle(indentTop(), indentBottom()));
                                     // we write the text of the cell
                                     lines = cell.getLines(indentTop(), indentBottom());
-                                    float cellTop = cell.top(indentTop()) - 6;
+                                    float cellTop = cell.top(indentTop());
                                     text.moveText(0, cellTop);
                                     cellDisplacement = flushLines() - cellTop;
                                     text.moveText(0, cellDisplacement);
                                 }
-                                
+
                                 currentHeight =  indentTop() - pagetop - table.cellspacing();
                                 text.moveText(0, pagetop - indentTop() + table.cellspacing() - currentHeight);
                             }
                             oldHeight = currentHeight;
-                            
+
                             // calculating the new positions of the table and the cells
-                            size = cells.size();
+                            size = Math.min(cells.size(), table.columns());
                             int i = 0;
-                            while (i < size) {
+                            while (i < size ) {
                                 cell = (PdfCell) cells.get(i);
                                 if (cell.top(-table.cellspacing()) > lostTableBottom) {
-                                    difference = Math.max(difference, lostTableBottom + cell.compensatingHeight(lostTableBottom));
+                                    float newBottom = pagetop - difference + cell.bottom();
+                                    float neededHeight = cell.remainingHeight();
+                                    if (newBottom > pagetop - neededHeight) {
+                                        difference += newBottom - (pagetop - neededHeight);
+                                    }
                                 }
                                 i++;
                             }
+                            size = cells.size();
                             table.setTop(indentTop());
                             table.setBottom(pagetop - difference + table.bottom(table.cellspacing()));
                             for (i = 0; i < size; i++) {
                                 cell = (PdfCell) cells.get(i);
-                                newTop = pagetop - difference + cell.top(-table.cellspacing());
-                                newBottom = pagetop - difference + cell.bottom();
+                                float newTop = pagetop - difference + cell.top(-table.cellspacing());
+                                float newBottom = pagetop - difference + cell.bottom();
                                 cell.setTop(newTop);
                                 cell.setBottom(newBottom);
                             }
                         }
                     }
-                    
+
                     text.moveText(0, oldHeight - currentHeight);
                     lines.add(line);
                     currentHeight += line.height() - pagetop + indentTop();
