@@ -1742,7 +1742,7 @@ class PdfDocument extends Document implements DocListener {
         // if there is a watermark, the watermark is added
         if (watermark != null) {
             float mt[] = watermark.matrix();
-            addImage(graphics, watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
+            addImage(writer.getDirectContentUnder(), watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
         
         // if there is a footer, the footer is added
