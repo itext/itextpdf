@@ -192,6 +192,9 @@ public class Paragraph extends Phrase implements TextElementArray {
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
             setLeading(Float.parseFloat(value + "f"));
         }
+        else {
+            setLeading(16);
+        }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.parseFloat(value + "f"));
         }

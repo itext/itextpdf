@@ -197,6 +197,9 @@ public class Cell extends Rectangle implements TextElementArray {
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
             setLeading(Float.parseFloat(value + "f"));
         }
+        else {
+            setLeading(16);
+        }
         if ((value = attributes.getProperty(ElementTags.HEADER)) != null) {
             setHeader(new Boolean(value).booleanValue());
         }
@@ -321,15 +324,15 @@ public class Cell extends Rectangle implements TextElementArray {
             case Element.GIF:
             case Element.PNG:
                 throw new BadElementException("You can't add listitems, rows, tables, cells, jpgs, gifs or pngs to a cell.");
+            case Element.LIST:
+                if (leading < 0) {
+                    leading = ((List) element).leading();
+                }
             case Element.ANCHOR:
             case Element.PARAGRAPH:
             case Element.PHRASE:
                 if (leading < 0) {
                     leading = ((Phrase) element).leading();
-                }
-            case Element.LIST:
-                if (leading < 0) {
-                    leading = ((List) element).leading();
                 }
                 default:
                     arrayList.add(element);

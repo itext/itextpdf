@@ -62,9 +62,9 @@ import com.lowagie.text.pdf.PdfAction;
 public class Chunk implements Element {
     
     // membervariables
-	
+    
 /** This is a Chunk containing a newline. */
-	public static final Chunk NEWLINE = new Chunk("\n");
+    public static final Chunk NEWLINE = new Chunk("\n");
     
 /** This is the content of this chunk of text. */
     private StringBuffer content;
