@@ -478,7 +478,7 @@ public class Row implements Element {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < columns; i++) {
             if (cells[i] != null) {
-                buf.append(cells.toString());
+                buf.append(cells[i].toString());
             }
         }
         return buf.toString();
