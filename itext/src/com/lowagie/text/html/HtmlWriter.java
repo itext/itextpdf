@@ -791,7 +791,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.TABLE);
-                write(HtmlTags.COLUMNS, String.valueOf(table.columns()));
+                //write(HtmlTags.COLUMNS, String.valueOf(table.columns()));
                 os.write(SPACE);
                 write(HtmlTags.WIDTH);
                 os.write(EQUALS);
