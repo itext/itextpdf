@@ -2,7 +2,7 @@
  * @(#)PdfCell.java				0.29 2000/02/13
  *       release iText0.3:		0.28 2000/02/14
  *       release iText0.35:		0.28 2000/08/11
- * 
+ *
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -29,7 +29,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -39,10 +39,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.lowagie.text.Cell;
-import com.lowagie.text.Chunk;						 
-import com.lowagie.text.Element;						 
-import com.lowagie.text.List;						 
-import com.lowagie.text.ListItem;						 
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Element;
+import com.lowagie.text.List;
+import com.lowagie.text.ListItem;
 import com.lowagie.text.Rectangle;
 
 /**
@@ -85,6 +85,7 @@ public class PdfCell extends Rectangle {
 	/** Indicates if this cell belongs to the header of a <CODE>PdfTable</CODE> */
 	private boolean header = false;
 
+
 // constructors
 
 	/**
@@ -119,7 +120,36 @@ public class PdfCell extends Rectangle {
 		int alignment = cell.horizontalAlignment();
 		left += cellspacing + cellpadding;
 		right -= cellspacing + cellpadding;
-		PdfLine line = new PdfLine(left, right, alignment, leading + cellspacing);
+
+
+		/*
+		 * Fixes bug 224848
+		 * 03/01/3001 David Freels
+		 * The height variable is adjusted just before the PDFLine is created
+		 * allowing the text to be rendered accordingly. The ALIGN_MIDDLE calculation
+		 * will be a little off for single row cells.
+		 */
+		float height = leading + cellspacing;
+		float rowSpan = (float)cell.rowspan();
+
+		switch(cell.verticalAlignment())
+		{
+			case Element.ALIGN_BOTTOM:
+					 height *= rowSpan;
+					 break;
+			case Element.ALIGN_MIDDLE:
+					 height *= (rowSpan / 1.5);
+					 break;
+			default:   //Alignment will be top
+					 if(rowSpan < 2)
+					 {
+						height -= (height / 2.5);
+					 }
+					break;
+		}
+
+		PdfLine line = new PdfLine(left, right, alignment, height);
+
 		// we loop over all the elements of the cell
 		for (Iterator i = cell.getElements(); i.hasNext(); ) {
 			element = (Element) i.next();
@@ -175,7 +205,7 @@ public class PdfCell extends Rectangle {
 		}
 		if (line.size() > 0) {
 			lines.add(line);
-		} 
+		}
 		if (lines.size() > 0) {
 			((PdfLine)lines.get(lines.size() - 1)).resetAlignment();
 		}
@@ -188,7 +218,7 @@ public class PdfCell extends Rectangle {
 		rowspan = cell.rowspan();
 		this.rownumber = rownumber;
 	}
-	
+
 // overriding of the Rectangle methods
 
 	/**
@@ -261,8 +291,8 @@ public class PdfCell extends Rectangle {
 
 		// initialisations
 		PdfLine line;
-		int lineHeight;
-		int currentPosition = Math.min(top(), top);
+		float lineHeight;
+		float currentPosition = Math.min(top(), top);
 		ArrayList result = new ArrayList();
 
 		// we loop over the lines
@@ -281,6 +311,7 @@ public class PdfCell extends Rectangle {
 			}
 		}
 		// if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
+
 		// bugfix solving an endless loop problem by Leslie Baski
 		if (!header && bottom <= bottom()) {
 			lines = new ArrayList();
@@ -327,10 +358,10 @@ public class PdfCell extends Rectangle {
 		return lines.size();
 	}
 
-// methods to retrieve membervariables							   
+// methods to retrieve membervariables
 
 	/**
-	 * Gets the leading of a cell. 
+	 * Gets the leading of a cell.
 	 *
 	 * @return	the leading of the lines is the cell.
 	 *
@@ -342,7 +373,7 @@ public class PdfCell extends Rectangle {
 	}
 
 	/**
-	 * Gets the number of the row this cell is in.. 
+	 * Gets the number of the row this cell is in..
 	 *
 	 * @return	a number
 	 *
@@ -351,10 +382,10 @@ public class PdfCell extends Rectangle {
 
 	public int rownumber() {
 		return rownumber;
-	}							   
+	}
 
 	/**
-	 * Gets the rowspan of a cell. 
+	 * Gets the rowspan of a cell.
 	 *
 	 * @return	the rowspan of the cell
 	 *
@@ -366,7 +397,7 @@ public class PdfCell extends Rectangle {
 	}
 
 	/**
-	 * Gets the cellspacing of a cell. . 
+	 * Gets the cellspacing of a cell. .
 	 *
 	 * @return	a value
 	 *
@@ -378,7 +409,7 @@ public class PdfCell extends Rectangle {
 	}
 
 	/**
-	 * Gets the cellpadding of a cell.. 
+	 * Gets the cellpadding of a cell..
 	 *
 	 * @return	a value
 	 *
