@@ -53,6 +53,7 @@ package com.lowagie.text;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 import com.lowagie.text.pdf.BaseFont;
 
 /**
@@ -227,5 +228,13 @@ public class FontFactory extends java.lang.Object {
             throw new ExceptionConverter(ioe);
         }
         return false;
+    }
+    
+/**
+ * Gets a set of registered fontnames.
+ */
+    
+    public static Set getRegisteredFonts() {
+        return trueTypeFonts.keySet();
     }
 }
