@@ -9,21 +9,15 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.DocumentException;
 import java.io.*;
 
-/**
+/** Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
  *
  * @author  psoares
- * @version 
  */
 public class CJKFont extends BaseFont
 {
-    class PdfLiteral extends PdfObject
-    {
-        PdfLiteral(String text)
-        {
-            super(0, text);
-        }
-    }
-    static int STSong_Light_UniGB_UCS2_H[] = {
+    static final String CJK_ENCODING = "UnicodeBigUnmarked";
+    /** Metrics for the font STSong-Light with the encoding UniGB-UCS2-H */
+    private static final int STSong_Light_UniGB_UCS2_H[] = {
         32,207,33,270,34,342,35,467,36,462,37,797,38,710,39,239,40,374,41,374,42,423,43,605,44,238,45,375,46,238,47,334,
         48,462,49,462,50,462,51,462,52,462,53,462,54,462,55,462,56,462,57,462,58,238,59,238,60,605,61,605,62,605,63,344,
         64,748,65,684,66,560,67,695,68,739,69,563,70,511,71,729,72,793,73,318,74,312,75,666,76,526,77,896,78,758,79,772,
@@ -32,7 +26,8 @@ public class CJKFont extends BaseFont
         112,524,113,504,114,338,115,336,116,277,117,517,118,450,119,652,120,466,121,452,122,407,123,370,124,258,125,370,126,605
     };
     
-    static int MHei_Medium_UniCNS_UCS2_H[] = {
+    /** Metrics for the font MHei-Medium with the encoding UniCNS-UCS2-H */
+    private static final int MHei_Medium_UniCNS_UCS2_H[] = {
         32,278,33,278,34,355,35,556,36,556,37,889,38,667,39,222,40,333,41,333,42,389,43,584,44,278,45,333,46,278,47,278,
         48,556,49,556,50,556,51,556,52,556,53,556,54,556,55,556,56,556,57,556,58,278,59,278,60,584,61,584,62,584,63,556,
         64,1015,65,667,66,667,67,722,68,722,69,667,70,611,71,778,72,722,73,278,74,500,75,667,76,556,77,833,78,722,79,778,
@@ -41,7 +36,8 @@ public class CJKFont extends BaseFont
         112,556,113,556,114,333,115,500,116,278,117,556,118,500,119,722,120,500,121,500,122,500,123,334,124,260,125,334,126,584
     };
     
-    static int MSung_Light_UniCNS_UCS2_H[] = {
+    /** Metrics for the font MSung_Light with the encoding UniCNS-UCS2-H */
+    private static final int MSung_Light_UniCNS_UCS2_H[] = {
         32,250,33,250,34,408,35,668,36,490,37,875,38,698,39,250,40,240,41,240,42,417,43,667,44,250,45,313,46,250,47,520,
         48,500,49,500,50,500,51,500,52,500,53,500,54,500,55,500,56,500,57,500,58,250,59,250,60,667,61,667,62,667,63,396,
         64,921,65,677,66,615,67,719,68,760,69,625,70,552,71,771,72,802,73,354,74,354,75,781,76,604,77,927,78,750,79,823,
@@ -50,7 +46,8 @@ public class CJKFont extends BaseFont
         112,521,113,521,114,365,115,333,116,292,117,521,118,458,119,677,120,479,121,458,122,427,123,480,124,496,125,480,126,667
     };
     
-    static int HeiseiKakuGo_W5_UniJIS_UCS2_H[] = {
+    /** Metrics for the font HeiseiKakuGo-W5 with the encoding UniJIS-UCS2-H */
+    private static final int HeiseiKakuGo_W5_UniJIS_UCS2_H[] = {
         32,278,33,278,34,355,35,556,36,556,37,889,38,667,39,191,40,333,41,333,42,389,43,584,44,278,45,333,46,278,47,278,
         48,556,49,556,50,556,51,556,52,556,53,556,54,556,55,556,56,556,57,556,58,278,59,278,60,584,61,584,62,584,63,556,
         64,1015,65,667,66,667,67,722,68,722,69,667,70,611,71,778,72,722,73,278,74,500,75,667,76,556,77,833,78,722,79,778,
@@ -71,7 +68,8 @@ public class CJKFont extends BaseFont
         65430,500,65431,500,65432,500,65433,500,65434,500,65435,500,65436,500,65437,500,65438,500,65439,500,65512,500
     };
     
-    static int HeiseiKakuGo_W5_UniJIS_UCS2_HW_H[] = {
+    /** Metrics for the font HeiseiKakuGo-W5 with the encoding UniJIS-UCS2-HW-H */
+    private static final int HeiseiKakuGo_W5_UniJIS_UCS2_HW_H[] = {
         32,500,33,500,34,500,35,500,36,500,37,500,38,500,39,500,40,500,41,500,42,500,43,500,44,500,45,500,46,500,47,500,
         48,500,49,500,50,500,51,500,52,500,53,500,54,500,55,500,56,500,57,500,58,500,59,500,60,500,61,500,62,500,63,500,
         64,500,65,500,66,500,67,500,68,500,69,500,70,500,71,500,72,500,73,500,74,500,75,500,76,500,77,500,78,500,79,500,
@@ -80,7 +78,8 @@ public class CJKFont extends BaseFont
         112,500,113,500,114,500,115,500,116,500,117,500,118,500,119,500,120,500,121,500,122,500,123,500,124,500,125,500,126,500,165,500
     };
 
-    static int HeiseiKakuGo_W5_UniJIS_UCS2_HW_V[] = {
+    /** Metrics for the font HeiseiKakuGo-W5 with the encoding UniJIS-UCS2-HW-V */
+    private static final int HeiseiKakuGo_W5_UniJIS_UCS2_HW_V[] = {
         32,500,33,500,34,500,35,500,36,500,37,500,38,500,39,500,40,500,41,500,42,500,43,500,44,500,45,500,46,500,47,500,
         48,500,49,500,50,500,51,500,52,500,53,500,54,500,55,500,56,500,57,500,58,500,59,500,60,500,61,500,62,500,63,500,
         64,500,65,500,66,500,67,500,68,500,69,500,70,500,71,500,72,500,73,500,74,500,75,500,76,500,77,500,78,500,79,500,
@@ -89,7 +88,8 @@ public class CJKFont extends BaseFont
         112,500,113,500,114,500,115,500,116,500,117,500,118,500,119,500,120,500,121,500,122,500,123,500,124,500,125,500,126,500,165,500
     };
 
-    static int HeiseiMin_W3_UniJIS_UCS2_H[] = {
+    /** Metrics for the font HeiseiMin-W3 with the encoding UniJIS-UCS2-H */
+    private static final int HeiseiMin_W3_UniJIS_UCS2_H[] = {
         32,250,33,333,34,408,35,500,36,500,37,833,38,778,39,180,40,333,41,333,42,500,43,564,44,250,45,333,46,250,47,278,
         48,500,49,500,50,500,51,500,52,500,53,500,54,500,55,500,56,500,57,500,58,278,59,278,60,564,61,564,62,564,63,444,
         64,921,65,722,66,667,67,667,68,722,69,611,70,556,71,722,72,722,73,333,74,389,75,722,76,611,77,889,78,722,79,722,
@@ -110,7 +110,8 @@ public class CJKFont extends BaseFont
         65427,500,65428,500,65429,500,65430,500,65431,500,65432,500,65433,500,65434,500,65435,500,65436,500,65437,500,65438,500,65439,500,65512,500
     };
     
-    static int HeiseiMin_W3_UniJIS_UCS2_HW_H[] = {
+    /** Metrics for the font HeiseiMin-W3 with the encoding UniJIS-UCS2-HW-H */
+    private static final int HeiseiMin_W3_UniJIS_UCS2_HW_H[] = {
         32,500,33,500,34,500,35,500,36,500,37,500,38,500,39,500,40,500,41,500,42,500,43,500,44,500,45,500,46,500,47,500,
         48,500,49,500,50,500,51,500,52,500,53,500,54,500,55,500,56,500,57,500,58,500,59,500,60,500,61,500,62,500,63,500,
         64,500,65,500,66,500,67,500,68,500,69,500,70,500,71,500,72,500,73,500,74,500,75,500,76,500,77,500,78,500,79,500,
@@ -119,7 +120,8 @@ public class CJKFont extends BaseFont
         112,500,113,500,114,500,115,500,116,500,117,500,118,500,119,500,120,500,121,500,122,500,123,500,124,500,125,500,126,500,165,500
     };
     
-    static int HeiseiMin_W3_UniJIS_UCS2_HW_V[] = {
+    /** Metrics for the font HeiseiMin-W3 with the encoding UniJIS-UCS2-HW-V */
+    private static final int HeiseiMin_W3_UniJIS_UCS2_HW_V[] = {
         32,500,33,500,34,500,35,500,36,500,37,500,38,500,39,500,40,500,41,500,42,500,43,500,44,500,45,500,46,500,47,500,
         48,500,49,500,50,500,51,500,52,500,53,500,54,500,55,500,56,500,57,500,58,500,59,500,60,500,61,500,62,500,63,500,
         64,500,65,500,66,500,67,500,68,500,69,500,70,500,71,500,72,500,73,500,74,500,75,500,76,500,77,500,78,500,79,500,
@@ -128,7 +130,8 @@ public class CJKFont extends BaseFont
         112,500,113,500,114,500,115,500,116,500,117,500,118,500,119,500,120,500,121,500,122,500,123,500,124,500,125,500,126,500,165,500
     };
 
-    static int HYGoThic_Medium_UniKS_UCS2_H[] = {
+    /** Metrics for the font HYGoThic-Medium with the encoding UniKS-UCS2-H */
+    private static final int HYGoThic_Medium_UniKS_UCS2_H[] = {
         32,333,33,416,34,416,35,833,36,666,37,916,38,750,39,250,40,416,41,416,42,583,43,833,44,375,45,833,46,375,47,375,
         48,583,49,583,50,583,51,583,52,583,53,583,54,583,55,583,56,583,57,583,58,416,59,416,60,833,61,833,62,833,63,583,
         65,666,66,708,67,750,68,750,69,666,70,625,71,833,72,750,73,291,74,541,75,708,76,583,77,875,78,750,79,791,80,666,
@@ -137,7 +140,8 @@ public class CJKFont extends BaseFont
         113,625,114,333,115,541,116,333,117,583,118,500,119,750,120,500,121,500,122,500,123,500,124,500,125,500,126,750
     };
     
-    static int HYSMyeongJo_Medium_UniKS_UCS2_H[] = {
+    /** Metrics for the font HYSMyeongJo-Medium with the encoding UniKS-UCS2-H */
+    private static final int HYSMyeongJo_Medium_UniKS_UCS2_H[] = {
         32,333,33,416,34,416,35,833,36,625,37,916,38,833,39,250,40,500,41,500,42,500,43,833,44,291,45,833,46,291,47,375,
         48,625,49,625,50,625,51,625,52,625,53,625,54,625,55,625,56,625,57,625,58,333,59,333,60,833,61,833,62,916,63,500,
         65,791,66,708,67,708,68,750,69,708,70,666,71,750,72,791,73,375,74,500,75,791,76,666,77,916,78,791,79,750,80,666,
@@ -146,7 +150,8 @@ public class CJKFont extends BaseFont
         114,458,115,541,116,375,117,583,118,583,119,833,120,625,121,625,122,500,123,583,124,583,125,583,126,750
     };
 
-    static final Object cjk[] =
+    /** Array of font/encoding combinations allowed and information to build the font descriptors */
+    private static final  Object cjk[] =
     {
         new Object[]{
             "STSong-Light", //font name
@@ -208,18 +213,31 @@ public class CJKFont extends BaseFont
         }
     };
     
-    String fontName;
-    String CMap;
-    int fdescInt[];
-    String fdescStr[];
-    int metrics1[];
-    int metrics2[];
+    /** The font name */
+    private String fontName;
+    /** The style modifier */
+    private String style = "";
+    /** The CMap associated with this font */
+    private String CMap;
+    /** The descriptor information of type <CODE>int</Code> */
+    private int fdescInt[];
+    /** The descriptor information of type <CODE>String</Code> */
+    private String fdescStr[];
+    /** The first metric array to search */
+    private int metrics1[];
+    /** The second metric array to search if the search failled on the first */
+    private int metrics2[];
 
     public CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException
     {
-        if (!isCJKFont(fontName, enc))
+        String nameBase = getBaseName(fontName);
+        if (!isCJKFont(nameBase, enc))
             throw new DocumentException("Font '" + fontName + "' with '" + enc + "' encoding is not a CJK font.");
-        encoding = "UnicodeBig";
+        if (nameBase.length() < fontName.length()) {
+            style = fontName.substring(nameBase.length());
+            fontName = nameBase;
+        }
+        encoding = CJK_ENCODING;
         for (int k = 0; k < cjk.length; ++k) {
             Object obj[] = (Object[])cjk[k];
             String name = (String)obj[0];
@@ -317,7 +335,7 @@ public class CJKFont extends BaseFont
         dic.put(new PdfName("Descent"), new PdfNumber(fdescInt[2]));
         dic.put(new PdfName("Flags"), new PdfNumber(fdescInt[3]));
         dic.put(new PdfName("FontBBox"), new PdfRectangle(fdescInt[4], fdescInt[5], fdescInt[6], fdescInt[7]));
-        dic.put(new PdfName("FontName"), new PdfName(fontName));
+        dic.put(new PdfName("FontName"), new PdfName(fontName + style));
         dic.put(new PdfName("ItalicAngle"), new PdfNumber(fdescInt[8]));
         dic.put(new PdfName("StemV"), new PdfNumber(fdescInt[9]));        
         dic.put(new PdfName("Style"), new PdfLiteral("<</Panose " + fdescStr[1] + " >>"));        
@@ -328,7 +346,7 @@ public class CJKFont extends BaseFont
     {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("CIDFontType0"));
-        dic.put(new PdfName("BaseFont"), new PdfName(fontName));
+        dic.put(new PdfName("BaseFont"), new PdfName(fontName + style));
         dic.put(new PdfName("FontDescriptor"), fontDescriptor);
         dic.put(new PdfName("DW"), new PdfNumber(1000));
         dic.put(new PdfName("W"), new PdfLiteral(fdescStr[2]));
@@ -340,12 +358,24 @@ public class CJKFont extends BaseFont
     {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("Type0"));
-        dic.put(new PdfName("BaseFont"), new PdfName(fontName + "-" + CMap));
+        String name = fontName;
+        if (style.length() > 0)
+            name += "-" + style.substring(1);
+        name += "-" + CMap;
+        dic.put(new PdfName("BaseFont"), new PdfName(name));
         dic.put(new PdfName("Encoding"), new PdfName(CMap));
         dic.put(new PdfName("DescendantFonts"), new PdfArray(CIDFont));
         return dic;
     }
     
+/** Generates the dictionary or stream required to represent the font.
+ *  <CODE>index</CODE> will cycle from 0 to 2 with the next cycle beeing fed
+ *  with the indirect reference from the previous cycle.
+ * @param iobj an indirect reference to a Pdf object. May be null
+ * @param index the type of object to generate. It may be 0, 1 or 2
+ * @return the object requested
+ * @throws DocumentException error in generating the object
+ */    
     PdfObject getFontInfo(PdfIndirectReference iobj, int index) throws DocumentException
     {
         switch (index) {

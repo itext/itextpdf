@@ -42,7 +42,7 @@ package com.lowagie.text.pdf;
  * @since   rugPdf0.38
  */
 
-class PdfDestination extends PdfArray {
+public class PdfDestination extends PdfArray {
 
 // public static final member-variables
 
@@ -88,7 +88,7 @@ class PdfDestination extends PdfArray {
 	 * @since		iText0.38
 	 */
 
-	PdfDestination(int type) { 
+	public PdfDestination(int type) { 
 		super();
 		if (type == FITB) {
 			add(PdfName.FITB);
@@ -114,7 +114,7 @@ class PdfDestination extends PdfArray {
 	 * @since		iText0.38
 	 */
 
-	PdfDestination(int type, int parameter) { 
+	public PdfDestination(int type, float parameter) { 
 		super(new PdfNumber(parameter));
 		switch(type) {
 		default:
@@ -131,26 +131,48 @@ class PdfDestination extends PdfArray {
 		}
 	}
 
-	/**
-	 * Constructs a new <CODE>PdfDestination</CODE>.
-	 *
-	 * @since		iText0.38
-	 */
+	/** Constructs a new <CODE>PdfDestination</CODE>.
+     * <P>
+     * Display the page, with the coordinates (left, top) positioned
+     * at the top-left corner of the window and the contents of the page magnified
+     * by the factor zoom. A negative value for any of the parameters left or top, or a
+     * zoom value of 0 specifies that the current value of that parameter is to be retained unchanged.
+     * @param type must be a <VAR>PdfDestination.XYZ</VAR>
+     * @param left the left value. Negative to place a null
+     * @param top the top value. Negative to place a null
+     * @param zoom The zoom factor. A value of 0 keeps the current value
+ */
 
-	PdfDestination(int type, int left, int top, int zoom) { 
+	public PdfDestination(int type, float left, float top, float zoom) { 
 		super(PdfName.XYZ);
-		add(new PdfNumber(left));
-		add(new PdfNumber(top));
+        if (left < 0)
+            add(new PdfLiteral("null"));
+        else
+            add(new PdfNumber(left));
+        if (top < 0)
+            add(new PdfLiteral("null"));
+        else
+            add(new PdfNumber(top));
 		add(new PdfNumber(zoom));
 	}
 
-	/**
-	 * Constructs a new <CODE>PdfDestination</CODE>.
-	 *
-	 * @since		iText0.38
-	 */
+	/** Constructs a new <CODE>PdfDestination</CODE>.
+     * <P>
+     * Display the page, with its contents magnified just enough
+     * to fit the rectangle specified by the coordinates left, bottom, right, and top
+     * entirely within the window both horizontally and vertically. If the required
+     * horizontal and vertical magnification factors are different, use the smaller of
+     * the two, centering the rectangle within the window in the other dimension.
+     *
+     * @param type must be PdfDestination.FITR
+     * @param left a parameter
+     * @param bottom a parameter
+     * @param right a parameter
+     * @param top a parameter
+     * @since iText0.38
+ */
 
-	PdfDestination(int type, int left, int bottom, int right, int top) { 
+	public PdfDestination(int type, float left, float bottom, float right, float top) { 
 		super(PdfName.FITR);
 		add(new PdfNumber(left));
 		add(new PdfNumber(bottom));
@@ -172,13 +194,12 @@ class PdfDestination extends PdfArray {
 		return status;
 	}
 
-	/**
-	 * Adds the indirect reference of the destination page.
-	 *
-	 * @param	page	an indirect reference
-	 *
-	 * @since		iText0.38
-	 */
+	/** Adds the indirect reference of the destination page.
+     *
+     * @param page	an indirect reference
+     * @return true if the page reference was added
+     * @since iText0.38
+ */
 
 	public boolean addPage(PdfIndirectReference page) {
 		if (!status) {

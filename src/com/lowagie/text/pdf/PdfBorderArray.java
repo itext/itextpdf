@@ -55,7 +55,7 @@ class PdfBorderArray extends PdfArray {
 	 * @since		iText0.38
 	 */
 
-	PdfBorderArray(int hRadius, int vRadius, int width) { 
+	PdfBorderArray(float hRadius, float vRadius, float width) { 
 		super(new PdfNumber(hRadius));
 		add(new PdfNumber(vRadius));
 		add(new PdfNumber(width));
@@ -67,7 +67,7 @@ class PdfBorderArray extends PdfArray {
 	 * @since		iText0.38
 	 */
 
-	PdfBorderArray(int hRadius, int vRadius, int width, PdfDashPattern dash) { 
+	PdfBorderArray(float hRadius, float vRadius, float width, PdfDashPattern dash) { 
 		super(new PdfNumber(hRadius));
 		add(new PdfNumber(vRadius));
 		add(new PdfNumber(width));

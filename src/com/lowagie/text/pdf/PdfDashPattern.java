@@ -51,13 +51,13 @@ class PdfDashPattern extends PdfArray {
 // membervariables
 
 	/** This is the length of a dash. */
-	private int dash = -1;
+	private float dash = -1;
 
 	/** This is the length of a gap. */
-	private int gap = -1;
+	private float gap = -1;
 
 	/** This is the phase. */
-	private int phase;
+	private float phase;
 
 // constructors
 
@@ -77,7 +77,7 @@ class PdfDashPattern extends PdfArray {
 	 * @since		iText0.38
 	 */
 
-	PdfDashPattern(int dash) { 
+	PdfDashPattern(float dash) { 
 		super(new PdfNumber(dash));
 		this.dash = dash;
 	}
@@ -88,7 +88,7 @@ class PdfDashPattern extends PdfArray {
 	 * @since		iText0.38
 	 */
 
-	PdfDashPattern(int dash, int gap) { 
+	PdfDashPattern(float dash, float gap) { 
 		super(new PdfNumber(dash));
 		add(new PdfNumber(gap));
 		this.dash = dash;
@@ -101,7 +101,7 @@ class PdfDashPattern extends PdfArray {
 	 * @since		iText0.38
 	 */
 
-	PdfDashPattern(int dash, int gap, int phase) { 
+	PdfDashPattern(float dash, float gap, float phase) { 
 		super(new PdfNumber(dash));
 		add(new PdfNumber(gap));
 		this.dash = dash;
@@ -117,7 +117,7 @@ class PdfDashPattern extends PdfArray {
 	 * @since		rugPdf0.38
      */
 
-    final byte[] toPdf() {
+    final public byte[] toPdf() {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			stream.write("[".getBytes());

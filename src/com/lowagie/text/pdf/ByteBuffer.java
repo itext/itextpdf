@@ -7,23 +7,30 @@
 package com.lowagie.text.pdf;
 
 import java.io.UnsupportedEncodingException;
-/**
- *
- * @author  psoares
- * @version 
+/** Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
+ * Floating point is converted to a format suitable to the PDF.
+ * @author Paulo Soares (psoares@consiste.pt)
  */
 public class ByteBuffer
 {
+/** The count of bytes in the buffer.
+ */    
     protected int count;
     
+/** The buffer where the bytes are stored.
+ */    
     protected byte buf[];
     
-    /** Creates new ByteBuffer */
+    /** Creates new ByteBuffer with capacity 128
+ */
     public ByteBuffer()
     {
         this(128);
     }
 
+/** Creates a byte buffer with a certain capacity.
+ * @param size the initial capacity
+ */    
     public ByteBuffer(int size)
     {
         if (size < 1)
@@ -31,6 +38,10 @@ public class ByteBuffer
         buf = new byte[size];
     }
 
+/** Appends an <CODE>int</CODE>. The size of the array will grow by one.
+ * @param b the int to be appended
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
     public ByteBuffer append_i(int b)
     {
         int newcount = count + 1;
@@ -44,6 +55,13 @@ public class ByteBuffer
         return this;
     }
 
+/** Appends the subarray of the <CODE>byte</CODE> array. The buffer will grow by
+ * <CODE>len</CODE> bytes.
+ * @param b the array to be appended
+ * @param off the offset to the start of the array
+ * @param len the length of bytes to append
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
     public ByteBuffer append(byte b[], int off, int len)
     {
         if ((off < 0) || (off > b.length) || (len < 0) ||
@@ -60,48 +78,125 @@ public class ByteBuffer
         return this;
     }
 
+/** Appends an array of bytes.
+ * @param b the array to be appended
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
     public ByteBuffer append(byte b[])
     {
         return append(b, 0, b.length);
     }
     
+/** Appends a <CODE>String</CODE> to the buffer. The <CODE>String</CODE> is
+ * converted according with the default platform encoding.
+ * @param str the <CODE>String</CODE> to be appended
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
     public ByteBuffer append(String str)
     {
         return append(str.getBytes());
     }
     
+/** Appends a <CODE>char</CODE> to the buffer. The <CODE>char</CODE> is
+ * converted according with the default platform encoding.
+ * @param c the <CODE>char</CODE> to be appended
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
+    public ByteBuffer append(char c)
+    {
+        if (c == ' ') // common case
+            return append_i(32);
+        return append(String.valueOf(c).getBytes());
+    }
+    
+/** Appends another <CODE>ByteBuffer</CODE> to this buffer.
+ * @param buf the <CODE>ByteBuffer</CODE> to be appended
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
+    public ByteBuffer append(ByteBuffer buf)
+    {
+        return append(buf.buf, 0, buf.count);
+    }
+    
+/** Appends the string representation of an <CODE>int</CODE>.
+ * @param i the <CODE>int</CODE> to be appended
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
     public ByteBuffer append(int i)
     {
         return append(String.valueOf(i));
     }
     
+/** Appends a string representation of a <CODE>float</CODE> according
+ * to the Pdf conventions.
+ * @param i the <CODE>float</CODE> to be appended
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
     public ByteBuffer append(float i)
     {
         return append((double)i);
     }
     
+/** Appends a string representation of a <CODE>double</CODE> according
+ * to the Pdf conventions.
+ * @param d the <CODE>double</CODE> to be appended
+ * @return a reference to this <CODE>ByteBuffer</CODE> object
+ */    
     public ByteBuffer append(double d)
     {
         return append(formatDouble(d));
     }
     
+/** Outputs a <CODE>double</CODE> into a format suitable for the PDF.
+ * @param d a double
+ * @return the <CODE>String</CODE> representation of the <CODE>double</CODE>
+ */    
     public static String formatDouble(double d)
     {
         if (Math.abs(d) < 0.000015)
             return "0";
-        long v = (long)(d * 100000);
-        String total = String.valueOf(v);
-        String integ = (total.length() <= 5) ? "0" : total.substring(0, total.length() - 5);
-        String fract = ("00000" + total).substring(total.length());
-        if (fract.equals("00000"))
-            return integ;
-        int k;
-        for (k = 4; k >= 0; --k)
-            if (fract.charAt(k) != '0')
-                break;
-        return integ + "." + fract.substring(0, k + 1);
+        String sign = "";
+        if (d < 0) {
+            sign = "-";
+            d = -d;
+        }
+        if (d < 1.0) {
+            d += 0.000005;
+            long v = (long)(d * 100000);
+            String total = String.valueOf(v);
+            String integ = (total.length() <= 5) ? "0" : total.substring(0, total.length() - 5);
+            String fract = ("00000" + total).substring(total.length());
+            if (fract.equals("00000"))
+                return sign + integ;
+            int k;
+            for (k = 4; k >= 0; --k)
+                if (fract.charAt(k) != '0')
+                    break;
+            return sign + integ + "." + fract.substring(0, k + 1);
+        }
+        else if (d <= 32767) {
+            d += 0.005;
+            long v = (long)(d * 100);
+            String total = String.valueOf(v);
+            String integ = (total.length() <= 2) ? "0" : total.substring(0, total.length() - 2);
+            String fract = ("00" + total).substring(total.length());
+            if (fract.equals("00"))
+                return sign + integ;
+            int k;
+            for (k = 1; k >= 0; --k)
+                if (fract.charAt(k) != '0')
+                    break;
+            return sign + integ + "." + fract.substring(0, k + 1);
+        }
+        else {
+            d += 0.5;
+            long v = (long)d;
+            return sign + String.valueOf(v);
+        }
     }
     
+/** Sets the size to zero.
+ */    
     public void reset()
     {
         count = 0;
@@ -121,12 +216,10 @@ public class ByteBuffer
         return newbuf;
     }
 
-    /**
-     * Returns the current size of the buffer.
+    /** Returns the current size of the buffer.
      *
-     * @return  the value of the <code>count</code> field, which is the number
-     *          of valid bytes in this byte buffer.
-     */
+     * @return the value of the <code>count</code> field, which is the number of valid bytes in this byte buffer.
+ */
     public int size()
     {
         return count;
