@@ -369,13 +369,6 @@ class PdfDocument extends Document implements DocListener {
 
     // membervariables
 
-    /**
-     * The ratio between the extra word spacing and the extra character spacing.
-     * <P>
-     * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
-     */
-    static final float ratio = 2.5f;
-
     /** The characters to be applied the hanging ponctuation. */
     static final String hangingPunctuation = ".,;:'";
 
@@ -437,8 +430,8 @@ class PdfDocument extends Document implements DocListener {
     private int textEmptySize;
     // resources
 
-    /** This is the size of the current Page. */
-    protected Rectangle thisPageSize = null;
+    /** This is the size of the next page. */
+    protected Rectangle nextPageSize = null;
 
     /** This is the size of the crop box of the current Page. */
     protected Rectangle thisCropSize = null;
@@ -521,16 +514,16 @@ class PdfDocument extends Document implements DocListener {
     //end add by Jin-Hsia Yang
 
 /** margin in x direction starting from the left. Will be valid in the next page */
-    protected float waitingMarginLeft;
+    protected float nextMarginLeft;
 
 /** margin in x direction starting from the right. Will be valid in the next page */
-    protected float waitingMarginRight;
+    protected float nextMarginRight;
 
 /** margin in y direction starting from the top. Will be valid in the next page */
-    protected float waitingMarginTop;
+    protected float nextMarginTop;
 
 /** margin in y direction starting from the bottom. Will be valid in the next page */
-    protected float waitingMarginBottom;
+    protected float nextMarginBottom;
 
 
     // constructors
@@ -576,7 +569,7 @@ class PdfDocument extends Document implements DocListener {
         if (writer != null && writer.isPaused()) {
             return false;
         }
-        this.pageSize = new Rectangle(pageSize);
+        nextPageSize = new Rectangle(pageSize);
         return true;
     }
 
@@ -692,16 +685,16 @@ class PdfDocument extends Document implements DocListener {
         if (writer != null && writer.isPaused()) {
             return false;
         }
-        waitingMarginLeft = marginLeft;
-        waitingMarginRight = marginRight;
-        waitingMarginTop = marginTop;
-        waitingMarginBottom = marginBottom;
+        nextMarginLeft = marginLeft;
+        nextMarginRight = marginRight;
+        nextMarginTop = marginTop;
+        nextMarginBottom = marginBottom;
         return true;
     }
 
     protected PdfArray rotateAnnotations() {
         PdfArray array = new PdfArray();
-        int rotation = thisPageSize.getRotation() % 360;
+        int rotation = pageSize.getRotation() % 360;
         int currentPage = writer.getCurrentPageNumber();
         for (int k = 0; k < annotations.size(); ++k) {
             PdfAnnotation dic = (PdfAnnotation)annotations.get(k);
@@ -727,24 +720,24 @@ class PdfDocument extends Document implements DocListener {
                     switch (rotation) {
                         case 90:
                             dic.put(PdfName.RECT, new PdfRectangle(
-                            thisPageSize.top() - rect.bottom(),
+                            pageSize.top() - rect.bottom(),
                             rect.left(),
-                            thisPageSize.top() - rect.top(),
+                            pageSize.top() - rect.top(),
                             rect.right()));
                             break;
                         case 180:
                             dic.put(PdfName.RECT, new PdfRectangle(
-                            thisPageSize.right() - rect.left(),
-                            thisPageSize.top() - rect.bottom(),
-                            thisPageSize.right() - rect.right(),
-                            thisPageSize.top() - rect.top()));
+                            pageSize.right() - rect.left(),
+                            pageSize.top() - rect.bottom(),
+                            pageSize.right() - rect.right(),
+                            pageSize.top() - rect.top()));
                             break;
                         case 270:
                             dic.put(PdfName.RECT, new PdfRectangle(
                             rect.bottom(),
-                            thisPageSize.right() - rect.left(),
+                            pageSize.right() - rect.left(),
                             rect.top(),
-                            thisPageSize.right() - rect.right()));
+                            pageSize.right() - rect.right()));
                             break;
                     }
                 }
@@ -806,11 +799,11 @@ class PdfDocument extends Document implements DocListener {
             resources.add(shadingDictionary);
         // we make a new page and add it to the document
         PdfPage page;
-        int rotation = thisPageSize.getRotation();
+        int rotation = pageSize.getRotation();
         if (rotation == 0)
-            page = new PdfPage(new PdfRectangle(thisPageSize, rotation), thisCropSize, resources);
+            page = new PdfPage(new PdfRectangle(pageSize, rotation), thisCropSize, resources);
         else
-            page = new PdfPage(new PdfRectangle(thisPageSize, rotation), thisCropSize, resources, new PdfNumber(rotation));
+            page = new PdfPage(new PdfRectangle(pageSize, rotation), thisCropSize, resources, new PdfNumber(rotation));
         // we add the annotations
         if (annotations.size() > 0) {
             PdfArray array = rotateAnnotations();
@@ -824,7 +817,7 @@ class PdfDocument extends Document implements DocListener {
             text.endText();
         else
             text = null;
-        PdfIndirectReference pageReference = writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), thisPageSize));
+        PdfIndirectReference pageReference = writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
         // we initialize the new page
         initPage();
 
@@ -1271,9 +1264,9 @@ class PdfDocument extends Document implements DocListener {
                         newLine();
                     }
                     float fith = indentTop() - currentHeight;
-                    int rotation = thisPageSize.getRotation();
+                    int rotation = pageSize.getRotation();
                     if (rotation == 90 || rotation == 180)
-                        fith = thisPageSize.height() - fith;
+                        fith = pageSize.height() - fith;
                     PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
                     while (currentOutline.level() >= section.depth()) {
                         currentOutline = currentOutline.parent();
@@ -1806,10 +1799,10 @@ class PdfDocument extends Document implements DocListener {
         float oldleading = leading;
         int oldAlignment = alignment;
 
-        marginLeft = waitingMarginLeft;
-        marginRight = waitingMarginRight;
-        marginTop = waitingMarginTop;
-        marginBottom = waitingMarginBottom;
+        marginLeft = nextMarginLeft;
+        marginRight = nextMarginRight;
+        marginTop = nextMarginTop;
+        marginBottom = nextMarginBottom;
         imageEnd = -1;
         imageIndentRight = 0;
         imageIndentLeft = 0;
@@ -1826,7 +1819,7 @@ class PdfDocument extends Document implements DocListener {
         currentHeight = 0;
 
         // backgroundcolors, etc...
-        thisPageSize = pageSize;
+        pageSize = nextPageSize;
         thisCropSize = cropSize;
         if (pageSize.backgroundColor() != null
         || pageSize.hasBorders()
@@ -2043,7 +2036,7 @@ class PdfDocument extends Document implements DocListener {
 
             currentValues[0] = currentFont;
 
-            writeLineToContent(l, text, graphics, currentValues);
+            writeLineToContent(l, text, graphics, currentValues, writer.getSpaceCharRatio());
 
             currentFont = (PdfFont)currentValues[0];
 
@@ -2228,7 +2221,7 @@ class PdfDocument extends Document implements DocListener {
      * @param currentValues the current font and extra spacing values
      * @throws DocumentException on error
      */
-    void writeLineToContent(PdfLine line, PdfContentByte text, PdfContentByte graphics, Object currentValues[])  throws DocumentException {
+    void writeLineToContent(PdfLine line, PdfContentByte text, PdfContentByte graphics, Object currentValues[], float ratio)  throws DocumentException {
         PdfFont currentFont = (PdfFont)(currentValues[0]);
         float lastBaseFactor = ((Float)(currentValues[1])).floatValue();
         PdfChunk chunk;

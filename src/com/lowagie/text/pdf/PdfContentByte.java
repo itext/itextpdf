@@ -2147,6 +2147,16 @@ public class PdfContentByte {
     }
     
     /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
+     * are translated to PDF commands as shapes. No PDF fonts will appear.
+     * @param width the width of the panel
+     * @param height the height of the panel
+     * @return a <CODE>Graphics2D</CODE>
+     */    
+    public java.awt.Graphics2D createGraphicsShapes(float width, float height) {
+        return new PdfGraphics2D(this, width, height);
+    }
+
+    /** Gets a <CODE>Graphics2D</CODE> to write on. The graphics
      * are translated to PDF commands.
      * @param width the width of the panel
      * @param height the height of the panel

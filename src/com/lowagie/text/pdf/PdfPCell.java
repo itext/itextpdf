@@ -116,7 +116,7 @@ public class PdfPCell extends Rectangle{
     
     /** Holds value of property colspan. */
     private int colspan = 1;
-    
+    private float spaceCharRatio = ColumnText.GLOBAL_SPACE_CHAR_RATIO;
     /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
      * The default padding is 2.
      * @param phrase the text
@@ -188,6 +188,7 @@ public class PdfPCell extends Rectangle{
         minimumHeight = cell.minimumHeight;
         noWrap = cell.noWrap;
         colspan = cell.colspan;
+        spaceCharRatio = cell.spaceCharRatio;
         if (cell.table != null)
             table = new PdfPTable(cell.table);
     }
@@ -479,5 +480,22 @@ public class PdfPCell extends Rectangle{
         return rightIndent;
     }
     
+    /** Gets the space/character extra spacing ratio for
+     * fully justified text.
+     * @return the space/character extra spacing ratio
+     */    
+    public float getSpaceCharRatio() {
+        return spaceCharRatio;
+    }
     
+    /** Sets the ratio between the extra word spacing and the extra character spacing
+     * when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
+     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
+     * will be zero.
+     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
+     */
+    public void setSpaceCharRatio(float spaceCharRatio) {
+        this.spaceCharRatio = spaceCharRatio;
+    }    
 }
