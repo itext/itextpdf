@@ -163,11 +163,21 @@ class PdfDocument extends Document implements DocListener {
         }
         
 /**
+ * Adds the name of the creator to the document.
+ *
+ * @param	creator		the name of the creator
+ */
+        
+        void addCreator(String creator) {
+            put(PdfName.CREATOR, new PdfString(creator));
+        }
+        
+/**
  * Adds the name of the producer to the document.
  */
         
         void addProducer() {
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com - release 0.70 - build 82"));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo - build 83"));
         }
         
 /**
@@ -788,6 +798,14 @@ class PdfDocument extends Document implements DocListener {
         int startRow = ptable.getHeaderRows();
         int currentRow = startRow;
         PdfContentByte cv[] = null;
+        float eventY = 0;
+        int eventRow = 0;
+        int eventHeader = 0;
+        float absoluteWidths[] = ptable.getAbsoluteWidths();
+        PdfPTableEvent event = ptable.getTableEvent();
+        ptable.setTableEvent(null);
+        float heights[] = new float[ptable.size()];
+        int heightsIdx = 0;
         for (currentRow = startRow; currentRow < ptable.size(); ++currentRow) {
             if (currentRow == startRow && currentY - ptable.getRowHeight(currentRow) - headerHeight < bottom) {
                 if (currentHeight == 0)
@@ -803,6 +821,17 @@ class PdfDocument extends Document implements DocListener {
             }
             if (currentY - ptable.getRowHeight(currentRow) < bottom) {
                 if (cv != null) {
+                    if (event != null) {
+                        float finalHeights[] = new float[heightsIdx + 1];
+                        finalHeights[0] = eventY;
+                        for (int k = 0; k < heightsIdx; ++k)
+                            finalHeights[k + 1] = finalHeights[k] - heights[k];
+                        float widths[] = new float[absoluteWidths.length + 1];
+                        widths[0] = xWidth;
+                        for (int k = 0; k < absoluteWidths.length; ++k)
+                            widths[k + 1] = widths[k] + absoluteWidths[k];
+                        event.tableLayout(ptable, widths, finalHeights, eventHeader, eventRow, cv);
+                    }
                     PdfPTable.endWritingRows(cv);
                     cv = null;
                 }
@@ -815,16 +844,40 @@ class PdfDocument extends Document implements DocListener {
             else {
                 if (cv == null) {
                     cv = PdfPTable.beginWritingRows(writer.getDirectContent());
+                    if (event != null) {
+                        heightsIdx = 0;
+                        eventHeader = ptable.getHeaderRows();
+                        for (int k = 0; k < eventHeader; ++k)
+                            heights[heightsIdx++] = ptable.getRowHeight(k);
+                        eventY = currentY;
+                        eventRow = currentRow;
+                    }
                     currentY = ptable.writeSelectedRows(0, ptable.getHeaderRows(), xWidth, currentY, cv);
+                }
+                if (event != null) {
+                    heights[heightsIdx++] = ptable.getRowHeight(currentRow);
                 }
                 currentY = ptable.writeSelectedRows(currentRow, currentRow + 1, xWidth, currentY, cv);
             }
         }
         if (cv != null) {
+            if (event != null) {
+                float finalHeights[] = new float[heightsIdx + 1];
+                finalHeights[0] = eventY;
+                for (int k = 0; k < heightsIdx; ++k)
+                    finalHeights[k + 1] = finalHeights[k] - heights[k];
+                float widths[] = new float[absoluteWidths.length + 1];
+                widths[0] = xWidth;
+                for (int k = 0; k < absoluteWidths.length; ++k)
+                    widths[k + 1] = widths[k] + absoluteWidths[k];
+                event.tableLayout(ptable, widths, finalHeights, eventHeader, eventRow, cv);
+            }
             PdfPTable.endWritingRows(cv);
             text.moveText(0, currentY - baseY);
             currentHeight = indentTop() - currentY;
         }
+        ptable.setTableEvent(event);
+
     }
     
 /**
@@ -858,6 +911,9 @@ class PdfDocument extends Document implements DocListener {
                     break;
                 case Element.AUTHOR:
                     info.addAuthor(((Meta)element).content());
+                    break;
+                case Element.CREATOR:
+                    info.addCreator(((Meta)element).content());
                     break;
                 case Element.PRODUCER:
                     // you can not change the name of the producer
@@ -2079,5 +2135,16 @@ class PdfDocument extends Document implements DocListener {
     
     public void setViewerPreferences(int preferences) {
         viewerPreferences |= preferences;
+    }
+    
+/** Implements an action in an area.
+ * @param action the <CODE>PdfAction</CODE>
+ * @param llx the lower left x corner of the activation area
+ * @param lly the lower left y corner of the activation area
+ * @param urx the upper right x corner of the activation area
+ * @param ury the upper right y corner of the activation area
+ */
+    void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
+        annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
     }
 }

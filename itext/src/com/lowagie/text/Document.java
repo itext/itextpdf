@@ -244,6 +244,7 @@ public class Document implements DocListener {
             type == Element.KEYWORDS ||
             type == Element.AUTHOR ||
             type == Element.PRODUCER ||
+            type == Element.CREATOR ||
             type == Element.CREATIONDATE)) {
                 throw new DocumentException("The document is not open yet; you can only add Meta information.");
             }
@@ -557,6 +558,22 @@ public class Document implements DocListener {
     public boolean addAuthor(String author) {
         try {
             return add(new Meta(Element.AUTHOR, author));
+        }
+        catch(DocumentException de) {
+            return false;
+        }
+    }
+    
+/**
+ * Adds the creator to a Document.
+ *
+ * @param	creator		the name of the creator
+ * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
+ */
+    
+    public boolean addCreator(String creator) {
+        try {
+            return add(new Meta(Element.CREATOR, creator));
         }
         catch(DocumentException de) {
             return false;

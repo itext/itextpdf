@@ -96,6 +96,9 @@ public interface Element {
 /** This is a possible type of <CODE>Element</CIDE>. */
     public static final int CREATIONDATE = 6;
     
+/** This is a possible type of <CODE>Element</CIDE>. */
+    public static final int CREATOR = 7;
+    
     // static membervariables (content)
     
 /** This is a possible type of <CODE>Element</CODE>. */

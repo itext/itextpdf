@@ -88,7 +88,7 @@ public class PdfAction extends PdfDictionary {
  * @param name the named destination to go to
  */
     
-    PdfAction(String filename, String name)
+    public PdfAction(String filename, String name)
     {
         super(PdfName.ACTION);
         put(PdfName.S, PdfName.GOTOR);
@@ -102,7 +102,7 @@ public class PdfAction extends PdfDictionary {
  * @param page the page destination to go to
  */
     
-    PdfAction(String filename, int page)
+    public PdfAction(String filename, int page)
     {
         super(PdfName.ACTION);
         put(PdfName.S, PdfName.GOTOR);

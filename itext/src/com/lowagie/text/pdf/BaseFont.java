@@ -43,7 +43,24 @@ import java.util.HashMap;
  */
 
 public abstract class BaseFont {
-    
+
+    /** The maximum height above the baseline reached by glyphs in this
+     * font, excluding the height of glyphs for accented characters.
+     */    
+    public final static int ASCENT = 1;    
+    /** The y coordinate of the top of flat capital letters, measured from
+     * the baseline.
+     */    
+    public final static int CAPHEIGHT = 2;
+    /** The maximum depth below the baseline reached by glyphs in this
+     * font. The value is a negative number.
+     */    
+    public final static int DESCENT = 3;
+    /** The angle, expressed in degrees counterclockwise from the vertical,
+     * of the dominant vertical strokes of the font. The value is
+     * negative for fonts that slope to the right, as almost all italic fonts do.
+     */    
+    public final static int ITALICANGLE = 4;
 /** if the font has to be embedded */
     public final static boolean EMBEDDED = true;
     
@@ -179,10 +196,11 @@ public abstract class BaseFont {
         return fontBuilt;
     }
     
-/**
- * Gets the name without the modifiers Bold, Italic or BoldItalic.
- * @return the name without the modifiers Bold, Italic or BoldItalic
- */
+    /**
+     * Gets the name without the modifiers Bold, Italic or BoldItalic.
+     * @param name the full name of the font
+     * @return the name without the modifiers Bold, Italic or BoldItalic
+     */
     protected static String getBaseName(String name)
     {
         if (name.endsWith(",Bold"))
@@ -363,11 +381,21 @@ public abstract class BaseFont {
  */
     abstract PdfObject getFontInfo(PdfIndirectReference iobj, int index) throws DocumentException;
     
-/**
- * Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
- */
+    /**
+     * Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
+     * @return the encoding name
+     */
     public String getEncoding()
     {
         return encoding;
     }
+    
+    /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
+     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
+     * and <CODE>ITALICANGLE</CODE>.
+     * @param key the parameter to be extracted
+     * @param fontSize the font size in points
+     * @return the parameter in points
+     */    
+    public abstract float getFontDescriptor(int key, float fontSize);
 }

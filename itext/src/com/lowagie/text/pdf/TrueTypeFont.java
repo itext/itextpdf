@@ -204,6 +204,8 @@ public class TrueTypeFont extends BaseFont {
         int usWinAscent;
         /** A variable. */
         int usWinDescent;
+        /** A variable. */
+        int sCapHeight;
     }
     
     /** This constructor is present to allow the derivation of this class.
@@ -282,7 +284,8 @@ public class TrueTypeFont extends BaseFont {
         table_location = (int[])tables.get("OS/2");
         if (table_location == null)
             throw new DocumentException("Table 'OS/2' does not exist in " + fileName + style);
-        rf.seek(table_location[0] + 2);
+        rf.seek(table_location[0]);
+        int version = rf.readUnsignedShort();
         os_2.xAvgCharWidth = rf.readShort();
         os_2.usWeightClass = rf.readUnsignedShort();
         os_2.usWidthClass = rf.readUnsignedShort();
@@ -309,6 +312,12 @@ public class TrueTypeFont extends BaseFont {
         os_2.sTypoLineGap = rf.readShort();
         os_2.usWinAscent = rf.readUnsignedShort();
         os_2.usWinDescent = rf.readUnsignedShort();
+        if (version > 1) {
+            rf.skipBytes(10);
+            os_2.sCapHeight = rf.readShort();
+        }
+        else
+            os_2.sCapHeight = (int)(0.7 * head.unitsPerEm);
         
         table_location = (int[])tables.get("post");
         if (table_location == null) {
@@ -704,7 +713,7 @@ public class TrueTypeFont extends BaseFont {
     private PdfDictionary getFontDescriptor(PdfIndirectReference fontStream) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(new PdfName("FontDescriptor"));
         dic.put(new PdfName("Ascent"), new PdfNumber((int)os_2.sTypoAscender * 1000 / head.unitsPerEm));
-        dic.put(new PdfName("CapHeight"), new PdfNumber(700));
+        dic.put(new PdfName("CapHeight"), new PdfNumber((int)os_2.sCapHeight * 1000 / head.unitsPerEm));
         dic.put(new PdfName("Descent"), new PdfNumber((int)os_2.sTypoDescender * 1000 / head.unitsPerEm));
         dic.put(new PdfName("FontBBox"), new PdfRectangle(
         (int)head.xMin * 1000 / head.unitsPerEm,
@@ -796,6 +805,27 @@ public class TrueTypeFont extends BaseFont {
                 return getFontType(iobj);
         }
         return null;
+    }
+    
+    /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
+     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
+     * and <CODE>ITALICANGLE</CODE>.
+     * @param key the parameter to be extracted
+     * @param fontSize the font size in points
+     * @return the parameter in points
+     */    
+    public float getFontDescriptor(int key, float fontSize) {
+        switch (key) {
+            case ASCENT:
+                return (float)os_2.sTypoAscender * fontSize / (float)head.unitsPerEm;
+            case CAPHEIGHT:
+                return (float)os_2.sCapHeight * fontSize / (float)head.unitsPerEm;
+            case DESCENT:
+                return (float)os_2.sTypoDescender * fontSize / (float)head.unitsPerEm;
+            case ITALICANGLE:
+                return (float)italicAngle;
+        }
+        return 0;
     }
     
 }

@@ -131,11 +131,12 @@ public class PdfContentByte {
         return content;
     }
     
-/**
- * Returns the PDF representation of this <CODE>PdfContentByte</CODE>-object.
- *
- * @return		a <CODE>String</CODE>
- */
+    /**
+     * Returns the PDF representation of this <CODE>PdfContentByte</CODE>-object.
+     *
+     * @param crypto the encryption data
+     * @return a <CODE>String</CODE>
+     */
     
     public byte[] toPdf(PdfEncryption crypto) {
         return content.toByteArray();
@@ -1673,5 +1674,16 @@ public class PdfContentByte {
         curveTo(x + r * b, y + h, x, y + h - r * b, x, y + h - r);
         lineTo(x, y + r);
         curveTo(x, y + r * b, x + r * b, y, x + r, y);
+    }
+    
+/** Implements an action in an area.
+ * @param action the <CODE>PdfAction</CODE>
+ * @param llx the lower left x corner of the activation area
+ * @param lly the lower left y corner of the activation area
+ * @param urx the upper right x corner of the activation area
+ * @param ury the upper right y corner of the activation area
+ */
+    public void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
+        pdf.setAction(action, llx, lly, urx, ury);
     }
 }

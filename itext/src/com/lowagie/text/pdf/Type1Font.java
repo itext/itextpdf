@@ -598,4 +598,26 @@ public class Type1Font extends BaseFont
         }
         return null;
     }
+    
+    /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
+     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
+     * and <CODE>ITALICANGLE</CODE>.
+     * @param key the parameter to be extracted
+     * @param fontSize the font size in points
+     * @return the parameter in points
+     */    
+    public float getFontDescriptor(int key, float fontSize) {
+        switch (key) {
+            case ASCENT:
+                return Ascender * fontSize / 1000;
+            case CAPHEIGHT:
+                return CapHeight * fontSize / 1000;
+            case DESCENT:
+                return Descender * fontSize / 1000;
+            case ITALICANGLE:
+                return ItalicAngle;
+        }
+        return 0;
+    }
+    
 }

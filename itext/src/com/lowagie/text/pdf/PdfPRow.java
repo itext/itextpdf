@@ -82,6 +82,7 @@ public class PdfPRow {
     
     public float calculateHeights()
     {
+        maxHeight = 0;
         for (int k = 0; k < cells.length; ++k) {
             PdfPCell cell = cells[k];
             PdfPTable table = cell.getTable();
