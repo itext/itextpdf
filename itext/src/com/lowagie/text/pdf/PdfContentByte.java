@@ -171,6 +171,8 @@ public class PdfContentByte {
  */
     
     public final void add(PdfContentByte other) {
+        if (writer == null) // bug #510813 fixed by Lou Farho, Certes Solutions, Inc. 
+            throw new RuntimeException("The writer of this PdfContentByte is null.");
         if (other.writer != null && writer != other.writer)
             throw new RuntimeException("Inconsistent writers. Are you mixing two documents?");
         content.append(other.content);
