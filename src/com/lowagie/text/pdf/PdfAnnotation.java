@@ -66,6 +66,7 @@ public class PdfAnnotation extends PdfDictionary {
     public final static PdfName HIGHLIGHT_INVERT = PdfName.I;
     public final static PdfName HIGHLIGHT_OUTLINE = PdfName.O;
     public final static PdfName HIGHLIGHT_PUSH = PdfName.P;
+    public final static PdfName HIGHLIGHT_TOGGLE = PdfName.T;
     public final static int FLAGS_INVISIBLE = 1;
     public final static int FLAGS_HIDDEN = 2;
     public final static int FLAGS_PRINT = 4;
