@@ -99,7 +99,7 @@ public class XmlWriter extends DocWriter implements DocListener {
     public static final byte[] DOCTYPE = getISOBytes("<!DOCTYPE ITEXT SYSTEM \"");
     
 /** This is the place where the DTD is located. */
-    public final static byte[] DTD = getISOBytes("http://www.lowagie.com/iText/itext.dtd");
+    public final static byte[] DTD = getISOBytes("http://itext.sourceforge.net/itext.dtd");
     
 /** This is an array containing character to XML translations. */
     private static final String[] xmlCode = new String[256];
