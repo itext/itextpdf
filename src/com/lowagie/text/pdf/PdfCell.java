@@ -296,7 +296,7 @@ public class PdfCell extends Rectangle {
             image.scaleToFit(right - left, Float.MAX_VALUE);
         }
         if (line.size() != 0) lines.add(line);
-        line = new PdfLine(left, right, alignment, image.scaledHeight() + leading);
+        line = new PdfLine(left, right, alignment, image.scaledHeight() + 0.4f * leading);
         lines.add(line);
         line = new PdfLine(left, right, alignment, leading);
         switch (image.alignment() & Image.MIDDLE) {
@@ -309,9 +309,9 @@ public class PdfCell extends Rectangle {
             case Image.LEFT:
                 default:
         }
-        image.setAbsolutePosition(left, height + (lines.size() - 1) * leading + image.scaledHeight());
+        image.setAbsolutePosition(left, height + (lines.size() - 2) * leading + image.scaledHeight() + 0.4f * leading);
         images.add(image);
-        return height + image.scaledHeight();
+        return height + image.scaledHeight() + 0.4f * leading;
     }
     
 /**
@@ -386,13 +386,14 @@ public class PdfCell extends Rectangle {
  * @return	an <CODE>ArrayList</CODE> of <CODE>Image</CODE>s
  */
     
-    public ArrayList getImages(float bottom) {
+    public ArrayList getImages(float top, float bottom) {
         
         // if the bottom of the page is higher than the top of the cell: do nothing
         if (top() < bottom) {
             return new ArrayList();
         }
-        
+        System.err.print("cellTop: " + top() + " pagetop: " + top);
+        top = Math.min(top(), top);
         // initialisations
         Image image;
         float height;
@@ -401,9 +402,10 @@ public class PdfCell extends Rectangle {
         for (Iterator i = images.iterator(); i.hasNext() && !header; ) {
             image = (Image) i.next();
             height = image.absoluteY();
+            System.err.println(" height: " + height);
             // if the currentPosition is higher than the bottom, we add the line to the result
-            if (top() - height > (bottom + cellpadding)) {
-                image.setAbsolutePosition(image.absoluteX(), top() - height);
+            if (top - height > (bottom + cellpadding)) {
+                image.setAbsolutePosition(image.absoluteX(), top - height);
                 result.add(image);
                 i.remove();
             }
