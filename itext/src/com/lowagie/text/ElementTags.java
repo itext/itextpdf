@@ -184,7 +184,7 @@ public class ElementTags {
 /** attribute of the table tag */
     public static final String CELLSPACING = "cellspacing";
     
-/** attribute of the table tag */
+/** attribute of the table/cell tag */
     public static final String WIDTH = "width";
     
 /** attribute of the table tag */

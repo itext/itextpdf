@@ -93,6 +93,9 @@ public class Cell extends Rectangle implements TextElementArray {
 /** This is the vertical alignment. */
     private int verticalAlignment;
     
+/** This is the vertical alignment. */
+    private String width;
+    
 /** This is the colspan. */
     private int colspan = 1;
     
@@ -181,6 +184,9 @@ public class Cell extends Rectangle implements TextElementArray {
         }
         if ((value = attributes.getProperty(ElementTags.VERTICALALIGN)) != null) {
             setVerticalAlignment(value);
+        }
+        if ((value = attributes.getProperty(ElementTags.WIDTH)) != null) {
+            setWidth(value);
         }
         if ((value = attributes.getProperty(ElementTags.COLSPAN)) != null) {
             setColspan(Integer.parseInt(value));
@@ -408,6 +414,16 @@ public class Cell extends Rectangle implements TextElementArray {
     }
     
 /**
+ * Sets the width.
+ *
+ * @param	value	the new value
+ */
+    
+    public final void setWidth(String value) {
+        width = value;
+    }
+    
+/**
  * Sets the colspan.
  *
  * @param	value	the new value
@@ -515,6 +531,16 @@ public class Cell extends Rectangle implements TextElementArray {
     
     public final int verticalAlignment() {
         return verticalAlignment;
+    }
+    
+/**
+ * Gets the width.
+ *
+ * @return	a value
+ */
+    
+    public final String cellWidth() {
+        return width;
     }
     
 /**

@@ -372,13 +372,13 @@ public class XmlWriter extends DocWriter implements DocListener {
                 }
                 buf.append(">");
                 if (tag) {
-                    buf.append(encode(chunk.content()));
+                    buf.append(encode(chunk.content(), indent));
                     buf.append("</").append(ElementTags.CHUNK).append(">\n");
                     return buf.toString();
                 }
                 buf = new StringBuffer();
                 addTabs(buf, indent);
-                buf.append(encode(chunk.content()));
+                buf.append(encode(chunk.content(), indent));
                 buf.append("\n");
                 return buf.toString();
             }
@@ -526,6 +526,9 @@ public class XmlWriter extends DocWriter implements DocListener {
                 buf.append(toXml((Rectangle) cell));
                 buf.append(" ").append(ElementTags.HORIZONTALALIGN).append("=\"").append(ElementTags.getAlignment(cell.horizontalAlignment())).append("\"");
                 buf.append(" ").append(ElementTags.VERTICALALIGN).append("=\"").append(ElementTags.getAlignment(cell.verticalAlignment())).append("\"");
+                if (cell.cellWidth() != null) {
+                    buf.append(" ").append(ElementTags.WIDTH).append("=\"").append(cell.cellWidth()).append("\"");
+                }
                 if (cell.colspan() != 1) {
                     buf.append(" ").append(ElementTags.COLSPAN).append("=\"").append(cell.colspan()).append("\"");
                 }
@@ -582,7 +585,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 buf.append("\" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(table.alignment()));
                 buf.append("\" ").append(ElementTags.CELLPADDING).append("=\"").append(table.cellpadding());
                 buf.append("\" ").append(ElementTags.CELLSPACING).append("=\"").append(table.cellspacing());
-                buf.append("\" ").append(ElementTags.WIDTHS).append("s=\"");
+                buf.append("\" ").append(ElementTags.WIDTHS).append("=\"");
                 float[] widths = table.getProportionalWidths();
                 buf.append(widths[0]);
                 for (int i = 1; i < widths.length; i++) {
@@ -837,8 +840,9 @@ public class XmlWriter extends DocWriter implements DocListener {
  * @return  the encoded <CODE>String</CODE>
  */
     
-    static final String encode(String string) {
+    static final String encode(String string, int indent) {
         int n = string.length();
+        int pos = 0;
         char character;
         StringBuffer buf = new StringBuffer();
         // loop over all the characters of the String.
@@ -847,7 +851,8 @@ public class XmlWriter extends DocWriter implements DocListener {
             // the Htmlcode of these characters are added to a StringBuffer one by one
             switch(character) {
                 case '\n':
-                    buf.append("<").append(ElementTags.NEWLINE).append(" />");
+                    buf.append("<").append(ElementTags.NEWLINE).append(" />\n");
+                    addTabs(buf, indent);
                     break;
                 case '"':
                     buf.append("&quot;");
@@ -864,6 +869,13 @@ public class XmlWriter extends DocWriter implements DocListener {
                 case '&':
                     buf.append("&amp;");
                     break;
+                case ' ':
+                    if ((i - pos) > 60) {
+                        pos = i;
+                        buf.append("\n");
+                        addTabs(buf, indent);
+                        break;
+                    }
                     default:
                         buf.append(character);
             }

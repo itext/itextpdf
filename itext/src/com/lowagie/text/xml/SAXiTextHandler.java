@@ -33,9 +33,12 @@
 
 package com.lowagie.text.xml;
 
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EmptyStackException;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Stack;
 
 import org.xml.sax.HandlerBase;
 import org.xml.sax.AttributeList;
@@ -156,21 +159,21 @@ public class SAXiTextHandler extends HandlerBase {
             return;
         }
         
-        // tables
-        if (Table.isTag(name)) {
-            try {
-                stack.push(new Table(attributes));
-                return;
-            }
-            catch(BadElementException bee) {
-                throw new RuntimeException(bee.getMessage());
-            }
-        }
-        
         // cells
         if (Cell.isTag(name)) {
             stack.push(new Cell(attributes));
             return;
+        }
+        
+        // tables
+        if (Table.isTag(name)) {
+            //try {
+            stack.push(new Table(attributes));
+            return;
+            //}
+            //catch(BadElementException bee) {
+            //    throw new RuntimeException(bee.getMessage());
+            //}
         }
         
         // sections
@@ -402,7 +405,7 @@ public class SAXiTextHandler extends HandlerBase {
             }
             
             // phrases, anchors, lists, tables
-            if (Phrase.isTag(name) || Anchor.isTag(name) || List.isTag(name) || Table.isTag(name) || Paragraph.isTag(name)) {
+            if (Phrase.isTag(name) || Anchor.isTag(name) || List.isTag(name) || Paragraph.isTag(name)) {
                 Element current = (Element) stack.pop();
                 try {
                     TextElementArray previous = (TextElementArray) stack.pop();
@@ -423,12 +426,95 @@ public class SAXiTextHandler extends HandlerBase {
                 stack.push(list);
             }
             
+            // tables
+            if (Table.isTag(name)) {
+                Table table = (Table) stack.pop();
+                float widths[] = table.getProportionalWidths();
+                for (int i = 0; i < widths.length; i++) {
+                    if (widths[i] == 0) {
+                        widths[i] = 100.0f / (float)widths.length;
+                    }
+                }
+                table.setWidths(widths);
+                try {
+                    TextElementArray previous = (TextElementArray) stack.pop();
+                    previous.add(table);
+                    stack.push(previous);
+                }
+                catch(EmptyStackException ese) {
+                    document.add(table);
+                }
+                return;
+            }
+            
+            // rows
+            if (Row.isTag(name)) {
+                ArrayList cells = new ArrayList();
+                int columns = 0;
+                Table table;
+                Cell cell;
+                while (true) {
+                    Element element = (Element) stack.pop();
+                    if (element.type() == Element.CELL) {
+                        cell = (Cell) element;
+                        columns += cell.colspan();
+                        cells.add(cell);
+                    }
+                    else {
+                        table = (Table) element;
+                        break;
+                    }
+                }
+                if (table.columns() < columns) {
+                    table.addColumns(columns - table.columns());
+                }
+                Collections.reverse(cells);
+                String width;
+                float[] cellWidths = new float[columns];
+                for (int i = 0; i < columns; i++) {
+                    cellWidths[i] = 0;
+                }
+                float total = 0;
+                int j = 0;
+                for (Iterator i = cells.iterator(); i.hasNext(); ) {
+                    cell = (Cell) i.next();
+                    if ((width = cell.cellWidth()) != null
+                    && cell.colspan() == 1
+                    && width.endsWith("%")) {
+                        try {
+                            cellWidths[j] = Float.parseFloat(width.substring(0, width.length() - 1) + "f");
+                            total += cellWidths[j];
+                        }
+                        catch(Exception e) {
+                        }
+                    }
+                    j += cell.colspan();
+                    table.addCell(cell);
+                }
+                float widths[] = table.getProportionalWidths();
+                if (widths.length == columns) {
+                    float left = 0.0f;
+                    for (int i = 0; i < widths.length; i++) {
+                        if (cellWidths[i] == 0 && widths[i] != 0) {
+                            left += widths[i];
+                            cellWidths[i] = widths[i];
+                        }
+                    }
+                    if (100.0 >= total) {
+                        for (int i = 0; i < widths.length; i++) {
+                            if (cellWidths[i] == 0 && widths[i] != 0) {
+                                cellWidths[i] = (widths[i] / left) * (100.0f - total);
+                            }
+                        }
+                    }
+                    table.setWidths(cellWidths);
+                }
+                stack.push(table);
+            }
+            
             // cells
             if (Cell.isTag(name)) {
-                Cell cell = (Cell) stack.pop();
-                Table table = (Table) stack.pop();
-                table.addCell(cell);
-                stack.push(table);
+                return;
             }
             
             // sections
