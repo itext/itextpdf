@@ -234,7 +234,7 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
-    public static PdfAnnotation createSquareCirlcle(PdfWriter writer, Rectangle rect, String contents, boolean square) {
+    public static PdfAnnotation createSquareCircle(PdfWriter writer, Rectangle rect, String contents, boolean square) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         if (square)
             annot.put(PdfName.SUBTYPE, PdfName.SQUARE);
