@@ -35,6 +35,7 @@ package com.lowagie.text.html;
 
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.xml.sax.AttributeList;
 
@@ -143,6 +144,60 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
                     p.put(ElementTags.RIGHT, String.valueOf(true));
                     p.put(ElementTags.TOP, String.valueOf(true));
                     p.put(ElementTags.BOTTOM, String.valueOf(true));
+                }
+                super.handleStartingTags(peer.getTag(), p);
+                return;
+            }
+            if (attrs.getValue(HtmlTags.STYLE) != null) {
+                Properties p = peer.getAttributes(attrs);
+                String style = p.getProperty(ElementTags.STYLE);
+                if (style == null) {
+                    style = "";
+                }
+                StringTokenizer tokens = new StringTokenizer(attrs.getValue(HtmlTags.STYLE), ";");
+                while (tokens.hasMoreTokens()) {
+                    StringTokenizer attr = new StringTokenizer(tokens.nextToken(), ":");
+                    String key = "";
+                    String value = "";
+                    if (attr.hasMoreTokens()) {
+                        key = attr.nextToken().trim();
+                    }
+                    if (attr.hasMoreTokens()) {
+                        value = attr.nextToken().trim();
+                    }
+                    if (HtmlTags.CSS_FONTFAMILY.equals(key)) {
+                        p.put(ElementTags.FONT, value);
+                    }
+                    else if (HtmlTags.CSS_FONTSIZE.equals(key)) {
+                        if (value.endsWith("px")) {
+                            try {
+                                value = value.substring(0, value.length() - 2);
+                            }
+                            catch(Exception e) {
+                            }
+                        }
+                        p.put(ElementTags.SIZE, value);
+                    }
+                    else if (HtmlTags.CSS_COLOR.equals(key)) { 
+                        p.put(ElementTags.COLOR, value);
+                    }
+                    if (HtmlTags.CSS_FONTWEIGHT.equals(key) || HtmlTags.CSS_FONTSTYLE.equals(key)) {
+                        if (style.length() > 0) style += ",";
+                        style += value;
+                    }
+                    else if (HtmlTags.CSS_TEXTDECORATION.equals(key)) { 
+                        if (HtmlTags.CSS_UNDERLINE.equals(value)) { 
+                            if (style.length() > 0) style += ",";
+                            style += ElementTags.UNDERLINE;
+                        }
+                        else if (HtmlTags.CSS_LINETHROUGH.equals(value)) {
+                            if (style.length() > 0) style += ",";
+                            style += ElementTags.STRIKETHRU;
+                        }
+                    }
+                    if (style.length() > 0) {
+                        p.put(ElementTags.STYLE, style);
+                    }
                 }
                 super.handleStartingTags(peer.getTag(), p);
                 return;

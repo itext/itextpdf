@@ -323,4 +323,10 @@ public class HtmlTags {
 
 /** the CSS tag for background color */
     public static final String CSS_BGCOLOR = "background-color";
+
+/** the CSS tag for text color */
+    public static final String CSS_UNDERLINE = "underline";
+
+/** the CSS tag for background color */
+    public static final String CSS_LINETHROUGH = "line-through";
 }
