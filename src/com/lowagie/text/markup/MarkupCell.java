@@ -71,7 +71,7 @@ public class MarkupCell
 	private Properties markupAttributes;
 
 /**
- * @see com.lowagie.text.Cell#init()
+ * @see com.lowagie.text.Cell#Cell()
  */
 	public MarkupCell()
 	{
@@ -80,7 +80,7 @@ public class MarkupCell
 	
 
 /**
- * @see com.lowagie.text.Cell#init(com.lowagie.text.Element)
+ * @see com.lowagie.text.Cell#Cell(com.lowagie.text.Element)
  */
 	public MarkupCell(Element element)
 	 throws BadElementException
@@ -90,7 +90,7 @@ public class MarkupCell
 
 
 /**
- * @see com.lowagie.text.Cell#init(com.lowagie.text.Element)
+ * @see com.lowagie.text.Cell#Cell(com.lowagie.text.Element)
  */
 	public MarkupCell(Properties attributes)
 	{
@@ -99,7 +99,7 @@ public class MarkupCell
 
 
 /**
- * @see com.lowagie.text.Cell#init(java.lang.String)
+ * @see com.lowagie.text.Cell#Cell(java.lang.String)
  */
 	public MarkupCell(String content)
 	{
@@ -108,7 +108,7 @@ public class MarkupCell
 	
 
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -118,7 +118,7 @@ public class MarkupCell
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -129,7 +129,7 @@ public class MarkupCell
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

@@ -72,7 +72,7 @@ public class MarkupAnchor
 
 
 /**
- * @see com.lowagie.text.Anchor#init()
+ * @see com.lowagie.text.Anchor#Anchor()
  */
 	public MarkupAnchor()
 	{
@@ -81,7 +81,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.Anchor#init(com.lowagie.text.Chunk)
+ * @see com.lowagie.text.Anchor#Anchor(com.lowagie.text.Chunk)
  */
 	public MarkupAnchor(Chunk chunk)
 	{
@@ -90,7 +90,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.Anchor#init(float)
+ * @see com.lowagie.text.Anchor#Anchor(float)
  */
 	public MarkupAnchor(float leading)
 	{
@@ -99,7 +99,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.Anchor#init(float, com.lowagie.text.Chunk)
+ * @see com.lowagie.text.Anchor#Anchor(float, com.lowagie.text.Chunk)
  */
 	public MarkupAnchor(float leading, Chunk chunk)
 	{
@@ -108,7 +108,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.Anchor#init(float, java.lang.String)
+ * @see com.lowagie.text.Anchor#Anchor(float, java.lang.String)
  */
 	public MarkupAnchor(float leading, String string)
 	{
@@ -117,7 +117,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.Anchor#init(float, java.lang.String, com.lowagie.text.Font)
+ * @see com.lowagie.text.Anchor#Anchor(float, java.lang.String, com.lowagie.text.Font)
  */
 	public MarkupAnchor(float leading, String string, Font font)
 	{
@@ -126,7 +126,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.Anchor#init(java.lang.Properties)
+ * @see com.lowagie.text.Anchor#Anchor(java.util.Properties)
  */
 	public MarkupAnchor(Properties attributes)
 	{
@@ -135,7 +135,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.Anchor#init(java.lang.String)
+ * @see com.lowagie.text.Anchor#Anchor(java.lang.String)
  */
 	public MarkupAnchor(String string)
 	{
@@ -144,7 +144,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.Anchor#init(java.lang.String, com.lowagie.text.Font)
+ * @see com.lowagie.text.Anchor#Anchor(java.lang.String, com.lowagie.text.Font)
  */
 	public MarkupAnchor(String string, Font font)
 	{
@@ -153,7 +153,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -163,7 +163,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -174,7 +174,7 @@ public class MarkupAnchor
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

@@ -70,7 +70,7 @@ public class MarkupAnnotation
 
 	
 /**
- * @see com.lowagie.text.Annotation#init(java.util.Properties)
+ * @see com.lowagie.text.Annotation#Annotation(java.util.Properties)
  */
 	public MarkupAnnotation(Properties attributes)
 	{
@@ -79,7 +79,7 @@ public class MarkupAnnotation
 
 
 /**
- * @see com.lowagie.text.Annotation#init(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.Annotation#Annotation(java.lang.String, java.lang.String)
  */
 	public MarkupAnnotation(String tag, String content)
 	{
@@ -88,7 +88,7 @@ public class MarkupAnnotation
 
 
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -98,7 +98,7 @@ public class MarkupAnnotation
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -109,7 +109,7 @@ public class MarkupAnnotation
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

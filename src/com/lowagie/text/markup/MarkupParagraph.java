@@ -73,7 +73,7 @@ public class MarkupParagraph
 
 
 /**
- * @see com.lowagie.text.Paragraph#init()
+ * @see com.lowagie.text.Paragraph#Paragraph()
  */
 	public MarkupParagraph()
 	{
@@ -82,7 +82,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(com.lowagie.text.Chunk)
+ * @see com.lowagie.text.Paragraph#Paragraph(com.lowagie.text.Chunk)
  */
 	public MarkupParagraph(Chunk chunk)
 	{
@@ -91,7 +91,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(float)
+ * @see com.lowagie.text.Paragraph#Paragraph(float)
  */
 	public MarkupParagraph(float leading)
 	{
@@ -100,7 +100,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(float, com.lowagie.text.Chunk)
+ * @see com.lowagie.text.Paragraph#Paragraph(float, com.lowagie.text.Chunk)
  */
 	public MarkupParagraph(float leading, Chunk chunk)
 	{
@@ -109,7 +109,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(float, java.lang.String)
+ * @see com.lowagie.text.Paragraph#Paragraph(float, java.lang.String)
  */
 	public MarkupParagraph(float leading, String string)
 	{
@@ -118,7 +118,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(float, java.lang.String, com.lowagie.text.Font)
+ * @see com.lowagie.text.Paragraph#Paragraph(float, java.lang.String, com.lowagie.text.Font)
  */
 	public MarkupParagraph(float leading, String string, Font font)
 	{
@@ -127,7 +127,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(com.lowagie.text.Phrase)
+ * @see com.lowagie.text.Paragraph#Paragraph(com.lowagie.text.Phrase)
  */
 	public MarkupParagraph(Phrase phrase)
 	{
@@ -136,7 +136,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(java.lang.Properties)
+ * @see com.lowagie.text.Paragraph#Paragraph(java.util.Properties)
  */
 	public MarkupParagraph(Properties attributes)
 	{
@@ -145,7 +145,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(java.lang.String)
+ * @see com.lowagie.text.Paragraph#Paragraph(java.lang.String)
  */
 	public MarkupParagraph(String string)
 	{
@@ -154,7 +154,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.Paragraph#init(java.lang.String, com.lowagie.text.Font)
+ * @see com.lowagie.text.Paragraph#Paragraph(java.lang.String, com.lowagie.text.Font)
  */
 	public MarkupParagraph(String string, Font font)
 	{
@@ -163,7 +163,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -173,7 +173,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -184,7 +184,7 @@ public class MarkupParagraph
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

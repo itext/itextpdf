@@ -11,8 +11,8 @@
  *
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
- * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * The ListItemial Developer of the Original Code is Bruno Lowagie. Portions created by
+ * the ListItemial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
@@ -73,7 +73,7 @@ public class MarkupListItem
 
 
 /**
- * @see com.lowagie.text.ListItem#init()
+ * @see com.lowagie.text.ListItem#ListItem()
  */
 	public MarkupListItem()
 	{
@@ -82,7 +82,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(com.lowagie.text.Chunk)
+ * @see com.lowagie.text.ListItem#ListItem(com.lowagie.text.Chunk)
  */
 	public MarkupListItem(Chunk chunk)
 	{
@@ -91,7 +91,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(float)
+ * @see com.lowagie.text.ListItem#ListItem(float)
  */
 	public MarkupListItem(float leading)
 	{
@@ -100,7 +100,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(float, com.lowagie.text.Chunk)
+ * @see com.lowagie.text.ListItem#ListItem(float, com.lowagie.text.Chunk)
  */
 	public MarkupListItem(float leading, Chunk chunk)
 	{
@@ -109,7 +109,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(float, java.lang.String)
+ * @see com.lowagie.text.ListItem#ListItem(float, java.lang.String)
  */
 	public MarkupListItem(float leading, String string)
 	{
@@ -118,7 +118,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(float, java.lang.String, com.lowagie.text.Font)
+ * @see com.lowagie.text.ListItem#ListItem(float, java.lang.String, com.lowagie.text.Font)
  */
 	public MarkupListItem(float leading, String string, Font font)
 	{
@@ -127,7 +127,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(com.lowagie.text.Phrase)
+ * @see com.lowagie.text.ListItem#ListItem(com.lowagie.text.Phrase)
  */
 	public MarkupListItem(Phrase phrase)
 	{
@@ -136,7 +136,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(java.lang.Properties)
+ * @see com.lowagie.text.ListItem#ListItem(java.util.Properties)
  */
 	public MarkupListItem(Properties attributes)
 	{
@@ -145,7 +145,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(java.lang.String)
+ * @see com.lowagie.text.ListItem#ListItem(java.lang.String)
  */
 	public MarkupListItem(String string)
 	{
@@ -154,7 +154,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.ListItem#init(java.lang.String, com.lowagie.text.Font)
+ * @see com.lowagie.text.ListItem#ListItem(java.lang.String, com.lowagie.text.Font)
  */
 	public MarkupListItem(String string, Font font)
 	{
@@ -163,7 +163,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -173,7 +173,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -184,7 +184,7 @@ public class MarkupListItem
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

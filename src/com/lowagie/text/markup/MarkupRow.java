@@ -11,8 +11,8 @@
  *
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
- * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * The Rowial Developer of the Original Code is Bruno Lowagie. Portions created by
+ * the Rowial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
@@ -70,7 +70,7 @@ public class MarkupRow
 
 	
 /**
- * @see com.lowagie.text.Row#init(int)
+ * @see com.lowagie.text.Row#Row(int)
  */
 	public MarkupRow(int columns)
 	{
@@ -79,7 +79,7 @@ public class MarkupRow
 
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -89,7 +89,7 @@ public class MarkupRow
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -100,7 +100,7 @@ public class MarkupRow
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

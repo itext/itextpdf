@@ -11,8 +11,8 @@
  *
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
- * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * The Rectangleial Developer of the Original Code is Bruno Lowagie. Portions created by
+ * the Rectangleial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
@@ -70,7 +70,7 @@ public class MarkupRectangle
 
 
 /**
- * @see com.lowagie.text.Rectangle#init(float, float)
+ * @see com.lowagie.text.Rectangle#Rectangle(float, float)
  */
 	public MarkupRectangle(float urx, float ury)
 	{
@@ -79,7 +79,7 @@ public class MarkupRectangle
 	
 	
 /**
- * @see com.lowagie.text.Rectangle#init(float, float, float, float)
+ * @see com.lowagie.text.Rectangle#Rectangle(float, float, float, float)
  */
 	public MarkupRectangle(float llx, float lly, float urx, float ury)
 	{
@@ -88,7 +88,7 @@ public class MarkupRectangle
 	
 	
 /**
- * @see com.lowagie.text.Rectangle#init(com.lowagie.text.Rectangle)
+ * @see com.lowagie.text.Rectangle#Rectangle(com.lowagie.text.Rectangle)
  */
 	public MarkupRectangle(Rectangle rect)
 	{
@@ -97,7 +97,7 @@ public class MarkupRectangle
 
 
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -107,7 +107,7 @@ public class MarkupRectangle
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -118,7 +118,7 @@ public class MarkupRectangle
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

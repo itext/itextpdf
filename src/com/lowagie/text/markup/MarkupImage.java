@@ -75,7 +75,7 @@ public class MarkupImage
 	private Properties markupAttributes;
 
 /**
- * @see com.lowagie.text.Image#init(java.net.URL)
+ * @see com.lowagie.text.Image#Image(java.net.URL)
  */
 	public MarkupImage(URL url)
 	{
@@ -84,7 +84,7 @@ public class MarkupImage
 	
 	
 /**
- * @see com.lowagie.text.Image#init(com.lowagie.text.Image)
+ * @see com.lowagie.text.Image#Image(com.lowagie.text.Image)
  */
 	protected MarkupImage(Image image)
 	{
@@ -203,7 +203,7 @@ public class MarkupImage
 
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -213,7 +213,7 @@ public class MarkupImage
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -224,7 +224,7 @@ public class MarkupImage
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

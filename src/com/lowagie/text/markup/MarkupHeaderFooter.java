@@ -71,7 +71,7 @@ public class MarkupHeaderFooter
 
 
 /**
- * @see com.lowagie.text.HeaderFooter#init(com.lowagie.text.Phrase, boolean)
+ * @see com.lowagie.text.HeaderFooter#HeaderFooter(com.lowagie.text.Phrase, boolean)
  */
 	public MarkupHeaderFooter(Phrase before, boolean numbered)
 	{
@@ -80,7 +80,7 @@ public class MarkupHeaderFooter
 
 	
 /**
- * @see com.lowagie.text.HeaderFooter#init(com.lowagie.text.Phrase, com.lowagie.text.Phrase)
+ * @see com.lowagie.text.HeaderFooter#HeaderFooter(com.lowagie.text.Phrase, com.lowagie.text.Phrase)
  */
 	public MarkupHeaderFooter(Phrase before, Phrase after)
 	{
@@ -89,7 +89,7 @@ public class MarkupHeaderFooter
 	
 
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -99,7 +99,7 @@ public class MarkupHeaderFooter
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -110,7 +110,7 @@ public class MarkupHeaderFooter
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

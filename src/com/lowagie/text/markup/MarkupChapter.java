@@ -72,7 +72,7 @@ public class MarkupChapter
 	private Properties markupAttributes;
 
 /**
- * @see com.lowagie.text.Chapter#init(com.lowagie.text.Paragraph, int)
+ * @see com.lowagie.text.Chapter#Chapter(com.lowagie.text.Paragraph, int)
  */
 	public MarkupChapter(Paragraph title, int number)
 	{
@@ -81,7 +81,7 @@ public class MarkupChapter
 	
 	
 /**
- * @see com.lowagie.text.Chapter#init(java.lang.Properties, int)
+ * @see com.lowagie.text.Chapter#Chapter(java.util.Properties, int)
  */
 	public MarkupChapter(Properties attributes, int number)
 	{
@@ -90,7 +90,7 @@ public class MarkupChapter
 	
 	
 /**
- * @see com.lowagie.text.Chapter#init(java.lang.String, int)
+ * @see com.lowagie.text.Chapter#Chapter(java.lang.String, int)
  */
 	public MarkupChapter(String title, int number)
 	{
@@ -99,7 +99,7 @@ public class MarkupChapter
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -109,7 +109,7 @@ public class MarkupChapter
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -120,7 +120,7 @@ public class MarkupChapter
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

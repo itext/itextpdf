@@ -72,7 +72,7 @@ public class MarkupPhrase
 
 
 /**
- * @see com.lowagie.text.Phrase#init()
+ * @see com.lowagie.text.Phrase#Phrase()
  */
 	public MarkupPhrase()
 	{
@@ -81,7 +81,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.Phrase#init(com.lowagie.text.Chunk)
+ * @see com.lowagie.text.Phrase#Phrase(com.lowagie.text.Chunk)
  */
 	public MarkupPhrase(Chunk chunk)
 	{
@@ -90,7 +90,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.Phrase#init(float)
+ * @see com.lowagie.text.Phrase#Phrase(float)
  */
 	public MarkupPhrase(float leading)
 	{
@@ -99,7 +99,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.Phrase#init(float, com.lowagie.text.Chunk)
+ * @see com.lowagie.text.Phrase#Phrase(float, com.lowagie.text.Chunk)
  */
 	public MarkupPhrase(float leading, Chunk chunk)
 	{
@@ -108,7 +108,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.Phrase#init(float, java.lang.String)
+ * @see com.lowagie.text.Phrase#Phrase(float, java.lang.String)
  */
 	public MarkupPhrase(float leading, String string)
 	{
@@ -117,7 +117,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.Phrase#init(float, java.lang.String, com.lowagie.text.Font)
+ * @see com.lowagie.text.Phrase#Phrase(float, java.lang.String, com.lowagie.text.Font)
  */
 	public MarkupPhrase(float leading, String string, Font font)
 	{
@@ -126,7 +126,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.Phrase#init(java.lang.Properties)
+ * @see com.lowagie.text.Phrase#Phrase(java.util.Properties)
  */
 	public MarkupPhrase(Properties attributes)
 	{
@@ -135,7 +135,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.Phrase#init(java.lang.String)
+ * @see com.lowagie.text.Phrase#Phrase(java.lang.String)
  */
 	public MarkupPhrase(String string)
 	{
@@ -144,7 +144,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.Phrase#init(java.lang.String, com.lowagie.text.Font)
+ * @see com.lowagie.text.Phrase#Phrase(java.lang.String, com.lowagie.text.Font)
  */
 	public MarkupPhrase(String string, Font font)
 	{
@@ -153,7 +153,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -163,7 +163,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -174,7 +174,7 @@ public class MarkupPhrase
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

@@ -69,7 +69,7 @@ public class MarkupList
 	private Properties markupAttributes;
 
 /**
- * @see com.lowagie.text.List#init(boolean, boolean, int)
+ * @see com.lowagie.text.List#List(boolean, boolean, int)
  */
 	public MarkupList(boolean numbered, boolean lettered, int symbolIndent)
 	{
@@ -78,7 +78,7 @@ public class MarkupList
 
             
 /**
- * @see com.lowagie.text.List#init(boolean, int)
+ * @see com.lowagie.text.List#List(boolean, int)
  */
 	public MarkupList(boolean numbered, int symbolIndent)
 	{
@@ -87,7 +87,7 @@ public class MarkupList
 
 	
 /**
- * @see com.lowagie.text.List#init(Properties)
+ * @see com.lowagie.text.List#List(Properties)
  */
 	public MarkupList(Properties attributes)
 	{
@@ -96,7 +96,7 @@ public class MarkupList
 
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -106,7 +106,7 @@ public class MarkupList
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -117,7 +117,7 @@ public class MarkupList
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{

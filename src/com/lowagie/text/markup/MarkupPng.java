@@ -72,7 +72,7 @@ public class MarkupPng
 	private Properties markupAttributes;
 
 /**
- * @see com.lowagie.text.Png#init(java.net.URL)
+ * @see com.lowagie.text.Png#Png(java.net.URL)
  */
 	public MarkupPng(URL url)
 	 throws BadElementException, IOException
@@ -82,7 +82,7 @@ public class MarkupPng
 	
 	
 /**
- * @see com.lowagie.text.Png#init(byte[])
+ * @see com.lowagie.text.Png#Png(byte[])
  */
 	protected MarkupPng(byte[] img)
 	 throws BadElementException, IOException
@@ -92,7 +92,7 @@ public class MarkupPng
 	
 
 /**
- * @see com.lowagie.text.Png#init(byte[], float, float)
+ * @see com.lowagie.text.Png#Png(byte[], float, float)
  */
 	protected MarkupPng(byte[] img, float width, float height)
 	 throws BadElementException, IOException
@@ -102,7 +102,7 @@ public class MarkupPng
 	
 
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
  */
   public Set getMarkupAttributeNames()
 	{
@@ -112,7 +112,7 @@ public class MarkupPng
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
   public void setMarkupAttribute(String name, String value)
 	{
@@ -123,7 +123,7 @@ public class MarkupPng
 	
 	
 /**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
   public String getMarkupAttribute(String name)
 	{
