@@ -92,6 +92,12 @@ public class Chunk implements Element, MarkupAttributes {
 /** This is a Chunk containing a newline. */
     public static final Chunk NEWLINE = new Chunk("\n");
 
+/** This is a Chunk containing a newpage. */
+    public static final Chunk NEXTPAGE;
+    static {
+    	NEXTPAGE = new Chunk("");
+    	NEXTPAGE.setNewPage();
+    }
 /** Key for sub/superscript. */
     public static final String SUBSUPSCRIPT = "SUBSUPSCRIPT";
 
