@@ -111,7 +111,7 @@ public class PdfAction extends PdfDictionary {
     }
     
     /**
-     * Construct a new <CODE>PdfAction</CODE> of Subtype URI that is a Map.
+     * Construct a new <CODE>PdfAction</CODE> of Subtype URI that accepts the x and y coordinate of the position that was clicked.
      * @param url
      * @param isMap
      */
@@ -130,7 +130,7 @@ public class PdfAction extends PdfDictionary {
     }
     
     /**
-     * Construct a new <CODE>PdfAction</CODE> of Subtype URI that is a Map.
+     * Construct a new <CODE>PdfAction</CODE> of Subtype URI that accepts the x and y coordinate of the position that was clicked.
      * @param url
      * @param isMap
      */
@@ -307,6 +307,12 @@ public class PdfAction extends PdfDictionary {
         return javaScript(code, writer, false);
     }
     
+    /**
+     * A Hide action hides or shows an object.
+     * @param obj object to hide or show
+     * @param hide true is hide, false is show
+     * @return a Hide Action
+     */
     static PdfAction createHide(PdfObject obj, boolean hide) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.HIDE);
@@ -316,10 +322,22 @@ public class PdfAction extends PdfDictionary {
         return action;
     }
     
+    /**
+     * A Hide action hides or shows an annotation.
+     * @param annot
+     * @param hide
+     * @return A Hide Action
+     */
     public static PdfAction createHide(PdfAnnotation annot, boolean hide) {
         return createHide(annot.getIndirectReference(), hide);
     }
     
+    /**
+     * A Hide action hides or shows an annotation.
+     * @param name
+     * @param hide
+     * @return A Hide Action
+     */
     public static PdfAction createHide(String name, boolean hide) {
         return createHide(new PdfString(name), hide);
     }
@@ -338,10 +356,23 @@ public class PdfAction extends PdfDictionary {
         return array;
     }
     
+    /**
+     * A Hide action hides or shows objects.
+     * @param names
+     * @param hide
+     * @return A Hide Action
+     */
     public static PdfAction createHide(Object names[], boolean hide) {
         return createHide(buildArray(names), hide);
     }
     
+    /**
+     * Creates a submit form.
+     * @param file	the URI to submit the form to
+     * @param names	the objects to submit
+     * @param flags	submit properties
+     * @return A PdfAction
+     */
     public static PdfAction createSubmitForm(String file, Object names[], int flags) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.SUBMITFORM);
@@ -355,6 +386,12 @@ public class PdfAction extends PdfDictionary {
         return action;
     }
     
+    /**
+     * Creates a resetform.
+     * @param names	the objects to reset
+     * @param flags	submit properties
+     * @return A PdfAction
+     */
     public static PdfAction createResetForm(Object names[], int flags) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.RESETFORM);
@@ -364,6 +401,11 @@ public class PdfAction extends PdfDictionary {
         return action;
     }
     
+    /**
+     * Creates an Import field.
+     * @param file
+     * @return A PdfAction
+     */
     public static PdfAction createImportData(String file) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.IMPORTDATA);
