@@ -98,15 +98,17 @@ public class PdfCell extends Rectangle {
  */
     
     public PdfCell(Cell cell, int rownumber, float left, float right, float top, float cellspacing, float cellpadding) {
-        // initialisation of the Rectangle
+        // constructs a Rectangle (the bottomvalue will be changed afterwards)
         super(left, top, right, top);
+        
+        // copying the attributes from class Cell
         setBorder(cell.border());
         setBorderWidth(cell.borderWidth());
         setBorderColor(cell.borderColor());
         setBackgroundColor(cell.backgroundColor());
         setGrayFill(cell.grayFill());
         
-        // initialisation of the lines
+        // initialisation of some parameters
         PdfChunk chunk;
         Element element;
         PdfChunk overflow;
@@ -116,13 +118,6 @@ public class PdfCell extends Rectangle {
         left += cellspacing + cellpadding;
         right -= cellspacing + cellpadding;
         
-/*
- * Fixes bug 224848
- * 03/01/3001 David Freels
- * The height variable is adjusted just before the PDFLine is created
- * allowing the text to be rendered accordingly. The ALIGN_MIDDLE calculation
- * will be a little off for single row cells.
- */
         float height = leading + cellpadding;
         float rowSpan = (float)cell.rowspan();
         
@@ -134,8 +129,8 @@ public class PdfCell extends Rectangle {
             case Element.ALIGN_MIDDLE:
                 height *= (rowSpan / 1.5);
                 break;
-            default:
-                height -= cellpadding * 0.4f;
+                default:
+                    height -= cellpadding * 0.4f;
         }
         
         PdfLine line = new PdfLine(left, right, alignment, height);
@@ -176,36 +171,36 @@ public class PdfCell extends Rectangle {
                     line = new PdfLine(left, right, alignment, leading);
                     break;
                     // if the element is something else
-                    default:
-                        allActions = new ArrayList();
-                        processActions(element, null, allActions);
-                        aCounter = 0;
-                        // we loop over the chunks
-                        for (Iterator j = element.getChunks().iterator(); j.hasNext(); ) {
-                            Chunk c = (Chunk) j.next();
-                            chunk = new PdfChunk(c, (PdfAction)(allActions.get(aCounter++)));
-                            while ((overflow = line.add(chunk)) != null) {
-                                lines.add(line);
-                                line = new PdfLine(left, right, alignment, leading);
-                                chunk = overflow;
-                            }
+                default:
+                    allActions = new ArrayList();
+                    processActions(element, null, allActions);
+                    aCounter = 0;
+                    // we loop over the chunks
+                    for (Iterator j = element.getChunks().iterator(); j.hasNext(); ) {
+                        Chunk c = (Chunk) j.next();
+                        chunk = new PdfChunk(c, (PdfAction)(allActions.get(aCounter++)));
+                        while ((overflow = line.add(chunk)) != null) {
+                            lines.add(line);
+                            line = new PdfLine(left, right, alignment, leading);
+                            chunk = overflow;
                         }
-                        // if the element is a paragraph, section or chapter, we reset the alignment and add the line
-                        switch (element.type()) {
-                            case Element.PARAGRAPH:
-                            case Element.SECTION:
-                            case Element.CHAPTER:
-                                line.resetAlignment();
-                                lines.add(line);
-                                line = new PdfLine(left, right, alignment, leading);
-                        }
+                    }
+                    // if the element is a paragraph, section or chapter, we reset the alignment and add the line
+                    switch (element.type()) {
+                        case Element.PARAGRAPH:
+                        case Element.SECTION:
+                        case Element.CHAPTER:
+                            line.resetAlignment();
+                            lines.add(line);
+                            line = new PdfLine(left, right, alignment, leading);
+                    }
             }
         }
         if (line.size() > 0) {
             lines.add(line);
         }
         // we set some additional parameters
-        setBottom(top - leading * lines.size() - 2 * cellpadding);
+        setBottom(top - leading * (lines.size() - 1) - cellpadding - height - 2 * cellspacing);
         this.cellpadding = cellpadding;
         this.cellspacing = cellspacing;
         
@@ -351,7 +346,7 @@ public class PdfCell extends Rectangle {
  */
     
     public int remainingLines() {
-        if (lines.size() == 0) return 0; 
+        if (lines.size() == 0) return 0;
         int result = 0;
         int size = lines.size();
         PdfLine line;

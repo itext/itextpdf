@@ -83,20 +83,21 @@ class PdfTable extends Rectangle {
  */
     
     PdfTable(Table table, float left, float right, float top) {
-        
         // constructs a Rectangle (the bottomvalue will be changed afterwards)
         super(left, top, right, top);
+        
+        // copying the attributes from class Table
         setBorder(table.border());
         setBorderWidth(table.borderWidth());
         setBorderColor(table.borderColor());
         setBackgroundColor(table.backgroundColor());
         setGrayFill(table.grayFill());
-        
-        // initialisation of some parameters
         this.columns = table.columns();
         this.cellpadding = table.cellpadding();
         this.cellspacing = table.cellspacing();
         float[] positions = table.getWidths(left, right - left);
+        
+        // initialisation of some parameters
         setLeft(positions[0]);
         setRight(positions[positions.length - 1]);
         
@@ -110,7 +111,7 @@ class PdfTable extends Rectangle {
         int rows = table.size() + 1;
         float[] offsets = new float[rows];
         for (int i = 0; i < rows; i++) {
-            offsets[i] = top - cellpadding;
+            offsets[i] = top;
         }
         
         // loop over all the rows
@@ -153,7 +154,7 @@ class PdfTable extends Rectangle {
                 currentCell.setBottom(offsets[offsets.length - 1]);
             }
         }
-        setBottom(offsets[offsets.length - 1] - cellspacing);
+        setBottom(offsets[offsets.length - 1]);
     }
     
     // methods
