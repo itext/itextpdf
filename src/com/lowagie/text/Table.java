@@ -577,10 +577,10 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
         if (aLocation == null) throw new NullPointerException("insertTable - point has null-value");
         mTableInserted = true;
+        aTable.complete();
         if (mDebug == true) {
             if (aLocation.y > columns) System.err.println("insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
         }
-        
         int rowCount = aLocation.x + 1 - rows.size();
         int i = 0;
         if ( rowCount > 0 ) {   //create new rows ?
@@ -592,7 +592,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         ((Row) rows.get(aLocation.x)).setElement(aTable,aLocation.y);
         
         setCurrentLocationToNextValidPosition(aLocation);
-        complete();
     }
     
 /*
