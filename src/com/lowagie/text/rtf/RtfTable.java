@@ -97,6 +97,9 @@ public class RtfTable
 	row = (RtfRow) rows.next();
 	row.writeRow(os);
       }
+    os.write(RtfWriter.escape);
+    os.write(RtfWriter.paragraphDefaults);
+    os.write(RtfWriter.paragraph);
     return true;
   }
 

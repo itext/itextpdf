@@ -171,6 +171,8 @@ public class RtfRow
   public boolean writeRow(OutputStream os) throws DocumentException, IOException
   {
     os.write(RtfWriter.escape);
+    os.write(RtfWriter.paragraphDefaults);
+    os.write(RtfWriter.escape);
     os.write(rowBegin);
     os.write((byte) '\n');
     os.write(RtfWriter.escape);
