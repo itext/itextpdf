@@ -143,6 +143,31 @@ public class PdfSignatureAppearance {
     }
     
     /**
+     * Gets the signature text identifying the signer if set by setLayer2Text().
+     * @return the signature text identifying the signer
+     */    
+    public String getLayer2Text() {
+        return layer2Text;
+    }
+    
+    /**
+     * Sets the text identifying the signature status.
+     * @param text the text identifying the signature status. If <CODE>null</CODE> or not set
+     * the description "Signature Not Verified" will be used
+     */    
+    public void setLayer4Text(String text) {
+        layer4Text = text;
+    }
+    
+    /**
+     * Gets the text identifying the signature status if set by setLayer4Text().
+     * @return the text identifying the signature status
+     */    
+    public String getLayer4Text() {
+        return layer4Text;
+    }
+    
+    /**
      * Gets the rectangle representing the signature dimensions.
      * @return the rectangle representing the signature dimensions. It may be <CODE>null</CODE>
      * or have zero width or height for invisible signatures
@@ -300,50 +325,69 @@ public class PdfSignatureAppearance {
             writer.addDirectTemplateSimple(t, new PdfName("n0"));
             t.setLiteral("% DSBlank\n");
         }
-        if (app[1] == null) {
+        if (app[1] == null && !acro6Layers) {
             PdfTemplate t = app[1] = new PdfTemplate(writer);
             t.setBoundingBox(new Rectangle(100, 100));
             writer.addDirectTemplateSimple(t, new PdfName("n1"));
             t.setLiteral(questionMark);
         }
         if (app[2] == null) {
+            String text;
             if (layer2Text == null) {
                 StringBuffer buf = new StringBuffer();
                 buf.append("Digitally signed by ").append(PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN")).append("\n");
-                SimpleDateFormat sd = (SimpleDateFormat)DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.US);
+                SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
                 buf.append("Date: ").append(sd.format(signDate.getTime()));
                 if (reason != null)
                     buf.append("\n").append("Reason: ").append(reason);
                 if (location != null)
                     buf.append("\n").append("Location: ").append(location);
-                layer2Text = buf.toString();
+                text = buf.toString();
             }
+            else
+                text = layer2Text;
             PdfTemplate t = app[2] = new PdfTemplate(writer);
             t.setBoundingBox(rect);
             writer.addDirectTemplateSimple(t, new PdfName("n2"));
-            BaseFont font = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
-            Rectangle sr = new Rectangle(rect.width() - 2 * margin, rect.height() * (1 - topSection) - 2 * margin);
-            float size = fitText(font, layer2Text, sr, 12);
+            Font font;
+            if (layer2Font == null)
+                font = new Font();
+            else
+                font = new Font(layer2Font);
+            float size = font.size();
+            if (size <= 0) {
+                Rectangle sr = new Rectangle(rect.width() - 2 * margin, rect.height() * (1 - topSection) - 2 * margin);
+                size = fitText(font, text, sr, 12, runDirection);
+            }
             ColumnText ct = new ColumnText(t);
-            ct.setSimpleColumn(new Phrase(layer2Text, new Font(font, size)), margin, 0, rect.width() - margin, rect.height() * (1 - topSection) - margin, size, Element.ALIGN_LEFT);
+            ct.setRunDirection(runDirection);
+            ct.setSimpleColumn(new Phrase(text, font), margin, 0, rect.width() - margin, rect.height() * (1 - topSection) - margin, size, Element.ALIGN_LEFT);
             ct.go();
         }
-        if (app[3] == null) {
+        if (app[3] == null && !acro6Layers) {
             PdfTemplate t = app[3] = new PdfTemplate(writer);
             t.setBoundingBox(new Rectangle(100, 100));
             writer.addDirectTemplateSimple(t, new PdfName("n3"));
             t.setLiteral("% DSBlank\n");
         }
-        if (app[4] == null) {
+        if (app[4] == null && !acro6Layers) {
             PdfTemplate t = app[4] = new PdfTemplate(writer);
             t.setBoundingBox(new Rectangle(0, rect.height() * (1 - topSection), rect.right(), rect.top()));
             writer.addDirectTemplateSimple(t, new PdfName("n4"));
-            BaseFont font = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+            Font font;
+            if (layer2Font == null)
+                font = new Font();
+            else
+                font = new Font(layer2Font);
+            float size = font.size();
             String text = "Signature Not Verified";
+            if (layer4Text != null)
+                text = layer4Text;
             Rectangle sr = new Rectangle(rect.width() - 2 * margin, rect.height() * topSection - 2 * margin);
-            float size = fitText(font, text, sr, 15);
+            size = fitText(font, text, sr, 15, runDirection);
             ColumnText ct = new ColumnText(t);
-            ct.setSimpleColumn(new Phrase(text, new Font(font, size)), margin, 0, rect.width() - margin, rect.height() - margin, size, Element.ALIGN_LEFT);
+            ct.setRunDirection(runDirection);
+            ct.setSimpleColumn(new Phrase(text, font), margin, 0, rect.width() - margin, rect.height() - margin, size, Element.ALIGN_LEFT);
             ct.go();
         }
         int rotation = writer.reader.getPageRotation(page);
@@ -368,10 +412,13 @@ public class PdfSignatureAppearance {
             else if (rotation == 270)
                 frm.concatCTM(0, -1, 1, 0, 0, rect.width());
             frm.addTemplate(app[0], 0, 0);
-            frm.addTemplate(app[1], scale, 0, 0, scale, x, y);
+            if (!acro6Layers)
+                frm.addTemplate(app[1], scale, 0, 0, scale, x, y);
             frm.addTemplate(app[2], 0, 0);
-            frm.addTemplate(app[3], scale, 0, 0, scale, x, y);
-            frm.addTemplate(app[4], 0, 0);
+            if (!acro6Layers) {
+                frm.addTemplate(app[3], scale, 0, 0, scale, x, y);
+                frm.addTemplate(app[4], 0, 0);
+            }
         }
         PdfTemplate napp = new PdfTemplate(writer);
         napp.setBoundingBox(rotated);
@@ -386,11 +433,11 @@ public class PdfSignatureAppearance {
      * @param text the text
      * @param rect the rectangle where the text must fit
      * @param maxFontSize the maximum font size
+     * @param runDirection the run direction
      * @return the calculated font size that makes the text fit
      */    
-    public static float fitText(BaseFont font, String text, Rectangle rect, float maxFontSize) {
+    public static float fitText(Font font, String text, Rectangle rect, float maxFontSize, int runDirection) {
         try {
-            //System.out.println(maxFontSize);
             ColumnText ct = null;
             int status = 0;
             if (maxFontSize <= 0) {
@@ -406,21 +453,24 @@ public class PdfSignatureAppearance {
                 int minLines = Math.max(cr, lf) + 1;
                 maxFontSize = Math.abs(rect.height()) / minLines - 0.001f;
             }
-            Phrase ph = new Phrase(text, new Font(font, maxFontSize));
+            font.setSize(maxFontSize);
+            Phrase ph = new Phrase(text, font);
             ct = new ColumnText(null);
             ct.setSimpleColumn(ph, rect.left(), rect.bottom(), rect.right(), rect.top(), maxFontSize, Element.ALIGN_LEFT);
+            ct.setRunDirection(runDirection);
             status = ct.go(true);
-            //System.out.println(maxFontSize);
             if ((status & ColumnText.NO_MORE_TEXT) != 0)
                 return maxFontSize;
             float precision = 0.1f;
             float min = 0;
             float max = maxFontSize;
-            while (true) {
-                float size = (min + max) / 2;
-                //System.out.println(size);
+            float size = maxFontSize;
+            for (int k = 0; k < 50; ++k) { //just in case it doesn't converge
+                size = (min + max) / 2;
                 ct = new ColumnText(null);
-                ct.setSimpleColumn(new Phrase(text, new Font(font, size)), rect.left(), rect.bottom(), rect.right(), rect.top(), size, Element.ALIGN_LEFT);
+                font.setSize(size);
+                ct.setSimpleColumn(new Phrase(text, font), rect.left(), rect.bottom(), rect.right(), rect.top(), size, Element.ALIGN_LEFT);
+                ct.setRunDirection(runDirection);
                 status = ct.go(true);
                 if ((status & ColumnText.NO_MORE_TEXT) != 0) {
                     if (max - min < size * precision)
@@ -430,6 +480,7 @@ public class PdfSignatureAppearance {
                 else
                     max = size;
             }
+            return size;
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -956,6 +1007,54 @@ public class PdfSignatureAppearance {
     }
     
     /**
+     * Gets the n2 and n4 layer font.
+     * @return the n2 and n4 layer font
+     */
+    public Font getLayer2Font() {
+        return this.layer2Font;
+    }
+    
+    /**
+     * Sets the n2 and n4 layer font. If the font size is zero, auto-fit will be used.
+     * @param layer2Font the n2 and n4 font
+     */
+    public void setLayer2Font(Font layer2Font) {
+        this.layer2Font = layer2Font;
+    }
+    
+    /**
+     * Gets the Acrobat 6.0 layer mode.
+     * @return the Acrobat 6.0 layer mode
+     */
+    public boolean isAcro6Layers() {
+        return this.acro6Layers;
+    }
+    
+    /**
+     * Acrobat 6.0 and higher recomends that only layer n2 and n4 be present. This method sets that mode.
+     * @param acro6Layers if <code>true</code> only the layers n2 and n4 will be present
+     */
+    public void setAcro6Layers(boolean acro6Layers) {
+        this.acro6Layers = acro6Layers;
+    }
+    
+    /** Sets the run direction in the n2 and n4 layer. 
+     * @param runDirection the run direction
+     */    
+    public void setRunDirection(int runDirection) {
+        if (runDirection < PdfWriter.RUN_DIRECTION_DEFAULT || runDirection > PdfWriter.RUN_DIRECTION_RTL)
+            throw new RuntimeException("Invalid run direction: " + runDirection);
+        this.runDirection = runDirection;
+    }
+    
+    /** Gets the run direction.
+     * @return the run direction
+     */    
+    public int getRunDirection() {
+        return runDirection;
+    }
+    
+    /**
      * Commands to draw a yellow question mark in a stream content
      */    
     public static final String questionMark = 
@@ -1007,7 +1106,30 @@ public class PdfSignatureAppearance {
      */
     private String contact;
     
-    public class RangeStream extends InputStream {
+    /**
+     * Holds value of property layer2Font.
+     */
+    private Font layer2Font;
+    
+    /**
+     * Holds value of property layer4Text.
+     */
+    private String layer4Text;
+    
+    /**
+     * Holds value of property acro6Layers.
+     */
+    private boolean acro6Layers;
+    
+    /**
+     * Holds value of property runDirection.
+     */
+    private int runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
+    
+    /**
+     *
+     */    
+    private static class RangeStream extends InputStream {
         private byte b[] = new byte[1];
         private RandomAccessFile raf;
         private byte bout[];

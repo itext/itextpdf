@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2004 by Takenori.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,37 +44,60 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
-/**
- * <CODE>PdfNull</CODE> is the Null object represented by the keyword <VAR>null</VAR>.
- * <P>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.9 (page 53).
- *
- * @see		PdfObject
- */
+import java.awt.Font;
 
-public class PdfNull extends PdfObject {
-    
-    // static membervariables
-    
-/** This is an instance of the <CODE>PdfNull</CODE>-object. */
-    public static final PdfNull	PDFNULL = new PdfNull();
-    
-/** This is the content of a <CODE>PdfNull</CODE>-object. */
-    private static final String CONTENT = "null";
-    
-    // constructors
-    
-/**
- * Constructs a <CODE>PdfNull</CODE>-object.
- * <P>
- * You never need to do this yourself, you can always use the static final object <VAR>PDFNULL</VAR>.
- */
-    
-    public PdfNull() {
-        super(NULL, CONTENT);
-    }
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.DefaultFontMapper;
+
+public class AsianFontMapper extends DefaultFontMapper {
+	
+	public static String ChineseSimplifiedFont = "STSong-Light";
+	public static String ChineseSimplifiedEncoding_H = "UniGB-UCS2-H";
+	public static String ChineseSimplifiedEncoding_V = "UniGB-UCS2-V";
+	
+	public static String ChineseTraditionalFont_MHei = "MHei-Medium";
+	public static String ChineseTraditionalFont_MSung = "MSung-Light";
+	public static String ChineseTraditionalEncoding_H = "UniCNS-UCS2-H";
+	public static String ChineseTraditionalEncoding_V = "UniCNS-UCS2-V";
+	
+	public static String JapaneseFont_Go = "HeiseiKakuGo-W5";
+	public static String JapaneseFont_Min = "HeiseiMin-W3";
+	public static String JapaneseEncoding_H = "UniJIS-UCS2-H";
+	public static String JapaneseEncoding_V = "UniJIS-UCS2-V";
+	public static String JapaneseEncoding_HW_H = "UniJIS-UCS2-HW-H";
+	public static String JapaneseEncoding_HW_V = "UniJIS-UCS2-HW-V";
+	
+	public static String KoreanFont_GoThic = "HYGoThic-Medium";
+	public static String KoreanFont_SMyeongJo = "HYSMyeongJo-Medium";
+	public static String KoreanEncoding_H = "UniKS-UCS2-H";
+	public static String KoreanEncoding_V = "UniKS-UCS2-V";
+	
+	private String defaultFont;
+	private String encoding;
+
+	public AsianFontMapper(String font, String encoding) {
+		super();
+		
+		this.defaultFont = font;
+		this.encoding = encoding;
+	}
+
+	public BaseFont awtToPdf(Font font) {
+		try {
+			BaseFontParameters p = getBaseFontParameters(font.getFontName());
+			if (p != null){
+				return BaseFont.createFont(p.fontName, p.encoding, p.embedded, p.cached, p.ttfAfm, p.pfb);
+			}else{
+				return BaseFont.createFont(defaultFont, encoding, true);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 }

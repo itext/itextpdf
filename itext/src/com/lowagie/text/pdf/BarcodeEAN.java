@@ -674,6 +674,7 @@ public class BarcodeEAN extends Barcode{
             case EAN8:
                 bars = getBarsEAN8(code);
                 width = 11 + 8 * 7;
+                break;
             case UPCA:
                 bars = getBarsEAN13("0" + code);
                 width = 11 + 12 * 7;

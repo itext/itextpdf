@@ -155,7 +155,7 @@ public class PdfPageLabels implements Comparator {
         addPageLabel(page, numberStyle, null, 1);
     }
     
-    /** Removes a page label. The first page lagel can not be removed, only changed.
+    /** Removes a page label. The first page label can not be removed, only changed.
      * @param page the real page to remove
      */    
     public void removePageLabel(int page) {
