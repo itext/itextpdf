@@ -90,7 +90,7 @@ import com.lowagie.text.markup.MarkupParser;
 public class Phrase extends ArrayList implements TextElementArray, MarkupAttributes {
     
 /** This is the value of an undefined leading. */
-    public static final float UNDEFINED = Float.MIN_VALUE;
+    public static final float UNDEFINED = Float.NaN;
     
     // membervariables
     

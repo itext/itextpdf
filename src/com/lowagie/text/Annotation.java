@@ -126,13 +126,13 @@ public class Annotation implements Element, MarkupAttributes {
     protected Properties markupAttributes = null;
     
 /** This is the lower left x-value */
-    protected float llx = Float.MIN_VALUE;
+    protected float llx = Float.NaN;
 /** This is the lower left y-value */
-    protected float lly = Float.MIN_VALUE;
+    protected float lly = Float.NaN;
 /** This is the upper right x-value */
-    protected float urx = Float.MIN_VALUE;
+    protected float urx = Float.NaN;
 /** This is the upper right y-value */
-    protected float ury = Float.MIN_VALUE;
+    protected float ury = Float.NaN;
     
     // constructors
     
@@ -463,7 +463,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public final float llx(float def) {
-        if (llx == Float.MIN_VALUE) return def;
+        if (llx == Float.NaN) return def;
         return llx;
     }
     
@@ -475,7 +475,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public final float lly(float def) {
-        if (lly == Float.MIN_VALUE) return def;
+        if (lly == Float.NaN) return def;
         return lly;
     }
     
@@ -487,7 +487,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public final float urx(float def) {
-        if (urx == Float.MIN_VALUE) return def;
+        if (urx == Float.NaN) return def;
         return urx;
     }
     
@@ -499,7 +499,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public final float ury(float def) {
-        if (ury == Float.MIN_VALUE) return def;
+        if (ury == Float.NaN) return def;
         return ury;
     }
     

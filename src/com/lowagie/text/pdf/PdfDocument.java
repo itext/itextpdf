@@ -197,7 +197,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.88)", PdfObject.ENCODING));
+            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.89)", PdfObject.ENCODING));
             // Do not edit the line above!
         }
         
@@ -1305,7 +1305,7 @@ class PdfDocument extends Document implements DocListener {
                     
                     // before every table, we add a new line and flush all lines
                     float offset = ((Table)element).getOffset();
-                    if (offset == Float.MIN_VALUE) offset = leading;
+                    if (offset == Float.NaN) offset = leading;
                     carriageReturn();
                     lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
                     currentHeight += offset;
@@ -1395,10 +1395,8 @@ class PdfDocument extends Document implements DocListener {
                             tablerec.setBorderColor(table.borderColor());
                             tablerec.setBackgroundColor(table.backgroundColor());
                             tablerec.setGrayFill(table.grayFill());
-                            PdfContentByte cb = writer.getDirectContentUnder();
-                            cb.rectangle(tablerec.rectangle(top(), indentBottom()));
-                            cb.add(cellGraphics);
-                            cb.stroke();
+                            graphics.rectangle(tablerec.rectangle(top(), indentBottom()));
+                            graphics.add(cellGraphics);
                         }
                         cellGraphics = new PdfContentByte(null);
                         // if the table continues on the next page
@@ -1663,18 +1661,11 @@ class PdfDocument extends Document implements DocListener {
         }
         float lowerleft = indentTop() - currentHeight - image.scaledHeight() -diff;
         float mt[] = image.matrix();
-        switch(image.alignment() & Image.MIDDLE) {
-            case Image.RIGHT:
-                addImage(graphics, image, mt[0], mt[1], mt[2], mt[3], indentRight() - image.scaledWidth() - mt[4], lowerleft - mt[5]);
-                break;
-            case Image.MIDDLE:
-                float middle = indentRight() - indentLeft() - image.scaledWidth();
-                addImage(graphics, image, mt[0], mt[1], mt[2], mt[3], indentLeft() + (middle / 2) - mt[4], lowerleft - mt[5]);
-                break;
-            case Image.LEFT:
-                default:
-                    addImage(graphics, image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
-        }
+        float startPosition = indentLeft() - mt[4];
+        if ((image.alignment() & Image.MIDDLE) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
+        if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.scaledWidth()) / 2) - mt[4];
+        if (image.hasAbsoluteX()) startPosition = image.absoluteX();
+        addImage(graphics, image, mt[0], mt[1], mt[2], mt[3], startPostition, lowerleft - mt[5]);
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
                 imageEnd = currentHeight + image.scaledHeight() + diff;
@@ -1742,7 +1733,7 @@ class PdfDocument extends Document implements DocListener {
         // if there is a watermark, the watermark is added
         if (watermark != null) {
             float mt[] = watermark.matrix();
-            addImage(writer.getDirectContentUnder(), watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
+            addImage(graphics, watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
         
         // if there is a footer, the footer is added

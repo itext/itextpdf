@@ -107,7 +107,7 @@ public class Cell extends Rectangle implements TextElementArray {
     }
     
 /** This is the value of an undefined leading. */
-    public static final float UNDEFINED = Float.MIN_VALUE;
+    public static final float UNDEFINED = Float.NaN;
     
     // membervariables
     
