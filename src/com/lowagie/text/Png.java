@@ -164,41 +164,69 @@ public class Png extends Image implements Element {
     }
     
     // private methods
-    
 /**
  * Gets an <CODE>int</CODE> from an <CODE>InputStream</CODE>.
  *
- * @param		an <CODE>InputStream</CODE>
- * @return		the value of an <CODE>int</CODE>
+ * @param   is      an <CODE>InputStream</CODE>
+ * @return  the value of an <CODE>int</CODE>
+ * @exception IOException if the end of the stream is reached or if another error occurs while reading.
  */
-    
+
     public static final int getInt(InputStream is) throws IOException {
-        return (is.read() << 24) + (is.read() << 16) + (is.read() << 8) + is.read();
+        int c1 = is.read();
+        int c2 = is.read();
+        int c3 = is.read();
+        int c4 = is.read();
+
+        if(c1 != -1 && c2 != -1 && c3 != -1 && c4 != -1) {
+            return (c1 << 24) + (c2 << 16) + (c3 << 8) + c4;
+        }
+        else {
+            throw new IOException("end of stream reached");
+        }
     }
-    
+
 /**
  * Gets a <CODE>word</CODE> from an <CODE>InputStream</CODE>.
  *
- * @param		an <CODE>InputStream</CODE>
- * @return		the value of an <CODE>int</CODE>
+ * @param   is      an <CODE>InputStream</CODE>
+ * @return  the value of an <CODE>int</CODE>
+ * @exception IOException if the end of the stream is reached or if another error occurs while reading.
  */
-    
+
     public static final int getWord(InputStream is) throws IOException {
-        return (is.read() << 8) + is.read();
+        int c1 = is.read();
+        int c2 = is.read();
+
+        if(c1 != -1 && c2 != -1) {
+            return (c1 << 8) + c2;
+        }
+        else {
+            throw new IOException("end of stream reached");
+        }
     }
-    
+
 /**
  * Gets a <CODE>String</CODE> from an <CODE>InputStream</CODE>.
  *
- * @param		an <CODE>InputStream</CODE>
- * @return		the value of an <CODE>int</CODE>
+ * @param   is      an <CODE>InputStream</CODE>
+ * @return                the value of an <CODE>int</CODE>
+ * @exception IOException if the end of the stream is reached or if another error occurs while reading.
  */
-    
+
     public static final String getString(InputStream is) throws IOException {
         StringBuffer buf = new StringBuffer();
+
         for (int i = 0; i < 4; i++) {
-            buf.append((char)is.read());
+            int c = is.read();
+            if(c != -1) {
+                buf.append((char)c);
+            }
+            else {
+                throw new IOException("end of stream reached");
+            }
         }
+
         return buf.toString();
     }
     
