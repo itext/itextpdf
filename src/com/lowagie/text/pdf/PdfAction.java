@@ -177,7 +177,7 @@ public class PdfAction extends PdfDictionary {
     }
     
     /** Implements name actions. The action can be FIRSTPAGE, LASTPAGE,
-     * NEXTPAGE and PREVPAGE.
+     * NEXTPAGE, PREVPAGE and PRINTDIALOG.
      * @param named the named action
      */
     public PdfAction(int named) {
