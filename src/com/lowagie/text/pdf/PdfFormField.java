@@ -84,6 +84,10 @@ public class PdfFormField extends PdfAnnotation {
     public final static PdfName IF_SCALE_NEVER = PdfName.N;
     public final static PdfName IF_SCALE_ANAMORPHIC = PdfName.A;
     public final static PdfName IF_SCALE_PROPORTIONAL = PdfName.P;
+    public final static boolean MULTILINE = true;
+    public final static boolean SINGLELINE = false;
+    public final static boolean PLAINTEXT = false;
+    public final static boolean PASSWORD = true;
     static PdfName mergeTarget[] = {PdfName.FONT, PdfName.XOBJECT, PdfName.COLORSPACE, PdfName.PATTERN};
     
     /** Holds value of property parent. */
