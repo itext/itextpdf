@@ -807,7 +807,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * Will fill empty cells with valid blank <CODE>Cell</CODE>s
      */
 
-    void complete() {
+    public void complete() {
         try {
             if (mTableInserted == true) {
                 mergeInsertedTables();  // integrate tables in the table
