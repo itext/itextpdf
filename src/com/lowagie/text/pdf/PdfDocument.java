@@ -195,7 +195,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 91", PdfObject.ENCODING));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 92", PdfObject.ENCODING));
             // Do not edit the line above!
         }
         
@@ -673,9 +673,9 @@ class PdfDocument extends Document implements DocListener {
             switch (rotation) {
                 case 90:
                     dic.put(PdfName.RECT, new PdfRectangle(
-                        thisPageSize.right() - rect.bottom(),
+                        thisPageSize.top() - rect.bottom(),
                         rect.left(),
-                        thisPageSize.right() - rect.top(),
+                        thisPageSize.top() - rect.top(),
                         rect.right()));
                     break;
                 case 180:
@@ -688,9 +688,9 @@ class PdfDocument extends Document implements DocListener {
                 case 270:
                     dic.put(PdfName.RECT, new PdfRectangle(
                         rect.bottom(),
-                        thisPageSize.top() - rect.left(),
+                        thisPageSize.right() - rect.left(),
                         rect.top(),
-                        thisPageSize.top() - rect.right()));
+                        thisPageSize.right() - rect.right()));
                     break;
             }
         }

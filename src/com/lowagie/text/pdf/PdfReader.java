@@ -153,7 +153,7 @@ public class PdfReader {
         Rectangle rect = getPageSize(index);
         int rotation = getPageRotation(index);
         while (rotation > 0) {
-            rect.rotate();
+            rect = rect.rotate();
             rotation -= 90;
         }
         return rect;
