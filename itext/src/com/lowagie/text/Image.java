@@ -78,13 +78,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     public static final int DEFAULT = 0;
     
     /** this is a kind of image alignment. */
-    public static final int RIGHT = 1;
+    public static final int RIGHT = 2;
     
     /** this is a kind of image alignment. */
-    public static final int LEFT = 2;
+    public static final int LEFT = 0;
     
     /** this is a kind of image alignment. */
-    public static final int MIDDLE = 3;
+    public static final int MIDDLE = 1;
     
     /** this is a kind of image alignment. */
     public static final int TEXTWRAP = 4;
