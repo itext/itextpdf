@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2003, 2004 by Mark Hall
+ * Copyright 2003, 2004, 2005 by Mark Hall
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -50,9 +50,13 @@
 
 package com.lowagie.text.rtf.document;
 
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfMapper;
+import com.lowagie.text.rtf.document.output.RtfDataCache;
+import com.lowagie.text.rtf.document.output.RtfDiskCache;
+import com.lowagie.text.rtf.document.output.RtfMemoryCache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -70,7 +74,7 @@ public class RtfDocument extends RtfElement {
     /**
      * Stores the actual document data
      */
-    private ByteArrayOutputStream data = null;
+    private RtfDataCache data = null;
     /**
      * The RtfMapper to use in this RtfDocument
      */
@@ -87,6 +91,10 @@ public class RtfDocument extends RtfElement {
      * Whether to automatically generate TOC entries for Chapters and Sections. Defaults to false
      */
     private boolean autogenerateTOCEntries = false;
+    /**
+     * Whether data has been written to the RtfDataCache.
+     */
+    private boolean dataWritten = false;
     
     /**
      * Constant for the Rtf document start
@@ -98,7 +106,7 @@ public class RtfDocument extends RtfElement {
      */
     public RtfDocument() {
         super(null);
-        data = new ByteArrayOutputStream();
+        data = new RtfMemoryCache();
         mapper = new RtfMapper(this);
         documentHeader = new RtfDocumentHeader(this);
         documentHeader.init();
@@ -134,7 +142,8 @@ public class RtfDocument extends RtfElement {
             if(element instanceof RtfInfoElement) {
                 this.documentHeader.addInfoElement((RtfInfoElement) element);
             } else {
-                data.write(element.write());
+                this.dataWritten = true;
+                data.getOutputStream().write(element.write());
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -237,5 +246,24 @@ public class RtfDocument extends RtfElement {
      */
     public boolean getAutogenerateTOCEntries() {
         return this.autogenerateTOCEntries;
+    }
+    
+    /**
+     * Sets the rtf data cache style to use. Valid values are given in the 
+     * RtfDataCache class.
+     *  
+     * @param dataCacheStyle The style to use.
+     * @throws DocumentException If data has already been written into the data cache.
+     * @throws IOException If the disk cache could not be initialised.
+     */
+    public void setDataCacheStyle(int dataCacheStyle) throws DocumentException, IOException {
+        if(dataWritten) {
+            throw new DocumentException("Data has already been written into the data cache. You can not change the cache style anymore.");
+        }
+        switch(dataCacheStyle) {
+            case RtfDataCache.CACHE_MEMORY : this.data = new RtfMemoryCache(); break;
+            case RtfDataCache.CACHE_DISK   : this.data = new RtfDiskCache(); break;
+            default                        : this.data = new RtfMemoryCache(); break;
+        }
     }
 }

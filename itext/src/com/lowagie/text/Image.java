@@ -610,8 +610,9 @@ public abstract class Image extends Rectangle implements Element,
 				boolean shades = false;
 				for (int j = 0; j < size; j++) {
 					byte alpha = smask[j] = (byte) ((pixels[j] >> 24) & 0xff);
+					/* bugfix by Chris Nokleberg */
 					if (!shades) {
-						if (alpha != 0 || alpha != -1) {
+						if (alpha != 0 && alpha != -1) {
 							shades = true;
 						} else if (transparency == null) {
 							if (alpha == 0) {
@@ -1483,7 +1484,7 @@ public abstract class Image extends Rectangle implements Element,
 	public void setImageMask(Image mask) throws DocumentException {
 		if (this.mask)
 			throw new DocumentException(
-					"An image mask can not contain another image mask.");
+					"An image mask cannot contain another image mask.");
 		if (!mask.mask)
 			throw new DocumentException(
 					"The image mask is not a mask. Did you do makeMask()?");

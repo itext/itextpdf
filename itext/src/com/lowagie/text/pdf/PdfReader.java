@@ -105,8 +105,6 @@ public class PdfReader {
     protected PRAcroForm acroForm = null;
     protected boolean acroFormParsed = false;
     protected ArrayList pageInh;
-    protected int pagesCount;
-    protected int maxPagesCount;
     protected boolean encrypted = false;
     protected boolean rebuilt = false;
     protected int freeXref;
@@ -231,7 +229,6 @@ public class PdfReader {
         this.eofPos = reader.eofPos;
         this.freeXref = reader.freeXref;
         this.lastXref = reader.lastXref;
-        this.pagesCount = reader.pagesCount;
         this.tokens = reader.tokens;
         this.decrypt = reader.decrypt;
         this.pValue = reader.pValue;
@@ -624,8 +621,6 @@ public class PdfReader {
     }
     
     protected void iteratePages(PRIndirectReference rpage) throws IOException {
-        if (pagesCount >= maxPagesCount) // just in case we have more pages than declared
-            return;
         PdfDictionary page = (PdfDictionary)getPdfObject(rpage);
         PdfArray kidsPR = (PdfArray)getPdfObject(page.get(PdfName.KIDS));
         if (kidsPR == null) {
@@ -659,13 +654,11 @@ public class PdfReader {
         pageInh = new ArrayList();
         catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
         PdfDictionary rootPages = (PdfDictionary)getPdfObject(catalog.get(PdfName.PAGES));
-        PdfNumber count = (PdfNumber)getPdfObject(rootPages.get(PdfName.COUNT));
-        maxPagesCount = count.intValue();
-        pages = new ArrayList(maxPagesCount);
-        pageRefs = new ArrayList(maxPagesCount);
-        pagesCount = 0;
+        pages = new ArrayList();
+        pageRefs = new ArrayList();
         iteratePages((PRIndirectReference)catalog.get(PdfName.PAGES));
         pageInh = null;
+        rootPages.put(PdfName.COUNT, new PdfNumber(pages.size()));
     }
     
     protected void PRSimpleRecursive(PdfObject obj) throws IOException {

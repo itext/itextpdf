@@ -69,6 +69,19 @@ import com.lowagie.text.rtf.style.RtfFont;
 public class RtfChunk extends RtfElement {
 
     /**
+     * Constant for the subscript flag
+     */
+    private static final byte[] FONT_SUBSCRIPT = "\\sub".getBytes();
+    /**
+     * Constant for the superscript flag
+     */
+    private static final byte[] FONT_SUPERSCRIPT = "\\super".getBytes();
+    /**
+     * Constant for the end of sub / superscript flag
+     */
+    private static final byte[] FONT_END_SUPER_SUBSCRIPT = "\\nosupersub".getBytes();
+
+    /**
      * The font of this RtfChunk
      */
     private RtfFont font = null;
@@ -80,6 +93,10 @@ public class RtfChunk extends RtfElement {
      * Whether to use soft line breaks instead of hard ones.
      */
     private boolean softLineBreaks = false;
+    /**
+     * The super / subscript of this RtfChunk
+     */
+    private float superSubScript = 0;
 
     /**
      * Constructs a RtfChunk based on the content of a Chunk
@@ -94,11 +111,10 @@ public class RtfChunk extends RtfElement {
             return;
         }
         
-        float superSubScript = 0;
         if(chunk.getAttributes() != null && chunk.getAttributes().get(Chunk.SUBSUPSCRIPT) != null) {
-            superSubScript = ((Float)chunk.getAttributes().get(Chunk.SUBSUPSCRIPT)).floatValue();
+            this.superSubScript = ((Float)chunk.getAttributes().get(Chunk.SUBSUPSCRIPT)).floatValue();
         }
-        font = new RtfFont(doc, chunk.font(), superSubScript);
+        font = new RtfFont(doc, chunk.font());
         content = chunk.content();
     }
     
@@ -112,8 +128,18 @@ public class RtfChunk extends RtfElement {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(font.writeBegin());
+            if(superSubScript < 0) {
+                result.write(FONT_SUBSCRIPT);
+            } else if(superSubScript > 0) {
+                result.write(FONT_SUPERSCRIPT);
+            }
             result.write(DELIMITER);
+            
             result.write(document.filterSpecialChar(content, false, softLineBreaks).getBytes());
+            
+            if(superSubScript != 0) {
+                result.write(FONT_END_SUPER_SUBSCRIPT);
+            }
             result.write(font.writeEnd());
         } catch(IOException ioe) {
             ioe.printStackTrace();

@@ -639,7 +639,7 @@ public class PdfWriter extends DocWriter {
     /** Type of encryption */
     public static final boolean STRENGTH128BITS = true;
     /** action value */
-    public static final PdfName DOCUMENT_CLOSE = PdfName.DC;
+    public static final PdfName DOCUMENT_CLOSE = PdfName.WC;
     /** action value */
     public static final PdfName WILL_SAVE = PdfName.WS;
     /** action value */

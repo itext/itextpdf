@@ -204,7 +204,8 @@ public class RtfRow extends RtfElement {
      */
     private void importRow(Row row) {
         this.cells = new ArrayList();
-        this.width  = (int) (this.document.getDocumentHeader().getPageSetting().getPageWidth() / 100 * this.parentTable.getTableWidthPercent());
+        this.width = this.document.getDocumentHeader().getPageSetting().getPageWidth() - this.document.getDocumentHeader().getPageSetting().getMarginLeft() - this.document.getDocumentHeader().getPageSetting().getMarginLeft();
+        this.width = (int) (this.width / 100 * this.parentTable.getTableWidthPercent());
         
         int cellRight = 0;
         int cellWidth = 0;

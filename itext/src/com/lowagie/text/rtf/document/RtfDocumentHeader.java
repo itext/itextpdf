@@ -106,8 +106,13 @@ public class RtfDocumentHeader extends RtfElement {
      * The page settings
      */
     private RtfPageSetting pageSetting = null;
-    
+    /**
+     * The current RtfHeaderFooterGroup for the header
+     */
     private RtfHeaderFooterGroup header = null;
+    /**
+     * The current RtfHeaderFooterGroup for the footer
+     */
     private RtfHeaderFooterGroup footer = null;
 
     /**

@@ -167,7 +167,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     protected RtfField(RtfDocument doc, Font font) {
         super("", font);
         this.document = doc;
-        this.font = new RtfFont(this.document, font, 0);
+        this.font = new RtfFont(this.document, font);
     }
     
     /**
@@ -433,5 +433,12 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      */
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;
+    }
+    
+    /**
+     * An RtfField is never empty.
+     */
+    public boolean isEmpty() {
+        return false;
     }
 }
