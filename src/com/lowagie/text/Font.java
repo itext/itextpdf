@@ -142,11 +142,10 @@ public class Font implements Comparable {
  */
     
     public Font(BaseFont bf, float size, int style, Color color) {
-        this.family = family;
+        this.baseFont = bf;
         this.size = size;
         this.style = style;
         this.color = color;
-        this.baseFont = bf;
     }
     
 /**
@@ -451,11 +450,24 @@ public class Font implements Comparable {
     
     public Font difference(Font font) {
         Font difference = new Font();
-        if (font.family() == UNDEFINED) {
-            difference.family = this.family;
+        if (font.baseFont != null) {
+            difference.baseFont = font.baseFont;
         }
         else {
-            difference.family = font.family;
+            if (font.family() != UNDEFINED) { 
+                difference.family = font.family;
+            }
+            else if (this.baseFont != null) {
+                difference.baseFont = this.baseFont;
+            }
+            else {
+                difference.family = this.family;
+            }
+            int style1 = this.style;
+            int style2 = font.style();
+            if (style1 == UNDEFINED) style1 = 0;
+            if (style2 == UNDEFINED) style2 = 0;
+            difference.style = style1 | style2;
         }
         if (font.size() == UNDEFINED) {
             difference.size = this.size;
@@ -463,11 +475,6 @@ public class Font implements Comparable {
         else {
             difference.size = font.size;
         }
-        int style1 = this.style;
-        int style2 = font.style();
-        if (style1 == UNDEFINED) style1 = 0;
-        if (style2 == UNDEFINED) style2 = 0;
-        difference.style = style1 | style2;
         if (font.color == null) {
             difference.color = this.color;
         }
