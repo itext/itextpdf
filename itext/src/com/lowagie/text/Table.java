@@ -789,7 +789,7 @@ public class Table extends Rectangle implements Element {
  * @param       value   the new value
  */
     
-    public final void setCellpadding(float value) {
+    public final void setPadding(float value) {
         cellpadding = value;
     }
     
@@ -799,8 +799,30 @@ public class Table extends Rectangle implements Element {
  * @param       value   the new value
  */
     
-    public final void setCellspacing(float value) {
+    public final void setSpacing(float value) {
         cellspacing = value;
+    }
+    
+/**
+ * Sets the cellpadding.
+ *
+ * @param       value   the new value
+ * @deprecated  use setSpacing instead
+ */
+    
+    public final void setCellpadding(float value) {
+        cellspacing = value;
+    }
+    
+/**
+ * Sets the cellspacing.
+ *
+ * @param       value   the new value
+ * @deprecated  use setPadding instead
+ */
+    
+    public final void setCellspacing(float value) {
+        cellpadding = value;
     }
     
 /**
