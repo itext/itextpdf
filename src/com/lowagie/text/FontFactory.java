@@ -194,12 +194,13 @@ public class FontFactory extends java.lang.Object {
         if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
         HashSet tmp = (HashSet) fontFamilies.get(fontname);
         if (tmp != null) {
+            int s = style == Font.UNDEFINED ? Font.NORMAL : style;
             for (Iterator i = tmp.iterator(); i.hasNext(); ) {
                 String f = (String) i.next();
                 int fs = Font.NORMAL;
                 if (f.toLowerCase().indexOf("bold") != -1) fs |= Font.BOLD;
                 if (f.toLowerCase().indexOf("italic") != -1 || f.toLowerCase().indexOf("oblique") != -1) fs |= Font.ITALIC;
-                if ((style & Font.BOLDITALIC) == fs) {
+                if ((s & Font.BOLDITALIC) == fs) {
                     fontname = f;
                     break;
                 }
