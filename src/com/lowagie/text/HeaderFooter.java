@@ -171,7 +171,7 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
     public void setAlignment(int alignment) {
         this.alignment = alignment;
     }
-
+    
     // methods to retrieve the membervariables
     
 /**
@@ -192,15 +192,4 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
         paragraph.setAlignment(alignment);
         return paragraph;
     }
-
-    /**
-     * Gets the alignment of this HeaderFooter.
-     *
-     * @return	alignment
-     */
-
-        public int alignment() {
-            return alignment;
-        }
-
 }

@@ -236,7 +236,10 @@ public class Jpeg extends Image implements Element {
             boolean firstPass = true;
             int len;
             while (true) {
-                if (is.read() == 0xFF) {
+                int v = is.read();
+                if (v < 0)
+                    throw new IOException("Premature EOF while reading JPG.");
+                if (v == 0xFF) {
                     int marker = is.read();
                     if (firstPass && marker == M_APP0) {
                         firstPass = false;
