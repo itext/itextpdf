@@ -243,7 +243,6 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(Properties attributes) {
-        
         String fontname = null;
         String encoding = defaultEncoding;
         boolean embedded = defaultEmbedding;
@@ -253,35 +252,40 @@ public class FontFactory extends java.lang.Object {
         String value = (String) attributes.remove(MarkupTags.STYLE);
         if (value != null && value.length() > 0) {
             Properties styleAttributes = MarkupParser.parseAttributes(value);
-            fontname = (String)styleAttributes.remove(MarkupTags.CSS_FONTFAMILY);
-            if (fontname != null) {
-                String tmp;
-                while (fontname.indexOf(",") != -1) {
-                    tmp = fontname.substring(0, fontname.indexOf(","));
-                    if (isRegistered(tmp)) {
-                        fontname = tmp;
-                    }
-                    else {
-                        fontname = fontname.substring(fontname.indexOf(",") + 1);
+            if (styleAttributes.size() == 0) {
+                attributes.put(MarkupTags.STYLE, value);
+            }
+            else {
+                fontname = (String)styleAttributes.remove(MarkupTags.CSS_FONTFAMILY);
+                if (fontname != null) {
+                    String tmp;
+                    while (fontname.indexOf(",") != -1) {
+                        tmp = fontname.substring(0, fontname.indexOf(","));
+                        if (isRegistered(tmp)) {
+                            fontname = tmp;
+                        }
+                        else {
+                            fontname = fontname.substring(fontname.indexOf(",") + 1);
+                        }
                     }
                 }
-            }
-            if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
-                size = MarkupParser.parseLength(value);
-            }
-            if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
-                style |= Font.getStyleValue(value);
-            }
-            if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
-                style |= Font.getStyleValue(value);
-            }
-            if ((value = (String)styleAttributes.remove(MarkupTags.CSS_COLOR)) != null) {
-                color = MarkupParser.decodeColor(value);
-            }
-            attributes.putAll(styleAttributes);
-            for (Enumeration e = styleAttributes.keys(); e.hasMoreElements();) {
-                Object o = e.nextElement();
-                attributes.put(o, styleAttributes.get(o));
+                if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
+                    size = MarkupParser.parseLength(value);
+                }
+                if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
+                    style |= Font.getStyleValue(value);
+                }
+                if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
+                    style |= Font.getStyleValue(value);
+                }
+                if ((value = (String)styleAttributes.remove(MarkupTags.CSS_COLOR)) != null) {
+                    color = MarkupParser.decodeColor(value);
+                }
+                attributes.putAll(styleAttributes);
+                for (Enumeration e = styleAttributes.keys(); e.hasMoreElements();) {
+                    Object o = e.nextElement();
+                    attributes.put(o, styleAttributes.get(o));
+                }
             }
         }
         if ((value = (String)attributes.remove(ElementTags.ENCODING)) != null) {
@@ -295,6 +299,9 @@ public class FontFactory extends java.lang.Object {
         }
         if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
             size = Float.valueOf(value + "f").floatValue();
+        }
+        if ((value = (String)attributes.remove(MarkupTags.STYLE)) != null) {
+            style |= Font.getStyleValue(value);
         }
         if ((value = (String)attributes.remove(ElementTags.STYLE)) != null) {
             style |= Font.getStyleValue(value);
@@ -492,14 +499,14 @@ public class FontFactory extends java.lang.Object {
                     names = bf.getFamilyFontName();
                     for (int i = 0; i < names.length; i++) {
                         if ("0".equals(names[i][2])) {
-                           familyName = names[i][3];
-                           HashSet tmp = (HashSet) fontFamilies.get(familyName);
-                           if (tmp == null) {
-                               tmp = new HashSet();
-                           }
-                           tmp.add(fullName);
-                           fontFamilies.put(familyName, tmp);
-                           break;
+                            familyName = names[i][3];
+                            HashSet tmp = (HashSet) fontFamilies.get(familyName);
+                            if (tmp == null) {
+                                tmp = new HashSet();
+                            }
+                            tmp.add(fullName);
+                            fontFamilies.put(familyName, tmp);
+                            break;
                         }
                     }
                 }
