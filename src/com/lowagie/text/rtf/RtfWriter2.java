@@ -240,4 +240,16 @@ public class RtfWriter2 extends DocWriter implements DocListener {
     public void setAutogenerateTOCEntries(boolean autogenerate) {
         this.rtfDoc.setAutogenerateTOCEntries(autogenerate);
     }
+    
+    /**
+     * Sets the rtf data cache style to use. Valid values are given in the 
+     * RtfDataCache class.
+     *  
+     * @param dataCacheStyle The style to use.
+     * @throws DocumentException If data has already been written into the data cache.
+     * @throws IOException If the disk cache could not be initialised.
+     */
+    public void setDataCacheStyle(int dataCacheStyle) throws DocumentException, IOException {
+        this.rtfDoc.setDataCacheStyle(dataCacheStyle);
+    }
 }
