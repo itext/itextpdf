@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Properties;
+import com.lowagie.text.pdf.PdfTemplate;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG or GIF)
@@ -108,6 +109,9 @@ public abstract class Image extends Rectangle implements Element {
     
 /** The raw data of the image. */
     protected byte rawData[];
+    
+/** The template to be treated as an image. */
+    protected PdfTemplate template;
     
 /** The alignment of the Image. */
     protected int alignment;
@@ -224,12 +228,13 @@ public abstract class Image extends Rectangle implements Element {
  * @param image the <CODE>java.awt.Image</CODE> to convert
  * @param color if different from <CODE>null</CODE> the transparency
  * pixels are replaced by this color
+ * @param forceBW if <CODE>true</CODE> the image is treated as black and white
  * @return an object of type <CODE>ImgRaw</CODE>
  * @throws BadElementException on error
  * @throws IOException on error
  */
     
-    public static Image getInstance(java.awt.Image image, java.awt.Color color) throws BadElementException, IOException {
+    public static Image getInstance(java.awt.Image image, java.awt.Color color, boolean forceBW) throws BadElementException, IOException {
         java.awt.image.PixelGrabber pg = new java.awt.image.PixelGrabber(image, 0, 0, -1, -1, true);
         try {
             pg.grabPixels();
@@ -242,51 +247,127 @@ public abstract class Image extends Rectangle implements Element {
         int w = pg.getWidth();
         int h = pg.getHeight();
         int[] pixels = (int[])pg.getPixels();
-        byte[] pixelsByte = new byte[w * h * 3];
-        
-        int index = 0;
-        int size = h * w;
-        int red = 255;
-        int green = 255;
-        int blue = 255;
-        if (color != null) {
-            red = color.getRed();
-            green = color.getGreen();
-            blue = color.getBlue();
-        }
-        int transparency[] = null;
-        if (color != null) {
-            for (int j = 0; j < size; j++) {
-                int alpha = (pixels[j] >> 24) & 0xff;
-                if (alpha < 250) {
-                    pixelsByte[index++] = (byte) red;
-                    pixelsByte[index++] = (byte) green;
-                    pixelsByte[index++] = (byte) blue;
+        if (forceBW) {
+            int byteWidth = (w / 8) + ((w & 7) != 0 ? 1 : 0);
+            byte[] pixelsByte = new byte[byteWidth * h];
+
+            int index = 0;
+            int size = h * w;
+            int transColor = 1;
+            if (color != null) {
+                transColor = (color.getRed() + color.getGreen() + color.getBlue() < 384) ? 0 : 1;
+            }
+            int transparency[] = null;
+            int cbyte = 0x80;
+            int wMarker = 0;
+            int currByte = 0;
+            if (color != null) {
+                for (int j = 0; j < size; j++) {
+                    int alpha = (pixels[j] >> 24) & 0xff;
+                    if (alpha < 250) {
+                        if (transColor == 1)
+                            currByte |= cbyte;
+                    }
+                    else {
+                        if ((pixels[j] & 0x888) != 0)
+                            currByte |= cbyte;
+                    }
+                    cbyte >>= 1;
+                    if (cbyte == 0 || wMarker + 1 >= w) {
+                        pixelsByte[index++] = (byte)currByte;
+                        cbyte = 0x80;
+                        currByte = 0;
+                    }
+                    ++wMarker;
+                    if (wMarker >= w)
+                        wMarker = 0;
                 }
-                else {
+            }
+            else {
+                for (int j = 0; j < size; j++) {
+                    if (transparency == null) {
+                        int alpha = (pixels[j] >> 24) & 0xff;
+                        if (alpha == 0) {
+                            transparency = new int[2];
+                            transparency[0] = transparency[1] = ((pixels[j] & 0x888) != 0) ? 1 : 0;
+                        }
+                    }
+                    if ((pixels[j] & 0x888) != 0)
+                        currByte |= cbyte;
+                    cbyte >>= 1;
+                    if (cbyte == 0 || wMarker + 1 >= w) {
+                        pixelsByte[index++] = (byte)currByte;
+                        cbyte = 0x80;
+                        currByte = 0;
+                    }
+                    ++wMarker;
+                    if (wMarker >= w)
+                        wMarker = 0;
+                }
+            }
+            return Image.getInstance(w, h, 1, 1, pixelsByte, transparency);
+        }
+        else {
+            byte[] pixelsByte = new byte[w * h * 3];
+
+            int index = 0;
+            int size = h * w;
+            int red = 255;
+            int green = 255;
+            int blue = 255;
+            if (color != null) {
+                red = color.getRed();
+                green = color.getGreen();
+                blue = color.getBlue();
+            }
+            int transparency[] = null;
+            if (color != null) {
+                for (int j = 0; j < size; j++) {
+                    int alpha = (pixels[j] >> 24) & 0xff;
+                    if (alpha < 250) {
+                        pixelsByte[index++] = (byte) red;
+                        pixelsByte[index++] = (byte) green;
+                        pixelsByte[index++] = (byte) blue;
+                    }
+                    else {
+                        pixelsByte[index++] = (byte) ((pixels[j] >> 16) & 0xff);
+                        pixelsByte[index++] = (byte) ((pixels[j] >> 8) & 0xff);
+                        pixelsByte[index++] = (byte) ((pixels[j]) & 0xff);
+                    }
+                }
+            }
+            else {
+                for (int j = 0; j < size; j++) {
+                    if (transparency == null) {
+                        int alpha = (pixels[j] >> 24) & 0xff;
+                        if (alpha == 0) {
+                            transparency = new int[6];
+                            transparency[0] = transparency[1] = (pixels[j] >> 16) & 0xff;
+                            transparency[2] = transparency[3] = (pixels[j] >> 8) & 0xff;
+                            transparency[4] = transparency[5] = pixels[j] & 0xff;
+                        }
+                    }
                     pixelsByte[index++] = (byte) ((pixels[j] >> 16) & 0xff);
                     pixelsByte[index++] = (byte) ((pixels[j] >> 8) & 0xff);
                     pixelsByte[index++] = (byte) ((pixels[j]) & 0xff);
                 }
             }
+            return Image.getInstance(w, h, 3, 8, pixelsByte, transparency);
         }
-        else {
-            for (int j = 0; j < size; j++) {
-                if (transparency == null) {
-                    int alpha = (pixels[j] >> 24) & 0xff;
-                    if (alpha == 0) {
-                        transparency = new int[6];
-                        transparency[0] = transparency[1] = (pixels[j] >> 16) & 0xff;
-                        transparency[2] = transparency[3] = (pixels[j] >> 8) & 0xff;
-                        transparency[4] = transparency[5] = pixels[j] & 0xff;
-                    }
-                }
-                pixelsByte[index++] = (byte) ((pixels[j] >> 16) & 0xff);
-                pixelsByte[index++] = (byte) ((pixels[j] >> 8) & 0xff);
-                pixelsByte[index++] = (byte) ((pixels[j]) & 0xff);
-            }
-        }
-        return Image.getInstance(w, h, 3, 8, pixelsByte, transparency);
+    }
+    
+/**
+ * Gets an instance of an Image from a java.awt.Image.
+ *
+ * @param image the <CODE>java.awt.Image</CODE> to convert
+ * @param color if different from <CODE>null</CODE> the transparency
+ * pixels are replaced by this color
+ * @return an object of type <CODE>ImgRaw</CODE>
+ * @throws BadElementException on error
+ * @throws IOException on error
+ */
+    public static Image getInstance(java.awt.Image image, java.awt.Color color) throws BadElementException, IOException {
+        return Image.getInstance(image, color, false);
     }
     
 /**
@@ -351,6 +432,10 @@ public abstract class Image extends Rectangle implements Element {
     
     public static Image getInstance(int width, int height, int components, int bpc, byte data[]) throws BadElementException, MalformedURLException, IOException {
         return new ImgRaw(width, height, components, bpc, data);
+    }
+    
+    public static Image getInstance(PdfTemplate template) throws BadElementException, MalformedURLException, IOException {
+        return new ImgTemplate(template);
     }
     
 /**
@@ -542,7 +627,7 @@ public abstract class Image extends Rectangle implements Element {
     }
     
 /**
- * Sets the rotation of the image.
+ * Sets the rotation of the image in radians.
  *
  * @param		r		rotation in radians
  *
@@ -557,6 +642,18 @@ public abstract class Image extends Rectangle implements Element {
         float[] matrix = matrix();
         scaledWidth = matrix[DX] - matrix[CX];
         scaledHeight = matrix[DY] - matrix[CY];
+    }
+    
+/**
+ * Sets the rotation of the image in degrees.
+ *
+ * @param		r		rotation in degrees
+ *
+ * @author		Paulo Soares
+ */
+    
+    public void setRotationDegrees(float deg) {
+        setRotation(deg / 180 * (float)Math.PI);
     }
     
     // methods to retrieve information
@@ -584,6 +681,20 @@ public abstract class Image extends Rectangle implements Element {
     
     public byte[] rawData() {
         return rawData;
+    }
+    
+/**
+ * Gets the template to be used as an image.
+ * <P>
+ * Remark: this only makes sense for Images of the type <CODE>ImgTemplate</CODE>.
+ *
+ * @return		the template
+ *
+ * @author		Paulo Soares
+ */
+    
+    public PdfTemplate templateData() {
+        return template;
     }
     
 /**
@@ -667,6 +778,17 @@ public abstract class Image extends Rectangle implements Element {
     public boolean isImgRaw() {
         return type == IMGRAW;
     }
+ /**
+ * Returns <CODE>true</CODE> if the image is an <CODE>ImgTemplate</CODE>-object.
+ *
+ * @return		a <CODE>boolean</CODE>
+ *
+ * @author		Paulo Soares
+ */
+    
+    public boolean isImgTemplate() {
+        return type == IMGTEMPLATE;
+    }
     
 /**
  * Gets the <CODE>String</CODE>-representation of the reference to the image.
@@ -696,26 +818,6 @@ public abstract class Image extends Rectangle implements Element {
     
     public String alt() {
         return alt;
-    }
-    
-/**
- * Gets the plain width of the image.
- *
- * @return		a value
- */
-    
-    public float plainWidth() {
-        return plainWidth;
-    }
-    
-/**
- * Gets the plain height of the image.
- *
- * @return		a value
- */
-    
-    public float plainHeight() {
-        return plainHeight;
     }
     
 /**
@@ -824,9 +926,6 @@ public abstract class Image extends Rectangle implements Element {
  */
     
     public static URL toURL(String filename) throws MalformedURLException {
-        if (filename.startsWith("file:/") || filename.startsWith("http://")) {
-            return new URL(filename);
-        }
         File f = new File(filename);
         String path = f.getAbsolutePath();
         if (File.separatorChar != '/') {
@@ -861,5 +960,45 @@ public abstract class Image extends Rectangle implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.IMAGE.equals(tag);
+    }
+    
+/**
+ * Returns a representation of this <CODE>Rectangle</CODE>.
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        if (url == null) {
+            return "";
+        }
+        StringBuffer buf = new StringBuffer("<").append(ElementTags.IMAGE).append(" ").append(ElementTags.URL).append("=\"");
+        buf.append(url.toString()).append("\"");
+        if ((alignment & LEFT) > 0) {
+            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_LEFT).append("\"");
+        }
+        else if ((alignment & RIGHT) > 0) {
+            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_RIGHT).append("\"");
+        }
+        else if ((alignment & MIDDLE) > 0) {
+            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_MIDDLE).append("\"");
+        }
+        if ((alignment & UNDERLYING) > 0) {
+            buf.append(" ").append(ElementTags.UNDERLYING).append("=\"").append(true).append("\"");
+        }
+        if ((alignment & TEXTWRAP) > 0) {
+            buf.append(" ").append(ElementTags.TEXTWRAP).append("=\"").append(true).append("\"");
+        }
+        if (alt != null) {
+            buf.append(" ").append(ElementTags.ALT).append("=\"").append(alt).append("\"");
+        }
+        if (hasAbsolutePosition()) {
+            buf.append(" ").append(ElementTags.ABSOLUTEX).append("=\"").append(absoluteX).append("\"");
+            buf.append(" ").append(ElementTags.ABSOLUTEY).append("=\"").append(absoluteY).append("\"");
+        }
+        buf.append(" ").append(ElementTags.PLAINWIDTH).append("=\"").append(plainWidth).append("\"");
+        buf.append(" ").append(ElementTags.PLAINHEIGHT).append("=\"").append(plainHeight).append("\"");
+        buf.append(" />");
+        return buf.toString();
     }
 }

@@ -1,8 +1,9 @@
 /*
- * $Id$
- * $Name$
+ * @(#)PdfImage.java				0.36 2000/09/10
+ *               iText0.35*:		0.35* 2000/08/21
+ *               iText0.36:			0.36 2000/09/10
  *
- * Copyright 1999, 2000, 2001 by Bruno Lowagie.
+ * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -62,22 +63,28 @@ import java.io.IOException;
 
 /**
  * <CODE>PdfImage</CODE> is a <CODE>PdfStream</CODE> containing an image-<CODE>Dictionary</CODE> and -stream.
+ *
+ * @author  bruno@lowagie.com
+ * @version 0.36 2000/08/21
+ * @since   iText0.31
  */
 
 class PdfImage extends PdfStream {
     
     // membervariables
     
-/** This is the <CODE>PdfName</CODE> of the image. */
+    /** This is the <CODE>PdfName</CODE> of the image. */
     protected PdfName name = null;
     
     // constructor
     
-/**
- * Constructs a <CODE>PdfImage</CODE>-object.
- *
- * @param		Image		the <CODE>Image</CODE>-object
- */
+    /**
+     * Constructs a <CODE>PdfImage</CODE>-object.
+     *
+     * @param		Image		the <CODE>Image</CODE>-object
+     *
+     * @since		iText0.31
+     */
     
     public PdfImage(Image image, String name) throws BadPdfFormatException {
         super();
@@ -100,8 +107,8 @@ class PdfImage extends PdfStream {
                         dictionary.put(PdfName.COLORSPACE, PdfName.DEVICERGB);
                         break;
                     case 4:
-                        default:
-                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+                    default:
+                        dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
                 }
                 dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
                 int transparency[] = image.getTransparency();
@@ -266,8 +273,8 @@ class PdfImage extends PdfStream {
                         case 3:
                             dictionary.put(PdfName.COLORSPACE, PdfName.DEVICERGB);
                             break;
-                            default:
-                                dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+                        default:
+                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
                     }
                     dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(8));
                     while ((i = is.read()) >= 0) {
@@ -417,8 +424,8 @@ class PdfImage extends PdfStream {
                         throw new BadPdfFormatException(errorID + " is not a supported GIF-file (unexpected end of data block).");
                     }
                     break;
-                    default:
-                        throw new BadPdfFormatException(errorID + " is an unknown Image format.");
+                default:
+                    throw new BadPdfFormatException(errorID + " is an unknown Image format.");
             }
             bytes = stream.toByteArray();
             dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
@@ -437,11 +444,13 @@ class PdfImage extends PdfStream {
         }
     }
     
-/**
- * Returns the <CODE>PdfName</CODE> of the image.
- *
- * @return		the name
- */
+    /**
+     * Returns the <CODE>PdfName</CODE> of the image.
+     *
+     * @return		the name
+     *
+     * @since		iText0.31
+     */
     
     public final PdfName name() {
         return name;

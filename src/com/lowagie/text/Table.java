@@ -238,7 +238,7 @@ public class Table extends Rectangle implements Element {
  * @return	a <CODE>Table</CODE>
  */
     
-    public Table(Properties attributes) {
+    public Table(Properties attributes) throws BadElementException {
         // a Rectangle is create with BY DEFAULT a border with a width of 1
         super(0, 0, 0, 0);
         setBorder(BOX);
@@ -246,13 +246,12 @@ public class Table extends Rectangle implements Element {
         
         String value = attributes.getProperty(ElementTags.COLUMNS);
         if (value == null) {
-            columns = 1;
+            throw new BadElementException("You have to tell the table how many columns you need.");
         }
-        else {
-            columns = Integer.parseInt(value);
-            if (columns <= 0) {
-                columns = 1;
-            }
+        
+        columns = Integer.parseInt(value);
+        if (columns <= 0) {
+            throw new BadElementException("A table should have at least 1 column.");
         }
         
         rows.add(new Row(columns));
@@ -272,23 +271,22 @@ public class Table extends Rectangle implements Element {
         }
         if ((value = attributes.getProperty(ElementTags.WIDTH)) != null) {
             if (value.endsWith("%"))
-                setWidth(Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue());
+                setWidth(Integer.parseInt(value.substring(0, value.length() - 1)));
             else
                 setAbsWidth(value);
         }
         widths = new float[columns];
         for (int i = 0; i < columns; i++) {
-            widths[i] = 0;
+            widths[i] = 1;
         }
         if ((value = attributes.getProperty(ElementTags.WIDTHS)) != null) {
             StringTokenizer widthTokens = new StringTokenizer(value, ";");
             int i = 0;
-            while (widthTokens.hasMoreTokens()) {
+            while (widthTokens.hasMoreTokens() && i < columns) {
                 value = (String) widthTokens.nextToken();
                 widths[i] = Float.valueOf(value + "f").floatValue();
                 i++;
             }
-            columns = i;
         }
         if ((value = attributes.getProperty(ElementTags.BORDERWIDTH)) != null) {
             setBorderWidth(Float.valueOf(value + "f").floatValue());
@@ -307,36 +305,19 @@ public class Table extends Rectangle implements Element {
             if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
         }
         setBorder(border);
-        String r = null;
-        String g = null;
-        String b = null;
-        if ((r = attributes.getProperty(ElementTags.RED)) != null ||
-        (g = attributes.getProperty(ElementTags.GREEN)) != null ||
-        (b = attributes.getProperty(ElementTags.BLUE)) != null) {
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            if (r != null) red = Integer.parseInt(r);
-            if (g != null) green = Integer.parseInt(g);
-            if (b != null) blue = Integer.parseInt(b);
-            setBorderColor(new Color(red, green, blue));
+        if (attributes.getProperty(ElementTags.RED) != null &&
+        attributes.getProperty(ElementTags.GREEN) != null &&
+        attributes.getProperty(ElementTags.BLUE) != null) {
+            setBorderColor(new Color(Integer.parseInt(attributes.getProperty(ElementTags.RED)),
+            Integer.parseInt(attributes.getProperty(ElementTags.GREEN)),
+            Integer.parseInt(attributes.getProperty(ElementTags.BLUE))));
         }
-        else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
-            setBorderColor(ElementTags.decodeColor(value));
-        }
-        if ((r = attributes.getProperty(ElementTags.BGRED)) != null ||
-        (g = attributes.getProperty(ElementTags.BGGREEN)) != null ||
-        (b = attributes.getProperty(ElementTags.BGBLUE)) != null) {
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            if (r != null) red = Integer.parseInt(r);
-            if (g != null) green = Integer.parseInt(g);
-            if (b != null) blue = Integer.parseInt(b);
-            setBackgroundColor(new Color(red, green, blue));
-        }
-        else if ((value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR)) != null) {
-            setBackgroundColor(ElementTags.decodeColor(value));
+        if (attributes.getProperty(ElementTags.BGRED) != null &&
+        attributes.getProperty(ElementTags.BGGREEN) != null &&
+        attributes.getProperty(ElementTags.BGBLUE) != null) {
+            setBackgroundColor(new Color(Integer.parseInt(attributes.getProperty(ElementTags.BGRED)),
+            Integer.parseInt(attributes.getProperty(ElementTags.BGGREEN)),
+            Integer.parseInt(attributes.getProperty(ElementTags.BGBLUE))));
         }
         if ((value = attributes.getProperty(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
@@ -440,15 +421,11 @@ public class Table extends Rectangle implements Element {
  * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>.
  *
  * @param       cell         a <CODE>Cell</CODE>
+ * @throws      BadElementException this should never happen
  */
     
-    public final void addCell(Cell cell) {
-        try {
-            addCell(cell, new Point(currentRow, currentColumn));
-        }
-        catch(BadElementException bee) {
-            // don't add the cell
-        }
+    public final void addCell(Cell cell) throws BadElementException {
+        addCell(cell, new Point(currentRow, currentColumn));
     }
     
 /**
@@ -868,16 +845,6 @@ public class Table extends Rectangle implements Element {
     // methods to retrieve the membervariables
     
 /**
- * Gets the number of columns.
- *
- * @return	a value
- */
-    
-    public final int columns() {
-        return columns;
-    }
-    
-/**
  * Gets the number of rows in this <CODE>Table</CODE>.
  *
  * @return      the number of rows in this <CODE>Table</CODE>
@@ -885,16 +852,6 @@ public class Table extends Rectangle implements Element {
     
     public final int size() {
         return rows.size();
-    }
-    
-/**
- * Gets the proportional widths of the columns in this <CODE>Table</CODE>.
- *
- * @return      the proportional widths of the columns in this <CODE>Table</CODE>
- */
-    
-    public final float[] getProportionalWidths() {
-        return widths;
     }
     
 /**
@@ -1042,7 +999,7 @@ public class Table extends Rectangle implements Element {
         }
         
         if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) ) {       // NO ADJUSTMENT
-            // ** WIDTH
+             // ** WIDTH
             // set correct width for new columns
             // divide width over new nr of columns
             lNewWidths = new float [lTotalColumns];
@@ -1206,7 +1163,7 @@ public class Table extends Rectangle implements Element {
         row.addElement(aCell, aPosition.y);
         
     }
-    
+
 /**
  * Checks if there are no rowspan difficulties in the table.
  * <P>
@@ -1257,41 +1214,6 @@ public class Table extends Rectangle implements Element {
                 addCell(new Cell(new Paragraph(" ")), new Point(i, columns-1));
             }
         }
-    }
-    
-/**
- * Gives you the posibility to add columns.
- *
- * @param   aColumns    the number of columns to add
- */
-    
-    public void addColumns(int aColumns) {
-        ArrayList newRows = new ArrayList(rows.size());
-        
-        int newColumns = columns + aColumns;
-        Row row;
-        for (int i = 0; i < rows.size(); i++) {
-            row = new Row(newColumns);
-            for (int j = 0; j < columns; j++) {
-                row.setElement(((Row) rows.get(i)).getCell(j) ,j);
-            }
-            for (int j = columns; j < newColumns && i < currentRow; j++) {
-                row.setElement(Cell.EMPTY_CELL, j);
-            }
-            newRows.add(row);
-        }
-        
-        // applied 1 column-fix; last column needs to have a width of 0
-        float [] newWidths = new float[newColumns];
-        for (int j = 0; j < columns; j++) {
-            newWidths[j] = widths[j];
-        }
-        for (int j = columns; j < newColumns ; j++) {
-            newWidths[j] = 0;
-        }
-        columns = newColumns;
-        widths = newWidths;
-        rows = newRows;
     }
     
 /**
@@ -1424,5 +1346,43 @@ public class Table extends Rectangle implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.TABLE.equals(tag);
+    }
+    
+/**
+ * Returns a representation of this <CODE>Row</CODE>.
+ *
+ * @return      a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        StringBuffer buf = new StringBuffer("<").append(ElementTags.TABLE).append(" ").append(ElementTags.WIDTH).append("=\"");
+        if (!absWidth.equals("")){
+            buf.append(absWidth);
+        }
+        else{
+            buf.append(widthPercentage).append("%");
+        }
+        buf.append("\" ").append(ElementTags.ALIGN).append("=\"");
+        buf.append(ElementTags.getAlignment(alignment));
+        buf.append("\" ").append(ElementTags.CELLPADDING).append("=\"");
+        buf.append(cellpadding);
+        buf.append("\" ").append(ElementTags.CELLSPACING).append("=\"");
+        buf.append(cellspacing);
+        buf.append("\" ").append(ElementTags.WIDTHS).append("s=\"");
+        buf.append(widths[0]);
+        for (int i = 1; i < widths.length; i++) {
+            buf.append(";");
+            buf.append(widths[i]);
+        }
+        buf.append("\"");
+        buf.append(super.toString());
+        buf.append(">\n");
+        Row row;
+        for (Iterator iterator = rows.iterator(); iterator.hasNext(); ) {
+            row = (Row) iterator.next();
+            buf.append(row.toString());
+        }
+        buf.append("</").append(ElementTags.TABLE).append(">\n");
+        return buf.toString();
     }
 }

@@ -1,77 +1,44 @@
 /*
- * $Id$
- * $Name$
+ * BaseFont.java
  *
- * Copyright 2000, 2001 by Paulo Soares.
- *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or any
- * later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
- * details.
- *
- * You should have received a copy of the GNU Library General Public License along
- * with this library; if not, write to the Free Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA.
- *
- * If you didn't download this code from the following link, you should check if
- * you aren't using an obsolete version:
- * http://www.lowagie.com/iText/
- *
- * ir-arch Bruno Lowagie,
- * Adolf Baeyensstraat 121
- * 9040 Sint-Amandsberg
- * BELGIUM
- * tel. +32 (0)9 228.10.97
- * bruno@lowagie.com
- *
+ * Created on March 10, 2001, 7:07 PM
  */
-
 package com.lowagie.text.pdf;
 import java.io.*;
 import com.lowagie.text.DocumentException;
 import java.util.HashMap;
-
-/**
- * Base class for the several font types supported
+/** Base class for the several font types supported
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
-
-public abstract class BaseFont {
-    
-/** a not defined character in a custom PDF encoding */
+public abstract class BaseFont
+{
+/** a not defined character in a custom PDF encoding
+ */    
     public final static String notdef = new String(".notdef");
-    
-/** table of characters widths for this encoding */
+/** table of characters widths for this encoding
+ */    
     protected int widths[] = new int[256];
-    
-/** encoding names */
+/** encoding names
+ */    
     protected String differences[] = new String[256];
-    
-/** encoding used with this font */
+/** encoding used with this font
+ */    
     protected String encoding;
-    
-/** true if the font is to be embedded in the PDF */
+/** true if the font is to be embedded in the PDF
+ */    
     protected boolean embedded;
-    
-/**
- * true if the font must use it's built in encoding. In that case the
+/** true if the font must use it's built in encoding. In that case the
  * <CODE>encoding</CODE> is only used to map a char to the position inside
  * the font, not to the expected char name.
- */
+ */    
     protected boolean fontSpecific = true;
-    
-/** cache for the fonts already used. */
+/** cache for the fonts already used.
+ */    
     protected static HashMap fontCache = new HashMap();
-    
-/** list of the 14 built in fonts. */
+/** list of the 14 built in fonts.
+ */    
     protected static final HashMap BuiltinFonts14 = new HashMap();
-    
     static
     {
         BuiltinFonts14.put("Courier", PdfName.COURIER);
@@ -89,16 +56,16 @@ public abstract class BaseFont {
         BuiltinFonts14.put("Times-Italic", PdfName.TIMES_ITALIC);
         BuiltinFonts14.put("ZapfDingbats", PdfName.ZAPFDINGBATS);
     }
-    
-    class StreamFont extends PdfStream {
-        
-/**
- * Generates the PDF stream with the Type1 and Truetype fonts returning
+/** An helper to generate a PdfStream.
+ */    
+    class StreamFont extends PdfStream
+    {
+/** Generates the PDF stream with the Type1 and Truetype fonts returning
  * a PdfStream.
  * @param contents the content of the stream
  * @param lengths an array of int that describes the several lengths of each part of the font
  * @throws DocumentException error in the stream compression
- */
+ */        
         public StreamFont(byte contents[], int lengths[]) throws DocumentException
         {
             try {
@@ -114,15 +81,10 @@ public abstract class BaseFont {
             }
         }
     }
-    
-/**
- *Creates new BaseFont
- */
+    /** Creates new BaseFont */
     protected BaseFont() {
     }
-    
-/**
- * Creates a new font. This font can be one of the 14 built in types,
+/** Creates a new font. This font can be one of the 14 built in types,
  * a Type1 font referred by an AFM file, a TrueType font or a CJK font from the
  * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier
  * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
@@ -137,7 +99,7 @@ public abstract class BaseFont {
  * @return returns a new font. This font may come from the cache
  * @throws DocumentException the font is invalid
  * @throws IOException the font file could not be read
- */
+ */    
     public static BaseFont createFont(String name, String encoding, boolean embedded) throws DocumentException, IOException
     {
         String nameBase = getBaseName(name);
@@ -168,20 +130,19 @@ public abstract class BaseFont {
             fontFound = (BaseFont)fontCache.get(key);
             if (fontFound != null)
                 return fontFound;
-            fontCache.put(key, fontBuilt);
+            fontCache.put(key, fontBuilt);            
         }
         return fontBuilt;
     }
     
-/**
- * Gets the name without the modifiers Bold, Italic or BoldItalic.
- * @return the name without the modifiers Bold, Italic or BoldItalic
- */
+    /** Gets the name without the modifiers Bold, Italic or BoldItalic.
+     * @return the name without the modifiers Bold, Italic or BoldItalic
+     */
     protected static String getBaseName(String name)
     {
         if (name.endsWith(",Bold"))
             return name.substring(0, name.length() - 5);
-        else if (name.endsWith(",Italic"))
+        else if (name.endsWith(",Italic")) 
             return name.substring(0, name.length() - 7);
         else if (name.endsWith(",BoldItalic"))
             return name.substring(0, name.length() - 11);
@@ -189,12 +150,11 @@ public abstract class BaseFont {
             return name;
     }
     
-/**
- * Normalize the encoding names. "winansi" is changed to "Cp1252" and
+/** Normalize the encoding names. "winansi" is changed to "Cp1252" and
  * "macroman" is changed to "MacRoman".
  * @param enc the encoding to be normalized
  * @return the normalized encoding
- */
+ */    
     protected static String normalizeEncoding(String enc)
     {
         if (enc.equals("winansi") || enc.equals(""))
@@ -205,67 +165,65 @@ public abstract class BaseFont {
             return enc;
     }
     
-/**
- * Creates the <CODE>widths</CODE> and the <CODE>differences</CODE> arrays
+/** Creates the <CODE>widths</CODE> and the <CODE>differences</CODE> arrays
  * @throws UnsupportedEncodingException the encoding is not supported
- */
+ */    
     protected void createEncoding() throws UnsupportedEncodingException
     {
-        byte b[] = new byte[256];
-        for (int k = 0; k < 256; ++k)
-        {
-            b[k] = (byte)(k);
-        }
         if (fontSpecific) {
             for (int k = 0; k < 256; ++k)
                 widths[k] = getRawWidth(k, null);
         }
         else {
-            String s = new String(b, encoding);
+            String s;
+            String name;
+            char c;
+            byte b[] = new byte[1];
             for (int k = 0; k < 256; ++k)
             {
-                char c = s.charAt(k);
-                String name = GlyphList.unicodeToName((int)c);
+                b[0] = (byte)k;
+                s = new String(b, encoding);
+                if (s.length() > 0)
+                    c = s.charAt(0);
+                else
+                    c = '?';
+                name = GlyphList.unicodeToName((int)c);
                 if (name == null)
                     name = notdef;
                 differences[k] = name;
                 widths[k] = getRawWidth((int)c, name);
             }
-        }
+        }    
     }
     
-/**
- * Gets the width from the font according to the Unicode char <CODE>c</CODE>
+/** Gets the width from the font according to the Unicode char <CODE>c</CODE>
  * or the <CODE>name</CODE>. If the <CODE>name</CODE> is null it's a symbolic font.
  * @param c the unicode char
  * @param name the glyph name
  * @return the width of the char
- */
+ */    
     protected abstract int getRawWidth(int c, String name);
     
-/**
- * Gets the kerning between two Unicode chars.
+/** Gets the kerning between two Unicode chars.
  * @param char1 the first char
  * @param char2 the second char
  * @return the kerning to be applied
- */
+ */    
     public abstract int getKerning(char char1, char char2);
     
-/**
- * Gets the width of a <CODE>char</CODE> in normalized 1000 units.
+/** Gets the width of a <CODE>char</CODE> in normalized 1000 units.
  * @param char1 the unicode <CODE>char</CODE> to get the width of
  * @return the width in normalized 1000 units
- */
+ */    
     public int getWidth(char char1)
     {
         return getWidth(new String(new char[]{char1}));
     }
     
-/**
- * Gets the width of a <CODE>String</CODE> in normalized 1000 units.
+/** Gets the width of a <CODE>String</CODE> in normalized 1000 units.
  * @param text the <CODE>String</CODE> to get the witdth of
  * @return the width in normalized 1000 units
- */
+ */    
     public int getWidth(String text)
     {
         int total = 0;
@@ -279,36 +237,33 @@ public abstract class BaseFont {
         return total;
     }
     
-/**
- * Gets the width of a <CODE>String</CODE> in points.
+/** Gets the width of a <CODE>String</CODE> in points.
  * @param text the <CODE>String</CODE> to get the witdth of
  * @param fontSize the font size
  * @return the width in points
- */
+ */    
     public float getWidthPoint(String text, float fontSize)
     {
         return (float)getWidth(text) * 0.001f * fontSize;
     }
     
-/**
- * Gets the width of a <CODE>char</CODE> in points.
+/** Gets the width of a <CODE>char</CODE> in points.
  * @param char1 the <CODE>char</CODE> to get the witdth of
  * @param fontSize the font size
  * @return the width in points
- */
+ */    
     public float getWidthPoint(char char1, float fontSize)
     {
         return getWidth(char1) * 0.001f * fontSize;
     }
-    
-/**
- * Checks if a character can be used to split a <CODE>PdfString</CODE>.
- * <P>
- * for the moment every character less than or equal to SPACE and the character '-' are 'splitCharacters'.
- *
- * @param	c		the character that has to be checked
- * @return	<CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
- */
+	/**
+	 * Checks if a character can be used to split a <CODE>PdfString</CODE>.
+	 * <P>
+	 * for the moment every character less than or equal to SPACE and the character '-' are 'splitCharacters'.
+	 *
+	 * @param	c		the character that has to be checked
+	 * @return	<CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
+	 */
     public static boolean isSplitCharacter(char c)
     {
         if (c <= ' ') {
@@ -319,17 +274,16 @@ public abstract class BaseFont {
             case '-':
             case '\t':
                 return true;
-                default:
-                    return false;
+            default:
+                return false;
         }
     }
     
-/**
- * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
+/** Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
  * to the font's encoding.
  * @param text the <CODE>String</CODE> to be converted
  * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
- */
+ */    
     byte[] convertToBytes(String text)
     {
         try {
@@ -341,20 +295,18 @@ public abstract class BaseFont {
         }
     }
     
-/**
- * Generates the dictionary or stream required to represent the font.
+/** Generates the dictionary or stream required to represent the font.
  *  <CODE>index</CODE> will cycle from 0 to 2 with the next cycle beeing fed
  *  with the indirect reference from the previous cycle.
  * @param iobj an indirect reference to a Pdf object. May be null
  * @param index the type of object to generate. It may be 0, 1 or 2
  * @return the object requested
  * @throws DocumentException error in generating the object
- */
+ */    
     abstract PdfObject getFontInfo(PdfIndirectReference iobj, int index) throws DocumentException;
     
-/**
- * Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
- */
+/** Gets the encoding used to convert <CODE>String</CODE> into <CODE>byte[]</CODE>.
+ */    
     public String getEncoding()
     {
         return encoding;
