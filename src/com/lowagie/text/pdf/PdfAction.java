@@ -80,13 +80,20 @@ public class PdfAction extends PdfDictionary {
      */
     public static final int PRINTDIALOG = 5;
 
-    // constructors
+    /** a possible submitvalue */
     public static final int SUBMIT_EXCLUDE = 1;
+    /** a possible submitvalue */
     public static final int SUBMIT_INCLUDE_NO_VALUE_FIELDS = 2;
+    /** a possible submitvalue */
     public static final int SUBMIT_HTML_FORMAT = 4;
+    /** a possible submitvalue */
     public static final int SUBMIT_HTML_GET = 8;
+    /** a possible submitvalue */
     public static final int SUBMIT_COORDINATES = 16;
+    /** a possible submitvalue */
     public static final int RESET_EXCLUDE = 1;
+
+    // constructors
     
     /** Create an empty action.
      */    
@@ -103,6 +110,11 @@ public class PdfAction extends PdfDictionary {
         this(url.toExternalForm());
     }
     
+    /**
+     * Construct a new <CODE>PdfAction</CODE> of Subtype URI that is a Map.
+     * @param url
+     * @param isMap
+     */
     public PdfAction(URL url, boolean isMap) {
         this(url.toExternalForm(), isMap);
     }
@@ -116,6 +128,12 @@ public class PdfAction extends PdfDictionary {
     public PdfAction(String url) {
         this(url, false);
     }
+    
+    /**
+     * Construct a new <CODE>PdfAction</CODE> of Subtype URI that is a Map.
+     * @param url
+     * @param isMap
+     */
     
     public PdfAction(String url, boolean isMap) {
         put(PdfName.S, PdfName.URI);
@@ -228,7 +246,14 @@ public class PdfAction extends PdfDictionary {
         return new PdfAction(application, parameters, operation, defaultDir);
     }
     
-     /**Creates a Rendition action*/
+     /**Creates a Rendition action
+     * @param file
+     * @param fs
+     * @param mimeType
+     * @param ref
+     * @return
+     * @throws IOException
+     */
     public static PdfAction rendition(String file, PdfFileSpecification fs, String mimeType, PdfIndirectReference ref) throws IOException {
         PdfAction js = new PdfAction();
         js.put(PdfName.S, PdfName.RENDITION);
