@@ -715,6 +715,17 @@ public class Table extends Rectangle implements Element {
 	}
 
 	/**
+	 * Gets the table width (a percentage).
+	 *
+	 * @return	the table width
+	 * @author	Leslie Baski
+	 */
+
+	public int widthPercentage() {
+		return widthPercentage;
+	}
+
+	/**
 	 * Gets the first number of the row that doesn't contain headers.
 	 *
 	 * @return	a rownumber
