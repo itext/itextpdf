@@ -464,7 +464,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Changes the standardfont.
  *
- * @param standardFont  The font
+ * @param standardfont  The font
  */
     
     public void setStandardFont(Font standardfont) {

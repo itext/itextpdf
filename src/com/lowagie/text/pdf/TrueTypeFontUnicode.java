@@ -51,7 +51,6 @@
 package com.lowagie.text.pdf;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;

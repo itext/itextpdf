@@ -50,7 +50,7 @@ package com.lowagie.text;
  * 
  * A special-version of <CODE>LIST</CODE> whitch use greek-letters.
  * 
- * @see com.lowagie.List
+ * @see com.lowagie.text.List
  * @version 2003-06-22
  * @author Michael Niedermair
  */

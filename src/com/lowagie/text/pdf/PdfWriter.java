@@ -170,8 +170,6 @@ public class PdfWriter extends DocWriter {
         
         /**
          * Constructs a new <CODE>PdfBody</CODE>.
-         *
-         * @param	offset	the offset of the body
          */
         
         PdfBody(PdfWriter writer) {

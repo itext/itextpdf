@@ -152,7 +152,7 @@ public class PdfIndirectObject {
 /**
  * Writes eficiently to a stream
  *
- * @param out the stream to write to
+ * @param os the stream to write to
  * @throws IOException on write error
  */
     void writeTo(OutputStream os) throws IOException

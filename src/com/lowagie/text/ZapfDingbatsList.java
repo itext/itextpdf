@@ -50,7 +50,7 @@ package com.lowagie.text;
  * 
  * A special-version of <CODE>LIST</CODE> whitch use zapfdingbats-letters.
  * 
- * @see com.lowagie.List
+ * @see com.lowagie.text.List
  * @version 2003-06-22
  * @author Michael Niedermair
  */
@@ -75,9 +75,7 @@ public class ZapfDingbatsList extends List {
 	}
 
 	/**
-	 * set the char-number 
-	 * 
-	 * @param char-number
+	 * set the char-number
 	 */
 	public void setCharNumber(int zn) {
 		this.zn = zn;

@@ -152,9 +152,6 @@ class PdfChunk implements SplitCharacter{
  * Constructs a <CODE>PdfChunk</CODE>-object.
  *
  * @param string the content of the <CODE>PdfChunk</CODE>-object
- * @param font the <CODE>PdfFont</CODE>
- * @param attributes the metrics attributes
- * @param noStroke the non metric attributes
  */
     
     PdfChunk(String string, PdfChunk other) {
