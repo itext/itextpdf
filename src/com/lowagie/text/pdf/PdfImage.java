@@ -294,6 +294,7 @@ class PdfImage extends PdfStream {
                     dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(8));
                     if (image.rawData() != null){
                         bytes = image.rawData();
+                        streamBytes = null;
                         dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
                         return;
                     }
