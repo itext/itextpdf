@@ -1238,6 +1238,15 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     }
     
     /**
+     * Gets the last number of the rows that contain headers.
+     *  
+     * @return a rownumber
+     */
+    public int lastHeaderRow() {
+        return this.lastHeaderRow;
+    }
+    
+    /**
      * Gets the dimension of this table
      *
      * @return  dimension
