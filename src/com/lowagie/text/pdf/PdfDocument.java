@@ -1309,7 +1309,7 @@ class PdfDocument extends Document implements DocListener {
                     indentLeft(), indentRight(),
                     currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
                     
-                    boolean tableHasToFit = ((Table) element).hasToFitPageTable() ? table.bottom() > indentBottom() : false;
+                    boolean tableHasToFit = ((Table) element).hasToFitPageTable() ? table.bottom() < indentBottom() : false;
                     boolean cellsHaveToFit = ((Table) element).hasToFitPageCells();
                     
                     // drawing the table
@@ -1330,7 +1330,6 @@ class PdfDocument extends Document implements DocListener {
                                 currentRownumber = cell.rownumber();
                                 int cellCount = 0;
                                 boolean cellsFit = true;
-                                System.err.println(cell.bottom());
                                 while (cell.rownumber() == currentRownumber && cellsFit && iterator.hasNext()) {
                                     if (cell.bottom() < indentBottom()) {
                                         cellsFit = false;
@@ -1368,7 +1367,7 @@ class PdfDocument extends Document implements DocListener {
                                 iterator.remove();
                             }
                         }
-                        
+                        tableHasToFit = false;
                         // we paint the graphics of the table after looping through all the cells
                         if (cellsShown) {
                             Rectangle tablerec = new Rectangle(table);

@@ -156,6 +156,7 @@ public class Cell extends Rectangle implements TextElementArray {
     
     public Cell(boolean dummy) {
         this();
+        leading = 16;
         arrayList.add(new Paragraph(0));
     }
     
