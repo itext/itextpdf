@@ -80,11 +80,19 @@ public class RtfPhrase extends RtfElement {
      * Constant for phrase in a table indication
      */
     protected static final byte[] IN_TABLE = "\\intbl".getBytes();
+    /**
+     * Constant for the line spacing.
+     */
+    public static final byte[] LINE_SPACING = "\\sl".getBytes();
     
     /**
      * ArrayList containing the RtfChunks of this RtfPhrase
      */
     protected ArrayList chunks = new ArrayList();
+    /**
+     * The height of each line.
+     */
+    protected int lineLeading = 0; 
     
     /**
      * Constructs a new RtfPhrase for the RtfDocument with the given Phrase
@@ -97,6 +105,12 @@ public class RtfPhrase extends RtfElement {
         
         if(phrase == null) {
             return;
+        }
+        
+        if(phrase.leadingDefined()) {
+            this.lineLeading = (int) (phrase.leading() * RtfElement.TWIPS_FACTOR);
+        } else {
+            this.lineLeading = 0;
         }
         
         RtfFont phraseFont = new RtfFont(null, phrase.font());
@@ -125,6 +139,10 @@ public class RtfPhrase extends RtfElement {
             result.write(PARAGRAPH_DEFAULTS);
             if(inTable) {
                 result.write(IN_TABLE);
+            }
+            if(this.lineLeading > 0) {
+                result.write(LINE_SPACING);
+                result.write(intToByteArray(this.lineLeading));
             }
             for(int i = 0; i < chunks.size(); i++) {
                 result.write(((RtfBasicElement) chunks.get(i)).write());
