@@ -138,11 +138,11 @@ public class HtmlTagMap extends HashMap {
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.B);
-        peer.addValue(MarkupTags.CSS_MARKUPWEIGHT, MarkupTags.CSS_BOLD);
+        peer.addValue(MarkupTags.CSS_FONTWEIGHT, MarkupTags.CSS_BOLD);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.STRONG);
-        peer.addValue(MarkupTags.CSS_STYLE, MarkupTags.CSS_BOLD);
+        peer.addValue(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_BOLD);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.S);
