@@ -597,7 +597,7 @@ public class Table extends Rectangle implements Element {
  * @author Geert Poels  -  Geert.Poels@skynet.be
  */
     
-    public final void complete() throws BadElementException, DocumentException {
+    public final void complete() throws DocumentException {
         if (mTableInserted == true) {
             mergeInsertedTables();  // integrate tables in the table
             mTableInserted = false;
