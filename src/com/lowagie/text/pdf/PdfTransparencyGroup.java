@@ -72,7 +72,7 @@ public class PdfTransparencyGroup extends PdfDictionary {
     }
     
     /**
-     * Determining whather the objects within the stack are composited with one another or only with the group's backdrop.
+     * Determining whether the objects within the stack are composited with one another or only with the group's backdrop.
      * @param knockout
      */
     public void setKnockout(boolean knockout) {
