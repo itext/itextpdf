@@ -1071,7 +1071,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 writeImage(chunk.getImage(), out);
             } else {
                 writeInitialFontSignature(out, chunk);
-                out.write(filterSpecialChar(chunk.content()).getBytes());
+                out.write(filterSpecialChar(chunk.content(), false).getBytes());
                 writeFinishingFontSignature(out, chunk);
             }
         }
@@ -1696,7 +1696,6 @@ public class RtfWriter extends DocWriter implements DocListener {
     private boolean writeDocument() {
         try {
             writeDocumentIntro();
-            os.write((byte) '\n');
             writeFontList();
             os.write((byte) '\n');
             writeColorList();
@@ -1731,6 +1730,7 @@ public class RtfWriter extends DocWriter implements DocListener {
         os.write(escape);
         os.write(ansiCodepage);
         writeInt(os, 1252);
+        os.write((byte)'\n');
         os.write(escape);
         os.write(defaultFont);
         writeInt(os, 0);
@@ -2163,7 +2163,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @param str The original <code>String</code>
      * @return The converted String
      */
-    public final static String filterSpecialChar(String str) {
+    public final static String filterSpecialChar(String str, boolean useHex) {
         int length = str.length();
         int z = (int) 'z';
         StringBuffer ret = new StringBuffer(length);
@@ -2175,10 +2175,21 @@ public class RtfWriter extends DocWriter implements DocListener {
             } else if (ch == '\n') {
                 ret.append("\\par ");
             } else if (((int) ch) > z) {
-                ret.append("\\u").append((long) ch).append('?');
+                if(useHex) {
+                    ret.append("\\\'").append(Long.toHexString((long) ch));
+                } else {
+                    ret.append("\\u").append((long) ch).append('?');
+                }
             } else {
                 ret.append(ch);
             }
+        }
+        if(ret.indexOf("$newpage$") >= 0) {
+            String before = ret.substring(0, ret.indexOf("$newpage$"));
+            String after = ret.substring(ret.indexOf("$newpage$") + 9);
+            ret = new StringBuffer(before);
+            ret.append("\\page\\par ");
+            ret.append(after);
         }
         return ret.toString();
     }
