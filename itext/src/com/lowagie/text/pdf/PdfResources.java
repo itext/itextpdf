@@ -1,11 +1,8 @@
 /*
- * @(#)PdfResources.java			0.38 2000/10/06
- *       release rugPdf0.10:		0.03 99/03/30
- *               rugPdf0.20:		0.12 99/11/30
- *               iText0.3:			0.22 2000/02/14
- *               iText0.35:         0.22 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -31,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -52,38 +49,30 @@ package com.lowagie.text.pdf;
  * @see		PdfProcSet
  * @see		PdfFontDictionary
  * @see		PdfPage
- *
- * @author  bruno@lowagie.com
- * @version 0.38 2000/10/06
- * @since   rugPdf0.10
  */
 
 class PdfResources extends PdfDictionary {
-
-// constructor
-
-	/**
-	 * Constructs a PDF ResourcesDictionary.
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	PdfResources() {
-		super();
-	}
-
-// methods
-
-	/**
-	 * Adds a <CODE>PdfResource</CODE> to the ResourcesDictionary.
-	 *
-	 * @param		resource		a <CODE>PdfResource</CODE>
-	 * @return		<CODE>true</CODE>
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	PdfObject add(PdfResource resource) {
-		return put(resource.key(), resource.value());
-	}
+    
+    // constructor
+    
+/**
+ * Constructs a PDF ResourcesDictionary.
+ */
+    
+    PdfResources() {
+        super();
+    }
+    
+    // methods
+    
+/**
+ * Adds a <CODE>PdfResource</CODE> to the ResourcesDictionary.
+ *
+ * @param		resource		a <CODE>PdfResource</CODE>
+ * @return		<CODE>true</CODE>
+ */
+    
+    PdfObject add(PdfResource resource) {
+        return put(resource.key(), resource.value());
+    }
 }

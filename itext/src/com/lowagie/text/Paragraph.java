@@ -236,7 +236,7 @@ public class Paragraph extends Phrase implements TextElementArray {
         }
         else if (o instanceof Paragraph) {
             super.add(o);
-			super.add(Chunk.NEWLINE);
+            super.add(Chunk.NEWLINE);
             return true;
         }
         return super.add(o);

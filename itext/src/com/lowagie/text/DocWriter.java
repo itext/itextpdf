@@ -61,7 +61,7 @@ import com.lowagie.text.Watermark;
  */
 
 public abstract class DocWriter implements DocListener {
-        
+    
 /** This is some byte that is often used. */
     public static final byte NEWLINE = (byte)'\n';
     
@@ -380,7 +380,7 @@ public abstract class DocWriter implements DocListener {
  * @param   key     the name of an attribute
  * @param   value   the value of an attribute
  */
- 
+    
     protected void write(String key, String value)
     throws IOException {
         os.write(SPACE);
@@ -396,7 +396,7 @@ public abstract class DocWriter implements DocListener {
  *
  * @param   tag     the name of the tag
  */
- 
+    
     protected void writeStart(String tag)
     throws IOException {
         os.write(LT);
@@ -408,7 +408,7 @@ public abstract class DocWriter implements DocListener {
  *
  * @param   tag     the name of the tag
  */
- 
+    
     protected void writeEnd(String tag)
     throws IOException {
         os.write(LT);
@@ -423,7 +423,7 @@ public abstract class DocWriter implements DocListener {
  *
  * @param   tag     the name of the tag
  */
- 
+    
     protected void writeEnd()
     throws IOException {
         os.write(SPACE);

@@ -1,11 +1,8 @@
 /*
- * @(#)PdfResource.java				0.22 2000/02/02
- *       release rugPdf0.10:		0.02 99/03/29
- *               rugPdf0.20:		0.12 99/11/26
- *               iText0.3:			0.22 2000/02/14
- *               iText0.35:			0.22 2000/08/11
- * 															
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -31,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -42,33 +39,25 @@ package com.lowagie.text.pdf;
  * @see		PdfResources
  * @see		PdfProcSet
  * @see		PdfFontDictionary
- *
- * @author  bruno@lowagie.com
- * @version 0.22 2000/02/02
- * @since   rugPdf0.10
  */
 
 interface PdfResource {
-
-// methods
-
-	/**
-	 * Returns the name of a resource.
-	 *
-	 * @return		a <CODE>PdfName</CODE>.
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	public PdfName key();
-
-	/**
-	 * Returns the object that represents the resource.
-	 *
-	 * @return		a <CODE>PdfObject</CODE>
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	public PdfObject value();
+    
+    // methods
+    
+/**
+ * Returns the name of a resource.
+ *
+ * @return		a <CODE>PdfName</CODE>.
+ */
+    
+    public PdfName key();
+    
+/**
+ * Returns the object that represents the resource.
+ *
+ * @return		a <CODE>PdfObject</CODE>
+ */
+    
+    public PdfObject value();
 }

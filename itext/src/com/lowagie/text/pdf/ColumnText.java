@@ -38,7 +38,9 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Element;
 import com.lowagie.text.DocumentException;
-/** Formats text in a columnwise form. The text is bound
+
+/**
+ * Formats text in a columnwise form. The text is bound
  * on the left and on the right by a sequence of lines. This allows the column
  * to have any shape, not only rectangular.
  * <P>
@@ -57,84 +59,80 @@ import com.lowagie.text.DocumentException;
  * each time.
  * @author Paulo Soares (psoares@ip.pt)
  */
-public class ColumnText
-{
-/** Signals that there are no more text available.
- */    
+ 
+public class ColumnText {
+
+/** Signals that there are no more text available. */    
     public static final int NO_MORE_TEXT = 1;
-/** Signals that there is no more column.
- */    
+	
+/** Signals that there is no more column. */    
     public static final int NO_MORE_COLUMN = 2;
     
-/** The column is valid.
- */    
+/** The column is valid. */    
     protected static final int LINE_STATUS_OK = 0;
-/** The line is out outhe column limits.
- */    
+	
+/** The line is out outhe column limits. */    
     protected static final int LINE_STATUS_OFFLIMITS = 1;
-/** The line cannot fit this column position.
- */    
+	
+/** The line cannot fit this column position. */    
     protected static final int LINE_STATUS_NOLINE = 2;
     
-/** Upper bound of the column.
- */    
+/** Upper bound of the column. */    
     protected float maxY;
-/** Lower bound of the column.
- */    
+	
+/** Lower bound of the column. */    
     protected float minY;
-/** The column alignment. Default is left alignment.
- */    
+	
+/** The column alignment. Default is left alignment. */    
     protected int alignment = Element.ALIGN_LEFT;
-/** The left column bound.
- */    
+	
+/** The left column bound. */    
     protected ArrayList leftWall;
-/** The right column bound.
- */    
+	
+/** The right column bound. */    
     protected ArrayList rightWall;
-/** The chunks that form the text.
- */    
+	
+/** The chunks that form the text. */    
     protected ArrayList chunks = new ArrayList();
-/** The current y line location. Text will be written at this line minus
- * the leading.
- */    
+	
+/** The current y line location. Text will be written at this line minus the leading. */    
     protected float yLine;
-/** The leading for the current line.
- */    
+	
+/** The leading for the current line. */    
     protected float currentLeading = 16;
-/** The fixed text leading.
- */    
+	
+/** The fixed text leading. */    
     protected float fixedLeading = 16;
-/** The text leading that is multiplied by the biggest font
- * size in the line.
- */    
+	
+/** The text leading that is multiplied by the biggest font size in the line. */    
     protected float multipliedLeading = 0;
-/** The <CODE>PdfContent</CODE> where the text will be written to.
- */    
+	
+/** The <CODE>PdfContent</CODE> where the text will be written to. */    
     protected PdfContentByte text;
-/** The line status when trying to fit a line to a column.
- */    
+	
+/** The line status when trying to fit a line to a column. */    
     protected int lineStatus;
-/** The first paragraph line indent.
- */    
+	
+/** The first paragraph line indent. */    
     protected float indent = 0;
-/** The extra space between paragraphs.
- */    
+	
+/** The extra space between paragraphs. */    
     protected float extraParagraphSpace = 0;
-/** Marks the chunks to be eliminated when the line is written.
- */    
+	
+/** Marks the chunks to be eliminated when the line is written. */    
     protected int currentChunkMarker = -1;
-/** The chunk created by the splitting.
- */    
+	
+/** The chunk created by the splitting. */    
     protected PdfChunk currentStandbyChunk;
-/** The chunk created by the splitting.
- */    
+	
+/** The chunk created by the splitting. */    
     protected String splittedChunkText;
     
-/** The width of the line when the column is defined as a simple rectangle.
- */    
+/** The width of the line when the column is defined as a simple rectangle. */    
     protected float rectangularWidth = -1;
     
-/** Creates a <CODE>ColumnText</CODE>.
+/**
+ * Creates a <CODE>ColumnText</CODE>.
  * @param text the place where the text will be written to. Can
  * be a template.
  */    
@@ -143,7 +141,8 @@ public class ColumnText
         this.text = text;
     }
     
-/** Adds a <CODE>Phrase</CODE> to the current text array.
+/**
+ * Adds a <CODE>Phrase</CODE> to the current text array.
  * @param phrase the text
  */    
     public void addText(Phrase phrase)
@@ -154,7 +153,8 @@ public class ColumnText
         }
     }
     
-/** Adds a <CODE>Chunk</CODE> to the current text array.
+/**
+ * Adds a <CODE>Chunk</CODE> to the current text array.
  * @param chunk the text
  */    
     public void addText(Chunk chunk)
@@ -162,7 +162,8 @@ public class ColumnText
         chunks.add(new PdfChunk(chunk, null));
     }
     
-/** Converts a sequence of lines representing one of the column bounds into
+/**
+ * Converts a sequence of lines representing one of the column bounds into
  * an internal format.
  * <p>
  * Each array element will contain a <CODE>float[4]</CODE> representing
@@ -199,7 +200,8 @@ public class ColumnText
         return cc;
     }
     
-/** Finds the intersection between the <CODE>yLine</CODE> and the column. It will
+/**
+ * Finds the intersection between the <CODE>yLine</CODE> and the column. It will
  * set the <CODE>lineStatus</CODE> apropriatly.
  * @param wall the column to intersect
  * @return the x coordinate of the intersection
@@ -221,7 +223,8 @@ public class ColumnText
         return 0;
     }
     
-/** Finds the intersection between the <CODE>yLine</CODE> and the two
+/**
+ * Finds the intersection between the <CODE>yLine</CODE> and the two
  * column bounds. It will set the <CODE>lineStatus</CODE> apropriatly.
  * @return a <CODE>float[2]</CODE>with the x coordinates of the intersection
  */    
@@ -238,7 +241,8 @@ public class ColumnText
         }
     }
     
-/** Finds the intersection between the <CODE>yLine</CODE>,
+/**
+ * Finds the intersection between the <CODE>yLine</CODE>,
  * the <CODE>yLine-leading</CODE>and the two
  * column bounds. It will set the <CODE>lineStatus</CODE> apropriatly.
  * @return a <CODE>float[4]</CODE>with the x coordinates of the intersection
@@ -266,7 +270,8 @@ public class ColumnText
         }
     }
     
-/** Sets the columns bounds. Each column bound is described by a
+/**
+ * Sets the columns bounds. Each column bound is described by a
  * <CODE>float[]</CODE> with the line points [x1,y1,x2,y2,...].
  * The array must have at least 4 elements.
  * @param leftLine the left column bound
@@ -279,7 +284,8 @@ public class ColumnText
         rectangularWidth = -1;
     }
     
-/** Simplified method for rectangular columns.
+/**
+ * Simplified method for rectangular columns.
  * @param phrase a <CODE>Phrase</CODE>
  * @param llx the lower left x corner
  * @param lly the lower left y corner
@@ -294,7 +300,8 @@ public class ColumnText
         setSimpleColumn(llx, lly, urx, ury, leading, alignment);
     }
     
-/** Simplified method for rectangular columns.
+/**
+ * Simplified method for rectangular columns.
  * @param llx the lower left x corner
  * @param lly the lower left y corner
  * @param urx the upper right x corner
@@ -321,7 +328,8 @@ public class ColumnText
         rectangularWidth = Math.abs(llx - urx);
     }
     
-/** Sets the leading to fixed
+/**
+ * Sets the leading to fixed
  * @param leading the leading
  */    
     public void setLeading(float leading)
@@ -330,7 +338,8 @@ public class ColumnText
         multipliedLeading = 0;
     }
     
-/** Sets the leading fixed and variable. The resultant leading will be
+/**
+ * Sets the leading fixed and variable. The resultant leading will be
  * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
  * size of the bigest font in the line.
  * @param fixedLeading the fixed leading
@@ -342,7 +351,8 @@ public class ColumnText
         this.multipliedLeading = multipliedLeading;
     }
     
-/** Gets the fixed leading
+/**
+ * Gets the fixed leading
  * @return the leading
  */    
     public float getLeading()
@@ -350,7 +360,8 @@ public class ColumnText
         return fixedLeading;
     }
     
-/** Gets the variable leading
+/**
+ * Gets the variable leading
  * @return the leading
  */    
     public float getMultipliedLeading()
@@ -358,14 +369,17 @@ public class ColumnText
         return multipliedLeading;
     }
     
-/** Sets the yLine. The line will be written to yLine-leading.
+/**
+ * Sets the yLine. The line will be written to yLine-leading.
  * @param yLine the yLine
  */    
     public void setYLine(float yLine)
     {
         this.yLine = yLine;
     }
-/** Gets the yLine.
+	
+/**
+ * Gets the yLine.
  * @return the yLine
  */    
     public float getYLine()
@@ -373,7 +387,8 @@ public class ColumnText
         return yLine;
     }
     
-/** Sets the alignment.
+/**
+ * Sets the alignment.
  * @param alignment the alignment
  */    
     public void setAlignment(int alignment)
@@ -381,7 +396,8 @@ public class ColumnText
         this.alignment = alignment;
     }
     
-/** Gets the alignment.
+/**
+ * Gets the alignment.
  * @return the alignment
  */    
     public int getAlignment()
@@ -389,7 +405,8 @@ public class ColumnText
         return alignment;
     }
     
-/** Sets the first paragraph line indent.
+/**
+ * Sets the first paragraph line indent.
  * @param indent the indent
  */    
     public void setIndent(float indent)
@@ -397,7 +414,8 @@ public class ColumnText
         this.indent = indent;
     }
     
-/** Gets the first paragraph line indent.
+/**
+ * Gets the first paragraph line indent.
  * @return the indent
  */    
     public float getIndent()
@@ -405,7 +423,8 @@ public class ColumnText
         return indent;
     }
     
-/** Creates a line from the chunk array.
+/**
+ * Creates a line from the chunk array.
  * @param width the width of the line
  * @return the line or null if no more chunks
  */    
@@ -430,7 +449,8 @@ public class ColumnText
         return line;
     }
     
-/** Normalizes the list of chunks when the line is accepted.
+/**
+ * Normalizes the list of chunks when the line is accepted.
  */    
     protected void shortenChunkArray()
     {
@@ -446,7 +466,9 @@ public class ColumnText
         for (int j = currentChunkMarker - 1; j >= 0; --j)
             chunks.remove(j);
     }
-/** Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
+	
+/**
+ * Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
  * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
  * and/or <CODE>NO_MORE_COLUMN</CODE>
  * @throws DocumentException on error
@@ -456,7 +478,8 @@ public class ColumnText
         return go(false);
     }
     
-/** Outputs the lines to the document. The output can be simulated.
+/**
+ * Outputs the lines to the document. The output can be simulated.
  * @param simulate <CODE>true</CODE> to simulate the writting to the document
  * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
  * and/or <CODE>NO_MORE_COLUMN</CODE>
@@ -563,21 +586,24 @@ public class ColumnText
         return status;
     }
     
-/** Sets the extra space between paragraphs.
+/**
+ * Sets the extra space between paragraphs.
  * @return the extra space between paragraphs
  */    
     public float getExtraParagraphSpace() {
         return extraParagraphSpace;
     }
     
-/** Sets the extra space between paragraphs.
+/**
+ * Sets the extra space between paragraphs.
  * @param extraParagraphSpace the extra space between paragraphs
  */    
     public void setExtraParagraphSpace(float extraParagraphSpace) {
         this.extraParagraphSpace = extraParagraphSpace;
     }
     
-/** Clears the chunk array. A call to <CODE>go()</CODE> will always return
+/**
+ * Clears the chunk array. A call to <CODE>go()</CODE> will always return
  * NO_MORE_TEXT.
  */    
     public void clearChunks()

@@ -47,7 +47,7 @@ import java.io.*;
 public class Type1Font extends BaseFont
 {
 /** The Postscript font name.
- */    
+ */
     private String FontName;
 /** The full name of the font.
  */
@@ -110,7 +110,7 @@ public class Type1Font extends BaseFont
 /** A variable.
  */
     private int StdVW = 80;
-
+    
 /** Represents the section CharMetrics in the AFM file. Each
  *  element of this array contains a <CODE>Object[3]</CODE> with an
  *  Integer, Integer and String. This is the code, width and name.
@@ -124,7 +124,7 @@ public class Type1Font extends BaseFont
  */
     private HashMap KernPairs = new HashMap();
 /** The file in use.
- */    
+ */
     private String fileName;
 /** <CODE>true</CODE> if this font is one of the 14 built in fonts.
  */
@@ -133,14 +133,14 @@ public class Type1Font extends BaseFont
  *  They have to appear in the PFB file in this sequence.
  */
     private final static int pfbTypes[] = {1, 2, 1};
-
+    
 /** Creates a new Type1 font.
  * @param afmFile the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
  * @param enc the encoding to be applied to this font
  * @param emb true if the font is to be embedded in the PDF
  * @throws DocumentException the AFM file is invalid
  * @throws IOException the AFM file could not be read
- */    
+ */
     public Type1Font(String afmFile, String enc, boolean emb) throws DocumentException, IOException
     {
         encoding = enc;
@@ -241,7 +241,7 @@ public class Type1Font extends BaseFont
  * @param c the char if the font is symbolic
  * @param name the glyph name
  * @return the width of the char
- */    
+ */
     protected int getRawWidth(int c, String name)
     {
         try {
@@ -273,7 +273,7 @@ public class Type1Font extends BaseFont
  * @param char1 the first char
  * @param char2 the second char
  * @return the kerning to be applied
- */    
+ */
     public int getKerning(char char1, char char2)
     {
         String first = GlyphList.unicodeToName((int)char1);
@@ -294,10 +294,10 @@ public class Type1Font extends BaseFont
     
     
  /** Reads the font metrics
- * @param fin AFM file with the font metrics
- * @throws DocumentException the AFM file is invalid
- * @throws IOException the AFM file could not be read
-*/    
+  * @param fin AFM file with the font metrics
+  * @throws DocumentException the AFM file is invalid
+  * @throws IOException the AFM file could not be read
+  */
     public void process(BufferedReader fin) throws DocumentException, IOException
     {
         String line;
@@ -427,7 +427,7 @@ public class Type1Font extends BaseFont
                     KernPairs.put(first, relates2);
                 }
             }
-            else if (ident.equals("EndKernPairs")) 
+            else if (ident.equals("EndKernPairs"))
             {
                 isMetrics = false;
                 break;
@@ -437,13 +437,13 @@ public class Type1Font extends BaseFont
             throw new DocumentException("Missing EndKernPairs in " + fileName);
         fin.close();
     }
- 
+    
 /** If the embedded flag is <CODE>false</CODE> or if the font is
  *  one of the 14 built in types, it returns <CODE>null</CODE>,
  * otherwise the font is read and output in a PdfStream object.
  * @return the PdfStream containing the font or <CODE>null</CODE>
  * @throws DocumentException if there is an error reading the font
- */    
+ */
     private PdfStream getFontStream() throws DocumentException
     {
         if (builtinFont || !embedded)
@@ -489,13 +489,13 @@ public class Type1Font extends BaseFont
             }
         }
     }
-
+    
 /** Generates the font descriptor for this font or <CODE>null</CODE> if it is
  * one of the 14 built in fonts.
  * @param fontStream the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
  * @return the PdfDictionary containing the font descriptor or <CODE>null</CODE>
  * @throws DocumentException if there is an error
- */    
+ */
     private PdfDictionary getFontDescriptor(PdfIndirectReference fontStream) throws DocumentException
     {
         if (builtinFont)
@@ -524,13 +524,13 @@ public class Type1Font extends BaseFont
         
         return dic;
     }
-
+    
 /** Generates the font dictionary for this font.
  * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor
  *   or <CODE>null</CODE>
  * @return the PdfDictionary containing the font dictionary
  * @throws DocumentException if there is an error
- */    
+ */
     private PdfDictionary getFontType(PdfIndirectReference fontDescriptor) throws DocumentException
     {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
@@ -571,7 +571,7 @@ public class Type1Font extends BaseFont
             dic.put(new PdfName("FontDescriptor"), fontDescriptor);
         return dic;
     }
-
+    
 /** Generates the dictionary or stream required to represent the font.
  *  <CODE>index</CODE> will cycle from 0 to 2 with the next cycle beeing fed
  *  with the indirect reference from the previous cycle.
@@ -585,7 +585,7 @@ public class Type1Font extends BaseFont
  * @param index the type of object to generate. It may be 0, 1 or 2
  * @return the object requested
  * @throws DocumentException error in generating the object
- */    
+ */
     PdfObject getFontInfo(PdfIndirectReference iobj, int index) throws DocumentException
     {
         switch (index) {

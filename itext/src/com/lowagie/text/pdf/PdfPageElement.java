@@ -38,33 +38,25 @@ package com.lowagie.text.pdf;
  *
  * @see		PdfPage
  * @see		PdfPages
- *
- * @author  bruno@lowagie.com
- * @version 0.23 2000/02/02
- * @since   rugPdf0.10
  */
 
 interface PdfPageElement {
-
-	/**
-	 * Set the value for the <B>Parent</B> key in the Page or Pages Dictionary.
-	 *
-	 * @param	parent			an indirect reference to a <CODE>PdfPages</CODE>-object
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	rugPdf0.10
-	 */
-
-	public void setParent(PdfIndirectReference reference);
-
-	/**
-	 * Checks if this page element is a tree of pages.
-	 *
-	 * @return	<CODE>true</CODE> if it's a tree of pages;
-	 *			<CODE>false</CODE> if it's a single page
-	 *
-	 * @since	iText0.30
-	 */
-
-	public boolean isParent();
+    
+/**
+ * Set the value for the <B>Parent</B> key in the Page or Pages Dictionary.
+ *
+ * @param	parent			an indirect reference to a <CODE>PdfPages</CODE>-object
+ * @return	<CODE>void</CODE>
+ */
+    
+    public void setParent(PdfIndirectReference reference);
+    
+/**
+ * Checks if this page element is a tree of pages.
+ *
+ * @return	<CODE>true</CODE> if it's a tree of pages;
+ *			<CODE>false</CODE> if it's a single page
+ */
+    
+    public boolean isParent();
 }

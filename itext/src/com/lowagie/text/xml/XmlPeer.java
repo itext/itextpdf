@@ -42,15 +42,15 @@ import com.lowagie.text.ElementTags;
  * This interface is implemented by the peer of all the iText objects.
  *
  * @author  blowagie
- * @version 
+ * @version
  */
 
 public class XmlPeer {
-
-/** This is the name of the alias. */    
+    
+/** This is the name of the alias. */
     protected String tagname;
-
-/** This is the name of the alias. */    
+    
+/** This is the name of the alias. */
     protected String customTagname;
     
 /** This is the Map that contains the aliases of the attributes. */
@@ -77,7 +77,7 @@ public class XmlPeer {
     
     public String getTag() {
         return tagname;
-    }    
+    }
     
 /**
  * Gets the tagname of the peer.
@@ -113,7 +113,7 @@ public class XmlPeer {
     
     public void addAlias(String name, String alias) {
         attributeAliases.put(alias, name);
-    }    
+    }
     
 /**
  * Sets a value for an attribute.
@@ -124,7 +124,7 @@ public class XmlPeer {
     
     public void addValue(String name, String value) {
         attributeValues.put(name, value);
-    }    
+    }
     
 /**
  * Sets the default content.

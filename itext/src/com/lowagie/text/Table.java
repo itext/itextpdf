@@ -1041,7 +1041,7 @@ public class Table extends Rectangle implements Element {
         }
         
         if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) ) {       // NO ADJUSTMENT
-             // ** WIDTH
+            // ** WIDTH
             // set correct width for new columns
             // divide width over new nr of columns
             lNewWidths = new float [lTotalColumns];
@@ -1205,7 +1205,7 @@ public class Table extends Rectangle implements Element {
         row.addElement(aCell, aPosition.y);
         
     }
-
+    
 /**
  * Checks if there are no rowspan difficulties in the table.
  * <P>

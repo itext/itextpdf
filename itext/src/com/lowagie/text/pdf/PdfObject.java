@@ -1,11 +1,8 @@
 /*
- * @(#)PdfObject.java				0.23 2000/02/02
- *       release rugPdf0.10:		0.05 99/04/13
- *               rugPdf0.20:		0.18 99/11/30
- *               iText0.3:			0.23 2000/02/14
- *               iText0.35:         0.23 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -31,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *     
+ *
  * Very special thanks to Troy Harrison, Systems Consultant
  * of CNA Life Department-Information Technology
  * Troy.Harrison@cnalife.com <mailto:Troy.Harrison@cnalife.com>
@@ -61,144 +58,127 @@ import java.io.UnsupportedEncodingException;
  * @see		PdfDictionary
  * @see		PdfStream
  * @see		PdfIndirectReference
- *
- * @author  bruno@lowagie.com
- * @version 0.23 2000/02/02
- *
- * @since   rugPdf0.10
  */
 
 abstract class PdfObject {
-
-// static membervariables (all the possible types of a PdfObject)
-
-	/** a possible type of <CODE>PdfObject</CODE> */
-	static final int NULL = 0;
-
-	/** a possible type of <CODE>PdfObject</CODE> */
-	static final int BOOLEAN = 1; 
-
-	/** a possible type of <CODE>PdfObject</CODE> */
-	static final int NUMBER = 2; 
-
-	/** a possible type of <CODE>PdfObject</CODE> */
-	static final int STRING = 3; 
-
-	/** a possible type of <CODE>PdfObject</CODE> */
-	static final int NAME = 4; 
-
-	/** a possible type of <CODE>PdfObject</CODE> */
-	static final int ARRAY = 5; 
-
-	/** a possible type of <CODE>PdfObject</CODE> */
-	static final int DICTIONARY = 6; 
-
-	/** a possible type of <CODE>PdfObject</CODE> */
-	static final int STREAM = 7;
-						   
-	/** This is an empty string used for the <CODE>PdfNull</CODE>-object and for an empty <CODE>PdfString</CODE>-object. */
-	public static final String NOTHING = "";
-
-	/** This is the encoding to be used for transferring Strings into bytes and vice versa. */
-	public static final String ENCODING = "ISO8859_1";
-
-// membervariables
-
-	/** the content of this <CODE>PdfObject</CODE> */
-	protected byte[] bytes = new byte[0];
-
-	/** the type of this <CODE>PdfObject</CODE> */
-	protected int type;
-
-// constructors
-
-	/**
-	 * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> without any <VAR>content</VAR>.
-	 *
-	 * @param		type			type of the new <CODE>PdfObject</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	protected PdfObject(int type) {
-		this.type = type;
-	}
-
-	/**
-	 * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> with a certain <VAR>content</VAR>.
-	 *
-	 * @param		type			type of the new <CODE>PdfObject</CODE>
-	 * @param		content			content of the new <CODE>PdfObject</CODE> as a <CODE>String</CODE>.
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	protected PdfObject(int type, String content) {
-		try {
-			bytes = content.getBytes(ENCODING);
-		}
-		catch(UnsupportedEncodingException uee) {
-			bytes = content.getBytes();
-		}
-		this.type = type;
-	}
-
-	/**
-	 * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> with a certain <VAR>content</VAR>.
-	 *
-	 * @param		type			type of the new <CODE>PdfObject</CODE>
-	 * @param		bytes			content of the new <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>.
-	 *
-	 * @since		iText0.30
-	 */
-
-	protected PdfObject(int type, byte[] bytes) {
-		this.bytes = bytes;
-		this.type = type;
-	}
-
-// methods dealing with the content of this object
-
-	/**
-     * Returns the PDF representation of this <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>s.
-	 *
-	 * @return		an array of <CODE>byte</CODE>
-     *
-	 * @since		rugPdf0.10
-     */
-
+    
+    // static membervariables (all the possible types of a PdfObject)
+    
+/** a possible type of <CODE>PdfObject</CODE> */
+    static final int NULL = 0;
+    
+/** a possible type of <CODE>PdfObject</CODE> */
+    static final int BOOLEAN = 1;
+    
+/** a possible type of <CODE>PdfObject</CODE> */
+    static final int NUMBER = 2;
+    
+/** a possible type of <CODE>PdfObject</CODE> */
+    static final int STRING = 3;
+    
+/** a possible type of <CODE>PdfObject</CODE> */
+    static final int NAME = 4;
+    
+/** a possible type of <CODE>PdfObject</CODE> */
+    static final int ARRAY = 5;
+    
+/** a possible type of <CODE>PdfObject</CODE> */
+    static final int DICTIONARY = 6;
+    
+/** a possible type of <CODE>PdfObject</CODE> */
+    static final int STREAM = 7;
+    
+/** This is an empty string used for the <CODE>PdfNull</CODE>-object and for an empty <CODE>PdfString</CODE>-object. */
+    public static final String NOTHING = "";
+    
+/** This is the encoding to be used for transferring Strings into bytes and vice versa. */
+    public static final String ENCODING = "ISO8859_1";
+    
+    // membervariables
+    
+/** the content of this <CODE>PdfObject</CODE> */
+    protected byte[] bytes = new byte[0];
+    
+/** the type of this <CODE>PdfObject</CODE> */
+    protected int type;
+    
+    // constructors
+    
+/**
+ * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> without any <VAR>content</VAR>.
+ *
+ * @param		type			type of the new <CODE>PdfObject</CODE>
+ */
+    
+    protected PdfObject(int type) {
+        this.type = type;
+    }
+    
+/**
+ * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> with a certain <VAR>content</VAR>.
+ *
+ * @param		type			type of the new <CODE>PdfObject</CODE>
+ * @param		content			content of the new <CODE>PdfObject</CODE> as a <CODE>String</CODE>.
+ */
+    
+    protected PdfObject(int type, String content) {
+        try {
+            bytes = content.getBytes(ENCODING);
+        }
+        catch(UnsupportedEncodingException uee) {
+            bytes = content.getBytes();
+        }
+        this.type = type;
+    }
+    
+/**
+ * Constructs a <CODE>PdfObject</CODE> of a certain <VAR>type</VAR> with a certain <VAR>content</VAR>.
+ *
+ * @param		type			type of the new <CODE>PdfObject</CODE>
+ * @param		bytes			content of the new <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>.
+ */
+    
+    protected PdfObject(int type, byte[] bytes) {
+        this.bytes = bytes;
+        this.type = type;
+    }
+    
+    // methods dealing with the content of this object
+    
+/**
+ * Returns the PDF representation of this <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>s.
+ *
+ * @return		an array of <CODE>byte</CODE>
+ */
+    
     public byte[] toPdf() {
-		return bytes;
-    } 
-
-	/**
-	 * Returns the length of the PDF representation of the <CODE>PdfObject</CODE>.
-	 * <P>
-	 * In some cases, namely for <CODE>PdfString</CODE> and <CODE>PdfStream</CODE>,
-	 * this method differs from the method <CODE>length</CODE> because <CODE>length</CODE>
-	 * returns the length of the actual content of the <CODE>PdfObject</CODE>.</P>
-	 * <P>
-	 * Remark: the actual content of an object is in most cases identical to its representation.
-	 * The following statement is always true: length() &gt;= pdfLength().</P>
-	 *
-	 * @return		a length
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	final int pdfLength() {
-		return toPdf().length;
-	}
-
-	/**
-     * Returns the <CODE>String</CODE>-representation of this <CODE>PdfObject</CODE>.
-	 *
-	 * @return		a <CODE>String</CODE>
-     *
-	 * @since		rugPdf0.10
-     */
-
-	public String toString() {
+        return bytes;
+    }
+    
+/**
+ * Returns the length of the PDF representation of the <CODE>PdfObject</CODE>.
+ * <P>
+ * In some cases, namely for <CODE>PdfString</CODE> and <CODE>PdfStream</CODE>,
+ * this method differs from the method <CODE>length</CODE> because <CODE>length</CODE>
+ * returns the length of the actual content of the <CODE>PdfObject</CODE>.</P>
+ * <P>
+ * Remark: the actual content of an object is in most cases identical to its representation.
+ * The following statement is always true: length() &gt;= pdfLength().</P>
+ *
+ * @return		a length
+ */
+    
+    final int pdfLength() {
+        return toPdf().length;
+    }
+    
+/**
+ * Returns the <CODE>String</CODE>-representation of this <CODE>PdfObject</CODE>.
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
+    public String toString() {
         try {
             return new String(toPdf(), ENCODING);
         }
@@ -206,152 +186,130 @@ abstract class PdfObject {
             return new String(toPdf());
         }
     }
-
-	/**
-	 * Returns the length of the actual content of the <CODE>PdfObject</CODE>.
-	 * <P>
-	 * In some cases, namely for <CODE>PdfString</CODE> and <CODE>PdfStream</CODE>,
-	 * this method differs from the method <CODE>pdfLength</CODE> because <CODE>pdfLength</CODE>
-	 * returns the length of the PDF representation of the object, not of the actual content
-	 * as does the method <CODE>length</CODE>.</P>
-	 * <P>
-	 * Remark: the actual content of an object is in some cases identical to its representation.
-	 * The following statement is always true: length() &gt;= pdfLength().</P>
-	 *
-	 * @return		a length
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	public int length() {
-		return toString().length();
-	}
-
-	/**
-	 * Changes the content of this <CODE>PdfObject</CODE>.
-	 *
-	 * @param		content			the new content of this <CODE>PdfObject</CODE>
-	 * @return		<CODE>void</CODE>
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	protected void setContent(String content) {
-		try {
-			bytes = content.getBytes(ENCODING);
-		}
-		catch(UnsupportedEncodingException uee) {
-			bytes = content.getBytes();
-		}
-	}
-
-// methods dealing with the type of this object
-
-	/**
-	 * Returns the type of this <CODE>PdfObject</CODE>.
-	 *
-	 * @return		a type
-	 *
-	 * @since		rugPdf0.10
-	 */
-
-	final int type() {
-		return type;
-	}
-
-	/**
-	 * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfNull</CODE>.
-	 *
-	 * @returns		<CODE>true</CODE> or <CODE>false</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	public final boolean isNull() {
-		return (this.type == NULL);
-	}
-
-	/**
-	 * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfBoolean</CODE>.
-	 *
-	 * @returns		<CODE>true</CODE> or <CODE>false</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	 public final boolean isBoolean() {
-		return (this.type == BOOLEAN);
-	 }																		
-
-	/**
-	 * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfNumber</CODE>.
-	 *
-	 * @returns		<CODE>true</CODE> or <CODE>false</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	public final boolean isNumber() {
-		return (this.type == NUMBER);
-	}
-
-	/**
-	 * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfString</CODE>.
-	 *
-	 * @returns		<CODE>true</CODE> or <CODE>false</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	public final boolean isString() {
-		return (this.type == STRING);
-	}
-
-	/**
-	 * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfName</CODE>.
-	 *
-	 * @returns		<CODE>true</CODE> or <CODE>false</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	final boolean isName() {
-		return (this.type == NAME);
-	}			  
-
-	/**
-	 * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfArray</CODE>.
-	 *
-	 * @returns		<CODE>true</CODE> or <CODE>false</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	final boolean isArray() {
-		return (this.type == ARRAY);
-	}
-
-	/**
-	 * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfDictionary</CODE>.
-	 *
-	 * @returns		<CODE>true</CODE> or <CODE>false</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	final boolean isDictionary() {
-		return (this.type == DICTIONARY);
-	}		   
-
-	/**
-	 * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfStream</CODE>.
-	 *
-	 * @returns		<CODE>true</CODE> or <CODE>false</CODE>
-	 *
-	 * @since		rugPdf0.20
-	 */
-
-	final boolean isStream() {
-		return (this.type == STREAM);
-	}
+    
+/**
+ * Returns the length of the actual content of the <CODE>PdfObject</CODE>.
+ * <P>
+ * In some cases, namely for <CODE>PdfString</CODE> and <CODE>PdfStream</CODE>,
+ * this method differs from the method <CODE>pdfLength</CODE> because <CODE>pdfLength</CODE>
+ * returns the length of the PDF representation of the object, not of the actual content
+ * as does the method <CODE>length</CODE>.</P>
+ * <P>
+ * Remark: the actual content of an object is in some cases identical to its representation.
+ * The following statement is always true: length() &gt;= pdfLength().</P>
+ *
+ * @return		a length
+ */
+    
+    public int length() {
+        return toString().length();
+    }
+    
+/**
+ * Changes the content of this <CODE>PdfObject</CODE>.
+ *
+ * @param		content			the new content of this <CODE>PdfObject</CODE>
+ * @return		<CODE>void</CODE>
+ */
+    
+    protected void setContent(String content) {
+        try {
+            bytes = content.getBytes(ENCODING);
+        }
+        catch(UnsupportedEncodingException uee) {
+            bytes = content.getBytes();
+        }
+    }
+    
+    // methods dealing with the type of this object
+    
+/**
+ * Returns the type of this <CODE>PdfObject</CODE>.
+ *
+ * @return		a type
+ */
+    
+    final int type() {
+        return type;
+    }
+    
+/**
+ * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfNull</CODE>.
+ *
+ * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ */
+    
+    public final boolean isNull() {
+        return (this.type == NULL);
+    }
+    
+/**
+ * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfBoolean</CODE>.
+ *
+ * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ */
+    
+    public final boolean isBoolean() {
+        return (this.type == BOOLEAN);
+    }
+    
+/**
+ * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfNumber</CODE>.
+ *
+ * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ */
+    
+    public final boolean isNumber() {
+        return (this.type == NUMBER);
+    }
+    
+/**
+ * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfString</CODE>.
+ *
+ * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ */
+    
+    public final boolean isString() {
+        return (this.type == STRING);
+    }
+    
+/**
+ * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfName</CODE>.
+ *
+ * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ */
+    
+    final boolean isName() {
+        return (this.type == NAME);
+    }
+    
+/**
+ * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfArray</CODE>.
+ *
+ * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ */
+    
+    final boolean isArray() {
+        return (this.type == ARRAY);
+    }
+    
+/**
+ * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfDictionary</CODE>.
+ *
+ * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ */
+    
+    final boolean isDictionary() {
+        return (this.type == DICTIONARY);
+    }
+    
+/**
+ * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfStream</CODE>.
+ *
+ * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ */
+    
+    final boolean isStream() {
+        return (this.type == STREAM);
+    }
 }

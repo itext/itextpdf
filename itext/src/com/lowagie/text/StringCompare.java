@@ -43,7 +43,7 @@ import java.util.Comparator;
  */
 
 public class StringCompare implements Comparator {
-
+    
 /**
  * Compares 2 objects.
  *

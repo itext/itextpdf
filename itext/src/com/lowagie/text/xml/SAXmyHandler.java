@@ -86,7 +86,7 @@ public class SAXmyHandler extends SAXiTextHandler {
                 }
             }
             handleStartingTags(name, attributes);
-        }        
+        }
     }
     
 /**

@@ -131,14 +131,14 @@ public class HtmlTags {
     
 /** attribute of anchor tag */
     public static final String[] H = new String[6];
-	static {
-		H[0] = "h1";
-		H[1] = "h2";
-		H[2] = "h3";
-		H[3] = "h4";
-		H[4] = "h5";
-		H[5] = "h6";
-	}
+    static {
+        H[0] = "h1";
+        H[1] = "h2";
+        H[2] = "h3";
+        H[3] = "h4";
+        H[4] = "h5";
+        H[5] = "h6";
+    }
     
     // Chunks
     
@@ -288,5 +288,5 @@ public class HtmlTags {
     
 /** the possible value of an alignment attribute */
     public static final String DEFAULT = "Default";
-        
+    
 }

@@ -30,7 +30,7 @@
  * bruno@lowagie.com
  *
  */
- 
+
 package com.lowagie.text.html;
 
 import java.io.OutputStream;
@@ -172,7 +172,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 write(chunk, 2);
                 return true;
             }
-        
+            
             switch(element.type()) {
                 case Element.HEADER:
                     try {
@@ -210,12 +210,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 case Element.CREATIONDATE:
                     writeComment("Creationdate: " + ((Meta)element).content());
                     return true;
-                default:
-                    write(element, 2);
-                    return true;
+                    default:
+                        write(element, 2);
+                        return true;
             }
         }
-        catch(IOException ioe) {   
+        catch(IOException ioe) {
             throw new DocumentException(ioe.getMessage());
         }
     }
@@ -232,7 +232,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
         try {
             writeComment("Producer: iTextXML by lowagie.com");
             writeComment("CreationDate: " + new Date().toString());
-			addTabs(1);
+            addTabs(1);
             writeEnd(HtmlTags.HEAD);
             addTabs(1);
             writeStart(HtmlTags.BODY);
@@ -475,7 +475,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 catch(NullPointerException npe) {
                 }
-
+                
                 HashMap attributes = chunk.getAttributes();
                 if (chunk.font().isStandardFont() && attributes == null) {
                     addTabs(indent);
@@ -523,7 +523,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.PHRASE:
             {
                 Phrase phrase = (Phrase) element;
-
+                
                 addTabs(indent);
                 writeStart(HtmlTags.PHRASE);
                 write(phrase.font());
@@ -551,7 +551,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.ANCHOR:
             {
                 Anchor anchor = (Anchor) element;
-
+                
                 addTabs(indent);
                 writeStart(HtmlTags.ANCHOR);
                 if (anchor.name() != null) {
@@ -582,7 +582,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     addTabs(indent);
                     writeFontStyleEnd(anchor.font().style());
                     os.write(NEWLINE);
-                }                
+                }
                 if (!anchor.font().isStandardFont()) {
                     addTabs(indent);
                     writeEnd(HtmlTags.PHRASE);;
@@ -594,7 +594,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.PARAGRAPH:
             {
                 Paragraph paragraph = (Paragraph) element;
-
+                
                 addTabs(indent);
                 writeStart(HtmlTags.PARAGRAPH);
                 write(HtmlTags.ALIGN, HtmlEncoder.getAlignment(paragraph.alignment()));
@@ -620,7 +620,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     addTabs(indent);
                     writeFontStyleEnd(paragraph.font().style());
                     os.write(NEWLINE);
-                }                
+                }
                 if (!paragraph.font().isStandardFont()) {
                     addTabs(indent);
                     writeEnd(HtmlTags.PHRASE);
@@ -634,7 +634,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.CHAPTER:
             {
                 Section section = (Section) element;
-
+                
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
                 writeSection(section, indent);
@@ -645,7 +645,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.LIST:
             {
                 List list = (List) element;
-
+                
                 addTabs(indent);
                 if (list.isNumbered()) {
                     writeStart(HtmlTags.ORDEREDLIST);
@@ -670,7 +670,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.LISTITEM:
             {
                 ListItem listItem = (ListItem) element;
-
+                
                 addTabs(indent);
                 writeStart(HtmlTags.LISTITEM);
                 os.write(GT);
@@ -695,7 +695,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     addTabs(indent);
                     writeFontStyleEnd(listItem.font().style());
                     os.write(NEWLINE);
-                }                
+                }
                 if (!listItem.font().isStandardFont()) {
                     addTabs(indent);
                     writeEnd(HtmlTags.PHRASE);
@@ -707,14 +707,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.CELL:
             {
                 Cell cell = (Cell) element;
-
+                
                 addTabs(indent);
                 if (cell.header()) {
                     writeStart(HtmlTags.HEADERCELL);
                 }
                 else {
                     writeStart(HtmlTags.CELL);
-                }        
+                }
                 if (cell.borderWidth() != Rectangle.UNDEFINED) {
                     write(HtmlTags.BORDERWIDTH, String.valueOf(cell.borderWidth()));
                 }
@@ -755,7 +755,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.ROW:
             {
                 Row row = (Row) element;
-
+                
                 addTabs(indent);
                 writeStart(HtmlTags.ROW);
                 os.write(GT);
@@ -773,7 +773,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.TABLE:
             {
                 Table table = (Table) element;
-
+                
                 addTabs(indent);
                 writeStart(HtmlTags.TABLE);
                 write(HtmlTags.COLUMNS, String.valueOf(table.columns()));
@@ -826,7 +826,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (image.url() == null) {
                     return;
                 }
-
+                
                 addTabs(indent);
                 writeStart(HtmlTags.IMAGE);
                 String path = image.url().toString();
@@ -873,10 +873,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
         os.write(NEWLINE);
         
         if (section.title() != null) {
-			int depth = section.depth() - 1;
-			if (depth > 5) {
-				depth = 5;
-			}
+            int depth = section.depth() - 1;
+            if (depth > 5) {
+                depth = 5;
+            }
             addTabs(indent + 1);
             writeStart(HtmlTags.H[depth]);
             write(HtmlTags.ALIGN, HtmlEncoder.getAlignment(section.title().alignment()));
@@ -1021,8 +1021,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     os.write(FORWARD);
                     write(HtmlTags.B);
                     break;
-                }
             }
-            os.write(GT);
         }
+        os.write(GT);
+    }
     }
