@@ -34,7 +34,7 @@
  *  	  
  */
 
-package com.lowagie.text.html;
+package com.lowagie.text;
 
 import java.util.Comparator;
 

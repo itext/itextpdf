@@ -1,6 +1,7 @@
 package com.lowagie.text.pdf;
 
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.afm.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -112,23 +113,57 @@ public class Type1Font extends BaseFont
         encoding = enc;
         embedded = emb;
         fileName = afmFile;
-        InputStream is = null;
+        BufferedReader fin = null;
         if (BuiltinFonts14.containsKey(afmFile)) {
             embedded = false;
             builtinFont = true;
             try {
-                is = getClass().getResourceAsStream("afm/" + afmFile + ".afm");
-                if (is == null) {
-                    String out = "/com/lowagie/text/pdf/afm/" + afmFile + " not found as resource. Are you sure you have the *.afm files in the jar/directory?";
-                    System.err.println(out);
-                    throw new DocumentException(out);
+                String afm = null;
+                if (afmFile.equals("Courier"))
+                    afm = Courier.afm;
+                else if (afmFile.equals("Courier-Bold"))
+                    afm = CourierBold.afm;
+                else if (afmFile.equals("Courier-BoldOblique"))
+                    afm = CourierBoldOblique.afm;
+                else if (afmFile.equals("Courier-Oblique"))
+                    afm = CourierOblique.afm;
+                else if (afmFile.equals("Helvetica-Bold")) {
+                    afm = HelveticaBold1.afm;
+                    afm += HelveticaBold2.afm;
                 }
-                process(is);
+                else if (afmFile.equals("Helvetica-BoldOblique")) {
+                    afm = HelveticaBoldOblique1.afm;
+                    afm += HelveticaBoldOblique2.afm;
+                }
+                else if (afmFile.equals("Helvetica-Oblique")) {
+                    afm = HelveticaOblique1.afm;
+                    afm += HelveticaOblique2.afm;
+                }
+                else if (afmFile.equals("Symbol"))
+                    afm = Symbol.afm;
+                else if (afmFile.equals("Times-Roman"))
+                    afm = TimesRoman.afm;
+                else if (afmFile.equals("Times-Bold"))
+                    afm = TimesBold.afm;
+                else if (afmFile.equals("Times-BoldItalic"))
+                    afm = TimesBoldItalic.afm;
+                else if (afmFile.equals("Times-Italic")) {
+                    afm = TimesItalic1.afm;
+                    afm += TimesItalic2.afm;
+                }
+                else if (afmFile.equals("ZapfDingbats"))
+                    afm = ZapfDingbats.afm;
+                else {
+                    afm = Helvetica1.afm;
+                    afm += Helvetica2.afm;
+                }
+                fin = new BufferedReader(new StringReader(afm));
+                process(fin);
             }
             finally {
-                if (is != null) {
+                if (fin != null) {
                     try {
-                        is.close();
+                        fin.close();
                     }
                     catch (Exception e) {
                     }
@@ -137,15 +172,15 @@ public class Type1Font extends BaseFont
         }
         else if (afmFile.toLowerCase().endsWith(".afm")) {
             try {
-                is = new FileInputStream(afmFile);
-                if (is == null)
+                fin = new BufferedReader(new InputStreamReader(new FileInputStream(afmFile), PdfObject.ENCODING));
+                if (fin == null)
                     throw new DocumentException(afmFile + " not found as file.");
-                process(is);
+                process(fin);
             }
             finally {
-                if (is != null) {
+                if (fin != null) {
                     try {
-                        is.close();
+                        fin.close();
                     }
                     catch (Exception e) {
                     }
@@ -224,13 +259,12 @@ public class Type1Font extends BaseFont
     
     
  /** Reads the font metrics
- * @param afmStream AFM file with the font metrics
+ * @param fin AFM file with the font metrics
  * @throws DocumentException the AFM file is invalid
  * @throws IOException the AFM file could not be read
 */    
-    public void process(InputStream afmStream) throws DocumentException, IOException
+    public void process(BufferedReader fin) throws DocumentException, IOException
     {
-        BufferedReader fin = new BufferedReader(new InputStreamReader(afmStream));
         String line;
         boolean isMetrics = false;
         while ((line = fin.readLine()) != null)

@@ -7,6 +7,8 @@
 package com.lowagie.text.pdf;
 
 import java.io.UnsupportedEncodingException;
+import com.lowagie.text.DocWriter;
+
 /** Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
  * Floating point is converted to a format suitable to the PDF.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -88,17 +90,17 @@ public class ByteBuffer
     }
     
 /** Appends a <CODE>String</CODE> to the buffer. The <CODE>String</CODE> is
- * converted according with the default platform encoding.
+ * converted according to the encoding ISO-8859-1.
  * @param str the <CODE>String</CODE> to be appended
  * @return a reference to this <CODE>ByteBuffer</CODE> object
  */    
     public ByteBuffer append(String str)
     {
-        return append(str.getBytes());
+        return append(DocWriter.getISOBytes(str));
     }
     
 /** Appends a <CODE>char</CODE> to the buffer. The <CODE>char</CODE> is
- * converted according with the default platform encoding.
+ * converted according to the encoding ISO-8859-1.
  * @param c the <CODE>char</CODE> to be appended
  * @return a reference to this <CODE>ByteBuffer</CODE> object
  */    
@@ -106,7 +108,7 @@ public class ByteBuffer
     {
         if (c == ' ') // common case
             return append_i(32);
-        return append(String.valueOf(c).getBytes());
+        return append(DocWriter.getISOBytes(String.valueOf(c)));
     }
     
 /** Appends another <CODE>ByteBuffer</CODE> to this buffer.

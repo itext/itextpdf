@@ -549,4 +549,9 @@ class PdfChunk extends PdfString {
         return offsetY;
     }
 
+    void setValue(String value)
+    {
+        this.value = value;
+        setContent(value);
+    }
 }

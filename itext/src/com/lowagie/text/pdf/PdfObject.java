@@ -100,7 +100,7 @@ abstract class PdfObject {
 	public static final String NOTHING = "";
 
 	/** This is the encoding to be used for transferring Strings into bytes and vice versa. */
-	public static final String ENCODING = "latin1";
+	public static final String ENCODING = "ISO8859_1";
 
 // membervariables
 
@@ -199,7 +199,12 @@ abstract class PdfObject {
      */
 
 	public String toString() {
-		return new String(toPdf());
+        try {
+            return new String(toPdf(), ENCODING);
+        }
+        catch (Exception e) {
+            return new String(toPdf());
+        }
     }
 
 	/**

@@ -370,4 +370,19 @@ public class PdfLine {
     {
         return originalWidth;
     }
+
+/** Gets the maximum size of all the fonts used in this line.
+ * @return maximum size of all the fonts used in this line
+ */    
+    float getMaxSize()
+    {
+        float maxSize = 0;
+        for (int k = 0; k < line.size(); ++k) {
+            PdfChunk chunk = (PdfChunk)line.get(k);
+            float size = chunk.font().size();
+            if (size > maxSize)
+                maxSize = size;
+        }
+        return maxSize;
+    }
 }

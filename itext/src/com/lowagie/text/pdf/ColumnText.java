@@ -73,9 +73,16 @@ public class ColumnText
  * the leading.
  */    
     protected float yLine;
-/** The text leading.
+/** The leading for the current line.
  */    
-    protected float leading = 16;
+    protected float currentLeading = 16;
+/** The fixed text leading.
+ */    
+    protected float fixedLeading = 16;
+/** The text leading that is multiplied by the biggest font
+ * size in the line.
+ */    
+    protected float multipliedLeading = 0;
 /** The <CODE>PdfContent</CODE> where the text will be written to.
  */    
     protected PdfContentByte text;
@@ -88,6 +95,19 @@ public class ColumnText
 /** The extra space between paragraphs.
  */    
     protected float extraParagraphSpace = 0;
+/** Marks the chunks to be eliminated when the line is written.
+ */    
+    protected int currentChunkMarker = -1;
+/** The chunk created by the splitting.
+ */    
+    protected PdfChunk currentStandbyChunk;
+/** The chunk created by the splitting.
+ */    
+    protected String splittedChunkText;
+    
+/** The width of the line when the column is defined as a simple rectangle.
+ */    
+    protected float rectangularWidth = -1;
     
 /** Creates a <CODE>ColumnText</CODE>.
  * @param text the place where the text will be written to. Can
@@ -204,7 +224,7 @@ public class ColumnText
             float x1[] = findLimitsOneLine();
             if (lineStatus == LINE_STATUS_OFFLIMITS)
                 return null;
-            yLine -= leading;
+            yLine -= currentLeading;
             if (lineStatus == LINE_STATUS_NOLINE) {
                 continue;
             }
@@ -212,7 +232,7 @@ public class ColumnText
             if (lineStatus == LINE_STATUS_OFFLIMITS)
                 return null;
             if (lineStatus == LINE_STATUS_NOLINE) {
-                yLine -= leading;
+                yLine -= currentLeading;
                 continue;
             }
             if (x1[0] >= x2[1] || x2[0] >= x1[1])
@@ -231,6 +251,7 @@ public class ColumnText
     {
         rightWall = convertColumn(rightLine);
         leftWall = convertColumn(leftLine);
+        rectangularWidth = -1;
     }
     
 /** Simplified method for rectangular columns.
@@ -269,25 +290,47 @@ public class ColumnText
         rightLine[2] = rightLine[0];
         rightLine[3] = leftLine[3];
         setColumns(leftLine, rightLine);
-        this.leading = leading;
+        setLeading(leading);
         this.alignment = alignment;
         yLine = leftLine[1];
+        rectangularWidth = Math.abs(llx - urx);
     }
     
-/** Sets the leading
+/** Sets the leading to fixed
  * @param leading the leading
  */    
     public void setLeading(float leading)
     {
-        this.leading = leading;
+        fixedLeading = leading;
+        multipliedLeading = 0;
     }
     
-/** Gets the leading
+/** Sets the leading fixed and variable. The resultant leading will be
+ * fixedLeading+multipliedLeading*maxFontSize where maxFontSize is the
+ * size of the bigest font in the line.
+ * @param fixedLeading the fixed leading
+ * @param multipliedLeading the variable leading
+ */    
+    public void setLeading(float fixedLeading, float multipliedLeading)
+    {
+        this.fixedLeading = fixedLeading;
+        this.multipliedLeading = multipliedLeading;
+    }
+    
+/** Gets the fixed leading
  * @return the leading
  */    
     public float getLeading()
     {
-        return leading;
+        return fixedLeading;
+    }
+    
+/** Gets the variable leading
+ * @return the leading
+ */    
+    public float getMultipliedLeading()
+    {
+        return multipliedLeading;
     }
     
 /** Sets the yLine. The line will be written to yLine-leading.
@@ -346,18 +389,38 @@ public class ColumnText
     {
         if (chunks.size() == 0)
             return null;
+        splittedChunkText = null;
+        currentStandbyChunk = null;
         PdfLine line = new PdfLine(0, width, alignment, 0);
-        for (int k = 0; k < chunks.size(); ++k) {
-            PdfChunk chunk = line.add((PdfChunk)(chunks.get(k)));
-            if (chunk != null) {
-                chunks.set(k, chunk);
-                for (int j = k - 1; j >= 0; --j)
-                    chunks.remove(j);
+        String total;
+        for (currentChunkMarker = 0; currentChunkMarker < chunks.size(); ++currentChunkMarker) {
+            PdfChunk original = (PdfChunk)(chunks.get(currentChunkMarker));
+            total = original.toString();
+            currentStandbyChunk = line.add(original);
+            if (currentStandbyChunk != null) {
+                splittedChunkText = original.toString();
+                original.setValue(total);
                 return line;
             }
         }
-        chunks.clear();
         return line;
+    }
+    
+/** Normalizes the list of chunks when the line is accepted.
+ */    
+    protected void shortenChunkArray()
+    {
+        if (currentChunkMarker < 0)
+            return;
+        if (currentChunkMarker >= chunks.size()) {
+            chunks.clear();
+            return;
+        }
+        PdfChunk split = (PdfChunk)(chunks.get(currentChunkMarker));
+        split.setValue(splittedChunkText);
+        chunks.set(currentChunkMarker, currentStandbyChunk);
+        for (int j = currentChunkMarker - 1; j >= 0; --j)
+            chunks.remove(j);
     }
 
 /** Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
@@ -388,38 +451,81 @@ public class ColumnText
         PdfContentByte graphics = text.getDuplicate();
         
         int status = 0;
-        for (;;) {
-            float yTemp = yLine;
-            float xx[] = findLimitsTwoLines();
-            if (xx == null) {
-                status = NO_MORE_COLUMN;
-                if (chunks.size() == 0)
-                    status |= NO_MORE_TEXT;
-                yLine = yTemp;
-                break;
+        if (rectangularWidth > 0) {
+            for (;;) {
+                if (rectangularWidth <= firstIndent) {
+                    status = NO_MORE_COLUMN;
+                    if (chunks.size() == 0)
+                        status |= NO_MORE_TEXT;
+                    break;
+                }
+                if (chunks.size() == 0) {
+                    status = NO_MORE_TEXT;
+                    break;
+                }
+                float yTemp = yLine;
+                PdfLine line = createLine(rectangularWidth - firstIndent);
+                float maxSize = line.getMaxSize();
+                currentLeading = fixedLeading + maxSize * multipliedLeading;
+                float xx[] = findLimitsTwoLines();
+                if (xx == null) {
+                    status = NO_MORE_COLUMN;
+                    yLine = yTemp;
+                    break;
+                }
+                float x1 = Math.max(xx[0], xx[2]);
+                float x2 = Math.min(xx[1], xx[3]);
+                if (!simulate && !dirty) {
+                    text.beginText();
+                    dirty = true;
+                }
+                shortenChunkArray();
+                if (!simulate) {
+                    currentValues[0] = currentFont;
+                    text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
+                    pdf.writeLineToContent(line, text, graphics, currentValues);            
+                    currentFont = (PdfFont)currentValues[0];
+                }
+                firstIndent = line.isNewlineSplit() ? indent : 0;
+                yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
             }
-            if (chunks.size() == 0) {
-                status = NO_MORE_TEXT;
-                yLine = yTemp;
-                break;
+        }
+        else {
+            currentLeading = fixedLeading;
+            for (;;) {
+                float yTemp = yLine;
+                float xx[] = findLimitsTwoLines();
+                if (xx == null) {
+                    status = NO_MORE_COLUMN;
+                    if (chunks.size() == 0)
+                        status |= NO_MORE_TEXT;
+                    yLine = yTemp;
+                    break;
+                }
+                if (chunks.size() == 0) {
+                    status = NO_MORE_TEXT;
+                    yLine = yTemp;
+                    break;
+                }
+                float x1 = Math.max(xx[0], xx[2]);
+                float x2 = Math.min(xx[1], xx[3]);
+                if (x2 - x1 <= firstIndent)
+                    continue;
+                if (!simulate && !dirty) {
+                    text.beginText();
+                    dirty = true;
+                }
+                PdfLine line = createLine(x2 - x1 - firstIndent);
+                shortenChunkArray();
+                if (!simulate) {
+                    currentValues[0] = currentFont;
+                    text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
+                    pdf.writeLineToContent(line, text, graphics, currentValues);            
+                    currentFont = (PdfFont)currentValues[0];
+                }
+                firstIndent = line.isNewlineSplit() ? indent : 0;
+                yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
             }
-            float x1 = Math.max(xx[0], xx[2]);
-            float x2 = Math.min(xx[1], xx[3]);
-            if (x2 - x1 <= firstIndent)
-                continue;
-            if (!simulate && !dirty) {
-                text.beginText();
-                dirty = true;
-            }
-            PdfLine line = createLine(x2 - x1 - firstIndent);
-            if (!simulate) {
-                currentValues[0] = currentFont;
-                text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
-                pdf.writeLineToContent(line, text, graphics, currentValues);            
-                currentFont = (PdfFont)currentValues[0];
-            }
-            firstIndent = line.isNewlineSplit() ? indent : 0;
-            yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
         }
         if (dirty) {
             text.endText();

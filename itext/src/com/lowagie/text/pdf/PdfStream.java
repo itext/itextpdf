@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.DeflaterOutputStream;
 import com.lowagie.text.Document;
+import com.lowagie.text.DocWriter;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -177,9 +178,9 @@ class PdfStream extends PdfObject {
 		try {
 			ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
 			pdfStream.write(dictionary.toPdf());
-			pdfStream.write("\nstream\n".getBytes());
+			pdfStream.write(DocWriter.getISOBytes("\nstream\n"));
 			pdfStream.write(bytes);
-			pdfStream.write("\nendstream".getBytes());
+			pdfStream.write(DocWriter.getISOBytes("\nendstream"));
 			return pdfStream.toByteArray();
 		}
 		catch(IOException ioe) {

@@ -44,6 +44,7 @@ package com.lowagie.text.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import com.lowagie.text.DocWriter;
 
 /**
  * <CODE>PdfIndirectObject</CODE> is the Pdf indirect object.
@@ -111,12 +112,12 @@ class PdfIndirectObject {
         type = object.type();
 		try {
 			bytes = new ByteArrayOutputStream();
-			bytes.write(String.valueOf(number).getBytes());
-			bytes.write(" ".getBytes());
-			bytes.write(String.valueOf(generation).getBytes());
-			bytes.write(" obj\n".getBytes());
+			bytes.write(DocWriter.getISOBytes(String.valueOf(number)));
+			bytes.write(DocWriter.getISOBytes(" "));
+			bytes.write(DocWriter.getISOBytes(String.valueOf(generation)));
+			bytes.write(DocWriter.getISOBytes(" obj\n"));
 			bytes.write(object.toPdf());
-			bytes.write("\nendobj\n".getBytes());
+			bytes.write(DocWriter.getISOBytes("\nendobj\n"));
 		}
 		catch (IOException ioe) {
 			throw new RuntimeException(ioe.getMessage());

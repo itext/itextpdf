@@ -46,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.lowagie.text.DocWriter;
 
 /**
  * <CODE>PdfArray</CODE> is the PDF Array object.
@@ -123,7 +124,7 @@ class PdfArray extends PdfObject {
     public byte[] toPdf() {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			stream.write("[".getBytes());
+			stream.write(DocWriter.getISOBytes("["));
 
 			Iterator i = arrayList.iterator();
 			PdfObject object;
@@ -133,10 +134,10 @@ class PdfArray extends PdfObject {
 			}
 			while (i.hasNext()) {
 				object = (PdfObject) i.next();
-				stream.write(" ".getBytes());
+				stream.write(DocWriter.getISOBytes(" "));
 				stream.write(object.toPdf());
 			}
-			stream.write("]".getBytes());
+			stream.write(DocWriter.getISOBytes("]"));
 
 			return stream.toByteArray();
 		}
