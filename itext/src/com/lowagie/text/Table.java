@@ -218,6 +218,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 /** If true cells may not be split over two pages. */
     boolean cellsFitPage = false;
     
+/** This is the offset of the table. */
+    float offset = Float.MIN_VALUE;
+    
 /** contains the attributes that are added to each odd (or even) row */
     protected Hashtable alternatingRowAttributes;
     
@@ -308,6 +311,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         }
         if ((value = (String)attributes.remove(ElementTags.CELLPADDING)) != null) {
             setPadding(Float.valueOf(value + "f").floatValue());
+        }
+        if ((value = (String)attributes.remove(ElementTags.OFFSET)) != null) {
+            setOffset(Float.valueOf(value + "f").floatValue());
         }
         if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
             if (value.endsWith("%"))
@@ -473,6 +479,31 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  
     public boolean hasToFitPageCells() {
         return cellsFitPage;
+    }
+    
+/**
+ * Sets the offset of this table.
+ *
+ * Normally a newline is added before you add a Table object.
+ * This newline uses the current leading.
+ * If you want to control the space between the table and the previous
+ * element yourself, you have to set the offset of this table.
+ *
+ * @param   offset  the space between this table and the previous object.
+ */
+    
+    public void setOffset(float offset) {
+        this.offset = offset;
+    }
+    
+/**
+ * Gets the offset of this table.
+ *
+ * @return  the space between this table and the previous element.
+ */
+    
+    public float getOffset() {
+        return offset;
     }
     
 /**
