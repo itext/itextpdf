@@ -370,6 +370,32 @@ public class Chunk implements Element {
     }
     
 /**
+ * Returns an XML representation of this <CODE>Chunk</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        StringBuffer buf = new StringBuffer();
+        DocWriter.addTabs(buf, indent);
+        buf.append("<").append(ElementTags.CHUNK);
+        buf.append(font.toString());
+        if (attributes != null) {
+            for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
+                String key = (String) i.next();
+                if (key.equals(LOCALGOTO) || key.equals(LOCALDESTINATION) || key.equals(GENERICTAG)) {
+                    String value = (String) attributes.get(key);
+                    buf.append(" ").append(key.toLowerCase()).append("=\"").append(value).append("\"");
+                }
+            }
+        }
+        buf.append(">");
+        buf.append(DocWriter.encode(content()));
+        buf.append("</").append(ElementTags.CHUNK).append(">");
+        return buf.toString();
+    }
+    
+/**
  * Returns a representation of this <CODE>Chunk</CODE>.
  *
  * @return	a <CODE>String</CODE>

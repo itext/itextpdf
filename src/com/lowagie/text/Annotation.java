@@ -175,7 +175,29 @@ public class Annotation implements Element {
     }
     
 /**
- * Returns a representation of this <CODE>Anchor</CODE>.
+ * Returns an XML representation of this <CODE>Annotation</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        StringBuffer buf = new StringBuffer();
+        DocWriter.addTabs(buf, indent);
+        buf.append("<").append(ElementTags.ANNOTATION).append("");
+        if (title != null) {
+            buf.append(" ").append(ElementTags.TITLE).append("=\"");
+            buf.append(title);
+        }
+        if (text != null) {
+            buf.append("\" ").append(ElementTags.CONTENT).append("=\"");
+            buf.append(text);
+        }
+        buf.append("\" />\n");
+        return buf.toString();
+    }
+    
+/**
+ * Returns a representation of this <CODE>Annotation</CODE>.
  *
  * @return	a <CODE>String</CODE>
  */

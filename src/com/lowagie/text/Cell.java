@@ -174,6 +174,7 @@ public class Cell extends Rectangle implements TextElementArray {
     
     public Cell(Properties attributes) {
         this();
+        arrayList.remove(0);
         String value;
         if ((value = attributes.getProperty(ElementTags.HORIZONTALALIGN)) != null) {
             setHorizontalAlignment(value);
@@ -585,6 +586,43 @@ public class Cell extends Rectangle implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.CELL.equals(tag);
+    }
+    
+/**
+ * Returns an XML representation of this <CODE>Cell</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        
+        StringBuffer buf = new StringBuffer();
+        DocWriter.addTabs(buf, indent);
+        buf.append("<").append(ElementTags.CELL);
+        
+        buf.append(" ").append(ElementTags.HORIZONTALALIGN).append("=\"").append(ElementTags.getAlignment(horizontalAlignment));
+        buf.append("\" ").append(ElementTags.VERTICALALIGN).append("=\"").append(ElementTags.getAlignment(verticalAlignment));
+        if (colspan != 1) {
+            buf.append(" ").append(ElementTags.COLSPAN).append("=\"").append(colspan).append("\"");
+        }
+        if (rowspan != 1) {
+            buf.append(" ").append(ElementTags.ROWSPAN).append("=\"").append(rowspan).append("\"");
+        }
+        if (header) {
+            buf.append(" ").append(ElementTags.HEADER).append("=\"").append(true).append("\"");
+        }
+        if (noWrap) {
+            buf.append(" ").append(ElementTags.NOWRAP).append("=\"").append(true).append("\"");
+        }
+        if (leading != -1) {
+            buf.append(" ").append(ElementTags.LEADING).append("=\"").append(leading).append("\"");
+        }
+        buf.append(">");
+        for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
+            buf.append(((Element) i.next()).toXml(indent + 1));
+        }
+        buf.append("</").append(ElementTags.CELL).append(">\n");
+        return buf.toString();
     }
     
 /**

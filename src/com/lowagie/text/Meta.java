@@ -164,6 +164,16 @@ public class Meta implements Element {
     }
     
 /**
+ * Returns the XML representation of this <CODE>Meta</CODE>.
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        return "";
+    }
+    
+/**
  * Returns the name and content of the meta information.
  *
  * @return	a <CODE>String</CODE>

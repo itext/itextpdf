@@ -312,6 +312,32 @@ public class Anchor extends Phrase implements TextElementArray {
     }
     
 /**
+ * Returns an XML representation of this <CODE>Anchor</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        StringBuffer buf = new StringBuffer();
+        DocWriter.addTabs(buf, indent);
+        buf.append("<").append(ElementTags.ANCHOR);
+        buf.append(" ").append(ElementTags.LEADING).append("=\"").append(leading);
+        buf.append("\"").append(font.toString());
+        if (name != null) {
+            buf.append(" ").append(ElementTags.NAME).append("=\"").append(name).append("\"");
+        }
+        if (reference != null) {
+            buf.append(" ").append(ElementTags.REFERENCE).append("=\"").append(reference).append("\"");
+        }
+        buf.append(">\n");
+        for (Iterator i = iterator(); i.hasNext(); ) {
+            buf.append(((Element)i.next()).toXml(indent + 1));
+        }
+        buf.append("</").append(ElementTags.ANCHOR).append(">");
+        return buf.toString();
+    }
+    
+/**
  * Returns a representation of this <CODE>Anchor</CODE>.
  *
  * @return	a <CODE>String</CODE>
