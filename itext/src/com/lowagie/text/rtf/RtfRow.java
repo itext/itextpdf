@@ -272,7 +272,7 @@ public class RtfRow
    * @param table The <code>Table</code> which contains the original <code>Row</code>.
    */
     // <!-- steffen
-    public boolean writeRow(OutputStream os, int rowNum, Table table) throws DocumentException,
+    public boolean writeRow(ByteArrayOutputStream os, int rowNum, Table table) throws DocumentException,
     // -->
     IOException
     {
@@ -371,7 +371,7 @@ public class RtfRow
     }
 
 
-    private void writeBorder( OutputStream os, byte[] borderType ) throws IOException {
+    private void writeBorder( ByteArrayOutputStream os, byte[] borderType ) throws IOException {
         // horizontal and vertical, top, left, bottom, right
         os.write(RtfWriter.escape);
         os.write( borderType );
@@ -416,7 +416,7 @@ public class RtfRow
    * @param out The <code>OutputStream</code> to be written to.
    * @param i The int to be written.
    */
-    private void writeInt(OutputStream out, int i) throws IOException
+    private void writeInt(ByteArrayOutputStream out, int i) throws IOException
     {
         out.write(Integer.toString(i).getBytes());
     }

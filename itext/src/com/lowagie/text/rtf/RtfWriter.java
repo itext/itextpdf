@@ -310,7 +310,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Text alignment left tag. */
     public static final byte[] alignLeft = "ql".getBytes();
-    
+
   /** Text alignment center tag. */
     private static final byte[] alignCenter = "qc".getBytes();
     
@@ -351,7 +351,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Keywords tag. */
     private static final byte[] metaKeywords = "keywords".getBytes();
-    
+
   /** Title tag. */
     private static final byte[] metaTitle = "title".getBytes();
     
@@ -386,6 +386,9 @@ public class RtfWriter extends DocWriter implements DocListener
   /** Title Page tag */
     private static final byte[] titlePage = "titlepg".getBytes();
 
+  /** Facing pages tag */
+    private static final byte[] facingPages = "facingp".getBytes();
+
   /** Begin header group tag. */
     private static final byte[] headerBegin = "header".getBytes();
 
@@ -408,7 +411,7 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Paper Properties
    */
-    
+
   /** Paper width tag. */
     private static final byte[] rtfPaperWidth = "paperw".getBytes();
 
@@ -417,19 +420,25 @@ public class RtfWriter extends DocWriter implements DocListener
 
   /** Margin left tag. */
     private static final byte[] rtfMarginLeft = "margl".getBytes();
-    
+
   /** Margin right tag. */
     private static final byte[] rtfMarginRight = "margr".getBytes();
-    
+
   /** Margin top tag. */
     private static final byte[] rtfMarginTop = "margt".getBytes();
-    
+
   /** Margin bottom tag. */
     private static final byte[] rtfMarginBottom = "margb".getBytes();
 
   /** New Page tag. */
     private static final byte[] newPage = "page".getBytes();
-    
+
+  /** Document Landscape tag 1. */
+    private static final byte[] landscapeTag1 = "landscape".getBytes();
+
+  /** Document Landscape tag 2. */
+    private static final byte[] landscapeTag2 = "lndscpsxn".getBytes();
+
   /**
    * Annotations
    */
@@ -449,7 +458,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Begin the main Picture group tag */
     private static final byte[] pictureGroup = "shppict".getBytes();
-    
+
   /** Begin the picture tag */
     private static final byte[] picture = "pict".getBytes();
 
@@ -461,7 +470,7 @@ public class RtfWriter extends DocWriter implements DocListener
 
   /** Picture width */
     private static final byte[] pictureWidth = "picw".getBytes();
-    
+
   /** Picture height */
     private static final byte[] pictureHeight = "pich".getBytes();
     
@@ -495,7 +504,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Last page number (not used) */
     protected static final byte[] fieldDisplay = "fldrslt".getBytes();
-    
+
     
   /** Class variables */
     
@@ -509,7 +518,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** This <code>Vector</code> contains all colours used in the document. */
     private Vector colorList = new Vector();
-    
+
   /** This <code>ByteArrayOutputStream</code> contains the main body of the document. */
     private ByteArrayOutputStream content = null;
     
@@ -536,7 +545,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Right margin. */
     private int marginRight = 1800;
-    
+
   /** Top margin. */
     private int marginTop = 1440;
     
@@ -544,13 +553,13 @@ public class RtfWriter extends DocWriter implements DocListener
     private int marginBottom = 1440;
 
   /** Page width. */
-    private int pageWidth = 12240;
-    
+    private int pageWidth = 11906;
+
   /** Page height. */
-    private int pageHeight = 15840;
+    private int pageHeight = 16838;
     
   /** Factor to use when converting. */
-    public final static double twipsFactor = 20.57140;
+    public final static double twipsFactor = 20;//20.57140;
     
   /** Current annotation ID. */
     private int currentAnnotationID = 0;
@@ -573,6 +582,11 @@ public class RtfWriter extends DocWriter implements DocListener
   /** Special title page */
     private boolean hasTitlePage = false;
 
+  /** Currently writing either Header or Footer */
+    private boolean inHeaderFooter = false;
+
+  /** Landscape or Portrait Document */
+    private boolean landscape = false;
 
   /** Protected Constructor */
 
@@ -615,7 +629,7 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * This method controls whether the first page is a title page
    *
-   * @param writeTOC    boolean value indicating whether the first page is a title page
+   * @param hasTitlePage    boolean value indicating whether the first page is a title page
    */
   public void setHasTitlePage(boolean hasTitlePage)
   {
@@ -630,6 +644,27 @@ public class RtfWriter extends DocWriter implements DocListener
   public boolean getHasTitlePage()
   {
     return hasTitlePage;
+  }
+
+  /**
+   * Explicitly sets the page format to use.
+   * Otherwise the RtfWriter will try to guess the format by comparing pagewidth and pageheight
+   *
+   * @param landscape boolean value indicating whether we are using landscape format or not
+   */
+  public void setLandscape(boolean landscape)
+  {
+    this.landscape = landscape;
+  }
+
+  /**
+   * Returns the current landscape setting
+   *
+   * @return boolean value indicating the current page format
+   */
+  public boolean getLandscape()
+  {
+    return landscape;
   }
 
   /** Public functions from the DocWriter Interface */
@@ -738,7 +773,7 @@ public class RtfWriter extends DocWriter implements DocListener
         this.marginBottom = (int) (marginBottom * twipsFactor);
         return true;
     }
-    
+
   /**
    * Sets the page size
    *
@@ -748,9 +783,13 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     public boolean setPageSize(Rectangle pageSize)
     {
+      if(!parseFormat(pageSize, false))
+      {
         pageWidth = (int) (pageSize.width() * twipsFactor);
         pageHeight = (int) (pageSize.height() * twipsFactor);
-        return true;
+	landscape = pageWidth > pageHeight;
+      }
+      return true;
     }
 
   /**
@@ -794,7 +833,7 @@ public class RtfWriter extends DocWriter implements DocListener
    * @return    <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
    * @throws    DocumentException   if a document isn't open yet, or has been closed
    */
-    private boolean addElement(Element element, ByteArrayOutputStream out) throws DocumentException
+    protected boolean addElement(Element element, ByteArrayOutputStream out) throws DocumentException
     {
         try
         {
@@ -826,7 +865,7 @@ public class RtfWriter extends DocWriter implements DocListener
         }
         return true;
     }
-    
+
   /**
    * Write the beginning of a new <code>Section</code>
    *
@@ -841,6 +880,7 @@ public class RtfWriter extends DocWriter implements DocListener
 	  {
 	    out.write(escape);
 	    out.write(sectionDefaults);
+	    writeSectionDefaults(out);
 	  }
         if(sectionElement.title() != null)
         {
@@ -876,7 +916,6 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Write the beginning of a new <code>Paragraph</code>
    *
-   * <<<<<<< RtfWriter.java
    * @param paragraphElement The <code>Paragraph</code> to be written
    * @param out The <code>ByteArrayOutputStream</code> to write to
    *
@@ -902,11 +941,14 @@ public class RtfWriter extends DocWriter implements DocListener
             Chunk ch = (Chunk) chunks.next();
             ch.setFont(ch.font().difference(paragraphElement.font()));
         }
-    paragraphElement.process(this);
+	ByteArrayOutputStream save = content;
+	content = out;
+        paragraphElement.process(this);
+	content = save;
         out.write(escape);
         out.write(paragraph);
     }
-    
+
   /**
    * Write a <code>Phrase</code>.
    *
@@ -917,15 +959,18 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     private void writePhrase(Phrase phrase, ByteArrayOutputStream out) throws IOException, DocumentException
     {
-        out.write(escape);
-        out.write(paragraphDefaults);
-        Iterator chunks = phrase.getChunks().iterator();
-        while(chunks.hasNext())
-        {
-            Chunk ch = (Chunk) chunks.next();
-            ch.setFont(ch.font().difference(phrase.font()));
-        }
+      out.write(escape);
+      out.write(paragraphDefaults);
+      Iterator chunks = phrase.getChunks().iterator();
+      while(chunks.hasNext())
+      {
+        Chunk ch = (Chunk) chunks.next();
+        ch.setFont(ch.font().difference(phrase.font()));
+      }
+      ByteArrayOutputStream save = content;
+      content = out;
       phrase.process(this);
+      content = save;
     }
 
   /**
@@ -963,7 +1008,7 @@ public class RtfWriter extends DocWriter implements DocListener
             writePhrase(anchor, out);
         }
     }
-    
+
   /**
    * Write a <code>Chunk</code> and all its font properties.
    *
@@ -1275,7 +1320,7 @@ public class RtfWriter extends DocWriter implements DocListener
     {
         table.complete();
         RtfTable rtfTable = new RtfTable(this);
-        rtfTable.importTable(table, 12239);
+        rtfTable.importTable(table, pageWidth);
         rtfTable.writeTable(out);
     }
     
@@ -1515,54 +1560,9 @@ public class RtfWriter extends DocWriter implements DocListener
             os.write((byte)'\n');
             writeDocumentFormat();
             os.write((byte)'\n');
-            if(hasTitlePage)
-            {
-              os.write(escape);
-              os.write(titlePage);
-            }
-            if (this.footer instanceof RtfHeaderFooters) {
-                RtfHeaderFooters rtfHf = (RtfHeaderFooters)this.footer;
-                HeaderFooter hf = rtfHf.get( RtfHeaderFooters.ALL_PAGES );
-                if (hf != null) {
-                    writeHeaderFooter( hf, footerBegin, os );
-                }
-                hf = rtfHf.get( RtfHeaderFooters.LEFT_PAGES );
-                if (hf != null) {
-                    writeHeaderFooter( hf, footerlBegin, os );
-                }
-                hf = rtfHf.get( RtfHeaderFooters.RIGHT_PAGES );
-                if (hf != null) {
-                    writeHeaderFooter( hf, footerrBegin, os );
-                }
-                hf = rtfHf.get( RtfHeaderFooters.FIRST_PAGE );
-                if (hf != null) {
-                    writeHeaderFooter( hf, footerfBegin, os );
-                }
-            } else {
-                writeHeaderFooter(this.footer, footerBegin, os);
-            }
-            if (this.header instanceof RtfHeaderFooters) {
-                RtfHeaderFooters rtfHf = (RtfHeaderFooters)this.header;
-                HeaderFooter hf = rtfHf.get( RtfHeaderFooters.ALL_PAGES );
-                if (hf != null) {
-                    writeHeaderFooter( hf, headerBegin, os );
-                }
-                hf = rtfHf.get( RtfHeaderFooters.LEFT_PAGES );
-                if (hf != null) {
-                    writeHeaderFooter( hf, headerlBegin, os );
-                }
-                hf = rtfHf.get( RtfHeaderFooters.RIGHT_PAGES );
-                if (hf != null) {
-                    writeHeaderFooter( hf, headerrBegin, os );
-                }
-                hf = rtfHf.get( RtfHeaderFooters.FIRST_PAGE );
-                if (hf != null) {
-                    writeHeaderFooter( hf, headerfBegin, os );
-                }
-            } else {
-                writeHeaderFooter(this.header, headerBegin, os);
-            }
-
+            ByteArrayOutputStream hf = new ByteArrayOutputStream();
+            writeSectionDefaults(hf);
+            hf.writeTo(os);
             content.writeTo(os);
             os.write(closeGroup);
             return true;
@@ -1654,13 +1654,19 @@ public class RtfWriter extends DocWriter implements DocListener
                     os.write(delimiter);
                     os.write(fontWindings);
                     break;
+		default: os.write(fnt.getFamilyname().getBytes());
+		    os.write(escape);
+		    os.write(fontCharset);
+		    writeInt(os, 0);
+		    os.write(delimiter);
+		    os.write(fnt.getFamilyname().getBytes());
             }
             os.write(commaDelimiter);
             os.write(closeGroup);
         }
         os.write(closeGroup);
     }
-    
+
   /**
    * Write the colour list to the final <code>ByteArrayOutputStream</code>
    */
@@ -1711,7 +1717,7 @@ public class RtfWriter extends DocWriter implements DocListener
         os.write((byte)'\n');
         listoverride.writeTo(os);
     }
-    
+
   /**
    * Write an integer
    *
@@ -1747,34 +1753,84 @@ public class RtfWriter extends DocWriter implements DocListener
         listIds.add(newInt);
         return newInt.intValue();
     }
-    
+
   /**
-   * Write the header to the final <code>ByteArrayOutputStream</code>
+   * Write the current header and footer to a <code>ByteArrayOutputStream</code>
+   *
+   * @param os		The <code>ByteArrayOutputStream</code> to which the header and footer will be written.
    */
-    private void writeHeaderFooter(HeaderFooter headerFooter, byte[] hfType, BufferedOutputStream target) throws IOException
+    public void writeHeadersFooters(ByteArrayOutputStream os) throws IOException
     {
+      if (this.footer instanceof RtfHeaderFooters) {
+        RtfHeaderFooters rtfHf = (RtfHeaderFooters)this.footer;
+        HeaderFooter hf = rtfHf.get( RtfHeaderFooters.ALL_PAGES );
+        if (hf != null) {
+          writeHeaderFooter( hf, footerBegin, os );
+        }
+        hf = rtfHf.get( RtfHeaderFooters.LEFT_PAGES );
+        if (hf != null) {
+          writeHeaderFooter( hf, footerlBegin, os );
+        }
+        hf = rtfHf.get( RtfHeaderFooters.RIGHT_PAGES );
+        if (hf != null) {
+          writeHeaderFooter( hf, footerrBegin, os );
+        }
+        hf = rtfHf.get( RtfHeaderFooters.FIRST_PAGE );
+        if (hf != null) {
+          writeHeaderFooter( hf, footerfBegin, os );
+        }
+      } else {
+        writeHeaderFooter(this.footer, footerBegin, os);
+      }
+      if (this.header instanceof RtfHeaderFooters) {
+        RtfHeaderFooters rtfHf = (RtfHeaderFooters)this.header;
+        HeaderFooter hf = rtfHf.get( RtfHeaderFooters.ALL_PAGES );
+        if (hf != null) {
+          writeHeaderFooter( hf, headerBegin, os );
+        }
+        hf = rtfHf.get( RtfHeaderFooters.LEFT_PAGES );
+        if (hf != null) {
+          writeHeaderFooter( hf, headerlBegin, os );
+        }
+        hf = rtfHf.get( RtfHeaderFooters.RIGHT_PAGES );
+        if (hf != null) {
+          writeHeaderFooter( hf, headerrBegin, os );
+        }
+        hf = rtfHf.get( RtfHeaderFooters.FIRST_PAGE );
+        if (hf != null) {
+          writeHeaderFooter( hf, headerfBegin, os );
+        }
+      } else {
+        writeHeaderFooter(this.header, headerBegin, os);
+      }
+    }
+
+  /**
+   * Write a <code>HeaderFooter</code> to a <code>ByteArrayOutputStream</code>
+   *
+   * @param headerFooter	The <code>HeaderFooter</code> object to be written.
+   * @param hfType		The type of header or footer to be added.
+   * @param target		The <code>ByteArrayOutputStream</code> to which the <code>HeaderFooter</code> will be written.
+   */
+    private void writeHeaderFooter(HeaderFooter headerFooter, byte[] hfType, ByteArrayOutputStream target) throws IOException
+    {
+      inHeaderFooter = true;
         try
         {
-
-            // XXX this is only a heack, because some method directly write to
-            // the content output stream, but thats not what I want here
-            ByteArrayOutputStream origContent = content;
-            
-            content = new ByteArrayOutputStream();
-            content.write(openGroup);
-            content.write(escape);
-            content.write(hfType);
-            if(headerFooter == null) {
-                content.write(delimiter);
-            }
-            else
-            {
-                if (headerFooter instanceof RtfHeaderFooter 
+            target.write(openGroup);
+            target.write(escape);
+            target.write(hfType);
+	    target.write(delimiter);
+            if(headerFooter != null) {
+                if (headerFooter instanceof RtfHeaderFooter
                         && ((RtfHeaderFooter)headerFooter).content() != null) {
-                    this.add( ((RtfHeaderFooter)headerFooter).content() );
+                    this.addElement( ((RtfHeaderFooter)headerFooter).content(), target );
                 } else {
+		if(headerFooter.getBefore() != null) { this.addElement(headerFooter.getBefore(), target); }
+		if(headerFooter.isNumbered()) { this.addElement(new RtfPageNumber("", headerFooter.getBefore().font()), target); }
+		if(headerFooter.getAfter() != null) { this.addElement(headerFooter.getAfter(), target); }
 //                    Element[] headerElements = new Element[3];
-                    java.util.List chunks = headerFooter.paragraph().getChunks();
+/*                    java.util.List chunks = headerFooter.paragraph().getChunks();
                     int headerCount = chunks.size();
 //                    if(headerCount >= 1) { headerElements[0] = (Element) headerFooter.paragraph().getChunks().get(0); }
 //                    if(headerCount >= 2) { headerElements[1] = (Element) headerFooter.paragraph().getChunks().get(1); }
@@ -1820,20 +1876,18 @@ public class RtfWriter extends DocWriter implements DocListener
                         add( (Element)chunks.get( 2 ) );
 //                        if(headerElements[2].type() == Element.CHUNK) { writeChunk((Chunk) headerElements[2], content); }
 //                        if(headerElements[2].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[2], content); }
-                    }
+                    }*/
                 }
             }
-            content.write(closeGroup);
-            content.writeTo(target);
-            // set the original
-            content = origContent;
+	    target.write(closeGroup);
         }
         catch(DocumentException e)
         {
             throw new IOException("DocumentException - "+e.getMessage());
         }
+      inHeaderFooter = false;
     }
-    
+
   /**
    *  Write the <code>Document</code>'s Paper and Margin Size
    *  to the final <code>ByteArrayOutputStream</code>
@@ -1896,6 +1950,133 @@ public class RtfWriter extends DocWriter implements DocListener
             System.err.println("InitDefaultsError" + e);
         }
     }
+
+    /**
+     * Writes the default values for the current Section
+     *
+     * @param out The <code>ByteArrayOutputStream</code> to be written to
+     */
+    private void writeSectionDefaults(ByteArrayOutputStream out) throws IOException
+    {
+      if(header instanceof RtfHeaderFooters || footer  instanceof RtfHeaderFooters)
+      {
+        out.write(escape);
+	out.write(facingPages);
+      }
+      if(hasTitlePage)
+      {
+        out.write(escape);
+        out.write(titlePage);
+      }
+      writeHeadersFooters(out);
+      if(landscape)
+      {
+        out.write(escape);
+        out.write(landscapeTag1);
+        out.write(escape);
+        out.write(landscapeTag2);
+      }
+    }
+
+  /**
+   * This method tries to fit the <code>Rectangle pageSize</code> to one of the predefined PageSize rectangles.
+   * If a match is found the pageWidth and pageHeight will be set according to values determined from files
+   * generated by MS Word2000 and OpenOffice 641. If no match is found the method will try to match the rotated
+   * Rectangle by calling itself with the parameter rotate set to true.
+   */
+  private boolean parseFormat(Rectangle pageSize, boolean rotate)
+  {
+      if(rotate) { pageSize = pageSize.rotate(); }
+      if(rectEquals(pageSize, PageSize.A3))
+      {
+	pageWidth = 16837;
+	pageHeight = 23811;
+	landscape = rotate;
+	return true;
+      }
+      if(rectEquals(pageSize, PageSize.A4))
+      {
+        pageWidth = 11907;
+	pageHeight = 16840;
+	landscape = rotate;
+	return true;
+      }
+      if(rectEquals(pageSize, PageSize.A5))
+      {
+        pageWidth = 8391;
+	pageHeight = 11907;
+	landscape = rotate;
+	return true;
+      }
+      if(rectEquals(pageSize, PageSize.A6))
+      {
+        pageWidth = 5959;
+	pageHeight = 8420;
+	landscape = rotate;
+	return true;
+      }
+      if(rectEquals(pageSize, PageSize.B4))
+      {
+        pageWidth = 14570;
+	pageHeight = 20636;
+	landscape = rotate;
+	return true;
+      }
+      if(rectEquals(pageSize, PageSize.B5))
+      {
+        pageWidth = 10319;
+	pageHeight = 14572;
+	landscape = rotate;
+	return true;
+      }
+      if(rectEquals(pageSize, PageSize.HALFLETTER))
+      {
+        pageWidth = 7927;
+	pageHeight = 12247;
+	landscape = rotate;
+	return true;
+      }
+      if(rectEquals(pageSize, PageSize.LETTER))
+      {
+        pageWidth = 12242;
+	pageHeight = 15842;
+	landscape = rotate;
+	return true;
+      }
+      if(rectEquals(pageSize, PageSize.LEGAL))
+      {
+        pageWidth = 12252;
+	pageHeight = 20163;
+	landscape = rotate;
+	return true;
+      }
+      if(!rotate && parseFormat(pageSize, true))
+      {
+        int x = pageWidth;
+	pageWidth = pageHeight;
+	pageHeight = x;
+	return true;
+      }
+      return false;
+  }
+
+  /**
+   * This method compares to Rectangles. They are considered equal if width and height are the same
+   */
+  private boolean rectEquals(Rectangle rect1, Rectangle rect2)
+  {
+    return (rect1.width() == rect2.width()) && (rect1.height() == rect2.height());
+  }
+
+  /**
+   * Returns whether we are currently writing a header or footer
+   *
+   * @return the value of inHeaderFooter
+   */
+  public boolean writingHeaderFooter()
+  {
+    return inHeaderFooter;
+  }
 
   /**
    * Replaces special characters with their unicode values

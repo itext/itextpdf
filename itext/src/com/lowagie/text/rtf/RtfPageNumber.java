@@ -62,23 +62,30 @@ import java.awt.Color;
  * A rtf page number field.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
- * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2002/02/12 14:30:35 $
+ * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
+ * @version $Revision$Date: 2002/03/06 13:29:37 $
+ *
+ * Modified by Mark Hall (mhall@austromail.at) 14.04.2002
  */
 public class RtfPageNumber extends Chunk implements RtfField {
 
-    protected static final byte[] pageControl = "chpgn".getBytes();
+    protected static final String pageControl = "\\chpgn ";
 
     public RtfPageNumber( String content, Font contentFont ) {
         super( content, contentFont );
+	/* This is a hack, because of the way multiple Chunks with the same Font are handled
+	 * by iText Phrases and Paragraphs we have to add the Page Number Control to the content
+	 * field. */
+	this.content.append(pageControl);
     }
 
 
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
 
         writer.writeInitialFontSignature( out, font() );
-        out.write( RtfWriter.escape );
-        out.write( pageControl );
+	out.write(content.toString().getBytes());
+/*        out.write( RtfWriter.escape );
+        out.write( pageControl );*/
         writer.writeFinishingFontSignature( out, font() );        
 //        out.write( RtfWriter.openGroup );
 //            out.write( RtfWriter.escape );

@@ -259,7 +259,7 @@ public class RtfCell
    * @param os The <code>OutputStream</code> to which to write the properties
    * of the <code>RtfCell</code> to.
    */
-    public boolean writeCellSettings(OutputStream os) throws DocumentException
+    public boolean writeCellSettings(ByteArrayOutputStream os) throws DocumentException
     {
         try
         {
@@ -421,7 +421,7 @@ public class RtfCell
    * @param os The <code>OutputStream</code> to which to write the content of
    * the <code>RtfCell</code> to.
    */
-    public boolean writeCellContent(OutputStream os) throws DocumentException
+    public boolean writeCellContent(ByteArrayOutputStream os) throws DocumentException
     {
         try
         {
@@ -455,7 +455,7 @@ public class RtfCell
                 while(cellIterator.hasNext())
                 {
                     Element element = (Element) cellIterator.next();
-                    element.process(writer);
+                    writer.addElement(element, os);
                     if(element.type() == Element.PARAGRAPH && cellIterator.hasNext())
                     {
                         os.write(RtfWriter.escape);
@@ -539,7 +539,7 @@ public class RtfCell
    * @param out The <code>OutputStream</code> to be written to.
    * @param i The int to be written.
    */
-    private void writeInt(OutputStream out, int i) throws IOException
+    private void writeInt(ByteArrayOutputStream out, int i) throws IOException
     {
         out.write(Integer.toString(i).getBytes());
     }

@@ -90,9 +90,18 @@ public class RtfHeaderFooters extends HeaderFooter {
     private HeaderFooter firstPage = null;
 
     public RtfHeaderFooters() {
-        super( null, null );
-    }    
+        super( new Phrase(""), false );	// Modified by Mark Hall (mhall@austromail.at) 01.04.2002
+    }
 
+    // Added by Mark Hall (mhall@austromail.at) 01.04.2002
+    public RtfHeaderFooters( Phrase before, Phrase after ) {
+        super( before, after );
+    }
+
+    // Added by Mark Hall (mhall@austromail.at) 01.04.2002
+    public RtfHeaderFooters( Phrase before, boolean numbered ) {
+        super( before, numbered );
+    }
 
     public void set( int type, HeaderFooter hf ) {
         switch (type) {
