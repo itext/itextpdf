@@ -47,6 +47,7 @@ import com.lowagie.text.DocWriter;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Header;
+import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.Meta;
@@ -291,7 +292,16 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	private Font standardFont = new Font();
 
 	/** This is a path for images. */
-	private String imagepath = null;
+	private String imagepath = null; 
+
+	/** Stores the page number. */
+	private static int pageN = 0;
+
+	/** This is the textual part of a header */
+	private HeaderFooter header = null;
+
+	/** This is the textual part of the footer */
+	private HeaderFooter footer = null;
 
 // constructor
 
@@ -305,7 +315,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	protected HtmlWriter(Document doc, OutputStream os) {
 		super(doc, os);
 		document.addDocListener(this);
-		try {
+		this.pageN = document.getPageNumber();
+		try {						  
 			writeBeginTag(HTML);
 			writeBeginTag(HEAD);
 			document.addProducer();
@@ -326,7 +337,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 */
 
 	public static HtmlWriter getInstance(Document document, OutputStream os) {
-		 return new HtmlWriter(document, os);
+		return new HtmlWriter(document, os);
 	}
 
 // implementation of the DocListener methods
@@ -381,12 +392,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		try {
 			switch(element.type()) {
 			case Element.HEADER:
-				Header header = (Header) element;
-				if (!STYLESHEET.equals(header.name())) {
-					writeHeader(header);
+				Header h = (Header) element;
+				if (!STYLESHEET.equals(h.name())) {
+					writeHeader(h);
 				}
 				else {
-					writeLink(header);
+					writeLink(h);
 				}
 				break;
 			case Element.SUBJECT:
@@ -637,7 +648,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
 			if (pageSize.backgroundColor() != null) {
 				attributes.put(BGCOLOR, HtmlEncoder.encode(pageSize.backgroundColor()));
 			}
-			writeBeginTag(BODY, attributes);
+			writeBeginTag(BODY, attributes); 
+			
+			//Add a header if available (added by David Freels)		
+			initHeader();
 		}
 		catch(IOException ioe) {
 		}
@@ -649,7 +663,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
      */
 
     public void close() {
-		try {
+		try { 
+			initFooter(); // line added by David Freels
 			writeEndTag(BODY);
 			writeEndTag(HTML);
 			super.close();
@@ -659,6 +674,42 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	}
 
 // some private methods
+
+	/**
+	 * Adds the header to the top of the </CODE>Document</CODE>
+	 *
+	 * @author	David Freels
+	 */
+
+	private void initHeader() {
+		if (header != null) {
+			try {
+				add(header.paragraph());
+				newLine();
+			}
+			catch(Exception e) {
+			}
+		}
+	}
+
+	/**
+	 *  Adds the header to the top of the </CODE>Document</CODE>
+	 *
+	 * @author	David Freels
+	 */
+
+	private void initFooter() {
+		if (footer != null)	{
+			try {
+				// Set the page number. HTML has no notion of a page, so it should always
+				// add up to 1
+				footer.setPageNumber(HtmlWriter.pageN + 1);
+				add(footer.paragraph());
+			}
+			catch(Exception e) {
+			}
+		}
+	}
 
 	/**
 	 * Writes a new line to the outputstream.
@@ -908,5 +959,29 @@ public class HtmlWriter extends DocWriter implements DocListener {
 
 	public void resetImagepath() {
 		imagepath = null;
+	} 
+
+	/**
+	 * Changes the header of this document.
+	 *
+	 * @param	header		the new header
+	 *
+	 * @author	David Freels
+	 */
+
+	public void setHeader(HeaderFooter header) {
+		this.header = header;
+	}
+
+	/**
+	 * Changes the footer of this document.
+	 *
+	 * @param	footer		the new footer
+	 *
+	 * @author	David Freels
+	 */
+
+	public void setFooter(HeaderFooter footer) {
+		this.footer = footer;
 	}
 }
