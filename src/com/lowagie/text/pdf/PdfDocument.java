@@ -197,7 +197,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 96"));
+            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.91)"));
             // Do not edit the line above!
         }
         
@@ -1412,12 +1412,6 @@ class PdfDocument extends Document implements DocListener {
                                     cell = (PdfCell) iterator.previous();
                                 }
                             }
-                            ArrayList images = cell.getImages(pagetop, indentBottom());
-                            for (Iterator i = images.iterator(); i.hasNext(); ) {
-                                cellsShown = true;
-                                Image image = (Image) i.next();
-                                addImage(graphics, image, 0, 0, 0, 0, 0, 0);
-                            }
                             lines = cell.getLines(pagetop, indentBottom());
                             // if there are lines to add, add them
                             if (lines != null && lines.size() > 0) {
@@ -1435,6 +1429,12 @@ class PdfDocument extends Document implements DocListener {
                                 if (oldHeight + cellDisplacement > currentHeight) {
                                     currentHeight = oldHeight + cellDisplacement;
                                 }
+                            }
+                            ArrayList images = cell.getImages(pagetop, indentBottom());
+                            for (Iterator i = images.iterator(); i.hasNext(); ) {
+                                cellsShown = true;
+                                Image image = (Image) i.next();
+                                addImage(cellGraphics, image, 0, 0, 0, 0, 0, 0);
                             }
                             // if a cell is allready added completely, remove it
                             if (cell.mayBeRemoved()) {
