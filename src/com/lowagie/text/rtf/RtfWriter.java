@@ -96,6 +96,8 @@ import java.text.ParsePosition;
  * <br />
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
+ *
+ * @author <a href="mailto:mhall@myrealbox.com">Mark.Hall@myrealbox.com</a>
  */
 public class RtfWriter extends DocWriter implements DocListener {
     /**
@@ -1968,8 +1970,12 @@ public class RtfWriter extends DocWriter implements DocListener {
      */
     private void writeSectionDefaults(ByteArrayOutputStream out) throws IOException {
         if (header instanceof RtfHeaderFooters || footer instanceof RtfHeaderFooters) {
-            out.write(escape);
-            out.write(facingPages);
+            RtfHeaderFooters rtfHeader = (RtfHeaderFooters) header;
+            RtfHeaderFooters rtfFooter = (RtfHeaderFooters) footer;
+            if (rtfHeader.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfHeader.get(RtfHeaderFooters.RIGHT_PAGES) != null || rtfFooter.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfFooter.get(RtfHeaderFooters.RIGHT_PAGES) != null) {
+                out.write(escape);
+                out.write(facingPages);
+            }
         }
         if (hasTitlePage) {
             out.write(escape);
