@@ -2483,7 +2483,7 @@ class PdfDocument extends Document implements DocListener {
                             if (cap2 != 0)
                                 graphics.setLineCap(cap2);
                             graphics.moveTo(xMarker, yMarker + shift);
-                            graphics.lineTo(xMarker + width - subtract, yMarker + shift + chunk.getTextRise());
+                            graphics.lineTo(xMarker + width - subtract, yMarker + shift);
                             graphics.stroke();
                             if (scolor != null)
                                 graphics.resetGrayStroke();
