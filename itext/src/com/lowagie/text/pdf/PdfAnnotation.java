@@ -234,7 +234,7 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
-    public static PdfAnnotation createSquareCirlcle(PdfWriter writer, Rectangle rect, String contents, boolean square) {
+    public static PdfAnnotation createSquareCircle(PdfWriter writer, Rectangle rect, String contents, boolean square) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         if (square)
             annot.put(PdfName.SUBTYPE, PdfName.SQUARE);
@@ -575,5 +575,13 @@ public class PdfAnnotation extends PdfDictionary {
     
     public void setMKTextPosition(int tp) {
         getMK().put(PdfName.TP, new PdfNumber(tp));
-    }    
+    }
+    
+    /**
+     * Sets the layer this annotation belongs to.
+     * @param layer the layer this annotation belongs to
+     */    
+    public void setLayer(PdfOCG layer) {
+        put(PdfName.OC, layer.getRef());
+    }
 }

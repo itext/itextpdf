@@ -570,7 +570,19 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName OC = new PdfName("OC");
     /** A name */
-    public static final PdfName OFF = new PdfName("Off");
+    public static final PdfName OCG = new PdfName("OCG");
+    /** A name */
+    public static final PdfName OCGS = new PdfName("OCGs");
+    /** A name */
+    public static final PdfName OCMD = new PdfName("OCMD");
+    /** A name */
+    public static final PdfName OCPROPERTIES = new PdfName("OCProperties");
+    /** A name */
+    public static final PdfName Off = new PdfName("Off");
+    /** A name */
+    public static final PdfName OFF = new PdfName("OFF");
+    /** A name */
+    public static final PdfName ON = new PdfName("ON");
     /** A name */
     public static final PdfName ONECOLUMN = new PdfName("OneColumn");
     /** A name */
@@ -630,6 +642,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PREDICTOR = new PdfName("Predictor");
     /** A name */
+    public static final PdfName PRESERVERB = new PdfName("PreserveRB");
+    /** A name */
     public static final PdfName PREV = new PdfName("Prev");
     /** A name */
     public static final PdfName PREVPAGE = new PdfName("PrevPage");
@@ -688,6 +702,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName SEPARATION = new PdfName("Separation");
     /** A name */
+    public static final PdfName SETOCGSTATE = new PdfName("SetOCGState");
+    /** A name */
     public static final PdfName SHADING = new PdfName("Shading");
     /** A name */
     public static final PdfName SHADINGTYPE = new PdfName("ShadingType");
@@ -711,6 +727,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName STAMP = new PdfName("Stamp");
     /** A name */
     public static final PdfName STANDARD = new PdfName("Standard");
+    /** A name */
+    public static final PdfName STATE = new PdfName("State");
     /** A name */
     public static final PdfName STRIKEOUT = new PdfName("StrikeOut");
     /** A name */
@@ -761,6 +779,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName TK = new PdfName("TK");
     /** A name */
     public static final PdfName TM = new PdfName("TM");
+    /** A name */
+    public static final PdfName TOGGLE = new PdfName("Toggle");
     /** A name */
     public static final PdfName TOUNICODE = new PdfName("ToUnicode");
     /** A name */

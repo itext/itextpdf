@@ -57,6 +57,7 @@ class PageResources {
     protected PdfDictionary patternDictionary = new PdfDictionary();
     protected PdfDictionary shadingDictionary = new PdfDictionary();
     protected PdfDictionary extGStateDictionary = new PdfDictionary();
+    protected PdfDictionary LayerDictionary = new PdfDictionary();
     protected HashMap forbiddenNames;
     protected PdfDictionary originalResources;
     protected int namePtr[] = {0};
@@ -151,6 +152,12 @@ class PageResources {
         return name;
     }
 
+    PdfName addLayer(PdfName name, PdfIndirectReference reference) {
+        name = translateName(name);
+        LayerDictionary.put(name, reference);
+        return name;
+    }
+
     PdfDictionary getResources() {
        PdfResources resources = new PdfResources();
         if (originalResources != null)
@@ -162,6 +169,7 @@ class PageResources {
         resources.add(PdfName.PATTERN, patternDictionary);
         resources.add(PdfName.SHADING, shadingDictionary);
         resources.add(PdfName.EXTGSTATE, extGStateDictionary);
+        resources.add(PdfName.PROPERTIES, LayerDictionary);
         return resources;
     }
 }
