@@ -45,7 +45,6 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="make.jar" description="--> makes a jarfile from the iText code">
-        <mkdir dir="${itext.dist}" />
         <mkdir dir="${itext.bin}" />
         <mkdir dir="${itext.classes}/com/lowagie/text/pdf/fonts" />
         <copy todir="${itext.classes}/com/lowagie/text/pdf/fonts" overwrite="yes">
@@ -56,8 +55,7 @@
                 <include name="**/*.txt"/>
             </fileset>
         </copy>
-        <jar jarfile="${itext.dist}/iText.jar" basedir="${itext.classes}" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**" />
-        <copy file="${itext.dist}/iText.jar" todir="${itext.bin}" overwrite="yes" />
+        <jar jarfile="${itext.bin}/iText.jar" basedir="${itext.classes}" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**" />
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
