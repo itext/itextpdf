@@ -203,17 +203,17 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Begin new section tag. */
     private static final byte[] section = "sect".getBytes();
-    
+
   /** Reset paragraph defaults tag. */
     public static final byte[] paragraphDefaults = "pard".getBytes();
-    
+
   /** Begin new paragraph tag. */
     public static final byte[] paragraph = "par".getBytes();
     
   /**
    * Lists
    */
-    
+
   /** Begin the List Table */
     private static final byte[] listtableGroup = "listtable".getBytes();
     
@@ -285,10 +285,10 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Current List ID */
     private static final byte[] listID = "listid".getBytes();
-    
+
   /** List override */
     private static final byte[] listOverride = "listoverride".getBytes();
-    
+
   /** Number of overrides */
     private static final byte[] listOverrideCount = "listoverridecount".getBytes();
     
@@ -326,10 +326,10 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Begin colour table tag. */
     private static final byte[] colorTable = "colortbl".getBytes();
-    
+
   /** Red value tag. */
     private static final byte[] colorRed = "red".getBytes();
-    
+
   /** Green value tag. */
     private static final byte[] colorGreen = "green".getBytes();
     
@@ -342,7 +342,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Begin the info group tag.*/
     private static final byte[] infoBegin = "info".getBytes();
-    
+
   /** Author tag. */
     private static final byte[] metaAuthor = "author".getBytes();
     
@@ -385,7 +385,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Begin header group tag. */
     private static final byte[] headerBegin = "header".getBytes();
-    
+
   /** Begin footer group tag. */
     private static final byte[] footerBegin = "footer".getBytes();
 
@@ -408,10 +408,10 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Paper width tag. */
     private static final byte[] rtfPaperWidth = "paperw".getBytes();
-    
+
   /** Paper height tag. */
     private static final byte[] rtfPaperHeight = "paperh".getBytes();
-    
+
   /** Margin left tag. */
     private static final byte[] rtfMarginLeft = "margl".getBytes();
     
@@ -449,10 +449,10 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Begin the picture tag */
     private static final byte[] picture = "pict".getBytes();
-    
+
   /** PNG Image */
     private static final byte[] picturePNG = "pngblip".getBytes();
-    
+
   /** JPEG Image */
     private static final byte[] pictureJPEG = "jpegblip".getBytes();
     
@@ -470,7 +470,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Picture scale horizontal percent */
     private static final byte[] pictureScaleX = "picscalex".getBytes();
-    
+
   /** Picture scale vertical percent */
     private static final byte[] pictureScaleY = "picscaley".getBytes();
     
@@ -557,7 +557,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** List of current Lists. */
     private Vector listIds = null;
-    
+
   /** Current List Level. */
     private int listLevel = 0;
     
@@ -897,9 +897,9 @@ public class RtfWriter extends DocWriter implements DocListener
             Chunk ch = (Chunk) chunks.next();
             ch.setFont(ch.font().difference(phrase.font()));
         }
-    phrase.process(this);
+      phrase.process(this);
     }
-    
+
   /**
    * Write an <code>Anchor</code>. Anchors are treated like Phrases.
    *
@@ -944,16 +944,23 @@ public class RtfWriter extends DocWriter implements DocListener
    *
    * @throws IOException
    */
-    private void writeChunk(Chunk chunk, ByteArrayOutputStream out) throws IOException
+  private void writeChunk(Chunk chunk, ByteArrayOutputStream out) throws IOException, DocumentException
     {
         if (chunk instanceof RtfField) {
             ((RtfField)chunk).write( this, out );
         } else {
-            writeInitialFontSignature( out, chunk.font() );
-            out.write( filterSpecialChar( chunk.content() ).getBytes() );
-            writeFinishingFontSignature( out, chunk.font() );            
-        }    
-	//        
+	  if(chunk.getImage() != null)
+	  {
+	    writeImage(chunk.getImage(), out);
+	  }
+	  else
+	  {
+	    writeInitialFontSignature( out, chunk.font() );
+	    out.write( filterSpecialChar( chunk.content() ).getBytes() );
+	    writeFinishingFontSignature( out, chunk.font() );
+	  }
+        }
+	//
 	//        if (chunk instanceof RtfTOC) {
 	//            ((RtfTOC)chunk).write( this, out );
 	//        }
@@ -963,61 +970,62 @@ public class RtfWriter extends DocWriter implements DocListener
     protected void writeInitialFontSignature( OutputStream out, Font font ) throws IOException {
         out.write(escape);
         out.write(fontNumber);
-        if (font.family() != Font.UNDEFINED) { 
-            writeInt(out, addFont( font )); 
-        } else { 
-            writeInt(out, 0); 
+	System.out.println(font.family());
+        if (font.family() != Font.UNDEFINED) {
+            writeInt(out, addFont( font ));
+        } else {
+            writeInt(out, 0);
         }
         out.write(escape);
         out.write(fontSize);
-        if (font.size() > 0) { 
-            writeInt( out, (int)(font.size() * 2) ); 
-        } else { 
-            writeInt(out, 20); 
+        if (font.size() > 0) {
+            writeInt( out, (int)(font.size() * 2) );
+        } else {
+            writeInt(out, 20);
         }
         out.write(escape);
         out.write(fontColor);
         writeInt(out, addColor( font.color() ) );
-        if (font.isBold()) { 
-            out.write(escape); 
-            out.write(bold); 
+        if (font.isBold()) {
+            out.write(escape);
+            out.write(bold);
         }
-        if (font.isItalic()) { 
-            out.write(escape); 
-            out.write(italic); 
+        if (font.isItalic()) {
+            out.write(escape);
+            out.write(italic);
         }
-        if (font.isUnderlined()) { 
-            out.write(escape); 
-            out.write(underline); 
+        if (font.isUnderlined()) {
+            out.write(escape);
+            out.write(underline);
         }
-        if (font.isStrikethru()) { 
-            out.write(escape); 
-            out.write(strikethrough); 
+        if (font.isStrikethru()) {
+            out.write(escape);
+            out.write(strikethrough);
         }
         out.write( delimiter );
-    }    
+    }
 
 
     protected void writeFinishingFontSignature( OutputStream out, Font font ) throws IOException {
-        if (font.isBold()) { 
-            out.write(escape); 
-            out.write(bold); 
-            writeInt(out, 0); 
+        if (font.isBold()) {
+            out.write(escape);
+            out.write(bold);
+            writeInt(out, 0);
         }
-        if (font.isItalic()) { 
-            out.write(escape); 
-            out.write(italic); 
-            writeInt(out, 0); 
+        if (font.isItalic()) {
+            out.write(escape);
+            out.write(italic);
+            writeInt(out, 0);
         }
-        if (font.isUnderlined()) { 
-            out.write(escape); 
-            out.write(underline); 
-            writeInt(out, 0); 
+        if (font.isUnderlined()) {
+            out.write(escape);
+            out.write(underline);
+            writeInt(out, 0);
         }
-        if (font.isStrikethru()) { 
-            out.write(escape); 
-            out.write(strikethrough); 
-            writeInt(out, 0); 
+        if (font.isStrikethru()) {
+            out.write(escape);
+            out.write(strikethrough);
+            writeInt(out, 0);
         }
     }
   /**
@@ -1353,7 +1361,7 @@ public class RtfWriter extends DocWriter implements DocListener
         out.write(annotationElement.content().getBytes());
         out.write(closeGroup);
     }
-    
+
   /**
    * Add a <code>Meta</code> element. It is written to the Inforamtion Group
    * and merged with the main <code>ByteArrayOutputStream</code> when the
@@ -1428,7 +1436,7 @@ public class RtfWriter extends DocWriter implements DocListener
     protected int addFont(Font newFont)
     {
         int fn = -1;
-        
+
         for(int i = 0; i < fontList.size(); i++)
         {
             if(newFont.family() == ((Font)fontList.get(i)).family()) { fn = i; }
@@ -1523,7 +1531,7 @@ public class RtfWriter extends DocWriter implements DocListener
                 hf = rtfHf.get( RtfHeaderFooters.FIRST_PAGE );
                 if (hf != null) {
                     writeHeaderFooter( hf, headerfBegin, os );
-                }                
+                }
             } else {
                 writeHeaderFooter(this.header, headerBegin, os);
             }    
@@ -1564,7 +1572,7 @@ public class RtfWriter extends DocWriter implements DocListener
     private void writeFontList() throws IOException
     {
         Font fnt;
-        
+
         os.write(openGroup);
         os.write(escape);
         os.write(fontTable);
