@@ -220,6 +220,7 @@ public class Document implements DocListener {
 				type == Element.PHRASE ||
 				type == Element.PARAGRAPH ||
 				type == Element.TABLE ||
+				type == Element.PTABLE ||
 
 				type == Element.ANCHOR ||
 

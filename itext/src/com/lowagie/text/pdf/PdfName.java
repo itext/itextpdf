@@ -121,6 +121,9 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName CCITTFAXDECODE = new PdfName("/CCITTFaxDecode", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName CENTERWINDOW = new PdfName("/CenterWindow", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName COLORS = new PdfName("/Colors", 0);
  
 	/** This is a static final PdfName */
@@ -184,6 +187,9 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName DEVICECMYK = new PdfName("/DeviceCMYK", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName DIRECTION = new PdfName("/Direction", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName DUR = new PdfName("/Dur", 0);
  
 	/** This is a static final PdfName */
@@ -235,6 +241,9 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName FITBV = new PdfName("/FitBV", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName FITWINDOW = new PdfName("/FitWindow", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName FLATEDECODE = new PdfName("/FlateDecode", 0);
  
 	/** This is a static final PdfName */
@@ -277,6 +286,15 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName HID = new PdfName("/Hid", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName HIDEMENUBAR = new PdfName("/HideMenubar", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName HIDETOOLBAR = new PdfName("/HideToolbar", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName HIDEWINDOWUI = new PdfName("/HideWindowUI", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName ID = new PdfName("/ID", 0);
  
 	/** This is a static final PdfName */
@@ -302,6 +320,9 @@ public class PdfName extends PdfObject implements Comparable {
  
 	/** This is a static final PdfName */
 	public static final PdfName KIDS = new PdfName("/Kids", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName L2R = new PdfName("/L2R", 0);
  
 	/** This is a static final PdfName */
 	public static final PdfName LAST = new PdfName("/Last", 0);
@@ -349,6 +370,12 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName NEXT = new PdfName("/Next", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName NONFULLSCREENPAGEMODE = new PdfName("/NonFullScreenPageMode", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName ONECOLUMN = new PdfName("/OneColumn", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName OPENACTION = new PdfName("/OpenAction", 0);
  
 	/** This is a static final PdfName */
@@ -356,6 +383,9 @@ public class PdfName extends PdfObject implements Comparable {
  
 	/** This is a static final PdfName */
 	public static final PdfName PAGE = new PdfName("/Page", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName PAGELAYOUT = new PdfName("/PageLayout", 0);
  
 	/** This is a static final PdfName */
 	public static final PdfName PAGEMODE = new PdfName("/PageMode", 0);
@@ -388,6 +418,9 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName PROPERTIES = new PdfName("/Properties", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName R2L = new PdfName("/R2L", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName RECT = new PdfName("/Rect", 0);
  
 	/** This is a static final PdfName */
@@ -404,6 +437,9 @@ public class PdfName extends PdfObject implements Comparable {
  
 	/** This is a static final PdfName */
 	public static final PdfName S = new PdfName("/S", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName SINGLEPAGE = new PdfName("/SinglePage", 0);
  
 	/** This is a static final PdfName */
 	public static final PdfName SIZE = new PdfName("/Size", 0);
@@ -448,6 +484,12 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName TRANS = new PdfName("/Trans", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName TWOCOLUMNLEFT = new PdfName("/TwoColumnLeft", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName TWOCOLUMNRIGHT = new PdfName("/TwoColumnRight", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName TYPE = new PdfName("/Type", 0);
  
 	/** This is a static final PdfName */
@@ -469,7 +511,7 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName USETHUMBS = new PdfName("/UseThumbs", 0);
  
 	/** This is a static final PdfName */
-	public static final PdfName VIEWERPREFERENCES = new PdfName("/VIEWERPREFERENCES", 0);
+	public static final PdfName VIEWERPREFERENCES = new PdfName("/ViewerPreferences", 0);
 
 	/** This is a static final PdfName of an attribute. */
 	public static final PdfName W = new PdfName("/W", 0);

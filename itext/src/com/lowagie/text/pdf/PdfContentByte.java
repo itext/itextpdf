@@ -294,8 +294,23 @@ public class PdfContentByte {
         }
     }
     
+    /** Modify the current clipping path by intersecting it with the current path, using the
+     * nonzero winding number rule to determine which regions lie inside the clipping
+     * path.
+     */
+    public final void clip() {
+        content.append("W\n");
+    }
+
+    /** Modify the current clipping path by intersecting it with the current path, using the
+     * even-odd rule to determine which regions lie inside the clipping path.
+     */
+    public final void eoClip() {
+      content.append("W*\n");
+    }
+
     /**
-     * Changes the currentgray tint for filling paths (device dependent colors!).
+     * Changes the current gray tint for filling paths (device dependent colors!).
      * <P>
      * Sets the color space to <B>DeviceGray</B> (or the <B>DefaultGray</B> color space),
      * and sets the gray tint to use for filling paths.</P>

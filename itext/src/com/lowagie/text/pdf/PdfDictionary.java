@@ -142,6 +142,7 @@ class PdfDictionary extends PdfObject {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			stream.write(DocWriter.getISOBytes("<<\n"));
 
+            System.out.println("dic " + treeMap.size());
 			// loop over all the object-pairs in the TreeMap
 			PdfName key;
 			PdfObject value;

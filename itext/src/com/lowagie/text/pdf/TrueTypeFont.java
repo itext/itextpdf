@@ -201,6 +201,7 @@ public class TrueTypeFont extends BaseFont {
         else
             throw new DocumentException(fileName + style + " is not a TTF font file.");
         try {
+            " ".getBytes(enc); // check if the encoding exists
             createEncoding();
         }
         catch (UnsupportedEncodingException e) {
