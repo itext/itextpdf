@@ -299,7 +299,7 @@ public class ElementTags {
 /** the image tag */
     public static final String IMAGE = "image";
     
-/** attribute of the image tag */
+/** attribute of the image and annotation tag */
     public static final String URL = "url";
     
 /** attribute of the image tag */
@@ -340,6 +340,42 @@ public class ElementTags {
     
 /** the annotation tag */
     public static final String ANNOTATION = "annotation";
+    
+/** attribute of the annotation tag */
+    public static String FILE = "file";
+    
+/** attribute of the annotation tag */
+    public static String DESTINATION = "destination";
+    
+/** attribute of the annotation tag */
+    public static String PAGE = "page";
+    
+/** attribute of the annotation tag */
+    public static String NAMED = "named";
+    
+/** attribute of the annotation tag */
+    public static String APPLICATION = "application";
+    
+/** attribute of the annotation tag */
+    public static String PARAMETERS = "parameters";
+    
+/** attribute of the annotation tag */
+    public static String OPERATION = "operation";
+    
+/** attribute of the annotation tag */
+    public static String DEFAULTDIR = "defaultdir";
+    
+/** attribute of the annotation tag */
+    public static String LLX = "llx";
+    
+/** attribute of the annotation tag */
+    public static String LLY = "lly";
+    
+/** attribute of the annotation tag */
+    public static String URX = "urx";
+    
+/** attribute of the annotation tag */
+    public static String URY = "ury";
     
 /** attribute of the annotation tag */
     public static final String CONTENT = "content";
