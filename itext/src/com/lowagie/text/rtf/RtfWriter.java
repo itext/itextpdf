@@ -1525,8 +1525,12 @@ public class RtfWriter extends DocWriter implements DocListener {
             } else {
                 imgIn = new ByteArrayInputStream(image.getOriginalData());
             }
-            if (type == Image.ORIGINAL_WMF) //remove the placeable header
-                imgIn.skip(22);
+            if (type == Image.ORIGINAL_WMF) { //remove the placeable header
+                long skipLength = 22;
+            	while(skipLength > 0) {
+            	    skipLength = skipLength - imgIn.skip(skipLength);
+            	}
+            }
         }
         int buffer = -1;
         int count = 0;
