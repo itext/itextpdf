@@ -49,7 +49,6 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.awt.Color;
 
 /** Implements form fields.
  *

@@ -67,15 +67,11 @@ import java.security.cert.X509Certificate;
 import java.security.cert.CRL;
 import java.security.PrivateKey;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.EOFException;
 import java.io.RandomAccessFile;
 import java.io.File;
 import java.io.InputStream;
-
-import java.io.IOException;
 
 /**
  * This class takes care of the cryptographic options and appearances that form a signature.

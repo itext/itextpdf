@@ -47,7 +47,6 @@
 
 package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 import java.util.HashMap;
 import java.util.ArrayList;
