@@ -123,7 +123,7 @@ public class SAXiTextHandler extends DefaultHandler {
  */
     
     public void handleStartingTags(String name, Properties attributes) {
-        System.err.println("Start: " + name);
+        //System.err.println("Start: " + name);
         if (ignore || ElementTags.IGNORE.equals(name)) {
             ignore = true;
             return;
@@ -432,7 +432,7 @@ public class SAXiTextHandler extends DefaultHandler {
         if (ignore) return;
         
         String content = new String(ch, start, length);
-        System.err.println("'" + content + "'");
+        //System.err.println("'" + content + "'");
         
         if (content.trim().length() == 0) {
             return;
@@ -491,7 +491,7 @@ public class SAXiTextHandler extends DefaultHandler {
     
     public void handleEndingTags(String name) {
         
-        System.err.println("Stop: " + name);
+        //.err.println("Stop: " + name);
         
         if (ElementTags.IGNORE.equals(name)) {
             ignore = false;
