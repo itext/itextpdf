@@ -197,23 +197,23 @@ public abstract class BaseFont {
     protected BaseFont() {
     }
     
-/**
- * Creates a new font. This font can be one of the 14 built in types,
- * a Type1 font referred by an AFM file, a TrueType font or a CJK font from the
- * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier
- * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
- * example would be "STSong-Light,Bold". Note that this modifiers do not work if
- * the font is embedded.
- * <P>
- * The fonts are cached and if they already exist they are extracted from the cache,
- * not parsed again.
- * @param name the name of the font or it's location on file
- * @param encoding the encoding to be applied to this font
- * @param embedded true if the font is to be embedded in the PDF
- * @return returns a new font. This font may come from the cache
- * @throws DocumentException the font is invalid
- * @throws IOException the font file could not be read
- */
+    /** Creates a new font. This font can be one of the 14 built in types,
+     * a Type1 font referred by an AFM file, a TrueType font (simple or collection) or a CJK font from the
+     * Adobe Asian Font Pack. TrueType fonts and CJK fonts can have an optional style modifier
+     * appended to the name. These modifiers are: Bold, Italic and BoldItalic. An
+     * example would be "STSong-Light,Bold". Note that this modifiers do not work if
+     * the font is embedded. Fonts in TrueType collections are addressed by index such as "msgothic.ttc,1".
+     * This would get the second font (indexes start at 0), in this case "MS PGothic".
+     * <P>
+     * The fonts are cached and if they already exist they are extracted from the cache,
+     * not parsed again.
+     * @param name the name of the font or it's location on file
+     * @param encoding the encoding to be applied to this font
+     * @param embedded true if the font is to be embedded in the PDF
+     * @return returns a new font. This font may come from the cache
+     * @throws DocumentException the font is invalid
+     * @throws IOException the font file could not be read
+     */
     public static BaseFont createFont(String name, String encoding, boolean embedded) throws DocumentException, IOException
     {
         String nameBase = getBaseName(name);
@@ -235,7 +235,7 @@ public abstract class BaseFont {
         if (isBuiltinFonts14 || name.toLowerCase().endsWith(".afm")) {
             fontBuilt = new Type1Font(name, encoding, embedded);
         }
-        else if (nameBase.toLowerCase().endsWith(".ttf")) {
+        else if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().indexOf(".ttc,") > 0) {
             if (encoding.equals(IDENTITY_H) || encoding.equals(IDENTITY_V))
                 fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded);
             else

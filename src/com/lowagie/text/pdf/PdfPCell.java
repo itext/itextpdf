@@ -39,8 +39,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Image;
 import com.lowagie.text.Chunk;
 
-/**
- * a cell in a PdfPTable
+/** A cell in a PdfPTable.
  */
 
 public class PdfPCell extends Rectangle{
@@ -66,7 +65,8 @@ public class PdfPCell extends Rectangle{
 /** The fixed text leading. */
     protected float fixedLeading = 0;
     
-/** The text leading that is multiplied by the biggest font size in the line. */
+    /** The text leading that is multiplied by the biggest font size in the line.
+     */
     protected float multipliedLeading = 1;
     
 /** The extra space between paragraphs. */
@@ -75,6 +75,8 @@ public class PdfPCell extends Rectangle{
 /** The first paragraph line indent. */
     protected float indent = 0;
     
+    /** The text in the cell.
+     */    
     protected Phrase phrase;
     
 /** Holds value of property fixedHeight. */
@@ -89,6 +91,10 @@ public class PdfPCell extends Rectangle{
     /** Holds value of property minimumHeight. */
     private float minimumHeight;
     
+    /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
+     * The default padding is 2.
+     * @param phrase the text
+     */    
     public PdfPCell(Phrase phrase)
     {
         super(0, 0, 0, 0);
@@ -97,6 +103,10 @@ public class PdfPCell extends Rectangle{
         this.phrase = phrase;
     }
     
+    /** Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
+     * The default padding is 0.
+     * @param image the <CODE>Image</CODE>
+     */    
     public PdfPCell(Image image)
     {
         super(0, 0, 0, 0);
@@ -108,6 +118,11 @@ public class PdfPCell extends Rectangle{
         setPadding(0);
     }
     
+    /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
+     * This constructor allows nested tables.
+     * The default padding is 0.
+     * @param table The <CODE>PdfPTable</CODE>
+     */    
     public PdfPCell(PdfPTable table)
     {
         super(0, 0, 0, 0);
@@ -119,6 +134,9 @@ public class PdfPCell extends Rectangle{
         this.table = table;
     }
     
+    /** Constructs a deep copy of a <CODE>PdfPCell</CODE>.
+     * @param cell the <CODE>PdfPCell</CODE> to duplicate
+     */    
     public PdfPCell(PdfPCell cell)
     {
         super(cell.llx, cell.lly, cell.urx, cell.ury);
@@ -145,11 +163,17 @@ public class PdfPCell extends Rectangle{
             table = new PdfPTable(cell.table);
     }
     
+    /** Gets the <CODE>Phrase</CODE> from this cell.
+     * @return the <CODE>Phrase</CODE>
+     */    
     public Phrase getPhrase()
     {
         return phrase;
     }
     
+    /** Sets the <CODE>Phrase</CODE> for this cell.
+     * @param phrase the <CODE>Phrase</CODE>
+     */    
     public void setPhrase(Phrase phrase)
     {
         this.phrase = phrase;
@@ -163,10 +187,10 @@ public class PdfPCell extends Rectangle{
         return horizontalAlignment;
     }
     
-/**
- * Setter for property horizontalAlignment.
- * @param horizontalAlignment New value of property horizontalAlignment.
- */
+    /** Sets the horizontal alignment for the cell. It could be
+     * <CODE>Element.ALIGN_CENTER</CODE> for example.
+     * @param horizontalAlignment The horizontal alignment
+     */
     public void setHorizontalAlignment(int horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
     }
@@ -179,10 +203,10 @@ public class PdfPCell extends Rectangle{
         return verticalAlignment;
     }
     
-/**
- * Setter for property verticalAlignment.
- * @param verticalAlignment New value of property verticalAlignment.
- */
+    /** Sets the vertical alignment for the cell. It could be
+     * <CODE>Element.ALIGN_MIDDLE</CODE> for example.
+     * @param verticalAlignment The vertical alignment
+     */
     public void setVerticalAlignment(int verticalAlignment) {
         this.verticalAlignment = verticalAlignment;
     }

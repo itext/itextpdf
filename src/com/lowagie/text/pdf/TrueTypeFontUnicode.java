@@ -36,14 +36,18 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      */
     TrueTypeFontUnicode(String ttFile, String enc, boolean emb) throws DocumentException, IOException {
         String nameBase = getBaseName(ttFile);
+        String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
-            ttFile = nameBase;
+            style = ttFile.substring(nameBase.length());
         }
         encoding = enc;
         embedded = emb;
-        fileName = ttFile;
+        fileName = ttcName;
+        ttcIndex = "";
+        if (ttcName.length() < nameBase.length())
+            ttcIndex = nameBase.substring(ttcName.length() + 1);
         fontType = FONT_TYPE_TTUNI;
-        if (fileName.toLowerCase().endsWith(".ttf") && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
+        if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
             process();
             if ((cmap31 == null && !fontSpecific) || (cmap10 == null && fontSpecific))
                 throw new DocumentException(fileName + " " + style + " does not contain an usable cmap.");
@@ -255,7 +259,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
         PdfIndirectObject obj = null;
-        TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, longTag, false);
+        TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, longTag, directoryOffset, false);
         byte b[] = sb.process();
         int lengths[] = new int[]{b.length};
         pobj = new StreamFont(b, lengths);

@@ -61,16 +61,19 @@ class TrueTypeFontSubSet {
     protected int locaTableRealSize;
     protected byte outFont[];
     protected int fontPtr;
+    protected int directoryOffset;
 
     /** Creates a new TrueTypeFontSubSet
+     * @param directoryOffset The offset from the start of the file to the table directory
      * @param fileName the file name of the font
      * @param glyphsUsed the glyphs used
      * @param includeCmap <CODE>true</CODE> if the table cmap is to be included in the generated font
      */
-    TrueTypeFontSubSet(String fileName, HashMap glyphsUsed, boolean includeCmap) {
+    TrueTypeFontSubSet(String fileName, HashMap glyphsUsed, int directoryOffset, boolean includeCmap) {
         this.fileName = fileName;
         this.glyphsUsed = glyphsUsed;
         this.includeCmap = includeCmap;
+        this.directoryOffset = directoryOffset;
         glyphsInList = new ArrayList(glyphsUsed.keySet());
     }
     
@@ -181,12 +184,12 @@ class TrueTypeFontSubSet {
     
     protected void createTableDirectory() throws IOException, DocumentException {
         tableDirectory = new HashMap();
+        rf.seek(directoryOffset);
         int id = rf.readInt();
         if (id != 0x00010000)
             throw new DocumentException(fileName + " is not a true type file.");
-        rf.seek(4);
         int num_tables = rf.readUnsignedShort();
-        rf.seek(12);
+        rf.skipBytes(6);
         for (int k = 0; k < num_tables; ++k) {
             String tag = readStandardString(4);
             int tableLocation[] = new int[3];
