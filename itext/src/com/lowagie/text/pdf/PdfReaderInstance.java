@@ -201,12 +201,21 @@ class PdfReaderInstance {
     }
     
     void writeAllPages() throws IOException {
-        file.reOpen();
-        for (Iterator it = importedPages.values().iterator(); it.hasNext();) {
-            PdfImportedPage ip = (PdfImportedPage)it.next();
-            writer.addToBody(ip.getFormXObject(), ip.getIndirectReference());
+        try {
+            file.reOpen();
+            for (Iterator it = importedPages.values().iterator(); it.hasNext();) {
+                PdfImportedPage ip = (PdfImportedPage)it.next();
+                writer.addToBody(ip.getFormXObject(), ip.getIndirectReference());
+            }
+            writeAllVisited();
         }
-        writeAllVisited();
-        file.close();
+        finally {
+            try {
+                file.close();
+            }
+            catch (Exception e) {
+                //Empty on purpose
+            }
+        }
     }
 }

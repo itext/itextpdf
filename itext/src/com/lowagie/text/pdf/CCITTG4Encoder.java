@@ -247,10 +247,11 @@ public class CCITTG4Encoder {
         if(end == data.length) { // Prevents out of bounds exception below
             end--;
         }
+        if (next == data.length) // and so does this
+            --next;
         int extra = bitOffset & 0x7;
         
         int  testbyte;
-        
         if((data[next] & (0x80 >>> extra)) != 0) {    // look for "0"
             testbyte = ~(data[next]) & (0xff >>> extra);
             while (next < end) {

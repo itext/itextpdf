@@ -74,11 +74,16 @@ import com.lowagie.text.DocumentException;
  * and the method <CODE>go</CODE> can be called again.<BR>
  * The only limitation is that one or more complete paragraphs must be loaded
  * each time.
+ * <P>
+ * Full bidirectional reordering is supported. If the run direction is
+ * <CODE>PdfWriter.RUN_DIRECTION_RTL</CODE> the meaning of the horizontal
+ * alignments and margins is mirrored.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 
 public class ColumnText {
     
+    protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
     public static final float GLOBAL_SPACE_CHAR_RATIO = 0;
     
     /** Signals that there is no more text available. */
@@ -112,7 +117,8 @@ public class ColumnText {
     protected ArrayList rightWall;
     
     /** The chunks that form the text. */
-    protected ArrayList chunks = new ArrayList();
+//    protected ArrayList chunks = new ArrayList();
+    protected BidiLine bidiLine = new BidiLine();
     
     /** The current y line location. Text will be written at this line minus the leading. */
     protected float yLine;
@@ -158,7 +164,8 @@ public class ColumnText {
     
     /** Holds value of property spaceCharRatio. */
     private float spaceCharRatio = GLOBAL_SPACE_CHAR_RATIO;
-    
+
+    private boolean lastWasNewline = true;
     /**
      * Creates a <CODE>ColumnText</CODE>.
      * @param text the place where the text will be written to. Can
@@ -174,7 +181,7 @@ public class ColumnText {
      */
     public void addText(Phrase phrase) {
         for (Iterator j = phrase.getChunks().iterator(); j.hasNext();) {
-            chunks.add(new PdfChunk((Chunk)j.next(), null));
+            bidiLine.addChunk(new PdfChunk((Chunk)j.next(), null));
         }
     }
     
@@ -183,7 +190,7 @@ public class ColumnText {
      * @param chunk the text
      */
     public void addText(Chunk chunk) {
-        chunks.add(new PdfChunk(chunk, null));
+        bidiLine.addChunk(new PdfChunk(chunk, null));
     }
     
     /**
@@ -420,6 +427,7 @@ public class ColumnText {
      */
     public void setIndent(float indent) {
         this.indent = indent;
+        lastWasNewline = true;
     }
     
     /**
@@ -436,6 +444,7 @@ public class ColumnText {
      */
     public void setFollowingIndent(float indent) {
         this.followingIndent = indent;
+        lastWasNewline = true;
     }
     
     /**
@@ -452,6 +461,7 @@ public class ColumnText {
      */
     public void setRightIndent(float indent) {
         this.rightIndent = indent;
+        lastWasNewline = true;
     }
     
     /**
@@ -460,48 +470,6 @@ public class ColumnText {
      */
     public float getRightIndent() {
         return rightIndent;
-    }
-    
-    /**
-     * Creates a line from the chunk array.
-     * @param width the width of the line
-     * @return the line or null if no more chunks
-     */
-    protected PdfLine createLine(float width) {
-        if (chunks.size() == 0)
-            return null;
-        splittedChunkText = null;
-        currentStandbyChunk = null;
-        PdfLine line = new PdfLine(0, width, alignment, 0);
-        String total;
-        for (currentChunkMarker = 0; currentChunkMarker < chunks.size(); ++currentChunkMarker) {
-            PdfChunk original = (PdfChunk)(chunks.get(currentChunkMarker));
-            total = original.toString();
-            currentStandbyChunk = line.add(original);
-            if (currentStandbyChunk != null) {
-                splittedChunkText = original.toString();
-                original.setValue(total);
-                return line;
-            }
-        }
-        return line;
-    }
-    
-    /**
-     * Normalizes the list of chunks when the line is accepted.
-     */
-    protected void shortenChunkArray() {
-        if (currentChunkMarker < 0)
-            return;
-        if (currentChunkMarker >= chunks.size()) {
-            chunks.clear();
-            return;
-        }
-        PdfChunk split = (PdfChunk)(chunks.get(currentChunkMarker));
-        split.setValue(splittedChunkText);
-        chunks.set(currentChunkMarker, currentStandbyChunk);
-        for (int j = currentChunkMarker - 1; j >= 0; --j)
-            chunks.remove(j);
     }
     
     /**
@@ -530,6 +498,9 @@ public class ColumnText {
         currentValues[1] = lastBaseFactor;
         PdfDocument pdf = null;
         PdfContentByte graphics = null;
+        int localRunDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
+        if (runDirection != PdfWriter.RUN_DIRECTION_DEFAULT)
+            localRunDirection = runDirection;
         if (text != null) {
             pdf = text.getPdfDocument();
             graphics = text.getDuplicate();
@@ -542,29 +513,31 @@ public class ColumnText {
             else if (ratio < 0.001f)
                 ratio = 0.001f;
         }
-        float firstIndent = indent;
+        float firstIndent = 0;
         
         int status = 0;
         if (rectangularWidth > 0) {
             for (;;) {
+                firstIndent = (lastWasNewline ? indent : followingIndent);
                 if (rectangularWidth <= firstIndent + rightIndent) {
                     status = NO_MORE_COLUMN;
-                    if (chunks.size() == 0)
+                    if (bidiLine.isEmpty())
                         status |= NO_MORE_TEXT;
                     break;
                 }
-                if (chunks.size() == 0) {
+                if (bidiLine.isEmpty()) {
                     status = NO_MORE_TEXT;
                     break;
                 }
                 float yTemp = yLine;
-                PdfLine line = createLine(rectangularWidth - firstIndent - rightIndent);
+                PdfLine line = bidiLine.processLine(rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection);
                 float maxSize = line.getMaxSizeSimple();
                 currentLeading = fixedLeading + maxSize * multipliedLeading;
                 float xx[] = findLimitsTwoLines();
                 if (xx == null) {
                     status = NO_MORE_COLUMN;
                     yLine = yTemp;
+                    bidiLine.restore();
                     break;
                 }
                 float x1 = Math.max(xx[0], xx[2]);
@@ -572,30 +545,30 @@ public class ColumnText {
                     text.beginText();
                     dirty = true;
                 }
-                shortenChunkArray();
                 if (!simulate) {
                     currentValues[0] = currentFont;
-                    text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
+                    text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
                     pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
                     currentFont = (PdfFont)currentValues[0];
                 }
-                firstIndent = line.isNewlineSplit() ? indent : followingIndent;
+                lastWasNewline = line.isNewlineSplit();
                 yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
             }
         }
         else {
             currentLeading = fixedLeading;
             for (;;) {
+                firstIndent = (lastWasNewline ? indent : followingIndent);
                 float yTemp = yLine;
                 float xx[] = findLimitsTwoLines();
                 if (xx == null) {
                     status = NO_MORE_COLUMN;
-                    if (chunks.size() == 0)
+                    if (bidiLine.isEmpty())
                         status |= NO_MORE_TEXT;
                     yLine = yTemp;
                     break;
                 }
-                if (chunks.size() == 0) {
+                if (bidiLine.isEmpty()) {
                     status = NO_MORE_TEXT;
                     yLine = yTemp;
                     break;
@@ -608,15 +581,14 @@ public class ColumnText {
                     text.beginText();
                     dirty = true;
                 }
-                PdfLine line = createLine(x2 - x1 - firstIndent - rightIndent);
-                shortenChunkArray();
+                PdfLine line = bidiLine.processLine(x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection);
                 if (!simulate) {
                     currentValues[0] = currentFont;
-                    text.setTextMatrix(x1 + firstIndent + line.indentLeft(), yLine);
+                    text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
                     pdf.writeLineToContent(line, text, graphics, currentValues, ratio);
                     currentFont = (PdfFont)currentValues[0];
                 }
-                firstIndent = line.isNewlineSplit() ? indent : followingIndent;
+                lastWasNewline = line.isNewlineSplit();
                 yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
             }
         }
@@ -648,7 +620,7 @@ public class ColumnText {
      * NO_MORE_TEXT.
      */
     public void clearChunks() {
-        chunks.clear();
+        bidiLine.clearChunks();
     }
     
     /** Gets the space/character extra spacing ratio for
@@ -669,5 +641,20 @@ public class ColumnText {
     public void setSpaceCharRatio(float spaceCharRatio) {
         this.spaceCharRatio = spaceCharRatio;
     }
+
+    /** Sets the run direction. 
+     * @param runDirection the run direction
+     */    
+    public void setRunDirection(int runDirection) {
+        if (runDirection < PdfWriter.RUN_DIRECTION_DEFAULT || runDirection > PdfWriter.RUN_DIRECTION_RTL)
+            throw new RuntimeException("Invalid run direction: " + runDirection);
+        this.runDirection = runDirection;
+    }
     
+    /** Gets the run direction.
+     * @return the run direction
+     */    
+    public int getRunDirection() {
+        return runDirection;
+    }
 }

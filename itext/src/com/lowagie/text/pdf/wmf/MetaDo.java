@@ -153,6 +153,10 @@ public class MetaDo {
         inch = in.readWord();
         state.setScalingX((float)(right - left) / (float)inch * 72f);
         state.setScalingY((float)(bottom - top) / (float)inch * 72f);
+        state.setOffsetWx(left);
+        state.setOffsetWy(top);
+        state.setExtentWx(right - left);
+        state.setExtentWy(bottom - top);
         in.readInt();
         in.readWord();
         in.skip(18);

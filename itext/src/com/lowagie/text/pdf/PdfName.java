@@ -87,6 +87,9 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName ACTION = new PdfName("Action");
     
     /** This is a static final PdfName */
+    public static final PdfName ALTERNATE = new PdfName("Alternate");
+    
+    /** This is a static final PdfName */
     public static final PdfName ANNOT = new PdfName("Annot");
     
     /** This is a static final PdfName */
@@ -258,7 +261,13 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DEVICECMYK = new PdfName("DeviceCMYK");
     
     /** This is a static final PdfName */
+    public static final PdfName DI = new PdfName("Di");
+
+    /** This is a static final PdfName */
     public static final PdfName DIRECTION = new PdfName("Direction");
+    
+    /** This is a static final PdfName */
+    public static final PdfName DM = new PdfName("Dm");
     
     /** This is a static final PdfName */
     public static final PdfName DOMAIN = new PdfName("Domain");
@@ -445,6 +454,9 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName I = new PdfName("I");
+    
+    /** This is a static final PdfName */
+    public static final PdfName ICCBASED = new PdfName("ICCBased");
     
     /** This is a static final PdfName */
     public static final PdfName ID = new PdfName("ID");
