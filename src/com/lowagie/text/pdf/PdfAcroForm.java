@@ -68,12 +68,14 @@ public class PdfAcroForm extends PdfDictionary {
     /** This is an array containing DocumentFields. */
     private PdfArray documentFields = new PdfArray();
     
+    /** This is an array containing the calculationorder of the fields. */
     private PdfArray calculationOrder = new PdfArray();
     
+    /** Contains the signature flags. */
     private int sigFlags = 0;
     
     /** Creates new PdfAcroForm */
-    public PdfAcroForm(PdfWriter writer) {
+    PdfAcroForm(PdfWriter writer) {
         super();
         this.writer = writer;
     }
@@ -94,23 +96,11 @@ public class PdfAcroForm extends PdfDictionary {
         documentFields.add(ref);
     }
     
-    public void addCalculationOrder(PdfIndirectReference ref) {
-        calculationOrder.add(ref);
-    }
-    
-    public void setSigFlags(int f) {
-        sigFlags |= f;
-    }
-    
-    public void addFormField(PdfFormField formField) {
-        writer.addAnnotation(formField);
-    }
-    
     /**
      * Closes the AcroForm.
      */
     
-    public boolean isValid() {
+    boolean isValid() {
         if (documentFields.size() == 0) return false;
         put(PdfName.FIELDS, documentFields);
         if (sigFlags != 0)
@@ -130,5 +120,44 @@ public class PdfAcroForm extends PdfDictionary {
             writer.eliminateFontSubset(fonts);
         }
         return true;
+    }
+    
+    /**
+     * Adds an object to the calculationOrder.
+     */
+    
+    public void addCalculationOrder(PdfFormField formField) {
+        calculationOrder.add(formField.getIndirectReference());
+    }
+    
+    /**
+     * Sets the signature flags.
+     */
+    
+    public void setSigFlags(int f) {
+        sigFlags |= f;
+    }
+    
+    /**
+     * Adds a formfield to the AcroForm.
+     */
+    
+    public void addFormField(PdfFormField formField) {
+        writer.addAnnotation(formField);
+    }
+    
+    public void addHtmlPostButton(String caption, BaseFont font, float fontSize, String name, String url, float llx, float lly, float urx, float ury) {
+        PdfAction action = PdfAction.createSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT);
+        PdfFormField annotation = new PdfFormField(writer, llx, lly, urx, ury, action);
+        annotation.setFieldName(name);
+        annotation.setButton(PdfFormField.FF_PUSHBUTTON);
+        annotation.setFlags(PdfAnnotation.FLAGS_PRINT);
+        annotation.setPage();
+        annotation.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
+        PdfContentByte cb = writer.getDirectContent();
+        PdfAppearance pa = cb.createAppearance(urx - llx, ury - lly);
+        pa.drawButton(0, 0, urx - llx, ury - lly, caption, font, fontSize);
+        annotation.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, pa);
+        addFormField(annotation);
     }
 }
