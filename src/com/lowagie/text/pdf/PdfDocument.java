@@ -1305,7 +1305,7 @@ class PdfDocument extends Document implements DocListener {
                     
                     // before every table, we add a new line and flush all lines
                     float offset = ((Table)element).getOffset();
-                    if (offset == Float.NaN) offset = leading;
+                    if (Float.isNaN(offset)) offset = leading;
                     carriageReturn();
                     lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
                     currentHeight += offset;

@@ -106,9 +106,6 @@ public class Cell extends Rectangle implements TextElementArray {
         DUMMY_CELL.setBorder(NO_BORDER);
     }
     
-/** This is the value of an undefined leading. */
-    public static final float UNDEFINED = Float.NaN;
-    
     // membervariables
     
 /** This is the <CODE>ArrayList</CODE> of <CODE>Element</CODE>s. */
@@ -130,7 +127,7 @@ public class Cell extends Rectangle implements TextElementArray {
     protected int rowspan = 1;
     
 /** This is the leading. */
-    float leading = UNDEFINED;
+    float leading = Float.NaN;
     
 /** Is this <CODE>Cell</CODE> a header? */
     protected boolean header;
@@ -382,7 +379,7 @@ public class Cell extends Rectangle implements TextElementArray {
                 arrayList.add(element);
                 break;
             case Element.LIST:
-                if (leading == UNDEFINED) {
+                if (Float.isNaN(leading)) {
                     leading = ((List) element).leading();
                 }
                 if (((List) element).size() == 0) return;
@@ -391,7 +388,7 @@ public class Cell extends Rectangle implements TextElementArray {
             case Element.ANCHOR:
             case Element.PARAGRAPH:
             case Element.PHRASE:
-                if (leading == UNDEFINED) {
+                if (Float.isNaN(leading)) {
                     leading = ((Phrase) element).leading();
                 }
                 if (((Phrase) element).isEmpty()) return;
@@ -718,7 +715,7 @@ public class Cell extends Rectangle implements TextElementArray {
  */
     
     public final float leading() {
-        if (leading == UNDEFINED) {
+        if (Float.isNaN(leading)) {
             return 16;
         }
         return leading;

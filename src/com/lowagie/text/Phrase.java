@@ -89,13 +89,10 @@ import com.lowagie.text.markup.MarkupParser;
 
 public class Phrase extends ArrayList implements TextElementArray, MarkupAttributes {
     
-/** This is the value of an undefined leading. */
-    public static final float UNDEFINED = Float.NaN;
-    
     // membervariables
     
 /** This is the leading of this phrase. */
-    protected float leading = UNDEFINED;
+    protected float leading = Float.NaN;
     
 /** This is the font of this phrase. */
     protected Font font = new Font();
@@ -153,7 +150,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public Phrase(String string) {
-        this(UNDEFINED, string, new Font());
+        this(Float.NaN, string, new Font());
     }
     
 /**
@@ -164,7 +161,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public Phrase(String string, Font font) {
-        this(UNDEFINED, string, font);
+        this(Float.NaN, string, font);
         this.font = font;
     }
     
@@ -474,7 +471,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public final boolean leadingDefined() {
-        if (leading == UNDEFINED) {
+        if (Float.isNaN(leading)) {
             return false;
         }
         return true;
@@ -487,7 +484,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public final float leading() {
-        if (leading == UNDEFINED) {
+        if (Float.isNaN(leading)) {
             return font.leading(1.5f);
         }
         return leading;
