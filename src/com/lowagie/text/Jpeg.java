@@ -300,6 +300,7 @@ public class Jpeg extends Image implements Element {
                         scaledWidth = getShort(is);
                         setRight(scaledWidth);
                         colorspace = is.read();
+                        bpc = 8;
                         break;
                     }
                     else if (markertype == UNSUPPORTED_MARKER) {

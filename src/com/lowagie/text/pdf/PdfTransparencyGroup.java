@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2003 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,48 +44,31 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
-/**
- * <CODE>PdfResources</CODE> is the PDF Resources-object.
- * <P>
- * The marking operations for drawing a page are stored in a stream that is the value of the
- * <B>Contents</B> key in the Page object's dictionary. Each marking context includes a list
- * of the named resources it uses. This resource list is stored as a dictionary that is the
- * value of the context's <B>Resources</B> key, and it serves two functions: it enumerates
- * the named resources in the contents stream, and it established the mapping from the names
- * to the objects used by the marking operations.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 7.5 (page 195-197).
+/** The transparency group dictionary.
  *
- * @see		PdfResource
- * @see		PdfProcSet
- * @see		PdfFontDictionary
- * @see		PdfPage
+ * @author Paulo Soares (psoares@consiste.pt)
  */
-
-class PdfResources extends PdfDictionary {
+public class PdfTransparencyGroup extends PdfDictionary {
     
-    // constructor
-    
-/**
- * Constructs a PDF ResourcesDictionary.
- */
-    
-    PdfResources() {
+    public PdfTransparencyGroup() {
         super();
+        put(PdfName.S, PdfName.TRANSPARENCY);
     }
-    
-    // methods
-    
-    void add(PdfName key, PdfDictionary resource) {
-        if (resource.size() == 0)
-            return;
-        PdfDictionary dic = (PdfDictionary)get(key);
-        if (dic == null)
-            put(key, resource);
+ 
+    public void setIsolated(boolean isolated) {
+        if (isolated)
+            put(PdfName.I, PdfBoolean.PDFTRUE);
         else
-            dic.putAll(resource);
+            remove(PdfName.I);
     }
+    
+    public void setKnockout(boolean knockout) {
+        if (knockout)
+            put(PdfName.K, PdfBoolean.PDFTRUE);
+        else
+            remove(PdfName.K);
+    }
+
 }

@@ -90,6 +90,18 @@ public class Png extends Image implements Element {
 /** A PNG marker. */
     public static final String pHYs = "pHYs";
     
+/** A PNG marker. */
+    public static final String gAMA = "gAMA";
+    
+/** A PNG marker. */
+    public static final String cHRM = "cHRM";
+    
+/** A PNG marker. */
+    public static final String sRGB = "sRGB";
+    
+/** A PNG marker. */
+    public static final String iCCP = "iCCP";
+    
     // Constructors
     Png(Image image) {
         super(image);

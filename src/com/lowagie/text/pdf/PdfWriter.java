@@ -258,9 +258,9 @@ public class PdfWriter extends DocWriter {
          * @return		a <CODE>PdfIndirectObject</CODE>
          */
         
-        PdfIndirectObject add(PdfResources object) {
-            return add(object);
-        }
+//        PdfIndirectObject add(PdfResources object) {
+//            return add(object);
+//        }
         
         /**
          * Adds a <CODE>PdfPages</CODE> object to the body.
@@ -455,7 +455,7 @@ public class PdfWriter extends DocWriter {
     protected PdfPages root = new PdfPages(this);
     
     /** Dictionary, containing all the images of the PDF document */
-    protected PdfXObjectDictionary imageDictionary = new PdfXObjectDictionary();
+    protected PdfDictionary imageDictionary = new PdfDictionary();
     
     /** This is the list with all the images in the document. */
     private HashMap images = new HashMap();
@@ -500,6 +500,8 @@ public class PdfWriter extends DocWriter {
     protected ColorDetails patternColorspaceCMYK;
     protected HashMap documentSpotPatterns = new HashMap();
     
+    protected HashMap documentExtGState = new HashMap();
+
     // membervariables
     
     /** body of the PDF document */
@@ -521,6 +523,8 @@ public class PdfWriter extends DocWriter {
     protected ArrayList pageReferences = new ArrayList();
     
     protected int currentPageNumber = 1;
+    
+    protected PdfDictionary group;
     
     /** The defaukt space-char ratio. */    
     public static final float SPACE_CHAR_RATIO_DEFAULT = 2.5f;
@@ -634,6 +638,10 @@ public class PdfWriter extends DocWriter {
             throw new ExceptionConverter(ioe);
         }
         page.add(object.getIndirectReference());
+        if (group != null) {
+            page.put(PdfName.GROUP, group);
+            group = null;
+        }
         root.addPage(page);
         currentPageNumber++;
         return null;
@@ -680,7 +688,16 @@ public class PdfWriter extends DocWriter {
                     PdfArray iccArray = new PdfArray();
                     iccArray.add(PdfName.ICCBASED);
                     iccArray.add(iccRef);
-                    i.put(PdfName.COLORSPACE, iccArray);
+                    PdfObject colorspace = i.get(PdfName.COLORSPACE);
+                    if (colorspace != null && colorspace.type() == PdfObject.ARRAY) {
+                        ArrayList ar = ((PdfArray)colorspace).getArrayList();
+                        if (ar.size() > 1 && PdfName.INDEXED.equals(ar.get(0)))
+                            ar.set(1, iccArray);
+                        else
+                            i.put(PdfName.COLORSPACE, iccArray);
+                    }
+                    else
+                        i.put(PdfName.COLORSPACE, iccArray);
                 }
                 add(i);
                 name = i.name();
@@ -699,7 +716,7 @@ public class PdfWriter extends DocWriter {
      */
     
     PdfIndirectReference add(PdfImage pdfImage) throws PdfException {
-        if (! imageDictionary.contains(pdfImage)) {
+        if (! imageDictionary.contains(pdfImage.name())) {
             PdfIndirectObject object;
             try {
                 object = body.add(pdfImage);
@@ -802,6 +819,12 @@ public class PdfWriter extends DocWriter {
         for (Iterator it = documentShadings.keySet().iterator(); it.hasNext();) {
             PdfShading shading = (PdfShading)it.next();
             shading.addToBody();
+        }
+        // add the extgstate
+        for (Iterator it = documentExtGState.keySet().iterator(); it.hasNext();) {
+            PdfDictionary gstate = (PdfDictionary)it.next();
+            PdfObject obj[] = (PdfObject[])documentExtGState.get(gstate);
+            addToBody(gstate, (PdfIndirectReference)obj[1]);
         }
     }
     
@@ -1107,6 +1130,13 @@ public class PdfWriter extends DocWriter {
             documentShadings.put(shading, null);
             shading.setName(documentShadings.size());
         }
+    }
+    
+    PdfObject[] addSimpleExtGState(PdfDictionary gstate) {
+        if (!documentExtGState.containsKey(gstate)) {
+            documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
+        }
+        return (PdfObject[])documentExtGState.get(gstate);
     }
     
     /**
@@ -1642,6 +1672,26 @@ public class PdfWriter extends DocWriter {
      */    
     public void setExtraCatalog(PdfDictionary extraCatalog) {
         this.extraCatalog = extraCatalog;
+    }
+    
+    public void setLinearPageMode() {
+        root.setLinearMode(null);
+    }
+    
+    /** Getter for property group.
+     * @return Value of property group.
+     *
+     */
+    public PdfDictionary getGroup() {
+        return this.group;
+    }
+    
+    /** Setter for property group.
+     * @param group New value of property group.
+     *
+     */
+    public void setGroup(PdfDictionary group) {
+        this.group = group;
     }
     
 }

@@ -61,7 +61,7 @@ import java.awt.color.ICC_Profile;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 import java.lang.reflect.Constructor;
-import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfDictionary;
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG or GIF)
  * that has to be inserted into the document
@@ -200,8 +200,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** Holds value of property deflated. */
     protected boolean deflated = false;
     
-    /** Holds value of property indexed. */
-    private PdfObject indexed = null;
+    private PdfDictionary additional = null;
+    
+    /** Holds value of property smask. */
+    private boolean smask;
+    
+    /** Holds value of property XYRatio. */
+    private float XYRatio = 0;
     
     // constructors
     
@@ -253,7 +258,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.markupAttributes = image.markupAttributes;
         this.profile = image.profile;
         this.deflated = image.deflated;
-        this.indexed = image.indexed;
+        this.additional = image.additional;
+        this.smask = image.smask;
+        this.XYRatio = image.XYRatio;
     }
     
     // gets an instance of an Image
@@ -395,6 +402,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         }
         else {
             byte[] pixelsByte = new byte[w * h * 3];
+            byte[] smask = null;
             
             int index = 0;
             int size = h * w;
@@ -423,9 +431,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
                 }
             }
             else {
+                smask = new byte[w * h];
+                boolean shades = false;
                 for (int j = 0; j < size; j++) {
+                    byte alpha = smask[j] = (byte)((pixels[j] >> 24) & 0xff);
+                    if (alpha != 0 && alpha != -1)
+                        shades = true;
                     if (transparency == null) {
-                        int alpha = (pixels[j] >> 24) & 0xff;
                         if (alpha == 0) {
                             transparency = new int[6];
                             transparency[0] = transparency[1] = (pixels[j] >> 16) & 0xff;
@@ -437,8 +449,21 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
                     pixelsByte[index++] = (byte) ((pixels[j] >> 8) & 0xff);
                     pixelsByte[index++] = (byte) ((pixels[j]) & 0xff);
                 }
+                if (shades)
+                    transparency = null;
             }
-            return Image.getInstance(w, h, 3, 8, pixelsByte, transparency);
+            Image img = Image.getInstance(w, h, 3, 8, pixelsByte, transparency);
+            if (smask != null) {
+                Image sm = Image.getInstance(w, h, 1, 8, smask);
+                try {
+                    sm.makeMask();
+                    img.setImageMask(sm);
+                }
+                catch (DocumentException de) {
+                    throw new ExceptionConverter(de);
+                }
+            }
+            return img;
         }
     }
     
@@ -1128,9 +1153,8 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         if (type == IMGRAW) {
             if (bpc > 0xff)
                 return true;
-            return bpc == 1 && colorspace == 1;
         }
-        return type == PNG && bpc == 1 && colorspace == 1;
+        return colorspace == 1;
     }
     
     /** Make this <CODE>Image</CODE> a mask.
@@ -1152,6 +1176,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         if (!mask.mask)
             throw new DocumentException("The image mask is not a mask. Did you do makeMask()?");
         imageMask = mask;
+        smask = (mask.bpc > 1 && mask.bpc <= 8);
     }
     
     /** Gets the explicit masking.
@@ -1284,16 +1309,46 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      * @return Value of property indexed.
      *
      */
-    public PdfObject getIndexed() {
-        return this.indexed;
+    public PdfDictionary getAdditional() {
+        return this.additional;
     }
     
     /** Sets the /Colorspace key.
      * @param indexed New value of property indexed.
      *
      */
-    public void setIndexed(PdfObject indexed) {
-        this.indexed = indexed;
+    public void setAdditional(PdfDictionary additional) {
+        this.additional = additional;
+    }
+    
+    /** Getter for property smask.
+     * @return Value of property smask.
+     *
+     */
+    public boolean isSmask() {
+        return this.smask;
+    }
+    
+    /** Setter for property smask.
+     * @param smask New value of property smask.
+     *
+     */
+    public void setSmask(boolean smask) {
+        this.smask = smask;
+    }
+    
+    /** Gets the X/Y pixel dimensionless aspect ratio.
+     * @return the X/Y pixel dimensionless aspect ratio
+     */
+    public float getXYRatio() {
+        return this.XYRatio;
+    }
+    
+    /** Sets the X/Y pixel dimensionless aspect ratio.
+     * @param XYRatio the X/Y pixel dimensionless aspect ratio
+     */
+    public void setXYRatio(float XYRatio) {
+        this.XYRatio = XYRatio;
     }
     
 }

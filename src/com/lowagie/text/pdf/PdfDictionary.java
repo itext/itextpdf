@@ -302,4 +302,12 @@ public class PdfDictionary extends PdfObject {
     public void putAll(PdfDictionary dic) {
         hashMap.putAll(dic.hashMap);
     }
+    
+    public int size() {
+        return hashMap.size();
+    }
+    
+    public boolean contains(PdfName key) {
+        return hashMap.containsKey(key);
+    }
 }

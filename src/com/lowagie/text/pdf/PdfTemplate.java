@@ -76,6 +76,8 @@ public class PdfTemplate extends PdfContentByte {
     
     protected PdfArray matrix;
     
+    protected PdfTransparencyGroup group;
+    
     /**
      *Creates a <CODE>PdfTemplate</CODE>.
      */
@@ -212,6 +214,7 @@ public class PdfTemplate extends PdfContentByte {
         tpl.thisReference = thisReference;
         tpl.pageResources = pageResources;
         tpl.bBox = new Rectangle(bBox);
+        tpl.group = group;
         if (matrix != null) {
             tpl.matrix = new PdfArray(matrix);
         }
@@ -225,4 +228,21 @@ public class PdfTemplate extends PdfContentByte {
     PageResources getPageResources() {
         return pageResources;
     }
+    
+    /** Getter for property group.
+     * @return Value of property group.
+     *
+     */
+    public PdfTransparencyGroup getGroup() {
+        return this.group;
+    }
+    
+    /** Setter for property group.
+     * @param group New value of property group.
+     *
+     */
+    public void setGroup(PdfTransparencyGroup group) {
+        this.group = group;
+    }
+    
 }

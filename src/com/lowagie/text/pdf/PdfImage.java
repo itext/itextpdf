@@ -106,10 +106,14 @@ class PdfImage extends PdfStream {
         put(PdfName.SUBTYPE, PdfName.IMAGE);
         put(PdfName.WIDTH, new PdfNumber(image.width()));
         put(PdfName.HEIGHT, new PdfNumber(image.height()));
-        if (image.isMask())
+        if (image.isMask() && (image.bpc() == 1 || image.bpc() > 0xff))
             put(PdfName.IMAGEMASK, PdfBoolean.PDFTRUE);
-        if (maskRef != null)
-            put(PdfName.MASK, maskRef);
+        if (maskRef != null) {
+            if (image.isSmask())
+                put(PdfName.SMASK, maskRef);
+            else
+                put(PdfName.MASK, maskRef);
+        }
         if (image.isMask() && image.isInvertMask())
             put(PdfName.DECODE, new PdfLiteral("[1 0]"));
         if (image.isInterpolation())
@@ -154,28 +158,26 @@ class PdfImage extends PdfStream {
                     put(PdfName.DECODEPARMS, decodeparms);
                 }
                 else {
-                    if (!image.isMask()) {
-                        switch(colorspace) {
-                            case 1:
-                                put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
-                                if (image.isInverted())
-                                    put(PdfName.DECODE, new PdfLiteral("[1 0]"));
-                                break;
-                            case 3:
-                                put(PdfName.COLORSPACE, PdfName.DEVICERGB);
-                                if (image.isInverted())
-                                    put(PdfName.DECODE, new PdfLiteral("[1 0 1 0 1 0]"));
-                                break;
-                            case 4:
-                            default:
-                                put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
-                                if (image.isInverted())
-                                    put(PdfName.DECODE, new PdfLiteral("[1 0 1 0 1 0 1 0]"));
-                        }
-                        PdfObject indexed = image.getIndexed();
-                        if (indexed != null)
-                            put(PdfName.COLORSPACE, indexed);
+                    switch(colorspace) {
+                        case 1:
+                            put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
+                            if (image.isInverted())
+                                put(PdfName.DECODE, new PdfLiteral("[1 0]"));
+                            break;
+                        case 3:
+                            put(PdfName.COLORSPACE, PdfName.DEVICERGB);
+                            if (image.isInverted())
+                                put(PdfName.DECODE, new PdfLiteral("[1 0 1 0 1 0]"));
+                            break;
+                        case 4:
+                        default:
+                            put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+                            if (image.isInverted())
+                                put(PdfName.DECODE, new PdfLiteral("[1 0 1 0 1 0 1 0]"));
                     }
+                    PdfDictionary additional = image.getAdditional();
+                    if (additional != null)
+                        putAll(additional);
                     put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
                     if (image.isDeflated())
                         put(PdfName.FILTER, PdfName.FLATEDECODE);

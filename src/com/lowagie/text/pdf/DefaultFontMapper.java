@@ -231,7 +231,7 @@ public class DefaultFontMapper implements FontMapper {
                 else if (name.endsWith(".ttc")) {
                     String ttcs[] = BaseFont.enumerateTTCNames(file.getPath());
                     for (int j = 0; j < ttcs.length; ++j) {
-                        String nt = file.getPath() + "," + (j + 1);
+                        String nt = file.getPath() + "," + j;
                         String names[][] = BaseFont.getFullFontName(nt, BaseFont.CP1252, null);
                         insertNames(names, nt);
                     }

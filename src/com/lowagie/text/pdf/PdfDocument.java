@@ -874,7 +874,7 @@ class PdfDocument extends Document implements DocListener {
         // we flush the arraylist with recently written lines
         flushLines();
         // we assemble the resources of this pages
-        PdfResources resources = pageResources.getResources();
+        PdfDictionary resources = pageResources.getResources();
         // we make a new page and add it to the document
         PdfPage page;
         int rotation = pageSize.getRotation();

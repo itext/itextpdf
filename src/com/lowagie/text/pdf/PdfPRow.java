@@ -60,7 +60,7 @@ import java.awt.Color;
 /**
  * A row in a PdfPTable.
  *
- * @author  Paulo Soares
+ * @author Paulo Soares (psoares@consiste.pt)
  */
 
 public class PdfPRow {
@@ -139,6 +139,7 @@ public class PdfPRow {
                 ct.setFollowingIndent(cell.getFollowingIndent());
                 ct.setRightIndent(cell.getRightIndent());
                 ct.setRunDirection(cell.getRunDirection());
+                ct.setArabicOptions(cell.getArabicOptions());
                 try {
                     ct.go(true);
                 }
@@ -340,6 +341,7 @@ public class PdfPRow {
                 ct.setRightIndent(cell.getRightIndent());
                 ct.setSpaceCharRatio(cell.getSpaceCharRatio());
                 ct.setRunDirection(cell.getRunDirection());
+                ct.setArabicOptions(cell.getArabicOptions());
                 try {
                     ct.go();
                 }

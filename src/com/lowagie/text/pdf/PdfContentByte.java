@@ -2080,7 +2080,7 @@ public class PdfContentByte {
      * @param ury the upper right y corner of the activation area
      */
     public void remoteGoto(String filename, String name, float llx, float lly, float urx, float ury) {
-        remoteGoto(filename, name, llx, lly, urx, ury);
+        pdf.remoteGoto(filename, name, llx, lly, urx, ury);
     }
     
     /**
@@ -2313,5 +2313,12 @@ public class PdfContentByte {
     
     PageResources getPageResources() {
         return pdf.getPageResources();
+    }
+    
+    public void setGState(PdfGState gstate) {
+        PdfObject obj[] = writer.addSimpleExtGState(gstate);
+        PageResources prs = getPageResources();
+        PdfName name = prs.addExtGState((PdfName)obj[0], (PdfIndirectReference)obj[1]);
+        content.append(name.getBytes()).append(" gs").append_i(separator);
     }
 }

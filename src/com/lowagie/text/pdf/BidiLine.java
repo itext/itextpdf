@@ -91,8 +91,9 @@ public class BidiLine {
     protected int storedCurrentChar = 0;
     
     protected boolean shortStore;
-    protected ArabicShaping arabic = new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.LENGTH_GROW_SHRINK | ArabicShaping.TEXT_DIRECTION_LOGICAL);
+//    protected ArabicShaping arabic = new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.LENGTH_GROW_SHRINK | ArabicShaping.TEXT_DIRECTION_LOGICAL);
     protected static final IntHashtable mirrorChars = new IntHashtable();
+    protected int arabicOptions;
 
     /** Creates new BidiLine */
     public BidiLine() {
@@ -293,7 +294,7 @@ public class BidiLine {
 //                System.out.print(Integer.toHexString((int)text[h + startArabicIdx]) + " ");
 //            System.out.println();
 //            int size = arabic.shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize);
-            int size = PangoArabicShapping.arabic_shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize, 0 /*PangoArabicShapping.ar_novowel PangoArabicShapping.ar_lig | PangoArabicShapping.ar_composedtashkeel*/);
+            int size = PangoArabicShapping.arabic_shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize, arabicOptions /*PangoArabicShapping.ar_novowel PangoArabicShapping.ar_lig | PangoArabicShapping.ar_composedtashkeel*/);
 //            for (int h = 0; h < size; ++h)
 //                System.out.print(Integer.toHexString((int)text[h + dest]) + " ");
 //            System.out.println();
@@ -309,7 +310,8 @@ public class BidiLine {
         }
     }
        
-    public PdfLine processLine(float width, int alignment, int runDirection) {
+    public PdfLine processLine(float width, int alignment, int runDirection, int arabicOptions) {
+        this.arabicOptions = arabicOptions;
         save();
         if (currentChar >= totalTextLength) {
             boolean hasText = getParagraph(runDirection);

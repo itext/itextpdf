@@ -124,7 +124,7 @@ public class PdfPCell extends Rectangle{
     
     /** Holds value of property cellEvent. */
     private PdfPCellEvent cellEvent;
-    
+    private int arabicOptions = 0;
     /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
      * The default padding is 2.
      * @param phrase the text
@@ -228,6 +228,7 @@ public class PdfPCell extends Rectangle{
             table = new PdfPTable(cell.table);
         image = Image.getInstance(cell.image);
         cellEvent = cell.cellEvent;
+        arabicOptions = cell.arabicOptions;
     }
     
     /** Gets the <CODE>Phrase</CODE> from this cell.
@@ -578,4 +579,18 @@ public class PdfPCell extends Rectangle{
         this.cellEvent = cellEvent;
     }
     
+    /** Gets the arabic shaping options.
+     * @return the arabic shaping options
+     */
+    public int getArabicOptions() {
+        return this.arabicOptions;
+    }
+    
+    /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
+     * AR_COMPOSEDTASHKEEL and AR_LIG.
+     * @param arabicOptions the arabic shaping options
+     */
+    public void setArabicOptions(int arabicOptions) {
+        this.arabicOptions = arabicOptions;
+    }
 }

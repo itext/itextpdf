@@ -119,6 +119,7 @@ public class PdfGraphics2D extends Graphics2D {
     private RenderingHints rhints = new RenderingHints(null);
     
     private Stroke stroke;
+    private Stroke originalStroke;
     
     private PdfContentByte cb;
     
@@ -171,7 +172,7 @@ public class PdfGraphics2D extends Graphics2D {
         this.height = height;
         clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         clip(clip);
-        stroke = oldStroke = strokeOne;
+        originalStroke = stroke = oldStroke = strokeOne;
         setStrokeDiff(stroke, null);
         cb.saveState();
     }
@@ -190,7 +191,7 @@ public class PdfGraphics2D extends Graphics2D {
         this.height = height;
         clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         clip(clip);
-        stroke = oldStroke = strokeOne;
+        originalStroke = stroke = oldStroke = strokeOne;
         setStrokeDiff(stroke, null);
         cb.saveState();
     }
@@ -454,7 +455,7 @@ public class PdfGraphics2D extends Graphics2D {
         if (!(stroke instanceof BasicStroke))
             return stroke;
         BasicStroke st = (BasicStroke)stroke;
-        float scale = (float)transform.getScaleX();
+        float scale = Math.abs((float)transform.getScaleX());
         float dash[] = st.getDashArray();
         if (dash != null) {
             for (int k = 0; k < dash.length; ++k)
@@ -544,6 +545,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#setStroke(Stroke)
      */
     public void setStroke(Stroke s) {
+        originalStroke = s;
         this.stroke = transformStroke(s);
     }
     
@@ -617,6 +619,7 @@ public class PdfGraphics2D extends Graphics2D {
      */
     public void scale(double sx, double sy) {
         transform.scale(sx, sy);
+        this.stroke = transformStroke(originalStroke);
     }
     
     /**
@@ -631,6 +634,7 @@ public class PdfGraphics2D extends Graphics2D {
      */
     public void transform(AffineTransform tx) {
         transform.concatenate(tx);
+        this.stroke = transformStroke(originalStroke);
     }
     
     /**
@@ -638,6 +642,7 @@ public class PdfGraphics2D extends Graphics2D {
      */
     public void setTransform(AffineTransform t) {
         transform=t;
+        this.stroke = transformStroke(originalStroke);
     }
     
     /**
@@ -679,7 +684,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#getStroke()
      */
     public Stroke getStroke() {
-        return stroke;
+        return originalStroke;
     }
     
     
@@ -710,6 +715,7 @@ public class PdfGraphics2D extends Graphics2D {
         g2.clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         g2.clip(g2.clip);
         g2.stroke = stroke;
+        g2.originalStroke = originalStroke;
         g2.strokeOne = (BasicStroke)g2.transformStroke(g2.strokeOne);
         g2.oldStroke = g2.strokeOne;
         g2.setStrokeDiff(g2.oldStroke, null);
@@ -766,6 +772,8 @@ public class PdfGraphics2D extends Graphics2D {
      * Sets the current font.
      */
     public void setFont(Font f) {
+        if (f == null)
+            return;
         if (onlyShapes) {
             font = f;
             return;
@@ -956,7 +964,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#fillArc(int, int, int, int, int, int)
      */
     public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
-        Arc2D arc = new Arc2D.Double(x,y,width,height,startAngle, arcAngle, Arc2D.OPEN);
+        Arc2D arc = new Arc2D.Double(x,y,width,height,startAngle, arcAngle, Arc2D.PIE);
         fill(arc);
     }
     
@@ -1294,10 +1302,10 @@ public class PdfGraphics2D extends Graphics2D {
     class PdfFontMetrics extends FontMetrics {
         private BaseFont bf;
         private float fontSize;
-        private int ascent = -1;
-        private int descent = -1;
-        private int leading = -1;
-        private int maxAdvance = -1;
+        private double ascent = -1;
+        private double descent = -1;
+        private double leading = -1;
+        private double maxAdvance = -1;
         private int widths[];
         private double scaleX;
         private double scaleY;
@@ -1313,26 +1321,26 @@ public class PdfGraphics2D extends Graphics2D {
         
         public int getAscent() {
             if (ascent < 0)
-                ascent = (int)(bf.getFontDescriptor(BaseFont.AWT_ASCENT, fontSize) * scaleY);
-            return ascent;
+                ascent = bf.getFontDescriptor(BaseFont.AWT_ASCENT, fontSize) * scaleY;
+            return (int)(0.9999 + ascent * 1.1);
         }
         
         public int getDescent() {
             if (descent < 0)
-                descent =  -(int)(bf.getFontDescriptor(BaseFont.AWT_DESCENT, fontSize) * scaleY);
-            return descent;
+                descent =  -bf.getFontDescriptor(BaseFont.AWT_DESCENT, fontSize) * scaleY;
+            return (int)(0.9999 + descent);
         }
         
         public int getLeading() {
             if (leading < 0)
-                leading = (int)(bf.getFontDescriptor(BaseFont.AWT_LEADING, fontSize) * scaleY);
-            return leading;
+                leading = bf.getFontDescriptor(BaseFont.AWT_LEADING, fontSize) * scaleY;
+            return (int)(0.9999 + leading);
         }
         
         public int getMaxAdvance() {
             if (maxAdvance < 0)
-                maxAdvance = (int)(bf.getFontDescriptor(BaseFont.AWT_MAXADVANCE, fontSize) * scaleX);
-            return maxAdvance;
+                maxAdvance = bf.getFontDescriptor(BaseFont.AWT_MAXADVANCE, fontSize) * scaleX;
+            return (int)(0.9999 + maxAdvance);
         }
         
         public int[] getWidths() {
@@ -1416,7 +1424,7 @@ public class PdfGraphics2D extends Graphics2D {
                 throw new IndexOutOfBoundsException("range length: " + (limit - beginIndex));
             }
             String str = new String(chars, beginIndex, limit - beginIndex);
-            return new Rectangle2D.Float(0, -ascent, (float)(bf.getWidthPoint(str, fontSize) * scaleX), getHeight());
+            return new Rectangle2D.Float(0, -getAscent(), (float)(bf.getWidthPoint(str, fontSize) * scaleX), getHeight());
         }
         
         /**
