@@ -174,8 +174,8 @@ public class PdfTable extends Rectangle {
 					if (cell != null) {
 						currentCell = new PdfCell(cell, rowNumber+prevRows, positions[i], positions[i + cell.colspan()], offsets[rowNumber], cellspacing(), cellpadding());
 						try {
-							if (offsets[rowNumber] - currentCell.height()  < offsets[rowNumber + currentCell.rowspan()]) {
-								offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() ;
+                     if (offsets[rowNumber] - currentCell.height() - cellpadding() < offsets[rowNumber + currentCell.rowspan()]) {
+                        offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() - cellpadding();
 							}
 						}
 						catch(ArrayIndexOutOfBoundsException aioobe) {

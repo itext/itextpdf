@@ -74,7 +74,7 @@ public class PdfEncryptor {
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
-     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
+     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @throws DocumentException on error
      * @throws IOException on error */
     public static void encrypt(PdfReader reader, OutputStream os, byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException, IOException {
@@ -95,7 +95,7 @@ public class PdfEncryptor {
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
-     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
+     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @param newInfo an optional <CODE>String</CODE> map to add or change
      * the info dictionary. Entries with <CODE>null</CODE>
      * values delete the key in the original info dictionary
@@ -118,7 +118,7 @@ public class PdfEncryptor {
      *  The permissions can be combined by ORing them.
      * @param reader the read PDF
      * @param os the output destination
-     * @param strength true for 128 bit key length. false for 40 bit key length
+     * @param strength <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
@@ -139,7 +139,7 @@ public class PdfEncryptor {
      *  The permissions can be combined by ORing them.
      * @param reader the read PDF
      * @param os the output destination
-     * @param strength true for 128 bit key length. false for 40 bit key length
+     * @param strength <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions

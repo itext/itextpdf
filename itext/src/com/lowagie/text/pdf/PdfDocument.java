@@ -1310,15 +1310,15 @@ class PdfDocument extends Document implements DocListener {
 					}
                                 
 					currentHeight = indentTop() - pagetop + table.cellspacing();
-					text.moveText(0, pagetop - indentTop() - table.cellspacing() - currentHeight);
+					text.moveText(0, pagetop - indentTop() - currentHeight);
 				}
 				else {
 					if (somethingAdded) {
 						pagetop = indentTop();
-						text.moveText(0, pagetop - indentTop() - table.cellspacing());
+						text.moveText(0, -table.cellspacing());
 					}
 				}
-				oldHeight = currentHeight+ table.cellspacing()-heightCorrection;
+				oldHeight = currentHeight - heightCorrection;
                             
 				// calculating the new positions of the table and the cells
 				size = Math.min(cells.size(), table.columns());
@@ -1339,13 +1339,13 @@ class PdfDocument extends Document implements DocListener {
 				table.setBottom(pagetop - difference + table.bottom(table.cellspacing()));
 				for (i = 0; i < size; i++) {
 					cell = (PdfCell) cells.get(i);
-					float newBottom = pagetop - difference + cell.bottom();
 					float newTop = pagetop - difference + cell.top(-table.cellspacing());
-					if (newTop > indentTop() - currentHeight + table.cellspacing()) {
-						newTop = indentTop() - currentHeight + table.cellspacing();
+					if (newTop > indentTop() - currentHeight) {
+						newTop = indentTop() - currentHeight;
 					}
-					cell.setTop(newTop - table.cellspacing());
-					cell.setBottom(newBottom - table.cellspacing());
+               float newBottom = newTop - cell.height();
+					cell.setTop(newTop );
+					cell.setBottom(newBottom );
 				}
 				if (onlyFirstPage) {
 					break;
@@ -1353,7 +1353,7 @@ class PdfDocument extends Document implements DocListener {
 			}
 		}
                     
-		text.moveText(0, oldHeight - currentHeight);
+		text.moveText(0, oldHeight - currentHeight - table.cellspacing() );
 		lines.add(line);
 		currentHeight += line.height() - pagetop + indentTop();
 		line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
@@ -1756,7 +1756,7 @@ class PdfDocument extends Document implements DocListener {
                     ensureNewLine();
                     flushLines();
                     MultiColumnText multiText = (MultiColumnText) element;
-                    float height = multiText.write(writer.getDirectContentUnder(), this, indentTop() - currentHeight);
+                    float height = multiText.write(writer.getDirectContent(), this, indentTop() - currentHeight);
                     currentHeight += height;
                     text.moveText(0, -1f* height);
                     pageEmpty = false;

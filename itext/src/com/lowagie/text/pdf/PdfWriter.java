@@ -1556,7 +1556,7 @@ public class PdfWriter extends DocWriter {
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
-     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
+     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @throws DocumentException if the document is already open
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
@@ -1573,7 +1573,7 @@ public class PdfWriter extends DocWriter {
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
      *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      *  The permissions can be combined by ORing them.
-     * @param strength true for 128 bit key length. false for 40 bit key length
+     * @param strength <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions

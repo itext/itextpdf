@@ -347,7 +347,7 @@ public abstract class BaseFont {
      * @param encoding the encoding to be applied to this font
      * @param embedded true if the font is to be embedded in the PDF
      * @param cached true if the font comes from the cache or is added to
-     * the cache if new. false if the font is always created new
+     * the cache if new, false if the font is always created new
      * @param ttfAfm the true type font or the afm in a byte array
      * @param pfb the pfb in a byte array
      * @return returns a new font. This font may come from the cache but only if cached

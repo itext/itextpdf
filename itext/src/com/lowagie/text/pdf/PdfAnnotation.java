@@ -139,14 +139,9 @@ public class PdfAnnotation extends PdfDictionary {
     /**
      * Creates a screen PdfAnnotation
      * @param writer
-     * @param llx
-     * @param lly
-     * @param urx
-     * @param ury
-     * @param clipPath
      * @param mimeType
      * @param playOnDisplay
-     * @return
+     * @return a screen PdfAnnotation
      */
     public static PdfAnnotation createScreen(PdfWriter writer, Rectangle rect, String clipTitle, PdfFileSpecification fs,
                                              String mimeType, boolean playOnDisplay) throws IOException {
@@ -352,7 +347,7 @@ public class PdfAnnotation extends PdfDictionary {
         putDel(PdfName.BS, border);
     }
     
-    public void setAppearance(PdfName ap, PdfAppearance template) {
+    public void setAppearance(PdfName ap, PdfTemplate template) {
         PdfDictionary dic = (PdfDictionary)get(PdfName.AP);
         if (dic == null)
             dic = new PdfDictionary();
@@ -365,7 +360,7 @@ public class PdfAnnotation extends PdfDictionary {
         templates.put(template, null);
     }
 
-    public void setAppearance(PdfName ap, String state, PdfAppearance template) {
+    public void setAppearance(PdfName ap, String state, PdfTemplate template) {
         PdfDictionary dicAp = (PdfDictionary)get(PdfName.AP);
         if (dicAp == null)
             dicAp = new PdfDictionary();
@@ -473,11 +468,16 @@ public class PdfAnnotation extends PdfDictionary {
     }
     
     /** Places the annotation in a specified page that must be greater
-     * or equal to the current one. The first page is 1.
+     * or equal to the current one. With <code>PdfStamper</code> the page
+     * can be any. The first page is 1.
      * @param placeInPage New value of property placeInPage.
      */
     public void setPlaceInPage(int placeInPage) {
         this.placeInPage = placeInPage;
+    }
+    
+    public void setRotate(int v) {
+        put(PdfName.ROTATE, new PdfNumber(v));
     }
     
 }

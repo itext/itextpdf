@@ -1,3 +1,49 @@
+/*
+ * Copyright 2004 by Paulo Soares.
+ *
+ * The contents of this file are subject to the Mozilla Public License Version 1.1
+ * (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is 'iText, a free JAVA-PDF library'.
+ *
+ * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
+ * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * All Rights Reserved.
+ * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
+ * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ *
+ * Contributor(s): all the names of the contributors are added in the source code
+ * where applicable.
+ *
+ * Alternatively, the contents of this file may be used under the terms of the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * provisions of LGPL are applicable instead of those above.  If you wish to
+ * allow use of your version of this file only under the terms of the LGPL
+ * License and not to allow others to use your version of this file under
+ * the MPL, indicate your decision by deleting the provisions above and
+ * replace them with the notice and other provisions required by the LGPL.
+ * If you do not delete the provisions above, a recipient may use your version
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE.
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the MPL as stated above or under the terms of the GNU
+ * Library General Public License as published by the Free Software Foundation;
+ * either version 2 of the License, or any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * details.
+ *
+ * If you didn't download this code from the following link, you should check if
+ * you aren't using an obsolete version:
+ * http://www.lowagie.com/iText/
+ */
 package com.lowagie.text.pdf;
 
 import com.lowagie.text.Rectangle;
@@ -5,18 +51,346 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Font;
 import com.lowagie.text.Element;
+import com.lowagie.text.DocumentException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.security.cert.CRL;
+import java.security.PrivateKey;
+import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.EOFException;
+import java.io.RandomAccessFile;
+import java.io.File;
 
+import java.io.IOException;
+
+/**
+ * This class takes care of the cryptographic options and appearances that form a signature.
+ */
 public class PdfSignatureAppearance {
     
+    /**
+     * The self signed filter.
+     */
+    public static final PdfName SELF_SIGNED = PdfName.ADOBE_PPKLITE;
+    /**
+     * The VeriSign filter.
+     */
+    public static final PdfName VERISIGN_SIGNED = PdfName.VERISIGN_PPKVS;
+    /**
+     * The Windows Certificate Security.
+     */
+    public static final PdfName WINCER_SIGNED = PdfName.ADOBE_PPKMS;
+
+    private static final float topSection = 0.3f;
+    private static final float margin = 2;
     private Rectangle rect;
-    
-    public PdfSignatureAppearance(Rectangle rect) {
-        this.rect = rect;
+    private Rectangle pageRect;
+    private PdfTemplate app[] = new PdfTemplate[5];
+    private PdfTemplate frm; 
+    private PdfStamperImp writer;
+    private String layer2Text;
+    private String reason;
+    private String location;
+    private Calendar signDate;
+    private String provider;
+    private int page = 1;
+    private String fieldName;
+    private PrivateKey privKey;
+    private Certificate[] certChain;
+    private CRL[] crlList;
+    private PdfName filter;
+    private boolean newField;
+    private ByteBuffer sigout;
+    private OutputStream originalout;
+    private File tempFile;
+    private PdfDictionary cryptoDictionary;
+    private PdfStamper stamper;
+    private boolean preClosed = false;
+    private PdfSigGenericPKCS sigStandard;
+    private int range[];
+    private RandomAccessFile raf;
+    private int rangePosition = 0;
+    private byte bout[];
+    private int boutLen;
+    private int contentsLength;
+    private byte externalDigest[];
+    private byte externalRSAdata[];
+    private String digestEncryptionAlgorithm;
+        
+    PdfSignatureAppearance(PdfStamperImp writer) {
+        this.writer = writer;
+        signDate = new GregorianCalendar();
+        fieldName = getNewSigName();
     }
     
+    /**
+     * Sets the signature text identifying the signer.
+     * @param text the signature text identifying the signer. If <CODE>null</CODE> or not set
+     * a standard description will be used
+     */    
+    public void setLayer2Text(String text) {
+        layer2Text = text;
+    }
+    
+    /**
+     * Gets the rectangle representing the signature dimensions.
+     * @return the rectangle representing the signature dimensions. It may be <CODE>null</CODE>
+     * or have zero width or height for invisible signatures
+     */    
+    public Rectangle getRect() {
+        return rect;
+    }
+    
+    /**
+     * Gets the visibility status of the signature.
+     * @return the visibility status of the signature
+     */    
+    public boolean isInvisible() {
+        return (rect == null || rect.width() == 0 || rect.height() == 0);
+    }
+    
+    /**
+     * Sets the cryptographic parameters.
+     * @param privKey the private key
+     * @param certChain the certificate chain
+     * @param crlList the certificate revocation list. It may be <CODE>null</CODE>
+     * @param filter the crytographic filter type. It can be SELF_SIGNED, VERISIGN_SIGNED or WINCER_SIGNED
+     */    
+    public void setCrypto(PrivateKey privKey, Certificate[] certChain, CRL[] crlList, PdfName filter) {
+        this.privKey = privKey;
+        this.certChain = certChain;
+        this.crlList = crlList;
+        this.filter = filter;
+    }
+    
+    /**
+     * Sets the signature to be visible. It creates a new visible signature field.
+     * @param pageRect the position and dimension of the field in the page
+     * @param page the page to place the field. The fist page is 1
+     * @param fieldName the field name or <CODE>null</CODE> to generate automatically a new field name
+     */    
+    public void setVisibleSignature(Rectangle pageRect, int page, String fieldName) {
+        if (fieldName != null) {
+            AcroFields af = writer.getAcroFields();
+            AcroFields.Item item = af.getFieldItem(fieldName);
+            if (item != null)
+                throw new IllegalArgumentException("The field " + fieldName + " already exists.");
+            this.fieldName = fieldName;
+        }
+        if (page < 1 || page > writer.reader.getNumberOfPages())
+            throw new IllegalArgumentException("Invalid page number: " + page);
+        this.pageRect = new Rectangle(pageRect);
+        this.pageRect.normalize();
+        rect = new Rectangle(this.pageRect.width(), this.pageRect.height());
+        this.page = page;
+        newField = true;
+    }
+    
+    /**
+     * Sets the signature to be visible. An empty signature field with the same name must already exist.
+     * @param fieldName the existing empty signature field name
+     */    
+    public void setVisibleSignature(String fieldName) {
+        AcroFields af = writer.getAcroFields();
+        AcroFields.Item item = af.getFieldItem(fieldName);
+        if (item == null)
+            throw new IllegalArgumentException("The field " + fieldName + " does not exist.");
+        PdfDictionary merged = (PdfDictionary)item.merged.get(0);
+        if (!PdfName.SIG.equals(PdfReader.getPdfObject(merged.get(PdfName.FT))))
+            throw new IllegalArgumentException("The field " + fieldName + " is not a signature field.");
+        this.fieldName = fieldName;
+        PdfArray r = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.RECT));
+        ArrayList ar = r.getArrayList();
+        float llx = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(0))).floatValue();
+        float lly = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(1))).floatValue();
+        float urx = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(2))).floatValue();
+        float ury = ((PdfNumber)PdfReader.getPdfObject((PdfObject)ar.get(3))).floatValue();
+        pageRect = new Rectangle(llx, lly, urx, ury);
+        pageRect.normalize();
+        page = ((Integer)item.page.get(0)).intValue();
+        int rotation = writer.reader.getPageRotation(page);
+        Rectangle pageSize = writer.reader.getPageSizeWithRotation(page);
+        switch (rotation) {
+            case 90:
+                pageRect = new Rectangle(
+                pageRect.bottom(),
+                pageSize.top() - pageRect.left(),
+                pageRect.top(),
+                pageSize.top() - pageRect.right());
+                break;
+            case 180:
+                pageRect = new Rectangle(
+                pageSize.right() - pageRect.left(),
+                pageSize.top() - pageRect.bottom(),
+                pageSize.right() - pageRect.right(),
+                pageSize.top() - pageRect.top());
+                break;
+            case 270:
+                pageRect = new Rectangle(
+                pageSize.right() - pageRect.bottom(),
+                pageRect.left(),
+                pageSize.right() - pageRect.top(),
+                pageRect.right());
+                break;
+        }
+        if (rotation != 0)
+            pageRect.normalize();
+        rect = new Rectangle(this.pageRect.width(), this.pageRect.height());
+    }
+    
+    /**
+     * Gets a template layer to create a signature appearance. The layers can go from 0 to 4.
+     * <p>
+     * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
+     * for further details.
+     * @param layer the layer
+     * @return a template
+     */    
+    public PdfTemplate getLayer(int layer) {
+        if (layer < 0 || layer >= app.length)
+            return null;
+        PdfTemplate t = app[layer];
+        if (t == null) {
+            t = app[layer] = new PdfTemplate(writer);
+            t.setBoundingBox(rect);
+            writer.addDirectTemplateSimple(t, new PdfName("n" + layer));
+        }
+        return t;
+    }
+    
+    /**
+     * Gets the template that aggregates all appearance layers. This corresponds to the /FRM resource.
+     * <p>
+     * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
+     * for further details.
+     * @return the template that aggregates all appearance layers
+     */    
+    public PdfTemplate getTopLayer() {
+        if (frm == null) {
+            frm = new PdfTemplate(writer);
+            frm.setBoundingBox(rect);
+            writer.addDirectTemplateSimple(frm, new PdfName("FRM"));
+        }
+        return frm;
+    }
+    
+    /**
+     * Gets the main appearance layer.
+     * <p>
+     * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
+     * for further details.
+     * @return the main appearance layer
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */    
+    public PdfTemplate getAppearance() throws DocumentException, IOException {
+        if (app[0] == null) {
+            PdfTemplate t = app[0] = new PdfTemplate(writer);
+            t.setBoundingBox(new Rectangle(100, 100));
+            writer.addDirectTemplateSimple(t, new PdfName("n0"));
+            t.setLiteral("% DSBlank\n");
+        }
+        if (app[1] == null) {
+            PdfTemplate t = app[1] = new PdfTemplate(writer);
+            t.setBoundingBox(new Rectangle(100, 100));
+            writer.addDirectTemplateSimple(t, new PdfName("n1"));
+            t.setLiteral(questionMark);
+        }
+        if (app[2] == null) {
+            if (layer2Text == null) {
+                StringBuffer buf = new StringBuffer();
+                buf.append("Digitally signed by ").append(PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN")).append("\n");
+                SimpleDateFormat sd = (SimpleDateFormat)DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.US);
+                buf.append("Date: ").append(sd.format(signDate.getTime()));
+                if (reason != null)
+                    buf.append("\n").append("Reason: ").append(reason);
+                if (location != null)
+                    buf.append("\n").append("Location: ").append(location);
+                layer2Text = buf.toString();
+            }
+            PdfTemplate t = app[2] = new PdfTemplate(writer);
+            t.setBoundingBox(rect);
+            writer.addDirectTemplateSimple(t, new PdfName("n2"));
+            BaseFont font = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+            Rectangle sr = new Rectangle(rect.width() - 2 * margin, rect.height() * (1 - topSection) - 2 * margin);
+            float size = fitText(font, layer2Text, sr, 12);
+            ColumnText ct = new ColumnText(t);
+            ct.setSimpleColumn(new Phrase(layer2Text, new Font(font, size)), margin, 0, rect.width() - margin, rect.height() * (1 - topSection) - margin, size, Element.ALIGN_LEFT);
+            ct.go();
+        }
+        if (app[3] == null) {
+            PdfTemplate t = app[3] = new PdfTemplate(writer);
+            t.setBoundingBox(new Rectangle(100, 100));
+            writer.addDirectTemplateSimple(t, new PdfName("n3"));
+            t.setLiteral("% DSBlank\n");
+        }
+        if (app[4] == null) {
+            PdfTemplate t = app[4] = new PdfTemplate(writer);
+            t.setBoundingBox(new Rectangle(0, rect.height() * (1 - topSection), rect.right(), rect.top()));
+            writer.addDirectTemplateSimple(t, new PdfName("n4"));
+            BaseFont font = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+            String text = "Signature Not Verified";
+            Rectangle sr = new Rectangle(rect.width() - 2 * margin, rect.height() * topSection - 2 * margin);
+            float size = fitText(font, text, sr, 15);
+            ColumnText ct = new ColumnText(t);
+            ct.setSimpleColumn(new Phrase(text, new Font(font, size)), margin, 0, rect.width() - margin, rect.height() - margin, size, Element.ALIGN_LEFT);
+            ct.go();
+        }
+        int rotation = writer.reader.getPageRotation(page);
+        Rectangle rotated = new Rectangle(rect);
+        int n = rotation;
+        while (n > 0) {
+            rotated = rotated.rotate();
+            n -= 90;
+        }
+        if (frm == null) {
+            frm = new PdfTemplate(writer);
+            frm.setBoundingBox(rotated);
+            writer.addDirectTemplateSimple(frm, new PdfName("FRM"));
+            float scale = Math.min(rect.width(), rect.height()) * 0.9f;
+            float x = (rect.width() - scale) / 2;
+            float y = (rect.height() - scale) / 2;
+            scale /= 100;
+            if (rotation == 90)
+                frm.concatCTM(0, 1, -1, 0, rect.height(), 0);
+            else if (rotation == 180)
+                frm.concatCTM(-1, 0, 0, -1, rect.width(), rect.height());
+            else if (rotation == 270)
+                frm.concatCTM(0, -1, 1, 0, 0, rect.width());
+            frm.addTemplate(app[0], 0, 0);
+            frm.addTemplate(app[1], scale, 0, 0, scale, x, y);
+            frm.addTemplate(app[2], 0, 0);
+            frm.addTemplate(app[3], scale, 0, 0, scale, x, y);
+            frm.addTemplate(app[4], 0, 0);
+        }
+        PdfTemplate napp = new PdfTemplate(writer);
+        napp.setBoundingBox(rotated);
+        writer.addDirectTemplateSimple(napp, null);
+        napp.addTemplate(frm, 0, 0);
+        return napp;
+    }
+    
+    /**
+     * Fits the text to some rectangle adjusting the font size as needed.
+     * @param font the font to use
+     * @param text the text
+     * @param rect the rectangle where the text must fit
+     * @param maxFontSize the maximum font size
+     * @return the calculated font size that makes the text fit
+     */    
     public static float fitText(BaseFont font, String text, Rectangle rect, float maxFontSize) {
         try {
-            System.out.println(maxFontSize);
+            //System.out.println(maxFontSize);
             ColumnText ct = null;
             int status = 0;
             if (maxFontSize <= 0) {
@@ -36,7 +410,7 @@ public class PdfSignatureAppearance {
             ct = new ColumnText(null);
             ct.setSimpleColumn(ph, rect.left(), rect.bottom(), rect.right(), rect.top(), maxFontSize, Element.ALIGN_LEFT);
             status = ct.go(true);
-            System.out.println(maxFontSize);
+            //System.out.println(maxFontSize);
             if ((status & ColumnText.NO_MORE_TEXT) != 0)
                 return maxFontSize;
             float precision = 0.1f;
@@ -44,7 +418,7 @@ public class PdfSignatureAppearance {
             float max = maxFontSize;
             while (true) {
                 float size = (min + max) / 2;
-                System.out.println(size);
+                //System.out.println(size);
                 ct = new ColumnText(null);
                 ct.setSimpleColumn(new Phrase(text, new Font(font, size)), rect.left(), rect.bottom(), rect.right(), rect.top(), size, Element.ALIGN_LEFT);
                 status = ct.go(true);
@@ -62,7 +436,483 @@ public class PdfSignatureAppearance {
         }
     }
     
-    public static String questionMark = 
+    /**
+     * Sets the digest to an external calculated value.
+     * @param digest the digest
+     * @param RSAdata the extra data
+     */    
+    public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
+        externalDigest = digest;
+        externalRSAdata = RSAdata;
+        this.digestEncryptionAlgorithm = digestEncryptionAlgorithm;
+    }
+
+    /**
+     * Gets the signing reason.
+     * @return the signing reason
+     */    
+    public String getReason() {
+        return this.reason;
+    }
+    
+    /**
+     * Sets the signing reason.
+     * @param reason the signing reason
+     */    
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+    
+    /**
+     * Gets the signing location.
+     * @return the signing location
+     */    
+    public String getLocation() {
+        return this.location;
+    }
+    
+    /**
+     * Sets the signing location.
+     * @param location the signing location
+     */    
+    public void setLocation(String location) {
+        this.location = location;
+    }
+        
+    /**
+     * Returns the Cryptographic Service Provider that will sign the document.
+     * @return provider the name of the provider, for example <code>SUN<code>,
+     * or <code>null</code> to use the default provider.
+     */
+    public String getProvider() {
+        return this.provider;
+    }
+    
+    /**
+     * Sets the Cryptographic Service Provider that will sign the document.
+     *
+     * @param provider the name of the provider, for example <code>SUN<code>, or
+     * <code>null</code> to use the default provider.
+     */
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+    
+    /**
+     * Gets the private key.
+     * @return the private key
+     */    
+    public java.security.PrivateKey getPrivKey() {
+        return privKey;
+    }
+    
+    /**
+     * Gets the certificate chain.
+     * @return the certificate chain
+     */    
+    public java.security.cert.Certificate[] getCertChain() {
+        return this.certChain;
+    }
+    
+    /**
+     * Gets the certificate revocation list.
+     * @return the certificate revocation list
+     */    
+    public java.security.cert.CRL[] getCrlList() {
+        return this.crlList;
+    }
+    
+    /**
+     * Gets the filter used to sign the document.
+     * @return the filter used to sign the document
+     */    
+    public com.lowagie.text.pdf.PdfName getFilter() {
+        return filter;
+    }
+    
+    /**
+     * Checks if a new field was created.
+     * @return <CODE>true</CODE> if a new field was created, <CODE>false</CODE> if signing
+     * an existing field or if the signature is invisible
+     */    
+    public boolean isNewField() {
+        return this.newField;
+    }
+    
+    /**
+     * Gets the page number of the field.
+     * @return the page number of the field
+     */    
+    public int getPage() {
+        return page;
+    }
+    
+    /**
+     * Gets the field name.
+     * @return the field name
+     */    
+    public java.lang.String getFieldName() {
+        return fieldName;
+    }
+    
+    /**
+     * Gets the rectangle that represent the position and dimension of the signature in the page.
+     * @return the rectangle that represent the position and dimension of the signature in the page
+     */    
+    public com.lowagie.text.Rectangle getPageRect() {
+        return pageRect;
+    }
+    
+    /**
+     * Gets the signature date.
+     * @return the signature date
+     */    
+    public java.util.Calendar getSignDate() {
+        return signDate;
+    }
+    
+    /**
+     * Sets the signature date.
+     * @param signDate the signature date
+     */    
+    public void setSignDate(java.util.Calendar signDate) {
+        this.signDate = signDate;
+    }
+    
+    com.lowagie.text.pdf.ByteBuffer getSigout() {
+        return sigout;
+    }
+    
+    void setSigout(com.lowagie.text.pdf.ByteBuffer sigout) {
+        this.sigout = sigout;
+    }
+    
+    java.io.OutputStream getOriginalout() {
+        return originalout;
+    }
+    
+    void setOriginalout(java.io.OutputStream originalout) {
+        this.originalout = originalout;
+    }
+    
+    /**
+     * Gets the temporary file.
+     * @return the temporary file or <CODE>null</CODE> is the document is created in memory
+     */    
+    public java.io.File getTempFile() {
+        return tempFile;
+    }
+    
+    void setTempFile(java.io.File tempFile) {
+        this.tempFile = tempFile;
+    }
+
+    /**
+     * Gets a new signature fied name that doesn't clash with any existing name.
+     * @return a new signature fied name
+     */    
+    public String getNewSigName() {
+        AcroFields af = writer.getAcroFields();
+        String name = "Signature";
+        int step = 0;
+        boolean found = false;
+        while (!found) {
+            ++step;
+            String n1 = name + step;
+            if (af.getFieldItem(n1) != null)
+                continue;
+            n1 += ".";
+            found = true;
+            for (Iterator it = af.getFields().keySet().iterator(); it.hasNext();) {
+                String fn = (String)it.next();
+                if (fn.startsWith(n1)) {
+                    found = false;
+                    break;
+                }
+            }
+        }
+        name += step;
+        return name;
+    }
+    
+    /**
+     * This is the first method to be called when using external signatures. The general sequence is:
+     * preClose(), getDocumentBytes() and close().
+     * <p>
+     * If calling preClose() <B>dont't</B> call PdfStamper.close().
+     * @throws IOException on error
+     * @throws DocumentException on error
+     */    
+    public void preClose() throws IOException, DocumentException {
+        if (preClosed)
+            throw new DocumentException("Document already pre closed.");
+        preClosed = true;
+        AcroFields af = writer.getAcroFields();
+        String name = getFieldName();
+        boolean fieldExists = !(isInvisible() || isNewField());
+        if (fieldExists) {
+            af.removeField(name);
+        }
+        writer.setSigFlags(3);
+        PdfFormField sigField = PdfFormField.createSignature(writer);
+        sigField.setFieldName(name);
+        PdfIndirectReference refSig = writer.getPdfIndirectReference();
+        sigField.put(PdfName.V, refSig);
+        sigField.setFlags(132);
+
+        int pagen = getPage();
+        PdfReader reader = writer.reader;
+        if (!isInvisible()) {
+            sigField.setWidget(getPageRect(), null);
+            sigField.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, getAppearance());
+        }
+        else
+            sigField.setWidget(new Rectangle(0, 0), null);
+        sigField.setPage(pagen);
+        writer.addAnnotation(sigField, pagen);
+
+        int position;
+        if (cryptoDictionary == null) {
+            if (PdfName.ADOBE_PPKLITE.equals(getFilter()))
+                sigStandard = new PdfSigGenericPKCS.PPKLite(getProvider());
+            else if (PdfName.ADOBE_PPKMS.equals(getFilter()))
+                sigStandard = new PdfSigGenericPKCS.PPKMS(getProvider());
+            else if (PdfName.VERISIGN_PPKVS.equals(getFilter()))
+                sigStandard = new PdfSigGenericPKCS.VeriSign(getProvider());
+            else
+                throw new IllegalArgumentException("Unknown filter: " + getFilter());
+            sigStandard.setExternalDigest(externalDigest, externalRSAdata, digestEncryptionAlgorithm);
+            if (getReason() != null)
+                sigStandard.setReason(getReason());
+            if (getLocation() != null)
+                sigStandard.setLocation(getLocation());
+            sigStandard.put(PdfName.M, new PdfDate(getSignDate()));
+            sigStandard.setSignInfo(getPrivKey(), getCertChain(), getCrlList());
+            PdfString contents = (PdfString)sigStandard.get(PdfName.CONTENTS);
+            contentsLength = contents.toString().length();
+            position = writer.getOs().getCounter();
+            writer.addToBody(sigStandard, refSig, false);
+        }
+        else {
+            position = writer.getOs().getCounter();
+            cryptoDictionary.put(PdfName.BYTERANGE, new PdfLiteral("[0                                 "));
+            PdfObject obj = cryptoDictionary.get(PdfName.CONTENTS);
+            if (obj == null || obj.type() != PdfObject.STRING)
+                throw new DocumentException("Invalid /Contents value in the signature dictionary");
+            PdfString contents = (PdfString)obj;
+            if (!contents.isHexWriting())
+                throw new DocumentException("The /Contents value in the signature dictionary must be a PdfString with setHexWriting(true)");
+            contentsLength = contents.toString().length();
+            writer.addToBody(cryptoDictionary, refSig, false);
+        }
+        writer.close(stamper.getMoreInfo());
+        
+        if (tempFile == null) {
+            bout = sigout.getBuffer();
+            boutLen = sigout.size();
+            int br = indexArray(bout, position, "/ByteRange");
+            int cr = indexArray(bout, position, "/Contents");
+            cr = indexArray(bout, cr, "<");
+            int ecr = indexArray(bout, cr, ">");
+            ByteBuffer bf = new ByteBuffer();
+            range = new int[]{0, cr, ecr + 1, boutLen - ecr - 1};
+            bf.append("/ByteRange[0 ").append(range[1]).append(' ').append(range[2]).append(' ').append(range[3]).append(']');
+            System.arraycopy(bf.getBuffer(), 0, bout, br, bf.size());
+        }
+        else {
+            try {
+                raf = new RandomAccessFile(tempFile, "rw");
+                int boutLen = (int)raf.length();
+                int br = indexFile(raf, position, "/ByteRange");
+                int cr = indexFile(raf, position, "/Contents");
+                cr = indexFile(raf, cr, "<");
+                int ecr = indexFile(raf, cr, ">");
+                ByteBuffer bf = new ByteBuffer();
+                range = new int[]{0, cr, ecr + 1, boutLen - ecr - 1};
+                bf.append("/ByteRange[0 ").append(range[1]).append(' ').append(range[2]).append(' ').append(range[3]).append(']');
+                raf.seek(br);
+                raf.write(bf.getBuffer(), 0, bf.size());
+            }
+            catch (IOException e) {
+                try{raf.close();}catch(Exception ee){}
+                try{tempFile.delete();}catch(Exception ee){}
+                throw e;
+            }
+        }
+        
+    }
+    
+    /**
+     * This is the last method to be called when using external signatures. The general sequence is:
+     * preClose(), getDocumentBytes() and close().
+     * <p>
+     * The parameter corresponds to the /Contents key and must be exactly the same
+     * size as the /Contents key when preClosed() was called.
+     * @param signerContents the new /Contents key that is generally a PKCS#7 object
+     * @throws IOException on error
+     */    
+    public void close(byte signerContents[]) throws IOException, DocumentException {
+        try {
+            if (!preClosed)
+                throw new DocumentException("preClose() must be called first.");
+            if (signerContents.length != contentsLength)
+                throw new IllegalArgumentException("The signer content must be the same size as in pre close.");
+            PdfString cout = new PdfString(signerContents).setHexWriting(true);
+            ByteBuffer bf = new ByteBuffer();
+            cout.toPdf(null, bf);
+            if (tempFile == null) {
+                System.arraycopy(bf.getBuffer(), 0, bout, range[1], bf.size());
+                originalout.write(bout, 0, boutLen);
+            }
+            else {
+                raf.seek(range[1]);
+                raf.write(bf.getBuffer(), 0, bf.size());
+                if (originalout != null) {
+                    raf.seek(0);
+                    int length = (int)raf.length();
+                    byte buf[] = new byte[8192];
+                    while (length > 0) {
+                        int r = raf.read(buf, 0, Math.min(buf.length, length));
+                        if (r < 0)
+                            throw new EOFException("Unexpected EOF");
+                        originalout.write(buf, 0, r);
+                        length -= r;
+                    }
+                }
+            }
+        }
+        finally {
+            if (tempFile != null) {
+                try{raf.close();}catch(Exception ee){}
+                if (originalout != null)
+                    try{tempFile.delete();}catch(Exception ee){}
+            }
+            if (originalout != null)
+                try{originalout.close();}catch(Exception e){}
+        }
+    }
+    
+    private static int indexArray(byte bout[], int position, String search) {
+        byte ss[] = PdfEncodings.convertToBytes(search, null);
+        while (true) {
+            int k;
+            for (k = 0; k < ss.length; ++k) {
+                if (ss[k] != bout[position + k])
+                    break;
+            }
+            if (k == ss.length)
+                return position;
+            ++position;
+        }
+    }
+
+    private static int indexFile(RandomAccessFile raf, int position, String search) throws IOException {
+        byte ss[] = PdfEncodings.convertToBytes(search, null);
+        while (true) {
+            raf.seek(position);
+            int k;
+            for (k = 0; k < ss.length; ++k) {
+                int b = raf.read();
+                if (b < 0)
+                    throw new EOFException("Unexpected EOF");
+                if (ss[k] != (byte)b)
+                    break;
+            }
+            if (k == ss.length)
+                return position;
+            ++position;
+        }
+    }
+
+    /**
+     * Gets the document bytes when using external signatures. The general sequence is:
+     * preClose(), getDocumentBytes() and close().
+     * <p>
+     * This method should be called until it return -1.
+     * @param store the returned bytes
+     * @return the number of bytes read or -1 if finished. After returning -1 another
+     * call will begin a new sequence from the beginning
+     * @throws IOException on error
+     */    
+    public int getDocumentBytes(byte store[]) throws IOException, DocumentException {
+        if (!preClosed)
+            throw new DocumentException("preClose() must be called first.");
+        if (rangePosition >= range[range.length - 2] + range[range.length - 1]) {
+            rangePosition = 0;
+            return -1;
+        }
+        for (int k = 0; k < range.length; k += 2) {
+            int start = range[k];
+            int end = start + range[k + 1];
+            if (rangePosition < start)
+                rangePosition = start;
+            if (rangePosition >= start && rangePosition < end) {
+                int len = Math.min(store.length, end - rangePosition);
+                if (tempFile == null)
+                    System.arraycopy(bout, rangePosition, store, 0, len);
+                else {
+                    raf.seek(rangePosition);
+                    raf.readFully(store, 0, len);
+                }
+                rangePosition += len;
+                return len;
+            }
+        }
+        return -1;
+    }
+    
+    /**
+     * Gets the user made signature dictionary. This is the dictionary at the /V key.
+     * @return the user made signature dictionary
+     */    
+    public com.lowagie.text.pdf.PdfDictionary getCryptoDictionary() {
+        return cryptoDictionary;
+    }
+    
+    /**
+     * Sets a user made signature dictionary. This is the dictionary at the /V key.
+     * @param cryptoDictionary a user made signature dictionary
+     */    
+    public void setCryptoDictionary(com.lowagie.text.pdf.PdfDictionary cryptoDictionary) {
+        this.cryptoDictionary = cryptoDictionary;
+    }
+    
+    /**
+     * Gets the <CODE>PdfStamper</CODE> associated with this instance.
+     * @return the <CODE>PdfStamper</CODE> associated with this instance
+     */    
+    public com.lowagie.text.pdf.PdfStamper getStamper() {
+        return stamper;
+    }
+    
+    void setStamper(com.lowagie.text.pdf.PdfStamper stamper) {
+        this.stamper = stamper;
+    }
+    
+    /**
+     * Checks if the document is in the process of closing.
+     * @return <CODE>true</CODE> if the document is in the process of closing,
+     * <CODE>false</CODE> otherwise
+     */    
+    public boolean isPreClosed() {
+        return preClosed;
+    }
+    
+    /**
+     * Gets the instance of the standard signature dictionary. This instance
+     * is only available after pre close.
+     * <p>
+     * The main use is to insert external signatures.
+     * @return the instance of the standard signature dictionary
+     */    
+    public com.lowagie.text.pdf.PdfSigGenericPKCS getSigStandard() {
+        return sigStandard;
+    }
+    
+    /**
+     * Commands to draw a yellow question mark in a stream content
+     */    
+    public static final String questionMark = 
         "% DSUnknown\n" +
         "q\n" +
         "1 G\n" +
@@ -105,5 +955,4 @@ public class PdfSignatureAppearance {
         "282 240 170 -164 re\n" +
         "B\n" +
         "Q\n";
-
 }

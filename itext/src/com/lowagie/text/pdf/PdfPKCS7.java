@@ -120,6 +120,8 @@ public class PdfPKCS7 {
     private byte RSAdata[];
     private boolean verified;
     private boolean verifyResult;
+    private byte externalDigest[];
+    private byte externalRSAdata[];
     
     private static final String ID_PKCS7_DATA = "1.2.840.113549.1.7.1";
     private static final String ID_PKCS7_SIGNED_DATA = "1.2.840.113549.1.7.2";
@@ -286,7 +288,7 @@ public class PdfPKCS7 {
         digestEncryptionAlgorithm = ((DERObjectIdentifier)((ASN1Sequence)signerInfo.getObjectAt(next++)).getObjectAt(0)).getId();
         digest = ((DEROctetString)signerInfo.getObjectAt(next)).getOctets();
         if (RSAdata != null) {
-            if (provider == null)
+            if (provider == null || provider.startsWith("SunPKCS11"))
                 messageDigest = MessageDigest.getInstance(getHashAlgorithm());
             else
                 messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
@@ -354,33 +356,37 @@ public class PdfPKCS7 {
             }
         }
         
-        //
-        // Now we have private key, find out what the digestEncryptionAlgorithm is.
-        //
-        digestEncryptionAlgorithm = privKey.getAlgorithm();
-        if (digestEncryptionAlgorithm.equals("RSA")) {
-            digestEncryptionAlgorithm = ID_RSA;
-        }
-        else if (digestEncryptionAlgorithm.equals("DSA")) {
-            digestEncryptionAlgorithm = ID_DSA;
-        }
-        else {
-            throw new NoSuchAlgorithmException("Unknown Key Algorithm "+digestEncryptionAlgorithm);
+        if (privKey != null) {
+            //
+            // Now we have private key, find out what the digestEncryptionAlgorithm is.
+            //
+            digestEncryptionAlgorithm = privKey.getAlgorithm();
+            if (digestEncryptionAlgorithm.equals("RSA")) {
+                digestEncryptionAlgorithm = ID_RSA;
+            }
+            else if (digestEncryptionAlgorithm.equals("DSA")) {
+                digestEncryptionAlgorithm = ID_DSA;
+            }
+            else {
+                throw new NoSuchAlgorithmException("Unknown Key Algorithm "+digestEncryptionAlgorithm);
+            }
         }
         if (hasRSAdata) {
             RSAdata = new byte[0];
-            if (provider == null)
+            if (provider == null || provider.startsWith("SunPKCS11"))
                 messageDigest = MessageDigest.getInstance(getHashAlgorithm());
             else
                 messageDigest = MessageDigest.getInstance(getHashAlgorithm(), provider);
         }
 
-        if (provider == null)
-            sig = Signature.getInstance(getDigestAlgorithm());
-        else
-            sig = Signature.getInstance(getDigestAlgorithm(), provider);
-        
-        sig.initSign(privKey);
+        if (privKey != null) {
+            if (provider == null)
+                sig = Signature.getInstance(getDigestAlgorithm());
+            else
+                sig = Signature.getInstance(getDigestAlgorithm(), provider);
+
+            sig.initSign(privKey);
+        }
     }
 
     /**
@@ -655,9 +661,15 @@ public class PdfPKCS7 {
         }
     }
     
+    /**
+     * Gets the bytes for the PKCS#1 object.
+     */
     public byte[] getEncodedPKCS1() {
         try {
-            digest = sig.sign();
+            if (externalDigest != null)
+                digest = externalDigest;
+            else
+                digest = sig.sign();
             ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
             
             ASN1OutputStream dout = new ASN1OutputStream(bOut);
@@ -672,15 +684,47 @@ public class PdfPKCS7 {
     }
     
     /**
-     * return the bytes for the PKCS7SignedData object.
+     * Sets the digest to an external calculated value.
+     * @param digest the digest
+     * @param RSAdata the extra data
+     */    
+    public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
+        externalDigest = digest;
+        externalRSAdata = RSAdata;
+        if (digestEncryptionAlgorithm != null) {
+            if (digestEncryptionAlgorithm.equals("RSA")) {
+                this.digestEncryptionAlgorithm = ID_RSA;
+            }
+            else if (digestEncryptionAlgorithm.equals("DSA")) {
+                this.digestEncryptionAlgorithm = ID_DSA;
+            }
+            else
+                throw new ExceptionConverter(new NoSuchAlgorithmException("Unknown Key Algorithm "+digestEncryptionAlgorithm));
+        }
+    }
+    
+    /**
+     * Gets the bytes for the PKCS7SignedData object.
      */
     public byte[] getEncodedPKCS7() {
         try {
-            if (RSAdata != null) {
-                RSAdata = messageDigest.digest();
-                sig.update(RSAdata);
+            if (externalDigest != null) {
+                digest = externalDigest;
+                if (RSAdata != null)
+                    RSAdata = externalRSAdata;
             }
-            digest = sig.sign();
+            else if (externalRSAdata != null && RSAdata != null) {
+                RSAdata = externalRSAdata;
+                sig.update(RSAdata);
+                digest = sig.sign();
+            }
+            else {
+                if (RSAdata != null) {
+                    RSAdata = messageDigest.digest();
+                    sig.update(RSAdata);
+                }
+                digest = sig.sign();
+            }
             
             // Create the set of Hash algorithms
             DERConstructedSet digestAlgorithms = new DERConstructedSet();

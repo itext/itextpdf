@@ -97,7 +97,7 @@ import java.util.Date;
  * catch(DocumentException de) {
  *    System.err.println(de.getMessage());
  * }
- * <STRONG>document.close();</CODE>
+ * <STRONG>document.close();</STRONG></CODE>
  * </PRE></BLOCKQUOTE>
  */
 
@@ -106,7 +106,7 @@ public class Document implements DocListener {
     // membervariables
     
 /** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-    private static final String ITEXT_VERSION = "itext-paulo-139 (itextpdf.sf.net-lowagie.com)";
+    private static final String ITEXT_VERSION = "itext-paulo-140 (itextpdf.sf.net-lowagie.com)";
     
 /** Allows the pdf documents to be produced without compression for debugging purposes. */
     public static boolean compress = true; 

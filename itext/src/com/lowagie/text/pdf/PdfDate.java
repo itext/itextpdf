@@ -83,16 +83,16 @@ public class PdfDate extends PdfString {
  * @param		d			the date that has to be turned into a <CODE>PdfDate</CODE>-object
  */
     
-    public PdfDate(GregorianCalendar d) {
+    public PdfDate(Calendar d) {
         super();
         StringBuffer date = new StringBuffer("D:");
-        date.append(setLength(d.get(GregorianCalendar.YEAR), 4));
-        date.append(setLength(d.get(GregorianCalendar.MONTH) + 1, 2));
-        date.append(setLength(d.get(GregorianCalendar.DATE), 2));
-        date.append(setLength(d.get(GregorianCalendar.HOUR_OF_DAY), 2));
-        date.append(setLength(d.get(GregorianCalendar.MINUTE), 2));
-        date.append(setLength(d.get(GregorianCalendar.SECOND), 2));
-        int timezone = d.get(GregorianCalendar.ZONE_OFFSET) / (60 * 60 * 1000);
+        date.append(setLength(d.get(Calendar.YEAR), 4));
+        date.append(setLength(d.get(Calendar.MONTH) + 1, 2));
+        date.append(setLength(d.get(Calendar.DATE), 2));
+        date.append(setLength(d.get(Calendar.HOUR_OF_DAY), 2));
+        date.append(setLength(d.get(Calendar.MINUTE), 2));
+        date.append(setLength(d.get(Calendar.SECOND), 2));
+        int timezone = d.get(Calendar.ZONE_OFFSET) / (60 * 60 * 1000);
         if (timezone == 0) {
             date.append("Z");
         }
@@ -105,7 +105,7 @@ public class PdfDate extends PdfString {
         }
         if (timezone != 0) {
             date.append(setLength(timezone, 2)).append("'");
-            int zone = Math.abs(d.get(GregorianCalendar.ZONE_OFFSET) / (60 * 1000)) - (timezone * 60);
+            int zone = Math.abs(d.get(Calendar.ZONE_OFFSET) / (60 * 1000)) - (timezone * 60);
             date.append(setLength(zone, 2)).append("'");
         }
         value = date.toString();

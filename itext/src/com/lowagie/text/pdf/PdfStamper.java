@@ -53,6 +53,7 @@ import java.security.cert.CertPath;
 import java.security.cert.CRL;
 import java.security.PrivateKey;
 import java.security.KeyStore;
+import java.security.SignatureException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -63,6 +64,7 @@ import java.io.File;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.Rectangle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
@@ -73,36 +75,17 @@ import java.util.Iterator;
  * all the interactive elements including bookmarks, links and form fields.
  * <p>
  * It is also possible to change the field values and to
- * flatten them.
+ * flatten them. New fields can be added but not flattened.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfStamper {
+    /**
+     * The writer
+     */    
     protected PdfStamperImp stamper;
     private HashMap moreInfo;
     private boolean hasSignature;
-    private ByteBuffer sigout;
-    private OutputStream originalout;
-    private PrivateKey privKey;
-    private Certificate[] certChain;
-    private CRL[] crlList;
-    private PdfName filter;
-    private String reason;
-    private String location;
-    private String provider;
-    private File tempFile;
-
-    /**
-     * The self signed filter.
-     */
-    public static final PdfName SELF_SIGNED = PdfName.ADOBE_PPKLITE;
-    /**
-     * The VeriSign filter.
-     */
-    public static final PdfName VERISIGN_SIGNED = PdfName.VERISIGN_PPKVS;
-    /**
-     * The Windows Certificate Security.
-     */
-    public static final PdfName WINCER_SIGNED = PdfName.ADOBE_PPKMS;
+    private PdfSignatureAppearance sigApp;
 
     /** Starts the process of adding extra content to an existing PDF
      * document.
@@ -150,27 +133,42 @@ public class PdfStamper {
 
 
     /**
-     * Sets the Cryptographic Service Provider that will sign the document.
-     *
-     * @param provider the name of the provider, for example <code>SUN<code>, or
-     * <code>null</code> to use the default provider.
-     */
-    public void setProvider(String provider) {
-        this.provider = provider;
+     * Gets the signing instance. The appearances and other parameters can the be set.
+     * @return the signing instance
+     */    
+    public PdfSignatureAppearance getSignatureAppearance() {
+        return sigApp;
     }
 
+    private String getNewSigName() {
+        AcroFields af = getAcroFields();
+        String name = "Signature";
+        int step = 0;
+        boolean found = false;
+        while (!found) {
+            ++step;
+            String n1 = name + step;
+            if (af.getFieldItem(n1) != null)
+                continue;
+            n1 += ".";
+            found = true;
+            for (Iterator it = af.getFields().keySet().iterator(); it.hasNext();) {
+                String fn = (String)it.next();
+                if (fn.startsWith(n1)) {
+                    found = false;
+                    break;
+                }
+            }
+        }
+        name += step;
+        return name;
+    }
     /**
-     * Returns the Cryptographic Service Provider that will sign the document.
-     *
-     * @returns provider the name of the provider, for example <code>SUN<code>,
-     * or <code>null</code> to use the default provider.
-     */
-    public String getProvider() {
-        return this.provider;
-    }
-
-    /** Closes the document. No more content can be written after the
+     * Closes the document. No more content can be written after the
      * document is closed.
+     * <p>
+     * If closing a signed document with an external signature the closing must be done
+     * in the <CODE>PdfSignatureAppearance</CODE> instance.
      * @throws DocumentException on error
      * @throws IOException on error
      */
@@ -179,161 +177,19 @@ public class PdfStamper {
             stamper.close(moreInfo);
             return;
         }
+        sigApp.preClose();
+        PdfSigGenericPKCS sig = sigApp.getSigStandard();
+        byte buf[] = new byte[8192];
+        int n;
         try {
-            AcroFields af = getAcroFields();
-            String name = "Signature";
-            int step = 0;
-            boolean found = false;
-            while (!found) {
-                ++step;
-                String n1 = name + step;
-                if (af.getFieldItem(n1) != null)
-                    continue;
-                n1 += ".";
-                found = true;
-                for (Iterator it = af.getFields().keySet().iterator(); it.hasNext();) {
-                    String fn = (String)it.next();
-                    if (fn.startsWith(n1)) {
-                        found = false;
-                        break;
-                    }
-                }
-            }
-            name += step;
-            PdfReader reader = getReader();
-            PdfDictionary catalog = reader.getCatalog();
-            PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM));
-            if (acroForm == null) {
-                acroForm = new PdfDictionary();
-                catalog.put(PdfName.ACROFORM, acroForm);
-                acroForm.put(PdfName.SIGFLAGS, new PdfNumber(3));
-            }
-            PdfArray fields = (PdfArray)PdfReader.getPdfObject(acroForm.get(PdfName.FIELDS));
-            if (fields == null) {
-                fields = new PdfArray();
-                acroForm.put(PdfName.FIELDS, fields);
-            }
-            PdfWriter writer = getWriter();
-            PdfIndirectReference refWidget = writer.getPdfIndirectReference();
-            PdfIndirectReference refSig = writer.getPdfIndirectReference();
-            fields.add(refWidget);
-            PdfDictionary widget = new PdfDictionary(PdfName.ANNOT);
-            widget.put(PdfName.SUBTYPE, PdfName.WIDGET);
-            widget.put(PdfName.F, new PdfNumber(132));
-            widget.put(PdfName.FT, PdfName.SIG);
-            widget.put(PdfName.RECT, new PdfArray(new int[]{0, 0, 0, 0}));
-            widget.put(PdfName.T, new PdfString(name));
-            widget.put(PdfName.V, refSig);
-            widget.put(PdfName.P, reader.getPageOrigRef(1));
-            PdfDictionary page = reader.getPageN(1);
-            PdfArray annots = (PdfArray)PdfReader.getPdfObject(page.get(PdfName.ANNOTS));
-            if (annots == null) {
-                annots = new PdfArray();
-                page.put(PdfName.ANNOTS, annots);
-            }
-            annots.add(refWidget);
-            writer.addToBody(widget, refWidget);
-            PdfSigGenericPKCS sig = null;
-            if (PdfName.ADOBE_PPKLITE.equals(filter))
-                sig = new PdfSigGenericPKCS.PPKLite(getProvider());
-            else if (PdfName.ADOBE_PPKMS.equals(filter))
-                sig = new PdfSigGenericPKCS.PPKMS(getProvider());
-            else if (PdfName.VERISIGN_PPKVS.equals(filter))
-                sig = new PdfSigGenericPKCS.VeriSign(getProvider());
-            else
-                throw new IllegalArgumentException("Unknown filter: " + filter.toString());
-            if (reason != null)
-                sig.setReason(reason);
-            if (location != null)
-                sig.setLocation(location);
-            sig.setSignInfo(privKey, certChain, crlList);
-            int position = writer.getOs().getCounter();
-            writer.addToBody(sig, refSig, false);
-            stamper.close(moreInfo);
-            if (tempFile == null) {
-                byte bout[] = sigout.getBuffer();
-                int boutLen = sigout.size();
-                int br = indexArray(bout, position, "/ByteRange");
-                int cr = indexArray(bout, position, "/Contents");
-                int ecr = indexArray(bout, cr, ">");
-                ByteBuffer bf = new ByteBuffer();
-                int range[] = {0, cr + 9, ecr + 1, boutLen - ecr - 1};
-                bf.append("/ByteRange[0 ").append(range[1]).append(' ').append(range[2]).append(' ').append(range[3]).append(']');
-                System.arraycopy(bf.getBuffer(), 0, bout, br, bf.size());
-                for (int k = 0; k < range.length; ++k) {
-                    int start = range[k];
-                    int length = range[++k];
-                    sig.getSigner().update(bout, start, length);
-                }
-                byte ar2[] = sig.getSignerContents();
-                PdfString cout = new PdfString(ar2).setWritingMode(true);
-                bf.reset();
-                cout.toPdf(null, bf);
-                System.arraycopy(bf.getBuffer(), 0, bout, range[1], bf.size());
-                originalout.write(bout, 0, boutLen);
-            }
-            else {
-                RandomAccessFile raf = null;
-                try {
-                    raf = new RandomAccessFile(tempFile, "rw");
-                    int boutLen = (int)raf.length();
-                    int br = indexFile(raf, position, "/ByteRange");
-                    int cr = indexFile(raf, position, "/Contents");
-                    int ecr = indexFile(raf, cr, ">");
-                    ByteBuffer bf = new ByteBuffer();
-                    int range[] = {0, cr + 9, ecr + 1, boutLen - ecr - 1};
-                    bf.append("/ByteRange[0 ").append(range[1]).append(' ').append(range[2]).append(' ').append(range[3]).append(']');
-                    raf.seek(br);
-                    raf.write(bf.getBuffer(), 0, bf.size());
-                    byte ar2[] = new byte[8192];
-                    for (int k = 0; k < range.length; ++k) {
-                        int start = range[k];
-                        int length = range[++k];
-                        raf.seek(start);
-                        while (length > 0) {
-                            int r = raf.read(ar2, 0, Math.min(ar2.length, length));
-                            if (r < 0)
-                                throw new EOFException("Unexpected EOF");
-                            sig.getSigner().update(ar2, 0, r);
-                            length -= r;
-                        }
-                    }
-                    byte ar3[] = sig.getSignerContents();
-                    PdfString cout = new PdfString(ar3).setWritingMode(true);
-                    bf.reset();
-                    cout.toPdf(null, bf);
-                    raf.seek(0);
-                    int length = range[1];
-                    while (length > 0) {
-                        int r = raf.read(ar2, 0, Math.min(ar2.length, length));
-                        if (r < 0)
-                            throw new EOFException("Unexpected EOF");
-                        originalout.write(ar2, 0, r);
-                        length -= r;
-                    }
-                    originalout.write(bf.getBuffer(), 0, bf.size());
-                    raf.seek(range[1] + bf.size());
-                    length = boutLen - (range[1] + bf.size());
-                    while (length > 0) {
-                        int r = raf.read(ar2, 0, Math.min(ar2.length, length));
-                        if (r < 0)
-                            throw new EOFException("Unexpected EOF");
-                        originalout.write(ar2, 0, r);
-                        length -= r;
-                    }
-                }
-                finally {
-                    try{raf.close();}catch(Exception ee){}
-                    try{tempFile.delete();}catch(Exception ee){}
-                }
+            while ((n = sigApp.getDocumentBytes(buf)) > 0) {
+                sig.getSigner().update(buf, 0, n);
             }
         }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
+        catch (SignatureException se) {
+            throw new ExceptionConverter(se);
         }
-        finally {
-            try{originalout.close();}catch(Exception e){}
-        }
+        sigApp.close(sig.getSignerContents());
     }
 
     private static int indexArray(byte bout[], int position, String search) {
@@ -414,7 +270,7 @@ public class PdfStamper {
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
-     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
+     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @throws DocumentException if anything was already written to the output
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
@@ -430,7 +286,7 @@ public class PdfStamper {
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
      *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      *  The permissions can be combined by ORing them.
-     * @param strength true for 128 bit key length. false for 40 bit key length
+     * @param strength <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
@@ -480,7 +336,8 @@ public class PdfStamper {
         stamper.setFormFlattening(flat);
     }
 
-    /** Adds an annotation in a specific page.
+    /** Adds an annotation of form filed in a specific page. This page number
+     * can be overridden with <code>PdfAnnotation.setPlaceInPage()</code>.
      * @param annot the annotation
      * @param page the page
      */
@@ -559,55 +416,46 @@ public class PdfStamper {
      * Certificate[] chain = ks.getCertificateChain(alias);
      * PdfReader reader = new PdfReader("original.pdf");
      * FileOutputStream fout = new FileOutputStream("signed.pdf");
-     * PdfStamper stp = PdfStamper.createInvisibleSignature(reader, fout, '\0', key, chain, null, PdfStamper.WINCER_SIGNED, "I'm the author", "Lisbon");
+     * PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0', new File("/temp"));
+     * PdfSignatureAppearance sap = stp.getSignatureAppearance();
+     * sap.setCrypto(key, chain, null, PdfSignatureAppearance.WINCER_SIGNED);
+     * sap.setReason("I'm the author");
+     * sap.setLocation("Lisbon");
+     * // comment next line to have an invisible signature
+     * sap.setVisibleSignature(new Rectangle(100, 100, 200, 200), 1, null);
      * stp.close();
      * </pre>
      * @param reader the original document
-     * @param os the output stream
+     * @param os the output stream or <CODE>null</CODE> to keep the document in the temporary file
      * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
      * document
-     * @param privKey the certificate private key
-     * @param certChain the certificate chain
-     * @param crlList the certificate revocation list
-     * @param filter the signature type to use. It can be SELF_SIGNED, VERISIGN_SIGNED
-     * or WINCER_SIGNED
-     * @param reason the signing reason or <CODE>null</CODE>
-     * @param location the signing location or <CODE>null</CODE>
      * @param tempFile location of the temporary file. If it's a directory a temporary file will be created there.
-     *     If it's a file it will be used directly. The file will be deleted on exit. If it's <CODE>null</CODE>
+     *     If it's a file it will be used directly. The file will be deleted on exit unless <CODE>os</CODE> is null.
+     *     In that case the document can be retrieved directly from the temporary file. If it's <CODE>null</CODE>
      *     no temporary file will be created and memory will be used
+     * @return a <CODE>PdfStamper</CODE>
      * @throws DocumentException on error
      * @throws IOException on error
-     * @return a <CODE>PdfStamper</CODE>
      */
-    public static PdfStamper createInvisibleSignature(PdfReader reader, OutputStream os, char pdfVersion, PrivateKey privKey, Certificate[] certChain, CRL[] crlList, PdfName filter, String reason, String location, File tempFile) throws DocumentException, IOException {
-        if (privKey == null)
-            throw new NullPointerException("The private key cannot be null.");
-        if (certChain == null)
-            throw new NullPointerException("The certificate chain cannot be null.");
-        if (certChain.length == 0)
-            throw new IllegalArgumentException("The certificate chain cannot be empty.");
+    public static PdfStamper createSignature(PdfReader reader, OutputStream os, char pdfVersion, File tempFile) throws DocumentException, IOException {
         PdfStamper stp;
         if (tempFile == null) {
             ByteBuffer bout = new ByteBuffer();
             stp = new PdfStamper(reader, bout, pdfVersion);
-            stp.sigout = bout;
+            stp.sigApp = new PdfSignatureAppearance(stp.stamper);
+            stp.sigApp.setSigout(bout);
         }
         else {
             if (tempFile.isDirectory())
                 tempFile = File.createTempFile("pdf", null, tempFile);
             FileOutputStream fout = new FileOutputStream(tempFile);
             stp = new PdfStamper(reader, fout, pdfVersion);
-            stp.tempFile = tempFile;
+            stp.sigApp = new PdfSignatureAppearance(stp.stamper);
+            stp.sigApp.setTempFile(tempFile);
         }
-        stp.originalout = os;
+        stp.sigApp.setOriginalout(os);
+        stp.sigApp.setStamper(stp);
         stp.hasSignature = true;
-        stp.privKey = privKey;
-        stp.certChain = certChain;
-        stp.crlList = crlList;
-        stp.filter = filter;
-        stp.reason = reason;
-        stp.location = location;
         return stp;
     }
 
@@ -615,7 +463,7 @@ public class PdfStamper {
      * Applies a digital signature to a document. The returned PdfStamper
      * can be used normally as the signature is only applied when closing.
      * <p>
-     * Note that the pdf in created in memory.
+     * Note that the pdf is created in memory.
      * <p>
      * A possible use is:
      * <p>
@@ -627,26 +475,25 @@ public class PdfStamper {
      * Certificate[] chain = ks.getCertificateChain(alias);
      * PdfReader reader = new PdfReader("original.pdf");
      * FileOutputStream fout = new FileOutputStream("signed.pdf");
-     * PdfStamper stp = PdfStamper.createInvisibleSignature(reader, fout, '\0', key, chain, null, PdfStamper.WINCER_SIGNED, "I'm the author", "Lisbon");
+     * PdfStamper stp = PdfStamper.createSignature(reader, fout, '\0');
+     * PdfSignatureAppearance sap = stp.getSignatureAppearance();
+     * sap.setCrypto(key, chain, null, PdfSignatureAppearance.WINCER_SIGNED);
+     * sap.setReason("I'm the author");
+     * sap.setLocation("Lisbon");
+     * // comment next line to have an invisible signature
+     * sap.setVisibleSignature(new Rectangle(100, 100, 200, 200), 1, null);
      * stp.close();
      * </pre>
      * @param reader the original document
      * @param os the output stream
      * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
      * document
-     * @param privKey the certificate private key
-     * @param certChain the certificate chain
-     * @param crlList the certificate revocation list
-     * @param filter the signature type to use. It can be SELF_SIGNED, VERISIGN_SIGNED
-     * or WINCER_SIGNED
-     * @param reason the signing reason or <CODE>null</CODE>
-     * @param location the signing location or <CODE>null</CODE>
      * @throws DocumentException on error
      * @throws IOException on error
      * @return a <CODE>PdfStamper</CODE>
      */
-    public static PdfStamper createInvisibleSignature(PdfReader reader, OutputStream os, char pdfVersion, PrivateKey privKey, Certificate[] certChain, CRL[] crlList, PdfName filter, String reason, String location) throws DocumentException, IOException 
+    public static PdfStamper createSignature(PdfReader reader, OutputStream os, char pdfVersion) throws DocumentException, IOException 
     {
-        return createInvisibleSignature(reader,  os, pdfVersion, privKey, certChain, crlList, filter, reason, location, null);
+        return createSignature(reader, os, pdfVersion, null);
     }
 }

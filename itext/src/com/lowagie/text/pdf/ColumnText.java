@@ -569,8 +569,6 @@ public class ColumnText {
     }
     
     public void setSimpleColumn(float llx, float lly, float urx, float ury) {
-        float leftLine[] = new float[4];
-        float rightLine[] = new float[4];
         leftX = Math.min(llx, urx);
         maxY = Math.max(lly, ury);
         minY = Math.min(lly, ury);

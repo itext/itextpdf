@@ -1106,7 +1106,7 @@ public class PdfReader {
             case PRTokeniser.TK_NUMBER:
                 return new PdfNumber(tokens.getStringValue());
             case PRTokeniser.TK_STRING:
-                PdfString str = new PdfString(tokens.getStringValue(), null).setWritingMode(tokens.isHexString());
+                PdfString str = new PdfString(tokens.getStringValue(), null).setHexWriting(tokens.isHexString());
                 str.setObjNum(objNum, objGen);
                 if (strings != null)
                     strings.add(str);

@@ -812,7 +812,8 @@ public class PdfCell extends Rectangle {
      */
 
     public Rectangle rectangle(float top, float bottom) {
-        Rectangle tmp = new Rectangle(this);
+        Rectangle tmp = new Rectangle(left(), bottom(), right(), top());
+        tmp.cloneNonPositionParameters(this);
         if (top() > top) {
             tmp.setTop(top);
             tmp.setBorder(border - (border & TOP));

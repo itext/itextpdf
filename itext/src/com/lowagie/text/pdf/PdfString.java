@@ -225,8 +225,12 @@ public class PdfString extends PdfObject {
         return PdfEncodings.convertToBytes(originalValue, null);
     }
     
-    public PdfString setWritingMode(boolean hexWriting) {
+    public PdfString setHexWriting(boolean hexWriting) {
         this.hexWriting = hexWriting;
         return this;
+    }
+    
+    public boolean isHexWriting() {
+        return hexWriting;
     }
 }

@@ -157,6 +157,6 @@ public class PdfFileSpecification extends PdfDictionary {
      * @param fileName the file name as a byte array
      */    
     public void setMultiByteFileName(byte fileName[]) {
-        put(PdfName.F, new PdfString(fileName).setWritingMode(true));
+        put(PdfName.F, new PdfString(fileName).setHexWriting(true));
     }
 }

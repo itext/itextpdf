@@ -68,7 +68,7 @@ public class PdfSignature extends PdfDictionary {
     }
     
     public void setContents(byte contents[]) {
-        put(PdfName.CONTENTS, new PdfString(contents).setWritingMode(true));
+        put(PdfName.CONTENTS, new PdfString(contents).setHexWriting(true));
     }
     
     public void setCert(byte cert[]) {

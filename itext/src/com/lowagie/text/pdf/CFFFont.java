@@ -271,21 +271,26 @@ public class CFFFont {
         indexOffSize = getCard8();
         
         for (int j=0; j<=count; j++) {
+        	//nextIndexOffset = ofset to relative segment
             offsets[j] = nextIndexOffset
+			//2-> count in the index header. 1->offset size in index header
             + 2+1
+			//offset array size * offset size 
             + (count+1)*indexOffSize
+			//???zero <-> one base
             - 1
+			// read object offset relative to object array base 
             + getOffset(indexOffSize);
         }
         //nextIndexOffset = offsets[count];
         return offsets;
     }
     
-    private String   key;
-    private Object[] args      = new Object[48];
-    private int      arg_count = 0;
+    protected String   key;
+    protected Object[] args      = new Object[48];
+    protected int      arg_count = 0;
     
-    private void getDictItem() {
+    protected void getDictItem() {
         for (int i=0; i<arg_count; i++) args[i]=null;
         arg_count = 0;
         key = null;
@@ -377,7 +382,7 @@ public class CFFFont {
     /** List items for the linked list that builds the new CID font.
      */
     
-    private static abstract class Item {
+    protected static abstract class Item {
         protected int myOffset = -1;
         /** remember the current offset and increment by item's size in bytes. */
         public void increment(int[] currentOffset) {
@@ -389,7 +394,7 @@ public class CFFFont {
         public void xref() {}
     }
     
-    private static abstract class OffsetItem extends Item {
+    protected static abstract class OffsetItem extends Item {
         public int value;
         /** set the value of an offset item that was initially unknown.
          * It will be fixed up latex by a call to xref on some marker.
@@ -401,7 +406,7 @@ public class CFFFont {
     /** A range item.
      */
     
-    private static final class RangeItem extends Item {
+    protected static final class RangeItem extends Item {
         public int offset, length;
         private RandomAccessFileOrArray buf;
         public RangeItem(RandomAccessFileOrArray buf, int offset, int length) {
@@ -427,13 +432,13 @@ public class CFFFont {
         }
     }
     
-    /** an index-offset item for the list.
-     * the size denotes the required size in the CFF. a positive
+    /** An index-offset item for the list.
+     * The size denotes the required size in the CFF. A positive
      * value means that we need a specific size in bytes (for offset arrays)
      * and a negative value means that this is a dict item that uses a
      * variable-size representation.
      */
-    static private final class IndexOffsetItem extends OffsetItem {
+    static protected final class IndexOffsetItem extends OffsetItem {
         public final int size;
         public IndexOffsetItem(int size, int value) {this.size=size; this.value=value;}
         public IndexOffsetItem(int size) {this.size=size; }
@@ -468,11 +473,11 @@ public class CFFFont {
         }
     }
     
-    static private final class IndexBaseItem extends Item {
+    static protected final class IndexBaseItem extends Item {
         public IndexBaseItem() {}
     }
     
-    static private final class IndexMarkerItem extends Item {
+    static protected final class IndexMarkerItem extends Item {
         private OffsetItem offItem;
         private IndexBaseItem indexBase;
         public IndexMarkerItem(OffsetItem offItem, IndexBaseItem indexBase) {
@@ -484,12 +489,31 @@ public class CFFFont {
             offItem.set(this.myOffset-indexBase.myOffset+1);
         }
     }
+    /**
+     * 
+     * @author orly manor
+     *
+     * TODO To change the template for this generated type comment go to
+     * Window - Preferences - Java - Code Generation - Code and Comments
+     */
+    static protected final class SubrMarkerItem extends Item {
+        private OffsetItem offItem;
+        private IndexBaseItem indexBase;
+        public SubrMarkerItem(OffsetItem offItem, IndexBaseItem indexBase) {
+            this.offItem   = offItem;
+            this.indexBase = indexBase;
+        }
+        public void xref() {
+            //System.err.println("index marker item, base="+indexBase.myOffset+" my="+this.myOffset);
+            offItem.set(this.myOffset-indexBase.myOffset);
+        }
+    }
     
     
     /** an unknown offset in a dictionary for the list.
      * We will fix up the offset later; for now, assume it's large.
      */
-    static private final class DictOffsetItem extends OffsetItem {
+    static protected final class DictOffsetItem extends OffsetItem {
         public final int size;
         public DictOffsetItem() {this.size=5; }
         
@@ -509,10 +533,49 @@ public class CFFFont {
         }
     }
     
+	/** Card24 item.
+     */
+    
+    static protected final class UInt24Item extends Item {
+        public int value;
+        public UInt24Item(int value) {this.value=value;}
+        
+        public void increment(int[] currentOffset) {
+            super.increment(currentOffset);
+            currentOffset[0] += 3;
+        }
+        // this is incomplete!
+        public void emit(byte[] buffer) {
+        	buffer[myOffset+0] = (byte) ((value >>> 16) & 0xff);
+            buffer[myOffset+1] = (byte) ((value >>> 8) & 0xff);
+            buffer[myOffset+2] = (byte) ((value >>> 0) & 0xff);
+        }
+    }
+    
+    /** Card32 item.
+     */
+    
+    static protected final class UInt32Item extends Item {
+        public int value;
+        public UInt32Item(int value) {this.value=value;}
+        
+        public void increment(int[] currentOffset) {
+            super.increment(currentOffset);
+            currentOffset[0] += 4;
+        }
+        // this is incomplete!
+        public void emit(byte[] buffer) {
+        	buffer[myOffset+0] = (byte) ((value >>> 24) & 0xff);
+        	buffer[myOffset+1] = (byte) ((value >>> 16) & 0xff);
+            buffer[myOffset+2] = (byte) ((value >>> 8) & 0xff);
+            buffer[myOffset+3] = (byte) ((value >>> 0) & 0xff);
+        }
+    }
+
     /** A SID or Card16 item.
      */
     
-    static private final class UInt16Item extends Item {
+    static protected final class UInt16Item extends Item {
         public char value;
         public UInt16Item(char value) {this.value=value;}
         
@@ -530,7 +593,7 @@ public class CFFFont {
     /** A Card8 item.
      */
     
-    static private final class UInt8Item extends Item {
+    static protected final class UInt8Item extends Item {
         public char value;
         public UInt8Item(char value) {this.value=value;}
         
@@ -544,7 +607,7 @@ public class CFFFont {
         }
     }
     
-    static private final class StringItem extends Item {
+    static protected final class StringItem extends Item {
         public String s;
         public StringItem(String s) {this.s=s;}
         
@@ -564,7 +627,7 @@ public class CFFFont {
      * representation.
      */
     
-    static private final class DictNumberItem extends Item {
+    static protected final class DictNumberItem extends Item {
         public final int value;
         public int size = 5;
         public DictNumberItem(int value) {this.value=value;}
@@ -588,7 +651,7 @@ public class CFFFont {
      * It is used to mark an offset and to set the offset list item.
      */
     
-    static private final class MarkerItem extends Item {
+    static protected final class MarkerItem extends Item {
         OffsetItem p;
         public MarkerItem(OffsetItem pointerToMarker) {p=pointerToMarker;}
         public void xref() {
@@ -602,7 +665,7 @@ public class CFFFont {
      * @return a range item representing the entire index
      */
     
-    private RangeItem getEntireIndexRange(int indexOffset) {
+    protected RangeItem getEntireIndexRange(int indexOffset) {
         seek(indexOffset);
         int count = getCard16();
         if (count==0) {
@@ -849,7 +912,7 @@ public class CFFFont {
             l.addLast(new RangeItem(buf,fonts[j].privateOffset,fonts[j].privateLength));
             if (fonts[j].privateSubrs >= 0) {
                 //System.err.println("has subrs="+fonts[j].privateSubrs+" ,len="+fonts[j].privateLength);
-                l.addLast(getEntireIndexRange(fonts[j].privateOffset+fonts[j].privateSubrs));
+                l.addLast(getEntireIndexRange(fonts[j].privateSubrs));
             }
         }
         
@@ -909,20 +972,29 @@ public class CFFFont {
             names[i] = fonts[i].name;
         return names;
     }
-    
-    private RandomAccessFileOrArray buf;
+    /**
+     * 
+     * @author orly manor
+     *
+     * TODO Changed to protected 
+     */
+    protected RandomAccessFileOrArray buf;
     private int offSize;
     
-    private int nameIndexOffset;
-    private int topdictIndexOffset;
-    private int stringIndexOffset;
-    private int gsubrIndexOffset;
-    private int[] nameOffsets;
-    private int[] topdictOffsets;
-    private int[] stringOffsets;
-    private int[] gsubrOffsets;
+    protected int nameIndexOffset;
+    protected int topdictIndexOffset;
+    protected int stringIndexOffset;
+    protected int gsubrIndexOffset;
+    protected int[] nameOffsets;
+    protected int[] topdictOffsets;
+    protected int[] stringOffsets;
+    protected int[] gsubrOffsets;
     
-    private static final class Font {
+    /**
+     * @author orly manor
+     * TODO Changed from private to protected by Ygal&Oren
+     */
+    protected final class Font {
         public String    name;
         public String    fullName;
         public boolean   isCID = false;
@@ -936,10 +1008,27 @@ public class CFFFont {
         public int       fdselectOffset    = -1; // only if CID
         public int[]     fdprivateOffsets;
         public int[]     fdprivateLengths;
-        public int[]      fdprivateSubrs;
+        public int[]     fdprivateSubrs;
+        
+        // Added by Oren & Ygal
+        public int nglyphs;
+        public int nstrings;
+        public int CharsetLength;
+        public int[]    charstringsOffsets;
+        public int[]    charset;
+        public int[] 	FDSelect;
+        public int FDSelectLength;
+        public int FDSelectFormat;
+        public int 		CharstringType = 2;
+        public int FDArrayCount;
+        public int FDArrayOffsize;
+        public int[] FDArrayOffsets;
+        public int[] PrivateSubrsOffset;
+        public int[][] PrivateSubrsOffsetsArray;
+        public int[]       SubrsOffsets;
     }
-    
-    private Font[] fonts;
+    // Changed from private to protected by Ygal&Oren
+    protected Font[] fonts;
     
     public CFFFont(RandomAccessFileOrArray inputbuffer) {
         
@@ -1015,7 +1104,7 @@ public class CFFFont {
         
         for (int j=0; j<topdictOffsets.length-1; j++) {
             seek(topdictOffsets[j]);
-            while (getPosition() < topdictOffsets[j+1]) {
+            while (getPosition() < topdictOffsets[j+1]) {            	
                 getDictItem();
                 if (key=="FullName") {
                     //System.err.println("getting fullname sid = "+((Integer)args[0]).intValue());
@@ -1027,17 +1116,27 @@ public class CFFFont {
                     fonts[j].privateLength  = ((Integer)args[0]).intValue();
                     fonts[j].privateOffset  = ((Integer)args[1]).intValue();
                 }
-                else if (key=="charset")
+                else if (key=="charset"){
                     fonts[j].charsetOffset = ((Integer)args[0]).intValue();
-                else if (key=="Encoding")
+                    
+                }
+                else if (key=="Encoding"){
                     fonts[j].encodingOffset = ((Integer)args[0]).intValue();
+                    ReadEncoding(fonts[j].encodingOffset);
+                }
                 else if (key=="CharStrings") {
                     fonts[j].charstringsOffset = ((Integer)args[0]).intValue();
                     //System.err.println("charstrings "+fonts[j].charstringsOffset);
+                    // Added by Oren & Ygal
+                    int p = getPosition();
+                    fonts[j].charstringsOffsets = getIndex(fonts[j].charstringsOffset);
+                    seek(p);
                 } else if (key=="FDArray")
                     fonts[j].fdarrayOffset = ((Integer)args[0]).intValue();
                 else if (key=="FDSelect")
                     fonts[j].fdselectOffset = ((Integer)args[0]).intValue();
+                else if (key=="CharstringType")
+                	fonts[j].CharstringType = ((Integer)args[0]).intValue();
             }
             
             // private dict
@@ -1047,7 +1146,9 @@ public class CFFFont {
                 while (getPosition() < fonts[j].privateOffset+fonts[j].privateLength) {
                     getDictItem();
                     if (key=="Subrs")
-                        fonts[j].privateSubrs = ((Integer)args[0]).intValue();
+                    	//Add the private offset to the lsubrs since the offset is 
+                    	// relative to the begining of the PrivateDict
+                        fonts[j].privateSubrs = ((Integer)args[0]).intValue()+fonts[j].privateOffset;
                 }
             }
             
@@ -1071,8 +1172,15 @@ public class CFFFont {
                     
                 }
             }
-            
         }
         //System.err.println("CFF: done");
     }
+    
+    // ADDED BY Oren & Ygal
+    
+    void ReadEncoding(int nextIndexOffset){
+    	int format;
+    	seek(nextIndexOffset);
+    	format = getCard8();
+    }    
 }
