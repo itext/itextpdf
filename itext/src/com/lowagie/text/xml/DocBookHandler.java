@@ -80,8 +80,10 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 
 	/** Locator of the original XML Document. */
 	protected Locator locator;
+	
 	/** A listener that will invoke all kinds of actions on a Document. */
 	protected Document document;
+	
 	/** If you are converting to PDF, the PDF writer that writes the actual PDF file. */
 	protected PdfWriter pdfWriter;
 
@@ -100,6 +102,9 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 	/** This is a flag that can be set, if you want to open and close the Document-object yourself. */
 	protected boolean controlOpenClose = true;
 
+	/** This is a reference to a class that can be used to check the type of a DocBookTag. */
+	protected DocBookTagChecker checker = new DocBookTagChecker();
+
 	/**
 	 * Constructs a new DocBookHandler that will translate all the events
 	 * triggered by the parser to actions on the <CODE>Document</CODE>-object.
@@ -112,6 +117,7 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 		tagStack = new Stack();
 		iTextObjectStack = new Stack();
 	}
+	
 	/**
 	 * This method gets called when a start tag is encountered.
 	 *
@@ -125,6 +131,7 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 		String name,
 		Attributes attrs)
 		throws SAXException {
+		// attributes are put in a Properties object
 		Properties attributes = new Properties();
 		attributes.setProperty(DOCBOOKTAGNAME, name);
 		if (attrs != null) {
@@ -143,14 +150,10 @@ public class DocBookHandler extends DefaultHandler implements DocBookTags {
 	 * @param       attributes  the list of attributes
 	 */
 
-	public void handleStartingTags(String name, Properties attributes) {
-		tagStack.push(name);
-		
-System.err.println("Start: " + tagStack.peek());		
+	public void handleStartingTags(String name, Properties attributes)
+		throws SAXException {
 
-		if (tagStack.size() == 1) return; 
-
-		// maybe there is some meaningful data that wasn't between tags
+		// adding data that was before the tag to the Object Stack
 		if (currentChunk != null) {
 			TextElementArray current;
 			try {
@@ -162,38 +165,31 @@ System.err.println("Start: " + tagStack.peek());
 			push(current);
 			currentChunk = null;
 		}
+			
+		// keeping track of the tags
+		tagStack.push(name);
 		
-		if (PARA.equals(name)) {
-			push(getNewParagraph(attributes));
+//System.err.println("Start: " + tagStack.peek());
+		
+		// tags that can be ignored
+		if (checker.isIgnore(name) || checker.isNewPage(name) || tagStack.size() == 1) {
+			// info tags are ignored
 			return;
 		}
-		if (APPENDIX.equals(name) ||
-			ARTICLE.equals(name) ||
-			BIBLIOGRAPHY.equals(name) ||
-			BOOK.equals(name) ||
-			CHAPTER.equals(name) ||
-			COLOPHON.equals(name) ||
-			DEDICATION.equals(name) ||
-			GLOSSARY.equals(name) ||
-			INDEX.equals(name) ||
-			LOT.equals(name) ||
-			PART.equals(name) ||
-			PREFACE.equals(name) ||
-			REFERENCE.equals(name) ||
-			SECTION.equals(name) ||
-			SECT1.equals(name) ||
-			SECT2.equals(name) ||
-			SECT3.equals(name) ||
-			SECT4.equals(name) ||
-			SECT5.equals(name) ||
-			SETINDEX.equals(name) ||
-			TOC.equals(name)) {
-			getSection(attributes);
+		
+		// chunks
+		if (checker.isChunk(name)) {
+			currentChunk = getNewChunk(attributes);
+		}
+		// paragraphs
+		if (checker.isParagraph(name) || checker.isTitle(name)) {
+			getNewParagraph(attributes);
+			return;
+		}
+		// sections
+		if (checker.isSection(name)) {
+			getNewSection(attributes);
 			return;	
-		}
-		if (TITLE.equals(name)) {
-			push(getTitleParagraph(attributes));
-			return;
 		}
 	}
 	
@@ -221,14 +217,20 @@ System.err.println("Start: " + tagStack.peek());
 	 */
 	public void characters(char[] ch, int start, int length)
 		throws SAXException {
+
+		if (ignoreContent() && document.isOpen()) return;
+
 		String content = new String(ch, start, length);
 
+		// ignore whitespace
 		if (content.trim().length() == 0) {
 			return;
 		}
 		
-System.err.println("'" + content + "'");
+//System.err.println("'" + content + "'");
 
+		// double spaces, tabs, carriage returns are not taken into account.
+		// newlines are changed into spaces if necessary
 		StringBuffer buf = new StringBuffer();
 		int len = content.length();
 		char character;
@@ -241,7 +243,7 @@ System.err.println("'" + content + "'");
 					}
 					break;
 				case '\n' :
-					if (i > 0) {
+					if (i > 0 && buf.length() > 0) {
 						newline = true;
 						buf.append(' ');
 					}
@@ -255,11 +257,11 @@ System.err.println("'" + content + "'");
 					buf.append(character);
 			}
 		}
+		// currentchunk is updated
 		if (currentChunk == null) {
-			currentChunk = new Chunk(buf.toString());
-		} else {
-			currentChunk.append(buf.toString());
+			currentChunk = getNewChunk(new Properties());
 		}
+		currentChunk.append(buf.toString());
 	}
 
 	/**
@@ -280,15 +282,22 @@ System.err.println("'" + content + "'");
 	 */
 
 	public void handleEndingTags(String name) throws SAXParseException {
+		// keeping track of the tags
 		String openTag = (String) tagStack.pop();
 		
-System.err.println("Stop: " + name);
-
-		if (tagStack.size() == 1) return;
+//System.err.println("Stop: " + name);
 		
-		if (!name.equals(openTag)) { throw new SAXParseException("Closing tag " + name + " doesn't match opentag " + openTag, locator); }
+		if (!name.equals(openTag)) {
+			throw new SAXParseException("Closing tag " + name + " doesn't match opentag " + openTag, locator);
+		}
 		try {
-			if (PARA.equals(name) || SUBTITLE.equals(name)) {
+			// tags that can be ignored
+			if (checker.isIgnore(name) || checker.isChunk(name) || tagStack.size() == 1) {
+				return;
+			}
+			// paragraphs
+			if (checker.isParagraph(name)) {
+				open();
 				Element current = getTextElementArray();
 				try {
 					TextElementArray previous = (TextElementArray) pop();
@@ -299,69 +308,63 @@ System.err.println("Stop: " + name);
 				}
 				return;
 			}
-			if (APPENDIX.equals(name) ||
-				ARTICLE.equals(name) ||
-				BIBLIOGRAPHY.equals(name) ||
-				BOOK.equals(name) ||
-				CHAPTER.equals(name) ||
-				COLOPHON.equals(name) ||
-				DEDICATION.equals(name) ||
-				GLOSSARY.equals(name) ||
-				INDEX.equals(name) ||
-				LOT.equals(name) ||
-				PART.equals(name) ||
-				PREFACE.equals(name) ||
-				REFERENCE.equals(name) ||
-				SECTION.equals(name) ||
-				SECT1.equals(name) ||
-				SECT2.equals(name) ||
-				SECT3.equals(name) ||
-				SECT4.equals(name) ||
-				SECT5.equals(name) ||
-				SETINDEX.equals(name) ||
-				TOC.equals(name)) {
+			// sections
+			if (checker.isSection(name)) {
+				open();
 				if (peek() instanceof Chapter) {
-System.err.println("pop chapter");
 					document.add(pop());
 				}	
 				else {
-System.err.println("pop section");
 					pop();
 				}
+				return;
 			}
-			if (TITLE.equals(name)) {
-				if (isInfo(tagStack.peek())) {
+			// titles
+			if (checker.isTitle(name)) {
+				TextElementArray current = getTextElementArray();
+				if (insideInfo()) {
+					// titles within info blocks are only added if the document isn't open yet
 					if (!document.isOpen()) {
-						TextElementArray current = getTextElementArray();
-						StringBuffer title = new StringBuffer();
-						Chunk chunk;
-						for (Iterator i = current.getChunks().iterator(); i.hasNext(); ) {
-							chunk = (Chunk)i.next();
-							title.append(chunk.content());
-						}
-						document.addTitle(title.toString());
+						document.addTitle(getString(current));
+						return;
+					}
+					// otherwise they are ignored
+					else {
+						return;
 					}
 				}
-				else {
+				else { 
 					open();
-					Paragraph current = (Paragraph) pop();
-					if (currentChunk != null) {
-						current.add(currentChunk);
-					}
+					// titles can be registered as titles of a section
 					if (peek() instanceof Section) {
 						Section previous = (Section) pop();
-						previous.setTitle(current);
+						previous.setTitle((Paragraph)current);
 						push(previous);
 					}
+					// titles can be plain paragraphs
 					else {
 						document.add(current);
 					}
 				}
-				currentChunk = null;
 				return;
 			}
-			if (COPYRIGHT.equals(name) && !document.isOpen() && currentChunk != null && ARTICLEINFO.equals(tagStack.peek())) {
-				document.addCreator(currentChunk.content());
+			// forced pagebreak
+
+			// newpage
+			if (checker.isNewPage(name)) {
+				push(getTextElementArray());
+				currentChunk = new Chunk("");
+				currentChunk.setNewPage();
+				push(getTextElementArray());
+				return;
+			}
+			// metainformation
+			if (COPYRIGHT.equals(name) && !document.isOpen() && currentChunk != null && insideInfo()) {
+				document.addCreator(getString(getTextElementArray()));
+				return;
+			}
+			if (AUTHOR.equals(name) && !document.isOpen() && currentChunk != null && insideInfo()) {
+				document.addAuthor(getString(getTextElementArray()));
 				return;
 			}
 		}
@@ -369,6 +372,7 @@ System.err.println("pop section");
 			throw new ExceptionConverter(de);
 		}
 	}
+	
 	/**
 	 * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
 	 */
@@ -390,10 +394,10 @@ System.err.println("pop section");
 	}
 	
 	/**
-	 * 
+	 * Gets the current TextElementArray from the Stack and add the current Chunk if necessary.
+	 * If there is no TextElementArray on the Stack, a new one is created. 
 	 */
 	private TextElementArray getTextElementArray() {
-System.err.println("getTextElementArray");
 		if (currentChunk != null) {
 			TextElementArray current;
 			try {
@@ -408,25 +412,27 @@ System.err.println("getTextElementArray");
 		return getNewParagraph(new Properties());
 	}
 	/**
+	 * Creates a new Chunk.
+	 * @return
+	 */
+	protected Chunk getNewChunk(Properties attributes) {
+		return new Chunk(attributes);
+	}
+	/**
+	 * Creates a new Paragraph.
 	 * @return
 	 */
 	protected Paragraph getNewParagraph(Properties attributes) {
-		return new Paragraph();
+		return (Paragraph)push(new Paragraph());
 	}
 	/**
+	 * Creates a new Section.
+	 * This can be a Chapter object (toplevel) or a Section object (sublevel).
 	 * @return
 	 */
-	protected Paragraph getTitleParagraph(Properties attributes) {
-		return new Paragraph();
-	}
-	
-	/**
-	 * @return
-	 */
-	protected Section getSection(Properties attributes) {
+	protected Section getNewSection(Properties attributes) {
 		Element previous = (Element) pop();
 		if (previous != null) { 
-System.err.println("nieuwe sectie");
 			Section section;
 			try { 
 				section = ((Section) previous).addSection(attributes);
@@ -438,7 +444,6 @@ System.err.println("nieuwe sectie");
 			return (Section) push(section);
 		}
 		else { 
-System.err.println("nieuwe chapter");
 			chapters++;
 			Chapter chapter = new Chapter(attributes, chapters);
 			chapter.setNumberDepth(0);
@@ -447,64 +452,60 @@ System.err.println("nieuwe chapter");
 	}
 	
 	/**
-	 * @param object
-	 * @return
+	 * Checks if there is a tag on the Stack of tags that tells the handler
+	 * to ignore the content.
+	 * 
+	 * @return true if the content can be ignored
 	 */
-	private boolean isInfo(Object object) {
-		if (ARTICLEINFO.equals(object)) return true;
-		if (BOOKINFO.equals(object)) return true;
-		if (APPENDIXINFO.equals(object)) return true;
-		if (INDEXINFO.equals(object)) return true;
-		if (BIBLIOGRAPHYINFO.equals(object)) return true;
-		if (CHAPTERINFO.equals(object)) return true;
-		if (CLASSSYNOPSISINFO.equals(object)) return true;
-		if (FUNCSYNOPSISINFO.equals(object)) return true;
-		if (GLOSSARYINFO.equals(object)) return true;
-		if (MSGINFO.equals(object)) return true;
-		if (OBJECTINFO.equals(object)) return true;
-		if (PARTINFO.equals(object)) return true;
-		if (PREFACEINFO.equals(object)) return true;
-		if (REFENTRYINFO.equals(object)) return true;
-		if (REFERENCEINFO.equals(object)) return true;
-		if (REFMISCINFO.equals(object)) return true;
-		if (REFSECT1INFO.equals(object)) return true;
-		if (REFSECT2INFO.equals(object)) return true;
-		if (REFSECT3INFO.equals(object)) return true;
-		if (REFSYNOPSISDIVINFO.equals(object)) return true;
-		if (RELEASEINFO.equals(object)) return true;
-		if (SCREENINFO.equals(object)) return true;
-		if (PARTINFO.equals(object)) return true;
-		if (SECT1INFO.equals(object)) return true;
-		if (SECT2INFO.equals(object)) return true;
-		if (SECT3INFO.equals(object)) return true;
-		if (SECT4INFO.equals(object)) return true;
-		if (SECT5INFO.equals(object)) return true;
-		if (SECTIONINFO.equals(object)) return true;
-		if (SETINDEXINFO.equals(object)) return true;
-		if (SETINFO.equals(object)) return true;
-		if (SIDEBARINFO.equals(object)) return true;
+	protected boolean ignoreContent() {
+		for (Iterator i = tagStack.iterator(); i.hasNext(); ) {
+			if (checker.isIgnoreContent(i.next())) return true;
+		}
 		return false;
 	}
 	
 	/**
-	 * @return
+	 * Checks if there is a tag on the Stack of tags that tells the handler
+	 * to ignore the content.
+	 * 
+	 * @return true if the content can be ignored
+	 */
+	protected boolean insideInfo() {
+		for (Iterator i = tagStack.iterator(); i.hasNext(); ) {
+			if (checker.isInfo(i.next())) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Gets all the parts of a TextElementArray and returns them as a String.
+	 */
+	protected static String getString(TextElementArray current) {StringBuffer title = new StringBuffer();
+		StringBuffer buf = new StringBuffer();
+		Chunk chunk;
+		for (Iterator i = current.getChunks().iterator(); i.hasNext(); ) {
+			chunk = (Chunk)i.next();
+			buf.append(chunk.content());
+		}
+		return buf.toString();
+	}
+	
+	/**
+	 * Pushes an element to the iText Object Stack.
+	 * 
+	 * @return the element that was pushed to the Stack
 	 */
 	private Element push(Element element) {
 		return (Element) iTextObjectStack.push(element);
 	}
 	
 	/**
-	 * @return
+	 * Gets and removes the element on top of the iText Object Stack.
+	 * 
+	 * @return the element on top of the Stack or null if the Stack is empty
 	 */
 	private Element pop() {
 		try {
-if (peek() == null) {
-	System.err.println("pop null");
-}
-else {
-
-	System.err.println(peek().getClass().getName());
-}
 		    return (Element) iTextObjectStack.pop();
 		}
 		catch(EmptyStackException ese) {
@@ -513,7 +514,9 @@ else {
 	}
 	
 	/**
-	 * @return
+	 * Looks at the element on top of the iText Object Stack without removing it.
+	 *
+	 * @return the element on top of the Stack or null if the Stack is empty
 	 */
 	private Element peek() {
 		try {
@@ -525,10 +528,11 @@ else {
 	}
 	
 	/**
-	 * Opent het document mocht dit nog niet gebeurd zijn.
+	 * Opens the document if it wasn't already open.
 	 */
 	private void open() {
 		if (document.isOpen()) return;
+		iTextObjectStack.clear();
 		document.open();
 	}
 }

@@ -92,7 +92,7 @@ public interface DocBookTags {
 	/** An appendix in a Book or Article. */
 	public static final String APPENDIX = "appendix";
 
-	/** - Meta-information for an Appendix. */
+	/** Meta-information for an Appendix. */
 	public static final String APPENDIXINFO = "appendixinfo";
 
 	/** The name of a software program. */
@@ -144,6 +144,9 @@ public interface DocBookTags {
 	public static final String BEGINPAGE = "beginpage";
 
 	/** A section of a Bibliography. */
+	public static final String BIBLIOCOVERAGE = "bibliocoverage";
+	
+	/**  */
 	public static final String BIBLIODIV = "bibliodiv";
 
 	/** An entry in a Bibliography. */
@@ -152,24 +155,36 @@ public interface DocBookTags {
 	/** A bibliography. */
 	public static final String BIBLIOGRAPHY = "bibliography";
 
-	/** - Meta-information for a Bibliography. */
+	/** Meta-information for a Bibliography. */
 	public static final String BIBLIOGRAPHYINFO = "bibliographyinfo";
 
+	/**  */
+	public static final String BIBLIOID = "biblioid";
+	
 	/** Untyped bibliographic information. */
 	public static final String BIBLIOMISC = "bibliomisc";
 
-	/** An entry in a Bibliography. */
+	/**  */
 	public static final String BIBLIOMIXED = "bibliomixed";
 
-	/** A cooked container for related bibliographic information. */
+	/**  */
+	public static final String BIBLIORELATION = "bibliorelation";
+
+	/**  */
 	public static final String BIBLIOMSET = "bibliomset";
 
 	/** A raw container for related bibliographic information. */
 	public static final String BIBLIOSET = "biblioset";
 
+	/**  */
+	public static final String BIBLIOSOURCE = "bibliosource";
+
+	/**  */
+	public static final String BLOCKINFO = "blockinfo";
+
 	/** A quotation set off from the main text. */
 	public static final String BLOCKQUOTE = "blockquote";
-
+	
 	/** Abook. */
 	public static final String BOOK = "book";
 
@@ -200,6 +215,9 @@ public interface DocBookTags {
 	/** An inline bibliographic reference to another published work. */
 	public static final String CITATION = "citation";
 
+	/** A citation to a reference page. */
+	public static final String CITEBIBLIOID = "citebiblioid";
+	
 	/** A citation to a reference page. */
 	public static final String CITEREFENTRY = "citerefentry";
 
