@@ -251,7 +251,7 @@ public class PdfAction extends PdfDictionary {
      * @param fs
      * @param mimeType
      * @param ref
-     * @return
+     * @return a Media Clip action
      * @throws IOException
      */
     public static PdfAction rendition(String file, PdfFileSpecification fs, String mimeType, PdfIndirectReference ref) throws IOException {
