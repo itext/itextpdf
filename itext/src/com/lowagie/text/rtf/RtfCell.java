@@ -167,6 +167,7 @@ public class RtfCell {
         super();
         this.writer = writer;
         this.mainTable = mainTable;
+        this.store = new Cell("");
     }
 
     /**
