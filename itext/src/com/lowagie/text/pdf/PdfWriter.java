@@ -597,40 +597,42 @@ public class PdfWriter extends DocWriter {
 	 * to the outputstream embedded in a Trailer.
      */
 
-    public void close() {
-		pdf.close();
-		try {
-            // add the form XObjects
-            for (Iterator it = formXObjects.keySet().iterator(); it.hasNext();) {
-                PdfTemplate template = (PdfTemplate)it.next();
-                PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
-                obj.writeTo(os);
-            }
-			// add the root to the body
-			PdfIndirectObject rootObject = body.add(root);
-			rootObject.writeTo(os);
+    public synchronized void close() {
+        if (open) {
+            pdf.close();
+            try {
+                // add the form XObjects
+                for (Iterator it = formXObjects.keySet().iterator(); it.hasNext();) {
+                    PdfTemplate template = (PdfTemplate)it.next();
+                    PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
+                    obj.writeTo(os);
+                }
+                // add the root to the body
+                PdfIndirectObject rootObject = body.add(root);
+                rootObject.writeTo(os);
 
-			// make the catalog-object and add it to the body
-			PdfIndirectObject indirectCatalog = body.add(((PdfDocument)document).getCatalog(rootObject.getIndirectReference()));
-			indirectCatalog.writeTo(os);
+                // make the catalog-object and add it to the body
+                PdfIndirectObject indirectCatalog = body.add(((PdfDocument)document).getCatalog(rootObject.getIndirectReference()));
+                indirectCatalog.writeTo(os);
 
-			// add the info-object to the body
-			PdfIndirectObject info = body.add(((PdfDocument)document).getInfo());
-			info.writeTo(os);
+                // add the info-object to the body
+                PdfIndirectObject info = body.add(((PdfDocument)document).getInfo());
+                info.writeTo(os);
 							   
-			// write the cross-reference table of the body
-			os.write(body.getCrossReferenceTable());
+                // write the cross-reference table of the body
+                os.write(body.getCrossReferenceTable());
 
-			// make the trailer
-			PdfTrailer trailer = new PdfTrailer(body.size(),
-											body.offset(),
-											indirectCatalog.getIndirectReference(),
-											info.getIndirectReference());
-			os.write(trailer.toPdf());
-			super.close();
-		}
-		catch(IOException ioe) {
-		}
+                // make the trailer
+                PdfTrailer trailer = new PdfTrailer(body.size(),
+                    body.offset(),
+                    indirectCatalog.getIndirectReference(),
+                    info.getIndirectReference());
+                os.write(trailer.toPdf());
+                super.close();
+            }
+            catch(IOException ioe) {
+            }
+        }
 	}
 
 // methods
