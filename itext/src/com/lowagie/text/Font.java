@@ -449,6 +449,9 @@ public class Font implements Comparable {
  */
     
     public Font difference(Font font) {
+		if (font.isStandardFont()) {
+			return this;
+		}
         Font difference = new Font();
         if (font.family() != UNDEFINED) {
             difference.family = font.family;

@@ -506,7 +506,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @return	the numberdepth
  */
     
-    public final float numberDepth() {
+    public final int numberDepth() {
         return numberDepth;
     }
     
@@ -569,9 +569,8 @@ public class Section extends ArrayList implements TextElementArray {
             buf.insert(0, ".");
             buf.insert(0, ((Integer) numbers.get(i)).intValue());
         }
-        Chunk chunk = new Chunk(buf.toString(), title.font());
-        Paragraph result = new Paragraph(chunk);
-        result.add(title);
+        Paragraph result = new Paragraph(title);
+		result.add(0, new Chunk(buf.toString(), title.font()));
         return result;
     }
     

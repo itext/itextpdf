@@ -35,6 +35,7 @@ package com.lowagie.text.html;
 
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -73,7 +74,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
     // static membervariables (tags)
     
 /** This is a possible HTML-tag. */
-    public static final byte[] BEGINCOMMENT = getISOBytes("<!--");
+    public static final byte[] BEGINCOMMENT = getISOBytes("\t<!--");
     
 /** This is a possible HTML-tag. */
     public static final byte[] ENDCOMMENT = getISOBytes("-->\n");
@@ -225,6 +226,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
     public void open() {
         super.open();
         try {
+            writeComment("Producer: iTextXML by lowagie.com");
+            writeComment("CreationDate: " + new Date().toString());
+			addTabs(1);
             writeEnd(HtmlTags.HEAD);
             addTabs(1);
             writeStart(HtmlTags.BODY);
@@ -628,9 +632,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 Section section = (Section) element;
 
                 addTabs(indent);
-                writeStart(ElementTags.SECTION);
+                writeStart(HtmlTags.DIV);
                 writeSection(section, indent);
-                writeEnd(ElementTags.SECTION);
+                writeEnd(HtmlTags.DIV);
                 return;
                 
             }
@@ -865,8 +869,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
         os.write(NEWLINE);
         
         if (section.title() != null) {
+			int depth = section.depth() - 1;
+			if (depth > 5) {
+				depth = 5;
+			}
             addTabs(indent + 1);
-            writeStart(HtmlTags.PARAGRAPH);
+            writeStart(HtmlTags.H[depth]);
             write(HtmlTags.ALIGN, HtmlEncoder.getAlignment(section.title().alignment()));
             os.write(GT);
             os.write(NEWLINE);
@@ -874,7 +882,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 write((Element)i.next(), indent + 2);
             }
             addTabs(indent + 1);
-            writeEnd(HtmlTags.PARAGRAPH);
+            writeEnd(HtmlTags.H[depth]);
         }
         for (Iterator i = section.iterator(); i.hasNext(); ) {
             write((Element) i.next(), indent + 1);

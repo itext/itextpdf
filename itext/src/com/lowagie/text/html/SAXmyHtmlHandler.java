@@ -57,7 +57,8 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
  */
     
     public SAXmyHtmlHandler(Document document) {
-        super(document, new HtmlTagMap());    }
+        super(document, new HtmlTagMap());
+    }
     
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
