@@ -157,7 +157,7 @@ public class Document implements DocListener {
 	 */
 
 	public Document(Rectangle pageSize) {
-		this(pageSize, 30, 30, 30, 30);
+		this(pageSize, 36, 36, 36, 36);
 	}
 
 	/**
