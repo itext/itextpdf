@@ -181,6 +181,9 @@ public class HtmlTags {
 /** some phrase tag */
     public static final String SUP = "sup";
     
+/** the possible value of a tag */
+    public static final String HORIZONTALRULE = "hr";
+    
     // tables/cells
     
 /** the table tag */
