@@ -402,7 +402,7 @@ public class PdfWriter extends DocWriter {
 
 	/**
 	 * Adds some <CODE>PdfContents</CODE> to this Writer.
-	 * <B>
+	 * <P>
 	 * The document has to be open before you can begin to add content
 	 * to the body of the document.
 	 *

@@ -138,7 +138,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	public static final byte[] IMG = "IMG".getBytes();	
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] LI = "LI".getBytes();
+	public static final byte[] LI = "LI".getBytes();	
+
+	/** This is a possible HTML-tag. */
+	public static final byte[] LINK = "LINK".getBytes();
 
 	/** This is a possible HTML-tag. */
 	public static final byte[] META = "META".getBytes();
@@ -222,6 +225,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	/** This is a possible HTML attribute for the HEAD tag. */
 	public static final String COLOR = "COLOR";
 
+	/** This is a possible HTML attribute for the LINK tag. */
+	public static final String CSS = "text/css";
+
 	/** This is a possible HTML attribute for the HEAD tag. */
 	public static final String FACE = "FACE";
 
@@ -243,6 +249,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	/** This is a possible HTML attribute for the HEAD tag. */
 	public static final String POINTSIZE = "POINT-SIZE";
 
+	/** This is a possible HTML attribute for the LINK tag. */
+	public static final String REL = "rel";
+
 	/** This is a possible HTML attribute for the BODY tag. */
 	public static final String RIGHTMARGIN = "RIGHTMARGIN";
 
@@ -252,11 +261,17 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	/** This is a possible HTML attribute for the TD tag. */
 	public static final String SRC = "SRC";
 
+	/** This is a possible HTML attribute for the TD tag. */
+	public static final String STYLESHEET = "STYLESHEET";
+
 	/** This is a possible HTML attribute for the BODY tag. */
 	public static final String TEXT = "TEXT";
 
 	/** This is a possible HTML attribute for the BODY tag. */
 	public static final String TOPMARGIN = "TOPMARGIN";
+
+	/** This is a possible HTML attribute for the LINK tag. */
+	public static final String TYPE = "TYPE";
 
 	/** This is a possible HTML attribute for the TD tag. */
 	public static final String VALIGN = "VALIGN";
@@ -366,6 +381,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		try {
 			switch(element.type()) {
 			case Element.HEADER:
+				Header header = (Header) element;
+				if (!STYLESHEET.equals(header.name())) {
+					writeHeader(header);
+				}
+				else {
+					writeLink(header);
+				}
+				break;
 			case Element.SUBJECT:
 			case Element.KEYWORDS:
 			case Element.AUTHOR:
@@ -751,7 +774,23 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		}
 		writeBeginTag(META, attributes);
 		indent--;
-	}					   
+	}						   
+
+	/**
+	 * Writes a link in the header.
+	 *
+	 * @param	element		the element that has to be written
+	 * @throws	IOException
+	 */
+
+	private void writeLink(Header header) throws IOException {
+		HtmlAttributes attributes = new HtmlAttributes();
+		attributes.put(REL, header.name());
+		attributes.put(TYPE, CSS);
+		attributes.put(HREF, header.content());
+		writeBeginTag(LINK, attributes);
+		indent--;
+	}				   
 
 	/**
 	 * Writes some comment.
