@@ -85,22 +85,22 @@ public class HtmlWriter extends DocWriter implements DocListener {
     // membervariables
     
 /** This is the current font of the HTML. */
-    private Font font = new Font();
+    protected Font font = new Font();
     
 /** This is the standard font of the HTML. */
-    private Font standardFont = new Font();
+    protected Font standardFont = new Font();
     
 /** This is a path for images. */
-    private String imagepath = null;
+    protected String imagepath = null;
     
 /** Stores the page number. */
-    private static int pageN = 0;
+    protected static int pageN = 0;
     
 /** This is the textual part of a header */
-    private HeaderFooter header = null;
+    protected HeaderFooter header = null;
     
 /** This is the textual part of the footer */
-    private HeaderFooter footer = null;
+    protected HeaderFooter footer = null;
     
     // constructor
     
@@ -279,7 +279,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
     }
     
-    // some private methods
+    // some protected methods
     
 /**
  * Adds the header to the top of the </CODE>Document</CODE>
@@ -287,7 +287,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @author	David Freels
  */
     
-    private void initHeader() {
+    protected void initHeader() {
         if (header != null) {
             try {
                 add(header.paragraph());
@@ -303,7 +303,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @author	David Freels
  */
     
-    private void initFooter() {
+    protected void initFooter() {
         if (footer != null)	{
             try {
                 // Set the page number. HTML has no notion of a page, so it should always
@@ -323,7 +323,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @throws	IOException
  */
     
-    private void writeHeader(Meta meta) throws IOException {
+    protected void writeHeader(Meta meta) throws IOException {
         addTabs(2);
         writeStart(HtmlTags.META);
         switch(meta.type()) {
@@ -351,7 +351,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @throws	IOException
  */
     
-    private void writeLink(Header header) throws IOException {
+    protected void writeLink(Header header) throws IOException {
         addTabs(2);
         writeStart(HtmlTags.LINK);
         write(HtmlTags.REL, header.name());
@@ -369,7 +369,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @throws	IOException
  */
     
-    private void writeComment(String comment) throws IOException {
+    protected void writeComment(String comment) throws IOException {
         os.write(BEGINCOMMENT);
         write(comment);
         os.write(ENDCOMMENT);
@@ -464,7 +464,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @param   indent      the indentation
  */
     
-    private void write(Element element, int indent) throws IOException {
+    protected void write(Element element, int indent) throws IOException {
         switch(element.type()) {
             case Element.CHUNK:
             {
@@ -891,7 +891,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @param   indent      the indentation
  */
     
-    private void writeSection(Section section, int indent) throws IOException {
+    protected void writeSection(Section section, int indent) throws IOException {
         os.write(GT);
         os.write(NEWLINE);
         
@@ -926,7 +926,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @param	a <CODE>Font</CODE>
  */
     
-    private void write(Font font) throws IOException {
+    protected void write(Font font) throws IOException {
         switch(font.family()) {
             case Font.COURIER:
                 write(HtmlTags.FONT, "Courier");
@@ -959,7 +959,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @param	a <CODE>Font</CODE>
  */
     
-    private void writeFontStyleStart(int fontstyle) throws IOException {
+    protected void writeFontStyleStart(int fontstyle) throws IOException {
         if (fontstyle == Font.UNDEFINED || fontstyle == Font.NORMAL) {
             return;
         }
@@ -1007,7 +1007,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @param	a <CODE>Font</CODE>
  */
     
-    private void writeFontStyleEnd(int fontstyle) throws IOException {
+    protected void writeFontStyleEnd(int fontstyle) throws IOException {
         if (fontstyle == Font.UNDEFINED || fontstyle == Font.NORMAL) {
             return;
         }
