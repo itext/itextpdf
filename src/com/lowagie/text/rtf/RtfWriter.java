@@ -1688,7 +1688,10 @@ public class RtfWriter extends DocWriter implements DocListener
        StringBuffer ret = new StringBuffer( length );
        for(int i = 0; i < length; i++) {
            char ch = str.charAt( i );
-           if( ((int)ch) > z ) {
+           if (ch == '\\') {
+               ret.append("\\\\");
+           }
+           else if( ((int)ch) > z ) { 
                ret.append( "\\u" ).append( (long)ch ).append( 'G' );
            } else {
                ret.append( ch );
