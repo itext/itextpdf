@@ -629,7 +629,7 @@ public class SAXiTextHandler extends HandlerBase {
  * @return	<CODE>true</CODE> if <VAR>tag</VAR> equals <CODE>itext</CODE>, <CODE>false</CODE> otherwise.
  */
     
-    private boolean isDocumentRoot(String tag) {
+    protected boolean isDocumentRoot(String tag) {
         return ElementTags.ITEXT.equals(tag);
     }
 }
