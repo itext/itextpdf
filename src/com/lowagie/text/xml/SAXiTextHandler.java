@@ -129,6 +129,17 @@ public class SAXiTextHandler extends HandlerBase {
             return;
         }
         
+        // chunks
+        if (Greek.isTag(name)) {
+            Font f = new Font();
+            if (currentChunk != null) {
+                handleEndingTags(ElementTags.CHUNK);
+                f = currentChunk.font();
+            }
+            currentChunk = Greek.get((char) Integer.parseInt(attributes.getProperty(ElementTags.ID)), f);
+            return;
+        }
+        
         // phrases
         if (Phrase.isTag(name)) {
             stack.push(new Phrase(attributes));

@@ -140,6 +140,12 @@ public class ElementTags {
     // Chunks
     
 /** the chunk tag */
+    public static final String SYMBOLTAG = "symbol";
+    
+/** the chunk tag */
+    public static final String ID = "id";
+    
+/** the chunk tag */
     public static final String CHUNK = "chunk";
     
 /** attribute of the chunk tag */

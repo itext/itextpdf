@@ -34,9 +34,12 @@
 package com.lowagie.text.xml;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.HashMap;
 
 import org.xml.sax.Parser;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.ParserFactory;
 
@@ -73,6 +76,57 @@ public class XmlParser {
 			throw new DocumentException(ie.getMessage());
 		}
     }
+	
+/**
+ * Parses a given file.
+ */
+ 
+	public void go(Document document, InputSource is) throws DocumentException {
+		try {
+    		parser.setDocumentHandler(new SAXiTextHandler(document));
+			parser.parse(is);
+		}
+		catch(SAXException se) {
+			throw new DocumentException(se.getMessage());
+		}
+		catch(IOException ioe) {
+			throw new DocumentException(ioe.getMessage());
+		}
+	}
+	
+/**
+ * Parses a given file.
+ */
+ 
+	public void go(Document document, InputSource is, String tagmap) throws DocumentException {
+		try {
+    		parser.setDocumentHandler(new SAXmyHandler(document, new TagMap(tagmap)));
+			parser.parse(is);
+		}
+		catch(SAXException se) {
+			throw new DocumentException(se.getMessage());
+		}
+		catch(IOException ioe) {
+			throw new DocumentException(ioe.getMessage());
+		}
+	}
+	
+/**
+ * Parses a given file.
+ */
+ 
+	public void go(Document document, InputSource is, HashMap tagmap) throws DocumentException {
+		try {
+    		parser.setDocumentHandler(new SAXmyHandler(document, tagmap));
+			parser.parse(is);
+		}
+		catch(SAXException se) {
+			throw new DocumentException(se.getMessage());
+		}
+		catch(IOException ioe) {
+			throw new DocumentException(ioe.getMessage());
+		}
+	}
 	
 /**
  * Parses a given file.
@@ -129,6 +183,33 @@ public class XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
  
+	public static void parse(Document document, InputSource is) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, is);	
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
+	public static void parse(Document document, InputSource is, String tagmap) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, is, tagmap);	
+	}
+	
+/**
+ * Parses a given file and writes the content to a document, using a certain tagmap.
+ */
+ 
+	public static void parse(Document document, InputSource is, HashMap tagmap) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, is, tagmap);	
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
 	public static void parse(Document document, String file) throws DocumentException {
 		XmlParser p = new XmlParser();
 		p.go(document, file);	
@@ -150,5 +231,59 @@ public class XmlParser {
 	public static void parse(Document document, String file, HashMap tagmap) throws DocumentException {
 		XmlParser p = new XmlParser();
 		p.go(document, file, tagmap);	
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
+	public static void parse(Document document, InputStream is) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, new InputSource(is));	
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
+	public static void parse(Document document, InputStream is, String tagmap) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, new InputSource(is), tagmap);	
+	}
+	
+/**
+ * Parses a given file and writes the content to a document, using a certain tagmap.
+ */
+ 
+	public static void parse(Document document, InputStream is, HashMap tagmap) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, new InputSource(is), tagmap);	
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
+	public static void parse(Document document, Reader is) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, new InputSource(is));	
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
+	public static void parse(Document document, Reader is, String tagmap) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, new InputSource(is), tagmap);	
+	}
+	
+/**
+ * Parses a given file and writes the content to a document, using a certain tagmap.
+ */
+ 
+	public static void parse(Document document, Reader is, HashMap tagmap) throws DocumentException {
+		XmlParser p = new XmlParser();
+		p.go(document, new InputSource(is), tagmap);	
 	}
 }
