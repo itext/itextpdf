@@ -83,8 +83,11 @@ import com.lowagie.text.ExceptionConverter;
  */
 
 public class ColumnText {
+    /** Eliminate the arabic vowels */    
     public static final int AR_NOVOWEL = 1;
+    /** Compose the tashkeel in the ligatures. */    
     public static final int AR_COMPOSEDTASHKEEL = 4;
+    /** Do some extra double ligatures. */    
     public static final int AR_LIG = 8;
 
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
@@ -154,15 +157,6 @@ public class ColumnText {
     /** The extra space between paragraphs. */
     protected float extraParagraphSpace = 0;
     
-    /** Marks the chunks to be eliminated when the line is written. */
-    protected int currentChunkMarker = -1;
-    
-    /** The chunk created by the splitting. */
-    protected PdfChunk currentStandbyChunk;
-    
-    /** The chunk created by the splitting. */
-    protected String splittedChunkText;
-    
     /** The width of the line when the column is defined as a simple rectangle. */
     protected float rectangularWidth = -1;
     
@@ -186,6 +180,55 @@ public class ColumnText {
      */
     public ColumnText(PdfContentByte canvas) {
         this.canvas = canvas;
+    }
+    
+    /** Creates an independent duplicated of the instance <CODE>org</CODE>.
+     * @param org the original <CODE>ColumnText</CODE>
+     * @return the duplicated
+     */    
+    public static ColumnText duplicate(ColumnText org) {
+        ColumnText ct = new ColumnText(null);
+        ct.setSimpleVars(org);
+        ct.bidiLine = new BidiLine(org.bidiLine);
+        return ct;
+    }
+    
+    /** Makes this instance an independent copy of <CODE>org</CODE>.
+     * @param org the original <CODE>ColumnText</CODE>
+     * @return itself
+     */    
+    public ColumnText setACopy(ColumnText org) {
+        setSimpleVars(org);
+        bidiLine = new BidiLine(org.bidiLine);
+        return this;
+    }
+    
+    protected void setSimpleVars(ColumnText org) {
+        maxY = org.maxY;
+        minY = org.minY;
+        alignment = org.alignment;
+        leftWall = null;
+        if (org.leftWall != null)
+            leftWall = new ArrayList(org.leftWall);
+        rightWall = null;
+        if (org.rightWall != null)
+            rightWall = new ArrayList(org.rightWall);
+        yLine = org.yLine;
+        currentLeading = org.currentLeading;
+        fixedLeading = org.fixedLeading;
+        multipliedLeading = org.multipliedLeading;
+        canvas = org.canvas;
+        lineStatus = org.lineStatus;
+        indent = org.indent;
+        followingIndent = org.followingIndent;
+        rightIndent = org.rightIndent;
+        extraParagraphSpace = org.extraParagraphSpace;
+        rectangularWidth = org.rectangularWidth;
+        spaceCharRatio = org.spaceCharRatio;
+        lastWasNewline = org.lastWasNewline;
+        linesWritten = org.linesWritten;
+        arabicOptions = org.arabicOptions;
+        descender = org.descender;
     }
     
     /**
@@ -271,15 +314,13 @@ public class ColumnText {
      * @return a <CODE>float[2]</CODE>with the x coordinates of the intersection
      */
     protected float[] findLimitsOneLine() {
-        for (;;) {
-            float x1 = findLimitsPoint(leftWall);
-            if (lineStatus == LINE_STATUS_OFFLIMITS || lineStatus == LINE_STATUS_NOLINE)
-                return null;
-            float x2 = findLimitsPoint(rightWall);
-            if (lineStatus == LINE_STATUS_NOLINE)
-                return null;
-            return new float[]{x1, x2};
-        }
+        float x1 = findLimitsPoint(leftWall);
+        if (lineStatus == LINE_STATUS_OFFLIMITS || lineStatus == LINE_STATUS_NOLINE)
+            return null;
+        float x2 = findLimitsPoint(rightWall);
+        if (lineStatus == LINE_STATUS_NOLINE)
+            return null;
+        return new float[]{x1, x2};
     }
     
     /**
@@ -289,7 +330,11 @@ public class ColumnText {
      * @return a <CODE>float[4]</CODE>with the x coordinates of the intersection
      */
     protected float[] findLimitsTwoLines() {
+        boolean repeat = false;
         for (;;) {
+            if (repeat && currentLeading == 0)
+                return null;
+            repeat = true;
             float x1[] = findLimitsOneLine();
             if (lineStatus == LINE_STATUS_OFFLIMITS)
                 return null;

@@ -166,7 +166,7 @@ public class PdfPTable implements Element{
     
     /** Sets the relative widths of the table.
      * @param relativeWidths the relative widths of the table.
-     * @throws DocumentException if the number of widths is different than tne number
+     * @throws DocumentException if the number of widths is different than the number
      * of columns
      */    
     public void setWidths(float relativeWidths[]) throws DocumentException {

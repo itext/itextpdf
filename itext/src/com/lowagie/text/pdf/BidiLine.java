@@ -48,10 +48,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -96,6 +92,37 @@ public class BidiLine {
 
     /** Creates new BidiLine */
     public BidiLine() {
+    }
+    
+    public BidiLine(BidiLine org) {
+        runDirection = org.runDirection;
+        pieceSize = org.pieceSize;
+        text = (char[])org.text.clone();
+        detailChunks = (PdfChunk[])org.detailChunks.clone();
+        totalTextLength = org.totalTextLength;
+
+        orderLevels = (byte[])org.orderLevels.clone();
+        indexChars = (int[])org.indexChars.clone();
+
+        chunks = new ArrayList(org.chunks);
+        indexChunk = org.indexChunk;
+        indexChunkChar = org.indexChunkChar;
+        currentChar = org.currentChar;
+
+        storedRunDirection = org.storedRunDirection;
+        storedText = (char[])org.storedText.clone();
+        storedDetailChunks = (PdfChunk[])org.storedDetailChunks.clone();
+        storedTotalTextLength = org.storedTotalTextLength;
+
+        storedOrderLevels = (byte[])org.storedOrderLevels.clone();
+        storedIndexChars = (int[])org.storedIndexChars.clone();
+
+        storedIndexChunk = org.storedIndexChunk;
+        storedIndexChunkChar = org.storedIndexChunkChar;
+        storedCurrentChar = org.storedCurrentChar;
+
+        shortStore = org.shortStore;
+        arabicOptions = org.arabicOptions;
     }
     
     public boolean isEmpty() {
@@ -158,15 +185,10 @@ public class BidiLine {
                 indexChars = new int[pieceSize];
             }
 
-            HashMap attr = new HashMap();
-            if (runDirection == PdfWriter.RUN_DIRECTION_LTR)
-                attr.put(TextAttribute.RUN_DIRECTION, TextAttribute.RUN_DIRECTION_LTR);
-            else
-                attr.put(TextAttribute.RUN_DIRECTION, TextAttribute.RUN_DIRECTION_RTL);
-            
-            TextLayout t = new TextLayout(new String(text, 0, totalTextLength), attr, new FontRenderContext(new AffineTransform(), false, true));
+            BidiOrder order = new BidiOrder(text, 0, totalTextLength, (byte)(runDirection == PdfWriter.RUN_DIRECTION_RTL ? 1 : 0));
+            byte od[] = order.getLevels();
             for (int k = 0; k < totalTextLength; ++k) {
-                orderLevels[k] = t.getCharacterLevel(k);
+                orderLevels[k] = od[k];
                 indexChars[k] = k;
             }
             doArabicShapping();

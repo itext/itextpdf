@@ -668,7 +668,7 @@ public class PdfWriter extends DocWriter {
                         wmf.readWMF(getDirectContent().createTemplate(0, 0));
                     }
                     catch (Exception e) {
-                        throw new DocumentException(e.getMessage());
+                        throw new DocumentException(e);
                     }
                 }
             }
@@ -1517,6 +1517,10 @@ public class PdfWriter extends DocWriter {
      */
     public void addAnnotation(PdfAnnotation annot) {
         pdf.addAnnotation(annot);
+    }
+    
+    void addAnnotation(PdfAnnotation annot, int page) {
+        addAnnotation(annot);
     }
     
     /** Sets the PDF version. Must be used right before the document

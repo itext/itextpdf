@@ -1370,6 +1370,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     }
     
     /** Sets the /Colorspace key.
+     * @param indexed New value of property indexed.
      *
      */
     public void setAdditional(PdfDictionary additional) {

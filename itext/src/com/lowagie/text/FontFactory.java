@@ -559,16 +559,16 @@ public class FontFactory extends java.lang.Object {
         File file = new File(dir);
         if (!file.exists() || !file.isDirectory())
             return 0;
-        File files[] = file.listFiles();
+        String files[] = file.list();
         if (files == null)
             return 0;
         int count = 0;
         for (int k = 0; k < files.length; ++k) {
-            file = files[k];
+            file = new File(dir, files[k]);
             String name = file.getPath().toLowerCase();
             try {
                 if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm") || name.endsWith(".ttc")) {
-                    register(name, null);
+                    register(file.getPath(), null);
                     ++count;
                 }
             }

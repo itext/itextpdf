@@ -53,6 +53,9 @@ import com.lowagie.text.BadElementException;
 import java.util.ArrayList;
 import java.io.UnsupportedEncodingException;
 import com.lowagie.text.pdf.codec.CCITTG4Encoder;
+import java.awt.Color;
+import java.awt.Canvas;
+import java.awt.image.MemoryImageSource;
 
 /** Generates the 2D barcode PDF417. Supports dimensioning auto-sizing, fixed
  * and variable sizes, automatic and manual error levels, raw codeword input,
@@ -771,6 +774,38 @@ public class BarcodePDF417 {
         return Image.getInstance(bitColumns, codeRows, false, Image.CCITTG4, (options & PDF417_INVERT_BITMAP) == 0 ? 0 : Image.CCITT_BLACKIS1, g4, null);
     }
 
+    /** Creates a <CODE>java.awt.Image</CODE>.
+     * @param foreground the color of the bars
+     * @param background the color of the background
+     * @return the image
+     */    
+    public java.awt.Image createAwtImage(Color foreground, Color background) {
+        int f = foreground.getRGB();
+        int g = background.getRGB();
+        Canvas canvas = new Canvas();
+
+        paintCode();
+        int h = (int)yHeight;
+        int pix[] = new int[bitColumns * codeRows * h];
+        int stride = (bitColumns + 7) / 8;
+        int ptr = 0;
+        for (int k = 0; k < codeRows; ++k) {
+            int p = k * stride;
+            for (int j = 0; j < bitColumns; ++j) {
+                int b = outBits[p + (j / 8)] & 0xff;
+                b <<= j % 8;
+                pix[ptr++] = (b & 0x80) == 0 ? g : f;
+            }
+            for (int j = 1; j < h; ++j) {
+                System.arraycopy(pix, ptr - bitColumns, pix, ptr + bitColumns * (j - 1), bitColumns);
+            }
+            ptr += bitColumns * (h - 1);
+        }
+        
+        java.awt.Image img = canvas.createImage(new MemoryImageSource(bitColumns, codeRows * h, pix, 0, bitColumns));
+        return img;
+    }
+    
     /** Gets the raw image bits of the barcode. The image will have to
      * be scaled in the Y direction by <CODE>yHeight</CODE>.
      * @return The raw barcode image

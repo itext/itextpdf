@@ -52,7 +52,7 @@ package com.lowagie.text.rtf;
 
 import com.lowagie.text.*;
 
-import java.util.*;
+import java.util.Iterator;
 import java.io.*;
 import java.awt.Color;
 

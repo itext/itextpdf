@@ -279,7 +279,7 @@ public abstract class BaseFont {
                 flateCompress();
             }
             catch (Exception e) {
-                throw new DocumentException(e.getMessage());
+                throw new DocumentException(e);
             }
         }
         
@@ -292,7 +292,7 @@ public abstract class BaseFont {
                 flateCompress();
             }
             catch (Exception e) {
-                throw new DocumentException(e.getMessage());
+                throw new DocumentException(e);
             }
         }
     }

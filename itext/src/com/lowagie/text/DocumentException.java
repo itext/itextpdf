@@ -61,6 +61,11 @@ package com.lowagie.text;
  */
 
 public class DocumentException extends Exception {
+    private Exception ex;
+
+    public DocumentException(Exception ex) {
+        this.ex = ex;
+    }
     
     // constructors
     
@@ -81,4 +86,77 @@ public class DocumentException extends Exception {
     public DocumentException(String message) {
         super(message);
     }
+
+    /** We print the message of the checked exception */
+    public String getMessage() {
+        if (ex == null)
+            return super.getMessage();
+        else
+            return ex.getMessage();
+    }
+
+    /** and make sure we also produce a localized version */
+    public String getLocalizedMessage() {
+        if (ex == null)
+            return super.getLocalizedMessage();
+        else
+            return ex.getLocalizedMessage();
+    }
+
+    /** The toString() is changed to be prefixed with ExceptionConverter */
+    public String toString() {
+        if (ex == null)
+            return super.toString();
+        else
+            return split(getClass().getName()) + ": " + ex;
+    }
+
+    /** we have to override this as well */
+    public void printStackTrace() {
+        printStackTrace(System.err);
+    }
+
+    /** here we prefix, with s.print(), not s.println(), the stack
+     * trace with "ExceptionConverter:" */
+    public void printStackTrace(java.io.PrintStream s) {
+        if (ex == null)
+            super.printStackTrace(s);
+        else {
+            synchronized (s) {
+                s.print(split(getClass().getName()) + ": ");
+                ex.printStackTrace(s);
+            }
+        }
+    }
+
+    /** Again, we prefix the stack trace with "ExceptionConverter:" */
+    public void printStackTrace(java.io.PrintWriter s) {
+        if (ex == null)
+            super.printStackTrace(s);
+        else {
+            synchronized (s) {
+                s.print(split(getClass().getName()) + ": ");
+                ex.printStackTrace(s);
+            }
+        }
+    }
+
+    private static String split(String s) {
+        int i = s.lastIndexOf('.');
+        if (i < 0)
+            return s;
+        else
+            return s.substring(i + 1);
+    }
+    
+    /** requests to fill in the stack trace we will have to ignore.
+     * We can't throw an exception here, because this method
+     * is called by the constructor of Throwable */
+//    public Throwable fillInStackTrace() {
+//        if (ex == null)
+//            return super.fillInStackTrace();
+//        else
+//            return this;
+//    }
+
 }

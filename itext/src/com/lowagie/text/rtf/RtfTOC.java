@@ -57,6 +57,7 @@ import java.io.OutputStream;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * This class can be used to insert a table of contents into 
@@ -101,8 +102,7 @@ public class RtfTOC extends Chunk implements RtfField {
             try {
                 writer.add( entry );
             } catch ( DocumentException de ) {
-                de.printStackTrace();
-                throw new RuntimeException( "underlying " + de.getMessage() );
+                throw new ExceptionConverter(de);
             }
         }
 

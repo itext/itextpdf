@@ -47,6 +47,9 @@
 package com.lowagie.text.pdf;
 import com.lowagie.text.Rectangle;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Canvas;
+import java.awt.image.MemoryImageSource;
 
 /** This class takes 2 barcodes, an EAN/UPC and a supplemental
  * and creates a single barcode with both combined in the
@@ -140,4 +143,14 @@ public class BarcodeEANSUPP extends Barcode{
         cb.restoreState();
         return getBarcodeSize();
     }
+    
+    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+     * contains the bars without any text.
+     * @param foreground the color of the bars
+     * @param background the color of the background
+     * @return the image
+     */    
+    public java.awt.Image createAwtImage(Color foreground, Color background) {
+        throw new UnsupportedOperationException("The two barcodes must be composed externally.");
+    }    
 }

@@ -56,6 +56,10 @@ public class StampContent extends PdfContentByte {
         this.pageNumber = pageNumber;
         pageResources = stamper.getPageStamp(pageNumber).pageResources;
     }
+    
+    public void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
+        ((PdfStamperImp)writer).addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, action), pageNumber);
+    }
 
     /**
      * Gets a duplicate of this <CODE>PdfContentByte</CODE>. All
@@ -69,5 +73,9 @@ public class StampContent extends PdfContentByte {
 
     PageResources getPageResources() {
         return pageResources;
+    }
+    
+    void addAnnotation(PdfAnnotation annot) {
+        ((PdfStamperImp)writer).addAnnotation(annot, pageNumber);
     }
 }

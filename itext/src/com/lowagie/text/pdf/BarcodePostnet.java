@@ -164,11 +164,21 @@ public class BarcodePostnet extends Barcode{
         }
         float startX = 0;
         for (int k = 0; k < bars.length; ++k) {
-            cb.rectangle(startX, 0, x, bars[k] == flip ? barHeight : size);
+            cb.rectangle(startX, 0, x - inkSpreading, bars[k] == flip ? barHeight : size);
             startX += n;
         }
         cb.fill();
         return getBarcodeSize();
     }
     
+    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+     * contains the bars without any text.
+     * @param foreground the color of the bars
+     * @param background the color of the background
+     * @return the image
+     *
+     */
+    public java.awt.Image createAwtImage(Color foreground, Color background) {
+        throw new UnsupportedOperationException("Not supported with postnet.");
+    }
 }

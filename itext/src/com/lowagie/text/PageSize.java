@@ -70,10 +70,10 @@ public class PageSize {
     public static final Rectangle LEGAL = new Rectangle(612,1008);
     
 /** This is the a0 format */
-    public static final Rectangle A0 = new Rectangle(2380,3368);
+    public static final Rectangle A0 = new Rectangle(2384,3370);
     
 /** This is the a1 format */
-    public static final Rectangle A1 = new Rectangle(1684,2380);
+    public static final Rectangle A1 = new Rectangle(1684,2384);
     
 /** This is the a2 format */
     public static final Rectangle A2 = new Rectangle(1190,1684);

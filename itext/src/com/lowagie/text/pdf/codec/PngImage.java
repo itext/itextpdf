@@ -677,7 +677,7 @@ public class PngImage {
                 filter = dataStream.read();
                 dataStream.readFully(curr, 0, bytesPerRow);
             } catch (Exception e) {
-                e.printStackTrace();
+                // empty on purpose
             }
             
             switch (filter) {

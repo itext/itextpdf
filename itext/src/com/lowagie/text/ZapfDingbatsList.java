@@ -75,7 +75,7 @@ public class ZapfDingbatsList extends List {
 	}
 
 	/**
-	 * set the char-number
+	 * set the char-number 
 	 */
 	public void setCharNumber(int zn) {
 		this.zn = zn;

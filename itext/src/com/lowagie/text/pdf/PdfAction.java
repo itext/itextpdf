@@ -88,7 +88,7 @@ public class PdfAction extends PdfDictionary {
     
     /** Create an empty action.
      */    
-    PdfAction() {
+    public PdfAction() {
     }
     
     /**

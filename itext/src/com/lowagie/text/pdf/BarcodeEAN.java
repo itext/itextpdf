@@ -50,6 +50,9 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.ExceptionConverter;
 import java.util.Arrays;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Canvas;
+import java.awt.image.MemoryImageSource;
 
 /** Generates barcodes in several formats: EAN13, EAN8, UPCA, UPCE,
  * supplemental 2 and 5. The default parameters are:
@@ -574,9 +577,9 @@ public class BarcodeEAN extends Barcode{
             float w = bars[k] * x;
             if (print) {
                 if (Arrays.binarySearch(guard, k) >= 0)
-                    cb.rectangle(barStartX, barStartY - gd, w, barHeight + gd);
+                    cb.rectangle(barStartX, barStartY - gd, w - inkSpreading, barHeight + gd);
                 else
-                    cb.rectangle(barStartX, barStartY, w, barHeight);
+                    cb.rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
             }
             print = !print;
             barStartX += w;
@@ -649,4 +652,66 @@ public class BarcodeEAN extends Barcode{
         }
         return rect;
     }
+    
+    /** Creates a <CODE>java.awt.Image</CODE>. This image only
+     * contains the bars without any text.
+     * @param foreground the color of the bars
+     * @param background the color of the background
+     * @return the image
+     */    
+    public java.awt.Image createAwtImage(Color foreground, Color background) {
+        int f = foreground.getRGB();
+        int g = background.getRGB();
+        Canvas canvas = new Canvas();
+
+        int width = 0;
+        byte bars[] = null;
+        switch (codeType) {
+            case EAN13:
+                bars = getBarsEAN13(code);
+                width = 11 + 12 * 7;
+                break;
+            case EAN8:
+                bars = getBarsEAN8(code);
+                width = 11 + 8 * 7;
+            case UPCA:
+                bars = getBarsEAN13("0" + code);
+                width = 11 + 12 * 7;
+                break;
+            case UPCE:
+                bars = getBarsUPCE(code);
+                width = 9 + 6 * 7;
+                break;
+            case SUPP2:
+                bars = getBarsSupplemental2(code);
+                width = 6 + 2 * 7;
+                break;
+            case SUPP5:
+                bars = getBarsSupplemental5(code);
+                width = 4 + 5 * 7 + 4 * 2;
+                break;
+            default:
+                throw new RuntimeException("Invalid code type.");
+        }
+
+        boolean print = true;
+        int ptr = 0;
+        int height = (int)barHeight;
+        int pix[] = new int[width * height];
+        for (int k = 0; k < bars.length; ++k) {
+            int w = bars[k];
+            int c = g;
+            if (print)
+                c = f;
+            print = !print;
+            for (int j = 0; j < w; ++j)
+                pix[ptr++] = c;
+        }
+        for (int k = width; k < pix.length; k += width) {
+            System.arraycopy(pix, 0, pix, k, width); 
+        }
+        Image img = canvas.createImage(new MemoryImageSource(width, height, pix, 0, width));
+        
+        return img;
+    }    
 }

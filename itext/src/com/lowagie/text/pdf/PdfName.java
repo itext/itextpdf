@@ -460,6 +460,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName LENGTH = new PdfName("Length");
     /** A name */
+    public static final PdfName LENGTH1 = new PdfName("Length1");
+    /** A name */
     public static final PdfName LIMITS = new PdfName("Limits");
     /** A name */
     public static final PdfName LINE = new PdfName("Line");
