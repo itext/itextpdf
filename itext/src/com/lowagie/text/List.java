@@ -296,7 +296,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @param	indentation		the new indentation
  */
     
-    public final void setIndentationLeft(float indentation) {
+    public void setIndentationLeft(float indentation) {
         this.indentationLeft = indentation;
     }
     
@@ -306,7 +306,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @param	indentation		the new indentation
  */
     
-    public final void setIndentationRight(float indentation) {
+    public void setIndentationRight(float indentation) {
         this.indentationRight = indentation;
     }
     
@@ -316,7 +316,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @param	first		a number
  */
     
-    public final void setFirst(int first) {
+    public void setFirst(int first) {
         this.first = first;
     }
     
@@ -327,7 +327,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @param	first		a letter
  */
     
-    public final void setFirst(char first) {
+    public void setFirst(char first) {
         this.firstCh = first;
         if ( Character.isLowerCase( this.firstCh )) {
             this.lastCh = 'z';
@@ -343,7 +343,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @param	symbol		a <CODE>Chunk</CODE>
  */
     
-    public final void setListSymbol(Chunk symbol) {
+    public void setListSymbol(Chunk symbol) {
         this.symbol = symbol;
     }
     
@@ -355,7 +355,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @param	symbol		a <CODE>String</CODE>
  */
     
-    public final void setListSymbol(String symbol) {
+    public void setListSymbol(String symbol) {
         this.symbol = new Chunk(symbol);
     }
     
@@ -401,7 +401,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @return	<CODE>true</CODE> if the list is numbered, <CODE>false</CODE> otherwise.
  */
     
-    public final boolean isNumbered() {
+    public boolean isNumbered() {
         return numbered;
     }
     
@@ -409,7 +409,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * Gets the symbol indentation.
  */
     
-    public final int symbolIndent() {
+    public int symbolIndent() {
         return symbolIndent;
     }
     
@@ -417,7 +417,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * Gets the symbol indentation.
  */
     
-    public final Chunk symbol() {
+    public Chunk symbol() {
         return symbol;
     }
     
@@ -425,7 +425,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * Gets the first number        .
  */
     
-    public final int first() {
+    public int first() {
         return first;
     }
     
@@ -435,7 +435,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @return	the indentation
  */
     
-    public final float indentationLeft() {
+    public float indentationLeft() {
         return indentationLeft;
     }
     
@@ -445,7 +445,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @return	the indentation
  */
     
-    public final float indentationRight() {
+    public float indentationRight() {
         return indentationRight;
     }
     

@@ -107,50 +107,50 @@ public abstract class BaseFont {
     /** The maximum height above the baseline reached by glyphs in this
      * font, excluding the height of glyphs for accented characters.
      */    
-    public final static int ASCENT = 1;    
+    public static final int ASCENT = 1;    
     /** The y coordinate of the top of flat capital letters, measured from
      * the baseline.
      */    
-    public final static int CAPHEIGHT = 2;
+    public static final int CAPHEIGHT = 2;
     /** The maximum depth below the baseline reached by glyphs in this
      * font. The value is a negative number.
      */    
-    public final static int DESCENT = 3;
+    public static final int DESCENT = 3;
     /** The angle, expressed in degrees counterclockwise from the vertical,
      * of the dominant vertical strokes of the font. The value is
      * negative for fonts that slope to the right, as almost all italic fonts do.
      */    
-    public final static int ITALICANGLE = 4;
+    public static final int ITALICANGLE = 4;
     /** The lower left x glyph coordinate.
      */    
-    public final static int BBOXLLX = 5;
+    public static final int BBOXLLX = 5;
     /** The lower left y glyph coordinate.
      */    
-    public final static int BBOXLLY = 6;
+    public static final int BBOXLLY = 6;
     /** The upper right x glyph coordinate.
      */    
-    public final static int BBOXURX = 7;
+    public static final int BBOXURX = 7;
     /** The upper right y glyph coordinate.
      */    
-    public final static int BBOXURY = 8;
+    public static final int BBOXURY = 8;
     
-    public final static int AWT_ASCENT = 9;
-    public final static int AWT_DESCENT = 10;
-    public final static int AWT_LEADING = 11;
-    public final static int AWT_MAXADVANCE = 12;
+    public static final int AWT_ASCENT = 9;
+    public static final int AWT_DESCENT = 10;
+    public static final int AWT_LEADING = 11;
+    public static final int AWT_MAXADVANCE = 12;
     
     /** The font is Type 1.
      */    
-    public final static int FONT_TYPE_T1 = 0;
+    public static final int FONT_TYPE_T1 = 0;
     /** The font is True Type with a standard encoding.
      */    
-    public final static int FONT_TYPE_TT = 1;
+    public static final int FONT_TYPE_TT = 1;
     /** The font is CJK.
      */    
-    public final static int FONT_TYPE_CJK = 2;
+    public static final int FONT_TYPE_CJK = 2;
     /** The font is True Type with a Unicode encoding.
      */    
-    public final static int FONT_TYPE_TTUNI = 3;
+    public static final int FONT_TYPE_TTUNI = 3;
     /** The Unicode encoding with horizontal writing.
      */    
     public static final String IDENTITY_H = "Identity-H";
@@ -175,20 +175,20 @@ public abstract class BaseFont {
     
     
 /** if the font has to be embedded */
-    public final static boolean EMBEDDED = true;
+    public static final boolean EMBEDDED = true;
     
 /** if the font doesn't have to be embedded */
-    public final static boolean NOT_EMBEDDED = false;
+    public static final boolean NOT_EMBEDDED = false;
 /** if the font has to be cached */
-    public final static boolean CACHED = true;
+    public static final boolean CACHED = true;
 /** if the font doesn't have to be cached */
-    public final static boolean NOT_CACHED = false;
+    public static final boolean NOT_CACHED = false;
     
     /** The font type.
      */    
     int fontType;
 /** a not defined character in a custom PDF encoding */
-    public final static String notdef = ".notdef";
+    public static final String notdef = ".notdef";
     
 /** table of characters widths for this encoding */
     protected int widths[] = new int[256];
@@ -238,8 +238,6 @@ public abstract class BaseFont {
     
     protected boolean fastWinansi = false;
     
-    protected static final IntHashtable otherWinansi = new IntHashtable();
-    
     static {
         BuiltinFonts14.put(COURIER, PdfName.COURIER);
         BuiltinFonts14.put(COURIER_BOLD, PdfName.COURIER_BOLD);
@@ -255,34 +253,6 @@ public abstract class BaseFont {
         BuiltinFonts14.put(TIMES_BOLDITALIC, PdfName.TIMES_BOLDITALIC);
         BuiltinFonts14.put(TIMES_ITALIC, PdfName.TIMES_ITALIC);
         BuiltinFonts14.put(ZAPFDINGBATS, PdfName.ZAPFDINGBATS);
-        
-        otherWinansi.put(8364, 128);
-        otherWinansi.put(8218, 130);
-        otherWinansi.put(402, 131);
-        otherWinansi.put(8222, 132);
-        otherWinansi.put(8230, 133);
-        otherWinansi.put(8224, 134);
-        otherWinansi.put(8225, 135);
-        otherWinansi.put(710, 136);
-        otherWinansi.put(8240, 137);
-        otherWinansi.put(352, 138);
-        otherWinansi.put(8249, 139);
-        otherWinansi.put(338, 140);
-        otherWinansi.put(381, 142);
-        otherWinansi.put(8216, 145);
-        otherWinansi.put(8217, 146);
-        otherWinansi.put(8220, 147);
-        otherWinansi.put(8221, 148);
-        otherWinansi.put(8226, 149);
-        otherWinansi.put(8211, 150);
-        otherWinansi.put(8212, 151);
-        otherWinansi.put(732, 152);
-        otherWinansi.put(8482, 153);
-        otherWinansi.put(353, 154);
-        otherWinansi.put(8250, 155);
-        otherWinansi.put(339, 156);
-        otherWinansi.put(382, 158);
-        otherWinansi.put(376, 159);
     }
     
     /** Generates the PDF stream with the Type1 and Truetype fonts returning
@@ -299,9 +269,9 @@ public abstract class BaseFont {
         public StreamFont(byte contents[], int lengths[]) throws DocumentException {
             try {
                 bytes = contents;
-                dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+                put(PdfName.LENGTH, new PdfNumber(bytes.length));
                 for (int k = 0; k < lengths.length; ++k) {
-                    dictionary.put(new PdfName("Length" + (k + 1)), new PdfNumber(lengths[k]));
+                    put(new PdfName("Length" + (k + 1)), new PdfNumber(lengths[k]));
                 }
                 flateCompress();
             }
@@ -503,7 +473,7 @@ public abstract class BaseFont {
         if (fastWinansi) {
             if (char1 < 128 || (char1 >= 160 && char1 <= 255))
                 return widths[char1];
-            return widths[otherWinansi.get(char1)];
+            return widths[PdfEncodings.winansi.get(char1)];
         }
         return getWidth(new String(new char[]{char1}));
     }
@@ -522,7 +492,7 @@ public abstract class BaseFont {
                 if (char1 < 128 || (char1 >= 160 && char1 <= 255))
                     total += widths[char1];
                 else
-                    total += widths[otherWinansi.get(char1)];
+                    total += widths[PdfEncodings.winansi.get(char1)];
             }
             return total;
         }
@@ -561,33 +531,9 @@ public abstract class BaseFont {
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
      */
     byte[] convertToBytes(String text) {
-        if (directTextToByte) {
-            int len = text.length();
-            byte b[] = new byte[len];
-            for (int k = 0; k < len; ++k)
-                b[k] = (byte)text.charAt(k);
-            return b;
-        }
-        if (fastWinansi) {
-            int len = text.length();
-            byte b[] = new byte[len];
-            int c = 0;
-            for (int k = 0; k < len; ++k) {
-                char char1 = text.charAt(k);
-                if (char1 < 128 || (char1 >= 160 && char1 <= 255))
-                    c = char1;
-                else
-                    c = otherWinansi.get(char1);
-                b[k] = (byte)c;
-            }
-            return b;
-        }
-        try {
-            return text.getBytes(encoding);
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new ExceptionConverter(e);
-        }
+        if (directTextToByte)
+            return PdfEncodings.convertToBytes(text, null);
+        return PdfEncodings.convertToBytes(text, encoding);
     }
     
     /** Outputs to the writer the font dictionaries and streams.

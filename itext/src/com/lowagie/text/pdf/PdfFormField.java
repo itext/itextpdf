@@ -58,36 +58,36 @@ import java.awt.Color;
  */
 public class PdfFormField extends PdfAnnotation {
 
-    public final static int FF_READ_ONLY = 1;
-    public final static int FF_REQUIRED = 2;
-    public final static int FF_NO_EXPORT = 4;
-    public final static int FF_NO_TOGGLE_TO_OFF = 16384;
-    public final static int FF_RADIO = 32768;
-    public final static int FF_PUSHBUTTON = 65536;
-    public final static int FF_MULTILINE = 4096;
-    public final static int FF_PASSWORD = 8192;
-    public final static int FF_COMBO = 131072;
-    public final static int FF_EDIT = 262144;
-    public final static int Q_LEFT = 0;
-    public final static int Q_CENTER = 1;
-    public final static int Q_RIGHT = 2;
-    public final static int MK_NO_ICON = 0;
-    public final static int MK_NO_CAPTION = 1;
-    public final static int MK_CAPTION_BELOW = 2;
-    public final static int MK_CAPTION_ABOVE = 3;
-    public final static int MK_CAPTION_RIGHT = 4;
-    public final static int MK_CAPTION_LEFT = 5;
-    public final static int MK_CAPTION_OVERLAID = 6;
-    public final static PdfName IF_SCALE_ALWAYS = PdfName.A;
-    public final static PdfName IF_SCALE_BIGGER = PdfName.B;
-    public final static PdfName IF_SCALE_SMALLER = PdfName.S;
-    public final static PdfName IF_SCALE_NEVER = PdfName.N;
-    public final static PdfName IF_SCALE_ANAMORPHIC = PdfName.A;
-    public final static PdfName IF_SCALE_PROPORTIONAL = PdfName.P;
-    public final static boolean MULTILINE = true;
-    public final static boolean SINGLELINE = false;
-    public final static boolean PLAINTEXT = false;
-    public final static boolean PASSWORD = true;
+    public static final int FF_READ_ONLY = 1;
+    public static final int FF_REQUIRED = 2;
+    public static final int FF_NO_EXPORT = 4;
+    public static final int FF_NO_TOGGLE_TO_OFF = 16384;
+    public static final int FF_RADIO = 32768;
+    public static final int FF_PUSHBUTTON = 65536;
+    public static final int FF_MULTILINE = 4096;
+    public static final int FF_PASSWORD = 8192;
+    public static final int FF_COMBO = 131072;
+    public static final int FF_EDIT = 262144;
+    public static final int Q_LEFT = 0;
+    public static final int Q_CENTER = 1;
+    public static final int Q_RIGHT = 2;
+    public static final int MK_NO_ICON = 0;
+    public static final int MK_NO_CAPTION = 1;
+    public static final int MK_CAPTION_BELOW = 2;
+    public static final int MK_CAPTION_ABOVE = 3;
+    public static final int MK_CAPTION_RIGHT = 4;
+    public static final int MK_CAPTION_LEFT = 5;
+    public static final int MK_CAPTION_OVERLAID = 6;
+    public static final PdfName IF_SCALE_ALWAYS = PdfName.A;
+    public static final PdfName IF_SCALE_BIGGER = PdfName.B;
+    public static final PdfName IF_SCALE_SMALLER = PdfName.S;
+    public static final PdfName IF_SCALE_NEVER = PdfName.N;
+    public static final PdfName IF_SCALE_ANAMORPHIC = PdfName.A;
+    public static final PdfName IF_SCALE_PROPORTIONAL = PdfName.P;
+    public static final boolean MULTILINE = true;
+    public static final boolean SINGLELINE = false;
+    public static final boolean PLAINTEXT = false;
+    public static final boolean PASSWORD = true;
     static PdfName mergeTarget[] = {PdfName.FONT, PdfName.XOBJECT, PdfName.COLORSPACE, PdfName.PATTERN};
     
     /** Holds value of property parent. */
@@ -172,36 +172,54 @@ public class PdfFormField extends PdfAnnotation {
         return field;
     }
     
+    public static PdfFormField createList(PdfWriter writer, String options[], int topIndex, boolean unicode) {
+        return createChoice(writer, 0, processOptions(options, unicode), topIndex);
+    }
+
     public static PdfFormField createList(PdfWriter writer, String options[], int topIndex) {
-        return createChoice(writer, 0, processOptions(options), topIndex);
+        return createList(writer, options, topIndex, false);
+    }
+
+    public static PdfFormField createList(PdfWriter writer, String options[][], int topIndex, boolean unicode) {
+        return createChoice(writer, 0, processOptions(options, unicode), topIndex);
     }
 
     public static PdfFormField createList(PdfWriter writer, String options[][], int topIndex) {
-        return createChoice(writer, 0, processOptions(options), topIndex);
+        return createList(writer, options, topIndex, false);
     }
 
+    public static PdfFormField createCombo(PdfWriter writer, boolean edit, String options[], int topIndex, boolean unicode) {
+        return createChoice(writer, FF_COMBO + (edit ? FF_EDIT : 0), processOptions(options, unicode), topIndex);
+    }
+    
     public static PdfFormField createCombo(PdfWriter writer, boolean edit, String options[], int topIndex) {
-        return createChoice(writer, FF_COMBO + (edit ? FF_EDIT : 0), processOptions(options), topIndex);
+        return createCombo(writer, edit, options, topIndex, false);
+    }
+    
+    public static PdfFormField createCombo(PdfWriter writer, boolean edit, String options[][], int topIndex, boolean unicode) {
+        return createChoice(writer, FF_COMBO + (edit ? FF_EDIT : 0), processOptions(options, unicode), topIndex);
     }
     
     public static PdfFormField createCombo(PdfWriter writer, boolean edit, String options[][], int topIndex) {
-        return createChoice(writer, FF_COMBO + (edit ? FF_EDIT : 0), processOptions(options), topIndex);
+        return createCombo(writer, edit, options, topIndex, false);
     }
     
-    protected static PdfArray processOptions(String options[]) {
+    protected static PdfArray processOptions(String options[], boolean unicode) {
+        String encoding = (unicode ? PdfObject.TEXT_UNICODE : PdfObject.ENCODING);
         PdfArray array = new PdfArray();
         for (int k = 0; k < options.length; ++k) {
-            array.add(new PdfString(options[k], PdfObject.TEXT_UNICODE));
+            array.add(new PdfString(options[k], encoding));
         }
         return array;
     }
     
-    protected static PdfArray processOptions(String options[][]) {
+    protected static PdfArray processOptions(String options[][], boolean unicode) {
+        String encoding = (unicode ? PdfObject.TEXT_UNICODE : PdfObject.ENCODING);
         PdfArray array = new PdfArray();
         for (int k = 0; k < options.length; ++k) {
             String subOption[] = options[k];
-            PdfArray ar2 = new PdfArray(new PdfString(subOption[0], PdfObject.TEXT_UNICODE));
-            ar2.add(new PdfString(subOption[1], PdfObject.TEXT_UNICODE));
+            PdfArray ar2 = new PdfArray(new PdfString(subOption[0], encoding));
+            ar2.add(new PdfString(subOption[1], encoding));
             array.add(ar2);
         }
         return array;
@@ -356,7 +374,8 @@ public class PdfFormField extends PdfAnnotation {
             }
             case ExtendedColor.TYPE_SEPARATION:
             case ExtendedColor.TYPE_PATTERN:
-                throw new RuntimeException("Separations and patterns not allowed in MK dictionary.");
+            case ExtendedColor.TYPE_SHADING:
+                throw new RuntimeException("Separations, patterns and shadings are not allowed in MK dictionary.");
             default:
                 array.add(new PdfNumber(color.getRed() / 255f));
                 array.add(new PdfNumber(color.getGreen() / 255f));
@@ -380,14 +399,26 @@ public class PdfFormField extends PdfAnnotation {
     }
     
     public void setMKNormalCaption(String caption) {
-        getMK().put(PdfName.CA, new PdfString(caption, PdfObject.TEXT_UNICODE));
+        getMK().put(PdfName.CA, new PdfString(caption));
     }
     
     public void setMKRolloverCaption(String caption) {
-        getMK().put(PdfName.RC, new PdfString(caption, PdfObject.TEXT_UNICODE));
+        getMK().put(PdfName.RC, new PdfString(caption));
     }
     
     public void setMKAlternateCaption(String caption) {
+        getMK().put(PdfName.AC, new PdfString(caption));
+    }
+    
+    public void setMKNormalCaptionUnicode(String caption) {
+        getMK().put(PdfName.CA, new PdfString(caption, PdfObject.TEXT_UNICODE));
+    }
+    
+    public void setMKRolloverCaptionUnicode(String caption) {
+        getMK().put(PdfName.RC, new PdfString(caption, PdfObject.TEXT_UNICODE));
+    }
+    
+    public void setMKAlternateCaptionUnicode(String caption) {
         getMK().put(PdfName.AC, new PdfString(caption, PdfObject.TEXT_UNICODE));
     }
     

@@ -91,6 +91,9 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName ANNOT = new PdfName("Annot");
     
     /** This is a static final PdfName */
+    public static final PdfName ANTIALIAS = new PdfName("AntiAlias");
+    
+    /** This is a static final PdfName */
     public static final PdfName ANNOTS = new PdfName("Annots");
     
     /** This is a static final PdfName */
@@ -110,7 +113,7 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName B = new PdfName("B");
-
+    
     /** This is a static final PdfName */
     public static final PdfName BASEFONT = new PdfName("BaseFont");
     
@@ -127,6 +130,9 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName BITSPERCOMPONENT = new PdfName("BitsPerComponent");
     
     /** This is a static final PdfName */
+    public static final PdfName BITSPERSAMPLE = new PdfName("BitsPerSample");
+    
+    /** This is a static final PdfName */
     public static final PdfName BL = new PdfName("Bl");
     
     /** This is a static final PdfName */
@@ -134,6 +140,9 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName BORDER = new PdfName("Border");
+    
+    /** This is a static final PdfName */
+    public static final PdfName BOUNDS = new PdfName("Bounds");
     
     /** This is a static final PdfName */
     public static final PdfName BS = new PdfName("BS");
@@ -148,6 +157,12 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName C = new PdfName("C");
     
     /** This is a static final PdfName */
+    public static final PdfName C0 = new PdfName("C0");
+    
+    /** This is a static final PdfName */
+    public static final PdfName C1 = new PdfName("C1");
+    
+    /** This is a static final PdfName */
     public static final PdfName CA = new PdfName("CA");
     
     /** This is a static final PdfName */
@@ -158,13 +173,13 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName CENTERWINDOW = new PdfName("CenterWindow");
-
+    
     /** This is a static final PdfName */
     public static final PdfName CH = new PdfName("Ch");
-
+    
     /** This is a static final PdfName */
     public static final PdfName CIRCLE = new PdfName("Circle");
-
+    
     /** This is a static final PdfName */
     public static final PdfName CO = new PdfName("CO");
     
@@ -182,6 +197,9 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName CONTENTS = new PdfName("Contents");
+    
+    /** This is a static final PdfName */
+    public static final PdfName COORDS = new PdfName("Coords");
     
     /** This is a static final PdfName */
     public static final PdfName COUNT = new PdfName("Count");
@@ -214,6 +232,9 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DA = new PdfName("DA");
     
     /** This is a static final PdfName */
+    public static final PdfName DC = new PdfName("DC");
+    
+    /** This is a static final PdfName */
     public static final PdfName DCTDECODE = new PdfName("DCTDecode");
     
     /** This is a static final PdfName */
@@ -241,19 +262,31 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DIRECTION = new PdfName("Direction");
     
     /** This is a static final PdfName */
+    public static final PdfName DOMAIN = new PdfName("Domain");
+    
+    /** This is a static final PdfName */
+    public static final PdfName DP = new PdfName("DP");
+    
+    /** This is a static final PdfName */
     public static final PdfName DR = new PdfName("DR");
     
     /** This is a static final PdfName */
+    public static final PdfName DS = new PdfName("DS");
+    
+    /** This is a static final PdfName */
     public static final PdfName DUR = new PdfName("Dur");
-
+    
     /** This is a static final PdfName */
     public static final PdfName DV = new PdfName("DV");
-
+    
     /** This is a static final PdfName */
     public static final PdfName E = new PdfName("E");
     
     /** This is a static final PdfName */
     public static final PdfName EARLYCHANGE = new PdfName("EarlyChange");
+    
+    /** This is a static final PdfName */
+    public static final PdfName ENCODE = new PdfName("Encode");
     
     /** This is a static final PdfName */
     public static final PdfName ENCODEDBYTEALIGN = new PdfName("EncodedByteAlign");
@@ -269,6 +302,9 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName ENDOFLINE = new PdfName("EndOfLine");
+    
+    /** This is a static final PdfName */
+    public static final PdfName EXTEND = new PdfName("Extend");
     
     /** This is a static final PdfName */
     public static final PdfName EXTGSTATE = new PdfName("ExtGState");
@@ -350,12 +386,18 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName FS = new PdfName("FS");
-
+    
     /** This is a static final PdfName */
     public static final PdfName FT = new PdfName("FT");
     
     /** This is a static final PdfName */
     public static final PdfName FULLSCREEN = new PdfName("FullScreen");
+    
+    /** This is a static final PdfName */
+    public static final PdfName FUNCTION = new PdfName("Function");
+    
+    /** This is a static final PdfName */
+    public static final PdfName FUNCTIONS = new PdfName("Functions");
     
     /** This is a static final PdfName */
     public static final PdfName FUNCTIONTYPE = new PdfName("FunctionType");
@@ -512,16 +554,16 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName of an encoding */
     public static final PdfName MASK = new PdfName("Mask");
-
+    
     /** This is a static final PdfName of an encoding */
     public static final PdfName MAXLEN = new PdfName("MaxLen");
-
-    /** This is a static final PdfName of an encoding */
-    public static final PdfName MK = new PdfName("MK");
-
+    
     /** This is a static final PdfName */
     public static final PdfName MEDIABOX = new PdfName("MediaBox");
-
+    
+    /** This is a static final PdfName of an encoding */
+    public static final PdfName MK = new PdfName("MK");
+    
     /** This is a static final PdfName */
     public static final PdfName MODDATE = new PdfName("ModDate");
     
@@ -562,6 +604,9 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName OPT = new PdfName("Opt");
     
     /** This is a static final PdfName */
+    public static final PdfName ORDER = new PdfName("Order");
+    
+    /** This is a static final PdfName */
     public static final PdfName ORDERING = new PdfName("Ordering");
     
     /** This is a static final PdfName */
@@ -586,6 +631,9 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName PAGES = new PdfName("Pages");
     
     /** This is a static final PdfName */
+    public static final PdfName PAINTTYPE = new PdfName("PaintType");
+    
+    /** This is a static final PdfName */
     public static final PdfName PANOSE = new PdfName("Panose");
     
     /** This is a static final PdfName */
@@ -593,6 +641,9 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName PATTERN = new PdfName("Pattern");
+    
+    /** This is a static final PdfName */
+    public static final PdfName PATTERNTYPE = new PdfName("PatternType");
     
     /** This is a static final PdfName */
     public static final PdfName PDF = new PdfName("PDF");
@@ -629,6 +680,9 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName R2L = new PdfName("R2L");
+    
+    /** This is a static final PdfName */
+    public static final PdfName RANGE = new PdfName("Range");
     
     /** This is a static final PdfName */
     public static final PdfName RC = new PdfName("RC");
@@ -668,13 +722,19 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName SEPARATION = new PdfName("Separation");
-
+    
+    /** This is a static final PdfName */
+    public static final PdfName SHADING = new PdfName("Shading");
+    
+    /** This is a static final PdfName */
+    public static final PdfName SHADINGTYPE = new PdfName("ShadingType");
+    
     /** This is a static final PdfName */
     public static final PdfName SIG = new PdfName("Sig");
-
+    
     /** This is a static final PdfName */
     public static final PdfName SIGFLAGS = new PdfName("SigFlags");
-
+    
     /** This is a static final PdfName */
     public static final PdfName SINGLEPAGE = new PdfName("SinglePage");
     
@@ -729,6 +789,9 @@ public class PdfName extends PdfObject implements Comparable{
     /** This is a static final PdfName */
     public static final PdfName TI = new PdfName("TI");
     
+    /** This is a static final PdfName */
+    public static final PdfName TILINGTYPE = new PdfName("TilingType");
+    
     /** This is a static final PdfName of a base 14 type 1 font */
     public static final PdfName TIMES_ROMAN = new PdfName("Times-Roman");
     
@@ -782,7 +845,7 @@ public class PdfName extends PdfObject implements Comparable{
     
     /** This is a static final PdfName */
     public static final PdfName URL = new PdfName("URL");
-
+    
     /** This is a static final PdfName */
     public static final PdfName USENONE = new PdfName("UseNone");
     
@@ -816,6 +879,12 @@ public class PdfName extends PdfObject implements Comparable{
     /** This is a static final PdfName of an encoding */
     public static final PdfName WIN_ANSI_ENCODING = new PdfName("WinAnsiEncoding");
     
+    /** This is a static final PdfName of an encoding */
+    public static final PdfName WP = new PdfName("WP");
+    
+    /** This is a static final PdfName of an encoding */
+    public static final PdfName WS = new PdfName("WS");
+    
     /** This is a static final PdfName */
     public static final PdfName X = new PdfName("X");
     
@@ -823,13 +892,19 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName XOBJECT = new PdfName("XObject");
     
     /** This is a static final PdfName */
+    public static final PdfName XSTEP = new PdfName("XStep");
+    
+    /** This is a static final PdfName */
     public static final PdfName XYZ = new PdfName("XYZ");
+    
+    /** This is a static final PdfName */
+    public static final PdfName YSTEP = new PdfName("YStep");
     
     /** This is a static final PdfName of a base 14 type 1 font */
     public static final PdfName ZAPFDINGBATS = new PdfName("ZapfDingbats");
     
     private int hash = 0;
-
+    
     // constructors
     
     /**
@@ -838,7 +913,7 @@ public class PdfName extends PdfObject implements Comparable{
      * @param		name		the new Name.
      */
     
-    PdfName(String name) {
+    public PdfName(String name) {
         super(PdfObject.NAME, name);
         // The minimum number of characters in a name is 1, the maximum is 127 (the '/' not included)
         if (bytes.length < 1 || bytes.length > 127) {
@@ -875,7 +950,12 @@ public class PdfName extends PdfObject implements Comparable{
                     pdfName.append(Integer.toString((int) character, 16));
                     break;
                 default:
-                    pdfName.append(character);
+                    if (character > 126) {
+                        pdfName.append('#');
+                        pdfName.append(Integer.toString((int) character, 16));
+                    }
+                    else
+                        pdfName.append(character);
                     break;
             }
         }
@@ -885,17 +965,19 @@ public class PdfName extends PdfObject implements Comparable{
     // methods
     
     /**
-     * Compares the names alfabetically.
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.<p>
      *
-     * @param		object	an object of the type PdfName
-     * @return		the value 0 if the object is a name equal to the name of this object,
-     *				a value less than 0 if the argument's name is greater than the name of this object,
-     *				a value greater than 0 if the argument's name is less than the name of this object
-     * @throws		a <CODE>ClassCastException</CODE> if the argument is not a PdfName
      *
+     * @param   object the Object to be compared.
+     * @return  a negative integer, zero, or a positive integer as this object
+     *		is less than, equal to, or greater than the specified object.
+     *
+     * @throws ClassCastException if the specified object's type prevents it
+     *         from being compared to this Object.
      */
-    
-    public final int compareTo(Object object) {
+    public int compareTo(Object object) {
         PdfName name = (PdfName) object;
         
         byte myBytes[] = bytes;
@@ -915,11 +997,25 @@ public class PdfName extends PdfObject implements Comparable{
         return 0;
     }
     
-    public final boolean equals(Object obj) {
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     *
+     * @param   obj   the reference object with which to compare.
+     * @return  <code>true</code> if this object is the same as the obj
+     *          argument; <code>false</code> otherwise.
+     */
+    public boolean equals(Object obj) {
         return compareTo(obj) == 0;
     }
     
-    public final int hashCode() {
+    /**
+     * Returns a hash code value for the object. This method is
+     * supported for the benefit of hashtables such as those provided by
+     * <code>java.util.Hashtable</code>.
+     *
+     * @return  a hash code value for this object.
+     */
+    public int hashCode() {
         int h = hash;
         if (h == 0) {
             int ptr = 0;
@@ -932,18 +1028,26 @@ public class PdfName extends PdfObject implements Comparable{
         return h;
     }
     
-    /**
-     * Returns the <CODE>String</CODE> value of this <CODE>PdfName</CODE>.
-     *
-     * @return		a <CODE>String</CODE>
+    /** Decodes an escaped name in the form "/AB#20CD" into "AB CD".
+     * @param name the name to decode
+     * @return the decoded name
      */
-    
-    public final String toString() {
+    public static String decodeName(String name) {
+        StringBuffer buf = new StringBuffer();
         try {
-            return new String(bytes, PdfObject.ENCODING);
+            int len = name.length();
+            for (int k = 1; k < len; ++k) {
+                char c = name.charAt(k);
+                if (c == '#') {
+                    c = (char)((PRTokeniser.getHex(name.charAt(k + 1)) << 4) + PRTokeniser.getHex(name.charAt(k + 2)));
+                    k += 2;
+                }
+                buf.append(c);
+            }
         }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
+        catch (IndexOutOfBoundsException e) {
+            // empty on purpose
         }
+        return buf.toString();
     }
 }

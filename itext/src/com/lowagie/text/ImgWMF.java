@@ -117,7 +117,7 @@ public class ImgWMF extends Image implements Element {
  * This method checks if the image is a valid WMF and processes some parameters.
  */
     
-    private final void processParameters() throws BadElementException, IOException {
+    private void processParameters() throws BadElementException, IOException {
         type = IMGTEMPLATE;
         InputStream is = null;
         try {

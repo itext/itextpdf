@@ -240,7 +240,22 @@ public class PdfPRow {
             }
             if (table == null) {
                 float fixedHeight = cell.getFixedHeight();
-                float rightLimit = cell.isNoWrap() ? 20000 : cell.right() + xPos - cell.getPaddingRight();
+                float rightLimit = cell.right() + xPos - cell.getPaddingRight();
+                float leftLimit = cell.left() + xPos + cell.getPaddingLeft();
+                if (cell.isNoWrap()) {
+                    switch (cell.getHorizontalAlignment()) {
+                        case Element.ALIGN_CENTER:
+                            rightLimit += 10000;
+                            leftLimit -= 10000;
+                            break;
+                        case Element.ALIGN_RIGHT:
+                            leftLimit -= 20000;
+                            break;
+                        default:
+                            rightLimit += 20000;
+                            break;
+                    }
+                }
                 ColumnText ct = new ColumnText(canvases[PdfPTable.TEXTCANVAS]);
                 float bry = -20000;
                 if (fixedHeight > 0) {
@@ -250,7 +265,7 @@ public class PdfPRow {
                     }
                 }
                 ct.setSimpleColumn(cell.getPhrase(),
-                    cell.left() + xPos + cell.getPaddingLeft(),
+                    leftLimit,
                     tly,
                     rightLimit,
                     bry,

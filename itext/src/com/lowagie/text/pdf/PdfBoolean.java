@@ -60,11 +60,11 @@ package com.lowagie.text.pdf;
  * @see		BadPdfFormatException
  */
 
-class PdfBoolean extends PdfObject implements PdfPrintable {
+class PdfBoolean extends PdfObject {
     
     // static membervariables (possible values of a boolean object)
-    static final PdfBoolean PDFTRUE = new PdfBoolean(true);
-    static final PdfBoolean PDFFALSE = new PdfBoolean(false);
+    public static final PdfBoolean PDFTRUE = new PdfBoolean(true);
+    public static final PdfBoolean PDFFALSE = new PdfBoolean(false);
 /** A possible value of <CODE>PdfBoolean</CODE> */
     public static final String TRUE = "true";
     
@@ -84,7 +84,7 @@ class PdfBoolean extends PdfObject implements PdfPrintable {
  * @param		value			the value of the new <CODE>PdfObject</CODE>
  */
     
-    PdfBoolean(boolean value) {
+    public PdfBoolean(boolean value) {
         super(BOOLEAN);
         if (value) {
             setContent(TRUE);
@@ -103,7 +103,7 @@ class PdfBoolean extends PdfObject implements PdfPrintable {
  * @throws		BadPdfFormatException	thrown if the <VAR>value</VAR> isn't '<CODE>true</CODE>' or '<CODE>false</CODE>'
  */
     
-    PdfBoolean(String value) throws BadPdfFormatException {
+    public PdfBoolean(String value) throws BadPdfFormatException {
         super(BOOLEAN, value);
         if (value.equals(TRUE)) {
             this.value = true;
@@ -119,28 +119,12 @@ class PdfBoolean extends PdfObject implements PdfPrintable {
     // methods returning the value of this object
     
 /**
- * Returns the <CODE>String</CODE> value of the <CODE>PdfBoolean</CODE>-object.
- *
- * @return		a <CODE>String</CODE> value "true" or "false"
- */
-    
-    public String toString() {
-        if (value) {
-            return TRUE;
-        }
-        else {
-            return FALSE;
-        }
-    }
-    
-    
-/**
  * Returns the primitive value of the <CODE>PdfBoolean</CODE>-object.
  *
  * @return		the actual value of the object.
  */
     
-    final boolean booleanValue() {
+    public boolean booleanValue() {
         return value;
     }
 }

@@ -59,7 +59,7 @@ package com.lowagie.text.pdf;
  * @see		PdfObject
  */
 
-class PdfNull extends PdfObject implements PdfPrintable {
+public class PdfNull extends PdfObject {
     
     // static membervariables
     
@@ -79,17 +79,5 @@ class PdfNull extends PdfObject implements PdfPrintable {
     
     private PdfNull() {
         super(NULL, CONTENT);
-    }
-    
-    // implementation of the PdfPrintable method(s)
-    
-/**
- * Returns the <CODE>String</CODE>-representation of this <CODE>PdfObject</CODE>.
- *
- * @return		a <CODE>String</CODE>
- */
-    
-    public final String toString() {
-        return NOTHING;
     }
 }

@@ -281,7 +281,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @param	alignment		the new alignment
  */
     
-    public final void setAlignment(int alignment) {
+    public void setAlignment(int alignment) {
         this.alignment = alignment;
     }
     
@@ -291,7 +291,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @param	alignment		the new alignment as a <CODE>String</CODE>
  */
     
-    public final void setAlignment(String alignment) {
+    public void setAlignment(String alignment) {
         if (ElementTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
             this.alignment = Element.ALIGN_CENTER;
             return;
@@ -313,7 +313,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @param	indentation		the new indentation
  */
     
-    public final void setIndentationLeft(float indentation) {
+    public void setIndentationLeft(float indentation) {
         this.indentationLeft = indentation;
     }
     
@@ -323,7 +323,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @param	indentation		the new indentation
  */
     
-    public final void setIndentationRight(float indentation) {
+    public void setIndentationRight(float indentation) {
         this.indentationRight = indentation;
     }
     
@@ -333,7 +333,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @param   keeptogether    true of the paragraph may not be split over 2 pages
  */
     
-    public final void setKeepTogether(boolean keeptogether) {
+    public void setKeepTogether(boolean keeptogether) {
         this.keeptogether = keeptogether;
     }
     
@@ -343,7 +343,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @return  true if the paragraph may not be split over 2 pages.
  */
     
-    public final boolean getKeepTogether() {
+    public boolean getKeepTogether() {
         return keeptogether;
     }
     
@@ -355,7 +355,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @return	alignment
  */
     
-    public final int alignment() {
+    public int alignment() {
         return alignment;
     }
     
@@ -365,7 +365,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @return	the indentation
  */
     
-    public final float indentationLeft() {
+    public float indentationLeft() {
         return indentationLeft;
     }
     
@@ -375,7 +375,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
  * @return	the indentation
  */
     
-    public final float indentationRight() {
+    public float indentationRight() {
         return indentationRight;
     }
     

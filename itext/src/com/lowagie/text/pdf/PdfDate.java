@@ -102,7 +102,6 @@ class PdfDate extends PdfString {
         int zone = Math.abs(d.get(GregorianCalendar.ZONE_OFFSET) / (60 * 1000)) - (timezone * 60);
         date.append(setLength(zone, 2)).append("'");
         value = date.toString();
-        setContent(value);
     }
     
 /**

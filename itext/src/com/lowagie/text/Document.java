@@ -106,7 +106,7 @@ public class Document implements DocListener {
     // membervariables
     
 /** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-    public static final String ITEXT_VERSION = "iText by lowagie.com (r0.92)";
+    private static final String ITEXT_VERSION = "itext-paulo (lowagie.com) - build 98";
     
 /** Allows the pdf documents to be produced without compression for debugging purposes. */
     public static boolean compress = true; 
@@ -197,7 +197,7 @@ public class Document implements DocListener {
  * @param	listener	the new DocListener.
  */
     
-    public final void addDocListener(DocListener listener) {
+    public void addDocListener(DocListener listener) {
         listeners.add(listener);
     }
     
@@ -207,7 +207,7 @@ public class Document implements DocListener {
  * @param	listener	the DocListener that has to be removed.
  */
     
-    public final void removeDocListener(DocListener listener) {
+    public void removeDocListener(DocListener listener) {
         listeners.remove(listener);
     }
     
@@ -756,7 +756,17 @@ public class Document implements DocListener {
         return this.pageSize;
     }
     
+    /** Checks if the document is open.
+     * @return <CODE>true</CODE> if the document is open
+     */    
     public boolean isOpen() {
         return open;
+    }
+    
+    /** Gets the iText version.
+     * @return iText version
+     */    
+    public static String getVersion() {
+        return ITEXT_VERSION;
     }
 }

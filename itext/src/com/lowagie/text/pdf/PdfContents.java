@@ -127,9 +127,11 @@ class PdfContents extends PdfStream {
                 content.getInternalBuffer().writeTo(out);
                 out.write(RESTORESTATE);
             }
-            out.write(SAVESTATE);
-            text.getInternalBuffer().writeTo(out);
-            out.write(RESTORESTATE);
+            if (text != null) {
+                out.write(SAVESTATE);
+                text.getInternalBuffer().writeTo(out);
+                out.write(RESTORESTATE);
+            }
             if (secondContent.size() > 0) {
                 secondContent.getInternalBuffer().writeTo(out);
             }
@@ -138,8 +140,8 @@ class PdfContents extends PdfStream {
         catch (Exception e) {
             throw new BadPdfFormatException(e.getMessage());
         }
-        dictionary.put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
+        put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
         if (compressed)
-            dictionary.put(PdfName.FILTER, PdfName.FLATEDECODE);
+            put(PdfName.FILTER, PdfName.FLATEDECODE);
     }
 }

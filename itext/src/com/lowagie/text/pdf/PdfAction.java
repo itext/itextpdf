@@ -64,23 +64,23 @@ public class PdfAction extends PdfDictionary {
     
     /** A named action to go to the first page.
      */
-    public final static int FIRSTPAGE = 1;
+    public static final int FIRSTPAGE = 1;
     /** A named action to go to the previous page.
      */
-    public final static int PREVPAGE = 2;
+    public static final int PREVPAGE = 2;
     /** A named action to go to the next page.
      */
-    public final static int NEXTPAGE = 3;
+    public static final int NEXTPAGE = 3;
     /** A named action to go to the last page.
      */
-    public final static int LASTPAGE = 4;
+    public static final int LASTPAGE = 4;
     // constructors
-    public final static int SUBMIT_EXCLUDE = 1;
-    public final static int SUBMIT_INCLUDE_NO_VALUE_FIELDS = 2;
-    public final static int SUBMIT_HTML_FORMAT = 4;
-    public final static int SUBMIT_HTML_GET = 8;
-    public final static int SUBMIT_COORDINATES = 16;
-    public final static int RESET_EXCLUDE = 1;
+    public static final int SUBMIT_EXCLUDE = 1;
+    public static final int SUBMIT_INCLUDE_NO_VALUE_FIELDS = 2;
+    public static final int SUBMIT_HTML_FORMAT = 4;
+    public static final int SUBMIT_HTML_GET = 8;
+    public static final int SUBMIT_COORDINATES = 16;
+    public static final int RESET_EXCLUDE = 1;
     
     /** Create an empty action.
      */    
@@ -206,7 +206,7 @@ public class PdfAction extends PdfDictionary {
     }
     
     /** Creates a JavaScript action. If the JavaScript is smaller than
-     * 50 characters it will be place as a string, otherwise it will
+     * 50 characters it will be placed as a string, otherwise it will
      * be placed as a compressed stream.
      * @param code the JavaScript code
      * @param writer the writer for this action
@@ -226,7 +226,7 @@ public class PdfAction extends PdfDictionary {
         }
         else {
             try {
-                byte b[] = code.getBytes(unicode ? PdfObject.TEXT_UNICODE : PdfObject.ENCODING);
+                byte b[] = PdfEncodings.convertToBytes(code, unicode ? PdfObject.TEXT_UNICODE : PdfObject.ENCODING);
                 PdfStream stream = new PdfStream(b);
                 stream.flateCompress();
                 js.put(PdfName.JS, writer.addToBody(stream).getIndirectReference());

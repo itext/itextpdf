@@ -144,7 +144,7 @@ class PdfProcSet implements PdfResource {
  * @return		a <CODE>PdfName</CODE>.
  */
     
-    public final PdfName key() {
+    public PdfName key() {
         return PdfName.PROCSET;
     }
     
@@ -154,7 +154,7 @@ class PdfProcSet implements PdfResource {
  * @return		a <CODE>PdfObject</CODE>
  */
     
-    public final PdfObject value() {
+    public PdfObject value() {
         return value;
     }
     
@@ -165,7 +165,7 @@ class PdfProcSet implements PdfResource {
  * @return		a <CODE>PdfArray</CODE>
  */
     
-    final static PdfArray getProcSet(int procset) {
+    static final PdfArray getProcSet(int procset) {
         PdfArray tmp = new PdfArray();
         for (int i = 0; i < N; i++) {
             if ((procset & types[i]) > 0) {

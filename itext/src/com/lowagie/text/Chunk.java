@@ -298,7 +298,7 @@ public class Chunk implements Element, MarkupAttributes {
  * @return	a <CODE>Font</CODE>
  */
     
-    public final Font font() {
+    public Font font() {
         return font;
     }
     
@@ -318,7 +318,7 @@ public class Chunk implements Element, MarkupAttributes {
  * @return	a <CODE>String</CODE>
  */
     
-    public final String content() {
+    public String content() {
         return content.toString();
     }
     
@@ -328,7 +328,7 @@ public class Chunk implements Element, MarkupAttributes {
  * @return	<CODE>false</CODE> if the Chunk contains other characters than space.
  */
     
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         return (content.toString().trim().length() == 0) && (content.toString().indexOf("\n") == -1) && (attributes == null);
     }
     

@@ -153,7 +153,7 @@ class Type1Font extends BaseFont
 /** Types of records in a PFB file. ASCII is 1 and BINARY is 2.
  *  They have to appear in the PFB file in this sequence.
  */
-    private final static int pfbTypes[] = {1, 2, 1};
+    private static final int pfbTypes[] = {1, 2, 1};
     
     /** Creates a new Type1 font.
      * @param ttfAfm the AFM file if the input is made with a <CODE>byte</CODE> array
@@ -218,7 +218,7 @@ class Type1Font extends BaseFont
                     afm = Helvetica1.afm;
                     afm += Helvetica2.afm;
                 }
-                rf = new RandomAccessFileOrArray(afm.getBytes(PdfObject.ENCODING));
+                rf = new RandomAccessFileOrArray(PdfEncodings.convertToBytes(afm, WINANSI));
                 process(rf);
             }
             finally {

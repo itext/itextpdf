@@ -57,6 +57,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Paint;
+import java.awt.GradientPaint;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -82,6 +83,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.renderable.RenderableImage;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.text.CharacterIterator;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
@@ -90,9 +92,9 @@ import java.util.Hashtable;
 
 public class PdfGraphics2D extends Graphics2D {
     
-    private final static int FILL = 1;
-    private final static int STROKE = 2;
-    private final static int CLIP = 3;
+    private static final int FILL = 1;
+    private static final int STROKE = 2;
+    private static final int CLIP = 3;
     
     private static AffineTransform IDENTITY = new AffineTransform();
     
@@ -143,7 +145,6 @@ public class PdfGraphics2D extends Graphics2D {
         clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         clip(clip);
         cb.saveState();
-        clip = null;
     }
     
     /**
@@ -924,7 +925,20 @@ public class PdfGraphics2D extends Graphics2D {
         this.paint = paint;
         if (paint instanceof Color) {
             cb.setColorFill((Color)paint);
-        } else {
+        }
+        else if (paint instanceof GradientPaint) {
+            GradientPaint gp = (GradientPaint)paint;
+            Point2D p1 = gp.getPoint1();
+            transform.transform(p1, p1);
+            Point2D p2 = gp.getPoint2();
+            transform.transform(p2, p2);
+            Color c1 = gp.getColor1();
+            Color c2 = gp.getColor2();
+            PdfShading shading = PdfShading.simpleAxial(cb.getPdfWriter(), (float)p1.getX(), (float)p1.getY(), (float)p2.getX(), (float)p2.getY(), c1, c2);
+            PdfShadingPattern pat = new PdfShadingPattern(shading);
+            cb.setShadingFill(pat);
+        }
+        else {
             try {
                 BufferedImage img = null;
                 int type = BufferedImage.TYPE_4BYTE_ABGR;

@@ -73,39 +73,43 @@ import com.lowagie.text.ExceptionConverter;
  * @see		PdfIndirectReference
  */
 
-abstract class PdfObject {
+public abstract class PdfObject {
     
     // static membervariables (all the possible types of a PdfObject)
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    static final int NULL = 0;
+    public static final int NULL = 0;
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    static final int BOOLEAN = 1;
+    public static final int BOOLEAN = 1;
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    static final int NUMBER = 2;
+    public static final int NUMBER = 2;
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    static final int STRING = 3;
+    public static final int STRING = 3;
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    static final int NAME = 4;
+    public static final int NAME = 4;
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    static final int ARRAY = 5;
+    public static final int ARRAY = 5;
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    static final int DICTIONARY = 6;
+    public static final int DICTIONARY = 6;
     
 /** a possible type of <CODE>PdfObject</CODE> */
-    static final int STREAM = 7;
-    
+    public static final int STREAM = 7;
+
+    public static final int INDIRECT = 10;    
+
 /** This is an empty string used for the <CODE>PdfNull</CODE>-object and for an empty <CODE>PdfString</CODE>-object. */
     public static final String NOTHING = "";
     
-/** This is the default encoding to be used for converting Strings into bytes and vice versa. */
-    public static final String ENCODING = "ISO-8859-1";
+/** This is the default encoding to be used for converting Strings into bytes and vice versa.
+ * The default encoding is PdfDocEcoding.
+ */
+    public static final String ENCODING = "PDF";
     
 /** This is the encoding to be used to output text in Unicode. */
     public static final String TEXT_UNICODE = "UnicodeBig";
@@ -113,7 +117,7 @@ abstract class PdfObject {
     // membervariables
     
 /** the content of this <CODE>PdfObject</CODE> */
-    protected byte[] bytes = new byte[0];
+    protected byte[] bytes;
     
 /** the type of this <CODE>PdfObject</CODE> */
     protected int type;
@@ -138,13 +142,8 @@ abstract class PdfObject {
  */
     
     protected PdfObject(int type, String content) {
-        try {
-            bytes = content.getBytes(ENCODING);
-        }
-        catch(UnsupportedEncodingException uee) {
-            throw new ExceptionConverter(uee);
-        }
         this.type = type;
+        bytes = PdfEncodings.convertToBytes(content, null);
     }
     
 /**
@@ -184,7 +183,7 @@ abstract class PdfObject {
  * @return		a length
  */
     
-    final int pdfLength() {
+    public int pdfLength() {
         return toPdf(null).length;
     }
     
@@ -195,12 +194,7 @@ abstract class PdfObject {
  */
     
     public String toString() {
-        try {
-            return new String(toPdf(null), ENCODING);
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
+        return PdfEncodings.convertToString(bytes, null);
     }
     
 /**
@@ -229,12 +223,7 @@ abstract class PdfObject {
  */
     
     protected void setContent(String content) {
-        try {
-            bytes = content.getBytes(ENCODING);
-        }
-        catch(UnsupportedEncodingException uee) {
-            throw new ExceptionConverter(uee);
-        }
+        bytes = PdfEncodings.convertToBytes(content, null);
     }
     
     // methods dealing with the type of this object
@@ -245,7 +234,7 @@ abstract class PdfObject {
  * @return		a type
  */
     
-    final int type() {
+    public int type() {
         return type;
     }
     
@@ -255,7 +244,7 @@ abstract class PdfObject {
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
-    public final boolean isNull() {
+    public boolean isNull() {
         return (this.type == NULL);
     }
     
@@ -265,7 +254,7 @@ abstract class PdfObject {
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
-    public final boolean isBoolean() {
+    public boolean isBoolean() {
         return (this.type == BOOLEAN);
     }
     
@@ -275,7 +264,7 @@ abstract class PdfObject {
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
-    public final boolean isNumber() {
+    public boolean isNumber() {
         return (this.type == NUMBER);
     }
     
@@ -285,7 +274,7 @@ abstract class PdfObject {
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
-    public final boolean isString() {
+    public boolean isString() {
         return (this.type == STRING);
     }
     
@@ -295,7 +284,7 @@ abstract class PdfObject {
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
-    final boolean isName() {
+    public boolean isName() {
         return (this.type == NAME);
     }
     
@@ -305,7 +294,7 @@ abstract class PdfObject {
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
-    final boolean isArray() {
+    public boolean isArray() {
         return (this.type == ARRAY);
     }
     
@@ -315,7 +304,7 @@ abstract class PdfObject {
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
-    final boolean isDictionary() {
+    public boolean isDictionary() {
         return (this.type == DICTIONARY);
     }
     
@@ -325,7 +314,7 @@ abstract class PdfObject {
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
-    final boolean isStream() {
+    public boolean isStream() {
         return (this.type == STREAM);
     }
 }

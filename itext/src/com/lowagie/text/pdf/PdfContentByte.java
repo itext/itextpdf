@@ -172,7 +172,7 @@ public class PdfContentByte {
      * @param		other		another <CODE>PdfByteContent</CODE>-object
      */
     
-    public final void add(PdfContentByte other) {
+    public void add(PdfContentByte other) {
         if (other.writer != null && writer != other.writer)
             throw new RuntimeException("Inconsistent writers. Are you mixing two documents?");
         content.append(other.content);
@@ -214,7 +214,7 @@ public class PdfContentByte {
      * @param		flatness		a value
      */
     
-    public final void setFlatness(float flatness) {
+    public void setFlatness(float flatness) {
         if (flatness >= 0 && flatness <= 100) {
             content.append(flatness).append(" i").append_i(separator);
         }
@@ -230,7 +230,7 @@ public class PdfContentByte {
      * @param		style		a value
      */
     
-    public final void setLineCap(int style) {
+    public void setLineCap(int style) {
         if (style >= 0 && style <= 2) {
             content.append(style).append(" J").append_i(separator);
         }
@@ -247,7 +247,7 @@ public class PdfContentByte {
      * @param		phase		the value of the phase
      */
     
-    public final void setLineDash(float phase) {
+    public void setLineDash(float phase) {
         content.append("[] ").append(phase).append(" d").append_i(separator);
     }
     
@@ -263,7 +263,7 @@ public class PdfContentByte {
      * @param		unitsOn		the number of units that must be 'on' (equals the number of units that must be 'off').
      */
     
-    public final void setLineDash(float unitsOn, float phase) {
+    public void setLineDash(float unitsOn, float phase) {
         content.append("[").append(unitsOn).append("] ").append(phase).append(" d").append_i(separator);
     }
     
@@ -280,7 +280,7 @@ public class PdfContentByte {
      * @param		unitsOff	the number of units that must be 'off'
      */
     
-    public final void setLineDash(float unitsOn, float unitsOff, float phase) {
+    public void setLineDash(float unitsOn, float unitsOff, float phase) {
         content.append("[").append(unitsOn).append(' ').append(unitsOff).append("] ").append(phase).append(" d").append_i(separator);
     }
     
@@ -294,7 +294,7 @@ public class PdfContentByte {
      * @param		style		a value
      */
     
-    public final void setLineJoin(int style) {
+    public void setLineJoin(int style) {
         if (style >= 0 && style <= 2) {
             content.append(style).append(" j").append_i(separator);
         }
@@ -309,7 +309,7 @@ public class PdfContentByte {
      * @param		w			a width
      */
     
-    public final void setLineWidth(float w) {
+    public void setLineWidth(float w) {
         content.append(w).append(" w").append_i(separator);
     }
     
@@ -324,7 +324,7 @@ public class PdfContentByte {
      * @param		miterLimit		a miter limit
      */
     
-    public final void setMiterLimit(float miterLimit) {
+    public void setMiterLimit(float miterLimit) {
         if (miterLimit > 1) {
             content.append(miterLimit).append(" M").append_i(separator);
         }
@@ -336,7 +336,7 @@ public class PdfContentByte {
      * path.
      */
     
-    public final void clip() {
+    public void clip() {
         content.append("W").append_i(separator);
     }
     
@@ -345,7 +345,7 @@ public class PdfContentByte {
      * even-odd rule to determine which regions lie inside the clipping path.
      */
     
-    public final void eoClip() {
+    public void eoClip() {
         content.append("W*").append_i(separator);
     }
     
@@ -561,7 +561,7 @@ public class PdfContentByte {
      * @param		y				new y-coordinate
      */
     
-    public final void moveTo(float x, float y) {
+    public void moveTo(float x, float y) {
         content.append(x).append(' ').append(y).append(" m").append_i(separator);
     }
     
@@ -573,7 +573,7 @@ public class PdfContentByte {
      * @param		y				new y-coordinate
      */
     
-    public final void lineTo(float x, float y) {
+    public void lineTo(float x, float y) {
         content.append(x).append(' ').append(y).append(" l").append_i(separator);
     }
     
@@ -588,7 +588,7 @@ public class PdfContentByte {
      * @param		y3		y-coordinaat of the ending point (= new current point)
      */
     
-    public final void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+    public void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
         content.append(x1).append(' ').append(y1).append(' ').append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" c").append_i(separator);
     }
     
@@ -601,7 +601,7 @@ public class PdfContentByte {
      * @param		y3		y-coordinaat of the ending point (= new current point)
      */
     
-    public final void curveTo(float x2, float y2, float x3, float y3) {
+    public void curveTo(float x2, float y2, float x3, float y3) {
         content.append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" v").append_i(separator);
     }
     
@@ -614,7 +614,7 @@ public class PdfContentByte {
      * @param		y3		y-coordinaat of the ending point (= new current point)
      */
     
-    public final void curveFromTo(float x1, float y1, float x3, float y3) {
+    public void curveFromTo(float x1, float y1, float x3, float y3) {
         content.append(x1).append(' ').append(y1).append(' ').append(x3).append(' ').append(y3).append(" y").append_i(separator);
     }
     
@@ -624,7 +624,7 @@ public class PdfContentByte {
      * @param y y center of circle
      * @param r radius of circle
      */
-    public final void circle(float x, float y, float r) {
+    public void circle(float x, float y, float r) {
         float b = 0.5523f;
         moveTo(x + r, y);
         curveTo(x + r, y + r * b, x + r * b, y + r, x, y + r);
@@ -644,7 +644,7 @@ public class PdfContentByte {
      * @param		h		height
      */
     
-    public final void rectangle(float x, float y, float w, float h) {
+    public void rectangle(float x, float y, float w, float h) {
         content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re").append_i(separator);
     }
     
@@ -654,7 +654,7 @@ public class PdfContentByte {
      * @param		rectangle		a <CODE>Rectangle</CODE>
      */
     
-    public final void rectangle(Rectangle rectangle) {
+    public void rectangle(Rectangle rectangle) {
         
         // the coordinates of the border are retrieved
         float x1 = rectangle.left();
@@ -734,7 +734,7 @@ public class PdfContentByte {
      * to the starting point of the subpath.
      */
     
-    public final void closePath() {
+    public void closePath() {
         content.append("h").append_i(separator);
     }
     
@@ -742,7 +742,7 @@ public class PdfContentByte {
      * Ends the path without filling or stroking it.
      */
     
-    public final void newPath() {
+    public void newPath() {
         content.append("n").append_i(separator);
     }
     
@@ -750,7 +750,7 @@ public class PdfContentByte {
      * Strokes the path.
      */
     
-    public final void stroke() {
+    public void stroke() {
         content.append("S").append_i(separator);
     }
     
@@ -758,7 +758,7 @@ public class PdfContentByte {
      * Closes the path and strokes it.
      */
     
-    public final void closePathStroke() {
+    public void closePathStroke() {
         content.append("s").append_i(separator);
     }
     
@@ -766,7 +766,7 @@ public class PdfContentByte {
      * Fills the path, using the non-zero winding number rule to determine the region to fill.
      */
     
-    public final void fill() {
+    public void fill() {
         content.append("f").append_i(separator);
     }
     
@@ -774,7 +774,7 @@ public class PdfContentByte {
      * Fills the path, using the even-odd rule to determine the region to fill.
      */
     
-    public final void eoFill() {
+    public void eoFill() {
         content.append("f*").append_i(separator);
     }
     
@@ -782,7 +782,7 @@ public class PdfContentByte {
      * Fills the path using the non-zero winding number rule to determine the region to fill and strokes it.
      */
     
-    public final void fillStroke() {
+    public void fillStroke() {
         content.append("B").append_i(separator);
     }
     
@@ -790,7 +790,7 @@ public class PdfContentByte {
      * Closes the path, fills it using the non-zero winding number rule to determine the region to fill and strokes it.
      */
     
-    public final void closePathFillStroke() {
+    public void closePathFillStroke() {
         content.append("b").append_i(separator);
     }
     
@@ -798,7 +798,7 @@ public class PdfContentByte {
      * Fills the path, using the even-odd rule to determine the region to fill and strokes it.
      */
     
-    public final void eoFillStroke() {
+    public void eoFillStroke() {
         content.append("B*").append_i(separator);
     }
     
@@ -806,7 +806,7 @@ public class PdfContentByte {
      * Closes the path, fills it using the even-odd rule to determine the region to fill and strokes it.
      */
     
-    public final void closePathEoFillStroke() {
+    public void closePathEoFillStroke() {
         content.append("b*").append_i(separator);
     }
     
@@ -816,7 +816,7 @@ public class PdfContentByte {
      * @param image the <CODE>Image</CODE> object
      * @throws DocumentException if the <CODE>Image</CODE> does not have absolute positioning
      */
-    final public void addImage(Image image) throws DocumentException {
+    public void addImage(Image image) throws DocumentException {
         if (!image.hasAbsolutePosition())
             throw new DocumentException("The image must have absolute positioning.");
         float matrix[] = image.matrix();
@@ -1007,17 +1007,7 @@ public class PdfContentByte {
         showText2(text);
         content.append("Tj").append_i(separator);
     }
-    
-    /**
-     * Shows the <CODE>text</CODE>.
-     *
-     * @param text the text to write
-     */
-    public void showText(PdfPrintable text) {
-        showText2(text.toString());
-        content.append("Tj").append_i(separator);
-    }
-    
+        
     /**
      * Moves to the next line and shows <CODE>text</CODE>.
      *
@@ -1028,18 +1018,7 @@ public class PdfContentByte {
         showText2(text);
         content.append("'").append_i(separator);
     }
-    
-    /**
-     * Moves to the next line and shows <CODE>text</CODE>.
-     *
-     * @param text the text to write
-     */
-    public void newlineShowText(PdfPrintable text) {
-        state.yTLM -= state.leading;
-        showText2(text.toString());
-        content.append("'").append_i(separator);
-    }
-    
+        
     /**
      * Moves to the next line and shows text string, using the given values of the character and word spacing parameters.
      *
@@ -1660,6 +1639,11 @@ public class PdfContentByte {
                 setPatternStroke(pat.getPainter());
                 break;
             }
+            case ExtendedColor.TYPE_SHADING: {
+                ShadingColor shading = (ShadingColor) color;
+                setShadingStroke(shading.getPdfShadingPattern());
+                break;
+            }
             default:
                 setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -1689,6 +1673,11 @@ public class PdfContentByte {
             case ExtendedColor.TYPE_PATTERN: {
                 PatternColor pat = (PatternColor) color;
                 setPatternFill(pat.getPainter());
+                break;
+            }
+            case ExtendedColor.TYPE_SHADING: {
+                ShadingColor shading = (ShadingColor) color;
+                setShadingFill(shading.getPdfShadingPattern());
                 break;
             }
             default:
@@ -1833,6 +1822,34 @@ public class PdfContentByte {
         content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN").append_i(separator);
     }
     
+    public void paintShading(PdfShading shading) {
+        pdf.addShadingToPage(shading);
+        content.append(shading.getShadingName().toPdf(null)).append(" sh").append_i(separator);
+        ColorDetails details = shading.getColorDetails();
+        if (details != null)
+            pdf.addColor(details.getColorName(), details.getIndirectReference());
+    }
+    
+    public void paintShading(PdfShadingPattern shading) {
+        paintShading(shading.getShading());
+    }
+    
+    public void setShadingFill(PdfShadingPattern shading) {
+        pdf.addShadingPatternToPage(shading);
+        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(shading.getPatternName().toPdf(null)).append(" scn").append_i(separator);
+        ColorDetails details = shading.getColorDetails();
+        if (details != null)
+            pdf.addColor(details.getColorName(), details.getIndirectReference());
+    }
+
+    public void setShadingStroke(PdfShadingPattern shading) {
+        pdf.addShadingPatternToPage(shading);
+        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(shading.getPatternName().toPdf(null)).append(" SCN").append_i(separator);
+        ColorDetails details = shading.getColorDetails();
+        if (details != null)
+            pdf.addColor(details.getColorName(), details.getIndirectReference());
+    }
+
     /** Check if we have a valid PdfWriter.
      *
      */

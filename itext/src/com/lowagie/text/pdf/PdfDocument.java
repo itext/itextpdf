@@ -197,7 +197,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString(Document.ITEXT_VERSION));
+            put(PdfName.PRODUCER, new PdfString(getVersion()));
             // Do not edit the line above!
         }
         
@@ -348,6 +348,19 @@ class PdfDocument extends Document implements DocListener {
             put(PdfName.OPENACTION, action);
         }
         
+        
+        /** Sets the document level additional actions.
+         * @param dictionary of actions
+         */        
+        void setAdditionalActions(PdfDictionary actions) {
+            try {
+                put(PdfName.AA, writer.addToBody(actions).getIndirectReference());            
+            } catch (Exception e) {
+                new ExceptionConverter(e);
+            }
+        }
+
+
         void setPageLabels(PdfPageLabels pageLabels) {
             put(PdfName.PAGELABELS, pageLabels.getDictionary());
         }
@@ -424,6 +437,7 @@ class PdfDocument extends Document implements DocListener {
     /** This checks if the page is empty. */
     private boolean pageEmpty = true;
     
+    private int textEmptySize;
     // resources
     
     /** This is the size of the current Page. */
@@ -447,6 +461,9 @@ class PdfDocument extends Document implements DocListener {
     
     /** This is the PatternDictionary of the current Page. */
     protected PdfPatternDictionary patternDictionary;
+
+    /** This is the ShadingDictionary of the current Page. */
+    protected PdfShadingDictionary shadingDictionary;
     // images
     
     /** This is the list with all the images in the document. */
@@ -500,6 +517,7 @@ class PdfDocument extends Document implements DocListener {
     
     private String openActionName;
     private PdfAction openActionAction;
+    private PdfDictionary additionalActions;
     private PdfPageLabels pageLabels;
     
     //add by Jin-Hsia Yang
@@ -531,7 +549,7 @@ class PdfDocument extends Document implements DocListener {
      * @throws DocumentException on error
      */
     
-    public final void addWriter(PdfWriter writer) throws DocumentException {
+    public void addWriter(PdfWriter writer) throws DocumentException {
         if (this.writer == null) {
             this.writer = writer;
             acroForm = new PdfAcroForm(writer);
@@ -777,6 +795,8 @@ class PdfDocument extends Document implements DocListener {
             resources.add(colorDictionary);
         if (patternDictionary.containsPattern())
             resources.add(patternDictionary);
+        if (shadingDictionary.containsShading())
+            resources.add(shadingDictionary);
         // we make a new page and add it to the document
         PdfPage page;
         int rotation = thisPageSize.getRotation();
@@ -793,7 +813,10 @@ class PdfDocument extends Document implements DocListener {
         if (!open || close) {
             throw new PdfException("The document isn't open.");
         }
-        text.endText();
+        if (text.size() > textEmptySize)
+            text.endText();
+        else
+            text = null;
         PdfIndirectReference pageReference = writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), thisPageSize));
         // we update the outlines
         for (Iterator i = outlines.iterator(); i.hasNext(); ) {
@@ -948,6 +971,16 @@ class PdfDocument extends Document implements DocListener {
         PdfName name = writer.addSimplePattern(painter);
         patternDictionary.put(name, painter.getIndirectReference());
         return name;
+    }
+    
+    public void addShadingPatternToPage(PdfShadingPattern shading) {
+        writer.addSimpleShadingPattern(shading);
+        patternDictionary.put(shading.getPatternName(), shading.getPatternReference());
+    }
+    
+    public void addShadingToPage(PdfShading shading) {
+        writer.addSimpleShading(shading);
+        shadingDictionary.put(shading.getShadingName(), shading.getShadingReference());
     }
     
     /** Adds a <CODE>PdfPTable</CODE> to the document.
@@ -1764,6 +1797,7 @@ class PdfDocument extends Document implements DocListener {
         xObjectDictionary = new PdfXObjectDictionary();
         colorDictionary = new PdfColorDictionary();
         patternDictionary = new PdfPatternDictionary();
+        shadingDictionary = new PdfShadingDictionary();
         writer.resetContent();
         
         // the pagenumber is incremented
@@ -1778,6 +1812,10 @@ class PdfDocument extends Document implements DocListener {
         imageIndentLeft = 0;
         graphics = new PdfContentByte(writer);
         text = new PdfContentByte(writer);
+        text.beginText();
+        text.moveText(left(), top());
+        textEmptySize = text.size();
+        text.reset();
         text.beginText();
         leading = 16;
         indentBottom = 0;
@@ -1983,7 +2021,7 @@ class PdfDocument extends Document implements DocListener {
                 if (chunk.color() != null) {
                     Color color = chunk.color();
                     text.setColorFill(color);
-                    text.showText(chunk);
+                    text.showText(chunk.toString());
                     text.resetRGBColorFill();
                 }
                 else if (chunk.isImage()) {
@@ -1996,7 +2034,7 @@ class PdfDocument extends Document implements DocListener {
                     addImage(graphics, image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                 }
                 else {
-                    text.showText(chunk);
+                    text.showText(chunk.toString());
                 }
                 text.moveText(l.listIndent(), 0);
             }
@@ -2050,6 +2088,11 @@ class PdfDocument extends Document implements DocListener {
         }
         else if (openActionAction != null)
             catalog.setOpenAction(openActionAction);
+
+        if (additionalActions != null)   {            
+            catalog.setAdditionalActions(additionalActions);            
+        }
+
         if (pageLabels != null)
             catalog.setPageLabels(pageLabels);
         catalog.addNames(localDestinations, documentJavaScript, writer);
@@ -2258,29 +2301,29 @@ class PdfDocument extends Document implements DocListener {
             if (chunk.isImage()) {
                 imageWasPresent = true;
             }
-            // If it is a CJK chunk we will have to simulate the
+            // If it is a CJK chunk or Unicode TTF we will have to simulate the
             // space adjustment.
             else if (isJustified && numberOfSpaces > 0 && chunk.isSpecialEncoding()) {
                 String s = chunk.toString();
                 int idx = s.indexOf(' ');
                 if (idx < 0)
-                    text.showText(chunk);
+                    text.showText(chunk.toString());
                 else {
                     float spaceCorrection = - ratio * lastBaseFactor * 1000f / chunk.font.size();
-                    PdfTextArray textArray = new PdfTextArray(new PdfString(s.substring(0, idx), chunk.getEncoding()));
+                    PdfTextArray textArray = new PdfTextArray(s.substring(0, idx));
                     int lastIdx = idx;
                     while ((idx = s.indexOf(' ', lastIdx + 1)) >= 0) {
-                        textArray.add(new PdfNumber(spaceCorrection));
-                        textArray.add(new PdfString(s.substring(lastIdx, idx), chunk.getEncoding()));
+                        textArray.add(spaceCorrection);
+                        textArray.add(s.substring(lastIdx, idx));
                         lastIdx = idx;
                     }
-                    textArray.add(new PdfNumber(spaceCorrection));
-                    textArray.add(new PdfString(s.substring(lastIdx), chunk.getEncoding()));
+                    textArray.add(spaceCorrection);
+                    textArray.add(s.substring(lastIdx));
                     text.showText(textArray);
                 }
             }
             else
-                text.showText(chunk);
+                text.showText(chunk.toString());
             
             if (rise != 0)
                 text.setTextRise(0);
@@ -2537,6 +2580,13 @@ class PdfDocument extends Document implements DocListener {
         openActionName = null;
     }
     
+    void addAdditionalAction(PdfName actionType, PdfAction action)  {        
+        if (additionalActions == null)  {            
+            additionalActions = new PdfDictionary();            
+        }        
+        additionalActions.put(actionType, action);        
+    }
+
     void setPageLabels(PdfPageLabels pageLabels) {
         this.pageLabels = pageLabels;
     }

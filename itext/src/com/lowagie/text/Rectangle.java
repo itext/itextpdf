@@ -70,25 +70,25 @@ public class Rectangle implements Element, MarkupAttributes {
     // static membervariables (concerning the presence of borders)
     
 /** This is the value that will be used as <VAR>undefined</VAR>. */
-    public final static int UNDEFINED = -1;
+    public static final int UNDEFINED = -1;
     
 /** This represents one side of the border of the <CODE>Rectangle</CODE>. */
-    public final static int TOP = 1;
+    public static final int TOP = 1;
     
 /** This represents one side of the border of the <CODE>Rectangle</CODE>. */
-    public final static int BOTTOM = 2;
+    public static final int BOTTOM = 2;
     
 /** This represents one side of the border of the <CODE>Rectangle</CODE>. */
-    public final static int LEFT = 4;
+    public static final int LEFT = 4;
     
 /** This represents one side of the border of the <CODE>Rectangle</CODE>. */
-    public final static int RIGHT = 8;
+    public static final int RIGHT = 8;
     
 /** This represents a rectangle without borders. */
-    public final static int NO_BORDER = 0;
+    public static final int NO_BORDER = 0;
     
 /** This represents a type of border. */
-    public final static int BOX = TOP + BOTTOM + LEFT + RIGHT;
+    public static final int BOX = TOP + BOTTOM + LEFT + RIGHT;
     
     // membervariables
     
@@ -459,7 +459,7 @@ public class Rectangle implements Element, MarkupAttributes {
  * @return	a boolean
  */
     
-    public final boolean hasBorders() {
+    public boolean hasBorders() {
         return border > 0 && borderWidth > 0;
     }
     
@@ -470,7 +470,7 @@ public class Rectangle implements Element, MarkupAttributes {
  * @return	a boolean
  */
     
-    public final boolean hasBorder(int type) {
+    public boolean hasBorder(int type) {
         return border != UNDEFINED && (border & type) == type;
     }
     
@@ -480,7 +480,7 @@ public class Rectangle implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final int border() {
+    public int border() {
         return border;
     }
     
@@ -500,7 +500,7 @@ public class Rectangle implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final Color borderColor() {
+    public Color borderColor() {
         return color;
     }
     
@@ -510,7 +510,7 @@ public class Rectangle implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final Color backgroundColor() {
+    public Color backgroundColor() {
         return background;
     }
     
@@ -520,11 +520,11 @@ public class Rectangle implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float grayFill() {
+    public float grayFill() {
         return grayFill;
     }
     
-    public final int getRotation() {
+    public int getRotation() {
         return rotation;
     }
     

@@ -139,7 +139,7 @@ public class PdfWriter extends DocWriter {
              * @return		an array of <CODE>byte</CODE>s
              */
             
-            final byte[] toPdf(PdfWriter writer) {
+            byte[] toPdf(PdfWriter writer) {
                 // This code makes it more difficult to port the lib to JDK1.1.x:
                 // StringBuffer off = new StringBuffer("0000000000").append(offset);
                 // off.delete(0, off.length() - 10);
@@ -199,7 +199,7 @@ public class PdfWriter extends DocWriter {
          * @return		a <CODE>PdfIndirectObject</CODE>
          */
         
-        final PdfIndirectObject add(PdfObject object) {
+        PdfIndirectObject add(PdfObject object) {
             PdfIndirectObject indirect = new PdfIndirectObject(size(), object, writer);
             xrefs.add(new PdfCrossReference(position));
             position += indirect.length();
@@ -211,12 +211,12 @@ public class PdfWriter extends DocWriter {
          * @return a PdfIndirectReference
          */
         
-        final PdfIndirectReference getPdfIndirectReference() {
+        PdfIndirectReference getPdfIndirectReference() {
             xrefs.add(new PdfCrossReference(0));
             return new PdfIndirectReference(0, size() - 1);
         }
         
-        final int getIndirectReferenceNumber() {
+        int getIndirectReferenceNumber() {
             xrefs.add(new PdfCrossReference(0));
             return size() - 1;
         }
@@ -236,14 +236,14 @@ public class PdfWriter extends DocWriter {
          * @return		a <CODE>PdfIndirectObject</CODE>
          */
         
-        final PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) {
+        PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) {
             PdfIndirectObject indirect = new PdfIndirectObject(ref.getNumber(), object, writer);
             xrefs.set(ref.getNumber(), new PdfCrossReference(position));
             position += indirect.length();
             return indirect;
         }
         
-        final PdfIndirectObject add(PdfObject object, int refNumber) {
+        PdfIndirectObject add(PdfObject object, int refNumber) {
             PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
             xrefs.set(refNumber, new PdfCrossReference(position));
             position += indirect.length();
@@ -257,7 +257,7 @@ public class PdfWriter extends DocWriter {
          * @return		a <CODE>PdfIndirectObject</CODE>
          */
         
-        final PdfIndirectObject add(PdfResources object) {
+        PdfIndirectObject add(PdfResources object) {
             return add(object);
         }
         
@@ -268,7 +268,7 @@ public class PdfWriter extends DocWriter {
          * @return		a <CODE>PdfIndirectObject</CODE>
          */
         
-        final PdfIndirectObject add(PdfPages object) {
+        PdfIndirectObject add(PdfPages object) {
             PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object, writer);
             rootOffset = position;
             position += indirect.length();
@@ -281,7 +281,7 @@ public class PdfWriter extends DocWriter {
          * @return		an offset
          */
         
-        final int offset() {
+        int offset() {
             return position;
         }
         
@@ -291,7 +291,7 @@ public class PdfWriter extends DocWriter {
          * @return	a number of objects
          */
         
-        final int size() {
+        int size() {
             return xrefs.size();
         }
         
@@ -301,7 +301,7 @@ public class PdfWriter extends DocWriter {
          * @return	an array of <CODE>byte</CODE>s
          */
         
-        final byte[] getCrossReferenceTable() {
+        byte[] getCrossReferenceTable() {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             try {
                 stream.write(getISOBytes("xref\n0 "));
@@ -381,7 +381,7 @@ public class PdfWriter extends DocWriter {
          * @return		an array of <CODE>byte</CODE>s
          */
         
-        final byte[] toPdf(PdfWriter writer) {
+        byte[] toPdf(PdfWriter writer) {
             return bytes;
         }
     }
@@ -449,7 +449,13 @@ public class PdfWriter extends DocWriter {
     public static final boolean STRENGTH40BITS = false;
     /** Type of encryption */
     public static final boolean STRENGTH128BITS = true;
-    
+
+    public static final PdfName DOCUMENT_CLOSE = PdfName.DC;
+    public static final PdfName WILL_SAVE = PdfName.WS;
+    public static final PdfName DID_SAVE = PdfName.DS;
+    public static final PdfName WILL_PRINT = PdfName.WP;
+    public static final PdfName DID_PRINT = PdfName.DP;
+
     public static final int SIGNATURE_EXISTS = 1;
     public static final int SIGNATURE_APPEND_ONLY = 2;
     
@@ -505,6 +511,10 @@ public class PdfWriter extends DocWriter {
     
     /** The patterns of this document */
     protected HashMap documentPatterns = new HashMap();
+    
+    protected HashMap documentShadings = new HashMap();
+    
+    protected HashMap documentShadingPatterns = new HashMap();
     
     protected ColorDetails patternColorspaceRGB;
     protected ColorDetails patternColorspaceGRAY;
@@ -742,7 +752,7 @@ public class PdfWriter extends DocWriter {
                 // add the color
                 for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
                     ColorDetails color = (ColorDetails)it.next();
-                    PdfIndirectObject cobj = body.add(color.getSpotColor(), color.getIndirectReference());
+                    PdfIndirectObject cobj = body.add(color.getSpotColor(this), color.getIndirectReference());
                     cobj.writeTo(os);
                 }
                 // add the pattern
@@ -750,6 +760,16 @@ public class PdfWriter extends DocWriter {
                     PdfPatternPainter pat = (PdfPatternPainter)it.next();
                     PdfIndirectObject pobj = body.add(pat.getPattern(), pat.getIndirectReference());
                     pobj.writeTo(os);
+                }
+                // add the shading patterns
+                for (Iterator it = documentShadingPatterns.keySet().iterator(); it.hasNext();) {
+                    PdfShadingPattern shadingPattern = (PdfShadingPattern)it.next();
+                    shadingPattern.addToBody();
+                }
+                // add the shadings
+                for (Iterator it = documentShadings.keySet().iterator(); it.hasNext();) {
+                    PdfShading shading = (PdfShading)it.next();
+                    shading.addToBody();
                 }
                 // add the root to the body
                 PdfIndirectObject rootObject = body.add(root);
@@ -907,7 +927,7 @@ public class PdfWriter extends DocWriter {
     public PdfAcroForm getAcroForm() {
         return pdf.getAcroForm();
     }
-    
+
     /** Gets the root outline.
      * @return the root outline
      */
@@ -983,8 +1003,8 @@ public class PdfWriter extends DocWriter {
     
     ColorDetails addSimplePatternColorspace(Color color) {
         int type = ExtendedColor.getType(color);
-        if (type == ExtendedColor.TYPE_PATTERN)
-            throw new RuntimeException("An uncolored tile pattern can not have another pattern as color.");
+        if (type == ExtendedColor.TYPE_PATTERN || type == ExtendedColor.TYPE_SHADING)
+            throw new RuntimeException("An uncolored tile pattern can not have another pattern or shding as color.");
         try {
             switch (type) {
                 case ExtendedColor.TYPE_RGB:
@@ -1024,6 +1044,7 @@ public class PdfWriter extends DocWriter {
                         array.add(details.getIndirectReference());
                         PdfIndirectObject cobj = body.add(array, patternDetails.getIndirectReference());
                         cobj.writeTo(os);
+                        documentSpotPatterns.put(details, patternDetails);
                     }
                     return patternDetails;
                 }
@@ -1036,7 +1057,21 @@ public class PdfWriter extends DocWriter {
         }
     }
     
+    void addSimpleShadingPattern(PdfShadingPattern shading) {
+        if (!documentShadingPatterns.containsKey(shading)) {
+            shading.setName(patternNumber);
+            ++patternNumber;
+            documentShadingPatterns.put(shading, null);
+            addSimpleShading(shading.getShading());
+        }
+    }
     
+    void addSimpleShading(PdfShading shading) {
+        if (!documentShadings.containsKey(shading)) {
+            documentShadings.put(shading, null);
+            shading.setName(documentShadings.size());
+        }
+    }
     
     /**
      * Gets the <CODE>PdfDocument</CODE> associated with this writer.
@@ -1257,6 +1292,27 @@ public class PdfWriter extends DocWriter {
         pdf.setOpenAction(name);
     }
     
+    /** Additional-actions defining the actions to be taken in
+     * response to various trigger events affecting the document
+     * as a whole. The actions types allowed are: <CODE>DOCUMENT_CLOSE</CODE>,
+     * <CODE>WILL_SAVE</CODE>, <CODE>DID_SAVE</CODE>, <CODE>WILL_PRINT</CODE>
+     * and <CODE>DID_PRINT</CODE>.
+     *
+     * @param actionType the action type
+     * @param action the action to execute in response to the trigger
+     * @throws PdfException on invalid action type
+     */    
+    public void setAdditionalAction(PdfName actionType, PdfAction action) throws PdfException {
+        if (!(actionType.equals(DOCUMENT_CLOSE) ||        
+            actionType.equals(WILL_SAVE) ||            
+            actionType.equals(DID_SAVE) ||            
+            actionType.equals(WILL_PRINT) ||            
+            actionType.equals(DID_PRINT))) {                
+                throw new PdfException("Invalid additional action type.");
+        }        
+        pdf.addAdditionalAction(actionType, action);        
+    }
+
     /** When the document opens this <CODE>action</CODE> will be
      * invoked.
      * @param action the action to be invoked
@@ -1405,5 +1461,4 @@ public class PdfWriter extends DocWriter {
     public void setPdfVersion(char version) {
         HEADER[VPOINT] = (byte)version;
     }
-
 }

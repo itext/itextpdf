@@ -72,7 +72,7 @@ import java.util.Iterator;
  * @see		com.lowagie.text.Font
  */
 
-class PdfChunk extends PdfString implements SplitCharacter{
+class PdfChunk implements SplitCharacter{
 
 /** The allowed attributes in variable <CODE>attributes</CODE>. */
     private static final HashMap keysAttributes = new HashMap();
@@ -98,6 +98,13 @@ class PdfChunk extends PdfString implements SplitCharacter{
     }
     
     // membervariables
+
+    /** The value of this object. */
+    protected String value = PdfObject.NOTHING;
+    
+    /** The encoding. */
+    protected String encoding = PdfObject.ENCODING;
+    
     
 /** The font for this <CODE>PdfChunk</CODE>. */
     protected PdfFont font;
@@ -142,7 +149,7 @@ class PdfChunk extends PdfString implements SplitCharacter{
  */
     
     private PdfChunk(String string, PdfFont font, HashMap attributes, HashMap noStroke) {
-        super(string);
+        value = string;
         this.font = font;
         this.attributes = attributes;
         this.noStroke = noStroke;
@@ -165,7 +172,7 @@ class PdfChunk extends PdfString implements SplitCharacter{
  */
     
     PdfChunk(Chunk chunk, PdfAction action) {
-        super(chunk.content());
+        value = chunk.content();
         
         Font f = chunk.font();
         float size = f.size();
@@ -344,7 +351,6 @@ class PdfChunk extends PdfString implements SplitCharacter{
                 if (value.length() < 1) {
                     value = " ";
                 }
-                setContent(value);
                 PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
                 return pc;
             }
@@ -369,7 +375,6 @@ class PdfChunk extends PdfString implements SplitCharacter{
         if (splitPosition < 0) {
             String returnValue = value;
             value = "";
-            setContent(value);
             PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
             return pc;
         }
@@ -383,7 +388,6 @@ class PdfChunk extends PdfString implements SplitCharacter{
                 if (post.length() > 0) {
                     String returnValue = post + value.substring(wordIdx);
                     value = trim(value.substring(0, lastSpace) + pre);
-                    setContent(value);
                     PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
                     return pc;
                 }
@@ -391,7 +395,6 @@ class PdfChunk extends PdfString implements SplitCharacter{
         }
         String returnValue = value.substring(splitPosition);
         value = trim(value.substring(0, splitPosition));
-        setContent(value);
         PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
         return pc;
     }
@@ -426,7 +429,6 @@ class PdfChunk extends PdfString implements SplitCharacter{
         if (width < font.width()) {
             String returnValue = value.substring(1);
             value = value.substring(0, 1);
-            setContent(value);
             PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
             return pc;
         }
@@ -457,7 +459,6 @@ class PdfChunk extends PdfString implements SplitCharacter{
         }
         String returnValue = value.substring(currentPosition);
         value = value.substring(0, currentPosition);
-        setContent(value);
         PdfChunk pc = new PdfChunk(returnValue, font, attributes, noStroke);
         return pc;
     }
@@ -535,7 +536,6 @@ class PdfChunk extends PdfString implements SplitCharacter{
     {
         if (value.length() > 1 && value.endsWith(" ")) {
             value = value.substring(0, value.length() - 1);
-            setContent(value);
             return font.width(' ');
         }
         return 0;
@@ -645,9 +645,33 @@ class PdfChunk extends PdfString implements SplitCharacter{
     void setValue(String value)
     {
         this.value = value;
-        setContent(value);
     }
 
+    public String toString() {
+        return value;
+    }
+
+    /**
+     * Tells you if this string is in Chinese, Japanese, Korean or Identity-H.
+     */
+    
+    boolean isSpecialEncoding() {
+        return encoding.equals(CJKFont.CJK_ENCODING) || encoding.equals(BaseFont.IDENTITY_H);
+    }
+    
+    /**
+     * Gets the encoding of this string.
+     *
+     * @return		a <CODE>String</CODE>
+     */
+    
+    String getEncoding() {
+        return encoding;
+    }
+
+    int length() {
+        return value.length();
+    }
 /**
  * Checks if a character can be used to split a <CODE>PdfString</CODE>.
  * <P>

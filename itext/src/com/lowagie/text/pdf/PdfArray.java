@@ -69,7 +69,7 @@ import com.lowagie.text.DocWriter;
  * @see		PdfObject
  */
 
-class PdfArray extends PdfObject {
+public class PdfArray extends PdfObject {
     
     // membervariables
     
@@ -82,7 +82,7 @@ class PdfArray extends PdfObject {
  * Constructs an empty <CODE>PdfArray</CODE>-object.
  */
     
-    PdfArray() {
+    public PdfArray() {
         super(ARRAY);
         arrayList = new ArrayList();
     }
@@ -93,10 +93,22 @@ class PdfArray extends PdfObject {
  * @param	object		a <CODE>PdfObject</CODE> that has to be added to the array
  */
     
-    PdfArray(PdfObject object) {
+    public PdfArray(PdfObject object) {
         super(ARRAY);
         arrayList = new ArrayList();
         arrayList.add(object);
+    }
+    
+    public PdfArray(float values[]) {
+        super(ARRAY);
+        arrayList = new ArrayList();
+        add(values);
+    }
+    
+    public PdfArray(int values[]) {
+        super(ARRAY);
+        arrayList = new ArrayList();
+        add(values);
     }
     
 /**
@@ -105,7 +117,7 @@ class PdfArray extends PdfObject {
  * @param	object		a <CODE>PdfArray</CODE> that has to be added to the array
  */
     
-    PdfArray(PdfArray array) {
+    public PdfArray(PdfArray array) {
         super(ARRAY);
         arrayList = new ArrayList(array.getArrayList());
     }
@@ -121,7 +133,7 @@ class PdfArray extends PdfObject {
     public byte[] toPdf(PdfWriter writer) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            stream.write(DocWriter.getISOBytes("["));
+            stream.write('[');
             
             Iterator i = arrayList.iterator();
             PdfObject object;
@@ -131,10 +143,10 @@ class PdfArray extends PdfObject {
             }
             while (i.hasNext()) {
                 object = (PdfObject) i.next();
-                stream.write(DocWriter.getISOBytes(" "));
+                stream.write(' ');
                 stream.write(object.toPdf(writer));
             }
-            stream.write(DocWriter.getISOBytes("]"));
+            stream.write(']');
             
             return stream.toByteArray();
         }
@@ -151,7 +163,7 @@ class PdfArray extends PdfObject {
  * @return		an ArrayList
  */
     
-    final ArrayList getArrayList() {
+    public ArrayList getArrayList() {
         return arrayList;
     }
     
@@ -161,7 +173,7 @@ class PdfArray extends PdfObject {
  * @return		the size of the ArrayList
  */
     
-    public final int size() {
+    public int size() {
         return arrayList.size();
     }
     
@@ -172,8 +184,20 @@ class PdfArray extends PdfObject {
  * @return		<CODE>true</CODE>
  */
     
-    boolean add(PdfObject object) {
+    public boolean add(PdfObject object) {
         return arrayList.add(object);
+    }
+    
+    public boolean add(float values[]) {
+        for (int k = 0; k < values.length; ++k)
+            arrayList.add(new PdfNumber(values[k]));
+        return true;
+    }
+    
+    public boolean add(int values[]) {
+        for (int k = 0; k < values.length; ++k)
+            arrayList.add(new PdfNumber(values[k]));
+        return true;
     }
     
 /**
@@ -185,7 +209,7 @@ class PdfArray extends PdfObject {
  * @return		<CODE>true</CODE>
  */
     
-    void addFirst(PdfObject object) {
+    public void addFirst(PdfObject object) {
         arrayList.add(0, object);
     }
     
@@ -196,20 +220,7 @@ class PdfArray extends PdfObject {
  * @return		<CODE>true</CODE>
  */
     
-    final boolean contains(PdfObject object) {
+    public boolean contains(PdfObject object) {
         return arrayList.contains(object);
-    }
-    
-    // deprecated methods
-    
-/**
- * Returns an array containing <CODE>PdfObject</CODE>s.
- *
- * @return		an array
- * @deprecated	this method was never used
- */
-    
-    final Object[] toArray() {
-        return arrayList.toArray();
     }
 }

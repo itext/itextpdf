@@ -131,7 +131,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  <CODE>true</CODE> if the element was processed successfully
  */
     
-    public final boolean process(ElementListener listener) {
+    public boolean process(ElementListener listener) {
         try {
             return listener.add(this);
         }
@@ -146,7 +146,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  a type
  */
     
-    public final int type() {
+    public int type() {
         return Element.ROW;
     }
     
@@ -156,7 +156,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  an <CODE>ArrayList</CODE>
  */
     
-    public final ArrayList getChunks() {
+    public ArrayList getChunks() {
         return new ArrayList();
     }
     
@@ -167,7 +167,7 @@ public class Row implements Element, MarkupAttributes {
  * @param column  the number of the column to delete
  */
     
-    final void deleteColumn(int column) {
+    void deleteColumn(int column) {
         if ((column >= columns) || (column < 0)) {
             throw new IndexOutOfBoundsException("getCell at illegal index : " + column);
         }
@@ -204,7 +204,7 @@ public class Row implements Element, MarkupAttributes {
  *                      or <CODE>-1</CODE> if the <CODE>element</CODE> couldn't be added.
  */
     
-    final int addElement(Object element) {
+    int addElement(Object element) {
         return addElement(element, currentColumn);
     }
     
@@ -217,7 +217,7 @@ public class Row implements Element, MarkupAttributes {
  *                      or <CODE>-1</CODE> if the <CODE>Cell</CODE> couldn't be added.
  */
     
-    final int addElement(Object element, int column) {
+    int addElement(Object element, int column) {
         if (element == null) throw new NullPointerException("addCell - null argument");
         if ((column < 0) || (column > columns)) throw new IndexOutOfBoundsException("addCell - illegal column argument");
         if ( !((getObjectID(element) == CELL) || (getObjectID(element) == TABLE)) ) throw new IllegalArgumentException("addCell - only Cells or Tables allowed");
@@ -243,7 +243,7 @@ public class Row implements Element, MarkupAttributes {
  *                  or <CODE>-1</CODE> if the <CODE>Cell</CODE> couldn't be added.
  */
     
-    final void setElement(Object aElement, int column) {
+    void setElement(Object aElement, int column) {
         if (reserved[column] == true) throw new IllegalArgumentException("setElement - position already taken");
         
         cells[column] = aElement;
@@ -259,7 +259,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
  */
     
-    final boolean reserve(int column) {
+    boolean reserve(int column) {
         return reserve(column, 1);
     }
     
@@ -272,7 +272,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
  */
     
-    final boolean reserve(int column, int size) {
+    boolean reserve(int column, int size) {
         if ((column < 0) || ((column + size) > columns)) throw new IndexOutOfBoundsException("reserve - incorrect column/size");
         
         for(int i=column; i < column + size; i++)
@@ -318,7 +318,7 @@ public class Row implements Element, MarkupAttributes {
  * @return      <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
  */
     
-    final boolean isReserved(int column) {
+    boolean isReserved(int column) {
         return reserved[column];
     }
     
@@ -360,7 +360,7 @@ public class Row implements Element, MarkupAttributes {
  *                  reserved or null if empty.
  */
     
-    public final Object getCell(int column) {
+    public Object getCell(int column) {
         if ((column < 0) || (column > columns)) {
             throw new IndexOutOfBoundsException("getCell at illegal index :" + column + " max is " + columns);
         }
@@ -373,7 +373,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  <CODE>true</CODE> if none of the columns is reserved.
  */
     
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         for (int i = 0; i < columns; i++) {
             if (cells[i] != null) {
                 return false;
@@ -388,7 +388,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  a value
  */
     
-    final int validPosition() {
+    int validPosition() {
         return currentColumn;
     }
     
@@ -398,7 +398,7 @@ public class Row implements Element, MarkupAttributes {
  * @return  a value
  */
     
-    public final int columns() {
+    public int columns() {
         return columns;
     }
     

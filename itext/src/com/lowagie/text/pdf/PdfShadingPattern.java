@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,79 +44,77 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
-/**
- * <CODE>PdfIndirectReference</CODE> contains a reference to a <CODE>PdfIndirectObject</CODE>.
- * <P>
- * Any object used as an element of an array or as a value in a dictionary may be specified
- * by either a direct object of an indirect reference. An <I>indirect reference</I> is a reference
- * to an indirect object, and consists of the indirect object's object number, generation number
- * and the <B>R</B> keyword.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.11 (page 54).
+import java.awt.Color;
+import java.io.IOException;
+/** Implements the shading pattern dictionary.
  *
- * @see		PdfObject
- * @see		PdfIndirectObject
+ * @author Paulo Soares (psoares@consiste.pt)
  */
+public class PdfShadingPattern extends PdfDictionary {
 
-class PdfIndirectReference extends PdfObject {
+    protected PdfShading shading;
     
-    // membervariables
+    protected PdfWriter writer;
     
-/** the object number */
-    protected int number;
+    protected float matrix[] = {1, 0, 0, 1, 0, 0};
     
-/** the generation number */
-    protected int generation = 0;
-    
-    // constructors
-    
-/**
- * Constructs a <CODE>PdfIndirectReference</CODE>.
- *
- * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
- * @param		number			the object number.
- * @param		generation		the generation number.
- */
-    
-    PdfIndirectReference(int type, int number, int generation) {
-        super(type, new StringBuffer().append(number).append(" ").append(generation).append(" R").toString());
-        this.number = number;
-        this.generation = generation;
+    protected PdfName patternName;
+
+    protected PdfIndirectReference patternReference;
+
+    /** Creates new PdfShadingPattern */
+    public PdfShadingPattern(PdfShading shading) {
+        writer = shading.getWriter();
+        put(PdfName.PATTERNTYPE, new PdfNumber(2));
+        this.shading = shading;
+    }
+        
+    PdfName getPatternName() {
+        return patternName;
+    }
+
+    PdfName getShadingName() {
+        return shading.getShadingName();
     }
     
-/**
- * Constructs a <CODE>PdfIndirectReference</CODE>.
- *
- * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
- * @param		number			the object number.
- */
-    
-    PdfIndirectReference(int type, int number) {
-        this(type, number, 0);
+    PdfIndirectReference getPatternReference() {
+        if (patternReference == null)
+            patternReference = writer.getPdfIndirectReference();
+        return patternReference;
     }
     
-    // methods
-    
-/**
- * Returns the number of the object.
- *
- * @return		a number.
- */
-    
-    int getNumber() {
-        return number;
+    PdfIndirectReference getShadingReference() {
+        return shading.getShadingReference();
     }
     
-/**
- * Returns the generation of the object.
- *
- * @return		a number.
- */
-    
-    int getGeneration() {
-        return generation;
+    void setName(int number) {
+        patternName = new PdfName("P" + number);
     }
+    
+    void addToBody() throws IOException {
+        put(PdfName.SHADING, getShadingReference());
+        put(PdfName.MATRIX, new PdfArray(matrix));
+        writer.addToBody(this, getPatternReference());
+    }
+    
+    public void setMatrix(float matrix[]) {
+        if (matrix.length != 6)
+            throw new RuntimeException("The matrix size must be 6.");
+        this.matrix = matrix;
+    }
+    
+    public float[] getMatrix() {
+        return matrix;
+    }
+    
+    PdfShading getShading() {
+        return shading;
+    }
+    
+    ColorDetails getColorDetails() {
+        return shading.getColorDetails();
+    }
+
 }

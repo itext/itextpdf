@@ -54,14 +54,20 @@ package com.lowagie.text.pdf;
  * a Literal
  */
 
-class PdfLiteral extends PdfObject
-{
-    PdfLiteral(String text)
-    {
+class PdfLiteral extends PdfObject {
+    PdfLiteral(String text) {
         super(0, text);
     }
-    PdfLiteral(byte b[])
-    {
+    
+    PdfLiteral(byte b[]) {
         super(0, b);
+    }
+
+    PdfLiteral(int type, String text) {
+        super(type, text);
+    }
+    
+    PdfLiteral(int type, byte b[]) {
+        super(type, b);
     }
 }

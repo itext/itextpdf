@@ -220,7 +220,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  * @return	<CODE>true</CODE> if the element was processed successfully
  */
     
-    public final boolean process(ElementListener listener) {
+    public boolean process(ElementListener listener) {
         try {
             Chunk chunk;
             Iterator i = getChunks().iterator();
@@ -276,7 +276,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  * @return	a type
  */
     
-    public final int type() {
+    public int type() {
         return Element.ANCHOR;
     }
     
@@ -289,7 +289,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  */
     
     // suggestion by by Curt Thompson
-    public final Iterator getElements() {
+    public Iterator getElements() {
         return this.iterator();
     }
     
@@ -299,7 +299,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  * @param	name		a new name
  */
     
-    public final void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
     
@@ -309,7 +309,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  * @param	reference		a new reference
  */
     
-    public final void setReference(String reference) {
+    public void setReference(String reference) {
         this.reference = reference;
     }
     
@@ -321,7 +321,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  * @return	a name
  */
     
-    public final String name() {
+    public String name() {
         return name;
     }
     
@@ -331,7 +331,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  * @return	a reference
  */
     
-    public final String reference() {
+    public String reference() {
         return reference;
     }
     
@@ -341,7 +341,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  * @return	an <CODE>URL</CODE>
  */
     
-    public final URL url() {
+    public URL url() {
         try {
             return new URL(reference);
         }

@@ -312,7 +312,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	<CODE>true</CODE> if the element was processed successfully
  */
     
-    public final boolean process(ElementListener listener) {
+    public boolean process(ElementListener listener) {
         try {
             return listener.add(this);
         }
@@ -327,7 +327,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	a type
  */
     
-    public final int type() {
+    public int type() {
         return Element.CELL;
     }
     
@@ -337,7 +337,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	an <CODE>ArrayList</CODE>
  */
     
-    public final ArrayList getChunks() {
+    public ArrayList getChunks() {
         ArrayList tmp = new ArrayList();
         for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
             tmp.addAll(((Element) i.next()).getChunks());
@@ -357,7 +357,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @throws BadElementException if the method was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
  */
     
-    public final void addElement(Element element) throws BadElementException {
+    public void addElement(Element element) throws BadElementException {
         if (isTable()) {
             Table table = (Table) arrayList.get(0);
             Cell tmp = new Cell(element);
@@ -470,7 +470,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	value	the new value
  */
     
-    public final void setLeading(float value) {
+    public void setLeading(float value) {
         leading = value;
     }
     
@@ -480,7 +480,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	value	the new value
  */
     
-    public final void setHorizontalAlignment(int value) {
+    public void setHorizontalAlignment(int value) {
         horizontalAlignment = value;
     }
     
@@ -490,7 +490,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	alignment		the new alignment as a <CODE>String</CODE>
  */
     
-    public final void setHorizontalAlignment(String alignment) {
+    public void setHorizontalAlignment(String alignment) {
         if (ElementTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
             this.horizontalAlignment = Element.ALIGN_CENTER;
             return;
@@ -512,7 +512,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	value	the new value
  */
     
-    public final void setVerticalAlignment(int value) {
+    public void setVerticalAlignment(int value) {
         verticalAlignment = value;
     }
     
@@ -522,7 +522,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	alignment		the new alignment as a <CODE>String</CODE>
  */
     
-    public final void setVerticalAlignment(String alignment) {
+    public void setVerticalAlignment(String alignment) {
         if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(alignment)) {
             this.verticalAlignment = Element.ALIGN_MIDDLE;
             return;
@@ -544,7 +544,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	value	the new value
  */
     
-    public final void setWidth(String value) {
+    public void setWidth(String value) {
         width = value;
     }
     
@@ -554,7 +554,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	value	the new value
  */
     
-    public final void setColspan(int value) {
+    public void setColspan(int value) {
         colspan = value;
     }
     
@@ -564,7 +564,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	value	the new value
  */
     
-    public final void setRowspan(int value) {
+    public void setRowspan(int value) {
         rowspan = value;
     }
     
@@ -574,7 +574,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	value	the new value
  */
     
-    public final void setHeader(boolean value) {
+    public void setHeader(boolean value) {
         header = value;
     }
     
@@ -584,7 +584,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @param	value	the new value
  */
     
-    public final void setNoWrap(boolean value) {
+    public void setNoWrap(boolean value) {
         noWrap = value;
     }
     
@@ -596,7 +596,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	a <CODE>size</CODE>.
  */
     
-    public final int size() {
+    public int size() {
         return arrayList.size();
     }
     
@@ -606,7 +606,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	<CODE>false</CODE> if there are non-empty <CODE>Element</CODE>s in the <CODE>Cell</CODE>.
  */
     
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         switch(size()) {
             case 0:
                 return true;
@@ -634,7 +634,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * Otherwise it might not be shown in the table.
  */
     
-    final void fill() {
+    void fill() {
         if (size() == 0) arrayList.add(new Paragraph(0));
     }
     
@@ -644,7 +644,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	<CODE>false</CODE> if there are non-empty <CODE>Element</CODE>s in the <CODE>Cell</CODE>.
  */
     
-    public final boolean isTable() {
+    public boolean isTable() {
         return (size() == 1) && (((Element)arrayList.get(0)).type() == Element.TABLE);
     }
     
@@ -654,7 +654,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	an <CODE>Iterator</CODE>.
  */
     
-    public final Iterator getElements() {
+    public Iterator getElements() {
         return arrayList.iterator();
     }
     
@@ -664,7 +664,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	a value
  */
     
-    public final int horizontalAlignment() {
+    public int horizontalAlignment() {
         return horizontalAlignment;
     }
     
@@ -674,7 +674,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	a value
  */
     
-    public final int verticalAlignment() {
+    public int verticalAlignment() {
         return verticalAlignment;
     }
     
@@ -684,7 +684,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	a value
  */
     
-    public final String cellWidth() {
+    public String cellWidth() {
         return width;
     }
     
@@ -694,7 +694,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	a value
  */
     
-    public final int colspan() {
+    public int colspan() {
         return colspan;
     }
     
@@ -704,7 +704,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	a value
  */
     
-    public final int rowspan() {
+    public int rowspan() {
         return rowspan;
     }
     
@@ -714,7 +714,7 @@ public class Cell extends Rectangle implements TextElementArray {
  * @return	a value
  */
     
-    public final float leading() {
+    public float leading() {
         if (Float.isNaN(leading)) {
             return 16;
         }
@@ -744,7 +744,7 @@ public class Cell extends Rectangle implements TextElementArray {
 /**
  * Clears all the <CODE>Element</CODE>s of this <CODE>Cell</CODE>.
  */
-    public final void clear() {
+    public void clear() {
         arrayList.clear();
     }
     

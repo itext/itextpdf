@@ -64,7 +64,7 @@ import com.lowagie.text.ExceptionConverter;
 public class PdfAcroForm extends PdfDictionary {
     
     private PdfWriter writer;
-    private boolean hasFormObjects = false;
+    
     
     /** This is a map containing FieldTemplates. */
     private HashMap fieldTemplates = new HashMap();
@@ -105,13 +105,13 @@ public class PdfAcroForm extends PdfDictionary {
      */
     
     boolean isValid() {
-        if (!hasFormObjects && documentFields.size() == 0 && fieldTemplates.size() == 0) return false;
-        if (documentFields.size() != 0)
-            put(PdfName.FIELDS, documentFields);
+        if (documentFields.size() == 0) return false;
+        put(PdfName.FIELDS, documentFields);
         if (sigFlags != 0)
             put(PdfName.SIGFLAGS, new PdfNumber(sigFlags));
         if (calculationOrder.size() > 0)
             put(PdfName.CO, calculationOrder);
+        if (fieldTemplates.size() == 0) return false;
         PdfDictionary dic = new PdfDictionary();
         for (Iterator it = fieldTemplates.keySet().iterator(); it.hasNext();) {
             PdfTemplate template = (PdfTemplate)it.next();
@@ -147,7 +147,6 @@ public class PdfAcroForm extends PdfDictionary {
      */
     
     public void addFormField(PdfFormField formField) {
-        hasFormObjects = true;
         writer.addAnnotation(formField);
     }
     
@@ -196,7 +195,7 @@ public class PdfAcroForm extends PdfDictionary {
     public void addHiddenField(String name, String value) {
         PdfFormField hidden = PdfFormField.createEmpty(writer);
         hidden.setFieldName(name);
-        hidden.setValueAsString(value);
+        hidden.setValueAsName(value);
         addFormField(hidden);
     }
     

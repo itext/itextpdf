@@ -164,12 +164,7 @@ class FontDetails {
                     char glyph[] = new char[len];
                     int i = 0;
                     if (symbolic) {
-                        try {
-                            b = text.getBytes(PdfObject.ENCODING);
-                        }
-                        catch (Exception e) {
-                            throw new ExceptionConverter(e);
-                        }
+                        b = PdfEncodings.convertToBytes(text, BaseFont.WINANSI);
                         len = b.length;
                         for (int k = 0; k < len; ++k) {
                             metrics = ttu.getMetricsTT(b[k] & 0xff);

@@ -151,7 +151,7 @@ class PdfIndirectObject {
  * @return		the length of the PDF-representation of this indirect object.
  */
     
-    public final int length() {
+    public int length() {
         if (isStream)
             return bytes.size() + SIZEOBJ + stream.getStreamLength(writer);
         else
@@ -165,7 +165,7 @@ class PdfIndirectObject {
  * @return		a <CODE>PdfIndirectReference</CODE>
  */
     
-    final PdfIndirectReference getIndirectReference() {
+    PdfIndirectReference getIndirectReference() {
         return new PdfIndirectReference(type, number, generation);
     }
     
@@ -175,7 +175,7 @@ class PdfIndirectObject {
  * @param out the stream to write to
  * @throws IOException on write error
  */
-    final void writeTo(OutputStream out) throws IOException
+    void writeTo(OutputStream out) throws IOException
     {
         bytes.writeTo(out);
         if (isStream) {

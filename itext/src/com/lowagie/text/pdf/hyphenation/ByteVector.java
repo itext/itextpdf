@@ -20,7 +20,7 @@ public class ByteVector implements Serializable {
     /**
      * Capacity increment size
      */
-    private final static int DEFAULT_BLOCK_SIZE = 2048;
+    private static final int DEFAULT_BLOCK_SIZE = 2048;
     private int BLOCK_SIZE;
 
     /**
