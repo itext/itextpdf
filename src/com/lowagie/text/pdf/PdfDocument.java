@@ -1488,7 +1488,6 @@ class PdfDocument extends Document implements DocListener {
                             PdfContentByte under = writer.getDirectContentUnder();
                             under.rectangle(tablerec.rectangle(top(), indentBottom()));
                             under.add(cellGraphics);
-                            under.add(graphics);
                         }
                         cellGraphics = new PdfContentByte(null);
                         // if the table continues on the next page
