@@ -384,6 +384,7 @@ public class AcroFields {
                 if (appDic == null) {
                     appDic = new PdfDictionary();
                     widget.put(PdfName.AP, appDic);
+                    merged.put(PdfName.AP, appDic);
                 }
                 appDic.put(PdfName.N, app.getIndirectReference());
             }
