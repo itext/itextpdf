@@ -231,7 +231,7 @@ public class Font implements Comparable {
             setFamily(value);
         }
         if ((value = attributes.getProperty(ElementTags.SIZE)) != null) {
-            setSize(Float.parseFloat(value + "f"));
+            setSize(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.STYLE)) != null) {
             setStyle(value);

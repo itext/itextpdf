@@ -204,7 +204,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         clear();
         String value = attributes.getProperty(ElementTags.LEADING);
         if (value != null) {
-            setLeading(Float.parseFloat(value + "f"));
+            setLeading(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
             add(new Chunk(value));
