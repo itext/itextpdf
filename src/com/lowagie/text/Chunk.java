@@ -1,7 +1,6 @@
 /*
- * @(#)Chunk.java					0.39 2000/11/23
- *       release iText0.30			0.25 2000/02/14
- *       release iText0.35			0.25 2000/08/11
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -51,9 +50,6 @@ import java.util.ArrayList;
  * </PRE></BLOCKQUOTE>
  *
  * @author  bruno@lowagie.com
- * @version 0.39, 2000/11/23
- *
- * @since   iText0.30
  */
 
 public class Chunk implements Element {
@@ -73,7 +69,6 @@ public class Chunk implements Element {
 	 *
 	 * @param	content		the content
 	 * @param	font		the font
-	 * @since	iText0.30
 	 */
 
 	public Chunk(String content, Font font) {
@@ -85,7 +80,6 @@ public class Chunk implements Element {
 	 * Constructs a chunk of text with a certain content, without specifying a <CODE>Font</CODE>.
 	 *
 	 * @param	content		the content
-	 * @since	iText0.30
 	 */
 
 	public Chunk(String content) {
@@ -99,7 +93,6 @@ public class Chunk implements Element {
 	 * <CODE>DocListener</CODE>. 
      *
 	 * <CODE>true</CODE> if the element was processed successfully
-     * @since   iText0.30
      */
 
     public boolean process(DocListener listener) {
@@ -115,7 +108,6 @@ public class Chunk implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-     * @since	iText0.30
      */
 
     public int type() {
@@ -126,8 +118,6 @@ public class Chunk implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public ArrayList getChunks() {
@@ -143,8 +133,6 @@ public class Chunk implements Element {
 	 *
 	 * @param	a <CODE>String</CODE>
 	 * @return	a <CODE>StringBuffer</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public StringBuffer append(String string) {
@@ -157,8 +145,6 @@ public class Chunk implements Element {
 	 * Gets the font of this <CODE>Chunk</CODE>.
 	 *
 	 * @return	a <CODE>Font</CODE>
-	 *
-     * @since   iText0.30
 	 */
 
 	public final Font font() {
@@ -169,8 +155,6 @@ public class Chunk implements Element {
 	 * Sets the font of this <CODE>Chunk</CODE>.
 	 *
 	 * @param	a <CODE>Font</CODE>
-	 *
-     * @since   iText0.39
 	 */
 
 	public void setFont(Font font) {
@@ -181,8 +165,6 @@ public class Chunk implements Element {
 	 * Returns the content of this <CODE>Chunk</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public final String content() {
@@ -193,8 +175,6 @@ public class Chunk implements Element {
 	 * Checks is this <CODE>Chunk</CODE> is empty.
 	 *
 	 * @return	<CODE>false</CODE> if the Chunk contains other characters than space.
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public final boolean isEmpty() {
@@ -212,16 +192,15 @@ public class Chunk implements Element {
 	 * Returns a representation of this <CODE>Chunk</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer("<CHUNK>\n");
-		buf.append(font);
+		StringBuffer buf = new StringBuffer("<chunk");
+		buf.append(font.toString());
+		buf.append(">");
 		buf.append("\t");
 		buf.append(content());
-		buf.append("\n</CHUNK>\n");
+		buf.append("\n</chunk>\n");
 		return buf.toString();
 	}
 }

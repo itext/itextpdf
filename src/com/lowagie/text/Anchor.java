@@ -62,7 +62,7 @@ import java.util.Iterator;
  * @since   iText0.30
  */
 
-public class Anchor extends Phrase implements Element {
+public class Anchor extends Phrase implements TextElementArray {
 
 // membervariables
 

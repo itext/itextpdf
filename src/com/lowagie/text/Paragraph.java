@@ -1,7 +1,6 @@
 /*
- * @(#)Paragraph.java				0.38 2000/11/16
- *       release iText0.3:			0.25 2000/02/14
- *       release iText0.35:			0.25 2000/08/11
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -57,12 +56,9 @@ import java.util.Iterator;
  * @see		ListItem
  * 
  * @author  bruno@lowagie.com
- * @version 0.38, 2000/11/16
- *
- * @since   iText0.30
  */
 
-public class Paragraph extends Phrase implements Element {
+public class Paragraph extends Phrase implements TextElementArray {
 
 // membervariables
 
@@ -79,8 +75,6 @@ public class Paragraph extends Phrase implements Element {
 
 	/**
 	 * Constructs a <CODE>Paragraph</CODE>.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Paragraph() {
@@ -91,8 +85,6 @@ public class Paragraph extends Phrase implements Element {
 	 * Constructs a <CODE>Paragraph</CODE> with a certain leading.
 	 *
 	 * @param	leading		the leading
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Paragraph(int leading) {
@@ -103,8 +95,6 @@ public class Paragraph extends Phrase implements Element {
 	 * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>Chunk</CODE>.
 	 *
 	 * @param	chunk		a <CODE>Chunk</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Paragraph(Chunk chunk) {
@@ -112,11 +102,21 @@ public class Paragraph extends Phrase implements Element {
 	}
 
 	/**
+	 * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>Chunk</CODE>
+	 * and a certain leading.
+	 *
+	 * @param	leading		the leading
+	 * @param	chunk		a <CODE>Chunk</CODE>
+	 */
+
+	public Paragraph(int leading, Chunk chunk) {
+		super(leading, chunk);
+	}
+
+	/**
 	 * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>String</CODE>.
 	 *
 	 * @param	string		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Paragraph(String string) {
@@ -128,27 +128,11 @@ public class Paragraph extends Phrase implements Element {
 	 * and a certain <CODE>Font</CODE>.
 	 *
 	 * @param	string		a <CODE>String</CODE>
-	 * @param	font		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
+	 * @param	font		a <CODE>Font</CODE>
 	 */
 
 	public Paragraph(String string, Font font) {
 		super(string, font);						 	
-	}
-
-	/**
-	 * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>Chunk</CODE>
-	 * and a certain leading.
-	 *
-	 * @param	leading		the leading
-	 * @param	chunk		a <CODE>Chunk</CODE>
-	 *
-	 * @since	iText0.30
-	 */
-
-	public Paragraph(int leading, Chunk chunk) {
-		super(leading, chunk);
 	}
 
 	/**
@@ -157,8 +141,6 @@ public class Paragraph extends Phrase implements Element {
 	 *
 	 * @param	leading		the leading
 	 * @param	string		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Paragraph(int leading, String string) {
@@ -172,8 +154,6 @@ public class Paragraph extends Phrase implements Element {
 	 * @param	leading		the leading
 	 * @param	string		a <CODE>String</CODE>
 	 * @param	font		a <CODE>Font</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Paragraph(int leading, String string, Font font) {
@@ -184,8 +164,6 @@ public class Paragraph extends Phrase implements Element {
 	 * Constructs a <CODE>Paragraph</CODE> with a certain <CODE>Phrase</CODE>.
 	 *
 	 * @param	phrase		a <CODE>Phrase</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Paragraph(Phrase phrase) {
@@ -199,8 +177,6 @@ public class Paragraph extends Phrase implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public int type() {
@@ -214,14 +190,48 @@ public class Paragraph extends Phrase implements Element {
 	 * 
 	 * @param	nested		the list to add.
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.38
 	 */
 
 	public void add(List list) {
 		list.setIndentationLeft(list.indentationLeft() + indentationLeft);
 		list.setIndentationRight(indentationRight);
 		super.add(list);
+	}				
+
+// setting the membervariables 
+
+	/**
+	 * Sets the alignment of this paragraph.
+	 *
+	 * @param	alignment		the new alignment
+	 * @return	<CODE>void</CODE>
+	 */
+
+	public final void setAlignment(int alignment) {
+		this.alignment = alignment;
+	} 
+
+	/**
+	 * Sets the alignment of this paragraph.
+	 *
+	 * @param	alignment		the new alignment as a <CODE>String</CODE>
+	 * @return	<CODE>void</CODE>
+	 */
+
+	public final void setAlignment(String alignment) {
+		if ("center".equals(alignment)) {
+			this.alignment = Element.ALIGN_CENTER;
+			return;
+		}
+		if ("right".equals(alignment)) {
+			this.alignment = Element.ALIGN_RIGHT;
+			return;
+		}
+		if ("justify".equals(alignment)) {
+			this.alignment = Element.ALIGN_JUSTIFIED;
+			return;
+		}
+		this.alignment = Element.ALIGN_LEFT;
 	}
 
 	/**
@@ -229,8 +239,6 @@ public class Paragraph extends Phrase implements Element {
 	 *
 	 * @param	indentation		the new indentation
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setIndentationLeft(int indentation) {
@@ -242,25 +250,10 @@ public class Paragraph extends Phrase implements Element {
 	 *
 	 * @param	indentation		the new indentation
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setIndentationRight(int indentation) {
 		this.indentationRight = indentation;
-	}
-
-	/**
-	 * Sets the alignment of this paragraph.
-	 *
-	 * @param	alignment		the new alignment
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
-	 */
-
-	public final void setAlignment(int alignment) {
-		this.alignment = alignment;
 	}
 
 // methods to retrieve information
@@ -269,8 +262,6 @@ public class Paragraph extends Phrase implements Element {
 	 * Gets the alignment of this paragraph.
 	 *
 	 * @return	alignment
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int alignment() {
@@ -281,8 +272,6 @@ public class Paragraph extends Phrase implements Element {
 	 * Gets the indentation of this paragraph on the left side.
 	 *
 	 * @return	the indentation
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int indentationLeft() {
@@ -293,8 +282,6 @@ public class Paragraph extends Phrase implements Element {
 	 * Gets the indentation of this paragraph on the right side.
 	 *
 	 * @return	the indentation
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int indentationRight() {
@@ -305,43 +292,41 @@ public class Paragraph extends Phrase implements Element {
 	 * Returns a representation of this <CODE>Paragraph</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer("<PARAGRAPH LEADING=\"");
+		StringBuffer buf = new StringBuffer("<paragraph leading=\"");
 		buf.append(leading);
-		buf.append("\" ALIGNMENT=\"");
+		buf.append("\" align=\"");
 		switch(alignment) {
 		case Element.ALIGN_LEFT:
-			buf.append("Left");
+			buf.append("left");
 			break;
 		case Element.ALIGN_CENTER:
-			buf.append("Center");
+			buf.append("center");
 			break;
 		case Element.ALIGN_RIGHT:
-			buf.append("Right");
+			buf.append("right");
 			break;
 		case Element.ALIGN_JUSTIFIED:
-			buf.append("Justify");
+			buf.append("justify");
 			break;
 		default:
-			buf.append("Default");
+			buf.append("default");
 		}
 		if (indentationLeft != 0) {
-			buf.append("\" LEFTINDENTATION=\"");
+			buf.append("\" left=\"");
 			buf.append(indentationLeft);
 		}
 		if (indentationRight != 0) {
-			buf.append("\" RIGHTINDENTATION=\"");
+			buf.append("\" right=\"");
 			buf.append(indentationRight);
 		}
 		buf.append("\">\n");
 		for (Iterator i = iterator(); i.hasNext(); ) {
 			buf.append(i.next().toString());
 		}
-		buf.append("\n</PARAGRAPH>\n");								
+		buf.append("\n</paragraph>\n");								
 		return buf.toString();
 	}
 }

@@ -1,7 +1,6 @@
 /*
- * @(#)Section.java					0.22 2000/02/02
- *       release iText0.3:			0.22 2000/02/14
- *       release iText0.35:         0.22 2000/08/11
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -64,23 +63,14 @@ import java.util.Iterator;
  * </PRE></BLOCKQUOTE>
  *
  * @author  bruno@lowagie.com
- * @version 0.22, 2000/02/02
- *
- * @since   iText0.30
  */
 
-public class Section extends ArrayList implements Element {
+public class Section extends ArrayList implements TextElementArray {
 
 // membervariables
 
 	/** This is the title of this section. */
 	protected Paragraph title;
-
-	/** This is the number of subsections. */
-	protected int subsections = 0;
-
-	/** This is the complete list of sectionnumbers of this section and the parents of this section. */
-	protected ArrayList numbers;
 	
 	/** This is the number of sectionnumbers that has to be shown before the section title. */
 	protected int numberDepth;
@@ -94,6 +84,12 @@ public class Section extends ArrayList implements Element {
 	/** The additional indentation of the content of this section. */
 	protected int sectionIndent;
 
+	/** This is the number of subsections. */
+	protected transient int subsections = 0;
+
+	/** This is the complete list of sectionnumbers of this section and the parents of this section. */
+	protected transient ArrayList numbers;
+
 // constructors
 
 	/**
@@ -101,13 +97,27 @@ public class Section extends ArrayList implements Element {
 	 *
 	 * @param	title			a <CODE>Paragraph</CODE>
 	 * @param	numberDepth		the numberDepth
-	 *
-	 * @since	iText0.30
 	 */
 
 	Section(Paragraph title, int numberDepth) {
 		this.numberDepth = numberDepth;
 		this.title = title;
+	}
+
+// private methods
+
+	/**
+	 * Sets the number of this section.
+	 *
+	 * @param	number		the number of this section
+	 * @param	numbers		an <CODE>ArrayList</CODE>, containing the numbers of the Parent
+	 * @return	<CODE>void</CODE>
+	 */
+
+	private final void setNumbers(int number, ArrayList numbers) {
+		this.numbers = new ArrayList();
+		this.numbers.add(new Integer(number));
+		this.numbers.addAll(numbers);
 	}
 
 // implementation of the Element-methods
@@ -116,8 +126,8 @@ public class Section extends ArrayList implements Element {
      * Processes the element by adding it (or the different parts) to a
 	 * <CODE>DocListener</CODE>. 
      *
+	 * @paran	listener		the <CODE>DocListener</CODE>
 	 * @return	<CODE>true</CODE> if the element was processed successfully
-     * @since   iText0.30
      */
 
     public final boolean process(DocListener listener) {
@@ -136,8 +146,6 @@ public class Section extends ArrayList implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public int type() {
@@ -148,8 +156,6 @@ public class Section extends ArrayList implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public ArrayList getChunks() {
@@ -170,8 +176,6 @@ public class Section extends ArrayList implements Element {
 	 * @param	object	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
 	 * @return	<CODE>void</CODE>
 	 * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void add(int index, Object o) {
@@ -198,8 +202,6 @@ public class Section extends ArrayList implements Element {
 	 * @param	object	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
 	 * @return	a boolean
 	 * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or <CODE>Section</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean add(Object o) {
@@ -231,8 +233,6 @@ public class Section extends ArrayList implements Element {
 	 * @param	collection	a collection of <CODE>Paragraph</CODE>s, <CODE>List</CODE>s and/or <CODE>Table</CODE>s
 	 * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
 	 * @throws	ClassCastException if one of the objects isn't a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean addAll(Collection collection) {	
@@ -242,36 +242,7 @@ public class Section extends ArrayList implements Element {
 		return true;
 	}
 
-// methods
-
-	/**
-	 * Creates a <CODE>Section</CODE>, add it to this <CODE>Section</CODE> and returns it.
-	 *
-	 * @param	title		the title of the new section
-	 * @param	numberDepth	the numberDepth of the section
-	 *
-     * @since	iText0.30
-	 */
-
-	public final Section addSection(Paragraph title, int numberDepth) {
-		Section section = new Section(title, numberDepth);
-		add(section);
-		return section;
-	}
-
-	/**
-	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
-	 *
-	 * @param	title		the title of the new section
-	 *
-     * @since	iText0.30
-	 */
-
-	public final Section addSection(Paragraph title) {
-		Section section = new Section(title, 1);
-		add(section);
-		return section;
-	}
+// methods that return a Section
 
 	/**
 	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
@@ -279,8 +250,6 @@ public class Section extends ArrayList implements Element {
 	 * @param	indentation	the indentation of the new section
 	 * @param	title		the title of the new section
 	 * @param	numberDepth	the numberDepth of the section
-	 *
-     * @since	iText0.30
 	 */
 
 	public final Section addSection(int indentation, Paragraph title, int numberDepth) {
@@ -295,8 +264,6 @@ public class Section extends ArrayList implements Element {
 	 *
 	 * @param	indentation	the indentation of the new section
 	 * @param	title		the title of the new section
-	 *
-     * @since	iText0.30
 	 */
 
 	public final Section addSection(int indentation, Paragraph title) {
@@ -307,30 +274,26 @@ public class Section extends ArrayList implements Element {
 	}
 
 	/**
-	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+	 * Creates a <CODE>Section</CODE>, add it to this <CODE>Section</CODE> and returns it.
 	 *
 	 * @param	title		the title of the new section
 	 * @param	numberDepth	the numberDepth of the section
-	 *
-     * @since	iText0.30
 	 */
 
-	public final Section addSection(String title, int numberDepth) {
-		Section section = new Section(new Paragraph(title), numberDepth);
+	public final Section addSection(Paragraph title, int numberDepth) {
+		Section section = new Section(title, numberDepth);
 		add(section);
 		return section;
 	}
 
 	/**
-	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
 	 *
 	 * @param	title		the title of the new section
-	 *
-     * @since	iText0.30
 	 */
 
-	public final Section addSection(String title) {
-		Section section = new Section(new Paragraph(title), 1);
+	public final Section addSection(Paragraph title) {
+		Section section = new Section(title, 1);
 		add(section);
 		return section;
 	}
@@ -341,8 +304,6 @@ public class Section extends ArrayList implements Element {
 	 * @param	indentation	the indentation of the new section
 	 * @param	title		the title of the new section
 	 * @param	numberDepth	the numberDepth of the section
-	 *
-     * @since	iText0.30
 	 */
 
 	public final Section addSection(int indentation, String title, int numberDepth) {
@@ -355,10 +316,21 @@ public class Section extends ArrayList implements Element {
 	/**
 	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
 	 *
+	 * @param	title		the title of the new section
+	 * @param	numberDepth	the numberDepth of the section
+	 */
+
+	public final Section addSection(String title, int numberDepth) {
+		Section section = new Section(new Paragraph(title), numberDepth);
+		add(section);
+		return section;
+	}
+
+	/**
+	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+	 *
 	 * @param	indentation	the indentation of the new section
 	 * @param	title		the title of the new section
-	 *
-     * @since	iText0.30
 	 */
 
 	public final Section addSection(int indentation, String title) {
@@ -369,19 +341,27 @@ public class Section extends ArrayList implements Element {
 	}
 
 	/**
-	 * Sets the number of this section.
+	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
 	 *
-	 * @param	number		the number of this section
-	 * @param	numbers		an <CODE>ArrayList</CODE>, containing the numbers of the Parent
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
+	 * @param	title		the title of the new section
 	 */
 
-	private final void setNumbers(int number, ArrayList numbers) {
-		this.numbers = new ArrayList();
-		this.numbers.add(new Integer(number));
-		this.numbers.addAll(numbers);
+	public final Section addSection(String title) {
+		Section section = new Section(new Paragraph(title), 1);
+		add(section);
+		return section;
+	}
+
+// public methods
+
+	/**
+	 * Sets the title of this section.
+	 *
+	 * @param	title	the new title
+	 */
+
+	public void setTitle(Paragraph title) {
+		this.title = title;
 	}
 
 	/**
@@ -392,9 +372,6 @@ public class Section extends ArrayList implements Element {
 	 * higher (for instance x > 1), the numbers of x - 1 parents will be shown.
 	 *
 	 * @param	numberDepth		the new numberDepth
-	 * @return	<CODE>void</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public void setNumberDepth(int numberDepth) {
@@ -405,9 +382,6 @@ public class Section extends ArrayList implements Element {
 	 * Sets the indentation of this <CODE>Section</CODE> on the left side.
 	 *
 	 * @param	indentation		the indentation
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setIndentationLeft(int indentation) {
@@ -418,9 +392,6 @@ public class Section extends ArrayList implements Element {
 	 * Sets the indentation of this <CODE>Section</CODE> on the right side.
 	 *
 	 * @param	indentation		the indentation
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setIndentationRight(int indentation) {
@@ -431,9 +402,6 @@ public class Section extends ArrayList implements Element {
 	 * Sets the indentation of the content of this <CODE>Section</CODE>.
 	 *
 	 * @param	indentation		the indentation
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setIndentation(int indentation) {
@@ -447,8 +415,6 @@ public class Section extends ArrayList implements Element {
 	 *
 	 * @return	<CODE>true</CODE> if it is a <CODE>Chapter</CODE>,
 	 *			<CODE>false</CODE> if it is a <CODE>Section</CODE>.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final boolean isChapter() {
@@ -460,8 +426,6 @@ public class Section extends ArrayList implements Element {
 	 *
 	 * @return	<CODE>true</CODE> if it is a <CODE>Section</CODE>,
 	 *			<CODE>false</CODE> if it is a <CODE>Chapter</CODE>.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final boolean isSection() {
@@ -472,8 +436,6 @@ public class Section extends ArrayList implements Element {
 	 * Returns the indentation of this <CODE>Section</CODE> on the left side.
 	 *
 	 * @return	the indentation
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int indentationLeft() {
@@ -484,8 +446,6 @@ public class Section extends ArrayList implements Element {
 	 * Returns the indentation of this <CODE>Section</CODE> on the right side.
 	 *
 	 * @return	the indentation
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int indentationRight() {
@@ -496,8 +456,6 @@ public class Section extends ArrayList implements Element {
 	 * Returns the indentation of the content of this <CODE>Section</CODE>.
 	 *
 	 * @return	the indentation
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int indentation() {
@@ -508,8 +466,6 @@ public class Section extends ArrayList implements Element {
 	 * Returns the depth of this section.
 	 *
 	 * @return	the depth
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int depth() {
@@ -520,8 +476,6 @@ public class Section extends ArrayList implements Element {
 	 * Returns the title, preceeded by a certain number of sectionnumbers.
 	 *
 	 * @return	a <CODE>Paragraph</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Paragraph title() {
@@ -547,36 +501,31 @@ public class Section extends ArrayList implements Element {
 	 * Returns a representation of this <CODE>Section</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer("\t<SECTION SECTIONINDENTATION=\"");
+		StringBuffer buf = new StringBuffer("<section depth=\"");
+		buf.append(numberDepth);
+		buf.append("\" indent=\"");
 		buf.append(sectionIndent);
 		if (indentationLeft != 0) {
-			buf.append("\" LEFTINDENTATION=\"");
+			buf.append("\" left=\"");
 			buf.append(indentationLeft);
 		}
 		if (indentationRight != 0) {
-			buf.append("\" RIGHTINDENTATION=\"");
+			buf.append("\" right=\"");
 			buf.append(indentationRight);
 		}
 		buf.append("\">\n");
-		buf.append("\t\t<TITLE>\n");
-		buf.append("\t\t\t<NUMBERS DEPTH=\"");
-		buf.append(numberDepth);
-		buf.append("\">");
-		buf.append(numbers.toString());
-		buf.append("<NUMBERS>\n");
+		buf.append("<title>\n");
 		if (title != null) {
 			buf.append(title.toString());
 		}
-		buf.append("\t\t</TITLE>\n");
+		buf.append("</title>\n");
 		for (Iterator i = iterator(); i.hasNext(); ) {
 			buf.append(i.next().toString());
 		}
-		buf.append("\n\t</SECTION>\n");								
+		buf.append("</section>\n");								
 		return buf.toString();
 	}
 }

@@ -79,7 +79,7 @@ import java.util.Iterator;
  * @since   iText0.30
  */
 
-public class Cell extends Rectangle implements Element {
+public class Cell extends Rectangle implements TextElementArray {
 
 // static final membervariable
 	
@@ -257,6 +257,25 @@ public class Cell extends Rectangle implements Element {
 			}
 		default:
 			arrayList.add(element);
+		}
+	}
+
+	/**
+	 * Add an <CODE>Object</CODE> to this cell.
+	 *
+	 * @param	o		the object to add
+	 */
+
+	public boolean add(Object o) {
+		try {
+			this.addElement((Element) o);
+			return true;
+		}
+		catch(ClassCastException cce) {
+			throw new ClassCastException("You can only add objects that implement the Element interface.");
+		}
+		catch(BadElementException bee) {
+			throw new ClassCastException(bee.getMessage());
 		}
 	}
 

@@ -382,7 +382,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
 				break;
 			case Element.TITLE:
 				writeBeginTag(TITLE);
+				tab();
 				write(((Meta)element).content());
+				newLine();
 				writeEndTag(TITLE);
 				break;
 			case Element.PRODUCER:
@@ -775,7 +777,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 			attributes.put(NAME, "author");
 			break;
 		}
-		writeBeginTag(HEAD, attributes);
+		writeBeginTag(META, attributes);
 		indent--;
 	}					   
 

@@ -1,7 +1,6 @@
 /*
- * @(#)Chapter.java					0.22 2000/02/02
- *       release iText0.3:			0.22 2000/02/14
- *       release iText0.35:			0.22 2000/08/11
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -59,12 +58,9 @@ import java.util.Iterator;
  * </PRE></BLOCKQUOTE>
  *
  * @author  bruno@lowagie.com
- * @version 0.22, 2000/02/02
- *
- * @since   iText0.30
  */
 
-public class Chapter extends Section implements Element {
+public class Chapter extends Section implements TextElementArray {
 
 // constructors
 
@@ -73,8 +69,6 @@ public class Chapter extends Section implements Element {
 	 *
 	 * @param	title		the Chapter title (as a <CODE>Paragraph</CODE>)
 	 * @param	number		the Chapter number
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Chapter(Paragraph title, int number) {
@@ -102,8 +96,6 @@ public class Chapter extends Section implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public int type() {
@@ -116,36 +108,31 @@ public class Chapter extends Section implements Element {
 	 * Returns a representation of this <CODE>Section</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer("<CHAPTER CHAPTERINDENTATION=\"");
+		StringBuffer buf = new StringBuffer("<chapter depth=\"");
+		buf.append(numberDepth);
+		buf.append("\" indent=\"");
 		buf.append(sectionIndent);
 		if (indentationLeft != 0) {
-			buf.append("\" LEFTINDENTATION=\"");
+			buf.append("\" left=\"");
 			buf.append(indentationLeft);
 		}
 		if (indentationRight != 0) {
-			buf.append("\" RIGHTINDENTATION=\"");
+			buf.append("\" right=\"");
 			buf.append(indentationRight);
 		}
 		buf.append("\">\n");
-		buf.append("\t<TITLE>\n");
-		buf.append("\t\t<NUMBERS DEPTH=\"");
-		buf.append(numberDepth);
-		buf.append("\">");
-		buf.append(numbers.toString());
-		buf.append("<NUMBERS>\n");
+		buf.append("<title>\n");
 		if (title != null) {
 			buf.append(title.toString());
 		}
-		buf.append("\t</TITLE>\n");
+		buf.append("</title>\n");
 		for (Iterator i = iterator(); i.hasNext(); ) {
 			buf.append(i.next().toString());
 		}
-		buf.append("\n</CHAPTER>\n");								
+		buf.append("</chapter>\n");								
 		return buf.toString();
 	}
 }

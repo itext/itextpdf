@@ -1,7 +1,6 @@
 /*
- * @(#)Phrase.java					0.38 2000/11/16
- *       release iText0.3:			0.26 2000/02/14
- *       release iText0.35:			0.26 2000/08/11
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -48,11 +47,15 @@ import java.util.Iterator;
  * <P>
  * Example:
  * <BLOCKQUOTE><PRE>
+ * // When no parameters are passed, the default leading = 16
+ * <STRONG>Phrase phrase0 = new Phrase();</STRONG>
  * <STRONG>Phrase phrase1 = new Phrase("this is a phrase");</STRONG>
+ * // In this example the leading is passed as a parameter
  * <STRONG>Phrase phrase2 = new Phrase(16, "this is a phrase with leading 16");</STRONG>
+ * // When a Font is passed (explicitely or embedded in a chunk), the default leading = 1.5 * size of the font
  * <STRONG>Phrase phrase3 = new Phrase("this is a phrase with a red, normal font Courier, size 12", new Font(Font.COURIER, 12, Font.NORMAL, new Color(255, 0, 0)));</STRONG>
  * <STRONG>Phrase phrase4 = new Phrase(new Chunk("this is a phrase"));</STRONG>
- * <STRONG>Phrase phrase5 = new Phrase(18, new Chunk("this is a phrase") new Font(Font.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));</STRONG>
+ * <STRONG>Phrase phrase5 = new Phrase(18, new Chunk("this is a phrase", new Font(Font.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));</STRONG>
  * </PRE></BLOCKQUOTE>
  *
  * @see		Element
@@ -61,12 +64,9 @@ import java.util.Iterator;
  * @see		Anchor
  *
  * @author  bruno@lowagie.com
- * @version 0.38, 2000/11/16
- *
- * @since   iText0.30
  */
 
-public class Phrase extends ArrayList implements Element {
+public class Phrase extends ArrayList implements TextElementArray {
 
 // membervariables
 
@@ -77,8 +77,6 @@ public class Phrase extends ArrayList implements Element {
 
 	/**
 	 * Constructs a <CODE>Phrase</CODE> without specifying a leading.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Phrase() {
@@ -89,8 +87,6 @@ public class Phrase extends ArrayList implements Element {
 	 * Constructs a <CODE>Phrase</CODE> with a certain leading.
 	 *
 	 * @param	leading		the leading
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Phrase(int leading) {
@@ -101,8 +97,6 @@ public class Phrase extends ArrayList implements Element {
 	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>.
 	 *
 	 * @param	chunk		a <CODE>Chunk</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Phrase(Chunk chunk) {
@@ -116,8 +110,6 @@ public class Phrase extends ArrayList implements Element {
 	 *
 	 * @param	leading	the leading
 	 * @param	chunk		a <CODE>Chunk</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Phrase(int leading, Chunk chunk) {
@@ -129,8 +121,6 @@ public class Phrase extends ArrayList implements Element {
 	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE>.
 	 *
 	 * @param	string		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Phrase(String string) {
@@ -142,8 +132,6 @@ public class Phrase extends ArrayList implements Element {
 	 *
 	 * @param	string		a <CODE>String</CODE>
 	 * @param	font		a <CODE>Font</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Phrase(String string, Font font) {
@@ -155,8 +143,6 @@ public class Phrase extends ArrayList implements Element {
 	 *
 	 * @param	leading	the leading
 	 * @param	string		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Phrase(int leading, String string) {
@@ -170,8 +156,6 @@ public class Phrase extends ArrayList implements Element {
 	 * @param	leading	the leading
 	 * @param	string		a <CODE>String</CODE>
 	 * @param	font		a <CODE>Font</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Phrase(int leading, String string, Font font) {
@@ -180,9 +164,9 @@ public class Phrase extends ArrayList implements Element {
 			int i = 0;
 			int index;
 			while((index = Greek.index(string)) > -1) {
-				if (index == 0) {
-					String firstpart = string.substring(0, index);
-					super.add(new Chunk(firstpart, font));
+				if (index > 0) {
+					String firstPart = string.substring(0, index);
+					super.add(new Chunk(firstPart));
 					string = string.substring(index);
 				}
 				Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
@@ -206,8 +190,6 @@ public class Phrase extends ArrayList implements Element {
 	 * <CODE>DocListener</CODE>. 
      *
 	 * @return	<CODE>true</CODE> if the element was processed successfully
-	 *
-     * @since   iText0.30
      */
 
     public final boolean process(DocListener listener) {
@@ -226,8 +208,6 @@ public class Phrase extends ArrayList implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public int type() {
@@ -238,8 +218,6 @@ public class Phrase extends ArrayList implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public ArrayList getChunks() {
@@ -260,8 +238,6 @@ public class Phrase extends ArrayList implements Element {
 	 * @param	object	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
 	 * @return	<CODE>void</CODE>
 	 * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void add(int index, Object o) {
@@ -288,8 +264,6 @@ public class Phrase extends ArrayList implements Element {
 	 * @param	object	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
 	 * @return	a boolean
 	 * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean add(Object o) {
@@ -322,8 +296,6 @@ public class Phrase extends ArrayList implements Element {
 	 *
 	 * @param	phrase		a <CODE>Phrase</CODE>
 	 * @return	a boolean
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean add(Phrase phrase) {
@@ -343,10 +315,8 @@ public class Phrase extends ArrayList implements Element {
 	 * <P>
 	 * The <CODE>String</CODE> is first converted to a Chunk with the font of the phrase.
 	 *
-	 * @param	phrase		a <CODE>Phrase</CODE>
+	 * @param	string		a <CODE>String</CODE>
 	 * @return	a boolean
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean add(String string) {
@@ -360,8 +330,6 @@ public class Phrase extends ArrayList implements Element {
 	 * @param	collection	a collection of <CODE>Chunk</CODE>s, <CODE>Anchor</CODE>s and <CODE>Phrase</CODE>s.
 	 * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
 	 * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean addAll(Collection collection) {	
@@ -378,8 +346,6 @@ public class Phrase extends ArrayList implements Element {
 	 *
 	 * @param	leading		the new leading
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void setLeading(int leading) {
@@ -393,8 +359,6 @@ public class Phrase extends ArrayList implements Element {
 	 *
 	 * @return	<CODE>false</CODE> if the <CODE>Phrase</CODE>
 	 * contains more than one or more non-empty<CODE>Chunk</CODE>s.
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public final boolean isEmpty() {
@@ -415,9 +379,7 @@ public class Phrase extends ArrayList implements Element {
 	/**
 	 * Gets the leading of this phrase.
 	 *
-	 * @return	linespacing
-	 *
-	 * @since	iText0.30
+	 * @return	the linespacing
 	 */
 
 	public final int leading() {
@@ -428,8 +390,6 @@ public class Phrase extends ArrayList implements Element {
 	 * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
 	 *
 	 * @return	a <CODE>Font</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final Font font() {
@@ -457,18 +417,16 @@ public class Phrase extends ArrayList implements Element {
 	 * Returns a representation of this <CODE>Phrase</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer("<PHRASE LEADING=\"");
+		StringBuffer buf = new StringBuffer("<phrase leading=\"");
 		buf.append(leading);
 		buf.append("\">\n");
 		for (Iterator i = iterator(); i.hasNext(); ) {
 			buf.append(i.next().toString());
 		}
-		buf.append("</PHRASE>\n");								
+		buf.append("</phrase>\n");								
 		return buf.toString();
 	}
 }
