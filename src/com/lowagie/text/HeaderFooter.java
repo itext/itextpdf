@@ -138,7 +138,7 @@ public class HeaderFooter extends Rectangle {
  */
     
     public final Paragraph paragraph() {
-        Paragraph paragraph = new Paragraph();
+        Paragraph paragraph = new Paragraph(before.leading());
         paragraph.add(before);
         if (numbered) {
             paragraph.addSpecial(new Chunk(String.valueOf(pageN), before.font()));
