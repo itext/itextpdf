@@ -355,12 +355,10 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
         }
         setBorder(border);
-        String r = null;
-        String g = null;
-        String b = null;
-        if (!(r = (String)attributes.remove(ElementTags.RED)) == null &&
-        (g = (String)attributes.remove(ElementTags.GREEN)) == null &&
-        (b = (String)attributes.remove(ElementTags.BLUE)) == null) {
+        String r = (String)attributes.remove(ElementTags.RED);
+        String g = (String)attributes.remove(ElementTags.GREEN);
+        String b = (String)attributes.remove(ElementTags.BLUE);
+        if (r != null || g != null || b != null) {
             int red = 0;
             int green = 0;
             int blue = 0;
@@ -372,9 +370,10 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
             setBorderColor(MarkupParser.decodeColor(value));
         }
-        if (!(r = (String)attributes.remove(ElementTags.BGRED)) == null &&
-        (g = (String)attributes.remove(ElementTags.BGGREEN)) == null &&
-        (b = (String)attributes.remove(ElementTags.BGBLUE)) == null) {
+        r = (String)attributes.remove(ElementTags.BGRED);
+        g = (String)attributes.remove(ElementTags.BGGREEN);
+        b = (String)attributes.remove(ElementTags.BGBLUE);
+        if (r != null || g != null || b != null) {
             int red = 0;
             int green = 0;
             int blue = 0;
