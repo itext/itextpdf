@@ -130,7 +130,7 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
         this.document = doc;
         this.type = type;
         this.mode = MODE_SINGLE;
-        headerAll = headerFooter;
+        headerAll = new RtfHeaderFooter(doc, headerFooter, type);
         headerAll.setType(this.type);
     }
     
@@ -259,6 +259,7 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
      */
     public void setHasTitlePage() {
         if(this.mode == MODE_SINGLE) {
+            this.mode = MODE_MULTIPLE;
             headerFirst = new RtfHeaderFooter(this.document, headerAll, RtfHeaderFooter.DISPLAY_FIRST_PAGE);
             headerFirst.setType(this.type);
         }
