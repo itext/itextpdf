@@ -99,7 +99,7 @@ public class RtfPhrase extends RtfElement {
             return;
         }
         
-        RtfFont phraseFont = new RtfFont(null, phrase.font(), 0);
+        RtfFont phraseFont = new RtfFont(null, phrase.font());
         for(int i = 0; i < phrase.size(); i++) {
             Element chunk = (Element) phrase.get(i);
             if(chunk instanceof Chunk) {
