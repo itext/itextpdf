@@ -23,6 +23,7 @@ import com.lowagie.text.*;
 import java.io.*;
 import java.util.*;
 import java.awt.Color;
+import java.text.DateFormat;
 
   /**
    * A <CODE>DocWriter</CODE> class for Rich Text Files (RTF).
@@ -918,47 +919,34 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     private void writeFormatedDateTime(String date) throws IOException
     {
-        String dummyStr = "";
-        
-        writeDateTimeNumber(year, date, 25, 29);
-        info.write(escape);
-        info.write(month);
-        dummyStr = date.substring(4, 7);
-        if(dummyStr.equals("Jan")) { writeInt(info, 1); }
-        else if (dummyStr.equals("Feb")) { writeInt(info, 2); }
-        else if (dummyStr.equals("Mar")) { writeInt(info, 3); }
-        else if (dummyStr.equals("Apr")) { writeInt(info, 4); }
-        else if (dummyStr.equals("May")) { writeInt(info, 5); }
-        else if (dummyStr.equals("Jun")) { writeInt(info, 6); }
-        else if (dummyStr.equals("Jul")) { writeInt(info, 7); }
-        else if (dummyStr.equals("Aug")) { writeInt(info, 8); }
-        else if (dummyStr.equals("Sep")) { writeInt(info, 9); }
-        else if (dummyStr.equals("Okt")) { writeInt(info, 10); }
-        else if (dummyStr.equals("Nov")) {  writeInt(info, 11);}
-        else { writeInt(info, 12); }
-        writeDateTimeNumber(day, date, 8, 10);
-        writeDateTimeNumber(hour, date, 11, 13);
-        writeDateTimeNumber(minute, date, 14, 16);
-        writeDateTimeNumber(second, date, 17, 19);
-    }
-    
-  /** 
-   * Writes a Date or Time number.
-   *
-   * @param identifier The tag defining the type of Date/Time to be written
-   * @param date The Date/Time to be written
-   * @param begin Position in the <code>date</code> where the Date/Time starts
-   * @param end Position in the <code>date</code> where the Date/Time ends
-   * 
-   * @throws IOException
-   */
-    private void writeDateTimeNumber(byte [] identifier, String date, int begin, int end) throws IOException
-    {
-        int dummyInt = 0;
-        info.write(escape);
-        info.write(identifier);
-        dummyInt = Integer.valueOf(date.substring(begin, end)).intValue();
-        writeInt(info, dummyInt);
+      Calendar cal = Calendar.getInstance();
+      DateFormat df = DateFormat.getInstance();
+      try
+	{
+	  cal.setTime(df.parse(date));
+	  info.write(escape);
+	  info.write(year);
+	  writeInt(info, cal.get(Calendar.YEAR));
+	  info.write(escape);
+	  info.write(month);
+	  writeInt(info, cal.get(Calendar.MONTH));
+	  info.write(escape);
+	  info.write(day);
+	  writeInt(info, cal.get(Calendar.DAY_OF_MONTH));
+	  info.write(escape);
+	  info.write(hour);
+	  writeInt(info, cal.get(Calendar.HOUR));
+	  info.write(escape);
+	  info.write(minute);
+	  writeInt(info, cal.get(Calendar.MINUTE));
+	  info.write(escape);
+	  info.write(second);
+	  writeInt(info, cal.get(Calendar.SECOND));
+	}
+      catch(java.text.ParseException e)
+	{
+	  throw new IOException("Error parsing Date");
+	}
     }
     
   /** 
