@@ -100,18 +100,37 @@ public class PdfContentByte {
     /** The alignement is right */
     public static final int ALIGN_RIGHT = Element.ALIGN_RIGHT;
 
+    /** A possible line cap value */
     public static final int LINE_CAP_BUTT = 0;
+    /** A possible line cap value */
     public static final int LINE_CAP_ROUND = 1;
+    /** A possible line cap value */
     public static final int LINE_CAP_PROJECTING_SQUARE = 2;
-    
+
+    /** A possible line join value */
+    public static final int LINE_JOIN_MITER = 0;
+    /** A possible line join value */
+    public static final int LINE_JOIN_ROUND = 1;
+    /** A possible line join value */
+    public static final int LINE_JOIN_BEVEL = 2;
+
+    /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_FILL = 0;
+    /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_STROKE = 1;
+    /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_FILL_STROKE = 2;
+    /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_INVISIBLE = 3;
+    /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_FILL_CLIP = 4;
+    /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_STROKE_CLIP = 5;
+    /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_FILL_STROKE_CLIP = 6;
+    /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_CLIP = 7;
+    
     // membervariables
     
     /** This is the actual content */
@@ -301,6 +320,18 @@ public class PdfContentByte {
         content.append("[").append(unitsOn).append(' ').append(unitsOff).append("] ").append(phase).append(" d").append_i(separator);
     }
     
+    /**
+     * Changes the value of the <VAR>line dash pattern</VAR>.
+     * <P>
+     * The line dash pattern controls the pattern of dashes and gaps used to stroke paths.
+     * It is specified by an <I>array</I> and a <I>phase</I>. The array specifies the length
+     * of the alternating dashes and gaps. The phase specifies the distance into the dash
+     * pattern to start the dash.<BR>
+     *
+     * @param		array		length of the alternating dashes and gaps
+     * @param		phase		the value of the phase
+     */
+    
     public final void setLineDash(float[] array, float phase) {
         content.append("[");
         for (int i = 0; i < array.length; i++) {
@@ -315,7 +346,7 @@ public class PdfContentByte {
      * <P>
      * The <VAR>line join style</VAR> specifies the shape to be used at the corners of paths
      * that are stroked.<BR>
-     * Allowed values are 0 (Miter joins), 1 (Round joins) and 2 (Bevel joins).<BR>
+     * Allowed values are LINE_JOIN_MITER (Miter joins), LINE_JOIN_ROUND (Round joins) and LINE_JOIN_BEVEL (Bevel joins).<BR>
      *
      * @param		style		a value
      */
@@ -1144,6 +1175,12 @@ public class PdfContentByte {
         content.append("Tj").append_i(separator);
     }
     
+    /**
+     * Constructs a kern array for a text in a certain font
+     * @param text the text
+     * @param font the font
+     * @return a PdfTextArray
+     */
     public static PdfTextArray getKernArray(String text, BaseFont font) {
         PdfTextArray pa = new PdfTextArray();
         StringBuffer acc = new StringBuffer();
@@ -1300,6 +1337,7 @@ public class PdfContentByte {
      * Escapes a <CODE>byte</CODE> array according to the PDF conventions.
      *
      * @param b the <CODE>byte</CODE> array to escape
+     * @param content the content
      */
     static void escapeString(byte b[], ByteBuffer content) {
         content.append_i('(');
@@ -2086,6 +2124,10 @@ public class PdfContentByte {
         content.append(PdfName.PATTERN.getBytes()).append(" CS ").append(name.getBytes()).append(" SCN").append_i(separator);
     }
     
+    /**
+     * Paints using a shading object. 
+     * @param shading the shading object
+     */
     public void paintShading(PdfShading shading) {
         writer.addSimpleShading(shading);
         PageResources prs = getPageResources();
@@ -2096,10 +2138,18 @@ public class PdfContentByte {
             prs.addColor(details.getColorName(), details.getIndirectReference());
     }
     
+    /**
+     * Paints using a shading pattern. 
+     * @param shading the shading pattern
+     */
     public void paintShading(PdfShadingPattern shading) {
         paintShading(shading.getShading());
     }
     
+    /**
+     * Sets the shading fill pattern.
+     * @param shading the shading pattern
+     */
     public void setShadingFill(PdfShadingPattern shading) {
         writer.addSimpleShadingPattern(shading);
         PageResources prs = getPageResources();
@@ -2110,6 +2160,10 @@ public class PdfContentByte {
             prs.addColor(details.getColorName(), details.getIndirectReference());
     }
     
+    /**
+     * Sets the shading stroke pattern
+     * @param shading the shading pattern
+     */
     public void setShadingStroke(PdfShadingPattern shading) {
         writer.addSimpleShadingPattern(shading);
         PageResources prs = getPageResources();
@@ -2306,8 +2360,13 @@ public class PdfContentByte {
     
     /**
      * Draws a TextField.
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @param on
+     * @deprecated
      */
-    
     public void drawRadioField(float llx, float lly, float urx, float ury, boolean on) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
@@ -2341,8 +2400,12 @@ public class PdfContentByte {
     
     /**
      * Draws a TextField.
-     */
-    
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @deprecated
+     */   
     public void drawTextField(float llx, float lly, float urx, float ury) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
@@ -2386,8 +2449,15 @@ public class PdfContentByte {
     
     /**
      * Draws a button.
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @param text
+     * @param bf
+     * @param size
+     * @deprecated
      */
-    
     public void drawButton(float llx, float lly, float urx, float ury, String text, BaseFont bf, float size) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
@@ -2441,6 +2511,7 @@ public class PdfContentByte {
      * are translated to PDF commands as shapes. No PDF fonts will appear.
      * @param width the width of the panel
      * @param height the height of the panel
+     * @param printerJob a printer job
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createPrinterGraphicsShapes(float width, float height, PrinterJob printerJob) {
@@ -2461,6 +2532,7 @@ public class PdfContentByte {
      * are translated to PDF commands.
      * @param width the width of the panel
      * @param height the height of the panel
+     * @param printerJob
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createPrinterGraphics(float width, float height, PrinterJob printerJob) {
@@ -2471,6 +2543,8 @@ public class PdfContentByte {
      * are translated to PDF commands.
      * @param width the width of the panel
      * @param height the height of the panel
+     * @param convertImagesToJPEG
+     * @param quality
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createGraphics(float width, float height, boolean convertImagesToJPEG, float quality) {
@@ -2481,16 +2555,36 @@ public class PdfContentByte {
      * are translated to PDF commands.
      * @param width the width of the panel
      * @param height the height of the panel
+     * @param convertImagesToJPEG
+     * @param quality
+     * @param printerJob
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createPrinterGraphics(float width, float height, boolean convertImagesToJPEG, float quality, PrinterJob printerJob) {
         return new PdfPrinterGraphics2D(this, width, height, null, false, convertImagesToJPEG, quality, printerJob);
     }
 
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width
+     * @param height
+     * @param convertImagesToJPEG
+     * @param quality
+     * @return A Graphics2D object
+     */
     public java.awt.Graphics2D createGraphicsShapes(float width, float height, boolean convertImagesToJPEG, float quality) {
         return new PdfGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality);
     }
 
+    /** Gets a <CODE>Graphics2D</CODE> to print on. The graphics
+     * are translated to PDF commands.
+     * @param width
+     * @param height
+     * @param convertImagesToJPEG
+     * @param quality
+     * @param printerJob
+     * @return a Graphics2D object
+     */
     public java.awt.Graphics2D createPrinterGraphicsShapes(float width, float height, boolean convertImagesToJPEG, float quality, PrinterJob printerJob) {
         return new PdfPrinterGraphics2D(this, width, height, null, true, convertImagesToJPEG, quality, printerJob);
     }
@@ -2511,6 +2605,7 @@ public class PdfContentByte {
      * @param width the width of the panel
      * @param height the height of the panel
      * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
+     * @param printerJob a printer job
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createPrinterGraphics(float width, float height, FontMapper fontMapper, PrinterJob printerJob) {
@@ -2537,6 +2632,7 @@ public class PdfContentByte {
      * @param fontMapper the mapping from awt fonts to <CODE>BaseFont</CODE>
      * @param convertImagesToJPEG converts awt images to jpeg before inserting in pdf
      * @param quality the quality of the jpeg
+     * @param printerJob a printer job
      * @return a <CODE>Graphics2D</CODE>
      */
     public java.awt.Graphics2D createPrinterGraphics(float width, float height, FontMapper fontMapper, boolean convertImagesToJPEG, float quality, PrinterJob printerJob) {
