@@ -360,10 +360,13 @@ public class XmlWriter extends DocWriter implements DocListener {
                         String key = (String) i.next();
                         if (key.equals(Chunk.LOCALGOTO)
                         || key.equals(Chunk.LOCALDESTINATION)
-                        || key.equals(Chunk.GENERICTAG)
-                        || key.equals(Chunk.SUBSUPSCRIPT)) {
+                        || key.equals(Chunk.GENERICTAG)) {
                             String value = (String) attributes.get(key);
                             buf.append(" ").append(key.toLowerCase()).append("=\"").append(value).append("\"");
+                            tag = true;
+                        }
+                        if (key.equals(Chunk.SUBSUPSCRIPT)) {
+                            buf.append(" ").append(key.toLowerCase()).append("=\"").append(((Float) attributes.get(key)).floatValue()).append("\"");
                             tag = true;
                         }
                         if (key.equals(Chunk.NEWPAGE)) {
