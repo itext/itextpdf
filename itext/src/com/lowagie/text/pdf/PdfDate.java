@@ -51,6 +51,8 @@
 package com.lowagie.text.pdf;
 
 import java.util.GregorianCalendar;
+import java.util.Calendar;
+import java.util.SimpleTimeZone;
 
 /**
  * <CODE>PdfDate</CODE> is the PDF date object.
@@ -68,7 +70,10 @@ import java.util.GregorianCalendar;
  * @see		java.util.GregorianCalendar
  */
 
-class PdfDate extends PdfString {
+public class PdfDate extends PdfString {
+    
+    private static final int dateSpace[] = {Calendar.YEAR, 4, 0, Calendar.MONTH, 2, -1, Calendar.DAY_OF_MONTH, 2, 0,
+        Calendar.HOUR_OF_DAY, 2, 0, Calendar.MINUTE, 2, 0, Calendar.SECOND, 2, 0};
     
     // constructors
     
@@ -78,7 +83,7 @@ class PdfDate extends PdfString {
  * @param		d			the date that has to be turned into a <CODE>PdfDate</CODE>-object
  */
     
-    PdfDate(GregorianCalendar d) {
+    public PdfDate(GregorianCalendar d) {
         super();
         StringBuffer date = new StringBuffer("D:");
         date.append(setLength(d.get(GregorianCalendar.YEAR), 4));
@@ -110,7 +115,7 @@ class PdfDate extends PdfString {
  * Constructs a <CODE>PdfDate</CODE>-object, representing the current day and time.
  */
     
-    PdfDate() {
+    public PdfDate() {
         this(new GregorianCalendar());
     }
     
@@ -131,5 +136,55 @@ class PdfDate extends PdfString {
         }
         tmp.setLength(length);
         return tmp.toString();
+    }
+    
+    /**
+     * Converts a PDF string representing a date into a Calendar.
+     * @param s the PDF string representing a date
+     * @return a <CODE>Calendar</CODE> representing the date or <CODE>null</CODE> if the string
+     * was not a date
+     */    
+    public static Calendar decode(String s) {
+        try {
+            if (s.startsWith("D:"))
+                s = s.substring(2);
+            GregorianCalendar calendar;
+            int slen = s.length();
+            int idx = s.indexOf('Z');
+            if (idx >= 0) {
+                slen = idx;
+                calendar = new GregorianCalendar(new SimpleTimeZone(0, "ZPDF"));
+            }
+            else {
+                int sign = 1;
+                idx = s.indexOf('+');
+                if (idx < 0) {
+                    idx = s.indexOf('-');
+                    if (idx >= 0)
+                        sign = -1;
+                }
+                if (idx < 0)
+                    calendar = new GregorianCalendar();
+                else {
+                    int offset = Integer.parseInt(s.substring(idx + 1, idx + 3)) * 60;
+                    if (idx + 5 < s.length())
+                        offset += Integer.parseInt(s.substring(idx + 4, idx + 6));
+                    calendar = new GregorianCalendar(new SimpleTimeZone(offset * sign * 60000, "ZPDF"));
+                    slen = idx;
+                }
+            }
+            calendar.clear();
+            idx = 0;
+            for (int k = 0; k < dateSpace.length; k += 3) {
+                if (idx >= slen)
+                    break;
+                calendar.set(dateSpace[k], Integer.parseInt(s.substring(idx, idx + dateSpace[k + 1])) + dateSpace[k + 2]);
+                idx += dateSpace[k + 1];
+            }
+            return calendar;
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 }

@@ -47,6 +47,9 @@
 package com.lowagie.text.pdf;
 import com.lowagie.text.Rectangle;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Canvas;
+import java.awt.image.MemoryImageSource;
 
 /** Implements the Postnet and Planet barcodes. The default parameters are:
  * <pre>
@@ -179,6 +182,52 @@ public class BarcodePostnet extends Barcode{
      *
      */
     public java.awt.Image createAwtImage(Color foreground, Color background) {
-        throw new UnsupportedOperationException("Not supported with postnet.");
+        int f = foreground.getRGB();
+        int g = background.getRGB();
+        Canvas canvas = new Canvas();
+        int barWidth = (int)x;
+        if (barWidth <= 0)
+            barWidth = 1;
+        int barDistance = (int)n;
+        if (barDistance <= barWidth)
+            barDistance = barWidth + 1;
+        int barShort = (int)size;
+        if (barShort <= 0)
+            barShort = 1;
+        int barTall = (int)barHeight;
+        if (barTall <= barShort)
+            barTall = barShort + 1;
+        int width = ((code.length() + 1) * 5 + 1) * barDistance + barWidth;
+        int pix[] = new int[width * barTall];
+        byte bars[] = getBarsPostnet(code);
+        byte flip = 1;
+        if (codeType == PLANET) {
+            flip = 0;
+            bars[0] = 0;
+            bars[bars.length - 1] = 0;
+        }
+        int idx = 0;
+        for (int k = 0; k < bars.length; ++k) {
+            boolean dot = (bars[k] == flip);
+            for (int j = 0; j < barDistance; ++j) {
+                pix[idx + j] = ((dot && j < barWidth) ? f : g);
+            }
+            idx += barDistance;
+        }
+        int limit = width * (barTall - barShort);
+        for (int k = width; k < limit; k += width)
+            System.arraycopy(pix, 0, pix, k, width);
+        idx = limit;
+        for (int k = 0; k < bars.length; ++k) {
+            for (int j = 0; j < barDistance; ++j) {
+                pix[idx + j] = ((j < barWidth) ? f : g);
+            }
+            idx += barDistance;
+        }
+        for (int k = limit + width; k < pix.length; k += width)
+            System.arraycopy(pix, limit, pix, k, width);
+        Image img = canvas.createImage(new MemoryImageSource(width, barTall, pix, 0, width));
+        
+        return img;
     }
 }

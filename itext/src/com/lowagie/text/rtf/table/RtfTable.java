@@ -53,7 +53,7 @@ package com.lowagie.text.rtf.table;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.lowagie.text.Element;
 import com.lowagie.text.Row;
@@ -77,7 +77,7 @@ public class RtfTable extends RtfElement {
     /**
      * The rows of this RtfTable
      */
-    private Vector rows = null;
+    private ArrayList rows = null;
     /**
      * The percentage of the page width that this RtfTable covers
      */
@@ -130,7 +130,7 @@ public class RtfTable extends RtfElement {
      * @param table The source Table
      */
     private void importTable(Table table) {
-        this.rows = new Vector();
+        this.rows = new ArrayList();
         this.tableWidthPercent = table.widthPercentage();
         this.proportionalWidths = table.getProportionalWidths();
         this.cellPadding = (float) (table.cellpadding() * TWIPS_FACTOR);
@@ -247,7 +247,7 @@ public class RtfTable extends RtfElement {
      * 
      * @return The rows of this RtfTable
      */
-    protected Vector getRows() {
+    protected ArrayList getRows() {
         return this.rows;
     }
     

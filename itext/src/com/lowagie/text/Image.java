@@ -233,6 +233,17 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** Holds value of property originalData. */
     protected byte[] originalData;
     
+/** The spacing before the image. */
+    protected float spacingBefore;
+    
+/** The spacing after the image. */
+    protected float spacingAfter;
+
+    /**
+     * Holds value of property widthPercentage.
+     */
+    private float widthPercentage = 100;
+    
     // constructors
     
     /**
@@ -288,6 +299,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.XYRatio = image.XYRatio;
         this.originalData = image.originalData;
         this.originalType = image.originalType;
+        this.spacingAfter = image.spacingAfter;
+        this.spacingBefore = image.spacingBefore;
+        this.widthPercentage = image.widthPercentage;
     }
     
     // gets an instance of an Image
@@ -620,10 +634,42 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return new ImgTemplate(template);
     }
     
+    /** Creates an Image with CCITT G3 or G4 compression. It assumes that the data bytes
+     * are already compressed.
+     *
+     * @param width the exact width of the image
+     * @param height the exact height of the image
+     * @param reverseBits reverses the bits in <code>data</code>.
+     *  Bit 0 is swapped with bit 7 and so on
+     * @param typeCCITT the type of compression in <code>data</code>. It can be
+     * CCITTG4, CCITTG31D, CCITTG32D
+     * @param parameters parameters associated with this stream. Possible values are
+     * CCITT_BLACKIS1, CCITT_ENCODEDBYTEALIGN, CCITT_ENDOFLINE and CCITT_ENDOFBLOCK or a
+     * combination of them
+     * @param data the image data
+     * @throws BadElementException on error
+     */
     public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data) throws BadElementException {
         return Image.getInstance(width, height, reverseBits, typeCCITT, parameters, data, null);
     }
     
+    /** Creates an Image with CCITT G3 or G4 compression. It assumes that the data bytes
+     * are already compressed.
+     *
+     * @param width the exact width of the image
+     * @param height the exact height of the image
+     * @param reverseBits reverses the bits in <code>data</code>.
+     *  Bit 0 is swapped with bit 7 and so on
+     * @param typeCCITT the type of compression in <code>data</code>. It can be
+     * CCITTG4, CCITTG31D, CCITTG32D
+     * @param parameters parameters associated with this stream. Possible values are
+     * CCITT_BLACKIS1, CCITT_ENCODEDBYTEALIGN, CCITT_ENDOFLINE and CCITT_ENDOFBLOCK or a
+     * combination of them
+     * @param data the image data
+     * @param transparency transparency information in the Mask format of the
+     * image dictionary
+     * @throws BadElementException on error
+     */
     public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data, int transparency[]) throws BadElementException {
         if (transparency != null && transparency.length != 2)
             throw new BadElementException("Transparency length must be equal to 2 with CCITT images");
@@ -1474,4 +1520,61 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     public void setUrl(URL url) {
         this.url = url;
     }
+
+/**
+ * Sets the spacing before this image.
+ *
+ * @param	spacing		the new spacing
+ */
+    
+    public void setSpacingBefore(float spacing) {
+        this.spacingBefore = spacing;
+    }
+    
+/**
+ * Sets the spacing after this image.
+ *
+ * @param	spacing		the new spacing
+ */
+    
+    public void setSpacingAfter(float spacing) {
+        this.spacingAfter = spacing;
+    }    
+
+/**
+ * Gets the spacing before this image.
+ *
+ * @return	the spacing
+ */
+    
+    public float spacingBefore() {
+        return spacingBefore;
+    }
+    
+/**
+ * Gets the spacing before this image.
+ *
+ * @return	the spacing
+ */
+    
+    public float spacingAfter() {
+        return spacingAfter;
+    }    
+    
+    /**
+     * Getter for property widthPercentage.
+     * @return Value of property widthPercentage.
+     */
+    public float getWidthPercentage() {
+        return this.widthPercentage;
+    }
+    
+    /**
+     * Setter for property widthPercentage.
+     * @param widthPercentage New value of property widthPercentage.
+     */
+    public void setWidthPercentage(float widthPercentage) {
+        this.widthPercentage = widthPercentage;
+    }
+    
 }

@@ -126,7 +126,7 @@ public class List implements TextElementArray, MarkupAttributes {
     protected float indentationRight = 0;
     
 /** The indentation of the listitems. */
-    protected int symbolIndent;
+    protected float symbolIndent;
 
 /** Contains extra markupAttributes */
     protected Properties markupAttributes;
@@ -144,13 +144,13 @@ public class List implements TextElementArray, MarkupAttributes {
  * @param	symbolIndent	the indentation that has to be used for the listsymbol
  */
     
-    public List(boolean numbered, int symbolIndent) {
+    public List(boolean numbered, float symbolIndent) {
         this.numbered = numbered;
         this.lettered = false;
         this.symbolIndent = symbolIndent;
     }
     
-    public List(boolean numbered, boolean lettered, int symbolIndent ) {
+    public List(boolean numbered, boolean lettered, float symbolIndent ) {
         this.numbered = numbered;
         this.lettered = lettered;
         this.symbolIndent = symbolIndent;
@@ -408,7 +408,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * Gets the symbol indentation.
  */
     
-    public int symbolIndent() {
+    public float symbolIndent() {
         return symbolIndent;
     }
     

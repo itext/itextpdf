@@ -80,6 +80,8 @@ class PdfFont implements Comparable {
     /** an image. */
     protected Image image;
     
+    protected float hScale = 1;
+    
     // constructors
     
     PdfFont(BaseFont bf, float size) {
@@ -139,10 +141,7 @@ class PdfFont implements Comparable {
      */
     
     float width() {
-        if (image == null)
-            return font.getWidthPoint(" ", size);
-        else
-            return image.scaledWidth();
+        return width(' ');
     }
     
     /**
@@ -154,14 +153,14 @@ class PdfFont implements Comparable {
     
     float width(char character) {
         if (image == null)
-            return font.getWidthPoint(character, size);
+            return font.getWidthPoint(character, size) * hScale;
         else
             return image.scaledWidth();
     }
     
     float width(String s) {
         if (image == null)
-            return font.getWidthPoint(s, size);
+            return font.getWidthPoint(s, size) * hScale;
         else
             return image.scaledWidth();
     }
@@ -182,5 +181,8 @@ class PdfFont implements Comparable {
         catch (Exception ee) {
             throw new ExceptionConverter(ee);
         }
+    }
+    void setHorizontalScaling(float hScale) {
+        this.hScale = hScale;
     }
 }

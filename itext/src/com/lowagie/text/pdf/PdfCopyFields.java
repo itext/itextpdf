@@ -188,4 +188,22 @@ public class PdfCopyFields {
     public PdfWriter getWriter() {
         return fc;
     }
+
+    /**
+     * Gets the 1.5 compression status.
+     * @return <code>true</code> if the 1.5 compression is on
+     */
+    public boolean isFullCompression() {
+        return fc.isFullCompression();
+    }
+    
+    /**
+     * Sets the document's compression to the new 1.5 mode with object streams and xref
+     * streams. It can be set at any time but once set it can't be unset.
+     * <p>
+     * If set before opening the document it will also set the pdf version to 1.5.
+     */
+    public void setFullCompression() {
+        fc.setFullCompression();
+    }    
 }

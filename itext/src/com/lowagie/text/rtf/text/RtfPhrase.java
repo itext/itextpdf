@@ -53,7 +53,7 @@ package com.lowagie.text.rtf.text;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -80,9 +80,9 @@ public class RtfPhrase extends RtfElement {
     protected static final byte[] IN_TABLE = "\\intbl".getBytes();
     
     /**
-     * Vector containing the RtfChunks of this RtfPhrase
+     * ArrayList containing the RtfChunks of this RtfPhrase
      */
-    protected Vector chunks = new Vector();
+    protected ArrayList chunks = new ArrayList();
     
     /**
      * Constructs a new RtfPhrase for the RtfDocument with the given Phrase

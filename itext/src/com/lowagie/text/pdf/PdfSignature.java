@@ -54,14 +54,12 @@ package com.lowagie.text.pdf;
 public class PdfSignature extends PdfDictionary {
 
     /** Creates new PdfSignature */
-    public PdfSignature(String filter) {
-        put(PdfName.FILTER, new PdfName(filter));
+    public PdfSignature(PdfName filter, PdfName subFilter) {
+        super(PdfName.SIG);
+        put(PdfName.FILTER, filter);
+        put(PdfName.SUBFILTER, subFilter);
     }
     
-    public void setSubFilter(String filter) {
-        put(PdfName.SUBFILTER, new PdfName(filter));
-    }
-
     public void setByteRange(int range[]) {
         PdfArray array = new PdfArray();
         for (int k = 0; k < range.length; ++k)
@@ -70,15 +68,19 @@ public class PdfSignature extends PdfDictionary {
     }
     
     public void setContents(byte contents[]) {
-        put(PdfName.CONTENTS, new PdfString(contents));
+        put(PdfName.CONTENTS, new PdfString(contents).setWritingMode(true));
+    }
+    
+    public void setCert(byte cert[]) {
+        put(PdfName.CERT, new PdfString(cert));
     }
     
     public void setName(String name) {
         put(PdfName.NAME, new PdfString(name, PdfObject.TEXT_UNICODE));
     }
 
-    public void setDate(String date) {
-        put(PdfName.M, new PdfString(date));
+    public void setDate(PdfDate date) {
+        put(PdfName.M, date);
     }
 
     public void setLocation(String name) {
@@ -87,17 +89,5 @@ public class PdfSignature extends PdfDictionary {
 
     public void setReason(String name) {
         put(PdfName.REASON, new PdfString(name, PdfObject.TEXT_UNICODE));
-    }
-
-    public void setString(String name, byte value[]) {
-        put(new PdfName(name), new PdfString(value));
-    }
-
-    public void setString(String name, String value) {
-        put(new PdfName(name), new PdfString(value, PdfObject.TEXT_UNICODE));
-    }
-
-    public void setStringAsName(String name, String value) {
-        put(new PdfName(name), new PdfName(value));
     }
 }

@@ -84,6 +84,16 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName ACTION = new PdfName("Action");
     /** A name */
+    public static final PdfName ADBE_PKCS7_DETACHED = new PdfName("adbe.pkcs7.detached");
+    /** A name */
+    public static final PdfName ADBE_PKCS7_SHA1 = new PdfName("adbe.pkcs7.sha1");
+    /** A name */
+    public static final PdfName ADBE_X509_RSA_SHA1 = new PdfName("adbe.x509.rsa_sha1");
+    /** A name */
+    public static final PdfName ADOBE_PPKLITE = new PdfName("Adobe.PPKLite");
+    /** A name */
+    public static final PdfName ADOBE_PPKMS = new PdfName("Adobe.PPKMS");
+    /** A name */
     public static final PdfName AIS = new PdfName("AIS");
     /** A name */
     public static final PdfName ALTERNATE = new PdfName("Alternate");
@@ -169,6 +179,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName CCITTFAXDECODE = new PdfName("CCITTFaxDecode");
     /** A name */
     public static final PdfName CENTERWINDOW = new PdfName("CenterWindow");
+    /** A name */
+    public static final PdfName CERT = new PdfName("Cert");
     /** A name */
     public static final PdfName CH = new PdfName("Ch");
     /** A name */
@@ -364,6 +376,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName FREETEXT = new PdfName("FreeText");
     /** A name */
+    public static final PdfName FRM = new PdfName("FRM");
+    /** A name */
     public static final PdfName FS = new PdfName("FS");
     /** A name */
     public static final PdfName FT = new PdfName("FT");
@@ -433,6 +447,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName IMAGEI = new PdfName("ImageI");
     /** A name */
     public static final PdfName IMAGEMASK = new PdfName("ImageMask");
+    /** A name */
+    public static final PdfName INDEX = new PdfName("Index");
     /** A name */
     public static final PdfName INDEXED = new PdfName("Indexed");
     /** A name */
@@ -516,6 +532,16 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName N = new PdfName("N");
     /** A name */
+    public static final PdfName N0 = new PdfName("n0");
+    /** A name */
+    public static final PdfName N1 = new PdfName("n1");
+    /** A name */
+    public static final PdfName N2 = new PdfName("n2");
+    /** A name */
+    public static final PdfName N3 = new PdfName("n3");
+    /** A name */
+    public static final PdfName N4 = new PdfName("n4");
+    /** A name */
     public static final PdfName NAME = new PdfName("Name");
     /** A name */
     public static final PdfName NAMED = new PdfName("Named");
@@ -537,6 +563,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName NUMS = new PdfName("Nums");
     /** A name */
     public static final PdfName O = new PdfName("O");
+    /** A name */
+    public static final PdfName OBJSTM = new PdfName("ObjStm");
     /** A name */
     public static final PdfName OC = new PdfName("OC");
     /** A name */
@@ -778,6 +806,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName V = new PdfName("V");
     /** A name */
+    public static final PdfName VERISIGN_PPKVS = new PdfName("VeriSign.PPKVS");
+    /** A name */
     public static final PdfName VIEWERPREFERENCES = new PdfName("ViewerPreferences");
     /** A name of an attribute. */
     public static final PdfName W = new PdfName("W");
@@ -807,6 +837,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName XOBJECT = new PdfName("XObject");
     /** A name */
     public static final PdfName XSTEP = new PdfName("XStep");
+    /** A name */
+    public static final PdfName XREF = new PdfName("XRef");
+    /** A name */
+    public static final PdfName XREFSTM = new PdfName("XRefStm");
     /** A name */
     public static final PdfName XYZ = new PdfName("XYZ");
     /** A name */

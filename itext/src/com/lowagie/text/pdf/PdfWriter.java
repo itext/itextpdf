@@ -103,6 +103,7 @@ public class PdfWriter extends DocWriter {
         static class PdfCrossReference {
             
             // membervariables
+            private int type;
             
             /**	Byte offset in the PDF file. */
             private int offset;
@@ -119,6 +120,7 @@ public class PdfWriter extends DocWriter {
              */
             
             PdfCrossReference(int offset, int generation) {
+                type = 0;
                 this.offset = offset;
                 this.generation = generation;
             }
@@ -130,7 +132,15 @@ public class PdfWriter extends DocWriter {
              */
             
             PdfCrossReference(int offset) {
-                this(offset, 0);
+                type = 1;
+                this.offset = offset;
+                this.generation = 0;
+            }
+            
+            PdfCrossReference(int type, int offset, int generation) {
+                this.type = type;
+                this.offset = offset;
+                this.generation = generation;
             }
             
             /**
@@ -139,7 +149,7 @@ public class PdfWriter extends DocWriter {
              * @return		an array of <CODE>byte</CODE>s
              */
             
-            public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+            public void toPdf(OutputStream os) throws IOException {
                 // This code makes it more difficult to port the lib to JDK1.1.x:
                 // StringBuffer off = new StringBuffer("0000000000").append(offset);
                 // off.delete(0, off.length() - 10);
@@ -155,6 +165,14 @@ public class PdfWriter extends DocWriter {
                 }
                 else
                     os.write(getISOBytes(off.append(' ').append(gen).append(" n \n").toString()));
+            }
+            
+            public void toPdf(int midSize, OutputStream os) throws IOException {
+                os.write((byte)type);
+                while (--midSize >= 0)
+                    os.write((byte)((offset >>> (8 * midSize)) & 0xff));
+                os.write((byte)((generation >>> 8) & 0xff));
+                os.write((byte)(generation & 0xff));
             }
         }
         
@@ -181,6 +199,49 @@ public class PdfWriter extends DocWriter {
         
         // methods
         
+        private static final int OBJSINSTREAM = 200;
+        
+        private ByteBuffer index;
+        private ByteBuffer streamObjects;
+        private int currentObjNum;
+        private int numObj = 0;
+        
+        private PdfWriter.PdfBody.PdfCrossReference addToObjStm(PdfObject obj, int nObj) throws IOException {
+            if (numObj >= OBJSINSTREAM)
+                flushObjStm();
+            if (index == null) {
+                index = new ByteBuffer();
+                streamObjects = new ByteBuffer();
+                currentObjNum = getIndirectReferenceNumber();
+                numObj = 0;
+            }
+            int p = streamObjects.size();
+            int idx = numObj++;
+            PdfEncryption enc = writer.crypto;
+            writer.crypto = null;
+            obj.toPdf(writer, streamObjects);
+            writer.crypto = enc;
+            streamObjects.append(' ');
+            index.append(nObj).append(' ').append(p).append(' ');
+            return new PdfWriter.PdfBody.PdfCrossReference(2, currentObjNum, idx);
+        }
+        
+        private void flushObjStm() throws IOException {
+            if (numObj == 0)
+                return;
+            int first = index.size();
+            index.append(streamObjects);
+            PdfStream stream = new PdfStream(index.toByteArray());
+            stream.flateCompress();
+            stream.put(PdfName.TYPE, PdfName.OBJSTM);
+            stream.put(PdfName.N, new PdfNumber(numObj));
+            stream.put(PdfName.FIRST, new PdfNumber(first));
+            add(stream, currentObjNum);
+            index = null;
+            streamObjects = null;
+            numObj = 0;
+        }
+        
         /**
          * Adds a <CODE>PdfObject</CODE> to the body.
          * <P>
@@ -195,11 +256,11 @@ public class PdfWriter extends DocWriter {
          */
         
         PdfIndirectObject add(PdfObject object) throws IOException {
-            PdfIndirectObject indirect = new PdfIndirectObject(size(), object, writer);
-            xrefs.add(new PdfCrossReference(position));
-            indirect.writeTo(writer.getOs());
-            position = writer.getOs().getCounter();
-            return indirect;
+            return add(object, getIndirectReferenceNumber());
+        }
+        
+        PdfIndirectObject add(PdfObject object, boolean inObjStm) throws IOException {
+            return add(object, getIndirectReferenceNumber(), inObjStm);
         }
         
         /**
@@ -208,12 +269,11 @@ public class PdfWriter extends DocWriter {
          */
         
         PdfIndirectReference getPdfIndirectReference() {
-            xrefs.add(new PdfCrossReference(0));
-            return new PdfIndirectReference(0, size() - 1);
+            return new PdfIndirectReference(0, getIndirectReferenceNumber());
         }
         
         int getIndirectReferenceNumber() {
-            xrefs.add(new PdfCrossReference(0));
+            xrefs.add(new PdfCrossReference(0, 65535));
             return size() - 1;
         }
         
@@ -233,19 +293,31 @@ public class PdfWriter extends DocWriter {
          */
         
         PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) throws IOException {
-            PdfIndirectObject indirect = new PdfIndirectObject(ref.getNumber(), object, writer);
-            xrefs.set(ref.getNumber(), new PdfCrossReference(position));
-            indirect.writeTo(writer.getOs());
-            position = writer.getOs().getCounter();
-            return indirect;
+            return add(object, ref.getNumber());
+        }
+        
+        PdfIndirectObject add(PdfObject object, PdfIndirectReference ref, boolean inObjStm) throws IOException {
+            return add(object, ref.getNumber(), inObjStm);
         }
         
         PdfIndirectObject add(PdfObject object, int refNumber) throws IOException {
-            PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
-            xrefs.set(refNumber, new PdfCrossReference(position));
-            indirect.writeTo(writer.getOs());
-            position = writer.getOs().getCounter();
-            return indirect;
+            return add(object, refNumber, true); // to false
+        }
+        
+        PdfIndirectObject add(PdfObject object, int refNumber, boolean inObjStm) throws IOException {
+            if (inObjStm && object.canBeInObjStm() && writer.isFullCompression()) {
+                PdfCrossReference pxref = addToObjStm(object, refNumber);
+                PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
+                xrefs.set(refNumber, pxref);
+                return indirect;
+            }
+            else {
+                PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
+                xrefs.set(refNumber, new PdfCrossReference(position));
+                indirect.writeTo(writer.getOs());
+                position = writer.getOs().getCounter();
+                return indirect;
+            }
         }
         
         /**
@@ -300,15 +372,55 @@ public class PdfWriter extends DocWriter {
          * @return	an array of <CODE>byte</CODE>s
          */
         
-        void writeCrossReferenceTable(OutputStream os) throws IOException {
-            os.write(getISOBytes("xref\n0 "));
-            os.write(getISOBytes(String.valueOf(size())));
-            os.write('\n');
-            // all the other objects
-            PdfCrossReference entry;
-            for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
-                entry = (PdfCrossReference) i.next();
-                entry.toPdf(null, os);
+        void writeCrossReferenceTable(OutputStream os, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID) throws IOException {
+            if (writer.isFullCompression()) {
+                flushObjStm();
+                int refNumber = getIndirectReferenceNumber();
+                xrefs.set(refNumber, new PdfCrossReference(position));
+                int mid = 4;
+                int mask = 0xff000000;
+                for (; mid > 1; --mid) {
+                    if ((mask & position) != 0)
+                        break;
+                    mask >>>= 8;
+                }
+                ByteBuffer buf = new ByteBuffer();
+                
+                PdfCrossReference entry;
+                for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
+                    entry = (PdfCrossReference) i.next();
+                    entry.toPdf(mid, buf);
+                }
+                PdfStream xr = new PdfStream(buf.toByteArray());
+                buf = null;
+                xr.flateCompress();
+                xr.put(PdfName.SIZE, new PdfNumber(size()));
+                xr.put(PdfName.ROOT, root);
+                if (info != null) {
+                    xr.put(PdfName.INFO, info);
+                }
+                if (encryption != null)
+                    xr.put(PdfName.ENCRYPT, encryption);
+                if (fileID != null)
+                    xr.put(PdfName.ID, fileID);
+                xr.put(PdfName.W, new PdfArray(new int[]{1, mid, 2}));
+                xr.put(PdfName.TYPE, PdfName.XREF);
+                PdfEncryption enc = writer.crypto;
+                writer.crypto = null;
+                PdfIndirectObject indirect = new PdfIndirectObject(refNumber, xr, writer);
+                indirect.writeTo(writer.getOs());
+                writer.crypto = enc;
+            }
+            else {
+                os.write(getISOBytes("xref\n0 "));
+                os.write(getISOBytes(String.valueOf(size())));
+                os.write('\n');
+                // all the other objects
+                PdfCrossReference entry;
+                for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
+                    entry = (PdfCrossReference) i.next();
+                    entry.toPdf(os);
+                }
             }
         }
     }
@@ -571,6 +683,11 @@ public class PdfWriter extends DocWriter {
     
     /** Holds value of property extraCatalog. */
     private PdfDictionary extraCatalog;
+    
+    /**
+     * Holds value of property fullCompression.
+     */
+    protected boolean fullCompression = false;
     
     // constructor
     
@@ -916,13 +1033,14 @@ public class PdfWriter extends DocWriter {
                 if (extraCatalog != null) {
                     catalog.mergeDifferent(extraCatalog);
                 }
-                PdfIndirectObject indirectCatalog = body.add(catalog);
+                PdfIndirectObject indirectCatalog = body.add(catalog, false);
                 // add the info-object to the body
-                PdfIndirectObject infoObj = body.add(info);
+                PdfIndirectObject infoObj = body.add(info, false);
                 PdfIndirectReference encryption = null;
                 PdfObject fileID = null;
+                body.flushObjStm();
                 if (crypto != null) {
-                    PdfIndirectObject encryptionObject = body.add(crypto.getEncryptionDictionary());
+                    PdfIndirectObject encryptionObject = body.add(crypto.getEncryptionDictionary(), false);
                     encryption = encryptionObject.getIndirectReference();
                     fileID = crypto.getFileID();
                 }
@@ -930,15 +1048,24 @@ public class PdfWriter extends DocWriter {
                     fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
                 
                 // write the cross-reference table of the body
-                body.writeCrossReferenceTable(os);
+                body.writeCrossReferenceTable(os, indirectCatalog.getIndirectReference(),
+                    infoObj.getIndirectReference(), encryption,  fileID);
+
                 // make the trailer
-                PdfTrailer trailer = new PdfTrailer(body.size(),
-                body.offset(),
-                indirectCatalog.getIndirectReference(),
-                infoObj.getIndirectReference(),
-                encryption,
-                fileID);
-                trailer.toPdf(this, os);
+                if (fullCompression) {
+                    os.write(getISOBytes("startxref\n"));
+                    os.write(getISOBytes(String.valueOf(body.offset())));
+                    os.write(getISOBytes("\n%%EOF\n"));
+                }
+                else {
+                    PdfTrailer trailer = new PdfTrailer(body.size(),
+                    body.offset(),
+                    indirectCatalog.getIndirectReference(),
+                    infoObj.getIndirectReference(),
+                    encryption,
+                    fileID);
+                    trailer.toPdf(this, os);
+                }
                 super.close();
             }
             catch(IOException ioe) {
@@ -1048,6 +1175,17 @@ public class PdfWriter extends DocWriter {
     }
     
     /**
+     * Gets the current vertical page position.
+     * @param ensureNewLine Tells whether a new line shall be enforced. This may cause side effects 
+     *   for elements that do not terminate the lines they've started because those lines will get
+     *   terminated. 
+     * @return The current vertical page position.
+     */
+    public float getVerticalPosition(boolean ensureNewLine) {
+        return pdf.getVerticalPosition(ensureNewLine);
+    }
+    
+    /**
      * Checks if writing is paused.
      *
      * @return		<CODE>true</CODE> if writing temporarely has to be paused, <CODE>false</CODE> otherwise.
@@ -1106,7 +1244,7 @@ public class PdfWriter extends DocWriter {
         return directContent.getRootOutline();
     }
     
-    OutputStreamCounter getOs() {
+    public OutputStreamCounter getOs() {
         return os;
     }
         
@@ -1270,17 +1408,22 @@ public class PdfWriter extends DocWriter {
     /**
      * Adds a template to the document but not to the page resources.
      * @param template the template to add
+     * @param forcedName the template name, rather than a generated one. Can be null
      * @return the <CODE>PdfName</CODE> for this template
      */
     
-    PdfName addDirectTemplateSimple(PdfTemplate template) {
+    PdfName addDirectTemplateSimple(PdfTemplate template, PdfName forcedName) {
         PdfIndirectReference ref = template.getIndirectReference();
         Object obj[] = (Object[])formXObjects.get(ref);
         PdfName name = null;
         try {
             if (obj == null) {
-                name = new PdfName("Xf" + formXObjectsCounter);
-                ++formXObjectsCounter;
+                if (forcedName == null) {
+                    name = new PdfName("Xf" + formXObjectsCounter);
+                    ++formXObjectsCounter;
+                }
+                else
+                    name = forcedName;
                 if (template.getType() == PdfTemplate.TYPE_IMPORTED)
                     template = null;
                 formXObjects.put(ref, new Object[]{name, template});
@@ -1378,6 +1521,14 @@ public class PdfWriter extends DocWriter {
      *     in the center of the screen.
      * <li><b>DisplayDocTitle</b> - A flag specifying whether to display the document's title
      *     in the top bar.
+     * <li>The predominant reading order for text. This entry has no direct effect on the
+     *     document's contents or page numbering, but can be used to determine the relative
+     *     positioning of pages when displayed side by side or printed <i>n-up</i> (choose one).
+     *   <ul>
+     *   <li><b>DirectionL2R</b> - Left to right
+     *   <li><b>DirectionR2L</b> - Right to left (including vertical writing systems such as
+     *       Chinese, Japanese, and Korean)
+     *   </ul>
      * <li>The document's page mode, specifying how to display the
      *     document on exiting full-screen mode. It is meaningful only
      *     if the page mode is <b>PageModeFullScreen</b> (choose one).
@@ -1437,13 +1588,28 @@ public class PdfWriter extends DocWriter {
         return iobj;
     }
     
+    public PdfIndirectObject addToBody(PdfObject object, boolean inObjStm) throws IOException {
+        PdfIndirectObject iobj = body.add(object, inObjStm);
+        return iobj;
+    }
+    
     public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref) throws IOException {
         PdfIndirectObject iobj = body.add(object, ref);
         return iobj;
     }
     
+    public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref, boolean inObjStm) throws IOException {
+        PdfIndirectObject iobj = body.add(object, ref, inObjStm);
+        return iobj;
+    }
+    
     public PdfIndirectObject addToBody(PdfObject object, int refNumber) throws IOException {
         PdfIndirectObject iobj = body.add(object, refNumber);
+        return iobj;
+    }
+    
+    public PdfIndirectObject addToBody(PdfObject object, int refNumber, boolean inObjStm) throws IOException {
+        PdfIndirectObject iobj = body.add(object, refNumber, inObjStm);
         return iobj;
     }
     
@@ -2006,14 +2172,22 @@ public class PdfWriter extends DocWriter {
         defaultColorspace.put(key, cs);
     }
 
-    /** Split up the cells in a table to fit to the size of a page, so that no
-     * rows are silently dropped from the output. Currently this function only
-     * breaks up nested tables to accomplish this, it can't handle blocks of
-     * text 
-     * @see com.lowagie.text.pdf.PdfPTable#fitCellsToPageSize(float,float)
+    /**
+     * Gets the 1.5 compression status.
+     * @return <code>true</code> if the 1.5 compression is on
      */
-    public void fitCellsToPageSize(PdfPTable table)
-    {
-        getPdfDocument().fitCellsToPageSize(table);
+    public boolean isFullCompression() {
+        return this.fullCompression;
     }
+    
+    /**
+     * Sets the document's compression to the new 1.5 mode with object streams and xref
+     * streams. It can be set at any time but once set it can't be unset.
+     * <p>
+     * If set before opening the document it will also set the pdf version to 1.5.
+     */
+    public void setFullCompression() {
+        this.fullCompression = true;
+        setPdfVersion(VERSION_1_5);
+    }    
 }

@@ -93,6 +93,7 @@ class PdfChunk implements SplitCharacter{
         keysAttributes.put(Chunk.BACKGROUND, null);
         keysAttributes.put(Chunk.PDFANNOTATION, null);
         keysAttributes.put(Chunk.SKEW, null);
+        keysAttributes.put(Chunk.HSCALE, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
         keysNoStroke.put(Chunk.SPLITCHARACTER, null);
         keysNoStroke.put(Chunk.HYPHENATION, null);
@@ -238,15 +239,20 @@ class PdfChunk implements SplitCharacter{
         noStroke.put(Chunk.COLOR, f.color());
         noStroke.put(Chunk.ENCODING, font.getFont().getEncoding());
         Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
-        if (obj == null)
+        if (obj == null) {
             image = null;
+        }
         else {
+            attributes.remove(Chunk.HSCALE); // images are scaled in other ways
             image = (Image)obj[0];
             offsetX = ((Float)obj[1]).floatValue();
             offsetY = ((Float)obj[2]).floatValue();
             changeLeading = ((Boolean)obj[3]).booleanValue();
         }
         font.setImage(image);
+        Float hs = (Float)attributes.get(Chunk.HSCALE);
+        if (hs != null)
+            font.setHorizontalScaling(hs.floatValue());
         encoding = font.getFont().getEncoding();
         splitCharacter = (SplitCharacter)noStroke.get(Chunk.SPLITCHARACTER);
         if (splitCharacter == null)
@@ -490,9 +496,7 @@ class PdfChunk implements SplitCharacter{
  */
     
     float width() {
-        if (image != null)
-            return image.scaledWidth();
-        return font.getFont().getWidthPoint(value, font.size());
+        return font.width(value);
     }
     
 /**
@@ -522,7 +526,7 @@ class PdfChunk implements SplitCharacter{
         int idx = -1;
         while ((idx = value.indexOf(' ', idx + 1)) >= 0)
             ++numberOfSpaces;
-        return font.getFont().getWidthPoint(value, font.size()) + value.length() * charSpacing + numberOfSpaces * wordSpacing;
+        return width() + (value.length() * charSpacing + numberOfSpaces * wordSpacing);
     }
     
 /**
@@ -737,5 +741,5 @@ class PdfChunk implements SplitCharacter{
     
     public static boolean noPrint(char c) {
         return ((c >= 0x200b && c <= 0x200f) || (c >= 0x202a && c <= 0x202e));
-    }    
+    }
 }

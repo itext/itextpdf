@@ -94,10 +94,13 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
 //
 import java.util.Set;
 import java.util.Iterator;
 import java.awt.font.TextAttribute;
+
+import java.awt.image.BufferedImage;
 
 public class PdfGraphics2D extends Graphics2D {
     
@@ -159,6 +162,9 @@ public class PdfGraphics2D extends Graphics2D {
     
     public static int AFM_DIVISOR = 1000; // used to calculate coordinates
 
+    private boolean convertImagesToJPEG = false;
+    private float jpegQuality = .95f;
+
     private PdfGraphics2D() {
     }
     
@@ -166,32 +172,24 @@ public class PdfGraphics2D extends Graphics2D {
      * Constructor for PDFGraphics2D.
      *
      */
-    PdfGraphics2D(PdfContentByte cb, float width, float height, FontMapper fontMapper) {
+    PdfGraphics2D(PdfContentByte cb, float width, float height, FontMapper fontMapper, boolean onlyShapes, boolean convertImagesToJPEG, float quality) {
         super();
+        try {
+            Class.forName("com.sun.image.codec.jpeg.JPEGCodec");
+        }
+        catch (Throwable t) {
+            convertImagesToJPEG = false;
+        }
+        this.convertImagesToJPEG = convertImagesToJPEG;
+        this.jpegQuality = quality;
+        this.onlyShapes = onlyShapes;
         this.transform = new AffineTransform();
         this.baseFonts = new HashMap();
-        this.fontMapper = fontMapper;
-        this.kids = new ArrayList();
-        if (this.fontMapper == null)
-            this.fontMapper = new DefaultFontMapper();
-        paint = Color.black;
-        background = Color.white;
-        setFont(new Font("sanserif", Font.PLAIN, 12));
-        this.cb = cb;
-        cb.saveState();
-        this.width = width;
-        this.height = height;
-        clip = new Area(new Rectangle2D.Float(0, 0, width, height));
-        clip(clip);
-        originalStroke = stroke = oldStroke = strokeOne;
-        setStrokeDiff(stroke, null);
-        cb.saveState();
-    }
-    
-    PdfGraphics2D(PdfContentByte cb, float width, float height) {
-        super();
-        this.onlyShapes = true;
-        this.transform = new AffineTransform();
+        if (!onlyShapes) {
+            this.fontMapper = fontMapper;
+            if (this.fontMapper == null)
+                this.fontMapper = new DefaultFontMapper();
+        }
         this.kids = new ArrayList();
         paint = Color.black;
         background = Color.white;
@@ -722,6 +720,8 @@ public class PdfGraphics2D extends Graphics2D {
         g2.strokeGState = this.strokeGState;
         g2.background = this.background;
         g2.mediaTracker = this.mediaTracker;
+        g2.convertImagesToJPEG = this.convertImagesToJPEG;
+        g2.jpegQuality = this.jpegQuality;
         g2.setFont(this.font);
         g2.cb = this.cb.getDuplicate();
         g2.cb.saveState();
@@ -1230,7 +1230,26 @@ public class PdfGraphics2D extends Graphics2D {
         inverse.getMatrix(mx);
         
         try {
-            com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(img, bgColor);
+            com.lowagie.text.Image image = null;
+            if(!convertImagesToJPEG){
+                image = com.lowagie.text.Image.getInstance(img, bgColor);
+            }
+            else{
+                BufferedImage scaled = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g3 = scaled.createGraphics();
+                g3.drawImage(img, 0, 0, img.getWidth(null), img.getHeight(null), null);
+                g3.dispose();
+                
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                com.sun.image.codec.jpeg.JPEGImageEncoder encoder = com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(baos);
+                com.sun.image.codec.jpeg.JPEGEncodeParam param = com.sun.image.codec.jpeg.JPEGCodec.getDefaultJPEGEncodeParam(scaled);
+                param.setQuality(jpegQuality, true);
+                encoder.encode(scaled, param);
+                scaled.flush();
+                scaled = null;
+                image = com.lowagie.text.Image.getInstance(baos.toByteArray());
+                
+            }
             if (mask!=null) {
                 com.lowagie.text.Image msk = com.lowagie.text.Image.getInstance(mask, null, true);
                 msk.makeMask();

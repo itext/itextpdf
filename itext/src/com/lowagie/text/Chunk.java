@@ -143,6 +143,9 @@ public class Chunk implements Element, MarkupAttributes {
 /** Key for text skewing. */
     public static final String SKEW = "SKEW";
 
+/** Key for text horizontal scaling. */
+    public static final String HSCALE = "HSCALE";
+
 // member variables
 
 /** This is the content of this chunk of text. */
@@ -404,7 +407,8 @@ public class Chunk implements Element, MarkupAttributes {
         return setAttribute(TEXTRENDERMODE, new Object[]{new Integer(mode), new Float(strokeWidth), strokeColor});
     }
 
-    /** Skews the text to simulate italic and other effects.
+    /**
+     * Skews the text to simulate italic and other effects.
      * Try <CODE>alpha=0</CODE> and <CODE>beta=12</CODE>.
      * @param alpha the first angle in degrees
      * @param beta the second angle in degrees
@@ -416,6 +420,16 @@ public class Chunk implements Element, MarkupAttributes {
         return setAttribute(SKEW, new float[]{alpha, beta});
     }
 
+    /**
+     * Sets the text horizontal scaling. A vaue of 1 is normal and a value of 0.5
+     * shrinks the text to half it's width. It doesn't work yet with justified text.
+     * @param scale the horizontal scaling factor
+     * @return this <CODE>Chunk</CODE>
+     */    
+    public Chunk setHorizontalScaling(float scale) {
+        return setAttribute(HSCALE, new Float(scale));
+    }
+    
 /**
  * Sets an action for this <CODE>Chunk</CODE>.
  *

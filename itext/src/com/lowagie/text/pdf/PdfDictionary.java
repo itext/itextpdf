@@ -141,13 +141,15 @@ public class PdfDictionary extends PdfObject {
         // loop over all the object-pairs in the HashMap
         PdfName key;
         PdfObject value;
+        int type = 0;
         for (Iterator i = hashMap.keySet().iterator(); i.hasNext(); ) {
             key = (PdfName) i.next();
             value = (PdfObject) hashMap.get(key);
             key.toPdf(writer, os);
-            os.write(' ');
+            type = value.type();
+            if (type != PdfObject.ARRAY && type != PdfObject.DICTIONARY && type != PdfObject.NAME && type != PdfObject.STRING)
+                os.write(' ');
             value.toPdf(writer, os);
-            os.write('\n');
         }
         os.write('>');
         os.write('>');

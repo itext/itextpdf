@@ -52,7 +52,7 @@ package com.lowagie.text.rtf.style;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
@@ -74,9 +74,9 @@ public class RtfColorList extends RtfElement implements RtfExtendedElement {
     private static final byte[] COLOR_TABLE = "\\colortbl".getBytes();
     
     /**
-     * Vector containing all colours of this RtfColorList
+     * ArrayList containing all colours of this RtfColorList
      */
-    Vector colorList = new Vector();
+    ArrayList colorList = new ArrayList();
     
     /**
      * Constructs a new RtfColorList for the RtfDocument. Will add the default

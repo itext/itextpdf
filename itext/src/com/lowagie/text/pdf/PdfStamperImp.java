@@ -119,9 +119,10 @@ class PdfStamperImp extends PdfWriter {
             int skip = -1;
             if (iInfo != null)
                 skip = iInfo.getNumber();
+            int rootN = ((PRIndirectReference)reader.trailer.get(PdfName.ROOT)).getNumber();
             for (int k = 1; k < xb.length; ++k) {
                 if (xb[k] != null && skip != k) {
-                    addToBody(xb[k], getNewObjectNumber(reader, k, 0));
+                    body.add(xb[k], getNewObjectNumber(reader, k, 0), k != rootN);
                 }
             }
         }
@@ -136,7 +137,7 @@ class PdfStamperImp extends PdfWriter {
         PdfIndirectReference encryption = null;
         PdfObject fileID = null;
         if (crypto != null) {
-            PdfIndirectObject encryptionObject = body.add(crypto.getEncryptionDictionary());
+            PdfIndirectObject encryptionObject = body.add(crypto.getEncryptionDictionary(), false);
             encryption = encryptionObject.getIndirectReference();
             fileID = crypto.getFileID();
         }
@@ -164,16 +165,23 @@ class PdfStamperImp extends PdfWriter {
             }
         }
         if (!newInfo.getKeys().isEmpty())
-            info = addToBody(newInfo).getIndirectReference();
+            info = body.add(newInfo, false).getIndirectReference();
         // write the cross-reference table of the body
-        body.writeCrossReferenceTable(os);
-        PdfTrailer trailer = new PdfTrailer(body.size(),
-        body.offset(),
-        root,
-        info,
-        encryption,
-        fileID);
-        trailer.toPdf(this, os);
+        body.writeCrossReferenceTable(os, root, info, encryption, fileID);
+        if (fullCompression) {
+            os.write(getISOBytes("startxref\n"));
+            os.write(getISOBytes(String.valueOf(body.offset())));
+            os.write(getISOBytes("\n%%EOF\n"));
+        }
+        else {
+            PdfTrailer trailer = new PdfTrailer(body.size(),
+            body.offset(),
+            root,
+            info,
+            encryption,
+            fileID);
+            trailer.toPdf(this, os);
+        }
         os.flush();
         if (isCloseStream())
             os.close();

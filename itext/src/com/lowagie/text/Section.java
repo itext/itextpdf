@@ -109,6 +109,8 @@ public class Section extends ArrayList implements TextElementArray {
     /** false if the bookmark children are not visible */
     protected boolean bookmarkOpen = true;
     
+    /** The bookmark title if different from the content title */
+    protected String bookmarkTitle;
     // constructors
     
 /**
@@ -626,4 +628,25 @@ public class Section extends ArrayList implements TextElementArray {
     public void setBookmarkOpen(boolean bookmarkOpen) {
         this.bookmarkOpen = bookmarkOpen;
     }
+    
+    /**
+     * Gets the bookmark title.
+     * @return the bookmark title
+     */    
+    public Paragraph getBookmarkTitle() {
+        if (bookmarkTitle == null)
+            return title();
+        else
+            return new Paragraph(bookmarkTitle);
+    }
+    
+    /**
+     * Sets the bookmark title. The bookmark title is the same as the section title but
+     * can be changed with this method.
+     * @param bookmarkTitle the bookmark title
+     */    
+    public void setBookmarkTitle(String bookmarkTitle) {
+        this.bookmarkTitle = bookmarkTitle;
+    }
+    
 }

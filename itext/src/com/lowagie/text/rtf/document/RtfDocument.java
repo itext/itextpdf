@@ -56,7 +56,7 @@ import com.lowagie.text.rtf.RtfMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * The RtfDocument stores all document related data and also the main data stream.
@@ -82,7 +82,7 @@ public class RtfDocument extends RtfElement {
     /**
      * Stores integers that have been generated as unique random numbers
      */
-    private Vector previousRandomInts = null;
+    private ArrayList previousRandomInts = null;
     /**
      * Whether to automatically generate TOC entries for Chapters and Sections. Defaults to false
      */
@@ -102,7 +102,7 @@ public class RtfDocument extends RtfElement {
         mapper = new RtfMapper(this);
         documentHeader = new RtfDocumentHeader(this);
         documentHeader.init();
-        previousRandomInts = new Vector();
+        previousRandomInts = new ArrayList();
     }
 
     /**

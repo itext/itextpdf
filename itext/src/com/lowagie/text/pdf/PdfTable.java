@@ -105,13 +105,11 @@ public class PdfTable extends Rectangle {
 		// constructs a Rectangle (the bottomvalue will be changed afterwards)
 		super(left, top, right, top);
 		this.table = table;
+        table.complete();
 
 		// copying the attributes from class Table
-		setBorder(table.border());
-		setBorderWidth(table.borderWidth());
-		setBorderColor(table.borderColor());
-		setBackgroundColor(table.backgroundColor());
-		setGrayFill(table.grayFill());
+        cloneNonPositionParameters(table);
+
 		this.columns = table.columns();
 		positions = table.getWidths(left, right - left);
         
@@ -137,6 +135,7 @@ public class PdfTable extends Rectangle {
 	 */
 	
 	void updateRowAdditions() {
+        table.complete();
 		updateRowAdditionsInternal();
 		table.deleteAllRows();
 	}
@@ -147,7 +146,6 @@ public class PdfTable extends Rectangle {
 	
 	private void updateRowAdditionsInternal() {
 		// correct table : fill empty cells/ parse table in table
-		table.complete();
 		Row row;
 		int prevRows = rows();
 		int rowNumber = 0;
@@ -176,8 +174,8 @@ public class PdfTable extends Rectangle {
 					if (cell != null) {
 						currentCell = new PdfCell(cell, rowNumber+prevRows, positions[i], positions[i + cell.colspan()], offsets[rowNumber], cellspacing(), cellpadding());
 						try {
-							if (offsets[rowNumber] - currentCell.height() - cellpadding() < offsets[rowNumber + currentCell.rowspan()]) {
-								offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() - cellpadding();
+							if (offsets[rowNumber] - currentCell.height()  < offsets[rowNumber + currentCell.rowspan()]) {
+								offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() ;
 							}
 						}
 						catch(ArrayIndexOutOfBoundsException aioobe) {

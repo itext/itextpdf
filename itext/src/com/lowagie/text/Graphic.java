@@ -126,22 +126,50 @@ public class Graphic extends PdfContentByte implements Element {
         return new ArrayList();
     }
     
-/**
- * Orders this graphic to draw a horizontal line.
- */
+    /**
+     * Orders this graphic to draw a horizontal, centered line.
+     * @param linewidth the line width
+     * @param percentage the percentage horizontal width in relation to the margins or if negative, an absolute value
+     */
     
     public void setHorizontalLine(float linewidth, float percentage) {
         if (attributes == null) attributes = new HashMap();
-        attributes.put(HORIZONTAL_LINE, new Object[]{new Float(linewidth), new Float(percentage), new Color(0, 0, 0)});
+        attributes.put(HORIZONTAL_LINE, new Object[]{new Float(linewidth), new Float(percentage), Color.black, new Integer(Element.ALIGN_CENTER)});
     }
     
-/**
- * Orders this graphic to draw a horizontal line.
- */
+    /**
+     * Orders this graphic to draw a horizontal line with some alignment.
+     * @param linewidth the line width
+     * @param percentage the percentage horizontal width in relation to the margins or if negative, an absolute value
+     * @param align the line alignment
+     */
+    public void setHorizontalLine(float linewidth, float percentage, int align) {
+        if (attributes == null) attributes = new HashMap();
+        attributes.put(HORIZONTAL_LINE, new Object[]{new Float(linewidth), new Float(percentage), Color.black, new Integer(align)});
+    }
+    
+    /**
+     * Orders this graphic to draw a horizontal, centered line.
+     * @param linewidth the line width
+     * @param percentage the percentage horizontal width in relation to the margins or if negative, an absolute value
+     * @param color the color of the line
+     */
     
     public void setHorizontalLine(float linewidth, float percentage, Color color) {
         if (attributes == null) attributes = new HashMap();
-        attributes.put(HORIZONTAL_LINE, new Object[]{new Float(linewidth), new Float(percentage), color});
+        attributes.put(HORIZONTAL_LINE, new Object[]{new Float(linewidth), new Float(percentage), color, new Integer(Element.ALIGN_CENTER)});
+    }
+    
+    /**
+     * Orders this graphic to draw a horizontal, centered line.
+     * @param linewidth the line width
+     * @param percentage the percentage horizontal width in relation to the margins or if negative, an absolute value
+     * @param color the color of the line
+     * @param align the line alignment
+     */
+    public void setHorizontalLine(float linewidth, float percentage, Color color, int align) {
+        if (attributes == null) attributes = new HashMap();
+        attributes.put(HORIZONTAL_LINE, new Object[]{new Float(linewidth), new Float(percentage), color, new Integer(align)});
     }
     
 /**
@@ -199,8 +227,24 @@ public class Graphic extends PdfContentByte implements Element {
             o = (Object[]) attributes.get(attribute);
             if (HORIZONTAL_LINE.equals(attribute)) {
                 float p = ((Float)o[1]).floatValue();
-                float w = (urx - llx) * (100.0f - p) / 200.0f;
-                drawHorizontalLine(((Float)o[0]).floatValue(), (Color)o[2], llx + w, urx - w, y);
+                float w;
+                if (p < 0)
+                    w = -p;
+                else
+                    w = (urx - llx) * p / 100.0f;
+                int align = ((Integer)o[3]).intValue();
+                float s;
+                switch (align) {
+                    case Element.ALIGN_LEFT:
+                        s = 0;
+                        break;
+                    case Element.ALIGN_RIGHT:
+                        s = urx - llx - w;
+                        break;
+                    default:
+                        s = (urx - llx - w) / 2;
+                }
+                drawHorizontalLine(((Float)o[0]).floatValue(), (Color)o[2], s + llx, s + w + llx, y);
             }
             if (BORDER.equals(attribute)) {
                 float extra = ((Float)o[1]).floatValue();

@@ -56,6 +56,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
 import java.io.IOException;
 import java.awt.Color;
+import java.util.Calendar;
 
 /** Query and change fields in existing documents either by method
  * calls or by FDF merging.
@@ -67,9 +68,12 @@ public class AcroFields {
     PdfWriter writer;
     HashMap fields;
     private int topFirst;
+    private ArrayList sigNames;
     static private final int DA_FONT = 0;
     static private final int DA_SIZE = 1;
     static private final int DA_COLOR = 2;
+    
+    private boolean lastWasString;
     
     /** Holds value of property generateAppearances. */
     private boolean generateAppearances = true;
@@ -192,10 +196,11 @@ public class AcroFields {
             PdfObject v = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.V));
             if (v == null)
                 continue;
-            if (v.isString())
-                writer.setFieldAsString(name, ((PdfString)v).toUnicodeString());
+            String value = getField(name);
+            if (lastWasString)
+                writer.setFieldAsString(name, value);
             else
-                writer.setFieldAsName(name, PdfName.decodeName(v.toString()));
+                writer.setFieldAsName(name, value);
         }
     }
     
@@ -300,9 +305,9 @@ public class AcroFields {
                 if (font != null) {
                     font = (PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONT));
                     if (font != null) {
-                        PRIndirectReference iref = (PRIndirectReference)font.get(new PdfName((String)dab[DA_FONT]));
-                        if (iref != null)
-                            tx.setFont(new DocumentFont(iref));
+                        PdfObject po = font.get(new PdfName((String)dab[DA_FONT]));
+                        if (po != null && po.type() == PdfObject.INDIRECT)
+                            tx.setFont(new DocumentFont((PRIndirectReference)po));
                     }
                 }
             }
@@ -323,7 +328,14 @@ public class AcroFields {
         PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
         if (nfl != null)
             flags = nfl.intValue();
-        tx.setOptions((flags & PdfFormField.FF_MULTILINE) == 0 ? 0 : TextField.MULTILINE);
+        tx.setOptions(((flags & PdfFormField.FF_MULTILINE) == 0 ? 0 : TextField.MULTILINE) | ((flags & PdfFormField.FF_COMB) == 0 ? 0 : TextField.COMB));
+        if ((flags & PdfFormField.FF_COMB) != 0) {
+            PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.MAXLEN));
+            int len = 0;
+            if (maxLen != null)
+                len = maxLen.intValue();
+            tx.setMaxCharacterLength(len);
+        }
         //alignment
         nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.Q));
         if (nfl != null) {
@@ -366,12 +378,6 @@ public class AcroFields {
         tx.setBox(box);
         PdfName fieldType = (PdfName)PdfReader.getPdfObject(merged.get(PdfName.FT));
         if (PdfName.TX.equals(fieldType)) {
-            PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.MAXLEN));
-            int len = 0;
-            if (maxLen != null)
-                len = maxLen.intValue();
-            if (len > 0)
-                text = text.substring(0, Math.min(len, text.length()));
             tx.setText(text);
             return tx.getAppearance();
         }
@@ -438,14 +444,43 @@ public class AcroFields {
         Item item = (Item)fields.get(name);
         if (item == null)
             return null;
+        lastWasString = false;
         PdfObject v = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.V));
         if (v == null)
             return "";
-        if (v.isString())
+        PdfName type = (PdfName)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FT));
+        if (PdfName.BTN.equals(type)) {
+            PdfNumber ff = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FF));
+            int flags = 0;
+            if (ff != null)
+                flags = ff.intValue();
+            if ((flags & PdfFormField.FF_PUSHBUTTON) != 0)
+                return "";
+            String value = "";
+            if (v.isName())
+                value = PdfName.decodeName(v.toString());
+            PdfObject opts = PdfReader.getPdfObject(((PdfDictionary)item.values.get(0)).get(PdfName.OPT));
+            if (opts != null && opts.isArray()) {
+                ArrayList list = ((PdfArray)opts).getArrayList();
+                int idx = 0;
+                try {
+                    idx = Integer.parseInt(value);
+                    PdfString ps = (PdfString)list.get(idx);
+                    value = ps.toUnicodeString();
+                    lastWasString = true;
+                }
+                catch (Exception e) {
+                }
+            }
+            return value;
+        }
+        if (v.isString()) {
+            lastWasString = true;
             return ((PdfString)v).toUnicodeString();
+        }
         return PdfName.decodeName(v.toString());
     }
-    
+
     /**
      * Sets a field property. Valid property names are:
      * <p>
@@ -468,7 +503,7 @@ public class AcroFields {
         if (name.equalsIgnoreCase("textcolor")) {
             for (int k = 0; k < item.merged.size(); ++k) {
                 if (hit.isHit(k)) {
-                    PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.widgets.get(k)).get(PdfName.DA));
+                    PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
                     if (da != null) {
                         Object dao[] = splitDAelements(da.toUnicodeString());
                         PdfAppearance cb = new PdfAppearance();
@@ -487,7 +522,7 @@ public class AcroFields {
         else if (name.equalsIgnoreCase("textsize")) {
             for (int k = 0; k < item.merged.size(); ++k) {
                 if (hit.isHit(k)) {
-                    PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.widgets.get(k)).get(PdfName.DA));
+                    PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
                     if (da != null) {
                         Object dao[] = splitDAelements(da.toUnicodeString());
                         PdfAppearance cb = new PdfAppearance();
@@ -630,6 +665,22 @@ public class AcroFields {
         }
     }
     
+    /** Sets the fields by XFDF merging.
+     * @param xfdf the XFDF form
+     * @throws IOException on error
+     * @throws DocumentException on error
+     */
+    
+    public void setFields(XfdfReader xfdf) throws IOException, DocumentException {
+        HashMap fd = xfdf.getFields();
+        for (Iterator i = fields.keySet().iterator(); i.hasNext();) {
+            String f = (String)i.next();
+            String v = xfdf.getFieldValue(f);
+            if (v != null)
+                setField(f, v);
+        }
+    }
+
     /** Sets the field value.
      * @param name the fully qualified field name
      * @param value the field value
@@ -661,6 +712,14 @@ public class AcroFields {
         if (item == null)
             return false;
         PdfName type = (PdfName)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.FT));
+        if (PdfName.TX.equals(type)) {
+            PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.MAXLEN));
+            int len = 0;
+            if (maxLen != null)
+                len = maxLen.intValue();
+            if (len > 0)
+                value = value.substring(0, Math.min(len, value.length()));
+        }
         if (PdfName.TX.equals(type) || PdfName.CH.equals(type)) {
             PdfString v = new PdfString(value, PdfObject.TEXT_UNICODE);
             for (int idx = 0; idx < item.values.size(); ++idx) {
@@ -982,6 +1041,197 @@ public class AcroFields {
             if (hits == null)
                 return true;
             return hits.containsKey(n);
+        }
+    }
+    
+    /**
+     * Gets the field names that have signatures.
+     * @return the field names that have signatures
+     */    
+    public ArrayList getSignatureNames() {
+        if (sigNames != null)
+            return sigNames;
+        sigNames = new ArrayList();
+        for (Iterator it = fields.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry)it.next();
+            Item item = (Item)entry.getValue();
+            PdfDictionary merged = (PdfDictionary)item.merged.get(0);
+            if (!PdfName.SIG.equals(merged.get(PdfName.FT)))
+                continue;
+            PdfObject vo = PdfReader.getPdfObject(merged.get(PdfName.V));
+            if (vo == null || vo.type() != PdfObject.DICTIONARY)
+                continue;
+            PdfDictionary v = (PdfDictionary)vo;
+            PdfObject contents = v.get(PdfName.CONTENTS);
+            if (contents == null || contents.type() != PdfObject.STRING)
+                continue;
+            sigNames.add(entry.getKey());
+        }
+        return sigNames;
+    }
+    
+    /**
+     * Gets the signature dictionary, the one keyed by /V.
+     * @param name the field name
+     * @return the signature dictionary keyed by /V or <CODE>null</CODE> if the field is not
+     * a signature
+     */    
+    public PdfDictionary getSignatureDictionary(String name) {
+        getSignatureNames();
+        if (sigNames.indexOf(name) < 0)
+            return null;
+        Item item = (Item)fields.get(name);
+        PdfDictionary merged = (PdfDictionary)item.merged.get(0);
+        PdfObject vo = PdfReader.getPdfObject(merged.get(PdfName.V));
+        return (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.V));
+    }
+    
+    /**
+     * Checks is the signature covers the entire document or just part of it.
+     * @param name the signature field name
+     * @return <CODE>true</CODE> if the signature covers the entire document,
+     * <CODE>false</CODE> otherwise
+     */    
+    public boolean signatureCoversWholeDocument(String name) {
+        PdfDictionary v = getSignatureDictionary(name);
+        if (v == null)
+            return false;
+        RandomAccessFileOrArray rf = reader.getSafeFile();
+        try {
+            rf.reOpen();
+            int len = rf.length();
+            rf.close();
+            PdfArray bounds = (PdfArray)PdfReader.getPdfObject(v.get(PdfName.BYTERANGE));
+            int offset = ((PdfNumber)bounds.getArrayList().get(2)).intValue();
+            int count = ((PdfNumber)bounds.getArrayList().get(3)).intValue();
+            return offset + count == len;
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+        finally {
+            try{rf.close();}catch(Exception e){}
+        }
+    }
+    
+    /**
+     * Verifies a signature. An example usage is:
+     * <p>
+     * <pre>
+     * KeyStore kall = PdfPKCS7.loadCacertsKeyStore();
+     * PdfReader reader = new PdfReader("my_signed_doc.pdf");
+     * AcroFields af = reader.getAcroFields();
+     * ArrayList names = af.getSignatureNames();
+     * for (int k = 0; k &lt; names.size(); ++k) {
+     *    String name = (String)names.get(k);
+     *    System.out.println("Signature name: " + name);
+     *    System.out.println("Signature covers whole document: " + af.signatureCoversWholeDocument(name));
+     *    PdfPKCS7 pk = af.verifySignature(name);
+     *    Calendar cal = pk.getSignDate();
+     *    Certificate pkc[] = pk.getCertificates();
+     *    System.out.println("Subject: " + PdfPKCS7.getSubjectFields(pk.getSigningCertificate()));
+     *    System.out.println("Document modified: " + !pk.verify());
+     *    Object fails[] = PdfPKCS7.verifyCertificates(pkc, kall, null, cal);
+     *    if (fails == null)
+     *        System.out.println("Certificates verified against the KeyStore");
+     *    else
+     *        System.out.println("Certificate failed: " + fails[1]);
+     * }
+     * </pre>
+     * @param name the signature field name
+     * @return a <CODE>PdfPKCS7</CODE> class to continue the verification
+     */    
+    public PdfPKCS7 verifySignature(String name) {
+        return verifySignature(name, null);
+    }
+    
+    /**
+     * Verifies a signature. An example usage is:
+     * <p>
+     * <pre>
+     * KeyStore kall = PdfPKCS7.loadCacertsKeyStore();
+     * PdfReader reader = new PdfReader("my_signed_doc.pdf");
+     * AcroFields af = reader.getAcroFields();
+     * ArrayList names = af.getSignatureNames();
+     * for (int k = 0; k &lt; names.size(); ++k) {
+     *    String name = (String)names.get(k);
+     *    System.out.println("Signature name: " + name);
+     *    System.out.println("Signature covers whole document: " + af.signatureCoversWholeDocument(name));
+     *    PdfPKCS7 pk = af.verifySignature(name);
+     *    Calendar cal = pk.getSignDate();
+     *    Certificate pkc[] = pk.getCertificates();
+     *    System.out.println("Subject: " + PdfPKCS7.getSubjectFields(pk.getSigningCertificate()));
+     *    System.out.println("Document modified: " + !pk.verify());
+     *    Object fails[] = PdfPKCS7.verifyCertificates(pkc, kall, null, cal);
+     *    if (fails == null)
+     *        System.out.println("Certificates verified against the KeyStore");
+     *    else
+     *        System.out.println("Certificate failed: " + fails[1]);
+     * }
+     * </pre>
+     * @param name the signature field name
+     * @param provider the provider or <code>null</code> for the default provider
+     * @return a <CODE>PdfPKCS7</CODE> class to continue the verification
+     */    
+    public PdfPKCS7 verifySignature(String name, String provider) {
+        PdfDictionary v = getSignatureDictionary(name);
+        if (v == null)
+            return null;
+        try {
+            PdfName sub = (PdfName)PdfReader.getPdfObject(v.get(PdfName.SUBFILTER));
+            PdfString contents = (PdfString)PdfReader.getPdfObject(v.get(PdfName.CONTENTS));
+            PdfPKCS7 pk = null;
+            if (sub.equals(PdfName.ADBE_X509_RSA_SHA1)) {
+                PdfString cert = (PdfString)PdfReader.getPdfObject(v.get(PdfName.CERT));
+                pk = new PdfPKCS7(contents.getOriginalBytes(), cert.getBytes(), provider);
+            }
+            else
+                pk = new PdfPKCS7(contents.getOriginalBytes(), provider);
+            updateByteRange(pk, v);
+            PdfString str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.M));
+            if (str != null)
+                pk.setSignDate(PdfDate.decode(str.toString()));
+            str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.NAME));
+            if (str != null)
+                pk.setSignName(str.toUnicodeString());
+            str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.REASON));
+            if (str != null)
+                pk.setReason(str.toUnicodeString());
+            str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.LOCATION));
+            if (str != null)
+                pk.setLocation(str.toUnicodeString());
+            return pk;
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    
+    private void updateByteRange(PdfPKCS7 pkcs7, PdfDictionary v) {
+        PdfArray b = (PdfArray)PdfReader.getPdfObject(v.get(PdfName.BYTERANGE));
+        RandomAccessFileOrArray rf = reader.getSafeFile();
+        try {
+            rf.reOpen();
+            byte buf[] = new byte[8192];
+            ArrayList ar = b.getArrayList();
+            for (int k = 0; k < ar.size(); ++k) {
+                int start = ((PdfNumber)ar.get(k)).intValue();
+                int length = ((PdfNumber)ar.get(++k)).intValue();
+                rf.seek(start);
+                while (length > 0) {
+                    int rd = rf.read(buf, 0, Math.min(length, buf.length));
+                    if (rd <= 0)
+                        break;
+                    length -= rd;
+                    pkcs7.update(buf, 0, rd);
+                }
+            }
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+        finally {
+            try{rf.close();}catch(Exception e){}
         }
     }
 }

@@ -53,7 +53,7 @@ package com.lowagie.text.rtf.list;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
@@ -163,7 +163,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     /**
      * The subitems of this RtfList
      */
-    private Vector items;
+    private ArrayList items;
     /**
      * The level of this RtfList
      */
@@ -212,7 +212,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         
         listNumber = document.getDocumentHeader().getListNumber(this);
         
-        items = new Vector();
+        items = new ArrayList();
         firstIndent = (int) (list.indentationLeft() * RtfElement.TWIPS_FACTOR * -1);
         leftIndent = (int) ((list.indentationLeft() + list.symbolIndent()) * RtfElement.TWIPS_FACTOR);
         rightIndent = (int) (list.indentationRight() * RtfElement.TWIPS_FACTOR);
