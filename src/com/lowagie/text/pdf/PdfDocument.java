@@ -167,7 +167,7 @@ class PdfDocument extends Document implements DocListener {
  */
         
         void addProducer() {
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com"));
+            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com - release 0.60"));
         }
         
 /**
@@ -275,17 +275,16 @@ class PdfDocument extends Document implements DocListener {
             if ((preferences & PdfWriter.ViewerPreferencesMask) == 0)
                 return;
             PdfDictionary vp = new PdfDictionary();
-            PdfBoolean PTRUE = new PdfBoolean(true);
             if ((preferences & PdfWriter.HideToolbar) != 0)
-                vp.put(PdfName.HIDETOOLBAR, PTRUE);
+                vp.put(PdfName.HIDETOOLBAR, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.HideMenubar) != 0)
-                vp.put(PdfName.HIDEMENUBAR, PTRUE);
+                vp.put(PdfName.HIDEMENUBAR, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.HideWindowUI) != 0)
-                vp.put(PdfName.HIDEWINDOWUI, PTRUE);
+                vp.put(PdfName.HIDEWINDOWUI, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.FitWindow) != 0)
-                vp.put(PdfName.FITWINDOW, PTRUE);
+                vp.put(PdfName.FITWINDOW, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.CenterWindow) != 0)
-                vp.put(PdfName.CENTERWINDOW, PTRUE);
+                vp.put(PdfName.CENTERWINDOW, PdfBoolean.PDFTRUE);
             if ((preferences & PdfWriter.NonFullScreenPageModeUseNone) != 0)
                 vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USENONE);
             else if ((preferences & PdfWriter.NonFullScreenPageModeUseOutlines) != 0)
@@ -896,7 +895,7 @@ class PdfDocument extends Document implements DocListener {
                 case Element.ANCHOR:
                 {
                     Anchor anchor = (Anchor) element;
-                    URL url = anchor.url();
+                    String url = anchor.reference();
                     leading = anchor.leading();
                     if (url != null) {
                         currentAction = new PdfAction(url);
@@ -1125,6 +1124,10 @@ class PdfDocument extends Document implements DocListener {
                             graphics.rectangle(table.rectangle(indentTop(), indentBottom()));
                         }
                         
+                        /* start patch sep 8 2001 Francesco De Milato */
+                        float lostTableBottom = 0;
+                        float lostTableTop = 0;
+                        /* end patch sep 8 2001 Francesco De Milato */
                         
                         // loop over the cells
                         for (Iterator iterator = cells.iterator(); iterator.hasNext(); ) {
@@ -1140,8 +1143,13 @@ class PdfDocument extends Document implements DocListener {
                                     graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
                                 }
                                 
+                                /* start patch sep 8 2001 Francesco De Milato */
+                                lostTableBottom = cell.bottom();
+                                lostTableTop = cell.top();
+                                /* stop patch sep 8 2001 Francesco De Milato */
+                                
                                 // we write the text
-                                float cellTop = cell.top(pagetop - oldHeight);
+                                float cellTop = cell.top(pagetop - oldHeight) - 6;
                                 text.moveText(0, cellTop);
                                 cellDisplacement = flushLines() - cellTop;
                                 text.moveText(0, cellDisplacement);
@@ -1157,6 +1165,37 @@ class PdfDocument extends Document implements DocListener {
                         
                         // if the table continues on the next page
                         if (newPage && ! cells.isEmpty()) {
+                            /* start patch sep 8 2001 Francesco De Milato */
+                            // Get the border's width
+                            graphics.setLineWidth(table.borderWidth());
+
+														/* start patch Sep 13 2001 Matt Benson */
+														if ((table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
+														{
+                            // Draw the bottom line
+															graphics.moveTo(table.left(),lostTableBottom);
+															graphics.lineTo(table.right(), lostTableBottom);
+															graphics.stroke();
+														}//end if bottom border should be drawn
+                            
+														if ((table.border() & Rectangle.LEFT) == Rectangle.LEFT)
+														{
+                            // Connect the bottom line with the left table's border
+															graphics.moveTo(table.left(),lostTableBottom);
+															graphics.lineTo(table.left(), lostTableTop);
+															graphics.stroke();
+														}//end if left border should be drawn
+
+														if ((table.border() & Rectangle.RIGHT) == Rectangle.RIGHT)
+														{
+															// Connect the bottom line with the right table's border
+															graphics.moveTo(table.right(), lostTableBottom);
+															graphics.lineTo(table.right(), lostTableTop);
+															graphics.stroke();
+														}//end if right border should be drawn
+														/* end patch Sep 13 2001 Matt Benson */
+                            /* end patch sep 8 2001 Francesco De Milato */
+                            
                             float difference = indentBottom() + leading;
                             pageEmpty = false;
                             newPage();
@@ -1183,7 +1222,7 @@ class PdfDocument extends Document implements DocListener {
                                     graphics.rectangle(cell.rectangle(indentTop() - leading / 2, indentBottom()));
                                     // we write the text of the cell
                                     lines = cell.getLines(indentTop(), indentBottom());
-                                    float cellTop = cell.top(indentTop());
+                                    float cellTop = cell.top(indentTop()) - 6;
                                     text.moveText(0, cellTop);
                                     cellDisplacement = flushLines() - cellTop;
                                     text.moveText(0, cellDisplacement);
@@ -1260,7 +1299,7 @@ class PdfDocument extends Document implements DocListener {
     }
     
 /** Adds an image to the document but not to the page resources. It is used with
- * templates.
+ * templates and <CODE>Document.add(Image)</CODE>.
  * @param image the <CODE>Image</CODE> to add
  * @return the name of the image added
  * @throws PdfException on error
@@ -1269,17 +1308,21 @@ class PdfDocument extends Document implements DocListener {
     PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
         PdfName name;
         // if the images is already added, just retrieve the name
-        if (images.containsKey(image)) {
-            name = (PdfName) images.get(image);
+        if (images.containsKey(image.getMySerialId())) {
+            name = (PdfName) images.get(image.getMySerialId());
         }
         // if it's a new image, add it to the document
         else {
-            PdfImage i = new PdfImage(image, "img" + images.size());
-            writer.add(i);
-            name = i.name();
-            images.put(image, name);
-        }
-        
+            if (image.isImgTemplate()) {
+                name = new PdfName("img" + images.size());   
+            }
+            else {
+                PdfImage i = new PdfImage(image, "img" + images.size());
+                writer.add(i);
+                name = i.name();
+            }
+            images.put(image.getMySerialId(), name);
+        }        
         return name;
     }
     
@@ -1294,23 +1337,7 @@ class PdfDocument extends Document implements DocListener {
     
     private void add(Image image) throws PdfException, DocumentException {
         pageEmpty = false;
-        PdfName name;
-        // if the images is already added, just retrieve the name
-        if (images.containsKey(image)) {
-            name = (PdfName) images.get(image);
-        }
-        // if it's a new image, add it to the document
-        else {
-            if (image.isImgTemplate()) {
-                name = new PdfName("img" + images.size());   
-            }
-            else {
-                PdfImage i = new PdfImage(image, "img" + images.size());
-                writer.add(i);
-                name = i.name();
-            }
-            images.put(image, name);
-        }
+        PdfName name = addDirectImageSimple(image);
         
         if (image.hasAbsolutePosition()) {
             graphics.addImage(image);
@@ -1329,6 +1356,8 @@ class PdfDocument extends Document implements DocListener {
                 return;
             }
         }
+        // avoid endless loops
+        imageWait = null;
         boolean textwrap = (image.alignment() & Image.TEXTWRAP) == Image.TEXTWRAP
         && !((image.alignment() & Image.MIDDLE) == Image.MIDDLE);
         boolean underlying = (image.alignment() & Image.UNDERLYING) == Image.UNDERLYING;
@@ -1412,20 +1441,7 @@ class PdfDocument extends Document implements DocListener {
         }
         
         // if there is a watermark, the watermark is added
-        if (watermark != null) {
-            
-            PdfName name;
-            // if the watermark is already added, just retrieve the name
-            if (images.containsKey(watermark)) {
-                name = (PdfName) images.get(watermark);
-            }
-            // if it's a new image, add it to the document
-            else {
-                PdfImage i = new PdfImage(watermark, "img" + images.size());
-                writer.add(i);
-                name = i.name();
-                images.put(watermark, name);
-            }
+        if (watermark != null) {            
             float mt[] = watermark.matrix();
             graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
