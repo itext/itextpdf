@@ -1888,13 +1888,25 @@ public class RtfWriter extends DocWriter implements DocListener {
                     this.addElement(((RtfHeaderFooter) headerFooter).content(), target);
                 } else {
                     if (headerFooter.getBefore() != null) {
-                        this.addElement(headerFooter.getBefore(), target);
+                        if(headerFooter.getBefore() instanceof Phrase) {
+                            Paragraph par = new Paragraph(headerFooter.getBefore());
+                            par.setAlignment(headerFooter.alignment());
+                            this.addElement(par, target);
+                        } else {
+                            this.addElement(headerFooter.getBefore(), target);
+                        }
                     }
                     if (headerFooter.isNumbered()) {
                         this.addElement(new RtfPageNumber("", headerFooter.getBefore().font()), target);
                     }
                     if (headerFooter.getAfter() != null) {
-                        this.addElement(headerFooter.getAfter(), target);
+                        if(headerFooter.getAfter() instanceof Phrase) {
+                            Paragraph par = new Paragraph(headerFooter.getAfter());
+                            par.setAlignment(headerFooter.alignment());
+                            this.addElement(par, target);
+                        } else {
+                            this.addElement(headerFooter.getAfter(), target);
+                        }
                     }
                 }
             }
