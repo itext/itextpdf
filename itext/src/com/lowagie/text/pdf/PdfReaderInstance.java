@@ -116,29 +116,15 @@ class PdfReaderInstance {
     PdfStream getFormXObject(int pageNumber) throws IOException {
         PdfDictionary page = pages[pageNumber - 1];
         PdfObject contents = PdfReader.getPdfObject(page.get(PdfName.CONTENTS));
-        int length = 0;
-        int offset = 0;
         PdfDictionary dic = new PdfDictionary();
-        ByteArrayOutputStream bout = null;
+        byte bout[] = null;
         ArrayList filters = null;
         if (contents != null) {
             if (contents.type() == PdfObject.STREAM) {
-                PRStream stream = (PRStream)contents;
-                length = stream.getLength();
-                offset = stream.getOffset();
-                dic.putAll(stream);
+                dic.putAll((PRStream)contents);
             }
             else {
-                PdfArray array = (PdfArray)contents;
-                ArrayList list = array.getArrayList();
-                bout = new ByteArrayOutputStream();
-                for (int k = 0; k < list.size(); ++k) {
-                    PRStream stream = (PRStream)PdfReader.getPdfObject((PdfObject)list.get(k));
-                    byte[] b = PdfReader.getStreamBytes(stream, file);
-                    bout.write(b);
-                    if (k != list.size() - 1)
-                        bout.write('\n');
-                }
+                bout = reader.getPageContent(pageNumber, file);
             }
         }
         dic.put(PdfName.RESOURCES, PdfReader.getPdfObject(page.get(PdfName.RESOURCES)));
@@ -154,12 +140,10 @@ class PdfReaderInstance {
         dic.put(PdfName.FORMTYPE, ONE);
         PRStream stream;
         if (bout == null) {
-            stream = new PRStream(reader, offset);
-            stream.putAll(dic);
-            stream.setLength(length);
+            stream = new PRStream((PRStream)contents, dic);
         }
         else {
-            stream = new PRStream(reader, bout.toByteArray());
+            stream = new PRStream(reader, bout);
             stream.putAll(dic);
         }
         return stream;

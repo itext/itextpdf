@@ -921,9 +921,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 return;
             }
-            case Element.GIF:
+            case Element.IMGRAW:
             case Element.JPEG:
-            case Element.PNG:
+            case Element.IMGTEMPLATE:
             {
                 Image image = (Image) element;
                 if (image.url() == null) {

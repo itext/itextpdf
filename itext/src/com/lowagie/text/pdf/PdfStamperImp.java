@@ -70,15 +70,19 @@ class PdfStamperImp extends PdfWriter {
     /** Creates new PdfStamperImp.
      * @param reader the read PDF
      * @param os the output destination
+     * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
+     * document
      * @throws DocumentException on error
      */
-    PdfStamperImp(PdfReader reader, OutputStream os) throws DocumentException, IOException {
+    PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion) throws DocumentException, IOException {
         super(new PdfDocument(), os);
         if (reader.isTampered())
             throw new DocumentException("The original document was reused. Read it again from file.");
         reader.setTampered(true);
         this.reader = reader;
         file = reader.getSafeFile();
+        if (pdfVersion == 0)
+            super.setPdfVersion(reader.getPdfVersion());
         super.open();
     }
     

@@ -43,6 +43,40 @@
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
+ *
+ *
+ * The original JAI codecs have the following license
+ *
+ * Copyright (c) 2001 Sun Microsystems, Inc. All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * -Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * -Redistribution in binary form must reproduct the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of contributors may
+ * be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * This software is provided "AS IS," without a warranty of any kind. ALL
+ * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY
+ * IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
+ * NON-INFRINGEMENT, ARE HEREBY EXCLUDED. SUN AND ITS LICENSORS SHALL NOT BE
+ * LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING
+ * OR DISTRIBUTING THE SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL SUN OR ITS
+ * LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT,
+ * INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER
+ * CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF
+ * OR INABILITY TO USE SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that Software is not designed,licensed or intended for use in
+ * the design, construction, operation or maintenance of any nuclear facility.
  */
 
 package com.lowagie.text.pdf.codec;
@@ -60,7 +94,6 @@ import java.util.zip.InflaterInputStream;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.ImgRaw;
-import com.lowagie.text.Png;
 import com.lowagie.text.pdf.ByteBuffer;
 import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -78,6 +111,38 @@ import com.lowagie.text.pdf.PdfString;
  * @author  Paulo Soares (psoares@consiste.pt)
  */
 public class PngImage {
+/** Some PNG specific values. */
+    public static final int[] PNGID = {137, 80, 78, 71, 13, 10, 26, 10};
+    
+/** A PNG marker. */
+    public static final String IHDR = "IHDR";
+    
+/** A PNG marker. */
+    public static final String PLTE = "PLTE";
+    
+/** A PNG marker. */
+    public static final String IDAT = "IDAT";
+    
+/** A PNG marker. */
+    public static final String IEND = "IEND";
+    
+/** A PNG marker. */
+    public static final String tRNS = "tRNS";
+    
+/** A PNG marker. */
+    public static final String pHYs = "pHYs";
+    
+/** A PNG marker. */
+    public static final String gAMA = "gAMA";
+    
+/** A PNG marker. */
+    public static final String cHRM = "cHRM";
+    
+/** A PNG marker. */
+    public static final String sRGB = "sRGB";
+    
+/** A PNG marker. */
+    public static final String iCCP = "iCCP";
     
     private static final int TRANSFERSIZE = 4096;
     private static final int PNG_FILTER_NONE = 0;
@@ -193,18 +258,18 @@ public class PngImage {
     }
     
     void readPng() throws IOException {
-        for (int i = 0; i < Png.PNGID.length; i++) {
-            if (Png.PNGID[i] != is.read())	{
+        for (int i = 0; i < PNGID.length; i++) {
+            if (PNGID[i] != is.read())	{
                 throw new IOException("File is not a valid PNG.");
             }
         }
         byte buffer[] = new byte[TRANSFERSIZE];
         while (true) {
-            int len = Png.getInt(is);
-            String marker = Png.getString(is);
+            int len = getInt(is);
+            String marker = getString(is);
             if (len < 0 || !checkMarker(marker))
                 throw new IOException("Corrupted PNG file.");
-            if (Png.IDAT.equals(marker)) {
+            if (IDAT.equals(marker)) {
                 int size;
                 while (len != 0) {
                     size = is.read(buffer, 0, Math.min(len, TRANSFERSIZE));
@@ -214,12 +279,12 @@ public class PngImage {
                     len -= size;
                 }
             }
-            else if (Png.tRNS.equals(marker)) {
+            else if (tRNS.equals(marker)) {
                 switch (colorType) {
                     case 0:
                         if (len >= 2) {
                             len -= 2;
-                            int gray = Png.getWord(is);
+                            int gray = getWord(is);
                             if (bitDepth == 16)
                                 transRedGray = gray;
                             else
@@ -229,9 +294,9 @@ public class PngImage {
                     case 2:
                         if (len >= 6) {
                             len -= 6;
-                            int red = Png.getWord(is);
-                            int green = Png.getWord(is);
-                            int blue = Png.getWord(is);
+                            int red = getWord(is);
+                            int green = getWord(is);
+                            int blue = getWord(is);
                             if (bitDepth == 16) {
                                 transRedGray = red;
                                 transGreen = green;
@@ -252,9 +317,9 @@ public class PngImage {
                 }
                 Image.skip(is, len);
             }
-            else if (Png.IHDR.equals(marker)) {
-                width = Png.getInt(is);
-                height = Png.getInt(is);
+            else if (IHDR.equals(marker)) {
+                width = getInt(is);
+                height = getInt(is);
                 
                 bitDepth = is.read();
                 colorType = is.read();
@@ -262,7 +327,7 @@ public class PngImage {
                 filterMethod = is.read();
                 interlaceMethod = is.read();
             }
-            else if (Png.PLTE.equals(marker)) {
+            else if (PLTE.equals(marker)) {
                 if (colorType == 3) {
                     PdfArray colorspace = new PdfArray();
                     colorspace.add(PdfName.INDEXED);
@@ -279,9 +344,9 @@ public class PngImage {
                     Image.skip(is, len);
                 }
             }
-            else if (Png.pHYs.equals(marker)) {
-                int dx = Png.getInt(is);
-                int dy = Png.getInt(is);
+            else if (pHYs.equals(marker)) {
+                int dx = getInt(is);
+                int dy = getInt(is);
                 int unit = is.read();
                 if (unit == 1) {
                     dpiX = (int)((float)dx * 0.0254f);
@@ -292,18 +357,18 @@ public class PngImage {
                         XYRatio = (float)dx / (float)dy;
                 }
             }
-            else if (Png.cHRM.equals(marker)) {
-                xW = (float)Png.getInt(is) / 100000f;
-                yW = (float)Png.getInt(is) / 100000f;
-                xR = (float)Png.getInt(is) / 100000f;
-                yR = (float)Png.getInt(is) / 100000f;
-                xG = (float)Png.getInt(is) / 100000f;
-                yG = (float)Png.getInt(is) / 100000f;
-                xB = (float)Png.getInt(is) / 100000f;
-                yB = (float)Png.getInt(is) / 100000f;
+            else if (cHRM.equals(marker)) {
+                xW = (float)getInt(is) / 100000f;
+                yW = (float)getInt(is) / 100000f;
+                xR = (float)getInt(is) / 100000f;
+                yR = (float)getInt(is) / 100000f;
+                xG = (float)getInt(is) / 100000f;
+                yG = (float)getInt(is) / 100000f;
+                xB = (float)getInt(is) / 100000f;
+                yB = (float)getInt(is) / 100000f;
                 hasCHRM = !(Math.abs(xW)<0.0001f||Math.abs(yW)<0.0001f||Math.abs(xR)<0.0001f||Math.abs(yR)<0.0001f||Math.abs(xG)<0.0001f||Math.abs(yG)<0.0001f||Math.abs(xB)<0.0001f||Math.abs(yB)<0.0001f);
             }
-            else if (Png.sRGB.equals(marker)) {
+            else if (sRGB.equals(marker)) {
                 int ri = is.read();
                 intent = intents[ri];
                 gamma = 2.2f;
@@ -317,8 +382,8 @@ public class PngImage {
                 yB = 0.06f;
                 hasCHRM = true;
             }
-            else if (Png.gAMA.equals(marker)) {
-                int gm = Png.getInt(is);
+            else if (gAMA.equals(marker)) {
+                int gm = getInt(is);
                 if (gm != 0) {
                     gamma = 100000f / (float)gm;
                     if (!hasCHRM) {
@@ -334,7 +399,7 @@ public class PngImage {
                     }
                 }
             }
-            else if (Png.iCCP.equals(marker)) {
+            else if (iCCP.equals(marker)) {
                 do {
                     --len;
                 } while (is.read() != 0);
@@ -358,7 +423,7 @@ public class PngImage {
                     icc_profile = null;
                 }
             }
-            else if (Png.IEND.equals(marker)) {
+            else if (IEND.equals(marker)) {
                 break;
             }
             else {
@@ -879,4 +944,42 @@ public class PngImage {
             return buf;
         }
     }
+
+/**
+ * Gets an <CODE>int</CODE> from an <CODE>InputStream</CODE>.
+ *
+ * @param		is      an <CODE>InputStream</CODE>
+ * @return		the value of an <CODE>int</CODE>
+ */
+    
+    public static final int getInt(InputStream is) throws IOException {
+        return (is.read() << 24) + (is.read() << 16) + (is.read() << 8) + is.read();
+    }
+    
+/**
+ * Gets a <CODE>word</CODE> from an <CODE>InputStream</CODE>.
+ *
+ * @param		is      an <CODE>InputStream</CODE>
+ * @return		the value of an <CODE>int</CODE>
+ */
+    
+    public static final int getWord(InputStream is) throws IOException {
+        return (is.read() << 8) + is.read();
+    }
+    
+/**
+ * Gets a <CODE>String</CODE> from an <CODE>InputStream</CODE>.
+ *
+ * @param		is      an <CODE>InputStream</CODE>
+ * @return		the value of an <CODE>int</CODE>
+ */
+    
+    public static final String getString(InputStream is) throws IOException {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < 4; i++) {
+            buf.append((char)is.read());
+        }
+        return buf.toString();
+    }
+
 }

@@ -92,23 +92,18 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         if (ttcName.length() < nameBase.length())
             ttcIndex = nameBase.substring(ttcName.length() + 1);
         fontType = FONT_TYPE_TTUNI;
-        if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
+        if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
             process(ttfAfm);
             if (os_2.fsType == 2)
-                throw new DocumentException(fileName + style + " - license restrictions does not permit embedding.");
+                throw new DocumentException(fileName + style + " cannot be embedded due to licensing restrictions.");
 
             if ((cmap31 == null && !fontSpecific) || (cmap10 == null && fontSpecific))
                 throw new DocumentException(fileName + " " + style + " does not contain an usable cmap.");
             if (fontSpecific) {
                 fontSpecific = false;
                 String tempEncoding = encoding;
-                encoding = PdfObject.TEXT_PDFDOCENCODING;
-                try {
-                    createEncoding();
-                }
-                catch (UnsupportedEncodingException e) {
-                    throw new DocumentException(e.getMessage());
-                }
+                encoding = "";
+                createEncoding();
                 encoding = tempEncoding;
                 fontSpecific = true;
             }

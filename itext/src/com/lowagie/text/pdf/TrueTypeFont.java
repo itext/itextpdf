@@ -359,17 +359,12 @@ class TrueTypeFont extends BaseFont {
         if (fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) {
             process(ttfAfm);
             if (!justNames && embedded && os_2.fsType == 2)
-                throw new DocumentException(fileName + style + " - license restrictions does not permit embedding.");
+                throw new DocumentException(fileName + style + " cannot be embedded due to licensing restrictions.");
         }
         else
             throw new DocumentException(fileName + style + " is not a TTF, OTF or TTC font file.");
-        try {
-            " ".getBytes(enc); // check if the encoding exists
-            createEncoding();
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new DocumentException(e.getMessage());
-        }
+        PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
+        createEncoding();
     }
     
     /** Gets the name from a composed TTC file name.

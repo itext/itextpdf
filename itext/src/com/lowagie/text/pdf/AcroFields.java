@@ -93,13 +93,19 @@ public class AcroFields {
                 dic.putAll(annot);
                 String name = "";
                 PdfDictionary value = null;
+                PdfObject lastV = null;
                 while (annot != null) {
                     dic.mergeDifferent(annot);
                     PdfString t = (PdfString)annot.get(PdfName.T);
                     if (t != null)
                         name = t.toUnicodeString() + "." + name;
-                    if (value == null && annot.get(PdfName.V) != null)
-                        value = annot;                        
+                    if (lastV == null && annot.get(PdfName.V) != null)
+                        lastV = annot.get(PdfName.V);
+                    if (value == null &&  t != null) {
+                        value = annot;
+                        if (annot.get(PdfName.V) == null && lastV  != null)
+                            value.put(PdfName.V, lastV);
+                    }
                     annot = (PdfDictionary)PdfReader.getPdfObject(annot.get(PdfName.PARENT));
                 }
                 if (name.length() > 0)

@@ -51,6 +51,7 @@
 package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.awt.geom.AffineTransform;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -2315,10 +2316,24 @@ public class PdfContentByte {
         return pdf.getPageResources();
     }
     
+    /** Sets the graphic state
+     * @param gstate the graphic state
+     */    
     public void setGState(PdfGState gstate) {
         PdfObject obj[] = writer.addSimpleExtGState(gstate);
         PageResources prs = getPageResources();
         PdfName name = prs.addExtGState((PdfName)obj[0], (PdfIndirectReference)obj[1]);
         content.append(name.getBytes()).append(" gs").append_i(separator);
+    }
+    
+    /** Concatenates a transformation to the current transformation
+     * matrix.
+     * @param af the transformation
+     */    
+    public void transform(AffineTransform af) {
+        double arr[] = new double[6];
+        af.getMatrix(arr);
+        content.append(arr[0]).append(' ').append(arr[1]).append(' ').append(arr[2]).append(' ');
+        content.append(arr[3]).append(' ').append(arr[4]).append(' ').append(arr[5]).append(" cm").append_i(separator);
     }
 }

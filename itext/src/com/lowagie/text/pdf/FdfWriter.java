@@ -60,7 +60,7 @@ import com.lowagie.text.DocumentException;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class FdfWriter {
-    static byte[] HEADER_FDF = DocWriter.getISOBytes("%FDF-1.2\n%\u00e0\u00e1\u00e2\u00e3\n");
+    static byte[] HEADER_FDF = DocWriter.getISOBytes("%FDF-1.2\n%\u00e2\u00e3\u00cf\u00d3\n");
     HashMap fields = new HashMap();
 
     /** The PDF file associated with the FDF. */

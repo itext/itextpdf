@@ -380,17 +380,13 @@ public abstract class BaseFont {
             fontBuilt = new Type1Font(name, encoding, embedded, ttfAfm, pfb);
             fontBuilt.fastWinansi = encoding.equals(CP1252);
         }
-        else if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().indexOf(".ttc,") > 0) {
+        else if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0) {
             if (encoding.equals(IDENTITY_H) || encoding.equals(IDENTITY_V))
                 fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded, ttfAfm);
             else {
                 fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm);
                 fontBuilt.fastWinansi = encoding.equals(CP1252);
             }
-        }
-        else if (nameBase.toLowerCase().endsWith(".otf")) {
-            fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm);
-            fontBuilt.fastWinansi = encoding.equals(CP1252);
         }
         else if (isCJKFont)
             fontBuilt = new CJKFont(name, encoding, embedded);
@@ -442,7 +438,7 @@ public abstract class BaseFont {
      * Creates the <CODE>widths</CODE> and the <CODE>differences</CODE> arrays
      * @throws UnsupportedEncodingException the encoding is not supported
      */
-    protected void createEncoding() throws UnsupportedEncodingException {
+    protected void createEncoding() {
         if (fontSpecific) {
             for (int k = 0; k < 256; ++k)
                 widths[k] = getRawWidth(k, null);
@@ -454,7 +450,7 @@ public abstract class BaseFont {
             byte b[] = new byte[1];
             for (int k = 0; k < 256; ++k) {
                 b[0] = (byte)k;
-                s = new String(b, encoding);
+                s = PdfEncodings.convertToString(b, encoding);
                 if (s.length() > 0) {
                     c = s.charAt(0);
                 }

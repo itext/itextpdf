@@ -87,9 +87,7 @@ public class PdfStream extends PdfDictionary {
     protected boolean compressed = false;
     
     protected ByteArrayOutputStream streamBytes = null;
-    
-    protected byte dicBytes[] = null;
-    
+        
     static final byte STARTSTREAM[] = DocWriter.getISOBytes("\nstream\n");
     static final byte ENDSTREAM[] = DocWriter.getISOBytes("\nendstream");
     static final int SIZESTREAM = STARTSTREAM.length + ENDSTREAM.length;

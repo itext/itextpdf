@@ -49,6 +49,7 @@ package com.lowagie.text.pdf;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -58,6 +59,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.GradientPaint;
+import java.awt.MediaTracker;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -143,6 +145,8 @@ public class PdfGraphics2D extends Graphics2D {
     private Stroke oldStroke;
     private Paint paintFill;
     private Paint paintStroke;
+    
+    private MediaTracker mediaTracker;
 
     // Added by Jurij Bilas
     protected boolean underline;          // indicates if the font style is underlined
@@ -455,7 +459,7 @@ public class PdfGraphics2D extends Graphics2D {
         if (!(stroke instanceof BasicStroke))
             return stroke;
         BasicStroke st = (BasicStroke)stroke;
-        float scale = Math.abs((float)transform.getScaleX());
+        float scale = (float)Math.sqrt(Math.abs(transform.getDeterminant()));
         float dash[] = st.getDashArray();
         if (dash != null) {
             for (int k = 0; k < dash.length; ++k)
@@ -641,7 +645,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#setTransform(AffineTransform)
      */
     public void setTransform(AffineTransform t) {
-        transform=t;
+        transform = new AffineTransform(t);
         this.stroke = transformStroke(originalStroke);
     }
     
@@ -698,38 +702,42 @@ public class PdfGraphics2D extends Graphics2D {
     /**
      * @see Graphics#create()
      */
-	public Graphics create() {
-		PdfGraphics2D g2 = new PdfGraphics2D();
-		g2.onlyShapes = this.onlyShapes;
-		g2.transform = new AffineTransform(this.transform);
-		g2.baseFonts = this.baseFonts;
-		g2.fontMapper = this.fontMapper;
-		g2.kids = this.kids;
-		g2.paint = this.paint;
-		g2.background = this.background;
-		g2.setFont(this.font);
-		g2.cb = this.cb.getDuplicate();
-		g2.cb.saveState();
-		g2.width = this.width;
-		g2.height = this.height;
-		g2.followPath(new Area(new Rectangle2D.Float(0, 0, width, height)), CLIP);
-		if (this.clip != null)
-			g2.clip = new Area(this.clip);
-		g2.stroke = stroke;
-		g2.originalStroke = originalStroke;
-		g2.strokeOne = (BasicStroke)g2.transformStroke(g2.strokeOne);
-		g2.oldStroke = g2.strokeOne;
-		g2.setStrokeDiff(g2.oldStroke, null);
-		g2.cb.saveState();
-		if (g2.clip != null)
-			g2.followPath(g2.clip, CLIP);
-		g2.kid = true;
-		synchronized (kids) {
-			kids.add(g2);
-		}
-		return g2;
-	}
+    public Graphics create() {
+        PdfGraphics2D g2 = new PdfGraphics2D();
+        g2.onlyShapes = this.onlyShapes;
+        g2.transform = new AffineTransform(this.transform);
+        g2.baseFonts = this.baseFonts;
+        g2.fontMapper = this.fontMapper;
+        g2.kids = this.kids;
+        g2.paint = this.paint;
+        g2.background = this.background;
+        g2.mediaTracker = this.mediaTracker;
+        g2.setFont(this.font);
+        g2.cb = this.cb.getDuplicate();
+        g2.cb.saveState();
+        g2.width = this.width;
+        g2.height = this.height;
+        g2.followPath(new Area(new Rectangle2D.Float(0, 0, width, height)), CLIP);
+        if (this.clip != null)
+            g2.clip = new Area(this.clip);
+        g2.stroke = stroke;
+        g2.originalStroke = originalStroke;
+        g2.strokeOne = (BasicStroke)g2.transformStroke(g2.strokeOne);
+        g2.oldStroke = g2.strokeOne;
+        g2.setStrokeDiff(g2.oldStroke, null);
+        g2.cb.saveState();
+        if (g2.clip != null)
+            g2.followPath(g2.clip, CLIP);
+        g2.kid = true;
+        synchronized (kids) {
+            kids.add(g2);
+        }
+        return g2;
+    }
     
+    public PdfContentByte getContent() {
+        return this.cb;
+    }
     /**
      * @see Graphics#getColor()
      */
@@ -960,6 +968,7 @@ public class PdfGraphics2D extends Graphics2D {
     public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
         Arc2D arc = new Arc2D.Double(x,y,width,height,startAngle, arcAngle, Arc2D.OPEN);
         draw(arc);
+
     }
     
     /**
@@ -1021,6 +1030,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#drawImage(Image, int, int, Color, ImageObserver)
      */
     public boolean drawImage(Image img, int x, int y, Color bgcolor, ImageObserver observer) {
+        waitForImage(img);
         return drawImage(img, x, y, img.getWidth(observer), img.getHeight(observer), bgcolor, observer);
     }
     
@@ -1028,6 +1038,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#drawImage(Image, int, int, int, int, Color, ImageObserver)
      */
     public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
+        waitForImage(img);
         double scalex = width/(double)img.getWidth(observer);
         double scaley = height/(double)img.getHeight(observer);
         AffineTransform tx = AffineTransform.getTranslateInstance(x,y);
@@ -1046,6 +1057,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#drawImage(Image, int, int, int, int, int, int, int, int, Color, ImageObserver)
      */
     public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2, Color bgcolor, ImageObserver observer) {
+        waitForImage(img);
         double dwidth = (double)dx2-dx1;
         double dheight = (double)dy2-dy1;
         double swidth = (double)sx2-sx1;
@@ -1118,7 +1130,9 @@ public class PdfGraphics2D extends Graphics2D {
         else
             points = s.getPathIterator(transform);
         float[] coords = new float[6];
+        int traces = 0;
         while(!points.isDone()) {
+            ++traces;
             int segtype = points.currentSegment(coords);
             normalizeY(coords);
             switch(segtype) {
@@ -1147,21 +1161,26 @@ public class PdfGraphics2D extends Graphics2D {
         
         switch (drawType) {
         case FILL:
-            if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
-                cb.eoFill();
-            else
-                cb.fill();
+            if (traces > 0) {
+                if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
+                    cb.eoFill();
+                else
+                    cb.fill();
+            }
             break;
         case STROKE:
-            cb.stroke();
+            if (traces > 0)
+                cb.stroke();
             break;
         default: //drawType==CLIP
+            if (traces == 0)
+                cb.rectangle(0, 0, 0, 0);
             if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
                 cb.eoClip();
             else
                 cb.clip();
+            cb.newPath();
         }
-        cb.newPath();
     }
     
     private float normalizeY(float y) {
@@ -1291,6 +1310,19 @@ public class PdfGraphics2D extends Graphics2D {
                     cb.setColorStroke(Color.gray);
             }
         }
+    }
+    
+    private synchronized void waitForImage(java.awt.Image image) {
+        if (mediaTracker == null)
+            mediaTracker = new MediaTracker(new PdfGraphics2D.fakeComponent());
+        mediaTracker.addImage(image, 0);
+        try {
+            mediaTracker.waitForID(0);
+        }
+        catch (InterruptedException e) {
+            // empty on purpose
+        }
+        mediaTracker.removeImage(image);
     }
     
     ///////////////////////////////////////////////
@@ -1478,5 +1510,8 @@ public class PdfGraphics2D extends Graphics2D {
         public Rectangle2D getMaxCharBounds(Graphics context) {
             return getStringBounds("M", context);
         }
+    }
+    
+    static private class fakeComponent extends Component {
     }
 }

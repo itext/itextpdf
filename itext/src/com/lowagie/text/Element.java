@@ -165,13 +165,7 @@ public interface Element {
     public static final int RECTANGLE = 30;
     
 /** This is a possible type of <CODE>Element</CODE>. */
-    public static final int GIF = 31;
-    
-/** This is a possible type of <CODE>Element</CODE>. */
     public static final int JPEG = 32;
-    
-/** This is a possible type of <CODE>Element</CODE>. */
-    public static final int PNG = 33;
     
 /** This is a possible type of <CODE>Element</CODE>. */
     public static final int IMGRAW = 34;

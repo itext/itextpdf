@@ -95,4 +95,9 @@ public class PRIndirectReference extends PdfIndirectReference {
     public PdfReader getReader() {
         return reader;
     }
+    
+    public void setNumber(int number, int generation) {
+        this.number = number;
+        this.generation = generation;
+    }
 }

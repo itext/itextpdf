@@ -158,8 +158,6 @@ public class PdfCell extends Rectangle {
                 case Element.JPEG:
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE:
-                case Element.GIF:
-                case Element.PNG:
                     height = addImage((Image)element, left, right, height, alignment);
                     break;
                     // if the element is a list

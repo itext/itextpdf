@@ -130,7 +130,7 @@ public class LZWDecoder {
      */
     public void initializeStringTable() {
         
-        stringTable = new byte[4096][];
+        stringTable = new byte[8192][];
         
         for (int i=0; i<256; i++) {
             stringTable[i] = new byte[1];
