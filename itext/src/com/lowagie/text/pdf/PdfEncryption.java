@@ -98,7 +98,7 @@ public class PdfEncryption {
     }
 
     /**
-     * @author Kazuya Ujihara
+     * author Kazuya Ujihara
      */
     private byte[] padPassword(byte userPassword[]) {
         byte userPad[] = new byte[32];
@@ -115,7 +115,7 @@ public class PdfEncryption {
     }
 
     /**
-     * @author Kazuya Ujihara
+     * author Kazuya Ujihara
      */
     private byte[] computeOwnerKey(byte userPad[], byte ownerPad[], boolean strength128Bits) {
         byte ownerKey[] = new byte[32];
@@ -142,7 +142,7 @@ public class PdfEncryption {
     }
 
     /**
-     * @author Kazuya Ujihara
+     * author Kazuya Ujihara
      *
      * ownerKey, documentID must be setuped
      */
@@ -176,7 +176,7 @@ public class PdfEncryption {
     }
 
     /**
-     * @author Kazuya Ujihara
+     * author Kazuya Ujihara
      *
      * mkey must be setuped
      */
@@ -230,14 +230,14 @@ public class PdfEncryption {
     }
 
     /**
-     * @author Kazuya Ujihara
+     * author Kazuya Ujihara
      */
     public void setupByUserPassword(byte[] documentID, byte userPassword[], byte ownerKey[], int permissions, boolean strength128Bits) {
         setupByUserPad(documentID, padPassword(userPassword), ownerKey, permissions, strength128Bits);
     }
 
     /**
-     * @author Kazuya Ujihara
+     * author Kazuya Ujihara
      */
     private void setupByUserPad(byte[] documentID, byte userPad[], byte ownerKey[], int permissions, boolean strength128Bits) {
         setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions, strength128Bits);
@@ -245,7 +245,7 @@ public class PdfEncryption {
     }
 
     /**
-     * @author Kazuya Ujihara
+     * author Kazuya Ujihara
      */
     public void setupByOwnerPassword(byte[] documentID, byte ownerPassword[], byte userKey[], byte ownerKey[], int permissions, boolean strength128Bits) {
         setupByOwnerPad(documentID, padPassword(ownerPassword), userKey, ownerKey, permissions, strength128Bits);
