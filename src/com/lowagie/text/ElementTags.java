@@ -76,6 +76,9 @@ public class ElementTags {
     public static final String SECTION = "section";
     
 /** attribute of section/chapter tag */
+    public static final String NUMBERDEPTH = "numberdepth";
+    
+/** attribute of section/chapter tag */
     public static final String DEPTH = "depth";
     
 /** attribute of section/chapter tag */

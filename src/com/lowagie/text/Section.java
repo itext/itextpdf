@@ -380,7 +380,7 @@ public class Section extends ArrayList implements TextElementArray {
         Section section = new Section(new Paragraph(""), 1);
         
         String value;
-        if ((value = attributes.getProperty(ElementTags.DEPTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.NUMBERDEPTH)) != null) {
             section.setNumberDepth(Integer.parseInt(value));
         }
         if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {
@@ -408,7 +408,7 @@ public class Section extends ArrayList implements TextElementArray {
     
     public void set(Properties attributes) {     
         String value;
-        if ((value = attributes.getProperty(ElementTags.DEPTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.NUMBERDEPTH)) != null) {
             setNumberDepth(Integer.parseInt(value));
         }
         if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {

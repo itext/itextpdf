@@ -821,7 +821,16 @@ public class HtmlWriter extends DocWriter implements DocListener {
 
                 addTabs(indent);
                 writeStart(HtmlTags.IMAGE);
-                write(HtmlTags.URL, image.url().toString());
+                String path = image.url().toString();
+                if (imagepath != null) {
+                    if (path.indexOf("/") > 0) {
+                        path = imagepath + path.substring(path.lastIndexOf("/") + 1);
+                    }
+                    else {
+                        path = imagepath + path;
+                    }
+                }
+                write(HtmlTags.URL, path);
                 if ((image.alignment() & Image.LEFT) > 0) {
                     write(HtmlTags.ALIGN, HtmlTags.ALIGN_LEFT);
                 }
@@ -834,8 +843,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (image.alt() != null) {
                     write(HtmlTags.ALT, image.alt());
                 }
-                write(HtmlTags.SCALEDWIDTH, String.valueOf(image.scaledWidth()));
-                write(HtmlTags.SCALEDHEIGHT, String.valueOf(image.scaledHeight()));
+                write(HtmlTags.PLAINWIDTH, String.valueOf(image.scaledWidth()));
+                write(HtmlTags.PLAINHEIGHT, String.valueOf(image.scaledHeight()));
                 writeEnd();
                 return;
             }

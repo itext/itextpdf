@@ -99,7 +99,7 @@ public class Chapter extends Section implements TextElementArray {
         this(new Paragraph(""), number);
         
         String value;
-        if ((value = attributes.getProperty(ElementTags.DEPTH)) != null) {
+        if ((value = attributes.getProperty(ElementTags.NUMBERDEPTH)) != null) {
             setNumberDepth(Integer.parseInt(value));
         }
         if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {

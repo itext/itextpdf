@@ -631,7 +631,8 @@ public class XmlWriter extends DocWriter implements DocListener {
  */
     
     private void writeSection(Section section, int indent) throws IOException {
-        write(ElementTags.DEPTH, String.valueOf(section.numberDepth()));
+        write(ElementTags.NUMBERDEPTH, String.valueOf(section.numberDepth()));
+        write(ElementTags.DEPTH, String.valueOf(section.depth()));
         write(ElementTags.INDENT, String.valueOf(section.indentation()));
         if (section.indentationLeft() != 0) {
             write(ElementTags.INDENTATIONLEFT, String.valueOf(section.indentationLeft()));
