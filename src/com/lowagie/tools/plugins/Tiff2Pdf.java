@@ -56,93 +56,69 @@ import java.util.Iterator;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
-import com.lowagie.text.pdf.PdfEncryptor;
-import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.Document;
+import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.tools.arguments.BitsetArgument;
+import com.lowagie.text.pdf.RandomAccessFileOrArray;
+import com.lowagie.text.pdf.codec.TiffImage;
 import com.lowagie.tools.arguments.FileArgument;
-import com.lowagie.tools.arguments.OptionArgument;
+import com.lowagie.tools.arguments.ImageFilter;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Allows you to encrypt an existing PDF file.
+ * Converts a Tiff file to a PDF file.
  */
-public class Encrypt extends AbstractTool {
-    private final static int PERMISSIONS[] = {
-            PdfWriter.AllowPrinting,
-            PdfWriter.AllowModifyContents,
-            PdfWriter.AllowCopy,
-            PdfWriter.AllowModifyAnnotations,
-            PdfWriter.AllowFillIn,
-            PdfWriter.AllowScreenReaders,
-            PdfWriter.AllowAssembly,
-            PdfWriter.AllowDegradedPrinting};
-    private final static String PERMISSION_OPTIONS[] = {
-    		"AllowPrinting",
-			"AllowModifyContents",
-			"AllowCopy",
-			"AllowModifyAnnotations",
-			"AllowFillIn (128 bit only)",
-			"AllowScreenReaders (128 bit only)",
-			"AllowAssembly (128 bit only)",
-			"AllowDegradedPrinting (128 bit only)"
-    		};
-
-	
+public class Tiff2Pdf extends AbstractTool {
 	/**
-	 * Constructs an Encrypt object.
+	 * Constructs a Tiff2Pdf object.
 	 */
-	public Encrypt() {
-		internalFrame = new JInternalFrame("Encrypt", true, true, true);
+	public Tiff2Pdf() {
+		internalFrame = new JInternalFrame("Tiff2Pdf", true, true, true);
 
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to encrypt", false, new PdfFilter()));
+		arguments.add(new FileArgument(this, "srcfile", "The file you want to encrypt", false, new ImageFilter(false, false, false, false, false, true)));
 		arguments.add(new FileArgument(this, "destfile", "The file to which the encrypted PDF has to be written", true, new PdfFilter()));
-		arguments.add(new ToolArgument(this, "userpassword", "The userpassword you want to add to the PDF file", String.class.getName()));
-		arguments.add(new ToolArgument(this, "ownerpassword", "The ownerpassword you want to add to the PDF file", String.class.getName()));
-		arguments.add(new BitsetArgument(this, "permissions", "Permissions on the file", PERMISSION_OPTIONS));
-		OptionArgument oa = new OptionArgument(this, "strength", "Strength of the encryption");
-		oa.addOption("40 bit encryption", "40");
-		oa.addOption("128 bit encryption", "128");
-		arguments.add(oa);
 		
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
 	public void execute() {
 		try {
 			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
+			File tiff_file = (File)getValue("srcfile");
 			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
-			int permissions = 0;
-			String p = (String)getValue("permissions");
-			if (p != null) {
-				for (int k = 0; k < p.length(); ++k) {
-					permissions |= (p.charAt(k) == '0' ? 0 : PERMISSIONS[k]);
-				}
-			}
-			byte[] userpassword = null;
-			if (getValue("userpassword") != null) {
-				userpassword = ((String)getValue("userpassword")).getBytes();
-			}
-			byte[] ownerpassword = null;
-			if (getValue("ownerpassword") != null) {
-				userpassword = ((String)getValue("ownerpassword")).getBytes();
-			}
-			PdfReader reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath());
-			PdfEncryptor.encrypt(
-        		reader,
-				new FileOutputStream((File)getValue("destfile")),
-				userpassword,
-				ownerpassword,
-				permissions,
-				"128".equals(getValue("strength"))
-				);
-		}
-		catch(Exception e) {
+			File pdf_file = (File)getValue("destfile");
+			Document document = new Document();
+			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_file));
+			int pages = 0;
+			document.open();
+			PdfContentByte cb = writer.getDirectContent();
+            RandomAccessFileOrArray ra = null;
+            int comps = 0;
+            ra = new RandomAccessFileOrArray(tiff_file.getAbsolutePath());
+            comps = TiffImage.getNumberOfPages(ra);
+            for (int c = 0; c < comps; ++c) {
+                Image img = TiffImage.getTiffImage(ra, c + 1);
+                if (img != null) {
+                    if (img.scaledWidth() > 500 || img.scaledHeight() > 700) {
+                        img.scaleToFit(500, 700);
+                    }
+                    img.setAbsolutePosition(20, 20);
+                    document.add(new Paragraph(tiff_file + " - page " + (c + 1)));
+                    cb.addImage(img);
+                    document.newPage();
+                    ++pages;
+                }
+            }
+            ra.close();
+            document.close();
+		} catch (Exception e) {
         	JOptionPane.showMessageDialog(internalFrame,
         		    e.getMessage(),
         		    e.getClass().getName(),
@@ -157,13 +133,14 @@ public class Encrypt extends AbstractTool {
 	public void valueHasChanged(ToolArgument arg) {
 		// do nothing
 	}
+
 	
     /**
-     * Encrypts an existing PDF file.
+     * Converts a tiff file to PDF.
      * @param args
      */
-    public static void main(String[] args) {
-    	Encrypt tool = new Encrypt();
+	public static void main(String[] args) {
+    	Tiff2Pdf tool = new Tiff2Pdf();
     	if (args.length < 2) {
     		System.err.println(tool.getUsage());
     	}
@@ -180,6 +157,5 @@ public class Encrypt extends AbstractTool {
         	counter++;
         }
         tool.execute();
-    }
-
+	}
 }
