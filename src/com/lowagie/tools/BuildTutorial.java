@@ -33,6 +33,11 @@ public class BuildTutorial {
 
 	/**
 	 * Main method so you can call the convert method from the command line.
+	 * @param args 4 arguments are expected:
+	 * <ul><li>a sourcedirectory (root of the tutorial xml-files),
+	 * <li>a destination directory (where the html and build.xml files will be generated),
+	 * <li>an xsl to transform the index.xml into a build.xml
+	 * <li>an xsl to transform the index.xml into am index.html</ul>
 	 */
 
 	public static void main(String[] args) {
@@ -63,7 +68,12 @@ public class BuildTutorial {
 	}
 
 	/**
-	 *  Inspects a file or directory that is given and performs the necessary actions on it (transformation or recursion).
+	 * Inspects a file or directory that is given and performs the necessary actions on it (transformation or recursion).
+	 * @param source a sourcedirectory (possibly with a tutorial xml-file)
+	 * @param destination a destination directory (where the html and build.xml file will be generated, if necessary)
+	 * @param xsl_examples an xsl to transform the index.xml into a build.xml
+	 * @param xsl_site an xsl to transform the index.xml into am index.html
+	 * @throws IOException when something goes wrong while reading or creating a file or directory
 	 */
 	public static void action(File source, File destination, File xsl_examples, File xsl_site) throws IOException {
 		if ("CVS".equals(source.getName())) return;
@@ -100,12 +110,12 @@ public class BuildTutorial {
 	 * Converts an <code>infile</code>, using an <code>xslfile</code> to an
 	 * <code>outfile</code>.
 	 * 
-	 * @param inFilename
+	 * @param infile
 	 *            the path to an XML file
-	 * @param outFilename
-	 *            the path for the output file
-	 * @param xslFilename
+	 * @param xslfile
 	 *            the path to the XSL file
+	 * @param outfile
+	 *            the path for the output file
 	 */
 	public static void convert(File infile, File xslfile, File outfile) {
 		try {
