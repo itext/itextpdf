@@ -252,6 +252,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         super(0, 0, 0, 0);
         setBorder(BOX);
         setBorderWidth(1);
+        defaultLayout.setBorder(BOX);
         
         // a table should have at least 1 column
         if (columns <= 0) {
@@ -286,6 +287,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         super(0, 0, 0, 0);
         setBorder(BOX);
         setBorderWidth(1);
+        defaultLayout.setBorder(BOX);
         
         String value = (String)attributes.remove(ElementTags.COLUMNS);
         if (value == null) {
@@ -557,6 +559,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
             if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
         }
+        if (aCell.border() == UNDEFINED) aCell.setBorder(defaultLayout.border());
         aCell.fill();
         placeCell(rows, aCell, aLocation);
         setCurrentLocationToNextValidPosition(aLocation);
