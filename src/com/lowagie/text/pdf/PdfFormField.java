@@ -122,7 +122,7 @@ public class PdfFormField extends PdfAnnotation {
         put(PdfName.SUBTYPE, PdfName.WIDGET);
         put(PdfName.RECT, new PdfRectangle(rect));
         annotation = true;
-        if (!highlight.equals(HIGHLIGHT_INVERT))
+        if (highlight != null && !highlight.equals(HIGHLIGHT_INVERT))
             put(PdfName.H, highlight);
     }
     
@@ -214,8 +214,6 @@ public class PdfFormField extends PdfAnnotation {
     public static PdfFormField createSignature(PdfWriter writer) {
         PdfFormField field = new PdfFormField(writer);
         field.put(PdfName.FT, PdfName.SIG);
-        field.put(PdfName.FF, new PdfNumber(0));
-        writer.setSigFlags(PdfWriter.SIGNATURE_EXISTS);
         return field;
     }
     
@@ -291,7 +289,8 @@ public class PdfFormField extends PdfAnnotation {
         PdfName target = null;
         for (int k = 0; k < mergeTarget.length; ++k) {
             target = mergeTarget[k];
-            if ((dic = (PdfDictionary)source.get(target)) != null) {
+            PdfDictionary pdfDict = (PdfDictionary)PdfReader.getPdfObject(source.get(target));
+            if ((dic = pdfDict) != null) {
                 if ((res = (PdfDictionary)result.get(target)) == null) {
                     res = new PdfDictionary();
                 }
@@ -334,7 +333,7 @@ public class PdfFormField extends PdfAnnotation {
         getMK().put(PdfName.R, new PdfNumber(rotation));
     }
     
-    PdfArray getMKColor(Color color) {
+    public static PdfArray getMKColor(Color color) {
         PdfArray array = new PdfArray();
         int type = ExtendedColor.getType(color);
         switch (type) {

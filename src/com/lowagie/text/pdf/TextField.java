@@ -831,7 +831,7 @@ public class TextField {
         return this.backgroundColor;
     }
     
-    /** Sets the background color. set to <CODE>null</CODE> for
+    /** Sets the background color. Set to <CODE>null</CODE> for
      * transparent background.
      * @param backgroundColor the background color
      */
@@ -861,7 +861,7 @@ public class TextField {
         return this.font;
     }
     
-    /** Sets the text font. if <CODE>null</CODE> then Helvetica
+    /** Sets the text font. If <CODE>null</CODE> then Helvetica
      * will be used.
      * @param font the text font
      */

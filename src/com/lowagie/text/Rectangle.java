@@ -192,7 +192,7 @@ public class Rectangle implements Element, MarkupAttributes {
  */
     
     public Rectangle(Rectangle rect) {
-        this(rect.left(), rect.bottom(), rect.right(), rect.top());
+        this(rect.llx, rect.lly, rect.urx, rect.ury);
         cloneNonPositionParameters(rect);
     }
 
@@ -261,6 +261,19 @@ public class Rectangle implements Element, MarkupAttributes {
     }
     
     // methods
+    
+    public void normalize() {
+        if (llx > urx) {
+            float a = llx;
+            llx = urx;
+            urx = a;
+        }
+        if (lly > ury) {
+            float a = lly;
+            lly = ury;
+            ury = a;
+        }
+    }
     
 /**
  * Gets a Rectangle that is altered to fit on the page.

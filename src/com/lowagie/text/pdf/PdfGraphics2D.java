@@ -273,7 +273,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @calculates position and/or stroke thickness depending on the font size
      * @param d value to be converted
      * @param i font size
-     * @return
+     * @return position and/or stroke thickness depending on the font size
      */
     public static double asPoints(double d, int i) {
         return (d * (double)i) / (double)AFM_DIVISOR;
@@ -1228,6 +1228,15 @@ public class PdfGraphics2D extends Graphics2D {
         
         double[] mx = new double[6];
         inverse.getMatrix(mx);
+        if (currentFillGState != 255) {
+            PdfGState gs = fillGState[255];
+            if (gs == null) {
+                gs = new PdfGState();
+                gs.setFillOpacity(1);
+                fillGState[255] = gs;
+            }
+            cb.setGState(gs);
+        }
         
         try {
             com.lowagie.text.Image image = null;
@@ -1260,7 +1269,10 @@ public class PdfGraphics2D extends Graphics2D {
         } catch (Exception ex) {
             throw new IllegalArgumentException();
         }
-        
+        if (currentFillGState != 255) {
+            PdfGState gs = fillGState[currentFillGState];
+            cb.setGState(gs);
+        }        
         return true;
     }
     

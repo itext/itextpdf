@@ -421,8 +421,8 @@ public class Chunk implements Element, MarkupAttributes {
     }
 
     /**
-     * Sets the text horizontal scaling. A vaue of 1 is normal and a value of 0.5
-     * shrinks the text to half it's width. It doesn't work yet with justified text.
+     * Sets the text horizontal scaling. A vaue of 1 is normal and a value of 0.5f
+     * shrinks the text to half it's width.
      * @param scale the horizontal scaling factor
      * @return this <CODE>Chunk</CODE>
      */    

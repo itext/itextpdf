@@ -487,6 +487,10 @@ public class AcroFields {
      * <ul>
      * <li>textcolor - sets the text color. The value for this entry is a <CODE>java.awt.Color</CODE>.<br>
      * <li>textsize - sets the text size. The value for this entry is a <CODE>Float</CODE>.
+     * <li>bgcolor - sets the background color. The value for this entry is a <CODE>java.awt.Color</CODE>.
+     *     If <code>null</code> removes the background.<br>
+     * <li>bordercolor - sets the border color. The value for this entry is a <CODE>java.awt.Color</CODE>.
+     *     If <code>null</code> removes the border.<br>
      * </ul>
      * @param field the field name
      * @param name the property name
@@ -536,6 +540,25 @@ public class AcroFields {
                             ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
                         }
                     }
+                }
+            }
+        }
+        else if (name.equalsIgnoreCase("bgcolor") || name.equalsIgnoreCase("bordercolor")) {
+            PdfName dname = (name.equalsIgnoreCase("bgcolor") ? PdfName.BG : PdfName.BC);
+            for (int k = 0; k < item.merged.size(); ++k) {
+                if (hit.isHit(k)) {
+                    PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.MK));
+                    if (mk == null) {
+                        if (value == null)
+                            return true;
+                        mk = new PdfDictionary();
+                        ((PdfDictionary)item.merged.get(k)).put(PdfName.MK, mk);
+                        ((PdfDictionary)item.widgets.get(k)).put(PdfName.MK, mk);
+                    }
+                    if (value == null)
+                        mk.remove(dname);
+                    else
+                        mk.put(dname, PdfFormField.getMKColor((Color)value));
                 }
             }
         }
@@ -1102,8 +1125,10 @@ public class AcroFields {
             int len = rf.length();
             rf.close();
             PdfArray bounds = (PdfArray)PdfReader.getPdfObject(v.get(PdfName.BYTERANGE));
-            int offset = ((PdfNumber)bounds.getArrayList().get(2)).intValue();
-            int count = ((PdfNumber)bounds.getArrayList().get(3)).intValue();
+            ArrayList ar = bounds.getArrayList();
+            int last = ar.size() - 2;
+            int offset = ((PdfNumber)ar.get(last)).intValue();
+            int count = ((PdfNumber)ar.get(last + 1)).intValue();
             return offset + count == len;
         }
         catch (Exception e) {

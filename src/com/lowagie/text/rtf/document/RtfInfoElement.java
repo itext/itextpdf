@@ -162,7 +162,7 @@ public class RtfInfoElement extends RtfElement {
     
     /**
      * Converts a date from the format used by iText to the format required by
-     * rtf. iText: EEE MMM dd HH:mm:ss zzz yyyy - rtf: \\'yr'yyyy\\'mo'MM\\'dy'dd\\'hr'HH\\'min'mm\\'sec'ss
+     * rtf.<br>iText: EEE MMM dd HH:mm:ss zzz yyyy - rtf: \\'yr'yyyy\\'mo'MM\\'dy'dd\\'hr'HH\\'min'mm\\'sec'ss
      * 
      * @param date The date formated by iText
      * @return The date formated for rtf
