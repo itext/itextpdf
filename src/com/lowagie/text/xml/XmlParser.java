@@ -70,7 +70,7 @@ import com.lowagie.text.ExceptionConverter;
 public class XmlParser {
     
 /** We use this parser to parse the document. */
-    public static final String PARSER = "org.apache.xerces.parsers.SAXParser";
+    public static final String PARSER = "javax.xml.parsers.SAXParser";
     
 /** This is the instance of the parser. */
     protected XMLReader parser;
@@ -81,7 +81,7 @@ public class XmlParser {
     
     public XmlParser() {
         try {
-            parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+            parser = XMLReaderFactory.createXMLReader(PARSER);
         }
         catch(SAXException se) {
             throw new ExceptionConverter(se);
