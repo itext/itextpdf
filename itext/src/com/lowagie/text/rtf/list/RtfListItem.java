@@ -87,6 +87,7 @@ public class RtfListItem extends RtfParagraph {
         try {
             for(int i = 0; i < chunks.size(); i++) {
                 RtfChunk rtfChunk = (RtfChunk) chunks.get(i);
+                rtfChunk.setSoftLineBreaks(true);
                 result.write(rtfChunk.write());
                 result.write(RtfParagraph.PARAGRAPH);
             }
