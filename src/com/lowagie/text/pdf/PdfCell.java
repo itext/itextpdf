@@ -388,7 +388,7 @@ public class PdfCell extends Rectangle {
         float height;
         ArrayList result = new ArrayList();
         // we loop over the images
-        for (Iterator i = images.iterator(); i.hasNext(); ) {
+        for (Iterator i = images.iterator(); i.hasNext() && !header; ) {
             image = (Image) i.next();
             height = image.absoluteY();
             // if the currentPosition is higher than the bottom, we add the line to the result
