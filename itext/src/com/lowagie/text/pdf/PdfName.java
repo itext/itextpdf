@@ -986,6 +986,10 @@ public class PdfName extends PdfObject implements Comparable{
         bytes = pdfName.toByteArray();
     }
     
+    /**
+     * Constructs a PdfName.
+     * @param bytes
+     */
     public PdfName(byte bytes[]) {
         super(PdfObject.NAME, bytes);
     }
