@@ -52,11 +52,17 @@
 
     <target name="tutorial" description="--> building the pages for lowagie.com">
         <mkdir dir="${itext.tutorial}" />
+        <mkdir dir="${itext.tutorial}/images" />
         <mkdir dir="${itext.examples}" />
 		<copy file="${itext.src.tutorial}/style.css" todir="${itext.tutorial}" overwrite="no" />
         <copy todir="${itext.examples}" overwrite="yes">
             <fileset dir="${itext.src.examples}">
                 <include name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy todir="${itext.tutorial}/images" overwrite="yes">
+            <fileset dir="${itext.src.tutorial}/images">
+                <include name="**/*.*"/>
             </fileset>
         </copy>
 		<java classname="com.lowagie.tools.BuildTutorial" dir="${basedir}/${itext.src.tutorial}" fork="true">
