@@ -664,10 +664,12 @@ class Type1Font extends BaseFont
      */    
     public float getFontDescriptor(int key, float fontSize) {
         switch (key) {
+            case AWT_ASCENT:
             case ASCENT:
                 return Ascender * fontSize / 1000;
             case CAPHEIGHT:
                 return CapHeight * fontSize / 1000;
+            case AWT_DESCENT:
             case DESCENT:
                 return Descender * fontSize / 1000;
             case ITALICANGLE:
@@ -680,6 +682,10 @@ class Type1Font extends BaseFont
                 return urx * fontSize / 1000;
             case BBOXURY:
                 return ury * fontSize / 1000;
+            case AWT_LEADING:
+                return 0;
+            case AWT_MAXADVANCE:
+                return (urx - llx) * fontSize / 1000;
         }
         return 0;
     }

@@ -329,7 +329,7 @@ public class Chunk implements Element, MarkupAttributes {
  */
     
     public final boolean isEmpty() {
-        return (content.toString().trim().length() == 0) && (content.toString().indexOf("\n") == -1) && (attributes == null);
+        return (content.toString().trim().length() == 0) && (attributes == null);
     }
     
 /**
@@ -390,14 +390,28 @@ public class Chunk implements Element, MarkupAttributes {
         return setAttribute(LOCALGOTO, name);
     }
     
+/**
+ * Sets the color of the background <CODE>Chunk</CODE>.
+ * @param color the color of the background
+ * @return this <CODE>Chunk</CODE>
+ */
     public Chunk setBackground(Color color) {
         return setAttribute(BACKGROUND, color);
     }
     
+/**
+ * Sets a generic annotation to this <CODE>Chunk</CODE>.
+ * @param annotation the annotation
+ * @return this <CODE>Chunk</CODE>
+ */
     public Chunk setAnnotation(PdfAnnotation annotation) {
         return setAttribute(PDFANNOTATION, annotation);
     }
     
+/** sets the hyphenation engine to this <CODE>Chunk</CODE>.
+ * @param hyphenation the hyphenation engine
+ * @return this <CODE>Chunk</CODE>
+ */
     public Chunk setHyphenation(HyphenationEvent hyphenation) {
         return setAttribute(HYPHENATION, hyphenation);
     }
@@ -461,9 +475,7 @@ public class Chunk implements Element, MarkupAttributes {
     }
     
 /**
- * Sets the generic tag <CODE>Chunk</CODE>.
- * The text for this tag can be retrieved with <CODE>PdfPageEvent</CODE>.
- * @param text the text for the tag
+ * Sets a new page tag..
  * @return this <CODE>Chunk</CODE>
  */
     
