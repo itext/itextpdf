@@ -210,10 +210,9 @@ public class PdfGraphics2D extends Graphics2D {
         AffineTransform inverse = this.normalizeMatrix();
         AffineTransform flipper = AffineTransform.getScaleInstance(1,-1);
         inverse.concatenate(flipper);
+        inverse.translate(x, -y);
         double[] mx = new double[6];
         inverse.getMatrix(mx);
-        mx[4]+=x;
-        mx[5]-=y;
         cb.beginText();
         cb.setFontAndSize(baseFont, fontSize);
         cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
@@ -876,7 +875,7 @@ public class PdfGraphics2D extends Graphics2D {
         
         return true;
     }
-        
+    
     private void setPaint(Paint paint, boolean invert, double xoffset, double yoffset) {
         this.paint = paint;
         if (paint instanceof Color) {
@@ -941,25 +940,25 @@ public class PdfGraphics2D extends Graphics2D {
                 ascent = (int)bf.getFontDescriptor(BaseFont.AWT_ASCENT, fontSize);
             return ascent;
         }
-         
+        
         public int getDescent() {
             if (descent < 0)
                 descent =  -(int)bf.getFontDescriptor(BaseFont.AWT_DESCENT, fontSize);
             return descent;
         }
-         
+        
         public int getLeading() {
             if (leading < 0)
                 leading = (int)bf.getFontDescriptor(BaseFont.AWT_LEADING, fontSize);
             return leading;
         }
-         
+        
         public int getMaxAdvance() {
             if (maxAdvance < 0)
                 maxAdvance = (int)bf.getFontDescriptor(BaseFont.AWT_MAXADVANCE, fontSize);
             return maxAdvance;
         }
-
+        
         public int[] getWidths() {
             if (widths == null) {
                 widths = new int[256];
@@ -969,7 +968,7 @@ public class PdfGraphics2D extends Graphics2D {
             }
             return widths;
         }
-
+        
         public int charWidth(char c) {
             return (int)bf.getWidthPoint(c, fontSize);
         }
