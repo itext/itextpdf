@@ -701,7 +701,7 @@ public class PdfGraphics2D extends Graphics2D {
     public Graphics create() {
         PdfGraphics2D g2 = new PdfGraphics2D();
         g2.onlyShapes = this.onlyShapes;
-        g2.transform = new AffineTransform(this.transform);
+        g2.transform = IDENTITY;
         g2.baseFonts = this.baseFonts;
         g2.fontMapper = this.fontMapper;
         g2.kids = this.kids;
@@ -714,6 +714,7 @@ public class PdfGraphics2D extends Graphics2D {
         g2.height = this.height;
         g2.clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         g2.clip(g2.clip);
+        g2.transform = new AffineTransform(this.transform);
         g2.stroke = stroke;
         g2.originalStroke = originalStroke;
         g2.strokeOne = (BasicStroke)g2.transformStroke(g2.strokeOne);
