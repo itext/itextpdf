@@ -63,7 +63,7 @@ import com.lowagie.text.rtf.style.RtfColor;
  * The RtfBorder handle one row or cell border.
  * INTERNAL USE ONLY
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Unknown
  */

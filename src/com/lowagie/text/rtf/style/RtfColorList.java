@@ -63,7 +63,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfColorList stores all colours that appear in the document. Black
  * and White are always added
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfColorList extends RtfElement implements RtfExtendedElement {

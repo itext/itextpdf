@@ -19,7 +19,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfHeaderFooterGroup holds 0 - 3 RtfHeaderFooters that create a group
  * of headers or footers.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElement {

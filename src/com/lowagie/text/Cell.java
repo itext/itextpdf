@@ -213,12 +213,10 @@ public class Cell extends Rectangle implements TextElementArray {
 		setBorder(UNDEFINED);
 		setBorderWidth(0.5f);
 
-		try {
+ 		// Update by Benoit WIART <b.wiart@proxiad.com>
+ 		if(element instanceof Phrase) {
 			Phrase p = (Phrase)element;
 			leading = p.leading();
-		}
-		catch(Exception e) {
-			// empty on purpose
 		}
 
 		// initializes the arraylist and adds an element

@@ -64,7 +64,7 @@ import com.lowagie.text.rtf.RtfElement;
  * Stores one information group element. Valid elements are
  * author, title, subject, keywords, producer and creationdate.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfInfoElement extends RtfElement {

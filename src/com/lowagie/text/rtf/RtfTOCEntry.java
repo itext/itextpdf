@@ -65,7 +65,7 @@ import com.lowagie.text.Font;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2004/09/24 15:23:46 $
+ * @version $Id$
  */
 public class RtfTOCEntry extends Chunk implements RtfField {
 

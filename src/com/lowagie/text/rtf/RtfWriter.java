@@ -1807,7 +1807,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                     os.write(fontCharset);
                     writeInt(os, 0);
                     os.write(delimiter);
-                    os.write(fnt.getFamilyname().getBytes());
+                    os.write(filterSpecialChar(fnt.getFamilyname(), true).getBytes());
             }
             os.write(commaDelimiter);
             os.write(closeGroup);

@@ -60,7 +60,7 @@ import java.io.ByteArrayOutputStream;
  * The RtfCodePage class allows different code pages to be used in the rtf document.
  * Currently always ansi / ansicpg1252
  *
- * Version: $Revision$
+ * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfCodePage extends RtfElement implements RtfExtendedElement {

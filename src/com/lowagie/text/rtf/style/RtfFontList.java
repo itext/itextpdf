@@ -62,7 +62,7 @@ import java.io.IOException;
  * The RtfFontList stores the list of fonts used in the rtf document. It also
  * has methods for writing this list to the document
  *
- * Version: $Revision$
+ * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfFontList extends RtfElement implements RtfExtendedElement {

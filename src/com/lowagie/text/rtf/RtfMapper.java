@@ -84,7 +84,7 @@ import com.lowagie.text.rtf.text.RtfSection;
  * The RtfMapper provides mappings between com.lowagie.text.* classes
  * and the corresponding com.lowagie.text.rtf.** classes.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfMapper {

@@ -62,7 +62,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 /**
  * The RtfListItem acts as a wrapper for a ListItem.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfListItem extends RtfParagraph {

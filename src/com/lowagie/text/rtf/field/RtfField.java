@@ -69,7 +69,7 @@ import com.lowagie.text.rtf.style.RtfFont;
  * and writeFieldResultContent. All other field functionality is handled by the
  * RtfField class.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author <a href="mailto:Dirk.Weigenand@smb-tec.com">Dirk Weigenand</a>
  */

@@ -60,7 +60,7 @@ import com.lowagie.text.rtf.RtfElement;
 /**
  * The RtfInfoGroup stores information group elements. 
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfInfoGroup extends RtfElement {

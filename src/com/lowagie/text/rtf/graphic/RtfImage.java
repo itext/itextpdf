@@ -67,7 +67,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 /**
  * The RtfImage contains one image. Supported image types are jpeg, png, wmf, bmp.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Paulo Soares
  */
