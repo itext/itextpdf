@@ -53,6 +53,8 @@ import java.util.Properties;
 
 /**
  * A <code>Cell</code> with extended style attributes
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  */
 public class RtfTableCell extends Cell
 {

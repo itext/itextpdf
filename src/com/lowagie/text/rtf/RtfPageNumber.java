@@ -58,11 +58,13 @@ import com.lowagie.text.Font;
 
 /**
  * A rtf page number field.
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
  * @author <a href="mailto:mhall@myrealbox.com">mhall@myrealbox.com</a>
- * @version $Revision$Date: 2004/07/12 09:33:43 $
+ * @version $Revision$Date: 2004/09/24 15:14:06 $
  */
 public class RtfPageNumber extends GenericRtfField implements RtfField {
     private String content;

@@ -60,10 +60,12 @@ import com.lowagie.text.Font;
 /**
  * This class can be used to insert entries for a table of contents into 
  * the RTF document.
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2003/05/02 09:01:36 $
+ * @version $Revision$Date: 2004/07/12 09:33:43 $
  */
 public class RtfTOCEntry extends Chunk implements RtfField {
 

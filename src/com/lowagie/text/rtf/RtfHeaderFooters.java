@@ -59,11 +59,13 @@ import com.lowagie.text.Phrase;
  * This HeaderFooter specialization contains some headers or footers for several
  * pages. Is a list of headerFooters but also a sub class of header footer, to change
  * as less as possible of the current API.
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
  * @author <a href="mailto:mhall@myrealbox.com">Mark.Hall@myrealbox.com</a>
- * @version $Revision$Date: 2003/02/25 13:57:30 $
+ * @version $Revision$Date: 2004/07/12 09:33:43 $
  */
 public class RtfHeaderFooters extends HeaderFooter {
 

@@ -58,6 +58,8 @@ import java.awt.*;
  * The RtfFont class enables you to add arbitrary Fonts to a rtf document by specifying
  * the font name you want to have. The font has to be installed on the client for this to
  * work.
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * @author <a href="mhall@myrealbox.com">mhall@myrealbox.com</a>
  */
