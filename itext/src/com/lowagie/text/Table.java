@@ -1080,6 +1080,7 @@ public class Table extends Rectangle implements Element {
         int i=0, j=0;
         float [] lNewWidths = null;
         int [] lDummyWidths = new int[columns];     // to keep track in how many new cols this one will be split
+        float[][] lDummyColumnWidths = new float[columns][]; // bugfix Tony Copping
         int [] lDummyHeights = new int[rows.size()]; // to keep track in how many new rows this one will be split
         ArrayList newRows = null;
         
@@ -1097,6 +1098,7 @@ public class Table extends Rectangle implements Element {
                     lDummyTable = ((Table) ((Row) rows.get(i)).getCell(j));
                     if ( lDummyTable.getDimension().width > lNewMaxColumns ) {
                         lNewMaxColumns = lDummyTable.getDimension().width;
+                        lDummyColumnWidths[j] = lDummyTable.widths; // bugfix Tony Copping
                     }
                 }
             }
@@ -1130,7 +1132,8 @@ public class Table extends Rectangle implements Element {
                 if ( lDummyWidths[tel] != 1) {
                     // divide
                     for (int tel2 = 0; tel2 < lDummyWidths[tel]; tel2++) {
-                        lNewWidths[lDummy] = widths[tel] / lDummyWidths[tel];
+                        // lNewWidths[lDummy] = widths[tel] / lDummyWidths[tel];
+                        lNewWidths[lDummy] = widths[tel] * lDummyColumnWidths[tel][tel2] / 100f; // bugfix Tony Copping
                         lDummy++;
                     }
                 }
