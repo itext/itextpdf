@@ -213,7 +213,7 @@ public class PdfCell extends Rectangle {
                 }
  */
         // we set some additional parameters
-        setBottom(top - leading * lines.size() - 5 * cellpadding / 2);
+        setBottom(top - leading * lines.size() - 2 * cellpadding - 6);
         this.cellpadding = cellpadding;
         this.cellspacing = cellspacing;
         
@@ -276,6 +276,7 @@ public class PdfCell extends Rectangle {
  */
     
     public ArrayList getLines(float top, float bottom) {
+        
         // if the bottom of the page is higher than the top of the cell: do nothing
         if (top() < bottom) {
             return null;
@@ -342,6 +343,48 @@ public class PdfCell extends Rectangle {
     
     public int size() {
         return lines.size();
+    }
+    
+/**
+ * Returns the number of lines in the cell that are not empty.
+ *
+ * @return	a value
+ */
+    
+    public int remainingLines() {
+        if (lines.size() == 0) return 0; 
+        int result = 0;
+        int size = lines.size();
+        PdfLine line;
+        for (int i = 0; i < size; i++) {
+            line = (PdfLine) lines.get(i);
+            if (line.size() > 0) result++;
+        }
+        return result;
+    }
+    
+/**
+ * Returns the height that can be used to draw text.
+ */
+    
+    public float availableHeight() {
+        return height() - 2 * cellpadding;
+    }
+    
+/**
+ * Returns the height that needs to be added if the remaining lines don't fit in the remaining height.
+ */
+    
+    public float compensatingHeight(float lostTableBottom) {
+        int remainingLines = remainingLines();
+        if (remainingLines == 0) return 0f;
+        int usedLines = lines.size() - remainingLines;
+        float neededHeight = remainingLines * leading;
+        float remainingHeight = availableHeight() - (usedLines * leading) - (lostTableBottom % leading);
+        if (neededHeight > remainingHeight) {
+            return 6 + neededHeight - remainingHeight;
+        }
+        return 0f;
     }
     
     // methods to retrieve membervariables

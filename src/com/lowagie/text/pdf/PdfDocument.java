@@ -1163,8 +1163,8 @@ class PdfDocument extends Document implements DocListener {
                     // drawing the table
                     ArrayList cells = table.getCells();
                     ArrayList headercells = null;
-                    while (! cells.isEmpty()) {
-                        
+                    while (! cells.isEmpty()) {            
+           
                         // does the table fit on one page?
                         newPage = false;
                         
@@ -1308,10 +1308,18 @@ class PdfDocument extends Document implements DocListener {
                             oldHeight = currentHeight;
                             
                             // calculating the new positions of the table and the cells
+                            size = cells.size();
+                            int i = 0;
+                            while (i < size) {
+                                cell = (PdfCell) cells.get(i);
+                                if (cell.top(-table.cellspacing()) > lostTableBottom) {
+                                    difference = Math.max(difference, lostTableBottom + cell.compensatingHeight(lostTableBottom));
+                                }
+                                i++;
+                            }
                             table.setTop(indentTop());
                             table.setBottom(pagetop - difference + table.bottom(table.cellspacing()));
-                            size = cells.size();
-                            for (int i = 0; i < size; i++) {
+                            for (i = 0; i < size; i++) {
                                 cell = (PdfCell) cells.get(i);
                                 newTop = pagetop - difference + cell.top(-table.cellspacing());
                                 newBottom = pagetop - difference + cell.bottom();
