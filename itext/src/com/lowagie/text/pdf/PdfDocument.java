@@ -491,6 +491,7 @@ class PdfDocument extends Document implements DocListener {
 		if (pageEmpty || (writer != null && writer.isPaused())) {
 			return false;
 		}
+
 		// we flush the arraylist with recently written lines
 		flushLines();
 		// we assemble the resources of this pages
@@ -973,6 +974,7 @@ class PdfDocument extends Document implements DocListener {
 					if (newPage && ! cells.isEmpty()) {
 													   
 						int difference = indentBottom() + leading;
+						pageEmpty = false;
 						newPage();
 						flushLines();
 

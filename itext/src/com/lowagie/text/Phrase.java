@@ -245,7 +245,8 @@ public class Phrase extends ArrayList implements TextElementArray {
 			Element element = (Element) o;
 			if (element.type() == Element.CHUNK ||
 				element.type() == Element.PHRASE ||
-				element.type() == Element.ANCHOR) {
+				element.type() == Element.ANCHOR ||
+				element.type() == Element.TABLE) { // line added by David Freels
 				super.add(index, element);
 			}
 			else {
@@ -279,6 +280,9 @@ public class Phrase extends ArrayList implements TextElementArray {
 			case Element.ANCHOR:
 				Anchor anchor = (Anchor) o;
 				return this.add(anchor);
+			case Element.TABLE: // case added by David Freels
+				Table table = (Table) o;
+				return super.add(o);
 			case Element.LIST:
 				List list = (List) o;
 				return super.add(list);
