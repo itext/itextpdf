@@ -120,13 +120,19 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     /** This represents a coordinate in the transformation matrix. */
     public static final int DY = 7;
-    
+    /** type of image */
     public static final int ORIGINAL_NONE = 0;
+    /** type of image */
     public static final int ORIGINAL_JPEG = 1;
+    /** type of image */
     public static final int ORIGINAL_PNG = 2;
+    /** type of image */
     public static final int ORIGINAL_GIF = 3;
+    /** type of image */
     public static final int ORIGINAL_BMP = 4;
+    /** type of image */
     public static final int ORIGINAL_TIFF = 5;
+    /** type of image */
     public static final int ORIGINAL_WMF = 6;
     // membervariables
     
@@ -304,7 +310,11 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.widthPercentage = image.widthPercentage;
     }
     
-    // gets an instance of an Image
+    /**
+     * gets an instance of an Image
+     * @param image an Image object
+     * @return a new Image object
+     */
     
     public static Image getInstance(Image image) {
         if (image == null)
@@ -324,6 +334,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      *
      * @param	url     an URL
      * @return	an Image
+     * @throws BadElementException
+     * @throws MalformedURLException
+     * @throws IOException
      */
     
     public static Image getInstance(URL url) throws BadElementException, MalformedURLException, IOException {
@@ -385,6 +398,14 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         }
     }
     
+    /**
+     * gets an instance of an Image
+     * @param imgb raw image date
+     * @return an Image object
+     * @throws BadElementException
+     * @throws MalformedURLException
+     * @throws IOException
+     */
     public static Image getInstance(byte imgb[]) throws BadElementException, MalformedURLException, IOException {
         InputStream is = null;
         try {
@@ -608,6 +629,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      *
      * @param	filename    a filename
      * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
+     * @throws BadElementException
+     * @throws MalformedURLException
+     * @throws IOException
      */
     
     public static Image getInstance(String filename) throws BadElementException, MalformedURLException, IOException {
@@ -630,6 +654,12 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return Image.getInstance(width, height, components, bpc, data, null);
     }
     
+    /**
+     * gets an instance of an Image
+     * @param template a PdfTemplate that has to be wrapped in an Image object
+     * @return an Image object
+     * @throws BadElementException
+     */
     public static Image getInstance(PdfTemplate template) throws BadElementException {
         return new ImgTemplate(template);
     }
@@ -647,6 +677,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      * CCITT_BLACKIS1, CCITT_ENCODEDBYTEALIGN, CCITT_ENDOFLINE and CCITT_ENDOFBLOCK or a
      * combination of them
      * @param data the image data
+     * @return an Image object
      * @throws BadElementException on error
      */
     public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data) throws BadElementException {
@@ -668,6 +699,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      * @param data the image data
      * @param transparency transparency information in the Mask format of the
      * image dictionary
+     * @return an Image object
      * @throws BadElementException on error
      */
     public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data, int transparency[]) throws BadElementException {
@@ -709,6 +741,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      *
      * @param	attributes		Some attributes
      * @return	an <CODE>Image</CODE>
+     * @throws BadElementException
+     * @throws MalformedURLException
+     * @throws IOException
      */
     
     public static Image getInstance(Properties attributes) throws BadElementException, MalformedURLException, IOException {
@@ -948,6 +983,10 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return template[0];
     }
     
+    /**
+     * Sets data from a PdfTemplate
+     * @param template the template with the content
+     */
     public void setTemplateData(PdfTemplate template) {
         this.template[0] = template;
     }
@@ -1140,6 +1179,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      *
      * @param	is		the <CODE>InputStream</CODE>
      * @param	size	the number of bytes to skip
+     * @throws IOException
      */
     
     static public void skip(InputStream is, int size) throws IOException {
@@ -1156,6 +1196,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      *
      * @param        filename        a given filename
      * @return        a valid URL
+     * @throws MalformedURLException
      */
     
     public static URL toURL(String filename) throws MalformedURLException {
@@ -1178,12 +1219,17 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     /**
      * Returns the transparency.
+     * @return the transparency values
      */
     
     public int[] getTransparency() {
         return transparency;
     }
     
+    /**
+     * Sets the transparency values
+     * @param transparency the transparency values
+     */
     public void setTransparency(int transparency[]) {
         this.transparency = transparency;
     }
@@ -1224,6 +1270,10 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return new Long(serialId);
     }
     
+    /**
+     * Returns a serial id for the Image (reuse the same image more than once)
+     * @return a serialId
+     */
     public Long getMySerialId() {
         return mySerialId;
     }
@@ -1242,6 +1292,11 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return dpiY;
     }
     
+    /**
+     * Sets the dots per inch value
+     * @param dpiX dpi for x coordinates
+     * @param dpiY dpi for y coordinates
+     */
     public void setDpi(int dpiX, int dpiY) {
         this.dpiX = dpiX;
         this.dpiY = dpiY;
@@ -1310,10 +1365,18 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return invert;
     }
     
+    /**
+     * Getter for the inverted value
+     * @return true if the image is inverted
+     */
     public boolean isInverted() {
         return invert;
     }
     
+    /**
+     * Sets inverted true or false
+     * @param invert true or false
+     */
     public void setInverted(boolean invert) {
         this.invert = invert;
     }
@@ -1415,9 +1478,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return this.additional;
     }
     
-    /** Sets the /Colorspace key.
-     * @param indexed New value of property indexed.
-     *
+    /**
+     * Sets the /Colorspace key.
+     * @param additional New value of property indexed.
      */
     public void setAdditional(PdfDictionary additional) {
         this.additional = additional;
@@ -1517,6 +1580,10 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.originalData = originalData;
     }
 
+    /**
+     * Sets the url of the image
+     * @param url the url of the image
+     */
     public void setUrl(URL url) {
         this.url = url;
     }
