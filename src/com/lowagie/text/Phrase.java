@@ -201,12 +201,12 @@ public class Phrase extends ArrayList implements TextElementArray {
     
     public Phrase(Properties attributes) {
         this("", new Font(attributes));
+        clear();
         String value = attributes.getProperty(ElementTags.LEADING);
         if (value != null) {
             setLeading(Float.parseFloat(value + "f"));
         }
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
-            remove(0);
             add(new Chunk(value));
         }
     }
@@ -315,10 +315,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                     if (!font.isStandardFont()) {
                         chunk.setFont(font.difference(chunk.font()));
                     }
-                    if (!chunk.isEmpty()) {
-                        return super.add(chunk);
-                    }
-                    return false;
+                    return super.add(chunk);
                 case Element.PHRASE:
                 case Element.PARAGRAPH:
                     Phrase phrase = (Phrase) o;
@@ -438,44 +435,5 @@ public class Phrase extends ArrayList implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.PHRASE.equals(tag);
-    }
-    
-/**
- * Returns an XML representation of this <CODE>Phrase</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toXml(int indent) {
-        StringBuffer buf = new StringBuffer();
-        DocWriter.addTabs(buf, indent);
-        buf.append("<").append(ElementTags.PHRASE).append(" ");
-        
-        buf.append(ElementTags.LEADING).append("=\"").append(leading);
-        buf.append("\"").append(font.toString()).append(">\n");
-        
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            buf.append(((Element)i.next()).toXml(indent + 1));
-        }
-        
-        buf.append("</").append(ElementTags.PHRASE).append(">");
-        return buf.toString();
-    }
-    
-/**
- * Returns a representation of this <CODE>Phrase</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.PHRASE).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading);
-        buf.append("\"").append(font.toString()).append(">");
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            buf.append(i.next().toString());
-        }
-        buf.append("</").append(ElementTags.PHRASE).append(">");
-        return buf.toString();
     }
 }

@@ -75,6 +75,7 @@ class PdfChunk extends PdfString {
         keysAttributes.put(Chunk.LOCALGOTO, null);
         keysAttributes.put(Chunk.LOCALDESTINATION, null);
         keysAttributes.put(Chunk.GENERICTAG, null);
+        keysAttributes.put(Chunk.NEWPAGE, null);
         keysAttributes.put(Chunk.IMAGE, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
     }

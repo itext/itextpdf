@@ -699,6 +699,26 @@ public abstract class Image extends Rectangle implements Element {
     }
     
 /**
+ * Gets the plain width of the image.
+ *
+ * @return		a value
+ */
+    
+    public float plainWidth() {
+        return plainWidth;
+    }
+    
+/**
+ * Gets the plain height of the image.
+ *
+ * @return		a value
+ */
+    
+    public float plainHeight() {
+        return plainHeight;
+    }
+    
+/**
  * Gets the scaled width of the image.
  *
  * @return		a value
@@ -838,87 +858,5 @@ public abstract class Image extends Rectangle implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.IMAGE.equals(tag);
-    }
-    
-/**
- * Returns an XML representation of this <CODE>Image</CODE>.
- *
- * @return		a <CODE>String</CODE>
- */
-    
-    public String toXml(int indent) {
-        if (url == null) {
-            return "";
-        }
-        StringBuffer buf = new StringBuffer();
-        DocWriter.addTabs(buf, indent);
-        buf.append("<").append(ElementTags.IMAGE).append(" ").append(ElementTags.URL).append("=\"");
-        buf.append(url.toString()).append("\"");
-        if ((alignment & LEFT) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_LEFT).append("\"");
-        }
-        else if ((alignment & RIGHT) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_RIGHT).append("\"");
-        }
-        else if ((alignment & MIDDLE) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_MIDDLE).append("\"");
-        }
-        if ((alignment & UNDERLYING) > 0) {
-            buf.append(" ").append(ElementTags.UNDERLYING).append("=\"").append(true).append("\"");
-        }
-        if ((alignment & TEXTWRAP) > 0) {
-            buf.append(" ").append(ElementTags.TEXTWRAP).append("=\"").append(true).append("\"");
-        }
-        if (alt != null) {
-            buf.append(" ").append(ElementTags.ALT).append("=\"").append(alt).append("\"");
-        }
-        if (hasAbsolutePosition()) {
-            buf.append(" ").append(ElementTags.ABSOLUTEX).append("=\"").append(absoluteX).append("\"");
-            buf.append(" ").append(ElementTags.ABSOLUTEY).append("=\"").append(absoluteY).append("\"");
-        }
-        buf.append(" ").append(ElementTags.PLAINWIDTH).append("=\"").append(plainWidth).append("\"");
-        buf.append(" ").append(ElementTags.PLAINHEIGHT).append("=\"").append(plainHeight).append("\"");
-        buf.append(" />\n");
-        return buf.toString();
-    }
-    
-/**
- * Returns a representation of this <CODE>Image</CODE>.
- *
- * @return		a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        if (url == null) {
-            return "";
-        }
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.IMAGE).append(" ").append(ElementTags.URL).append("=\"");
-        buf.append(url.toString()).append("\"");
-        if ((alignment & LEFT) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_LEFT).append("\"");
-        }
-        else if ((alignment & RIGHT) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_RIGHT).append("\"");
-        }
-        else if ((alignment & MIDDLE) > 0) {
-            buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_MIDDLE).append("\"");
-        }
-        if ((alignment & UNDERLYING) > 0) {
-            buf.append(" ").append(ElementTags.UNDERLYING).append("=\"").append(true).append("\"");
-        }
-        if ((alignment & TEXTWRAP) > 0) {
-            buf.append(" ").append(ElementTags.TEXTWRAP).append("=\"").append(true).append("\"");
-        }
-        if (alt != null) {
-            buf.append(" ").append(ElementTags.ALT).append("=\"").append(alt).append("\"");
-        }
-        if (hasAbsolutePosition()) {
-            buf.append(" ").append(ElementTags.ABSOLUTEX).append("=\"").append(absoluteX).append("\"");
-            buf.append(" ").append(ElementTags.ABSOLUTEY).append("=\"").append(absoluteY).append("\"");
-        }
-        buf.append(" ").append(ElementTags.PLAINWIDTH).append("=\"").append(plainWidth).append("\"");
-        buf.append(" ").append(ElementTags.PLAINHEIGHT).append("=\"").append(plainHeight).append("\"");
-        buf.append(" />");
-        return buf.toString();
     }
 }

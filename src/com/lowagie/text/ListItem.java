@@ -203,7 +203,6 @@ public class ListItem extends Paragraph implements TextElementArray {
         super("", new Font(attributes));
         String value;
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
-            remove(0);
             add(new Chunk(value));
         }
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
@@ -268,59 +267,5 @@ public class ListItem extends Paragraph implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.LISTITEM.equals(tag);
-    }
-    
-/**
- * Returns an XML representation of this <CODE>ListItem</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toXml(int indent) {
-        StringBuffer buf = new StringBuffer();
-        DocWriter.addTabs(buf, indent);
-        buf.append("<").append(ElementTags.LISTITEM);
-        buf.append(" ").append(ElementTags.LEADING).append("=\"").append(leading);
-        buf.append("\"").append(font.toString());
-        buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
-        if (indentationLeft != 0) {
-            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"").append(indentationLeft);
-        }
-        if (indentationRight != 0) {
-            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"").append(indentationRight);
-        }
-        buf.append("\">\n");
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            buf.append(((Element)i.next()).toXml(indent + 1));
-        }
-        DocWriter.addTabs(buf, indent);
-        buf.append("</").append(ElementTags.LISTITEM).append(">\n");
-        return buf.toString();
-    }
-    
-/**
- * Returns a representation of this <CODE>ListItem</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("\n<").append(ElementTags.LISTITEM).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading);
-        buf.append("\"").append(font.toString()).append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
-        if (indentationLeft != 0) {
-            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
-            buf.append(indentationLeft);
-        }
-        if (indentationRight != 0) {
-            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
-            buf.append(indentationRight);
-        }
-        buf.append("\">");
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            buf.append(i.next().toString());
-        }
-        buf.append("</").append(ElementTags.LISTITEM).append(">");
-        return buf.toString();
     }
 }

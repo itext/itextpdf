@@ -33,19 +33,14 @@
 
 package com.lowagie.text.xml;
 
+import java.awt.Color;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.HashMap;
 
-import com.lowagie.text.DocListener;
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.DocWriter;
-import com.lowagie.text.Element;
-import com.lowagie.text.ElementTags;
-import com.lowagie.text.Meta;
-import com.lowagie.text.Rectangle;
+import com.lowagie.text.*;
 
 /**
  * A <CODE>DocWriter</CODE> class for XML (Remark: this class is not finished yet!).
@@ -216,7 +211,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                     itext.put(ElementTags.AUTHOR, ((Meta)element).content());
                     return true;
                     default:
-                        os.write(getISOBytes(element.toXml(1)));
+                        os.write(getISOBytes(toXml(element, 1)));
                         return true;
             }
         }
@@ -327,4 +322,600 @@ public class XmlWriter extends DocWriter implements DocListener {
     private void newLine() throws IOException {
         os.write(NEWLINE);
     }
+    
+/**
+ * Returns the XML representation of an element.
+ *
+ * @param   element     the element
+ * @param   indent      the indentation
+ * @return  an XML representation
+ */
+    
+    private String toXml(Element element, int indent) {
+        switch(element.type()) {
+            case Element.CHUNK:
+            {
+                Chunk chunk = (Chunk) element;
+                
+                // if the chunk contains an image, return the image representation
+                try {
+                    Image image = chunk.getImage();
+                    return toXml(image, indent);
+                }
+                catch(NullPointerException npe) {
+                }
+                
+                boolean tag = false;
+                // start composing the chunk tag
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.CHUNK);
+                if (! chunk.font().isStandardFont()) {
+                    buf.append(toXml(chunk.font()));
+                    tag = true;
+                }
+                HashMap attributes = chunk.getAttributes();
+                if (attributes != null) {
+                    for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
+                        String key = (String) i.next();
+                        if (key.equals(Chunk.LOCALGOTO)
+                        || key.equals(Chunk.LOCALDESTINATION)
+                        || key.equals(Chunk.GENERICTAG)) {
+                            String value = (String) attributes.get(key);
+                            buf.append(" ").append(key.toLowerCase()).append("=\"").append(value).append("\"");
+                            tag = true;
+                        }
+                        if (key.equals(Chunk.NEWPAGE)) {
+                            return "<" + ElementTags.NEWPAGE + " />";
+                        }
+                    }
+                }
+                buf.append(">");
+                if (tag) {
+                    buf.append(encode(chunk.content()));
+                    buf.append("</").append(ElementTags.CHUNK).append(">\n");
+                    return buf.toString();
+                }
+                buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append(encode(chunk.content()));
+                buf.append("\n");
+                return buf.toString();
+            }
+            case Element.PHRASE:
+            {
+                Phrase phrase = (Phrase) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.PHRASE).append(" ");
+                
+                buf.append(ElementTags.LEADING).append("=\"").append(phrase.leading());
+                buf.append("\"").append(toXml(phrase.font())).append(">\n");
+                
+                for (Iterator i = phrase.iterator(); i.hasNext(); ) {
+                    buf.append(toXml((Element) i.next(), indent + 1));
+                }
+                addTabs(buf, indent);
+                buf.append("</").append(ElementTags.PHRASE).append(">\n");
+                return buf.toString();
+            }
+            case Element.ANCHOR:
+            {
+                Anchor anchor = (Anchor) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.ANCHOR);
+                buf.append(" ").append(ElementTags.LEADING).append("=\"").append(anchor.leading());
+                buf.append("\"").append(toXml(anchor.font()));
+                if (anchor.name() != null) {
+                    buf.append(" ").append(ElementTags.NAME).append("=\"").append(anchor.name()).append("\"");
+                }
+                if (anchor.reference() != null) {
+                    buf.append(" ").append(ElementTags.REFERENCE).append("=\"").append(anchor.reference()).append("\"");
+                }
+                buf.append(">\n");
+                for (Iterator i = anchor.iterator(); i.hasNext(); ) {
+                    buf.append(toXml((Element) i.next(), indent + 1));
+                }
+                addTabs(buf, indent);
+                buf.append("</").append(ElementTags.ANCHOR).append(">\n");
+                return buf.toString();
+            }
+            case Element.PARAGRAPH:
+            {
+                Paragraph paragraph = (Paragraph) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.PARAGRAPH);
+                
+                buf.append(" ").append(ElementTags.LEADING).append("=\"").append(paragraph.leading());
+                buf.append("\"").append(toXml(paragraph.font()));
+                buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(paragraph.alignment()));
+                if (paragraph.indentationLeft() != 0) {
+                    buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"").append(paragraph.indentationLeft());
+                }
+                if (paragraph.indentationRight() != 0) {
+                    buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"").append(paragraph.indentationRight());
+                }
+                buf.append("\">\n");
+                for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
+                    buf.append(toXml((Element) i.next(), indent + 1));
+                }
+                addTabs(buf, indent);
+                buf.append("</").append(ElementTags.PARAGRAPH).append(">\n");
+                return buf.toString();
+            }
+            case Element.SECTION:
+            {
+                Section section = (Section) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.SECTION);
+                addXml(buf, section, indent);
+                buf.append("</").append(ElementTags.SECTION).append(">\n");
+                return buf.toString();
+            }
+            case Element.CHAPTER:
+            {
+                Chapter chapter = (Chapter) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.CHAPTER);
+                addXml(buf, chapter, indent);
+                buf.append("</").append(ElementTags.CHAPTER).append(">\n");
+                return buf.toString();
+                
+            }
+            case Element.LIST:
+            {
+                List list = (List) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.LIST);
+                buf.append(" ").append(ElementTags.NUMBERED).append("=\"").append(list.isNumbered());
+                buf.append("\" ").append(ElementTags.SYMBOLINDENT).append("=\"").append(list.symbolIndent()).append("\"");
+                if (list.first() != 1) {
+                    buf.append(" ").append(ElementTags.FIRST).append("=\"").append(list.first()).append("\"");
+                }
+                if (list.indentationLeft() != 0) {
+                    buf.append(" ").append(ElementTags.INDENTATIONLEFT).append("=\"").append(list.indentationLeft()).append("\"");
+                }
+                if (list.indentationRight() != 0) {
+                    buf.append(" ").append(ElementTags.INDENTATIONRIGHT).append("=\"").append(list.indentationRight()).append("\"");
+                }
+                if (!list.isNumbered()) {
+                    buf.append(" ").append(ElementTags.LISTSYMBOL).append("=\"").append(list.symbol().content()).append("\"");
+                }
+                buf.append(toXml(list.symbol().font())).append(">\n");
+                for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
+                    buf.append(toXml((Element) i.next(), indent + 1));
+                }
+                addTabs(buf, indent);
+                buf.append("</").append(ElementTags.LIST).append(">\n");
+                return buf.toString();
+            }
+            case Element.LISTITEM:
+            {
+                ListItem listItem = (ListItem) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.LISTITEM);
+                buf.append(" ").append(ElementTags.LEADING).append("=\"").append(listItem.leading());
+                buf.append("\"").append(toXml(listItem.font()));
+                buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(listItem.alignment()));
+                if (listItem.indentationLeft() != 0) {
+                    buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"").append(listItem.indentationLeft());
+                }
+                if (listItem.indentationRight() != 0) {
+                    buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"").append(listItem.indentationRight());
+                }
+                buf.append("\">\n");
+                for (Iterator i = listItem.iterator(); i.hasNext(); ) {
+                    buf.append(toXml((Element) i.next(), indent + 1));
+                }
+                addTabs(buf, indent);
+                buf.append("</").append(ElementTags.LISTITEM).append(">\n");
+                return buf.toString();
+            }
+            case Element.CELL:
+            {
+                Cell cell = (Cell) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.CELL);
+                buf.append(toXml((Rectangle) cell));
+                buf.append(" ").append(ElementTags.HORIZONTALALIGN).append("=\"").append(ElementTags.getAlignment(cell.horizontalAlignment())).append("\"");
+                buf.append(" ").append(ElementTags.VERTICALALIGN).append("=\"").append(ElementTags.getAlignment(cell.verticalAlignment())).append("\"");
+                if (cell.colspan() != 1) {
+                    buf.append(" ").append(ElementTags.COLSPAN).append("=\"").append(cell.colspan()).append("\"");
+                }
+                if (cell.rowspan() != 1) {
+                    buf.append(" ").append(ElementTags.ROWSPAN).append("=\"").append(cell.rowspan()).append("\"");
+                }
+                if (cell.header()) {
+                    buf.append(" ").append(ElementTags.HEADER).append("=\"").append(true).append("\"");
+                }
+                if (cell.noWrap()) {
+                    buf.append(" ").append(ElementTags.NOWRAP).append("=\"").append(true).append("\"");
+                }
+                if (cell.leading() != -1) {
+                    buf.append(" ").append(ElementTags.LEADING).append("=\"").append(cell.leading()).append("\"");
+                }
+                buf.append(">\n");
+                for (Iterator i = cell.getElements(); i.hasNext(); ) {
+                    buf.append(toXml((Element) i.next(), indent + 1));
+                }
+                addTabs(buf, indent);
+                buf.append("</").append(ElementTags.CELL).append(">\n");
+                return buf.toString();
+            }
+            case Element.ROW:
+            {
+                Row row = (Row) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.ROW).append(">\n");
+                Element cell;
+                for (int i = 0; i < row.columns(); i++) {
+                    if ((cell = (Element)row.getCell(i)) != null) {
+                        buf.append(toXml(cell, indent + 1));
+                    }
+                }
+                addTabs(buf, indent);
+                buf.append("</").append(ElementTags.ROW).append(">\n");
+                return buf.toString();
+            }
+            case Element.TABLE:
+            {
+                Table table = (Table) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.TABLE);
+                buf.append(" ").append(ElementTags.COLUMNS).append("=\"").append(table.columns()).append("\"");
+                buf.append(" ").append(ElementTags.WIDTH).append("=\"");
+                if (!table.absWidth().equals("")){
+                    buf.append(table.absWidth());
+                }
+                else{
+                    buf.append(table.widthPercentage()).append("%");
+                }
+                buf.append("\" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(table.alignment()));
+                buf.append("\" ").append(ElementTags.CELLPADDING).append("=\"").append(table.cellpadding());
+                buf.append("\" ").append(ElementTags.CELLSPACING).append("=\"").append(table.cellspacing());
+                buf.append("\" ").append(ElementTags.WIDTHS).append("s=\"");
+                float[] widths = table.getProportionalWidths();
+                buf.append(widths[0]);
+                for (int i = 1; i < widths.length; i++) {
+                    buf.append(";");
+                    buf.append(widths[i]);
+                }
+                buf.append("\"").append(toXml((Rectangle) table)).append(">\n");
+                Row row;
+                for (Iterator iterator = table.iterator(); iterator.hasNext(); ) {
+                    row = (Row) iterator.next();
+                    buf.append(toXml(row, indent + 1));
+                }
+                addTabs(buf, indent);
+                buf.append("</").append(ElementTags.TABLE).append(">\n");
+                return buf.toString();
+            }
+            case Element.ANNOTATION:
+            {
+                Annotation annotation = (Annotation) element;
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.ANNOTATION).append("");
+                if (annotation.title() != null) {
+                    buf.append(" ").append(ElementTags.TITLE).append("=\"");
+                    buf.append(annotation.title());
+                }
+                if (annotation.content() != null) {
+                    buf.append("\" ").append(ElementTags.CONTENT).append("=\"");
+                    buf.append(annotation.content());
+                }
+                buf.append("\" />\n");
+                return buf.toString();
+            }
+            case Element.GIF:
+            case Element.JPEG:
+            case Element.PNG:
+            {
+                Image image = (Image) element;
+                if (image.url() == null) {
+                    return "";
+                }
+                StringBuffer buf = new StringBuffer();
+                addTabs(buf, indent);
+                buf.append("<").append(ElementTags.IMAGE).append(" ").append(ElementTags.URL).append("=\"");
+                buf.append(image.url().toString()).append("\"");
+                if ((image.alignment() & Image.LEFT) > 0) {
+                    buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_LEFT).append("\"");
+                }
+                else if ((image.alignment() & Image.RIGHT) > 0) {
+                    buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_RIGHT).append("\"");
+                }
+                else if ((image.alignment() & Image.MIDDLE) > 0) {
+                    buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.ALIGN_MIDDLE).append("\"");
+                }
+                if ((image.alignment() & Image.UNDERLYING) > 0) {
+                    buf.append(" ").append(ElementTags.UNDERLYING).append("=\"").append(true).append("\"");
+                }
+                if ((image.alignment() & Image.TEXTWRAP) > 0) {
+                    buf.append(" ").append(ElementTags.TEXTWRAP).append("=\"").append(true).append("\"");
+                }
+                if (image.alt() != null) {
+                    buf.append(" ").append(ElementTags.ALT).append("=\"").append(image.alt()).append("\"");
+                }
+                if (image.hasAbsolutePosition()) {
+                    buf.append(" ").append(ElementTags.ABSOLUTEX).append("=\"").append(image.absoluteX()).append("\"");
+                    buf.append(" ").append(ElementTags.ABSOLUTEY).append("=\"").append(image.absoluteY()).append("\"");
+                }
+                buf.append(" ").append(ElementTags.PLAINWIDTH).append("=\"").append(image.plainWidth()).append("\"");
+                buf.append(" ").append(ElementTags.PLAINHEIGHT).append("=\"").append(image.plainHeight()).append("\"");
+                buf.append(" />\n");
+                return buf.toString();
+            }
+            default:
+                return "";
+        }
+    }
+    
+    /**
+     * Adds XML to a given StringBuffer.
+     */
+    
+    public void addXml(StringBuffer buf, Section section, int indent){
+        buf.append(" ").append(ElementTags.DEPTH).append("=\"").append(section.numberDepth());
+        buf.append("\" ").append(ElementTags.INDENT).append("=\"").append(section.indentation());
+        if (section.indentationLeft() != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"").append(section.indentationLeft());
+        }
+        if (section.indentationRight() != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"").append(section.indentationRight());
+        }
+        buf.append("\">\n");
+        
+        if (section.title() != null) {
+            addTabs(buf, indent + 1);
+            buf.append("<").append(ElementTags.TITLE).append(" ");
+            buf.append(ElementTags.LEADING).append("=\"").append(section.title().leading());
+            buf.append("\" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(section.title().alignment()));
+            if (section.title().indentationLeft() != 0) {
+                buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
+                buf.append(section.title().indentationLeft());
+            }
+            if (section.title().indentationRight() != 0) {
+                buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
+                buf.append(section.title().indentationRight());
+            }
+            buf.append("\">\n");
+            for (Iterator i = section.title().iterator(); i.hasNext(); ) {
+                buf.append(toXml((Element)i.next(), indent + 2));
+            }
+            addTabs(buf, indent + 1);
+            buf.append("</").append(ElementTags.TITLE).append(">\n");
+        }
+        for (Iterator i = section.iterator(); i.hasNext(); ) {
+            buf.append(toXml((Element) i.next(), indent + 1));
+        }
+        addTabs(buf, indent);
+    }
+    
+/**
+ * Gives the String representation of a <CODE>Font</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toXml(Font font) {
+        StringBuffer buffer = new StringBuffer(" ").append(ElementTags.FONT).append("=\"");
+        switch(font.family()) {
+            case Font.COURIER:
+                buffer.append("Courier");
+                break;
+            case Font.HELVETICA:
+                buffer.append("Helvetica");
+                break;
+            case Font.TIMES_NEW_ROMAN:
+                buffer.append("Times New Roman");
+                break;
+            case Font.SYMBOL:
+                buffer.append("Symbol");
+                break;
+            case Font.ZAPFDINGBATS:
+                buffer.append("ZapfDingbats");
+                break;
+                default:
+                    buffer.append("default");
+        }
+        if (font.size() != Font.UNDEFINED) {
+            buffer.append("\" ").append(ElementTags.SIZE).append("=\"");
+            buffer.append(font.size());
+        }
+        if (font.style() != Font.UNDEFINED) {
+            buffer.append("\" ").append(ElementTags.STYLE).append("=\"");
+            switch(font.style() & Font.BOLDITALIC) {
+                case Font.NORMAL:
+                    buffer.append("normal");
+                    break;
+                case Font.BOLD:
+                    buffer.append("bold");
+                    break;
+                case Font.ITALIC:
+                    buffer.append("italic");
+                    break;
+                case Font.BOLDITALIC:
+                    buffer.append("bold, italic");
+                    break;
+            }
+            if ((font.style() & Font.UNDERLINE) > 0) {
+                buffer.append(", underline");
+            }
+            if ((font.style() & Font.STRIKETHRU) > 0) {
+                buffer.append(", strike");
+            }
+        }
+        if (font.color() != null) {
+            buffer.append("\" ").append(ElementTags.RED).append("=\"");
+            buffer.append(font.color().getRed());
+            buffer.append("\" ").append(ElementTags.GREEN).append("=\"");
+            buffer.append(font.color().getGreen());
+            buffer.append("\" ").append(ElementTags.BLUE).append("=\"");
+            buffer.append(font.color().getBlue());
+        }
+        return buffer.append("\"").toString();
+    }
+    
+/**
+ * Returns a representation of this <CODE>Rectangle</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toXml(Rectangle rectangle) {
+        StringBuffer buf = new StringBuffer();
+        if (rectangle.borderWidth() != Rectangle.UNDEFINED) {
+            buf.append(" ").append(ElementTags.BORDERWIDTH).append("=\"");
+            buf.append(rectangle.borderWidth());
+            buf.append("\"");
+            if (rectangle.hasBorder(Rectangle.LEFT)) {
+                buf.append(" ").append(ElementTags.LEFT).append("=\"").append(true).append("\"");
+            }
+            if (rectangle.hasBorder(Rectangle.RIGHT)) {
+                buf.append(" ").append(ElementTags.RIGHT).append("=\"").append(true).append("\"");
+            }
+            if (rectangle.hasBorder(Rectangle.TOP)) {
+                buf.append(" ").append(ElementTags.TOP).append("=\"").append(true).append("\"");
+            }
+            if (rectangle.hasBorder(Rectangle.BOTTOM)) {
+                buf.append(" ").append(ElementTags.BOTTOM).append("=\"").append(true).append("\"");
+            }
+        }
+        if (rectangle.borderColor() != null) {
+            buf.append(" ").append(ElementTags.RED).append("=\"");
+            buf.append(rectangle.borderColor().getRed());
+            buf.append("\" ").append(ElementTags.GREEN).append("=\"");
+            buf.append(rectangle.borderColor().getGreen());
+            buf.append("\" ").append(ElementTags.BLUE).append("=\"");
+            buf.append(rectangle.borderColor().getBlue());
+            buf.append("\"");
+        }
+        if (rectangle.backgroundColor() != null) {
+            buf.append(" ").append(ElementTags.BGRED).append("=\"");
+            buf.append(rectangle.backgroundColor().getRed());
+            buf.append("\" ").append(ElementTags.BGGREEN).append("=\"");
+            buf.append(rectangle.backgroundColor().getGreen());
+            buf.append("\" ").append(ElementTags.BGBLUE).append("=\"");
+            buf.append(rectangle.backgroundColor().getBlue());
+            buf.append("\"");
+        }
+        if (rectangle.grayFill() > 0) {
+            buf.append(" ").append(ElementTags.GRAYFILL).append("=\"");
+            buf.append(rectangle.grayFill());
+            buf.append("\"");
+        }
+        return buf.toString();
+    }
+    
+/**
+ * Adds a number of tabs to a <CODE>StringBuffer</CODE>.
+ *
+ * @param   buf     the <CODE>StringBuffer</CODE>
+ * @param   indent  the number of tabs to add
+ */
+    
+    static final void addTabs(StringBuffer buf, int indent) {
+        for (int i = 0; i < indent; i++) {
+            buf.append("\t");
+        }
+    }
+    
+/**
+ * Encodes a <CODE>String</CODE>.
+ *
+ * @param   string     the <CODE>String</CODE> to encode
+ * @return  the encoded <CODE>String</CODE>
+ */
+    
+    static final String encode(String string) {
+        int n = string.length();
+        char character;
+        StringBuffer buf = new StringBuffer();
+        // loop over all the characters of the String.
+        for (int i = 0; i < n; i++) {
+            character = string.charAt(i);
+            // the Htmlcode of these characters are added to a StringBuffer one by one
+            switch(character) {
+                case '\n':
+                    buf.append("<").append(ElementTags.NEWLINE).append(" />");
+                    break;
+                case '"':
+                    buf.append("&quot;");
+                    break;
+                case '\'':
+                    buf.append("&apos;");
+                    break;
+                case '<':
+                    buf.append("&lt;");
+                    break;
+                case '>':
+                    buf.append("&gt;");
+                    break;
+                case '&':
+                    buf.append("&amp;");
+                    break;
+                    default:
+                        buf.append(character);
+            }
+        }
+        return buf.toString();
+    }
+    
+/**
+ * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>Color</CODE>.
+ *
+ * @param	color	the <CODE>Color</CODE> that has to be converted.
+ * @return	the HTML representation of this <COLOR>Color</COLOR>
+ */
+    
+    public static String encode(Color color) {
+        StringBuffer buffer = new StringBuffer("#");
+        if (color.getRed() < 16) {
+            buffer.append('0');
+        }
+        buffer.append(Integer.toString(color.getRed(), 16));
+        if (color.getGreen() < 16) {
+            buffer.append('0');
+        }
+        buffer.append(Integer.toString(color.getGreen(), 16));
+        if (color.getBlue() < 16) {
+            buffer.append('0');
+        }
+        buffer.append(Integer.toString(color.getBlue(), 16));
+        return buffer.toString();
+    }
+    
+/**
+ * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>Color</CODE>.
+ *
+ * @param	color	the <CODE>Color</CODE> that has to be converted.
+ * @return	the HTML representation of this <COLOR>Color</COLOR>
+ */
+    
+    /*public static Color decode encode(String string) {
+        StringBuffer buffer = new StringBuffer("#");
+        if (color.getRed() < 16) {
+            buffer.append('0');
+        }
+        buffer.append(Integer.toString(color.getRed(), 16));
+        if (color.getGreen() < 16) {
+            buffer.append('0');
+        }
+        buffer.append(Integer.toString(color.getGreen(), 16));
+        if (color.getBlue() < 16) {
+            buffer.append('0');
+        }
+        buffer.append(Integer.toString(color.getBlue(), 16));
+        return buffer.toString();
+    }*/
 }

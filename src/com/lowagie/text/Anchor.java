@@ -172,7 +172,6 @@ public class Anchor extends Phrase implements TextElementArray {
         this("", new Font(attributes));
         String value;
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
-            remove(0);
             add(new Chunk(value));
         }
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
@@ -309,57 +308,5 @@ public class Anchor extends Phrase implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.ANCHOR.equals(tag);
-    }
-    
-/**
- * Returns an XML representation of this <CODE>Anchor</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toXml(int indent) {
-        StringBuffer buf = new StringBuffer();
-        DocWriter.addTabs(buf, indent);
-        buf.append("<").append(ElementTags.ANCHOR);
-        buf.append(" ").append(ElementTags.LEADING).append("=\"").append(leading);
-        buf.append("\"").append(font.toString());
-        if (name != null) {
-            buf.append(" ").append(ElementTags.NAME).append("=\"").append(name).append("\"");
-        }
-        if (reference != null) {
-            buf.append(" ").append(ElementTags.REFERENCE).append("=\"").append(reference).append("\"");
-        }
-        buf.append(">\n");
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            buf.append(((Element)i.next()).toXml(indent + 1));
-        }
-        DocWriter.addTabs(buf, indent);
-        buf.append("</").append(ElementTags.ANCHOR).append(">\n");
-        return buf.toString();
-    }
-    
-/**
- * Returns a representation of this <CODE>Anchor</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.ANCHOR).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading).append("\"").append(font.toString());
-        if (name != null) {
-            buf.append(" ").append(ElementTags.NAME).append("=\"");
-            buf.append(name).append("\"");
-        }
-        if (reference != null) {
-            buf.append(" ").append(ElementTags.REFERENCE).append("=\"");
-            buf.append(reference).append("\"");
-        }
-        buf.append(">");
-        for (Iterator i = iterator(); i.hasNext(); ) {
-            buf.append(i.next().toString());
-        }
-        buf.append("</").append(ElementTags.ANCHOR).append(">");
-        return buf.toString();
     }
 }

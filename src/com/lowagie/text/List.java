@@ -343,6 +343,30 @@ public class List implements TextElementArray {
     }
     
 /**
+ * Gets the symbol indentation.
+ */
+    
+    public final int symbolIndent() {
+        return symbolIndent;
+    }
+    
+/**
+ * Gets the symbol indentation.
+ */
+    
+    public final Chunk symbol() {
+        return symbol;
+    }
+    
+/**
+ * Gets the first number        .
+ */
+    
+    public final int first() {
+        return first;
+    }
+    
+/**
  * Gets the indentation of this paragraph on the left side.
  *
  * @return	the indentation
@@ -382,76 +406,5 @@ public class List implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.LIST.equals(tag);
-    }
-    
-/**
- * Returns an XML representation of this <CODE>Paragraph</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toXml(int indent) {
-        StringBuffer buf = new StringBuffer();
-        DocWriter.addTabs(buf, indent);
-        buf.append("<").append(ElementTags.LIST);
-        buf.append(" ").append(ElementTags.NUMBERED).append("=\"").append(numbered);
-        buf.append("\" ").append(ElementTags.SYMBOLINDENT).append("=\"").append(symbolIndent).append("\"");
-        if (first != 1) {
-            buf.append(" ").append(ElementTags.FIRST).append("=\"").append(first).append("\"");
-        }
-        if (indentationLeft != 0) {
-            buf.append(" ").append(ElementTags.INDENTATIONLEFT).append("=\"").append(indentationLeft).append("\"");
-        }
-        if (indentationRight != 0) {
-            buf.append(" ").append(ElementTags.INDENTATIONRIGHT).append("=\"").append(indentationRight).append("\"");
-        }
-        if (!numbered) {
-            buf.append(" ").append(ElementTags.LISTSYMBOL).append("=\"").append(symbol.content()).append("\"");
-        }
-        buf.append(symbol.font().toString()).append(">\n");
-        for (Iterator i = list.iterator(); i.hasNext(); ) {
-            buf.append(((Element)i.next()).toXml(indent + 1));
-        }
-        DocWriter.addTabs(buf, indent);
-        buf.append("</").append(ElementTags.LIST).append(">\n");
-        return buf.toString();
-    }
-    
-/**
- * Returns a representation of this <CODE>Paragraph</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.LIST).append(" ").append(ElementTags.NUMBERED).append("=\"");
-        buf.append(numbered);
-        buf.append("\" ").append(ElementTags.SYMBOLINDENT).append("=\"");
-        buf.append(symbolIndent);
-        buf.append("\"");
-        if (first != 1) {
-            buf.append(" ").append(ElementTags.FIRST).append("=\"");
-            buf.append(first);
-            buf.append("\"");
-        }
-        if (indentationLeft != 0) {
-            buf.append(" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
-            buf.append(indentationLeft);
-            buf.append("\"");
-        }
-        if (indentationRight != 0) {
-            buf.append(" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
-            buf.append(indentationRight);
-            buf.append("\"");
-        }
-        if (!numbered) {
-            buf.append(" ").append(ElementTags.LISTSYMBOL).append("=\"").append(symbol.content()).append("\"");
-        }
-        buf.append(symbol.font().toString()).append(">");
-        for (Iterator i = list.iterator(); i.hasNext(); ) {
-            buf.append(i.next().toString());
-        }
-        buf.append("</").append(ElementTags.LIST).append(">\n");
-        return buf.toString();
     }
 }

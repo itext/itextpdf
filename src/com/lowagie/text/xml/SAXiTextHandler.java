@@ -102,7 +102,10 @@ public class SAXiTextHandler extends HandlerBase {
  * @param       attributes  the list of attributes
  */
     
-    public void handleStartingTags(String name, Properties attributes) {   
+    public void handleStartingTags(String name, Properties attributes) {
+        
+        //System.err.println("Start: " + name);
+        
         // maybe there is some meaningful data that wasn't between tags
         if (currentChunk != null) {
             TextElementArray current;
@@ -246,13 +249,22 @@ public class SAXiTextHandler extends HandlerBase {
         
         // newpage
         if (isNewpage(name)) {
+            TextElementArray current;
             try {
-                document.newPage();
-                return;
+                current = (TextElementArray) stack.pop();
+                Chunk newPage = new Chunk("");
+                newPage.setNewPage();
+                current.add(newPage);
+                stack.push(current);
             }
-            catch(DocumentException de) {
-                return;
+            catch(EmptyStackException ese) {
+                try {
+                    document.newPage();
+                }
+                catch(DocumentException de) {
+                }
             }
+            return;
         }
         
         // documentroot
@@ -296,26 +308,42 @@ public class SAXiTextHandler extends HandlerBase {
     
     public void characters(char[] ch, int start, int length) {
         String content = new String(ch, start, length);
+        
+        //System.err.println("'" + content + "'");
+        
         if (content.trim().length() == 0) {
             return;
         }
-        if (content.endsWith("\n") || content.endsWith(" ")) {
-            content = content.substring(0, content.length() - 1).trim() + " ";
-        }
-        else {
-            content = content.trim();
-        }
-        int newline;
-        while ((newline = content.indexOf("\n")) > -1) {
-            StringBuffer buf = new StringBuffer(content.substring(0, newline));
-            buf.append(" ");
-            buf.append(content.substring(newline + 1));
+        
+        StringBuffer buf = new StringBuffer();
+        int len = content.length();
+        char character;
+        boolean newline = false;
+        for (int i = 0; i < len; i++) {
+            switch(character = content.charAt(i)) {
+                case ' ':
+                    if (!newline) {
+                        buf.append(character);
+                    }
+                    break;
+                case '\n':
+                    newline = true;
+                    buf.append(' ');
+                    break;
+                case '\r':
+                    break;
+                case '\t':
+                    break;
+                    default:
+                        newline = false;
+                        buf.append(character);
+            }
         }
         if (currentChunk == null) {
-            currentChunk = new Chunk(content);
+            currentChunk = new Chunk(buf.toString());
         }
         else {
-            currentChunk.append(content);
+            currentChunk.append(buf.toString());
         }
     }
     
@@ -337,6 +365,9 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void handleEndingTags(String name) {
+        
+        //System.err.println("End: " + name);
+        
         try {
             // tags that don't have any content
             if (isNewpage(name) || Annotation.isTag(name) || Image.isTag(name) || isNewline(name)) {

@@ -71,13 +71,13 @@ public class Annotation implements Element {
         this.text = text;
     }
     
-        /**
-         * Returns an <CODE>Annotation</CODE> that has been constructed taking in account
-         * the value of some <VAR>attributes</VAR>.
-         *
-         * @param	attributes		Some attributes
-         * @return	an <CODE>Annotation</CODE>
-         */
+/**
+ * Returns an <CODE>Annotation</CODE> that has been constructed taking in account
+ * the value of some <VAR>attributes</VAR>.
+ *
+ * @param	attributes		Some attributes
+ * @return	an <CODE>Annotation</CODE>
+ */
     
     public Annotation(Properties attributes) {
         title = attributes.getProperty(ElementTags.TITLE);
@@ -122,16 +122,6 @@ public class Annotation implements Element {
     }
     
 /**
- * Gets an iterator of <CODE>Element</CODE>s.
- *
- * @return	an <CODE>Iterator</CODE>
- */
-    
-    public final Iterator getElements() {
-        return new ArrayList().iterator();
-    }
-    
-/**
  * Gets all the chunks in this element.
  *
  * @return	an <CODE>ArrayList</CODE>
@@ -172,47 +162,5 @@ public class Annotation implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.ANNOTATION.equals(tag);
-    }
-    
-/**
- * Returns an XML representation of this <CODE>Annotation</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toXml(int indent) {
-        StringBuffer buf = new StringBuffer();
-        DocWriter.addTabs(buf, indent);
-        buf.append("<").append(ElementTags.ANNOTATION).append("");
-        if (title != null) {
-            buf.append(" ").append(ElementTags.TITLE).append("=\"");
-            buf.append(title);
-        }
-        if (text != null) {
-            buf.append("\" ").append(ElementTags.CONTENT).append("=\"");
-            buf.append(text);
-        }
-        buf.append("\" />\n");
-        return buf.toString();
-    }
-    
-/**
- * Returns a representation of this <CODE>Annotation</CODE>.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.ANNOTATION).append("");
-        if (title != null) {
-            buf.append(" ").append(ElementTags.TITLE).append("=\"");
-            buf.append(title);
-        }
-        if (text != null) {
-            buf.append("\" ").append(ElementTags.CONTENT).append("=\"");
-            buf.append(text);
-        }
-        buf.append("\" />");
-        return buf.toString();
     }
 }
