@@ -48,10 +48,10 @@ import com.lowagie.text.BadElementException;
 
 public class PdfPTable implements Element{
     
-    static final int BASECANVAS = 0;
-    static final int BACKGROUNDCANVAS = 1;
-    static final int LINECANVAS = 2;
-    static final int TEXTCANVAS = 3;
+    public static final int BASECANVAS = 0;
+    public static final int BACKGROUNDCANVAS = 1;
+    public static final int LINECANVAS = 2;
+    public static final int TEXTCANVAS = 3;
     
     protected ArrayList rows = new ArrayList();
     protected float totalHeight = 0;
@@ -61,6 +61,7 @@ public class PdfPTable implements Element{
     protected float totalWidth = 0;
     protected float relativeWidths[];
     protected float absoluteWidths[];
+    protected PdfPTableEvent tableEvent;
     
 /** Holds value of property headerRows. */
     protected int headerRows;
@@ -102,6 +103,7 @@ public class PdfPTable implements Element{
         totalWidth = table.totalWidth;
         totalHeight = table.totalHeight;
         currentRowIdx = table.currentRowIdx;
+        tableEvent = table.tableEvent;
         defaultCell = new PdfPCell(table.defaultCell);
         currentRow = new PdfPCell[table.currentRow.length];
         for (int k = 0; k < currentRow.length; ++k) {
@@ -152,7 +154,11 @@ public class PdfPTable implements Element{
         calculateWidths();
         calculateHeights();
     }
-    
+
+    public float getTotalWidth() {
+        return totalWidth;
+    }
+
     public void calculateHeights() {
         if (totalWidth <= 0)
             return;
@@ -208,10 +214,24 @@ public class PdfPTable implements Element{
         if (rowStart >= size || rowStart >= rowEnd)
             return yPos;
         rowEnd = Math.min(rowEnd, size);
+        float yPosStart = yPos;
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
             row.writeCells(xPos, yPos, canvases);
             yPos -= row.getMaxHeights();
+        }
+        if (tableEvent != null) {
+            float heights[] = new float[rowEnd - rowStart + 1];
+            heights[0] = yPosStart;
+            for (int k = rowStart; k < rowEnd; ++k) {
+                PdfPRow row = (PdfPRow)rows.get(k);
+                heights[k - rowStart + 1] = heights[k - rowStart] - row.getMaxHeights();
+            }
+            float widths[] = new float[absoluteWidths.length + 1];
+            widths[0] = xPos;
+            for (int k = 0; k < absoluteWidths.length; ++k)
+                widths[k + 1] = widths[k] + absoluteWidths[k];
+            tableEvent.tableLayout(this, widths, heights, 0, rowStart, canvases);
         }
         return yPos;
     }
@@ -364,4 +384,15 @@ public class PdfPTable implements Element{
         this.horizontalAlignment = horizontalAlignment;
     }
     
+    public void setTableEvent(PdfPTableEvent event) {
+        tableEvent = event;
+    }
+    
+    public PdfPTableEvent getTableEvent() {
+        return tableEvent;
+    }
+    
+    public float[] getAbsoluteWidths() {
+        return absoluteWidths;
+    }
 }

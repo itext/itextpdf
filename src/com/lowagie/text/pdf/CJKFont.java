@@ -44,6 +44,8 @@ import java.io.*;
 
 public class CJKFont extends BaseFont
 {
+    /** The encoding used in the PDF document for CJK fonts
+     */    
     static final String CJK_ENCODING = "UnicodeBigUnmarked";
 /** Metrics for the font STSong-Light with the encoding UniGB-UCS2-H */
     private static final int STSong_Light_UniGB_UCS2_H[] = {
@@ -261,6 +263,13 @@ public class CJKFont extends BaseFont
     private int metrics1[];
 /** The second metric array to search if the search failled on the first */
     private int metrics2[];
+    /** Creates a CJK font.
+     * @param fontName the name of the font
+     * @param enc the encoding of the font
+     * @param emb always <CODE>false</CODE>. CJK font and not embedded
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */    
     public CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException
     {
         String nameBase = getBaseName(fontName);
@@ -292,6 +301,12 @@ public class CJKFont extends BaseFont
             }
         }
     }
+    
+    /** Checks if its a valid CJK font.
+     * @param fontName the font name
+     * @param enc the encoding
+     * @return <CODE>true</CODE> if it is CJK font
+     */    
     public static boolean isCJKFont(String fontName, String enc)
     {
         for (int k = 0; k < cjk.length; ++k) {
@@ -423,4 +438,26 @@ public class CJKFont extends BaseFont
         }
         return null;
     }
+    
+    /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
+     * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
+     * and <CODE>ITALICANGLE</CODE>.
+     * @param key the parameter to be extracted
+     * @param fontSize the font size in points
+     * @return the parameter in points
+     */    
+    public float getFontDescriptor(int key, float fontSize) {
+        switch (key) {
+            case ASCENT:
+                return fdescInt[0] * fontSize / 1000;
+            case CAPHEIGHT:
+                return fdescInt[1] * fontSize / 1000;
+            case DESCENT:
+                return fdescInt[2] * fontSize / 1000;
+            case ITALICANGLE:
+                return fdescInt[8];
+        }
+        return 0;
+    }
+    
 }

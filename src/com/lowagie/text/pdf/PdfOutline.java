@@ -64,6 +64,10 @@ public class PdfOutline extends PdfDictionary {
 /** value of the <B>Destination</B>-key */
     private PdfDestination destination;
     
+    /** The <CODE>PdfAction</CODE> for this outline.
+     */    
+    private PdfAction action;
+    
 /** <CODE>true</CODE> if it's children are visible */
     private boolean isOpen;
     
@@ -88,12 +92,28 @@ public class PdfOutline extends PdfDictionary {
  * <CODE>true</CODE>.
  *
  * @param parent the parent of this outline item
- * @param destination the destination for this outline item
+ * @param action the <CODE>PdfAction</CODE> for this outline item
  * @param title the title of this outline item
  */
     
-    public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title) {
-        this(parent, destination, title, true);
+    public PdfOutline(PdfOutline parent, PdfAction action, String title) {
+        this(parent, action, title, true);
+    }
+    
+/**
+ * Constructs a <CODE>PdfOutline</CODE>.
+ * <P>
+ * This is the constructor for an <CODE>outline entry</CODE>.
+ *
+ * @param parent the parent of this outline item
+ * @param action the <CODE>PdfAction</CODE> for this outline item
+ * @param title the title of this outline item
+ * @param open <CODE>true</CODE> if the children are visible
+ */
+    public PdfOutline(PdfOutline parent, PdfAction action, String title, boolean open) {
+        super();
+        initOutline(parent, title, open);
+        this.action = action;
     }
     
 /**
@@ -109,6 +129,117 @@ public class PdfOutline extends PdfDictionary {
     
     public PdfOutline(PdfOutline parent, PdfDestination destination, String title) {
         this(parent, destination, title, true);
+    }
+    
+/**
+ * Constructs a <CODE>PdfOutline</CODE>.
+ * <P>
+ * This is the constructor for an <CODE>outline entry</CODE>.
+ *
+ * @param parent the parent of this outline item
+ * @param destination the destination for this outline item
+ * @param title the title of this outline item
+ * @param open <CODE>true</CODE> if the children are visible
+ */
+    public PdfOutline(PdfOutline parent, PdfDestination destination, String title, boolean open) {
+        super();
+        initOutline(parent, title, open);
+        this.destination = destination;
+    }
+    
+/**
+ * Constructs a <CODE>PdfOutline</CODE>.
+ * <P>
+ * This is the constructor for an <CODE>outline entry</CODE>. The open mode is
+ * <CODE>true</CODE>.
+ *
+ * @param parent the parent of this outline item
+ * @param action the <CODE>PdfAction</CODE> for this outline item
+ * @param title the title of this outline item
+ */
+    public PdfOutline(PdfOutline parent, PdfAction action, PdfString title) {
+        this(parent, action, title, true);
+    }
+    
+/**
+ * Constructs a <CODE>PdfOutline</CODE>.
+ * <P>
+ * This is the constructor for an <CODE>outline entry</CODE>.
+ *
+ * @param parent the parent of this outline item
+ * @param action the <CODE>PdfAction</CODE> for this outline item
+ * @param title the title of this outline item
+ * @param open <CODE>true</CODE> if the children are visible
+ */
+    public PdfOutline(PdfOutline parent, PdfAction action, PdfString title, boolean open)
+    {
+        this(parent, action, title.toString(), true);
+    }
+    
+/**
+ * Constructs a <CODE>PdfOutline</CODE>.
+ * <P>
+ * This is the constructor for an <CODE>outline entry</CODE>. The open mode is
+ * <CODE>true</CODE>.
+ *
+ * @param parent the parent of this outline item
+ * @param destination the destination for this outline item
+ * @param title the title of this outline item
+ */
+    
+    public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title) {
+        this(parent, destination, title, true);
+    }
+    
+/**
+ * Constructs a <CODE>PdfOutline</CODE>.
+ * <P>
+ * This is the constructor for an <CODE>outline entry</CODE>.
+ *
+ * @param parent the parent of this outline item
+ * @param destination the destination for this outline item
+ * @param title the title of this outline item
+ * @param open <CODE>true</CODE> if the children are visible
+ */
+    public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title, boolean open)
+    {
+        this(parent, destination, title.toString(), true);
+    }
+    
+/**
+ * Constructs a <CODE>PdfOutline</CODE>.
+ * <P>
+ * This is the constructor for an <CODE>outline entry</CODE>. The open mode is
+ * <CODE>true</CODE>.
+ *
+ * @param parent the parent of this outline item
+ * @param action the <CODE>PdfAction</CODE> for this outline item
+ * @param title the title of this outline item
+ */
+    
+    public PdfOutline(PdfOutline parent, PdfAction action, Paragraph title) {
+        this(parent, action, title, true);
+    }
+    
+/**
+ * Constructs a <CODE>PdfOutline</CODE>.
+ * <P>
+ * This is the constructor for an <CODE>outline entry</CODE>.
+ *
+ * @param parent the parent of this outline item
+ * @param action the <CODE>PdfAction</CODE> for this outline item
+ * @param title the title of this outline item
+ * @param open <CODE>true</CODE> if the children are visible
+ */
+    public PdfOutline(PdfOutline parent, PdfAction action, Paragraph title, boolean open) {
+        super();
+        StringBuffer buf = new StringBuffer();
+        for (Iterator i = title.getChunks().iterator(); i.hasNext(); ) {
+            Chunk chunk = (Chunk) i.next();
+            buf.append(chunk.content());
+        }
+        initOutline(parent, buf.toString(), open);
+        this.action = action;
     }
     
 /**
@@ -136,60 +267,33 @@ public class PdfOutline extends PdfDictionary {
  * @param title the title of this outline item
  * @param open <CODE>true</CODE> if the children are visible
  */
-    public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title, boolean open)
-    {
-        this(parent, destination, title.toString(), true);
-    }
-    
-/**
- * Constructs a <CODE>PdfOutline</CODE>.
- * <P>
- * This is the constructor for an <CODE>outline entry</CODE>.
- *
- * @param parent the parent of this outline item
- * @param destination the destination for this outline item
- * @param title the title of this outline item
- * @param open <CODE>true</CODE> if the children are visible
- */
-    public PdfOutline(PdfOutline parent, PdfDestination destination, String title, boolean open) {
-        super();
-        isOpen = open && parent.isOpen;
-        if (isOpen || parent.isOpen) {
-            parent.add();
-        }
-        this.parent = parent;
-        this.destination = destination;
-        put(PdfName.TITLE, new PdfString(title, "UnicodeBig"));
-    }
-    
-/**
- * Constructs a <CODE>PdfOutline</CODE>.
- * <P>
- * This is the constructor for an <CODE>outline entry</CODE>.
- *
- * @param parent the parent of this outline item
- * @param destination the destination for this outline item
- * @param title the title of this outline item
- * @param open <CODE>true</CODE> if the children are visible
- */
     public PdfOutline(PdfOutline parent, PdfDestination destination, Paragraph title, boolean open) {
         super();
-        isOpen = open && parent.isOpen;
-        if (isOpen || parent.isOpen) {
-            parent.add();
-        }
-        this.parent = parent;
-        this.destination = destination;
         StringBuffer buf = new StringBuffer();
         for (Iterator i = title.getChunks().iterator(); i.hasNext(); ) {
             Chunk chunk = (Chunk) i.next();
             buf.append(chunk.content());
         }
-        put(PdfName.TITLE, new PdfString(buf.toString(), "UnicodeBig"));
+        initOutline(parent, buf.toString(), open);
+        this.destination = destination;
     }
     
     
     // methods
+    
+    /** Helper for the constructors.
+     * @param parent the parent outline
+     * @param title the title for this outline
+     * @param open <CODE>true</CODE> if the children are visible
+     */    
+    void initOutline(PdfOutline parent, String title, boolean open) {
+        isOpen = open && parent.isOpen;
+        if (isOpen || parent.isOpen) {
+            parent.add();
+        }
+        this.parent = parent;
+        put(PdfName.TITLE, new PdfString(title, "UnicodeBig"));
+    }
     
 /**
  * Sets the indirect reference of this <CODE>PdfOutline</CODE>.
@@ -268,11 +372,12 @@ public class PdfOutline extends PdfDictionary {
         return (parent.level() + 1);
     }
     
-/**
- * Returns the PDF representation of this <CODE>PdfOutline</CODE>.
- *
- * @return		an array of <CODE>byte</CODE>
- */
+    /**
+     * Returns the PDF representation of this <CODE>PdfOutline</CODE>.
+     *
+     * @param crypto the encryption information
+     * @return an array of <CODE>byte</CODE>
+     */
     
     final public byte[] toPdf(PdfEncryption crypto) {
         if (parent != null) {
@@ -281,6 +386,8 @@ public class PdfOutline extends PdfDictionary {
         if (destination != null && destination.hasPage()) {
             put(PdfName.DEST, destination);
         }
+        if (action != null)
+            put(PdfName.A, action);
         if ((isOpen || parent.isOpen) && count > 0) {
             put(PdfName.COUNT, new PdfNumber(count));
         }
