@@ -51,10 +51,10 @@
 package com.lowagie.text;
 
 /**
- * This class contains the symbols that correspond with Greek letters.
+ * This class contains the symbols that correspond with special symbols.
  * <P>
- * When you construct a <CODE>Phrase</CODE> (or a derived object) using a <CODE>String</CODE>,
- * this <CODE>String</CODE> can contain Greek Symbols. These are characters with an int value
+ * When you construct a <CODE>Phrase</CODE> with Phrase.getInstance using a <CODE>String</CODE>,
+ * this <CODE>String</CODE> can contain special Symbols. These are characters with an int value
  * between 913 and 937 (except 930) and between 945 and 969. With this class the value of the
  * corresponding character of the Font Symbol, can be retrieved.
  *
@@ -64,13 +64,13 @@ package com.lowagie.text;
  * @author  Evelyne De Cordier
  */
 
-public class Greek {
+public class SpecialSymbol {
     
 /**
- * Returns the first occurrence of a Greek symbol in a <CODE>String</CODE>.
+ * Returns the first occurrence of a special symbol in a <CODE>String</CODE>.
  *
  * @param	string		a <CODE>String</CODE>
- * @return	an index of -1 if no Greek symbol was found
+ * @return	an index of -1 if no special symbol was found
  */
     
     public static int index(String string) {
@@ -91,7 +91,7 @@ public class Greek {
  */
     
     public static Chunk get(char c, Font font) {
-        char greek = Greek.getCorrespondingSymbol(c);
+        char greek = SpecialSymbol.getCorrespondingSymbol(c);
         if (greek == ' ') {
             return new Chunk(String.valueOf(c), font);
         }

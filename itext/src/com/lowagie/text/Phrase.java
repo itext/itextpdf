@@ -102,6 +102,13 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     // constructors
     
 /**
+ * Constructs a Phrase that can be used in the static getInstance() method.
+ * @param	dummy	a dummy parameter
+ */
+    private Phrase(boolean dummy) {
+    }
+    
+/**
  * Constructs a <CODE>Phrase</CODE> without specifying a leading.
  */
     
@@ -187,31 +194,67 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     public Phrase(float leading, String string, Font font) {
         this(leading);
         this.font = font;
-        if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
-            int index;
-            while((index = Greek.index(string)) > -1) {
-                if (index > 0) {
-                    String firstPart = string.substring(0, index);
-                    /* bugfix [ #461272 ] CODE CHANGE REQUIRED IN Phrase.java
-                       by Arekh Nambiar */
-                    super.add(new Chunk(firstPart, font));
-                    string = string.substring(index);
-                }
-                Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
-                StringBuffer buf = new StringBuffer();
-                buf.append(Greek.getCorrespondingSymbol(string.charAt(0)));
-                string = string.substring(1);
-                while (Greek.index(string) == 0) {
-                    buf.append(Greek.getCorrespondingSymbol(string.charAt(0)));
-                    string = string.substring(1);
-                }
-                super.add(new Chunk(buf.toString(), symbol));
-            }
-        }
         if (string.length() != 0) {
             super.add(new Chunk(string, font));
         }
     }
+    
+    /**
+     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
+     * @param string
+     * @return a newly constructed Phrase
+     */
+    public static final Phrase getInstance(String string) {
+    	return getInstance(16, string, new Font());
+    }
+    
+    /**
+     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
+     * @param leading
+     * @param string
+     * @return a newly constructed Phrase
+     */
+    public static final Phrase getInstance(int leading, String string) {
+    	return getInstance(leading, string, new Font());
+    }
+    
+    /**
+     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
+     * @param leading
+     * @param string
+     * @param font
+     * @return a newly constructed Phrase
+     */
+    public static final Phrase getInstance(int leading, String string, Font font) {
+    	Phrase p = new Phrase(true);
+    	p.setLeading(leading);
+    	p.font = font;
+    	if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
+            int index;
+            while((index = SpecialSymbol.index(string)) > -1) {
+                if (index > 0) {
+                    String firstPart = string.substring(0, index);
+                    /* bugfix [ #461272 ] CODE CHANGE REQUIRED IN Phrase.java
+                       by Arekh Nambiar */
+                    ((ArrayList)p).add(new Chunk(firstPart, font));
+                    string = string.substring(index);
+                }
+                Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
+                StringBuffer buf = new StringBuffer();
+                buf.append(SpecialSymbol.getCorrespondingSymbol(string.charAt(0)));
+                string = string.substring(1);
+                while (SpecialSymbol.index(string) == 0) {
+                    buf.append(SpecialSymbol.getCorrespondingSymbol(string.charAt(0)));
+                    string = string.substring(1);
+                }
+                ((ArrayList)p).add(new Chunk(buf.toString(), symbol));
+            }
+        }
+        if (string.length() != 0) {
+        	((ArrayList)p).add(new Chunk(string, font));
+        }
+    	return p;
+    }    
     
 /**
  * Returns a <CODE>Phrase</CODE> that has been constructed taking in account
