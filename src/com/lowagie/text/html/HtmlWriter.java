@@ -601,6 +601,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
                                 el.process(this);
                                 writeEndTag(PARAGRAPH);
                             }
+							// bugfix by Paulo (july 2001)
+                            else if (el.type() == Element.ANCHOR) {
+                                add(el);
+                            }
                             else {
                                 el.process(this);
                             }
