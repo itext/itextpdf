@@ -54,6 +54,7 @@ import com.lowagie.text.pdf.*;
 import com.lowagie.text.*;
 import java.awt.Point;
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class MetaDo {
     
@@ -309,6 +310,96 @@ public class MetaDo {
                     strokeAndFill();
                     break;
                 }
+                case META_ARC:
+                {
+                    if (isNullStrokeFill(state.getLineNeutral()))
+                        break;
+                    float yend = state.transformY(in.readShort());
+                    float xend = state.transformX(in.readShort());
+                    float ystart = state.transformY(in.readShort());
+                    float xstart = state.transformX(in.readShort());
+                    float b = state.transformY(in.readShort());
+                    float r = state.transformX(in.readShort());
+                    float t = state.transformY(in.readShort());
+                    float l = state.transformX(in.readShort());
+                    float cx = (r + l) / 2;
+                    float cy = (t + b) / 2;
+                    float arc1 = getArc(cx, cy, xstart, ystart);
+                    float arc2 = getArc(cx, cy, xend, yend);
+                    arc2 -= arc1;
+                    if (arc2 <= 0)
+                        arc2 += 360;
+                    cb.arc(l, b, r, t, arc1, arc2);
+                    cb.stroke();
+                    break;
+                }
+                case META_PIE:
+                {
+                    if (isNullStrokeFill(state.getLineNeutral()))
+                        break;
+                    float yend = state.transformY(in.readShort());
+                    float xend = state.transformX(in.readShort());
+                    float ystart = state.transformY(in.readShort());
+                    float xstart = state.transformX(in.readShort());
+                    float b = state.transformY(in.readShort());
+                    float r = state.transformX(in.readShort());
+                    float t = state.transformY(in.readShort());
+                    float l = state.transformX(in.readShort());
+                    float cx = (r + l) / 2;
+                    float cy = (t + b) / 2;
+                    float arc1 = getArc(cx, cy, xstart, ystart);
+                    float arc2 = getArc(cx, cy, xend, yend);
+                    arc2 -= arc1;
+                    if (arc2 <= 0)
+                        arc2 += 360;
+                    ArrayList ar = cb.bezierArc(l, b, r, t, arc1, arc2);
+                    if (ar.size() == 0)
+                        break;
+                    float pt[] = (float [])ar.get(0);
+                    cb.moveTo(cx, cy);
+                    cb.lineTo(pt[0], pt[1]);
+                    for (int k = 0; k < ar.size(); ++k) {
+                        pt = (float [])ar.get(k);
+                        cb.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
+                    }
+                    cb.lineTo(cx, cy);
+                    strokeAndFill();
+                    break;
+                }
+                case META_CHORD:
+                {
+                    if (isNullStrokeFill(state.getLineNeutral()))
+                        break;
+                    float yend = state.transformY(in.readShort());
+                    float xend = state.transformX(in.readShort());
+                    float ystart = state.transformY(in.readShort());
+                    float xstart = state.transformX(in.readShort());
+                    float b = state.transformY(in.readShort());
+                    float r = state.transformX(in.readShort());
+                    float t = state.transformY(in.readShort());
+                    float l = state.transformX(in.readShort());
+                    float cx = (r + l) / 2;
+                    float cy = (t + b) / 2;
+                    float arc1 = getArc(cx, cy, xstart, ystart);
+                    float arc2 = getArc(cx, cy, xend, yend);
+                    arc2 -= arc1;
+                    if (arc2 <= 0)
+                        arc2 += 360;
+                    ArrayList ar = cb.bezierArc(l, b, r, t, arc1, arc2);
+                    if (ar.size() == 0)
+                        break;
+                    float pt[] = (float [])ar.get(0);
+                    cx = pt[0];
+                    cy = pt[1];
+                    cb.moveTo(cx, cy);
+                    for (int k = 0; k < ar.size(); ++k) {
+                        pt = (float [])ar.get(k);
+                        cb.curveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
+                    }
+                    cb.lineTo(cx, cy);
+                    strokeAndFill();
+                    break;
+                }
                 case META_RECTANGLE:
                 {
                     if (isNullStrokeFill(true))
@@ -517,5 +608,12 @@ public class MetaDo {
                 cb.closePathStroke();
             }
         }
+    }
+    
+    static float getArc(float xCenter, float yCenter, float xDot, float yDot) {
+        double s = Math.atan2(yDot - yCenter, xDot - xCenter);
+        if (s < 0)
+            s += Math.PI * 2;
+        return (float)(s / Math.PI * 180);
     }
 }
