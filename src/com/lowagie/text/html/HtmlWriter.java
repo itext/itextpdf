@@ -55,6 +55,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Stack;
+import java.util.EmptyStackException;
 
 import com.lowagie.text.*;
 
@@ -102,10 +104,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
     // membervariables
     
 /** This is the current font of the HTML. */
-    protected Font font = new Font();
+    protected Stack currentfont = new Stack();
     
 /** This is the standard font of the HTML. */
-    protected Font standardFont = new Font();
+    protected Font standardfont = new Font();
     
 /** This is a path for images. */
     protected String imagepath = null;
@@ -201,11 +203,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
             return false;
         }
         try {
-            if (element.type() == Element.CHUNK && !standardFont.isStandardFont()) {
-                Chunk chunk = new Chunk(((Chunk) element).content(), standardFont.difference(((Chunk) element).font()));
-                write(chunk, 2);
-                return true;
-            }
             
             switch(element.type()) {
                 case Element.HEADER:
@@ -418,7 +415,26 @@ public class HtmlWriter extends DocWriter implements DocListener {
  */
     
     public void setStandardFont(Font standardFont) {
-        this.standardFont = standardFont;
+        this.standardfont = standardfont;
+    }
+    
+/**
+ * Checks if a given font is the same as the font that was last used.
+ *
+ * @param   font    the font of an object
+ * @return  true if the font differs
+ */
+    
+    public boolean isOtherFont(Font font) {
+        try {
+            Font cFont = (Font) currentfont.peek();
+            if (cFont.compareTo(font) == 0) return false;
+            return true;
+        }
+        catch(EmptyStackException ese) {
+            if (standardfont.compareTo(font) == 0) return false;
+            return true;
+        }
     }
     
 /**
@@ -510,54 +526,44 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 if (chunk.isEmpty()) return;
                 HashMap attributes = chunk.getAttributes();
-                // patch by Matt Benson 02/21/2002
-                if (chunk.font().isStandardFont() && attributes == null
-                && !(hasMarkupAttributes(chunk)))
-                {
-                    // end patch by Matt Benson 02/21/2002
-                    addTabs(indent);
-                    write(HtmlEncoder.encode(chunk.content()));
-                    os.write(NEWLINE);
+                if (attributes != null && attributes.get(Chunk.NEWPAGE) != null) {
                     return;
                 }
-                else {
-                    if (attributes != null && attributes.get(Chunk.NEWPAGE) != null) {
-                        return;
-                    }
-                    addTabs(indent);
-                    writeStart(HtmlTags.CHUNK);
-                    if (! chunk.font().isStandardFont()) {
+                addTabs(indent);
+                boolean tag = isOtherFont(chunk.font()) || hasMarkupAttributes(chunk);
+                if (tag) {
+                    writeStart(HtmlTags.SPAN);
+                    if (isOtherFont(chunk.font())) {
                         write(chunk.font());
                     }
-                    // patch by Matt Benson 02/21/2002
-                    if (hasMarkupAttributes(chunk))
-                    {
+                    if (hasMarkupAttributes(chunk)) {
                         writeMarkupAttributes((MarkupAttributes)chunk);
-                    }//end if this Element has MarkupAttributes
-                    // end patch by Matt Benson 02/21/2002
+                    }
                     os.write(GT);
-                    if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
-                        if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
-                            writeStart(HtmlTags.SUP);
-                        }
-                        else {
-                            writeStart(HtmlTags.SUB);
-                        }
-                        os.write(GT);
+                }
+                if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
+                    if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
+                        writeStart(HtmlTags.SUP);
                     }
-                    write(HtmlEncoder.encode(chunk.content()));
-                    if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
-                        os.write(LT);
-                        os.write(FORWARD);
-                        if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
-                            write(HtmlTags.SUP);
-                        }
-                        else {
-                            write(HtmlTags.SUB);
-                        }
-                        os.write(GT);
+                    else {
+                        writeStart(HtmlTags.SUB);
                     }
-                    writeEnd(HtmlTags.CHUNK);
+                    os.write(GT);
+                }
+                write(HtmlEncoder.encode(chunk.content()));
+                if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
+                    os.write(LT);
+                    os.write(FORWARD);
+                    if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
+                        write(HtmlTags.SUP);
+                    }
+                    else {
+                        write(HtmlTags.SUB);
+                    }
+                    os.write(GT);
+                }
+                if (tag) {
+                    writeEnd(HtmlTags.SPAN);
                 }
                 return;
             }
@@ -565,50 +571,53 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Phrase phrase = (Phrase) element;
                 
-                addTabs(indent);
-                writeStart(HtmlTags.PHRASE);
-                write(phrase.font());
-                // patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(phrase))
-                {
-                    writeMarkupAttributes((MarkupAttributes)phrase);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
-                os.write(GT);
-                os.write(NEWLINE);
+                
+                boolean tag = isOtherFont(phrase.font()) || hasMarkupAttributes(phrase);
+                if (tag) {
+                    addTabs(indent);
+                    if (isOtherFont(phrase.font())) {
+                        writeStart(HtmlTags.SPAN);
+                        currentfont.push(phrase.font());
+                        write(phrase.font());
+                    }
+                    if (hasMarkupAttributes(phrase)) {
+                        writeMarkupAttributes((MarkupAttributes)phrase);
+                    }
+                    os.write(GT);
+                    os.write(NEWLINE);
+                }
+                
                 for (Iterator i = phrase.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
-                addTabs(indent);
-                writeEnd(HtmlTags.PHRASE);
+                
+                if (tag) {
+                    addTabs(indent);
+                    writeEnd(HtmlTags.SPAN);
+                    currentfont.pop();
+                }
                 return;
             }
             case Element.ANCHOR:
             {
                 Anchor anchor = (Anchor) element;
                 
-                if (!anchor.font().isStandardFont()) {
-                    addTabs(indent);
-                    writeStart(HtmlTags.PHRASE);
-                    write(anchor.font());
-                    os.write(GT);
-                    os.write(NEWLINE);
-                }
-                
                 addTabs(indent);
                 writeStart(HtmlTags.ANCHOR);
+                boolean otherFont = isOtherFont(anchor.font());
+                if (otherFont) {
+                    currentfont.push(anchor.font());
+                    write(anchor.font());
+                }
                 if (anchor.name() != null) {
                     write(HtmlTags.NAME, anchor.name());
                 }
                 if (anchor.reference() != null) {
                     write(HtmlTags.REFERENCE, anchor.reference());
                 }
-                // patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(anchor))
-                {
+                if (hasMarkupAttributes(anchor)) {
                     writeMarkupAttributes((MarkupAttributes)anchor);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
                 os.write(NEWLINE);
                 
@@ -619,9 +628,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 addTabs(indent);
                 writeEnd(HtmlTags.ANCHOR);
                 
-                if (!anchor.font().isStandardFont()) {
-                    addTabs(indent);
-                    writeEnd(HtmlTags.PHRASE);
+                if (otherFont) {
+                    currentfont.pop();
                 }
                 return;
             }
@@ -630,43 +638,31 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 Paragraph paragraph = (Paragraph) element;
                 
                 addTabs(indent);
-                writeStart(HtmlTags.PARAGRAPH);
+                writeStart(HtmlTags.DIV);
                 String alignment = HtmlEncoder.getAlignment(paragraph.alignment());
                 if (!"".equals(alignment)) {
                     write(HtmlTags.ALIGN, alignment);
                 }
+                if (hasMarkupAttributes(paragraph)) {
+                    writeMarkupAttributes((MarkupAttributes)paragraph);
+                }
+                boolean otherFont = isOtherFont(paragraph.font());
+                if (otherFont) {
+                    currentfont.push(paragraph.font());
+                    write(paragraph.font());
+                }
                 os.write(GT);
                 os.write(NEWLINE);
-                
-                if (!paragraph.font().isStandardFont() || hasMarkupAttributes(paragraph))
-                {
-                    addTabs(indent);
-                    writeStart(HtmlTags.PHRASE);
-                    if (!paragraph.font().isStandardFont()) {
-                        write(paragraph.font());
-                    }
-                    
-                    // patch by Matt Benson 02/21/2002
-                    if (hasMarkupAttributes(paragraph))
-                    {
-                        writeMarkupAttributes((MarkupAttributes)paragraph);
-                    }//end if this Element has MarkupAttributes
-                    // end patch by Matt Benson 02/21/2002
-                    
-                    os.write(GT);
-                    os.write(NEWLINE);
-                }
                 
                 for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
-                if (!paragraph.font().isStandardFont()) {
-                    addTabs(indent);
-                    writeEnd(HtmlTags.PHRASE);
+                if (otherFont) {
+                    currentfont.pop();
                 }
                 
                 addTabs(indent);
-                writeEnd(HtmlTags.PARAGRAPH);
+                writeEnd(HtmlTags.DIV);
                 return;
             }
             case Element.SECTION:
@@ -676,12 +672,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
-                // patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(section))
-                {
+                if (hasMarkupAttributes(section)) {
                     writeMarkupAttributes((MarkupAttributes)section);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
+                }
                 writeSection(section, indent);
                 writeEnd(HtmlTags.DIV);
                 return;
@@ -698,12 +691,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 else {
                     writeStart(HtmlTags.UNORDEREDLIST);
                 }
-                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(list))
                 {
                     writeMarkupAttributes((MarkupAttributes)list);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
@@ -724,28 +715,22 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.LISTITEM);
-                // patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(listItem))
-                {
+                boolean otherFont = isOtherFont(listItem.font());
+                if (otherFont) {
+                    currentfont.push(listItem.font());
+                    write(listItem.font());
+                }
+                if (hasMarkupAttributes(listItem)) {
                     writeMarkupAttributes((MarkupAttributes)listItem);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
                 os.write(NEWLINE);
                 
-                if (!listItem.font().isStandardFont()) {
-                    addTabs(indent);
-                    writeStart(HtmlTags.PHRASE);
-                    write(listItem.font());
-                    os.write(GT);
-                    os.write(NEWLINE);
-                }
                 for (Iterator i = listItem.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
-                if (!listItem.font().isStandardFont()) {
-                    addTabs(indent);
-                    writeEnd(HtmlTags.PHRASE);
+                if (otherFont) {
+                    currentfont.pop();
                 }
                 addTabs(indent);
                 writeEnd(HtmlTags.LISTITEM);
@@ -791,12 +776,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (cell.noWrap()) {
                     write(HtmlTags.NOWRAP, String.valueOf(true));
                 }
-                // patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(cell))
-                {
+                if (hasMarkupAttributes(cell)) {
                     writeMarkupAttributes((MarkupAttributes)cell);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
                 os.write(NEWLINE);
                 if (cell.isEmpty()) {
@@ -821,12 +803,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.ROW);
-                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(row))
                 {
                     writeMarkupAttributes((MarkupAttributes)row);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
                 os.write(NEWLINE);
                 Element cell;
@@ -873,12 +853,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (table.backgroundColor() != null) {
                     write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(table.backgroundColor()));
                 }
-                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(table))
                 {
                     writeMarkupAttributes((MarkupAttributes)table);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
                 os.write(NEWLINE);
                 Row row;
@@ -894,14 +872,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Annotation annotation = (Annotation) element;
                 writeComment(annotation.title() + ": " + annotation.content());
-                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(annotation))
                 {
                     os.write(BEGINCOMMENT);
                     writeMarkupAttributes((MarkupAttributes)annotation);
                     os.write(ENDCOMMENT);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
+                }
                 return;
             }
             case Element.GIF:
@@ -939,14 +915,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 write(HtmlTags.PLAINWIDTH, String.valueOf(image.scaledWidth()));
                 write(HtmlTags.PLAINHEIGHT, String.valueOf(image.scaledHeight()));
-                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(image))
                 {
                     writeMarkupAttributes((MarkupAttributes)image);
-                }//end if this Element has MarkupAttributes
-                // end patch by Matt Benson 02/21/2002
-                writeEnd();
-                return;
+                    writeEnd();
+                    return;
+                }
             }
             default:
                 return;
@@ -999,6 +973,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
      */
     
     protected void write(Font font) throws IOException {
+        if (font == null) return;
         write(" ");
         write(HtmlTags.STYLE);
         write("=\"");
@@ -1018,11 +993,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Font.ZAPFDINGBATS:
                 writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.ZAPFDINGBATS);
                 break;
-            default:
-                com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
-                if (bf != null) {
-                    writeCssProperty(HtmlTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
-                }
+                default:
+                    com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
+                    if (bf != null) {
+                        writeCssProperty(HtmlTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
+                    }
         }
         
         if (font.size() != Font.UNDEFINED) {
