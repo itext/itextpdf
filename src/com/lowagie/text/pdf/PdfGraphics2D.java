@@ -295,14 +295,14 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
-     * @see Graphics2D#setRenderingHint(Key, Object)
+     * @see Graphics2D
      */
     public void setRenderingHint(Key arg0, Object arg1) {
         rhints.put(arg0, arg1);
     }
     
     /**
-     * @see Graphics2D#getRenderingHint(Key)
+     * @see Graphics2D
      */
     public Object getRenderingHint(Key arg0) {
         return rhints.get(arg0);
