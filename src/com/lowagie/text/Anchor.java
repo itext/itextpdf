@@ -74,7 +74,7 @@ import java.util.Properties;
  * @see		Phrase
  */
 
-public class Anchor extends Phrase implements TextElementArray {
+public class Anchor extends Phrase implements TextElementArray, MarkupAttributes {
     
     // membervariables
     
@@ -82,10 +82,10 @@ public class Anchor extends Phrase implements TextElementArray {
     public static final String ANCHOR = "anchor";
     
 /** This is the name of the <CODE>Anchor</CODE>. */
-    private String name = null;
+    protected String name = null;
     
 /** This is the reference of the <CODE>Anchor</CODE>. */
-    private String reference = null;
+    protected String reference = null;
     
     // constructors
     

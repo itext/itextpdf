@@ -57,7 +57,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.lowagie.text.*;
-import com.lowagie.text.markup.MarkupAttributes;
 
 /**
  * A <CODE>DocWriter</CODE> class for HTML.

@@ -51,8 +51,10 @@
 package com.lowagie.text;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * A <CODE>List</CODE> contains several <CODE>ListItem</CODE>s.
@@ -99,7 +101,7 @@ import java.util.Properties;
  * @see		ListItem
  */
 
-public class List implements TextElementArray {
+public class List implements TextElementArray, MarkupAttributes {
     
     // membervariables
     
@@ -126,6 +128,9 @@ public class List implements TextElementArray {
     
 /** The indentation of the listitems. */
     private int symbolIndent;
+
+/** Contains extra markupAttributes */
+    protected Properties markupAttributes;
     
     // constructors
     
@@ -482,5 +487,35 @@ public class List implements TextElementArray {
          new_char[0] = (char) ival;
          String ret = new String( new_char );
          return ret;
+    }
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
+    public Set getMarkupAttributeNames()
+    {
+        return (markupAttributes == null) ?
+        Collections.EMPTY_SET : markupAttributes.keySet();
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ */
+    public void setMarkupAttribute(String name, String value)
+    {
+        markupAttributes = (markupAttributes == null) ?
+        new Properties() : markupAttributes;
+        markupAttributes.put(name, value);
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ */
+    public String getMarkupAttribute(String name)
+    {
+        return (markupAttributes == null) ?
+        null : String.valueOf(markupAttributes.get(name));
     }
 }

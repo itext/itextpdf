@@ -59,7 +59,7 @@ import java.util.TreeMap;
 import java.util.HashMap;
 
 import com.lowagie.text.*;
-import com.lowagie.text.markup.MarkupAttributes;
+import com.lowagie.text.MarkupAttributes;
 
 /**
  * A <CODE>DocWriter</CODE> class for XML (Remark: this class is not finished yet!).

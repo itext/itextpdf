@@ -100,7 +100,7 @@ import java.util.Properties;
  * @see	Paragraph
  */
 
-public class ListItem extends Paragraph implements TextElementArray {
+public class ListItem extends Paragraph implements TextElementArray, MarkupAttributes {
     
     // membervariables
     

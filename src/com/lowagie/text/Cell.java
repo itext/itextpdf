@@ -100,31 +100,31 @@ public class Cell extends Rectangle implements TextElementArray {
     // membervariables
     
 /** This is the <CODE>ArrayList</CODE> of <CODE>Element</CODE>s. */
-    private ArrayList arrayList;
+    protected ArrayList arrayList;
     
 /** This is the horizontal alignment. */
-    private int horizontalAlignment = Element.ALIGN_UNDEFINED;
+    protected int horizontalAlignment = Element.ALIGN_UNDEFINED;
     
 /** This is the vertical alignment. */
-    private int verticalAlignment = Element.ALIGN_UNDEFINED;
+    protected int verticalAlignment = Element.ALIGN_UNDEFINED;
     
 /** This is the vertical alignment. */
-    private String width;
+    protected String width;
     
 /** This is the colspan. */
-    private int colspan = 1;
+    protected int colspan = 1;
     
 /** This is the rowspan. */
-    private int rowspan = 1;
+    protected int rowspan = 1;
     
 /** This is the leading. */
     float leading = -1;
     
 /** Is this <CODE>Cell</CODE> a header? */
-    private boolean header;
+    protected boolean header;
     
 /** Will the element have to be wrapped? */
-    private boolean noWrap;
+    protected boolean noWrap;
     
     // constructors
     
