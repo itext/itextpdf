@@ -299,6 +299,16 @@ public class PdfCell extends Rectangle {
         line = new PdfLine(left, right, alignment, image.scaledHeight() + leading);
         lines.add(line);
         line = new PdfLine(left, right, alignment, leading);
+        switch (image.alignment() & Image.MIDDLE) {
+            case Image.RIGHT:
+                left = right - image.scaledWidth();
+                break;
+            case Image.MIDDLE:
+                left = left + ((right - left - image.scaledWidth()) / 2f);
+                break;
+            case Image.LEFT:
+                default:
+        }
         image.setAbsolutePosition(left, height + (lines.size() - 1) * leading + image.scaledHeight());
         images.add(image);
         return height + image.scaledHeight();

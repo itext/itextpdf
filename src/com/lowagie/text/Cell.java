@@ -404,8 +404,20 @@ public class Cell extends Rectangle implements TextElementArray {
                 Table table = new Table(3);
                 float[] widths = new float[3];
                 widths[1] = ((Table)element).widthPercentage();
-                widths[0] = (100f - widths[1]) / 2f;
-                widths[2] = widths[0];
+                
+                switch(((Table)element).alignment()) {
+                    case Element.ALIGN_LEFT:
+                        widths[0] = 0f;
+                        widths[2] = 100f - widths[1];
+                        break;
+                    case Element.ALIGN_RIGHT:
+                        widths[0] = (100f - widths[1]) / 2f;
+                        widths[2] = widths[0];
+                        break;
+                    case Element.ALIGN_CENTER:
+                        widths[0] = 100f - widths[1];
+                        widths[2] = 0f;
+                }
                 table.setWidths(widths);
                 Cell tmp;
                 if (arrayList.size() == 0) {
