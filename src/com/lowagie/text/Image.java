@@ -612,7 +612,7 @@ public abstract class Image extends Rectangle implements Element,
 					byte alpha = smask[j] = (byte) ((pixels[j] >> 24) & 0xff);
 					/* bugfix by Chris Nokleberg */
 					if (!shades) {
-						if (alpha != 0 || alpha != -1) {
+						if (alpha != 0 && alpha != -1) {
 							shades = true;
 						} else if (transparency == null) {
 							if (alpha == 0) {
