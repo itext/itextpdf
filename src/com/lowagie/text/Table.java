@@ -1355,7 +1355,9 @@ public class Table extends Rectangle implements Element {
  */
     
     public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.TABLE).append(" ").append(ElementTags.WIDTH).append("=\"");
+        StringBuffer buf = new StringBuffer("<").append(ElementTags.TABLE);
+        buf.append(" ").append(ElementTags.COLUMNS).append("=\"").append(columns).append("\"");
+        buf.append(" ").append(ElementTags.WIDTH).append("=\"");
         if (!absWidth.equals("")){
             buf.append(absWidth);
         }
