@@ -24,14 +24,14 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
  * the MPL, indicate your decision by deleting the provisions above and
  * replace them with the notice and other provisions required by the LGPL.
  * If you do not delete the provisions above, a recipient may use your version
- * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE.
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE 
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the MPL as stated above or under the terms of the GNU
@@ -40,7 +40,7 @@
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU LIBRARY GENERAL PUBLIC LICENSE for more
  * details.
  *
  * If you didn't download this code from the following link, you should check if
@@ -59,6 +59,7 @@ import java.util.TreeMap;
 import java.util.HashMap;
 
 import com.lowagie.text.*;
+import com.lowagie.text.markup.MarkupAttributes;
 
 /**
  * A <CODE>DocWriter</CODE> class for XML (Remark: this class is not finished yet!).
@@ -139,8 +140,8 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Constructs an <CODE>XmlWriter</CODE>.
  *
- * @param	document	The <CODE>Document</CODE> that has to be written as XML
- * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
+ * @param document  The <CODE>Document</CODE> that has to be written as XML
+ * @param os      The <CODE>OutputStream</CODE> the writer has to write to.
  */
     
     protected XmlWriter(Document doc, OutputStream os) {
@@ -163,8 +164,8 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Constructs an <CODE>XmlWriter</CODE>.
  *
- * @param	document	The <CODE>Document</CODE> that has to be written as XML
- * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
+ * @param document  The <CODE>Document</CODE> that has to be written as XML
+ * @param os      The <CODE>OutputStream</CODE> the writer has to write to.
  * @param   dtd         The DTD to use
  */
     
@@ -190,9 +191,9 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Gets an instance of the <CODE>XmlWriter</CODE>.
  *
- * @param	document	The <CODE>Document</CODE> that has to be written
- * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
- * @return	a new <CODE>XmlWriter</CODE>
+ * @param document  The <CODE>Document</CODE> that has to be written
+ * @param os  The <CODE>OutputStream</CODE> the writer has to write to.
+ * @return  a new <CODE>XmlWriter</CODE>
  */
     
     public static XmlWriter getInstance(Document document, OutputStream os) {
@@ -202,10 +203,10 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Gets an instance of the <CODE>XmlWriter</CODE>.
  *
- * @param	document	The <CODE>Document</CODE> that has to be written
- * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
+ * @param document  The <CODE>Document</CODE> that has to be written
+ * @param os  The <CODE>OutputStream</CODE> the writer has to write to.
  * @param   dtd         The DTD to use
- * @return	a new <CODE>XmlWriter</CODE>
+ * @return  a new <CODE>XmlWriter</CODE>
  */
     
     public static XmlWriter getInstance(Document document, OutputStream os, String dtd) {
@@ -217,8 +218,8 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
  *
- * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
- * @throws	DocumentException	when a document isn't open yet, or has been closed
+ * @return  <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+ * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean add(Element element) throws DocumentException {
@@ -276,8 +277,8 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Signals that an new page has to be LTed.
  *
- * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
- * @throws	DocumentException	when a document isn't open yet, or has been closed
+ * @return  <CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
+ * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean newPage() throws DocumentException {
@@ -336,7 +337,11 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 HashMap attributes = chunk.getAttributes();
-                if (chunk.font().isStandardFont() && attributes == null) {
+// patch by Matt Benson 02/21/2002
+                if (chunk.font().isStandardFont() && attributes == null
+                 && !(hasMarkupAttributes(chunk)))
+                {
+// end patch by Matt Benson 02/21/2002
                     write(encode(chunk.content(), indent));
                     os.write(NEWLINE);
                     return;
@@ -365,6 +370,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                             }
                         }
                     }
+// patch by Matt Benson 02/21/2002
+                    if (hasMarkupAttributes(chunk))
+                    {
+                      writeMarkupAttributes((MarkupAttributes)chunk);
+                    }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                     os.write(GT);
                     write(encode(chunk.content(), indent));
                     writeEnd(ElementTags.CHUNK);
@@ -380,6 +391,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 write(ElementTags.LEADING, String.valueOf(phrase.leading()));
                 write(phrase.font());
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(phrase))
+                {
+                  writeMarkupAttributes((MarkupAttributes)phrase);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 
@@ -406,6 +423,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (anchor.reference() != null) {
                     write(ElementTags.REFERENCE, anchor.reference());
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(anchor))
+                {
+                  writeMarkupAttributes((MarkupAttributes)anchor);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = anchor.iterator(); i.hasNext(); ) {
@@ -431,6 +454,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (paragraph.indentationRight() != 0) {
                     write(ElementTags.INDENTATIONRIGHT, String.valueOf(paragraph.indentationRight()));
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(paragraph))
+                {
+                  writeMarkupAttributes((MarkupAttributes)paragraph);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
@@ -456,6 +485,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(ElementTags.CHAPTER);
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(chapter))
+                {
+                  writeMarkupAttributes((MarkupAttributes)chapter);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 writeSection(chapter, indent);
                 writeEnd(ElementTags.CHAPTER);
                 return;
@@ -482,6 +517,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                     write(ElementTags.LISTSYMBOL, list.symbol().content());
                 }
                 write(list.symbol().font());
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(list))
+                {
+                  writeMarkupAttributes((MarkupAttributes)list);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
@@ -506,6 +547,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (listItem.indentationRight() != 0) {
                     write(ElementTags.INDENTATIONRIGHT, String.valueOf(listItem.indentationRight()));
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(listItem))
+                {
+                  writeMarkupAttributes((MarkupAttributes)listItem);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = listItem.iterator(); i.hasNext(); ) {
@@ -542,6 +589,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (cell.leading() != -1) {
                     write(ElementTags.LEADING, String.valueOf(cell.leading()));
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(cell))
+                {
+                  writeMarkupAttributes((MarkupAttributes)cell);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = cell.getElements(); i.hasNext(); ) {
@@ -557,6 +610,11 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(ElementTags.ROW);
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(row))
+                {
+                  writeMarkupAttributes((MarkupAttributes)row);
+                }//end if this Element has MarkupAttributes
                 os.write(GT);
                 os.write(NEWLINE);
                 Element cell;
@@ -603,6 +661,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 }
                 os.write(QUOTE);
                 write((Rectangle) table);
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(table))
+                {
+                  writeMarkupAttributes((MarkupAttributes)table);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 Row row;
@@ -626,6 +690,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (annotation.content() != null) {
                     write(ElementTags.CONTENT, annotation.content());
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(annotation))
+                {
+                  writeMarkupAttributes((MarkupAttributes)annotation);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 writeEnd();
                 return;
             }
@@ -665,6 +735,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                 }
                 write(ElementTags.PLAINWIDTH, String.valueOf(image.plainWidth()));
                 write(ElementTags.PLAINHEIGHT, String.valueOf(image.plainHeight()));
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(image))
+                {
+                  writeMarkupAttributes((MarkupAttributes)image);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 writeEnd();
                 return;
             }
@@ -726,7 +802,7 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Writes the XML representation of a <CODE>Font</CODE>.
  *
- * @param	a <CODE>Font</CODE>
+ * @param a <CODE>Font</CODE>
  */
     
     private void write(Font font) throws IOException {
@@ -792,7 +868,7 @@ public class XmlWriter extends DocWriter implements DocListener {
 /**
  * Writes the XML representation of this <CODE>Rectangle</CODE>.
  *
- * @param	a <CODE>Rectangle</CODE>
+ * @param a <CODE>Rectangle</CODE>
  */
     
     private void write(Rectangle rectangle) throws IOException {

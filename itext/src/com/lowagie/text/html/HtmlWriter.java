@@ -24,14 +24,14 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
  * the MPL, indicate your decision by deleting the provisions above and
  * replace them with the notice and other provisions required by the LGPL.
  * If you do not delete the provisions above, a recipient may use your version
- * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE.
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the MPL as stated above or under the terms of the GNU
@@ -40,7 +40,7 @@
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU LIBRARY GENERAL PUBLIC LICENSE for more
  * details.
  *
  * If you didn't download this code from the following link, you should check if
@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.lowagie.text.*;
+import com.lowagie.text.markup.MarkupAttributes;
 
 /**
  * A <CODE>DocWriter</CODE> class for HTML.
@@ -124,8 +125,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Constructs a <CODE>HtmlWriter</CODE>.
  *
- * @param	document	The <CODE>Document</CODE> that has to be written as HTML
- * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
+ * @param document  The <CODE>Document</CODE> that has to be written as HTML
+ * @param os      The <CODE>OutputStream</CODE> the writer has to write to.
  */
     
     protected HtmlWriter(Document doc, OutputStream os) {
@@ -154,9 +155,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Gets an instance of the <CODE>HtmlWriter</CODE>.
  *
- * @param	document	The <CODE>Document</CODE> that has to be written
- * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
- * @return	a new <CODE>HtmlWriter</CODE>
+ * @param document  The <CODE>Document</CODE> that has to be written
+ * @param os  The <CODE>OutputStream</CODE> the writer has to write to.
+ * @return  a new <CODE>HtmlWriter</CODE>
  */
     
     public static HtmlWriter getInstance(Document document, OutputStream os) {
@@ -168,8 +169,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Signals that an new page has to be started.
  *
- * @return	<CODE>true</CODE> if this action succeeded, <CODE>false</CODE> if not.
- * @throws	DocumentException	when a document isn't open yet, or has been closed
+ * @return  <CODE>true</CODE> if this action succeeded, <CODE>false</CODE> if not.
+ * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean newPage() throws DocumentException {
@@ -192,8 +193,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
  *
- * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
- * @throws	DocumentException	when a document isn't open yet, or has been closed
+ * @return  <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+ * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean add(Element element) throws DocumentException {
@@ -337,7 +338,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  */
     
     protected void initFooter() {
-        if (footer != null)	{
+        if (footer != null) {
             try {
                 // Set the page number. HTML has no notion of a page, so it should always
                 // add up to 1
@@ -353,8 +354,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Writes a Metatag in the header.
  *
- * @param	element		the element that has to be written
- * @throws	IOException
+ * @param element   the element that has to be written
+ * @throws  IOException
  */
     
     protected void writeHeader(Meta meta) throws IOException {
@@ -381,8 +382,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Writes a link in the header.
  *
- * @param	element		the element that has to be written
- * @throws	IOException
+ * @param element   the element that has to be written
+ * @throws  IOException
  */
     
     protected void writeLink(Header header) throws IOException {
@@ -399,8 +400,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * <P>
  * This method writes some comment.
  *
- * @param	comment		the comment that has to be written
- * @throws	IOException
+ * @param comment   the comment that has to be written
+ * @throws  IOException
  */
     
     protected void writeComment(String comment) throws IOException {
@@ -414,7 +415,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Changes the standardfont.
  *
- * @param	standardfont	The font
+ * @param standardfont  The font
  */
     
     public void setStandardFont(Font standardFont) {
@@ -430,7 +431,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * necessary to use a relative path or a special path to some
  * images directory.
  *
- * @param	the new imagepath
+ * @param the new imagepath
  */
     
     public void setImagepath(String imagepath) {
@@ -448,7 +449,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Changes the header of this document.
  *
- * @param	header		the new header
+ * @param header    the new header
  */
     
     public void setHeader(HeaderFooter header) {
@@ -458,7 +459,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Changes the footer of this document.
  *
- * @param	footer		the new footer
+ * @param footer    the new footer
  */
     
     public void setFooter(HeaderFooter footer) {
@@ -468,8 +469,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Signals that a <CODE>String</CODE> was added to the <CODE>Document</CODE>.
  *
- * @return	<CODE>true</CODE> if the string was added, <CODE>false</CODE> if not.
- * @throws	DocumentException	when a document isn't open yet, or has been closed
+ * @return  <CODE>true</CODE> if the string was added, <CODE>false</CODE> if not.
+ * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean add(String string) throws DocumentException{
@@ -510,7 +511,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 if (chunk.isEmpty()) return;
                 HashMap attributes = chunk.getAttributes();
-                if (chunk.font().isStandardFont() && attributes == null) {
+// patch by Matt Benson 02/21/2002
+                if (chunk.font().isStandardFont() && attributes == null
+                 && !(hasMarkupAttributes(chunk)))
+                {
+// end patch by Matt Benson 02/21/2002
                     addTabs(indent);
                     write(HtmlEncoder.encode(chunk.content()));
                     os.write(NEWLINE);
@@ -525,6 +530,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     if (! chunk.font().isStandardFont()) {
                         write(chunk.font());
                     }
+// patch by Matt Benson 02/21/2002
+                    if (hasMarkupAttributes(chunk))
+                    {
+                      writeMarkupAttributes((MarkupAttributes)chunk);
+                    }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                     os.write(GT);
                     if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
                         if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
@@ -558,6 +569,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 addTabs(indent);
                 writeStart(HtmlTags.PHRASE);
                 write(phrase.font());
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(phrase))
+                {
+                  writeMarkupAttributes((MarkupAttributes)phrase);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = phrase.iterator(); i.hasNext(); ) {
@@ -587,6 +604,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (anchor.reference() != null) {
                     write(HtmlTags.REFERENCE, anchor.reference());
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(anchor))
+                {
+                  writeMarkupAttributes((MarkupAttributes)anchor);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 
@@ -616,10 +639,21 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 os.write(GT);
                 os.write(NEWLINE);
                 
-                if (!paragraph.font().isStandardFont()) {
+                if (!paragraph.font().isStandardFont() || hasMarkupAttributes(paragraph))
+                {
                     addTabs(indent);
                     writeStart(HtmlTags.PHRASE);
-                    write(paragraph.font());
+                    if (!paragraph.font().isStandardFont()) {
+                      write(paragraph.font());
+                    }
+
+// patch by Matt Benson 02/21/2002
+                    if (hasMarkupAttributes(paragraph))
+                    {
+                      writeMarkupAttributes((MarkupAttributes)paragraph);
+                    }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
+
                     os.write(GT);
                     os.write(NEWLINE);
                 }
@@ -643,6 +677,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(section))
+                {
+                  writeMarkupAttributes((MarkupAttributes)section);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 writeSection(section, indent);
                 writeEnd(HtmlTags.DIV);
                 return;
@@ -659,6 +699,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 else {
                     writeStart(HtmlTags.UNORDEREDLIST);
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(list))
+                {
+                  writeMarkupAttributes((MarkupAttributes)list);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
@@ -679,6 +725,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.LISTITEM);
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(listItem))
+                {
+                  writeMarkupAttributes((MarkupAttributes)listItem);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 
@@ -740,6 +792,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (cell.noWrap()) {
                     write(HtmlTags.NOWRAP, String.valueOf(true));
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(cell))
+                {
+                  writeMarkupAttributes((MarkupAttributes)cell);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 if (cell.isEmpty()) {
@@ -764,6 +822,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.ROW);
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(row))
+                {
+                  writeMarkupAttributes((MarkupAttributes)row);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 Element cell;
@@ -810,6 +874,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (table.backgroundColor() != null) {
                     write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(table.backgroundColor()));
                 }
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(table))
+                {
+                  writeMarkupAttributes((MarkupAttributes)table);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 Row row;
@@ -825,6 +895,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Annotation annotation = (Annotation) element;
                 writeComment(annotation.title() + ": " + annotation.content());
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(annotation))
+                {
+                  os.write(BEGINCOMMENT);
+                  writeMarkupAttributes((MarkupAttributes)annotation);
+                  os.write(ENDCOMMENT);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 return;
             }
             case Element.GIF:
@@ -862,6 +940,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 write(HtmlTags.PLAINWIDTH, String.valueOf(image.scaledWidth()));
                 write(HtmlTags.PLAINHEIGHT, String.valueOf(image.scaledHeight()));
+// patch by Matt Benson 02/21/2002
+                if (hasMarkupAttributes(image))
+                {
+                  writeMarkupAttributes((MarkupAttributes)image);
+                }//end if this Element has MarkupAttributes
+// end patch by Matt Benson 02/21/2002
                 writeEnd();
                 return;
             }
@@ -909,7 +993,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
     /**
      * Writes the HTML representation of a <CODE>Font</CODE>.
      *
-     * @param	a <CODE>Font</CODE>
+     * @param a <CODE>Font</CODE>
      */
     
     private void write(Font font) throws IOException {
