@@ -99,7 +99,8 @@ public abstract class PdfObject {
 
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int NULL = 8;
-    
+
+    /** a possible type of <CODE>PdfObject</CODE> */
     public static final int INDIRECT = 10;    
 
 /** This is an empty string used for the <CODE>PdfNull</CODE>-object and for an empty <CODE>PdfString</CODE>-object. */
@@ -165,24 +166,29 @@ public abstract class PdfObject {
     // methods dealing with the content of this object
     
 /**
- * Returns the PDF representation of this <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>s.
- *
- * @return		an array of <CODE>byte</CODE>
+ * Writes the PDF representation of this <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>s to the writer.
+ * @param writer for backwards compatibility
+ * @param os the outputstream to write the bytes to.
+ * @throws IOException
  */
-    
-//    public byte[] toPdf(PdfWriter writer) {
-//        return bytes;
-//    }
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         if (bytes != null)
             os.write(bytes);
     }
     
+    /**
+     * Gets the presentation of this object in a byte array
+     * @return a byte array
+     */
     public byte[] getBytes() {
         return bytes;
     }
 
+    /**
+     * Can this object be in an object stream?
+     * @return true if this object can be in an object stream.
+     */
     public boolean canBeInObjStm() {
         return (type >= 1 && type <= 6) || type == 8;
     }
@@ -337,6 +343,10 @@ public abstract class PdfObject {
         return (this.type == STREAM);
     }
 
+    /**
+     * Checks if this is an indirect object.
+     * @return true if this is an indirect object
+     */
     public boolean isIndirect() {
         return (this.type == INDIRECT);
     }
