@@ -47,6 +47,7 @@ import java.net.MalformedURLException;
  * @author  bruno@lowagie.com
  */
 
+
 public class Watermark extends Image implements Element {
 
 // membervariables
