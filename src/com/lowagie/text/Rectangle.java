@@ -514,9 +514,9 @@ public class Rectangle implements Element {
     }
     
 /**
- * Gets the rotation.
+ * Sets the rotation.
  *
- * @param   rotation    the value of the rotation
+ * @paran   rotation  the rotation value (0, 90, 180 or 270)
  */
     public final void setRotation(int rotation) {
         this.rotation = rotation;
