@@ -628,7 +628,7 @@ public class Document implements DocListener {
 
 	public boolean addProducer() {
 		try {
-			return add(new Meta(Element.PRODUCER, "iText by Bruno Lowagie"));
+			return add(new Meta(Element.PRODUCER, "iText by lowagie.com"));
 		}
 		catch(DocumentException de) {
 			return false;
