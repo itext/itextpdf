@@ -418,8 +418,8 @@ public class Cell extends Rectangle implements TextElementArray {
  */
     
     public final void setVerticalAlignment(String alignment) {
-        if (ElementTags.ALIGN_TOP.equals(alignment)) {
-            this.verticalAlignment = Element.ALIGN_TOP;
+        if (ElementTags.ALIGN_MIDDLE.equals(alignment)) {
+            this.verticalAlignment = Element.ALIGN_MIDDLE;
             return;
         }
         if (ElementTags.ALIGN_BOTTOM.equals(alignment)) {
@@ -430,7 +430,7 @@ public class Cell extends Rectangle implements TextElementArray {
             this.verticalAlignment = Element.ALIGN_BASELINE;
             return;
         }
-        this.verticalAlignment = Element.ALIGN_MIDDLE;
+        this.verticalAlignment = Element.ALIGN_TOP;
     }
     
 /**
