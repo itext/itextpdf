@@ -167,6 +167,9 @@ public class ElementTags {
     public static final String TABLE = "table";
     
 /** the cell tag */
+    public static final String ROW = "row";
+    
+/** the cell tag */
     public static final String CELL = "cell";
     
 /** attribute of the table tag */

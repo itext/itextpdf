@@ -98,24 +98,4 @@ public class Graphic extends PdfContentByte implements Element {
     public ArrayList getChunks() {
         return new ArrayList();
     }
-    
-/**
- * Returns the XML representation of this <CODE>Graphic</CODE>.
- *
- * @return		a <CODE>String</CODE>
- */
-    
-    public String toXml(int indent) {
-        return "";
-    }
-    
-/**
- * Returns the name and content of the meta information.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public final String toString() {
-        return "";
-    }
 }

@@ -819,6 +819,9 @@ class PdfDocument extends Document implements DocListener {
                         }
                     }
                     pageEmpty = false;
+                    if (chunk.isAttribute(Chunk.NEWPAGE)) {
+                        newPage();
+                    }
                     break;
                     
                 case Element.ANCHOR:

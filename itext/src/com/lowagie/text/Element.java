@@ -76,7 +76,7 @@ public interface Element {
     // static membervariables (meta information)
     
 /** This is a possible type of <CODE>Element</CODE>. */
-    public static final int	HEADER = 0;
+    public static final int HEADER = 0;
     
 /** This is a possible type of <CODE>Element</CODE>. */
     public static final int TITLE = 1;
@@ -247,20 +247,5 @@ public interface Element {
  */
     
     public ArrayList getChunks();
-    
-/**
- * Gets the content of the text element in XML form.
- *
- * @return	a type
- */
-    
-    public String toXml(int indent);
-    
-/**
- * Gets the content of the text element.
- *
- * @return	a type
- */
-    
-    public String toString();
+
 }

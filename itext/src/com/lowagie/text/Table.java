@@ -845,6 +845,16 @@ public class Table extends Rectangle implements Element {
     // methods to retrieve the membervariables
     
 /**
+ * Gets the number of columns.
+ *
+ * @return	a value
+ */
+    
+    public final int columns() {
+        return columns;
+    }
+    
+/**
  * Gets the number of rows in this <CODE>Table</CODE>.
  *
  * @return      the number of rows in this <CODE>Table</CODE>
@@ -852,6 +862,16 @@ public class Table extends Rectangle implements Element {
     
     public final int size() {
         return rows.size();
+    }
+    
+/**
+ * Gets the proportional widths of the columns in this <CODE>Table</CODE>.
+ *
+ * @return      the proportional widths of the columns in this <CODE>Table</CODE>
+ */
+    
+    public final float[] getProportionalWidths() {
+        return widths;
     }
     
 /**
@@ -1346,83 +1366,5 @@ public class Table extends Rectangle implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.TABLE.equals(tag);
-    }
-    
-/**
- * Returns a representation of this <CODE>Table</CODE>.
- *
- * @return      a <CODE>String</CODE>
- */
-    
-    public String toXml(int indent) {
-        StringBuffer buf = new StringBuffer();
-        DocWriter.addTabs(buf, indent);
-        buf.append("<").append(ElementTags.TABLE);
-        buf.append(" ").append(ElementTags.COLUMNS).append("=\"").append(columns).append("\"");
-        buf.append(" ").append(ElementTags.WIDTH).append("=\"");
-        if (!absWidth.equals("")){
-            buf.append(absWidth);
-        }
-        else{
-            buf.append(widthPercentage).append("%");
-        }
-        buf.append("\" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
-        buf.append("\" ").append(ElementTags.CELLPADDING).append("=\"").append(cellpadding);
-        buf.append("\" ").append(ElementTags.CELLSPACING).append("=\"").append(cellspacing);
-        buf.append("\" ").append(ElementTags.WIDTHS).append("s=\"");
-        buf.append(widths[0]);
-        for (int i = 1; i < widths.length; i++) {
-            buf.append(";");
-            buf.append(widths[i]);
-        }
-        buf.append("\"").append(super.toString()).append(">\n");
-        Row row;
-        for (Iterator iterator = rows.iterator(); iterator.hasNext(); ) {
-            row = (Row) iterator.next();
-            buf.append(row.toXml(indent + 1));
-        }
-        DocWriter.addTabs(buf, indent);
-        buf.append("</").append(ElementTags.TABLE).append(">\n");
-        return buf.toString();
-    }
-    
-/**
- * Returns a representation of this <CODE>Table</CODE>.
- *
- * @return      a <CODE>String</CODE>
- */
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer("<").append(ElementTags.TABLE);
-        buf.append(" ").append(ElementTags.COLUMNS).append("=\"").append(columns).append("\"");
-        buf.append(" ").append(ElementTags.WIDTH).append("=\"");
-        if (!absWidth.equals("")){
-            buf.append(absWidth);
-        }
-        else{
-            buf.append(widthPercentage).append("%");
-        }
-        buf.append("\" ").append(ElementTags.ALIGN).append("=\"");
-        buf.append(ElementTags.getAlignment(alignment));
-        buf.append("\" ").append(ElementTags.CELLPADDING).append("=\"");
-        buf.append(cellpadding);
-        buf.append("\" ").append(ElementTags.CELLSPACING).append("=\"");
-        buf.append(cellspacing);
-        buf.append("\" ").append(ElementTags.WIDTHS).append("s=\"");
-        buf.append(widths[0]);
-        for (int i = 1; i < widths.length; i++) {
-            buf.append(";");
-            buf.append(widths[i]);
-        }
-        buf.append("\"");
-        buf.append(super.toString());
-        buf.append(">\n");
-        Row row;
-        for (Iterator iterator = rows.iterator(); iterator.hasNext(); ) {
-            row = (Row) iterator.next();
-            buf.append(row.toString());
-        }
-        buf.append("</").append(ElementTags.TABLE).append(">\n");
-        return buf.toString();
     }
 }
