@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.net.URL;
 import java.net.MalformedURLException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;

@@ -103,10 +103,10 @@ public class Section extends ArrayList implements TextElementArray {
     protected float sectionIndent;
     
 /** This is the number of subsections. */
-    protected transient int subsections = 0;
+    protected int subsections = 0;
     
 /** This is the complete list of sectionnumbers of this section and the parents of this section. */
-    protected transient ArrayList numbers;
+    protected ArrayList numbers = null;
     
     /** false if the bookmark children are not visible */
     protected boolean bookmarkOpen = true;

@@ -123,7 +123,7 @@ public class Annotation implements Element, MarkupAttributes {
     protected HashMap annotationAttributes = new HashMap();
 
 /** Contains extra markupAttributes */
-    protected Properties markupAttributes;
+    protected Properties markupAttributes = null;
     
 /** This is the lower left x-value */
     protected float llx = Float.MIN_VALUE;

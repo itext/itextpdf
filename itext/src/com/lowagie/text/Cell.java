@@ -109,7 +109,7 @@ public class Cell extends Rectangle implements TextElementArray {
     // membervariables
     
 /** This is the <CODE>ArrayList</CODE> of <CODE>Element</CODE>s. */
-    protected ArrayList arrayList;
+    protected ArrayList arrayList = null;
     
 /** This is the horizontal alignment. */
     protected int horizontalAlignment = Element.ALIGN_UNDEFINED;

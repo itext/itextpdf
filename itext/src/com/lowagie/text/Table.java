@@ -223,7 +223,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     float offset = Float.MIN_VALUE;
     
 /** contains the attributes that are added to each odd (or even) row */
-    protected Hashtable alternatingRowAttributes;
+    protected Hashtable alternatingRowAttributes = null;
     
     // constructors
     

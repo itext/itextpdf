@@ -69,7 +69,7 @@ import com.lowagie.text.markup.MarkupParser;
 
 public class Font implements Comparable {
     
-    // static membervariables for the different families
+// static membervariables for the different families
     
 /** a possible value of a font family. */
     public static final int COURIER = 0;
@@ -86,7 +86,7 @@ public class Font implements Comparable {
 /** a possible value of a font family. */
     public static final int ZAPFDINGBATS = 4;
     
-    // static membervariables for the different styles
+// static membervariables for the different styles
     
 /** this is a possible style. */
     public static final int NORMAL		= 0;
@@ -106,7 +106,7 @@ public class Font implements Comparable {
 /** this is a possible style. */
     public static final int BOLDITALIC	= BOLD | ITALIC;
     
-    // static membervariables
+// static membervariables
     
 /** the value of an undefined attribute. */
     public static final int UNDEFINED = -1;
@@ -114,7 +114,7 @@ public class Font implements Comparable {
 /** the value of the default size. */
     public static final int DEFAULTSIZE = 12;
     
-    // membervariables
+// membervariables
     
 /** the value of the fontfamily. */
     private int family = UNDEFINED;
@@ -131,7 +131,7 @@ public class Font implements Comparable {
 /** the external font */
     private BaseFont baseFont = null;
     
-    // constructors
+// constructors
     
 /**
  * Constructs a Font.
