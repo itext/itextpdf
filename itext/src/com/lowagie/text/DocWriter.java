@@ -100,6 +100,7 @@ public abstract class DocWriter implements DocListener {
 /** This is some byte that is often used. */
     public static final byte FORWARD = (byte)'/';
     
+    public static byte[][] valueOfCharByteCache = new byte[256][];
     // membervariables
     
 /** The pageSize. */
@@ -330,6 +331,19 @@ public abstract class DocWriter implements DocListener {
         }
     }
     
+public static final byte[] getISOBytes(char c) {
+    //david teran
+    //now we build up a cache for all characters that are one byte long
+    if (c < 256) {
+        if (valueOfCharByteCache[c] == null) {
+            valueOfCharByteCache[c] = getISOBytes(String.valueOf(c));
+        }
+        return valueOfCharByteCache[c];
+    } else {
+        return getISOBytes(String.valueOf(c));
+    }
+}
+
 /**
  * Let the writer know that all writing has to be paused.
  */
