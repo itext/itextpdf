@@ -50,7 +50,6 @@
 
 package com.lowagie.text;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;

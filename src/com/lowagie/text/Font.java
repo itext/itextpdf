@@ -51,11 +51,9 @@
 package com.lowagie.text;
 
 import java.awt.Color;
-import java.util.Properties;
 
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.markup.MarkupTags;
-import com.lowagie.text.markup.MarkupParser;
 
 /**
  * Contains all the specifications of a font: fontfamily, size, style and color.
@@ -495,7 +493,6 @@ public class Font implements Comparable {
             dColor = this.color;
         }
         // family
-        String dFamily = null;
         if (font.baseFont != null) {
             return new Font(font.baseFont, dSize, dStyle, dColor);
         }

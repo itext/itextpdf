@@ -55,9 +55,6 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
-import com.lowagie.text.markup.MarkupTags;
-import com.lowagie.text.html.HtmlEncoder;
-
 /**
  * An abstract <CODE>Writer</CODE> class for documents.
  * <P>

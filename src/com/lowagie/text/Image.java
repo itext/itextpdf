@@ -55,7 +55,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 import com.lowagie.text.pdf.PdfTemplate;
@@ -213,7 +212,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /**
      * Constructs an <CODE>Image</CODE>-object, using an <VAR>url</VAR>.
      *
-     * @param		url			the <CODE>URL</CODE> where the image can be found.
+     * @param		image			another Image object.
      */
     
     protected Image(Image image) {
@@ -242,7 +241,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /**
      * Gets an instance of an Image.
      *
-     * @param	an URL
+     * @param	url     an URL
      * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
      */
     
@@ -427,7 +426,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /**
      * Gets an instance of an Image.
      *
-     * @param	a filename
+     * @param	filename    a filename
      * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
      */
     
@@ -438,7 +437,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /**
      * Gets an instance of an Image.
      *
-     * @param	a byte array
+     * @param	img     a byte array
      * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
      */
     
@@ -481,15 +480,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      * @param bpc bits per component
      * @return an object of type <CODE>ImgRaw</CODE>
      * @throws BadElementException on error
-     * @throws MalformedURLException on error
-     * @throws IOException on error
      */
     
-    public static Image getInstance(int width, int height, int components, int bpc, byte data[]) throws BadElementException, MalformedURLException, IOException {
+    public static Image getInstance(int width, int height, int components, int bpc, byte data[]) throws BadElementException {
         return Image.getInstance(width, height, components, bpc, data, null);
     }
     
-    public static Image getInstance(PdfTemplate template) throws BadElementException, MalformedURLException, IOException {
+    public static Image getInstance(PdfTemplate template) throws BadElementException {
         return new ImgTemplate(template);
     }
     
@@ -516,11 +513,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      * image dictionary
      * @return an object of type <CODE>ImgRaw</CODE>
      * @throws BadElementException on error
-     * @throws MalformedURLException on error
-     * @throws IOException on error
      */
     
-    public static Image getInstance(int width, int height, int components, int bpc, byte data[], int transparency[]) throws BadElementException, MalformedURLException, IOException {
+    public static Image getInstance(int width, int height, int components, int bpc, byte data[], int transparency[]) throws BadElementException {
         if (transparency != null && transparency.length != components * 2)
             throw new BadElementException("Transparency length must be equal to (componentes * 2)");
         if (components == 1 && bpc == 1) {
@@ -584,7 +579,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /**
      * Sets the alignment for the image.
      *
-     * @param		aligment		the alignment
+     * @param		alignment		the alignment
      */
     
     public void setAlignment(int alignment) {
@@ -712,7 +707,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /**
      * Sets the rotation of the image in degrees.
      *
-     * @param		r		rotation in degrees
+     * @param		deg		rotation in degrees
      */
     
     public void setRotationDegrees(float deg) {

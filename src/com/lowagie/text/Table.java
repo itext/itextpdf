@@ -55,15 +55,13 @@ package com.lowagie.text;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
-import java.io.FileOutputStream;
+import java.awt.Point;\
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
-
-import com.lowagie.text.pdf.PdfWriter;
+\
 import com.lowagie.text.markup.*;
 
 /**
@@ -534,7 +532,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 /**
  * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE> at a certain row and column.
  *
- * @param       cell    The <CODE>Cell</CODE> to add
+ * @param       aCell    The <CODE>Cell</CODE> to add
  * @param       row     The row where the <CODE>Cell</CODE> will be added
  * @param       column  The column where the <CODE>Cell</CODE> will be added
  */
@@ -546,8 +544,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 /**
  * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE> at a certain location.
  *
- * @param       cell        The <CODE>Cell</CODE> to add
- * @param       location    The location where the <CODE>Cell</CODE> will be added
+ * @param       aCell        The <CODE>Cell</CODE> to add
+ * @param       aLocation    The location where the <CODE>Cell</CODE> will be added
  */
     
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
@@ -709,14 +707,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  */
     
     public void complete() {
-        try {
-            if (mTableInserted == true) {
-                mergeInsertedTables();  // integrate tables in the table
-                mTableInserted = false;
-            }
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
+        if (mTableInserted == true) {
+            mergeInsertedTables();  // integrate tables in the table
+            mTableInserted = false;
         }
         if (mAutoFillEmptyCells == true) {
             fillEmptyMatrixCells();
@@ -1082,7 +1075,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * The widths will be: a width of 50% for the first column,
  * 25% for the second and third column.
  *
- * @param       an array with values
+ * @param       widths  an array with values
  */
     
     public void setWidths(float[] widths) throws BadElementException {
@@ -1113,7 +1106,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * The sum of these values will be considered 100%.
  * The values will be recalculated as percentages of this sum.
  *
- * @param       an array with values
+ * @param       widths  an array with values
  */
     
     public void setWidths(int[] widths) throws DocumentException {
@@ -1249,7 +1242,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * Integrates all added tables and recalculates column widths.
  */
     
-    private void mergeInsertedTables() throws DocumentException {
+    private void mergeInsertedTables() {
         int i=0, j=0;
         float [] lNewWidths = null;
         int [] lDummyWidths = new int[columns];     // to keep track in how many new cols this one will be split
@@ -1374,9 +1367,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  */
     
     private void fillEmptyMatrixCells() {
-        Cell lDummyCell = null;
-        int  lTel = -1;
-        Object obj = new Object();
         try {
             for (int i=0; i < rows.size(); i++) {
                 for (int j=0; j < columns; j++) {
@@ -1438,7 +1428,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  */
     
     private void placeCell(ArrayList someRows, Cell aCell, Point aPosition) {
-        int i,j;
+        int i;
         Row row = null;
         int lColumns = ((Row) someRows.get(0)).columns();
         int rowCount = aPosition.x + aCell.rowspan() - someRows.size();
@@ -1497,82 +1487,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         columns = newColumns;
         widths = newWidths;
         rows = newRows;
-    }
-    
-/**
- * Gives you the possibility to add columns.
- *
- * @param   aColumns    the number of columns to add
- */
-    
-    private void addColumn(int aColumns) {
-        ArrayList newRows = new ArrayList(rows.size());
-        int length = ((Row) rows.get(0)).columns();             // old nr of cols
-        
-        for (int i = 0; i < rows.size(); i++) {
-            this.rows.add(new Row(length + aColumns));
-            for (int j = 0; j < length; j++) {
-                ((Row) rows.get(i)).setElement( ((Row) rows.get(i)).getCell(j) ,j);
-            }
-        }
-        
-        columns += aColumns;
-        
-        // applied 1 column-fix; last column needs to have a width of 0
-        float [] newWidths = new float[columns];
-        System.arraycopy(widths, 0, newWidths, 0, columns-1);
-        for (int k = columns - aColumns;k < columns ; k++) {
-            newWidths[k] = 0;
-        }
-        widths = newWidths;
-        rows = newRows;
-    }
-    
-/**
- * returns the element at a given location.
- */
-    
-    private Object getElement(ArrayList al, int row, int column) {
-        return ((Row) al.get(row)).getCell(column);
-    }
-    
-/**
- * returns the element type name (Cell, Tabl, Objt).
- */
-    
-    private String getElementType(Object aElement) {
-        String aReturnValue = null;
-        if ( Cell.class.isInstance(aElement) ) {
-            aReturnValue = "Cell";
-        }
-        else if ( Table.class.isInstance(aElement) ) {
-            aReturnValue = "Tabl";
-        }
-        else if ( Object.class.isInstance(aElement) ) {
-            aReturnValue = "Objt";
-        }
-        else {
-            aReturnValue = "null";
-        }
-        return aReturnValue;
-    }
-    
-/**
- * returns the element type name (Cell, Tabl, Objt) of
- * an element in the table at point(aRow, aColumn).
- */
-    
-    private String getElementType(int aRow, int aColumn) {
-        return getElementType(rows,aRow,aColumn);
-    }
-    
-/**
- * returns the element type name (Cell, Tabl, Objt) of
- * an element in the table at point(aRow, aColumn).
- */
-    
-    private String getElementType(ArrayList al, int aRow, int aColumn) {
-        return getElementType(getElement(al,aRow, aColumn));
     }
     
 /**
@@ -1648,114 +1562,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     public static boolean isTag(String tag) {
         return ElementTags.TABLE.equals(tag);
-    }
-    
-/**
- *    Only for debugging purposes: printing table's structure and contents.
- */
-    
-    private void printTableMatrix()
-    {
-        printTableMatrix(rows);
-    }
-    
-/**
- *    Only for debugging purposes: printing table's structure and contents.
- */
-    
-    private void printTableMatrix(ArrayList aAl)
-    {
-        printReserved(aAl);
-        StringBuffer lLine = null;
-        int lLineNumberCount = -1;
-        int lColumns = ((Row) aAl.get(0)).columns();
-        for (int i=0; i < aAl.size();i++)
-        {
-            // rownumber
-            lLine = new StringBuffer("Row ");
-            lLineNumberCount = new Integer(i).toString().length(); // alignment for three chars
-            for(int s=0; s < (3 - lLineNumberCount);s++)
-            {
-                lLine.append(" ");
-            }
-            lLine.append(i + ": ");
-            for (int j=0; j < lColumns;j++)
-            {
-                lLine.append(" " + getElementType(aAl,i,j));
-            }
-        }
-        printTableMatrixContents();
-    }
-    
-    private void printReserved(ArrayList aAl) {
-        Row lRow = null;
-        String lStatus = null;
-        for (int i=0; i < aAl.size();i++)
-        {
-            lStatus = new String();
-            lRow = (Row) aAl.get(i);
-            for (int j=0; j < lRow.columns();j++)
-            {
-                lStatus += lRow.isReserved(j) + "  ";
-            }
-        }
-    }
-    
-/**
- * Method to briefly print all cell contents, an aid when debugging.
- */
-    
-    private void printTableMatrixContents()
-    {
-        int lineNumberCount = -1;
-        Object lElement = null;
-        StringBuffer lLine = null;
-        for (int i=0; i < rows.size();i++)
-        {
-            // rownumber
-            lLine = new StringBuffer("Row ");
-            lineNumberCount = new Integer(i).toString().length(); // alignment for three chars
-            for(int s=0; s < (3 - lineNumberCount);s++)
-            {
-                lLine.append(" ");
-            }
-            lLine.append(i + ": ");
-            for (int j=0; j < columns;j++)
-            {
-                lElement = ((Row) rows.get(i)).getCell(j);
-                if ( Cell.class.isInstance(lElement) )
-                {
-                    ArrayList al = ((Cell) lElement).getChunks();
-                    if (al.size() > 0)
-                    {
-                        if (((Chunk) al.get(0)).content().length() >= 6)
-                        {
-                            lLine.append(" - " + ((Chunk) al.get(0)).content().substring(0,6) + " - ");
-                        }
-                        else
-                        {
-                            lLine.append(" - " +((Chunk) al.get(0)).content().substring(0,((Chunk) al.get(0)).content().length()) + " - ");
-                        }
-                    }
-                }
-                else if ( Table.class.isInstance(lElement) )
-                {
-                    lLine.append(" - Table  - ");
-                }
-                else if ( Object.class.isInstance(lElement) )
-                {
-                    lLine.append(" - Object - ");
-                }
-                else if (lElement == null)
-                {
-                    lLine.append(" - null   - ");
-                }
-                else
-                {
-                    lLine.append("- other  -");
-                }
-            }
-        }
     }
     
 /**

@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -189,7 +188,6 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
         this(leading);
         this.font = font;
         if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
-            int i = 0;
             int index;
             while((index = Greek.index(string)) > -1) {
                 if (index > 0) {
@@ -295,8 +293,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * to this <CODE>Phrase</CODE>.
  *
  * @param	index	index at which the specified element is to be inserted
- * @param	object	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
- * @return	<CODE>void</CODE>
+ * @param	o   	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
  * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
  */
     
@@ -330,7 +327,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * Adds a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
  * to this <CODE>Phrase</CODE>.
  *
- * @param	object	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+ * @param	o	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
  * @return	a boolean
  * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
  */
@@ -418,9 +415,9 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     }
     
 /**
- * Adds a <CODE>Image</CODE> to the <CODE>Paragraph</CODE>.
+ * Adds a <CODE>Object</CODE> to the <CODE>Paragraph</CODE>.
  *
- * @param	image		the image to add.
+ * @param	object		the object to add.
  */
     
     protected void addSpecial(Object object) {
@@ -433,7 +430,6 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * Sets the leading of this phrase.
  *
  * @param	leading		the new leading
- * @return	<CODE>void</CODE>
  */
     
     public void setLeading(float leading) {

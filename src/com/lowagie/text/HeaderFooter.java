@@ -50,8 +50,6 @@
 
 package com.lowagie.text;
 
-import java.awt.Color;
-
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 

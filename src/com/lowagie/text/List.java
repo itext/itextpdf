@@ -51,7 +51,6 @@
 package com.lowagie.text;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -256,7 +255,7 @@ public class List implements TextElementArray, MarkupAttributes {
 /**
  * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
  *
- * @param	object		the object to add.
+ * @param	o		the object to add.
  */
     
     public boolean add(Object o) {

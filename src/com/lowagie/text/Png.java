@@ -50,7 +50,6 @@
 
 package com.lowagie.text;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -168,7 +167,7 @@ public class Png extends Image implements Element {
 /**
  * Gets an <CODE>int</CODE> from an <CODE>InputStream</CODE>.
  *
- * @param		an <CODE>InputStream</CODE>
+ * @param		is      an <CODE>InputStream</CODE>
  * @return		the value of an <CODE>int</CODE>
  */
     
@@ -179,7 +178,7 @@ public class Png extends Image implements Element {
 /**
  * Gets a <CODE>word</CODE> from an <CODE>InputStream</CODE>.
  *
- * @param		an <CODE>InputStream</CODE>
+ * @param		is      an <CODE>InputStream</CODE>
  * @return		the value of an <CODE>int</CODE>
  */
     
@@ -190,7 +189,7 @@ public class Png extends Image implements Element {
 /**
  * Gets a <CODE>String</CODE> from an <CODE>InputStream</CODE>.
  *
- * @param		an <CODE>InputStream</CODE>
+ * @param		is      an <CODE>InputStream</CODE>
  * @return		the value of an <CODE>int</CODE>
  */
     

@@ -51,7 +51,6 @@
 package com.lowagie.text;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
 
@@ -98,7 +97,7 @@ public class Meta implements Element, MarkupAttributes {
 /**
  * Constructs a <CODE>Meta</CODE>.
  *
- * @param	type		the type of meta-information
+ * @param	tag		    the tagname of the meta-information
  * @param	content		the content
  */
     
@@ -151,7 +150,7 @@ public class Meta implements Element, MarkupAttributes {
 /**
  * appends some text to this <CODE>Meta</CODE>.
  *
- * @param	a <CODE>String</CODE>
+ * @param	string      a <CODE>String</CODE>
  * @return	a <CODE>StringBuffer</CODE>
  */
     
