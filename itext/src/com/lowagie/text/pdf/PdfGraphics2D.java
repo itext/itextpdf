@@ -134,8 +134,6 @@ public class PdfGraphics2D extends Graphics2D {
     
     private FontMapper fontMapper;
     
-    private PdfFontMetrics fontMetrics;
-    
     private ArrayList kids;
     
     private boolean kid = false;
@@ -329,6 +327,8 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#drawString(String, float, float)
      */
     public void drawString(String s, float x, float y) {
+        if (s.length() == 0)
+            return;
         setFillPaint();
         if (onlyShapes) {
             TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
@@ -348,7 +348,15 @@ public class PdfGraphics2D extends Graphics2D {
             cb.beginText();
             cb.setFontAndSize(baseFont, fontSize);
             cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
+            double width = font.getStringBounds(s, getFontRenderContext()).getWidth();
+            if (s.length() > 1) {
+                float adv = ((float)width - baseFont.getWidthPoint(s, fontSize)) / (s.length() - 1);
+                cb.setCharacterSpacing(adv);
+            }
             cb.showText(s);
+            if (s.length() > 1) {
+                cb.setCharacterSpacing(0);
+            }
             cb.endText();
             setTransform(at);
             if(underline)
@@ -357,8 +365,6 @@ public class PdfGraphics2D extends Graphics2D {
                 int UnderlinePosition = -100;
                 int UnderlineThickness = 50;
                 //
-                FontMetrics fm = getFontMetrics();
-                double width = fm.stringWidth(s);
                 double d = asPoints((double)UnderlineThickness, (int)fontSize);
                 setStroke(new BasicStroke((float)d));
                 y = (float)((double)(y) + asPoints((double)(-UnderlineThickness), (int)fontSize));
@@ -801,7 +807,6 @@ public class PdfGraphics2D extends Graphics2D {
         }
         if (f == font)
             return;
-        fontMetrics = null;
         font = f;
         fontSize = f.getSize2D();
         baseFont = getCachedBaseFont(f);
@@ -822,15 +827,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#getFontMetrics(Font)
      */
     public FontMetrics getFontMetrics(Font f) {
-        if (onlyShapes) {
-            return dg2.getFontMetrics(f);
-        }
-        if (f == font) {
-            if (fontMetrics == null)
-                fontMetrics = new PdfFontMetrics(f, getCachedBaseFont(f));
-            return fontMetrics;
-        }
-        return new PdfFontMetrics(f, getCachedBaseFont(f));
+        return dg2.getFontMetrics(f);
     }
     
     /**
@@ -1418,194 +1415,7 @@ public class PdfGraphics2D extends Graphics2D {
         }
         mediaTracker.removeImage(image);
     }
-    
-    ///////////////////////////////////////////////
-    //
-    //
-    //		PdfFontMetrics class
-    //
-    //
-    
-    
-    static class PdfFontMetrics extends FontMetrics {
-        private BaseFont bf;
-        private float fontSize;
-        private double ascent = -1;
-        private double descent = -1;
-        private double leading = -1;
-        private double maxAdvance = -1;
-        private int widths[];
-        private double scaleX;
-        private double scaleY;
         
-        private PdfFontMetrics(Font f, BaseFont bf) {
-            super(f);
-            this.bf = bf;
-            this.fontSize = f.getSize2D();
-            AffineTransform af = f.getTransform();
-            scaleX = af.getScaleX();
-            scaleY = af.getScaleY();
-        }
-        
-        public int getAscent() {
-            if (ascent < 0)
-                ascent = bf.getFontDescriptor(BaseFont.AWT_ASCENT, fontSize) * scaleY;
-            return (int)(0.9999 + ascent * 1.1);
-        }
-        
-        public int getDescent() {
-            if (descent < 0)
-                descent =  -bf.getFontDescriptor(BaseFont.AWT_DESCENT, fontSize) * scaleY;
-            return (int)(0.9999 + descent);
-        }
-        
-        public int getLeading() {
-            if (leading < 0)
-                leading = bf.getFontDescriptor(BaseFont.AWT_LEADING, fontSize) * scaleY;
-            return (int)(0.9999 + leading);
-        }
-        
-        public int getMaxAdvance() {
-            if (maxAdvance < 0)
-                maxAdvance = bf.getFontDescriptor(BaseFont.AWT_MAXADVANCE, fontSize) * scaleX;
-            return (int)(0.9999 + maxAdvance);
-        }
-        
-        public int[] getWidths() {
-            if (widths == null) {
-                widths = new int[256];
-                for (char ch = 0 ; ch < 256 ; ch++) {
-                    widths[ch] = charWidth(ch);
-                }
-            }
-            return widths;
-        }
-        
-        public int charWidth(char c) {
-            return (int)(bf.getWidthPoint(c, fontSize) * scaleX);
-        }
-        
-        public int stringWidth(String s) {
-            return (int)(bf.getWidthPoint(s, fontSize) * scaleX);
-        }
-        /**
-         * Returns the bounds of the specified <code>String</code> in the
-         * specified <code>Graphics</code> context.  The bounds is used
-         * to layout the <code>String</code>.
-         * @param str the specified <code>String</code>
-         * @param context the specified <code>Graphics</code> context
-         * @return a {@link Rectangle2D} that is the bounding box of the
-         * specified <code>String</code> in the specified
-         * <code>Graphics</code> context.
-         * @see java.awt.Font#getStringBounds(String, FontRenderContext)
-         */
-        public Rectangle2D getStringBounds( String str, Graphics context) {
-            char[] array = str.toCharArray();
-            return getStringBounds(array, 0, array.length, context);
-        }
-        
-        /**
-         * Returns the bounds of the specified <code>String</code> in the
-         * specified <code>Graphics</code> context.  The bounds is used
-         * to layout the <code>String</code>.
-         * @param str the specified <code>String</code>
-         * @param beginIndex the offset of the beginning of <code>str</code>
-         * @param limit the length of <code>str</code>
-         * @param context the specified <code>Graphics</code> context
-         * @return a <code>Rectangle2D</code> that is the bounding box of the
-         * specified <code>String</code> in the specified
-         * <code>Graphics</code> context.
-         * @see java.awt.Font#getStringBounds(String, int, int, FontRenderContext)
-         */
-        public Rectangle2D getStringBounds( String str, int beginIndex, int limit,
-            Graphics context) {
-            String substr = str.substring(beginIndex, limit);
-            return getStringBounds(substr, context);
-        }
-        
-        /**
-         * Returns the bounds of the specified array of characters
-         * in the specified <code>Graphics</code> context.
-         * The bounds is used to layout the <code>String</code>
-         * created with the specified array of characters,
-         * <code>beginIndex</code> and <code>limit</code>.
-         * @param chars an array of characters
-         * @param beginIndex the initial offset of the array of
-         * characters
-         * @param limit the length of the array of characters
-         * @param context the specified <code>Graphics</code> context
-         * @return a <code>Rectangle2D</code> that is the bounding box of the
-         * specified character array in the specified
-         * <code>Graphics</code> context.
-         * @see java.awt.Font#getStringBounds(char[], int, int, FontRenderContext)
-         */
-        
-        public Rectangle2D getStringBounds(char chars[], int beginIndex, int limit, Graphics context) {
-            
-            if (beginIndex < 0) {
-                throw new IndexOutOfBoundsException("beginIndex: " + beginIndex);
-            }
-            if (limit > chars.length) {
-                throw new IndexOutOfBoundsException("limit: " + limit);
-            }
-            if (beginIndex > limit) {
-                throw new IndexOutOfBoundsException("range length: " + (limit - beginIndex));
-            }
-            String str = new String(chars, beginIndex, limit - beginIndex);
-            return new Rectangle2D.Float(0, -getAscent(), (float)(bf.getWidthPoint(str, fontSize) * scaleX), getHeight());
-        }
-        
-        /**
-         * Returns the bounds of the characters indexed in the specified
-         * <code>CharacterIterator</code> in the
-         * specified <code>Graphics</code> context.
-         * @param ci the specified <code>CharacterIterator</code>
-         * @param beginIndex the initial offset in <code>ci</code>
-         * @param limit the end index of <code>ci</code>
-         * @param context the specified <code>Graphics</code> context
-         * @return a <code>Rectangle2D</code> that is the bounding box of the
-         * characters indexed in the specified <code>CharacterIterator</code>
-         * in the specified <code>Graphics</code> context.
-         * @see java.awt.Font#getStringBounds(CharacterIterator, int, int, FontRenderContext)
-         */
-        public Rectangle2D getStringBounds(CharacterIterator ci, int beginIndex, int limit, Graphics context) {
-            int start = ci.getBeginIndex();
-            int end = ci.getEndIndex();
-            
-            if (beginIndex < start) {
-                throw new IndexOutOfBoundsException("beginIndex: " + beginIndex);
-            }
-            if (limit > end) {
-                throw new IndexOutOfBoundsException("limit: " + limit);
-            }
-            if (beginIndex > limit) {
-                throw new IndexOutOfBoundsException("range length: " + (limit - beginIndex));
-            }
-            
-            char[]  arr = new char[limit - beginIndex];
-            
-            ci.setIndex(beginIndex);
-            for(int idx = 0; idx < arr.length; idx++) {
-                arr[idx] = ci.current();
-                ci.next();
-            }
-            
-            return getStringBounds(arr,0,arr.length,context);
-        }
-        
-        /**
-         * Returns the bounds for the character with the maximum bounds
-         * in the specified <code>Graphics</code> context.
-         * @param context the specified <code>Graphics</code> context
-         * @return a <code>Rectangle2D</code> that is the
-         * bounding box for the character with the maximum bounds.
-         * @see java.awt.Font#getMaxCharBounds(FontRenderContext)
-         */
-        public Rectangle2D getMaxCharBounds(Graphics context) {
-            return getStringBounds("M", context);
-        }
-    }
-    
     static private class fakeComponent extends Component {
     }
 }
