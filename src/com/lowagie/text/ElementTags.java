@@ -94,6 +94,9 @@ public class ElementTags {
     public static final String DEPTH = "depth";
     
 /** attribute of section/chapter tag */
+    public static final String NUMBER = "number";
+    
+/** attribute of section/chapter tag */
     public static final String INDENT = "indent";
     
 /** attribute of chapter/section/paragraph/table/cell tag */
@@ -230,6 +233,9 @@ public class ElementTags {
     
 /** attribute of the table tag */
     public static final String WIDTHS = "widths";
+    
+/** attribute of the table tag */
+    public static final String FITPAGE = "fitpage";
     
 /** attribute of the cell tag */
     public static final String HORIZONTALALIGN = "horizontalalign";

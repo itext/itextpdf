@@ -326,6 +326,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             }
             columns = i;
         }
+        if ((value = (String)attributes.remove(ElementTags.FITPAGE)) != null) {
+            hasToFitPage = new Boolean(value).booleanValue();
+        }
         if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
             setBorderWidth(Float.valueOf(value + "f").floatValue());
         }
@@ -490,6 +493,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
         if (aCell == null) throw new NullPointerException("addCell - cell has null-value");
         if (aLocation == null) throw new NullPointerException("addCell - point has null-value");
+        if (aCell.isTable()) insertTable((Table)aCell.getElements().next());
         if (mDebug == true) {
             if (aLocation.x < 0) throw new BadElementException("row coordinate of location must be >= 0");
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
