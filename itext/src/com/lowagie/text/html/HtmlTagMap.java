@@ -53,6 +53,8 @@ package com.lowagie.text.html;
 import java.util.HashMap;
 
 import com.lowagie.text.ElementTags;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
@@ -72,15 +74,9 @@ public class HtmlTagMap extends HashMap {
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.CHUNK);
-        peer.addAlias(ElementTags.FONT, HtmlTags.FONT);
-        peer.addAlias(ElementTags.SIZE, HtmlTags.SIZE);
-        peer.addAlias(ElementTags.COLOR, HtmlTags.COLOR);
-        put(peer.getAlias(), peer);
-        
-        peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.PHRASE);
-        peer.addAlias(ElementTags.FONT, HtmlTags.FONT);
-        peer.addAlias(ElementTags.SIZE, HtmlTags.SIZE);
-        peer.addAlias(ElementTags.COLOR, HtmlTags.COLOR);
+        peer.addAlias(MarkupTags.CSS_FONTFAMILY, HtmlTags.FONT);
+        peer.addAlias(MarkupTags.CSS_FONTSIZE, HtmlTags.SIZE);
+        peer.addAlias(MarkupTags.CSS_COLOR, HtmlTags.COLOR);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.ANCHOR, HtmlTags.ANCHOR);
@@ -92,32 +88,32 @@ public class HtmlTagMap extends HashMap {
         peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
         put(peer.getAlias(), peer);
         
-        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.DIV);
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, MarkupTags.DIV);
         peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[0]);
-        peer.addValue(ElementTags.SIZE, "20");
+        peer.addValue(MarkupTags.CSS_FONTSIZE, "20");
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[1]);
-        peer.addValue(ElementTags.SIZE, "18");
+        peer.addValue(MarkupTags.CSS_FONTSIZE, "18");
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[2]);
-        peer.addValue(ElementTags.SIZE, "16");
+        peer.addValue(MarkupTags.CSS_FONTSIZE, "16");
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[3]);
-        peer.addValue(ElementTags.SIZE, "14");
+        peer.addValue(MarkupTags.CSS_FONTSIZE, "14");
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[4]);
-        peer.addValue(ElementTags.SIZE, "12");
+        peer.addValue(MarkupTags.CSS_FONTSIZE, "12");
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.H[5]);
-        peer.addValue(ElementTags.SIZE, "10");
+        peer.addValue(MarkupTags.CSS_FONTSIZE, "10");
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.LIST, HtmlTags.ORDEREDLIST);
@@ -134,36 +130,36 @@ public class HtmlTagMap extends HashMap {
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.I);
-        peer.addValue(ElementTags.STYLE, ElementTags.ITALIC);
+        peer.addValue(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_ITALIC);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.EM);
-        peer.addValue(ElementTags.STYLE, ElementTags.ITALIC);
+        peer.addValue(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_ITALIC);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.B);
-        peer.addValue(ElementTags.STYLE, ElementTags.BOLD);
+        peer.addValue(MarkupTags.CSS_MARKUPWEIGHT, MarkupTags.CSS_BOLD);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.STRONG);
-        peer.addValue(ElementTags.STYLE, ElementTags.BOLD);
+        peer.addValue(MarkupTags.CSS_STYLE, MarkupTags.CSS_BOLD);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.S);
-        peer.addValue(ElementTags.STYLE, ElementTags.STRIKETHRU);
+        peer.addValue(MarkupTags.CSS_TEXTDECORATION, MarkupTags.CSS_LINETHROUGH);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.CODE);
-        peer.addValue(ElementTags.FONT, ElementTags.COURIER);
+        peer.addValue(MarkupTags.CSS_FONT, FontFactory.COURIER);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.VAR);
-        peer.addValue(ElementTags.FONT, ElementTags.COURIER);
-        peer.addValue(ElementTags.STYLE, ElementTags.ITALIC);
+        peer.addValue(MarkupTags.CSS_FONTFAMILY, FontFactory.COURIER);
+        peer.addValue(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_ITALIC);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.U);
-        peer.addValue(ElementTags.STYLE, ElementTags.UNDERLINE);
+        peer.addValue(MarkupTags.CSS_TEXTDECORATION, MarkupTags.CSS_UNDERLINE);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.SUP);
@@ -255,7 +251,7 @@ public class HtmlTagMap extends HashMap {
  */
     
     public boolean isLink(String tag) {
-        return HtmlTags.LINK.equalsIgnoreCase(tag);
+        return MarkupTags.LINK.equalsIgnoreCase(tag);
     }
     
 /**

@@ -173,19 +173,10 @@ public class ElementTags {
     public static final String CHUNK = "chunk";
     
 /** attribute of the chunk tag */
-    public static final String FONT = "font";
-    
-/** attribute of the chunk tag */
     public static final String ENCODING = "encoding";
     
 /** attribute of the chunk tag */
     public static final String EMBEDDED = "embedded";
-    
-/** attribute of the chunk tag */
-    public static final String SIZE = "size";
-    
-/** attribute of the chunk tag */
-    public static final String STYLE = "style";
     
 /** attribute of the chunk/table/cell tag */
     public static final String COLOR = "color";
@@ -382,9 +373,6 @@ public class ElementTags {
     
 /** attribute of the annotation tag */
     public static final String CONTENT = "content";
-
-/** attribute for specifying externally defined CSS class (only recognized by HTML generator) */
-    public static final String CLASS = "class";
     
     // alignment attribute values
     
@@ -417,39 +405,6 @@ public class ElementTags {
     
 /** the possible value of an alignment attribute */
     public static final String UNKNOWN = "unknown";
-    
-/** the possible value of a font */
-    public static final String COURIER = "Courier";
-    
-/** the possible value of a font */
-    public static final String HELVETICA = "Helvetica";
-    
-/** the possible value of a font */
-    public static final String TIMES_NEW_ROMAN = "Times New Roman";
-    
-/** the possible value of a font */
-    public static final String SYMBOL = "Symbol";
-    
-/** the possible value of a font */
-    public static final String ZAPFDINGBATS = "ZapfDingBats";
-    
-/** the possible value of a fontstyle */
-    public static final String NORMAL = "normal";
-    
-/** the possible value of a fontstyle */
-    public static final String ITALIC = "italic";
-    
-/** the possible value of a fontstyle */
-    public static final String BOLD = "bold";
-    
-/** the possible value of a fontstyle */
-    public static final String UNDERLINE = "underline";
-    
-/** the possible value of a fontstyle */
-    public static final String STRIKETHRU = "strike";
-    
-/** the possible value of a page-break */
-    public static final String ALWAYS = "always";
     
 /** the possible value of a tag */
     public static final String HORIZONTALRULE = "horizontalrule";
@@ -486,27 +441,4 @@ public class ElementTags {
         }
     }
     
-/**
- * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>Color</CODE>.
- *
- * @param	color	the <CODE>Color</CODE> that has to be converted.
- * @return	the HTML representation of this <COLOR>Color</COLOR>
- */
-    
-    public static Color decodeColor(String string) {
-        int red = 0;
-        int green = 0;
-        int blue = 0;
-        try {
-            red = Integer.parseInt(string.substring(1, 3), 16);
-            green = Integer.parseInt(string.substring(3, 5), 16);
-            blue = Integer.parseInt(string.substring(5), 16);
-        }
-        catch(Exception sioobe) {
-            // empty on purpose
-        }
-        return new Color(red, green, blue);
-    }
-    
 }
-

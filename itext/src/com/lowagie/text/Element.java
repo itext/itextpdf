@@ -266,7 +266,7 @@ public interface Element {
     public static final int CCITT_BLACKIS1 = 1;
     /** A flag indicating whether the filter expects extra 0-bits before each
      *  encoded line so that the line begins on a byte boundary.
-     */    
+     */
     public static final int CCITT_ENCODEDBYTEALIGN = 2;
     /** A flag indicating whether end-of-line bit patterns are required to be
      *  present in the encoding.

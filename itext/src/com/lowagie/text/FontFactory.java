@@ -55,6 +55,8 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.markup.MarkupParser;
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
@@ -187,19 +189,26 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(Properties attributes) {
-        String value;
-        String fontname = (String)attributes.remove(ElementTags.FONT);
+        String value = (String) attributes.remove(MarkupTags.STYLE);
+        if (value != null) {
+            attributes.putAll(MarkupParser.parseAttributes(value));
+        }
+        String fontname = (String)attributes.remove(MarkupTags.CSS_FONTFAMILY);
         String encoding = (String)attributes.remove(ElementTags.ENCODING);
         boolean embedded = true;
         if ("false".equals((String) attributes.remove(ElementTags.EMBEDDED))) {
             embedded = false;
         }
         float size = Font.UNDEFINED;
-        if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
+        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
+            if (value.endsWith("px")) value = value.substring(0, value.length() - 2);
             size = Float.valueOf(value + "f").floatValue();
         }
-        int style = Font.UNDEFINED;
-        if ((value = (String)attributes.remove(ElementTags.STYLE)) != null) {
+        int style = Font.NORMAL;
+        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
+            style = Font.getStyleValue(value);
+        }
+        if ((value = (String)attributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
             style = Font.getStyleValue(value);
         }
         Color color = null;
@@ -216,7 +225,7 @@ public class FontFactory extends java.lang.Object {
             color = new Color(red, green, blue);
         }
         else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
-            color = ElementTags.decodeColor(value);
+            color = MarkupParser.decodeColor(value);
         }
         if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
         if (encoding == null) encoding = defaultEncoding;
