@@ -656,6 +656,10 @@ class PdfDocument extends Document implements DocListener {
 					int lineY = indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3);
 					while ((overflowChunk = line.add(aChunk)) != null) {
 						if (action != null) { 
+							// this is a hack, it doesn't work in all cases
+							if (alignment == Element.ALIGN_RIGHT || alignment == Element.ALIGN_CENTER) {
+								beginx += line.indentLeft();
+							}
 							annotations.add(new PdfAnnotation(beginx, indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3), indentRight(), indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3) + aChunk.font().size(), action));
 						}
 						beginx = indentLeft();
@@ -680,7 +684,11 @@ class PdfDocument extends Document implements DocListener {
 						graphics.lineTo(indentRight() - line.widthLeft(), lineY);
 						graphics.stroke();
 					} 
-					if (action != null) {
+					if (action != null) { 
+						// this is a hack, it doesn't work in all cases 
+						if (alignment == Element.ALIGN_RIGHT || alignment == Element.ALIGN_CENTER) {
+							beginx += line.indentLeft();
+						}
 						annotations.add(new PdfAnnotation(beginx, indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3), indentRight() - line.widthLeft(), indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3) + aChunk.font().size(), action));
 					}
 				}
