@@ -94,7 +94,7 @@ public class SAXiTextHandler extends HandlerBase {
 		if (attrs != null) {
 			for (int i = 0; i < attrs.getLength(); i++) {
 				String attribute = attrs.getName(i);
-				attributes.setProperty(attribute, attrs.getValue(i));
+				attributes.put(attribute, attrs.getValue(i));
 			}
 		}		
 
