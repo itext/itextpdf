@@ -67,27 +67,6 @@ public class HtmlTags {
 /** This is a possible HTML attribute for the HEAD tag. */
     public static final String CONTENT = "content";
     
-/** This is a possible HTML-tag. */
-    public static final String LINK = "link";
-    
-/** This is a possible HTML attribute for the LINK tag. */
-    public static final String CSS = "text/css";
-    
-/** This is a possible HTML attribute for the LINK tag. */
-    public static final String REL = "rel";
-    
-/** This is a possible HTML attribute for the TD tag. */
-    public static final String STYLESHEET = "stylesheet";
-
-/** This is used for inline css style information */
-    public static final String STYLE = "style";
-
-/** This is used for inline css style information */
-    public static final String SPAN = "span";
-    
-/** This is a possible HTML attribute for the LINK tag. */
-    public static final String TYPE = "type";
-    
 /** the meta tag */
     public static final String META = "meta";
     
@@ -146,9 +125,6 @@ public class HtmlTags {
     
 /** the paragraph tag */
     public static final String PARAGRAPH = "p";
-    
-/** the paragraph tag */
-    public static final String DIV = "div";
     
 /** attribute of anchor tag */
     public static final String NAME = "name";
@@ -318,37 +294,5 @@ public class HtmlTags {
     
 /** the possible value of an alignment attribute */
     public static final String DEFAULT = "Default";
-
-    // CSS related
-
-/** the CSS tag for the font size */
-    public static final String CSS_FONTSIZE = "font-size";
-
-/** the CSS tag for the font style */
-    public static final String CSS_FONTSTYLE = "font-style";
-
-/** the CSS tag for the font weight */
-    public static final String CSS_FONTWEIGHT = "font-weight";
-    
-/** the CSS tag for the font family */
-    public static final String CSS_FONTFAMILY = "font-family";
-
-/** the CSS tag for text decorations */
-    public static final String CSS_TEXTDECORATION = "text-decoration";
-
-/** the CSS tag for text color */
-    public static final String CSS_COLOR = "color";
-
-/** the CSS tag for background color */
-    public static final String CSS_BGCOLOR = "background-color";
-
-/** the CSS tag for text color */
-    public static final String CSS_UNDERLINE = "underline";
-
-/** the CSS tag for background color */
-    public static final String CSS_LINETHROUGH = "line-through";
- 
-/** the CSS tag for adding a page break when the document is printed */
-    public static final String PAGE_BREAK_BEFORE = "page-break-before";
 
 }

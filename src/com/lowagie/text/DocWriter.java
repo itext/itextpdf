@@ -373,6 +373,7 @@ public abstract class DocWriter implements DocListener {
  */
     
     protected final void addTabs(int indent) throws IOException {
+        os.write(NEWLINE);
         for (int i = 0; i < indent; i++) {
             os.write(TAB);
         }
@@ -419,7 +420,6 @@ public abstract class DocWriter implements DocListener {
         os.write(FORWARD);
         write(tag);
         os.write(GT);
-        os.write(NEWLINE);
     }
     
 /**
@@ -433,7 +433,6 @@ public abstract class DocWriter implements DocListener {
         os.write(SPACE);
         os.write(FORWARD);
         os.write(GT);
-        os.write(NEWLINE);
     }
     
 // patch by Matt Benson 02/21/2002

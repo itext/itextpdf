@@ -267,7 +267,6 @@ public class XmlWriter extends DocWriter implements DocListener {
                 write(key, (String) itext.get(key));
             }
             os.write(GT);
-            os.write(NEWLINE);
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -302,6 +301,7 @@ public class XmlWriter extends DocWriter implements DocListener {
     
     public void close() {
         try {
+            os.write(NEWLINE);
             writeEnd(ElementTags.ITEXT);
             super.close();
         }
@@ -337,13 +337,8 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 HashMap attributes = chunk.getAttributes();
-// patch by Matt Benson 02/21/2002
-                if (chunk.font().isStandardFont() && attributes == null
-                 && !(hasMarkupAttributes(chunk)))
-                {
-// end patch by Matt Benson 02/21/2002
+                if (chunk.font().isStandardFont() && attributes == null && !(hasMarkupAttributes(chunk))) {
                     write(encode(chunk.content(), indent));
-                    os.write(NEWLINE);
                     return;
                 }
                 else {
@@ -391,14 +386,10 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 write(ElementTags.LEADING, String.valueOf(phrase.leading()));
                 write(phrase.font());
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(phrase))
-                {
+                if (hasMarkupAttributes(phrase)) {
                   writeMarkupAttributes((MarkupAttributes)phrase);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
-                os.write(NEWLINE);
                 
                 for (Iterator i = phrase.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
@@ -423,14 +414,10 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (anchor.reference() != null) {
                     write(ElementTags.REFERENCE, anchor.reference());
                 }
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(anchor))
-                {
+                if (hasMarkupAttributes(anchor)) {
                   writeMarkupAttributes((MarkupAttributes)anchor);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
-                os.write(NEWLINE);
                 for (Iterator i = anchor.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
@@ -454,14 +441,10 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (paragraph.indentationRight() != 0) {
                     write(ElementTags.INDENTATIONRIGHT, String.valueOf(paragraph.indentationRight()));
                 }
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(paragraph))
-                {
+                if (hasMarkupAttributes(paragraph)) {
                   writeMarkupAttributes((MarkupAttributes)paragraph);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
-                os.write(NEWLINE);
                 for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
@@ -517,14 +500,10 @@ public class XmlWriter extends DocWriter implements DocListener {
                     write(ElementTags.LISTSYMBOL, list.symbol().content());
                 }
                 write(list.symbol().font());
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(list))
-                {
+                if (hasMarkupAttributes(list)) {
                   writeMarkupAttributes((MarkupAttributes)list);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
-                os.write(NEWLINE);
                 for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
@@ -547,14 +526,10 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (listItem.indentationRight() != 0) {
                     write(ElementTags.INDENTATIONRIGHT, String.valueOf(listItem.indentationRight()));
                 }
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(listItem))
-                {
+                if (hasMarkupAttributes(listItem)) {
                   writeMarkupAttributes((MarkupAttributes)listItem);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
-                os.write(NEWLINE);
                 for (Iterator i = listItem.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
@@ -589,14 +564,10 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (cell.leading() != -1) {
                     write(ElementTags.LEADING, String.valueOf(cell.leading()));
                 }
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(cell))
-                {
+                if (hasMarkupAttributes(cell)) {
                   writeMarkupAttributes((MarkupAttributes)cell);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
-                os.write(NEWLINE);
                 for (Iterator i = cell.getElements(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
@@ -610,13 +581,10 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(ElementTags.ROW);
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(row))
-                {
+                if (hasMarkupAttributes(row)){
                   writeMarkupAttributes((MarkupAttributes)row);
-                }//end if this Element has MarkupAttributes
+                }
                 os.write(GT);
-                os.write(NEWLINE);
                 Element cell;
                 for (int i = 0; i < row.columns(); i++) {
                     if ((cell = (Element)row.getCell(i)) != null) {
@@ -661,14 +629,10 @@ public class XmlWriter extends DocWriter implements DocListener {
                 }
                 os.write(QUOTE);
                 write((Rectangle) table);
-// patch by Matt Benson 02/21/2002
-                if (hasMarkupAttributes(table))
-                {
+                if (hasMarkupAttributes(table)) {
                   writeMarkupAttributes((MarkupAttributes)table);
-                }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                }
                 os.write(GT);
-                os.write(NEWLINE);
                 Row row;
                 for (Iterator iterator = table.iterator(); iterator.hasNext(); ) {
                     row = (Row) iterator.next();
@@ -767,7 +731,6 @@ public class XmlWriter extends DocWriter implements DocListener {
             write(ElementTags.INDENTATIONRIGHT, String.valueOf(section.indentationRight()));
         }
         os.write(GT);
-        os.write(NEWLINE);
         
         if (section.title() != null) {
             addTabs(indent + 1);
@@ -782,7 +745,6 @@ public class XmlWriter extends DocWriter implements DocListener {
             }
             write(section.title().font());
             os.write(GT);
-            os.write(NEWLINE);
             Iterator i = section.title().iterator();
             if (section.depth() > 0) {
                 i.next();

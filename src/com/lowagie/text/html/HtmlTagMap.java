@@ -53,6 +53,8 @@ package com.lowagie.text.html;
 import java.util.HashMap;
 
 import com.lowagie.text.ElementTags;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
@@ -92,7 +94,7 @@ public class HtmlTagMap extends HashMap {
         peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
         put(peer.getAlias(), peer);
         
-        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.DIV);
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, MarkupTags.DIV);
         peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
         put(peer.getAlias(), peer);
         
@@ -154,11 +156,11 @@ public class HtmlTagMap extends HashMap {
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.CODE);
-        peer.addValue(ElementTags.FONT, ElementTags.COURIER);
+        peer.addValue(ElementTags.FONT, FontFactory.COURIER);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.VAR);
-        peer.addValue(ElementTags.FONT, ElementTags.COURIER);
+        peer.addValue(ElementTags.FONT, FontFactory.COURIER);
         peer.addValue(ElementTags.STYLE, ElementTags.ITALIC);
         put(peer.getAlias(), peer);
         
@@ -255,7 +257,7 @@ public class HtmlTagMap extends HashMap {
  */
     
     public boolean isLink(String tag) {
-        return HtmlTags.LINK.equalsIgnoreCase(tag);
+        return MarkupTags.LINK.equalsIgnoreCase(tag);
     }
     
 /**

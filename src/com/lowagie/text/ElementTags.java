@@ -382,9 +382,6 @@ public class ElementTags {
     
 /** attribute of the annotation tag */
     public static final String CONTENT = "content";
-
-/** attribute for specifying externally defined CSS class (only recognized by HTML generator) */
-    public static final String CLASS = "class";
     
     // alignment attribute values
     
@@ -417,21 +414,6 @@ public class ElementTags {
     
 /** the possible value of an alignment attribute */
     public static final String UNKNOWN = "unknown";
-    
-/** the possible value of a font */
-    public static final String COURIER = "Courier";
-    
-/** the possible value of a font */
-    public static final String HELVETICA = "Helvetica";
-    
-/** the possible value of a font */
-    public static final String TIMES_NEW_ROMAN = "Times New Roman";
-    
-/** the possible value of a font */
-    public static final String SYMBOL = "Symbol";
-    
-/** the possible value of a font */
-    public static final String ZAPFDINGBATS = "ZapfDingBats";
     
 /** the possible value of a fontstyle */
     public static final String NORMAL = "normal";

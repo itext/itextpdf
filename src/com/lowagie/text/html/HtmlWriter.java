@@ -59,6 +59,7 @@ import java.util.Stack;
 import java.util.EmptyStackException;
 
 import com.lowagie.text.*;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * A <CODE>DocWriter</CODE> class for HTML.
@@ -144,7 +145,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
             os.write(LT);
             os.write(getISOBytes(HtmlTags.HEAD));
             os.write(GT);
-            os.write(NEWLINE);
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -176,14 +176,13 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     public boolean newPage() throws DocumentException {
         try {
-            writeStart(HtmlTags.DIV);
+            writeStart(MarkupTags.DIV);
             write(" ");
-            write(HtmlTags.STYLE);
+            write(MarkupTags.STYLE);
             write("=\"");
-            writeCssProperty(HtmlTags.PAGE_BREAK_BEFORE, ElementTags.ALWAYS);
+            writeCssProperty(MarkupTags.PAGE_BREAK_BEFORE, ElementTags.ALWAYS);
             write("\" /");
             os.write(GT);
-            os.write(NEWLINE);
         }
         catch(IOException ioe) {
             throw new DocumentException(ioe.getMessage());
@@ -208,7 +207,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 case Element.HEADER:
                     try {
                         Header h = (Header) element;
-                        if (!HtmlTags.STYLESHEET.equals(h.name())) {
+                        if (!MarkupTags.STYLESHEET.equals(h.name())) {
                             writeHeader(h);
                         }
                         else {
@@ -228,10 +227,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     addTabs(2);
                     writeStart(HtmlTags.TITLE);
                     os.write(GT);
-                    os.write(NEWLINE);
                     addTabs(3);
                     write(((Meta)element).content());
-                    os.write(NEWLINE);
                     addTabs(2);
                     writeEnd(HtmlTags.TITLE);
                     return true;
@@ -286,7 +283,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(pageSize.backgroundColor()));
             }
             os.write(GT);
-            os.write(NEWLINE);
             initHeader(); // line added by David Freels
         }
         catch(IOException ioe) {
@@ -384,9 +380,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     protected void writeLink(Header header) throws IOException {
         addTabs(2);
-        writeStart(HtmlTags.LINK);
-        write(HtmlTags.REL, header.name());
-        write(HtmlTags.TYPE, HtmlTags.CSS);
+        writeStart(MarkupTags.LINK);
+        write(MarkupTags.REL, header.name());
+        write(MarkupTags.TYPE, MarkupTags.CSS);
         write(HtmlTags.REFERENCE, header.content());
         writeEnd();
     }
@@ -529,10 +525,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (attributes != null && attributes.get(Chunk.NEWPAGE) != null) {
                     return;
                 }
-                addTabs(indent);
                 boolean tag = isOtherFont(chunk.font()) || hasMarkupAttributes(chunk);
                 if (tag) {
-                    writeStart(HtmlTags.SPAN);
+                    addTabs(indent);
+                    writeStart(MarkupTags.SPAN);
                     if (isOtherFont(chunk.font())) {
                         write(chunk.font());
                     }
@@ -563,7 +559,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     os.write(GT);
                 }
                 if (tag) {
-                    writeEnd(HtmlTags.SPAN);
+                    writeEnd(MarkupTags.SPAN);
                 }
                 return;
             }
@@ -576,7 +572,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (tag) {
                     addTabs(indent);
                     if (isOtherFont(phrase.font())) {
-                        writeStart(HtmlTags.SPAN);
+                        writeStart(MarkupTags.SPAN);
                         currentfont.push(phrase.font());
                         write(phrase.font());
                     }
@@ -584,7 +580,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                         writeMarkupAttributes((MarkupAttributes)phrase);
                     }
                     os.write(GT);
-                    os.write(NEWLINE);
                 }
                 
                 for (Iterator i = phrase.iterator(); i.hasNext(); ) {
@@ -593,7 +588,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 if (tag) {
                     addTabs(indent);
-                    writeEnd(HtmlTags.SPAN);
+                    writeEnd(MarkupTags.SPAN);
                     currentfont.pop();
                 }
                 return;
@@ -619,7 +614,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeMarkupAttributes((MarkupAttributes)anchor);
                 }
                 os.write(GT);
-                os.write(NEWLINE);
                 
                 for (Iterator i = anchor.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
@@ -638,7 +632,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 Paragraph paragraph = (Paragraph) element;
                 
                 addTabs(indent);
-                writeStart(HtmlTags.DIV);
+                writeStart(MarkupTags.DIV);
                 String alignment = HtmlEncoder.getAlignment(paragraph.alignment());
                 if (!"".equals(alignment)) {
                     write(HtmlTags.ALIGN, alignment);
@@ -652,7 +646,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     write(paragraph.font());
                 }
                 os.write(GT);
-                os.write(NEWLINE);
                 
                 for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
@@ -662,7 +655,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 
                 addTabs(indent);
-                writeEnd(HtmlTags.DIV);
+                writeEnd(MarkupTags.DIV);
                 return;
             }
             case Element.SECTION:
@@ -671,12 +664,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 Section section = (Section) element;
                 
                 addTabs(indent);
-                writeStart(HtmlTags.DIV);
+                writeStart(MarkupTags.DIV);
                 if (hasMarkupAttributes(section)) {
                     writeMarkupAttributes((MarkupAttributes)section);
                 }
                 writeSection(section, indent);
-                writeEnd(HtmlTags.DIV);
+                writeEnd(MarkupTags.DIV);
                 return;
                 
             }
@@ -696,7 +689,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeMarkupAttributes((MarkupAttributes)list);
                 }
                 os.write(GT);
-                os.write(NEWLINE);
                 for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
@@ -724,7 +716,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeMarkupAttributes((MarkupAttributes)listItem);
                 }
                 os.write(GT);
-                os.write(NEWLINE);
                 
                 for (Iterator i = listItem.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
@@ -780,7 +771,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeMarkupAttributes((MarkupAttributes)cell);
                 }
                 os.write(GT);
-                os.write(NEWLINE);
                 if (cell.isEmpty()) {
                     write(NBSP);
                 } else {
@@ -808,7 +798,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeMarkupAttributes((MarkupAttributes)row);
                 }
                 os.write(GT);
-                os.write(NEWLINE);
                 Element cell;
                 for (int i = 0; i < row.columns(); i++) {
                     if ((cell = (Element)row.getCell(i)) != null) {
@@ -858,7 +847,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeMarkupAttributes((MarkupAttributes)table);
                 }
                 os.write(GT);
-                os.write(NEWLINE);
                 Row row;
                 for (Iterator iterator = table.iterator(); iterator.hasNext(); ) {
                     row = (Row) iterator.next();
@@ -936,7 +924,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     protected void writeSection(Section section, int indent) throws IOException {
         os.write(GT);
-        os.write(NEWLINE);
         
         if (section.title() != null) {
             int depth = section.depth() - 1;
@@ -953,7 +940,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 writeMarkupAttributes((MarkupAttributes)section.title());
             }
             os.write(GT);
-            os.write(NEWLINE);
             for (Iterator i = section.title().iterator(); i.hasNext(); ) {
                 write((Element)i.next(), indent + 2);
             }
@@ -975,60 +961,60 @@ public class HtmlWriter extends DocWriter implements DocListener {
     protected void write(Font font) throws IOException {
         if (font == null) return;
         write(" ");
-        write(HtmlTags.STYLE);
+        write(MarkupTags.STYLE);
         write("=\"");
         switch (font.family()) {
             case Font.COURIER:
-                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.COURIER);
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.COURIER);
                 break;
             case Font.HELVETICA:
-                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.HELVETICA);
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.HELVETICA);
                 break;
             case Font.TIMES_NEW_ROMAN:
-                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.TIMES_NEW_ROMAN);
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.TIMES_ROMAN);
                 break;
             case Font.SYMBOL:
-                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.SYMBOL);
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.SYMBOL);
                 break;
             case Font.ZAPFDINGBATS:
-                writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.ZAPFDINGBATS);
+                writeCssProperty(MarkupTags.CSS_FONTFAMILY, FontFactory.ZAPFDINGBATS);
                 break;
                 default:
                     com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
                     if (bf != null) {
-                        writeCssProperty(HtmlTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
+                        writeCssProperty(MarkupTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
                     }
         }
         
         if (font.size() != Font.UNDEFINED) {
-            writeCssProperty(HtmlTags.CSS_FONTSIZE, String.valueOf(font.size()) + "px");
+            writeCssProperty(MarkupTags.CSS_FONTSIZE, String.valueOf(font.size()) + "px");
         }
         if (font.color() != null) {
-            writeCssProperty(HtmlTags.CSS_COLOR, HtmlEncoder.encode(font.color()));
+            writeCssProperty(MarkupTags.CSS_COLOR, HtmlEncoder.encode(font.color()));
         }
         
         int fontstyle = font.style();
         if (fontstyle != Font.UNDEFINED && fontstyle != Font.NORMAL) {
             switch (fontstyle & Font.BOLDITALIC) {
                 case Font.BOLD:
-                    writeCssProperty(HtmlTags.CSS_FONTWEIGHT, ElementTags.BOLD);
+                    writeCssProperty(MarkupTags.CSS_FONTWEIGHT, ElementTags.BOLD);
                     break;
                 case Font.ITALIC:
-                    writeCssProperty(HtmlTags.CSS_FONTSTYLE, ElementTags.ITALIC);
+                    writeCssProperty(MarkupTags.CSS_FONTSTYLE, ElementTags.ITALIC);
                     break;
                 case Font.BOLDITALIC:
-                    writeCssProperty(HtmlTags.CSS_FONTWEIGHT, ElementTags.BOLD);
-                    writeCssProperty(HtmlTags.CSS_FONTSTYLE, ElementTags.ITALIC);
+                    writeCssProperty(MarkupTags.CSS_FONTWEIGHT, ElementTags.BOLD);
+                    writeCssProperty(MarkupTags.CSS_FONTSTYLE, ElementTags.ITALIC);
                     break;
             }
             
             // CSS only supports one decoration tag so if both are specified
             // only one of the two will display
             if ((fontstyle & Font.UNDERLINE) > 0) {
-                writeCssProperty(HtmlTags.CSS_TEXTDECORATION, HtmlTags.CSS_UNDERLINE);
+                writeCssProperty(MarkupTags.CSS_TEXTDECORATION, MarkupTags.CSS_UNDERLINE);
             }
             if ((fontstyle & Font.STRIKETHRU) > 0) {
-                writeCssProperty(HtmlTags.CSS_TEXTDECORATION, HtmlTags.CSS_LINETHROUGH);
+                writeCssProperty(MarkupTags.CSS_TEXTDECORATION, MarkupTags.CSS_LINETHROUGH);
             }
         }
         

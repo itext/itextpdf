@@ -336,19 +336,19 @@ public class Font implements Comparable {
  */
     
     public static int getFamilyIndex(String family) {
-        if (family.equalsIgnoreCase(ElementTags.COURIER)) {
+        if (family.equalsIgnoreCase(FontFactory.COURIER)) {
             return COURIER;
         }
-        if (family.equalsIgnoreCase(ElementTags.HELVETICA)) {
+        if (family.equalsIgnoreCase(FontFactory.HELVETICA)) {
             return HELVETICA;
         }
-        if (family.equalsIgnoreCase(ElementTags.TIMES_NEW_ROMAN)) {
+        if (family.equalsIgnoreCase(FontFactory.TIMES_ROMAN)) {
             return TIMES_NEW_ROMAN;
         }
-        if (family.equalsIgnoreCase(ElementTags.SYMBOL)) {
+        if (family.equalsIgnoreCase(FontFactory.SYMBOL)) {
             return SYMBOL;
         }
-        if (family.equalsIgnoreCase(ElementTags.ZAPFDINGBATS)) {
+        if (family.equalsIgnoreCase(FontFactory.ZAPFDINGBATS)) {
             return ZAPFDINGBATS;
         }
         return UNDEFINED;
