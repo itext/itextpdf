@@ -97,6 +97,13 @@ public class Cell extends Rectangle implements TextElementArray {
 /** This constant can be used as empty cell. */
     public static final Cell EMPTY_CELL = new Cell();
     
+/** This constant can be used as empty cell. */
+    public static final Cell DUMMY_CELL = new Cell();
+    static {
+        DUMMY_CELL.setColspan(3);
+        DUMMY_CELL.setBorder(NO_BORDER);
+    }
+    
     // membervariables
     
 /** This is the <CODE>ArrayList</CODE> of <CODE>Element</CODE>s. */
@@ -140,12 +147,6 @@ public class Cell extends Rectangle implements TextElementArray {
         
         // initializes the arraylist and adds an element
         arrayList = new ArrayList();
-        try {
-            addElement(new Paragraph(0));
-        }
-        catch(BadElementException bee) {
-            throw new ExceptionConverter(bee);
-        }
     }
     
 /**
@@ -398,34 +399,36 @@ public class Cell extends Rectangle implements TextElementArray {
                 arrayList.add(element);
                 return;
             case Element.TABLE:
-                if (arrayList.size() == 0) {
-                    arrayList.add(element);
-                    return;
-                }
                 Table table = new Table(3);
-                Cell tmp = new Cell();
-                tmp.setBorder(NO_BORDER);
-                tmp.setColspan(3);
                 float[] widths = new float[3];
                 widths[1] = ((Table)element).widthPercentage();
                 widths[0] = (100f - widths[1]) / 2f;
                 widths[2] = widths[0];
                 table.setWidths(widths);
-                for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
-                    tmp.add((Element) i.next());
+                Cell tmp;
+                if (arrayList.size() == 0) {
+                    table.addCell(DUMMY_CELL);
                 }
-                table.addCell(tmp);
+                else {
+                    tmp = new Cell();
+                    tmp.setBorder(NO_BORDER);
+                    tmp.setColspan(3);
+                    for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
+                        tmp.add((Element) i.next());
+                    }
+                    table.addCell(tmp);
+                }
                 tmp = new Cell();
                 tmp.setBorder(NO_BORDER);
-                table.addCell(tmp, 1, 0);
-                table.addCell(tmp, 1, 2);
-                table.insertTable((Table)element, 1, 1);
-                table.complete();
+                table.addCell(tmp);
+                table.insertTable((Table)element);
+                table.addCell(tmp);
+                table.addCell(DUMMY_CELL);
                 clear();
                 arrayList.add(table);
                 return;
-            default:
-                arrayList.add(element);
+                default:
+                    arrayList.add(element);
         }
     }
     
@@ -726,86 +729,86 @@ public class Cell extends Rectangle implements TextElementArray {
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public float top() {
-       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-   }
+    public float top() {
+        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public float bottom() {
-       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-   }
+    public float bottom() {
+        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public float left() {
-       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-   }
+    public float left() {
+        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public float right() {
-       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-   }
+    public float right() {
+        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public float top(int margin) {
-       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-   }
+    public float top(int margin) {
+        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public float bottom(int margin) {
-       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-   }
+    public float bottom(int margin) {
+        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public float left(int margin) {
-       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-   }
+    public float left(int margin) {
+        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public float right(int margin) {
-       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
-   }
+    public float right(int margin) {
+        throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public void setTop(int value) {
-       throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
-   }
+    public void setTop(int value) {
+        throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public void setBottom(int value) {
-       throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
-   }
+    public void setBottom(int value) {
+        throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public void setLeft(int value) {
-       throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
-   }
+    public void setLeft(int value) {
+        throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+    }
     
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
  */
-   public void setRight(int value) {
-       throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
-   }
+    public void setRight(int value) {
+        throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+    }
     
 /**
  * Checks if a given tag corresponds with this object.
