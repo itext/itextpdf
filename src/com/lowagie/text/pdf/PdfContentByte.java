@@ -54,10 +54,13 @@ public class PdfContentByte {
     
     class GraphicState {
         
-/** This is the font in use */
+        /** This is the font in use */
         FontDetails fontDetails;
         
-/** This is the font size in use */
+        /** This is the color in use */
+        ColorDetails colorDetails;
+
+        /** This is the font size in use */
         float size;
         
 /** The x position of the text line matrix. */
@@ -646,8 +649,8 @@ public class PdfContentByte {
         // the backgroundcolor is set
         Color background = rectangle.backgroundColor();
         if (background != null) {
-            setRGBColorStroke(background.getRed(), background.getGreen(), background.getBlue());
-            setRGBColorFill(background.getRed(), background.getGreen(), background.getBlue());
+            setColorStroke(background);
+            setColorFill(background);
             rectangle(x1, y1, x2 - x1, y2 - y1);
             closePathFillStroke();
             resetRGBColorFill();
@@ -676,7 +679,7 @@ public class PdfContentByte {
         // the color is set to the color of the element
         Color color = rectangle.borderColor();
         if (color != null) {
-            setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+            setColorStroke(color);
         }
         
         // if the box is a rectangle, it is added as a rectangle
@@ -1551,6 +1554,78 @@ public class PdfContentByte {
         content.append(" RG\n");
     }
     
+    public void setColorStroke(Color color) {
+        if (color instanceof ExtendedColor) {
+            int type = ((ExtendedColor)color).type;
+            switch (type) {
+                case ExtendedColor.TYPE_GRAY:
+                {
+                    setGrayStroke(((GrayColor)color).getGray());
+                    break;
+                }
+                case ExtendedColor.TYPE_CMYK:
+                {
+                    CMYKColor cmyk = (CMYKColor)color;
+                    setCMYKColorStrokeF(cmyk.getCyan(), cmyk.getMagenta(), cmyk.getYellow(), cmyk.getBlack());
+                    break;
+                }
+                case ExtendedColor.TYPE_SEPARATION:
+                {
+                    SpotColor spot = (SpotColor)color;
+                    setColorStroke(spot.getPdfSpotColor(), spot.getTint());
+                    break;
+                }
+                default:
+                    throw new RuntimeException("ExtendedColor type " + type + " not recognized.");
+            }
+        }
+        else {
+            setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+        }
+    }
+    
+    public void setColorFill(Color color) {
+        if (color instanceof ExtendedColor) {
+            int type = ((ExtendedColor)color).type;
+            switch (type) {
+                case ExtendedColor.TYPE_GRAY:
+                {
+                    setGrayFill(((GrayColor)color).getGray());
+                    break;
+                }
+                case ExtendedColor.TYPE_CMYK:
+                {
+                    CMYKColor cmyk = (CMYKColor)color;
+                    setCMYKColorFillF(cmyk.getCyan(), cmyk.getMagenta(), cmyk.getYellow(), cmyk.getBlack());
+                    break;
+                }
+                case ExtendedColor.TYPE_SEPARATION:
+                {
+                    SpotColor spot = (SpotColor)color;
+                    setColorFill(spot.getPdfSpotColor(), spot.getTint());
+                    break;
+                }
+                default:
+                    throw new RuntimeException("ExtendedColor type " + type + " not recognized.");
+            }
+        }
+        else {
+            setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+        }
+    }
+    
+    public void setColorFill(PdfSpotColor sp, float tint) {
+        checkWriter();
+        state.colorDetails = writer.add(sp);
+        content.append(state.colorDetails.getColorName().toPdf(null)).append(" cs ").append(tint).append(" scn\n");
+    }
+    
+    public void setColorStroke(PdfSpotColor sp, float tint) {
+        checkWriter();
+        state.colorDetails = writer.add(sp);
+        content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN\n");
+    }
+
 /**
  * Check if we have a valid PdfWriter.
  *

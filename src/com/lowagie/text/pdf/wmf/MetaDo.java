@@ -395,7 +395,7 @@ public class MetaDo {
                     int y = in.readShort();
                     int x = in.readShort();
                     cb.saveState();
-                    cb.setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+                    cb.setColorFill(color);
                     cb.rectangle(state.transformX(x), state.transformY(y), .2f, .2f);
                     cb.fill();
                     cb.restoreState();
@@ -436,12 +436,12 @@ public class MetaDo {
         Color textColor;
         if (state.getBackgroundMode() == MetaState.OPAQUE) {
             textColor = state.getCurrentBackgroundColor();
-            cb.setRGBColorFill(textColor.getRed(), textColor.getGreen(), textColor.getBlue());
+            cb.setColorFill(textColor);
             cb.rectangle(tx, ty + descender, textWidth, ury - descender);
             cb.fill();
         }
         textColor = state.getCurrentTextColor();
-        cb.setRGBColorFill(textColor.getRed(), textColor.getGreen(), textColor.getBlue());
+        cb.setColorFill(textColor);
         cb.beginText();
         cb.setFontAndSize(bf, fontSize);
         cb.setTextMatrix(tx, ty);

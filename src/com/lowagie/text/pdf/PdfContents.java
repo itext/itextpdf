@@ -35,6 +35,7 @@ package com.lowagie.text.pdf;
 
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
+import com.lowagie.text.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.zip.DeflaterOutputStream;
@@ -47,6 +48,10 @@ class PdfContents extends PdfStream {
     
     static final byte SAVESTATE[] = DocWriter.getISOBytes("q\n");
     static final byte RESTORESTATE[] = DocWriter.getISOBytes("Q\n");
+    static final byte ROTATE90[] = DocWriter.getISOBytes("0 1 -1 0 ");
+    static final byte ROTATE180[] = DocWriter.getISOBytes("-1 0 0 -1 ");
+    static final byte ROTATE270[] = DocWriter.getISOBytes("0 -1 1 0 ");
+    static final byte ROTATEFINAL[] = DocWriter.getISOBytes(" cm\n");
     // constructor
     
 /**
@@ -59,7 +64,7 @@ class PdfContents extends PdfStream {
  * @throws BadPdfFormatException on error
  */
     
-    PdfContents(PdfContentByte under, PdfContentByte content, PdfContentByte text, PdfContentByte secondContent) throws BadPdfFormatException {
+    PdfContents(PdfContentByte under, PdfContentByte content, PdfContentByte text, PdfContentByte secondContent, Rectangle page) throws BadPdfFormatException {
         super();
         try {
             OutputStream out = null;
@@ -71,6 +76,30 @@ class PdfContents extends PdfStream {
             }
             else
                 out = streamBytes;
+            int rotation = page.getRotation();
+            switch (rotation) {
+                case 90:
+                    out.write(ROTATE90);
+                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.top())));
+                    out.write(' ');
+                    out.write('0');
+                    out.write(ROTATEFINAL);
+                    break;
+                case 180:
+                    out.write(ROTATE180);
+                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.right())));
+                    out.write(' ');
+                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.top())));
+                    out.write(ROTATEFINAL);
+                    break;
+                case 270:
+                    out.write(ROTATE270);
+                    out.write('0');
+                    out.write(' ');
+                    out.write(DocWriter.getISOBytes(ByteBuffer.formatDouble(page.right())));
+                    out.write(ROTATEFINAL);
+                    break;
+            }
             if (under.size() > 0) {
                 out.write(SAVESTATE);
                 under.getInternalBuffer().writeTo(out);

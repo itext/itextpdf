@@ -137,7 +137,7 @@ public class PdfPRow {
         // the backgroundcolor is set
         Color background = cell.backgroundColor();
         if (background != null) {
-            backgr.setRGBColorFill(background.getRed(), background.getGreen(), background.getBlue());
+            backgr.setColorFill(background);
             backgr.rectangle(x1, y1, x2 - x1, y2 - y1);
             backgr.fill();
         }
@@ -157,7 +157,7 @@ public class PdfPRow {
             // the color is set to the color of the element
             Color color = cell.borderColor();
             if (color != null) {
-                lines.setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+                lines.setColorStroke(color);
             }
 
             // if the box is a rectangle, it is added as a rectangle

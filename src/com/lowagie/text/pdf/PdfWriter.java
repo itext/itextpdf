@@ -459,6 +459,9 @@ public class PdfWriter extends DocWriter {
     
 /** The font number counter for the fonts in the document. */
     protected int fontNumber = 1;
+
+/** The color number counter for the colors in the document. */
+    protected int colorNumber = 1;
     
 /** The direct content in this document. */
     protected PdfContentByte directContent;
@@ -468,6 +471,9 @@ public class PdfWriter extends DocWriter {
     
 /** The fonts of this document */
     protected HashMap documentFonts = new HashMap();
+    
+/** The colors of this document */
+    protected HashMap documentColors = new HashMap();
     
     // membervariables
     
@@ -690,6 +696,12 @@ public class PdfWriter extends DocWriter {
                     currentPdfReaderInstance.writeAllPages();
                 }
                 
+                // add the color
+                for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
+                    ColorDetails color = (ColorDetails)it.next();
+                    PdfIndirectObject cobj = body.add(color.getSpotColor(), color.getIndirectReference());
+                    cobj.writeTo(os);
+                }
                 // add the root to the body
                 PdfIndirectObject rootObject = body.add(root);
                 rootObject.writeTo(os);
@@ -881,6 +893,38 @@ public class PdfWriter extends DocWriter {
         return ret;
     }
     
+    /**
+     * Adds a <CODE>SpotColor</CODE> to the document and to the page resources.
+     * @param spc the <CODE>PdfSpotColor</CODE> to add
+     * @return the name of the spotcolor in the document
+     */
+    
+    ColorDetails add(PdfSpotColor spc) {
+        ColorDetails ret = (ColorDetails)addSimple(spc);
+        pdf.addColor(ret.getColorName(), ret.getIndirectReference());
+        return ret;
+    }
+    
+    /**
+     * Adds a <CODE>SpotColor</CODE> to the document but not to the page resources.
+     * @param spc the <CODE>SpotColor</CODE> to add
+     * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
+     * and position 1 is an <CODE>PdfIndirectReference</CODE>
+     */
+    
+    ColorDetails addSimple(PdfSpotColor spc) {
+        ColorDetails ret = (ColorDetails)documentColors.get(spc);
+        if (ret == null) {
+            try {
+                ret = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), spc);
+            }
+            catch (BadPdfFormatException e) {
+            }
+            documentColors.put(spc, ret);
+        }
+        return ret;
+    }
+
 /**
  * Gets the <CODE>PdfDocument</CODE> associated with this writer.
  * @return the <CODE>PdfDocument</CODE>

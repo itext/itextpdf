@@ -40,10 +40,10 @@ import com.lowagie.text.DocumentException;
 
 public class MetaFont extends MetaObject {
     static final String fontNames[] = {
-        BaseFont.COURIER, BaseFont.COURIER_BOLD, BaseFont.COURIER_OBLIQUE, BaseFont.COURIER_BOLDOBLIQUE,
-        BaseFont.HELVETICA, BaseFont.HELVETICA_BOLD, BaseFont.HELVETICA_OBLIQUE, BaseFont.HELVETICA_BOLDOBLIQUE,
-        BaseFont.TIMES_ROMAN, BaseFont.TIMES_BOLD, BaseFont.TIMES_ITALIC, BaseFont.TIMES_BOLDITALIC,
-        BaseFont.SYMBOL, BaseFont.ZAPFDINGBATS};
+        "Courier", "Courier-Bold", "Courier-Oblique", "Courier-BoldOblique",
+        "Helvetica", "Helvetica-Bold", "Helvetica-Oblique", "Helvetica-BoldOblique",
+        "Times-Roman", "Times-Bold", "Times-Italic", "Times-BoldItalic",
+        "Symbol", "ZapfDingbats"};
 
     static final int MARKER_BOLD = 1;
     static final int MARKER_ITALIC = 2;

@@ -131,11 +131,11 @@ public class MetaState {
                 style = currentBrush.getStyle();
                 if (style == MetaBrush.BS_SOLID) {
                     Color color = currentBrush.getColor();
-                    cb.setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+                    cb.setColorFill(color);
                 }
                 else if (style == MetaBrush.BS_HATCHED) {
                     Color color = currentBackgroundColor;
-                    cb.setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+                    cb.setColorFill(color);
                 }
                 break;
             case MetaObject.META_PEN:
@@ -144,7 +144,7 @@ public class MetaState {
                 style = currentPen.getStyle();
                 if (style != MetaPen.PS_NULL) {
                     Color color = currentPen.getColor();
-                    cb.setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
+                    cb.setColorStroke(color);
                     cb.setLineWidth(Math.abs((float)currentPen.getPenWidth() * scalingX / extentWx));
                     switch (style) {
                         case MetaPen.PS_DASH:

@@ -10,9 +10,9 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import com.lowagie.text.DocumentException;
-/**
+/** Enumerates all the fonts inside a True Type Collection.
  *
- * @author  Administrator
+ * @author  Paulo Soares (psoares@consiste.pt)
  */
 class EnumerateTTC extends TrueTypeFont{
 

@@ -44,7 +44,7 @@ import java.io.IOException;
 
 public class PdfTemplate extends PdfContentByte {
     
-/** The indirect reference to thsi template */
+/** The indirect reference to this template */
     protected PdfIndirectReference thisReference;
     
 /** The fonts used by this template */
@@ -52,7 +52,8 @@ public class PdfTemplate extends PdfContentByte {
     
 /** The images and other templates used by this template */
     protected PdfXObjectDictionary xObjectDictionary;
-    
+
+    protected PdfColorDictionary colorDictionary;    
 /** The bounding box of this template */
     protected Rectangle bBox = new Rectangle(0, 0);
     
@@ -74,6 +75,7 @@ public class PdfTemplate extends PdfContentByte {
         super(wr);
         fontDictionary = new PdfFontDictionary();
         xObjectDictionary = new PdfXObjectDictionary();
+        colorDictionary = new PdfColorDictionary();
         thisReference = writer.getPdfIndirectReference();
     }
     
@@ -207,6 +209,18 @@ public class PdfTemplate extends PdfContentByte {
             throw new DocumentException(ee.getMessage());
         }
     }
+
+    public void setColorFill(PdfSpotColor sp, float tint) {
+        state.colorDetails = writer.addSimple(sp);
+        colorDictionary.put(state.colorDetails.getColorName(), state.colorDetails.getIndirectReference());
+        content.append(state.colorDetails.getColorName().toPdf(null)).append(" cs ").append(tint).append(" scn\n");
+    }
+    
+    public void setColorStroke(PdfSpotColor sp, float tint) {
+        state.colorDetails = writer.addSimple(sp);
+        colorDictionary.put(state.colorDetails.getColorName(), state.colorDetails.getIndirectReference());
+        content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN\n");
+    }
     
 /**
  * Constructs the resources used by this template.
@@ -225,6 +239,8 @@ public class PdfTemplate extends PdfContentByte {
             resources.add(xObjectDictionary);
             procset |= PdfProcSet.IMAGEC;
         }
+        if (colorDictionary.containsColorSpace())
+            resources.add(colorDictionary);
         resources.add(new PdfProcSet(procset));
         return resources;
     }

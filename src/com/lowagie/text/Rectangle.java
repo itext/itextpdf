@@ -101,6 +101,8 @@ public class Rectangle implements Element {
 /** This is the grayscale value of the background of this rectangle. */
     protected float grayFill = 0;
     
+    protected int rotation = 0;
+    
     // constructors
     
 /**
@@ -138,6 +140,11 @@ public class Rectangle implements Element {
     
     public Rectangle(Rectangle rect) {
         this(rect.left(), rect.bottom(), rect.right(), rect.top());
+        this.llx = rect.llx;
+        this.lly = rect.lly;
+        this.urx = rect.urx;
+        this.ury = rect.ury;
+        this.rotation = rect.rotation;
     }
     
     // implementation of the Element interface
@@ -214,7 +221,10 @@ public class Rectangle implements Element {
  */
     
     public Rectangle rotate() {
-        return new Rectangle(lly, llx, ury, urx);
+        Rectangle rect = new Rectangle(lly, llx, ury, urx);
+        rect.rotation += 90;
+        rect.rotation %= 360;
+        return rect;
     }
     
     // methods to set the membervariables
@@ -486,5 +496,9 @@ public class Rectangle implements Element {
     
     public final float grayFill() {
         return grayFill;
+    }
+    
+    public final int getRotation() {
+        return rotation;
     }
 }
