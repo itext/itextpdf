@@ -16,7 +16,7 @@ class PdfReaderInstance {
     int myXref[]; 
     PdfReader reader;
     RandomAccessFileOrArray file;
-    HashMap importedPages = new HashMap();;
+    HashMap importedPages = new HashMap();
     PdfWriter writer;
     HashMap visited = new HashMap();
     ArrayList nextRound = new ArrayList();
