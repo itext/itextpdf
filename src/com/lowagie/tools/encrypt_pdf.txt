@@ -1,0 +1,26 @@
+PDF document encryptor
+
+usage: input_file output_file user_password owner_password permissions 128|40
+
+permissions is 8 digit long 0 or 1. Each digit has a particular security function:
+
+AllowPrinting
+AllowModifyContents
+AllowCopy
+AllowModifyAnnotations
+AllowFillIn (128 bit only)
+AllowScreenReaders (128 bit only)
+AllowAssembly (128 bit only)
+AllowDegradedPrinting (128 bit only)
+
+Example permissions to copy and print would be: 10100000
+
+You'll need iText to run it (http://www.lowagie.com/iText).
+
+Command line example:
+
+java -cp .;itext.jar encrypt_pdf input.pdf output.pdf "" master 10100000 128
+
+
+Author: Paulo Soares (psoares@consiste.pt)
+
