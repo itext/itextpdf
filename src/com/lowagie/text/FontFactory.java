@@ -109,7 +109,24 @@ public class FontFactory extends java.lang.Object {
     public static final String ZAPFDINGBATS = "ZapfDingbats";
     
 /** This is a map of postscriptfontnames of True Type fonts and the path of their ttf- or ttc-file. */
-    private static Properties trueTypeFonts;
+    private static Properties trueTypeFonts = new Properties();
+    
+    static {
+        trueTypeFonts.setProperty(COURIER, "");
+        trueTypeFonts.setProperty(COURIER_BOLD, "");
+        trueTypeFonts.setProperty(COURIER_OBLIQUE, "");
+        trueTypeFonts.setProperty(COURIER_BOLDOBLIQUE, "");
+        trueTypeFonts.setProperty(HELVETICA, "");
+        trueTypeFonts.setProperty(HELVETICA_BOLD, "");
+        trueTypeFonts.setProperty(HELVETICA_OBLIQUE, "");
+        trueTypeFonts.setProperty(HELVETICA_BOLDOBLIQUE, "");
+        trueTypeFonts.setProperty(SYMBOL, "");
+        trueTypeFonts.setProperty(TIMES_ROMAN, "");
+        trueTypeFonts.setProperty(TIMES_BOLD, "");
+        trueTypeFonts.setProperty(TIMES_ITALIC, "");
+        trueTypeFonts.setProperty(TIMES_BOLDITALIC, "");
+        trueTypeFonts.setProperty(ZAPFDINGBATS, "");
+    }
     
 /** Creates new FontFactory */
     private FontFactory() {
@@ -290,22 +307,84 @@ public class FontFactory extends java.lang.Object {
     }
     
 /**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
+ * @param	fontname    the name of the font
+ * @param	size	    the size of this font
+ * @param	style	    the style of this font
+ * @param	color	    the <CODE>Color</CODE> of this font.
+ */
+    
+    public static Font getFont(String fontname, float size, int style, Color color) {
+        return getFont(fontname, BaseFont.WINANSI, false, size, style, color);
+    }
+    
+/**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
+ * @param	fontname    the name of the font
+ * @param	size	    the size of this font
+ * @param	style	    the style of this font
+ */
+    
+    public static Font getFont(String fontname, float size, int style) {
+        return getFont(fontname, BaseFont.WINANSI, false, size, style, null);
+    }
+    
+/**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
+ * @param	fontname    the name of the font
+ * @param	size	    the size of this font
+ */
+    
+    public static Font getFont(String fontname, float size) {
+        return getFont(fontname, BaseFont.WINANSI, false, size, Font.UNDEFINED, null);
+    }
+    
+/**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
+ * @param	fontname    the name of the font
+ */
+    
+    public static Font getFont(String fontname) {
+        return getFont(fontname, BaseFont.WINANSI, false, Font.UNDEFINED, Font.UNDEFINED, null);
+    }
+    
+/**
  * Register a ttf- or a ttc-file.
  *
  * @param   path    the path to a ttf- or ttc-file
  */
     
     public static void register(String path) {
-        if (trueTypeFonts == null) trueTypeFonts = new Properties();
+        register(path, null);
+    }
+    
+/**
+ * Register a ttf- or a ttc-file and use an alias for the font contained in the ttf-file.
+ *
+ * @param   path    the path to a ttf- or ttc-file
+ * @param   alias   the alias you want to use for the font
+ */
+    
+    public static void register(String path, String alias) {
         try {
             if (path.toLowerCase().endsWith(".ttf")) {
                 BaseFont bf = BaseFont.createFont(path, BaseFont.WINANSI, false, false, null, null);
                 trueTypeFonts.setProperty(bf.getPostscriptFontName(), path);
+                if (alias != null) {
+                    trueTypeFonts.setProperty(alias, path);
+                }
             }
             else if (path.toLowerCase().endsWith(".ttc")) {
                 String[] names = BaseFont.enumerateTTCNames(path);
                 for (int i = 0; i < names.length; i++) {
                     trueTypeFonts.setProperty(names[i], path + "," + (i + 1));                
+                }
+                if (alias != null) {
+                    System.err.println("class FontFactory: You can't define an alias for a true type collection.");
                 }
             }
         }
