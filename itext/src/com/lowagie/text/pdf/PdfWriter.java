@@ -947,7 +947,8 @@ public class PdfWriter extends DocWriter {
         return pdf.getPageNumber();
     }
     
-/** Sets the viewer preferences as the sum of several constants:<br>
+/**
+ * Sets the viewer preferences by ORing some of these constants:<br>
  * <ul>
  * <li>The page layout to be used when the document is opened (choose one).
  *   <ul>
@@ -1028,8 +1029,8 @@ public class PdfWriter extends DocWriter {
      * @param permissions the user permissions
      * @throws DocumentException if the document is already open
      */    
-    public void setEncryption(boolean strength128Bits, String userPassword, String ownerPassword, int permissions) throws DocumentException {
-        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength128Bits);
+    public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength);
     }
 
     PdfIndirectObject addToBody(PdfObject object) throws IOException {
