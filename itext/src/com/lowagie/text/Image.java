@@ -222,7 +222,7 @@ public abstract class Image extends Rectangle implements Element {
 	 */
 
 	public static Image getInstance(String filename) throws BadElementException, MalformedURLException, IOException {
-		return getInstance(new File(filename).toURL());
+		return getInstance(toURL(filename));
 	}
 
 	/**
@@ -620,6 +620,33 @@ public abstract class Image extends Rectangle implements Element {
 		while (size > 0) {
 			size -= is.skip(size);
 		}
+	}
+
+	/**
+	 * This method makes a valid URL from a given filename.
+	 * <P>
+	 * This method makes the conversion of this library from the JAVA 2 platform
+	 * to a JDK1.1.x-version easier.
+	 *
+	 * @param        filename        a given filename
+	 * @return        a valid URL
+	 *
+	 * @author                Paulo Soares
+	 */
+
+	public static URL toURL(String filename) throws MalformedURLException {
+		File f = new File(filename);
+		String path = f.getAbsolutePath();
+		if (File.separatorChar != '/') {
+			path = path.replace(File.separatorChar, '/');
+		}
+		if (!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		if (!path.endsWith("/") && f.isDirectory()) {
+			path = path + "/";
+		}
+		return new URL("file", "", path);
 	}
 
 	/**
