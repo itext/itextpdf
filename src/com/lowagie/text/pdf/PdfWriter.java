@@ -42,6 +42,7 @@ import java.util.Iterator;
 import com.lowagie.text.Document;
 import com.lowagie.text.Table;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
 
 /**
@@ -392,6 +393,29 @@ public class PdfWriter extends DocWriter {
 	public static PdfWriter getInstance(Document document, OutputStream os)
 		throws DocumentException {
 		PdfDocument pdf = new PdfDocument();
+		document.addDocListener(pdf);
+		PdfWriter writer = new PdfWriter(pdf, os);
+		pdf.addWriter(writer);
+		return writer;
+	}
+
+	/**
+	 * Gets an instance of the <CODE>PdfWriter</CODE>.
+	 *
+	 * @param	document	The <CODE>Document</CODE> that has to be written
+	 * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
+	 * @param	listener	A <CODE>DocListener</CODE> to pass to the PdfDocument.
+	 * @return	a new <CODE>PdfWriter</CODE>
+	 *
+	 * @throws	DocumentException
+	 *
+	 * @author	David Freels
+	 */
+
+	public static PdfWriter getInstance(Document document, OutputStream os, DocListener listener)
+		throws DocumentException {
+		PdfDocument pdf = new PdfDocument();
+		pdf.addDocListener(listener);
 		document.addDocListener(pdf);
 		PdfWriter writer = new PdfWriter(pdf, os);
 		pdf.addWriter(writer);
