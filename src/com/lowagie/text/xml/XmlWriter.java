@@ -654,7 +654,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 return;
             }
             case Element.IMGRAW:
-            case Element.PNG:
+            case Element.JPEG:
             case Element.IMGTEMPLATE:
             {
                 Image image = (Image) element;
