@@ -53,7 +53,6 @@ import java.io.UnsupportedEncodingException;
 import java.io.OutputStream;
 import java.io.IOException;
 import com.lowagie.text.DocWriter;
-import tuning.stringconvert.AppenderHelper;
 
 /**
 * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
@@ -69,13 +68,9 @@ public class ByteBuffer
     /** The buffer where the bytes are stored. */
     protected byte buf[];
 
-    private static final int longCacheSize = 100000;
-    private static byte[][] longCache = new byte[longCacheSize][];
-    public static long cacheGet = 0;
-    public static long cacheSet = 0;
-    public static long biggerThan = 0;
-    public static long lowerThan = 0;
-    public static long notCached = 0;
+    private static final int LONG_CACHE_SIZE = 100010;
+    private static final int MAX_STRINGITERATOR = 10;
+    private static byte[][] longCache = new byte[LONG_CACHE_SIZE][];
     public static byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private static final byte[] bytes = new byte[] {(byte)'0', (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'7', (byte)'8', (byte)'9'};
@@ -159,7 +154,7 @@ public class ByteBuffer
     {
         if (str != null) {
             int length = str.length();
-            if (length < 5) {
+            if (length < MAX_STRINGITERATOR) {
                 for (int i = 0; i < length; i++) {
                     char c = str.charAt(i);
                     if (c < 128) {
@@ -170,7 +165,6 @@ public class ByteBuffer
                 }
                 return this;
             } else {
-                System.out.println("append:"+str+"---");
                 return append(DocWriter.getISOBytes(str));
             }
         } else {
@@ -235,7 +229,8 @@ public class ByteBuffer
      */
     public ByteBuffer append(double d)
     {
-        return append(formatDouble(d, this));
+        append(formatDouble(d, this));
+        return this;
     }
 
     /**
@@ -260,6 +255,7 @@ public class ByteBuffer
         if (Math.abs(d) < 0.000015) {
             if (buf != null) {
                 buf.append((byte)ZERO);
+                return null;
             } else {
                 return "0";
             }
@@ -308,7 +304,6 @@ public class ByteBuffer
                         }
                     }
                 }
-                lowerThan++;
                 return null;
             } else {
                 int x = 100000;
@@ -328,7 +323,6 @@ public class ByteBuffer
                     --cut;
                 }
                 res.setLength(cut + 1);
-                lowerThan++;
                 return res.toString();
             }
         } else if (d <= 32767) {
@@ -336,8 +330,7 @@ public class ByteBuffer
             int v = (int) (d * 100);
 
 
-            if (v < longCacheSize && longCache[v] != null) {
-                cacheGet++;
+            if (v < LONG_CACHE_SIZE && longCache[v] != null) {
                 if (buf != null) {
                     buf.append(longCache[v]);
                     return null;
@@ -346,26 +339,35 @@ public class ByteBuffer
                 }
             }
             if (buf != null) {
-                if (v < longCacheSize) {
+                if (v < LONG_CACHE_SIZE) {
                     //create the cachebyte[]
-                    cacheSet++;
                     byte[] cache;
                     int size = 0;
                     int n = negative ? 1 : 0;
-                    if (v % 10 != 0) {
-                        size += 8;
-                    } else if (v % 100 != 0) {
-                        size += 7;
-                    } else if (v >= 1000000) {
+                    if (v >= 1000000) {
+                        //the original number is >=10000, we need 5 more bytes
                         size += 5;
                     } else if (v >= 100000) {
+                        //the original number is >=1000, we need 4 more bytes
                         size += 4;
                     } else if (v >= 10000) {
+                        //the original number is >=100, we need 3 more bytes
                         size += 3;
                     } else if (v >= 1000) {
+                        //the original number is >=10, we need 2 more bytes
                         size += 2;
                     } else if (v >= 100) {
+                        //the original number is >=1, we need 1 more bytes
                         size += 1;
+                    }
+
+                    //now we must check if we have a decimal number
+                    if (v % 100 != 0) {
+                        //yes, do not forget the "."
+                        size += 2;
+                    }
+                    if (v % 10 != 0) {
+                        size++;
                     }
                     if (negative) {
                         size++;
@@ -374,7 +376,6 @@ public class ByteBuffer
                     int add = n;
                     if (v >= 1000000) {
                         cache[add++] = bytes[(v / 1000000)];
-                        ;
                     }
                     if (v >= 100000) {
                         cache[add++] = bytes[(v / 100000) % 10];
@@ -455,7 +456,6 @@ public class ByteBuffer
         } else {
             StringBuffer res = new StringBuffer();
             if (negative) res.append('-');
-            biggerThan++;
             d += 0.5;
             long v = (long) d;
             return res.append(v).toString();
