@@ -169,8 +169,13 @@ class PdfReaderInstance {
         dic.put(PdfName.RESOURCES, reader.getPdfObject(page.get(PdfName.RESOURCES)));
         dic.put(PdfName.TYPE, PdfName.XOBJECT);
         dic.put(PdfName.SUBTYPE, PdfName.FORM);
-        dic.put(PdfName.BBOX, new PdfRectangle(((PdfImportedPage)importedPages.get(new Integer(pageNumber))).getBoundingBox()));
-        dic.put(PdfName.MATRIX, IDENTITYMATRIX);
+        PdfImportedPage impPage = (PdfImportedPage)importedPages.get(new Integer(pageNumber));
+        dic.put(PdfName.BBOX, new PdfRectangle(impPage.getBoundingBox()));
+        PdfArray matrix = impPage.getMatrix();
+        if (matrix == null)
+            dic.put(PdfName.MATRIX, IDENTITYMATRIX);
+        else
+            dic.put(PdfName.MATRIX, matrix);
         dic.put(PdfName.FORMTYPE, ONE);
         PRStream stream;
         if (bout == null) {
