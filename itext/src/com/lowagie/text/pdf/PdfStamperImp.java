@@ -120,7 +120,6 @@ class PdfStamperImp extends PdfWriter {
         PdfObject fileID = null;
         if (crypto != null) {
             PdfIndirectObject encryptionObject = body.add(crypto.getEncryptionDictionary());
-            encryptionObject.writeTo(os);
             encryption = encryptionObject.getIndirectReference();
             fileID = crypto.getFileID();
         }
