@@ -8,3 +8,4 @@ DvdCover: com.lowagie.tools.plugins.DvdCover
 Encrypt: com.lowagie.tools.plugins.Encrypt
 Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
 Tiff2Pdf: com.lowagie.tools.plugins.Tiff2Pdf
+Handouts: com.lowagie.tools.plugins.Handouts
