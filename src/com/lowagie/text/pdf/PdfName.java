@@ -830,7 +830,6 @@ public class PdfName extends PdfObject implements Comparable{
      * Constructs a <CODE>PdfName</CODE>-object.
      *
      * @param		name		the new Name.
-     * @exception	BadPdfFormatException	gets thrown	when the name is too long or an illegal character is used.
      */
     
     PdfName(String name) {
