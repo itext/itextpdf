@@ -1,1352 +1,1386 @@
+/*
+ * $Id$
+ * $Name$
+ *
+ * Data: Copyright 1985-... Adobe Systems Incorporated.  All Rights Reserved.
+ * Java: Copyright 2001 Paulo Soares
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Library General Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or any
+ * later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Library General Public License along
+ * with this library; if not, write to the Free Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * If you didn't download this code from the following link, you should check if
+ * you aren't using an obsolete version:
+ * http://www.lowagie.com/iText/
+ *
+ * ir-arch Bruno Lowagie,
+ * Adolf Baeyensstraat 121
+ * 9040 Sint-Amandsberg
+ * BELGIUM
+ * tel. +32 (0)9 228.10.97
+ * bruno@lowagie.com
+ *
+ */
+
 package com.lowagie.text.pdf.afm;
 
 public class HelveticaBoldOblique2
 {
     public static String afm =
-"KPX Tcaron Acircumflex -90\n"+
-"KPX Tcaron Adieresis -90\n"+
-"KPX Tcaron Agrave -90\n"+
-"KPX Tcaron Amacron -90\n"+
-"KPX Tcaron Aogonek -90\n"+
-"KPX Tcaron Aring -90\n"+
-"KPX Tcaron Atilde -90\n"+
-"KPX Tcaron O -40\n"+
-"KPX Tcaron Oacute -40\n"+
-"KPX Tcaron Ocircumflex -40\n"+
-"KPX Tcaron Odieresis -40\n"+
-"KPX Tcaron Ograve -40\n"+
-"KPX Tcaron Ohungarumlaut -40\n"+
-"KPX Tcaron Omacron -40\n"+
-"KPX Tcaron Oslash -40\n"+
-"KPX Tcaron Otilde -40\n"+
-"KPX Tcaron a -80\n"+
-"KPX Tcaron aacute -80\n"+
-"KPX Tcaron abreve -80\n"+
-"KPX Tcaron acircumflex -80\n"+
-"KPX Tcaron adieresis -80\n"+
-"KPX Tcaron agrave -80\n"+
-"KPX Tcaron amacron -80\n"+
-"KPX Tcaron aogonek -80\n"+
-"KPX Tcaron aring -80\n"+
-"KPX Tcaron atilde -80\n"+
-"KPX Tcaron colon -40\n"+
-"KPX Tcaron comma -80\n"+
-"KPX Tcaron e -60\n"+
-"KPX Tcaron eacute -60\n"+
-"KPX Tcaron ecaron -60\n"+
-"KPX Tcaron ecircumflex -60\n"+
-"KPX Tcaron edieresis -60\n"+
-"KPX Tcaron edotaccent -60\n"+
-"KPX Tcaron egrave -60\n"+
-"KPX Tcaron emacron -60\n"+
-"KPX Tcaron eogonek -60\n"+
-"KPX Tcaron hyphen -120\n"+
-"KPX Tcaron o -80\n"+
-"KPX Tcaron oacute -80\n"+
-"KPX Tcaron ocircumflex -80\n"+
-"KPX Tcaron odieresis -80\n"+
-"KPX Tcaron ograve -80\n"+
-"KPX Tcaron ohungarumlaut -80\n"+
-"KPX Tcaron omacron -80\n"+
-"KPX Tcaron oslash -80\n"+
-"KPX Tcaron otilde -80\n"+
-"KPX Tcaron period -80\n"+
-"KPX Tcaron r -80\n"+
-"KPX Tcaron racute -80\n"+
-"KPX Tcaron rcommaaccent -80\n"+
-"KPX Tcaron semicolon -40\n"+
-"KPX Tcaron u -90\n"+
-"KPX Tcaron uacute -90\n"+
-"KPX Tcaron ucircumflex -90\n"+
-"KPX Tcaron udieresis -90\n"+
-"KPX Tcaron ugrave -90\n"+
-"KPX Tcaron uhungarumlaut -90\n"+
-"KPX Tcaron umacron -90\n"+
-"KPX Tcaron uogonek -90\n"+
-"KPX Tcaron uring -90\n"+
-"KPX Tcaron w -60\n"+
-"KPX Tcaron y -60\n"+
-"KPX Tcaron yacute -60\n"+
-"KPX Tcaron ydieresis -60\n"+
-"KPX Tcommaaccent A -90\n"+
-"KPX Tcommaaccent Aacute -90\n"+
-"KPX Tcommaaccent Abreve -90\n"+
-"KPX Tcommaaccent Acircumflex -90\n"+
-"KPX Tcommaaccent Adieresis -90\n"+
-"KPX Tcommaaccent Agrave -90\n"+
-"KPX Tcommaaccent Amacron -90\n"+
-"KPX Tcommaaccent Aogonek -90\n"+
-"KPX Tcommaaccent Aring -90\n"+
-"KPX Tcommaaccent Atilde -90\n"+
-"KPX Tcommaaccent O -40\n"+
-"KPX Tcommaaccent Oacute -40\n"+
-"KPX Tcommaaccent Ocircumflex -40\n"+
-"KPX Tcommaaccent Odieresis -40\n"+
-"KPX Tcommaaccent Ograve -40\n"+
-"KPX Tcommaaccent Ohungarumlaut -40\n"+
-"KPX Tcommaaccent Omacron -40\n"+
-"KPX Tcommaaccent Oslash -40\n"+
-"KPX Tcommaaccent Otilde -40\n"+
-"KPX Tcommaaccent a -80\n"+
-"KPX Tcommaaccent aacute -80\n"+
-"KPX Tcommaaccent abreve -80\n"+
-"KPX Tcommaaccent acircumflex -80\n"+
-"KPX Tcommaaccent adieresis -80\n"+
-"KPX Tcommaaccent agrave -80\n"+
-"KPX Tcommaaccent amacron -80\n"+
-"KPX Tcommaaccent aogonek -80\n"+
-"KPX Tcommaaccent aring -80\n"+
-"KPX Tcommaaccent atilde -80\n"+
-"KPX Tcommaaccent colon -40\n"+
-"KPX Tcommaaccent comma -80\n"+
-"KPX Tcommaaccent e -60\n"+
-"KPX Tcommaaccent eacute -60\n"+
-"KPX Tcommaaccent ecaron -60\n"+
-"KPX Tcommaaccent ecircumflex -60\n"+
-"KPX Tcommaaccent edieresis -60\n"+
-"KPX Tcommaaccent edotaccent -60\n"+
-"KPX Tcommaaccent egrave -60\n"+
-"KPX Tcommaaccent emacron -60\n"+
-"KPX Tcommaaccent eogonek -60\n"+
-"KPX Tcommaaccent hyphen -120\n"+
-"KPX Tcommaaccent o -80\n"+
-"KPX Tcommaaccent oacute -80\n"+
-"KPX Tcommaaccent ocircumflex -80\n"+
-"KPX Tcommaaccent odieresis -80\n"+
-"KPX Tcommaaccent ograve -80\n"+
-"KPX Tcommaaccent ohungarumlaut -80\n"+
-"KPX Tcommaaccent omacron -80\n"+
-"KPX Tcommaaccent oslash -80\n"+
-"KPX Tcommaaccent otilde -80\n"+
-"KPX Tcommaaccent period -80\n"+
-"KPX Tcommaaccent r -80\n"+
-"KPX Tcommaaccent racute -80\n"+
-"KPX Tcommaaccent rcommaaccent -80\n"+
-"KPX Tcommaaccent semicolon -40\n"+
-"KPX Tcommaaccent u -90\n"+
-"KPX Tcommaaccent uacute -90\n"+
-"KPX Tcommaaccent ucircumflex -90\n"+
-"KPX Tcommaaccent udieresis -90\n"+
-"KPX Tcommaaccent ugrave -90\n"+
-"KPX Tcommaaccent uhungarumlaut -90\n"+
-"KPX Tcommaaccent umacron -90\n"+
-"KPX Tcommaaccent uogonek -90\n"+
-"KPX Tcommaaccent uring -90\n"+
-"KPX Tcommaaccent w -60\n"+
-"KPX Tcommaaccent y -60\n"+
-"KPX Tcommaaccent yacute -60\n"+
-"KPX Tcommaaccent ydieresis -60\n"+
-"KPX U A -50\n"+
-"KPX U Aacute -50\n"+
-"KPX U Abreve -50\n"+
-"KPX U Acircumflex -50\n"+
-"KPX U Adieresis -50\n"+
-"KPX U Agrave -50\n"+
-"KPX U Amacron -50\n"+
-"KPX U Aogonek -50\n"+
-"KPX U Aring -50\n"+
-"KPX U Atilde -50\n"+
-"KPX U comma -30\n"+
-"KPX U period -30\n"+
-"KPX Uacute A -50\n"+
-"KPX Uacute Aacute -50\n"+
-"KPX Uacute Abreve -50\n"+
-"KPX Uacute Acircumflex -50\n"+
-"KPX Uacute Adieresis -50\n"+
-"KPX Uacute Agrave -50\n"+
-"KPX Uacute Amacron -50\n"+
-"KPX Uacute Aogonek -50\n"+
-"KPX Uacute Aring -50\n"+
-"KPX Uacute Atilde -50\n"+
-"KPX Uacute comma -30\n"+
-"KPX Uacute period -30\n"+
-"KPX Ucircumflex A -50\n"+
-"KPX Ucircumflex Aacute -50\n"+
-"KPX Ucircumflex Abreve -50\n"+
-"KPX Ucircumflex Acircumflex -50\n"+
-"KPX Ucircumflex Adieresis -50\n"+
-"KPX Ucircumflex Agrave -50\n"+
-"KPX Ucircumflex Amacron -50\n"+
-"KPX Ucircumflex Aogonek -50\n"+
-"KPX Ucircumflex Aring -50\n"+
-"KPX Ucircumflex Atilde -50\n"+
-"KPX Ucircumflex comma -30\n"+
-"KPX Ucircumflex period -30\n"+
-"KPX Udieresis A -50\n"+
-"KPX Udieresis Aacute -50\n"+
-"KPX Udieresis Abreve -50\n"+
-"KPX Udieresis Acircumflex -50\n"+
-"KPX Udieresis Adieresis -50\n"+
-"KPX Udieresis Agrave -50\n"+
-"KPX Udieresis Amacron -50\n"+
-"KPX Udieresis Aogonek -50\n"+
-"KPX Udieresis Aring -50\n"+
-"KPX Udieresis Atilde -50\n"+
-"KPX Udieresis comma -30\n"+
-"KPX Udieresis period -30\n"+
-"KPX Ugrave A -50\n"+
-"KPX Ugrave Aacute -50\n"+
-"KPX Ugrave Abreve -50\n"+
-"KPX Ugrave Acircumflex -50\n"+
-"KPX Ugrave Adieresis -50\n"+
-"KPX Ugrave Agrave -50\n"+
-"KPX Ugrave Amacron -50\n"+
-"KPX Ugrave Aogonek -50\n"+
-"KPX Ugrave Aring -50\n"+
-"KPX Ugrave Atilde -50\n"+
-"KPX Ugrave comma -30\n"+
-"KPX Ugrave period -30\n"+
-"KPX Uhungarumlaut A -50\n"+
-"KPX Uhungarumlaut Aacute -50\n"+
-"KPX Uhungarumlaut Abreve -50\n"+
-"KPX Uhungarumlaut Acircumflex -50\n"+
-"KPX Uhungarumlaut Adieresis -50\n"+
-"KPX Uhungarumlaut Agrave -50\n"+
-"KPX Uhungarumlaut Amacron -50\n"+
-"KPX Uhungarumlaut Aogonek -50\n"+
-"KPX Uhungarumlaut Aring -50\n"+
-"KPX Uhungarumlaut Atilde -50\n"+
-"KPX Uhungarumlaut comma -30\n"+
-"KPX Uhungarumlaut period -30\n"+
-"KPX Umacron A -50\n"+
-"KPX Umacron Aacute -50\n"+
-"KPX Umacron Abreve -50\n"+
-"KPX Umacron Acircumflex -50\n"+
-"KPX Umacron Adieresis -50\n"+
-"KPX Umacron Agrave -50\n"+
-"KPX Umacron Amacron -50\n"+
-"KPX Umacron Aogonek -50\n"+
-"KPX Umacron Aring -50\n"+
-"KPX Umacron Atilde -50\n"+
-"KPX Umacron comma -30\n"+
-"KPX Umacron period -30\n"+
-"KPX Uogonek A -50\n"+
-"KPX Uogonek Aacute -50\n"+
-"KPX Uogonek Abreve -50\n"+
-"KPX Uogonek Acircumflex -50\n"+
-"KPX Uogonek Adieresis -50\n"+
-"KPX Uogonek Agrave -50\n"+
-"KPX Uogonek Amacron -50\n"+
-"KPX Uogonek Aogonek -50\n"+
-"KPX Uogonek Aring -50\n"+
-"KPX Uogonek Atilde -50\n"+
-"KPX Uogonek comma -30\n"+
-"KPX Uogonek period -30\n"+
-"KPX Uring A -50\n"+
-"KPX Uring Aacute -50\n"+
-"KPX Uring Abreve -50\n"+
-"KPX Uring Acircumflex -50\n"+
-"KPX Uring Adieresis -50\n"+
-"KPX Uring Agrave -50\n"+
-"KPX Uring Amacron -50\n"+
-"KPX Uring Aogonek -50\n"+
-"KPX Uring Aring -50\n"+
-"KPX Uring Atilde -50\n"+
-"KPX Uring comma -30\n"+
-"KPX Uring period -30\n"+
-"KPX V A -80\n"+
-"KPX V Aacute -80\n"+
-"KPX V Abreve -80\n"+
-"KPX V Acircumflex -80\n"+
-"KPX V Adieresis -80\n"+
-"KPX V Agrave -80\n"+
-"KPX V Amacron -80\n"+
-"KPX V Aogonek -80\n"+
-"KPX V Aring -80\n"+
-"KPX V Atilde -80\n"+
-"KPX V G -50\n"+
-"KPX V Gbreve -50\n"+
-"KPX V Gcommaaccent -50\n"+
-"KPX V O -50\n"+
-"KPX V Oacute -50\n"+
-"KPX V Ocircumflex -50\n"+
-"KPX V Odieresis -50\n"+
-"KPX V Ograve -50\n"+
-"KPX V Ohungarumlaut -50\n"+
-"KPX V Omacron -50\n"+
-"KPX V Oslash -50\n"+
-"KPX V Otilde -50\n"+
-"KPX V a -60\n"+
-"KPX V aacute -60\n"+
-"KPX V abreve -60\n"+
-"KPX V acircumflex -60\n"+
-"KPX V adieresis -60\n"+
-"KPX V agrave -60\n"+
-"KPX V amacron -60\n"+
-"KPX V aogonek -60\n"+
-"KPX V aring -60\n"+
-"KPX V atilde -60\n"+
-"KPX V colon -40\n"+
-"KPX V comma -120\n"+
-"KPX V e -50\n"+
-"KPX V eacute -50\n"+
-"KPX V ecaron -50\n"+
-"KPX V ecircumflex -50\n"+
-"KPX V edieresis -50\n"+
-"KPX V edotaccent -50\n"+
-"KPX V egrave -50\n"+
-"KPX V emacron -50\n"+
-"KPX V eogonek -50\n"+
-"KPX V hyphen -80\n"+
-"KPX V o -90\n"+
-"KPX V oacute -90\n"+
-"KPX V ocircumflex -90\n"+
-"KPX V odieresis -90\n"+
-"KPX V ograve -90\n"+
-"KPX V ohungarumlaut -90\n"+
-"KPX V omacron -90\n"+
-"KPX V oslash -90\n"+
-"KPX V otilde -90\n"+
-"KPX V period -120\n"+
-"KPX V semicolon -40\n"+
-"KPX V u -60\n"+
-"KPX V uacute -60\n"+
-"KPX V ucircumflex -60\n"+
-"KPX V udieresis -60\n"+
-"KPX V ugrave -60\n"+
-"KPX V uhungarumlaut -60\n"+
-"KPX V umacron -60\n"+
-"KPX V uogonek -60\n"+
-"KPX V uring -60\n"+
-"KPX W A -60\n"+
-"KPX W Aacute -60\n"+
-"KPX W Abreve -60\n"+
-"KPX W Acircumflex -60\n"+
-"KPX W Adieresis -60\n"+
-"KPX W Agrave -60\n"+
-"KPX W Amacron -60\n"+
-"KPX W Aogonek -60\n"+
-"KPX W Aring -60\n"+
-"KPX W Atilde -60\n"+
-"KPX W O -20\n"+
-"KPX W Oacute -20\n"+
-"KPX W Ocircumflex -20\n"+
-"KPX W Odieresis -20\n"+
-"KPX W Ograve -20\n"+
-"KPX W Ohungarumlaut -20\n"+
-"KPX W Omacron -20\n"+
-"KPX W Oslash -20\n"+
-"KPX W Otilde -20\n"+
-"KPX W a -40\n"+
-"KPX W aacute -40\n"+
-"KPX W abreve -40\n"+
-"KPX W acircumflex -40\n"+
-"KPX W adieresis -40\n"+
-"KPX W agrave -40\n"+
-"KPX W amacron -40\n"+
-"KPX W aogonek -40\n"+
-"KPX W aring -40\n"+
-"KPX W atilde -40\n"+
-"KPX W colon -10\n"+
-"KPX W comma -80\n"+
-"KPX W e -35\n"+
-"KPX W eacute -35\n"+
-"KPX W ecaron -35\n"+
-"KPX W ecircumflex -35\n"+
-"KPX W edieresis -35\n"+
-"KPX W edotaccent -35\n"+
-"KPX W egrave -35\n"+
-"KPX W emacron -35\n"+
-"KPX W eogonek -35\n"+
-"KPX W hyphen -40\n"+
-"KPX W o -60\n"+
-"KPX W oacute -60\n"+
-"KPX W ocircumflex -60\n"+
-"KPX W odieresis -60\n"+
-"KPX W ograve -60\n"+
-"KPX W ohungarumlaut -60\n"+
-"KPX W omacron -60\n"+
-"KPX W oslash -60\n"+
-"KPX W otilde -60\n"+
-"KPX W period -80\n"+
-"KPX W semicolon -10\n"+
-"KPX W u -45\n"+
-"KPX W uacute -45\n"+
-"KPX W ucircumflex -45\n"+
-"KPX W udieresis -45\n"+
-"KPX W ugrave -45\n"+
-"KPX W uhungarumlaut -45\n"+
-"KPX W umacron -45\n"+
-"KPX W uogonek -45\n"+
-"KPX W uring -45\n"+
-"KPX W y -20\n"+
-"KPX W yacute -20\n"+
-"KPX W ydieresis -20\n"+
-"KPX Y A -110\n"+
-"KPX Y Aacute -110\n"+
-"KPX Y Abreve -110\n"+
-"KPX Y Acircumflex -110\n"+
-"KPX Y Adieresis -110\n"+
-"KPX Y Agrave -110\n"+
-"KPX Y Amacron -110\n"+
-"KPX Y Aogonek -110\n"+
-"KPX Y Aring -110\n"+
-"KPX Y Atilde -110\n"+
-"KPX Y O -70\n"+
-"KPX Y Oacute -70\n"+
-"KPX Y Ocircumflex -70\n"+
-"KPX Y Odieresis -70\n"+
-"KPX Y Ograve -70\n"+
-"KPX Y Ohungarumlaut -70\n"+
-"KPX Y Omacron -70\n"+
-"KPX Y Oslash -70\n"+
-"KPX Y Otilde -70\n"+
-"KPX Y a -90\n"+
-"KPX Y aacute -90\n"+
-"KPX Y abreve -90\n"+
-"KPX Y acircumflex -90\n"+
-"KPX Y adieresis -90\n"+
-"KPX Y agrave -90\n"+
-"KPX Y amacron -90\n"+
-"KPX Y aogonek -90\n"+
-"KPX Y aring -90\n"+
-"KPX Y atilde -90\n"+
-"KPX Y colon -50\n"+
-"KPX Y comma -100\n"+
-"KPX Y e -80\n"+
-"KPX Y eacute -80\n"+
-"KPX Y ecaron -80\n"+
-"KPX Y ecircumflex -80\n"+
-"KPX Y edieresis -80\n"+
-"KPX Y edotaccent -80\n"+
-"KPX Y egrave -80\n"+
-"KPX Y emacron -80\n"+
-"KPX Y eogonek -80\n"+
-"KPX Y o -100\n"+
-"KPX Y oacute -100\n"+
-"KPX Y ocircumflex -100\n"+
-"KPX Y odieresis -100\n"+
-"KPX Y ograve -100\n"+
-"KPX Y ohungarumlaut -100\n"+
-"KPX Y omacron -100\n"+
-"KPX Y oslash -100\n"+
-"KPX Y otilde -100\n"+
-"KPX Y period -100\n"+
-"KPX Y semicolon -50\n"+
-"KPX Y u -100\n"+
-"KPX Y uacute -100\n"+
-"KPX Y ucircumflex -100\n"+
-"KPX Y udieresis -100\n"+
-"KPX Y ugrave -100\n"+
-"KPX Y uhungarumlaut -100\n"+
-"KPX Y umacron -100\n"+
-"KPX Y uogonek -100\n"+
-"KPX Y uring -100\n"+
-"KPX Yacute A -110\n"+
-"KPX Yacute Aacute -110\n"+
-"KPX Yacute Abreve -110\n"+
-"KPX Yacute Acircumflex -110\n"+
-"KPX Yacute Adieresis -110\n"+
-"KPX Yacute Agrave -110\n"+
-"KPX Yacute Amacron -110\n"+
-"KPX Yacute Aogonek -110\n"+
-"KPX Yacute Aring -110\n"+
-"KPX Yacute Atilde -110\n"+
-"KPX Yacute O -70\n"+
-"KPX Yacute Oacute -70\n"+
-"KPX Yacute Ocircumflex -70\n"+
-"KPX Yacute Odieresis -70\n"+
-"KPX Yacute Ograve -70\n"+
-"KPX Yacute Ohungarumlaut -70\n"+
-"KPX Yacute Omacron -70\n"+
-"KPX Yacute Oslash -70\n"+
-"KPX Yacute Otilde -70\n"+
-"KPX Yacute a -90\n"+
-"KPX Yacute aacute -90\n"+
-"KPX Yacute abreve -90\n"+
-"KPX Yacute acircumflex -90\n"+
-"KPX Yacute adieresis -90\n"+
-"KPX Yacute agrave -90\n"+
-"KPX Yacute amacron -90\n"+
-"KPX Yacute aogonek -90\n"+
-"KPX Yacute aring -90\n"+
-"KPX Yacute atilde -90\n"+
-"KPX Yacute colon -50\n"+
-"KPX Yacute comma -100\n"+
-"KPX Yacute e -80\n"+
-"KPX Yacute eacute -80\n"+
-"KPX Yacute ecaron -80\n"+
-"KPX Yacute ecircumflex -80\n"+
-"KPX Yacute edieresis -80\n"+
-"KPX Yacute edotaccent -80\n"+
-"KPX Yacute egrave -80\n"+
-"KPX Yacute emacron -80\n"+
-"KPX Yacute eogonek -80\n"+
-"KPX Yacute o -100\n"+
-"KPX Yacute oacute -100\n"+
-"KPX Yacute ocircumflex -100\n"+
-"KPX Yacute odieresis -100\n"+
-"KPX Yacute ograve -100\n"+
-"KPX Yacute ohungarumlaut -100\n"+
-"KPX Yacute omacron -100\n"+
-"KPX Yacute oslash -100\n"+
-"KPX Yacute otilde -100\n"+
-"KPX Yacute period -100\n"+
-"KPX Yacute semicolon -50\n"+
-"KPX Yacute u -100\n"+
-"KPX Yacute uacute -100\n"+
-"KPX Yacute ucircumflex -100\n"+
-"KPX Yacute udieresis -100\n"+
-"KPX Yacute ugrave -100\n"+
-"KPX Yacute uhungarumlaut -100\n"+
-"KPX Yacute umacron -100\n"+
-"KPX Yacute uogonek -100\n"+
-"KPX Yacute uring -100\n"+
-"KPX Ydieresis A -110\n"+
-"KPX Ydieresis Aacute -110\n"+
-"KPX Ydieresis Abreve -110\n"+
-"KPX Ydieresis Acircumflex -110\n"+
-"KPX Ydieresis Adieresis -110\n"+
-"KPX Ydieresis Agrave -110\n"+
-"KPX Ydieresis Amacron -110\n"+
-"KPX Ydieresis Aogonek -110\n"+
-"KPX Ydieresis Aring -110\n"+
-"KPX Ydieresis Atilde -110\n"+
-"KPX Ydieresis O -70\n"+
-"KPX Ydieresis Oacute -70\n"+
-"KPX Ydieresis Ocircumflex -70\n"+
-"KPX Ydieresis Odieresis -70\n"+
-"KPX Ydieresis Ograve -70\n"+
-"KPX Ydieresis Ohungarumlaut -70\n"+
-"KPX Ydieresis Omacron -70\n"+
-"KPX Ydieresis Oslash -70\n"+
-"KPX Ydieresis Otilde -70\n"+
-"KPX Ydieresis a -90\n"+
-"KPX Ydieresis aacute -90\n"+
-"KPX Ydieresis abreve -90\n"+
-"KPX Ydieresis acircumflex -90\n"+
-"KPX Ydieresis adieresis -90\n"+
-"KPX Ydieresis agrave -90\n"+
-"KPX Ydieresis amacron -90\n"+
-"KPX Ydieresis aogonek -90\n"+
-"KPX Ydieresis aring -90\n"+
-"KPX Ydieresis atilde -90\n"+
-"KPX Ydieresis colon -50\n"+
-"KPX Ydieresis comma -100\n"+
-"KPX Ydieresis e -80\n"+
-"KPX Ydieresis eacute -80\n"+
-"KPX Ydieresis ecaron -80\n"+
-"KPX Ydieresis ecircumflex -80\n"+
-"KPX Ydieresis edieresis -80\n"+
-"KPX Ydieresis edotaccent -80\n"+
-"KPX Ydieresis egrave -80\n"+
-"KPX Ydieresis emacron -80\n"+
-"KPX Ydieresis eogonek -80\n"+
-"KPX Ydieresis o -100\n"+
-"KPX Ydieresis oacute -100\n"+
-"KPX Ydieresis ocircumflex -100\n"+
-"KPX Ydieresis odieresis -100\n"+
-"KPX Ydieresis ograve -100\n"+
-"KPX Ydieresis ohungarumlaut -100\n"+
-"KPX Ydieresis omacron -100\n"+
-"KPX Ydieresis oslash -100\n"+
-"KPX Ydieresis otilde -100\n"+
-"KPX Ydieresis period -100\n"+
-"KPX Ydieresis semicolon -50\n"+
-"KPX Ydieresis u -100\n"+
-"KPX Ydieresis uacute -100\n"+
-"KPX Ydieresis ucircumflex -100\n"+
-"KPX Ydieresis udieresis -100\n"+
-"KPX Ydieresis ugrave -100\n"+
-"KPX Ydieresis uhungarumlaut -100\n"+
-"KPX Ydieresis umacron -100\n"+
-"KPX Ydieresis uogonek -100\n"+
-"KPX Ydieresis uring -100\n"+
-"KPX a g -10\n"+
-"KPX a gbreve -10\n"+
-"KPX a gcommaaccent -10\n"+
-"KPX a v -15\n"+
-"KPX a w -15\n"+
-"KPX a y -20\n"+
-"KPX a yacute -20\n"+
-"KPX a ydieresis -20\n"+
-"KPX aacute g -10\n"+
-"KPX aacute gbreve -10\n"+
-"KPX aacute gcommaaccent -10\n"+
-"KPX aacute v -15\n"+
-"KPX aacute w -15\n"+
-"KPX aacute y -20\n"+
-"KPX aacute yacute -20\n"+
-"KPX aacute ydieresis -20\n"+
-"KPX abreve g -10\n"+
-"KPX abreve gbreve -10\n"+
-"KPX abreve gcommaaccent -10\n"+
-"KPX abreve v -15\n"+
-"KPX abreve w -15\n"+
-"KPX abreve y -20\n"+
-"KPX abreve yacute -20\n"+
-"KPX abreve ydieresis -20\n"+
-"KPX acircumflex g -10\n"+
-"KPX acircumflex gbreve -10\n"+
-"KPX acircumflex gcommaaccent -10\n"+
-"KPX acircumflex v -15\n"+
-"KPX acircumflex w -15\n"+
-"KPX acircumflex y -20\n"+
-"KPX acircumflex yacute -20\n"+
-"KPX acircumflex ydieresis -20\n"+
-"KPX adieresis g -10\n"+
-"KPX adieresis gbreve -10\n"+
-"KPX adieresis gcommaaccent -10\n"+
-"KPX adieresis v -15\n"+
-"KPX adieresis w -15\n"+
-"KPX adieresis y -20\n"+
-"KPX adieresis yacute -20\n"+
-"KPX adieresis ydieresis -20\n"+
-"KPX agrave g -10\n"+
-"KPX agrave gbreve -10\n"+
-"KPX agrave gcommaaccent -10\n"+
-"KPX agrave v -15\n"+
-"KPX agrave w -15\n"+
-"KPX agrave y -20\n"+
-"KPX agrave yacute -20\n"+
-"KPX agrave ydieresis -20\n"+
-"KPX amacron g -10\n"+
-"KPX amacron gbreve -10\n"+
-"KPX amacron gcommaaccent -10\n"+
-"KPX amacron v -15\n"+
-"KPX amacron w -15\n"+
-"KPX amacron y -20\n"+
-"KPX amacron yacute -20\n"+
-"KPX amacron ydieresis -20\n"+
-"KPX aogonek g -10\n"+
-"KPX aogonek gbreve -10\n"+
-"KPX aogonek gcommaaccent -10\n"+
-"KPX aogonek v -15\n"+
-"KPX aogonek w -15\n"+
-"KPX aogonek y -20\n"+
-"KPX aogonek yacute -20\n"+
-"KPX aogonek ydieresis -20\n"+
-"KPX aring g -10\n"+
-"KPX aring gbreve -10\n"+
-"KPX aring gcommaaccent -10\n"+
-"KPX aring v -15\n"+
-"KPX aring w -15\n"+
-"KPX aring y -20\n"+
-"KPX aring yacute -20\n"+
-"KPX aring ydieresis -20\n"+
-"KPX atilde g -10\n"+
-"KPX atilde gbreve -10\n"+
-"KPX atilde gcommaaccent -10\n"+
-"KPX atilde v -15\n"+
-"KPX atilde w -15\n"+
-"KPX atilde y -20\n"+
-"KPX atilde yacute -20\n"+
-"KPX atilde ydieresis -20\n"+
-"KPX b l -10\n"+
-"KPX b lacute -10\n"+
-"KPX b lcommaaccent -10\n"+
-"KPX b lslash -10\n"+
-"KPX b u -20\n"+
-"KPX b uacute -20\n"+
-"KPX b ucircumflex -20\n"+
-"KPX b udieresis -20\n"+
-"KPX b ugrave -20\n"+
-"KPX b uhungarumlaut -20\n"+
-"KPX b umacron -20\n"+
-"KPX b uogonek -20\n"+
-"KPX b uring -20\n"+
-"KPX b v -20\n"+
-"KPX b y -20\n"+
-"KPX b yacute -20\n"+
-"KPX b ydieresis -20\n"+
-"KPX c h -10\n"+
-"KPX c k -20\n"+
-"KPX c kcommaaccent -20\n"+
-"KPX c l -20\n"+
-"KPX c lacute -20\n"+
-"KPX c lcommaaccent -20\n"+
-"KPX c lslash -20\n"+
-"KPX c y -10\n"+
-"KPX c yacute -10\n"+
-"KPX c ydieresis -10\n"+
-"KPX cacute h -10\n"+
-"KPX cacute k -20\n"+
-"KPX cacute kcommaaccent -20\n"+
-"KPX cacute l -20\n"+
-"KPX cacute lacute -20\n"+
-"KPX cacute lcommaaccent -20\n"+
-"KPX cacute lslash -20\n"+
-"KPX cacute y -10\n"+
-"KPX cacute yacute -10\n"+
-"KPX cacute ydieresis -10\n"+
-"KPX ccaron h -10\n"+
-"KPX ccaron k -20\n"+
-"KPX ccaron kcommaaccent -20\n"+
-"KPX ccaron l -20\n"+
-"KPX ccaron lacute -20\n"+
-"KPX ccaron lcommaaccent -20\n"+
-"KPX ccaron lslash -20\n"+
-"KPX ccaron y -10\n"+
-"KPX ccaron yacute -10\n"+
-"KPX ccaron ydieresis -10\n"+
-"KPX ccedilla h -10\n"+
-"KPX ccedilla k -20\n"+
-"KPX ccedilla kcommaaccent -20\n"+
-"KPX ccedilla l -20\n"+
-"KPX ccedilla lacute -20\n"+
-"KPX ccedilla lcommaaccent -20\n"+
-"KPX ccedilla lslash -20\n"+
-"KPX ccedilla y -10\n"+
-"KPX ccedilla yacute -10\n"+
-"KPX ccedilla ydieresis -10\n"+
-"KPX colon space -40\n"+
-"KPX comma quotedblright -120\n"+
-"KPX comma quoteright -120\n"+
-"KPX comma space -40\n"+
-"KPX d d -10\n"+
-"KPX d dcroat -10\n"+
-"KPX d v -15\n"+
-"KPX d w -15\n"+
-"KPX d y -15\n"+
-"KPX d yacute -15\n"+
-"KPX d ydieresis -15\n"+
-"KPX dcroat d -10\n"+
-"KPX dcroat dcroat -10\n"+
-"KPX dcroat v -15\n"+
-"KPX dcroat w -15\n"+
-"KPX dcroat y -15\n"+
-"KPX dcroat yacute -15\n"+
-"KPX dcroat ydieresis -15\n"+
-"KPX e comma 10\n"+
-"KPX e period 20\n"+
-"KPX e v -15\n"+
-"KPX e w -15\n"+
-"KPX e x -15\n"+
-"KPX e y -15\n"+
-"KPX e yacute -15\n"+
-"KPX e ydieresis -15\n"+
-"KPX eacute comma 10\n"+
-"KPX eacute period 20\n"+
-"KPX eacute v -15\n"+
-"KPX eacute w -15\n"+
-"KPX eacute x -15\n"+
-"KPX eacute y -15\n"+
-"KPX eacute yacute -15\n"+
-"KPX eacute ydieresis -15\n"+
-"KPX ecaron comma 10\n"+
-"KPX ecaron period 20\n"+
-"KPX ecaron v -15\n"+
-"KPX ecaron w -15\n"+
-"KPX ecaron x -15\n"+
-"KPX ecaron y -15\n"+
-"KPX ecaron yacute -15\n"+
-"KPX ecaron ydieresis -15\n"+
-"KPX ecircumflex comma 10\n"+
-"KPX ecircumflex period 20\n"+
-"KPX ecircumflex v -15\n"+
-"KPX ecircumflex w -15\n"+
-"KPX ecircumflex x -15\n"+
-"KPX ecircumflex y -15\n"+
-"KPX ecircumflex yacute -15\n"+
-"KPX ecircumflex ydieresis -15\n"+
-"KPX edieresis comma 10\n"+
-"KPX edieresis period 20\n"+
-"KPX edieresis v -15\n"+
-"KPX edieresis w -15\n"+
-"KPX edieresis x -15\n"+
-"KPX edieresis y -15\n"+
-"KPX edieresis yacute -15\n"+
-"KPX edieresis ydieresis -15\n"+
-"KPX edotaccent comma 10\n"+
-"KPX edotaccent period 20\n"+
-"KPX edotaccent v -15\n"+
-"KPX edotaccent w -15\n"+
-"KPX edotaccent x -15\n"+
-"KPX edotaccent y -15\n"+
-"KPX edotaccent yacute -15\n"+
-"KPX edotaccent ydieresis -15\n"+
-"KPX egrave comma 10\n"+
-"KPX egrave period 20\n"+
-"KPX egrave v -15\n"+
-"KPX egrave w -15\n"+
-"KPX egrave x -15\n"+
-"KPX egrave y -15\n"+
-"KPX egrave yacute -15\n"+
-"KPX egrave ydieresis -15\n"+
-"KPX emacron comma 10\n"+
-"KPX emacron period 20\n"+
-"KPX emacron v -15\n"+
-"KPX emacron w -15\n"+
-"KPX emacron x -15\n"+
-"KPX emacron y -15\n"+
-"KPX emacron yacute -15\n"+
-"KPX emacron ydieresis -15\n"+
-"KPX eogonek comma 10\n"+
-"KPX eogonek period 20\n"+
-"KPX eogonek v -15\n"+
-"KPX eogonek w -15\n"+
-"KPX eogonek x -15\n"+
-"KPX eogonek y -15\n"+
-"KPX eogonek yacute -15\n"+
-"KPX eogonek ydieresis -15\n"+
-"KPX f comma -10\n"+
-"KPX f e -10\n"+
-"KPX f eacute -10\n"+
-"KPX f ecaron -10\n"+
-"KPX f ecircumflex -10\n"+
-"KPX f edieresis -10\n"+
-"KPX f edotaccent -10\n"+
-"KPX f egrave -10\n"+
-"KPX f emacron -10\n"+
-"KPX f eogonek -10\n"+
-"KPX f o -20\n"+
-"KPX f oacute -20\n"+
-"KPX f ocircumflex -20\n"+
-"KPX f odieresis -20\n"+
-"KPX f ograve -20\n"+
-"KPX f ohungarumlaut -20\n"+
-"KPX f omacron -20\n"+
-"KPX f oslash -20\n"+
-"KPX f otilde -20\n"+
-"KPX f period -10\n"+
-"KPX f quotedblright 30\n"+
-"KPX f quoteright 30\n"+
-"KPX g e 10\n"+
-"KPX g eacute 10\n"+
-"KPX g ecaron 10\n"+
-"KPX g ecircumflex 10\n"+
-"KPX g edieresis 10\n"+
-"KPX g edotaccent 10\n"+
-"KPX g egrave 10\n"+
-"KPX g emacron 10\n"+
-"KPX g eogonek 10\n"+
-"KPX g g -10\n"+
-"KPX g gbreve -10\n"+
-"KPX g gcommaaccent -10\n"+
-"KPX gbreve e 10\n"+
-"KPX gbreve eacute 10\n"+
-"KPX gbreve ecaron 10\n"+
-"KPX gbreve ecircumflex 10\n"+
-"KPX gbreve edieresis 10\n"+
-"KPX gbreve edotaccent 10\n"+
-"KPX gbreve egrave 10\n"+
-"KPX gbreve emacron 10\n"+
-"KPX gbreve eogonek 10\n"+
-"KPX gbreve g -10\n"+
-"KPX gbreve gbreve -10\n"+
-"KPX gbreve gcommaaccent -10\n"+
-"KPX gcommaaccent e 10\n"+
-"KPX gcommaaccent eacute 10\n"+
-"KPX gcommaaccent ecaron 10\n"+
-"KPX gcommaaccent ecircumflex 10\n"+
-"KPX gcommaaccent edieresis 10\n"+
-"KPX gcommaaccent edotaccent 10\n"+
-"KPX gcommaaccent egrave 10\n"+
-"KPX gcommaaccent emacron 10\n"+
-"KPX gcommaaccent eogonek 10\n"+
-"KPX gcommaaccent g -10\n"+
-"KPX gcommaaccent gbreve -10\n"+
-"KPX gcommaaccent gcommaaccent -10\n"+
-"KPX h y -20\n"+
-"KPX h yacute -20\n"+
-"KPX h ydieresis -20\n"+
-"KPX k o -15\n"+
-"KPX k oacute -15\n"+
-"KPX k ocircumflex -15\n"+
-"KPX k odieresis -15\n"+
-"KPX k ograve -15\n"+
-"KPX k ohungarumlaut -15\n"+
-"KPX k omacron -15\n"+
-"KPX k oslash -15\n"+
-"KPX k otilde -15\n"+
-"KPX kcommaaccent o -15\n"+
-"KPX kcommaaccent oacute -15\n"+
-"KPX kcommaaccent ocircumflex -15\n"+
-"KPX kcommaaccent odieresis -15\n"+
-"KPX kcommaaccent ograve -15\n"+
-"KPX kcommaaccent ohungarumlaut -15\n"+
-"KPX kcommaaccent omacron -15\n"+
-"KPX kcommaaccent oslash -15\n"+
-"KPX kcommaaccent otilde -15\n"+
-"KPX l w -15\n"+
-"KPX l y -15\n"+
-"KPX l yacute -15\n"+
-"KPX l ydieresis -15\n"+
-"KPX lacute w -15\n"+
-"KPX lacute y -15\n"+
-"KPX lacute yacute -15\n"+
-"KPX lacute ydieresis -15\n"+
-"KPX lcommaaccent w -15\n"+
-"KPX lcommaaccent y -15\n"+
-"KPX lcommaaccent yacute -15\n"+
-"KPX lcommaaccent ydieresis -15\n"+
-"KPX lslash w -15\n"+
-"KPX lslash y -15\n"+
-"KPX lslash yacute -15\n"+
-"KPX lslash ydieresis -15\n"+
-"KPX m u -20\n"+
-"KPX m uacute -20\n"+
-"KPX m ucircumflex -20\n"+
-"KPX m udieresis -20\n"+
-"KPX m ugrave -20\n"+
-"KPX m uhungarumlaut -20\n"+
-"KPX m umacron -20\n"+
-"KPX m uogonek -20\n"+
-"KPX m uring -20\n"+
-"KPX m y -30\n"+
-"KPX m yacute -30\n"+
-"KPX m ydieresis -30\n"+
-"KPX n u -10\n"+
-"KPX n uacute -10\n"+
-"KPX n ucircumflex -10\n"+
-"KPX n udieresis -10\n"+
-"KPX n ugrave -10\n"+
-"KPX n uhungarumlaut -10\n"+
-"KPX n umacron -10\n"+
-"KPX n uogonek -10\n"+
-"KPX n uring -10\n"+
-"KPX n v -40\n"+
-"KPX n y -20\n"+
-"KPX n yacute -20\n"+
-"KPX n ydieresis -20\n"+
-"KPX nacute u -10\n"+
-"KPX nacute uacute -10\n"+
-"KPX nacute ucircumflex -10\n"+
-"KPX nacute udieresis -10\n"+
-"KPX nacute ugrave -10\n"+
-"KPX nacute uhungarumlaut -10\n"+
-"KPX nacute umacron -10\n"+
-"KPX nacute uogonek -10\n"+
-"KPX nacute uring -10\n"+
-"KPX nacute v -40\n"+
-"KPX nacute y -20\n"+
-"KPX nacute yacute -20\n"+
-"KPX nacute ydieresis -20\n"+
-"KPX ncaron u -10\n"+
-"KPX ncaron uacute -10\n"+
-"KPX ncaron ucircumflex -10\n"+
-"KPX ncaron udieresis -10\n"+
-"KPX ncaron ugrave -10\n"+
-"KPX ncaron uhungarumlaut -10\n"+
-"KPX ncaron umacron -10\n"+
-"KPX ncaron uogonek -10\n"+
-"KPX ncaron uring -10\n"+
-"KPX ncaron v -40\n"+
-"KPX ncaron y -20\n"+
-"KPX ncaron yacute -20\n"+
-"KPX ncaron ydieresis -20\n"+
-"KPX ncommaaccent u -10\n"+
-"KPX ncommaaccent uacute -10\n"+
-"KPX ncommaaccent ucircumflex -10\n"+
-"KPX ncommaaccent udieresis -10\n"+
-"KPX ncommaaccent ugrave -10\n"+
-"KPX ncommaaccent uhungarumlaut -10\n"+
-"KPX ncommaaccent umacron -10\n"+
-"KPX ncommaaccent uogonek -10\n"+
-"KPX ncommaaccent uring -10\n"+
-"KPX ncommaaccent v -40\n"+
-"KPX ncommaaccent y -20\n"+
-"KPX ncommaaccent yacute -20\n"+
-"KPX ncommaaccent ydieresis -20\n"+
-"KPX ntilde u -10\n"+
-"KPX ntilde uacute -10\n"+
-"KPX ntilde ucircumflex -10\n"+
-"KPX ntilde udieresis -10\n"+
-"KPX ntilde ugrave -10\n"+
-"KPX ntilde uhungarumlaut -10\n"+
-"KPX ntilde umacron -10\n"+
-"KPX ntilde uogonek -10\n"+
-"KPX ntilde uring -10\n"+
-"KPX ntilde v -40\n"+
-"KPX ntilde y -20\n"+
-"KPX ntilde yacute -20\n"+
-"KPX ntilde ydieresis -20\n"+
-"KPX o v -20\n"+
-"KPX o w -15\n"+
-"KPX o x -30\n"+
-"KPX o y -20\n"+
-"KPX o yacute -20\n"+
-"KPX o ydieresis -20\n"+
-"KPX oacute v -20\n"+
-"KPX oacute w -15\n"+
-"KPX oacute x -30\n"+
-"KPX oacute y -20\n"+
-"KPX oacute yacute -20\n"+
-"KPX oacute ydieresis -20\n"+
-"KPX ocircumflex v -20\n"+
-"KPX ocircumflex w -15\n"+
-"KPX ocircumflex x -30\n"+
-"KPX ocircumflex y -20\n"+
-"KPX ocircumflex yacute -20\n"+
-"KPX ocircumflex ydieresis -20\n"+
-"KPX odieresis v -20\n"+
-"KPX odieresis w -15\n"+
-"KPX odieresis x -30\n"+
-"KPX odieresis y -20\n"+
-"KPX odieresis yacute -20\n"+
-"KPX odieresis ydieresis -20\n"+
-"KPX ograve v -20\n"+
-"KPX ograve w -15\n"+
-"KPX ograve x -30\n"+
-"KPX ograve y -20\n"+
-"KPX ograve yacute -20\n"+
-"KPX ograve ydieresis -20\n"+
-"KPX ohungarumlaut v -20\n"+
-"KPX ohungarumlaut w -15\n"+
-"KPX ohungarumlaut x -30\n"+
-"KPX ohungarumlaut y -20\n"+
-"KPX ohungarumlaut yacute -20\n"+
-"KPX ohungarumlaut ydieresis -20\n"+
-"KPX omacron v -20\n"+
-"KPX omacron w -15\n"+
-"KPX omacron x -30\n"+
-"KPX omacron y -20\n"+
-"KPX omacron yacute -20\n"+
-"KPX omacron ydieresis -20\n"+
-"KPX oslash v -20\n"+
-"KPX oslash w -15\n"+
-"KPX oslash x -30\n"+
-"KPX oslash y -20\n"+
-"KPX oslash yacute -20\n"+
-"KPX oslash ydieresis -20\n"+
-"KPX otilde v -20\n"+
-"KPX otilde w -15\n"+
-"KPX otilde x -30\n"+
-"KPX otilde y -20\n"+
-"KPX otilde yacute -20\n"+
-"KPX otilde ydieresis -20\n"+
-"KPX p y -15\n"+
-"KPX p yacute -15\n"+
-"KPX p ydieresis -15\n"+
-"KPX period quotedblright -120\n"+
-"KPX period quoteright -120\n"+
-"KPX period space -40\n"+
-"KPX quotedblright space -80\n"+
-"KPX quoteleft quoteleft -46\n"+
-"KPX quoteright d -80\n"+
-"KPX quoteright dcroat -80\n"+
-"KPX quoteright l -20\n"+
-"KPX quoteright lacute -20\n"+
-"KPX quoteright lcommaaccent -20\n"+
-"KPX quoteright lslash -20\n"+
-"KPX quoteright quoteright -46\n"+
-"KPX quoteright r -40\n"+
-"KPX quoteright racute -40\n"+
-"KPX quoteright rcaron -40\n"+
-"KPX quoteright rcommaaccent -40\n"+
-"KPX quoteright s -60\n"+
-"KPX quoteright sacute -60\n"+
-"KPX quoteright scaron -60\n"+
-"KPX quoteright scedilla -60\n"+
-"KPX quoteright scommaaccent -60\n"+
-"KPX quoteright space -80\n"+
-"KPX quoteright v -20\n"+
-"KPX r c -20\n"+
-"KPX r cacute -20\n"+
-"KPX r ccaron -20\n"+
-"KPX r ccedilla -20\n"+
-"KPX r comma -60\n"+
-"KPX r d -20\n"+
-"KPX r dcroat -20\n"+
-"KPX r g -15\n"+
-"KPX r gbreve -15\n"+
-"KPX r gcommaaccent -15\n"+
-"KPX r hyphen -20\n"+
-"KPX r o -20\n"+
-"KPX r oacute -20\n"+
-"KPX r ocircumflex -20\n"+
-"KPX r odieresis -20\n"+
-"KPX r ograve -20\n"+
-"KPX r ohungarumlaut -20\n"+
-"KPX r omacron -20\n"+
-"KPX r oslash -20\n"+
-"KPX r otilde -20\n"+
-"KPX r period -60\n"+
-"KPX r q -20\n"+
-"KPX r s -15\n"+
-"KPX r sacute -15\n"+
-"KPX r scaron -15\n"+
-"KPX r scedilla -15\n"+
-"KPX r scommaaccent -15\n"+
-"KPX r t 20\n"+
-"KPX r tcommaaccent 20\n"+
-"KPX r v 10\n"+
-"KPX r y 10\n"+
-"KPX r yacute 10\n"+
-"KPX r ydieresis 10\n"+
-"KPX racute c -20\n"+
-"KPX racute cacute -20\n"+
-"KPX racute ccaron -20\n"+
-"KPX racute ccedilla -20\n"+
-"KPX racute comma -60\n"+
-"KPX racute d -20\n"+
-"KPX racute dcroat -20\n"+
-"KPX racute g -15\n"+
-"KPX racute gbreve -15\n"+
-"KPX racute gcommaaccent -15\n"+
-"KPX racute hyphen -20\n"+
-"KPX racute o -20\n"+
-"KPX racute oacute -20\n"+
-"KPX racute ocircumflex -20\n"+
-"KPX racute odieresis -20\n"+
-"KPX racute ograve -20\n"+
-"KPX racute ohungarumlaut -20\n"+
-"KPX racute omacron -20\n"+
-"KPX racute oslash -20\n"+
-"KPX racute otilde -20\n"+
-"KPX racute period -60\n"+
-"KPX racute q -20\n"+
-"KPX racute s -15\n"+
-"KPX racute sacute -15\n"+
-"KPX racute scaron -15\n"+
-"KPX racute scedilla -15\n"+
-"KPX racute scommaaccent -15\n"+
-"KPX racute t 20\n"+
-"KPX racute tcommaaccent 20\n"+
-"KPX racute v 10\n"+
-"KPX racute y 10\n"+
-"KPX racute yacute 10\n"+
-"KPX racute ydieresis 10\n"+
-"KPX rcaron c -20\n"+
-"KPX rcaron cacute -20\n"+
-"KPX rcaron ccaron -20\n"+
-"KPX rcaron ccedilla -20\n"+
-"KPX rcaron comma -60\n"+
-"KPX rcaron d -20\n"+
-"KPX rcaron dcroat -20\n"+
-"KPX rcaron g -15\n"+
-"KPX rcaron gbreve -15\n"+
-"KPX rcaron gcommaaccent -15\n"+
-"KPX rcaron hyphen -20\n"+
-"KPX rcaron o -20\n"+
-"KPX rcaron oacute -20\n"+
-"KPX rcaron ocircumflex -20\n"+
-"KPX rcaron odieresis -20\n"+
-"KPX rcaron ograve -20\n"+
-"KPX rcaron ohungarumlaut -20\n"+
-"KPX rcaron omacron -20\n"+
-"KPX rcaron oslash -20\n"+
-"KPX rcaron otilde -20\n"+
-"KPX rcaron period -60\n"+
-"KPX rcaron q -20\n"+
-"KPX rcaron s -15\n"+
-"KPX rcaron sacute -15\n"+
-"KPX rcaron scaron -15\n"+
-"KPX rcaron scedilla -15\n"+
-"KPX rcaron scommaaccent -15\n"+
-"KPX rcaron t 20\n"+
-"KPX rcaron tcommaaccent 20\n"+
-"KPX rcaron v 10\n"+
-"KPX rcaron y 10\n"+
-"KPX rcaron yacute 10\n"+
-"KPX rcaron ydieresis 10\n"+
-"KPX rcommaaccent c -20\n"+
-"KPX rcommaaccent cacute -20\n"+
-"KPX rcommaaccent ccaron -20\n"+
-"KPX rcommaaccent ccedilla -20\n"+
-"KPX rcommaaccent comma -60\n"+
-"KPX rcommaaccent d -20\n"+
-"KPX rcommaaccent dcroat -20\n"+
-"KPX rcommaaccent g -15\n"+
-"KPX rcommaaccent gbreve -15\n"+
-"KPX rcommaaccent gcommaaccent -15\n"+
-"KPX rcommaaccent hyphen -20\n"+
-"KPX rcommaaccent o -20\n"+
-"KPX rcommaaccent oacute -20\n"+
-"KPX rcommaaccent ocircumflex -20\n"+
-"KPX rcommaaccent odieresis -20\n"+
-"KPX rcommaaccent ograve -20\n"+
-"KPX rcommaaccent ohungarumlaut -20\n"+
-"KPX rcommaaccent omacron -20\n"+
-"KPX rcommaaccent oslash -20\n"+
-"KPX rcommaaccent otilde -20\n"+
-"KPX rcommaaccent period -60\n"+
-"KPX rcommaaccent q -20\n"+
-"KPX rcommaaccent s -15\n"+
-"KPX rcommaaccent sacute -15\n"+
-"KPX rcommaaccent scaron -15\n"+
-"KPX rcommaaccent scedilla -15\n"+
-"KPX rcommaaccent scommaaccent -15\n"+
-"KPX rcommaaccent t 20\n"+
-"KPX rcommaaccent tcommaaccent 20\n"+
-"KPX rcommaaccent v 10\n"+
-"KPX rcommaaccent y 10\n"+
-"KPX rcommaaccent yacute 10\n"+
-"KPX rcommaaccent ydieresis 10\n"+
-"KPX s w -15\n"+
-"KPX sacute w -15\n"+
-"KPX scaron w -15\n"+
-"KPX scedilla w -15\n"+
-"KPX scommaaccent w -15\n"+
-"KPX semicolon space -40\n"+
-"KPX space T -100\n"+
-"KPX space Tcaron -100\n"+
-"KPX space Tcommaaccent -100\n"+
-"KPX space V -80\n"+
-"KPX space W -80\n"+
-"KPX space Y -120\n"+
-"KPX space Yacute -120\n"+
-"KPX space Ydieresis -120\n"+
-"KPX space quotedblleft -80\n"+
-"KPX space quoteleft -60\n"+
-"KPX v a -20\n"+
-"KPX v aacute -20\n"+
-"KPX v abreve -20\n"+
-"KPX v acircumflex -20\n"+
-"KPX v adieresis -20\n"+
-"KPX v agrave -20\n"+
-"KPX v amacron -20\n"+
-"KPX v aogonek -20\n"+
-"KPX v aring -20\n"+
-"KPX v atilde -20\n"+
-"KPX v comma -80\n"+
-"KPX v o -30\n"+
-"KPX v oacute -30\n"+
-"KPX v ocircumflex -30\n"+
-"KPX v odieresis -30\n"+
-"KPX v ograve -30\n"+
-"KPX v ohungarumlaut -30\n"+
-"KPX v omacron -30\n"+
-"KPX v oslash -30\n"+
-"KPX v otilde -30\n"+
-"KPX v period -80\n"+
-"KPX w comma -40\n"+
-"KPX w o -20\n"+
-"KPX w oacute -20\n"+
-"KPX w ocircumflex -20\n"+
-"KPX w odieresis -20\n"+
-"KPX w ograve -20\n"+
-"KPX w ohungarumlaut -20\n"+
-"KPX w omacron -20\n"+
-"KPX w oslash -20\n"+
-"KPX w otilde -20\n"+
-"KPX w period -40\n"+
-"KPX x e -10\n"+
-"KPX x eacute -10\n"+
-"KPX x ecaron -10\n"+
-"KPX x ecircumflex -10\n"+
-"KPX x edieresis -10\n"+
-"KPX x edotaccent -10\n"+
-"KPX x egrave -10\n"+
-"KPX x emacron -10\n"+
-"KPX x eogonek -10\n"+
-"KPX y a -30\n"+
-"KPX y aacute -30\n"+
-"KPX y abreve -30\n"+
-"KPX y acircumflex -30\n"+
-"KPX y adieresis -30\n"+
-"KPX y agrave -30\n"+
-"KPX y amacron -30\n"+
-"KPX y aogonek -30\n"+
-"KPX y aring -30\n"+
-"KPX y atilde -30\n"+
-"KPX y comma -80\n"+
-"KPX y e -10\n"+
-"KPX y eacute -10\n"+
-"KPX y ecaron -10\n"+
-"KPX y ecircumflex -10\n"+
-"KPX y edieresis -10\n"+
-"KPX y edotaccent -10\n"+
-"KPX y egrave -10\n"+
-"KPX y emacron -10\n"+
-"KPX y eogonek -10\n"+
-"KPX y o -25\n"+
-"KPX y oacute -25\n"+
-"KPX y ocircumflex -25\n"+
-"KPX y odieresis -25\n"+
-"KPX y ograve -25\n"+
-"KPX y ohungarumlaut -25\n"+
-"KPX y omacron -25\n"+
-"KPX y oslash -25\n"+
-"KPX y otilde -25\n"+
-"KPX y period -80\n"+
-"KPX yacute a -30\n"+
-"KPX yacute aacute -30\n"+
-"KPX yacute abreve -30\n"+
-"KPX yacute acircumflex -30\n"+
-"KPX yacute adieresis -30\n"+
-"KPX yacute agrave -30\n"+
-"KPX yacute amacron -30\n"+
-"KPX yacute aogonek -30\n"+
-"KPX yacute aring -30\n"+
-"KPX yacute atilde -30\n"+
-"KPX yacute comma -80\n"+
-"KPX yacute e -10\n"+
-"KPX yacute eacute -10\n"+
-"KPX yacute ecaron -10\n"+
-"KPX yacute ecircumflex -10\n"+
-"KPX yacute edieresis -10\n"+
-"KPX yacute edotaccent -10\n"+
-"KPX yacute egrave -10\n"+
-"KPX yacute emacron -10\n"+
-"KPX yacute eogonek -10\n"+
-"KPX yacute o -25\n"+
-"KPX yacute oacute -25\n"+
-"KPX yacute ocircumflex -25\n"+
-"KPX yacute odieresis -25\n"+
-"KPX yacute ograve -25\n"+
-"KPX yacute ohungarumlaut -25\n"+
-"KPX yacute omacron -25\n"+
-"KPX yacute oslash -25\n"+
-"KPX yacute otilde -25\n"+
-"KPX yacute period -80\n"+
-"KPX ydieresis a -30\n"+
-"KPX ydieresis aacute -30\n"+
-"KPX ydieresis abreve -30\n"+
-"KPX ydieresis acircumflex -30\n"+
-"KPX ydieresis adieresis -30\n"+
-"KPX ydieresis agrave -30\n"+
-"KPX ydieresis amacron -30\n"+
-"KPX ydieresis aogonek -30\n"+
-"KPX ydieresis aring -30\n"+
-"KPX ydieresis atilde -30\n"+
-"KPX ydieresis comma -80\n"+
-"KPX ydieresis e -10\n"+
-"KPX ydieresis eacute -10\n"+
-"KPX ydieresis ecaron -10\n"+
-"KPX ydieresis ecircumflex -10\n"+
-"KPX ydieresis edieresis -10\n"+
-"KPX ydieresis edotaccent -10\n"+
-"KPX ydieresis egrave -10\n"+
-"KPX ydieresis emacron -10\n"+
-"KPX ydieresis eogonek -10\n"+
-"KPX ydieresis o -25\n"+
-"KPX ydieresis oacute -25\n"+
-"KPX ydieresis ocircumflex -25\n"+
-"KPX ydieresis odieresis -25\n"+
-"KPX ydieresis ograve -25\n"+
-"KPX ydieresis ohungarumlaut -25\n"+
-"KPX ydieresis omacron -25\n"+
-"KPX ydieresis oslash -25\n"+
-"KPX ydieresis otilde -25\n"+
-"KPX ydieresis period -80\n"+
-"KPX z e 10\n"+
-"KPX z eacute 10\n"+
-"KPX z ecaron 10\n"+
-"KPX z ecircumflex 10\n"+
-"KPX z edieresis 10\n"+
-"KPX z edotaccent 10\n"+
-"KPX z egrave 10\n"+
-"KPX z emacron 10\n"+
-"KPX z eogonek 10\n"+
-"KPX zacute e 10\n"+
-"KPX zacute eacute 10\n"+
-"KPX zacute ecaron 10\n"+
-"KPX zacute ecircumflex 10\n"+
-"KPX zacute edieresis 10\n"+
-"KPX zacute edotaccent 10\n"+
-"KPX zacute egrave 10\n"+
-"KPX zacute emacron 10\n"+
-"KPX zacute eogonek 10\n"+
-"KPX zcaron e 10\n"+
-"KPX zcaron eacute 10\n"+
-"KPX zcaron ecaron 10\n"+
-"KPX zcaron ecircumflex 10\n"+
-"KPX zcaron edieresis 10\n"+
-"KPX zcaron edotaccent 10\n"+
-"KPX zcaron egrave 10\n"+
-"KPX zcaron emacron 10\n"+
-"KPX zcaron eogonek 10\n"+
-"KPX zdotaccent e 10\n"+
-"KPX zdotaccent eacute 10\n"+
-"KPX zdotaccent ecaron 10\n"+
-"KPX zdotaccent ecircumflex 10\n"+
-"KPX zdotaccent edieresis 10\n"+
-"KPX zdotaccent edotaccent 10\n"+
-"KPX zdotaccent egrave 10\n"+
-"KPX zdotaccent emacron 10\n"+
-"KPX zdotaccent eogonek 10\n"+
-"EndKernPairs\n"+
-"EndKernData\n"+
-"EndFontMetrics\n";
+    "KPX Tcaron Acircumflex -90\n"+
+    "KPX Tcaron Adieresis -90\n"+
+    "KPX Tcaron Agrave -90\n"+
+    "KPX Tcaron Amacron -90\n"+
+    "KPX Tcaron Aogonek -90\n"+
+    "KPX Tcaron Aring -90\n"+
+    "KPX Tcaron Atilde -90\n"+
+    "KPX Tcaron O -40\n"+
+    "KPX Tcaron Oacute -40\n"+
+    "KPX Tcaron Ocircumflex -40\n"+
+    "KPX Tcaron Odieresis -40\n"+
+    "KPX Tcaron Ograve -40\n"+
+    "KPX Tcaron Ohungarumlaut -40\n"+
+    "KPX Tcaron Omacron -40\n"+
+    "KPX Tcaron Oslash -40\n"+
+    "KPX Tcaron Otilde -40\n"+
+    "KPX Tcaron a -80\n"+
+    "KPX Tcaron aacute -80\n"+
+    "KPX Tcaron abreve -80\n"+
+    "KPX Tcaron acircumflex -80\n"+
+    "KPX Tcaron adieresis -80\n"+
+    "KPX Tcaron agrave -80\n"+
+    "KPX Tcaron amacron -80\n"+
+    "KPX Tcaron aogonek -80\n"+
+    "KPX Tcaron aring -80\n"+
+    "KPX Tcaron atilde -80\n"+
+    "KPX Tcaron colon -40\n"+
+    "KPX Tcaron comma -80\n"+
+    "KPX Tcaron e -60\n"+
+    "KPX Tcaron eacute -60\n"+
+    "KPX Tcaron ecaron -60\n"+
+    "KPX Tcaron ecircumflex -60\n"+
+    "KPX Tcaron edieresis -60\n"+
+    "KPX Tcaron edotaccent -60\n"+
+    "KPX Tcaron egrave -60\n"+
+    "KPX Tcaron emacron -60\n"+
+    "KPX Tcaron eogonek -60\n"+
+    "KPX Tcaron hyphen -120\n"+
+    "KPX Tcaron o -80\n"+
+    "KPX Tcaron oacute -80\n"+
+    "KPX Tcaron ocircumflex -80\n"+
+    "KPX Tcaron odieresis -80\n"+
+    "KPX Tcaron ograve -80\n"+
+    "KPX Tcaron ohungarumlaut -80\n"+
+    "KPX Tcaron omacron -80\n"+
+    "KPX Tcaron oslash -80\n"+
+    "KPX Tcaron otilde -80\n"+
+    "KPX Tcaron period -80\n"+
+    "KPX Tcaron r -80\n"+
+    "KPX Tcaron racute -80\n"+
+    "KPX Tcaron rcommaaccent -80\n"+
+    "KPX Tcaron semicolon -40\n"+
+    "KPX Tcaron u -90\n"+
+    "KPX Tcaron uacute -90\n"+
+    "KPX Tcaron ucircumflex -90\n"+
+    "KPX Tcaron udieresis -90\n"+
+    "KPX Tcaron ugrave -90\n"+
+    "KPX Tcaron uhungarumlaut -90\n"+
+    "KPX Tcaron umacron -90\n"+
+    "KPX Tcaron uogonek -90\n"+
+    "KPX Tcaron uring -90\n"+
+    "KPX Tcaron w -60\n"+
+    "KPX Tcaron y -60\n"+
+    "KPX Tcaron yacute -60\n"+
+    "KPX Tcaron ydieresis -60\n"+
+    "KPX Tcommaaccent A -90\n"+
+    "KPX Tcommaaccent Aacute -90\n"+
+    "KPX Tcommaaccent Abreve -90\n"+
+    "KPX Tcommaaccent Acircumflex -90\n"+
+    "KPX Tcommaaccent Adieresis -90\n"+
+    "KPX Tcommaaccent Agrave -90\n"+
+    "KPX Tcommaaccent Amacron -90\n"+
+    "KPX Tcommaaccent Aogonek -90\n"+
+    "KPX Tcommaaccent Aring -90\n"+
+    "KPX Tcommaaccent Atilde -90\n"+
+    "KPX Tcommaaccent O -40\n"+
+    "KPX Tcommaaccent Oacute -40\n"+
+    "KPX Tcommaaccent Ocircumflex -40\n"+
+    "KPX Tcommaaccent Odieresis -40\n"+
+    "KPX Tcommaaccent Ograve -40\n"+
+    "KPX Tcommaaccent Ohungarumlaut -40\n"+
+    "KPX Tcommaaccent Omacron -40\n"+
+    "KPX Tcommaaccent Oslash -40\n"+
+    "KPX Tcommaaccent Otilde -40\n"+
+    "KPX Tcommaaccent a -80\n"+
+    "KPX Tcommaaccent aacute -80\n"+
+    "KPX Tcommaaccent abreve -80\n"+
+    "KPX Tcommaaccent acircumflex -80\n"+
+    "KPX Tcommaaccent adieresis -80\n"+
+    "KPX Tcommaaccent agrave -80\n"+
+    "KPX Tcommaaccent amacron -80\n"+
+    "KPX Tcommaaccent aogonek -80\n"+
+    "KPX Tcommaaccent aring -80\n"+
+    "KPX Tcommaaccent atilde -80\n"+
+    "KPX Tcommaaccent colon -40\n"+
+    "KPX Tcommaaccent comma -80\n"+
+    "KPX Tcommaaccent e -60\n"+
+    "KPX Tcommaaccent eacute -60\n"+
+    "KPX Tcommaaccent ecaron -60\n"+
+    "KPX Tcommaaccent ecircumflex -60\n"+
+    "KPX Tcommaaccent edieresis -60\n"+
+    "KPX Tcommaaccent edotaccent -60\n"+
+    "KPX Tcommaaccent egrave -60\n"+
+    "KPX Tcommaaccent emacron -60\n"+
+    "KPX Tcommaaccent eogonek -60\n"+
+    "KPX Tcommaaccent hyphen -120\n"+
+    "KPX Tcommaaccent o -80\n"+
+    "KPX Tcommaaccent oacute -80\n"+
+    "KPX Tcommaaccent ocircumflex -80\n"+
+    "KPX Tcommaaccent odieresis -80\n"+
+    "KPX Tcommaaccent ograve -80\n"+
+    "KPX Tcommaaccent ohungarumlaut -80\n"+
+    "KPX Tcommaaccent omacron -80\n"+
+    "KPX Tcommaaccent oslash -80\n"+
+    "KPX Tcommaaccent otilde -80\n"+
+    "KPX Tcommaaccent period -80\n"+
+    "KPX Tcommaaccent r -80\n"+
+    "KPX Tcommaaccent racute -80\n"+
+    "KPX Tcommaaccent rcommaaccent -80\n"+
+    "KPX Tcommaaccent semicolon -40\n"+
+    "KPX Tcommaaccent u -90\n"+
+    "KPX Tcommaaccent uacute -90\n"+
+    "KPX Tcommaaccent ucircumflex -90\n"+
+    "KPX Tcommaaccent udieresis -90\n"+
+    "KPX Tcommaaccent ugrave -90\n"+
+    "KPX Tcommaaccent uhungarumlaut -90\n"+
+    "KPX Tcommaaccent umacron -90\n"+
+    "KPX Tcommaaccent uogonek -90\n"+
+    "KPX Tcommaaccent uring -90\n"+
+    "KPX Tcommaaccent w -60\n"+
+    "KPX Tcommaaccent y -60\n"+
+    "KPX Tcommaaccent yacute -60\n"+
+    "KPX Tcommaaccent ydieresis -60\n"+
+    "KPX U A -50\n"+
+    "KPX U Aacute -50\n"+
+    "KPX U Abreve -50\n"+
+    "KPX U Acircumflex -50\n"+
+    "KPX U Adieresis -50\n"+
+    "KPX U Agrave -50\n"+
+    "KPX U Amacron -50\n"+
+    "KPX U Aogonek -50\n"+
+    "KPX U Aring -50\n"+
+    "KPX U Atilde -50\n"+
+    "KPX U comma -30\n"+
+    "KPX U period -30\n"+
+    "KPX Uacute A -50\n"+
+    "KPX Uacute Aacute -50\n"+
+    "KPX Uacute Abreve -50\n"+
+    "KPX Uacute Acircumflex -50\n"+
+    "KPX Uacute Adieresis -50\n"+
+    "KPX Uacute Agrave -50\n"+
+    "KPX Uacute Amacron -50\n"+
+    "KPX Uacute Aogonek -50\n"+
+    "KPX Uacute Aring -50\n"+
+    "KPX Uacute Atilde -50\n"+
+    "KPX Uacute comma -30\n"+
+    "KPX Uacute period -30\n"+
+    "KPX Ucircumflex A -50\n"+
+    "KPX Ucircumflex Aacute -50\n"+
+    "KPX Ucircumflex Abreve -50\n"+
+    "KPX Ucircumflex Acircumflex -50\n"+
+    "KPX Ucircumflex Adieresis -50\n"+
+    "KPX Ucircumflex Agrave -50\n"+
+    "KPX Ucircumflex Amacron -50\n"+
+    "KPX Ucircumflex Aogonek -50\n"+
+    "KPX Ucircumflex Aring -50\n"+
+    "KPX Ucircumflex Atilde -50\n"+
+    "KPX Ucircumflex comma -30\n"+
+    "KPX Ucircumflex period -30\n"+
+    "KPX Udieresis A -50\n"+
+    "KPX Udieresis Aacute -50\n"+
+    "KPX Udieresis Abreve -50\n"+
+    "KPX Udieresis Acircumflex -50\n"+
+    "KPX Udieresis Adieresis -50\n"+
+    "KPX Udieresis Agrave -50\n"+
+    "KPX Udieresis Amacron -50\n"+
+    "KPX Udieresis Aogonek -50\n"+
+    "KPX Udieresis Aring -50\n"+
+    "KPX Udieresis Atilde -50\n"+
+    "KPX Udieresis comma -30\n"+
+    "KPX Udieresis period -30\n"+
+    "KPX Ugrave A -50\n"+
+    "KPX Ugrave Aacute -50\n"+
+    "KPX Ugrave Abreve -50\n"+
+    "KPX Ugrave Acircumflex -50\n"+
+    "KPX Ugrave Adieresis -50\n"+
+    "KPX Ugrave Agrave -50\n"+
+    "KPX Ugrave Amacron -50\n"+
+    "KPX Ugrave Aogonek -50\n"+
+    "KPX Ugrave Aring -50\n"+
+    "KPX Ugrave Atilde -50\n"+
+    "KPX Ugrave comma -30\n"+
+    "KPX Ugrave period -30\n"+
+    "KPX Uhungarumlaut A -50\n"+
+    "KPX Uhungarumlaut Aacute -50\n"+
+    "KPX Uhungarumlaut Abreve -50\n"+
+    "KPX Uhungarumlaut Acircumflex -50\n"+
+    "KPX Uhungarumlaut Adieresis -50\n"+
+    "KPX Uhungarumlaut Agrave -50\n"+
+    "KPX Uhungarumlaut Amacron -50\n"+
+    "KPX Uhungarumlaut Aogonek -50\n"+
+    "KPX Uhungarumlaut Aring -50\n"+
+    "KPX Uhungarumlaut Atilde -50\n"+
+    "KPX Uhungarumlaut comma -30\n"+
+    "KPX Uhungarumlaut period -30\n"+
+    "KPX Umacron A -50\n"+
+    "KPX Umacron Aacute -50\n"+
+    "KPX Umacron Abreve -50\n"+
+    "KPX Umacron Acircumflex -50\n"+
+    "KPX Umacron Adieresis -50\n"+
+    "KPX Umacron Agrave -50\n"+
+    "KPX Umacron Amacron -50\n"+
+    "KPX Umacron Aogonek -50\n"+
+    "KPX Umacron Aring -50\n"+
+    "KPX Umacron Atilde -50\n"+
+    "KPX Umacron comma -30\n"+
+    "KPX Umacron period -30\n"+
+    "KPX Uogonek A -50\n"+
+    "KPX Uogonek Aacute -50\n"+
+    "KPX Uogonek Abreve -50\n"+
+    "KPX Uogonek Acircumflex -50\n"+
+    "KPX Uogonek Adieresis -50\n"+
+    "KPX Uogonek Agrave -50\n"+
+    "KPX Uogonek Amacron -50\n"+
+    "KPX Uogonek Aogonek -50\n"+
+    "KPX Uogonek Aring -50\n"+
+    "KPX Uogonek Atilde -50\n"+
+    "KPX Uogonek comma -30\n"+
+    "KPX Uogonek period -30\n"+
+    "KPX Uring A -50\n"+
+    "KPX Uring Aacute -50\n"+
+    "KPX Uring Abreve -50\n"+
+    "KPX Uring Acircumflex -50\n"+
+    "KPX Uring Adieresis -50\n"+
+    "KPX Uring Agrave -50\n"+
+    "KPX Uring Amacron -50\n"+
+    "KPX Uring Aogonek -50\n"+
+    "KPX Uring Aring -50\n"+
+    "KPX Uring Atilde -50\n"+
+    "KPX Uring comma -30\n"+
+    "KPX Uring period -30\n"+
+    "KPX V A -80\n"+
+    "KPX V Aacute -80\n"+
+    "KPX V Abreve -80\n"+
+    "KPX V Acircumflex -80\n"+
+    "KPX V Adieresis -80\n"+
+    "KPX V Agrave -80\n"+
+    "KPX V Amacron -80\n"+
+    "KPX V Aogonek -80\n"+
+    "KPX V Aring -80\n"+
+    "KPX V Atilde -80\n"+
+    "KPX V G -50\n"+
+    "KPX V Gbreve -50\n"+
+    "KPX V Gcommaaccent -50\n"+
+    "KPX V O -50\n"+
+    "KPX V Oacute -50\n"+
+    "KPX V Ocircumflex -50\n"+
+    "KPX V Odieresis -50\n"+
+    "KPX V Ograve -50\n"+
+    "KPX V Ohungarumlaut -50\n"+
+    "KPX V Omacron -50\n"+
+    "KPX V Oslash -50\n"+
+    "KPX V Otilde -50\n"+
+    "KPX V a -60\n"+
+    "KPX V aacute -60\n"+
+    "KPX V abreve -60\n"+
+    "KPX V acircumflex -60\n"+
+    "KPX V adieresis -60\n"+
+    "KPX V agrave -60\n"+
+    "KPX V amacron -60\n"+
+    "KPX V aogonek -60\n"+
+    "KPX V aring -60\n"+
+    "KPX V atilde -60\n"+
+    "KPX V colon -40\n"+
+    "KPX V comma -120\n"+
+    "KPX V e -50\n"+
+    "KPX V eacute -50\n"+
+    "KPX V ecaron -50\n"+
+    "KPX V ecircumflex -50\n"+
+    "KPX V edieresis -50\n"+
+    "KPX V edotaccent -50\n"+
+    "KPX V egrave -50\n"+
+    "KPX V emacron -50\n"+
+    "KPX V eogonek -50\n"+
+    "KPX V hyphen -80\n"+
+    "KPX V o -90\n"+
+    "KPX V oacute -90\n"+
+    "KPX V ocircumflex -90\n"+
+    "KPX V odieresis -90\n"+
+    "KPX V ograve -90\n"+
+    "KPX V ohungarumlaut -90\n"+
+    "KPX V omacron -90\n"+
+    "KPX V oslash -90\n"+
+    "KPX V otilde -90\n"+
+    "KPX V period -120\n"+
+    "KPX V semicolon -40\n"+
+    "KPX V u -60\n"+
+    "KPX V uacute -60\n"+
+    "KPX V ucircumflex -60\n"+
+    "KPX V udieresis -60\n"+
+    "KPX V ugrave -60\n"+
+    "KPX V uhungarumlaut -60\n"+
+    "KPX V umacron -60\n"+
+    "KPX V uogonek -60\n"+
+    "KPX V uring -60\n"+
+    "KPX W A -60\n"+
+    "KPX W Aacute -60\n"+
+    "KPX W Abreve -60\n"+
+    "KPX W Acircumflex -60\n"+
+    "KPX W Adieresis -60\n"+
+    "KPX W Agrave -60\n"+
+    "KPX W Amacron -60\n"+
+    "KPX W Aogonek -60\n"+
+    "KPX W Aring -60\n"+
+    "KPX W Atilde -60\n"+
+    "KPX W O -20\n"+
+    "KPX W Oacute -20\n"+
+    "KPX W Ocircumflex -20\n"+
+    "KPX W Odieresis -20\n"+
+    "KPX W Ograve -20\n"+
+    "KPX W Ohungarumlaut -20\n"+
+    "KPX W Omacron -20\n"+
+    "KPX W Oslash -20\n"+
+    "KPX W Otilde -20\n"+
+    "KPX W a -40\n"+
+    "KPX W aacute -40\n"+
+    "KPX W abreve -40\n"+
+    "KPX W acircumflex -40\n"+
+    "KPX W adieresis -40\n"+
+    "KPX W agrave -40\n"+
+    "KPX W amacron -40\n"+
+    "KPX W aogonek -40\n"+
+    "KPX W aring -40\n"+
+    "KPX W atilde -40\n"+
+    "KPX W colon -10\n"+
+    "KPX W comma -80\n"+
+    "KPX W e -35\n"+
+    "KPX W eacute -35\n"+
+    "KPX W ecaron -35\n"+
+    "KPX W ecircumflex -35\n"+
+    "KPX W edieresis -35\n"+
+    "KPX W edotaccent -35\n"+
+    "KPX W egrave -35\n"+
+    "KPX W emacron -35\n"+
+    "KPX W eogonek -35\n"+
+    "KPX W hyphen -40\n"+
+    "KPX W o -60\n"+
+    "KPX W oacute -60\n"+
+    "KPX W ocircumflex -60\n"+
+    "KPX W odieresis -60\n"+
+    "KPX W ograve -60\n"+
+    "KPX W ohungarumlaut -60\n"+
+    "KPX W omacron -60\n"+
+    "KPX W oslash -60\n"+
+    "KPX W otilde -60\n"+
+    "KPX W period -80\n"+
+    "KPX W semicolon -10\n"+
+    "KPX W u -45\n"+
+    "KPX W uacute -45\n"+
+    "KPX W ucircumflex -45\n"+
+    "KPX W udieresis -45\n"+
+    "KPX W ugrave -45\n"+
+    "KPX W uhungarumlaut -45\n"+
+    "KPX W umacron -45\n"+
+    "KPX W uogonek -45\n"+
+    "KPX W uring -45\n"+
+    "KPX W y -20\n"+
+    "KPX W yacute -20\n"+
+    "KPX W ydieresis -20\n"+
+    "KPX Y A -110\n"+
+    "KPX Y Aacute -110\n"+
+    "KPX Y Abreve -110\n"+
+    "KPX Y Acircumflex -110\n"+
+    "KPX Y Adieresis -110\n"+
+    "KPX Y Agrave -110\n"+
+    "KPX Y Amacron -110\n"+
+    "KPX Y Aogonek -110\n"+
+    "KPX Y Aring -110\n"+
+    "KPX Y Atilde -110\n"+
+    "KPX Y O -70\n"+
+    "KPX Y Oacute -70\n"+
+    "KPX Y Ocircumflex -70\n"+
+    "KPX Y Odieresis -70\n"+
+    "KPX Y Ograve -70\n"+
+    "KPX Y Ohungarumlaut -70\n"+
+    "KPX Y Omacron -70\n"+
+    "KPX Y Oslash -70\n"+
+    "KPX Y Otilde -70\n"+
+    "KPX Y a -90\n"+
+    "KPX Y aacute -90\n"+
+    "KPX Y abreve -90\n"+
+    "KPX Y acircumflex -90\n"+
+    "KPX Y adieresis -90\n"+
+    "KPX Y agrave -90\n"+
+    "KPX Y amacron -90\n"+
+    "KPX Y aogonek -90\n"+
+    "KPX Y aring -90\n"+
+    "KPX Y atilde -90\n"+
+    "KPX Y colon -50\n"+
+    "KPX Y comma -100\n"+
+    "KPX Y e -80\n"+
+    "KPX Y eacute -80\n"+
+    "KPX Y ecaron -80\n"+
+    "KPX Y ecircumflex -80\n"+
+    "KPX Y edieresis -80\n"+
+    "KPX Y edotaccent -80\n"+
+    "KPX Y egrave -80\n"+
+    "KPX Y emacron -80\n"+
+    "KPX Y eogonek -80\n"+
+    "KPX Y o -100\n"+
+    "KPX Y oacute -100\n"+
+    "KPX Y ocircumflex -100\n"+
+    "KPX Y odieresis -100\n"+
+    "KPX Y ograve -100\n"+
+    "KPX Y ohungarumlaut -100\n"+
+    "KPX Y omacron -100\n"+
+    "KPX Y oslash -100\n"+
+    "KPX Y otilde -100\n"+
+    "KPX Y period -100\n"+
+    "KPX Y semicolon -50\n"+
+    "KPX Y u -100\n"+
+    "KPX Y uacute -100\n"+
+    "KPX Y ucircumflex -100\n"+
+    "KPX Y udieresis -100\n"+
+    "KPX Y ugrave -100\n"+
+    "KPX Y uhungarumlaut -100\n"+
+    "KPX Y umacron -100\n"+
+    "KPX Y uogonek -100\n"+
+    "KPX Y uring -100\n"+
+    "KPX Yacute A -110\n"+
+    "KPX Yacute Aacute -110\n"+
+    "KPX Yacute Abreve -110\n"+
+    "KPX Yacute Acircumflex -110\n"+
+    "KPX Yacute Adieresis -110\n"+
+    "KPX Yacute Agrave -110\n"+
+    "KPX Yacute Amacron -110\n"+
+    "KPX Yacute Aogonek -110\n"+
+    "KPX Yacute Aring -110\n"+
+    "KPX Yacute Atilde -110\n"+
+    "KPX Yacute O -70\n"+
+    "KPX Yacute Oacute -70\n"+
+    "KPX Yacute Ocircumflex -70\n"+
+    "KPX Yacute Odieresis -70\n"+
+    "KPX Yacute Ograve -70\n"+
+    "KPX Yacute Ohungarumlaut -70\n"+
+    "KPX Yacute Omacron -70\n"+
+    "KPX Yacute Oslash -70\n"+
+    "KPX Yacute Otilde -70\n"+
+    "KPX Yacute a -90\n"+
+    "KPX Yacute aacute -90\n"+
+    "KPX Yacute abreve -90\n"+
+    "KPX Yacute acircumflex -90\n"+
+    "KPX Yacute adieresis -90\n"+
+    "KPX Yacute agrave -90\n"+
+    "KPX Yacute amacron -90\n"+
+    "KPX Yacute aogonek -90\n"+
+    "KPX Yacute aring -90\n"+
+    "KPX Yacute atilde -90\n"+
+    "KPX Yacute colon -50\n"+
+    "KPX Yacute comma -100\n"+
+    "KPX Yacute e -80\n"+
+    "KPX Yacute eacute -80\n"+
+    "KPX Yacute ecaron -80\n"+
+    "KPX Yacute ecircumflex -80\n"+
+    "KPX Yacute edieresis -80\n"+
+    "KPX Yacute edotaccent -80\n"+
+    "KPX Yacute egrave -80\n"+
+    "KPX Yacute emacron -80\n"+
+    "KPX Yacute eogonek -80\n"+
+    "KPX Yacute o -100\n"+
+    "KPX Yacute oacute -100\n"+
+    "KPX Yacute ocircumflex -100\n"+
+    "KPX Yacute odieresis -100\n"+
+    "KPX Yacute ograve -100\n"+
+    "KPX Yacute ohungarumlaut -100\n"+
+    "KPX Yacute omacron -100\n"+
+    "KPX Yacute oslash -100\n"+
+    "KPX Yacute otilde -100\n"+
+    "KPX Yacute period -100\n"+
+    "KPX Yacute semicolon -50\n"+
+    "KPX Yacute u -100\n"+
+    "KPX Yacute uacute -100\n"+
+    "KPX Yacute ucircumflex -100\n"+
+    "KPX Yacute udieresis -100\n"+
+    "KPX Yacute ugrave -100\n"+
+    "KPX Yacute uhungarumlaut -100\n"+
+    "KPX Yacute umacron -100\n"+
+    "KPX Yacute uogonek -100\n"+
+    "KPX Yacute uring -100\n"+
+    "KPX Ydieresis A -110\n"+
+    "KPX Ydieresis Aacute -110\n"+
+    "KPX Ydieresis Abreve -110\n"+
+    "KPX Ydieresis Acircumflex -110\n"+
+    "KPX Ydieresis Adieresis -110\n"+
+    "KPX Ydieresis Agrave -110\n"+
+    "KPX Ydieresis Amacron -110\n"+
+    "KPX Ydieresis Aogonek -110\n"+
+    "KPX Ydieresis Aring -110\n"+
+    "KPX Ydieresis Atilde -110\n"+
+    "KPX Ydieresis O -70\n"+
+    "KPX Ydieresis Oacute -70\n"+
+    "KPX Ydieresis Ocircumflex -70\n"+
+    "KPX Ydieresis Odieresis -70\n"+
+    "KPX Ydieresis Ograve -70\n"+
+    "KPX Ydieresis Ohungarumlaut -70\n"+
+    "KPX Ydieresis Omacron -70\n"+
+    "KPX Ydieresis Oslash -70\n"+
+    "KPX Ydieresis Otilde -70\n"+
+    "KPX Ydieresis a -90\n"+
+    "KPX Ydieresis aacute -90\n"+
+    "KPX Ydieresis abreve -90\n"+
+    "KPX Ydieresis acircumflex -90\n"+
+    "KPX Ydieresis adieresis -90\n"+
+    "KPX Ydieresis agrave -90\n"+
+    "KPX Ydieresis amacron -90\n"+
+    "KPX Ydieresis aogonek -90\n"+
+    "KPX Ydieresis aring -90\n"+
+    "KPX Ydieresis atilde -90\n"+
+    "KPX Ydieresis colon -50\n"+
+    "KPX Ydieresis comma -100\n"+
+    "KPX Ydieresis e -80\n"+
+    "KPX Ydieresis eacute -80\n"+
+    "KPX Ydieresis ecaron -80\n"+
+    "KPX Ydieresis ecircumflex -80\n"+
+    "KPX Ydieresis edieresis -80\n"+
+    "KPX Ydieresis edotaccent -80\n"+
+    "KPX Ydieresis egrave -80\n"+
+    "KPX Ydieresis emacron -80\n"+
+    "KPX Ydieresis eogonek -80\n"+
+    "KPX Ydieresis o -100\n"+
+    "KPX Ydieresis oacute -100\n"+
+    "KPX Ydieresis ocircumflex -100\n"+
+    "KPX Ydieresis odieresis -100\n"+
+    "KPX Ydieresis ograve -100\n"+
+    "KPX Ydieresis ohungarumlaut -100\n"+
+    "KPX Ydieresis omacron -100\n"+
+    "KPX Ydieresis oslash -100\n"+
+    "KPX Ydieresis otilde -100\n"+
+    "KPX Ydieresis period -100\n"+
+    "KPX Ydieresis semicolon -50\n"+
+    "KPX Ydieresis u -100\n"+
+    "KPX Ydieresis uacute -100\n"+
+    "KPX Ydieresis ucircumflex -100\n"+
+    "KPX Ydieresis udieresis -100\n"+
+    "KPX Ydieresis ugrave -100\n"+
+    "KPX Ydieresis uhungarumlaut -100\n"+
+    "KPX Ydieresis umacron -100\n"+
+    "KPX Ydieresis uogonek -100\n"+
+    "KPX Ydieresis uring -100\n"+
+    "KPX a g -10\n"+
+    "KPX a gbreve -10\n"+
+    "KPX a gcommaaccent -10\n"+
+    "KPX a v -15\n"+
+    "KPX a w -15\n"+
+    "KPX a y -20\n"+
+    "KPX a yacute -20\n"+
+    "KPX a ydieresis -20\n"+
+    "KPX aacute g -10\n"+
+    "KPX aacute gbreve -10\n"+
+    "KPX aacute gcommaaccent -10\n"+
+    "KPX aacute v -15\n"+
+    "KPX aacute w -15\n"+
+    "KPX aacute y -20\n"+
+    "KPX aacute yacute -20\n"+
+    "KPX aacute ydieresis -20\n"+
+    "KPX abreve g -10\n"+
+    "KPX abreve gbreve -10\n"+
+    "KPX abreve gcommaaccent -10\n"+
+    "KPX abreve v -15\n"+
+    "KPX abreve w -15\n"+
+    "KPX abreve y -20\n"+
+    "KPX abreve yacute -20\n"+
+    "KPX abreve ydieresis -20\n"+
+    "KPX acircumflex g -10\n"+
+    "KPX acircumflex gbreve -10\n"+
+    "KPX acircumflex gcommaaccent -10\n"+
+    "KPX acircumflex v -15\n"+
+    "KPX acircumflex w -15\n"+
+    "KPX acircumflex y -20\n"+
+    "KPX acircumflex yacute -20\n"+
+    "KPX acircumflex ydieresis -20\n"+
+    "KPX adieresis g -10\n"+
+    "KPX adieresis gbreve -10\n"+
+    "KPX adieresis gcommaaccent -10\n"+
+    "KPX adieresis v -15\n"+
+    "KPX adieresis w -15\n"+
+    "KPX adieresis y -20\n"+
+    "KPX adieresis yacute -20\n"+
+    "KPX adieresis ydieresis -20\n"+
+    "KPX agrave g -10\n"+
+    "KPX agrave gbreve -10\n"+
+    "KPX agrave gcommaaccent -10\n"+
+    "KPX agrave v -15\n"+
+    "KPX agrave w -15\n"+
+    "KPX agrave y -20\n"+
+    "KPX agrave yacute -20\n"+
+    "KPX agrave ydieresis -20\n"+
+    "KPX amacron g -10\n"+
+    "KPX amacron gbreve -10\n"+
+    "KPX amacron gcommaaccent -10\n"+
+    "KPX amacron v -15\n"+
+    "KPX amacron w -15\n"+
+    "KPX amacron y -20\n"+
+    "KPX amacron yacute -20\n"+
+    "KPX amacron ydieresis -20\n"+
+    "KPX aogonek g -10\n"+
+    "KPX aogonek gbreve -10\n"+
+    "KPX aogonek gcommaaccent -10\n"+
+    "KPX aogonek v -15\n"+
+    "KPX aogonek w -15\n"+
+    "KPX aogonek y -20\n"+
+    "KPX aogonek yacute -20\n"+
+    "KPX aogonek ydieresis -20\n"+
+    "KPX aring g -10\n"+
+    "KPX aring gbreve -10\n"+
+    "KPX aring gcommaaccent -10\n"+
+    "KPX aring v -15\n"+
+    "KPX aring w -15\n"+
+    "KPX aring y -20\n"+
+    "KPX aring yacute -20\n"+
+    "KPX aring ydieresis -20\n"+
+    "KPX atilde g -10\n"+
+    "KPX atilde gbreve -10\n"+
+    "KPX atilde gcommaaccent -10\n"+
+    "KPX atilde v -15\n"+
+    "KPX atilde w -15\n"+
+    "KPX atilde y -20\n"+
+    "KPX atilde yacute -20\n"+
+    "KPX atilde ydieresis -20\n"+
+    "KPX b l -10\n"+
+    "KPX b lacute -10\n"+
+    "KPX b lcommaaccent -10\n"+
+    "KPX b lslash -10\n"+
+    "KPX b u -20\n"+
+    "KPX b uacute -20\n"+
+    "KPX b ucircumflex -20\n"+
+    "KPX b udieresis -20\n"+
+    "KPX b ugrave -20\n"+
+    "KPX b uhungarumlaut -20\n"+
+    "KPX b umacron -20\n"+
+    "KPX b uogonek -20\n"+
+    "KPX b uring -20\n"+
+    "KPX b v -20\n"+
+    "KPX b y -20\n"+
+    "KPX b yacute -20\n"+
+    "KPX b ydieresis -20\n"+
+    "KPX c h -10\n"+
+    "KPX c k -20\n"+
+    "KPX c kcommaaccent -20\n"+
+    "KPX c l -20\n"+
+    "KPX c lacute -20\n"+
+    "KPX c lcommaaccent -20\n"+
+    "KPX c lslash -20\n"+
+    "KPX c y -10\n"+
+    "KPX c yacute -10\n"+
+    "KPX c ydieresis -10\n"+
+    "KPX cacute h -10\n"+
+    "KPX cacute k -20\n"+
+    "KPX cacute kcommaaccent -20\n"+
+    "KPX cacute l -20\n"+
+    "KPX cacute lacute -20\n"+
+    "KPX cacute lcommaaccent -20\n"+
+    "KPX cacute lslash -20\n"+
+    "KPX cacute y -10\n"+
+    "KPX cacute yacute -10\n"+
+    "KPX cacute ydieresis -10\n"+
+    "KPX ccaron h -10\n"+
+    "KPX ccaron k -20\n"+
+    "KPX ccaron kcommaaccent -20\n"+
+    "KPX ccaron l -20\n"+
+    "KPX ccaron lacute -20\n"+
+    "KPX ccaron lcommaaccent -20\n"+
+    "KPX ccaron lslash -20\n"+
+    "KPX ccaron y -10\n"+
+    "KPX ccaron yacute -10\n"+
+    "KPX ccaron ydieresis -10\n"+
+    "KPX ccedilla h -10\n"+
+    "KPX ccedilla k -20\n"+
+    "KPX ccedilla kcommaaccent -20\n"+
+    "KPX ccedilla l -20\n"+
+    "KPX ccedilla lacute -20\n"+
+    "KPX ccedilla lcommaaccent -20\n"+
+    "KPX ccedilla lslash -20\n"+
+    "KPX ccedilla y -10\n"+
+    "KPX ccedilla yacute -10\n"+
+    "KPX ccedilla ydieresis -10\n"+
+    "KPX colon space -40\n"+
+    "KPX comma quotedblright -120\n"+
+    "KPX comma quoteright -120\n"+
+    "KPX comma space -40\n"+
+    "KPX d d -10\n"+
+    "KPX d dcroat -10\n"+
+    "KPX d v -15\n"+
+    "KPX d w -15\n"+
+    "KPX d y -15\n"+
+    "KPX d yacute -15\n"+
+    "KPX d ydieresis -15\n"+
+    "KPX dcroat d -10\n"+
+    "KPX dcroat dcroat -10\n"+
+    "KPX dcroat v -15\n"+
+    "KPX dcroat w -15\n"+
+    "KPX dcroat y -15\n"+
+    "KPX dcroat yacute -15\n"+
+    "KPX dcroat ydieresis -15\n"+
+    "KPX e comma 10\n"+
+    "KPX e period 20\n"+
+    "KPX e v -15\n"+
+    "KPX e w -15\n"+
+    "KPX e x -15\n"+
+    "KPX e y -15\n"+
+    "KPX e yacute -15\n"+
+    "KPX e ydieresis -15\n"+
+    "KPX eacute comma 10\n"+
+    "KPX eacute period 20\n"+
+    "KPX eacute v -15\n"+
+    "KPX eacute w -15\n"+
+    "KPX eacute x -15\n"+
+    "KPX eacute y -15\n"+
+    "KPX eacute yacute -15\n"+
+    "KPX eacute ydieresis -15\n"+
+    "KPX ecaron comma 10\n"+
+    "KPX ecaron period 20\n"+
+    "KPX ecaron v -15\n"+
+    "KPX ecaron w -15\n"+
+    "KPX ecaron x -15\n"+
+    "KPX ecaron y -15\n"+
+    "KPX ecaron yacute -15\n"+
+    "KPX ecaron ydieresis -15\n"+
+    "KPX ecircumflex comma 10\n"+
+    "KPX ecircumflex period 20\n"+
+    "KPX ecircumflex v -15\n"+
+    "KPX ecircumflex w -15\n"+
+    "KPX ecircumflex x -15\n"+
+    "KPX ecircumflex y -15\n"+
+    "KPX ecircumflex yacute -15\n"+
+    "KPX ecircumflex ydieresis -15\n"+
+    "KPX edieresis comma 10\n"+
+    "KPX edieresis period 20\n"+
+    "KPX edieresis v -15\n"+
+    "KPX edieresis w -15\n"+
+    "KPX edieresis x -15\n"+
+    "KPX edieresis y -15\n"+
+    "KPX edieresis yacute -15\n"+
+    "KPX edieresis ydieresis -15\n"+
+    "KPX edotaccent comma 10\n"+
+    "KPX edotaccent period 20\n"+
+    "KPX edotaccent v -15\n"+
+    "KPX edotaccent w -15\n"+
+    "KPX edotaccent x -15\n"+
+    "KPX edotaccent y -15\n"+
+    "KPX edotaccent yacute -15\n"+
+    "KPX edotaccent ydieresis -15\n"+
+    "KPX egrave comma 10\n"+
+    "KPX egrave period 20\n"+
+    "KPX egrave v -15\n"+
+    "KPX egrave w -15\n"+
+    "KPX egrave x -15\n"+
+    "KPX egrave y -15\n"+
+    "KPX egrave yacute -15\n"+
+    "KPX egrave ydieresis -15\n"+
+    "KPX emacron comma 10\n"+
+    "KPX emacron period 20\n"+
+    "KPX emacron v -15\n"+
+    "KPX emacron w -15\n"+
+    "KPX emacron x -15\n"+
+    "KPX emacron y -15\n"+
+    "KPX emacron yacute -15\n"+
+    "KPX emacron ydieresis -15\n"+
+    "KPX eogonek comma 10\n"+
+    "KPX eogonek period 20\n"+
+    "KPX eogonek v -15\n"+
+    "KPX eogonek w -15\n"+
+    "KPX eogonek x -15\n"+
+    "KPX eogonek y -15\n"+
+    "KPX eogonek yacute -15\n"+
+    "KPX eogonek ydieresis -15\n"+
+    "KPX f comma -10\n"+
+    "KPX f e -10\n"+
+    "KPX f eacute -10\n"+
+    "KPX f ecaron -10\n"+
+    "KPX f ecircumflex -10\n"+
+    "KPX f edieresis -10\n"+
+    "KPX f edotaccent -10\n"+
+    "KPX f egrave -10\n"+
+    "KPX f emacron -10\n"+
+    "KPX f eogonek -10\n"+
+    "KPX f o -20\n"+
+    "KPX f oacute -20\n"+
+    "KPX f ocircumflex -20\n"+
+    "KPX f odieresis -20\n"+
+    "KPX f ograve -20\n"+
+    "KPX f ohungarumlaut -20\n"+
+    "KPX f omacron -20\n"+
+    "KPX f oslash -20\n"+
+    "KPX f otilde -20\n"+
+    "KPX f period -10\n"+
+    "KPX f quotedblright 30\n"+
+    "KPX f quoteright 30\n"+
+    "KPX g e 10\n"+
+    "KPX g eacute 10\n"+
+    "KPX g ecaron 10\n"+
+    "KPX g ecircumflex 10\n"+
+    "KPX g edieresis 10\n"+
+    "KPX g edotaccent 10\n"+
+    "KPX g egrave 10\n"+
+    "KPX g emacron 10\n"+
+    "KPX g eogonek 10\n"+
+    "KPX g g -10\n"+
+    "KPX g gbreve -10\n"+
+    "KPX g gcommaaccent -10\n"+
+    "KPX gbreve e 10\n"+
+    "KPX gbreve eacute 10\n"+
+    "KPX gbreve ecaron 10\n"+
+    "KPX gbreve ecircumflex 10\n"+
+    "KPX gbreve edieresis 10\n"+
+    "KPX gbreve edotaccent 10\n"+
+    "KPX gbreve egrave 10\n"+
+    "KPX gbreve emacron 10\n"+
+    "KPX gbreve eogonek 10\n"+
+    "KPX gbreve g -10\n"+
+    "KPX gbreve gbreve -10\n"+
+    "KPX gbreve gcommaaccent -10\n"+
+    "KPX gcommaaccent e 10\n"+
+    "KPX gcommaaccent eacute 10\n"+
+    "KPX gcommaaccent ecaron 10\n"+
+    "KPX gcommaaccent ecircumflex 10\n"+
+    "KPX gcommaaccent edieresis 10\n"+
+    "KPX gcommaaccent edotaccent 10\n"+
+    "KPX gcommaaccent egrave 10\n"+
+    "KPX gcommaaccent emacron 10\n"+
+    "KPX gcommaaccent eogonek 10\n"+
+    "KPX gcommaaccent g -10\n"+
+    "KPX gcommaaccent gbreve -10\n"+
+    "KPX gcommaaccent gcommaaccent -10\n"+
+    "KPX h y -20\n"+
+    "KPX h yacute -20\n"+
+    "KPX h ydieresis -20\n"+
+    "KPX k o -15\n"+
+    "KPX k oacute -15\n"+
+    "KPX k ocircumflex -15\n"+
+    "KPX k odieresis -15\n"+
+    "KPX k ograve -15\n"+
+    "KPX k ohungarumlaut -15\n"+
+    "KPX k omacron -15\n"+
+    "KPX k oslash -15\n"+
+    "KPX k otilde -15\n"+
+    "KPX kcommaaccent o -15\n"+
+    "KPX kcommaaccent oacute -15\n"+
+    "KPX kcommaaccent ocircumflex -15\n"+
+    "KPX kcommaaccent odieresis -15\n"+
+    "KPX kcommaaccent ograve -15\n"+
+    "KPX kcommaaccent ohungarumlaut -15\n"+
+    "KPX kcommaaccent omacron -15\n"+
+    "KPX kcommaaccent oslash -15\n"+
+    "KPX kcommaaccent otilde -15\n"+
+    "KPX l w -15\n"+
+    "KPX l y -15\n"+
+    "KPX l yacute -15\n"+
+    "KPX l ydieresis -15\n"+
+    "KPX lacute w -15\n"+
+    "KPX lacute y -15\n"+
+    "KPX lacute yacute -15\n"+
+    "KPX lacute ydieresis -15\n"+
+    "KPX lcommaaccent w -15\n"+
+    "KPX lcommaaccent y -15\n"+
+    "KPX lcommaaccent yacute -15\n"+
+    "KPX lcommaaccent ydieresis -15\n"+
+    "KPX lslash w -15\n"+
+    "KPX lslash y -15\n"+
+    "KPX lslash yacute -15\n"+
+    "KPX lslash ydieresis -15\n"+
+    "KPX m u -20\n"+
+    "KPX m uacute -20\n"+
+    "KPX m ucircumflex -20\n"+
+    "KPX m udieresis -20\n"+
+    "KPX m ugrave -20\n"+
+    "KPX m uhungarumlaut -20\n"+
+    "KPX m umacron -20\n"+
+    "KPX m uogonek -20\n"+
+    "KPX m uring -20\n"+
+    "KPX m y -30\n"+
+    "KPX m yacute -30\n"+
+    "KPX m ydieresis -30\n"+
+    "KPX n u -10\n"+
+    "KPX n uacute -10\n"+
+    "KPX n ucircumflex -10\n"+
+    "KPX n udieresis -10\n"+
+    "KPX n ugrave -10\n"+
+    "KPX n uhungarumlaut -10\n"+
+    "KPX n umacron -10\n"+
+    "KPX n uogonek -10\n"+
+    "KPX n uring -10\n"+
+    "KPX n v -40\n"+
+    "KPX n y -20\n"+
+    "KPX n yacute -20\n"+
+    "KPX n ydieresis -20\n"+
+    "KPX nacute u -10\n"+
+    "KPX nacute uacute -10\n"+
+    "KPX nacute ucircumflex -10\n"+
+    "KPX nacute udieresis -10\n"+
+    "KPX nacute ugrave -10\n"+
+    "KPX nacute uhungarumlaut -10\n"+
+    "KPX nacute umacron -10\n"+
+    "KPX nacute uogonek -10\n"+
+    "KPX nacute uring -10\n"+
+    "KPX nacute v -40\n"+
+    "KPX nacute y -20\n"+
+    "KPX nacute yacute -20\n"+
+    "KPX nacute ydieresis -20\n"+
+    "KPX ncaron u -10\n"+
+    "KPX ncaron uacute -10\n"+
+    "KPX ncaron ucircumflex -10\n"+
+    "KPX ncaron udieresis -10\n"+
+    "KPX ncaron ugrave -10\n"+
+    "KPX ncaron uhungarumlaut -10\n"+
+    "KPX ncaron umacron -10\n"+
+    "KPX ncaron uogonek -10\n"+
+    "KPX ncaron uring -10\n"+
+    "KPX ncaron v -40\n"+
+    "KPX ncaron y -20\n"+
+    "KPX ncaron yacute -20\n"+
+    "KPX ncaron ydieresis -20\n"+
+    "KPX ncommaaccent u -10\n"+
+    "KPX ncommaaccent uacute -10\n"+
+    "KPX ncommaaccent ucircumflex -10\n"+
+    "KPX ncommaaccent udieresis -10\n"+
+    "KPX ncommaaccent ugrave -10\n"+
+    "KPX ncommaaccent uhungarumlaut -10\n"+
+    "KPX ncommaaccent umacron -10\n"+
+    "KPX ncommaaccent uogonek -10\n"+
+    "KPX ncommaaccent uring -10\n"+
+    "KPX ncommaaccent v -40\n"+
+    "KPX ncommaaccent y -20\n"+
+    "KPX ncommaaccent yacute -20\n"+
+    "KPX ncommaaccent ydieresis -20\n"+
+    "KPX ntilde u -10\n"+
+    "KPX ntilde uacute -10\n"+
+    "KPX ntilde ucircumflex -10\n"+
+    "KPX ntilde udieresis -10\n"+
+    "KPX ntilde ugrave -10\n"+
+    "KPX ntilde uhungarumlaut -10\n"+
+    "KPX ntilde umacron -10\n"+
+    "KPX ntilde uogonek -10\n"+
+    "KPX ntilde uring -10\n"+
+    "KPX ntilde v -40\n"+
+    "KPX ntilde y -20\n"+
+    "KPX ntilde yacute -20\n"+
+    "KPX ntilde ydieresis -20\n"+
+    "KPX o v -20\n"+
+    "KPX o w -15\n"+
+    "KPX o x -30\n"+
+    "KPX o y -20\n"+
+    "KPX o yacute -20\n"+
+    "KPX o ydieresis -20\n"+
+    "KPX oacute v -20\n"+
+    "KPX oacute w -15\n"+
+    "KPX oacute x -30\n"+
+    "KPX oacute y -20\n"+
+    "KPX oacute yacute -20\n"+
+    "KPX oacute ydieresis -20\n"+
+    "KPX ocircumflex v -20\n"+
+    "KPX ocircumflex w -15\n"+
+    "KPX ocircumflex x -30\n"+
+    "KPX ocircumflex y -20\n"+
+    "KPX ocircumflex yacute -20\n"+
+    "KPX ocircumflex ydieresis -20\n"+
+    "KPX odieresis v -20\n"+
+    "KPX odieresis w -15\n"+
+    "KPX odieresis x -30\n"+
+    "KPX odieresis y -20\n"+
+    "KPX odieresis yacute -20\n"+
+    "KPX odieresis ydieresis -20\n"+
+    "KPX ograve v -20\n"+
+    "KPX ograve w -15\n"+
+    "KPX ograve x -30\n"+
+    "KPX ograve y -20\n"+
+    "KPX ograve yacute -20\n"+
+    "KPX ograve ydieresis -20\n"+
+    "KPX ohungarumlaut v -20\n"+
+    "KPX ohungarumlaut w -15\n"+
+    "KPX ohungarumlaut x -30\n"+
+    "KPX ohungarumlaut y -20\n"+
+    "KPX ohungarumlaut yacute -20\n"+
+    "KPX ohungarumlaut ydieresis -20\n"+
+    "KPX omacron v -20\n"+
+    "KPX omacron w -15\n"+
+    "KPX omacron x -30\n"+
+    "KPX omacron y -20\n"+
+    "KPX omacron yacute -20\n"+
+    "KPX omacron ydieresis -20\n"+
+    "KPX oslash v -20\n"+
+    "KPX oslash w -15\n"+
+    "KPX oslash x -30\n"+
+    "KPX oslash y -20\n"+
+    "KPX oslash yacute -20\n"+
+    "KPX oslash ydieresis -20\n"+
+    "KPX otilde v -20\n"+
+    "KPX otilde w -15\n"+
+    "KPX otilde x -30\n"+
+    "KPX otilde y -20\n"+
+    "KPX otilde yacute -20\n"+
+    "KPX otilde ydieresis -20\n"+
+    "KPX p y -15\n"+
+    "KPX p yacute -15\n"+
+    "KPX p ydieresis -15\n"+
+    "KPX period quotedblright -120\n"+
+    "KPX period quoteright -120\n"+
+    "KPX period space -40\n"+
+    "KPX quotedblright space -80\n"+
+    "KPX quoteleft quoteleft -46\n"+
+    "KPX quoteright d -80\n"+
+    "KPX quoteright dcroat -80\n"+
+    "KPX quoteright l -20\n"+
+    "KPX quoteright lacute -20\n"+
+    "KPX quoteright lcommaaccent -20\n"+
+    "KPX quoteright lslash -20\n"+
+    "KPX quoteright quoteright -46\n"+
+    "KPX quoteright r -40\n"+
+    "KPX quoteright racute -40\n"+
+    "KPX quoteright rcaron -40\n"+
+    "KPX quoteright rcommaaccent -40\n"+
+    "KPX quoteright s -60\n"+
+    "KPX quoteright sacute -60\n"+
+    "KPX quoteright scaron -60\n"+
+    "KPX quoteright scedilla -60\n"+
+    "KPX quoteright scommaaccent -60\n"+
+    "KPX quoteright space -80\n"+
+    "KPX quoteright v -20\n"+
+    "KPX r c -20\n"+
+    "KPX r cacute -20\n"+
+    "KPX r ccaron -20\n"+
+    "KPX r ccedilla -20\n"+
+    "KPX r comma -60\n"+
+    "KPX r d -20\n"+
+    "KPX r dcroat -20\n"+
+    "KPX r g -15\n"+
+    "KPX r gbreve -15\n"+
+    "KPX r gcommaaccent -15\n"+
+    "KPX r hyphen -20\n"+
+    "KPX r o -20\n"+
+    "KPX r oacute -20\n"+
+    "KPX r ocircumflex -20\n"+
+    "KPX r odieresis -20\n"+
+    "KPX r ograve -20\n"+
+    "KPX r ohungarumlaut -20\n"+
+    "KPX r omacron -20\n"+
+    "KPX r oslash -20\n"+
+    "KPX r otilde -20\n"+
+    "KPX r period -60\n"+
+    "KPX r q -20\n"+
+    "KPX r s -15\n"+
+    "KPX r sacute -15\n"+
+    "KPX r scaron -15\n"+
+    "KPX r scedilla -15\n"+
+    "KPX r scommaaccent -15\n"+
+    "KPX r t 20\n"+
+    "KPX r tcommaaccent 20\n"+
+    "KPX r v 10\n"+
+    "KPX r y 10\n"+
+    "KPX r yacute 10\n"+
+    "KPX r ydieresis 10\n"+
+    "KPX racute c -20\n"+
+    "KPX racute cacute -20\n"+
+    "KPX racute ccaron -20\n"+
+    "KPX racute ccedilla -20\n"+
+    "KPX racute comma -60\n"+
+    "KPX racute d -20\n"+
+    "KPX racute dcroat -20\n"+
+    "KPX racute g -15\n"+
+    "KPX racute gbreve -15\n"+
+    "KPX racute gcommaaccent -15\n"+
+    "KPX racute hyphen -20\n"+
+    "KPX racute o -20\n"+
+    "KPX racute oacute -20\n"+
+    "KPX racute ocircumflex -20\n"+
+    "KPX racute odieresis -20\n"+
+    "KPX racute ograve -20\n"+
+    "KPX racute ohungarumlaut -20\n"+
+    "KPX racute omacron -20\n"+
+    "KPX racute oslash -20\n"+
+    "KPX racute otilde -20\n"+
+    "KPX racute period -60\n"+
+    "KPX racute q -20\n"+
+    "KPX racute s -15\n"+
+    "KPX racute sacute -15\n"+
+    "KPX racute scaron -15\n"+
+    "KPX racute scedilla -15\n"+
+    "KPX racute scommaaccent -15\n"+
+    "KPX racute t 20\n"+
+    "KPX racute tcommaaccent 20\n"+
+    "KPX racute v 10\n"+
+    "KPX racute y 10\n"+
+    "KPX racute yacute 10\n"+
+    "KPX racute ydieresis 10\n"+
+    "KPX rcaron c -20\n"+
+    "KPX rcaron cacute -20\n"+
+    "KPX rcaron ccaron -20\n"+
+    "KPX rcaron ccedilla -20\n"+
+    "KPX rcaron comma -60\n"+
+    "KPX rcaron d -20\n"+
+    "KPX rcaron dcroat -20\n"+
+    "KPX rcaron g -15\n"+
+    "KPX rcaron gbreve -15\n"+
+    "KPX rcaron gcommaaccent -15\n"+
+    "KPX rcaron hyphen -20\n"+
+    "KPX rcaron o -20\n"+
+    "KPX rcaron oacute -20\n"+
+    "KPX rcaron ocircumflex -20\n"+
+    "KPX rcaron odieresis -20\n"+
+    "KPX rcaron ograve -20\n"+
+    "KPX rcaron ohungarumlaut -20\n"+
+    "KPX rcaron omacron -20\n"+
+    "KPX rcaron oslash -20\n"+
+    "KPX rcaron otilde -20\n"+
+    "KPX rcaron period -60\n"+
+    "KPX rcaron q -20\n"+
+    "KPX rcaron s -15\n"+
+    "KPX rcaron sacute -15\n"+
+    "KPX rcaron scaron -15\n"+
+    "KPX rcaron scedilla -15\n"+
+    "KPX rcaron scommaaccent -15\n"+
+    "KPX rcaron t 20\n"+
+    "KPX rcaron tcommaaccent 20\n"+
+    "KPX rcaron v 10\n"+
+    "KPX rcaron y 10\n"+
+    "KPX rcaron yacute 10\n"+
+    "KPX rcaron ydieresis 10\n"+
+    "KPX rcommaaccent c -20\n"+
+    "KPX rcommaaccent cacute -20\n"+
+    "KPX rcommaaccent ccaron -20\n"+
+    "KPX rcommaaccent ccedilla -20\n"+
+    "KPX rcommaaccent comma -60\n"+
+    "KPX rcommaaccent d -20\n"+
+    "KPX rcommaaccent dcroat -20\n"+
+    "KPX rcommaaccent g -15\n"+
+    "KPX rcommaaccent gbreve -15\n"+
+    "KPX rcommaaccent gcommaaccent -15\n"+
+    "KPX rcommaaccent hyphen -20\n"+
+    "KPX rcommaaccent o -20\n"+
+    "KPX rcommaaccent oacute -20\n"+
+    "KPX rcommaaccent ocircumflex -20\n"+
+    "KPX rcommaaccent odieresis -20\n"+
+    "KPX rcommaaccent ograve -20\n"+
+    "KPX rcommaaccent ohungarumlaut -20\n"+
+    "KPX rcommaaccent omacron -20\n"+
+    "KPX rcommaaccent oslash -20\n"+
+    "KPX rcommaaccent otilde -20\n"+
+    "KPX rcommaaccent period -60\n"+
+    "KPX rcommaaccent q -20\n"+
+    "KPX rcommaaccent s -15\n"+
+    "KPX rcommaaccent sacute -15\n"+
+    "KPX rcommaaccent scaron -15\n"+
+    "KPX rcommaaccent scedilla -15\n"+
+    "KPX rcommaaccent scommaaccent -15\n"+
+    "KPX rcommaaccent t 20\n"+
+    "KPX rcommaaccent tcommaaccent 20\n"+
+    "KPX rcommaaccent v 10\n"+
+    "KPX rcommaaccent y 10\n"+
+    "KPX rcommaaccent yacute 10\n"+
+    "KPX rcommaaccent ydieresis 10\n"+
+    "KPX s w -15\n"+
+    "KPX sacute w -15\n"+
+    "KPX scaron w -15\n"+
+    "KPX scedilla w -15\n"+
+    "KPX scommaaccent w -15\n"+
+    "KPX semicolon space -40\n"+
+    "KPX space T -100\n"+
+    "KPX space Tcaron -100\n"+
+    "KPX space Tcommaaccent -100\n"+
+    "KPX space V -80\n"+
+    "KPX space W -80\n"+
+    "KPX space Y -120\n"+
+    "KPX space Yacute -120\n"+
+    "KPX space Ydieresis -120\n"+
+    "KPX space quotedblleft -80\n"+
+    "KPX space quoteleft -60\n"+
+    "KPX v a -20\n"+
+    "KPX v aacute -20\n"+
+    "KPX v abreve -20\n"+
+    "KPX v acircumflex -20\n"+
+    "KPX v adieresis -20\n"+
+    "KPX v agrave -20\n"+
+    "KPX v amacron -20\n"+
+    "KPX v aogonek -20\n"+
+    "KPX v aring -20\n"+
+    "KPX v atilde -20\n"+
+    "KPX v comma -80\n"+
+    "KPX v o -30\n"+
+    "KPX v oacute -30\n"+
+    "KPX v ocircumflex -30\n"+
+    "KPX v odieresis -30\n"+
+    "KPX v ograve -30\n"+
+    "KPX v ohungarumlaut -30\n"+
+    "KPX v omacron -30\n"+
+    "KPX v oslash -30\n"+
+    "KPX v otilde -30\n"+
+    "KPX v period -80\n"+
+    "KPX w comma -40\n"+
+    "KPX w o -20\n"+
+    "KPX w oacute -20\n"+
+    "KPX w ocircumflex -20\n"+
+    "KPX w odieresis -20\n"+
+    "KPX w ograve -20\n"+
+    "KPX w ohungarumlaut -20\n"+
+    "KPX w omacron -20\n"+
+    "KPX w oslash -20\n"+
+    "KPX w otilde -20\n"+
+    "KPX w period -40\n"+
+    "KPX x e -10\n"+
+    "KPX x eacute -10\n"+
+    "KPX x ecaron -10\n"+
+    "KPX x ecircumflex -10\n"+
+    "KPX x edieresis -10\n"+
+    "KPX x edotaccent -10\n"+
+    "KPX x egrave -10\n"+
+    "KPX x emacron -10\n"+
+    "KPX x eogonek -10\n"+
+    "KPX y a -30\n"+
+    "KPX y aacute -30\n"+
+    "KPX y abreve -30\n"+
+    "KPX y acircumflex -30\n"+
+    "KPX y adieresis -30\n"+
+    "KPX y agrave -30\n"+
+    "KPX y amacron -30\n"+
+    "KPX y aogonek -30\n"+
+    "KPX y aring -30\n"+
+    "KPX y atilde -30\n"+
+    "KPX y comma -80\n"+
+    "KPX y e -10\n"+
+    "KPX y eacute -10\n"+
+    "KPX y ecaron -10\n"+
+    "KPX y ecircumflex -10\n"+
+    "KPX y edieresis -10\n"+
+    "KPX y edotaccent -10\n"+
+    "KPX y egrave -10\n"+
+    "KPX y emacron -10\n"+
+    "KPX y eogonek -10\n"+
+    "KPX y o -25\n"+
+    "KPX y oacute -25\n"+
+    "KPX y ocircumflex -25\n"+
+    "KPX y odieresis -25\n"+
+    "KPX y ograve -25\n"+
+    "KPX y ohungarumlaut -25\n"+
+    "KPX y omacron -25\n"+
+    "KPX y oslash -25\n"+
+    "KPX y otilde -25\n"+
+    "KPX y period -80\n"+
+    "KPX yacute a -30\n"+
+    "KPX yacute aacute -30\n"+
+    "KPX yacute abreve -30\n"+
+    "KPX yacute acircumflex -30\n"+
+    "KPX yacute adieresis -30\n"+
+    "KPX yacute agrave -30\n"+
+    "KPX yacute amacron -30\n"+
+    "KPX yacute aogonek -30\n"+
+    "KPX yacute aring -30\n"+
+    "KPX yacute atilde -30\n"+
+    "KPX yacute comma -80\n"+
+    "KPX yacute e -10\n"+
+    "KPX yacute eacute -10\n"+
+    "KPX yacute ecaron -10\n"+
+    "KPX yacute ecircumflex -10\n"+
+    "KPX yacute edieresis -10\n"+
+    "KPX yacute edotaccent -10\n"+
+    "KPX yacute egrave -10\n"+
+    "KPX yacute emacron -10\n"+
+    "KPX yacute eogonek -10\n"+
+    "KPX yacute o -25\n"+
+    "KPX yacute oacute -25\n"+
+    "KPX yacute ocircumflex -25\n"+
+    "KPX yacute odieresis -25\n"+
+    "KPX yacute ograve -25\n"+
+    "KPX yacute ohungarumlaut -25\n"+
+    "KPX yacute omacron -25\n"+
+    "KPX yacute oslash -25\n"+
+    "KPX yacute otilde -25\n"+
+    "KPX yacute period -80\n"+
+    "KPX ydieresis a -30\n"+
+    "KPX ydieresis aacute -30\n"+
+    "KPX ydieresis abreve -30\n"+
+    "KPX ydieresis acircumflex -30\n"+
+    "KPX ydieresis adieresis -30\n"+
+    "KPX ydieresis agrave -30\n"+
+    "KPX ydieresis amacron -30\n"+
+    "KPX ydieresis aogonek -30\n"+
+    "KPX ydieresis aring -30\n"+
+    "KPX ydieresis atilde -30\n"+
+    "KPX ydieresis comma -80\n"+
+    "KPX ydieresis e -10\n"+
+    "KPX ydieresis eacute -10\n"+
+    "KPX ydieresis ecaron -10\n"+
+    "KPX ydieresis ecircumflex -10\n"+
+    "KPX ydieresis edieresis -10\n"+
+    "KPX ydieresis edotaccent -10\n"+
+    "KPX ydieresis egrave -10\n"+
+    "KPX ydieresis emacron -10\n"+
+    "KPX ydieresis eogonek -10\n"+
+    "KPX ydieresis o -25\n"+
+    "KPX ydieresis oacute -25\n"+
+    "KPX ydieresis ocircumflex -25\n"+
+    "KPX ydieresis odieresis -25\n"+
+    "KPX ydieresis ograve -25\n"+
+    "KPX ydieresis ohungarumlaut -25\n"+
+    "KPX ydieresis omacron -25\n"+
+    "KPX ydieresis oslash -25\n"+
+    "KPX ydieresis otilde -25\n"+
+    "KPX ydieresis period -80\n"+
+    "KPX z e 10\n"+
+    "KPX z eacute 10\n"+
+    "KPX z ecaron 10\n"+
+    "KPX z ecircumflex 10\n"+
+    "KPX z edieresis 10\n"+
+    "KPX z edotaccent 10\n"+
+    "KPX z egrave 10\n"+
+    "KPX z emacron 10\n"+
+    "KPX z eogonek 10\n"+
+    "KPX zacute e 10\n"+
+    "KPX zacute eacute 10\n"+
+    "KPX zacute ecaron 10\n"+
+    "KPX zacute ecircumflex 10\n"+
+    "KPX zacute edieresis 10\n"+
+    "KPX zacute edotaccent 10\n"+
+    "KPX zacute egrave 10\n"+
+    "KPX zacute emacron 10\n"+
+    "KPX zacute eogonek 10\n"+
+    "KPX zcaron e 10\n"+
+    "KPX zcaron eacute 10\n"+
+    "KPX zcaron ecaron 10\n"+
+    "KPX zcaron ecircumflex 10\n"+
+    "KPX zcaron edieresis 10\n"+
+    "KPX zcaron edotaccent 10\n"+
+    "KPX zcaron egrave 10\n"+
+    "KPX zcaron emacron 10\n"+
+    "KPX zcaron eogonek 10\n"+
+    "KPX zdotaccent e 10\n"+
+    "KPX zdotaccent eacute 10\n"+
+    "KPX zdotaccent ecaron 10\n"+
+    "KPX zdotaccent ecircumflex 10\n"+
+    "KPX zdotaccent edieresis 10\n"+
+    "KPX zdotaccent edotaccent 10\n"+
+    "KPX zdotaccent egrave 10\n"+
+    "KPX zdotaccent emacron 10\n"+
+    "KPX zdotaccent eogonek 10\n"+
+    "EndKernPairs\n"+
+    "EndKernData\n"+
+    "EndFontMetrics\n";
 }
