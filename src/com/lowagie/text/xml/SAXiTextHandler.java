@@ -150,7 +150,7 @@ public class SAXiTextHandler extends HandlerBase {
             return;
         }
         
-        // chunks
+        // symbols
         if (Entities.isTag(name)) {
             Font f = new Font();
             if (currentChunk != null) {
@@ -210,6 +210,7 @@ public class SAXiTextHandler extends HandlerBase {
                 table.setWidths(widths);
             }
             catch(BadElementException bee) {
+                // this shouldn't happen
                 throw new ExceptionConverter(bee);
             }
             stack.push(table);
@@ -219,7 +220,13 @@ public class SAXiTextHandler extends HandlerBase {
         // sections
         if (Section.isTag(name)) {
             Element previous = (Element) stack.pop();
-            Section section = ((Section)previous).addSection(attributes);
+            Section section;
+            try {
+                section = ((Section)previous).addSection(attributes);
+            }
+            catch(ClassCastException cce) {
+                throw new ExceptionConverter(cce);
+            }
             stack.push(previous);
             stack.push(section);
             return;
@@ -268,21 +275,27 @@ public class SAXiTextHandler extends HandlerBase {
         
         // annotations
         if (Annotation.isTag(name)) {
+            Annotation annotation = new Annotation(attributes);
             TextElementArray current;
             try {
-                current = (TextElementArray) stack.pop();
-                current.add(new Annotation(attributes));
-                stack.push(current);
-            }
-            catch(EmptyStackException ese) {
                 try {
-                    document.add(new Annotation(attributes));
+                    current = (TextElementArray) stack.pop();
+                    try {
+                        current.add(annotation);
+                    }
+                    catch(Exception e) {
+                        document.add(annotation);
+                    }
+                    stack.push(current);
                 }
-                catch(DocumentException de) {
-                    throw new ExceptionConverter(de);
+                catch(EmptyStackException ese) {
+                    document.add(annotation);
                 }
+                return;
             }
-            return;
+            catch(DocumentException de) {
+                throw new ExceptionConverter(de);
+            }
         }
         
         // newlines
