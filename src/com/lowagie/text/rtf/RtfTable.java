@@ -60,6 +60,9 @@ import java.io.*;
  * A Helper Class for the <CODE>RtfWriter</CODE>
  * <P>
  * Do not use it directly, except if you want to write a <CODE>DocumentListener</CODE> for Rtf
+ *
+ * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
+ * improvements.
  */
 public class RtfTable
 {
@@ -67,6 +70,12 @@ public class RtfTable
   private ArrayList rowsList = new ArrayList();
   /** Stores the RtfWriter, which created this RtfTable */
   private RtfWriter writer = null;
+  // <!-- steffen
+  /** Stores the Table, which this RtfTable is based on */
+  private Table origTable = null;
+  // -->
+  
+  
 
   /** 
    * Create a new <code>RtfTable</code>
@@ -86,6 +95,9 @@ public class RtfTable
    */
   public boolean importTable(Table table, int pageWidth)
   {
+    // <!-- steffen
+    origTable = table;
+    // -->        
     // All Cells are pregenerated first, so that cell and rowspanning work
     Iterator rows = table.iterator();
     Row row = null;
@@ -94,23 +106,27 @@ public class RtfTable
     int cellpadding = (int) (table.cellpadding() * writer.twipsFactor);
     int cellspacing = (int) (table.cellspacing() * writer.twipsFactor);
     float[] propWidths = table.getProportionalWidths();
+
     int borders = table.border();
     java.awt.Color borderColor = table.borderColor();
     float borderWidth = table.borderWidth();
 
     for(int i = 0; i < table.size(); i++)
       {
-	RtfRow rtfRow = new RtfRow(writer, this);
-	rtfRow.pregenerateRows(table.columns());
-	rowsList.add(rtfRow);
+        RtfRow rtfRow = new RtfRow(writer, this);
+        rtfRow.pregenerateRows(table.columns());
+        rowsList.add(rtfRow);
       }
     int i = 0;
     while(rows.hasNext())
       {
-	row = (Row) rows.next();
-	RtfRow rtfRow = (RtfRow) rowsList.get(i);
-	rtfRow.importRow(row, tableWidth, pageWidth, cellpadding, cellspacing, borders, borderColor, borderWidth, i);
-	i++;
+        row = (Row) rows.next();
+        RtfRow rtfRow = (RtfRow) rowsList.get(i);
+        // steffen
+        // <---
+        rtfRow.importRow(row, propWidths, tableWidth, pageWidth, cellpadding, cellspacing, borders, borderColor, borderWidth, i);
+        // -->
+        i++;
       }
     return true;
   }
@@ -122,13 +138,14 @@ public class RtfTable
    */
   public boolean writeTable(OutputStream os) throws DocumentException, IOException
   {
-    Iterator rows = rowsList.iterator();
-    RtfRow row = null;
-    while(rows.hasNext())
+    // <!-- steffen
+    int size = rowsList.size();
+    for (int i = 0; i < size; i++)
       {
-	row = (RtfRow) rows.next();
-	row.writeRow(os);
+        RtfRow row = (RtfRow)rowsList.get( i );
+        row.writeRow( os, i, origTable );
       }
+    // -->    
     os.write(RtfWriter.escape);
     os.write(RtfWriter.paragraphDefaults);
     os.write(RtfWriter.paragraph);
