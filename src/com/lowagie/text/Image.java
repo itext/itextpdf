@@ -824,9 +824,9 @@ public abstract class Image extends Rectangle implements Element {
  */
     
     public static URL toURL(String filename) throws MalformedURLException {
-		if (filename.startsWith("file:/") || filename.startsWith("http://")) {
-			return new URL(filename);
-		}
+        if (filename.startsWith("file:/") || filename.startsWith("http://")) {
+            return new URL(filename);
+        }
         File f = new File(filename);
         String path = f.getAbsolutePath();
         if (File.separatorChar != '/') {

@@ -406,7 +406,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	attributes	the attributes
  */
     
-    public void set(Properties attributes) {     
+    public void set(Properties attributes) {
         String value;
         if ((value = attributes.getProperty(ElementTags.NUMBERDEPTH)) != null) {
             setNumberDepth(Integer.parseInt(value));
@@ -419,7 +419,7 @@ public class Section extends ArrayList implements TextElementArray {
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.parseFloat(value + "f"));
-        }   
+        }
     }
     
 /**
@@ -570,7 +570,7 @@ public class Section extends ArrayList implements TextElementArray {
             buf.insert(0, ((Integer) numbers.get(i)).intValue());
         }
         Paragraph result = new Paragraph(title);
-		result.add(0, new Chunk(buf.toString(), title.font()));
+        result.add(0, new Chunk(buf.toString(), title.font()));
         return result;
     }
     

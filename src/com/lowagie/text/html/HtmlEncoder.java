@@ -173,24 +173,24 @@ public class HtmlEncoder {
     
     public static String getAlignment(int alignment) {
         switch(alignment) {
-        case Element.ALIGN_LEFT:
-            return HtmlTags.ALIGN_LEFT;
-        case Element.ALIGN_CENTER:
-            return HtmlTags.ALIGN_CENTER;
-        case Element.ALIGN_RIGHT:
-            return HtmlTags.ALIGN_RIGHT;
-        case Element.ALIGN_JUSTIFIED:
-            return HtmlTags.ALIGN_JUSTIFIED;
-        case Element.ALIGN_TOP:
-            return HtmlTags.ALIGN_TOP;
-        case Element.ALIGN_MIDDLE:
-            return HtmlTags.ALIGN_MIDDLE;
-        case Element.ALIGN_BOTTOM:
-            return HtmlTags.ALIGN_BOTTOM;
-        case Element.ALIGN_BASELINE:
-            return HtmlTags.ALIGN_BASELINE;
-        default:
-            return HtmlTags.DEFAULT;
+            case Element.ALIGN_LEFT:
+                return HtmlTags.ALIGN_LEFT;
+            case Element.ALIGN_CENTER:
+                return HtmlTags.ALIGN_CENTER;
+            case Element.ALIGN_RIGHT:
+                return HtmlTags.ALIGN_RIGHT;
+            case Element.ALIGN_JUSTIFIED:
+                return HtmlTags.ALIGN_JUSTIFIED;
+            case Element.ALIGN_TOP:
+                return HtmlTags.ALIGN_TOP;
+            case Element.ALIGN_MIDDLE:
+                return HtmlTags.ALIGN_MIDDLE;
+            case Element.ALIGN_BOTTOM:
+                return HtmlTags.ALIGN_BOTTOM;
+            case Element.ALIGN_BASELINE:
+                return HtmlTags.ALIGN_BASELINE;
+                default:
+                    return HtmlTags.DEFAULT;
         }
     }
 }

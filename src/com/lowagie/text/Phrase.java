@@ -72,7 +72,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     // membervariables
     
 /** This is the leading of this phrase. */
-    protected float leading;  
+    protected float leading;
     
 /** This is the font of this phrase. */
     protected Font font = new Font();
@@ -280,9 +280,9 @@ public class Phrase extends ArrayList implements TextElementArray {
                 super.add(index, chunk);
             }
             else if (element.type() == Element.PHRASE ||
-                element.type() == Element.ANCHOR ||
-                element.type() == Element.ANNOTATION ||
-                element.type() == Element.TABLE) { // line added by David Freels
+            element.type() == Element.ANCHOR ||
+            element.type() == Element.ANNOTATION ||
+            element.type() == Element.TABLE) { // line added by David Freels
                 super.add(index, element);
             }
             else {
@@ -320,15 +320,15 @@ public class Phrase extends ArrayList implements TextElementArray {
                 case Element.PARAGRAPH:
                     Phrase phrase = (Phrase) o;
                     boolean success = true;
-					Element e;
+                    Element e;
                     for (Iterator i = phrase.iterator(); i.hasNext(); ) {
-						e = (Element) i.next();
-						if (e instanceof Chunk) {
-	                        success &= super.add(e);
-						}
-						else {
-							success &= this.add(e);
-						}
+                        e = (Element) i.next();
+                        if (e instanceof Chunk) {
+                            success &= super.add(e);
+                        }
+                        else {
+                            success &= this.add(e);
+                        }
                     }
                     return success;
                 case Element.ANCHOR:

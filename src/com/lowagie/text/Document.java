@@ -91,7 +91,7 @@ public class Document implements DocListener {
     // membervariables
     
 /** Allows the pdf documents to be produced without compression for debugging purposes. */
-    public static boolean compress = true; 
+    public static boolean compress = true;
     
 /** The DocListener. */
     private ArrayList listeners = new ArrayList();
@@ -221,7 +221,7 @@ public class Document implements DocListener {
             type == Element.PARAGRAPH ||
             type == Element.TABLE ||
             type == Element.PTABLE ||
-            type == Element.ANCHOR ||     
+            type == Element.ANCHOR ||
             type == Element.ANNOTATION ||
             type == Element.CHAPTER ||
             type == Element.SECTION ||
@@ -229,8 +229,8 @@ public class Document implements DocListener {
             type == Element.LISTITEM ||
             type == Element.RECTANGLE ||
             type == Element.PNG ||
-            type == Element.JPEG ||    
-            type == Element.GIF ||    
+            type == Element.JPEG ||
+            type == Element.GIF ||
             type == Element.IMGRAW ||
             type == Element.GRAPHIC)) {
                 throw new DocumentException("The document is open; you can only add Elements with content.");

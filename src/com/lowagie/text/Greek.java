@@ -64,7 +64,7 @@ public class Greek {
             }
         }
         return -1;
-    }                
+    }
     
  /**
   * Gets a chunk with a symbol character.

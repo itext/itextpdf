@@ -113,7 +113,7 @@ public class XmlWriter extends DocWriter implements DocListener {
         for (int i = 128; i < 256; i++) {
             xmlCode[i] = "&#" + i + ";";
         }
-    }    
+    }
     // membervariables
     
 /** This is the meta information of the document. */
@@ -313,7 +313,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 }
                 catch(NullPointerException npe) {
                 }
-
+                
                 addTabs(indent);
                 HashMap attributes = chunk.getAttributes();
                 if (chunk.font().isStandardFont() && attributes == null) {
@@ -334,7 +334,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                     if (attributes != null) {
                         for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
                             String key = (String) i.next();
-                           if (key.equals(Chunk.LOCALGOTO)
+                            if (key.equals(Chunk.LOCALGOTO)
                             || key.equals(Chunk.LOCALDESTINATION)
                             || key.equals(Chunk.GENERICTAG)) {
                                 String value = (String) attributes.get(key);
@@ -354,7 +354,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.PHRASE:
             {
                 Phrase phrase = (Phrase) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.PHRASE);
                 
@@ -374,7 +374,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.ANCHOR:
             {
                 Anchor anchor = (Anchor) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.ANCHOR);
                 
@@ -398,7 +398,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.PARAGRAPH:
             {
                 Paragraph paragraph = (Paragraph) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.PARAGRAPH);
                 
@@ -423,7 +423,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.SECTION:
             {
                 Section section = (Section) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.SECTION);
                 writeSection(section, indent);
@@ -433,7 +433,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.CHAPTER:
             {
                 Chapter chapter = (Chapter) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.CHAPTER);
                 writeSection(chapter, indent);
@@ -444,7 +444,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.LIST:
             {
                 List list = (List) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.LIST);
                 write(ElementTags.NUMBERED, String.valueOf(list.isNumbered()));
@@ -474,7 +474,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.LISTITEM:
             {
                 ListItem listItem = (ListItem) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.LISTITEM);
                 write(ElementTags.LEADING, String.valueOf(listItem.leading()));
@@ -498,7 +498,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.CELL:
             {
                 Cell cell = (Cell) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.CELL);
                 write((Rectangle) cell);
@@ -534,7 +534,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.ROW:
             {
                 Row row = (Row) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.ROW);
                 os.write(GT);
@@ -552,7 +552,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.TABLE:
             {
                 Table table = (Table) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.TABLE);
                 write(ElementTags.COLUMNS, String.valueOf(table.columns()));
@@ -597,7 +597,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Element.ANNOTATION:
             {
                 Annotation annotation = (Annotation) element;
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.ANNOTATION);
                 if (annotation.title() != null) {
@@ -617,7 +617,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 if (image.url() == null) {
                     return;
                 }
-
+                
                 addTabs(indent);
                 writeStart(ElementTags.IMAGE);
                 write(ElementTags.URL, image.url().toString());
@@ -684,15 +684,15 @@ public class XmlWriter extends DocWriter implements DocListener {
             if (section.title().indentationRight() != 0) {
                 write(ElementTags.INDENTATIONRIGHT, String.valueOf(section.title().indentationRight()));
             }
-			write(section.title().font());
+            write(section.title().font());
             os.write(GT);
             os.write(NEWLINE);
-			Iterator i = section.title().iterator();
-			if (section.depth() > 0) {
-				i.next();
-			}
+            Iterator i = section.title().iterator();
+            if (section.depth() > 0) {
+                i.next();
+            }
             while (i.hasNext()) {
-				write((Element) i.next(), indent + 2);
+                write((Element) i.next(), indent + 2);
             }
             addTabs(indent + 1);
             writeEnd(ElementTags.TITLE);
