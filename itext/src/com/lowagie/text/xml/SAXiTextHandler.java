@@ -90,11 +90,6 @@ public class SAXiTextHandler extends HandlerBase {
     
     public void startElement(String name, AttributeList attrs) {
         
-        if (ignore || ElementTags.IGNORE.equals(name)) {
-            ignore = true;
-            return;
-        }
-        
         Properties attributes = new Properties();
         attributes.setProperty(ElementTags.TAGNAME, name);
         if (attrs != null) {
@@ -114,8 +109,12 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void handleStartingTags(String name, Properties attributes) {
-        
         //System.err.println("Start: " + name);
+        
+        if (ignore || ElementTags.IGNORE.equals(name)) {
+            ignore = true;
+            return;
+        }
         
         // maybe there is some meaningful data that wasn't between tags
         if (currentChunk != null) {
@@ -350,8 +349,10 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void characters(char[] ch, int start, int length) {
-        String content = new String(ch, start, length);
         
+        if (ignore) return;
+        
+        String content = new String(ch, start, length);
         //System.err.println("'" + content + "'");
         
         if (content.trim().length() == 0) {
@@ -400,13 +401,6 @@ public class SAXiTextHandler extends HandlerBase {
     
     public void endElement(String name) {
         
-        if (ElementTags.IGNORE.equals(name)) {
-            ignore = false;
-            return;
-        }
-        
-        if (ignore) return;
-        
         handleEndingTags(name);
     }
     
@@ -419,7 +413,14 @@ public class SAXiTextHandler extends HandlerBase {
     
     public void handleEndingTags(String name) {
         
-        //System.err.println("End: " + name);
+        //System.err.println("Stop: " + name);
+        
+        if (ElementTags.IGNORE.equals(name)) {
+            ignore = false;
+            return;
+        }
+        
+        if (ignore) return;
         
         try {
             // tags that don't have any content
