@@ -25,7 +25,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -61,7 +61,7 @@ import java.io.*;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
- * @version $Revision$Date: 2002/08/06 12:44:40 $
+ * @version $Revision$Date: 2002/11/07 21:44:11 $
  *
  * Modified by Mark Hall (mhall@austromail.at) 14.04.2002
  */
@@ -91,5 +91,9 @@ public class RtfPageNumber extends GenericRtfField implements RtfField {
         out.write(content.toString().getBytes());
         writer.writeFinishingFontSignature( out, this );
         super.write(writer, out);
+    }
+
+    public String toString() {
+        return content.toString();
     }
 }
