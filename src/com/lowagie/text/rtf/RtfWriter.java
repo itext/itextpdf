@@ -378,6 +378,15 @@ public class RtfWriter extends DocWriter implements DocListener
   /** Second tag. */
     private static final byte[] second = "sec".getBytes();
 
+  /** Start superscript. */
+    private static final byte[] startSuper = "super".getBytes();
+
+  /** Start subscript. */
+    private static final byte[] startSub = "sub".getBytes();
+
+  /** End super/sub script. */
+    private static final byte[] endSuperSub = "nosupersub".getBytes();
+
   /**
    * Header / Footer
    */
@@ -1031,15 +1040,17 @@ public class RtfWriter extends DocWriter implements DocListener
 	  }
 	  else
 	  {
-	    writeInitialFontSignature( out, chunk.font() );
-	    out.write( filterSpecialChar( chunk.content() ).getBytes() );
-	    writeFinishingFontSignature( out, chunk.font() );
+	    writeInitialFontSignature(out, chunk);
+ 	    out.write( filterSpecialChar( chunk.content() ).getBytes() );
+	    writeFinishingFontSignature( out, chunk );
 	  }
         }
     }
 
 
-    protected void writeInitialFontSignature( OutputStream out, Font font ) throws IOException {
+    protected void writeInitialFontSignature( OutputStream out, Chunk chunk ) throws IOException {
+        Font font = chunk.font();
+
         out.write(escape);
         out.write(fontNumber);
         if (!font.getFamilyname().equalsIgnoreCase("unknown")) {
@@ -1073,11 +1084,32 @@ public class RtfWriter extends DocWriter implements DocListener
             out.write(escape);
             out.write(strikethrough);
         }
+
+        /*
+         * Superscript / Subscript added by Scott Dietrich (sdietrich@emlab.com)
+         */
+        if (chunk.getAttributes() != null) {
+            Float f = (Float)chunk.getAttributes().get(Chunk.SUBSUPSCRIPT);
+            if (f != null)
+                if (f.floatValue() > 0)
+                {
+                    out.write(escape);
+                    out.write(startSuper);
+                }
+                else if (f.floatValue() < 0)
+                {
+                    out.write(escape);
+                    out.write(startSub);
+                }
+        }
+
         out.write( delimiter );
     }
 
 
-    protected void writeFinishingFontSignature( OutputStream out, Font font ) throws IOException {
+    protected void writeFinishingFontSignature( OutputStream out, Chunk chunk) throws IOException {
+        Font font = chunk.font();
+
         if (font.isBold()) {
             out.write(escape);
             out.write(bold);
@@ -1097,6 +1129,19 @@ public class RtfWriter extends DocWriter implements DocListener
             out.write(escape);
             out.write(strikethrough);
             writeInt(out, 0);
+        }
+
+        /*
+         * Superscript / Subscript added by Scott Dietrich (sdietrich@emlab.com)
+         */
+        if (chunk.getAttributes() != null) {
+            Float f = (Float)chunk.getAttributes().get(Chunk.SUBSUPSCRIPT);
+            if (f != null)
+                if (f.floatValue() != 0)
+                {
+                    out.write(escape);
+                    out.write(endSuperSub);
+                }
         }
     }
   /**
