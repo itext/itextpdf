@@ -1158,6 +1158,8 @@ class PdfDocument extends Document implements DocListener {
 		pageN++;
 
 		// graphics and text are initialized
+		int oldleading = leading;
+		int oldAlignment = alignment;
 		imageEnd = -1;
 		imageIndentRight = 0;
 		imageIndentLeft = 0;
@@ -1168,7 +1170,6 @@ class PdfDocument extends Document implements DocListener {
 		indentTop = 0;
 		
 		currentHeight = 0;
-		int oldAlignment = alignment;
 
 		// backgroundcolors, etc...
 		thisPageSize = pageSize;
@@ -1250,6 +1251,7 @@ class PdfDocument extends Document implements DocListener {
 			e.printStackTrace();
 		}
 
+		leading = oldleading;
 		alignment = oldAlignment;
 		carriageReturn();
 	}
