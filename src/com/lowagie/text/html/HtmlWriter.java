@@ -915,13 +915,13 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 write(HtmlTags.PLAINWIDTH, String.valueOf(image.scaledWidth()));
                 write(HtmlTags.PLAINHEIGHT, String.valueOf(image.scaledHeight()));
-                if (hasMarkupAttributes(image))
-                {
+                if (hasMarkupAttributes(image)){
                     writeMarkupAttributes((MarkupAttributes)image);
-                    writeEnd();
-                    return;
                 }
+                writeEnd();
+                return;
             }
+            
             default:
                 return;
         }
