@@ -278,6 +278,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             case Element.CHUNK:
             Chunk chunk = (Chunk) o;
             return super.add(chunk);
+            case Element.PARAGRAPH:
             case Element.PHRASE:
             Phrase phrase = (Phrase) o;
             boolean success = true;
