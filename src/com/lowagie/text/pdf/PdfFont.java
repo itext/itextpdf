@@ -50,7 +50,6 @@ import com.lowagie.text.Image;
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 7.7 (page 198-203).
  *
- * @see		PdfFontMetrics
  * @see		PdfName
  * @see		PdfDictionary
  * @see		BadPdfFormatException
