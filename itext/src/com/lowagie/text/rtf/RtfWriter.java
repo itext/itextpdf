@@ -1912,27 +1912,18 @@ public class RtfWriter extends DocWriter implements DocListener {
                 if (headerFooter instanceof RtfHeaderFooter && ((RtfHeaderFooter) headerFooter).content() != null) {
                     this.addElement(((RtfHeaderFooter) headerFooter).content(), target);
                 } else {
+                    Paragraph par = new Paragraph();
+                    par.setAlignment(headerFooter.alignment());
                     if (headerFooter.getBefore() != null) {
-                        if(headerFooter.getBefore() instanceof Phrase) {
-                            Paragraph par = new Paragraph(headerFooter.getBefore());
-                            par.setAlignment(headerFooter.alignment());
-                            this.addElement(par, target);
-                        } else {
-                            this.addElement(headerFooter.getBefore(), target);
-                        }
+                        par.add(headerFooter.getBefore());
                     }
                     if (headerFooter.isNumbered()) {
-                        this.addElement(new RtfPageNumber("", headerFooter.getBefore().font()), target);
+                        par.add(new RtfPageNumber("", headerFooter.getBefore().font()));
                     }
                     if (headerFooter.getAfter() != null) {
-                        if(headerFooter.getAfter() instanceof Phrase) {
-                            Paragraph par = new Paragraph(headerFooter.getAfter());
-                            par.setAlignment(headerFooter.alignment());
-                            this.addElement(par, target);
-                        } else {
-                            this.addElement(headerFooter.getAfter(), target);
-                        }
+                        par.add(headerFooter.getAfter());
                     }
+                    this.addElement(par, target);
                 }
             }
             target.write(closeGroup);
