@@ -110,16 +110,16 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** This is the escape character which introduces RTF tags. */
     public static final byte escape = (byte) '\\';
-    
+
   /** This is another escape character which introduces RTF tags. */
     private static final byte[] extendedEscape = "\\*\\".getBytes();
-    
+
   /** This is the delimiter between RTF tags and normal text. */
     protected static final byte delimiter = (byte) ' ';
-    
+
   /** This is another delimiter between RTF tags and normal text. */
     private static final byte commaDelimiter = (byte) ';';
-    
+
   /** This is the character for beginning a new group. */
     public static final byte openGroup = (byte) '{';
     
@@ -151,7 +151,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Font size tag. */
     protected static final byte[] fontSize = "fs".getBytes();
-    
+
   /** Font color tag. */
     protected static final byte[] fontColor = "cf".getBytes();
     
@@ -332,7 +332,7 @@ public class RtfWriter extends DocWriter implements DocListener
 
   /** Green value tag. */
     private static final byte[] colorGreen = "green".getBytes();
-    
+
   /** Blue value tag. */
     private static final byte[] colorBlue = "blue".getBytes();
     
@@ -357,32 +357,35 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Producer tag. */
     private static final byte[] metaProducer = "operator".getBytes();
-    
+
   /** Creation Date tag. */
     private static final byte[] metaCreationDate = "creationdate".getBytes();
-    
+
   /** Year tag. */
     private static final byte[] year = "yr".getBytes();
-    
+
   /** Month tag. */
     private static final byte[] month = "mo".getBytes();
-    
+
   /** Day tag. */
     private static final byte[] day = "dy".getBytes();
-    
+
   /** Hour tag. */
     private static final byte[] hour = "hr".getBytes();
-    
+
   /** Minute tag. */
     private static final byte[] minute = "min".getBytes();
-    
+
   /** Second tag. */
     private static final byte[] second = "sec".getBytes();
-    
+
   /**
    * Header / Footer
    */
-    
+
+  /** Title Page tag */
+    private static final byte[] titlePage = "titlepg".getBytes();
+
   /** Begin header group tag. */
     private static final byte[] headerBegin = "header".getBytes();
 
@@ -391,17 +394,17 @@ public class RtfWriter extends DocWriter implements DocListener
 
     // header footer 'left', 'right', 'first'
     private static final byte[] headerlBegin = "headerl".getBytes();
-    
+
     private static final byte[] footerlBegin = "footerl".getBytes();
 
     private static final byte[] headerrBegin = "headerr".getBytes();
-    
+
     private static final byte[] footerrBegin = "footerr".getBytes();
 
     private static final byte[] headerfBegin = "headerf".getBytes();
-    
+
     private static final byte[] footerfBegin = "footerf".getBytes();
-    
+
   /**
    * Paper Properties
    */
@@ -423,7 +426,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Margin bottom tag. */
     private static final byte[] rtfMarginBottom = "margb".getBytes();
-    
+
   /** New Page tag. */
     private static final byte[] newPage = "page".getBytes();
     
@@ -455,7 +458,7 @@ public class RtfWriter extends DocWriter implements DocListener
 
   /** JPEG Image */
     private static final byte[] pictureJPEG = "jpegblip".getBytes();
-    
+
   /** Picture width */
     private static final byte[] pictureWidth = "picw".getBytes();
     
@@ -464,7 +467,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Picture width after scaling */
     private static final byte[] pictureIntendedWidth = "picwgoal".getBytes();
-    
+
   /** Picture height after scaling */
     private static final byte[] pictureIntendedHeight = "pichgoal".getBytes();
     
@@ -539,7 +542,7 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Bottom margin. */
     private int marginBottom = 1440;
-    
+
   /** Page width. */
     private int pageWidth = 12240;
     
@@ -560,43 +563,34 @@ public class RtfWriter extends DocWriter implements DocListener
 
   /** Current List Level. */
     private int listLevel = 0;
-    
+
   /** Current maximum List Level. */
     private int maxListLevel = 0;
 
   /** Write a TOC */
-  private boolean writeTOC = false;
+    private boolean writeTOC = false;
+
+  /** Special title page */
+    private boolean hasTitlePage = false;
 
 
   /** Protected Constructor */
-    
+
   /**
    * Constructs a <CODE>RtfWriter</CODE>.
    *
    * @param document    The <CODE>Document</CODE> that is to be written as RTF
    * @param os          The <CODE>OutputStream</CODE> the writer has to write to.
    */
-    
+
     protected RtfWriter(Document doc, OutputStream os)
     {
         super(doc, os);
         document.addDocListener(this);
         initDefaults();
     }
-    
-  /** Public functions from the DocWriter Interface */
-    
-  /**
-   * Gets an instance of the <CODE>RtfWriter</CODE>.
-   *
-   * @param document    The <CODE>Document</CODE> that has to be written
-   * @param os  The <CODE>OutputStream</CODE> the writer has to write to.
-   * @return    a new <CODE>RtfWriter</CODE>
-   */
-    public static RtfWriter getInstance(Document document, OutputStream os)
-    {
-        return(new RtfWriter(document, os));
-    }
+
+  /** Public functions special to the RtfWriter */
 
   /**
    * This method controls whether TOC entries are automatically generated
@@ -617,6 +611,40 @@ public class RtfWriter extends DocWriter implements DocListener
   {
     return writeTOC;
   }
+
+  /**
+   * This method controls whether the first page is a title page
+   *
+   * @param writeTOC    boolean value indicating whether the first page is a title page
+   */
+  public void setHasTitlePage(boolean hasTitlePage)
+  {
+    this.hasTitlePage = hasTitlePage;
+  }
+
+  /**
+   * Gets the current setting of hasTitlePage
+   *
+   * @return    boolean value indicating whether the first page is a title page
+   */
+  public boolean getHasTitlePage()
+  {
+    return hasTitlePage;
+  }
+
+  /** Public functions from the DocWriter Interface */
+
+  /**
+   * Gets an instance of the <CODE>RtfWriter</CODE>.
+   *
+   * @param document    The <CODE>Document</CODE> that has to be written
+   * @param os  The <CODE>OutputStream</CODE> the writer has to write to.
+   * @return    a new <CODE>RtfWriter</CODE>
+   */
+    public static RtfWriter getInstance(Document document, OutputStream os)
+    {
+        return(new RtfWriter(document, os));
+    }
 
   /**
    * Signals that the <CODE>Document</CODE> has been opened and that
@@ -960,17 +988,13 @@ public class RtfWriter extends DocWriter implements DocListener
 	    writeFinishingFontSignature( out, chunk.font() );
 	  }
         }
-	//
-	//        if (chunk instanceof RtfTOC) {
-	//            ((RtfTOC)chunk).write( this, out );
-	//        }
     }
 
 
     protected void writeInitialFontSignature( OutputStream out, Font font ) throws IOException {
         out.write(escape);
         out.write(fontNumber);
-        if (font.family() != Font.UNDEFINED) {
+        if (!font.getFamilyname().equalsIgnoreCase("unknown")) {
             writeInt(out, addFont( font ));
         } else {
             writeInt(out, 0);
@@ -1438,7 +1462,7 @@ public class RtfWriter extends DocWriter implements DocListener
 
         for(int i = 0; i < fontList.size(); i++)
         {
-            if(newFont.family() == ((Font)fontList.get(i)).family()) { fn = i; }
+            if(newFont.getFamilyname().equals(((Font)fontList.get(i)).getFamilyname())) { fn = i; }
         }
         if(fn == -1)
         {
@@ -1491,7 +1515,11 @@ public class RtfWriter extends DocWriter implements DocListener
             os.write((byte)'\n');
             writeDocumentFormat();
             os.write((byte)'\n');
-	    os.write( "\\titlepg".getBytes() );
+            if(hasTitlePage)
+            {
+              os.write(escape);
+              os.write(titlePage);
+            }
             if (this.footer instanceof RtfHeaderFooters) {
                 RtfHeaderFooters rtfHf = (RtfHeaderFooters)this.footer;
                 HeaderFooter hf = rtfHf.get( RtfHeaderFooters.ALL_PAGES );
@@ -1512,7 +1540,7 @@ public class RtfWriter extends DocWriter implements DocListener
                 }
             } else {
                 writeHeaderFooter(this.footer, footerBegin, os);
-            }    
+            }
             if (this.header instanceof RtfHeaderFooters) {
                 RtfHeaderFooters rtfHf = (RtfHeaderFooters)this.header;
                 HeaderFooter hf = rtfHf.get( RtfHeaderFooters.ALL_PAGES );
@@ -1533,7 +1561,8 @@ public class RtfWriter extends DocWriter implements DocListener
                 }
             } else {
                 writeHeaderFooter(this.header, headerBegin, os);
-            }    
+            }
+
             content.writeTo(os);
             os.write(closeGroup);
             return true;
@@ -1583,7 +1612,7 @@ public class RtfWriter extends DocWriter implements DocListener
             os.write(fontNumber);
             writeInt(os, i);
             os.write(escape);
-            switch(fnt.family())
+            switch(Font.getFamilyIndex(fnt.getFamilyname()))
             {
                 case Font.COURIER:
                     os.write(fontModern);
@@ -1864,7 +1893,7 @@ public class RtfWriter extends DocWriter implements DocListener
         }
         catch(IOException e)
         {
-            System.out.println("InitDefaultsError" + e);
+            System.err.println("InitDefaultsError" + e);
         }
     }
 
