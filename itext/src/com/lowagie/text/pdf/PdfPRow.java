@@ -237,6 +237,17 @@ public class PdfPRow {
                 }
             }
             else {
+
+                //add by Jin-Hsia Yang, to add remaining height to last row
+                if (table.size() > 0) {
+                    PdfPRow row = table.getRow(table.size()-1);
+                    float remainingHeight=maxHeight-table.getTotalHeight()-cell.getPaddingBottom()-cell.getPaddingTop();
+                    if (remainingHeight > 0) {
+                        row.setMaxHeights(row.getMaxHeights()+ remainingHeight );
+                    }
+                }
+                //end add
+
                 table.writeSelectedRows(0, -1, cell.left() + xPos + cell.getPaddingLeft(),
                     tly, canvases);
             }
@@ -255,4 +266,10 @@ public class PdfPRow {
         else
             return calculateHeights();
     }
+    
+    //add by Jin-Hsia Yang
+    public void setMaxHeights(float maxHeight) {
+	this.maxHeight=maxHeight;
+    }
+    //end add
 }

@@ -154,6 +154,13 @@ public abstract class Image extends Rectangle implements Element {
     protected Long mySerialId = getSerialId();
     
     static long serialId = 0;
+    
+    /** Holds value of property dpiX. */
+    protected int dpiX = 0;
+    
+    /** Holds value of property dpiY. */
+    protected int dpiY = 0;
+    
     // constructors
     
 /**
@@ -222,6 +229,9 @@ public abstract class Image extends Rectangle implements Element {
             }
             if (c1 == Png.PNGID[0] && c2 == Png.PNGID[1]) {
                 return new Png(url);
+            }
+            if (c1 == 0xD7 && c2 == 0xCD) {
+                return new ImgWMF(url);
             }
             throw new IOException(url.toString() + " is not a recognized imageformat.");
         }
@@ -416,6 +426,9 @@ public abstract class Image extends Rectangle implements Element {
             }
             if (c1 == Png.PNGID[0] && c2 == Png.PNGID[1]) {
                 return new Png(img);
+            }
+            if (c1 == 0xD7 && c2 == 0xCD) {
+                return new ImgWMF(img);
             }
             throw new IOException("Could not find a recognized imageformat.");
         }
@@ -718,6 +731,10 @@ public abstract class Image extends Rectangle implements Element {
         return template;
     }
     
+    public void setTemplateData(PdfTemplate template) {
+        this.template = template;
+    }
+    
 /**
  * Checks if the <CODE>Images</CODE> has to be added at an absolute position.
  *
@@ -1014,4 +1031,19 @@ public abstract class Image extends Rectangle implements Element {
     public Long getMySerialId() {
         return mySerialId;
     }
+    
+    /** Gets the dots-per-inch in the X direction. Returns 0 if not available.
+     * @return the dots-per-inch in the X direction
+     */
+    public int getDpiX() {
+        return dpiX;
+    }
+    
+    /** Gets the dots-per-inch in the Y direction. Returns 0 if not available.
+     * @return the dots-per-inch in the Y direction
+     */
+    public int getDpiY() {
+        return dpiY;
+    }
+    
 }

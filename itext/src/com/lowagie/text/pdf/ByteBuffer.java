@@ -200,33 +200,35 @@ public class ByteBuffer
             res.append('-');
             d = -d;
         }
-        // some performance ameliorations suggested by Gerald Fehringer
-        if (d == 1.0) {
-            return res.append('1').toString();
-        }
         if (d < 1.0) {
             d += 0.000005;
-            long v = (long)(d * 100000);
+            if (d >= 1) {
+                return res.append('1').toString();
+            }
+            long x = 100000;
+            long v = (long) (d * x);
             res.append("0.");
-            String total = String.valueOf(v);
-            for (int i = total.length(); i < 5; i++) {
+            while( v < x/10 ) {
                 res.append('0');
+                x /= 10;
             }
             res.append(v);
-            while (res.charAt(res.length() - 1) == '0') {
-                res.deleteCharAt(res.length() - 1);
+            int cut = res.length() - 1;
+            while (res.charAt(cut) == '0') {
+                --cut;
             }
+            res.setLength(cut + 1);
             return res.toString();
         }
         else if (d <= 32767) {
             d += 0.005;
-            long v = (long)(d * 100);
+            long v = (long) (d * 100);
             String total = String.valueOf(v);
             int len = total.length();
             char c1 = total.charAt(len - 2);
             char c2 = total.charAt(len - 1);
             for (int i = 0; i < (len - 2); i++) {
-                 res.append(total.charAt(i));
+                res.append(total.charAt(i));
             }
             if (c1 != '0' || c2 != '0') {
                 res.append('.').append(c1);
@@ -234,11 +236,11 @@ public class ByteBuffer
                     res.append(c2);
                 }
             }
-			return res.toString();
+            return res.toString();
         }
         else {
             d += 0.5;
-            long v = (long)d;
+            long v = (long) d;
             return res.append(v).toString();
         }
     }

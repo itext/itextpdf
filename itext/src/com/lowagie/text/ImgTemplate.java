@@ -59,6 +59,8 @@ public class ImgTemplate extends Image implements Element {
      */
     public ImgTemplate(PdfTemplate template) throws BadElementException{
         super((URL)null);
+        if (template == null)
+            throw new BadElementException("The template can not be null.");
         type = IMGTEMPLATE;
         scaledHeight = template.getHeight();
         setTop(scaledHeight);

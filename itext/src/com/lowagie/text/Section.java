@@ -91,6 +91,9 @@ public class Section extends ArrayList implements TextElementArray {
 /** This is the complete list of sectionnumbers of this section and the parents of this section. */
     protected transient ArrayList numbers;
     
+    /** false if the bookmark children are not visible */
+    protected boolean bookmarkOpen = true;
+    
     // constructors
     
 /**
@@ -189,6 +192,8 @@ public class Section extends ArrayList implements TextElementArray {
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
             element.type() == Element.TABLE ||
+            element.type() == Element.PTABLE ||
+            element.type() == Element.IMGTEMPLATE ||
             element.type() == Element.GIF ||
             element.type() == Element.JPEG ||
             element.type() == Element.PNG ||
@@ -223,6 +228,8 @@ public class Section extends ArrayList implements TextElementArray {
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
             element.type() == Element.TABLE ||
+            element.type() == Element.IMGTEMPLATE ||
+            element.type() == Element.PTABLE ||
             element.type() == Element.GIF ||
             element.type() == Element.JPEG ||
             element.type() == Element.PNG ||
@@ -595,4 +602,20 @@ public class Section extends ArrayList implements TextElementArray {
     public static boolean isTag(String tag) {
         return ElementTags.SECTION.equals(tag);
     }
+    
+    /** Getter for property bookmarkOpen.
+     * @return Value of property bookmarkOpen.
+     */
+    public boolean isBookmarkOpen() {
+        return bookmarkOpen;
+    }
+    
+    /** Setter for property bookmarkOpen.
+     * @param bookmarkOpen false if the bookmark children are not
+     * visible.
+     */
+    public void setBookmarkOpen(boolean bookmarkOpen) {
+        this.bookmarkOpen = bookmarkOpen;
+    }
+    
 }

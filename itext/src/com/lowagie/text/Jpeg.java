@@ -77,7 +77,10 @@ public class Jpeg extends Image implements Element {
     
 /** Jpeg markers without additional parameters. */
     public static final int[] NOPARAM_MARKERS = {0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0x01};
+
+    public static final int M_APP0 = 0xE0;
     
+    public static final byte JFIF_ID[] = {0x4A, 0x46, 0x49, 0x46, 0x00};
     // Constructors
     
 /**
@@ -217,9 +220,48 @@ public class Jpeg extends Image implements Element {
             if (is.read() != 0xFF || is.read() != 0xD8)	{
                 throw new BadElementException(errorID + " is not a valid JPEG-file.");
             }
+            boolean firstPass = true;
             while (true) {
                 if (is.read() == 0xFF) {
                     int marker = is.read();
+                    if (firstPass && marker == M_APP0) {
+                        firstPass = false;
+                        int len = getShort(is);
+                        if (len < 16) {
+                            skip(is, len - 2);
+                            continue;
+                        }
+                        byte bcomp[] = new byte[JFIF_ID.length];
+                        int r = is.read(bcomp);
+                        if (r != bcomp.length)
+                            throw new BadElementException(errorID + " corrupted JFIF marker.");
+                        boolean found = true;
+                        for (int k = 0; k < bcomp.length; ++k) {
+                            if (bcomp[k] != JFIF_ID[k]) {
+                                found = false;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            skip(is, len - 2 - bcomp.length);
+                            continue;
+                        }
+                        skip(is, 2);
+                        int units = is.read();
+                        int dx = getShort(is);
+                        int dy = getShort(is);
+                        if (units == 1) {
+                            dpiX = dx;
+                            dpiY = dy;
+                        }
+                        else if (units == 2) {
+                            dpiX = (int)((float)dx * 2.54f + 0.5f);
+                            dpiY = (int)((float)dy * 2.54f + 0.5f);
+                        }
+                        skip(is, len - 2 - bcomp.length - 7);
+                        continue;
+                    }
+                    firstPass = false;
                     int markertype = marker(marker);
                     if (markertype == VALID_MARKER) {
                         skip(is, 2);

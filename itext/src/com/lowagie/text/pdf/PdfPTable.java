@@ -384,6 +384,12 @@ public class PdfPTable implements Element{
         this.horizontalAlignment = horizontalAlignment;
     }
     
+    //add by Jin-Hsia Yang
+    PdfPRow getRow(int idx) {
+        return (PdfPRow)rows.get(idx);
+    }
+    //end add
+
     public void setTableEvent(PdfPTableEvent event) {
         tableEvent = event;
     }

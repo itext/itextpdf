@@ -7,7 +7,6 @@ import com.lowagie.text.DocWriter;
  *
  * @author  psoares
  */
- 
 public final class PdfEncryption {
 
     static final byte pad[] = {

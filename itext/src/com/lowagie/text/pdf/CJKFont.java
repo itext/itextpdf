@@ -456,6 +456,14 @@ public class CJKFont extends BaseFont
                 return fdescInt[2] * fontSize / 1000;
             case ITALICANGLE:
                 return fdescInt[8];
+            case BBOXLLX:
+                return fontSize * fdescInt[4] / 1000;
+            case BBOXLLY:
+                return fontSize * fdescInt[5] / 1000;
+            case BBOXURX:
+                return fontSize * fdescInt[6] / 1000;
+            case BBOXURY:
+                return fontSize * fdescInt[7] / 1000;
         }
         return 0;
     }

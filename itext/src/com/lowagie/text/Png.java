@@ -74,6 +74,9 @@ public class Png extends Image implements Element {
 /** A PNG marker. */
     public static final String tRNS = "tRNS";
     
+/** A PNG marker. */
+    public static final String pHYs = "pHYs";
+    
     // Constructors
     
 /**
@@ -213,14 +216,27 @@ public class Png extends Image implements Element {
             }
             while(true) {
                 int len = getInt(is);
-                if (IHDR.equals(getString(is))) {
+                String id = getString(is);
+                if (IHDR.equals(id)) {
                     scaledWidth = getInt(is);
                     setRight(scaledWidth);
                     scaledHeight = getInt(is);
                     setTop(scaledHeight);
-                    break;
+                    skip(is, len + 4 - 8);
+                    continue;
                 }
-                if (IEND.equals(getString(is))) {
+                if (pHYs.equals(id)) {
+                    int dx = getInt(is);
+                    int dy = getInt(is);
+                    int unit = is.read();
+                    if (unit == 1) {
+                        dpiX = (int)((float)dx * 0.0254f + 0.5f);
+                        dpiY = (int)((float)dy * 0.0254f + 0.5f);
+                    }
+                    skip(is, len + 4 - 9);
+                    continue;
+                }
+                if (IDAT.equals(id) || IEND.equals(id)) {
                     break;
                 }
                 skip(is, len + 4);

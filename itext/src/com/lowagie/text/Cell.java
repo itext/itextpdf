@@ -331,6 +331,8 @@ public class Cell extends Rectangle implements TextElementArray {
             case Element.CELL:
             case Element.TABLE:
             case Element.JPEG:
+            case Element.IMGRAW:
+            case Element.IMGTEMPLATE:
             case Element.GIF:
             case Element.PNG:
                 throw new BadElementException("You can't add listitems, rows, tables, cells, jpgs, gifs or pngs to a cell.");

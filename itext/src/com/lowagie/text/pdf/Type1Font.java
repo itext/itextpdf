@@ -616,6 +616,14 @@ public class Type1Font extends BaseFont
                 return Descender * fontSize / 1000;
             case ITALICANGLE:
                 return ItalicAngle;
+            case BBOXLLX:
+                return llx * fontSize / 1000;
+            case BBOXLLY:
+                return lly * fontSize / 1000;
+            case BBOXURX:
+                return urx * fontSize / 1000;
+            case BBOXURY:
+                return ury * fontSize / 1000;
         }
         return 0;
     }

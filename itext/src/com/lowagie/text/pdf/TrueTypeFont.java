@@ -824,6 +824,14 @@ public class TrueTypeFont extends BaseFont {
                 return (float)os_2.sTypoDescender * fontSize / (float)head.unitsPerEm;
             case ITALICANGLE:
                 return (float)italicAngle;
+            case BBOXLLX:
+                return fontSize * (int)head.xMin / head.unitsPerEm;
+            case BBOXLLY:
+                return fontSize * (int)head.yMin / head.unitsPerEm;
+            case BBOXURX:
+                return fontSize * (int)head.xMax / head.unitsPerEm;
+            case BBOXURY:
+                return fontSize * (int)head.yMax / head.unitsPerEm;
         }
         return 0;
     }
