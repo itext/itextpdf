@@ -469,7 +469,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.CHUNK:
             {
                 Chunk chunk = (Chunk) element;
-                
                 // if the chunk contains an image, return the image representation
                 try {
                     Image image = chunk.getImage();
@@ -479,6 +478,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 catch(NullPointerException npe) {
                 }
                 
+                if (chunk.isEmpty()) return;
                 HashMap attributes = chunk.getAttributes();
                 if (chunk.font().isStandardFont() && attributes == null) {
                     addTabs(indent);
