@@ -402,4 +402,15 @@ public class Row implements Element {
     public int verticalAlignment() {
         return verticalAlignment;
     }
+    
+/**
+ * Checks if a given tag corresponds with this object.
+ *
+ * @param   tag     the given tag
+ * @return  true if the tag corresponds
+ */
+    
+    public static boolean isTag(String tag) {
+        return ElementTags.ROW.equals(tag);
+    }
 }

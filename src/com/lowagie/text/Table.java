@@ -238,7 +238,7 @@ public class Table extends Rectangle implements Element {
  * @return	a <CODE>Table</CODE>
  */
     
-    public Table(Properties attributes) throws BadElementException {
+    public Table(Properties attributes) {
         // a Rectangle is create with BY DEFAULT a border with a width of 1
         super(0, 0, 0, 0);
         setBorder(BOX);
@@ -246,12 +246,13 @@ public class Table extends Rectangle implements Element {
         
         String value = attributes.getProperty(ElementTags.COLUMNS);
         if (value == null) {
-            throw new BadElementException("You have to tell the table how many columns you need.");
+            columns = 1;
         }
-        
-        columns = Integer.parseInt(value);
-        if (columns <= 0) {
-            throw new BadElementException("A table should have at least 1 column.");
+        else {
+            columns = Integer.parseInt(value);
+            if (columns <= 0) {
+                columns = 1;
+            }
         }
         
         rows.add(new Row(columns));
@@ -277,7 +278,7 @@ public class Table extends Rectangle implements Element {
         }
         widths = new float[columns];
         for (int i = 0; i < columns; i++) {
-            widths[i] = 1;
+            widths[i] = 0;
         }
         if ((value = attributes.getProperty(ElementTags.WIDTHS)) != null) {
             StringTokenizer widthTokens = new StringTokenizer(value, ";");
@@ -1234,6 +1235,41 @@ public class Table extends Rectangle implements Element {
                 addCell(new Cell(new Paragraph(" ")), new Point(i, columns-1));
             }
         }
+    }
+    
+/**
+ * Gives you the posibility to add columns.
+ *
+ * @param   aColumns    the number of columns to add
+ */
+    
+    public void addColumns(int aColumns) {
+        ArrayList newRows = new ArrayList(rows.size());
+        
+        int newColumns = columns + aColumns;
+        Row row;
+        for (int i = 0; i < rows.size(); i++) {
+            row = new Row(newColumns);
+            for (int j = 0; j < columns; j++) {
+                row.setElement(((Row) rows.get(i)).getCell(j) ,j);
+            }
+            for (int j = columns; j < newColumns && i < currentRow; j++) {
+                row.setElement(Cell.EMPTY_CELL, j);
+            }
+            newRows.add(row);
+        }
+        
+        // applied 1 column-fix; last column needs to have a width of 0
+        float [] newWidths = new float[newColumns];
+        for (int j = 0; j < columns; j++) {
+            newWidths[j] = widths[j];
+        }
+        for (int j = columns; j < newColumns ; j++) {
+            newWidths[j] = 0;
+        }
+        columns = newColumns;
+        widths = newWidths;
+        rows = newRows;
     }
     
 /**
