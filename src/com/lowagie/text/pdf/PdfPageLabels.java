@@ -83,20 +83,12 @@ public class PdfPageLabels implements Comparator {
     public static int EMPTY = 5;
     /** Dictionary values to set the logical page styles
      */    
-    static PdfName numberingStyle[];
+    static PdfName numberingStyle[] = new PdfName[]{PdfName.D, PdfName.R,
+                new PdfName("r"), PdfName.A, new PdfName("a")};
     /** The sequence of logical pages. Will contain at least a value for page 1
      */    
     TreeMap map;
     
-    static {
-        try {
-            numberingStyle = new PdfName[]{new PdfName("D"), new PdfName("R"),
-                new PdfName("r"), new PdfName("A"), new PdfName("a")};
-        }
-        catch (Exception e) {
-            // empty on purpose
-        }
-    }
     /** Creates a new PdfPageLabel with a default logical page 1
      */
     public PdfPageLabels() {
@@ -189,11 +181,11 @@ public class PdfPageLabels implements Comparator {
                 subDic.put(PdfName.P, new PdfString(text, PdfObject.TEXT_UNICODE));
             int st = ((Integer)obj[3]).intValue();
             if (st != 1)
-                subDic.put(new PdfName("St"), new PdfNumber(st));
+                subDic.put(PdfName.ST, new PdfNumber(st));
             array.add(new PdfNumber(((Integer)obj[0]).intValue() - 1));
             array.add(subDic);
         }
-        dic.put(new PdfName("Nums"), array);
+        dic.put(PdfName.NUMS, array);
         return dic;
     }
 }

@@ -93,12 +93,15 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         fontType = FONT_TYPE_TTUNI;
         if ((fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".ttc")) && ((enc.equals(IDENTITY_H) || enc.equals(IDENTITY_V)) && emb)) {
             process(ttfAfm);
+            if (os_2.fsType == 2)
+                throw new DocumentException(fileName + style + " - license restrictions does not permit embedding.");
+
             if ((cmap31 == null && !fontSpecific) || (cmap10 == null && fontSpecific))
                 throw new DocumentException(fileName + " " + style + " does not contain an usable cmap.");
             if (fontSpecific) {
                 fontSpecific = false;
                 String tempEncoding = encoding;
-                encoding = PdfObject.ENCODING;
+                encoding = PdfObject.TEXT_PDFDOCENCODING;
                 try {
                     createEncoding();
                 }
@@ -203,17 +206,17 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      */    
     private PdfDictionary getCIDFontType2(PdfIndirectReference fontDescriptor, String subsetPrefix, Object metrics[]) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
-        dic.put(PdfName.SUBTYPE, new PdfName("CIDFontType2"));
+        dic.put(PdfName.SUBTYPE, PdfName.CIDFONTTYPE2);
         dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));
         dic.put(PdfName.FONTDESCRIPTOR, fontDescriptor);
-        dic.put(new PdfName("CIDToGIDMap"),new PdfName("Identity"));
+        dic.put(PdfName.CIDTOGIDMAP,PdfName.IDENTITY);
         PdfDictionary cdic = new PdfDictionary();
         cdic.put(PdfName.REGISTRY, new PdfString("Adobe"));
         cdic.put(PdfName.ORDERING, new PdfString("Identity"));
         cdic.put(PdfName.SUPPLEMENT, new PdfNumber(0));
-        dic.put(new PdfName("CIDSystemInfo"), cdic);
+        dic.put(PdfName.CIDSYSTEMINFO, cdic);
         if (!vertical) {
-            dic.put(new PdfName("DW"), new PdfNumber(1000));
+            dic.put(PdfName.DW, new PdfNumber(1000));
             StringBuffer buf = new StringBuffer("[");
             int lastNumber = -10;
             boolean firstTime = true;
@@ -250,12 +253,12 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      */    
     private PdfDictionary getFontBaseType(PdfIndirectReference descendant, String subsetPrefix, PdfIndirectReference toUnicode) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
-        dic.put(PdfName.SUBTYPE, new PdfName("Type0"));
+        dic.put(PdfName.SUBTYPE, PdfName.TYPE0);
         dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));
         dic.put(PdfName.ENCODING, new PdfName(encoding));
-        dic.put(new PdfName("DescendantFonts"), new PdfArray(descendant));
+        dic.put(PdfName.DESCENDANTFONTS, new PdfArray(descendant));
         if (toUnicode != null)
-            dic.put(new PdfName("ToUnicode"), toUnicode);
+            dic.put(PdfName.TOUNICODE, toUnicode);
         return dic;
     }
 

@@ -89,7 +89,12 @@ class PdfResources extends PdfDictionary {
  * @return		<CODE>true</CODE>
  */
     
-    PdfObject add(PdfResource resource) {
-        return put(resource.key(), resource.value());
+    void add(PdfResource resource) {
+        PdfDictionary dic = (PdfDictionary)get(resource.key());
+        if (dic == null)
+            put(resource.key(), resource.value());
+        else {
+            dic.putAll((PdfDictionary)resource.value());
+        }
     }
 }

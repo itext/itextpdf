@@ -166,6 +166,10 @@ public class ColumnText {
     private float spaceCharRatio = GLOBAL_SPACE_CHAR_RATIO;
 
     private boolean lastWasNewline = true;
+    
+    /** Holds value of property linesWritten. */
+    private int linesWritten;
+    
     /**
      * Creates a <CODE>ColumnText</CODE>.
      * @param canvas the place where the text will be written to. Can
@@ -490,6 +494,7 @@ public class ColumnText {
      * @throws DocumentException on error
      */
     public int go(boolean simulate) throws DocumentException {
+        linesWritten = 0;
         boolean dirty = false;
         float ratio = spaceCharRatio;
         Object currentValues[] = new Object[2];
@@ -559,6 +564,7 @@ public class ColumnText {
                 }
                 lastWasNewline = line.isNewlineSplit();
                 yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
+                ++linesWritten;
             }
         }
         else {
@@ -601,6 +607,7 @@ public class ColumnText {
                 }
                 lastWasNewline = line.isNewlineSplit();
                 yLine -= line.isNewlineSplit() ? extraParagraphSpace : 0;
+                ++linesWritten;
             }
         }
         if (dirty) {
@@ -668,4 +675,12 @@ public class ColumnText {
     public int getRunDirection() {
         return runDirection;
     }
+    
+    /** Gets the number of lines written.
+     * @return the number of lines written
+     */
+    public int getLinesWritten() {
+        return this.linesWritten;
+    }
+    
 }

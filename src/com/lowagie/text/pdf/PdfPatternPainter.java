@@ -100,10 +100,7 @@ public class PdfPatternPainter extends PdfTemplate {
         tpl.writer = writer;
         tpl.pdf = pdf;
         tpl.thisReference = thisReference;
-        tpl.fontDictionary = fontDictionary;
-        tpl.xObjectDictionary = xObjectDictionary;
-        tpl.colorDictionary = colorDictionary;
-        tpl.patternDictionary = patternDictionary;
+        tpl.pageResources = pageResources;
         tpl.bBox = new Rectangle(bBox);
         tpl.xstep = xstep;
         tpl.ystep = ystep;

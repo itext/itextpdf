@@ -58,7 +58,7 @@ import com.lowagie.text.Rectangle;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipInputStream;
 /** Reads a PDF document and prepares it to import pages to our
- * document. This class is not mutable and is thread safe; this means that
+ * document. This class is thread safe; this means that
  * a single instance can serve as many output documents as needed and can even be static.
  * @author Paulo Soares (psoares@consiste.pt)
  */
@@ -79,6 +79,8 @@ public class PdfReader {
     protected int pagesCount;
     protected boolean encrypted = false;
     protected boolean rebuilt = false;
+    protected int freeXref;
+    protected boolean tampered = false;
     
     /** Reads and parses a PDF document.
      * @param filename the file name of the document
@@ -136,8 +138,11 @@ public class PdfReader {
         PdfNumber rotate = (PdfNumber)getPdfObject(page.get(PdfName.ROTATE));
         if (rotate == null)
             return 0;
-        else
-            return rotate.intValue();
+        else {
+            int n = rotate.intValue();
+            n %= 360;
+            return n < 0 ? n + 360 : n;
+        }
     }
     
     /** Gets the page size, taking rotation into account. This
@@ -198,11 +203,7 @@ public class PdfReader {
             String value = obj.toString();
             switch (obj.type()) {
                 case PdfObject.STRING: {
-                    byte b[] = PdfEncodings.convertToBytes(value, null);
-                    if (b.length >= 2 && b[0] == (byte)254 && b[1] == (byte)255)
-                        value = PdfEncodings.convertToString(b, PdfObject.TEXT_UNICODE);
-                    else
-                        value = PdfEncodings.convertToString(b, PdfObject.ENCODING);
+                    value = ((PdfString)obj).toUnicodeString();
                     break;
                 }
                 case PdfObject.NAME: {
@@ -260,13 +261,14 @@ public class PdfReader {
         }
     }
 
-    public PdfObject getPdfObject(PdfObject obj) {
+    public static PdfObject getPdfObject(PdfObject obj) {
         if (obj == null)
             return null;
         if (obj.type() != PdfObject.INDIRECT)
             return obj;
-        int idx = ((PRIndirectReference)obj).getNumber();
-        obj = xrefObj[idx];
+        PRIndirectReference ref = (PRIndirectReference)obj;
+        int idx = ref.getNumber();
+        obj = ref.getReader().xrefObj[idx];
         if (obj == null)
             return PdfNull.PDFNULL;
         else
@@ -353,9 +355,20 @@ public class PdfReader {
         }
         for (int k = 0; k < streams.size(); ++k) {
             PRStream stream = (PRStream)streams.get(k);
-            PdfObject length = getPdfObject(stream.get(PdfName.LENGTH));
-            stream.setLength(((PdfNumber)length).intValue());
+            PdfNumber length = (PdfNumber)killIndirect(stream.get(PdfName.LENGTH));
+            stream.setLength(length.intValue());
         }
+    }
+
+    static PdfObject killIndirect(PdfObject obj) {
+        if (obj == null || obj.type() == PdfObject.NULL)
+            return null;
+        PdfObject ret = PdfReader.getPdfObject(obj);
+        if (obj.type() == PdfObject.INDIRECT) {
+            PRIndirectReference ref = (PRIndirectReference)obj;
+            ref.getReader().xrefObj[ref.getNumber()] = null;
+        }
+        return ret;
     }
     
     protected void readXref() throws IOException {
@@ -374,7 +387,7 @@ public class PdfReader {
         } while (ch != -1 && ch != 't');
         if (ch == -1)
             throw new IOException("Unexpected end of file.");
-        tokens.backOnePosition();
+        tokens.backOnePosition(0);
         tokens.nextValidToken();
         if (!tokens.getStringValue().equals("trailer"))
             throw new IOException("trailer not found.");
@@ -443,8 +456,11 @@ public class PdfReader {
                 gen = tokens.intValue();
                 tokens.nextValidToken();
                 if (tokens.getStringValue().equals("n")) {
-                    if (xref[k] == 0)
+                    if (xref[k] == 0) {
+                        if (pos == 0)
+                            tokens.throwError("File position 0 cross-reference entry in this xref subsection");
                         xref[k] = pos;
+                    }
                 }
                 else if (tokens.getStringValue().equals("f")) {
                     if (xref[k] == 0)
@@ -503,8 +519,11 @@ public class PdfReader {
         }
         if (trailer == null)
             throw new IOException("trailer not found.");
-        if (trailer.get(PdfName.ENCRYPT) != null)
+        PdfObject encDic = trailer.get(PdfName.ENCRYPT);
+        if (encDic != null && !encDic.toString().equals("null")) {
             throw new IOException("Encrypted files are not supported.");
+        }
+        trailer.remove(PdfName.ENCRYPT);
         xref = new int[top];
         for (int k = 0; k < top; ++k) {
             int obj[] = xr[k];
@@ -561,7 +580,7 @@ public class PdfReader {
                     if (ch == '\r')
                         ch = tokens.read();
                     if (ch != '\n')
-                        tokens.backOnePosition();
+                        tokens.backOnePosition(ch);
                     PRStream stream = new PRStream(this, tokens.getFilePointer());
                     stream.putAll(dic);
                     return stream;
@@ -720,4 +739,115 @@ public class PdfReader {
         return pageRefs[pageNum - 1];
     }
     
+    public byte[] getPageContent(int pageNum, RandomAccessFileOrArray file) throws IOException{
+        PdfDictionary page = getPageN(pageNum);
+        if (page == null)
+            return null;
+        PdfObject contents = getPdfObject(page.get(PdfName.CONTENTS));
+        if (contents == null)
+            return null;
+        ByteArrayOutputStream bout = null;
+        if (contents.type() == PdfObject.STREAM) {
+            return getStreamBytes((PRStream)contents, file);
+        }
+        else {
+            PdfArray array = (PdfArray)contents;
+            ArrayList list = array.getArrayList();
+            bout = new ByteArrayOutputStream();
+            for (int k = 0; k < list.size(); ++k) {
+                PRStream stream = (PRStream)getPdfObject((PdfObject)list.get(k));
+                byte[] b = PdfReader.getStreamBytes(stream, file);
+                bout.write(b);
+                if (k != list.size() - 1)
+                    bout.write('\n');
+            }
+            return bout.toByteArray();
+        }
+    }
+
+    protected void killXref(PdfObject obj) {
+        if (obj == null)
+            return;
+        if ((obj instanceof PdfIndirectReference) && obj.type() != PdfObject.INDIRECT)
+            return;
+        switch (obj.type()) {
+            case PdfObject.INDIRECT: {
+                int xr = ((PRIndirectReference)obj).getNumber();
+                obj = xrefObj[xr];
+                xrefObj[xr] = null;
+                freeXref = xr;
+                killXref(obj);
+                break;
+            }
+            case PdfObject.ARRAY: {
+                ArrayList t = ((PdfArray)obj).getArrayList();
+                for (int i = 0; i < t.size(); ++i)
+                    killXref((PdfObject)t.get(i));
+                break;
+            }
+            case PdfObject.STREAM:
+            case PdfObject.DICTIONARY: {
+                PdfDictionary dic = (PdfDictionary)obj;
+                for (Iterator i = dic.getKeys().iterator(); i.hasNext();){
+                    killXref(dic.get((PdfName)i.next()));
+                }
+                break;
+            }
+        }
+    }
+    
+    public void setPageContent(int pageNum, byte content[]) throws IOException{
+        PdfDictionary page = getPageN(pageNum);
+        if (page == null)
+            return;
+        PdfObject contents = page.get(PdfName.CONTENTS);
+        killXref(contents);
+        page.put(PdfName.CONTENTS, new PRIndirectReference(this, freeXref));
+        xrefObj[freeXref] = new PRStream(this, content);
+    }
+
+    public static byte[] getStreamBytes(PRStream stream, RandomAccessFileOrArray file) throws IOException {
+        PdfReader reader = stream.getReader();
+        PdfObject filter = reader.getPdfObject(stream.get(PdfName.FILTER));
+        byte b[];
+        if (stream.getOffset() < 0)
+            b = stream.getBytes();
+        else {
+            b = new byte[stream.getLength()];
+            file.seek(stream.getOffset());
+            file.readFully(b);
+        }
+        ArrayList filters = new ArrayList();
+        if (filter != null) {
+            if (filter.type() == PdfObject.NAME) {
+                filters.add(filter);
+            }
+            else if (filter.type() == PdfObject.ARRAY) {
+                filters = ((PdfArray)filter).getArrayList();
+            }
+        }
+        String name;
+        for (int j = 0; j < filters.size(); ++j) {
+            name = ((PdfName)reader.getPdfObject((PdfObject)filters.get(j))).toString();
+            if (name.equals("/FlateDecode") || name.equals("/Fl"))
+                b = PdfReader.FlateDecode(b);
+            else if (name.equals("/ASCIIHexDecode") || name.equals("/AHx"))
+                b = PdfReader.ASCIIHexDecode(b);
+            else if (name.equals("/ASCII85Decode") || name.equals("/A85"))
+                b = PdfReader.ASCII85Decode(b);
+            else if (name.equals("/LZWDecode"))
+                b = PdfReader.LZWDecode(b);
+            else
+                throw new IOException("The filter " + name + " is not supported.");
+        }
+        return b;
+    }
+    
+    public boolean isTampered() {
+        return tampered;
+    }
+    
+    public void setTampered(boolean tampered) {
+        this.tampered = tampered;
+    }
 }

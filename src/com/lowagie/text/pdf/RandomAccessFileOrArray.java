@@ -174,7 +174,7 @@ public class RandomAccessFileOrArray implements DataInput {
         return newpos - pos;
     }
     
-    void reOpen() throws IOException {
+    public void reOpen() throws IOException {
         if (filename != null) {
             close();
             rf = new RandomAccessFile(filename, "r");

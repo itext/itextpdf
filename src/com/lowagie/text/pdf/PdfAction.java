@@ -178,6 +178,7 @@ public class PdfAction extends PdfDictionary {
             case PRINTDIALOG:
                 put(PdfName.S, PdfName.JAVASCRIPT);
                 put(PdfName.JS, new PdfString("this.print(true);\r"));
+                break;
             default:
                 throw new RuntimeException("Invalid named action.");
         }
@@ -231,7 +232,7 @@ public class PdfAction extends PdfDictionary {
         }
         else {
             try {
-                byte b[] = PdfEncodings.convertToBytes(code, unicode ? PdfObject.TEXT_UNICODE : PdfObject.ENCODING);
+                byte b[] = PdfEncodings.convertToBytes(code, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING);
                 PdfStream stream = new PdfStream(b);
                 stream.flateCompress();
                 js.put(PdfName.JS, writer.addToBody(stream).getIndirectReference());

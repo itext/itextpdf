@@ -167,9 +167,9 @@ public class PdfPRow {
         PdfContentByte backgr = canvases[PdfPTable.BACKGROUNDCANVAS];
         // the coordinates of the border are retrieved
         float x1 = cell.left() + xPos;
-        float y1 = cell.top() + yPos;
+        float y2 = cell.top() + yPos;
         float x2 = cell.right() + xPos;
-        float y2 = y1 - maxHeight;
+        float y1 = y2 - maxHeight;
 
         // the backgroundcolor is set
         Color background = cell.backgroundColor();
@@ -212,12 +212,12 @@ public class PdfPRow {
                     lines.lineTo(x1, y2);
                 }
                 if (cell.hasBorder(Rectangle.BOTTOM)) {
-                    lines.moveTo(x1, y2);
-                    lines.lineTo(x2, y2);
-                }
-                if (cell.hasBorder(Rectangle.TOP)) {
                     lines.moveTo(x1, y1);
                     lines.lineTo(x2, y1);
+                }
+                if (cell.hasBorder(Rectangle.TOP)) {
+                    lines.moveTo(x1, y2);
+                    lines.lineTo(x2, y2);
                 }
             }
             lines.stroke();
@@ -350,6 +350,12 @@ public class PdfPRow {
                 if (alignTop && remainingHeight > 0)
                     table.getRow(table.size()-1).setMaxHeights(maxLastRow);
             }
+            PdfPCellEvent evt = cell.getCellEvent();
+            if (evt != null) {
+                Rectangle rect = new Rectangle(cell.left() + xPos, cell.top() + yPos - maxHeight, cell.right() + xPos, cell.top() + yPos);
+                evt.cellLayout(cell, rect, canvases);
+            }
+            
         }
     }
     

@@ -122,6 +122,9 @@ public class PdfPCell extends Rectangle{
     /** Holds value of property image. */
     private Image image;
     
+    /** Holds value of property cellEvent. */
+    private PdfPCellEvent cellEvent;
+    
     /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
      * The default padding is 2.
      * @param phrase the text
@@ -224,6 +227,7 @@ public class PdfPCell extends Rectangle{
         if (cell.table != null)
             table = new PdfPTable(cell.table);
         image = Image.getInstance(cell.image);
+        cellEvent = cell.cellEvent;
     }
     
     /** Gets the <CODE>Phrase</CODE> from this cell.
@@ -556,6 +560,22 @@ public class PdfPCell extends Rectangle{
      */
     public void setImage(Image image) {
         this.image = image;
+    }
+    
+    /** Gets the cell event for this cell.
+     * @return the cell event
+     *
+     */
+    public PdfPCellEvent getCellEvent() {
+        return this.cellEvent;
+    }
+    
+    /** Sets the cell event for this cell.
+     * @param cellEvent the cell event
+     *
+     */
+    public void setCellEvent(PdfPCellEvent cellEvent) {
+        this.cellEvent = cellEvent;
     }
     
 }

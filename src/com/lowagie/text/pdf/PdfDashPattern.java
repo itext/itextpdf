@@ -73,7 +73,7 @@ public class PdfDashPattern extends PdfArray {
     private float gap = -1;
     
 /** This is the phase. */
-    private float phase;
+    private float phase = -1;
     
     // constructors
     

@@ -48,12 +48,22 @@
 package com.lowagie.text.pdf;
 import com.lowagie.text.ExceptionConverter;
 import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 /** Supports fast encodings for winansi and PDFDocEncoding.
- *
+ * Supports conversions from CJK encodings to CID.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfEncodings {
-    
+    protected static final int CIDNONE = 0;
+    protected static final int CIDRANGE = 1;
+    protected static final int CIDCHAR = 2;
+
     static final char winansiByteToChar[] = {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 
         16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 
@@ -150,11 +160,11 @@ public class PdfEncodings {
         pdfEncoding.put(0x20ac, 160);
     }
 
-    /**
-     * Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
+    /** Converts a <CODE>String</CODE> to a </CODE>byte</CODE> array according
      * to the font's encoding.
-     * @param text the <CODE>String</CODE> to be converted
      * @return an array of <CODE>byte</CODE> representing the conversion according to the font's encoding
+     * @param encoding the encoding
+     * @param text the <CODE>String</CODE> to be converted
      */
     public static final byte[] convertToBytes(String text, String encoding) {
         if (encoding == null || encoding.length() == 0) {
@@ -167,7 +177,7 @@ public class PdfEncodings {
         IntHashtable hash = null;
         if (encoding.equals(BaseFont.WINANSI))
             hash = winansi;
-        else if (encoding.equals(PdfObject.ENCODING))
+        else if (encoding.equals(PdfObject.TEXT_PDFDOCENCODING))
             hash = pdfEncoding;
         if (hash != null) {
             int len = text.length();
@@ -206,6 +216,12 @@ public class PdfEncodings {
         }
     }
     
+    /** Converts a </CODE>byte</CODE> array to a <CODE>String</CODE> according
+     * to the some encoding.
+     * @param bytes the bytes to convert
+     * @param encoding the encoding
+     * @return the converted <CODE>String</CODE>
+     */    
     public static final String convertToString(byte bytes[], String encoding) {
         if (encoding == null || encoding.length() == 0) {
             char c[] = new char[bytes.length];
@@ -216,7 +232,7 @@ public class PdfEncodings {
         char ch[] = null;
         if (encoding.equals(BaseFont.WINANSI))
             ch = winansiByteToChar;
-        else if (encoding.equals(PdfObject.ENCODING))
+        else if (encoding.equals(PdfObject.TEXT_PDFDOCENCODING))
             ch = pdfEncodingByteToChar;
         if (ch != null) {
             int len = bytes.length;
@@ -233,4 +249,239 @@ public class PdfEncodings {
             throw new ExceptionConverter(e);
         }
     }
+    
+    /** Checks is <CODE>text</CODE> only has PdfDocEncoding characters.
+     * @param text the <CODE>String</CODE> to test
+     * @return <CODE>true</CODE> if only PdfDocEncoding characters are present
+     */    
+    public static boolean isPdfDocEncoding(String text) {
+        int len = text.length();
+        for (int k = 0; k < len; ++k) {
+            char char1 = text.charAt(k);
+            if (char1 < 128 || (char1 >= 160 && char1 <= 255))
+                continue;
+            if (!pdfEncoding.containsKey(char1))
+                return false;
+        }
+        return true;
+    }
+    
+    static final HashMap cmaps = new HashMap();
+    /** Assumes that '\\n' and '\\r\\n' are the newline sequences. It may not work for
+     * all CJK encodings. To be used with loadCmap().
+     */    
+    public static final byte CRLF_CID_NEWLINE[][] = new byte[][]{{'\n'}, {'\r', '\n'}};
+
+    /** Clears the CJK cmaps from the cache. If <CODE>name</CODE> is the
+     * empty string then all the cache is cleared. Calling this method
+     * has no consequences other than the need to reload the cmap
+     * if needed.
+     * @param name the name of the cmap to clear or all the cmaps if the empty string
+     */    
+    public static void clearCmap(String name) {
+        synchronized (cmaps) {
+            if (name.length() == 0)
+                cmaps.clear();
+            else
+                cmaps.remove(name);
+        }
+    }
+    
+    /** Loads a CJK cmap to the cache with the option of associating
+     * sequences to the newline.
+     * @param name the CJK cmap name
+     * @param newline the sequences to be replaced bi a newline in the resulting CID. See <CODE>CRLF_CID_NEWLINE</CODE>
+     */    
+    public static void loadCmap(String name, byte newline[][]) {
+        try {
+            char planes[][] = null;
+            synchronized (cmaps) {
+                planes = (char[][])cmaps.get(name);
+            }
+            if (planes == null) {
+                planes = readCmap(name, (byte[][])newline);
+                synchronized (cmaps) {
+                    cmaps.put(name, planes);
+                }
+            }
+        }
+        catch (IOException e) {
+            throw new ExceptionConverter(e);
+        }        
+    }
+    
+    /** Converts a <CODE>byte</CODE> array encoded as <CODE>name</CODE>
+     * to a CID string. This is needed to reach some CJK characters
+     * that don't exist in 16 bit Unicode.</p>
+     * The font to use this result must use the encoding "Identity-H"
+     * or "Identity-V".</p>
+     * See ftp://ftp.oreilly.com/pub/examples/nutshell/cjkv/adobe/.
+     * @param name the CJK encoding name
+     * @param seq the <CODE>byte</CODE> array to be decoded
+     * @return the CID string
+     */    
+    public static String convertCmap(String name, byte seq[]) {
+        return convertCmap(name, seq, 0, seq.length);
+    }
+    
+    /** Converts a <CODE>byte</CODE> array encoded as <CODE>name</CODE>
+     * to a CID string. This is needed to reach some CJK characters
+     * that don't exist in 16 bit Unicode.</p>
+     * The font to use this result must use the encoding "Identity-H"
+     * or "Identity-V".</p>
+     * See ftp://ftp.oreilly.com/pub/examples/nutshell/cjkv/adobe/.
+     * @param name the CJK encoding name
+     * @param start the start offset in the data
+     * @param length the number of bytes to convert
+     * @param seq the <CODE>byte</CODE> array to be decoded
+     * @return the CID string
+     */    
+    public static String convertCmap(String name, byte seq[], int start, int length) {
+        try {
+            char planes[][] = null;
+            synchronized (cmaps) {
+                planes = (char[][])cmaps.get(name);
+            }
+            if (planes == null) {
+                planes = readCmap(name, (byte[][])null);
+                synchronized (cmaps) {
+                    cmaps.put(name, planes);
+                }
+            }
+            return decodeSequence(seq, start, length, planes);
+        }
+        catch (IOException e) {
+            throw new ExceptionConverter(e);
+        }        
+    }
+    
+    static String decodeSequence(byte seq[], int start, int length, char planes[][]) {
+        StringBuffer buf = new StringBuffer();
+        int end = start + length;
+        int currentPlane = 0;
+        for (int k = start; k < end; ++k) {
+            int one = (int)seq[k] & 0xff;
+            char plane[] = planes[currentPlane];
+            int cid = plane[one];
+            if ((cid & 0x8000) == 0) {
+                buf.append((char)cid);
+                currentPlane = 0;
+            }
+            else
+                currentPlane = cid & 0x7fff;
+        }
+        return buf.toString();
+    }
+
+    static char[][] readCmap(String name, byte newline[][]) throws IOException {
+        ArrayList planes = new ArrayList();
+        planes.add(new char[256]);
+        readCmap(name, planes);
+        if (newline != null) {
+            for (int k = 0; k < newline.length; ++k)
+                encodeSequence(newline[k].length, newline[k], BaseFont.CID_NEWLINE, planes);
+        }
+        char ret[][] = new char[planes.size()][];
+        return (char[][])planes.toArray(ret);
+    }
+    
+    static void readCmap(String name, ArrayList planes) throws IOException {
+        String fullName = BaseFont.RESOURCE_PATH + "cmaps/" + name;
+        InputStream in = BaseFont.getResourceStream(fullName);
+        if (in == null)
+            throw new IOException("The Cmap " + name + " was not found.");
+        encodeStream(in, planes);
+        in.close();
+    }
+    
+    static void encodeStream(InputStream in, ArrayList planes) throws IOException {
+        BufferedReader rd = new BufferedReader(new InputStreamReader(in, "iso-8859-1"));
+        String line = null;
+        int state = CIDNONE;
+        byte seqs[] = new byte[7];
+        while ((line = rd.readLine()) != null) {
+            if (line.length() < 6)
+                continue;
+            switch (state) {
+                case CIDNONE: {
+                    if (line.indexOf("begincidrange") >= 0)
+                        state = CIDRANGE;
+                    else if (line.indexOf("begincidchar") >= 0)
+                        state = CIDCHAR;
+                    else if (line.indexOf("usecmap") >= 0) {
+                        StringTokenizer tk = new StringTokenizer(line);
+                        String t = tk.nextToken();
+                        readCmap(t.substring(1), planes);
+                    }
+                    break;
+                }
+                case CIDRANGE: {
+                    if (line.indexOf("endcidrange") >= 0) {
+                        state = CIDNONE;
+                        break;
+                    }
+                    StringTokenizer tk = new StringTokenizer(line);
+                    String t = tk.nextToken();
+                    int size = t.length() / 2 - 1;
+                    long start = Long.parseLong(t.substring(1, t.length() - 1), 16);
+                    t = tk.nextToken();
+                    long end = Long.parseLong(t.substring(1, t.length() - 1), 16);
+                    t = tk.nextToken();
+                    int cid = Integer.parseInt(t);
+                    for (long k = start; k <= end; ++k) {
+                        breakLong(k, size, seqs);
+                        encodeSequence(size, seqs, (char)cid, planes);
+                        ++cid;
+                    }
+                    break;
+                }
+                case CIDCHAR: {
+                    if (line.indexOf("endcidchar") >= 0) {
+                        state = CIDNONE;
+                        break;
+                    }
+                    StringTokenizer tk = new StringTokenizer(line);
+                    String t = tk.nextToken();
+                    int size = t.length() / 2 - 1;
+                    long start = Long.parseLong(t.substring(1, t.length() - 1), 16);
+                    t = tk.nextToken();
+                    int cid = Integer.parseInt(t);
+                    breakLong(start, size, seqs);
+                    encodeSequence(size, seqs, (char)cid, planes);
+                    break;
+                }
+            }
+        }
+    }
+    
+    static void breakLong(long n, int size, byte seqs[]) {
+        for (int k = 0; k < size; ++k) {
+            seqs[k] = (byte)(n >> ((size - 1 - k) * 8));
+        }
+    }
+
+    static void encodeSequence(int size, byte seqs[], char cid, ArrayList planes) {
+        --size;
+        int nextPlane = 0;
+        for (int idx = 0; idx < size; ++idx) {
+            char plane[] = (char[])planes.get(nextPlane);
+            int one = (int)seqs[idx] & 0xff;
+            char c = plane[one];
+            if (c != 0 && (c & 0x8000) == 0)
+                throw new RuntimeException("Inconsistent mapping.");
+            if (c == 0) {
+                planes.add(new char[256]);
+                c = (char)((planes.size() - 1) | 0x8000);
+                plane[one] = c;
+            }
+            nextPlane = c & 0x7fff;
+        }
+        char plane[] = (char[])planes.get(nextPlane);
+        int one = (int)seqs[size] & 0xff;
+        char c = plane[one];
+        if ((c & 0x8000) != 0)
+            throw new RuntimeException("Inconsistent mapping.");
+        plane[one] = cid;
+    }
+
 }

@@ -340,6 +340,204 @@ class PdfImage extends PdfStream {
                         throw new BadPdfFormatException(errorID + " is not a GIF-file (GIF header not found).");
                     }
                     
+                    // Byte 3-5: version
+                    // Byte 6-7: logical screen width
+                    // Byte 8-9: logical screen height
+                    // Byte 10: Packed Fields
+                    for (int j = 0; j < 8; j++) {
+                        i = is.read();
+                    }
+                    
+                    // Color table data
+                    int nColors = 0;
+                    ByteBuffer colorTable = null;
+                    
+                    // Byte 10: bit 1: Global Color Table Flag
+                    if((i & 0x80) == 0x80) {
+                        // Byte 10: bit 6-8: Size of Global Color Table
+                        nColors = 2 << (i & 7);
+                        // Byte 11: Background color index
+                        is.read();
+                        // Byte 12: Pixel aspect ratio
+                        is.read();
+                        // Byte 13-...: Global color table
+                        colorTable = new ByteBuffer();
+                        for (int j = 0; j < nColors; j++) {
+                            colorTable.append_i(is.read());	// red
+                            colorTable.append_i(is.read());	// green
+                            colorTable.append_i(is.read());	// blue
+                        }
+                    }
+                    
+                    // Patch by Inventive Designers for gif extension field skipping and local colormap usage
+                    boolean foundImageSeperator = false;
+                    while(!foundImageSeperator) {
+                        // Byte 0: Gif block identifier
+                        final int gifField = is.read();
+                        switch(gifField) {
+                            case 0x2c: // IMAGE_SEPERATOR
+                            {
+                                foundImageSeperator = true;
+                                
+                                // Byte 1-2: Image Left Position
+                                // Byte 3-4: Image Top Position
+                                // Byte 5-6: Image Width
+                                // Byte 7-8: Image Height
+                                // ignore position and size
+                                for (int j = 0; j < 8; j++) {
+                                    is.read();
+                                }
+                                // Byte 9: Packed Fields
+                                // Byte 9: bit 1: Local Color Table Flag
+                                // Byte 9: bit 2: Interlace Flag
+                                final int packedFields = is.read();
+                                if ((packedFields & 0x40) != 0) {
+                                    throw new BadPdfFormatException(errorID + " is not a supported GIF-file (interlaced gifs are not supported).");
+                                }
+                                if((packedFields & 0x80) != 0) {
+                                    // Local colormap found, thus override the global color map
+                                    // Byte 10: bit 6-8: Size of Local Color Table
+                                    nColors = 2 << (i & 7);
+                                    // Byte 11: Background color index
+                                    is.read();
+                                    // Byte 12: Pixel aspect ratio
+                                    is.read();
+                                    // Byte 13-...: Global color table
+                                    colorTable = new ByteBuffer();
+                                    for (int j = 0; j < nColors; j++) {
+                                        colorTable.append_i(is.read());	// red
+                                        colorTable.append_i(is.read());	// green
+                                        colorTable.append_i(is.read());	// blue
+                                    }
+                                }
+                                
+                                // Byte 10: LZW initial code
+                                if (is.read() != 0x08) {
+                                    throw new BadPdfFormatException(errorID + " is not a supported GIF-file (initial LZW code not supported).");
+                                }
+                                // Read the Image Data
+                                int code = 0;
+                                int codelength = 9;
+                                int tablelength = 257;
+                                int bitsread = 0;
+                                int bitstowrite = 0;
+                                int bitsdone = 0;
+                                int bitsleft = 23;
+                                int bytesdone = 0;
+                                int bytesread = 0;
+                                int byteswritten = 0;
+                                // read the size of the first Data Block
+                                int size = is.read();
+                                // Check if there is any data in the GIF
+                                if (size < 1) {
+                                    throw new BadPdfFormatException(errorID + " is not a supported GIF-file. (no image data found).");
+                                }
+                                // if possible, we read the first 24 bits of data
+                                size--; bytesread++; bitsread = is.read();
+                                if (size > 0) {
+                                    size--; bytesread++; bitsread += (is.read() << 8);
+                                    if (size > 0) {
+                                        size--; bytesread++; bitsread += (is.read() << 16);
+                                    }
+                                }
+                                while (bytesread > byteswritten) {
+                                    tablelength++;
+                                    // we extract a code with length=codelength
+                                    code = (bitsread >> bitsdone) & ((1 << codelength) - 1);
+                                    // we delete the bytesdone in bitsread and append the next byte(s)
+                                    bytesdone = (bitsdone + codelength) / 8;
+                                    bitsdone = (bitsdone + codelength) % 8;
+                                    while (bytesdone > 0) {
+                                        bytesdone--;
+                                        bitsread = (bitsread >> 8);
+                                        if (size > 0) {
+                                            size--; bytesread++; bitsread += (is.read() << 16);
+                                        }
+                                        else {
+                                            size = is.read();
+                                            if (size > 0) {
+                                                size--; bytesread++; bitsread += (is.read() << 16);
+                                            }
+                                        }
+                                    }
+                                    // we package all the bits that are done into bytes and write them to the stream
+                                    bitstowrite += (code << (bitsleft - codelength + 1));
+                                    bitsleft -= codelength;
+                                    while (bitsleft < 16) {
+                                        streamBytes.write(bitstowrite >> 16);
+                                        byteswritten++;
+                                        bitstowrite = (bitstowrite & 0xFFFF) << 8;
+                                        bitsleft += 8;
+                                    }
+                                    if (code == 256) {
+                                        codelength = 9;
+                                        tablelength = 257;
+                                    }
+                                    if (code == 257) {
+                                        break;
+                                    }
+                                    if (tablelength == (1 << codelength)) {
+                                        if (codelength < 12) // bugfix by DT
+                                            codelength++;
+                                    }
+                                }
+                                if (bytesread - byteswritten > 2) {
+                                    throw new BadPdfFormatException(errorID + " is not a supported GIF-file (unexpected end of data block).");
+                                }
+                                
+                                break;
+                            }
+                            case 0x21: // EXTENSION_INTRODUCER
+                            {
+                                final int extensionLabel = is.read();
+                                switch(extensionLabel) {
+                                    case 0xF9: // GRAPHIC_CONTROL_EXTENSION
+                                    {
+                                        is.read();
+                                        int field = is.read();
+                                        is.read();
+                                        is.read();
+                                        int trf = is.read();
+                                        if ((field & 1) != 0) {
+                                            put(PdfName.MASK, new PdfLiteral("["+trf+" "+trf+"]"));
+                                        }
+                                        int len = 0;
+                                        while((len = is.read()) != 0) {
+                                            is.skip(len);
+                                        }
+                                        break;
+                                    }
+                                    case 0xFE: // COMMENT_EXTENSION
+                                    case 0xFF: // APPLICATION_EXTENSION
+                                    case 0x01: // PLAINTEXT_EXTENSION
+                                    {
+                                        int len = 0;
+                                        while((len = is.read()) != 0) {
+                                            is.skip(len);
+                                        }
+                                        break;
+                                    }
+                                    default: {
+                                        throw new BadPdfFormatException(errorID + " is not a supported GIF-file (bad extension identifier).");
+                                    }
+                                }
+                                break;
+                            }
+                            case 0x3b: // TRAILER
+                            {
+                                // nothing todo
+                                break;
+                            }
+                            default: {
+                                throw new BadPdfFormatException(errorID + " is not a supported GIF-file (bad data block identifier).");
+                            }
+                        }	// end of switch
+                    }	// end of while
+                    
+                    if(colorTable == null) {
+                        throw new BadPdfFormatException(errorID + " is not a supported GIF-file (there is nor a global, nor a local color table present).");
+                    }
+                    
                     put(PdfName.FILTER, PdfName.LZWDECODE);
                     
                     PdfDictionary decodeparms = new PdfDictionary();
@@ -349,131 +547,12 @@ class PdfImage extends PdfStream {
                     PdfArray colorspace = new PdfArray();
                     colorspace.add(PdfName.INDEXED);
                     colorspace.add(PdfName.DEVICERGB);
-                    // Byte 3-5: version
-                    // Byte 6-7: logical screen width
-                    // Byte 8-9: logical screen height
-                    // Byte 10: Packed Fields
-                    for (int j = 0; j < 8; j++) {
-                        i = is.read();
-                    }
-                    // Byte 10: bit 1: Global Color Table Flag
-                    if ((i & 0x80) == 0) {
-                        throw new BadPdfFormatException(errorID + " is not a supported GIF-file (there is no global color table present).");
-                    }
-                    // Byte 10: bit 6-8: Size of Global Color Table
-                    int nColors = 1 << ((i & 7) + 1);
+                    
+                    // Add the color space data
                     colorspace.add(new PdfNumber(nColors - 1));
-                    // Byte 11: Background color index
-                    is.read();
-                    // Byte 12: Pixel aspect ratio
-                    is.read();
-                    // Byte 13-...: Global color table
-                    ByteBuffer colortable = new ByteBuffer();
-                    for (int j = 0; j < nColors; j++) {
-                        colortable.append_i(is.read());	// red
-                        colortable.append_i(is.read());	// green
-                        colortable.append_i(is.read());	// blue
-                    }
-                    colorspace.add(new PdfString(colortable.toByteArray()));
+                    colorspace.add(new PdfString(colorTable.toByteArray()));
                     put(PdfName.COLORSPACE, colorspace);
                     put(PdfName.BITSPERCOMPONENT, new PdfNumber(8));
-                    
-                    // IMAGE DESCRIPTOR
-                    
-                    // Byte 0: Image separator
-                    // only simple gif files with image immediate following global color table are supported
-                    // 0x2c is a fixed value for the image separator
-                    if (is.read() != 0x2c) {
-                        throw new BadPdfFormatException(errorID + " is not a supported GIF-file (the image separator '0x2c' is not found after reading the color table).");
-                    }
-                    // Byte 1-2: Image Left Position
-                    // Byte 3-4: Image Top Position
-                    // Byte 5-6: Image Width
-                    // Byte 7-8: Image Height
-                    // ignore position and size
-                    for (int j = 0; j < 8; j++) {
-                        is.read();
-                    }
-                    // Byte 9: Packed Fields
-                    // Byte 9: bit 1: Local Color Table Flag
-                    // Byte 9: bit 2: Interlace Flag
-                    if ((is.read() & 0xc0) > 0) {
-                        throw new BadPdfFormatException(errorID + " is not a supported GIF-file (interlaced gifs or gifs using local color table can't be inserted).");
-                    }
-                    
-                    // Byte 10: LZW initial code
-                    if (is.read() != 0x08) {
-                        throw new BadPdfFormatException(errorID + " is not a supported GIF-file (initial LZW code not supported).");
-                    }
-                    // Read the Image Data
-                    int code = 0;
-                    int codelength = 9;
-                    int tablelength = 257;
-                    int bitsread = 0;
-                    int bitstowrite = 0;
-                    int bitsdone = 0;
-                    int bitsleft = 23;
-                    int bytesdone = 0;
-                    int bytesread = 0;
-                    int byteswritten = 0;
-                    // read the size of the first Data Block
-                    int size = is.read();
-                    // Check if there is any data in the GIF
-                    if (size < 1) {
-                        throw new BadPdfFormatException(errorID + " is not a supported GIF-file. (no image data found).");
-                    }
-                    // if possible, we read the first 24 bits of data
-                    size--; bytesread++; bitsread = is.read();
-                    if (size > 0) {
-                        size--; bytesread++; bitsread += (is.read() << 8);
-                        if (size > 0) {
-                            size--; bytesread++; bitsread += (is.read() << 16);
-                        }
-                    }
-                    while (bytesread > byteswritten) {
-                        tablelength++;
-                        // we extract a code with length=codelength
-                        code = (bitsread >> bitsdone) & ((1 << codelength) - 1);
-                        // we delete the bytesdone in bitsread and append the next byte(s)
-                        bytesdone = (bitsdone + codelength) / 8;
-                        bitsdone = (bitsdone + codelength) % 8;
-                        while (bytesdone > 0) {
-                            bytesdone--;
-                            bitsread = (bitsread >> 8);
-                            if (size > 0) {
-                                size--; bytesread++; bitsread += (is.read() << 16);
-                            }
-                            else {
-                                size = is.read();
-                                if (size > 0) {
-                                    size--; bytesread++; bitsread += (is.read() << 16);
-                                }
-                            }
-                        }
-                        // we package all the bits that are done into bytes and write them to the stream
-                        bitstowrite += (code << (bitsleft - codelength + 1));
-                        bitsleft -= codelength;
-                        while (bitsleft < 16) {
-                            streamBytes.write(bitstowrite >> 16);
-                            byteswritten++;
-                            bitstowrite = (bitstowrite & 0xFFFF) << 8;
-                            bitsleft += 8;
-                        }
-                        if (code == 256) {
-                            codelength = 9;
-                            tablelength = 257;
-                        }
-                        if (code == 257) {
-                            break;
-                        }
-                        if (tablelength == (1 << codelength)) {
-                            if (codelength < 12) // bugfix by DT
-                                codelength++;
-                        }
-                    }
-                    if (bytesread - byteswritten > 2) {
-                        throw new BadPdfFormatException(errorID + " is not a supported GIF-file (unexpected end of data block).");
-                    }
                     break;
                 default:
                     throw new BadPdfFormatException(errorID + " is an unknown Image format.");

@@ -130,7 +130,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     protected byte rawData[];
     
     /** The template to be treated as an image. */
-    protected PdfTemplate template;
+    protected PdfTemplate template[] = new PdfTemplate[1];
     
     /** The alignment of the Image. */
     protected int alignment;
@@ -796,11 +796,11 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      */
     
     public PdfTemplate templateData() {
-        return template;
+        return template[0];
     }
     
     public void setTemplateData(PdfTemplate template) {
-        this.template = template;
+        this.template[0] = template;
     }
     
     /**

@@ -233,6 +233,17 @@ public class IntHashtable {
         return res;
     }
     
+    public int getOneKey() {
+        if (count == 0)
+            return 0;
+        int index = table.length;
+        IntHashtableEntry entry = null;
+        while ((index-- > 0) && ((entry = table[index]) == null));
+        if (entry == null)
+            return 0;
+        return entry.key;
+    }
+    
     class IntHashtableEntry {
         int hash;
         int key;

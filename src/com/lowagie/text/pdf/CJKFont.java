@@ -137,7 +137,7 @@ class CJKFont extends BaseFont {
                 c = readCMap(s);
                 if (c == null)
                     throw new DocumentException("The cmap " + s + " does not exist as a resource.");
-                c[0xff00] = '\n';
+                c[CID_NEWLINE] = '\n';
                 allCMaps.put(s, c);
             }
             translationMap = c;
@@ -206,7 +206,7 @@ class CJKFont extends BaseFont {
         return total;
     }
     
-    protected int getRawWidth(int c, String name) {
+    int getRawWidth(int c, String name) {
         return 0;
     }
     public int getKerning(char char1, char char2) {
@@ -214,53 +214,53 @@ class CJKFont extends BaseFont {
     }
 
     private PdfDictionary getFontDescriptor() {
-        PdfDictionary dic = new PdfDictionary(new PdfName("FontDescriptor"));
-        dic.put(new PdfName("Ascent"), new PdfLiteral((String)fontDesc.get("Ascent")));
-        dic.put(new PdfName("CapHeight"), new PdfLiteral((String)fontDesc.get("CapHeight")));
-        dic.put(new PdfName("Descent"), new PdfLiteral((String)fontDesc.get("Descent")));
-        dic.put(new PdfName("Flags"), new PdfLiteral((String)fontDesc.get("Flags")));
-        dic.put(new PdfName("FontBBox"), new PdfLiteral((String)fontDesc.get("FontBBox")));
-        dic.put(new PdfName("FontName"), new PdfName(fontName + style));
-        dic.put(new PdfName("ItalicAngle"), new PdfLiteral((String)fontDesc.get("ItalicAngle")));
-        dic.put(new PdfName("StemV"), new PdfLiteral((String)fontDesc.get("StemV")));
+        PdfDictionary dic = new PdfDictionary(PdfName.FONTDESCRIPTOR);
+        dic.put(PdfName.ASCENT, new PdfLiteral((String)fontDesc.get("Ascent")));
+        dic.put(PdfName.CAPHEIGHT, new PdfLiteral((String)fontDesc.get("CapHeight")));
+        dic.put(PdfName.DESCENT, new PdfLiteral((String)fontDesc.get("Descent")));
+        dic.put(PdfName.FLAGS, new PdfLiteral((String)fontDesc.get("Flags")));
+        dic.put(PdfName.FONTBBOX, new PdfLiteral((String)fontDesc.get("FontBBox")));
+        dic.put(PdfName.FONTNAME, new PdfName(fontName + style));
+        dic.put(PdfName.ITALICANGLE, new PdfLiteral((String)fontDesc.get("ItalicAngle")));
+        dic.put(PdfName.STEMV, new PdfLiteral((String)fontDesc.get("StemV")));
         PdfDictionary pdic = new PdfDictionary();
         pdic.put(PdfName.PANOSE, new PdfString((String)fontDesc.get("Panose"), null));
-        dic.put(new PdfName("Style"), pdic);
+        dic.put(PdfName.STYLE, pdic);
         return dic;
     }
     
     private PdfDictionary getCIDFont(PdfIndirectReference fontDescriptor, IntHashtable cjkTag) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
-        dic.put(PdfName.SUBTYPE, new PdfName("CIDFontType0"));
-        dic.put(new PdfName("BaseFont"), new PdfName(fontName + style));
-        dic.put(new PdfName("FontDescriptor"), fontDescriptor);
+        dic.put(PdfName.SUBTYPE, PdfName.CIDFONTTYPE0);
+        dic.put(PdfName.BASEFONT, new PdfName(fontName + style));
+        dic.put(PdfName.FONTDESCRIPTOR, fontDescriptor);
         int keys[] = cjkTag.toOrderedKeys();
         String w = convertToHCIDMetrics(keys, hMetrics);
         if (w != null)
-            dic.put(new PdfName("W"), new PdfLiteral(w));
+            dic.put(PdfName.W, new PdfLiteral(w));
         if (vertical) {
             w = convertToVCIDMetrics(keys, vMetrics, hMetrics);;
             if (w != null)
-                dic.put(new PdfName("W2"), new PdfLiteral(w));
+                dic.put(PdfName.W2, new PdfLiteral(w));
         }
         PdfDictionary cdic = new PdfDictionary();
         cdic.put(PdfName.REGISTRY, new PdfString((String)fontDesc.get("Registry"), null));
         cdic.put(PdfName.ORDERING, new PdfString((String)fontDesc.get("Ordering"), null));
         cdic.put(PdfName.SUPPLEMENT, new PdfLiteral((String)fontDesc.get("Supplement")));
-        dic.put(new PdfName("CIDSystemInfo"), cdic);
+        dic.put(PdfName.CIDSYSTEMINFO, cdic);
         return dic;
     }
     
     private PdfDictionary getFontBaseType(PdfIndirectReference CIDFont) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
-        dic.put(PdfName.SUBTYPE, new PdfName("Type0"));
+        dic.put(PdfName.SUBTYPE, PdfName.TYPE0);
         String name = fontName;
         if (style.length() > 0)
             name += "-" + style.substring(1);
         name += "-" + CMap;
-        dic.put(new PdfName("BaseFont"), new PdfName(name));
-        dic.put(new PdfName("Encoding"), new PdfName(CMap));
-        dic.put(new PdfName("DescendantFonts"), new PdfArray(CIDFont));
+        dic.put(PdfName.BASEFONT, new PdfName(name));
+        dic.put(PdfName.ENCODING, new PdfName(CMap));
+        dic.put(PdfName.DESCENDANTFONTS, new PdfArray(CIDFont));
         return dic;
     }
     

@@ -165,7 +165,7 @@ public class ImgWMF extends Image implements Element {
      * @throws DocumentException on error
      */    
     public void readWMF(PdfTemplate template) throws IOException, DocumentException {
-        this.template = template;
+        setTemplateData(template);
         template.setWidth(width());
         template.setHeight(height());
         InputStream is = null;

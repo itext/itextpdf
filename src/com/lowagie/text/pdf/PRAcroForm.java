@@ -127,7 +127,7 @@ public class PRAcroForm extends PdfDictionary {
     public void readAcroForm(PdfDictionary root) {
         hashMap = root.hashMap;
         pushAttrib(root);
-        PdfArray fieldlist = (PdfArray)root.get(PdfName.FIELDS);
+        PdfArray fieldlist = (PdfArray)reader.getPdfObject(root.get(PdfName.FIELDS));
         iterateFields(fieldlist, null, null);
     }
 
