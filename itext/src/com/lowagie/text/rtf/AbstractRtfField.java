@@ -64,6 +64,8 @@ import java.io.IOException;
  * This class implements an abstract RtfField.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * @author <a href="mailto:Dirk.Weigenand@smb-tec.com">Dirk Weigenand</a>
  * @version $Id$

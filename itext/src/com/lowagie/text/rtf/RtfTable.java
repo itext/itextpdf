@@ -60,6 +60,8 @@ import java.io.*;
  * A Helper Class for the <CODE>RtfWriter</CODE>.
  * <P>
  * Do not use it directly, except if you want to write a <CODE>DocumentListener</CODE> for Rtf
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.

@@ -65,10 +65,12 @@ import com.lowagie.text.ExceptionConverter;
  * Therefore the field TOC is used. It works great in Word 2000. 
  * StarOffice doesn't support such fields. Other word version
  * are not tested yet.
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2003/05/02 09:01:36 $
+ * @version $Revision$Date: 2004/07/12 09:33:43 $
  */
 public class RtfTOC extends Chunk implements RtfField {
 

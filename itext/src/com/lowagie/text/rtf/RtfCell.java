@@ -60,6 +60,8 @@ import java.awt.Color;
  * A Helper Class for the <CODE>RtfWriter</CODE>.
  * <P>
  * Do not use it directly
+ * 
+ * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
