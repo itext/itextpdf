@@ -320,8 +320,15 @@ public class Phrase extends ArrayList implements TextElementArray {
                 case Element.PARAGRAPH:
                     Phrase phrase = (Phrase) o;
                     boolean success = true;
+					Element e;
                     for (Iterator i = phrase.iterator(); i.hasNext(); ) {
-                        success &= this.add(i.next());
+						e = (Element) i.next();
+						if (e instanceof Chunk) {
+	                        success &= super.add(e);
+						}
+						else {
+							success &= this.add(e);
+						}
                     }
                     return success;
                 case Element.ANCHOR:
@@ -329,11 +336,9 @@ public class Phrase extends ArrayList implements TextElementArray {
                 case Element.ANNOTATION:
                     return super.add((Annotation) o);
                 case Element.TABLE: // case added by David Freels
-                    Table table = (Table) o;
-                    return super.add(o);
+                    return super.add((Table) o);
                 case Element.LIST:
-                    List list = (List) o;
-                    return super.add(list);
+                    return super.add((List) o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
             }
