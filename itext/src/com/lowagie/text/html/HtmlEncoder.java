@@ -190,7 +190,7 @@ public class HtmlEncoder {
             case Element.ALIGN_BASELINE:
                 return HtmlTags.ALIGN_BASELINE;
                 default:
-                    return HtmlTags.DEFAULT;
+                    return "";
         }
     }
 }

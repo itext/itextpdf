@@ -64,7 +64,7 @@ public class Paragraph extends Phrase implements TextElementArray {
     // membervariables
     
 /** The alignment of the text. */
-    protected int alignment;
+    protected int alignment = Element.ALIGN_UNDEFINED;
     
 /** The indentation of this paragraph on the left side. */
     protected float indentationLeft;

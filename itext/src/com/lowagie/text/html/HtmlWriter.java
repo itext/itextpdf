@@ -77,7 +77,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
     public static final byte[] BEGINCOMMENT = getISOBytes("\t<!-- ");
     
 /** This is a possible HTML-tag. */
-    public static final byte[] ENDCOMMENT = getISOBytes(" -->\n");
+    public static final byte[] ENDCOMMENT = getISOBytes(" -->\n");    
+    
+/** This is a possible HTML-tag. */
+    public static final String NBSP = "&nbsp;";
     
     // membervariables
     
@@ -597,7 +600,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.PARAGRAPH);
-                write(HtmlTags.ALIGN, HtmlEncoder.getAlignment(paragraph.alignment()));
+                String alignment = HtmlEncoder.getAlignment(paragraph.alignment());
+                if (!"".equals(alignment)) {
+                    write(HtmlTags.ALIGN, alignment);
+                }
                 os.write(GT);
                 os.write(NEWLINE);
                 
@@ -724,8 +730,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (cell.backgroundColor() != null) {
                     write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(cell.backgroundColor()));
                 }
-                write(HtmlTags.HORIZONTALALIGN, HtmlEncoder.getAlignment(cell.horizontalAlignment()));
-                write(HtmlTags.VERTICALALIGN, HtmlEncoder.getAlignment(cell.verticalAlignment()));
+                String alignment = HtmlEncoder.getAlignment(cell.horizontalAlignment());
+                if (!"".equals(alignment)) {
+                    write(HtmlTags.HORIZONTALALIGN, alignment);
+                }
+                alignment = HtmlEncoder.getAlignment(cell.verticalAlignment());
+                if (!"".equals(alignment)) {
+                    write(HtmlTags.VERTICALALIGN, alignment);
+                }
                 if (cell.cellWidth() != null) {
                     write(HtmlTags.WIDTH, cell.cellWidth());
                 }
@@ -742,6 +754,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 os.write(NEWLINE);
                 for (Iterator i = cell.getElements(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
+                }
+                if (cell.isEmpty()) {
+                    write(NBSP);
                 }
                 addTabs(indent);
                 if (cell.header()) {
@@ -789,7 +804,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     write("%");
                 }
                 os.write(QUOTE);
-                write(HtmlTags.ALIGN, HtmlEncoder.getAlignment(table.alignment()));
+                String alignment = HtmlEncoder.getAlignment(table.alignment());
+                if (!"".equals(alignment)) {
+                    write(HtmlTags.ALIGN, alignment);
+                }
                 write(HtmlTags.CELLPADDING, String.valueOf(table.cellpadding()));
                 write(HtmlTags.CELLSPACING, String.valueOf(table.cellspacing()));
                 if (table.borderWidth() != Rectangle.UNDEFINED) {
@@ -879,7 +897,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
             }
             addTabs(indent + 1);
             writeStart(HtmlTags.H[depth]);
-            write(HtmlTags.ALIGN, HtmlEncoder.getAlignment(section.title().alignment()));
+            String alignment = HtmlEncoder.getAlignment(section.title().alignment());
+            if (!"".equals(alignment)) {
+                write(HtmlTags.ALIGN, alignment);
+            }
             os.write(GT);
             os.write(NEWLINE);
             for (Iterator i = section.title().iterator(); i.hasNext(); ) {
@@ -1025,4 +1046,4 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
         os.write(GT);
     }
-    }
+}

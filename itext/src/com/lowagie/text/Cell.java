@@ -88,10 +88,10 @@ public class Cell extends Rectangle implements TextElementArray {
     private ArrayList arrayList;
     
 /** This is the horizontal alignment. */
-    private int horizontalAlignment;
+    private int horizontalAlignment = Element.ALIGN_UNDEFINED;
     
 /** This is the vertical alignment. */
-    private int verticalAlignment;
+    private int verticalAlignment = Element.ALIGN_UNDEFINED;
     
 /** This is the vertical alignment. */
     private String width;
@@ -167,13 +167,13 @@ public class Cell extends Rectangle implements TextElementArray {
         addElement(element);
     }
     
-        /**
-         * Returns a <CODE>Cell</CODE> that has been constructed taking in account
-         * the value of some <VAR>attributes</VAR>.
-         *
-         * @param	attributes		Some attributes
-         * @return	a <CODE>Cell</CODE>
-         */
+/**
+ * Returns a <CODE>Cell</CODE> that has been constructed taking in account
+ * the value of some <VAR>attributes</VAR>.
+ *
+ * @param	attributes		Some attributes
+ * @return	a <CODE>Cell</CODE>
+ */
     
     public Cell(Properties attributes) {
         this();
