@@ -135,9 +135,13 @@ public abstract class BaseFont {
      */    
     public static final int BBOXURY = 8;
     
+    /** java.awt.Font property */
     public static final int AWT_ASCENT = 9;
+    /** java.awt.Font property */
     public static final int AWT_DESCENT = 10;
+    /** java.awt.Font property */
     public static final int AWT_LEADING = 11;
+    /** java.awt.Font property */
     public static final int AWT_MAXADVANCE = 12;
     
     /** The font is Type 1.
@@ -286,6 +290,12 @@ public abstract class BaseFont {
             }
         }
         
+        /**
+         * Generates the PDF stream for a font.
+         * @param contents the content of a stream
+         * @param subType the subtype of the font.
+         * @throws DocumentException
+         */
         public StreamFont(byte contents[], String subType) throws DocumentException {
             try {
                 bytes = contents;
@@ -445,7 +455,6 @@ public abstract class BaseFont {
     
     /**
      * Creates the <CODE>widths</CODE> and the <CODE>differences</CODE> arrays
-     * @throws UnsupportedEncodingException the encoding is not supported
      */
     protected void createEncoding() {
         if (fontSpecific) {
@@ -583,6 +592,7 @@ public abstract class BaseFont {
  * Gets the descent of a <CODE>String</CODE> in points. The descent will always be
  * less than or equal to zero even if all the characters have an higher descent.
  * @param text the <CODE>String</CODE> to get the descent of
+ * @param fontSize the size of the font
  * @return the dexcent in points
  */
     public float getDescentPoint(String text, float fontSize)
@@ -594,6 +604,7 @@ public abstract class BaseFont {
  * Gets the ascent of a <CODE>String</CODE> in points. The ascent will always be
  * greater than or equal to zero even if all the characters have a lower ascent.
  * @param text the <CODE>String</CODE> to get the ascent of
+ * @param fontSize the size of the font
  * @return the ascent in points
  */
     public float getAscentPoint(String text, float fontSize)
