@@ -352,7 +352,6 @@ public class Cell extends Rectangle implements TextElementArray {
             case Element.LISTITEM:
             case Element.ROW:
             case Element.CELL:
-            case Element.TABLE:
             case Element.JPEG:
             case Element.IMGRAW:
             case Element.IMGTEMPLATE:
@@ -363,14 +362,22 @@ public class Cell extends Rectangle implements TextElementArray {
                 if (leading < 0) {
                     leading = ((List) element).leading();
                 }
+                if (((List) element).size() == 0) return;
+                arrayList.add(element);
+                return;
             case Element.ANCHOR:
             case Element.PARAGRAPH:
             case Element.PHRASE:
                 if (leading < 0) {
                     leading = ((Phrase) element).leading();
                 }
-                default:
-                    arrayList.add(element);
+                if (((Phrase) element).isEmpty()) return;
+                arrayList.add(element);
+                return;
+            case Element.CHUNK:
+                if (((Chunk) element).isEmpty()) return;
+            default:
+                arrayList.add(element);
         }
     }
     
@@ -556,6 +563,16 @@ public class Cell extends Rectangle implements TextElementArray {
                 default:
                     return false;
         }
+    }
+    
+/**
+ * Checks if the <CODE>Cell</CODE> is empty.
+ *
+ * @return	<CODE>false</CODE> if there are non-empty <CODE>Element</CODE>s in the <CODE>Cell</CODE>.
+ */
+    
+    public final boolean isTable() {
+        return (size() == 1) && (((Element)arrayList.get(0)).type() == Element.TABLE);
     }
     
 /**

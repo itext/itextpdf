@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -417,6 +417,10 @@ public class Section extends ArrayList implements TextElementArray {
     
     public Section addSection(Properties attributes) {
         Section section = new Section(new Paragraph(""), 1);
+        String value;
+        if ((value = (String)attributes.remove(ElementTags.NUMBER)) != null) {
+            subsections = Integer.parseInt(value) - 1;
+        }
         section.set(attributes);
         add(section);
         return section;

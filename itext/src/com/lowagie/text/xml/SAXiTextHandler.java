@@ -234,7 +234,14 @@ public class SAXiTextHandler extends HandlerBase {
         
         // chapters
         if (Chapter.isTag(name)) {
-            Chapter chapter = new Chapter(attributes, ++chapters);
+            String value; // changed after a suggestion by Serge S. Vasiljev
+            if ((value = (String)attributes.remove(ElementTags.NUMBER)) != null){
+                 chapters = Integer.parseInt(value);
+             }
+            else {
+               chapters++;
+            }
+            Chapter chapter = new Chapter(attributes,chapters);
             stack.push(chapter);
             return;
         }
@@ -245,12 +252,15 @@ public class SAXiTextHandler extends HandlerBase {
                 Image img = Image.getInstance(attributes);
                 TextElementArray current;
                 try {
+                    // if there is an element on the stack...
                     current = (TextElementArray) stack.pop();
+                    // ...and it's a Chapter or a Section, the Image can be added directly
                     if ((current instanceof Chapter) || (current instanceof Section)) {
                         current.add(img);
                         stack.push(current);
                         return;
                     }
+                    // ...if not, the Image is wrapped in a Chunk before it's added
                     else {
                         Chunk chunk = new Chunk(img, 0, 0);
                         current.add(chunk);
@@ -259,6 +269,7 @@ public class SAXiTextHandler extends HandlerBase {
                     }
                 }
                 catch(EmptyStackException ese) {
+                    // if there is no element on the stack, the Image is added to the document
                     try {
                         document.add(img);
                     }
@@ -454,7 +465,6 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void endElement(String name) {
-        
         handleEndingTags(name);
     }
     
@@ -473,15 +483,13 @@ public class SAXiTextHandler extends HandlerBase {
             ignore = false;
             return;
         }
-        
         if (ignore) return;
+        // tags that don't have any content
+        if (isNewpage(name) || Annotation.isTag(name) || Image.isTag(name) || isNewline(name)) {
+            return;
+        }
         
         try {
-            // tags that don't have any content
-            if (isNewpage(name) || Annotation.isTag(name) || Image.isTag(name) || isNewline(name)) {
-                return;
-            }
-            
             // titles of sections and chapters
             if (Section.isTitle(name)) {
                 Paragraph current = (Paragraph) stack.pop();
@@ -495,7 +503,7 @@ public class SAXiTextHandler extends HandlerBase {
                 return;
             }
             
-            // chunks or other endtags
+            // all other endtags
             if (currentChunk != null) {
                 TextElementArray current;
                 try {
@@ -507,6 +515,11 @@ public class SAXiTextHandler extends HandlerBase {
                 current.add(currentChunk);
                 stack.push(current);
                 currentChunk = null;
+            }
+            
+            // chunks
+            if (Chunk.isTag(name)) {
+                return;
             }
             
             // phrases, anchors, lists, tables
@@ -533,8 +546,7 @@ public class SAXiTextHandler extends HandlerBase {
             
             // tables
             if (Table.isTag(name)) {
-                Table table = (Table) stack.pop();
-                
+                Table table = (Table) stack.pop();           
                 try {
                     TextElementArray previous = (TextElementArray) stack.pop();
                     previous.add(table);
