@@ -108,6 +108,16 @@ public class Watermark extends Image implements Element {
     }
     
 /**
+ * Returns the XML representation of this <CODE>Rectangle</CODE>.
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        return "";
+    }
+    
+/**
  * Returns a representation of this <CODE>Rectangle</CODE>.
  *
  * @return		a <CODE>String</CODE>

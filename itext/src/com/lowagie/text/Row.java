@@ -469,6 +469,22 @@ public class Row implements Element {
     }
     
 /**
+ * Returns an XML representation of this <CODE>Row</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < columns; i++) {
+            if (cells[i] != null) {
+                buf.append(((Element)cells[i]).toXml(indent));
+            }
+        }
+        return buf.toString();
+    }
+    
+/**
  * Returns a representation of this <CODE>Row</CODE>.
  *
  * @return	a <CODE>String</CODE>

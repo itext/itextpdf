@@ -1349,7 +1349,45 @@ public class Table extends Rectangle implements Element {
     }
     
 /**
- * Returns a representation of this <CODE>Row</CODE>.
+ * Returns a representation of this <CODE>Table</CODE>.
+ *
+ * @return      a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        StringBuffer buf = new StringBuffer();
+        DocWriter.addTabs(buf, indent);
+        buf.append("<").append(ElementTags.TABLE);
+        buf.append(" ").append(ElementTags.COLUMNS).append("=\"").append(columns).append("\"");
+        buf.append(" ").append(ElementTags.WIDTH).append("=\"");
+        if (!absWidth.equals("")){
+            buf.append(absWidth);
+        }
+        else{
+            buf.append(widthPercentage).append("%");
+        }
+        buf.append("\" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
+        buf.append("\" ").append(ElementTags.CELLPADDING).append("=\"").append(cellpadding);
+        buf.append("\" ").append(ElementTags.CELLSPACING).append("=\"").append(cellspacing);
+        buf.append("\" ").append(ElementTags.WIDTHS).append("s=\"");
+        buf.append(widths[0]);
+        for (int i = 1; i < widths.length; i++) {
+            buf.append(";");
+            buf.append(widths[i]);
+        }
+        buf.append("\"").append(super.toString()).append(">\n");
+        Row row;
+        for (Iterator iterator = rows.iterator(); iterator.hasNext(); ) {
+            row = (Row) iterator.next();
+            buf.append(row.toXml(indent + 1));
+        }
+        DocWriter.addTabs(buf, indent);
+        buf.append("</").append(ElementTags.TABLE).append(">\n");
+        return buf.toString();
+    }
+    
+/**
+ * Returns a representation of this <CODE>Table</CODE>.
  *
  * @return      a <CODE>String</CODE>
  */

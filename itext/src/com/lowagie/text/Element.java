@@ -249,6 +249,14 @@ public interface Element {
     public ArrayList getChunks();
     
 /**
+ * Gets the content of the text element in XML form.
+ *
+ * @return	a type
+ */
+    
+    public String toXml(int indent);
+    
+/**
  * Gets the content of the text element.
  *
  * @return	a type

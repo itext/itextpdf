@@ -588,6 +588,56 @@ public class Section extends ArrayList implements TextElementArray {
     }
     
 /**
+ * Returns the XML representation of this <CODE>Section</CODE>.
+ *
+ * @return		a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        StringBuffer buf = new StringBuffer();
+        DocWriter.addTabs(buf, indent);
+        
+        buf.append("<").append(ElementTags.SECTION);
+        
+        buf.append(" ").append(ElementTags.DEPTH).append("=\"").append(numberDepth);
+        buf.append("\" ").append(ElementTags.INDENT).append("=\"").append(sectionIndent);
+        if (indentationLeft != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"").append(indentationLeft);
+        }
+        if (indentationRight != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"").append(indentationRight);
+        }
+        buf.append("\">\n");
+
+        if (title != null) {        
+            DocWriter.addTabs(buf, indent + 1);
+            buf.append("<").append(ElementTags.TITLE).append(" ");
+            buf.append(ElementTags.LEADING).append("=\"").append(title.leading());
+            buf.append("\" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(title.alignment()));
+            if (indentationLeft != 0) {
+                buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
+                buf.append(indentationLeft);
+            }
+            if (indentationRight != 0) {
+                buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
+                buf.append(indentationRight);
+            }
+            buf.append("\">\n");
+            for (Iterator i = title.iterator(); i.hasNext(); ) {
+                buf.append(((Element)i.next()).toXml(indent + 2));
+            }
+            DocWriter.addTabs(buf, indent + 1);
+            buf.append("</").append(ElementTags.TITLE).append(">\n");
+        }
+        for (Iterator i = iterator(); i.hasNext(); ) {
+            buf.append(((Element)i.next()).toXml(indent + 1));
+        }
+        DocWriter.addTabs(buf, indent);
+        buf.append("</").append(ElementTags.SECTION).append(">\n");
+        return buf.toString();
+    }
+    
+/**
  * Returns a representation of this <CODE>Section</CODE>.
  *
  * @return	a <CODE>String</CODE>

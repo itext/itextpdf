@@ -333,6 +333,35 @@ public class Paragraph extends Phrase implements TextElementArray {
     }
     
 /**
+ * Returns an XML representation of this <CODE>Paragraph</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toXml(int indent) {
+        StringBuffer buf = new StringBuffer();
+        DocWriter.addTabs(buf, indent);
+        buf.append("<").append(ElementTags.PARAGRAPH);
+        
+        buf.append(" ").append(ElementTags.LEADING).append("=\"").append(leading).append("\"");
+        buf.append(font.toString());
+        buf.append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
+        if (indentationLeft != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"").append(indentationLeft);
+        }
+        if (indentationRight != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"").append(indentationRight);
+        }
+        buf.append("\">\n");
+        for (Iterator i = iterator(); i.hasNext(); ) {
+            buf.append(((Element)i.next()).toXml(indent + 1));
+        }
+        DocWriter.addTabs(buf, indent);
+        buf.append("</").append(ElementTags.PARAGRAPH).append(">\n");
+        return buf.toString();
+    }
+    
+/**
  * Returns a representation of this <CODE>Paragraph</CODE>.
  *
  * @return	a <CODE>String</CODE>
