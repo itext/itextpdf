@@ -58,15 +58,14 @@ import java.util.Set;
 
 /**
  * A <CODE>Row</CODE> is part of a <CODE>Table</CODE>
- * and contains <bold>nothing but</bold> <CODE>Cells</CODE>.
+ * and contains some <CODE>Cells</CODE>.
  * <P>
  * All <CODE>Row</CODE>s are constructed by a <CODE>Table</CODE>-object.
  * You don't have to construct any <CODE>Row</CODE> yourself.
  * In fact you can't construct a <CODE>Row</CODE> outside the package.
  * <P>
  * Since a <CODE>Cell</CODE> can span several rows and/or columns
- * a row contains reserved space without any content. This class
- * manages the reservation on a per row basis.
+ * a row can contain reserved space without any content.
  *
  * @see   Element
  * @see   Cell
@@ -74,54 +73,64 @@ import java.util.Set;
  */
 
 public class Row implements Element, MarkupAttributes {
-
+    
     // membervariables
-
-    /** This is the number of columns in the <CODE>Row</CODE>. */
+    
+/** id of a null element in a Row*/
+    public static final int NULL = 0;
+    
+/** id of the Cell element in a Row*/
+    public static final int CELL = 1;
+    
+/** id of the Table element in a Row*/
+    public static final int TABLE = 2;
+    
+/** This is the number of columns in the <CODE>Row</CODE>. */
     protected int columns;
-
-    /** This is a valid position the <CODE>Row</CODE>. */
-    // protected int currentColumn;
-
-    /** This is the array that keeps track of reserved cells. */
+    
+/** This is a valid position the <CODE>Row</CODE>. */
+    protected int currentColumn;
+    
+/** This is the array that keeps track of reserved cells. */
     protected boolean[] reserved;
-
-    /** This is the array of <CODE>Cell</CODE>s. */
-    protected Cell[] cells;
-
-    /** This is the vertical alignment. */
+    
+/** This is the array of Objects (<CODE>Cell</CODE> or <CODE>Table</CODE>). */
+    protected Object[] cells;
+    
+/** This is the vertical alignment. */
     protected int horizontalAlignment;
-
-    /** This is the vertical alignment. */
+    
+/** This is the vertical alignment. */
     protected int verticalAlignment;
 
-    /** Contains extra markupAttributes */
+/** Contains extra markupAttributes */
     protected Properties markupAttributes;
-
+    
     // constructors
-
-    /**
-     * Constructs a <CODE>Row</CODE> with a certain number of <VAR>columns</VAR>.
-     *
-     * @param columns   a number of columns
-     */
-
+    
+/**
+ * Constructs a <CODE>Row</CODE> with a certain number of <VAR>columns</VAR>.
+ *
+ * @param columns   a number of columns
+ */
+ 
     protected Row(int columns) {
         this.columns = columns;
         reserved = new boolean[columns];
-        cells = new Cell[columns];
-        //      currentColumn = 0;
+        cells = new Object[columns];
+        currentColumn = 0;
     }
-
+    
     // implementation of the Element-methods
-
-    /**
-     * Processes the element by adding it (or the different parts) to a
-     * <CODE>ElementListener</CODE>.
-     *
-     * @param listener  an <CODE>ElementListener</CODE>
-     * @return  <CODE>true</CODE> if the element was processed successfully
-     */
+    
+/**
+ * Processes the element by adding it (or the different parts) to a
+ * <CODE>ElementListener</CODE>.
+ *
+ * @param listener  an <CODE>ElementListener</CODE>
+ * @return  <CODE>true</CODE> if the element was processed successfully
+ */
+    
     public boolean process(ElementListener listener) {
         try {
             return listener.add(this);
@@ -130,42 +139,42 @@ public class Row implements Element, MarkupAttributes {
             return false;
         }
     }
-
-    /**
-     * Gets the type of the text element.
-     *
-     * @return  a type
-     */
-
+    
+/**
+ * Gets the type of the text element.
+ *
+ * @return  a type
+ */
+    
     public int type() {
         return Element.ROW;
     }
-
-    /**
-     * Gets all the chunks in this element, which is always empty!
-     *
-     * @return  an <CODE>ArrayList</CODE>
-     */
-
+    
+/**
+ * Gets all the chunks in this element.
+ *
+ * @return  an <CODE>ArrayList</CODE>
+ */
+    
     public ArrayList getChunks() {
         return new ArrayList();
     }
-
-    /**
-     * Returns a <CODE>Row</CODE> that is a copy of this <CODE>Row</CODE>
-     * in which a certain column has been deleted.
-     *
-     * @param column  the number of the column to delete
-     */
-
+    
+/**
+ * Returns a <CODE>Row</CODE> that is a copy of this <CODE>Row</CODE>
+ * in which a certain column has been deleted.
+ *
+ * @param column  the number of the column to delete
+ */
+    
     void deleteColumn(int column) {
         if ((column >= columns) || (column < 0)) {
-            throw new IndexOutOfBoundsException("deleteColumn at illegal index : " + column);
+            throw new IndexOutOfBoundsException("getCell at illegal index : " + column);
         }
         columns--;
         boolean newReserved[] = new boolean[columns];
-        Cell newCells[] = new Cell[columns];
-
+        Object newCells[] = new Cell[columns];
+        
         for (int i = 0; i < column; i++) {
             newReserved[i] = reserved[i];
             newCells[i] = cells[i];
@@ -184,56 +193,91 @@ public class Row implements Element, MarkupAttributes {
         reserved = newReserved;
         cells = newCells;
     }
-
+    
     // methods
-
-
-    /**
-     * Adds an element to the <CODE>Row</CODE> at the given position.
-     *
-     * @param       element the element (<CODE>Cell</CODE> or <CODE>Table</CODE>) to add.
-     * @param       column  the column position where to add the element.
-     */
-
-    void setCell(Cell cell, int column) {
-        if (cell == null)
-            throw new NullPointerException("addCell - null argument");
-        if ((column < 0) || (column > columns))
-            throw new IndexOutOfBoundsException("addCell - illegal column argument");
-
-        cells[column] = cell;
-        // currentColumn = column + lColspan - 1;
-
-        // System.out.println(" Row.setCell: empty:"+cell.isEmpty()+" colspan: "+cell.colspan()+" @"+column);
+    
+/**
+ * Adds a <CODE>Cell</CODE> to the <CODE>Row</CODE>.
+ *
+ * @param       element the element to add (currently only Cells and Tables supported)
+ * @return      the column position the <CODE>Cell</CODE> was added,
+ *                      or <CODE>-1</CODE> if the <CODE>element</CODE> couldn't be added.
+ */
+    
+    int addElement(Object element) {
+        return addElement(element, currentColumn);
     }
-
-
-    /**
-     * Reserves a <CODE>Cell</CODE> in the <CODE>Row</CODE>.
-     *
-     * @param   column  the column that has to be reserved.
-     * @return  <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
-     */
-
+    
+/**
+ * Adds an element to the <CODE>Row</CODE> at the position given.
+ *
+ * @param       element the element to add. (currently only Cells and Tables supported
+ * @param       column  the position where to add the cell.
+ * @return      the column position the <CODE>Cell</CODE> was added,
+ *                      or <CODE>-1</CODE> if the <CODE>Cell</CODE> couldn't be added.
+ */
+    
+    int addElement(Object element, int column) {
+        if (element == null) throw new NullPointerException("addCell - null argument");
+        if ((column < 0) || (column > columns)) throw new IndexOutOfBoundsException("addCell - illegal column argument");
+        if ( !((getObjectID(element) == CELL) || (getObjectID(element) == TABLE)) ) throw new IllegalArgumentException("addCell - only Cells or Tables allowed");
+        
+        int lColspan = ( (Cell.class.isInstance(element)) ? ((Cell) element).colspan() : 1);
+        
+        if ( reserve(column, lColspan) == false ) {
+            return -1;
+        }
+        
+        cells[column] = element;
+        currentColumn += lColspan - 1;
+        
+        return column;
+    }
+    
+/**
+ * Puts <CODE>Cell</CODE> to the <CODE>Row</CODE> at the position given, doesn't reserve colspan.
+ *
+ * @param   cell    the cell to add.
+ * @param   column  the position where to add the cell.
+ * @return  the column position the <CODE>Cell</CODE> was added,
+ *                  or <CODE>-1</CODE> if the <CODE>Cell</CODE> couldn't be added.
+ */
+    
+    void setElement(Object aElement, int column) {
+        if (reserved[column] == true) throw new IllegalArgumentException("setElement - position already taken");
+        
+        cells[column] = aElement;
+        if (aElement != null) {
+            reserved[column] = true;
+        }
+    }
+    
+/**
+ * Reserves a <CODE>Cell</CODE> in the <CODE>Row</CODE>.
+ *
+ * @param   column  the column that has to be reserved.
+ * @return  <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
+ */
+    
     boolean reserve(int column) {
         return reserve(column, 1);
     }
-
-
-    /**
-     * Reserves a <CODE>Cell</CODE> in the <CODE>Row</CODE>.
-     *
-     * @param   column  the column that has to be reserved.
-     * @param   size    the number of columns
-     * @return  <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
-     */
-
+    
+    
+/**
+ * Reserves a <CODE>Cell</CODE> in the <CODE>Row</CODE>.
+ *
+ * @param   column  the column that has to be reserved.
+ * @param   size    the number of columns
+ * @return  <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
+ */
+    
     boolean reserve(int column, int size) {
-        if ((column < 0) || ((column + size) > columns))
-            throw new IndexOutOfBoundsException("reserve - incorrect column/size");
-
-        for(int i=column; i < column + size; i++) {
-            if (true == reserved[i]) {
+        if ((column < 0) || ((column + size) > columns)) throw new IndexOutOfBoundsException("reserve - incorrect column/size");
+        
+        for(int i=column; i < column + size; i++)
+        {
+            if (reserved[i] == true) {
                 // undo reserve
                 for(int j=i; j >= column; j--) {
                     reserved[i] = false;
@@ -244,65 +288,91 @@ public class Row implements Element, MarkupAttributes {
         }
         return true;
     }
-
-    /**
-     * Sets the horizontal alignment.
-     *
-     * @param value the new value
-     */
-
+    
+/**
+ * Sets the horizontal alignment.
+ *
+ * @param value the new value
+ */
+    
     public void setHorizontalAlignment(int value) {
         horizontalAlignment = value;
     }
-
-    /**
-     * Sets the vertical alignment.
-     *
-     * @param value the new value
-     */
-
+    
+/**
+ * Sets the vertical alignment.
+ *
+ * @param value the new value
+ */
+    
     public void setVerticalAlignment(int value) {
         verticalAlignment = value;
     }
-
+    
     // methods to retrieve information
-
-    /**
-     * Returns true/false when this position in the <CODE>Row</CODE>
-     * has been reserved, either filled or through a colspan of an
-     * Element.
-     *
-     * @param       column  the column.
-     * @return      <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
-     */
-
+    
+/**
+ * Returns true/false when this position in the <CODE>Row</CODE> has been reserved, either filled or through a colspan of an Element.
+ *
+ * @param       column  the column.
+ * @return      <CODE>true</CODE> if the column was reserved, <CODE>false</CODE> if not.
+ */
+    
     boolean isReserved(int column) {
         return reserved[column];
     }
-
-    /**
-     * Gets a <CODE>Cell</CODE> or <CODE>Table</CODE> from a certain column.
-     *
-     * @param   column  the column the <CODE>Cell/Table</CODE> is in.
-     * @return  the <CODE>Cell</CODE>,<CODE>Table</CODE> or <VAR>Object</VAR> if the column was
-     *                  reserved or null if empty.
-     */
-
-    public Cell getCell(int column) {
+    
+/**
+ * Returns the type-id of the element in a Row.
+ *
+ * @param       column  the column of which you'd like to know the type
+ */
+    
+    int getElementID(int column) {
+        if (cells[column] == null) return NULL;
+        else if (Cell.class.isInstance(cells[column])) return CELL;
+        else if (Table.class.isInstance(cells[column])) return TABLE;
+        
+        return -1;
+    }
+    
+    
+/**
+ * Returns the type-id of an Object.
+ *
+ * @param       object the object of which you'd like to know the type-id, -1 if invalid
+ */
+    
+    int getObjectID(Object element) {
+        if (element == null) return NULL;
+        else if (Cell.class.isInstance(element)) return CELL;
+        else if (Table.class.isInstance(element)) return TABLE;
+        
+        return -1;
+    }
+    
+    
+/**
+ * Gets a <CODE>Cell</CODE> or <CODE>Table</CODE> from a certain column.
+ *
+ * @param   column  the column the <CODE>Cell/Table</CODE> is in.
+ * @return  the <CODE>Cell</CODE>,<CODE>Table</CODE> or <VAR>Object</VAR> if the column was
+ *                  reserved or null if empty.
+ */
+    
+    public Object getCell(int column) {
         if ((column < 0) || (column > columns)) {
-            throw new IndexOutOfBoundsException("getCell at illegal index :"
-                                                + column + " max is " + columns);
+            throw new IndexOutOfBoundsException("getCell at illegal index :" + column + " max is " + columns);
         }
         return cells[column];
     }
-
-    /**
-     * Checks if the row is empty.
-     *
-     * @return  <CODE>true</CODE> if none of the columns is reserved.
-     * <ea> todo: either the comment or the code is wrong!
-     */
-
+    
+/**
+ * Checks if the row is empty.
+ *
+ * @return  <CODE>true</CODE> if none of the columns is reserved.
+ */
+    
     public boolean isEmpty() {
         for (int i = 0; i < columns; i++) {
             if (cells[i] != null) {
@@ -311,100 +381,92 @@ public class Row implements Element, MarkupAttributes {
         }
         return true;
     }
-
-    /**
-     * Gets the index of the current, valid position
-     *
-     * @return  a value
-     */
-
-    /* int validPosition() {
+    
+/**
+ * Gets the index of the current, valid position
+ *
+ * @return  a value
+ */
+    
+    int validPosition() {
         return currentColumn;
-        }*/
-
-    /**
-     * Gets the number of columns.
-     *
-     * @return  a value
-     */
-
+    }
+    
+/**
+ * Gets the number of columns.
+ *
+ * @return  a value
+ */
+    
     public int columns() {
         return columns;
     }
-
-    /**
-     * Gets the horizontal alignment.
-     *
-     * @return  a value
-     */
-
+    
+/**
+ * Gets the horizontal alignment.
+ *
+ * @return  a value
+ */
+    
     public int horizontalAlignment() {
         return horizontalAlignment;
     }
-
-    /**
-     * Gets the vertical alignment.
-     *
-     * @return  a value
-     */
-
+    
+/**
+ * Gets the vertical alignment.
+ *
+ * @return  a value
+ */
+    
     public int verticalAlignment() {
         return verticalAlignment;
     }
-
-    /**
-     * Checks if a given tag corresponds with this object.
-     *
-     * @param   tag     the given tag
-     * @return  true if the tag corresponds
-     */
-
+    
+/**
+ * Checks if a given tag corresponds with this object.
+ *
+ * @param   tag     the given tag
+ * @return  true if the tag corresponds
+ */
+    
     public static boolean isTag(String tag) {
         return ElementTags.ROW.equals(tag);
     }
-
-
-    /**
-     * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
-     */
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ */
     public void setMarkupAttribute(String name, String value) {
         markupAttributes = (markupAttributes == null) ? new Properties() : markupAttributes;
         markupAttributes.put(name, value);
     }
-
-    /**
-     * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
-     */
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
+ */
     public void setMarkupAttributes(Properties markupAttributes) {
         this.markupAttributes = markupAttributes;
     }
-
-    /**
-     * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
-     */
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ */
     public String getMarkupAttribute(String name) {
         return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
     }
-
-    /**
-     * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
-     */
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
     public Set getMarkupAttributeNames() {
         return Chunk.getKeySet(markupAttributes);
     }
-
-    /**
-     * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
-     */
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
+ */
     public Properties getMarkupAttributes() {
         return markupAttributes;
-    }
-
-    void printReserved() {
-        String lStatus = new String();
-        for (int i=0; i < reserved.length; i++) {
-            lStatus += isReserved(i) + "  ";
-        }
-        System.out.println(lStatus);
     }
 }
