@@ -74,6 +74,9 @@ public class DocBookTagChecker implements DocBookTags {
 		if (APPLICATION.equals(object)) return true;
 		if (AUTHORINITIALS.equals(object)) return true;
 		if (ARG.equals(object)) return true;
+		if (CITY.equals(object)) return true;
+		if (CLASSNAME.equals(object)) return true;
+		if (COLLABNAME.equals(object)) return true;
 		return false;
 	}
 	
@@ -87,6 +90,9 @@ public class DocBookTagChecker implements DocBookTags {
 		if (ACKNO.equals(object)) return true;
 		if (ADDRESS.equals(object)) return true;
 		if (ATTRIBUTION.equals(object)) return true;
+		if (BRIDGEHEAD.equals(object)) return true;
+		if (CITATION.equals(object)) return true;
+		if (CITETITLE.equals(object)) return true;
 		if (PARA.equals(object)) return true;
 		if (SUBTITLE.equals(object)) return true;
 		return false;
@@ -104,6 +110,13 @@ public class DocBookTagChecker implements DocBookTags {
 		if (AUTHORGROUP.equals(object)) return true;
 		if (ABSTRACT.equals(object)) return true;
 		if (AFFILIATION.equals(object)) return true;
+		if (BIBLIODIV.equals(object)) return true;
+		if (BIBLIOENTRY.equals(object)) return true;
+		if (BLOCKQUOTE.equals(object)) return true;
+		if (CAUTION.equals(object)) return true;
+		if (CLASSSYNOPSIS.equals(object)) return true;
+		if (CMDSYNOPSIS.equals(object)) return true;
+		if (COLLAB.equals(object)) return true;
 		return false;
 	}
 	
@@ -115,12 +128,12 @@ public class DocBookTagChecker implements DocBookTags {
 	 */
 	public boolean isNotSupported(Object object) {
 		if (isIgnoreContent(object)) return true;
-		if (AUDIODATA.equals(object)) return true;
-		if (AUDIOOBJECT.equals(object)) return true;
 		// Anchors
 		if (ANCHOR.equals(object)) return true; // TODO
 		// Lists
 		if (ANSWER.equals(object)) return true; // TODO
+		// ???
+		if (CAPTION.equals(object)) return true;
 		return false;
 	}
 	
@@ -177,6 +190,7 @@ public class DocBookTagChecker implements DocBookTags {
 	public boolean isInfo(Object object) {
 		if (ARTICLEINFO.equals(object)) return true;
 		if (BOOKINFO.equals(object)) return true;
+		if (BLOCKINFO.equals(object)) return true;
 		if (APPENDIXINFO.equals(object)) return true;
 		if (INDEXINFO.equals(object)) return true;
 		if (BIBLIOGRAPHYINFO.equals(object)) return true;
@@ -237,6 +251,20 @@ public class DocBookTagChecker implements DocBookTags {
 		if (AREASET.equals(object)) return true;
 		if (AREASPEC.equals(object)) return true;
 		if (ARTPAGENUMS.equals(object)) return true;
+		if (AUDIODATA.equals(object)) return true;
+		if (AUDIOOBJECT.equals(object)) return true;
+		if (BIBLIOCOVERAGE.equals(object)) return true;
+		if (BIBLIOID.equals(object)) return true;
+		if (BIBLIOMISC.equals(object)) return true;
+		if (BIBLIOMIXED.equals(object)) return true;
+		if (BIBLIOMSET.equals(object)) return true;
+		if (BIBLIORELATION.equals(object)) return true;
+		if (BIBLIOSET.equals(object)) return true;
+		if (BIBLIOSOURCE.equals(object)) return true;
+		if (CALLOUT.equals(object)) return true;
+		if (CALLOUTLIST.equals(object)) return true;
+		if (CITEBIBLIOID.equals(object)) return true;
+		if (CO.equals(object)) return true;
 		return false;
 	}
 	
