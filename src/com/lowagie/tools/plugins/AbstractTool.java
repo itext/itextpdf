@@ -98,19 +98,21 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		close.setMnemonic(KeyEvent.VK_C);
 		close.addActionListener(this);
 		tool.add(close);
-		JMenu params = new JMenu(ARGUMENTS);
-		tool.setMnemonic(KeyEvent.VK_T);
-		JMenuItem item;
-		ToolArgument argument;
-		for (Iterator i = arguments.iterator(); i.hasNext(); ) {
-			argument = (ToolArgument)i.next();
-			item = new JMenuItem(argument.getName());
-			item.setToolTipText(argument.getDescription());
-			item.addActionListener(argument);
-			params.add(item);
-		}
 		menubar.add(tool);
-		menubar.add(params);
+		if (arguments.size() > 0) {
+			JMenu params = new JMenu(ARGUMENTS);
+			tool.setMnemonic(KeyEvent.VK_T);
+			JMenuItem item;
+			ToolArgument argument;
+			for (Iterator i = arguments.iterator(); i.hasNext(); ) {
+				argument = (ToolArgument)i.next();
+				item = new JMenuItem(argument.getName());
+				item.setToolTipText(argument.getDescription());
+				item.addActionListener(argument);
+				params.add(item);
+			}
+			menubar.add(params);
+		}
 		return menubar;
 	}
 
