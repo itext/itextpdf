@@ -842,7 +842,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.TABLE:
             {
                 Table table = (Table) element;
-                
+                table.complete();
                 addTabs(indent);
                 writeStart(HtmlTags.TABLE);
                 //write(HtmlTags.COLUMNS, String.valueOf(table.columns()));

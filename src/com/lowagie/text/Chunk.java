@@ -76,7 +76,7 @@ import com.lowagie.text.pdf.PdfAction;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Chunk implements Element {
+public class Chunk implements Element, MarkupAttributes {
     
     // membervariables
     
