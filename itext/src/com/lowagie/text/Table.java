@@ -56,6 +56,7 @@ package com.lowagie.text;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.FileOutputStream;
 import java.lang.Float;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -66,6 +67,7 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import com.lowagie.text.markup.*;
+import com.lowagie.text.pdf.PdfWriter;
 
 
 /**
@@ -232,57 +234,61 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 
     private class WidthComparator implements Comparator
     {
-        // Tables columns widths are floats representing a percentage
-        // of the avaliable width (in the range of 0f .. 100f) this
-        // comparator will compare two floats differening less than
-        // some fraction to be equal. (this effectively implements
-        // a kind of snapping together of too tiny columsn)
+	// Tables columns widths are floats representing a percentage
+	// of the avaliable width (in the range of 0f .. 100f) this
+	// comparator will compare two floats differening less than
+	// some fraction to be equal. (this effectively implements
+	// a kind of snapping together of too tiny columsn)
 
-        private float snap = 0.01f; // columns thiner the 0.01% of the total
-        // width are folded. There is no setter for this parameter
-        // because changing the value would change the order of some
-        // orderes set.... asking for problems then.
+	private float snap = 0.01f; // columns thiner the 0.01% of the total
+	// width are folded. There is no setter for this parameter
+	// because changing the value would change the order of some
+	// orderes set.... asking for problems then.
 
-        float getSnap() {
-            return snap;
-        }
+	float getSnap() {
+	    return snap;
+	}
 
-        WidthComparator(float s) {
-            snap = s;
-        }
-        WidthComparator() {
-        }
+	WidthComparator(float s) {
+	    snap = s;
+	}
+	WidthComparator() {
+	}
 
-        /**
-         * compares this comparator to another comparator: do we yield
-         * the same ordering?
-         * @param o an objects
-         * @return true, we do  or false, we don't
-         */
-        public boolean equals(Object o) {
-            if (o instanceof WidthComparator) {
-                return (snap == ((WidthComparator)o).getSnap());
-            } // end of if (param instanceof WidthComparator)
+	/**
+	 * compares this comparator to another comparator: do we yield
+	 * the same ordering?
+	 * @param param an objects
+	 * @return true, we do  or false, we don't
+	 */
+	public boolean equals(Object o) {
+	    if (o instanceof WidthComparator) {
+		return (snap == ((WidthComparator)o).getSnap());
+	    } // end of if (param instanceof WidthComparator)
 
-            return false;
-        }
+	    return false;
+	}
 
-        /**
-         *@param    param1  the first object to be compared.
-         *@param    param2  the second object to be compared.
-         *@return   a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
-         */
-        public int compare(Object param1, Object param2) {
-            float p1 = ((Float)param1).floatValue();
-            float p2 = ((Float)param2).floatValue();
-            if (Math.abs(p1 - p2) < snap) {
-                return 0;
-            } else if (p1 > p2) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
+	/**
+	 *@param
+	 *o1 - the first object to be compared.
+	 *o2 - the second object to be compared.
+	 *@return
+	 *a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
+	 *@throws
+	 *ClassCastException - if the arguments' types prevent them from being compared by this Comparator
+	 */
+	public int compare(Object param1, Object param2) {
+	    float p1 = ((Float)param1).floatValue();
+	    float p2 = ((Float)param2).floatValue();
+	    if (Math.abs(p1 - p2) < snap) {
+		return 0;
+	    } else if (p1 > p2) {
+		return 1;
+	    } else {
+		return -1;
+	    }
+	}
     }
 
 
@@ -297,7 +303,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public Table(int columns) throws BadElementException {
-        this(columns, 1);
+	this(columns, 1);
     }
 
     /**
@@ -310,32 +316,32 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public Table(int columns, int rows) throws BadElementException {
-        // a Rectangle is create with BY DEFAULT a border with a width of 1
-        super(0, 0, 0, 0);
-        setBorder(BOX);
-        setBorderWidth(1);
-        defaultLayout.setBorder(BOX);
+	// a Rectangle is create with BY DEFAULT a border with a width of 1
+	super(0, 0, 0, 0);
+	setBorder(BOX);
+	setBorderWidth(1);
+	defaultLayout.setBorder(BOX);
 
-        // a table should have at least 1 column
-        if (columns <= 0) {
-            throw new BadElementException("A table should have at least 1 column.");
-        }
-        this.columns = columns;
+	// a table should have at least 1 column
+	if (columns <= 0) {
+	    throw new BadElementException("A table should have at least 1 column.");
+	}
+	this.columns = columns;
 
-        // a certain number of rows are created
-        for (int i = 0; i < rows; i++) {
-            this.rows.add(new Row(columns));
-        }
-        curPosition = new Point(0,0);
-        // currentRow = 0;
-        // currentColumn = 0;
+	// a certain number of rows are created
+	for (int i = 0; i < rows; i++) {
+	    this.rows.add(new Row(columns));
+	}
+	curPosition = new Point(0,0);
+	// currentRow = 0;
+	// currentColumn = 0;
 
-        // the DEFAULT widths are calculated
-        widths = new float[columns];
-        float width = 100f / columns;
-        for (int i = 0; i < columns; i++) {
-            widths[i] = width;
-        }
+	// the DEFAULT widths are calculated
+	widths = new float[columns];
+	float width = 100f / columns;
+	for (int i = 0; i < columns; i++) {
+	    widths[i] = width;
+	}
     }
 
     /**
@@ -346,120 +352,120 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public Table(Properties attributes) {
-        // a Rectangle is create with BY DEFAULT a border with a width of 1
-        super(0, 0, 0, 0);
-        setBorder(BOX);
-        setBorderWidth(1);
-        defaultLayout.setBorder(BOX);
+	// a Rectangle is create with BY DEFAULT a border with a width of 1
+	super(0, 0, 0, 0);
+	setBorder(BOX);
+	setBorderWidth(1);
+	defaultLayout.setBorder(BOX);
 
-        String value = (String)attributes.remove(ElementTags.COLUMNS);
-        if (value == null) {
-            columns = 1;
-        }
-        else {
-            columns = Integer.parseInt(value);
-            if (columns <= 0) {
-                columns = 1;
-            }
-        }
+	String value = (String)attributes.remove(ElementTags.COLUMNS);
+	if (value == null) {
+	    columns = 1;
+	}
+	else {
+	    columns = Integer.parseInt(value);
+	    if (columns <= 0) {
+		columns = 1;
+	    }
+	}
 
-        rows.add(new Row(columns));
-        // currentRow = 0;
-        curPosition.setLocation(0,curPosition.y);
+	rows.add(new Row(columns));
+	// currentRow = 0;
+	curPosition.setLocation(0,curPosition.y);
 
-        if ((value = (String)attributes.remove(ElementTags.LASTHEADERROW)) != null) {
-            setLastHeaderRow(Integer.parseInt(value));
-        }
-        if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
-            setAlignment(value);
-        }
-        if ((value = (String)attributes.remove(ElementTags.CELLSPACING)) != null) {
-            setSpacing(Float.valueOf(value + "f").floatValue());
-        }
-        if ((value = (String)attributes.remove(ElementTags.CELLPADDING)) != null) {
-            setPadding(Float.valueOf(value + "f").floatValue());
-        }
-        if ((value = (String)attributes.remove(ElementTags.OFFSET)) != null) {
-            setOffset(Float.valueOf(value + "f").floatValue());
-        }
-        if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
-            if (value.endsWith("%"))
-                setWidth(Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue());
-            else
-                setAbsWidth(value);
-        }
-        widths = new float[columns];
-        for (int i = 0; i < columns; i++) {
-            widths[i] = 0;
-        }
-        if ((value = (String)attributes.remove(ElementTags.WIDTHS)) != null) {
-            StringTokenizer widthTokens = new StringTokenizer(value, ";");
-            int i = 0;
-            while (widthTokens.hasMoreTokens()) {
-                value = (String) widthTokens.nextToken();
-                widths[i] = Float.valueOf(value + "f").floatValue();
-                i++;
-            }
-            columns = i;
-        }
-        if ((value = (String)attributes.remove(ElementTags.TABLEFITSPAGE)) != null) {
-            tableFitsPage = new Boolean(value).booleanValue();
-        }
-        if ((value = (String)attributes.remove(ElementTags.CELLSFITPAGE)) != null) {
-            cellsFitPage = new Boolean(value).booleanValue();
-        }
-        if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
-            setBorderWidth(Float.valueOf(value + "f").floatValue());
-        }
-        int border = 0;
-        if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
-            if (new Boolean(value).booleanValue()) border |= Rectangle.LEFT;
-        }
-        if ((value = (String)attributes.remove(ElementTags.RIGHT)) != null) {
-            if (new Boolean(value).booleanValue()) border |= Rectangle.RIGHT;
-        }
-        if ((value = (String)attributes.remove(ElementTags.TOP)) != null) {
-            if (new Boolean(value).booleanValue()) border |= Rectangle.TOP;
-        }
-        if ((value = (String)attributes.remove(ElementTags.BOTTOM)) != null) {
-            if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
-        }
-        setBorder(border);
-        String r = null;
-        String g = null;
-        String b = null;
-        if ((r = (String)attributes.remove(ElementTags.RED)) != null ||
-            (g = (String)attributes.remove(ElementTags.GREEN)) != null ||
-            (b = (String)attributes.remove(ElementTags.BLUE)) != null) {
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            if (r != null) red = Integer.parseInt(r);
-            if (g != null) green = Integer.parseInt(g);
-            if (b != null) blue = Integer.parseInt(b);
-            setBorderColor(new Color(red, green, blue));
-        }
-        else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
-            setBorderColor(MarkupParser.decodeColor(value));
-        }
-        if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
-            (g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
-            (b = (String)attributes.remove(ElementTags.BGBLUE)) != null) {
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            if (r != null) red = Integer.parseInt(r);
-            if (g != null) green = Integer.parseInt(g);
-            if (b != null) blue = Integer.parseInt(b);
-            setBackgroundColor(new Color(red, green, blue));
-        }
-        else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
-            setBackgroundColor(MarkupParser.decodeColor(value));
-        }
-        if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
-            setGrayFill(Float.valueOf(value + "f").floatValue());
-        }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
+	if ((value = (String)attributes.remove(ElementTags.LASTHEADERROW)) != null) {
+	    setLastHeaderRow(Integer.parseInt(value));
+	}
+	if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
+	    setAlignment(value);
+	}
+	if ((value = (String)attributes.remove(ElementTags.CELLSPACING)) != null) {
+	    setSpacing(Float.valueOf(value + "f").floatValue());
+	}
+	if ((value = (String)attributes.remove(ElementTags.CELLPADDING)) != null) {
+	    setPadding(Float.valueOf(value + "f").floatValue());
+	}
+	if ((value = (String)attributes.remove(ElementTags.OFFSET)) != null) {
+	    setOffset(Float.valueOf(value + "f").floatValue());
+	}
+	if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
+	    if (value.endsWith("%"))
+		setWidth(Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue());
+	    else
+		setAbsWidth(value);
+	}
+	widths = new float[columns];
+	for (int i = 0; i < columns; i++) {
+	    widths[i] = 0;
+	}
+	if ((value = (String)attributes.remove(ElementTags.WIDTHS)) != null) {
+	    StringTokenizer widthTokens = new StringTokenizer(value, ";");
+	    int i = 0;
+	    while (widthTokens.hasMoreTokens()) {
+		value = (String) widthTokens.nextToken();
+		widths[i] = Float.valueOf(value + "f").floatValue();
+		i++;
+	    }
+	    columns = i;
+	}
+	if ((value = (String)attributes.remove(ElementTags.TABLEFITSPAGE)) != null) {
+	    tableFitsPage = new Boolean(value).booleanValue();
+	}
+	if ((value = (String)attributes.remove(ElementTags.CELLSFITPAGE)) != null) {
+	    cellsFitPage = new Boolean(value).booleanValue();
+	}
+	if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
+	    setBorderWidth(Float.valueOf(value + "f").floatValue());
+	}
+	int border = 0;
+	if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
+	    if (new Boolean(value).booleanValue()) border |= Rectangle.LEFT;
+	}
+	if ((value = (String)attributes.remove(ElementTags.RIGHT)) != null) {
+	    if (new Boolean(value).booleanValue()) border |= Rectangle.RIGHT;
+	}
+	if ((value = (String)attributes.remove(ElementTags.TOP)) != null) {
+	    if (new Boolean(value).booleanValue()) border |= Rectangle.TOP;
+	}
+	if ((value = (String)attributes.remove(ElementTags.BOTTOM)) != null) {
+	    if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
+	}
+	setBorder(border);
+	String r = null;
+	String g = null;
+	String b = null;
+	if ((r = (String)attributes.remove(ElementTags.RED)) != null ||
+	    (g = (String)attributes.remove(ElementTags.GREEN)) != null ||
+	    (b = (String)attributes.remove(ElementTags.BLUE)) != null) {
+	    int red = 0;
+	    int green = 0;
+	    int blue = 0;
+	    if (r != null) red = Integer.parseInt(r);
+	    if (g != null) green = Integer.parseInt(g);
+	    if (b != null) blue = Integer.parseInt(b);
+	    setBorderColor(new Color(red, green, blue));
+	}
+	else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
+	    setBorderColor(MarkupParser.decodeColor(value));
+	}
+	if ((r = (String)attributes.remove(ElementTags.BGRED)) != null ||
+	    (g = (String)attributes.remove(ElementTags.BGGREEN)) != null ||
+	    (b = (String)attributes.remove(ElementTags.BGBLUE)) != null) {
+	    int red = 0;
+	    int green = 0;
+	    int blue = 0;
+	    if (r != null) red = Integer.parseInt(r);
+	    if (g != null) green = Integer.parseInt(g);
+	    if (b != null) blue = Integer.parseInt(b);
+	    setBackgroundColor(new Color(red, green, blue));
+	}
+	else if ((value = (String)attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
+	    setBackgroundColor(MarkupParser.decodeColor(value));
+	}
+	if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
+	    setGrayFill(Float.valueOf(value + "f").floatValue());
+	}
+	if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
 
     // implementation of the Element-methods
@@ -473,19 +479,19 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public boolean process(ElementListener listener) {
-        try {
-            return listener.add(this);
-        }
-        catch(DocumentException de) {
-            return false;
-        }
+	try {
+	    return listener.add(this);
+	}
+	catch(DocumentException de) {
+	    return false;
+	}
     }
 
     /**
      * Performs extra checks when executing table code (currently only when cells are added).
      */
     public void setDebug(boolean aDebug) {
-        mDebug = aDebug;
+	mDebug = aDebug;
     }
 
     /**
@@ -501,7 +507,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setAutoFillEmptyCells(boolean aDoAutoFill) {
-        mAutoFillEmptyCells = aDoAutoFill;
+	mAutoFillEmptyCells = aDoAutoFill;
     }
 
     /**
@@ -514,8 +520,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setTableFitsPage(boolean fitPage) {
-        this.tableFitsPage = fitPage;
-        if (fitPage) setCellsFitPage(true);
+	this.tableFitsPage = fitPage;
+	if (fitPage) setCellsFitPage(true);
     }
 
     /**
@@ -528,7 +534,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setCellsFitPage(boolean fitPage) {
-        this.cellsFitPage = fitPage;
+	this.cellsFitPage = fitPage;
     }
 
     /**
@@ -538,7 +544,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public boolean hasToFitPageTable() {
-        return tableFitsPage;
+	return tableFitsPage;
     }
 
     /**
@@ -548,7 +554,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public boolean hasToFitPageCells() {
-        return cellsFitPage;
+	return cellsFitPage;
     }
 
     /**
@@ -563,7 +569,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setOffset(float offset) {
-        this.offset = offset;
+	this.offset = offset;
     }
 
     /**
@@ -573,7 +579,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public float getOffset() {
-        return offset;
+	return offset;
     }
 
     /**
@@ -583,7 +589,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public int type() {
-        return Element.TABLE;
+	return Element.TABLE;
     }
 
     /**
@@ -595,7 +601,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public ArrayList getChunks() {
-        return new ArrayList();
+	return new ArrayList();
     }
 
     // methods to add content to the table
@@ -603,57 +609,57 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE> at a certain row and column.
      *
-     * @param       aCell    The <CODE>Cell</CODE> to add
+     * @param       cell    The <CODE>Cell</CODE> to add
      * @param       row     The row where the <CODE>Cell</CODE> will be added
      * @param       column  The column where the <CODE>Cell</CODE> will be added
      */
 
     public void addCell(Cell aCell, int row, int column) throws BadElementException {
-        addCell(aCell, new Point(row,column));
+	addCell(aCell, new Point(row,column));
     }
 
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE> at a certain location.
      *
-     * @param       aCell        The <CODE>Cell</CODE> to add
-     * @param       aLocation    The location where the <CODE>Cell</CODE> will be added
+     * @param       cell        The <CODE>Cell</CODE> to add
+     * @param       location    The location where the <CODE>Cell</CODE> will be added
      */
 
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
-        if (aCell == null)
-            throw new NullPointerException("addCell - cell has null-value");
-        if (aLocation == null)
-            throw new NullPointerException("addCell - point has null-value");
+	if (aCell == null)
+	    throw new NullPointerException("addCell - cell has null-value");
+	if (aLocation == null)
+	    throw new NullPointerException("addCell - point has null-value");
 
-        /*if (mDebug == true)*/ {
-            if (aLocation.x < 0)
-                throw new BadElementException("row coordinate of location must be >= 0");
-            if ((aLocation.y <= 0) && (aLocation.y > columns))
-                throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
-            if (!isValidLocation(aCell, aLocation))
-                throw new BadElementException("Adding a cell at the location ("
-                                              + aLocation.x + "," + aLocation.y
-                                              + ") with a colspan of "
-                                              + aCell.colspan() + " and a rowspan of "
-                                              + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
-        }
-        if (aCell.isTable()) {
-            Table aTable = (Table)aCell.getElements().next();
-            // finish (flat out) the inner table
-            aTable.complete();
-            // mark this table as container of inner table(s)
-            mTableInserted = true;
-        } else {
-            aCell.fill();
-        } // end of else
+	/*if (mDebug == true)*/ {
+	    if (aLocation.x < 0)
+		throw new BadElementException("row coordinate of location must be >= 0");
+	    if ((aLocation.y <= 0) && (aLocation.y > columns))
+		throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
+	    if (!isValidLocation(aCell, aLocation))
+		throw new BadElementException("Adding a cell at the location ("
+					      + aLocation.x + "," + aLocation.y
+					      + ") with a colspan of "
+					      + aCell.colspan() + " and a rowspan of "
+					      + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
+	}
+	if (aCell.isTable()) {
+	    Table aTable = (Table)aCell.getElements().next();
+	    // finish (flat out) the inner table
+	    aTable.complete();
+	    // mark this table as container of inner table(s)
+	    mTableInserted = true;
+	} else {
+	    aCell.fill();
+	} // end of else
 
-        if (aCell.border() == UNDEFINED)
-            aCell.setBorder(defaultLayout.border());
-        // reserves the  col/row-spanned cells
-        placeCell(rows, aCell, aLocation);
-        // update current position
-        curPosition = getNextValidPosition(rows, aLocation);
-        // System.out.println(" current Postition: "+currentRow+","+currentColumn);
+	if (aCell.border() == UNDEFINED)
+	    aCell.setBorder(defaultLayout.border());
+	// reserves the  col/row-spanned cells
+	placeCell(rows, aCell, aLocation);
+	// update current position
+	curPosition = getNextValidPosition(rows, aLocation);
+	// System.out.println(" current Postition: "+currentRow+","+currentColumn);
     }
 
 
@@ -664,12 +670,12 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void addCell(Cell cell) {
-        try {
-            addCell(cell, curPosition);
-        }
-        catch(BadElementException bee) {
-            // don't add the cell
-        }
+	try {
+	    addCell(cell, curPosition);
+	}
+	catch(BadElementException bee) {
+	    // don't add the cell
+	}
     }
 
     /**
@@ -683,7 +689,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void addCell(Phrase content) throws BadElementException {
-        addCell(content, curPosition);
+	addCell(content, curPosition);
     }
 
     /**
@@ -698,17 +704,17 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void addCell(Phrase content, Point location) throws BadElementException {
-        Cell cell = new Cell(content);
-        cell.setBorder(defaultLayout.border());
-        cell.setBorderWidth(defaultLayout.borderWidth());
-        cell.setBorderColor(defaultLayout.borderColor());
-        cell.setBackgroundColor(defaultLayout.backgroundColor());
-        cell.setGrayFill(defaultLayout.grayFill());
-        cell.setHorizontalAlignment(defaultLayout.horizontalAlignment());
-        cell.setVerticalAlignment(defaultLayout.verticalAlignment());
-        cell.setColspan(defaultLayout.colspan());
-        cell.setRowspan(defaultLayout.rowspan());
-        addCell(cell, location);
+	Cell cell = new Cell(content);
+	cell.setBorder(defaultLayout.border());
+	cell.setBorderWidth(defaultLayout.borderWidth());
+	cell.setBorderColor(defaultLayout.borderColor());
+	cell.setBackgroundColor(defaultLayout.backgroundColor());
+	cell.setGrayFill(defaultLayout.grayFill());
+	cell.setHorizontalAlignment(defaultLayout.horizontalAlignment());
+	cell.setVerticalAlignment(defaultLayout.verticalAlignment());
+	cell.setColspan(defaultLayout.colspan());
+	cell.setRowspan(defaultLayout.rowspan());
+	addCell(cell, location);
     }
 
     /**
@@ -722,7 +728,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void addCell(String content) throws BadElementException {
-        addCell(new Phrase(content), curPosition);
+	addCell(new Phrase(content), curPosition);
     }
 
     /**
@@ -737,7 +743,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void addCell(String content, Point location) throws BadElementException {
-        addCell(new Phrase(content), location);
+	addCell(new Phrase(content), location);
     }
 
     /**
@@ -749,8 +755,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 
     /*
     public void insertTable(Table aTable) {
-        if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
-        insertTable(aTable, curPosition);
+	if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
+	insertTable(aTable, curPosition);
     }
     */
 
@@ -764,8 +770,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
     /*
     public void insertTable(Table aTable, int row, int column) {
-        if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
-        insertTable(aTable, new Point(row, column));
+	if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
+	insertTable(aTable, new Point(row, column));
     }
     */
 
@@ -778,22 +784,22 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
     /*
     public void insertTable(Table aTable, Point aLocation) {
-        if (aTable == null)
-            throw new NullPointerException("insertTable - table has null-value");
-        if (aLocation == null)
-            throw new NullPointerException("insertTable - point has null-value");
-        if (aLocation.y > columns) {
-            // <ea> todo: illeagal positions should be caught here
-        } // end of if (aLocation.y > columns)
+	if (aTable == null)
+	    throw new NullPointerException("insertTable - table has null-value");
+	if (aLocation == null)
+	    throw new NullPointerException("insertTable - point has null-value");
+	if (aLocation.y > columns) {
+	    // <ea> todo: illeagal positions should be caught here
+	} // end of if (aLocation.y > columns)
 
-        // a table in a default row/col-span=(1,1) Cell
-        try {
-            Cell newCell = new Cell(aTable);
-            addCell(newCell, aLocation);
-        } catch (BadElementException e) {
-            // this exception will never be thrown here
-            // never say never, ....
-        } // end of try-catch
+	// a table in a default row/col-span=(1,1) Cell
+	try {
+	    Cell newCell = new Cell(aTable);
+	    addCell(newCell, aLocation);
+	} catch (BadElementException e) {
+	    // this exception will never be thrown here
+	    // never say never, ....
+	} // end of try-catch
     }
     */
 
@@ -801,36 +807,42 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * Will fill empty cells with valid blank <CODE>Cell</CODE>s
      */
 
+	// <ea> i think that this method should not be public. iText
+	// should rather ensure internally that complete() is called at
+	// the right time, the user should never need to call complete
+	// explicitely, in fact calling it too early (i.e. before the
+	// table is really complete) will most probably lead to unexpected
+	// behaviour.
     public void complete() {
-        try {
-            if (mTableInserted == true) {
-                mergeInsertedTables();  // integrate tables in the table
-                mTableInserted = false;
-            }
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
-        if (mAutoFillEmptyCells) {
-            fillEmptyMatrixCells();
-        }
-        if (alternatingRowAttributes != null) {
-            Properties even = new Properties();
-            Properties odd = new Properties();
-            String name;
-            String[] value;
-            for (Iterator iterator = alternatingRowAttributes.keySet().iterator(); iterator.hasNext(); ) {
-                name = String.valueOf(iterator.next());
-                value = (String[])alternatingRowAttributes.get(name);
-                even.setProperty(name, value[0]);
-                odd.setProperty(name, value[1]);
-            }
-            Row row;
-            for (int i = lastHeaderRow + 1; i < rows.size(); i++) {
-                row = (Row)rows.get(i);
-                row.setMarkupAttributes(i % 2 == 0 ? even : odd);
-            }
-        }
+	try {
+	    if (mTableInserted == true) {
+		mergeInsertedTables();  // integrate tables in the table
+		mTableInserted = false;
+	    }
+	}
+	catch(DocumentException de) {
+	    throw new ExceptionConverter(de);
+	}
+	if (mAutoFillEmptyCells) {
+	    fillEmptyMatrixCells();
+	}
+	if (alternatingRowAttributes != null) {
+	    Properties even = new Properties();
+	    Properties odd = new Properties();
+	    String name;
+	    String[] value;
+	    for (Iterator iterator = alternatingRowAttributes.keySet().iterator(); iterator.hasNext(); ) {
+		name = String.valueOf(iterator.next());
+		value = (String[])alternatingRowAttributes.get(name);
+		even.setProperty(name, value[0]);
+		odd.setProperty(name, value[1]);
+	    }
+	    Row row;
+	    for (int i = lastHeaderRow + 1; i < rows.size(); i++) {
+		row = (Row)rows.get(i);
+		row.setMarkupAttributes(i % 2 == 0 ? even : odd);
+	    }
+	}
     }
 
     /**
@@ -841,7 +853,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultCellBorder(int value) {
-        defaultLayout.setBorder(value);
+	defaultLayout.setBorder(value);
     }
 
     /**
@@ -852,7 +864,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultCellBorderWidth(float value) {
-        defaultLayout.setBorderWidth(value);
+	defaultLayout.setBorderWidth(value);
     }
 
     /**
@@ -863,7 +875,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultCellBorderColor(Color color) {
-        defaultLayout.setBorderColor(color);
+	defaultLayout.setBorderColor(color);
     }
 
     /**
@@ -874,7 +886,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultCellBackgroundColor(Color color) {
-        defaultLayout.setBackgroundColor(color);
+	defaultLayout.setBackgroundColor(color);
     }
 
     /**
@@ -885,9 +897,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultCellGrayFill(float value) {
-        if (value >= 0 && value <= 1) {
-            defaultLayout.setGrayFill(value);
-        }
+	if (value >= 0 && value <= 1) {
+	    defaultLayout.setGrayFill(value);
+	}
     }
 
     /**
@@ -898,7 +910,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultHorizontalAlignment(int value) {
-        defaultLayout.setHorizontalAlignment(value);
+	defaultLayout.setHorizontalAlignment(value);
     }
 
     /**
@@ -909,7 +921,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultVerticalAlignment(int value) {
-        defaultLayout.setVerticalAlignment(value);
+	defaultLayout.setVerticalAlignment(value);
     }
 
     /**
@@ -920,7 +932,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultRowspan(int value) {
-        defaultLayout.setRowspan(value);
+	defaultLayout.setRowspan(value);
     }
 
     /**
@@ -931,7 +943,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setDefaultColspan(int value) {
-        defaultLayout.setColspan(value);
+	defaultLayout.setColspan(value);
     }
 
     // methods
@@ -944,27 +956,27 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 
     private void assumeTableDefaults(Cell aCell) {
 
-        if (aCell.border() == Rectangle.UNDEFINED) {
-            aCell.setBorder(defaultLayout.border());
-        }
-        if (aCell.borderWidth() == Rectangle.UNDEFINED) {
-            aCell.setBorderWidth(defaultLayout.borderWidth());
-        }
-        if (aCell.borderColor() == null) {
-            aCell.setBorderColor(defaultLayout.borderColor());
-        }
-        if (aCell.backgroundColor() == null) {
-            aCell.setBackgroundColor(defaultLayout.backgroundColor());
-        }
-        if (aCell.grayFill() == Rectangle.UNDEFINED) {
-            aCell.setGrayFill(defaultLayout.grayFill());
-        }
-        if (aCell.horizontalAlignment() == Element.ALIGN_UNDEFINED) {
-            aCell.setHorizontalAlignment(defaultLayout.horizontalAlignment());
-        }
-        if (aCell.verticalAlignment() == Element.ALIGN_UNDEFINED) {
-            aCell.setVerticalAlignment(defaultLayout.verticalAlignment());
-        }
+	if (aCell.border() == Rectangle.UNDEFINED) {
+	    aCell.setBorder(defaultLayout.border());
+	}
+	if (aCell.borderWidth() == Rectangle.UNDEFINED) {
+	    aCell.setBorderWidth(defaultLayout.borderWidth());
+	}
+	if (aCell.borderColor() == null) {
+	    aCell.setBorderColor(defaultLayout.borderColor());
+	}
+	if (aCell.backgroundColor() == null) {
+	    aCell.setBackgroundColor(defaultLayout.backgroundColor());
+	}
+	if (aCell.grayFill() == Rectangle.UNDEFINED) {
+	    aCell.setGrayFill(defaultLayout.grayFill());
+	}
+	if (aCell.horizontalAlignment() == Element.ALIGN_UNDEFINED) {
+	    aCell.setHorizontalAlignment(defaultLayout.horizontalAlignment());
+	}
+	if (aCell.verticalAlignment() == Element.ALIGN_UNDEFINED) {
+	    aCell.setVerticalAlignment(defaultLayout.verticalAlignment());
+	}
     }
 
     /**
@@ -974,30 +986,30 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void deleteColumn(int column) throws BadElementException {
-        float newWidths[] = new float[--columns];
-        for (int i = 0; i < column; i++) {
-            newWidths[i] = widths[i];
-        }
-        for (int i = column; i < columns; i++) {
-            newWidths[i] = widths[i + 1];
-        }
-        setWidths(newWidths);
-        for (int i = 0; i < columns; i++) {
-            newWidths[i] = widths[i];
-        }
-        widths = newWidths;
-        Row row;
-        int size = rows.size();
-        for (int i = 0; i < size; i++) {
-            row = (Row) rows.get(i);
-            row.deleteColumn(column);
-            rows.set(i, row);
-        }
-        if (column == columns) {
-            curPosition.setLocation(curPosition.x+1, 0);
-            // currentRow++;
-            // currentColumn = 0;
-        }
+	float newWidths[] = new float[--columns];
+	for (int i = 0; i < column; i++) {
+	    newWidths[i] = widths[i];
+	}
+	for (int i = column; i < columns; i++) {
+	    newWidths[i] = widths[i + 1];
+	}
+	setWidths(newWidths);
+	for (int i = 0; i < columns; i++) {
+	    newWidths[i] = widths[i];
+	}
+	widths = newWidths;
+	Row row;
+	int size = rows.size();
+	for (int i = 0; i < size; i++) {
+	    row = (Row) rows.get(i);
+	    row.deleteColumn(column);
+	    rows.set(i, row);
+	}
+	if (column == columns) {
+	    curPosition.setLocation(curPosition.x+1, 0);
+	    // currentRow++;
+	    // currentColumn = 0;
+	}
     }
 
     /**
@@ -1008,14 +1020,14 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public boolean deleteRow(int row) {
-        if (row < 0 || row >= rows.size()) {
-            return false;
-        }
-        rows.remove(row);
-        //Added by CWE
-        // --currentRow;
-        curPosition.setLocation(curPosition.x-1, curPosition.y);
-        return true;
+	if (row < 0 || row >= rows.size()) {
+	    return false;
+	}
+	rows.remove(row);
+	//Added by CWE
+	// --currentRow;
+	curPosition.setLocation(curPosition.x-1, curPosition.y);
+	return true;
     }
 
     /**
@@ -1025,7 +1037,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public boolean deleteLastRow() {
-        return deleteRow(rows.size() - 1);
+	return deleteRow(rows.size() - 1);
     }
 
     /**
@@ -1035,9 +1047,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public int endHeaders() {
-        /* patch sep 8 2001 Francesco De Milato */
-        lastHeaderRow = curPosition.x - 1; // currentRow - 1;
-        return lastHeaderRow;
+	/* patch sep 8 2001 Francesco De Milato */
+	lastHeaderRow = curPosition.x - 1; // currentRow - 1;
+	return lastHeaderRow;
     }
 
     // methods to set the membervariables
@@ -1049,7 +1061,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setLastHeaderRow(int value) {
-        lastHeaderRow = value;
+	lastHeaderRow = value;
     }
 
     /**
@@ -1059,7 +1071,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setAlignment(int value) {
-        alignment = value;
+	alignment = value;
     }
 
     /**
@@ -1069,15 +1081,15 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setAlignment(String alignment) {
-        if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(alignment)) {
-            this.alignment = Element.ALIGN_LEFT;
-            return;
-        }
-        if (ElementTags.RIGHT.equalsIgnoreCase(alignment)) {
-            this.alignment = Element.ALIGN_RIGHT;
-            return;
-        }
-        this.alignment = Element.ALIGN_CENTER;
+	if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(alignment)) {
+	    this.alignment = Element.ALIGN_LEFT;
+	    return;
+	}
+	if (ElementTags.RIGHT.equalsIgnoreCase(alignment)) {
+	    this.alignment = Element.ALIGN_RIGHT;
+	    return;
+	}
+	this.alignment = Element.ALIGN_CENTER;
     }
 
     /**
@@ -1087,7 +1099,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setSpaceInsideCell(float value) {
-        cellpadding = value;
+	cellpadding = value;
     }
 
     /**
@@ -1097,7 +1109,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setSpaceBetweenCells(float value) {
-        cellspacing = value;
+	cellspacing = value;
     }
 
     /**
@@ -1107,7 +1119,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setPadding(float value) {
-        cellpadding = value;
+	cellpadding = value;
     }
 
     /**
@@ -1117,7 +1129,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setSpacing(float value) {
-        cellspacing = value;
+	cellspacing = value;
     }
 
     /**
@@ -1128,7 +1140,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setCellpadding(float value) {
-        cellspacing = value;
+	cellspacing = value;
     }
 
     /**
@@ -1139,7 +1151,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setCellspacing(float value) {
-        cellpadding = value;
+	cellpadding = value;
     }
 
     /**
@@ -1149,7 +1161,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setWidth(float width) {
-        this.widthPercentage = width;
+	this.widthPercentage = width;
     }
 
     /**
@@ -1159,7 +1171,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public void setAbsWidth(String width) {
-        this.absWidth = width;
+	this.absWidth = width;
     }
 
     /**
@@ -1177,28 +1189,28 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * The widths will be: a width of 50% for the first column,
      * 25% for the second and third column.
      *
-     * @param       widths an array with values
+     * @param       an array with values
      */
 
     public void setWidths(float[] widths) throws BadElementException {
-        if (widths.length != columns) {
-            throw new BadElementException("Wrong number of columns.");
-        }
+	if (widths.length != columns) {
+	    throw new BadElementException("Wrong number of columns.");
+	}
 
-        // The sum of all values is 100%
-        float hundredPercent = 0;
-        for (int i = 0; i < columns; i++) {
-            hundredPercent += widths[i];
-        }
+	// The sum of all values is 100%
+	float hundredPercent = 0;
+	for (int i = 0; i < columns; i++) {
+	    hundredPercent += widths[i];
+	}
 
-        // The different percentages are calculated
-        float width;
-        this.widths[columns - 1] = 100;
-        for (int i = 0; i < columns - 1; i++) {
-            width = (100.0f * widths[i]) / hundredPercent;
-            this.widths[i] = width;
-            this.widths[columns - 1] -= width;
-        }
+	// The different percentages are calculated
+	float width;
+	this.widths[columns - 1] = 100;
+	for (int i = 0; i < columns - 1; i++) {
+	    width = (100.0f * widths[i]) / hundredPercent;
+	    this.widths[i] = width;
+	    this.widths[columns - 1] -= width;
+	}
     }
 
     /**
@@ -1208,14 +1220,14 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * The sum of these values will be considered 100%.
      * The values will be recalculated as percentages of this sum.
      *
-     * @param       widths  an array with values
+     * @param       an array with values
      */
 
     public void setWidths(int[] widths) throws DocumentException {
-        float tb[] = new float[widths.length];
-        for (int k = 0; k < widths.length; ++k)
-            tb[k] = widths[k];
-        setWidths(tb);
+	float tb[] = new float[widths.length];
+	for (int k = 0; k < widths.length; ++k)
+	    tb[k] = widths[k];
+	setWidths(tb);
     }
     // methods to retrieve the membervariables
 
@@ -1226,7 +1238,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public int columns() {
-        return columns;
+	return columns;
     }
 
     /**
@@ -1236,7 +1248,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public int size() {
-        return rows.size();
+	return rows.size();
     }
 
     /**
@@ -1248,7 +1260,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public float[] getProportionalWidths() {
-        return widths;
+	return widths;
     }
 
     /**
@@ -1258,7 +1270,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public Iterator iterator() {
-        return rows.iterator();
+	return rows.iterator();
     }
 
     /**
@@ -1268,7 +1280,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public int alignment() {
-        return alignment;
+	return alignment;
     }
 
     /**
@@ -1278,7 +1290,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public float cellpadding() {
-        return cellpadding;
+	return cellpadding;
     }
 
     /**
@@ -1288,7 +1300,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public float cellspacing() {
-        return cellspacing;
+	return cellspacing;
     }
 
     /**
@@ -1298,7 +1310,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public float widthPercentage() {
-        return widthPercentage;
+	return widthPercentage;
     }
 
     /**
@@ -1308,7 +1320,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public String absWidth() {
-        return absWidth;
+	return absWidth;
     }
 
     /**
@@ -1318,7 +1330,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public int firstDataRow() {
-        return lastHeaderRow + 1;
+	return lastHeaderRow + 1;
     }
 
     /**
@@ -1327,7 +1339,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * @return  dimension
      */
     public Dimension getDimension() {
-        return new Dimension(columns, rows.size());
+	return new Dimension(columns, rows.size());
     }
 
     /**
@@ -1335,16 +1347,16 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      *  <code>cell</code> at <code>column</code>.
      *
      * @param cell the <code>Cell</code> of interest
-     * @param column  <code>int</code> the column index of <code>cell</code>
+     * @param col  <code>int</code> the column index of <code>cell</code>
      * @param widths  <code>float[]</code> value with the percentages for all columns in a row
      * @return the total width percentage in a <code>float</code>
      */
     private float computeCellWidth(Cell cell, int column, float[] widths) {
-        float thisWidth = 0.0f;
-        for (int k = 0; k < cell.colspan(); k++) {
-            thisWidth += widths[column+k];
-        } // end of for (int i = 0; i < lCell.colspan(); i++)
-        return thisWidth;
+	float thisWidth = 0.0f;
+	for (int k = 0; k < cell.colspan(); k++) {
+	    thisWidth += widths[column+k];
+	} // end of for (int i = 0; i < lCell.colspan(); i++)
+	return thisWidth;
     }
 
     /**
@@ -1358,14 +1370,14 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * @return an <code>int</code> containing the number of skiped tabstops
      */
     private int computeColspan(int tabIdx, TreeSet tabs, float cellWidth) {
-        // get current tabPosition
-        Iterator it = tabs.iterator();
-        for (int k=0; k < tabIdx; k++) { // skip n tabstops
-            it.next();
-        } // end of for (int k=0; k < currentPosition.y; k++)
-        Float left = (Float)it.next();
-        Float right = new Float(left.floatValue() + cellWidth);
-        return tabs.subSet(left,right).size();
+	// get current tabPosition
+	Iterator it = tabs.iterator();
+	for (int k=0; k < tabIdx; k++) { // skip n tabstops
+	    it.next();
+	} // end of for (int k=0; k < currentPosition.y; k++)
+	Float left = (Float)it.next();
+	Float right = new Float(left.floatValue() + cellWidth);
+	return tabs.subSet(left,right).size();
     }
 
 
@@ -1375,200 +1387,201 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     private void mergeInsertedTables() throws DocumentException {
-        // System.out.println(" mergeInsertedTables");
-        int i=0, j=0;
+	// System.out.println(" mergeInsertedTables");
+	int i=0, j=0;
 
-        // the new (flattened) table described by new* variables
-        float [] newWidths = null;
-        ArrayList newRows = null;
-        int newColumns = 0;
+	// the new (flattened) table described by new* variables
+	float [] newWidths = null;
+	ArrayList newRows = null;
+	int newColumns = 0;
 
-        // to keep track in how many new rows each one will be split
-        int[] rowSplitting = new int[rows.size()];
+	// to keep track in how many new rows each one will be split
+	int[] rowSplitting = new int[rows.size()];
 
-        // local helpers
-        int lTotalRows = 0;
-        Table lInnerTable = null;
-        Cell lCell = null;
-        Row lRow = null;
+	// local helpers
+	int lTotalRows = 0;
+	Table lInnerTable = null;
+	Cell lCell = null;
+	Row lRow = null;
 
-        // first we'll add new columns when needed
-        // construct a TreeSet of the new widths
-        TreeSet tabSet = new TreeSet(new WidthComparator(1f));
-        // we always have a tabstop at the left border. (NB. there is
-        // of course also always one at the right border, but it is
-        // computed later)
-        tabSet.add(new Float(0f));
+	// first we'll add new columns when needed
+	// construct a TreeSet of the new widths
+	TreeSet tabSet = new TreeSet(new WidthComparator(0.0001f));
+	// we always have a tabstop at the left border. (NB. there is
+	// of course also always one at the right border, but it is
+	// computed later)
+	tabSet.add(new Float(0f));
 
-        // Note that the order in which the new tabStops are added to
-        // the tabSet is important, due to the snapping mechanism. We
-        // therfore add the tabPositons of the outer table first to
-        // ensure that they remain un-snapped.
-        float tabStop = 0.0f;
-        for (j=0; j < columns; j++) {
-            tabStop = tabStop + widths[j];
-            tabSet.add(new Float(tabStop));
-        }
+	// Note that the order in which the new tabStops are added to
+	// the tabSet is important, due to the snapping mechanism. We
+	// therfore add the tabPositons of the outer table first to
+	// ensure that they remain un-snapped.
+	float tabStop = 0.0f;
+	for (j=0; j < columns; j++) {
+	    tabStop = tabStop + widths[j];
+	    tabSet.add(new Float(tabStop));
+	}
 
-        tabStop = 0.0f;
-        for (j=0; j < columns; j++) {
-            for (i=0; i < rows.size(); i++) {
-                lRow = (Row)rows.get(i);
-                lCell = lRow.getCell(j);
-                if (!((null == lCell) && (lRow.isReserved(j)))) {
-                    float thisWidth = computeCellWidth(lCell, j, widths);
+	tabStop = 0.0f;
+	for (j=0; j < columns; j++) {
+	    for (i=0; i < rows.size(); i++) {
+		lRow = (Row)rows.get(i);
+		lCell = lRow.getCell(j);
+		if (!((null == lCell) /* && (lRow.isReserved(j)) */ )) {
+		    int lColspan = lCell.colspan();
+		    float thisWidth = computeCellWidth(lCell, j, widths);
 
-                    if (lCell.isTable()) {
-                        // System.out.println(" Inner Table ");
-                        lInnerTable = (Table)lCell.getElements().next();
-                        float lTabStop = tabStop;
-                        for (int k=0; k < lInnerTable.columns(); k++) {
-                            lTabStop = lTabStop + (lInnerTable.widths[k] * thisWidth)/100f;
-                            tabSet.add(new Float(lTabStop));
-                        } // end of for (int k; k < lInnerTable.columns; k++)
-                    }
-                } else {
-                    // skip this over spanned null cell
-                    // System.out.println(" overspanned null cell at "+i+","+j);
-                } // end of else
-                // end of if (null == lCell)
-            }
-            tabStop = tabStop + widths[j];
-        }
-        newColumns = tabSet.size()-1;
+		    if (lCell.isTable()) {
+			// System.out.println(" Inner Table ");
+			lInnerTable = (Table)lCell.getElements().next();
+			float lTabStop = tabStop;
+			for (int k=0; k < lInnerTable.columns(); k++) {
+			    lTabStop = lTabStop + (lInnerTable.widths[k] * thisWidth)/100f;
+			    tabSet.add(new Float(lTabStop));
+			} // end of for (int k; k < lInnerTable.columns; k++)
+		    }
+		} else {
+		    // skip this over spanned null cell
+		    // System.out.println(" overspanned null cell at "+i+","+j);
+		} // end of else
+		// end of if (null == lCell)
+	    }
+	    tabStop = tabStop + widths[j];
+	}
+	newColumns = tabSet.size()-1;
 
-        // next we'll add new rows when needed
-        for (i=0; i < rows.size(); i++) {
-            // holds value in how many rows the current one will be split
-            int rowSplit = 1;
-            for (j=0; j < columns; j++) {
-                lRow = (Row)rows.get(i);
-                lCell = lRow.getCell(j);
-                if ((null != lCell) || (!lRow.isReserved(j))) {
-                    if ( lCell.isTable()) {
-                        lInnerTable = (Table)lCell.getElements().next();
-                        rowSplit = Math.max(rowSplit, lInnerTable.rows.size() - lCell.rowspan() + 1);
-                        // System.out.println(" splitting row "+i+" into "+rowSplit);
-                    }
-                } else {
-                    // the isReserved is a kind of assertion... if
-                    // lCell == null and !isReserved there's something
-                    // gone havock, and we'll get a NullPointerException
-                    // skip this over spanned null cell
-                } // end of else
-                // end of if (null == lCell)
-            }
-            lTotalRows += rowSplit;
-            rowSplitting[i] = rowSplit;
-        }
+	// next we'll add new rows when needed
+	for (i=0; i < rows.size(); i++) {
+	    // holds value in how many rows the current one will be split
+	    int rowSplit = 1;
+	    for (j=0; j < columns; j++) {
+		lRow = (Row)rows.get(i);
+		lCell = lRow.getCell(j);
+		if ((null != lCell) /* || (!lRow.isReserved(j))*/ ) {
+		    if ( lCell.isTable()) {
+			lInnerTable = (Table)lCell.getElements().next();
+			rowSplit = Math.max(rowSplit, lInnerTable.rows.size() - lCell.rowspan() + 1);
+			// System.out.println(" splitting row "+i+" into "+rowSplit);
+		    }
+		} else {
+		    // the isReserved is a kind of assertion... if
+		    // lCell == null and !isReserved there's something
+		    // gone havock, and we'll get a NullPointerException
+		    // skip this over spanned null cell
+		} // end of else
+		// end of if (null == lCell)
+	    }
+	    lTotalRows += rowSplit;
+	    rowSplitting[i] = rowSplit;
+	}
 
-        // if really something changed in the structure of the
-        // table...  [the odds are good, unless the user added nothing
-        // but a (1,1)-table to a cell, which would be a stupid thing
-        // to do, wouldn't it?]
-        if ( (newColumns != columns) || (lTotalRows != rows.size()) ) {
-            // compute widths for new columns
-            newWidths = new float [newColumns];
-            float prev = 0.0f;
-            float cur = 0.0f;
-            int idx = 0;
-            Iterator it = tabSet.iterator();
-            it.next();// skip the 0 tabstop!
-            while (it.hasNext()) {
-                cur = ((Float)it.next()).floatValue();
-                newWidths[idx++] = cur-prev;
-                prev = cur;
-            } // end of for (Iterator it = widthSet.iterator(); it.hasNext(); )
+	// if really something changed in the structure of the
+	// table...  [the odds are good, unless the user added nothing
+	// but a (1,1)-table to a cell, which would be a stupid thing
+	// to do, wouldn't it?]
+	if ( (newColumns != columns) || (lTotalRows != rows.size()) ) {
+	    // compute widths for new columns
+	    newWidths = new float [newColumns];
+	    float prev = 0.0f;
+	    float cur = 0.0f;
+	    int idx = 0;
+	    Iterator it = tabSet.iterator();
+	    it.next();// skip the 0 tabstop!
+	    while (it.hasNext()) {
+		cur = ((Float)it.next()).floatValue();
+		newWidths[idx++] = cur-prev;
+		prev = cur;
+	    } // end of for (Iterator it = widthSet.iterator(); it.hasNext(); )
 
-            // ** FILL NEW TABLE
-            // generate new table
-            // copy old values
-            newRows = new ArrayList(lTotalRows);
-            for (i = 0; i < lTotalRows; i++) {
-                newRows.add(new Row(newColumns));
-            }
-            // the insertion postion in the new table
-            Point nextInsertion = new Point(0,0);
-            // we iterate row-wise, becasue getNextValidPosition() goes
-            // that way, too.
-            for (i=0; i < rows.size(); i++) {
-                for (j=0; j < columns; j++) {
-                    // this is the loop over each lCell in the outer table...
-                    lRow = (Row)rows.get(i);
-                    lCell = lRow.getCell(j);
-                    if ((null != lCell) || (!lRow.isReserved(j))) {
-                        float thisWidth = computeCellWidth(lCell,j,widths);
-                        Point continueOuter = nextInsertion;
-                        if ( lCell.isTable() ) {
-                            // this cell contains an entire inner table:
-                            // Copy its cells into new large table
-                            lInnerTable = (Table)lCell.getElements().next();
-                            Point startNextRow = nextInsertion;
-                            for (int k=0; k < lInnerTable.rows.size(); k++) {
-                                nextInsertion = startNextRow;
-                                for (int l=0; l < lInnerTable.columns(); l++) {
-                                    Cell copyCell = lInnerTable.getCell(k,l);
-                                    if (copyCell != null) {
-                                        // note that I do not check
-                                        // wheter the cell is also
-                                        // reseved!  That's beacause
-                                        // this inner table has
-                                        // already ben complete()'ed.
-                                        float innerCellWidth = computeCellWidth(copyCell, l, lInnerTable.widths) * thisWidth/100f;
-                                        copyCell.setColspan( computeColspan(nextInsertion.y, tabSet, innerCellWidth));
-                                        // <ea> no rowspan becuase we
-                                        // take the original rowspan
-                                        // of the inner cell rowspan
-                                        // System.out.println(" inner cell at "+(nextInsertion.x+1)+","+(nextInsertion.y+1)
-                                        //             + " colspan " + copyCell.colspan());
+	    // ** FILL NEW TABLE
+	    // generate new table
+	    // copy old values
+	    newRows = new ArrayList(lTotalRows);
+	    for (i = 0; i < lTotalRows; i++) {
+		newRows.add(new Row(newColumns));
+	    }
+	    // the insertion postion in the new table
+	    Point nextInsertion = new Point(0,0);
+	    // we iterate row-wise, becasue getNextValidPosition() goes
+	    // that way, too.
+	    for (i=0; i < rows.size(); i++) {
+		for (j=0; j < columns; j++) {
+		    // this is the loop over each lCell in the outer table...
+		    lRow = (Row)rows.get(i);
+		    lCell = lRow.getCell(j);
+		    if ((null != lCell) /* || (!lRow.isReserved(j)) */ ) {
+			float thisWidth = computeCellWidth(lCell,j,widths);
+			Point continueOuter = nextInsertion;
+			if ( lCell.isTable() ) {
+			    // this cell contains an entire inner table:
+			    // Copy its cells into new large table
+			    lInnerTable = (Table)lCell.getElements().next();
+			    Point startNextRow = nextInsertion;
+			    for (int k=0; k < lInnerTable.rows.size(); k++) {
+				nextInsertion = startNextRow;
+				for (int l=0; l < lInnerTable.columns(); l++) {
+				    Cell copyCell = lInnerTable.getCell(k,l);
+				    if (copyCell != null) {
+					// note that I do not check
+					// wheter the cell is also
+					// reseved!  That's beacause
+					// this inner table has
+					// already been complete()'ed.
+					float innerCellWidth = computeCellWidth(copyCell, l, lInnerTable.widths) * thisWidth/100f;
+					copyCell.setColspan( computeColspan(nextInsertion.y, tabSet, innerCellWidth));
+					// <ea> no rowspan because the original rowspan of
+					// the inner cell is the correct rowspan
+					// System.out.println(" inner cell at"
+					// +(nextInsertion.x+1)+","+(nextInsertion.y+1) +
+					// " colspan " + copyCell.colspan());
 
-                                        placeCell(newRows, copyCell, nextInsertion);
-                                        nextInsertion = getNextValidPosition(newRows, nextInsertion);
-                                    }
-                                    if (k==0) {
-                                        // save the postion, where the
-                                        // next outer cell should be
-                                        // stored (only if we are in
-                                        // the middle of the outer
-                                        // table)
-                                        continueOuter = nextInsertion;
-                                    } // end of if (k==0)
-                                }
-                                startNextRow.x++;
-                            }
-                            // are we in the middle of the outer table?
-                            if (nextInsertion.y > 0) {
-                                nextInsertion = continueOuter;
-                            } // else nextInsertion points to the
-                              // leftmost cell on the next row, which
-                              // is exacty where we can continue
-                              // adding cells ;)
-                        } else {
-                            // place the lCell in the new grid..
-                            // .. compute new spans ...
-                            lCell.setColspan( computeColspan(nextInsertion.y, tabSet, thisWidth));
-                            lCell.setRowspan( lCell.rowspan() + rowSplitting[i] - 1);
+					placeCell(newRows, copyCell, nextInsertion);
+					nextInsertion = getNextValidPosition(newRows, nextInsertion);
+				    }
+				    if (k==0) {
+					// save the postion, where the
+					// next outer cell should be
+					// stored (only if we are in
+					// the middle of the outer
+					// table)
+					continueOuter = nextInsertion;
+				    } // end of if (k==0)
+				}
+				startNextRow.x++;
+			    }
+			    // are we in the middle of the outer table?
+			    if (nextInsertion.y > 0) {
+				nextInsertion = continueOuter;
+			    } // else nextInsertion points to the
+			      // leftmost cell on the next row, which
+			      // is exacty where we can continue
+			      // adding cells ;)
+			} else {
+			    // place the lCell in the new grid..
+			    // .. compute new spans ...
+			    lCell.setColspan( computeColspan(nextInsertion.y, tabSet, thisWidth));
+			    lCell.setRowspan( lCell.rowspan() + rowSplitting[i] - 1);
 
-                            // ... and place it
-                            // System.out.println(" outer cell at "+(nextInsertion.x+1)+","+(nextInsertion.y+1)
-                            // +" colspan " + lCell.colspan());
-                            // System.out.println(" ");
+			    // ... and place it
+			    // System.out.println(" outer cell at "+(nextInsertion.x+1)+","+(nextInsertion.y+1)
+			    // +" colspan " + lCell.colspan());
+			    // System.out.println(" ");
 
-                            placeCell(newRows, lCell, nextInsertion);
-                            nextInsertion = getNextValidPosition(newRows, nextInsertion);
-                        }
-                    } else {
-                        // skip this over spanned null cell
-                    } // end of else
-                    // end of if (null == lCell)
-                }
-            }
+			    placeCell(newRows, lCell, nextInsertion);
+			    nextInsertion = getNextValidPosition(newRows, nextInsertion);
+			}
+		    } else {
+			// skip this over spanned null cell
+		    } // end of else
+		    // end of if (null == lCell)
+		}
+	    }
 
-            // Set our new matrix
-            columns = newColumns;
-            rows = newRows;
-            widths = newWidths;
-        }
+	    // Set our new matrix
+	    columns = newColumns;
+	    rows = newRows;
+	    widths = newWidths;
+	}
     }
 
     /**
@@ -1576,18 +1589,19 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     private void fillEmptyMatrixCells() {
-        try {
-            for (int i=0; i < rows.size(); i++) {
-                for (int j=0; j < columns; j++) {
-                    if ( ((Row) rows.get(i)).isReserved(j) == false) {
-                        addCell(defaultLayout, new Point(i, j));
-                    }
-                }
-            }
-        }
-        catch(BadElementException bee) {
-            throw new ExceptionConverter(bee);
-        }
+	int  lTel = -1;
+	try {
+	    for (int i=0; i < rows.size(); i++) {
+		for (int j=0; j < columns; j++) {
+		    if ( ((Row) rows.get(i)).isReserved(j) == false) {
+			addCell(defaultLayout, new Point(i, j));
+		    }
+		}
+	    }
+	}
+	catch(BadElementException bee) {
+	    throw new ExceptionConverter(bee);
+	}
     }
 
     /**
@@ -1601,31 +1615,31 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
     private boolean isValidLocation(Cell aCell, Point aLocation)
     {
-        // rowspan not beyond last column
-        if ( aLocation.x < rows.size() )        // if false : new location is already at new, not-yet-created area so no check
-            {
-                if ((aLocation.y + aCell.colspan()) > columns) {
-                    return false;
-                }
+	// rowspan not beyond last column
+	if ( aLocation.x < rows.size() )        // if false : new location is already at new, not-yet-created area so no check
+	    {
+		if ((aLocation.y + aCell.colspan()) > columns) {
+		    return false;
+		}
 
-                int difx = ((rows.size() - aLocation.x) >  aCell.rowspan()) ? aCell.rowspan() : rows.size() - aLocation.x;
-                int dify = ((columns - aLocation.y) >  aCell.colspan()) ? aCell.colspan() : columns - aLocation.y;
-                // no other content at cells targetted by rowspan/colspan
-                for (int i=aLocation.x; i < (aLocation.x + difx); i++) {
-                    for (int j=aLocation.y; j < (aLocation.y + dify); j++) {
-                        if ( ((Row) rows.get(i)).isReserved(j) == true ) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        else {
-            if ((aLocation.y + aCell.colspan()) > columns) {
-                return false;
-            }
-        }
+		int difx = ((rows.size() - aLocation.x) >  aCell.rowspan()) ? aCell.rowspan() : rows.size() - aLocation.x;
+		int dify = ((columns - aLocation.y) >  aCell.colspan()) ? aCell.colspan() : columns - aLocation.y;
+		// no other content at cells targetted by rowspan/colspan
+		for (int i=aLocation.x; i < (aLocation.x + difx); i++) {
+		    for (int j=aLocation.y; j < (aLocation.y + dify); j++) {
+			if ( ((Row) rows.get(i)).isReserved(j) == true ) {
+			    return false;
+			}
+		    }
+		}
+	    }
+	else {
+	    if ((aLocation.y + aCell.colspan()) > columns) {
+		return false;
+	    }
+	}
 
-        return true;
+	return true;
     }
 
     /**
@@ -1637,96 +1651,115 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     private void placeCell(ArrayList someRows, Cell aCell, Point aPosition) {
-        int i;
-        Row row = null;
-        int lColumns = ((Row) someRows.get(0)).columns();
-        int rowCount = aPosition.x + aCell.rowspan() - someRows.size();
-        assumeTableDefaults(aCell);
-        if ( rowCount > 0 ) {        //create new rows ?
-                for (i = 0; i < rowCount; i++) {
-                    row = new Row(lColumns);
-                    someRows.add(row);
-                }
-            }
+	int i,j;
+	Row row = null;
+	int lColumns = ((Row) someRows.get(0)).columns();
+	int rowCount = aPosition.x + aCell.rowspan() - someRows.size();
+	assumeTableDefaults(aCell);
+	if ( rowCount > 0 ) {        //create new rows ?
+			for (i = 0; i < rowCount; i++) {
+				row = new Row(lColumns);
+				someRows.add(row);
+			}
+		}
 
-        // reserve cell in rows below
-        for (i = aPosition.x; i < (aPosition.x  + aCell.rowspan()); i++) {
-            if ( !((Row) someRows.get(i)).reserve(aPosition.y, aCell.colspan())) {
+	// reserve cell in rows below
+	for (i = aPosition.x; i < (aPosition.x  + aCell.rowspan()); i++) {
+	    if ( !((Row) someRows.get(i)).reserve(aPosition.y, aCell.colspan())) {
 
-                // should be impossible to come here :-)
-                throw new RuntimeException("addCell - error in reserve - Row: #"+ i
-                                           + " cells:" + aPosition.y + "--"+ (aPosition.y+aCell.colspan()));
-            }
-        }
-        row = (Row) someRows.get(aPosition.x);
-        row.setCell(aCell, aPosition.y);
-        // printReserved();
-        // System.out.println(" placeCell at "+aPosition.x +","+aPosition.y);
+		// should be impossible to come here :-)
+		throw new RuntimeException("addCell - error in reserve - Row: #"+ i
+					   + " cells:" + aPosition.y + "--"+ (aPosition.y+aCell.colspan()));
+	    }
+	}
+	row = (Row) someRows.get(aPosition.x);
+	row.setCell(aCell, aPosition.y);
+	// printReserved();
+	// System.out.println(" placeCell at "+aPosition.x +","+aPosition.y);
     }
 
     /**
      * Gives you the posibility to add columns.
      *
-     * @param   aColumns    the number of columns to add
+     * @param   aColumns    the number of additional columns
      */
 
     public void addColumns(int aColumns) {
-        ArrayList newRows = new ArrayList(rows.size());
+	ArrayList newRows = new ArrayList(rows.size());
 
-        int newColumns = columns + aColumns;
-        Row row;
-        for (int i = 0; i < rows.size(); i++) {
-            row = new Row(newColumns);
-            for (int j = 0; j < columns; j++) {
-                row.setCell(((Row) rows.get(i)).getCell(j) ,j);
-            }
-            for (int j = columns; j < newColumns && i < curPosition.x /*Row*/; j++) {
-                row.setCell(defaultLayout, j);
-            }
-            newRows.add(row);
-        }
+	int newColumns = columns + aColumns;
+	Row newRow;
+		Row oldRow;
+	for (int i = 0; i < rows.size(); i++) {
+	    newRow = new Row(newColumns);
+			oldRow = (Row)rows.get(i);
+			// copy old existing cells
+			int j = 0;
+			while (j < columns) {
+				Cell cell =  oldRow.getCell(j);
+				if (null != cell) {
+					newRow.setCell(cell, j);
+				} // end of if (null != cell)
+				if (oldRow.isReserved(j)) {
+					newRow.reserve(j);
+				} // end of if (oldRow.isReserved(j))
 
-        // applied 1 column-fix; last column needs to have a width of 0
-        float [] newWidths = new float[newColumns];
-        for (int j = 0; j < columns; j++) {
-            newWidths[j] = widths[j];
-        }
-        for (int j = columns; j < newColumns ; j++) {
-            newWidths[j] = 0;
-        }
-        columns = newColumns;
-        widths = newWidths;
-        rows = newRows;
+				j++;
+			} // end of while (j < columns)
+
+			// set and reserve empty cells in the rows above
+			for (j = columns; j < newColumns && i < curPosition.x /*Row*/; j++) {
+				newRow.setCell(defaultLayout, j);
+				newRow.reserve(j);
+			}
+
+	    newRows.add(newRow);
+	}
+
+	// new columns get 1/newcolumns space
+	float [] newWidths = new float[newColumns];
+	for (int j = 0; j < columns; j++) {
+	    newWidths[j] = widths[j]*columns/newColumns;
+	}
+	for (int j = columns; j < newColumns ; j++) {
+	    newWidths[j] = 100f/newColumns;
+	}
+	columns = newColumns;
+	widths = newWidths;
+	rows = newRows;
     }
 
+
+	// <ea> nobody calls this...!
     /**
      * Gives you the possibility to add columns.
      *
      * @param   aColumns    the number of columns to add
      */
-
+	/*
     private void addColumn(int aColumns) {
-        ArrayList newRows = new ArrayList(rows.size());
-        int length = ((Row) rows.get(0)).columns();             // old nr of cols
+	ArrayList newRows = new ArrayList(rows.size());
+	int length = ((Row) rows.get(0)).columns();             // old nr of cols
 
-        for (int i = 0; i < rows.size(); i++) {
-            this.rows.add(new Row(length + aColumns));
-            for (int j = 0; j < length; j++) {
-                ((Row) rows.get(i)).setCell( ((Row) rows.get(i)).getCell(j) ,j);
-            }
-        }
+	for (int i = 0; i < rows.size(); i++) {
+	    this.rows.add(new Row(length + aColumns));
+	    for (int j = 0; j < length; j++) {
+		((Row) rows.get(i)).setCell( ((Row) rows.get(i)).getCell(j) ,j);
+	    }
+	}
 
-        columns += aColumns;
+	columns += aColumns;
 
-        // applied 1 column-fix; last column needs to have a width of 0
-        float [] newWidths = new float[columns];
-        System.arraycopy(widths, 0, newWidths, 0, columns-1);
-        for (int k = columns - aColumns;k < columns ; k++) {
-            newWidths[k] = 0;
-        }
-        widths = newWidths;
-        rows = newRows;
+	// applied 1 column-fix; last column needs to have a width of 0
+	float [] newWidths = new float[columns];
+	System.arraycopy(widths, 0, newWidths, 0, columns-1);
+	for (int k = columns - aColumns;k < columns ; k++) {
+	    newWidths[k] = 0;
+	}
+	widths = newWidths;
+	rows = newRows;
     }
+	*/
 
     /**
      * returns the Cell at the position row, column this is always a
@@ -1735,7 +1768,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      *
      */
     public Cell getCell(int row, int column) {
-        return ((Row) rows.get(row)).getCell(column);
+	return ((Row) rows.get(row)).getCell(column);
     }
 
     /**
@@ -1743,20 +1776,20 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     private String getElementType(Object aElement) {
-        String aReturnValue = null;
-        if ( Cell.class.isInstance(aElement) ) {
-            aReturnValue = "Cell";
-        }
-        else if ( Table.class.isInstance(aElement) ) {
-            aReturnValue = "Tabl";
-        }
-        else if ( Object.class.isInstance(aElement) ) {
-            aReturnValue = "Objt";
-        }
-        else {
-            aReturnValue = "null";
-        }
-        return aReturnValue;
+	String aReturnValue = null;
+	if ( Cell.class.isInstance(aElement) ) {
+	    aReturnValue = "Cell";
+	}
+	else if ( Table.class.isInstance(aElement) ) {
+	    aReturnValue = "Tabl";
+	}
+	else if ( Object.class.isInstance(aElement) ) {
+	    aReturnValue = "Objt";
+	}
+	else {
+	    aReturnValue = "null";
+	}
+	return aReturnValue;
     }
 
     /**
@@ -1765,7 +1798,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     private String getElementType(int aRow, int aColumn) {
-        return getElementType(getCell(aRow, aColumn));
+	return getElementType(getCell(aRow, aColumn));
     }
 
     /**
@@ -1774,8 +1807,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     /*private String getElementType(ArrayList al, int aRow, int aColumn) {
-        return getElementType(getCell(aRow, aColumn));
-        }*/
+	return getElementType(getCell(aRow, aColumn));
+	}*/
 
     /**
      * Gets an array with the positions of the borders between every column.
@@ -1790,29 +1823,29 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public float[] getWidths(float left, float totalWidth) {
-        // for x columns, there are x+1 borders
-        float[] w = new float[columns + 1];
-        // the border at the left is calculated
-        switch(alignment) {
-        case Element.ALIGN_LEFT:
-            w[0] = left;
-            break;
-        case Element.ALIGN_RIGHT:
-            w[0] = left + (totalWidth * (100 - widthPercentage)) / 100;
-            break;
-        case Element.ALIGN_CENTER:
-        default:
-            w[0] = left + (totalWidth * (100 - widthPercentage)) / 200;
-        }
-        // the total available width is changed
-        totalWidth = (totalWidth * widthPercentage) / 100;
-        // the inner borders are calculated
-        for (int i = 1; i < columns; i++) {
-            w[i] = w[i - 1] + (widths[i - 1] * totalWidth / 100);
-        }
-        // the border at the right is calculated
-        w[columns] = w[0] + totalWidth;
-        return w;
+	// for x columns, there are x+1 borders
+	float[] w = new float[columns + 1];
+	// the border at the left is calculated
+	switch(alignment) {
+	case Element.ALIGN_LEFT:
+	    w[0] = left;
+	    break;
+	case Element.ALIGN_RIGHT:
+	    w[0] = left + (totalWidth * (100 - widthPercentage)) / 100;
+	    break;
+	case Element.ALIGN_CENTER:
+	default:
+	    w[0] = left + (totalWidth * (100 - widthPercentage)) / 200;
+	}
+	// the total available width is changed
+	totalWidth = (totalWidth * widthPercentage) / 100;
+	// the inner borders are calculated
+	for (int i = 1; i < columns; i++) {
+	    w[i] = w[i - 1] + (widths[i - 1] * totalWidth / 100);
+	}
+	// the border at the right is calculated
+	w[columns] = w[0] + totalWidth;
+	return w;
     }
 
     /**
@@ -1820,22 +1853,22 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * <code>aLocation</code>
      */
     private Point getNextValidPosition(ArrayList someRows, Point aLocation) {
-        // set latest location to next valid position
-        int lColumns = ((Row)someRows.get(0)).columns();
-        int i, j;
-        i = aLocation.x;
-        j = aLocation.y;
-        do {
-            if ( (j + 1)  >= lColumns ) { // look ahead
-                // goto next row
-                i++;
-                j = 0;
-            } else {
-                j++;
-            }
-        } while ( (i < someRows.size())
-                  && (((Row) someRows.get(i)).isReserved(j)) );
-        return new Point(i, j);
+	// set latest location to next valid position
+	int lColumns = ((Row)someRows.get(0)).columns();
+	int i, j;
+	i = aLocation.x;
+	j = aLocation.y;
+	do {
+	    if ( (j + 1)  >= lColumns ) { // look ahead
+		// goto next row
+		i++;
+		j = 0;
+	    } else {
+		j++;
+	    }
+	} while ( (i < someRows.size())
+		  && (((Row) someRows.get(i)).isReserved(j)) );
+	return new Point(i, j);
     }
 
 
@@ -1848,7 +1881,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     public static boolean isTag(String tag) {
-        return ElementTags.TABLE.equals(tag);
+	return ElementTags.TABLE.equals(tag);
     }
 
     /**
@@ -1857,32 +1890,32 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 
     private void printTableMatrix()
     {
-        printReserved();
-        StringBuffer lLine = null;
-        int lLineNumberCount = -1;
-        int lColumns = ((Row) rows.get(0)).columns();
-        for (int i=0; i < rows.size();i++) {
-            // rownumber
-            lLine = new StringBuffer("Row ");
-            lLineNumberCount = new Integer(i).toString().length(); // alignment for three chars
-            for(int s=0; s < (3 - lLineNumberCount);s++) {
-                lLine.append(" ");
-            }
-            lLine.append(i + ": ");
-            for (int j=0; j < lColumns;j++) {
-                lLine.append(" " + getElementType(getCell(i,j)));
-            }
-        }
-        printTableMatrixContents();
+	printReserved();
+	StringBuffer lLine = null;
+	int lLineNumberCount = -1;
+	int lColumns = ((Row) rows.get(0)).columns();
+	for (int i=0; i < rows.size();i++) {
+	    // rownumber
+	    lLine = new StringBuffer("Row ");
+	    lLineNumberCount = new Integer(i).toString().length(); // alignment for three chars
+	    for(int s=0; s < (3 - lLineNumberCount);s++) {
+		lLine.append(" ");
+	    }
+	    lLine.append(i + ": ");
+	    for (int j=0; j < lColumns;j++) {
+		lLine.append(" " + getElementType(getCell(i,j)));
+	    }
+	}
+	printTableMatrixContents();
     }
 
     private void printReserved() {
-        Row lRow = null;
-        for (int i=0; i < rows.size();i++) {
-            lRow = (Row) rows.get(i);
-            System.out.print(" row#"+i+" ");
-            lRow.printReserved();
-        }
+	Row lRow = null;
+	for (int i=0; i < rows.size();i++) {
+	    lRow = (Row) rows.get(i);
+	    System.out.print(" row#"+i+" ");
+	    lRow.printReserved();
+	}
     }
 
     /**
@@ -1890,43 +1923,43 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     private void printTableMatrixContents() {
-        int lineNumberCount = -1;
-        Object lElement = null;
-        StringBuffer lLine = null;
-        for (int i=0; i < rows.size();i++) {
-            // rownumber
-            lLine = new StringBuffer("Row ");
-            lineNumberCount = new Integer(i).toString().length(); // alignment for three chars
-            for(int s=0; s < (3 - lineNumberCount);s++) {
-                lLine.append(" ");
-            }
-            lLine.append(i + ": ");
-            for (int j=0; j < columns;j++) {
-                lElement = ((Row) rows.get(i)).getCell(j);
-                if ( Cell.class.isInstance(lElement) ) {
-                    ArrayList al = ((Cell) lElement).getChunks();
-                    if (al.size() > 0) {
-                        if (((Chunk) al.get(0)).content().length() >= 6) {
-                            lLine.append(" - " + ((Chunk) al.get(0)).content().substring(0,6) + " - ");
-                        } else {
-                            lLine.append(" - " +((Chunk) al.get(0)).content().substring(0,((Chunk) al.get(0)).content().length()) + " - ");
-                        }
-                    }
-                }
-                else if ( Table.class.isInstance(lElement) ) {
-                    lLine.append(" - Table  - ");
-                }
-                else if ( Object.class.isInstance(lElement) ) {
-                    lLine.append(" - Object - ");
-                }
-                else if (lElement == null) {
-                    lLine.append(" - null   - ");
-                }
-                else {
-                    lLine.append("- other  -");
-                }
-            }
-        }
+	int lineNumberCount = -1;
+	Object lElement = null;
+	StringBuffer lLine = null;
+	for (int i=0; i < rows.size();i++) {
+	    // rownumber
+	    lLine = new StringBuffer("Row ");
+	    lineNumberCount = new Integer(i).toString().length(); // alignment for three chars
+	    for(int s=0; s < (3 - lineNumberCount);s++) {
+		lLine.append(" ");
+	    }
+	    lLine.append(i + ": ");
+	    for (int j=0; j < columns;j++) {
+		lElement = ((Row) rows.get(i)).getCell(j);
+		if ( Cell.class.isInstance(lElement) ) {
+		    ArrayList al = ((Cell) lElement).getChunks();
+		    if (al.size() > 0) {
+			if (((Chunk) al.get(0)).content().length() >= 6) {
+			    lLine.append(" - " + ((Chunk) al.get(0)).content().substring(0,6) + " - ");
+			} else {
+			    lLine.append(" - " +((Chunk) al.get(0)).content().substring(0,((Chunk) al.get(0)).content().length()) + " - ");
+			}
+		    }
+		}
+		else if ( Table.class.isInstance(lElement) ) {
+		    lLine.append(" - Table  - ");
+		}
+		else if ( Object.class.isInstance(lElement) ) {
+		    lLine.append(" - Object - ");
+		}
+		else if (lElement == null) {
+		    lLine.append(" - null   - ");
+		}
+		else {
+		    lLine.append("- other  -");
+		}
+	    }
+	}
     }
 
     /**
@@ -1939,100 +1972,100 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * @param   value1  the value of the attribute for odd rows
      */
     public void setAlternatingRowAttribute(String name, String value0, String value1) {
-        if (value0 == null || value1 == null) {
-            throw new NullPointerException("MarkupTable#setAlternatingRowAttribute(): null values are not permitted.");
-        }
-        alternatingRowAttributes = (alternatingRowAttributes == null) ?  new Hashtable() : alternatingRowAttributes;
+	if (value0 == null || value1 == null) {
+	    throw new NullPointerException("MarkupTable#setAlternatingRowAttribute(): null values are not permitted.");
+	}
+	alternatingRowAttributes = (alternatingRowAttributes == null) ?  new Hashtable() : alternatingRowAttributes;
 
-        // we could always use new Arrays but this is big enough
-        String[] value = (String[])(alternatingRowAttributes.get(name));
-        value = (value == null) ? new String[2] : value;
-        value[0] = value0;
-        value[1] = value1;
-        alternatingRowAttributes.put(name, value);
+	// we could always use new Arrays but this is big enough
+	String[] value = (String[])(alternatingRowAttributes.get(name));
+	value = (value == null) ? new String[2] : value;
+	value[0] = value0;
+	value[1] = value1;
+	alternatingRowAttributes.put(name, value);
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float top() {
-        throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float bottom() {
-        throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float left() {
-        throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float right() {
-        throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float top(int margin) {
-        throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float bottom(int margin) {
-        throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float left(int margin) {
-        throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public float right(int margin) {
-        throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public void setTop(int value) {
-        throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public void setBottom(int value) {
-        throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public void setLeft(int value) {
-        throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
     }
 
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
      */
     public void setRight(int value) {
-        throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
+	throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
     }
 }

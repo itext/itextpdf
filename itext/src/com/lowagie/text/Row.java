@@ -160,7 +160,7 @@ public class Row implements Element, MarkupAttributes {
 
     void deleteColumn(int column) {
         if ((column >= columns) || (column < 0)) {
-            throw new IndexOutOfBoundsException("getCell at illegal index : " + column);
+            throw new IndexOutOfBoundsException("deleteColumn at illegal index : " + column);
         }
         columns--;
         boolean newReserved[] = new boolean[columns];
@@ -300,7 +300,7 @@ public class Row implements Element, MarkupAttributes {
      * Checks if the row is empty.
      *
      * @return  <CODE>true</CODE> if none of the columns is reserved.
-     * <ea> todo: either the coment or the code is wrong!
+     * <ea> todo: either the comment or the code is wrong!
      */
 
     public boolean isEmpty() {
@@ -407,7 +407,4 @@ public class Row implements Element, MarkupAttributes {
         }
         System.out.println(lStatus);
     }
-
-
-
 }
