@@ -439,6 +439,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  
     public void setTableFitsPage(boolean fitPage) {
         this.tableFitsPage = fitPage;
+        if (fitPage) setCellsFitPage(true);
     }
 
 /**
@@ -518,7 +519,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
         if (aCell == null) throw new NullPointerException("addCell - cell has null-value");
         if (aLocation == null) throw new NullPointerException("addCell - point has null-value");
-        if (aCell.isTable()) insertTable((Table)aCell.getElements().next());
+        if (aCell.isTable()) insertTable((Table)aCell.getElements().next(), aLocation);
         if (mDebug == true) {
             if (aLocation.x < 0) throw new BadElementException("row coordinate of location must be >= 0");
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
@@ -1422,7 +1423,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 throw new RuntimeException("addCell - error in reserve");
             }
         }
-        
         row = (Row) someRows.get(aPosition.x);
         row.addElement(aCell, aPosition.y);
         
@@ -1445,7 +1445,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 row.setElement(((Row) rows.get(i)).getCell(j) ,j);
             }
             for (int j = columns; j < newColumns && i < currentRow; j++) {
-                row.setElement(Cell.EMPTY_CELL, j);
+                row.setElement(defaultLayout, j);
             }
             newRows.add(row);
         }
