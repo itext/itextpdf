@@ -89,6 +89,12 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
 /** The indentation of this paragraph on the right side. */
     protected float indentationRight;
     
+/** The spacing before the paragraph. */
+    protected float spacingBefore;
+    
+/** The spacing after the paragraph. */
+    protected float spacingAfter;
+    
 /** Does the paragraph has to be kept together on 1 page. */
     protected boolean keeptogether = false;
     
@@ -331,6 +337,26 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     }
     
 /**
+ * Sets the spacing before this paragraph.
+ *
+ * @param	spacing		the new spacing
+ */
+    
+    public void setSpacingBefore(float spacing) {
+        this.spacingBefore = spacing;
+    }
+    
+/**
+ * Sets the spacing after this paragraph.
+ *
+ * @param	spacing		the new spacing
+ */
+    
+    public void setSpacingAfter(float spacing) {
+        this.spacingAfter = spacing;
+    }
+    
+/**
  * Indicates that the paragraph has to be kept together on one page.
  *
  * @param   keeptogether    true of the paragraph may not be split over 2 pages
@@ -380,6 +406,26 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     
     public float indentationRight() {
         return indentationRight;
+    }
+    
+/**
+ * Gets the spacing before this paragraph.
+ *
+ * @return	the spacing
+ */
+    
+    public float spacingBefore() {
+        return spacingBefore;
+    }
+    
+/**
+ * Gets the spacing before this paragraph.
+ *
+ * @return	the spacing
+ */
+    
+    public float spacingAfter() {
+        return spacingAfter;
     }
     
 /**

@@ -399,11 +399,11 @@ public class TIFFDirectory extends Object implements Serializable {
      */
     public int[] getTags() {
         int[] tags = new int[fieldIndex.size()];
-        Enumeration enum = fieldIndex.keys();
+        Enumeration e = fieldIndex.keys();
         int i = 0;
         
-        while (enum.hasMoreElements()) {
-            tags[i++] = ((Integer)enum.nextElement()).intValue();
+        while (e.hasMoreElements()) {
+            tags[i++] = ((Integer)e.nextElement()).intValue();
         }
         
         return tags;

@@ -254,4 +254,8 @@ public class PdfStamper {
     public boolean partialFormFlattening(String name) {
         return stamper.partialFormFlattening(name);
     }
+    
+    public void addJavaScript(String js) {
+        stamper.addJavaScript(js, !PdfEncodings.isPdfDocEncoding(js));
+    }
 }

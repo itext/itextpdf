@@ -88,7 +88,7 @@ public class PdfAppearance extends PdfTemplate {
      *Creates a <CODE>PdfAppearance</CODE>.
      */
     
-    protected PdfAppearance() {
+    PdfAppearance() {
         super();
         separator = ' ';
     }

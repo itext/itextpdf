@@ -1207,5 +1207,15 @@ class TrueTypeFont extends BaseFont {
     public boolean hasKernPairs() {
         return kerning.size() > 0;
     }    
+    
+    /**
+     * Sets the font name that will appear in the pdf font dictionary.
+     * Use with care as it can easily make a font unreadable if not embedded.
+     * @param name the new font name
+     */    
+    public void setPostscriptFontName(String name) {
+        fontName = name;
+    }
+    
 }
 

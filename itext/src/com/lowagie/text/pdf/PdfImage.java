@@ -183,12 +183,7 @@ class PdfImage extends PdfStream {
                     if (image.isDeflated())
                         put(PdfName.FILTER, PdfName.FLATEDECODE);
                     else {
-                        try {
-                            flateCompress();
-                        }
-                        catch(PdfException pe) {
-                            throw new ExceptionConverter(pe);
-                        }
+                        flateCompress();
                     }
                 }
                 return;

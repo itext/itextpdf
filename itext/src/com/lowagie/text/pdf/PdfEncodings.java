@@ -268,7 +268,7 @@ public class PdfEncodings {
     /** Assumes that '\\n' and '\\r\\n' are the newline sequences. It may not work for
      * all CJK encodings. To be used with loadCmap().
      */    
-    public static final byte CRLF_CID_NEWLINE[][] = new byte[][]{{'\n'}, {'\r', '\n'}};
+    public static final byte CRLF_CID_NEWLINE[][] = new byte[][]{{(byte)'\n'}, {(byte)'\r', (byte)'\n'}};
 
     /** Clears the CJK cmaps from the cache. If <CODE>name</CODE> is the
      * empty string then all the cache is cleared. Calling this method

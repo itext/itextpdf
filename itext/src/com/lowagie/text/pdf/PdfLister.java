@@ -113,7 +113,7 @@ public class PdfLister {
         try {
             listDict(stream);
             out.println("startstream");
-            byte[] b = PdfReader.getStreamBytes(stream, reader.getReaderFile());
+            byte[] b = PdfReader.getStreamBytes(stream);
 //                  byte buf[] = new byte[Math.min(stream.getLength(), 4096)];
 //                  int r = 0;
 //                  stream.openStream(reader);
@@ -126,7 +126,7 @@ public class PdfLister {
             int len = b.length - 1;
             for (int k = 0; k < len; ++k) {
                 if (b[k] == '\r' && b[k + 1] != '\n')
-                    b[k] = '\n';
+                    b[k] = (byte)'\n';
             }
             out.println(new String(b));
             out.println("endstream");

@@ -64,6 +64,7 @@ import java.util.Arrays;
 
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.PageSize;
+import com.lowagie.text.StringCompare;
 
 /** Reads a PDF document and prepares it to import pages to our
  * document. This class is thread safe; this means that
@@ -77,8 +78,8 @@ public class PdfReader {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
     };
     
-    static final byte endstream[] = {'e','n','d','s','t','r','e','a','m'};
-    static final byte endobj[] = {'e','n','d','o','b','j'};
+    static final byte endstream[] = PdfEncodings.convertToBytes("endstream", null);
+    static final byte endobj[] = PdfEncodings.convertToBytes("endobj", null);
     protected PRTokeniser tokens;
     protected int xref[];
     protected PdfObject xrefObj[];
@@ -304,6 +305,29 @@ public class PdfReader {
         if (cropBox == null)
             return getPageSize(index);
         return getNormalizedRectangle(cropBox);
+    }
+    
+    /** Gets the box size. Allowed names are: "crop", "trim", "art", "bleed" and "media".
+     * @param index the page number. The first page is 1
+     * @param boxName the box name
+     * @return the box rectangle or null
+     */
+    public Rectangle getBoxSize(int index, String boxName) {
+        PdfDictionary page = pages[index - 1];
+        PdfArray box = null;
+        if (boxName.equals("trim"))
+            box = (PdfArray)getPdfObject(page.get(PdfName.TRIMBOX));
+        else if (boxName.equals("art"))
+            box = (PdfArray)getPdfObject(page.get(PdfName.ARTBOX));
+        else if (boxName.equals("bleed"))
+            box = (PdfArray)getPdfObject(page.get(PdfName.BLEEDBOX));
+        else if (boxName.equals("crop"))
+            box = (PdfArray)getPdfObject(page.get(PdfName.CROPBOX));
+        else if (boxName.equals("media"))
+            box = (PdfArray)getPdfObject(page.get(PdfName.MEDIABOX));
+        if (box == null)
+            return null;
+        return getNormalizedRectangle(box);
     }
     
     /** Returns the content of the document information dictionary as a <CODE>HashMap</CODE>
@@ -835,7 +859,7 @@ public class PdfReader {
                 // be careful in the trailer. May not be a "next" token.
                 if (tokens.nextToken() && tokens.getStringValue().equals("stream")) {
                     int ch = tokens.read();
-                    if (ch == '\r')
+                    if (ch != '\n')
                         ch = tokens.read();
                     if (ch != '\n')
                         tokens.backOnePosition(ch);
@@ -1058,7 +1082,7 @@ public class PdfReader {
             bout = new ByteArrayOutputStream();
             for (int k = 0; k < list.size(); ++k) {
                 PdfObject item = getPdfObject((PdfObject)list.get(k));
-                if (item == null || !item.isStream()) //here's the ERROR
+                if (item == null || !item.isStream())
                     continue;
                 byte[] b = getStreamBytes((PRStream)item, file);
                 bout.write(b);
@@ -1069,6 +1093,22 @@ public class PdfReader {
         }
         else
             return new byte[0];
+    }
+    
+    /** Gets the contents of the page.
+     * @param pageNum the page number. 1 is the first
+     * @throws IOException on error
+     * @return the content
+     */    
+    public byte[] getPageContent(int pageNum) throws IOException{
+        RandomAccessFileOrArray rf = getSafeFile();
+        try {
+            rf.reOpen();
+            return getPageContent(pageNum, rf);
+        }
+        finally {
+            try{rf.close();}catch(Exception e){}
+        }
     }
     
     protected void killXref(PdfObject obj) {
@@ -1179,6 +1219,22 @@ public class PdfReader {
                 throw new IOException("The filter " + name + " is not supported.");
         }
         return b;
+    }
+    
+    /** Get the content from a stream.
+     * @param stream the stream
+     * @throws IOException on error
+     * @return the stream content
+     */    
+    public static byte[] getStreamBytes(PRStream stream) throws IOException {
+        RandomAccessFileOrArray rf = stream.getReader().getSafeFile();
+        try {
+            rf.reOpen();
+            return PdfReader.getStreamBytes(stream, rf);
+        }
+        finally {
+            try{rf.close();}catch(Exception e){}
+        }
     }
     
     /** Eliminates shared streams if they exist. */    
@@ -1694,5 +1750,47 @@ public class PdfReader {
      */    
     public AcroFields getAcroFields() {
         return new AcroFields(this, null);
+    }
+    
+    public String getJavaScript(RandomAccessFileOrArray file) throws IOException {
+        PdfDictionary names = (PdfDictionary)getPdfObject(catalog.get(PdfName.NAMES));
+        if (names == null)
+            return null;
+        PdfDictionary js = (PdfDictionary)getPdfObject(names.get(PdfName.JAVASCRIPT));
+        if (js == null)
+            return null;
+        HashMap jscript = PdfNameTree.readTree(js);
+        String sortedNames[] = new String[jscript.size()];
+        sortedNames = (String[])jscript.keySet().toArray(sortedNames);
+        Arrays.sort(sortedNames, new StringCompare());
+        StringBuffer buf = new StringBuffer();
+        for (int k = 0; k < sortedNames.length; ++k) {
+            PdfDictionary j = (PdfDictionary)getPdfObject((PdfIndirectReference)jscript.get(sortedNames[k]));
+            if (j == null)
+                continue;
+            PdfObject obj = getPdfObject(j.get(PdfName.JS));
+            if (obj.isString())
+                buf.append(((PdfString)obj).toUnicodeString()).append('\n');
+            else if (obj.isStream()) {
+                byte bytes[] = getStreamBytes((PRStream)obj, file);
+                if (bytes.length >= 2 && bytes[0] == (byte)254 && bytes[1] == (byte)255)
+                    buf.append(PdfEncodings.convertToString(bytes, PdfObject.TEXT_UNICODE));
+                else
+                    buf.append(PdfEncodings.convertToString(bytes, PdfObject.TEXT_PDFDOCENCODING));
+                buf.append('\n');    
+            }            
+        }
+        return buf.toString();
+    }
+    
+    public String getJavaScript() throws IOException {
+        RandomAccessFileOrArray rf = getSafeFile();
+        try {
+            rf.reOpen();
+            return getJavaScript(rf);
+        }
+        finally {
+            try{rf.close();}catch(Exception e){}
+        }
     }
 }

@@ -116,12 +116,7 @@ public class PdfFileSpecification extends PdfDictionary {
         else
             stream = new PdfStream(fileStore);
         stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
-        try {
-            stream.flateCompress();
-        }
-        catch (PdfException e) {
-            //empty on purpose
-        }
+        stream.flateCompress();
         PdfIndirectReference ref = writer.addToBody(stream).getIndirectReference();
         PdfDictionary f = new PdfDictionary();
         f.put(PdfName.F, ref);

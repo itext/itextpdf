@@ -109,6 +109,11 @@ public class PdfPTable implements Element{
     
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
 
+    /**
+     * Holds value of property lockedWidth.
+     */
+    private boolean lockedWidth = false;
+    
     /** Constructs a <CODE>PdfPTable</CODE> with the relative column widths.
      * @param relativeWidths the relative column widths
      */    
@@ -741,4 +746,21 @@ public class PdfPTable implements Element{
     public int getRunDirection() {
         return runDirection;
     }
+    
+    /**
+     * Getter for property lockedWidth.
+     * @return Value of property lockedWidth.
+     */
+    public boolean isLockedWidth() {
+        return this.lockedWidth;
+    }
+    
+    /**
+     * Uses the value in <CODE>setTotalWidth()</CODE> in <CODE>Document.add()</CODE>.
+     * @param lockedWidth <CODE>true</CODE> to use the value in <CODE>setTotalWidth()</CODE> in <CODE>Document.add()</CODE>
+     */
+    public void setLockedWidth(boolean lockedWidth) {
+        this.lockedWidth = lockedWidth;
+    }
+    
 }

@@ -499,7 +499,22 @@ public class PdfWriter extends DocWriter {
     protected HashMap documentSpotPatterns = new HashMap();
     
     protected HashMap documentExtGState = new HashMap();
+    
+    protected PdfDictionary defaultColorspace = new PdfDictionary();
+    
+    public static final int PDFXNONE = 0;
+    public static final int PDFX1A2001 = 1;
+    public static final int PDFX32002 = 2;
 
+    private int pdfxConformance = PDFXNONE;
+    
+    static final int PDFXKEY_COLOR = 1;
+    static final int PDFXKEY_CMYK = 2;
+    static final int PDFXKEY_RGB = 3;
+    static final int PDFXKEY_FONT = 4;
+    static final int PDFXKEY_IMAGE = 5;
+    static final int PDFXKEY_GSTATE = 6;
+    
     // membervariables
     
     /** body of the PDF document */
@@ -718,6 +733,7 @@ public class PdfWriter extends DocWriter {
     
     PdfIndirectReference add(PdfImage pdfImage) throws PdfException {
         if (! imageDictionary.contains(pdfImage.name())) {
+            checkPDFXConformance(this, PDFXKEY_IMAGE, pdfImage);
             PdfIndirectObject object;
             try {
                 object = body.add(pdfImage);
@@ -768,6 +784,15 @@ public class PdfWriter extends DocWriter {
         try {
             os.write(HEADER);
             body = new PdfBody(this);
+            if (pdfxConformance == PDFX32002) {
+                PdfDictionary sec = new PdfDictionary();
+                sec.put(PdfName.GAMMA, new PdfArray(new float[]{2.2f,2.2f,2.2f}));
+                sec.put(PdfName.MATRIX, new PdfArray(new float[]{0.4124f,0.2126f,0.0193f,0.3576f,0.7152f,0.1192f,0.1805f,0.0722f,0.9505f}));
+                sec.put(PdfName.WHITEPOINT, new PdfArray(new float[]{0.9505f,1f,1.089f}));
+                PdfArray arr = new PdfArray(PdfName.CALRGB);
+                arr.add(sec);
+                setDefaultColorspace(PdfName.DEFAULTRGB, addToBody(arr).getIndirectReference());
+            }
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -851,12 +876,43 @@ public class PdfWriter extends DocWriter {
                 PdfIndirectReference rootRef = root.writePageTree();
                 // make the catalog-object and add it to the body
                 PdfDictionary catalog = getCatalog(rootRef);
+                // make pdfx conformant
+                PdfDictionary info = getInfo();
+                if (pdfxConformance != PDFXNONE) {
+                    if (info.get(PdfName.GTS_PDFXVERSION) == null) {
+                        if (pdfxConformance == PDFX1A2001) {
+                            info.put(PdfName.GTS_PDFXVERSION, new PdfString("PDF/X-1:2001"));
+                            info.put(new PdfName("GTS_PDFXConformance"), new PdfString("PDF/X-1a:2001"));
+                        }
+                        else if (pdfxConformance == PDFX32002)
+                            info.put(PdfName.GTS_PDFXVERSION, new PdfString("PDF/X-3:2002"));
+                    }
+                    if (info.get(PdfName.TITLE) == null) {
+                        info.put(PdfName.TITLE, new PdfString("Pdf document"));
+                    }
+                    if (info.get(PdfName.CREATOR) == null) {
+                        info.put(PdfName.CREATOR, new PdfString("Unknown"));
+                    }
+                    if (info.get(PdfName.TRAPPED) == null) {
+                        info.put(PdfName.TRAPPED, new PdfName("False"));
+                    }
+                    getExtraCatalog();
+                    if (extraCatalog.get(PdfName.OUTPUTINTENTS) == null) {
+                        PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
+                        out.put(PdfName.OUTPUTCONDITION, new PdfString("SWOP CGATS TR 001-1995"));
+                        out.put(PdfName.OUTPUTCONDITIONIDENTIFIER, new PdfString("CGATS TR 001"));
+                        out.put(PdfName.REGISTRYNAME, new PdfString("http://www.color.org"));
+                        out.put(PdfName.INFO, new PdfString(""));
+                        out.put(PdfName.S, PdfName.GTS_PDFX);
+                        extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+                    }
+                }
                 if (extraCatalog != null) {
                     catalog.mergeDifferent(extraCatalog);
                 }
                 PdfIndirectObject indirectCatalog = body.add(catalog);
                 // add the info-object to the body
-                PdfIndirectObject info = body.add(((PdfDocument)document).getInfo());
+                PdfIndirectObject infoObj = body.add(info);
                 PdfIndirectReference encryption = null;
                 PdfObject fileID = null;
                 if (crypto != null) {
@@ -873,7 +929,7 @@ public class PdfWriter extends DocWriter {
                 PdfTrailer trailer = new PdfTrailer(body.size(),
                 body.offset(),
                 indirectCatalog.getIndirectReference(),
-                info.getIndirectReference(),
+                infoObj.getIndirectReference(),
                 encryption,
                 fileID);
                 trailer.toPdf(this, os);
@@ -1032,10 +1088,11 @@ public class PdfWriter extends DocWriter {
     
     FontDetails addSimple(BaseFont bf) {
         if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
-            return new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
+            return new FontDetails(new PdfName("F" + (fontNumber++)), ((DocumentFont)bf).getIndirectReference(), bf);
         }
         FontDetails ret = (FontDetails)documentFonts.get(bf);
         if (ret == null) {
+            checkPDFXConformance(this, PDFXKEY_FONT, bf);
             ret = new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
             documentFonts.put(bf, ret);
         }
@@ -1135,6 +1192,7 @@ public class PdfWriter extends DocWriter {
     
     PdfObject[] addSimpleExtGState(PdfDictionary gstate) {
         if (!documentExtGState.containsKey(gstate)) {
+            checkPDFXConformance(this, PDFXKEY_GSTATE, gstate);
             documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
         }
         return (PdfObject[])documentExtGState.get(gstate);
@@ -1668,18 +1726,20 @@ public class PdfWriter extends DocWriter {
         return ((PdfDocument)document).getInfo();
     }
     
+    /**
+     * Sets extra keys to the catalog.
+     * @return the catalog to change
+     */    
     public PdfDictionary getExtraCatalog() {
+        if (extraCatalog == null)
+            extraCatalog = new PdfDictionary();
         return this.extraCatalog;
     }
     
-    /** Sets extra keys to the catalog.
-     * @param extraCatalog the extra keys
+    /**
+     * Sets the document in a suitable way to do page reordering.
      */    
-    public void setExtraCatalog(PdfDictionary extraCatalog) {
-        this.extraCatalog = extraCatalog;
-    }
-    
-    public void setLinearPageMode() {
+     public void setLinearPageMode() {
         root.setLinearMode(null);
     }
     
@@ -1699,4 +1759,214 @@ public class PdfWriter extends DocWriter {
         this.group = group;
     }
     
+    /**
+     * Sets the PDFX conformance level. Allowed values are PDFX1A2001 and PDFX32002. It
+     * must be called before opening the document.
+     * @param pdfxConformance the conformance level
+     */    
+    public void setPDFXConformance(int pdfxConformance) {
+        if (this.pdfxConformance == pdfxConformance)
+            return;
+        if (pdf.isOpen())
+            throw new PdfXConformanceException("PDFX conformance can only be set before opening the document.");
+        if (crypto != null)
+            throw new PdfXConformanceException("A PDFX conforming document cannot be encrypted.");
+        if (pdfxConformance != PDFXNONE)
+            setPdfVersion(VERSION_1_3);
+        this.pdfxConformance = pdfxConformance;
+    }
+ 
+    /**
+     * Gets the PDFX conformance level.
+     * @return the PDFX conformance level
+     */    
+    public int getPDFXConformance() {
+        return pdfxConformance;
+    }
+    
+    static void checkPDFXConformance(PdfWriter writer, int key, Object obj1) {
+        if (writer == null || writer.pdfxConformance == PDFXNONE)
+            return;
+        int conf = writer.pdfxConformance;
+        switch (key) {
+            case PDFXKEY_COLOR:
+                switch (conf) {
+                    case PDFX1A2001:
+                        if (obj1 instanceof ExtendedColor) {
+                            ExtendedColor ec = (ExtendedColor)obj1;
+                            switch (ec.getType()) {
+                                case ExtendedColor.TYPE_CMYK:
+                                case ExtendedColor.TYPE_GRAY:
+                                    return;
+                                case ExtendedColor.TYPE_RGB:
+                                    throw new PdfXConformanceException("Colorspace RGB is not allowed.");
+                                case ExtendedColor.TYPE_SEPARATION:
+                                    SpotColor sc = (SpotColor)ec;
+                                    checkPDFXConformance(writer, PDFXKEY_COLOR, sc.getPdfSpotColor().getAlternativeCS());
+                                    break;
+                                case ExtendedColor.TYPE_SHADING:
+                                    ShadingColor xc = (ShadingColor)ec;
+                                    checkPDFXConformance(writer, PDFXKEY_COLOR, xc.getPdfShadingPattern().getShading().getColorSpace());
+                                    break;
+                                case ExtendedColor.TYPE_PATTERN:
+                                    PatternColor pc = (PatternColor)ec;
+                                    checkPDFXConformance(writer, PDFXKEY_COLOR, pc.getPainter().getDefaultColor());
+                                    break;
+                            }
+                        }
+                        else if (obj1 instanceof Color)
+                            throw new PdfXConformanceException("Colorspace RGB is not allowed.");
+                        break;
+                }
+                break;
+            case PDFXKEY_CMYK:
+                break;
+            case PDFXKEY_RGB:
+                if (conf == PDFX1A2001)
+                    throw new PdfXConformanceException("Colorspace RGB is not allowed.");
+                break;
+            case PDFXKEY_FONT:
+                if (!((BaseFont)obj1).isEmbedded())
+                    throw new PdfXConformanceException("All the fonts must be embedded.");
+                break;
+            case PDFXKEY_IMAGE:
+                PdfImage image = (PdfImage)obj1;
+                if (image.get(PdfName.SMASK) != null)
+                    throw new PdfXConformanceException("The /SMask key is not allowed in images.");
+                switch (conf) {
+                    case PDFX1A2001:
+                        PdfObject cs = image.get(PdfName.COLORSPACE);
+                        if (cs == null)
+                            return;
+                        if (cs.isName()) {
+                            if (PdfName.DEVICERGB.equals(cs))
+                                throw new PdfXConformanceException("Colorspace RGB is not allowed.");
+                        }
+                        else if (cs.isArray()) {
+                            if (PdfName.CALRGB.equals((PdfObject)((PdfArray)cs).getArrayList().get(0)))
+                                throw new PdfXConformanceException("Colorspace CalRGB is not allowed.");
+                        }
+                        break;
+                }
+                break;
+            case PDFXKEY_GSTATE:
+                PdfDictionary gs = (PdfDictionary)obj1;
+                PdfObject obj = gs.get(PdfName.BM);
+                if (obj != null && !PdfGState.BM_NORMAL.equals(obj) && !PdfGState.BM_COMPATIBLE.equals(obj))
+                    throw new PdfXConformanceException("Blend mode " + obj.toString() + " not allowed.");
+                obj = gs.get(PdfName.CA);
+                double v = 0.0;
+                if (obj != null && (v = ((PdfNumber)obj).doubleValue()) != 1.0)
+                    throw new PdfXConformanceException("Transparency is not allowed: /CA = " + v);
+                obj = gs.get(PdfName.ca);
+                v = 0.0;
+                if (obj != null && (v = ((PdfNumber)obj).doubleValue()) != 1.0)
+                    throw new PdfXConformanceException("Transparency is not allowed: /ca = " + v);
+                break;
+        }
+    }
+    
+    /**
+     * Sets the values of the output intent dictionary. Null values are allowed to
+     * suppress any key.
+     * @param outputConditionIdentifier a value
+     * @param outputCondition a value
+     * @param registryName a value
+     * @param info a value
+     * @param destOutputProfile a value
+     * @throws IOException on error
+     */    
+    public void setOutputIntents(String outputConditionIdentifier, String outputCondition, String registryName, String info, byte destOutputProfile[]) throws IOException {
+        getExtraCatalog();
+        PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
+        if (outputCondition != null)
+            out.put(PdfName.OUTPUTCONDITION, new PdfString(outputCondition, PdfObject.TEXT_UNICODE));
+        if (outputConditionIdentifier != null)
+            out.put(PdfName.OUTPUTCONDITIONIDENTIFIER, new PdfString(outputConditionIdentifier, PdfObject.TEXT_UNICODE));
+        if (registryName != null)
+            out.put(PdfName.REGISTRYNAME, new PdfString(registryName, PdfObject.TEXT_UNICODE));
+        if (info != null)
+            out.put(PdfName.INFO, new PdfString(registryName, PdfObject.TEXT_UNICODE));
+        if (destOutputProfile != null) {
+            PdfStream stream = new PdfStream(destOutputProfile);
+            stream.flateCompress();
+            out.put(PdfName.DESTOUTPUTPROFILE, addToBody(stream).getIndirectReference());
+        }
+        out.put(PdfName.S, PdfName.GTS_PDFX);
+        extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+    }
+    
+    private static String getNameString(PdfDictionary dic, PdfName key) {
+        PdfObject obj = PdfReader.getPdfObject(dic.get(key));
+        if (obj == null || !obj.isString())
+            return null;
+        return ((PdfString)obj).toUnicodeString();
+    }
+    
+    /**
+     * Copies the output intent dictionary from other document to this one.
+     * @param reader the other document
+     * @param checkExistence <CODE>true</CODE> to just check for the existence of a valid output intent
+     * dictionary, <CODE>false</CODE> to insert the dictionary if it exists
+     * @throws IOException on error
+     * @return <CODE>true</CODE> if the output intent dictionary exists, <CODE>false</CODE>
+     * otherwise
+     */    
+    public boolean setOutputIntents(PdfReader reader, boolean checkExistence) throws IOException {
+        PdfDictionary catalog = reader.getCatalog();
+        PdfArray outs = (PdfArray)PdfReader.getPdfObject(catalog.get(PdfName.OUTPUTINTENTS));
+        if (outs == null)
+            return false;
+        ArrayList arr = outs.getArrayList();
+        if (arr.size() == 0)
+            return false;
+        PdfDictionary out = (PdfDictionary)PdfReader.getPdfObject((PdfObject)arr.get(0));
+        PdfObject obj = PdfReader.getPdfObject(out.get(PdfName.S));
+        if (obj == null || !PdfName.GTS_PDFX.equals(obj))
+            return false;
+        if (checkExistence)
+            return true;
+        PRStream stream = (PRStream)PdfReader.getPdfObject(out.get(PdfName.DESTOUTPUTPROFILE));
+        byte destProfile[] = null;
+        if (stream != null) {
+            destProfile = PdfReader.getStreamBytes(stream);
+        }
+        setOutputIntents(getNameString(out, PdfName.OUTPUTCONDITIONIDENTIFIER), getNameString(out, PdfName.OUTPUTCONDITION),
+            getNameString(out, PdfName.REGISTRYNAME), getNameString(out, PdfName.INFO), destProfile);
+        return true;
+    }
+    
+    /**
+     * Sets the page box sizes. Allowed names are: "crop", "trim", "art" and "bleed".
+     * @param boxName the box size
+     * @param size the size
+     */    
+    public void setBoxSize(String boxName, Rectangle size) {
+        pdf.setBoxSize(boxName, size);
+    }
+    
+    /**
+     * Gets the default colorspaces.
+     * @return the default colorspaces
+     */    
+    public PdfDictionary getDefaultColorspace() {
+        return defaultColorspace;
+    }
+
+    /**
+     * Sets the default colorspace that will be applied to all the document.
+     * The colorspace is only applied if another colorspace with the same name
+     * is not present in the content.
+     * <p>
+     * The colorspace is applied immediately when creating templates and at the page
+     * end for the main document content.
+     * @param key the name of the colorspace. It can be <CODE>PdfName.DEFAULTGRAY</CODE>, <CODE>PdfName.DEFAULTRGB</CODE>
+     * or <CODE>PdfName.DEFAULTCMYK</CODE>
+     * @param cs the colorspace. A <CODE>null</CODE> or <CODE>PdfNull</CODE> removes any colorspace with the same name
+     */    
+    public void setDefaultColorspace(PdfName key, PdfObject cs) {
+        if (cs == null || cs.isNull())
+            defaultColorspace.remove(key);
+        defaultColorspace.put(key, cs);
+    }
 }

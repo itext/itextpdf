@@ -74,6 +74,8 @@ public class PdfAnnotation extends PdfDictionary {
     public static final int FLAGS_NOROTATE = 16;
     public static final int FLAGS_NOVIEW = 32;
     public static final int FLAGS_READONLY = 64;
+    public static final int FLAGS_LOCKED = 128;
+    public static final int FLAGS_TOGGLENOVIEW = 256;
     public static final PdfName APPEARANCE_NORMAL = PdfName.N;
     public static final PdfName APPEARANCE_ROLLOVER = PdfName.R;
     public static final PdfName APPEARANCE_DOWN = PdfName.D;

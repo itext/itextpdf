@@ -93,6 +93,7 @@ class PdfStamperImp extends PdfWriter {
         else
             super.setPdfVersion(pdfVersion);
         super.open();
+        pdf.addWriter(this);
     }
     
     void close(HashMap moreInfo) throws DocumentException, IOException {
@@ -103,6 +104,7 @@ class PdfStamperImp extends PdfWriter {
         closed = true;
         addSharedObjectsToBody();
         setOutlines();
+        setJavaScript();
         PRIndirectReference iInfo = null;
         try {
             file.reOpen();
@@ -204,6 +206,24 @@ class PdfStamperImp extends PdfWriter {
         for (Iterator i = pagesToContent.keySet().iterator(); i.hasNext();) {
             Integer pageNumber = (Integer)i.next();
             PageStamp ps = (PageStamp)pagesToContent.get(pageNumber);
+            PdfDictionary pdic = reader.getPageN(pageNumber.intValue());
+            PdfArray ar = null;
+            PdfObject content = PdfReader.getPdfObject(pdic.get(PdfName.CONTENTS));
+            if (content == null) {
+                ar = new PdfArray();
+                pdic.put(PdfName.CONTENTS, ar);
+            }
+            else if (content.isArray())
+                ar = (PdfArray)content;
+            else if (content.isStream()) {
+                ar = new PdfArray();
+                ar.add(pdic.get(PdfName.CONTENTS));
+                pdic.put(PdfName.CONTENTS, ar);
+            }
+            else {
+                ar = new PdfArray();
+                pdic.put(PdfName.CONTENTS, ar);
+            }
             ByteBuffer out = new ByteBuffer();
             if (ps.under != null) {
                 out.append(PdfContents.SAVESTATE);
@@ -213,7 +233,10 @@ class PdfStamperImp extends PdfWriter {
             }
             if (ps.over != null)
                 out.append(PdfContents.SAVESTATE);
-            out.append(reader.getPageContent(pageNumber.intValue(), file));
+            PdfStream stream = new PdfStream(out.toByteArray());
+            try{stream.flateCompress();}catch(Exception e){throw new ExceptionConverter(e);}
+            ar.addFirst(addToBody(stream).getIndirectReference());
+            out.reset();
             if (ps.over != null) {
                 out.append(' ');
                 out.append(PdfContents.RESTORESTATE);
@@ -221,12 +244,14 @@ class PdfStamperImp extends PdfWriter {
                 applyRotation(pageNumber.intValue(), out);
                 out.append(ps.over.getInternalBuffer());
                 out.append(PdfContents.RESTORESTATE);
+                stream = new PdfStream(out.toByteArray());
+                try{stream.flateCompress();}catch(Exception e){throw new ExceptionConverter(e);}
+                ar.add(addToBody(stream).getIndirectReference());
             }
-            reader.setPageContent(pageNumber.intValue(), out.toByteArray());
             alterResources(ps);
         }
     }
-    
+
     void alterResources(PageStamp ps) {
         PdfDictionary dic = reader.getPageN(ps.pageNumber);
         dic.put(PdfName.RESOURCES, ps.pageResources.getResources());
@@ -564,6 +589,29 @@ class PdfStamperImp extends PdfWriter {
         PdfReader.killIndirect(outlines);
         catalog.remove(PdfName.OUTLINES);
     }
+    
+    void setJavaScript() throws IOException {
+        ArrayList djs = pdf.getDocumentJavaScript();
+        if (djs.size() == 0)
+            return;
+        PdfDictionary catalog = reader.getCatalog();
+        PdfDictionary names = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.NAMES));
+        if (names == null) {
+            names = new PdfDictionary();
+            catalog.put(PdfName.NAMES, names);
+        }
+        String s = String.valueOf(djs.size() - 1);
+        int n = s.length();
+        String pad = "000000000000000";
+        HashMap maptree = new HashMap();
+        for (int k = 0; k < djs.size(); ++k) {
+            s = String.valueOf(k);
+            s = pad.substring(0, n - s.length()) + s;
+            maptree.put(s, djs.get(k));
+        }
+        PdfDictionary tree = PdfNameTree.writeTree(maptree, this);
+        names.put(PdfName.JAVASCRIPT, addToBody(tree).getIndirectReference());
+    }
         
     void setOutlines() throws IOException {
         if (newBookmarks == null)
@@ -585,7 +633,7 @@ class PdfStamperImp extends PdfWriter {
     void setOutlines(List outlines) {
         newBookmarks = outlines;
     }
-
+    
     class PageStamp {
         
         int pageNumber;

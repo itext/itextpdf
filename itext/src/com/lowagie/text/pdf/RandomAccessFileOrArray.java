@@ -79,27 +79,52 @@ public class RandomAccessFileOrArray implements DataInput {
     public RandomAccessFileOrArray(String filename) throws IOException {
         File file = new File(filename);
         if (!file.canRead()) {
-            InputStream is = BaseFont.getResourceStream(filename);
-            if (is == null)
-                throw new IOException(filename + " not found as file or resource.");
-            try {
-                byte b[] = new byte[4096];
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                for (;;) {
-                    int read = is.read(b);
-                    if (read < 1)
-                        break;
-                    out.write(b, 0, read);
-                }
-                this.arrayIn = out.toByteArray();
-                return;
-            }
-            finally {
+            if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("https://") || filename.startsWith("jar:")) {
+                InputStream is = new URL(filename).openStream();
                 try {
-                    is.close();
+                    byte b[] = new byte[4096];
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    for (;;) {
+                        int read = is.read(b);
+                        if (read < 1)
+                            break;
+                        out.write(b, 0, read);
+                    }
+                    this.arrayIn = out.toByteArray();
+                    return;
                 }
-                catch (IOException ioe) {
-                    // empty on purpose
+                finally {
+                    try {
+                        is.close();
+                    }
+                    catch (IOException ioe) {
+                        // empty on purpose
+                    }
+                }
+            }
+            else {
+                InputStream is = BaseFont.getResourceStream(filename);
+                if (is == null)
+                    throw new IOException(filename + " not found as file or resource.");
+                try {
+                    byte b[] = new byte[4096];
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    for (;;) {
+                        int read = is.read(b);
+                        if (read < 1)
+                            break;
+                        out.write(b, 0, read);
+                    }
+                    this.arrayIn = out.toByteArray();
+                    return;
+                }
+                finally {
+                    try {
+                        is.close();
+                    }
+                    catch (IOException ioe) {
+                        // empty on purpose
+                    }
                 }
             }
         }
