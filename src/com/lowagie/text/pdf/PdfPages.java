@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.lowagie.text.DocumentException;
 
 /**
  * <CODE>PdfPages</CODE> is the PDF Pages-object.
@@ -147,8 +148,6 @@ public class PdfPages extends PdfDictionary implements PdfPageElement {
     void add(PdfIndirectReference kid) {
         count.increment();
         kids.add(kid);
-        put(PdfName.COUNT, count);
-        put(PdfName.KIDS, kids);
     }
     
 /**
@@ -159,5 +158,28 @@ public class PdfPages extends PdfDictionary implements PdfPageElement {
     
     Iterator iterator() {
         return pages.iterator();
+    }
+    
+    int reorderPages(int order[]) throws DocumentException {
+        if (order == null)
+            return kids.size();
+        if (order.length != kids.size())
+            throw new DocumentException("Page reordering requires and array with the same size as the number of pages.");
+        int max = kids.size();
+        boolean temp[] = new boolean[max];
+        for (int k = 0; k < max; ++k) {
+            int p = order[k];
+            if (p < 1 || p > max)
+                throw new DocumentException("Page reordering requires pages between 1 and " + max + ". Found " + p + ".");
+            if (temp[p - 1])
+                throw new DocumentException("Page reordering requires no page repetition. Page " + p + " is repeated.");
+            temp[p - 1] = true;
+        }
+        ArrayList array = kids.getArrayList();
+        Object copy[] = array.toArray();
+        for (int k = 0; k < max; ++k) {
+            array.set(k, copy[order[k] - 1]);
+        }
+        return max;
     }
 }

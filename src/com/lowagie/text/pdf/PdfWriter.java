@@ -682,25 +682,6 @@ public class PdfWriter extends DocWriter {
         return (PdfIndirectReference) imageDictionary.get(name);
     }
     
-    /**
-     * Writes a <CODE>PdfOutline</CODE> to the outputstream.
-     *
-     * @return a <CODE>PdfIndirectReference</CODE> to the encapsulated outline
-     * @param outline the outline to be written
-     * @throws PdfException when a document isn't open yet, or has been closed
-     */
-    
-    public PdfIndirectReference add(PdfOutline outline) throws PdfException {
-        PdfIndirectObject object = body.add(outline);
-        try {
-            object.writeTo(os);
-        }
-        catch(IOException ioe) {
-            throw new ExceptionConverter(ioe);
-        }
-        return object.getIndirectReference();
-    }
-    
     // methods to open and close the writer
     
     /**
@@ -1468,5 +1449,18 @@ public class PdfWriter extends DocWriter {
      */    
     public void setPdfVersion(char version) {
         HEADER[VPOINT] = (byte)version;
+    }
+    
+    /** Reorder the pages in the document. A <CODE>null</CODE> argument value
+     * only returns the number of pages to process. It is
+     * advisable to issue a <CODE>Document.newPage()</CODE>
+     * before using this method.
+     * @return the total number of pages
+     * @param order an array with the new page sequence. It must have the
+     * same size as the number of pages.
+     * @throws DocumentException if all the pages are not present in the array
+     */    
+    public int reorderPages(int order[]) throws DocumentException {
+        return root.reorderPages(order);
     }
 }

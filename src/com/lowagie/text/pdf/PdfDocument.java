@@ -489,8 +489,8 @@ class PdfDocument extends Document implements DocListener {
     /** This is the AcroForm object. */
     PdfAcroForm acroForm;
     
-    /** This is the <CODE>ArrayList</CODE> with the outlines of the document. */
-    private ArrayList outlines;
+    /** This is the root outline of the document. */
+    private PdfOutline rootOutline;;
     
     /** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
     private PdfOutline currentOutline;
@@ -506,9 +506,6 @@ class PdfDocument extends Document implements DocListener {
     
     private ArrayList documentJavaScript = new ArrayList();
     
-    /** Stores the destinations for the current page. */
-    private HashMap localPageDestinations = new HashMap();
-    
     /** these are the viewerpreferences of the document */
     private int viewerPreferences = 0;
     
@@ -522,6 +519,19 @@ class PdfDocument extends Document implements DocListener {
     private boolean isParagraphE = false;
     private float paraIndent = 0;
     //end add by Jin-Hsia Yang
+
+/** margin in x direction starting from the left. Will be valid in the next page */
+    protected float waitingMarginLeft;
+    
+/** margin in x direction starting from the right. Will be valid in the next page */
+    protected float waitingMarginRight;
+    
+/** margin in y direction starting from the top. Will be valid in the next page */
+    protected float waitingMarginTop;
+    
+/** margin in y direction starting from the bottom. Will be valid in the next page */
+    protected float waitingMarginBottom;
+
     
     // constructors
     
@@ -682,10 +692,10 @@ class PdfDocument extends Document implements DocListener {
         if (writer != null && writer.isPaused()) {
             return false;
         }
-        this.marginLeft = marginLeft;
-        this.marginRight = marginRight;
-        this.marginTop = marginTop;
-        this.marginBottom = marginBottom;
+        waitingMarginLeft = marginLeft;
+        waitingMarginRight = marginRight;
+        waitingMarginTop = marginTop;
+        waitingMarginBottom = marginBottom;
         return true;
     }
     
@@ -815,17 +825,6 @@ class PdfDocument extends Document implements DocListener {
         else
             text = null;
         PdfIndirectReference pageReference = writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), thisPageSize));
-        // we update the outlines
-        for (Iterator i = outlines.iterator(); i.hasNext(); ) {
-            PdfOutline outline = (PdfOutline) i.next();
-            outline.setDestinationPage(pageReference);
-        }
-        // we update the local destinations
-        for (Iterator i = localPageDestinations.keySet().iterator(); i.hasNext();) {
-            PdfDestination destination = (PdfDestination)i.next();
-            destination.addPage(pageReference);
-        }
-        localPageDestinations.clear();
         // we initialize the new page
         initPage();
         
@@ -849,10 +848,8 @@ class PdfDocument extends Document implements DocListener {
         if (!open) {
             super.open();
             writer.open();
-            outlines = new ArrayList();
-            PdfOutline outline = new PdfOutline();
-            outlines.add(outline);
-            currentOutline = outline;
+            rootOutline = new PdfOutline(writer);
+            currentOutline = rootOutline;
         }
         try {
             initPage();
@@ -862,21 +859,66 @@ class PdfDocument extends Document implements DocListener {
         }
     }
     
-    void outlineTree(PdfOutline outline) {
-        outlines.add(outline);
+    void outlineTree(PdfOutline outline) throws IOException {
+        outline.setIndirectReference(writer.getPdfIndirectReference());
+        if (outline.parent() != null)
+            outline.put(PdfName.PARENT, outline.parent().indirectReference());
         ArrayList kids = outline.getKids();
-        for (int k = 0; k < kids.size(); ++k)
+        int size = kids.size();
+        for (int k = 0; k < size; ++k)
             outlineTree((PdfOutline)kids.get(k));
+        for (int k = 0; k < size; ++k) {
+            if (k > 0)
+                ((PdfOutline)kids.get(k)).put(PdfName.PREV, ((PdfOutline)kids.get(k - 1)).indirectReference());
+            if (k < size - 1)
+                ((PdfOutline)kids.get(k)).put(PdfName.NEXT, ((PdfOutline)kids.get(k + 1)).indirectReference());
+        }
+        if (size > 0) {
+            outline.put(PdfName.FIRST, ((PdfOutline)kids.get(0)).indirectReference());
+            outline.put(PdfName.LAST, ((PdfOutline)kids.get(size - 1)).indirectReference());
+        }
+        for (int k = 0; k < size; ++k) {
+            PdfOutline kid = (PdfOutline)kids.get(k);
+            writer.addToBody(kid, kid.indirectReference());
+        }
     }
     
-    void fixOutlines() {
-        if (outlines.size() <= 1)
+    void writeOutlines() throws IOException {
+        if (rootOutline.getKids().size() == 0)
             return;
-        PdfOutline firstOutline = (PdfOutline)outlines.get(0);
-        outlines.clear();
-        outlineTree(firstOutline);
+        outlineTree(rootOutline);
+        writer.addToBody(rootOutline, rootOutline.indirectReference());
     }
     
+    void traverseOutlineCount(PdfOutline outline) {
+        ArrayList kids = outline.getKids();
+        PdfOutline parent = outline.parent();
+        if (kids.size() == 0) {
+            if (parent != null) {
+                parent.setCount(parent.getCount() + 1);
+            }
+        }
+        else {
+            for (int k = 0; k < kids.size(); ++k) {
+                traverseOutlineCount((PdfOutline)kids.get(k));
+            }
+            if (parent != null) {
+                if (outline.isOpen()) {
+                    parent.setCount(outline.getCount() + parent.getCount() + 1);
+                }
+                else {
+                    parent.setCount(parent.getCount() + 1);
+                    outline.setCount(-outline.getCount());
+                }
+            }
+        }
+    }
+    
+    void calculateOutlineCount() {
+        if (rootOutline.getKids().size() == 0)
+            return;
+        traverseOutlineCount(rootOutline);
+    }
     /**
      * Closes the document.
      * <B>
@@ -899,51 +941,8 @@ class PdfDocument extends Document implements DocListener {
             super.close();
             
             writer.addLocalDestinations(localDestinations);
-            fixOutlines();
-            if (outlines.size() > 1) {
-                int objectNumber = writer.size();
-                int level = 0;
-                // telling each outline what its indirect reference is
-                for (Iterator i = outlines.iterator(); i.hasNext(); ) {
-                    PdfOutline o = (PdfOutline) i.next();
-                    if (o.level() > level) {
-                        level = o.level();
-                    }
-                    PdfIndirectReference reference = new PdfIndirectReference(PdfObject.DICTIONARY, objectNumber);
-                    o.setIndirectReference(reference);
-                    objectNumber++;
-                }
-                // setting al the navigation keys (First, Last, Next, Previous)
-                for (int l = 0; l <= level; l++) {
-                    PdfOutline levelOutline = null;
-                    for (Iterator i = outlines.iterator(); i.hasNext(); ) {
-                        PdfOutline o = (PdfOutline) i.next();
-                        if (o.level() == l) {
-                            if (levelOutline == null) {
-                                levelOutline = o;
-                            }
-                            else {
-                                if (o.parent().indirectReference().getNumber() == levelOutline.parent().indirectReference().getNumber()) {
-                                    levelOutline.put(PdfName.NEXT, o.indirectReference());
-                                    o.put(PdfName.PREV, levelOutline.indirectReference());
-                                }
-                                levelOutline = o;
-                            }
-                        }
-                        else if (o.level() == (l + 1)) {
-                            if (o.parent().get(PdfName.FIRST) == null) {
-                                o.parent().put(PdfName.FIRST, o.indirectReference());
-                            }
-                            o.parent().put(PdfName.LAST, o.indirectReference());
-                        }
-                    }
-                }
-                
-                // write everything to the PdfWriter
-                for (Iterator i = outlines.iterator(); i.hasNext(); ) {
-                    writer.add((PdfOutline) i.next());
-                }
-            }
+            calculateOutlineCount();
+            writeOutlines();
         }
         catch(Exception e) {
             throw new ExceptionConverter(e);
@@ -1268,7 +1267,6 @@ class PdfDocument extends Document implements DocListener {
                         currentOutline = currentOutline.parent();
                     }
                     PdfOutline outline = new PdfOutline(currentOutline, destination, section.title(), section.isBookmarkOpen());
-                    outlines.add(outline);
                     currentOutline = outline;
                     
                     // some values are set
@@ -1803,6 +1801,10 @@ class PdfDocument extends Document implements DocListener {
         float oldleading = leading;
         int oldAlignment = alignment;
         
+        marginLeft = waitingMarginLeft;
+        marginRight = waitingMarginRight;
+        marginTop = waitingMarginTop;
+        marginBottom = waitingMarginBottom;
         imageEnd = -1;
         imageIndentRight = 0;
         imageIndentLeft = 0;
@@ -2071,9 +2073,8 @@ class PdfDocument extends Document implements DocListener {
     
     PdfCatalog getCatalog(PdfIndirectReference pages) {
         PdfCatalog catalog;
-        if (outlines.size() > 1) {
-            PdfOutline outline = (PdfOutline) outlines.get(0);
-            catalog = new PdfCatalog(pages, outline.indirectReference());
+        if (rootOutline.getKids().size() > 0) {
+            catalog = new PdfCatalog(pages, rootOutline.indirectReference());
         }
         else
             catalog = new PdfCatalog(pages);
@@ -2175,20 +2176,11 @@ class PdfDocument extends Document implements DocListener {
     }
     
     /**
-     * Adds an outline to the document.
-     * @param outline the outline to be added
-     */
-    void addOutline(PdfOutline outline) {
-        outlines.add(outline);
-    }
-    
-    /**
      * Adds a named outline to the document .
      * @param outline the outline to be added
      * @param name the name of this local destination
      */
     void addOutline(PdfOutline outline, String name) {
-        outlines.add(outline);
         localDestination(name, outline.getPdfDestination());
     }
     
@@ -2206,7 +2198,7 @@ class PdfDocument extends Document implements DocListener {
      * @return the root outline
      */
     public PdfOutline getRootOutline() {
-        return (PdfOutline)outlines.get(0);
+        return rootOutline;
     }
     
     /**
@@ -2514,7 +2506,7 @@ class PdfDocument extends Document implements DocListener {
             return false;
         obj[2] = destination;
         localDestinations.put(name, obj);
-        localPageDestinations.put(destination, null);
+        destination.addPage(writer.getCurrentPage());
         return true;
     }
     
