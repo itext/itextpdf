@@ -147,7 +147,7 @@ public class Phrase extends ArrayList implements Element {
 	 */
 
 	public Phrase(String string, Font font) {
-		this(font.leading(1.5), string, font));
+		this(font.leading(1.5), string, font);
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class Phrase extends ArrayList implements Element {
 			int i = 0;
 			int index;
 			while((index = Greek.index(string)) > -1) {
-				if (index = 0) {
+				if (index == 0) {
 					String firstpart = string.substring(0, index);
 					super.add(new Chunk(firstpart, font));
 					string = string.substring(index);
