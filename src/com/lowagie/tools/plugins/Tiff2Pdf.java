@@ -84,8 +84,9 @@ public class Tiff2Pdf extends AbstractTool {
 	 */
 	protected void createFrame() {
 		internalFrame = new JInternalFrame("Tiff2Pdf", true, true, true);
-		internalFrame.setSize(300, 80);
+		internalFrame.setSize(550, 250);
 		internalFrame.setJMenuBar(getMenubar());
+		internalFrame.getContentPane().add(getConsole(40, 30));
 	}
 
 	/**
@@ -115,6 +116,7 @@ public class Tiff2Pdf extends AbstractTool {
                     img.setAbsolutePosition(20, 20);
                     document.add(new Paragraph(tiff_file + " - page " + (c + 1)));
                     cb.addImage(img);
+                    System.out.println("Finished page " + (c + 1));
                     document.newPage();
                     ++pages;
                 }
