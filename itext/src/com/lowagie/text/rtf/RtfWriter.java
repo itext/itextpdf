@@ -52,8 +52,17 @@ import java.text.ParsePosition;
  * // this will close the document and all the OutputStreams listening to it
  * <STRONG>document.close();</CODE>
  * </PRE></BLOCKQUOTE>
+ * <P>
+ * <STRONG>LIMITATIONS</STRONG><BR>
+ * There are currently still a few limitations on what the RTF Writer can do:
+ * <UL>
+ *  <LI>Only PNG / JPEG Images are supported.</LI>
+ *  <LI>Rotating of Images is not supported.</LI>
+ *  <LI>Only one Header and one Footer are possible.</LI>
+ *  <LI>Nested Tables are not supported.</LI>
+ *  <LI>The <CODE>Leading</CODE> is not supported.</LI>
+ * </UL>
  */
-
 public class RtfWriter extends DocWriter implements DocListener
 {
   /**
@@ -170,29 +179,82 @@ public class RtfWriter extends DocWriter implements DocListener
    * Lists
    */
   
+  /** Begin the List Table */
+  private static final byte[] listtableGroup = "listtable".getBytes();
+
+  /** Begin the List Override Table */
+  private static final byte[] listoverridetableGroup = "listoverridetable".getBytes();
+
+  /** Begin a List definition */
   private static final byte[] listDefinition = "list".getBytes();
+
+  /** List Template ID */
   private static final byte[] listTemplateID = "listtemplateid".getBytes();
+
+  /** RTF Writer outputs hybrid lists */
   private static final byte[] hybridList = "hybrid".getBytes();
+
+  /** Current List level */
   private static final byte[] listLevelDefinition = "listlevel".getBytes();
+
+  /** Level numbering (old) */
   private static final byte[] listLevelTypeOld = "levelnfc".getBytes();
+
+  /** Level numbering (new) */
   private static final byte[] listLevelTypeNew = "levelnfcn".getBytes();
+
+  /** Level alignment (old) */
   private static final byte[] listLevelAlignOld = "leveljc".getBytes();
+
+  /** Level alignment (new) */
   private static final byte[] listLevelAlignNew = "leveljcn".getBytes();
+
+  /** Level starting number */
   private static final byte[] listLevelStartAt = "levelstartat".getBytes();
+
+  /** Level text group */
   private static final byte[] listLevelTextDefinition = "leveltext".getBytes();
+
+  /** Filler for Level Text Length */
   private static final byte[] listLevelTextLength = "\'0".getBytes();
+
+  /** Level Text Numbering Style */
   private static final byte[] listLevelTextStyleNumbers = "\'00.".getBytes();
+
+  /** Level Text Bullet Style */
   private static final byte[] listLevelTextStyleBullet = "u-3913 ?".getBytes();
+
+  /** Level Numbers Definition */
   private static final byte[] listLevelNumbersDefinition = "levelnumbers".getBytes();
+
+  /** Filler for Level Numbers */
   private static final byte[] listLevelNumbers = "\\'0".getBytes();
+
+  /** Tab Stop */
   private static final byte[] tabStop = "tx".getBytes();
+
+  /** Actual list begin */
   private static final byte[] listBegin = "ls".getBytes();
+
+  /** Current list level */
   private static final byte[] listCurrentLevel = "ilvl".getBytes();
+
+  /** List text group for older browsers */
   private static final byte[] listTextOld = "listtext".getBytes();
+
+  /** Tab */
   private static final byte[] tab = "tab".getBytes();
+
+  /** Old Bullet Style */
   private static final byte[] listBulletOld = "\'b7".getBytes();
+
+  /** Current List ID */
   private static final byte[] listID = "listid".getBytes();
+
+  /** List override */
   private static final byte[] listOverride = "listoverride".getBytes();
+
+  /** Number of overrides */
   private static final byte[] listOverrideCount = "listoverridecount".getBytes();
 
   /** 
@@ -334,27 +396,53 @@ public class RtfWriter extends DocWriter implements DocListener
    * Images 
    */
   
-  /** Begin GIF / PNG image tag. */
-  private static final byte[] imageGifPng = "pngblibp".getBytes();
+  /** Begin the main Picture group tag */
+  private static final byte[] pictureGroup = "shppict".getBytes();
 
-  /** Begin JPEG image tag. */
-  private static final byte[] imageJpeg = "jpegblibp".getBytes();
-  
-  /** Begin picture group tag. */
-  private static final byte[] pictGroupBegin = "shppict".getBytes();
-  
-  /** Picture tag. */
+  /** Begin the picture tag */
   private static final byte[] picture = "pict".getBytes();
+
+  /** PNG Image */
+  private static final byte[] picturePNG = "pngblip".getBytes();
+
+  /** JPEG Image */
+  private static final byte[] pictureJPEG = "jpegblip".getBytes();
+
+  /** Picture width */
+  private static final byte[] pictureWidth = "picw".getBytes();
+
+  /** Picture height */
+  private static final byte[] pictureHeight = "pich".getBytes();
   
-  /** Picture width tag. */
-  private static final byte[] pictureWidth = "picwgoal".getBytes();
+  /** Picture width after scaling */
+  private static final byte[] pictureIntendedWidth = "picwgoal".getBytes();
+
+  /** Picture height after scaling */
+  private static final byte[] pictureIntendedHeight = "pichgoal".getBytes();
+
+  /** Picture scale horizontal percent */
+  private static final byte[] pictureScaleX = "picscalex".getBytes();
+
+  /** Picture scale vertical percent */
+  private static final byte[] pictureScaleY = "picscaley".getBytes();
+
+  /**
+   * Fields (for page numbering)
+   */
+
+  /** Begin field tag */
+  private static final byte[] field = "field".getBytes();
+
+  /** Content fo the field */
+  private static final byte[] fieldContent = "fldinst".getBytes();
+
+  /** PAGE numbers */
+  private static final byte[] fieldPage = "PAGE".getBytes();
+
+  /** Last page number (not used) */
+  private static final byte[] fieldMax = "fldrslt".getBytes();
   
-  /** Picture height tag. */
-  private static final byte[] pictureHeight = "pichgoal".getBytes();
-  
-  /** Begin binary data tag. */
-  private static final byte[] binaryData = "bin".getBytes();
-  
+
   /** Class variables */
 
   /** 
@@ -442,7 +530,7 @@ public class RtfWriter extends DocWriter implements DocListener
   }
   
   /** Public functions from the DocWriter Interface */
-  
+
   /**
    * Gets an instance of the <CODE>RtfWriter</CODE>.
    *
@@ -498,7 +586,7 @@ public class RtfWriter extends DocWriter implements DocListener
    */
   public void resetFooter()
   {
-    this.footer = null;
+    setFooter(null);
   }
   
   /**
@@ -506,7 +594,7 @@ public class RtfWriter extends DocWriter implements DocListener
    */
   public void resetHeader()
   {
-    this.header = null;
+    setHeader(null);
   }
   
   /**
@@ -576,8 +664,7 @@ public class RtfWriter extends DocWriter implements DocListener
   /** Private functions */
 
   /**
-   * Adds an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
-   *
+   * Adds an <CODE>Element</CODE> to the <CODE>Document</CODE>.
    * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
    * @throws	DocumentException	if a document isn't open yet, or has been closed
    */
@@ -595,7 +682,10 @@ public class RtfWriter extends DocWriter implements DocListener
 	  case Element.SECTION      : writeSection((Section) element, out);            break;
 	  case Element.LIST         : writeList((com.lowagie.text.List) element, out); break;
 	  case Element.TABLE        : writeTable((Table) element, out);	               break;
-	  
+	  case Element.ANNOTATION   : writeAnnotation((Annotation) element, out);      break;
+	  case Element.PNG          :
+	  case Element.JPEG         : writeImage((Image) element, out);                break;
+
 	  case Element.AUTHOR       : writeMeta(metaAuthor, (Meta) element);       break;
 	  case Element.SUBJECT      : writeMeta(metaSubject, (Meta) element);      break;
 	  case Element.KEYWORDS     : writeMeta(metaKeywords, (Meta) element);     break;
@@ -637,6 +727,7 @@ public class RtfWriter extends DocWriter implements DocListener
   /** 
    * Write the beginning of a new <code>Paragraph</code>
    *
+<<<<<<< RtfWriter.java
    * @param paragraphElement The <code>Paragraph</code> to be written
    * @param out The <code>ByteArrayOutputStream</code> to write to
    * 
@@ -952,15 +1043,90 @@ public class RtfWriter extends DocWriter implements DocListener
    * Write a <code>Table</code>.
    *
    * @param table The <code>table</code> to be written
-   * 
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   *
+   * Currently no nesting of tables is supported. If a cell contains anything but a Cell Object it is ignored.
+   *
    * @throws IOException, DocumentException
    */
-  
   private void writeTable(Table table, ByteArrayOutputStream out) throws IOException, DocumentException
   {
     RtfTable rtfTable = new RtfTable(this);
     rtfTable.importTable(table, 12239);
     rtfTable.writeTable(out);
+  }
+
+
+  /** 
+   * Write an <code>Image</code>.
+   *
+   * @param image The <code>image</code> to be written
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   * 
+   * At the moment only PNG and JPEG Images are supported.
+   *
+   * @throws IOException, DocumentException
+   */
+  private void writeImage(Image image, ByteArrayOutputStream out) throws IOException, DocumentException
+  {
+    if(!image.isPng() && !image.isJpeg()) throw new DocumentException("Only PNG and JPEG images are supported by the RTF Writer");
+    switch(image.alignment())
+      {
+      case Element.ALIGN_LEFT      : out.write(escape); out.write(alignLeft); break;
+      case Element.ALIGN_RIGHT     : out.write(escape); out.write(alignRight); break;
+      case Element.ALIGN_CENTER    : out.write(escape); out.write(alignCenter); break;
+      case Element.ALIGN_JUSTIFIED : out.write(escape); out.write(alignJustify); break;
+      }
+    out.write(openGroup);
+    out.write(extendedEscape);
+    out.write(pictureGroup);
+    out.write(openGroup);
+    out.write(escape);
+    out.write(picture);
+    out.write(escape);
+    if(image.isPng()) out.write(picturePNG);
+    if(image.isJpeg())  out.write(pictureJPEG);
+    out.write(escape);
+    out.write(pictureWidth);
+    writeInt(out, (int) (image.width() * twipsFactor));
+    out.write(escape);
+    out.write(pictureHeight);
+    writeInt(out, (int) (image.height() * twipsFactor));
+    out.write(escape);
+    out.write(pictureIntendedWidth);
+    writeInt(out, (int) (image.plainWidth() * twipsFactor));
+    out.write(escape);
+    out.write(pictureIntendedHeight);
+    writeInt(out, (int) (image.plainHeight() * twipsFactor));
+    if(image.width() > 0)
+      {
+	out.write(escape);
+	out.write(pictureScaleX);
+	writeInt(out, (int) (100 / image.width() * image.plainWidth()));
+      }
+    if(image.height() > 0)
+      {
+	out.write(escape);
+	out.write(pictureScaleY);
+	writeInt(out, (int) (100 / image.height() * image.plainHeight()));
+      }
+    out.write(delimiter);
+    InputStream imgIn;
+    if(image.rawData() == null) { imgIn = image.url().openStream(); } else { imgIn = new ByteArrayInputStream(image.rawData()); }
+    int buffer = -1;
+    int count = 0;
+    out.write((byte) '\n');
+    while((buffer = imgIn.read()) != -1)
+      {
+	String helperStr = Integer.toHexString(buffer);
+	if(helperStr.length() < 2) helperStr = "0" + helperStr;
+	out.write(helperStr.getBytes());
+	count++;
+	if(count == 64) { out.write((byte) '\n'); count = 0; }
+      }
+    out.write(closeGroup);
+    out.write(closeGroup);
+    out.write((byte) '\n');
   }
   
   /**
@@ -971,24 +1137,29 @@ public class RtfWriter extends DocWriter implements DocListener
    * 
    * @throws IOException
    */
-  private void writeAnnotation(Annotation annotationElement, ByteArrayOutputStream out) throws IOException
+  private void writeAnnotation(Annotation annotationElement, ByteArrayOutputStream out) throws IOException, DocumentException
   {
-  }
-  
-  /** 
-   * Write am <code>Image</code> and all its font properties.
-   *
-   * @param image The <code>Image</code> to be written
-   * @param imageType The type of image to be written
-   * @param out The <code>ByteArrayOutputStream</code> to write to
-   * 
-   * @throws IOException
-   */
-
-  //  I'm having problems with this, because image.rawData() always returns null
-  //  Don't know why
-  private void writeImage(Image image, byte[] imageType, ByteArrayOutputStream out) throws IOException
-  {
+    int id = getRandomInt();
+    out.write(openGroup);
+    out.write(extendedEscape);
+    out.write(annotationID);
+    out.write(delimiter);
+    writeInt(out, id);
+    out.write(closeGroup);
+    out.write(openGroup);
+    out.write(extendedEscape);
+    out.write(annotationAuthor);
+    out.write(delimiter);
+    out.write(annotationElement.title().getBytes());
+    out.write(closeGroup);
+    out.write(openGroup);
+    out.write(extendedEscape);
+    out.write(annotation);
+    out.write(escape);
+    out.write(paragraphDefaults);
+    out.write(delimiter);
+    out.write(annotationElement.content().getBytes());
+    out.write(closeGroup);
   }
   
   /** 
@@ -998,7 +1169,9 @@ public class RtfWriter extends DocWriter implements DocListener
    *
    * @param metaName The type of <code>Meta</code> element to be added
    * @param meta The <code>Meta</code> element to be added
-   * 
+   *
+   * Currently only the Meta Elements Author, Subject, Keywords, Title, Producer and CreationDate are supported.
+   *
    * @throws IOException
    */
   private void writeMeta(byte[] metaName, Meta meta) throws IOException
@@ -1119,6 +1292,8 @@ public class RtfWriter extends DocWriter implements DocListener
 	os.write((byte)'\n');
 	writeDocumentFormat();
 	os.write((byte)'\n');
+	writeHeaderFooter(this.footer, footerBegin, os);
+	writeHeaderFooter(this.header, headerBegin, os);
 	content.writeTo(os);
 	os.write(closeGroup);
 	return true;
@@ -1131,10 +1306,10 @@ public class RtfWriter extends DocWriter implements DocListener
     
   }
   
-    /** Write the Rich Text file settings
-     *
-     * @return <code>true</code if the writing operation succeded
-     */
+  /** Write the Rich Text file settings
+   *
+   * @return <code>true</code if the writing operation succeded
+   */
   private void writeDocumentIntro() throws IOException
   {
     os.write(openGroup);
@@ -1165,7 +1340,7 @@ public class RtfWriter extends DocWriter implements DocListener
 	fnt = (Font) fontList.get(i);
 	os.write(openGroup);
 	os.write(escape);
-	os.write((byte) 'f');
+	os.write(fontNumber);
 	writeInt(os, i);
 	os.write(escape);
 	switch(fnt.family())
@@ -1307,15 +1482,81 @@ public class RtfWriter extends DocWriter implements DocListener
   /** 
    * Write the header to the final <code>ByteArrayOutputStream</code>
    */
-  private void writeHeader() throws IOException
+  private void writeHeaderFooter(HeaderFooter headerFooter, byte[] hfType, BufferedOutputStream target) throws IOException
   {
-  }
-  
-  /** 
-   * Write the footer to the final <code>ByteArrayOutputStream</code>
-   */
-  private void writeFooter() throws IOException
-  {
+    try
+      {
+	ByteArrayOutputStream out = new ByteArrayOutputStream();
+	if(headerFooter == null)
+	  {
+	    out.write(openGroup);
+	    out.write(escape);
+	    out.write(hfType);
+	    out.write(delimiter);
+	    out.write(closeGroup);
+	  }
+	else
+	  {
+	    Element[] headerElements = new Element[3];
+	    int headerCount = headerFooter.paragraph().getChunks().size();
+	    if(headerCount >= 1) { headerElements[0] = (Element) headerFooter.paragraph().getChunks().get(0); }
+	    if(headerCount >= 2) { headerElements[1] = (Element) headerFooter.paragraph().getChunks().get(1); }
+	    if(headerCount >= 3) { headerElements[2] = (Element) headerFooter.paragraph().getChunks().get(2); }
+	    out.write(openGroup);
+	    out.write(escape);
+	    out.write(hfType);
+	    if(headerCount >= 1)
+	      {
+		if(headerElements[0].type() == Element.CHUNK) { writeChunk((Chunk) headerElements[0], out); }
+		if(headerElements[0].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[0], out); }
+	      }
+	    if(headerCount >= 2)
+	      {
+		if(headerElements[1].type() == Element.CHUNK) 
+		  {
+		    try
+		      {
+			Integer.parseInt(((Chunk) headerElements[1]).content());
+			out.write(openGroup);
+			out.write(escape);
+			out.write(field);
+			out.write(openGroup);
+			out.write(extendedEscape);
+			out.write(fieldContent);
+			out.write(openGroup);
+			out.write(delimiter);
+			out.write(fieldPage);
+			out.write(delimiter);
+			out.write(closeGroup);
+			out.write(closeGroup);
+			out.write(openGroup);
+			out.write(escape);
+			out.write(fieldMax);
+			out.write(openGroup);
+			out.write(closeGroup);
+			out.write(closeGroup);
+			out.write(closeGroup);
+		      }
+		    catch(NumberFormatException nfe)
+		      {
+			writeChunk((Chunk) headerElements[1], out); 
+		      }
+		  }
+		if(headerElements[1].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[1], out); }
+	      }
+	    if(headerCount >= 3)
+	      {
+		if(headerElements[2].type() == Element.CHUNK) { writeChunk((Chunk) headerElements[2], out); }
+		if(headerElements[2].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[2], out); }
+	      }
+	    out.write(closeGroup);
+	  }
+	out.writeTo(target);
+      }
+    catch(DocumentException e)
+      {
+	throw new IOException("DocumentException - "+e.getMessage());
+      }
   }
   
   /** 
@@ -1349,7 +1590,6 @@ public class RtfWriter extends DocWriter implements DocListener
   /**
    * Initialise all helper classes.
    * Clears alls lists, creates new <code>ByteArrayOutputStream</code>'s
-   *
    */
   private void initDefaults()
   {
@@ -1369,11 +1609,11 @@ public class RtfWriter extends DocWriter implements DocListener
       {
 	listtable.write(openGroup);
 	listtable.write(extendedEscape);
-	listtable.write("listtable".getBytes());
+	listtable.write(listtableGroup);
 	listtable.write((byte) '\n');
 	listoverride.write(openGroup);
 	listoverride.write(extendedEscape);
-	listoverride.write("listoverridetable".getBytes());
+	listoverride.write(listoverridetableGroup);
 	listoverride.write((byte) '\n');
       }
     catch(IOException e)
