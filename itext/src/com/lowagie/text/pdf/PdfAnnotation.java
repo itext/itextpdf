@@ -61,37 +61,67 @@ import java.io.*;
  */
 
 public class PdfAnnotation extends PdfDictionary {
-    
+    /** highlight attributename */
     public static final PdfName HIGHLIGHT_NONE = PdfName.N;
+    /** highlight attributename */
     public static final PdfName HIGHLIGHT_INVERT = PdfName.I;
+    /** highlight attributename */
     public static final PdfName HIGHLIGHT_OUTLINE = PdfName.O;
+    /** highlight attributename */
     public static final PdfName HIGHLIGHT_PUSH = PdfName.P;
+    /** highlight attributename */
     public static final PdfName HIGHLIGHT_TOGGLE = PdfName.T;
+    /** flagvalue */
     public static final int FLAGS_INVISIBLE = 1;
+    /** flagvalue */
     public static final int FLAGS_HIDDEN = 2;
+    /** flagvalue */
     public static final int FLAGS_PRINT = 4;
+    /** flagvalue */
     public static final int FLAGS_NOZOOM = 8;
+    /** flagvalue */
     public static final int FLAGS_NOROTATE = 16;
+    /** flagvalue */
     public static final int FLAGS_NOVIEW = 32;
+    /** flagvalue */
     public static final int FLAGS_READONLY = 64;
+    /** flagvalue */
     public static final int FLAGS_LOCKED = 128;
+    /** flagvalue */
     public static final int FLAGS_TOGGLENOVIEW = 256;
+    /** appearance attributename */
     public static final PdfName APPEARANCE_NORMAL = PdfName.N;
+    /** appearance attributename */
     public static final PdfName APPEARANCE_ROLLOVER = PdfName.R;
+    /** appearance attributename */
     public static final PdfName APPEARANCE_DOWN = PdfName.D;
+    /** attributevalue */
     public static final PdfName AA_ENTER = PdfName.E;
+    /** attributevalue */
     public static final PdfName AA_EXIT = PdfName.X;
+    /** attributevalue */
     public static final PdfName AA_DOWN = PdfName.D;
+    /** attributevalue */
     public static final PdfName AA_UP = PdfName.U;
+    /** attributevalue */
     public static final PdfName AA_FOCUS = PdfName.FO;
+    /** attributevalue */
     public static final PdfName AA_BLUR = PdfName.BL;
+    /** attributevalue */
     public static final PdfName AA_JS_KEY = PdfName.K;
+    /** attributevalue */
     public static final PdfName AA_JS_FORMAT = PdfName.F;
+    /** attributevalue */
     public static final PdfName AA_JS_CHANGE = PdfName.V;
+    /** attributevalue */
     public static final PdfName AA_JS_OTHER_CHANGE = PdfName.C;
+    /** attributevalue */
     public static final int MARKUP_HIGHLIGHT = 0;
+    /** attributevalue */
     public static final int MARKUP_UNDERLINE = 1;
+    /** attributevalue */
     public static final int MARKUP_STRIKEOUT = 2;
+    
     protected PdfWriter writer;
     protected PdfIndirectReference reference;
     protected HashMap templates;
@@ -113,6 +143,13 @@ public class PdfAnnotation extends PdfDictionary {
     
 /**
  * Constructs a new <CODE>PdfAnnotation</CODE> of subtype text.
+ * @param writer
+ * @param llx
+ * @param lly
+ * @param urx
+ * @param ury
+ * @param title
+ * @param content
  */
     
     PdfAnnotation(PdfWriter writer, float llx, float lly, float urx, float ury, PdfString title, PdfString content) {
@@ -125,6 +162,12 @@ public class PdfAnnotation extends PdfDictionary {
     
 /**
  * Constructs a new <CODE>PdfAnnotation</CODE> of subtype link (Action).
+ * @param writer
+ * @param llx
+ * @param lly
+ * @param urx
+ * @param ury
+ * @param action
  */
     
     public PdfAnnotation(PdfWriter writer, float llx, float lly, float urx, float ury, PdfAction action) {
@@ -139,9 +182,13 @@ public class PdfAnnotation extends PdfDictionary {
     /**
      * Creates a screen PdfAnnotation
      * @param writer
+     * @param rect
+     * @param clipTitle
+     * @param fs
      * @param mimeType
      * @param playOnDisplay
      * @return a screen PdfAnnotation
+     * @throws IOException
      */
     public static PdfAnnotation createScreen(PdfWriter writer, Rectangle rect, String clipTitle, PdfFileSpecification fs,
                                              String mimeType, boolean playOnDisplay) throws IOException {
@@ -171,6 +218,15 @@ public class PdfAnnotation extends PdfDictionary {
         return reference;
     }
     
+    /**
+     * @param writer
+     * @param rect
+     * @param title
+     * @param contents
+     * @param open
+     * @param icon
+     * @return a PdfAnnotation
+     */
     public static PdfAnnotation createText(PdfWriter writer, Rectangle rect, String title, String contents, boolean open, String icon) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.TEXT);
@@ -186,6 +242,13 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
     
+    /**
+     * Creates a link.
+     * @param writer
+     * @param rect
+     * @param highlight
+     * @return A PdfAnnotation
+     */
     protected static PdfAnnotation createLink(PdfWriter writer, Rectangle rect, PdfName highlight) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.LINK);
@@ -194,18 +257,43 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
     
+    /**
+     * Creates an Annotation with an Action.
+     * @param writer
+     * @param rect
+     * @param highlight
+     * @param action
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createLink(PdfWriter writer, Rectangle rect, PdfName highlight, PdfAction action) {
         PdfAnnotation annot = createLink(writer, rect, highlight);
         annot.putEx(PdfName.A, action);
         return annot;
     }
 
+    /**
+     * Creates an Annotation with an local destination.
+     * @param writer
+     * @param rect
+     * @param highlight
+     * @param namedDestination
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createLink(PdfWriter writer, Rectangle rect, PdfName highlight, String namedDestination) {
         PdfAnnotation annot = createLink(writer, rect, highlight);
         annot.put(PdfName.DEST, new PdfString(namedDestination));
         return annot;
     }
 
+    /**
+     * Creates an Annotation with a PdfDestination.
+     * @param writer
+     * @param rect
+     * @param highlight
+     * @param page
+     * @param dest
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createLink(PdfWriter writer, Rectangle rect, PdfName highlight, int page, PdfDestination dest) {
         PdfAnnotation annot = createLink(writer, rect, highlight);
         PdfIndirectReference ref = writer.getPageReference(page);
@@ -214,6 +302,14 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
     
+    /**
+     * Add some free text to the document.
+     * @param writer
+     * @param rect
+     * @param contents
+     * @param defaultAppearance
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createFreeText(PdfWriter writer, Rectangle rect, String contents, PdfContentByte defaultAppearance) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.FREETEXT);
@@ -222,6 +318,17 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
+    /**
+     * Adds a line to the document. Move over the line and a tooltip is shown.
+     * @param writer
+     * @param rect
+     * @param contents
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createLine(PdfWriter writer, Rectangle rect, String contents, float x1, float y1, float x2, float y2) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.LINE);
@@ -234,7 +341,15 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
-    public static PdfAnnotation createSquareCirlcle(PdfWriter writer, Rectangle rect, String contents, boolean square) {
+    /**
+     * Adds a circle or a square that shows a tooltip when you pass over it.
+     * @param writer
+     * @param rect
+     * @param contents The tooltip
+     * @param square true if you want a square, false if you want a circle
+     * @return A PdfAnnotation
+     */
+    public static PdfAnnotation createSquareCircle(PdfWriter writer, Rectangle rect, String contents, boolean square) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         if (square)
             annot.put(PdfName.SUBTYPE, PdfName.SQUARE);
@@ -264,6 +379,14 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
 
+    /**
+     * Adds a Stamp to your document. Move over the stamp and a tooltip is shown
+     * @param writer
+     * @param rect
+     * @param contents
+     * @param name
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createStamp(PdfWriter writer, Rectangle rect, String contents, String name) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.STAMP);
@@ -295,7 +418,7 @@ public class PdfAnnotation extends PdfDictionary {
      * @param fileStore an array with the file. If it's <CODE>null</CODE>
      * the file will be read from the disk
      * @param file the path to the file. It will only be used if
-     * <CODE>fileStore</CODE> in not <CODE>null</CODE>
+     * <CODE>fileStore</CODE> is not <CODE>null</CODE>
      * @param fileDisplay the actual file name stored in the pdf
      * @throws IOException on error
      * @return the annotation
@@ -312,6 +435,14 @@ public class PdfAnnotation extends PdfDictionary {
         return annot;
     }
     
+    /**
+     * Adds a popup to your document.
+     * @param writer
+     * @param rect
+     * @param contents
+     * @param open
+     * @return A PdfAnnotation
+     */
     public static PdfAnnotation createPopup(PdfWriter writer, Rectangle rect, String contents, boolean open) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.POPUP);
@@ -575,5 +706,13 @@ public class PdfAnnotation extends PdfDictionary {
     
     public void setMKTextPosition(int tp) {
         getMK().put(PdfName.TP, new PdfNumber(tp));
-    }    
+    }
+    
+    /**
+     * Sets the layer this annotation belongs to.
+     * @param layer the layer this annotation belongs to
+     */    
+    public void setLayer(PdfOCG layer) {
+        put(PdfName.OC, layer.getRef());
+    }
 }

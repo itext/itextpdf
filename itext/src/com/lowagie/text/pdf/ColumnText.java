@@ -982,21 +982,27 @@ public class ColumnText {
             && alignment != Element.ALIGN_RIGHT)
             alignment = Element.ALIGN_LEFT;
         canvas.saveState();
-        if (rotation == 0)
-            canvas.concatCTM(1, 0, 0, 1, x, y);
+        ColumnText ct = new ColumnText(canvas);
+        if (rotation == 0) {
+            if (alignment == Element.ALIGN_LEFT)
+                ct.setSimpleColumn(phrase, x, y - 1, 20000 + x, y + 2, 2, alignment);
+            else if (alignment == Element.ALIGN_RIGHT)
+                ct.setSimpleColumn(phrase, x-20000, y-1, x, y+2, 2, alignment);
+            else
+                ct.setSimpleColumn(phrase, x-20000, y-1, x+20000, y+2, 2, alignment);
+        }
         else {
             double alpha = rotation * Math.PI / 180.0;
             float cos = (float)Math.cos(alpha);
             float sin = (float)Math.sin(alpha);
             canvas.concatCTM(cos, sin, -sin, cos, x, y);
+            if (alignment == Element.ALIGN_LEFT)
+                ct.setSimpleColumn(phrase, 0, -1, 20000, 2, 2, alignment);
+            else if (alignment == Element.ALIGN_RIGHT)
+                ct.setSimpleColumn(phrase, -20000, -1, 0, 2, 2, alignment);
+            else
+                ct.setSimpleColumn(phrase, -20000, -1, 20000, 2, 2, alignment);
         }
-        ColumnText ct = new ColumnText(canvas);
-        if (alignment == Element.ALIGN_LEFT)
-            ct.setSimpleColumn(phrase, 0, -1, 20000, 2, 2, alignment);
-        else if (alignment == Element.ALIGN_RIGHT)
-            ct.setSimpleColumn(phrase, -20000, -1, 0, 2, 2, alignment);
-        else
-            ct.setSimpleColumn(phrase, -20000, -1, 20000, 2, 2, alignment);
         if (runDirection == PdfWriter.RUN_DIRECTION_RTL) {
             if (alignment == Element.ALIGN_LEFT)
                 alignment = Element.ALIGN_RIGHT;

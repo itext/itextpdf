@@ -129,6 +129,9 @@ public class PdfContentByte {
     /** The list were we save/restore the state */
     protected ArrayList stateList = new ArrayList();
     
+    /** The list were we save/restore the layer depth */
+    protected ArrayList layerDepth;
+    
     /** The separator between commands.
      */
     protected int separator = '\n';
@@ -964,7 +967,11 @@ public class PdfContentByte {
                 PdfTemplate template = image.templateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
+                if (image.getLayer() != null)
+                    beginLayer(image.getLayer());
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
+                if (image.getLayer() != null)
+                    endLayer();
             }
             else {
                 PdfName name;
@@ -2535,6 +2542,56 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = prs.addExtGState((PdfName)obj[0], (PdfIndirectReference)obj[1]);
         content.append(name.getBytes()).append(" gs").append_i(separator);
+    }
+    
+    /**
+     * Begins a graphic block whose visibility is controled by the <CODE>layer</CODE>.
+     * Blocks can be nested. Each block must be terminated by an {@link #endLayer()}.<p>
+     * Note that nested layers with {@link PdfLayer#addChild(PdfLayer)} only require a single
+     * call to this method and a single call to {@link #endLayer()}; all the nesting control
+     * is built in.
+     * @param layer the layer
+     */    
+    public void beginLayer(PdfOCG layer) {
+        if ((layer instanceof PdfLayer) && ((PdfLayer)layer).getTitle() != null)
+            throw new IllegalArgumentException("A title is not a layer");
+        if (layerDepth == null)
+            layerDepth = new ArrayList();
+        if (layer instanceof PdfLayerMembership) {
+            layerDepth.add(new Integer(1));
+            beginLayer2(layer);
+            return;
+        }
+        int n = 0;
+        PdfLayer la = (PdfLayer)layer;
+        while (la != null) {
+            if (la.getTitle() == null) {
+                beginLayer2(la);
+                ++n;
+            }
+            la = la.getParent();
+        }
+        layerDepth.add(new Integer(n));
+    }
+    
+    private void beginLayer2(PdfOCG layer) {
+        PdfName name = writer.addSimpleLayer(layer);
+        PageResources prs = getPageResources();
+        name = prs.addLayer(name, layer.getRef());
+        content.append("/OC ").append(name.getBytes()).append(" BDC").append_i(separator);
+    }
+    
+    /**
+     * Ends a layer controled graphic block. It will end the most recent open block.
+     */    
+    public void endLayer() {
+        int n = 1;
+        if (layerDepth != null && layerDepth.size() > 0) {
+            n = ((Integer)layerDepth.get(layerDepth.size() - 1)).intValue();
+            layerDepth.remove(layerDepth.size() - 1);
+        }
+        while (n-- > 0)
+            content.append("EMC").append_i(separator);
     }
     
     /** Concatenates a transformation to the current transformation

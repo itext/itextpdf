@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import java.net.URL;
 import com.lowagie.text.ExceptionConverter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.
@@ -79,13 +80,20 @@ public class PdfAction extends PdfDictionary {
      */
     public static final int PRINTDIALOG = 5;
 
-    // constructors
+    /** a possible submitvalue */
     public static final int SUBMIT_EXCLUDE = 1;
+    /** a possible submitvalue */
     public static final int SUBMIT_INCLUDE_NO_VALUE_FIELDS = 2;
+    /** a possible submitvalue */
     public static final int SUBMIT_HTML_FORMAT = 4;
+    /** a possible submitvalue */
     public static final int SUBMIT_HTML_GET = 8;
+    /** a possible submitvalue */
     public static final int SUBMIT_COORDINATES = 16;
+    /** a possible submitvalue */
     public static final int RESET_EXCLUDE = 1;
+
+    // constructors
     
     /** Create an empty action.
      */    
@@ -102,6 +110,11 @@ public class PdfAction extends PdfDictionary {
         this(url.toExternalForm());
     }
     
+    /**
+     * Construct a new <CODE>PdfAction</CODE> of Subtype URI that accepts the x and y coordinate of the position that was clicked.
+     * @param url
+     * @param isMap
+     */
     public PdfAction(URL url, boolean isMap) {
         this(url.toExternalForm(), isMap);
     }
@@ -115,6 +128,12 @@ public class PdfAction extends PdfDictionary {
     public PdfAction(String url) {
         this(url, false);
     }
+    
+    /**
+     * Construct a new <CODE>PdfAction</CODE> of Subtype URI that accepts the x and y coordinate of the position that was clicked.
+     * @param url
+     * @param isMap
+     */
     
     public PdfAction(String url, boolean isMap) {
         put(PdfName.S, PdfName.URI);
@@ -158,7 +177,7 @@ public class PdfAction extends PdfDictionary {
     }
     
     /** Implements name actions. The action can be FIRSTPAGE, LASTPAGE,
-     * NEXTPAGE and PREVPAGE.
+     * NEXTPAGE, PREVPAGE and PRINTDIALOG.
      * @param named the named action
      */
     public PdfAction(int named) {
@@ -227,7 +246,14 @@ public class PdfAction extends PdfDictionary {
         return new PdfAction(application, parameters, operation, defaultDir);
     }
     
-     /**Creates a Rendition action*/
+     /**Creates a Rendition action
+     * @param file
+     * @param fs
+     * @param mimeType
+     * @param ref
+     * @return
+     * @throws IOException
+     */
     public static PdfAction rendition(String file, PdfFileSpecification fs, String mimeType, PdfIndirectReference ref) throws IOException {
         PdfAction js = new PdfAction();
         js.put(PdfName.S, PdfName.RENDITION);
@@ -281,6 +307,12 @@ public class PdfAction extends PdfDictionary {
         return javaScript(code, writer, false);
     }
     
+    /**
+     * A Hide action hides or shows an object.
+     * @param obj object to hide or show
+     * @param hide true is hide, false is show
+     * @return a Hide Action
+     */
     static PdfAction createHide(PdfObject obj, boolean hide) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.HIDE);
@@ -290,10 +322,22 @@ public class PdfAction extends PdfDictionary {
         return action;
     }
     
+    /**
+     * A Hide action hides or shows an annotation.
+     * @param annot
+     * @param hide
+     * @return A Hide Action
+     */
     public static PdfAction createHide(PdfAnnotation annot, boolean hide) {
         return createHide(annot.getIndirectReference(), hide);
     }
     
+    /**
+     * A Hide action hides or shows an annotation.
+     * @param name
+     * @param hide
+     * @return A Hide Action
+     */
     public static PdfAction createHide(String name, boolean hide) {
         return createHide(new PdfString(name), hide);
     }
@@ -312,10 +356,23 @@ public class PdfAction extends PdfDictionary {
         return array;
     }
     
+    /**
+     * A Hide action hides or shows objects.
+     * @param names
+     * @param hide
+     * @return A Hide Action
+     */
     public static PdfAction createHide(Object names[], boolean hide) {
         return createHide(buildArray(names), hide);
     }
     
+    /**
+     * Creates a submit form.
+     * @param file	the URI to submit the form to
+     * @param names	the objects to submit
+     * @param flags	submit properties
+     * @return A PdfAction
+     */
     public static PdfAction createSubmitForm(String file, Object names[], int flags) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.SUBMITFORM);
@@ -329,6 +386,12 @@ public class PdfAction extends PdfDictionary {
         return action;
     }
     
+    /**
+     * Creates a resetform.
+     * @param names	the objects to reset
+     * @param flags	submit properties
+     * @return A PdfAction
+     */
     public static PdfAction createResetForm(Object names[], int flags) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.RESETFORM);
@@ -338,6 +401,11 @@ public class PdfAction extends PdfDictionary {
         return action;
     }
     
+    /**
+     * Creates an Import field.
+     * @param file
+     * @return A PdfAction
+     */
     public static PdfAction createImportData(String file) {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.IMPORTDATA);
@@ -397,8 +465,8 @@ public class PdfAction extends PdfDictionary {
      * Creates a GoToR action to a named destination.
      * @param filename the file name to go to
      * @param dest the destination name
-     * @param newWindow open the document in a new window if <CODE>true</CODE>
      * @param isName if true sets the destination as a name, if false sets it as a String
+     * @param newWindow open the document in a new window if <CODE>true</CODE>, if false the current document is replaced by the new document.
      * @return a GoToR action
      */
     public static PdfAction gotoRemotePage(String filename, String dest, boolean isName, boolean newWindow) {
@@ -411,6 +479,64 @@ public class PdfAction extends PdfDictionary {
             action.put(PdfName.D, new PdfString(dest, null));
         if (newWindow)
             action.put(PdfName.NEWWINDOW, PdfBoolean.PDFTRUE);
+        return action;
+    }
+
+    /**
+     * A set-OCG-state action (PDF 1.5) sets the state of one or more optional content
+     * groups.
+     * @param state an array consisting of any number of sequences beginning with a <CODE>PdfName</CODE>
+     * or <CODE>String</CODE> (ON, OFF, or Toggle) followed by one or more optional content group dictionaries
+     * <CODE>PdfLayer</CODE> or a <CODE>PdfIndirectReference</CODE> to a <CODE>PdfLayer</CODE>.<br>
+     * The array elements are processed from left to right; each name is applied
+     * to the subsequent groups until the next name is encountered:
+     * <ul>
+     * <li>ON sets the state of subsequent groups to ON</li>
+     * <li>OFF sets the state of subsequent groups to OFF</li>
+     * <li>Toggle reverses the state of subsequent groups</li>
+     * </ul>
+     * @param preserveRB if <CODE>true</CODE>, indicates that radio-button state relationships between optional
+     * content groups (as specified by the RBGroups entry in the current configuration
+     * dictionary) should be preserved when the states in the
+     * <CODE>state</CODE> array are applied. That is, if a group is set to ON (either by ON or Toggle) during
+     * processing of the <CODE>state</CODE> array, any other groups belong to the same radio-button
+     * group are turned OFF. If a group is set to OFF, there is no effect on other groups.<br>
+     * If <CODE>false</CODE>, radio-button state relationships, if any, are ignored
+     * @return the action
+     */    
+    public static PdfAction setOCGstate(ArrayList state, boolean preserveRB) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.SETOCGSTATE);
+        PdfArray a = new PdfArray();
+        for (int k = 0; k < state.size(); ++k) {
+            Object o = state.get(k);
+            if (o == null)
+                continue;
+            if (o instanceof PdfIndirectReference)
+                a.add((PdfIndirectReference)o);
+            else if (o instanceof PdfLayer)
+                a.add(((PdfLayer)o).getRef());
+            else if (o instanceof PdfName)
+                a.add((PdfName)o);
+            else if (o instanceof String) {
+                PdfName name = null;
+                String s = (String)o;
+                if (s.equalsIgnoreCase("on"))
+                    name = PdfName.ON;
+                else if (s.equalsIgnoreCase("off"))
+                    name = PdfName.OFF;
+                else if (s.equalsIgnoreCase("toggle"))
+                    name = PdfName.TOGGLE;
+                else
+                    throw new IllegalArgumentException("A string '" + s + " was passed in state. Only 'ON', 'OFF' and 'Toggle' are allowed.");
+                a.add(name);
+            }
+            else
+                throw new IllegalArgumentException("Invalid type was passed in state: " + o.getClass().getName());
+        }
+        action.put(PdfName.STATE, a);
+        if (!preserveRB)
+            action.put(PdfName.PRESERVERB, PdfBoolean.PDFFALSE);
         return action;
     }
 }

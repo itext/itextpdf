@@ -140,6 +140,8 @@ public class PdfAppearance extends PdfTemplate {
         tpl.thisReference = thisReference;
         tpl.pageResources = pageResources;
         tpl.bBox = new Rectangle(bBox);
+        tpl.group = group;
+        tpl.layer = layer;
         if (matrix != null) {
             tpl.matrix = new PdfArray(matrix);
         }
