@@ -838,6 +838,9 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @throws    DocumentException   if a document isn't open yet, or has been closed
      */
     public boolean add(Element element) throws DocumentException {
+        if (pause) {
+            return false;
+        }
         return addElement(element, content);
     }
 

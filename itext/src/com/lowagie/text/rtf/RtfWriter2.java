@@ -181,6 +181,9 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      * @throws DocumentException
      */
     public boolean add(Element element) throws DocumentException {
+        if (pause) {
+            return false;
+        }
         RtfBasicElement rtfElement = rtfDoc.getMapper().mapElement(element);
         if(rtfElement != null) {
             rtfDoc.add(rtfElement);
