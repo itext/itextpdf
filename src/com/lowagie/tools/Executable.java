@@ -129,7 +129,7 @@ public class Executable {
 	 * Opens a PDF document.
 	 * @param file
 	 * @param waitForTermination
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process openDocument(File file,
@@ -140,7 +140,7 @@ public class Executable {
 	/**
 	 * Opens a PDF document.
 	 * @param fileName
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process openDocument(String fileName) throws IOException {
@@ -150,7 +150,7 @@ public class Executable {
 	/**
 	 * Opens a PDF document.
 	 * @param file
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process openDocument(File file) throws IOException {
@@ -173,7 +173,7 @@ public class Executable {
 	 * Prints a PDF document.
 	 * @param file
 	 * @param waitForTermination
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process printDocument(File file,
@@ -184,7 +184,7 @@ public class Executable {
 	/**
 	 * Prints a PDF document.
 	 * @param fileName
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process printDocument(String fileName) throws IOException {
@@ -194,7 +194,7 @@ public class Executable {
 	/**
 	 * Prints a PDF document.
 	 * @param file
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process printDocument(File file) throws IOException {
@@ -217,7 +217,7 @@ public class Executable {
 	 * Prints a PDF document without opening a Dialog box.
 	 * @param file
 	 * @param waitForTermination
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process printDocumentSilent(File file,
@@ -228,7 +228,7 @@ public class Executable {
 	/**
 	 * Prints a PDF document without opening a Dialog box.
 	 * @param fileName
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process printDocumentSilent(String fileName) throws IOException {
@@ -238,7 +238,7 @@ public class Executable {
 	/**
 	 * Prints a PDF document without opening a Dialog box.
 	 * @param file
-	 * @return
+	 * @return a process
 	 * @throws IOException
 	 */
 	public static final Process printDocumentSilent(File file) throws IOException {
