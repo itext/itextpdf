@@ -556,6 +556,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
             if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
         }
+        aCell.fill();
         placeCell(rows, aCell, aLocation);
         setCurrentLocationToNextValidPosition(aLocation);
     }

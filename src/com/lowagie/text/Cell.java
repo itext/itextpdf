@@ -95,10 +95,10 @@ public class Cell extends Rectangle implements TextElementArray {
     // static final membervariable
     
 /** This constant can be used as empty cell. */
-    public static final Cell EMPTY_CELL = new Cell();
+    public static final Cell EMPTY_CELL = new Cell(true);
     
 /** This constant can be used as empty cell. */
-    public static final Cell DUMMY_CELL = new Cell();
+    public static final Cell DUMMY_CELL = new Cell(true);
     static {
         DUMMY_CELL.setColspan(3);
         DUMMY_CELL.setBorder(NO_BORDER);
@@ -628,6 +628,16 @@ public class Cell extends Rectangle implements TextElementArray {
                 default:
                     return false;
         }
+    }
+    
+/**
+ * Makes sure there is at least 1 object in the Cell.
+ *
+ * Otherwise it might not be shown in the table.
+ */
+    
+    final void fill() {
+        if (size() == 0) arrayList.add(new Paragraph(0));
     }
     
 /**
