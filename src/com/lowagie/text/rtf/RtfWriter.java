@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -94,6 +94,9 @@ import java.text.ParsePosition;
  *  <LI>Nested Tables are not supported.</LI>
  *  <LI>The <CODE>Leading</CODE> is not supported.</LI>
  * </UL>
+ * <br />
+ * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
+ * improvements.
  */
 public class RtfWriter extends DocWriter implements DocListener
 {
@@ -112,7 +115,7 @@ public class RtfWriter extends DocWriter implements DocListener
     private static final byte[] extendedEscape = "\\*\\".getBytes();
     
   /** This is the delimiter between RTF tags and normal text. */
-    private static final byte delimiter = (byte) ' ';
+    protected static final byte delimiter = (byte) ' ';
     
   /** This is another delimiter between RTF tags and normal text. */
     private static final byte commaDelimiter = (byte) ';';
@@ -144,13 +147,13 @@ public class RtfWriter extends DocWriter implements DocListener
     private static final byte[] fontTable = "fonttbl".getBytes();
     
   /** Font number tag. */
-    private static final byte fontNumber = (byte) 'f';
+    protected static final byte fontNumber = (byte) 'f';
     
   /** Font size tag. */
-    private static final byte[] fontSize = "fs".getBytes();
+    protected static final byte[] fontSize = "fs".getBytes();
     
   /** Font color tag. */
-    private static final byte[] fontColor = "cf".getBytes();
+    protected static final byte[] fontColor = "cf".getBytes();
     
   /** Modern font tag. */
     private static final byte[] fontModern = "fmodern".getBytes();
@@ -294,16 +297,16 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     
   /** Bold tag. */
-    private static final byte bold = (byte) 'b';
+    protected static final byte bold = (byte) 'b';
     
   /** Italic tag. */
-    private static final byte italic = (byte) 'i';
+    protected static final byte italic = (byte) 'i';
     
   /** Underline tag. */
-    private static final byte[] underline = "ul".getBytes();
+    protected static final byte[] underline = "ul".getBytes();
     
   /** Strikethrough tag. */
-    private static final byte[] strikethrough = "strike".getBytes();
+    protected static final byte[] strikethrough = "strike".getBytes();
     
   /** Text alignment left tag. */
     public static final byte[] alignLeft = "ql".getBytes();
@@ -385,6 +388,19 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Begin footer group tag. */
     private static final byte[] footerBegin = "footer".getBytes();
+
+    // header footer 'left', 'right', 'first'
+    private static final byte[] headerlBegin = "headerl".getBytes();
+    
+    private static final byte[] footerlBegin = "footerl".getBytes();
+
+    private static final byte[] headerrBegin = "headerr".getBytes();
+    
+    private static final byte[] footerrBegin = "footerr".getBytes();
+
+    private static final byte[] headerfBegin = "headerf".getBytes();
+    
+    private static final byte[] footerfBegin = "footerf".getBytes();
     
   /**
    * Paper Properties
@@ -463,19 +479,19 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     
   /** Begin field tag */
-    private static final byte[] field = "field".getBytes();
+    protected static final byte[] field = "field".getBytes();
     
   /** Content fo the field */
-    private static final byte[] fieldContent = "fldinst".getBytes();
+    protected static final byte[] fieldContent = "fldinst".getBytes();
     
   /** PAGE numbers */
-    private static final byte[] fieldPage = "PAGE".getBytes();
+    protected static final byte[] fieldPage = "PAGE".getBytes();
     
   /** HYPERLINK field */
-    private static final byte[] fieldHyperlink = "HYPERLINK".getBytes();
+    protected static final byte[] fieldHyperlink = "HYPERLINK".getBytes();
     
   /** Last page number (not used) */
-    private static final byte[] fieldDisplay = "fldrslt".getBytes();
+    protected static final byte[] fieldDisplay = "fldrslt".getBytes();
     
     
   /** Class variables */
@@ -531,7 +547,7 @@ public class RtfWriter extends DocWriter implements DocListener
     private int pageHeight = 15840;
     
   /** Factor to use when converting. */
-    public double twipsFactor = 20;
+    public final static double twipsFactor = 20.57140;
     
   /** Current annotation ID. */
     private int currentAnnotationID = 0;
@@ -547,7 +563,11 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Current maximum List Level. */
     private int maxListLevel = 0;
-    
+
+  /** Write a TOC */
+  private boolean writeTOC = false;
+
+
   /** Protected Constructor */
     
   /**
@@ -577,7 +597,27 @@ public class RtfWriter extends DocWriter implements DocListener
     {
         return(new RtfWriter(document, os));
     }
-    
+
+  /**
+   * This method controls whether TOC entries are automatically generated
+   *
+   * @param writeTOC    boolean value indicating whether a TOC is to be generated
+   */
+  public void setGenerateTOCEntries(boolean writeTOC)
+  {
+    this.writeTOC = writeTOC;
+  }
+
+  /**
+   * Gets the current setting of writeTOC
+   *
+   * @return    boolean value indicating whether a TOC is being generated
+   */
+  public boolean getGeneratingTOCEntries()
+  {
+    return writeTOC;
+  }
+
   /**
    * Signals that the <CODE>Document</CODE> has been opened and that
    * <CODE>Elements</CODE> can be added.
@@ -684,6 +724,28 @@ public class RtfWriter extends DocWriter implements DocListener
         pageHeight = (int) (pageSize.height() * twipsFactor);
         return true;
     }
+
+  /**
+   * Sets the page margins
+   *
+   * @param tocTitle The title that will be displayed above the TOC
+   * @param titleFont The <code>Font</code> that will be used for the tocTitle
+   * @param showTOCasEntry Set this to true if you want the TOC to appear as an entry in the TOC
+   * @param showTOCEntryFont Use this <code>Font</code> to specify what Font to use when showTOCasEntry is true
+   *
+   * @return <code>true</code> if the TOC was added.
+   */
+  public boolean writeTOC(String tocTitle, Font titleFont, boolean showTOCasEntry, Font showTOCEntryFont)
+  {
+    try
+      {
+	RtfTOC toc = new RtfTOC(tocTitle, titleFont);
+	if(showTOCasEntry) { toc.addTOCAsTOCEntry(tocTitle, showTOCEntryFont); }
+	add(new Paragraph(toc));
+      }
+    catch(DocumentException de) { return false; }
+    return true;
+  }
     
   /**
    * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
@@ -745,19 +807,42 @@ public class RtfWriter extends DocWriter implements DocListener
    *
    * @throws IOException
    */
-    private void writeSection(Section sectionElement, ByteArrayOutputStream out) throws IOException
+  private void writeSection(Section sectionElement, ByteArrayOutputStream out) throws IOException, DocumentException
     {
-        out.write(escape);
-        out.write(sectionDefaults);
+        if(sectionElement.type() == Element.CHAPTER)
+	  {
+	    out.write(escape);
+	    out.write(sectionDefaults);
+	  }
         if(sectionElement.title() != null)
         {
-            sectionElement.title().process(this);
+	    if(writeTOC)
+	      {
+		StringBuffer title = new StringBuffer("");
+		for(ListIterator li = sectionElement.title().getChunks().listIterator(); li.hasNext();)
+		  {
+		    title.append(((Chunk) li.next()).content());
+		  }
+		add(new RtfTOCEntry(title.toString(), sectionElement.title().font()));
+	      }
+	    else
+	      {
+		sectionElement.title().process(this);
+	      }
             out.write(escape);
             out.write(paragraph);
         }
         sectionElement.process(this);
-        out.write(escape);
-        out.write(section);
+        if(sectionElement.type() == Element.CHAPTER)
+	  {
+	    out.write(escape);
+	    out.write(section);
+	  }
+	if(sectionElement.type() == Element.SECTION)
+	  {
+	    out.write(escape);
+	    out.write(paragraph);
+	  }
     }
     
   /**
@@ -789,7 +874,7 @@ public class RtfWriter extends DocWriter implements DocListener
             Chunk ch = (Chunk) chunks.next();
             ch.setFont(ch.font().difference(paragraphElement.font()));
         }
-	paragraphElement.process(this);
+    paragraphElement.process(this);
         out.write(escape);
         out.write(paragraph);
     }
@@ -812,7 +897,7 @@ public class RtfWriter extends DocWriter implements DocListener
             Chunk ch = (Chunk) chunks.next();
             ch.setFont(ch.font().difference(phrase.font()));
         }
-	phrase.process(this);
+    phrase.process(this);
     }
     
   /**
@@ -861,27 +946,80 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     private void writeChunk(Chunk chunk, ByteArrayOutputStream out) throws IOException
     {
+        if (chunk instanceof RtfField) {
+            ((RtfField)chunk).write( this, out );
+        } else {
+            writeInitialFontSignature( out, chunk.font() );
+            out.write( filterSpecialChar( chunk.content() ).getBytes() );
+            writeFinishingFontSignature( out, chunk.font() );            
+        }    
+	//        
+	//        if (chunk instanceof RtfTOC) {
+	//            ((RtfTOC)chunk).write( this, out );
+	//        }
+    }
+
+
+    protected void writeInitialFontSignature( OutputStream out, Font font ) throws IOException {
         out.write(escape);
         out.write(fontNumber);
-        if(chunk.font().family() != Font.UNDEFINED) { writeInt(out, addFont(chunk.font())); } else { writeInt(out, 0); }
+        if (font.family() != Font.UNDEFINED) { 
+            writeInt(out, addFont( font )); 
+        } else { 
+            writeInt(out, 0); 
+        }
         out.write(escape);
         out.write(fontSize);
-        if(chunk.font().size() > 0) { writeInt(out, (int) (chunk.font().size() * 2)); } else { writeInt(out, 20); }
+        if (font.size() > 0) { 
+            writeInt( out, (int)(font.size() * 2) ); 
+        } else { 
+            writeInt(out, 20); 
+        }
         out.write(escape);
         out.write(fontColor);
-        writeInt(out, addColor(chunk.font().color()));
-        if(chunk.font().isBold()) { out.write(escape); out.write(bold); }
-        if(chunk.font().isItalic()) { out.write(escape); out.write(italic); }
-        if(chunk.font().isUnderlined()) { out.write(escape); out.write(underline); }
-        if(chunk.font().isStrikethru()) { out.write(escape); out.write(strikethrough); }
-        out.write(delimiter);
-        out.write(filterSpecialChar(chunk.content()).getBytes());
-        if(chunk.font().isBold()) { out.write(escape); out.write(bold); writeInt(out, 0); }
-        if(chunk.font().isItalic()) { out.write(escape); out.write(italic); writeInt(out, 0); }
-        if(chunk.font().isUnderlined()) { out.write(escape); out.write(underline); writeInt(out, 0); }
-        if(chunk.font().isStrikethru()) { out.write(escape); out.write(strikethrough); writeInt(out, 0); }
+        writeInt(out, addColor( font.color() ) );
+        if (font.isBold()) { 
+            out.write(escape); 
+            out.write(bold); 
+        }
+        if (font.isItalic()) { 
+            out.write(escape); 
+            out.write(italic); 
+        }
+        if (font.isUnderlined()) { 
+            out.write(escape); 
+            out.write(underline); 
+        }
+        if (font.isStrikethru()) { 
+            out.write(escape); 
+            out.write(strikethrough); 
+        }
+        out.write( delimiter );
+    }    
+
+
+    protected void writeFinishingFontSignature( OutputStream out, Font font ) throws IOException {
+        if (font.isBold()) { 
+            out.write(escape); 
+            out.write(bold); 
+            writeInt(out, 0); 
+        }
+        if (font.isItalic()) { 
+            out.write(escape); 
+            out.write(italic); 
+            writeInt(out, 0); 
+        }
+        if (font.isUnderlined()) { 
+            out.write(escape); 
+            out.write(underline); 
+            writeInt(out, 0); 
+        }
+        if (font.isStrikethru()) { 
+            out.write(escape); 
+            out.write(strikethrough); 
+            writeInt(out, 0); 
+        }
     }
-    
   /**
    * Write a <code>ListItem</code>
    *
@@ -1104,7 +1242,6 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     private void writeTable(Table table, ByteArrayOutputStream out) throws IOException, DocumentException
     {
-        table.complete();
         RtfTable rtfTable = new RtfTable(this);
         rtfTable.importTable(table, 12239);
         rtfTable.writeTable(out);
@@ -1287,7 +1424,7 @@ public class RtfWriter extends DocWriter implements DocListener
    *
    * @return The index of the <code>Font</code> in the font list
    */
-    private int addFont(Font newFont)
+    protected int addFont(Font newFont)
     {
         int fn = -1;
         
@@ -1346,8 +1483,49 @@ public class RtfWriter extends DocWriter implements DocListener
             os.write((byte)'\n');
             writeDocumentFormat();
             os.write((byte)'\n');
-            writeHeaderFooter(this.footer, footerBegin, os);
-            writeHeaderFooter(this.header, headerBegin, os);
+	    os.write( "\\titlepg".getBytes() );
+            if (this.footer instanceof RtfHeaderFooters) {
+                RtfHeaderFooters rtfHf = (RtfHeaderFooters)this.footer;
+                HeaderFooter hf = rtfHf.get( RtfHeaderFooters.ALL_PAGES );
+                if (hf != null) {
+                    writeHeaderFooter( hf, footerBegin, os );
+                }
+                hf = rtfHf.get( RtfHeaderFooters.LEFT_PAGES );
+                if (hf != null) {
+                    writeHeaderFooter( hf, footerlBegin, os );
+                }
+                hf = rtfHf.get( RtfHeaderFooters.RIGHT_PAGES );
+                if (hf != null) {
+                    writeHeaderFooter( hf, footerrBegin, os );
+                }
+                hf = rtfHf.get( RtfHeaderFooters.FIRST_PAGE );
+                if (hf != null) {
+                    writeHeaderFooter( hf, footerfBegin, os );
+                }
+            } else {
+                writeHeaderFooter(this.footer, footerBegin, os);
+            }    
+            if (this.header instanceof RtfHeaderFooters) {
+                RtfHeaderFooters rtfHf = (RtfHeaderFooters)this.header;
+                HeaderFooter hf = rtfHf.get( RtfHeaderFooters.ALL_PAGES );
+                if (hf != null) {
+                    writeHeaderFooter( hf, headerBegin, os );
+                }
+                hf = rtfHf.get( RtfHeaderFooters.LEFT_PAGES );
+                if (hf != null) {
+                    writeHeaderFooter( hf, headerlBegin, os );
+                }
+                hf = rtfHf.get( RtfHeaderFooters.RIGHT_PAGES );
+                if (hf != null) {
+                    writeHeaderFooter( hf, headerrBegin, os );
+                }
+                hf = rtfHf.get( RtfHeaderFooters.FIRST_PAGE );
+                if (hf != null) {
+                    writeHeaderFooter( hf, headerfBegin, os );
+                }                
+            } else {
+                writeHeaderFooter(this.header, headerBegin, os);
+            }    
             content.writeTo(os);
             os.write(closeGroup);
             return true;
@@ -1503,7 +1681,7 @@ public class RtfWriter extends DocWriter implements DocListener
    * @param out The <code>OuputStream</code> to which the <code>int</code> value is to be written
    * @param i The <code>int</code> value to be written
    */
-    private void writeInt(OutputStream out, int i) throws IOException
+    public final static void writeInt(OutputStream out, int i) throws IOException
     {
         out.write(Integer.toString(i).getBytes());
     }
@@ -1540,72 +1718,78 @@ public class RtfWriter extends DocWriter implements DocListener
     {
         try
         {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            if(headerFooter == null)
-            {
-                out.write(openGroup);
-                out.write(escape);
-                out.write(hfType);
-                out.write(delimiter);
-                out.write(closeGroup);
+
+            // XXX this is only a heack, because some method directly write to
+            // the content output stream, but thats not what I want here
+            ByteArrayOutputStream origContent = content;
+            
+            content = new ByteArrayOutputStream();
+            content.write(openGroup);
+            content.write(escape);
+            content.write(hfType);
+            if(headerFooter == null) {
+                content.write(delimiter);
             }
             else
             {
-                Element[] headerElements = new Element[3];
-                int headerCount = headerFooter.paragraph().getChunks().size();
-                if(headerCount >= 1) { headerElements[0] = (Element) headerFooter.paragraph().getChunks().get(0); }
-                if(headerCount >= 2) { headerElements[1] = (Element) headerFooter.paragraph().getChunks().get(1); }
-                if(headerCount >= 3) { headerElements[2] = (Element) headerFooter.paragraph().getChunks().get(2); }
-                out.write(openGroup);
-                out.write(escape);
-                out.write(hfType);
-                if(headerCount >= 1)
-                {
-                    if(headerElements[0].type() == Element.CHUNK) { writeChunk((Chunk) headerElements[0], out); }
-                    if(headerElements[0].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[0], out); }
-                }
-                if(headerCount >= 2)
-                {
-                    if(headerElements[1].type() == Element.CHUNK)
-                    {
-                        try
-                        {
-                            Integer.parseInt(((Chunk) headerElements[1]).content());
-                            out.write(openGroup);
-                            out.write(escape);
-                            out.write(field);
-                            out.write(openGroup);
-                            out.write(extendedEscape);
-                            out.write(fieldContent);
-                            out.write(openGroup);
-                            out.write(delimiter);
-                            out.write(fieldPage);
-                            out.write(delimiter);
-                            out.write(closeGroup);
-                            out.write(closeGroup);
-                            out.write(openGroup);
-                            out.write(escape);
-                            out.write(fieldDisplay);
-                            out.write(openGroup);
-                            out.write(closeGroup);
-                            out.write(closeGroup);
-                            out.write(closeGroup);
-                        }
-                        catch(NumberFormatException nfe)
-                        {
-                            writeChunk((Chunk) headerElements[1], out);
-                        }
+                if (headerFooter instanceof RtfHeaderFooter 
+                        && ((RtfHeaderFooter)headerFooter).content() != null) {
+                    this.add( ((RtfHeaderFooter)headerFooter).content() );
+                } else {
+//                    Element[] headerElements = new Element[3];
+                    java.util.List chunks = headerFooter.paragraph().getChunks();
+                    int headerCount = chunks.size();
+//                    if(headerCount >= 1) { headerElements[0] = (Element) headerFooter.paragraph().getChunks().get(0); }
+//                    if(headerCount >= 2) { headerElements[1] = (Element) headerFooter.paragraph().getChunks().get(1); }
+//                    if(headerCount >= 3) { headerElements[2] = (Element) headerFooter.paragraph().getChunks().get(2); }
+                    if(headerCount >= 1) {
+                        add( (Element)chunks.get( 0 ) );
                     }
-                    if(headerElements[1].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[1], out); }
+                    if (headerCount >= 2) {
+                        Element chunk = (Element)chunks.get(1);
+                        if (chunk.type() == Element.CHUNK) {
+                            try {
+                                Integer.parseInt( ((Chunk)chunk).content() );
+                                content.write(openGroup);
+                                content.write(escape);
+                                content.write(field);
+                                content.write(openGroup);
+                                content.write(extendedEscape);
+                                content.write(fieldContent);
+                                content.write(openGroup);
+                                content.write(delimiter);
+                                content.write(fieldPage);
+                                content.write(delimiter);
+                                content.write(closeGroup);
+                                content.write(closeGroup);
+                                content.write(openGroup);
+                                content.write(escape);
+                                content.write(fieldDisplay);
+                                content.write(openGroup);
+                                content.write(closeGroup);
+                                content.write(closeGroup);
+                                content.write(closeGroup);
+                            }
+                            catch(NumberFormatException nfe)
+                            {
+                                add( chunk );
+                            }
+                        } else {
+                            add( chunk );
+                        }
+//                        if(headerElements[1].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[1], content); }
+                    }
+                    if(headerCount >= 3) {
+                        add( (Element)chunks.get( 2 ) );
+//                        if(headerElements[2].type() == Element.CHUNK) { writeChunk((Chunk) headerElements[2], content); }
+//                        if(headerElements[2].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[2], content); }
+                    }
                 }
-                if(headerCount >= 3)
-                {
-                    if(headerElements[2].type() == Element.CHUNK) { writeChunk((Chunk) headerElements[2], out); }
-                    if(headerElements[2].type() == Element.PHRASE) { writePhrase((Phrase) headerElements[2], out); }
-                }
-                out.write(closeGroup);
             }
-            out.writeTo(target);
+            content.write(closeGroup);
+            content.writeTo(target);
+            // set the original
+            content = origContent;
         }
         catch(DocumentException e)
         {
@@ -1682,17 +1866,22 @@ public class RtfWriter extends DocWriter implements DocListener
    * @param str The original <code>String</code>
    * @return The converted String
    */
-  private String filterSpecialChar(String str)
+  public final static String filterSpecialChar(String str)
   {
        int length = str.length();
        int z = (int)'z';
        StringBuffer ret = new StringBuffer( length );
        for(int i = 0; i < length; i++) {
            char ch = str.charAt( i );
-           if (ch == '\\') {
-               ret.append("\\\\");
-           }
-           else if( ((int)ch) > z ) { 
+	   if(ch == '\\')
+	     {
+	       ret.append("\\\\");
+	     }
+	   else if(ch == '\n')
+	     {
+	       ret.append("\\par ");
+	     }
+           else if( ((int)ch) > z ) {
                ret.append( "\\u" ).append( (long)ch ).append( 'G' );
            } else {
                ret.append( ch );
