@@ -269,9 +269,6 @@ public class Font implements Comparable {
         Font font;
         try {
             font = (Font) object;
-            if (baseFont != null && !baseFont.equals(font.getBaseFont())) {
-                return -2;
-            }
             if (this.family != font.family()) {
                 return 1;
             }
@@ -296,7 +293,7 @@ public class Font implements Comparable {
             return 4;
         }
         catch(ClassCastException cce) {
-            return -3;
+            return -2;
         }
     }
     
@@ -467,7 +464,10 @@ public class Font implements Comparable {
         int style2 = font.style();
         if (style1 == UNDEFINED) style1 = 0;
         if (style2 == UNDEFINED) style2 = 0;
-        difference.style = style1 | style2;
+        /* bugfix by Lars Martin */
+        int mask = style1 | style2;
+        difference.style = mask == style2 ? style2 : style ^ mask;
+        /* end bugfix */
         if (font.color == null) {
             difference.color = this.color;
         }

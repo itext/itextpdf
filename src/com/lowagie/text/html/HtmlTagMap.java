@@ -157,6 +157,9 @@ public class HtmlTagMap extends HashMap {
         peer.addValue(ElementTags.SUBSUPSCRIPT, "-6.0");
         put(peer.getAlias(), peer);
         
+        peer = new HtmlPeer(ElementTags.HORIZONTALRULE, HtmlTags.HORIZONTALRULE);
+        put(peer.getAlias(), peer);
+        
         peer = new HtmlPeer(ElementTags.TABLE, HtmlTags.TABLE);
         peer.addAlias(ElementTags.WIDTH, HtmlTags.WIDTH);
         peer.addAlias(ElementTags.BACKGROUNDCOLOR, HtmlTags.BACKGROUNDCOLOR);

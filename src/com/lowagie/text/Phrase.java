@@ -282,7 +282,8 @@ public class Phrase extends ArrayList implements TextElementArray {
             else if (element.type() == Element.PHRASE ||
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
-            element.type() == Element.TABLE) { // line added by David Freels
+            element.type() == Element.TABLE || // line added by David Freels
+            element.type() == Element.GRAPHIC) {
                 super.add(index, element);
             }
             else {
