@@ -136,14 +136,16 @@ public class MultiColumnText implements Element {
         // canvas will be set later
         columnText = new ColumnText(null);
         totalHeight = 0f;
-        overflow = false;
     }
 
     /**
      * Indicates that all of the text did not fit in the
-     * specified height
+     * specified height. Note that isOverflow will return
+     * false before the MultiColumnText object has been
+     * added to the document.  It will always be false if
+     * the height is AUTOMATIC.
      *
-     * @return true if the text didn't fit
+     * @return true if there is still space left in the column
      */
     public boolean isOverflow() {
         return overflow;
@@ -240,22 +242,22 @@ public class MultiColumnText implements Element {
     public float write(PdfContentByte canvas, PdfDocument document, float documentY) throws DocumentException {
         this.document = document;
         columnText.setCanvas(canvas);
-        if (nextY == AUTOMATIC) {
-            nextY = documentY;
-        }
-        if (top == AUTOMATIC) {
-            top = documentY;  // shouldn't I be able to get this from the document?
-        }
         if (columnDefs.size() == 0) {
             throw new DocumentException("MultiColumnText has no columns");
         }
-        //columnText.setYLine(top);
+        overflow = false;
         pageBottom = document.bottom();
         float currentHeight = 0;
-        //int currentColumn = 0;
         boolean done = false;
         try {
             while (!done) {
+                if (nextY == AUTOMATIC) {
+                    nextY = documentY;
+                }
+                if (top == AUTOMATIC) {
+                    top = documentY;  // shouldn't I be able to get this from the document?
+                }
+
                 ColumnDef currentDef = (ColumnDef) columnDefs.get(currentColumn);
                 columnText.setYLine(top);
 
@@ -280,12 +282,10 @@ public class MultiColumnText implements Element {
                     totalHeight += currentHeight;
 
                     if ((desiredHeight != AUTOMATIC) && (totalHeight >= desiredHeight)) {
-                        done = true;
                         overflow = true;
+                        break;
                     } else {  // need to start new page and reset the columns
-                        document.newPage();
-                        currentColumn = 0;
-                        top = nextY = document.top();
+                        newPage();
                         currentHeight = 0;
                     }
                 }
@@ -297,6 +297,14 @@ public class MultiColumnText implements Element {
         return currentHeight;
     }
 
+    private void newPage() throws DocumentException {
+        currentColumn = 0;
+        top = nextY = AUTOMATIC;
+        if (document != null) {
+            document.newPage();
+        }
+    }
+
     /**
      * Moves the text insertion point to the beginning of the next column, issuing a page break if
      * needed.
@@ -305,9 +313,8 @@ public class MultiColumnText implements Element {
     public void nextColumn() throws DocumentException {
         currentColumn = (currentColumn + 1) % columnDefs.size();
         top = nextY;
-        if (currentColumn == 0 && document != null) {
-            top = nextY = AUTOMATIC;
-            document.newPage();
+        if (currentColumn == 0) {
+            newPage();
         }
     }
     
