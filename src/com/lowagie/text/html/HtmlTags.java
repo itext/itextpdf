@@ -121,7 +121,7 @@ public class HtmlTags {
     public static final String PARAGRAPH = "p";
     
 /** the paragraph tag */
-    public static final String SECTION = "div";
+    public static final String DIV = "div";
     
 /** attribute of anchor tag */
     public static final String NAME = "name";
@@ -241,10 +241,10 @@ public class HtmlTags {
     public static final String ALT = "alt";
     
 /** attribute of the image tag */
-    public static final String SCALEDWIDTH = "width";
+    public static final String PLAINWIDTH = "width";
     
 /** attribute of the image tag */
-    public static final String SCALEDHEIGHT = "height";
+    public static final String PLAINHEIGHT = "height";
     
 /** the newpage tag */
     public static final String NEWLINE = "br";

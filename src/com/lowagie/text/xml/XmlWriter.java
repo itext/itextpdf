@@ -702,23 +702,27 @@ public class XmlWriter extends DocWriter implements DocListener {
             os.write(QUOTE);
             switch(font.style() & Font.BOLDITALIC) {
                 case Font.NORMAL:
-                    write("normal");
+                    write(ElementTags.NORMAL);
                     break;
                 case Font.BOLD:
-                    write("bold");
+                    write(ElementTags.BOLD);
                     break;
                 case Font.ITALIC:
-                    write("italic");
+                    write(ElementTags.ITALIC);
                     break;
                 case Font.BOLDITALIC:
-                    write("bold, italic");
+                    write(ElementTags.BOLD);
+                    write(", ");
+                    write(ElementTags.ITALIC);
                     break;
             }
             if ((font.style() & Font.UNDERLINE) > 0) {
-                write(", underline");
+                write(", ");
+                write(ElementTags.UNDERLINE);
             }
             if ((font.style() & Font.STRIKETHRU) > 0) {
-                write(", strike");
+                write(", ");
+                write(ElementTags.STRIKETHRU);
             }
             os.write(QUOTE);
         }

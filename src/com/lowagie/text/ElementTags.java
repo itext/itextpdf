@@ -325,6 +325,36 @@ public class ElementTags {
 /** the possible value of an alignment attribute */
     public static final String UNKNOWN = "unknown";
     
+/** the possible value of a font */
+    public static final String COURIER = "Courier";
+    
+/** the possible value of a font */
+    public static final String HELVETICA = "Helvetica";
+    
+/** the possible value of a font */
+    public static final String TIMES_NEW_ROMAN = "Times New Roman";
+    
+/** the possible value of a font */
+    public static final String SYMBOL = "Symbol";
+    
+/** the possible value of a font */
+    public static final String ZAPFDINGBATS = "ZapfDingBats";
+    
+/** the possible value of a fontstyle */
+    public static final String NORMAL = "normal";
+    
+/** the possible value of a fontstyle */
+    public static final String ITALIC = "italic";
+    
+/** the possible value of a fontstyle */
+    public static final String BOLD = "bold";
+    
+/** the possible value of a fontstyle */
+    public static final String UNDERLINE = "underline";
+    
+/** the possible value of a fontstyle */
+    public static final String STRIKETHRU = "strike";
+    
     // methods
     
 /**

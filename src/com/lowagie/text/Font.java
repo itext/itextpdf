@@ -321,19 +321,19 @@ public class Font implements Comparable {
  */
     
     public static int getFamilyIndex(String family) {
-        if (family.equalsIgnoreCase("Courier")) {
+        if (family.equalsIgnoreCase(ElementTags.COURIER)) {
             return COURIER;
         }
-        if (family.equalsIgnoreCase("Helvetica")) {
+        if (family.equalsIgnoreCase(ElementTags.HELVETICA)) {
             return HELVETICA;
         }
-        if (family.equalsIgnoreCase("Times New Roman")) {
+        if (family.equalsIgnoreCase(ElementTags.TIMES_NEW_ROMAN)) {
             return TIMES_NEW_ROMAN;
         }
-        if (family.equalsIgnoreCase("Symbol")) {
+        if (family.equalsIgnoreCase(ElementTags.SYMBOL)) {
             return SYMBOL;
         }
-        if (family.equalsIgnoreCase("ZapfDingBats")) {
+        if (family.equalsIgnoreCase(ElementTags.ZAPFDINGBATS)) {
             return ZAPFDINGBATS;
         }
         return UNDEFINED;
@@ -370,19 +370,19 @@ public class Font implements Comparable {
     
     public static int getStyleValue(String style) {
         int s = 0;
-        if (style.indexOf("normal") != -1) {
+        if (style.indexOf(ElementTags.NORMAL) != -1) {
             s |= NORMAL;
         }
-        if (style.indexOf("bold") != -1) {
+        if (style.indexOf(ElementTags.BOLD) != -1) {
             s |= BOLD;
         }
-        if (style.indexOf("italic") != -1) {
+        if (style.indexOf(ElementTags.ITALIC) != -1) {
             s |= ITALIC;
         }
-        if (style.indexOf("underline") != -1) {
+        if (style.indexOf(ElementTags.UNDERLINE) != -1) {
             s |= UNDERLINE;
         }
-        if (style.indexOf("strike") != -1) {
+        if (style.indexOf(ElementTags.STRIKETHRU) != -1) {
             s |= STRIKETHRU;
         }
         return s;

@@ -48,19 +48,19 @@ import com.lowagie.text.ElementTags;
 public class XmlPeer {
 
 /** This is the name of the alias. */    
-    private String tagname;
+    protected String tagname;
 
 /** This is the name of the alias. */    
-    private String customTagname;
+    protected String customTagname;
     
 /** This is the Map that contains the aliases of the attributes. */
-    private Properties attributeAliases = new Properties();
+    protected Properties attributeAliases = new Properties();
     
 /** This is the Map that contains the default values of the attributes. */
-    private Properties attributeValues = new Properties();
+    protected Properties attributeValues = new Properties();
     
 /** This is String that contains the default content of the attributes. */
-    private String defaultContent = null;
+    protected String defaultContent = null;
     
 /**
  * Creates a XmlPeer.
