@@ -100,7 +100,7 @@ public class BuildTutorial {
 			convert(source, xsl_examples, buildfile);
 			build.write("\t<ant antfile=\"${basedir}");
 			build.write(path);
-			build.write("\" inheritAll=\"false\" />\n");
+			build.write("\" target=\"install\" inheritAll=\"false\" />\n");
 		}
 		else {
 			System.out.println("... skipped");
