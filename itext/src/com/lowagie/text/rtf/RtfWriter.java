@@ -64,6 +64,10 @@ import java.text.ParsePosition;
 import com.lowagie.text.pdf.wmf.MetaDo;
 
 /**
+ * If you are creating a new project using the rtf part of iText, please
+ * consider using the new RtfWriter2. The RtfWriter is in bug-fix-only mode,
+ * will be deprecated end of 2005 and removed end of 2007.
+ * 
  * A <CODE>DocWriter</CODE> class for Rich Text Files (RTF).
  * <P>
  * A <CODE>RtfWriter</CODE> can be added as a <CODE>DocListener</CODE>
