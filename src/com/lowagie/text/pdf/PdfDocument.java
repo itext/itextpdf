@@ -1031,7 +1031,10 @@ class PdfDocument extends Document implements DocListener {
                     //				}
                     // some parameters are set back to normal again
                     
+                    //add by Jin-Hsia Yang and blowagie
                     paraIndent -= paragraph.indentationLeft();
+                    //end add by Jin-Hsia Yang and blowagie
+                    
                     carriageReturn();
                     
                     if (pageEvent != null && isParagraph)
@@ -1721,14 +1724,12 @@ class PdfDocument extends Document implements DocListener {
             //add by Jin-Hsia Yang
             if(isParagraphE && isNewpage && newline) {
 	        newline=false;
-  System.out.println("anders " +  paraIndent + " " + getPageNumber());
-	        text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent, -l.height());
+	        text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
             } else
             //end add by Jin-Hsia Yang
 
             // aligning the line
             text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
-  System.out.print("|" + paraIndent + "|");
             
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
