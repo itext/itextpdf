@@ -203,16 +203,17 @@ public class ListItem extends Paragraph implements TextElementArray {
         super("", new Font(attributes));
         String value;
         if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+            remove(0);
             add(new Chunk(value));
         }
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
-            setLeading(Float.parseFloat(value + "f"));
+            setLeading(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.parseFloat(value + "f"));
+            setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.parseFloat(value + "f"));
+            setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
             setAlignment(value);
@@ -267,5 +268,31 @@ public class ListItem extends Paragraph implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.LISTITEM.equals(tag);
+    }
+    
+/**
+ * Returns a representation of this <CODE>ListItem</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        StringBuffer buf = new StringBuffer("\n<").append(ElementTags.LISTITEM).append(" ").append(ElementTags.LEADING).append("=\"");
+        buf.append(leading);
+        buf.append("\"").append(font.toString()).append(" ").append(ElementTags.ALIGN).append("=\"").append(ElementTags.getAlignment(alignment));
+        if (indentationLeft != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
+            buf.append(indentationLeft);
+        }
+        if (indentationRight != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
+            buf.append(indentationRight);
+        }
+        buf.append("\">");
+        for (Iterator i = iterator(); i.hasNext(); ) {
+            buf.append(i.next().toString());
+        }
+        buf.append("</").append(ElementTags.LISTITEM).append(">");
+        return buf.toString();
     }
 }

@@ -156,10 +156,10 @@ public class List implements TextElementArray {
             setFirst(Integer.parseInt(value));
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.parseFloat(value + "f"));
+            setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.parseFloat(value + "f"));
+            setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
     }
     
@@ -343,30 +343,6 @@ public class List implements TextElementArray {
     }
     
 /**
- * Gets the symbol indentation.
- */
-    
-    public final int symbolIndent() {
-        return symbolIndent;
-    }
-    
-/**
- * Gets the symbol indentation.
- */
-    
-    public final Chunk symbol() {
-        return symbol;
-    }
-    
-/**
- * Gets the first number        .
- */
-    
-    public final int first() {
-        return first;
-    }
-    
-/**
  * Gets the indentation of this paragraph on the left side.
  *
  * @return	the indentation
@@ -406,5 +382,43 @@ public class List implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.LIST.equals(tag);
+    }
+    
+/**
+ * Returns a representation of this <CODE>Paragraph</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        StringBuffer buf = new StringBuffer("<").append(ElementTags.LIST).append(" ").append(ElementTags.NUMBERED).append("=\"");
+        buf.append(numbered);
+        buf.append("\" ").append(ElementTags.SYMBOLINDENT).append("=\"");
+        buf.append(symbolIndent);
+        buf.append("\"");
+        if (first != 1) {
+            buf.append(" ").append(ElementTags.FIRST).append("=\"");
+            buf.append(first);
+            buf.append("\"");
+        }
+        if (indentationLeft != 0) {
+            buf.append(" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
+            buf.append(indentationLeft);
+            buf.append("\"");
+        }
+        if (indentationRight != 0) {
+            buf.append(" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
+            buf.append(indentationRight);
+            buf.append("\"");
+        }
+        if (!numbered) {
+            buf.append(" ").append(ElementTags.LISTSYMBOL).append("=\"").append(symbol.content()).append("\"");
+        }
+        buf.append(symbol.font().toString()).append(">");
+        for (Iterator i = list.iterator(); i.hasNext(); ) {
+            buf.append(i.next().toString());
+        }
+        buf.append("</").append(ElementTags.LIST).append(">\n");
+        return buf.toString();
     }
 }
