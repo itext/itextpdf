@@ -379,10 +379,12 @@ public class PdfReader {
         if (!tokens.getStringValue().equals("trailer"))
             throw new IOException("trailer not found.");
         trailer = (PdfDictionary)readPRObject();
-        if (trailer.get(PdfName.ENCRYPT) != null) {
+        PdfObject encDic = trailer.get(PdfName.ENCRYPT);
+        if (encDic != null && !encDic.toString().equals("null")) {
             encrypted = true;
             throw new IOException("Encrypted files are not supported.");
         }
+        trailer.remove(PdfName.ENCRYPT);
         PdfNumber xrefSize = (PdfNumber)trailer.get(PdfName.SIZE);
         xref = new int[xrefSize.intValue()];
         tokens.seek(startxref);

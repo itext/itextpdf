@@ -1605,4 +1605,21 @@ public class PdfWriter extends DocWriter {
     public int getCurrentDocumentSize() {
         return body.offset() + body.size() * 20 + 0x48;
     }
+    
+    /** Getter for property strictImageSequence.
+     * @return value of property strictImageSequence
+     *
+     */
+    public boolean isStrictImageSequence() {
+        return pdf.isStrictImageSequence();
+    }
+    
+    /** Sets the image sequence to follow the text in strict order.
+     * @param strictImageSequence new value of property strictImageSequence
+     *
+     */
+    public void setStrictImageSequence(boolean strictImageSequence) {
+        pdf.setStrictImageSequence(strictImageSequence);
+    }
+    
 }

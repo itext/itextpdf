@@ -159,6 +159,13 @@ class PdfFont implements Comparable {
             return image.scaledWidth();
     }
     
+    float width(String s) {
+        if (image == null)
+            return font.getWidthPoint(s, size);
+        else
+            return image.scaledWidth();
+    }
+    
     BaseFont getFont() {
         return font;
     }

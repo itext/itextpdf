@@ -540,6 +540,8 @@ class PdfDocument extends Document implements DocListener {
     
     protected PdfDictionary pageAA = null;
     
+    /** Holds value of property strictImageSequence. */
+    private boolean strictImageSequence = false;    
 
     // constructors
     
@@ -1378,6 +1380,8 @@ class PdfDocument extends Document implements DocListener {
                     // so we cast both to a Section
                     Section section = (Section) element;
                     
+                    boolean hasTitle = section.title() != null;
+                    
                     // if the section is a chapter, we begin a new page
                     if (section.isChapter()) {
                         newPage();
@@ -1386,6 +1390,8 @@ class PdfDocument extends Document implements DocListener {
                     else {
                         newLine();
                     }
+
+                    if (hasTitle) {
                     float fith = indentTop() - currentHeight;
                     int rotation = pageSize.getRotation();
                     if (rotation == 90 || rotation == 180)
@@ -1396,6 +1402,7 @@ class PdfDocument extends Document implements DocListener {
                     }
                     PdfOutline outline = new PdfOutline(currentOutline, destination, section.title(), section.isBookmarkOpen());
                     currentOutline = outline;
+                    }
                     
                     // some values are set
                     carriageReturn();
@@ -1410,7 +1417,7 @@ class PdfDocument extends Document implements DocListener {
                             pageEvent.onSection(writer, this, indentTop() - currentHeight, section.depth(), section.title());
                     
                     // the title of the section (if any has to be printed)
-                    if (section.title() != null) {
+                    if (hasTitle) {
                         isParagraph = false;
                         add(section.title());
                         isParagraph = true;
@@ -1927,7 +1934,7 @@ class PdfDocument extends Document implements DocListener {
         
         // if there isn't enough room for the image on this page, save it for the next page
         if (currentHeight != 0 && indentTop() - currentHeight - image.scaledHeight() < indentBottom()) {
-            if (imageWait == null) {
+            if (!strictImageSequence && imageWait == null) {
                 imageWait = image;
                 return;
             }
@@ -2466,57 +2473,12 @@ class PdfDocument extends Document implements DocListener {
         float xMarker = text.getXTLM();
         float baseXMarker = xMarker;
         float yMarker = text.getYTLM();
-        boolean imageWasPresent = false;
+        boolean adjustMatrix = false;
         
         // looping over all the chunks in 1 line
         for (Iterator j = line.iterator(); j.hasNext(); ) {
             chunk = (PdfChunk) j.next();
-            
-            if (chunk.font().compareTo(currentFont) != 0) {
-                currentFont = chunk.font();
-                text.setFontAndSize(currentFont.getFont(), currentFont.size());
-            }
             Color color = chunk.color();
-            float rise = 0;
-            Float fr = (Float)chunk.getAttribute(Chunk.SUBSUPSCRIPT);
-            if (fr != null)
-                rise = fr.floatValue();
-            if (color != null)
-                text.setColorFill(color);
-            if (rise != 0)
-                text.setTextRise(rise);
-            
-            if (chunk.isImage()) {
-                imageWasPresent = true;
-            }
-            // If it is a CJK chunk or Unicode TTF we will have to simulate the
-            // space adjustment.
-            else if (isJustified && numberOfSpaces > 0 && chunk.isSpecialEncoding()) {
-                String s = chunk.toString();
-                int idx = s.indexOf(' ');
-                if (idx < 0)
-                    text.showText(chunk.toString());
-                else {
-                    float spaceCorrection = - ratio * lastBaseFactor * 1000f / chunk.font.size();
-                    PdfTextArray textArray = new PdfTextArray(s.substring(0, idx));
-                    int lastIdx = idx;
-                    while ((idx = s.indexOf(' ', lastIdx + 1)) >= 0) {
-                        textArray.add(spaceCorrection);
-                        textArray.add(s.substring(lastIdx, idx));
-                        lastIdx = idx;
-                    }
-                    textArray.add(spaceCorrection);
-                    textArray.add(s.substring(lastIdx));
-                    text.showText(textArray);
-                }
-            }
-            else
-                text.showText(chunk.toString());
-            
-            if (rise != 0)
-                text.setTextRise(0);
-            if (color != null)
-                text.resetRGBColorFill();
             
             if (chunkStrokeIdx <= lastChunkStroke) {
                 boolean isStroked = (chunk.isAttribute(Chunk.STRIKETHRU) || chunk.isAttribute(Chunk.UNDERLINE));
@@ -2629,13 +2591,17 @@ class PdfDocument extends Document implements DocListener {
                         annot.put(PdfName.RECT, new PdfRectangle(xMarker, yMarker + descender, xMarker + width - subtract, yMarker + ascender));
                         addAnnotation(annot);
                     }
+                    if (chunk.isAttribute(Chunk.SKEW)) {
+                        float params[] = (float[])chunk.getAttribute(Chunk.SKEW);
+                        text.setTextMatrix(1, params[0], params[1], 1, xMarker, yMarker);
+                    }
                     if (chunk.isImage()) {
                         Image image = chunk.getImage();
                         float matrix[] = image.matrix();
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
                         addImage(graphics, image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
-                        text.setTextMatrix(xMarker + lastBaseFactor + image.scaledWidth(), yMarker);
+                        text.moveText(xMarker + lastBaseFactor + image.scaledWidth() - text.getXTLM(), 0);
                     }
                     if (isStroked) {
                         graphics.setLineWidth(chunk.font().size() / 15);
@@ -2646,13 +2612,88 @@ class PdfDocument extends Document implements DocListener {
                 xMarker += width;
                 ++chunkStrokeIdx;
             }
+
+            if (chunk.font().compareTo(currentFont) != 0) {
+                currentFont = chunk.font();
+                text.setFontAndSize(currentFont.getFont(), currentFont.size());
+            }
+            float rise = 0;
+            Object textRender[] = (Object[])chunk.getAttribute(Chunk.TEXTRENDERMODE);
+            int tr = 0;
+            float strokeWidth = 1;
+            Color strokeColor = null;
+            Float fr = (Float)chunk.getAttribute(Chunk.SUBSUPSCRIPT);
+            if (textRender != null) {
+                tr = ((Integer)textRender[0]).intValue() & 3;
+                if (tr != PdfContentByte.TEXT_RENDER_MODE_FILL)
+                    text.setTextRenderingMode(tr);
+                if (tr == PdfContentByte.TEXT_RENDER_MODE_STROKE || tr == PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE) {
+                    strokeWidth = ((Float)textRender[1]).floatValue();
+                    if (strokeWidth != 1)
+                        text.setLineWidth(strokeWidth);
+                    strokeColor = (Color)textRender[2];
+                    if (strokeColor == null)
+                        strokeColor = color;
+                    if (strokeColor != null)
+                        text.setColorStroke(strokeColor);
+                }
+            }
+            if (fr != null)
+                rise = fr.floatValue();
+            if (color != null)
+                text.setColorFill(color);
+            if (rise != 0)
+                text.setTextRise(rise);
+            if (chunk.isImage()) {
+                adjustMatrix = true;
+            }
+            // If it is a CJK chunk or Unicode TTF we will have to simulate the
+            // space adjustment.
+            else if (isJustified && numberOfSpaces > 0 && chunk.isSpecialEncoding()) {
+                String s = chunk.toString();
+                int idx = s.indexOf(' ');
+                if (idx < 0)
+                    text.showText(chunk.toString());
+                else {
+                    float spaceCorrection = - ratio * lastBaseFactor * 1000f / chunk.font.size();
+                    PdfTextArray textArray = new PdfTextArray(s.substring(0, idx));
+                    int lastIdx = idx;
+                    while ((idx = s.indexOf(' ', lastIdx + 1)) >= 0) {
+                        textArray.add(spaceCorrection);
+                        textArray.add(s.substring(lastIdx, idx));
+                        lastIdx = idx;
+                    }
+                    textArray.add(spaceCorrection);
+                    textArray.add(s.substring(lastIdx));
+                    text.showText(textArray);
+                }
+            }
+            else
+                text.showText(chunk.toString());
+            
+            if (rise != 0)
+                text.setTextRise(0);
+            if (color != null)
+                text.resetRGBColorFill();
+            if (tr != PdfContentByte.TEXT_RENDER_MODE_FILL)
+                text.setTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL);
+            if (strokeColor != null)
+                text.resetRGBColorStroke();
+            if (strokeWidth != 1)
+                text.setLineWidth(1);            
+            if (chunk.isAttribute(Chunk.SKEW)) {
+                adjustMatrix = true;
+                text.setTextMatrix(xMarker, yMarker);
+            }
         }
         if (isJustified) {
             text.setWordSpacing(0);
             text.setCharacterSpacing(0);
+            if (line.isNewlineSplit())
+                lastBaseFactor = 0;
         }
-        if (imageWasPresent)
-            text.setTextMatrix(baseXMarker, yMarker);
+        if (adjustMatrix)
+            text.moveText(baseXMarker - text.getXTLM(), 0);
         currentValues[0] = currentFont;
         currentValues[1] = new Float(lastBaseFactor);
     }
@@ -2845,4 +2886,21 @@ class PdfDocument extends Document implements DocListener {
         }
         pageAA.put(actionType, action);
     }
+    
+    /** Getter for property strictImageSequence.
+     * @return Value of property strictImageSequence.
+     *
+     */
+    boolean isStrictImageSequence() {
+        return this.strictImageSequence;
+    }
+    
+    /** Setter for property strictImageSequence.
+     * @param strictImageSequence New value of property strictImageSequence.
+     *
+     */
+    void setStrictImageSequence(boolean strictImageSequence) {
+        this.strictImageSequence = strictImageSequence;
+    }
+    
 }

@@ -302,6 +302,18 @@ public class PdfFormField extends PdfAnnotation {
         put(PdfName.TM, new PdfString(s));
     }
     
+    public void setFieldNameUnicode(String s) {
+        put(PdfName.T, new PdfString(s, PdfObject.TEXT_UNICODE));
+    }
+    
+    public void setUserNameUnicode(String s) {
+        put(PdfName.TU, new PdfString(s, PdfObject.TEXT_UNICODE));
+    }
+    
+    public void setMappingNameUnicode(String s) {
+        put(PdfName.TM, new PdfString(s, PdfObject.TEXT_UNICODE));
+    }
+    
     public void setQuadding(int v) {
         put(PdfName.Q, new PdfNumber(v));
     }

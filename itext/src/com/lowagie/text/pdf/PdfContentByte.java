@@ -97,6 +97,14 @@ public class PdfContentByte {
     /** The alignement is right */
     public static final int ALIGN_RIGHT = 2;
     
+    public static final int TEXT_RENDER_MODE_FILL = 0;
+    public static final int TEXT_RENDER_MODE_STROKE = 1;
+    public static final int TEXT_RENDER_MODE_FILL_STROKE = 2;
+    public static final int TEXT_RENDER_MODE_INVISIBLE = 3;
+    public static final int TEXT_RENDER_MODE_FILL_CLIP = 4;
+    public static final int TEXT_RENDER_MODE_STROKE_CLIP = 5;
+    public static final int TEXT_RENDER_MODE_FILL_STROKE_CLIP = 6;
+    public static final int TEXT_RENDER_MODE_CLIP = 7;
     // membervariables
     
     /** This is the actual content */

@@ -298,8 +298,8 @@ public class FontFactory extends java.lang.Object {
         if ((value = (String)attributes.remove(ElementTags.ENCODING)) != null) {
             encoding = value;
         }
-        if ("false".equals((String) attributes.remove(ElementTags.EMBEDDED))) {
-            embedded = false;
+        if ("true".equals((String) attributes.remove(ElementTags.EMBEDDED))) {
+            embedded = true;
         }
         if ((value = (String)attributes.remove(ElementTags.FONT)) != null) {
             fontname = value;
@@ -523,7 +523,7 @@ public class FontFactory extends java.lang.Object {
             else if (path.toLowerCase().endsWith(".ttc")) {
                 String[] names = BaseFont.enumerateTTCNames(path);
                 for (int i = 0; i < names.length; i++) {
-                    trueTypeFonts.setProperty(names[i], path + "," + (i + 1));
+                    trueTypeFonts.setProperty(names[i], path + "," + i);
                 }
                 if (alias != null) {
                     System.err.println("class FontFactory: You can't define an alias for a true type collection.");

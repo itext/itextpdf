@@ -118,6 +118,10 @@ public class PdfPCell extends Rectangle{
     private int colspan = 1;
     private float spaceCharRatio = ColumnText.GLOBAL_SPACE_CHAR_RATIO;
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+    
+    /** Holds value of property image. */
+    private Image image;
+    
     /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
      * The default padding is 2.
      * @param phrase the text
@@ -143,6 +147,32 @@ public class PdfPCell extends Rectangle{
         fixedLeading = 0;
         multipliedLeading = 1;
         setPadding(0);
+    }
+    
+    /** Constructs a <CODE>PdfPCell</CODE> with an <CODE>Image</CODE>.
+     * The default padding is 0.25 for a border width of 0.5.
+     * @param image the <CODE>Image</CODE>
+     * @param fit <CODE>true</CODE> to fit the image to the cell
+     */    
+    public PdfPCell(Image image, boolean fit)
+    {
+        super(0, 0, 0, 0);
+        if (fit) {
+            borderWidth = 0.5f;
+            border = BOX;
+            this.image = image;
+            fixedLeading = 0;
+            multipliedLeading = 1;
+            setPadding(borderWidth / 2);
+        }
+        else {
+            borderWidth = 0.5f;
+            border = BOX;
+            phrase = new Phrase(new Chunk(image, 0, 0));
+            fixedLeading = 0;
+            multipliedLeading = 1;
+            setPadding(0);
+        }
     }
     
     /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>PdfPtable</CODE>.
@@ -193,6 +223,7 @@ public class PdfPCell extends Rectangle{
         runDirection = cell.runDirection;
         if (cell.table != null)
             table = new PdfPTable(cell.table);
+        image = Image.getInstance(cell.image);
     }
     
     /** Gets the <CODE>Phrase</CODE> from this cell.
@@ -510,4 +541,21 @@ public class PdfPCell extends Rectangle{
     public int getRunDirection() {
         return runDirection;
     }
+    
+    /** Getter for property image.
+     * @return Value of property image.
+     *
+     */
+    public Image getImage() {
+        return this.image;
+    }
+    
+    /** Setter for property image.
+     * @param image New value of property image.
+     *
+     */
+    public void setImage(Image image) {
+        this.image = image;
+    }
+    
 }

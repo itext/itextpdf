@@ -183,6 +183,8 @@ public abstract class BaseFont {
 /** if the font doesn't have to be cached */
     public static final boolean NOT_CACHED = false;
     
+    public static final String RESOURCE_PATH = "fonts/";
+    
     /** The font type.
      */    
     int fontType;
@@ -810,12 +812,12 @@ public abstract class BaseFont {
                 ClassLoader contextClassLoader =
                     (ClassLoader)getCCL.invoke(Thread.currentThread(),
                                                new Object[0]);
-                is = contextClassLoader.getResourceAsStream("fonts/" + key);
+                is = contextClassLoader.getResourceAsStream(key);
             }
         } catch (Exception e) {}
 
         if (is == null) {
-            is = BaseFont.class.getResourceAsStream("fonts/" + key);
+            is = BaseFont.class.getResourceAsStream(key);
         }
         return is;
     }

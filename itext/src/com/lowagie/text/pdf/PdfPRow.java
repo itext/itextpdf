@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import java.awt.Color;
 
@@ -111,7 +112,14 @@ public class PdfPRow {
             if (cell == null)
                 continue;
             PdfPTable table = cell.getTable();
-            if (table == null ) {
+            Image img = cell.getImage();
+            if (img != null) {
+                img.scalePercent(100);
+                float scale = (cell.right() - cell.getPaddingRight() - cell.getPaddingLeft() - cell.left()) / img.scaledWidth();
+                img.scalePercent(scale * 100);
+                cell.setBottom(cell.top() - cell.getPaddingTop() - cell.getPaddingBottom() - img.scaledHeight());
+            }
+            else if (table == null ) {
                 float rightLimit = cell.isNoWrap() ? 20000 : cell.right() - cell.getPaddingRight();
                 ColumnText ct = new ColumnText(null);
                 ct.setSimpleColumn(cell.getPhrase(),
@@ -229,6 +237,7 @@ public class PdfPRow {
                 continue;
             writeBorderAndBackgroung(xPos, yPos, cell, canvases);
             PdfPTable table = cell.getTable();
+            Image img = cell.getImage();
             float tly = 0;
             boolean alignTop = false;
             switch (cell.getVerticalAlignment()) {
@@ -243,7 +252,37 @@ public class PdfPRow {
                     tly = cell.top() + yPos - cell.getPaddingTop();
                     break;
             }
-            if (table == null) {
+            if (img != null) {
+                boolean vf = false;
+                if (cell.height() > maxHeight) {
+                    img.scalePercent(100);
+                    float scale = (maxHeight - cell.getPaddingTop() - cell.getPaddingBottom()) / img.scaledHeight();
+                    img.scalePercent(scale * 100);
+                    vf = true;
+                }
+                float left = cell.left() + xPos + cell.getPaddingLeft();
+                if (vf) {
+                    switch (cell.getHorizontalAlignment()) {
+                        case Element.ALIGN_CENTER:
+                            left = xPos + (cell.left() + cell.getPaddingLeft() + cell.right() - cell.getPaddingRight() - img.scaledWidth()) / 2;
+                            break;
+                        case Element.ALIGN_RIGHT:
+                            left = xPos + cell.right() - cell.getPaddingRight() - img.scaledWidth();
+                            break;
+                        default:
+                            break;
+                    }
+                    tly = cell.top() + yPos - cell.getPaddingTop();
+                }
+                img.setAbsolutePosition(left, tly - img.scaledHeight());
+                try {
+                    canvases[PdfPTable.TEXTCANVAS].addImage(img);
+                }
+                catch (DocumentException e) {
+                    throw new ExceptionConverter(e);
+                }
+            }
+            else if (table == null) {
                 float fixedHeight = cell.getFixedHeight();
                 float rightLimit = cell.right() + xPos - cell.getPaddingRight();
                 float leftLimit = cell.left() + xPos + cell.getPaddingLeft();

@@ -1280,8 +1280,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             lDummyHeights [i] = lNewMaxRows;
         }
 
-        if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) )    // NO ADJUSTMENT
-        {
+//        if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) )    // NO ADJUSTMENT
+//        {
             // ** WIDTH
             // set correct width for new columns
             // divide width over new nr of columns
@@ -1300,7 +1300,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                     lNewWidths[lDummy] = widths[tel];
                     lDummy++;
                 }
-            }
+//            }
 
             // ** FILL OUR NEW TABLE
             // generate new table

@@ -97,6 +97,7 @@ public class PdfGraphics2D extends Graphics2D {
     private static final int FILL = 1;
     private static final int STROKE = 2;
     private static final int CLIP = 3;
+    private BasicStroke strokeOne = new BasicStroke(1);
     
     private static AffineTransform IDENTITY = new AffineTransform();
     
@@ -133,6 +134,10 @@ public class PdfGraphics2D extends Graphics2D {
     private Graphics dg2 = new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB).getGraphics();
     
     private boolean onlyShapes = false;
+    
+    private Stroke oldStroke;
+    private Paint paintFill;
+    private Paint paintStroke;
 
     private PdfGraphics2D() {
     }
@@ -152,13 +157,14 @@ public class PdfGraphics2D extends Graphics2D {
         paint = Color.black;
         background = Color.white;
         setFont(new Font("sanserif", Font.PLAIN, 12));
-        stroke = new BasicStroke(1);
         this.cb = cb;
         cb.saveState();
         this.width = width;
         this.height = height;
         clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         clip(clip);
+        stroke = oldStroke = strokeOne;
+        setStrokeDiff(stroke, null);
         cb.saveState();
     }
     
@@ -170,13 +176,14 @@ public class PdfGraphics2D extends Graphics2D {
         paint = Color.black;
         background = Color.white;
         setFont(new Font("sanserif", Font.PLAIN, 12));
-        stroke = new BasicStroke(1);
         this.cb = cb;
         cb.saveState();
         this.width = width;
         this.height = height;
         clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         clip(clip);
+        stroke = oldStroke = strokeOne;
+        setStrokeDiff(stroke, null);
         cb.saveState();
     }
     
@@ -247,6 +254,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#drawString(String, float, float)
      */
     public void drawString(String s, float x, float y) {
+        setFillPaint();
         if (onlyShapes) {
             TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
             tl.draw(this, x, y);
@@ -322,7 +330,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#getDeviceConfiguration()
      */
     public GraphicsConfiguration getDeviceConfiguration() {
-        throw new UnsupportedOperationException();
+        return ((Graphics2D)dg2).getDeviceConfiguration();
     }
     
     /**
@@ -336,15 +344,109 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#setPaint(Paint)
      */
     public void setPaint(Paint paint) {
-        setPaint(paint, false, 0, 0);
+        if (paint == null)
+            return;
+        this.paint = paint;
+//        setPaint(paint, false, 0, 0);
+    }
+
+    private Stroke transformStroke(Stroke stroke) {
+        if (!(stroke instanceof BasicStroke))
+            return stroke;
+        BasicStroke st = (BasicStroke)stroke;
+        float scale = (float)transform.getScaleX();
+        float dash[] = st.getDashArray();
+        if (dash != null) {
+            for (int k = 0; k < dash.length; ++k)
+                dash[k] *= scale;
+        }
+        return new BasicStroke(st.getLineWidth() * scale, st.getEndCap(), st.getLineJoin(), st.getMiterLimit(), dash, st.getDashPhase() * scale);
+    }
+    
+    private void setStrokeDiff(Stroke newStroke, Stroke oldStroke) {
+        if (newStroke == oldStroke)
+            return;
+        if (!(newStroke instanceof BasicStroke))
+            return;
+        BasicStroke nStroke = (BasicStroke)newStroke;
+        boolean oldOk = (oldStroke instanceof BasicStroke);
+        BasicStroke oStroke = null;
+        if (oldOk)
+            oStroke = (BasicStroke)oldStroke;
+        if (!oldOk || nStroke.getLineWidth() != oStroke.getLineWidth())
+            cb.setLineWidth(nStroke.getLineWidth());
+        if (!oldOk || nStroke.getEndCap() != oStroke.getEndCap()) {
+            switch (nStroke.getEndCap()) {
+            case BasicStroke.CAP_BUTT:
+                cb.setLineCap(0);
+                break;
+            case BasicStroke.CAP_SQUARE:
+                cb.setLineCap(2);
+                break;
+            default:
+                cb.setLineCap(1);
+            }
+        }
+        if (!oldOk || nStroke.getLineJoin() != oStroke.getLineJoin()) {
+            switch (nStroke.getLineJoin()) {
+            case BasicStroke.JOIN_MITER:
+                cb.setLineJoin(0);
+                break;
+            case BasicStroke.JOIN_BEVEL:
+                cb.setLineJoin(2);
+                break;
+            default:
+                cb.setLineJoin(1);
+            }
+        }
+        if (!oldOk || nStroke.getMiterLimit() != oStroke.getMiterLimit())
+            cb.setMiterLimit(nStroke.getMiterLimit());
+        boolean makeDash;
+        if (oldOk) {
+            if (nStroke.getDashArray() != null) {
+                if (nStroke.getDashPhase() != oStroke.getDashPhase()) {
+                    makeDash = true;
+                }
+                else if (!java.util.Arrays.equals(nStroke.getDashArray(), oStroke.getDashArray())) {
+                    makeDash = true;
+                }
+                else
+                    makeDash = false;
+            }
+            else if (oStroke.getDashArray() != null) {
+                makeDash = true;
+            }
+            else
+                makeDash = false;
+        }
+        else {
+            makeDash = true;
+        }
+        if (makeDash) {
+            float dash[] = nStroke.getDashArray();
+            if (dash == null)
+                cb.setLiteral("[]0 d\n");
+            else {
+                cb.setLiteral('[');
+                int lim = dash.length;
+                for (int k = 0; k < lim; ++k) {
+                    cb.setLiteral(dash[k]);
+                    cb.setLiteral(' ');
+                }
+                cb.setLiteral(']');
+                cb.setLiteral(nStroke.getDashPhase());
+                cb.setLiteral(" d\n");
+            }
+        }
     }
     
     /**
      * @see Graphics2D#setStroke(Stroke)
      */
     public void setStroke(Stroke s) {
-        this.stroke = s;
+        this.stroke = transformStroke(s);
     }
+    
     
     /**
      * @see Graphics2D#setRenderingHint(Key, Object)
@@ -501,13 +603,16 @@ public class PdfGraphics2D extends Graphics2D {
         g2.paint = this.paint;
         g2.background = this.background;
         g2.setFont(this.font);
-        g2.stroke = this.stroke;
         g2.cb = this.cb.getDuplicate();
         g2.cb.saveState();
         g2.width = this.width;
         g2.height = this.height;
         g2.clip = new Area(new Rectangle2D.Float(0, 0, width, height));
         g2.clip(g2.clip);
+        g2.stroke = stroke;
+        g2.strokeOne = (BasicStroke)g2.transformStroke(g2.strokeOne);
+        g2.oldStroke = g2.strokeOne;
+        g2.setStrokeDiff(g2.oldStroke, null);
         g2.cb.saveState();
         g2.followPath(this.clip, CLIP);
         g2.kid = true;
@@ -544,7 +649,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#setXORMode(Color)
      */
     public void setXORMode(Color c1) {
-        throw new UnsupportedOperationException();
+        
     }
     
     /**
@@ -664,14 +769,15 @@ public class PdfGraphics2D extends Graphics2D {
             clip = new Area(s);
             followPath(s, CLIP);
         }
-        setPaint(paint);
+        paintFill = paintStroke = null;
+        oldStroke = strokeOne;
     }
     
     /**
      * @see Graphics#copyArea(int, int, int, int, int, int)
      */
     public void copyArea(int x, int y, int width, int height, int dx, int dy) {
-        throw new UnsupportedOperationException();
+        
     }
     
     /**
@@ -700,9 +806,10 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics#clearRect(int, int, int, int)
      */
     public void clearRect(int x, int y, int width, int height) {
+        Paint temp = paint;
         setPaint(background);
         fillRect(x,y,width,height);
-        setPaint(paint);
+        setPaint(temp);
     }
     
     /**
@@ -881,14 +988,20 @@ public class PdfGraphics2D extends Graphics2D {
     
     private void followPath(Shape s, int drawType) {
         if (s==null) return;
-        
         if (drawType==STROKE) {
-            s = stroke.createStrokedShape(s);
-            followPath(s, FILL);
-            return;
+            if (!(stroke instanceof BasicStroke)) {
+                s = stroke.createStrokedShape(s);
+                followPath(s, FILL);
+                return;
+            }
         }
-        
-        cb.newPath();
+        if (drawType==STROKE) {
+            setStrokeDiff(stroke, oldStroke);
+            oldStroke = stroke;
+            setStrokePaint();
+        }
+        else if (drawType==FILL)
+            setFillPaint();
         PathIterator points;
         if (drawType == CLIP)
             points = s.getPathIterator(IDENTITY);
@@ -922,18 +1035,21 @@ public class PdfGraphics2D extends Graphics2D {
             points.next();
         }
         
-        if (drawType==FILL) {
-            if (points.getWindingRule()==PathIterator.WIND_EVEN_ODD) {
+        switch (drawType) {
+        case FILL:
+            if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
                 cb.eoFill();
-            } else {
+            else
                 cb.fill();
-            }
-        } else {	//drawType==CLIP
-            if (points.getWindingRule()==PathIterator.WIND_EVEN_ODD) {
+            break;
+        case STROKE:
+            cb.stroke();
+            break;
+        default: //drawType==CLIP
+            if (points.getWindingRule() == PathIterator.WIND_EVEN_ODD)
                 cb.eoClip();
-            } else {
+            else
                 cb.clip();
-            }
         }
         cb.newPath();
     }
@@ -989,10 +1105,32 @@ public class PdfGraphics2D extends Graphics2D {
         return true;
     }
     
-    private void setPaint(Paint paint, boolean invert, double xoffset, double yoffset) {
-        this.paint = paint;
+    private boolean checkNewPaint(Paint oldPaint) {
+        if (paint == oldPaint)
+            return false;
+        return !((paint instanceof Color) && paint.equals(oldPaint));
+    }
+    
+    private void setFillPaint() {
+        if (checkNewPaint(paintFill)) {
+            paintFill = paint;
+            setPaint(false, 0, 0, true);
+        }
+    }
+    
+    private void setStrokePaint() {
+        if (checkNewPaint(paintStroke)) {
+            paintStroke = paint;
+            setPaint(false, 0, 0, false);
+        }
+    }
+    
+    private void setPaint(boolean invert, double xoffset, double yoffset, boolean fill) {
         if (paint instanceof Color) {
-            cb.setColorFill((Color)paint);
+            if (fill)
+                cb.setColorFill((Color)paint);
+            else
+                cb.setColorStroke((Color)paint);
         }
         else if (paint instanceof GradientPaint) {
             GradientPaint gp = (GradientPaint)paint;
@@ -1004,7 +1142,10 @@ public class PdfGraphics2D extends Graphics2D {
             Color c2 = gp.getColor2();
             PdfShading shading = PdfShading.simpleAxial(cb.getPdfWriter(), (float)p1.getX(), (float)p1.getY(), (float)p2.getX(), (float)p2.getY(), c1, c2);
             PdfShadingPattern pat = new PdfShadingPattern(shading);
-            cb.setShadingFill(pat);
+            if (fill)
+                cb.setShadingFill(pat);
+            else
+                cb.setShadingStroke(pat);
         }
         else {
             try {
@@ -1029,9 +1170,15 @@ public class PdfGraphics2D extends Graphics2D {
                 PdfPatternPainter pattern = cb.createPattern(width, height);
                 image.setAbsolutePosition(0,0);
                 pattern.addImage(image);
-                cb.setPatternFill(pattern);
+                if (fill)
+                    cb.setPatternFill(pattern);
+                else
+                    cb.setPatternStroke(pattern);
             } catch (Exception ex) {
-                cb.setColorFill(Color.gray);
+                if (fill)
+                    cb.setColorFill(Color.gray);
+                else
+                    cb.setColorStroke(Color.gray);
             }
         }
     }
@@ -1221,6 +1368,5 @@ public class PdfGraphics2D extends Graphics2D {
         public Rectangle2D getMaxCharBounds(Graphics context) {
             return getStringBounds("M", context);
         }
-        
     }
 }
