@@ -91,7 +91,6 @@ public class Executable {
 						"command.com /C start acrord32" + parameters + " \"" + fileName + "\"");
 			}
 			else {
-System.out.println("cmd /c start acrord32" + parameters + " \"" + fileName + "\"");
 				process = Runtime.getRuntime().exec(
 					"cmd /c start acrord32" + parameters + " \"" + fileName + "\"");
 			}
