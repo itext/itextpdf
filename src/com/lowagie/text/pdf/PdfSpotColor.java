@@ -63,10 +63,10 @@ public class PdfSpotColor{
 /*	The tint value */
     protected float tint;
     
-/*	The color name */
+/**	The color name */
     public PdfName name;
     
-/* The alternative color space */
+/** The alternative color space */
     public Color altcs;
     // constructors
     
@@ -84,10 +84,18 @@ public class PdfSpotColor{
         this.altcs = altcs;
     }
     
+    /**
+     * Gets the tint of the SpotColor.
+     * @return a float
+     */
     public float getTint() {
         return tint;
     }
     
+    /**
+     * Gets the alternative ColorSpace.
+     * @return a Colot
+     */
     public Color getAlternativeCS() {
         return altcs;
     }
