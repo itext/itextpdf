@@ -82,7 +82,10 @@ public class SAXiTextHandler extends DefaultHandler {
     
 /** This is the current chunk to which characters can be added. */
     protected boolean ignore = false;
-    
+
+/** This is a flag that can be set, if you want to open and close the Document-object yourself. */
+    protected boolean controlOpenClose = true;
+
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
  * triggered by the parser to actions on the <CODE>Document</CODE>-object.
@@ -95,7 +98,21 @@ public class SAXiTextHandler extends DefaultHandler {
         this.document = document;
         stack = new Stack();
     }
-    
+
+/**
+ * Sets the parameter that allows you to enable/disable the control over the Document.open() and Document.close() method.
+ * <P>
+ * If you set this parameter to true (= default), the parser will open the Document object when the start-root-tag is encounterd
+ * and close it when the end-root-tag is met. If you set it to false, you have to open and close the Document object
+ * yourself.
+ *
+ * @param   controlOpenClose    set this to false if you plan to open/close the Document yourself
+ */
+
+    public void setControlOpenClose(boolean controlOpenClose) {
+        this.controlOpenClose = controlOpenClose;
+    }
+
 /**
  * This method gets called when a start tag is encountered.
  *
@@ -403,7 +420,7 @@ public class SAXiTextHandler extends DefaultHandler {
                     throw new ExceptionConverter(de);
                 }
             }
-            document.open();
+            if (controlOpenClose) document.open();
         }
     }
     
@@ -686,7 +703,7 @@ public class SAXiTextHandler extends DefaultHandler {
                 catch(EmptyStackException ese) {
                     // empty on purpose
                 }
-                document.close();
+                if (controlOpenClose) document.close();
                 return;
             }
         }
