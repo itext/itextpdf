@@ -87,11 +87,23 @@ public class Jpeg extends Image implements Element {
 	 *
 	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
 	 *
+	 * @since		iText0.36
+	 */
+
+	public Jpeg(String filename) throws BadElementException, MalformedURLException, IOException {
+		this(new File(filename).toURL());
+	}
+
+	/**
+	 * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
+	 *
+	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 *
 	 * @since		iText0.31
 	 */
 
 	public Jpeg(String filename, int width, int height) throws BadElementException, MalformedURLException, IOException {
-		this(Image.toURL(filename), width, height);
+		this(new File(filename).toURL(), width, height);
 	}
 
 	/**
@@ -107,69 +119,47 @@ public class Jpeg extends Image implements Element {
 		scaledWidth = width;
 		scaledHeight = height;
 	}
-
-	/**
-	 * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
-	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-	 *
-	 * @since		iText0.36
-	 */
-
-	public Jpeg(String filename) throws BadElementException, MalformedURLException, IOException {
-		this(Image.toURL(filename));
-	}
-
-	/**
+    
+    /**
 	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
 	 *
-	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 *
-	 * @since		iText0.36
+	 * @param		url			the <CODE>URL</CODE> where the image can be found
 	 */
 
 	public Jpeg(URL url) throws BadElementException, IOException {
 		 super(url);
-		 type = JPEG;
-		 InputStream is = null;
-		 try {
-			is = url.openStream();
-			if (is.read() != 0xFF || is.read() != 0xD8)	{
-				throw new BadElementException(url.toString() + " is not a valid JPEG-file.");
-			}
-			while (true) {
-				if (is.read() == 0xFF) {
-					int marker = is.read();
-					int markertype = marker(marker);
-					if (markertype == VALID_MARKER) {
-						skip(is, 2);					   
-						if (is.read() != 0x08) {
-							throw new BadElementException(url.toString() + " must have 8 bits per component.");
-						}
-						scaledHeight = getShort(is);
-						setTop((int) scaledHeight);
-						scaledWidth = getShort(is);
-						setRight((int) scaledWidth);
-						colorspace = is.read();
-						break;
-					}
-					else if (markertype == UNSUPPORTED_MARKER) {
-						throw new BadElementException(url.toString() + ": unsupported JPEG marker: " + marker);
-					}
-					else if (markertype != NOPARAM_MARKER) {
-						skip(is, getShort(is) - 2);
-					}
-				}
-			}
-		 }
-		 finally {
-			if (is != null) {
-				is.close();
-			}
-			plainWidth = width();
-			plainHeight = height();
-		 }
+         processParameters();
 	}
+
+	/**
+	 * Constructs a <CODE>Jpeg</CODE>-object from memory.
+	 *
+	 * @param		img		the memory image
+	 *
+	 * @author		Paulo Soares
+	 */
+
+	public Jpeg(byte[] img) throws BadElementException, IOException {
+        super((URL)null);
+        rawData = img;
+        processParameters();
+    }
+    
+	/**
+	 * Constructs a <CODE>Jpeg</CODE>-object from memory.
+	 *
+	 * @param		img			the memory image.
+	 * @param		width		the width you want the image to have
+	 * @param		height		the height you want the image to have
+	 * 
+	 * @author		Paulo Soares
+	 */
+
+	public Jpeg(byte[] img, int width, int height) throws BadElementException, IOException {
+        this(img);
+		scaledWidth = width;
+		scaledHeight = height;
+    }
 
 // private static methods
 
@@ -209,6 +199,62 @@ public class Jpeg extends Image implements Element {
 		}
 		return NOT_A_MARKER;
 	}
+    
+// private methods
+
+	/**
+	 * This method checks if the image is a valid JPEG and processes some parameters.
+	 */
+
+    private final void processParameters() throws BadElementException, IOException {
+		type = JPEG;
+		InputStream is = null;
+		try {
+            String errorID;
+            if (rawData == null){
+			    is = url.openStream();
+                errorID = url.toString();
+            }
+            else{
+                is = new java.io.ByteArrayInputStream(rawData);
+                errorID = "Byte array";
+            }
+			if (is.read() != 0xFF || is.read() != 0xD8)	{
+				throw new BadElementException(errorID + " is not a valid JPEG-file.");
+			}
+			while (true) {
+				if (is.read() == 0xFF) {
+					int marker = is.read();
+					int markertype = marker(marker);
+					if (markertype == VALID_MARKER) {
+						skip(is, 2);					   
+						if (is.read() != 0x08) {
+							throw new BadElementException(errorID + " must have 8 bits per component.");
+						}
+						scaledHeight = getShort(is);
+						setTop((int) scaledHeight);
+						scaledWidth = getShort(is);
+						setRight((int) scaledWidth);
+						colorspace = is.read();
+						break;
+					}
+					else if (markertype == UNSUPPORTED_MARKER) {
+						throw new BadElementException(errorID + ": unsupported JPEG marker: " + marker);
+					}
+					else if (markertype != NOPARAM_MARKER) {
+						skip(is, getShort(is) - 2);
+					}
+				}
+			}
+		 }
+		 finally {
+			if (is != null) {
+				is.close();
+			}
+			plainWidth = width();
+			plainHeight = height();
+		 }
+    }
 
 // methods to retrieve information
 

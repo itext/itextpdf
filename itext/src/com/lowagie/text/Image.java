@@ -108,6 +108,9 @@ public abstract class Image extends Rectangle implements Element {
 	/** The URL of the image. */
 	protected URL url;
 
+	/** The raw data of the image. */
+	protected byte rawData[];
+
 	/** The alignment of the Image. */
 	protected int alignment;
 
@@ -137,6 +140,9 @@ public abstract class Image extends Rectangle implements Element {
 
 	/** this is the colorspace of a jpeg-image. */
 	protected int colorspace = -1;
+
+	/** this is the bits per component of the raw image. */
+	protected int bpc = 1;
 
 // constructors
 
@@ -191,7 +197,7 @@ public abstract class Image extends Rectangle implements Element {
 	 */
 
 	public static Image getInstance(String filename) throws BadElementException, MalformedURLException, IOException {
-		return getInstance(Image.toURL(filename));
+		return getInstance(new File(filename).toURL());
 	}
 
 	/**
@@ -210,6 +216,7 @@ public abstract class Image extends Rectangle implements Element {
 			int c1 = is.read();
 			int c2 = is.read();
 			is.close();
+            is = null;
 			if (c1 == 'G' && c2 == 'I') {
 				return new Gif(url);
 			}
@@ -228,6 +235,58 @@ public abstract class Image extends Rectangle implements Element {
 		}
 	}
 
+	/**
+	 * Gets an instance of an Image.
+	 * 
+	 * @param	a byte array
+	 * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
+	 *
+	 * @author	Paulo Soares
+	 */
+
+	public static Image getInstance(byte img[]) throws BadElementException, MalformedURLException, IOException {
+		InputStream is = null;
+		try {
+			is = new java.io.ByteArrayInputStream(img);
+			int c1 = is.read();
+			int c2 = is.read();
+			is.close();
+            is = null;
+			if (c1 == 'G' && c2 == 'I') {
+				return new Gif(img);
+			}
+			if (c1 == 0xFF && c2 == 0xD8) {
+				return new Jpeg(img);
+			}
+			if (c1 == Png.PNGID[0] && c2 == Png.PNGID[1]) {
+				return new Png(img);
+			}
+			throw new IOException("Could not find a recognized imageformat.");
+		}
+		finally {
+			if (is != null) {
+				is.close();
+			}
+		}
+	}
+
+	/**
+	 * Gets an instance of an Image in raw mode.
+	 * 
+	 * @param	width
+	 * @param	height
+	 * @param	components	1,3 or 4 for GrayScale, RGB and CMYK 
+	 * @param	bps			bits per component. Must be 1,2,4 or 8
+	 * @param	data		the image data
+	 * @return	an object of type <CODE>ImgRaw</CODE>
+	 *
+	 * @author	Paulo Soares
+	 */
+
+	public static Image getInstance(int width, int height, int components, int bpc, byte data[]) throws BadElementException, MalformedURLException, IOException {
+		return new ImgRaw(width, height, components, bpc, data);
+	}
+
 // methods to set information
 
 	/**
@@ -235,8 +294,6 @@ public abstract class Image extends Rectangle implements Element {
 	 *
 	 * @param		aligment		the alignment
 	 * @return		<CODE>void</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public void setAlignment(int alignment) {
@@ -257,6 +314,32 @@ public abstract class Image extends Rectangle implements Element {
 	}
 
 // methods to retrieve information
+
+	/**
+	 * Gets the bpc for the image.
+	 * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
+	 *
+	 * @return		a bpc value
+	 *
+	 * @author		Paulo Soares
+	 */
+
+	public int bpc() {
+		return bpc;
+	}
+
+	/**
+	 * Gets the raw data for the image.
+	 * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
+	 *
+	 * @return		the raw data
+	 *
+	 * @author		Paulo Soares
+	 */
+
+	public byte[] rawData() {
+		return rawData;
+	}
 
 	/**
 	 * Checks if the <CODE>Images</CODE> has to be added at an absolute position.
@@ -354,6 +437,18 @@ public abstract class Image extends Rectangle implements Element {
 
 	public boolean isPng() {
 		return type == PNG;
+	}
+
+	/**
+	 * Returns <CODE>true</CODE> if the image is a <CODE>ImgRaw</CODE>-object.
+	 *
+	 * @return		a <CODE>boolean</CODE>
+	 *
+	 * @author		Paulo Soares
+	 */
+
+	public boolean isImgRaw() {
+		return type == IMGRAW;
 	}
 
 	/**
@@ -568,35 +663,6 @@ public abstract class Image extends Rectangle implements Element {
 		while (size > 0) {
 			size -= is.skip(size);
 		}
-	}
-
-	/**
-	 * This method makes a valid URL from a given filename.
-	 * <P>
-	 * This method makes the conversion of this library from the JAVA 2 platform
-	 * to a JDK1.1.x-version easier.
-	 *
-	 * @param	filename	a given filename
-	 * @return	a valid URL
-	 *
-	 * @version		iText0.39
-	 * @author		Paulo Soares
-	 */
-
-	public static URL toURL(String filename) throws MalformedURLException {
-		File f = new File(filename);
-		String path = f.getAbsolutePath();
-		if (File.separatorChar != '/') {
-		    path = path.replace(File.separatorChar, '/');
-		}
-		if (!path.startsWith("/")) {
-		    path = "/" + path;
-		}
-		if (!path.endsWith("/") && f.isDirectory()) {
-		    path = path + "/";
-		}
-		
-		return new URL("file", "", path);
 	}
 
 	/**

@@ -61,6 +61,18 @@ public class Gif extends Image implements Element {
 	 * Constructs a <CODE>Gif</CODE>-object, using a <VAR>filename</VAR>.
 	 *
 	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 *
+	 * @since		iText0.36
+	 */
+
+	public Gif(String filename) throws BadElementException, MalformedURLException, IOException {
+		this(new File(filename).toURL());
+	}
+
+	/**
+	 * Constructs a <CODE>Gif</CODE>-object, using a <VAR>filename</VAR>.
+	 *
+	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
 	 * @param		width		the width you want the image to have
 	 * @param		height		the height you want the image to have
 	 *
@@ -68,7 +80,18 @@ public class Gif extends Image implements Element {
 	 */
 
 	public Gif(String filename, int width, int height)  throws BadElementException, MalformedURLException, IOException {
-		this(Image.toURL(filename), width, height);
+		this(new File(filename).toURL(), width, height);
+	}
+
+	/**
+	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
+	 *
+	 * @param		url			the <CODE>URL</CODE> where the image can be found.
+	 */
+
+	public Gif(URL url) throws BadElementException, IOException {
+		 super(url);
+		 processParameters();
 	}
 
 	/**
@@ -88,33 +111,56 @@ public class Gif extends Image implements Element {
 	}
 
 	/**
-	 * Constructs a <CODE>Gif</CODE>-object, using a <VAR>filename</VAR>.
+	 * Constructs a <CODE>Gif</CODE>-object from memory.
 	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 * @param		img		the memory image
 	 *
-	 * @since		iText0.36
+	 * @author		Paulo Soares
 	 */
 
-	public Gif(String filename) throws BadElementException, MalformedURLException, IOException {
-		this(Image.toURL(filename));
-	}
+	public Gif(byte[] img) throws BadElementException, IOException {
+		super((URL)null);
+		rawData = img;
+		processParameters();
+	}     
 
 	/**
-	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
+	 * Constructs a <CODE>Gif</CODE>-object from memory.
 	 *
-	 * @param		url			the <CODE>URL</CODE> where the image can be found.
+	 * @param		img			the memory image
+	 * @param		width		the width you want the image to have
+	 * @param		height		the height you want the image to have
 	 *
-	 * @since		iText0.36
+	 * @author		Paulo Soares
 	 */
 
-	public Gif(URL url) throws BadElementException, IOException {
-		 super(url);
+	public Gif(byte[] img, int width, int height) throws BadElementException, IOException {
+		this(img);
+		scaledWidth = width;
+		scaledHeight = height;
+	}
+    
+// private methods
+
+	/**
+	 * This method checks if the image is a valid GIF and processes some parameters.
+	 */
+
+    private final void processParameters() throws BadElementException, IOException {
 		 type = GIF;
 		 InputStream is = null;
 		 try {
-			is = url.openStream();
+            String errorID;
+            if (rawData == null){
+			    is = url.openStream();
+                errorID = url.toString();
+            }
+            else{
+                is = new java.io.ByteArrayInputStream(rawData);
+                errorID = "Byte array";
+            }
 			if (is.read() != 'G' || is.read() != 'I' || is.read() != 'F')	{
-				throw new BadElementException(url.toString() + " is not a valid GIF-file.");
+				throw new BadElementException(errorID + " is not a valid GIF-file.");
 			}
 			skip(is, 3);
 			scaledWidth = is.read() + (is.read() << 8);

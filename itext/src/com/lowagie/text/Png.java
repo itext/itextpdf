@@ -84,8 +84,33 @@ public class Png extends Image implements Element {
 	 * @since		iText0.36
 	 */
 
+	public Png(String filename) throws MalformedURLException, BadElementException, IOException {
+		this(new File(filename).toURL());
+	}
+
+	/**
+	 * Constructs a <CODE>Png</CODE>-object, using a <VAR>filename</VAR>.
+	 *
+	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 *
+	 * @since		iText0.36
+	 */
+
 	public Png(String filename, int width, int height) throws MalformedURLException, BadElementException, IOException {
-		this(Image.toURL(filename), width, height);
+		this(new File(filename).toURL(), width, height);
+	}
+    
+	/**
+	 * Constructs a <CODE>Png</CODE>-object, using an <VAR>url</VAR>.
+	 *
+	 * @param		url			the <CODE>URL</CODE> where the image can be found.
+	 *
+	 * @since		iText0.36
+	 */
+
+	public Png(URL url) throws BadElementException, IOException {
+        super(url);
+        processParameters();
 	}
 
 	/**
@@ -103,59 +128,30 @@ public class Png extends Image implements Element {
 	}
 
 	/**
-	 * Constructs a <CODE>Png</CODE>-object, using a <VAR>filename</VAR>.
+	 * Constructs a <CODE>Png</CODE>-object from memory.
 	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 * @param		img			the memory image.
 	 *
-	 * @since		iText0.36
 	 */
 
-	public Png(String filename) throws MalformedURLException, BadElementException, IOException {
-		this(Image.toURL(filename));
-	}
-
+	public Png(byte[] img) throws BadElementException, IOException {
+        super((URL)null);
+        rawData = img;
+        processParameters();
+    }
+    
 	/**
-	 * Constructs a <CODE>Png</CODE>-object, using an <VAR>url</VAR>.
+	 * Constructs a <CODE>Png</CODE>-object from memory.
 	 *
-	 * @param		url			the <CODE>URL</CODE> where the image can be found.
+	 * @param		img			the memory image.
 	 *
-	 * @since		iText0.36
 	 */
 
-	public Png(URL url) throws BadElementException, IOException {
-		 super(url);
-		 type = PNG;
-		 InputStream is = null;
-		 try {
-			 is = url.openStream();
-			 for (int i = 0; i < PNGID.length; i++) {
-				 if (PNGID[i] != is.read())	{
-					 throw new BadElementException(url.toString() + " is not a valid PNG-file.");
-				 }
-			 }
-			 while(true) {
-				int len = getInt(is);
-				if (IHDR.equals(getString(is))) {
-					scaledWidth = getInt(is);
-					setRight((int) scaledWidth);
-					scaledHeight = getInt(is);
-					setTop((int) scaledHeight);
-					break;
-				}
-				if (IEND.equals(getString(is))) {
-					break;
-				}
-				skip(is, len + 4);
-			 }
-		 }
-		 finally {
-			if (is != null) {
-				is.close();
-			}
-			plainWidth = width();
-			plainHeight = height();
-		 }
-	}
+	public Png(byte[] img, int width, int height) throws BadElementException, IOException {
+        this(img);
+		scaledWidth = width;
+		scaledHeight = height;
+    }
 
 // private methods
 
@@ -183,6 +179,54 @@ public class Png extends Image implements Element {
 			buf.append((char)is.read());
 		}
 		return buf.toString();
+	}
+    
+// private methods
+
+	/**
+	 * This method checks if the image is a valid JPEG and processes some parameters.
+	 */
+
+    private final void processParameters() throws BadElementException, IOException {
+		 type = PNG;
+		 InputStream is = null;
+		 try {
+            String errorID;
+            if (rawData == null){
+			    is = url.openStream();
+                errorID = url.toString();
+            }
+            else{
+                is = new java.io.ByteArrayInputStream(rawData);
+                errorID = "Byte array";
+            }
+			 for (int i = 0; i < PNGID.length; i++) {
+				 if (PNGID[i] != is.read())	{
+					 throw new BadElementException(errorID + " is not a valid PNG-file.");
+				 }
+			 }
+			 while(true) {
+				int len = getInt(is);
+				if (IHDR.equals(getString(is))) {
+					scaledWidth = getInt(is);
+					setRight((int) scaledWidth);
+					scaledHeight = getInt(is);
+					setTop((int) scaledHeight);
+					break;
+				}
+				if (IEND.equals(getString(is))) {
+					break;
+				}
+				skip(is, len + 4);
+			 }
+		 }
+		 finally {
+			if (is != null) {
+				is.close();
+			}
+			plainWidth = width();
+			plainHeight = height();
+		 }
 	}
 
 // methods to retrieve information

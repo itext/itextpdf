@@ -990,6 +990,7 @@ class PdfDocument extends Document implements DocListener {
 			case Element.GIF:
 			case Element.JPEG:
 			case Element.PNG:
+			case Element.IMGRAW:
 				carriageReturn(); 
 				add((Image) element);
 				break;
