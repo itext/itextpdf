@@ -294,7 +294,7 @@ public class PdfCell extends Rectangle {
             lineHeight = line.height();
             currentPosition -= lineHeight;
             // if the currentPosition is higher than the bottom, we add the line to the result
-            if (currentPosition > bottom) {
+            if (currentPosition > (bottom + 2.0f * cellpadding + 0.4f * leading)) { // bugfix by Tom Ring and Veerendra Namineni
                 result.add(line);
                 // as soon as a line is part of the result, we blank it out, except for table headers
                 if (!header) {
