@@ -198,6 +198,12 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	}
 	
 	/**
+	 * Indicates that the value of an argument has changed.
+	 * @param arg the argument that has changed
+	 */
+	public abstract void valueHasChanged(ToolArgument arg);
+	
+	/**
 	 * @return Returns the arguments.
 	 */
 	public ArrayList getArguments() {

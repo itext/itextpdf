@@ -66,6 +66,9 @@ import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.tools.AbstractTool;
+import com.lowagie.tools.arguments.FileArgument;
+import com.lowagie.tools.arguments.ImageArgument;
+import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
@@ -79,12 +82,12 @@ public class DvdCover extends AbstractTool {
 	public DvdCover() {
 		internalFrame = new JInternalFrame("Make your own DVD Cover", true, true, true);
 		
-		arguments.add(new ToolArgument(internalFrame, "destfile", "The file to which the PDF has to be written", File.class.getName()));
-		arguments.add(new ToolArgument(internalFrame, "title", "The title of the DVD", String.class.getName()));
-		arguments.add(new ToolArgument(internalFrame, "backgroundcolor", "The backgroundcolor of the DVD Cover (for instance FFFFFF)", Color.class.getName()));
-		arguments.add(new ToolArgument(internalFrame, "front", "The front image of the DVD Cover", Image.class.getName()));
-		arguments.add(new ToolArgument(internalFrame, "back", "The back image of the DVD Cover", Image.class.getName()));
-		arguments.add(new ToolArgument(internalFrame, "side", "The side image of the DVD Cover", Image.class.getName()));
+		arguments.add(new FileArgument(this, "destfile", "The file to which the PDF has to be written", true, new PdfFilter()));
+		arguments.add(new ToolArgument(this, "title", "The title of the DVD", String.class.getName()));
+		arguments.add(new ToolArgument(this, "backgroundcolor", "The backgroundcolor of the DVD Cover (for instance 0xFFFFFF)", Color.class.getName()));
+		arguments.add(new ImageArgument(this, "front", "The front image of the DVD Cover"));
+		arguments.add(new ImageArgument(this, "back", "The back image of the DVD Cover"));
+		arguments.add(new ImageArgument(this, "side", "The side image of the DVD Cover"));
 		
 		internalFrame.setSize(500, 300);
 		internalFrame.setJMenuBar(getMenubar());
@@ -179,6 +182,13 @@ public class DvdCover extends AbstractTool {
         		    JOptionPane.ERROR_MESSAGE);
             System.err.println(e.getMessage());
         }
-    }	
+    }
+
+	/**
+	 * @see com.lowagie.tools.AbstractTool#valueHasChanged(com.lowagie.tools.arguments.ToolArgument)
+	 */
+	public void valueHasChanged(ToolArgument arg) {
+		// do nothing
+	}	
 
 }
