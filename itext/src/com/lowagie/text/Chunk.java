@@ -80,74 +80,74 @@ import com.lowagie.text.markup.MarkupTags;
  */
 
 public class Chunk implements Element, MarkupAttributes {
-    
+
 // public static membervariables
-    
+
 /** This is a Chunk containing a newline. */
     public static final Chunk NEWLINE = new Chunk("\n");
-    
+
 /** Key for sub/superscript. */
     public static final String SUBSUPSCRIPT = "SUBSUPSCRIPT";
-    
+
 /** Key for underline. */
     public static final String UNDERLINE = "UNDERLINE";
-    
+
 /** Key for strikethru. */
     public static final String STRIKETHRU = "STRIKETHRU";
-    
+
 /** Key for color. */
     public static final String COLOR = "COLOR";
-    
+
 /** Key for encoding. */
     public static final String ENCODING = "ENCODING";
-    
+
 /** Key for remote goto. */
     public static final String REMOTEGOTO = "REMOTEGOTO";
-    
+
 /** Key for local goto. */
     public static final String LOCALGOTO = "LOCALGOTO";
-    
+
 /** Key for local destination. */
     public static final String LOCALDESTINATION = "LOCALDESTINATION";
-    
+
 /** Key for image. */
     public static final String IMAGE = "IMAGE";
-    
+
 /** Key for generic tag. */
     public static final String GENERICTAG = "GENERICTAG";
-    
+
 /** Key for newpage. */
     public static final String NEWPAGE = "NEWPAGE";
-    
+
 /** Key for split character. */
     public static final String SPLITCHARACTER = "SPLITCHARACTER";
-    
+
 /** Key for Action. */
     public static final String ACTION = "ACTION";
-    
+
 /** Key for background. */
     public static final String BACKGROUND = "BACKGROUND";
-    
+
 /** Key for annotation. */
     public static final String PDFANNOTATION = "PDFANNOTATION";
-    
+
 /** Key for hyphenation. */
     public static final String HYPHENATION = "HYPHENATION";
-    
+
 // member variables
-    
+
 /** This is the content of this chunk of text. */
     protected StringBuffer content = null;
-    
+
 /** This is the <CODE>Font</CODE> of this chunk of text. */
     protected Font font = null;
-    
+
 /** Contains some of the attributes for this Chunk. */
     protected HashMap attributes = null;
 
 /** Contains extra markupAttributes */
     protected Properties markupAttributes = null;
-    
+
 // constructors
 
 /**
@@ -155,29 +155,29 @@ public class Chunk implements Element, MarkupAttributes {
  */
     protected Chunk() {
     }
-    
+
 /**
  * Constructs a chunk of text with a certain content and a certain <CODE>Font</CODE>.
  *
  * @param	content		the content
  * @param	font		the font
  */
-    
+
     public Chunk(String content, Font font) {
         this.content = new StringBuffer(content);
         this.font = font;
     }
-    
+
 /**
  * Constructs a chunk of text with a certain content, without specifying a <CODE>Font</CODE>.
  *
  * @param	content		the content
  */
-    
+
     public Chunk(String content) {
         this(content, new Font());
     }
-    
+
 /**
  * Constructs a chunk containing an <CODE>Image</CODE>.
  *
@@ -185,19 +185,33 @@ public class Chunk implements Element, MarkupAttributes {
  * @param offsetX the image offset in the x direction
  * @param offsetY the image offset in the y direction
  */
-    
+
     public Chunk(Image image, float offsetX, float offsetY) {
         this("*", new Font());
-        setAttribute(IMAGE, new Object[]{image, new Float(offsetX), new Float(offsetY)});
+        setAttribute(IMAGE, new Object[]{image, new Float(offsetX), new Float(offsetY), new Boolean(false)});
     }
-    
+
+/**
+ * Constructs a chunk containing an <CODE>Image</CODE>.
+ *
+ * @param image         the image
+ * @param offsetX       the image offset in the x direction
+ * @param offsetY       the image offset in the y direction
+ * @param changeLeading true if the leading has to be adapted to the image
+ */
+
+    public Chunk(Image image, float offsetX, float offsetY, boolean changeLeading) {
+        this("*", new Font());
+        setAttribute(IMAGE, new Object[]{image, new Float(offsetX), new Float(offsetY), new Boolean(changeLeading)});
+    }
+
 /**
  * Returns a <CODE>Chunk</CODE> that has been constructed taking in account
  * the value of some <VAR>attributes</VAR>.
  *
  * @param	attributes		Some attributes
  */
-    
+
     public Chunk(Properties attributes) {
         this("", FontFactory.getFont(attributes));
         String value;
@@ -210,7 +224,7 @@ public class Chunk implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.REMOTEGOTO)) != null) {
             String destination = (String) attributes.remove(ElementTags.DESTINATION);
             String page = (String) attributes.remove(ElementTags.PAGE);
-            if (page != null) { 
+            if (page != null) {
                 setRemoteGoto(value, Integer.valueOf(page).intValue());
             }
             else if (destination != null) {
@@ -232,9 +246,9 @@ public class Chunk implements Element, MarkupAttributes {
         }
         if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
-    
+
     // implementation of the Element-methods
-    
+
 /**
  * Processes the element by adding it (or the different parts) to an
  * <CODE>ElementListener</CODE>.
@@ -242,7 +256,7 @@ public class Chunk implements Element, MarkupAttributes {
  * @param	listener	an <CODE>ElementListener</CODE>
  * @return	<CODE>true</CODE> if the element was processed successfully
  */
-    
+
     public boolean process(ElementListener listener) {
         try {
             return listener.add(this);
@@ -251,84 +265,84 @@ public class Chunk implements Element, MarkupAttributes {
             return false;
         }
     }
-    
+
 /**
  * Gets the type of the text element.
  *
  * @return	a type
  */
-    
+
     public int type() {
         return Element.CHUNK;
     }
-    
+
 /**
  * Gets all the chunks in this element.
  *
  * @return	an <CODE>ArrayList</CODE>
  */
-    
+
     public ArrayList getChunks() {
         ArrayList tmp = new ArrayList();
         tmp.add(this);
         return tmp;
     }
-    
+
     // methods
-    
+
 /**
  * appends some text to this <CODE>Chunk</CODE>.
  *
  * @param	string <CODE>String</CODE>
  * @return	a <CODE>StringBuffer</CODE>
  */
-    
+
     public StringBuffer append(String string) {
         return content.append(string);
     }
-    
+
     // methods to retrieve information
-    
+
 /**
  * Gets the font of this <CODE>Chunk</CODE>.
  *
  * @return	a <CODE>Font</CODE>
  */
-    
+
     public Font font() {
         return font;
     }
-    
+
 /**
  * Sets the font of this <CODE>Chunk</CODE>.
  *
  * @param	font a <CODE>Font</CODE>
  */
-    
+
     public void setFont(Font font) {
         this.font = font;
     }
-    
+
 /**
  * Returns the content of this <CODE>Chunk</CODE>.
  *
  * @return	a <CODE>String</CODE>
  */
-    
+
     public String content() {
         return content.toString();
     }
-    
+
 /**
  * Checks is this <CODE>Chunk</CODE> is empty.
  *
  * @return	<CODE>false</CODE> if the Chunk contains other characters than space.
  */
-    
+
     public boolean isEmpty() {
         return (content.toString().trim().length() == 0) && (content.toString().indexOf("\n") == -1) && (attributes == null);
     }
-    
+
 /**
  * Sets the text displacement relative to the baseline. Positive values rise the text,
  * negative values lower the text.
@@ -337,44 +351,44 @@ public class Chunk implements Element, MarkupAttributes {
  * @param rise the displacement in points
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setTextRise(float rise) {
         return setAttribute(SUBSUPSCRIPT, new Float(rise));
     }
-    
+
 /**
  * Sets an action for this <CODE>Chunk</CODE>.
  *
  * @param action the action
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setAction(PdfAction action) {
         return setAttribute(ACTION, action);
     }
-    
+
 /**
  * Sets an anchor for this <CODE>Chunk</CODE>.
  *
  * @param url the <CODE>URL</CODE> to link to
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setAnchor(URL url) {
         return setAttribute(ACTION, new PdfAction(url.toExternalForm()));
     }
-    
+
 /**
  * Sets an anchor for this <CODE>Chunk</CODE>.
  *
  * @param url the url to link to
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setAnchor(String url) {
         return setAttribute(ACTION, new PdfAction(url));
     }
-    
+
 /**
  * Sets a local goto for this <CODE>Chunk</CODE>.
  * <P>
@@ -382,11 +396,11 @@ public class Chunk implements Element, MarkupAttributes {
  * @param name the name of the destination to go to
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setLocalGoto(String name) {
         return setAttribute(LOCALGOTO, name);
     }
-    
+
 /**
  * Sets the color of the background <CODE>Chunk</CODE>.
  * @param color the color of the background
@@ -395,7 +409,7 @@ public class Chunk implements Element, MarkupAttributes {
     public Chunk setBackground(Color color) {
         return setAttribute(BACKGROUND, color);
     }
-    
+
 /**
  * Sets a generic annotation to this <CODE>Chunk</CODE>.
  * @param annotation the annotation
@@ -404,7 +418,7 @@ public class Chunk implements Element, MarkupAttributes {
     public Chunk setAnnotation(PdfAnnotation annotation) {
         return setAttribute(PDFANNOTATION, annotation);
     }
-    
+
 /** sets the hyphenation engine to this <CODE>Chunk</CODE>.
  * @param hyphenation the hyphenation engine
  * @return this <CODE>Chunk</CODE>
@@ -412,7 +426,7 @@ public class Chunk implements Element, MarkupAttributes {
     public Chunk setHyphenation(HyphenationEvent hyphenation) {
         return setAttribute(HYPHENATION, hyphenation);
     }
-    
+
 /**
  * Sets a goto for a remote destination for this <CODE>Chunk</CODE>.
  *
@@ -420,11 +434,11 @@ public class Chunk implements Element, MarkupAttributes {
  * @param name the name of the destination to go to
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setRemoteGoto(String filename, String name) {
         return setAttribute(REMOTEGOTO, new Object[]{filename, name});
     }
-    
+
 /**
  * Sets a goto for a remote destination for this <CODE>Chunk</CODE>.
  *
@@ -432,11 +446,11 @@ public class Chunk implements Element, MarkupAttributes {
  * @param page the page of the destination to go to. First page is 1
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setRemoteGoto(String filename, int page) {
         return setAttribute(REMOTEGOTO, new Object[]{filename, new Integer(page)});
     }
-    
+
 /**
  * Sets a local destination for this <CODE>Chunk</CODE>.
  *
@@ -446,7 +460,7 @@ public class Chunk implements Element, MarkupAttributes {
     public Chunk setLocalDestination(String name) {
         return setAttribute(LOCALDESTINATION, name);
     }
-    
+
 /**
  * Sets the generic tag <CODE>Chunk</CODE>.
  * <P>
@@ -455,31 +469,31 @@ public class Chunk implements Element, MarkupAttributes {
  * @param text the text for the tag
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setGenericTag(String text) {
         return setAttribute(GENERICTAG, text);
     }
-    
+
 /**
  * Sets the split characters.
  *
  * @param splitCharacter the <CODE>SplitCharacter</CODE> interface
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setSplitCharacter(SplitCharacter splitCharacter) {
         return setAttribute(SPLITCHARACTER, splitCharacter);
     }
-    
+
 /**
  * Sets a new page tag..
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     public Chunk setNewPage() {
         return setAttribute(NEWPAGE, null);
     }
-    
+
 /**
  * Sets an arbitrary attribute.
  *
@@ -487,14 +501,14 @@ public class Chunk implements Element, MarkupAttributes {
  * @param obj the value of the attribute
  * @return this <CODE>Chunk</CODE>
  */
-    
+
     private Chunk setAttribute(String name, Object obj) {
         if (attributes == null)
             attributes = new HashMap();
         attributes.put(name, obj);
         return this;
     }
-    
+
 /**
  * Gets the attributes for this <CODE>Chunk</CODE>.
  * <P>
@@ -502,25 +516,25 @@ public class Chunk implements Element, MarkupAttributes {
  *
  * @return the attributes for this <CODE>Chunk</CODE>
  */
-    
+
     public HashMap getAttributes() {
         return attributes;
     }
-    
+
 /**
  * Checks the attributes of this <CODE>Chunk</CODE>.
  *
  * @return false if there aren't any.
  */
-    
+
     public boolean hasAttributes() {
         return attributes != null;
     }
-    
+
 /**
  * Returns the image.
  */
-    
+
     public Image getImage() {
         if (attributes == null) return null;
         Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
@@ -530,19 +544,19 @@ public class Chunk implements Element, MarkupAttributes {
             return (Image)obj[0];
         }
     }
-    
+
 /**
  * Checks if a given tag corresponds with this object.
  *
  * @param   tag     the given tag
  * @return  true if the tag corresponds
  */
-    
+
     public static boolean isTag(String tag) {
         return ElementTags.CHUNK.equals(tag);
     }
-    
-    
+
+
 /**
  * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
@@ -550,35 +564,35 @@ public class Chunk implements Element, MarkupAttributes {
         markupAttributes = (markupAttributes == null) ? new Properties() : markupAttributes;
         markupAttributes.put(name, value);
     }
-    
+
 /**
  * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
  */
     public void setMarkupAttributes(Properties markupAttributes) {
         this.markupAttributes = markupAttributes;
     }
-    
+
 /**
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
     public String getMarkupAttribute(String name) {
         return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
     }
-    
+
 /**
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
  */
     public Set getMarkupAttributeNames() {
         return getKeySet(markupAttributes);
     }
-    
+
 /**
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
  */
     public Properties getMarkupAttributes() {
         return markupAttributes;
     }
-    
+
     public static Set getKeySet(Hashtable table) {
         return (table == null) ? Collections.EMPTY_SET : table.keySet();
     }

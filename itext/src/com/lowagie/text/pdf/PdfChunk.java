@@ -135,7 +135,10 @@ class PdfChunk implements SplitCharacter{
     
 /** The offset in the y direction for the image */
     protected float offsetY;
-    
+
+/** Indicates if the height and offset of the Image has to be taken into account */
+    protected boolean changeLeading = false;
+
     // constructors
     
 /**
@@ -159,6 +162,7 @@ class PdfChunk implements SplitCharacter{
             image = (Image)obj[0];
             offsetX = ((Float)obj[1]).floatValue();
             offsetY = ((Float)obj[2]).floatValue();
+            changeLeading = ((Boolean)obj[3]).booleanValue();
         }
         encoding = font.getFont().getEncoding();
     }
@@ -752,5 +756,9 @@ class PdfChunk implements SplitCharacter{
             }
         }
         return string;
+    }
+
+    public boolean changeLeading() {
+        return changeLeading;
     }
 }

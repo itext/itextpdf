@@ -356,20 +356,25 @@ public class PdfLine {
     {
         return originalWidth;
     }
-    
-/**
- * Gets the maximum size of all the fonts used in this line.
- * @return maximum size of all the fonts used in this line
- */
-    float getMaxSize()
-    {
-        float maxSize = 0;
-        for (int k = 0; k < line.size(); ++k) {
-            PdfChunk chunk = (PdfChunk)line.get(k);
-            float size = chunk.font().size();
-            if (size > maxSize)
-                maxSize = size;
-        }
-        return maxSize;
+
+    /**
+	 * Gets the maximum size of all the fonts used in this line
+     * including images (if there are images in the line and if
+     * the leading has to be changed).
+	 * @return maximum size of all the fonts used in this line
+	 */
+
+    float getMaxSize() {
+		float maxSize = 0;
+		for (int k = 0; k < line.size(); ++k) {
+			PdfChunk chunk = (PdfChunk)line.get(k);
+			if (!chunk.isImage()) {
+				maxSize = Math.max(chunk.font().size(), maxSize);
+			}
+            else if (chunk.changeLeading()) {
+				maxSize = Math.max(chunk.getImage().scaledHeight() + chunk.getImageOffsetY() , maxSize);
+			}
+		}
+		return maxSize;
     }
 }
