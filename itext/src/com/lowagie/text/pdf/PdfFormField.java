@@ -101,6 +101,7 @@ public class PdfFormField extends PdfAnnotation {
     
     public PdfFormField(PdfWriter writer, float llx, float lly, float urx, float ury, PdfAction action) {
         super(writer, llx, lly, urx, ury, action);
+        put(PdfName.TYPE, PdfName.ANNOT);
         put(PdfName.SUBTYPE, PdfName.WIDGET);
         annotation = true;
     }
@@ -126,11 +127,15 @@ public class PdfFormField extends PdfAnnotation {
         return field;
     }
     
+    public void setButton(int flags) {
+        put(PdfName.FT, PdfName.BTN);
+        if (flags != 0)
+            put(PdfName.FF, new PdfNumber(flags));
+    }
+    
     protected static PdfFormField createButton(PdfWriter writer, int flags) {
         PdfFormField field = new PdfFormField(writer);
-        field.put(PdfName.FT, PdfName.BTN);
-        if (flags != 0)
-            field.put(PdfName.FF, new PdfNumber(flags));
+        field.setButton(flags);
         return field;
     }
     
