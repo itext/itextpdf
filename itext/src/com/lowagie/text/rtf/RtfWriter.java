@@ -312,13 +312,13 @@ public class RtfWriter extends DocWriter implements DocListener {
     public static final byte[] alignLeft = "ql".getBytes();
 
     /** Text alignment center tag. */
-    private static final byte[] alignCenter = "qc".getBytes();
+    public static final byte[] alignCenter = "qc".getBytes();
 
     /** Text alignment right tag. */
-    private static final byte[] alignRight = "qr".getBytes();
+    public static final byte[] alignRight = "qr".getBytes();
 
     /** Text alignment justify tag. */
-    private static final byte[] alignJustify = "qj".getBytes();
+    public static final byte[] alignJustify = "qj".getBytes();
 
     /**
      * Colors
