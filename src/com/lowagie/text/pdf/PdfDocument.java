@@ -1031,6 +1031,7 @@ class PdfDocument extends Document implements DocListener {
 				lines.add(line);
 				currentHeight += line.height() - pagetop + indentTop();
 				line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
+				pageEmpty = false;
 				break;
 
 			case Element.GIF:
