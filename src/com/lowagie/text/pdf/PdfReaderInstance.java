@@ -155,6 +155,8 @@ class PdfReaderInstance {
                             b = PdfReader.ASCIIHexDecode(b);
                         else if (name.equals("/ASCII85Decode") || name.equals("/A85"))
                             b = PdfReader.ASCII85Decode(b);
+                        else if (name.equals("/LZWDecode"))
+                            b = PdfReader.LZWDecode(b);
                         else
                             throw new IOException("The filter " + name + " is not supported.");
                     }
