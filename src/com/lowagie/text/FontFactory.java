@@ -206,7 +206,7 @@ public class FontFactory extends java.lang.Object {
  * @param   path    the path to a ttf- or ttc-file
  */
     
-    public static boolean register(String path) {
+    public static void register(String path) {
         if (trueTypeFonts == null) trueTypeFonts = new Properties();
         try {
             if (path.toLowerCase().endsWith(".ttf")) {
@@ -227,7 +227,6 @@ public class FontFactory extends java.lang.Object {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        return false;
     }
     
 /**
