@@ -46,15 +46,14 @@
  */
 package com.lowagie.text.pdf;
 
-import java.io.OutputStream;
 import java.io.IOException;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.DocWriter;
-import java.util.HashMap;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
-import java.awt.Color;
 
 class PdfStamperImp extends PdfWriter {
     RandomAccessFileOrArray file;
@@ -125,12 +124,12 @@ class PdfStamperImp extends PdfWriter {
         PRIndirectReference iRoot = (PRIndirectReference)reader.trailer.get(PdfName.ROOT);
         PdfIndirectReference root = new PdfIndirectReference(0, getNewObjectNumber(reader, iRoot.getNumber(), 0));
         PdfIndirectReference info = null;
-        PdfDictionary oldInfo = (PdfDictionary)reader.getPdfObject(iInfo);
+        PdfDictionary oldInfo = (PdfDictionary)PdfReader.getPdfObject(iInfo);
         PdfDictionary newInfo = new PdfDictionary();
         if (oldInfo != null) {
             for (Iterator i = oldInfo.getKeys().iterator(); i.hasNext();) {
                 PdfName key = (PdfName)i.next();
-                PdfObject value = reader.getPdfObject(oldInfo.get(key));
+                PdfObject value = PdfReader.getPdfObject(oldInfo.get(key));
                 newInfo.put(key, value);
             }
         }
@@ -406,7 +405,7 @@ class PdfStamperImp extends PdfWriter {
             this.pageNumber = pageNumber;
             pageResources = new PageResources();
             PdfDictionary dic = reader.getPageN(pageNumber);
-            PdfDictionary resources = (PdfDictionary)reader.getPdfObject(dic.get(PdfName.RESOURCES));
+            PdfDictionary resources = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.RESOURCES));
             pageResources.setOriginalResources(resources, reader);
         }
     }

@@ -46,15 +46,16 @@
  */
 package com.lowagie.text.pdf;
 
-import java.io.OutputStream;
 import java.io.IOException;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.DocWriter;
-import java.util.HashMap;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-import com.lowagie.text.Rectangle;
+
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.DocumentException;
+
 /** Writes an FDF form.
  * @author Paulo Soares (psoares@consiste.pt)
  */

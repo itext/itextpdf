@@ -51,17 +51,17 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.*;
-import com.lowagie.text.rtf.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import java.io.*;
+import com.lowagie.text.Font;
 
 /**
  * A rtf page number field.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
- * @version $Revision$Date: 2002/11/07 21:44:11 $
+ * @version $Revision$Date: 2003/03/18 14:37:34 $
  *
  * Modified by Mark Hall (mhall@austromail.at) 14.04.2002
  */

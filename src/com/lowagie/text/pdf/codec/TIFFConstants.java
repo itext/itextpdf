@@ -31,9 +31,6 @@
  * the design, construction, operation or maintenance of any nuclear facility.
  */
 package com.lowagie.text.pdf.codec;
-import java.io.File;
-import java.io.InputStream;
-import java.io.IOException;
 
 /**
  * A baseline TIFF reader. The reader has some functionality in addition to

@@ -50,11 +50,11 @@
 
 package com.lowagie.text.pdf;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
-import java.io.IOException;
 
 /**
  * <CODE>PdfPages</CODE> is the PDF Pages-object.

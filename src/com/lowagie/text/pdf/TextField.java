@@ -576,31 +576,31 @@ public class TextField {
             field.setMKBackgroundColor(backgroundColor);
         switch (visibility) {
             case HIDDEN:
-                field.setFlags(field.FLAGS_PRINT | field.FLAGS_HIDDEN);
+                field.setFlags(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_HIDDEN);
                 break;
             case VISIBLE_BUT_DOES_NOT_PRINT:
                 break;
             case HIDDEN_BUT_PRINTABLE:
-                field.setFlags(field.FLAGS_PRINT | field.FLAGS_NOVIEW);
+                field.setFlags(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_NOVIEW);
                 break;
             default:
-                field.setFlags(field.FLAGS_PRINT);
+                field.setFlags(PdfAnnotation.FLAGS_PRINT);
                 break;
         }
         if ((options & READ_ONLY) != 0)
-            field.setFieldFlags(field.FF_READ_ONLY);
+            field.setFieldFlags(PdfFormField.FF_READ_ONLY);
         if ((options & REQUIRED) != 0)
-            field.setFieldFlags(field.FF_REQUIRED);
+            field.setFieldFlags(PdfFormField.FF_REQUIRED);
         if ((options & MULTILINE) != 0)
-            field.setFieldFlags(field.FF_MULTILINE);
+            field.setFieldFlags(PdfFormField.FF_MULTILINE);
         if ((options & DO_NOT_SCROLL) != 0)
-            field.setFieldFlags(field.FF_DONOTSCROLL);
+            field.setFieldFlags(PdfFormField.FF_DONOTSCROLL);
         if ((options & PASSWORD) != 0)
-            field.setFieldFlags(field.FF_PASSWORD);
+            field.setFieldFlags(PdfFormField.FF_PASSWORD);
         if ((options & FILE_SELECTION) != 0)
-            field.setFieldFlags(field.FF_FILESELECT);
+            field.setFieldFlags(PdfFormField.FF_FILESELECT);
         if ((options & DO_NOT_SPELL_CHECK) != 0)
-            field.setFieldFlags(field.FF_DONOTSPELLCHECK);
+            field.setFieldFlags(PdfFormField.FF_DONOTSPELLCHECK);
         return field;
     }
     
@@ -694,23 +694,23 @@ public class TextField {
             field.setMKBackgroundColor(backgroundColor);
         switch (visibility) {
             case HIDDEN:
-                field.setFlags(field.FLAGS_PRINT | field.FLAGS_HIDDEN);
+                field.setFlags(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_HIDDEN);
                 break;
             case VISIBLE_BUT_DOES_NOT_PRINT:
                 break;
             case HIDDEN_BUT_PRINTABLE:
-                field.setFlags(field.FLAGS_PRINT | field.FLAGS_NOVIEW);
+                field.setFlags(PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_NOVIEW);
                 break;
             default:
-                field.setFlags(field.FLAGS_PRINT);
+                field.setFlags(PdfAnnotation.FLAGS_PRINT);
                 break;
         }
         if ((options & READ_ONLY) != 0)
-            field.setFieldFlags(field.FF_READ_ONLY);
+            field.setFieldFlags(PdfFormField.FF_READ_ONLY);
         if ((options & REQUIRED) != 0)
-            field.setFieldFlags(field.FF_REQUIRED);
+            field.setFieldFlags(PdfFormField.FF_REQUIRED);
         if ((options & DO_NOT_SPELL_CHECK) != 0)
-            field.setFieldFlags(field.FF_DONOTSPELLCHECK);
+            field.setFieldFlags(PdfFormField.FF_DONOTSPELLCHECK);
         return field;
     }
     

@@ -52,13 +52,10 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Font;
-
-import com.lowagie.text.rtf.RtfWriter;
-
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+
+import com.lowagie.text.Font;
 
 
 /**

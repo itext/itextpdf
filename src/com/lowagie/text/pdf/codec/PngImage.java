@@ -47,17 +47,29 @@
 
 package com.lowagie.text.pdf.codec;
 
-import com.lowagie.text.pdf.*;
-import com.lowagie.text.Image;
-import com.lowagie.text.Png;
-import com.lowagie.text.ImgRaw;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.DocumentException;
-import java.io.*;
-import java.util.zip.*;
 import java.awt.color.ICC_Profile;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
+
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
+import com.lowagie.text.ImgRaw;
+import com.lowagie.text.Png;
+import com.lowagie.text.pdf.ByteBuffer;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfLiteral;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfString;
 
 /** Reads a PNG image. All types of PNG can be read.
  * <p>

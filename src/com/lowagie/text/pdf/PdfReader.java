@@ -50,14 +50,17 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import com.lowagie.text.Rectangle;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.ZipInputStream;
-import java.net.URL;
+
+import com.lowagie.text.Rectangle;
+
 /** Reads a PDF document and prepares it to import pages to our
  * document. This class is thread safe; this means that
  * a single instance can serve as many output documents as needed and can even be static.
@@ -828,7 +831,7 @@ public class PdfReader {
 
     public static byte[] getStreamBytes(PRStream stream, RandomAccessFileOrArray file) throws IOException {
         PdfReader reader = stream.getReader();
-        PdfObject filter = reader.getPdfObject(stream.get(PdfName.FILTER));
+        PdfObject filter = PdfReader.getPdfObject(stream.get(PdfName.FILTER));
         byte b[];
         if (stream.getOffset() < 0)
             b = stream.getBytes();
@@ -848,7 +851,7 @@ public class PdfReader {
         }
         String name;
         for (int j = 0; j < filters.size(); ++j) {
-            name = ((PdfName)reader.getPdfObject((PdfObject)filters.get(j))).toString();
+            name = ((PdfName)PdfReader.getPdfObject((PdfObject)filters.get(j))).toString();
             if (name.equals("/FlateDecode") || name.equals("/Fl"))
                 b = PdfReader.FlateDecode(b);
             else if (name.equals("/ASCIIHexDecode") || name.equals("/AHx"))

@@ -127,7 +127,7 @@ public class PRAcroForm extends PdfDictionary {
     public void readAcroForm(PdfDictionary root) {
         hashMap = root.hashMap;
         pushAttrib(root);
-        PdfArray fieldlist = (PdfArray)reader.getPdfObject(root.get(PdfName.FIELDS));
+        PdfArray fieldlist = (PdfArray)PdfReader.getPdfObject(root.get(PdfName.FIELDS));
         iterateFields(fieldlist, null, null);
     }
 
@@ -141,7 +141,7 @@ public class PRAcroForm extends PdfDictionary {
     {
         for (Iterator it = fieldlist.getArrayList().iterator(); it.hasNext();) {
             PRIndirectReference ref = (PRIndirectReference)it.next();
-            PdfDictionary dict = (PdfDictionary) reader.getPdfObject(ref);
+            PdfDictionary dict = (PdfDictionary) PdfReader.getPdfObject(ref);
 
 	    // if we are not a field dictionary, pass our parent's values
 	    PRIndirectReference myFieldDict = fieldDict;

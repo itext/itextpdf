@@ -356,7 +356,7 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    ArrayList ar = cb.bezierArc(l, b, r, t, arc1, arc2);
+                    ArrayList ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.size() == 0)
                         break;
                     float pt[] = (float [])ar.get(0);
@@ -389,7 +389,7 @@ public class MetaDo {
                     arc2 -= arc1;
                     if (arc2 <= 0)
                         arc2 += 360;
-                    ArrayList ar = cb.bezierArc(l, b, r, t, arc1, arc2);
+                    ArrayList ar = PdfContentByte.bezierArc(l, b, r, t, arc1, arc2);
                     if (ar.size() == 0)
                         break;
                     float pt[] = (float [])ar.get(0);

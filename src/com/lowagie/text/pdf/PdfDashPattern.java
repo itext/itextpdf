@@ -50,9 +50,8 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.OutputStream;
 import java.io.IOException;
-import com.lowagie.text.DocWriter;
+import java.io.OutputStream;
 
 /**
  * A <CODE>PdfDashPattern</CODE> defines a dash pattern as described in

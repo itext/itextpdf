@@ -144,14 +144,14 @@ public class PdfLister {
 
         PdfDictionary page = reader.getPageN(pageNum);
         listDict(page);
-        PdfObject obj = reader.getPdfObject(page.get(PdfName.CONTENTS));
+        PdfObject obj = PdfReader.getPdfObject(page.get(PdfName.CONTENTS));
         switch (obj.type) {
         case PdfObject.STREAM:
             listStream((PRStream)obj, readerInst);
             break;
         case PdfObject.ARRAY:
             for (Iterator i = ((PdfArray)obj).getArrayList().iterator(); i.hasNext();) {
-                PdfObject o = reader.getPdfObject((PdfObject)i.next());
+                PdfObject o = PdfReader.getPdfObject((PdfObject)i.next());
                 listStream((PRStream)o, readerInst);
                 out.println("-----------");
             }

@@ -46,10 +46,6 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Image;
-import com.lowagie.text.DocumentException;
-
-
 public class StampContent extends PdfContentByte {
     int pageNumber;
     PageResources pageResources;

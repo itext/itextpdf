@@ -51,7 +51,6 @@
 package com.lowagie.text.rtf;
 
 import com.lowagie.text.*;
-import com.lowagie.text.rtf.*;
 
 import java.util.*;
 import java.io.*;
@@ -372,7 +371,7 @@ public class RtfRow {
         // borderwidth
         os.write(RtfWriter.escape);
         os.write(RtfRow.tableBorderWidth);
-        writeInt(os, (int) (borderWidth * writer.twipsFactor));
+        writeInt(os, (int) (borderWidth * RtfWriter.TWIPSFACTOR));
         // border color
         os.write(RtfWriter.escape);
         os.write(RtfRow.tableBorderColor);

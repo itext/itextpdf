@@ -50,12 +50,12 @@
 
 package com.lowagie.text.pdf;
 import java.awt.Color;
-import com.lowagie.text.Image;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Image;
-import com.lowagie.text.Element;
 import java.util.ArrayList;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned

@@ -51,7 +51,6 @@
 package com.lowagie.text.rtf;
 
 import com.lowagie.text.*;
-import com.lowagie.text.rtf.*;
 
 import java.util.*;
 import java.io.*;
@@ -191,8 +190,7 @@ public class RtfCell {
         }
         if (cell.cellWidth() != null && !cell.cellWidth().equals("")) {
 
-            this.cellWidth = (int) (Integer.parseInt(cell.cellWidth()) *
-                    writer.twipsFactor);
+            this.cellWidth = (int) (Integer.parseInt(cell.cellWidth()) * RtfWriter.TWIPSFACTOR);
         }
         cellRight = cellLeft + this.cellWidth;
         store = cell;
@@ -296,7 +294,7 @@ public class RtfCell {
                 os.write(lStyle);
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderWidth);
-                writeInt(os, (int) (lWidth * writer.twipsFactor));
+                writeInt(os, (int) (lWidth * RtfWriter.TWIPSFACTOR));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
                 if (store.borderColor() == null)
@@ -313,7 +311,7 @@ public class RtfCell {
                 os.write(tStyle);
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderWidth);
-                writeInt(os, (int) (tWidth * writer.twipsFactor));
+                writeInt(os, (int) (tWidth * RtfWriter.TWIPSFACTOR));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
                 if (store.borderColor() == null)
@@ -331,7 +329,7 @@ public class RtfCell {
                 os.write(bStyle);
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderWidth);
-                writeInt(os, (int) (bWidth * writer.twipsFactor));
+                writeInt(os, (int) (bWidth * RtfWriter.TWIPSFACTOR));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
                 if (store.borderColor() == null)
@@ -349,7 +347,7 @@ public class RtfCell {
                 os.write(rStyle);
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderWidth);
-                writeInt(os, (int) (rWidth * writer.twipsFactor));
+                writeInt(os, (int) (rWidth * RtfWriter.TWIPSFACTOR));
                 os.write(RtfWriter.escape);
                 os.write(RtfRow.tableBorderColor);
                 if (store.borderColor() == null)
