@@ -519,6 +519,11 @@ public class PdfWriter extends DocWriter {
     
     private PdfReaderInstance currentPdfReaderInstance;
     
+/** The PdfIndirectReference to the pages. */
+    private ArrayList pageReferences = new ArrayList();
+    
+    private int currentPageNumber = 1;
+    
     // constructor
     
     /**
@@ -606,7 +611,7 @@ public class PdfWriter extends DocWriter {
         }
         page.add(object.getIndirectReference());
         page.setParent(ROOTREFERENCE);
-        PdfIndirectObject pageObject = body.add(page);
+        PdfIndirectObject pageObject = body.add(page, getPageReference(currentPageNumber++));
         try {
             pageObject.writeTo(os);
             os.flush();
@@ -702,6 +707,9 @@ public class PdfWriter extends DocWriter {
     
     public synchronized void close() {
         if (open) {
+            if ((currentPageNumber - 1) != pageReferences.size())
+                throw new RuntimeException("The page " + pageReferences.size() + 
+                " was requested but the document has only " + (currentPageNumber - 1) + " pages.");
             pdf.close();
             try {
                 // add the fonts
@@ -1277,5 +1285,121 @@ public class PdfWriter extends DocWriter {
             importedPages.put(reader, inst);
         }
         return inst.getImportedPage(pageNumber);
+    }
+
+    /** Adds a JavaScript action at the document level. When the document
+     * opens all this JavaScript runs.
+     * @param js The JavaScrip action
+     */    
+    public void addJavaScript(PdfAction js) {
+        pdf.addJavaScript(js);
+    }
+    
+    /** Adds a JavaScript action at the document level. When the document
+     * opens all this JavaScript runs.
+     * @param code the JavaScript code
+     * @param unicode select JavaScript unicode. Note that the internal
+     * Acrobat JavaScript engine does not support unicode,
+     * so this may or may not work for you
+     */    
+    public void addJavaScript(String code, boolean unicode) {
+        addJavaScript(PdfAction.javaScript(code, this, unicode));
+    }
+
+    /** Adds a JavaScript action at the document level. When the document
+     * opens all this JavaScript runs.
+     * @param code the JavaScript code
+     */    
+    public void addJavaScript(String code) {
+        addJavaScript(code, false);
+    }
+
+    /** Gets a reference to a page existing or not. If the page does not exist
+     * yet the reference will be created in advance. If on closing the document, a
+     * page number greater than the total number of pages was requested, an
+     * exception is thrown.
+     * @param page the page number. The first page is 1
+     * @return the reference to the page
+     */    
+    PdfIndirectReference getPageReference(int page) {
+        --page;
+        if (page < 0)
+            throw new IndexOutOfBoundsException("The page numbers start at 1.");
+        PdfIndirectReference ref;
+        if (page < pageReferences.size()) {
+            ref = (PdfIndirectReference)pageReferences.get(page);
+            if (ref == null) {
+                ref = body.getPdfIndirectReference();
+                pageReferences.set(page, ref);
+            }
+        }
+        else {
+            int empty = page - pageReferences.size();
+            for (int k = 0; k < empty; ++k)
+                pageReferences.add(null);
+            ref = body.getPdfIndirectReference();
+            pageReferences.add(ref);
+        }
+        return ref;
+    }
+
+    public void addTextField(String name, String text, float llx, float lly, float urx, float ury) {
+        try {
+            PdfTemplate template = new PdfTemplate(this);
+            template.setWidth(urx - llx);
+            template.setHeight(ury - lly);
+            addDirectTemplateSimple(template);
+            BaseFont bf = BaseFont.createFont("Helvetica", "winansi", false);
+            template.setGrayFill(1);
+            template.rectangle(0, 0, urx - llx, ury - lly);
+            template.fill();
+            template.setLiteral("/Tx BMC q\n");
+            //template.saveState();
+            //template.rectangle(0, 0, urx - llx, ury - lly);
+            //template.stroke();
+            template.rectangle(1, 1, urx - llx - 1, ury - lly - 1);
+            template.clip();
+            template.newPath();
+            template.beginText();
+            template.setFontAndSize(bf, 12);
+            template.setRGBColorFillF(0, 0, 1);
+            template.setTextMatrix(0, 0);
+            template.showText(text);
+            template.endText();
+            template.setLiteral("Q\nEMC");
+            FontDetails fd = add(bf);
+            PdfDictionary acroForm = new PdfDictionary();
+            PdfDictionary annot = new PdfDictionary();
+            annot.put(PdfName.TYPE, PdfName.ANNOT);
+            annot.put(PdfName.SUBTYPE, PdfName.WIDGET);
+            annot.put(PdfName.RECT, new PdfRectangle(llx, lly, urx, ury));
+            //annot.put(PdfName.BORDER, new PdfLiteral("[0 0 1]"));
+            annot.put(PdfName.FT, PdfName.TX);
+            annot.put(PdfName.T, new PdfString(name));
+            annot.put(PdfName.V, new PdfString(text));
+            //annot.put(PdfName.MK, new PdfLiteral("<< /BG [1 1 1] >>"));
+            annot.put(PdfName.F, new PdfLiteral("4"));
+            annot.put(PdfName.FF, new PdfLiteral("8"));
+            annot.put(PdfName.Q, new PdfLiteral("0"));
+            ByteBuffer bb = new ByteBuffer();
+            bb.append(fd.getFontName().toPdf(null)).append(" 0 Tf 0 0 1 rg");
+            annot.put(PdfName.DA, new PdfStringLiteral(bb.toByteArray()));
+            annot.put(PdfName.DR, template.getResources());
+            acroForm.put(PdfName.DA, new PdfStringLiteral(bb.toByteArray()));
+            acroForm.put(PdfName.DR, template.getResources());
+            PdfDictionary ap = new PdfDictionary();
+            ap.put(PdfName.N, template.getIndirectReference());
+            annot.put(PdfName.AP, ap);
+            PdfIndirectReference ref = addToBody(annot).getIndirectReference();
+            acroForm.put(PdfName.FIELDS, new PdfArray(ref));
+            PdfIndirectReference aref = addToBody(acroForm).getIndirectReference();
+            pdf.addAcroForm(aref, ref);
+        }
+        catch (RuntimeException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
     }
 }

@@ -79,9 +79,11 @@ import com.lowagie.text.ExceptionConverter;
 import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Iterator;
+import java.io.IOException;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -193,7 +195,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("itext by lowagie.com (r0.83)", PdfObject.ENCODING));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 90", PdfObject.ENCODING));
             // Do not edit the line above!
         }
         
@@ -253,26 +255,43 @@ class PdfDocument extends Document implements DocListener {
          * Adds the names of the named destinations to the catalog.
          * @param localDestinations the local destinations
          */
-        void addNames(TreeMap localDestinations) {
-            if (localDestinations.size() == 0)
+        void addNames(TreeMap localDestinations, ArrayList documentJavaScript, PdfWriter writer) {
+            if (localDestinations.size() == 0 && documentJavaScript.size() == 0)
                 return;
-            PdfArray ar = new PdfArray();
-            for (Iterator i = localDestinations.keySet().iterator(); i.hasNext();) {
-                String name = (String)i.next();
-                Object obj[] = (Object[])localDestinations.get(name);
-                PdfIndirectReference ref = (PdfIndirectReference)obj[1];
-                ar.add(new PdfString(name));
-                ar.add(ref);
+            try {
+                PdfDictionary names = new PdfDictionary();
+                if (localDestinations.size() > 0) {
+                    PdfArray ar = new PdfArray();
+                    for (Iterator i = localDestinations.keySet().iterator(); i.hasNext();) {
+                        String name = (String)i.next();
+                        Object obj[] = (Object[])localDestinations.get(name);
+                        PdfIndirectReference ref = (PdfIndirectReference)obj[1];
+                        ar.add(new PdfString(name));
+                        ar.add(ref);
+                    }
+                    PdfDictionary dests = new PdfDictionary();
+                    dests.put(PdfName.NAMES, ar);
+                    names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
+                }
+                if (documentJavaScript.size() > 0) {
+                    String s[] = new String[documentJavaScript.size()];
+                    for (int k = 0; k < s.length; ++k)
+                        s[k] = Integer.toHexString(k);
+                    Arrays.sort(s, new StringCompare());
+                    PdfArray ar = new PdfArray();
+                    for (int k = 0; k < s.length; ++k) {
+                        ar.add(new PdfString(s[k]));
+                        ar.add((PdfIndirectReference)documentJavaScript.get(k));
+                    }
+                    PdfDictionary js = new PdfDictionary();
+                    js.put(PdfName.NAMES, ar);
+                    names.put(PdfName.JAVASCRIPT, writer.addToBody(js).getIndirectReference());
+                }
+                put(PdfName.NAMES, writer.addToBody(names).getIndirectReference());
             }
-            PdfArray limits = new PdfArray();
-            limits.add((PdfString)ar.getArrayList().get(0));
-            limits.add((PdfString)ar.getArrayList().get(ar.size() - 2));
-            PdfDictionary dests = new PdfDictionary();
-            PdfDictionary names = new PdfDictionary();
-            dests.put(PdfName.LIMITS, limits);
-            dests.put(PdfName.NAMES, ar);
-            names.put(PdfName.DESTS, dests);
-            put(PdfName.NAMES, names);
+            catch (IOException e) {
+                throw new ExceptionConverter(e);
+            }
         }
         
         /** Sets the viewer preferences as the sum of several constants.
@@ -451,6 +470,8 @@ class PdfDocument extends Document implements DocListener {
      */
     private TreeMap localDestinations = new TreeMap(new StringCompare());
     
+    private ArrayList documentJavaScript = new ArrayList();
+    
     /** Stores the destinations for the current page. */
     private HashMap localPageDestinations = new HashMap();
     
@@ -460,6 +481,7 @@ class PdfDocument extends Document implements DocListener {
     private String openActionName;
     private PdfAction openActionAction;
     private PdfPageLabels pageLabels;
+    private PdfObject acroForm;
     
     //add by Jin-Hsia Yang
     private boolean isNewpage = false;
@@ -1859,8 +1881,10 @@ class PdfDocument extends Document implements DocListener {
             catalog.setOpenAction(openActionAction);
         if (pageLabels != null)
             catalog.setPageLabels(pageLabels);
-        catalog.addNames(localDestinations);
+        catalog.addNames(localDestinations, documentJavaScript, writer);
         catalog.setViewerPreferences(viewerPreferences);
+        if (acroForm != null)
+            catalog.put(PdfName.ACROFORM, acroForm);
         return catalog;
     }
     
@@ -2303,5 +2327,21 @@ class PdfDocument extends Document implements DocListener {
     
     void setPageLabels(PdfPageLabels pageLabels) {
         this.pageLabels = pageLabels;
+    }
+    
+    void addJavaScript(PdfAction js) {
+        if (js.get(PdfName.JS) == null)
+            throw new RuntimeException("Only JavaScript actions are allowed.");
+        try {
+            documentJavaScript.add(writer.addToBody(js).getIndirectReference());
+        }
+        catch (IOException e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    
+    void addAcroForm(PdfObject form, PdfObject annot) {
+        acroForm = form;
+        annotations.add(annot);
     }
 }
