@@ -1420,20 +1420,15 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                                 if(convertWidth(wb)==convertWidth(wt)) break;
                             }
                             
-                            if(convertWidth(wb)==convertWidth(wt) == false) {
+                            /* if(convertWidth(wb)==convertWidth(wt) == false) {
                                 System.out.println( "error w !=w2");
-                            }
+                            } */
                         }
                         colMap[cb] = lDummyColumn+ct;
                         
                         // need to change this to work out how many cols to span
                         for (int k=0; k < lDummyTable.getDimension().height; k++) {
-                            if(lNewWidths.length==23 && i==2 && k==3) {
-                                System.out.println( "1");
-                            }
-                            
                             for (int l=0; l < lDummyTable.getDimension().width; l++) {
-                                
                                 int yy=l;
                                 lDummyElement = lDummyTable.getElement(k,l);
                                 if (lDummyElement != null) {
