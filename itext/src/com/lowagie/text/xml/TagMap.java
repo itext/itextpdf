@@ -57,6 +57,9 @@ import org.xml.sax.AttributeList;
 import org.xml.sax.Parser;
 import org.xml.sax.helpers.ParserFactory;
 
+import java.io.InputStream;
+import org.xml.sax.InputSource;
+
 import com.lowagie.text.*;
 
 /**
@@ -95,7 +98,7 @@ public class TagMap extends HashMap {
  * Constructs a new SAXiTextHandler that will translate all the events
  * triggered by the parser to actions on the <CODE>Document</CODE>-object.
  *
- * @param	document	this is the document on which events must be triggered
+ * @param	tagMap  A Hashmap containing XmlPeer-objects
  */
         
         public AttributeHandler(HashMap tagMap) {
@@ -106,7 +109,7 @@ public class TagMap extends HashMap {
 /**
  * This method gets called when a start tag is encountered.
  *
- * @param	name		the name of the tag that is encountered
+ * @param	tag 		the name of the tag that is encountered
  * @param	attrs		the list of attributes
  */
         
@@ -160,7 +163,7 @@ public class TagMap extends HashMap {
 /**
  * This method gets called when an end tag is encountered.
  *
- * @param	name		the name of the tag that ends
+ * @param	tag		the name of the tag that ends
  */
         
         public void endElement(String tag) {
@@ -175,12 +178,27 @@ public class TagMap extends HashMap {
     public TagMap(String tagfile) {
         super();
         try {
+            init(TagMap.class.getClassLoader().getResourceAsStream(tagfile));
+        }catch(Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+
+    public TagMap(InputStream in) {
+        super();
+        init(in);
+    }
+
+    protected void init(InputStream in) {
+        try {
             Parser parser = ParserFactory.makeParser(PARSER);
             parser.setDocumentHandler(new AttributeHandler(this));
-            parser.parse(tagfile);
+            parser.parse(new InputSource(in));
         }
         catch(Exception e) {
             throw new ExceptionConverter(e);
         }
     }
+
+
 }
