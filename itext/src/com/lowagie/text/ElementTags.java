@@ -58,9 +58,6 @@ import java.awt.Color;
 
 public class ElementTags {
     
-/** This is the name of a tag. */
-    public static final String TAGNAME = "tagname";
-    
 /** the root tag. */
     public static final String ITEXT = "itext";
     
@@ -171,6 +168,12 @@ public class ElementTags {
     
 /** attribute of the chunk tag */
     public static final String FONT = "font";
+    
+/** attribute of the chunk tag */
+    public static final String ENCODING = "encoding";
+    
+/** attribute of the chunk tag */
+    public static final String EMBEDDED = "embedded";
     
 /** attribute of the chunk tag */
     public static final String SIZE = "size";
