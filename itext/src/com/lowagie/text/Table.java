@@ -313,12 +313,18 @@ public class Table extends Rectangle implements Element {
             Integer.parseInt(attributes.getProperty(ElementTags.GREEN)),
             Integer.parseInt(attributes.getProperty(ElementTags.BLUE))));
         }
+        else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
+            setBorderColor(ElementTags.decodeColor(value));
+        }
         if (attributes.getProperty(ElementTags.BGRED) != null &&
         attributes.getProperty(ElementTags.BGGREEN) != null &&
         attributes.getProperty(ElementTags.BGBLUE) != null) {
             setBackgroundColor(new Color(Integer.parseInt(attributes.getProperty(ElementTags.BGRED)),
             Integer.parseInt(attributes.getProperty(ElementTags.BGGREEN)),
             Integer.parseInt(attributes.getProperty(ElementTags.BGBLUE))));
+        }
+        else if ((value = attributes.getProperty(ElementTags.COLOR)) != null) {
+            setBackgroundColor(ElementTags.decodeColor(value));
         }
         if ((value = attributes.getProperty(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.parseFloat(value + "f"));

@@ -33,6 +33,8 @@
 
 package com.lowagie.text;
 
+import java.awt.Color;
+
 /**
  * A class that contains all the possible tagnames and their attributes.
  *
@@ -147,6 +149,9 @@ public class ElementTags {
     public static final String STYLE = "style";
     
 /** attribute of the chunk/table/cell tag */
+    public static final String COLOR = "color";
+    
+/** attribute of the chunk/table/cell tag */
     public static final String RED = "red";
     
 /** attribute of the chunk/table/cell tag */
@@ -156,10 +161,13 @@ public class ElementTags {
     public static final String BLUE = "blue";
     
 /** attribute of the chunk tag */
-    public static final String LOCALGOTO = "localgoto";
+    public static final String SUBSUPSCRIPT = Chunk.SUBSUPSCRIPT.toLowerCase();
     
 /** attribute of the chunk tag */
-    public static final String LOCALDESTINATION = "localdestination";
+    public static final String LOCALGOTO = Chunk.LOCALGOTO.toLowerCase();
+    
+/** attribute of the chunk tag */
+    public static final String LOCALDESTINATION = Chunk.LOCALDESTINATION.toLowerCase();
     
     // tables/cells
     
@@ -183,9 +191,6 @@ public class ElementTags {
     
 /** attribute of the table tag */
     public static final String CELLSPACING = "cellspacing";
-    
-/** attribute of the table/cell tag */
-    public static final String WIDTH = "width";
     
 /** attribute of the table tag */
     public static final String WIDTHS = "widths";
@@ -216,6 +221,12 @@ public class ElementTags {
     
 /** attribute of the table/cell tag */
     public static final String BOTTOM = "bottom";
+    
+/** attribute of the table/cell tag */
+    public static final String WIDTH = "width";
+    
+/** attribute of the table/cell tag */
+    public static final String BORDERCOLOR = "bordercolor";
     
 /** attribute of the table/cell tag */
     public static final String BGRED = "bgred";
@@ -341,6 +352,27 @@ public class ElementTags {
         default:
             return DEFAULT;
         }
+    }
+    
+/**
+ * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>Color</CODE>.
+ *
+ * @param	color	the <CODE>Color</CODE> that has to be converted.
+ * @return	the HTML representation of this <COLOR>Color</COLOR>
+ */
+    
+    public static Color decodeColor(String string) {
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+        try {
+            red = Integer.parseInt("0x" + string.substring(1, 3));
+            green = Integer.parseInt("0x" + string.substring(3, 5));
+            blue = Integer.parseInt("0x" + string.substring(5));
+        }
+        catch(Exception sioobe) {
+        }
+        return new Color(red, green, blue);
     }
         
 }

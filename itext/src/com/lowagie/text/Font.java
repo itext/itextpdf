@@ -243,6 +243,9 @@ public class Font implements Comparable {
             Integer.parseInt(attributes.getProperty(ElementTags.GREEN)),
             Integer.parseInt(attributes.getProperty(ElementTags.BLUE)));
         }
+        else if ((value = attributes.getProperty(ElementTags.COLOR)) != null) {
+            setColor(ElementTags.decodeColor(value));
+        }
     }
     
     // implementation of the Comparable interface
