@@ -1152,10 +1152,11 @@ public class PdfContentByte {
      * Adds an outline to the document.
      *
      * @param outline the outline
+     * @deprecated not needed anymore. The outlines are extracted
+     * from the root outline
      */
     public void addOutline(PdfOutline outline) {
-        checkWriter();
-        pdf.addOutline(outline);
+        // for compatibility
     }
     /**
      * Adds a named outline to the document.

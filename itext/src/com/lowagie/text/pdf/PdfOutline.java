@@ -85,11 +85,16 @@ public class PdfOutline extends PdfDictionary {
     /** The <CODE>PdfAction</CODE> for this outline.
      */
     private PdfAction action;
-    
-    /** <CODE>true</CODE> if it's children are visible */
-    private boolean isOpen;
-    
+       
     protected ArrayList kids = new ArrayList();
+    
+    protected PdfWriter writer;
+    
+    /** Holds value of property tag. */
+    private String tag;
+    
+    /** Holds value of property open. */
+    private boolean open;
     
     // constructors
     
@@ -99,10 +104,11 @@ public class PdfOutline extends PdfDictionary {
      * This is the constructor for the <CODE>outlines object</CODE>.
      */
     
-    PdfOutline() {
+    PdfOutline(PdfWriter writer) {
         super(OUTLINES);
-        isOpen = true;
+        open = true;
         parent = null;
+        this.writer = writer;
     }
     
     /**
@@ -132,8 +138,8 @@ public class PdfOutline extends PdfDictionary {
      */
     public PdfOutline(PdfOutline parent, PdfAction action, String title, boolean open) {
         super();
-        initOutline(parent, title, open);
         this.action = action;
+        initOutline(parent, title, open);
     }
     
     /**
@@ -163,8 +169,8 @@ public class PdfOutline extends PdfDictionary {
      */
     public PdfOutline(PdfOutline parent, PdfDestination destination, String title, boolean open) {
         super();
-        initOutline(parent, title, open);
         this.destination = destination;
+        initOutline(parent, title, open);
     }
     
     /**
@@ -256,8 +262,8 @@ public class PdfOutline extends PdfDictionary {
             Chunk chunk = (Chunk) i.next();
             buf.append(chunk.content());
         }
-        initOutline(parent, buf.toString(), open);
         this.action = action;
+        initOutline(parent, buf.toString(), open);
     }
     
     /**
@@ -292,8 +298,8 @@ public class PdfOutline extends PdfDictionary {
             Chunk chunk = (Chunk) i.next();
             buf.append(chunk.content());
         }
-        initOutline(parent, buf.toString(), open);
         this.destination = destination;
+        initOutline(parent, buf.toString(), open);
     }
     
     
@@ -305,13 +311,12 @@ public class PdfOutline extends PdfDictionary {
      * @param open <CODE>true</CODE> if the children are visible
      */
     void initOutline(PdfOutline parent, String title, boolean open) {
-        isOpen = open && parent.isOpen;
-        if (isOpen || parent.isOpen) {
-            parent.add();
-        }
+        this.open = open;
         this.parent = parent;
+        writer = parent.writer;
         put(PdfName.TITLE, new PdfString(title, PdfObject.TEXT_UNICODE));
         parent.addKid(this);
+        setDestinationPage(writer.getCurrentPage());
     }
     
     /**
@@ -366,15 +371,12 @@ public class PdfOutline extends PdfDictionary {
         return destination;
     }
     
-    /**
-     * Increments the count.
-     */
-    
-    public void add() {
-        if (parent != null) {
-            parent.add();
-        }
-        ++count;
+    int getCount() {
+        return count;
+    }
+
+    void setCount(int count) {
+        this.count = count;
     }
     
     /**
@@ -406,17 +408,59 @@ public class PdfOutline extends PdfDictionary {
         }
         if (action != null)
             put(PdfName.A, action);
-        if ((isOpen || parent.isOpen) && count > 0) {
+        if (count != 0) {
             put(PdfName.COUNT, new PdfNumber(count));
         }
         return super.toPdf(writer);
     }
     
-    void addKid(PdfOutline outline) {
+    public void addKid(PdfOutline outline) {
         kids.add(outline);
     }
     
-    ArrayList getKids() {
+    public ArrayList getKids() {
         return kids;
     }
+    
+    public void setKids(ArrayList kids) {
+        this.kids = kids;
+    }
+    
+    /** Getter for property tag.
+     * @return Value of property tag.
+     */
+    public String getTag() {
+        return tag;
+    }
+    
+    /** Setter for property tag.
+     * @param tag New value of property tag.
+     */
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+    
+    public String getTitle() {
+        PdfString title = (PdfString)get(PdfName.TITLE);
+        return title.toString();
+    }
+    
+    public void setTitle(String title) {
+        put(PdfName.TITLE, new PdfString(title, PdfObject.TEXT_UNICODE));
+    }
+    
+    /** Getter for property open.
+     * @return Value of property open.
+     */
+    public boolean isOpen() {
+        return open;
+    }
+    
+    /** Setter for property open.
+     * @param open New value of property open.
+     */
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+    
 }
