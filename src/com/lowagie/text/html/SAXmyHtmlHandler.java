@@ -167,8 +167,8 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
             }
             if (attrs.getValue(MarkupTags.STYLE) != null) {
                 Properties p = peer.getAttributes(attrs);
-                p.addAll(MarkupParser.parseAttributes(p.remove(MarkupTags.STYLE)));
-                p.addAll(MarkupParser.parseAttributes(attrs.getValue(MarkupTags.STYLE)));
+                p.putAll(MarkupParser.parseAttributes((String)p.remove(MarkupTags.STYLE)));
+                p.putAll(MarkupParser.parseAttributes(attrs.getValue(MarkupTags.STYLE)));
                 super.handleStartingTags(peer.getTag(), p);
                 return;
             }
