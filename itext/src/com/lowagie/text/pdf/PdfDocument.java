@@ -1209,7 +1209,7 @@ class PdfDocument extends Document implements DocListener {
                                 /* stop patch sep 8 2001 Francesco De Milato */
                                 
                                 // we write the text
-                                float cellTop = cell.top(pagetop - oldHeight) + 2; // bugfix by Tom Ring and Veerendra Namineni
+                                float cellTop = cell.top(pagetop - oldHeight) - 6; // bugfix by Tom Ring and Veerendra Namineni
                                 text.moveText(0, cellTop);
                                 cellDisplacement = flushLines() - cellTop;
                                 text.moveText(0, cellDisplacement);
@@ -1265,10 +1265,12 @@ class PdfDocument extends Document implements DocListener {
                                 graphics.lineTo(table.right(), lostTableTop);
                                 graphics.stroke();
                             }//end if right border should be drawn
-                                                                                                                /* end patch Sep 13 2001 Matt Benson */
+                            /* end patch Sep 13 2001 Matt Benson */
                             /* end patch sep 8 2001 Francesco De Milato */
                             
-                            float difference = indentBottom() + leading;
+                            /* start bugfix by Tom Ring and Veerendra Namineni */
+                            float difference = lostTableBottom;
+                            /* end bugfix by Tom Ring and Veerendra Namineni */
                             pageEmpty = false;
                             newPage();
                             flushLines();
