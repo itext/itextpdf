@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002 by Paulo Soares.
+ * Copyright 2005 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,76 +47,89 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.tools.arguments;
 
-package com.lowagie.text.pdf;
+import java.io.File;
 
-import java.awt.Color;
+import javax.swing.filechooser.FileFilter;
+
 /**
- *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * Filters images in a FileChooser.
  */
-public class ExtendedColor extends Color{
-    
-	/** a type of extended color. */
-    public static final int TYPE_RGB = 0;
-    /** a type of extended color. */
-    public static final int TYPE_GRAY = 1;
-    /** a type of extended color. */
-    public static final int TYPE_CMYK = 2;
-    /** a type of extended color. */
-    public static final int TYPE_SEPARATION = 3;
-    /** a type of extended color. */
-    public static final int TYPE_PATTERN = 4;
-    /** a type of extended color. */
-    public static final int TYPE_SHADING = 5;
-    
-    protected int type;
+public class ImageFilter extends FileFilter {
 
-    /**
-     * Constructs an extended color of a certain type.
-     * @param type
-     */
-    public ExtendedColor(int type) {
-        super(0, 0, 0);
-        this.type = type;
-    }
-    
-    /**
-     * Constructs an extended color of a certain type and a certain color.
-     * @param type
-     * @param red
-     * @param green
-     * @param blue
-     */
-    public ExtendedColor(int type, float red, float green, float blue) {
-        super(normalize(red), normalize(green), normalize(blue));
-        this.type = type;
-    }
-    
-    /**
-     * Gets the type of this color.
-     * @return one of the types (see constants)
-     */
-    public int getType() {
-        return type;
-    }
-    
-    /**
-     * Gets the type of a given color.
-     * @param color
-     * @return one of the types (see constants)
-     */
-    public static int getType(Color color) {
-        if (color instanceof ExtendedColor)
-            return ((ExtendedColor)color).getType();
-        return TYPE_RGB;
-    }
+	/** Array with all kinds of image extensions. */
+	public static final String[] IMAGES = new String[8];
+	static {
+		IMAGES[0] = ".jpg";
+		IMAGES[1] = ".jpeg";
+		IMAGES[2] = ".png";
+		IMAGES[3] = ".gif";
+		IMAGES[4] = ".bmp";
+		IMAGES[5] = ".wmf";
+		IMAGES[6] = ".tif";
+		IMAGES[7] = ".tiff";
+	}
+	
+	/** array that enables you to filter on imagetypes. */
+	public boolean[] filter = new boolean[8];
 
-    static final float normalize(float value) {
-        if (value < 0)
-            return 0;
-        if (value > 1)
-            return 1;
-        return value;
-    }
+	/**
+	 * Constructs an ImageFilter allowing all images.
+	 */
+	public ImageFilter() {
+		for (int i = 0; i < filter.length; i++) {
+			filter[i] = true;
+		}
+	}
+	
+	/**
+	 * Constructs an ImageFilter allowing some images.
+	 * @param jpeg indicates if jpegs are allowed
+	 * @param png indicates if pngs are allowed
+	 * @param gif indicates if gifs are allowed
+	 * @param bmp indicates if bmps are allowed
+	 * @param wmf indicates if wmfs are allowed
+	 * @param tiff indicates if tiffs are allowed
+	 */
+	public ImageFilter(boolean jpeg, boolean png, boolean gif, boolean bmp, boolean wmf, boolean tiff) {
+		if (jpeg) {
+			filter[0] = true;
+			filter[1] = true;
+		}
+		if (png) {
+			filter[2] = true;
+		}
+		if (gif) {
+			filter[3] = true;
+		}
+		if (bmp) {
+			filter[4] = true;
+		}
+		if (wmf) {
+			filter[5] = true;
+		}
+		if (tiff) {
+			filter[6] = true;
+			filter[7] = true;
+		}
+	}
+	
+	/**
+	 * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
+	 */
+	public boolean accept(File f) {
+		if (f.isDirectory()) return true;
+		for (int i = 0; i < IMAGES.length; i++) {
+			if (filter[i] && f.getName().endsWith(IMAGES[i])) return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @see javax.swing.filechooser.FileFilter#getDescription()
+	 */
+	public String getDescription() {
+		return "Image files";
+	}
 }

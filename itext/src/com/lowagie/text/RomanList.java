@@ -48,7 +48,7 @@ package com.lowagie.text;
 
 /**
  * 
- * A special-version of <CODE>LIST</CODE> whitch use roman-letters.
+ * A special-version of <CODE>LIST</CODE> which use roman-letters.
  * 
  * @see com.lowagie.text.List
  * @version 2003-06-22
@@ -63,7 +63,7 @@ public class RomanList extends List {
 	protected boolean romanlower;
 
 	/**
-	 * Initialisierung
+	 * Initialization
 	 * 
 	 * @param symbolIndent	indent
 	 */
@@ -72,7 +72,7 @@ public class RomanList extends List {
 	}
 
 	/**
-	 * Initialisierung 
+	 * Initialization 
 	 * @param	romanlower		roman-char in lowercase   
 	 * @param 	symbolIndent	indent
 	 */
@@ -171,7 +171,7 @@ public class RomanList extends List {
 	 */
 
 	/**
-	 * Array mit römischen Zeichen und deren Wert
+	 * Array with Roman digits.
 	 */
 	private static final RomanDigit[] roman =
 		{
@@ -184,7 +184,7 @@ public class RomanList extends List {
 			new RomanDigit('i', 1, true)};
 
 	/** 
-	 * Wandelt eine Integerzahl in römische Kleinbuchstaben um.
+	 * changes an int into a lower case roman number.
 	 * @param number the original number
 	 * @return the roman number (lower case)
 	 */
@@ -193,7 +193,7 @@ public class RomanList extends List {
 	}
 
 	/** 
-	 * Wandelt eine Integerzahl in römische Großbuchstaben um.
+	 * Changes an int into an upper case roman number.
 	 * @param number the original number
 	 * @return the roman number (upper case)
 	 */
@@ -202,7 +202,7 @@ public class RomanList extends List {
 	}
 
 	/** 
-	 * Wandelt eine Integerzahl in römische Kleinbuchstaben um.
+	 * Changes an int into a lower case roman number.
 	 * @param number the original number
 	 * @return the roman number (lower case)
 	 */
@@ -262,7 +262,7 @@ public class RomanList extends List {
 	}
 
 	/**
-	 * Hilfsklasse für römische Zeichen
+	 * Helper class for Roman Digits
 	 */
 	private static class RomanDigit {
 
@@ -287,33 +287,5 @@ public class RomanList extends List {
 			this.pre = pre;
 		}
 	}
-
-	// Test
-	//	public static void main(String[] args) throws Exception {
-	//
-	//		for (int i = -1; i <= 20; i++) {
-	//			System.out.println(i + " = " + toRoman(i));
-	//		}
-	//		System.out.println("49   = " + toRoman(49));
-	//		System.out.println("50   = " + toRoman(50));
-	//		System.out.println("51   = " + toRoman(51));
-	//		System.out.println("99   = " + toRoman(99));
-	//		System.out.println("100  = " + toRoman(100));
-	//		System.out.println("101  = " + toRoman(101));
-	//		System.out.println("499  = " + toRoman(499));
-	//		System.out.println("500  = " + toRoman(500));
-	//		System.out.println("501  = " + toRoman(501));
-	//		System.out.println("999  = " + toRoman(999));
-	//		System.out.println("1000 = " + toRoman(1000));
-	//		System.out.println("1001 = " + toRoman(1001));
-	//		System.out.println("2999 = " + toRoman(2999));
-	//		System.out.println("3000 = " + toRoman(3000));
-	//		System.out.println("3001 = " + toRoman(3001));
-	//		System.out.println("9054 = " + toRoman(9054));
-	//		System.out.println("99999  = " + toRoman(99999));
-	//		System.out.println("100000 = " + toRoman(100000));
-	//		System.out.println("109054 = " + toRoman(109054));
-	//		System.out.println("3109054 = " + toRoman(3109054));
-	//	}
 
 }

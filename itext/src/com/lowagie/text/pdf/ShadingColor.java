@@ -54,13 +54,20 @@ package com.lowagie.text.pdf;
 public class ShadingColor extends ExtendedColor {
 
     PdfShadingPattern shadingPattern;
-    float tint;
 
+    /**
+     * Creates a shading color.
+     * @param shadingPattern
+     */
     public ShadingColor(PdfShadingPattern shadingPattern) {
         super(TYPE_SHADING, .5f, .5f, .5f);
         this.shadingPattern = shadingPattern;
     }
 
+    /**
+     * Gets the shading pattern.
+     * @return a shading pattern.
+     */
     public PdfShadingPattern getPdfShadingPattern() {
         return shadingPattern;
     }

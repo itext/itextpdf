@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002 by Paulo Soares.
+ * Copyright 2005 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,76 +47,90 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.tools.arguments;
 
-package com.lowagie.text.pdf;
+import java.awt.event.ActionEvent;
 
-import java.awt.Color;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+
+import com.lowagie.tools.plugins.AbstractTool;
+
 /**
- *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * Argument that results in a set of "1" and "0" values.
  */
-public class ExtendedColor extends Color{
-    
-	/** a type of extended color. */
-    public static final int TYPE_RGB = 0;
-    /** a type of extended color. */
-    public static final int TYPE_GRAY = 1;
-    /** a type of extended color. */
-    public static final int TYPE_CMYK = 2;
-    /** a type of extended color. */
-    public static final int TYPE_SEPARATION = 3;
-    /** a type of extended color. */
-    public static final int TYPE_PATTERN = 4;
-    /** a type of extended color. */
-    public static final int TYPE_SHADING = 5;
-    
-    protected int type;
-
-    /**
-     * Constructs an extended color of a certain type.
-     * @param type
-     */
-    public ExtendedColor(int type) {
-        super(0, 0, 0);
-        this.type = type;
-    }
-    
-    /**
-     * Constructs an extended color of a certain type and a certain color.
-     * @param type
-     * @param red
-     * @param green
-     * @param blue
-     */
-    public ExtendedColor(int type, float red, float green, float blue) {
-        super(normalize(red), normalize(green), normalize(blue));
-        this.type = type;
-    }
-    
-    /**
-     * Gets the type of this color.
-     * @return one of the types (see constants)
-     */
-    public int getType() {
-        return type;
-    }
-    
-    /**
-     * Gets the type of a given color.
-     * @param color
-     * @return one of the types (see constants)
-     */
-    public static int getType(Color color) {
-        if (color instanceof ExtendedColor)
-            return ((ExtendedColor)color).getType();
-        return TYPE_RGB;
-    }
-
-    static final float normalize(float value) {
-        if (value < 0)
-            return 0;
-        if (value > 1)
-            return 1;
-        return value;
-    }
+public class BitsetArgument extends ToolArgument {
+	/** These are the different options that can be true or false. */
+	private JCheckBox[] options;
+	
+	/**
+	 * Constructs an BitsetArgument.
+	 * @param tool the tool that needs this argument
+	 * @param name the name of the argument
+	 * @param description the description of the argument
+	 * @param options the different options that can be true or false
+	 */
+	public BitsetArgument(AbstractTool tool, String name, String description, String[] options) {
+		super(tool, name, description, String.class.getName());
+		this.options = new JCheckBox[options.length];
+		for (int i = 0; i < options.length; i++) {
+			this.options[i] = new JCheckBox(options[i]);
+		}
+	}
+	
+	/**
+	 * Gets the argument as an object.
+	 * @return an object
+	 * @throws InstantiationException
+	 */
+	public Object getArgument() throws InstantiationException {
+		return value;
+	}
+	
+	/**
+	 * @see com.lowagie.tools.arguments.ToolArgument#getUsage()
+	 */
+	public String getUsage() {
+		StringBuffer buf = new StringBuffer(super.getUsage());
+		buf.append("    possible options:\n");
+		for (int i = 0; i < options.length; i++) {
+			buf.append("    - ");
+			buf.append(options[i].getText());
+			buf.append("\n");
+		}
+		return buf.toString();
+	}
+	
+	/**
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent evt) {
+		Object[] message = new Object[1 + options.length];
+		message[0] = "Check the options you need:";
+		for(int i = 0; i < options.length; i++ ) {
+			message[i+1] = options[i];
+		}
+		int result = JOptionPane.showOptionDialog( 
+	 		    tool.getInternalFrame(),
+	 		    message, 
+	 		    description,
+	 		    JOptionPane.OK_CANCEL_OPTION, 
+	 		    JOptionPane.QUESTION_MESSAGE,
+	 		    null,
+	 		    null,
+				null
+	 		);
+		if (result == 0) {
+			StringBuffer buf = new StringBuffer();
+			for (int i = 0; i < options.length; i++) {
+				if (options[i].isSelected()) {
+					buf.append("1");
+				}
+				else {
+					buf.append("0");
+				}
+			}
+			setValue(buf.toString());
+		}
+	}
 }

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002 by Paulo Soares.
+ * Copyright 2005 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,76 +47,71 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.tools.arguments;
 
-package com.lowagie.text.pdf;
+import java.awt.event.ActionEvent;
 
-import java.awt.Color;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+
+import com.lowagie.text.Image;
+import com.lowagie.tools.plugins.AbstractTool;
+
 /**
- *
- * @author  Paulo Soares (psoares@consiste.pt)
+ * ToolArgument class if the argument is a com.lowagie.text.Image.
  */
-public class ExtendedColor extends Color{
-    
-	/** a type of extended color. */
-    public static final int TYPE_RGB = 0;
-    /** a type of extended color. */
-    public static final int TYPE_GRAY = 1;
-    /** a type of extended color. */
-    public static final int TYPE_CMYK = 2;
-    /** a type of extended color. */
-    public static final int TYPE_SEPARATION = 3;
-    /** a type of extended color. */
-    public static final int TYPE_PATTERN = 4;
-    /** a type of extended color. */
-    public static final int TYPE_SHADING = 5;
-    
-    protected int type;
+public class ImageArgument extends ToolArgument {
+	/** a filter to put on the FileChooser. */
+	private FileFilter filter;
+	
+	/**
+	 * Constructs a FileArgument. 
+	 * @param tool	the tool that needs this argument
+	 * @param name	the name of the argument
+	 * @param description	the description of the argument
+	 * @param filter		a custom filter
+	 */
+	public ImageArgument(AbstractTool tool, String name, String description, FileFilter filter) {
+		super(tool, name, description, Image.class.getName());
+		this.filter = filter;
+	}
+	
+	/**
+	 * Constructs a FileArgument. 
+	 * @param tool	the tool that needs this argument
+	 * @param name	the name of the argument
+	 * @param description	the description of the argument
+	 */
+	public ImageArgument(AbstractTool tool, String name, String description) {
+		this(tool, name, description, new ImageFilter());
+	}
+	
+	/**
+	 * Gets the argument as an object.
+	 * @return an object
+	 * @throws InstantiationException
+	 */
+	public Object getArgument() throws InstantiationException {
+		if (value == null) return null;
+		try {
+			return Image.getInstance(value);
+		} catch (Exception e) {
+			throw new InstantiationException(e.getMessage());
+		}
+	}
+	
+	/**
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		JFileChooser fc = new JFileChooser();
+		if (filter != null) fc.setFileFilter(filter);
+		fc.showOpenDialog(tool.getInternalFrame());
+		try {
+			setValue(fc.getSelectedFile().getAbsolutePath());
+		}
+		catch(NullPointerException npe) {
+		}
+	}
 
-    /**
-     * Constructs an extended color of a certain type.
-     * @param type
-     */
-    public ExtendedColor(int type) {
-        super(0, 0, 0);
-        this.type = type;
-    }
-    
-    /**
-     * Constructs an extended color of a certain type and a certain color.
-     * @param type
-     * @param red
-     * @param green
-     * @param blue
-     */
-    public ExtendedColor(int type, float red, float green, float blue) {
-        super(normalize(red), normalize(green), normalize(blue));
-        this.type = type;
-    }
-    
-    /**
-     * Gets the type of this color.
-     * @return one of the types (see constants)
-     */
-    public int getType() {
-        return type;
-    }
-    
-    /**
-     * Gets the type of a given color.
-     * @param color
-     * @return one of the types (see constants)
-     */
-    public static int getType(Color color) {
-        if (color instanceof ExtendedColor)
-            return ((ExtendedColor)color).getType();
-        return TYPE_RGB;
-    }
-
-    static final float normalize(float value) {
-        if (value < 0)
-            return 0;
-        if (value > 1)
-            return 1;
-        return value;
-    }
 }

@@ -105,7 +105,7 @@ public class Document implements DocListener {
     // membervariables
     
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = "iText 1.2.4 by lowagie.com (based on itext-paulo-153)";
+	private static final String ITEXT_VERSION = "iText 1.3 by lowagie.com (based on itext-paulo-153)";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
