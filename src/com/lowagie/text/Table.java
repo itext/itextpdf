@@ -1184,7 +1184,7 @@ public class Table extends Rectangle implements Element {
  */
     
     private void fillEmptyMatrixCells() throws BadElementException {
-    if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("begin FillEmptyMatrixCells()");
+    //if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("begin FillEmptyMatrixCells()");
         Cell lDummyCell = null;
         int  lTel = -1;
         Object obj = new Object();
@@ -1192,7 +1192,7 @@ public class Table extends Rectangle implements Element {
         for (int i=0; i < rows.size(); i++) {
             for (int j=0; j < columns; j++) {
                 if ( ((Row) rows.get(i)).isReserved(j) == false) {
-if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("add empty Cell at " + i + "," + j);
+    //if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("add empty Cell at " + i + "," + j);
                     addCell(new Cell(new Paragraph(" ")), new Point(i, j));
                 }
             }
