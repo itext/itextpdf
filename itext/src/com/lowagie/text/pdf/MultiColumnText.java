@@ -113,6 +113,8 @@ public class MultiColumnText implements Element {
     
     private float nextY = AUTOMATIC;
     
+    private boolean columnsRightToLeft = false;
+    
     private PdfDocument document;
     /**
      * Default constructor.  Sets height to <CODE>AUTOMATIC</CODE>.
@@ -258,7 +260,7 @@ public class MultiColumnText implements Element {
                     top = documentY;  // shouldn't I be able to get this from the document?
                 }
 
-                ColumnDef currentDef = (ColumnDef) columnDefs.get(currentColumn);
+                ColumnDef currentDef = (ColumnDef) columnDefs.get(getCurrentColumn());
                 columnText.setYLine(top);
 
                 float[] left = currentDef.resolvePositions(Rectangle.LEFT);
@@ -275,8 +277,7 @@ public class MultiColumnText implements Element {
                 if ((result & ColumnText.NO_MORE_TEXT) != 0) {
                     done = true;
                     top = columnText.getYLine();
-                } else if (currentColumn + 1 < columnDefs.size()) {
-                    currentColumn++;
+                } else if (shiftCurrentColumn()) {
                     top = nextY;
                 } else {  // check if we are done because of height
                     totalHeight += currentHeight;
@@ -298,23 +299,10 @@ public class MultiColumnText implements Element {
     }
 
     private void newPage() throws DocumentException {
-        currentColumn = 0;
+        resetCurrentColumn();
         top = nextY = AUTOMATIC;
         if (document != null) {
             document.newPage();
-        }
-    }
-
-    /**
-     * Moves the text insertion point to the beginning of the next column, issuing a page break if
-     * needed.
-     * @throws DocumentException on error
-     */    
-    public void nextColumn() throws DocumentException {
-        currentColumn = (currentColumn + 1) % columnDefs.size();
-        top = nextY;
-        if (currentColumn == 0) {
-            newPage();
         }
     }
     
@@ -390,11 +378,54 @@ public class MultiColumnText implements Element {
     }
 
     /**
+     * Moves the text insertion point to the beginning of the next column, issuing a page break if
+     * needed.
+     * @throws DocumentException on error
+     */    
+    public void nextColumn() throws DocumentException {
+        currentColumn = (currentColumn + 1) % columnDefs.size();
+        top = nextY;
+        if (currentColumn == 0) {
+            newPage();
+        }
+    }
+
+    /**
      * Gets the current column.
      * @return the current column
      */
     public int getCurrentColumn() {
+    	if (columnsRightToLeft) {
+    		return (columnDefs.size() - currentColumn - 1);
+    	} 
         return currentColumn;
+    }
+    
+    /**
+     * Resets the current column.
+     */
+    public void resetCurrentColumn() {
+    	currentColumn = 0;
+    }
+    
+    /**
+     * Shifts the current column.
+     * @return true if the currentcolumn has changed
+     */
+    public boolean shiftCurrentColumn() {
+    	if (currentColumn + 1 < columnDefs.size()) {
+            currentColumn++;
+            return true;
+    	}
+    	return false;
+    }
+    
+    /**
+     * Sets the direction of the columns.
+     * @param direction true = right2left; false = left2right
+     */
+    public void setColumnsRightToLeft(boolean direction) {
+    	columnsRightToLeft = direction;
     }
     
     /**
