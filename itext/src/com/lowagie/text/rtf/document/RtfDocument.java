@@ -175,12 +175,13 @@ public class RtfDocument extends RtfElement {
     
     /**
      * Replaces special characters with their unicode values
-     *
      * @param str The original <code>String</code>
      * @param useHex indicated if the hexadecimal value has to be used
+     * @param softLineBreaks whether to use soft line breaks instead of default hard ones.
+     *
      * @return The converted String
      */
-    public String filterSpecialChar(String str, boolean useHex) {
+    public String filterSpecialChar(String str, boolean useHex, boolean softLineBreaks) {
         int length = str.length();
         int z = (int) 'z';
         StringBuffer ret = new StringBuffer(length);
@@ -190,7 +191,11 @@ public class RtfDocument extends RtfElement {
             if (ch == '\\') {
                 ret.append("\\\\");
             } else if (ch == '\n') {
-                ret.append("\\par ");
+                if(softLineBreaks) {
+                    ret.append("\\line ");
+                } else {
+                    ret.append("\\par ");
+                }
             } else if (ch == '\t') {
                 ret.append("\\tab");
             } else if (((int) ch) > z) {
