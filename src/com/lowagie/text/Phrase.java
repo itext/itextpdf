@@ -111,31 +111,6 @@ public class Phrase extends ArrayList implements Element {
 	}
 
 	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
-	 */
-
-	public Phrase(String string) {
-		this(new Chunk(string));
-	}
-
-	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 * @param	font		a <CODE>Font</CODE>
-	 *
-	 * @since	iText0.30
-	 */
-
-	public Phrase(String string, Font font) {
-		this(new Chunk(string, font));
-	}
-
-	/**
 	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>
 	 * and a certain leading.
 	 *
@@ -151,6 +126,31 @@ public class Phrase extends ArrayList implements Element {
 	}
 
 	/**
+	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE>.
+	 *
+	 * @param	string		a <CODE>String</CODE>
+	 *
+	 * @since	iText0.30
+	 */
+
+	public Phrase(String string) {
+		this(new Font().leading(1.5), string, new Font());
+	}
+
+	/**
+	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
+	 *
+	 * @param	string		a <CODE>String</CODE>
+	 * @param	font		a <CODE>Font</CODE>
+	 *
+	 * @since	iText0.30
+	 */
+
+	public Phrase(String string, Font font) {
+		this(font.leading(1.5), string, font));
+	}
+
+	/**
 	 * Constructs a <CODE>Phrase</CODE> with a certain leading and a certain <CODE>String</CODE>.
 	 *
 	 * @param	leading	the leading
@@ -160,7 +160,7 @@ public class Phrase extends ArrayList implements Element {
 	 */
 
 	public Phrase(int leading, String string) {
-		this(leading, new Chunk(string));
+		this(leading, string, new Font());
 	}
 
 	/**
@@ -175,7 +175,28 @@ public class Phrase extends ArrayList implements Element {
 	 */
 
 	public Phrase(int leading, String string, Font font) {
-		this(leading, new Chunk(string, font));
+		this(leading);
+		if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS) {
+			int i = 0;
+			int index;
+			while((index = Greek.index(string)) > -1) {
+				if (index = 0) {
+					String firstpart = string.substring(0, index);
+					super.add(new Chunk(firstpart, font));
+					string = string.substring(index);
+				}
+				Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
+				StringBuffer buf = new StringBuffer();
+				buf.append(Greek.getCorrespondingSymbol(string.charAt(0)));
+				string = string.substring(1);
+				while (Greek.index(string) == 0) {
+					buf.append(Greek.getCorrespondingSymbol(string.charAt(0)));
+					string = string.substring(1);
+				}
+				super.add(new Chunk(buf.toString(), symbol));
+			}
+		}
+		super.add(new Chunk(string, font));
 	}
 
 // implementation of the Element-methods
