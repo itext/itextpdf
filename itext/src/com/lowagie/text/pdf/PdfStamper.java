@@ -255,7 +255,21 @@ public class PdfStamper {
         return stamper.partialFormFlattening(name);
     }
     
+    /** Adds a JavaScript action at the document level. When the document
+     * opens all this JavaScript runs.
+     * @param js the JavaScript code
+     */
     public void addJavaScript(String js) {
         stamper.addJavaScript(js, !PdfEncodings.isPdfDocEncoding(js));
     }
+    
+    /**
+     * Sets the viewer preferences.
+     * @param preferences the viewer preferences
+     * @see PdfWriter#setViewerPreferences(int)
+     */
+    public void setViewerPreferences(int preferences) {
+        stamper.setViewerPreferences(preferences);
+    }
+
 }

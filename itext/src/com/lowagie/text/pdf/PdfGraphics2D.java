@@ -1395,7 +1395,7 @@ public class PdfGraphics2D extends Graphics2D {
     //
     
     
-    class PdfFontMetrics extends FontMetrics {
+    static class PdfFontMetrics extends FontMetrics {
         private BaseFont bf;
         private float fontSize;
         private double ascent = -1;

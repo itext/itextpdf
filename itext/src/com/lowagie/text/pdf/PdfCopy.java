@@ -71,7 +71,7 @@ public class PdfCopy extends PdfWriter {
      * This class holds information about indirect references, since they are
      * renumbered by iText.
      */
-    class IndirectReferences {
+    static class IndirectReferences {
         PdfIndirectReference theRef;
         boolean hasCopied;
         IndirectReferences(PdfIndirectReference ref) {
@@ -94,7 +94,7 @@ public class PdfCopy extends PdfWriter {
     /**
      * A key to allow us to hash indirect references
      */
-    protected class RefKey {
+    protected static class RefKey {
         int num;
         int gen;
         RefKey(int num, int gen) {

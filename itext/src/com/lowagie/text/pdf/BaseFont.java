@@ -263,7 +263,7 @@ public abstract class BaseFont {
     /** Generates the PDF stream with the Type1 and Truetype fonts returning
      * a PdfStream.
      */
-    class StreamFont extends PdfStream {
+    static class StreamFont extends PdfStream {
         
         /** Generates the PDF stream with the Type1 and Truetype fonts returning
          * a PdfStream.
@@ -488,9 +488,18 @@ public abstract class BaseFont {
      * Gets the kerning between two Unicode chars.
      * @param char1 the first char
      * @param char2 the second char
-     * @return the kerning to be applied
+     * @return the kerning to be applied in normalized 1000 units
      */
     public abstract int getKerning(char char1, char char2);
+
+    /**
+     * Sets the kerning between two Unicode chars.
+     * @param char1 the first char
+     * @param char2 the second char
+     * @paran kern the kerning to apply in normalized 1000 units
+     * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
+     */
+    public abstract boolean setKerning(char char1, char char2, int kern);
     
     /**
      * Gets the width of a <CODE>char</CODE> in normalized 1000 units.

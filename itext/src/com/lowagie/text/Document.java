@@ -106,7 +106,7 @@ public class Document implements DocListener {
     // membervariables
     
 /** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-    private static final String ITEXT_VERSION = "itext-paulo (lowagie.com) - build 131";
+    private static final String ITEXT_VERSION = "itext-paulo (lowagie.com) - build 132";
     
 /** Allows the pdf documents to be produced without compression for debugging purposes. */
     public static boolean compress = true; 
@@ -139,6 +139,8 @@ public class Document implements DocListener {
     
 /** margin in y direction starting from the bottom */
     protected float marginBottom = 0;
+    
+    protected boolean marginMirroring = false;
     
 /** Content of JavaScript onLoad function */
     protected String javaScript_onLoad = null;
@@ -847,4 +849,29 @@ public class Document implements DocListener {
 			}
 		}
 	}
+    
+    /**
+     * Set the margin mirroring. It will mirror margins for odd/even pages.
+     * <p>
+     * Note: it will not work with {@link Table}.
+     * @param marginMirroring <CODE>true</CODE> to mirror the margins
+     * @return always <CODE>true</CODE>
+     */    
+    public boolean setMarginMirroring(boolean marginMirroring) {
+        this.marginMirroring = marginMirroring;
+        DocListener listener;
+        for (Iterator iterator = listeners.iterator(); iterator.hasNext(); ) {
+            listener = (DocListener) iterator.next();
+            listener.setMarginMirroring(marginMirroring);
+        }
+        return true;
+    }
+    
+    /**
+     * Gets the margin mirroring flag.
+     * @return the margin mirroring flag
+     */    
+    public boolean isMarginMirroring() {
+        return marginMirroring;
+    }
 }

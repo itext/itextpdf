@@ -383,6 +383,8 @@ public class PdfWriter extends DocWriter {
     public static final int PageModeUseThumbs = 64;
     /** A viewer preference */
     public static final int PageModeFullScreen = 128;
+    /** A viewer preference */
+    public static final int PageModeUseOC = 1 << 20;
     
     /** A viewer preference */
     public static final int HideToolbar = 256;
@@ -401,15 +403,17 @@ public class PdfWriter extends DocWriter {
     public static final int NonFullScreenPageModeUseOutlines = 16384;
     /** A viewer preference */
     public static final int NonFullScreenPageModeUseThumbs = 32768;
+    /** A viewer preference */
+    public static final int NonFullScreenPageModeUseOC = 1 << 19;
     
     /** A viewer preference */
-    public static final int DirectionL2R = 65536;
+    public static final int DirectionL2R = 1 << 16;
     /** A viewer preference */
-    public static final int DirectionR2L = 131072;
+    public static final int DirectionR2L = 1 << 17;
     /** A viewer preference */
-    public static final int DisplayDocTitle = 131072 * 2;
+    public static final int DisplayDocTitle = 1 << 18;
     /** The mask to decide if a ViewerPreferences dictionary is needed */
-    static final int ViewerPreferencesMask = 0x7ff00;
+    static final int ViewerPreferencesMask = 0xfff00;
     /** The operation permitted when the document is opened with the user password */
     public static final int AllowPrinting = 4 + 2048;
     /** The operation permitted when the document is opened with the user password */
@@ -1344,7 +1348,7 @@ public class PdfWriter extends DocWriter {
      * <ul>
      * <li>The page layout to be used when the document is opened (choose one).
      *   <ul>
-     *   <li><b>PageLayoutSinglePage</b> - Display one page at a time.
+     *   <li><b>PageLayoutSinglePage</b> - Display one page at a time. (default)
      *   <li><b>PageLayoutOneColumn</b> - Display the pages in one column.
      *   <li><b>PageLayoutTwoColumnLeft</b> - Display the pages in two columns, with
      *       oddnumbered pages on the left.
@@ -1354,11 +1358,12 @@ public class PdfWriter extends DocWriter {
      * <li>The page mode how the document should be displayed
      *     when opened (choose one).
      *   <ul>
-     *   <li><b>PageModeUseNone</b> - Neither document outline nor thumbnail images visible.
+     *   <li><b>PageModeUseNone</b> - Neither document outline nor thumbnail images visible. (default)
      *   <li><b>PageModeUseOutlines</b> - Document outline visible.
      *   <li><b>PageModeUseThumbs</b> - Thumbnail images visible.
      *   <li><b>PageModeFullScreen</b> - Full-screen mode, with no menu bar, window
      *       controls, or any other window visible.
+     *   <li><b>PageModeUseOC</b> - Optional content group panel visible
      *   </ul>
      * <li><b>HideToolbar</b> - A flag specifying whether to hide the viewer application's tool
      *     bars when the document is active.
@@ -1381,6 +1386,7 @@ public class PdfWriter extends DocWriter {
      *       visible
      *   <li><b>NonFullScreenPageModeUseOutlines</b> - Document outline visible
      *   <li><b>NonFullScreenPageModeUseThumbs</b> - Thumbnail images visible
+     *   <li><b>NonFullScreenPageModeUseOC</b> - Optional content group panel visible
      *   </ul>
      * </ul>
      * @param preferences the viewer preferences

@@ -73,6 +73,8 @@ class PdfStamperImp extends PdfWriter {
     protected boolean namedAsNames;
     protected List newBookmarks;
     protected HashSet partialFlattening = new HashSet();
+    protected boolean useVp = false;
+    protected int vp = 0;
     
     /** Creates new PdfStamperImp.
      * @param reader the read PDF
@@ -99,6 +101,8 @@ class PdfStamperImp extends PdfWriter {
     void close(HashMap moreInfo) throws DocumentException, IOException {
         if (closed)
             return;
+        if (useVp)
+            reader.setViewerPreferences(vp);
         if (flat)
             flatFields();
         closed = true;
@@ -634,7 +638,17 @@ class PdfStamperImp extends PdfWriter {
         newBookmarks = outlines;
     }
     
-    class PageStamp {
+    /**
+     * Sets the viewer preferences.
+     * @param preferences the viewer preferences
+     * @see PdfWriter#setViewerPreferences(int)
+     */
+    public void setViewerPreferences(int preferences) {
+        useVp = true;
+        vp |= preferences;
+    }
+    
+    static class PageStamp {
         
         int pageNumber;
         StampContent under;

@@ -76,7 +76,7 @@ public class FdfWriter {
      * @throws IOException on error
      */    
     public void writeTo(OutputStream os) throws DocumentException, IOException {
-        Wrt wrt = new Wrt(os);
+        Wrt wrt = new Wrt(os, this);
         wrt.writeTo();
     }
     
@@ -288,19 +288,21 @@ public class FdfWriter {
         this.file = file;
     }
     
-    class Wrt extends PdfWriter {
+    static class Wrt extends PdfWriter {
+        private FdfWriter fdf;
        
-        Wrt(OutputStream os) throws DocumentException, IOException {
+        Wrt(OutputStream os, FdfWriter fdf) throws DocumentException, IOException {
             super(new PdfDocument(), os);
+            this.fdf = fdf;
             this.os.write(HEADER_FDF);
             body = new PdfBody(this);
         }
         
         void writeTo() throws DocumentException, IOException {
             PdfDictionary dic = new PdfDictionary();
-            dic.put(PdfName.FIELDS, calculate(fields));
-            if (file != null)
-                dic.put(PdfName.F, new PdfString(file, PdfObject.TEXT_UNICODE));
+            dic.put(PdfName.FIELDS, calculate(fdf.fields));
+            if (fdf.file != null)
+                dic.put(PdfName.F, new PdfString(fdf.file, PdfObject.TEXT_UNICODE));
             PdfDictionary fd = new PdfDictionary();
             fd.put(PdfName.FDF, dic);
             PdfIndirectReference ref = addToBody(fd).getIndirectReference();

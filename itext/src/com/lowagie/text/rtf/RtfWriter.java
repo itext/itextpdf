@@ -2238,5 +2238,10 @@ public class RtfWriter extends DocWriter implements DocListener {
             }
         }
     }
+    
+    public boolean setMarginMirroring(boolean MarginMirroring) {
+        return false;
+    }
+    
 }
 

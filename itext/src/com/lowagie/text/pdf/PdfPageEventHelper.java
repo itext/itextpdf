@@ -57,7 +57,8 @@ import com.lowagie.text.Paragraph;
  * Helps the use of <CODE>PdfPageEvent</CODE> by implementing all the interface methods.
  * A class can extend <CODE>PdfPageEventHelper</CODE> and only implement the
  * needed methods.
- *
+ *<p>
+ * Note: do not use Document.add() inside a page event.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 

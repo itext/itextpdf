@@ -55,6 +55,8 @@ import com.lowagie.text.Paragraph;
 
 /**
  * Allows a class to catch several document events.
+ *<p>
+ * Note: do not use Document.add() inside a page event.
  *
  * @author  Paulo Soares (psoares@consiste.pt)
  */

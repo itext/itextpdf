@@ -922,7 +922,7 @@ public class CFFFont {
     private int[] stringOffsets;
     private int[] gsubrOffsets;
     
-    private final class Font {
+    private static final class Font {
         public String    name;
         public String    fullName;
         public boolean   isCID = false;

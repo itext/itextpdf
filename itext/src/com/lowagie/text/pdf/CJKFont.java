@@ -611,4 +611,9 @@ class CJKFont extends BaseFont {
     public void setPostscriptFontName(String name) {
         fontName = name;
     }   
+    
+    public boolean setKerning(char char1, char char2, int kern) {
+        return false;
+    }
+    
 }
