@@ -188,15 +188,24 @@ public class Paragraph extends Phrase implements TextElementArray {
 	/**
 	 * Adds a <CODE>List</CODE> to the <CODE>Paragraph</CODE>.
 	 * 
-	 * @param	nested		the list to add.
-	 * @return	<CODE>void</CODE>
+	 * @param	list		the list to add.
 	 */
 
 	public void add(List list) {
 		list.setIndentationLeft(list.indentationLeft() + indentationLeft);
 		list.setIndentationRight(indentationRight);
 		super.add(list);
-	}				
+	}	
+
+	/**
+	 * Adds a <CODE>Image</CODE> to the <CODE>Paragraph</CODE>.
+	 * 
+	 * @param	image		the image to add.
+	 */
+
+	public void add(Image image) {
+		super.addSpecial(image);
+	}			
 
 // setting the membervariables 
 
