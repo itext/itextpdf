@@ -555,6 +555,20 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Anchor anchor = (Anchor) element;
                 
+                if (!anchor.font().isStandardFont()) {
+                    addTabs(indent);
+                    writeStart(HtmlTags.PHRASE);
+                    write(anchor.font());
+                    os.write(GT);
+                    os.write(NEWLINE);
+                }
+                
+                if (anchor.font().style() != Font.UNDEFINED && anchor.font().style() != Font.NORMAL) {
+                    addTabs(indent);
+                    writeFontStyleStart(anchor.font().style());
+                    os.write(NEWLINE);
+                }
+                
                 addTabs(indent);
                 writeStart(HtmlTags.ANCHOR);
                 if (anchor.name() != null) {
@@ -566,32 +580,23 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 os.write(GT);
                 os.write(NEWLINE);
                 
-                if (!anchor.font().isStandardFont()) {
-                    addTabs(indent);
-                    writeStart(HtmlTags.PHRASE);
-                    write(anchor.font());
-                    os.write(GT);
-                    os.write(NEWLINE);
-                }
-                if (anchor.font().style() != Font.UNDEFINED && anchor.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleStart(anchor.font().style());
-                    os.write(NEWLINE);
-                }
                 for (Iterator i = anchor.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
+                
+                addTabs(indent);
+                writeEnd(HtmlTags.ANCHOR);
+                
                 if (anchor.font().style() != Font.UNDEFINED && anchor.font().style() != Font.NORMAL) {
                     addTabs(indent);
                     writeFontStyleEnd(anchor.font().style());
                     os.write(NEWLINE);
                 }
+                
                 if (!anchor.font().isStandardFont()) {
                     addTabs(indent);
                     writeEnd(HtmlTags.PHRASE);;
                 }
-                addTabs(indent);
-                writeEnd(HtmlTags.ANCHOR);
                 return;
             }
             case Element.PARAGRAPH:

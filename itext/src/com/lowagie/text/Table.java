@@ -804,11 +804,11 @@ public class Table extends Rectangle implements Element {
  */
     
     public final void setAlignment(String alignment) {
-        if (ElementTags.ALIGN_LEFT.equals(alignment)) {
+        if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(alignment)) {
             this.alignment = Element.ALIGN_LEFT;
             return;
         }
-        if (ElementTags.RIGHT.equals(alignment)) {
+        if (ElementTags.RIGHT.equalsIgnoreCase(alignment)) {
             this.alignment = Element.ALIGN_RIGHT;
             return;
         }

@@ -398,15 +398,15 @@ public class Cell extends Rectangle implements TextElementArray {
  */
     
     public final void setHorizontalAlignment(String alignment) {
-        if (ElementTags.ALIGN_CENTER.equals(alignment)) {
+        if (ElementTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
             this.horizontalAlignment = Element.ALIGN_CENTER;
             return;
         }
-        if (ElementTags.ALIGN_RIGHT.equals(alignment)) {
+        if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(alignment)) {
             this.horizontalAlignment = Element.ALIGN_RIGHT;
             return;
         }
-        if (ElementTags.ALIGN_JUSTIFIED.equals(alignment)) {
+        if (ElementTags.ALIGN_JUSTIFIED.equalsIgnoreCase(alignment)) {
             this.horizontalAlignment = Element.ALIGN_JUSTIFIED;
             return;
         }
@@ -430,15 +430,15 @@ public class Cell extends Rectangle implements TextElementArray {
  */
     
     public final void setVerticalAlignment(String alignment) {
-        if (ElementTags.ALIGN_MIDDLE.equals(alignment)) {
+        if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(alignment)) {
             this.verticalAlignment = Element.ALIGN_MIDDLE;
             return;
         }
-        if (ElementTags.ALIGN_BOTTOM.equals(alignment)) {
+        if (ElementTags.ALIGN_BOTTOM.equalsIgnoreCase(alignment)) {
             this.verticalAlignment = Element.ALIGN_BOTTOM;
             return;
         }
-        if (ElementTags.ALIGN_BASELINE.equals(alignment)) {
+        if (ElementTags.ALIGN_BASELINE.equalsIgnoreCase(alignment)) {
             this.verticalAlignment = Element.ALIGN_BASELINE;
             return;
         }
