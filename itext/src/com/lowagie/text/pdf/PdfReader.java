@@ -130,7 +130,8 @@ public class PdfReader {
         return pages.length;
     }
     
-    /** Gets the page rotation. This value can be 0, 90, 180 or 270.
+    /**
+     * Gets the page rotation. This value can be 0, 90, 180 or 270.
      * @param index the page number. The first page is 1
      * @return the page rotation
      */    
@@ -141,6 +142,28 @@ public class PdfReader {
             return 0;
         else
             return rotate.intValue();
+    }
+    
+    /** Gets the page size, taking rotation into account. This
+     * is a <CODE>Rectangle</CODE> with the value of the /MediaBox and the /Rotate key.
+     * @param index the page number. The first page is 1
+     * @return a <CODE>Rectangle</CODE>
+     */    
+    public Rectangle getPageSizeWithRotation(int index) {
+        PRDictionary page = pages[index - 1];
+        PRArray mediaBox = (PRArray)getPdfObject(page.get(NAME_MEDIABOX));
+        ArrayList rect = mediaBox.getArrayList();
+        float llx = ((PRNumber)rect.get(0)).floatValue();
+        float lly = ((PRNumber)rect.get(1)).floatValue();
+        float urx = ((PRNumber)rect.get(2)).floatValue();
+        float ury = ((PRNumber)rect.get(3)).floatValue();
+        Rectangle rectangle = new Rectangle(llx, lly, urx, ury);
+        int rotation = getPageRotation(index);
+        if (rotation == 90 || rotation == 270) {
+            rectangle = rectangle.rotate();
+        }
+        rectangle.setRotation(rotation);
+        return rectangle;
     }
     
     /** Gets the page size without taking rotation into account. This
