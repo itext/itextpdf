@@ -65,7 +65,7 @@ import java.io.*;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2002/03/06 13:29:37 $
+ * @version $Revision$Date: 2002/07/09 10:52:22 $
  */
 public class RtfTOC extends Chunk implements RtfField {
 
@@ -89,9 +89,9 @@ public class RtfTOC extends Chunk implements RtfField {
 
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
 
-        writer.writeInitialFontSignature( out, font() );
+        writer.writeInitialFontSignature( out, this );
         out.write( RtfWriter.filterSpecialChar( content() ).getBytes() );
-        writer.writeFinishingFontSignature( out, font() );            
+        writer.writeFinishingFontSignature( out, this );
         
         if (addTOCAsTOCEntry) {
             RtfTOCEntry entry = new RtfTOCEntry( entryName, entryFont );

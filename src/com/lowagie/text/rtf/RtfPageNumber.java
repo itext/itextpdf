@@ -61,7 +61,7 @@ import java.io.*;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
- * @version $Revision$Date: 2002/04/30 11:38:58 $
+ * @version $Revision$Date: 2002/07/09 10:52:22 $
  *
  * Modified by Mark Hall (mhall@austromail.at) 14.04.2002
  */
@@ -80,11 +80,11 @@ public class RtfPageNumber extends Chunk implements RtfField {
 
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
 
-        writer.writeInitialFontSignature( out, font() );
+        writer.writeInitialFontSignature( out, this );
 	out.write(content.toString().getBytes());
 /*        out.write( RtfWriter.escape );
         out.write( pageControl );*/
-        writer.writeFinishingFontSignature( out, font() );        
+        writer.writeFinishingFontSignature( out, this );
 //        out.write( RtfWriter.openGroup );
 //            out.write( RtfWriter.escape );
 //            out.write( RtfWriter.field );
