@@ -74,6 +74,18 @@ public class Meta implements Element {
         this.content = new StringBuffer(content);
     }
     
+/**
+ * Constructs a <CODE>Meta</CODE>.
+ *
+ * @param	type		the type of meta-information
+ * @param	content		the content
+ */
+    
+    public Meta(String tag, String content) {
+        this.type = Meta.getType(tag);
+        this.content = new StringBuffer(content);
+    }
+    
     // implementation of the Element-methods
     
 /**
@@ -161,5 +173,33 @@ public class Meta implements Element {
                 default:
                     return ElementTags.UNKNOWN;
         }
+    }
+    
+/**
+ * Returns the name of the meta information.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public static int getType(String tag) {
+        if (ElementTags.SUBJECT.equals(tag)) {
+            return Element.SUBJECT;
+        }
+        if (ElementTags.KEYWORDS.equals(tag)) {
+            return Element.KEYWORDS;
+        }
+        if (ElementTags.AUTHOR.equals(tag)) {
+            return Element.AUTHOR;
+        }
+        if (ElementTags.TITLE.equals(tag)) {
+            return Element.TITLE;
+        }
+        if (ElementTags.PRODUCER.equals(tag)) {
+            return Element.PRODUCER;
+        }
+        if (ElementTags.CREATIONDATE.equals(tag)) {
+            return Element.CREATIONDATE;
+        }
+        return Element.HEADER;
     }
 }

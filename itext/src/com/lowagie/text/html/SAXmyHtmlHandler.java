@@ -62,7 +62,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
  * @param	document	this is the document on which events must be triggered
  */
     
-    public SAXmyHtmlHandler(Document document) {
+    public SAXmyHtmlHandler(DocListener document) {
         super(document, new HtmlTagMap());
     }
     
@@ -73,7 +73,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
  * @param	document	this is the document on which events must be triggered
  */
     
-    public SAXmyHtmlHandler(Document document, HashMap htmlTags) {
+    public SAXmyHtmlHandler(DocListener document, HashMap htmlTags) {
         super(document, htmlTags);
     }
     

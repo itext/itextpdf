@@ -54,7 +54,7 @@ import com.lowagie.text.*;
 public class SAXiTextHandler extends HandlerBase {
     
 /** This is the resulting document. */
-    protected Document document;
+    protected DocListener document;
     
 /** This is a <CODE>Stack</CODE> of objects, waiting to be added to the document. */
     protected Stack stack;
@@ -65,6 +65,9 @@ public class SAXiTextHandler extends HandlerBase {
 /** This is the current chunk to which characters can be added. */
     protected Chunk currentChunk = null;
     
+/** This is the current chunk to which characters can be added. */
+    protected boolean ignore = false;
+    
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
  * triggered by the parser to actions on the <CODE>Document</CODE>-object.
@@ -72,7 +75,7 @@ public class SAXiTextHandler extends HandlerBase {
  * @param	document	this is the document on which events must be triggered
  */
     
-    public SAXiTextHandler(Document document) {
+    public SAXiTextHandler(DocListener document) {
         super();
         this.document = document;
         stack = new Stack();
@@ -86,6 +89,11 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void startElement(String name, AttributeList attrs) {
+        
+        if (ignore || ElementTags.IGNORE.equals(name)) {
+            ignore = true;
+            return;
+        }
         
         Properties attributes = new Properties();
         attributes.setProperty(ElementTags.TAGNAME, name);
@@ -130,13 +138,13 @@ public class SAXiTextHandler extends HandlerBase {
         }
         
         // chunks
-        if (Greek.isTag(name)) {
+        if (Entities.isTag(name)) {
             Font f = new Font();
             if (currentChunk != null) {
                 handleEndingTags(ElementTags.CHUNK);
                 f = currentChunk.font();
             }
-            currentChunk = Greek.get((char) Integer.parseInt(attributes.getProperty(ElementTags.ID)), f);
+            currentChunk = Entities.get(attributes.getProperty(ElementTags.ID), f);
             return;
         }
         
@@ -305,18 +313,17 @@ public class SAXiTextHandler extends HandlerBase {
         
         // documentroot
         if (isDocumentRoot(name)) {
+            String key;
             String value;
-            if ((value = attributes.getProperty(ElementTags.TITLE)) != null) {
-                document.addTitle(value);
-            }
-            if ((value = attributes.getProperty(ElementTags.SUBJECT)) != null) {
-                document.addSubject(value);
-            }
-            if ((value = attributes.getProperty(ElementTags.KEYWORDS)) != null) {
-                document.addKeywords(value);
-            }
-            if ((value = attributes.getProperty(ElementTags.AUTHOR)) != null) {
-                document.addAuthor(value);
+            for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
+                key = (String) i.next();
+                value = attributes.getProperty(key);
+                try {
+                    document.add(new Meta(key, value));
+                }
+                catch(DocumentException de) {
+                    // do nothing
+                }
             }
             document.open();
         }
@@ -392,6 +399,14 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void endElement(String name) {
+        
+        if (ElementTags.IGNORE.equals(name)) {
+            ignore = false;
+            return;
+        }
+        
+        if (ignore) return;
+        
         handleEndingTags(name);
     }
     
