@@ -68,7 +68,7 @@ import java.net.URL;
 
 public class Jpeg extends Image implements Element {
     
-    // public final static membervariables
+    // public static final membervariables
     
     /** This is a type of marker. */
     public static final int NOT_A_MARKER = -1;
@@ -214,7 +214,7 @@ public class Jpeg extends Image implements Element {
      * This method checks if the image is a valid JPEG and processes some parameters.
      */
     
-    private final void processParameters() throws BadElementException, IOException {
+    private void processParameters() throws BadElementException, IOException {
         type = JPEG;
         InputStream is = null;
         try {

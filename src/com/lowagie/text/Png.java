@@ -68,7 +68,7 @@ import java.net.URL;
 
 public class Png extends Image implements Element {
     
-    // public final static membervariables
+    // public static final membervariables
     
 /** Some PNG specific values. */
     public static final int[] PNGID = {137, 80, 78, 71, 13, 10, 26, 10};
@@ -208,7 +208,7 @@ public class Png extends Image implements Element {
  * This method checks if the image is a valid PNG and processes some parameters.
  */
     
-    private final void processParameters() throws BadElementException, IOException {
+    private void processParameters() throws BadElementException, IOException {
         type = PNG;
         InputStream is = null;
         try {

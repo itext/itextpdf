@@ -197,7 +197,7 @@ class CJKFont extends BaseFont {
     private static final  Object cjk[] = {
         new Object[]{
             "STSong-Light", //font name
-            new int[]{880,880,-120,6,-25,-254,1000,880,0,93,2}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
+            new int[]{880,880,-120,6,-25,-254,1000,880,0,93,4}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
             //font descriptor registry, ordering, W
             new String[]{"Adobe", "GB1", "[1[207 270 342 467 462 797 710 239]9 10 374 11[423 605 238 375 238 334]17 26 462 27 28 238 29 31 605 32[344 748 684 560 695 739 563 511 729 793 318 312 666 526 896 758 772 544 772 628 465 607 753 711 972 647 620 607 374 333 374 606 500 239 417 503 427 529 415 264 444 518 241 230 495 228 793 527]80 81 524 82[504 338 336 277 517 450 652 466 452 407 370 258 370 605]814 939 500 7712[517 684 723 1000 500]]"},
             new byte[]{1,5,2,2,4,0,0,0,0,0,0,0}, //panose
@@ -206,7 +206,7 @@ class CJKFont extends BaseFont {
         },
         new Object[]{
             "MHei-Medium", //font name
-            new int[]{880,880,-120,4,-45,-250,1015,887,0,93,0}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
+            new int[]{880,880,-120,4,-45,-250,1015,887,0,93,3}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
             //font descriptor registry, ordering, W
             new String[]{"Adobe", "CNS1", "[1 2 278 3[355]4 5 556 6[889 667 222]9 10 333 11[389 584 278 333]15 16 278 17 26 556 27 28 278 29 31 584 32[556 1015]34 35 667 36 37 722 38[667 611 778 722 278 500 667 556 833 722 778 667 778 722 667 611 722 667 944]57 58 667 59[611]60 62 278 63[469 556 222]66 67 556 68[500]69 70 556 71[278]72 73 556 74 75 222 76[500 222 833]79 82 556 83[333 500 278 556 500 722]89 91 500 92[334 260 334 584 737]13648 13742 500]"},
             new byte[]{8,1,2,11,6,0,0,0,0,0,0,0}, //panose
@@ -215,7 +215,7 @@ class CJKFont extends BaseFont {
         },
         new Object[]{
             "MSung-Light", //font name
-            new int[]{880,880,-120,6,-160,-249,1015,888,0,93,0}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
+            new int[]{880,880,-120,6,-160,-249,1015,888,0,93,3}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
             //font descriptor registry, ordering, W
             new String[]{"Adobe", "CNS1", "[1 2 250 3[408 668 490 875 698 250]9 10 240 11[417 667 250 313 250 520]17 26 500 27 28 250 29 31 667 32[396 921 677 615 719 760 625 552 771 802]42 43 354 44[781 604 927 750 823 563 823 729 542 698 771 729 948 771 677 635 344 520 344 469 500 250 469 521 427 521 438 271 469 531]74 75 250 76[458 240 802 531 500]81 82 521 83[365 333 292 521 458 677 479 458 427 480 496 480 667 760 980]13648 13742 500]"},
             new byte[]{1,5,2,2,4,0,0,0,0,0,0,0}, //panose
@@ -224,7 +224,7 @@ class CJKFont extends BaseFont {
         },
         new Object[]{
             "HeiseiKakuGo-W5", //font name
-            new int[]{875,718,-125,4,-92,-250,1010,922,0,93,2}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
+            new int[]{875,718,-125,4,-92,-250,1010,922,0,93,4}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
             //font descriptor registry, ordering, W
             new String[]{"Adobe", "Japan1", "[1 2 278 3[355]4 5 556 6[889 667 191]9 10 333 11[389 584 278 333]15 16 278 17 26 556 27 28 278 29 31 584 32[556 1015]34 35 667 36 37 722 38[667 611 778 722 278 500 667 556 833 722 778 667 778 722 667 611 722 667 944]57 58 667 59[611 278 556 278 469 556 333]66 67 556 68[500]69 70 556 71[278]72 73 556 74 75 222 76[500 222 833]79 82 556 83[333 500 278 556 500 722]89 91 500 92[334 260 334 333 222 278 222 260 584 333]102 103 556 104[167]105 107 556 108[333 556]110 111 333 112 113 500 114 116 556 117[278 537 350 222]121 122 333 123[556]126[611]127 137 333 140[370 556 778 1000 365 889 278 222 611 944 611 584 737 584 737 400 584]157 158 333 159[556 333]161 163 834 164 169 667 170[722]171 174 667 175 178 278 179 180 722 181 185 778 186[584]187 190 722 191 192 667 193 198 556 199[500]200 203 556 204 207 278 208 214 556 215[584]216 219 556 220[500 556 500]223 224 667 225[611 556 500 1000 500 556]231 632 500 8718[500]]"},
             new byte[]{8,1,2,11,6,0,0,0,0,0,0,0}, //panose
@@ -234,7 +234,7 @@ class CJKFont extends BaseFont {
         },
         new Object[]{
             "HeiseiMin-W3", //font name
-            new int[]{857,718,-143,6,-123,-257,1001,910,0,93,2}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
+            new int[]{857,718,-143,6,-123,-257,1001,910,0,93,4}, //font descriptor (Ascent,CapHeight,Descent,Flags,FontBBox,ItalicAngle,StemV,Supplement
             //font descriptor registry, ordering, W
             new String[]{"Adobe", "Japan1", "[1[250 333 408]4 5 500 6[833 778 180]9 10 333 11[500 564 250 333 250 278]17 26 500 27 28 278 29 31 564 32[444 921 722]35 36 667 37[722 611 556]40 41 722 42[333 389 722 611 889]47 48 722 49[556 722 667 556 611]54 55 722 56[944]57 58 722 59[611 333 500 333 469 500 333 444 500 444 500 444 333]72 73 500 74 75 278 76[500 278 778]79 82 500 83[333 389 278]86 87 500 88[722]89 90 500 91[444 480 200 480]95 96 333 97[278 333 200 541 333]102 103 500 104[167]105 107 500 108[444 500]110 111 333 112 113 556 114 116 500 117[250 453 350 333]121 122 444 123[500]126[444]127 137 333 138[1000 889 276 611 722 889 310 667]146 147 278 148[500 722 500 564 760 564 760 400 564]157 158 300 159[500 300]161 163 750 164 169 722 170[667]171 174 611 175 178 333 179 185 722 186[564]187 191 722 192[556]193 203 444 204 207 278 208 214 500 215[564]216 222 500 223[556 722 611 500 389 980 444]230 632 500 8718[500]]"},
             new byte[]{1,5,2,2,4,0,0,0,0,0,0,0}, //panose
@@ -418,7 +418,7 @@ class CJKFont extends BaseFont {
         dic.put(new PdfName("ItalicAngle"), new PdfNumber(fdescInt[8]));
         dic.put(new PdfName("StemV"), new PdfNumber(fdescInt[9]));
         PdfDictionary pdic = new PdfDictionary();
-        pdic.put(PdfName.PANOSE, new PdfStringLiteral(panose));
+        pdic.put(PdfName.PANOSE, new PdfString(panose));
         dic.put(new PdfName("Style"), pdic);
         return dic;
     }

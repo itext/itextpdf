@@ -62,34 +62,34 @@ import java.awt.Color;
 
 public class PdfAnnotation extends PdfDictionary {
     
-    public final static PdfName HIGHLIGHT_NONE = PdfName.N;
-    public final static PdfName HIGHLIGHT_INVERT = PdfName.I;
-    public final static PdfName HIGHLIGHT_OUTLINE = PdfName.O;
-    public final static PdfName HIGHLIGHT_PUSH = PdfName.P;
-    public final static PdfName HIGHLIGHT_TOGGLE = PdfName.T;
-    public final static int FLAGS_INVISIBLE = 1;
-    public final static int FLAGS_HIDDEN = 2;
-    public final static int FLAGS_PRINT = 4;
-    public final static int FLAGS_NOZOOM = 8;
-    public final static int FLAGS_NOROTATE = 16;
-    public final static int FLAGS_NOVIEW = 32;
-    public final static int FLAGS_READONLY = 64;
-    public final static PdfName APPEARANCE_NORMAL = PdfName.N;
-    public final static PdfName APPEARANCE_ROLLOVER = PdfName.R;
-    public final static PdfName APPEARANCE_DOWN = PdfName.D;
-    public final static PdfName AA_ENTER = PdfName.E;
-    public final static PdfName AA_EXIT = PdfName.X;
-    public final static PdfName AA_DOWN = PdfName.D;
-    public final static PdfName AA_UP = PdfName.U;
-    public final static PdfName AA_FOCUS = PdfName.FO;
-    public final static PdfName AA_BLUR = PdfName.BL;
-    public final static PdfName AA_JS_KEY = PdfName.K;
-    public final static PdfName AA_JS_FORMAT = PdfName.F;
-    public final static PdfName AA_JS_CHANGE = PdfName.V;
-    public final static PdfName AA_JS_OTHER_CHANGE = PdfName.C;
-    public final static int MARKUP_HIGHLIGHT = 0;
-    public final static int MARKUP_UNDERLINE = 1;
-    public final static int MARKUP_STRIKEOUT = 2;
+    public static final PdfName HIGHLIGHT_NONE = PdfName.N;
+    public static final PdfName HIGHLIGHT_INVERT = PdfName.I;
+    public static final PdfName HIGHLIGHT_OUTLINE = PdfName.O;
+    public static final PdfName HIGHLIGHT_PUSH = PdfName.P;
+    public static final PdfName HIGHLIGHT_TOGGLE = PdfName.T;
+    public static final int FLAGS_INVISIBLE = 1;
+    public static final int FLAGS_HIDDEN = 2;
+    public static final int FLAGS_PRINT = 4;
+    public static final int FLAGS_NOZOOM = 8;
+    public static final int FLAGS_NOROTATE = 16;
+    public static final int FLAGS_NOVIEW = 32;
+    public static final int FLAGS_READONLY = 64;
+    public static final PdfName APPEARANCE_NORMAL = PdfName.N;
+    public static final PdfName APPEARANCE_ROLLOVER = PdfName.R;
+    public static final PdfName APPEARANCE_DOWN = PdfName.D;
+    public static final PdfName AA_ENTER = PdfName.E;
+    public static final PdfName AA_EXIT = PdfName.X;
+    public static final PdfName AA_DOWN = PdfName.D;
+    public static final PdfName AA_UP = PdfName.U;
+    public static final PdfName AA_FOCUS = PdfName.FO;
+    public static final PdfName AA_BLUR = PdfName.BL;
+    public static final PdfName AA_JS_KEY = PdfName.K;
+    public static final PdfName AA_JS_FORMAT = PdfName.F;
+    public static final PdfName AA_JS_CHANGE = PdfName.V;
+    public static final PdfName AA_JS_OTHER_CHANGE = PdfName.C;
+    public static final int MARKUP_HIGHLIGHT = 0;
+    public static final int MARKUP_UNDERLINE = 1;
+    public static final int MARKUP_STRIKEOUT = 2;
     protected PdfWriter writer;
     protected PdfIndirectReference reference;
     protected HashMap templates;
@@ -274,7 +274,7 @@ public class PdfAnnotation extends PdfDictionary {
             if (b[k] == '\n')
                 b[k] = 32;
         }
-        put(PdfName.DA, new PdfStringLiteral(b));
+        put(PdfName.DA, new PdfString(b));
     }
     
     public void setFlags(int flags) {

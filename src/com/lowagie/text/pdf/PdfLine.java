@@ -123,7 +123,7 @@ public class PdfLine {
  *				not be added is returned
  */
     
-    final PdfChunk add(PdfChunk chunk) {
+    PdfChunk add(PdfChunk chunk) {
         // nothing happens if the chunk is null.
         if (chunk == null || chunk.toString().equals("")) {
             return null;
@@ -194,7 +194,7 @@ public class PdfLine {
  * @return	a value
  */
     
-    final float height() {
+    float height() {
         return height;
     }
     
@@ -204,7 +204,7 @@ public class PdfLine {
  * @return	a value
  */
     
-    final float indentLeft() {
+    float indentLeft() {
         switch (alignment) {
             case Element.ALIGN_RIGHT:
                 return left + width;
@@ -244,7 +244,7 @@ public class PdfLine {
  * @return	a value
  */
     
-    final float widthLeft() {
+    float widthLeft() {
         return width;
     }
     
@@ -254,7 +254,7 @@ public class PdfLine {
  * @return	a value
  */
     
-    final int numberOfSpaces() {
+    int numberOfSpaces() {
         String string = toString();
         int length = string.length();
         int numberOfSpaces = 0;

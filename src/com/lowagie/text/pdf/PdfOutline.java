@@ -397,7 +397,7 @@ public class PdfOutline extends PdfDictionary {
      * @return an array of <CODE>byte</CODE>
      */
     
-    final public byte[] toPdf(PdfWriter writer) {
+    public byte[] toPdf(PdfWriter writer) {
         if (parent != null) {
             put(PdfName.PARENT, parent.indirectReference());
         }

@@ -83,18 +83,18 @@ public class PdfFormXObject extends PdfStream {
     PdfFormXObject(PdfTemplate template) // throws BadPdfFormatException
     {
         super();
-        dictionary.put(PdfName.TYPE, PdfName.XOBJECT);
-        dictionary.put(PdfName.SUBTYPE, PdfName.FORM);
-        dictionary.put(PdfName.RESOURCES, template.getResources());
-        dictionary.put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
-        dictionary.put(PdfName.FORMTYPE, ONE);
+        put(PdfName.TYPE, PdfName.XOBJECT);
+        put(PdfName.SUBTYPE, PdfName.FORM);
+        put(PdfName.RESOURCES, template.getResources());
+        put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
+        put(PdfName.FORMTYPE, ONE);
         PdfArray matrix = template.getMatrix();
         if (matrix == null)
-            dictionary.put(PdfName.MATRIX, MATRIX);
+            put(PdfName.MATRIX, MATRIX);
         else
-            dictionary.put(PdfName.MATRIX, matrix);
+            put(PdfName.MATRIX, matrix);
         bytes = template.toPdf(null);
-        dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+        put(PdfName.LENGTH, new PdfNumber(bytes.length));
         try {
             flateCompress();
         }

@@ -62,6 +62,7 @@ public class ExtendedColor extends Color{
     static final int TYPE_CMYK = 2;
     static final int TYPE_SEPARATION = 3;
     static final int TYPE_PATTERN = 4;
+    static final int TYPE_SHADING = 5;
     
     protected int type;
 
@@ -85,7 +86,7 @@ public class ExtendedColor extends Color{
         return TYPE_RGB;
     }
 
-    final static float normalize(float value) {
+    static final float normalize(float value) {
         if (value < 0)
             return 0;
         if (value > 1)

@@ -55,61 +55,61 @@ import java.io.*;
  *
  * @author  Paulo Soares (psoares@consiste.pt)
  */
-class PRTokeniser {
+public class PRTokeniser {
     
-    static final int TK_NUMBER = 1;
-    static final int TK_STRING = 2;
-    static final int TK_NAME = 3;
-    static final int TK_COMMENT = 4;
-    static final int TK_START_ARRAY = 5;
-    static final int TK_END_ARRAY = 6;
-    static final int TK_START_DIC = 7;
-    static final int TK_END_DIC = 8;
-    static final int TK_REF = 9;
-    static final int TK_OTHER = 10;
+    public static final int TK_NUMBER = 1;
+    public static final int TK_STRING = 2;
+    public static final int TK_NAME = 3;
+    public static final int TK_COMMENT = 4;
+    public static final int TK_START_ARRAY = 5;
+    public static final int TK_END_ARRAY = 6;
+    public static final int TK_START_DIC = 7;
+    public static final int TK_END_DIC = 8;
+    public static final int TK_REF = 9;
+    public static final int TK_OTHER = 10;
     
     static final String EMPTY = "";
 
     
-    RandomAccessFileOrArray file;
-    int type;
-    String stringValue;
-    int reference;
-    int generation;
+    protected RandomAccessFileOrArray file;
+    protected int type;
+    protected String stringValue;
+    protected int reference;
+    protected int generation;
 
-    PRTokeniser(String filename) throws IOException {
+    public PRTokeniser(String filename) throws IOException {
         file = new RandomAccessFileOrArray(filename);
     }
 
-    PRTokeniser(byte pdfIn[]) {
+    public PRTokeniser(byte pdfIn[]) {
         file = new RandomAccessFileOrArray(pdfIn);
     }
     
-    void seek(int pos) throws IOException {
+    public void seek(int pos) throws IOException {
         file.seek(pos);
     }
     
-    int getFilePointer() throws IOException {
+    public int getFilePointer() throws IOException {
         return file.getFilePointer();
     }
 
-    void close() throws IOException {
+    public void close() throws IOException {
         file.close();
     }
     
-    int length() throws IOException {
+    public int length() throws IOException {
         return file.length();
     }
 
-    int read() throws IOException {
+    public int read() throws IOException {
         return file.read();
     }
     
-    RandomAccessFileOrArray getSafeFile() {
+    public RandomAccessFileOrArray getSafeFile() {
         return new RandomAccessFileOrArray(file);
     }
     
-    String readString(int size) throws IOException {
+    public String readString(int size) throws IOException {
         StringBuffer buf = new StringBuffer();
         int ch;
         while ((size--) > 0) {
@@ -121,45 +121,45 @@ class PRTokeniser {
         return buf.toString();
     }
 
-    static final boolean isWhitespace(int ch) {
+    public static final boolean isWhitespace(int ch) {
         return (ch == 0 || ch == 9 || ch == 10 || ch == 12 || ch == 13 || ch == 32);
     }
     
-    static final boolean isDelimiter(int ch) {
+    public static final boolean isDelimiter(int ch) {
         return (ch == '(' || ch == ')' || ch == '<' || ch == '>' || ch == '[' || ch == ']' || ch == '/' || ch == '%');
     }
 
-    int getTokenType() {
+    public int getTokenType() {
         return type;
     }
     
-    String getStringValue() {
+    public String getStringValue() {
         return stringValue;
     }
     
-    int getReference() {
+    public int getReference() {
         return reference;
     }
     
-    int getGeneration() {
+    public int getGeneration() {
         return generation;
     }
     
-    void backOnePosition() throws IOException {
+    public void backOnePosition() throws IOException {
         file.seek(file.getFilePointer() - 1);
     }
     
-    void throwError(String error) throws IOException {
+    protected void throwError(String error) throws IOException {
         throw new IOException(error + " at file pointer " + file.getFilePointer());
     }
     
-    void checkPdfHeader() throws IOException {
+    public void checkPdfHeader() throws IOException {
         String str = readString(7);
         if (!str.equals("%PDF-1."))
             throw new IOException("PDF header signature not found.");
     }
     
-    int getStartxref() throws IOException {
+    public int getStartxref() throws IOException {
         int size = Math.min(1024, file.length());
         int pos = file.length() - size;
         file.seek(pos);
@@ -170,7 +170,7 @@ class PRTokeniser {
         return pos + idx;
     }
 
-    static int getHex(int v) {
+    public static int getHex(int v) {
         if (v >= '0' && v <= '9')
             return v - '0';
         if (v >= 'A' && v <= 'F')
@@ -180,7 +180,7 @@ class PRTokeniser {
         return -1;
     }
     
-    void nextValidToken() throws IOException {
+    public void nextValidToken() throws IOException {
         int level = 0;
         String n1 = null;
         String n2 = null;
@@ -228,7 +228,7 @@ class PRTokeniser {
         throwError("Unexpected end of file");
     }
     
-    boolean nextToken() throws IOException {
+    public boolean nextToken() throws IOException {
         StringBuffer outBuf = null;
         stringValue = EMPTY;
         int ch = 0;
@@ -428,7 +428,7 @@ class PRTokeniser {
         return true;
     }
     
-    int intValue() {
+    public int intValue() {
         return Integer.valueOf(stringValue).intValue();
     }
 }

@@ -117,7 +117,7 @@ public class Meta implements Element, MarkupAttributes {
  * @return	<CODE>true</CODE> if the element was processed successfully
  */
     
-    public final boolean process(ElementListener listener) {
+    public boolean process(ElementListener listener) {
         try {
             return listener.add(this);
         }
@@ -132,7 +132,7 @@ public class Meta implements Element, MarkupAttributes {
  * @return	a type
  */
     
-    public final int type() {
+    public int type() {
         return type;
     }
     
@@ -155,7 +155,7 @@ public class Meta implements Element, MarkupAttributes {
  * @return	a <CODE>StringBuffer</CODE>
  */
     
-    public final StringBuffer append(String string) {
+    public StringBuffer append(String string) {
         return content.append(string);
     }
     
@@ -167,7 +167,7 @@ public class Meta implements Element, MarkupAttributes {
  * @return	a <CODE>String</CODE>
  */
     
-    public final String content() {
+    public String content() {
         return content.toString();
     }
     

@@ -17,26 +17,21 @@ public class PdfPattern extends PdfStream {
         PdfNumber one = new PdfNumber(1);
         PdfArray matrix = painter.getMatrix();
         if ( matrix != null ) {
-            dictionary.put(PdfName.MATRIX, matrix);
+            put(PdfName.MATRIX, matrix);
         }
-        dictionary.put(PdfName.TYPE, PdfName.PATTERN);
-        dictionary.put(PdfName.BBOX, new PdfRectangle(painter.getBoundingBox()));
-        dictionary.put(PdfName.RESOURCES, painter.getResources());
-        PdfName key = new PdfName("TilingType");
-        dictionary.put(key, one);
-        key = new PdfName("PatternType");
-        dictionary.put(key, one);
-        key = new PdfName("PaintType");
+        put(PdfName.TYPE, PdfName.PATTERN);
+        put(PdfName.BBOX, new PdfRectangle(painter.getBoundingBox()));
+        put(PdfName.RESOURCES, painter.getResources());
+        put(PdfName.TILINGTYPE, one);
+        put(PdfName.PATTERNTYPE, one);
         if (painter.isStencil())
-            dictionary.put(key, new PdfNumber(2));
+            put(PdfName.PAINTTYPE, new PdfNumber(2));
         else
-            dictionary.put(key, one);
-        key = new PdfName("XStep");
-        dictionary.put(key, new PdfNumber(painter.getXStep()));
-        key = new PdfName("YStep");
-        dictionary.put(key, new PdfNumber(painter.getYStep()));
+            put(PdfName.PAINTTYPE, one);
+        put(PdfName.XSTEP, new PdfNumber(painter.getXStep()));
+        put(PdfName.YSTEP, new PdfNumber(painter.getYStep()));
         bytes = painter.toPdf(null);
-        dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+        put(PdfName.LENGTH, new PdfNumber(bytes.length));
         try {
             flateCompress();
         } catch (Exception e) {

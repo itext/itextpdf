@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,79 +44,58 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
+import java.util.Iterator;
+
 /**
- * <CODE>PdfIndirectReference</CODE> contains a reference to a <CODE>PdfIndirectObject</CODE>.
- * <P>
- * Any object used as an element of an array or as a value in a dictionary may be specified
- * by either a direct object of an indirect reference. An <I>indirect reference</I> is a reference
- * to an indirect object, and consists of the indirect object's object number, generation number
- * and the <B>R</B> keyword.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.11 (page 54).
+ * <CODE>PdfShadingDictionary</CODE> is a <CODE>PdfResource</CODE>, containing a dictionary of shadings.
  *
- * @see		PdfObject
- * @see		PdfIndirectObject
+ * @author Paulo Soares (psoares@consiste.pt)
+ */
+class PdfShadingDictionary extends PdfDictionary implements PdfResource {
+
+    // constructors
+
+/**
+ * Constructs a new <CODE>PdfPatternDictionary</CODE>.
  */
 
-class PdfIndirectReference extends PdfObject {
-    
-    // membervariables
-    
-/** the object number */
-    protected int number;
-    
-/** the generation number */
-    protected int generation = 0;
-    
-    // constructors
-    
-/**
- * Constructs a <CODE>PdfIndirectReference</CODE>.
- *
- * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
- * @param		number			the object number.
- * @param		generation		the generation number.
- */
-    
-    PdfIndirectReference(int type, int number, int generation) {
-        super(type, new StringBuffer().append(number).append(" ").append(generation).append(" R").toString());
-        this.number = number;
-        this.generation = generation;
+    PdfShadingDictionary() {
+        super();
     }
-    
-/**
- * Constructs a <CODE>PdfIndirectReference</CODE>.
- *
- * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
- * @param		number			the object number.
- */
-    
-    PdfIndirectReference(int type, int number) {
-        this(type, number, 0);
-    }
-    
+
     // methods
-    
+
 /**
- * Returns the number of the object.
+ * Returns the name of a resource.
  *
- * @return		a number.
+ * @return		a <CODE>PdfName</CODE>.
  */
-    
-    int getNumber() {
-        return number;
+
+    public PdfName key() {
+        return PdfName.SHADING;
     }
-    
+
 /**
- * Returns the generation of the object.
+ * Returns the object that represents the resource.
  *
- * @return		a number.
+ * @return		a <CODE>PdfObject</CODE>
  */
-    
-    int getGeneration() {
-        return generation;
+
+    public PdfObject value() {
+        return this;
+    }
+
+/**
+ * Checks if the <CODE>PdfPatternDictionary</CODE> contains at least
+ * one object.
+ *
+ * @return		<CODE>true</CODE> if an object was found
+ *				<CODE>false</CODE> otherwise
+ */
+
+    boolean containsShading() {
+        return hashMap.size() > 0;
     }
 }

@@ -97,10 +97,6 @@ public class HyphenationAuto implements HyphenationEvent {
         float hyphenWidth = font.getWidthPoint(hyphen, fontSize);
         if (hyphenWidth > remainingWidth)
             return "";
-        if (font.getWidthPoint(word, fontSize) <= remainingWidth) {
-            post = "";
-            return word;
-        }
         Hyphenation hyphenation = hyphenator.hyphenate(word);
         if (hyphenation == null) {
             return "";

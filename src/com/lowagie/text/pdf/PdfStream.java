@@ -80,12 +80,9 @@ import com.lowagie.text.ExceptionConverter;
  * @see		PdfDictionary
  */
 
-class PdfStream extends PdfObject {
+public class PdfStream extends PdfDictionary {
     
     // membervariables
-    
-/** the stream dictionary */
-    protected PdfDictionary dictionary;
     
 /** is the stream compressed? */
     protected boolean compressed = false;
@@ -103,72 +100,23 @@ class PdfStream extends PdfObject {
 /**
  * Constructs a <CODE>PdfStream</CODE>-object.
  *
- * @param		dictionary		the stream dictionary
- * @param		str				the stream
- */
-    
-    PdfStream(PdfDictionary dictionary, String stream) {
-        super(STREAM);
-        this.dictionary = dictionary;
-        
-        // The length of a line in a PDF document is limited to 256 characters
-        StringBuffer streamContent = new StringBuffer();
-        int numberProcessed = 0;
-        int numberToProcess = stream.length();
-        int positionOfNewLine;
-        int lengthOfTheLine;
-        while (numberProcessed < numberToProcess) {
-            positionOfNewLine = stream.indexOf('\n', numberProcessed) + 1;
-            lengthOfTheLine = positionOfNewLine - numberProcessed;
-            if (lengthOfTheLine < 250 && lengthOfTheLine > 0) {
-                streamContent.append(stream.substring(numberProcessed, positionOfNewLine));
-                numberProcessed = positionOfNewLine;
-            }
-            else {
-                try {
-                    streamContent.append(stream.substring(numberProcessed, numberProcessed + 250) + "\n");
-                }
-                catch(IndexOutOfBoundsException ioobe) {
-                    streamContent.append(stream.substring(numberProcessed) + "\n");
-                }
-                numberProcessed += 250;
-            }
-        }
-        
-        setContent(streamContent.toString());
-        dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
-    }
-    
-/**
- * Constructs a <CODE>PdfStream</CODE>-object.
- *
  * @param		bytes			content of the new <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>.
  */
  
-    PdfStream(byte[] bytes) {
-        super(STREAM);
-        dictionary = new PdfDictionary();
+    public PdfStream(byte[] bytes) {
+        super();
+        type = STREAM;
         this.bytes = bytes;
-        dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+        put(PdfName.LENGTH, new PdfNumber(bytes.length));
     }
   
-/**
- * Constructs a <CODE>PdfStream</CODE>-object.
- *
- * @param		str				the stream
- */
-    
-    PdfStream(String stream) {
-        this(new PdfDictionary(), stream);
-    }
-    
 /**
  * Constructs a <CODE>PdfStream</CODE>-object.
  */
     
     protected PdfStream() {
-        super(STREAM);
-        dictionary = new PdfDictionary();
+        super();
+        type = STREAM;
     }
     
     // methods overriding some methods of PdfObject
@@ -180,7 +128,7 @@ class PdfStream extends PdfObject {
  */
     
     public byte[] toPdf(PdfWriter writer) {
-        dicBytes = dictionary.toPdf(writer);
+        dicBytes = super.toPdf(writer);
         return null;
     }
     
@@ -193,7 +141,7 @@ class PdfStream extends PdfObject {
  * @throws		<CODE>PdfException<CODE> if a filter is allready defined
  */
     
-    synchronized final void flateCompress() throws PdfException {
+    public void flateCompress() throws PdfException {
         if (!Document.compress)
             return;
         // check if the flateCompress-method has allready been
@@ -201,7 +149,7 @@ class PdfStream extends PdfObject {
             return;
         }
         // check if a filter allready exists
-        PdfObject filter = dictionary.get(PdfName.FILTER);
+        PdfObject filter = get(PdfName.FILTER);
         if (filter != null) {
             if (filter.isName() && ((PdfName) filter).compareTo(PdfName.FLATEDECODE) == 0) {
                 return;
@@ -225,14 +173,14 @@ class PdfStream extends PdfObject {
             // update the object
             streamBytes = stream;
             bytes = null;
-            dictionary.put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
+            put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
             if (filter == null) {
-                dictionary.put(PdfName.FILTER, PdfName.FLATEDECODE);
+                put(PdfName.FILTER, PdfName.FLATEDECODE);
             }
             else {
                 PdfArray filters = new PdfArray(filter);
                 filters.add(PdfName.FLATEDECODE);
-                dictionary.put(PdfName.FILTER, filters);
+                put(PdfName.FILTER, filters);
             }
             compressed = true;
         }
@@ -241,7 +189,7 @@ class PdfStream extends PdfObject {
         }
     }
 
-    int getStreamLength(PdfWriter writer) {
+    public int getStreamLength(PdfWriter writer) {
         if (dicBytes == null)
             toPdf(writer);
         if (streamBytes != null)

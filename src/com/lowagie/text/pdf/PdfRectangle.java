@@ -68,7 +68,7 @@ import com.lowagie.text.Rectangle;
  * @see		PdfArray
  */
 
-class PdfRectangle extends PdfArray {
+public class PdfRectangle extends PdfArray {
     
     // membervariables
     
@@ -97,7 +97,7 @@ class PdfRectangle extends PdfArray {
  * @since		rugPdf0.10
  */
     
-    PdfRectangle(float llx, float lly, float urx, float ury, int rotation) {
+    public PdfRectangle(float llx, float lly, float urx, float ury, int rotation) {
         super();
         if (rotation == 90 || rotation == 270) {
             this.llx = lly;
@@ -117,7 +117,7 @@ class PdfRectangle extends PdfArray {
         super.add(new PdfNumber(this.ury));
     }
 
-    PdfRectangle(float llx, float lly, float urx, float ury) {
+    public PdfRectangle(float llx, float lly, float urx, float ury) {
         this(llx, lly, urx, ury, 0);
     }
 
@@ -128,11 +128,11 @@ class PdfRectangle extends PdfArray {
  * @param		ury			upper right y
  */
     
-    PdfRectangle(float urx, float ury, int rotation) {
+    public PdfRectangle(float urx, float ury, int rotation) {
         this(0, 0, urx, ury, rotation);
     }
 
-    PdfRectangle(float urx, float ury) {
+    public PdfRectangle(float urx, float ury) {
         this(0, 0, urx, ury, 0);
     }
     
@@ -142,11 +142,11 @@ class PdfRectangle extends PdfArray {
  * @param	rectangle	a <CODE>Rectangle</CODE>
  */
     
-    PdfRectangle(Rectangle rectangle, int rotation) {
+    public PdfRectangle(Rectangle rectangle, int rotation) {
         this(rectangle.left(), rectangle.bottom(), rectangle.right(), rectangle.top(), rotation);
     }
     
-    PdfRectangle(Rectangle rectangle) {
+    public PdfRectangle(Rectangle rectangle) {
         this(rectangle.left(), rectangle.bottom(), rectangle.right(), rectangle.top(), 0);
     }
     
@@ -159,7 +159,7 @@ class PdfRectangle extends PdfArray {
  * @return		<CODE>false</CODE>
  */
     
-    final boolean add(PdfObject object) {
+    public boolean add(PdfObject object) {
         return false;
     }
     
@@ -169,7 +169,7 @@ class PdfRectangle extends PdfArray {
  * @return		the lower left x-coordinaat
  */
     
-    final float left() {
+    public float left() {
         return llx;
     }
     
@@ -179,7 +179,7 @@ class PdfRectangle extends PdfArray {
  * @return		the upper right x-coordinate
  */
     
-    final float right() {
+    public float right() {
         return urx;
     }
     
@@ -189,7 +189,7 @@ class PdfRectangle extends PdfArray {
  * @return		the upper right y-coordinate
  */
     
-    final float top() {
+    public float top() {
         return ury;
     }
     
@@ -199,7 +199,7 @@ class PdfRectangle extends PdfArray {
  * @return		the lower left y-coordinate
  */
     
-    final float bottom() {
+    public float bottom() {
         return lly;
     }
     
@@ -210,7 +210,7 @@ class PdfRectangle extends PdfArray {
  * @return		the lower left x-coordinate
  */
     
-    final float left(int margin) {
+    public float left(int margin) {
         return llx + margin;
     }
     
@@ -221,7 +221,7 @@ class PdfRectangle extends PdfArray {
  * @return		the upper right x-coordinate
  */
     
-    final float right(int margin) {
+    public float right(int margin) {
         return urx - margin;
     }
     
@@ -232,7 +232,7 @@ class PdfRectangle extends PdfArray {
  * @return		the upper right y-coordinate
  */
     
-    final float top(int margin) {
+    public float top(int margin) {
         return ury - margin;
     }
     
@@ -243,7 +243,7 @@ class PdfRectangle extends PdfArray {
  * @return		the lower left y-coordinate
  */
     
-    final float bottom(int margin) {
+    public float bottom(int margin) {
         return lly + margin;
     }
     
@@ -253,7 +253,7 @@ class PdfRectangle extends PdfArray {
  * @return		a width
  */
     
-    final float width() {
+    public float width() {
         return urx - llx;
     }
     
@@ -263,7 +263,7 @@ class PdfRectangle extends PdfArray {
  * @return		a height
  */
     
-    final float height() {
+    public float height() {
         return ury - lly;
     }
     
@@ -273,7 +273,7 @@ class PdfRectangle extends PdfArray {
  * @return		a <CODE>PdfRectangle</CODE>
  */
     
-    final PdfRectangle rotate() {
+    public PdfRectangle rotate() {
         return new PdfRectangle(lly, llx, ury, urx, 0);
     }
 }

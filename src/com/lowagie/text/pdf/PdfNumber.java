@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 /**
  * <CODE>PdfNumber</CODE> provides two types of numbers, integer and real.
  * <P>
@@ -62,20 +63,7 @@ package com.lowagie.text.pdf;
  * @see		BadPdfFormatException
  */
 
-class PdfNumber extends PdfObject implements PdfPrintable {
-    
-    // static membervariables (possible types of a number object)
-    
-/** a possible type of <CODE>PdfNumber</CODE> */
-    public static final int INTEGER = 0;
-    
-/** a possible type of <CODE>PdfNumber</CODE> */
-    public static final int REAL = 1;
-    
-    // membervariables
-    
-/** type of this <CODE>PdfNumber</CODE> */
-    private int numberType;
+public class PdfNumber extends PdfObject {
     
 /** actual value of this <CODE>PdfNumber</CODE>, represented as a <CODE>double</CODE> */
     private double value;
@@ -91,32 +79,14 @@ class PdfNumber extends PdfObject implements PdfPrintable {
  * @exception	BadPdfFormatException	Signals that a given type doesn't exist of that a given value isn't a number.
  */
     
-    PdfNumber(int type, String content) throws BadPdfFormatException {
+    public PdfNumber(String content) {
         super(NUMBER);
-        numberType = type;
-        switch (numberType) {
-            case INTEGER:
-                try {
-                    int i = Integer.parseInt(content.trim());
-                    setContent(String.valueOf(i));
-                    value = 1.0 * i;
-                }
-                catch (NumberFormatException nfe){
-                    throw new BadPdfFormatException(content + " is not a valid integer.");
-                }
-                break;
-            case REAL:
-                try {
-                    double d = Double.valueOf(content.trim()).doubleValue();
-                    setContent(ByteBuffer.formatDouble(d));
-                    value = d;
-                }
-                catch (NumberFormatException nfe){
-                    throw new BadPdfFormatException(content + " is not a valid real.");
-                }
-                break;
-                default:
-                    throw new BadPdfFormatException("Unknown type of number: " + type);
+        try {
+            value = Double.valueOf(content.trim()).doubleValue();
+            setContent(content);
+        }
+        catch (NumberFormatException nfe){
+            throw new RuntimeException(content + " is not a valid number - " + nfe.toString());
         }
     }
     
@@ -126,22 +96,10 @@ class PdfNumber extends PdfObject implements PdfPrintable {
  * @param		value				value of the new <CODE>PdfNumber</CODE>-object
  */
     
-    PdfNumber(int value) {
-        super(NUMBER, String.valueOf(value));
-        this.value = 1.0 * value;
-        numberType = INTEGER;
-    }
-    
-/**
- * Constructs a new REAL <CODE>PdfNumber</CODE>-object.
- *
- * @param		value				value of the new <CODE>PdfNumber</CODE>-object
- */
-    
-    PdfNumber(double value) {
-        super(NUMBER, ByteBuffer.formatDouble(value));
+    public PdfNumber(int value) {
+        super(NUMBER);
         this.value = value;
-        numberType = REAL;
+        setContent(String.valueOf(value));
     }
     
 /**
@@ -150,26 +108,23 @@ class PdfNumber extends PdfObject implements PdfPrintable {
  * @param		value				value of the new <CODE>PdfNumber</CODE>-object
  */
     
-    PdfNumber(float value) {
+    public PdfNumber(double value) {
+        super(NUMBER);
+        this.value = value;
+        setContent(ByteBuffer.formatDouble(value));
+    }
+    
+/**
+ * Constructs a new REAL <CODE>PdfNumber</CODE>-object.
+ *
+ * @param		value				value of the new <CODE>PdfNumber</CODE>-object
+ */
+    
+    public PdfNumber(float value) {
         this((double)value);
     }
     
     // methods returning the value of this object
-    
-/**
- * Returns the <CODE>String</CODE> value of the <CODE>PdfNumber</CODE>-object.
- *
- * @return		a <CODE>String</CODE> value "true" or "false"
- */
-    
-    public String toString() {
-        if (numberType == INTEGER) {
-            return String.valueOf((int) value);
-        }
-        else {
-            return ByteBuffer.formatDouble(value);
-        }
-    }
     
 /**
  * Returns the primitive <CODE>int</CODE> value of this object.
@@ -177,7 +132,7 @@ class PdfNumber extends PdfObject implements PdfPrintable {
  * @return		a value
  */
     
-    final int intValue() {
+    public int intValue() {
         return (int) value;
     }
     
@@ -187,8 +142,12 @@ class PdfNumber extends PdfObject implements PdfPrintable {
  * @return		a value
  */
     
-    final double doubleValue() {
+    public double doubleValue() {
         return value;
+    }
+    
+    public float floatValue() {
+        return (float)value;
     }
     
     // other methods
@@ -199,7 +158,7 @@ class PdfNumber extends PdfObject implements PdfPrintable {
  * @return		<CODE>void</CODE>
  */
     
-    void increment() {
+    public void increment() {
         value += 1.0;
         setContent(ByteBuffer.formatDouble(value));
     }

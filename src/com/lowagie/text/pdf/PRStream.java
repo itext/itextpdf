@@ -58,23 +58,20 @@ import com.lowagie.text.Document;
  * a Literal
  */
 
-class PRStream extends PdfStream {
+public class PRStream extends PdfStream {
     
-    protected PRDictionary dictionary;
     protected PdfReader reader;
     protected int offset;
     protected int length;
     
-    PRStream(PRDictionary dictionary, PdfReader reader, int offset)
+    public PRStream(PdfReader reader, int offset)
     {
-        this.dictionary = dictionary;
         this.reader = reader;
         this.offset = offset;
     }
     
-    PRStream(PRDictionary dictionary, PdfReader reader, byte conts[])
+    public PRStream(PdfReader reader, byte conts[])
     {
-        this.dictionary = dictionary;
         this.reader = reader;
         this.offset = -1;
         if (Document.compress) {
@@ -88,40 +85,27 @@ class PRStream extends PdfStream {
             catch(IOException ioe) {
                 throw new ExceptionConverter(ioe);
             }
-            dictionary.put(new PRName("Filter"), new PRName("FlateDecode"));
+            put(PdfName.FILTER, PdfName.FLATEDECODE);
         }
         else
             bytes = conts;
         setLength(bytes.length);
     }
     
-    void setLength(int length) {
+    public void setLength(int length) {
         this.length = length;
-        dictionary.put(new PRName("Length"), new PRNumber(length));
+        put(PdfName.LENGTH, new PdfNumber(length));
     }
     
-    PRDictionary getDictionary() {
-        return dictionary;
-    }
-    
-    void setDictionary(PRDictionary dic) {
-        dictionary = dic;
-    }
-    
-    int getOffset() {
+    public int getOffset() {
         return offset;
     }
     
-    int getLength() {
+    public int getLength() {
         return length;
     }
     
-    public byte[] toPdf(PdfWriter writer) {
-        dicBytes = dictionary.toPdf(writer);
-        return null;
-    }
-
-    int getStreamLength(PdfWriter writer) {
+    public int getStreamLength(PdfWriter writer) {
         if (dicBytes == null)
             toPdf(writer);
         return length + dicBytes.length + SIZESTREAM;

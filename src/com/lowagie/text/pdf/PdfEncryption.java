@@ -58,7 +58,7 @@ import com.lowagie.text.ExceptionConverter;
  *
  * @author  Paulo Soares (psoares@consiste.pt)
  */
-public final class PdfEncryption {
+public class PdfEncryption {
 
     static final byte pad[] = {
         (byte)0x28, (byte)0xBF, (byte)0x4E, (byte)0x5E, (byte)0x4E, (byte)0x75,

@@ -260,7 +260,7 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
  * @param	symbol	a <CODE>Chunk</CODE>
  */
     
-    public final void setListSymbol(Chunk symbol) {
+    public void setListSymbol(Chunk symbol) {
         this.symbol = symbol;
         if (this.symbol.font().isStandardFont()) {
             this.symbol.setFont(font);
@@ -275,7 +275,7 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
  * @return	a <CODE>Chunk</CODE>
  */
     
-    public final Chunk listSymbol() {
+    public Chunk listSymbol() {
         return symbol;
     }
     

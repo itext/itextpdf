@@ -99,7 +99,7 @@ public class TernaryTree implements Cloneable, Serializable {
     protected char freenode;
     protected int length;    // number of items in tree
 
-    protected final static int BLOCK_SIZE = 2048;    // allocation size for arrays
+    protected static final int BLOCK_SIZE = 2048;    // allocation size for arrays
 
     TernaryTree() {
         init();

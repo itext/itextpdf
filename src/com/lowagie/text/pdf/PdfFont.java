@@ -72,74 +72,73 @@ import com.lowagie.text.ExceptionConverter;
 
 class PdfFont implements Comparable {
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int COURIER = 0;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int COURIER_BOLD = 1;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int COURIER_OBLIQUE = 2;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int COURIER_BOLDOBLIQUE = 3;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int HELVETICA = 4;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int HELVETICA_BOLD = 5;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int HELVETICA_OBLIQUE = 6;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int HELVETICA_BOLDOBLIQUE = 7;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int SYMBOL = 8;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int TIMES_ROMAN = 9;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int TIMES_BOLD = 10;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int TIMES_ITALIC = 11;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int TIMES_BOLDITALIC = 12;
     
-/** This is a possible value of a base 14 type 1 font */
+    /** This is a possible value of a base 14 type 1 font */
     public static final int ZAPFDINGBATS = 13;
     // membervariables
     
-/** the name of this font. */
+    /** the name of this font. */
     private PdfName name;
     
-/** the font metrics. */
+    /** the font metrics. */
     private BaseFont font;
     
-/** the size. */
+    /** the size. */
     private float size;
     
-/** an image. */
+    /** an image. */
     protected Image image;
     
     // constructors
     
-/**
- * Constructs a new <CODE>PdfFont</CODE>-object.
- *
- * @param		name		name of the font
- * @param		f			the base 14 type
- * @param		s			value of the size
- * @param		e			value of the encodingtype
- */
+    /**
+     * Constructs a new <CODE>PdfFont</CODE>-object.
+     *
+     * @param		name		name of the font
+     * @param		f			the base 14 type
+     * @param		s			value of the size
+     * @param		e			value of the encodingtype
+     */
     
-    PdfFont(String name, int f, float s, int e)
-    {
+    PdfFont(String name, int f, float s, int e) {
         String fontName = BaseFont.HELVETICA;
         size = s;
         switch (f) {
@@ -194,45 +193,44 @@ class PdfFont implements Comparable {
         }
     }
     
-/**
- * Constructs a new <CODE>PdfFont</CODE>-object.
- *
- * @param		f			the base 14 type
- * @param		s			value of the size
- * @param		e			value of the encodingtype
- */
+    /**
+     * Constructs a new <CODE>PdfFont</CODE>-object.
+     *
+     * @param		f			the base 14 type
+     * @param		s			value of the size
+     * @param		e			value of the encodingtype
+     */
     
     PdfFont(int f, float s, int e) {
         this(new StringBuffer("F").append(f).toString(), f, s, e);
     }
     
-/**
- * Constructs a new <CODE>PdfFont</CODE>-object.
- *
- * @param		f			the base 14 type
- * @param		s			value of the size
- */
+    /**
+     * Constructs a new <CODE>PdfFont</CODE>-object.
+     *
+     * @param		f			the base 14 type
+     * @param		s			value of the size
+     */
     
     PdfFont(int f, float s) {
         this(new StringBuffer("F").append(f).toString(), f, s, -1);
     }
     
-    PdfFont(BaseFont bf, float size)
-    {
+    PdfFont(BaseFont bf, float size) {
         this.size = size;
         font = bf;
     }
     
     // methods
     
-/**
- * Compares this <CODE>PdfFont</CODE> with another
- *
- * @param	object	the other <CODE>PdfFont</CODE>
- * @return	a value
- */
+    /**
+     * Compares this <CODE>PdfFont</CODE> with another
+     *
+     * @param	object	the other <CODE>PdfFont</CODE>
+     * @return	a value
+     */
     
-    public final int compareTo(Object object) {
+    public int compareTo(Object object) {
         if (image != null)
             return 0;
         if (object == null) {
@@ -254,11 +252,11 @@ class PdfFont implements Comparable {
         }
     }
     
-/**
- * Returns the size of this font.
- *
- * @return		a size
- */
+    /**
+     * Returns the size of this font.
+     *
+     * @return		a size
+     */
     
     float size() {
         if (image == null)
@@ -268,11 +266,11 @@ class PdfFont implements Comparable {
         }
     }
     
-/**
- * Returns the name of this font.
- *
- * @return		a <CODE>PdfName</CODE>
- */
+    /**
+     * Returns the name of this font.
+     *
+     * @return		a <CODE>PdfName</CODE>
+     */
     
     PdfName getName() {
         return name;
@@ -282,11 +280,11 @@ class PdfFont implements Comparable {
         this.name = name;
     }
     
-/**
- * Returns the approximative width of 1 character of this font.
- *
- * @return		a width in Text Space
- */
+    /**
+     * Returns the approximative width of 1 character of this font.
+     *
+     * @return		a width in Text Space
+     */
     
     float width() {
         if (image == null)
@@ -295,12 +293,12 @@ class PdfFont implements Comparable {
             return image.scaledWidth();
     }
     
-/**
- * Returns the width of a certain character of this font.
- *
- * @param		character	a certain character
- * @return		a width in Text Space
- */
+    /**
+     * Returns the width of a certain character of this font.
+     *
+     * @param		character	a certain character
+     * @return		a width in Text Space
+     */
     
     float width(char character) {
         if (image == null)
@@ -309,28 +307,11 @@ class PdfFont implements Comparable {
             return image.scaledWidth();
     }
     
-/**
- * Returns the width (user space) of a <CODE>PdfPrintable</CODE>-object.
- *
- * @param		text		a <CODE>PdfPrintable</CODE>-object
- * @return		a width
- */
-    
-    float width(PdfPrintable text) {
-        if (image == null)
-            return font.getWidthPoint(text.toString(), size);
-        else
-            return image.scaledWidth();
-        
-    }
-    
-    BaseFont getFont()
-    {
+    BaseFont getFont() {
         return font;
     }
     
-    void setImage(Image image)
-    {
+    void setImage(Image image) {
         this.image = image;
     }
 }

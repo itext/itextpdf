@@ -130,7 +130,7 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
  * @return  true if the page has to be numbered
  */
     
-    public final boolean isNumbered() {
+    public boolean isNumbered() {
         return numbered;
     }
     
@@ -140,7 +140,7 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
  * @return  a Phrase
  */
     
-    public final Phrase getBefore() {
+    public Phrase getBefore() {
         return before;
     }
     
@@ -150,7 +150,7 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
  * @return  a Phrase
  */
     
-    public final Phrase getAfter() {
+    public Phrase getAfter() {
         return after;
     }
     
@@ -160,7 +160,7 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
  * @param		pageN		the new page number
  */
     
-    public final void setPageNumber(int pageN) {
+    public void setPageNumber(int pageN) {
         this.pageN = pageN;
     }
     
@@ -170,7 +170,7 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
  * @param		alignment	the new alignment
  */
     
-    public final void setAlignment(int alignment) {
+    public void setAlignment(int alignment) {
         this.alignment = alignment;
     }
     
@@ -182,7 +182,7 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
  * @return		a <CODE>Paragraph</CODE>
  */
     
-    public final Paragraph paragraph() {
+    public Paragraph paragraph() {
         Paragraph paragraph = new Paragraph(before.leading());
         paragraph.add(before);
         if (numbered) {

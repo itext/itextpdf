@@ -417,7 +417,7 @@ public class PdfCell extends Rectangle {
  * @return	<CODE>void</CODE>
  */
     
-    final boolean isHeader() {
+    boolean isHeader() {
         return header;
     }
     
@@ -427,7 +427,7 @@ public class PdfCell extends Rectangle {
  * @return	<CODE>void</CODE>
  */
     
-    final void setHeader() {
+    void setHeader() {
         header = true;
     }
     
@@ -440,7 +440,7 @@ public class PdfCell extends Rectangle {
  * @return	<CODE>true</CODE> if all the lines are allready drawn; <CODE>false</CODE> otherwise.
  */
     
-    final boolean mayBeRemoved() {
+    boolean mayBeRemoved() {
         return (header || (lines.size() == 0 && images.size() == 0));
     }
     

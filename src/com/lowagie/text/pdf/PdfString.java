@@ -70,82 +70,73 @@ import java.io.UnsupportedEncodingException;
  * @see		BadPdfFormatException
  */
 
-class PdfString extends PdfObject implements PdfPrintable {
+public class PdfString extends PdfObject {
     
     // membervariables
     
-/** The value of this object. */
+    /** The value of this object. */
     protected String value = NOTHING;
     
-/** The encoding. */
+    /** The encoding. */
     protected String encoding = ENCODING;
     
     // constructors
     
-/**
- * Constructs an empty <CODE>PdfString</CODE>-object.
- */
+    /**
+     * Constructs an empty <CODE>PdfString</CODE>-object.
+     */
     
-    PdfString() {
-        super(STRING, NOTHING);
+    public PdfString() {
+        super(STRING);
     }
     
-/**
- * Constructs a <CODE>PdfString</CODE>-object.
- *
- * @param		content		the content of the string
- */
+    /**
+     * Constructs a <CODE>PdfString</CODE>-object.
+     *
+     * @param		content		the content of the string
+     */
     
-    PdfString(String value) {
-        super(STRING, value);
+    public PdfString(String value) {
+        super(STRING);
         this.value = value;
     }
     
-/**
- * Constructs a <CODE>PdfString</CODE>-object.
- *
- * @param		content		the content of the string
- * @param		encoding	an encoding
- */
+    /**
+     * Constructs a <CODE>PdfString</CODE>-object.
+     *
+     * @param		content		the content of the string
+     * @param		encoding	an encoding
+     */
     
-    PdfString(String value, String encoding) {
-        super(STRING, value);
+    public PdfString(String value, String encoding) {
+        super(STRING);
         this.value = value;
         this.encoding = encoding;
     }
     
-/**
- * Constructs a <CODE>PdfString</CODE>-object.
- *
- * @param		bytes	an array of <CODE>byte</CODE>
- */
+    /**
+     * Constructs a <CODE>PdfString</CODE>-object.
+     *
+     * @param		bytes	an array of <CODE>byte</CODE>
+     */
     
-    PdfString(byte[] bytes) {
-        super(STRING, bytes);
-        try {
-            this.value = new String(bytes, ENCODING);
-        }
-        catch(UnsupportedEncodingException uee) {
-            throw new ExceptionConverter(uee);
-        }
+    public PdfString(byte[] bytes) {
+        super(STRING);
+        value = PdfEncodings.convertToString(bytes, null);
+        encoding = NOTHING;
     }
     
     // methods overriding some methods in PdfObject
     
-/**
- * Returns the PDF representation of this <CODE>PdfString</CODE>.
- *
- * @return		an array of <CODE>byte</CODE>s
- */
+    /**
+     * Returns the PDF representation of this <CODE>PdfString</CODE>.
+     *
+     * @return		an array of <CODE>byte</CODE>s
+     */
     
-    final public byte[] toPdf(PdfWriter writer) {
+    public byte[] toPdf(PdfWriter writer) {
         byte b[];
-        try {
-            b = value.getBytes(encoding);
-        }
-        catch(UnsupportedEncodingException uee) {
-            throw new ExceptionConverter(uee);
-        }
+        b = PdfEncodings.convertToBytes(value, encoding);
         PdfEncryption crypto = writer.getEncryption();
         if (crypto != null) {
             crypto.prepareKey();
@@ -154,11 +145,11 @@ class PdfString extends PdfObject implements PdfPrintable {
         return PdfContentByte.escapeString(b);
     }
     
-/**
- * Returns the <CODE>String</CODE> value of the <CODE>PdfString</CODE>-object.
- *
- * @return		a <CODE>String</CODE>
- */
+    /**
+     * Returns the <CODE>String</CODE> value of the <CODE>PdfString</CODE>-object.
+     *
+     * @return		a <CODE>String</CODE>
+     */
     
     public String toString() {
         return value;
@@ -166,34 +157,24 @@ class PdfString extends PdfObject implements PdfPrintable {
     
     // other methods
     
-/**
- * Gets the PDF representation of this <CODE>String</CODE> as a <CODE>String</CODE>
- *
- * @return		a <CODE>String</CODE>
- */
+    /**
+     * Gets the PDF representation of this <CODE>String</CODE> as a <CODE>String</CODE>
+     *
+     * @return		a <CODE>String</CODE>
+     */
     
     byte[] get(PdfWriter writer) {
         return toPdf(writer);
         // we create the StringBuffer that will be the PDF representation of the content
     }
     
-/**
- * Tells you if this string is in Chinese, Japanese, Korean or Identity-H.
- */
+    /**
+     * Gets the encoding of this string.
+     *
+     * @return		a <CODE>String</CODE>
+     */
     
-    boolean isSpecialEncoding()
-    {
-        return encoding.equals(CJKFont.CJK_ENCODING) || encoding.equals(BaseFont.IDENTITY_H);
-    }
-    
-/**
- * Gets the encoding of this string.
- *
- * @return		a <CODE>String</CODE>
- */
-    
-    String getEncoding()
-    {
+    public String getEncoding() {
         return encoding;
     }
 }

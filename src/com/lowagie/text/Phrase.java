@@ -436,7 +436,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * @return	<CODE>void</CODE>
  */
     
-    public final void setLeading(float leading) {
+    public void setLeading(float leading) {
         this.leading = leading;
     }
     
@@ -449,7 +449,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * contains more than one or more non-empty<CODE>Chunk</CODE>s.
  */
     
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         switch(size()) {
             case 0:
                 return true;
@@ -470,7 +470,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * @return	true if the leading is defined
  */
     
-    public final boolean leadingDefined() {
+    public boolean leadingDefined() {
         if (Float.isNaN(leading)) {
             return false;
         }
@@ -483,7 +483,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * @return	the linespacing
  */
     
-    public final float leading() {
+    public float leading() {
         if (Float.isNaN(leading)) {
             return font.leading(1.5f);
         }
@@ -496,7 +496,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * @return	a <CODE>Font</CODE>
  */
     
-    public final Font font() {
+    public Font font() {
         return font;
     }
     

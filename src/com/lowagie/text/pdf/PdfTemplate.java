@@ -61,9 +61,9 @@ import java.awt.Color;
  */
 
 public class PdfTemplate extends PdfContentByte {
-    public final static int TYPE_TEMPLATE = 1;
-    public final static int TYPE_IMPORTED = 2;
-    public final static int TYPE_PATTERN = 3;
+    public static final int TYPE_TEMPLATE = 1;
+    public static final int TYPE_IMPORTED = 2;
+    public static final int TYPE_PATTERN = 3;
     protected int type;
     /** The indirect reference to this template */
     protected PdfIndirectReference thisReference;
@@ -77,6 +77,8 @@ public class PdfTemplate extends PdfContentByte {
     protected PdfColorDictionary colorDictionary;
     
     protected PdfPatternDictionary patternDictionary;
+    
+    protected PdfShadingDictionary shadingDictionary;
     
     /** The bounding box of this template */
     protected Rectangle bBox = new Rectangle(0, 0);
@@ -105,6 +107,7 @@ public class PdfTemplate extends PdfContentByte {
         xObjectDictionary = new PdfXObjectDictionary();
         colorDictionary = new PdfColorDictionary();
         patternDictionary = new PdfPatternDictionary();
+        shadingDictionary = new PdfShadingDictionary();
         thisReference = writer.getPdfIndirectReference();
     }
     
@@ -314,6 +317,33 @@ public class PdfTemplate extends PdfContentByte {
         outputColorNumbers(color, tint);
         content.append(' ').append(name.toPdf(null)).append(" SCN").append_i(separator);
     }
+
+    public void paintShading(PdfShading shading) {
+        writer.addSimpleShading(shading);
+        shadingDictionary.put(shading.getShadingName(), shading.getShadingReference());
+        content.append(shading.getShadingName().toPdf(null)).append(" sh").append_i(separator);
+        ColorDetails details = shading.getColorDetails();
+        if (details != null)
+            colorDictionary.put(details.getColorName(), details.getIndirectReference());
+    }
+    
+    public void setShadingFill(PdfShadingPattern shading) {
+        writer.addSimpleShadingPattern(shading);
+        patternDictionary.put(shading.getPatternName(), shading.getPatternReference());
+        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(shading.getPatternName().toPdf(null)).append(" scn").append_i(separator);
+        ColorDetails details = shading.getColorDetails();
+        if (details != null)
+            colorDictionary.put(details.getColorName(), details.getIndirectReference());
+    }
+
+    public void setShadingStroke(PdfShadingPattern shading) {
+        writer.addSimpleShadingPattern(shading);
+        patternDictionary.put(shading.getPatternName(), shading.getPatternReference());
+        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(shading.getPatternName().toPdf(null)).append(" SCN").append_i(separator);
+        ColorDetails details = shading.getColorDetails();
+        if (details != null)
+            colorDictionary.put(details.getColorName(), details.getIndirectReference());
+    }
     
     public void beginVariableText() {
         content.append("/Tx BMC ");
@@ -344,6 +374,8 @@ public class PdfTemplate extends PdfContentByte {
             resources.add(colorDictionary);
         if (patternDictionary.containsPattern())
             resources.add(patternDictionary);
+        if (shadingDictionary.containsShading())
+            resources.add(shadingDictionary);
         resources.add(new PdfProcSet(procset));
         return resources;
     }
@@ -388,6 +420,7 @@ public class PdfTemplate extends PdfContentByte {
         tpl.xObjectDictionary = xObjectDictionary;
         tpl.colorDictionary = colorDictionary;
         tpl.patternDictionary = patternDictionary;
+        tpl.shadingDictionary = shadingDictionary;
         tpl.bBox = new Rectangle(bBox);
         if (matrix != null) {
             tpl.matrix = new PdfArray(matrix);

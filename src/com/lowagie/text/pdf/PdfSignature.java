@@ -70,7 +70,7 @@ public class PdfSignature extends PdfDictionary {
     }
     
     public void setContents(byte contents[]) {
-        put(PdfName.CONTENTS, new PdfStringLiteral(contents));
+        put(PdfName.CONTENTS, new PdfString(contents));
     }
     
     public void setName(String name) {
@@ -90,7 +90,7 @@ public class PdfSignature extends PdfDictionary {
     }
 
     public void setString(String name, byte value[]) {
-        put(new PdfName(name), new PdfStringLiteral(value));
+        put(new PdfName(name), new PdfString(value));
     }
 
     public void setString(String name, String value) {

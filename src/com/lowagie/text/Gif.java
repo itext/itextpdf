@@ -153,7 +153,7 @@ public class Gif extends Image implements Element {
  * This method checks if the image is a valid GIF and processes some parameters.
  */
     
-    private final void processParameters() throws BadElementException, IOException {
+    private void processParameters() throws BadElementException, IOException {
         type = GIF;
         InputStream is = null;
         try {

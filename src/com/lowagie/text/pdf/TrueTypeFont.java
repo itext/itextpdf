@@ -611,7 +611,7 @@ class TrueTypeFont extends BaseFont {
         byte buf[] = new byte[length];
         rf.readFully(buf);
         try {
-            return new String(buf, PdfObject.ENCODING);
+            return new String(buf, WINANSI);
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);

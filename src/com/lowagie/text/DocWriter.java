@@ -363,7 +363,7 @@ public abstract class DocWriter implements DocListener {
  * @param string    the <CODE>String</CODE> to write
  */
     
-    protected final void write(String string) throws IOException {
+    protected void write(String string) throws IOException {
         os.write(getISOBytes(string));
     }
     
@@ -373,7 +373,7 @@ public abstract class DocWriter implements DocListener {
  * @param   indent  the number of tabs to add
  */
     
-    protected final void addTabs(int indent) throws IOException {
+    protected void addTabs(int indent) throws IOException {
         os.write(NEWLINE);
         for (int i = 0; i < indent; i++) {
             os.write(TAB);

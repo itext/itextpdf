@@ -389,7 +389,7 @@ public class ByteBuffer {
                     buf.append(byteCache[v]);
                     return null;
                 } else {
-                    String tmp = new String(byteCache[v]);
+                    String tmp = PdfEncodings.convertToString(byteCache[v], null);
                     if (negative) tmp = "-" + tmp;
                     return tmp;
                 }

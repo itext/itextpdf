@@ -127,7 +127,7 @@ public class PdfDashPattern extends PdfArray {
  * @return		an array of <CODE>byte</CODE>s
  */
     
-    final public byte[] toPdf(PdfWriter writer) {
+    public byte[] toPdf(PdfWriter writer) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             stream.write(DocWriter.getISOBytes("["));

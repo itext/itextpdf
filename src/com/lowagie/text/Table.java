@@ -408,7 +408,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return <CODE>true</CODE> if the element was processed successfully
  */
     
-    public final boolean process(ElementListener listener) {
+    public boolean process(ElementListener listener) {
         try {
             return listener.add(this);
         }
@@ -515,7 +515,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return  a type
  */
     
-    public final int type() {
+    public int type() {
         return Element.TABLE;
     }
     
@@ -525,7 +525,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return  an <CODE>ArrayList</CODE>
  */
     
-    public final ArrayList getChunks() {
+    public ArrayList getChunks() {
         return new ArrayList();
     }
     
@@ -572,7 +572,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       cell         a <CODE>Cell</CODE>
  */
     
-    public final void addCell(Cell cell) {
+    public void addCell(Cell cell) {
         try {
             addCell(cell, new Point(currentRow, currentColumn));
         }
@@ -591,7 +591,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @throws      BadElementException this should never happen
  */
     
-    public final void addCell(Phrase content) throws BadElementException {
+    public void addCell(Phrase content) throws BadElementException {
         addCell(content, new Point(currentRow, currentColumn));
     }
     
@@ -606,7 +606,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @throws      BadElementException this should never happen
  */
     
-    public final void addCell(Phrase content, Point location) throws BadElementException {
+    public void addCell(Phrase content, Point location) throws BadElementException {
         Cell cell = new Cell(content);
         cell.setBorder(defaultLayout.border());
         cell.setBorderWidth(defaultLayout.borderWidth());
@@ -630,7 +630,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @throws      BadElementException this should never happen
  */
     
-    public final void addCell(String content) throws BadElementException {
+    public void addCell(String content) throws BadElementException {
         addCell(new Phrase(content), new Point(currentRow,currentColumn));
     }
     
@@ -645,7 +645,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @throws      BadElementException this should never happen
  */
     
-    public final void addCell(String content, Point location) throws BadElementException {
+    public void addCell(String content, Point location) throws BadElementException {
         addCell(new Phrase(content), location);
     }
     
@@ -708,7 +708,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * Will fill empty cells with valid blank <CODE>Cell</CODE>s
  */
     
-    public final void complete() {
+    public void complete() {
         try {
             if (mTableInserted == true) {
                 mergeInsertedTables();  // integrate tables in the table
@@ -747,7 +747,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new border value
  */
     
-    public final void setDefaultCellBorder(int value) {
+    public void setDefaultCellBorder(int value) {
         defaultLayout.setBorder(value);
     }
     
@@ -758,7 +758,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new width
  */
     
-    public final void setDefaultCellBorderWidth(float value) {
+    public void setDefaultCellBorderWidth(float value) {
         defaultLayout.setBorderWidth(value);
     }
     
@@ -769,7 +769,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       color   the new color
  */
     
-    public final void setDefaultCellBorderColor(Color color) {
+    public void setDefaultCellBorderColor(Color color) {
         defaultLayout.setBorderColor(color);
     }
     
@@ -780,7 +780,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       color   the new color
  */
     
-    public final void setDefaultCellBackgroundColor(Color color) {
+    public void setDefaultCellBackgroundColor(Color color) {
         defaultLayout.setBackgroundColor(color);
     }
     
@@ -791,7 +791,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new value
  */
     
-    public final void setDefaultCellGrayFill(float value) {
+    public void setDefaultCellGrayFill(float value) {
         if (value >= 0 && value <= 1) {
             defaultLayout.setGrayFill(value);
         }
@@ -804,7 +804,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new alignment value
  */
     
-    public final void setDefaultHorizontalAlignment(int value) {
+    public void setDefaultHorizontalAlignment(int value) {
         defaultLayout.setHorizontalAlignment(value);
     }
     
@@ -815,7 +815,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new alignment value
  */
     
-    public final void setDefaultVerticalAlignment(int value) {
+    public void setDefaultVerticalAlignment(int value) {
         defaultLayout.setVerticalAlignment(value);
     }
     
@@ -826,7 +826,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new rowspan value
  */
     
-    public final void setDefaultRowspan(int value) {
+    public void setDefaultRowspan(int value) {
         defaultLayout.setRowspan(value);
     }
     
@@ -837,7 +837,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new colspan value
  */
     
-    public final void setDefaultColspan(int value) {
+    public void setDefaultColspan(int value) {
         defaultLayout.setColspan(value);
     }
     
@@ -880,7 +880,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       column  the number of the column that has to be deleted
  */
     
-    public final void deleteColumn(int column) throws BadElementException {
+    public void deleteColumn(int column) throws BadElementException {
         float newWidths[] = new float[--columns];
         for (int i = 0; i < column; i++) {
             newWidths[i] = widths[i];
@@ -913,7 +913,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return      boolean <CODE>true</CODE> if the row was deleted; <CODE>false</CODE> if not
  */
     
-    public final boolean deleteRow(int row) {
+    public boolean deleteRow(int row) {
         if (row < 0 || row >= rows.size()) {
             return false;
         }
@@ -929,7 +929,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return      boolean <CODE>true</CODE> if the row was deleted; <CODE>false</CODE> if not
  */
     
-    public final boolean deleteLastRow() {
+    public boolean deleteLastRow() {
         return deleteRow(rows.size() - 1);
     }
     
@@ -953,7 +953,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new value
  */
     
-    public final void setLastHeaderRow(int value) {
+    public void setLastHeaderRow(int value) {
         lastHeaderRow = value;
     }
     
@@ -963,7 +963,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new value
  */
     
-    public final void setAlignment(int value) {
+    public void setAlignment(int value) {
         alignment = value;
     }
     
@@ -973,7 +973,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param    alignment        the new alignment as a <CODE>String</CODE>
  */
     
-    public final void setAlignment(String alignment) {
+    public void setAlignment(String alignment) {
         if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(alignment)) {
             this.alignment = Element.ALIGN_LEFT;
             return;
@@ -991,7 +991,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new value
  */
     
-    public final void setSpaceInsideCell(float value) {
+    public void setSpaceInsideCell(float value) {
         cellpadding = value;
     }
     
@@ -1001,7 +1001,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new value
  */
     
-    public final void setSpaceBetweenCells(float value) {
+    public void setSpaceBetweenCells(float value) {
         cellspacing = value;
     }
     
@@ -1011,7 +1011,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new value
  */
     
-    public final void setPadding(float value) {
+    public void setPadding(float value) {
         cellpadding = value;
     }
     
@@ -1021,7 +1021,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       value   the new value
  */
     
-    public final void setSpacing(float value) {
+    public void setSpacing(float value) {
         cellspacing = value;
     }
     
@@ -1032,7 +1032,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @deprecated  use setSpacing instead
  */
     
-    public final void setCellpadding(float value) {
+    public void setCellpadding(float value) {
         cellspacing = value;
     }
     
@@ -1043,7 +1043,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @deprecated  use setPadding instead
  */
     
-    public final void setCellspacing(float value) {
+    public void setCellspacing(float value) {
         cellpadding = value;
     }
     
@@ -1053,7 +1053,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       width           the width
  */
     
-    public final void setWidth(float width) {
+    public void setWidth(float width) {
         this.widthPercentage = width;
     }
     
@@ -1063,7 +1063,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param   width           the width
  */
     
-    public final void setAbsWidth(String width) {
+    public void setAbsWidth(String width) {
         this.absWidth = width;
     }
     
@@ -1085,7 +1085,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       an array with values
  */
     
-    public final void setWidths(float[] widths) throws BadElementException {
+    public void setWidths(float[] widths) throws BadElementException {
         if (widths.length != columns) {
             throw new BadElementException("Wrong number of columns.");
         }
@@ -1116,7 +1116,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @param       an array with values
  */
     
-    public final void setWidths(int[] widths) throws DocumentException {
+    public void setWidths(int[] widths) throws DocumentException {
         float tb[] = new float[widths.length];
         for (int k = 0; k < widths.length; ++k)
             tb[k] = widths[k];
@@ -1130,7 +1130,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return    a value
  */
     
-    public final int columns() {
+    public int columns() {
         return columns;
     }
     
@@ -1140,7 +1140,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return      the number of rows in this <CODE>Table</CODE>
  */
     
-    public final int size() {
+    public int size() {
         return rows.size();
     }
     
@@ -1150,7 +1150,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * @return      the proportional widths of the columns in this <CODE>Table</CODE>
  */
     
-    public final float[] getProportionalWidths() {
+    public float[] getProportionalWidths() {
         return widths;
     }
     

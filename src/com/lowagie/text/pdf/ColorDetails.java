@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 
 import java.util.HashMap;
 import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 /** Each spotcolor in the document will have an instance of this class
  *
  * @author Phillip Pan (phillip@formstar.com)
@@ -96,7 +97,7 @@ class ColorDetails {
     /** Gets the <CODE>SpotColor</CODE> object.
      * @return the <CODE>PdfSpotColor</CODE>
      */
-    PdfSpotColor getSpotColor() {
-        return spotcolor;
+    PdfArray getSpotColor(PdfWriter writer) throws IOException {
+        return spotcolor.getPdfArray(writer);
     }
 }

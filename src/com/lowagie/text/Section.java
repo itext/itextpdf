@@ -147,7 +147,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @return	<CODE>void</CODE>
  */
     
-    private final void setNumbers(int number, ArrayList numbers) {
+    private void setNumbers(int number, ArrayList numbers) {
         this.numbers = new ArrayList();
         this.numbers.add(new Integer(number));
         this.numbers.addAll(numbers);
@@ -163,7 +163,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @return	<CODE>true</CODE> if the element was processed successfully
  */
     
-    public final boolean process(ElementListener listener) {
+    public boolean process(ElementListener listener) {
         try {
             for (Iterator i = iterator(); i.hasNext(); ) {
                 listener.add((Element) i.next());
@@ -305,7 +305,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	numberDepth	the numberDepth of the section
  */
     
-    public final Section addSection(float indentation, Paragraph title, int numberDepth) {
+    public Section addSection(float indentation, Paragraph title, int numberDepth) {
         Section section = new Section(title, numberDepth);
         section.setIndentation(indentation);
         add(section);
@@ -319,7 +319,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	title		the title of the new section
  */
     
-    public final Section addSection(float indentation, Paragraph title) {
+    public Section addSection(float indentation, Paragraph title) {
         Section section = new Section(title, 1);
         section.setIndentation(indentation);
         add(section);
@@ -333,7 +333,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	numberDepth	the numberDepth of the section
  */
     
-    public final Section addSection(Paragraph title, int numberDepth) {
+    public Section addSection(Paragraph title, int numberDepth) {
         Section section = new Section(title, numberDepth);
         add(section);
         return section;
@@ -345,7 +345,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	title		the title of the new section
  */
     
-    public final Section addSection(Paragraph title) {
+    public Section addSection(Paragraph title) {
         Section section = new Section(title, 1);
         add(section);
         return section;
@@ -359,7 +359,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	numberDepth	the numberDepth of the section
  */
     
-    public final Section addSection(float indentation, String title, int numberDepth) {
+    public Section addSection(float indentation, String title, int numberDepth) {
         Section section = new Section(new Paragraph(title), numberDepth);
         section.setIndentation(indentation);
         add(section);
@@ -373,7 +373,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	numberDepth	the numberDepth of the section
  */
     
-    public final Section addSection(String title, int numberDepth) {
+    public Section addSection(String title, int numberDepth) {
         Section section = new Section(new Paragraph(title), numberDepth);
         add(section);
         return section;
@@ -386,7 +386,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	title		the title of the new section
  */
     
-    public final Section addSection(float indentation, String title) {
+    public Section addSection(float indentation, String title) {
         Section section = new Section(new Paragraph(title), 1);
         section.setIndentation(indentation);
         add(section);
@@ -399,7 +399,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	title		the title of the new section
  */
     
-    public final Section addSection(String title) {
+    public Section addSection(String title) {
         Section section = new Section(new Paragraph(title), 1);
         add(section);
         return section;
@@ -478,7 +478,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	indentation		the indentation
  */
     
-    public final void setIndentationLeft(float indentation) {
+    public void setIndentationLeft(float indentation) {
         indentationLeft = indentation;
     }
     
@@ -488,7 +488,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	indentation		the indentation
  */
     
-    public final void setIndentationRight(float indentation) {
+    public void setIndentationRight(float indentation) {
         indentationRight = indentation;
     }
     
@@ -498,7 +498,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @param	indentation		the indentation
  */
     
-    public final void setIndentation(float indentation) {
+    public void setIndentation(float indentation) {
         sectionIndent = indentation;
     }
     
@@ -511,7 +511,7 @@ public class Section extends ArrayList implements TextElementArray {
  *			<CODE>false</CODE> if it is a <CODE>Section</CODE>.
  */
     
-    public final boolean isChapter() {
+    public boolean isChapter() {
         return type() == Element.CHAPTER;
     }
     
@@ -522,7 +522,7 @@ public class Section extends ArrayList implements TextElementArray {
  *			<CODE>false</CODE> if it is a <CODE>Chapter</CODE>.
  */
     
-    public final boolean isSection() {
+    public boolean isSection() {
         return type() == Element.SECTION;
     }
     
@@ -532,7 +532,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @return	the numberdepth
  */
     
-    public final int numberDepth() {
+    public int numberDepth() {
         return numberDepth;
     }
     
@@ -542,7 +542,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @return	the indentation
  */
     
-    public final float indentationLeft() {
+    public float indentationLeft() {
         return indentationLeft;
     }
     
@@ -552,7 +552,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @return	the indentation
  */
     
-    public final float indentationRight() {
+    public float indentationRight() {
         return indentationRight;
     }
     
@@ -562,7 +562,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @return	the indentation
  */
     
-    public final float indentation() {
+    public float indentation() {
         return sectionIndent;
     }
     
@@ -572,7 +572,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @return	the depth
  */
     
-    public final int depth() {
+    public int depth() {
         return numbers.size();
     }
     

@@ -127,13 +127,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             return text.length() * 1000;
         int total = 0;
         if (fontSpecific) {
-            byte b[] = null;
-            try {
-                b = text.getBytes(PdfObject.ENCODING);
-            }
-            catch (Exception e) {
-                throw new ExceptionConverter(e);
-            }
+            byte b[] = PdfEncodings.convertToBytes(text, WINANSI);
             int len = b.length;
             for (int k = 0; k < len; ++k)
                 total += getRawWidth(b[k] & 0xff, null);
@@ -189,14 +183,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         "CMapName currentdict /CMap defineresource pop\n" +
         "end end\n");
         String s = buf.toString();
-        byte b[] = null;
-        try {
-            b = s.getBytes(PdfObject.ENCODING);
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
-        PdfStream stream = new PdfStream(b);
+        PdfStream stream = new PdfStream(PdfEncodings.convertToBytes(s, null));
         stream.flateCompress();
         return stream;
     }

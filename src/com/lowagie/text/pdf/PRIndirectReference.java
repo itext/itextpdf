@@ -50,7 +50,7 @@
 
 package com.lowagie.text.pdf;
 
-class PRIndirectReference extends PRObject {
+class PRIndirectReference extends PdfObject {
     
     protected PdfReader reader;
     // membervariables
@@ -97,7 +97,7 @@ class PRIndirectReference extends PRObject {
  * @return		a number.
  */
     
-    final int getNumber() {
+    int getNumber() {
         return number;
     }
     
@@ -107,13 +107,13 @@ class PRIndirectReference extends PRObject {
  * @return		a number.
  */
     
-    final int getGeneration() {
+    int getGeneration() {
         return generation;
     }
     
     public byte[] toPdf(PdfWriter writer) {
         int n = writer.getNewObjectNumber(reader, number, generation);
-        return stringToByte(new StringBuffer().append(n).append(" 0 R").toString());
+        return PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" 0 R").toString(), null);
     }
 
 }

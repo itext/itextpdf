@@ -378,7 +378,7 @@ class TrueTypeFontSubSet {
         byte buf[] = new byte[length];
         rf.readFully(buf);
         try {
-            return new String(buf, PdfObject.ENCODING);
+            return new String(buf, BaseFont.WINANSI);
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -398,13 +398,7 @@ class TrueTypeFontSubSet {
     }
 
     protected void writeFontString(String s) {
-        byte b[];
-        try {
-            b = s.getBytes(PdfObject.ENCODING);
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
+        byte b[] = PdfEncodings.convertToBytes(s, BaseFont.WINANSI);
         System.arraycopy(b, 0, outFont, fontPtr, b.length);
         fontPtr += b.length;
     }

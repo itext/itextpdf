@@ -59,10 +59,10 @@ import java.io.*;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 class PdfReaderInstance {
-    static final PRLiteral IDENTITYMATRIX = new PRLiteral(0, "[1 0 0 1 0 0]");
-    static final PRNumber ONE = new PRNumber(1);
+    static final PdfLiteral IDENTITYMATRIX = new PdfLiteral("[1 0 0 1 0 0]");
+    static final PdfNumber ONE = new PdfNumber(1);
     PdfObject xrefObj[];
-    PRDictionary pages[];
+    PdfDictionary pages[];
     int myXref[]; 
     PdfReader reader;
     RandomAccessFileOrArray file;
@@ -71,7 +71,7 @@ class PdfReaderInstance {
     HashMap visited = new HashMap();
     ArrayList nextRound = new ArrayList();
 
-    PdfReaderInstance(PdfReader reader, PdfWriter writer, PdfObject xrefObj[], PRDictionary pages[]) {
+    PdfReaderInstance(PdfReader reader, PdfWriter writer, PdfObject xrefObj[], PdfDictionary pages[]) {
         this.reader = reader;
         this.xrefObj = xrefObj;
         this.pages = pages;
@@ -109,15 +109,15 @@ class PdfReaderInstance {
     }
     
     PdfObject getResources(int pageNumber) {
-        return reader.getPdfObject(pages[pageNumber - 1].get(PdfReader.NAME_RESOURCES));
+        return reader.getPdfObject(pages[pageNumber - 1].get(PdfName.RESOURCES));
     }
     
     PdfStream getFormXObject(int pageNumber) throws IOException {
-        PRDictionary page = pages[pageNumber - 1];
-        PdfObject contents = reader.getPdfObject(page.get(PdfReader.NAME_CONTENTS));
+        PdfDictionary page = pages[pageNumber - 1];
+        PdfObject contents = reader.getPdfObject(page.get(PdfName.CONTENTS));
         int length = 0;
         int offset = 0;
-        PRDictionary dic = new PRDictionary();
+        PdfDictionary dic = new PdfDictionary();
         ByteArrayOutputStream bout = null;
         ArrayList filters = null;
         if (contents != null) {
@@ -125,15 +125,15 @@ class PdfReaderInstance {
                 PRStream stream = (PRStream)contents;
                 length = stream.getLength();
                 offset = stream.getOffset();
-                dic.putAll(stream.getDictionary());
+                dic.putAll(stream);
             }
             else {
-                PRArray array = (PRArray)contents;
+                PdfArray array = (PdfArray)contents;
                 ArrayList list = array.getArrayList();
                 bout = new ByteArrayOutputStream();
                 for (int k = 0; k < list.size(); ++k) {
                     PRStream stream = (PRStream)reader.getPdfObject((PdfObject)list.get(k));
-                    PdfObject filter = stream.getDictionary().get(new PRName("Filter"));
+                    PdfObject filter = stream.get(PdfName.FILTER);
                     byte b[] = new byte[stream.getLength()];
                     file.seek(stream.getOffset());
                     file.readFully(b);
@@ -143,12 +143,12 @@ class PdfReaderInstance {
                             filters.add(filter);
                         }
                         else if (filter.type() == PdfObject.ARRAY) {
-                            filters = ((PRArray)filter).getArrayList();
+                            filters = ((PdfArray)filter).getArrayList();
                         }
                     }
                     String name;
                     for (int j = 0; j < filters.size(); ++j) {
-                        name = ((PRName)filters.get(j)).toString();
+                        name = ((PdfName)filters.get(j)).toString();
                         if (name.equals("/FlateDecode") || name.equals("/Fl"))
                             b = PdfReader.FlateDecode(b);
                         else if (name.equals("/ASCIIHexDecode") || name.equals("/AHx"))
@@ -166,19 +166,22 @@ class PdfReaderInstance {
                 }
             }
         }
-        dic.put(PdfReader.NAME_RESOURCES, reader.getPdfObject(page.get(PdfReader.NAME_RESOURCES)));
-        dic.put(PdfReader.NAME_TYPE, PdfName.XOBJECT);
-        dic.put(PdfReader.NAME_SUBTYPE, PdfName.FORM);
-        dic.put(PdfReader.NAME_BBOX, new PdfRectangle(((PdfImportedPage)importedPages.get(new Integer(pageNumber))).getBoundingBox()));
-        dic.put(PdfReader.NAME_MATRIX, IDENTITYMATRIX);
-        dic.put(PdfReader.NAME_FORMTYPE, ONE);
+        dic.put(PdfName.RESOURCES, reader.getPdfObject(page.get(PdfName.RESOURCES)));
+        dic.put(PdfName.TYPE, PdfName.XOBJECT);
+        dic.put(PdfName.SUBTYPE, PdfName.FORM);
+        dic.put(PdfName.BBOX, new PdfRectangle(((PdfImportedPage)importedPages.get(new Integer(pageNumber))).getBoundingBox()));
+        dic.put(PdfName.MATRIX, IDENTITYMATRIX);
+        dic.put(PdfName.FORMTYPE, ONE);
         PRStream stream;
         if (bout == null) {
-            stream = new PRStream(dic, reader, offset);
+            stream = new PRStream(reader, offset);
+            stream.putAll(dic);
             stream.setLength(length);
         }
-        else
-            stream = new PRStream(dic, reader, bout.toByteArray());
+        else {
+            stream = new PRStream(reader, bout.toByteArray());
+            stream.putAll(dic);
+        }
         return stream;
     }
     

@@ -362,7 +362,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a type
  */
     
-    public final int type() {
+    public int type() {
         return Element.ANNOTATION;
     }
     
@@ -421,7 +421,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float llx() {
+    public float llx() {
         return llx;
     }
     
@@ -431,7 +431,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float lly() {
+    public float lly() {
         return lly;
     }
     
@@ -441,7 +441,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float urx() {
+    public float urx() {
         return urx;
     }
     
@@ -451,7 +451,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float ury() {
+    public float ury() {
         return ury;
     }
     
@@ -462,7 +462,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float llx(float def) {
+    public float llx(float def) {
         if (llx == Float.NaN) return def;
         return llx;
     }
@@ -474,7 +474,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float lly(float def) {
+    public float lly(float def) {
         if (lly == Float.NaN) return def;
         return lly;
     }
@@ -486,7 +486,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float urx(float def) {
+    public float urx(float def) {
         if (urx == Float.NaN) return def;
         return urx;
     }
@@ -498,7 +498,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a value
  */
     
-    public final float ury(float def) {
+    public float ury(float def) {
         if (ury == Float.NaN) return def;
         return ury;
     }
@@ -509,7 +509,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a type
  */
     
-    public final int annotationType() {
+    public int annotationType() {
         return annotationtype;
     }
     
@@ -519,7 +519,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a name
  */
     
-    public final String title() {
+    public String title() {
         String s = (String)annotationAttributes.get(TITLE);
         if (s == null) s = "";
         return s;
@@ -531,7 +531,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a reference
  */
     
-    public final String content() {
+    public String content() {
         String s = (String)annotationAttributes.get(CONTENT);
         if (s == null) s = "";
         return s;
@@ -543,7 +543,7 @@ public class Annotation implements Element, MarkupAttributes {
  * @return	a reference
  */
     
-    public final HashMap attributes() {
+    public HashMap attributes() {
         return annotationAttributes;
     }
     
