@@ -1861,7 +1861,7 @@ public class PdfContentByte {
      * Show an array of text.
      * @param text array of text
      */
-    void showText(PdfTextArray text) {
+    public void showText(PdfTextArray text) {
         if (state.fontDetails == null)
             throw new NullPointerException("Font and size must be set before writing any text");
         content.append("[");
