@@ -253,6 +253,8 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     // gets an instance of an Image
     
     public static Image getInstance(Image image) {
+        if (image == null)
+            return null;
         try {
             Class cs = image.getClass();
             Constructor constructor = cs.getDeclaredConstructor(new Class[]{Image.class});

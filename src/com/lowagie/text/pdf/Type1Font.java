@@ -180,7 +180,7 @@ class Type1Font extends BaseFont
             builtinFont = true;
             byte buf[] = new byte[1024];
             try {
-                is = getResourceStream(afmFile + ".afm");
+                is = getResourceStream(RESOURCE_PATH + afmFile + ".afm");
                 if (is == null) {
                     String msg = afmFile + " not found as resource. (The *.afm files must exist as resources in the package com.lowagie.text.pdf.fonts)";
                     System.err.println(msg);

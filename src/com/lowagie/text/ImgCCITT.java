@@ -111,7 +111,7 @@ public class ImgCCITT extends Image implements Element {
         super(image);
     }
 
-    /** Creats an Image in CCITT mode.
+    /** Creates an Image with CCITT compression.
      *
      * @param width the exact width of the image
      * @param height the exact height of the image

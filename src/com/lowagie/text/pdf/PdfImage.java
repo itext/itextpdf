@@ -467,7 +467,8 @@ class PdfImage extends PdfStream {
                             break;
                         }
                         if (tablelength == (1 << codelength)) {
-                            codelength++;
+                            if (codelength < 12) // bugfix by DT
+                                codelength++;
                         }
                     }
                     if (bytesread - byteswritten > 2) {

@@ -80,10 +80,10 @@ class CJKFont extends BaseFont {
     
     static {
         try {
-            InputStream is = getResourceStream("cjkfonts.properties");
+            InputStream is = getResourceStream(RESOURCE_PATH + "cjkfonts.properties");
             cjkFonts.load(is);
             is.close();
-            is = getResourceStream("cjkencodings.properties");
+            is = getResourceStream(RESOURCE_PATH + "cjkencodings.properties");
             cjkEncodings.load(is);
             is.close();
         }
@@ -362,7 +362,7 @@ class CJKFont extends BaseFont {
     static char[] readCMap(String name) {
         try {
             name = name + ".cmap";
-            InputStream is = getResourceStream(name);
+            InputStream is = getResourceStream(RESOURCE_PATH + name);
             char c[] = new char[0x10000];
             for (int k = 0; k < 0x10000; ++k)
                 c[k] = (char)((is.read() << 8) + is.read());
@@ -527,7 +527,7 @@ class CJKFont extends BaseFont {
     static HashMap readFontProperties(String name) {
         try {
             name += ".properties";
-            InputStream is = getResourceStream(name);
+            InputStream is = getResourceStream(RESOURCE_PATH + name);
             Properties p = new Properties();
             p.load(is);
             is.close();

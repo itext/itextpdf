@@ -74,6 +74,7 @@ import com.lowagie.text.ExceptionConverter;
 
 class PdfChunk implements SplitCharacter{
 
+    private static final float ITALIC_ANGLE = 0.21256f;
 /** The allowed attributes in variable <CODE>attributes</CODE>. */
     private static final HashMap keysAttributes = new HashMap();
     
@@ -92,9 +93,11 @@ class PdfChunk implements SplitCharacter{
         keysAttributes.put(Chunk.IMAGE, null);
         keysAttributes.put(Chunk.BACKGROUND, null);
         keysAttributes.put(Chunk.PDFANNOTATION, null);
+        keysAttributes.put(Chunk.SKEW, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
         keysNoStroke.put(Chunk.SPLITCHARACTER, null);
         keysNoStroke.put(Chunk.HYPHENATION, null);
+        keysNoStroke.put(Chunk.TEXTRENDERMODE, null);
     }
     
     // membervariables
@@ -108,6 +111,8 @@ class PdfChunk implements SplitCharacter{
     
 /** The font for this <CODE>PdfChunk</CODE>. */
     protected PdfFont font;
+    
+    protected BaseFont baseFont;
     
     protected SplitCharacter splitCharacter;
 /**
@@ -157,6 +162,7 @@ class PdfChunk implements SplitCharacter{
         this.font = other.font;
         this.attributes = other.attributes;
         this.noStroke = other.noStroke;
+        this.baseFont = other.baseFont;
         Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
         if (obj == null)
             image = null;
@@ -186,14 +192,14 @@ class PdfChunk implements SplitCharacter{
         float size = f.size();
         if (size == Font.UNDEFINED)
             size = 12;
-        BaseFont bf = f.getBaseFont();
-        if (bf == null) {
+        baseFont = f.getBaseFont();
+        int style = f.style();
+        if (style == Font.UNDEFINED) {
+            style = Font.NORMAL;
+        }
+        if (baseFont == null) {
             // translation of the font-family to a PDF font-family
             String fontName = BaseFont.HELVETICA;
-            int style = f.style();
-            if (style == Font.UNDEFINED) {
-                style = Font.NORMAL;
-            }
             switch(f.family()) {
                 case Font.COURIER:
                     switch(style & Font.BOLDITALIC) {
@@ -255,13 +261,21 @@ class PdfChunk implements SplitCharacter{
                     break;
             }
             try {
-                bf = BaseFont.createFont(fontName, BaseFont.WINANSI, false);
+                baseFont = BaseFont.createFont(fontName, BaseFont.WINANSI, false);
             }
             catch (Exception ee) {
                 throw new ExceptionConverter(ee);
             }
         }
-        font = new PdfFont(bf, size);
+        else {
+            // bold simulation
+            if ((style & Font.BOLD) != 0)
+                attributes.put(Chunk.TEXTRENDERMODE, new Object[]{new Integer(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE), new Float(size / 30f), null});
+            // italic simulation
+            if ((style & Font.ITALIC) != 0)
+                attributes.put(Chunk.SKEW, new float[]{0, ITALIC_ANGLE});
+        }
+        font = new PdfFont(baseFont, size);
         // other style possibilities
         HashMap attr = chunk.getAttributes();
         if (attr != null) {
@@ -305,6 +319,10 @@ class PdfChunk implements SplitCharacter{
     
     // methods
     
+    public char getUnicodeEquivalent(char c) {
+        return baseFont.getUnicodeEquivalent(c);
+    }
+
     protected int getWord(String text, int start) {
         int len = text.length();
         while (start < len) {
@@ -429,7 +447,7 @@ class PdfChunk implements SplitCharacter{
             if (wordIdx > lastSpace) {
                 String pre = hyphenationEvent.getHyphenatedWordPre(value.substring(lastSpace, wordIdx), font.getFont(), font.size(), width - lastSpaceWidth);
                 String post = hyphenationEvent.getHyphenatedWordPost();
-                if (post.length() > 0) {
+                if (pre.length() > 0) {
                     String returnValue = post + value.substring(wordIdx);
                     value = trim(value.substring(0, lastSpace) + pre);
                     PdfChunk pc = new PdfChunk(returnValue, this);

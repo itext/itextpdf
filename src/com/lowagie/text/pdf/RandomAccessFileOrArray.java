@@ -55,6 +55,9 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.io.EOFException;
 import java.io.RandomAccessFile;
+import java.io.File;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 /** An implementation of a RandomAccessFile for input only
  * that accepts a file or a byte array as data source.
  *
@@ -68,6 +71,32 @@ public class RandomAccessFileOrArray implements DataInput {
     int arrayInPtr;
 
     public RandomAccessFileOrArray(String filename) throws IOException {
+        File file = new File(filename);
+        if (!file.canRead()) {
+            InputStream is = BaseFont.getResourceStream(filename);
+            if (is == null)
+                throw new IOException(filename + " not found as file or resource.");
+            try {
+                byte b[] = new byte[4096];
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                for (;;) {
+                    int read = is.read(b);
+                    if (read < 1)
+                        break;
+                    out.write(b, 0, read);
+                }
+                this.arrayIn = out.toByteArray();
+                return;
+            }
+            finally {
+                try {
+                    is.close();
+                }
+                catch (IOException ioe) {
+                    // empty on purpose
+                }
+            }
+        }
         this.filename = filename;
         rf = new RandomAccessFile(filename, "r");
     }

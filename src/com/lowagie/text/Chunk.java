@@ -137,6 +137,12 @@ public class Chunk implements Element, MarkupAttributes {
 /** Key for hyphenation. */
     public static final String HYPHENATION = "HYPHENATION";
 
+/** Key for text rendering mode. */
+    public static final String TEXTRENDERMODE = "TEXTRENDERMODE";
+
+/** Key for text skewing. */
+    public static final String SKEW = "SKEW";
+
 // member variables
 
 /** This is the content of this chunk of text. */
@@ -362,6 +368,32 @@ public class Chunk implements Element, MarkupAttributes {
 
     public Chunk setTextRise(float rise) {
         return setAttribute(SUBSUPSCRIPT, new Float(rise));
+    }
+
+    /** Sets the text rendering mode. It can outline text, simulate bold and make
+     * text invisible.
+     * @param mode the text rendering mode. It can be <CODE>PdfContentByte.TEXT_RENDER_MODE_FILL</CODE>,
+     * <CODE>PdfContentByte.TEXT_RENDER_MODE_STROKE</CODE>, <CODE>PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE</CODE>
+     * and <CODE>PdfContentByte.TEXT_RENDER_MODE_INVISIBLE</CODE>.
+     * @param strokeWidth the stroke line width for the modes <CODE>PdfContentByte.TEXT_RENDER_MODE_STROKE</CODE> and
+     * <CODE>PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE</CODE>.
+     * @param strokeColor the stroke color or <CODE>null</CODE> to follow the text color
+     * @return this <CODE>Chunk</CODE>
+     */    
+    public Chunk setTextRenderMode(int mode, float strokeWidth, Color strokeColor) {
+        return setAttribute(TEXTRENDERMODE, new Object[]{new Integer(mode), new Float(strokeWidth), strokeColor});
+    }
+
+    /** Skews the text to simulate italic and other effects.
+     * Try <CODE>alpha=0</CODE> and <CODE>beta=12</CODE>.
+     * @param alpha the first angle in degrees
+     * @param beta the second angle in degrees
+     * @return this <CODE>Chunk</CODE>
+     */    
+    public Chunk setSkew(float alpha, float beta) {
+        alpha = (float)Math.tan(alpha * Math.PI / 180);
+        beta = (float)Math.tan(beta * Math.PI / 180);
+        return setAttribute(SKEW, new float[]{alpha, beta});
     }
 
 /**

@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import java.util.ArrayList;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Element;
+import com.lowagie.text.Image;
 import com.lowagie.text.ElementListener;
 import com.lowagie.text.DocumentException;
 
@@ -295,6 +296,15 @@ public class PdfPTable implements Element{
         defaultCell.setTable(table);
         addCell(defaultCell);
         defaultCell.setTable(null);
+    }
+    
+    /** Adds a cell element.
+     * @param image the <CODE>Image</CODE> to add to the table. This image will fit in the cell
+     */    
+    public void addCell(Image image) {
+        defaultCell.setImage(image);
+        addCell(defaultCell);
+        defaultCell.setImage(null);
     }
     
     /** Adds a cell element.
