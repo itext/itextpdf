@@ -109,6 +109,9 @@ public class TextField {
      */    
     public static final int EDIT = 128;
 
+    /**
+     * combo box flag.
+     */
     public static final int COMB = 256;
 
     protected float borderWidth = BORDER_WIDTH_THIN;
@@ -251,6 +254,12 @@ public class TextField {
         return app;
     }
     
+    /**
+     * Gets the appearance for this TextField.
+     * @return the appearance object for this TextField
+     * @throws IOException
+     * @throws DocumentException
+     */
     public PdfAppearance getAppearance() throws IOException, DocumentException {
         PdfAppearance app = getBorderAppearance();
         app.beginVariableText();
