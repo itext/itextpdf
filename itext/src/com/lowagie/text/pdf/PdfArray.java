@@ -193,13 +193,6 @@ public class PdfArray extends PdfObject {
         return true;
     }
     
-    public boolean add(PdfArray other) {
-        if (other == null)
-            return false;
-        arrayList.add(other.arrayList);
-        return true;
-    }
-    
 /**
  * Adds a <CODE>PdfObject</CODE> to the <CODE>PdfArray</CODE>.
  * <P>
