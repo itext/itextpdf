@@ -730,8 +730,7 @@ public class PdfWriter extends DocWriter {
  * @return the direct content
  */
     
-    public PdfContentByte getDirectContent()
-    {
+    public PdfContentByte getDirectContent() {
         return directContent;
     }
     
@@ -741,8 +740,7 @@ public class PdfWriter extends DocWriter {
  * @return the direct content
  */
     
-    public PdfContentByte getDirectContentUnder()
-    {
+    public PdfContentByte getDirectContentUnder() {
         return directContentUnder;
     }
     
@@ -750,10 +748,17 @@ public class PdfWriter extends DocWriter {
  * Resets all the direct contents to empty. This happens when a new page is started.
  */
     
-    void resetContent()
-    {
+    void resetContent() {
         directContent.reset();
         directContentUnder.reset();
+    }
+    
+/**
+ * Gets the root outline.
+ */
+    
+    public PdfOutline getRootOutline() {
+        return directContent.getRootOutline();
     }
     
 /**
@@ -762,8 +767,7 @@ public class PdfWriter extends DocWriter {
  * @return the name of the font in the document
  */
     
-    PdfName add(BaseFont bf)
-    {
+    PdfName add(BaseFont bf) {
         Object ret[] = (Object[])addSimple(bf);
         pdf.addFont((PdfName)ret[0], (PdfIndirectReference)ret[1]);
         return (PdfName)ret[0];
@@ -777,8 +781,7 @@ public class PdfWriter extends DocWriter {
  * and position 1 is an <CODE>PdfIndirectReference</CODE>
  */
     
-    Object[] addSimple(BaseFont bf)
-    {
+    Object[] addSimple(BaseFont bf) {
         Object ret[] = (Object[])documentFonts.get(bf);
         if (ret == null) {
             PdfIndirectReference ind_font = null;
@@ -811,8 +814,7 @@ public class PdfWriter extends DocWriter {
  * @return the <CODE>PdfDocument</CODE>
  */
     
-    PdfDocument getPdfDocument()
-    {
+    PdfDocument getPdfDocument() {
         return pdf;
     }
     
@@ -822,8 +824,7 @@ public class PdfWriter extends DocWriter {
  * @return the <CODE>PdfIndirectReference</CODE>
  */
     
-    PdfIndirectReference getPdfIndirectReference()
-    {
+    PdfIndirectReference getPdfIndirectReference() {
         return body.getPdfIndirectReference();
     }
     
@@ -833,8 +834,7 @@ public class PdfWriter extends DocWriter {
  * @return the <CODE>PdfName</CODE> for this template
  */
     
-    PdfName addDirectTemplateSimple(PdfTemplate template)
-    {
+    PdfName addDirectTemplateSimple(PdfTemplate template) {
         PdfName name = (PdfName)formXObjects.get(template);
         try {
             if (name == null) {
@@ -852,8 +852,7 @@ public class PdfWriter extends DocWriter {
  * @param pageEvent the <CODE>PdfPageEvent</CODE> for this document
  */
     
-    public void setPageEvent(PdfPageEvent pageEvent)
-    {
+    public void setPageEvent(PdfPageEvent pageEvent) {
         this.pageEvent = pageEvent;
     }
     
@@ -864,8 +863,7 @@ public class PdfWriter extends DocWriter {
  * if none is set
  */
     
-    public PdfPageEvent getPageEvent()
-    {
+    public PdfPageEvent getPageEvent() {
         return pageEvent;
     }
     
@@ -875,8 +873,7 @@ public class PdfWriter extends DocWriter {
  * @throws IOException on error
  */
     
-    void addLocalDestinations(TreeMap dest) throws IOException
-    {
+    void addLocalDestinations(TreeMap dest) throws IOException {
         for (Iterator i = dest.keySet().iterator(); i.hasNext();) {
             String name = (String)i.next();
             Object obj[] = (Object[])dest.get(name);
@@ -896,8 +893,7 @@ public class PdfWriter extends DocWriter {
  * @return a page number
  */
     
-    public int getPageNumber()
-    {
+    public int getPageNumber() {
         return pdf.getPageNumber();
     }
     

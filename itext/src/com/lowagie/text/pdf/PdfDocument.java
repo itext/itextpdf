@@ -249,7 +249,7 @@ class PdfDocument extends Document implements DocListener {
             names.put(PdfName.DESTS, dests);
             put(PdfName.NAMES, names);
         }
-                
+        
 /** Sets the viewer preferences as the sum of several constants.
  * @param preferences the viewer preferences
  * @see PdfWriter#setViewerPreferences
@@ -735,7 +735,7 @@ class PdfDocument extends Document implements DocListener {
                     }
                 }
             }
-
+            
             // write everything to the PdfWriter
             try {
                 for (Iterator i = outlines.iterator(); i.hasNext(); ) {
@@ -747,7 +747,7 @@ class PdfDocument extends Document implements DocListener {
             }
             
         }
-
+        
         writer.close();
     }
     
@@ -772,12 +772,12 @@ class PdfDocument extends Document implements DocListener {
     public void addFont(PdfName name, PdfIndirectReference ref) {
         fontDictionary.put(name, ref);
     }
-        
+    
 /** Adds a <CODE>PdfPTable</CODE> to the document.
  * @param ptable the <CODE>PdfPTable</CODE> to be added to the document.
  * @param xWidth the width the <CODE>PdfPTable</CODE> occupies in the page
  * @throws DocumentException on error
- */    
+ */
     
     void addPTable(PdfPTable ptable, float xWidth) throws DocumentException {
         if (ptable.getHeaderRows() >= ptable.size())
@@ -1301,9 +1301,14 @@ class PdfDocument extends Document implements DocListener {
         }
         // if it's a new image, add it to the document
         else {
-            PdfImage i = new PdfImage(image, "img" + images.size());
-            writer.add(i);
-            name = i.name();
+            if (image.isImgTemplate()) {
+                name = new PdfName("img" + images.size());   
+            }
+            else {
+                PdfImage i = new PdfImage(image, "img" + images.size());
+                writer.add(i);
+                name = i.name();
+            }
             images.put(image, name);
         }
         
@@ -1678,7 +1683,7 @@ class PdfDocument extends Document implements DocListener {
         float totalWidth = (indentRight() - indentLeft()) * table.getWidthPercentage() / 100;
         table.setTotalWidth(totalWidth);
         return table.getTotalHeight() <= indentTop() - currentHeight - indentBottom() - margin;
-    }    
+    }
     
 /**
  * Gets the indentation on the left side.
@@ -2050,11 +2055,11 @@ class PdfDocument extends Document implements DocListener {
     void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury) {
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, new PdfAction(filename, page)));
     }
-            
+    
 /** Sets the viewer preferences as the sum of several constants.
  * @param preferences the viewer preferences
  * @see PdfWriter#setViewerPreferences
- */  
+ */
     
     public void setViewerPreferences(int preferences) {
         viewerPreferences |= preferences;

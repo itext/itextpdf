@@ -211,21 +211,26 @@ public abstract class BaseFont {
  */
     protected void createEncoding() throws UnsupportedEncodingException
     {
-        byte b[] = new byte[256];
-        for (int k = 0; k < 256; ++k)
-        {
-            b[k] = (byte)(k);
-        }
         if (fontSpecific) {
             for (int k = 0; k < 256; ++k)
                 widths[k] = getRawWidth(k, null);
         }
         else {
-            String s = new String(b, encoding);
+            String s;
+            String name;
+            char c;
+            byte b[] = new byte[1];
             for (int k = 0; k < 256; ++k)
             {
-                char c = s.charAt(k);
-                String name = GlyphList.unicodeToName((int)c);
+                b[0] = (byte)k;
+                s = new String(b, encoding);
+                if (s.length() > 0) {
+                    c = s.charAt(0);
+                }
+                else {   
+                    c = '?';
+                }
+                name = GlyphList.unicodeToName((int)c);
                 if (name == null)
                     name = notdef;
                 differences[k] = name;

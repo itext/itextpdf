@@ -821,15 +821,23 @@ public class PdfContentByte {
     {
         checkWriter();
         try {
-            PdfName name = pdf.addDirectImage(image);
-            content.append("q ");
-            content.append(a).append(' ');
-            content.append(b).append(' ');
-            content.append(c).append(' ');
-            content.append(d).append(' ');
-            content.append(e).append(' ');
-            content.append(f).append(" cm ");
-            content.append(name.toString()).append(" Do Q\n");
+            if (image.isImgTemplate()) {
+                PdfTemplate template = image.templateData();
+                float w = template.getWidth();
+                float h = template.getHeight();
+                addTemplate(template, a / w, b / w, c / h, d / h, e, f);
+            }
+            else {
+                PdfName name = pdf.addDirectImage(image);
+                content.append("q ");
+                content.append(a).append(' ');
+                content.append(b).append(' ');
+                content.append(c).append(' ');
+                content.append(d).append(' ');
+                content.append(e).append(' ');
+                content.append(f).append(" cm ");
+                content.append(name.toString()).append(" Do Q\n");
+            }
         }
         catch (Exception ee) {
             throw new DocumentException(ee.getMessage());
