@@ -74,7 +74,7 @@ import com.lowagie.text.DocumentException;
  * and the method <CODE>go</CODE> can be called again.<BR>
  * The only limitation is that one or more complete paragraphs must be loaded
  * each time.
- * @author Paulo Soares (psoares@ip.pt)
+ * @author Paulo Soares (psoares@consiste.pt)
  */
  
 public class ColumnText {

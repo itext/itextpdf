@@ -115,6 +115,8 @@ public class PdfContentByte {
     /** The list were we save/restore the state */
     protected ArrayList stateList = new ArrayList();
     
+    protected int separator = '\n';
+    
     // constructors
     
     /**
@@ -212,7 +214,7 @@ public class PdfContentByte {
     
     public final void setFlatness(float flatness) {
         if (flatness >= 0 && flatness <= 100) {
-            content.append(flatness).append(" i\n");
+            content.append(flatness).append(" i").append_i(separator);
         }
     }
     
@@ -228,7 +230,7 @@ public class PdfContentByte {
     
     public final void setLineCap(int style) {
         if (style >= 0 && style <= 2) {
-            content.append(style).append(" J\n");
+            content.append(style).append(" J").append_i(separator);
         }
     }
     
@@ -244,7 +246,7 @@ public class PdfContentByte {
      */
     
     public final void setLineDash(float phase) {
-        content.append("[] ").append(phase).append(" d\n");
+        content.append("[] ").append(phase).append(" d").append_i(separator);
     }
     
     /**
@@ -260,7 +262,7 @@ public class PdfContentByte {
      */
     
     public final void setLineDash(float unitsOn, float phase) {
-        content.append("[").append(unitsOn).append("] ").append(phase).append(" d\n");
+        content.append("[").append(unitsOn).append("] ").append(phase).append(" d").append_i(separator);
     }
     
     /**
@@ -277,7 +279,7 @@ public class PdfContentByte {
      */
     
     public final void setLineDash(float unitsOn, float unitsOff, float phase) {
-        content.append("[").append(unitsOn).append(' ').append(unitsOff).append("] ").append(phase).append(" d\n");
+        content.append("[").append(unitsOn).append(' ').append(unitsOff).append("] ").append(phase).append(" d").append_i(separator);
     }
     
     /**
@@ -292,7 +294,7 @@ public class PdfContentByte {
     
     public final void setLineJoin(int style) {
         if (style >= 0 && style <= 2) {
-            content.append(style).append(" j\n");
+            content.append(style).append(" j").append_i(separator);
         }
     }
     
@@ -306,7 +308,7 @@ public class PdfContentByte {
      */
     
     public final void setLineWidth(float w) {
-        content.append(w).append(" w\n");
+        content.append(w).append(" w").append_i(separator);
     }
     
     /**
@@ -322,7 +324,7 @@ public class PdfContentByte {
     
     public final void setMiterLimit(float miterLimit) {
         if (miterLimit > 1) {
-            content.append(miterLimit).append(" M\n");
+            content.append(miterLimit).append(" M").append_i(separator);
         }
     }
     
@@ -333,7 +335,7 @@ public class PdfContentByte {
      */
     
     public final void clip() {
-        content.append("W\n");
+        content.append("W").append_i(separator);
     }
     
     /**
@@ -342,7 +344,7 @@ public class PdfContentByte {
      */
     
     public final void eoClip() {
-        content.append("W*\n");
+        content.append("W*").append_i(separator);
     }
     
     /**
@@ -355,7 +357,7 @@ public class PdfContentByte {
      */
     
     public void setGrayFill(float gray) {
-        content.append(gray).append(" g\n");
+        content.append(gray).append(" g").append_i(separator);
     }
     
     /**
@@ -363,7 +365,7 @@ public class PdfContentByte {
      */
     
     public void resetGrayFill() {
-        content.append("0 g\n");
+        content.append("0 g").append_i(separator);
     }
     
     /**
@@ -376,7 +378,7 @@ public class PdfContentByte {
      */
     
     public void setGrayStroke(float gray) {
-        content.append(gray).append(" G\n");
+        content.append(gray).append(" G").append_i(separator);
     }
     
     /**
@@ -384,7 +386,7 @@ public class PdfContentByte {
      */
     
     public void resetGrayStroke() {
-        content.append("0 G\n");
+        content.append("0 G").append_i(separator);
     }
     
     /**
@@ -425,7 +427,7 @@ public class PdfContentByte {
     
     public void setRGBColorFillF(float red, float green, float blue) {
         HelperRGB(red, green, blue);
-        content.append(" rg\n");
+        content.append(" rg").append_i(separator);
     }
     
     /**
@@ -433,7 +435,7 @@ public class PdfContentByte {
      */
     
     public void resetRGBColorFill() {
-        content.append("0 0 0 rg\n");
+        content.append("0 0 0 rg").append_i(separator);
     }
     
     /**
@@ -452,7 +454,7 @@ public class PdfContentByte {
     
     public void setRGBColorStrokeF(float red, float green, float blue) {
         HelperRGB(red, green, blue);
-        content.append(" RG\n");
+        content.append(" RG").append_i(separator);
     }
     
     /**
@@ -461,7 +463,7 @@ public class PdfContentByte {
      */
     
     public void resetRGBColorStroke() {
-        content.append("0 0 0 RG\n");
+        content.append("0 0 0 RG").append_i(separator);
     }
     
     /**
@@ -509,7 +511,7 @@ public class PdfContentByte {
     
     public void setCMYKColorFillF(float cyan, float magenta, float yellow, float black) {
         HelperCMYK(cyan, magenta, yellow, black);
-        content.append(" k\n");
+        content.append(" k").append_i(separator);
     }
     
     /**
@@ -518,7 +520,7 @@ public class PdfContentByte {
      */
     
     public void resetCMYKColorFill() {
-        content.append("0 0 0 1 k\n");
+        content.append("0 0 0 1 k").append_i(separator);
     }
     
     /**
@@ -538,7 +540,7 @@ public class PdfContentByte {
     
     public void setCMYKColorStrokeF(float cyan, float magenta, float yellow, float black) {
         HelperCMYK(cyan, magenta, yellow, black);
-        content.append(" K\n");
+        content.append(" K").append_i(separator);
     }
     
     /**
@@ -547,7 +549,7 @@ public class PdfContentByte {
      */
     
     public void resetCMYKColorStroke() {
-        content.append("0 0 0 1 K\n");
+        content.append("0 0 0 1 K").append_i(separator);
     }
     
     /**
@@ -558,7 +560,7 @@ public class PdfContentByte {
      */
     
     public final void moveTo(float x, float y) {
-        content.append(x).append(' ').append(y).append(" m\n");
+        content.append(x).append(' ').append(y).append(" m").append_i(separator);
     }
     
     /**
@@ -570,7 +572,7 @@ public class PdfContentByte {
      */
     
     public final void lineTo(float x, float y) {
-        content.append(x).append(' ').append(y).append(" l\n");
+        content.append(x).append(' ').append(y).append(" l").append_i(separator);
     }
     
     /**
@@ -585,7 +587,7 @@ public class PdfContentByte {
      */
     
     public final void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
-        content.append(x1).append(' ').append(y1).append(' ').append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" c\n");
+        content.append(x1).append(' ').append(y1).append(' ').append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" c").append_i(separator);
     }
     
     /**
@@ -598,7 +600,7 @@ public class PdfContentByte {
      */
     
     public final void curveTo(float x2, float y2, float x3, float y3) {
-        content.append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" v\n");
+        content.append(x2).append(' ').append(y2).append(' ').append(x3).append(' ').append(y3).append(" v").append_i(separator);
     }
     
     /**
@@ -611,7 +613,7 @@ public class PdfContentByte {
      */
     
     public final void curveFromTo(float x1, float y1, float x3, float y3) {
-        content.append(x1).append(' ').append(y1).append(' ').append(x3).append(' ').append(y3).append(" y\n");
+        content.append(x1).append(' ').append(y1).append(' ').append(x3).append(' ').append(y3).append(" y").append_i(separator);
     }
     
     /** Draws a circle. The endpoint will (x+r, y).
@@ -641,7 +643,7 @@ public class PdfContentByte {
      */
     
     public final void rectangle(float x, float y, float w, float h) {
-        content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re\n");
+        content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re").append_i(separator);
     }
     
     /**
@@ -731,7 +733,7 @@ public class PdfContentByte {
      */
     
     public final void closePath() {
-        content.append("h\n");
+        content.append("h").append_i(separator);
     }
     
     /**
@@ -739,7 +741,7 @@ public class PdfContentByte {
      */
     
     public final void newPath() {
-        content.append("n\n");
+        content.append("n").append_i(separator);
     }
     
     /**
@@ -747,7 +749,7 @@ public class PdfContentByte {
      */
     
     public final void stroke() {
-        content.append("S\n");
+        content.append("S").append_i(separator);
     }
     
     /**
@@ -755,7 +757,7 @@ public class PdfContentByte {
      */
     
     public final void closePathStroke() {
-        content.append("s\n");
+        content.append("s").append_i(separator);
     }
     
     /**
@@ -763,7 +765,7 @@ public class PdfContentByte {
      */
     
     public final void fill() {
-        content.append("f\n");
+        content.append("f").append_i(separator);
     }
     
     /**
@@ -771,7 +773,7 @@ public class PdfContentByte {
      */
     
     public final void eoFill() {
-        content.append("f*\n");
+        content.append("f*").append_i(separator);
     }
     
     /**
@@ -779,7 +781,7 @@ public class PdfContentByte {
      */
     
     public final void fillStroke() {
-        content.append("B\n");
+        content.append("B").append_i(separator);
     }
     
     /**
@@ -787,7 +789,7 @@ public class PdfContentByte {
      */
     
     public final void closePathFillStroke() {
-        content.append("b\n");
+        content.append("b").append_i(separator);
     }
     
     /**
@@ -795,7 +797,7 @@ public class PdfContentByte {
      */
     
     public final void eoFillStroke() {
-        content.append("B*\n");
+        content.append("B*").append_i(separator);
     }
     
     /**
@@ -803,7 +805,7 @@ public class PdfContentByte {
      */
     
     public final void closePathEoFillStroke() {
-        content.append("b*\n");
+        content.append("b*").append_i(separator);
     }
     
     /**
@@ -853,7 +855,7 @@ public class PdfContentByte {
                 content.append(d).append(' ');
                 content.append(e).append(' ');
                 content.append(f).append(" cm ");
-                content.append(name.toString()).append(" Do Q\n");
+                content.append(name.toString()).append(" Do Q").append_i(separator);
             }
         }
         catch (Exception ee) {
@@ -876,14 +878,14 @@ public class PdfContentByte {
     public void beginText() {
         state.xTLM = 0;
         state.yTLM = 0;
-        content.append("BT\n");
+        content.append("BT").append_i(separator);
     }
     
     /**
      * Ends the writing of text and makes the current font invalid.
      */
     public void endText() {
-        content.append("ET\n");
+        content.append("ET").append_i(separator);
     }
     
     /**
@@ -891,7 +893,7 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void saveState() {
-        content.append("q\n");
+        content.append("q").append_i(separator);
         stateList.add(state);
     }
     
@@ -900,7 +902,7 @@ public class PdfContentByte {
      * <CODE>restoreState</CODE> must be balanced.
      */
     public void restoreState() {
-        content.append("Q\n");
+        content.append("Q").append_i(separator);
         int idx = stateList.size() - 1;
         if (idx < 0)
             throw new RuntimeException("Unbalanced save/restore state operators.");
@@ -914,7 +916,7 @@ public class PdfContentByte {
      * @param		charSpace			a parameter
      */
     public void setCharacterSpacing(float charSpace) {
-        content.append(charSpace).append(" Tc\n");
+        content.append(charSpace).append(" Tc").append_i(separator);
     }
     
     /**
@@ -923,7 +925,7 @@ public class PdfContentByte {
      * @param		wordSpace			a parameter
      */
     public void setWordSpacing(float wordSpace) {
-        content.append(wordSpace).append(" Tw\n");
+        content.append(wordSpace).append(" Tw").append_i(separator);
     }
     
     /**
@@ -932,7 +934,7 @@ public class PdfContentByte {
      * @param		scale				a parameter
      */
     public void setHorizontalScaling(float scale) {
-        content.append(scale).append(" Tz\n");
+        content.append(scale).append(" Tz").append_i(separator);
     }
     
     /**
@@ -945,7 +947,7 @@ public class PdfContentByte {
      */
     public void setLeading(float leading) {
         state.leading = leading;
-        content.append(leading).append(" TL\n");
+        content.append(leading).append(" TL").append_i(separator);
     }
     
     /**
@@ -958,7 +960,7 @@ public class PdfContentByte {
         checkWriter();
         state.size = size;
         state.fontDetails = writer.add(bf);
-        content.append(state.fontDetails.getFontName().toPdf(null)).append(' ').append(size).append(" Tf\n");
+        content.append(state.fontDetails.getFontName().toPdf(null)).append(' ').append(size).append(" Tf").append_i(separator);
     }
     
     /**
@@ -967,7 +969,7 @@ public class PdfContentByte {
      * @param		rendering				a parameter
      */
     public void setTextRenderingMode(int rendering) {
-        content.append(rendering).append(" Tr\n");
+        content.append(rendering).append(" Tr").append_i(separator);
     }
     
     /**
@@ -978,7 +980,7 @@ public class PdfContentByte {
      * @param		rise				a parameter
      */
     public void setTextRise(float rise) {
-        content.append(rise).append(" Ts\n");
+        content.append(rise).append(" Ts").append_i(separator);
     }
     
     /**
@@ -1001,7 +1003,7 @@ public class PdfContentByte {
      */
     public void showText(String text) {
         showText2(text);
-        content.append("Tj\n");
+        content.append("Tj").append_i(separator);
     }
     
     /**
@@ -1011,7 +1013,7 @@ public class PdfContentByte {
      */
     public void showText(PdfPrintable text) {
         showText2(text.toString());
-        content.append("Tj\n");
+        content.append("Tj").append_i(separator);
     }
     
     /**
@@ -1022,7 +1024,7 @@ public class PdfContentByte {
     public void newlineShowText(String text) {
         state.yTLM -= state.leading;
         showText2(text);
-        content.append("'\n");
+        content.append("'").append_i(separator);
     }
     
     /**
@@ -1033,7 +1035,7 @@ public class PdfContentByte {
     public void newlineShowText(PdfPrintable text) {
         state.yTLM -= state.leading;
         showText2(text.toString());
-        content.append("'\n");
+        content.append("'").append_i(separator);
     }
     
     /**
@@ -1047,7 +1049,7 @@ public class PdfContentByte {
         state.yTLM -= state.leading;
         content.append(wordSpacing).append(' ').append(charSpacing);
         showText2(text);
-        content.append("\"\n");
+        content.append("\"").append_i(separator);
     }
     
     /**
@@ -1067,7 +1069,7 @@ public class PdfContentByte {
         state.yTLM = y;
         content.append(a).append(' ').append(b).append_i(' ')
         .append(c).append_i(' ').append(d).append_i(' ')
-        .append(x).append_i(' ').append(y).append(" Tm\n");
+        .append(x).append_i(' ').append(y).append(" Tm").append_i(separator);
     }
     
     /**
@@ -1091,7 +1093,7 @@ public class PdfContentByte {
     public void moveText(float x, float y) {
         state.xTLM += x;
         state.yTLM += y;
-        content.append(x).append(' ').append(y).append(" Td\n");
+        content.append(x).append(' ').append(y).append(" Td").append_i(separator);
     }
     
     /**
@@ -1106,7 +1108,7 @@ public class PdfContentByte {
         state.xTLM += x;
         state.yTLM += y;
         state.leading = -y;
-        content.append(x).append(' ').append(y).append(" TD\n");
+        content.append(x).append(' ').append(y).append(" TD").append_i(separator);
     }
     
     /**
@@ -1114,7 +1116,7 @@ public class PdfContentByte {
      */
     public void newlineText() {
         state.yTLM -= state.leading;
-        content.append("T*\n");
+        content.append("T*").append_i(separator);
     }
     
     /**
@@ -1141,7 +1143,7 @@ public class PdfContentByte {
                     content.append("\\r");
                     break;
                 case '\n':
-                    content.append("\\n");
+                    content.append("\n");
                     break;
                 case '(':
                 case ')':
@@ -1242,7 +1244,7 @@ public class PdfContentByte {
      **/
     public void concatCTM(float a, float b, float c, float d, float e, float f) {
         content.append(a).append(' ').append(b).append(' ').append(c).append(' ');
-        content.append(d).append(' ').append(e).append(' ').append(f).append(" cm\n");
+        content.append(d).append(' ').append(e).append(' ').append(f).append(" cm").append_i(separator);
     }
     
     /**
@@ -1461,6 +1463,22 @@ public class PdfContentByte {
     }
     
     /**
+     * Creates a new appearance to be used with form fields.
+     *
+     * @param width the bounding box width
+     * @param height the bounding box height
+     * @return the appearance created
+     */
+    public PdfAppearance createAppearance(float width, float height) {
+        checkWriter();
+        PdfAppearance template = new PdfAppearance(writer);
+        template.setWidth(width);
+        template.setHeight(height);
+        writer.addDirectTemplateSimple(template);
+        return template;
+    }
+    
+    /**
      * Adds a template to this content.
      *
      * @param template the template
@@ -1482,7 +1500,7 @@ public class PdfContentByte {
         content.append(d).append(' ');
         content.append(e).append(' ');
         content.append(f).append(" cm ");
-        content.append(name.toString()).append(" Do Q\n");
+        content.append(name.toString()).append(" Do Q").append_i(separator);
     }
     
     /**
@@ -1522,7 +1540,7 @@ public class PdfContentByte {
         content.append((float)(yellow & 0xFF) / 0xFF);
         content.append(' ');
         content.append((float)(black & 0xFF) / 0xFF);
-        content.append(" k\n");
+        content.append(" k").append_i(separator);
     }
     /**
      * Changes the current color for stroking paths (device dependent colors!).
@@ -1549,7 +1567,7 @@ public class PdfContentByte {
         content.append((float)(yellow & 0xFF) / 0xFF);
         content.append(' ');
         content.append((float)(black & 0xFF) / 0xFF);
-        content.append(" K\n");
+        content.append(" K").append_i(separator);
     }
     
     /**
@@ -1575,7 +1593,7 @@ public class PdfContentByte {
         content.append((float)(green & 0xFF) / 0xFF);
         content.append(' ');
         content.append((float)(blue & 0xFF) / 0xFF);
-        content.append(" rg\n");
+        content.append(" rg").append_i(separator);
     }
     
     /**
@@ -1600,7 +1618,7 @@ public class PdfContentByte {
         content.append((float)(green & 0xFF) / 0xFF);
         content.append(' ');
         content.append((float)(blue & 0xFF) / 0xFF);
-        content.append(" RG\n");
+        content.append(" RG").append_i(separator);
     }
     
     /** Sets the stroke color. <CODE>color</CODE> can be an
@@ -1673,7 +1691,7 @@ public class PdfContentByte {
     public void setColorFill(PdfSpotColor sp, float tint) {
         checkWriter();
         state.colorDetails = writer.add(sp);
-        content.append(state.colorDetails.getColorName().toPdf(null)).append(" cs ").append(tint).append(" scn\n");
+        content.append(state.colorDetails.getColorName().toPdf(null)).append(" cs ").append(tint).append(" scn").append_i(separator);
     }
     
     /** Sets the stroke color to a spot color.
@@ -1684,7 +1702,7 @@ public class PdfContentByte {
     public void setColorStroke(PdfSpotColor sp, float tint) {
         checkWriter();
         state.colorDetails = writer.add(sp);
-        content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN\n");
+        content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN").append_i(separator);
     }
     
     /** Sets the fill color to a pattern. The pattern can be
@@ -1698,7 +1716,7 @@ public class PdfContentByte {
         }
         checkWriter();
         PdfName name = pdf.addPatternToPage(p);
-        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn\n");
+        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn").append_i(separator);
     }
     
     /** Outputs the color values to the content.
@@ -1755,9 +1773,9 @@ public class PdfContentByte {
         PdfName name = pdf.addPatternToPage(p);
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
         pdf.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(csDetail.getColorName().toPdf(null)).append(" cs\n");
+        content.append(csDetail.getColorName().toPdf(null)).append(" cs").append_i(separator);
         outputColorNumbers(color, tint);
-        content.append(' ').append(name.toPdf(null)).append(" scn\n");
+        content.append(' ').append(name.toPdf(null)).append(" scn").append_i(separator);
     }
     
     /** Sets the stroke color to an uncolored pattern.
@@ -1783,9 +1801,9 @@ public class PdfContentByte {
         PdfName name = pdf.addPatternToPage(p);
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
         pdf.addColor(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(csDetail.getColorName().toPdf(null)).append(" CS\n");
+        content.append(csDetail.getColorName().toPdf(null)).append(" CS").append_i(separator);
         outputColorNumbers(color, tint);
-        content.append(' ').append(name.toPdf(null)).append(" SCN\n");
+        content.append(' ').append(name.toPdf(null)).append(" SCN").append_i(separator);
     }
     
     /** Sets the stroke color to a pattern. The pattern can be
@@ -1799,7 +1817,7 @@ public class PdfContentByte {
         }
         checkWriter();
         PdfName name = pdf.addPatternToPage(p);
-        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN\n");
+        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN").append_i(separator);
     }
     
     /**
@@ -1836,7 +1854,7 @@ public class PdfContentByte {
                 content.append(obj.toString());
             }
         }
-        content.append("]TJ\n");
+        content.append("]TJ").append_i(separator);
     }
     
     /**

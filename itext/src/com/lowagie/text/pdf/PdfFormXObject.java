@@ -88,7 +88,11 @@ public class PdfFormXObject extends PdfStream {
         dictionary.put(PdfName.RESOURCES, template.getResources());
         dictionary.put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
         dictionary.put(PdfName.FORMTYPE, ONE);
-        dictionary.put(PdfName.MATRIX, MATRIX);
+        PdfArray matrix = template.getMatrix();
+        if (matrix == null)
+            dictionary.put(PdfName.MATRIX, MATRIX);
+        else
+            dictionary.put(PdfName.MATRIX, matrix);
         bytes = template.toPdf(null);
         dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
         try {

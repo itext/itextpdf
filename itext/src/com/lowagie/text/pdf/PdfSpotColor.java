@@ -86,12 +86,8 @@ public class PdfSpotColor extends PdfArray {
         int range = 0;
         PdfLiteral c0;
         PdfArray c1 = new PdfArray();
-        try {
-            this.name = new PdfName(name);
-            add(this.name);
-        } catch (BadPdfFormatException bfe) {
-            throw new ExceptionConverter(bfe);
-        }
+        this.name = new PdfName(name);
+        add(this.name);
         if (altcs instanceof ExtendedColor) {
             int type = ((ExtendedColor)altcs).type;
             switch (type) {
@@ -126,21 +122,17 @@ public class PdfSpotColor extends PdfArray {
         func = new PdfDictionary();
         add(func);
         func.put(PdfName.FUNCTIONTYPE, new PdfNumber((int) 2));
-        try {
-            PdfName domain = new PdfName("Domain");
-            PdfArray domainval = new PdfArray(new PdfNumber(0));
-            domainval.add(new PdfNumber(1));
-            func.put(domain, domainval);
-            PdfName c0n = new PdfName("C0");
-            func.put(c0n, c0);
-            PdfName c1n = new PdfName("C1");
-            func.put(c1n, c1);
-            PdfName n = new PdfName("N");
-            PdfNumber nval = new PdfNumber(1.0);
-            func.put(n, nval);
-        } catch (BadPdfFormatException bfe) {
-            throw new ExceptionConverter(bfe);
-        }
+        PdfName domain = new PdfName("Domain");
+        PdfArray domainval = new PdfArray(new PdfNumber(0));
+        domainval.add(new PdfNumber(1));
+        func.put(domain, domainval);
+        PdfName c0n = new PdfName("C0");
+        func.put(c0n, c0);
+        PdfName c1n = new PdfName("C1");
+        func.put(c1n, c1);
+        PdfName n = new PdfName("N");
+        PdfNumber nval = new PdfNumber(1.0);
+        func.put(n, nval);
         this.tint = tint;
         this.altcs = altcs;
     }

@@ -548,14 +548,6 @@ public class Chunk implements Element, MarkupAttributes {
     }
     
     public static Set getKeySet(Hashtable table) {
-        // for java2
         return (table == null) ? Collections.EMPTY_SET : table.keySet();
-        // for jdk1.1.x
-        /*
-        if (table == null) return Collections.EMPTY_SET;
-        HashSet hash = new HashSet();
-        for (Enumeration e = table.keys(); e.hasMoreElements();) hash.add(e.nextElement());
-        return hash;
-        */
     }
 }

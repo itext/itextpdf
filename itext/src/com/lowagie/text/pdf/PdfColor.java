@@ -49,7 +49,7 @@
  */
 
 package com.lowagie.text.pdf;
-
+import java.awt.Color;
 /**
  * A <CODE>PdfColor</CODE> defines a Color (it's a <CODE>PdfArray</CODE> containing 3 values).
  *
@@ -72,5 +72,9 @@ class PdfColor extends PdfArray {
         super(new PdfNumber((double)(red & 0xFF) / 0xFF));
         add(new PdfNumber((double)(green & 0xFF) / 0xFF));
         add(new PdfNumber((double)(blue & 0xFF) / 0xFF));
+    }
+    
+    PdfColor(Color color) {
+        this(color.getRed(), color.getGreen(), color.getBlue());
     }
 }

@@ -450,6 +450,9 @@ public class PdfWriter extends DocWriter {
     /** Type of encryption */
     public static final boolean STRENGTH128BITS = true;
     
+    public static final int SIGNATURE_EXISTS = 1;
+    public static final int SIGNATURE_APPEND_ONLY = 2;
+    
     /** this is the header of a PDF document */
     private static byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e0\u00e1\u00e2\u00e3\n");
     
@@ -605,7 +608,6 @@ public class PdfWriter extends DocWriter {
         PdfIndirectObject object = body.add(contents);
         try {
             object.writeTo(os);
-            os.flush();
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -615,7 +617,6 @@ public class PdfWriter extends DocWriter {
         PdfIndirectObject pageObject = body.add(page, getPageReference(currentPageNumber++));
         try {
             pageObject.writeTo(os);
-            os.flush();
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -925,15 +926,18 @@ public class PdfWriter extends DocWriter {
     FontDetails addSimple(BaseFont bf) {
         FontDetails ret = (FontDetails)documentFonts.get(bf);
         if (ret == null) {
-            try {
-                ret = new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
-            }
-            catch (BadPdfFormatException e) {
-                throw new ExceptionConverter(e);
-            }
+            ret = new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
             documentFonts.put(bf, ret);
         }
         return ret;
+    }
+    
+    void eliminateFontSubset(PdfDictionary fonts) {
+        for (Iterator it = documentFonts.values().iterator(); it.hasNext();) {
+            FontDetails ft = (FontDetails)it.next();
+            if (fonts.get(ft.getFontName()) != null)
+                ft.setSubset(false);
+        }
     }
     
     /**
@@ -958,12 +962,7 @@ public class PdfWriter extends DocWriter {
     ColorDetails addSimple(PdfSpotColor spc) {
         ColorDetails ret = (ColorDetails)documentColors.get(spc);
         if (ret == null) {
-            try {
-                ret = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), spc);
-            }
-            catch (BadPdfFormatException e) {
-                throw new ExceptionConverter(e);
-            }
+            ret = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), spc);
             documentColors.put(spc, ret);
         }
         return ret;
@@ -1352,64 +1351,33 @@ public class PdfWriter extends DocWriter {
         }
         return ref;
     }
-
-    public void addTextField(String name, String text, float llx, float lly, float urx, float ury) {
-        try {
-            PdfTemplate template = new PdfTemplate(this);
-            template.setWidth(urx - llx);
-            template.setHeight(ury - lly);
-            addDirectTemplateSimple(template);
-            BaseFont bf = BaseFont.createFont("Helvetica", "winansi", false);
-            template.setGrayFill(1);
-            template.rectangle(0, 0, urx - llx, ury - lly);
-            template.fill();
-            template.setLiteral("/Tx BMC q\n");
-            //template.saveState();
-            //template.rectangle(0, 0, urx - llx, ury - lly);
-            //template.stroke();
-            template.rectangle(1, 1, urx - llx - 1, ury - lly - 1);
-            template.clip();
-            template.newPath();
-            template.beginText();
-            template.setFontAndSize(bf, 12);
-            template.setRGBColorFillF(0, 0, 1);
-            template.setTextMatrix(0, 0);
-            template.showText(text);
-            template.endText();
-            template.setLiteral("Q\nEMC");
-            FontDetails fd = add(bf);
-            PdfDictionary acroForm = new PdfDictionary();
-            PdfDictionary annot = new PdfDictionary();
-            annot.put(PdfName.TYPE, PdfName.ANNOT);
-            annot.put(PdfName.SUBTYPE, PdfName.WIDGET);
-            annot.put(PdfName.RECT, new PdfRectangle(llx, lly, urx, ury));
-            //annot.put(PdfName.BORDER, new PdfLiteral("[0 0 1]"));
-            annot.put(PdfName.FT, PdfName.TX);
-            annot.put(PdfName.T, new PdfString(name));
-            annot.put(PdfName.V, new PdfString(text));
-            //annot.put(PdfName.MK, new PdfLiteral("<< /BG [1 1 1] >>"));
-            annot.put(PdfName.F, new PdfLiteral("4"));
-            annot.put(PdfName.FF, new PdfLiteral("8"));
-            annot.put(PdfName.Q, new PdfLiteral("0"));
-            ByteBuffer bb = new ByteBuffer();
-            bb.append(fd.getFontName().toPdf(null)).append(" 0 Tf 0 0 1 rg");
-            annot.put(PdfName.DA, new PdfStringLiteral(bb.toByteArray()));
-            annot.put(PdfName.DR, template.getResources());
-            acroForm.put(PdfName.DA, new PdfStringLiteral(bb.toByteArray()));
-            acroForm.put(PdfName.DR, template.getResources());
-            PdfDictionary ap = new PdfDictionary();
-            ap.put(PdfName.N, template.getIndirectReference());
-            annot.put(PdfName.AP, ap);
-            PdfIndirectReference ref = addToBody(annot).getIndirectReference();
-            acroForm.put(PdfName.FIELDS, new PdfArray(ref));
-            PdfIndirectReference aref = addToBody(acroForm).getIndirectReference();
-            pdf.addAcroForm(aref, ref);
-        }
-        catch (RuntimeException e) {
-            throw e;
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
+    
+    PdfIndirectReference getCurrentPage() {
+        return getPageReference(currentPageNumber);
     }
+    
+    /** Adds the <CODE>PdfAnnotation</CODE> to the calculation order
+     * array.
+     * @param annot the <CODE>PdfAnnotation</CODE> to be added
+     */    
+    public void addCalculationOrder(PdfAnnotation annot) {
+        pdf.addCalculationOrder(annot);
+    }
+    
+    /** Set the signature flags.
+     * @param f the flags. This flags are ORed with current ones
+     */    
+    public void setSigFlags(int f) {
+        pdf.setSigFlags(f);
+    }
+    
+    /** Adds a <CODE>PdfAnnotation</CODE> or a <CODE>PdfFormField</CODE>
+     * to the document. Only the top parent of a <CODE>PdfFormField</CODE>
+     * needs to be added.
+     * @param annot the <CODE>PdfAnnotation</CODE> or the <CODE>PdfFormField</CODE> to add
+     */    
+    public void addAnnotation(PdfAnnotation annot) {
+        pdf.addAnnotation(annot);
+    }
+
 }

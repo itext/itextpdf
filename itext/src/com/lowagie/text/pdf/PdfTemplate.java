@@ -81,6 +81,8 @@ public class PdfTemplate extends PdfContentByte {
     /** The bounding box of this template */
     protected Rectangle bBox = new Rectangle(0, 0);
     
+    protected PdfArray matrix;
+    
     /**
      *Creates a <CODE>PdfTemplate</CODE>.
      */
@@ -155,6 +157,20 @@ public class PdfTemplate extends PdfContentByte {
         this.bBox = bBox;
     }
     
+    public void setMatrix(float a, float b, float c, float d, float e, float f) {
+		matrix = new PdfArray();
+		matrix.add(new PdfNumber(a));
+		matrix.add(new PdfNumber(b));
+		matrix.add(new PdfNumber(c));
+		matrix.add(new PdfNumber(d));
+		matrix.add(new PdfNumber(e));
+		matrix.add(new PdfNumber(f));
+	}
+
+	PdfArray getMatrix() {
+		return matrix;
+	}
+    
     /**
      * Gets the indirect reference to this template.
      *
@@ -187,7 +203,7 @@ public class PdfTemplate extends PdfContentByte {
         content.append(d).append(' ');
         content.append(e).append(' ');
         content.append(f).append(" cm ");
-        content.append(name.toString()).append(" Do Q\n");
+        content.append(name.toString()).append(" Do Q").append_i(separator);
         xObjectDictionary.put(name, template.getIndirectReference());
     }
     
@@ -229,7 +245,7 @@ public class PdfTemplate extends PdfContentByte {
                 content.append(d).append(' ');
                 content.append(e).append(' ');
                 content.append(f).append(" cm ");
-                content.append(name.toString()).append(" Do Q\n");
+                content.append(name.toString()).append(" Do Q").append_i(separator);
             }
             if (!image.isImgTemplate())
                 xObjectDictionary.put(name, writer.getImageReference(name));
@@ -242,13 +258,13 @@ public class PdfTemplate extends PdfContentByte {
     public void setColorFill(PdfSpotColor sp, float tint) {
         state.colorDetails = writer.addSimple(sp);
         colorDictionary.put(state.colorDetails.getColorName(), state.colorDetails.getIndirectReference());
-        content.append(state.colorDetails.getColorName().toPdf(null)).append(" cs ").append(tint).append(" scn\n");
+        content.append(state.colorDetails.getColorName().toPdf(null)).append(" cs ").append(tint).append(" scn").append_i(separator);
     }
     
     public void setColorStroke(PdfSpotColor sp, float tint) {
         state.colorDetails = writer.addSimple(sp);
         colorDictionary.put(state.colorDetails.getColorName(), state.colorDetails.getIndirectReference());
-        content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN\n");
+        content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN").append_i(separator);
     }
     
     public void setPatternFill(PdfPatternPainter p) {
@@ -259,7 +275,7 @@ public class PdfTemplate extends PdfContentByte {
         checkWriter();
         PdfName name = writer.addSimplePattern(p);
         patternDictionary.put(name, p.getIndirectReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn\n");
+        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn").append_i(separator);
     }
     
     public void setPatternStroke(PdfPatternPainter p) {
@@ -270,7 +286,7 @@ public class PdfTemplate extends PdfContentByte {
         checkWriter();
         PdfName name = writer.addSimplePattern(p);
         patternDictionary.put(name, p.getIndirectReference());
-        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN\n");
+        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN").append_i(separator);
     }
 
     public void setPatternFill(PdfPatternPainter p, Color color, float tint) {
@@ -281,9 +297,9 @@ public class PdfTemplate extends PdfContentByte {
         patternDictionary.put(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
         colorDictionary.put(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(csDetail.getColorName().toPdf(null)).append(" cs\n");
+        content.append(csDetail.getColorName().toPdf(null)).append(" cs").append_i(separator);
         outputColorNumbers(color, tint);
-        content.append(' ').append(name.toPdf(null)).append(" scn\n");
+        content.append(' ').append(name.toPdf(null)).append(" scn").append_i(separator);
     }
     
     public void setPatternStroke(PdfPatternPainter p, Color color, float tint) {
@@ -294,9 +310,17 @@ public class PdfTemplate extends PdfContentByte {
         patternDictionary.put(name, p.getIndirectReference());
         ColorDetails csDetail = writer.addSimplePatternColorspace(color);
         colorDictionary.put(csDetail.getColorName(), csDetail.getIndirectReference());
-        content.append(csDetail.getColorName().toPdf(null)).append(" CS\n");
+        content.append(csDetail.getColorName().toPdf(null)).append(" CS").append_i(separator);
         outputColorNumbers(color, tint);
-        content.append(' ').append(name.toPdf(null)).append(" SCN\n");
+        content.append(' ').append(name.toPdf(null)).append(" SCN").append_i(separator);
+    }
+    
+    public void beginVariableText() {
+        content.append("/Tx BMC ");
+    }
+    
+    public void endVariableText() {
+        content.append("EMC ");
     }
     
     /**
@@ -345,7 +369,7 @@ public class PdfTemplate extends PdfContentByte {
         state.size = size;
         state.fontDetails = writer.addSimple(bf);
         PdfName name = state.fontDetails.getFontName();
-        content.append(name.toPdf(null)).append(' ').append(size).append(" Tf\n");
+        content.append(name.toPdf(null)).append(' ').append(size).append(" Tf").append_i(separator);
         fontDictionary.put(name, state.fontDetails.getIndirectReference());
     }
     
@@ -365,6 +389,9 @@ public class PdfTemplate extends PdfContentByte {
         tpl.colorDictionary = colorDictionary;
         tpl.patternDictionary = patternDictionary;
         tpl.bBox = new Rectangle(bBox);
+        if (matrix != null) {
+            tpl.matrix = new PdfArray(matrix);
+        }
         return tpl;
     }
     

@@ -10,32 +10,31 @@ import java.awt.Color;
  */
 
 public class PdfPatternPainter extends PdfTemplate {
-
-	protected float xstep, ystep;
-	protected PdfArray matrix = null;
+    
+    protected float xstep, ystep;
     protected boolean stencil = false;
     protected Color defaultColor;
-
-/**
- *Creates a <CODE>PdfPattern</CODE>.
- */
-
+    
+    /**
+     *Creates a <CODE>PdfPattern</CODE>.
+     */
+    
     private PdfPatternPainter() {
         super(null);
         type = TYPE_PATTERN;
     }
-
-/**
- * Creates new PdfPattern
- *
- * @param wr the <CODE>PdfWriter</CODE>
- */
-
+    
+    /**
+     * Creates new PdfPattern
+     *
+     * @param wr the <CODE>PdfWriter</CODE>
+     */
+    
     PdfPatternPainter(PdfWriter wr) {
         super(wr);
         type = TYPE_PATTERN;
     }
-
+    
     PdfPatternPainter(PdfWriter wr, Color defaultColor) {
         this(wr);
         stencil = true;
@@ -44,63 +43,48 @@ public class PdfPatternPainter extends PdfTemplate {
         else
             this.defaultColor = defaultColor;
     }
-
-/**
- * Sets the xstep of this pattern.
- *
- * @param xstep the xstep in horizontal painting 
- */
-
+    
+    /**
+     * Sets the xstep of this pattern.
+     *
+     * @param xstep the xstep in horizontal painting
+     */
+    
     public void setXStep(float xstep) {
         this.xstep = xstep;
     }
-
-/**
- * Sets the ystep of this pattern.
- *
- * @param ystep in vertical painting
- */
-
+    
+    /**
+     * Sets the ystep of this pattern.
+     *
+     * @param ystep in vertical painting
+     */
+    
     public void setYStep(float ystep) {
         this.ystep = ystep;
     }
-
-    public float getXStep()
-    {
+    
+    public float getXStep() {
         return this.xstep;
     }
-
-    public float getYStep()
-    {
+    
+    public float getYStep() {
         return this.ystep;
     }
     
     public boolean isStencil() {
         return stencil;
     }
-
-	public void setPatternMatrix(float a, float b, float c, float d, float e, float f) 
-	{
-		matrix = new PdfArray();
-		matrix.add(new PdfNumber(a));
-		matrix.add(new PdfNumber(b));
-		matrix.add(new PdfNumber(c));
-		matrix.add(new PdfNumber(d));
-		matrix.add(new PdfNumber(e));
-		matrix.add(new PdfNumber(f));
-	}
-
-	PdfArray getMatrix()
-	{
-		return matrix;
-	}
-	
-/**
- * Gets the stream representing this pattern 
- *
- * @return the stream representing this pattern
- */
-
+    
+    public void setPatternMatrix(float a, float b, float c, float d, float e, float f) {
+        setMatrix(a, b, c, d, e, f);
+    }
+    /**
+     * Gets the stream representing this pattern
+     *
+     * @return the stream representing this pattern
+     */
+    
     PdfPattern getPattern() {
         return new PdfPattern(this);
     }
@@ -128,11 +112,11 @@ public class PdfPatternPainter extends PdfTemplate {
         tpl.defaultColor = defaultColor;
         return tpl;
     }
-
+    
     public Color getDefaultColor() {
         return defaultColor;
     }
-
+    
     public void setGrayFill(float gray) {
         checkNoColor();
         super.setGrayFill(gray);

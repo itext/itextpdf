@@ -73,96 +73,99 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     // static membervariables (concerning the presence of borders)
     
-/** this is a kind of image alignment. */
+    /** this is a kind of image alignment. */
     public static final int DEFAULT = 0;
     
-/** this is a kind of image alignment. */
+    /** this is a kind of image alignment. */
     public static final int RIGHT = 1;
     
-/** this is a kind of image alignment. */
+    /** this is a kind of image alignment. */
     public static final int LEFT = 2;
     
-/** this is a kind of image alignment. */
+    /** this is a kind of image alignment. */
     public static final int MIDDLE = 3;
     
-/** this is a kind of image alignment. */
+    /** this is a kind of image alignment. */
     public static final int TEXTWRAP = 4;
     
-/** this is a kind of image alignment. */
+    /** this is a kind of image alignment. */
     public static final int UNDERLYING = 8;
     
-/** This represents a coordinate in the transformation matrix. */
+    /** This represents a coordinate in the transformation matrix. */
     public static final int AX = 0;
     
-/** This represents a coordinate in the transformation matrix. */
+    /** This represents a coordinate in the transformation matrix. */
     public static final int AY = 1;
     
-/** This represents a coordinate in the transformation matrix. */
+    /** This represents a coordinate in the transformation matrix. */
     public static final int BX = 2;
     
-/** This represents a coordinate in the transformation matrix. */
+    /** This represents a coordinate in the transformation matrix. */
     public static final int BY = 3;
     
-/** This represents a coordinate in the transformation matrix. */
+    /** This represents a coordinate in the transformation matrix. */
     public static final int CX = 4;
     
-/** This represents a coordinate in the transformation matrix. */
+    /** This represents a coordinate in the transformation matrix. */
     public static final int CY = 5;
     
-/** This represents a coordinate in the transformation matrix. */
+    /** This represents a coordinate in the transformation matrix. */
     public static final int DX = 6;
     
-/** This represents a coordinate in the transformation matrix. */
+    /** This represents a coordinate in the transformation matrix. */
     public static final int DY = 7;
     
     // membervariables
     
-/** The imagetype. */
+    /** Adobe invert CMYK JPEG */
+    protected boolean invert = false;
+    
+    /** The imagetype. */
     protected int type;
     
-/** The URL of the image. */
-    protected URL url = null;
+    /** The URL of the image. */
+    protected URL url;
     
-/** The raw data of the image. */
+    /** The raw data of the image. */
     protected byte rawData[];
     
-/** The template to be treated as an image. */
-    protected PdfTemplate template = null;
+    /** The template to be treated as an image. */
+    protected PdfTemplate template;
     
-/** The alignment of the Image. */
+    /** The alignment of the Image. */
     protected int alignment;
     
-/** Text that can be shown instead of the image. */
-    protected String alt = null;
+    /** Text that can be shown instead of the image. */
+    protected String alt;
     
-/** This is the absolute X-position of the image. */
+    /** This is the absolute X-position of the image. */
     protected float absoluteX = Float.NaN;
     
-/** This is the absolute Y-position of the image. */
+    /** This is the absolute Y-position of the image. */
     protected float absoluteY = Float.NaN;
     
-/** This is the width of the image without rotation. */
+    /** This is the width of the image without rotation. */
     protected float plainWidth;
     
-/** This is the width of the image without rotation. */
+    /** This is the width of the image without rotation. */
     protected float plainHeight;
     
-/** This is the scaled width of the image taking rotation into account. */
+    /** This is the scaled width of the image taking rotation into account. */
     protected float scaledWidth;
     
-/** This is the original height of the image taking rotation into account. */
+    /** This is the original height of the image taking rotation into account. */
     protected float scaledHeight;
     
-/** This is the rotation of the image. */
+    /** This is the rotation of the image. */
     protected float rotation;
     
-/** this is the colorspace of a jpeg-image. */
+    /** this is the colorspace of a jpeg-image. */
     protected int colorspace = -1;
     
-/** this is the bits per component of the raw image. It also flags a CCITT image.*/
+    /** this is the bits per component of the raw image. It also flags a CCITT image.*/
     protected int bpc = 1;
     
-/** this is the transparency information of the raw image*/
+    /** this is the transparency information of the raw image*/
     protected int transparency[];
     
     // serial stamping
@@ -186,19 +189,19 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** Holds value of property interpolation. */
     protected boolean interpolation;
     
-/** if the annotation is not null the image will be clickable. */
+    /** if the annotation is not null the image will be clickable. */
     protected Annotation annotation = null;
-
-/** Contains extra markupAttributes */
+    
+    /** Contains extra markupAttributes */
     protected Properties markupAttributes;
     
     // constructors
     
-/**
- * Constructs an <CODE>Image</CODE>-object, using an <VAR>url</VAR>.
- *
- * @param		url			the <CODE>URL</CODE> where the image can be found.
- */
+    /**
+     * Constructs an <CODE>Image</CODE>-object, using an <VAR>url</VAR>.
+     *
+     * @param		url			the <CODE>URL</CODE> where the image can be found.
+     */
     
     public Image(URL url) {
         super(0, 0);
@@ -207,11 +210,11 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         rotation = 0;
     }
     
-/**
- * Constructs an <CODE>Image</CODE>-object, using an <VAR>url</VAR>.
- *
- * @param		url			the <CODE>URL</CODE> where the image can be found.
- */
+    /**
+     * Constructs an <CODE>Image</CODE>-object, using an <VAR>url</VAR>.
+     *
+     * @param		url			the <CODE>URL</CODE> where the image can be found.
+     */
     
     protected Image(Image image) {
         super(image);
@@ -236,12 +239,12 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     // gets an instance of an Image
     
-/**
- * Gets an instance of an Image.
- *
- * @param	an URL
- * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
- */
+    /**
+     * Gets an instance of an Image.
+     *
+     * @param	an URL
+     * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
+     */
     
     public static Image getInstance(URL url) throws BadElementException, MalformedURLException, IOException {
         InputStream is = null;
@@ -273,17 +276,17 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         }
     }
     
-/**
- * Gets an instance of an Image from a java.awt.Image.
- *
- * @param image the <CODE>java.awt.Image</CODE> to convert
- * @param color if different from <CODE>null</CODE> the transparency
- * pixels are replaced by this color
- * @param forceBW if <CODE>true</CODE> the image is treated as black and white
- * @return an object of type <CODE>ImgRaw</CODE>
- * @throws BadElementException on error
- * @throws IOException on error
- */
+    /**
+     * Gets an instance of an Image from a java.awt.Image.
+     *
+     * @param image the <CODE>java.awt.Image</CODE> to convert
+     * @param color if different from <CODE>null</CODE> the transparency
+     * pixels are replaced by this color
+     * @param forceBW if <CODE>true</CODE> the image is treated as black and white
+     * @return an object of type <CODE>ImgRaw</CODE>
+     * @throws BadElementException on error
+     * @throws IOException on error
+     */
     
     public static Image getInstance(java.awt.Image image, java.awt.Color color, boolean forceBW) throws BadElementException, IOException {
         java.awt.image.PixelGrabber pg = new java.awt.image.PixelGrabber(image, 0, 0, -1, -1, true);
@@ -301,7 +304,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         if (forceBW) {
             int byteWidth = (w / 8) + ((w & 7) != 0 ? 1 : 0);
             byte[] pixelsByte = new byte[byteWidth * h];
-
+            
             int index = 0;
             int size = h * w;
             int transColor = 1;
@@ -360,7 +363,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         }
         else {
             byte[] pixelsByte = new byte[w * h * 3];
-
+            
             int index = 0;
             int size = h * w;
             int red = 255;
@@ -407,37 +410,37 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         }
     }
     
-/**
- * Gets an instance of an Image from a java.awt.Image.
- *
- * @param image the <CODE>java.awt.Image</CODE> to convert
- * @param color if different from <CODE>null</CODE> the transparency
- * pixels are replaced by this color
- * @return an object of type <CODE>ImgRaw</CODE>
- * @throws BadElementException on error
- * @throws IOException on error
- */
+    /**
+     * Gets an instance of an Image from a java.awt.Image.
+     *
+     * @param image the <CODE>java.awt.Image</CODE> to convert
+     * @param color if different from <CODE>null</CODE> the transparency
+     * pixels are replaced by this color
+     * @return an object of type <CODE>ImgRaw</CODE>
+     * @throws BadElementException on error
+     * @throws IOException on error
+     */
     public static Image getInstance(java.awt.Image image, java.awt.Color color) throws BadElementException, IOException {
         return Image.getInstance(image, color, false);
     }
     
-/**
- * Gets an instance of an Image.
- *
- * @param	a filename
- * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
- */
+    /**
+     * Gets an instance of an Image.
+     *
+     * @param	a filename
+     * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
+     */
     
     public static Image getInstance(String filename) throws BadElementException, MalformedURLException, IOException {
         return getInstance(toURL(filename));
     }
     
-/**
- * Gets an instance of an Image.
- *
- * @param	a byte array
- * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
- */
+    /**
+     * Gets an instance of an Image.
+     *
+     * @param	a byte array
+     * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
+     */
     
     public static Image getInstance(byte[] img) throws BadElementException, MalformedURLException, IOException {
         InputStream is = null;
@@ -468,19 +471,19 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         }
     }
     
-/**
- * Gets an instance of an Image in raw mode.
- *
- * @param width the width of the image in pixels
- * @param height the height of the image in pixels
- * @param components 1,3 or 4 for GrayScale, RGB and CMYK
- * @param data the image data
- * @param bpc bits per component
- * @return an object of type <CODE>ImgRaw</CODE>
- * @throws BadElementException on error
- * @throws MalformedURLException on error
- * @throws IOException on error
- */
+    /**
+     * Gets an instance of an Image in raw mode.
+     *
+     * @param width the width of the image in pixels
+     * @param height the height of the image in pixels
+     * @param components 1,3 or 4 for GrayScale, RGB and CMYK
+     * @param data the image data
+     * @param bpc bits per component
+     * @return an object of type <CODE>ImgRaw</CODE>
+     * @throws BadElementException on error
+     * @throws MalformedURLException on error
+     * @throws IOException on error
+     */
     
     public static Image getInstance(int width, int height, int components, int bpc, byte data[]) throws BadElementException, MalformedURLException, IOException {
         return Image.getInstance(width, height, components, bpc, data, null);
@@ -493,7 +496,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data) throws BadElementException {
         return Image.getInstance(width, height, reverseBits, typeCCITT, parameters, data, null);
     }
-
+    
     public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data, int transparency[]) throws BadElementException {
         if (transparency != null && transparency.length != 2)
             throw new BadElementException("Transparency length must be equal to 2 with CCITT images");
@@ -501,21 +504,21 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         img.transparency = transparency;
         return img;
     }
-/**
- * Gets an instance of an Image in raw mode.
- *
- * @param width the width of the image in pixels
- * @param height the height of the image in pixels
- * @param components 1,3 or 4 for GrayScale, RGB and CMYK
- * @param data the image data
- * @param bpc bits per component
- * @param transparency transparency information in the Mask format of the
- * image dictionary
- * @return an object of type <CODE>ImgRaw</CODE>
- * @throws BadElementException on error
- * @throws MalformedURLException on error
- * @throws IOException on error
- */
+    /**
+     * Gets an instance of an Image in raw mode.
+     *
+     * @param width the width of the image in pixels
+     * @param height the height of the image in pixels
+     * @param components 1,3 or 4 for GrayScale, RGB and CMYK
+     * @param data the image data
+     * @param bpc bits per component
+     * @param transparency transparency information in the Mask format of the
+     * image dictionary
+     * @return an object of type <CODE>ImgRaw</CODE>
+     * @throws BadElementException on error
+     * @throws MalformedURLException on error
+     * @throws IOException on error
+     */
     
     public static Image getInstance(int width, int height, int components, int bpc, byte data[], int transparency[]) throws BadElementException, MalformedURLException, IOException {
         if (transparency != null && transparency.length != components * 2)
@@ -529,13 +532,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return img;
     }
     
-/**
- * Returns an <CODE>Image</CODE> that has been constructed taking in account
- * the value of some <VAR>attributes</VAR>.
- *
- * @param	attributes		Some attributes
- * @return	an <CODE>Image</CODE>
- */
+    /**
+     * Returns an <CODE>Image</CODE> that has been constructed taking in account
+     * the value of some <VAR>attributes</VAR>.
+     *
+     * @param	attributes		Some attributes
+     * @return	an <CODE>Image</CODE>
+     */
     
     public static Image getInstance(Properties attributes) throws BadElementException, MalformedURLException, IOException {
         String value = (String)attributes.remove(ElementTags.URL);
@@ -578,44 +581,44 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     // methods to set information
     
-/**
- * Sets the alignment for the image.
- *
- * @param		aligment		the alignment
- */
+    /**
+     * Sets the alignment for the image.
+     *
+     * @param		aligment		the alignment
+     */
     
     public void setAlignment(int alignment) {
         this.alignment = alignment;
     }
     
-/**
- * Sets the alternative information for the image.
- *
- * @param		alt		the alternative information
- */
+    /**
+     * Sets the alternative information for the image.
+     *
+     * @param		alt		the alternative information
+     */
     
     public void setAlt(String alt) {
         this.alt = alt;
     }
     
-/**
- * Sets the absolute position of the <CODE>Image</CODE>.
- *
- * @param	absoluteX
- * @param	absoluteY
- */
+    /**
+     * Sets the absolute position of the <CODE>Image</CODE>.
+     *
+     * @param	absoluteX
+     * @param	absoluteY
+     */
     
     public void setAbsolutePosition(float absoluteX, float absoluteY) {
         this.absoluteX = absoluteX;
         this.absoluteY = absoluteY;
     }
     
-/**
- * Scale the image to an absolute width and an absolute height.
- *
- * @param		newWidth	the new width
- * @param		newHeight	the new height
- */
+    /**
+     * Scale the image to an absolute width and an absolute height.
+     *
+     * @param		newWidth	the new width
+     * @param		newHeight	the new height
+     */
     
     public void scaleAbsolute(float newWidth, float newHeight) {
         plainWidth = newWidth;
@@ -625,11 +628,11 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         scaledHeight = matrix[DY] - matrix[CY];
     }
     
-/**
- * Scale the image to an absolute width.
- *
- * @param		newWidth	the new width
- */
+    /**
+     * Scale the image to an absolute width.
+     *
+     * @param		newWidth	the new width
+     */
     
     public void scaleAbsoluteWidth(float newWidth) {
         plainWidth = newWidth;
@@ -638,11 +641,11 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         scaledHeight = matrix[DY] - matrix[CY];
     }
     
-/**
- * Scale the image to an absolute height.
- *
- * @param		newHeight	the new height
- */
+    /**
+     * Scale the image to an absolute height.
+     *
+     * @param		newHeight	the new height
+     */
     
     public void scaleAbsoluteHeight(float newHeight) {
         plainHeight = newHeight;
@@ -651,22 +654,22 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         scaledHeight = matrix[DY] - matrix[CY];
     }
     
-/**
- * Scale the image to a certain percentage.
- *
- * @param		percent		the scaling percentage
- */
+    /**
+     * Scale the image to a certain percentage.
+     *
+     * @param		percent		the scaling percentage
+     */
     
     public void scalePercent(float percent) {
         scalePercent(percent, percent);
     }
     
-/**
- * Scale the width and height of an image to a certain percentage.
- *
- * @param		percentX	the scaling percentage of the width
- * @param		percentY	the scaling percentage of the height
- */
+    /**
+     * Scale the width and height of an image to a certain percentage.
+     *
+     * @param		percentX	the scaling percentage of the width
+     * @param		percentY	the scaling percentage of the height
+     */
     
     public void scalePercent(float percentX, float percentY) {
         plainWidth = (width() * percentX) / 100f;
@@ -676,12 +679,12 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         scaledHeight = matrix[DY] - matrix[CY];
     }
     
-/**
- * Scales the image so that it fits a certain width and height.
- *
- * @param		fitWidth		the width to fit
- * @param		fitHeight		the height to fit
- */
+    /**
+     * Scales the image so that it fits a certain width and height.
+     *
+     * @param		fitWidth		the width to fit
+     * @param		fitHeight		the height to fit
+     */
     
     public void scaleToFit(float fitWidth, float fitHeight) {
         float percentX = (fitWidth * 100) / width();
@@ -689,49 +692,49 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         scalePercent(percentX < percentY ? percentX : percentY);
     }
     
-/**
- * Sets the rotation of the image in radians.
- *
- * @param		r		rotation in radians
- */
+    /**
+     * Sets the rotation of the image in radians.
+     *
+     * @param		r		rotation in radians
+     */
     
     public void setRotation(float r) {
-        double d=Math.PI;                  //__IDS__	
+        double d=Math.PI;                  //__IDS__
         rotation = (float)(r % (2.0 * d)); //__IDS__
         if (rotation < 0) {
-            rotation += 2.0 * d;           //__IDS__	
+            rotation += 2.0 * d;           //__IDS__
         }
         float[] matrix = matrix();
         scaledWidth = matrix[DX] - matrix[CX];
         scaledHeight = matrix[DY] - matrix[CY];
     }
     
-/**
- * Sets the rotation of the image in degrees.
- *
- * @param		r		rotation in degrees
- */
+    /**
+     * Sets the rotation of the image in degrees.
+     *
+     * @param		r		rotation in degrees
+     */
     
     public void setRotationDegrees(float deg) {
         double d=Math.PI;                  //__IDS__
         setRotation(deg / 180 * (float)d); //__IDS__
     }
     
-/**
- * Sets the annotation of this Image.
- *
- * @param   annotation  the annotation
- */
-
+    /**
+     * Sets the annotation of this Image.
+     *
+     * @param   annotation  the annotation
+     */
+    
     public void setAnnotation(Annotation annotation) {
         this.annotation = annotation;
     }
     
-/**
- * Gets the annotation.
- *
- * @return  the annotation that is linked to this image
- */
+    /**
+     * Gets the annotation.
+     *
+     * @return  the annotation that is linked to this image
+     */
     
     public Annotation annotation() {
         return annotation;
@@ -739,36 +742,36 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     // methods to retrieve information
     
-/** Gets the bpc for the image.
- * <P>
- * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
- *
- * @return a bpc value
- */
+    /** Gets the bpc for the image.
+     * <P>
+     * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
+     *
+     * @return a bpc value
+     */
     
     public int bpc() {
         return bpc;
     }
     
-/**
- * Gets the raw data for the image.
- * <P>
- * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
- *
- * @return		the raw data
- */
+    /**
+     * Gets the raw data for the image.
+     * <P>
+     * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
+     *
+     * @return		the raw data
+     */
     
     public byte[] rawData() {
         return rawData;
     }
     
-/**
- * Gets the template to be used as an image.
- * <P>
- * Remark: this only makes sense for Images of the type <CODE>ImgTemplate</CODE>.
- *
- * @return		the template
- */
+    /**
+     * Gets the template to be used as an image.
+     * <P>
+     * Remark: this only makes sense for Images of the type <CODE>ImgTemplate</CODE>.
+     *
+     * @return		the template
+     */
     
     public PdfTemplate templateData() {
         return template;
@@ -778,11 +781,11 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.template = template;
     }
     
-/**
- * Checks if the <CODE>Images</CODE> has to be added at an absolute position.
- *
- * @return		a boolean
- */
+    /**
+     * Checks if the <CODE>Images</CODE> has to be added at an absolute position.
+     *
+     * @return		a boolean
+     */
     
     public boolean hasAbsolutePosition() {
         return !Float.isNaN(absoluteY);
@@ -797,153 +800,153 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     public boolean hasAbsoluteX() {
         return !Float.isNaN(absoluteX);
     }
-    
-/**
- * Returns the absolute X position.
- *
- * @return		a position
- */
+
+    /**
+     * Returns the absolute X position.
+     *
+     * @return		a position
+     */
     
     public float absoluteX() {
         return absoluteX;
     }
     
-/**
- * Returns the absolute Y position.
- *
- * @return		a position
- */
+    /**
+     * Returns the absolute Y position.
+     *
+     * @return		a position
+     */
     
     public float absoluteY() {
         return absoluteY;
     }
     
-/**
- * Returns the type.
- *
- * @return		a type
- */
+    /**
+     * Returns the type.
+     *
+     * @return		a type
+     */
     
     public int type() {
         return type;
     }
     
-/**
- * Returns <CODE>true</CODE> if the image is a <CODE>Gif</CODE>-object.
- *
- * @return		a <CODE>boolean</CODE>
- */
+    /**
+     * Returns <CODE>true</CODE> if the image is a <CODE>Gif</CODE>-object.
+     *
+     * @return		a <CODE>boolean</CODE>
+     */
     
     public boolean isGif() {
         return type == GIF;
     }
     
-/**
- * Returns <CODE>true</CODE> if the image is a <CODE>Jpeg</CODE>-object.
- *
- * @return		a <CODE>boolean</CODE>
- */
+    /**
+     * Returns <CODE>true</CODE> if the image is a <CODE>Jpeg</CODE>-object.
+     *
+     * @return		a <CODE>boolean</CODE>
+     */
     
     public boolean isJpeg() {
         return type == JPEG;
     }
     
-/**
- * Returns <CODE>true</CODE> if the image is a <CODE>Png</CODE>-object.
- *
- * @return		a <CODE>boolean</CODE>
- */
+    /**
+     * Returns <CODE>true</CODE> if the image is a <CODE>Png</CODE>-object.
+     *
+     * @return		a <CODE>boolean</CODE>
+     */
     
     public boolean isPng() {
         return type == PNG;
     }
     
-/**
- * Returns <CODE>true</CODE> if the image is a <CODE>ImgRaw</CODE>-object.
- *
- * @return		a <CODE>boolean</CODE>
- */
+    /**
+     * Returns <CODE>true</CODE> if the image is a <CODE>ImgRaw</CODE>-object.
+     *
+     * @return		a <CODE>boolean</CODE>
+     */
     
     public boolean isImgRaw() {
         return type == IMGRAW;
     }
- /**
- * Returns <CODE>true</CODE> if the image is an <CODE>ImgTemplate</CODE>-object.
- *
- * @return		a <CODE>boolean</CODE>
- */
+    /**
+     * Returns <CODE>true</CODE> if the image is an <CODE>ImgTemplate</CODE>-object.
+     *
+     * @return		a <CODE>boolean</CODE>
+     */
     
     public boolean isImgTemplate() {
         return type == IMGTEMPLATE;
     }
     
-/**
- * Gets the <CODE>String</CODE>-representation of the reference to the image.
- *
- * @return		a <CODE>String</CODE>
- */
+    /**
+     * Gets the <CODE>String</CODE>-representation of the reference to the image.
+     *
+     * @return		a <CODE>String</CODE>
+     */
     
     public URL url() {
         return url;
     }
     
-/**
- * Gets the alignment for the image.
- *
- * @return		a value
- */
+    /**
+     * Gets the alignment for the image.
+     *
+     * @return		a value
+     */
     
     public int alignment() {
         return alignment;
     }
     
-/**
- * Gets the alternative text for the image.
- *
- * @return		a <CODE>String</CODE>
- */
+    /**
+     * Gets the alternative text for the image.
+     *
+     * @return		a <CODE>String</CODE>
+     */
     
     public String alt() {
         return alt;
     }
     
-/**
- * Gets the scaled width of the image.
- *
- * @return		a value
- */
+    /**
+     * Gets the scaled width of the image.
+     *
+     * @return		a value
+     */
     
     public float scaledWidth() {
         return scaledWidth;
     }
     
-/**
- * Gets the scaled height of the image.
- *
- * @return		a value
- */
+    /**
+     * Gets the scaled height of the image.
+     *
+     * @return		a value
+     */
     
     public float scaledHeight() {
         return scaledHeight;
     }
     
-/**
- * Gets the colorspace for the image.
- * <P>
- * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
- *
- * @return		a colorspace value
- */
+    /**
+     * Gets the colorspace for the image.
+     * <P>
+     * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
+     *
+     * @return		a colorspace value
+     */
     
     public int colorspace() {
         return colorspace;
     }
     
-/**
- * Returns the transformation matrix of the image.
- *
- * @return		an array [AX, AY, BX, BY, CX, CY, DX, DY]
- */
+    /**
+     * Returns the transformation matrix of the image.
+     *
+     * @return		an array [AX, AY, BX, BY, CX, CY, DX, DY]
+     */
     
     public float[] matrix() {
         float[] matrix = new float[8];
@@ -980,13 +983,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return matrix;
     }
     
-/**
- * This method is an alternative for the <CODE>InputStream.skip()</CODE>-method
- * that doesn't seem to work properly for big values of <CODE>size</CODE>.
- *
- * @param	is		the <CODE>InputStream</CODE>
- * @param	size	the number of bytes to skip
- */
+    /**
+     * This method is an alternative for the <CODE>InputStream.skip()</CODE>-method
+     * that doesn't seem to work properly for big values of <CODE>size</CODE>.
+     *
+     * @param	is		the <CODE>InputStream</CODE>
+     * @param	size	the number of bytes to skip
+     */
     
     static public void skip(InputStream is, int size) throws IOException {
         while (size > 0) {
@@ -994,15 +997,15 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         }
     }
     
-/**
- * This method makes a valid URL from a given filename.
- * <P>
- * This method makes the conversion of this library from the JAVA 2 platform
- * to a JDK1.1.x-version easier.
- *
- * @param        filename        a given filename
- * @return        a valid URL
- */
+    /**
+     * This method makes a valid URL from a given filename.
+     * <P>
+     * This method makes the conversion of this library from the JAVA 2 platform
+     * to a JDK1.1.x-version easier.
+     *
+     * @param        filename        a given filename
+     * @return        a valid URL
+     */
     
     public static URL toURL(String filename) throws MalformedURLException {
         if (filename.startsWith("file:/") || filename.startsWith("http://")) {
@@ -1022,41 +1025,40 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return new URL("file", "", path);
     }
     
-/**
- * Returns the transparency.
- */
+    /**
+     * Returns the transparency.
+     */
     
-    public int[] getTransparency()
-    {
+    public int[] getTransparency() {
         return transparency;
     }
     
-/**
- * Checks if a given tag corresponds with this object.
- *
- * @param   tag     the given tag
- * @return  true if the tag corresponds
- */
+    /**
+     * Checks if a given tag corresponds with this object.
+     *
+     * @param   tag     the given tag
+     * @return  true if the tag corresponds
+     */
     
     public static boolean isTag(String tag) {
         return ElementTags.IMAGE.equals(tag);
     }
     
-/**
- * Gets the plain width of the image.
- *
- * @return              a value
- */
+    /**
+     * Gets the plain width of the image.
+     *
+     * @return              a value
+     */
     
     public float plainWidth() {
         return plainWidth;
     }
     
- /**
-  * Gets the plain height of the image.
-  *
-  * @return              a value
-  */
+    /**
+     * Gets the plain height of the image.
+     *
+     * @return              a value
+     */
     
     public float plainHeight() {
         return plainHeight;
@@ -1088,7 +1090,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
      * requisites to be a mask.
      * @return <CODE>true</CODE> if this <CODE>Image</CODE> can be a mask
-     */    
+     */
     public boolean isMaskCandidate() {
         if (type == IMGRAW) {
             if (bpc > 0xff)
@@ -1100,7 +1102,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     /** Make this <CODE>Image</CODE> a mask.
      * @throws DocumentException if this <CODE>Image</CODE> can not be a mask
-     */    
+     */
     public void makeMask() throws DocumentException {
         if (!isMaskCandidate())
             throw new DocumentException("This image can not be an image mask.");
@@ -1110,7 +1112,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** Sets the explicit masking.
      * @param mask the mask to be applied
      * @throws DocumentException on error
-     */    
+     */
     public void setImageMask(Image mask) throws DocumentException {
         if (this.mask)
             throw new DocumentException("An image mask can not contain another image mask.");
@@ -1121,21 +1123,21 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     /** Gets the explicit masking.
      * @return the explicit masking
-     */    
+     */
     public Image getImageMask() {
         return imageMask;
     }
     
     /** Returns <CODE>true</CODE> if this <CODE>Image</CODE> is a mask.
      * @return <CODE>true</CODE> if this <CODE>Image</CODE> is a mask
-     */    
+     */
     public boolean isMask() {
         return mask;
     }
     
     /** Inverts the meaning of the bits of a mask.
      * @param invertMask <CODE>true</CODE> to invert the meaning of the bits of a mask
-     */    
+     */
     public void setInvertMask(boolean invertMask) {
         this.invertMask = invertMask;
     }
@@ -1143,9 +1145,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** Returns <CODE>true</CODE> if the bits are to be inverted
      * in the mask.
      * @return <CODE>true</CODE> if the bits are to be inverted in the mask
-     */    
+     */
     public boolean isInvertMask() {
         return invertMask;
+    }
+    
+    public boolean isInvertedJPEG() {
+        return invert;
     }
     
     /** Getter for property interpolation.
@@ -1164,38 +1170,38 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     }
     
     
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
+    /**
+     * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+     */
     public void setMarkupAttribute(String name, String value) {
         markupAttributes = (markupAttributes == null) ? new Properties() : markupAttributes;
         markupAttributes.put(name, value);
     }
     
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
- */
+    /**
+     * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
+     */
     public void setMarkupAttributes(Properties markupAttributes) {
         this.markupAttributes = markupAttributes;
     }
     
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
+    /**
+     * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+     */
     public String getMarkupAttribute(String name) {
         return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
     }
     
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
- */
+    /**
+     * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+     */
     public Set getMarkupAttributeNames() {
         return Chunk.getKeySet(markupAttributes);
     }
     
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
- */
+    /**
+     * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
+     */
     public Properties getMarkupAttributes() {
         return markupAttributes;
     }

@@ -82,7 +82,7 @@ import java.io.IOException;
  */
 
 class PdfImage extends PdfStream {
-
+    
     static final int TRANSFERSIZE = 4096;
     // membervariables
     
@@ -318,6 +318,9 @@ class PdfImage extends PdfStream {
                             break;
                         default:
                             dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+                            if (image.isInvertedJPEG()) {
+                                dictionary.put(PdfName.DECODE, new PdfLiteral("[1 0 1 0 1 0 1 0]"));
+                            }
                     }
                     dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(8));
                     if (image.rawData() != null){

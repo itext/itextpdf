@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -49,37 +46,52 @@
  */
 
 package com.lowagie.text.pdf;
-
-import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 import java.io.IOException;
+import java.awt.Color;
 
 /**
- * A <CODE>PdfBorderArray</CODE> defines the border of a <CODE>PdfAnnotation</CODE>.
- *
- * @see		PdfArray
+ * Implements the appearance stream to be used with form fields..
  */
 
-public class PdfBorderArray extends PdfArray {
+public class PdfAppearance extends PdfTemplate {
+    /**
+     *Creates a <CODE>PdfAppearance</CODE>.
+     */
     
-    // constructors
-    
-/**
- * Constructs a new <CODE>PdfBorderArray</CODE>.
- */
-    
-    public PdfBorderArray(float hRadius, float vRadius, float width) {
-        this(hRadius, vRadius, width, null);
+    protected PdfAppearance() {
+        super();
+        separator = ' ';
     }
     
-/**
- * Constructs a new <CODE>PdfBorderArray</CODE>.
- */
+    /**
+     * Creates new PdfTemplate
+     *
+     * @param wr the <CODE>PdfWriter</CODE>
+     */
     
-    public PdfBorderArray(float hRadius, float vRadius, float width, PdfDashPattern dash) {
-        super(new PdfNumber(hRadius));
-        add(new PdfNumber(vRadius));
-        add(new PdfNumber(width));
-        if (dash != null)
-            add(dash);
+    PdfAppearance(PdfWriter wr) {
+        super(wr);
+        separator = ' ';
+    }
+    
+    public PdfContentByte getDuplicate() {
+        PdfAppearance tpl = new PdfAppearance();
+        tpl.writer = writer;
+        tpl.pdf = pdf;
+        tpl.thisReference = thisReference;
+        tpl.fontDictionary = fontDictionary;
+        tpl.xObjectDictionary = xObjectDictionary;
+        tpl.colorDictionary = colorDictionary;
+        tpl.patternDictionary = patternDictionary;
+        tpl.bBox = new Rectangle(bBox);
+        if (matrix != null) {
+            tpl.matrix = new PdfArray(matrix);
+        }
+        tpl.separator = separator;
+        return tpl;
     }
 }

@@ -197,7 +197,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.89)", PdfObject.ENCODING));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 94"));
             // Do not edit the line above!
         }
         
@@ -351,6 +351,10 @@ class PdfDocument extends Document implements DocListener {
         void setPageLabels(PdfPageLabels pageLabels) {
             put(PdfName.PAGELABELS, pageLabels.getDictionary());
         }
+
+        void setAcroForm(PdfObject fields) {
+           put(PdfName.ACROFORM, fields);
+        }
     }
     
     // membervariables
@@ -463,8 +467,15 @@ class PdfDocument extends Document implements DocListener {
     // annotations and outlines
     
     /** This is the array containing the references to the annotations. */
-    private PdfArray annotations;
+    private ArrayList annotations;
     
+    private HashMap fieldTemplates = new HashMap();
+    
+    private PdfArray documentFields = new PdfArray();
+
+    private PdfArray calculationOrder = new PdfArray();
+    
+    private int sigFlags = 0;
     /** This is the <CODE>ArrayList</CODE> with the outlines of the document. */
     private ArrayList outlines;
     
@@ -491,7 +502,6 @@ class PdfDocument extends Document implements DocListener {
     private String openActionName;
     private PdfAction openActionAction;
     private PdfPageLabels pageLabels;
-    private PdfObject acroForm;
     
     //add by Jin-Hsia Yang
     private boolean isNewpage = false;
@@ -664,38 +674,61 @@ class PdfDocument extends Document implements DocListener {
         return true;
     }
     
-    protected void rotateAnnotations() {
+    protected PdfArray rotateAnnotations() {
+        PdfArray array = new PdfArray();
         int rotation = thisPageSize.getRotation() % 360;
-        if (rotation == 0)
-            return;
-        ArrayList list = annotations.getArrayList();
-        for (int k = 0; k < list.size(); ++k) {
-            PdfDictionary dic = (PdfDictionary)list.get(k);
-            PdfRectangle rect = (PdfRectangle)dic.get(PdfName.RECT);
-            switch (rotation) {
-                case 90:
-                    dic.put(PdfName.RECT, new PdfRectangle(
-                        thisPageSize.top() - rect.bottom(),
-                        rect.left(),
-                        thisPageSize.top() - rect.top(),
-                        rect.right()));
-                    break;
-                case 180:
-                    dic.put(PdfName.RECT, new PdfRectangle(
-                        thisPageSize.right() - rect.left(),
-                        thisPageSize.top() - rect.bottom(),
-                        thisPageSize.right() - rect.right(),
-                        thisPageSize.top() - rect.top()));
-                    break;
-                case 270:
-                    dic.put(PdfName.RECT, new PdfRectangle(
-                        rect.bottom(),
-                        thisPageSize.right() - rect.left(),
-                        rect.top(),
-                        thisPageSize.right() - rect.right()));
-                    break;
+        for (int k = 0; k < annotations.size(); ++k) {
+            PdfAnnotation dic = (PdfAnnotation)annotations.get(k);
+            if (dic.isForm()) {
+                if (!dic.isUsed()) {
+                    HashMap templates = dic.getTemplates();
+                    if (templates != null)
+                        fieldTemplates.putAll(templates);
+                }
+                PdfFormField field = (PdfFormField)dic;
+                if (field.getParent() == null)
+                    documentFields.add(field.getIndirectReference());
+            }
+            if (dic.isAnnotation()) {
+                array.add(dic.getIndirectReference());
+                if (!dic.isUsed()) {
+                    PdfRectangle rect = (PdfRectangle)dic.get(PdfName.RECT);
+                    switch (rotation) {
+                        case 90:
+                            dic.put(PdfName.RECT, new PdfRectangle(
+                                thisPageSize.top() - rect.bottom(),
+                                rect.left(),
+                                thisPageSize.top() - rect.top(),
+                                rect.right()));
+                            break;
+                        case 180:
+                            dic.put(PdfName.RECT, new PdfRectangle(
+                                thisPageSize.right() - rect.left(),
+                                thisPageSize.top() - rect.bottom(),
+                                thisPageSize.right() - rect.right(),
+                                thisPageSize.top() - rect.top()));
+                            break;
+                        case 270:
+                            dic.put(PdfName.RECT, new PdfRectangle(
+                                rect.bottom(),
+                                thisPageSize.right() - rect.left(),
+                                rect.top(),
+                                thisPageSize.right() - rect.right()));
+                            break;
+                    }
+                }
+            }
+            if (!dic.isUsed()) {
+                dic.setUsed();
+                try {
+                    writer.addToBody(dic, dic.getIndirectReference());
+                }
+                catch (IOException e) {
+                    throw new ExceptionConverter(e);
+                }
             }
         }
+        return array;
     }
     
     
@@ -747,8 +780,9 @@ class PdfDocument extends Document implements DocListener {
             page = new PdfPage(new PdfRectangle(thisPageSize, rotation), thisCropSize, resources, new PdfNumber(rotation));
         // we add the annotations
         if (annotations.size() > 0) {
-            rotateAnnotations();
-            page.put(PdfName.ANNOTS, annotations);
+            PdfArray array = rotateAnnotations();
+            if (array.size() != 0)
+                page.put(PdfName.ANNOTS, array);
         }
         if (!open || close) {
             throw new PdfException("The document isn't open.");
@@ -802,6 +836,21 @@ class PdfDocument extends Document implements DocListener {
         }
     }
     
+    void outlineTree(PdfOutline outline) {
+        outlines.add(outline);
+        ArrayList kids = outline.getKids();
+        for (int k = 0; k < kids.size(); ++k)
+            outlineTree((PdfOutline)kids.get(k));
+    }
+    
+    void fixOutlines() {
+        if (outlines.size() <= 1)
+            return;
+        PdfOutline firstOutline = (PdfOutline)outlines.get(0);
+        outlines.clear();
+        outlineTree(firstOutline);
+    }
+    
     /**
      * Closes the document.
      * <B>
@@ -822,6 +871,7 @@ class PdfDocument extends Document implements DocListener {
             super.close();
             
             writer.addLocalDestinations(localDestinations);
+            fixOutlines();
             if (outlines.size() > 1) {
                 int objectNumber = writer.size();
                 int level = 0;
@@ -1071,25 +1121,25 @@ class PdfDocument extends Document implements DocListener {
                     Annotation annot = (Annotation) element;
                     switch(annot.annotationType()) {
                         case Annotation.URL_NET:
-                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((URL) annot.attributes().get(Annotation.URL))));
+                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((URL) annot.attributes().get(Annotation.URL))));
                             break;
                         case Annotation.URL_AS_STRING:
-                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE))));
+                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE))));
                             break;
                         case Annotation.FILE_DEST:
-                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), (String) annot.attributes().get(Annotation.DESTINATION))));
+                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), (String) annot.attributes().get(Annotation.DESTINATION))));
                             break;
                         case Annotation.FILE_PAGE:
-                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), ((Integer) annot.attributes().get(Annotation.PAGE)).intValue())));
+                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), ((Integer) annot.attributes().get(Annotation.PAGE)).intValue())));
                             break;
                         case Annotation.NAMED_DEST:
-                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction(((Integer) annot.attributes().get(Annotation.NAMED)).intValue())));
+                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction(((Integer) annot.attributes().get(Annotation.NAMED)).intValue())));
                             break;
                         case Annotation.LAUNCH:
-                            annotations.add(new PdfAnnotation(annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR))));
+                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR))));
                             break;
                         default:
-                            annotations.add(new PdfAnnotation(annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content())));
+                            annotations.add(new PdfAnnotation(writer, annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content())));
                     }
                     pageEmpty = false;
                     break;
@@ -1695,7 +1745,7 @@ class PdfDocument extends Document implements DocListener {
     private void initPage() throws DocumentException {
         
         // initialisation of some page objects
-        annotations = new PdfArray();
+        annotations = new ArrayList();
         fontDictionary = new PdfFontDictionary();
         xObjectDictionary = new PdfXObjectDictionary();
         colorDictionary = new PdfColorDictionary();
@@ -1990,8 +2040,33 @@ class PdfDocument extends Document implements DocListener {
             catalog.setPageLabels(pageLabels);
         catalog.addNames(localDestinations, documentJavaScript, writer);
         catalog.setViewerPreferences(viewerPreferences);
-        if (acroForm != null)
-            catalog.put(PdfName.ACROFORM, acroForm);
+        if (documentFields.size() > 0) {
+            PdfDictionary acroForm = new PdfDictionary();
+            acroForm.put(PdfName.FIELDS, documentFields);
+            if (sigFlags != 0)
+                acroForm.put(PdfName.SIGFLAGS, new PdfNumber(sigFlags));
+            if (calculationOrder.size() > 0)
+                acroForm.put(PdfName.CO, calculationOrder);
+            if (fieldTemplates.size() > 0) {
+                PdfDictionary dic = new PdfDictionary();
+                for (Iterator it = fieldTemplates.keySet().iterator(); it.hasNext();) {
+                    PdfTemplate template = (PdfTemplate)it.next();
+                    PdfFormField.mergeResources(dic, (PdfDictionary)template.getResources());
+                }
+                acroForm.put(PdfName.DR, dic);
+                PdfDictionary fonts = (PdfDictionary)dic.get(PdfName.FONT);
+                if (fonts != null) {
+                    acroForm.put(PdfName.DA, new PdfString("/F1 0 Tf 0 g "));
+                    writer.eliminateFontSubset(fonts);
+                }
+                try {
+                    catalog.setAcroForm(writer.addToBody(acroForm).getIndirectReference());
+                }
+                catch (IOException e) {
+                    throw new ExceptionConverter(e);
+                }
+            }
+        }
         return catalog;
     }
     
@@ -2103,7 +2178,7 @@ class PdfDocument extends Document implements DocListener {
         xObjectDictionary.put(name, template.getIndirectReference());
         return name;
     }
-    
+
     /**
      * Writes a text line to the document. It takes care of all the attributes.
      * <P>
@@ -2252,7 +2327,7 @@ class PdfDocument extends Document implements DocListener {
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        annotations.add(new PdfAnnotation(xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
+                        annotations.add(new PdfAnnotation(writer, xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
                     }
                     if (chunk.isAttribute(Chunk.REMOTEGOTO)) {
                         float subtract = lastBaseFactor;
@@ -2333,7 +2408,7 @@ class PdfDocument extends Document implements DocListener {
      */
     void localGoto(String name, float llx, float lly, float urx, float ury) {
         PdfAction action = getLocalGotoAction(name);
-        annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
+        annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, action));
     }
     
     PdfAction getLocalGotoAction(String name) {
@@ -2386,7 +2461,7 @@ class PdfDocument extends Document implements DocListener {
      * @param ury the upper right y corner of the activation area
      */
     void remoteGoto(String filename, String name, float llx, float lly, float urx, float ury) {
-        annotations.add(new PdfAnnotation(llx, lly, urx, ury, new PdfAction(filename, name)));
+        annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, name)));
     }
     
     /**
@@ -2399,7 +2474,7 @@ class PdfDocument extends Document implements DocListener {
      * @param ury the upper right y corner of the activation area
      */
     void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury) {
-        annotations.add(new PdfAnnotation(llx, lly, urx, ury, new PdfAction(filename, page)));
+        annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, page)));
     }
     
     /** Sets the viewer preferences as the sum of several constants.
@@ -2419,7 +2494,7 @@ class PdfDocument extends Document implements DocListener {
      * @param ury the upper right y corner of the activation area
      */
     void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
-        annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
+        annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, action));
     }
     
     void setOpenAction(String name) {
@@ -2446,13 +2521,35 @@ class PdfDocument extends Document implements DocListener {
             throw new ExceptionConverter(e);
         }
     }
-    
-    void addAcroForm(PdfObject form, PdfObject annot) {
-        acroForm = form;
-        annotations.add(annot);
-    }
 
     void setCropBoxSize(Rectangle crop) {
         cropSize = new Rectangle(crop);
+    }
+    
+    void addCalculationOrder(PdfAnnotation annot) {
+        calculationOrder.add(annot.getIndirectReference());
+    }
+    
+    void setSigFlags(int f) {
+        sigFlags |= f;
+    }
+    
+    void addFormFieldRaw(PdfFormField field) {
+        annotations.add(field);
+        ArrayList kids = field.getKids();
+        if (kids != null) {
+            for (int k = 0; k < kids.size(); ++k)
+                addFormFieldRaw((PdfFormField)kids.get(k));
+        }
+    }
+    
+    void addAnnotation(PdfAnnotation annot) {
+        if (annot.isForm()) {
+            PdfFormField field = (PdfFormField)annot;
+            if (field.getParent() == null)
+                addFormFieldRaw(field);
+        }
+        else
+            annotations.add(annot);
     }
 }

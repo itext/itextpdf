@@ -54,6 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Set;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.ExceptionConverter;
 
@@ -175,6 +176,34 @@ class PdfDictionary extends PdfObject {
     }
     
 /**
+ * Adds a <CODE>PdfObject</CODE> and its key to the <CODE>PdfDictionary</CODE>.
+ * If the value is null it does nothing.
+ *
+ * @param		key		key of the entry (a <CODE>PdfName</CODE>)
+ * @param		value	value of the entry (a <CODE>PdfObject</CODE>)
+ * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
+ */
+    final PdfObject putEx(PdfName key, PdfObject value) {
+        if (value == null)
+            return null;
+        return (PdfObject) hashMap.put(key, value);
+    }
+    
+/**
+ * Adds a <CODE>PdfObject</CODE> and its key to the <CODE>PdfDictionary</CODE>.
+ * If the value is null the key is deleted.
+ *
+ * @param		key		key of the entry (a <CODE>PdfName</CODE>)
+ * @param		value	value of the entry (a <CODE>PdfObject</CODE>)
+ * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
+ */
+    final PdfObject putDel(PdfName key, PdfObject value) {
+        if (value == null)
+            return (PdfObject) hashMap.remove(key);;
+        return (PdfObject) hashMap.put(key, value);
+    }
+    
+/**
  * Removes a <CODE>PdfObject</CODE> and its key from the <CODE>PdfDictionary</CODE>.
  *
  * @param		key		key of the entry (a <CODE>PdfName</CODE>)
@@ -259,5 +288,13 @@ class PdfDictionary extends PdfObject {
     
     final boolean isOutlineTree() {
         return dictionaryType.compareTo(OUTLINES) == 0;
+    }
+    
+    final void merge(PdfDictionary other) {
+        hashMap.putAll(other.hashMap);
+    }
+    
+    final Set getKeys() {
+        return hashMap.keySet();
     }
 }
