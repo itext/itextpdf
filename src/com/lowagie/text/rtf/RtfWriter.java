@@ -103,6 +103,7 @@ import java.text.ParsePosition;
  * @author <a href="mailto:mhall@myrealbox.com">Mark.Hall@myrealbox.com</a>
  * @author Steffen Stundzig
  * @author <a href="ericmattes@yahoo.com">Eric Mattes</a>
+ * @author <a href="raul.wegmann@uam.es">Raul Wegmann</a>
  */
 public class RtfWriter extends DocWriter implements DocListener {
     /**
@@ -217,6 +218,12 @@ public class RtfWriter extends DocWriter implements DocListener {
 
     /** Begin new paragraph tag. */
     public static final byte[] paragraph = "par".getBytes();
+
+	/** Page width of a section. */
+	public static final byte[] sectionPageWidth = "pgwsxn".getBytes();
+
+	/** Page height of a section. */
+	public static final byte[] sectionPageHeight = "pghsxn".getBytes();
 
     /**
      * Lists
@@ -2011,10 +2018,16 @@ public class RtfWriter extends DocWriter implements DocListener {
         }
         writeHeadersFooters(out);
         if (landscape) {
-            out.write(escape);
-            out.write(landscapeTag1);
+            //out.write(escape);
+            //out.write(landscapeTag1);
             out.write(escape);
             out.write(landscapeTag2);
+            out.write(escape);
+            out.write(sectionPageWidth);
+            writeInt(out, pageWidth);
+            out.write(escape);
+            out.write(sectionPageHeight);
+            writeInt(out, pageHeight);
         }
     }
 
