@@ -192,7 +192,7 @@ class TrueTypeFont extends BaseFont {
      * Unicode for the second character. The value is the amount of kerning in
      * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative.
      */
-    protected HashMap kerning;
+    protected HashMap kerning = new HashMap();
     /**
      * The font name.
      * This name is usually extracted from the table 'name' with
@@ -698,12 +698,14 @@ class TrueTypeFont extends BaseFont {
         fontSpecific = false;
         int map10 = 0;
         int map31 = 0;
+        int map30 = 0;
         for (int k = 0; k < num_tables; ++k) {
             int platId = rf.readUnsignedShort();
             int platSpecId = rf.readUnsignedShort();
             int offset = rf.readInt();
             if (platId == 3 && platSpecId == 0) {
                 fontSpecific = true;
+                map30 = offset;
             }
             else if (platId == 3 && platSpecId == 1) {
                 map31 = offset;
@@ -734,6 +736,13 @@ class TrueTypeFont extends BaseFont {
                 cmap31 = readFormat4();
             }
         }
+        if (map30 > 0) {
+            rf.seek(table_location[0] + map30);
+            int format = rf.readUnsignedShort();
+            if (format == 4) {
+                cmap10 = readFormat4();
+            }
+        }
     }
     
     /** The information in the maps of the table 'cmap' is coded in several formats.
@@ -759,6 +768,7 @@ class TrueTypeFont extends BaseFont {
      * @throws IOException the font file could not be read
      */
     HashMap readFormat4() throws IOException {
+        int mask = (fontSpecific ? 0xff : 0xffff);
         HashMap h = new HashMap();
         int table_lenght = rf.readUnsignedShort();
         rf.skipBytes(2);
@@ -800,7 +810,7 @@ class TrueTypeFont extends BaseFont {
                 int r[] = new int[2];
                 r[0] = glyph;
                 r[1] = getGlyphWidth(r[0]);
-                h.put(new Integer(j), r);
+                h.put(new Integer(j & mask), r);
             }
         }
         return h;
@@ -836,7 +846,6 @@ class TrueTypeFont extends BaseFont {
             return;
         rf.seek(table_location[0] + 2);
         int nTables = rf.readUnsignedShort();
-        kerning = new HashMap();
         int checkpoint = table_location[0] + 4;
         int length = 0;
         for (int k = 0; k < nTables; ++k) {
@@ -993,6 +1002,15 @@ class TrueTypeFont extends BaseFont {
         if (fontDescriptor != null)
             dic.put(PdfName.FONTDESCRIPTOR, fontDescriptor);
         return dic;
+    }
+    
+    private byte[] getFullFont() throws IOException {
+        RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
+        rf2.reOpen();
+        byte b[] = new byte[rf2.length()];
+        rf2.readFully(b);
+        rf2.close();
+        return b;
     }
     
     /** Outputs to the writer the font dictionaries and streams.

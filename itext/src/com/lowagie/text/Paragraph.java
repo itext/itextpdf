@@ -303,6 +303,10 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
             this.alignment = Element.ALIGN_JUSTIFIED;
             return;
         }
+        if (ElementTags.ALIGN_JUSTIFIED_ALL.equalsIgnoreCase(alignment)) {
+            this.alignment = Element.ALIGN_JUSTIFIED_ALL;
+            return;
+        }
         this.alignment = Element.ALIGN_LEFT;
     }
     

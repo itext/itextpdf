@@ -572,8 +572,9 @@ public class MetaDo {
         MetaFont font = state.getCurrentFont();
         float refX = state.transformX(x);
         float refY = state.transformY(y);
-        float sin = (float)Math.sin(font.getAngle());
-        float cos = (float)Math.cos(font.getAngle());
+        float angle = state.transformAngle(font.getAngle());
+        float sin = (float)Math.sin(angle);
+        float cos = (float)Math.cos(angle);
         float fontSize = font.getFontSize(state);
         BaseFont bf = font.getFont();
         int align = state.getTextAlign();

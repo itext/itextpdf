@@ -224,7 +224,7 @@ class PdfStamperImp extends PdfWriter {
         dic.put(PdfName.RESOURCES, ps.pageResources.getResources());
     }
     
-    int getNewObjectNumber(PdfReader reader, int number, int generation) {
+    protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
         if (currentPdfReaderInstance == null) {
             if (myXref[number] == 0) {
                 myXref[number] = getIndirectReferenceNumber();
@@ -311,7 +311,7 @@ class PdfStamperImp extends PdfWriter {
                 int flags = 0;
                 if (ff != null)
                     flags = ff.intValue();
-                if ((flags & PdfFormField.FLAGS_PRINT) == 0)
+                if ((flags & PdfFormField.FLAGS_PRINT) == 0 || (flags & PdfFormField.FLAGS_HIDDEN) != 0)
                     continue;
                 PdfDictionary appDic = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.AP));
                 if (appDic == null)
@@ -441,7 +441,7 @@ class PdfStamperImp extends PdfWriter {
                     break;
             }
             PdfDictionary dic = reader.getPageN(page);
-            PdfArray annots = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.ANNOTS));
+            PdfArray annots = (PdfArray)reader.getPdfObject(dic.get(PdfName.ANNOTS));
             if (annots == null) {
                 annots = new PdfArray();
                 dic.put(PdfName.ANNOTS, annots);

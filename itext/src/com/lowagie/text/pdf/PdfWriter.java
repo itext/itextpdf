@@ -553,6 +553,9 @@ public class PdfWriter extends DocWriter {
     
     // constructor
     
+    protected PdfWriter() {
+    }
+    
     /**
      * Constructs a <CODE>PdfWriter</CODE>.
      * <P>
@@ -1402,7 +1405,7 @@ public class PdfWriter extends DocWriter {
         return currentPdfReaderInstance.getReaderFile();
     }
     
-    int getNewObjectNumber(PdfReader reader, int number, int generation) {
+    protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
         return currentPdfReaderInstance.getNewObjectNumber(number, generation);
     }
     
