@@ -62,7 +62,7 @@ import com.lowagie.text.Font;
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
  * @author <a href="mailto:mhall@myrealbox.com">mhall@myrealbox.com</a>
- * @version $Revision$Date: 2003/05/02 17:47:06 $
+ * @version $Revision$Date: 2004/07/12 09:33:43 $
  */
 public class RtfPageNumber extends GenericRtfField implements RtfField {
     private String content;
@@ -87,12 +87,12 @@ public class RtfPageNumber extends GenericRtfField implements RtfField {
      */
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
         writer.writeInitialFontSignature( out, this );
-        out.write(content.toString().getBytes());
+        out.write(content.getBytes());
         writer.writeFinishingFontSignature( out, this );
         super.write(writer, out);
     }
 
     public String toString() {
-        return content.toString();
+        return content;
     }
 }
