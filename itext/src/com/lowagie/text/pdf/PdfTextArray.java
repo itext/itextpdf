@@ -72,6 +72,11 @@ public final class PdfTextArray{
     
     public PdfTextArray(PdfString str) {
         arrayList = new ArrayList();
+        arrayList.add(str.toString());
+    }
+    
+    public PdfTextArray(String str) {
+        arrayList = new ArrayList();
         arrayList.add(str);
     }
     
@@ -85,12 +90,22 @@ public final class PdfTextArray{
     
     public void add(PdfString str)
     {
-        arrayList.add(str);
+        arrayList.add(str.toString());
     }
     
     public void add(PdfNumber number)
     {
-        arrayList.add(number);
+        arrayList.add(new Float(number.doubleValue()));
+    }
+    
+    public void add(float number)
+    {
+        arrayList.add(new Float(number));
+    }
+    
+    public void add(String str)
+    {
+        arrayList.add(str);
     }
     
     ArrayList getArrayList() {

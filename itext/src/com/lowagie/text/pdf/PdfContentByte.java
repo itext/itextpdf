@@ -1852,9 +1852,9 @@ public class PdfContentByte {
         ArrayList arrayList = text.getArrayList();
         boolean lastWasNumber = false;
         for (int k = 0; k < arrayList.size(); ++k) {
-            PdfObject obj = (PdfObject)arrayList.get(k);
-            if (obj.isString()) {
-                showText2(obj.toString());
+            Object obj = arrayList.get(k);
+            if (obj instanceof String) {
+                showText2((String)obj);
                 lastWasNumber = false;
             }
             else {
@@ -1862,7 +1862,7 @@ public class PdfContentByte {
                     content.append(' ');
                 else
                     lastWasNumber = true;
-                content.append(obj.toString());
+                content.append(((Float)obj).floatValue());
             }
         }
         content.append("]TJ").append_i(separator);
