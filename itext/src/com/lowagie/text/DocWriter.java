@@ -125,7 +125,7 @@ public abstract class DocWriter implements DocListener {
  */
     
     public void finalize() {
-        close();
+        if (open) close();
     }
     
     // implementation of the DocListener methods
