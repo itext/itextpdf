@@ -362,7 +362,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
 
     /**
      * Add a character class to the tree. It is used by
-     * {@link PatternParser PatternParser} as callback to
+     * PatternParser as callback to
      * add character classes. Character classes define the
      * valid word characters for hyphenation. If a word contains
      * a character not defined in any of the classes, it is not hyphenated.
@@ -386,7 +386,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
 
     /**
      * Add an exception to the tree. It is used by
-     * {@link PatternParser PatternParser} class as callback to
+     * PatternParser class as callback to
      * store the hyphenation exceptions.
      * @param word normalized word
      * @param hyphenatedword a vector of alternating strings and
@@ -398,7 +398,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
 
     /**
      * Add a pattern to the tree. Mainly, to be used by
-     * {@link PatternParser PatternParser} class as callback to
+     * PatternParser class as callback to
      * add a pattern to the tree.
      * @param pattern the hyphenation pattern
      * @param ivalue interletter weight values indicating the

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.awt.Color;
 import java.util.Iterator;
 import java.util.HashMap;
 

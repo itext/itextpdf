@@ -50,8 +50,6 @@
 
 package com.lowagie.text.html;
 
-import java.awt.Color;
-
 /**
  * A class that contains all the possible tagnames and their attributes.
  */

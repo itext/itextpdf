@@ -7,8 +7,6 @@
 
 package com.lowagie.text.pdf.hyphenation;
 
-import java.util.Vector;
-
 /**
  * This class represents a hyphenated word.
  *

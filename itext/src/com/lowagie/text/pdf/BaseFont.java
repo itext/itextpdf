@@ -51,7 +51,6 @@
 package com.lowagie.text.pdf;
 import java.io.*;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.ExceptionConverter;
 import java.util.HashMap;
 
 /**
@@ -279,6 +278,19 @@ public abstract class BaseFont {
                 throw new DocumentException(e.getMessage());
             }
         }
+        
+        public StreamFont(byte contents[], String subType) throws DocumentException {
+            try {
+                bytes = contents;
+                put(PdfName.LENGTH, new PdfNumber(bytes.length));
+                if (subType != null)
+                    put(PdfName.SUBTYPE, new PdfName(subType));
+                flateCompress();
+            }
+            catch (Exception e) {
+                throw new DocumentException(e.getMessage());
+            }
+        }
     }
     
     /**
@@ -367,6 +379,10 @@ public abstract class BaseFont {
                 fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm);
                 fontBuilt.fastWinansi = encoding.equals(CP1252);
             }
+        }
+        else if (nameBase.toLowerCase().endsWith(".otf")) {
+            fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm);
+            fontBuilt.fastWinansi = encoding.equals(CP1252);
         }
         else if (isCJKFont)
             fontBuilt = new CJKFont(name, encoding, embedded);
@@ -641,7 +657,7 @@ public abstract class BaseFont {
     public static String[][] getFullFontName(String name, String encoding, byte ttfAfm[]) throws DocumentException, IOException {
         String nameBase = getBaseName(name);
         BaseFont fontBuilt = null;
-        if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().indexOf(".ttc,") > 0)
+        if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0)
             fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true);
         else
             fontBuilt = createFont(name, encoding, false, false, ttfAfm, null);
