@@ -556,7 +556,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         String x;
         String y;
         if (((x = (String)attributes.remove(ElementTags.ABSOLUTEX)) != null)
-        && ((y = (String)attributes.remove(ElementTags.ABSOLUTEX)) != null)) {
+        && ((y = (String)attributes.remove(ElementTags.ABSOLUTEY)) != null)) {
             image.setAbsolutePosition(Float.valueOf(x + "f").floatValue(), Float.valueOf(y + "f").floatValue());
         }
         if ((value = (String)attributes.remove(ElementTags.PLAINWIDTH)) != null) {
