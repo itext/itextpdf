@@ -123,7 +123,7 @@ public class PdfCell extends Rectangle {
  * allowing the text to be rendered accordingly. The ALIGN_MIDDLE calculation
  * will be a little off for single row cells.
  */
-        float height = leading + cellspacing;
+        float height = leading + cellpadding;
         float rowSpan = (float)cell.rowspan();
         
         switch(cell.verticalAlignment())
@@ -213,7 +213,7 @@ public class PdfCell extends Rectangle {
                 }
  */
         // we set some additional parameters
-        setBottom(top - leading * lines.size() - 5 * cellspacing / 2);
+        setBottom(top - leading * lines.size() - 5 * cellpadding / 2);
         this.cellpadding = cellpadding;
         this.cellspacing = cellspacing;
         
@@ -230,7 +230,7 @@ public class PdfCell extends Rectangle {
  */
     
     public float left() {
-        return super.left(cellpadding);
+        return super.left(cellspacing);
     }
     
 /**
@@ -240,7 +240,7 @@ public class PdfCell extends Rectangle {
  */
     
     public float right() {
-        return super.right(cellpadding);
+        return super.right(cellspacing);
     }
     
 /**
@@ -250,7 +250,7 @@ public class PdfCell extends Rectangle {
  */
     
     public float top() {
-        return super.top(cellpadding);
+        return super.top(cellspacing);
     }
     
 /**
@@ -260,7 +260,7 @@ public class PdfCell extends Rectangle {
  */
     
     public float bottom() {
-        return super.bottom(cellpadding);
+        return super.bottom(cellspacing);
     }
     
     // methods
