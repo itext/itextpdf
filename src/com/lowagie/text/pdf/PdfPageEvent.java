@@ -35,6 +35,7 @@
 package com.lowagie.text.pdf;
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.Paragraph;
 
 /**
  * Allows a class to catch several document events.
@@ -117,7 +118,7 @@ public interface PdfPageEvent {
  * @param document the document
  * @param position the position the chapter will be written to
  */
-    public void onChapter(PdfWriter writer,Document document,float paragraphPosition);
+    public void onChapter(PdfWriter writer,Document document,float paragraphPosition, Paragraph title);
     
 /**
  * Called when the end of a Chapter is reached.
@@ -141,7 +142,7 @@ public interface PdfPageEvent {
  * @param position the position the section will be written to
  * @param depth the depth of the section
  */
-    public void onSection(PdfWriter writer,Document document,float paragraphPosition, int depth);
+    public void onSection(PdfWriter writer,Document document,float paragraphPosition, int depth, Paragraph title);
     
 /**
  * Called when the end of a Section is reached.
