@@ -92,6 +92,17 @@ public abstract class BaseFont {
     /** The Unicode encoding with vertical writing.
      */    
     public static final String IDENTITY_V = "Identity-V";
+    
+    /** A possible encoding. */    
+    public static final String CP1252 = "Cp1252";
+    
+    /** A possible encoding. */    
+    public static final String WINANSI = "Cp1252";
+    
+    /** A possible encoding. */    
+    public static final String MACROMAN = "MacRoman";
+    
+    
 /** if the font has to be embedded */
     public final static boolean EMBEDDED = true;
     
@@ -269,9 +280,9 @@ public abstract class BaseFont {
     protected static String normalizeEncoding(String enc)
     {
         if (enc.equals("winansi") || enc.equals(""))
-            return "Cp1252";
+            return CP1252;
         else if (enc.equals("macroman"))
-            return "MacRoman";
+            return MACROMAN;
         else
             return enc;
     }
