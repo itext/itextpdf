@@ -2011,29 +2011,21 @@ public class PdfContentByte {
  * Draws a TextField.
  */
     
-    public void drawTextField(float llx, float lly, float urx, float ury, String text, BaseFont bf, float size) {
+    public void drawTextField(float llx, float lly, float urx, float ury) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
         // silver rectangle not filled
         setColorStroke(new Color(0xC0, 0xC0, 0xC0));
         setLineWidth(1);
         setLineCap(0);
-        rectangle(llx - 0.5f, lly - 0.5f, urx - llx + 1f, ury - lly + 1f);
+        rectangle(llx, lly, urx - llx, ury - lly);
         stroke();
         // white rectangle filled
         setLineWidth(1);
         setLineCap(0);
         setColorFill(new Color(0xFF, 0xFF, 0xFF));
-        rectangle(llx, lly, urx - llx, ury -lly);
+        rectangle(llx + 0.5f, lly + 0.5f, urx - llx - 1f, ury -lly - 1f);
         fill();
-        // gray lines
-        setColorStroke(new Color(0xA0, 0xA0, 0xA0));
-        setLineWidth(1);
-        setLineCap(0);
-        moveTo(llx + 0.5f, lly + 1f);
-        lineTo(llx + 0.5f, ury - 0.5f);
-        lineTo(urx - 1f, ury - 0.5f);
-        stroke();
         // silver lines
         setColorStroke(new Color(0xC0, 0xC0, 0xC0));
         setLineWidth(1);
@@ -2042,25 +2034,22 @@ public class PdfContentByte {
         lineTo(urx - 1.5f, lly + 1.5f);
         lineTo(urx - 1.5f, ury - 1f);
         stroke();
+        // gray lines
+        setColorStroke(new Color(0xA0, 0xA0, 0xA0));
+        setLineWidth(1);
+        setLineCap(0);
+        moveTo(llx + 1f, lly + 1);
+        lineTo(llx + 1f, ury - 1f);
+        lineTo(urx - 1f, ury - 1f);
+        stroke();
         // black lines
         setColorStroke(new Color(0x00, 0x00, 0x00));
         setLineWidth(1);
         setLineCap(0);
-        moveTo(llx + 1.5f, lly + 2f);
-        lineTo(llx + 1.5f, ury - 1.5f);
-        lineTo(urx - 2f, ury - 1.5f);
+        moveTo(llx + 2f, lly + 2f);
+        lineTo(llx + 2f, ury - 2f);
+        lineTo(urx - 2f, ury - 2f);
         stroke();
-        // text
-        resetRGBColorFill();
-        beginText();
-        setFontAndSize(bf, size);
-        java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(text, "\n");
-        float yPos = ury;
-        while (tokenizer.hasMoreTokens()) {
-            yPos -= size * 1.5f;
-            showTextAligned(PdfContentByte.ALIGN_LEFT, tokenizer.nextToken(), llx + 3, yPos, 0);
-        }
-        endText();
     }
     
 /**
