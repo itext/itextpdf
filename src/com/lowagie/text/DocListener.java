@@ -105,6 +105,8 @@ public interface DocListener extends ElementListener {
     
     public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom);
     
+    public boolean setMarginMirroring(boolean marginMirroring);
+    
 /**
  * Signals that an new page has to be started.
  *

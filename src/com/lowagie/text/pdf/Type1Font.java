@@ -731,4 +731,38 @@ class Type1Font extends BaseFont
         FontName = name;
     }
     
+    /**
+     * Sets the kerning between two Unicode chars.
+     * @param char1 the first char
+     * @param char2 the second char
+     * @paran kern the kerning to apply in normalized 1000 units
+     * @return <code>true</code> if the kerning was applied, <code>false</code> otherwise
+     */
+    public boolean setKerning(char char1, char char2, int kern) {
+        String first = GlyphList.unicodeToName((int)char1);
+        if (first == null)
+            return false;
+        String second = GlyphList.unicodeToName((int)char2);
+        if (second == null)
+            return false;
+        Object obj[] = (Object[])KernPairs.get(first);
+        if (obj == null) {
+            obj = new Object[]{second, new Integer(kern)};
+            KernPairs.put(first, obj);
+            return true;
+        }
+        for (int k = 0; k < obj.length; k += 2) {
+            if (second.equals(obj[k])) {
+                obj[k + 1] = new Integer(kern);
+                return true;
+            }
+        }
+        int size = obj.length;
+        Object obj2[] = new Object[size + 2];
+        System.arraycopy(obj, 0, obj2, 0, size);
+        obj2[size] = second;
+        obj2[size + 1] = new Integer(kern);
+        KernPairs.put(first, obj2);
+        return true;
+    }
 }

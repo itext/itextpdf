@@ -320,7 +320,8 @@ public class PdfAnnotation extends PdfDictionary {
     public static PdfAnnotation createPopup(PdfWriter writer, Rectangle rect, String contents, boolean open) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.POPUP);
-        annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
+        if (contents != null)
+            annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         if (open)
             annot.put(PdfName.OPEN, PdfBoolean.PDFTRUE);
         return annot;

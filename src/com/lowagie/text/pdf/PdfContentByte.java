@@ -70,7 +70,7 @@ public class PdfContentByte {
      * This class keeps the graphic state of the current page
      */
     
-    class GraphicState {
+    static class GraphicState {
         
         /** This is the font in use */
         FontDetails fontDetails;

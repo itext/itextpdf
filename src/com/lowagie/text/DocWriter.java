@@ -491,4 +491,8 @@ public abstract class DocWriter implements DocListener {
 		// do nothing
 	}
 
+    public boolean setMarginMirroring(boolean MarginMirroring) {
+        return false;
+    }
+    
 }

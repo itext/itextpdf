@@ -482,7 +482,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public float llx(float def) {
-        if (llx == Float.NaN) return def;
+        if (Float.isNaN(llx)) return def;
         return llx;
     }
     
@@ -494,7 +494,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public float lly(float def) {
-        if (lly == Float.NaN) return def;
+        if (Float.isNaN(lly)) return def;
         return lly;
     }
     
@@ -506,7 +506,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public float urx(float def) {
-        if (urx == Float.NaN) return def;
+        if (Float.isNaN(urx)) return def;
         return urx;
     }
     
@@ -518,7 +518,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public float ury(float def) {
-        if (ury == Float.NaN) return def;
+        if (Float.isNaN(ury)) return def;
         return ury;
     }
     

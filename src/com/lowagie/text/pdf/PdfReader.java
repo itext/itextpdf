@@ -54,6 +54,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,7 +78,12 @@ public class PdfReader {
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
     };
-    
+
+    static final PdfName vpnames[] = {PdfName.HIDETOOLBAR, PdfName.HIDEMENUBAR,
+        PdfName.HIDEWINDOWUI, PdfName.FITWINDOW, PdfName.CENTERWINDOW, PdfName.DISPLAYDOCTITLE};
+    static final int vpints[] = {PdfWriter.HideToolbar, PdfWriter.HideMenubar,
+        PdfWriter.HideWindowUI, PdfWriter.FitWindow, PdfWriter.CenterWindow, PdfWriter.DisplayDocTitle};
+
     static final byte endstream[] = PdfEncodings.convertToBytes("endstream", null);
     static final byte endobj[] = PdfEncodings.convertToBytes("endobj", null);
     protected PRTokeniser tokens;
@@ -295,7 +301,8 @@ public class PdfReader {
     /** Gets the crop box without taking rotation into account. This
      * is the value of the /CropBox key. The crop box is the part
      * of the document to be displayed or printed. It usually is the same
-     * as the media box but may be smaller.
+     * as the media box but may be smaller. If the page doesn't have a crop
+     * box the page size will be returned.
      * @param index the page number. The first page is 1
      * @return the crop box
      */
@@ -1320,6 +1327,10 @@ public class PdfReader {
         return tampered;
     }
     
+    /**
+     * Sets the tampered state. A tampered PdfReader cannot be reused in PdfStamper.
+     * @param tampered the tampered state
+     */    
     public void setTampered(boolean tampered) {
         this.tampered = tampered;
     }
@@ -1349,34 +1360,68 @@ public class PdfReader {
         return b;
     }
     
+    /**
+     * Gets the byte address of the last xref table.
+     * @return the byte address of the last xref table
+     */    
     public int getLastXref() {
         return lastXref;
     }
     
+    /**
+     * Gets the number of xref objects.
+     * @return the number of xref objects
+     */    
     public int getXrefSize() {
         return xrefObj.length;
     }
     
+    /**
+     * Gets the byte address of the %%EOF marker.
+     * @return the byte address of the %%EOF marker
+     */    
     public int getEofPos() {
         return eofPos;
     }
     
+    /**
+     * Gets the PDF version. Only the last version char is returned. For example
+     * version 1.4 is returned as '4'.
+     * @return the PDF version
+     */    
     public char getPdfVersion() {
         return pdfVersion;
     }
     
+    /**
+     * Returns <CODE>true</CODE> if the PDF is encrypted.
+     * @return <CODE>true</CODE> if the PDF is encrypted
+     */    
     public boolean isEncrypted() {
         return encrypted;
     }
     
+    /**
+     * Gets the encryption permissions. It can be used directly in
+     * <CODE>PdfWriter.setEncryption()</CODE>.
+     * @return the encryption permissions
+     */    
     public int getPermissions() {
         return pValue;
     }
     
+    /**
+     * Returns <CODE>true</CODE> if the PDF has a 128 bit key encryption.
+     * @return <CODE>true</CODE> if the PDF has a 128 bit key encryption
+     */    
     public boolean is128Key() {
         return rValue == 3;
     }
     
+    /**
+     * Gets the trailer dictionary
+     * @return the trailer dictionary
+     */    
     public PdfDictionary getTrailer() {
         return trailer;
     }
@@ -1529,12 +1574,22 @@ public class PdfReader {
         return null;
     }
 
+    /**
+     * Gets all the named destinations as an <CODE>HashMap</CODE>. The key is the name
+     * and the value is the destinations array.
+     * @return gets all the named destinations
+     */    
     public HashMap getNamedDestination() {
         HashMap names = getNamedDestinationFromNames();
         names.putAll(getNamedDestinationFromStrings());
         return names;
     }
     
+    /**
+     * Gets the named destinations from the /Dests key in the catalog as an <CODE>HashMap</CODE>. The key is the name
+     * and the value is the destinations array.
+     * @return gets the named destinations
+     */    
     public HashMap getNamedDestinationFromNames() {
         HashMap names = new HashMap();
         if (catalog.get(PdfName.DESTS) != null) {
@@ -1551,6 +1606,11 @@ public class PdfReader {
         return names;
     }
 
+    /**
+     * Gets the named destinations from the /Names key in the catalog as an <CODE>HashMap</CODE>. The key is the name
+     * and the value is the destinations array.
+     * @return gets the named destinations
+     */    
     public HashMap getNamedDestinationFromStrings() {
         if (catalog.get(PdfName.NAMES) != null) {
             PdfDictionary dic = (PdfDictionary)getPdfObject(catalog.get(PdfName.NAMES));
@@ -1716,15 +1776,30 @@ public class PdfReader {
                 PdfDictionary dic = (PdfDictionary)obj;
                 for (Iterator it = dic.getKeys().iterator(); it.hasNext();) {
                     PdfName key = (PdfName)it.next();
-                    removeUnusedNode(dic.get(key), hits);
+                    PdfObject v = dic.get(key);
+                    if (v.isIndirect()) {
+                        int num = ((PRIndirectReference)v).getNumber();
+                        if (xrefObj[num] == null) {
+                            dic.put(key, PdfNull.PDFNULL);
+                            continue;
+                        }
+                    }
+                    removeUnusedNode(v, hits);
                 }
                 break;
             }
             case PdfObject.ARRAY: {
                 ArrayList list = ((PdfArray)obj).getArrayList();
-                PdfArray arr = new PdfArray();
-                for (Iterator it = list.iterator(); it.hasNext();) {
-                    removeUnusedNode((PdfObject)it.next(), hits);
+                for (int k = 0; k < list.size(); ++k) {
+                    PdfObject v = (PdfObject)list.get(k);
+                    if (v.isIndirect()) {
+                        int num = ((PRIndirectReference)v).getNumber();
+                        if (xrefObj[num] == null) {
+                            list.set(k, PdfNull.PDFNULL);
+                            continue;
+                        }
+                    }
+                    removeUnusedNode(v, hits);
                 }
                 break;
             }
@@ -1762,6 +1837,12 @@ public class PdfReader {
         return new AcroFields(this, null);
     }
     
+    /**
+     * Gets the global document JavaScript.
+     * @param file the document file
+     * @throws IOException on error
+     * @return the global document JavaScript
+     */    
     public String getJavaScript(RandomAccessFileOrArray file) throws IOException {
         PdfDictionary names = (PdfDictionary)getPdfObject(catalog.get(PdfName.NAMES));
         if (names == null)
@@ -1793,6 +1874,11 @@ public class PdfReader {
         return buf.toString();
     }
     
+    /**
+     * Gets the global document JavaScript.
+     * @throws IOException on error
+     * @return the global document JavaScript
+     */    
     public String getJavaScript() throws IOException {
         RandomAccessFileOrArray rf = getSafeFile();
         try {
@@ -1802,5 +1888,172 @@ public class PdfReader {
         finally {
             try{rf.close();}catch(Exception e){}
         }
+    }
+    
+    /**
+     * Selects the pages to keep in the document. The pages are described as
+     * ranges. The page ordering can be changed but
+     * no page repetitions are allowed.
+     * @param ranges the comma separated ranges as described in {@link SequenceList}
+     */    
+    public void selectPages(String ranges) {
+        selectPages(SequenceList.expand(ranges, getNumberOfPages()));
+    }
+    
+    /**
+     * Selects the pages to keep in the document. The pages are described as a
+     * <CODE>List</CODE> of <CODE>Integer</CODE>. The page ordering can be changed but
+     * no page repetitions are allowed.
+     * @param pagesToKeep the pages to keep in the document
+     */    
+    public void selectPages(List pagesToKeep) {
+        IntHashtable pg = new IntHashtable();
+        ArrayList finalPages = new ArrayList();
+        for (Iterator it = pagesToKeep.iterator(); it.hasNext();) {
+            Integer pi = (Integer)it.next();
+            int p = pi.intValue();
+            if (p >= 1 && p <= pages.length && pg.put(p, 1) == 0)
+                finalPages.add(pi);
+        }
+        PRIndirectReference parent = (PRIndirectReference)catalog.get(PdfName.PAGES);
+        PdfDictionary topPages = (PdfDictionary)getPdfObject(parent);
+        PRIndirectReference newPageRefs[] = new PRIndirectReference[finalPages.size()];
+        PdfDictionary newPages[] = new PdfDictionary[finalPages.size()];
+        topPages.put(PdfName.COUNT, new PdfNumber(finalPages.size()));
+        PdfArray kids = new PdfArray();
+        for (int k = 0; k < finalPages.size(); ++k) {
+            int p = ((Integer)finalPages.get(k)).intValue() - 1;
+            kids.add(newPageRefs[k] = pageRefs[p]);
+            newPages[k] = pages[p];
+            newPages[k].put(PdfName.PARENT, parent);
+            pageRefs[p] = null;
+        }
+        topPages.put(PdfName.KIDS, kids);
+        AcroFields af = getAcroFields();
+        for (int k = 0; k < pageRefs.length; ++k) {
+            PRIndirectReference ref = pageRefs[k];
+            if (ref != null) {
+                af.removeFieldsFromPage(k + 1);
+                xrefObj[ref.getNumber()] = null;
+            }
+        }
+        pages = newPages;
+        pageRefs = newPageRefs;
+        removeUnusedObjects();
+    }
+
+    public static void setViewerPreferences(int preferences, PdfDictionary catalog) {
+        catalog.remove(PdfName.PAGELAYOUT);
+        catalog.remove(PdfName.PAGEMODE);
+        catalog.remove(PdfName.VIEWERPREFERENCES);
+        if ((preferences & PdfWriter.PageLayoutSinglePage) != 0)
+            catalog.put(PdfName.PAGELAYOUT, PdfName.SINGLEPAGE);
+        else if ((preferences & PdfWriter.PageLayoutOneColumn) != 0)
+            catalog.put(PdfName.PAGELAYOUT, PdfName.ONECOLUMN);
+        else if ((preferences & PdfWriter.PageLayoutTwoColumnLeft) != 0)
+            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNLEFT);
+        else if ((preferences & PdfWriter.PageLayoutTwoColumnRight) != 0)
+            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNRIGHT);
+        if ((preferences & PdfWriter.PageModeUseNone) != 0)
+            catalog.put(PdfName.PAGEMODE, PdfName.USENONE);
+        else if ((preferences & PdfWriter.PageModeUseOutlines) != 0)
+            catalog.put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
+        else if ((preferences & PdfWriter.PageModeUseThumbs) != 0)
+            catalog.put(PdfName.PAGEMODE, PdfName.USETHUMBS);
+        else if ((preferences & PdfWriter.PageModeFullScreen) != 0)
+            catalog.put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
+        else if ((preferences & PdfWriter.PageModeUseOC) != 0)
+            catalog.put(PdfName.PAGEMODE, PdfName.USEOC);
+        if ((preferences & PdfWriter.ViewerPreferencesMask) == 0)
+            return;
+        PdfDictionary vp = new PdfDictionary();
+        if ((preferences & PdfWriter.HideToolbar) != 0)
+            vp.put(PdfName.HIDETOOLBAR, PdfBoolean.PDFTRUE);
+        if ((preferences & PdfWriter.HideMenubar) != 0)
+            vp.put(PdfName.HIDEMENUBAR, PdfBoolean.PDFTRUE);
+        if ((preferences & PdfWriter.HideWindowUI) != 0)
+            vp.put(PdfName.HIDEWINDOWUI, PdfBoolean.PDFTRUE);
+        if ((preferences & PdfWriter.FitWindow) != 0)
+            vp.put(PdfName.FITWINDOW, PdfBoolean.PDFTRUE);
+        if ((preferences & PdfWriter.CenterWindow) != 0)
+            vp.put(PdfName.CENTERWINDOW, PdfBoolean.PDFTRUE);
+        if ((preferences & PdfWriter.DisplayDocTitle) != 0)
+            vp.put(PdfName.DISPLAYDOCTITLE, PdfBoolean.PDFTRUE);
+        if ((preferences & PdfWriter.NonFullScreenPageModeUseNone) != 0)
+            vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USENONE);
+        else if ((preferences & PdfWriter.NonFullScreenPageModeUseOutlines) != 0)
+            vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USEOUTLINES);
+        else if ((preferences & PdfWriter.NonFullScreenPageModeUseThumbs) != 0)
+            vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USETHUMBS);
+        else if ((preferences & PdfWriter.NonFullScreenPageModeUseOC) != 0)
+            vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USEOC);
+        if ((preferences & PdfWriter.DirectionL2R) != 0)
+            vp.put(PdfName.DIRECTION, PdfName.L2R);
+        else if ((preferences & PdfWriter.DirectionR2L) != 0)
+            vp.put(PdfName.DIRECTION, PdfName.R2L);
+        catalog.put(PdfName.VIEWERPREFERENCES, vp);
+    }
+
+    public void setViewerPreferences(int preferences) {
+        setViewerPreferences(preferences, catalog);
+    }
+    
+    public int getViewerPreferences() {
+        int prefs = 0;
+        PdfName name = null;
+        PdfObject obj = getPdfObject(catalog.get(PdfName.PAGELAYOUT));
+        if (obj != null && obj.isName()) {
+            name = (PdfName)obj;
+            if (name.equals(PdfName.SINGLEPAGE))
+                prefs |= PdfWriter.PageLayoutSinglePage;
+            else if (name.equals(PdfName.ONECOLUMN))
+                prefs |= PdfWriter.PageLayoutOneColumn;
+            else if (name.equals(PdfName.TWOCOLUMNLEFT))
+                prefs |= PdfWriter.PageLayoutTwoColumnLeft;
+            else if (name.equals(PdfName.TWOCOLUMNRIGHT))
+                prefs |= PdfWriter.PageLayoutTwoColumnRight;
+        }
+        obj = getPdfObject(catalog.get(PdfName.PAGEMODE));
+        if (obj != null && obj.isName()) {
+            name = (PdfName)obj;
+            if (name.equals(PdfName.USENONE))
+                prefs |= PdfWriter.PageModeUseNone;
+            else if (name.equals(PdfName.USEOUTLINES))
+                prefs |= PdfWriter.PageModeUseOutlines;
+            else if (name.equals(PdfName.USETHUMBS))
+                prefs |= PdfWriter.PageModeUseThumbs;
+            else if (name.equals(PdfName.USEOC))
+                prefs |= PdfWriter.PageModeUseOC;
+        }
+        obj = getPdfObject(catalog.get(PdfName.VIEWERPREFERENCES));
+        if (obj == null || !obj.isDictionary())
+            return prefs;
+        PdfDictionary vp = (PdfDictionary)obj;
+        for (int k = 0; k < vpnames.length; ++k) {
+            obj = getPdfObject(catalog.get(vpnames[k]));
+            if (obj != null && "true".equals(obj.toString()))
+                prefs |= vpints[k];
+        }
+        obj = getPdfObject(catalog.get(PdfName.NONFULLSCREENPAGEMODE));
+        if (obj != null && obj.isName()) {
+            name = (PdfName)obj;
+            if (name.equals(PdfName.USENONE))
+                prefs |= PdfWriter.NonFullScreenPageModeUseNone;
+            else if (name.equals(PdfName.USEOUTLINES))
+                prefs |= PdfWriter.NonFullScreenPageModeUseOutlines;
+            else if (name.equals(PdfName.USETHUMBS))
+                prefs |= PdfWriter.NonFullScreenPageModeUseThumbs;
+            else if (name.equals(PdfName.USEOC))
+                prefs |= PdfWriter.NonFullScreenPageModeUseOC;
+        }
+        obj = getPdfObject(catalog.get(PdfName.DIRECTION));
+        if (obj != null && obj.isName()) {
+            name = (PdfName)obj;
+            if (name.equals(PdfName.L2R))
+                prefs |= PdfWriter.DirectionL2R;
+            else if (name.equals(PdfName.R2L))
+                prefs |= PdfWriter.DirectionR2L;
+        }
+        return prefs;
     }
 }

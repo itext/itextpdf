@@ -399,4 +399,7 @@ public class DocumentFont extends BaseFont {
     public void setPostscriptFontName(String name) {
     }
     
+    public boolean setKerning(char char1, char char2, int kern) {
+        return false;
+    }
 }

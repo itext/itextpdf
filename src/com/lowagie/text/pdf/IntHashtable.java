@@ -249,7 +249,7 @@ public class IntHashtable {
         return entry.key;
     }
     
-    class IntHashtableEntry {
+    static class IntHashtableEntry {
         int hash;
         int key;
         int value;

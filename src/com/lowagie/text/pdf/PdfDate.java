@@ -98,9 +98,11 @@ class PdfDate extends PdfString {
         else {
             date.append("+");
         }
-        date.append(setLength(timezone, 2)).append("'");
-        int zone = Math.abs(d.get(GregorianCalendar.ZONE_OFFSET) / (60 * 1000)) - (timezone * 60);
-        date.append(setLength(zone, 2)).append("'");
+        if (timezone != 0) {
+            date.append(setLength(timezone, 2)).append("'");
+            int zone = Math.abs(d.get(GregorianCalendar.ZONE_OFFSET) / (60 * 1000)) - (timezone * 60);
+            date.append(setLength(zone, 2)).append("'");
+        }
         value = date.toString();
     }
     

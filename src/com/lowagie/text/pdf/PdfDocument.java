@@ -108,7 +108,7 @@ class PdfDocument extends Document implements DocListener {
      * section 6.10 (page 120-121)
      */
     
-    public class PdfInfo extends PdfDictionary {
+    public static class PdfInfo extends PdfDictionary {
         
         // constructors
         
@@ -228,8 +228,9 @@ class PdfDocument extends Document implements DocListener {
      * section 6.2 (page 67-71)
      */
     
-    class PdfCatalog extends PdfDictionary {
+    static class PdfCatalog extends PdfDictionary {
         
+        PdfWriter writer;
         // constructors
         
         /**
@@ -238,8 +239,9 @@ class PdfDocument extends Document implements DocListener {
          * @param		pages		an indirect reference to the root of the document's Pages tree.
          */
         
-        PdfCatalog(PdfIndirectReference pages) {
+        PdfCatalog(PdfIndirectReference pages, PdfWriter writer) {
             super(CATALOG);
+            this.writer = writer;
             put(PdfName.PAGES, pages);
         }
         
@@ -250,8 +252,9 @@ class PdfDocument extends Document implements DocListener {
          * @param		outlines	an indirect reference to the outline tree.
          */
         
-        PdfCatalog(PdfIndirectReference pages, PdfIndirectReference outlines) {
+        PdfCatalog(PdfIndirectReference pages, PdfIndirectReference outlines, PdfWriter writer) {
             super(CATALOG);
+            this.writer = writer;
             put(PdfName.PAGES, pages);
             put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
             put(PdfName.OUTLINES, outlines);
@@ -306,48 +309,7 @@ class PdfDocument extends Document implements DocListener {
          */
         
         void setViewerPreferences(int preferences) {
-            if ((preferences & PdfWriter.PageLayoutSinglePage) != 0)
-                put(PdfName.PAGELAYOUT, PdfName.SINGLEPAGE);
-            else if ((preferences & PdfWriter.PageLayoutOneColumn) != 0)
-                put(PdfName.PAGELAYOUT, PdfName.ONECOLUMN);
-            else if ((preferences & PdfWriter.PageLayoutTwoColumnLeft) != 0)
-                put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNLEFT);
-            else if ((preferences & PdfWriter.PageLayoutTwoColumnRight) != 0)
-                put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNRIGHT);
-            if ((preferences & PdfWriter.PageModeUseNone) != 0)
-                put(PdfName.PAGEMODE, PdfName.USENONE);
-            else if ((preferences & PdfWriter.PageModeUseOutlines) != 0)
-                put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
-            else if ((preferences & PdfWriter.PageModeUseThumbs) != 0)
-                put(PdfName.PAGEMODE, PdfName.USETHUMBS);
-            else if ((preferences & PdfWriter.PageModeFullScreen) != 0)
-                put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
-            if ((preferences & PdfWriter.ViewerPreferencesMask) == 0)
-                return;
-            PdfDictionary vp = new PdfDictionary();
-            if ((preferences & PdfWriter.HideToolbar) != 0)
-                vp.put(PdfName.HIDETOOLBAR, PdfBoolean.PDFTRUE);
-            if ((preferences & PdfWriter.HideMenubar) != 0)
-                vp.put(PdfName.HIDEMENUBAR, PdfBoolean.PDFTRUE);
-            if ((preferences & PdfWriter.HideWindowUI) != 0)
-                vp.put(PdfName.HIDEWINDOWUI, PdfBoolean.PDFTRUE);
-            if ((preferences & PdfWriter.FitWindow) != 0)
-                vp.put(PdfName.FITWINDOW, PdfBoolean.PDFTRUE);
-            if ((preferences & PdfWriter.CenterWindow) != 0)
-                vp.put(PdfName.CENTERWINDOW, PdfBoolean.PDFTRUE);
-            if ((preferences & PdfWriter.DisplayDocTitle) != 0)
-                vp.put(PdfName.DISPLAYDOCTITLE, PdfBoolean.PDFTRUE);
-            if ((preferences & PdfWriter.NonFullScreenPageModeUseNone) != 0)
-                vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USENONE);
-            else if ((preferences & PdfWriter.NonFullScreenPageModeUseOutlines) != 0)
-                vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USEOUTLINES);
-            else if ((preferences & PdfWriter.NonFullScreenPageModeUseThumbs) != 0)
-                vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USETHUMBS);
-            if ((preferences & PdfWriter.DirectionL2R) != 0)
-                vp.put(PdfName.DIRECTION, PdfName.L2R);
-            else if ((preferences & PdfWriter.DirectionR2L) != 0)
-                vp.put(PdfName.DIRECTION, PdfName.R2L);
-            put(PdfName.VIEWERPREFERENCES, vp);
+            PdfReader.setViewerPreferences(preferences, this);
         }
         
         void setOpenAction(PdfAction action) {
@@ -1063,9 +1025,16 @@ class PdfDocument extends Document implements DocListener {
      * @throws DocumentException on error
      */
     
-    void addPTable(PdfPTable ptable, float xWidth) throws DocumentException {
+    void addPTable(PdfPTable ptable) throws DocumentException {
         if (ptable.getHeaderRows() >= ptable.size())
             return;
+        float totalWidth;
+        if (ptable.isLockedWidth())
+            totalWidth = ptable.getTotalWidth();
+        else
+            totalWidth = (indentRight() - indentLeft()) * ptable.getWidthPercentage() / 100;
+        float xWidth = 0;
+        ptable.setTotalWidth(totalWidth);
         boolean skipHeader = ptable.getSkipFirstHeader();
         float headerHeight = ptable.getHeaderHeight();
         float bottom = indentBottom();
@@ -1118,6 +1087,16 @@ class PdfDocument extends Document implements DocListener {
             }
             else {
                 if (cv == null) {
+                    switch (ptable.getHorizontalAlignment()) {
+                        case Element.ALIGN_LEFT:
+                            xWidth = indentLeft();
+                            break;
+                        case Element.ALIGN_RIGHT:
+                            xWidth = indentRight() - totalWidth;
+                            break;
+                        default:
+                            xWidth = (indentRight() + indentLeft() - totalWidth) / 2;
+                    }
                     cv = PdfPTable.beginWritingRows(writer.getDirectContent());
                     if (event != null && !skipHeader) {
                         heightsIdx = 0;
@@ -1572,7 +1551,11 @@ class PdfDocument extends Document implements DocListener {
                             annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR))));
                             break;
                         default:
-                            annotations.add(new PdfAnnotation(writer, annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content())));
+                            PdfAnnotation an = new PdfAnnotation(writer, annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content()));
+                            //PdfAnnotation pop = PdfAnnotation.createPopup(writer, new Rectangle(annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20)), null, true);
+                            //an.setPopup(pop);
+                            annotations.add(an);
+                            //annotations.add(pop);
                     }
                     pageEmpty = false;
                     break;
@@ -1805,25 +1788,7 @@ class PdfDocument extends Document implements DocListener {
                     newLine();
                     flushLines();
                     PdfPTable ptable = (PdfPTable)element;
-                    float totalWidth;
-                    if (ptable.isLockedWidth())
-                        totalWidth = ptable.getTotalWidth();
-                    else
-                        totalWidth = (indentRight() - indentLeft()) * ptable.getWidthPercentage() / 100;
-                    float xWidth = 0;
-                    switch (ptable.getHorizontalAlignment()) {
-                        case Element.ALIGN_LEFT:
-                            xWidth = indentLeft();
-                            break;
-                        case Element.ALIGN_RIGHT:
-                            xWidth = indentRight() - totalWidth;
-                            break;
-                        default:
-                            xWidth = (indentRight() + indentLeft() - totalWidth) / 2;
-                    }
-                    ptable.setTotalWidth(totalWidth);
-                    addPTable(ptable, xWidth);
-                    
+                    addPTable(ptable);                    
                     break;
                 }
                 case Element.TABLE : {
@@ -2003,8 +1968,14 @@ class PdfDocument extends Document implements DocListener {
         float oldleading = leading;
         int oldAlignment = alignment;
         
-        marginLeft = nextMarginLeft;
-        marginRight = nextMarginRight;
+        if (marginMirroring && (getPageNumber() & 1) == 0) {
+            marginRight = nextMarginLeft;
+            marginLeft = nextMarginRight;
+        }
+        else {
+            marginLeft = nextMarginLeft;
+            marginRight = nextMarginRight;
+        }
         marginTop = nextMarginTop;
         marginBottom = nextMarginBottom;
         imageEnd = -1;
@@ -2349,10 +2320,10 @@ class PdfDocument extends Document implements DocListener {
     PdfCatalog getCatalog(PdfIndirectReference pages) {
         PdfCatalog catalog;
         if (rootOutline.getKids().size() > 0) {
-            catalog = new PdfCatalog(pages, rootOutline.indirectReference());
+            catalog = new PdfCatalog(pages, rootOutline.indirectReference(), writer);
         }
         else
-            catalog = new PdfCatalog(pages);
+            catalog = new PdfCatalog(pages, writer);
         if (openActionName != null) {
             PdfAction action = getLocalGotoAction(openActionName);
             catalog.setOpenAction(action);
@@ -3012,5 +2983,12 @@ class PdfDocument extends Document implements DocListener {
         float width = ((indentRight() - indentLeft()) * table.getWidthPercentage()) / 100;
         float height = indentTop() - indentBottom();
         table.fitCellsToPageSize(width, height);
+    }
+    
+    public boolean setMarginMirroring(boolean MarginMirroring) {
+        if (writer != null && writer.isPaused()) {
+            return false;
+        }
+        return super.setMarginMirroring(MarginMirroring);
     }
 }

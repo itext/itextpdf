@@ -48,6 +48,7 @@ package com.lowagie.text.pdf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Element;
@@ -177,6 +178,25 @@ public class AcroFields {
         }
         String out[] = new String[names.size()];
         return (String[])names.keySet().toArray(out);
+    }
+    
+    /**
+     * Export the fields as a FDF.
+     * @param writer the FDF writer
+     */    
+    public void exportAsFdf(FdfWriter writer) {
+        for (Iterator it = fields.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry)it.next();
+            Item item = (Item)entry.getValue();
+            String name = (String)entry.getKey();
+            PdfObject v = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(0)).get(PdfName.V));
+            if (v == null)
+                continue;
+            if (v.isString())
+                writer.setFieldAsString(name, ((PdfString)v).toUnicodeString());
+            else
+                writer.setFieldAsName(name, PdfName.decodeName(v.toString()));
+        }
     }
     
     /**

@@ -76,6 +76,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     PdfDictionary form;
     protected List newBookmarks;
     boolean closing = false;
+    Document nd;
     
     PdfCopyFieldsImp(OutputStream os) throws DocumentException, IOException {
         this(os, '\0');
@@ -86,12 +87,23 @@ class PdfCopyFieldsImp extends PdfWriter {
         pdf.addWriter(this);
         if (pdfVersion != 0)
             super.setPdfVersion(pdfVersion);
-        Document nd = new Document();
+        nd = new Document();
         nd.addDocListener(pdf);
-        nd.open();
+    }
+    
+    void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException {
+        if (!readers2intrefs.containsKey(reader) && reader.isTampered())
+            throw new DocumentException("The document was reused.");
+        reader = new PdfReader(reader);        
+        reader.selectPages(pagesToKeep);
+        if (reader.getNumberOfPages() == 0)
+            return;
+        reader.setTampered(false);
+        addDocument(reader);
     }
     
     void addDocument(PdfReader reader) throws DocumentException {
+        openDoc();
         if (readers2intrefs.containsKey(reader)) {
             reader = new PdfReader(reader);
         }
@@ -101,6 +113,7 @@ class PdfCopyFieldsImp extends PdfWriter {
             reader.consolidateNamedDestinations();
             reader.setTampered(true);
         }
+        reader.shuffleSubsetNames();
         readers2intrefs.put(reader, new IntHashtable());
         readers.add(reader);
         int len = reader.getNumberOfPages();
@@ -111,7 +124,8 @@ class PdfCopyFieldsImp extends PdfWriter {
         visited.put(reader, new IntHashtable());
         fields.add(reader.getAcroFields());
     }
-        
+    
+    
     void propagate(PdfObject obj, PdfIndirectReference refo, boolean restricted) throws IOException {
         if (obj == null)
             return;
@@ -479,6 +493,10 @@ class PdfCopyFieldsImp extends PdfWriter {
         newBookmarks = outlines;
     }
 
+    public void openDoc() {
+        if (!nd.isOpen())
+            nd.open();
+    }    
     
     protected static final HashMap widgetKeys = new HashMap();
     protected static final HashMap fieldKeys = new HashMap();
