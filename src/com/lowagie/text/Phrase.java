@@ -172,7 +172,9 @@ public class Phrase extends ArrayList implements TextElementArray {
             while((index = Greek.index(string)) > -1) {
                 if (index > 0) {
                     String firstPart = string.substring(0, index);
-                    super.add(new Chunk(firstPart));
+                    /* bugfix [ #461272 ] CODE CHANGE REQUIRED IN Phrase.java
+                       by Arekh Nambiar */
+                    super.add(new Chunk(firstPart, font));
                     string = string.substring(index);
                 }
                 Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
