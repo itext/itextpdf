@@ -408,9 +408,9 @@ class PdfDocument extends Document implements DocListener {
     /** Stores the destinations for the current page.
      */
     private HashMap localPageDestinations = new HashMap();
-
+    
     private int viewerPreferences = 0;
-
+    
     // constructors
     
     /**
@@ -804,6 +804,7 @@ class PdfDocument extends Document implements DocListener {
                     
                     // content (text)
                 case Element.CHUNK:
+                {
                     // if there isn't a current line available, we make one
                     if (line == null) {
                         carriageReturn();
@@ -823,8 +824,9 @@ class PdfDocument extends Document implements DocListener {
                         newPage();
                     }
                     break;
-                    
+                }
                 case Element.ANCHOR:
+                {
                     Anchor anchor = (Anchor) element;
                     URL url = anchor.url();
                     leading = anchor.leading();
@@ -836,8 +838,9 @@ class PdfDocument extends Document implements DocListener {
                     element.process(this);
                     currentAction = null;
                     break;
-                    
+                }
                 case Element.ANNOTATION:
+                {
                     if (line == null) {
                         carriageReturn();
                     }
@@ -845,15 +848,17 @@ class PdfDocument extends Document implements DocListener {
                     annotations.add(new PdfAnnotation(indentRight() - line.widthLeft(), indentTop() - currentHeight, indentRight() - line.widthLeft() + 20, indentTop() - currentHeight - 20, new PdfString(annot.title()), new PdfString(annot.content())));
                     pageEmpty = false;
                     break;
-                    
+                }
                 case Element.PHRASE:
+                {
                     // we cast the element to a phrase and set the leading of the document
                     leading = ((Phrase) element).leading();
                     // we process the element
                     element.process(this);
                     break;
-                    
+                }
                 case Element.PARAGRAPH:
+                {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     // we adjust the parameters of the document
@@ -878,13 +883,18 @@ class PdfDocument extends Document implements DocListener {
                     //				}
                     // some parameters are set back to normal again
                     carriageReturn();
+                    
+                    if (pageEvent != null)
+                        pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
+                    
                     alignment = Element.ALIGN_LEFT;
                     indentLeft -= paragraph.indentationLeft();
                     indentRight -= paragraph.indentationRight();
                     break;
-                    
+                }
                 case Element.SECTION:
                 case Element.CHAPTER:
+                {
                     // Chapters and Sections only differ in their constructor
                     // so we cast both to a Section
                     Section section = (Section) element;
@@ -901,6 +911,14 @@ class PdfDocument extends Document implements DocListener {
                     carriageReturn();
                     indentLeft += section.indentationLeft();
                     indentRight += section.indentationRight();
+                    
+                    PdfPageEvent pageEvent = writer.getPageEvent();
+                    if (pageEvent != null)
+                        if (element.type() == Element.CHAPTER)
+                            pageEvent.onChapter(writer, this, indentTop() - currentHeight);
+                        else
+                            pageEvent.onSection(writer, this, indentTop() - currentHeight);
+                    
                     // the title of the section (if any has to be printed)
                     if (section.title() != null) {
                         add(section.title());
@@ -911,6 +929,13 @@ class PdfDocument extends Document implements DocListener {
                     // some parameters are set back to normal again
                     indentLeft -= section.indentationLeft() + section.indentation();
                     indentRight -= section.indentationRight();
+                    
+                    if (pageEvent != null)
+                        if (element.type() == Element.CHAPTER)
+                            pageEvent.onChapterEnd(writer, this, indentTop() - currentHeight);
+                        else
+                            pageEvent.onSectionEnd(writer, this, indentTop() - currentHeight);
+                    
                     // if the section is a chapter, we begin a new page
                     if (section.isChapter()) {
                         newPage();
@@ -920,8 +945,9 @@ class PdfDocument extends Document implements DocListener {
                         newLine();
                     }
                     break;
-                    
+                }
                 case Element.LIST:
+                {
                     // we cast the element to a List
                     List list = (List) element;
                     // we adjust the document
@@ -933,8 +959,9 @@ class PdfDocument extends Document implements DocListener {
                     listIndentLeft -= list.indentationLeft();
                     indentRight -= list.indentationRight();
                     break;
-                    
+                }
                 case Element.LISTITEM:
+                {
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
                     // we adjust the document
@@ -956,14 +983,16 @@ class PdfDocument extends Document implements DocListener {
                     listIndentLeft -= listItem.indentationLeft();
                     indentRight -= listItem.indentationRight();
                     break;
-                    
+                }
                 case Element.RECTANGLE:
+                {
                     Rectangle rectangle = (Rectangle) element;
                     graphics.rectangle(rectangle);
                     pageEmpty = false;
                     break;
-                    
+                }
                 case Element.PTABLE:
+                {
                     // before every table, we add a new line and flush all lines
                     newLine();
                     flushLines();
@@ -977,8 +1006,8 @@ class PdfDocument extends Document implements DocListener {
                         case Element.ALIGN_RIGHT:
                             xWidth = indentRight() - totalWidth;
                             break;
-                        default:
-                            xWidth = (indentRight() + indentLeft() - totalWidth) / 2;
+                            default:
+                                xWidth = (indentRight() + indentLeft() - totalWidth) / 2;
                     }
                     ptable.setTotalWidth(totalWidth);
                     float maxHeight = indentTop() - currentHeight - indentBottom();
@@ -987,8 +1016,9 @@ class PdfDocument extends Document implements DocListener {
                     currentHeight = indentTop() - dn;
                     
                     break;
-                    
+                }
                 case Element.TABLE:
+                {
                     // before every table, we add a new line and flush all lines
                     newLine();
                     flushLines();
@@ -1007,7 +1037,7 @@ class PdfDocument extends Document implements DocListener {
                     PdfTable table = new PdfTable((Table) element,
                     indentLeft(), indentRight(),
                     currentHeight > 0 ? pagetop - currentHeight : pagetop);
-
+                    
                     // drawing the table
                     ArrayList cells = table.getCells();
                     ArrayList headercells = null;
@@ -1117,21 +1147,23 @@ class PdfDocument extends Document implements DocListener {
                     line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
                     pageEmpty = false;
                     break;
-                    
+                }
                 case Element.GIF:
                 case Element.JPEG:
                 case Element.PNG:
                 case Element.IMGRAW:
+                {
                     carriageReturn();
                     add((Image) element);
                     pageEmpty = false;
                     break;
-                    
+                }
                 case Element.GRAPHIC:
+                {
                     graphics.add((Graphic) element);
                     pageEmpty = false;
                     break;
-                    
+                }
                 default:
                     return false;
             }
@@ -1241,8 +1273,8 @@ class PdfDocument extends Document implements DocListener {
                 graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() + (middle / 2) - mt[4], lowerleft - mt[5]);
                 break;
             case Image.LEFT:
-            default:
-                graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
+                default:
+                    graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
         }
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {

@@ -34,8 +34,11 @@
 package com.lowagie.text.html;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 
 import org.xml.sax.Parser;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.ParserFactory;
 
@@ -55,6 +58,32 @@ public class HtmlParser extends XmlParser {
  
     public HtmlParser() throws DocumentException {
 		super();
+	}
+	
+/**
+ * Parses a given file.
+ */
+ 
+	public void go(Document document, InputSource is) throws DocumentException {
+		try {
+    		parser.setDocumentHandler(new SAXmyHtmlHandler(document));
+			parser.parse(is);
+		}
+		catch(SAXException se) {
+			throw new DocumentException(se.getMessage());
+		}
+		catch(IOException ioe) {
+			throw new DocumentException(ioe.getMessage());
+		}
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
+	public static void parse(Document document, InputSource is) throws DocumentException {
+		HtmlParser p = new HtmlParser();
+		p.go(document, is);	
 	}
 	
 /**
@@ -81,5 +110,57 @@ public class HtmlParser extends XmlParser {
 	public static void parse(Document document, String file) throws DocumentException {
 		HtmlParser p = new HtmlParser();
 		p.go(document, file);	
+	}
+	
+/**
+ * Parses a given file.
+ */
+ 
+	public void go(Document document, InputStream is) throws DocumentException {
+		try {
+    		parser.setDocumentHandler(new SAXmyHtmlHandler(document));
+			parser.parse(new InputSource(is));
+		}
+		catch(SAXException se) {
+			throw new DocumentException(se.getMessage());
+		}
+		catch(IOException ioe) {
+			throw new DocumentException(ioe.getMessage());
+		}
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
+	public static void parse(Document document, InputStream is) throws DocumentException {
+		HtmlParser p = new HtmlParser();
+		p.go(document, new InputSource(is));	
+	}
+	
+/**
+ * Parses a given file.
+ */
+ 
+	public void go(Document document, Reader is) throws DocumentException {
+		try {
+    		parser.setDocumentHandler(new SAXmyHtmlHandler(document));
+			parser.parse(new InputSource(is));
+		}
+		catch(SAXException se) {
+			throw new DocumentException(se.getMessage());
+		}
+		catch(IOException ioe) {
+			throw new DocumentException(ioe.getMessage());
+		}
+	}
+	
+/**
+ * Parses a given file that validates with the iText DTD and writes the content to a document.
+ */
+ 
+	public static void parse(Document document, Reader is) throws DocumentException {
+		HtmlParser p = new HtmlParser();
+		p.go(document, new InputSource(is));	
 	}
 }

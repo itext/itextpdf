@@ -64,6 +64,16 @@ public class Greek {
             }
         }
         return -1;
+    }                
+    
+ /**
+  * Gets a chunk with a symbol character.
+  */
+    
+    public static Chunk get(char c, Font font) {
+        Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
+        String s = String.valueOf(Greek.getCorrespondingSymbol(c));
+        return new Chunk(s, symbol);
     }
     
 /**
@@ -176,5 +186,16 @@ public class Greek {
                 default:
                     return ' ';
         }
+    }
+    
+/**
+ * Checks if a given tag corresponds with this object.
+ *
+ * @param   tag     the given tag
+ * @return  true if the tag corresponds
+ */
+    
+    public static boolean isTag(String tag) {
+        return ElementTags.SYMBOLTAG.equals(tag);
     }
 }

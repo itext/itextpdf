@@ -56,6 +56,66 @@ public interface PdfPageEvent
      */
     public void onParagraph(PdfWriter writer, Document document, float paragraphPosition);
     
+/** Called when a Paragraph is written.
+ * <P>
+ * <CODE>paragraphPosition</CODE> will hold the height at which the
+ * paragraph will be written to. This is useful to insert bookmarks with
+ * more control.
+ *
+ * @param writer the <CODE>PdfWriter</CODE> for this document
+ * @param document the document
+ * @param paragraphPosition the position the paragraph will be written to
+ */
+    public void onParagraphEnd(PdfWriter writer,Document document,float paragraphPosition);
+    
+/** Called when a Paragraph is written.
+ * <P>
+ * <CODE>paragraphPosition</CODE> will hold the height at which the
+ * paragraph will be written to. This is useful to insert bookmarks with
+ * more control.
+ *
+ * @param writer the <CODE>PdfWriter</CODE> for this document
+ * @param document the document
+ * @param paragraphPosition the position the paragraph will be written to
+ */
+    public void onChapter(PdfWriter writer,Document document,float paragraphPosition);
+    
+/** Called when a Paragraph is written.
+ * <P>
+ * <CODE>paragraphPosition</CODE> will hold the height at which the
+ * paragraph will be written to. This is useful to insert bookmarks with
+ * more control.
+ *
+ * @param writer the <CODE>PdfWriter</CODE> for this document
+ * @param document the document
+ * @param paragraphPosition the position the paragraph will be written to
+ */
+    public void onChapterEnd(PdfWriter writer,Document document,float paragraphPosition);
+    
+/** Called when a Paragraph is written.
+ * <P>
+ * <CODE>paragraphPosition</CODE> will hold the height at which the
+ * paragraph will be written to. This is useful to insert bookmarks with
+ * more control.
+ *
+ * @param writer the <CODE>PdfWriter</CODE> for this document
+ * @param document the document
+ * @param paragraphPosition the position the paragraph will be written to
+ */
+    public void onSection(PdfWriter writer,Document document,float paragraphPosition);
+    
+/** Called when a Paragraph is written.
+ * <P>
+ * <CODE>paragraphPosition</CODE> will hold the height at which the
+ * paragraph will be written to. This is useful to insert bookmarks with
+ * more control.
+ *
+ * @param writer the <CODE>PdfWriter</CODE> for this document
+ * @param document the document
+ * @param paragraphPosition the position the paragraph will be written to
+ */
+    public void onSectionEnd(PdfWriter writer,Document document,float paragraphPosition);
+    
     /** Called when a <CODE>Chunk</CODE> with a generic tag is written.
      * <P>
      * It is usefull to pinpoint the <CODE>Chunk</CODE> location to generate
