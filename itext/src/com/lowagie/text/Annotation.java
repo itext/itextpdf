@@ -112,7 +112,7 @@ public class Annotation implements Element, MarkupAttributes {
 /** This is a possible attribute. */
     public static String LLY = "lly";
 /** This is a possible attribute. */
-    public static String urX = "urx";
+    public static String URX = "urx";
 /** This is a possible attribute. */
     public static String URY = "ury";
     
@@ -251,16 +251,65 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public Annotation(Properties attributes) {
+        String value = (String)attributes.remove(ElementTags.LLX);
+        if (value != null) {
+            llx = Float.valueOf(value + "f").floatValue();
+        }
+        value = (String)attributes.remove(ElementTags.LLY);
+        if (value != null) {
+            lly = Float.valueOf(value + "f").floatValue();
+        }
+        value = (String)attributes.remove(ElementTags.URX);
+        if (value != null) {
+            urx = Float.valueOf(value + "f").floatValue();
+        }
+        value = (String)attributes.remove(ElementTags.URY);
+        if (value != null) {
+            ury = Float.valueOf(value + "f").floatValue();
+        }
         String title = (String)attributes.remove(ElementTags.TITLE);
         String text = (String)attributes.remove(ElementTags.CONTENT);
-        if (title == null) {
-            title = "";
+        if (title != null || text != null) {
+            annotationtype = TEXT;
         }
-        if (text == null) {
-            text = "";
+        else if ((value = (String)attributes.remove(ElementTags.URL)) != null) {
+            annotationtype = URL_AS_STRING;
+            annotationAttributes.put(FILE, value);
         }
-        annotationAttributes.put(TITLE, title);
-        annotationAttributes.put(CONTENT, text);
+        else if ((value = (String)attributes.remove(ElementTags.NAMED)) != null) {
+            annotationtype = NAMED_DEST;
+            annotationAttributes.put(NAMED, Integer.valueOf(value));
+        }
+        else {
+            String file = (String)attributes.remove(ElementTags.FILE);
+            String destination = (String)attributes.remove(ElementTags.DESTINATION);
+            String page = (String)attributes.remove(ElementTags.PAGE);
+            if (file != null) {
+                annotationAttributes.put(FILE, file);
+                if (destination != null) {
+                    annotationtype = FILE_DEST;
+                    annotationAttributes.put(DESTINATION, destination);
+                }
+                else if (page != null) {
+                    annotationtype = FILE_PAGE;
+                    annotationAttributes.put(FILE, file);
+                    annotationAttributes.put(PAGE, Integer.valueOf(page));
+                }
+            }
+            else if ((value = (String)attributes.remove(ElementTags.NAMED)) != null) {
+                annotationtype = LAUNCH;
+                annotationAttributes.put(APPLICATION, value);
+                annotationAttributes.put(PARAMETERS, (String)attributes.remove(ElementTags.PARAMETERS));
+                annotationAttributes.put(OPERATION, (String)attributes.remove(ElementTags.OPERATION));
+                annotationAttributes.put(DEFAULTDIR, (String)attributes.remove(ElementTags.DEFAULTDIR));
+            }
+        }
+        if (annotationtype == TEXT) {
+            if (title == null) title = "";
+            if (text == null) text = "";
+            annotationAttributes.put(TITLE, title);
+            annotationAttributes.put(CONTENT, text);
+        }
         if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
