@@ -105,28 +105,28 @@ public class List implements TextElementArray, MarkupAttributes {
     // membervariables
     
 /** This is the <CODE>ArrayList</CODE> containing the different <CODE>ListItem</CODE>s. */
-    private ArrayList list = new ArrayList();
+    protected ArrayList list = new ArrayList();
     
 /** This variable indicates if the list has to be numbered. */
-    private boolean numbered;
-    private boolean lettered;
+    protected boolean numbered;
+    protected boolean lettered;
     
 /** This variable indicates the first number of a numbered list. */
-    private int first = 1;
-    private char firstCh = 'A';
-    private char lastCh  = 'Z';
+    protected int first = 1;
+    protected char firstCh = 'A';
+    protected char lastCh  = 'Z';
     
 /** This is the listsymbol of a list that is not numbered. */
-    private Chunk symbol = new Chunk("-");
+    protected Chunk symbol = new Chunk("-");
     
 /** The indentation of this list on the left side. */
-    private float indentationLeft = 0;
+    protected float indentationLeft = 0;
     
 /** The indentation of this list on the right side. */
-    private float indentationRight = 0;
+    protected float indentationRight = 0;
     
 /** The indentation of the listitems. */
-    private int symbolIndent;
+    protected int symbolIndent;
 
 /** Contains extra markupAttributes */
     protected Properties markupAttributes;

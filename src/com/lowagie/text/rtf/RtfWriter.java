@@ -492,6 +492,12 @@ public class RtfWriter extends DocWriter implements DocListener {
     /** JPEG Image */
     private static final byte[] pictureJPEG = "jpegblip".getBytes();
 
+    /** BMP Image */
+    private static final byte[] pictureBMP = "dibitmap0".getBytes();
+
+    /** WMF Image */
+    private static final byte[] pictureWMF = "wmetafile8".getBytes();
+
     /** Picture width */
     private static final byte[] pictureWidth = "picw".getBytes();
 
@@ -857,9 +863,12 @@ public class RtfWriter extends DocWriter implements DocListener {
                 case Element.ANNOTATION:
                     writeAnnotation((Annotation) element, out);
                     break;
-                case Element.PNG:
+                case Element.IMGRAW:
+                case Element.IMGTEMPLATE:
                 case Element.JPEG:
-                    writeImage((Image) element, out);
+                    Image img = (Image)element;
+                    if (img.url() != null)
+                        writeImage(img, out);
                     break;
 
                 case Element.AUTHOR:
@@ -1429,7 +1438,10 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @throws DocumentException
      */
     private void writeImage(Image image, ByteArrayOutputStream out) throws IOException, DocumentException {
-        if (!image.isPng() && !image.isJpeg()) throw new DocumentException("Only PNG and JPEG images are supported by the RTF Writer");
+        int type = image.getOriginalType();
+        if (!(type == Image.ORIGINAL_JPEG
+            || type == Image.ORIGINAL_PNG || type == Image.ORIGINAL_WMF))
+            throw new DocumentException("Only PNG, WMF and JPEG images are supported by the RTF Writer");
         switch (image.alignment()) {
             case Element.ALIGN_LEFT:
                 out.write(escape);
@@ -1455,8 +1467,17 @@ public class RtfWriter extends DocWriter implements DocListener {
         out.write(escape);
         out.write(picture);
         out.write(escape);
-        if (image.isPng()) out.write(picturePNG);
-        if (image.isJpeg()) out.write(pictureJPEG);
+        switch (type) {
+            case Image.ORIGINAL_JPEG:
+                out.write(pictureJPEG);
+                break;
+            case Image.ORIGINAL_PNG:
+                out.write(picturePNG);
+                break;
+            case Image.ORIGINAL_WMF:
+                out.write(pictureWMF);
+                break;
+        }
         out.write(escape);
         out.write(pictureWidth);
         writeInt(out, (int) (image.plainWidth() * TWIPSFACTOR));
@@ -1487,11 +1508,13 @@ public class RtfWriter extends DocWriter implements DocListener {
         }
         out.write(delimiter);
         InputStream imgIn;
-        if (image.rawData() == null) {
+        if (image.getOriginalData() == null) {
             imgIn = image.url().openStream();
         } else {
-            imgIn = new ByteArrayInputStream(image.rawData());
+            imgIn = new ByteArrayInputStream(image.getOriginalData());
         }
+        if (type == Image.ORIGINAL_WMF) //remove the placeable header
+            imgIn.skip(22);
         int buffer = -1;
         int count = 0;
         out.write((byte) '\n');

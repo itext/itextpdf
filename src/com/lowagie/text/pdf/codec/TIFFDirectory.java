@@ -208,7 +208,8 @@ public class TIFFDirectory extends Object implements Serializable {
     };
     
     private void initialize(RandomAccessFileOrArray stream) throws IOException {
-        long nextTagOffset;
+        long nextTagOffset = 0L;
+        long maxOffset = (long) stream.length();
         int i, j;
         
         IFDOffset = stream.getFilePointer();
@@ -216,11 +217,12 @@ public class TIFFDirectory extends Object implements Serializable {
         numEntries = readUnsignedShort(stream);
         fields = new TIFFField[numEntries];
         
-        for (i = 0; i < numEntries; i++) {
+        for (i = 0; (i < numEntries) && (nextTagOffset < maxOffset); i++) {
             int tag = readUnsignedShort(stream);
             int type = readUnsignedShort(stream);
             int count = (int)(readUnsignedInt(stream));
             int value = 0;
+            boolean processTag = true;
             
             // The place to return to to read the next tag
             nextTagOffset = stream.getFilePointer() + 4;
@@ -229,15 +231,23 @@ public class TIFFDirectory extends Object implements Serializable {
                 // If the tag data can't fit in 4 bytes, the next 4 bytes
                 // contain the starting offset of the data
                 if (count*sizeOfType[type] > 4) {
-                    value = (int)(readUnsignedInt(stream));
-                    stream.seek(value);
+                    long valueOffset = readUnsignedInt(stream);
+                    
+                    // bounds check offset for EOF
+                    if (valueOffset < maxOffset) {
+                    	stream.seek(valueOffset);
+                    }
+                    else {
+                    	// bad offset pointer .. skip tag
+                    	processTag = false;
+                    }
                 }
             } catch (ArrayIndexOutOfBoundsException ae) {
                 // if the data type is unknown we should skip this TIFF Field
-                stream.seek(nextTagOffset);
-                continue;
+                processTag = false;
             }
             
+            if (processTag) {
             fieldIndex.put(new Integer(tag), new Integer(i));
             Object obj = null;
             
@@ -349,6 +359,8 @@ public class TIFFDirectory extends Object implements Serializable {
             }
             
             fields[i] = new TIFFField(tag, type, count, obj);
+            }
+            
             stream.seek(nextTagOffset);
         }
         

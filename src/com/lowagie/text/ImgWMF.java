@@ -113,6 +113,7 @@ public class ImgWMF extends Image implements Element {
     public ImgWMF(byte[] img) throws BadElementException, IOException {
         super((URL)null);
         rawData = img;
+        originalData = img;
         processParameters();
     }
     
@@ -122,6 +123,7 @@ public class ImgWMF extends Image implements Element {
     
     private void processParameters() throws BadElementException, IOException {
         type = IMGTEMPLATE;
+        originalType = ORIGINAL_WMF;
         InputStream is = null;
         try {
             String errorID;

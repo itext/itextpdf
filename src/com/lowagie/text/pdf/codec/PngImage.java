@@ -200,7 +200,9 @@ public class PngImage {
         InputStream is = null;
         try {
             is = url.openStream();
-            return getImage(is);
+            Image img = getImage(is);
+            img.setUrl(url);
+            return img;
         }
         finally {
             if (is != null) {
@@ -237,7 +239,9 @@ public class PngImage {
         InputStream is = null;
         try {
             is = new ByteArrayInputStream(data);
-            return getImage(is);
+            Image img = getImage(is);
+            img.setOriginalData(data);
+            return img;
         }
         finally {
             if (is != null) {
@@ -529,8 +533,7 @@ public class PngImage {
                 palShades = true;
             genBWMask = (!palShades && (pal0 > 1 || transRedGray >= 0));
             if (!palShades && !genBWMask && pal0 == 1) {
-                int t = trans[palIdx] % 0xff;
-                additional.put(PdfName.MASK, new PdfLiteral("["+t+" "+t+"]"));
+                additional.put(PdfName.MASK, new PdfLiteral("["+palIdx+" "+palIdx+"]"));
             }
             boolean needDecode = (interlaceMethod == 1) || (bitDepth == 16) || ((colorType & 4) != 0) || palShades || genBWMask;
             switch (colorType) {
@@ -591,6 +594,7 @@ public class PngImage {
             }
             img.setDpi(dpiX, dpiY);
             img.setXYRatio(XYRatio);
+            img.setOriginalType(Image.ORIGINAL_PNG);
             return img;
         }
         catch (Exception e) {
