@@ -405,7 +405,7 @@ class PRTokeniser {
             default:
             {
                 outBuf = new StringBuffer();
-                if (ch == '.' || (ch >= '0' && ch <= '9')) {
+                if (ch == '-' || ch == '+' || ch == '.' || (ch >= '0' && ch <= '9')) {
                     type = TK_NUMBER;
                     do {
                         outBuf.append((char)ch);
