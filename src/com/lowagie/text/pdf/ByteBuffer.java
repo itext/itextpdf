@@ -195,43 +195,51 @@ public class ByteBuffer
     {
         if (Math.abs(d) < 0.000015)
             return "0";
-        String sign = "";
+        StringBuffer res = new StringBuffer();
         if (d < 0) {
-            sign = "-";
+            res.append('-');
             d = -d;
+        }
+        // some performance ameliorations suggested by Gerald Fehringer
+        if (d == 1.0) {
+            return res.append('1').toString();
         }
         if (d < 1.0) {
             d += 0.000005;
             long v = (long)(d * 100000);
+            res.append("0.");
             String total = String.valueOf(v);
-            String integ = (total.length() <= 5) ? "0" : total.substring(0, total.length() - 5);
-            String fract = ("00000" + total).substring(total.length());
-            if (fract.equals("00000"))
-                return sign + integ;
-            int k;
-            for (k = 4; k >= 0; --k)
-                if (fract.charAt(k) != '0')
-                    break;
-            return sign + integ + "." + fract.substring(0, k + 1);
+            for (int i = total.length(); i < 5; i++) {
+                res.append('0');
+            }
+            res.append(v);
+            while (res.charAt(res.length() - 1) == '0') {
+                res.deleteCharAt(res.length() - 1);
+            }
+            return res.toString();
         }
         else if (d <= 32767) {
             d += 0.005;
             long v = (long)(d * 100);
             String total = String.valueOf(v);
-            String integ = (total.length() <= 2) ? "0" : total.substring(0, total.length() - 2);
-            String fract = ("00" + total).substring(total.length());
-            if (fract.equals("00"))
-                return sign + integ;
-            int k;
-            for (k = 1; k >= 0; --k)
-                if (fract.charAt(k) != '0')
-                    break;
-            return sign + integ + "." + fract.substring(0, k + 1);
+            int len = total.length();
+            char c1 = total.charAt(len - 2);
+            char c2 = total.charAt(len - 1);
+            for (int i = 0; i < (len - 2); i++) {
+                 res.append(total.charAt(i));
+            }
+            if (c1 != '0' || c2 != '0') {
+                res.append('.').append(c1);
+                if (c2 != '0') {
+                    res.append(c2);
+                }
+            }
+			return res.toString();
         }
         else {
             d += 0.5;
             long v = (long)d;
-            return sign + String.valueOf(v);
+            return res.append(v).toString();
         }
     }
     

@@ -59,6 +59,9 @@ import com.lowagie.text.Image;
 class PdfFont implements Comparable {
     
     // membervariables
+
+/** instances of a PdfFont. */
+    private static java.util.Hashtable instances = new java.util.Hashtable();
     
 /** the name of this font. */
     private PdfName name;
@@ -83,7 +86,7 @@ class PdfFont implements Comparable {
  * @param		e			value of the encodingtype
  */
     
-    PdfFont(String name, int f, float s, int e)
+    private PdfFont(String name, int f, float s, int e)
     {
         String fontName = "Helvetica";
         size = s;
@@ -147,7 +150,7 @@ class PdfFont implements Comparable {
  * @param		e			value of the encodingtype
  */
     
-    PdfFont(int f, float s, int e) {
+    private PdfFont(int f, float s, int e) {
         this(new StringBuffer("F").append(f).toString(), f, s, e);
     }
     
@@ -170,6 +173,44 @@ class PdfFont implements Comparable {
     
     // methods
     
+/**
+ * Gets an instance (existing or newly created) of PdfFont.
+ *
+ * @author Gerald Fehringer
+ */
+
+public static PdfFont getInstance(BaseFont bf, float s) {
+    PdfFont f = null;
+    java.util.Hashtable hash = (java.util.Hashtable) instances.get(bf);
+    if (hash == null) {
+        hash = new java.util.Hashtable();
+        instances.put(bf, hash);
+    }
+    f = (PdfFont) hash.get(String.valueOf(s));
+    if (f == null) {
+        f = new PdfFont(bf, s);
+        hash.put(String.valueOf(s), f);
+    }
+    return f;
+}
+
+/**
+ * Gets an instance (existing or newly created) of PdfFont.
+ *
+ * @author Gerald Fehringer
+ */
+
+public static PdfFont getInstance(int fam, float s) {
+    PdfFont f = null;
+    String key = fam + "&" + s;
+    f = (PdfFont) instances.get(key);
+    if (f == null) {
+        f = new PdfFont(fam, s);
+        instances.put(key, f);
+    }
+    return f;
+}
+	
 /**
  * Compares this <CODE>PdfFont</CODE> with another
  *

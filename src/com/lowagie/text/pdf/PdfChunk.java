@@ -218,10 +218,10 @@ class PdfChunk extends PdfString {
                     break;
             }
             // creation of the PdfFont with the right size
-            font = new PdfFont(family, size);
+            font = PdfFont.getInstance(family, size);
         }
         else
-            font = new PdfFont(bf, size);
+            font = PdfFont.getInstance(bf, size);
         // other style possibilities
         HashMap attr = chunk.getAttributes();
         if (attr != null) {
@@ -278,7 +278,7 @@ class PdfChunk extends PdfString {
                 value = "";
                 attributes = new HashMap();
                 image = null;
-                font = new PdfFont(PdfFontMetrics.HELVETICA, 12);
+                font = PdfFont.getInstance(PdfFontMetrics.HELVETICA, 12);
                 return pc;
             }
             else
