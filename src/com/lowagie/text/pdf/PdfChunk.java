@@ -344,7 +344,7 @@ class PdfChunk implements SplitCharacter{
             if (character == '\r' || character == '\n') {
                 newlineSplit = true;
                 int inc = 1;
-                if (character == '\r' && currentPosition + 1 < length && value.charAt(currentPosition) == '\n')
+                if (character == '\r' && currentPosition + 1 < length && value.charAt(currentPosition + 1) == '\n')
                     inc = 2;
                 String returnValue = value.substring(currentPosition + inc);
                 value = value.substring(0, currentPosition);
