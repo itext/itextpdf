@@ -101,6 +101,8 @@ public class PdfPTable implements Element{
 /** Holds value of property horizontalAlignment. */
     private int horizontalAlignment = Element.ALIGN_CENTER;
     
+    protected boolean isColspan = false;
+    
     /** Constructs a <CODE>PdfPTable</CODE> with the relative column widths.
      * @param relativeWidths the relative column widths
      */    
@@ -144,6 +146,7 @@ public class PdfPTable implements Element{
         tableEvent = table.tableEvent;
         defaultCell = new PdfPCell(table.defaultCell);
         currentRow = new PdfPCell[table.currentRow.length];
+        isColspan = table.isColspan;
         for (int k = 0; k < currentRow.length; ++k) {
             if (table.currentRow[k] == null)
                 break;
@@ -238,7 +241,14 @@ public class PdfPTable implements Element{
      */    
     public void addCell(PdfPCell cell) {
         PdfPCell ncell = new PdfPCell(cell);
-        currentRow[currentRowIdx++] = ncell;
+        int colspan = ncell.getColspan();
+        colspan = Math.max(colspan, 1);
+        colspan = Math.min(colspan, currentRow.length - currentRowIdx);
+        ncell.setColspan(colspan);
+        if (colspan != 1)
+            isColspan = true;
+        currentRow[currentRowIdx] = ncell;
+        currentRowIdx += colspan;
         if (currentRowIdx >= currentRow.length) {
             PdfPRow row = new PdfPRow(currentRow);
             if (totalWidth > 0) {
@@ -292,7 +302,7 @@ public class PdfPTable implements Element{
      */    
     public float writeSelectedRows(int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases) {
         if (totalWidth <= 0)
-            throw new RuntimeException("The width must be greater than zero.");
+            throw new RuntimeException("The table width must be greater than zero.");
         int size = rows.size();
         if (rowEnd < 0)
             rowEnd = size;
@@ -312,11 +322,7 @@ public class PdfPTable implements Element{
                 PdfPRow row = (PdfPRow)rows.get(k);
                 heights[k - rowStart + 1] = heights[k - rowStart] - row.getMaxHeights();
             }
-            float widths[] = new float[absoluteWidths.length + 1];
-            widths[0] = xPos;
-            for (int k = 0; k < absoluteWidths.length; ++k)
-                widths[k + 1] = widths[k] + absoluteWidths[k];
-            tableEvent.tableLayout(this, widths, heights, 0, rowStart, canvases);
+            tableEvent.tableLayout(this, getEventWidths(xPos, rowStart, rowEnd, false), heights, 0, rowStart, canvases);
         }
         return yPos;
     }
@@ -547,5 +553,27 @@ public class PdfPTable implements Element{
     
     public float[] getAbsoluteWidths() {
         return absoluteWidths;
+    }
+    
+    float [][] getEventWidths(float xPos, int firstRow, int lastRow, boolean includeHeaders) {
+        float widths[][] = new float[(includeHeaders ? headerRows : 0) + lastRow - firstRow][];
+        if (isColspan) {
+            int n = 0;
+            if (includeHeaders) {
+                for (int k = 0; k < headerRows; ++k)
+                    widths[n++] = ((PdfPRow)rows.get(k)).getEventWidth(xPos);
+            }
+            for (; firstRow < lastRow; ++firstRow)
+                widths[n++] = ((PdfPRow)rows.get(firstRow)).getEventWidth(xPos);
+        }
+        else {
+            float width[] = new float[absoluteWidths.length + 1];
+            width[0] = xPos;
+            for (int k = 0; k < absoluteWidths.length; ++k)
+                width[k + 1] = width[k] + absoluteWidths[k];
+            for (int k = 0; k < widths.length; ++k)
+                widths[k] = width;
+        }
+        return widths;
     }
 }

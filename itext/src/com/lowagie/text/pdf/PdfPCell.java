@@ -108,6 +108,9 @@ public class PdfPCell extends Rectangle{
     /** Holds value of property minimumHeight. */
     private float minimumHeight;
     
+    /** Holds value of property colspan. */
+    private int colspan = 1;
+    
     /** Constructs a <CODE>PdfPCell</CODE> with a <CODE>Phrase</CODE>.
      * The default padding is 2.
      * @param phrase the text
@@ -176,6 +179,7 @@ public class PdfPCell extends Rectangle{
         fixedHeight = cell.fixedHeight;
         minimumHeight = cell.minimumHeight;
         noWrap = cell.noWrap;
+        colspan = cell.colspan;
         if (cell.table != null)
             table = new PdfPTable(cell.table);
     }
@@ -419,6 +423,20 @@ public class PdfPCell extends Rectangle{
     public void setMinimumHeight(float minimumHeight) {
         this.minimumHeight = minimumHeight;
         fixedHeight = 0;
+    }
+    
+    /** Getter for property colspan.
+     * @return Value of property colspan.
+     */
+    public int getColspan() {
+        return colspan;
+    }
+    
+    /** Setter for property colspan.
+     * @param colspan New value of property colspan.
+     */
+    public void setColspan(int colspan) {
+        this.colspan = colspan;
     }
     
 }

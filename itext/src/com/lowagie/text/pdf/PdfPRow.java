@@ -57,7 +57,7 @@ import com.lowagie.text.Rectangle;
 import java.awt.Color;
 
 /**
- * a row in a PdfPTable.
+ * A row in a PdfPTable.
  *
  * @author  Paulo Soares
  */
@@ -78,8 +78,10 @@ public class PdfPRow {
         maxHeight = row.maxHeight;
         calculated = row.calculated;
         cells = new PdfPCell[row.cells.length];
-        for (int k = 0; k < cells.length; ++k)
-            cells[k] = new PdfPCell(row.cells[k]);
+        for (int k = 0; k < cells.length; ++k) {
+            if (row.cells[k] != null)
+                cells[k] = new PdfPCell(row.cells[k]);
+        }
     }
     
     public boolean setWidths(float widths[])
@@ -91,7 +93,10 @@ public class PdfPRow {
         for (int k = 0; k < widths.length; ++k) {
             PdfPCell cell = cells[k];
             cell.setLeft(total);
-            total += widths[k];
+            int last = k + cell.getColspan();
+            for (; k < last; ++k)
+                total += widths[k];
+            --k;
             cell.setRight(total);
             cell.setTop(0);
         }
@@ -103,6 +108,8 @@ public class PdfPRow {
         maxHeight = 0;
         for (int k = 0; k < cells.length; ++k) {
             PdfPCell cell = cells[k];
+            if (cell == null)
+                continue;
             PdfPTable table = cell.getTable();
             if (table == null ) {
                 float rightLimit = cell.isNoWrap() ? 20000 : cell.right() - cell.getPaddingRight();
@@ -215,6 +222,8 @@ public class PdfPRow {
             calculateHeights();
         for (int k = 0; k < cells.length; ++k) {
             PdfPCell cell = cells[k];
+            if (cell == null)
+                continue;
             writeBorderAndBackgroung(xPos, yPos, cell, canvases);
             PdfPTable table = cell.getTable();
             float tly = 0;
@@ -292,4 +301,22 @@ public class PdfPRow {
 	this.maxHeight=maxHeight;
     }
     //end add
+    
+    float[] getEventWidth(float xPos) {
+        int n = 0;
+        for (int k = 0; k < cells.length; ++k) {
+            if (cells[k] != null)
+                ++n;
+        }
+        float width[] = new float[n + 1];
+        n = 0;
+        width[n++] = xPos;
+        for (int k = 0; k < cells.length; ++k) {
+            if (cells[k] != null) {
+                width[n] = width[n - 1] + cells[k].width();
+                ++n;
+            }
+        }
+        return width;
+    }
 }

@@ -49,7 +49,7 @@
  */
 
 package com.lowagie.text.pdf;
-
+import com.lowagie.text.Rectangle;
 /**
  * <CODE>PdfPage</CODE> is the PDF Page-object.
  * <P>
@@ -91,7 +91,7 @@ public class PdfPage extends PdfDictionary implements PdfPageElement {
  * @param		rotate			a value for the <B>Rotate</B> key
  */
     
-    PdfPage(PdfRectangle mediaBox, PdfIndirectReference resources, PdfNumber rotate) {
+    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfIndirectReference resources, PdfNumber rotate) {
         super(PAGE);
         this.mediaBox = mediaBox;
         put(PdfName.MEDIABOX, mediaBox);
@@ -99,6 +99,8 @@ public class PdfPage extends PdfDictionary implements PdfPageElement {
         if (rotate != null) {
             put(PdfName.ROTATE, rotate);
         }
+        if (cropBox != null)
+            put(PdfName.CROPBOX, new PdfRectangle(cropBox));
     }
     
 /**
@@ -109,7 +111,7 @@ public class PdfPage extends PdfDictionary implements PdfPageElement {
  * @param		rotate			a value for the <B>Rotate</B> key
  */
     
-    PdfPage(PdfRectangle mediaBox, PdfResources resources, PdfNumber rotate) {
+    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfResources resources, PdfNumber rotate) {
         super(PAGE);
         this.mediaBox = mediaBox;
         put(PdfName.MEDIABOX, mediaBox);
@@ -117,6 +119,8 @@ public class PdfPage extends PdfDictionary implements PdfPageElement {
         if (rotate != null) {
             put(PdfName.ROTATE, rotate);
         }
+        if (cropBox != null)
+            put(PdfName.CROPBOX, new PdfRectangle(cropBox));
     }
     
 /**
@@ -126,8 +130,8 @@ public class PdfPage extends PdfDictionary implements PdfPageElement {
  * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
  */
     
-    PdfPage(PdfRectangle mediaBox, PdfIndirectReference resources) {
-        this(mediaBox, resources, null);
+    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfIndirectReference resources) {
+        this(mediaBox, cropBox, resources, null);
     }
     
 /**
@@ -137,8 +141,8 @@ public class PdfPage extends PdfDictionary implements PdfPageElement {
  * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
  */
     
-    PdfPage(PdfRectangle mediaBox, PdfResources resources) {
-        this(mediaBox, resources, null);
+    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfResources resources) {
+        this(mediaBox, cropBox, resources, null);
     }
     
     // implementation of the PdfPageElement interface

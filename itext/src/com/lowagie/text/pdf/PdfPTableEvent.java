@@ -71,21 +71,22 @@ public interface PdfPTableEvent {
      * The layers are placed in sequence on top of each other.
      * <p>
      * The <CODE>widths</CODE> and <CODE>heights</CODE> have the coordinates of the cells.<br>
-     * For the <CODE>widths</CODE> the first element is the x coordinate of the left table border and the last
-     * element is the x coordinate of the right table border.<br>
+     * In each array in <CODE>widths</CODE> the first element is the x coordinate of the left table border and the last
+     * element is the x coordinate of the right table border. The size of
+     * the widths array correspond to each row. If colspan was not used all the elements are the same.<br>
      * For the <CODE>heights</CODE> the first element is the y coordinate of the top table border and the last
      * element is the y coordinate of the bottom table border.
      * @param table the <CODE>PdfPTable</CODE> in use
-     * @param widths an array with the cells' x positions. It has a length of number
-     * of columns + 1
+     * @param widths an array of arrays with the cells' x positions. It has the length of the number
+     * of rows
      * @param heights an array with the cells' y positions. It has a length of number
      * of rows + 1
      * @param headerRows the number of rows defined for the header.
-     * It is always 0 if the table is not rendered with <CODE>Document.add</CODE>
+     * It is always 0 if the table is not rendered with <CODE>Document.add()</CODE>
      * @param rowStart the first row number after the header
      * @param canvases an array of <CODE>PdfContentByte</CODE>
      */    
-    public void tableLayout(PdfPTable table, float widths[], float heights[], int headerRows, int rowStart, PdfContentByte[] canvases);
+    public void tableLayout(PdfPTable table, float widths[][], float heights[], int headerRows, int rowStart, PdfContentByte[] canvases);
 
 }
 

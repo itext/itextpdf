@@ -503,7 +503,7 @@ public class Document implements DocListener {
             return add(new Header(name, content));
         }
         catch(DocumentException de) {
-            return false;
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -519,7 +519,7 @@ public class Document implements DocListener {
             return add(new Meta(Element.TITLE, title));
         }
         catch(DocumentException de) {
-            return false;
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -535,7 +535,7 @@ public class Document implements DocListener {
             return add(new Meta(Element.SUBJECT, subject));
         }
         catch(DocumentException de) {
-            return false;
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -551,7 +551,7 @@ public class Document implements DocListener {
             return add(new Meta(Element.KEYWORDS, keywords));
         }
         catch(DocumentException de) {
-            return false;
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -567,7 +567,7 @@ public class Document implements DocListener {
             return add(new Meta(Element.AUTHOR, author));
         }
         catch(DocumentException de) {
-            return false;
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -583,7 +583,7 @@ public class Document implements DocListener {
             return add(new Meta(Element.CREATOR, creator));
         }
         catch(DocumentException de) {
-            return false;
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -598,7 +598,7 @@ public class Document implements DocListener {
             return add(new Meta(Element.PRODUCER, "iText by lowagie.com"));
         }
         catch(DocumentException de) {
-            return false;
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -613,7 +613,7 @@ public class Document implements DocListener {
             return add(new Meta(Element.CREATIONDATE, new Date().toString()));
         }
         catch(DocumentException de) {
-            return false;
+            throw new ExceptionConverter(de);
         }
     }
     

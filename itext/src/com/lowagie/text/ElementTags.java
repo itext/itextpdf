@@ -58,6 +58,9 @@ import java.awt.Color;
 
 public class ElementTags {
     
+/** This is the name of a tag. */
+    public static final String TAGNAME = "tagname";
+    
 /** the root tag. */
     public static final String ITEXT = "itext";
     

@@ -150,20 +150,13 @@ public class PdfReader {
      * @return a <CODE>Rectangle</CODE>
      */    
     public Rectangle getPageSizeWithRotation(int index) {
-        PRDictionary page = pages[index - 1];
-        PRArray mediaBox = (PRArray)getPdfObject(page.get(NAME_MEDIABOX));
-        ArrayList rect = mediaBox.getArrayList();
-        float llx = ((PRNumber)rect.get(0)).floatValue();
-        float lly = ((PRNumber)rect.get(1)).floatValue();
-        float urx = ((PRNumber)rect.get(2)).floatValue();
-        float ury = ((PRNumber)rect.get(3)).floatValue();
-        Rectangle rectangle = new Rectangle(llx, lly, urx, ury);
+        Rectangle rect = getPageSize(index);
         int rotation = getPageRotation(index);
-        if (rotation == 90 || rotation == 270) {
-            rectangle = rectangle.rotate();
+        while (rotation > 0) {
+            rect.rotate();
+            rotation -= 90;
         }
-        rectangle.setRotation(rotation);
-        return rectangle;
+        return rect;
     }
     
     /** Gets the page size without taking rotation into account. This
