@@ -61,9 +61,11 @@ import java.io.IOException;
 /**
  * The RtfFont class stores one font for an rtf document. It extends Font,
  * so can be set as a font, to allow adding of fonts with arbitrary names.
+ * BaseFont fontname handling contributed by Craig Fleming.
  *
  * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Craig Fleming <rythos@rhana.dhs.org>
  */
 public class RtfFont extends Font implements RtfExtendedElement {
     /**
@@ -255,7 +257,18 @@ public class RtfFont extends Font implements RtfExtendedElement {
                     this.fontName = font.getFamilyname();
             }
         }
-        if(font.getFamilyname().equalsIgnoreCase("unknown")) {
+        if(font.getBaseFont() != null) {
+            String[][] fontNames = font.getBaseFont().getFullFontName();
+            for(int i = 0; i < fontNames.length; i++) {
+                if(fontNames[i][2].equals("0")) {
+                    this.fontName = fontNames[i][3];
+                    break;
+                } else if(fontNames[i][2].equals("1033") || fontNames[i][2].equals("")) {
+                    this.fontName = fontNames[i][3];
+                }
+            }
+        }
+        if(this.fontName.equalsIgnoreCase("unknown")) {
             color = new RtfColor(doc, 0, 0, 0);
             return;
         }
