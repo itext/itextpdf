@@ -42,7 +42,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.ParserFactory;
 
-import com.lowagie.text.Document;
+import com.lowagie.text.DocListener;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.xml.XmlParser;
 
@@ -64,7 +64,7 @@ public class HtmlParser extends XmlParser {
  * Parses a given file.
  */
  
-	public void go(Document document, InputSource is) throws DocumentException {
+	public void go(DocListener document, InputSource is) throws DocumentException {
 		try {
     		parser.setDocumentHandler(new SAXmyHtmlHandler(document));
 			parser.parse(is);
@@ -81,7 +81,7 @@ public class HtmlParser extends XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
  
-	public static void parse(Document document, InputSource is) throws DocumentException {
+	public static void parse(DocListener document, InputSource is) throws DocumentException {
 		HtmlParser p = new HtmlParser();
 		p.go(document, is);	
 	}
@@ -90,7 +90,7 @@ public class HtmlParser extends XmlParser {
  * Parses a given file.
  */
  
-	public void go(Document document, String file) throws DocumentException {
+	public void go(DocListener document, String file) throws DocumentException {
 		try {
     		parser.setDocumentHandler(new SAXmyHtmlHandler(document));
 			parser.parse(file);
@@ -107,7 +107,7 @@ public class HtmlParser extends XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
  
-	public static void parse(Document document, String file) throws DocumentException {
+	public static void parse(DocListener document, String file) throws DocumentException {
 		HtmlParser p = new HtmlParser();
 		p.go(document, file);	
 	}
@@ -116,7 +116,7 @@ public class HtmlParser extends XmlParser {
  * Parses a given file.
  */
  
-	public void go(Document document, InputStream is) throws DocumentException {
+	public void go(DocListener document, InputStream is) throws DocumentException {
 		try {
     		parser.setDocumentHandler(new SAXmyHtmlHandler(document));
 			parser.parse(new InputSource(is));
@@ -133,7 +133,7 @@ public class HtmlParser extends XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
  
-	public static void parse(Document document, InputStream is) throws DocumentException {
+	public static void parse(DocListener document, InputStream is) throws DocumentException {
 		HtmlParser p = new HtmlParser();
 		p.go(document, new InputSource(is));	
 	}
@@ -142,7 +142,7 @@ public class HtmlParser extends XmlParser {
  * Parses a given file.
  */
  
-	public void go(Document document, Reader is) throws DocumentException {
+	public void go(DocListener document, Reader is) throws DocumentException {
 		try {
     		parser.setDocumentHandler(new SAXmyHtmlHandler(document));
 			parser.parse(new InputSource(is));
@@ -159,7 +159,7 @@ public class HtmlParser extends XmlParser {
  * Parses a given file that validates with the iText DTD and writes the content to a document.
  */
  
-	public static void parse(Document document, Reader is) throws DocumentException {
+	public static void parse(DocListener document, Reader is) throws DocumentException {
 		HtmlParser p = new HtmlParser();
 		p.go(document, new InputSource(is));	
 	}

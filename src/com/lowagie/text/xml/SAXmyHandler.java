@@ -59,7 +59,7 @@ public class SAXmyHandler extends SAXiTextHandler {
  * @param	document	this is the document on which events must be triggered
  */
     
-    public SAXmyHandler(Document document, HashMap myTags) {
+    public SAXmyHandler(DocListener document, HashMap myTags) {
         super(document);
         this.myTags = myTags;
     }

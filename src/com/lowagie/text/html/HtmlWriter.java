@@ -74,10 +74,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
     // static membervariables (tags)
     
 /** This is a possible HTML-tag. */
-    public static final byte[] BEGINCOMMENT = getISOBytes("\t<!--");
+    public static final byte[] BEGINCOMMENT = getISOBytes("\t<!-- ");
     
 /** This is a possible HTML-tag. */
-    public static final byte[] ENDCOMMENT = getISOBytes("-->\n");
+    public static final byte[] ENDCOMMENT = getISOBytes(" -->\n");
     
     // membervariables
     
@@ -175,12 +175,16 @@ public class HtmlWriter extends DocWriter implements DocListener {
         
             switch(element.type()) {
                 case Element.HEADER:
-                    Header h = (Header) element;
-                    if (!HtmlTags.STYLESHEET.equals(h.name())) {
-                        writeHeader(h);
+                    try {
+                        Header h = (Header) element;
+                        if (!HtmlTags.STYLESHEET.equals(h.name())) {
+                            writeHeader(h);
+                        }
+                        else {
+                            writeLink(h);
+                        }
                     }
-                    else {
-                        writeLink(h);
+                    catch(ClassCastException cce) {
                     }
                     return true;
                 case Element.SUBJECT:

@@ -140,7 +140,10 @@ public class ElementTags {
     // Chunks
     
 /** the chunk tag */
-    public static final String SYMBOLTAG = "symbol";
+    public static final String IGNORE = "ignore";
+    
+/** the chunk tag */
+    public static final String ENTITY = "entity";
     
 /** the chunk tag */
     public static final String ID = "id";
