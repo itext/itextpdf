@@ -125,6 +125,16 @@ public class HeaderFooter extends Rectangle implements MarkupAttributes {
     // methods
     
 /**
+ * Checks if the HeaderFooter contains a page number.
+ *
+ * @return  true if the page has to be numbered
+ */
+    
+    public final boolean isNumbered() {
+        return numbered;
+    }
+    
+/**
  * Gets the part that comes before the pageNumber.
  *
  * @return  a Phrase
