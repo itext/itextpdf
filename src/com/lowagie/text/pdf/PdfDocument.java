@@ -1278,7 +1278,7 @@ class PdfDocument extends Document implements DocListener {
                             if (size > 0) {
                                 // this is the top of the headersection
                                 cell = (PdfCell) headercells.get(0);
-                                float oldTop = cell.top(-table.cellpadding());
+                                float oldTop = cell.top();
                                 // loop over all the cells of the table header
                                 for (int i = 0; i < size; i++) {
                                     cell = (PdfCell) headercells.get(i);
