@@ -159,7 +159,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 				createFrame(evt.getActionCommand());
 			}
 			catch(Exception e) {
-				// do nothing
+				e.printStackTrace();
 			}
 		}
 	}

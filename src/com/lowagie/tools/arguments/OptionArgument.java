@@ -157,7 +157,7 @@ public class OptionArgument extends ToolArgument {
 	public Object getArgument() throws InstantiationException {
 		if (value == null) return null;
 		try {
-			return (Entry)options.get(value);
+			return ((Entry)options.get(value)).getValue();
 		} catch (Exception e) {
 			throw new InstantiationException(e.getMessage());
 		}

@@ -49,41 +49,51 @@
  */
 package com.lowagie.tools.plugins;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.Image;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.RandomAccessFileOrArray;
-import com.lowagie.text.pdf.codec.TiffImage;
 import com.lowagie.tools.arguments.FileArgument;
-import com.lowagie.tools.arguments.ImageFilter;
+import com.lowagie.tools.arguments.OptionArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Converts a Tiff file to a PDF file.
+ * Converts a monospaced txt file to a PDF file.
  */
-public class Tiff2Pdf extends AbstractTool {
+public class Txt2Pdf extends AbstractTool {
 	/**
 	 * Constructs a Tiff2Pdf object.
 	 */
-	public Tiff2Pdf() {
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to convert", false, new ImageFilter(false, false, false, false, false, true)));
-		arguments.add(new FileArgument(this, "destfile", "The file to which the converted TIFF has to be written", true, new PdfFilter()));
+	public Txt2Pdf() {
+		arguments.add(new FileArgument(this, "srcfile", "The file you want to convert", false));
+		arguments.add(new FileArgument(this, "destfile", "The file to which the converted text has to be written", true, new PdfFilter()));
+		OptionArgument oa1 = new OptionArgument(this, "pagesize", "Pagesize");
+		oa1.addOption("A4", "A4");
+		oa1.addOption("Letter", "LETTER");
+		arguments.add(oa1);
+		OptionArgument oa2 = new OptionArgument(this, "orientation", "Orientation of the page");
+		oa2.addOption("Portrait", "PORTRAIT");
+		oa2.addOption("Landscape", "LANDSCAPE");
+		arguments.add(oa2);
 	}
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Tiff2Pdf", true, true, true);
+		internalFrame = new JInternalFrame("Txt2Pdf", true, true, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
@@ -93,33 +103,30 @@ public class Tiff2Pdf extends AbstractTool {
 	 */
 	public void execute() {
 		try {
-			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
-			File tiff_file = (File)getValue("srcfile");
-			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
-			File pdf_file = (File)getValue("destfile");
-			Document document = new Document();
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_file));
-			int pages = 0;
-			document.open();
-			PdfContentByte cb = writer.getDirectContent();
-            RandomAccessFileOrArray ra = null;
-            int comps = 0;
-            ra = new RandomAccessFileOrArray(tiff_file.getAbsolutePath());
-            comps = TiffImage.getNumberOfPages(ra);
-            for (int c = 0; c < comps; ++c) {
-                Image img = TiffImage.getTiffImage(ra, c + 1);
-                if (img != null) {
-                    if (img.scaledWidth() > 500 || img.scaledHeight() > 700) {
-                        img.scaleToFit(500, 700);
-                    }
-                    img.setAbsolutePosition(20, 20);
-                    document.add(new Paragraph(tiff_file + " - page " + (c + 1)));
-                    cb.addImage(img);
-                    document.newPage();
-                    ++pages;
-                }
+            String line = null;
+            Document document;
+            Font f;
+            Rectangle pagesize;
+            if ("LETTER".equals(getValue("pagesize"))) {
+            	pagesize = PageSize.LETTER;
             }
-            ra.close();
+            else {
+            	pagesize = PageSize.A4;
+            }
+            if ("LANDSCAPE".equals(getValue("orientation"))) {
+                f = FontFactory.getFont(FontFactory.COURIER, 10);
+                document = new Document(pagesize.rotate(), 36, 9, 36, 36);
+            }
+            else {
+                f = FontFactory.getFont(FontFactory.COURIER, 11);
+                document = new Document(pagesize, 72, 36, 36, 36);
+            }
+            BufferedReader in = new BufferedReader(new FileReader((File)getValue("srcfile")));
+            PdfWriter.getInstance(document, new FileOutputStream((File)getValue("destfile")));
+            document.open();
+            while ((line = in.readLine()) != null) {
+                document.add(new Paragraph(12, line, f));
+            }
             document.close();
 		} catch (Exception e) {
         	JOptionPane.showMessageDialog(internalFrame,
@@ -147,7 +154,7 @@ public class Tiff2Pdf extends AbstractTool {
      * @param args
      */
 	public static void main(String[] args) {
-    	Tiff2Pdf tool = new Tiff2Pdf();
+    	Txt2Pdf tool = new Txt2Pdf();
     	if (args.length < 2) {
     		System.err.println(tool.getUsage());
     	}
