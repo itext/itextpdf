@@ -360,19 +360,15 @@ public class RtfRow
             cell.writeCellSettings(os);
         }
 
-        os.write(RtfWriter.openGroup);
         cellIterator = cells.iterator();
         while(cellIterator.hasNext())
         {
             RtfCell cell = (RtfCell) cellIterator.next();
             cell.writeCellContent(os);
         }
-        os.write(RtfWriter.closeGroup);
         os.write(RtfWriter.delimiter);
-        os.write(RtfWriter.openGroup);
         os.write(RtfWriter.escape);
         os.write(rowEnd);
-        os.write(RtfWriter.closeGroup);
         return true;
     }
 
