@@ -525,6 +525,21 @@ public class PdfCell extends Rectangle {
     }
     
 /**
+ * Sets the top.
+ *
+ * @param   newTop  the new value of the top
+ */
+    
+    public void setTop(float newTop) {
+        Image image;
+        for (Iterator i = images.iterator(); i.hasNext(); ) {
+            image = (Image) i.next();
+            image.setAbsolutePosition(image.absoluteX(), remainingHeight());
+        }
+        super.setTop(newTop);
+    }
+    
+/**
  * Processes all actions contained in the cell.
  */
     
