@@ -998,7 +998,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
      * @param a <CODE>Font</CODE>
      */
     
-    private void write(Font font) throws IOException {
+    protected void write(Font font) throws IOException {
         write(" ");
         write(HtmlTags.STYLE);
         write("=\"");
