@@ -157,6 +157,12 @@ public interface DocListener extends ElementListener {
     public void setPageCount(int pageN);
     
 /**
+ * Clears text wrapping around images (if applicable).
+ * Method suggested by Pelikan Stephan
+ */
+	public void clearTextWrap() throws DocumentException;
+    
+/**
  * Signals that the <CODE>Document</CODE> was closed and that no other
  * <CODE>Elements</CODE> will be added.
  * <P>
