@@ -112,7 +112,7 @@ public class Jpeg extends Image implements Element {
 	 */
 
 	public Jpeg(String filename) throws BadElementException, MalformedURLException, IOException {
-		this(new File(filename).toURL());
+		this(Image.toURL(filename));
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class Jpeg extends Image implements Element {
 	 */
 
 	public Jpeg(String filename, int width, int height) throws BadElementException, MalformedURLException, IOException {
-		this(new File(filename).toURL(), width, height);
+		this(Image.toURL(filename), width, height);
 	}
 
 	/**

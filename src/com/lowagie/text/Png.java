@@ -105,7 +105,7 @@ public class Png extends Image implements Element {
 	 */
 
 	public Png(String filename) throws MalformedURLException, BadElementException, IOException {
-		this(new File(filename).toURL());
+		this(Image.toURL(filename));
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class Png extends Image implements Element {
 	 */
 
 	public Png(String filename, int width, int height) throws MalformedURLException, BadElementException, IOException {
-		this(new File(filename).toURL(), width, height);
+		this(Image.toURL(filename), width, height);
 	}
 
 	/**
