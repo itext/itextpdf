@@ -724,6 +724,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      */
     public void setFooter(HeaderFooter footer) {
         this.footer = footer;
+        processHeaderFooter(this.footer);
     }
 
     /**
@@ -731,6 +732,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      */
     public void setHeader(HeaderFooter header) {
         this.header = header;
+        processHeaderFooter(this.header);
     }
 
     /**
@@ -2042,7 +2044,7 @@ public class RtfWriter extends DocWriter implements DocListener {
         if (header instanceof RtfHeaderFooters || footer instanceof RtfHeaderFooters) {
             RtfHeaderFooters rtfHeader = (RtfHeaderFooters) header;
             RtfHeaderFooters rtfFooter = (RtfHeaderFooters) footer;
-            if (rtfHeader.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfHeader.get(RtfHeaderFooters.RIGHT_PAGES) != null || rtfFooter.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfFooter.get(RtfHeaderFooters.RIGHT_PAGES) != null) {
+            if ((rtfHeader != null && (rtfHeader.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfHeader.get(RtfHeaderFooters.RIGHT_PAGES) != null)) || (rtfFooter != null && (rtfFooter.get(RtfHeaderFooters.LEFT_PAGES) != null || rtfFooter.get(RtfHeaderFooters.RIGHT_PAGES) != null))) {
                 out.write(escape);
                 out.write(facingPages);
             }
@@ -2179,6 +2181,49 @@ public class RtfWriter extends DocWriter implements DocListener {
             }
         }
         return ret.toString();
+    }
+
+    private void addHeaderFooterFontColor(HeaderFooter hf) {
+        if(hf instanceof RtfHeaderFooter) {
+            RtfHeaderFooter rhf = (RtfHeaderFooter) hf;
+            if(rhf.content() instanceof Chunk) {
+                addFont(((Chunk) rhf.content()).font());
+                addColor(((Chunk) rhf.content()).font().color());
+            } else if(rhf.content() instanceof Phrase) {
+                addFont(((Phrase) rhf.content()).font());
+                addColor(((Phrase) rhf.content()).font().color());
+            }
+        }
+        if(hf.getBefore() != null) {
+            addFont(hf.getBefore().font());
+            addColor(hf.getBefore().font().color());
+        }
+        if(hf.getAfter() != null) {
+            addFont(hf.getAfter().font());
+            addColor(hf.getAfter().font().color());
+        }
+    }
+
+    private void processHeaderFooter(HeaderFooter hf) {
+        if(hf != null) {
+            if(hf instanceof RtfHeaderFooters) {
+                RtfHeaderFooters rhf = (RtfHeaderFooters) hf;
+                if(rhf.get(RtfHeaderFooters.ALL_PAGES) != null) {
+                    addHeaderFooterFontColor(rhf.get(RtfHeaderFooters.ALL_PAGES));
+                }
+                if(rhf.get(RtfHeaderFooters.LEFT_PAGES) != null) {
+                    addHeaderFooterFontColor(rhf.get(RtfHeaderFooters.LEFT_PAGES));
+                }
+                if(rhf.get(RtfHeaderFooters.RIGHT_PAGES) != null) {
+                    addHeaderFooterFontColor(rhf.get(RtfHeaderFooters.RIGHT_PAGES));
+                }
+                if(rhf.get(RtfHeaderFooters.FIRST_PAGE) != null) {
+                    addHeaderFooterFontColor(rhf.get(RtfHeaderFooters.FIRST_PAGE));
+                }
+            } else {
+                addHeaderFooterFontColor(hf);
+            }
+        }
     }
 }
 
