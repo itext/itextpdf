@@ -44,6 +44,12 @@ import java.util.HashMap;
 
 public abstract class BaseFont {
     
+/** if the font has to be embedded */
+    public final static boolean EMBEDDED = true;
+    
+/** if the font doesn't have to be embedded */
+    public final static boolean NOT_EMBEDDED = false;
+    
 /** a not defined character in a custom PDF encoding */
     public final static String notdef = new String(".notdef");
     
