@@ -177,7 +177,7 @@ class PdfDocument extends Document implements DocListener {
  */
         
         void addProducer() {
-            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 84"));
+            put(PdfName.PRODUCER, new PdfString("itext0.71 - based on paulo-84"));
         }
         
 /**
