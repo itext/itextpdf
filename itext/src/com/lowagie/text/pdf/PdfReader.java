@@ -455,21 +455,32 @@ public class PdfReader {
                 return new PRLiteral(-type, tokens.getStringValue());
         }
     }
-    
+
     static byte[] FlateDecode(byte in[]) {
+        byte b[] = FlateDecode(in, true);
+        if (b == null)
+            return FlateDecode(in, false);
+        return b;
+    }
+    
+    static byte[] FlateDecode(byte in[], boolean strict) {
         ByteArrayInputStream stream = new ByteArrayInputStream(in);
         InflaterInputStream zip = new InflaterInputStream(stream);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte b[] = new byte[1024];
+        byte b[] = new byte[strict ? 4092 : 1];
         try {
             int n;
             while ((n = zip.read(b)) >= 0) {
                 out.write(b, 0, n);
             }
+            zip.close();
+            out.close();
             return out.toByteArray();
         }
         catch (Exception e) {
-            throw new ExceptionConverter(e);
+            if (strict)
+                return null;
+            return out.toByteArray();
         }
     }
 
