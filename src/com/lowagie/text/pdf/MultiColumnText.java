@@ -140,7 +140,10 @@ public class MultiColumnText implements Element {
 
     /**
      * Indicates that all of the text did not fit in the
-     * specified height.
+     * specified height. Note that isOverflow will return
+     * false before the MultiColumnText object has been
+     * added to the document.  It will always be false if
+     * the height is AUTOMATIC.
      *
      * @return true if there is still space left in the column
      */
@@ -239,12 +242,6 @@ public class MultiColumnText implements Element {
     public float write(PdfContentByte canvas, PdfDocument document, float documentY) throws DocumentException {
         this.document = document;
         columnText.setCanvas(canvas);
-        if (nextY == AUTOMATIC) {
-            nextY = documentY;
-        }
-        if (top == AUTOMATIC) {
-            top = documentY;  // shouldn't I be able to get this from the document?
-        }
         if (columnDefs.size() == 0) {
             throw new DocumentException("MultiColumnText has no columns");
         }
@@ -254,6 +251,13 @@ public class MultiColumnText implements Element {
         boolean done = false;
         try {
             while (!done) {
+                if (nextY == AUTOMATIC) {
+                    nextY = documentY;
+                }
+                if (top == AUTOMATIC) {
+                    top = documentY;  // shouldn't I be able to get this from the document?
+                }
+
                 ColumnDef currentDef = (ColumnDef) columnDefs.get(currentColumn);
                 columnText.setYLine(top);
 
