@@ -80,10 +80,10 @@ public class MarkupParser {
         String key;
         String value;
         while (keyValuePairs.hasMoreTokens()) {
-            keyValuePair = new StringTokenizer(keyValuePairs.nextToken(), "=");
-            if (keyValuePair.hasMoreTokens()) key = keyValuePair.nextToken();
+            keyValuePair = new StringTokenizer(keyValuePairs.nextToken(), ":");
+            if (keyValuePair.hasMoreTokens()) key = keyValuePair.nextToken().trim();
             else continue;
-            if (keyValuePair.hasMoreTokens()) value = keyValuePair.nextToken();
+            if (keyValuePair.hasMoreTokens()) value = keyValuePair.nextToken().trim();
             else continue;
             if (value.startsWith("\"")) value = value.substring(1);
             if (value.endsWith("\"")) value = value.substring(0, value.length() - 1);
