@@ -535,8 +535,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
  */
     
     public static Image getInstance(Properties attributes) throws BadElementException, MalformedURLException, IOException {
-        String value;
-        Image image = Image.getInstance((String)attributes.remove(ElementTags.URL));
+        String value = (String)attributes.remove(ElementTags.URL);
+        if (value == null) throw new MalformedURLException("The URL of the image is missing.");
+        Image image = Image.getInstance(value);
         int align = 0;
         if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
             if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(value)) align |= Image.LEFT;

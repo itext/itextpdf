@@ -563,6 +563,16 @@ class PdfChunk extends PdfString implements SplitCharacter{
     }
     
 /**
+ * Sets the image offset in the x direction
+ * @rparam  offsetX the image offset in the x direction
+ */
+    
+    void setImageOffsetX(float offsetX)
+    {
+        this.offsetX = offsetX;
+    }
+    
+/**
  * Gets the image offset in the x direction
  * @return the image offset in the x direction
  */
@@ -570,6 +580,16 @@ class PdfChunk extends PdfString implements SplitCharacter{
     float getImageOffsetX()
     {
         return offsetX;
+    }
+    
+/**
+ * Sets the image offset in the y direction
+ * @rparam  offsetY the image offset in the y direction
+ */
+    
+    void setImageOffsetY(float offsetY)
+    {
+        this.offsetY = offsetY;
     }
     
 /**

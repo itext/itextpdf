@@ -160,7 +160,7 @@ public class SAXiTextHandler extends HandlerBase {
             currentChunk = Entities.get(attributes.getProperty(ElementTags.ID), f);
             return;
         }
-        
+
         // phrases
         if (Phrase.isTag(name)) {
             stack.push(new Phrase(attributes));
@@ -255,7 +255,7 @@ public class SAXiTextHandler extends HandlerBase {
                     // if there is an element on the stack...
                     current = (TextElementArray) stack.pop();
                     // ...and it's a Chapter or a Section, the Image can be added directly
-                    if ((current instanceof Chapter) || (current instanceof Section)) {
+                    if ((current instanceof Chapter) || (current instanceof Section) || (current instanceof Cell)) {
                         current.add(img);
                         stack.push(current);
                         return;
@@ -548,7 +548,7 @@ public class SAXiTextHandler extends HandlerBase {
             if (Table.isTag(name)) {
                 Table table = (Table) stack.pop();           
                 try {
-                    TextElementArray previous = (TextElementArray) stack.pop();
+                    TextElementArray previous = (TextElementArray) stack.pop(); 
                     previous.add(table);
                     stack.push(previous);
                 }
