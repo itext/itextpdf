@@ -762,5 +762,125 @@ public class PdfPTable implements Element{
     public void setLockedWidth(boolean lockedWidth) {
         this.lockedWidth = lockedWidth;
     }
-    
+
+    /** This function tries to split the cells in a PdfPTable to fit the given
+     * page size. It does so by dividing up any sub tables within the table
+     * into seperate rows within the table. This function adds rows to the
+     * table. The top row after a breakup contains all of the cells on the same
+     * row as the broken up cell plus whatever could fit on a page for the
+     * broken up cell. The subsequent rows contain blank cells plus the
+     * remaining content of the cells. 
+     */
+
+    public void fitCellsToPageSize(float maxWidth, float maxHeight)
+    {
+        setTotalWidth(maxWidth);
+        maxHeight -= getHeaderHeight();
+        for(int i = getHeaderRows(); i < size(); i++) {
+            float rowHeight = getRowHeight(i);
+            if(rowHeight > maxHeight) {
+                PdfPRow oversizedRow = getRow(i);
+                ArrayList dividedRows = oversizedRow.splitToPageSize(maxWidth, maxHeight);
+                rows.remove(i);
+                rows.addAll(i, dividedRows);
+            }
+        }
+
+        calculateWidths();
+        calculateHeights();
+    }
+
+    /** Split the table up into smaller tables that each fit on a page.
+     * this function is primarily used for nested tables. If 
+     * we call fitCellsToPageSize on a table with a nested table inside
+     * we need to split that table into pieces that each fit on a page
+     */
+    protected ArrayList splitToPageSize(float maxWidth, float maxHeight)
+    {
+        ArrayList splitTables = new ArrayList();
+
+        //first split up the cells to the size of a page
+        fitCellsToPageSize(maxWidth, maxHeight);
+        if(getTotalHeight() < maxHeight) {
+            splitTables.add(this);
+            return splitTables;
+        }
+        else {
+            float height = getHeaderHeight();
+            int startIndex = 0;
+            for(int i = getHeaderRows(); i < rows.size(); i++) {
+                height += ((PdfPRow)rows.get(i)).getMaxHeights();
+                //if the height up to this point is larger than the size of a page
+                //break up the table at the last cell
+                if(height > maxHeight - 1) {
+                    PdfPTable table = subTable(startIndex, i);
+                    splitTables.add(table);
+                    height = ((PdfPRow)rows.get(i)).getMaxHeights() + getHeaderHeight();
+                    startIndex = i;
+                }
+            }
+            if(startIndex != rows.size()) {
+                PdfPTable table = subTable(startIndex, rows.size());
+                splitTables.add(table);
+            }
+        }
+
+        return splitTables;
+    }
+
+    /** Returns a new table containing the rows between fromIndex inclusive and
+     * toIndex exclusive. Header rows are copied into the new table.  Unlike
+     * the java.util.List subList function, changes to this table are not
+     * reflected in the original table.
+     */
+
+    protected PdfPTable subTable(int fromIndex, int toIndex)
+    {
+        if(toIndex < fromIndex) {
+            throw new IllegalArgumentException("From Index must be less than toIndex.");
+        }
+        if(toIndex < 0 || fromIndex > rows.size() + 1) {
+            throw new IndexOutOfBoundsException("endpoints out of range fromIndex < 0 || toIndex > size");
+        }
+
+        PdfPTable newTable = new PdfPTable(relativeWidths);
+
+        newTable.setTotalWidth(totalWidth);
+        newTable.setHeaderRows(headerRows);
+        newTable.tableEvent = tableEvent;
+        newTable.runDirection = runDirection;
+        newTable.defaultCell = new PdfPCell(defaultCell);
+
+        //if we are including the last row, lets include the current row
+        if(fromIndex == rows.size() + 1) {
+            newTable.isColspan = isColspan;
+            newTable.currentRowIdx = currentRowIdx;
+
+            for (int k = 0; k < currentRow.length; ++k) {
+                if (currentRow[k] == null)
+                    break;
+                newTable.currentRow[k] = new PdfPCell(currentRow[k]);
+            }
+        }
+
+        //copy the header rows into the new table
+        if(fromIndex < getHeaderRows()) {
+            fromIndex = getHeaderRows();
+        }
+        else {
+            for (int k = 0; k < getHeaderRows(); ++k) {
+                newTable.rows.add(new PdfPRow((PdfPRow)(rows.get(k))));
+            }
+        }
+
+        //copy the selected rows into the new table
+        for (int k = fromIndex; k < toIndex; ++k) {
+            newTable.rows.add(new PdfPRow((PdfPRow)(rows.get(k))));
+        }
+
+        newTable.calculateWidths();
+        newTable.calculateHeights();
+
+        return newTable;
+    }
 }

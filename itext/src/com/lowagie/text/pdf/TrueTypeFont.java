@@ -446,6 +446,8 @@ class TrueTypeFont extends BaseFont {
         os_2.usLastCharIndex = rf.readUnsignedShort();
         os_2.sTypoAscender = rf.readShort();
         os_2.sTypoDescender = rf.readShort();
+        if (os_2.sTypoDescender > 0)
+            os_2.sTypoDescender = (short)(-os_2.sTypoDescender);
         os_2.sTypoLineGap = rf.readShort();
         os_2.usWinAscent = rf.readUnsignedShort();
         os_2.usWinDescent = rf.readUnsignedShort();

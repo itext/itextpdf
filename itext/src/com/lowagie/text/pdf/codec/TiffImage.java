@@ -237,10 +237,6 @@ public class TiffImage {
             }
             img.setDpi(dpiX, dpiY);
             img.setXYRatio(XYRatio);
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
-                TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
-                img.tagICC(ICC_Profile.getInstance(fd.getAsBytes()));
-            }
             img.setOriginalType(Image.ORIGINAL_TIFF);
             return img;
         }

@@ -107,12 +107,12 @@ class CJKFont extends BaseFont {
                 is = getResourceStream(RESOURCE_PATH + "cjkencodings.properties");
                 cjkEncodings.load(is);
                 is.close();
-                propertiesLoaded = true;
             }
             catch (Exception e) {
                 cjkFonts = new Properties();
                 cjkEncodings = new Properties();
             }
+            propertiesLoaded = true;
         }
     }
     

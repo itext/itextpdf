@@ -390,7 +390,17 @@ public class PdfReader {
                     throw new IOException("Rebuild failed: " + ne.getMessage() + "; Original message: " + e.getMessage());
                 }
             }
+            try {
             readDocObj();
+            }
+            catch (IOException ne) {
+                if (rebuilt)
+                    throw ne;
+                rebuilt = true;
+                rebuildXref();
+                lastXref = -1;
+                readDocObj();
+            }
             
             readDecryptedDocObj();	//added by ujihara for decryption
             strings.clear();

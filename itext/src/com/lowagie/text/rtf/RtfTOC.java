@@ -25,7 +25,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
+ * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -68,7 +68,7 @@ import com.lowagie.text.ExceptionConverter;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2004/04/02 10:32:58 $
+ * @version $Revision$Date: 2003/05/02 09:01:36 $
  */
 public class RtfTOC extends Chunk implements RtfField {
 

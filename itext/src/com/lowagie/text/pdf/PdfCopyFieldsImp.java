@@ -308,7 +308,7 @@ class PdfCopyFieldsImp extends PdfWriter {
             PdfDictionary merged = (PdfDictionary)item.merged.get(k);
             PdfObject dr = merged.get(PdfName.DR);
             if (dr != null)
-                PdfFormField.mergeResources(resources, (PdfDictionary)dr);
+                PdfFormField.mergeResources(resources, (PdfDictionary)PdfReader.getPdfObject(dr));
             PdfDictionary widget = new PdfDictionary();
             for (Iterator it = merged.getKeys().iterator(); it.hasNext();) {
                 PdfName key = (PdfName)it.next();
