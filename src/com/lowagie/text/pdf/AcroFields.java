@@ -418,11 +418,11 @@ public class AcroFields {
         }
         if (!PdfName.CH.equals(fieldType))
             throw new DocumentException("An appearance was requested without a variable text field.");
-        if ((flags & PdfFormField.FF_COMBO) != 0) {
+        PdfArray opt = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.OPT));
+        if ((flags & PdfFormField.FF_COMBO) != 0 && opt == null) {
             tx.setText(text);
             return tx.getAppearance();
         }
-        PdfArray opt = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.OPT));
         int arrsize = 0;
         if (opt != null) {
             ArrayList op = opt.getArrayList();
@@ -438,6 +438,16 @@ public class AcroFields {
                     choicesExp[k] = ((PdfString)opar.get(0)).toUnicodeString();
                     choices[k] = ((PdfString)opar.get(1)).toUnicodeString();
                 }
+            }
+            if ((flags & PdfFormField.FF_COMBO) != 0) {
+                for (int k = 0; k < choices.length; ++k) {
+                    if (text.equals(choicesExp[k])) {
+                        text = choices[k];
+                        break;
+                    }
+                }
+                tx.setText(text);
+                return tx.getAppearance();
             }
             int idx = 0;
             for (int k = 0; k < choices.length; ++k) {
@@ -880,8 +890,8 @@ public class AcroFields {
                         widget.put(PdfName.AS, vt);
                     }
                     else {
-                        merged.put(PdfName.AS, PdfName.OFF);
-                        widget.put(PdfName.AS, PdfName.OFF);
+                        merged.put(PdfName.AS, PdfName.Off);
+                        widget.put(PdfName.AS, PdfName.Off);
                     }
                 }
             }

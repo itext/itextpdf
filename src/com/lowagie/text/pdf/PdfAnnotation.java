@@ -575,5 +575,13 @@ public class PdfAnnotation extends PdfDictionary {
     
     public void setMKTextPosition(int tp) {
         getMK().put(PdfName.TP, new PdfNumber(tp));
-    }    
+    }
+    
+    /**
+     * Sets the layer this annotation belongs to.
+     * @param layer the layer this annotation belongs to
+     */    
+    public void setLayer(PdfOCG layer) {
+        put(PdfName.OC, layer.getRef());
+    }
 }

@@ -67,6 +67,7 @@ import com.lowagie.text.pdf.codec.GifImage;
 import com.lowagie.text.pdf.codec.PngImage;
 import com.lowagie.text.pdf.codec.TiffImage;
 import com.lowagie.text.pdf.codec.BmpImage;
+import com.lowagie.text.pdf.PdfOCG;
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG or GIF)
  * that has to be inserted into the document
@@ -250,6 +251,8 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      */
     private float widthPercentage = 100;
     
+    protected PdfOCG layer;
+    
     // constructors
     
     /**
@@ -308,6 +311,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.spacingAfter = image.spacingAfter;
         this.spacingBefore = image.spacingBefore;
         this.widthPercentage = image.widthPercentage;
+        this.layer = layer;
     }
     
     /**
@@ -1642,6 +1646,22 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      */
     public void setWidthPercentage(float widthPercentage) {
         this.widthPercentage = widthPercentage;
+    }
+    
+    /**
+     * Gets the layer this image belongs to.
+     * @return the layer this image belongs to or <code>null</code> for no layer defined
+     */
+    public PdfOCG getLayer() {
+        return layer;
+    }
+    
+    /**
+     * Sets the layer this image belongs to.
+     * @param layer the layer this image belongs to
+     */    
+    public void setLayer(PdfOCG layer) {
+        this.layer = layer;
     }
     
 }

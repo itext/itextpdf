@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.HashSet;
 
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
@@ -687,6 +688,11 @@ public class PdfWriter extends DocWriter {
     
     protected HashMap documentExtGState = new HashMap();
     
+    protected HashMap documentLayers = new HashMap();
+    protected HashSet documentOCG = new HashSet();
+    protected ArrayList documentOCGorder = new ArrayList();
+    protected PdfOCProperties OCProperties;
+    
     protected PdfDictionary defaultColorspace = new PdfDictionary();
     
     public static final int PDFXNONE = 0;
@@ -701,6 +707,7 @@ public class PdfWriter extends DocWriter {
     static final int PDFXKEY_FONT = 4;
     static final int PDFXKEY_IMAGE = 5;
     static final int PDFXKEY_GSTATE = 6;
+    static final int PDFXKEY_LAYER = 7;
     
     // membervariables
     
@@ -993,7 +1000,30 @@ public class PdfWriter extends DocWriter {
     
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj)
     {
-        return ((PdfDocument)document).getCatalog(rootObj);
+        PdfDictionary catalog = ((PdfDocument)document).getCatalog(rootObj);
+        if (documentLayers.size() == 0)
+            return catalog;
+        getOCProperties();
+        catalog.put(PdfName.OCPROPERTIES, OCProperties);
+        if (OCProperties.get(PdfName.OCGS) == null) {
+            PdfArray gr = new PdfArray();
+            for (Iterator it = documentOCGorder.iterator(); it.hasNext();) {
+                PdfOCG layer = (PdfOCG)it.next();
+                gr.add(layer.getRef());
+            }
+            OCProperties.put(PdfName.OCGS, gr);
+        }
+        if (OCProperties.get(PdfName.D) != null)
+            return catalog;
+        PdfArray order = new PdfArray();
+        for (Iterator it = documentOCGorder.iterator(); it.hasNext();) {
+            PdfOCG layer = (PdfOCG)it.next();
+            order.add(layer.getRef());
+        }
+        PdfDictionary d = new PdfDictionary();
+        d.put(PdfName.ORDER, order);
+        OCProperties.put(PdfName.D, d);
+        return catalog;
     }
 
     protected void addSharedObjectsToBody() throws IOException {
@@ -1043,6 +1073,16 @@ public class PdfWriter extends DocWriter {
             PdfDictionary gstate = (PdfDictionary)it.next();
             PdfObject obj[] = (PdfObject[])documentExtGState.get(gstate);
             addToBody(gstate, (PdfIndirectReference)obj[1]);
+        }
+        // add the layers
+        for (Iterator it = documentLayers.keySet().iterator(); it.hasNext();) {
+            PdfOCG layer = (PdfOCG)it.next();
+            if (layer instanceof PdfLayerMembership)
+                addToBody(layer.getPdfObject(), layer.getRef());
+        }
+        for (Iterator it = documentOCG.iterator(); it.hasNext();) {
+            PdfOCG layer = (PdfOCG)it.next();
+            addToBody(layer.getPdfObject(), layer.getRef());
         }
     }
     
@@ -1425,6 +1465,25 @@ public class PdfWriter extends DocWriter {
             documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
         }
         return (PdfObject[])documentExtGState.get(gstate);
+    }
+    
+    void registerLayer(PdfOCG layer) {
+        if (layer instanceof PdfLayer) {
+            if (!documentOCG.contains(layer)) {
+                documentOCG.add(layer);
+                documentOCGorder.add(layer);
+            }
+        }
+        else
+            throw new IllegalArgumentException("Only PdfLayer is accepted.");
+    }
+    
+    PdfName addSimpleLayer(PdfOCG layer) {
+        if (!documentLayers.containsKey(layer)) {
+            checkPDFXConformance(this, PDFXKEY_LAYER, null);
+            documentLayers.put(layer, new PdfName("OC" + (documentLayers.size() + 1)));
+        }
+        return (PdfName)documentLayers.get(layer);
     }
     
     /**
@@ -2124,6 +2183,8 @@ public class PdfWriter extends DocWriter {
                 if (obj != null && (v = ((PdfNumber)obj).doubleValue()) != 1.0)
                     throw new PdfXConformanceException("Transparency is not allowed: /ca = " + v);
                 break;
+            case PDFXKEY_LAYER:
+                throw new PdfXConformanceException("Layers are not allowed.");
         }
     }
     
@@ -2248,5 +2309,17 @@ public class PdfWriter extends DocWriter {
     public void setFullCompression() {
         this.fullCompression = true;
         setPdfVersion(VERSION_1_5);
-    }    
+    }
+    
+    /**
+     * Gets the <B>Optional Content Properties Dictionary</B>. The /OCGs key will be
+     * filled automatically. If the /D key doesn't exist the layers will appear in the
+     * order they were created.
+     * @return the Optional Content Properties Dictionary
+     */    
+    public PdfOCProperties getOCProperties() {
+        if (OCProperties == null)
+            OCProperties = new PdfOCProperties();
+        return OCProperties;
+    }
 }

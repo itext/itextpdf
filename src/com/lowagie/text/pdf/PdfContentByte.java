@@ -964,7 +964,11 @@ public class PdfContentByte {
                 PdfTemplate template = image.templateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
+                if (image.getLayer() != null)
+                    beginLayer(image.getLayer());
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
+                if (image.getLayer() != null)
+                    endLayer();
             }
             else {
                 PdfName name;
@@ -2535,6 +2539,25 @@ public class PdfContentByte {
         PageResources prs = getPageResources();
         PdfName name = prs.addExtGState((PdfName)obj[0], (PdfIndirectReference)obj[1]);
         content.append(name.getBytes()).append(" gs").append_i(separator);
+    }
+    
+    /**
+     * Begins a graphic block whose visibility is controled by the <CODE>layer</CODE>.
+     * Blocks can be nested. Each block must be terminated by an {@link #endLayer()}.
+     * @param layer the layer
+     */    
+    public void beginLayer(PdfOCG layer) {
+        PdfName name = writer.addSimpleLayer(layer);
+        PageResources prs = getPageResources();
+        name = prs.addLayer(name, layer.getRef());
+        content.append("/OC ").append(name.getBytes()).append(" BDC").append_i(separator);
+    }
+    
+    /**
+     * Ends a layer controled graphic block. It will end the most recent open block.
+     */    
+    public void endLayer() {
+        content.append("EMC").append_i(separator);
     }
     
     /** Concatenates a transformation to the current transformation

@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import java.net.URL;
 import com.lowagie.text.ExceptionConverter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.
@@ -411,6 +412,64 @@ public class PdfAction extends PdfDictionary {
             action.put(PdfName.D, new PdfString(dest, null));
         if (newWindow)
             action.put(PdfName.NEWWINDOW, PdfBoolean.PDFTRUE);
+        return action;
+    }
+
+    /**
+     * A set-OCG-state action (PDF 1.5) sets the state of one or more optional content
+     * groups.
+     * @param state an array consisting of any number of sequences beginning with a <CODE>PdfName</CODE>
+     * or <CODE>String</CODE> (ON, OFF, or Toggle) followed by one or more optional content group dictionaries
+     * <CODE>PdfLayer</CODE> or a <CODE>PdfIndirectReference</CODE> to a <CODE>PdfLayer</CODE>.<br>
+     * The array elements are processed from left to right; each name is applied
+     * to the subsequent groups until the next name is encountered:
+     * <ul>
+     * <li>ON sets the state of subsequent groups to ON</li>
+     * <li>OFF sets the state of subsequent groups to OFF</li>
+     * <li>Toggle reverses the state of subsequent groups</li>
+     * </ul>
+     * @param preserveRB if <CODE>true</CODE>, indicates that radio-button state relationships between optional
+     * content groups (as specified by the RBGroups entry in the current configuration
+     * dictionary) should be preserved when the states in the
+     * <CODE>state</CODE> array are applied. That is, if a group is set to ON (either by ON or Toggle) during
+     * processing of the <CODE>state</CODE> array, any other groups belong to the same radio-button
+     * group are turned OFF. If a group is set to OFF, there is no effect on other groups.<br>
+     * If <CODE>false</CODE>, radio-button state relationships, if any, are ignored
+     * @return the action
+     */    
+    public static PdfAction setOCGstate(ArrayList state, boolean preserveRB) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.SETOCGSTATE);
+        PdfArray a = new PdfArray();
+        for (int k = 0; k < state.size(); ++k) {
+            Object o = state.get(k);
+            if (o == null)
+                continue;
+            if (o instanceof PdfIndirectReference)
+                a.add((PdfIndirectReference)o);
+            else if (o instanceof PdfLayer)
+                a.add(((PdfLayer)o).getRef());
+            else if (o instanceof PdfName)
+                a.add((PdfName)o);
+            else if (o instanceof String) {
+                PdfName name = null;
+                String s = (String)o;
+                if (s.equalsIgnoreCase("on"))
+                    name = PdfName.ON;
+                else if (s.equalsIgnoreCase("off"))
+                    name = PdfName.OFF;
+                else if (s.equalsIgnoreCase("toggle"))
+                    name = PdfName.TOGGLE;
+                else
+                    throw new IllegalArgumentException("A string '" + s + " was passed in state. Only 'ON', 'OFF' and 'Toggle' are allowed.");
+                a.add(name);
+            }
+            else
+                throw new IllegalArgumentException("Invalid type was passed in state: " + o.getClass().getName());
+        }
+        action.put(PdfName.STATE, a);
+        if (!preserveRB)
+            action.put(PdfName.PRESERVERB, PdfBoolean.PDFFALSE);
         return action;
     }
 }
