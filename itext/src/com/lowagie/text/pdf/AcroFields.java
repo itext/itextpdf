@@ -56,7 +56,6 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
 import java.io.IOException;
 import java.awt.Color;
-import java.util.Calendar;
 
 /** Query and change fields in existing documents either by method
  * calls or by FDF merging.

@@ -58,7 +58,6 @@ import com.lowagie.text.Image;
 import com.lowagie.text.SplitCharacter;
 import java.util.HashMap;
 import java.util.Iterator;
-import com.lowagie.text.ExceptionConverter;
 
 /**
  * A <CODE>PdfChunk</CODE> is the PDF translation of a <CODE>Chunk</CODE>.

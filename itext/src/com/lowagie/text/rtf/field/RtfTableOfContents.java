@@ -55,7 +55,6 @@ package com.lowagie.text.rtf.field;
 import java.io.IOException;
 
 import com.lowagie.text.Font;
-import com.lowagie.text.rtf.document.RtfDocument;
 
 
 

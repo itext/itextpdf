@@ -622,7 +622,7 @@ class PdfStamperImp extends PdfWriter {
                 }
                 if (annot.isAnnotation()) {
                     PdfDictionary dic = reader.getPageN(realPage);
-                    PdfArray annots = (PdfArray)reader.getPdfObject(dic.get(PdfName.ANNOTS));
+                    PdfArray annots = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.ANNOTS));
                     if (annots == null) {
                         annots = new PdfArray();
                         dic.put(PdfName.ANNOTS, annots);

@@ -74,10 +74,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Date;
 import com.lowagie.text.ExceptionConverter;
 
 import com.lowagie.bc.asn1.ASN1InputStream;

@@ -46,8 +46,6 @@
  */
 package com.lowagie.text.pdf;
 
-import java.util.HashMap;
-
 /**
  * The handler for the events fired by <CODE>SimpleXMLParser</CODE>.
  * @author Paulo Soares (psoares@consiste.pt)

@@ -46,7 +46,6 @@
  */
 package com.lowagie.text.pdf;
 
-import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.security.cert.CRL;
 import java.security.PrivateKey;

@@ -46,16 +46,8 @@
  */
 package com.lowagie.text.pdf;
 
-import java.security.cert.X509Certificate;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CertPath;
-import java.security.cert.CRL;
-import java.security.PrivateKey;
-import java.security.KeyStore;
 import java.security.SignatureException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.EOFException;
@@ -65,7 +57,6 @@ import java.io.InputStream;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocWriter;
-import com.lowagie.text.Rectangle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
