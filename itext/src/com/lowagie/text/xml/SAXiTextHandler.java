@@ -310,6 +310,26 @@ public class SAXiTextHandler extends HandlerBase {
             return;
         }
         
+        // newpage
+        if (ElementTags.HORIZONTALRULE.equals(name)) {
+            TextElementArray current;
+            Graphic hr = new Graphic();
+            hr.setHorizontalLine(1.0f, 100.0f);
+            try {
+                current = (TextElementArray) stack.pop();
+                current.add(hr);
+                stack.push(current);
+            }
+            catch(EmptyStackException ese) {
+                try {
+                    document.add(hr);
+                }
+                catch(DocumentException de) {
+                }
+            }
+            return;
+        }
+        
         // documentroot
         if (isDocumentRoot(name)) {
             String key;
