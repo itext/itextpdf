@@ -265,7 +265,6 @@ public class Font implements Comparable {
         else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
             setColor(ElementTags.decodeColor(value));
         }
-        setMarkupAttributes(attributes);
     }
     
     // implementation of the Comparable interface

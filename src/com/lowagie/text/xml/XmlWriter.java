@@ -822,7 +822,11 @@ public class XmlWriter extends DocWriter implements DocListener {
             case Font.ZAPFDINGBATS:
                 write(ElementTags.FONT, "ZapfDingbats");
                 break;
-                default:
+            default:
+                com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
+                if (bf != null) {
+                    writeCssProperty(HtmlTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
+                }
         }
         if (font.size() != Font.UNDEFINED) {
             write(ElementTags.SIZE, String.valueOf(font.size()));

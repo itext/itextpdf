@@ -599,10 +599,15 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * Will fill empty cells with valid blank <CODE>Cell</CODE>s
  */
     
-    public final void complete() throws DocumentException {
-        if (mTableInserted == true) {
-            mergeInsertedTables();  // integrate tables in the table
-            mTableInserted = false;
+    public final void complete() {
+        try {
+            if (mTableInserted == true) {
+                mergeInsertedTables();  // integrate tables in the table
+                mTableInserted = false;
+            }
+        }
+        catch(DocumentException de) {
+            throw new ExceptionConverter(de);
         }
         if (mAutoFillEmptyCells == true) {
             fillEmptyMatrixCells();
@@ -1259,17 +1264,21 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * adds new<CODE>Cell</CODE>'s to empty/null spaces.
  */
     
-    private void fillEmptyMatrixCells() throws BadElementException {
+    private void fillEmptyMatrixCells() {
         Cell lDummyCell = null;
         int  lTel = -1;
         Object obj = new Object();
-        
-        for (int i=0; i < rows.size(); i++) {
-            for (int j=0; j < columns; j++) {
-                if ( ((Row) rows.get(i)).isReserved(j) == false) {
-                    addCell(new Cell(new Paragraph(" ")), new Point(i, j));
+        try {
+            for (int i=0; i < rows.size(); i++) {
+                for (int j=0; j < columns; j++) {
+                    if ( ((Row) rows.get(i)).isReserved(j) == false) {
+                        addCell(new Cell(new Paragraph(" ")), new Point(i, j));
+                    }
                 }
             }
+        }
+        catch(BadElementException bee) {
+            throw new ExceptionConverter(bee);
         }
     }
     
