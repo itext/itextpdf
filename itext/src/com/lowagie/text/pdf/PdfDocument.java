@@ -421,7 +421,7 @@ class PdfDocument extends Document implements DocListener {
     
 /** This is the <CODE>ArrayList</CODE> with the outlines of the document. */
     private ArrayList outlines;
-   
+    
 /** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
     private PdfOutline currentOutline;
     
@@ -443,7 +443,7 @@ class PdfDocument extends Document implements DocListener {
     private String openActionName;
     private PdfAction openActionAction;
     private PdfPageLabels pageLabels;
-
+    
     //add by Jin-Hsia Yang
     private boolean isNewpage = false;
     private boolean isParagraphE = false;
@@ -674,11 +674,11 @@ class PdfDocument extends Document implements DocListener {
         localPageDestinations.clear();
         // we initialize the new page
         initPage();
-
+        
         //add by Jin-Hsia Yang
         isNewpage = false;
         //end add by Jin-Hsia Yang
-
+        
         return true;
     }
     
@@ -894,7 +894,7 @@ class PdfDocument extends Document implements DocListener {
             currentHeight = indentTop() - currentY;
         }
         ptable.setTableEvent(event);
-
+        
     }
     
 /**
@@ -1435,7 +1435,7 @@ class PdfDocument extends Document implements DocListener {
                 name = i.name();
             }
             images.put(image.getMySerialId(), name);
-        }        
+        }
         return name;
     }
     
@@ -1554,7 +1554,7 @@ class PdfDocument extends Document implements DocListener {
         }
         
         // if there is a watermark, the watermark is added
-        if (watermark != null) {            
+        if (watermark != null) {
             float mt[] = watermark.matrix();
             graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
@@ -1725,13 +1725,13 @@ class PdfDocument extends Document implements DocListener {
             
             //add by Jin-Hsia Yang
             if(isParagraphE && isNewpage && newline) {
-	        newline=false;
-	        text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
+                newline=false;
+                text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
             } else
-            //end add by Jin-Hsia Yang
-
-            // aligning the line
-            text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
+                //end add by Jin-Hsia Yang
+                
+                // aligning the line
+                text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
             
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
@@ -1746,6 +1746,15 @@ class PdfDocument extends Document implements DocListener {
                     text.setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
                     text.showText(chunk);
                     text.resetRGBColorFill();
+                }
+                else if (chunk.isImage()) {
+                    Image image = chunk.getImage();
+                    float matrix[] = image.matrix();
+                    float xMarker = text.getXTLM();
+                    float yMarker = text.getYTLM();
+                    matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
+                    matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
+                    graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                 }
                 else {
                     text.showText(chunk);
@@ -2149,7 +2158,7 @@ class PdfDocument extends Document implements DocListener {
         PdfAction action = getLocalGotoAction(name);
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
     }
-
+    
     PdfAction getLocalGotoAction(String name) {
         PdfAction action;
         Object obj[] = (Object[])localDestinations.get(name);
@@ -2235,12 +2244,12 @@ class PdfDocument extends Document implements DocListener {
     void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
     }
-
+    
     void setOpenAction(String name) {
         openActionName = name;
         openActionAction = null;
     }
-
+    
     void setOpenAction(PdfAction action) {
         openActionAction = action;
         openActionName = null;
