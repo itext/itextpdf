@@ -55,18 +55,27 @@
 import java.io.*;
 import java.util.Iterator;
 /**
- * List a PDF file in human-readable form
+ * List a PDF file in human-readable form (for debugging reasons mostly)
  * @author Mark Thompson
  */
 
 public class PdfLister {
 
+	/** the printStream you want to write the output to. */
     PrintStream out;
 
+    /**
+     * Create a new lister object.
+     * @param out
+     */
     public PdfLister(PrintStream out) {
         this.out = out;
     }
 
+    /**
+     * Visualizes a PDF object.
+     * @param object	a com.lowagie.text.pdf object
+     */
     public void listAnyObject(PdfObject object)
     {
         switch (object.type()) {
@@ -84,6 +93,10 @@ public class PdfLister {
             break;
         }
     }
+    /**
+     * Visualizes a PdfDictionary object.
+     * @param dictionary	a com.lowagie.text.pdf.PdfDictionary object
+     */
     public void listDict(PdfDictionary dictionary)
     {
         out.println("<<");
@@ -99,6 +112,10 @@ public class PdfLister {
         out.println(">>");
     }
 
+    /**
+     * Visualizes a PdfArray object.
+     * @param array	a com.lowagie.text.pdf.PdfArray object
+     */
     public void listArray(PdfArray array)
     {
         out.println('[');
@@ -108,6 +125,11 @@ public class PdfLister {
         }
         out.println(']');
     }
+    /**
+     * Visualizes a Stream.
+     * @param stream
+     * @param reader
+     */
     public void listStream(PRStream stream, PdfReaderInstance reader)
     {
         try {
@@ -136,6 +158,10 @@ public class PdfLister {
 //              System.err.println("Data Format Exception: " + e);
         }
     }
+    /**
+     * Visualizes an imported page
+     * @param iPage
+     */
     public void listPage(PdfImportedPage iPage)
     {
         int pageNum = iPage.getPageNumber();
