@@ -251,7 +251,7 @@ public class Meta implements Element, MarkupAttributes {
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
  */
     public Set getMarkupAttributeNames() {
-        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+        return Chunk.getKeySet(markupAttributes);
     }
     
 /**

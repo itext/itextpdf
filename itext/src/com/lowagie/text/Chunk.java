@@ -53,7 +53,10 @@ package com.lowagie.text;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -520,7 +523,7 @@ public class Chunk implements Element, MarkupAttributes {
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
  */
     public Set getMarkupAttributeNames() {
-        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+        return getKeySet(markupAttributes);
     }
     
 /**
@@ -528,5 +531,17 @@ public class Chunk implements Element, MarkupAttributes {
  */
     public Properties getMarkupAttributes() {
         return markupAttributes;
+    }
+    
+    public static Set getKeySet(Hashtable table) {
+        // for java2
+        return (table == null) ? Collections.EMPTY_SET : table.keySet();
+        // for jdk1.1.x
+        /*
+        if (table == null) return Collections.EMPTY_SET;
+        HashSet hash = new HashSet();
+        for (Enumeration e = table.keys(); e.hasMoreElements();) hash.add(e.nextElement());
+        return hash;
+        */
     }
 }

@@ -517,7 +517,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
  */
     public Set getMarkupAttributeNames() {
-        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+        return Chunk.getKeySet(markupAttributes);
     }
     
 /**

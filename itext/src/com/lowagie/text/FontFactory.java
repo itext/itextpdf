@@ -408,6 +408,6 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Set getRegisteredFonts() {
-        return trueTypeFonts.keySet();
+        return Chunk.getKeySet(trueTypeFonts);
     }
 }

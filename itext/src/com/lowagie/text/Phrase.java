@@ -517,7 +517,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
  */
     public Set getMarkupAttributeNames() {
-        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+        return Chunk.getKeySet(markupAttributes);
     }
     
 /**
