@@ -49,6 +49,17 @@
  */
 package com.lowagie.tools.arguments;
 
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.Iterator;
+import java.util.TreeMap;
+
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
+import com.lowagie.tools.plugins.AbstractTool;
+
 /**
  * Argument that can be one of several options.
  */
@@ -86,5 +97,63 @@ public class OptionArgument extends ToolArgument {
 		public String toString() {
 			return description.toString();
 		}
+	}
+	
+	private TreeMap options = new TreeMap();
+	
+	/**
+	 * Constructs an OptionArgument.
+	 * @param tool the tool that needs this argument
+	 * @param name the name of the argument
+	 * @param the description of the argument
+	 */
+	public OptionArgument(AbstractTool tool, String name, String description) {
+		super(tool, name, description, Entry.class.getName());
+	}
+	
+	/**
+	 * Adds an Option.
+	 * @param description the description of the option
+	 * @param value the value of the option
+	 */
+	public void addOption(Object description, Object value) {
+		options.put(description.toString(), new Entry(description, value));
+	}
+	
+	/**
+	 * Gets the argument as an object.
+	 * @return an object
+	 * @throws InstantiationException
+	 */
+	public Object getArgument() throws InstantiationException {
+		if (value == null) return null;
+		try {
+			return (Entry)options.get(value);
+		} catch (Exception e) {
+			throw new InstantiationException(e.getMessage());
+		}
+	}
+	
+	/**
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		Object[] message = new Object[2];
+		message[0] = "Choose one of the following options:";
+		JComboBox cb = new JComboBox();
+		for(Iterator i = options.values().iterator(); i.hasNext(); ) {
+			cb.addItem(i.next());
+		}
+		message[1] = cb;
+		int result = JOptionPane.showOptionDialog( 
+	 		    tool.getInternalFrame(),
+	 		    message, 
+	 		    description,
+	 		    JOptionPane.OK_CANCEL_OPTION, 
+	 		    JOptionPane.QUESTION_MESSAGE,
+	 		    null,
+	 		    null,
+				null
+	 		);
 	}
 }
