@@ -305,11 +305,13 @@ public class PdfCopy extends PdfWriter {
             PdfDictionary catalog = reader.getCatalog();
             PRIndirectReference ref = (PRIndirectReference)catalog.get(PdfName.PAGES);
             indirects.put(new RefKey(ref), new IndirectReferences(topPageParent));
-            ref = (PRIndirectReference)catalog.get(PdfName.ACROFORM);
-            if (ref != null) {
-                if (acroForm == null) acroForm = body.getPdfIndirectReference();
-                indirects.put(new RefKey(ref), new IndirectReferences(acroForm));
-            }
+            ref = null;
+            PdfObject o = catalog.get(PdfName.ACROFORM);
+            if (o == null || o.type() != PdfObject.INDIRECT)
+                return;
+            ref = (PRIndirectReference)o;
+            if (acroForm == null) acroForm = body.getPdfIndirectReference();
+            indirects.put(new RefKey(ref), new IndirectReferences(acroForm));
         }
     }
     /**
@@ -362,7 +364,10 @@ public class PdfCopy extends PdfWriter {
         setFromReader(reader);
         
         PdfDictionary catalog = reader.getCatalog();
-        PRIndirectReference hisRef = (PRIndirectReference)catalog.get(PdfName.ACROFORM);
+        PRIndirectReference hisRef = null;
+        PdfObject o = catalog.get(PdfName.ACROFORM);
+        if (o != null && o.type() == PdfObject.INDIRECT)
+            hisRef = (PRIndirectReference)o;
         RefKey key = new RefKey(hisRef);
         PdfIndirectReference myRef;
         IndirectReferences iRef = (IndirectReferences)indirects.get(key);

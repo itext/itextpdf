@@ -430,6 +430,12 @@ public class PdfWriter extends DocWriter {
          */
         
         void writeCrossReferenceTable(OutputStream os, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID, int prevxref) throws IOException {
+            int refNumber = 0;
+            if (writer.isFullCompression()) {
+                flushObjStm();
+                refNumber = getIndirectReferenceNumber();
+                xrefs.add(new PdfCrossReference(refNumber, position));
+            }
             PdfCrossReference entry = (PdfCrossReference)xrefs.first();
             int first = entry.getRefnum();
             int len = 0;
@@ -448,9 +454,6 @@ public class PdfWriter extends DocWriter {
             sections.add(new Integer(first));
             sections.add(new Integer(len));
             if (writer.isFullCompression()) {
-                flushObjStm();
-                int refNumber = getIndirectReferenceNumber();
-                xrefs.add(new PdfCrossReference(refNumber, position));
                 int mid = 4;
                 int mask = 0xff000000;
                 for (; mid > 1; --mid) {
@@ -654,7 +657,7 @@ public class PdfWriter extends DocWriter {
     public static final int SIGNATURE_EXISTS = 1;
     /** signature value */
     public static final int SIGNATURE_APPEND_ONLY = 2;
-
+    
     /** possible PDF version */
     public static final char VERSION_1_2 = '2';
     /** possible PDF version */
@@ -1870,7 +1873,7 @@ public class PdfWriter extends DocWriter {
         PdfIndirectObject iobj = body.add(object, ref, inObjStm);
         return iobj;
     }
-
+    
     /**
      * Adds an object to the PDF body.
      * @param object
