@@ -53,10 +53,11 @@
 
     <target name="download.bin" description="--> downloads files that hardly ever change">
         <mkdir dir="${itext.bin}" />
-        <get src="http://itext.sourceforge.net/downloads/crimson.jar" dest="${itext.bin}/crimson.jar" verbose="true" />
-        <get src="http://itext.sourceforge.net/downloads/iTextHYPH.jar" dest="${itext.bin}/iTextHYPH.jar" verbose="true" />
-        <get src="http://itext.sourceforge.net/downloads/iTextAsian.jar" dest="${itext.bin}/iTextAsian.jar" verbose="true" />
-        <get src="http://itext.sourceforge.net/downloads/iTextAsianCmaps.jar" dest="${itext.bin}/iTextAsianCmaps.jar" verbose="true" />
-        <get src="http://itext.sourceforge.net/downloads/barcodefonts.zip" dest="${itext.bin}/barcodefonts.zip" verbose="true" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/crimson.jar" dest="${itext.bin}/crimson.jar" verbose="true" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/iTextHYPH.jar" dest="${itext.bin}/iTextHYPH.jar" verbose="true" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/iTextAsian.jar" dest="${itext.bin}/iTextAsian.jar" verbose="true" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/iTextAsianCmaps.jar" dest="${itext.bin}/iTextAsianCmaps.jar" verbose="true" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/servlet.jar" dest="${itext.bin}/servlet.jar" verbose="true" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/barcodefonts.zip" dest="${itext.bin}/barcodefonts.zip" verbose="true" />
     </target>
 </project>
