@@ -152,7 +152,7 @@ public class BidiLine {
                 c = s.charAt(indexChunkChar);
                 uniC = bf.getUnicodeEquivalent(c);
                 if (uniC == '\r' || uniC == '\n') {
-                    // next conditin is never true for CID
+                    // next condition is never true for CID
                     if (uniC == '\r' && indexChunkChar + 1 < len && s.charAt(indexChunkChar + 1) == '\n')
                         ++indexChunkChar;
                     ++indexChunkChar;
@@ -184,7 +184,7 @@ public class BidiLine {
                 orderLevels = new byte[pieceSize];
                 indexChars = new int[pieceSize];
             }
-
+            ArabicLigaturizer.processNumbers(text, 0, totalTextLength, arabicOptions);
             BidiOrder order = new BidiOrder(text, 0, totalTextLength, (byte)(runDirection == PdfWriter.RUN_DIRECTION_RTL ? 1 : 0));
             byte od[] = order.getLevels();
             for (int k = 0; k < totalTextLength; ++k) {
@@ -315,7 +315,7 @@ public class BidiLine {
 //                System.out.print(Integer.toHexString((int)text[h + startArabicIdx]) + " ");
 //            System.out.println();
 //            int size = arabic.shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize);
-            int size = PangoArabicShapping.arabic_shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize, arabicOptions /*PangoArabicShapping.ar_novowel PangoArabicShapping.ar_lig | PangoArabicShapping.ar_composedtashkeel*/);
+            int size = ArabicLigaturizer.arabic_shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize, arabicOptions /*PangoArabicShapping.ar_novowel PangoArabicShapping.ar_lig | PangoArabicShapping.ar_composedtashkeel*/);
 //            for (int h = 0; h < size; ++h)
 //                System.out.print(Integer.toHexString((int)text[h + dest]) + " ");
 //            System.out.println();

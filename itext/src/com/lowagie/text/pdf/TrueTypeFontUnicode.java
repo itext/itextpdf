@@ -95,9 +95,10 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             process(ttfAfm);
             if (os_2.fsType == 2)
                 throw new DocumentException(fileName + style + " cannot be embedded due to licensing restrictions.");
-
+            // Sivan
             if ((cmap31 == null && !fontSpecific) || (cmap10 == null && fontSpecific))
-                throw new DocumentException(fileName + " " + style + " does not contain an usable cmap.");
+                directTextToByte=true;
+                //throw new DocumentException(fileName + " " + style + " does not contain an usable cmap.");
             if (fontSpecific) {
                 fontSpecific = false;
                 String tempEncoding = encoding;
@@ -123,10 +124,14 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             return text.length() * 1000;
         int total = 0;
         if (fontSpecific) {
-            byte b[] = PdfEncodings.convertToBytes(text, WINANSI);
-            int len = b.length;
-            for (int k = 0; k < len; ++k)
-                total += getRawWidth(b[k] & 0xff, null);
+            char cc[] = text.toCharArray();
+            char ptr = 0;
+            int len = cc.length;
+            for (int k = 0; k < len; ++k) {
+                char c = cc[k];
+                if ((c & 0xff00) == 0 || (c & 0xff00) == 0xf000)
+                    total += getRawWidth(c & 0xff, null);
+            }
         }
         else {
             int len = text.length();
@@ -201,10 +206,18 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      */    
     private PdfDictionary getCIDFontType2(PdfIndirectReference fontDescriptor, String subsetPrefix, Object metrics[]) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
-        dic.put(PdfName.SUBTYPE, PdfName.CIDFONTTYPE2);
-        dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));
+        // sivan; cff
+        if (cff) {
+			dic.put(PdfName.SUBTYPE, PdfName.CIDFONTTYPE0);
+            dic.put(PdfName.BASEFONT, new PdfName(fontName+"-"+encoding));
+        }
+		else {
+			dic.put(PdfName.SUBTYPE, PdfName.CIDFONTTYPE2);
+            dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));
+        }
         dic.put(PdfName.FONTDESCRIPTOR, fontDescriptor);
-        dic.put(PdfName.CIDTOGIDMAP,PdfName.IDENTITY);
+        if (!cff)
+          dic.put(PdfName.CIDTOGIDMAP,PdfName.IDENTITY);
         PdfDictionary cdic = new PdfDictionary();
         cdic.put(PdfName.REGISTRY, new PdfString("Adobe"));
         cdic.put(PdfName.ORDERING, new PdfString("Identity"));
@@ -248,12 +261,19 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      */    
     private PdfDictionary getFontBaseType(PdfIndirectReference descendant, String subsetPrefix, PdfIndirectReference toUnicode) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
+
         dic.put(PdfName.SUBTYPE, PdfName.TYPE0);
-        dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));
+        // The PDF Reference manual advises to add -encoding to CID font names
+		if (cff)
+		  dic.put(PdfName.BASEFONT, new PdfName(fontName+"-"+encoding));
+		  //dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix+fontName));
+		else
+		  dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));
+		  //dic.put(PdfName.BASEFONT, new PdfName(fontName));
         dic.put(PdfName.ENCODING, new PdfName(encoding));
         dic.put(PdfName.DESCENDANTFONTS, new PdfArray(descendant));
         if (toUnicode != null)
-            dic.put(PdfName.TOUNICODE, toUnicode);
+            dic.put(PdfName.TOUNICODE, toUnicode);  
         return dic;
     }
 
@@ -286,13 +306,56 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         PdfIndirectReference ind_font = null;
         PdfObject pobj = null;
         PdfIndirectObject obj = null;
-        TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, longTag, directoryOffset, false);
-        byte b[] = sb.process();
-        int lengths[] = new int[]{b.length};
-        pobj = new StreamFont(b, lengths);
-        obj = writer.addToBody(pobj);
-        ind_font = obj.getIndirectReference();
+        // sivan: cff
+        if (cff) {
+			RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
+			byte b[] = new byte[cffLength];
+			try {
+				rf2.reOpen();
+				rf2.seek(cffOffset);
+				rf2.readFully(b);
+			} finally {
+				try {
+					rf2.close();
+				} catch (Exception e) {
+					// empty on purpose
+				}
+			}
+			
+			CFFFont cffFont = new CFFFont(new RandomAccessFileOrArray(b));
+			// test if we can find the font by name and if it's a type1 CFF
+			if (cffFont.exists(fontName) && !cffFont.isCID(fontName)) {
+				byte[] cid = cffFont.getCID( (cffFont.getNames())[0] );
+				if (cid != null) b=cid;
+			}
+			// if the font is already CID, or not found by name, or 
+			// getCID returned null, we just use the data in the CFF
+			// table and hope for the best.
+		  
+				
+			// for debugging, force a reparsing
+			/*
+			java.lang.System.err.println("");
+			java.lang.System.err.println("");
+			java.lang.System.err.println("");
+			CFFFont dummy = new CFFFont(java.nio.ByteBuffer.wrap(b));	
+			java.lang.System.err.println("");
+			java.lang.System.err.println("");
+			java.lang.System.err.println("");
+			*/	
+			pobj = new StreamFont(b, "CIDFontType0C");
+			obj = writer.addToBody(pobj);
+			ind_font = obj.getIndirectReference();
+        } else {
+          TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, longTag, directoryOffset, false);
+          byte b[] = sb.process();
+          int lengths[] = new int[]{b.length};
+          pobj = new StreamFont(b, lengths);
+          obj = writer.addToBody(pobj);
+          ind_font = obj.getIndirectReference();
+        }
         String subsetPrefix = createSubsetPrefix();
+        //if (cff) subsetPrefix = "";
         PdfDictionary dic = getFontDescriptor(ind_font, subsetPrefix);
         obj = writer.addToBody(dic);
         ind_font = obj.getIndirectReference();
@@ -303,6 +366,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 
         pobj = getToUnicode(metrics);
         PdfIndirectReference toUnicodeRef = null;
+        
         if (pobj != null) {
             obj = writer.addToBody(pobj);
             toUnicodeRef = obj.getIndirectReference();
@@ -319,5 +383,60 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
     byte[] convertToBytes(String text)
     {
         return null;
+    }
+
+    /**
+     * Checks if a character exists in this font.
+     * @param c the character to check
+     * @return <CODE>true</CODE> if the character has a glyph,
+     * <CODE>false</CODE> otherwise
+     */
+    public boolean charExists(char c) {
+        HashMap map = null;
+        if (fontSpecific)
+            map = cmap10;
+        else
+            map = cmap31;
+        if (map == null)
+            return false;
+        if (fontSpecific) {
+            if ((c & 0xff00) == 0 || (c & 0xff00) == 0xf000)
+                return map.get(new Integer(c & 0xff)) != null;
+            else
+                return false;
+        }
+        else
+            return map.get(new Integer(c)) != null;
+    }
+    
+    /**
+     * Sets the character advance.
+     * @param c the character
+     * @param advance the character advance normalized to 1000 units
+     * @return <CODE>true</CODE> if the advance was set,
+     * <CODE>false</CODE> otherwise
+     */
+    public boolean setCharAdvance(char c, int advance) {
+        HashMap map = null;
+        if (fontSpecific)
+            map = cmap10;
+        else
+            map = cmap31;
+        if (map == null)
+            return false;
+        int m[] = null;
+        if (fontSpecific) {
+            if ((c & 0xff00) == 0 || (c & 0xff00) == 0xf000)
+                m = (int[])map.get(new Integer(c & 0xff));
+            else
+                return false;
+        }
+        else
+            m = (int[])map.get(new Integer(c));
+        if (m == null)
+            return false;
+        else
+            m[1] = advance;
+        return true;
     }
 }

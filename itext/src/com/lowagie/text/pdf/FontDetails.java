@@ -178,7 +178,7 @@ class FontDetails {
                     char glyph[] = new char[len];
                     int i = 0;
                     if (symbolic) {
-                        b = PdfEncodings.convertToBytes(text, BaseFont.WINANSI);
+                        b = PdfEncodings.convertToBytes(text, "symboltt");
                         len = b.length;
                         for (int k = 0; k < len; ++k) {
                             metrics = ttu.getMetricsTT(b[k] & 0xff);

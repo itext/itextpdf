@@ -102,6 +102,9 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
     public void startElement(String uri, String lname, String name, Attributes attrs) {
        //System.err.println("Start: " + name);
         
+        // super.handleStartingTags is replaced with handleStartingTags
+        // suggestion by Vu Ngoc Tan/Hop
+        
         if (((HtmlTagMap)myTags).isHtml(name)) {
             // we do nothing
             return;
@@ -140,7 +143,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
             // maybe we could extract some info about the document: color, margins,...
             // but that's for a later version...
             XmlPeer peer = new XmlPeer(ElementTags.ITEXT, name);
-            super.handleStartingTags(peer.getTag(), bodyAttributes);
+            handleStartingTags(peer.getTag(), bodyAttributes);
             return;
         }
         if (myTags.containsKey(name)) {
@@ -159,10 +162,10 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
                     p.put(ElementTags.TOP, String.valueOf(true));
                     p.put(ElementTags.BOTTOM, String.valueOf(true));
                 }
-                super.handleStartingTags(peer.getTag(), p);
+                handleStartingTags(peer.getTag(), p);
                 return;
             }
-            super.handleStartingTags(peer.getTag(), peer.getAttributes(attrs));
+            handleStartingTags(peer.getTag(), peer.getAttributes(attrs));
             return;
         }
         Properties attributes = new Properties();
@@ -172,7 +175,7 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
                 attributes.setProperty(attribute, attrs.getValue(i));
             }
         }
-        super.handleStartingTags(name, attributes);
+        handleStartingTags(name, attributes);
     }
     
 /**

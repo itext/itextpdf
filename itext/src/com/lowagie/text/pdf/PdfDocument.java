@@ -1239,6 +1239,19 @@ class PdfDocument extends Document implements DocListener {
                         case Annotation.FILE_DEST:
                             annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), (String) annot.attributes().get(Annotation.DESTINATION))));
                             break;
+                        case Annotation.SCREEN:
+                            boolean sparams[] = (boolean[])annot.attributes().get(Annotation.PARAMETERS);
+                            String fname = (String) annot.attributes().get(Annotation.FILE);
+                            String mimetype = (String) annot.attributes().get(Annotation.MIMETYPE);
+                            PdfFileSpecification fs;
+                            if (sparams[0])
+                                fs = PdfFileSpecification.fileEmbedded(writer, fname, fname, null);
+                            else
+                                fs = PdfFileSpecification.fileExtern(writer, fname);
+                            PdfAnnotation ann = PdfAnnotation.createScreen(writer, new Rectangle(annot.llx(), annot.lly(), annot.urx(), annot.ury()),
+                                    fname, fs, mimetype, sparams[1]);
+                            annotations.add(ann);
+                            break;
                         case Annotation.FILE_PAGE:
                             annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), ((Integer) annot.attributes().get(Annotation.PAGE)).intValue())));
                             break;
@@ -2436,7 +2449,6 @@ class PdfDocument extends Document implements DocListener {
             Color color = chunk.color();
             
             if (chunkStrokeIdx <= lastChunkStroke) {
-                boolean isStroked = (chunk.isAttribute(Chunk.STRIKETHRU) || chunk.isAttribute(Chunk.UNDERLINE));
                 float width;
                 if (isJustified) {
                     width = chunk.getWidthCorrected(lastBaseFactor, ratio * lastBaseFactor);
@@ -2445,31 +2457,38 @@ class PdfDocument extends Document implements DocListener {
                     width = chunk.width();
                 if (chunk.isStroked()) {
                     PdfChunk nextChunk = line.getChunk(chunkStrokeIdx + 1);
-                    if (isStroked) {
-                        graphics.setLineWidth(chunk.font().size() / 15);
-                        if (color != null)
-                            graphics.setColorStroke(color);
-                    }
-                    float shift = chunk.font().size() / 3;
-                    if (chunk.isAttribute(Chunk.STRIKETHRU)) {
-                        float subtract = lastBaseFactor;
-                        if (nextChunk != null && nextChunk.isAttribute(Chunk.STRIKETHRU))
-                            subtract = 0;
-                        if (nextChunk == null)
-                            subtract += hangingCorrection;
-                        graphics.moveTo(xMarker, yMarker + shift);
-                        graphics.lineTo(xMarker + width - subtract, yMarker + shift);
-                        graphics.stroke();
-                    }
                     if (chunk.isAttribute(Chunk.UNDERLINE)) {
                         float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.UNDERLINE))
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        graphics.moveTo(xMarker, yMarker - shift);
-                        graphics.lineTo(xMarker + width - subtract, yMarker - shift);
-                        graphics.stroke();
+                        Object unders[][] = (Object[][])chunk.getAttribute(Chunk.UNDERLINE);
+                        Color scolor = null;
+                        int cap = 0;
+                        for (int k = 0; k < unders.length; ++k) {
+                            Object obj[] = unders[k];
+                            scolor = (Color)obj[0];
+                            float ps[] = (float[])obj[1];
+                            if (scolor == null)
+                                scolor = color;
+                            if (scolor != null)
+                                graphics.setColorStroke(scolor);
+                            float fsize = chunk.font().size();
+                            graphics.setLineWidth(ps[0] + fsize * ps[1]);
+                            float shift = ps[2] + fsize * ps[3];
+                            int cap2 = (int)ps[4];
+                            if (cap2 != 0)
+                                graphics.setLineCap(cap2);
+                            graphics.moveTo(xMarker, yMarker + shift);
+                            graphics.lineTo(xMarker + width - subtract, yMarker + shift);
+                            graphics.stroke();
+                            if (scolor != null)
+                                graphics.resetGrayStroke();
+                            if (cap2 != 0)
+                                graphics.setLineCap(0);
+                        }
+                        graphics.setLineWidth(1);
                     }
                     if (chunk.isAttribute(Chunk.ACTION)) {
                         float subtract = lastBaseFactor;
@@ -2562,11 +2581,6 @@ class PdfDocument extends Document implements DocListener {
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
                         addImage(graphics, image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                         text.moveText(xMarker + lastBaseFactor + image.scaledWidth() - text.getXTLM(), 0);
-                    }
-                    if (isStroked) {
-                        graphics.setLineWidth(chunk.font().size() / 15);
-                        if (color != null)
-                            graphics.resetRGBColorStroke();
                     }
                 }
                 xMarker += width;
@@ -2693,7 +2707,7 @@ class PdfDocument extends Document implements DocListener {
     
     /**
      * The local destination to where a local goto with the same
-     * name will jump.
+     * name will jump to.
      * @param name the name of this local destination
      * @param destination the <CODE>PdfDestination</CODE> with the jump coordinates
      * @return <CODE>true</CODE> if the local destination was added,

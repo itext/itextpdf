@@ -177,6 +177,8 @@ class PdfImage extends PdfStream {
                     PdfDictionary additional = image.getAdditional();
                     if (additional != null)
                         putAll(additional);
+                    if (image.isMask() && (image.bpc() == 1 || image.bpc() > 8))
+                        remove(PdfName.COLORSPACE);
                     put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
                     if (image.isDeflated())
                         put(PdfName.FILTER, PdfName.FLATEDECODE);

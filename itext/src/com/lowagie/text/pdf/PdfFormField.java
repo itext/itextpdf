@@ -294,7 +294,7 @@ public class PdfFormField extends PdfAnnotation {
                 if ((res = (PdfDictionary)result.get(target)) == null) {
                     res = new PdfDictionary();
                 }
-                res.merge(dic);
+                res.mergeDifferent(dic);
                 result.put(target, res);
             }
         }

@@ -923,7 +923,14 @@ class TrueTypeFont extends BaseFont {
         (int)head.yMin * 1000 / head.unitsPerEm,
         (int)head.xMax * 1000 / head.unitsPerEm,
         (int)head.yMax * 1000 / head.unitsPerEm));
-        dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName + style));
+        if (cff) {
+            if (encoding.startsWith("Identity-"))
+                dic.put(PdfName.FONTNAME, new PdfName(fontName+"-"+encoding));
+            else
+                dic.put(PdfName.FONTNAME, new PdfName(fontName + style));
+        }
+        else
+            dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName + style));
         dic.put(PdfName.ITALICANGLE, new PdfNumber(italicAngle));
         dic.put(PdfName.STEMV, new PdfNumber(80));
         if (fontStream != null) {
@@ -956,10 +963,14 @@ class TrueTypeFont extends BaseFont {
      */
     protected PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
-        if (cff)
+        if (cff) {
             dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
-        else
+            dic.put(PdfName.BASEFONT, new PdfName(fontName + style));
+        }
+        else {
             dic.put(PdfName.SUBTYPE, PdfName.TRUETYPE);
+            dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
+        }
         dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         if (!fontSpecific) {
             for (int k = firstChar; k <= lastChar; ++k) {

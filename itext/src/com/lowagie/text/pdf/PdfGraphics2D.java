@@ -59,6 +59,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Paint;
 import java.awt.GradientPaint;
+import java.awt.TexturePaint;
 import java.awt.MediaTracker;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -251,6 +252,7 @@ public class PdfGraphics2D extends Graphics2D {
             }
             BufferedImage result = new BufferedImage(cm, raster, isAlphaPremultiplied, properties);
             img.copyData(raster);
+            image=result;
         }
         drawImage(image, xform, null);
     }
@@ -1302,12 +1304,37 @@ public class PdfGraphics2D extends Graphics2D {
             transform.transform(p2, p2);
             Color c1 = gp.getColor1();
             Color c2 = gp.getColor2();
-            PdfShading shading = PdfShading.simpleAxial(cb.getPdfWriter(), (float)p1.getX(), (float)p1.getY(), (float)p2.getX(), (float)p2.getY(), c1, c2);
+            PdfShading shading = PdfShading.simpleAxial(cb.getPdfWriter(), (float)p1.getX(), normalizeY((float)p1.getY()), (float)p2.getX(), normalizeY((float)p2.getY()), c1, c2);
             PdfShadingPattern pat = new PdfShadingPattern(shading);
             if (fill)
                 cb.setShadingFill(pat);
             else
                 cb.setShadingStroke(pat);
+        }
+        else if (paint instanceof TexturePaint) {
+            try {
+                TexturePaint tp = (TexturePaint)paint;
+                BufferedImage img = tp.getImage();
+                Rectangle2D rect = tp.getAnchorRect();
+                com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(img, null);
+                PdfPatternPainter pattern = cb.createPattern(image.width(), image.height());
+                AffineTransform inverse = this.normalizeMatrix();
+                inverse.scale(rect.getWidth() / image.width(), -rect.getHeight() / image.height());
+                double[] mx = new double[6];
+                inverse.getMatrix(mx);
+                pattern.setPatternMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]) ;
+                image.setAbsolutePosition(0,0);
+                pattern.addImage(image);
+                if (fill)
+                    cb.setPatternFill(pattern);
+                else
+                    cb.setPatternStroke(pattern);
+            } catch (Exception ex) {
+                if (fill)
+                    cb.setColorFill(Color.gray);
+                else
+                    cb.setColorStroke(Color.gray);
+            }
         }
         else {
             try {
@@ -1318,8 +1345,10 @@ public class PdfGraphics2D extends Graphics2D {
                 }
                 img = new BufferedImage((int)width, (int)height, type);
                 Graphics2D g = (Graphics2D)img.getGraphics();
-                Shape fillRect = new Rectangle2D.Double(0,0,img.getWidth(),
-                img.getHeight());
+                g.transform(transform);
+                AffineTransform inv = transform.createInverse();
+                Shape fillRect = new Rectangle2D.Double(0,0,img.getWidth(),img.getHeight());
+                fillRect = inv.createTransformedShape(fillRect);
                 g.setPaint(paint);
                 g.fill(fillRect);
                 if (invert) {

@@ -55,6 +55,7 @@ import com.lowagie.text.DocumentException;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import com.lowagie.text.pdf.fonts.FontsResourceAnchor;
 import java.io.*;
 
 /** Reads a Type1 font
@@ -63,6 +64,8 @@ import java.io.*;
  */
 class Type1Font extends BaseFont
 {
+    private static FontsResourceAnchor resourceAnchor;
+    
     /** The PFB file if the input was made with a <CODE>byte</CODE> array.
      */    
     protected byte pfb[];
@@ -180,7 +183,9 @@ class Type1Font extends BaseFont
             builtinFont = true;
             byte buf[] = new byte[1024];
             try {
-                is = getResourceStream(RESOURCE_PATH + afmFile + ".afm");
+                if (resourceAnchor == null)
+                    resourceAnchor = new FontsResourceAnchor();
+                is = getResourceStream(RESOURCE_PATH + afmFile + ".afm", resourceAnchor.getClass().getClassLoader());
                 if (is == null) {
                     String msg = afmFile + " not found as resource. (The *.afm files must exist as resources in the package com.lowagie.text.pdf.fonts)";
                     System.err.println(msg);

@@ -83,7 +83,6 @@ class PdfChunk implements SplitCharacter{
     
     static {
         keysAttributes.put(Chunk.ACTION, null);
-        keysAttributes.put(Chunk.STRIKETHRU, null);
         keysAttributes.put(Chunk.UNDERLINE, null);
         keysAttributes.put(Chunk.REMOTEGOTO, null);
         keysAttributes.put(Chunk.LOCALGOTO, null);
@@ -196,73 +195,7 @@ class PdfChunk implements SplitCharacter{
         }
         if (baseFont == null) {
             // translation of the font-family to a PDF font-family
-            String fontName = BaseFont.HELVETICA;
-            switch(f.family()) {
-                case Font.COURIER:
-                    switch(style & Font.BOLDITALIC) {
-                        case Font.BOLD:
-                            fontName = BaseFont.COURIER_BOLD;
-                            break;
-                        case Font.ITALIC:
-                            fontName = BaseFont.COURIER_OBLIQUE;
-                            break;
-                        case Font.BOLDITALIC:
-                            fontName = BaseFont.COURIER_BOLDOBLIQUE;
-                            break;
-                            default:
-                        case Font.NORMAL:
-                            fontName = BaseFont.COURIER;
-                            break;
-                    }
-                    break;
-                case Font.TIMES_ROMAN:
-                    switch(style & Font.BOLDITALIC) {
-                        case Font.BOLD:
-                            fontName = BaseFont.TIMES_BOLD;
-                            break;
-                        case Font.ITALIC:
-                            fontName = BaseFont.TIMES_ITALIC;
-                            break;
-                        case Font.BOLDITALIC:
-                            fontName = BaseFont.TIMES_BOLDITALIC;
-                            break;
-                            default:
-                        case Font.NORMAL:
-                            fontName = BaseFont.TIMES_ROMAN;
-                            break;
-                    }
-                    break;
-                case Font.SYMBOL:
-                    fontName = BaseFont.SYMBOL;
-                    break;
-                case Font.ZAPFDINGBATS:
-                    fontName = BaseFont.ZAPFDINGBATS;
-                    break;
-                    default:
-                case Font.HELVETICA:
-                    switch(style & Font.BOLDITALIC) {
-                        case Font.BOLD:
-                            fontName = BaseFont.HELVETICA_BOLD;
-                            break;
-                        case Font.ITALIC:
-                            fontName = BaseFont.HELVETICA_OBLIQUE;
-                            break;
-                        case Font.BOLDITALIC:
-                            fontName = BaseFont.HELVETICA_BOLDOBLIQUE;
-                            break;
-                            default:
-                        case Font.NORMAL:
-                            fontName = BaseFont.HELVETICA;
-                            break;
-                    }
-                    break;
-            }
-            try {
-                baseFont = BaseFont.createFont(fontName, BaseFont.WINANSI, false);
-            }
-            catch (Exception ee) {
-                throw new ExceptionConverter(ee);
-            }
+            baseFont = f.getCalculatedBaseFont(false);
         }
         else {
             // bold simulation
@@ -289,10 +222,16 @@ class PdfChunk implements SplitCharacter{
                 attributes.put(Chunk.GENERICTAG, chunk.content());
             }
         }
-        if (f.isUnderlined())
-            attributes.put(Chunk.UNDERLINE, null);
-        if (f.isStrikethru())
-            attributes.put(Chunk.STRIKETHRU, null);
+        if (f.isUnderlined()) {
+            Object obj[] = {null, new float[]{0, 1f / 15, 0, -1f / 3, 0}};
+            Object unders[][] = Chunk.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
+            attributes.put(Chunk.UNDERLINE, unders);
+        }
+        if (f.isStrikethru()) {
+            Object obj[] = {null, new float[]{0, 1f / 15, 0, 1f / 3, 0}};
+            Object unders[][] = Chunk.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
+            attributes.put(Chunk.UNDERLINE, unders);
+        }
         if (action != null)
             attributes.put(Chunk.ACTION, action);
         // the color can't be stored in a PdfFont

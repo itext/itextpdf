@@ -60,7 +60,7 @@ package com.lowagie.text.pdf;
  * @see		BadPdfFormatException
  */
 
-class PdfBoolean extends PdfObject {
+public class PdfBoolean extends PdfObject {
     
     // static membervariables (possible values of a boolean object)
     public static final PdfBoolean PDFTRUE = new PdfBoolean(true);

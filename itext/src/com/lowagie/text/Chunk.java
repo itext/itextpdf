@@ -84,6 +84,9 @@ public class Chunk implements Element, MarkupAttributes {
 
 // public static membervariables
     
+    /**
+     * The character stand in for an image.
+     */    
     public static final String OBJECT_REPLACEMENT_CHARACTER = "\ufffc";
 
 /** This is a Chunk containing a newline. */
@@ -94,9 +97,6 @@ public class Chunk implements Element, MarkupAttributes {
 
 /** Key for underline. */
     public static final String UNDERLINE = "UNDERLINE";
-
-/** Key for strikethru. */
-    public static final String STRIKETHRU = "STRIKETHRU";
 
 /** Key for color. */
     public static final String COLOR = "COLOR";
@@ -470,7 +470,7 @@ public class Chunk implements Element, MarkupAttributes {
         return setBackground(color, 0, 0, 0, 0);
     }
 
-    /** Sets the color of the background <CODE>Chunk</CODE>.
+    /** Sets the color and the size of the background <CODE>Chunk</CODE>.
      * @param color the color of the background
      * @param extraLeft increase the size of the rectangle in the left
      * @param extraBottom increase the size of the rectangle in the bottom
@@ -482,6 +482,50 @@ public class Chunk implements Element, MarkupAttributes {
         return setAttribute(BACKGROUND, new Object[]{color, new float[]{extraLeft, extraBottom, extraRight, extraTop}});
     }
 
+    /**
+     * Sets an horizontal line that can be an underline or a strikethrough.
+     * Actually, the line can be anywhere vertically and has always the
+     * <CODE>Chunk</CODE> width. Multiple call to this method will
+     * produce multiple lines.
+     * @param color the color of the line or <CODE>null</CODE> to follow
+     * the text color
+     * @param thickness the absolute thickness of the line
+     * @param thicknessMul the thickness multiplication factor with the font size
+     * @param yPosition the absolute y position relative to the baseline
+     * @param yPositionMul the position multiplication factor with the font size
+     * @param cap the end line cap. Allowed values are
+     * PdfContentByte.LINE_CAP_BUTT, PdfContentByte.LINE_CAP_ROUND and
+     * PdfContentByte.LINE_CAP_PROJECTING_SQUARE
+     * @return this <CODE>Chunk</CODE>
+     */    
+    public Chunk setUnderline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int cap) {
+        if (attributes == null)
+            attributes = new HashMap();
+        Object obj[] = {color, new float[]{thickness, thicknessMul, yPosition, yPositionMul, (float)cap}};
+        Object unders[][] = addToArray((Object[][])attributes.get(UNDERLINE), obj);
+        return setAttribute(UNDERLINE, unders);
+    }
+    
+    /**
+     * Utility method to extend an array.
+     * @param original the original array or <CODE>null</CODE>
+     * @param item the item to be added to the array
+     * @return a new array with the item appended
+     */    
+    public static Object[][] addToArray(Object original[][], Object item[]) {
+        if (original == null) {
+            original = new Object[1][];
+            original[0] = item;
+            return original;
+        }
+        else {
+            Object original2[][] = new Object[original.length + 1][];
+            System.arraycopy(original, 0, original2, 0, original.length);
+            original2[original.length] = item;
+            return original2;
+        }
+    }
+    
 /**
  * Sets a generic annotation to this <CODE>Chunk</CODE>.
  * @param annotation the annotation
@@ -499,13 +543,12 @@ public class Chunk implements Element, MarkupAttributes {
         return setAttribute(HYPHENATION, hyphenation);
     }
 
-/**
- * Sets a goto for a remote destination for this <CODE>Chunk</CODE>.
- *
- * @param filename the file name of the destination document
- * @param name the name of the destination to go to
- * @return this <CODE>Chunk</CODE>
- */
+    /**
+     * Sets a goto for a remote destination for this <CODE>Chunk</CODE>.
+     * @param filename the file name of the destination document
+     * @param name the name of the destination to go to
+     * @return this <CODE>Chunk</CODE>
+     */
 
     public Chunk setRemoteGoto(String filename, String name) {
         return setAttribute(REMOTEGOTO, new Object[]{filename, name});
@@ -603,9 +646,10 @@ public class Chunk implements Element, MarkupAttributes {
         return attributes != null;
     }
 
-/**
- * Returns the image.
- */
+    /**
+     * Returns the image.
+     * @return the image
+     */
 
     public Image getImage() {
         if (attributes == null) return null;

@@ -167,9 +167,9 @@ public class FdfReader extends PdfReader {
         PdfObject v = getPdfObject(field.get(PdfName.V));
         if (v == null)
             return null;
-        if (v.type() == PdfObject.NAME)
+        if (v.isName())
             return PdfName.decodeName(((PdfName)v).toString());
-        else if (v.type() == PdfObject.STRING)
+        else if (v.isString())
             return ((PdfString)v).toUnicodeString();
         else
             return null;

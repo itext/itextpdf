@@ -52,9 +52,13 @@
 package com.lowagie.text.pdf;
 
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 import java.io.*;
-import com.lowagie.text.*;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
 
 /**
  * Make copies of PDF documents. Documents can be edited after reading and
@@ -84,6 +88,8 @@ public class PdfCopy extends PdfWriter {
     protected PdfReader reader;
     protected PdfIndirectReference acroForm;
     protected PdfIndirectReference topPageParent;
+    protected ArrayList pageNumbersToRefs = new ArrayList();
+    protected List newBookmarks;
     
     /**
      * A key to allow us to hash indirect references
@@ -337,8 +343,15 @@ public class PdfCopy extends PdfWriter {
             PdfIndirectObject pageObj = body.add(newPage, pageRef);
         }
         root.addPage(pageRef);
+        pageNumbersToRefs.add(pageRef);
     }
     
+    public PdfIndirectReference getPageReference(int page) {
+        if (page < 0 || page > pageNumbersToRefs.size())
+            throw new IllegalArgumentException("Invalid page number " + page);
+        return (PdfIndirectReference)pageNumbersToRefs.get(page - 1);
+    }
+
     /**
      * Copy the acroform for an input document. Note that you can only have one,
      * we make no effort to merge them.
@@ -373,11 +386,33 @@ public class PdfCopy extends PdfWriter {
      * we wrap this so that we can extend it
      */
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
-        PdfDictionary theCat = ((PdfDocument)document).getCatalog(rootObj);
-        if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
-        return theCat;
+        try {
+            if (newBookmarks != null && newBookmarks.size() > 0)
+                setViewerPreferences(PageModeUseOutlines);
+            PdfDictionary theCat = ((PdfDocument)document).getCatalog(rootObj);
+            if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
+            if (newBookmarks == null || newBookmarks.size() == 0)
+                return theCat;
+            PdfDictionary top = new PdfDictionary();
+            PdfIndirectReference topRef = getPdfIndirectReference();
+            Object kids[] = SimpleBookmark.iterateOutlines(this, topRef, newBookmarks, false);
+            top.put(PdfName.FIRST, (PdfIndirectReference)kids[0]);
+            top.put(PdfName.LAST, (PdfIndirectReference)kids[1]);
+            top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
+            addToBody(top, topRef);
+            theCat.put(PdfName.OUTLINES, topRef);
+            
+            return theCat;
+        }
+        catch (IOException e) {
+            throw new ExceptionConverter(e);
+        }
     }
     
+    public void setOutlines(List outlines) {
+        newBookmarks = outlines;
+    }
+
     /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
      * <CODE>Elements</CODE> will be added.

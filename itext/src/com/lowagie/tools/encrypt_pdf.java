@@ -25,6 +25,7 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 
 import java.io.FileOutputStream;
+import java.util.HashMap;
 
 /** Encrypts a PDF document. It needs iText (http://www.lowagie.com/iText).
  * @author Paulo Soares (psoares@consiste.pt)
@@ -37,6 +38,7 @@ public class encrypt_pdf {
     private final static int OWNER_PASSWORD = 3;
     private final static int PERMISSIONS = 4;
     private final static int STRENGTH = 5;
+    private final static int MOREINFO = 6;
     private final static int permit[] = {
         PdfWriter.AllowPrinting,
         PdfWriter.AllowModifyContents,
@@ -48,7 +50,7 @@ public class encrypt_pdf {
         PdfWriter.AllowDegradedPrinting};
 
     private static void usage() {
-        System.out.println("usage: input_file output_file user_password owner_password permissions 128|40");
+        System.out.println("usage: input_file output_file user_password owner_password permissions 128|40 [new info string pairs]");
         System.out.println("permissions is 8 digit long 0 or 1. Each digit has a particular security function:");
         System.out.println();
         System.out.println("AllowPrinting");
@@ -64,7 +66,7 @@ public class encrypt_pdf {
     
     public static void main (String args[]) {
         System.out.println("PDF document encryptor");
-        if (args.length < 6 || args[PERMISSIONS].length() != 8) {
+        if (args.length <= STRENGTH || args[PERMISSIONS].length() != 8) {
             usage();
             return;
         }
@@ -77,8 +79,11 @@ public class encrypt_pdf {
             System.out.println("Reading " + args[INPUT_FILE]);
             PdfReader reader = new PdfReader(args[INPUT_FILE]);
             System.out.println("Writing " + args[OUTPUT_FILE]);
+            HashMap moreInfo = new HashMap();
+            for (int k = MOREINFO; k < args.length - 1; k += 2)
+                moreInfo.put(args[k], args[k + 1]);
             PdfEncryptor.encrypt(reader, new FileOutputStream(args[OUTPUT_FILE]),
-                args[USER_PASSWORD].getBytes(), args[OWNER_PASSWORD].getBytes(), permissions, args[STRENGTH].equals("128"));
+                args[USER_PASSWORD].getBytes(), args[OWNER_PASSWORD].getBytes(), permissions, args[STRENGTH].equals("128"), moreInfo);
             System.out.println("Done.");
         }
         catch (Exception e) {

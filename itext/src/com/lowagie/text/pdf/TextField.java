@@ -245,7 +245,7 @@ public class TextField {
         return app;
     }
     
-    PdfAppearance getAppearance() throws IOException, DocumentException {
+    public PdfAppearance getAppearance() throws IOException, DocumentException {
         PdfAppearance app = getBorderAppearance();
         app.beginVariableText();
         if (text == null || text.length() == 0) {
@@ -326,9 +326,18 @@ public class TextField {
         }
         else {
             float usize = fontSize;
-            float calculatedSize = h / (ufont.getFontDescriptor(BaseFont.BBOXURX, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1));
-            if (usize == 0)
-                usize = calculatedSize;
+            if (usize == 0) {
+                float maxCalculatedSize = h / (ufont.getFontDescriptor(BaseFont.BBOXURX, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1));
+                float wd = ufont.getWidthPoint(text, 1);
+                if (wd == 0)
+                    usize = maxCalculatedSize;
+                else
+                    usize = (box.width() - 2 * offsetX) / wd;
+                if (usize > maxCalculatedSize)
+                    usize = maxCalculatedSize;
+                if (usize < 4)
+                    usize = 4;
+            }
             app.setFontAndSize(ufont, usize);
             float offsetY = offsetX + (h - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
             if (offsetY < offsetX)
