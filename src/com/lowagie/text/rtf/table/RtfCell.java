@@ -73,7 +73,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * The RtfCell is an extension of Cell, that supports a multitude of different
  * borderstyles.
  * 
- * @version $Version:$
+ * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
  * @author Benoit WIART <b.wiart@proxiad.com>
@@ -310,8 +310,10 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             }
             result.write(this.borders.write());
 
-            result.write("\\clcbpat".getBytes());
-            result.write(intToByteArray(this.backgroundColor.getColorNumber()));
+            if(this.backgroundColor != null) {
+                result.write("\\clcbpat".getBytes());
+                result.write(intToByteArray(this.backgroundColor.getColorNumber()));
+            }
             result.write('\n');
             
             result.write("\\clftsWidth3".getBytes());
