@@ -80,9 +80,24 @@ public class HtmlTags {
 /** the title tag. */
     public static final String TITLE = "title";
     
+/** the script tag. */
+    public static final String SCRIPT = "script";
+
+/** This is a possible HTML attribute for the SCRIPT tag. */
+    public static final String LANGUAGE = "language";
+
+/** This is a possible value for the LANGUAGE attribute. */
+    public static final String JAVASCRIPT = "JavaScript";
+
 /** the body tag. */
     public static final String BODY = "body";
     
+/** This is a possible HTML attribute for the BODY tag */
+    public static final String JAVASCRIPT_ONLOAD = "onLoad";
+
+/** This is a possible HTML attribute for the BODY tag */
+    public static final String JAVASCRIPT_ONUNLOAD = "onUnLoad";
+
 /** This is a possible HTML attribute for the BODY tag. */
     public static final String TOPMARGIN = "topmargin";
     
