@@ -230,18 +230,18 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeStart(HtmlTags.TITLE);
                     os.write(GT);
                     addTabs(3);
-                    write(((Meta)element).content());
+                    write(HtmlEncoder.encode(((Meta)element).content()));
                     addTabs(2);
                     writeEnd(HtmlTags.TITLE);
                     return true;
                 case Element.CREATOR:
-                    writeComment("Creator: " + ((Meta)element).content());
+                    writeComment("Creator: " + HtmlEncoder.encode(((Meta)element).content()));
                     return true;
                 case Element.PRODUCER:
-                    writeComment("Producer: " + ((Meta)element).content());
+                    writeComment("Producer: " + HtmlEncoder.encode(((Meta)element).content()));
                     return true;
                 case Element.CREATIONDATE:
-                    writeComment("Creationdate: " + ((Meta)element).content());
+                    writeComment("Creationdate: " + HtmlEncoder.encode(((Meta)element).content()));
                     return true;
                     default:
                         write(element, 2);
@@ -370,7 +370,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 write(HtmlTags.NAME, HtmlTags.AUTHOR);
                 break;
         }
-        write(HtmlTags.CONTENT, meta.content());
+        write(HtmlTags.CONTENT, HtmlEncoder.encode(meta.content()));
         writeEnd();
     }
     
