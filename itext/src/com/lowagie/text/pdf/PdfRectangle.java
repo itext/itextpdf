@@ -49,7 +49,7 @@ import com.lowagie.text.Rectangle;
  *
  * @see		com.lowagie.text.Rectangle
  * @see		PdfArray
- * @see		PdfMediaBox
+ * @see         PageSize
  */
 
 class PdfRectangle extends PdfArray {

@@ -43,7 +43,6 @@ package com.lowagie.text.pdf;
  * @see		PdfName
  * @see		PdfDictionary
  * @see		PdfFont
- * @see		PdfBody
  */
 
 public class BadPdfFormatException extends PdfException {
