@@ -59,7 +59,7 @@ import java.io.*;
  * @author  Paulo Soares (psoares@consiste.pt)
  */
 
-class CJKFont extends BaseFont implements Serializable {
+class CJKFont extends BaseFont {
     
 /** The encoding used in the PDF document for CJK fonts */    
     static final String CJK_ENCODING = "UnicodeBigUnmarked";

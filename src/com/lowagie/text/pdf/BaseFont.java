@@ -60,7 +60,7 @@ import java.util.HashMap;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 
-public abstract class BaseFont implements Serializable {
+public abstract class BaseFont {
     
 // static final membervariables
     

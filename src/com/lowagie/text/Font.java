@@ -51,7 +51,6 @@
 package com.lowagie.text;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.Properties;
 
 import com.lowagie.text.pdf.BaseFont;
@@ -68,7 +67,7 @@ import com.lowagie.text.markup.MarkupParser;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Font implements Comparable, Serializable {
+public class Font implements Comparable {
     
 // static membervariables for the different families
     

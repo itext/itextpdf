@@ -50,7 +50,6 @@
 
 package com.lowagie.text;
 
-import java.io.Serializable;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -77,7 +76,7 @@ import com.lowagie.text.markup.MarkupParser;
  * @see		Phrase
  */
 
-public class Anchor extends Phrase implements TextElementArray, MarkupAttributes, Serializable {
+public class Anchor extends Phrase implements TextElementArray, MarkupAttributes {
     
     // membervariables
     

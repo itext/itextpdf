@@ -57,7 +57,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.FileOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -157,7 +156,7 @@ import com.lowagie.text.markup.*;
  * @see         Cell
  */
 
-public class Table extends Rectangle implements Element, MarkupAttributes, Serializable {
+public class Table extends Rectangle implements Element, MarkupAttributes {
     
     // membervariables
     

@@ -50,7 +50,6 @@
 
 package com.lowagie.text;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -84,7 +83,7 @@ import java.util.Set;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Section extends ArrayList implements TextElementArray, Serializable {
+public class Section extends ArrayList implements TextElementArray {
     
     // membervariables
     

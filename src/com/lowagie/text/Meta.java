@@ -54,7 +54,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
-import java.io.Serializable;
 
 /**
  * This is an <CODE>Element</CODE> that contains
@@ -69,7 +68,7 @@ import java.io.Serializable;
  * @see		Header
  */
 
-public class Meta implements Element, MarkupAttributes, Serializable {
+public class Meta implements Element, MarkupAttributes {
     
     // membervariables
     

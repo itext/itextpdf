@@ -62,7 +62,7 @@ import java.io.*;
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
-class Type1Font extends BaseFont implements Serializable {
+class Type1Font extends BaseFont {
 /** The PFB file if the input was made with a <CODE>byte</CODE> array. */    
     protected byte pfb[];
     

@@ -53,7 +53,6 @@ package com.lowagie.text;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Collections;
@@ -70,7 +69,7 @@ import com.lowagie.text.pdf.CCITTG4Encoder;
  * @see		Rectangle
  */
 
-public abstract class Image extends Rectangle implements Element, MarkupAttributes, Serializable {
+public abstract class Image extends Rectangle implements Element, MarkupAttributes {
     
     // static membervariables (concerning the presence of borders)
     

@@ -51,7 +51,6 @@
 package com.lowagie.text;
 
 import java.net.URL;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +66,7 @@ import java.util.Set;
  * @see		Anchor
  */
 
-public class Annotation implements Element, MarkupAttributes, Serializable {
+public class Annotation implements Element, MarkupAttributes {
     
     // membervariables
     

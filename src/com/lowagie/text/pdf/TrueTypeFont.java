@@ -63,7 +63,7 @@ import com.lowagie.text.ExceptionConverter;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 
-class TrueTypeFont extends BaseFont implements Serializable {
+class TrueTypeFont extends BaseFont {
 
 /** The code pages possible for a True Type font. */    
     static final String codePages[] = {
@@ -223,7 +223,7 @@ class TrueTypeFont extends BaseFont implements Serializable {
     protected boolean isFixedPitch = false;
     
     /** The components of table 'head'. */
-    protected class FontHeader implements Serializable {
+    protected class FontHeader {
         /** A variable. */
         int flags;
         /** A variable. */
@@ -242,7 +242,7 @@ class TrueTypeFont extends BaseFont implements Serializable {
     
     /** The components of table 'hhea'.
      */
-    protected class HorizontalHeader implements Serializable {
+    protected class HorizontalHeader {
         /** A variable. */
         short Ascender;
         /** A variable. */
@@ -267,7 +267,7 @@ class TrueTypeFont extends BaseFont implements Serializable {
     
     /** The components of table 'OS/2'.
      */
-    protected class WindowsMetrics implements Serializable {
+    protected class WindowsMetrics {
         /** A variable. */
         short xAvgCharWidth;
         /** A variable. */

@@ -51,7 +51,6 @@
 package com.lowagie.text;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -81,7 +80,7 @@ import com.lowagie.text.markup.MarkupTags;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Chunk implements Element, MarkupAttributes, Serializable {
+public class Chunk implements Element, MarkupAttributes {
     
 // public static membervariables
     
