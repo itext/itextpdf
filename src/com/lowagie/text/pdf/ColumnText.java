@@ -547,7 +547,7 @@ public class ColumnText {
                 }
                 float yTemp = yLine;
                 PdfLine line = createLine(rectangularWidth - firstIndent - rightIndent);
-                float maxSize = line.getMaxSize();
+                float maxSize = line.getMaxSizeSimple();
                 currentLeading = fixedLeading + maxSize * multipliedLeading;
                 float xx[] = findLimitsTwoLines();
                 if (xx == null) {
