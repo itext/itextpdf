@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -40,7 +40,7 @@ package com.lowagie.text;
  * <B>Example:</B>
  * <BLOCKQUOTE><PRE>
  * <STRONG>Header header = new Header("inspired by", "William Shakespeare");</STRONG>
- * </PRE></BLOCKQUOTE> 
+ * </PRE></BLOCKQUOTE>
  *
  * @see		Element
  * @see		Meta
@@ -49,35 +49,35 @@ package com.lowagie.text;
  */
 
 public class Header extends Meta implements Element {
-
-// membervariables
-		   
-	/** This is the content of this chunk of text. */
-	private StringBuffer name;
-
-// constructors
-
-	/**
-	 * Constructs a <CODE>Meta</CODE>.
-	 *
-	 * @param	type		the type of meta-information
-	 * @param	content		the content
-	 */
-
-	public Header(String name, String content) {
-		super(Element.HEADER, content);
-		this.name = new StringBuffer(name);
-	}
-
-// methods to retrieve information
-
-	/**
-	 * Returns the name of the meta information.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 */
-
-	public String name() {
-		return name.toString();
-	}
+    
+    // membervariables
+    
+/** This is the content of this chunk of text. */
+    private StringBuffer name;
+    
+    // constructors
+    
+/**
+ * Constructs a <CODE>Meta</CODE>.
+ *
+ * @param	type		the type of meta-information
+ * @param	content		the content
+ */
+    
+    public Header(String name, String content) {
+        super(Element.HEADER, content);
+        this.name = new StringBuffer(name);
+    }
+    
+    // methods to retrieve information
+    
+/**
+ * Returns the name of the meta information.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String name() {
+        return name.toString();
+    }
 }

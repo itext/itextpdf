@@ -1,8 +1,8 @@
 /*
  * $Id$
  * $Name$
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ *
+ * Copyright (c) 1999, 2000, 2001 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -42,19 +42,19 @@ package com.lowagie.text;
  * @see		ListItem
  * @see		Chapter
  * @see		Anchor
- * @see		Cell 
+ * @see		Cell
  *
  * @author  bruno@lowagie.com
  */
 
 public interface TextElementArray extends Element {
- 
-   /**
-     * Adds an object to the <CODE>TextElementArray</CODE>.
-     *
-	 * @param	o			an object that has to be added
-     * @return	<CODE>true</CODE> if the addition succeeded; <CODE>false</CODE> otherwise
-     */
-
+    
+  /**
+   * Adds an object to the <CODE>TextElementArray</CODE>.
+   *
+   * @param	o			an object that has to be added
+   * @return	<CODE>true</CODE> if the addition succeeded; <CODE>false</CODE> otherwise
+   */
+    
     public boolean add(Object o);
 }

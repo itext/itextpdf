@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright (c) 1999, 2000, 2001 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -45,116 +45,116 @@ package com.lowagie.text;
  */
 
 public interface DocListener extends ElementListener {
-
-// methods
-
-	/**
-	 * Closes the <CODE>DocListener</CODE> when gc is invoked.
-	 */
-
-	public void finalize();
-
-    /**
-     * Signals that the <CODE>Document</CODE> has been opened and that
-	 * <CODE>Elements</CODE> can be added.
-     */
-
+    
+    // methods
+    
+/**
+ * Closes the <CODE>DocListener</CODE> when gc is invoked.
+ */
+    
+    public void finalize();
+    
+/**
+ * Signals that the <CODE>Document</CODE> has been opened and that
+ * <CODE>Elements</CODE> can be added.
+ */
+    
     public void open();
-
-	/**
-	 * Sets the pagesize.
-	 *
-	 * @param	pageSize	the new pagesize
-	 * @return	a <CODE>boolean</CODE>
-	 */
-
-	public boolean setPageSize(Rectangle pageSize);
-
-    /**
-     * Signals that a <CODE>Watermark</CODE> was added to the <CODE>Document</CODE>. 
-     *
-	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-     */
-
+    
+/**
+ * Sets the pagesize.
+ *
+ * @param	pageSize	the new pagesize
+ * @return	a <CODE>boolean</CODE>
+ */
+    
+    public boolean setPageSize(Rectangle pageSize);
+    
+/**
+ * Signals that a <CODE>Watermark</CODE> was added to the <CODE>Document</CODE>.
+ *
+ * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+ */
+    
     public boolean add(Watermark watermark);
-
-    /**
-     * Signals that a <CODE>Watermark</CODE> was removed from the <CODE>Document</CODE>.
-     */
-
+    
+/**
+ * Signals that a <CODE>Watermark</CODE> was removed from the <CODE>Document</CODE>.
+ */
+    
     public void removeWatermark();
-
-	/**
-	 * Sets the margins.
-	 *			   							
-	 * @param	marginLeft		the margin on the left
-	 * @param	marginRight		the margin on the right
-	 * @param	marginTop		the margin on the top
-	 * @param	marginBottom	the margin on the bottom
-	 * @return	a <CODE>boolean</CODE>
-	 */
-
-	public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom);	
-
-    /**
-     * Signals that an new page has to be started. 
-     *
-	 * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
-	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-     */
-
+    
+/**
+ * Sets the margins.
+ *
+ * @param	marginLeft		the margin on the left
+ * @param	marginRight		the margin on the right
+ * @param	marginTop		the margin on the top
+ * @param	marginBottom	the margin on the bottom
+ * @return	a <CODE>boolean</CODE>
+ */
+    
+    public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom);
+    
+/**
+ * Signals that an new page has to be started.
+ *
+ * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
+ * @throws	DocumentException	when a document isn't open yet, or has been closed
+ */
+    
     public boolean newPage() throws DocumentException;
-
-	/**
-	 * Changes the header of this document.
-	 * 
-	 * @param	header		the new header
-	 */
-
-	public void setHeader(HeaderFooter header);
-
-	/**
-	 * Resets the header of this document.
-	 * 
-	 * @param	header		the new header
-	 */
-
-	public void resetHeader();
-
-	/**
-	 * Changes the footer of this document.
-	 * 
-	 * @param	footer		the new footer
-	 */
-
-	public void setFooter(HeaderFooter footer);
-
-	/**
-	 * Resets the footer of this document.
-	 */
-
-	public void resetFooter();
-	
-	/**
-	 * Sets the page number to 0.
-	 */
-
-	public void resetPageCount();
-
-	/**
-	 * Sets the page number.
-	 *
-	 * @param	pageN		the new page number
-	 */
-
-	public void setPageCount(int pageN);
-
-    /**
-     * Signals that the <CODE>Document</CODE> was closed and that no other
-	 * <CODE>Elements</CODE> will be added.
-	 * <P>
-	 * The outputstream of every writer implementing <CODE>DocListener</CODE> will be closed.
-     */
-
+    
+/**
+ * Changes the header of this document.
+ *
+ * @param	header		the new header
+ */
+    
+    public void setHeader(HeaderFooter header);
+    
+/**
+ * Resets the header of this document.
+ *
+ * @param	header		the new header
+ */
+    
+    public void resetHeader();
+    
+/**
+ * Changes the footer of this document.
+ *
+ * @param	footer		the new footer
+ */
+    
+    public void setFooter(HeaderFooter footer);
+    
+/**
+ * Resets the footer of this document.
+ */
+    
+    public void resetFooter();
+    
+/**
+ * Sets the page number to 0.
+ */
+    
+    public void resetPageCount();
+    
+/**
+ * Sets the page number.
+ *
+ * @param	pageN		the new page number
+ */
+    
+    public void setPageCount(int pageN);
+    
+/**
+ * Signals that the <CODE>Document</CODE> was closed and that no other
+ * <CODE>Elements</CODE> will be added.
+ * <P>
+ * The outputstream of every writer implementing <CODE>DocListener</CODE> will be closed.
+ */
+    
     public void close();
 }

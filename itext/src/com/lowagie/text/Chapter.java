@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,13 +28,14 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 
 /**
  * A <CODE>Chapter</CODE> is a special <CODE>Section</CODE>.
@@ -50,7 +51,7 @@ import java.util.Iterator;
  * <STRONG>Chapter chapter2 = new Chapter(title2, 2);</STRONG>
  * <STRONG>chapter2.setNumberDepth(0);</STRONG>
  * Paragraph someText = new Paragraph("This is some text");
- * <STRONG>chapter2.add(someText);</STRONG>				
+ * <STRONG>chapter2.add(someText);</STRONG>
  * Paragraph title21 = new Paragraph("This is Section 1 in Chapter 2", new Font(Font.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));
  * Section section1 = <STRONG>chapter2.addSection(title21);</STRONG>
  * Paragraph someSectionText = new Paragraph("This is some silly paragraph in a chapter and/or section. It contains some text to test the functionality of Chapters and Section.");
@@ -61,76 +62,125 @@ import java.util.Iterator;
  */
 
 public class Chapter extends Section implements TextElementArray {
-
-// constructors
-
-	/**
-	 * Constructs a new <CODE>Chapter</CODE>.
-	 *
-	 * @param	title		the Chapter title (as a <CODE>Paragraph</CODE>)
-	 * @param	number		the Chapter number
-	 */
-
-	public Chapter(Paragraph title, int number) {
-		super(title, 1);
-		numbers = new ArrayList();
-		numbers.add(new Integer(number));
-	}
-
-	/**
-	 * Constructs a new <CODE>Chapter</CODE>.
-	 *
-	 * @param	title		the Chapter title (as a <CODE>String</CODE>)
-	 * @param	number		the Chapter number
-	 */
-
-	public Chapter(String title, int number) {
-		this(new Paragraph(title), number);
-	}
-
-// implementation of the Element-methods
-
-    /**
-     * Gets the type of the text element. 
-     *
-     * @return	a type
-     */
-
+    
+    // constructors
+    
+/**
+ * Constructs a new <CODE>Chapter</CODE>.
+ *
+ * @param	title		the Chapter title (as a <CODE>Paragraph</CODE>)
+ * @param	number		the Chapter number
+ */
+    
+    public Chapter(Paragraph title, int number) {
+        super(title, 1);
+        numbers = new ArrayList();
+        numbers.add(new Integer(number));
+    }
+    
+/**
+ * Constructs a new <CODE>Chapter</CODE>.
+ *
+ * @param	title		the Chapter title (as a <CODE>String</CODE>)
+ * @param	number		the Chapter number
+ */
+    
+    public Chapter(String title, int number) {
+        this(new Paragraph(title), number);
+    }
+    
+/**
+ * Creates a new <CODE>Chapter</CODE> following a set of attributes.
+ *
+ * @param	attributes	the attributes
+ */
+    
+    public Chapter(Properties attributes, int number) {
+        this(new Paragraph(""), number);
+        
+        String value;
+        if ((value = attributes.getProperty(ElementTags.DEPTH)) != null) {
+            setNumberDepth(Integer.parseInt(value));
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENT)) != null) {
+            setIndentation(Float.parseFloat(value + "f"));
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
+            setIndentationLeft(Float.parseFloat(value + "f"));
+        }
+        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
+            setIndentationRight(Float.parseFloat(value + "f"));
+        }
+    }
+    
+    // implementation of the Element-methods
+    
+/**
+ * Gets the type of the text element.
+ *
+ * @return	a type
+ */
+    
     public int type() {
-		return Element.CHAPTER;
-	}
-
-// methods
-
-	/**
-	 * Returns a representation of this <CODE>Section</CODE>.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 */
-
-	public String toString() {
-		StringBuffer buf = new StringBuffer("<chapter depth=\"");
-		buf.append(numberDepth);
-		buf.append("\" indent=\"");
-		buf.append(sectionIndent);
-		if (indentationLeft != 0) {
-			buf.append("\" left=\"");
-			buf.append(indentationLeft);
-		}
-		if (indentationRight != 0) {
-			buf.append("\" right=\"");
-			buf.append(indentationRight);
-		}
-		buf.append("\">\n");
-		buf.append("<title>\n");
-		if (title != null) {
-			buf.append(title.toString());
-		}
-		buf.append("</title>\n");
-		for (Iterator i = iterator(); i.hasNext(); ) {
-			buf.append(i.next().toString());
-		}
-		buf.append("</chapter>\n");								
-		return buf.toString();
-	}
+        return Element.CHAPTER;
+    }
+    
+    // methods
+    
+/**
+ * Checks if a given tag corresponds with this object.
+ *
+ * @param   tag     the given tag
+ * @return  true if the tag corresponds
+ */
+    
+    public static boolean isTag(String tag) {
+        return ElementTags.CHAPTER.equals(tag);
+    }
+    
+/**
+ * Returns a representation of this <CODE>Section</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        StringBuffer buf = new StringBuffer("<").append(ElementTags.CHAPTER).append(" ").append(ElementTags.DEPTH).append("=\"");
+        buf.append(numberDepth);
+        buf.append("\" ").append(ElementTags.INDENT).append("=\"");
+        buf.append(sectionIndent);
+        if (indentationLeft != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
+            buf.append(indentationLeft);
+        }
+        if (indentationRight != 0) {
+            buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
+            buf.append(indentationRight);
+        }
+        buf.append("\">\n");
+        if (title != null) {
+            buf.append("<").append(ElementTags.TITLE).append(" ").append(ElementTags.LEADING).append("=\"");
+            buf.append(title.leading());
+            buf.append("\" ").append(ElementTags.ALIGN).append("=\"");
+            buf.append(ElementTags.getAlignment(title.alignment()));
+            if (indentationLeft != 0) {
+                buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");
+                buf.append(indentationLeft);
+            }
+            if (indentationRight != 0) {
+                buf.append("\" ").append(ElementTags.INDENTATIONRIGHT).append("=\"");
+                buf.append(indentationRight);
+            }
+            buf.append("\">");
+            for (Iterator i = title.iterator(); i.hasNext(); ) {
+                buf.append(i.next().toString());
+            }
+            buf.append("</").append(ElementTags.TITLE).append(">\n");
+        }
+        for (Iterator i = iterator(); i.hasNext(); ) {
+            buf.append(i.next().toString());
+        }
+        buf.append("</").append(ElementTags.CHAPTER).append(">\n");
+        return buf.toString();
+    }
 }

@@ -1,18 +1,43 @@
 /*
- * ColumnText.java
+ * $Id$
+ * $Name$
  *
- * Created on April 22, 2001, 12:15 PM
+ * Copyright 2001 by Paulo Soares
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Library General Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or any
+ * later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Library General Public License along
+ * with this library; if not, write to the Free Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * If you didn't download this code from the following link, you should check if
+ * you aren't using an obsolete version:
+ * http://www.lowagie.com/iText/
+ *
+ * ir-arch Bruno Lowagie,
+ * Adolf Baeyensstraat 121
+ * 9040 Sint-Amandsberg
+ * BELGIUM
+ * tel. +32 (0)9 228.10.97
+ * bruno@lowagie.com
+ *
  */
 
 package com.lowagie.text.pdf;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Element;
 import com.lowagie.text.DocumentException;
-
 /** Formats text in a columnwise form. The text is bound
  * on the left and on the right by a sequence of lines. This allows the column
  * to have any shape, not only rectangular.
@@ -340,7 +365,6 @@ public class ColumnText
     {
         this.yLine = yLine;
     }
-
 /** Gets the yLine.
  * @return the yLine
  */    
@@ -422,7 +446,6 @@ public class ColumnText
         for (int j = currentChunkMarker - 1; j >= 0; --j)
             chunks.remove(j);
     }
-
 /** Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
  * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
  * and/or <CODE>NO_MORE_COLUMN</CODE>

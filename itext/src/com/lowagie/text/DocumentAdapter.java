@@ -37,139 +37,139 @@ package com.lowagie.text;
 /**
  * This class allows you to obtain a listener without
  * adding all of the methods of the DocListener interface.
- * 
+ *
  * @author       David Freels
  */
 
 public abstract class DocumentAdapter implements DocListener {
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 *
-	 * @return	false
-	 */
-
-	public boolean newPage() throws DocumentException {
-		return false;
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 */
-
-	public void close() {
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 */
-
-	public void finalize() {
-	}
-	
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 *
-	 * @param	element		a text element
-	 * @return	false
-	 */
-
-	public boolean add(Element element) throws DocumentException {
-		return false;
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 */
-
-	public void open() {
-	}								   
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 *
-	 * @param	pageSize	the size of a page
-	 */
-	
-	public boolean setPageSize(Rectangle pageSize) {
-		return false;
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 *
-	 * @param	watermark	a watermark
-	 */
-
-	public boolean add(Watermark watermark) {
-		return false;
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 */
-
-	public void removeWatermark() {
-	}							
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 *
-	 * @param	marginLeft		the width of the margin at the left
-	 * @param	marginRight		the width of the margin at the right
-	 * @param	marginTop		the height of the margin at the top
-	 * @param	marginBottom	the height of the margin at the bottom
-	 */
-
-	public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
-		return false;
-	}							
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 *
-	 * @param	header	a header
-	 */
-
-	public void setHeader(HeaderFooter header) {
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 */
-
-	public void resetHeader() {
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 *
-	 * @param	footer	a footer
-	 */
-
-	public void setFooter(HeaderFooter footer) {
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 */
-
-	public void resetFooter() {
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 */
-
-	public void resetPageCount() {
-	}
-
-	/**
-	 * This is an empty implementation of the corresponding method in the DocListener interface.
-	 *
-	 * @param	pageN	a page number
-	 */
-
-	public void setPageCount(int pageN) {
-	}
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ *
+ * @return	false
+ */
+    
+    public boolean newPage() throws DocumentException {
+        return false;
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ */
+    
+    public void close() {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ */
+    
+    public void finalize() {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ *
+ * @param	element		a text element
+ * @return	false
+ */
+    
+    public boolean add(Element element) throws DocumentException {
+        return false;
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ */
+    
+    public void open() {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ *
+ * @param	pageSize	the size of a page
+ */
+    
+    public boolean setPageSize(Rectangle pageSize) {
+        return false;
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ *
+ * @param	watermark	a watermark
+ */
+    
+    public boolean add(Watermark watermark) {
+        return false;
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ */
+    
+    public void removeWatermark() {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ *
+ * @param	marginLeft		the width of the margin at the left
+ * @param	marginRight		the width of the margin at the right
+ * @param	marginTop		the height of the margin at the top
+ * @param	marginBottom	the height of the margin at the bottom
+ */
+    
+    public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
+        return false;
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ *
+ * @param	header	a header
+ */
+    
+    public void setHeader(HeaderFooter header) {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ */
+    
+    public void resetHeader() {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ *
+ * @param	footer	a footer
+ */
+    
+    public void setFooter(HeaderFooter footer) {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ */
+    
+    public void resetFooter() {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ */
+    
+    public void resetPageCount() {
+    }
+    
+/**
+ * This is an empty implementation of the corresponding method in the DocListener interface.
+ *
+ * @param	pageN	a page number
+ */
+    
+    public void setPageCount(int pageN) {
+    }
 }

@@ -3,9 +3,7 @@
  *
  * Created on March 28, 2001, 8:34 PM
  */
-
 package com.lowagie.text.pdf;
-
 /**
  *
  * @author  Administrator
@@ -17,7 +15,6 @@ class PdfLiteral extends PdfObject
     {
         super(0, text);
     }
-
     PdfLiteral(byte b[])
     {
         super(0, b);

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text;
@@ -54,122 +54,108 @@ import com.lowagie.text.Phrase;
  */
 
 public class HeaderFooter extends Rectangle {
-
-// membervariables
-
-	/** Does the page contain a pagenumber? */
-	private boolean numbered;
-
-	/** This is the <CODE>Phrase</CODE> that comes before the pagenumber. */
-	private Phrase before = null;
-
-	/** This is number of the page. */
-	private int pageN;
-
-	/** This is the <CODE>Phrase</CODE> that comes after the pagenumber. */
-	private Phrase after = null;
-
-	/** This is alignment of the header/footer. */
-	private int alignment; 
-
-// constructors
-
-	/**
-	 * Constructs a <CODE>HeaderFooter</CODE>-object.
-	 *
-	 * @param	before		the <CODE>Phrase</CODE> before the pagenumber
-	 * @param	after		the <CODE>Phrase</CODE> before the pagenumber
-	 */
-
-	public HeaderFooter(Phrase before, Phrase after) {
-		super(0, 0, 0, 0);
-		setBorder(TOP + BOTTOM);
-		setBorderWidth(1);
-
-		numbered = true;
-		this.before = before;
-		this.after = after;
-	}
-
-	/**
-	 * Constructs a <CODE>Header</CODE>-object with a pagenumber at the end.
-	 *
-	 * @param	before		the <CODE>Phrase</CODE> before the pagenumber
-	 * @param	numbered	<CODE>true</CODE> if the page has to be numbered
-	 */
-
-	public HeaderFooter(Phrase before, boolean numbered) {
-		super(0, 0, 0, 0);
-		setBorder(TOP + BOTTOM);
-		setBorderWidth(1);
-
-		this.numbered = numbered;
-		this.before = before;
-	}
-
-// methods
-
-	/**
-	 * Sets the page number.
-	 *
-	 * @param		pageN		the new page number
-	 */
-
-	public final void setPageNumber(int pageN) {
-		this.pageN = pageN;
-	}
-
-	/**
-	 * Sets the alignment.
-	 *
-	 * @param		alignment	the new alignment
-	 */
-
-	public final void setAlignment(int alignment) {
-		this.alignment = alignment;
-	}
-
-// methods to retrieve the membervariables
-
-	/**
-	 * Gets the <CODE>Paragraph</CODE> that can be used as header or footer.
-	 *
-	 * @return		a <CODE>Paragraph</CODE>
-	 */
-
-	public final Paragraph paragraph() {
-		Paragraph paragraph = new Paragraph(before);
-		if (numbered) {
-			paragraph.add(String.valueOf(pageN));
-		}
-		if (after != null) {
-			paragraph.add(after);
-		} 
-		paragraph.setAlignment(alignment);
-		return paragraph;
-	}
-
-	/**
-	 * Returns a representation of this <CODE>Section</CODE>.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 */
-
-	public String toString() {
-		StringBuffer buf = new StringBuffer("<HEADERFOOTER NUMBERED=\"");
-		buf.append(numbered);
-		buf.append("\" ALIGNMENT=\"");
-		buf.append(alignment);
-		buf.append("\">\n");
-		buf.append(super.toString());
-		buf.append("\t<BEFORE>\n");
-		buf.append(before.toString());
-		buf.append("\t</BEFORE>");
-		buf.append("\t<AFTER>\n");
-		if (after != null) {
-			buf.append(after.toString());
-		}
-		buf.append("\t</AFTER>");
-		return buf.toString();
-	}
+    
+    // membervariables
+    
+/** Does the page contain a pagenumber? */
+    private boolean numbered;
+    
+/** This is the <CODE>Phrase</CODE> that comes before the pagenumber. */
+    private Phrase before = null;
+    
+/** This is number of the page. */
+    private int pageN;
+    
+/** This is the <CODE>Phrase</CODE> that comes after the pagenumber. */
+    private Phrase after = null;
+    
+/** This is alignment of the header/footer. */
+    private int alignment;
+    
+    // constructors
+    
+/**
+ * Constructs a <CODE>HeaderFooter</CODE>-object.
+ *
+ * @param	before		the <CODE>Phrase</CODE> before the pagenumber
+ * @param	after		the <CODE>Phrase</CODE> before the pagenumber
+ */
+    
+    public HeaderFooter(Phrase before, Phrase after) {
+        super(0, 0, 0, 0);
+        setBorder(TOP + BOTTOM);
+        setBorderWidth(1);
+        
+        numbered = true;
+        this.before = before;
+        this.after = after;
+    }
+    
+/**
+ * Constructs a <CODE>Header</CODE>-object with a pagenumber at the end.
+ *
+ * @param	before		the <CODE>Phrase</CODE> before the pagenumber
+ * @param	numbered	<CODE>true</CODE> if the page has to be numbered
+ */
+    
+    public HeaderFooter(Phrase before, boolean numbered) {
+        super(0, 0, 0, 0);
+        setBorder(TOP + BOTTOM);
+        setBorderWidth(1);
+        
+        this.numbered = numbered;
+        this.before = before;
+    }
+    
+    // methods
+    
+/**
+ * Sets the page number.
+ *
+ * @param		pageN		the new page number
+ */
+    
+    public final void setPageNumber(int pageN) {
+        this.pageN = pageN;
+    }
+    
+/**
+ * Sets the alignment.
+ *
+ * @param		alignment	the new alignment
+ */
+    
+    public final void setAlignment(int alignment) {
+        this.alignment = alignment;
+    }
+    
+    // methods to retrieve the membervariables
+    
+/**
+ * Gets the <CODE>Paragraph</CODE> that can be used as header or footer.
+ *
+ * @return		a <CODE>Paragraph</CODE>
+ */
+    
+    public final Paragraph paragraph() {
+        Paragraph paragraph = new Paragraph(before);
+        if (numbered) {
+            paragraph.add(String.valueOf(pageN));
+        }
+        if (after != null) {
+            paragraph.add(after);
+        }
+        paragraph.setAlignment(alignment);
+        return paragraph;
+    }
+    
+/**
+ * Returns a representation of this <CODE>Section</CODE>.
+ *
+ * @return	a <CODE>String</CODE>
+ */
+    
+    public String toString() {
+        return "";
+    }
 }

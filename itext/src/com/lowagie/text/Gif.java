@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text;
@@ -47,144 +47,129 @@ import java.net.URL;
  * @see		Image
  * @see		Jpeg
  * @see		Png
- * 
+ *
  * @author  bruno@lowagie.com
  */
 
 public class Gif extends Image implements Element {
-
-// Constructors
-
-	/**
-	 * Constructs a <CODE>Gif</CODE>-object, using an <VAR>url</VAR>.
-	 *
-	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 */
-
-	public Gif(URL url) throws BadElementException, IOException {
-		 super(url);
-		 processParameters();
-	}
-
-	/**
-	 * Constructs a <CODE>Gif</CODE>-object, using an <VAR>url</VAR>.
-	 *
-	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 * @param		width		the width you want the image to have
-	 * @param		height		the height you want the image to have.
-
-	 * @deprecated	use Image.getInstance(...) to create an Image
-	 */
-
-	public Gif(URL url, float width, float height) throws BadElementException, IOException {
-		this(url);
-		scaledWidth = width;
-		scaledHeight = height;
-	}
-
-	/**
-	 * Constructs a <CODE>Gif</CODE>-object, using a <VAR>filename</VAR>.
-	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-	 * @deprecated	use Image.getInstance(...) to create an Image
-	 */
-
-	public Gif(String filename) throws BadElementException, MalformedURLException, IOException {
-		this(Image.toURL(filename));
-	}
-
-	/**
-	 * Constructs a <CODE>Gif</CODE>-object, using a <VAR>filename</VAR>.
-	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-	 * @param		width		the width you want the image to have
-	 * @param		height		the height you want the image to have.
-	 * @deprecated	use Image.getInstance(...) to create an Image
-	 */
-
-	public Gif(String filename, float width, float height)  throws BadElementException, MalformedURLException, IOException {
-		this(Image.toURL(filename), width, height);
-	}
-
-	/**
-	 * Constructs a <CODE>Gif</CODE>-object from memory.
-	 *
-	 * @param		img		the memory image
-	 *
-	 * @author		Paulo Soares
-	 */
-
-	public Gif(byte[] img) throws BadElementException, IOException {
-		super((URL)null);
-		rawData = img;
-		processParameters();
-	}     
-
-	/**
-	 * Constructs a <CODE>Gif</CODE>-object from memory.
-	 *
-	 * @param		img			the memory image
-	 * @param		width		the width you want the image to have
-	 * @param		height		the height you want the image to have
-	 *
-	 * @author		Paulo Soares
-	 */
-
-	public Gif(byte[] img, float width, float height) throws BadElementException, IOException {
-		this(img);
-		scaledWidth = width;
-		scaledHeight = height;
-	}    
-
-// private methods
-
-	/**
-	 * This method checks if the image is a valid GIF and processes some parameters.
-	 */
-
+    
+    // Constructors
+    
+/**
+ * Constructs a <CODE>Gif</CODE>-object, using an <VAR>url</VAR>.
+ *
+ * @param		url			the <CODE>URL</CODE> where the image can be found.
+ */
+    
+    public Gif(URL url) throws BadElementException, IOException {
+        super(url);
+        processParameters();
+    }
+    
+/**
+ * Constructs a <CODE>Gif</CODE>-object, using an <VAR>url</VAR>.
+ *
+ * @param		url			the <CODE>URL</CODE> where the image can be found.
+ * @param		width		the width you want the image to have
+ * @param		height		the height you want the image to have.
+ *
+ * @deprecated	use Image.getInstance(...) to create an Image
+ */
+    
+    public Gif(URL url, float width, float height) throws BadElementException, IOException {
+        this(url);
+        scaledWidth = width;
+        scaledHeight = height;
+    }
+    
+/**
+ * Constructs a <CODE>Gif</CODE>-object, using a <VAR>filename</VAR>.
+ *
+ * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+ * @deprecated	use Image.getInstance(...) to create an Image
+ */
+    
+    public Gif(String filename) throws BadElementException, MalformedURLException, IOException {
+        this(Image.toURL(filename));
+    }
+    
+/**
+ * Constructs a <CODE>Gif</CODE>-object, using a <VAR>filename</VAR>.
+ *
+ * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+ * @param		width		the width you want the image to have
+ * @param		height		the height you want the image to have.
+ * @deprecated	use Image.getInstance(...) to create an Image
+ */
+    
+    public Gif(String filename, float width, float height)  throws BadElementException, MalformedURLException, IOException {
+        this(Image.toURL(filename), width, height);
+    }
+    
+/**
+ * Constructs a <CODE>Gif</CODE>-object from memory.
+ *
+ * @param		img		the memory image
+ *
+ * @author		Paulo Soares
+ */
+    
+    public Gif(byte[] img) throws BadElementException, IOException {
+        super((URL)null);
+        rawData = img;
+        processParameters();
+    }
+    
+/**
+ * Constructs a <CODE>Gif</CODE>-object from memory.
+ *
+ * @param		img			the memory image
+ * @param		width		the width you want the image to have
+ * @param		height		the height you want the image to have
+ *
+ * @author		Paulo Soares
+ */
+    
+    public Gif(byte[] img, float width, float height) throws BadElementException, IOException {
+        this(img);
+        scaledWidth = width;
+        scaledHeight = height;
+    }
+    
+    // private methods
+    
+/**
+ * This method checks if the image is a valid GIF and processes some parameters.
+ */
+    
     private final void processParameters() throws BadElementException, IOException {
-		 type = GIF;
-		 InputStream is = null;
-		 try {
+        type = GIF;
+        InputStream is = null;
+        try {
             String errorID;
             if (rawData == null){
-			    is = url.openStream();
+                is = url.openStream();
                 errorID = url.toString();
             }
             else{
                 is = new java.io.ByteArrayInputStream(rawData);
                 errorID = "Byte array";
             }
-			if (is.read() != 'G' || is.read() != 'I' || is.read() != 'F')	{
-				throw new BadElementException(errorID + " is not a valid GIF-file.");
-			}
-			skip(is, 3);
-			scaledWidth = is.read() + (is.read() << 8);
-			setRight(scaledWidth);
-			scaledHeight = is.read() + (is.read() << 8);
-			setTop(scaledHeight);
-		 }
-		 finally {
-			if (is != null) {
-				is.close();
-			}
-			plainWidth = width();
-			plainHeight = height();
-		 }
-	}
-
-// methods to retrieve information
-
-	/**
-	 * Returns a representation of this <CODE>Rectangle</CODE>.
-	 *
-	 * @return		a <CODE>String</CODE>
-	 */
-
-	public String toString() {
-		StringBuffer buf = new StringBuffer("<GIF>");
-		buf.append(super.toString());
-		buf.append("</GIF>");
-		return buf.toString();
-	}
+            if (is.read() != 'G' || is.read() != 'I' || is.read() != 'F')	{
+                throw new BadElementException(errorID + " is not a valid GIF-file.");
+            }
+            skip(is, 3);
+            scaledWidth = is.read() + (is.read() << 8);
+            setRight(scaledWidth);
+            scaledHeight = is.read() + (is.read() << 8);
+            setTop(scaledHeight);
+        }
+        finally {
+            if (is != null) {
+                is.close();
+            }
+            plainWidth = width();
+            plainHeight = height();
+        }
+    }
 }

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -53,7 +53,7 @@ import com.lowagie.text.Watermark;
  * Every <CODE>Element</CODE> added to the original <CODE>Document</CODE>
  * will be written to the <CODE>OutputStream</CODE> of the listening
  * <CODE>DocWriter</CODE>.
- * 
+ *
  * @see		Document
  * @see		DocListener
  *
@@ -61,233 +61,234 @@ import com.lowagie.text.Watermark;
  */
 
 public abstract class DocWriter implements DocListener {
-
-// membervariables
-
-	/** The pageSize. */
-	protected Rectangle pageSize;
-
-	/** This is the document that has to be written. */
-	protected Document document;
-
-	/** The outputstream of this writer. */
-	protected BufferedOutputStream os;
-
-	/** Is the writer open for writing? */
-	protected boolean open = false;		
-
-	/** Do we have to pause all writing actions? */
-	protected boolean pause = false;
-
-// constructor
-
-	/**
-	 * Constructs a <CODE>DocWriter</CODE>.
-	 *				
-	 * @param	document	The <CODE>Document</CODE> that has to be written
-	 * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
-	 */
-
-	protected DocWriter(Document document, OutputStream os)  {
-		this.document = document;
-		this.os = new BufferedOutputStream(os);
-		open = true;
-	}
-
-// destructor
-
-	/**
-	 * Closes the <CODE>DocWriter</CODE> when gc is invoked.
-	 */
-
-	public void finalize() {
-		close();
-	}
-
-// implementation of the DocListener methods
-
-    /**
-     * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>. 
-	 * <P>
-	 * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
-	 * derived from this abstract class.
-     *
-	 * @return	<CODE>false</CODE>
-	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-     */
-
+    
+    // membervariables
+    
+/** The pageSize. */
+    protected Rectangle pageSize;
+    
+/** This is the document that has to be written. */
+    protected Document document;
+    
+/** The outputstream of this writer. */
+    protected BufferedOutputStream os;
+    
+/** Is the writer open for writing? */
+    protected boolean open = false;
+    
+/** Do we have to pause all writing actions? */
+    protected boolean pause = false;
+    
+    // constructor
+    
+/**
+ * Constructs a <CODE>DocWriter</CODE>.
+ *
+ * @param	document	The <CODE>Document</CODE> that has to be written
+ * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
+ */
+    
+    protected DocWriter(Document document, OutputStream os)  {
+        this.document = document;
+        this.os = new BufferedOutputStream(os);
+        open = true;
+    }
+    
+    // destructor
+    
+/**
+ * Closes the <CODE>DocWriter</CODE> when gc is invoked.
+ */
+    
+    public void finalize() {
+        close();
+    }
+    
+    // implementation of the DocListener methods
+    
+/**
+ * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
+ * <P>
+ * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
+ * derived from this abstract class.
+ *
+ * @return	<CODE>false</CODE>
+ * @throws	DocumentException	when a document isn't open yet, or has been closed
+ */
+    
     public boolean add(Element element) throws DocumentException {
-		 return false;
-	}
-
-    /**
-     * Signals that the <CODE>Document</CODE> was opened.
-     */
-
+        return false;
+    }
+    
+/**
+ * Signals that the <CODE>Document</CODE> was opened.
+ */
+    
     public void open() {
-		open = true;
-	}			  
-
-	/**
-	 * Sets the pagesize.
-	 *
-	 * @param	pageSize	the new pagesize
-	 * @return	a <CODE>boolean</CODE>
-	 */
-
-	public boolean setPageSize(Rectangle pageSize) {
-		this.pageSize = pageSize;
-		return true;
-	}
-
-    /**
-     * Sets the <CODE>Watermark</CODE>. 
-	 * <P>
-	 * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
-	 * derived from this abstract class if they actually support the use of
-	 * a <CODE>Watermark</CODE>. 
-     *
-	 * @return	<CODE>false</CODE> (because watermarks aren't supported by default).
-     */
-
+        open = true;
+    }
+    
+/**
+ * Sets the pagesize.
+ *
+ * @param	pageSize	the new pagesize
+ * @return	a <CODE>boolean</CODE>
+ */
+    
+    public boolean setPageSize(Rectangle pageSize) {
+        this.pageSize = pageSize;
+        return true;
+    }
+    
+/**
+ * Sets the <CODE>Watermark</CODE>.
+ * <P>
+ * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
+ * derived from this abstract class if they actually support the use of
+ * a <CODE>Watermark</CODE>.
+ *
+ * @return	<CODE>false</CODE> (because watermarks aren't supported by default).
+ */
+    
     public boolean add(Watermark watermark) {
-		return false;
-	}
-
-	/**
-	 * Removes the <CODE>Watermark</CODE> (if there is one).
-	 */
-
-	public void removeWatermark() {
-	}
-
-	/**
-	 * Sets the margins.
-	 * <P>
-	 * This does nothing. Has to be overridden if needed.
-	 *			   							
-	 * @param	marginLeft		the margin on the left
-	 * @param	marginRight		the margin on the right
-	 * @param	marginTop		the margin on the top
-	 * @param	marginBottom	the margin on the bottom
-	 * @return	<CODE>false</CODE>
-	 */
-
-	public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
-		return false;
-	}
-
-    /**
-     * Signals that an new page has to be started.
-	 * <P>
-	 * This does nothing. Has to be overridden if needed. 
-     *
-	 * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
-	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-     */
-
+        return false;
+    }
+    
+/**
+ * Removes the <CODE>Watermark</CODE> (if there is one).
+ */
+    
+    public void removeWatermark() {
+    }
+    
+/**
+ * Sets the margins.
+ * <P>
+ * This does nothing. Has to be overridden if needed.
+ *
+ * @param	marginLeft		the margin on the left
+ * @param	marginRight		the margin on the right
+ * @param	marginTop		the margin on the top
+ * @param	marginBottom	the margin on the bottom
+ * @return	<CODE>false</CODE>
+ */
+    
+    public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
+        return false;
+    }
+    
+/**
+ * Signals that an new page has to be started.
+ * <P>
+ * This does nothing. Has to be overridden if needed.
+ *
+ * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
+ * @throws	DocumentException	when a document isn't open yet, or has been closed
+ */
+    
     public boolean newPage() throws DocumentException {
-		if (!open) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Changes the header of this document. 
-	 * <P>
-	 * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
-	 * derived from this abstract class if they actually support the use of
-	 * headers.
-	 * 
-	 * @param	header		the new header
-	 */
-
-	public void setHeader(HeaderFooter header) {
-	}
-
-	/**
-	 * Resets the header of this document. 
-	 * <P>
-	 * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
-	 * derived from this abstract class if they actually support the use of
-	 * headers.
-	 */
-
-	public void resetHeader() {
-	}
-
-	/**
-	 * Changes the footer of this document. 
-	 * <P>
-	 * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
-	 * derived from this abstract class if they actually support the use of
-	 * footers.
-	 * 
-	 * @param	footer		the new footer
-	 */
-
-	public void setFooter(HeaderFooter footer) {
-	}
-
-	/**
-	 * Resets the footer of this document. 
-	 * <P>
-	 * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
-	 * derived from this abstract class if they actually support the use of
-	 * footers.
-	 */
-
-	public void resetFooter() {
-	}
-	
-	/**
-	 * Sets the page number to 0. 
-	 * <P>
-	 * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
-	 * derived from this abstract class if they actually support the use of
-	 * pagenumbers.
-	 */
-
-	public void resetPageCount() {
-	}
-
-	/**
-	 * Sets the page number. 
-	 * <P>
-	 * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
-	 * derived from this abstract class if they actually support the use of
-	 * pagenumbers.
-	 *
-	 * @param	pageN		the new page number
-	 */
-
-	public void setPageCount(int pageN) {
-	}
-
-    /**
-     * Signals that the <CODE>Document</CODE> was closed and that no other
-	 * <CODE>Elements</CODE> will be added. 
-     */
-
+        if (!open) {
+            return false;
+        }
+        return true;
+    }
+    
+/**
+ * Changes the header of this document.
+ * <P>
+ * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
+ * derived from this abstract class if they actually support the use of
+ * headers.
+ *
+ * @param	header		the new header
+ */
+    
+    public void setHeader(HeaderFooter header) {
+    }
+    
+/**
+ * Resets the header of this document.
+ * <P>
+ * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
+ * derived from this abstract class if they actually support the use of
+ * headers.
+ */
+    
+    public void resetHeader() {
+    }
+    
+/**
+ * Changes the footer of this document.
+ * <P>
+ * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
+ * derived from this abstract class if they actually support the use of
+ * footers.
+ *
+ * @param	footer		the new footer
+ */
+    
+    public void setFooter(HeaderFooter footer) {
+    }
+    
+/**
+ * Resets the footer of this document.
+ * <P>
+ * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
+ * derived from this abstract class if they actually support the use of
+ * footers.
+ */
+    
+    public void resetFooter() {
+    }
+    
+/**
+ * Sets the page number to 0.
+ * <P>
+ * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
+ * derived from this abstract class if they actually support the use of
+ * pagenumbers.
+ */
+    
+    public void resetPageCount() {
+    }
+    
+/**
+ * Sets the page number.
+ * <P>
+ * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
+ * derived from this abstract class if they actually support the use of
+ * pagenumbers.
+ *
+ * @param	pageN		the new page number
+ */
+    
+    public void setPageCount(int pageN) {
+    }
+    
+/**
+ * Signals that the <CODE>Document</CODE> was closed and that no other
+ * <CODE>Elements</CODE> will be added.
+ */
+    
     public void close() {
-		open = false;
-		try {
-			os.flush();
-			os.close();
-		}
-		catch(IOException ioe) {
-		//	System.err.println("Error: " + ioe.getMessage());
-		}
-	}
-
-// methods
-
-    /** Converts a <CODE>String</CODE> into a <CODE>Byte</CODE> array
-     * according to the ISO-8859-1 codepage.
-     * @param text the text to be converted
-     * @return the conversion result
-     */    
+        open = false;
+        try {
+            os.flush();
+            os.close();
+        }
+        catch(IOException ioe) {
+            //	System.err.println("Error: " + ioe.getMessage());
+        }
+    }
+    
+    // methods
+    
+/** Converts a <CODE>String</CODE> into a <CODE>Byte</CODE> array
+ * according to the ISO-8859-1 codepage.
+ * @param text the text to be converted
+ * @return the conversion result
+ */
+    
     public static final byte[] getISOBytes(String text)
     {
         try {
@@ -299,41 +300,41 @@ public abstract class DocWriter implements DocListener {
         }
     }
     
-	/**
-	 * Let the writer know that all writing has to be paused.
-	 */
-
-	public void pause() {
-		pause = true;
-	}
-
-	/**
-	 * Let the writer know that writing may be resumed.
-	 */
-
-	public void resume() {
-		pause = false;
-	}
-
-	/**
-	 * Flushes the <CODE>BufferedOutputStream</CODE>.
-	 */
-
-	public void flush() {
-		try {
-			os.flush();
-		}
-		catch(IOException ioe) {
-		}
-	}
-
-	/**
-	 * Writes a <CODE>String</CODE> to the <CODE>OutputStream</CODE>.
-	 *
-	 * @param	string		the <CODE>String</CODE> to write
-	 */
-
-	public final void write(String string) throws IOException {
-		os.write(DocWriter.getISOBytes(string));
-	}
+/**
+ * Let the writer know that all writing has to be paused.
+ */
+    
+    public void pause() {
+        pause = true;
+    }
+    
+/**
+ * Let the writer know that writing may be resumed.
+ */
+    
+    public void resume() {
+        pause = false;
+    }
+    
+/**
+ * Flushes the <CODE>BufferedOutputStream</CODE>.
+ */
+    
+    public void flush() {
+        try {
+            os.flush();
+        }
+        catch(IOException ioe) {
+        }
+    }
+    
+/**
+ * Writes a <CODE>String</CODE> to the <CODE>OutputStream</CODE>.
+ *
+ * @param	string		the <CODE>String</CODE> to write
+ */
+    
+    public final void write(String string) throws IOException {
+        os.write(DocWriter.getISOBytes(string));
+    }
 }

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -48,133 +48,133 @@ package com.lowagie.text;
  */
 
 public class Greek {
-
-	/**
-	 * Returns the first occurrence of a Greek symbol in a <CODE>String</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 * @return	an index of -1 if no Greek symbol was found
-	 */
-
-	public static int index(String string) {
-		int length = string.length();
-		for (int i = 0; i < length; i++) {
-			if (getCorrespondingSymbol(string.charAt(i)) != ' ') {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * Looks for the corresponding symbol in the font Symbol.
-	 *
-	 * @param	c	the original ASCII-char
-	 * @return	the corresponding symbol in font Symbol
-	 */
-
-	public static char getCorrespondingSymbol(char c) {
-		switch(c) {
-		case 913:
-			return 'A'; // ALFA
-		case 914:
-			return 'B'; // BETA
-		case 915:
-			return 'G'; // GAMMA
-		case 916:
-			return 'D'; // DELTA
-		case 917:
-			return 'E'; // EPSILON
-		case 918:
-			return 'Z'; // ZETA
-		case 919:
-			return 'H'; // ETA
-		case 920:
-			return 'Q'; // THETA
-		case 921:
-			return 'I'; // IOTA
-		case 922:
-			return 'K'; // KAPPA
-		case 923:
-			return 'L'; // LAMBDA
-		case 924:
-			return 'M'; // MU
-		case 925:
-			return 'N'; // NU
-		case 926:
-			return 'X'; // XI
-		case 927:
-			return 'O'; // OMICRON
-		case 928:
-			return 'P'; // PI
-		case 929:
-			return 'R'; // RHO
-		case 931:
-			return 'S'; // SIGMA
-		case 932:
-			return 'T'; // TAU
-		case 933:
-			return 'U'; // UPSILON
-		case 934:
-			return 'J'; // PHI
-		case 935:
-			return 'C'; // CHI
-		case 936:
-			return 'Y'; // PSI
-		case 937:
-			return 'W'; // OMEGA
-		case 945:
-			return 'a'; // alfa
-		case 946:
-			return 'b'; // beta
-		case 947:
-			return 'g'; // gamma
-		case 948:
-			return 'd'; // delta
-		case 949:
-			return 'e'; // epsilon
-		case 950:
-			return 'z'; // zeta
-		case 951:
-			return 'h'; // eta
-		case 952:
-			return 'q'; // theta
-		case 953:
-			return 'i'; // iota
-		case 954:
-			return 'k'; // kappa
-		case 955:
-			return 'l'; // lambda
-		case 956:
-			return 'm'; // mu
-		case 957:
-			return 'n'; // nu
-		case 958:
-			return 'x'; // xi
-		case 959:
-			return 'o'; // omicron
-		case 960:
-			return 'p'; // pi
-		case 961:
-			return 'r'; // rho
-		case 962:
-			return 's'; // sigma
-		case 963:
-			return 's'; // sigma
-		case 964:
-			return 't'; // tau
-		case 965:
-			return 'u'; // upsilon
-		case 966:
-			return 'j'; // phi
-		case 967:
-			return 'c'; // chi
-		case 968:
-			return 'y'; // psi
-		case 969:
-			return 'w'; // omega 
-		default:
-			return ' ';
-		}
-	}
+    
+/**
+ * Returns the first occurrence of a Greek symbol in a <CODE>String</CODE>.
+ *
+ * @param	string		a <CODE>String</CODE>
+ * @return	an index of -1 if no Greek symbol was found
+ */
+    
+    public static int index(String string) {
+        int length = string.length();
+        for (int i = 0; i < length; i++) {
+            if (getCorrespondingSymbol(string.charAt(i)) != ' ') {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+/**
+ * Looks for the corresponding symbol in the font Symbol.
+ *
+ * @param	c	the original ASCII-char
+ * @return	the corresponding symbol in font Symbol
+ */
+    
+    public static char getCorrespondingSymbol(char c) {
+        switch(c) {
+            case 913:
+                return 'A'; // ALFA
+            case 914:
+                return 'B'; // BETA
+            case 915:
+                return 'G'; // GAMMA
+            case 916:
+                return 'D'; // DELTA
+            case 917:
+                return 'E'; // EPSILON
+            case 918:
+                return 'Z'; // ZETA
+            case 919:
+                return 'H'; // ETA
+            case 920:
+                return 'Q'; // THETA
+            case 921:
+                return 'I'; // IOTA
+            case 922:
+                return 'K'; // KAPPA
+            case 923:
+                return 'L'; // LAMBDA
+            case 924:
+                return 'M'; // MU
+            case 925:
+                return 'N'; // NU
+            case 926:
+                return 'X'; // XI
+            case 927:
+                return 'O'; // OMICRON
+            case 928:
+                return 'P'; // PI
+            case 929:
+                return 'R'; // RHO
+            case 931:
+                return 'S'; // SIGMA
+            case 932:
+                return 'T'; // TAU
+            case 933:
+                return 'U'; // UPSILON
+            case 934:
+                return 'J'; // PHI
+            case 935:
+                return 'C'; // CHI
+            case 936:
+                return 'Y'; // PSI
+            case 937:
+                return 'W'; // OMEGA
+            case 945:
+                return 'a'; // alfa
+            case 946:
+                return 'b'; // beta
+            case 947:
+                return 'g'; // gamma
+            case 948:
+                return 'd'; // delta
+            case 949:
+                return 'e'; // epsilon
+            case 950:
+                return 'z'; // zeta
+            case 951:
+                return 'h'; // eta
+            case 952:
+                return 'q'; // theta
+            case 953:
+                return 'i'; // iota
+            case 954:
+                return 'k'; // kappa
+            case 955:
+                return 'l'; // lambda
+            case 956:
+                return 'm'; // mu
+            case 957:
+                return 'n'; // nu
+            case 958:
+                return 'x'; // xi
+            case 959:
+                return 'o'; // omicron
+            case 960:
+                return 'p'; // pi
+            case 961:
+                return 'r'; // rho
+            case 962:
+                return 's'; // sigma
+            case 963:
+                return 's'; // sigma
+            case 964:
+                return 't'; // tau
+            case 965:
+                return 'u'; // upsilon
+            case 966:
+                return 'j'; // phi
+            case 967:
+                return 'c'; // chi
+            case 968:
+                return 'y'; // psi
+            case 969:
+                return 'w'; // omega
+                default:
+                    return ' ';
+        }
+    }
 }

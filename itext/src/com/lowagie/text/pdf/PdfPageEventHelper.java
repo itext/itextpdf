@@ -3,11 +3,9 @@
  *
  * Created on May 16, 2001, 5:10 PM
  */
-
 package com.lowagie.text.pdf;
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
-
 /** Helps the use of <CODE>PdfPageEvent</CODE> by implementing all the interface methods.
  * A class can extend <CODE>PdfPageEventHelper</CODE> and only implement the
  * needed methods.

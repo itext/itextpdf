@@ -3,13 +3,10 @@
  *
  * Created on April 9, 2001, 2:39 PM
  */
-
 package com.lowagie.text.pdf;
-
 import java.util.HashMap;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
-
 /** Implements the form XObject.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -26,14 +23,12 @@ public class PdfTemplate extends PdfContentByte
     protected float width;
     /** The bounding heigth of this template */
     protected float height;
-
 /** Creates a <CODE>PdfTemplate</CODE>.
  */    
     private PdfTemplate()
     {
         super(null);
     }
-
     /** Creates new PdfTemplate
      *
      * @param wr the <CODE>PdfWriter</CODE>
@@ -54,7 +49,6 @@ public class PdfTemplate extends PdfContentByte
     {
         this.width = width;
     }
-
     /** Sets the bounding heigth of this template.
      *
      * @param height the bounding height
@@ -63,7 +57,6 @@ public class PdfTemplate extends PdfContentByte
     {
         this.height = height;
     }
-
     /** Gets the bounding width of this template.
      *
      * @return width the bounding width
@@ -72,7 +65,6 @@ public class PdfTemplate extends PdfContentByte
     {
         return width;
     }
-
     /** Gets the bounding heigth of this template.
      *
      * @return heigth the bounding height
@@ -81,7 +73,6 @@ public class PdfTemplate extends PdfContentByte
     {
         return height;
     }
-
     /** Gets the indirect reference to this template.
      *
      * @return the indirect reference to this template
@@ -90,7 +81,6 @@ public class PdfTemplate extends PdfContentByte
     {
         return thisReference;
     }
-
     /** Adds a template to this template.
      *
      * @param template the template
@@ -114,7 +104,6 @@ public class PdfTemplate extends PdfContentByte
         content.append(name.toString()).append(" Do Q\n");
         xObjectDictionary.put(name, template.getIndirectReference());
     }
-
     /** Adds an <CODE>Image</CODE> to this template. The positioning of the <CODE>Image</CODE>
      * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
      * use addImage(image, image_width, 0, 0, image_height, x, y).
@@ -145,7 +134,6 @@ public class PdfTemplate extends PdfContentByte
             throw new DocumentException(ee.getMessage());
         }
     }
-
     /** Constructs the resources used by this template.
      *
      * @return the resources used by this template
@@ -174,7 +162,6 @@ public class PdfTemplate extends PdfContentByte
     {
         return new PdfFormXObject(this);
     }
-
     /** Set the font and the size for the subsequent text writing.
      *
      * @param bf the font
@@ -206,6 +193,5 @@ public class PdfTemplate extends PdfContentByte
         tpl.height = height;
         return tpl;
     }
-
 
 }

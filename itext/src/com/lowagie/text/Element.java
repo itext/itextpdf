@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -66,193 +66,193 @@ import java.util.ArrayList;
  * @see		Rectangle
  * @see		Row
  * @see		Section
- * @see		Table 
+ * @see		Table
  *
  * @author  bruno@lowagie.com
  */
 
 public interface Element {
-
-// static membervariables (meta information)
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int	HEADER = 0;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int TITLE = 1;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int SUBJECT = 2;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int KEYWORDS = 3;
-
-	/** This is a possible type of <CODE>Element</CIDE>. */
-	public static final int AUTHOR = 4;
-
-	/** This is a possible type of <CODE>Element</CIDE>. */
-	public static final int PRODUCER = 5;
-
-	/** This is a possible type of <CODE>Element</CIDE>. */
-	public static final int CREATIONDATE = 6;
-
-// static membervariables (content)
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int CHUNK = 10;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int PHRASE = 11;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int PARAGRAPH = 12;
-
-	/** This is a possible type of <CODE>Element</CODE> */
-	public static final int SECTION = 13;
-
-	/** This is a possible type of <CODE>Element</CODE> */
-	public static final int LIST = 14;
-
-	/** This is a possible type of <CODE>Element</CODE> */
-	public static final int LISTITEM = 15;
-
-	/** This is a possible type of <CODE>Element</CODE> */
-	public static final int CHAPTER = 16;
-
-	/** This is a possible type of <CODE>Element</CODE> */
-	public static final int ANCHOR = 17;
-
-// static membervariables (tables)
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int CELL = 20;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int ROW = 21;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int TABLE = 22;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int PTABLE = 23;
-
-// static membervariables (annotations)
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int ANNOTATION = 29;
-
-// static membervariables (geometric figures)
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int RECTANGLE = 30;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int GIF = 31; 
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int JPEG = 32; 
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int PNG = 33; 
-
-	/** This is a possible type of <CODE>Element</CODE>. */ 
-	public static final int IMGRAW = 34;
-
-	/** This is a possible type of <CODE>Element</CODE>. */
-	public static final int GRAPHIC = 39;
-
-// static membervariables (alignment)
-
-    /**
-     * A possible value for paragraph alignment.  This
-     * specifies that the text is aligned to the left 
-     * indent and extra whitespace should be placed on
-     * the right.
-     */
+    
+    // static membervariables (meta information)
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int	HEADER = 0;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int TITLE = 1;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int SUBJECT = 2;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int KEYWORDS = 3;
+    
+/** This is a possible type of <CODE>Element</CIDE>. */
+    public static final int AUTHOR = 4;
+    
+/** This is a possible type of <CODE>Element</CIDE>. */
+    public static final int PRODUCER = 5;
+    
+/** This is a possible type of <CODE>Element</CIDE>. */
+    public static final int CREATIONDATE = 6;
+    
+    // static membervariables (content)
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int CHUNK = 10;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int PHRASE = 11;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int PARAGRAPH = 12;
+    
+/** This is a possible type of <CODE>Element</CODE> */
+    public static final int SECTION = 13;
+    
+/** This is a possible type of <CODE>Element</CODE> */
+    public static final int LIST = 14;
+    
+/** This is a possible type of <CODE>Element</CODE> */
+    public static final int LISTITEM = 15;
+    
+/** This is a possible type of <CODE>Element</CODE> */
+    public static final int CHAPTER = 16;
+    
+/** This is a possible type of <CODE>Element</CODE> */
+    public static final int ANCHOR = 17;
+    
+    // static membervariables (tables)
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int CELL = 20;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int ROW = 21;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int TABLE = 22;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int PTABLE = 23;
+    
+    // static membervariables (annotations)
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int ANNOTATION = 29;
+    
+    // static membervariables (geometric figures)
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int RECTANGLE = 30;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int GIF = 31;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int JPEG = 32;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int PNG = 33;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int IMGRAW = 34;
+    
+/** This is a possible type of <CODE>Element</CODE>. */
+    public static final int GRAPHIC = 39;
+    
+    // static membervariables (alignment)
+    
+/**
+ * A possible value for paragraph alignment.  This
+ * specifies that the text is aligned to the left
+ * indent and extra whitespace should be placed on
+ * the right.
+ */
     public static final int ALIGN_LEFT = 0;
-
-    /**
-     * A possible value for paragraph alignment.  This
-     * specifies that the text is aligned to the center
-     * and extra whitespace should be placed equally on
-     * the left and right.
-     */
+    
+/**
+ * A possible value for paragraph alignment.  This
+ * specifies that the text is aligned to the center
+ * and extra whitespace should be placed equally on
+ * the left and right.
+ */
     public static final int ALIGN_CENTER = 1;
-
-    /**
-     * A possible value for paragraph alignment.  This
-     * specifies that the text is aligned to the right
-     * indent and extra whitespace should be placed on
-     * the left.
-     */
+    
+/**
+ * A possible value for paragraph alignment.  This
+ * specifies that the text is aligned to the right
+ * indent and extra whitespace should be placed on
+ * the left.
+ */
     public static final int ALIGN_RIGHT = 2;
-
-    /**
-     * A possible value for paragraph alignment.  This
-     * specifies that extra whitespace should be spread
-     * out through the rows of the paragraph with the
-     * text lined up with the left and right indent
-     * except on the last line which should be aligned
-     * to the left.
-     */
+    
+/**
+ * A possible value for paragraph alignment.  This
+ * specifies that extra whitespace should be spread
+ * out through the rows of the paragraph with the
+ * text lined up with the left and right indent
+ * except on the last line which should be aligned
+ * to the left.
+ */
     public static final int ALIGN_JUSTIFIED = 3;
-
-	/**
-	 * A possible value for vertical alignment.
-	 */
-
+    
+/**
+ * A possible value for vertical alignment.
+ */
+    
     public static final int ALIGN_TOP = 4;
-
-	/**
-	 * A possible value for vertical alignment.
-	 */
-
+    
+/**
+ * A possible value for vertical alignment.
+ */
+    
     public static final int ALIGN_MIDDLE = 5;
-
-	/**
-	 * A possible value for vertical alignment.
-	 */
-
+    
+/**
+ * A possible value for vertical alignment.
+ */
+    
     public static final int ALIGN_BOTTOM = 6;
-
-	/**
-	 * A possible value for vertical alignment.
-	 */
+    
+/**
+ * A possible value for vertical alignment.
+ */
     public static final int ALIGN_BASELINE = 7;
-
-// methods
-
-    /**
-     * Processes the element by adding it (or the different parts) to an
-	 * <CODE>ElementListener</CODE>. 
-     *
-	 * @param	listener	an <CODE>ElementListener</CODE>
-	 * @return	<CODE>true</CODE> if the element was processed successfully
-     */
-
+    
+    // methods
+    
+/**
+ * Processes the element by adding it (or the different parts) to an
+ * <CODE>ElementListener</CODE>.
+ *
+ * @param	listener	an <CODE>ElementListener</CODE>
+ * @return	<CODE>true</CODE> if the element was processed successfully
+ */
+    
     public boolean process(ElementListener listener);
-
-    /**
-     * Gets the type of the text element. 
-     *
-     * @return	a type
-     */
-
+    
+/**
+ * Gets the type of the text element.
+ *
+ * @return	a type
+ */
+    
     public int type();
-
-    /**
-     * Gets all the chunks in this element. 
-     *
-     * @return	an <CODE>ArrayList</CODE>
-     */
-
+    
+/**
+ * Gets all the chunks in this element.
+ *
+ * @return	an <CODE>ArrayList</CODE>
+ */
+    
     public ArrayList getChunks();
-
-    /**
-     * Gets the content of the text element. 
-     *
-     * @return	a type
-     */
-
+    
+/**
+ * Gets the content of the text element.
+ *
+ * @return	a type
+ */
+    
     public String toString();
 }
