@@ -215,7 +215,7 @@ public class TextField {
             // beveled
             Color actual = backgroundColor;
             if (actual == null)
-                actual = Color.WHITE;
+                actual = Color.white;
             app.setGrayFill(1);
             drawTopFrame(app);
             app.setColorFill(actual.darker());

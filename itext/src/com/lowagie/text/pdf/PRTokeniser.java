@@ -87,6 +87,10 @@ public class PRTokeniser {
         file = new RandomAccessFileOrArray(pdfIn);
     }
     
+    public PRTokeniser(RandomAccessFileOrArray file) {
+        this.file = file;
+    }
+    
     public void seek(int pos) throws IOException {
         file.seek(pos);
     }

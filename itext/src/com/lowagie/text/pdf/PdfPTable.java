@@ -319,9 +319,9 @@ public class PdfPTable implements Element{
     /**
      * Writes the selected rows to the document.
      * <P>
-     * <CODE>canvases</CODE> is obtained from <CODE>beginWrittingRows()</CODE>.
+     * <CODE>canvases</CODE> is obtained from <CODE>beginWritingRows()</CODE>.
      * @param rowStart the first row to be written, zero index
-     * @param rowEnd the last row to be written - 1. If it is -1 all the
+     * @param rowEnd the last row to be written + 1. If it is -1 all the
      * rows to the end are written
      * @param xPos the x write coodinate
      * @param yPos the y write coodinate
@@ -331,21 +331,53 @@ public class PdfPTable implements Element{
      * @see #beginWritingRows(com.lowagie.text.pdf.PdfContentByte)
      */    
     public float writeSelectedRows(int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases) {
+        return writeSelectedRows(0, -1, rowStart, rowEnd, xPos, yPos, canvases);
+    }
+    
+    /** Writes the selected rows and columns to the document.
+     * This method does not clip the columns; this is only important
+     * if there are columns with colspan at boundaries.
+     * <P>
+     * <CODE>canvases</CODE> is obtained from <CODE>beginWritingRows()</CODE>.
+     * <P>
+     * The table event is only fired for complete rows.
+     * @param colStart the first column to be written, zero index
+     * @param colEnd the last column to be written + 1. If it is -1 all the
+     * columns to the end are written
+     * @param rowStart the first row to be written, zero index
+     * @param rowEnd the last row to be written + 1. If it is -1 all the
+     * rows to the end are written
+     * @param xPos the x write coodinate
+     * @param yPos the y write coodinate
+     * @param canvases an array of 4 <CODE>PdfContentByte</CODE> obtained from
+     * <CODE>beginWrittingRows()</CODE>
+     * @return the y coordinate position of the bottom of the last row
+     * @see #beginWritingRows(com.lowagie.text.pdf.PdfContentByte)
+     */    
+    public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases) {
         if (totalWidth <= 0)
             throw new RuntimeException("The table width must be greater than zero.");
         int size = rows.size();
         if (rowEnd < 0)
             rowEnd = size;
-        if (rowStart >= size || rowStart >= rowEnd)
-            return yPos;
         rowEnd = Math.min(rowEnd, size);
+        if (rowStart < 0)
+            rowStart = 0;
+        if (rowStart >= rowEnd)
+            return yPos;
+        if (colEnd < 0)
+            colEnd = absoluteWidths.length;
+        colEnd = Math.min(colEnd, absoluteWidths.length);
+        if (colStart < 0)
+            colStart = 0;
+        colStart = Math.min(colStart, absoluteWidths.length);
         float yPosStart = yPos;
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
-            row.writeCells(xPos, yPos, canvases);
+            row.writeCells(colStart, colEnd, xPos, yPos, canvases);
             yPos -= row.getMaxHeights();
         }
-        if (tableEvent != null) {
+        if (tableEvent != null && colStart == 0 && colEnd == absoluteWidths.length) {
             float heights[] = new float[rowEnd - rowStart + 1];
             heights[0] = yPosStart;
             for (int k = rowStart; k < rowEnd; ++k) {
@@ -361,7 +393,7 @@ public class PdfPTable implements Element{
      * Writes the selected rows to the document.
      * 
      * @param rowStart the first row to be written, zero index
-     * @param rowEnd the last row to be written - 1. If it is -1 all the
+     * @param rowEnd the last row to be written + 1. If it is -1 all the
      * rows to the end are written
      * @param xPos the x write coodinate
      * @param yPos the y write coodinate
@@ -370,9 +402,54 @@ public class PdfPTable implements Element{
      * @return the y coordinate position of the bottom of the last row
      */    
     public float writeSelectedRows(int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte canvas) {
+        return writeSelectedRows(0, -1, rowStart, rowEnd, xPos, yPos, canvas);
+    }
+    
+    /**
+     * Writes the selected rows to the document.
+     * This method clips the columns; this is only important
+     * if there are columns with colspan at boundaries.
+     * <P>
+     * The table event is only fired for complete rows.
+     * 
+     * @param colStart the first column to be written, zero index
+     * @param colEnd the last column to be written + 1. If it is -1 all the
+     * @param rowStart the first row to be written, zero index
+     * @param rowEnd the last row to be written + 1. If it is -1 all the
+     * rows to the end are written
+     * @param xPos the x write coodinate
+     * @param yPos the y write coodinate
+     * @param canvas the <CODE>PdfContentByte</CODE> where the rows will
+     * be written to
+     * @return the y coordinate position of the bottom of the last row
+     */    
+    public float writeSelectedRows(int colStart, int colEnd, int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte canvas) {
+        if (colEnd < 0)
+            colEnd = absoluteWidths.length;
+        colEnd = Math.min(colEnd, absoluteWidths.length);
+        if (colStart < 0)
+            colStart = 0;
+        colStart = Math.min(colStart, absoluteWidths.length);
+        if (colStart != 0 || colEnd != absoluteWidths.length) {
+            float w = 0;
+            for (int k = colStart; k < colEnd; ++k)
+                w += absoluteWidths[k];
+            canvas.saveState();
+            float lx = 0;
+            float rx = 0;
+            if (colStart == 0)
+                lx = 10000;
+            if (colEnd == absoluteWidths.length)
+                rx = 10000;
+            canvas.rectangle(xPos - lx, -10000, w + lx + rx, 20000);
+            canvas.clip();
+            canvas.newPath();
+        }
         PdfContentByte[] canvases = beginWritingRows(canvas);
-        float y = writeSelectedRows(rowStart, rowEnd, xPos, yPos, canvases);
+        float y = writeSelectedRows(colStart, colEnd, rowStart, rowEnd, xPos, yPos, canvases);
         endWritingRows(canvases);
+        if (colStart != 0 || colEnd != absoluteWidths.length)
+            canvas.restoreState();
         return y;
     }
     
@@ -581,6 +658,9 @@ public class PdfPTable implements Element{
         return tableEvent;
     }
     
+    /** Gets the absolute sizes of each column width.
+     * @return he absolute sizes of each column width
+     */    
     public float[] getAbsoluteWidths() {
         return absoluteWidths;
     }

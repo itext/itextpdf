@@ -49,6 +49,7 @@ package com.lowagie.text.pdf;
 import java.io.OutputStream;
 import java.io.IOException;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.DocWriter;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -156,7 +157,9 @@ class PdfStamperImp extends PdfWriter {
         encryption,
         fileID);
         os.write(trailer.toPdf(this));
-        os.close();
+        os.flush();
+        if (isCloseStream())
+            os.close();
     }
     
     void applyRotation(int pageNumber, ByteBuffer out) {

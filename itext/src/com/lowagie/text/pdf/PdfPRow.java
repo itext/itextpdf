@@ -66,12 +66,14 @@ import java.awt.Color;
 public class PdfPRow {
 
     protected PdfPCell cells[];
+    protected float widths[];
     protected float maxHeight = 0;
     protected boolean calculated = false;
 
     public PdfPRow(PdfPCell cells[])
     {
         this.cells = cells;
+        widths = new float[cells.length];
     }
     
     public PdfPRow(PdfPRow row)
@@ -83,12 +85,15 @@ public class PdfPRow {
             if (row.cells[k] != null)
                 cells[k] = new PdfPCell(row.cells[k]);
         }
+        widths = new float[cells.length];
+        System.arraycopy(row.widths, 0, widths, 0, cells.length);
     }
     
     public boolean setWidths(float widths[])
     {
         if (widths.length != cells.length)
             return false;
+        System.arraycopy(widths, 0, this.widths, 0, cells.length);
         float total = 0;
         calculated = false;
         for (int k = 0; k < widths.length; ++k) {
@@ -227,11 +232,25 @@ public class PdfPRow {
         }            
     }
     
-    public void writeCells(float xPos, float yPos, PdfContentByte[] canvases)
+    public void writeCells(int colStart, int colEnd, float xPos, float yPos, PdfContentByte[] canvases)
     {
         if (!calculated)
             calculateHeights();
-        for (int k = 0; k < cells.length; ++k) {
+        if (colEnd < 0)
+            colEnd = cells.length;
+        colEnd = Math.min(colEnd, cells.length);
+        if (colStart < 0)
+            colStart = 0;
+        if (colStart >= colEnd)
+            return;
+        int newStart;
+        for (newStart = colStart; newStart >= 0; --newStart) {
+            if (cells[newStart] != null)
+                break;
+            xPos -= widths[newStart - 1];
+        }
+        xPos -= cells[newStart].left();
+        for (int k = newStart; k < colEnd; ++k) {
             PdfPCell cell = cells[k];
             if (cell == null)
                 continue;
@@ -354,8 +373,7 @@ public class PdfPRow {
             if (evt != null) {
                 Rectangle rect = new Rectangle(cell.left() + xPos, cell.top() + yPos - maxHeight, cell.right() + xPos, cell.top() + yPos);
                 evt.cellLayout(cell, rect, canvases);
-            }
-            
+            }            
         }
     }
     

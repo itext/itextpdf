@@ -168,6 +168,8 @@ public class PdfString extends PdfObject {
     }
     
     public String toUnicodeString() {
+        if (encoding != null && encoding.length() != 0)
+            return value;
         byte b[] = PdfEncodings.convertToBytes(value, null);
         if (b.length >= 2 && b[0] == (byte)254 && b[1] == (byte)255)
             return PdfEncodings.convertToString(b, PdfObject.TEXT_UNICODE);

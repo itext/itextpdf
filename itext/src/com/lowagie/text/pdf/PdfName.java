@@ -720,17 +720,12 @@ public class PdfName extends PdfObject implements Comparable{
         }
         // The name has to be checked for illegal characters
         int length = name.length();
-        for (int i = 0; i < length; i++) {
-            if (name.charAt(i) < 32 || name.charAt(i) > 255) {
-                throw new IllegalArgumentException("Illegal character on position " + i + ".");
-            }
-        }
         // every special character has to be substituted
         StringBuffer pdfName = new StringBuffer("/");
         char character;
         // loop over all the characters
         for (int index = 0; index < length; index++) {
-            character = name.charAt(index);
+            character = (char)(name.charAt(index) & 0xff);
             // special characters are escaped (reference manual p.39)
             switch (character) {
                 case ' ':
@@ -749,8 +744,10 @@ public class PdfName extends PdfObject implements Comparable{
                     pdfName.append(Integer.toString((int) character, 16));
                     break;
                 default:
-                    if (character > 126) {
+                    if (character > 126 || character < 32) {
                         pdfName.append('#');
+                        if (character < 16)
+                            pdfName.append('0');
                         pdfName.append(Integer.toString((int) character, 16));
                     }
                     else
