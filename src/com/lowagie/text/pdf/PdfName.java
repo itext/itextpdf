@@ -79,6 +79,9 @@ public class PdfName extends PdfObject {
     public static final PdfName AA = new PdfName("/AA", 0);
     
     /** This is a static final PdfName */
+    public static final PdfName ACROFORM = new PdfName("/AcroForm", 0);
+    
+    /** This is a static final PdfName */
     public static final PdfName ACTION = new PdfName("/Action", 0);
     
     /** This is a static final PdfName */
@@ -86,6 +89,9 @@ public class PdfName extends PdfObject {
     
     /** This is a static final PdfName */
     public static final PdfName ANNOTS = new PdfName("/Annots", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName AP = new PdfName("/AP", 0);
     
     /** This is a static final PdfName */
     public static final PdfName ASCII85DECODE = new PdfName("/ASCII85Decode", 0);
@@ -104,6 +110,9 @@ public class PdfName extends PdfObject {
     
     /** This is a static final PdfName */
     public static final PdfName BBOX = new PdfName("/BBox", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName BG = new PdfName("/BG", 0);
     
     /** This is a static final PdfName */
     public static final PdfName BITSPERCOMPONENT = new PdfName("/BitsPerComponent", 0);
@@ -172,6 +181,9 @@ public class PdfName extends PdfObject {
     public static final PdfName D = new PdfName("/D", 0);
     
     /** This is a static final PdfName */
+    public static final PdfName DA = new PdfName("/DA", 0);
+    
+    /** This is a static final PdfName */
     public static final PdfName DCTDECODE = new PdfName("/DCTDecode", 0);
     
     /** This is a static final PdfName */
@@ -197,6 +209,9 @@ public class PdfName extends PdfObject {
     
     /** This is a static final PdfName */
     public static final PdfName DIRECTION = new PdfName("/Direction", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName DR = new PdfName("/DR", 0);
     
     /** This is a static final PdfName */
     public static final PdfName DUR = new PdfName("/Dur", 0);
@@ -229,7 +244,13 @@ public class PdfName extends PdfObject {
     public static final PdfName FDECODEPARMS = new PdfName("/FDecodeParms", 0);
     
     /** This is a static final PdfName */
+    public static final PdfName FF = new PdfName("/Ff", 0);
+    
+    /** This is a static final PdfName */
     public static final PdfName FFILTER = new PdfName("/FFilter", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName FIELDS = new PdfName("/Fields", 0);
     
     /** This is a static final PdfName */
     public static final PdfName FILTER = new PdfName("/Filter", 0);
@@ -281,6 +302,9 @@ public class PdfName extends PdfObject {
     
     /** This is a static final PdfName */
     public static final PdfName FORMTYPE = new PdfName("/FormType", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName FT = new PdfName("/FT", 0);
     
     /** This is a static final PdfName */
     public static final PdfName FULLSCREEN = new PdfName("/FullScreen", 0);
@@ -346,6 +370,12 @@ public class PdfName extends PdfObject {
     public static final PdfName INFO = new PdfName("/Info", 0);
     
     /** This is a static final PdfName */
+    public static final PdfName JAVASCRIPT = new PdfName("/JavaScript", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName JS = new PdfName("/JS", 0);
+    
+    /** This is a static final PdfName */
     public static final PdfName INTERPOLATE = new PdfName("/Interpolate", 0);
     
     /** This is a static final PdfName */
@@ -398,6 +428,9 @@ public class PdfName extends PdfObject {
     
     /** This is a static final PdfName */
     public static final PdfName MEDIABOX = new PdfName("/MediaBox", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName MK = new PdfName("/MK", 0);
     
     /** This is a static final PdfName */
     public static final PdfName MODDATE = new PdfName("/ModDate", 0);
@@ -485,6 +518,9 @@ public class PdfName extends PdfObject {
     
     /** This is a static final PdfName */
     public static final PdfName PROPERTIES = new PdfName("/Properties", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName Q = new PdfName("/Q", 0);
     
     /** This is a static final PdfName */
     public static final PdfName R = new PdfName("/R", 0);
@@ -577,6 +613,9 @@ public class PdfName extends PdfObject {
     public static final PdfName TWOCOLUMNRIGHT = new PdfName("/TwoColumnRight", 0);
     
     /** This is a static final PdfName */
+    public static final PdfName TX = new PdfName("/Tx", 0);
+    
+    /** This is a static final PdfName */
     public static final PdfName TYPE = new PdfName("/Type", 0);
     
     /** This is a static final PdfName */
@@ -605,6 +644,9 @@ public class PdfName extends PdfObject {
     
     /** This is a static final PdfName of an attribute. */
     public static final PdfName W = new PdfName("/W", 0);
+    
+    /** This is a static final PdfName of an attribute. */
+    public static final PdfName WIDGET = new PdfName("/Widget", 0);
     
     /** This is a static final PdfName of an attribute. */
     public static final PdfName WIDTH = new PdfName("/Width", 0);

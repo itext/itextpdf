@@ -51,6 +51,8 @@
 package com.lowagie.text.pdf;
 
 import java.net.URL;
+import java.io.IOException;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.
@@ -61,77 +63,75 @@ import java.net.URL;
 public class PdfAction extends PdfDictionary {
     
     /** A named action to go to the first page.
-     */    
+     */
     public final static int FIRSTPAGE = 1;
     /** A named action to go to the previous page.
-     */    
+     */
     public final static int PREVPAGE = 2;
     /** A named action to go to the next page.
-     */    
+     */
     public final static int NEXTPAGE = 3;
     /** A named action to go to the last page.
-     */    
+     */
     public final static int LASTPAGE = 4;
     // constructors
     
-/**
- * Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
- *
- * @param url the Url to go to
- */
+    /** Create an empty action.
+     */    
+    PdfAction() {
+    }
+    
+    /**
+     * Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
+     *
+     * @param url the Url to go to
+     */
     
     public PdfAction(URL url) {
-        super(PdfName.ACTION);
         put(PdfName.S, PdfName.URI);
         put(PdfName.URI, new PdfString(url.toExternalForm()));
     }
     
-/**
- * Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
- *
- * @param url the url to go to
- */
+    /**
+     * Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
+     *
+     * @param url the url to go to
+     */
     
     public PdfAction(String url) {
-        super(PdfName.ACTION);
         put(PdfName.S, PdfName.URI);
         put(PdfName.URI, new PdfString(url));
     }
     
-/**
- * Constructs a new <CODE>PdfAction</CODE> of Subtype GoTo.
- * @param destination the destination to go to
- */
+    /**
+     * Constructs a new <CODE>PdfAction</CODE> of Subtype GoTo.
+     * @param destination the destination to go to
+     */
     
     PdfAction(PdfIndirectReference destination) {
-        super(PdfName.ACTION);
         put(PdfName.S, PdfName.GOTO);
         put(PdfName.D, destination);
     }
-  
-/**
- * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
- * @param filename the file name to go to
- * @param name the named destination to go to
- */
     
-    public PdfAction(String filename, String name)
-    {
-        super(PdfName.ACTION);
+    /**
+     * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
+     * @param filename the file name to go to
+     * @param name the named destination to go to
+     */
+    
+    public PdfAction(String filename, String name) {
         put(PdfName.S, PdfName.GOTOR);
         put(PdfName.F, new PdfString(filename));
         put(PdfName.D, new PdfString(name));
     }
     
-/**
- * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
- * @param filename the file name to go to
- * @param page the page destination to go to
- */
+    /**
+     * Constructs a new <CODE>PdfAction</CODE> of Subtype GoToR.
+     * @param filename the file name to go to
+     * @param page the page destination to go to
+     */
     
-    public PdfAction(String filename, int page)
-    {
-        super(PdfName.ACTION);
+    public PdfAction(String filename, int page) {
         put(PdfName.S, PdfName.GOTOR);
         put(PdfName.F, new PdfString(filename));
         put(PdfName.D, new PdfLiteral("[" + (page - 1) + " /FitH 10000]"));
@@ -140,16 +140,17 @@ public class PdfAction extends PdfDictionary {
     /** Implements name actions. The action can be FIRSTPAGE, LASTPAGE,
      * NEXTPAGE and PREVPAGE.
      * @param named the named action
-     */    
+     */
     public PdfAction(int named) {
-        super(PdfName.ACTION);
         put(PdfName.S, PdfName.NAMED);
         switch (named) {
             case FIRSTPAGE:
                 put(PdfName.N, PdfName.FIRSTPAGE);
                 break;
             case LASTPAGE:
-                put(PdfName.N, PdfName.LASTPAGE);
+                put(PdfName.S, PdfName.JAVASCRIPT);
+                put(PdfName.JS, new PdfString("this.print(true);\r"));
+                //put(PdfName.N, PdfName.LASTPAGE);
                 break;
             case NEXTPAGE:
                 put(PdfName.N, PdfName.NEXTPAGE);
@@ -171,9 +172,8 @@ public class PdfAction extends PdfDictionary {
      * It can be <CODE>null</CODE>.
      * @param defaultDir (Windows-specific) the default directory in standard DOS syntax.
      * It can be <CODE>null</CODE>.
-     */    
+     */
     public PdfAction(String application, String parameters, String operation, String defaultDir) {
-        super(PdfName.ACTION);
         put(PdfName.S, PdfName.LAUNCH);
         if (parameters == null && operation == null && defaultDir == null)
             put(PdfName.F, new PdfString(application));
@@ -188,5 +188,81 @@ public class PdfAction extends PdfDictionary {
                 dic.put(PdfName.D, new PdfString(defaultDir));
             put(PdfName.WIN, dic);
         }
+    }
+    
+    /** Creates a JavaScript action. If the JavaScript is smaller than
+     * 50 characters it will be place as a string, otherwise it will
+     * be placed as a compressed stream.
+     * @param code the JavaScript code
+     * @param writer the writer for this action
+     * @param unicode select JavaScript unicode. Note that the internal
+     * Acrobat JavaScript engine does not support unicode,
+     * so this may or may not work for you
+     * @return the JavaScript action
+     */    
+    public static PdfAction javaScript(String code, PdfWriter writer, boolean unicode) {
+        PdfAction js = new PdfAction();
+        js.put(PdfName.S, PdfName.JAVASCRIPT);
+        if (unicode && code.length() < 50) {
+                js.put(PdfName.JS, new PdfString(code, PdfObject.TEXT_UNICODE));
+        }
+        else if (!unicode && code.length() < 100) {
+                js.put(PdfName.JS, new PdfString(code));
+        }
+        else {
+            try {
+                byte b[] = code.getBytes(unicode ? PdfObject.TEXT_UNICODE : PdfObject.ENCODING);
+                PdfStream stream = new PdfStream(b);
+                stream.flateCompress();
+                js.put(PdfName.JS, writer.addToBody(stream).getIndirectReference());
+            }
+            catch (Exception e) {
+                throw new ExceptionConverter(e);
+            }
+        }
+        return js;
+    }
+
+    /** Creates a JavaScript action. If the JavaScript is smaller than
+     * 50 characters it will be place as a string, otherwise it will
+     * be placed as a compressed stream.
+     * @param code the JavaScript code
+     * @param writer the writer for this action
+     * @return the JavaScript action
+     */    
+    public static PdfAction javaScript(String code, PdfWriter writer) {
+        return javaScript(code, writer, false);
+    }
+    
+    /** Add a chained action.
+     * @param na the next action
+     */    
+    public void next(PdfAction na) {
+        PdfObject nextAction = get(PdfName.NEXT);
+        if (nextAction == null)
+            put(PdfName.NEXT, na);
+        else if (nextAction.type() == PdfObject.DICTIONARY) {
+            PdfArray array = new PdfArray(nextAction);
+            array.add(na);
+            put(PdfName.NEXT, array);
+        }
+        else {
+            ((PdfArray)nextAction).add(na);
+        }
+    }
+    
+    /** Creates a GoTo action to an internal page.
+     * @param page the page to go. First page is 1
+     * @param dest the destination for the page
+     * @param writer the writer for this action
+     * @return a GoTo action
+     */    
+    public static PdfAction gotoLocalPage(int page, PdfDestination dest, PdfWriter writer) {
+        PdfIndirectReference ref = writer.getPageReference(page);
+        dest.addPage(ref);
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.GOTO);
+        action.put(PdfName.D, dest);
+        return action;
     }
 }
