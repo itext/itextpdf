@@ -95,7 +95,7 @@ public class MarkupChapter extends Chapter implements MarkupAttributes, MarkupSe
  * @see com.lowagie.text.Section#addSection(java.util.Properties)
  */
     public MarkupSection addMarkupSection(Properties attributes) {
-        MarkupSection section = new MarkupSection(new Paragraph(""), 1);
+        MarkupSection section = new MarkupSection();
         section.set(attributes);
         add(section);
         return section;
