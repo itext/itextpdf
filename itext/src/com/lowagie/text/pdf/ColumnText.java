@@ -408,6 +408,12 @@ public class ColumnText {
             t.addCell(c);
             element = t;
         }
+        if (element.type() == Element.CHUNK) {
+        	element = new Paragraph((Chunk)element);
+        }
+        if (element.type() == Element.PHRASE) {
+        	element = new Paragraph((Phrase)element);
+        }
         if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.GRAPHIC)
             throw new IllegalArgumentException("Element not allowed.");
         if (!composite) {

@@ -145,7 +145,7 @@ public abstract class Image extends Rectangle implements Element,
 	/** type of image */
 	public static final int ORIGINAL_WMF = 6;
 
-	// membervariables
+	/** type of image */
     public static final int ORIGINAL_PS = 7;
 
 	/** Image color inversion */
