@@ -1,7 +1,6 @@
 /*
- * @(#)Image.java				0.37 2000/10/05
- *       release iText0.35:			0.33 2000/08/11
- *       release iText0.37:			0.33 2000/10/05
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -50,8 +49,6 @@ import java.net.MalformedURLException;
  * @see		Rectangle
  * 
  * @author  bruno@lowagie.com
- * @version 0.37 2000/10/05
- * @since   iText0.31
  */
 
 public abstract class Image extends Rectangle implements Element {
@@ -150,8 +147,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Constructs an <CODE>Image</CODE>-object, using an <VAR>url</VAR>.
 	 *
 	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 *
-	 * @since		iText0.36
 	 */
 
 	public Image(URL url) {
@@ -165,8 +160,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Constructs an <CODE>Image</CODE>-object, using an <VAR>url</VAR>.
 	 *
 	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 *
-	 * @since		iText0.36
 	 */
 
 	protected Image(Image image) {
@@ -190,23 +183,8 @@ public abstract class Image extends Rectangle implements Element {
 	/**
 	 * Gets an instance of an Image.
 	 * 
-	 * @param	a filename
-	 * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
-	 *
-	 * @since	iText0.36
-	 */
-
-	public static Image getInstance(String filename) throws BadElementException, MalformedURLException, IOException {
-		return getInstance(new File(filename).toURL());
-	}
-
-	/**
-	 * Gets an instance of an Image.
-	 * 
 	 * @param	an URL
 	 * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
-	 *
-	 * @since	iText0.36
 	 */
 
 	public static Image getInstance(URL url) throws BadElementException, MalformedURLException, IOException {
@@ -238,13 +216,24 @@ public abstract class Image extends Rectangle implements Element {
 	/**
 	 * Gets an instance of an Image.
 	 * 
+	 * @param	a filename
+	 * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
+	 */
+
+	public static Image getInstance(String filename) throws BadElementException, MalformedURLException, IOException {
+		return getInstance(new File(filename).toURL());
+	}
+
+	/**
+	 * Gets an instance of an Image.
+	 * 
 	 * @param	a byte array
 	 * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
 	 *
 	 * @author	Paulo Soares
 	 */
 
-	public static Image getInstance(byte img[]) throws BadElementException, MalformedURLException, IOException {
+	public static Image getInstance(byte[] img) throws BadElementException, MalformedURLException, IOException {
 		InputStream is = null;
 		try {
 			is = new java.io.ByteArrayInputStream(img);
@@ -293,7 +282,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Sets the alignment for the image.
 	 *
 	 * @param		aligment		the alignment
-	 * @return		<CODE>void</CODE>
 	 */
 
 	public void setAlignment(int alignment) {
@@ -304,13 +292,99 @@ public abstract class Image extends Rectangle implements Element {
 	 * Sets the alternative information for the image.
 	 *
 	 * @param		alt		the alternative information
-	 * @return		<CODE>void</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public void setAlt(String alt) {
 		this.alt = alt;
+	}
+
+	/**
+	 * Sets the absolute position of the <CODE>Image</CODE>.
+	 *
+	 * @param	absoluteX
+	 * @param	absoluteY
+	 */
+
+	public void setAbsolutePosition(int absoluteX, int absoluteY) {
+		this.absoluteX = absoluteX;
+		this.absoluteY = absoluteY;
+	}
+
+	/**
+	 * Scale the image to an absolute width and an absolute height.
+	 *
+	 * @param		newWidth	the new width
+	 * @param		newHeight	the new height
+	 *
+	 * @author		Paulo Soares
+	 */
+
+	public void scaleAbsolute(int newWidth, int newHeight) {
+		plainWidth = newWidth;
+		plainHeight = newHeight;
+		double[] matrix = matrix();
+		scaledWidth = (int) (matrix[DX] - matrix[CX]);
+		scaledHeight = (int) (matrix[DY] - matrix[CY]);
+	}
+
+	/**
+	 * Scale the image to a certain percentage.
+	 *
+	 * @param		percent		the scaling percentage
+	 *
+	 * @author		Paulo Soares
+	 */
+
+	public void scalePercent(int percent) {
+		scalePercent(percent, percent);
+	}
+
+	/**
+	 * Scale the width and height of an image to a certain percentage.
+	 *
+	 * @param		percentX	the scaling percentage of the width
+	 * @param		percentY	the scaling percentage of the height
+	 *
+	 * @author		Paulo Soares
+	 */
+
+	public void scalePercent(int percentX, int percentY) {
+		plainWidth = (width() * percentX) / 100.0;
+		plainHeight = (height() * percentY) / 100.0;
+		double[] matrix = matrix();
+		scaledWidth = (int) (matrix[DX] - matrix[CX]);
+		scaledHeight = (int) (matrix[DY] - matrix[CY]);
+	}
+
+	/**
+	 * Scales the image so that it fits a certain width and height.
+	 *
+	 * @param		fitWidth		the width to fit
+	 * @param		fitHeight		the height to fit
+	 */
+
+	public void scaleToFit(int fitWidth, int fitHeight) {
+		int percentX = (fitWidth * 100) / width();
+		int percentY = (fitHeight * 100) / height();
+		scalePercent(percentX < percentY ? percentX : percentY);
+	}
+
+	/**
+	 * Sets the rotation of the image.
+	 *
+	 * @param		r		rotation in radians
+	 *
+	 * @author		Paulo Soares 
+	 */
+
+	public void setRotation(double r) {
+		 rotation = r % (2.0 * Math.PI);
+		 if (rotation < 0) {
+			 rotation += 2.0 * Math.PI;
+		 }	
+		double[] matrix = matrix();
+		scaledWidth = (int) (matrix[DX] - matrix[CX]);
+		scaledHeight = (int) (matrix[DY] - matrix[CY]);
 	}
 
 // methods to retrieve information
@@ -345,8 +419,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Checks if the <CODE>Images</CODE> has to be added at an absolute position.
 	 *
 	 * @return		a boolean
-	 *
-	 * @version		iText0.37
 	 */
 
 	public boolean hasAbsolutePosition() {
@@ -357,8 +429,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Returns the absolute X position.
 	 *
 	 * @return		a position
-	 *
-	 * @version		iText0.37
 	 */
 
 	public int absoluteX() {
@@ -369,8 +439,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Returns the absolute Y position.
 	 *
 	 * @return		a position
-	 *
-	 * @version		iText0.37
 	 */
 
 	public int absoluteY() {
@@ -378,25 +446,9 @@ public abstract class Image extends Rectangle implements Element {
 	}
 
 	/**
-	 * Sets the absolute position of the <CODE>Image</CODE>.
-	 *
-	 * @param	absoluteX
-	 * @param	absoluteY
-	 *
-	 * @version		iText0.37
-	 */
-
-	public void setAbsolutePosition(int absoluteX, int absoluteY) {
-		this.absoluteX = absoluteX;
-		this.absoluteY = absoluteY;
-	}
-
-	/**
 	 * Returns the type.
 	 *
 	 * @return		a type
-	 * 
-	 * @since		iText0.36
 	 */
 
 	public int type() {
@@ -407,8 +459,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Returns <CODE>true</CODE> if the image is a <CODE>Gif</CODE>-object.
 	 *
 	 * @return		a <CODE>boolean</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public boolean isGif() {
@@ -419,8 +469,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Returns <CODE>true</CODE> if the image is a <CODE>Jpeg</CODE>-object.
 	 *
 	 * @return		a <CODE>boolean</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public boolean isJpeg() {
@@ -431,8 +479,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Returns <CODE>true</CODE> if the image is a <CODE>Png</CODE>-object.
 	 *
 	 * @return		a <CODE>boolean</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public boolean isPng() {
@@ -455,8 +501,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Gets the <CODE>String</CODE>-representation of the reference to the image.
 	 *
 	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public URL url() {
@@ -467,8 +511,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Gets the alignment for the image.
 	 *
 	 * @return		a value
-	 *
-	 * @since		iText0.31
 	 */
 
 	public int alignment() {
@@ -479,8 +521,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Gets the alternative text for the image.
 	 *
 	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public String alt() {
@@ -491,8 +531,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Gets the scaled width of the image.
 	 *
 	 * @return		a value
-	 *
-	 * @since		iText0.36
 	 */
 
 	public int scaledWidth() {
@@ -503,8 +541,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Gets the scaled height of the image.
 	 *
 	 * @return		a value
-	 *
-	 * @since		iText0.36
 	 */
 
 	public int scaledHeight() {
@@ -517,7 +553,6 @@ public abstract class Image extends Rectangle implements Element {
 	 *
 	 * @return		a colorspace value
 	 *
-	 * @since		iText0.36
 	 * @author		Paulo Soares
 	 */
 
@@ -528,7 +563,8 @@ public abstract class Image extends Rectangle implements Element {
 	/**
 	 * Returns the transformation matrix of the image.
 	 *
-	 * @since		iText0.36
+	 * @return		an array [AX, AY, BX, BY, CX, CY, DX, DY]
+	 *
 	 * @author		Paulo Soares
 	 */
 
@@ -568,94 +604,12 @@ public abstract class Image extends Rectangle implements Element {
 	}
 
 	/**
-	 * Scale the image to an absolute width and an absolute height.
-	 *
-	 * @param		newWidth	the new width
-	 * @param		newHeight	the new height
-	 *
-	 * @since		iText0.36
-	 * @author		Paulo Soares
-	 */
-
-	public void scaleAbsolute(int newWidth, int newHeight) {
-		plainWidth = newWidth;
-		plainHeight = newHeight;
-		double[] matrix = matrix();
-		scaledWidth = (int) (matrix[DX] - matrix[CX]);
-		scaledHeight = (int) (matrix[DY] - matrix[CY]);
-	}
-
-	/**
-	 * Scale the image to a certain percentage.
-	 *
-	 * @param		percent		the scaling percentage
-	 *
-	 * @since		iText0.36
-	 * @author		Paulo Soares
-	 */
-
-	public void scalePercent(int percent) {
-		scalePercent(percent, percent);
-	}
-
-	/**
-	 * Scale the width and height of an image to a certain percentage.
-	 *
-	 * @param		percentX	the scaling percentage of the width
-	 * @param		percentY	the scaling percentage of the height
-	 *
-	 * @since		iText0.36
-	 * @author		Paulo Soares
-	 */
-
-	public void scalePercent(int percentX, int percentY) {
-		plainWidth = (width() * percentX) / 100.0;
-		plainHeight = (height() * percentY) / 100.0;
-		double[] matrix = matrix();
-		scaledWidth = (int) (matrix[DX] - matrix[CX]);
-		scaledHeight = (int) (matrix[DY] - matrix[CY]);
-	}
-
-	/**
-	 * Scales the image so that it fits a certain width and height.
-	 *
-	 * @param		fitWidth		the width to fit
-	 * @param		fitHeight		the height to fit
-	 */
-
-	public void scaleToFit(int fitWidth, int fitHeight) {
-		int percentX = (fitWidth * 100) / width();
-		int percentY = (fitHeight * 100) / height();
-		scalePercent(percentX < percentY ? percentX : percentY);
-	}
-
-	/**
-	 * Sets the rotation of the image.
-	 *
-	 * @param		r		rotation in radians
-	 *
-	 * @since		iText0.36
-	 * @author		Paulo Soares 
-	 */
-
-	public void setRotation(double r) {
-		 rotation = r % (2.0 * Math.PI);
-		 if (rotation < 0) {
-			 rotation += 2.0 * Math.PI;
-		 }	
-		double[] matrix = matrix();
-		scaledWidth = (int) (matrix[DX] - matrix[CX]);
-		scaledHeight = (int) (matrix[DY] - matrix[CY]);
-	}
-
-	/**
 	 * This method is an alternative for the <CODE>InputStream.skip()</CODE>-method
 	 * that doesn't seem to work properly.
 	 *
 	 * @param	is		the <CODE>InputStream</CODE>
 	 * @param	size	the number of bytes to skip
 	 *
-	 * @version		iText0.37
 	 * @author		Paulo Soares
 	 */
 
@@ -669,8 +623,6 @@ public abstract class Image extends Rectangle implements Element {
 	 * Returns a representation of this <CODE>Rectangle</CODE>.
 	 *
 	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public String toString() {

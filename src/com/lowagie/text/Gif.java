@@ -1,9 +1,8 @@
 /*
- * @(#)Gif.java				0.37 2000/10/05	
- *       release iText0.35:			0.32 2000/08/11	
- *       release iText0.37:			0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -49,8 +48,6 @@ import java.net.URL;
  * @see		Jpeg
  * 
  * @author  bruno@lowagie.com
- * @version 0.37 2000/10/05
- * @since   iText0.31
  */
 
 public class Gif extends Image implements Element {
@@ -58,11 +55,36 @@ public class Gif extends Image implements Element {
 // Constructors
 
 	/**
+	 * Constructs a <CODE>Gif</CODE>-object, using an <VAR>url</VAR>.
+	 *
+	 * @param		url			the <CODE>URL</CODE> where the image can be found.
+	 */
+
+	public Gif(URL url) throws BadElementException, IOException {
+		 super(url);
+		 processParameters();
+	}
+
+	/**
+	 * Constructs a <CODE>Gif</CODE>-object, using an <VAR>url</VAR>.
+	 *
+	 * @param		url			the <CODE>URL</CODE> where the image can be found.
+	 * @param		width		the width you want the image to have
+	 * @param		height		the height you want the image to have.
+	 * @deprecated	use Image.getInstance(...) to create an Image
+	 */
+
+	public Gif(URL url, int width, int height) throws BadElementException, IOException {
+		this(url);
+		scaledWidth = width;
+		scaledHeight = height;
+	}
+
+	/**
 	 * Constructs a <CODE>Gif</CODE>-object, using a <VAR>filename</VAR>.
 	 *
 	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-	 *
-	 * @since		iText0.36
+	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
 	public Gif(String filename) throws BadElementException, MalformedURLException, IOException {
@@ -74,42 +96,13 @@ public class Gif extends Image implements Element {
 	 *
 	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
 	 * @param		width		the width you want the image to have
-	 * @param		height		the height you want the image to have
-	 *
-	 * @since		iText0.31
+	 * @param		height		the height you want the image to have.
+	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
 	public Gif(String filename, int width, int height)  throws BadElementException, MalformedURLException, IOException {
 		this(new File(filename).toURL(), width, height);
 	}
-
-	/**
-	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
-	 *
-	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 */
-
-	public Gif(URL url) throws BadElementException, IOException {
-		 super(url);
-		 processParameters();
-	}
-
-	/**
-	 * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
-	 *
-	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 * @param		width		the width you want the image to have
-	 * @param		height		the height you want the image to have
-	 *
-	 * @since		iText0.31
-	 */
-
-	public Gif(URL url, int width, int height) throws BadElementException, IOException {
-		this(url);
-		scaledWidth = width;
-		scaledHeight = height;
-	}
-
 	/**
 	 * Constructs a <CODE>Gif</CODE>-object from memory.
 	 *
@@ -183,8 +176,6 @@ public class Gif extends Image implements Element {
 	 * Returns a representation of this <CODE>Rectangle</CODE>.
 	 *
 	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public String toString() {

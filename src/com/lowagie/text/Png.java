@@ -1,7 +1,6 @@
 /*
- * @(#)Png.java					0.37 2000/10/05
- *       release iText0.36:		0.36 2000/09/10
- *       release iText0.37:		0.36 2000/10/05
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -51,8 +50,6 @@ import java.net.URL;
  * @see		Jpeg
  * 
  * @author  bruno@lowagie.com
- * @version 0.37 2000/10/05
- * @since   iText0.36
  */
 
 public class Png extends Image implements Element {
@@ -75,37 +72,11 @@ public class Png extends Image implements Element {
 	public static final String IEND = "IEND";
 
 // Constructors
-
-	/**
-	 * Constructs a <CODE>Png</CODE>-object, using a <VAR>filename</VAR>.
-	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-	 *
-	 * @since		iText0.36
-	 */
-
-	public Png(String filename) throws MalformedURLException, BadElementException, IOException {
-		this(new File(filename).toURL());
-	}
-
-	/**
-	 * Constructs a <CODE>Png</CODE>-object, using a <VAR>filename</VAR>.
-	 *
-	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
-	 *
-	 * @since		iText0.36
-	 */
-
-	public Png(String filename, int width, int height) throws MalformedURLException, BadElementException, IOException {
-		this(new File(filename).toURL(), width, height);
-	}
     
 	/**
 	 * Constructs a <CODE>Png</CODE>-object, using an <VAR>url</VAR>.
 	 *
 	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 *
-	 * @since		iText0.36
 	 */
 
 	public Png(URL url) throws BadElementException, IOException {
@@ -117,8 +88,7 @@ public class Png extends Image implements Element {
 	 * Constructs a <CODE>Png</CODE>-object, using an <VAR>url</VAR>.
 	 *
 	 * @param		url			the <CODE>URL</CODE> where the image can be found.
-	 *
-	 * @since		iText0.36
+	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
 	public Png(URL url, int width, int height) throws BadElementException, IOException {
@@ -128,10 +98,31 @@ public class Png extends Image implements Element {
 	}
 
 	/**
+	 * Constructs a <CODE>Png</CODE>-object, using a <VAR>filename</VAR>.
+	 *
+	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 * @deprecated	use Image.getInstance(...) to create an Image
+	 */
+
+	public Png(String filename) throws MalformedURLException, BadElementException, IOException {
+		this(new File(filename).toURL());
+	}
+
+	/**
+	 * Constructs a <CODE>Png</CODE>-object, using a <VAR>filename</VAR>.
+	 *
+	 * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+	 * @deprecated	use Image.getInstance(...) to create an Image
+	 */
+
+	public Png(String filename, int width, int height) throws MalformedURLException, BadElementException, IOException {
+		this(new File(filename).toURL(), width, height);
+	}
+
+	/**
 	 * Constructs a <CODE>Png</CODE>-object from memory.
 	 *
 	 * @param		img			the memory image.
-	 *
 	 */
 
 	public Png(byte[] img) throws BadElementException, IOException {
@@ -144,7 +135,6 @@ public class Png extends Image implements Element {
 	 * Constructs a <CODE>Png</CODE>-object from memory.
 	 *
 	 * @param		img			the memory image.
-	 *
 	 */
 
 	public Png(byte[] img, int width, int height) throws BadElementException, IOException {
@@ -185,6 +175,8 @@ public class Png extends Image implements Element {
 
 	/**
 	 * This method checks if the image is a valid JPEG and processes some parameters.
+	 *
+	 * @author	Paulo Soares
 	 */
 
     private final void processParameters() throws BadElementException, IOException {
@@ -235,8 +227,6 @@ public class Png extends Image implements Element {
 	 * Returns a representation of this <CODE>Rectangle</CODE>.
 	 *
 	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		iText0.36
 	 */
 
 	public String toString() {

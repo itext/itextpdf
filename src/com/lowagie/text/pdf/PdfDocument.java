@@ -529,7 +529,7 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * Opens the document.
-	 * <B>
+	 * <P>
 	 * You have to open the document before you can begin to add content
 	 * to the body of the document.
 	 */

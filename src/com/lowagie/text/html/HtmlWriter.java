@@ -474,7 +474,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
 				String path = image.url().toString();
 				// if a basepath is defined, the path is changed
 				if (basepath != null) {
-					path = basepath + path.substring(path.lastIndexOf("/"));
+					if (path.indexOf("/") > 0) {
+						path = basepath + path.substring(path.lastIndexOf("/") + 1);
+					}
+					else {
+						path = basepath + path;
+					}
 				}
 				attributes.put(SRC, path);
 				if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) {
