@@ -157,7 +157,7 @@ public class RtfCell
    * and not the top and bottom one 
    */
     private int cellpadding = 0;
-    
+
   /**
    * Create a new <code>RtfCell</code>.
    *
@@ -455,12 +455,19 @@ public class RtfCell
                 case Element.ALIGN_JUSTIFIED : os.write(RtfWriter.escape);
                 os.write(cellHorizontalAlignJustified); break;
             }*/
+
             if(!emptyCell)
             {
                 Iterator cellIterator = store.getElements();
                 while(cellIterator.hasNext())
                 {
                     Element element = (Element) cellIterator.next();
+
+                    // if horizontal alignment is undefined overwrite
+                    // with that of enclosing cell
+                    if (element instanceof Paragraph && ((Paragraph)element).alignment() == Element.ALIGN_UNDEFINED) {
+                        ((Paragraph)element).setAlignment(store.horizontalAlignment());
+                    }
                     writer.addElement(element, os);
                     if(element.type() == Element.PARAGRAPH && cellIterator.hasNext())
                     {
