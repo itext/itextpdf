@@ -113,6 +113,13 @@ public class PdfContentByte {
         return content.toString();
     }
     
+/** Gets the internal buffer.
+ * @return the internal buffer
+ */    
+    ByteBuffer getInternalBuffer() {
+        return content;
+    }
+    
     /**
      * Returns the PDF representation of this <CODE>PdfContentByte</CODE>-object.
      *
@@ -1109,6 +1116,17 @@ public class PdfContentByte {
         pdf.addOutline(outline);
     }
 
+    /** Adds a named outline to the document.
+     *
+     * @param outline the outline
+     * @param name the name for the local destination
+ */
+    public void addOutline(PdfOutline outline, String name)
+    {
+        checkWriter();
+        pdf.addOutline(outline, name);
+    }
+
     /** Gets the root outline.
      *
      * @return the root outline
@@ -1202,7 +1220,7 @@ public class PdfContentByte {
  * @param extent angle extent in degrees
  * @return a list of float[] with the bezier curves
  */    
-    public ArrayList bezierArc(float x1, float y1, float x2, float y2, float startAng, float extent)
+    public static ArrayList bezierArc(float x1, float y1, float x2, float y2, float startAng, float extent)
     {
         float tmp;
         if (x1 > x2) {
@@ -1529,5 +1547,63 @@ public class PdfContentByte {
     public boolean localDestination(String name, PdfDestination destination)
     {
         return pdf.localDestination(name, destination);
+    }
+    
+/** Gets a duplicate of this <CODE>PdfContentByte</CODE>. All
+ * the members are copied by reference but the buffer stays different.
+ * @return a copy of this <CODE>PdfContentByte</CODE>
+ */    
+    public PdfContentByte getDuplicate()
+    {
+        return new PdfContentByte(writer);
+    }
+/** Implements a link to another document.
+ * @param filename the filename for the remote document
+ * @param name the name to jump to
+ * @param llx the lower left x corner of the activation area
+ * @param lly the lower left y corner of the activation area
+ * @param urx the upper right x corner of the activation area
+ * @param ury the upper right y corner of the activation area
+ */    
+    public void remoteGoto(String filename, String name, float llx, float lly, float urx, float ury)
+    {
+        remoteGoto(filename, name, llx, lly, urx, ury);        
+    }
+
+
+/** Implements a link to another document.
+ * @param filename the filename for the remote document
+ * @param page the page to jump to
+ * @param llx the lower left x corner of the activation area
+ * @param lly the lower left y corner of the activation area
+ * @param urx the upper right x corner of the activation area
+ * @param ury the upper right y corner of the activation area
+ */    
+    public void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury)
+    {
+        pdf.remoteGoto(filename, page, llx, lly, urx, ury);
+    }
+
+    /**
+     * Adds a round rectangle to the current path.
+     *
+     * @param x x-coordinate of the starting point
+     * @param y y-coordinate of the starting point
+     * @param w width
+     * @param h height
+     * @param r radius of the arc corner
+     */
+    public void roundRectangle(float x, float y, float w, float h, float r)
+    {
+        float b = 0.4477f;
+        moveTo(x + r, y);
+        lineTo(x + w - r, y);
+        curveTo(x + w - r * b, y, x + w, y + r * b, x + w, y + r);
+        lineTo(x + w, y + h - r);
+        curveTo(x + w, y + h - r * b, x + w - r * b, y + h, x + w - r, y + h);
+        lineTo(x + r, y + h);
+        curveTo(x + r * b, y + h, x, y + h - r * b, x, y + h - r);
+        lineTo(x, y + r);
+        curveTo(x, y + r * b, x + r * b, y, x + r, y);
     }
 }

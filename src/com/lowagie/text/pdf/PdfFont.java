@@ -41,6 +41,7 @@ package com.lowagie.text.pdf;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.lowagie.text.Image;
 
 /**
  * <CODE>PdfFont</CODE> is the Pdf Font object.
@@ -73,6 +74,8 @@ class PdfFont implements Comparable {
 	private BaseFont font;
     
     private float size;
+    
+    protected Image image;
 
 // constructors
 
@@ -187,6 +190,8 @@ class PdfFont implements Comparable {
 	 */
 
 	public final int compareTo(Object object) {
+        if (image != null)
+            return 0;
 		if (object == null) {
 			return -1;
 		}
@@ -215,7 +220,11 @@ class PdfFont implements Comparable {
 	 */
 
 	float size() {
-		return size;
+        if (image == null)
+		    return size;
+        else {
+            return image.scaledHeight();
+        }
 	}
 
 	/**
@@ -243,7 +252,10 @@ class PdfFont implements Comparable {
 	 */
 
 	float width() {
-		return font.getWidthPoint(" ", size);
+        if (image == null)
+		    return font.getWidthPoint(" ", size);
+        else
+            return image.scaledWidth();
 	} 
 
 	/**
@@ -256,7 +268,10 @@ class PdfFont implements Comparable {
 	 */
 
 	float width(char character) {
-		return font.getWidthPoint(character, size);
+        if (image == null)
+		    return font.getWidthPoint(character, size);
+        else
+            return image.scaledWidth();
 	}
 
 	/**
@@ -269,178 +284,20 @@ class PdfFont implements Comparable {
 	 */
 
 	float width(PdfPrintable text) {
-		return font.getWidthPoint(text.toString(), size);
-	}
-					   
-	/**
-	 * Returns the offset from the start position of the <CODE>PdfPrintable</CODE>-object
-	 * (y direction; user space).
-	 *
-	 * @param		object		a <CODE>PdfPrintable</CODE>-object
-	 * @param		factor		the used scaling factor
-	 * @param		alignment	the value of the alignment
-	 * @param		leftX		the left x-coordinate of the interval
-	 * @param		rightX		the right x-coordinate of the interval
-	 *
-	 * @deprecated
-	 * @since		rugPdf0.10
-	 */
-
-	double offset(PdfPrintable object, double factor, int alignment, int leftX, int rightX) {
-
-		// the default alignment is set
-		if (alignment == PdfPrintable.DEFAULT) {
-			// PdfString-objects are aligned to the LEFT
-			if (object.isString()) {
-				alignment = PdfPrintable.LEFT;
-			}
-			// all other PdfPrintable objects are aligned to the RIGHT
-			else {
-				alignment = PdfPrintable.RIGHT;
-			}
-		}
-
-		// if the alignment is LEFT, the answer can be returned immediately
-		if (alignment == PdfPrintable.LEFT) {
-			return 0.0;
-		}
-
-		// some calculations are made
-		double width = (double) (rightX - leftX);
-		double scaledLength = factor * width(object);
-		// the value of the offset is returned
-		switch (alignment) {
-		case PdfPrintable.CENTER:
-			return (width - scaledLength) / 2;
-		case PdfPrintable.RIGHT:
-			return width - scaledLength;
-		default:
-			return 0.0;
-		}
-	}
-
-	/**
-	 * Returns a <CODE>PdfString</CODE>-object that fits into the given width.
-	 *
-	 * @param		text		a <CODE>PdfPrintable</CODE>-object
-	 * @param		totalWidth	a given width
-	 * @param		factor		the used scaling factor
-	 * @return		a truncated <CODE>PdfString</CODE>
-	 *
-	 * @deprecated
-	 * @since		rugPdf0.10
-	 */
-
-	PdfString truncate(PdfPrintable text, double totalWidth, double factor) {
-		char ellipsis = '\u2016';
-		int currentPosition = 0;
-		double currentWidth = font.getWidthPoint(ellipsis, size) * factor;
-        if (currentWidth == 0.0) {
-            ellipsis = ' ';
-            currentWidth = font.getWidthPoint(ellipsis, size) * factor;
-        }
-
-		// it's no use trying to truncate if there isn't even enough place for an ellipsis
-		if (totalWidth < currentWidth) {
-			return new PdfString(String.valueOf(ellipsis), font);
-		}
-
-		// loop over all the characters of a string
-		// or until the totalWidth is reached
-		char character;
-		String string = text.toString();
-		int length = string.length();
-		while (currentPosition < length && currentWidth < totalWidth) {
-				character = string.charAt(currentPosition);
-				currentWidth += font.getWidthPoint(character, size) * factor;
-				currentPosition++;
-		}		
-
-		// if all the characters fit in the total width, the whole PdfPrintable is returned
-		if (currentPosition == length) {
-			return new PdfString(text, font);
-		}
-
-		// otherwise, the string has to be truncated
-		currentPosition -= 2;
-		if (currentPosition < 0) {
-			return new PdfString(String.valueOf(ellipsis), font);
-		}
-		return new PdfString(string.substring(0, currentPosition) + ellipsis, font);
-	}
-
-	/**
-	 * Returns an iterator of <CODE>PdfString</CODE>-objects that all fit into the given width.
-	 *
-	 * @param		text		a <CODE>PdfPrintable</CODE>-object
-	 * @param		totalWidth	a given width (user space) 
-	 * @param		factor		the used scaling factor
-	 * @return		an <CODE>Iterator</CODE>
-	 *
-	 * @deprecated
-	 * @since		rugPdf0.10
-	 */
-
-	Iterator split(PdfPrintable text, double totalWidth, double factor) {
-		ArrayList array = new ArrayList();
-		// the total width has to be positive
-		if (totalWidth <= 0.0) {
-			return array.iterator();
-		}
-
-		// initialisation of some variables
-		String string = text.toString();
+        if (image == null)
+		    return font.getWidthPoint(text.toString(), size);
+        else
+            return image.scaledWidth();
 		
-		int previousPosition = 0;
-		int splitPosition = 0;
-		int currentPosition = 0;
-		int length = string.length();
-
-		char character;
-		double currentWidth = font.getWidthPoint(" ", size) * factor;
-
-		while (currentPosition < length) {
-			character = string.charAt(currentPosition);
-			currentPosition++;
-
-			// if the end of the string is reached
-			if (currentPosition >= length) {
-				array.add(new PdfString(string.substring(previousPosition), font));
-				break;
-			}
-
-			// if a newLine or carriageReturn is encountered
-			if (character == '\r' || character == '\n') {
-				array.add(new PdfString(string.substring(previousPosition, currentPosition - 1), font));
-				currentWidth = font.getWidthPoint(" ", size) * factor;
-				previousPosition = currentPosition;
-				continue;
-			}
-
-			// if a split-character is encountered, the splitPosition is altered
-			if (font.isSplitCharacter(character)) {
-				splitPosition = currentPosition + 1;
-			}
-
-			// checks if the totalWidth is reached
-			currentWidth += font.getWidthPoint(" ", size) * factor;
-			if (currentWidth > totalWidth) {
-				if (previousPosition >= splitPosition) {
-					splitPosition = Math.max(previousPosition + 1, currentPosition - 2);
-				}
-				array.add(new PdfString(PdfFontMetrics.trim(string.substring(previousPosition, splitPosition)), font));
-				currentPosition = splitPosition;
-				currentWidth = font.getWidthPoint(" ", size) * factor;
-				previousPosition = currentPosition;
-				continue;
-			}
-		}
-
-		return array.iterator();			   
 	}
     
     BaseFont getFont()
     {
         return font;
+    }
+    
+    void setImage(Image image)
+    {
+        this.image = image;
     }
 }

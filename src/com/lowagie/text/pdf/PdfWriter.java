@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Table;
@@ -365,7 +366,7 @@ public class PdfWriter extends DocWriter {
 // static membervariables
 
 	/** this is the header of a PDF document */
-	private static final byte[] HEADER = "%PDF-1.2\n%рсту\n".getBytes();
+	private static final byte[] HEADER = "%PDF-1.3\n%рсту\n".getBytes();
 
 	/** byte offset of the Body */
 	private static final int OFFSET = HEADER.length;						   
@@ -396,6 +397,9 @@ public class PdfWriter extends DocWriter {
 /** The direct content in this document.
  */    
     protected PdfContentByte directContent;
+/** The direct content under in this document.
+ */    
+    protected PdfContentByte directContentUnder;
     /** The fonts of this document */
     protected HashMap documentFonts = new HashMap();
 
@@ -426,6 +430,7 @@ public class PdfWriter extends DocWriter {
 		super(document, os);
 		pdf = document;
         directContent = new PdfContentByte(this);
+        directContentUnder = new PdfContentByte(this);
 	}		 
 
 // get an instance of the PdfWriter
@@ -682,11 +687,21 @@ public class PdfWriter extends DocWriter {
         return directContent;
     }
     
-/** Resets the direct content to empty. This happens when a new page is started.
+/** Gets the direct content under for this document. There is only one direct content,
+ * multiple calls to this method will allways retrieve the same.
+ * @return the direct content
+ */    
+    public PdfContentByte getDirectContentUnder()
+    {
+        return directContentUnder;
+    }
+    
+/** Resets all the direct contents to empty. This happens when a new page is started.
  */    
     void resetContent()
     {
         directContent.reset();
+        directContentUnder.reset();
     }
     
 /** Adds a <CODE>BaseFont</CODE> to the document and to the page resources.
@@ -792,7 +807,7 @@ public class PdfWriter extends DocWriter {
  * @param dest the <CODE>HashMap</CODE> containing the destinations
  * @throws IOException on error
  */    
-    void addLocalDestinations(HashMap dest) throws IOException
+    void addLocalDestinations(TreeMap dest) throws IOException
     {
         for (Iterator i = dest.keySet().iterator(); i.hasNext();) {
             String name = (String)i.next();
@@ -800,10 +815,10 @@ public class PdfWriter extends DocWriter {
             PdfDestination destination = (PdfDestination)obj[2];
             if (destination == null)
                 throw new RuntimeException("The name '" + name + "' has no local destination.");
-            if (obj[1] != null) {
-                PdfIndirectObject iob = body.add(destination, (PdfIndirectReference)obj[1]);
-                iob.writeTo(os);
-            }
+            if (obj[1] == null)
+                obj[1] = getPdfIndirectReference();
+            PdfIndirectObject iob = body.add(destination, (PdfIndirectReference)obj[1]);
+            iob.writeTo(os);
         }
     }
     

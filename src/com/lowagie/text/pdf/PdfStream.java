@@ -46,6 +46,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.DeflaterOutputStream;
+import com.lowagie.text.Document;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -200,6 +201,8 @@ class PdfStream extends PdfObject {
 	 */
 
 	synchronized final void flateCompress() throws PdfException {
+        if (!Document.compress)
+            return;
 		// check if the flateCompress-method has allready been
 		if (compressed) {
 			return;

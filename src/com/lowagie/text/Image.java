@@ -140,6 +140,9 @@ public abstract class Image extends Rectangle implements Element {
 
 	/** this is the bits per component of the raw image. */
 	protected int bpc = 1;
+    
+    /** this is the transparency information of the raw image*/
+    protected int transparency[];
 
 // constructors
 
@@ -214,6 +217,76 @@ public abstract class Image extends Rectangle implements Element {
 		}
 	}
 
+	/** Gets an instance of an Image from a java.awt.Image.
+     *
+     * @param image the <CODE>java.awt.Image</CODE> to convert
+     * @param color if different from <CODE>null</CODE> the transparency
+     * pixels are replaced by this color
+     * @return an object of type <CODE>ImgRaw</CODE>
+     * @throws BadElementException on error
+     * @throws IOException on error
+ */
+
+	public static Image getInstance(java.awt.Image image, java.awt.Color color) throws BadElementException, IOException {
+        java.awt.image.PixelGrabber pg = new java.awt.image.PixelGrabber(image, 0, 0, -1, -1, true);
+        try {
+            pg.grabPixels();
+        } catch (InterruptedException e) {
+            throw new IOException("java.awt.Image Interrupted waiting for pixels!");
+        }
+        if ((pg.getStatus() & java.awt.image.ImageObserver.ABORT) != 0) {
+            throw new IOException("java.awt.Image fetch aborted or errored");
+        }
+        int w = pg.getWidth();
+        int h = pg.getHeight();
+        int[] pixels = (int[])pg.getPixels();
+        byte[] pixelsByte = new byte[w * h * 3];
+        
+        int index = 0;
+        int size = h * w;
+        int red = 255;
+        int green = 255;
+        int blue = 255;
+        if (color != null) {
+            red = color.getRed();
+            green = color.getGreen();
+            blue = color.getBlue();
+        }
+        int transparency[] = null;
+        if (color != null) {
+            for (int j = 0; j < size; j++) {
+                int alpha = (pixels[j] >> 24) & 0xff;
+                if (alpha < 250) {
+                    pixelsByte[index++] = (byte) red;
+                    pixelsByte[index++] = (byte) green;
+                    pixelsByte[index++] = (byte) blue;
+                }
+                else {
+                    pixelsByte[index++] = (byte) ((pixels[j] >> 16) & 0xff);
+                    pixelsByte[index++] = (byte) ((pixels[j] >> 8) & 0xff);
+                    pixelsByte[index++] = (byte) ((pixels[j]) & 0xff);
+                }
+            }
+        }
+        else {
+            for (int j = 0; j < size; j++) {
+                if (transparency == null) {
+                    int alpha = (pixels[j] >> 24) & 0xff;
+                    if (alpha == 0) {
+                        transparency = new int[6];
+                        transparency[0] = transparency[1] = (pixels[j] >> 16) & 0xff;
+                        transparency[2] = transparency[3] = (pixels[j] >> 8) & 0xff;
+                        transparency[4] = transparency[5] = pixels[j] & 0xff;
+                    }
+                }
+                pixelsByte[index++] = (byte) ((pixels[j] >> 16) & 0xff);
+                pixelsByte[index++] = (byte) ((pixels[j] >> 8) & 0xff);
+                pixelsByte[index++] = (byte) ((pixels[j]) & 0xff);
+            }
+        }
+        return Image.getInstance(w, h, 3, 8, pixelsByte, transparency);
+	}
+
 	/**
 	 * Gets an instance of an Image.
 	 * 
@@ -260,21 +333,44 @@ public abstract class Image extends Rectangle implements Element {
 		}
 	}
 
-	/**
-	 * Gets an instance of an Image in raw mode.
-	 * 
-	 * @param	width
-	 * @param	height
-	 * @param	components	1,3 or 4 for GrayScale, RGB and CMYK 
-	 * @param	bps			bits per component. Must be 1,2,4 or 8
-	 * @param	data		the image data
-	 * @return	an object of type <CODE>ImgRaw</CODE>
-	 *
-	 * @author	Paulo Soares
-	 */
+	/** Gets an instance of an Image in raw mode.
+     *
+     * @param width the width of the image in pixels
+     * @param height the height of the image in pixels
+     * @param components 1,3 or 4 for GrayScale, RGB and CMYK
+     * @param data the image data
+     * @param bpc bits per component
+     * @return an object of type <CODE>ImgRaw</CODE>
+     * @throws BadElementException on error
+     * @throws MalformedURLException on error
+     * @throws IOException on error
+ */
 
 	public static Image getInstance(int width, int height, int components, int bpc, byte data[]) throws BadElementException, MalformedURLException, IOException {
 		return new ImgRaw(width, height, components, bpc, data);
+	}
+
+	/** Gets an instance of an Image in raw mode.
+     *
+     * @param width the width of the image in pixels
+     * @param height the height of the image in pixels
+     * @param components 1,3 or 4 for GrayScale, RGB and CMYK
+     * @param data the image data
+     * @param bpc bits per component
+     * @param transparency transparency information in the Mask format of the
+     * image dictionary
+     * @return an object of type <CODE>ImgRaw</CODE>
+     * @throws BadElementException on error
+     * @throws MalformedURLException on error
+     * @throws IOException on error
+ */
+
+	public static Image getInstance(int width, int height, int components, int bpc, byte data[], int transparency[]) throws BadElementException, MalformedURLException, IOException {
+        if (transparency != null && transparency.length != components * 2)
+            throw new BadElementException("transparency length must be equal to (componentes * 2)");
+		Image img = new ImgRaw(width, height, components, bpc, data);
+        img.transparency = transparency;
+        return img;
 	}
 
 // methods to set information
@@ -390,15 +486,12 @@ public abstract class Image extends Rectangle implements Element {
 
 // methods to retrieve information
 
-	/**
-	 * Gets the bpc for the image.
+	/** Gets the bpc for the image.
      * <P>
-	 * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
-	 *
-	 * @return		a bpc value
-	 *
-	 * @author		Paulo Soares
-	 */
+     * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
+     *
+     * @return a bpc value
+ */
 
 	public int bpc() {
 		return bpc;
@@ -664,4 +757,9 @@ public abstract class Image extends Rectangle implements Element {
 		buf.append("</IMG>");
 		return buf.toString();
 	}
+    
+    public int[] getTransparency()
+    {
+        return transparency;
+    }
 }

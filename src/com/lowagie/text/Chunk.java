@@ -88,6 +88,10 @@ public class Chunk implements Element {
  */    
     public static final String ENCODING = "ENCODING";
 
+/** Key for remote goto.
+ */    
+    public static final String REMOTEGOTO = "REMOTEGOTO";
+
 /** Key for local goto.
  */    
     public static final String LOCALGOTO = "LOCALGOTO";
@@ -95,6 +99,10 @@ public class Chunk implements Element {
 /** Key for local destination.
  */    
     public static final String LOCALDESTINATION = "LOCALDESTINATION";
+
+/** Key for image.
+ */    
+    public static final String IMAGE = "IMAGE";
 
 /** Key for generic tag.
  */    
@@ -122,6 +130,18 @@ public class Chunk implements Element {
 
 	public Chunk(String content) {
 		this(content, new Font());
+	}
+
+	/** Constructs a chunk containing an <CODE>Image</CODE>.
+     *
+     * @param image the image
+     * @param offsetX the image offset in the x direction
+     * @param offsetY the image offset in the y direction
+ */
+
+	public Chunk(Image image, float offsetX, float offsetY) {
+		this("*", new Font());
+        setAttribute(IMAGE, new Object[]{image, new Float(offsetX), new Float(offsetY)});
 	}
 
 // implementation of the Element-methods
@@ -272,6 +292,26 @@ public class Chunk implements Element {
     public Chunk setLocalGoto(String name)
     {
         return setAttribute(LOCALGOTO, name);
+    }
+    
+/** Sets a goto for a remote destination for this <CODE>Chunk</CODE>.
+ * @param filename the file name of the destination document
+ * @param name the name of the destination to go to
+ * @return this <CODE>Chunk</CODE>
+ */    
+    public Chunk setRemoteGoto(String filename, String name)
+    {
+        return setAttribute(REMOTEGOTO, new Object[]{filename, name});
+    }
+    
+/** Sets a goto for a remote destination for this <CODE>Chunk</CODE>.
+ * @param filename the file name of the destination document
+ * @param page the page of the destination to go to. First page is 1
+ * @return this <CODE>Chunk</CODE>
+ */    
+    public Chunk setRemoteGoto(String filename, int page)
+    {
+        return setAttribute(REMOTEGOTO, new Object[]{filename, new Integer(page)});
     }
     
 /** Sets a local destination for this <CODE>Chunk</CODE>.

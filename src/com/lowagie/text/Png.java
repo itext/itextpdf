@@ -71,6 +71,9 @@ public class Png extends Image implements Element {
 	/** A PNG marker. */
 	public static final String IEND = "IEND";
 
+	/** A PNG marker. */
+	public static final String tRNS = "tRNS";
+
 // Constructors
 
 	/**
@@ -154,6 +157,17 @@ public class Png extends Image implements Element {
 
 	public static final int getInt(InputStream is) throws IOException {
 		return (is.read() << 24) + (is.read() << 16) + (is.read() << 8) + is.read();
+	}
+
+	/**
+	 * Gets a <CODE>word</CODE> from an <CODE>InputStream</CODE>.
+	 *
+	 * @param		an <CODE>InputStream</CODE>
+	 * @return		the value of an <CODE>int</CODE>
+	 */
+
+	public static final int getWord(InputStream is) throws IOException {
+		return (is.read() << 8) + is.read();
 	}
 
 	/**

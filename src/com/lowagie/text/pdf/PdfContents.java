@@ -49,22 +49,35 @@ class PdfContents extends PdfStream {
 // constructor
 
 	/**
-	 * Constructs a <CODE>PdfContents</CODE>-object, containing text and general graphics.
-	 *
-	 * @param		content		the graphics in a page
-	 * @param		text		the text in a page
-	 *
-	 * @since		rugPdf0.10
-	 */
+     * Constructs a <CODE>PdfContents</CODE>-object, containing text and general graphics.
+     *
+     * @since rugPdf0.10
+     * @param under the direct content that is under all others
+     * @param content the graphics in a page
+     * @param text the text in a page
+     * @param secondContent the direct content that is over all others
+     * @throws BadPdfFormatException on error
+ */
 
-	PdfContents(PdfContentByte content, PdfContentByte text, PdfContentByte secondContent) throws BadPdfFormatException {
+	PdfContents(PdfContentByte under, PdfContentByte content, PdfContentByte text, PdfContentByte secondContent) throws BadPdfFormatException {
 		super(new PdfDictionary(), " ");
         ByteBuffer buf = new ByteBuffer();
+        if (under.size() > 0) {
+            buf.append("q\n");
+            buf.append(under.getInternalBuffer());
+            buf.append("Q\n");
+        }
+        if (content.size() > 0) {
+            buf.append("q\n");
+            buf.append(content.getInternalBuffer());
+            buf.append("Q\n");
+        }
         buf.append("q\n");
-        buf.append(content.toPdf());
-        buf.append("Q\nq\n");
-        buf.append(text.toPdf());
-        buf.append("Q\n").append(secondContent.toPdf());
+        buf.append(text.getInternalBuffer());
+        buf.append("Q\n");
+        if (secondContent.size() > 0) {
+            buf.append(secondContent.getInternalBuffer());
+        }
         bytes = buf.toByteArray();
         dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
 		try {

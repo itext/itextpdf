@@ -79,9 +79,6 @@ public class ColumnText
 /** The <CODE>PdfContent</CODE> where the text will be written to.
  */    
     protected PdfContentByte text;
-/** The <CODE>PdfContent</CODE> where the graphics will be written to.
- */    
-    protected PdfContentByte graphics;
 /** The line status when trying to fit a line to a column.
  */    
     protected int lineStatus;
@@ -99,7 +96,6 @@ public class ColumnText
     public ColumnText(PdfContentByte text)
     {
         this.text = text;
-        graphics = new PdfContentByte(null);
     }
     
 /** Adds a <CODE>Phrase</CODE> to the current text array.
@@ -389,7 +385,7 @@ public class ColumnText
         currentValues[1] = lastBaseFactor;
         PdfDocument pdf = text.getPdfDocument();
         float firstIndent = indent;
-        graphics.reset();
+        PdfContentByte graphics = text.getDuplicate();
         
         int status = 0;
         for (;;) {
@@ -399,6 +395,7 @@ public class ColumnText
                 status = NO_MORE_COLUMN;
                 if (chunks.size() == 0)
                     status |= NO_MORE_TEXT;
+                yLine = yTemp;
                 break;
             }
             if (chunks.size() == 0) {

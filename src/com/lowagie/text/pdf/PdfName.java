@@ -256,6 +256,9 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName GOTO = new PdfName("/GoTo", 0);
 
 	/** This is a static final PdfName of an attribute. */
+	public static final PdfName GOTOR = new PdfName("/GoToR", 0);
+
+	/** This is a static final PdfName of an attribute. */
 	public static final PdfName HEIGHT = new PdfName("/Height", 0);
 
 	/** This is a static final PdfName of a base 14 type 1 font */
@@ -310,6 +313,9 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName LENGTH = new PdfName("/Length", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName LIMITS = new PdfName("/Limits", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName LINK = new PdfName("/Link", 0);
  
 	/** This is a static final PdfName */
@@ -323,6 +329,9 @@ public class PdfName extends PdfObject implements Comparable {
  
 	/** This is a static final PdfName of an encoding */
 	public static final PdfName MAC_ROMAN_ENCODING = new PdfName("/MacRomanEncoding", 0);
+
+	/** This is a static final PdfName of an encoding */
+	public static final PdfName MASK = new PdfName("/Mask", 0);
 
 	/** This is a static final PdfName */
 	public static final PdfName MEDIABOX = new PdfName("/MediaBox", 0);

@@ -33,8 +33,10 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.StringCompare;
 import com.lowagie.text.Anchor;
 import com.lowagie.text.Annotation;
+import java.util.Comparator;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -59,6 +61,7 @@ import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.Iterator;
 
 /**
@@ -164,7 +167,7 @@ class PdfDocument extends Document implements DocListener {
 		 */
 
 		void addProducer() {
-			put(PdfName.PRODUCER, new PdfString("iText by lowagie.com"));
+			put(PdfName.PRODUCER, new PdfString("iText by lowagie.com - build 77"));
 		}
 
 		/**
@@ -175,8 +178,8 @@ class PdfDocument extends Document implements DocListener {
 			put(PdfName.CREATIONDATE, new PdfDate());
 		}
 	}
-
-	/**
+    
+    /**
 	 * <CODE>PdfCatalog</CODE> is the PDF Catalog-object.
 	 * <P>
 	 * The Catalog is a dictionary that is the root node of the document. It contains a reference
@@ -220,6 +223,32 @@ class PdfDocument extends Document implements DocListener {
 			put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
 			put(PdfName.OUTLINES, outlines);
 		}
+        
+/** Adds the names of the named destinations to the catalog.
+ * @param localDestinations the local destinations
+ */        
+        void addNames(TreeMap localDestinations)
+        {
+            if (localDestinations.size() == 0)
+                return;
+            PdfArray ar = new PdfArray();
+            for (Iterator i = localDestinations.keySet().iterator(); i.hasNext();) {
+                String name = (String)i.next();
+                Object obj[] = (Object[])localDestinations.get(name);
+                PdfIndirectReference ref = (PdfIndirectReference)obj[1];
+                ar.add(new PdfString(name));
+                ar.add(ref);
+            }
+            PdfArray limits = new PdfArray();
+            limits.add((PdfString)ar.getArrayList().get(0));
+            limits.add((PdfString)ar.getArrayList().get(ar.size() - 2));
+            PdfDictionary dests = new PdfDictionary();
+            PdfDictionary names = new PdfDictionary();
+            dests.put(PdfName.LIMITS, limits);
+            dests.put(PdfName.NAMES, ar);
+            names.put(PdfName.DESTS, dests);
+            put(PdfName.NAMES, names);
+        }
 	}
 
 // membervariables
@@ -330,7 +359,7 @@ class PdfDocument extends Document implements DocListener {
 /** Stores the destinations keyed by name. Value is
  * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
  */
-    private HashMap localDestinations = new HashMap();
+    private TreeMap localDestinations = new TreeMap(new StringCompare());
 
 /** Stores the destinations for the current page.
  */
@@ -511,7 +540,7 @@ class PdfDocument extends Document implements DocListener {
  */
 
 	public boolean newPage() throws DocumentException {
-		if (writer.getDirectContent().size() == 0 && (pageEmpty || (writer != null && writer.isPaused()))) {
+		if (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || (writer != null && writer.isPaused()))) {
 			return false;
 		}
         PdfPageEvent pageEvent = writer.getPageEvent();
@@ -545,7 +574,7 @@ class PdfDocument extends Document implements DocListener {
 			throw new PdfException("The document isn't open.");
 		}
         text.endText();
-		PdfIndirectReference pageReference = writer.add(page, new PdfContents(graphics, text, writer.getDirectContent()));
+		PdfIndirectReference pageReference = writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent()));
 		// we update the outlines
 		for (Iterator i = outlines.iterator(); i.hasNext(); ) {
 			PdfOutline outline = (PdfOutline) i.next();
@@ -1088,6 +1117,7 @@ class PdfDocument extends Document implements DocListener {
  */
 
 	private void add(Image image) throws PdfException, DocumentException {
+        pageEmpty = false;
 		PdfName name;
 		// if the images is already added, just retrieve the name
 		if (images.containsKey(image)) {
@@ -1426,11 +1456,15 @@ class PdfDocument extends Document implements DocListener {
  */
  
  	PdfCatalog getCatalog(PdfIndirectReference pages) {
+        PdfCatalog catalog;
  		if (outlines.size() > 1) {
  			PdfOutline outline = (PdfOutline) outlines.get(0);
- 			return new PdfCatalog(pages, outline.indirectReference());
+ 			catalog = new PdfCatalog(pages, outline.indirectReference());
  		}
- 		return new PdfCatalog(pages);
+        else
+ 		    catalog = new PdfCatalog(pages);
+        catalog.addNames(localDestinations);
+        return catalog;
  	}
  
  // methods concerning the layout
@@ -1495,6 +1529,16 @@ class PdfDocument extends Document implements DocListener {
     void addOutline(PdfOutline outline)
     {
         outlines.add(outline);
+    }
+    
+/** Adds a named outline to the document .
+ * @param outline the outline to be added
+ * @param name the name of this local destination
+ */    
+    void addOutline(PdfOutline outline, String name)
+    {
+        outlines.add(outline);
+        localDestination(name, outline.getPdfDestination());
     }
     
 /** Gets the root outline. All the outlines must be created with a parent.
@@ -1568,7 +1612,9 @@ class PdfDocument extends Document implements DocListener {
         int lastChunkStroke = line.getLastStrokeChunk();
         int chunkStrokeIdx = 0;
         float xMarker = text.getXTLM();
+        float baseXMarker = xMarker;
         float yMarker = text.getYTLM();
+        boolean imageWasPresent = false;
 
         // looping over all the chunks in 1 line
         for (Iterator j = line.iterator(); j.hasNext(); ) {
@@ -1588,9 +1634,12 @@ class PdfDocument extends Document implements DocListener {
             if (rise != 0)
                 text.setTextRise(rise);
 
+            if (chunk.isImage()) {
+                imageWasPresent = true;
+            }
             // If it is a CJK chunk we will have to simulate the
             // space adjustment.
-            if (isJustified && numberOfSpaces > 0 && chunk.isCJKEncoding()) {
+            else if (isJustified && numberOfSpaces > 0 && chunk.isCJKEncoding()) { 
                 String s = chunk.toString();
                 int idx = s.indexOf(' ');
                 if (idx < 0)
@@ -1662,6 +1711,19 @@ class PdfDocument extends Document implements DocListener {
                             subtract += hangingCorrection;
                         annotations.add(new PdfAnnotation(xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size(), (PdfAction)chunk.getAttribute(Chunk.LINK)));
                     }
+                    if (chunk.isAttribute(Chunk.REMOTEGOTO)) {
+                        float subtract = lastBaseFactor;
+                        if (nextChunk != null && nextChunk.isAttribute(Chunk.REMOTEGOTO))
+                            subtract = 0;
+                        if (nextChunk == null)
+                            subtract += hangingCorrection;
+                        Object obj[] = (Object[])chunk.getAttribute(Chunk.REMOTEGOTO);
+                        String filename = (String)obj[0];
+                        if (obj[1] instanceof String)
+                            remoteGoto(filename, (String)obj[1], xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size());
+                        else
+                            remoteGoto(filename, ((Integer)obj[1]).intValue(), xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size());
+                    }
                     if (chunk.isAttribute(Chunk.LOCALGOTO)) {
                         float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.LOCALGOTO))
@@ -1689,6 +1751,14 @@ class PdfDocument extends Document implements DocListener {
                         if (pev != null)
                             pev.onGenericTag(writer, this, rect, (String)chunk.getAttribute(Chunk.GENERICTAG));
                     }
+                    if (chunk.isImage()) {
+                        Image image = chunk.getImage();
+                        float matrix[] = image.matrix();
+                        matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
+                        matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
+                        graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+                        text.setTextMatrix(xMarker + lastBaseFactor + image.scaledWidth(), yMarker);
+                    }
                     if (isStroked) {
                         graphics.setLineWidth(chunk.font().size() / 15);
                         if (color != null)
@@ -1697,13 +1767,14 @@ class PdfDocument extends Document implements DocListener {
                 }
                 xMarker += width;
                 ++chunkStrokeIdx;
-            }
-
+            }            
         }
         if (isJustified) {
             text.setWordSpacing(0);
             text.setCharacterSpacing(0);
         }
+        if (imageWasPresent)
+            text.setTextMatrix(baseXMarker, yMarker);
         currentValues[0] = currentFont;
         currentValues[1] = new Float(lastBaseFactor);
     }
@@ -1718,16 +1789,16 @@ class PdfDocument extends Document implements DocListener {
  */    
     void localGoto(String name, float llx, float lly, float urx, float ury)
     {
-        PdfIndirectReference ref;
         PdfAction action;
         Object obj[] = (Object[])localDestinations.get(name);
         if (obj == null)
             obj = new Object[3];
         if (obj[0] == null) {
-            ref = writer.getPdfIndirectReference();
-            action = new PdfAction(ref);
+            if (obj[1] == null) {
+                obj[1] = writer.getPdfIndirectReference();
+            }
+            action = new PdfAction((PdfIndirectReference)obj[1]);
             obj[0] = action;
-            obj[1] = ref;
             localDestinations.put(name, obj);
         }
         else {
@@ -1755,5 +1826,31 @@ class PdfDocument extends Document implements DocListener {
         localDestinations.put(name, obj);
         localPageDestinations.put(destination, null);
         return true;
+    }
+    
+/** Implements a link to another document.
+ * @param filename the filename for the remote document
+ * @param name the name to jump to
+ * @param llx the lower left x corner of the activation area
+ * @param lly the lower left y corner of the activation area
+ * @param urx the upper right x corner of the activation area
+ * @param ury the upper right y corner of the activation area
+ */    
+    void remoteGoto(String filename, String name, float llx, float lly, float urx, float ury)
+    {
+        annotations.add(new PdfAnnotation(llx, lly, urx, ury, new PdfAction(filename, name)));        
+    }
+
+/** Implements a link to another document.
+ * @param filename the filename for the remote document
+ * @param page the page to jump to
+ * @param llx the lower left x corner of the activation area
+ * @param lly the lower left y corner of the activation area
+ * @param urx the upper right x corner of the activation area
+ * @param ury the upper right y corner of the activation area
+ */    
+    void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury)
+    {
+        annotations.add(new PdfAnnotation(llx, lly, urx, ury, new PdfAction(filename, page)));
     }
 }

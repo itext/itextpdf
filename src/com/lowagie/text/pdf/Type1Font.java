@@ -118,8 +118,11 @@ public class Type1Font extends BaseFont
             builtinFont = true;
             try {
                 is = getClass().getResourceAsStream("afm/" + afmFile + ".afm");
-                if (is == null)
-                    throw new DocumentException(afmFile + " not found as resource.");
+                if (is == null) {
+                    String out = "/com/lowagie/text/pdf/afm/" + afmFile + " not found as resource. Are you sure you have the *.afm files in the jar/directory?";
+                    System.err.println(out);
+                    throw new DocumentException(out);
+                }
                 process(is);
             }
             finally {
