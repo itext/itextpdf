@@ -135,7 +135,7 @@ class PdfTable extends Rectangle {
         for (Iterator rowIterator = table.iterator(); rowIterator.hasNext(); ) {
             row = (Row) rowIterator.next();
             if (row.isEmpty()) {
-                if (rowNumber < rows - 1) offsets[rowNumber + 1] = offsets[rowNumber];
+                if (rowNumber < rows - 1 && offsets[rowNumber + 1] > offsets[rowNumber]) offsets[rowNumber + 1] = offsets[rowNumber];
             }
             else {
                 for(int i = 0; i < row.columns(); i++) {
