@@ -1058,7 +1058,7 @@ public class PdfReader {
             bout = new ByteArrayOutputStream();
             for (int k = 0; k < list.size(); ++k) {
                 PdfObject item = getPdfObject((PdfObject)list.get(k));
-                if (item == null || item.isStream())
+                if (item == null || !item.isStream()) //here's the ERROR
                     continue;
                 byte[] b = getStreamBytes((PRStream)item, file);
                 bout.write(b);
