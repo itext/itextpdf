@@ -1290,8 +1290,15 @@ class PdfDocument extends Document implements DocListener {
                      * Paulo Soares
                      */
                     
+                    // correct table : fill empty cells/ parse table in table
+                    ((Table) element).complete();
+                    
                     // before every table, we add a new line and flush all lines
-                    newLine();
+                    float offset = ((Table)element).getOffset();
+                    if (offset == Float.MIN_VALUE) offset = leading;
+                    carriageReturn();
+                    lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
+                    currentHeight += offset;
                     flushLines();
                     
                     // initialisation of parameters
@@ -1301,13 +1308,9 @@ class PdfDocument extends Document implements DocListener {
                     PdfCell cell;
                     Color color;
                     
-                    // correct table : fill empty cells/ parse table in table
-                    ((Table) element).complete();
                     
                     // constructing the PdfTable
-                    PdfTable table = new PdfTable((Table) element,
-                    indentLeft(), indentRight(),
-                    currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
+                    PdfTable table = new PdfTable((Table) element, indentLeft(), indentRight(), currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
                     
                     boolean tableHasToFit = ((Table) element).hasToFitPageTable() ? table.bottom() < indentBottom() : false;
                     boolean cellsHaveToFit = ((Table) element).hasToFitPageCells();

@@ -232,6 +232,9 @@ public class ElementTags {
     public static final String CELLSPACING = "cellspacing";
     
 /** attribute of the table tag */
+    public static final String OFFSET = "offset";
+    
+/** attribute of the table tag */
     public static final String WIDTHS = "widths";
     
 /** attribute of the table tag */
