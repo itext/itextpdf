@@ -290,8 +290,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	/** This is the standard font of the HTML. */
 	private Font standardFont = new Font();
 
-	/** This is a basepath for images. */
-	private String basepath = null;
+	/** This is a path for images. */
+	private String imagepath = null;
 
 // constructor
 
@@ -472,13 +472,13 @@ public class HtmlWriter extends DocWriter implements DocListener {
 			case Element.PNG:
 				Image image = (Image) element;
 				String path = image.url().toString();
-				// if a basepath is defined, the path is changed
-				if (basepath != null) {
+				// if an imagepath is defined, the path is changed
+				if (imagepath != null) {
 					if (path.indexOf("/") > 0) {
-						path = basepath + path.substring(path.lastIndexOf("/") + 1);
+						path = imagepath + path.substring(path.lastIndexOf("/") + 1);
 					}
 					else {
-						path = basepath + path;
+						path = imagepath + path;
 					}
 				}
 				attributes.put(SRC, path);
@@ -895,18 +895,18 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 * necessary to use a relative path or a special path to some
 	 * images directory.
 	 *
-	 * @param	the new basepath
+	 * @param	the new imagepath
 	 */
 
-	public void setBasepath(String basepath) {
-		this.basepath = basepath;
+	public void setImagepath(String imagepath) {
+		this.imagepath = imagepath;
 	}
 
 	/**
-	 * Resets the basepath.
+	 * Resets the imagepath.
 	 */
 
-	public void resetBasepath() {
-		basepath = null;
+	public void resetImagepath() {
+		imagepath = null;
 	}
 }
