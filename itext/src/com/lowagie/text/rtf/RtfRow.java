@@ -240,7 +240,10 @@ public class RtfRow {
         for (int i = 0; i < columns; i++) {
             RtfCell firstCell = (RtfCell) cells.get(i);
             Cell cell = firstCell.getStore();
-            int cols = cell.colspan();
+            int cols = 0;
+            if(cell != null) {
+                cols = cell.colspan();
+            }
             if (cols > 1) {
                 RtfCell lastCell = (RtfCell) cells.get(i + cols - 1);
                 firstCell.setCellRight(lastCell.getCellRight());
