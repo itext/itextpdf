@@ -207,6 +207,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     addTabs(2);
                     writeEnd(HtmlTags.TITLE);
                     return true;
+                case Element.CREATOR:
+                    writeComment("Creator: " + ((Meta)element).content());
+                    return true;
                 case Element.PRODUCER:
                     writeComment("Producer: " + ((Meta)element).content());
                     return true;
