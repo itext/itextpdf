@@ -46,12 +46,7 @@
  */
 
 package com.lowagie.text.pdf;
-import java.util.HashMap;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
-import java.io.IOException;
-import java.awt.Color;
 
 /**
  * Implements the appearance stream to be used with form fields..

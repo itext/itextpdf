@@ -55,7 +55,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
-import com.lowagie.text.pdf.PdfEncryption;
 
 /**
  * <CODE>PdfDictionary</CODE> is the Pdf dictionary object.
@@ -78,35 +77,35 @@ import com.lowagie.text.pdf.PdfEncryption;
  */
 
 class PRDictionary extends PRObject {
-    
+
 /** This is the hashmap that contains all the values and keys of the dictionary */
     protected HashMap hashMap;
-    
+
     // constructors
-    
+
 /**
  * Constructs an empty <CODE>PdfDictionary</CODE>-object.
  */
-    
+
     PRDictionary() {
         super(DICTIONARY);
         hashMap = new HashMap();
     }
-    
+
     // methods overriding some methods in PdfObject
-    
+
 /**
  * Returns the PDF representation of this <CODE>PdfDictionary</CODE>.
  *
  * @return		an array of <CODE>byte</CODE>
  */
-    
+
     public byte[] toPdf(PdfWriter writer) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             stream.write('<');
             stream.write('<');
-            
+
             // loop over all the object-pairs in the HashMap
             PRName key;
             PdfObject value;
@@ -120,16 +119,16 @@ class PRDictionary extends PRObject {
             }
             stream.write('>');
             stream.write('>');
-            
+
             return stream.toByteArray();
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
     }
-    
+
     // methods concerning the HashMap member value
-    
+
 /**
  * Adds a <CODE>PdfObject</CODE> and its key to the <CODE>PdfDictionary</CODE>.
  *
@@ -137,38 +136,38 @@ class PRDictionary extends PRObject {
  * @param		value	value of the entry (a <CODE>PdfObject</CODE>)
  * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
-    
+
     final PdfObject put(PRName key, PdfObject value) {
         return (PdfObject) hashMap.put(key, value);
     }
-    
+
 /**
  * Removes a <CODE>PdfObject</CODE> and its key from the <CODE>PdfDictionary</CODE>.
  *
  * @param		key		key of the entry (a <CODE>PdfName</CODE>)
  * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
-    
-    final PdfObject remove(PRName key) {
-        return (PdfObject) hashMap.remove(key);
-    }
-    
-/**
- * Gets a <CODE>PdfObject</CODE> with a certain key from the <CODE>PdfDictionary</CODE>.
- *
- * @param		key		key of the entry (a <CODE>PdfName</CODE>)
- * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
- */
-    
-    final PdfObject get(PRName key) {
-        return (PdfObject) hashMap.get(key);
-    }
-    
-    final void putAll(PRDictionary dic) {
-        hashMap.putAll(dic.hashMap);
-    }
-    
-    final Iterator getIterator() {
-        return hashMap.keySet().iterator();
-    }
-}
+
+     final PdfObject remove(PRName key) {
+         return (PdfObject) hashMap.remove(key);
+     }
+
+ /**
+  * Gets a <CODE>PdfObject</CODE> with a certain key from the <CODE>PdfDictionary</CODE>.
+  *
+  * @param		key		key of the entry (a <CODE>PdfName</CODE>)
+  * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
+  */
+
+     final PdfObject get(PRName key) {
+         return (PdfObject) hashMap.get(key);
+     }
+
+     final void putAll(PRDictionary dic) {
+         hashMap.putAll(dic.hashMap);
+     }
+
+     final Iterator getIterator() {
+         return hashMap.keySet().iterator();
+     }
+ }

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.Iterator;

@@ -1,7 +1,5 @@
 package com.lowagie.text.pdf;
 
-import java.util.Iterator;
-
 /**
  * $Id$ 
  * <CODE>PdfPatternDictionary</CODE> is a <CODE>PdfResource</CODE>, containing a dictionary of <CODE>PdfSpotPattern</CODE>s.

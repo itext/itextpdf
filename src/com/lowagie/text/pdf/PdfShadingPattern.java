@@ -46,7 +46,6 @@
  */
 package com.lowagie.text.pdf;
 
-import java.awt.Color;
 import java.io.IOException;
 /** Implements the shading pattern dictionary.
  *

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 /**
  * <CODE>PdfNumber</CODE> provides two types of numbers, integer and real.
  * <P>
@@ -73,10 +72,7 @@ public class PdfNumber extends PdfObject {
 /**
  * Constructs a <CODE>PdfNumber</CODE>-object.
  *
- * @param		type			one of the following types: <CODE>INTEGER</CODE> or <CODE>REAL</CODE>
  * @param		content			value of the new <CODE>PdfNumber</CODE>-object
- *
- * @exception	BadPdfFormatException	Signals that a given type doesn't exist of that a given value isn't a number.
  */
     
     public PdfNumber(String content) {
@@ -154,8 +150,6 @@ public class PdfNumber extends PdfObject {
     
 /**
  * Increments the value of the <CODE>PdfNumber</CODE>-object with 1.
- *
- * @return		<CODE>void</CODE>
  */
     
     public void increment() {

@@ -54,17 +54,14 @@ package com.lowagie.text.pdf;
  * A string literal
  */
 
-class PdfStringLiteral extends PdfObject
-{
-    PdfStringLiteral(String text)
-    {
+class PdfStringLiteral extends PdfObject {
+    PdfStringLiteral(String text) {
         super(0, text);
     }
-    PdfStringLiteral(byte[] b)
-    {
+    PdfStringLiteral(byte[] b) {
         super(0, b);
     }
-    
+
     final public byte[] toPdf(PdfWriter writer) {
         PdfEncryption crypto = writer.getEncryption();
         if (crypto != null) {

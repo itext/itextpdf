@@ -53,7 +53,6 @@ package com.lowagie.text.pdf;
 import java.io.*;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Arrays;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;

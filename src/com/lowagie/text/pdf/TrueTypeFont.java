@@ -53,7 +53,6 @@ package com.lowagie.text.pdf;
 import java.io.*;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Iterator;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 /** Reads a Truetype font
@@ -493,7 +492,6 @@ class TrueTypeFont extends BaseFont {
         rf.seek(table_location[0] + 2);
         int numRecords = rf.readUnsignedShort();
         int startOfStorage = rf.readUnsignedShort();
-        String postscriptName;
         for (int k = 0; k < numRecords; ++k) {
             int platformID = rf.readUnsignedShort();
             int platformEncodingID = rf.readUnsignedShort();
@@ -526,7 +524,6 @@ class TrueTypeFont extends BaseFont {
         rf.seek(table_location[0] + 2);
         int numRecords = rf.readUnsignedShort();
         int startOfStorage = rf.readUnsignedShort();
-        String postscriptName;
         ArrayList names = new ArrayList();
         for (int k = 0; k < numRecords; ++k) {
             int platformID = rf.readUnsignedShort();

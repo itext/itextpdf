@@ -50,9 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 /**
  * A <CODE>PdfBorderArray</CODE> defines the border of a <CODE>PdfAnnotation</CODE>.
  *

@@ -53,11 +53,9 @@ package com.lowagie.text.pdf;
 import java.io.*;
 import java.util.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Comparator;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.ExceptionConverter;
 /** Represents a True Type font with Unicode encoding. All the character
  * in the font can be used directly by using the encoding Identity-H or
  * Identity-V. This is the only way to represent some character sets such
@@ -201,10 +199,9 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @param fontDescriptor the indirect reference to the font descriptor
      * @param subsetPrefix the subset prefix
      * @param metrics the horizontal width metrics
-     * @throws DocumentException on error
      * @return a stream
      */    
-    private PdfDictionary getCIDFontType2(PdfIndirectReference fontDescriptor, String subsetPrefix, Object metrics[]) throws DocumentException {
+    private PdfDictionary getCIDFontType2(PdfIndirectReference fontDescriptor, String subsetPrefix, Object metrics[]) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("CIDFontType2"));
         dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));
@@ -249,10 +246,9 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @param descendant the descendant dictionary
      * @param subsetPrefix the subset prefix
      * @param toUnicode the ToUnicode stream
-     * @throws DocumentException on error
      * @return the stream
      */    
-    private PdfDictionary getFontBaseType(PdfIndirectReference descendant, String subsetPrefix, PdfIndirectReference toUnicode) throws DocumentException {
+    private PdfDictionary getFontBaseType(PdfIndirectReference descendant, String subsetPrefix, PdfIndirectReference toUnicode) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("Type0"));
         dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));

@@ -53,7 +53,6 @@ package com.lowagie.text.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.zip.DeflaterOutputStream;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocWriter;
@@ -137,8 +136,7 @@ public class PdfStream extends PdfDictionary {
 /**
  * Compresses the stream.
  *
- * @return		<CODE>void<CODE>
- * @throws		<CODE>PdfException<CODE> if a filter is allready defined
+ * @throws PdfException if a filter is allready defined
  */
     
     public void flateCompress() throws PdfException {

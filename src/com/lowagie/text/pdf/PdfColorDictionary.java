@@ -50,8 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.Iterator;
-
 /**
  * $Id$ 
  * <CODE>PdfColorDictionary</CODE> is a <CODE>PdfResource</CODE>, containing a dictionary of <CODE>PdfSpotColor</CODE>s.

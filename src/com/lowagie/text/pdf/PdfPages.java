@@ -97,8 +97,7 @@ public class PdfPages extends PdfDictionary implements PdfPageElement {
 /**
  * Set the value for the <B>Parent</B> key in the Page or Pages Dictionary.
  *
- * @param		parent			an indirect reference to a <CODE>PdfPages</CODE>-object
- * @return		<CODE>void</CODE>
+ * @param		reference			an indirect reference to a <CODE>PdfPages</CODE>-object
  */
     
     public void setParent(PdfIndirectReference reference) {
@@ -123,7 +122,6 @@ public class PdfPages extends PdfDictionary implements PdfPageElement {
  * Adds a <CODE>PdfPages</CODE>-object.
  *
  * @param		pages		a <CODE>PdfPages</CODE>-object
- * @return		<CODE>void</CODE>
  */
     
     void add(PdfPages pages) {
@@ -134,7 +132,6 @@ public class PdfPages extends PdfDictionary implements PdfPageElement {
  * Adds a <CODE>PdfPage</CODE>-object.
  *
  * @param		page		a <CODE>PdfPage</CODE>-object
- * @return		<CODE>void</CODE>
  */
     
     void add(PdfPage page) {
@@ -145,7 +142,6 @@ public class PdfPages extends PdfDictionary implements PdfPageElement {
  * Updates the array of kids.
  *
  * @param		kid			an indirect reference to a <CODE>PdfPageElement</CODE>-object
- * @return		<CODE>void</CODE>
  */
     
     void add(PdfIndirectReference kid) {

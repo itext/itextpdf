@@ -51,7 +51,6 @@
 package com.lowagie.text.pdf;
 
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.ExceptionConverter;
 import java.util.HashMap;
 import java.awt.Color;
 /**

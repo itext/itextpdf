@@ -60,72 +60,72 @@ package com.lowagie.text.pdf;
  */
 
 public interface PdfPrintable {
-    
+
     // static membervariables
-    
+
 /** possible align value of a printable object */
     public static final int DEFAULT = 0;
-    
+
 /** possible align value of a printable object */
     public static final int RIGHT = 1;
-    
+
 /** possible align value of a printable object */
     public static final int LEFT = 2;
-    
+
 /** possible align value of a printable object */
     public static final int CENTER = 3;
-    
+
     // basic methods
-    
+
 /**
  * Every printable object should have a <CODE>toString</CODE>-method.
  *
  * @return		a <CODE>String</CODE>
  */
-    
+
     public String toString();
-    
+
 /**
  * Returns the length of the actual content of the <CODE>PdfObject</CODE>.
  *
  * @return		a length
  */
-    
+
     public int length();
-    
+
     // methods concerning the actual type of a PdfPrintable object
-    
+
 /**
  * Checks if this <CODE>PdfPrintable</CODE> is of the type <CODE>PdfNull</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isNull();
-    
+
 /**
  * Checks if this <CODE>PdfPrintable</CODE> is of the type <CODE>PdfBoolean</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isBoolean();
-    
+
 /**
  * Checks if this <CODE>PdfPrintable</CODE> is of the type <CODE>PdfNumber</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isNumber();
-    
+
 /**
  * Checks if this <CODE>PdfPrintable</CODE> is of the type <CODE>PdfString</CODE>.
  *
  * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean isString();
-    
+
     public byte[] toPdf(PdfWriter writer);
 }

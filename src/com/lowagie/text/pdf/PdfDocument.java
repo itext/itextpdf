@@ -57,11 +57,9 @@ import com.lowagie.text.Cell;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.DocWriter;
 import com.lowagie.text.Element;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Graphic;
-import com.lowagie.text.Header;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.ImgWMF;
@@ -80,7 +78,6 @@ import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Iterator;
@@ -350,7 +347,7 @@ class PdfDocument extends Document implements DocListener {
         
         
         /** Sets the document level additional actions.
-         * @param dictionary of actions
+         * @param actions   dictionary of actions
          */        
         void setAdditionalActions(PdfDictionary actions) {
             try {
@@ -1412,7 +1409,6 @@ class PdfDocument extends Document implements DocListener {
                     float oldHeight = currentHeight;
                     float cellDisplacement;
                     PdfCell cell;
-                    Color color;
                     PdfContentByte cellGraphics = new PdfContentByte(writer);
                     
                     // constructing the PdfTable
@@ -1690,7 +1686,7 @@ class PdfDocument extends Document implements DocListener {
     /**
      * Adds an image to the Graphics object.
      *
-     * @image   the image
+     * @param image the image
      * @param a an element of the transformation matrix
      * @param b an element of the transformation matrix
      * @param c an element of the transformation matrix
@@ -1990,7 +1986,6 @@ class PdfDocument extends Document implements DocListener {
         // initialisation of some parameters
         Object currentValues[] = new Object[2];
         PdfFont currentFont = null;
-        int currentLeading = 0;
         float displacement = 0;
         PdfLine l;
         PdfChunk chunk;
@@ -2333,7 +2328,6 @@ class PdfDocument extends Document implements DocListener {
             if (chunkStrokeIdx <= lastChunkStroke) {
                 boolean isStroked = (chunk.isAttribute(Chunk.STRIKETHRU) || chunk.isAttribute(Chunk.UNDERLINE));
                 float width;
-                float endSpacing = 0;
                 if (isJustified) {
                     width = chunk.getWidthCorrected(lastBaseFactor, ratio * lastBaseFactor);
                 }

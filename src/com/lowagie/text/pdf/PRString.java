@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.UnsupportedEncodingException;
 
 /**
  * A <CODE>PdfString</CODE>-class is the PDF-equivalent of a JAVA-<CODE>String</CODE>-object.
@@ -70,47 +69,47 @@ import java.io.UnsupportedEncodingException;
  */
 
 class PRString extends PRObject {
-    
+
     // membervariables
-    
+
     // constructors
-    
+
 /**
  * Constructs an empty <CODE>PdfString</CODE>-object.
  */
-    
+
     PRString() {
         super(STRING);
     }
-    
+
 /**
  * Constructs a <CODE>PdfString</CODE>-object.
  *
- * @param		content		the content of the string
+ * @param		value		the content of the string
  */
-    
+
     PRString(String value) {
         super(STRING, value);
     }
-    
+
 /**
  * Constructs a <CODE>PdfString</CODE>-object.
  *
  * @param		bytes	an array of <CODE>byte</CODE>
  */
-    
+
     PRString(byte[] bytes) {
         super(STRING, bytes);
     }
-    
+
     // methods overriding some methods in PdfObject
-    
+
 /**
  * Returns the PDF representation of this <CODE>PdfString</CODE>.
  *
  * @return		an array of <CODE>byte</CODE>s
  */
-    
+
     final public byte[] toPdf(PdfWriter writer) {
         PdfEncryption crypto = writer.getEncryption();
         if (crypto != null) {

@@ -55,7 +55,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import com.lowagie.text.DocWriter;
 
 /**
  * <CODE>PdfArray</CODE> is the PDF Array object.
@@ -114,7 +113,7 @@ public class PdfArray extends PdfObject {
 /**
  * Constructs an <CODE>PdfArray</CODE>-object, containing all the <CODE>PdfObject</CODE>s in a given <CODE>PdfArray</CODE>.
  *
- * @param	object		a <CODE>PdfArray</CODE> that has to be added to the array
+ * @param	array		a <CODE>PdfArray</CODE> that has to be added to the array
  */
     
     public PdfArray(PdfArray array) {
@@ -206,7 +205,6 @@ public class PdfArray extends PdfObject {
  * The newly added object will be the first element in the <CODE>ArrayList</CODE>.
  *
  * @param		object			<CODE>PdfObject</CODE> to add
- * @return		<CODE>true</CODE>
  */
     
     public void addFirst(PdfObject object) {

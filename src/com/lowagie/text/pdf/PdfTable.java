@@ -50,10 +50,8 @@
 
 package com.lowagie.text.pdf;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ListIterator;
 
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Cell;

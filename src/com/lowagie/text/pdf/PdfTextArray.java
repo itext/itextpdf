@@ -51,7 +51,6 @@
 package com.lowagie.text.pdf;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * <CODE>PdfTextArray</CODE> defines an array with displacements and <CODE>PdfString</CODE>-objects.
@@ -75,8 +74,6 @@ public class PdfTextArray{
  * Adds a <CODE>PdfNumber</CODE> to the <CODE>PdfArray</CODE>.
  *
  * @param		number			displacement of the string
- *
- * @return		<CODE>true</CODE>
  */
     
     public void add(PdfNumber number)
