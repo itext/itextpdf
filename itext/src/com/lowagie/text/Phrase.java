@@ -57,6 +57,9 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.markup.MarkupParser;
+
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
  * <P>
@@ -223,9 +226,12 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     public Phrase(Properties attributes) {
         this("", FontFactory.getFont(attributes));
         clear();
-        String value = (String)attributes.remove(ElementTags.LEADING);
-        if (value != null) {
+        String value;
+        if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
+        }
+        else if ((value = (String)attributes.remove(MarkupTags.CSS_LINEHEIGHT)) != null) {
+            setLeading(MarkupParser.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             Chunk chunk = new Chunk(value);

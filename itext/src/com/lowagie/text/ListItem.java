@@ -53,6 +53,9 @@ package com.lowagie.text;
 import java.util.Iterator;
 import java.util.Properties;
 
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.markup.MarkupParser;
+
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
  * that can be added to a <CODE>List</CODE>.
@@ -221,6 +224,9 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
+        }
+        else if ((value = (String)attributes.remove(MarkupTags.CSS_LINEHEIGHT)) != null) {
+            setLeading(MarkupParser.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.valueOf(value + "f").floatValue());

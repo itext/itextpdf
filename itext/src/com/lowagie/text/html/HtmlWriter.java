@@ -942,8 +942,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
             if (depth > 5) {
                 depth = 5;
             }
+            Properties styleAttributes = new Properties();
+            styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(section.title().leading()) + "pt");
+            // start tag
             addTabs(indent + 1);
             writeStart(HtmlTags.H[depth]);
+            write(section.title().font(), styleAttributes);
             String alignment = HtmlEncoder.getAlignment(section.title().alignment());
             if (!"".equals(alignment)) {
                 write(HtmlTags.ALIGN, alignment);
@@ -952,11 +956,15 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 writeMarkupAttributes((MarkupAttributes)section.title());
             }
             os.write(GT);
+            currentfont.push(section.title().font());
+            // contents
             for (Iterator i = section.title().iterator(); i.hasNext(); ) {
                 write((Element)i.next(), indent + 2);
             }
+            // end tag
             addTabs(indent + 1);
             writeEnd(HtmlTags.H[depth]);
+            currentfont.pop();
         }
         for (Iterator i = section.iterator(); i.hasNext(); ) {
             write((Element) i.next(), indent + 1);
