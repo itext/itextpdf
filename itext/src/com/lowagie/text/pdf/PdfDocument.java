@@ -1849,7 +1849,7 @@ class PdfDocument extends Document implements DocListener {
             footer.setLeft(left());
             footer.setRight(right());
             graphics.rectangle(footer);
-            indentBottom = currentHeight + leading * 3 / 2;
+            indentBottom = currentHeight + leading * 2;
             currentHeight = 0;
         }
         
