@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -246,7 +246,9 @@ public class Table extends Rectangle implements Element {
         
         // a certain number of rows are created
         for (int i = 0; i < rows; i++) {
-            this.rows.add(new Row(columns));
+// patch by Matt Benson 02/21/2002
+            this.rows.add(createRow(columns));
+// end patch by Matt Benson 02/21/2002
         }
         currentRow = 0;
         currentColumn = 0;
@@ -283,7 +285,9 @@ public class Table extends Rectangle implements Element {
             }
         }
         
-        rows.add(new Row(columns));
+// patch by Matt Benson 02/21/2002
+        rows.add(createRow(columns));
+// end patch by Matt Benson 02/21/2002
         currentRow = 0;
         
         if ((value = attributes.getProperty(ElementTags.LASTHEADERROW)) != null) {
@@ -579,7 +583,9 @@ public class Table extends Rectangle implements Element {
         int i = 0;
         if ( rowCount > 0 ) {   //create new rows ?
             for (; i < rowCount; i++) {
-                rows.add(new Row(columns));
+// patch by Matt Benson 02/21/2002
+                rows.add(createRow(columns));
+// end patch by Matt Benson 02/21/2002
             }
         }
 
@@ -1187,7 +1193,9 @@ public class Table extends Rectangle implements Element {
             // copy old values
             newRows = new ArrayList(lTotalRows);
             for (i = 0; i < lTotalRows; i++) {
-                newRows.add(new Row(lTotalColumns));
+// patch by Matt Benson 02/21/2002
+                newRows.add(createRow(lTotalColumns));
+// end patch by Matt Benson 02/21/2002
             }
             int lDummyRow = 0, lDummyColumn = 0;        // to remember where we are in the new, larger table
             Object lDummyElement = null;
@@ -1307,7 +1315,9 @@ public class Table extends Rectangle implements Element {
         if ( (aPosition.x + aCell.rowspan()) > someRows.size() )        //create new rows ?
         {
             for (i = 0; i < rowCount; i++) {
-                row = new Row(lColumns);
+// patch by Matt Benson 02/21/2002
+                row = createRow(lColumns);
+// end patch by Matt Benson 02/21/2002
                 someRows.add(row);
             }
         }
@@ -1388,7 +1398,9 @@ public class Table extends Rectangle implements Element {
         int newColumns = columns + aColumns;
         Row row;
         for (int i = 0; i < rows.size(); i++) {
-            row = new Row(newColumns);
+// patch by Matt Benson 02/21/2002
+            row = createRow(newColumns);
+// end patch by Matt Benson 02/21/2002
             for (int j = 0; j < columns; j++) {
                 row.setElement(((Row) rows.get(i)).getCell(j) ,j);
             }
@@ -1410,9 +1422,23 @@ public class Table extends Rectangle implements Element {
         widths = newWidths;
         rows = newRows;
     }
+
+// patch by Matt Benson 02/21/2002
     
 /**
- * Gives you the posibility to add columns.
+ * Creates and returns a new <CODE>Row</CODE> with the specified number of
+ * columns.  This can be overridden by subclasses.
+ * @return <CODE>Row</CODE>.
+ */
+    protected Row createRow(int columns)
+    {
+      return new Row(columns);
+    }//end createRow
+
+// end patch by Matt Benson 02/21/2002
+    
+/**
+ * Gives you the possibility to add columns.
  *
  * @param   aColumns    the number of columns to add
  */
@@ -1422,7 +1448,9 @@ public class Table extends Rectangle implements Element {
         int length = ((Row) rows.get(0)).columns();             // old nr of cols
         
         for (int i = 0; i < rows.size(); i++) {
-            this.rows.add(new Row(length + aColumns));
+// patch by Matt Benson 02/21/2002
+            this.rows.add(createRow(length + aColumns));
+// end patch by Matt Benson 02/21/2002
             for (int j = 0; j < length; j++) {
                 ((Row) rows.get(i)).setElement( ((Row) rows.get(i)).getCell(j) ,j);
             }

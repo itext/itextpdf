@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -53,11 +53,9 @@ package com.lowagie.text;
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
-import com.lowagie.text.DocListener;
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Watermark;
+import com.lowagie.text.markup.MarkupAttributes;
 
 /**
  * An abstract <CODE>Writer</CODE> class for documents.
@@ -71,8 +69,8 @@ import com.lowagie.text.Watermark;
  * will be written to the <CODE>OutputStream</CODE> of the listening
  * <CODE>DocWriter</CODE>.
  *
- * @see		Document
- * @see		DocListener
+ * @see   Document
+ * @see   DocListener
  */
 
 public abstract class DocWriter implements DocListener {
@@ -123,8 +121,8 @@ public abstract class DocWriter implements DocListener {
 /**
  * Constructs a <CODE>DocWriter</CODE>.
  *
- * @param	document	The <CODE>Document</CODE> that has to be written
- * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
+ * @param document  The <CODE>Document</CODE> that has to be written
+ * @param os  The <CODE>OutputStream</CODE> the writer has to write to.
  */
     
     protected DocWriter(Document document, OutputStream os)  {
@@ -141,8 +139,8 @@ public abstract class DocWriter implements DocListener {
  * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
  * derived from this abstract class.
  *
- * @return	<CODE>false</CODE>
- * @throws	DocumentException	when a document isn't open yet, or has been closed
+ * @return  <CODE>false</CODE>
+ * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean add(Element element) throws DocumentException {
@@ -160,8 +158,8 @@ public abstract class DocWriter implements DocListener {
 /**
  * Sets the pagesize.
  *
- * @param	pageSize	the new pagesize
- * @return	a <CODE>boolean</CODE>
+ * @param pageSize  the new pagesize
+ * @return  a <CODE>boolean</CODE>
  */
     
     public boolean setPageSize(Rectangle pageSize) {
@@ -176,7 +174,7 @@ public abstract class DocWriter implements DocListener {
  * derived from this abstract class if they actually support the use of
  * a <CODE>Watermark</CODE>.
  *
- * @return	<CODE>false</CODE> (because watermarks aren't supported by default).
+ * @return  <CODE>false</CODE> (because watermarks aren't supported by default).
  */
     
     public boolean add(Watermark watermark) {
@@ -195,11 +193,11 @@ public abstract class DocWriter implements DocListener {
  * <P>
  * This does nothing. Has to be overridden if needed.
  *
- * @param	marginLeft		the margin on the left
- * @param	marginRight		the margin on the right
- * @param	marginTop		the margin on the top
- * @param	marginBottom	the margin on the bottom
- * @return	<CODE>false</CODE>
+ * @param marginLeft    the margin on the left
+ * @param marginRight   the margin on the right
+ * @param marginTop   the margin on the top
+ * @param marginBottom  the margin on the bottom
+ * @return  <CODE>false</CODE>
  */
     
     public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
@@ -211,8 +209,8 @@ public abstract class DocWriter implements DocListener {
  * <P>
  * This does nothing. Has to be overridden if needed.
  *
- * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
- * @throws	DocumentException	when a document isn't open yet, or has been closed
+ * @return  <CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
+ * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
     public boolean newPage() throws DocumentException {
@@ -229,7 +227,7 @@ public abstract class DocWriter implements DocListener {
  * derived from this abstract class if they actually support the use of
  * headers.
  *
- * @param	header		the new header
+ * @param header    the new header
  */
     
     public void setHeader(HeaderFooter header) {
@@ -253,7 +251,7 @@ public abstract class DocWriter implements DocListener {
  * derived from this abstract class if they actually support the use of
  * footers.
  *
- * @param	footer		the new footer
+ * @param footer    the new footer
  */
     
     public void setFooter(HeaderFooter footer) {
@@ -288,7 +286,7 @@ public abstract class DocWriter implements DocListener {
  * derived from this abstract class if they actually support the use of
  * pagenumbers.
  *
- * @param	pageN		the new page number
+ * @param pageN   the new page number
  */
     
     public void setPageCount(int pageN) {
@@ -363,7 +361,7 @@ public abstract class DocWriter implements DocListener {
 /**
  * Writes a <CODE>String</CODE> to the <CODE>OutputStream</CODE>.
  *
- * @param	string		the <CODE>String</CODE> to write
+ * @param string    the <CODE>String</CODE> to write
  */
     
     protected final void write(String string) throws IOException {
@@ -439,4 +437,39 @@ public abstract class DocWriter implements DocListener {
         os.write(GT);
         os.write(NEWLINE);
     }
+    
+// patch by Matt Benson 02/21/2002
+    
+/**
+ * Writes the markup attributes of the specified <CODE>MarkupAttributes</CODE>
+ * object to the <CODE>OutputStream</CODE>.
+ * @param mAtt   the <CODE>MarkupAttributes</CODE> to write.
+ */
+    protected boolean writeMarkupAttributes(MarkupAttributes mAtt)
+     throws IOException
+    {
+      Iterator attributeIterator = mAtt.getMarkupAttributeNames().iterator();
+      boolean result = attributeIterator.hasNext();
+      while (attributeIterator.hasNext())
+      {
+        String name = String.valueOf(attributeIterator.next());
+        write(name, mAtt.getMarkupAttribute(name));
+      }//end while attributeIterator has next
+      return result;
+    }//end writeMarkupAttributes
+    
+    
+/**
+ * Returns <CODE>true</CODE> if the specified <CODE>Element</CODE> implements
+ * <CODE>MarkupAttributes</CODE> and has one or more attributes to write.
+ * @param element   the <CODE>Element</CODE> to check.
+ * @return <CODE>boolean</CODE>.
+ */
+    protected static boolean hasMarkupAttributes(Element element)
+    {
+      return (element instanceof MarkupAttributes &&
+       !(((MarkupAttributes)element).getMarkupAttributeNames().isEmpty()));
+    }//end hasMarkupAttributes
+// end patch by Matt Benson 02/21/2002
+    
 }

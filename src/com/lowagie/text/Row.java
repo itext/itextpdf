@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -64,9 +64,9 @@ import java.util.ArrayList;
  * Since a <CODE>Cell</CODE> can span several rows and/or columns
  * a row can contain reserved space without any content.
  *
- * @see		Element
- * @see		Cell
- * @see		Table
+ * @see   Element
+ * @see   Cell
+ * @see   Table
  */
 
 public class Row implements Element {
@@ -105,10 +105,12 @@ public class Row implements Element {
 /**
  * Constructs a <CODE>Row</CODE> with a certain number of <VAR>columns</VAR>.
  *
- * @param	columns		a number of columns
+ * @param columns   a number of columns
  */
-    
-    Row(int columns) {
+// patch by Matt Benson 02/21/2002
+// changed access modifier to protected for MarkupRow
+    protected Row(int columns) {
+// end patch by Matt Benson 02/21/2002
         this.columns = columns;
         reserved = new boolean[columns];
         cells = new Object[columns];
@@ -121,8 +123,8 @@ public class Row implements Element {
  * Processes the element by adding it (or the different parts) to a
  * <CODE>ElementListener</CODE>.
  *
- * @param	listener	an <CODE>ElementListener</CODE>
- * @return	<CODE>true</CODE> if the element was processed successfully
+ * @param listener  an <CODE>ElementListener</CODE>
+ * @return  <CODE>true</CODE> if the element was processed successfully
  */
     
     public final boolean process(ElementListener listener) {
@@ -137,7 +139,7 @@ public class Row implements Element {
 /**
  * Gets the type of the text element.
  *
- * @return	a type
+ * @return  a type
  */
     
     public final int type() {
@@ -147,7 +149,7 @@ public class Row implements Element {
 /**
  * Gets all the chunks in this element.
  *
- * @return	an <CODE>ArrayList</CODE>
+ * @return  an <CODE>ArrayList</CODE>
  */
     
     public final ArrayList getChunks() {
@@ -158,7 +160,7 @@ public class Row implements Element {
  * Returns a <CODE>Row</CODE> that is a copy of this <CODE>Row</CODE>
  * in which a certain column has been deleted.
  *
- * @param	column	the number of the column to delete
+ * @param column  the number of the column to delete
  */
     
     final void deleteColumn(int column) {
@@ -286,7 +288,7 @@ public class Row implements Element {
 /**
  * Sets the horizontal alignment.
  *
- * @param	value	the new value
+ * @param value the new value
  */
     
     public void setHorizontalAlignment(int value) {
@@ -296,7 +298,7 @@ public class Row implements Element {
 /**
  * Sets the vertical alignment.
  *
- * @param	value	the new value
+ * @param value the new value
  */
     
     public void setVerticalAlignment(int value) {
@@ -364,7 +366,7 @@ public class Row implements Element {
 /**
  * Checks if the row is empty.
  *
- * @return	<CODE>true</CODE> if none of the columns is reserved.
+ * @return  <CODE>true</CODE> if none of the columns is reserved.
  */
     
     public final boolean isEmpty() {
@@ -389,7 +391,7 @@ public class Row implements Element {
 /**
  * Gets the number of columns.
  *
- * @return	a value
+ * @return  a value
  */
     
     public final int columns() {
@@ -399,7 +401,7 @@ public class Row implements Element {
 /**
  * Gets the horizontal alignment.
  *
- * @return	a value
+ * @return  a value
  */
     
     public int horizontalAlignment() {
@@ -409,7 +411,7 @@ public class Row implements Element {
 /**
  * Gets the vertical alignment.
  *
- * @return	a value
+ * @return  a value
  */
     
     public int verticalAlignment() {
