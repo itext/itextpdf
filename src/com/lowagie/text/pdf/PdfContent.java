@@ -520,7 +520,7 @@ public class PdfContent {
 	}
 
 	/**
-		 * Move the current point <I>(x, y)</I>, omitting any connecting line segment.
+	 * Move the current point <I>(x, y)</I>, omitting any connecting line segment.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
 	 * section 8.6.1 (page 334-336).
@@ -528,16 +528,16 @@ public class PdfContent {
 	 * @param		x				new x-coordinate
 	 * @param		y				new y-coordinate
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
-
-		public final void moveTo(float x, float y) {
+	*/
+	
+	public final void moveTo(int x, int y) {
 		content.append(x).append(" ").append(y).append(" m\n");
-		}
+	}
 
 	/**
-		 * Appends a straight line segment from the current point <I>(x, y)</I>. The new current
+	 * Appends a straight line segment from the current point <I>(x, y)</I>. The new current
 	 * point is <I>(x, y)</I>.
 	 * <P>
 	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
@@ -546,13 +546,48 @@ public class PdfContent {
 	 * @param		x				new x-coordinate
 	 * @param		y				new y-coordinate
 	 * @return		<CODE>void</CODE>
-		 *
+	 *
 	 * @since		rugPdf0.10
-		 */
+	 */
 
-		public final void lineTo(float x, float y) {
+	public final void lineTo(int x, int y) {
 		content.append(x).append(" ").append(y).append(" l\n");
-		}
+	}
+
+	/**
+	 * Move the current point <I>(x, y)</I>, omitting any connecting line segment.
+	 * <P>
+	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
+	 * section 8.6.1 (page 334-336).
+	 *
+	 * @param		x				new x-coordinate
+	 * @param		y				new y-coordinate
+	 * @return		<CODE>void</CODE>
+	 *
+	 * @author	David Freels
+	 */
+
+	public final void moveTo(float x, float y) {
+		content.append(x).append(" ").append(y).append(" m\n");
+	}
+
+	/**
+	 * Appends a straight line segment from the current point <I>(x, y)</I>. The new current
+	 * point is <I>(x, y)</I>.
+	 * <P>
+	 * This method is described in the 'Portable Document Format Reference Manual version 1.3'
+	 * section 8.6.1 (page 334-336).
+	 *
+	 * @param		x				new x-coordinate
+	 * @param		y				new y-coordinate
+	 * @return		<CODE>void</CODE>
+	 *
+	 * @author	David Freels
+	 */
+
+	public final void lineTo(float x, float y) {
+		content.append(x).append(" ").append(y).append(" l\n");
+	}
 
 	/**
 		 * Appends a Bêzier curve to the path, starting from the current point.
