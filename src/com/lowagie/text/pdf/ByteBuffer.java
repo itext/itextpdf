@@ -135,30 +135,29 @@ public class ByteBuffer {
             if (i % 10 != 0) {
                 size++;
             }
-            byte[] cache = new byte[size];
-            int add = 0;
-            if (i >= 1000000) {
-                cache[add++] = bytes[(i / 1000000)];
-            }
-            if (i >= 100000) {
-                cache[add++] = bytes[(i / 100000) % 10];
-            }
-            if (i >= 10000) {
-                cache[add++] = bytes[(i / 10000) % 10];
-            }
-            if (i >= 1000) {
-                cache[add++] = bytes[(i / 1000) % 10];
-            }
-            if (i >= 100) {
-                cache[add++] = bytes[(i / 100) % 10];
-            }
-            
-            if (i % 100 != 0) {
-                cache[add++] = (byte)'.';
-                cache[add++] = bytes[(i / 10) % 10];
-                if (i % 10 != 0) {
-                    cache[add++] = bytes[i % 10];
+            if (i < 100) {
+                size++;
+                if (i < 10) {
+                    size++;
                 }
+            }
+            byte[] cache = new byte[size];
+            size--;
+            if (i < 100) {
+                cache[1] = (byte)'0';
+            }
+            if (i % 10 != 0) {
+                cache[size--] = bytes[i % 10];
+            }
+            if (i % 100 != 0) {
+                cache[size--] = bytes[(i / 10) % 10];
+                cache[size--] = (byte)'.';
+            }
+            size = (int)Math.floor(Math.log(i) / Math.log(10));
+            int add = 1;
+            while (add < size) {
+                cache[add] = bytes[(i / (int)Math.pow(10, size - add + 1)) % 10];
+                add++;
             }
             longCache[i] = cache;
         }
