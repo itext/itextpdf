@@ -134,6 +134,8 @@ public class PdfCell extends Rectangle {
             case Element.ALIGN_MIDDLE:
                 height *= (rowSpan / 1.5);
                 break;
+            default:
+                height -= cellpadding * 0.4f;
         }
         
         PdfLine line = new PdfLine(left, right, alignment, height);
