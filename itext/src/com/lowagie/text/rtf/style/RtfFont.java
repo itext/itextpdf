@@ -97,18 +97,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     private static final byte[] FONT_STRIKETHROUGH = "\\strike".getBytes();
     /**
-     * Constant for the subscript flag
-     */
-    private static final byte[] FONT_SUBSCRIPT = "\\sub".getBytes();
-    /**
-     * Constant for the superscript flag
-     */
-    private static final byte[] FONT_SUPERSCRIPT = "\\super".getBytes();
-    /**
-     * Constant for the end of sub / superscript flag
-     */
-    private static final byte[] FONT_END_SUPER_SUBSCRIPT = "\\nosupersub".getBytes();
-    /**
      * Constant for a plain font
      */
     public static final int STYLE_NONE = 0;
@@ -145,10 +133,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
      * The number of this font
      */
     private int fontNumber = 0;
-    /**
-     * The super / subscript of this font
-     */
-    private float fontSuperSubscript = 0;
     /**
      * The colour of this font
      */
@@ -226,12 +210,10 @@ public class RtfFont extends Font implements RtfExtendedElement {
 
     /**
      * Constructs a RtfFont from a com.lowagie.text.Font
-     *
      * @param doc The RtfDocument this font appears in
      * @param font The Font to use as a base
-     * @param superSubScript a value for sub- or superscript
      */
-    public RtfFont(RtfDocument doc, Font font, float superSubScript) {
+    public RtfFont(RtfDocument doc, Font font) {
         this.document = doc;
         if(font instanceof RtfFont) {
             this.fontName = ((RtfFont) font).getFontName();
@@ -290,7 +272,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
             this.fontNumber = document.getDocumentHeader().getFontNumber(this);
         }
         color = new RtfColor(doc, font.color());
-        this.fontSuperSubscript = superSubScript;
     }
 
     /**
@@ -336,11 +317,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
             if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
                 result.write(FONT_STRIKETHROUGH);
             }
-            if(fontSuperSubscript < 0) {
-                result.write(FONT_SUBSCRIPT);
-            } else if(fontSuperSubscript > 0) {
-                result.write(FONT_SUPERSCRIPT);
-            }
             result.write(color.writeBegin());
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -372,9 +348,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
                 result.write(FONT_STRIKETHROUGH);
                 result.write(intToByteArray(0));
             }
-            if(fontSuperSubscript != 0) {
-                result.write(FONT_END_SUPER_SUBSCRIPT);
-            }
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
@@ -405,7 +378,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
         result = result & this.fontName.equals(font.getFontName());
         result = result & (this.fontSize == font.getFontSize());
         result = result & (this.fontStyle == font.getFontStyle());
-        result = result & (this.fontSuperSubscript == font.getFontSuperSubscript());
         return result;
     }
 
@@ -417,7 +389,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      * @return The hash code of this RtfFont
      */
     public int hashCode() {
-        return (this.fontName + this.fontSize + "-" + this.fontStyle + "-" + this.fontSuperSubscript).hashCode();
+        return (this.fontName + this.fontSize + "-" + this.fontStyle).hashCode();
     }
     
     /**
@@ -461,15 +433,6 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public int getFontNumber() {
         return fontNumber;
-    }
-
-    /**
-     * Gets the font sub / superscript value
-     * 
-     * @return The sub / superscript value
-     */
-    public float getFontSuperSubscript() {
-        return fontSuperSubscript;
     }
 
     /**
