@@ -71,8 +71,6 @@ import java.util.Properties;
  *
  * @see		Element
  * @see		Phrase
- *
- * @author  bruno@lowagie.com
  */
 
 public class Anchor extends Phrase implements TextElementArray {
@@ -230,6 +228,37 @@ public class Anchor extends Phrase implements TextElementArray {
                 listener.add(chunk);
             }
             return true;
+        }
+        catch(DocumentException de) {
+            return false;
+        }
+    }
+    
+/**
+ * Gets all the chunks in this element.
+ *
+ * @return	an <CODE>ArrayList</CODE>
+ */
+    
+    public ArrayList getChunks() {
+        try {
+            ArrayList tmp = new ArrayList();
+            Chunk chunk;
+            Iterator i = getChunks().iterator();
+            boolean localDestination = (reference != null && reference.startsWith("#"));
+            boolean notGotoOK = true;
+            while (i.hasNext()) {
+                chunk = (Chunk) i.next();
+                if (name != null && notGotoOK && !chunk.isEmpty()) {
+                    chunk.setLocalDestination(name);
+                    notGotoOK = false;
+                }
+                if (localDestination) {
+                    chunk.setLocalGoto(reference.substring(1));
+                }
+                tmp.add(chunk);
+            }
+            return tmp;
         }
         catch(DocumentException de) {
             return false;
