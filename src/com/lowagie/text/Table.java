@@ -306,24 +306,35 @@ public class Table extends Rectangle implements Element {
             if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
         }
         setBorder(border);
-        if (attributes.getProperty(ElementTags.RED) != null &&
-        attributes.getProperty(ElementTags.GREEN) != null &&
-        attributes.getProperty(ElementTags.BLUE) != null) {
-            setBorderColor(new Color(Integer.parseInt(attributes.getProperty(ElementTags.RED)),
-            Integer.parseInt(attributes.getProperty(ElementTags.GREEN)),
-            Integer.parseInt(attributes.getProperty(ElementTags.BLUE))));
+        String r = null;
+        String g = null;
+        String b = null;
+        if ((r = attributes.getProperty(ElementTags.RED)) != null ||
+        (g = attributes.getProperty(ElementTags.GREEN)) != null ||
+        (b = attributes.getProperty(ElementTags.BLUE)) != null) {
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            if (r != null) red = Integer.parseInt(r);
+            if (g != null) green = Integer.parseInt(g);
+            if (b != null) blue = Integer.parseInt(b);
+            setBorderColor(new Color(red, green, blue));
         }
         else if ((value = attributes.getProperty(ElementTags.BORDERCOLOR)) != null) {
             setBorderColor(ElementTags.decodeColor(value));
         }
-        if (attributes.getProperty(ElementTags.BGRED) != null &&
-        attributes.getProperty(ElementTags.BGGREEN) != null &&
-        attributes.getProperty(ElementTags.BGBLUE) != null) {
-            setBackgroundColor(new Color(Integer.parseInt(attributes.getProperty(ElementTags.BGRED)),
-            Integer.parseInt(attributes.getProperty(ElementTags.BGGREEN)),
-            Integer.parseInt(attributes.getProperty(ElementTags.BGBLUE))));
+        if ((r = attributes.getProperty(ElementTags.BGRED)) != null ||
+        (g = attributes.getProperty(ElementTags.BGGREEN)) != null ||
+        (b = attributes.getProperty(ElementTags.BGBLUE)) != null) {
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            if (r != null) red = Integer.parseInt(r);
+            if (g != null) green = Integer.parseInt(g);
+            if (b != null) blue = Integer.parseInt(b);
+            setBackgroundColor(new Color(red, green, blue));
         }
-        else if ((value = attributes.getProperty(ElementTags.COLOR)) != null) {
+        else if ((value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR)) != null) {
             setBackgroundColor(ElementTags.decodeColor(value));
         }
         if ((value = attributes.getProperty(ElementTags.GRAYFILL)) != null) {

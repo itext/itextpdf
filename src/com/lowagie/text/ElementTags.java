@@ -229,6 +229,9 @@ public class ElementTags {
     public static final String BORDERCOLOR = "bordercolor";
     
 /** attribute of the table/cell tag */
+    public static final String BACKGROUNDCOLOR = "backgroundcolor";
+    
+/** attribute of the table/cell tag */
     public static final String BGRED = "bgred";
     
 /** attribute of the table/cell tag */
@@ -302,7 +305,7 @@ public class ElementTags {
     public static final String ALIGN_RIGHT = "Right";
     
 /** the possible value of an alignment attribute */
-    public static final String ALIGN_JUSTIFIED = "Justified";
+    public static final String ALIGN_JUSTIFIED = "Justify";
     
 /** the possible value of an alignment attribute */
     public static final String ALIGN_TOP = "Top";

@@ -1,8 +1,8 @@
 /*
- * @(#)PdfXObjectDictionary.java	0.31 2000/08/10
- *       release iText0.35:         0.31 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -40,21 +40,15 @@ import java.util.Iterator;
  *
  * @see		PdfResource
  * @see		PdfResources
- *
- * @author  bruno@lowagie.com
- * @version 0.31 2000/08/10
- * @since   rugPdf0.31
  */
 
 class PdfXObjectDictionary extends PdfDictionary implements PdfResource {
 
 // constructors
 
-	/**
-	 * Constructs a new <CODE>PdfFontDictionary</CODE>.
-	 *
-	 * @since		iText0.31
-	 */
+/**
+* Constructs a new <CODE>PdfFontDictionary</CODE>.
+*/
 
 	PdfXObjectDictionary() { 
 		super();
@@ -62,55 +56,47 @@ class PdfXObjectDictionary extends PdfDictionary implements PdfResource {
 
 // methods
 
-	/**
-	 * Returns the name of a resource.
-	 *
-	 * @return		a <CODE>PdfName</CODE>.
-	 *
-	 * @since		iText0.31
-	 */
+/**
+* Returns the name of a resource.
+*
+* @return		a <CODE>PdfName</CODE>.
+*/
 
 	public PdfName key() {
 		return PdfName.XOBJECT;
 	}
 
-	/**
-	 * Returns the object that represents the resource.
-	 *
-	 * @return		a <CODE>PdfObject</CODE>
-	 *
-	 * @since		iText0.31
-	 */
+/**
+* Returns the object that represents the resource.
+*
+* @return		a <CODE>PdfObject</CODE>
+*/
 
 	public PdfObject value() {
 		return this;
 	}
 
-	/**
-	 * Checks if the <CODE>XObjectDictionary</CODE> allready contains a
-	 * <CODE>PdfImage</CODE> with this name.
-	 *
-	 * @return		<CODE>true</CODE> if a font with this name allready exists,
-	 *				<CODE>false</CODE> otherwise
-	 *
-	 * @since		iText0.38
-	 */
+/**
+* Checks if the <CODE>XObjectDictionary</CODE> allready contains a
+* <CODE>PdfImage</CODE> with this name.
+*
+* @return		<CODE>true</CODE> if a font with this name allready exists,
+*				<CODE>false</CODE> otherwise
+*/
 
 	boolean contains(PdfImage image) {
-		return treeMap.containsKey(image.name());
+		return hashMap.containsKey(image.name());
 	}
 
-	/**
-	 * Checks if the <CODE>PdfXObjectDictionary</CODE> contains at least
-	 * one object.
-	 *
-	 * @return		<CODE>true</CODE> if an object was found
-	 *				<CODE>false</CODE> otherwise
-	 *
-	 * @since		iText0.31
-	 */
+/**
+* Checks if the <CODE>PdfXObjectDictionary</CODE> contains at least
+* one object.
+*
+* @return		<CODE>true</CODE> if an object was found
+*				<CODE>false</CODE> otherwise
+*/
 
 	boolean containsXObject() {
-		return treeMap.size() > 0;
+		return hashMap.size() > 0;
 	}
 }

@@ -330,7 +330,7 @@ public class SAXiTextHandler extends HandlerBase {
                     }
                     break;
                 case '\n':
-                    newline = true;
+                    if (i > 0) newline = true;
                     buf.append(' ');
                     break;
                 case '\r':
