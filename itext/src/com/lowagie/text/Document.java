@@ -102,44 +102,44 @@ import java.util.Date;
  */
 
 public class Document implements DocListener {
-
+    
     // membervariables
-
+    
 /** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-    private static final String ITEXT_VERSION = "iText by lowagie.com (r0.95 based on version Paulo build 103)";
-
+    private static final String ITEXT_VERSION = "itext-paulo (lowagie.com) - build 106";
+    
 /** Allows the pdf documents to be produced without compression for debugging purposes. */
-    public static boolean compress = true;
-
+    public static boolean compress = true; 
+    
 /** The DocListener. */
     private ArrayList listeners = new ArrayList();
-
+    
 /** Is the document open or not? */
     protected boolean open;
-
-/** Has the document allready been closed? */
+    
+/** Has the document already been closed? */
     protected boolean close;
-
+    
     // membervariables concerning the layout
-
+    
 /** The size of the page. */
     protected Rectangle pageSize;
-
+    
 /** The watermark on the pages. */
     protected Watermark watermark = null;
-
+    
 /** margin in x direction starting from the left */
     protected float marginLeft = 0;
-
+    
 /** margin in x direction starting from the right */
     protected float marginRight = 0;
-
+    
 /** margin in y direction starting from the top */
     protected float marginTop = 0;
-
+    
 /** margin in y direction starting from the bottom */
     protected float marginBottom = 0;
-
+    
 /** Content of JavaScript onLoad function */
     protected String javaScript_onLoad = null;
 
@@ -150,36 +150,36 @@ public class Document implements DocListener {
     protected String htmlStyleClass = null;
 
     // headers, footers
-
+    
 /** Current pagenumber */
     protected int pageN = 0;
-
+    
 /** This is the textual part of a Page; it can contain a header */
     protected HeaderFooter header = null;
-
+    
 /** This is the textual part of the footer */
     protected HeaderFooter footer = null;
-
+    
     // constructor
-
+    
 /**
  * Constructs a new <CODE>Document</CODE>-object.
  */
-
+    
     public Document() {
         this(PageSize.A4);
     }
-
+    
 /**
  * Constructs a new <CODE>Document</CODE>-object.
  *
  * @param	pageSize	the pageSize
  */
-
+    
     public Document(Rectangle pageSize) {
         this(pageSize, 36, 36, 36, 36);
     }
-
+    
 /**
  * Constructs a new <CODE>Document</CODE>-object.
  *
@@ -189,7 +189,7 @@ public class Document implements DocListener {
  * @param	marginTop		the margin on the top
  * @param	marginBottom	the margin on the bottom
  */
-
+    
     public Document(Rectangle pageSize, float marginLeft, float marginRight, float marginTop, float marginBottom) {
         this.pageSize = pageSize;
         this.marginLeft = marginLeft;
@@ -197,38 +197,38 @@ public class Document implements DocListener {
         this.marginTop = marginTop;
         this.marginBottom = marginBottom;
     }
-
+    
     // listener methods
-
+    
 /**
  * Adds a <CODE>DocListener</CODE> to the <CODE>Document</CODE>.
  *
  * @param	listener	the new DocListener.
  */
-
+    
     public void addDocListener(DocListener listener) {
         listeners.add(listener);
     }
-
+    
 /**
  * Removes a <CODE>DocListener</CODE> from the <CODE>Document</CODE>.
  *
  * @param	listener	the DocListener that has to be removed.
  */
-
+    
     public void removeDocListener(DocListener listener) {
         listeners.remove(listener);
     }
-
+    
     // methods implementing the DocListener interface
-
+    
 /** Adds an <CODE>Element</CODE> to the <CODE>Document</CODE>.
  *
  * @param element the <CODE>Element</CODE> to add
  * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not
  * @throws DocumentException when a document isn't open yet, or has been closed
  */
-
+    
     public boolean add(Element element) throws DocumentException {
         if (close) {
             throw new DocumentException("The document has been closed. You can't add any Elements.");
@@ -240,7 +240,7 @@ public class Document implements DocListener {
             type == Element.PARAGRAPH ||
             type == Element.TABLE ||
             type == Element.PTABLE ||
-            type == Element.ANCHOR ||
+            type == Element.ANCHOR ||     
             type == Element.ANNOTATION ||
             type == Element.CHAPTER ||
             type == Element.SECTION ||
@@ -248,8 +248,8 @@ public class Document implements DocListener {
             type == Element.LISTITEM ||
             type == Element.RECTANGLE ||
             type == Element.PNG ||
-            type == Element.JPEG ||
-            type == Element.GIF ||
+            type == Element.JPEG ||    
+            type == Element.GIF ||    
             type == Element.IMGRAW ||
             type == Element.IMGTEMPLATE ||
             type == Element.GRAPHIC)) {
@@ -276,7 +276,7 @@ public class Document implements DocListener {
         }
         return success;
     }
-
+    
 /**
  * Opens the document.
  * <P>
@@ -284,7 +284,7 @@ public class Document implements DocListener {
  * anymore. You have to open the document before you can begin to add content
  * to the body of the document.
  */
-
+    
     public void open() {
         if (! close) {
             open = true;
@@ -297,14 +297,14 @@ public class Document implements DocListener {
             listener.open();
         }
     }
-
+    
 /**
  * Sets the pagesize.
  *
  * @param	pageSize	the new pagesize
  * @return	a <CODE>boolean</CODE>
  */
-
+    
     public boolean setPageSize(Rectangle pageSize) {
         this.pageSize = pageSize;
         DocListener listener;
@@ -314,14 +314,14 @@ public class Document implements DocListener {
         }
         return true;
     }
-
+    
 /**
  * Sets the <CODE>Watermark</CODE>.
  *
  * @param watermark the watermark to add
  * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
  */
-
+    
     public boolean add(Watermark watermark) {
         this.watermark = watermark;
         DocListener listener;
@@ -331,11 +331,11 @@ public class Document implements DocListener {
         }
         return true;
     }
-
+    
 /**
  * Removes the <CODE>Watermark</CODE>.
  */
-
+    
     public void removeWatermark() {
         this.watermark = null;
         DocListener listener;
@@ -344,7 +344,7 @@ public class Document implements DocListener {
             listener.removeWatermark();
         }
     }
-
+    
 /**
  * Sets the margins.
  *
@@ -354,7 +354,7 @@ public class Document implements DocListener {
  * @param	marginBottom	the margin on the bottom
  * @return	a <CODE>boolean</CODE>
  */
-
+    
     public boolean setMargins(float marginLeft,float marginRight,float marginTop,float marginBottom) {
         this.marginLeft = marginLeft;
         this.marginRight = marginRight;
@@ -367,14 +367,14 @@ public class Document implements DocListener {
         }
         return true;
     }
-
+    
 /**
  * Signals that an new page has to be started.
  *
  * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
  * @throws	DocumentException	when a document isn't open yet, or has been closed
  */
-
+    
     public boolean newPage() throws DocumentException {
         if (!open || close) {
             return false;
@@ -386,13 +386,13 @@ public class Document implements DocListener {
         }
         return true;
     }
-
+    
 /**
  * Changes the header of this document.
  *
  * @param	header		the new header
  */
-
+    
     public void setHeader(HeaderFooter header) {
         this.header = header;
         DocListener listener;
@@ -401,11 +401,11 @@ public class Document implements DocListener {
             listener.setHeader(header);
         }
     }
-
+    
 /**
  * Resets the header of this document.
  */
-
+    
     public void resetHeader() {
         this.header = null;
         DocListener listener;
@@ -414,13 +414,13 @@ public class Document implements DocListener {
             listener.resetHeader();
         }
     }
-
+    
 /**
  * Changes the footer of this document.
  *
  * @param	footer		the new footer
  */
-
+    
     public void setFooter(HeaderFooter footer) {
         this.footer = footer;
         DocListener listener;
@@ -429,11 +429,11 @@ public class Document implements DocListener {
             listener.setFooter(footer);
         }
     }
-
+    
 /**
  * Resets the footer of this document.
  */
-
+    
     public void resetFooter() {
         this.footer = footer;
         DocListener listener;
@@ -442,11 +442,11 @@ public class Document implements DocListener {
             listener.resetFooter();
         }
     }
-
+    
 /**
  * Sets the page number to 0.
  */
-
+    
     public void resetPageCount() {
         pageN = 0;
         DocListener listener;
@@ -455,13 +455,13 @@ public class Document implements DocListener {
             listener.resetPageCount();
         }
     }
-
+    
 /**
  * Sets the page number.
  *
  * @param	pageN		the new page number
  */
-
+    
     public void setPageCount(int pageN) {
         this.pageN = pageN;
         DocListener listener;
@@ -470,24 +470,24 @@ public class Document implements DocListener {
             listener.setPageCount(pageN);
         }
     }
-
+    
 /**
  * Returns the current page number.
  *
  * @return the current page number
  */
-
+    
     public int getPageNumber() {
         return this.pageN;
     }
-
+    
 /**
  * Closes the document.
  * <P>
  * Once all the content has been written in the body, you have to close
  * the body. After that nothing can be written to the body anymore.
  */
-
+    
     public void close() {
         if (! close) {
             open = false;
@@ -499,9 +499,9 @@ public class Document implements DocListener {
             listener.close();
         }
     }
-
+    
     // methods concerning the header or some meta information
-
+    
 /**
  * Adds a user defined header to the document.
  *
@@ -509,7 +509,7 @@ public class Document implements DocListener {
  * @param	content	the content of the header
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-
+    
     public boolean addHeader(String name, String content) {
         try {
             return add(new Header(name, content));
@@ -518,14 +518,14 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-
+    
 /**
  * Adds the title to a Document.
  *
  * @param	title	the title
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-
+    
     public boolean addTitle(String title) {
         try {
             return add(new Meta(Element.TITLE, title));
@@ -534,14 +534,14 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-
+    
 /**
  * Adds the subject to a Document.
  *
  * @param	subject		the subject
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-
+    
     public boolean addSubject(String subject) {
         try {
             return add(new Meta(Element.SUBJECT, subject));
@@ -550,14 +550,14 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-
+    
 /**
  * Adds the keywords to a Document.
  *
  * @param keywords adds the keywords to the document
  * @return <CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-
+    
     public boolean addKeywords(String keywords) {
         try {
             return add(new Meta(Element.KEYWORDS, keywords));
@@ -566,14 +566,14 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-
+    
 /**
  * Adds the author to a Document.
  *
  * @param	author		the name of the author
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-
+    
     public boolean addAuthor(String author) {
         try {
             return add(new Meta(Element.AUTHOR, author));
@@ -582,14 +582,14 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-
+    
 /**
  * Adds the creator to a Document.
  *
  * @param	creator		the name of the creator
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-
+    
     public boolean addCreator(String creator) {
         try {
             return add(new Meta(Element.CREATOR, creator));
@@ -598,13 +598,13 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-
+    
 /**
  * Adds the producer to a Document.
  *
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-
+    
     public boolean addProducer() {
         try {
             return add(new Meta(Element.PRODUCER, "iText by lowagie.com"));
@@ -613,13 +613,13 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-
+    
 /**
  * Adds the current date and time to a Document.
  *
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-
+    
     public boolean addCreationDate() {
         try {
             return add(new Meta(Element.CREATIONDATE, new Date().toString()));
@@ -628,153 +628,153 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-
+    
     // methods to get the layout of the document.
-
+    
 /**
  * Returns the left margin.
  *
  * @return	the left margin
  */
-
+    
     public float leftMargin() {
         return marginLeft;
     }
-
+    
 /**
  * Return the right margin.
  *
  * @return	the right margin
  */
-
+    
     public float rightMargin() {
         return marginRight;
     }
-
+    
 /**
  * Returns the top margin.
  *
  * @return	the top margin
  */
-
+    
     public float topMargin() {
         return marginTop;
     }
-
+    
 /**
  * Returns the bottom margin.
  *
  * @return	the bottom margin
  */
-
+    
     public float bottomMargin() {
         return marginBottom;
     }
-
+    
 /**
  * Returns the lower left x-coordinate.
  *
  * @return	the lower left x-coordinate
  */
-
+    
     public float left() {
         return pageSize.left(marginLeft);
     }
-
+    
 /**
  * Returns the upper right x-coordinate.
  *
  * @return	the upper right x-coordinate
  */
-
+    
     public float right() {
         return pageSize.right(marginRight);
     }
-
+    
 /**
  * Returns the upper right y-coordinate.
  *
  * @return	the upper right y-coordinate
  */
-
+    
     public float top() {
         return pageSize.top(marginTop);
     }
-
+    
 /**
  * Returns the lower left y-coordinate.
  *
  * @return	the lower left y-coordinate
  */
-
+    
     public float bottom() {
         return pageSize.bottom(marginBottom);
     }
-
+    
 /**
  * Returns the lower left x-coordinate considering a given margin.
  *
  * @param	margin			a margin
  * @return	the lower left x-coordinate
  */
-
+    
     public float left(float margin) {
         return pageSize.left(marginLeft + margin);
     }
-
+    
 /**
  * Returns the upper right x-coordinate, considering a given margin.
  *
  * @param	margin			a margin
  * @return	the upper right x-coordinate
  */
-
+    
     public float right(float margin) {
         return pageSize.right(marginRight + margin);
     }
-
+    
 /**
  * Returns the upper right y-coordinate, considering a given margin.
  *
  * @param	margin			a margin
  * @return	the upper right y-coordinate
  */
-
+    
     public float top(float margin) {
         return pageSize.top(marginTop + margin);
     }
-
+    
 /**
  * Returns the lower left y-coordinate, considering a given margin.
  *
  * @param	margin			a margin
  * @return	the lower left y-coordinate
  */
-
+    
     public float bottom(float margin) {
         return pageSize.bottom(marginBottom + margin);
     }
-
+    
 /**
  * Gets the pagesize.
  * @return the page size
  */
-
+    
     public Rectangle getPageSize()
     {
         return this.pageSize;
     }
-
+    
     /** Checks if the document is open.
      * @return <CODE>true</CODE> if the document is open
-     */
+     */    
     public boolean isOpen() {
         return open;
     }
-
+    
     /** Gets the iText version.
      * @return iText version
-     */
+     */    
     public static String getVersion() {
         return ITEXT_VERSION;
     }
@@ -784,7 +784,7 @@ public class Document implements DocListener {
  *
  * @param	code		the JavaScript code to be executed on load of the HTML page
  */
-
+    
     public void setJavaScript_onLoad(String code) {
         this.javaScript_onLoad = code;
     }
@@ -803,7 +803,7 @@ public class Document implements DocListener {
  *
  * @param	code		the JavaScript code to be executed on unload of the HTML page
  */
-
+    
     public void setJavaScript_onUnLoad(String code) {
         this.javaScript_onUnLoad = code;
     }
@@ -822,7 +822,7 @@ public class Document implements DocListener {
  *
  * @param	htmlStyleClass		the style class for the HTML body tag
  */
-
+    
     public void setHtmlStyleClass(String htmlStyleClass) {
         this.htmlStyleClass = htmlStyleClass;
     }
@@ -832,7 +832,7 @@ public class Document implements DocListener {
  *
  * @return		the style class of the HTML body tag
  */
-
+    
     public String getHtmlStyleClass() {
         return this.htmlStyleClass;
     }

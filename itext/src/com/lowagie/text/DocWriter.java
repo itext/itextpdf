@@ -113,6 +113,9 @@ public abstract class DocWriter implements DocListener {
 
 /** Do we have to pause all writing actions? */
     protected boolean pause = false;
+    
+/** Closes the stream on document close */
+    protected boolean closeStream = true;
 
     // constructor
 
@@ -299,7 +302,8 @@ public abstract class DocWriter implements DocListener {
         open = false;
         try {
             os.flush();
-            os.close();
+            if (closeStream)
+                os.close();
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -460,4 +464,20 @@ public abstract class DocWriter implements DocListener {
        !(((MarkupAttributes)element).getMarkupAttributeNames().isEmpty()));
     }
 
+    /** Checks if the stream is to be closed on document close
+     * @return true if the stream is closed on documnt close
+     *
+     */
+    public boolean isCloseStream() {
+        return closeStream;
+    }
+    
+    /** Sets the close state of the stream after document close
+     * @param closeStream true if the stream is close on document close
+     *
+     */
+    public void setCloseStream(boolean closeStream) {
+        this.closeStream = closeStream;
+    }
+    
 }

@@ -50,7 +50,7 @@
 
 package com.lowagie.text.pdf;
 
-class PRIndirectReference extends PdfObject {
+public class PRIndirectReference extends PdfObject {
     
     protected PdfReader reader;
     // membervariables
@@ -97,7 +97,7 @@ class PRIndirectReference extends PdfObject {
  * @return		a number.
  */
     
-    int getNumber() {
+    public int getNumber() {
         return number;
     }
     
@@ -107,7 +107,7 @@ class PRIndirectReference extends PdfObject {
  * @return		a number.
  */
     
-    int getGeneration() {
+    public int getGeneration() {
         return generation;
     }
     

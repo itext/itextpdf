@@ -90,7 +90,6 @@ class CJKFont extends BaseFont {
         catch (Exception e) {
             cjkFonts = new Properties();
             cjkEncodings = new Properties();
-            System.err.println("Missing configuration files for CJK fonts");
         }
     }
     
@@ -562,4 +561,12 @@ class CJKFont extends BaseFont {
             return c;
         return translationMap[c];
     }
+    
+    /** Checks if the font has any kerning pairs.
+     * @return <CODE>true</CODE> if the font has any kerning pairs
+     */    
+    public boolean hasKernPairs() {
+        return false;
+    }
+    
 }

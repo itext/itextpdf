@@ -70,6 +70,20 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
         type = TYPE_IMPORTED;
     }
 
+    /** Reads the content from this <CODE>PdfImportedPage</CODE>-object from a reader.
+     *
+     * @return self
+     *
+     */
+    public PdfImportedPage getFromReader() {
+      return this;
+    }
+
+    public int getPageNumber() {
+        return pageNumber;
+    }
+
+
     /** Always throws an error. This operation is not allowed.
      * @param image dummy
      * @param a dummy

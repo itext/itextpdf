@@ -926,8 +926,8 @@ public class PdfName extends PdfObject implements Comparable{
     
     public PdfName(String name) {
         super(PdfObject.NAME, name);
-        // The minimum number of characters in a name is 1, the maximum is 127 (the '/' not included)
-        if (bytes.length < 1 || bytes.length > 127) {
+        // The minimum number of characters in a name is 0, the maximum is 127 (the '/' not included)
+        if (bytes.length > 127) {
             throw new IllegalArgumentException("The name is too long (" + bytes.length + " characters).");
         }
         // The name has to be checked for illegal characters

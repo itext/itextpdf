@@ -1171,5 +1171,11 @@ class TrueTypeFont extends BaseFont {
         return familyName;
     }
     
+    /** Checks if the font has any kerning pairs.
+     * @return <CODE>true</CODE> if the font has any kerning pairs
+     */    
+    public boolean hasKernPairs() {
+        return kerning.size() > 0;
+    }    
 }
 

@@ -502,7 +502,7 @@ public class PdfGraphics2D extends Graphics2D {
         g2.background = this.background;
         g2.setFont(this.font);
         g2.stroke = this.stroke;
-        g2.cb = new PdfContentByte(this.cb.getPdfWriter());
+        g2.cb = this.cb.getDuplicate();
         g2.cb.saveState();
         g2.width = this.width;
         g2.height = this.height;

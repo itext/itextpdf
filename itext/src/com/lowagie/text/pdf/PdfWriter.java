@@ -464,6 +464,9 @@ public class PdfWriter extends DocWriter {
     public static final PdfName WILL_PRINT = PdfName.WP;
     public static final PdfName DID_PRINT = PdfName.DP;
     
+    public static final PdfName PAGE_OPEN = PdfName.O;
+    public static final PdfName PAGE_CLOSE = PdfName.C;
+
     public static final int SIGNATURE_EXISTS = 1;
     public static final int SIGNATURE_APPEND_ONLY = 2;
     
@@ -482,7 +485,7 @@ public class PdfWriter extends DocWriter {
     private static final int ROOT = 1;
     
     /** This is an indirect reference to the root. */
-    private static final PdfIndirectReference ROOTREFERENCE = new PdfIndirectReference(PdfObject.DICTIONARY, ROOT);
+    protected static final PdfIndirectReference ROOTREFERENCE = new PdfIndirectReference(PdfObject.DICTIONARY, ROOT);
     
     /** Indirect reference to the root of the document. */
     protected PdfPages root = new PdfPages();
@@ -490,7 +493,8 @@ public class PdfWriter extends DocWriter {
     /** Dictionary, containing all the images of the PDF document */
     protected PdfXObjectDictionary imageDictionary = new PdfXObjectDictionary();
     
-    /** The form XObjects in this document. */
+    /** The form XObjects in this document. The key is the xref and the value
+        is Object[]{PdfName, template}.*/
     protected HashMap formXObjects = new HashMap();
     
     /** The name counter for the form XObjects name. */
@@ -535,7 +539,7 @@ public class PdfWriter extends DocWriter {
     protected PdfBody body = new PdfBody(OFFSET, this);
     
     /** the pdfdocument object. */
-    private PdfDocument pdf;
+    protected PdfDocument pdf;
     
     /** The <CODE>PdfPageEvent</CODE> for this document. */
     private PdfPageEvent pageEvent;
@@ -544,12 +548,12 @@ public class PdfWriter extends DocWriter {
     
     private HashMap importedPages = new HashMap();
     
-    private PdfReaderInstance currentPdfReaderInstance;
+    protected PdfReaderInstance currentPdfReaderInstance;
     
     /** The PdfIndirectReference to the pages. */
-    private ArrayList pageReferences = new ArrayList();
+    protected ArrayList pageReferences = new ArrayList();
     
-    private int currentPageNumber = 1;
+    protected int currentPageNumber = 1;
     
     /** The defaukt space-char ratio. */    
     public static final float SPACE_CHAR_RATIO_DEFAULT = 2.5f;
@@ -736,6 +740,11 @@ public class PdfWriter extends DocWriter {
         }
     }
     
+    protected PdfDictionary getCatalog(PdfIndirectReference rootObj)
+    {
+        return ((PdfDocument)document).getCatalog(rootObj);
+    }
+
     /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
      * <CODE>Elements</CODE> will be added.
@@ -760,9 +769,10 @@ public class PdfWriter extends DocWriter {
                 }
                 
                 // add the form XObjects
-                for (Iterator it = formXObjects.keySet().iterator(); it.hasNext();) {
-                    PdfTemplate template = (PdfTemplate)it.next();
-                    if (template.getType() == PdfTemplate.TYPE_TEMPLATE) {
+                for (Iterator it = formXObjects.values().iterator(); it.hasNext();) {
+                    Object objs[] = (Object[])it.next();
+                    PdfTemplate template = (PdfTemplate)objs[1];
+                    if (template != null && template.getType() == PdfTemplate.TYPE_TEMPLATE) {
                         PdfIndirectObject obj = body.add(template.getFormXObject(), template.getIndirectReference());
                         obj.writeTo(os);
                     }
@@ -772,7 +782,6 @@ public class PdfWriter extends DocWriter {
                     currentPdfReaderInstance = (PdfReaderInstance)it.next();
                     currentPdfReaderInstance.writeAllPages();
                 }
-                
                 // add the color
                 for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
                     ColorDetails color = (ColorDetails)it.next();
@@ -1140,13 +1149,19 @@ public class PdfWriter extends DocWriter {
      */
     
     PdfName addDirectTemplateSimple(PdfTemplate template) {
-        PdfName name = (PdfName)formXObjects.get(template);
+        PdfIndirectReference ref = template.getIndirectReference();
+        Object obj[] = (Object[])formXObjects.get(ref);
+        PdfName name = null;
         try {
-            if (name == null) {
+            if (obj == null) {
                 name = new PdfName("Xf" + formXObjectsCounter);
                 ++formXObjectsCounter;
-                formXObjects.put(template, name);
+                if (template.getType() == PdfTemplate.TYPE_IMPORTED)
+                    template = null;
+                formXObjects.put(ref, new Object[]{name, template});
             }
+            else
+                name = (PdfName)obj[0];
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
@@ -1331,7 +1346,7 @@ public class PdfWriter extends DocWriter {
         actionType.equals(DID_SAVE) ||
         actionType.equals(WILL_PRINT) ||
         actionType.equals(DID_PRINT))) {
-            throw new PdfException("Invalid additional action type.");
+            throw new PdfException("Invalid additional action type: " + actionType.toString());
         }
         pdf.addAdditionalAction(actionType, action);
     }
@@ -1551,5 +1566,43 @@ public class PdfWriter extends DocWriter {
      */
     public void setTransition(PdfTransition transition) {
         pdf.setTransition(transition);
+    }
+    
+    /** Writes the reader to the document and frees the memory used by it.
+     * The main use is when concatenating multiple documents to keep the
+     * memory usage restricted to the current appending document.
+     * @param reader the <CODE>PdfReader</CODE> to free
+     * @throws IOException on error
+     */    
+    public void freeReader(PdfReader reader) throws IOException {
+        currentPdfReaderInstance = (PdfReaderInstance)importedPages.get(reader);
+        if (currentPdfReaderInstance == null)
+            return;
+        currentPdfReaderInstance.writeAllPages();
+        currentPdfReaderInstance = null;
+        importedPages.remove(reader);
+    }
+    
+    /** Sets the open and close page additional action.
+     * @param actionType the action type. It can be <CODE>PdfWriter.PAGE_OPEN</CODE>
+     * or <CODE>PdfWriter.PAGE_CLOSE</CODE>
+     * @param action the action to perform
+     * @throws PdfException if the action type is invalid
+     */    
+    public void setPageAction(PdfName actionType, PdfAction action) throws PdfException {
+        if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
+            throw new PdfException("Invalid page additional action type: " + actionType.toString());
+        pdf.setPageAction(actionType, action);
+    }
+    
+    /** Gets the current document size. This size only includes
+     * the data already writen to the output stream, it does not
+     * include templates or fonts. It is usefull if used with
+     * <CODE>freeReader()</CODE> when concatenating many documents
+     * and an idea of the current size is needed.
+     * @return the approximate size without fonts or templates
+     */    
+    public int getCurrentDocumentSize() {
+        return body.offset() + body.size() * 20 + 0x48;
     }
 }

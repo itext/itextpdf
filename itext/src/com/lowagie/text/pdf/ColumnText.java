@@ -133,7 +133,7 @@ public class ColumnText {
     protected float multipliedLeading = 0;
     
     /** The <CODE>PdfContent</CODE> where the text will be written to. */
-    protected PdfContentByte text;
+    protected PdfContentByte canvas;
     
     /** The line status when trying to fit a line to a column. */
     protected int lineStatus;
@@ -168,11 +168,11 @@ public class ColumnText {
     private boolean lastWasNewline = true;
     /**
      * Creates a <CODE>ColumnText</CODE>.
-     * @param text the place where the text will be written to. Can
+     * @param canvas the place where the text will be written to. Can
      * be a template.
      */
-    public ColumnText(PdfContentByte text) {
-        this.text = text;
+    public ColumnText(PdfContentByte canvas) {
+        this.canvas = canvas;
     }
     
     /**
@@ -498,12 +498,14 @@ public class ColumnText {
         currentValues[1] = lastBaseFactor;
         PdfDocument pdf = null;
         PdfContentByte graphics = null;
+        PdfContentByte text = null;
         int localRunDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
         if (runDirection != PdfWriter.RUN_DIRECTION_DEFAULT)
             localRunDirection = runDirection;
-        if (text != null) {
-            pdf = text.getPdfDocument();
-            graphics = text.getDuplicate();
+        if (canvas != null) {
+            graphics = canvas;
+            pdf = canvas.getPdfDocument();
+            text = canvas.getDuplicate();
         }
         else if (!simulate)
             throw new NullPointerException("ColumnText.go with simulate==false and text==null.");
@@ -531,6 +533,10 @@ public class ColumnText {
                 }
                 float yTemp = yLine;
                 PdfLine line = bidiLine.processLine(rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection);
+                if (line == null) {
+                    status = NO_MORE_TEXT;
+                    break;
+                }
                 float maxSize = line.getMaxSizeSimple();
                 currentLeading = fixedLeading + maxSize * multipliedLeading;
                 float xx[] = findLimitsTwoLines();
@@ -582,6 +588,11 @@ public class ColumnText {
                     dirty = true;
                 }
                 PdfLine line = bidiLine.processLine(x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection);
+                if (line == null) {
+                    status = NO_MORE_TEXT;
+                    yLine = yTemp;
+                    break;
+                }
                 if (!simulate) {
                     currentValues[0] = currentFont;
                     text.setTextMatrix(x1 + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
@@ -594,7 +605,7 @@ public class ColumnText {
         }
         if (dirty) {
             text.endText();
-            text.add(graphics);
+            canvas.add(text);
         }
         return status;
     }

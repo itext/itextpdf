@@ -66,6 +66,7 @@ import com.lowagie.text.ImgWMF;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.Meta;
+import com.lowagie.text.Header;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
@@ -204,6 +205,12 @@ class PdfDocument extends Document implements DocListener {
         
         void addCreationDate() {
             put(PdfName.CREATIONDATE, new PdfDate());
+        }
+        
+        void addkey(String key, String value) {
+            if (key.equals("Producer") || key.equals("CreationDate"))
+                return;
+            put(new PdfName(key), new PdfString(value, PdfObject.TEXT_UNICODE));
         }
     }
     
@@ -530,6 +537,8 @@ class PdfDocument extends Document implements DocListener {
     
 /** The page transition */
     protected PdfTransition transition=null; 
+    
+    protected PdfDictionary pageAA = null;
     
 
     // constructors
@@ -902,9 +911,21 @@ class PdfDocument extends Document implements DocListener {
         // we add the transitions
         if (this.transition!=null) {
             page.put(PdfName.TRANS,codeTransition(this.transition));
+            transition = null;
         }
         if (this.duration>0) {
             page.put(PdfName.DUR,new PdfNumber(this.duration));
+            duration = 0;
+        }
+        // we add the page object additional actions
+        if (pageAA != null) {
+            try {
+                page.put(PdfName.AA, writer.addToBody(pageAA).getIndirectReference());
+            }
+            catch (IOException ioe) {
+                throw new ExceptionConverter(ioe);
+            }
+            pageAA = null;
         }
         // we add the annotations
         if (annotations.size() > 0) {
@@ -1189,8 +1210,8 @@ class PdfDocument extends Document implements DocListener {
                 
                 // Information (headers)
                 case Element.HEADER:
-                    // other headers than those below are not supported
-                    return false;
+                    info.addkey(((Header)element).name(), ((Header)element).content());
+                    break;
                 case Element.TITLE:
                     info.addTitle(((Meta)element).content());
                     break;
@@ -1473,7 +1494,7 @@ class PdfDocument extends Document implements DocListener {
                     
                     break;
                 }
-                case Element.TABLE: {
+                case Element.TABLE : {
                     
                     /**
                      * This is a list of people who worked on the Table functionality.
@@ -1488,14 +1509,16 @@ class PdfDocument extends Document implements DocListener {
                      * Geert Poels
                      * Tom Ring
                      * Paulo Soares
+                     * Gerald Fehringer
                      */
                     
                     // correct table : fill empty cells/ parse table in table
                     ((Table) element).complete();
                     
                     // before every table, we add a new line and flush all lines
-                    float offset = ((Table)element).getOffset();
-                    if (Float.isNaN(offset)) offset = leading;
+                    float offset = ((Table) element).getOffset();
+                    if (Float.isNaN(offset))
+                        offset = leading;
                     carriageReturn();
                     lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
                     currentHeight += offset;
@@ -1509,41 +1532,85 @@ class PdfDocument extends Document implements DocListener {
                     PdfContentByte cellGraphics = new PdfContentByte(writer);
                     
                     // constructing the PdfTable
-                    PdfTable table = new PdfTable((Table) element, indentLeft(), indentRight(), currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
+                    PdfTable table =
+                    new PdfTable(
+                    (Table) element,
+                    indentLeft(),
+                    indentRight(),
+                    currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
                     
-                    boolean tableHasToFit = ((Table) element).hasToFitPageTable() ? table.bottom() < indentBottom() : false;
-                    if (pageEmpty) tableHasToFit = false;
+                    boolean tableHasToFit =
+                    ((Table) element).hasToFitPageTable() ? table.bottom() < indentBottom() : false;
+                    if (pageEmpty)
+                        tableHasToFit = false;
                     boolean cellsHaveToFit = ((Table) element).hasToFitPageCells();
                     
                     // drawing the table
                     ArrayList cells = table.getCells();
                     ArrayList headercells = null;
-                    while (! cells.isEmpty()) {
+                    while (!cells.isEmpty()) {
                         // initialisation of some extra parameters;
                         float lostTableBottom = 0;
-                        float lostTableTop = 0;
                         
                         // loop over the cells
                         boolean cellsShown = false;
-                        int currentRownumber = 0;
-                        for (ListIterator iterator = cells.listIterator(); iterator.hasNext() && !tableHasToFit; ) {
+                        int currentGroupNumber = 0;
+                        boolean headerChecked = false;
+                        for (ListIterator iterator = cells.listIterator(); iterator.hasNext() && !tableHasToFit;) {
                             cell = (PdfCell) iterator.next();
-                            if (cell.rownumber() != currentRownumber && !cell.isHeader() && cellsHaveToFit) {
-                                currentRownumber = cell.rownumber();
-                                int cellCount = 0;
-                                boolean cellsFit = true;
-                                while (cell.rownumber() == currentRownumber && cellsFit && iterator.hasNext()) {
-                                    if (cell.bottom() < indentBottom()) {
-                                        cellsFit = false;
+                            if( cellsHaveToFit ) {
+                                if( !cell.isHeader() ) {
+                                    if (cell.getGroupNumber() != currentGroupNumber) {
+                                        boolean cellsFit = true;
+                                        currentGroupNumber = cell.getGroupNumber();
+                                        int cellCount = 0;
+                                        while (cell.getGroupNumber() == currentGroupNumber && cellsFit && iterator.hasNext()) {
+                                            if (cell.bottom() < indentBottom()) {
+                                                cellsFit = false;
+                                            }
+                                            cell = (PdfCell) iterator.next();
+                                            cellCount++;
+                                        }
+                                        if (!cellsFit) {
+                                            break;
+                                        }
+                                        for (int i = cellCount; i >= 0; i--) {
+                                            cell = (PdfCell) iterator.previous();
+                                        }
                                     }
-                                    cell = (PdfCell) iterator.next();
-                                    cellCount++;
                                 }
-                                if (!cellsFit) {
-                                    break;
-                                }
-                                for (int i = cellCount; i >= 0; i--) {
-                                    cell = (PdfCell) iterator.previous();
+                                else {
+                                    if( !headerChecked ) {
+                                        headerChecked = true;
+                                        boolean cellsFit = true;
+                                        int cellCount = 0;
+                                        float firstTop = cell.top();
+                                        while (cell.isHeader() && cellsFit && iterator.hasNext()) {
+                                            if (firstTop - cell.bottom(0) > indentTop() - currentHeight - indentBottom()) {
+                                                cellsFit = false;
+                                            }
+                                            cell = (PdfCell) iterator.next();
+                                            cellCount++;
+                                        }
+                                        currentGroupNumber = cell.getGroupNumber();
+                                        while (cell.getGroupNumber() == currentGroupNumber && cellsFit && iterator.hasNext()) {
+                                            if (firstTop - cell.bottom(0) > indentTop() - currentHeight - indentBottom() - 10.0) {
+                                                cellsFit = false;
+                                            }
+                                            cell = (PdfCell) iterator.next();
+                                            cellCount++;
+                                        }
+                                        for (int i = cellCount; i >= 0; i--) {
+                                            cell = (PdfCell) iterator.previous();
+                                        }
+                                        if (!cellsFit) {
+                                            while( cell.isHeader() ) {
+                                                iterator.remove();
+                                                cell = (PdfCell) iterator.next();
+                                            }
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                             lines = cell.getLines(pagetop, indentBottom());
@@ -1553,7 +1620,6 @@ class PdfDocument extends Document implements DocListener {
                                 cellsShown = true;
                                 cellGraphics.rectangle(cell.rectangle(pagetop, indentBottom()));
                                 lostTableBottom = Math.max(cell.bottom(), indentBottom());
-                                lostTableTop = cell.top();
                                 
                                 // we write the text
                                 float cellTop = cell.top(pagetop - oldHeight);
@@ -1565,7 +1631,7 @@ class PdfDocument extends Document implements DocListener {
                                 }
                             }
                             ArrayList images = cell.getImages(pagetop, indentBottom());
-                            for (Iterator i = images.iterator(); i.hasNext(); ) {
+                            for (Iterator i = images.iterator(); i.hasNext();) {
                                 cellsShown = true;
                                 Image image = (Image) i.next();
                                 addImage(graphics, image, 0, 0, 0, 0, 0, 0);
@@ -1596,8 +1662,7 @@ class PdfDocument extends Document implements DocListener {
                         }
                         cellGraphics = new PdfContentByte(null);
                         // if the table continues on the next page
-                        if (! cells.isEmpty()) {
-                            
+                        if (!cells.isEmpty()) {
                             graphics.setLineWidth(table.borderWidth());
                             if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) {
                                 // Draw the bottom line
@@ -1608,7 +1673,7 @@ class PdfDocument extends Document implements DocListener {
                                     graphics.setColorStroke(tColor);
                                 }
                                 graphics.moveTo(table.left(), Math.max(table.bottom(), indentBottom()));
-                                graphics.lineTo(table.right(),  Math.max(table.bottom(), indentBottom()));
+                                graphics.lineTo(table.right(), Math.max(table.bottom(), indentBottom()));
                                 graphics.stroke();
                                 if (tColor != null) {
                                     graphics.resetRGBColorStroke();
@@ -1621,7 +1686,21 @@ class PdfDocument extends Document implements DocListener {
                             
                             // new page
                             newPage();
-                            flushLines();
+                            // G.F.: if something added in page event i.e. currentHeight > 0
+                            float heightCorrection = 0;
+                            boolean somethingAdded = false;
+                            if (currentHeight > 0) {
+                                heightCorrection = 6;
+                                currentHeight += heightCorrection;
+                                somethingAdded = true;
+                                newLine();
+                                flushLines();
+                                indentTop = currentHeight - leading;
+                                currentHeight = 0;
+                            }
+                            else {
+                                flushLines();
+                            }
                             
                             // this part repeats the table headers (if any)
                             headercells = table.getHeaderCells();
@@ -1629,39 +1708,45 @@ class PdfDocument extends Document implements DocListener {
                             if (size > 0) {
                                 // this is the top of the headersection
                                 cell = (PdfCell) headercells.get(0);
-                                float oldTop = cell.top();
+                                float oldTop = cell.top(0);
                                 // loop over all the cells of the table header
                                 for (int i = 0; i < size; i++) {
                                     cell = (PdfCell) headercells.get(i);
                                     // calculation of the new cellpositions
-                                    cell.setTop(indentTop() - oldTop + cell.top());
-                                    cell.setBottom(indentTop() - oldTop + cell.bottom() - 2f * table.cellspacing());
+                                    cell.setTop(indentTop() - oldTop + cell.top(0));
+                                    cell.setBottom(indentTop() - oldTop + cell.bottom(0));
                                     pagetop = cell.bottom();
                                     // we paint the borders of the cell
                                     cellGraphics.rectangle(cell.rectangle(indentTop(), indentBottom()));
                                     // we write the text of the cell
                                     ArrayList images = cell.getImages(indentTop(), indentBottom());
-                                    for (Iterator im = images.iterator(); im.hasNext(); ) {
+                                    for (Iterator im = images.iterator(); im.hasNext();) {
                                         cellsShown = true;
                                         Image image = (Image) im.next();
                                         addImage(graphics, image, 0, 0, 0, 0, 0, 0);
                                     }
                                     lines = cell.getLines(indentTop(), indentBottom());
                                     float cellTop = cell.top(indentTop());
-                                    text.moveText(0, cellTop);
-                                    cellDisplacement = flushLines() - cellTop;
+                                    text.moveText(0, cellTop-heightCorrection);
+                                    cellDisplacement = flushLines() - cellTop+heightCorrection;
                                     text.moveText(0, cellDisplacement);
                                 }
                                 
-                                currentHeight =  indentTop() - pagetop - table.cellspacing();
-                                text.moveText(0, pagetop - indentTop() + table.cellspacing() - currentHeight);
+                                currentHeight = indentTop() - pagetop + table.cellspacing();
+                                text.moveText(0, pagetop - indentTop() - table.cellspacing() - currentHeight);
                             }
-                            oldHeight = currentHeight;
+                            else {
+                                if (somethingAdded) {
+                                    pagetop = indentTop();
+                                    text.moveText(0, pagetop - indentTop() - table.cellspacing());
+                                }
+                            }
+                            oldHeight = currentHeight+ table.cellspacing()-heightCorrection;
                             
                             // calculating the new positions of the table and the cells
                             size = Math.min(cells.size(), table.columns());
                             int i = 0;
-                            while (i < size ) {
+                            while (i < size) {
                                 cell = (PdfCell) cells.get(i);
                                 if (cell.top(-table.cellspacing()) > lostTableBottom) {
                                     float newBottom = pagetop - difference + cell.bottom();
@@ -1679,12 +1764,11 @@ class PdfDocument extends Document implements DocListener {
                                 cell = (PdfCell) cells.get(i);
                                 float newBottom = pagetop - difference + cell.bottom();
                                 float newTop = pagetop - difference + cell.top(-table.cellspacing());
-                                if (newTop > indentTop() - currentHeight - table.cellspacing()) {
-                                    newTop = indentTop() - currentHeight - table.cellspacing();
-                                    //newTop = newBottom + cell.remainingHeight();
+                                if (newTop > indentTop() - currentHeight + table.cellspacing()) {
+                                    newTop = indentTop() - currentHeight + table.cellspacing();
                                 }
-                                cell.setTop(newTop);
-                                cell.setBottom(newBottom);
+                                cell.setTop(newTop - table.cellspacing());
+                                cell.setBottom(newBottom - table.cellspacing());
                             }
                         }
                     }
@@ -2753,5 +2837,12 @@ class PdfDocument extends Document implements DocListener {
      */
     void setTransition(PdfTransition transition) {
         this.transition=transition;
+    }
+
+    void setPageAction(PdfName actionType, PdfAction action) {
+        if (pageAA == null) {
+            pageAA = new PdfDictionary();
+        }
+        pageAA.put(actionType, action);
     }
 }

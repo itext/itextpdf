@@ -92,18 +92,6 @@ class PdfFontDictionary extends PdfDictionary implements PdfResource {
     }
     
 /**
- * Checks if the <CODE>FontDictionary</CODE> allready contains a
- * <CODE>PdfFont</CODE> with this name.
- *
- * @return		<CODE>true</CODE> if a font with this name allready exists,
- *				<CODE>false</CODE> otherwise
- */
-    
-    boolean contains(PdfFont font) {
-        return hashMap.containsKey(font.getName());
-    }
-    
-/**
  * Checks if the <CODE>PdfFontDictionary</CODE> contains at least
  * one object.
  *
