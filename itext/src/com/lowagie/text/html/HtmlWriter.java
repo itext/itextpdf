@@ -1018,7 +1018,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Font.ZAPFDINGBATS:
                 writeCssProperty(HtmlTags.CSS_FONTFAMILY, ElementTags.ZAPFDINGBATS);
                 break;
-                default:
+            default:
+                com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
+                if (bf != null) {
+                    writeCssProperty(HtmlTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
+                }
         }
         
         if (font.size() != Font.UNDEFINED) {
