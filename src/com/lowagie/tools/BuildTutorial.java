@@ -24,7 +24,7 @@ import javax.xml.transform.stream.*;
  *
  * @author Bruno Lowagie (based on an example found in the Developer's Almanac)
  */
-public class BuildSite {
+public class BuildTutorial {
 
 
   public static class XmlFileFilter implements FilenameFilter {
