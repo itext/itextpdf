@@ -183,6 +183,10 @@ public class Paragraph extends Phrase implements TextElementArray {
     public Paragraph(Properties attributes) {
         this("", new Font(attributes));
         String value;
+        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+            remove(0);
+            add(new Chunk(value));
+        }
         if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
             setAlignment(value);
         }
@@ -336,8 +340,8 @@ public class Paragraph extends Phrase implements TextElementArray {
     
     public String toString() {
         StringBuffer buf = new StringBuffer("<").append(ElementTags.PARAGRAPH).append(" ").append(ElementTags.LEADING).append("=\"");
-        buf.append(leading).append(font.toString());
-        buf.append("\" ").append(ElementTags.ALIGN).append("=\"");
+        buf.append(leading).append("\"").append(font.toString());
+        buf.append(" ").append(ElementTags.ALIGN).append("=\"");
         buf.append(ElementTags.getAlignment(alignment));
         if (indentationLeft != 0) {
             buf.append("\" ").append(ElementTags.INDENTATIONLEFT).append("=\"");

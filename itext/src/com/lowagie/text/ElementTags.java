@@ -96,9 +96,6 @@ public class ElementTags {
 /** the list tag */
     public static final String LIST = "list";
     
-/** the listsymbol tag */
-    public static final String LISTSYMBOL = "listsymbol";
-    
 /** the listitem tag */
     public static final String LISTITEM = "listitem";
     
@@ -116,6 +113,9 @@ public class ElementTags {
     
 /** attribute of anchor tag */
     public static final String REFERENCE = "reference";
+    
+/** attribute of list tag */
+    public static final String LISTSYMBOL = "listsymbol";
     
 /** attribute of list tag */
     public static final String NUMBERED = "numbered";

@@ -67,6 +67,9 @@ public class TagMap extends HashMap {
 /** This is an attribute */
         public static final String VALUE = "value";
         
+/** This is an attribute */
+        public static final String CONTENT = "content";
+        
 /** This is the tagmap using the AttributeHandler */
         private HashMap tagMap;
         
@@ -109,7 +112,10 @@ public class TagMap extends HashMap {
                     }
                 }
             }
-            
+            value = attrs.getValue(CONTENT);
+            if (value != null) {
+                currentPeer.setContent(value);
+            }
         }
         
 /**

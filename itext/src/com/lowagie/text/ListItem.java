@@ -202,6 +202,10 @@ public class ListItem extends Paragraph implements TextElementArray {
     public ListItem(Properties attributes) {
         super("", new Font(attributes));
         String value;
+        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+            remove(0);
+            add(new Chunk(value));
+        }
         if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
             setLeading(Float.parseFloat(value + "f"));
         }

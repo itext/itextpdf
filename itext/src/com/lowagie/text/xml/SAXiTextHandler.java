@@ -120,8 +120,8 @@ public class SAXiTextHandler extends HandlerBase {
             currentChunk = null;
         }
         
-        // chunks and listsymbols
-        if (Chunk.isTag(name) || List.isSymbol(name)) {
+        // chunks
+        if (Chunk.isTag(name)) {
             currentChunk = new Chunk(attributes);
             return;
         }
@@ -317,18 +317,10 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void handleEndingTags(String name) {
+
         try {
             // tags that don't have any content
             if (isNewpage(name) || Annotation.isTag(name) || Image.isTag(name) || isNewline(name)) {
-                return;
-            }
-            
-            // listsymbols (don't move this: must be before chunks or other endtags!)
-            if (List.isSymbol(name)) {
-                List list = (List) stack.pop();
-                list.setListSymbol(currentChunk);
-                stack.push(list);
-                currentChunk = null;
                 return;
             }
             

@@ -59,6 +59,9 @@ public class XmlPeer {
 /** This is the Map that contains the default values of the attributes. */
     private Properties attributeValues = new Properties();
     
+/** This is String that contains the default content of the attributes. */
+    private String defaultContent = null;
+    
 /**
  * Creates a XmlPeer.
  */
@@ -89,6 +92,9 @@ public class XmlPeer {
         Properties attributes = new Properties();
         attributes.setProperty(ElementTags.TAGNAME, customTagname);
         attributes.putAll(attributeValues);
+        if (defaultContent != null) {
+            attributes.put(ElementTags.ITEXT, defaultContent);
+        }
         if (attrs != null) {
             for (int i = 0; i < attrs.getLength(); i++) {
                 String attribute = getName(attrs.getName(i));
@@ -118,6 +124,16 @@ public class XmlPeer {
     
     public void addValue(String name, String value) {
         attributeValues.put(name, value);
+    }    
+    
+/**
+ * Sets the default content.
+ *
+ * @param   content    the default content
+ */
+    
+    public void setContent(String content) {
+        this.defaultContent = content;
     }
     
 /**

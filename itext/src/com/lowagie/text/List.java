@@ -137,7 +137,11 @@ public class List implements TextElementArray {
          */
     
     public List(Properties attributes) {
-        String value;
+        String value= attributes.getProperty(ElementTags.LISTSYMBOL);
+        if (value == null) {
+            value = "-";
+        }
+        symbol = new Chunk(value, new Font(attributes));
         
         this.numbered = false;
         if ((value = attributes.getProperty(ElementTags.NUMBERED)) != null) {
@@ -407,16 +411,10 @@ public class List implements TextElementArray {
             buf.append(indentationRight);
             buf.append("\"");
         }
-        buf.append("><").append(ElementTags.LISTSYMBOL).append("");
-        buf.append(symbol.font().toString());
-        if (numbered) {
-            buf.append(" />");
+        if (!numbered) {
+            buf.append(" ").append(ElementTags.LISTSYMBOL).append("=\"").append(symbol.content()).append("\"");
         }
-        else {
-            buf.append(">");
-            buf.append(symbol.content());
-            buf.append("</").append(ElementTags.LISTSYMBOL).append(">");
-        }
+        buf.append(symbol.font().toString()).append(">");
         for (Iterator i = list.iterator(); i.hasNext(); ) {
             buf.append(i.next().toString());
         }

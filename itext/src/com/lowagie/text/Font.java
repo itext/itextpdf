@@ -425,6 +425,7 @@ public class Font implements Comparable {
     public boolean isStandardFont() {
         return (family == UNDEFINED
         && size == UNDEFINED
+        && style == UNDEFINED
         && color == null
         && baseFont == null);
     }
