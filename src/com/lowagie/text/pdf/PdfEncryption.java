@@ -48,9 +48,10 @@ public final class PdfEncryption {
     
     public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) {
         if (strength128Bits)
-            permissions |= 0xfffff0c3;
+            permissions |= 0xfffff0c0;
         else
-            permissions |= 0xffffffc3;
+            permissions |= 0xffffffc0;
+        permissions &= 0xfffffffc;
         this.permissions = permissions;
         long time;
         long mem;
