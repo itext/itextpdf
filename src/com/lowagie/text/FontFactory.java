@@ -100,7 +100,7 @@ public class FontFactory extends java.lang.Object {
     public static final String SYMBOL = BaseFont.SYMBOL;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_NEW_ROMAN = "Times New Roman";
+    public static final String TIMES_NEW_ROMAN = "Times";
     
 /** This is a possible value of a base 14 type 1 font */
     public static final String TIMES_ROMAN = BaseFont.TIMES_ROMAN;

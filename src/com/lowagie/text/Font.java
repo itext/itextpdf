@@ -346,10 +346,13 @@ public class Font implements Comparable {
                 if (baseFont != null) {
                     String[][] names = baseFont.getFamilyFontName();
                     for (int i = 0; i < names.length; i++) {
-                        if ("0".equals(names[i][0]) && "0".equals(names[i][2])) {
+                        if ("0".equals(names[i][2])) {
                             return names[i][3];
                         }
-                        if ("3".equals(names[i][0]) && "1033".equals(names[i][2])) {
+                        if ("1033".equals(names[i][2])) {
+                            tmp = names[i][3];
+                        }
+                        if ("".equals(names[i][2])) {
                             tmp = names[i][3];
                         }
                     }
