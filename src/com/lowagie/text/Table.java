@@ -442,9 +442,9 @@ public class Table extends Rectangle implements Element {
         if (aCell == null) throw new NullPointerException("addCell - cell has null-value");
         if (aLocation == null) throw new NullPointerException("addCell - point has null-value");
         if (mDebug == true) {
-            Assert.assert(aLocation.x >= 0,"row coordinate of location must be >= 0)");
-            Assert.assert((aLocation.y > 0) || (aLocation.y <= columns),"column coordinate of location must be >= 0 and < nr of columns)");
-            Assert.assert(isValidLocation(aCell, aLocation) == true,"Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
+            if (aLocation.x < 0) throw new BadElementException("row coordinate of location must be >= 0");
+            if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
+            if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
         }        
         placeCell(rows, aCell, aLocation);
         setCurrentLocationToNextValidPosition(aLocation);
@@ -561,7 +561,7 @@ public class Table extends Rectangle implements Element {
         if (aLocation == null) throw new NullPointerException("insertTable - point has null-value");
         mTableInserted = true;
         if (mDebug == true) {
-            Assert.assert(aLocation.y <= columns,"insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
+            if (aLocation.y > columns) System.err.println("insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
         }
     
         int rowCount = aLocation.x + 1 - rows.size();
