@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text.html;
@@ -36,9 +36,9 @@ package com.lowagie.text.html;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.util.Iterator;
-					
-import com.lowagie.text.Anchor;					
-import com.lowagie.text.Cell;					
+
+import com.lowagie.text.Anchor;
+import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.Document;
@@ -103,16 +103,16 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	public static final byte END = (byte)'>';
 
 	/** This is some byte that is often used. */
-	public static final byte ENDTAG = (byte)'/';	
+	public static final byte ENDTAG = (byte)'/';
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] BEGINCOMMENT = "<!--".getBytes(); 	
+	public static final byte[] BEGINCOMMENT = "<!--".getBytes();
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] ENDCOMMENT = "-->".getBytes();	
+	public static final byte[] ENDCOMMENT = "-->".getBytes();
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] A = "A".getBytes();	
+	public static final byte[] A = "A".getBytes();
 
 	/** This is a possible HTML-tag. */
 	public static final byte[] B = "B".getBytes();
@@ -127,19 +127,19 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	public static final byte[] FONT = "FONT".getBytes();
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] HEAD = "HEAD".getBytes();	
+	public static final byte[] HEAD = "HEAD".getBytes();
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] HTML = "HTML".getBytes();	
+	public static final byte[] HTML = "HTML".getBytes();
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] I = "I".getBytes();	
+	public static final byte[] I = "I".getBytes();
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] IMG = "IMG".getBytes();	
+	public static final byte[] IMG = "IMG".getBytes();
 
 	/** This is a possible HTML-tag. */
-	public static final byte[] LI = "LI".getBytes();	
+	public static final byte[] LI = "LI".getBytes();
 
 	/** This is a possible HTML-tag. */
 	public static final byte[] LINK = "LINK".getBytes();
@@ -292,7 +292,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	private Font standardFont = new Font();
 
 	/** This is a path for images. */
-	private String imagepath = null; 
+	private String imagepath = null;
 
 	/** Stores the page number. */
 	private static int pageN = 0;
@@ -316,7 +316,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		super(doc, os);
 		document.addDocListener(this);
 		this.pageN = document.getPageNumber();
-		try {						  
+		try {
 			writeBeginTag(HTML);
 			writeBeginTag(HEAD);
 			document.addProducer();
@@ -324,13 +324,13 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		}
 		catch(IOException ioe) {
 		}
-	}	   
+	}
 
 // get an instance of the HtmlWriter
 
 	/**
 	 * Gets an instance of the <CODE>HtmlWriter</CODE>.
-	 *				
+	 *
 	 * @param	document	The <CODE>Document</CODE> that has to be written
 	 * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
 	 * @return	a new <CODE>HtmlWriter</CODE>
@@ -342,16 +342,16 @@ public class HtmlWriter extends DocWriter implements DocListener {
 
 // implementation of the DocListener methods
 
-    /**
-     * Signals that an new page has to be started.
+		/**
+		 * Signals that an new page has to be started.
 	 * <P>
-	 * Writes a horizontal rule. 
-     *
+	 * Writes a horizontal rule.
+		 *
 	 * @return	<CODE>true</CODE> if this action succeeded, <CODE>false</CODE> if not.
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-     */
+		 */
 
-    public boolean newPage() throws DocumentException {
+		public boolean newPage() throws DocumentException {
 		if (pause || !open) {
 			return false;
 		}
@@ -364,14 +364,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		}
 	}
 
-    /**
-     * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>. 
-     *
+		/**
+		 * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
+		 *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-     */
+		 */
 
-    public boolean add(Element element) throws DocumentException {
+		public boolean add(Element element) throws DocumentException {
 		if (pause) {
 			return false;
 		}
@@ -443,7 +443,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 				writeBeginTag(LI);
 				element.process(this);
 				writeEndTag(LI);
-				break; 
+				break;
 			case Element.LIST:
 				List list = (List) element;
 				if (list.isNumbered()) {
@@ -510,7 +510,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 				}
 				if (image.scaledWidth() != 0) {
 					attributes.put(WIDTH, String.valueOf(image.scaledWidth()));
-				} 
+				}
 				if (image.scaledHeight() != 0) {
 					attributes.put(HEIGHT, String.valueOf(image.scaledHeight()));
 				}
@@ -521,6 +521,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
 				attributes.put(ALIGN, HtmlEncoder.getAlignment(table.alignment()));
 				if (table.cellpadding() > 0) {
 					attributes.put(CELLPADDING, String.valueOf(table.cellpadding()));
+				}
+				//Added 03/01/2001 David Freels
+				//Adds the width attribute to the table tag
+				if (table.widthPercentage() > 0) {
+					attributes.put(WIDTH, String.valueOf(table.widthPercentage())+"%");
 				}
 				if (table.cellspacing() > 0) {
 					attributes.put(CELLSPACING, String.valueOf(table.cellspacing()));
@@ -618,18 +623,18 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		}
 	}
 
-    /**
-     * Signals that the <CODE>Document</CODE> has been opened and that
+		/**
+		 * Signals that the <CODE>Document</CODE> has been opened and that
 	 * <CODE>Elements</CODE> can be added.
 	 * <P>
 	 * The <CODE>HEAD</CODE>-section of the HTML-document is written.
-     */
+		 */
 
-    public void open() {
+		public void open() {
 		super.open();
 		try {
 			writeEndTag(HEAD);
-			HtmlAttributes attributes = new HtmlAttributes();	
+			HtmlAttributes attributes = new HtmlAttributes();
 			if (font != null && font.color() != null) {
 				attributes.put(TEXT, HtmlEncoder.encode(font.color()));
 			}
@@ -648,22 +653,22 @@ public class HtmlWriter extends DocWriter implements DocListener {
 			if (pageSize.backgroundColor() != null) {
 				attributes.put(BGCOLOR, HtmlEncoder.encode(pageSize.backgroundColor()));
 			}
-			writeBeginTag(BODY, attributes); 
-			
-			//Add a header if available (added by David Freels)		
+			writeBeginTag(BODY, attributes);
+
+			//Add a header if available (added by David Freels)
 			initHeader();
 		}
 		catch(IOException ioe) {
 		}
 	}
 
-    /**
-     * Signals that the <CODE>Document</CODE> was closed and that no other
-	 * <CODE>Elements</CODE> will be added. 
-     */
+		/**
+		 * Signals that the <CODE>Document</CODE> was closed and that no other
+	 * <CODE>Elements</CODE> will be added.
+		 */
 
-    public void close() {
-		try { 
+		public void close() {
+		try {
 			initFooter(); // line added by David Freels
 			writeEndTag(BODY);
 			writeEndTag(HTML);
@@ -783,7 +788,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		os.write(END);
 		indent++;
 		newLine();
-	}					   
+	}
 
 	/**
 	 * Writes an end tag.
@@ -802,7 +807,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		os.write(tag);
 		os.write(END);
 		newLine();
-	}					   
+	}
 
 	/**
 	 * Writes a Metatag in the header.
@@ -816,7 +821,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		attributes.put(CONTENT, meta.content());
 		switch(meta.type()) {
 		case Element.HEADER:
-			attributes.put(NAME, ((Header) meta).name()); 
+			attributes.put(NAME, ((Header) meta).name());
 			break;
 		case Element.SUBJECT:
 			attributes.put(NAME, "subject");
@@ -830,7 +835,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		}
 		writeBeginTag(META, attributes);
 		indent--;
-	}						   
+	}
 
 	/**
 	 * Writes a link in the header.
@@ -846,7 +851,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		attributes.put(HREF, header.content());
 		writeBeginTag(LINK, attributes);
 		indent--;
-	}				   
+	}
 
 	/**
 	 * Writes some comment.
@@ -959,7 +964,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 
 	public void resetImagepath() {
 		imagepath = null;
-	} 
+	}
 
 	/**
 	 * Changes the header of this document.
