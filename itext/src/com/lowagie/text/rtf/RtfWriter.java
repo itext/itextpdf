@@ -24,277 +24,471 @@ import java.io.*;
 import java.util.*;
 import java.awt.Color;
 
+  /**
+   * A <CODE>DocWriter</CODE> class for Rich Text Files (RTF).
+   * <P>
+   * A <CODE>RtfWriter</CODE> can be added as a <CODE>DocListener</CODE>
+   * to a certain <CODE>Document</CODE> by getting an instance.
+   * Every <CODE>Element</CODE> added to the original <CODE>Document</CODE>
+   * will be written to the <CODE>OutputStream</CODE> of this <CODE>RtfWriter</CODE>.
+   * <P>
+   * Example:
+   * <BLOCKQUOTE><PRE>
+   * // creation of the document with a certain size and certain margins
+   * Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+   * try {
+   *    // this will write RTF to the Standard OutputStream
+   *    <STRONG>RtfWriter.getInstance(document, System.out);</STRONG>
+   *    // this will write Rtf to a file called text.rtf
+   *    <STRONG>RtfWriter.getInstance(document, new FileOutputStream("text.rtf"));</STRONG>
+   *    // this will write Rtf to for instance the OutputStream of a HttpServletResponse-object
+   *    <STRONG>RtfWriter.getInstance(document, response.getOutputStream());</STRONG>
+   * }
+   * catch(DocumentException de) {
+   *    System.err.println(de.getMessage());
+   * }
+   * // this will close the document and all the OutputStreams listening to it
+   * <STRONG>document.close();</CODE>
+   * </PRE></BLOCKQUOTE>
+   */
+
 public class RtfWriter extends DocWriter implements DocListener
 {
+  /**
+   * Static Constants
+   */
     
-  /** Static Constants */
+  /**
+   * General
+   */
     
-  /** General */
+  /** This is the escape character which introduces RTF tags. */
     private static final byte escape = (byte) '\\';
     
+  /** This is another escape character which introduces RTF tags. */
     private static final byte[] extendedEscape = "\\*\\".getBytes();
     
+  /** This is the delimiter between RTF tags and normal text. */
     private static final byte delimiter = (byte) ' ';
     
+  /** This is another delimiter between RTF tags and normal text. */
     private static final byte commaDelimiter = (byte) ';';
     
+  /** This is the character for beginning a new group. */
     private static final byte openGroup = (byte) '{';
     
+  /** This is the character for closing a group. */
     private static final byte closeGroup = (byte) '}';
     
     
-  /** RTF Information */
+  /**
+   * RTF Information
+   */
+    
+  /** RTF begin and version. */
     private static final byte[] docBegin = "rtf1".getBytes();
     
+  /** RTF encoding. */
     private static final byte[] ansi = "ansi".getBytes();
     
+  /** RTF encoding codepage. */
     private static final byte[] ansiCodepage = "ansicpg".getBytes();
     
     
-  /** Font Data */
+  /**
+   *Font Data
+   */
+    
+  /** Begin the font table tag. */
     private static final byte[] fontTable = "fonttbl".getBytes();
     
+  /** Font number tag. */
     private static final byte fontNumber = (byte) 'f';
     
+  /** Font size tag. */
     private static final byte[] fontSize = "fs".getBytes();
     
+  /** Font color tag. */
     private static final byte[] fontColor = "cf".getBytes();
     
+  /** Modern font tag. */
     private static final byte[] fontModern = "fmodern".getBytes();
     
+  /** Swiss font tag. */
     private static final byte[] fontSwiss = "fswiss".getBytes();
     
+  /** Roman font tag. */
     private static final byte[] fontRoman = "froman".getBytes();
     
+  /** Tech font tag. */
     private static final byte[] fontTech = "ftech".getBytes();
     
+  /** Font charset tag. */
     private static final byte[] fontCharset = "fcharset".getBytes();
     
+  /** Font Courier tag. */
     private static final byte[] fontCourier = "Courier".getBytes();
     
+  /** Font Arial tag. */
     private static final byte[] fontArial = "Arial".getBytes();
     
+  /** Font Symbol tag. */
     private static final byte[] fontSymbol = "Symbol".getBytes();
     
+  /** Font Times New Roman tag. */
     private static final byte[] fontTimesNewRoman = "Times New Roman".getBytes();
     
+  /** Font Windings tag. */
     private static final byte[] fontWindings = "Windings".getBytes();
     
     
-  /** Sections / Paragraphs */
+  /**
+   *Sections / Paragraphs
+   */
+    
+  /** Reset section defaults tag. */
     private static final byte[] sectionDefaults = "sectd".getBytes();
     
+  /** Begin new section tag. */
     private static final byte[] section = "sect".getBytes();
     
-    private static final byte[] paragraph = "par".getBytes();
-    
+  /** Reset paragraph defaults tag. */
     private static final byte[] paragraphDefaults = "pard".getBytes();
     
+  /** Begin new paragraph tag. */
+    private static final byte[] paragraph = "par".getBytes();
     
-  /** Lists */
+    
+  /**
+   *Lists
+   */
+    
+  /** List style group tag. */
     private static final byte[] listText = "pntext".getBytes();
     
+  /** List bullet character tag. */
     private static final byte[] bulletCharacter = "'B7".getBytes();
     
+  /** Tabulator tag. */
     private static final byte[] tab = "tab".getBytes();
     
+  /** Begin new list tag. */
     private static final byte[] listBegin = "pn".getBytes();
     
+  /** List numbering  tag. */
     private static final byte[] lvlbodyNumbering = "pnlvlbody".getBytes();
     
+  /** List decimal numbering tag. */
     private static final byte[] decimalNumbering = "pndec".getBytes();
     
+  /** Bulleted list tag. */
     private static final byte[] listBullets = "pnlvlblt".getBytes();
     
+  /** List font number tag. */
     private static final byte[] listFontNumber = "pnf".getBytes();
     
+  /** List first indentation tag. */
     private static final byte[] listFirstIndent  = "pnindent".getBytes();
     
+  /** Begin bullet group tag. */
     private static final byte[] listBulletDefine  = "pntextb".getBytes();
     
+  /** First indent tag. */
     private static final byte[] firstIndent = "fi-".getBytes();
     
+  /** List indent tag. */
     private static final byte[] listIndent = "li".getBytes();
     
     
-  /** Text Style */
+  /**
+   *Text Style
+   */
+    
+  /** Bold tag. */
     private static final byte bold = (byte) 'b';
     
+  /** Italic tag. */
     private static final byte italic = (byte) 'i';
     
+  /** Underline tag. */
     private static final byte[] underline = "ul".getBytes();
     
+  /** Strikethrough tag. */
     private static final byte[] strikethrough = "strike".getBytes();
     
+  /** Text alignment left tag. */
     private static final byte[] alignLeft = "ql".getBytes();
     
+  /** Text alignment center tag. */
     private static final byte[] alignCenter = "qc".getBytes();
     
+  /** Text alignment right tag. */
     private static final byte[] alignRight = "qr".getBytes();
     
     
-  /** Colors */
+  /**
+   *Colors
+   */
+    
+  /** Begin colour table tag. */
     private static final byte[] colorTable = "colortbl".getBytes();
     
+  /** Red value tag. */
     private static final byte[] colorRed = "red".getBytes();
     
+  /** Green value tag. */
     private static final byte[] colorGreen = "green".getBytes();
     
+  /** Blue value tag. */
     private static final byte[] colorBlue = "blue".getBytes();
     
     
-  /** Information Group */
+  /**
+   *Information Group
+   */
+    
+  /** Begin the info group tag.*/
     private static final byte[] infoBegin = "info".getBytes();
     
+  /** Author tag. */
     private static final byte[] metaAuthor = "author".getBytes();
     
+  /** Subject tag. */
     private static final byte[] metaSubject = "subject".getBytes();
     
+  /** Keywords tag. */
     private static final byte[] metaKeywords = "keywords".getBytes();
     
+  /** Title tag. */
     private static final byte[] metaTitle = "title".getBytes();
     
+  /** Producer tag. */
     private static final byte[] metaProducer = "operator".getBytes();
     
+  /** Creation Date tag. */
     private static final byte[] metaCreationDate = "creationdate".getBytes();
     
+  /** Year tag. */
     private static final byte[] year = "yr".getBytes();
     
+  /** Month tag. */
     private static final byte[] month = "mo".getBytes();
     
+  /** Day tag. */
     private static final byte[] day = "dy".getBytes();
     
+  /** Hour tag. */
     private static final byte[] hour = "hr".getBytes();
     
+  /** Minute tag. */
     private static final byte[] minute = "min".getBytes();
     
+  /** Second tag. */
     private static final byte[] second = "sec".getBytes();
     
     
-  /** Tables */
+  /**
+   *Tables
+   */
+    
+  /** Begin table row tag. */
     private static final byte[] tableRowBegin = "trowd".getBytes();
     
+  /** End row tag. */
     private static final byte[] tableRowEnd = "row".getBytes();
     
+  /** Cell right position tag. */
     private static final byte[] cellRightPosition = "cellx".getBytes();
     
+  /** End cell tag. */
     private static final byte[] cellEnd = "cell".getBytes();
     
+  /** In table tag. */
     private static final byte[] inTableBegin = "intbl".getBytes();
     
+  /** Table Row alignment left tag. */
     private static final byte[] tableAlignLeft = "trql".getBytes();
     
+  /** Table Row alignment center tag. */
     private static final byte[] tableAlignCenter = "trqc".getBytes();
     
+  /** Table Row alignment right tag. */
     private static final byte[] tableAlignRight = "trqr".getBytes();
     
+  /** Horizontal merge begin tag. */
     private static final byte[] mergeHorizontalBegin = "clmgf".getBytes();
     
+  /** Horizontal merge cell tag. */
     private static final byte[] mergeHorizontal = "clmrg".getBytes();
     
+  /** Vertical merge begin tag. */
     private static final byte[] mergeVerticalBegin = "clvmgf".getBytes();
     
+  /** Vertical merge cell tag. */
     private static final byte[] mergeVertical = "clvmrg".getBytes();
     
+  /** Left cell padding tag. */
     private static final byte[] tablePaddingLeft = "trpaddl".getBytes();
     
+  /** Right cell padding tag. */
     private static final byte[] tablePaddingRight = "trpaddr".getBytes();
     
+  /** Vertical cell alignment bottom tag. */
     private static final byte[] cellVertAlignBottom = "clvertalt".getBytes();
     
+  /** Vertical cell alignment middle tag. */
     private static final byte[] cellVertAlignMiddle = "clvertalc".getBytes();
     
+  /** Vertical cell alignment top tag. */
     private static final byte[] cellVertAlignTop = "clvertalb".getBytes();
     
     
-  /** Header / Footer */
+  /**
+   * Header / Footer
+   */
+    
+  /** Begin header group tag. */
     private static final byte[] headerBegin = "header".getBytes();
     
+  /** Begin footer group tag. */
     private static final byte[] footerBegin = "footer".getBytes();
     
     
-  /** Paper Properties */
+  /**
+   * Paper Properties
+   */
+    
+  /** Paper width tag. */
     private static final byte[] rtfPaperWidth = "paperw".getBytes();
     
+  /** Paper height tag. */
     private static final byte[] rtfPaperHeight = "paperh".getBytes();
     
+  /** Margin left tag. */
     private static final byte[] rtfMarginLeft = "margl".getBytes();
     
+  /** Margin right tag. */
     private static final byte[] rtfMarginRight = "margr".getBytes();
     
+  /** Margin top tag. */
     private static final byte[] rtfMarginTop = "margt".getBytes();
     
+  /** Margin bottom tag. */
     private static final byte[] rtfMarginBottom = "margb".getBytes();
     
     
-  /** Annotations */
+  /**
+   * Annotations
+   */
+    
+  /** Annotation ID tag. */
     private static final byte[] annotationID = "atnid".getBytes();
     
+  /** Annotation Author tag. */
     private static final byte[] annotationAuthor = "atnauthor".getBytes();
     
+  /** Annotation text tag. */
     private static final byte[] annotation = "annotation".getBytes();
     
     
-  /** Images */
+  /**
+   * Images
+   */
+    
+  /** Begin GIF / PNG image tag. */
     private static final byte[] imageGifPng = "pngblibp".getBytes();
     
+  /** Begin JPEG image tag. */
     private static final byte[] imageJpeg = "jpegblibp".getBytes();
     
+  /** Begin picture group tag. */
     private static final byte[] pictGroupBegin = "shppict".getBytes();
     
+  /** Picture tag. */
     private static final byte[] picture = "pict".getBytes();
     
+  /** Picture width tag. */
     private static final byte[] pictureWidth = "picwgoal".getBytes();
     
+  /** Picture height tag. */
     private static final byte[] pictureHeight = "pichgoal".getBytes();
     
+  /** Begin binary data tag. */
     private static final byte[] binaryData = "bin".getBytes();
     
     
     
   /** Class variables */
     
-  /** Because of the way RTF works and the way itext works, the text has to be
-   *  stored and is only written to the actual OutputStream at the end */
+  /**
+   * Because of the way RTF works and the way itext works, the text has to be
+   * stored and is only written to the actual OutputStream at the end.
+   */
     
+  /** This <code>Vector</code> contains all fonts used in the document. */
     private static Vector fontList = new Vector();
     
+  /** This <code>Vector</code> contains all colours used in the document. */
     private static Vector colorList = new Vector();
     
+  /** This <code>ByteArrayOutputStream</code> contains the main body of the document. */
     private static ByteArrayOutputStream content = null;
     
+  /** This <code>ByteArrayOutputStream</code> contains the information group. */
     private static ByteArrayOutputStream info = null;
     
+  /** This <code>ByteArrayOutputStream</code> is used when tables are created. */
     private static ByteArrayOutputStream[] rows = null;
     
+  /** Which font is currently being used. */
     private static int listFont = 0;
     
+  /** The current row number when processing tables. */
     private static int rowNr = 0;
     
+  /** Flag for processing tables. */
     private static boolean tableProcessing = false;
     
+  /** Document header. */
     private static HeaderFooter header = null;
     
+  /** Document footer. */
     private static HeaderFooter footer = null;
     
+  /** Left margin. */
     private static int marginLeft = 1800;
     
+  /** Right margin. */
     private static int marginRight = 1800;
     
+  /** Top margin. */
     private static int marginTop = 1440;
     
+  /** Bottom margin. */
     private static int marginBottom = 1440;
     
+  /** Page width. */
     private static int pageWidth = 12240;
     
+  /** Page height. */
     private static int pageHeight = 15840;
     
+  /** Factor to use when converting. */
     private static double twipsFactor = 20.5714;
     
+  /** Current annotation ID. */
     private static int currentAnnotationID = 0;
     
     
   /** Protected Constructor */
+    
+/**
+ * Constructs a <CODE>RtfWriter</CODE>.
+ *
+ * @param	document	The <CODE>Document</CODE> that has to be written as RTF
+ * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
+ */
+    
     protected RtfWriter(Document doc, OutputStream os)
     {
         super(doc, os);
@@ -311,14 +505,26 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Public functions from the DocWriter Interface */
     
-  /** Create a new RtfWriter */
+/**
+ * Gets an instance of the <CODE>RtfWriter</CODE>.
+ *
+ * @param	document	The <CODE>Document</CODE> that has to be written
+ * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
+ * @return	a new <CODE>RtfWriter</CODE>
+ */
+    
     public static RtfWriter getInstance(Document document, OutputStream os)
     {
         return(new RtfWriter(document, os));
     }
     
-  /** Add an Element */
-    public boolean add(Element element)
+/**
+ * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
+ *
+ * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+ * @throws	DocumentException	if a document isn't open yet, or has been closed
+ */
+    public boolean add(Element element) throws DocumentException
     {
         ByteArrayOutputStream cOut = null;
         if(tableProcessing) { cOut = rows[rowNr]; } else { cOut = content; }
@@ -348,46 +554,74 @@ public class RtfWriter extends DocWriter implements DocListener
                 case Element.CREATIONDATE : writeMeta(metaCreationDate, (Meta) element); break;
             }
         }
-        catch(Exception e)
+        catch(IOException e)
         {
-            System.out.println("Error: "+e);
-            return false;
+            throw new DocumentException("IO Error");
         }
         return true;
     }
     
+/**
+ * Signals that the <CODE>Document</CODE> has been opened and that
+ * <CODE>Elements</CODE> can be added.
+ */
     public void open()
     {
         super.open();
     }
     
+/**
+ * Signals that the <CODE>Document</CODE> was closed and that no other
+ * <CODE>Elements</CODE> will be added.
+ * <p>
+ * The content of the font table, color table, information group, content, header, footer are merged into the final
+ * <code>OutputStream</code>
+ */
     public void close()
     {
         writeDocumentEnd();
         super.close();
     }
     
+  /**
+   * Adds the footer to the bottom of the <CODE>Document</CODE>.
+   */
     public void setFooter(HeaderFooter footer)
     {
         this.footer = footer;
     }
     
+  /**
+   * Adds the header to the top of the <CODE>Document</CODE>.
+   */
     public void setHeader(HeaderFooter header)
     {
         this.header = header;
     }
     
+  /**
+   * Resets the footer.
+   */
     public void resetFooter()
     {
         this.footer = null;
     }
     
+  /**
+   * Resets the header.
+   */
     public void resetHeader()
     {
         this.header = null;
     }
     
-    public boolean newPage()
+  /**
+   * Tells the <code>RtfWriter</code> that a new page is to be begun.
+   *
+   * @return <code>true</code> if a new Page was begun.
+   * @throws DocumentException if the Document was not open or had been closed.
+   */
+    public boolean newPage() throws DocumentException
     {
         try
         {
@@ -398,12 +632,21 @@ public class RtfWriter extends DocWriter implements DocListener
         }
         catch(IOException e)
         {
-            System.err.println("Error: "+e);
-            return false;
+            throw new DocumentException("IO Error "+e);
         }
         return true;
     }
     
+  /**
+   * Sets the page margins
+   *
+   * @param marginLeft The left margin
+   * @param marginRight The right margin
+   * @param marginTop The top margin
+   * @param marginBottom The bottom margin
+   *
+   * @return <code>true</code> if the page margins were set.
+   */
     public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom)
     {
         this.marginLeft = (int) (marginLeft * twipsFactor);
@@ -413,6 +656,13 @@ public class RtfWriter extends DocWriter implements DocListener
         return true;
     }
     
+  /**
+   * Sets the page size
+   *
+   * @param pageSize A <code>Rectangle</code> specifying the page size
+   *
+   * @return <code>true</code> if the page size was set
+   */
     public boolean setPageSize(Rectangle pageSize)
     {
         pageWidth = (int) (pageSize.width() * twipsFactor);
@@ -422,7 +672,14 @@ public class RtfWriter extends DocWriter implements DocListener
     
   /** Private functions */
     
-  /** Write a list Item */
+  /**
+   * Write a <code>ListItem</code>
+   *
+   * @param listItem The <code>ListItem</code> to be written
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   *
+   * @throws IOException
+   */
     private void writeListElement(ListItem listItem, ByteArrayOutputStream out) throws IOException
     {
         out.write(openGroup);
@@ -441,7 +698,14 @@ public class RtfWriter extends DocWriter implements DocListener
         out.write(paragraph);
     }
     
-  /** List initialisation and wrapper */
+  /**
+   * Write a <code>List</code>
+   *
+   * @param list The <code>List</code> to be written
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   *
+   * @throws IOException
+   */
     private void writeList(com.lowagie.text.List list, ByteArrayOutputStream out) throws IOException
     {
         out.write(openGroup);
@@ -482,7 +746,14 @@ public class RtfWriter extends DocWriter implements DocListener
         out.write(paragraph);
     }
     
-  /** Section initialisation and wrapper */
+  /**
+   * Write the beginning of a new <code>Section</code>
+   *
+   * @param sectionElement The <code>Section</code> be written
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   *
+   * @throws IOException
+   */
     private void writeSection(Section sectionElement, ByteArrayOutputStream out) throws IOException
     {
         if(sectionElement.type() == Element.CHAPTER)
@@ -512,7 +783,14 @@ public class RtfWriter extends DocWriter implements DocListener
         }
     }
     
-  /** Paragraph initialisation and wrapper */
+  /**
+   * Write the beginning of a new <code>Paragraph</code>
+   *
+   * @param paragraphElement The <code>Paragraph</code> to be written
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   *
+   * @throws IOException
+   */
     private void writeParagraph(Paragraph paragraphElement, ByteArrayOutputStream out) throws IOException
     {
         out.write(escape);
@@ -532,7 +810,14 @@ public class RtfWriter extends DocWriter implements DocListener
         out.write(paragraph);
     }
     
-  /** Write a Chunk and all the font properties it has */
+  /**
+   * Write a <code>Chunk</code> and all its font properties.
+   *
+   * @param chunk The <code>Chunk</code> item to be written
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   *
+   * @throws IOException
+   */
     private void writeChunk(Chunk chunk, ByteArrayOutputStream out) throws IOException
     {
         out.write(escape);
@@ -604,7 +889,17 @@ public class RtfWriter extends DocWriter implements DocListener
         }
     }
     
-  /** Write a Meta Tag. They are stored in the Info group */
+    
+  /**
+   * Add a <code>Meta</code> element. It is written to the Inforamtion Group
+   * and merged with the main <code>ByteArrayOutputStream</code> when the
+   * Document is closed.
+   *
+   * @param metaName The type of <code>Meta</code> element to be added
+   * @param meta The <code>Meta</code> element to be added
+   *
+   * @throws IOException
+   */
     private void writeMeta(byte[] metaName, Meta meta) throws IOException
     {
         info.write(openGroup);
@@ -615,6 +910,13 @@ public class RtfWriter extends DocWriter implements DocListener
         info.write(closeGroup);
     }
     
+  /**
+   * Writes a date. The date is formated <strong>Year, Month, Day, Hour, Minute, Second</strong>
+   *
+   * @param date The date to be written
+   *
+   * @throws IOException
+   */
     private void writeFormatedDateTime(String date) throws IOException
     {
         String dummyStr = "";
@@ -641,6 +943,16 @@ public class RtfWriter extends DocWriter implements DocListener
         writeDateTimeNumber(second, date, 17, 19);
     }
     
+  /**
+   * Writes a Date or Time number.
+   *
+   * @param identifier The tag defining the type of Date/Time to be written
+   * @param date The Date/Time to be written
+   * @param begin Position in the <code>date</code> where the Date/Time starts
+   * @param end Position in the <code>date</code> where the Date/Time ends
+   *
+   * @throws IOException
+   */
     private void writeDateTimeNumber(byte [] identifier, String date, int begin, int end) throws IOException
     {
         int dummyInt = 0;
@@ -650,11 +962,18 @@ public class RtfWriter extends DocWriter implements DocListener
         writeInt(info, dummyInt);
     }
     
-  /** Write a table
+  /**
+   * Write a <code>Table</code>.
    *
-   *  ATTENTION. THIS IS A KLUDGE
+   * @param table The <code>table</code> to be written
    *
-   *  It's ugly and it's slow and it works. All I can say */
+   * @throws IOException
+   */
+    
+    //  ATTENTION. THIS IS A KLUDGE
+    //  It's ugly and it's slow and it works.
+    //  The problem being that the structure of the iText library and
+    //  the structure of tables in RTF are not too compatible
     private void writeTable(Table table) throws IOException
     {
         rows = new ByteArrayOutputStream[table.size()];
@@ -801,7 +1120,14 @@ public class RtfWriter extends DocWriter implements DocListener
         content.write(paragraph);
     }
     
-  /** Write an Annotation */
+  /**
+   * Write an <code>Annotation</code>
+   *
+   * @param annotationElement The <code>Annotation</code> to be written
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   *
+   * @throws IOException
+   */
     private void writeAnnotation(Annotation annotationElement, ByteArrayOutputStream out) throws IOException
     {
         out.write(openGroup);
@@ -822,10 +1148,18 @@ public class RtfWriter extends DocWriter implements DocListener
         out.write(closeGroup);
     }
     
-  /** Write an Image
+  /**
+   * Write am <code>Image</code> and all its font properties.
    *
-   *  I'm having problems with this, because image.rawData() always return null
-   *  Don't know why */
+   * @param image The <code>Image</code> to be written
+   * @param imageType The type of image to be written
+   * @param out The <code>ByteArrayOutputStream</code> to write to
+   *
+   * @throws IOException
+   */
+    
+    //  I'm having problems with this, because image.rawData() always return null
+    //  Don't know why
     private void writeImage(Image image, byte[] imageType, ByteArrayOutputStream out) throws IOException
     {
         if(image.rawData() != null)
@@ -861,7 +1195,11 @@ public class RtfWriter extends DocWriter implements DocListener
         }
     }
     
-  /** Write the Document Head */
+  /**
+   * Write the initialisation and basic RTF information.
+   *
+   * @return <code>true</code> if the initialisation was sucessfully written
+   */
     private boolean writeDocumentBegin()
     {
         try
@@ -882,8 +1220,14 @@ public class RtfWriter extends DocWriter implements DocListener
         }
     }
     
-  /** This adds a Font to the fontList if it is not in the list yet.
-   *  The return value is the font's index in the list */
+  /**
+   * Add a new <code>Font</code> to the list of fonts. If the <code>Font</code>
+   * already exists in the list of fonts, then it is not added again.
+   *
+   * @param newFont The <code>Font</code> to be added
+   *
+   * @return The index of the <code>Font</code> in the font list
+   */
     private int addFont(Font newFont)
     {
         int fn = -1;
@@ -900,7 +1244,14 @@ public class RtfWriter extends DocWriter implements DocListener
         return fn;
     }
     
-  /** Same as for the Font only for the Colors */
+  /**
+   * Add a new <code>Color</code> to the list of colours. If the <code>Color</code>
+   * already exists in the list of colours, then it is not added again.
+   *
+   * @param newColor The <code>Color</code> to be added
+   *
+   * @return The index of the <code>color</code> in the colour list
+   */
     private int addColor(Color newColor)
     {
         int cn = 0;
@@ -914,7 +1265,12 @@ public class RtfWriter extends DocWriter implements DocListener
         return cn;
     }
     
-  /** Writes all the accumulated data to the final OutputStream */
+  /**
+   * Merge all the different <code>Vector</code>s and <code>ByteArrayOutputStream</code>s
+   * to the final <code>ByteArrayOutputStream</code>
+   *
+   * @return <code>true</code> if all information was sucessfully written to the <code>ByteArrayOutputStream</code>
+   */
     private boolean writeDocumentEnd()
     {
         try
@@ -935,7 +1291,9 @@ public class RtfWriter extends DocWriter implements DocListener
         }
     }
     
-  /** Write the fontList to the final OutputStream */
+  /**
+   * Write the font list to the final <code>ByteArrayOutputStream</code>
+   */
     private void writeFontList() throws IOException
     {
         Font fnt;
@@ -1002,7 +1360,9 @@ public class RtfWriter extends DocWriter implements DocListener
         os.write(closeGroup);
     }
     
-  /** Write the colors to the final OutputStream */
+  /**
+   * Write the colour list to the final <code>ByteArrayOutputStream</code>
+   */
     private void writeColorList() throws IOException
     {
         Color color = null;
@@ -1027,7 +1387,9 @@ public class RtfWriter extends DocWriter implements DocListener
         os.write(closeGroup);
     }
     
-  /** Write the Information Group to the final OutputStream */
+  /**
+   * Write the Information Group to the final <code>ByteArrayOutputStream</code>
+   */
     private void writeInfoList() throws IOException
     {
         os.write(openGroup);
@@ -1037,13 +1399,21 @@ public class RtfWriter extends DocWriter implements DocListener
         os.write(closeGroup);
     }
     
-  /** Write an integer to the OutputStream passed in out */
+  /**
+   * Write an integer
+   *
+   * @param out The <code>OuputStream</code> to which the <code>int</code> value is to be written
+   * @param i The <code>int</code> value to be written
+   */
     private void writeInt(OutputStream out, int i) throws IOException
     {
         out.write(Integer.toString(i).getBytes());
     }
     
-  /** Write the header */
+    
+  /**
+   * Write the header to the final <code>ByteArrayOutputStream</code>
+   */
     private void writeHeader() throws IOException
     {
         if(header != null)
@@ -1062,7 +1432,9 @@ public class RtfWriter extends DocWriter implements DocListener
         }
     }
     
-  /** Write the footer */
+  /**
+   * Write the footer to the final <code>ByteArrayOutputStream</code>
+   */
     private void writeFooter() throws IOException
     {
         if(footer != null)
@@ -1081,7 +1453,10 @@ public class RtfWriter extends DocWriter implements DocListener
         }
     }
     
-  /** Write the Document's Paper properties */
+  /**
+   * Write the <code>Document</code>'s Paper and Margin Size
+   *  to the final <code>ByteArrayOutputStream</code>
+   */
     private void writeDocumentFormat() throws IOException
     {
         os.write(openGroup);
