@@ -104,7 +104,6 @@ public class XmlPeer {
 /** Gets the list of attributes of the peer. */
     public Properties getAttributes(AttributeList attrs) {
         Properties attributes = new Properties();
-        attributes.setProperty(ElementTags.TAGNAME, customTagname);
         attributes.putAll(attributeValues);
         if (defaultContent != null) {
             attributes.put(ElementTags.ITEXT, defaultContent);

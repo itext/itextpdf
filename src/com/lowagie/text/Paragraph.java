@@ -197,26 +197,26 @@ public class Paragraph extends Phrase implements TextElementArray {
     public Paragraph(Properties attributes) {
         this("", new Font(attributes));
         String value;
-        if ((value = attributes.getProperty(ElementTags.ITEXT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             Chunk chunk = new Chunk(value);
-            if ((value = attributes.getProperty(ElementTags.GENERICTAG)) != null) {
+            if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
                 chunk.setGenericTag(value);
             }
             add(chunk);
         }
-        if ((value = attributes.getProperty(ElementTags.ALIGN)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
             setAlignment(value);
         }
-        if ((value = attributes.getProperty(ElementTags.LEADING)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
         }
         else {
             setLeading(16);
         }
-        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
     }

@@ -160,29 +160,29 @@ public class List implements TextElementArray {
          */
     
     public List(Properties attributes) {
-        String value= attributes.getProperty(ElementTags.LISTSYMBOL);
+        String value= (String)attributes.remove(ElementTags.LISTSYMBOL);
         if (value == null) {
             value = "-";
         }
         symbol = new Chunk(value, new Font(attributes));
         
         this.numbered = false;
-        if ((value = attributes.getProperty(ElementTags.NUMBERED)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.NUMBERED)) != null) {
             this.numbered = new Boolean(value).booleanValue();
             if ( this.lettered && this.numbered )
                 this.lettered = false;
         }
-        if ((value = attributes.getProperty(ElementTags.LETTERED)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.LETTERED)) != null) {
             this.lettered = new Boolean(value).booleanValue();
             if ( this.numbered && this.lettered )
                 this.numbered = false;
         }
         this.symbolIndent = 0;
-        if ((value = attributes.getProperty(ElementTags.SYMBOLINDENT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.SYMBOLINDENT)) != null) {
             this.symbolIndent = Integer.parseInt(value);
         }
         
-        if ((value = attributes.getProperty(ElementTags.FIRST)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.FIRST)) != null) {
             char khar = value.charAt(0);
             if ( Character.isLetter( khar ) ) {
                 setFirst( khar );
@@ -191,10 +191,10 @@ public class List implements TextElementArray {
                 setFirst(Integer.parseInt(value));
             }
         }
-        if ((value = attributes.getProperty(ElementTags.INDENTATIONLEFT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = attributes.getProperty(ElementTags.INDENTATIONRIGHT)) != null) {
+        if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
     }

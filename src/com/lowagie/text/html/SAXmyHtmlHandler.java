@@ -222,7 +222,6 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
             return;
         }
         Properties attributes = new Properties();
-        attributes.setProperty(ElementTags.TAGNAME, name);
         if (attrs != null) {
             for (int i = 0; i < attrs.getLength(); i++) {
                 String attribute = attrs.getName(i);
