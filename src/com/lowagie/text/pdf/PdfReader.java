@@ -158,7 +158,7 @@ public class PdfReader {
      */    
     public Rectangle getCropBox(int index) {
         PdfDictionary page = pages[index - 1];
-        PdfArray cropBox = (PdfArray)getPdfObject(page.get(PdfName.MEDIABOX));
+        PdfArray cropBox = (PdfArray)getPdfObject(page.get(PdfName.CROPBOX));
         if (cropBox == null)
             return getPageSize(index);
         return getNormalizedRectangle(cropBox);
