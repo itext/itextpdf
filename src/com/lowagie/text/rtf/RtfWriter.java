@@ -1242,6 +1242,7 @@ public class RtfWriter extends DocWriter implements DocListener
    */
     private void writeTable(Table table, ByteArrayOutputStream out) throws IOException, DocumentException
     {
+        table.complete();
         RtfTable rtfTable = new RtfTable(this);
         rtfTable.importTable(table, 12239);
         rtfTable.writeTable(out);
