@@ -610,6 +610,7 @@ public abstract class Image extends Rectangle implements Element,
 				boolean shades = false;
 				for (int j = 0; j < size; j++) {
 					byte alpha = smask[j] = (byte) ((pixels[j] >> 24) & 0xff);
+					/* bugfix by Chris Nokleberg */
 					if (!shades) {
 						if (alpha != 0 || alpha != -1) {
 							shades = true;
