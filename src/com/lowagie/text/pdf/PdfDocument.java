@@ -1443,6 +1443,12 @@ class PdfDocument extends Document implements DocListener {
                                     // we paint the borders of the cell
                                     graphics.rectangle(cell.rectangle(indentTop(), indentBottom()));
                                     // we write the text of the cell
+                                    ArrayList images = cell.getImages(indentBottom());
+                                    for (Iterator im = images.iterator(); im.hasNext(); ) {
+                                        cellsShown = true;
+                                        Image image = (Image) im.next();
+                                        addImage(image, 0, 0, 0, 0, 0, 0);
+                                    }
                                     lines = cell.getLines(indentTop(), indentBottom());
                                     float cellTop = cell.top(indentTop());
                                     text.moveText(0, cellTop);

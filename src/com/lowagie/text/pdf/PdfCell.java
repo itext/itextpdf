@@ -189,10 +189,7 @@ public class PdfCell extends Rectangle {
                         line.setListItem(item);
                         for (Iterator j = item.getChunks().iterator(); j.hasNext(); ) {
                             chunk = new PdfChunk((Chunk) j.next(), (PdfAction)(allActions.get(aCounter++)));
-                            if (chunk.isImage()) {
-                                height = addImage(chunk.getImage(), left, right, height, alignment);
-                            }
-                            else while ((overflow = line.add(chunk)) != null) { 
+                            while ((overflow = line.add(chunk)) != null) { 
                                 lines.add(line);
                                 line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
                                 chunk = overflow;
@@ -325,7 +322,6 @@ public class PdfCell extends Rectangle {
         }
         
         // initialisations
-        PdfLine line;
         float lineHeight;
         float currentPosition = Math.min(top(), top);
         setTop(currentPosition + cellspacing);
@@ -347,6 +343,7 @@ public class PdfCell extends Rectangle {
             }
         }
         // if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
+        float difference = 0f;
         if (!header) {
             if (aboveBottom) {
                 lines = new ArrayList();
@@ -355,7 +352,15 @@ public class PdfCell extends Rectangle {
                 size = result.size();
                 for (int i = 0; i < size; i++) {
                     line = (PdfLine) lines.remove(0);
+                    difference += line.height();
                 }
+            }
+        }
+        if (difference > 0) {
+            Image image;
+            for (Iterator i = images.iterator(); i.hasNext(); ) {
+                image = (Image) i.next();
+                image.setAbsolutePosition(image.absoluteX(), image.absoluteY() - difference - leading);
             }
         }
         return result;
@@ -522,21 +527,6 @@ public class PdfCell extends Rectangle {
     
     public float cellpadding() {
         return cellpadding;
-    }
-    
-/**
- * Sets the top.
- *
- * @param   newTop  the new value of the top
- */
-    
-    public void setTop(float newTop) {
-        Image image;
-        for (Iterator i = images.iterator(); i.hasNext(); ) {
-            image = (Image) i.next();
-            image.setAbsolutePosition(image.absoluteX(), remainingHeight());
-        }
-        super.setTop(newTop);
     }
     
 /**
