@@ -125,7 +125,7 @@ public class PdfPatternPainter extends PdfTemplate {
     }
     
     /**
-     * Tells you if this pattern is colored/uncolored (stencil = uncolored).
+     * Tells you if this pattern is colored/uncolored (stencil = uncolored, you need to set a default color).
      * @return true if the pattern is an uncolored tiling pattern (stencil).
      */
     public boolean isStencil() {
