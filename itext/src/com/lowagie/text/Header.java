@@ -1,7 +1,6 @@
 /*
- * @(#)Header.java					0.23 2000/02/02
- *       release iText0.3:			0.23 2000/02/14
- *       release iText0.35:         0.23 2000/08/11
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -37,14 +36,16 @@ package com.lowagie.text;
 /**
  * This is an <CODE>Element</CODE> that contains
  * some userdefined meta information about the document.
+ * <P>
+ * <B>Example:</B>
+ * <BLOCKQUOTE><PRE>
+ * <STRONG>Header header = new Header("inspired by", "William Shakespeare");</STRONG>
+ * </PRE></BLOCKQUOTE> 
  *
  * @see		Element
  * @see		Meta
  *
  * @author  bruno@lowagie.com
- * @version 0.23, 2000/02/02
- *
- * @since   iText0.30
  */
 
 public class Header extends Meta implements Element {
@@ -61,8 +62,6 @@ public class Header extends Meta implements Element {
 	 *
 	 * @param	type		the type of meta-information
 	 * @param	content		the content
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Header(String name, String content) {
@@ -76,8 +75,6 @@ public class Header extends Meta implements Element {
 	 * Returns the name of the meta information.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public String name() {

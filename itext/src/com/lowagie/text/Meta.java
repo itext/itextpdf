@@ -1,7 +1,6 @@
 /*
- * @(#)Meta.java					0.31 2000/04/20
- *       release iText0.3:			0.24 2000/02/14
- *       release iText0.35:         0.31 2000/08/11
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -39,7 +38,7 @@ import java.util.ArrayList;
 /**
  * This is an <CODE>Element</CODE> that contains
  * some meta information about the document.
- *
+ * <P>
  * An object of type <CODE>Meta</CODE> can not be constructed by the user.
  * Userdefined meta information should be placed in a <CODE>Header</CODE>-object.
  * <CODE>Meta</CODE> is reserved for: Subject, Keywords, Author, Title, Producer
@@ -49,9 +48,6 @@ import java.util.ArrayList;
  * @see		Header
  *
  * @author  bruno@lowagie.com
- * @version 0.31, 2000/04/20
- *
- * @since   iText0.30
  */
 
 public class Meta implements Element {
@@ -71,8 +67,6 @@ public class Meta implements Element {
 	 *
 	 * @param	type		the type of meta-information
 	 * @param	content		the content
-	 *
-	 * @since	iText0.30
 	 */
 
 	Meta(int type, String content) {
@@ -86,9 +80,8 @@ public class Meta implements Element {
      * Processes the element by adding it (or the different parts) to a
 	 * <CODE>DocListener</CODE>. 
      *
-	 * <CODE>true</CODE> if the element was processed successfully
-	 *
-     * @since   iText0.30
+	 * @param	listener		the <CODE>DocListener</CODE>
+	 * @return	<CODE>true</CODE> if the element was processed successfully
      */
 
     public final boolean process(DocListener listener) {
@@ -104,8 +97,6 @@ public class Meta implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 * 
-     * @since	iText0.30
      */
 
     public final int type() {
@@ -116,8 +107,6 @@ public class Meta implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public ArrayList getChunks() {
@@ -131,8 +120,6 @@ public class Meta implements Element {
 	 *
 	 * @param	a <CODE>String</CODE>
 	 * @return	a <CODE>StringBuffer</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final StringBuffer append(String string) {
@@ -145,8 +132,6 @@ public class Meta implements Element {
 	 * Returns the content of the meta information.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final String content() {
@@ -157,8 +142,6 @@ public class Meta implements Element {
 	 * Returns the name of the meta information.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public String name() {
@@ -184,16 +167,14 @@ public class Meta implements Element {
 	 * Returns the name and content of the meta information.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final String toString() {
-		StringBuffer buf = new StringBuffer("\t\t<META NAME=\"");
+		StringBuffer buf = new StringBuffer("<meta name=\"");
 		buf.append(name());
-		buf.append("\" CONTENT=\"");
+		buf.append("\" content=\"");
 		buf.append(content());
-		buf.append("\"></META>\n");
+		buf.append("\" />\n");
 		return buf.toString();
 	}
 

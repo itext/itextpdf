@@ -1,7 +1,6 @@
 /*
- * @(#)Font.java					0.39 2000/11/23
- *       release iText0.3:			0.25 2000/02/14
- *       release iText0.31:			0.25 2000/02/11
+ * $Id$
+ * $Name$
  * 
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
@@ -46,9 +45,6 @@ import java.awt.Color;
  * </PRE></BLOCKQUOTE>
  *
  * @author  bruno@lowagie.com
- * @version 0.39, 2000/11/23
- *
- * @since   iText0.30
  */
 
 public class Font implements Comparable {
@@ -121,7 +117,6 @@ public class Font implements Comparable {
 	 * @param	size	the size of this font
 	 * @param	style	the style of this font
 	 * @paran	color	the <CODE>Color</CODE> of this font.
-	 * @since iText0.30
 	 */
 
 	public Font(int family, int size, int style, Color color) {
@@ -137,7 +132,6 @@ public class Font implements Comparable {
 	 * @param	family	the family to which this font belongs
 	 * @param	size	the size of this font
 	 * @param	style	the style of this font
-	 * @since iText0.30
 	 */
 
 	public Font(int family, int size, int style) {
@@ -149,7 +143,6 @@ public class Font implements Comparable {
 	 *
 	 * @param	family	the family to which this font belongs
 	 * @param	size	the size of this font
-	 * @since iText0.30
 	 */
 
 	public Font(int family, int size) {
@@ -160,7 +153,6 @@ public class Font implements Comparable {
 	 * Constructs a Font.
 	 *
 	 * @param	family	the family to which this font belongs
-	 * @since iText0.30
 	 */
 
 	public Font(int family) {
@@ -169,8 +161,6 @@ public class Font implements Comparable {
 
 	/**
 	 * Constructs a Font.
-	 *
-	 * @since iText0.30
 	 */
 
 	public Font() {
@@ -184,8 +174,6 @@ public class Font implements Comparable {
 	 *
 	 * @param	object	the other <CODE>Font</CODE>
 	 * @return	a value
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int compareTo(Object object) {
@@ -226,15 +214,112 @@ public class Font implements Comparable {
 // methods
 
 	/**
+	 * Sets the family using a <CODE>String</CODE> ("Courier",
+	 * "Helvetica", "Times New Roman", "Symbol" or "ZapfDingbats").
+	 *
+	 * @param	family		A <CODE>String</CODE> representing a certain font-family.
+	 */
+
+	public void setFamily(String family) {
+		this.family = getFamilyIndex(family);
+	} 
+
+	/**
+	 * Translates a <CODE>String</CODE>-value of a certain family
+	 * into the index that is used for this family in this class.
+	 *
+	 * @param	family		A <CODE>String</CODE> representing a certain font-family
+	 * @return	the corresponding index
+	 */
+
+	public static int getFamilyIndex(String family) {
+		if (family.equalsIgnoreCase("Courier")) {
+			return COURIER;
+		}
+		if (family.equalsIgnoreCase("Helvetica")) {
+			return HELVETICA;
+		}
+		if (family.equalsIgnoreCase("Times New Roman")) {
+			return TIMES_NEW_ROMAN;
+		}
+		if (family.equalsIgnoreCase("Symbol")) {
+			return SYMBOL;
+		}
+		if (family.equalsIgnoreCase("ZapfDingBats")) {
+			return ZAPFDINGBATS;
+		}
+		return UNDEFINED;
+	}
+
+	/**
+	 * Sets the size.
+	 *
+	 * @param	size		The new size of the font.
+	 */
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	/**
+	 * Sets the style using a <CODE>String</CODE> containing one of
+	 * more of the following values: normal, bold, italic, underline, strike.
+	 *
+	 * @param	family		A <CODE>String</CODE> representing a certain font-family.
+	 */
+
+	public void setStyle(String style) {
+		this.style = getStyleValue(style);
+	} 
+
+	/**
+	 * Translates a <CODE>String</CODE>-value of a certain style
+	 * into the index value is used for this style in this class.
+	 *
+	 * @param	style			A <CODE>String</CODE>
+	 * @return	the corresponding value
+	 */
+
+	public static int getStyleValue(String style) {
+		int s = 0;
+		if (style.indexOf("normal") != -1) {
+			s |= NORMAL;
+		}
+		if (style.indexOf("bold") != -1) {
+			s |= BOLD;
+		}
+		if (style.indexOf("italic") != -1) {
+			s |= ITALIC;
+		}
+		if (style.indexOf("underline") != -1) {
+			s |= UNDERLINE;
+		}
+		if (style.indexOf("strike") != -1) {
+			s |= STRIKETHRU;
+		}
+		return s;
+	}
+
+	/**
 	 * Sets the color.
 	 *
-	 * @param	color	th enew color of the font
-	 *
-	 * @since	iText0.40
+	 * @param	color		the new color of the font
 	 */
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+	/**
+	 * Sets the color.
+	 *
+	 * @param	red			the red-value of the new color
+	 * @param	green		the green-value of the new color
+	 * @param	blue		the blue-value of the new color
+	 */
+
+	public void setColor(int red, int green, int blue) {
+		this.color = new Color(red, green, blue);
 	}
 
     /**
@@ -242,7 +327,6 @@ public class Font implements Comparable {
      *
 	 * @param	linespacing		a certain linespacing
      * @return	the height of a line
-     * @since	itext0.30
      */
 
     public int leading(double linespacing) {
@@ -258,8 +342,6 @@ public class Font implements Comparable {
 	 * If so, the standard should be used.
 	 *
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean isStandardFont() {
@@ -274,8 +356,6 @@ public class Font implements Comparable {
 	 *
 	 * @param	font	the font of a bigger element class
 	 * @return	a <CODE>Font</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Font difference(Font font) {
@@ -305,9 +385,7 @@ public class Font implements Comparable {
     /**
      * Gets the family of this font. 
      *
-	 * @return	the value of the family.
-	 *
-     * @since   iText0.30
+	 * @return	the value of the family
      */
 
     public int family() {
@@ -318,8 +396,6 @@ public class Font implements Comparable {
      * Gets the size of this font. 
      *
      * @return	a size
-	 *
-     * @since	iText0.30
      */
 
     public int size() {
@@ -330,8 +406,6 @@ public class Font implements Comparable {
      * Gets the style of this font. 
      *
      * @return	a size
-	 *
-     * @since	iText0.30
      */
 
     public int style() {
@@ -342,8 +416,6 @@ public class Font implements Comparable {
 	 * checks if this font is Bold.
 	 *
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean isBold() {
@@ -357,8 +429,6 @@ public class Font implements Comparable {
 	 * checks if this font is Bold.
 	 *
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean isItalic() {
@@ -372,8 +442,6 @@ public class Font implements Comparable {
 	 * checks if this font is underlined.
 	 *
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.38
 	 */
 
 	public boolean isUnderlined() {
@@ -387,8 +455,6 @@ public class Font implements Comparable {
 	 * checks if the style of this font is STRIKETHRU.
 	 *
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.38
 	 */
 
 	public boolean isStrikethru() {
@@ -402,8 +468,6 @@ public class Font implements Comparable {
      * Gets the color of this font. 
      *
      * @return	a color
-	 *
-     * @since	iText0.30
      */
 
     public Color color() {
@@ -414,43 +478,35 @@ public class Font implements Comparable {
 	 * Gives the String representation of a <CODE>Font</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public String toString() {
-		if (isStandardFont()) {
-			return "";
-		}
-		StringBuffer buffer = new StringBuffer("<FONT>\n");
-		if (family != UNDEFINED) {
-			buffer.append("\t<FAMILY>");
-			switch(family) {
-			case COURIER:
-				buffer.append("Courier");
-				break;
-			case HELVETICA:
-				buffer.append("Helvetica");
-				break;
-			case TIMES_NEW_ROMAN:
-				buffer.append("Times New Roman");
-				break;
-			case SYMBOL:
-				buffer.append("Symbol");
-				break;
-			case ZAPFDINGBATS:
-				buffer.append("ZapfDingbats");
-				break;
-			}
-			buffer.append("</FAMILY>\n");
+		StringBuffer buffer = new StringBuffer(" font=\"");
+		switch(family) {
+		case COURIER:
+			buffer.append("Courier");
+			break;
+		case HELVETICA:
+			buffer.append("Helvetica");
+			break;
+		case TIMES_NEW_ROMAN:
+			buffer.append("Times New Roman");
+			break;
+		case SYMBOL:
+			buffer.append("Symbol");
+			break;
+		case ZAPFDINGBATS:
+			buffer.append("ZapfDingbats");
+			break;
+		default:
+			buffer.append("default");
 		}
 		if (size != UNDEFINED) {
-			buffer.append("\t<SIZE>");
+			buffer.append("\" size=\"");
 			buffer.append(size);
-			buffer.append("</SIZE>\n");
 		}
 		if (style != UNDEFINED) {
-			buffer.append("\t<STYLE>");
+			buffer.append("\" style=\"");
 			switch(style & BOLDITALIC) {
 			case NORMAL:
 				buffer.append("normal");
@@ -465,21 +521,15 @@ public class Font implements Comparable {
 				buffer.append("bold, italic");
 				break;
 			}
-			buffer.append("</STYLE>\n");
 		}
 		if (color != null) {
-			buffer.append("\t<COLOR>\n");
-			buffer.append("\t\t<RED>");
+			buffer.append("\" red=\"");
 			buffer.append(color.getRed());
-			buffer.append("</RED>\n");;
-			buffer.append("\t\t<GREEN>");
+			buffer.append("\" green=\"");
 			buffer.append(color.getGreen());
-			buffer.append("</GREEN>\n"); ;
-			buffer.append("\t\t<BLUE>");
+			buffer.append("\" blue=\"");
 			buffer.append(color.getBlue());
-			buffer.append("</BLUE>\n");
-			buffer.append("\t</COLOR>\n");
 		}
-		return buffer.append("</FONT>\n").toString();
+		return buffer.append("\"").toString();
 	}
 }

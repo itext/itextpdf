@@ -88,7 +88,7 @@ import java.util.Iterator;
  * @since   iText0.30
  */
 
-public class ListItem extends Paragraph implements Element {
+public class ListItem extends Paragraph implements TextElementArray {
 
 // membervariables
 
