@@ -100,7 +100,10 @@ public class FontFactory extends java.lang.Object {
     public static final String SYMBOL = BaseFont.SYMBOL;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_NEW_ROMAN = "Times";
+    public static final String TIMES_NEW_ROMAN = "Times New Roman";
+    
+/** This is a possible value of a base 14 type 1 font */
+    public static final String TIMES = "Times";
     
 /** This is a possible value of a base 14 type 1 font */
     public static final String TIMES_ROMAN = BaseFont.TIMES_ROMAN;
@@ -163,6 +166,7 @@ public class FontFactory extends java.lang.Object {
         tmp.add(TIMES_ITALIC);
         tmp.add(TIMES_BOLDITALIC);
         fontFamilies.put(TIMES_NEW_ROMAN, tmp);
+        fontFamilies.put(TIMES, tmp);
         tmp = new HashSet();
         tmp.add(ZAPFDINGBATS);
         fontFamilies.put(ZAPFDINGBATS, tmp);
