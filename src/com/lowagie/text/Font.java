@@ -469,7 +469,7 @@ public class Font implements Comparable {
         if (style2 == UNDEFINED) style2 = 0;
         /* bugfix by Lars Martin */
         int mask = style1 | style2;
-        difference.style = mask == style2 ? style2 : style ^ mask;
+        difference.style = mask == style2 ? style2 : style1 ^ mask;
         /* end bugfix */
         if (font.color == null) {
             difference.color = this.color;
