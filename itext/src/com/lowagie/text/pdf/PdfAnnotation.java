@@ -427,6 +427,14 @@ public class PdfAnnotation extends PdfDictionary {
         return createFileAttachment(writer, rect, contents, PdfFileSpecification.fileEmbedded(writer, file, fileDisplay, fileStore));
     }
 
+    /** Creates a file attachment annotation
+     * @param writer
+     * @param rect
+     * @param contents
+     * @param fs
+     * @return the annotation
+     * @throws IOException
+     */
     public static PdfAnnotation createFileAttachment(PdfWriter writer, Rectangle rect, String contents, PdfFileSpecification fs) throws IOException {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.FILEATTACHMENT);

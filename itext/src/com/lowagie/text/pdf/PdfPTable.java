@@ -190,6 +190,11 @@ public class PdfPTable implements Element{
         }
     }
     
+    /**
+     * Makes a shallow copy of a table (format without content).
+     * @param table
+     * @return a shallow copy of the table
+     */
     public static PdfPTable shallowCopy(PdfPTable table) {
         PdfPTable nt = new PdfPTable();
         nt.copyFormat(table);
@@ -295,6 +300,7 @@ public class PdfPTable implements Element{
     /** Sets the percentage width of the table from the absolute column width.
      * @param columnWidth the absolute width of each column
      * @param pageSize the page size
+     * @throws DocumentException
      */    
     public void setWidthPercentage(float columnWidth[], Rectangle pageSize) throws DocumentException {
         if (columnWidth.length != this.relativeWidths.length)
@@ -326,6 +332,9 @@ public class PdfPTable implements Element{
         }
     }
     
+    /**
+     * Calculates the heights of the table.
+     */
     public void calculateHeightsFast() {
         if (totalWidth <= 0)
             return;
@@ -393,7 +402,8 @@ public class PdfPTable implements Element{
         addCell(new Phrase(text));
     }
     
-    /** Adds a cell element.
+    /**
+     * Adds a nested table.
      * @param table the table to be added to the cell
      */    
     public void addCell(PdfPTable table) {
@@ -402,7 +412,8 @@ public class PdfPTable implements Element{
         defaultCell.setTable(null);
     }
     
-    /** Adds a cell element.
+    /**
+     * Adds an Image as Cell.
      * @param image the <CODE>Image</CODE> to add to the table. This image will fit in the cell
      */    
     public void addCell(Image image) {
@@ -411,7 +422,8 @@ public class PdfPTable implements Element{
         defaultCell.setImage(null);
     }
     
-    /** Adds a cell element.
+    /**
+     * Adds a cell element.
      * @param phrase the <CODE>Phrase</CODE> to be added to the cell
      */    
     public void addCell(Phrase phrase) {
@@ -764,12 +776,20 @@ public class PdfPTable implements Element{
         this.horizontalAlignment = horizontalAlignment;
     }
     
-    //add by Jin-Hsia Yang
+    /**
+     * Gets a row with a given index
+     * (added by Jin-Hsia Yang).
+     * @param idx
+     * @return the row at position idx
+     */
     public PdfPRow getRow(int idx) {
         return (PdfPRow)rows.get(idx);
     }
-    //end add
 
+    /**
+     * Gets an arraylist with all the rows in the table.
+     * @return an arraylist
+     */
     public ArrayList getRows() {
         return rows;
     }
@@ -843,12 +863,20 @@ public class PdfPTable implements Element{
         this.skipFirstHeader = skipFirstHeader;
     }
 
+    /**
+     * Sets the run direction of the contents of the table.
+     * @param runDirection
+     */
     public void setRunDirection(int runDirection) {
         if (runDirection < PdfWriter.RUN_DIRECTION_DEFAULT || runDirection > PdfWriter.RUN_DIRECTION_RTL)
             throw new RuntimeException("Invalid run direction: " + runDirection);
         this.runDirection = runDirection;
     }
     
+    /**
+     * Returns the run direction of the contents in the table.
+     * @return One of the following values: PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI, PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.
+     */
     public int getRunDirection() {
         return runDirection;
     }

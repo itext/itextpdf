@@ -117,7 +117,7 @@ public class PdfWriter extends DocWriter {
             // constructors
             /**
              * Constructs a cross-reference element for a PdfIndirectObject.
-             *
+             * @param refnum
              * @param	offset		byte offset of the object
              * @param	generation	generationnumber of the object
              */
@@ -131,7 +131,7 @@ public class PdfWriter extends DocWriter {
             
             /**
              * Constructs a cross-reference element for a PdfIndirectObject.
-             *
+             * @param refnum
              * @param	offset		byte offset of the object
              */
             
@@ -155,8 +155,8 @@ public class PdfWriter extends DocWriter {
             
             /**
              * Returns the PDF representation of this <CODE>PdfObject</CODE>.
-             *
-             * @return		an array of <CODE>byte</CODE>s
+             * @param os
+             * @throws IOException
              */
             
             public void toPdf(OutputStream os) throws IOException {
@@ -177,6 +177,12 @@ public class PdfWriter extends DocWriter {
                     os.write(getISOBytes(off.append(' ').append(gen).append(" n \n").toString()));
             }
             
+            /**
+             * Writes PDF syntax to the OutputStream
+             * @param midSize
+             * @param os
+             * @throws IOException
+             */
             public void toPdf(int midSize, OutputStream os) throws IOException {
                 os.write((byte)type);
                 while (--midSize >= 0)
@@ -185,11 +191,17 @@ public class PdfWriter extends DocWriter {
                 os.write((byte)(generation & 0xff));
             }
             
+            /**
+             * @see java.lang.Comparable#compareTo(java.lang.Object)
+             */
             public int compareTo(Object o) {
                 PdfCrossReference other = (PdfCrossReference)o;
                 return (refnum < other.refnum ? -1 : (refnum==other.refnum ? 0 : 1));
             }
             
+            /**
+             * @see java.lang.Object#equals(java.lang.Object)
+             */
             public boolean equals(Object obj) {
                 if (obj instanceof PdfCrossReference) {
                     PdfCrossReference other = (PdfCrossReference)obj;
@@ -213,8 +225,8 @@ public class PdfWriter extends DocWriter {
         
         /**
          * Constructs a new <CODE>PdfBody</CODE>.
+         * @param writer
          */
-        
         PdfBody(PdfWriter writer) {
             xrefs = new TreeSet();
             xrefs.add(new PdfCrossReference(0, 0, 65535));
@@ -283,6 +295,7 @@ public class PdfWriter extends DocWriter {
          *
          * @param		object			a <CODE>PdfObject</CODE>
          * @return		a <CODE>PdfIndirectObject</CODE>
+         * @throws IOException
          */
         
         PdfIndirectObject add(PdfObject object) throws IOException {
@@ -321,6 +334,7 @@ public class PdfWriter extends DocWriter {
          * @param		object			a <CODE>PdfObject</CODE>
          * @param		ref		        a <CODE>PdfIndirectReference</CODE>
          * @return		a <CODE>PdfIndirectObject</CODE>
+         * @throws IOException
          */
         
         PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) throws IOException {
@@ -406,8 +420,13 @@ public class PdfWriter extends DocWriter {
         
         /**
          * Returns the CrossReferenceTable of the <CODE>Body</CODE>.
-         *
-         * @return	an array of <CODE>byte</CODE>s
+         * @param os
+         * @param root
+         * @param info
+         * @param encryption
+         * @param fileID
+         * @param prevxref
+         * @throws IOException
          */
         
         void writeCrossReferenceTable(OutputStream os, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID, int prevxref) throws IOException {
@@ -512,6 +531,9 @@ public class PdfWriter extends DocWriter {
          * @param		offset		offset of the <CODE>PdfCrossReferenceTable</CODE>
          * @param		root		an indirect reference to the root of the PDF document
          * @param		info		an indirect reference to the info object of the PDF document
+         * @param encryption
+         * @param fileID
+         * @param prevxref
          */
         
         PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info, PdfIndirectReference encryption, PdfObject fileID, int prevxref) {
@@ -531,10 +553,10 @@ public class PdfWriter extends DocWriter {
         
         /**
          * Returns the PDF representation of this <CODE>PdfObject</CODE>.
-         *
-         * @return		an array of <CODE>byte</CODE>s
+         * @param writer
+         * @param os
+         * @throws IOException
          */
-        
         public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
             os.write(getISOBytes("trailer\n"));
             super.toPdf(null, os);
@@ -613,23 +635,35 @@ public class PdfWriter extends DocWriter {
     public static final boolean STRENGTH40BITS = false;
     /** Type of encryption */
     public static final boolean STRENGTH128BITS = true;
-    
+    /** action value */
     public static final PdfName DOCUMENT_CLOSE = PdfName.DC;
+    /** action value */
     public static final PdfName WILL_SAVE = PdfName.WS;
+    /** action value */
     public static final PdfName DID_SAVE = PdfName.DS;
+    /** action value */
     public static final PdfName WILL_PRINT = PdfName.WP;
+    /** action value */
     public static final PdfName DID_PRINT = PdfName.DP;
-    
+    /** action value */
     public static final PdfName PAGE_OPEN = PdfName.O;
+    /** action value */
     public static final PdfName PAGE_CLOSE = PdfName.C;
 
+    /** signature value */
     public static final int SIGNATURE_EXISTS = 1;
+    /** signature value */
     public static final int SIGNATURE_APPEND_ONLY = 2;
-    
+
+    /** possible PDF version */
     public static final char VERSION_1_2 = '2';
+    /** possible PDF version */
     public static final char VERSION_1_3 = '3';
+    /** possible PDF version */
     public static final char VERSION_1_4 = '4';
+    /** possible PDF version */
     public static final char VERSION_1_5 = '5';
+    /** possible PDF version */
     public static final char VERSION_1_6 = '6';
     
     private static final int VPOINT = 7;
@@ -696,8 +730,11 @@ public class PdfWriter extends DocWriter {
     
     protected PdfDictionary defaultColorspace = new PdfDictionary();
     
+    /** PDF/X value */
     public static final int PDFXNONE = 0;
+    /** PDF/X value */
     public static final int PDFX1A2001 = 1;
+    /** PDF/X value */
     public static final int PDFX32002 = 2;
 
     private int pdfxConformance = PDFXNONE;
@@ -1279,6 +1316,7 @@ public class PdfWriter extends DocWriter {
 	 * Gets a pre-rendered table.
 	 * (Contributed by dperezcar@fcc.es) 
 	 * @param table		Contains the table definition.  Its contents are deleted, after being pre-rendered.
+     * @return a PdfTable
 	 */
 	
 	public PdfTable getPdfTable(Table table) {
@@ -1294,6 +1332,7 @@ public class PdfWriter extends DocWriter {
 	 *
 	 * @param	table		The pre-rendered table obtained from {@link #getPdfTable(Table)} 
 	 * @return	true if the table is rendered and emptied.
+	 * @throws DocumentException
 	 * @see #getPdfTable(Table)
 	 */
 	
@@ -1415,6 +1454,10 @@ public class PdfWriter extends DocWriter {
         return directContent.getRootOutline();
     }
     
+    /**
+     * Returns the outputStreamCounter.
+     * @return the outputStreamCounter
+     */
     public OutputStreamCounter getOs() {
         return os;
     }
@@ -1780,31 +1823,74 @@ public class PdfWriter extends DocWriter {
         setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength);
     }
     
+    /**
+     * Adds an object to the PDF body.
+     * @param object
+     * @return a PdfIndirectObject
+     * @throws IOException
+     */
     public PdfIndirectObject addToBody(PdfObject object) throws IOException {
         PdfIndirectObject iobj = body.add(object);
         return iobj;
     }
     
+    /**
+     * Adds an object to the PDF body.
+     * @param object
+     * @param inObjStm
+     * @return a PdfIndirectObject
+     * @throws IOException
+     */
     public PdfIndirectObject addToBody(PdfObject object, boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, inObjStm);
         return iobj;
     }
     
+    /**
+     * Adds an object to the PDF body.
+     * @param object
+     * @param ref
+     * @return a PdfIndirectObject
+     * @throws IOException
+     */
     public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref) throws IOException {
         PdfIndirectObject iobj = body.add(object, ref);
         return iobj;
     }
     
+    /**
+     * Adds an object to the PDF body.
+     * @param object
+     * @param ref
+     * @param inObjStm
+     * @return a PdfIndirectObject
+     * @throws IOException
+     */
     public PdfIndirectObject addToBody(PdfObject object, PdfIndirectReference ref, boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, ref, inObjStm);
         return iobj;
     }
-    
+
+    /**
+     * Adds an object to the PDF body.
+     * @param object
+     * @param refNumber
+     * @return a PdfIndirectObject
+     * @throws IOException
+     */
     public PdfIndirectObject addToBody(PdfObject object, int refNumber) throws IOException {
         PdfIndirectObject iobj = body.add(object, refNumber);
         return iobj;
     }
     
+    /**
+     * Adds an object to the PDF body.
+     * @param object
+     * @param refNumber
+     * @param inObjStm
+     * @return a PdfIndirectObject
+     * @throws IOException
+     */
     public PdfIndirectObject addToBody(PdfObject object, int refNumber, boolean inObjStm) throws IOException {
         PdfIndirectObject iobj = body.add(object, refNumber, inObjStm);
         return iobj;
@@ -1985,7 +2071,7 @@ public class PdfWriter extends DocWriter {
     
     /** Sets the PDF version. Must be used right before the document
      * is opened. Valid options are VERSION_1_2, VERSION_1_3,
-     * VERSION_1_4 and VERSION_1_5. VERSION_1_4 is the default.
+     * VERSION_1_4, VERSION_1_5 and VERSION_1_6. VERSION_1_4 is the default.
      * @param version the version number
      */
     public void setPdfVersion(char version) {
@@ -2114,6 +2200,9 @@ public class PdfWriter extends DocWriter {
         pdf.setStrictImageSequence(strictImageSequence);
     }
     
+    /** If you use setPageEmpty(false), invoking newPage() after a blank page will add a newPage.
+     * @param pageEmpty
+     */
     public void setPageEmpty(boolean pageEmpty) {
         pdf.setPageEmpty(pageEmpty);
     }
