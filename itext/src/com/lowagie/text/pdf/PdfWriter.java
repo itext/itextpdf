@@ -1,9 +1,8 @@
 /*
- * @(#)PdfWriter.java				0.39 2000/10/23
- *       release iText0.3:			0.25 2000/02/14
- *       release iText0.35:			0.32 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -53,9 +52,6 @@ import com.lowagie.text.DocWriter;
  * added to this Document will be written to the outputstream.</P>
  *
  * @author  bruno@lowagie.com
- * @version 0.39 2000/11/23
- *
- * @since   iText0.30
  */
 
 public class PdfWriter extends DocWriter {
@@ -74,8 +70,6 @@ public class PdfWriter extends DocWriter {
 	 * @see		PdfIndirectObject
 	 * 
 	 * @author  bruno@lowagie.com
-	 * @version 0.22 2000/02/02
-	 * @since   rugPdf0.10
 	 */
 
 	public class PdfBody {
@@ -86,8 +80,6 @@ public class PdfWriter extends DocWriter {
 		 * <CODE>PdfCrossReference</CODE> is an entry in the PDF Cross-Reference table.
 		 *
 		 * @author  bruno@lowagie.com
-		 * @version 0.21 99/12/02
-		 * @since   rugPdf0.10
 		 */
 
 		class PdfCrossReference {
@@ -107,8 +99,6 @@ public class PdfWriter extends DocWriter {
 			 *
 			 * @param	offset		byte offset of the object
 			 * @param	generation	generationnumber of the object
-			 *
-			 * @since   rugPdf0.10
 			 */
 
 			PdfCrossReference(int offset, int generation) {
@@ -120,8 +110,6 @@ public class PdfWriter extends DocWriter {
 			 * Constructs a cross-reference element for a PdfIndirectObject.
 			 *
 			 * @param	offset		byte offset of the object
-			 *
-			 * @since   rugPdf0.10
 			 */
 
 			PdfCrossReference(int offset) {
@@ -132,8 +120,6 @@ public class PdfWriter extends DocWriter {
 			 * Returns the PDF representation of this <CODE>PdfObject</CODE>.
 			 *
 			 * @return		an array of <CODE>byte</CODE>s
-			 *
-			 * @since		rugPdf0.10
 			 */
 
 			final byte[] toPdf() {
@@ -144,6 +130,7 @@ public class PdfWriter extends DocWriter {
 				// StringBuffer gen = new StringBuffer("00000").append(generation);
 				// gen.delete(0, gen.length() - 5);
 
+				// so it was changed into this:
 				String s = "0000000000" + offset;
 				StringBuffer off = new StringBuffer(s.substring(s.length() - 10));
 				s = "00000" + generation;
@@ -174,8 +161,6 @@ public class PdfWriter extends DocWriter {
 		 * Constructs a new <CODE>PdfBody</CODE>.
 		 *
 		 * @param	offset	the offset of the body
-		 *
-		 * @since	rugPdf0.10
 		 */
 
 		PdfBody(int offset) {
@@ -198,8 +183,6 @@ public class PdfWriter extends DocWriter {
 		 *
 		 * @param		object			a <CODE>PdfObject</CODE>
 		 * @return		a <CODE>PdfIndirectObject</CODE>
-		 *
-		 * @since		iText0.30
 		 */
 
 		final PdfIndirectObject add(PdfObject object) {
@@ -214,8 +197,6 @@ public class PdfWriter extends DocWriter {
 		 *
 		 * @param		object			the <CODE>PdfResources</CODE>
 		 * @return		a <CODE>PdfIndirectObject</CODE>
-		 *
-		 * @since		iText0.30
 		 */
 
 		final PdfIndirectObject add(PdfResources object) {
@@ -227,8 +208,6 @@ public class PdfWriter extends DocWriter {
 		 *
 		 * @param		object			the root of the document
 		 * @return		a <CODE>PdfIndirectObject</CODE>
-		 *
-		 * @since		iText0.39
 		 */
 
 		final PdfIndirectObject add(PdfPages object) {
@@ -242,8 +221,6 @@ public class PdfWriter extends DocWriter {
 		 * Returns the offset of the Cross-Reference table.
 		 *
 		 * @return		an offset
-		 *
-		 * @since		rugPdf0.10
 		 */
 
 		final int offset() {
@@ -254,8 +231,6 @@ public class PdfWriter extends DocWriter {
 		 * Returns the total number of objects contained in the CrossReferenceTable of this <CODE>Body</CODE>.
 		 *
 		 * @return	a number of objects
-		 *
-		 * @since	rugPdf0.10
 		 */
 
 		final int size() {
@@ -266,8 +241,6 @@ public class PdfWriter extends DocWriter {
 		 * Returns the CrossReferenceTable of the <CODE>Body</CODE>.
 		 *
 		 * @return	an array of <CODE>byte</CODE>s
-		 *
-		 * @since	iText0.30
 		 */
 
 		final byte[] getCrossReferenceTable() {
@@ -299,8 +272,6 @@ public class PdfWriter extends DocWriter {
 	 * section 5.16 (page 59-60).
 	 *
 	 * @author  bruno@lowagie.com
-	 * @version 0.21 99/12/02
-	 * @since   rugPdf0.10
 	 */
 
 	class PdfTrailer {
@@ -319,8 +290,6 @@ public class PdfWriter extends DocWriter {
 		 * @param		offset		offset of the <CODE>PdfCrossReferenceTable</CODE>
 		 * @param		root		an indirect reference to the root of the PDF document
 		 * @param		info		an indirect reference to the info object of the PDF document
-		 *
-		 * @since		rugPdf0.10
 		 */
 
 		public PdfTrailer(int size, int offset, PdfIndirectReference root, PdfIndirectReference info) {
@@ -353,8 +322,6 @@ public class PdfWriter extends DocWriter {
 		 * Returns the PDF representation of this <CODE>PdfObject</CODE>.
 		 *
 		 * @return		an array of <CODE>byte</CODE>s
-		 *
-		 * @since		rugPdf0.10
 		 */
 
 		final byte[] toPdf() {
@@ -403,8 +370,6 @@ public class PdfWriter extends DocWriter {
 	 *
 	 * @param	document	The <CODE>PdfDocument</CODE> that has to be written
 	 * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
-	 * 
-	 * @since	iText0.30
 	 */
 
 	protected PdfWriter(PdfDocument document, OutputStream os) {
@@ -422,8 +387,6 @@ public class PdfWriter extends DocWriter {
 	 * @return	a new <CODE>PdfWriter</CODE> 
 	 *
 	 * @throws	DocumentException
-	 *
-	 * @since	iText0.30
 	 */
 
 	public static PdfWriter getInstance(Document document, OutputStream os)
@@ -446,8 +409,6 @@ public class PdfWriter extends DocWriter {
 	 * @param	page		the <CODE>PdfPage</CODE> to add
 	 * @param	contents	the <CODE>PdfContents</CODE> of the page
 	 * @return	a <CODE>PdfIndirectReference</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException {
@@ -483,8 +444,6 @@ public class PdfWriter extends DocWriter {
 	 * @param	font		the <CODE>PdfFont</CODE> to add
 	 * @return	a <CODE>PdfIndirectReference</CODE> to the encapsulated font
 	 * @throws	PdfException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
      */
 
     public PdfIndirectReference add(PdfFont font) throws PdfException {
@@ -508,8 +467,6 @@ public class PdfWriter extends DocWriter {
 	 * @param	image		the <CODE>PdfImage</CODE> to add
 	 * @return	a <CODE>PdfIndirectReference</CODE> to the encapsulated image
 	 * @throws	PdfException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.31
      */
 
     public PdfIndirectReference add(PdfImage pdfImage) throws PdfException {
@@ -533,8 +490,6 @@ public class PdfWriter extends DocWriter {
 	 *
 	 * @param		the name of an image.
 	 * @return		a <CODE>PdfIndirectReference</CODE>
-	 *
-	 * @since		iText0.38
 	 */
 
 	public PdfIndirectReference getImageReference(PdfName name) {
@@ -547,8 +502,6 @@ public class PdfWriter extends DocWriter {
 	 * @param	image		the <CODE>PdfImage</CODE> to add
 	 * @return	a <CODE>PdfIndirectReference</CODE> to the encapsulated outline
 	 * @throws	PdfException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.39
      */
 
     public PdfIndirectReference add(PdfOutline outline) throws PdfException {
@@ -566,11 +519,10 @@ public class PdfWriter extends DocWriter {
 
     /**
      * Signals that the <CODE>Document</CODE> has been opened and that
-	 * <CODE>Elements</CODE> can be added. 
-     *
-	 * @return	<CODE>void</CODE>
-	 *
-     * @since   iText0.30
+	 * <CODE>Elements</CODE> can be added.
+	 * <P>
+	 * When this method is called, the PDF-document header is
+	 * written to the outputstream.
      */
 
     public void open() {
@@ -583,11 +535,12 @@ public class PdfWriter extends DocWriter {
 
     /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
-	 * <CODE>Elements</CODE> will be added. 
-     *
-	 * @return	<CODE>void</CODE>
-	 *
-     * @since   iText0.30
+	 * <CODE>Elements</CODE> will be added.
+	 * <P>
+	 * The pages-tree is built and written to the outputstream.
+	 * A Catalog is constructed, as well as an Info-object,
+	 * the referencetable is composed and everything is written
+	 * to the outputstream embedded in a Trailer.
      */
 
     public void close() {
@@ -626,8 +579,6 @@ public class PdfWriter extends DocWriter {
 	 * Returns the number of the next object that can be added to the body.
 	 *
 	 * @return	the size of the body-object
-	 *
-	 * @since	iText0.39
 	 */
 
 	int size() {
@@ -640,8 +591,6 @@ public class PdfWriter extends DocWriter {
 	 * @param	table	the table that has to be checked
 	 * @param	margin	a certain margin
 	 * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
-	 *
-	 * since	iText0.31
 	 */
 
 	public boolean fitsPage(Table table, int margin) {
@@ -653,11 +602,19 @@ public class PdfWriter extends DocWriter {
 	 *
 	 * @param	table	the table that has to be checked
 	 * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
-	 *
-	 * since	iText0.31
 	 */
 
 	public boolean fitsPage(Table table) {
 		 return fitsPage(table, 0);
+	} 
+
+	/**
+	 * Checks if writing is paused.
+	 * 
+	 * @return		<CODE>true</CODE> if writing temporarely has to be paused, <CODE>false</CODE> otherwise.
+	 */
+
+	boolean isPaused() {
+		return pause;
 	}
 }

@@ -1,11 +1,8 @@
 /*
- * @(#)HtmlWriter.java				0.38 2000/10/06
- *       release iText0.3:			0.26 2000/02/14
- *       release iText0.35:			0.33 2000/08/11
- *       release iText0.36:			0.36 2000/09/08
- *       release iText0.37:			0.36 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -86,9 +83,6 @@ import com.lowagie.text.Table;
  * </PRE></BLOCKQUOTE>
  *
  * @author  bruno@lowagie.com
- * @version 0.38, 2000/10/06
- *
- * @since   iText0.30
  */
 
 public class HtmlWriter extends DocWriter implements DocListener {
@@ -281,6 +275,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	/** This is the standard font of the HTML. */
 	private Font standardFont = new Font();
 
+	/** This is a basepath for images. */
+	private String basepath = null;
+
 // constructor
 
 	/**
@@ -288,8 +285,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 *
 	 * @param	document	The <CODE>Document</CODE> that has to be written as HTML
 	 * @param	os			The <CODE>OutputStream</CODE> the writer has to write to.
-	 * 
-	 * @since	iText0.30
 	 */
 
 	protected HtmlWriter(Document doc, OutputStream os) {
@@ -313,8 +308,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 * @param	document	The <CODE>Document</CODE> that has to be written
 	 * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
 	 * @return	a new <CODE>HtmlWriter</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public static HtmlWriter getInstance(Document document, OutputStream os) {
@@ -326,16 +319,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
     /**
      * Signals that an new page has to be started.
 	 * <P>
-	 * Writes a horizontal rul. 
+	 * Writes a horizontal rule. 
      *
 	 * @return	<CODE>true</CODE> if this action succeeded, <CODE>false</CODE> if not.
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
      */
 
     public boolean newPage() throws DocumentException {
-		if (!open) {
+		if (pause || !open) {
 			return false;
 		}
 		try {
@@ -352,11 +343,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
      *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
      */
 
     public boolean add(Element element) throws DocumentException {
+		if (pause) {
+			return false;
+		}
 		Font difference = null;
 		if (element.type() == Element.CHUNK) {
 			Chunk chunk = (Chunk) element;
@@ -456,7 +448,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
 			case Element.JPEG:
 			case Element.PNG:
 				Image image = (Image) element;
-				attributes.put(SRC, image.url().toString());
+				String path = image.url().toString();
+				// if a basepath is defined, the path is changed
+				if (basepath != null) {
+					path = basepath + path.substring(path.lastIndexOf("/"));
+				}
+				attributes.put(SRC, path);
 				if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) {
 					attributes.put(ALIGN, "Middle");
 				}
@@ -498,9 +495,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
 				if (table.borderColor() != null) {
 					attributes.put(BORDERCOLOR, HtmlEncoder.encode(table.borderColor()));
 				}
-				if (table.widthPercentage() > 0) { // bugfix Leslie Baski
-					attributes.put(WIDTH, String.valueOf(table.widthPercentage()) + "%"); 
-                }
 				writeBeginTag(TABLE, attributes);
 				for (Iterator rowIterator = table.iterator(); rowIterator.hasNext(); ) {
 					((Row) rowIterator.next()).process(this);
@@ -587,11 +581,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
 
     /**
      * Signals that the <CODE>Document</CODE> has been opened and that
-	 * <CODE>Elements</CODE> can be added. 
-     *
-	 * @return	<CODE>void</CODE>
-	 *
-     * @since   iText0.30
+	 * <CODE>Elements</CODE> can be added.
+	 * <P>
+	 * The <CODE>HEAD</CODE>-section of the HTML-document is written.
      */
 
     public void open() {
@@ -626,10 +618,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
     /**
      * Signals that the <CODE>Document</CODE> was closed and that no other
 	 * <CODE>Elements</CODE> will be added. 
-     *
-	 * @return	<CODE>void</CODE>
-	 *
-     * @since   iText0.30
      */
 
     public void close() {
@@ -647,9 +635,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	/**
 	 * Writes a new line to the outputstream.
 	 *
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
+	 * @throws	IOException
 	 */
 
 	private void newLine() throws IOException {
@@ -659,9 +645,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	/**
 	 * Writes a number of tabs to the outputstream.
 	 *
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
+	 * @throws	IOException
 	 */
 
 	private void tab() throws IOException {
@@ -673,10 +657,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	/**
 	 * Writes a linebreak.
 	 *
-	 * @return	<CODE>void</CODE>
 	 * @throws	IOException
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void writeBreak() throws IOException {
@@ -693,10 +674,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 * This method writes a given tag between brackets.
 	 *
 	 * @param	tag		the tag that has to be written
-	 * @return	<CODE>void</CODE>
 	 * @throws	IOException
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void writeBeginTag(byte[] tag) throws IOException {
@@ -715,10 +693,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 *
 	 * @param	tag			the tag that has to be written
 	 * @param	attributes	the attributes of the tag
-	 * @return	<CODE>void</CODE>
 	 * @throws	IOException
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void writeBeginTag(byte[] tag, HtmlAttributes attributes) throws IOException {
@@ -737,10 +712,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 * This method writes a given tag between brackets.
 	 *
 	 * @param	tag		the tag that has to be written
-	 * @return	<CODE>void</CODE>
 	 * @throws	IOException
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void writeEndTag(byte[] tag) throws IOException {
@@ -757,10 +729,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 * Writes a Metatag in the header.
 	 *
 	 * @param	element		the element that has to be written
-	 * @return	<CODE>void</CODE>
 	 * @throws	IOException
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void writeHeader(Meta meta) throws IOException {
@@ -790,10 +759,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 * This method writes some comment.
 	 *
 	 * @param	comment		the comment that has to be written
-	 * @return	<CODE>void</CODE>
 	 * @throws	IOException
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void writeComment(String comment) throws IOException {
@@ -805,25 +771,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	}
 
 	/**
-	 * Changes the standardfont.
-	 *
-	 * @param	standardfont	The font
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
-	 */
-
-	public void setStandardFont(Font standardFont) throws IOException {
-		this.standardFont = standardFont;
-	}
-
-	/**
 	 * Changes the font.
 	 *
 	 * @param	font	The font
-	 * @return	<CODE>void</CODE>
 	 *
-	 * @since	iText0.30
+	 * @throws	IOException
 	 */
 
 	private void setFont(Font difference) throws IOException {
@@ -858,9 +810,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
 	 * Closes the tags that changed the font.
 	 *
 	 * @param	font	The font
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void resetFont(Font difference) throws IOException {
@@ -879,5 +828,41 @@ public class HtmlWriter extends DocWriter implements DocListener {
 		if (!difference.isStandardFont()) {
 			writeEndTag(FONT);
 		}
+	}
+
+// public methods
+
+	/**
+	 * Changes the standardfont.
+	 *
+	 * @param	standardfont	The font
+	 */
+
+	public void setStandardFont(Font standardFont) {
+		this.standardFont = standardFont;
+	}
+
+	/**
+	 * Sets the basepath for images.
+	 * <P>
+	 * This is especially useful if you add images using a file,
+	 * rather than an URL. In PDF there is no problem, since
+	 * the images are added inline, but in HTML it is sometimes
+	 * necessary to use a relative path or a special path to some
+	 * images directory.
+	 *
+	 * @param	the new basepath
+	 */
+
+	public void setBasepath(String basepath) {
+		this.basepath = basepath;
+	}
+
+	/**
+	 * Resets the basepath.
+	 */
+
+	public void resetBasepath() {
+		basepath = null;
 	}
 }
