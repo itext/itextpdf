@@ -76,6 +76,10 @@ public class RtfChunk extends RtfElement {
      * The actual content of this RtfChunk
      */
     private String content = "";
+    /**
+     * Whether to use soft line breaks instead of hard ones.
+     */
+    private boolean softLineBreaks = false;
 
     /**
      * Constructs a RtfChunk based on the content of a Chunk
@@ -109,7 +113,7 @@ public class RtfChunk extends RtfElement {
         try {
             result.write(font.writeBegin());
             result.write(DELIMITER);
-            result.write(document.filterSpecialChar(content, false).getBytes());
+            result.write(document.filterSpecialChar(content, false, softLineBreaks).getBytes());
             result.write(font.writeEnd());
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -125,5 +129,23 @@ public class RtfChunk extends RtfElement {
     public void setRtfDocument(RtfDocument doc) {
         super.setRtfDocument(doc);
         this.font.setRtfDocument(this.document);
+    }
+    
+    /**
+     * Sets whether to use soft line breaks instead of default hard ones.
+     * 
+     * @param softLineBreaks whether to use soft line breaks instead of default hard ones.
+     */
+    public void setSoftLineBreaks(boolean softLineBreaks) {
+        this.softLineBreaks = softLineBreaks;
+    }
+    
+    /**
+     * Gets whether to use soft line breaks instead of default hard ones.
+     * 
+     * @return whether to use soft line breaks instead of default hard ones.
+     */
+    public boolean getSoftLineBreaks() {
+        return this.softLineBreaks;
     }
 }
