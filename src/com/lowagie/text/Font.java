@@ -269,7 +269,7 @@ public class Font implements Comparable {
         Font font;
         try {
             font = (Font) object;
-            if ((baseFont != null || font.getBaseFont() != null) && !baseFont.equals(font.getBaseFont())) {
+            if (baseFont != null && !baseFont.equals(font.getBaseFont())) {
                 return -2;
             }
             if (this.family != font.family()) {
