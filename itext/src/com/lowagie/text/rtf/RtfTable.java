@@ -51,7 +51,6 @@
 package com.lowagie.text.rtf;
 
 import com.lowagie.text.*;
-import com.lowagie.text.rtf.*;
 
 import java.util.*;
 import java.io.*;
@@ -97,8 +96,8 @@ public class RtfTable {
         Row row = null;
 
         int tableWidth = (int) table.widthPercentage();
-        int cellpadding = (int) (table.cellpadding() * writer.twipsFactor);
-        int cellspacing = (int) (table.cellspacing() * writer.twipsFactor);
+        int cellpadding = (int) (table.cellpadding() * RtfWriter.TWIPSFACTOR);
+        int cellspacing = (int) (table.cellspacing() * RtfWriter.TWIPSFACTOR);
         float[] propWidths = table.getProportionalWidths();
 
         int borders = table.border();

@@ -109,13 +109,13 @@ class PdfReaderInstance {
     }
     
     PdfObject getResources(int pageNumber) {
-        return reader.getPdfObject(pages[pageNumber - 1].get(PdfName.RESOURCES));
+        return PdfReader.getPdfObject(pages[pageNumber - 1].get(PdfName.RESOURCES));
     }
     
     
     PdfStream getFormXObject(int pageNumber) throws IOException {
         PdfDictionary page = pages[pageNumber - 1];
-        PdfObject contents = reader.getPdfObject(page.get(PdfName.CONTENTS));
+        PdfObject contents = PdfReader.getPdfObject(page.get(PdfName.CONTENTS));
         int length = 0;
         int offset = 0;
         PdfDictionary dic = new PdfDictionary();
@@ -133,7 +133,7 @@ class PdfReaderInstance {
                 ArrayList list = array.getArrayList();
                 bout = new ByteArrayOutputStream();
                 for (int k = 0; k < list.size(); ++k) {
-                    PRStream stream = (PRStream)reader.getPdfObject((PdfObject)list.get(k));
+                    PRStream stream = (PRStream)PdfReader.getPdfObject((PdfObject)list.get(k));
                     byte[] b = PdfReader.getStreamBytes(stream, file);
                     bout.write(b);
                     if (k != list.size() - 1)
@@ -141,7 +141,7 @@ class PdfReaderInstance {
                 }
             }
         }
-        dic.put(PdfName.RESOURCES, reader.getPdfObject(page.get(PdfName.RESOURCES)));
+        dic.put(PdfName.RESOURCES, PdfReader.getPdfObject(page.get(PdfName.RESOURCES)));
         dic.put(PdfName.TYPE, PdfName.XOBJECT);
         dic.put(PdfName.SUBTYPE, PdfName.FORM);
         PdfImportedPage impPage = (PdfImportedPage)importedPages.get(new Integer(pageNumber));

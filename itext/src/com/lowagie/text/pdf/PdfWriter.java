@@ -50,24 +50,23 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import java.awt.Color;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TreeMap;
 
+import com.lowagie.text.DocListener;
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.DocListener;
-import com.lowagie.text.DocWriter;
-import java.awt.Color;
-import com.lowagie.text.ExceptionConverter;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.

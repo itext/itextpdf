@@ -50,11 +50,12 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.*;
-import java.util.*;
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+
 import com.lowagie.text.DocumentException;
 /** Represents a True Type font with Unicode encoding. All the character
  * in the font can be used directly by using the encoding Identity-H or

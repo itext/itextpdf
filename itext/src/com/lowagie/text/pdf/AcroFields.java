@@ -199,7 +199,7 @@ public class AcroFields {
         PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
         if (nfl != null)
             flags = nfl.intValue();
-        tx.setOptions((flags & PdfFormField.FF_MULTILINE) == 0 ? 0 : tx.MULTILINE);
+        tx.setOptions((flags & PdfFormField.FF_MULTILINE) == 0 ? 0 : TextField.MULTILINE);
         //alignment
         nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.Q));
         if (nfl != null) {

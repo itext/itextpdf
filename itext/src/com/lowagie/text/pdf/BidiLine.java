@@ -48,15 +48,14 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.ArrayList;
-import java.awt.font.TextLayout;
-import java.text.AttributedString;
-import java.awt.font.TextAttribute;
 import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.HashMap;
-import com.lowagie.text.*;
-import java.io.*;
+
+import com.lowagie.text.Chunk;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *

@@ -51,10 +51,12 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.*;
-import com.lowagie.text.rtf.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import java.io.*;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
 
 /**
  * This class can be used to insert a table of contents into 
@@ -65,7 +67,7 @@ import java.io.*;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2002/07/09 10:52:22 $
+ * @version $Revision$Date: 2002/08/06 12:44:40 $
  */
 public class RtfTOC extends Chunk implements RtfField {
 

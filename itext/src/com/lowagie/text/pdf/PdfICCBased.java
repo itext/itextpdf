@@ -1,8 +1,7 @@
 package com.lowagie.text.pdf;
 
-import java.io.*;
 import java.awt.color.ICC_Profile;
-import com.lowagie.text.Document;
+
 import com.lowagie.text.ExceptionConverter;
 
 /**

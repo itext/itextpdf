@@ -72,7 +72,7 @@ class PageResources {
         if (resources == null)
             return;
         for (Iterator i = resources.getKeys().iterator(); i.hasNext();) {
-            PdfObject sub = reader.getPdfObject(resources.get((PdfName)i.next()));
+            PdfObject sub = PdfReader.getPdfObject(resources.get((PdfName)i.next()));
             if (sub.type() == PdfObject.DICTIONARY) {
                 PdfDictionary dic = (PdfDictionary)sub;
                 for (Iterator j = dic.getKeys().iterator(); j.hasNext();) {

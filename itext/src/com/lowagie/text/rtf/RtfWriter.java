@@ -567,7 +567,7 @@ public class RtfWriter extends DocWriter implements DocListener {
     private int pageHeight = 16838;
 
     /** Factor to use when converting. */
-    public final static double twipsFactor = 20;//20.57140;
+    public final static double TWIPSFACTOR = 20;//20.57140;
 
     /** Current list ID. */
     private int currentListID = 1;
@@ -758,10 +758,10 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @return <code>true</code> if the page margins were set.
      */
     public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
-        this.marginLeft = (int) (marginLeft * twipsFactor);
-        this.marginRight = (int) (marginRight * twipsFactor);
-        this.marginTop = (int) (marginTop * twipsFactor);
-        this.marginBottom = (int) (marginBottom * twipsFactor);
+        this.marginLeft = (int) (marginLeft * TWIPSFACTOR);
+        this.marginRight = (int) (marginRight * TWIPSFACTOR);
+        this.marginTop = (int) (marginTop * TWIPSFACTOR);
+        this.marginBottom = (int) (marginBottom * TWIPSFACTOR);
         return true;
     }
 
@@ -774,8 +774,8 @@ public class RtfWriter extends DocWriter implements DocListener {
      */
     public boolean setPageSize(Rectangle pageSize) {
         if (!parseFormat(pageSize, false)) {
-            pageWidth = (int) (pageSize.width() * twipsFactor);
-            pageHeight = (int) (pageSize.height() * twipsFactor);
+            pageWidth = (int) (pageSize.width() * TWIPSFACTOR);
+            pageHeight = (int) (pageSize.height() * TWIPSFACTOR);
             landscape = pageWidth > pageHeight;
         }
         return true;
@@ -953,10 +953,10 @@ public class RtfWriter extends DocWriter implements DocListener {
         }
         out.write(escape);
         out.write(listIndent);
-        writeInt(out, (int) (paragraphElement.indentationLeft() * twipsFactor));
+        writeInt(out, (int) (paragraphElement.indentationLeft() * TWIPSFACTOR));
         out.write(escape);
         out.write(rightIndent);
-        writeInt(out, (int) (paragraphElement.indentationRight() * twipsFactor));
+        writeInt(out, (int) (paragraphElement.indentationRight() * TWIPSFACTOR));
         Iterator chunks = paragraphElement.getChunks().iterator();
         while (chunks.hasNext()) {
             Chunk ch = (Chunk) chunks.next();
@@ -1248,16 +1248,16 @@ public class RtfWriter extends DocWriter implements DocListener {
             }
             listtable.write(escape);
             listtable.write(firstIndent);
-            writeInt(listtable, (int) (list.indentationLeft() * twipsFactor * -1));
+            writeInt(listtable, (int) (list.indentationLeft() * TWIPSFACTOR * -1));
             listtable.write(escape);
             listtable.write(listIndent);
-            writeInt(listtable, (int) ((list.indentationLeft() + list.symbolIndent()) * twipsFactor));
+            writeInt(listtable, (int) ((list.indentationLeft() + list.symbolIndent()) * TWIPSFACTOR));
             listtable.write(escape);
             listtable.write(rightIndent);
-            writeInt(listtable, (int) (list.indentationRight() * twipsFactor));
+            writeInt(listtable, (int) (list.indentationRight() * TWIPSFACTOR));
             listtable.write(escape);
             listtable.write(tabStop);
-            writeInt(listtable, (int) (list.symbolIndent() * twipsFactor));
+            writeInt(listtable, (int) (list.symbolIndent() * TWIPSFACTOR));
             listtable.write(closeGroup);
             listtable.write((byte) '\n');
         }
@@ -1268,13 +1268,13 @@ public class RtfWriter extends DocWriter implements DocListener {
         out.write(alignLeft);
         out.write(escape);
         out.write(firstIndent);
-        writeInt(out, (int) (list.indentationLeft() * twipsFactor * -1));
+        writeInt(out, (int) (list.indentationLeft() * TWIPSFACTOR * -1));
         out.write(escape);
         out.write(listIndent);
-        writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * twipsFactor));
+        writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * TWIPSFACTOR));
         out.write(escape);
         out.write(rightIndent);
-        writeInt(out, (int) (list.indentationRight() * twipsFactor));
+        writeInt(out, (int) (list.indentationRight() * TWIPSFACTOR));
         out.write(escape);
         out.write(fontSize);
         writeInt(out, 20);
@@ -1310,13 +1310,13 @@ public class RtfWriter extends DocWriter implements DocListener {
                 }
                 out.write(escape);
                 out.write(firstIndent);
-                writeInt(out, (int) (list.indentationLeft() * twipsFactor * -1));
+                writeInt(out, (int) (list.indentationLeft() * TWIPSFACTOR * -1));
                 out.write(escape);
                 out.write(listIndent);
-                writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * twipsFactor));
+                writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * TWIPSFACTOR));
                 out.write(escape);
                 out.write(rightIndent);
-                writeInt(out, (int) (list.indentationRight() * twipsFactor));
+                writeInt(out, (int) (list.indentationRight() * TWIPSFACTOR));
                 out.write(delimiter);
                 if (list.isNumbered()) {
                     writeInt(out, count);
@@ -1340,13 +1340,13 @@ public class RtfWriter extends DocWriter implements DocListener {
                 out.write(alignLeft);
                 out.write(escape);
                 out.write(firstIndent);
-                writeInt(out, (int) (list.indentationLeft() * twipsFactor * -1));
+                writeInt(out, (int) (list.indentationLeft() * TWIPSFACTOR * -1));
                 out.write(escape);
                 out.write(listIndent);
-                writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * twipsFactor));
+                writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * TWIPSFACTOR));
                 out.write(escape);
                 out.write(rightIndent);
-                writeInt(out, (int) (list.indentationRight() * twipsFactor));
+                writeInt(out, (int) (list.indentationRight() * TWIPSFACTOR));
                 out.write(escape);
                 out.write(fontSize);
                 writeInt(out, 20);
@@ -1452,10 +1452,10 @@ public class RtfWriter extends DocWriter implements DocListener {
         if (image.isJpeg()) out.write(pictureJPEG);
         out.write(escape);
         out.write(pictureWidth);
-        writeInt(out, (int) (image.plainWidth() * twipsFactor));
+        writeInt(out, (int) (image.plainWidth() * TWIPSFACTOR));
         out.write(escape);
         out.write(pictureHeight);
-        writeInt(out, (int) (image.plainHeight() * twipsFactor));
+        writeInt(out, (int) (image.plainHeight() * TWIPSFACTOR));
 
 
 // For some reason this messes up the intended image size. It makes it too big. Weird

@@ -49,11 +49,9 @@
  */
 
 package com.lowagie.text.pdf;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
 import java.io.IOException;
-import java.awt.Color;
+
+import com.lowagie.text.Rectangle;
 
 /**
  * Implements the form XObject.

@@ -116,7 +116,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
     protected String imagepath = null;
     
 /** Stores the page number. */
-    protected static int pageN = 0;
+    protected int pageN = 0;
     
 /** This is the textual part of a header */
     protected HeaderFooter header = null;
@@ -349,7 +349,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             try {
                 // Set the page number. HTML has no notion of a page, so it should always
                 // add up to 1
-                footer.setPageNumber(HtmlWriter.pageN + 1);
+                footer.setPageNumber(pageN + 1);
                 add(footer.paragraph());
             }
             catch(Exception e) {
@@ -467,7 +467,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @param standardFont  The font
  */
     
-    public void setStandardFont(Font standardFont) {
+    public void setStandardFont(Font standardfont) {
         this.standardfont = standardfont;
     }
     

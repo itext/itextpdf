@@ -435,7 +435,6 @@ public class Document implements DocListener {
  */
     
     public void resetFooter() {
-        this.footer = footer;
         DocListener listener;
         for (Iterator iterator = listeners.iterator(); iterator.hasNext(); ) {
             listener = (DocListener) iterator.next();
