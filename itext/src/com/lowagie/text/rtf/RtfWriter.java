@@ -909,7 +909,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 }
                 add(new RtfTOCEntry(title.toString(), sectionElement.title().font()));
             } else {
-                sectionElement.title().process(this);
+                add(sectionElement.title());
             }
             out.write(escape);
             out.write(paragraph);
