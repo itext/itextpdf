@@ -364,6 +364,8 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
                     return super.add((Table) o);
                 case Element.LIST:
                     return super.add((List) o);
+                case Element.GRAPHIC: // suggested by Steven Balthazor
+                	return super.add((Graphic) o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
             }
