@@ -81,6 +81,8 @@ public class AcroFields {
     /** Holds value of property generateAppearances. */
     private boolean generateAppearances = true;
     
+    private HashMap localFonts = new HashMap();
+    
     AcroFields(PdfReader reader, PdfWriter writer) {
         this.reader = reader;
         this.writer = writer;
@@ -114,11 +116,11 @@ public class AcroFields {
                 PdfObject lastV = null;
                 while (annot != null) {
                     dic.mergeDifferent(annot);
-                    PdfString t = (PdfString)annot.get(PdfName.T);
+                    PdfString t = (PdfString)PdfReader.getPdfObject(annot.get(PdfName.T));
                     if (t != null)
                         name = t.toUnicodeString() + "." + name;
                     if (lastV == null && annot.get(PdfName.V) != null)
-                        lastV = annot.get(PdfName.V);
+                        lastV = PdfReader.getPdfObject(annot.get(PdfName.V));
                     if (value == null &&  t != null) {
                         value = annot;
                         if (annot.get(PdfName.V) == null && lastV  != null)
@@ -323,19 +325,24 @@ public class AcroFields {
                             if (po != null && po.type() == PdfObject.INDIRECT)
                                 tx.setFont(new DocumentFont((PRIndirectReference)po));
                             else {
-                                String fn[] = (String[])stdFieldFontNames.get(dab[DA_FONT]);
-                                if (fn != null) {
-                                    try {
-                                        String enc = "winansi";
-                                        if (fn.length > 1)
-                                            enc = fn[1];
-                                        BaseFont bf = BaseFont.createFont(fn[0], enc, false);
-                                        tx.setFont(bf);
-                                    }
-                                    catch (Exception e) {
-                                        // empty
+                                BaseFont bf = (BaseFont)localFonts.get(dab[DA_FONT]);
+                                if (bf == null) {
+                                    String fn[] = (String[])stdFieldFontNames.get(dab[DA_FONT]);
+                                    if (fn != null) {
+                                        try {
+                                            String enc = "winansi";
+                                            if (fn.length > 1)
+                                                enc = fn[1];
+                                            bf = BaseFont.createFont(fn[0], enc, false);
+                                            tx.setFont(bf);
+                                        }
+                                        catch (Exception e) {
+                                            // empty
+                                        }
                                     }
                                 }
+                                else
+                                    tx.setFont(bf);
                             }
                         }
                     }
@@ -345,7 +352,10 @@ public class AcroFields {
             PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.MK));
             if (mk != null) {
                 PdfArray ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BC));
-                tx.setBorderColor(getMKColor(ar));
+                Color border = getMKColor(ar);
+                tx.setBorderColor(border);
+                if (border != null)
+                    tx.setBorderWidth(1);
                 ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BG));
                 tx.setBackgroundColor(getMKColor(ar));
                 PdfNumber rotation = (PdfNumber)PdfReader.getPdfObject(mk.get(PdfName.R));
@@ -532,6 +542,7 @@ public class AcroFields {
      * Sets a field property. Valid property names are:
      * <p>
      * <ul>
+     * <li>textfont - sets the text font. The value for this entry is a <CODE>BaseFont</CODE>.<br>
      * <li>textcolor - sets the text color. The value for this entry is a <CODE>java.awt.Color</CODE>.<br>
      * <li>textsize - sets the text size. The value for this entry is a <CODE>Float</CODE>.
      * <li>bgcolor - sets the background color. The value for this entry is a <CODE>java.awt.Color</CODE>.
@@ -547,76 +558,148 @@ public class AcroFields {
      * @return <CODE>true</CODE> if the property exists, <CODE>false</CODE> otherwise
      */    
     public boolean setFieldProperty(String field, String name, Object value, int inst[]) {
-        Item item = (Item)fields.get(field);
-        if (item == null)
-            return false;
-        InstHit hit = new InstHit(inst);
-        if (name.equalsIgnoreCase("textcolor")) {
-            for (int k = 0; k < item.merged.size(); ++k) {
-                if (hit.isHit(k)) {
-                    PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
-                    if (da != null) {
-                        Object dao[] = splitDAelements(da.toUnicodeString());
-                        PdfAppearance cb = new PdfAppearance();
-                        if (dao[DA_FONT] != null) {
-                            ByteBuffer buf = cb.getInternalBuffer();
-                            buf.append(new PdfName((String)dao[DA_FONT]).getBytes()).append(' ').append(((Float)dao[DA_SIZE]).floatValue()).append(" Tf ");
-                            cb.setColorFill((Color)value);
-                            PdfString s = new PdfString(cb.toString());
-                            ((PdfDictionary)item.merged.get(k)).put(PdfName.DA, s);
-                            ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
-                            markUsed((PdfDictionary)item.widgets.get(k));
+        if (writer == null)
+            throw new RuntimeException("This AcroFields instance is read-only.");
+        try {
+            Item item = (Item)fields.get(field);
+            if (item == null)
+                return false;
+            InstHit hit = new InstHit(inst);
+            if (name.equalsIgnoreCase("textfont")) {
+                for (int k = 0; k < item.merged.size(); ++k) {
+                    if (hit.isHit(k)) {
+                        PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
+                        PdfDictionary dr = (PdfDictionary)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DR));
+                        if (da != null && dr != null) {
+                            Object dao[] = splitDAelements(da.toUnicodeString());
+                            PdfAppearance cb = new PdfAppearance();
+                            if (dao[DA_FONT] != null) {
+                                BaseFont bf = (BaseFont)value;
+                                PdfName psn = (PdfName)PdfAppearance.stdFieldFontNames.get(bf.getPostscriptFontName());
+                                if (psn == null) {
+                                    psn = new PdfName(bf.getPostscriptFontName());
+                                }
+                                PdfDictionary fonts = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+                                if (fonts == null) {
+                                    fonts = new PdfDictionary();
+                                    dr.put(PdfName.FONT, fonts);
+                                }
+                                PdfIndirectReference fref = (PdfIndirectReference)fonts.get(psn);
+                                PdfDictionary top = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM));
+                                markUsed(top);
+                                dr = (PdfDictionary)PdfReader.getPdfObject(top.get(PdfName.DR));
+                                if (dr == null) {
+                                    dr = new PdfDictionary();
+                                    top.put(PdfName.DR, dr);
+                                }
+                                markUsed(dr);
+                                PdfDictionary fontsTop = (PdfDictionary)PdfReader.getPdfObject(dr.get(PdfName.FONT));
+                                if (fontsTop == null) {
+                                    fontsTop = new PdfDictionary();
+                                    dr.put(PdfName.FONT, fontsTop);
+                                }
+                                markUsed(fontsTop);
+                                PdfIndirectReference frefTop = (PdfIndirectReference)fontsTop.get(psn);
+                                if (frefTop != null) {
+                                    if (fref == null)
+                                        fonts.put(psn, frefTop);
+                                }
+                                else if (fref == null) {
+                                    FontDetails fd;
+                                    if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
+                                        fd = new FontDetails(null, ((DocumentFont)bf).getIndirectReference(), bf);
+                                    }
+                                    else {
+                                        bf.setSubset(false);
+                                        fd = writer.addSimple(bf);
+                                        localFonts.put(psn.toString().substring(1), bf);
+                                    }
+                                    fontsTop.put(psn, fd.getIndirectReference());
+                                    fonts.put(psn, fd.getIndirectReference());
+                                }
+                                ByteBuffer buf = cb.getInternalBuffer();
+                                buf.append(psn.getBytes()).append(' ').append(((Float)dao[DA_SIZE]).floatValue()).append(" Tf ");
+                                if (dao[DA_COLOR] != null)
+                                    cb.setColorFill((Color)dao[DA_COLOR]);
+                                PdfString s = new PdfString(cb.toString());
+                                ((PdfDictionary)item.merged.get(k)).put(PdfName.DA, s);
+                                ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
+                                markUsed((PdfDictionary)item.widgets.get(k));
+                            }
                         }
                     }
                 }
             }
-        }
-        else if (name.equalsIgnoreCase("textsize")) {
-            for (int k = 0; k < item.merged.size(); ++k) {
-                if (hit.isHit(k)) {
-                    PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
-                    if (da != null) {
-                        Object dao[] = splitDAelements(da.toUnicodeString());
-                        PdfAppearance cb = new PdfAppearance();
-                        if (dao[DA_FONT] != null) {
-                            ByteBuffer buf = cb.getInternalBuffer();
-                            buf.append(new PdfName((String)dao[DA_FONT]).getBytes()).append(' ').append(((Float)value).floatValue()).append(" Tf ");
-                            if (dao[DA_COLOR] != null)
-                                cb.setColorFill((Color)dao[DA_COLOR]);
-                            PdfString s = new PdfString(cb.toString());
-                            ((PdfDictionary)item.merged.get(k)).put(PdfName.DA, s);
-                            ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
-                            markUsed((PdfDictionary)item.widgets.get(k));
+            else if (name.equalsIgnoreCase("textcolor")) {
+                for (int k = 0; k < item.merged.size(); ++k) {
+                    if (hit.isHit(k)) {
+                        PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
+                        if (da != null) {
+                            Object dao[] = splitDAelements(da.toUnicodeString());
+                            PdfAppearance cb = new PdfAppearance();
+                            if (dao[DA_FONT] != null) {
+                                ByteBuffer buf = cb.getInternalBuffer();
+                                buf.append(new PdfName((String)dao[DA_FONT]).getBytes()).append(' ').append(((Float)dao[DA_SIZE]).floatValue()).append(" Tf ");
+                                cb.setColorFill((Color)value);
+                                PdfString s = new PdfString(cb.toString());
+                                ((PdfDictionary)item.merged.get(k)).put(PdfName.DA, s);
+                                ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
+                                markUsed((PdfDictionary)item.widgets.get(k));
+                            }
                         }
                     }
                 }
             }
-        }
-        else if (name.equalsIgnoreCase("bgcolor") || name.equalsIgnoreCase("bordercolor")) {
-            PdfName dname = (name.equalsIgnoreCase("bgcolor") ? PdfName.BG : PdfName.BC);
-            for (int k = 0; k < item.merged.size(); ++k) {
-                if (hit.isHit(k)) {
-                    PdfObject obj = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.MK));
-                    markUsed(obj);
-                    PdfDictionary mk = (PdfDictionary)obj;
-                    if (mk == null) {
+            else if (name.equalsIgnoreCase("textsize")) {
+                for (int k = 0; k < item.merged.size(); ++k) {
+                    if (hit.isHit(k)) {
+                        PdfString da = (PdfString)PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.DA));
+                        if (da != null) {
+                            Object dao[] = splitDAelements(da.toUnicodeString());
+                            PdfAppearance cb = new PdfAppearance();
+                            if (dao[DA_FONT] != null) {
+                                ByteBuffer buf = cb.getInternalBuffer();
+                                buf.append(new PdfName((String)dao[DA_FONT]).getBytes()).append(' ').append(((Float)value).floatValue()).append(" Tf ");
+                                if (dao[DA_COLOR] != null)
+                                    cb.setColorFill((Color)dao[DA_COLOR]);
+                                PdfString s = new PdfString(cb.toString());
+                                ((PdfDictionary)item.merged.get(k)).put(PdfName.DA, s);
+                                ((PdfDictionary)item.widgets.get(k)).put(PdfName.DA, s);
+                                markUsed((PdfDictionary)item.widgets.get(k));
+                            }
+                        }
+                    }
+                }
+            }
+            else if (name.equalsIgnoreCase("bgcolor") || name.equalsIgnoreCase("bordercolor")) {
+                PdfName dname = (name.equalsIgnoreCase("bgcolor") ? PdfName.BG : PdfName.BC);
+                for (int k = 0; k < item.merged.size(); ++k) {
+                    if (hit.isHit(k)) {
+                        PdfObject obj = PdfReader.getPdfObject(((PdfDictionary)item.merged.get(k)).get(PdfName.MK));
+                        markUsed(obj);
+                        PdfDictionary mk = (PdfDictionary)obj;
+                        if (mk == null) {
+                            if (value == null)
+                                return true;
+                            mk = new PdfDictionary();
+                            ((PdfDictionary)item.merged.get(k)).put(PdfName.MK, mk);
+                            ((PdfDictionary)item.widgets.get(k)).put(PdfName.MK, mk);
+                            markUsed((PdfDictionary)item.widgets.get(k));
+                        }
                         if (value == null)
-                            return true;
-                        mk = new PdfDictionary();
-                        ((PdfDictionary)item.merged.get(k)).put(PdfName.MK, mk);
-                        ((PdfDictionary)item.widgets.get(k)).put(PdfName.MK, mk);
-                        markUsed((PdfDictionary)item.widgets.get(k));
+                            mk.remove(dname);
+                        else
+                            mk.put(dname, PdfFormField.getMKColor((Color)value));
                     }
-                    if (value == null)
-                        mk.remove(dname);
-                    else
-                        mk.put(dname, PdfFormField.getMKColor((Color)value));
                 }
             }
+            else
+                return false;
+            return true;
         }
-        else
-            return false;
-        return true;
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
     }
     
     /**
@@ -646,6 +729,8 @@ public class AcroFields {
      * @return <CODE>true</CODE> if the property exists, <CODE>false</CODE> otherwise
      */    
     public boolean setFieldProperty(String field, String name, int value, int inst[]) {
+        if (writer == null)
+            throw new RuntimeException("This AcroFields instance is read-only.");
         Item item = (Item)fields.get(field);
         if (item == null)
             return false;

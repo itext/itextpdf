@@ -57,6 +57,7 @@ import java.io.InputStream;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.Rectangle;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
@@ -139,7 +140,17 @@ public class PdfStamper {
         this.moreInfo = moreInfo;
     }
 
-
+    /**
+     * Inserts a blank page. All the pages above and including <CODE>pageNumber</CODE> will
+     * be shifted up. If <CODE>pageNumber</CODE> is bigger than the total number of pages
+     * the new page will be the last one.
+     * @param pageNumber the page number position where the new page will be inserted
+     * @param mediabox the size of the new page
+     */    
+    public void insertPage(int pageNumber, Rectangle mediabox) {
+        stamper.insertPage(pageNumber, mediabox);
+    }
+    
     /**
      * Gets the signing instance. The appearances and other parameters can the be set.
      * @return the signing instance
