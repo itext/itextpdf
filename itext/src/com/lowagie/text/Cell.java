@@ -144,7 +144,7 @@ public class Cell extends Rectangle implements TextElementArray {
     public Cell() {
         // creates a Rectangle with BY DEFAULT a border of 0.5
         super(0, 0, 0, 0);
-        setBorder(BOX);
+        setBorder(UNDEFINED);
         setBorderWidth(0.5f);
         
         // initializes the arraylist and adds an element
@@ -173,7 +173,7 @@ public class Cell extends Rectangle implements TextElementArray {
     public Cell(String content) {
         // creates a Rectangle with BY DEFAULT a border of 0.5
         super(0, 0, 0, 0);
-        setBorder(BOX);
+        setBorder(UNDEFINED);
         setBorderWidth(0.5f);
         
         // initializes the arraylist and adds an element
@@ -198,7 +198,7 @@ public class Cell extends Rectangle implements TextElementArray {
     public Cell(Element element) throws BadElementException {
         // creates a Rectangle with BY DEFAULT a border of 0.5
         super(0, 0, 0, 0);
-        setBorder(BOX);
+        setBorder(UNDEFINED);
         setBorderWidth(0.5f);
         
         try {
