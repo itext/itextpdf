@@ -186,7 +186,14 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
     
     public void endElement(String uri, String lname, String name) {
         //System.err.println("End: " + name);
-        
+		if (Paragraph.isTag(name)) {
+			try {
+				document.add((Element) stack.pop());
+				return;
+			} catch (DocumentException e) {
+				throw new ExceptionConverter(e);
+			}
+		}        
         if (((HtmlTagMap)myTags).isHead(name)) {
             // we do nothing
             return;
@@ -217,6 +224,8 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
             super.handleEndingTags(peer.getTag());
             return;
         }
-        super.handleEndingTags(name);
+        // super.handleEndingTags is replaced with handleEndingTags
+        // suggestion by Ken Auer
+        handleEndingTags(name);
     }
 }
