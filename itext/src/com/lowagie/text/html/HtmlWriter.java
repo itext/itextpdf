@@ -664,20 +664,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
             case Element.SECTION:
             case Element.CHAPTER:
             {
-                Section section = (Section) element;
-                
-                // start tag
-                addTabs(indent);
-                writeStart(MarkupTags.DIV);
-                if (hasMarkupAttributes(section)) {
-                    writeMarkupAttributes((MarkupAttributes)section);
-                }
                 // part of the start tag + contents
-                writeSection(section, indent);
-                // end tag
-                writeEnd(MarkupTags.DIV);
+                writeSection((Section) element, indent);
                 return;
-                
             }
             case Element.LIST:
             {
@@ -935,8 +924,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
  */
     
     protected void writeSection(Section section, int indent) throws IOException {
-        os.write(GT);
-        
         if (section.title() != null) {
             int depth = section.depth() - 1;
             if (depth > 5) {
@@ -945,7 +932,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             Properties styleAttributes = new Properties();
             styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(section.title().leading()) + "pt");
             // start tag
-            addTabs(indent + 1);
+            addTabs(indent);
             writeStart(HtmlTags.H[depth]);
             write(section.title().font(), styleAttributes);
             String alignment = HtmlEncoder.getAlignment(section.title().alignment());
@@ -959,17 +946,16 @@ public class HtmlWriter extends DocWriter implements DocListener {
             currentfont.push(section.title().font());
             // contents
             for (Iterator i = section.title().iterator(); i.hasNext(); ) {
-                write((Element)i.next(), indent + 2);
+                write((Element)i.next(), indent + 1);
             }
             // end tag
-            addTabs(indent + 1);
+            addTabs(indent);
             writeEnd(HtmlTags.H[depth]);
             currentfont.pop();
         }
         for (Iterator i = section.iterator(); i.hasNext(); ) {
-            write((Element) i.next(), indent + 1);
+            write((Element) i.next(), indent);
         }
-        addTabs(indent);
     }
     
     /**

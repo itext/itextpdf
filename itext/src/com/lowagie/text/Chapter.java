@@ -77,7 +77,7 @@ import java.util.Properties;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Chapter extends Section implements TextElementArray, MarkupAttributes {
+public class Chapter extends Section implements TextElementArray {
     
     // constructors
     
@@ -127,7 +127,6 @@ public class Chapter extends Section implements TextElementArray, MarkupAttribut
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
-        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

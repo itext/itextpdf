@@ -110,9 +110,6 @@ public class Section extends ArrayList implements TextElementArray {
     
     /** false if the bookmark children are not visible */
     protected boolean bookmarkOpen = true;
-
-/** Contains extra markupAttributes */
-    protected Properties markupAttributes;
     
     // constructors
     
@@ -449,7 +446,6 @@ public class Section extends ArrayList implements TextElementArray {
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
 /**
@@ -640,42 +636,5 @@ public class Section extends ArrayList implements TextElementArray {
      */
     public void setBookmarkOpen(boolean bookmarkOpen) {
         this.bookmarkOpen = bookmarkOpen;
-    }
-    
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
-    public void setMarkupAttribute(String name, String value) {
-        markupAttributes = (markupAttributes == null) ? new Properties() : markupAttributes;
-        markupAttributes.put(name, value);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
- */
-    public void setMarkupAttributes(Properties markupAttributes) {
-        this.markupAttributes = markupAttributes;
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
-    public String getMarkupAttribute(String name) {
-        return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
- */
-    public Set getMarkupAttributeNames() {
-        return Chunk.getKeySet(markupAttributes);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
- */
-    public Properties getMarkupAttributes() {
-        return markupAttributes;
     }
 }
