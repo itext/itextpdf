@@ -169,6 +169,13 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** this is the transparency information of the raw image*/
     protected int transparency[];
     
+    // for the moment these variables are only used for Images in class Table
+    // code contributed by Pelikan Stephan
+    /** the indentation to the left. */
+	protected float indentationLeft = 0;
+	/** the indentation to the right. */
+	protected float indentationRight = 0;
+ 
     // serial stamping
     
     protected Long mySerialId = getSerialId();
@@ -1357,4 +1364,36 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.XYRatio = XYRatio;
     }
     
+	/**
+	 * Gets the left indentation.
+	 * @return the left indentation
+	 */
+	public float indentationLeft() {
+		return indentationLeft;
+	}
+
+	/**
+	 * Gets the right indentation.
+	 * @return the right indentation
+	 */
+	public float indentationRight() {
+		return indentationRight;
+	}
+
+	/**
+	 * Sets the left indentation.
+	 * @param f
+	 */
+	public void setIndentationLeft(float f) {
+		indentationLeft = f;
+	}
+
+	/**
+	 * Sets the right indentation.
+	 * @param f
+	 */
+	public void setIndentationRight(float f) {
+		indentationRight = f;
+	}
+
 }

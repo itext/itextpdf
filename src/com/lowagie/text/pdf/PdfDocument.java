@@ -476,7 +476,7 @@ class PdfDocument extends Document implements DocListener {
     PdfAcroForm acroForm;
     
     /** This is the root outline of the document. */
-    private PdfOutline rootOutline;;
+    private PdfOutline rootOutline;
     
     /** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
     private PdfOutline currentOutline;
@@ -868,6 +868,10 @@ class PdfDocument extends Document implements DocListener {
         
         //Added to inform any listeners that we are moving to a new page (added by David Freels)
         super.newPage();
+        
+        // the following 2 lines were added by Pelikan Stephan
+        imageIndentLeft = 0;
+        imageIndentRight = 0;
         
         // we flush the arraylist with recently written lines
         flushLines();
@@ -1846,10 +1850,12 @@ class PdfDocument extends Document implements DocListener {
                 imageEnd = currentHeight + image.scaledHeight() + diff;
             }
             if ((image.alignment() & Image.RIGHT) == Image.RIGHT) {
-                imageIndentRight += image.scaledWidth();
+            	// indentation suggested by Pelikan Stephan
+                imageIndentRight += image.scaledWidth() + image.indentationLeft();
             }
             else {
-                imageIndentLeft += image.scaledWidth();
+            	// indentation suggested by Pelikan Stephan
+                imageIndentLeft += image.scaledWidth() + image.indentationRight();
             }
         }
         if (!(textwrap || underlying)) {
@@ -2815,4 +2821,20 @@ class PdfDocument extends Document implements DocListener {
     void setPageEmpty(boolean pageEmpty) {
         this.pageEmpty = pageEmpty;
     }
+	/**
+	 * Method added by Pelikan Stephan
+	 * @see com.lowagie.text.DocListener#clearTextWrap()
+	 */
+	public void clearTextWrap() throws DocumentException {
+		super.clearTextWrap();
+		float tmpHeight = imageEnd - currentHeight;
+		if (line != null) {
+			tmpHeight += line.height();
+		}
+		if ((imageEnd > -1) && (tmpHeight > 0)) {
+			carriageReturn();
+			currentHeight += tmpHeight;
+		}
+	}
+
 }
