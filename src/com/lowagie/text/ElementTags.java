@@ -128,6 +128,9 @@ public class ElementTags {
 /** attribute of paragraph/image/table tag */
     public static final String ALIGN = "align";
     
+/** attribute of paragraph */
+    public static final String KEEPTOGETHER = "keeptogether";
+    
 /** attribute of anchor tag */
     public static final String NAME = "name";
     
