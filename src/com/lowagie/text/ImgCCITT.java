@@ -107,6 +107,10 @@ public class ImgCCITT extends Image implements Element {
             data[k] = bitReversal[(int)data[k] & 0xff];
     }
 
+    ImgCCITT(Image image) {
+        super(image);
+    }
+
     /** Creats an Image in CCITT mode.
      *
      * @param width the exact width of the image

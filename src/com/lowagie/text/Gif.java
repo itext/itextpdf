@@ -68,6 +68,9 @@ import java.net.URL;
 public class Gif extends Image implements Element {
     
     // Constructors
+    Gif(Image image) {
+        super(image);
+    }
     
 /**
  * Constructs a <CODE>Gif</CODE>-object, using an <VAR>url</VAR>.

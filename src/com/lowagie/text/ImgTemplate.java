@@ -64,6 +64,10 @@ import com.lowagie.text.pdf.PdfTemplate;
 
 public class ImgTemplate extends Image implements Element {
     
+    ImgTemplate(Image image) {
+        super(image);
+    }
+    
     /** Creats an Image from a PdfTemplate.
      *
      * @param template the PdfTemplate
