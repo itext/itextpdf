@@ -56,7 +56,6 @@ package com.lowagie.text;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.io.FileOutputStream;
 import java.lang.Float;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -67,7 +66,6 @@ import java.util.StringTokenizer;
 import java.util.TreeSet;
 
 import com.lowagie.text.markup.*;
-import com.lowagie.text.pdf.PdfWriter;
 
 
 /**
@@ -258,7 +256,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         /**
          * compares this comparator to another comparator: do we yield
          * the same ordering?
-         * @param param an objects
+         * @param o an objects
          * @return true, we do  or false, we don't
          */
         public boolean equals(Object o) {
@@ -270,13 +268,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         }
 
         /**
-         *@param
-         *o1 - the first object to be compared.
-         *o2 - the second object to be compared.
-         *@return
-         *a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
-         *@throws
-         *ClassCastException - if the arguments' types prevent them from being compared by this Comparator
+         *@param    param1  the first object to be compared.
+         *@param    param2  the second object to be compared.
+         *@return   a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
          */
         public int compare(Object param1, Object param2) {
             float p1 = ((Float)param1).floatValue();
@@ -609,7 +603,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE> at a certain row and column.
      *
-     * @param       cell    The <CODE>Cell</CODE> to add
+     * @param       aCell    The <CODE>Cell</CODE> to add
      * @param       row     The row where the <CODE>Cell</CODE> will be added
      * @param       column  The column where the <CODE>Cell</CODE> will be added
      */
@@ -621,8 +615,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE> at a certain location.
      *
-     * @param       cell        The <CODE>Cell</CODE> to add
-     * @param       location    The location where the <CODE>Cell</CODE> will be added
+     * @param       aCell        The <CODE>Cell</CODE> to add
+     * @param       aLocation    The location where the <CODE>Cell</CODE> will be added
      */
 
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
@@ -1183,7 +1177,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * The widths will be: a width of 50% for the first column,
      * 25% for the second and third column.
      *
-     * @param       an array with values
+     * @param       widths an array with values
      */
 
     public void setWidths(float[] widths) throws BadElementException {
@@ -1214,7 +1208,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * The sum of these values will be considered 100%.
      * The values will be recalculated as percentages of this sum.
      *
-     * @param       an array with values
+     * @param       widths  an array with values
      */
 
     public void setWidths(int[] widths) throws DocumentException {
@@ -1341,7 +1335,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      *  <code>cell</code> at <code>column</code>.
      *
      * @param cell the <code>Cell</code> of interest
-     * @param col  <code>int</code> the column index of <code>cell</code>
+     * @param column  <code>int</code> the column index of <code>cell</code>
      * @param widths  <code>float[]</code> value with the percentages for all columns in a row
      * @return the total width percentage in a <code>float</code>
      */
@@ -1422,7 +1416,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 lRow = (Row)rows.get(i);
                 lCell = lRow.getCell(j);
                 if (!((null == lCell) && (lRow.isReserved(j)))) {
-                    int lColspan = lCell.colspan();
                     float thisWidth = computeCellWidth(lCell, j, widths);
 
                     if (lCell.isTable()) {
@@ -1583,7 +1576,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     private void fillEmptyMatrixCells() {
-        int  lTel = -1;
         try {
             for (int i=0; i < rows.size(); i++) {
                 for (int j=0; j < columns; j++) {
@@ -1645,7 +1637,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
 
     private void placeCell(ArrayList someRows, Cell aCell, Point aPosition) {
-        int i,j;
+        int i;
         Row row = null;
         int lColumns = ((Row) someRows.get(0)).columns();
         int rowCount = aPosition.x + aCell.rowspan() - someRows.size();
