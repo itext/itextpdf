@@ -63,10 +63,10 @@ class PdfContents extends PdfStream {
         buf.append(bytes).append(secondContent);
         bytes = buf.toByteArray();
         dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
-/*		try {
+		try {
 			flateCompress();
 		}
 		catch(PdfException pe) {
-		}  */
+		}
 	}
 }

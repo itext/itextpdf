@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  	  
+ *
  */
 
 package com.lowagie.text;
@@ -68,380 +68,354 @@ import java.util.Iterator;
 
 public class Phrase extends ArrayList implements TextElementArray {
 
-// membervariables
+   // membervariables
 
-	/** This is the leading of this phrase. */
-	protected int leading;
+   /** This is the leading of this phrase. */
+   protected int leading;
 
-// constructors
+   // constructors
 
-	/**
-	 * Constructs a <CODE>Phrase</CODE> without specifying a leading.
-	 */
+   /**
+    * Constructs a <CODE>Phrase</CODE> without specifying a leading.
+    */
 
-	public Phrase() {
-		this(16);
-	}
+   public Phrase() {
+      this(16);
+   }
 
-	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain leading.
-	 *
-	 * @param	leading		the leading
-	 */
+   /**
+    * Constructs a <CODE>Phrase</CODE> with a certain leading.
+    *
+    * @param	leading		the leading
+    */
 
-	public Phrase(int leading) {
-		this.leading = leading;
-	}
+   public Phrase(int leading) {
+      this.leading = leading;
+   }
 
-	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>.
-	 *
-	 * @param	chunk		a <CODE>Chunk</CODE>
-	 */
+   /**
+    * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>.
+    *
+    * @param	chunk		a <CODE>Chunk</CODE>
+    */
 
-	public Phrase(Chunk chunk) {
-		this(chunk.font().leading(1.5));
-		super.add(chunk);
-	}
+   public Phrase(Chunk chunk) {
+      this(chunk.font().leading(1.5));
+      super.add(chunk);
+   }
 
-	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>
-	 * and a certain leading.
-	 *
-	 * @param	leading	the leading
-	 * @param	chunk		a <CODE>Chunk</CODE>
-	 */
+   /**
+    * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>
+    * and a certain leading.
+    *
+    * @param	leading	the leading
+    * @param	chunk		a <CODE>Chunk</CODE>
+    */
 
-	public Phrase(int leading, Chunk chunk) {
-		this(leading);
-		super.add(chunk);
-	}
+   public Phrase(int leading, Chunk chunk) {
+      this(leading);
+      super.add(chunk);
+   }
 
-	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 */
+   /**
+    * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE>.
+    *
+    * @param	string		a <CODE>String</CODE>
+    */
 
-	public Phrase(String string) {
-		this(new Font().leading(1.5), string, new Font());
-	}
+   public Phrase(String string) {
+      this(new Font().leading(1.5), string, new Font());
+   }
 
-	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 * @param	font		a <CODE>Font</CODE>
-	 */
+   /**
+    * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
+    *
+    * @param	string		a <CODE>String</CODE>
+    * @param	font		a <CODE>Font</CODE>
+    */
 
-	public Phrase(String string, Font font) {
-		this(font.leading(1.5), string, font);
-	}
+   public Phrase(String string, Font font) {
+      this(font.leading(1.5), string, font);
+   }
 
-	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain leading and a certain <CODE>String</CODE>.
-	 *
-	 * @param	leading	the leading
-	 * @param	string		a <CODE>String</CODE>
-	 */
+   /**
+    * Constructs a <CODE>Phrase</CODE> with a certain leading and a certain <CODE>String</CODE>.
+    *
+    * @param	leading	the leading
+    * @param	string		a <CODE>String</CODE>
+    */
 
-	public Phrase(int leading, String string) {
-		this(leading, string, new Font());
-	}
+   public Phrase(int leading, String string) {
+      this(leading, string, new Font());
+   }
 
-	/**
-	 * Constructs a <CODE>Phrase</CODE> with a certain leading, a certain <CODE>String</CODE>
-	 * and a certain <CODE>Font</CODE>.
-	 *
-	 * @param	leading	the leading
-	 * @param	string		a <CODE>String</CODE>
-	 * @param	font		a <CODE>Font</CODE>
-	 */
+   /**
+    * Constructs a <CODE>Phrase</CODE> with a certain leading, a certain <CODE>String</CODE>
+    * and a certain <CODE>Font</CODE>.
+    *
+    * @param	leading	the leading
+    * @param	string		a <CODE>String</CODE>
+    * @param	font		a <CODE>Font</CODE>
+    */
 
-	public Phrase(int leading, String string, Font font) {
-		this(leading);
-		if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS) {
-			int i = 0;
-			int index;
-			while((index = Greek.index(string)) > -1) {
-				if (index > 0) {
-					String firstPart = string.substring(0, index);
-					super.add(new Chunk(firstPart));
-					string = string.substring(index);
-				}
-				Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
-				StringBuffer buf = new StringBuffer();
-				buf.append(Greek.getCorrespondingSymbol(string.charAt(0)));
-				string = string.substring(1);
-				while (Greek.index(string) == 0) {
-					buf.append(Greek.getCorrespondingSymbol(string.charAt(0)));
-					string = string.substring(1);
-				}
-				super.add(new Chunk(buf.toString(), symbol));
-			}
-		}
-		super.add(new Chunk(string, font));
-	}
+   public Phrase(int leading, String string, Font font) {
+      this(leading);
+      if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS) {
+         int i = 0;
+         int index;
+         while((index = Greek.index(string)) > -1) {
+            if (index > 0) {
+               String firstPart = string.substring(0, index);
+               super.add(new Chunk(firstPart));
+               string = string.substring(index);
+            }
+            Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
+            StringBuffer buf = new StringBuffer();
+            buf.append(Greek.getCorrespondingSymbol(string.charAt(0)));
+            string = string.substring(1);
+            while (Greek.index(string) == 0) {
+               buf.append(Greek.getCorrespondingSymbol(string.charAt(0)));
+               string = string.substring(1);
+            }
+            super.add(new Chunk(buf.toString(), symbol));
+         }
+      }
+      super.add(new Chunk(string, font));
+   }
 
-// implementation of the Element-methods
+   // implementation of the Element-methods
 
-    /**
-     * Processes the element by adding it (or the different parts) to an
-	 * <CODE>ElementListener</CODE>. 
-     *
-	 * @param	listener	an <CODE>ElementListener</CODE>
-	 * @return	<CODE>true</CODE> if the element was processed successfully
-     */
+   /**
+    * Processes the element by adding it (or the different parts) to an
+    * <CODE>ElementListener</CODE>.
+    *
+    * @param	listener	an <CODE>ElementListener</CODE>
+    * @return	<CODE>true</CODE> if the element was processed successfully
+    */
 
-    public final boolean process(ElementListener listener) {
-		try {
-			for (Iterator i = iterator(); i.hasNext(); ) {
-				listener.add((Element) i.next());
-			}
-			return true;
-		}
-		catch(DocumentException de) {
-			return false;
-		}
-	}
+   public final boolean process(ElementListener listener) {
+      try {
+         for (Iterator i = iterator(); i.hasNext(); ) {
+            listener.add((Element) i.next());
+         }
+         return true;
+      }
+      catch(DocumentException de) {
+         return false;
+      }
+   }
 
-    /**
-     * Gets the type of the text element. 
-     *
-     * @return	a type
-     */
+   /**
+    * Gets the type of the text element.
+    *
+    * @return	a type
+    */
 
-    public int type() {
-		return Element.PHRASE;
-	}		
+   public int type() {
+      return Element.PHRASE;
+   }
 
-    /**
-     * Gets all the chunks in this element. 
-     *
-     * @return	an <CODE>ArrayList</CODE>
-     */
+   /**
+    * Gets all the chunks in this element.
+    *
+    * @return	an <CODE>ArrayList</CODE>
+    */
 
-    public ArrayList getChunks() {
-		 ArrayList tmp = new ArrayList();
-		 for (Iterator i = iterator(); i.hasNext(); ) {
-			 tmp.addAll(((Element) i.next()).getChunks());
-		 }
-		 return tmp;
-	}
+   public ArrayList getChunks() {
+      ArrayList tmp = new ArrayList();
+      for (Iterator i = iterator(); i.hasNext(); ) {
+         tmp.addAll(((Element) i.next()).getChunks());
+      }
+      return tmp;
+   }
 
-// overriding some of the ArrayList-methods
+   // overriding some of the ArrayList-methods
 
-	/**
-	 * Adds a <CODE>Chunk</CODE>, an <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
-	 * to this <CODE>Phrase</CODE>.
-	 *
-	 * @param	index	index at which the specified element is to be inserted
-	 * @param	object	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
-	 * @return	<CODE>void</CODE>
-	 * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
-	 */
+   /**
+    * Adds a <CODE>Chunk</CODE>, an <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
+    * to this <CODE>Phrase</CODE>.
+    *
+    * @param	index	index at which the specified element is to be inserted
+    * @param	object	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+    * @return	<CODE>void</CODE>
+    * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+    */
 
-	public void add(int index, Object o) {
-		try {
-			Element element = (Element) o;
-			if (element.type() == Element.CHUNK ||
-				element.type() == Element.PHRASE ||
-				element.type() == Element.ANCHOR ||
-				element.type() == Element.TABLE) { // line added by David Freels
-				super.add(index, element);
-			}
-			else {
-				throw new ClassCastException(String.valueOf(element.type()));
-			}
-		}
-		catch(ClassCastException cce) {
-			throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
-		}
-	}
+   public void add(int index, Object o) {
+      try {
+         Element element = (Element) o;
+         if (element.type() == Element.CHUNK ||
+         element.type() == Element.PHRASE ||
+         element.type() == Element.ANCHOR ||
+         element.type() == Element.TABLE) { // line added by David Freels
+            super.add(index, element);
+         }
+         else {
+            throw new ClassCastException(String.valueOf(element.type()));
+         }
+      }
+      catch(ClassCastException cce) {
+         throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
+      }
+   }
 
-	/**
-	 * Adds a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
-	 * to this <CODE>Phrase</CODE>.
-	 *
-	 * @param	object	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
-	 * @return	a boolean
-	 * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
-	 */
+   /**
+    * Adds a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
+    * to this <CODE>Phrase</CODE>.
+    *
+    * @param	object	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+    * @return	a boolean
+    * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+    */
 
-	public boolean add(Object o) {
-		try {
-			Element element = (Element) o;
-			switch(element.type()) {
-			case Element.CHUNK:
-				Chunk chunk = (Chunk) o;
-				return super.add(chunk);
-			case Element.PHRASE:
-				Phrase phrase = (Phrase) o;
-				return this.add(phrase);
-			case Element.ANCHOR:
-				Anchor anchor = (Anchor) o;
-				return this.add(anchor);
-			case Element.TABLE: // case added by David Freels
-				Table table = (Table) o;
-				return super.add(o);
-			case Element.LIST:
-				List list = (List) o;
-				return super.add(list);
-			default:
-				throw new ClassCastException(String.valueOf(element.type()));
-			}
-		}
-		catch(ClassCastException cce) {
-			throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
-		}
-	}
+   public boolean add(Object o) {
+      if (o instanceof String) {
+         return super.add(new Chunk((String) o, font()));
+      }
+      try {
+         Element element = (Element) o;
+         switch(element.type()) {
+            case Element.CHUNK:
+            Chunk chunk = (Chunk) o;
+            return super.add(chunk);
+            case Element.PHRASE:
+            Phrase phrase = (Phrase) o;
+            boolean success = true;
+            for (Iterator i = phrase.iterator(); i.hasNext(); ) {
+               success &= super.add(i.next());
+            }
+            return success;
+            case Element.ANCHOR:
+            return super.add((Anchor) o);
+            case Element.TABLE: // case added by David Freels
+            Table table = (Table) o;
+            return super.add(o);
+            case Element.LIST:
+            List list = (List) o;
+            return super.add(list);
+            default:
+            throw new ClassCastException(String.valueOf(element.type()));
+         }
+      }
+      catch(ClassCastException cce) {
+         throw new ClassCastException("Insertion of illegal Element: " + cce.getMessage());
+      }
+   }
 
-	/**
-	 * Adds a <CODE>Phrase</CODE> to this <CODE>Phrase</CODE>.
-	 *
-	 * @param	phrase		a <CODE>Phrase</CODE>
-	 * @return	a boolean
-	 */
+   /**
+    * Adds a collection of <CODE>Chunk</CODE>s
+    * to this <CODE>Phrase</CODE>.
+    *
+    * @param	collection	a collection of <CODE>Chunk</CODE>s, <CODE>Anchor</CODE>s and <CODE>Phrase</CODE>s.
+    * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
+    * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+    */
 
-	public boolean add(Phrase phrase) {
-		if (phrase.type() == Element.ANCHOR) {
-			return super.add(phrase);
-		}
-		Chunk chunk;
-		boolean success = true;
-		for (Iterator i = phrase.iterator(); i.hasNext(); ) {
-			success &= super.add(i.next());
-		}
-		return success;
-	}
+   public boolean addAll(Collection collection) {
+      for (Iterator iterator = collection.iterator(); iterator.hasNext(); ) {
+         this.add(iterator.next());
+      }
+      return true;
+   }
 
-	/**
-	 * Adds a <CODE>String</CODE> to this <CODE>Phrase</CODE>.
-	 * <P>
-	 * The <CODE>String</CODE> is first converted to a Chunk with the font of the phrase.
-	 *
-	 * @param	string		a <CODE>String</CODE>
-	 * @return	a boolean
-	 */
+   /**
+    * Adds a <CODE>Image</CODE> to the <CODE>Paragraph</CODE>.
+    *
+    * @param	image		the image to add.
+    */
 
-	public boolean add(String string) {
-		return super.add(new Chunk(string, font()));
-	}
+   protected boolean addSpecial(Object object) {
+      return super.add(object);
+   }
 
-	/**
-	 * Adds a collection of <CODE>Chunk</CODE>s
-	 * to this <CODE>Phrase</CODE>.
-	 *
-	 * @param	collection	a collection of <CODE>Chunk</CODE>s, <CODE>Anchor</CODE>s and <CODE>Phrase</CODE>s.
-	 * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
-	 * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
-	 */
+   // methods
 
-	public boolean addAll(Collection collection) {	
-		for (Iterator iterator = collection.iterator(); iterator.hasNext(); ) {
-			this.add(iterator.next());
-		}
-		return true;
-	}	
+   /**
+    * Sets the leading of this phrase.
+    *
+    * @param	leading		the new leading
+    * @return	<CODE>void</CODE>
+    */
 
-	/**
-	 * Adds a <CODE>Image</CODE> to the <CODE>Paragraph</CODE>.
-	 * 
-	 * @param	image		the image to add.
-	 */
+   public final void setLeading(int leading) {
+      this.leading = leading;
+   }
 
-	protected void addSpecial(Object object) {
-		super.add(object);
-	}
+   // methods to retrieve information
 
-// methods
+   /**
+    * Checks is this <CODE>Phrase</CODE> contains no or 1 empty <CODE>Chunk</CODE>.
+    *
+    * @return	<CODE>false</CODE> if the <CODE>Phrase</CODE>
+    * contains more than one or more non-empty<CODE>Chunk</CODE>s.
+    */
 
-	/**
-	 * Sets the leading of this phrase.
-	 *
-	 * @param	leading		the new leading
-	 * @return	<CODE>void</CODE>
-	 */
+   public final boolean isEmpty() {
+      switch(size()) {
+         case 0:
+         return true;
+         case 1:
+         Element element = (Element) get(0);
+         if (element.type() == Element.CHUNK && ((Chunk) element).isEmpty()) {
+            return true;
+         }
+         return false;
+         default:
+         return false;
+      }
+   }
 
-	public final void setLeading(int leading) {
-		this.leading = leading;
-	}
+   /**
+    * Gets the leading of this phrase.
+    *
+    * @return	the linespacing
+    */
 
-// methods to retrieve information
+   public final int leading() {
+      return leading;
+   }
 
-	/**
-	 * Checks is this <CODE>Phrase</CODE> contains no or 1 empty <CODE>Chunk</CODE>.
-	 *
-	 * @return	<CODE>false</CODE> if the <CODE>Phrase</CODE>
-	 * contains more than one or more non-empty<CODE>Chunk</CODE>s.
-	 */
+   /**
+    * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
+    *
+    * @return	a <CODE>Font</CODE>
+    */
 
-	public final boolean isEmpty() {
-		switch(size()) {
-		case 0:
-			return true;
-		case 1:
-			Element element = (Element) get(0);
-			if (element.type() == Element.CHUNK && ((Chunk) element).isEmpty()) {
-				return true;
-			}
-			return false;
-		default:
-			return false;
-		}
-	}
+   public final Font font() {
+      if (size() < 1) {
+         return new Font();
+      }
+      try {
+         Element element = (Element) get(0);
+         switch(element.type()) {
+            case Element.CHUNK:
+            return ((Chunk) element).font();
+            case Element.PHRASE:
+            case Element.ANCHOR:
+            return ((Phrase) element).font();
+            default:
+            return new Font();
+         }
+      }
+      catch(ClassCastException cce) {
+         return new Font();
+      }
+   }
 
-	/**
-	 * Gets the leading of this phrase.
-	 *
-	 * @return	the linespacing
-	 */
+   /**
+    * Returns a representation of this <CODE>Phrase</CODE>.
+    *
+    * @return	a <CODE>String</CODE>
+    */
 
-	public final int leading() {
-		return leading;
-	}
-
-	/**
-	 * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
-	 *
-	 * @return	a <CODE>Font</CODE>
-	 */
-
-	public final Font font() {
-		if (size() < 1) {
-			return new Font();
-		}
-		try {
-			Element element = (Element) get(0);
-			switch(element.type()) {
-			case Element.CHUNK:
-				return ((Chunk) element).font();
-			case Element.PHRASE:
-			case Element.ANCHOR:
-				return ((Phrase) element).font();
-			default:
-				return new Font();
-			}
-		}
-		catch(ClassCastException cce) {
-			return new Font();
-		}
-	}
-
-	/**
-	 * Returns a representation of this <CODE>Phrase</CODE>.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 */
-
-	public String toString() {
-		StringBuffer buf = new StringBuffer("<phrase leading=\"");
-		buf.append(leading);
-		buf.append("\">\n");
-		for (Iterator i = iterator(); i.hasNext(); ) {
-			buf.append(i.next().toString());
-		}
-		buf.append("</phrase>\n");								
-		return buf.toString();
-	}
+   public String toString() {
+      StringBuffer buf = new StringBuffer("<phrase leading=\"");
+      buf.append(leading);
+      buf.append("\">\n");
+      for (Iterator i = iterator(); i.hasNext(); ) {
+         buf.append(i.next().toString());
+      }
+      buf.append("</phrase>\n");
+      return buf.toString();
+   }
 }
