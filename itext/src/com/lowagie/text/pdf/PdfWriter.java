@@ -419,6 +419,10 @@ public class PdfWriter extends DocWriter {
     public static final int AllowAssembly = 1024;
 /** The operation permitted when the document is opened with the user password */
     public static final int AllowDegradedPrinting = 4;
+/** Type of encryption */
+    public static final boolean STRENGTH40BITS = false;
+/** Type of encryption */
+    public static final boolean STRENGTH128BITS = true;
 
 /** this is the header of a PDF document */
     private static byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e0\u00e1\u00e2\u00e3\n");
@@ -999,7 +1003,8 @@ public class PdfWriter extends DocWriter {
         pdf.setViewerPreferences(preferences);
     }
     
-    /** Sets the encryption options for this document. The userPassword and the
+    /**
+     * Sets the encryption options for this document. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
      *  is replaced by a random string. The open permissions for the document can be
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations, 
@@ -1017,5 +1022,23 @@ public class PdfWriter extends DocWriter {
         crypto = new PdfEncryption();
         crypto.setupAllKeys(userPassword, ownerPassword, permissions, strength128Bits);
         body.setCrypto(crypto);
+    }
+    
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations, 
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param strength128Bits true for 128 bit key length. false for 40 bit key length
+     * @throws DocumentException if document is already open
+     */  
+    
+    public void setEncryption(boolean strength128Bits, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength128Bits);
     }
 }
