@@ -128,6 +128,12 @@ public class FontFactory extends java.lang.Object {
         trueTypeFonts.setProperty(ZAPFDINGBATS, "");
     }
     
+/** This is the default encoding to use. */
+    public static String defaultEncoding = BaseFont.WINANSI;
+    
+/** This is the default value of the <VAR>embedded</VAR> variable. */
+    public static boolean defaultEmbedding = BaseFont.NOT_EMBEDDED;
+    
 /** Creates new FontFactory */
     private FontFactory() {
     }
@@ -213,7 +219,7 @@ public class FontFactory extends java.lang.Object {
             color = ElementTags.decodeColor(value);
         }
         if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
-        if (encoding == null) encoding = BaseFont.WINANSI;
+        if (encoding == null) encoding = defaultEncoding;
         return getFont(fontname, encoding, embedded, size, style, color);
     }
     
@@ -267,7 +273,7 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname, String encoding, float size, int style, Color color) {
-        return getFont(fontname, encoding, false, size, style, color);
+        return getFont(fontname, encoding, defaultEmbedding, size, style, color);
     }
     
 /**
@@ -280,7 +286,7 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname, String encoding, float size, int style) {
-        return getFont(fontname, encoding, false, size, style, null);
+        return getFont(fontname, encoding, defaultEmbedding, size, style, null);
     }
     
 /**
@@ -292,7 +298,7 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname, String encoding, float size) {
-        return getFont(fontname, encoding, false, size, Font.UNDEFINED, null);
+        return getFont(fontname, encoding, defaultEmbedding, size, Font.UNDEFINED, null);
     }
     
 /**
@@ -303,7 +309,7 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname, String encoding) {
-        return getFont(fontname, encoding, false, Font.UNDEFINED, Font.UNDEFINED, null);
+        return getFont(fontname, encoding, defaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
     }
     
 /**
@@ -316,7 +322,7 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname, float size, int style, Color color) {
-        return getFont(fontname, BaseFont.WINANSI, false, size, style, color);
+        return getFont(fontname, defaultEncoding, defaultEmbedding, size, style, color);
     }
     
 /**
@@ -328,7 +334,7 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname, float size, int style) {
-        return getFont(fontname, BaseFont.WINANSI, false, size, style, null);
+        return getFont(fontname, defaultEncoding, defaultEmbedding, size, style, null);
     }
     
 /**
@@ -339,7 +345,7 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname, float size) {
-        return getFont(fontname, BaseFont.WINANSI, false, size, Font.UNDEFINED, null);
+        return getFont(fontname, defaultEncoding, defaultEmbedding, size, Font.UNDEFINED, null);
     }
     
 /**
@@ -349,7 +355,7 @@ public class FontFactory extends java.lang.Object {
  */
     
     public static Font getFont(String fontname) {
-        return getFont(fontname, BaseFont.WINANSI, false, Font.UNDEFINED, Font.UNDEFINED, null);
+        return getFont(fontname, defaultEncoding, defaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
     }
     
 /**
