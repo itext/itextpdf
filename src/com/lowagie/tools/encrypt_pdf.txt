@@ -19,7 +19,7 @@ You'll need iText to run it (http://www.lowagie.com/iText).
 
 Command line example:
 
-java -cp .;itext.jar encrypt_pdf input.pdf output.pdf "" master 10100000 128
+java -cp itext.jar com.lowagie.tools.encrypt_pdf input.pdf output.pdf "" master 10100000 128
 
 
 Author: Paulo Soares (psoares@consiste.pt)
