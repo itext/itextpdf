@@ -503,6 +503,18 @@ public class Document implements DocListener {
 	}
 
 	/**
+	 * Returns the current page number.
+	 *
+	 * @return	the current page number
+	 *
+	 * @author	David Freels
+	 */
+
+	public int getPageNumber() {
+		return this.pageN;
+	}
+
+	/**
 	 * Closes the document.
 	 * <P>
 	 * Once all the content has been written in the body, you have to close
