@@ -135,10 +135,11 @@ class Type1Font extends BaseFont
     private int StdVW = 80;
     
 /** Represents the section CharMetrics in the AFM file. Each
- *  element of this array contains a <CODE>Object[4]</CODE> with an
+ *  value of this array contains a <CODE>Object[4]</CODE> with an
  *  Integer, Integer, String and int[]. This is the code, width, name and char bbox.
+ *  The key is the name of the char and also an Integer with the char number.
  */
-    private ArrayList CharMetrics = new ArrayList();
+    private HashMap CharMetrics = new HashMap();
 /** Represents the section KernPairs in the AFM file. The key is
  *  the name of the first character and the value is a <CODE>Object[]</CODE>
  *  with 2 elements for each kern pair. Position 0 is the name of
@@ -244,8 +245,31 @@ class Type1Font extends BaseFont
                 }
             }
         }
+        else if (afmFile.toLowerCase().endsWith(".pfm")) {
+            try {
+                ByteArrayOutputStream ba = new ByteArrayOutputStream();
+                if (ttfAfm == null)
+                    rf = new RandomAccessFileOrArray(afmFile);
+                else
+                    rf = new RandomAccessFileOrArray(ttfAfm);
+                Pfm2afm.convert(rf, ba);
+                rf.close();
+                rf = new RandomAccessFileOrArray(ba.toByteArray());
+                process(rf);
+            }
+            finally {
+                if (rf != null) {
+                    try {
+                        rf.close();
+                    }
+                    catch (Exception e) {
+                        // empty on purpose
+                    }
+                }
+            }
+        }
         else
-            throw new DocumentException(afmFile + " is not an AFM font file.");
+            throw new DocumentException(afmFile + " is not an AFM or PFM font file.");
         try {
             EncodingScheme = EncodingScheme.trim();
             if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
@@ -269,29 +293,18 @@ class Type1Font extends BaseFont
  * @param name the glyph name
  * @return the width of the char
  */
-    int getRawWidth(int c, String name)
-    {
-        try {
-            if (name == null) { // font specific
-                for (int k = 0; k < CharMetrics.size(); ++k) {
-                    Object metrics[] = (Object[])CharMetrics.get(k);
-                    if (((Integer)(metrics[0])).intValue() == c)
-                        return ((Integer)(metrics[1])).intValue();
-                }
-            }
-            else {
-                if (name.equals(".notdef"))
-                    return 0;
-                for (int k = 0; k < CharMetrics.size(); ++k) {
-                    Object metrics[] = (Object[])CharMetrics.get(k);
-                    if (name.equals(metrics[2]))
-                        return ((Integer)(metrics[1])).intValue();
-                }
-            }
+    int getRawWidth(int c, String name) {
+        Object metrics[];
+        if (name == null) { // font specific
+            metrics = (Object[])CharMetrics.get(new Integer(c));
         }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
+        else {
+            if (name.equals(".notdef"))
+                return 0;
+            metrics = (Object[])CharMetrics.get(name);
         }
+        if (metrics != null)
+            return ((Integer)(metrics[1])).intValue();
         return 0;
     }
     
@@ -419,7 +432,10 @@ class Type1Font extends BaseFont
                                          Integer.parseInt(tokc.nextToken())};
                 }
             }
-            CharMetrics.add(new Object[]{C, WX, N, B});
+            Object metrics[] = new Object[]{C, WX, N, B};
+            if (C.intValue() >= 0)
+                CharMetrics.put(C, metrics);
+            CharMetrics.put(N, metrics);
         }
         if (isMetrics)
             throw new DocumentException("Missing EndCharMetrics in " + fileName);
@@ -775,22 +791,17 @@ class Type1Font extends BaseFont
     }
     
     protected int[] getRawCharBBox(int c, String name) {
+        Object metrics[];
         if (name == null) { // font specific
-            for (int k = 0; k < CharMetrics.size(); ++k) {
-                Object metrics[] = (Object[])CharMetrics.get(k);
-                if (((Integer)(metrics[0])).intValue() == c)
-                    return (int[])(metrics[3]);
-            }
+            metrics = (Object[])CharMetrics.get(new Integer(c));
         }
         else {
             if (name.equals(".notdef"))
                 return null;
-            for (int k = 0; k < CharMetrics.size(); ++k) {
-                Object metrics[] = (Object[])CharMetrics.get(k);
-                if (name.equals(metrics[2]))
-                    return (int[])(metrics[3]);
-            }
+            metrics = (Object[])CharMetrics.get(name);
         }
+        if (metrics != null)
+            return ((int[])(metrics[3]));
         return null;
     }
     

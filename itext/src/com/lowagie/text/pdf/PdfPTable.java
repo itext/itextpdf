@@ -73,7 +73,7 @@ public class PdfPTable implements Element{
     /** The index of the original <CODE>PdfcontentByte</CODE>.
      */    
     public static final int BASECANVAS = 0;
-    /** The index of the duplicate <CODE>PdfContentByte</CODE> where the backgroung will be drawn.
+    /** The index of the duplicate <CODE>PdfContentByte</CODE> where the background will be drawn.
      */    
     public static final int BACKGROUNDCANVAS = 1;
     /** The index of the duplicate <CODE>PdfContentByte</CODE> where the border lines will be drawn.

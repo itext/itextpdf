@@ -805,7 +805,7 @@ public class PdfWriter extends DocWriter {
      * Holds value of property fullCompression.
      */
     protected boolean fullCompression = false;
-    
+        
     // constructor
     
     protected PdfWriter() {
@@ -2078,7 +2078,8 @@ public class PdfWriter extends DocWriter {
      * @param version the version number
      */
     public void setPdfVersion(char version) {
-        HEADER[VPOINT] = (byte)version;
+        if (HEADER.length > VPOINT)
+            HEADER[VPOINT] = (byte)version;
     }
     
     /** Reorder the pages in the document. A <CODE>null</CODE> argument value

@@ -138,6 +138,8 @@ public class ColumnText {
     public static final int DIGIT_TYPE_AN_EXTENDED = ArabicLigaturizer.DIGIT_TYPE_AN_EXTENDED;
     
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
+    
+    /** the space char ratio */
     public static final float GLOBAL_SPACE_CHAR_RATIO = 0;
     
     /** Signals that there is no more text available. */
@@ -568,6 +570,13 @@ public class ColumnText {
         setSimpleColumn(llx, lly, urx, ury);
     }
     
+    /**
+     * Simplified method for rectangular columns.
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     */
     public void setSimpleColumn(float llx, float lly, float urx, float ury) {
         leftX = Math.min(llx, urx);
         maxY = Math.max(lly, ury);
@@ -1353,20 +1362,36 @@ public class ColumnText {
         }
     }
     
+    /**
+     * Gets the canvas.
+     * @return a PdfContentByte.
+     */
     public PdfContentByte getCanvas() {
         return canvas;
     }
     
+    /**
+     * Sets the canvas.
+     * @param canvas
+     */
     public void setCanvas(PdfContentByte canvas) {
         this.canvas = canvas;
         if (compositeColumn != null)
             compositeColumn.setCanvas(canvas);
     }
     
+    /**
+     * Checks if the element has a height of 0.
+     * @return true or false
+     */
     public boolean zeroHeightElement() {
         return composite == true && compositeElements.size() > 0 && ((Element)compositeElements.getFirst()).type() == Element.GRAPHIC;
     }
 
+    /**
+     * Checks if UseAscender is enabled/disabled.
+     * @return true is the adjustment of the first line height is based on max ascender.
+     */
     public boolean isUseAscender() {
         return useAscender;
     }
