@@ -2,7 +2,7 @@
  * @(#)PdfLine.java					0.24 2000/02/08
  *               iText0.3:			0.24 2000/02/14
  *               iText0.35:			0.24 2000/08/11
- * 
+ *
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -56,7 +56,7 @@ public class PdfLine {
 
 	/** The arraylist containing the chunks. */
 	protected ArrayList line = new ArrayList();
-								
+
 	/** The left indentation of the line. */
 	protected int left;
 
@@ -67,7 +67,7 @@ public class PdfLine {
 	protected int alignment;
 
 	/** The heigth of the line. */
-	protected int height;
+	protected float height;
 
 	/** The listsymbol (if necessary). */
 	protected PdfChunk listSymbol = null;
@@ -80,7 +80,7 @@ public class PdfLine {
 	/**
 	 * Constructs a new <CODE>PdfLine</CODE>-object.
 	 *
-	 * @param	left		the limit of the line at the left  
+	 * @param	left		the limit of the line at the left
 	 * @param	right		the limit of the line at the right
 	 * @param	alignment	the alignment of the line
 	 * @param	height		the height of the line
@@ -88,7 +88,7 @@ public class PdfLine {
 	 * @since   iText0.30
 	 */
 
-	PdfLine(int left, int right, int alignment, int height) {
+	PdfLine(int left, int right, int alignment, float height) {
 		this.left = left;
 		this.width = right - left;
 		this.alignment = alignment;
@@ -159,7 +159,7 @@ public class PdfLine {
 
 	/**
 	 * Returns an iterator of <CODE>PdfChunk</CODE>s.
-	 *	 
+	 *
 	 * @return	an <CODE>Iterator</CODE>
 	 *
 	 * @since	iText0.30
@@ -171,13 +171,13 @@ public class PdfLine {
 
 	/**
 	 * Returns the height of the line.
-	 * 
+	 *
 	 * @return	a value
 	 *
 	 * @since	iText0.30
 	 */
 
-	final int height() {
+	final float height() {
 		return height;
 	}
 
@@ -216,7 +216,7 @@ public class PdfLine {
 	 * Resets the alignment of this line.
 	 * <P>
 	 * The alignment of the last line of for instance a <CODE>Paragraph</CODE>
-	 * that has to be justified, has to be reset to <VAR>ALIGN_LEFT</VAR>. 
+	 * that has to be justified, has to be reset to <VAR>ALIGN_LEFT</VAR>.
 	 *
 	 * @return	<CODE>void</CODE>
 	 *
@@ -245,7 +245,7 @@ public class PdfLine {
 	 * Returns the number of space-characters in this line.
 	 *
 	 * @return	a value
-	 * 
+	 *
 	 * @since	iText0.30
 	 */
 
@@ -265,10 +265,10 @@ public class PdfLine {
 	 * Sets the listsymbol of this line.
 	 * <P>
 	 * This is only necessary for the first line of a <CODE>ListItem</CODE>.
-	 * 
+	 *
 	 * @return	<CODE>void</CODE>
 	 *
-	 * @since	iText0.30 
+	 * @since	iText0.30
 	 */
 
 	public void setListItem(ListItem listItem) {

@@ -1,8 +1,7 @@
 /*
- * @(#)PdfCell.java				0.29 2000/02/13
- *       release iText0.3:		0.28 2000/02/14
- *       release iText0.35:		0.28 2000/08/11
- * 
+ * $Id$
+ * $Name$
+ *
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -29,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -39,10 +38,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.lowagie.text.Cell;
-import com.lowagie.text.Chunk;						 
-import com.lowagie.text.Element;						 
-import com.lowagie.text.List;						 
-import com.lowagie.text.ListItem;						 
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Element;
+import com.lowagie.text.List;
+import com.lowagie.text.ListItem;
 import com.lowagie.text.Rectangle;
 
 /**
@@ -56,8 +55,6 @@ import com.lowagie.text.Rectangle;
  * @see		PdfTable
  *
  * @author  bruno@lowagie.com
- * @version 0.29 2000/02/13
- * @since   iText0.30
  */
 
 public class PdfCell extends Rectangle {
@@ -85,6 +82,7 @@ public class PdfCell extends Rectangle {
 	/** Indicates if this cell belongs to the header of a <CODE>PdfTable</CODE> */
 	private boolean header = false;
 
+
 // constructors
 
 	/**
@@ -97,8 +95,6 @@ public class PdfCell extends Rectangle {
 	 * @param	top			the top border of the <CODE>PdfCell</CODE>
 	 * @param	cellspacing	the cellspacing of the <CODE>Table</CODE>
 	 * @param	cellpadding	the cellpadding	of the <CODE>Table</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public PdfCell(Cell cell, int rownumber, int left, int right, int top, int cellspacing, int cellpadding) {
@@ -119,7 +115,36 @@ public class PdfCell extends Rectangle {
 		int alignment = cell.horizontalAlignment();
 		left += cellspacing + cellpadding;
 		right -= cellspacing + cellpadding;
-		PdfLine line = new PdfLine(left, right, alignment, leading + cellspacing);
+
+
+		/*
+		 * Fixes bug 224848
+		 * 03/01/3001 David Freels
+		 * The height variable is adjusted just before the PDFLine is created
+		 * allowing the text to be rendered accordingly. The ALIGN_MIDDLE calculation
+		 * will be a little off for single row cells.
+		 */
+		float height = leading + cellspacing;
+		float rowSpan = (float)cell.rowspan();
+
+		switch(cell.verticalAlignment())
+		{
+			case Element.ALIGN_BOTTOM:
+					 height *= rowSpan;
+					 break;
+			case Element.ALIGN_MIDDLE:
+					 height *= (rowSpan / 1.5);
+					 break;
+			default:   //Alignment will be top
+					 if(rowSpan < 2)
+					 {
+						height -= (height / 2.5);
+					 }
+					break;
+		}
+
+		PdfLine line = new PdfLine(left, right, alignment, height);
+
 		// we loop over all the elements of the cell
 		for (Iterator i = cell.getElements(); i.hasNext(); ) {
 			element = (Element) i.next();
@@ -175,7 +200,7 @@ public class PdfCell extends Rectangle {
 		}
 		if (line.size() > 0) {
 			lines.add(line);
-		} 
+		}
 		if (lines.size() > 0) {
 			((PdfLine)lines.get(lines.size() - 1)).resetAlignment();
 		}
@@ -188,15 +213,13 @@ public class PdfCell extends Rectangle {
 		rowspan = cell.rowspan();
 		this.rownumber = rownumber;
 	}
-	
+
 // overriding of the Rectangle methods
 
 	/**
 	 * Returns the lower left x-coordinaat.
 	 *
 	 * @return		the lower left x-coordinaat
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int left() {
@@ -207,8 +230,6 @@ public class PdfCell extends Rectangle {
 	 * Returns the upper right x-coordinate.
 	 *
 	 * @return		the upper right x-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int right() {
@@ -219,8 +240,6 @@ public class PdfCell extends Rectangle {
 	 * Returns the upper right y-coordinate.
 	 *
 	 * @return		the upper right y-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int top() {
@@ -231,8 +250,6 @@ public class PdfCell extends Rectangle {
 	 * Returns the lower left y-coordinate.
 	 *
 	 * @return		the lower left y-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int bottom() {
@@ -249,8 +266,6 @@ public class PdfCell extends Rectangle {
 	 * @param	top		the top of the part of the table that can be drawn
 	 * @param	bottom	the bottom of the part of the table that can be drawn
 	 * @return	an <CODE>ArrayList</CODE> of <CODE>PdfLine</CODE>s
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ArrayList getLines(int top, int bottom) {
@@ -261,8 +276,8 @@ public class PdfCell extends Rectangle {
 
 		// initialisations
 		PdfLine line;
-		int lineHeight;
-		int currentPosition = Math.min(top(), top);
+		float lineHeight;
+		float currentPosition = Math.min(top(), top);
 		ArrayList result = new ArrayList();
 
 		// we loop over the lines
@@ -281,6 +296,7 @@ public class PdfCell extends Rectangle {
 			}
 		}
 		// if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
+
 		// bugfix solving an endless loop problem by Leslie Baski
 		if (!header && bottom <= bottom()) {
 			lines = new ArrayList();
@@ -292,8 +308,6 @@ public class PdfCell extends Rectangle {
 	 * Indicates that this cell belongs to the header of a <CODE>PdfTable</CODE>.
 	 *
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	final void setHeader() {
@@ -307,8 +321,6 @@ public class PdfCell extends Rectangle {
 	 * they will be repeated on each following page anyway!
 	 *
 	 * @return	<CODE>true</CODE> if all the lines are allready drawn; <CODE>false</CODE> otherwise.
-	 *
-	 * @since	iText0.30
 	 */
 
 	final boolean mayBeRemoved() {
@@ -319,22 +331,18 @@ public class PdfCell extends Rectangle {
 	 * Returns the number of lines in the cell.
 	 *
 	 * @return	a value
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int size() {
 		return lines.size();
 	}
 
-// methods to retrieve membervariables							   
+// methods to retrieve membervariables
 
 	/**
-	 * Gets the leading of a cell. 
+	 * Gets the leading of a cell.
 	 *
 	 * @return	the leading of the lines is the cell.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int leading() {
@@ -342,23 +350,19 @@ public class PdfCell extends Rectangle {
 	}
 
 	/**
-	 * Gets the number of the row this cell is in.. 
+	 * Gets the number of the row this cell is in..
 	 *
 	 * @return	a number
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int rownumber() {
 		return rownumber;
-	}							   
+	}
 
 	/**
-	 * Gets the rowspan of a cell. 
+	 * Gets the rowspan of a cell.
 	 *
 	 * @return	the rowspan of the cell
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int rowspan() {
@@ -366,11 +370,9 @@ public class PdfCell extends Rectangle {
 	}
 
 	/**
-	 * Gets the cellspacing of a cell. . 
+	 * Gets the cellspacing of a cell. .
 	 *
 	 * @return	a value
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int cellspacing() {
@@ -378,11 +380,9 @@ public class PdfCell extends Rectangle {
 	}
 
 	/**
-	 * Gets the cellpadding of a cell.. 
+	 * Gets the cellpadding of a cell..
 	 *
 	 * @return	a value
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int cellpadding() {

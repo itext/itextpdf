@@ -4,7 +4,7 @@
  *               rugPdf0.20:		0.13 99/11/30
  *               iText0.3:			0.23 2000/02/14
  *               iText0.35:         0.23 2000/08/11
- * 
+ *
  * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -31,7 +31,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -62,18 +62,18 @@ import com.lowagie.text.Rectangle;
 class PdfRectangle extends PdfArray {
 
 // membervariables
-	
+
 	/** lower left x */
-	private int llx = 0;
-	
+	private float llx = 0;
+
 	/** lower left y */
-	private int lly = 0;
-	
+	private float lly = 0;
+
 	/** upper right x */
-	private int urx = 0;
-	
+	private float urx = 0;
+
 	/** upper right y */
-	private int ury = 0;
+	private float ury = 0;
 
 // constructors
 
@@ -88,7 +88,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	PdfRectangle(int llx, int lly, int urx, int ury) {
+	PdfRectangle(float llx, float lly, float urx, float ury) {
 		super();
 		this.llx = llx;
 		this.lly = lly;
@@ -109,7 +109,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	PdfRectangle(int urx, int ury) {
+	PdfRectangle(float urx, float ury) {
 		this(0, 0, urx, ury);
 	}
 
@@ -148,7 +148,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int left() {
+	final float left() {
 		return llx;
 	}
 
@@ -160,7 +160,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int right() {
+	final float right() {
 		return urx;
 	}
 
@@ -172,7 +172,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int top() {
+	final float top() {
 		return ury;
 	}
 
@@ -184,7 +184,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int bottom() {
+	final float bottom() {
 		return lly;
 	}
 
@@ -197,7 +197,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int left(int margin) {
+	final float left(int margin) {
 		return llx + margin;
 	}
 
@@ -210,7 +210,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int right(int margin) {
+	final float right(int margin) {
 		return urx - margin;
 	}
 
@@ -223,7 +223,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int top(int margin) {
+	final float top(int margin) {
 		return ury - margin;
 	}
 
@@ -236,7 +236,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int bottom(int margin) {
+	final float bottom(int margin) {
 		return lly + margin;
 	}
 
@@ -248,7 +248,7 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int width() {
+	final float width() {
 		return urx - llx;
 	}
 
@@ -260,13 +260,13 @@ class PdfRectangle extends PdfArray {
 	 * @since		rugPdf0.10
 	 */
 
-	final int height() {
+	final float height() {
 		return ury - lly;
 	}
 
 	/**
 	 * Swaps the values of urx and ury and of lly and llx in order to rotate the rectangle.
-	 * 
+	 *
 	 * @return		a <CODE>PdfRectangle</CODE>
 	 *
 	 * @since		rugPdf0.10

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * $Name$
- * 
+ *
  * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
@@ -72,7 +72,7 @@ import java.util.Iterator;
  * @see		com.lowagie.text.Document
  * @see		com.lowagie.text.DocListener
  * @see		PdfWriter
- * 
+ *
  * @author  bruno@lowagie.com
  */
 
@@ -127,7 +127,7 @@ class PdfDocument extends Document implements DocListener {
 
 		void addTitle(String title) {
 			put(PdfName.TITLE, new PdfString(title));
-		}				 
+		}
 
 		/**
 		 * Adds the subject to the document.
@@ -137,7 +137,7 @@ class PdfDocument extends Document implements DocListener {
 
 		void addSubject(String subject) {
 			put(PdfName.SUBJECT, new PdfString(subject));
-		}				 
+		}
 
 		/**
 		 * Adds some keywords to the document.
@@ -339,7 +339,7 @@ class PdfDocument extends Document implements DocListener {
 			return;
 		}
 		throw new DocumentException("You can only add a writer to a PdfDocument once.");
-	}		  
+	}
 
 	/**
 	 * Sets the pagesize.
@@ -357,11 +357,9 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * Changes the header of this document.
-	 * 
+	 *
 	 * @param	header		the new header
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setHeader(HeaderFooter header) {
@@ -373,7 +371,7 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * Resets the header of this document.
-	 * 
+	 *
 	 * @param	header		the new header
 	 * @return	<CODE>void</CODE>
 	 *
@@ -389,7 +387,7 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * Changes the footer of this document.
-	 * 
+	 *
 	 * @param	footer		the new footer
 	 */
 
@@ -410,12 +408,12 @@ class PdfDocument extends Document implements DocListener {
 		}
 		super.resetFooter();
 	}
-	
+
 	/**
 	 * Sets the page number to 0.
 	 */
 
-	public void resetPageCount() { 
+	public void resetPageCount() {
 		if (writer != null && writer.isPaused()) {
 			return;
 		}
@@ -435,13 +433,13 @@ class PdfDocument extends Document implements DocListener {
 		super.setPageCount(pageN);
 	}
 
-    /**
-     * Sets the <CODE>Watermark</CODE>. 
-     *
+	/**
+	 * Sets the <CODE>Watermark</CODE>.
+	 *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-     */
+	 */
 
-    public boolean add(Watermark watermark) {
+	public boolean add(Watermark watermark) {
 		if (writer != null && writer.isPaused()) {
 			return false;
 		}
@@ -462,7 +460,7 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * Sets the margins.
-	 *			   							
+	 *
 	 * @param	marginLeft		the margin on the left
 	 * @param	marginRight		the margin on the right
 	 * @param	marginTop		the margin on the top
@@ -481,7 +479,7 @@ class PdfDocument extends Document implements DocListener {
 		return true;
 	}
 
-	/** 
+	/**
 	 * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
 	 *
 	 * @return	a <CODE>boolean</CODE>
@@ -517,13 +515,13 @@ class PdfDocument extends Document implements DocListener {
 		}
 		if (!open || close) {
 			throw new PdfException("The document isn't open.");
-		}	 
+		}
 		PdfIndirectReference pageReference = writer.add(page, new PdfContents(graphics, text));
 		// we update the outlines
 		for (Iterator i = outlines.iterator(); i.hasNext(); ) {
 			PdfOutline outline = (PdfOutline) i.next();
 			outline.setDestinationPage(pageReference);
-		}					 
+		}
 		// we initialize the new page
 		initPage();
 		return true;
@@ -574,14 +572,14 @@ class PdfDocument extends Document implements DocListener {
 		catch(DocumentException pe) {
 		}
 		super.close();
-		
+
 		if (outlines.size() > 1) {
 			int objectNumber = writer.size();
 			int level = 0;
 			// telling each outline what its indirect reference is
 			for (Iterator i = outlines.iterator(); i.hasNext(); ) {
 				PdfOutline o = (PdfOutline) i.next();
-				if (o.level() > level) { 
+				if (o.level() > level) {
 					level = o.level();
 				}
 				PdfIndirectReference reference = new PdfIndirectReference(PdfObject.DICTIONARY, objectNumber);
@@ -624,30 +622,30 @@ class PdfDocument extends Document implements DocListener {
 			}
 		}
 		writer.close();
-	} 
+	}
 
-    /**
-     * Signals that a <CODE>PdfFont</CODE> was added to the <CODE>PdfDocument</CODE>. 
-     *
+	/**
+	 * Signals that a <CODE>PdfFont</CODE> was added to the <CODE>PdfDocument</CODE>.
+	 *
 	 * @param	font		the <CODE>PdfFont</CODE> to add
 	 * @throws	PdfException	when a document isn't open yet, or has been closed
-     */
+	 */
 
-    private void add(PdfFont font) throws PdfException {
+	private void add(PdfFont font) throws PdfException {
 		if (!open || close) {
 			throw new PdfException("The document isn't open.");
 		}
 		fontDictionary.put(font.getName(), writer.add(font));
 	}
 
-    /**
-     * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>. 
-     *
+	/**
+	 * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
+	 *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-     */
+	 */
 
-    public boolean add(Element element) throws DocumentException {
+	public boolean add(Element element) throws DocumentException {
 		if (writer != null && writer.isPaused()) {
 			return false;
 		}
@@ -655,8 +653,7 @@ class PdfDocument extends Document implements DocListener {
 			switch(element.type()) {
 
 			// Information (headers)
-
-			case Element.HEADER:
+   			case Element.HEADER:
 				// other headers than those below are not supported
 				return false;
 			case Element.TITLE:
@@ -681,18 +678,17 @@ class PdfDocument extends Document implements DocListener {
 				break;
 
 			// content (text)
-
 			case Element.CHUNK:
 				// if there isn't a current line available, we make one
 				if (line == null) {
-					carriageReturn(); 
+					carriageReturn();
 				}
 				// we cast the element to a chunk
 				PdfChunk chunk = new PdfChunk((Chunk) element);
 				// we try to add the chunk to the line, until we succeed
 				{
 					int beginX = indentRight() - line.widthLeft();
-					int lineY = indentTop() - currentHeight - line.height() - (chunk.font().size() / 3);
+					float lineY = indentTop() - currentHeight - line.height() - (chunk.font().size() / 3);
 					PdfChunk overflow;
 					while ((overflow = line.add(chunk)) != null) {
 						carriageReturn();
@@ -707,10 +703,10 @@ class PdfDocument extends Document implements DocListener {
 							lineY = indentTop() - currentHeight - line.height() - (chunk.font().size() / 3);
 						}
 						chunk = overflow;
-					}		
+					}
 					if (chunk.isUnderlined() || chunk.isStrikethru()) {
-						if (chunk.isStrikethru()) { 
-							lineY += (chunk.font().size() / 1.5);		
+						if (chunk.isStrikethru()) {
+							lineY += (chunk.font().size() / 1.5);
 						}
 						graphics.moveTo(beginX, lineY);
 						graphics.lineTo(indentRight() - line.widthLeft(), lineY);
@@ -728,18 +724,18 @@ class PdfDocument extends Document implements DocListener {
 				if (url != null) {
 					action = new PdfAction(url);
 				}
-												   
+
 				if (line == null) {
 					carriageReturn();
 				}
 				int beginx = indentRight() - line.widthLeft();
 				for (Iterator i = anchor.getChunks().iterator(); i.hasNext(); ) {
 					PdfChunk aChunk = new PdfChunk((Chunk) i.next());
-					PdfChunk overflowChunk;						
+					PdfChunk overflowChunk;
 					int beginX = indentRight() - line.widthLeft();
-					int lineY = indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3);
+					float lineY = indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3);
 					while ((overflowChunk = line.add(aChunk)) != null) {
-						if (action != null) { 
+						if (action != null) {
 							// this is a hack, it doesn't work in all cases
 							int endx = indentRight();
 							if (alignment == Element.ALIGN_RIGHT || alignment == Element.ALIGN_CENTER) {
@@ -761,15 +757,15 @@ class PdfDocument extends Document implements DocListener {
 							lineY = indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3);
 						}
 						aChunk = overflowChunk;
-					}				 		
+					}
 					if (aChunk.isUnderlined() || aChunk.isStrikethru()) {
 						if (aChunk.isStrikethru()) {
-							lineY += (aChunk.font().size() / 1.5);			
+							lineY += (aChunk.font().size() / 1.5);
 						}
 						graphics.moveTo(beginX, lineY);
 						graphics.lineTo(indentRight() - line.widthLeft(), lineY);
 						graphics.stroke();
-					} 
+					}
 					if (action != null) {
 						int endx = indentRight();
 						if (alignment == Element.ALIGN_RIGHT || alignment == Element.ALIGN_CENTER) {
@@ -782,7 +778,7 @@ class PdfDocument extends Document implements DocListener {
 				pageEmpty = false;
 				break;
 
-			case Element.ANNOTATION:												   
+			case Element.ANNOTATION:
 				if (line == null) {
 					carriageReturn();
 				}
@@ -841,7 +837,7 @@ class PdfDocument extends Document implements DocListener {
 				// some values are set
 				carriageReturn();
 				indentLeft += section.indentationLeft();
-				indentRight += section.indentationRight();				
+				indentRight += section.indentationRight();
 				// the title of the section (if any has to be printed)
 				if (section.title() != null) {
 					add(section.title());
@@ -913,7 +909,7 @@ class PdfDocument extends Document implements DocListener {
 				boolean newPage = false;
 				int pagetop = indentTop();
 				int	oldHeight = currentHeight;
-				int cellDisplacement;
+				float cellDisplacement;
 				PdfCell cell;
 				Color color;
 
@@ -929,8 +925,9 @@ class PdfDocument extends Document implements DocListener {
 
 					// does the table fit on one page?
 					newPage = false;
+
 					if (table.bottom() < indentBottom()) {
-						newPage = true;
+							newPage = true;
 					}
 
 					// we paint the graphics of the table
@@ -940,15 +937,14 @@ class PdfDocument extends Document implements DocListener {
 					else {
 						graphics.rectangle(table.rectangle(indentTop(), indentBottom()));
 					}
-
+				
+				
 					// loop over the cells
 					for (Iterator iterator = cells.iterator(); iterator.hasNext(); ) {
 						cell = (PdfCell) iterator.next();
-
 						lines = cell.getLines(pagetop, indentBottom());
 						// if there are lines to add, add them
 						if (lines != null && lines.size() > 0) {
-
 							// we paint the borders of the cells
 							if (pagetop == indentTop()) {
 								graphics.rectangle(cell.rectangle(pagetop - leading / 2, indentBottom()));
@@ -956,68 +952,61 @@ class PdfDocument extends Document implements DocListener {
 							else {
 								graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
 							}
-
+				
 							// we write the text
 							int cellTop = cell.top(pagetop - oldHeight);
 							text.move(0, cellTop);
 							cellDisplacement = flushLines() - cellTop;
 							text.move(0, cellDisplacement);
 							if (oldHeight + cellDisplacement > currentHeight) {
-								currentHeight = oldHeight + cellDisplacement;
+								currentHeight = oldHeight + (int)cellDisplacement;
 							}
 						}
-
 						// if a cell is allready added completely, remove it
 						if (cell.mayBeRemoved()) {
 							iterator.remove();
-						} 
+						}
 					}
-
+				
 					// if the table continues on the next page
 					if (newPage && ! cells.isEmpty()) {
-													   
 						int difference = indentBottom() + leading;
 						pageEmpty = false;
 						newPage();
 						flushLines();
-
 						int newTop;
-						int newBottom;
-							   	
-						// this part repeats the table headers (if any)
-						headercells = table.getHeaderCells();
-						int size = headercells.size();
-						if (size > 0) {
-							// this is the top of the headersection
-							cell = (PdfCell) headercells.get(0);
-							int oldTop = cell.top(-table.cellpadding());
-							// loop over all the cells of the table header
-							for (int i = 0; i < size; i++) {
-								cell = (PdfCell) headercells.get(i);
-						
-								// calculation of the new cellpositions
-								newTop = indentTop() + cell.top(-table.cellpadding()) - oldTop;
-								cell.setTop(newTop);
-								newBottom = indentTop() + cell.bottom() - oldTop;
-								cell.setBottom(newBottom);
-								pagetop = cell.bottom();
-
-								// we paint the borders of the cell
-								graphics.rectangle(cell.rectangle(indentTop() - leading / 2, indentBottom()));
-							
-								// we write the text of the cell
-								lines = cell.getLines(indentTop(), indentBottom());
-								int cellTop = cell.top(indentTop());
-								text.move(0, cellTop);
-								cellDisplacement = flushLines() - cellTop;
-								text.move(0, cellDisplacement);
-							}
-						
+  						int newBottom;
+  						// this part repeats the table headers (if any)
+  						headercells = table.getHeaderCells();
+  						int size = headercells.size();
+  						if (size > 0) {
+  							// this is the top of the headersection
+  							cell = (PdfCell) headercells.get(0);
+  							int oldTop = cell.top(-table.cellpadding());
+  							// loop over all the cells of the table header
+  							for (int i = 0; i < size; i++) {
+  								cell = (PdfCell) headercells.get(i);
+  								// calculation of the new cellpositions
+  								newTop = indentTop() + cell.top(-table.cellpadding()) - oldTop;
+  								cell.setTop(newTop);
+  								newBottom = indentTop() + cell.bottom() - oldTop;
+  								cell.setBottom(newBottom);
+  								pagetop = cell.bottom();
+  								// we paint the borders of the cell
+  								graphics.rectangle(cell.rectangle(indentTop() - leading / 2, indentBottom()));
+  								// we write the text of the cell
+  								lines = cell.getLines(indentTop(), indentBottom());
+  								int cellTop = cell.top(indentTop());
+  								text.move(0, cellTop);
+  								cellDisplacement = flushLines() - cellTop;
+  								text.move(0, cellDisplacement);
+  							}
+				
 							currentHeight =  indentTop() - pagetop - table.cellpadding();
 							text.move(0, pagetop - indentTop() + table.cellpadding() - currentHeight);
 						}
 						oldHeight = currentHeight;
-
+				
 						// calculating the new positions of the table and the cells
 						table.setTop(indentTop());
 						table.setBottom(pagetop - difference + table.bottom(table.cellpadding()));
@@ -1034,16 +1023,16 @@ class PdfDocument extends Document implements DocListener {
 
 				text.move(0, oldHeight - currentHeight);
 				lines.add(line);
-				currentHeight += line.height() - pagetop + indentTop();
-				line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
-				pageEmpty = false;
-				break;
-
+ 				currentHeight += line.height() - pagetop + indentTop();
+ 				line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
+ 				pageEmpty = false;
+ 				break;
+				
 			case Element.GIF:
 			case Element.JPEG:
 			case Element.PNG:
 			case Element.IMGRAW:
-				carriageReturn(); 
+				carriageReturn();
 				add((Image) element);
 				pageEmpty = false;
 				break;
@@ -1064,7 +1053,7 @@ class PdfDocument extends Document implements DocListener {
 	}
 
 // methods to add Content
-	
+
 	/**
 	 * Adds an image to the document.
 	 */
@@ -1087,7 +1076,7 @@ class PdfDocument extends Document implements DocListener {
 			graphics.doImage(name, image.matrix(), image.absoluteX(), image.absoluteY());
 			xObjectDictionary.put(name, writer.getImageReference(name));
 			return;
-		}					
+		}
 
 		// if there isn't enough room for the image on this page, save it for the next page
 		if (currentHeight != 0 && indentTop() - currentHeight - image.scaledHeight() < indentBottom()) {
@@ -1120,7 +1109,7 @@ class PdfDocument extends Document implements DocListener {
 			break;
 		case Image.LEFT:
 		default:
-			graphics.doImage(name, image.matrix(), indentLeft(), lowerleft);			
+			graphics.doImage(name, image.matrix(), indentLeft(), lowerleft);
 		}
 		if (textwrap) {
 			if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
@@ -1138,14 +1127,14 @@ class PdfDocument extends Document implements DocListener {
 			flushLines();
 			text.move(0, - (image.scaledHeight() + diff));
 			newLine();
-		}	
+		}
 	}
 
 	/**
 	 * Initializes a page.
 	 * <P>
 	 * If the footer/header is set, it is printed.
-	 */			
+	 */
 
 	private void initPage() throws DocumentException {
 
@@ -1160,6 +1149,7 @@ class PdfDocument extends Document implements DocListener {
 		// graphics and text are initialized
 		int oldleading = leading;
 		int oldAlignment = alignment;
+
 		imageEnd = -1;
 		imageIndentRight = 0;
 		imageIndentLeft = 0;
@@ -1168,7 +1158,6 @@ class PdfDocument extends Document implements DocListener {
 		leading = 16;
 		indentBottom = 0;
 		indentTop = 0;
-		
 		currentHeight = 0;
 
 		// backgroundcolors, etc...
@@ -1182,7 +1171,7 @@ class PdfDocument extends Document implements DocListener {
 
 		// if there is a watermark, the watermark is added
 		if (watermark != null) {
-			
+
 			PdfName name;
 			// if the watermark is already added, just retrieve the name
 			if (images.containsKey(watermark)) {
@@ -1309,13 +1298,13 @@ class PdfDocument extends Document implements DocListener {
 	 * @return	the displacement that was caused
 	 */
 
-	private int flushLines() throws DocumentException {
+	private float flushLines() throws DocumentException {
 
 		// checks if the ArrayList with the lines is not null
 		if (lines == null) {
 			return 0;
 		}
-			 
+
 		// checks if a new Line has to be made.
 		if (line != null && line.size() > 0) {
 			lines.add(line);
@@ -1330,7 +1319,7 @@ class PdfDocument extends Document implements DocListener {
 		// initialisation of some parameters
 		PdfFont currentFont = null;
 		int currentLeading = 0;
-		int displacement = 0;
+		float displacement = 0;
 		PdfLine l;
 		PdfChunk chunk;
 		int numberOfSpaces;
@@ -1371,112 +1360,112 @@ class PdfDocument extends Document implements DocListener {
 
 			// looping over all the chunks in 1 line
 			for (Iterator j = l.iterator(); j.hasNext(); ) {
-				chunk = (PdfChunk) j.next();
-
-				if (chunk.font().compareTo(currentFont) != 0) {
-					currentFont = chunk.font();
-					add(currentFont);
-					text.setFont(currentFont);
-				}
-				if (chunk.color() != null) {
-					Color color = chunk.color();
-					text.setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
-					text.show(chunk);
-					text.resetRGBColorFill();
-				}
-				else {
-					text.show(chunk);
-				}
-			}
-			text.newLine();
-			displacement += l.height();
-			if (indentLeft() - listIndentLeft != l.indentLeft()) {
-				text.move(indentLeft() - l.indentLeft() - listIndentLeft, 0);
-			}
-			if (l.hasToBeJustified() && numberOfSpaces != 0) {
-				text.setWordSpacing(0);
-			}
-		}
-		lines = new ArrayList();
-		return displacement;
-	} 
-
-// methods to retrieve information
-
-	/**
-	 * Gets the <CODE>PdfInfo</CODE>-object.
-	 *
-	 * @return	<CODE>PdfInfo</COPE>
-	 */
-
-	PdfInfo getInfo() {
-		return info;
-	}
-
-	/**
-	 * Gets the <CODE>PdfInfo</CODE>-object.
-	 *
-	 * @return	<CODE>PdfInfo</COPE>
-	 */
-
-	PdfCatalog getCatalog(PdfIndirectReference pages) {
-		if (outlines.size() > 1) {
-			PdfOutline outline = (PdfOutline) outlines.get(0);
-			return new PdfCatalog(pages, outline.indirectReference());
-		}
-		return new PdfCatalog(pages);
-	}
-
-// methods concerning the layout
-
-	/**
-	 * Returns the bottomvalue of a <CODE>Table</CODE> if it were added to this document.
-	 *
-	 * @param	table	the table that may or may not be added to this document
-	 * @return	a bottom value
-	 */
-	
-	int bottom(Table table) {
-		// constructing the PdfTable
-		PdfTable tmp = new PdfTable(table, indentLeft(), indentRight(),
-			currentHeight > 0 ? indentTop() - currentHeight : indentTop());
-		return tmp.bottom();
-	}
-
-	/**
-	 * Gets the indentation on the left side.
-	 *
-	 * @return	a margin
-	 */
-
-	private int indentLeft() {
-		return left(indentLeft + listIndentLeft + imageIndentLeft);
-	}
-
-	/**
-	 * Gets the indentation on the right side.
-	 *
-	 * @return	a margin
-	 */
-
-	private int indentRight() {
-		return right(indentRight + imageIndentRight);
-	}
-
-	/**
-	 * Gets the indentation on the top side.
-	 *
-	 * @return	a margin
-	 */
-
-	private int indentTop() {
-		return top(indentTop);
-	}
-
-	/**
-	 * Gets the indentation on the bottom side.
-	 *
-	 * @return	a margin
+ 				chunk = (PdfChunk) j.next();
+ 
+ 				if (chunk.font().compareTo(currentFont) != 0) {
+ 					currentFont = chunk.font();
+ 					add(currentFont);
+ 					text.setFont(currentFont);
+ 				}
+ 				if (chunk.color() != null) {
+ 					Color color = chunk.color();
+ 					text.setRGBColorFill(color.getRed(), color.getGreen(), color.getBlue());
+ 					text.show(chunk);
+ 					text.resetRGBColorFill();
+ 				}
+ 				else {
+ 					text.show(chunk);
+ 				}
+ 			}
+ 			text.newLine();
+ 			displacement += l.height();
+ 			if (indentLeft() - listIndentLeft != l.indentLeft()) {
+ 				text.move(indentLeft() - l.indentLeft() - listIndentLeft, 0);
+ 			}
+ 			if (l.hasToBeJustified() && numberOfSpaces != 0) {
+ 				text.setWordSpacing(0);
+ 			}
+ 		}
+ 		lines = new ArrayList();
+ 		return displacement;
+ 	}
+ 
+ // methods to retrieve information
+ 
+ 	/**
+ 	 * Gets the <CODE>PdfInfo</CODE>-object.
+ 	 *
+ 	 * @return	<CODE>PdfInfo</COPE>
+ 	 */
+ 
+ 	PdfInfo getInfo() {
+ 		return info;
+ 	}
+ 
+ 	/**
+ 	 * Gets the <CODE>PdfInfo</CODE>-object.
+ 	 *
+ 	 * @return	<CODE>PdfInfo</COPE>
+ 	 */
+ 
+ 	PdfCatalog getCatalog(PdfIndirectReference pages) {
+ 		if (outlines.size() > 1) {
+ 			PdfOutline outline = (PdfOutline) outlines.get(0);
+ 			return new PdfCatalog(pages, outline.indirectReference());
+ 		}
+ 		return new PdfCatalog(pages);
+ 	}
+ 
+ // methods concerning the layout
+ 
+ 	/**
+ 	 * Returns the bottomvalue of a <CODE>Table</CODE> if it were added to this document.
+ 	 *
+ 	 * @param	table	the table that may or may not be added to this document
+ 	 * @return	a bottom value
+ 	 */
+ 
+ 	int bottom(Table table) {
+ 		// constructing the PdfTable
+ 		PdfTable tmp = new PdfTable(table, indentLeft(), indentRight(),
+ 			currentHeight > 0 ? indentTop() - currentHeight : indentTop());
+ 		return tmp.bottom();
+ 	}
+ 
+ 	/**
+ 	 * Gets the indentation on the left side.
+ 	 *
+ 	 * @return	a margin
+ 	 */
+ 
+ 	private int indentLeft() {
+ 		return left(indentLeft + listIndentLeft + imageIndentLeft);
+ 	}
+ 
+ 	/**
+ 	 * Gets the indentation on the right side.
+ 	 *
+ 	 * @return	a margin
+ 	 */
+ 
+ 	private int indentRight() {
+ 		return right(indentRight + imageIndentRight);
+ 	}
+ 
+ 	/**
+ 	 * Gets the indentation on the top side.
+ 	 *
+ 	 * @return	a margin
+ 	 */
+ 
+ 	private int indentTop() {
+ 		return top(indentTop);
+ 	}
+ 
+ 	/**
+ 	 * Gets the indentation on the bottom side.
+ 	 *
+ 	 * @return	a margin
 	 */
 
 	int indentBottom() {
