@@ -67,6 +67,33 @@ public class PRTokeniser {
     public static final int TK_END_DIC = 8;
     public static final int TK_REF = 9;
     public static final int TK_OTHER = 10;
+    public static final boolean delims[] = {
+        true,  true,  false, false, false, false, false, false, false, false,
+        true,  true,  false, true,  true,  false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, true,  false, false, false, false, true,  false,
+        false, true,  true,  false, false, false, false, false, true,  false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, true,  false, true,  false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, true,  false, true,  false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false, false, false, false,
+        false, false, false, false, false, false, false};
     
     static final String EMPTY = "";
 
@@ -135,6 +162,10 @@ public class PRTokeniser {
         return (ch == '(' || ch == ')' || ch == '<' || ch == '>' || ch == '[' || ch == ']' || ch == '/' || ch == '%');
     }
 
+    public static final boolean isDelimiterWhitespace(int ch) {
+        return delims[ch + 1];
+    }
+
     public int getTokenType() {
         return type;
     }
@@ -153,7 +184,7 @@ public class PRTokeniser {
     
     public void backOnePosition(int ch) throws IOException {
         if (ch != -1)
-            file.seek(file.getFilePointer() - 1);
+            file.pushBack((byte)ch);
     }
     
     public void throwError(String error) throws IOException {
@@ -263,7 +294,7 @@ public class PRTokeniser {
                 type = TK_NAME;
                 while (true) {
                     ch = file.read();
-                    if (ch == -1 || isDelimiter(ch) || isWhitespace(ch))
+                    if (delims[ch + 1])
                         break;
                     if (ch == '#') {
                         ch = (getHex(file.read()) << 4) + getHex(file.read());
@@ -403,8 +434,8 @@ public class PRTokeniser {
                         if (ch < 0)
                             break;
                         if (ch != '\n') {
-                            ch = '\n';
                             backOnePosition(ch);
+                            ch = '\n';
                         }
                     }
                     if (nesting == -1)
@@ -430,7 +461,7 @@ public class PRTokeniser {
                     do {
                         outBuf.append((char)ch);
                         ch = file.read();
-                    } while (ch != -1 && !isDelimiter(ch) && !isWhitespace(ch));
+                    } while (!delims[ch + 1]);
                 }
                 backOnePosition(ch);
                 break;

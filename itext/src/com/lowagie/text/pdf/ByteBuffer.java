@@ -72,7 +72,8 @@ public class ByteBuffer {
     private static byte[][] byteCache = new byte[byteCacheSize][];
     public static byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    private static final byte[] bytes = new byte[] {(byte)'0', (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'7', (byte)'8', (byte)'9'};
+    private static final byte[] bytes = new byte[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'a', 'b', 'c', 'd', 'e', 'f'};
     
     /** Creates new ByteBuffer with capacity 128 */
     public ByteBuffer() {
@@ -265,6 +266,11 @@ public class ByteBuffer {
     
     public ByteBuffer append(byte b) {
         return append_i(b);
+    }
+    
+    public ByteBuffer appendHex(byte b) {
+        append(bytes[(b >> 4) & 0x0f]);
+        return append(bytes[b & 0x0f]);
     }
     
     /**

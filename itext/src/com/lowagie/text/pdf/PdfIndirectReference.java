@@ -113,7 +113,7 @@ class PdfIndirectReference extends PdfObject {
  * @return		a number.
  */
     
-    int getNumber() {
+    public int getNumber() {
         return number;
     }
     
@@ -123,7 +123,7 @@ class PdfIndirectReference extends PdfObject {
  * @return		a number.
  */
     
-    int getGeneration() {
+    public int getGeneration() {
         return generation;
     }
 }

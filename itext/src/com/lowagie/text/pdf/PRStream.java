@@ -54,9 +54,8 @@ import java.io.*;
 import com.lowagie.text.ExceptionConverter;
 import java.util.zip.DeflaterOutputStream;
 import com.lowagie.text.Document;
-/**
- * a Literal
- */
+import java.io.OutputStream;
+import java.io.IOException;
 
 public class PRStream extends PdfStream {
     
@@ -113,28 +112,28 @@ public class PRStream extends PdfStream {
         return bytes;
     }
     
-    public int getStreamLength(PdfWriter writer) {
-        if (dicBytes == null)
-            toPdf(writer);
-        return length + dicBytes.length + SIZESTREAM;
-    }
+//    public int getStreamLength(PdfWriter writer) {
+//        if (dicBytes == null)
+//            toPdf(writer);
+//        return length + dicBytes.length + SIZESTREAM;
+//    }
     
-    void writeTo(OutputStream out, PdfWriter writer) throws IOException{
-        if (dicBytes == null)
-            toPdf(writer);
-        out.write(dicBytes);
-        out.write(STARTSTREAM);
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        superToPdf(writer, os);
+        os.write(STARTSTREAM);
         if (length > 0) {
-            PdfEncryption crypto = writer.getEncryption();
+            PdfEncryption crypto = null;
+            if (writer != null)
+                crypto = writer.getEncryption();
             if (offset < 0) {
                 if (crypto == null)
-                    out.write(bytes);
+                    os.write(bytes);
                 else {
                     crypto.prepareKey();
                     byte buf[] = new byte[length];
                     System.arraycopy(bytes, 0, buf, 0, length);
                     crypto.encryptRC4(buf);
-                    out.write(buf);
+                    os.write(buf);
                 }
             }
             else {
@@ -149,10 +148,10 @@ public class PRStream extends PdfStream {
                     size -= r;
                     if (crypto != null)
                         crypto.encryptRC4(buf, 0, r);
-                    out.write(buf, 0, r);
+                    os.write(buf, 0, r);
                 }
             }
         }
-        out.write(ENDSTREAM);
+        os.write(ENDSTREAM);
     }
 }

@@ -248,6 +248,10 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName EARLYCHANGE = new PdfName("EarlyChange");
     /** A name */
+    public static final PdfName EF = new PdfName("EF");
+    /** A name */
+    public static final PdfName EMBEDDEDFILE = new PdfName("EmbeddedFile");
+    /** A name */
     public static final PdfName ENCODE = new PdfName("Encode");
     /** A name */
     public static final PdfName ENCODEDBYTEALIGN = new PdfName("EncodedByteAlign");
@@ -275,6 +279,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName FFILTER = new PdfName("FFilter");
     /** A name */
     public static final PdfName FIELDS = new PdfName("Fields");
+    /** A name */
+    public static final PdfName FILEATTACHMENT = new PdfName("FileAttachment");
+    /** A name */
+    public static final PdfName FILESPEC = new PdfName("Filespec");
     /** A name */
     public static final PdfName FILTER = new PdfName("Filter");
     /** A name */
@@ -392,6 +400,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName INFO = new PdfName("Info");
     /** A name */
+    public static final PdfName INK = new PdfName("Ink");
+    /** A name */
     public static final PdfName INKLIST = new PdfName("InkList");
     /** A name */
     public static final PdfName IMPORTDATA = new PdfName("ImportData");
@@ -445,13 +455,15 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName MAC_EXPERT_ENCODING = new PdfName("MacExpertEncoding");
     /** A name of an encoding */
     public static final PdfName MAC_ROMAN_ENCODING = new PdfName("MacRomanEncoding");
-    /** A name of an encoding */
+    /** A name */
     public static final PdfName MASK = new PdfName("Mask");
-    /** A name of an encoding */
+    /** A name */
     public static final PdfName MAXLEN = new PdfName("MaxLen");
     /** A name */
     public static final PdfName MEDIABOX = new PdfName("MediaBox");
-    /** A name of an encoding */
+    /** A name */
+    public static final PdfName METADATA = new PdfName("Metadata");
+    /** A name */
     public static final PdfName MK = new PdfName("MK");
     /** A name */
     public static final PdfName MODDATE = new PdfName("ModDate");
@@ -636,6 +648,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName TRANS = new PdfName("Trans");
     /** A name */
+    public static final PdfName TRAPPED = new PdfName("Trapped");
+    /** A name */
     public static final PdfName TRUETYPE = new PdfName("TrueType");
     /** A name */
     public static final PdfName TU = new PdfName("TU");
@@ -713,19 +727,21 @@ public class PdfName extends PdfObject implements Comparable{
      */
     
     public PdfName(String name) {
-        super(PdfObject.NAME, name);
+        super(PdfObject.NAME);
         // The minimum number of characters in a name is 0, the maximum is 127 (the '/' not included)
-        if (bytes.length > 127) {
+        int length = name.length();
+        if (length > 127) {
             throw new IllegalArgumentException("The name is too long (" + bytes.length + " characters).");
         }
         // The name has to be checked for illegal characters
-        int length = name.length();
         // every special character has to be substituted
-        StringBuffer pdfName = new StringBuffer("/");
+        ByteBuffer pdfName = new ByteBuffer(length + 20);
+        pdfName.append('/');
         char character;
+        char chars[] = name.toCharArray();
         // loop over all the characters
         for (int index = 0; index < length; index++) {
-            character = (char)(name.charAt(index) & 0xff);
+            character = (char)(chars[index] & 0xff);
             // special characters are escaped (reference manual p.39)
             switch (character) {
                 case ' ':
@@ -755,9 +771,12 @@ public class PdfName extends PdfObject implements Comparable{
                     break;
             }
         }
-        setContent(pdfName.toString());
+        bytes = pdfName.toByteArray();
     }
     
+    public PdfName(byte bytes[]) {
+        super(PdfObject.NAME, bytes);
+    }
     // methods
     
     /**

@@ -49,6 +49,8 @@
  */
 
 package com.lowagie.text.pdf;
+import java.io.OutputStream;
+import java.io.IOException;
 
 public class PRIndirectReference extends PdfIndirectReference {
     
@@ -85,9 +87,9 @@ public class PRIndirectReference extends PdfIndirectReference {
     
     // methods
     
-    public byte[] toPdf(PdfWriter writer) {
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         int n = writer.getNewObjectNumber(reader, number, generation);
-        return PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" 0 R").toString(), null);
+        os.write(PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" 0 R").toString(), null));
     }
 
     public PdfReader getReader() {

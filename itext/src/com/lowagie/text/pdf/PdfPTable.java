@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.ElementListener;
 import com.lowagie.text.DocumentException;
 
@@ -181,7 +182,7 @@ public class PdfPTable implements Element{
 
     /** Sets the relative widths of the table.
      * @param relativeWidths the relative widths of the table.
-     * @throws DocumentException if the number of widths is different than tne number
+     * @throws DocumentException if the number of widths is different than the number
      * of columns
      */    
     public void setWidths(int relativeWidths[]) throws DocumentException {
@@ -213,6 +214,33 @@ public class PdfPTable implements Element{
         totalHeight = 0;
         calculateWidths();
         calculateHeights();
+    }
+
+    /** Sets the full width of the table from the absolute column width.
+     * @param columnWidth the absolute width of each column
+     * @throws DocumentException if the number of widths is different than the number
+     * of columns
+     */    
+    public void setTotalWidth(float columnWidth[]) throws DocumentException {
+        if (columnWidth.length != this.relativeWidths.length)
+            throw new DocumentException("Wrong number of columns.");
+        totalWidth = 0;
+        for (int k = 0; k < columnWidth.length; ++k)
+            totalWidth += columnWidth[k];
+        setWidths(columnWidth);
+    }
+
+    /** Sets the percentage width of the table from the absolute column width.
+     * @param columnWidth the absolute width of each column
+     * @param pageSize the page size
+     */    
+    public void setWidthPercentage(float columnWidth[], Rectangle pageSize) {
+        if (columnWidth.length != this.relativeWidths.length)
+            throw new IllegalArgumentException("Wrong number of columns.");
+        float totalWidth = 0;
+        for (int k = 0; k < columnWidth.length; ++k)
+            totalWidth += columnWidth[k];
+        widthPercentage = totalWidth / (pageSize.right() - pageSize.left()) * 100f;
     }
 
     /** Gets the full width of the table.

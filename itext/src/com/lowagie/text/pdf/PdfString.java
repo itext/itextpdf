@@ -49,6 +49,8 @@
  */
 
 package com.lowagie.text.pdf;
+import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * A <CODE>PdfString</CODE>-class is the PDF-equivalent of a JAVA-<CODE>String</CODE>-object.
@@ -131,18 +133,20 @@ public class PdfString extends PdfObject {
      * @return		an array of <CODE>byte</CODE>s
      */
     
-    public byte[] toPdf(PdfWriter writer) {
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         byte b[];
         if (encoding != null && encoding.equals(TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
             b = PdfEncodings.convertToBytes(value, TEXT_PDFDOCENCODING);
         else
             b = PdfEncodings.convertToBytes(value, encoding);
-        PdfEncryption crypto = writer.getEncryption();
+        PdfEncryption crypto = null;
+        if (writer != null)
+            crypto = writer.getEncryption();
         if (crypto != null) {
             crypto.prepareKey();
             crypto.encryptRC4(b);
         }
-        return PdfContentByte.escapeString(b);
+        os.write(PdfContentByte.escapeString(b));
     }
     
     /**

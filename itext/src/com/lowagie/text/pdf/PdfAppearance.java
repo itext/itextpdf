@@ -130,7 +130,7 @@ public class PdfAppearance extends PdfTemplate {
         PageResources prs = getPageResources();
 //        PdfName name = state.fontDetails.getFontName();
         prs.addFont(psn, state.fontDetails.getIndirectReference());
-        content.append(psn.toPdf(null)).append(' ').append(size).append(" Tf").append_i(separator);
+        content.append(psn.getBytes()).append(' ').append(size).append(" Tf").append_i(separator);
     }
 
     public PdfContentByte getDuplicate() {

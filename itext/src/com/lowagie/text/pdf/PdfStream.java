@@ -126,10 +126,10 @@ public class PdfStream extends PdfDictionary {
  * @return		an array of <CODE>byte</CODE>s
  */
     
-    public byte[] toPdf(PdfWriter writer) {
-        dicBytes = super.toPdf(writer);
-        return null;
-    }
+//    public byte[] toPdf(PdfWriter writer) {
+//        dicBytes = super.toPdf(writer);
+//        return null;
+//    }
     
     // methods
     
@@ -187,26 +187,30 @@ public class PdfStream extends PdfDictionary {
         }
     }
 
-    public int getStreamLength(PdfWriter writer) {
-        if (dicBytes == null)
-            toPdf(writer);
-        if (streamBytes != null)
-            return streamBytes.size() + dicBytes.length + SIZESTREAM;
-        else
-            return bytes.length + dicBytes.length + SIZESTREAM;
+//    public int getStreamLength(PdfWriter writer) {
+//        if (dicBytes == null)
+//            toPdf(writer);
+//        if (streamBytes != null)
+//            return streamBytes.size() + dicBytes.length + SIZESTREAM;
+//        else
+//            return bytes.length + dicBytes.length + SIZESTREAM;
+//    }
+    
+    protected void superToPdf(PdfWriter writer, OutputStream os) throws IOException {
+        super.toPdf(writer, os);
     }
     
-    void writeTo(OutputStream out, PdfWriter writer) throws IOException{
-        if (dicBytes == null)
-            toPdf(writer);
-        out.write(dicBytes);
-        out.write(STARTSTREAM);
-        PdfEncryption crypto = writer.getEncryption();
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        superToPdf(writer, os);
+        os.write(STARTSTREAM);
+        PdfEncryption crypto = null;
+        if (writer != null)
+            crypto = writer.getEncryption();
         if (crypto == null) {
             if (streamBytes != null)
-                streamBytes.writeTo(out);
+                streamBytes.writeTo(os);
             else
-                out.write(bytes);
+                os.write(bytes);
         }
         else {
             crypto.prepareKey();
@@ -219,8 +223,8 @@ public class PdfStream extends PdfDictionary {
                 b = new byte[bytes.length];
                 crypto.encryptRC4(bytes, b);
             }
-            out.write(b);
+            os.write(b);
         }
-        out.write(ENDSTREAM);
+        os.write(ENDSTREAM);
     }
 }

@@ -289,7 +289,15 @@ public class BidiLine {
                 ++src;
             }
             int arabicWordSize = src - startArabicIdx;
-            int size = arabic.shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize);
+//            for (int h = 0; h < arabicWordSize; ++h)
+//                System.out.print(Integer.toHexString((int)text[h + startArabicIdx]) + " ");
+//            System.out.println();
+//            int size = arabic.shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize);
+            int size = PangoArabicShapping.arabic_shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize, 0 /*PangoArabicShapping.ar_novowel PangoArabicShapping.ar_lig | PangoArabicShapping.ar_composedtashkeel*/);
+//            for (int h = 0; h < size; ++h)
+//                System.out.print(Integer.toHexString((int)text[h + dest]) + " ");
+//            System.out.println();
+//            System.out.println();
             if (startArabicIdx != dest) {
                 for (int k = 0; k < size; ++k) {
                     detailChunks[dest] = detailChunks[startArabicIdx];

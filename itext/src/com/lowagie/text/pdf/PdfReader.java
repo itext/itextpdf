@@ -81,6 +81,8 @@ public class PdfReader {
     protected boolean rebuilt = false;
     protected int freeXref;
     protected boolean tampered = false;
+    protected int lastXref;
+    protected int eofPos;
     
     /** Reads and parses a PDF document.
      * @param filename the file name of the document
@@ -100,6 +102,10 @@ public class PdfReader {
         readPdf();
     }
     
+    /** Gets a new file instance of the original PDF
+     * document.
+     * @return a new file instance of the original PDF document
+     */    
     public RandomAccessFileOrArray getSafeFile() {
         return tokens.getSafeFile();
     }
@@ -115,15 +121,16 @@ public class PdfReader {
         return pages.length;
     }
     
-    /**
-     * Returns the document's catalog
+    /** Returns the document's catalog. This dictionary is not a copy,
+     * any changes will be reflected in the catalog.
+     * @return the document's catalog
      */
     public PdfDictionary getCatalog() {
         return catalog;
     }
 
-    /**
-     * Returns the document's acroform, if it has one
+    /** Returns the document's acroform, if it has one.
+     * @return he document's acroform
      */
      public PRAcroForm getAcroForm() {
 	    return acroForm;
@@ -238,6 +245,7 @@ public class PdfReader {
                 try {
                     rebuilt = true;
                     rebuildXref();
+                    lastXref = -1;
                 }
                 catch (Exception ne) {
                     throw new IOException("Rebuild failed: " + ne.getMessage() + "; Original message: " + e.getMessage());
@@ -247,8 +255,8 @@ public class PdfReader {
             readPages();
             PdfObject form = catalog.get(PdfName.ACROFORM);
             if (form != null) {
-	      acroForm = new PRAcroForm(this);
-	      acroForm.readAcroForm((PdfDictionary)getPdfObject(form));
+                acroForm = new PRAcroForm(this);
+                acroForm.readAcroForm((PdfDictionary)getPdfObject(form));
             }
         }
         finally {
@@ -380,6 +388,8 @@ public class PdfReader {
         if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
             throw new IOException("startxref is not followed by a number.");
         int startxref = tokens.intValue();
+        lastXref = startxref;
+        eofPos = tokens.getFilePointer();
         tokens.seek(startxref);
         int ch;
         do {
@@ -387,7 +397,7 @@ public class PdfReader {
         } while (ch != -1 && ch != 't');
         if (ch == -1)
             throw new IOException("Unexpected end of file.");
-        tokens.backOnePosition(0);
+        tokens.backOnePosition(ch);
         tokens.nextValidToken();
         if (!tokens.getStringValue().equals("trailer"))
             throw new IOException("trailer not found.");
@@ -849,5 +859,38 @@ public class PdfReader {
     
     public void setTampered(boolean tampered) {
         this.tampered = tampered;
+    }
+    
+    /** Gets the XML metadata.
+     * @throws IOException on error
+     * @return the XML metadata
+     */    
+    public byte[] getMetadata() throws IOException {
+        PdfObject obj = getPdfObject(catalog.get(PdfName.METADATA));
+        if (!(obj instanceof PRStream))
+            return null;
+        RandomAccessFileOrArray rf = getSafeFile();
+        byte b[] = null;
+        try {
+            rf.reOpen();
+            b = getStreamBytes((PRStream)obj, rf);
+        }
+        finally {
+            try {
+                rf.close();
+            }
+            catch (Exception e) {
+                // empty on purpose
+            }
+        }
+        return b;
+    }
+    
+    public int getLastXref() {
+        return lastXref;
+    }
+    
+    public int getEofPos() {
+        return eofPos;
     }
 }

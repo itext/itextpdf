@@ -69,6 +69,8 @@ public class RandomAccessFileOrArray implements DataInput {
     String filename;
     byte arrayIn[];
     int arrayInPtr;
+    byte back;
+    boolean isBack = false;
 
     public RandomAccessFileOrArray(String filename) throws IOException {
         File file = new File(filename);
@@ -110,7 +112,16 @@ public class RandomAccessFileOrArray implements DataInput {
         arrayIn = file.arrayIn;
     }
     
+    public void pushBack(byte b) {
+        back = b;
+        isBack = true;
+    }
+    
     public int read() throws IOException {
+        if(isBack) {
+            isBack = false;
+            return back & 0xff;
+        }
         if (arrayIn == null)
             return rf.read();
         else {
@@ -121,18 +132,32 @@ public class RandomAccessFileOrArray implements DataInput {
     }
 
     public int read(byte[] b, int off, int len) throws IOException {
-        if (arrayIn == null)
-            return rf.read(b, off, len);
+        if (len == 0)
+            return 0;
+        int n = 0;
+        if (isBack) {
+            isBack = false;
+            if (len == 1) {
+                b[off] = back;
+                return 1;
+            }
+            else {
+                n = 1;
+                b[off++] = back;
+                --len;
+            }
+        }
+        if (arrayIn == null) {
+            return rf.read(b, off, len) + n;
+        }
         else {
-            if (len == 0)
-                return 0;
             if (arrayInPtr >= arrayIn.length)
                 return -1;
             if (arrayInPtr + len > arrayIn.length)
                 len = arrayIn.length - arrayInPtr;
             System.arraycopy(arrayIn, arrayInPtr, b, off, len);
             arrayInPtr += len;
-            return len;
+            return len + n;
         }
     }
 
@@ -155,13 +180,24 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public int skipBytes(int n) throws IOException {
+        if (n <= 0) {
+            return 0;
+        }
+        int adj = 0;
+        if (isBack) {
+            isBack = false;
+            if (n == 1) {
+                return 1;
+            }
+            else {
+                --n;
+                adj = 1;
+            }
+        }
         int pos;
         int len;
         int newpos;
         
-        if (n <= 0) {
-            return 0;
-        }
         pos = getFilePointer();
         len = length();
         newpos = pos + n;
@@ -171,10 +207,11 @@ public class RandomAccessFileOrArray implements DataInput {
         seek(newpos);
         
     /* return the actual number of bytes skipped */
-        return newpos - pos;
+        return newpos - pos + adj;
     }
     
     public void reOpen() throws IOException {
+        isBack = false;
         if (filename != null) {
             close();
             rf = new RandomAccessFile(filename, "r");
@@ -191,6 +228,7 @@ public class RandomAccessFileOrArray implements DataInput {
     }
 
     public void close() throws IOException {
+        isBack = false;
         if (rf != null) {
             rf.close();
             rf = null;
@@ -205,6 +243,7 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public void seek(int pos) throws IOException {
+        isBack = false;
         if (arrayIn == null) {
             insureOpen();
             rf.seek(pos);
@@ -214,10 +253,11 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public int getFilePointer() throws IOException {
+        int n = isBack ? 1 : 0;
         if (arrayIn == null)
-            return (int)rf.getFilePointer();
+            return (int)rf.getFilePointer() - n;
         else
-            return arrayInPtr;
+            return arrayInPtr - n;
     }
     
     public boolean readBoolean() throws IOException {

@@ -242,6 +242,36 @@ public class FdfWriter {
         }
     }
     
+    /** Sets all the fields from this <CODE>PdfReader</CODE>
+     * @param pdf the <CODE>PdfReader</CODE>
+     */    
+    public void setFields(PdfReader pdf) {
+        PRAcroForm acro = pdf.getAcroForm();
+        ArrayList f = acro.getFields();
+        for (int k = 0; k < f.size(); ++k) {
+            PRAcroForm.FieldInformation inf = (PRAcroForm.FieldInformation)f.get(k);
+            PdfObject obj = inf.getInfo().get(PdfName.V);
+            if (obj == null)
+                continue;
+            setField(inf.name, obj);
+        }
+    }
+    
+    /** Sets all the fields from this <CODE>AcroFields</CODE>
+     * @param acro the <CODE>AcroFields</CODE>
+     */    
+    public void setFields(AcroFields acro) {
+        HashMap map = acro.getFields();
+        for (Iterator it = map.keySet().iterator(); it.hasNext();) {
+            String key = (String)it.next();
+            AcroFields.Item item = (AcroFields.Item)map.get(key);
+            PdfObject obj = ((PdfDictionary)item.merged.get(0)).get(PdfName.V);
+            if (obj == null)
+                continue;
+            setField(key, obj);
+        }
+    }
+    
     /** Gets the PDF file name associated with the FDF.
      * @return the PDF file name associated with the FDF
      */
@@ -276,7 +306,7 @@ public class FdfWriter {
             os.write(getISOBytes("trailer\n"));
             PdfDictionary trailer = new PdfDictionary();
             trailer.put(PdfName.ROOT, ref);
-            os.write(trailer.toPdf(null));
+            trailer.toPdf(null, os);
             os.write(getISOBytes("\n%%EOF\n"));
             os.close();
         }

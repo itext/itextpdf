@@ -49,6 +49,8 @@
  */
 
 package com.lowagie.text.pdf;
+import java.io.OutputStream;
+import java.io.IOException;
 
 /**
  * <CODE>PdfObject</CODE> is the abstract superclass of all PDF objects.
@@ -163,7 +165,16 @@ public abstract class PdfObject {
  * @return		an array of <CODE>byte</CODE>
  */
     
-    public byte[] toPdf(PdfWriter writer) {
+//    public byte[] toPdf(PdfWriter writer) {
+//        return bytes;
+//    }
+    
+    public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
+        if (bytes != null)
+            os.write(bytes);
+    }
+    
+    public byte[] getBytes() {
         return bytes;
     }
     
@@ -180,9 +191,9 @@ public abstract class PdfObject {
  * @return		a length
  */
     
-    public int pdfLength() {
-        return toPdf(null).length;
-    }
+//    public int pdfLength() {
+//        return toPdf(null).length;
+//    }
     
 /**
  * Returns the <CODE>String</CODE>-representation of this <CODE>PdfObject</CODE>.
@@ -191,7 +202,10 @@ public abstract class PdfObject {
  */
     
     public String toString() {
-        return PdfEncodings.convertToString(bytes, null);
+        if (bytes == null)
+            return super.toString();
+        else
+            return PdfEncodings.convertToString(bytes, null);
     }
     
 /**
