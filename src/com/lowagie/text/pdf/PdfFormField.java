@@ -91,6 +91,16 @@ public class PdfFormField extends PdfAnnotation {
     
     protected ArrayList kids;
     
+/**
+ * Constructs a new <CODE>PdfAnnotation</CODE> of subtype link (Action).
+ */
+    
+    public PdfFormField(PdfWriter writer, float llx, float lly, float urx, float ury, PdfAction action) {
+        super(writer, llx, lly, urx, ury, action);
+        put(PdfName.SUBTYPE, PdfName.WIDGET);
+        annotation = true;
+    }
+    
     /** Creates new PdfFormField */
     protected PdfFormField(PdfWriter writer) {
         super(writer, null);
