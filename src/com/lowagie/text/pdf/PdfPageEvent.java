@@ -158,8 +158,9 @@ public interface PdfPageEvent {
  *
  * @param writer            the <CODE>PdfWriter</CODE> for this document
  * @param document          the document
- * @param paragraphPosition the position the chapter will be written to
- * @param title             the title of the Chapter
+ * @param paragraphPosition the position the section will be written to
+ * @param depth				the number depth of the section
+ * @param title             the title of the section
  */
     public void onSection(PdfWriter writer,Document document,float paragraphPosition, int depth, Paragraph title);
     
@@ -170,7 +171,7 @@ public interface PdfPageEvent {
  *
  * @param writer            the <CODE>PdfWriter</CODE> for this document
  * @param document          the document
- * @param paragraphPosition the position the chapter will be written to
+ * @param paragraphPosition the position the section will be written to
  */
     public void onSectionEnd(PdfWriter writer,Document document,float paragraphPosition);
     
