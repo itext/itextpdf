@@ -59,8 +59,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.awt.color.ICC_Profile;
 import com.lowagie.text.pdf.PdfTemplate;
-import com.lowagie.text.pdf.CCITTG4Encoder;
+import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 import java.lang.reflect.Constructor;
+import com.lowagie.text.pdf.PdfObject;
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG or GIF)
  * that has to be inserted into the document
@@ -117,7 +118,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     // membervariables
     
-    /** Adobe invert CMYK JPEG */
+    /** Image color inversion */
     protected boolean invert = false;
     
     /** The imagetype. */
@@ -184,8 +185,6 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     protected Image imageMask;
     
-    protected boolean invertMask = false;
-    
     /** Holds value of property interpolation. */
     protected boolean interpolation;
     
@@ -197,6 +196,12 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     /** ICC Profile attached */
     protected ICC_Profile profile = null;
+    
+    /** Holds value of property deflated. */
+    protected boolean deflated = false;
+    
+    /** Holds value of property indexed. */
+    private PdfObject indexed = null;
     
     // constructors
     
@@ -243,11 +248,12 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.dpiY = image.dpiY;
         this.mask = image.mask;
         this.imageMask = image.imageMask;
-        this.invertMask = image.invertMask;
         this.interpolation = image.interpolation;
         this.annotation = image.annotation;
         this.markupAttributes = image.markupAttributes;
         this.profile = image.profile;
+        this.deflated = image.deflated;
+        this.indexed = image.indexed;
     }
     
     // gets an instance of an Image
@@ -1109,6 +1115,11 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         return dpiY;
     }
     
+    public void setDpi(int dpiX, int dpiY) {
+        this.dpiX = dpiX;
+        this.dpiY = dpiY;
+    }
+    
     /** Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
      * requisites to be a mask.
      * @return <CODE>true</CODE> if this <CODE>Image</CODE> can be a mask
@@ -1160,8 +1171,8 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     /** Inverts the meaning of the bits of a mask.
      * @param invertMask <CODE>true</CODE> to invert the meaning of the bits of a mask
      */
-    public void setInvertMask(boolean invertMask) {
-        this.invertMask = invertMask;
+    public void setInvertMask(boolean invert) {
+        this.invert = invert;
     }
     
     /** Returns <CODE>true</CODE> if the bits are to be inverted
@@ -1169,11 +1180,15 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      * @return <CODE>true</CODE> if the bits are to be inverted in the mask
      */
     public boolean isInvertMask() {
-        return invertMask;
+        return invert;
     }
     
-    public boolean isInvertedJPEG() {
+    public boolean isInverted() {
         return invert;
+    }
+    
+    public void setInverted(boolean invert) {
+        this.invert = invert;
     }
     
     /** Getter for property interpolation.
@@ -1248,4 +1263,37 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     public ICC_Profile getICCProfile() {
         return profile;
     }
+    
+    /** Getter for property deflated.
+     * @return Value of property deflated.
+     *
+     */
+    public boolean isDeflated() {
+        return this.deflated;
+    }
+    
+    /** Setter for property deflated.
+     * @param deflated New value of property deflated.
+     *
+     */
+    public void setDeflated(boolean deflated) {
+        this.deflated = deflated;
+    }
+    
+    /** Getter for property indexed.
+     * @return Value of property indexed.
+     *
+     */
+    public PdfObject getIndexed() {
+        return this.indexed;
+    }
+    
+    /** Sets the /Colorspace key.
+     * @param indexed New value of property indexed.
+     *
+     */
+    public void setIndexed(PdfObject indexed) {
+        this.indexed = indexed;
+    }
+    
 }

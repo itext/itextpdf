@@ -48,6 +48,7 @@ package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.net.URL;
 /** Reads an FDF form and makes the fields available
  * @author Paulo Soares (psoares@consiste.pt)
  */
@@ -70,6 +71,14 @@ public class FdfReader extends PdfReader {
      */    
     public FdfReader(byte pdfIn[]) throws IOException {
         super(pdfIn);
+    }
+    
+    /** Reads an FDF form.
+     * @param url the URL of the document
+     * @throws IOException on error
+     */    
+    public FdfReader(URL url) throws IOException {
+        super(url);
     }
     
     protected void readPdf() throws IOException {

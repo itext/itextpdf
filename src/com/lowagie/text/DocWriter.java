@@ -130,7 +130,6 @@ public abstract class DocWriter implements DocListener {
     protected DocWriter(Document document, OutputStream os)  {
         this.document = document;
         this.os = new OutputStreamCounter(new BufferedOutputStream(os));
-        open = true;
     }
 
     // implementation of the DocListener methods

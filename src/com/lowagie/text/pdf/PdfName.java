@@ -476,6 +476,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName NAMES = new PdfName("Names");
     /** A name */
+    public static final PdfName NEEDAPPEARANCES = new PdfName("NeedAppearances");
+    /** A name */
     public static final PdfName NEXT = new PdfName("Next");
     /** A name */
     public static final PdfName NEXTPAGE = new PdfName("NextPage");

@@ -62,7 +62,7 @@ import com.lowagie.text.Rectangle;
  * @see		PdfPages
  */
 
-public class PdfPage extends PdfDictionary implements PdfPageElement {
+public class PdfPage extends PdfDictionary {
     
     // membervariables
     
@@ -143,18 +143,6 @@ public class PdfPage extends PdfDictionary implements PdfPageElement {
     
     PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfResources resources) {
         this(mediaBox, cropBox, resources, null);
-    }
-    
-    // implementation of the PdfPageElement interface
-    
-/**
- * Set the value for the <B>Parent</B> key in the Page or Pages Dictionary.
- *
- * @param		reference			an indirect reference to a <CODE>PdfPages</CODE>-object
- */
-    
-    public void setParent(PdfIndirectReference reference) {
-        put(PdfName.PARENT, reference);
     }
     
 /**
