@@ -249,6 +249,7 @@ public class Document implements DocListener {
 				type == Element.PNG ||
 				type == Element.JPEG ||
 				type == Element.GIF ||
+				type == Element.IMGRAW ||
 				type == Element.GRAPHIC)) {
 				throw new DocumentException("The document is open; you can only add Elements with content.");
 			}
