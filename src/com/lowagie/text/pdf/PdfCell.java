@@ -299,14 +299,10 @@ public class PdfCell extends Rectangle {
             image.scaleToFit(right - left, Float.MAX_VALUE);
         }
         if (line.size() != 0) lines.add(line);
-        if (lines.size() == 0) {
-            line = new PdfLine(left, right, alignment, image.scaledHeight() + height);
-            image.setAbsolutePosition(left, image.scaledHeight() - leading);
-        }
-        else {
-            line = new PdfLine(left, right, alignment, image.scaledHeight() + leading);
-            image.setAbsolutePosition(left, height + lines.size() * leading + image.scaledHeight());
-        }
+        line = new PdfLine(left, right, alignment, image.scaledHeight() + leading);
+        lines.add(line);
+        line = new PdfLine(left, right, alignment, leading);
+        image.setAbsolutePosition(left, height + (lines.size() - 1) * leading + image.scaledHeight());
         images.add(image);
         return height + image.scaledHeight();
     }
@@ -375,11 +371,11 @@ public class PdfCell extends Rectangle {
  * @return	an <CODE>ArrayList</CODE> of <CODE>Image</CODE>s
  */
     
-    public ArrayList getImages(float top, float bottom) {
+    public ArrayList getImages(float bottom) {
         
         // if the bottom of the page is higher than the top of the cell: do nothing
         if (top() < bottom) {
-            return null;
+            return new ArrayList();
         }
         
         // initialisations
@@ -391,8 +387,8 @@ public class PdfCell extends Rectangle {
             image = (Image) i.next();
             height = image.absoluteY();
             // if the currentPosition is higher than the bottom, we add the line to the result
-            if (top - height > (bottom + cellpadding)) {
-                image.setAbsolutePosition(image.absoluteX(), top - height);
+            if (top() - height > (bottom + cellpadding)) {
+                image.setAbsolutePosition(image.absoluteX(), top() - height);
                 result.add(image);
                 i.remove();
             }
@@ -430,7 +426,7 @@ public class PdfCell extends Rectangle {
  */
     
     final boolean mayBeRemoved() {
-        return (header || (lines.size() < 1 && images.size() < 1));
+        return (header || (lines.size() == 0 && images.size() == 0));
     }
     
 /**

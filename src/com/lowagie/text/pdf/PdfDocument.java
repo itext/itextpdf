@@ -1330,7 +1330,6 @@ class PdfDocument extends Document implements DocListener {
                     ArrayList cells = table.getCells();
                     ArrayList headercells = null;
                     while (! cells.isEmpty()) {
-                        
                         // initialisation of some extra parameters;
                         float lostTableBottom = 0;
                         float lostTableTop = 0;
@@ -1358,8 +1357,9 @@ class PdfDocument extends Document implements DocListener {
                                     cell = (PdfCell) iterator.previous();
                                 }
                             }
-                            ArrayList images = cell.getImages(indentTop() - currentHeight, indentBottom());
+                            ArrayList images = cell.getImages(indentBottom());
                             for (Iterator i = images.iterator(); i.hasNext(); ) {
+                                cellsShown = true;
                                 Image image = (Image) i.next();
                                 addImage(image, 0, 0, 0, 0, 0, 0);
                             }
@@ -1516,6 +1516,7 @@ class PdfDocument extends Document implements DocListener {
             return true;
         }
         catch(Exception e) {
+            System.err.println("Error: " + e.getMessage());
             throw new DocumentException(e.getMessage());
         }
     }
