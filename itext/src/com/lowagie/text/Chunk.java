@@ -71,7 +71,7 @@ import com.lowagie.text.pdf.PdfAction;
  * <P>
  * Example:
  * <BLOCKQUOTE><PRE>
- * <STRONG>Chunk chunk = new Chunk("Hello world", new Font(Font.COURIER, 20, Font.ITALIC, new Color(255, 0, 0)));</STRONG>
+ * <STRONG>Chunk chunk = new Chunk("Hello world", FontFactory.getFont(FontFactory.COURIER, 20, Font.ITALIC, new Color(255, 0, 0)));</STRONG>
  * document.add(chunk);
  * </PRE></BLOCKQUOTE>
  */

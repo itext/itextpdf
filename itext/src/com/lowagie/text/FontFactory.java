@@ -67,49 +67,66 @@ import com.lowagie.text.pdf.BaseFont;
 public class FontFactory extends java.lang.Object {
 
 /** This is a possible value of a base 14 type 1 font */
-    public static final String COURIER = "Courier";
+    public static final String COURIER = BaseFont.COURIER;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String COURIER_BOLD = "Courier-Bold";
+    public static final String COURIER_BOLD = BaseFont.COURIER_BOLD;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String COURIER_OBLIQUE = "Courier-Oblique";
+    public static final String COURIER_OBLIQUE = BaseFont.COURIER_OBLIQUE;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String COURIER_BOLDOBLIQUE = "Courier-BoldOblique";
+    public static final String COURIER_BOLDOBLIQUE = BaseFont.COURIER_BOLDOBLIQUE;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String HELVETICA = "Helvetica";
+    public static final String HELVETICA = BaseFont.HELVETICA;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String HELVETICA_BOLD = "Helvetica-Bold";
+    public static final String HELVETICA_BOLD = BaseFont.HELVETICA_BOLD;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String HELVETICA_OBLIQUE = "Helvetica-Oblique";
+    public static final String HELVETICA_OBLIQUE = BaseFont.HELVETICA_OBLIQUE;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String HELVETICA_BOLDOBLIQUE = "Helvetica-BoldOblique";
+    public static final String HELVETICA_BOLDOBLIQUE = BaseFont.HELVETICA_BOLDOBLIQUE;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String SYMBOL = "Symbol";
+    public static final String SYMBOL = BaseFont.SYMBOL;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_ROMAN = "Times-Roman";
+    public static final String TIMES_ROMAN = BaseFont.TIMES_ROMAN;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_BOLD = "Times-Bold";
+    public static final String TIMES_BOLD = BaseFont.TIMES_BOLD;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_ITALIC = "Times-Italic";
+    public static final String TIMES_ITALIC = BaseFont.TIMES_ITALIC;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String TIMES_BOLDITALIC = "Times-BoldItalic";
+    public static final String TIMES_BOLDITALIC = BaseFont.TIMES_BOLDITALIC;
     
 /** This is a possible value of a base 14 type 1 font */
-    public static final String ZAPFDINGBATS = "ZapfDingbats";
+    public static final String ZAPFDINGBATS = BaseFont.ZAPFDINGBATS;
     
 /** This is a map of postscriptfontnames of True Type fonts and the path of their ttf- or ttc-file. */
-    private static Properties trueTypeFonts;
+    private static Properties trueTypeFonts = new Properties();
+    
+    static {
+        trueTypeFonts.setProperty(COURIER, "");
+        trueTypeFonts.setProperty(COURIER_BOLD, "");
+        trueTypeFonts.setProperty(COURIER_OBLIQUE, "");
+        trueTypeFonts.setProperty(COURIER_BOLDOBLIQUE, "");
+        trueTypeFonts.setProperty(HELVETICA, "");
+        trueTypeFonts.setProperty(HELVETICA_BOLD, "");
+        trueTypeFonts.setProperty(HELVETICA_OBLIQUE, "");
+        trueTypeFonts.setProperty(HELVETICA_BOLDOBLIQUE, "");
+        trueTypeFonts.setProperty(SYMBOL, "");
+        trueTypeFonts.setProperty(TIMES_ROMAN, "");
+        trueTypeFonts.setProperty(TIMES_BOLD, "");
+        trueTypeFonts.setProperty(TIMES_ITALIC, "");
+        trueTypeFonts.setProperty(TIMES_BOLDITALIC, "");
+        trueTypeFonts.setProperty(ZAPFDINGBATS, "");
+    }
     
 /** Creates new FontFactory */
     private FontFactory() {
@@ -290,22 +307,84 @@ public class FontFactory extends java.lang.Object {
     }
     
 /**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
+ * @param	fontname    the name of the font
+ * @param	size	    the size of this font
+ * @param	style	    the style of this font
+ * @param	color	    the <CODE>Color</CODE> of this font.
+ */
+    
+    public static Font getFont(String fontname, float size, int style, Color color) {
+        return getFont(fontname, BaseFont.WINANSI, false, size, style, color);
+    }
+    
+/**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
+ * @param	fontname    the name of the font
+ * @param	size	    the size of this font
+ * @param	style	    the style of this font
+ */
+    
+    public static Font getFont(String fontname, float size, int style) {
+        return getFont(fontname, BaseFont.WINANSI, false, size, style, null);
+    }
+    
+/**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
+ * @param	fontname    the name of the font
+ * @param	size	    the size of this font
+ */
+    
+    public static Font getFont(String fontname, float size) {
+        return getFont(fontname, BaseFont.WINANSI, false, size, Font.UNDEFINED, null);
+    }
+    
+/**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
+ * @param	fontname    the name of the font
+ */
+    
+    public static Font getFont(String fontname) {
+        return getFont(fontname, BaseFont.WINANSI, false, Font.UNDEFINED, Font.UNDEFINED, null);
+    }
+    
+/**
  * Register a ttf- or a ttc-file.
  *
  * @param   path    the path to a ttf- or ttc-file
  */
     
     public static void register(String path) {
-        if (trueTypeFonts == null) trueTypeFonts = new Properties();
+        register(path, null);
+    }
+    
+/**
+ * Register a ttf- or a ttc-file and use an alias for the font contained in the ttf-file.
+ *
+ * @param   path    the path to a ttf- or ttc-file
+ * @param   alias   the alias you want to use for the font
+ */
+    
+    public static void register(String path, String alias) {
         try {
             if (path.toLowerCase().endsWith(".ttf")) {
                 BaseFont bf = BaseFont.createFont(path, BaseFont.WINANSI, false, false, null, null);
                 trueTypeFonts.setProperty(bf.getPostscriptFontName(), path);
+                if (alias != null) {
+                    trueTypeFonts.setProperty(alias, path);
+                }
             }
             else if (path.toLowerCase().endsWith(".ttc")) {
                 String[] names = BaseFont.enumerateTTCNames(path);
                 for (int i = 0; i < names.length; i++) {
                     trueTypeFonts.setProperty(names[i], path + "," + (i + 1));                
+                }
+                if (alias != null) {
+                    System.err.println("class FontFactory: You can't define an alias for a true type collection.");
                 }
             }
         }

@@ -66,7 +66,7 @@ import java.util.Properties;
  * Example:
  * <BLOCKQUOTE><PRE>
  * <STRONG>Paragraph p = new Paragraph("This is a paragraph",
- *               new Font(Font.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255)));</STRONG>
+ *               FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255)));</STRONG>
  * </PRE></BLOCKQUOTE>
  *
  * @see		Element
