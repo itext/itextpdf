@@ -64,7 +64,7 @@ import java.awt.Color;
  *
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
- * Code added by Lorenz Maierhofer <larry@sbox.tugraz.at>
+ * Code added by c
  */
 public class RtfRow {
     /* Table border solid */
