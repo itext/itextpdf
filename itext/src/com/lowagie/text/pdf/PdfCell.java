@@ -282,7 +282,8 @@ public class PdfCell extends Rectangle {
  * @param   right   the right border
  */
     
-    private float addImage(Image image, float left, float right, float height, int alignment) {
+    private float addImage(Image imageOrg, float left, float right, float height, int alignment) {
+        Image image = Image.getInstance(imageOrg);
         if (image.scaledWidth() > right - left) {
             image.scaleToFit(right - left, Float.MAX_VALUE);
         }

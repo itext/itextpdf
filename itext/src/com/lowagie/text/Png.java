@@ -91,6 +91,9 @@ public class Png extends Image implements Element {
     public static final String pHYs = "pHYs";
     
     // Constructors
+    Png(Image image) {
+        super(image);
+    }
     
 /**
  * Constructs a <CODE>Png</CODE>-object, using an <VAR>url</VAR>.

@@ -96,6 +96,10 @@ public class Jpeg extends Image implements Element {
     public static final byte JFIF_ID[] = {0x4A, 0x46, 0x49, 0x46, 0x00};
     // Constructors
     
+    Jpeg(Image image) {
+        super(image);
+    }
+
     /**
      * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
      *

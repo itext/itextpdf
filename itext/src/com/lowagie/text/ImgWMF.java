@@ -72,6 +72,10 @@ public class ImgWMF extends Image implements Element {
     
     // Constructors
     
+    ImgWMF(Image image) {
+        super(image);
+    }
+    
     /**
      * Constructs an <CODE>ImgWMF</CODE>-object, using an <VAR>url</VAR>.
      *

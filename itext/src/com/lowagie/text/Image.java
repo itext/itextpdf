@@ -59,7 +59,7 @@ import java.util.Properties;
 import java.util.Set;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.CCITTG4Encoder;
-
+import java.lang.reflect.Constructor;
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG or GIF)
  * that has to be inserted into the document
@@ -234,9 +234,29 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.bpc = image.bpc;
         this.transparency = image.transparency;
         this.mySerialId = image.mySerialId;
+        this.invert = image.invert;
+        this.dpiX = image.dpiX;
+        this.dpiY = image.dpiY;
+        this.mask = image.mask;
+        this.imageMask = image.imageMask;
+        this.invertMask = image.invertMask;
+        this.interpolation = image.interpolation;
+        this.annotation = image.annotation;
+        this.markupAttributes = image.markupAttributes;
     }
-    
+   
     // gets an instance of an Image
+    
+    public static Image getInstance(Image image) {
+        try {
+            Class cs = image.getClass();
+            Constructor constructor = cs.getDeclaredConstructor(new Class[]{Image.class});
+            return (Image)constructor.newInstance(new Object[]{image});
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
     
     /**
      * Gets an instance of an Image.
