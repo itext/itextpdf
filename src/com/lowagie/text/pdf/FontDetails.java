@@ -72,6 +72,8 @@ class FontDetails {
     /** The font if its an instance of <CODE>TrueTypeFontUnicode</CODE>
      */    
     TrueTypeFontUnicode ttu;
+
+    CJKFont cjkFont;
     /** The array used with single byte encodings
      */    
     byte shortTag[];
@@ -79,6 +81,8 @@ class FontDetails {
      * value is int[]{glyph, width, Unicode code}
      */    
     HashMap longTag;
+    
+    IntHashtable cjkTag;
     /** The font type
      */    
     int fontType;
@@ -107,6 +111,8 @@ class FontDetails {
                 shortTag = new byte[256];
                 break;
             case BaseFont.FONT_TYPE_CJK:
+                cjkTag = new IntHashtable();
+                cjkFont = (CJKFont)baseFont;
                 break;
             case BaseFont.FONT_TYPE_TTUNI:
                 longTag = new HashMap();
@@ -154,9 +160,13 @@ class FontDetails {
                     shortTag[((int)b[k]) & 0xff] = 1;
                 break;
             }
-            case BaseFont.FONT_TYPE_CJK:
+            case BaseFont.FONT_TYPE_CJK: {
+                int len = text.length();
+                for (int k = 0; k < len; ++k)
+                    cjkTag.put(cjkFont.getCidCode(text.charAt(k)), 0);
                 b = baseFont.convertToBytes(text);
                 break;
+            }
             case BaseFont.FONT_TYPE_TTUNI: {
                 try {
                     int len = text.length();
@@ -233,7 +243,7 @@ class FontDetails {
                     break;
                 }
                 case BaseFont.FONT_TYPE_CJK:
-                    baseFont.writeFont(writer, indirectReference, null);
+                    baseFont.writeFont(writer, indirectReference, new Object[]{cjkTag});
                     break;
                 case BaseFont.FONT_TYPE_TTUNI:
                     baseFont.writeFont(writer, indirectReference, new Object[]{longTag});

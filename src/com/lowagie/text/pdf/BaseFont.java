@@ -625,6 +625,29 @@ public abstract class BaseFont {
      */
     public abstract String[][] getFullFontName();
     
+    /** Gets the full name of the font. If it is a True Type font
+     * each array element will have {Platform ID, Platform Encoding ID,
+     * Language ID, font name}. The interpretation of this values can be
+     * found in the Open Type specification, chapter 2, in the 'name' table.<br>
+     * For the other fonts the array has a single element with {"", "", "",
+     * font name}.
+     * @param name the name of the font
+     * @param encoding the encoding of the font
+     * @param ttfAfm the true type font or the afm in a byte array
+     * @throws DocumentException on error
+     * @throws IOException on error
+     * @return the full name of the font
+     */    
+    public static String[][] getFullFontName(String name, String encoding, byte ttfAfm[]) throws DocumentException, IOException {
+        String nameBase = getBaseName(name);
+        BaseFont fontBuilt = null;
+        if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().indexOf(".ttc,") > 0)
+            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true);
+        else
+            fontBuilt = createFont(name, encoding, false, false, ttfAfm, null);
+        return fontBuilt.getFullFontName();
+    }
+    
     /** Gets the family name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -735,5 +758,49 @@ public abstract class BaseFont {
     public void setSubset(boolean subset) {
         this.subset = subset;
     }
+
+    /** Gets the font resources.
+     * @param key the name of the resource
+     * @return the <CODE>InputStream</CODE> to get the resource or
+     * <CODE>null</CODE> if not found
+     */    
+    public static InputStream getResourceStream(String key) {
+        InputStream is = null;
+        // Try to use Context Class Loader to load the properties file.
+        try {
+            java.lang.reflect.Method getCCL =
+                Thread.class.getMethod("getContextClassLoader", new Class[0]);
+            if (getCCL != null) {
+                ClassLoader contextClassLoader =
+                    (ClassLoader)getCCL.invoke(Thread.currentThread(),
+                                               new Object[0]);
+                is = contextClassLoader.getResourceAsStream("fonts/" + key);
+            }
+        } catch (Exception e) {}
+
+        if (is == null) {
+            is = BaseFont.class.getResourceAsStream("fonts/" + key);
+        }
+        return is;
+    }
     
+    /** Gets the Unicode equivalent to a CID.
+     * The (inexistent) CID <FF00> is translated as '\n'. 
+     * It has only meaning with CJK fonts with Identity encoding.
+     * @param c the CID code
+     * @return the Unicode equivalent
+     */    
+    public char getUnicodeEquivalent(char c) {
+        return c;
+    }
+    
+    /** Gets the CID code given an Unicode.
+     * It has only meaning with CJK fonts.
+     * @param c the Unicode
+     * @return the CID equivalent
+     */    
+    public char getCidCode(char c) {
+        return c;
+    }
+
 }

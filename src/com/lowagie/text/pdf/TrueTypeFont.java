@@ -129,7 +129,8 @@ class TrueTypeFont extends BaseFont {
         "708 Arabic; ASMO 708",
         "850 WE/Latin 1",
         "437 US"};
-    
+ 
+    protected boolean justNames = false;
     /** Contains the location of the several tables. The key is the name of
      * the table and the value is an <CODE>int[2]</CODE> where position 0
      * is the offset from the start of the file and position 1 is the length
@@ -323,6 +324,10 @@ class TrueTypeFont extends BaseFont {
     protected TrueTypeFont() {
     }
     
+    TrueTypeFont(String ttFile, String enc, boolean emb, byte ttfAfm[]) throws DocumentException, IOException {
+        this(ttFile, enc, emb, ttfAfm, false);
+    }
+    
     /** Creates a new TrueType font.
      * @param ttFile the location of the font on file. The file must end in '.ttf' or
      * '.ttc' but can have modifiers after the name
@@ -332,7 +337,8 @@ class TrueTypeFont extends BaseFont {
      * @throws DocumentException the font is invalid
      * @throws IOException the font file could not be read
      */
-    TrueTypeFont(String ttFile, String enc, boolean emb, byte ttfAfm[]) throws DocumentException, IOException {
+    TrueTypeFont(String ttFile, String enc, boolean emb, byte ttfAfm[], boolean justNames) throws DocumentException, IOException {
+        this.justNames = justNames;
         String nameBase = getBaseName(ttFile);
         String ttcName = getTTCName(nameBase);
         if (nameBase.length() < ttFile.length()) {
@@ -587,10 +593,12 @@ class TrueTypeFont extends BaseFont {
             fontName = getBaseFont();
             fullName = getNames(4); //full name
             familyName = getNames(1); //family name
-            fillTables();
-            readGlyphWidths();
-            readCMaps();
-            readKerning();
+            if (!justNames) {
+                fillTables();
+                readGlyphWidths();
+                readCMaps();
+                readKerning();
+            }
         }
         finally {
             if (rf != null) {

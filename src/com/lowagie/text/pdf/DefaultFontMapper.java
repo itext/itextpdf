@@ -222,12 +222,9 @@ public class DefaultFontMapper implements FontMapper {
         for (int k = 0; k < files.length; ++k) {
             file = files[k];
             String name = file.getPath().toLowerCase();
-            BaseFont bf = null;
             try {
                 if (name.endsWith(".ttf") || name.endsWith(".afm")) {
-                    bf = BaseFont.createFont(file.getPath(), BaseFont.CP1252, false, BaseFont.NOT_CACHED, null, null);
-                    String names[][] = bf.getFullFontName();
-                    bf = null;
+                    String names[][] = BaseFont.getFullFontName(file.getPath(), BaseFont.CP1252, null);
                     insertNames(names, file.getPath());
                     ++count;
                 }
@@ -235,9 +232,7 @@ public class DefaultFontMapper implements FontMapper {
                     String ttcs[] = BaseFont.enumerateTTCNames(file.getPath());
                     for (int j = 0; j < ttcs.length; ++j) {
                         String nt = file.getPath() + "," + (j + 1);
-                        bf = BaseFont.createFont(nt, BaseFont.CP1252, false, BaseFont.NOT_CACHED, null, null);
-                        String names[][] = bf.getFullFontName();
-                        bf = null;
+                        String names[][] = BaseFont.getFullFontName(nt, BaseFont.CP1252, null);
                         insertNames(names, nt);
                     }
                     ++count;
