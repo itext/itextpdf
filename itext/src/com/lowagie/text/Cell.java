@@ -383,11 +383,6 @@ public class Cell extends Rectangle implements TextElementArray {
 			case Element.ROW:
 			case Element.CELL:
 				throw new BadElementException("You can't add listitems, rows or cells to a cell.");
-			case Element.JPEG:
-			case Element.IMGRAW:
-			case Element.IMGTEMPLATE:
-				arrayList.add(element);
-				break;
 			case Element.LIST:
 				if (Float.isNaN(leading)) {
 					leading = ((List) element).leading();
