@@ -197,7 +197,7 @@ class PdfDocument extends Document implements DocListener {
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.91)"));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 96"));
             // Do not edit the line above!
         }
         
@@ -469,6 +469,8 @@ class PdfDocument extends Document implements DocListener {
     /** This is the array containing the references to the annotations. */
     private ArrayList annotations;
     
+    private ArrayList delayedAnnotations = new ArrayList();
+    
     private HashMap fieldTemplates = new HashMap();
     
     private PdfArray documentFields = new PdfArray();
@@ -677,8 +679,14 @@ class PdfDocument extends Document implements DocListener {
     protected PdfArray rotateAnnotations() {
         PdfArray array = new PdfArray();
         int rotation = thisPageSize.getRotation() % 360;
+        int currentPage = writer.getCurrentPageNumber();
         for (int k = 0; k < annotations.size(); ++k) {
             PdfAnnotation dic = (PdfAnnotation)annotations.get(k);
+            int page = dic.getPlaceInPage();
+            if (page > currentPage) {
+                delayedAnnotations.add(dic);
+                continue;
+            }
             if (dic.isForm()) {
                 if (!dic.isUsed()) {
                     HashMap templates = dic.getTemplates();
@@ -865,6 +873,8 @@ class PdfDocument extends Document implements DocListener {
         try {
             newPage();
             if (imageWait != null) newPage();
+            if (annotations.size() > 0)
+                throw new RuntimeException(annotations.size() + " annotations had invalid placement pages.");
             PdfPageEvent pageEvent = writer.getPageEvent();
             if (pageEvent != null)
                 pageEvent.onCloseDocument(writer, this);
@@ -1434,7 +1444,7 @@ class PdfDocument extends Document implements DocListener {
                             for (Iterator i = images.iterator(); i.hasNext(); ) {
                                 cellsShown = true;
                                 Image image = (Image) i.next();
-                                addImage(cellGraphics, image, 0, 0, 0, 0, 0, 0);
+                                addImage(graphics, image, 0, 0, 0, 0, 0, 0);
                             }
                             // if a cell is allready added completely, remove it
                             if (cell.mayBeRemoved()) {
@@ -1750,7 +1760,8 @@ class PdfDocument extends Document implements DocListener {
     private void initPage() throws DocumentException {
         
         // initialisation of some page objects
-        annotations = new ArrayList();
+        annotations = delayedAnnotations;
+        delayedAnnotations = new ArrayList();
         fontDictionary = new PdfFontDictionary();
         xObjectDictionary = new PdfXObjectDictionary();
         colorDictionary = new PdfColorDictionary();
