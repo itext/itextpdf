@@ -179,27 +179,22 @@ public class PdfPageLabels implements Comparator {
     PdfDictionary getDictionary() {
         PdfDictionary dic = new PdfDictionary();
         PdfArray array = new PdfArray();
-        try {
-            for (Iterator it = map.values().iterator(); it.hasNext();) {
-                Object obj[] = (Object[])it.next();
-                PdfDictionary subDic = new PdfDictionary();
-                PdfName pName = (PdfName)obj[1];
-                if (pName != null)
-                    subDic.put(PdfName.S, pName);
-                String text = (String)obj[2];
-                if (text != null)
-                    subDic.put(PdfName.P, new PdfString(text, PdfObject.TEXT_UNICODE));
-                int st = ((Integer)obj[3]).intValue();
-                if (st != 1)
-                    subDic.put(new PdfName("St"), new PdfNumber(st));
-                array.add(new PdfNumber(((Integer)obj[0]).intValue() - 1));
-                array.add(subDic);
-            }
-            dic.put(new PdfName("Nums"), array);
+        for (Iterator it = map.values().iterator(); it.hasNext();) {
+            Object obj[] = (Object[])it.next();
+            PdfDictionary subDic = new PdfDictionary();
+            PdfName pName = (PdfName)obj[1];
+            if (pName != null)
+                subDic.put(PdfName.S, pName);
+            String text = (String)obj[2];
+            if (text != null)
+                subDic.put(PdfName.P, new PdfString(text, PdfObject.TEXT_UNICODE));
+            int st = ((Integer)obj[3]).intValue();
+            if (st != 1)
+                subDic.put(new PdfName("St"), new PdfNumber(st));
+            array.add(new PdfNumber(((Integer)obj[0]).intValue() - 1));
+            array.add(subDic);
         }
-        catch (BadPdfFormatException e) {
-            throw new ExceptionConverter(e);
-        }
+        dic.put(new PdfName("Nums"), array);
         return dic;
     }
 }

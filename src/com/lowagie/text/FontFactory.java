@@ -54,6 +54,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Enumeration;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
@@ -225,6 +226,10 @@ public class FontFactory extends java.lang.Object {
                 color = MarkupParser.decodeColor(value);
             }
             attributes.putAll(styleAttributes);
+            for (Enumeration e = styleAttributes.keys(); e.hasMoreElements();) {
+                Object o = e.nextElement();
+                attributes.put(o, styleAttributes.get(o));
+            }
         }
         if ((value = (String)attributes.remove(ElementTags.ENCODING)) != null) {
             encoding = value;

@@ -85,6 +85,10 @@ class FontDetails {
     /** <CODE>true</CODE> if the font is symbolic
      */    
     boolean symbolic;
+    /** Indicates if all the glyphs and widths for that particular
+     * encoding should be included in the document.
+     */
+    protected boolean subset = true;
     /** Each font used in a document has an instance of this class.
      * This class stores the characters used in the document and other
      * specifics unique to the current working document.
@@ -209,18 +213,26 @@ class FontDetails {
                 case BaseFont.FONT_TYPE_T1:
                 case BaseFont.FONT_TYPE_TT: {
                     int firstChar;
-                    for (firstChar = 0; firstChar < 256; ++firstChar) {
-                        if (shortTag[firstChar] != 0)
-                            break;
-                    }
                     int lastChar;
-                    for (lastChar = 255; lastChar >= firstChar; --lastChar) {
-                        if (shortTag[lastChar] != 0)
-                            break;
+                    if (subset) {
+                        for (firstChar = 0; firstChar < 256; ++firstChar) {
+                            if (shortTag[firstChar] != 0)
+                                break;
+                        }
+                        for (lastChar = 255; lastChar >= firstChar; --lastChar) {
+                            if (shortTag[lastChar] != 0)
+                                break;
+                        }
+                        if (firstChar > 255) {
+                            firstChar = 255;
+                            lastChar = 255;
+                        }
                     }
-                    if (firstChar > 255) {
-                        firstChar = 255;
-                        lastChar = 255;
+                    else {
+                        for (int k = 0; k < shortTag.length; ++k)
+                            shortTag[k] = 1;
+                        firstChar = 0;
+                        lastChar = shortTag.length - 1;
                     }
                     baseFont.writeFont(writer, indirectReference, new Object[]{new Integer(firstChar), new Integer(lastChar), shortTag});
                     break;
@@ -236,5 +248,22 @@ class FontDetails {
         catch(Exception e) {
             throw new ExceptionConverter(e);
         }
+    }
+    
+    /** Indicates if all the glyphs and widths for that particular
+     * encoding should be included in the document.
+     * @return <CODE>false</CODE> to include all the glyphs and widths.
+     */
+    public boolean isSubset() {
+        return subset;
+    }
+    
+    /** Indicates if all the glyphs and widths for that particular
+     * encoding should be included in the document. Set to <CODE>false</CODE>
+     * to include all.
+     * @param subset new value of property subset
+     */
+    public void setSubset(boolean subset) {
+        this.subset = subset;
     }
 }

@@ -75,6 +75,12 @@ public class PdfAction extends PdfDictionary {
      */
     public final static int LASTPAGE = 4;
     // constructors
+    public final static int SUBMIT_EXCLUDE = 1;
+    public final static int SUBMIT_INCLUDE_NO_VALUE_FIELDS = 2;
+    public final static int SUBMIT_HTML_FORMAT = 4;
+    public final static int SUBMIT_HTML_GET = 8;
+    public final static int SUBMIT_COORDINATES = 16;
+    public final static int RESET_EXCLUDE = 1;
     
     /** Create an empty action.
      */    
@@ -88,8 +94,11 @@ public class PdfAction extends PdfDictionary {
      */
     
     public PdfAction(URL url) {
-        put(PdfName.S, PdfName.URI);
-        put(PdfName.URI, new PdfString(url.toExternalForm()));
+        this(url.toExternalForm());
+    }
+    
+    public PdfAction(URL url, boolean isMap) {
+        this(url.toExternalForm(), isMap);
     }
     
     /**
@@ -99,8 +108,14 @@ public class PdfAction extends PdfDictionary {
      */
     
     public PdfAction(String url) {
+        this(url, false);
+    }
+    
+    public PdfAction(String url, boolean isMap) {
         put(PdfName.S, PdfName.URI);
         put(PdfName.URI, new PdfString(url));
+        if (isMap)
+            put(PdfName.ISMAP, PdfBoolean.PDFTRUE);
     }
     
     /**
@@ -232,6 +247,67 @@ public class PdfAction extends PdfDictionary {
      */    
     public static PdfAction javaScript(String code, PdfWriter writer) {
         return javaScript(code, writer, false);
+    }
+    
+    static PdfAction createHide(PdfObject obj, boolean hide) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.HIDE);
+        action.put(PdfName.T, obj);
+        if (!hide)
+            action.put(PdfName.H, PdfBoolean.PDFFALSE);
+        return action;
+    }
+    
+    public static PdfAction createHide(PdfAnnotation annot, boolean hide) {
+        return createHide(annot.getIndirectReference(), hide);
+    }
+    
+    public static PdfAction createHide(String name, boolean hide) {
+        return createHide(new PdfString(name), hide);
+    }
+    
+    static PdfArray buildArray(Object names[]) {
+        PdfArray array = new PdfArray();
+        for (int k = 0; k < names.length; ++k) {
+            Object obj = names[k];
+            if (obj instanceof String)
+                array.add(new PdfString((String)obj));
+            else if (obj instanceof PdfAnnotation)
+                array.add(((PdfAnnotation)obj).getIndirectReference());
+            else
+                throw new RuntimeException("The array must contain String or PdfAnnotation.");
+        }
+        return array;
+    }
+    
+    public static PdfAction createHide(Object names[], boolean hide) {
+        return createHide(buildArray(names), hide);
+    }
+    
+    public static PdfAction createSubmitForm(String file, Object names[], int flags) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.SUBMITFORM);
+        action.put(PdfName.F, new PdfString(file));
+        if (names != null)
+            action.put(PdfName.FIELDS, buildArray(names));
+        action.put(PdfName.FLAGS, new PdfNumber(flags));
+        return action;
+    }
+    
+    public static PdfAction createResetForm(Object names[], int flags) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.RESETFORM);
+        if (names != null)
+            action.put(PdfName.FIELDS, buildArray(names));
+        action.put(PdfName.FLAGS, new PdfNumber(flags));
+        return action;
+    }
+    
+    public static PdfAction createImportData(String file) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.IMPORTDATA);
+        action.put(PdfName.F, new PdfString(file));
+        return action;
     }
     
     /** Add a chained action.

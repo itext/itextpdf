@@ -62,7 +62,7 @@ import com.lowagie.text.ExceptionConverter;
  * @see		PdfArray
  */
 
-class PdfDashPattern extends PdfArray {
+public class PdfDashPattern extends PdfArray {
     
     // membervariables
     
@@ -81,7 +81,7 @@ class PdfDashPattern extends PdfArray {
  * Constructs a new <CODE>PdfDashPattern</CODE>.
  */
     
-    PdfDashPattern() {
+    public PdfDashPattern() {
         super();
     }
     
@@ -89,7 +89,7 @@ class PdfDashPattern extends PdfArray {
  * Constructs a new <CODE>PdfDashPattern</CODE>.
  */
     
-    PdfDashPattern(float dash) {
+    public PdfDashPattern(float dash) {
         super(new PdfNumber(dash));
         this.dash = dash;
     }
@@ -98,7 +98,7 @@ class PdfDashPattern extends PdfArray {
  * Constructs a new <CODE>PdfDashPattern</CODE>.
  */
     
-    PdfDashPattern(float dash, float gap) {
+    public PdfDashPattern(float dash, float gap) {
         super(new PdfNumber(dash));
         add(new PdfNumber(gap));
         this.dash = dash;
@@ -109,12 +109,16 @@ class PdfDashPattern extends PdfArray {
  * Constructs a new <CODE>PdfDashPattern</CODE>.
  */
     
-    PdfDashPattern(float dash, float gap, float phase) {
+    public PdfDashPattern(float dash, float gap, float phase) {
         super(new PdfNumber(dash));
         add(new PdfNumber(gap));
         this.dash = dash;
         this.gap = gap;
         this.phase = phase;
+    }
+    
+    public void add(float n) {
+        add(new PdfNumber(n));
     }
     
 /**

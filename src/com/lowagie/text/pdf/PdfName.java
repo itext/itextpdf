@@ -68,607 +68,762 @@ import com.lowagie.text.ExceptionConverter;
  * @see		BadPdfFormatException
  */
 
-public class PdfName extends PdfObject {
+public class PdfName extends PdfObject implements Comparable{
     
     // static membervariables (a variety of standard names used in PDF)
     
     /** This is a static final PdfName */
-    public static final PdfName A = new PdfName("/A", 0);
+    public static final PdfName A = new PdfName("A");
     
     /** This is a static final PdfName */
-    public static final PdfName AA = new PdfName("/AA", 0);
+    public static final PdfName AA = new PdfName("AA");
     
     /** This is a static final PdfName */
-    public static final PdfName ACROFORM = new PdfName("/AcroForm", 0);
+    public static final PdfName AC = new PdfName("AC");
     
     /** This is a static final PdfName */
-    public static final PdfName ACTION = new PdfName("/Action", 0);
+    public static final PdfName ACROFORM = new PdfName("AcroForm");
     
     /** This is a static final PdfName */
-    public static final PdfName ANNOT = new PdfName("/Annot", 0);
+    public static final PdfName ACTION = new PdfName("Action");
     
     /** This is a static final PdfName */
-    public static final PdfName ANNOTS = new PdfName("/Annots", 0);
+    public static final PdfName ANNOT = new PdfName("Annot");
     
     /** This is a static final PdfName */
-    public static final PdfName AP = new PdfName("/AP", 0);
+    public static final PdfName ANNOTS = new PdfName("Annots");
     
     /** This is a static final PdfName */
-    public static final PdfName ASCII85DECODE = new PdfName("/ASCII85Decode", 0);
+    public static final PdfName AP = new PdfName("AP");
     
     /** This is a static final PdfName */
-    public static final PdfName ASCIIHEXDECODE = new PdfName("/ASCIIHexDecode", 0);
+    public static final PdfName AS = new PdfName("AS");
     
     /** This is a static final PdfName */
-    public static final PdfName AUTHOR = new PdfName("/Author", 0);
+    public static final PdfName ASCII85DECODE = new PdfName("ASCII85Decode");
     
     /** This is a static final PdfName */
-    public static final PdfName B = new PdfName("/B", 0);
+    public static final PdfName ASCIIHEXDECODE = new PdfName("ASCIIHexDecode");
     
     /** This is a static final PdfName */
-    public static final PdfName BASEFONT = new PdfName("/BaseFont", 0);
+    public static final PdfName AUTHOR = new PdfName("Author");
     
     /** This is a static final PdfName */
-    public static final PdfName BBOX = new PdfName("/BBox", 0);
+    public static final PdfName B = new PdfName("B");
+
+    /** This is a static final PdfName */
+    public static final PdfName BASEFONT = new PdfName("BaseFont");
     
     /** This is a static final PdfName */
-    public static final PdfName BG = new PdfName("/BG", 0);
+    public static final PdfName BBOX = new PdfName("BBox");
     
     /** This is a static final PdfName */
-    public static final PdfName BITSPERCOMPONENT = new PdfName("/BitsPerComponent", 0);
+    public static final PdfName BC = new PdfName("BC");
     
     /** This is a static final PdfName */
-    public static final PdfName BLACKIS1 = new PdfName("/BlackIs1", 0);
+    public static final PdfName BG = new PdfName("BG");
     
     /** This is a static final PdfName */
-    public static final PdfName BORDER = new PdfName("/Border", 0);
+    public static final PdfName BITSPERCOMPONENT = new PdfName("BitsPerComponent");
     
     /** This is a static final PdfName */
-    public static final PdfName BS = new PdfName("/BS", 0);
+    public static final PdfName BL = new PdfName("Bl");
     
     /** This is a static final PdfName */
-    public static final PdfName C = new PdfName("/C", 0);
+    public static final PdfName BLACKIS1 = new PdfName("BlackIs1");
     
     /** This is a static final PdfName */
-    public static final PdfName CATALOG = new PdfName("/Catalog", 0);
+    public static final PdfName BORDER = new PdfName("Border");
     
     /** This is a static final PdfName */
-    public static final PdfName CCITTFAXDECODE = new PdfName("/CCITTFaxDecode", 0);
+    public static final PdfName BS = new PdfName("BS");
     
     /** This is a static final PdfName */
-    public static final PdfName CENTERWINDOW = new PdfName("/CenterWindow", 0);
+    public static final PdfName BTN = new PdfName("Btn");
     
     /** This is a static final PdfName */
-    public static final PdfName COLORS = new PdfName("/Colors", 0);
+    public static final PdfName BYTERANGE = new PdfName("ByteRange");
     
     /** This is a static final PdfName */
-    public static final PdfName COLORSPACE = new PdfName("/ColorSpace", 0);
+    public static final PdfName C = new PdfName("C");
     
     /** This is a static final PdfName */
-    public static final PdfName COLUMNS = new PdfName("/Columns", 0);
+    public static final PdfName CA = new PdfName("CA");
     
     /** This is a static final PdfName */
-    public static final PdfName CONTENT = new PdfName("/Content", 0);
+    public static final PdfName CATALOG = new PdfName("Catalog");
     
     /** This is a static final PdfName */
-    public static final PdfName CONTENTS = new PdfName("/Contents", 0);
+    public static final PdfName CCITTFAXDECODE = new PdfName("CCITTFaxDecode");
     
     /** This is a static final PdfName */
-    public static final PdfName COUNT = new PdfName("/Count", 0);
+    public static final PdfName CENTERWINDOW = new PdfName("CenterWindow");
+
+    /** This is a static final PdfName */
+    public static final PdfName CH = new PdfName("Ch");
+
+    /** This is a static final PdfName */
+    public static final PdfName CIRCLE = new PdfName("Circle");
+
+    /** This is a static final PdfName */
+    public static final PdfName CO = new PdfName("CO");
+    
+    /** This is a static final PdfName */
+    public static final PdfName COLORS = new PdfName("Colors");
+    
+    /** This is a static final PdfName */
+    public static final PdfName COLORSPACE = new PdfName("ColorSpace");
+    
+    /** This is a static final PdfName */
+    public static final PdfName COLUMNS = new PdfName("Columns");
+    
+    /** This is a static final PdfName */
+    public static final PdfName CONTENT = new PdfName("Content");
+    
+    /** This is a static final PdfName */
+    public static final PdfName CONTENTS = new PdfName("Contents");
+    
+    /** This is a static final PdfName */
+    public static final PdfName COUNT = new PdfName("Count");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName COURIER = new PdfName("/Courier", 0);
+    public static final PdfName COURIER = new PdfName("Courier");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName COURIER_BOLD = new PdfName("/Courier-Bold", 0);
+    public static final PdfName COURIER_BOLD = new PdfName("Courier-Bold");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName COURIER_OBLIQUE = new PdfName("/Courier-Oblique", 0);
+    public static final PdfName COURIER_OBLIQUE = new PdfName("Courier-Oblique");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName COURIER_BOLDOBLIQUE = new PdfName("/Courier-BoldOblique", 0);
+    public static final PdfName COURIER_BOLDOBLIQUE = new PdfName("Courier-BoldOblique");
     
     /** This is a static final PdfName */
-    public static final PdfName CREATIONDATE = new PdfName("/CreationDate", 0);
+    public static final PdfName CREATIONDATE = new PdfName("CreationDate");
     
     /** This is a static final PdfName */
-    public static final PdfName CREATOR = new PdfName("/Creator", 0);
+    public static final PdfName CREATOR = new PdfName("Creator");
     
     /** This is a static final PdfName */
-    public static final PdfName CROPBOX = new PdfName("/CropBox", 0);
+    public static final PdfName CROPBOX = new PdfName("CropBox");
     
     /** This is a static final PdfName */
-    public static final PdfName D = new PdfName("/D", 0);
+    public static final PdfName D = new PdfName("D");
     
     /** This is a static final PdfName */
-    public static final PdfName DA = new PdfName("/DA", 0);
+    public static final PdfName DA = new PdfName("DA");
     
     /** This is a static final PdfName */
-    public static final PdfName DCTDECODE = new PdfName("/DCTDecode", 0);
+    public static final PdfName DCTDECODE = new PdfName("DCTDecode");
     
     /** This is a static final PdfName */
-    public static final PdfName DECODE = new PdfName("/Decode", 0);
+    public static final PdfName DECODE = new PdfName("Decode");
     
     /** This is a static final PdfName */
-    public static final PdfName DECODEPARMS = new PdfName("/DecodeParms", 0);
+    public static final PdfName DECODEPARMS = new PdfName("DecodeParms");
     
     /** This is a static final PdfName */
-    public static final PdfName DEST = new PdfName("/Dest", 0);
+    public static final PdfName DEST = new PdfName("Dest");
     
     /** This is a static final PdfName */
-    public static final PdfName DESTS = new PdfName("/Dests", 0);
+    public static final PdfName DESTS = new PdfName("Dests");
     
     /** This is a static final PdfName */
-    public static final PdfName DEVICEGRAY = new PdfName("/DeviceGray", 0);
+    public static final PdfName DEVICEGRAY = new PdfName("DeviceGray");
     
     /** This is a static final PdfName */
-    public static final PdfName DEVICERGB = new PdfName("/DeviceRGB", 0);
+    public static final PdfName DEVICERGB = new PdfName("DeviceRGB");
     
     /** This is a static final PdfName */
-    public static final PdfName DEVICECMYK = new PdfName("/DeviceCMYK", 0);
+    public static final PdfName DEVICECMYK = new PdfName("DeviceCMYK");
     
     /** This is a static final PdfName */
-    public static final PdfName DIRECTION = new PdfName("/Direction", 0);
+    public static final PdfName DIRECTION = new PdfName("Direction");
     
     /** This is a static final PdfName */
-    public static final PdfName DR = new PdfName("/DR", 0);
+    public static final PdfName DR = new PdfName("DR");
     
     /** This is a static final PdfName */
-    public static final PdfName DUR = new PdfName("/Dur", 0);
+    public static final PdfName DUR = new PdfName("Dur");
+
+    /** This is a static final PdfName */
+    public static final PdfName DV = new PdfName("DV");
+
+    /** This is a static final PdfName */
+    public static final PdfName E = new PdfName("E");
     
     /** This is a static final PdfName */
-    public static final PdfName EARLYCHANGE = new PdfName("/EarlyChange", 0);
+    public static final PdfName EARLYCHANGE = new PdfName("EarlyChange");
     
     /** This is a static final PdfName */
-    public static final PdfName ENCODEDBYTEALIGN = new PdfName("/EncodedByteAlign", 0);
+    public static final PdfName ENCODEDBYTEALIGN = new PdfName("EncodedByteAlign");
     
     /** This is a static final PdfName */
-    public static final PdfName ENCODING = new PdfName("/Encoding", 0);
+    public static final PdfName ENCODING = new PdfName("Encoding");
     
     /** This is a static final PdfName */
-    public static final PdfName ENCRYPT = new PdfName("/Encrypt", 0);
+    public static final PdfName ENCRYPT = new PdfName("Encrypt");
     
     /** This is a static final PdfName */
-    public static final PdfName ENDOFBLOCK = new PdfName("/EndOfBlock", 0);
+    public static final PdfName ENDOFBLOCK = new PdfName("EndOfBlock");
     
     /** This is a static final PdfName */
-    public static final PdfName ENDOFLINE = new PdfName("/EndOfLine", 0);
+    public static final PdfName ENDOFLINE = new PdfName("EndOfLine");
     
     /** This is a static final PdfName */
-    public static final PdfName EXTGSTATE = new PdfName("/ExtGState", 0);
+    public static final PdfName EXTGSTATE = new PdfName("ExtGState");
     
     /** This is a static final PdfName */
-    public static final PdfName F = new PdfName("/F", 0);
+    public static final PdfName F = new PdfName("F");
     
     /** This is a static final PdfName */
-    public static final PdfName FDECODEPARMS = new PdfName("/FDecodeParms", 0);
+    public static final PdfName FDECODEPARMS = new PdfName("FDecodeParms");
     
     /** This is a static final PdfName */
-    public static final PdfName FF = new PdfName("/Ff", 0);
+    public static final PdfName FF = new PdfName("Ff");
     
     /** This is a static final PdfName */
-    public static final PdfName FFILTER = new PdfName("/FFilter", 0);
+    public static final PdfName FFILTER = new PdfName("FFilter");
     
     /** This is a static final PdfName */
-    public static final PdfName FIELDS = new PdfName("/Fields", 0);
+    public static final PdfName FIELDS = new PdfName("Fields");
     
     /** This is a static final PdfName */
-    public static final PdfName FILTER = new PdfName("/Filter", 0);
+    public static final PdfName FILTER = new PdfName("Filter");
     
     /** This is a static final PdfName */
-    public static final PdfName FIRST = new PdfName("/First", 0);
+    public static final PdfName FIRST = new PdfName("First");
     
     /** This is a static final PdfName */
-    public static final PdfName FIRSTCHAR = new PdfName("/FirstChar", 0);
+    public static final PdfName FIRSTCHAR = new PdfName("FirstChar");
     
     /** This is a static final PdfName */
-    public static final PdfName FIRSTPAGE = new PdfName("/FirstPage", 0);
+    public static final PdfName FIRSTPAGE = new PdfName("FirstPage");
     
     /** This is a static final PdfName */
-    public static final PdfName FIT = new PdfName("/Fit", 0);
+    public static final PdfName FIT = new PdfName("Fit");
     
     /** This is a static final PdfName */
-    public static final PdfName FITH = new PdfName("/FitH", 0);
+    public static final PdfName FITH = new PdfName("FitH");
     
     /** This is a static final PdfName */
-    public static final PdfName FITV = new PdfName("/FitV", 0);
+    public static final PdfName FITV = new PdfName("FitV");
     
     /** This is a static final PdfName */
-    public static final PdfName FITR = new PdfName("/FitR", 0);
+    public static final PdfName FITR = new PdfName("FitR");
     
     /** This is a static final PdfName */
-    public static final PdfName FITB = new PdfName("/FitB", 0);
+    public static final PdfName FITB = new PdfName("FitB");
     
     /** This is a static final PdfName */
-    public static final PdfName FITBH = new PdfName("/FitBH", 0);
+    public static final PdfName FITBH = new PdfName("FitBH");
     
     /** This is a static final PdfName */
-    public static final PdfName FITBV = new PdfName("/FitBV", 0);
+    public static final PdfName FITBV = new PdfName("FitBV");
     
     /** This is a static final PdfName */
-    public static final PdfName FITWINDOW = new PdfName("/FitWindow", 0);
+    public static final PdfName FITWINDOW = new PdfName("FitWindow");
     
     /** This is a static final PdfName */
-    public static final PdfName FLATEDECODE = new PdfName("/FlateDecode", 0);
+    public static final PdfName FLAGS = new PdfName("Flags");
     
     /** This is a static final PdfName */
-    public static final PdfName FONT = new PdfName("/Font", 0);
+    public static final PdfName FLATEDECODE = new PdfName("FlateDecode");
     
     /** This is a static final PdfName */
-    public static final PdfName FONTDESCRIPTOR = new PdfName("/FontDescriptor", 0);
+    public static final PdfName FO = new PdfName("Fo");
     
     /** This is a static final PdfName */
-    public static final PdfName FORM = new PdfName("/Form", 0);
+    public static final PdfName FONT = new PdfName("Font");
     
     /** This is a static final PdfName */
-    public static final PdfName FORMTYPE = new PdfName("/FormType", 0);
+    public static final PdfName FONTDESCRIPTOR = new PdfName("FontDescriptor");
     
     /** This is a static final PdfName */
-    public static final PdfName FT = new PdfName("/FT", 0);
+    public static final PdfName FORM = new PdfName("Form");
     
     /** This is a static final PdfName */
-    public static final PdfName FULLSCREEN = new PdfName("/FullScreen", 0);
+    public static final PdfName FORMTYPE = new PdfName("FormType");
     
     /** This is a static final PdfName */
-    public static final PdfName FUNCTIONTYPE = new PdfName("/FunctionType", 0);
+    public static final PdfName FREETEXT = new PdfName("FreeText");
+    
+    /** This is a static final PdfName */
+    public static final PdfName FT = new PdfName("FT");
+    
+    /** This is a static final PdfName */
+    public static final PdfName FULLSCREEN = new PdfName("FullScreen");
+    
+    /** This is a static final PdfName */
+    public static final PdfName FUNCTIONTYPE = new PdfName("FunctionType");
     
     /** This is a static final PdfName of an attribute. */
-    public static final PdfName GOTO = new PdfName("/GoTo", 0);
+    public static final PdfName GOTO = new PdfName("GoTo");
     
     /** This is a static final PdfName of an attribute. */
-    public static final PdfName GOTOR = new PdfName("/GoToR", 0);
+    public static final PdfName GOTOR = new PdfName("GoToR");
     
     /** This is a static final PdfName of an attribute. */
-    public static final PdfName HEIGHT = new PdfName("/Height", 0);
+    public static final PdfName H = new PdfName("H");
+    
+    /** This is a static final PdfName of an attribute. */
+    public static final PdfName HEIGHT = new PdfName("Height");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName HELVETICA = new PdfName("/Helvetica", 0);
+    public static final PdfName HELVETICA = new PdfName("Helvetica");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName HELVETICA_BOLD = new PdfName("/Helvetica-Bold", 0);
+    public static final PdfName HELVETICA_BOLD = new PdfName("Helvetica-Bold");
     
     /** This is a static PdfName PdfName of a base 14 type 1 font */
-    public static final PdfName HELVETICA_OBLIQUE = new PdfName("/Helvetica-Oblique", 0);
+    public static final PdfName HELVETICA_OBLIQUE = new PdfName("Helvetica-Oblique");
     
     /** This is a static PdfName PdfName of a base 14 type 1 font */
-    public static final PdfName HELVETICA_BOLDOBLIQUE = new PdfName("/Helvetica-BoldOblique", 0);
+    public static final PdfName HELVETICA_BOLDOBLIQUE = new PdfName("Helvetica-BoldOblique");
     
     /** This is a static final PdfName */
-    public static final PdfName HID = new PdfName("/Hid", 0);
+    public static final PdfName HID = new PdfName("Hid");
     
     /** This is a static final PdfName */
-    public static final PdfName HIDEMENUBAR = new PdfName("/HideMenubar", 0);
+    public static final PdfName HIDE = new PdfName("Hide");
     
     /** This is a static final PdfName */
-    public static final PdfName HIDETOOLBAR = new PdfName("/HideToolbar", 0);
+    public static final PdfName HIDEMENUBAR = new PdfName("HideMenubar");
     
     /** This is a static final PdfName */
-    public static final PdfName HIDEWINDOWUI = new PdfName("/HideWindowUI", 0);
+    public static final PdfName HIDETOOLBAR = new PdfName("HideToolbar");
     
     /** This is a static final PdfName */
-    public static final PdfName ID = new PdfName("/ID", 0);
+    public static final PdfName HIDEWINDOWUI = new PdfName("HideWindowUI");
     
     /** This is a static final PdfName */
-    public static final PdfName IMAGE = new PdfName("/Image", 0);
+    public static final PdfName HIGHLIGHT = new PdfName("Highlight");
     
     /** This is a static final PdfName */
-    public static final PdfName IMAGEB = new PdfName("/ImageB", 0);
+    public static final PdfName I = new PdfName("I");
     
     /** This is a static final PdfName */
-    public static final PdfName IMAGEC = new PdfName("/ImageC", 0);
+    public static final PdfName ID = new PdfName("ID");
     
     /** This is a static final PdfName */
-    public static final PdfName IMAGEI = new PdfName("/ImageI", 0);
+    public static final PdfName IF = new PdfName("IF");
     
     /** This is a static final PdfName */
-    public static final PdfName IMAGEMASK = new PdfName("/ImageMask", 0);
+    public static final PdfName IMAGE = new PdfName("Image");
     
     /** This is a static final PdfName */
-    public static final PdfName INDEXED = new PdfName("/Indexed", 0);
+    public static final PdfName IMAGEB = new PdfName("ImageB");
     
     /** This is a static final PdfName */
-    public static final PdfName INFO = new PdfName("/Info", 0);
+    public static final PdfName IMAGEC = new PdfName("ImageC");
     
     /** This is a static final PdfName */
-    public static final PdfName JAVASCRIPT = new PdfName("/JavaScript", 0);
+    public static final PdfName IMAGEI = new PdfName("ImageI");
     
     /** This is a static final PdfName */
-    public static final PdfName JS = new PdfName("/JS", 0);
+    public static final PdfName IMAGEMASK = new PdfName("ImageMask");
     
     /** This is a static final PdfName */
-    public static final PdfName INTERPOLATE = new PdfName("/Interpolate", 0);
+    public static final PdfName INDEXED = new PdfName("Indexed");
     
     /** This is a static final PdfName */
-    public static final PdfName K = new PdfName("/K", 0);
+    public static final PdfName INFO = new PdfName("Info");
     
     /** This is a static final PdfName */
-    public static final PdfName KEYWORDS = new PdfName("/Keywords", 0);
+    public static final PdfName INKLIST = new PdfName("InkList");
     
     /** This is a static final PdfName */
-    public static final PdfName KIDS = new PdfName("/Kids", 0);
+    public static final PdfName IMPORTDATA = new PdfName("ImportData");
     
     /** This is a static final PdfName */
-    public static final PdfName L2R = new PdfName("/L2R", 0);
+    public static final PdfName INTERPOLATE = new PdfName("Interpolate");
     
     /** This is a static final PdfName */
-    public static final PdfName LAST = new PdfName("/Last", 0);
+    public static final PdfName ISMAP = new PdfName("IsMap");
     
     /** This is a static final PdfName */
-    public static final PdfName LASTCHAR = new PdfName("/LastChar", 0);
+    public static final PdfName IX = new PdfName("IX");
     
     /** This is a static final PdfName */
-    public static final PdfName LASTPAGE = new PdfName("/LastPage", 0);
+    public static final PdfName JAVASCRIPT = new PdfName("JavaScript");
     
     /** This is a static final PdfName */
-    public static final PdfName LAUNCH = new PdfName("/Launch", 0);
+    public static final PdfName JS = new PdfName("JS");
     
     /** This is a static final PdfName */
-    public static final PdfName LENGTH = new PdfName("/Length", 0);
+    public static final PdfName K = new PdfName("K");
     
     /** This is a static final PdfName */
-    public static final PdfName LIMITS = new PdfName("/Limits", 0);
+    public static final PdfName KEYWORDS = new PdfName("Keywords");
     
     /** This is a static final PdfName */
-    public static final PdfName LINK = new PdfName("/Link", 0);
+    public static final PdfName KIDS = new PdfName("Kids");
     
     /** This is a static final PdfName */
-    public static final PdfName LZWDECODE = new PdfName("/LZWDecode", 0);
+    public static final PdfName L = new PdfName("L");
     
     /** This is a static final PdfName */
-    public static final PdfName MATRIX = new PdfName("/Matrix", 0);
+    public static final PdfName L2R = new PdfName("L2R");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LAST = new PdfName("Last");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LASTCHAR = new PdfName("LastChar");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LASTPAGE = new PdfName("LastPage");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LAUNCH = new PdfName("Launch");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LENGTH = new PdfName("Length");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LIMITS = new PdfName("Limits");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LINE = new PdfName("Line");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LINK = new PdfName("Link");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LOCATION = new PdfName("Location");
+    
+    /** This is a static final PdfName */
+    public static final PdfName LZWDECODE = new PdfName("LZWDecode");
+    
+    /** This is a static final PdfName */
+    public static final PdfName M = new PdfName("M");
+    
+    /** This is a static final PdfName */
+    public static final PdfName MATRIX = new PdfName("Matrix");
     
     /** This is a static final PdfName of an encoding */
-    public static final PdfName MAC_EXPERT_ENCODING = new PdfName("/MacExpertEncoding", 0);
+    public static final PdfName MAC_EXPERT_ENCODING = new PdfName("MacExpertEncoding");
     
     /** This is a static final PdfName of an encoding */
-    public static final PdfName MAC_ROMAN_ENCODING = new PdfName("/MacRomanEncoding", 0);
+    public static final PdfName MAC_ROMAN_ENCODING = new PdfName("MacRomanEncoding");
     
     /** This is a static final PdfName of an encoding */
-    public static final PdfName MASK = new PdfName("/Mask", 0);
+    public static final PdfName MASK = new PdfName("Mask");
+
+    /** This is a static final PdfName of an encoding */
+    public static final PdfName MAXLEN = new PdfName("MaxLen");
+
+    /** This is a static final PdfName of an encoding */
+    public static final PdfName MK = new PdfName("MK");
+
+    /** This is a static final PdfName */
+    public static final PdfName MEDIABOX = new PdfName("MediaBox");
+
+    /** This is a static final PdfName */
+    public static final PdfName MODDATE = new PdfName("ModDate");
     
     /** This is a static final PdfName */
-    public static final PdfName MEDIABOX = new PdfName("/MediaBox", 0);
+    public static final PdfName N = new PdfName("N");
     
     /** This is a static final PdfName */
-    public static final PdfName MK = new PdfName("/MK", 0);
+    public static final PdfName NAME = new PdfName("Name");
     
     /** This is a static final PdfName */
-    public static final PdfName MODDATE = new PdfName("/ModDate", 0);
+    public static final PdfName NAMED = new PdfName("Named");
     
     /** This is a static final PdfName */
-    public static final PdfName N = new PdfName("/N", 0);
+    public static final PdfName NAMES = new PdfName("Names");
     
     /** This is a static final PdfName */
-    public static final PdfName NAME = new PdfName("/Name", 0);
+    public static final PdfName NEXT = new PdfName("Next");
     
     /** This is a static final PdfName */
-    public static final PdfName NAMED = new PdfName("/Named", 0);
+    public static final PdfName NEXTPAGE = new PdfName("NextPage");
     
     /** This is a static final PdfName */
-    public static final PdfName NAMES = new PdfName("/Names", 0);
+    public static final PdfName NONFULLSCREENPAGEMODE = new PdfName("NonFullScreenPageMode");
     
     /** This is a static final PdfName */
-    public static final PdfName NEXT = new PdfName("/Next", 0);
+    public static final PdfName O = new PdfName("O");
     
     /** This is a static final PdfName */
-    public static final PdfName NEXTPAGE = new PdfName("/NextPage", 0);
+    public static final PdfName ONECOLUMN = new PdfName("OneColumn");
     
     /** This is a static final PdfName */
-    public static final PdfName NONFULLSCREENPAGEMODE = new PdfName("/NonFullScreenPageMode", 0);
+    public static final PdfName OPEN = new PdfName("Open");
     
     /** This is a static final PdfName */
-    public static final PdfName O = new PdfName("/O", 0);
+    public static final PdfName OPENACTION = new PdfName("OpenAction");
     
     /** This is a static final PdfName */
-    public static final PdfName ONECOLUMN = new PdfName("/OneColumn", 0);
+    public static final PdfName OPT = new PdfName("Opt");
     
     /** This is a static final PdfName */
-    public static final PdfName OPENACTION = new PdfName("/OpenAction", 0);
+    public static final PdfName ORDERING = new PdfName("Ordering");
     
     /** This is a static final PdfName */
-    public static final PdfName ORDERING = new PdfName("/Ordering", 0);
+    public static final PdfName OUTLINES = new PdfName("Outlines");
     
     /** This is a static final PdfName */
-    public static final PdfName OUTLINES = new PdfName("/Outlines", 0);
+    public static final PdfName P = new PdfName("P");
     
     /** This is a static final PdfName */
-    public static final PdfName P = new PdfName("/P", 0);
+    public static final PdfName PAGE = new PdfName("Page");
     
     /** This is a static final PdfName */
-    public static final PdfName PAGE = new PdfName("/Page", 0);
+    public static final PdfName PAGELABELS = new PdfName("PageLabels");
     
     /** This is a static final PdfName */
-    public static final PdfName PAGELABELS = new PdfName("/PageLabels", 0);
+    public static final PdfName PAGELAYOUT = new PdfName("PageLayout");
     
     /** This is a static final PdfName */
-    public static final PdfName PAGELAYOUT = new PdfName("/PageLayout", 0);
+    public static final PdfName PAGEMODE = new PdfName("PageMode");
     
     /** This is a static final PdfName */
-    public static final PdfName PAGEMODE = new PdfName("/PageMode", 0);
+    public static final PdfName PAGES = new PdfName("Pages");
     
     /** This is a static final PdfName */
-    public static final PdfName PAGES = new PdfName("/Pages", 0);
+    public static final PdfName PANOSE = new PdfName("Panose");
     
     /** This is a static final PdfName */
-    public static final PdfName PANOSE = new PdfName("/Panose", 0);
+    public static final PdfName PARENT = new PdfName("Parent");
     
     /** This is a static final PdfName */
-    public static final PdfName PARENT = new PdfName("/Parent", 0);
+    public static final PdfName PATTERN = new PdfName("Pattern");
     
     /** This is a static final PdfName */
-    public static final PdfName PATTERN = new PdfName("/Pattern", 0);
+    public static final PdfName PDF = new PdfName("PDF");
     
     /** This is a static final PdfName */
-    public static final PdfName PDF = new PdfName("/PDF", 0);
+    public static final PdfName POPUP = new PdfName("Popup");
     
     /** This is a static final PdfName */
-    public static final PdfName PREDICTOR = new PdfName("/Predictor", 0);
+    public static final PdfName PREDICTOR = new PdfName("Predictor");
     
     /** This is a static final PdfName */
-    public static final PdfName PREV = new PdfName("/Prev", 0);
+    public static final PdfName PREV = new PdfName("Prev");
     
     /** This is a static final PdfName */
-    public static final PdfName PREVPAGE = new PdfName("/PrevPage", 0);
+    public static final PdfName PREVPAGE = new PdfName("PrevPage");
     
     /** This is a static final PdfName */
-    public static final PdfName PROCSET = new PdfName("/ProcSet", 0);
+    public static final PdfName PROCSET = new PdfName("ProcSet");
     
     /** This is a static final PdfName */
-    public static final PdfName PRODUCER = new PdfName("/Producer", 0);
+    public static final PdfName PRODUCER = new PdfName("Producer");
     
     /** This is a static final PdfName */
-    public static final PdfName PROPERTIES = new PdfName("/Properties", 0);
+    public static final PdfName PROPERTIES = new PdfName("Properties");
     
     /** This is a static final PdfName */
-    public static final PdfName Q = new PdfName("/Q", 0);
+    public static final PdfName Q = new PdfName("Q");
     
     /** This is a static final PdfName */
-    public static final PdfName R = new PdfName("/R", 0);
+    public static final PdfName QUADPOINTS = new PdfName("QuadPoints");
     
     /** This is a static final PdfName */
-    public static final PdfName R2L = new PdfName("/R2L", 0);
+    public static final PdfName R = new PdfName("R");
     
     /** This is a static final PdfName */
-    public static final PdfName RECT = new PdfName("/Rect", 0);
+    public static final PdfName R2L = new PdfName("R2L");
     
     /** This is a static final PdfName */
-    public static final PdfName REGISTRY = new PdfName("/Registry", 0);
+    public static final PdfName RC = new PdfName("RC");
     
     /** This is a static final PdfName */
-    public static final PdfName RESOURCES = new PdfName("/Resources", 0);
+    public static final PdfName REASON = new PdfName("Reason");
     
     /** This is a static final PdfName */
-    public static final PdfName ROOT = new PdfName("/Root", 0);
+    public static final PdfName RECT = new PdfName("Rect");
     
     /** This is a static final PdfName */
-    public static final PdfName ROTATE = new PdfName("/Rotate", 0);
+    public static final PdfName REGISTRY = new PdfName("Registry");
     
     /** This is a static final PdfName */
-    public static final PdfName ROWS = new PdfName("/Rows", 0);
+    public static final PdfName RESETFORM = new PdfName("ResetForm");
     
     /** This is a static final PdfName */
-    public static final PdfName RUNLENGTHDECODE = new PdfName("/RunLengthDecode", 0);
+    public static final PdfName RESOURCES = new PdfName("Resources");
     
     /** This is a static final PdfName */
-    public static final PdfName S = new PdfName("/S", 0);
+    public static final PdfName RI = new PdfName("RI");
     
     /** This is a static final PdfName */
-    public static final PdfName SEPARATION = new PdfName("/Separation", 0);
+    public static final PdfName ROOT = new PdfName("Root");
     
     /** This is a static final PdfName */
-    public static final PdfName SINGLEPAGE = new PdfName("/SinglePage", 0);
+    public static final PdfName ROTATE = new PdfName("Rotate");
     
     /** This is a static final PdfName */
-    public static final PdfName SIZE = new PdfName("/Size", 0);
+    public static final PdfName ROWS = new PdfName("Rows");
     
     /** This is a static final PdfName */
-    public static final PdfName STANDARD = new PdfName("/Standard", 0);
+    public static final PdfName RUNLENGTHDECODE = new PdfName("RunLengthDecode");
     
     /** This is a static final PdfName */
-    public static final PdfName SUBJECT = new PdfName("/Subject", 0);
+    public static final PdfName S = new PdfName("S");
     
     /** This is a static final PdfName */
-    public static final PdfName SUBTYPE = new PdfName("/Subtype", 0);
+    public static final PdfName SEPARATION = new PdfName("Separation");
+
+    /** This is a static final PdfName */
+    public static final PdfName SIG = new PdfName("Sig");
+
+    /** This is a static final PdfName */
+    public static final PdfName SIGFLAGS = new PdfName("SigFlags");
+
+    /** This is a static final PdfName */
+    public static final PdfName SINGLEPAGE = new PdfName("SinglePage");
     
     /** This is a static final PdfName */
-    public static final PdfName SUPPLEMENT = new PdfName("/Supplement", 0);
+    public static final PdfName SIZE = new PdfName("Size");
+    
+    /** This is a static final PdfName */
+    public static final PdfName SQUARE = new PdfName("Square");
+    
+    /** This is a static final PdfName */
+    public static final PdfName STAMP = new PdfName("Stamp");
+    
+    /** This is a static final PdfName */
+    public static final PdfName STANDARD = new PdfName("Standard");
+    
+    /** This is a static final PdfName */
+    public static final PdfName STRIKEOUT = new PdfName("StrikeOut");
+    
+    /** This is a static final PdfName */
+    public static final PdfName SUBFILTER = new PdfName("SubFilter");
+    
+    /** This is a static final PdfName */
+    public static final PdfName SUBJECT = new PdfName("Subject");
+    
+    /** This is a static final PdfName */
+    public static final PdfName SUBMITFORM = new PdfName("SubmitForm");
+    
+    /** This is a static final PdfName */
+    public static final PdfName SUBTYPE = new PdfName("Subtype");
+    
+    /** This is a static final PdfName */
+    public static final PdfName SUPPLEMENT = new PdfName("Supplement");
+    
+    /** This is a static final PdfName */
+    public static final PdfName SW = new PdfName("SW");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName SYMBOL = new PdfName("/Symbol", 0);
+    public static final PdfName SYMBOL = new PdfName("Symbol");
     
     /** This is a static final PdfName */
-    public static final PdfName T = new PdfName("/T", 0);
+    public static final PdfName T = new PdfName("T");
     
     /** This is a static final PdfName */
-    public static final PdfName TEXT = new PdfName("/Text", 0);
+    public static final PdfName TEXT = new PdfName("Text");
     
     /** This is a static final PdfName */
-    public static final PdfName THUMB = new PdfName("/Thumb", 0);
+    public static final PdfName THUMB = new PdfName("Thumb");
     
     /** This is a static final PdfName */
-    public static final PdfName THREADS = new PdfName("/Threads", 0);
+    public static final PdfName THREADS = new PdfName("Threads");
+    
+    /** This is a static final PdfName */
+    public static final PdfName TI = new PdfName("TI");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName TIMES_ROMAN = new PdfName("/Times-Roman", 0);
+    public static final PdfName TIMES_ROMAN = new PdfName("Times-Roman");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName TIMES_BOLD = new PdfName("/Times-Bold", 0);
+    public static final PdfName TIMES_BOLD = new PdfName("Times-Bold");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName TIMES_ITALIC = new PdfName("/Times-Italic", 0);
+    public static final PdfName TIMES_ITALIC = new PdfName("Times-Italic");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName TIMES_BOLDITALIC = new PdfName("/Times-BoldItalic", 0);
+    public static final PdfName TIMES_BOLDITALIC = new PdfName("Times-BoldItalic");
     
     /** This is a static final PdfName */
-    public static final PdfName TITLE = new PdfName("/Title", 0);
+    public static final PdfName TITLE = new PdfName("Title");
     
     /** This is a static final PdfName */
-    public static final PdfName TRANS = new PdfName("/Trans", 0);
+    public static final PdfName TM = new PdfName("TM");
     
     /** This is a static final PdfName */
-    public static final PdfName TWOCOLUMNLEFT = new PdfName("/TwoColumnLeft", 0);
+    public static final PdfName TP = new PdfName("TP");
     
     /** This is a static final PdfName */
-    public static final PdfName TWOCOLUMNRIGHT = new PdfName("/TwoColumnRight", 0);
+    public static final PdfName TRANS = new PdfName("Trans");
     
     /** This is a static final PdfName */
-    public static final PdfName TX = new PdfName("/Tx", 0);
+    public static final PdfName TU = new PdfName("TU");
     
     /** This is a static final PdfName */
-    public static final PdfName TYPE = new PdfName("/Type", 0);
+    public static final PdfName TWOCOLUMNLEFT = new PdfName("TwoColumnLeft");
     
     /** This is a static final PdfName */
-    public static final PdfName TYPE1 = new PdfName("/Type1", 0);
+    public static final PdfName TWOCOLUMNRIGHT = new PdfName("TwoColumnRight");
+    
+    /** This is a static final PdfName */
+    public static final PdfName TX = new PdfName("Tx");
+    
+    /** This is a static final PdfName */
+    public static final PdfName TYPE = new PdfName("Type");
+    
+    /** This is a static final PdfName */
+    public static final PdfName TYPE1 = new PdfName("Type1");
     
     /** This is a static final PdfName of an attribute. */
-    public static final PdfName U = new PdfName("/U", 0);
-    
-    /** This is a static final PdfName */
-    public static final PdfName URI = new PdfName("/URI", 0);
-    
-    /** This is a static final PdfName */
-    public static final PdfName USENONE = new PdfName("/UseNone", 0);
-    
-    /** This is a static final PdfName */
-    public static final PdfName USEOUTLINES = new PdfName("/UseOutlines", 0);
-    
-    /** This is a static final PdfName */
-    public static final PdfName USETHUMBS = new PdfName("/UseThumbs", 0);
-    
-    /** This is a static final PdfName */
-    public static final PdfName V = new PdfName("/V", 0);
-    
-    /** This is a static final PdfName */
-    public static final PdfName VIEWERPREFERENCES = new PdfName("/ViewerPreferences", 0);
+    public static final PdfName U = new PdfName("U");
     
     /** This is a static final PdfName of an attribute. */
-    public static final PdfName W = new PdfName("/W", 0);
-    
-    /** This is a static final PdfName of an attribute. */
-    public static final PdfName WIDGET = new PdfName("/Widget", 0);
-    
-    /** This is a static final PdfName of an attribute. */
-    public static final PdfName WIDTH = new PdfName("/Width", 0);
+    public static final PdfName UNDERLINE = new PdfName("Underline");
     
     /** This is a static final PdfName */
-    public static final PdfName WIDTHS = new PdfName("/Widths", 0);
+    public static final PdfName URI = new PdfName("URI");
+    
+    /** This is a static final PdfName */
+    public static final PdfName USENONE = new PdfName("UseNone");
+    
+    /** This is a static final PdfName */
+    public static final PdfName USEOUTLINES = new PdfName("UseOutlines");
+    
+    /** This is a static final PdfName */
+    public static final PdfName USETHUMBS = new PdfName("UseThumbs");
+    
+    /** This is a static final PdfName */
+    public static final PdfName V = new PdfName("V");
+    
+    /** This is a static final PdfName */
+    public static final PdfName VIEWERPREFERENCES = new PdfName("ViewerPreferences");
+    
+    /** This is a static final PdfName of an attribute. */
+    public static final PdfName W = new PdfName("W");
+    
+    /** This is a static final PdfName of an attribute. */
+    public static final PdfName WIDGET = new PdfName("Widget");
+    
+    /** This is a static final PdfName of an attribute. */
+    public static final PdfName WIDTH = new PdfName("Width");
+    
+    /** This is a static final PdfName */
+    public static final PdfName WIDTHS = new PdfName("Widths");
     
     /** This is a static final PdfName of an encoding */
-    public static final PdfName WIN = new PdfName("/Win", 0);
+    public static final PdfName WIN = new PdfName("Win");
     
     /** This is a static final PdfName of an encoding */
-    public static final PdfName WIN_ANSI_ENCODING = new PdfName("/WinAnsiEncoding", 0);
+    public static final PdfName WIN_ANSI_ENCODING = new PdfName("WinAnsiEncoding");
     
     /** This is a static final PdfName */
-    public static final PdfName XOBJECT = new PdfName("/XObject", 0);
+    public static final PdfName X = new PdfName("X");
     
     /** This is a static final PdfName */
-    public static final PdfName XYZ = new PdfName("/XYZ", 0);
+    public static final PdfName XOBJECT = new PdfName("XObject");
+    
+    /** This is a static final PdfName */
+    public static final PdfName XYZ = new PdfName("XYZ");
     
     /** This is a static final PdfName of a base 14 type 1 font */
-    public static final PdfName ZAPFDINGBATS = new PdfName("/ZapfDingbats", 0);
+    public static final PdfName ZAPFDINGBATS = new PdfName("ZapfDingbats");
     
+    private int hash = 0;
+
     // constructors
     
     /**
@@ -678,17 +833,17 @@ public class PdfName extends PdfObject {
      * @exception	BadPdfFormatException	gets thrown	when the name is too long or an illegal character is used.
      */
     
-    PdfName(String name) throws BadPdfFormatException {
+    PdfName(String name) {
         super(PdfObject.NAME, name);
         // The minimum number of characters in a name is 1, the maximum is 127 (the '/' not included)
         if (bytes.length < 1 || bytes.length > 127) {
-            throw new BadPdfFormatException("The name is too long (" + bytes.length + " characters).");
+            throw new IllegalArgumentException("The name is too long (" + bytes.length + " characters).");
         }
         // The name has to be checked for illegal characters
         int length = name.length();
         for (int i = 0; i < length; i++) {
             if (name.charAt(i) < 32 || name.charAt(i) > 255) {
-                throw new BadPdfFormatException("Illegal character on position " + i + ".");
+                throw new IllegalArgumentException("Illegal character on position " + i + ".");
             }
         }
         // every special character has to be substituted
@@ -722,19 +877,6 @@ public class PdfName extends PdfObject {
         setContent(pdfName.toString());
     }
     
-    /**
-     * Constructs a <CODE>PdfName</CODE>-object that doesn't throw a BadPdfFormatException.
-     * <P>
-     * This extra private constructor was needed to be able to construct final static names.
-     *
-     * @param		name		the new Name.
-     * @param		dummy		a dummy variable
-     */
-    
-    private PdfName(String name, int dummy) {
-        super(PdfObject.NAME, name);
-    }
-    
     // methods
     
     /**
@@ -751,29 +893,38 @@ public class PdfName extends PdfObject {
     public final int compareTo(Object object) {
         PdfName name = (PdfName) object;
         
-        // BEGIN: changes by lauerc@gmx.de
-        // Byte array to String conversion is damned slow in JAVA, this implementation makes PDF genearation perform
-        // more than 20 % faster!
-        //return toString().compareTo(name.toString()); // removed performance killer
-        
         byte myBytes[] = bytes;
         byte objBytes[] = name.bytes;
-        
-        if(myBytes.length > objBytes.length)
-            return 1;
-        
-        if(objBytes.length > myBytes.length)
-            return -1;
-        
-        for(int i=0; i<myBytes.length; i++) {
+        int len = Math.min(myBytes.length, objBytes.length);
+        for(int i=0; i<len; i++) {
             if(myBytes[i] > objBytes[i])
                 return 1;
             
             if(myBytes[i] < objBytes[i])
                 return -1;
         }
+        if (myBytes.length < objBytes.length)
+            return -1;
+        if (myBytes.length > objBytes.length)
+            return 1;
         return 0;
-        // END: changes by lauerc@gmx.de
+    }
+    
+    public final boolean equals(Object obj) {
+        return compareTo(obj) == 0;
+    }
+    
+    public final int hashCode() {
+        int h = hash;
+        if (h == 0) {
+            int ptr = 0;
+            int len = bytes.length;
+            
+            for (int i = 0; i < len; i++)
+                h = 31*h + (bytes[ptr++] & 0xff);
+            hash = h;
+        }
+        return h;
     }
     
     /**

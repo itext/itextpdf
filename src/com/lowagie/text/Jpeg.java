@@ -70,49 +70,50 @@ public class Jpeg extends Image implements Element {
     
     // public final static membervariables
     
-/** This is a type of marker. */
+    /** This is a type of marker. */
     public static final int NOT_A_MARKER = -1;
     
-/** This is a type of marker. */
+    /** This is a type of marker. */
     public static final int VALID_MARKER = 0;
     
-/** Acceptable Jpeg markers. */
+    /** Acceptable Jpeg markers. */
     public static final int[] VALID_MARKERS = {0xC0, 0xC1, 0xC2};
     
-/** This is a type of marker. */
+    /** This is a type of marker. */
     public static final int UNSUPPORTED_MARKER = 1;
     
-/** Unsupported Jpeg markers. */
+    /** Unsupported Jpeg markers. */
     public static final int[] UNSUPPORTED_MARKERS = {0xC3, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF};
     
-/** This is a type of marker. */
+    /** This is a type of marker. */
     public static final int NOPARAM_MARKER = 2;
     
-/** Jpeg markers without additional parameters. */
+    /** Jpeg markers without additional parameters. */
     public static final int[] NOPARAM_MARKERS = {0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0x01};
-
+    
     public static final int M_APP0 = 0xE0;
+    public static final int M_APPE = 0xEE;
     
     public static final byte JFIF_ID[] = {0x4A, 0x46, 0x49, 0x46, 0x00};
     // Constructors
     
-/**
- * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
- *
- * @param		url			the <CODE>URL</CODE> where the image can be found
- */
+    /**
+     * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
+     *
+     * @param		url			the <CODE>URL</CODE> where the image can be found
+     */
     
     public Jpeg(URL url) throws BadElementException, IOException {
         super(url);
         processParameters();
     }
     
-/**
- * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
- *
- * @param		url			the <CODE>URL</CODE> where the image can be found.
- * @deprecated	use Image.getInstance(...) to create an Image
- */
+    /**
+     * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
+     *
+     * @param		url			the <CODE>URL</CODE> where the image can be found.
+     * @deprecated	use Image.getInstance(...) to create an Image
+     */
     
     public Jpeg(URL url, float width, float height) throws BadElementException, IOException {
         this(url);
@@ -120,33 +121,33 @@ public class Jpeg extends Image implements Element {
         scaledHeight = height;
     }
     
-/**
- * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
- *
- * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
- * @deprecated	use Image.getInstance(...) to create an Image
- */
+    /**
+     * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
+     *
+     * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+     * @deprecated	use Image.getInstance(...) to create an Image
+     */
     
     public Jpeg(String filename) throws BadElementException, MalformedURLException, IOException {
         this(Image.toURL(filename));
     }
     
-/**
- * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
- *
- * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
- * @deprecated	use Image.getInstance(...) to create an Image
- */
+    /**
+     * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
+     *
+     * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+     * @deprecated	use Image.getInstance(...) to create an Image
+     */
     
     public Jpeg(String filename, float width, float height) throws BadElementException, MalformedURLException, IOException {
         this(Image.toURL(filename), width, height);
     }
     
-/**
- * Constructs a <CODE>Jpeg</CODE>-object from memory.
- *
- * @param		img		the memory image
- */
+    /**
+     * Constructs a <CODE>Jpeg</CODE>-object from memory.
+     *
+     * @param		img		the memory image
+     */
     
     public Jpeg(byte[] img) throws BadElementException, IOException {
         super((URL)null);
@@ -154,13 +155,13 @@ public class Jpeg extends Image implements Element {
         processParameters();
     }
     
-/**
- * Constructs a <CODE>Jpeg</CODE>-object from memory.
- *
- * @param		img			the memory image.
- * @param		width		the width you want the image to have
- * @param		height		the height you want the image to have
- */
+    /**
+     * Constructs a <CODE>Jpeg</CODE>-object from memory.
+     *
+     * @param		img			the memory image.
+     * @param		width		the width you want the image to have
+     * @param		height		the height you want the image to have
+     */
     
     public Jpeg(byte[] img, float width, float height) throws BadElementException, IOException {
         this(img);
@@ -170,23 +171,23 @@ public class Jpeg extends Image implements Element {
     
     // private static methods
     
-/**
- * Reads a short from the <CODE>InputStream</CODE>.
- *
- * @param	is		the <CODE>InputStream</CODE>
- * @return	an int
- */
+    /**
+     * Reads a short from the <CODE>InputStream</CODE>.
+     *
+     * @param	is		the <CODE>InputStream</CODE>
+     * @return	an int
+     */
     
     private static final int getShort(InputStream is) throws IOException {
         return (is.read() << 8) + is.read();
     }
     
-/**
- * Returns a type of marker.
- *
- * @param	an int
- * @return	a type: <VAR>VALID_MARKER</CODE>, <VAR>UNSUPPORTED_MARKER</VAR> or <VAR>NOPARAM_MARKER</VAR>
- */
+    /**
+     * Returns a type of marker.
+     *
+     * @param	an int
+     * @return	a type: <VAR>VALID_MARKER</CODE>, <VAR>UNSUPPORTED_MARKER</VAR> or <VAR>NOPARAM_MARKER</VAR>
+     */
     
     private static final int marker(int marker) {
         for (int i = 0; i < VALID_MARKERS.length; i++) {
@@ -209,9 +210,9 @@ public class Jpeg extends Image implements Element {
     
     // private methods
     
-/**
- * This method checks if the image is a valid JPEG and processes some parameters.
- */
+    /**
+     * This method checks if the image is a valid JPEG and processes some parameters.
+     */
     
     private final void processParameters() throws BadElementException, IOException {
         type = JPEG;
@@ -230,12 +231,13 @@ public class Jpeg extends Image implements Element {
                 throw new BadElementException(errorID + " is not a valid JPEG-file.");
             }
             boolean firstPass = true;
+            int len;
             while (true) {
                 if (is.read() == 0xFF) {
                     int marker = is.read();
                     if (firstPass && marker == M_APP0) {
                         firstPass = false;
-                        int len = getShort(is);
+                        len = getShort(is);
                         if (len < 16) {
                             skip(is, len - 2);
                             continue;
@@ -269,6 +271,19 @@ public class Jpeg extends Image implements Element {
                         }
                         skip(is, len - 2 - bcomp.length - 7);
                         continue;
+                    }
+                    if (marker == M_APPE) {
+                        len = getShort(is);
+                        byte[] byteappe = new byte[len];
+                        for (int k = 0; k < len; ++k) {
+                            byteappe[k] = (byte)is.read();
+                        }
+                        if (byteappe.length > 12) {
+                            String appe = new String(byteappe, 0, 5, "ISO8859_1");
+                            if (appe.equals("Adobe")) {
+                                invert = true;
+                            }
+                        }
                     }
                     firstPass = false;
                     int markertype = marker(marker);

@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2002 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -50,36 +47,61 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-/**
- * A <CODE>PdfBorderArray</CODE> defines the border of a <CODE>PdfAnnotation</CODE>.
+/** Implements the signature dictionary.
  *
- * @see		PdfArray
+ * @author Paulo Soares (psoares@consiste.pt)
  */
+public class PdfSignature extends PdfDictionary {
 
-public class PdfBorderArray extends PdfArray {
-    
-    // constructors
-    
-/**
- * Constructs a new <CODE>PdfBorderArray</CODE>.
- */
-    
-    public PdfBorderArray(float hRadius, float vRadius, float width) {
-        this(hRadius, vRadius, width, null);
+    /** Creates new PdfSignature */
+    public PdfSignature(String filter) {
+        put(PdfName.FILTER, new PdfName(filter));
     }
     
-/**
- * Constructs a new <CODE>PdfBorderArray</CODE>.
- */
+    public void setSubFilter(String filter) {
+        put(PdfName.SUBFILTER, new PdfName(filter));
+    }
+
+    public void setByteRange(int range[]) {
+        PdfArray array = new PdfArray();
+        for (int k = 0; k < range.length; ++k)
+            array.add(new PdfNumber(range[k]));
+        put(PdfName.BYTERANGE, array);
+    }
     
-    public PdfBorderArray(float hRadius, float vRadius, float width, PdfDashPattern dash) {
-        super(new PdfNumber(hRadius));
-        add(new PdfNumber(vRadius));
-        add(new PdfNumber(width));
-        if (dash != null)
-            add(dash);
+    public void setContents(byte contents[]) {
+        put(PdfName.CONTENTS, new PdfStringLiteral(contents));
+    }
+    
+    public void setName(String name) {
+        put(PdfName.NAME, new PdfString(name, PdfObject.TEXT_UNICODE));
+    }
+
+    public void setDate(String date) {
+        put(PdfName.M, new PdfString(date));
+    }
+
+    public void setLocation(String name) {
+        put(PdfName.LOCATION, new PdfString(name, PdfObject.TEXT_UNICODE));
+    }
+
+    public void setReason(String name) {
+        put(PdfName.REASON, new PdfString(name, PdfObject.TEXT_UNICODE));
+    }
+
+    public void setString(String name, byte value[]) {
+        put(new PdfName(name), new PdfStringLiteral(value));
+    }
+
+    public void setString(String name, String value) {
+        put(new PdfName(name), new PdfString(value));
+    }
+
+    public void setStringUnicode(String name, String value) {
+        put(new PdfName(name), new PdfString(value, PdfObject.TEXT_UNICODE));
+    }
+
+    public void setStringAsName(String name, String value) {
+        put(new PdfName(name), new PdfName(value));
     }
 }
