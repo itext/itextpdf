@@ -82,6 +82,7 @@ public class PdfCopy extends PdfWriter {
     protected int currentObjectNum = 1;
     protected PdfReader reader;
     protected PdfIndirectReference acroForm;
+    protected PdfIndirectReference topPageParent;
     
     /**
      * A key to allow us to hash indirect references
@@ -124,7 +125,12 @@ public class PdfCopy extends PdfWriter {
         pdf.addWriter(this);
         indirectMap = new HashMap();
     }
-    
+    public void open() {
+        super.open();
+        topPageParent = getPdfIndirectReference();
+        root.setLinearMode(topPageParent);
+    }
+
     /**
      * Grabs a page from the input document
      * @param reader the reader of the document
@@ -197,7 +203,7 @@ public class PdfCopy extends PdfWriter {
             //	    System.out.println("Copy " + key);
             if (key.equals(PdfName.PARENT) &&
             type != null && ((PdfName)type).equals(PdfName.PAGE)) {
-                out.put(PdfName.PARENT, ROOTREFERENCE);
+                out.put(PdfName.PARENT, topPageParent);
             }
             else
                 out.put(key, copyObject(value));
@@ -292,7 +298,7 @@ public class PdfCopy extends PdfWriter {
             indirectMap.put(reader,indirects);
             PdfDictionary catalog = reader.getCatalog();
             PRIndirectReference ref = (PRIndirectReference)catalog.get(PdfName.PAGES);
-            indirects.put(new RefKey(ref), new IndirectReferences(ROOTREFERENCE));
+            indirects.put(new RefKey(ref), new IndirectReferences(topPageParent));
             ref = (PRIndirectReference)catalog.get(PdfName.ACROFORM);
             if (ref != null) {
                 if (acroForm == null) acroForm = body.getPdfIndirectReference();
@@ -327,10 +333,10 @@ public class PdfCopy extends PdfWriter {
         if (! iRef.getCopied()) {
             iRef.setCopied();
             PdfDictionary newPage = copyDictionary(thePage);
-            newPage.put(PdfName.PARENT, ROOTREFERENCE);
+            newPage.put(PdfName.PARENT, topPageParent);
             PdfIndirectObject pageObj = body.add(newPage, pageRef);
         }
-        root.add(pageRef);
+        root.addPage(pageRef);
     }
     
     /**

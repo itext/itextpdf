@@ -52,6 +52,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.BadElementException;
 import java.util.ArrayList;
 import java.io.UnsupportedEncodingException;
+import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 
 /** Generates the 2D barcode PDF417. Supports dimensioning auto-sizing, fixed
  * and variable sizes, automatic and manual error levels, raw codeword input,

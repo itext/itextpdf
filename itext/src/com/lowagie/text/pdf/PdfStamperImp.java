@@ -80,8 +80,7 @@ class PdfStamperImp extends PdfWriter {
         reader.setTampered(true);
         this.reader = reader;
         file = reader.getSafeFile();
-        body = new PdfBody(HEADER.length, this, true);
-        os.write(HEADER);
+        super.open();
     }
     
     void close(HashMap moreInfo) throws DocumentException, IOException {

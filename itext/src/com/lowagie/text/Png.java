@@ -236,7 +236,12 @@ public class Png extends Image implements Element {
                     setRight(scaledWidth);
                     scaledHeight = getInt(is);
                     setTop(scaledHeight);
-                    skip(is, len + 4 - 8);
+                    bpc = is.read();
+                    int colorType = is.read();
+                    colorspace = 3;
+                    if (colorType == 0)
+                        colorspace = 1;
+                    skip(is, len + 4 - 10);
                     continue;
                 }
                 if (pHYs.equals(id)) {

@@ -161,16 +161,12 @@ public class PdfWriter extends DocWriter {
         
         // membervariables
         
-        /**	Byte offset in the PDF file of the root object. */
-        private int rootOffset;
-        
         /** array containing the cross-reference table of the normal objects. */
         private ArrayList xrefs;
         
         /** the current byteposition in the body. */
         private int position;
         private PdfWriter writer;
-        private boolean simple;
         // constructors
         
         /**
@@ -179,17 +175,10 @@ public class PdfWriter extends DocWriter {
          * @param	offset	the offset of the body
          */
         
-        PdfBody(int offset, PdfWriter writer) {
-            this(offset, writer, false);
-        }
-        
-        PdfBody(int offset, PdfWriter writer, boolean simple) {
-            this.simple = simple;
+        PdfBody(PdfWriter writer) {
             xrefs = new ArrayList();
             xrefs.add(new PdfCrossReference(0, 65535));
-            if (!simple)
-                xrefs.add(new PdfCrossReference(0));
-            position = offset;
+            position = writer.getOs().getCounter();
             this.writer = writer;
         }
         
@@ -280,13 +269,13 @@ public class PdfWriter extends DocWriter {
          * @return		a <CODE>PdfIndirectObject</CODE>
          */
         
-        PdfIndirectObject add(PdfPages object) throws IOException {
-            PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object, writer);
-            rootOffset = position;
-            indirect.writeTo(writer.getOs());
-            position = writer.getOs().getCounter();
-            return indirect;
-        }
+//        PdfIndirectObject add(PdfPages object) throws IOException {
+//            PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object, writer);
+//            rootOffset = position;
+//            indirect.writeTo(writer.getOs());
+//            position = writer.getOs().getCounter();
+//            return indirect;
+//        }
         
         /**
          * Returns the offset of the Cross-Reference table.
@@ -318,10 +307,6 @@ public class PdfWriter extends DocWriter {
             os.write(getISOBytes("xref\n0 "));
             os.write(getISOBytes(String.valueOf(size())));
             os.write('\n');
-            if (!simple) {
-                // we set the ROOT object
-                xrefs.set(PdfWriter.ROOT, new PdfCrossReference(rootOffset));
-            }
             // all the other objects
             PdfCrossReference entry;
             for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
@@ -467,17 +452,7 @@ public class PdfWriter extends DocWriter {
     /** this is the header of a PDF document */
     protected byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e0\u00e1\u00e2\u00e3\n");
     
-    /** byte offset of the Body */
-    private int OFFSET = HEADER.length;
-    
-    /** This is the object number of the root. */
-    private static final int ROOT = 1;
-    
-    /** This is an indirect reference to the root. */
-    protected static final PdfIndirectReference ROOTREFERENCE = new PdfIndirectReference(PdfObject.DICTIONARY, ROOT);
-    
-    /** Indirect reference to the root of the document. */
-    protected PdfPages root = new PdfPages();
+    protected PdfPages root = new PdfPages(this);
     
     /** Dictionary, containing all the images of the PDF document */
     protected PdfXObjectDictionary imageDictionary = new PdfXObjectDictionary();
@@ -528,7 +503,7 @@ public class PdfWriter extends DocWriter {
     // membervariables
     
     /** body of the PDF document */
-    protected PdfBody body = new PdfBody(OFFSET, this);
+    protected PdfBody body;
     
     /** the pdfdocument object. */
     protected PdfDocument pdf;
@@ -659,16 +634,9 @@ public class PdfWriter extends DocWriter {
             throw new ExceptionConverter(ioe);
         }
         page.add(object.getIndirectReference());
-        page.setParent(ROOTREFERENCE);
-        PdfIndirectObject pageObject;
-        try {
-            pageObject = body.add(page, getPageReference(currentPageNumber++));
-        }
-        catch(IOException ioe) {
-            throw new ExceptionConverter(ioe);
-        }
-        root.add(pageObject.getIndirectReference());
-        return pageObject.getIndirectReference();
+        root.addPage(page);
+        currentPageNumber++;
+        return null;
     }
     
     /** Adds an image to the document but not to the page resources. It is used with
@@ -778,8 +746,10 @@ public class PdfWriter extends DocWriter {
      */
     
     public void open() {
+        super.open();
         try {
             os.write(HEADER);
+            body = new PdfBody(this);
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
@@ -854,9 +824,9 @@ public class PdfWriter extends DocWriter {
             try {
                 addSharedObjectsToBody();
                 // add the root to the body
-                PdfIndirectObject rootObject = body.add(root);
+                PdfIndirectReference rootRef = root.writePageTree();
                 // make the catalog-object and add it to the body
-                PdfDictionary catalog = getCatalog(rootObject.getIndirectReference());
+                PdfDictionary catalog = getCatalog(rootRef);
                 if (extraCatalog != null) {
                     catalog.mergeDifferent(extraCatalog);
                 }
@@ -982,6 +952,8 @@ public class PdfWriter extends DocWriter {
      */
     
     public PdfContentByte getDirectContent() {
+        if (!open)
+            throw new RuntimeException("The document is not open.");
         return directContent;
     }
     
@@ -992,6 +964,8 @@ public class PdfWriter extends DocWriter {
      */
     
     public PdfContentByte getDirectContentUnder() {
+        if (!open)
+            throw new RuntimeException("The document is not open.");
         return directContentUnder;
     }
     

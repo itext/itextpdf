@@ -57,6 +57,7 @@ import java.util.Iterator;
 import com.lowagie.text.Rectangle;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipInputStream;
+import java.net.URL;
 /** Reads a PDF document and prepares it to import pages to our
  * document. This class is thread safe; this means that
  * a single instance can serve as many output documents as needed and can even be static.
@@ -99,6 +100,15 @@ public class PdfReader {
      */    
     public PdfReader(byte pdfIn[]) throws IOException {
         tokens = new PRTokeniser(pdfIn);
+        readPdf();
+    }
+    
+    /** Reads and parses a PDF document.
+     * @param url the URL of the document
+     * @throws IOException on error
+     */    
+    public PdfReader(URL url) throws IOException {
+        tokens = new PRTokeniser(new RandomAccessFileOrArray(url));
         readPdf();
     }
     

@@ -56,7 +56,7 @@ import java.io.IOException;
 import java.awt.Color;
 
 /** Query and change fields in existing documents either by method
- * call or by FDF merging.
+ * calls or by FDF merging.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class AcroFields {
@@ -65,6 +65,9 @@ public class AcroFields {
     PdfWriter writer;
     HashMap fields;
     private int topFirst;
+    
+    /** Holds value of property generateAppearances. */
+    private boolean generateAppearances = true;
     
     AcroFields(PdfReader reader, PdfWriter writer) {
         this.reader = reader;
@@ -373,20 +376,26 @@ public class AcroFields {
                 ((PdfDictionary)item.values.get(idx)).put(PdfName.V, v);
                 PdfDictionary merged = (PdfDictionary)item.merged.get(idx);
                 merged.put(PdfName.V, v);
-                PdfAppearance app = getAppearance(merged, display);
                 PdfDictionary widget = (PdfDictionary)item.widgets.get(idx);
-                if (PdfName.CH.equals(type)) {
-                    PdfNumber n = new PdfNumber(topFirst);
-                    widget.put(PdfName.TI, n);
-                    merged.put(PdfName.TI, n);
+                if (generateAppearances) {
+                    PdfAppearance app = getAppearance(merged, display);
+                    if (PdfName.CH.equals(type)) {
+                        PdfNumber n = new PdfNumber(topFirst);
+                        widget.put(PdfName.TI, n);
+                        merged.put(PdfName.TI, n);
+                    }
+                    PdfDictionary appDic = (PdfDictionary)PdfReader.getPdfObject(widget.get(PdfName.AP));
+                    if (appDic == null) {
+                        appDic = new PdfDictionary();
+                        widget.put(PdfName.AP, appDic);
+                        merged.put(PdfName.AP, appDic);
+                    }
+                    appDic.put(PdfName.N, app.getIndirectReference());
                 }
-                PdfDictionary appDic = (PdfDictionary)PdfReader.getPdfObject(widget.get(PdfName.AP));
-                if (appDic == null) {
-                    appDic = new PdfDictionary();
-                    widget.put(PdfName.AP, appDic);
-                    merged.put(PdfName.AP, appDic);
+                else {
+                    widget.remove(PdfName.AP);
+                    merged.remove(PdfName.AP);
                 }
-                appDic.put(PdfName.N, app.getIndirectReference());
             }
             return true;
         }
@@ -443,6 +452,28 @@ public class AcroFields {
      */    
     public HashMap getFields() {
         return fields;
+    }
+    
+    /** Gets the property generateAppearances.
+     * @return the property generateAppearances
+     */
+    public boolean isGenerateAppearances() {
+        return this.generateAppearances;
+    }
+    
+    /** Sets the option to generate appearances. Not generating apperances
+     * will speed-up form filling but the results can be
+     * unexpected in Acrobat. Don't use it unless your environment is well
+     * controlled. The default is <CODE>true</CODE>.
+     * @param generateAppearances the option to generate appearances
+     */
+    public void setGenerateAppearances(boolean generateAppearances) {
+        this.generateAppearances = generateAppearances;
+        PdfDictionary top = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM));
+        if (generateAppearances)
+            top.remove(PdfName.NEEDAPPEARANCES);
+        else
+            top.put(PdfName.NEEDAPPEARANCES, PdfBoolean.PDFTRUE);
     }
     
     /** The field representations for retrieval and modification. */    

@@ -53,6 +53,8 @@ package com.lowagie.text.pdf;
 import java.util.ArrayList;
 import java.util.Iterator;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
+import java.io.IOException;
 
 /**
  * <CODE>PdfPages</CODE> is the PDF Pages-object.
@@ -66,18 +68,13 @@ import com.lowagie.text.DocumentException;
  * @see		PdfPage
  */
 
-public class PdfPages extends PdfDictionary implements PdfPageElement {
+public class PdfPages {
     
-    // membervariables
-    
-/** value of the <B>Count</B>-key */
-    private PdfNumber count;
-    
-/** value of the <B>Kids</B>-key */
-    private PdfArray kids;
-    
-/** array of objects of the type <CODE>PdfPageElement</CODE> (contains the actual Pages tree) */
     private ArrayList pages = new ArrayList();
+    private ArrayList parents = new ArrayList();
+    private int leafSize = 10;
+    private PdfWriter writer;
+    private PdfIndirectReference topParent;
     
     // constructors
     
@@ -85,87 +82,98 @@ public class PdfPages extends PdfDictionary implements PdfPageElement {
  * Constructs a <CODE>PdfPages</CODE>-object.
  */
     
-    PdfPages() {
-        super(PAGES);
-        count = new PdfNumber(0);
-        kids = new PdfArray();
-        put(PdfName.COUNT, count);
-        put(PdfName.KIDS, kids);
+    PdfPages(PdfWriter writer) {
+        this.writer = writer;
     }
     
-    // implementation of the PdfPageElement interface
-    
-/**
- * Set the value for the <B>Parent</B> key in the Page or Pages Dictionary.
- *
- * @param		reference			an indirect reference to a <CODE>PdfPages</CODE>-object
- */
-    
-    public void setParent(PdfIndirectReference reference) {
-        put(PdfName.PARENT, reference);
+    void addPage(PdfDictionary page) {
+        try {
+            if ((pages.size() % leafSize) == 0)
+                parents.add(writer.getPdfIndirectReference());
+            PdfIndirectReference parent = (PdfIndirectReference)parents.get(parents.size() - 1);
+            page.put(PdfName.PARENT, parent);
+            PdfIndirectReference current = writer.getCurrentPage();
+            writer.addToBody(page, current);
+            pages.add(current);
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
     }
     
-/**
- * Checks if this page element is a tree of pages.
- * <P>
- * This method allways returns <CODE>true</CODE>.
- *
- * @return	<CODE>true</CODE> because this object is a tree of pages
- */
-    
-    public boolean isParent() {
-        return true;
+    // returns the top parent to include in the catalog
+    PdfIndirectReference writePageTree() throws IOException {
+        if (pages.size() == 0)
+            throw new IOException("The document has no pages.");
+        int leaf = 1;
+        ArrayList tParents = parents;
+        ArrayList tPages = pages;
+        ArrayList nextParents = new ArrayList();
+        while (true) {
+            leaf *= leafSize;
+            int stdCount = leafSize;
+            int rightCount = tPages.size() % leafSize;
+            if (rightCount == 0)
+                rightCount = leafSize;
+            for (int p = 0; p < tParents.size(); ++p) {
+                int count;
+                int thisLeaf = leaf;
+                if (p == tParents.size() - 1) {
+                    count = rightCount;
+                    thisLeaf = pages.size() % leaf;
+                    if (thisLeaf == 0)
+                        thisLeaf = leaf;
+                }
+                else
+                    count = stdCount;
+                PdfDictionary top = new PdfDictionary(PdfName.PAGES);
+                top.put(PdfName.COUNT, new PdfNumber(thisLeaf));
+                PdfArray kids = new PdfArray();
+                ArrayList internal = kids.getArrayList();
+                internal.addAll(tPages.subList(p * stdCount, p * stdCount + count));
+                top.put(PdfName.KIDS, kids);
+                if (tParents.size() > 1) {
+                    if ((p % leafSize) == 0)
+                        nextParents.add(writer.getPdfIndirectReference());
+                    top.put(PdfName.PARENT, (PdfIndirectReference)nextParents.get(p / leafSize));
+                }
+                writer.addToBody(top, (PdfIndirectReference)tParents.get(p));
+            }
+            if (tParents.size() == 1) {
+                topParent = (PdfIndirectReference)tParents.get(0);
+                return topParent;
+            }
+            tPages = tParents;
+            tParents = nextParents;
+            nextParents = new ArrayList();
+        }
     }
     
-    // methods
-    
-/**
- * Adds a <CODE>PdfPages</CODE>-object.
- *
- * @param		pages		a <CODE>PdfPages</CODE>-object
- */
-    
-    void add(PdfPages pages) {
-        pages.add(pages);
+    PdfIndirectReference getTopParent() {
+        return topParent;
     }
     
-/**
- * Adds a <CODE>PdfPage</CODE>-object.
- *
- * @param		page		a <CODE>PdfPage</CODE>-object
- */
-    
-    void add(PdfPage page) {
+    void setLinearMode(PdfIndirectReference topParent) {
+        if (topParent == null) {
+            this.topParent = topParent;
+            parents.clear();
+            parents.add(topParent);
+        }
+        leafSize = 0x7ffffff;
+    }
+
+    void addPage(PdfIndirectReference page) {
         pages.add(page);
     }
-    
-/**
- * Updates the array of kids.
- *
- * @param		kid			an indirect reference to a <CODE>PdfPageElement</CODE>-object
- */
-    
-    void add(PdfIndirectReference kid) {
-        count.increment();
-        kids.add(kid);
-    }
-    
-/**
- * Returns an <CODE>Iterator</CODE> with all the leafs of this Pages-object.
- *
- * @return		an <CODE>Iterator</CODE>
- */
-    
-    Iterator iterator() {
-        return pages.iterator();
-    }
-    
+
     int reorderPages(int order[]) throws DocumentException {
         if (order == null)
-            return kids.size();
-        if (order.length != kids.size())
+            return pages.size();
+        if (parents.size() > 1)
+            throw new DocumentException("Page reordering requires a single parent in the page tree.");
+        if (order.length != pages.size())
             throw new DocumentException("Page reordering requires and array with the same size as the number of pages.");
-        int max = kids.size();
+        int max = pages.size();
         boolean temp[] = new boolean[max];
         for (int k = 0; k < max; ++k) {
             int p = order[k];
@@ -175,10 +183,9 @@ public class PdfPages extends PdfDictionary implements PdfPageElement {
                 throw new DocumentException("Page reordering requires no page repetition. Page " + p + " is repeated.");
             temp[p - 1] = true;
         }
-        ArrayList array = kids.getArrayList();
-        Object copy[] = array.toArray();
+        Object copy[] = pages.toArray();
         for (int k = 0; k < max; ++k) {
-            array.set(k, copy[order[k] - 1]);
+            pages.set(k, copy[order[k] - 1]);
         }
         return max;
     }

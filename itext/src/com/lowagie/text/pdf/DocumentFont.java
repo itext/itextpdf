@@ -118,7 +118,7 @@ public class DocumentFont extends BaseFont {
         if (BuiltinFonts14.containsKey(fontName)) {
             BaseFont bf;
             try {
-                bf = BaseFont.createFont(fontName, WINANSI, false, false, null, null);
+                bf = BaseFont.createFont(fontName, WINANSI, false);
             }
             catch (Exception e) {
                 throw new ExceptionConverter(e);

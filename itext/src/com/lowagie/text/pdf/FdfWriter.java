@@ -291,8 +291,8 @@ public class FdfWriter {
        
         Wrt(OutputStream os) throws DocumentException, IOException {
             super(new PdfDocument(), os);
-            body = new PdfBody(HEADER_FDF.length, this, true);
-            os.write(HEADER_FDF);
+            this.os.write(HEADER_FDF);
+            body = new PdfBody(this);
         }
         
         void writeTo() throws DocumentException, IOException {
