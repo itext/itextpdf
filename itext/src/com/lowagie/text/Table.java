@@ -65,8 +65,8 @@ import com.lowagie.text.pdf.PdfWriter;
  * <STRONG>Table table = new Table(3);</STRONG>
  * <STRONG>table.setBorderWidth(1);</STRONG>
  * <STRONG>table.setBorderColor(new Color(0, 0, 255));</STRONG>
- * <STRONG>table.setCellpadding(5);</STRONG>
- * <STRONG>table.setCellspacing(5);</STRONG>
+ * <STRONG>table.setPadding(5);</STRONG>
+ * <STRONG>table.setSpacing(5);</STRONG>
  * Cell cell = new Cell("header");
  * cell.setHeader(true);
  * cell.setColspan(3);
@@ -276,10 +276,10 @@ public class Table extends Rectangle implements Element {
             setAlignment(value);
         }
         if ((value = attributes.getProperty(ElementTags.CELLSPACING)) != null) {
-            setCellspacing(Float.valueOf(value + "f").floatValue());
+            setSpacing(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.CELLPADDING)) != null) {
-            setCellpadding(Float.valueOf(value + "f").floatValue());
+            setPadding(Float.valueOf(value + "f").floatValue());
         }
         if ((value = attributes.getProperty(ElementTags.WIDTH)) != null) {
             if (value.endsWith("%"))
@@ -1802,8 +1802,8 @@ public class Table extends Rectangle implements Element {
             Table table = new Table(3);
             table.setBorderWidth(1);
             table.setBorderColor(new Color(0, 0, 255));
-            table.setCellpadding(5);
-            table.setCellspacing(5);
+            table.setPadding(5);
+            table.setSpacing(5);
             Cell cell = new Cell("header");
             cell.setHeader(true);
             cell.setColspan(3);
@@ -1831,8 +1831,8 @@ public class Table extends Rectangle implements Element {
             Table tableDouble = new Table(3);
             tableDouble.setBorderWidth(1);
             tableDouble.setBorderColor(new Color(0, 0, 255));
-            tableDouble.setCellpadding(5);
-            tableDouble.setCellspacing(5);
+            tableDouble.setPadding(5);
+            tableDouble.setSpacing(5);
             cell = new Cell("header");
             cell.setHeader(true);
             cell.setColspan(3);
