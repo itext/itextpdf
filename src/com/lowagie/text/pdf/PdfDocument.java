@@ -1189,7 +1189,6 @@ class PdfDocument extends Document implements DocListener {
                     flushLines();
 
                     // initialisation of parameters
-                    boolean newPage = false;
                     float pagetop = indentTop();
                     float oldHeight = currentHeight;
                     float cellDisplacement;
@@ -1212,10 +1211,6 @@ class PdfDocument extends Document implements DocListener {
                         // initialisation of some extra parameters;
                         float lostTableBottom = 0;
                         float lostTableTop = 0;
-
-                        // does the table fit on this page?
-                        if (table.bottom() < indentBottom())  newPage = true;
-                        else newPage = false;
 
                         // loop over the cells
                         boolean cellsShown = false;
@@ -1258,10 +1253,10 @@ class PdfDocument extends Document implements DocListener {
                         }
 
                         // if the table continues on the next page
-                        if (newPage && ! cells.isEmpty()) {
+                        if (! cells.isEmpty()) {
 
                             graphics.setLineWidth(table.borderWidth());
-                            if ((table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
+                            if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
                             {
                                 // Draw the bottom line
                                 graphics.moveTo(table.left(), Math.max(table.bottom(), indentBottom()));
