@@ -56,6 +56,9 @@ class PdfTable extends Rectangle {
     
     // membervariables
     
+/** this is the number of columns in the table. */
+    private int columns;
+    
 /** this is the ArrayList with all the cell of the table header. */
     private ArrayList headercells;
     
@@ -90,6 +93,7 @@ class PdfTable extends Rectangle {
         setGrayFill(table.grayFill());
         
         // initialisation of some parameters
+        this.columns = table.columns();
         this.cellpadding = table.cellpadding();
         this.cellspacing = table.cellspacing();
         float[] positions = table.getWidths(left, right - left);
@@ -182,6 +186,16 @@ class PdfTable extends Rectangle {
     
     ArrayList getCells() {
         return cells;
+    }
+    
+/**
+ * Returns the number of columns of the table.
+ *
+ * @return	the number of columns
+ */
+    
+    int columns() {
+        return columns;
     }
     
 /**
