@@ -51,6 +51,7 @@
 package com.lowagie.text;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -80,24 +81,12 @@ import com.lowagie.text.markup.MarkupTags;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Chunk implements Element, MarkupAttributes {
+public class Chunk implements Element, MarkupAttributes, Serializable {
     
-    // membervariables
+// public static membervariables
     
 /** This is a Chunk containing a newline. */
     public static final Chunk NEWLINE = new Chunk("\n");
-    
-/** This is the content of this chunk of text. */
-    protected StringBuffer content;
-    
-/** This is the <CODE>Font</CODE> of this chunk of text. */
-    protected Font font;
-    
-/** Contains some of the attributes for this Chunk. */
-    protected HashMap attributes;
-
-/** Contains extra markupAttributes */
-    protected Properties markupAttributes;
     
 /** Key for sub/superscript. */
     public static final String SUBSUPSCRIPT = "SUBSUPSCRIPT";
@@ -138,7 +127,27 @@ public class Chunk implements Element, MarkupAttributes {
 /** Key for Action. */
     public static final String ACTION = "ACTION";
     
-    // constructors
+// member variables
+    
+/** This is the content of this chunk of text. */
+    protected StringBuffer content = null;
+    
+/** This is the <CODE>Font</CODE> of this chunk of text. */
+    protected Font font = null;
+    
+/** Contains some of the attributes for this Chunk. */
+    protected HashMap attributes = null;
+
+/** Contains extra markupAttributes */
+    protected Properties markupAttributes = null;
+    
+// constructors
+
+/**
+ * Empty constructor.
+ */
+    protected Chunk() {
+    }
     
 /**
  * Constructs a chunk of text with a certain content and a certain <CODE>Font</CODE>.

@@ -60,7 +60,9 @@ import java.util.HashMap;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 
-public abstract class BaseFont {
+public abstract class BaseFont implements Serializable {
+    
+// static final membervariables
     
     /** This is a possible value of a base 14 type 1 font */
     public static final String COURIER = "Courier";
@@ -174,52 +176,18 @@ public abstract class BaseFont {
     
 /** if the font doesn't have to be embedded */
     public final static boolean NOT_EMBEDDED = false;
+    
 /** if the font has to be cached */
     public final static boolean CACHED = true;
+    
 /** if the font doesn't have to be cached */
     public final static boolean NOT_CACHED = false;
     
-    /** The font type.
-     */    
-    int fontType;
 /** a not defined character in a custom PDF encoding */
     public final static String notdef = ".notdef";
     
-/** table of characters widths for this encoding */
-    protected int widths[] = new int[256];
-    
-/** encoding names */
-    protected String differences[] = new String[256];
-/** same as differences but with the unicode codes */
-    protected char unicodeDifferences[] = new char[256];
-    
-/** encoding used with this font */
-    protected String encoding;
-    
-/** true if the font is to be embedded in the PDF */
-    protected boolean embedded;
-    
-/**
- * true if the font must use it's built in encoding. In that case the
- * <CODE>encoding</CODE> is only used to map a char to the position inside
- * the font, not to the expected char name.
- */
-    protected boolean fontSpecific = true;
-    
-/** cache for the fonts already used. */
-    protected static HashMap fontCache = new HashMap();
-    
 /** list of the 14 built in fonts. */
     protected static final HashMap BuiltinFonts14 = new HashMap();
-    
-    /** The subset prefix to be added to the font name when the font is embedded.
-     */    
-    protected static char subsetPrefix[] = {'A', 'B', 'C', 'D', 'E', 'E', '+'};
-    
-    /** Forces the output of the width array.
-     */
-    protected boolean forceWidthsOutput = false;
-    
     static {
         BuiltinFonts14.put(COURIER, PdfName.COURIER);
         BuiltinFonts14.put(COURIER_BOLD, PdfName.COURIER_BOLD);
@@ -236,13 +204,51 @@ public abstract class BaseFont {
         BuiltinFonts14.put(TIMES_ITALIC, PdfName.TIMES_ITALIC);
         BuiltinFonts14.put(ZAPFDINGBATS, PdfName.ZAPFDINGBATS);
     }
+
+// membervariables
     
-    /** Generates the PDF stream with the Type1 and Truetype fonts returning
+/** The font type. */    
+    int fontType;
+    
+/** table of characters widths for this encoding */
+    protected int widths[] = new int[256];
+    
+/** encoding names */
+    protected String differences[] = new String[256];
+    
+/** same as differences but with the unicode codes */
+    protected char unicodeDifferences[] = new char[256];
+    
+/** encoding used with this font */
+    protected String encoding;
+    
+/** true if the font is to be embedded in the PDF */
+    protected boolean embedded;
+    
+/** Forces the output of the width array. */
+    protected boolean forceWidthsOutput = false;
+    
+/**
+ * true if the font must use it's built in encoding. In that case the
+ * <CODE>encoding</CODE> is only used to map a char to the position inside
+ * the font, not to the expected char name.
+ */
+    protected boolean fontSpecific = true;
+    
+/** cache for the fonts already used. */
+    protected static HashMap fontCache = new HashMap();
+    
+/** The subset prefix to be added to the font name when the font is embedded. */    
+    protected static char subsetPrefix[] = {'A', 'B', 'C', 'D', 'E', 'E', '+'};
+    
+    /**
+     * Generates the PDF stream with the Type1 and Truetype fonts returning
      * a PdfStream.
      */
     class StreamFont extends PdfStream {
         
-        /** Generates the PDF stream with the Type1 and Truetype fonts returning
+        /**
+         * Generates the PDF stream with the Type1 and Truetype fonts returning
          * a PdfStream.
          * @param contents the content of the stream
          * @param lengths an array of int that describes the several lengths of each part of the font

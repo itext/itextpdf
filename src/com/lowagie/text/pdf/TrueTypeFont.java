@@ -56,14 +56,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
-/** Reads a Truetype font
+
+/**
+ * Reads a Truetype font
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
-class TrueTypeFont extends BaseFont {
 
-    /** The code pages possible for a True Type font.
-     */    
+class TrueTypeFont extends BaseFont implements Serializable {
+
+/** The code pages possible for a True Type font. */    
     static final String codePages[] = {
         "1252 Latin 1",
         "1250 Latin 2: Eastern Europe",
@@ -130,74 +132,85 @@ class TrueTypeFont extends BaseFont {
         "850 WE/Latin 1",
         "437 US"};
     
-    /** Contains the location of the several tables. The key is the name of
+    /**
+     * Contains the location of the several tables. The key is the name of
      * the table and the value is an <CODE>int[2]</CODE> where position 0
      * is the offset from the start of the file and position 1 is the length
      * of the table.
      */
-    protected HashMap tables;
-    /** The file in use.
-     */
-    protected RandomAccessFileOrArray rf;
-    /** The file name.
-     */
-    protected String fileName;
+    protected HashMap tables = null;
     
-    /** The offset from the start of the file to the table directory.
+    /** The file in use. */
+    protected RandomAccessFileOrArray rf = null;
+    
+    /** The file name. */
+    protected String fileName = null;
+    
+    /**
+     * The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font.
-     */    
+     */ 
     protected int directoryOffset;
-    /** The index for the TTC font. It is an empty <CODE>String</CODE> for a
-     * TTF file.
-     */    
-    protected String ttcIndex;
+    
+    /** The index for the TTC font. It is an empty <CODE>String</CODE> for a TTF file. */    
+    protected String ttcIndex = null;
+    
     /** The style modifier */
     protected String style = "";
-    /** The content of table 'head'.
-     */
+    
+    /** The content of table 'head'. */
     protected FontHeader head = new FontHeader();
-    /** The content of table 'hhea'.
-     */
+    
+    /** The content of table 'hhea'. */
     protected HorizontalHeader hhea = new HorizontalHeader();
-    /** The content of table 'OS/2'.
-     */
+    
+    /** The content of table 'OS/2'. */
     protected WindowsMetrics os_2 = new WindowsMetrics();
-    /** The width of the glyphs. This is essentially the content of table
+    
+    /**
+     * The width of the glyphs. This is essentially the content of table
      * 'hmtx' normalized to 1000 units.
      */
     protected int GlyphWidths[];
-    /** The map containing the code information for the table 'cmap', encoding 1.0.
+    
+    /**
+     * The map containing the code information for the table 'cmap', encoding 1.0.
      * The key is the code and the value is an <CODE>int[2]</CODE> where position 0
      * is the glyph number and position 1 is the glyph width normalized to 1000
      * units.
      */
-    protected HashMap cmap10;
-    /** The map containing the code information for the table 'cmap', encoding 3.1
+    protected HashMap cmap10 = null;
+    
+    /**
+     * The map containing the code information for the table 'cmap', encoding 3.1
      * in Unicode.
      * <P>
      * The key is the code and the value is an <CODE>int</CODE>[2] where position 0
      * is the glyph number and position 1 is the glyph width normalized to 1000
      * units.
      */
-    protected HashMap cmap31;
+    protected HashMap cmap31 = null;
     /** The map containig the kerning information. It represents the content of
      * table 'kern'. The key is an <CODE>Integer</CODE> where the top 16 bits
      * are the Unicode for the first character and the lower 16 bits are the
      * Unicode for the second character. The value is the amount of kerning in
      * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative.
      */
-    protected HashMap kerning;
+    
+    protected HashMap kerning = null;
+    
     /**
      * The font name.
      * This name is usually extracted from the table 'name' with
      * the 'Name ID' 6.
      */
-    protected String fontName;
+    protected String fontName = null;
     
-    /** The full name of the font
-     */    
+    /** The full name of the font */    
     protected String fullName[][];
-    /** The italic angle. It is usually extracted from the 'post' table or in it's
+    
+    /**
+     * The italic angle. It is usually extracted from the 'post' table or in it's
      * absence with the code:
      * <P>
      * <PRE>
@@ -205,13 +218,12 @@ class TrueTypeFont extends BaseFont {
      * </PRE>
      */
     protected double italicAngle;
-    /** <CODE>true</CODE> if all the glyphs have the same width.
-     */
+    
+    /** <CODE>true</CODE> if all the glyphs have the same width. */
     protected boolean isFixedPitch = false;
     
-    /** The components of table 'head'.
-     */
-    protected class FontHeader {
+    /** The components of table 'head'. */
+    protected class FontHeader implements Serializable {
         /** A variable. */
         int flags;
         /** A variable. */
@@ -230,7 +242,7 @@ class TrueTypeFont extends BaseFont {
     
     /** The components of table 'hhea'.
      */
-    protected class HorizontalHeader {
+    protected class HorizontalHeader implements Serializable {
         /** A variable. */
         short Ascender;
         /** A variable. */
@@ -255,7 +267,7 @@ class TrueTypeFont extends BaseFont {
     
     /** The components of table 'OS/2'.
      */
-    protected class WindowsMetrics {
+    protected class WindowsMetrics implements Serializable {
         /** A variable. */
         short xAvgCharWidth;
         /** A variable. */

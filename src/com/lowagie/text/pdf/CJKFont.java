@@ -59,11 +59,11 @@ import java.io.*;
  * @author  Paulo Soares (psoares@consiste.pt)
  */
 
-class CJKFont extends BaseFont
-{
-    /** The encoding used in the PDF document for CJK fonts
-     */    
+class CJKFont extends BaseFont implements Serializable {
+    
+/** The encoding used in the PDF document for CJK fonts */    
     static final String CJK_ENCODING = "UnicodeBigUnmarked";
+    
 /** Metrics for the font STSong-Light with the encoding UniGB-UCS2-H */
     private static final int STSong_Light_UniGB_UCS2_H[] = {
         32,207,33,270,34,342,35,467,36,462,37,797,38,710,39,239,40,374,41,374,42,423,43,605,44,238,45,375,46,238,47,334,
@@ -265,30 +265,46 @@ class CJKFont extends BaseFont
     };
     
 /** The font name */
-    private String fontName;
+    private String fontName = null;
+    
 /** The style modifier */
     private String style = "";
 /** The CMap associated with this font */
-    private String CMap;
+    
+    private String CMap = null;
+    
 /** The descriptor information of type <CODE>int</Code> */
     private int fdescInt[];
+    
 /** The descriptor information of type <CODE>String</Code> */
     private String fdescStr[];
+    
 /** The panose information */
     private byte panose[];
+    
 /** The first metric array to search */
     private int metrics1[];
+    
 /** The second metric array to search if the search failled on the first */
     private int metrics2[];
-    /** Creates a CJK font.
+    
+    /**
+     * Empty constructor.
+     */
+    
+    protected CJKFont() {
+    }
+    
+    /**
+     * Creates a CJK font.
      * @param fontName the name of the font
      * @param enc the encoding of the font
      * @param emb always <CODE>false</CODE>. CJK font and not embedded
      * @throws DocumentException on error
      * @throws IOException on error
-     */    
-    CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException
-    {
+     */
+    
+    CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException {
         fontType = FONT_TYPE_CJK;
         String nameBase = getBaseName(fontName);
         if (!isCJKFont(nameBase, enc))
@@ -320,13 +336,13 @@ class CJKFont extends BaseFont
         }
     }
     
-    /** Checks if its a valid CJK font.
+    /**
+     * Checks if its a valid CJK font.
      * @param fontName the font name
      * @param enc the encoding
      * @return <CODE>true</CODE> if it is CJK font
      */    
-    public static boolean isCJKFont(String fontName, String enc)
-    {
+    public static boolean isCJKFont(String fontName, String enc) {
         for (int k = 0; k < cjk.length; ++k) {
             Object obj[] = (Object[])cjk[k];
             String name = (String)obj[0];
@@ -369,8 +385,7 @@ class CJKFont extends BaseFont
         return null;
     }
     
-    public int getWidth(String text)
-    {
+    public int getWidth(String text) {
         int total = 0;
         for (int k = 0; k < text.length(); ++k) {
             int c = text.charAt(k);
@@ -392,16 +407,15 @@ class CJKFont extends BaseFont
         return total;
     }
     
-    protected int getRawWidth(int c, String name)
-    {
+    protected int getRawWidth(int c, String name) {
         return 0;
     }
-    public int getKerning(char char1, char char2)
-    {
+    
+    public int getKerning(char char1, char char2) {
         return 0;
     }
-    public static int getValueByKey(int a[], int key)
-    {
+    
+    public static int getValueByKey(int a[], int key) {
         int low = 0;
         int high = a.length / 2 -1;
         while (low <= high) {
@@ -416,8 +430,8 @@ class CJKFont extends BaseFont
         }
         return -1;  // key not found.
     }
-    private PdfDictionary getFontDescriptor() throws DocumentException
-    {
+    
+    private PdfDictionary getFontDescriptor() throws DocumentException {
         PdfDictionary dic = new PdfDictionary(new PdfName("FontDescriptor"));
         dic.put(new PdfName("Ascent"), new PdfNumber(fdescInt[0]));
         dic.put(new PdfName("CapHeight"), new PdfNumber(fdescInt[1]));
@@ -433,8 +447,7 @@ class CJKFont extends BaseFont
         return dic;
     }
     
-    private PdfDictionary getCIDFont(PdfIndirectReference fontDescriptor) throws DocumentException
-    {
+    private PdfDictionary getCIDFont(PdfIndirectReference fontDescriptor) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("CIDFontType0"));
         dic.put(new PdfName("BaseFont"), new PdfName(fontName + style));
@@ -449,8 +462,7 @@ class CJKFont extends BaseFont
         return dic;
     }
     
-    private PdfDictionary getFontBaseType(PdfIndirectReference CIDFont) throws DocumentException
-    {
+    private PdfDictionary getFontBaseType(PdfIndirectReference CIDFont) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         dic.put(PdfName.SUBTYPE, new PdfName("Type0"));
         String name = fontName;
@@ -463,9 +475,11 @@ class CJKFont extends BaseFont
         return dic;
     }
     
-/** Generates the dictionary or stream required to represent the font.
- *  <CODE>index</CODE> will cycle from 0 to 2 with the next cycle beeing fed
- *  with the indirect reference from the previous cycle.
+/**
+ * Generates the dictionary or stream required to represent the font.
+ * <CODE>index</CODE> will cycle from 0 to 2 with the next cycle beeing fed
+ * with the indirect reference from the previous cycle.
+ *
  * @param iobj an indirect reference to a Pdf object. May be null
  * @param index the type of object to generate. It may be 0, 1 or 2
  * @return the object requested
@@ -489,13 +503,15 @@ class CJKFont extends BaseFont
         writer.addToBody(pobj, ref);
     }
     
-    /** Gets the font parameter identified by <CODE>key</CODE>. Valid values
+    /**
+     * Gets the font parameter identified by <CODE>key</CODE>. Valid values
      * for <CODE>key</CODE> are <CODE>ASCENT</CODE>, <CODE>CAPHEIGHT</CODE>, <CODE>DESCENT</CODE>
      * and <CODE>ITALICANGLE</CODE>.
      * @param key the parameter to be extracted
      * @param fontSize the font size in points
      * @return the parameter in points
-     */    
+     */
+    
     public float getFontDescriptor(int key, float fontSize) {
         switch (key) {
             case ASCENT:
@@ -522,7 +538,8 @@ class CJKFont extends BaseFont
         return fontName;
     }
     
-    /** Gets the full name of the font. If it is a True Type font
+    /**
+     * Gets the full name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
      * found in the Open Type specification, chapter 2, in the 'name' table.<br>
@@ -533,5 +550,4 @@ class CJKFont extends BaseFont
     public String[][] getFullFontName() {
         return new String[][]{{"", "", "", fontName}};
     }
-    
 }

@@ -50,6 +50,7 @@
 
 package com.lowagie.text;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -87,7 +88,7 @@ import com.lowagie.text.markup.MarkupParser;
  * @see		Anchor
  */
 
-public class Phrase extends ArrayList implements TextElementArray, MarkupAttributes {
+public class Phrase extends ArrayList implements TextElementArray, MarkupAttributes, Serializable {
     
     // membervariables
     
