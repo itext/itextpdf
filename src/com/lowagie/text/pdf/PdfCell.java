@@ -61,7 +61,6 @@ import com.lowagie.text.Element;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.Table;
 import com.lowagie.text.Anchor;
 
 /**
