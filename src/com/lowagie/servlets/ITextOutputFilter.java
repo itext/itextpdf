@@ -1,5 +1,4 @@
 /*
- * $Name$
  * $Id$
  *
  * Copyright 2002 by Marcelo Vanzin.
@@ -52,19 +51,19 @@ package com.lowagie.servlets;
 
 
 //Import General
+import java.util.HashMap;
+import java.lang.reflect.Method;
+
 import java.io.InputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import javax.xml.parsers.SAXParser;
@@ -75,11 +74,9 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.PageSize;
 
-import com.lowagie.text.xml.SAXiTextHandler;
-
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.rtf.RtfWriter;
-import com.lowagie.text.xml.XmlWriter;
+import com.lowagie.text.xml.*;
 import com.lowagie.text.html.HtmlWriter;
 
 /**
@@ -87,15 +84,31 @@ import com.lowagie.text.html.HtmlWriter;
  *  the iText library.</p>
  *
  *  @author     Marcelo Vanzin
- *  @created    18/Abr/2002
  */
 public class ITextOutputFilter extends OutputFilterBase {
 
-    // Tipos de saída
-    public final static int PDF_OUTPUT  = 0;
-    public final static int RTF_OUTPUT  = 1;
-    public final static int XML_OUTPUT  = 2;
-    public final static int HTML_OUTPUT = 3;
+    // Output types
+    
+    public final static int PDF_OUTPUT_INT    = 0;
+    public final static int RTF_OUTPUT_INT    = 1;
+    public final static int XML_OUTPUT_INT    = 2;
+    public final static int HTML_OUTPUT_INT   = 3;
+    public final static int CUSTOM_OUTPUT_INT = 4;
+    
+    /** Constant for PDF output. */
+    public final static Integer PDF_OUTPUT    = new Integer(PDF_OUTPUT_INT);
+    
+    /** Constant for RTF output. */
+    public final static Integer RTF_OUTPUT    = new Integer(RTF_OUTPUT_INT);
+    
+    /** Constant for XML output. */
+    public final static Integer XML_OUTPUT    = new Integer(XML_OUTPUT_INT);
+    
+    /** Constant for HTML output. */
+    public final static Integer HTML_OUTPUT   = new Integer(HTML_OUTPUT_INT);
+    
+    /** Constant for custom writer output. */
+    public final static Integer CUSTOM_OUTPUT = new Integer(CUSTOM_OUTPUT_INT);
     
     private static final String[] CONTENT_TYPES =  {
         "application/pdf",
@@ -112,16 +125,38 @@ public class ITextOutputFilter extends OutputFilterBase {
     /** Request key where to store the desired output type. */
     public final static String OUTPUT_TYPE_KEY = "ITEXT_OUTPUT_TYPE";
 
+    /** Request key where to store the desired filename to be sent to the browser. */
+    public final static String FILENAME_KEY    = "ITEXT_FILENAME";
+    
+    /** Request key where to store the desired tagmap to use in iText. */
+    public final static String TAGMAP_KEY      = "ITEXT_TAGMAP";
+    
+    /** Request key where to store the desired DocWriter class name. */
+    public final static String DOCWRITER_KEY   = "ITEXT_DOCWRITER";
+
+    /** Request key where to store the desired Content Type to send for the custom DocWriter. */
+    public final static String CONTENT_TYPE_KEY   = "ITEXT_CONTENTTYPE";
+
     // Atributos internos
 
     private Rectangle pageSize = PageSize.A4;
-    private int outputType     = PDF_OUTPUT;
+    private int outputType     = PDF_OUTPUT.intValue();
+    private String docWriter   = null;
+    private String contentType = CONTENT_TYPES[PDF_OUTPUT_INT];
     
     private final SAXParserFactory spf = SAXParserFactory.newInstance();
     
     private static final String PAGE_SIZE   = "pageSize";
     private static final String OUTPUT_TYPE = "defaultOutput";
+    private static final String CUSTOM_WRITER = "writer";
+    private static final String CONTENT_TYPE  = "contentType";
     
+    private static final Class[] INIT_PARAMS = {
+        Document.class, OutputStream.class
+    };
+    
+    private final HashMap construtores = new HashMap(); 
+
     /**
      *  <p>Initializes the filter. Possible configuration parameters are:</p>
      *
@@ -132,6 +167,17 @@ public class ITextOutputFilter extends OutputFilterBase {
      *      <li>defaultOutput: The default output desired. Currently, only the
      *      writer bundled with iText are supported. Possible values are: PDF,
      *      RTF, XML, HTML. Default: PDF.</li>
+     *
+     *      <li>writer: if by default you want to use a custom DocWriter, provide
+     *      the class name in this parameter. The class must have a static
+     *      method called "getInstance()" that receives two parameters: a
+     *      {@link com.lowagie.text.Document Document} and an
+     *      {@link java.io.OutputStream OutputStream}, just like the other
+     *      DocWriters available with iText.</li>
+     *
+     *      <li>contentType: if you define a custom writer, you may define a
+     *      custom content type to be sent by default. If it is not provided,
+     *      the default (PDF) will be used.</li>
      *  </ul>
      *
      *  @see com.lowagie.text.PageSize
@@ -155,13 +201,31 @@ public class ITextOutputFilter extends OutputFilterBase {
         tmp = filterConfig.getInitParameter(OUTPUT_TYPE);
         if (tmp != null) {
             if (tmp.equalsIgnoreCase("PDF")) {
-                outputType = PDF_OUTPUT;
+                outputType = PDF_OUTPUT.intValue();
             } else if (tmp.equalsIgnoreCase("RTF")) {
-                outputType = RTF_OUTPUT;
+                outputType = RTF_OUTPUT.intValue();
             } else if (tmp.equalsIgnoreCase("XML")) {
-                outputType = XML_OUTPUT;
+                outputType = XML_OUTPUT.intValue();
             } else if (tmp.equalsIgnoreCase("HTML")) {
-                outputType = HTML_OUTPUT;
+                outputType = HTML_OUTPUT.intValue();
+            } else if (tmp.equalsIgnoreCase("CUSTOM")) {
+                tmp = filterConfig.getInitParameter(CUSTOM_WRITER);
+                if (tmp == null) {
+                    outputType = PDF_OUTPUT.intValue();
+                } else {
+                    try {
+                        construtores.put(tmp, Class.forName(tmp).getMethod("getInstance",INIT_PARAMS));
+                        docWriter = tmp;
+                    } catch (ClassNotFoundException cnfe) {
+                        // Ignores: uses PDF
+                    } catch (NoSuchMethodException nsme) {
+                        // Ignores: uses PDF
+                    }
+                    tmp = filterConfig.getInitParameter(CONTENT_TYPE);
+                    if (tmp != null) {
+                        contentType = tmp;
+                    }
+                }
             }
         }
     }
@@ -180,8 +244,26 @@ public class ITextOutputFilter extends OutputFilterBase {
      *      {@link com.lowagie.text.Rectangle Rectangle}.</li>
      *
      *      <li>OUTPUT_TYPE_KEY: the type of the output document. Must be an
-     *      {@link java,lang.Integer Integer} containing one of the constant
+     *      {@link java.lang.Integer Integer} containing one of the constant
      *       values defined in this class. Defaults to PDF.</li>
+     *      
+     *      <li>FILENAME_KEY: the file name to be sent to the browser, using the
+     *      "Content-Disposition" HTTP header.</li>
+     *
+     *      <li>TAGMAP_KEY: if you want to use a tagmap to translate the XML file
+     *      then put either a HashMap or a String with the path to the tagmap
+     *      file in this attribute.</li>      
+     *
+     *      <li>DOCWRITER_KEY: if you want to use a custom DocWriter, put the 
+     *      class name in this attribute. The class must have a method as
+     *      described {@link #init(FilterConfig) above}.</li>
+     *
+     *      <li>CONTENT_TYPE_KEY: you may specify a custom content type <b>only</b>
+     *      if you use a custom DocWriter. If a custom DocWriter is used and no
+     *      content type is specified here, the default content type (either PDF
+     *      or the content type defined for the default custom DocWriter) is
+     *      used.</li>
+     *
      *  </ul>
      *
      *  @param  request     The original request from the filter chain.
@@ -209,27 +291,46 @@ public class ITextOutputFilter extends OutputFilterBase {
         }
         
         // Definindo a saída
-        int output = outputType; 
+        Integer output = new Integer(outputType);
         try {
             Integer i = (Integer) request.getAttribute(OUTPUT_TYPE_KEY);
-            if (i != null && (i.intValue() >= PDF_OUTPUT && i.intValue() <= HTML_OUTPUT)) {
-                output = i.intValue();
+            if (i != null && (i.compareTo(PDF_OUTPUT) >= 0 && 
+                    i.compareTo(CUSTOM_OUTPUT) <= 0)) {
+                output = i;
             }
         } catch (Exception e) { /* ignore */ }
         
         // Criando o PDF
-        
-        switch (output) {
-            case RTF_OUTPUT:
+        switch (output.intValue()) {
+            case RTF_OUTPUT_INT:
                 RtfWriter.getInstance(doc, out);
                 break;
                 
-            case XML_OUTPUT:
+            case XML_OUTPUT_INT:
                 XmlWriter.getInstance(doc, out);
                 break;
                 
-            case HTML_OUTPUT:
+            case HTML_OUTPUT_INT:
                 HtmlWriter.getInstance(doc, out);
+                break;
+                
+            case CUSTOM_OUTPUT_INT:
+                String clazz = (String) request.getAttribute(DOCWRITER_KEY);
+                if (clazz == null) {
+                    clazz = docWriter;
+                }
+                if (clazz == null) {
+                    throw new IllegalArgumentException("No DocWriter specified.");
+                }
+                Method c = (Method) construtores.get(clazz);
+                if (c == null) {
+                    synchronized(construtores) {
+                        c = Class.forName(clazz).getMethod("getInstance",INIT_PARAMS);
+                        construtores.put(clazz, c);
+                    }
+                }
+                Object[] args = { doc, out };
+                c.invoke(null,args);
                 break;
                 
             default:
@@ -238,11 +339,38 @@ public class ITextOutputFilter extends OutputFilterBase {
         }
                 
         SAXParser parser = spf.newSAXParser();
-        parser.parse(data, new SAXiTextHandler(doc));
+        Object tagmap = request.getAttribute(TAGMAP_KEY);
+        if (tagmap != null) {
+            if (tagmap instanceof HashMap) {
+                // Tagmap is a HashMap
+                parser.parse(data, new SAXmyHandler(doc, (HashMap)tagmap));
+            } else {
+                // If not, treats the object as a String
+                parser.parse(data, new SAXmyHandler(doc, new TagMap(tagmap.toString())));
+            }
+        } else {
+            parser.parse(data, new SAXiTextHandler(doc));
+        }
          
         byte[] pdf = out.toByteArray();
-        response.setContentType(CONTENT_TYPES[output]);
+        
+        Object filename = request.getAttribute(FILENAME_KEY);
+        if (filename != null) {
+            ((HttpServletResponse)response)
+                .setHeader("Content-Disposition", "attachment;filename=" + filename);
+        }
+        
+        if (!output.equals(CUSTOM_OUTPUT)) {
+            response.setContentType(CONTENT_TYPES[output.intValue()]);
+        } else {
+            String ct = (String) request.getAttribute(CONTENT_TYPE_KEY);
+            if (ct == null) {
+                ct = contentType;
+            }
+            response.setContentType(ct);
+        }
         response.setContentLength(pdf.length);
+        
         dump(new ByteArrayInputStream(pdf), response);
                   
     }
