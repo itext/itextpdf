@@ -1317,7 +1317,7 @@ class PdfDocument extends Document implements DocListener {
                     float cellDisplacement;
                     PdfCell cell;
                     Color color;
-                    
+                    PdfContentByte cellGraphics = new PdfContentByte(null);
                     
                     // constructing the PdfTable
                     PdfTable table = new PdfTable((Table) element, indentLeft(), indentRight(), currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
@@ -1368,7 +1368,7 @@ class PdfDocument extends Document implements DocListener {
                             if (lines != null && lines.size() > 0) {
                                 // we paint the borders of the cells
                                 cellsShown = true;
-                                graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
+                                cellGraphics.rectangle(cell.rectangle(pagetop, indentBottom()));
                                 lostTableBottom = Math.max(cell.bottom(), indentBottom());
                                 lostTableTop = cell.top();
                                 
@@ -1397,9 +1397,10 @@ class PdfDocument extends Document implements DocListener {
                             tablerec.setGrayFill(table.grayFill());
                             PdfContentByte cb = writer.getDirectContentUnder();
                             cb.rectangle(tablerec.rectangle(top(), indentBottom()));
+                            cb.add(cellGraphics);
                             cb.stroke();
                         }
-                        
+                        cellGraphics = new PdfContentByte(null);
                         // if the table continues on the next page
                         if (! cells.isEmpty()) {
                             
@@ -1443,7 +1444,7 @@ class PdfDocument extends Document implements DocListener {
                                     cell.setBottom(indentTop() - oldTop + cell.bottom() - 2f * table.cellspacing());
                                     pagetop = cell.bottom();
                                     // we paint the borders of the cell
-                                    graphics.rectangle(cell.rectangle(indentTop(), indentBottom()));
+                                    cellGraphics.rectangle(cell.rectangle(indentTop(), indentBottom()));
                                     // we write the text of the cell
                                     ArrayList images = cell.getImages(indentTop(), indentBottom());
                                     for (Iterator im = images.iterator(); im.hasNext(); ) {
