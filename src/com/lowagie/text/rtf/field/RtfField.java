@@ -167,7 +167,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     protected RtfField(RtfDocument doc, Font font) {
         super("", font);
         this.document = doc;
-        this.font = new RtfFont(this.document, font, 0);
+        this.font = new RtfFont(this.document, font);
     }
     
     /**
