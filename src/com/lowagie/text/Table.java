@@ -163,11 +163,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 /** This is the number of columns in the <CODE>Table</CODE>. */
     private int columns;
 
-/** This is the currentRow. */
-    private int currentRow;
-
-/** This is the currentColumn. */
-    private int currentColumn;
+// this is the current Position in the table
+    private Point curPosition;
 
 /** This is the list of <CODE>Row</CODE>s. */
     private ArrayList rows = new ArrayList();
@@ -262,8 +259,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         for (int i = 0; i < rows; i++) {
             this.rows.add(new Row(columns));
         }
-        currentRow = 0;
-        currentColumn = 0;
+        curPosition = new Point(0, 0);
 
         // the DEFAULT widths are calculated
         widths = new float[columns];
@@ -299,7 +295,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         }
 
         rows.add(new Row(columns));
-        currentRow = 0;
+        curPosition.setLocation(0, curPosition.y);
 
         if ((value = (String)attributes.remove(ElementTags.LASTHEADERROW)) != null) {
             setLastHeaderRow(Integer.parseInt(value));
@@ -572,7 +568,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 
     public void addCell(Cell cell) {
         try {
-            addCell(cell, new Point(currentRow, currentColumn));
+            addCell(cell, curPosition);
         }
         catch(BadElementException bee) {
             // don't add the cell
@@ -590,7 +586,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  */
 
     public void addCell(Phrase content) throws BadElementException {
-        addCell(content, new Point(currentRow, currentColumn));
+        addCell(content, curPosition);
     }
 
 /**
@@ -629,7 +625,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  */
 
     public void addCell(String content) throws BadElementException {
-        addCell(new Phrase(content), new Point(currentRow,currentColumn));
+        addCell(new Phrase(content), curPosition);
     }
 
 /**
@@ -656,7 +652,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 
     public void insertTable(Table aTable) {
         if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
-        insertTable(aTable, new Point(currentRow, currentColumn));
+        insertTable(aTable, curPosition);
     }
 
 /**
@@ -894,8 +890,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             rows.set(i, row);
         }
         if (column == columns) {
-            currentRow++;
-            currentColumn = 0;
+            curPosition.setLocation(curPosition.x+1, 0);
         }
     }
 
@@ -911,8 +906,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             return false;
         }
         rows.remove(row);
-        //Added by CWE
-        --currentRow;
+        curPosition.setLocation(curPosition.x-1, curPosition.y);
         return true;
     }
 
@@ -934,7 +928,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 
     public int endHeaders() {
         /* patch sep 8 2001 Francesco De Milato */
-        lastHeaderRow = currentRow - 1;
+        lastHeaderRow = curPosition.x - 1;
         return lastHeaderRow;
     }
 
@@ -1470,7 +1464,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             for (int j = 0; j < columns; j++) {
                 row.setElement(((Row) rows.get(i)).getCell(j) ,j);
             }
-            for (int j = columns; j < newColumns && i < currentRow; j++) {
+            for (int j = columns; j < newColumns && i < curPosition.x; j++) {
                 row.setElement(defaultLayout, j);
             }
             newRows.add(row);
@@ -1547,8 +1541,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         while (
         (i < rows.size()) && (j < columns) && (((Row) rows.get(i)).isReserved(j) == true)
         );
-        currentRow        = i;
-        currentColumn    = j;
+        curPosition = new Point(i, j);
     }
 
 
