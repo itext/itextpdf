@@ -61,50 +61,35 @@ import java.io.*;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
- * @version $Revision$Date: 2002/07/09 10:52:22 $
+ * @version $Revision$Date: 2002/08/06 12:44:40 $
  *
  * Modified by Mark Hall (mhall@austromail.at) 14.04.2002
  */
-public class RtfPageNumber extends Chunk implements RtfField {
+public class RtfPageNumber extends GenericRtfField implements RtfField {
+    private String content;
 
-    protected static final String pageControl = "\\chpgn ";
-
+    /**
+     * construct a RtfPageNumber. The parameter content will be
+     * displayed in front of the page number using the font given as
+     * second argument.
+     * @param content the String that will be displayed in front of the page number
+     * @param contentFont the font to use to display this page number
+     */
     public RtfPageNumber( String content, Font contentFont ) {
-        super( content, contentFont );
-	/* This is a hack, because of the way multiple Chunks with the same Font are handled
-	 * by iText Phrases and Paragraphs we have to add the Page Number Control to the content
-	 * field. */
-	this.content.append(pageControl);
+        super("PAGE", "", contentFont);
+        this.content = content;
     }
 
-
+    /**
+     * write this RtfField into a stream using the writer given as
+     * first argument.
+     * @param writer the RtfWriter to use to write this RtfField
+     * @param out the Stream to write this RtfField into.
+     */
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
-
         writer.writeInitialFontSignature( out, this );
-	out.write(content.toString().getBytes());
-/*        out.write( RtfWriter.escape );
-        out.write( pageControl );*/
+        out.write(content.toString().getBytes());
         writer.writeFinishingFontSignature( out, this );
-//        out.write( RtfWriter.openGroup );
-//            out.write( RtfWriter.escape );
-//            out.write( RtfWriter.field );
-//            out.write( RtfWriter.openGroup );
-//                out.write( RtfWriter.extendedEscape );
-//                out.write( RtfWriter.fieldContent );
-//                out.write( RtfWriter.openGroup );
-//                    out.write( RtfWriter.delimiter );
-//                    out.write( RtfWriter.fieldPage );
-//                    out.write( RtfWriter.delimiter );
-//                out.write( RtfWriter.closeGroup );
-//            out.write( RtfWriter.closeGroup );
-//            out.write( RtfWriter.openGroup );
-//                out.write( RtfWriter.escape );
-//                out.write( RtfWriter.fieldDisplay );
-//                out.write( RtfWriter.openGroup );
-//                out.write( RtfWriter.closeGroup );
-//            out.write( RtfWriter.closeGroup );
-//        out.write( RtfWriter.closeGroup );
+        super.write(writer, out);
     }
 }
-
-
