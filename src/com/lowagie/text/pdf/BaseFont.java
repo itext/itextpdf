@@ -136,7 +136,13 @@ public abstract class BaseFont {
     public static final String IDENTITY_V = "Identity-V";
     
     /** A possible encoding. */    
+    public static final String CP1250 = "Cp1250";
+    
+    /** A possible encoding. */    
     public static final String CP1252 = "Cp1252";
+    
+    /** A possible encoding. */    
+    public static final String CP1257 = "Cp1257";
     
     /** A possible encoding. */    
     public static final String WINANSI = "Cp1252";
