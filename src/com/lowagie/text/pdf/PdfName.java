@@ -1,13 +1,8 @@
 /*
- * @(#)PdfName.java					0.39 2000/11/21
- *       release rugPdf0.10:		0.03 99/04/14
- *               rugPdf0.20:		0.15 99/11/30     
- *               iText0.3:			0.23 2000/02/14     
- *               iText0.35:			0.31 2000/08/11     
- *               iText0.36:			0.36 2000/09/08     
- *               iText0.36:			0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -103,6 +98,9 @@ public class PdfName extends PdfObject implements Comparable {
  
 	/** This is a static final PdfName */
 	public static final PdfName BASEFONT = new PdfName("/BaseFont", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName BBOX = new PdfName("/BBox", 0);
  
 	/** This is a static final PdfName */
 	public static final PdfName BITSPERCOMPONENT = new PdfName("/BitsPerComponent", 0);
@@ -243,6 +241,12 @@ public class PdfName extends PdfObject implements Comparable {
 	public static final PdfName FONTDESCRIPTOR = new PdfName("/FontDescriptor", 0);
  
 	/** This is a static final PdfName */
+	public static final PdfName FORM = new PdfName("/Form", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName FORMTYPE = new PdfName("/FormType", 0);
+ 
+	/** This is a static final PdfName */
 	public static final PdfName FULLSCREEN = new PdfName("/FullScreen", 0);
 
 	/** This is a static final PdfName of an attribute. */
@@ -304,6 +308,9 @@ public class PdfName extends PdfObject implements Comparable {
  
 	/** This is a static final PdfName */
 	public static final PdfName LZWDECODE = new PdfName("/LZWDecode", 0);
+ 
+	/** This is a static final PdfName */
+	public static final PdfName MATRIX = new PdfName("/Matrix", 0);
 	
 	/** This is a static final PdfName of an encoding */
 	public static final PdfName MAC_EXPERT_ENCODING = new PdfName("/MacExpertEncoding", 0);
