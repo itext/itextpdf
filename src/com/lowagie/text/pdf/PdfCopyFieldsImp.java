@@ -54,6 +54,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -73,6 +74,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     ArrayList pageDics = new ArrayList();
     PdfDictionary resources = new PdfDictionary();
     PdfDictionary form;
+    protected List newBookmarks;
     boolean closing = false;
     
     PdfCopyFieldsImp(OutputStream os) throws DocumentException, IOException {
@@ -413,6 +415,16 @@ class PdfCopyFieldsImp extends PdfWriter {
                 PdfIndirectReference ref = addToBody(form).getIndirectReference();
                 cat.put(PdfName.ACROFORM, ref);
             }
+            if (newBookmarks == null || newBookmarks.size() == 0)
+                return cat;
+            PdfDictionary top = new PdfDictionary();
+            PdfIndirectReference topRef = getPdfIndirectReference();
+            Object kids[] = SimpleBookmark.iterateOutlines(this, topRef, newBookmarks, false);
+            top.put(PdfName.FIRST, (PdfIndirectReference)kids[0]);
+            top.put(PdfName.LAST, (PdfIndirectReference)kids[1]);
+            top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
+            addToBody(top, topRef);
+            cat.put(PdfName.OUTLINES, topRef);            
             return cat;
         }
         catch (IOException e) {
@@ -457,6 +469,16 @@ class PdfCopyFieldsImp extends PdfWriter {
     RandomAccessFileOrArray getReaderFile(PdfReader reader) {
             return file;
     }
+
+    /**
+     * Sets the bookmarks. The list structure is defined in
+     * <CODE>SimpleBookmark#</CODE>.
+     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
+     */    
+    public void setOutlines(List outlines) {
+        newBookmarks = outlines;
+    }
+
     
     protected static final HashMap widgetKeys = new HashMap();
     protected static final HashMap fieldKeys = new HashMap();

@@ -549,8 +549,8 @@ class CJKFont extends BaseFont {
             IntHashtable W2 = createMetric(p.getProperty("W2"));
             p.remove("W2");
             HashMap map = new HashMap();
-            for (Enumeration enum = p.keys(); enum.hasMoreElements();) {
-                Object obj = enum.nextElement();
+            for (Enumeration e = p.keys(); e.hasMoreElements();) {
+                Object obj = e.nextElement();
                 map.put(obj, p.getProperty((String)obj));
             }
             map.put("W", W);
@@ -602,4 +602,13 @@ class CJKFont extends BaseFont {
     public boolean setCharAdvance(char c, int advance) {
         return false;
     }
+    
+    /**
+     * Sets the font name that will appear in the pdf font dictionary.
+     * Use with care as it can easily make a font unreadable if not embedded.
+     * @param name the new font name
+     */    
+    public void setPostscriptFontName(String name) {
+        fontName = name;
+    }   
 }

@@ -95,6 +95,7 @@ public class PdfTemplate extends PdfContentByte {
         super(wr);
         type = TYPE_TEMPLATE;
         pageResources = new PageResources();
+        pageResources.addDefaultColor(wr.getDefaultColorspace());
         thisReference = writer.getPdfIndirectReference();
     }
     

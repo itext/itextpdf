@@ -387,8 +387,6 @@ public class PdfCopy extends PdfWriter {
      */
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
-            if (newBookmarks != null && newBookmarks.size() > 0)
-                setViewerPreferences(PageModeUseOutlines);
             PdfDictionary theCat = ((PdfDocument)document).getCatalog(rootObj);
             if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
             if (newBookmarks == null || newBookmarks.size() == 0)
@@ -401,7 +399,6 @@ public class PdfCopy extends PdfWriter {
             top.put(PdfName.COUNT, new PdfNumber(((Integer)kids[2]).intValue()));
             addToBody(top, topRef);
             theCat.put(PdfName.OUTLINES, topRef);
-            
             return theCat;
         }
         catch (IOException e) {
@@ -409,6 +406,11 @@ public class PdfCopy extends PdfWriter {
         }
     }
     
+    /**
+     * Sets the bookmarks. The list structure is defined in
+     * <CODE>SimpleBookmark#</CODE>.
+     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
+     */    
     public void setOutlines(List outlines) {
         newBookmarks = outlines;
     }

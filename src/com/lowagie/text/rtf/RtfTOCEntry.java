@@ -63,7 +63,7 @@ import com.lowagie.text.Font;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2004/02/07 10:29:03 $
+ * @version $Revision$Date: 2003/05/02 09:01:36 $
  */
 public class RtfTOCEntry extends Chunk implements RtfField {
 
@@ -100,7 +100,7 @@ public class RtfTOCEntry extends Chunk implements RtfField {
 
         if (!hideText) {
             writer.writeInitialFontSignature( out, new Chunk("", contentFont) );
-            out.write( RtfWriter.filterSpecialChar( content(), false).getBytes() );
+            out.write( RtfWriter.filterSpecialChar( content() ).getBytes() );
             writer.writeFinishingFontSignature( out, new Chunk("", contentFont) );
         }
 
@@ -132,7 +132,7 @@ public class RtfTOCEntry extends Chunk implements RtfField {
             out.write( "tcn".getBytes() );
         }    
         out.write( RtfWriter.delimiter );
-        out.write( RtfWriter.filterSpecialChar( entryName, true).getBytes() );
+        out.write( RtfWriter.filterSpecialChar( entryName ).getBytes() );
         out.write( RtfWriter.delimiter );
         out.write( RtfWriter.closeGroup );        
 

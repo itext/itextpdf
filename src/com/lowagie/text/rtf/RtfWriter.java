@@ -1071,7 +1071,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 writeImage(chunk.getImage(), out);
             } else {
                 writeInitialFontSignature(out, chunk);
-                out.write(filterSpecialChar(chunk.content(), false).getBytes());
+                out.write(filterSpecialChar(chunk.content()).getBytes());
                 writeFinishingFontSignature(out, chunk);
             }
         }
@@ -2163,7 +2163,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @param str The original <code>String</code>
      * @return The converted String
      */
-    public final static String filterSpecialChar(String str, boolean useHex) {
+    public final static String filterSpecialChar(String str) {
         int length = str.length();
         int z = (int) 'z';
         StringBuffer ret = new StringBuffer(length);
@@ -2175,11 +2175,7 @@ public class RtfWriter extends DocWriter implements DocListener {
             } else if (ch == '\n') {
                 ret.append("\\par ");
             } else if (((int) ch) > z) {
-                if(useHex) {
-                    ret.append("\\\'").append(Long.toHexString((long) ch));
-                } else {
-                    ret.append("\\u").append((long) ch).append('?');
-                }
+                ret.append("\\u").append((long) ch).append('?');
             } else {
                 ret.append(ch);
             }

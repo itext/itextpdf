@@ -440,12 +440,12 @@ class PdfDocument extends Document implements DocListener {
     /** This is the size of the next page. */
     protected Rectangle nextPageSize = null;
     
-    /** This is the size of the crop box of the current Page. */
-    protected Rectangle thisCropSize = null;
+    /** This is the size of the several boxes of the current Page. */
+    protected HashMap thisBoxSize = new HashMap();
     
-    /** This is the size of the crop box that will be used in
+    /** This is the size of the several boxes that will be used in
      * the next page. */
-    protected Rectangle cropSize = null;
+    protected HashMap boxSize = new HashMap();
     
     /** This are the page resources of the current Page. */
     protected PageResources pageResources;
@@ -876,14 +876,22 @@ class PdfDocument extends Document implements DocListener {
         // we flush the arraylist with recently written lines
         flushLines();
         // we assemble the resources of this pages
+        pageResources.addDefaultColorDiff(writer.getDefaultColorspace());        
         PdfDictionary resources = pageResources.getResources();
         // we make a new page and add it to the document
+        if (writer.getPDFXConformance() != PdfWriter.PDFXNONE) {
+            if (thisBoxSize.containsKey("art") && thisBoxSize.containsKey("trim"))
+                throw new PdfXConformanceException("Only one of ArtBox or TrimBox can exist in the page.");
+            if (!thisBoxSize.containsKey("art") && !thisBoxSize.containsKey("trim")) {
+                if (thisBoxSize.containsKey("crop"))
+                    thisBoxSize.put("trim", thisBoxSize.get("crop"));
+                else
+                    thisBoxSize.put("trim", new PdfRectangle(pageSize, pageSize.getRotation()));
+            }
+        }
         PdfPage page;
         int rotation = pageSize.getRotation();
-        if (rotation == 0)
-            page = new PdfPage(new PdfRectangle(pageSize, rotation), thisCropSize, resources);
-        else
-            page = new PdfPage(new PdfRectangle(pageSize, rotation), thisCropSize, resources, new PdfNumber(rotation));
+        page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
         // we add the transitions
         if (this.transition!=null) {
             page.put(PdfName.TRANS,codeTransition(this.transition));
@@ -1278,6 +1286,21 @@ class PdfDocument extends Document implements DocListener {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     
+                    float spacingBefore = paragraph.spacingBefore();
+                    if (spacingBefore != 0) {
+                        leading = spacingBefore;
+                        carriageReturn();
+                        if (!pageEmpty) {
+                            /*
+                             * Don't add spacing before a paragraph if it's the first
+                             * on the page
+                             */
+                            Chunk space = new Chunk(" ");
+                            space.process(this);
+                            carriageReturn();
+                        }
+                    }
+                    
                     // we adjust the parameters of the document
                     alignment = paragraph.alignment();
                     leading = paragraph.leading();
@@ -1337,6 +1360,22 @@ class PdfDocument extends Document implements DocListener {
                     //       carriageReturn();
                     // End removed: Bonf (Marc Schneider) 2003-07-29
                     
+                    float spacingAfter = paragraph.spacingAfter();
+                    if (spacingAfter != 0) {
+                        leading = spacingAfter;
+                        carriageReturn();
+                        if (currentHeight + line.height() + leading < indentTop() - indentBottom()) {
+                            /*
+                             * Only add spacing after a paragraph if the extra
+                             * spacing fits on the page.
+                             */
+                            Chunk space = new Chunk(" ");
+                            space.process(this);
+                            carriageReturn();
+                        }
+                        leading = paragraph.leading();      // restore original leading
+                    }
+
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
                     
@@ -1464,7 +1503,11 @@ class PdfDocument extends Document implements DocListener {
                     newLine();
                     flushLines();
                     PdfPTable ptable = (PdfPTable)element;
-                    float totalWidth = (indentRight() - indentLeft()) * ptable.getWidthPercentage() / 100;
+                    float totalWidth;
+                    if (ptable.isLockedWidth())
+                        totalWidth = ptable.getTotalWidth();
+                    else
+                        totalWidth = (indentRight() - indentLeft()) * ptable.getWidthPercentage() / 100;
                     float xWidth = 0;
                     switch (ptable.getHorizontalAlignment()) {
                         case Element.ALIGN_LEFT:
@@ -1933,7 +1976,7 @@ class PdfDocument extends Document implements DocListener {
         
         // backgroundcolors, etc...
         pageSize = nextPageSize;
-        thisCropSize = cropSize;
+        thisBoxSize = new HashMap(boxSize);
         if (pageSize.backgroundColor() != null
         || pageSize.hasBorders()
         || pageSize.borderColor() != null
@@ -2314,8 +2357,10 @@ class PdfDocument extends Document implements DocListener {
      */
     
     boolean fitsPage(PdfPTable table, float margin) {
-        float totalWidth = (indentRight() - indentLeft()) * table.getWidthPercentage() / 100;
-        table.setTotalWidth(totalWidth);
+        if (!table.isLockedWidth()) {
+            float totalWidth = (indentRight() - indentLeft()) * table.getWidthPercentage() / 100;
+            table.setTotalWidth(totalWidth);
+        }
         return table.getTotalHeight() <= indentTop() - currentHeight - indentBottom() - margin;
     }
     
@@ -2805,7 +2850,14 @@ class PdfDocument extends Document implements DocListener {
     }
     
     void setCropBoxSize(Rectangle crop) {
-        cropSize = new Rectangle(crop);
+        setBoxSize("crop", crop);
+    }
+    
+    void setBoxSize(String boxName, Rectangle size) {
+        if (size == null)
+            boxSize.remove(boxName);
+        else
+            boxSize.put(boxName, new PdfRectangle(size));
     }
     
     void addCalculationOrder(PdfFormField formField) {
@@ -2896,5 +2948,9 @@ class PdfDocument extends Document implements DocListener {
 			currentHeight += tmpHeight;
 		}
 	}
+    
+    ArrayList getDocumentJavaScript() {
+        return documentJavaScript;
+    }
 
 }

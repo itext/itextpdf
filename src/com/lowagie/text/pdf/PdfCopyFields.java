@@ -50,6 +50,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * Concatenates PDF documents including form fields. The rules for the form field
@@ -96,5 +97,29 @@ public class PdfCopyFields {
      */    
     public void close() {
         fc.close();
+    }
+
+    /**
+     * Adds JavaScript to the global document
+     * @param js the JavaScript
+     */    
+    public void addJavaScript(String js) {
+        fc.addJavaScript(js, !PdfEncodings.isPdfDocEncoding(js));
+    }
+
+    /**
+     * Sets the bookmarks. The list structure is defined in
+     * <CODE>SimpleBookmark#</CODE>.
+     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
+     */    
+    public void setOutlines(List outlines) {
+        fc.setOutlines(outlines);
+    }
+    
+    /** Gets the underlying PdfWriter.
+     * @return the underlying PdfWriter
+     */    
+    public PdfWriter getWriter() {
+        return fc;
     }
 }

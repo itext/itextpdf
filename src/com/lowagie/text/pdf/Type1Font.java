@@ -722,4 +722,13 @@ class Type1Font extends BaseFont
         return KernPairs.size() > 0;
     }
     
+    /**
+     * Sets the font name that will appear in the pdf font dictionary.
+     * Use with care as it can easily make a font unreadable if not embedded.
+     * @param name the new font name
+     */    
+    public void setPostscriptFontName(String name) {
+        FontName = name;
+    }
+    
 }

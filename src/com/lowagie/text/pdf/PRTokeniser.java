@@ -532,8 +532,8 @@ public class PRTokeniser {
             return false;
         }
         if (ptr + 2 <= len) {
-            input[ptr++] = ' ';
-            input[ptr] = 'X';
+            input[ptr++] = (byte)' ';
+            input[ptr] = (byte)'X';
         }
         return true;
     }

@@ -304,7 +304,7 @@ public class TiffImage {
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_RESOLUTIONUNIT))
                 resolutionUnit = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_RESOLUTIONUNIT);
             dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
-            dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
+            dpiY = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
             int rowsStrip = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);

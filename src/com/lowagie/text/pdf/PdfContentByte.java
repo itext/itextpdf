@@ -411,6 +411,7 @@ public class PdfContentByte {
      * @param	blue	the intensity of blue. A value between 0 and 1
      */
     private void HelperRGB(float red, float green, float blue) {
+        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_RGB, null);
         if (red < 0)
             red = 0.0f;
         else if (red > 1.0f)
@@ -450,7 +451,7 @@ public class PdfContentByte {
      */
     
     public void resetRGBColorFill() {
-        content.append("0 0 0 rg").append_i(separator);
+        content.append("0 g").append_i(separator);
     }
     
     /**
@@ -478,7 +479,7 @@ public class PdfContentByte {
      */
     
     public void resetRGBColorStroke() {
-        content.append("0 0 0 RG").append_i(separator);
+        content.append("0 G").append_i(separator);
     }
     
     /**
@@ -1698,11 +1699,7 @@ public class PdfContentByte {
      */
     
     public void setRGBColorFill(int red, int green, int blue) {
-        content.append((float)(red & 0xFF) / 0xFF);
-        content.append(' ');
-        content.append((float)(green & 0xFF) / 0xFF);
-        content.append(' ');
-        content.append((float)(blue & 0xFF) / 0xFF);
+        HelperRGB((float)(red & 0xFF) / 0xFF, (float)(green & 0xFF) / 0xFF, (float)(blue & 0xFF) / 0xFF);
         content.append(" rg").append_i(separator);
     }
     
@@ -1723,11 +1720,7 @@ public class PdfContentByte {
      */
     
     public void setRGBColorStroke(int red, int green, int blue) {
-        content.append((float)(red & 0xFF) / 0xFF);
-        content.append(' ');
-        content.append((float)(green & 0xFF) / 0xFF);
-        content.append(' ');
-        content.append((float)(blue & 0xFF) / 0xFF);
+        HelperRGB((float)(red & 0xFF) / 0xFF, (float)(green & 0xFF) / 0xFF, (float)(blue & 0xFF) / 0xFF);
         content.append(" RG").append_i(separator);
     }
     
@@ -1736,6 +1729,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorStroke(Color color) {
+        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -1772,6 +1766,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorFill(Color color) {
+        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -1852,6 +1847,7 @@ public class PdfContentByte {
      * @param tint the tint if it is a spot color, ignored otherwise
      */
     void outputColorNumbers(Color color, float tint) {
+        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_RGB:
@@ -2343,5 +2339,16 @@ public class PdfContentByte {
     
     void addAnnotation(PdfAnnotation annot) {
         writer.addAnnotation(annot);
+    }
+    
+    /**
+     * Sets the default colorspace.
+     * @param name the name of the colorspace. It can be <CODE>PdfName.DEFAULTGRAY</CODE>, <CODE>PdfName.DEFAULTRGB</CODE>
+     * or <CODE>PdfName.DEFAULTCMYK</CODE>
+     * @param obj the colorspace. A <CODE>null</CODE> or <CODE>PdfNull</CODE> removes any colorspace with the same name
+     */    
+    public void setDefaultColorspace(PdfName name, PdfObject obj) {
+        PageResources prs = getPageResources();
+        prs.addDefaultColor(name, obj);
     }
 }

@@ -391,4 +391,12 @@ public class DocumentFont extends BaseFont {
             return super.charExists(c);
     }
     
+    /**
+     * Sets the font name that will appear in the pdf font dictionary.
+     * It does nothing in this case as the font is already in the document.
+     * @param name the new font name
+     */    
+    public void setPostscriptFontName(String name) {
+    }
+    
 }
