@@ -224,15 +224,16 @@ public class SAXiTextHandler extends HandlerBase {
                 TextElementArray current;
                 try {
                     current = (TextElementArray) stack.pop();
-                    if (current instanceof Cell) {
-                        Chunk chunk = new Chunk(img, 0, 0);
-                        current.add(chunk);
+                    if ((current instanceof Chapter) || (current instanceof Section)) {
+                        current.add(img);
                         stack.push(current);
                         return;
                     }
                     else {
-                        current.add(img);
+                        Chunk chunk = new Chunk(img, 0, 0);
+                        current.add(chunk);
                         stack.push(current);
+                        return;
                     }
                 }
                 catch(EmptyStackException ese) {
