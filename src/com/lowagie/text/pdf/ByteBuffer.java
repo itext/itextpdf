@@ -67,9 +67,9 @@ public class ByteBuffer {
     /** The buffer where the bytes are stored. */
     protected byte buf[];
     
-    private static int LONG_CACHE_SIZE = 0;
+    private static int byteCacheSize = 0;
     
-    private static byte[][] longCache = new byte[LONG_CACHE_SIZE][];
+    private static byte[][] byteCache = new byte[byteCacheSize][];
     public static byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private static final byte[] bytes = new byte[] {(byte)'0', (byte)'1', (byte)'2', (byte)'3', (byte)'4', (byte)'5', (byte)'6', (byte)'7', (byte)'8', (byte)'9'};
@@ -99,15 +99,14 @@ public class ByteBuffer {
      */
     
     public static void setCacheSize(int size) {
-        if (size <= LONG_CACHE_SIZE) {
-            return;
-        }
+        if (size > 3276700) size = 3276700;
+        if (size <= byteCacheSize) return;
         byte[][] tmpCache = new byte[size][];
-        for (int i = 0; i < LONG_CACHE_SIZE; i++) {
-            tmpCache[i] = longCache[i];
+        for (int i = 0; i < byteCacheSize; i++) {
+            tmpCache[i] = byteCache[i];
         }
-        longCache = tmpCache;
-        LONG_CACHE_SIZE = size;
+        byteCache = tmpCache;
+        byteCacheSize = size;
     }
     
     /**
@@ -126,41 +125,53 @@ public class ByteBuffer {
                 step = 10;
                 break;
         }
-        for (int i = 1; i < LONG_CACHE_SIZE; i += step) {
-            if (longCache[i] != null) continue;
-            int size = (int)Math.floor(Math.log(i) / Math.log(10));
-            if (i % 100 != 0) {
-                size += 2;
-            }
-            if (i % 10 != 0) {
-                size++;
-            }
-            if (i < 100) {
-                size++;
-                if (i < 10) {
-                    size++;
-                }
-            }
-            byte[] cache = new byte[size];
-            size--;
-            if (i < 100) {
-                cache[1] = (byte)'0';
-            }
-            if (i % 10 != 0) {
-                cache[size--] = bytes[i % 10];
-            }
-            if (i % 100 != 0) {
-                cache[size--] = bytes[(i / 10) % 10];
-                cache[size--] = (byte)'.';
-            }
-            size = (int)Math.floor(Math.log(i) / Math.log(10));
-            int add = 1;
-            while (add < size) {
-                cache[add] = bytes[(i / (int)Math.pow(10, size - add + 1)) % 10];
-                add++;
-            }
-            longCache[i] = cache;
+        for (int i = 1; i < byteCacheSize; i += step) {
+            if (byteCache[i] != null) continue;
+            byteCache[i] = convertToBytes(i);
         }
+    }
+    
+    /**
+     * Converts an double (multiplied by 100 and cast to an int) into an array of bytes.
+     *
+     * @param   i   the int
+     * @return  a bytearray
+     */
+    
+    private static byte[] convertToBytes(int i) {
+        int size = (int)Math.floor(Math.log(i) / Math.log(10));
+        if (i % 100 != 0) {
+            size += 2;
+        }
+        if (i % 10 != 0) {
+            size++;
+        }
+        if (i < 100) {
+            size++;
+            if (i < 10) {
+                size++;
+            }
+        }
+        size--;
+        byte[] cache = new byte[size];
+        size --;
+        if (i < 100) {
+            cache[0] = (byte)'0';
+        }
+        if (i % 10 != 0) {
+            cache[size--] = bytes[i % 10];
+        }
+        if (i % 100 != 0) {
+            cache[size--] = bytes[(i / 10) % 10];
+            cache[size--] = (byte)'.';
+        }
+        size = (int)Math.floor(Math.log(i) / Math.log(10)) - 1;
+        int add = 0;
+        while (add < size) {
+            cache[add] = bytes[(i / (int)Math.pow(10, size - add + 1)) % 10];
+            add++;
+        }
+        return cache;
     }
     
     /**
@@ -336,13 +347,13 @@ public class ByteBuffer {
                 
                 buf.append( (byte)(v / 10000 + ZERO) );
                 if (v % 10000 != 0) {
-                    buf.append( (byte)((v / 1000) % 10 +ZERO) );
+                    buf.append( (byte)((v / 1000) % 10 + ZERO) );
                     if (v % 1000 != 0) {
-                        buf.append( (byte)((v / 100) % 10 +ZERO) );
+                        buf.append( (byte)((v / 100) % 10 + ZERO) );
                         if (v % 100 != 0) {
-                            buf.append((byte)((v / 10) % 10 +ZERO) );
+                            buf.append((byte)((v / 10) % 10 + ZERO) );
                             if (v % 10 != 0) {
-                                buf.append((byte)((v) % 10 +ZERO) );
+                                buf.append((byte)((v) % 10 + ZERO) );
                             }
                         }
                     }
@@ -372,19 +383,19 @@ public class ByteBuffer {
             d += 0.005;
             int v = (int) (d * 100);
             
-            if (v < LONG_CACHE_SIZE && longCache[v] != null) {
+            if (v < byteCacheSize && byteCache[v] != null) {
                 if (buf != null) {
                     if (negative) buf.append((byte)'-');
-                    buf.append(longCache[v]);
+                    buf.append(byteCache[v]);
                     return null;
                 } else {
-                    String tmp = new String(longCache[v]);
+                    String tmp = new String(byteCache[v]);
                     if (negative) tmp = "-" + tmp;
                     return tmp;
                 }
             }
             if (buf != null) {
-                if (v < LONG_CACHE_SIZE) {
+                if (v < byteCacheSize) {
                     //create the cachebyte[]
                     byte[] cache;
                     int size = 0;
@@ -438,7 +449,7 @@ public class ByteBuffer {
                             cache[add++] = bytes[v % 10];
                         }
                     }
-                    longCache[v] = cache;
+                    byteCache[v] = cache;
                 }
                 
                 if (negative) buf.append((byte)'-');
