@@ -225,6 +225,7 @@ public class RtfRow extends RtfElement {
      * Performs a second pass over all cells to handle cell row/column spanning.
      */
     protected void handleCellSpanning() {
+        int realCellIndex = 0;
         for(int i = 0; i < this.cells.size(); i++) {
             RtfCell rtfCell = (RtfCell) this.cells.get(i);
             if(rtfCell.getColspan() > 1) {
@@ -244,18 +245,19 @@ public class RtfRow extends RtfElement {
                 for(int j = 1; j < rtfCell.getRowspan(); j++) {
                     RtfRow mergeRow = (RtfRow) rows.get(this.rowNumber + j);
                     if(this.rowNumber + j < rows.size()) {
-                        RtfCell rtfCellMerge = (RtfCell) mergeRow.getCells().get(i);
+                        RtfCell rtfCellMerge = (RtfCell) mergeRow.getCells().get(realCellIndex);
                         rtfCellMerge.setCellMergeChild(rtfCell);
                     }
                     if(rtfCell.getColspan() > 1) {
                         int k = rtfCell.getColspan();
                         while(k > 1) {
-                            mergeRow.getCells().remove(i + 1);
+                            mergeRow.getCells().remove(realCellIndex + 1);
                             k--;
                         }
                     }
                 }
             }
+            realCellIndex = realCellIndex + rtfCell.getColspan();
         }
     }
                               
