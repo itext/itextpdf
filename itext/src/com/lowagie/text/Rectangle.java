@@ -166,6 +166,11 @@ public class Rectangle implements Element, MarkupAttributes {
         this.urx = rect.urx;
         this.ury = rect.ury;
         this.rotation = rect.rotation;
+        this.border = rect.border;
+        this.borderWidth = rect.borderWidth;
+        this.color = rect.color;
+        this.background = rect.background;
+        this.grayFill = rect.grayFill;
     }
     
     // implementation of the Element interface
