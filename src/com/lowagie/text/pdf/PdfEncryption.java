@@ -58,7 +58,7 @@ import com.lowagie.text.ExceptionConverter;
  * @author  Paulo Soares (psoares@consiste.pt)
  */
 public class PdfEncryption {
-
+    
     static final byte pad[] = {
         (byte)0x28, (byte)0xBF, (byte)0x4E, (byte)0x5E, (byte)0x4E, (byte)0x75,
         (byte)0x8A, (byte)0x41, (byte)0x64, (byte)0x00, (byte)0x4E, (byte)0x56,
@@ -87,48 +87,46 @@ public class PdfEncryption {
     int permissions;
     byte documentID[];
     static long seq = System.currentTimeMillis();
-    
+
     public PdfEncryption() {
         try {
             md5 = MessageDigest.getInstance("MD5");
         }
         catch (Exception e) {
-             throw new ExceptionConverter(e);
-       }
+            throw new ExceptionConverter(e);
+        }
     }
-    
-    public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) {
-        if (strength128Bits)
-            permissions |= 0xfffff0c0;
-        else
-            permissions |= 0xffffffc0;
-        permissions &= 0xfffffffc;
-        this.permissions = permissions;
+
+    /**
+     * @author Kazuya Ujihara
+     */
+    private byte[] padPassword(byte userPassword[]) {
         byte userPad[] = new byte[32];
-        if (userPassword == null)
+        if (userPassword == null) {
             System.arraycopy(pad, 0, userPad, 0, 32);
+        }
         else {
             System.arraycopy(userPassword, 0, userPad, 0, Math.min(userPassword.length, 32));
             if (userPassword.length < 32)
                 System.arraycopy(pad, 0, userPad, userPassword.length, 32 - userPassword.length);
         }
-        byte ownerPad[] = new byte[32];
-        if (ownerPassword == null || ownerPassword.length == 0) {
-            System.arraycopy(pad, 0, ownerPad, 0, 32);
-            System.arraycopy(md5.digest(createDocumentId()), 0, ownerPad, 0, 16);
-        }
-        else {
-            System.arraycopy(ownerPassword, 0, ownerPad, 0, Math.min(ownerPassword.length, 32));
-            if (ownerPassword.length < 32)
-                System.arraycopy(pad, 0, ownerPad, ownerPassword.length, 32 - ownerPassword.length);
-        }
-        mkey = new byte[strength128Bits ? 16 : 5];
+
+        return userPad;
+    }
+
+    /**
+     * @author Kazuya Ujihara
+     */
+    private byte[] computeOwnerKey(byte userPad[], byte ownerPad[], boolean strength128Bits) {
+        byte ownerKey[] = new byte[32];
+
         byte digest[] = md5.digest(ownerPad);
         if (strength128Bits) {
+            byte mkey[] = new byte[16];
             for (int k = 0; k < 50; ++k)
                 digest = md5.digest(digest);
             System.arraycopy(userPad, 0, ownerKey, 0, 32);
-            for (int i = 0; i < 20; ++i){
+            for (int i = 0; i < 20; ++i) {
                 for (int j = 0; j < mkey.length ; ++j)
                     mkey[j] = (byte)(digest[j] ^ i);
                 prepareRC4Key(mkey);
@@ -136,29 +134,56 @@ public class PdfEncryption {
             }
         }
         else {
-            prepareRC4Key(digest, 0, mkey.length);
+            prepareRC4Key(digest, 0, 5);
             encryptRC4(userPad, ownerKey);
         }
-        documentID = createDocumentId();
+
+        return ownerKey;
+    }
+
+    /**
+     * @author Kazuya Ujihara
+     *
+     * ownerKey, documentID must be setuped
+     */
+    private void setupGlobalEncryptionKey(byte[] documentID, byte userPad[], byte ownerKey[], int permissions, boolean strength128Bits) {
+        this.documentID = documentID;
+        this.ownerKey = ownerKey;
+        this.permissions = permissions;
+        mkey = new byte[strength128Bits ? 16 : 5];
+
+        //fixed by ujihara in order to follow PDF refrence
+        md5.reset();
         md5.update(userPad);
         md5.update(ownerKey);
-        extra[0] = (byte)permissions;
-        extra[1] = (byte)(permissions >> 8);
-        extra[2] = (byte)(permissions >> 16);
-        extra[3] = (byte)(permissions >> 24);
-        md5.update(extra, 0, 4);
-        digest = md5.digest(documentID);
-        if (strength128Bits) {
+
+        byte ext[] = new byte[4];
+        ext[0] = (byte)permissions;
+        ext[1] = (byte)(permissions >> 8);
+        ext[2] = (byte)(permissions >> 16);
+        ext[3] = (byte)(permissions >> 24);
+        md5.update(ext, 0, 4);
+        if (documentID != null) md5.update(documentID);
+
+        byte digest[] = md5.digest();
+
+        if (mkey.length == 16) {
             for (int k = 0; k < 50; ++k)
                 digest = md5.digest(digest);
         }
+
         System.arraycopy(digest, 0, mkey, 0, mkey.length);
-        
-        // Compute the user key
-        
-        if (strength128Bits) {
+    }
+
+    /**
+     * @author Kazuya Ujihara
+     *
+     * mkey must be setuped
+     */
+    private void setupUserKey() {
+        if (mkey.length == 16) {
             md5.update(pad);
-            digest = md5.digest(documentID);
+            byte digest[] = md5.digest(documentID);
             System.arraycopy(digest, 0, userKey, 0, 16);
             for (int k = 16; k < 32; ++k)
                 userKey[k] = 0;
@@ -174,12 +199,70 @@ public class PdfEncryption {
             encryptRC4(pad, userKey);
         }
     }
-    
+
+    public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) {
+        if (ownerPassword == null || ownerPassword.length == 0)
+            ownerPassword = md5.digest(createDocumentId());
+        permissions |= strength128Bits ? 0xfffff0c0 : 0xffffffc0;
+        permissions &= 0xfffffffc;
+        //PDF refrence 3.5.2 Standard Security Handler, Algorithum 3.3-1
+        //If there is no owner password, use the user password instead.
+        byte userPad[] = padPassword(userPassword);
+        byte ownerPad[] = padPassword(ownerPassword);
+
+        this.ownerKey = computeOwnerKey(userPad, ownerPad, strength128Bits);
+        documentID = createDocumentId();
+        setupByUserPad(this.documentID, userPad, this.ownerKey, permissions, strength128Bits);
+    }
+
+    public static byte[] createDocumentId() {
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        }
+        catch (Exception e) {
+             throw new ExceptionConverter(e);
+       }
+        long time = System.currentTimeMillis();
+        long mem = Runtime.getRuntime().freeMemory();
+        String s = time + "+" + mem + "+" + (seq++);
+        return md5.digest(s.getBytes());
+    }
+
+    /**
+     * @author Kazuya Ujihara
+     */
+    public void setupByUserPassword(byte[] documentID, byte userPassword[], byte ownerKey[], int permissions, boolean strength128Bits) {
+        setupByUserPad(documentID, padPassword(userPassword), ownerKey, permissions, strength128Bits);
+    }
+
+    /**
+     * @author Kazuya Ujihara
+     */
+    private void setupByUserPad(byte[] documentID, byte userPad[], byte ownerKey[], int permissions, boolean strength128Bits) {
+        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions, strength128Bits);
+        setupUserKey();
+    }
+
+    /**
+     * @author Kazuya Ujihara
+     */
+    public void setupByOwnerPassword(byte[] documentID, byte ownerPassword[], byte userKey[], byte ownerKey[], int permissions, boolean strength128Bits) {
+        setupByOwnerPad(documentID, padPassword(ownerPassword), userKey, ownerKey, permissions, strength128Bits);
+    }
+
+    private void setupByOwnerPad(byte[] documentID, byte ownerPad[], byte userKey[], byte ownerKey[], int permissions, boolean strength128Bits) {
+        byte userPad[] = computeOwnerKey(ownerKey, ownerPad, strength128Bits);	//userPad will be set in this.ownerKey
+        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions, strength128Bits); //step 3
+        setupUserKey();
+    }
+
     public void prepareKey() {
         prepareRC4Key(key, 0, keySize);
     }
-    
+
     public void setHashKey(int number, int generation) {
+        md5.reset();	//added by ujihara
         extra[0] = (byte)number;
         extra[1] = (byte)(number >> 8);
         extra[2] = (byte)(number >> 16);
@@ -191,11 +274,19 @@ public class PdfEncryption {
         if (keySize > 16)
             keySize = 16;
     }
-    
-    public PdfObject getFileID() {
-        return createInfoId(documentID);
+
+    public static PdfObject createInfoId(byte id[]) {
+        ByteBuffer buf = new ByteBuffer(90);
+        buf.append('[').append('<');
+        for (int k = 0; k < 16; ++k)
+            buf.appendHex(id[k]);
+        buf.append('>').append('<');
+        for (int k = 0; k < 16; ++k)
+            buf.appendHex(id[k]);
+        buf.append('>').append(']');
+        return new PdfLiteral(buf.toByteArray());
     }
-    
+
     public PdfDictionary getEncryptionDictionary() {
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.FILTER, PdfName.STANDARD);
@@ -213,11 +304,11 @@ public class PdfEncryption {
         }
         return dic;
     }
-    
+
     public void prepareRC4Key(byte key[]) {
         prepareRC4Key(key, 0, key.length);
     }
-    
+
     public void prepareRC4Key(byte key[], int off, int len) {
         int index1 = 0;
         int index2 = 0;
@@ -234,7 +325,7 @@ public class PdfEncryption {
             index1 = (index1 + 1) % len;
         }
     }
-    
+
     public void encryptRC4(byte dataIn[], int off, int len, byte dataOut[]) {
         int length = len + off;
         byte tmp;
@@ -255,34 +346,13 @@ public class PdfEncryption {
     public void encryptRC4(byte dataIn[], byte dataOut[]) {
         encryptRC4(dataIn, 0, dataIn.length, dataOut);
     }
-    
+
     public void encryptRC4(byte data[]) {
         encryptRC4(data, 0, data.length, data);
     }
     
-    public static byte[] createDocumentId() {
-        MessageDigest md5;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        }
-        catch (Exception e) {
-             throw new ExceptionConverter(e);
-       }
-        long time = System.currentTimeMillis();
-        long mem = Runtime.getRuntime().freeMemory();
-        String s = time + "+" + mem + "+" + (seq++);
-        return md5.digest(s.getBytes());
+    public PdfObject getFileID() {
+        return createInfoId(documentID);
     }
-    
-    public static PdfObject createInfoId(byte id[]) {
-        ByteBuffer buf = new ByteBuffer(90);
-        buf.append('[').append('<');
-        for (int k = 0; k < 16; ++k)
-            buf.appendHex(id[k]);
-        buf.append('>').append('<');
-        for (int k = 0; k < 16; ++k)
-            buf.appendHex(id[k]);
-        buf.append('>').append(']');
-        return new PdfLiteral(buf.toByteArray());
-    }
+
 }

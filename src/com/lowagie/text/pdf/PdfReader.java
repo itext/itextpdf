@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.InflaterInputStream;
+import java.util.Arrays;
 
 import com.lowagie.text.Rectangle;
 
@@ -67,10 +68,11 @@ import com.lowagie.text.Rectangle;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfReader {
-
+    
     static final PdfName pageInhCandidates[] = {
-        PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX};
-
+        PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
+    };
+    
     protected PRTokeniser tokens;
     protected int xref[];
     protected PdfObject xrefObj[];
@@ -87,12 +89,24 @@ public class PdfReader {
     protected boolean tampered = false;
     protected int lastXref;
     protected int eofPos;
+    protected char pdfVersion;
+    protected PdfEncryption decrypt;
+    protected byte password[] = null; //added by ujihara for decryption
+    protected int objNum;
+    protected int objGen;
+    protected ArrayList strings = new ArrayList();
+    protected boolean sharedStreams = true;
     
     /** Reads and parses a PDF document.
      * @param filename the file name of the document
      * @throws IOException on error
-     */    
+     */
     public PdfReader(String filename) throws IOException {
+        this(filename, null);
+    }
+    
+    public PdfReader(String filename, byte ownerPassword[]) throws IOException {
+        password = ownerPassword;
         tokens = new PRTokeniser(filename);
         readPdf();
     }
@@ -100,8 +114,13 @@ public class PdfReader {
     /** Reads and parses a PDF document.
      * @param pdfIn the byte array with the document
      * @throws IOException on error
-     */    
+     */
     public PdfReader(byte pdfIn[]) throws IOException {
+        this(pdfIn, null);
+    }
+    
+    public PdfReader(byte pdfIn[], byte ownerPassword[]) throws IOException {
+        password = ownerPassword;
         tokens = new PRTokeniser(pdfIn);
         readPdf();
     }
@@ -109,8 +128,13 @@ public class PdfReader {
     /** Reads and parses a PDF document.
      * @param url the URL of the document
      * @throws IOException on error
-     */    
+     */
     public PdfReader(URL url) throws IOException {
+        this(url, null);
+    }
+    
+    public PdfReader(URL url, byte ownerPassword[]) throws IOException {
+        password = ownerPassword;
         tokens = new PRTokeniser(new RandomAccessFileOrArray(url));
         readPdf();
     }
@@ -118,7 +142,7 @@ public class PdfReader {
     /** Gets a new file instance of the original PDF
      * document.
      * @return a new file instance of the original PDF document
-     */    
+     */
     public RandomAccessFileOrArray getSafeFile() {
         return tokens.getSafeFile();
     }
@@ -129,7 +153,7 @@ public class PdfReader {
     
     /** Gets the number of pages in the document.
      * @return the number of pages in the document
-     */    
+     */
     public int getNumberOfPages() {
         return pages.length;
     }
@@ -141,18 +165,18 @@ public class PdfReader {
     public PdfDictionary getCatalog() {
         return catalog;
     }
-
+    
     /** Returns the document's acroform, if it has one.
      * @return he document's acroform
      */
-     public PRAcroForm getAcroForm() {
-	    return acroForm;
-     }
+    public PRAcroForm getAcroForm() {
+        return acroForm;
+    }
     /**
      * Gets the page rotation. This value can be 0, 90, 180 or 270.
      * @param index the page number. The first page is 1
      * @return the page rotation
-     */    
+     */
     public int getPageRotation(int index) {
         PdfDictionary page = pages[index - 1];
         PdfNumber rotate = (PdfNumber)getPdfObject(page.get(PdfName.ROTATE));
@@ -169,7 +193,7 @@ public class PdfReader {
      * is a <CODE>Rectangle</CODE> with the value of the /MediaBox and the /Rotate key.
      * @param index the page number. The first page is 1
      * @return a <CODE>Rectangle</CODE>
-     */    
+     */
     public Rectangle getPageSizeWithRotation(int index) {
         Rectangle rect = getPageSize(index);
         int rotation = getPageRotation(index);
@@ -184,7 +208,7 @@ public class PdfReader {
      * is the value of the /MediaBox key.
      * @param index the page number. The first page is 1
      * @return the page size
-     */    
+     */
     public Rectangle getPageSize(int index) {
         PdfDictionary page = pages[index - 1];
         PdfArray mediaBox = (PdfArray)getPdfObject(page.get(PdfName.MEDIABOX));
@@ -197,7 +221,7 @@ public class PdfReader {
      * as the media box but may be smaller.
      * @param index the page number. The first page is 1
      * @return the crop box
-     */    
+     */
     public Rectangle getCropBox(int index) {
         PdfDictionary page = pages[index - 1];
         PdfArray cropBox = (PdfArray)getPdfObject(page.get(PdfName.CROPBOX));
@@ -209,7 +233,7 @@ public class PdfReader {
     /** Returns the content of the document information dictionary as a <CODE>HashMap</CODE>
      * of <CODE>String</CODE>.
      * @return content of the document information dictionary
-     */    
+     */
     public HashMap getInfo() {
         HashMap map = new HashMap();
         PdfDictionary info = (PdfDictionary)getPdfObject(trailer.get(PdfName.INFO));
@@ -243,18 +267,16 @@ public class PdfReader {
         float urx = ((PdfNumber)rect.get(2)).floatValue();
         float ury = ((PdfNumber)rect.get(3)).floatValue();
         return new Rectangle(Math.min(llx, urx), Math.min(lly, ury),
-            Math.max(llx, urx), Math.max(lly, ury));
+        Math.max(llx, urx), Math.max(lly, ury));
     }
     
     protected void readPdf() throws IOException {
         try {
-            tokens.checkPdfHeader();
+            pdfVersion = tokens.checkPdfHeader();
             try {
                 readXref();
             }
             catch (Exception e) {
-                if (encrypted)
-                    throw (IOException)e;
                 try {
                     rebuilt = true;
                     rebuildXref();
@@ -265,11 +287,29 @@ public class PdfReader {
                 }
             }
             readDocObj();
+            
+            readDecryptedDocObj();	//added by ujihara for decryption
+            strings.clear();
             readPages();
+            PdfDictionary info = (PdfDictionary)getPdfObject(trailer.get(PdfName.INFO));
+            if (info != null) {
+                PdfObject obj = getPdfObject(info.get(PdfName.PRODUCER));
+                if (obj != null && obj.type() == PdfObject.STRING) {
+                    String value = ((PdfString)obj).toUnicodeString();
+                    // Acrobat Distiller 3.01 creates shared streams
+                    if (value.indexOf("3.01") >= 0)
+                        eliminateSharedStreams();
+                }
+            }
             PdfObject form = catalog.get(PdfName.ACROFORM);
             if (form != null) {
-                acroForm = new PRAcroForm(this);
-                acroForm.readAcroForm((PdfDictionary)getPdfObject(form));
+                try {
+                    acroForm = new PRAcroForm(this);
+                    acroForm.readAcroForm((PdfDictionary)getPdfObject(form));
+                }
+                catch (Exception e) {
+                    acroForm = null;
+                }
             }
         }
         finally {
@@ -281,7 +321,59 @@ public class PdfReader {
             }
         }
     }
-
+    
+    /**
+     * @author Kazuya Ujihara
+     */
+    private void readDecryptedDocObj() throws IOException {
+        PdfObject encDic = trailer.get(PdfName.ENCRYPT);
+        if (encDic == null || encDic.toString().equals("null"))
+            return;
+        encrypted = true;
+        PdfDictionary enc = (PdfDictionary)getPdfObject(encDic);
+        
+        String s;
+        PdfObject o;
+        
+        PdfArray documentIDs = (PdfArray)getPdfObject(trailer.get(PdfName.ID));
+        byte documentID[] = null;
+        if (documentIDs != null) {
+            o = (PdfObject)documentIDs.getArrayList().get(0);
+            s = o.toString();
+            documentID = com.lowagie.text.DocWriter.getISOBytes(s);
+        }
+        
+        s = enc.get(PdfName.U).toString();
+        byte uValue[] = com.lowagie.text.DocWriter.getISOBytes(s);
+        s = enc.get(PdfName.O).toString();
+        byte oValue[] = com.lowagie.text.DocWriter.getISOBytes(s);
+        
+        o = enc.get(PdfName.R);
+        if (o.type() != PdfObject.NUMBER) throw new IOException("Illegal R value.");
+        int rValue = ((PdfNumber)o).intValue();
+        if (rValue != 2 && rValue != 3) throw new IOException("Unknown encryption type (" + rValue + ")");
+        
+        o = enc.get(PdfName.P);
+        if (o.type() != PdfObject.NUMBER) throw new IOException("Illegal P value.");
+        int pValue = ((PdfNumber)o).intValue();;
+        
+        decrypt = new PdfEncryption();
+        
+        //check by user password
+        decrypt.setupByUserPassword(documentID, password, oValue, pValue, rValue == 3);
+        if (!Arrays.equals(uValue, decrypt.userKey)) {
+            //check by owner password
+            decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue, rValue == 3);
+            if (!Arrays.equals(uValue, decrypt.userKey)) {
+                throw new IOException("Bad user password");
+            }
+        }
+        for (int k = 0; k < strings.size(); ++k) {
+            PdfString str = (PdfString)strings.get(k);
+            str.decrypt(this);
+        }
+    }
+    
     public static PdfObject getPdfObject(PdfObject obj) {
         if (obj == null)
             return null;
@@ -308,7 +400,7 @@ public class PdfReader {
         }
         pageInh.add(dic);
     }
-
+    
     protected void popPageAttributes() {
         pageInh.remove(pageInh.size() - 1);
     }
@@ -361,26 +453,28 @@ public class PdfReader {
             tokens.nextValidToken();
             if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
                 tokens.throwError("Invalid object number.");
-            int objNum = tokens.intValue();
+            objNum = tokens.intValue();
             tokens.nextValidToken();
             if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
                 tokens.throwError("Invalid generation number.");
-            int objGen = tokens.intValue();
+            objGen = tokens.intValue();
             tokens.nextValidToken();
             if (!tokens.getStringValue().equals("obj"))
                 tokens.throwError("Token 'obj' expected.");
             PdfObject obj = readPRObject();
             xrefObj[k] = obj;
-            if (obj.type() == PdfObject.STREAM)
+            if (obj.type() == PdfObject.STREAM) {
                 streams.add(obj);
+            }
         }
         for (int k = 0; k < streams.size(); ++k) {
             PRStream stream = (PRStream)streams.get(k);
             PdfNumber length = (PdfNumber)killIndirect(stream.get(PdfName.LENGTH));
             stream.setLength(length.intValue());
         }
+        xref = null;
     }
-
+    
     static PdfObject killIndirect(PdfObject obj) {
         if (obj == null || obj.type() == PdfObject.NULL)
             return null;
@@ -415,12 +509,6 @@ public class PdfReader {
         if (!tokens.getStringValue().equals("trailer"))
             throw new IOException("trailer not found.");
         trailer = (PdfDictionary)readPRObject();
-        PdfObject encDic = trailer.get(PdfName.ENCRYPT);
-        if (encDic != null && !encDic.toString().equals("null")) {
-            encrypted = true;
-            throw new IOException("Encrypted files are not supported.");
-        }
-        trailer.remove(PdfName.ENCRYPT);
         PdfNumber xrefSize = (PdfNumber)trailer.get(PdfName.SIZE);
         xref = new int[xrefSize.intValue()];
         tokens.seek(startxref);
@@ -494,7 +582,7 @@ public class PdfReader {
             }
         }
     }
-
+    
     protected void rebuildXref() throws IOException {
         tokens.seek(0);
         int xr[][] = new int[1024][];
@@ -542,11 +630,6 @@ public class PdfReader {
         }
         if (trailer == null)
             throw new IOException("trailer not found.");
-        PdfObject encDic = trailer.get(PdfName.ENCRYPT);
-        if (encDic != null && !encDic.toString().equals("null")) {
-            throw new IOException("Encrypted files are not supported.");
-        }
-        trailer.remove(PdfName.ENCRYPT);
         xref = new int[top];
         for (int k = 0; k < top; ++k) {
             int obj[] = xr[k];
@@ -554,7 +637,7 @@ public class PdfReader {
                 xref[k] = obj[0];
         }
     }
-
+    
     protected PdfDictionary readDictionary() throws IOException {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
@@ -593,11 +676,10 @@ public class PdfReader {
         tokens.nextValidToken();
         int type = tokens.getTokenType();
         switch (type) {
-            case PRTokeniser.TK_START_DIC:
-            {
+            case PRTokeniser.TK_START_DIC: {
                 PdfDictionary dic = readDictionary();
                 int pos = tokens.getFilePointer();
-		// be careful in the trailer. May not be a "next" token.
+                // be careful in the trailer. May not be a "next" token.
                 if (tokens.nextToken() && tokens.getStringValue().equals("stream")) {
                     int ch = tokens.read();
                     if (ch == '\r')
@@ -606,6 +688,7 @@ public class PdfReader {
                         tokens.backOnePosition(ch);
                     PRStream stream = new PRStream(this, tokens.getFilePointer());
                     stream.putAll(dic);
+                    stream.setObjNum(objNum, objGen);
                     return stream;
                 }
                 else {
@@ -618,7 +701,10 @@ public class PdfReader {
             case PRTokeniser.TK_NUMBER:
                 return new PdfNumber(tokens.getStringValue());
             case PRTokeniser.TK_STRING:
-                return new PdfString(tokens.getStringValue(), null);
+                PdfString str = new PdfString(tokens.getStringValue(), null);
+                str.setObjNum(objNum, objGen);
+                strings.add(str);
+                return str;
             case PRTokeniser.TK_NAME:
                 return new PdfName(tokens.getStringValue());
             case PRTokeniser.TK_REF:
@@ -627,7 +713,7 @@ public class PdfReader {
                 return new PdfLiteral(-type, tokens.getStringValue());
         }
     }
-
+    
     public static byte[] FlateDecode(byte in[]) {
         byte b[] = FlateDecode(in, true);
         if (b == null)
@@ -655,7 +741,7 @@ public class PdfReader {
             return out.toByteArray();
         }
     }
-
+    
     public static byte[] ASCIIHexDecode(byte in[]) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         boolean first = true;
@@ -679,7 +765,7 @@ public class PdfReader {
             out.write((byte)(n1 << 4));
         return out.toByteArray();
     }
-
+    
     public static byte[] ASCII85Decode(byte in[]) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int state = 0;
@@ -716,23 +802,23 @@ public class PdfReader {
         if (state == 1)
             throw new RuntimeException("Illegal length in ASCII85Decode.");
         if (state == 2) {
-            r = chn[0] * 85 + chn[1];
-            out.write((byte)r);
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85;
+            out.write((byte)(r >> 24));
         }
         else if (state == 3) {
-            r = chn[0] * 85 * 85 + chn[1] * 85 + chn[2];
-            out.write((byte)(r >> 8));
-            out.write((byte)r);
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85;
+            out.write((byte)(r >> 24));
+            out.write((byte)(r >> 16));
         }
         else if (state == 4) {
-            r = chn[0] * 85 * 85 * 85 + chn[1] * 85 * 85 + chn[2] * 85 + chn[3];
+            r = chn[0] * 85 * 85 * 85 * 85 + chn[1] * 85 * 85 * 85  + chn[2] * 85 * 85  + chn[3] * 85 ;
+            out.write((byte)(r >> 24));
             out.write((byte)(r >> 16));
             out.write((byte)(r >> 8));
-            out.write((byte)r);
         }
         return out.toByteArray();
     }
-
+    
     public static byte[] LZWDecode(byte in[]) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         LZWDecoder lzw = new LZWDecoder();
@@ -747,17 +833,15 @@ public class PdfReader {
     public boolean isRebuilt() {
         return this.rebuilt;
     }
-
-    public PdfDictionary getPageN(int pageNum)
-    {
+    
+    public PdfDictionary getPageN(int pageNum) {
         if (pageNum > pages.length) return null;
         return pages[pageNum - 1];
-
-
+        
+        
     }
-
-    public PRIndirectReference getPageOrigRef(int pageNum)
-    {
+    
+    public PRIndirectReference getPageOrigRef(int pageNum) {
         if (pageNum > pageRefs.length) return null;
         return pageRefs[pageNum - 1];
     }
@@ -787,7 +871,7 @@ public class PdfReader {
             return bout.toByteArray();
         }
     }
-
+    
     protected void killXref(PdfObject obj) {
         if (obj == null)
             return;
@@ -828,7 +912,7 @@ public class PdfReader {
         page.put(PdfName.CONTENTS, new PRIndirectReference(this, freeXref));
         xrefObj[freeXref] = new PRStream(this, content);
     }
-
+    
     public static byte[] getStreamBytes(PRStream stream, RandomAccessFileOrArray file) throws IOException {
         PdfReader reader = stream.getReader();
         PdfObject filter = PdfReader.getPdfObject(stream.get(PdfName.FILTER));
@@ -839,6 +923,12 @@ public class PdfReader {
             b = new byte[stream.getLength()];
             file.seek(stream.getOffset());
             file.readFully(b);
+            PdfEncryption decrypt = reader.getDecrypt();
+            if (decrypt != null) {
+                decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
+                decrypt.prepareKey();
+                decrypt.encryptRC4(b);
+            }
         }
         ArrayList filters = new ArrayList();
         if (filter != null) {
@@ -866,6 +956,71 @@ public class PdfReader {
         return b;
     }
     
+    /** Eliminates shared streams if they exist. */    
+    public void eliminateSharedStreams() {
+        if (!sharedStreams)
+            return;
+        sharedStreams = false;
+        if (pages.length == 1)
+            return;
+        ArrayList newRefs = new ArrayList();
+        ArrayList newStreams = new ArrayList();
+        IntHashtable visited = new IntHashtable();
+        for (int k = 0; k < pages.length; ++k) {
+            PdfDictionary page = pages[k];
+            if (page == null)
+                continue;
+            PdfObject contents = getPdfObject(page.get(PdfName.CONTENTS));
+            if (contents == null)
+                continue;
+            if (contents.type() == PdfObject.STREAM) {
+                PRIndirectReference ref = (PRIndirectReference)page.get(PdfName.CONTENTS);
+                if (visited.containsKey(ref.getNumber())) {
+                    // need to duplicate
+                    newRefs.add(ref);
+                    newStreams.add(new PRStream((PRStream)contents, null));
+                }
+                else
+                    visited.put(ref.getNumber(), 1);
+            }
+            else {
+                PdfArray array = (PdfArray)contents;
+                ArrayList list = array.getArrayList();
+                for (int j = 0; j < list.size(); ++j) {
+                    PRIndirectReference ref = (PRIndirectReference)list.get(j);
+                    if (visited.containsKey(ref.getNumber())) {
+                        // need to duplicate
+                        newRefs.add(ref);
+                        newStreams.add(new PRStream((PRStream)getPdfObject(ref), null));
+                    }
+                    else
+                        visited.put(ref.getNumber(), 1);
+                }
+            }
+        }
+        if (newStreams.size() == 0)
+            return;
+        int start = 1;
+        for (int pass = 0; pass < 2; ++pass) {
+            for (int k = start; k < xrefObj.length; ++k) {
+                if (xrefObj[k] == null) {
+                    int p = newStreams.size() - 1;
+                    xrefObj[k] = (PRStream)newStreams.get(p);
+                    PRIndirectReference ref = (PRIndirectReference)newRefs.get(p);
+                    ref.setNumber(k, 0);
+                    if (p == 0)
+                        return;
+                    newStreams.remove(p);
+                }
+            }
+            start = xrefObj.length;
+            PdfObject nxo[] = new PdfObject[xrefObj.length + newStreams.size()];
+            System.arraycopy(xrefObj, 0, nxo, 0, xrefObj.length);
+            xrefObj = nxo;
+        }
+        
+    }
+    
     public boolean isTampered() {
         return tampered;
     }
@@ -877,7 +1032,7 @@ public class PdfReader {
     /** Gets the XML metadata.
      * @throws IOException on error
      * @return the XML metadata
-     */    
+     */
     public byte[] getMetadata() throws IOException {
         PdfObject obj = getPdfObject(catalog.get(PdfName.METADATA));
         if (!(obj instanceof PRStream))
@@ -905,5 +1060,17 @@ public class PdfReader {
     
     public int getEofPos() {
         return eofPos;
+    }
+    
+    public char getPdfVersion() {
+        return pdfVersion;
+    }
+    
+    public boolean isEncrypted() {
+        return encrypted;
+    }
+    
+    PdfEncryption getDecrypt() {
+        return decrypt;
     }
 }

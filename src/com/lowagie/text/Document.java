@@ -106,7 +106,7 @@ public class Document implements DocListener {
     // membervariables
     
 /** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-    private static final String ITEXT_VERSION = "iText by lowagie.com (r0.99 - paulo118)";
+    private static final String ITEXT_VERSION = "itext-paulo (lowagie.com) - build 120";
     
 /** Allows the pdf documents to be produced without compression for debugging purposes. */
     public static boolean compress = true; 
@@ -247,9 +247,7 @@ public class Document implements DocListener {
             type == Element.LIST ||
             type == Element.LISTITEM ||
             type == Element.RECTANGLE ||
-            type == Element.PNG ||
             type == Element.JPEG ||    
-            type == Element.GIF ||    
             type == Element.IMGRAW ||
             type == Element.IMGTEMPLATE ||
             type == Element.GRAPHIC)) {
@@ -435,7 +433,7 @@ public class Document implements DocListener {
  */
     
     public void resetFooter() {
-    	this.footer = null;
+        this.footer = null;
         DocListener listener;
         for (Iterator iterator = listeners.iterator(); iterator.hasNext(); ) {
             listener = (DocListener) iterator.next();

@@ -78,7 +78,9 @@ public class PdfString extends PdfObject {
     
     /** The encoding. */
     protected String encoding = TEXT_PDFDOCENCODING;
-    
+    protected int objNum = 0;
+    protected int objGen = 0;
+
     // constructors
     
     /**
@@ -179,5 +181,21 @@ public class PdfString extends PdfObject {
             return PdfEncodings.convertToString(b, PdfObject.TEXT_UNICODE);
         else
             return PdfEncodings.convertToString(b, PdfObject.TEXT_PDFDOCENCODING);
+    }
+    
+    void setObjNum(int objNum, int objGen) {
+        this.objNum = objNum;
+        this.objGen = objGen;
+    }
+    
+    void decrypt(PdfReader reader) {
+        PdfEncryption decrypt = reader.getDecrypt();
+        if (decrypt != null) {
+            decrypt.setHashKey(objNum, objGen);
+            decrypt.prepareKey();
+            byte b[] = PdfEncodings.convertToBytes(value, null);
+            decrypt.encryptRC4(b);
+            value = PdfEncodings.convertToString(b,  null);
+        }
     }
 }

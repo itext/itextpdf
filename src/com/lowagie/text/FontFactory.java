@@ -58,6 +58,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Enumeration;
+import java.io.File;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
@@ -163,6 +164,7 @@ public class FontFactory extends java.lang.Object {
         tmp.add(TIMES_ITALIC);
         tmp.add(TIMES_BOLDITALIC);
         fontFamilies.put(TIMES, tmp);
+        fontFamilies.put(TIMES_ROMAN, tmp);
         tmp = new HashSet();
         tmp.add(ZAPFDINGBATS);
         fontFamilies.put(ZAPFDINGBATS, tmp);
@@ -482,15 +484,15 @@ public class FontFactory extends java.lang.Object {
     }
     
 /**
- * Register a ttf- or a ttc-file and use an alias for the font contained in the ttf-file.
+ * Register a font file and use an alias for the font contained in it.
  *
- * @param   path    the path to a ttf- or ttc-file
+ * @param   path    the path to a font file
  * @param   alias   the alias you want to use for the font
  */
     
     public static void register(String path, String alias) {
         try {
-            if (path.toLowerCase().endsWith(".ttf")) {
+            if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf")) {
                 BaseFont bf = BaseFont.createFont(path, BaseFont.WINANSI, false, false, null, null);
                 trueTypeFonts.setProperty(bf.getPostscriptFontName(), path);
                 if (alias != null) {
@@ -502,9 +504,12 @@ public class FontFactory extends java.lang.Object {
                 for (int i = 0; i < names.length; i++) {
                     if ("0".equals(names[i][2])) {
                         fullName = names[i][3];
-                        trueTypeFonts.setProperty(fullName, path);
                         break;
                     }
+                }
+                // register all the font names with all the locales
+                for (int i = 0; i < names.length; i++) {
+                    trueTypeFonts.setProperty(names[i][3], path);
                 }
                 if (fullName != null) {
                     names = bf.getFamilyFontName();
@@ -531,6 +536,11 @@ public class FontFactory extends java.lang.Object {
                     System.err.println("class FontFactory: You can't define an alias for a true type collection.");
                 }
             }
+            else if (path.toLowerCase().endsWith(".afm")) {
+                BaseFont bf = BaseFont.createFont(path, BaseFont.CP1252, false);
+                trueTypeFonts.setProperty(bf.getPostscriptFontName(), path);
+                trueTypeFonts.setProperty(bf.getFullFontName()[0][3], path);
+            }
         }
         catch(DocumentException de) {
             // this shouldn't happen
@@ -540,7 +550,52 @@ public class FontFactory extends java.lang.Object {
             throw new ExceptionConverter(ioe);
         }
     }
-    
+
+    /** Register all the fonts in a directory.
+     * @param dir the directory
+     * @return the number of fonts registered
+     */    
+    public static int registerDirectory(String dir) {
+        File file = new File(dir);
+        if (!file.exists() || !file.isDirectory())
+            return 0;
+        File files[] = file.listFiles();
+        if (files == null)
+            return 0;
+        int count = 0;
+        for (int k = 0; k < files.length; ++k) {
+            file = files[k];
+            String name = file.getPath().toLowerCase();
+            try {
+                if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm") || name.endsWith(".ttc")) {
+                    register(name, null);
+                    ++count;
+                }
+            }
+            catch (Exception e) {
+                //empty on purpose
+            }
+        }
+        return count;
+    }
+
+    /** Register fonts in some probable directories. It usually works in Windows,
+     * Linux and Solaris.
+     * @return the number of fonts registered
+     */    
+    public static int registerDirectories() {
+        int count = 0;
+        count += registerDirectory("c:/windows/fonts");
+        count += registerDirectory("c:/winnt/fonts");
+        count += registerDirectory("d:/windows/fonts");
+        count += registerDirectory("d:/winnt/fonts");
+        count += registerDirectory("/usr/X/lib/X11/fonts/TrueType");
+        count += registerDirectory("/usr/openwin/lib/X11/fonts/TrueType");
+        count += registerDirectory("/usr/share/fonts/default/TrueType");
+        count += registerDirectory("/usr/X11R6/lib/X11/fonts/ttf");
+        return count;
+    }
+
 /**
  * Gets a set of registered fontnames.
  */

@@ -1740,9 +1740,7 @@ class PdfDocument extends Document implements DocListener {
                     pageEmpty = false;
                     break;
                 }
-                case Element.GIF:
                 case Element.JPEG:
-                case Element.PNG:
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE: {
                     carriageReturn();

@@ -1091,6 +1091,8 @@ public class TIFFFaxDecoder {
             
             // Add the changing element beyond the current scanline for the
             // other color too
+            //make sure that the index does not exceed the bounds of the array
+            if(currIndex < cce.length) 
             cce[currIndex++] = bitOffset;
             
             // Number of changing elements in this scanline.

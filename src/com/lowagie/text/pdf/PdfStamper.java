@@ -73,7 +73,20 @@ public class PdfStamper {
      * @throws IOException on error
      */    
     public PdfStamper(PdfReader reader, OutputStream os) throws DocumentException, IOException {
-        stamper = new PdfStamperImp(reader, os);
+        stamper = new PdfStamperImp(reader, os, '\0');
+    }
+    
+    /** Starts the process of adding extra content to an existing PDF
+     * document.
+     * @param reader the original document. It cannot be reused
+     * @param os the output stream
+     * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
+     * document
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */    
+    public PdfStamper(PdfReader reader, OutputStream os, char pdfVersion) throws DocumentException, IOException {
+        stamper = new PdfStamperImp(reader, os, pdfVersion);
     }
     
     /** Gets the optional <CODE>String</CODE> map to add or change values in

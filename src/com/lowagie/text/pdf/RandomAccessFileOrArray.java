@@ -73,6 +73,9 @@ public class RandomAccessFileOrArray implements DataInput {
     byte back;
     boolean isBack = false;
     
+    /** Holds value of property startOffset. */
+    private int startOffset = 0;
+    
     public RandomAccessFileOrArray(String filename) throws IOException {
         File file = new File(filename);
         if (!file.canRead()) {
@@ -135,6 +138,7 @@ public class RandomAccessFileOrArray implements DataInput {
     public RandomAccessFileOrArray(RandomAccessFileOrArray file) {
         filename = file.filename;
         arrayIn = file.arrayIn;
+        startOffset = file.startOffset;
     }
     
     public void pushBack(byte b) {
@@ -244,9 +248,11 @@ public class RandomAccessFileOrArray implements DataInput {
         if (filename != null) {
             close();
             rf = new RandomAccessFile(filename, "r");
+            if (startOffset != 0)
+                rf.seek(startOffset);
         }
         else {
-            arrayInPtr = 0;
+            arrayInPtr = startOffset;
         }
     }
     
@@ -266,12 +272,13 @@ public class RandomAccessFileOrArray implements DataInput {
     
     public int length() throws IOException {
         if (arrayIn == null)
-            return (int)rf.length();
+            return (int)rf.length() - startOffset;
         else
-            return arrayIn.length;
+            return arrayIn.length - startOffset;
     }
     
     public void seek(int pos) throws IOException {
+        pos += startOffset;
         isBack = false;
         if (arrayIn == null) {
             insureOpen();
@@ -288,9 +295,9 @@ public class RandomAccessFileOrArray implements DataInput {
     public int getFilePointer() throws IOException {
         int n = isBack ? 1 : 0;
         if (arrayIn == null)
-            return (int)rf.getFilePointer() - n;
+            return (int)rf.getFilePointer() - n - startOffset;
         else
-            return arrayInPtr - n;
+            return arrayInPtr - n - startOffset;
     }
     
     public boolean readBoolean() throws IOException {
@@ -564,4 +571,21 @@ public class RandomAccessFileOrArray implements DataInput {
     public String readUTF() throws IOException {
         return DataInputStream.readUTF(this);
     }
+    
+    /** Getter for property startOffset.
+     * @return Value of property startOffset.
+     *
+     */
+    public int getStartOffset() {
+        return this.startOffset;
+    }
+    
+    /** Setter for property startOffset.
+     * @param startOffset New value of property startOffset.
+     *
+     */
+    public void setStartOffset(int startOffset) {
+        this.startOffset = startOffset;
+    }
+    
 }

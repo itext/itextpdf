@@ -373,8 +373,6 @@ public class Cell extends Rectangle implements TextElementArray {
 			case Element.JPEG:
 			case Element.IMGRAW:
 			case Element.IMGTEMPLATE:
-			case Element.GIF:
-			case Element.PNG:
 				arrayList.add(element);
 				break;
 			case Element.LIST:

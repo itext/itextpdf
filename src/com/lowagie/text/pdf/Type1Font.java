@@ -246,8 +246,11 @@ class Type1Font extends BaseFont
             if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
                 fontSpecific = false;
             }
-            " ".getBytes(enc); // check if the encoding exists
+            PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
             createEncoding();
+        }
+        catch (RuntimeException re) {
+            throw re;
         }
         catch (Exception e) {
             throw new DocumentException(e.getMessage());
@@ -399,7 +402,7 @@ class Type1Font extends BaseFont
                 if (ident.equals("C"))
                     C = Integer.valueOf(tokc.nextToken());
                 else if (ident.equals("WX"))
-                    WX = Integer.valueOf(tokc.nextToken());
+                    WX = new Integer(Float.valueOf(tokc.nextToken()).intValue());
                 else if (ident.equals("N"))
                     N = tokc.nextToken();
             }
@@ -433,7 +436,7 @@ class Type1Font extends BaseFont
             {
                 String first = tok.nextToken();
                 String second = tok.nextToken();
-                Integer width = new Integer((int)Float.valueOf(tok.nextToken()).floatValue());
+                Integer width = new Integer(Float.valueOf(tok.nextToken()).intValue());
                 Object relates[] = (Object[])KernPairs.get(first);
                 if (relates == null)
                     KernPairs.put(first, new Object[]{second, width});

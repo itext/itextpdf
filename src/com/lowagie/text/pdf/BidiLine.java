@@ -312,6 +312,7 @@ public class BidiLine {
     public PdfLine processLine(float width, int alignment, int runDirection, int arabicOptions) {
         this.arabicOptions = arabicOptions;
         save();
+        boolean isRTL = (runDirection == PdfWriter.RUN_DIRECTION_RTL);
         if (currentChar >= totalTextLength) {
             boolean hasText = getParagraph(runDirection);
             if (!hasText)
@@ -320,7 +321,7 @@ public class BidiLine {
                 ArrayList ar = new ArrayList();
                 PdfChunk ck = new PdfChunk("", detailChunks[0]);
                 ar.add(ck);
-                return new PdfLine(0, 0, alignment, true, ar, (runDirection == PdfWriter.RUN_DIRECTION_RTL));
+                return new PdfLine(0, 0, alignment, true, ar, isRTL);
             }
         }
         float originalWidth = width;
@@ -347,7 +348,6 @@ public class BidiLine {
             width -= charWidth;
             lastValidChunk = ck;
         }
-        boolean isRTL = (runDirection == PdfWriter.RUN_DIRECTION_RTL);
         if (lastValidChunk == null) {
             // not even a single char fit; must output the first char
             ++currentChar;

@@ -61,7 +61,12 @@ import java.awt.color.ICC_Profile;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 import java.lang.reflect.Constructor;
+import com.lowagie.text.pdf.RandomAccessFileOrArray;
 import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.codec.GifImage;
+import com.lowagie.text.pdf.codec.PngImage;
+import com.lowagie.text.pdf.codec.TiffImage;
+import com.lowagie.text.pdf.codec.BmpImage;
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG or GIF)
  * that has to be inserted into the document
@@ -289,7 +294,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      * Gets an instance of an Image.
      *
      * @param	url     an URL
-     * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
+     * @return	an Image
      */
     
     public static Image getInstance(URL url) throws BadElementException, MalformedURLException, IOException {
@@ -298,22 +303,103 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
             is = url.openStream();
             int c1 = is.read();
             int c2 = is.read();
+            int c3 = is.read();
+            int c4 = is.read();
             is.close();
             
             is = null;
-            if (c1 == 'G' && c2 == 'I') {
-                return new Gif(url);
+            if (c1 == 'G' && c2 == 'I' && c3 == 'F') {
+                GifImage gif = new GifImage(url);
+                Image img = gif.getImage(1);
+                img.url = url;
+                return img;
             }
             if (c1 == 0xFF && c2 == 0xD8) {
                 return new Jpeg(url);
             }
-            if (c1 == Png.PNGID[0] && c2 == Png.PNGID[1]) {
-                return new Png(url);
+            if (c1 == PngImage.PNGID[0] && c2 == PngImage.PNGID[1] && c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
+                Image img = PngImage.getImage(url);
+                img.url = url;
+                return img;
             }
             if (c1 == 0xD7 && c2 == 0xCD) {
-                return new ImgWMF(url);
+                Image img = new ImgWMF(url);
+                img.url = url;
+                return img;
+            }
+            if (c1 == 'B' && c2 == 'M') {
+                Image img = BmpImage.getImage(url);
+                img.url = url;
+                return img;
+            }
+            if ((c1 == 'M' && c2 == 'M' && c3 == 0 && c4 == 42) || (c1 == 'I' && c2 == 'I' && c3 == 42 && c4 == 0)) {
+                RandomAccessFileOrArray ra = null;
+                try {
+                    if (url.getProtocol().equals("file")) {
+                        String file = url.getFile();
+                        ra = new RandomAccessFileOrArray(file);
+                    }
+                    else
+                        ra = new RandomAccessFileOrArray(url);
+                    Image img = TiffImage.getTiffImage(ra, 1);
+                    img.url = url;
+                    return img;
+                }
+                finally {
+                    if (ra != null)
+                        ra.close();
+                }
+                
             }
             throw new IOException(url.toString() + " is not a recognized imageformat.");
+        }
+        finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
+    
+    public static Image getInstance(byte imgb[]) throws BadElementException, MalformedURLException, IOException {
+        InputStream is = null;
+        try {
+            is = new java.io.ByteArrayInputStream(imgb);
+            int c1 = is.read();
+            int c2 = is.read();
+            int c3 = is.read();
+            int c4 = is.read();
+            is.close();
+            
+            is = null;
+            if (c1 == 'G' && c2 == 'I' && c3 == 'F') {
+                GifImage gif = new GifImage(imgb);
+                return gif.getImage(1);
+            }
+            if (c1 == 0xFF && c2 == 0xD8) {
+                return new Jpeg(imgb);
+            }
+            if (c1 == PngImage.PNGID[0] && c2 == PngImage.PNGID[1] && c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
+                return PngImage.getImage(imgb);
+            }
+            if (c1 == 0xD7 && c2 == 0xCD) {
+                return new ImgWMF(imgb);
+            }
+            if (c1 == 'B' && c2 == 'M') {
+                return BmpImage.getImage(imgb);
+            }
+            if ((c1 == 'M' && c2 == 'M' && c3 == 0 && c4 == 42) || (c1 == 'I' && c2 == 'I' && c3 == 42 && c4 == 0)) {
+                RandomAccessFileOrArray ra = null;
+                try {
+                    ra = new RandomAccessFileOrArray(imgb);
+                    return TiffImage.getTiffImage(ra, 1);
+                }
+                finally {
+                    if (ra != null)
+                        ra.close();
+                }
+                
+            }
+            throw new IOException("The byte array is not a recognized imageformat.");
         }
         finally {
             if (is != null) {
@@ -499,42 +585,6 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     public static Image getInstance(String filename) throws BadElementException, MalformedURLException, IOException {
         return getInstance(toURL(filename));
-    }
-    
-    /**
-     * Gets an instance of an Image.
-     *
-     * @param	img     a byte array
-     * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
-     */
-    
-    public static Image getInstance(byte[] img) throws BadElementException, MalformedURLException, IOException {
-        InputStream is = null;
-        try {
-            is = new java.io.ByteArrayInputStream(img);
-            int c1 = is.read();
-            int c2 = is.read();
-            is.close();
-            is = null;
-            if (c1 == 'G' && c2 == 'I') {
-                return new Gif(img);
-            }
-            if (c1 == 0xFF && c2 == 0xD8) {
-                return new Jpeg(img);
-            }
-            if (c1 == Png.PNGID[0] && c2 == Png.PNGID[1]) {
-                return new Png(img);
-            }
-            if (c1 == 0xD7 && c2 == 0xCD) {
-                return new ImgWMF(img);
-            }
-            throw new IOException("Could not find a recognized imageformat.");
-        }
-        finally {
-            if (is != null) {
-                is.close();
-            }
-        }
     }
     
     /**
@@ -894,16 +944,6 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     }
     
     /**
-     * Returns <CODE>true</CODE> if the image is a <CODE>Gif</CODE>-object.
-     *
-     * @return		a <CODE>boolean</CODE>
-     */
-    
-    public boolean isGif() {
-        return type == GIF;
-    }
-    
-    /**
      * Returns <CODE>true</CODE> if the image is a <CODE>Jpeg</CODE>-object.
      *
      * @return		a <CODE>boolean</CODE>
@@ -911,16 +951,6 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     public boolean isJpeg() {
         return type == JPEG;
-    }
-    
-    /**
-     * Returns <CODE>true</CODE> if the image is a <CODE>Png</CODE>-object.
-     *
-     * @return		a <CODE>boolean</CODE>
-     */
-    
-    public boolean isPng() {
-        return type == PNG;
     }
     
     /**
@@ -1070,7 +1100,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      */
     
     public static URL toURL(String filename) throws MalformedURLException {
-        if (filename.startsWith("file:/") || filename.startsWith("http://")) {
+        if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("jar:")) {
             return new URL(filename);
         }
         File f = new File(filename);

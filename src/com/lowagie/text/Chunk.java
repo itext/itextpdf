@@ -182,9 +182,30 @@ public class Chunk implements Element, MarkupAttributes {
  *
  * @param	content		the content
  */
-
     public Chunk(String content) {
         this(content, new Font());
+    }
+    
+/**
+ * Constructs a chunk of text with a char and a certain <CODE>Font</CODE>.
+ *
+ * @param	c		the content
+ * @param	font		the font
+ */
+    public Chunk(char c, Font font) {
+        this.content = new StringBuffer();
+        this.content.append(c);
+        this.font = font;
+    }
+    
+/**
+ * Constructs a chunk of text with a char, without specifying a <CODE>Font</CODE>.
+ *
+ * @param	c		the content
+ * @param	font		the font
+ */
+    public Chunk(char c) {
+        this(c, new Font());
     }
 
 /**

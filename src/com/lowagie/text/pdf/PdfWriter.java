@@ -446,10 +446,11 @@ public class PdfWriter extends DocWriter {
     public static final char VERSION_1_2 = '2';
     public static final char VERSION_1_3 = '3';
     public static final char VERSION_1_4 = '4';
+    public static final char VERSION_1_5 = '5';
     
     private static final int VPOINT = 7;
     /** this is the header of a PDF document */
-    protected byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e0\u00e1\u00e2\u00e3\n");
+    protected byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e2\u00e3\u00cf\u00d3\n");
     
     protected PdfPages root = new PdfPages(this);
     
@@ -1521,8 +1522,8 @@ public class PdfWriter extends DocWriter {
     }
     
     /** Sets the PDF version. Must be used right before the document
-     * is opened. Valid options are VERSION_1_2, VERSION_1_3 and
-     * VERSION_1_4. VERSION_1_4 is the default.
+     * is opened. Valid options are VERSION_1_2, VERSION_1_3,
+     * VERSION_1_4 and VERSION_1_5. VERSION_1_4 is the default.
      * @param version the version number
      */
     public void setPdfVersion(char version) {

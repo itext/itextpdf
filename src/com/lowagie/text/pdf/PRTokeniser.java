@@ -191,16 +191,23 @@ public class PRTokeniser {
         throw new IOException(error + " at file pointer " + file.getFilePointer());
     }
     
-    public void checkPdfHeader() throws IOException {
-        String str = readString(7);
-        if (!str.equals("%PDF-1."))
+    public char checkPdfHeader() throws IOException {
+        file.setStartOffset(0);
+        String str = readString(1024);
+        int idx = str.indexOf("%PDF-1.");
+        if (idx < 0)
             throw new IOException("PDF header signature not found.");
+        file.setStartOffset(idx);
+        return str.charAt(idx + 7);
     }
     
     public void checkFdfHeader() throws IOException {
-        String str = readString(8);
-        if (!str.equals("%FDF-1.2"))
+        file.setStartOffset(0);
+        String str = readString(1024);
+        int idx = str.indexOf("%FDF-1.2");
+        if (idx < 0)
             throw new IOException("FDF header signature not found.");
+        file.setStartOffset(idx);
     }
 
     public int getStartxref() throws IOException {

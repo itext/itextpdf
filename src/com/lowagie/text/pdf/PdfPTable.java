@@ -234,13 +234,14 @@ public class PdfPTable implements Element{
      * @param columnWidth the absolute width of each column
      * @param pageSize the page size
      */    
-    public void setWidthPercentage(float columnWidth[], Rectangle pageSize) {
+    public void setWidthPercentage(float columnWidth[], Rectangle pageSize) throws DocumentException {
         if (columnWidth.length != this.relativeWidths.length)
             throw new IllegalArgumentException("Wrong number of columns.");
         float totalWidth = 0;
         for (int k = 0; k < columnWidth.length; ++k)
             totalWidth += columnWidth[k];
         widthPercentage = totalWidth / (pageSize.right() - pageSize.left()) * 100f;
+        setWidths(columnWidth);
     }
 
     /** Gets the full width of the table.

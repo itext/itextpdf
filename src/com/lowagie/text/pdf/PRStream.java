@@ -63,14 +63,31 @@ public class PRStream extends PdfStream {
     protected int offset;
     protected int length;
     
-    public PRStream(PdfReader reader, int offset)
-    {
+    //added by ujihara for decryption
+    protected int objNum = 0;
+    protected int objGen = 0;
+    
+    public PRStream(PRStream stream, PdfDictionary newDic) {
+        reader = stream.reader;
+        offset = stream.offset;
+        length = stream.length;
+        compressed = stream.compressed;
+        streamBytes = stream.streamBytes;
+        bytes = stream.bytes;
+        objNum = stream.objNum;
+        objGen = stream.objGen;
+        if (newDic != null)
+            putAll(newDic);
+        else
+            hashMap.putAll(stream.hashMap);
+    }
+    
+    public PRStream(PdfReader reader, int offset) {
         this.reader = reader;
         this.offset = offset;
     }
     
-    public PRStream(PdfReader reader, byte conts[])
-    {
+    public PRStream(PdfReader reader, byte conts[]) {
         this.reader = reader;
         this.offset = -1;
         if (Document.compress) {
@@ -112,11 +129,18 @@ public class PRStream extends PdfStream {
         return bytes;
     }
     
-//    public int getStreamLength(PdfWriter writer) {
-//        if (dicBytes == null)
-//            toPdf(writer);
-//        return length + dicBytes.length + SIZESTREAM;
-//    }
+    public void setObjNum(int objNum, int objGen) {
+        this.objNum = objNum;
+        this.objGen = objGen;
+    }
+    
+    int getObjNum() {
+        return objNum;
+    }
+    
+    int getObjGen() {
+        return objGen;
+    }
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         superToPdf(writer, os);
@@ -141,11 +165,23 @@ public class PRStream extends PdfStream {
                 RandomAccessFileOrArray file = writer.getReaderFile(reader);
                 file.seek(offset);
                 int size = length;
+                
+                //added by ujihara for decryption
+                PdfEncryption decrypt = reader.getDecrypt();
+                if (decrypt != null) {
+                    decrypt.setHashKey(objNum, objGen);
+                    decrypt.prepareKey();
+                }
+                
                 if (crypto != null)
                     crypto.prepareKey();
                 while (size > 0) {
                     int r = file.read(buf, 0, Math.min(size, buf.length));
                     size -= r;
+                    
+                    if (decrypt != null)
+                        decrypt.encryptRC4(buf, 0, r); //added by ujihara for decryption
+                    
                     if (crypto != null)
                         crypto.encryptRC4(buf, 0, r);
                     os.write(buf, 0, r);
