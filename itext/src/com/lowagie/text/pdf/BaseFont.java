@@ -51,6 +51,7 @@
 package com.lowagie.text.pdf;
 import java.io.*;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 import java.util.HashMap;
 
 /**
@@ -460,6 +461,7 @@ public abstract class BaseFont {
                 total += widths[0xff & mbytes[k]];
         }
         catch (UnsupportedEncodingException e) {
+            throw new ExceptionConverter(e);
         }
         return total;
     }
@@ -495,9 +497,7 @@ public abstract class BaseFont {
             return text.getBytes(encoding);
         }
         catch (UnsupportedEncodingException e) {
-            // Panic! We should not be here
-            e.printStackTrace();
-            return text.getBytes();
+            throw new ExceptionConverter(e);
         }
     }
     

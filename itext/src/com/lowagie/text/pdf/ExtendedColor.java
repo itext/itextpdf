@@ -57,12 +57,13 @@ import java.awt.Color;
  */
 public class ExtendedColor extends Color{
     
+    static final int TYPE_RGB = 0;
     static final int TYPE_GRAY = 1;
     static final int TYPE_CMYK = 2;
     static final int TYPE_SEPARATION = 3;
     static final int TYPE_PATTERN = 4;
     
-    int type;
+    protected int type;
 
     public ExtendedColor(int type) {
         super(0, 0, 0);
@@ -76,6 +77,12 @@ public class ExtendedColor extends Color{
     
     public int getType() {
         return type;
+    }
+    
+    public static int getType(Color color) {
+        if (color instanceof ExtendedColor)
+            return ((ExtendedColor)color).getType();
+        return TYPE_RGB;
     }
 
     final static float normalize(float value) {

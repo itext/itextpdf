@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Rectangle;
@@ -119,6 +120,7 @@ public class PdfPRow {
                     ct.go(true);
                 }
                 catch (DocumentException e) {
+                    throw new ExceptionConverter(e);
                 }
                 float yLine = ct.getYLine();
                 cell.setBottom(yLine - cell.getPaddingBottom());
@@ -251,6 +253,7 @@ public class PdfPRow {
                     ct.go();
                 }
                 catch (DocumentException e) {
+                    throw new ExceptionConverter(e);
                 }
             }
             else {

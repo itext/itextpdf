@@ -74,6 +74,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
 import com.lowagie.text.Table;
 import com.lowagie.text.Watermark;
+import com.lowagie.text.ExceptionConverter;
 
 import java.awt.Color;
 import java.net.URL;
@@ -99,25 +100,25 @@ import java.util.Iterator;
 
 class PdfDocument extends Document implements DocListener {
     
-/**
- * <CODE>PdfInfo</CODE> is the PDF InfoDictionary.
- * <P>
- * A document's trailer may contain a reference to an Info dictionary that provides information
- * about the document. This optional dictionary may contain one or more keys, whose values
- * should be strings.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 6.10 (page 120-121)
- *
- * @author  bruno@lowagie.com
- */
+    /**
+     * <CODE>PdfInfo</CODE> is the PDF InfoDictionary.
+     * <P>
+     * A document's trailer may contain a reference to an Info dictionary that provides information
+     * about the document. This optional dictionary may contain one or more keys, whose values
+     * should be strings.<BR>
+     * This object is described in the 'Portable Document Format Reference Manual version 1.3'
+     * section 6.10 (page 120-121)
+     *
+     * @author  bruno@lowagie.com
+     */
     
     public class PdfInfo extends PdfDictionary {
         
         // constructors
         
-/**
- * Construct a <CODE>PdfInfo</CODE>-object.
- */
+        /**
+         * Construct a <CODE>PdfInfo</CODE>-object.
+         */
         
         PdfInfo() {
             super();
@@ -125,13 +126,13 @@ class PdfDocument extends Document implements DocListener {
             addCreationDate();
         }
         
-/**
- * Constructs a <CODE>PdfInfo</CODE>-object.
- *
- * @param		author		name of the author of the document
- * @param		title		title of the document
- * @param		subject		subject of the document
- */
+        /**
+         * Constructs a <CODE>PdfInfo</CODE>-object.
+         *
+         * @param		author		name of the author of the document
+         * @param		title		title of the document
+         * @param		subject		subject of the document
+         */
         
         PdfInfo(String author, String title, String subject) {
             this();
@@ -140,112 +141,112 @@ class PdfDocument extends Document implements DocListener {
             addAuthor(author);
         }
         
-/**
- * Adds the title of the document.
- *
- * @param	title		the title of the document
- */
+        /**
+         * Adds the title of the document.
+         *
+         * @param	title		the title of the document
+         */
         
         void addTitle(String title) {
             put(PdfName.TITLE, new PdfString(title, PdfObject.TEXT_UNICODE));
         }
         
-/**
- * Adds the subject to the document.
- *
- * @param	subject		the subject of the document
- */
+        /**
+         * Adds the subject to the document.
+         *
+         * @param	subject		the subject of the document
+         */
         
         void addSubject(String subject) {
             put(PdfName.SUBJECT, new PdfString(subject, PdfObject.TEXT_UNICODE));
         }
         
-/**
- * Adds some keywords to the document.
- *
- * @param	keywords		the keywords of the document
- */
+        /**
+         * Adds some keywords to the document.
+         *
+         * @param	keywords		the keywords of the document
+         */
         
         void addKeywords(String keywords) {
             put(PdfName.KEYWORDS, new PdfString(keywords, PdfObject.TEXT_UNICODE));
         }
         
-/**
- * Adds the name of the author to the document.
- *
- * @param	author		the name of the author
- */
+        /**
+         * Adds the name of the author to the document.
+         *
+         * @param	author		the name of the author
+         */
         
         void addAuthor(String author) {
             put(PdfName.AUTHOR, new PdfString(author, PdfObject.TEXT_UNICODE));
         }
         
-/**
- * Adds the name of the creator to the document.
- *
- * @param	creator		the name of the creator
- */
+        /**
+         * Adds the name of the creator to the document.
+         *
+         * @param	creator		the name of the creator
+         */
         
         void addCreator(String creator) {
             put(PdfName.CREATOR, new PdfString(creator, PdfObject.TEXT_UNICODE));
         }
         
-/**
- * Adds the name of the producer to the document.
- */
+        /**
+         * Adds the name of the producer to the document.
+         */
         
         void addProducer() {
             // This line may only be changed by Bruno Lowagie or Paulo Soares
-            put(PdfName.PRODUCER, new PdfString("iText by lowagie.com (r0.81 based on build paulo-88", PdfObject.TEXT_UNICODE));
+            put(PdfName.PRODUCER, new PdfString("itext-paulo (lowagie.com) - build 89", PdfObject.ENCODING));
             // Do not edit the line above!
         }
         
-/**
- * Adds the date of creation to the document.
- */
+        /**
+         * Adds the date of creation to the document.
+         */
         
         void addCreationDate() {
             put(PdfName.CREATIONDATE, new PdfDate());
         }
     }
     
-/**
- * <CODE>PdfCatalog</CODE> is the PDF Catalog-object.
- * <P>
- * The Catalog is a dictionary that is the root node of the document. It contains a reference
- * to the tree of pages contained in the document, a reference to the tree of objects representing
- * the document's outline, a reference to the document's article threads, and the list of named
- * destinations. In addition, the Catalog indicates whether the document's outline or thumbnail
- * page images should be displayed automatically when the document is viewed and wether some location
- * other than the first page should be shown when the document is opened.<BR>
- * In this class however, only the reference to the tree of pages is implemented.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 6.2 (page 67-71)
- *
- * @author  bruno@lowagie.com
- */
+    /**
+     * <CODE>PdfCatalog</CODE> is the PDF Catalog-object.
+     * <P>
+     * The Catalog is a dictionary that is the root node of the document. It contains a reference
+     * to the tree of pages contained in the document, a reference to the tree of objects representing
+     * the document's outline, a reference to the document's article threads, and the list of named
+     * destinations. In addition, the Catalog indicates whether the document's outline or thumbnail
+     * page images should be displayed automatically when the document is viewed and wether some location
+     * other than the first page should be shown when the document is opened.<BR>
+     * In this class however, only the reference to the tree of pages is implemented.<BR>
+     * This object is described in the 'Portable Document Format Reference Manual version 1.3'
+     * section 6.2 (page 67-71)
+     *
+     * @author  bruno@lowagie.com
+     */
     
     class PdfCatalog extends PdfDictionary {
         
         // constructors
         
-/**
- * Constructs a <CODE>PdfCatalog</CODE>.
- *
- * @param		pages		an indirect reference to the root of the document's Pages tree.
- */
+        /**
+         * Constructs a <CODE>PdfCatalog</CODE>.
+         *
+         * @param		pages		an indirect reference to the root of the document's Pages tree.
+         */
         
         PdfCatalog(PdfIndirectReference pages) {
             super(CATALOG);
             put(PdfName.PAGES, pages);
         }
         
-/**
- * Constructs a <CODE>PdfCatalog</CODE>.
- *
- * @param		pages		an indirect reference to the root of the document's Pages tree.
- * @param		outlines	an indirect reference to the outline tree.
- */
+        /**
+         * Constructs a <CODE>PdfCatalog</CODE>.
+         *
+         * @param		pages		an indirect reference to the root of the document's Pages tree.
+         * @param		outlines	an indirect reference to the outline tree.
+         */
         
         PdfCatalog(PdfIndirectReference pages, PdfIndirectReference outlines) {
             super(CATALOG);
@@ -254,10 +255,10 @@ class PdfDocument extends Document implements DocListener {
             put(PdfName.OUTLINES, outlines);
         }
         
-/**
- * Adds the names of the named destinations to the catalog.
- * @param localDestinations the local destinations
- */
+        /**
+         * Adds the names of the named destinations to the catalog.
+         * @param localDestinations the local destinations
+         */
         void addNames(TreeMap localDestinations) {
             if (localDestinations.size() == 0)
                 return;
@@ -280,10 +281,10 @@ class PdfDocument extends Document implements DocListener {
             put(PdfName.NAMES, names);
         }
         
-/** Sets the viewer preferences as the sum of several constants.
- * @param preferences the viewer preferences
- * @see PdfWriter#setViewerPreferences
- */
+        /** Sets the viewer preferences as the sum of several constants.
+         * @param preferences the viewer preferences
+         * @see PdfWriter#setViewerPreferences
+         */
         
         void setViewerPreferences(int preferences) {
             if ((preferences & PdfWriter.PageLayoutSinglePage) != 0)
@@ -339,130 +340,133 @@ class PdfDocument extends Document implements DocListener {
     
     // membervariables
     
-/**
- * The ratio between the extra word spacing and the extra character spacing.<BR>
- * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
- */
+    /**
+     * The ratio between the extra word spacing and the extra character spacing.<BR>
+     * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
+     */
     static final float ratio = 2.5f;
     
-/** The characters to be applied the hanging ponctuation. */
+    /** The characters to be applied the hanging ponctuation. */
     static final String hangingPunctuation = ".,;:'";
     
-/** The <CODE>PdfWriter</CODE>. */
+    /** The <CODE>PdfWriter</CODE>. */
     private PdfWriter writer;
     
-/** some meta information about the Document. */
+    /** some meta information about the Document. */
     private PdfInfo info = new PdfInfo();
     
-/** Signals that OnOpenDocument should be called. */
+    /** Signals that OnOpenDocument should be called. */
     private boolean firstPageEvent = true;
     
-/** Signals that onParagraph is valid. */
+    /** Signals that onParagraph is valid. */
     private boolean isParagraph = true;
     
     // Horizontal line
     
-/** The line that is currently being written. */
+    /** The line that is currently being written. */
     private PdfLine line = null;
     
-/** This represents the current indentation of the PDF Elements on the left side. */
+    /** This represents the current indentation of the PDF Elements on the left side. */
     private float indentLeft = 0;
     
-/** This represents the current indentation of the PDF Elements on the right side. */
+    /** This represents the current indentation of the PDF Elements on the right side. */
     private float indentRight = 0;
     
-/** This represents the current indentation of the PDF Elements on the left side. */
+    /** This represents the current indentation of the PDF Elements on the left side. */
     private float listIndentLeft = 0;
     
-/** This represents the current alignment of the PDF Elements. */
+    /** This represents the current alignment of the PDF Elements. */
     private int alignment = Element.ALIGN_LEFT;
     
     // Vertical lines
     
-/** This is the PdfContentByte object, containing the text. */
+    /** This is the PdfContentByte object, containing the text. */
     private PdfContentByte text;
     
-/** This is the PdfContentByte object, containing the borders and other Graphics. */
+    /** This is the PdfContentByte object, containing the borders and other Graphics. */
     private PdfContentByte graphics;
     
-/** The lines that are written until now. */
+    /** The lines that are written until now. */
     private ArrayList lines = new ArrayList();
     
-/** This represents the leading of the lines. */
+    /** This represents the leading of the lines. */
     private float leading = 0;
     
-/** This is the current height of the document. */
+    /** This is the current height of the document. */
     private float currentHeight = 0;
     
-/** This represents the current indentation of the PDF Elements on the top side. */
+    /** This represents the current indentation of the PDF Elements on the top side. */
     private float indentTop = 0;
     
-/** This represents the current indentation of the PDF Elements on the bottom side. */
+    /** This represents the current indentation of the PDF Elements on the bottom side. */
     private float indentBottom = 0;
     
-/** This checks if the page is empty. */
+    /** This checks if the page is empty. */
     private boolean pageEmpty = true;
     
     // resources
     
-/** This is the size of the current Page. */
+    /** This is the size of the current Page. */
     protected Rectangle thisPageSize = null;
     
-/** This is the FontDictionary of the current Page. */
+    /** This is the FontDictionary of the current Page. */
     protected PdfFontDictionary fontDictionary;
     
-/** This is the XObjectDictionary of the current Page. */
+    /** This is the XObjectDictionary of the current Page. */
     protected PdfXObjectDictionary xObjectDictionary;
     
-/** This is the ColorSpaceDictionary of the current Page. */
+    /** This is the ColorSpaceDictionary of the current Page. */
     protected PdfColorDictionary colorDictionary;
+    
+    /** This is the PatternDictionary of the current Page. */
+    protected PdfPatternDictionary patternDictionary;
     // images
     
-/** This is the list with all the images in the document. */
+    /** This is the list with all the images in the document. */
     private HashMap images = new HashMap();
     
-/** This is the image that could not be shown on a previous page. */
+    /** This is the image that could not be shown on a previous page. */
     private Image imageWait = null;
     
-/** This is the position where the image ends. */
+    /** This is the position where the image ends. */
     private float imageEnd = -1;
     
-/** This is the indentation caused by an image on the left. */
+    /** This is the indentation caused by an image on the left. */
     private float imageIndentLeft = 0;
     
-/** This is the indentation caused by an image on the right. */
+    /** This is the indentation caused by an image on the right. */
     private float imageIndentRight = 0;
     
     // annotations and outlines
     
-/** This is the array containing the references to the annotations. */
+    /** This is the array containing the references to the annotations. */
     private PdfArray annotations;
     
-/** This is the <CODE>ArrayList</CODE> with the outlines of the document. */
+    /** This is the <CODE>ArrayList</CODE> with the outlines of the document. */
     private ArrayList outlines;
-   
-/** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
+    
+    /** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
     private PdfOutline currentOutline;
     
-/** The current active <CODE>PdfAction</CODE> when processing an <CODE>Anchor</CODE>. */
+    /** The current active <CODE>PdfAction</CODE> when processing an <CODE>Anchor</CODE>. */
     private PdfAction currentAction = null;
     
-/**
- * Stores the destinations keyed by name. Value is
- * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
- */
+    /**
+     * Stores the destinations keyed by name. Value is
+     * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
+     */
     private TreeMap localDestinations = new TreeMap(new StringCompare());
     
-/** Stores the destinations for the current page. */
+    /** Stores the destinations for the current page. */
     private HashMap localPageDestinations = new HashMap();
     
-/** these are the viewerpreferences of the document */
+    /** these are the viewerpreferences of the document */
     private int viewerPreferences = 0;
     
     private String openActionName;
     private PdfAction openActionAction;
     private PdfPageLabels pageLabels;
-
+    
     //add by Jin-Hsia Yang
     private boolean isNewpage = false;
     private boolean isParagraphE = false;
@@ -471,10 +475,10 @@ class PdfDocument extends Document implements DocListener {
     
     // constructors
     
-/**
- * Constructs a new PDF document.
- * @throws DocumentException on error
- */
+    /**
+     * Constructs a new PDF document.
+     * @throws DocumentException on error
+     */
     
     public PdfDocument() throws DocumentException {
         super();
@@ -484,13 +488,13 @@ class PdfDocument extends Document implements DocListener {
     
     // listener methods
     
-/**
- * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
- *
- * @param writer the <CODE>PdfWriter</CODE> that writes everything
- *                     what is added to this document to an outputstream.
- * @throws DocumentException on error
- */
+    /**
+     * Adds a <CODE>PdfWriter</CODE> to the <CODE>PdfDocument</CODE>.
+     *
+     * @param writer the <CODE>PdfWriter</CODE> that writes everything
+     *                     what is added to this document to an outputstream.
+     * @throws DocumentException on error
+     */
     
     public final void addWriter(PdfWriter writer) throws DocumentException {
         if (this.writer == null) {
@@ -500,12 +504,12 @@ class PdfDocument extends Document implements DocListener {
         throw new DocumentException("You can only add a writer to a PdfDocument once.");
     }
     
-/**
- * Sets the pagesize.
- *
- * @param pageSize the new pagesize
- * @return <CODE>true</CODE> if the page size was set
- */
+    /**
+     * Sets the pagesize.
+     *
+     * @param pageSize the new pagesize
+     * @return <CODE>true</CODE> if the page size was set
+     */
     
     public boolean setPageSize(Rectangle pageSize) {
         if (writer != null && writer.isPaused()) {
@@ -515,11 +519,11 @@ class PdfDocument extends Document implements DocListener {
         return true;
     }
     
-/**
- * Changes the header of this document.
- *
- * @param header the new header
- */
+    /**
+     * Changes the header of this document.
+     *
+     * @param header the new header
+     */
     
     public void setHeader(HeaderFooter header) {
         if (writer != null && writer.isPaused()) {
@@ -528,9 +532,9 @@ class PdfDocument extends Document implements DocListener {
         super.setHeader(header);
     }
     
-/**
- * Resets the header of this document.
- */
+    /**
+     * Resets the header of this document.
+     */
     
     public void resetHeader() {
         if (writer != null && writer.isPaused()) {
@@ -539,11 +543,11 @@ class PdfDocument extends Document implements DocListener {
         super.resetHeader();
     }
     
-/**
- * Changes the footer of this document.
- *
- * @param	footer		the new footer
- */
+    /**
+     * Changes the footer of this document.
+     *
+     * @param	footer		the new footer
+     */
     
     public void setFooter(HeaderFooter footer) {
         if (writer != null && writer.isPaused()) {
@@ -552,9 +556,9 @@ class PdfDocument extends Document implements DocListener {
         super.setFooter(footer);
     }
     
-/**
- * Resets the footer of this document.
- */
+    /**
+     * Resets the footer of this document.
+     */
     
     public void resetFooter() {
         if (writer != null && writer.isPaused()) {
@@ -563,9 +567,9 @@ class PdfDocument extends Document implements DocListener {
         super.resetFooter();
     }
     
-/**
- * Sets the page number to 0.
- */
+    /**
+     * Sets the page number to 0.
+     */
     
     public void resetPageCount() {
         if (writer != null && writer.isPaused()) {
@@ -574,11 +578,11 @@ class PdfDocument extends Document implements DocListener {
         super.resetPageCount();
     }
     
-/**
- * Sets the page number.
- *
- * @param	pageN		the new page number
- */
+    /**
+     * Sets the page number.
+     *
+     * @param	pageN		the new page number
+     */
     
     public void setPageCount(int pageN) {
         if (writer != null && writer.isPaused()) {
@@ -587,12 +591,12 @@ class PdfDocument extends Document implements DocListener {
         super.setPageCount(pageN);
     }
     
-/**
- * Sets the <CODE>Watermark</CODE>.
- *
- * @param watermark the watermark to add
- * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
- */
+    /**
+     * Sets the <CODE>Watermark</CODE>.
+     *
+     * @param watermark the watermark to add
+     * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+     */
     
     public boolean add(Watermark watermark) {
         if (writer != null && writer.isPaused()) {
@@ -602,9 +606,9 @@ class PdfDocument extends Document implements DocListener {
         return true;
     }
     
-/**
- * Removes the <CODE>Watermark</CODE>.
- */
+    /**
+     * Removes the <CODE>Watermark</CODE>.
+     */
     
     public void removeWatermark() {
         if (writer != null && writer.isPaused()) {
@@ -613,15 +617,15 @@ class PdfDocument extends Document implements DocListener {
         this.watermark = null;
     }
     
-/**
- * Sets the margins.
- *
- * @param	marginLeft		the margin on the left
- * @param	marginRight		the margin on the right
- * @param	marginTop		the margin on the top
- * @param	marginBottom	the margin on the bottom
- * @return	a <CODE>boolean</CODE>
- */
+    /**
+     * Sets the margins.
+     *
+     * @param	marginLeft		the margin on the left
+     * @param	marginRight		the margin on the right
+     * @param	marginTop		the margin on the top
+     * @param	marginBottom	the margin on the bottom
+     * @return	a <CODE>boolean</CODE>
+     */
     
     public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom) {
         if (writer != null && writer.isPaused()) {
@@ -634,12 +638,12 @@ class PdfDocument extends Document implements DocListener {
         return true;
     }
     
-/**
- * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
- *
- * @return a <CODE>boolean</CODE>
- * @throws DocumentException on error
- */
+    /**
+     * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
+     *
+     * @return a <CODE>boolean</CODE>
+     * @throws DocumentException on error
+     */
     
     public boolean newPage() throws DocumentException {
         //add by Jin-Hsia Yang
@@ -671,6 +675,8 @@ class PdfDocument extends Document implements DocListener {
         resources.add(new PdfProcSet(procset));
         if (colorDictionary.containsColorSpace())
             resources.add(colorDictionary);
+        if (patternDictionary.containsPattern())
+            resources.add(patternDictionary);
         // we make a new page and add it to the document
         PdfPage page;
         int rotation = thisPageSize.getRotation();
@@ -700,22 +706,22 @@ class PdfDocument extends Document implements DocListener {
         localPageDestinations.clear();
         // we initialize the new page
         initPage();
-
+        
         //add by Jin-Hsia Yang
         isNewpage = false;
         //end add by Jin-Hsia Yang
-
+        
         return true;
     }
     
     // methods to open and close a document
     
-/**
- * Opens the document.
- * <P>
- * You have to open the document before you can begin to add content
- * to the body of the document.
- */
+    /**
+     * Opens the document.
+     * <P>
+     * You have to open the document before you can begin to add content
+     * to the body of the document.
+     */
     
     public void open() {
         if (!open) {
@@ -730,15 +736,16 @@ class PdfDocument extends Document implements DocListener {
             initPage();
         }
         catch(DocumentException de) {
+            throw new ExceptionConverter(de);
         }
     }
     
-/**
- * Closes the document.
- * <B>
- * Once all the content has been written in the body, you have to close
- * the body. After that nothing can be written to the body anymore.
- */
+    /**
+     * Closes the document.
+     * <B>
+     * Once all the content has been written in the body, you have to close
+     * the body. After that nothing can be written to the body anymore.
+     */
     
     public void close() {
         if (close) {
@@ -747,92 +754,87 @@ class PdfDocument extends Document implements DocListener {
         try {
             newPage();
             newPage();
-        }
-        catch(DocumentException pe) {
-            pe.printStackTrace();
-        }
-        PdfPageEvent pageEvent = writer.getPageEvent();
-        if (pageEvent != null)
-            pageEvent.onCloseDocument(writer, this);
-        super.close();
-        
-        try {
+            PdfPageEvent pageEvent = writer.getPageEvent();
+            if (pageEvent != null)
+                pageEvent.onCloseDocument(writer, this);
+            super.close();
+            
             writer.addLocalDestinations(localDestinations);
-        }
-        catch(Exception pe) {
-        }
-        
-        if (outlines.size() > 1) {
-            int objectNumber = writer.size();
-            int level = 0;
-            // telling each outline what its indirect reference is
-            for (Iterator i = outlines.iterator(); i.hasNext(); ) {
-                PdfOutline o = (PdfOutline) i.next();
-                if (o.level() > level) {
-                    level = o.level();
-                }
-                PdfIndirectReference reference = new PdfIndirectReference(PdfObject.DICTIONARY, objectNumber);
-                o.setIndirectReference(reference);
-                objectNumber++;
-            }
-            // setting al the navigation keys (First, Last, Next, Previous)
-            for (int l = 0; l <= level; l++) {
-                PdfOutline levelOutline = null;
+            if (outlines.size() > 1) {
+                int objectNumber = writer.size();
+                int level = 0;
+                // telling each outline what its indirect reference is
                 for (Iterator i = outlines.iterator(); i.hasNext(); ) {
                     PdfOutline o = (PdfOutline) i.next();
-                    if (o.level() == l) {
-                        if (levelOutline == null) {
-                            levelOutline = o;
-                        }
-                        else {
-                            if (o.parent().indirectReference().getNumber() == levelOutline.parent().indirectReference().getNumber()) {
-                                levelOutline.put(PdfName.NEXT, o.indirectReference());
-                                o.put(PdfName.PREV, levelOutline.indirectReference());
-                            }
-                            levelOutline = o;
-                        }
+                    if (o.level() > level) {
+                        level = o.level();
                     }
-                    else if (o.level() == (l + 1)) {
-                        if (o.parent().get(PdfName.FIRST) == null) {
-                            o.parent().put(PdfName.FIRST, o.indirectReference());
+                    PdfIndirectReference reference = new PdfIndirectReference(PdfObject.DICTIONARY, objectNumber);
+                    o.setIndirectReference(reference);
+                    objectNumber++;
+                }
+                // setting al the navigation keys (First, Last, Next, Previous)
+                for (int l = 0; l <= level; l++) {
+                    PdfOutline levelOutline = null;
+                    for (Iterator i = outlines.iterator(); i.hasNext(); ) {
+                        PdfOutline o = (PdfOutline) i.next();
+                        if (o.level() == l) {
+                            if (levelOutline == null) {
+                                levelOutline = o;
+                            }
+                            else {
+                                if (o.parent().indirectReference().getNumber() == levelOutline.parent().indirectReference().getNumber()) {
+                                    levelOutline.put(PdfName.NEXT, o.indirectReference());
+                                    o.put(PdfName.PREV, levelOutline.indirectReference());
+                                }
+                                levelOutline = o;
+                            }
                         }
-                        o.parent().put(PdfName.LAST, o.indirectReference());
+                        else if (o.level() == (l + 1)) {
+                            if (o.parent().get(PdfName.FIRST) == null) {
+                                o.parent().put(PdfName.FIRST, o.indirectReference());
+                            }
+                            o.parent().put(PdfName.LAST, o.indirectReference());
+                        }
                     }
                 }
-            }
-            
-            // write everything to the PdfWriter
-            try {
+                
+                // write everything to the PdfWriter
                 for (Iterator i = outlines.iterator(); i.hasNext(); ) {
                     writer.add((PdfOutline) i.next());
                 }
             }
-            catch(Exception pe) {
-                System.err.println("Error: " + pe.getMessage());
-            }
-            
+        }
+        catch(Exception e) {
+            throw new ExceptionConverter(e);
         }
         
         writer.close();
     }
     
-/** Adds a font to the current page.
- * @param name the name of the font
- * @param ref the indirect reference to this font
- */
+    /** Adds a font to the current page.
+     * @param name the name of the font
+     * @param ref the indirect reference to this font
+     */
     public void addFont(PdfName name, PdfIndirectReference ref) {
         fontDictionary.put(name, ref);
     }
-
+    
     public void addColor(PdfName name, PdfIndirectReference ref) {
         colorDictionary.put(name, ref);
     }
-
-/** Adds a <CODE>PdfPTable</CODE> to the document.
- * @param ptable the <CODE>PdfPTable</CODE> to be added to the document.
- * @param xWidth the width the <CODE>PdfPTable</CODE> occupies in the page
- * @throws DocumentException on error
- */
+    
+    public PdfName addPatternToPage(PdfPatternPainter painter) {
+        PdfName name = writer.addSimplePattern(painter);
+        patternDictionary.put(name, painter.getIndirectReference());
+        return name;
+    }
+    
+    /** Adds a <CODE>PdfPTable</CODE> to the document.
+     * @param ptable the <CODE>PdfPTable</CODE> to be added to the document.
+     * @param xWidth the width the <CODE>PdfPTable</CODE> occupies in the page
+     * @throws DocumentException on error
+     */
     
     void addPTable(PdfPTable ptable, float xWidth) throws DocumentException {
         if (ptable.getHeaderRows() >= ptable.size())
@@ -925,16 +927,16 @@ class PdfDocument extends Document implements DocListener {
             currentHeight = indentTop() - currentY;
         }
         ptable.setTableEvent(event);
-
+        
     }
     
-/**
- * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
- *
- * @param element the element to add
- * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
- * @throws DocumentException when a document isn't open yet, or has been closed
- */
+    /**
+     * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
+     *
+     * @param element the element to add
+     * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
+     * @throws DocumentException when a document isn't open yet, or has been closed
+     */
     
     public boolean add(Element element) throws DocumentException {
         if (writer != null && writer.isPaused()) {
@@ -973,8 +975,7 @@ class PdfDocument extends Document implements DocListener {
                     break;
                     
                     // content (text)
-                case Element.CHUNK:
-                {
+                case Element.CHUNK: {
                     // if there isn't a current line available, we make one
                     if (line == null) {
                         carriageReturn();
@@ -996,8 +997,7 @@ class PdfDocument extends Document implements DocListener {
                     }
                     break;
                 }
-                case Element.ANCHOR:
-                {
+                case Element.ANCHOR: {
                     Anchor anchor = (Anchor) element;
                     String url = anchor.reference();
                     leading = anchor.leading();
@@ -1010,8 +1010,7 @@ class PdfDocument extends Document implements DocListener {
                     currentAction = null;
                     break;
                 }
-                case Element.ANNOTATION:
-                {
+                case Element.ANNOTATION: {
                     if (line == null) {
                         carriageReturn();
                     }
@@ -1020,16 +1019,14 @@ class PdfDocument extends Document implements DocListener {
                     pageEmpty = false;
                     break;
                 }
-                case Element.PHRASE:
-                {
+                case Element.PHRASE: {
                     // we cast the element to a phrase and set the leading of the document
                     leading = ((Phrase) element).leading();
                     // we process the element
                     element.process(this);
                     break;
                 }
-                case Element.PARAGRAPH:
-                {
+                case Element.PARAGRAPH: {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     
@@ -1084,8 +1081,7 @@ class PdfDocument extends Document implements DocListener {
                     break;
                 }
                 case Element.SECTION:
-                case Element.CHAPTER:
-                {
+                case Element.CHAPTER: {
                     // Chapters and Sections only differ in their constructor
                     // so we cast both to a Section
                     Section section = (Section) element;
@@ -1139,8 +1135,7 @@ class PdfDocument extends Document implements DocListener {
                     }
                     break;
                 }
-                case Element.LIST:
-                {
+                case Element.LIST: {
                     // we cast the element to a List
                     List list = (List) element;
                     // we adjust the document
@@ -1153,8 +1148,7 @@ class PdfDocument extends Document implements DocListener {
                     indentRight -= list.indentationRight();
                     break;
                 }
-                case Element.LISTITEM:
-                {
+                case Element.LISTITEM: {
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
                     // we adjust the document
@@ -1177,15 +1171,13 @@ class PdfDocument extends Document implements DocListener {
                     indentRight -= listItem.indentationRight();
                     break;
                 }
-                case Element.RECTANGLE:
-                {
+                case Element.RECTANGLE: {
                     Rectangle rectangle = (Rectangle) element;
                     graphics.rectangle(rectangle);
                     pageEmpty = false;
                     break;
                 }
-                case Element.PTABLE:
-                {
+                case Element.PTABLE: {
                     // before every table, we add a new line and flush all lines
                     newLine();
                     flushLines();
@@ -1199,16 +1191,15 @@ class PdfDocument extends Document implements DocListener {
                         case Element.ALIGN_RIGHT:
                             xWidth = indentRight() - totalWidth;
                             break;
-                            default:
-                                xWidth = (indentRight() + indentLeft() - totalWidth) / 2;
+                        default:
+                            xWidth = (indentRight() + indentLeft() - totalWidth) / 2;
                     }
                     ptable.setTotalWidth(totalWidth);
                     addPTable(ptable, xWidth);
                     
                     break;
                 }
-                case Element.TABLE:
-                {
+                case Element.TABLE: {
                     
                     /**
                      * This is a list of people who worked on the Table functionality.
@@ -1296,8 +1287,7 @@ class PdfDocument extends Document implements DocListener {
                         if (! cells.isEmpty()) {
                             
                             graphics.setLineWidth(table.borderWidth());
-                            if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM)
-                            {
+                            if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) {
                                 // Draw the bottom line
                                 
                                 // the color is set to the color of the element
@@ -1392,15 +1382,13 @@ class PdfDocument extends Document implements DocListener {
                 case Element.JPEG:
                 case Element.PNG:
                 case Element.IMGRAW:
-                case Element.IMGTEMPLATE:
-                {
+                case Element.IMGTEMPLATE: {
                     carriageReturn();
                     add((Image) element);
                     pageEmpty = false;
                     break;
                 }
-                case Element.GRAPHIC:
-                {
+                case Element.GRAPHIC: {
                     Graphic graphic = (Graphic) element;
                     graphic.processAttributes(indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
                     graphics.add(graphic);
@@ -1419,13 +1407,13 @@ class PdfDocument extends Document implements DocListener {
     
     // methods to add Content
     
-/**
- * Adds an image to the document and to the page resources.
- * @param image the <CODE>Image</CODE> to add
- * @return the name of the image added
- * @throws PdfException on error
- * @throws DocumentException on error
- */
+    /**
+     * Adds an image to the document and to the page resources.
+     * @param image the <CODE>Image</CODE> to add
+     * @return the name of the image added
+     * @throws PdfException on error
+     * @throws DocumentException on error
+     */
     
     PdfName addDirectImage(Image image) throws PdfException, DocumentException {
         Image maskImage = image.getImageMask();
@@ -1437,13 +1425,13 @@ class PdfDocument extends Document implements DocListener {
         return name;
     }
     
-/** Adds an image to the document but not to the page resources. It is used with
- * templates and <CODE>Document.add(Image)</CODE>.
- * @param image the <CODE>Image</CODE> to add
- * @return the name of the image added
- * @throws PdfException on error
- * @throws DocumentException on error
- */
+    /** Adds an image to the document but not to the page resources. It is used with
+     * templates and <CODE>Document.add(Image)</CODE>.
+     * @param image the <CODE>Image</CODE> to add
+     * @return the name of the image added
+     * @throws PdfException on error
+     * @throws DocumentException on error
+     */
     PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
         PdfName name;
         // if the images is already added, just retrieve the name
@@ -1476,18 +1464,18 @@ class PdfDocument extends Document implements DocListener {
                 name = i.name();
             }
             images.put(image.getMySerialId(), name);
-        }        
+        }
         return name;
     }
     
     
     
-/**
- * Adds an image to the document.
- * @param image the <CODE>Image</CODE> to add
- * @throws PdfException on error
- * @throws DocumentException on error
- */
+    /**
+     * Adds an image to the document.
+     * @param image the <CODE>Image</CODE> to add
+     * @throws PdfException on error
+     * @throws DocumentException on error
+     */
     
     private void add(Image image) throws PdfException, DocumentException {
         pageEmpty = false;
@@ -1530,8 +1518,8 @@ class PdfDocument extends Document implements DocListener {
                 graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() + (middle / 2) - mt[4], lowerleft - mt[5]);
                 break;
             case Image.LEFT:
-                default:
-                    graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
+            default:
+                graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], indentLeft() - mt[4], lowerleft - mt[5]);
         }
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
@@ -1552,12 +1540,12 @@ class PdfDocument extends Document implements DocListener {
         }
     }
     
-/**
- * Initializes a page.
- * <P>
- * If the footer/header is set, it is printed.
- * @throws DocumentException on error
- */
+    /**
+     * Initializes a page.
+     * <P>
+     * If the footer/header is set, it is printed.
+     * @throws DocumentException on error
+     */
     
     private void initPage() throws DocumentException {
         
@@ -1566,6 +1554,7 @@ class PdfDocument extends Document implements DocListener {
         fontDictionary = new PdfFontDictionary();
         xObjectDictionary = new PdfXObjectDictionary();
         colorDictionary = new PdfColorDictionary();
+        patternDictionary = new PdfPatternDictionary();
         writer.resetContent();
         
         // the pagenumber is incremented
@@ -1596,7 +1585,7 @@ class PdfDocument extends Document implements DocListener {
         }
         
         // if there is a watermark, the watermark is added
-        if (watermark != null) {            
+        if (watermark != null) {
             float mt[] = watermark.matrix();
             graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
@@ -1650,7 +1639,7 @@ class PdfDocument extends Document implements DocListener {
             }
         }
         catch(Exception e) {
-            e.printStackTrace();
+            throw new ExceptionConverter(e);
         }
         
         leading = oldleading;
@@ -1666,11 +1655,11 @@ class PdfDocument extends Document implements DocListener {
         firstPageEvent = false;
     }
     
-/**
- * If the current line is not empty or null, it is added to the arraylist
- * of lines and a new empty line is added.
- * @throws DocumentException on error
- */
+    /**
+     * If the current line is not empty or null, it is added to the arraylist
+     * of lines and a new empty line is added.
+     * @throws DocumentException on error
+     */
     
     private void carriageReturn() throws DocumentException {
         // the arraylist with lines may not be null
@@ -1702,10 +1691,10 @@ class PdfDocument extends Document implements DocListener {
         line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
     }
     
-/**
- * Adds the current line to the list of lines and also adds an empty line.
- * @throws DocumentException on error
- */
+    /**
+     * Adds the current line to the list of lines and also adds an empty line.
+     * @throws DocumentException on error
+     */
     
     private void newLine() throws DocumentException {
         carriageReturn();
@@ -1716,12 +1705,12 @@ class PdfDocument extends Document implements DocListener {
         line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
     }
     
-/**
- * Writes all the lines to the text-object.
- *
- * @return the displacement that was caused
- * @throws DocumentException on error
- */
+    /**
+     * Writes all the lines to the text-object.
+     *
+     * @return the displacement that was caused
+     * @throws DocumentException on error
+     */
     
     private float flushLines() throws DocumentException {
         
@@ -1767,13 +1756,13 @@ class PdfDocument extends Document implements DocListener {
             
             //add by Jin-Hsia Yang
             if(isParagraphE && isNewpage && newline) {
-	        newline=false;
-	        text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
+                newline=false;
+                text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
             } else
-            //end add by Jin-Hsia Yang
-
-            // aligning the line
-            text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
+                //end add by Jin-Hsia Yang
+                
+                // aligning the line
+                text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
             
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
@@ -1822,22 +1811,22 @@ class PdfDocument extends Document implements DocListener {
     
     // methods to retrieve information
     
-/**
- * Gets the <CODE>PdfInfo</CODE>-object.
- *
- * @return	<CODE>PdfInfo</COPE>
- */
+    /**
+     * Gets the <CODE>PdfInfo</CODE>-object.
+     *
+     * @return	<CODE>PdfInfo</COPE>
+     */
     
     PdfInfo getInfo() {
         return info;
     }
     
-/**
- * Gets the <CODE>PdfCatalog</CODE>-object.
- *
- * @param pages an indirect reference to this document pages
- * @return <CODE>PdfCatalog</CODE>
- */
+    /**
+     * Gets the <CODE>PdfCatalog</CODE>-object.
+     *
+     * @param pages an indirect reference to this document pages
+     * @return <CODE>PdfCatalog</CODE>
+     */
     
     PdfCatalog getCatalog(PdfIndirectReference pages) {
         PdfCatalog catalog;
@@ -1862,12 +1851,12 @@ class PdfDocument extends Document implements DocListener {
     
     // methods concerning the layout
     
-/**
- * Returns the bottomvalue of a <CODE>Table</CODE> if it were added to this document.
- *
- * @param	table	the table that may or may not be added to this document
- * @return	a bottom value
- */
+    /**
+     * Returns the bottomvalue of a <CODE>Table</CODE> if it were added to this document.
+     *
+     * @param	table	the table that may or may not be added to this document
+     * @return	a bottom value
+     */
     
     float bottom(Table table) {
         // where will the table begin?
@@ -1877,13 +1866,13 @@ class PdfDocument extends Document implements DocListener {
         return tmp.bottom();
     }
     
-/**
- * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
- *
- * @param	table	the table that has to be checked
- * @param	margin	a certain margin
- * @return	<CODE>true</CODE> if the <CODE>PdfPTable</CODE> fits the page, <CODE>false</CODE> otherwise.
- */
+    /**
+     * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
+     *
+     * @param	table	the table that has to be checked
+     * @param	margin	a certain margin
+     * @return	<CODE>true</CODE> if the <CODE>PdfPTable</CODE> fits the page, <CODE>false</CODE> otherwise.
+     */
     
     boolean fitsPage(PdfPTable table, float margin) {
         float totalWidth = (indentRight() - indentLeft()) * table.getWidthPercentage() / 100;
@@ -1891,95 +1880,95 @@ class PdfDocument extends Document implements DocListener {
         return table.getTotalHeight() <= indentTop() - currentHeight - indentBottom() - margin;
     }
     
-/**
- * Gets the indentation on the left side.
- *
- * @return	a margin
- */
+    /**
+     * Gets the indentation on the left side.
+     *
+     * @return	a margin
+     */
     
     private float indentLeft() {
         return left(indentLeft + listIndentLeft + imageIndentLeft);
     }
     
-/**
- * Gets the indentation on the right side.
- *
- * @return	a margin
- */
+    /**
+     * Gets the indentation on the right side.
+     *
+     * @return	a margin
+     */
     
     private float indentRight() {
         return right(indentRight + imageIndentRight);
     }
     
-/**
- * Gets the indentation on the top side.
- *
- * @return	a margin
- */
+    /**
+     * Gets the indentation on the top side.
+     *
+     * @return	a margin
+     */
     
     private float indentTop() {
         return top(indentTop);
     }
     
-/**
- * Gets the indentation on the bottom side.
- *
- * @return	a margin
- */
+    /**
+     * Gets the indentation on the bottom side.
+     *
+     * @return	a margin
+     */
     
     float indentBottom() {
         return bottom(indentBottom);
     }
     
-/**
- * Adds an outline to the document.
- * @param outline the outline to be added
- */
+    /**
+     * Adds an outline to the document.
+     * @param outline the outline to be added
+     */
     void addOutline(PdfOutline outline) {
         outlines.add(outline);
     }
     
-/**
- * Adds a named outline to the document .
- * @param outline the outline to be added
- * @param name the name of this local destination
- */
+    /**
+     * Adds a named outline to the document .
+     * @param outline the outline to be added
+     * @param name the name of this local destination
+     */
     void addOutline(PdfOutline outline, String name) {
         outlines.add(outline);
         localDestination(name, outline.getPdfDestination());
     }
     
-/**
- * Gets the root outline. All the outlines must be created with a parent.
- * The first level is created with this outline.
- * @return the root outline
- */
+    /**
+     * Gets the root outline. All the outlines must be created with a parent.
+     * The first level is created with this outline.
+     * @return the root outline
+     */
     public PdfOutline getRootOutline() {
         return (PdfOutline)outlines.get(0);
     }
     
-/**
- * Adds a template to the page dictionary.
- * @param template the template to be added
- * @return the name by which this template is identified
- */
+    /**
+     * Adds a template to the page dictionary.
+     * @param template the template to be added
+     * @return the name by which this template is identified
+     */
     PdfName addTemplateToPage(PdfTemplate template) {
         PdfName name = writer.addDirectTemplateSimple(template);
         xObjectDictionary.put(name, template.getIndirectReference());
         return name;
     }
     
-/**
- * Writes a text line to the document. It takes care of all the attributes.
- * <P>
- * Before entering the line position must have been established and the
- * <CODE>text</CODE> argument must be in text object scope (<CODE>beginText()</CODE>).
- * @param line the line to be written
- * @param text the <CODE>PdfContentByte</CODE> where the text will be written to
- * @param graphics the <CODE>PdfContentByte</CODE> where the graphics will be written to
- * @param currentValues the current font and extra spacing values
- * @throws DocumentException on error
- */
+    /**
+     * Writes a text line to the document. It takes care of all the attributes.
+     * <P>
+     * Before entering the line position must have been established and the
+     * <CODE>text</CODE> argument must be in text object scope (<CODE>beginText()</CODE>).
+     * @param line the line to be written
+     * @param text the <CODE>PdfContentByte</CODE> where the text will be written to
+     * @param graphics the <CODE>PdfContentByte</CODE> where the graphics will be written to
+     * @param currentValues the current font and extra spacing values
+     * @throws DocumentException on error
+     */
     void writeLineToContent(PdfLine line, PdfContentByte text, PdfContentByte graphics, Object currentValues[])  throws DocumentException {
         PdfFont currentFont = (PdfFont)(currentValues[0]);
         float lastBaseFactor = ((Float)(currentValues[1])).floatValue();
@@ -2111,13 +2100,13 @@ class PdfDocument extends Document implements DocListener {
                         graphics.lineTo(xMarker + width - subtract, yMarker - shift);
                         graphics.stroke();
                     }
-                    if (chunk.isAttribute(Chunk.LINK)) {
+                    if (chunk.isAttribute(Chunk.ACTION)) {
                         float subtract = lastBaseFactor;
-                        if (nextChunk != null && nextChunk.isAttribute(Chunk.LINK))
+                        if (nextChunk != null && nextChunk.isAttribute(Chunk.ACTION))
                             subtract = 0;
                         if (nextChunk == null)
                             subtract += hangingCorrection;
-                        annotations.add(new PdfAnnotation(xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size(), (PdfAction)chunk.getAttribute(Chunk.LINK)));
+                        annotations.add(new PdfAnnotation(xMarker, yMarker, xMarker + width - subtract, yMarker + chunk.font().size(), (PdfAction)chunk.getAttribute(Chunk.ACTION)));
                     }
                     if (chunk.isAttribute(Chunk.REMOTEGOTO)) {
                         float subtract = lastBaseFactor;
@@ -2187,20 +2176,20 @@ class PdfDocument extends Document implements DocListener {
         currentValues[1] = new Float(lastBaseFactor);
     }
     
-/**
- * Implements a link to other part of the document. The jump will
- * be made to a local destination with the same name, that must exist.
- * @param name the name for this link
- * @param llx the lower left x corner of the activation area
- * @param lly the lower left y corner of the activation area
- * @param urx the upper right x corner of the activation area
- * @param ury the upper right y corner of the activation area
- */
+    /**
+     * Implements a link to other part of the document. The jump will
+     * be made to a local destination with the same name, that must exist.
+     * @param name the name for this link
+     * @param llx the lower left x corner of the activation area
+     * @param lly the lower left y corner of the activation area
+     * @param urx the upper right x corner of the activation area
+     * @param ury the upper right y corner of the activation area
+     */
     void localGoto(String name, float llx, float lly, float urx, float ury) {
         PdfAction action = getLocalGotoAction(name);
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
     }
-
+    
     PdfAction getLocalGotoAction(String name) {
         PdfAction action;
         Object obj[] = (Object[])localDestinations.get(name);
@@ -2220,15 +2209,15 @@ class PdfDocument extends Document implements DocListener {
         return action;
     }
     
-/**
- * The local destination to where a local goto with the same
- * name will jump.
- * @param name the name of this local destination
- * @param destination the <CODE>PdfDestination</CODE> with the jump coordinates
- * @return <CODE>true</CODE> if the local destination was added,
- * <CODE>false</CODE> if a local destination with the same name
- * already existed
- */
+    /**
+     * The local destination to where a local goto with the same
+     * name will jump.
+     * @param name the name of this local destination
+     * @param destination the <CODE>PdfDestination</CODE> with the jump coordinates
+     * @return <CODE>true</CODE> if the local destination was added,
+     * <CODE>false</CODE> if a local destination with the same name
+     * already existed
+     */
     boolean localDestination(String name, PdfDestination destination) {
         Object obj[] = (Object[])localDestinations.get(name);
         if (obj == null)
@@ -2241,57 +2230,57 @@ class PdfDocument extends Document implements DocListener {
         return true;
     }
     
-/**
- * Implements a link to another document.
- * @param filename the filename for the remote document
- * @param name the name to jump to
- * @param llx the lower left x corner of the activation area
- * @param lly the lower left y corner of the activation area
- * @param urx the upper right x corner of the activation area
- * @param ury the upper right y corner of the activation area
- */
+    /**
+     * Implements a link to another document.
+     * @param filename the filename for the remote document
+     * @param name the name to jump to
+     * @param llx the lower left x corner of the activation area
+     * @param lly the lower left y corner of the activation area
+     * @param urx the upper right x corner of the activation area
+     * @param ury the upper right y corner of the activation area
+     */
     void remoteGoto(String filename, String name, float llx, float lly, float urx, float ury) {
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, new PdfAction(filename, name)));
     }
     
-/**
- * Implements a link to another document.
- * @param filename the filename for the remote document
- * @param page the page to jump to
- * @param llx the lower left x corner of the activation area
- * @param lly the lower left y corner of the activation area
- * @param urx the upper right x corner of the activation area
- * @param ury the upper right y corner of the activation area
- */
+    /**
+     * Implements a link to another document.
+     * @param filename the filename for the remote document
+     * @param page the page to jump to
+     * @param llx the lower left x corner of the activation area
+     * @param lly the lower left y corner of the activation area
+     * @param urx the upper right x corner of the activation area
+     * @param ury the upper right y corner of the activation area
+     */
     void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury) {
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, new PdfAction(filename, page)));
     }
     
-/** Sets the viewer preferences as the sum of several constants.
- * @param preferences the viewer preferences
- * @see PdfWriter#setViewerPreferences
- */
+    /** Sets the viewer preferences as the sum of several constants.
+     * @param preferences the viewer preferences
+     * @see PdfWriter#setViewerPreferences
+     */
     
     public void setViewerPreferences(int preferences) {
         viewerPreferences |= preferences;
     }
     
-/** Implements an action in an area.
- * @param action the <CODE>PdfAction</CODE>
- * @param llx the lower left x corner of the activation area
- * @param lly the lower left y corner of the activation area
- * @param urx the upper right x corner of the activation area
- * @param ury the upper right y corner of the activation area
- */
+    /** Implements an action in an area.
+     * @param action the <CODE>PdfAction</CODE>
+     * @param llx the lower left x corner of the activation area
+     * @param lly the lower left y corner of the activation area
+     * @param urx the upper right x corner of the activation area
+     * @param ury the upper right y corner of the activation area
+     */
     void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
         annotations.add(new PdfAnnotation(llx, lly, urx, ury, action));
     }
-
+    
     void setOpenAction(String name) {
         openActionName = name;
         openActionAction = null;
     }
-
+    
     void setOpenAction(PdfAction action) {
         openActionAction = action;
         openActionName = null;

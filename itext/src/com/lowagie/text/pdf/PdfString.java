@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -125,7 +126,7 @@ class PdfString extends PdfObject implements PdfPrintable {
             this.value = new String(bytes, ENCODING);
         }
         catch(UnsupportedEncodingException uee) {
-            this.value = new String(bytes);
+            throw new ExceptionConverter(uee);
         }
     }
     
@@ -143,7 +144,7 @@ class PdfString extends PdfObject implements PdfPrintable {
             b = value.getBytes(encoding);
         }
         catch(UnsupportedEncodingException uee) {
-            b = value.getBytes();
+            throw new ExceptionConverter(uee);
         }
         PdfEncryption crypto = writer.getEncryption();
         if (crypto != null) {

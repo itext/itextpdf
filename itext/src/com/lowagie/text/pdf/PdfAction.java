@@ -62,6 +62,18 @@ import java.net.URL;
 
 public class PdfAction extends PdfDictionary {
     
+    /** A named action to go to the first page.
+     */    
+    public final static int FIRSTPAGE = 1;
+    /** A named action to go to the previous page.
+     */    
+    public final static int PREVPAGE = 2;
+    /** A named action to go to the next page.
+     */    
+    public final static int NEXTPAGE = 3;
+    /** A named action to go to the last page.
+     */    
+    public final static int LASTPAGE = 4;
     // constructors
     
 /**
@@ -125,5 +137,58 @@ public class PdfAction extends PdfDictionary {
         put(PdfName.S, PdfName.GOTOR);
         put(PdfName.F, new PdfString(filename));
         put(PdfName.D, new PdfLiteral("[" + (page - 1) + " /FitH 10000]"));
+    }
+    
+    /** Implements name actions. The action can be FIRSTPAGE, LASTPAGE,
+     * NEXTPAGE and PREVPAGE.
+     * @param named the named action
+     */    
+    public PdfAction(int named) {
+        super(PdfName.ACTION);
+        put(PdfName.S, PdfName.NAMED);
+        switch (named) {
+            case FIRSTPAGE:
+                put(PdfName.N, PdfName.FIRSTPAGE);
+                break;
+            case LASTPAGE:
+                put(PdfName.N, PdfName.LASTPAGE);
+                break;
+            case NEXTPAGE:
+                put(PdfName.N, PdfName.NEXTPAGE);
+                break;
+            case PREVPAGE:
+                put(PdfName.N, PdfName.PREVPAGE);
+                break;
+            default:
+                throw new RuntimeException("Invalid named action.");
+        }
+    }
+    
+    /** Launchs an application or a document.
+     * @param application the application to be launched or the document to be opened or printed.
+     * @param parameters (Windows-specific) A parameter string to be passed to the application.
+     * It can be <CODE>null</CODE>.
+     * @param operation (Windows-specific) the operation to perform: "open" - Open a document,
+     * "print" - Print a document.
+     * It can be <CODE>null</CODE>.
+     * @param defaultDir (Windows-specific) the default directory in standard DOS syntax.
+     * It can be <CODE>null</CODE>.
+     */    
+    public PdfAction(String application, String parameters, String operation, String defaultDir) {
+        super(PdfName.ACTION);
+        put(PdfName.S, PdfName.LAUNCH);
+        if (parameters == null && operation == null && defaultDir == null)
+            put(PdfName.F, new PdfString(application));
+        else {
+            PdfDictionary dic = new PdfDictionary();
+            dic.put(PdfName.F, new PdfString(application));
+            if (parameters != null)
+                dic.put(PdfName.P, new PdfString(parameters));
+            if (operation != null)
+                dic.put(PdfName.O, new PdfString(operation));
+            if (defaultDir != null)
+                dic.put(PdfName.D, new PdfString(defaultDir));
+            put(PdfName.WIN, dic);
+        }
     }
 }

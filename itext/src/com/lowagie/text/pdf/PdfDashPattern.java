@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * A <CODE>PdfDashPattern</CODE> defines a dash pattern as described in
@@ -143,7 +144,7 @@ class PdfDashPattern extends PdfArray {
             return stream.toByteArray();
         }
         catch(IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
 }

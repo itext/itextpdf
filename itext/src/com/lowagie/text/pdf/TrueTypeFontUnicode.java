@@ -57,6 +57,7 @@ import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Comparator;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 /** Represents a True Type font with Unicode encoding. All the character
  * in the font can be used directly by using the encoding Identity-H or
  * Identity-V. This is the only way to represent some character sets such
@@ -131,7 +132,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
                 b = text.getBytes(PdfObject.ENCODING);
             }
             catch (Exception e) {
-                b = text.getBytes();
+                throw new ExceptionConverter(e);
             }
             int len = b.length;
             for (int k = 0; k < len; ++k)
@@ -193,7 +194,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             b = s.getBytes(PdfObject.ENCODING);
         }
         catch (Exception e) {
-            b = s.getBytes();
+            throw new ExceptionConverter(e);
         }
         PdfStream stream = new PdfStream(b);
         stream.flateCompress();

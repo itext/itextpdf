@@ -51,7 +51,9 @@
 package com.lowagie.text.pdf;
 
 import java.io.*;
+import com.lowagie.text.ExceptionConverter;
 import java.util.zip.DeflaterOutputStream;
+import com.lowagie.text.Document;
 /**
  * a Literal
  */
@@ -75,18 +77,22 @@ class PRStream extends PdfStream {
         this.dictionary = dictionary;
         this.reader = reader;
         this.offset = -1;
-        try {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            DeflaterOutputStream zip = new DeflaterOutputStream(stream);
-            zip.write(conts);
-            zip.close();
-            bytes = stream.toByteArray();
+        if (Document.compress) {
+            try {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                DeflaterOutputStream zip = new DeflaterOutputStream(stream);
+                zip.write(conts);
+                zip.close();
+                bytes = stream.toByteArray();
+            }
+            catch(IOException ioe) {
+                throw new ExceptionConverter(ioe);
+            }
+            dictionary.put(new PRName("Filter"), new PRName("FlateDecode"));
         }
-        catch(IOException ioe) {
-            System.err.println("The PRStream was not compressed: " + ioe.getMessage());
-        }
+        else
+            bytes = conts;
         setLength(bytes.length);
-        dictionary.put(new PRName("Filter"), new PRName("FlateDecode"));
     }
     
     void setLength(int length) {

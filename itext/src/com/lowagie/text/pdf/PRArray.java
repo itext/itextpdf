@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ class PRArray extends PRObject {
             return stream.toByteArray();
         }
         catch(IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     

@@ -77,6 +77,8 @@ public class ImgTemplate extends Image implements Element {
         super((URL)null);
         if (template == null)
             throw new BadElementException("The template can not be null.");
+        if (template.getType() == PdfTemplate.TYPE_PATTERN)
+            throw new BadElementException("A pattern can not be used as a template to create an image.");
         type = IMGTEMPLATE;
         scaledHeight = template.getHeight();
         setTop(scaledHeight);

@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import java.util.HashMap;
 import java.io.UnsupportedEncodingException;
 /** Each font in the document will have an instance of this class
@@ -163,7 +164,7 @@ class FontDetails {
                             b = text.getBytes(PdfObject.ENCODING);
                         }
                         catch (Exception e) {
-                            b = text.getBytes();
+                            throw new ExceptionConverter(e);
                         }
                         len = b.length;
                         for (int k = 0; k < len; ++k) {
@@ -191,8 +192,7 @@ class FontDetails {
                     b = s.getBytes(CJKFont.CJK_ENCODING);
                 }
                 catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    b = new byte[0];
+                    throw new ExceptionConverter(e);
                 }
                 break;
             }
@@ -234,7 +234,7 @@ class FontDetails {
             }
         }
         catch(Exception e) {
-            e.printStackTrace();
+            throw new ExceptionConverter(e);
         }
     }
 }

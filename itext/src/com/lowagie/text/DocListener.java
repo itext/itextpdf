@@ -66,12 +66,6 @@ public interface DocListener extends ElementListener {
     // methods
     
 /**
- * Closes the <CODE>DocListener</CODE> when gc is invoked.
- */
-    
-    public void finalize();
-    
-/**
  * Signals that the <CODE>Document</CODE> has been opened and that
  * <CODE>Elements</CODE> can be added.
  */

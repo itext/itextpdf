@@ -54,6 +54,7 @@ import java.io.UnsupportedEncodingException;
 import java.awt.Color;
 import com.lowagie.text.pdf.*;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 
 public class MetaFont extends MetaObject {
     static final String fontNames[] = {
@@ -182,7 +183,7 @@ public class MetaFont extends MetaObject {
             font = BaseFont.createFont(fontName, "Cp1252", false);
         }
         catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new ExceptionConverter(e);
         }
         
         return font;

@@ -57,6 +57,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Properties;
 import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.CCITTG4Encoder;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG or GIF)
@@ -478,7 +479,7 @@ public abstract class Image extends Rectangle implements Element {
  */
     
     public static Image getInstance(int width, int height, int components, int bpc, byte data[]) throws BadElementException, MalformedURLException, IOException {
-        return new ImgRaw(width, height, components, bpc, data);
+        return Image.getInstance(width, height, components, bpc, data, null);
     }
     
     public static Image getInstance(PdfTemplate template) throws BadElementException, MalformedURLException, IOException {
@@ -486,12 +487,12 @@ public abstract class Image extends Rectangle implements Element {
     }
     
     public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data) throws BadElementException {
-        return new ImgCCITT(width, height, reverseBits, typeCCITT, parameters, data);
+        return Image.getInstance(width, height, reverseBits, typeCCITT, parameters, data, null);
     }
 
     public static Image getInstance(int width, int height, boolean reverseBits, int typeCCITT, int parameters, byte[] data, int transparency[]) throws BadElementException {
         if (transparency != null && transparency.length != 2)
-            throw new BadElementException("transparency length must be equal to 2 with CCITT images");
+            throw new BadElementException("Transparency length must be equal to 2 with CCITT images");
         Image img = new ImgCCITT(width, height, reverseBits, typeCCITT, parameters, data);
         img.transparency = transparency;
         return img;
@@ -514,7 +515,11 @@ public abstract class Image extends Rectangle implements Element {
     
     public static Image getInstance(int width, int height, int components, int bpc, byte data[], int transparency[]) throws BadElementException, MalformedURLException, IOException {
         if (transparency != null && transparency.length != components * 2)
-            throw new BadElementException("transparency length must be equal to (componentes * 2)");
+            throw new BadElementException("Transparency length must be equal to (componentes * 2)");
+        if (components == 1 && bpc == 1) {
+            byte g4[] = CCITTG4Encoder.compress(data, width, height);
+            return Image.getInstance(width, height, false, Image.CCITTG4, Image.CCITT_BLACKIS1, g4, transparency);
+        }
         Image img = new ImgRaw(width, height, components, bpc, data);
         img.transparency = transparency;
         return img;
@@ -1074,7 +1079,7 @@ public abstract class Image extends Rectangle implements Element {
     
     /** Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
      * requisites to be a mask.
-     * @return <CODE>true</CODE> if this <CODE>Image</CODE> can ba a mask
+     * @return <CODE>true</CODE> if this <CODE>Image</CODE> can be a mask
      */    
     public boolean isMaskCandidate() {
         if (type == IMGRAW) {

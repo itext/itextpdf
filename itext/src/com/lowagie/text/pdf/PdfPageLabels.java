@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import java.util.Comparator;
 import java.util.TreeMap;
 import java.util.Iterator;
@@ -94,6 +95,7 @@ public class PdfPageLabels implements Comparator {
                 new PdfName("r"), new PdfName("A"), new PdfName("a")};
         }
         catch (Exception e) {
+            // empty on purpose
         }
     }
     /** Creates a new PdfPageLabel with a default logical page 1
@@ -196,6 +198,7 @@ public class PdfPageLabels implements Comparator {
             dic.put(new PdfName("Nums"), array);
         }
         catch (BadPdfFormatException e) {
+            throw new ExceptionConverter(e);
         }
         return dic;
     }

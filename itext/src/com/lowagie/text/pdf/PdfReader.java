@@ -49,6 +49,8 @@
  */
 
 package com.lowagie.text.pdf;
+
+import com.lowagie.text.ExceptionConverter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -189,6 +191,7 @@ public class PdfReader {
                 tokens.close();
             }
             catch (Exception e) {
+                // empty on purpose
             }
         }
     }
@@ -411,10 +414,10 @@ public class PdfReader {
                 tokens.nextValidToken();
                 if (tokens.getStringValue().equals("stream")) {
                     int ch = tokens.read();
-                    if (ch != '\n')
+                    if (ch == '\r')
                         ch = tokens.read();
                     if (ch != '\n')
-                        tokens.throwError("stream is not followed by '\\n'");
+                        tokens.backOnePosition();
                     return new PRStream(dic, this, tokens.getFilePointer());
                 }
                 else {
@@ -450,7 +453,7 @@ public class PdfReader {
             return out.toByteArray();
         }
         catch (Exception e) {
-            throw new RuntimeException("Error in FlateDecode: " + e.getMessage()); 
+            throw new ExceptionConverter(e);
         }
     }
 

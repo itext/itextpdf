@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 /** Reads a Truetype font
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -604,7 +605,7 @@ class TrueTypeFont extends BaseFont {
             return new String(buf, PdfObject.ENCODING);
         }
         catch (Exception e) {
-            return new String(buf);
+            throw new ExceptionConverter(e);
         }
     }
     

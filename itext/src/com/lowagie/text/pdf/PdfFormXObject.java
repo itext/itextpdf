@@ -51,6 +51,7 @@
 package com.lowagie.text.pdf;
 
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.ExceptionConverter;
 /**
  * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
  */
@@ -66,16 +67,7 @@ public class PdfFormXObject extends PdfStream {
     public static final PdfNumber ONE = new PdfNumber(1);
     
 /** This is the 1 - matrix. */
-    public static final PdfArray MATRIX = new PdfArray();
-    
-    static {
-        MATRIX.add(ONE);
-        MATRIX.add(ZERO);
-        MATRIX.add(ZERO);
-        MATRIX.add(ONE);
-        MATRIX.add(ZERO);
-        MATRIX.add(ZERO);
-    }
+    public static final PdfLiteral MATRIX = new PdfLiteral("[1 0 0 1 0 0]");
     
     // membervariables
     
@@ -99,7 +91,12 @@ public class PdfFormXObject extends PdfStream {
         dictionary.put(PdfName.MATRIX, MATRIX);
         bytes = template.toPdf(null);
         dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
-        try {flateCompress();} catch (Exception e){}
+        try {
+            flateCompress();
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
         //compress()
     }
     
