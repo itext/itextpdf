@@ -311,6 +311,9 @@ class PdfDocument extends Document implements DocListener {
 	/** This represents the current indentation of the PDF Elements on the bottom side. */
 	private int indentBottom = 0;
 
+	/** This checks if the page is empty. */
+	private boolean pageEmpty = true;
+
 	// resources
 
 	/** This is the size of the current Page. */
@@ -450,7 +453,7 @@ class PdfDocument extends Document implements DocListener {
 	 */
 
 	public boolean newPage() throws DocumentException {
-		if (currentHeight == 0 && imageWait == null) {
+		if (pageEmpty) {
 			return false;
 		}
 		// we flush the arraylist with recently written lines
@@ -682,6 +685,7 @@ class PdfDocument extends Document implements DocListener {
 						graphics.stroke();
 					}
 				}
+				pageEmpty = false;
 				break;
 
 			case Element.ANCHOR:
@@ -732,6 +736,7 @@ class PdfDocument extends Document implements DocListener {
 						annotations.add(new PdfAnnotation(beginx, indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3), indentRight() - line.widthLeft(), indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3) + aChunk.font().size(), action));
 					}
 				}
+				pageEmpty = false;
 				break;
 
 			case Element.ANNOTATION:												   
@@ -740,6 +745,7 @@ class PdfDocument extends Document implements DocListener {
 				}
 				Annotation annot = (Annotation) element;
 				annotations.add(new PdfAnnotation(indentRight() - line.widthLeft(), indentTop() - currentHeight, indentRight() - line.widthLeft() + 20, indentTop() - currentHeight - 20, new PdfString(annot.title()), new PdfString(annot.content())));
+				pageEmpty = false;
 				break;
 
 			case Element.PHRASE:
@@ -852,6 +858,7 @@ class PdfDocument extends Document implements DocListener {
 			case Element.RECTANGLE:
 				Rectangle rectangle = (Rectangle) element;
 				graphics.rectangle(rectangle);
+				pageEmpty = false;
 				break;
 
 			case Element.TABLE:
@@ -993,10 +1000,12 @@ class PdfDocument extends Document implements DocListener {
 			case Element.IMGRAW:
 				carriageReturn(); 
 				add((Image) element);
+				pageEmpty = false;
 				break;
 
 			case Element.GRAPHIC:
 				graphics.add((Graphic) element);
+				pageEmpty = false;
 				break;
 
 			default:
@@ -1185,6 +1194,8 @@ class PdfDocument extends Document implements DocListener {
 			flushLines();
 			currentHeight = 0;
 		}
+
+		pageEmpty = true;
 
 		// if there is an image waiting to be drawn, draw it
 		try {
