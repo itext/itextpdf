@@ -123,6 +123,12 @@ public class PdfReader {
     private int objGen;
     private boolean visited[];
     private IntHashtable newHits;
+    private int fileLength;
+    
+    /**
+     * Holds value of property appendable.
+     */
+    private boolean appendable;
     
     protected PdfReader() {
     }
@@ -211,6 +217,7 @@ public class PdfReader {
      * @param reader the <CODE>PdfReader</CODE> to duplicate
      */    
     public PdfReader(PdfReader reader) {
+        this.appendable = reader.appendable;
         this.consolidateNamedDestinations = reader.consolidateNamedDestinations;
         this.encrypted = reader.encrypted;
         this.rebuilt = reader.rebuilt;
@@ -238,6 +245,7 @@ public class PdfReader {
         }
         this.trailer = (PdfDictionary)duplicatePdfObject(reader.trailer, this);
         this.catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
+        this.fileLength = reader.fileLength;
     }
     
     /** Gets a new file instance of the original PDF
@@ -414,6 +422,7 @@ public class PdfReader {
     
     protected void readPdf() throws IOException {
         try {
+            fileLength = tokens.getFile().length();
             pdfVersion = tokens.checkPdfHeader();
             try {
                 readXref();
@@ -531,11 +540,58 @@ public class PdfReader {
             return obj;
         PRIndirectReference ref = (PRIndirectReference)obj;
         int idx = ref.getNumber();
+        boolean appendable = ref.getReader().appendable;
         obj = ref.getReader().xrefObj[idx];
-        if (obj == null)
-            return PdfNull.PDFNULL;
-        else
+        if (obj == null) {
+            if (appendable) {
+                obj = new PdfNull();
+                obj.setIndRef(ref);
+                return obj;
+            }
+            else
+                return PdfNull.PDFNULL;
+        }
+        else {
+            if (appendable) {
+                switch (obj.type()) {
+                    case PdfObject.NULL:
+                        obj = new PdfNull();
+                        break;
+                    case PdfObject.BOOLEAN:
+                        obj = new PdfBoolean(((PdfBoolean)obj).booleanValue());
+                        break;
+                    case PdfObject.NAME:
+                        obj = new PdfName(obj.getBytes());
+                        break;
+                }
+                obj.setIndRef(ref);
+            }
             return obj;
+        }
+    }
+    
+    public static PdfObject getPdfObject(PdfObject obj, PdfObject parent) {
+        if (obj == null)
+            return null;
+        if (!obj.isIndirect()) {
+            PRIndirectReference ref = null;
+            if (parent != null && (ref = parent.getIndRef()) != null && ref.getReader().isAppendable()) {
+                switch (obj.type()) {
+                    case PdfObject.NULL:
+                        obj = new PdfNull();
+                        break;
+                    case PdfObject.BOOLEAN:
+                        obj = new PdfBoolean(((PdfBoolean)obj).booleanValue());
+                        break;
+                    case PdfObject.NAME:
+                        obj = new PdfName(obj.getBytes());
+                        break;
+                }
+                obj.setIndRef(ref);
+            }
+            return obj;
+        }
+        return getPdfObject(obj);
     }
     
     protected void pushPageAttributes(PdfDictionary nodePages) {
@@ -1409,9 +1465,9 @@ public class PdfReader {
      */    
     public PdfDictionary getPageN(int pageNum) {
         if (pageNum > pages.length) return null;
+        if (appendable)
+            pages[pageNum - 1].setIndRef(pageRefs[pageNum - 1]);
         return pages[pageNum - 1];
-        
-        
     }
     
     /** Gets the page reference to this page.
@@ -2423,4 +2479,39 @@ public class PdfReader {
         }
         return prefs;
     }
+    
+    /**
+     * Getter for property appendable.
+     * @return Value of property appendable.
+     */
+    public boolean isAppendable() {
+        return this.appendable;
+    }
+    
+    /**
+     * Setter for property appendable.
+     * @param appendable New value of property appendable.
+     */
+    public void setAppendable(boolean appendable) {
+        this.appendable = appendable;
+        if (appendable)
+            getPdfObject(trailer.get(PdfName.ROOT));
+    }
+    
+    /**
+     * Getter for property newXrefType.
+     * @return Value of property newXrefType.
+     */
+    public boolean isNewXrefType() {
+        return newXrefType;
+    }    
+    
+    /**
+     * Getter for property fileLength.
+     * @return Value of property fileLength.
+     */
+    public int getFileLength() {
+        return fileLength;
+    }
+    
 }

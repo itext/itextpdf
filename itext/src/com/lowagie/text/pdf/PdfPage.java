@@ -49,7 +49,6 @@
  */
 
 package com.lowagie.text.pdf;
-import com.lowagie.text.Rectangle;
 import java.util.HashMap;
 /**
  * <CODE>PdfPage</CODE> is the PDF Page-object.

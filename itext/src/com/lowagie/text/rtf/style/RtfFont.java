@@ -347,8 +347,8 @@ public class RtfFont extends Font implements RtfExtendedElement {
                 result.write(intToByteArray(0));
             }
             if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
-                result.write(intToByteArray(0));
                 result.write(FONT_ITALIC);
+                result.write(intToByteArray(0));
             }
             if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
                 result.write(FONT_UNDERLINE);

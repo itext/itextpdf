@@ -159,7 +159,7 @@ public class PdfStream extends PdfDictionary {
             throw new UnsupportedOperationException("writeLength() can only be called in a contructed PdfStream(InputStream,PdfWriter).");
         if (inputStreamLength == -1)
             throw new IOException("writeLength() can only be called after output of the stream body.");
-        writer.addToBody(new PdfNumber(inputStreamLength), ref);
+        writer.addToBody(new PdfNumber(inputStreamLength), ref, false);
     }
     
     /**

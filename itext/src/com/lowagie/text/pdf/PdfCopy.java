@@ -191,7 +191,7 @@ public class PdfCopy extends PdfWriter {
         }
         iRef.setCopied();
         PdfObject obj = copyObject((PdfObject)PdfReader.getPdfObject(in));
-        PdfIndirectObject theObj = body.add(obj, theRef);
+        PdfIndirectObject theObj = addToBody(obj, theRef);
         return theRef;
     }
     
@@ -340,7 +340,7 @@ public class PdfCopy extends PdfWriter {
             iRef.setCopied();
             PdfDictionary newPage = copyDictionary(thePage);
             newPage.put(PdfName.PARENT, topPageParent);
-            PdfIndirectObject pageObj = body.add(newPage, pageRef);
+            PdfIndirectObject pageObj = addToBody(newPage, pageRef);
         }
         root.addPage(pageRef);
         pageNumbersToRefs.add(pageRef);
@@ -377,7 +377,7 @@ public class PdfCopy extends PdfWriter {
         if (! iRef.getCopied()) {
             iRef.setCopied();
             PdfDictionary theForm = copyDictionary((PdfDictionary)PdfReader.getPdfObject(hisRef));
-            PdfIndirectObject myObj = body.add(theForm, myRef);
+            PdfIndirectObject myObj = addToBody(theForm, myRef);
         }
     }
     

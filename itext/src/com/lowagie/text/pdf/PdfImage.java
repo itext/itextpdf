@@ -68,7 +68,6 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 
 import java.io.ByteArrayOutputStream;

@@ -77,7 +77,7 @@ public class PdfNull extends PdfObject {
  * You never need to do this yourself, you can always use the static final object <VAR>PDFNULL</VAR>.
  */
     
-    private PdfNull() {
+    public PdfNull() {
         super(NULL, CONTENT);
     }
 }

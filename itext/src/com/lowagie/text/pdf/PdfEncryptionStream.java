@@ -2,7 +2,6 @@ package com.lowagie.text.pdf;
 
 import java.io.FilterOutputStream;
 import java.io.OutputStream;
-import java.io.InputStream;
 import java.io.IOException;
 
 public class PdfEncryptionStream extends FilterOutputStream {

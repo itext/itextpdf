@@ -1091,4 +1091,21 @@ public class TextField {
     int getTopFirst() {
         return topFirst;
     }
+    
+    /**
+     * Getter for property writer.
+     * @return Value of property writer.
+     */
+    public PdfWriter getWriter() {
+        return writer;
+    }
+    
+    /**
+     * Setter for property writer.
+     * @param writer New value of property writer.
+     */
+    public void setWriter(PdfWriter writer) {
+        this.writer = writer;
+    }
+    
 }

@@ -46,7 +46,6 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.DocWriter;
 import java.io.IOException;

@@ -117,7 +117,7 @@ public class PdfPTable implements Element{
     /**
      * Holds value of property splitRows.
      */
-    private boolean splitRows = false;
+    private boolean splitRows = true;
     
 /** The spacing before the table. */
     protected float spacingBefore;
@@ -138,7 +138,7 @@ public class PdfPTable implements Element{
     /**
      * Holds value of property splitLate.
      */
-    private boolean splitLate;
+    private boolean splitLate = true;
     
     protected PdfPTable() {
     }
@@ -879,8 +879,8 @@ public class PdfPTable implements Element{
     
     /**
      * When set the rows that won't fit in the page will be split. 
-     * Note that it takes at least twice the memory to handle a split table
-     * than a normal table.
+     * Note that it takes at least twice the memory to handle a split table row
+     * than a normal table. <CODE>true</CODE> by default.
      * @param splitRows true to split; false otherwise
      */
     public void setSplitRows(boolean splitRows) {
@@ -970,7 +970,7 @@ public class PdfPTable implements Element{
     
     /**
      * If true the row will only split if it's the first one in an empty page.
-     * It's false by default.
+     * It's true by default.
      *<p>
      * It's only meaningful if setSplitRows(true).
      * @param splitLate the property value

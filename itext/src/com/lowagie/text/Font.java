@@ -130,6 +130,14 @@ public class Font implements Comparable {
     private BaseFont baseFont = null;
     
 // constructors
+ 
+    public Font(Font other) {
+        this.color = other.color;
+        this.family = other.family;
+        this.size = other.size;
+        this.style = other.style;
+        this.baseFont = other.baseFont;
+    }
     
 /**
  * Constructs a Font.
