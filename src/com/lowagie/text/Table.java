@@ -413,10 +413,8 @@ public class Table extends Rectangle implements Element {
         Assert.assert(isValidLocation(aCell, aLocation) == true,"Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
         
         placeCell(rows, aCell, aLocation);
-
-	setCurrentLocationToNextValidPosition(aLocation);
-        
-		printTableMatrix();
+        setCurrentLocationToNextValidPosition(aLocation);
+        printTableMatrix();
     }
     
     
@@ -424,7 +422,6 @@ public class Table extends Rectangle implements Element {
  * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>.
  *
  * @param       cell         a <CODE>Cell</CODE>
-     * @throws      BadElementException this should never happen
  */
     
     public final void addCell(Cell cell) {
@@ -527,27 +524,24 @@ public class Table extends Rectangle implements Element {
  */
 	public void insertTable(Table aTable, Point aLocation) {
 
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("InsertTable(Table, Point)");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("InsertTable(Table, Point)");
         if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
         if (aLocation == null) throw new NullPointerException("insertTable - point has null-value");
         
         Assert.assert(aLocation.y <= columns,"insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("insertTable - " + aLocation.x + "," + aLocation.y);
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("insertTable - " + aLocation.x + "," + aLocation.y);
 	
 		int rowCount = aLocation.x + 1 - rows.size();
 		int i = 0;
-		if ( rowCount > 0  )	//create new rows ?
-		{
-			for (; i < rowCount; i++)
-			{
-				rows.add(new Row(columns));
+		if ( rowCount > 0  ) {	//create new rows ?
+            for (; i < rowCount; i++) {
+                 rows.add(new Row(columns));
 			}
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("created " + i + " rows");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("created " + i + " rows");
 		}
 
         ((Row) rows.get(aLocation.x)).setElement(aTable,aLocation.y);
-		
-		setCurrentLocationToNextValidPosition(aLocation);
+        setCurrentLocationToNextValidPosition(aLocation);
     }
     
 /*
@@ -556,12 +550,12 @@ public class Table extends Rectangle implements Element {
  */
     
     public final void complete() throws BadElementException, DocumentException {
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("Begin complete");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("Begin complete");
         mergeInsertedTables();  // integrate tables in the table
         fillEmptyMatrixCells();
         checkIllegalRowspan();
-		if (Logging.INCLUDE_LOG_IN_BUILD)  printTableMatrix();
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("End complete");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  printTableMatrix();
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("End complete");
     }
     
 /**
@@ -729,7 +723,8 @@ public class Table extends Rectangle implements Element {
  */
     
     public int endHeaders() {
-        lastHeaderRow = currentRow;
+        /* patch sep 8 2001 Francesco De Milato */
+        lastHeaderRow = currentRow - 1;
         return lastHeaderRow;
     }
     
@@ -779,7 +774,7 @@ public class Table extends Rectangle implements Element {
  * @param       value   the new value
  */
     
-    public final void setCellpadding(float value) {
+    public final void setSpaceInsideCell(float value) {
         cellpadding = value;
     }
     
@@ -789,8 +784,50 @@ public class Table extends Rectangle implements Element {
  * @param       value   the new value
  */
     
-    public final void setCellspacing(float value) {
+    public final void setSpaceBetweenCells(float value) {
         cellspacing = value;
+    }
+    
+/**
+ * Sets the cellpadding.
+ *
+ * @param       value   the new value
+ */
+    
+    public final void setPadding(float value) {
+        cellpadding = value;
+    }
+    
+/**
+ * Sets the cellspacing.
+ *
+ * @param       value   the new value
+ */
+    
+    public final void setSpacing(float value) {
+        cellspacing = value;
+    }
+    
+/**
+ * Sets the cellspacing (the meaning of cellpadding and cellspacing was inverted by mistake).
+ *
+ * @param       value   the new value
+ * @deprecated  use setSpacing instead
+ */
+    
+    public final void setCellpadding(float value) {
+        cellspacing = value;
+    }
+    
+/**
+ * Sets the cellpadding (the meaning of cellpadding and cellspacing was inverted by mistake).
+ *
+ * @param       value   the new value
+ * @deprecated  use setPadding instead
+ */
+    
+    public final void setCellspacing(float value) {
+        cellpadding = value;
     }
     
 /**
@@ -833,9 +870,9 @@ public class Table extends Rectangle implements Element {
  */
     
     public final void setWidths(float[] widths) throws BadElementException {
-    		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("Begin setWidths(float) : " + widths.length + "  - columns:" + columns);
+        //if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("Begin setWidths(float) : " + widths.length + "  - columns:" + columns);
         if (widths.length != columns) {
-        		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("Begin setWidths(float) : " + widths.length + "  - columns:" + columns);
+            //if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("Begin setWidths(float) : " + widths.length + "  - columns:" + columns);
             throw new BadElementException("Wrong number of columns.");
         }
         
@@ -853,7 +890,7 @@ public class Table extends Rectangle implements Element {
             this.widths[i] = width;
             this.widths[columns - 1] -= width;
         }
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("End setWidths(float)");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("End setWidths(float)");
     }
     
 /**
@@ -1006,7 +1043,7 @@ public class Table extends Rectangle implements Element {
  */
     
     private void mergeInsertedTables() throws DocumentException {
-        if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("begin mergeInsertedTables()");
+        //if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("begin mergeInsertedTables()");
         int i=0, j=0;
         float [] lNewWidths = null;
         int [] lDummyWidths = new int[columns];     // to keep track in how many new cols this one will be split
@@ -1041,7 +1078,7 @@ public class Table extends Rectangle implements Element {
                 if ( Table.class.isInstance(((Row) rows.get(i)).getCell(j)) ) {
                     lDummyTable = (Table) ((Row) rows.get(i)).getCell(j);
                     if ( lDummyTable.getDimension().height > lNewMaxRows ) {
-						if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("Table at " + i + "," + j + " will be split in " + lDummyTable.getDimension().height);
+						//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("Table at " + i + "," + j + " will be split in " + lDummyTable.getDimension().height);
                         lNewMaxRows = lDummyTable.getDimension().height;
                     }
                 }
@@ -1050,9 +1087,8 @@ public class Table extends Rectangle implements Element {
             lDummyHeights [i] = lNewMaxRows;
         }
         
-		if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) )	// NO ADJUSTMENT
-		{
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("new tablesize :" + lTotalRows + "x" +lTotalColumns);
+		if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) ) { // NO ADJUSTMENT
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("new tablesize :" + lTotalRows + "x" +lTotalColumns);
             // ** WIDTH
             // set correct width for new columns
             // divide width over new nr of columns
@@ -1071,7 +1107,7 @@ public class Table extends Rectangle implements Element {
                     lDummy++;
                 }
             }
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("Calculated new table widths : " + lTotalColumns);
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("Calculated new table widths : " + lTotalColumns);
             
             // ** FILL OUR NEW TABLE
             // generate new table
@@ -1081,11 +1117,11 @@ public class Table extends Rectangle implements Element {
             for (i = 0; i < lTotalRows; i++) {
                 newRows.add(new Row(lTotalColumns));
             }
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("created new empty table " + newRows.size() + "x" + ((Row) newRows.get(0)).columns());
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("created new empty table " + newRows.size() + "x" + ((Row) newRows.get(0)).columns());
 			
-			if (Logging.INCLUDE_LOG_IN_BUILD)  printTableMatrix();
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  printTableMatrix();
 			
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("Start copying values");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("Start copying values");
             int lDummyRow = 0, lDummyColumn = 0;        // to remember where we are in the new, larger table
             Object lDummyElement = null;
             for (i=0; i < rows.size(); i++) {
@@ -1094,7 +1130,7 @@ public class Table extends Rectangle implements Element {
                 for (j=0; j < columns; j++) {
                     if ( Table.class.isInstance(((Row) rows.get(i)).getCell(j)) )       // copy values from embedded table
                     {
-						if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("including table of " + lDummyTable.getDimension().height + "x" + lDummyTable.getDimension().width);
+						//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("including table of " + lDummyTable.getDimension().height + "x" + lDummyTable.getDimension().width);
                         lDummyTable = (Table) ((Row) rows.get(i)).getCell(j);
                         
                         for (int k=0; k < lDummyTable.getDimension().height; k++) {
@@ -1105,30 +1141,30 @@ public class Table extends Rectangle implements Element {
                                 }
                             }
                         }
-						if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" ! table done");
+						//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" ! table done");
                     }
                     else        // copy others values
                     {
-						if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("copying element");
+						//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("copying element");
                         Object aElement = getElement(i,j);
                         
 						if ( Cell.class.isInstance(aElement) ) {
 
-							if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("\t cell value");
+							//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("\t cell value");
                             // adjust spans for cell
                             ((Cell) aElement).setRowspan(((Cell) ((Row) rows.get(i)).getCell(j)).rowspan() + lDummyHeights[i] - 1);
                             ((Cell) aElement).setColspan(((Cell) ((Row) rows.get(i)).getCell(j)).colspan() + lDummyWidths[j] - 1);
                             
                             // most likely this cell covers a larger area because of the row/cols splits : define not-to-be-filled cells
-							if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" -11");
+							//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" -11");
                             placeCell(newRows,((Cell) aElement), new Point(lDummyRow,lDummyColumn));
                         }
-						if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" element done");
+						//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" element done");
                     }
                     lDummyColumn += lDummyWidths[j];
                 }
                 lDummyRow += lDummyHeights[i];
-				if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("5.3");
+				//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("5.3");
             }
             
             // Set our new matrix
@@ -1136,7 +1172,7 @@ public class Table extends Rectangle implements Element {
             rows = newRows;
             this.widths = lNewWidths;
         }
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("end mergeInsertedTables()");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("end mergeInsertedTables()");
     }
     
 /**
@@ -1145,7 +1181,7 @@ public class Table extends Rectangle implements Element {
  */
     
     private void fillEmptyMatrixCells() throws BadElementException {
-	if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("begin FillEmptyMatrixCells()");
+	//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("begin FillEmptyMatrixCells()");
         Cell lDummyCell = null;
         int  lTel = -1;
         Object obj = new Object();
@@ -1153,12 +1189,12 @@ public class Table extends Rectangle implements Element {
         for (int i=0; i < rows.size(); i++) {
             for (int j=0; j < columns; j++) {
                 if ( ((Row) rows.get(i)).isReserved(j) == false) {
-if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("add empty Cell at " + i + "," + j);
+//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("add empty Cell at " + i + "," + j);
                     addCell(new Cell(new Paragraph(" ")), new Point(i, j));
                 }
             }
         }
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("end FillEmptyMatrixCells()");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("end FillEmptyMatrixCells()");
     }
     
 /**
@@ -1171,12 +1207,11 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
  * @param   aLocation   the location where the cell has to be placed
  * @author  Geert Poels
 	**/
-	private boolean isValidLocation(Cell aCell, Point aLocation)
-	{
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" isValidLoc : enter " + aLocation.x + "x" + aLocation.y);
+	private boolean isValidLocation(Cell aCell, Point aLocation) {
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" isValidLoc : enter " + aLocation.x + "x" + aLocation.y);
 		printTableMatrix();
         // rowspan not beyond last column
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" ---isValidLoc : " + aLocation.x + "," + aLocation.y + "   " + aCell.rowspan() + "x" + aCell.colspan() + "  current dim. " + rows.size() + "x" + columns);
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" ---isValidLoc : " + aLocation.x + "," + aLocation.y + "   " + aCell.rowspan() + "x" + aCell.colspan() + "  current dim. " + rows.size() + "x" + columns);
         if ( aLocation.x < rows.size() )        // if false : new location is already at new, not-yet-created area so no check
         {
             if ((aLocation.y + aCell.colspan()) > columns) {
@@ -1189,7 +1224,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
             for (int i=aLocation.x; i < (aLocation.x + difx); i++) {
                 for (int j=aLocation.y; j < (aLocation.y + dify); j++) {
                     if ( ((Row) rows.get(i)).isReserved(j) == true ) {
-						if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" covered at " + i + " " + j);
+						//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" covered at " + i + " " + j);
                         return false;
                     }
                 }
@@ -1201,7 +1236,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
             }
         }
 
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("isValideLoca : end");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("isValideLoca : end");
         return true;
     }
     
@@ -1215,7 +1250,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
  */
     
     private void placeCell(ArrayList someRows, Cell aCell, Point aPosition) {
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("placeCell : enter\t rowspan:" + aCell.rowspan() + " x colspan:" + aCell.colspan() + " at r:" + aPosition.x + ", c:" + aPosition.y);
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("placeCell : enter\t rowspan:" + aCell.rowspan() + " x colspan:" + aCell.colspan() + " at r:" + aPosition.x + ", c:" + aPosition.y);
 		printTableMatrix(someRows);
         int i,j;
         Row row = null;
@@ -1228,12 +1263,12 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
                 row = new Row(lColumns);
                 someRows.add(row);
             }
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" created " + i + " rows");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" created " + i + " rows");
         }
         
         // reserve cell in rows below
         for (i = aPosition.x + 1; i < (aPosition.x  + aCell.rowspan()); i++) {
-        if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("§reserve row position : " + aPosition.y + " cs:" + aCell.colspan());
+        //if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("§reserve row position : " + aPosition.y + " cs:" + aCell.colspan());
             if ( !((Row) someRows.get(i)).reserve(aPosition.y, aCell.colspan())) {
 
                 // should be impossible to come here :-)
@@ -1241,11 +1276,11 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
             }
         }
         
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" - set at: " + aPosition.x + "  -  size:" + someRows.size());
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" - set at: " + aPosition.x + "  -  size:" + someRows.size());
         row = (Row) someRows.get(aPosition.x);
         row.addElement(aCell, aPosition.y);
         
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("end placeCell");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("end placeCell");
     }
     
 /**
@@ -1265,7 +1300,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
  * @author  Kris Jespers
  */
     protected void checkIllegalRowspan() throws BadElementException {
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("begin checkIllegalRowspan()");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("begin checkIllegalRowspan()");
         // find lowest cell
         int i = rows.size() - 1, j = columns - 1;
         
@@ -1299,7 +1334,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
                 addCell(new Cell(new Paragraph(" ")), new Point(i, columns-1));
             }
         }
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("end checkIllegalRowspan()");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("end checkIllegalRowspan()");
     }
     
 /**
@@ -1481,7 +1516,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 		);
 		currentRow		= i;
 		currentColumn	= j;
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("next valid location from " + aLocation.x + "," + aLocation.y + " is :" + i + "," + j);
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("next valid location from " + aLocation.x + "," + aLocation.y + " is :" + i + "," + j);
 	}
     
   
@@ -1512,7 +1547,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 		StringBuffer lLine = null;
 		int lLineNumberCount = -1;
 		int lColumns = ((Row) aAl.get(0)).columns();
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("________Table width ==> rows :" + aAl.size() + "  columns : " + lColumns + "-");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("________Table width ==> rows :" + aAl.size() + "  columns : " + lColumns + "-");
 		for (int i=0; i < aAl.size();i++)
 		{
 			// rownumber
@@ -1527,14 +1562,14 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			{
 				lLine.append(" " + getElementType(aAl,i,j));
 			}
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(lLine.toString());
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(lLine.toString());
 		}
-		if (Logging.INCLUDE_LOG_IN_BUILD) Logging.getLogInstance().getLogger(Table.class).debug("_____________ ");
+		//if (Logging.INCLUDE_LOG_IN_BUILD) Logging.getLogInstance().getLogger(Table.class).debug("_____________ ");
 		printTableMatrixContents();
 	}
 
 	private void printReserved(ArrayList aAl) {
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("________printReserved  ==> rows :" + aAl.size());
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("________printReserved  ==> rows :" + aAl.size());
 		Row lRow = null;
 		String lStatus = null;
 		for (int i=0; i < aAl.size();i++)
@@ -1545,9 +1580,9 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			{
 				lStatus += lRow.isReserved(j) + "  ";
 			}
-			if (Logging.INCLUDE_LOG_IN_BUILD) Logging.getLogInstance().getLogger(Table.class).debug(lStatus);
+			//if (Logging.INCLUDE_LOG_IN_BUILD) Logging.getLogInstance().getLogger(Table.class).debug(lStatus);
 		}
-		if (Logging.INCLUDE_LOG_IN_BUILD) Logging.getLogInstance().getLogger(Table.class).debug("_____________ ");
+		//if (Logging.INCLUDE_LOG_IN_BUILD) Logging.getLogInstance().getLogger(Table.class).debug("_____________ ");
 	}
 
 	/*
@@ -1556,10 +1591,10 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 	**/
 	private void printTableMatrixContents()
 	{
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("-- printTableMatrixContents()");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).info("-- printTableMatrixContents()");
 		int lineNumberCount = -1;
 		Object lElement = null;
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" ________________==> rows :" + getDimension().height + "  columns : " + getDimension().width);
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(" ________________==> rows :" + getDimension().height + "  columns : " + getDimension().width);
 		StringBuffer lLine = null;
 		for (int i=0; i < rows.size();i++)
 		{
@@ -1606,9 +1641,9 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 					lLine.append("- other  -");
 				}
 			}
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(lLine.toString());
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug(lLine.toString());
 		}
-		if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("________________");
+		//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("________________");
 	}
 
 
@@ -1631,7 +1666,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			Table thirdTable	= null;
 /*
 			// test 1 : simple table
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 1");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 1");
 			aTable = new Table(2,2);	// 2 rows, 2 columns
 			aTable.addCell("0.0");
 			aTable.addCell("0.1");
@@ -1643,7 +1678,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			document.newPage();
 
 			// test 2 : add some random cells
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 2");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 2");
 			aTable = new Table(4,4);	// 4 rows, 4 columns
 			aTable.addCell("2.2", new Point(2,2));
 			aTable.addCell("3.3", new Point(3,3));
@@ -1655,7 +1690,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			document.newPage();
 			
 			// test 3 : check if new rows are added
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 3");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 3");
 			aTable = new Table(4,4);	// 4 rows, 4 columns
 			aTable.addCell("2.2", new Point(2,2));
 			aTable.addCell("3.3", new Point(3,3));
@@ -1670,7 +1705,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			document.newPage();
 
 			// test 4 : add a table
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 4");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 4");
 			secondTable = new Table(2);
 			secondTable.addCell("2nd table 0.0");
 			secondTable.addCell("2nd table 0.1");
@@ -1689,7 +1724,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			document.newPage();
 
 			// test 5 : add table at row to be added
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 5");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 5");
 			secondTable = new Table(2);
 			secondTable.addCell("2nd table 0.0");
 			secondTable.addCell("2nd table 0.1");
@@ -1714,7 +1749,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			document.newPage();
 
 			// test 6 : This one's taken from the above Javadoc example
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 6");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 6");
 			Table table = new Table(3);
 			table.setBorderWidth(1);
 			table.setBorderColor(new Color(0, 0, 255));
@@ -1743,7 +1778,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 			System.out.println("\n --------------------- test6 done");
 	
 			// Test 7 : adding the table twice
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 7");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 7");
             Table tableDouble = new Table(3);
             tableDouble.setBorderWidth(1);
             tableDouble.setBorderColor(new Color(0, 0, 255));
@@ -1777,7 +1812,7 @@ if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.clas
 
 		// Test 8 : test of BUG reported by Bala Bharathan, thanks !
 		// http://www.geocrawler.com/lists/3/SourceForge/8175/25/6413216/
-			if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 8");
+			//if (Logging.INCLUDE_LOG_IN_BUILD)  Logging.getLogInstance().getLogger(Table.class).debug("** Start Test 8");
 			Table t1 = new Table(3);
 			t1.addCell("1.1");
 			t1.addCell("1.2");
