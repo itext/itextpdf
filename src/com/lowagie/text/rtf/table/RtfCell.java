@@ -272,7 +272,6 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             }
             if(container != null) {
                 try {
-                    System.out.println("fred");
                     RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
                     rtfElement.setInTable(true);
                     this.content.add(rtfElement);
