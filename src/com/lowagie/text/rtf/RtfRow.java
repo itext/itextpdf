@@ -64,6 +64,7 @@ import java.awt.Color;
  *
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
+ * Code added by Lorenz Maierhofer <larry@sbox.tugraz.at>
  */
 public class RtfRow {
     /* Table border solid */
@@ -358,6 +359,9 @@ public class RtfRow {
             RtfCell cell = (RtfCell) cellIterator.next();
             cell.writeCellSettings(os);
         }
+
+        os.write(RtfWriter.escape);
+        os.write("intbl".getBytes());
 
         cellIterator = cells.iterator();
         while (cellIterator.hasNext()) {
