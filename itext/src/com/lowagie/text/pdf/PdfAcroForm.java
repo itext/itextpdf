@@ -150,7 +150,7 @@ public class PdfAcroForm extends PdfDictionary {
         writer.addAnnotation(formField);
     }
     
-    public void addHtmlPostButton(String caption, BaseFont font, float fontSize, String name, String url, float llx, float lly, float urx, float ury) {
+    public void addHtmlPostButton(String name, String caption, String url, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
         PdfAction action = PdfAction.createSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT);
         PdfFormField button = new PdfFormField(writer, llx, lly, urx, ury, action);
         button.setButton(PdfFormField.FF_PUSHBUTTON);
@@ -165,21 +165,21 @@ public class PdfAcroForm extends PdfDictionary {
         addFormField(button);
     }
     
-    public void addSingleLineTextField(String text, BaseFont font, float fontSize, String name, float llx, float lly, float urx, float ury) {
+    public void addSingleLineTextField(String name, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
         PdfFormField field = PdfFormField.createTextField(writer, PdfFormField.SINGLELINE, PdfFormField.PLAINTEXT, 0);
         setTextFieldParams(field, text, name, llx, lly, urx, ury);
         drawSingleLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
         addFormField(field);
     }
     
-    public void addMultiLineTextField(String text, BaseFont font, float fontSize, String name, float llx, float lly, float urx, float ury) {
+    public void addMultiLineTextField(String name, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
         PdfFormField field = PdfFormField.createTextField(writer, PdfFormField.MULTILINE, PdfFormField.PLAINTEXT, 0);
         setTextFieldParams(field, text, name, llx, lly, urx, ury);
         drawMultiLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
         addFormField(field);
     }
     
-    public void addSingleLinePasswordField(String text, BaseFont font, float fontSize, String name, float llx, float lly, float urx, float ury) {
+    public void addSingleLinePasswordField(String name, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
         PdfFormField field = PdfFormField.createTextField(writer, PdfFormField.SINGLELINE, PdfFormField.PASSWORD, 0);
         setTextFieldParams(field, text, name, llx, lly, urx, ury);
         drawSingleLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
@@ -213,13 +213,12 @@ public class PdfAcroForm extends PdfDictionary {
         tp.beginText();
         tp.setFontAndSize(font, fontSize);
         tp.resetRGBColorFill();
-        tp.setTextMatrix(4, 5);
+        tp.setTextMatrix(4, (ury - lly) / 2 - (fontSize * 0.3f));
         tp.showText(text);
         tp.endText();
         tp.restoreState();
         tp.endVariableText();
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, tp);
-        field.setAppearance(PdfAnnotation.APPEARANCE_DOWN, tp);
     }
     
     public void drawMultiLineOfText(PdfFormField field, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
@@ -243,14 +242,13 @@ public class PdfAcroForm extends PdfDictionary {
         java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(text, "\n");
         float yPos = ury - lly;
         while (tokenizer.hasMoreTokens()) {
-            yPos -= fontSize * 1.5f;
+            yPos -= fontSize * 1.2f;
             tp.showTextAligned(PdfContentByte.ALIGN_LEFT, tokenizer.nextToken(), 3, yPos, 0);
         }
         tp.endText();
         tp.restoreState();
         tp.endVariableText();
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, tp);
-        field.setAppearance(PdfAnnotation.APPEARANCE_DOWN, tp);
     }
     
     public void addCheckBox(String name, String value, boolean status, float llx, float lly, float urx, float ury) {
@@ -340,5 +338,66 @@ public class PdfAcroForm extends PdfDictionary {
         PdfAppearance tpOff = cb.createAppearance(urx - llx, ury - lly);
         tpOff.drawRadioField(0f, 0f, urx - llx, ury - lly, false);
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, "Off", tpOff);
+    }
+    
+    public void addSelectList(String name, String[] options, String defaultValue, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
+        PdfFormField choice = PdfFormField.createList(writer, options, 0);
+        setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
+        StringBuffer text = new StringBuffer();
+        for (int i = 0; i < options.length; i++) {
+            text.append(options[i]).append("\n");
+        }
+        drawMultiLineOfText(choice, text.toString(), font, fontSize, llx, lly, urx, ury);
+        addFormField(choice);
+    }
+    
+    public void addSelectList(String name, String[][] options, String defaultValue, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
+        PdfFormField choice = PdfFormField.createList(writer, options, 0);
+        setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
+        StringBuffer text = new StringBuffer();
+        for (int i = 0; i < options.length; i++) {
+            text.append(options[i][1]).append("\n");
+        }
+        drawMultiLineOfText(choice, text.toString(), font, fontSize, llx, lly, urx, ury);
+        addFormField(choice);
+    }
+    
+    public void addComboBox(String name, String[] options, String defaultValue, boolean editable, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
+        PdfFormField choice = PdfFormField.createCombo(writer, editable, options, 0);
+        setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
+        if (defaultValue == null) {
+            defaultValue = options[0];
+        }
+        drawSingleLineOfText(choice, defaultValue, font, fontSize, llx, lly, urx, ury);
+        addFormField(choice);
+    }
+    
+    public void addComboBox(String name, String[][] options, String defaultValue, boolean editable, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
+        PdfFormField choice = PdfFormField.createCombo(writer, editable, options, 0);
+        setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
+        String value = null;
+        for (int i = 0; i < options.length; i++) {
+            if (options[i][0].equals(defaultValue)) {
+                value = options[i][1];
+                break;
+            }
+        }
+        if (value == null) {
+            value = options[0][1];
+        }
+        drawSingleLineOfText(choice, value, font, fontSize, llx, lly, urx, ury);
+        addFormField(choice);
+    }
+    
+    public void setChoiceParams(PdfFormField field, String name, String defaultValue, float llx, float lly, float urx, float ury) {
+        field.setWidget(new Rectangle(llx, lly, urx, ury), PdfAnnotation.HIGHLIGHT_INVERT);
+        if (defaultValue != null) {
+            field.setValueAsString(defaultValue);
+            field.setDefaultValueAsString(defaultValue);
+        }
+        field.setFieldName(name);
+        field.setFlags(PdfAnnotation.FLAGS_PRINT);
+        field.setPage();
+        field.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
     }
 }
