@@ -1,3 +1,23 @@
+/*
+ * $Id$
+ * $Name$
+ *
+ * This code is free software. It may only be copied or modified
+ * if you include the following copyright notice:
+ *
+ * This class by Paulo Soares. Copyright (c) 2002 Paulo Soares.
+ *
+ * This code is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * itext@lowagie.com
+ */
+
+/**
+ * This class demonstrates how to encrypt a pdf file
+ * @author Paulo Soares
+ */
 package com.lowagie.tools;
 
 import com.lowagie.text.pdf.PdfEncryptor;
