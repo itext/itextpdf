@@ -1021,15 +1021,16 @@ class TrueTypeFont extends BaseFont {
         String subsetPrefix = "";
         if (embedded) {
             if (cff) {
+                RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
                 byte b[] = new byte[cffLength];
                 try {
-                    rf.reOpen();
-                    rf.seek(cffOffset);
-                    rf.readFully(b);
+                    rf2.reOpen();
+                    rf2.seek(cffOffset);
+                    rf2.readFully(b);
                 }
                 finally {
                     try {
-                        rf.close();
+                        rf2.close();
                     }
                     catch (Exception e) {
                         // empty on purpose
@@ -1054,7 +1055,7 @@ class TrueTypeFont extends BaseFont {
                             glyphs.put(new Integer(metrics[0]), null);
                     }
                 }
-                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, glyphs, directoryOffset, true);
+                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), glyphs, directoryOffset, true);
                 byte b[] = sb.process();
                 int lengths[] = new int[]{b.length};
                 pobj = new StreamFont(b, lengths);
