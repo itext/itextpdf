@@ -133,7 +133,40 @@ public class PdfAnnotation extends PdfDictionary {
         put(PdfName.BORDER, new PdfBorderArray(0, 0, 0));
         put(PdfName.C, new PdfColor(0x00, 0x00, 0xFF));
     }
-    
+
+    /**
+     * Creates a screen PdfAnnotation
+     * @param writer
+     * @param llx
+     * @param lly
+     * @param urx
+     * @param ury
+     * @param clipPath
+     * @param mimeType
+     * @param playOnDisplay
+     * @return
+     */
+    public static PdfAnnotation createScreen(PdfWriter writer, Rectangle rect, String clipTitle, PdfFileSpecification fs,
+                                             String mimeType, boolean playOnDisplay) throws IOException {
+        PdfAnnotation ann = new PdfAnnotation(writer, rect);
+        ann.put(PdfName.SUBTYPE, PdfName.SCREEN);
+        ann.put (PdfName.F, new PdfNumber(FLAGS_PRINT));
+        ann.put(PdfName.BORDER, new PdfBorderArray(0, 0, 0));
+        ann.put(PdfName.C, new PdfColor(0x00, 0x00, 0xFF));
+        ann.put(PdfName.TYPE, PdfName.ANNOT);
+        ann.setPage();
+        PdfIndirectReference ref = ann.getIndirectReference();
+        PdfAction action = PdfAction.rendition(clipTitle,fs,mimeType, ref);
+        // for play on display add trigger event
+        if (playOnDisplay)
+        {
+            PdfDictionary aa = new PdfDictionary();
+            aa.put(new PdfName("PV"), action);
+            ann.put(PdfName.AA, aa);
+        }
+        return ann;
+    }
+
     PdfIndirectReference getIndirectReference() {
         if (reference == null) {
             reference = writer.getPdfIndirectReference();
@@ -271,52 +304,17 @@ public class PdfAnnotation extends PdfDictionary {
      * @return the annotation
      */    
     public static PdfAnnotation createFileAttachment(PdfWriter writer, Rectangle rect, String contents, byte fileStore[], String file, String fileDisplay) throws IOException {
+        return createFileAttachment(writer, rect, contents, PdfFileSpecification.fileEmbedded(writer, file, fileDisplay, fileStore));
+    }
+
+    public static PdfAnnotation createFileAttachment(PdfWriter writer, Rectangle rect, String contents, PdfFileSpecification fs) throws IOException {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.FILEATTACHMENT);
         annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
-        PdfStream stream;
-        if (fileStore == null) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte buf[] = new byte[4192];
-            FileInputStream in = new FileInputStream(file);
-            try {
-                while (true) {
-                    int r = in.read(buf);
-                    if (r < 0)
-                        break;
-                    out.write(buf, 0, r);
-                }
-            }
-            finally {
-                try {
-                    in.close();
-                }
-                catch (Exception e) {
-                    // empty on purpose
-                }
-            }
-            stream = new PdfStream(out.toByteArray());
-        }
-        else
-            stream = new PdfStream(fileStore);
-        stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
-        try {
-            stream.flateCompress();
-        }
-        catch (PdfException e) {
-            //empty on purpose
-        }
-        PdfIndirectReference ref = writer.addToBody(stream).getIndirectReference();
-        PdfDictionary fs = new PdfDictionary(PdfName.FILESPEC);
-        fs.put(PdfName.F, new PdfString(fileDisplay, PdfObject.TEXT_UNICODE));
-        PdfDictionary f = new PdfDictionary();
-        f.put(PdfName.F, ref);
-        fs.put(PdfName.EF, f);
-        ref = writer.addToBody(fs).getIndirectReference();
-        annot.put(PdfName.FS, ref);
+        annot.put(PdfName.FS, fs.getReference());
         return annot;
     }
-
+    
     public static PdfAnnotation createPopup(PdfWriter writer, Rectangle rect, String contents, boolean open) {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.POPUP);
@@ -371,7 +369,7 @@ public class PdfAnnotation extends PdfDictionary {
 
         PdfDictionary dic;
         PdfObject obj = dicAp.get(ap);
-        if (obj != null && obj.type() == DICTIONARY)
+        if (obj != null && obj.isDictionary())
             dic = (PdfDictionary)obj;
         else
             dic = new PdfDictionary();
@@ -417,7 +415,7 @@ public class PdfAnnotation extends PdfDictionary {
     public void setAdditionalActions(PdfName key, PdfAction action) {
         PdfDictionary dic;
         PdfObject obj = get(PdfName.AA);
-        if (obj != null && obj.type() == DICTIONARY)
+        if (obj != null && obj.isDictionary())
             dic = (PdfDictionary)obj;
         else
             dic = new PdfDictionary();

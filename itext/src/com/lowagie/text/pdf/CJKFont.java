@@ -77,21 +77,7 @@ class CJKFont extends BaseFont {
     static Properties cjkEncodings = new Properties();
     static Hashtable allCMaps = new Hashtable();
     static Hashtable allFonts = new Hashtable();
-    
-    static {
-        try {
-            InputStream is = getResourceStream(RESOURCE_PATH + "cjkfonts.properties");
-            cjkFonts.load(is);
-            is.close();
-            is = getResourceStream(RESOURCE_PATH + "cjkencodings.properties");
-            cjkEncodings.load(is);
-            is.close();
-        }
-        catch (Exception e) {
-            cjkFonts = new Properties();
-            cjkEncodings = new Properties();
-        }
-    }
+    private static boolean propertiesLoaded = false;
     
     /** The font name */
     private String fontName;
@@ -108,6 +94,28 @@ class CJKFont extends BaseFont {
     private HashMap fontDesc;
     private boolean vertical = false;
     
+    private static void loadProperties() {
+        if (propertiesLoaded)
+            return;
+        synchronized (allFonts) {
+            if (propertiesLoaded)
+                return;
+            try {
+                InputStream is = getResourceStream(RESOURCE_PATH + "cjkfonts.properties");
+                cjkFonts.load(is);
+                is.close();
+                is = getResourceStream(RESOURCE_PATH + "cjkencodings.properties");
+                cjkEncodings.load(is);
+                is.close();
+                propertiesLoaded = true;
+            }
+            catch (Exception e) {
+                cjkFonts = new Properties();
+                cjkEncodings = new Properties();
+            }
+        }
+    }
+    
     /** Creates a CJK font.
      * @param fontName the name of the font
      * @param enc the encoding of the font
@@ -116,6 +124,7 @@ class CJKFont extends BaseFont {
      * @throws IOException on error
      */
     CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException {
+        loadProperties();
         fontType = FONT_TYPE_CJK;
         String nameBase = getBaseName(fontName);
         if (!isCJKFont(nameBase, enc))
@@ -183,6 +192,7 @@ class CJKFont extends BaseFont {
      * @return <CODE>true</CODE> if it is CJK font
      */
     public static boolean isCJKFont(String fontName, String enc) {
+        loadProperties();
         String encodings = cjkFonts.getProperty(fontName);
         return (encodings != null && (enc.equals("Identity-H") || enc.equals("Identity-V") || encodings.indexOf("_" + enc + "_") >= 0));
     }
@@ -209,6 +219,7 @@ class CJKFont extends BaseFont {
     int getRawWidth(int c, String name) {
         return 0;
     }
+  
     public int getKerning(char char1, char char2) {
         return 0;
     }
@@ -565,10 +576,30 @@ class CJKFont extends BaseFont {
     }
     
     /** Checks if the font has any kerning pairs.
-     * @return <CODE>true</CODE> if the font has any kerning pairs
+     * @return always <CODE>false</CODE>
      */    
     public boolean hasKernPairs() {
         return false;
     }
     
+    /**
+     * Checks if a character exists in this font.
+     * @param c the character to check
+     * @return <CODE>true</CODE> if the character has a glyph,
+     * <CODE>false</CODE> otherwise
+     */
+    public boolean charExists(char c) {
+        return translationMap[c] != 0;
+    }
+    
+    /**
+     * Sets the character advance.
+     * @param c the character
+     * @param advance the character advance normalized to 1000 units
+     * @return <CODE>true</CODE> if the advance was set,
+     * <CODE>false</CODE> otherwise. Will always return <CODE>false</CODE>
+     */
+    public boolean setCharAdvance(char c, int advance) {
+        return false;
+    }
 }

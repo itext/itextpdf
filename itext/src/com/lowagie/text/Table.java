@@ -417,7 +417,15 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         mDebug = aDebug;
     }
 
-/**
+    /**                                                                    
+     * Sets the default layout of the Table to 
+     * the provided Cell
+     */
+    public void setDefaultLayout(Cell value) {
+        defaultLayout = value;
+    }
+
+    /**
  * Enables/disables automatic insertion of empty cells before table is rendered. (default = false)
  * As some people may want to create a table, fill only a couple of the cells and don't bother with
  * investigating which empty ones need to be added, this default behaviour may be very welcome.

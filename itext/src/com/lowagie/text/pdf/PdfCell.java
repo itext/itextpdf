@@ -312,10 +312,10 @@ public class PdfCell extends Rectangle {
         lines.add(line);
         line = new PdfLine(left, right, alignment, leading);
         if ((image.alignment() & Image.RIGHT) == Image.RIGHT) { // fix Uwe Zimmerman
-            left = right - image.scaledWidth();
+                left = right - image.scaledWidth();
         }
         else if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) {
-            left = left + ((right - left - image.scaledWidth()) / 2f);
+                left = left + ((right - left - image.scaledWidth()) / 2f);
         }
         image.setAbsolutePosition(left, height + (lines.size() - 2) * leading + image.scaledHeight() + 0.4f * leading);
         images.add(image);
@@ -333,17 +333,15 @@ public class PdfCell extends Rectangle {
      */
     
     public ArrayList getLines(float top, float bottom) {
-        
-        // if the bottom of the page is higher than the top of the cell: do nothing
-        if (top() < bottom) {
-            return null;
-        }
-        
-        // initialisations
         float lineHeight;
         float currentPosition = Math.min(top(), top);
         setTop(currentPosition + cellspacing);
         ArrayList result = new ArrayList();
+        
+		// if the bottom of the page is higher than the top of the cell: do nothing
+		if (top() < bottom) {
+			return result;
+		}
         
         // we loop over the lines
         int size = lines.size();

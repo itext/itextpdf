@@ -84,12 +84,53 @@ import com.lowagie.text.ExceptionConverter;
 
 public class ColumnText {
     /** Eliminate the arabic vowels */    
-    public static final int AR_NOVOWEL = 1;
+    public static final int AR_NOVOWEL = ArabicLigaturizer.ar_novowel;
     /** Compose the tashkeel in the ligatures. */    
-    public static final int AR_COMPOSEDTASHKEEL = 4;
+    public static final int AR_COMPOSEDTASHKEEL = ArabicLigaturizer.ar_composedtashkeel;
     /** Do some extra double ligatures. */    
-    public static final int AR_LIG = 8;
-
+    public static final int AR_LIG = ArabicLigaturizer.ar_lig;
+    /**
+     * Digit shaping option: Replace European digits (U+0030...U+0039) by Arabic-Indic digits.
+     */
+    public static final int DIGITS_EN2AN = ArabicLigaturizer.DIGITS_EN2AN;
+    
+    /**
+     * Digit shaping option: Replace Arabic-Indic digits by European digits (U+0030...U+0039).
+     */
+    public static final int DIGITS_AN2EN = ArabicLigaturizer.DIGITS_AN2EN;
+    
+    /**
+     * Digit shaping option:
+     * Replace European digits (U+0030...U+0039) by Arabic-Indic digits
+     * if the most recent strongly directional character
+     * is an Arabic letter (its Bidi direction value is RIGHT_TO_LEFT_ARABIC).
+     * The initial state at the start of the text is assumed to be not an Arabic,
+     * letter, so European digits at the start of the text will not change.
+     * Compare to DIGITS_ALEN2AN_INIT_AL.
+     */
+    public static final int DIGITS_EN2AN_INIT_LR = ArabicLigaturizer.DIGITS_EN2AN_INIT_LR;
+    
+    /**
+     * Digit shaping option:
+     * Replace European digits (U+0030...U+0039) by Arabic-Indic digits
+     * if the most recent strongly directional character
+     * is an Arabic letter (its Bidi direction value is RIGHT_TO_LEFT_ARABIC).
+     * The initial state at the start of the text is assumed to be an Arabic,
+     * letter, so European digits at the start of the text will change.
+     * Compare to DIGITS_ALEN2AN_INT_LR.
+     */
+    public static final int DIGITS_EN2AN_INIT_AL = ArabicLigaturizer.DIGITS_EN2AN_INIT_AL;
+    
+    /**
+     * Digit type option: Use Arabic-Indic digits (U+0660...U+0669).
+     */
+    public static final int DIGIT_TYPE_AN = ArabicLigaturizer.DIGIT_TYPE_AN;
+    
+    /**
+     * Digit type option: Use Eastern (Extended) Arabic-Indic digits (U+06f0...U+06f9).
+     */
+    public static final int DIGIT_TYPE_AN_EXTENDED = ArabicLigaturizer.DIGIT_TYPE_AN_EXTENDED;
+    
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
     public static final float GLOBAL_SPACE_CHAR_RATIO = 0;
     

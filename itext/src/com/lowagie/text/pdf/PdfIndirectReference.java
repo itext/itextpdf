@@ -64,7 +64,7 @@ package com.lowagie.text.pdf;
  * @see		PdfIndirectObject
  */
 
-class PdfIndirectReference extends PdfObject {
+public class PdfIndirectReference extends PdfObject {
     
     // membervariables
     

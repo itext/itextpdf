@@ -56,12 +56,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.zip.InflaterInputStream;
 import java.util.Arrays;
 
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.PageSize;
 
 /** Reads a PDF document and prepares it to import pages to our
  * document. This class is thread safe; this means that
@@ -85,6 +87,7 @@ public class PdfReader {
     protected PdfDictionary catalog;
     protected PRIndirectReference pageRefs[];
     protected PRAcroForm acroForm = null;
+    protected boolean acroFormParsed = false;
     protected ArrayList pageInh;
     protected int pagesCount;
     protected boolean encrypted = false;
@@ -96,13 +99,15 @@ public class PdfReader {
     protected char pdfVersion;
     protected PdfEncryption decrypt;
     protected byte password[] = null; //added by ujihara for decryption
-    protected int objNum;
-    protected int objGen;
     protected ArrayList strings = new ArrayList();
     protected boolean sharedStreams = true;
     protected boolean consolidateNamedDestinations = false;
     protected int rValue;
     protected int pValue;
+    private int objNum;
+    private int objGen;
+    private boolean visited[];
+    private IntHashtable newHits;
     
     protected PdfReader() {
     }
@@ -119,7 +124,7 @@ public class PdfReader {
      * @param filename the file name of the document
      * @param ownerPassword the password to read the document
      * @throws IOException on error
-     */
+     */    
     public PdfReader(String filename, byte ownerPassword[]) throws IOException {
         password = ownerPassword;
         tokens = new PRTokeniser(filename);
@@ -178,8 +183,6 @@ public class PdfReader {
         this.eofPos = reader.eofPos;
         this.freeXref = reader.freeXref;
         this.lastXref = reader.lastXref;
-        this.objGen = reader.objGen;
-        this.objNum = reader.objNum;
         this.pagesCount = reader.pagesCount;
         this.tokens = reader.tokens;
         this.decrypt = reader.decrypt;
@@ -197,16 +200,6 @@ public class PdfReader {
         }
         this.trailer = (PdfDictionary)duplicatePdfObject(reader.trailer, this);
         this.catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
-        PdfObject form = catalog.get(PdfName.ACROFORM);
-        if (form != null) {
-            try {
-                acroForm = new PRAcroForm(this);
-                acroForm.readAcroForm((PdfDictionary)getPdfObject(form));
-            }
-            catch (Exception e) {
-                acroForm = null;
-            }
-        }
     }
     
     /** Gets a new file instance of the original PDF
@@ -240,6 +233,19 @@ public class PdfReader {
      * @return he document's acroform
      */
     public PRAcroForm getAcroForm() {
+        if (!acroFormParsed) {
+            acroFormParsed = true;
+            PdfObject form = catalog.get(PdfName.ACROFORM);
+            if (form != null) {
+                try {
+                    acroForm = new PRAcroForm(this);
+                    acroForm.readAcroForm((PdfDictionary)getPdfObject(form));
+                }
+                catch (Exception e) {
+                    acroForm = null;
+                }
+            }
+        }
         return acroForm;
     }
     /**
@@ -365,16 +371,6 @@ public class PdfReader {
             readDecryptedDocObj();	//added by ujihara for decryption
             strings.clear();
             readPages();
-            PdfObject form = catalog.get(PdfName.ACROFORM);
-            if (form != null) {
-                try {
-                    acroForm = new PRAcroForm(this);
-                    acroForm.readAcroForm((PdfDictionary)getPdfObject(form));
-                }
-                catch (Exception e) {
-                    acroForm = null;
-                }
-            }
             eliminateSharedStreams();
         }
         finally {
@@ -421,12 +417,12 @@ public class PdfReader {
         byte oValue[] = com.lowagie.text.DocWriter.getISOBytes(s);
         
         o = enc.get(PdfName.R);
-        if (o.type() != PdfObject.NUMBER) throw new IOException("Illegal R value.");
+        if (!o.isNumber()) throw new IOException("Illegal R value.");
         rValue = ((PdfNumber)o).intValue();
         if (rValue != 2 && rValue != 3) throw new IOException("Unknown encryption type (" + rValue + ")");
         
         o = enc.get(PdfName.P);
-        if (o.type() != PdfObject.NUMBER) throw new IOException("Illegal P value.");
+        if (!o.isNumber()) throw new IOException("Illegal P value.");
         pValue = ((PdfNumber)o).intValue();
         
         decrypt = new PdfEncryption();
@@ -444,6 +440,8 @@ public class PdfReader {
             PdfString str = (PdfString)strings.get(k);
             str.decrypt(this);
         }
+        if (encDic.isIndirect())
+            xrefObj[((PRIndirectReference)encDic).getNumber()] = null;
     }
     
     /** Reads a <CODE>PdfObject</CODE> resolving an indirect reference
@@ -454,7 +452,7 @@ public class PdfReader {
     public static PdfObject getPdfObject(PdfObject obj) {
         if (obj == null)
             return null;
-        if (obj.type() != PdfObject.INDIRECT)
+        if (!obj.isIndirect())
             return obj;
         PRIndirectReference ref = (PRIndirectReference)obj;
         int idx = ref.getNumber();
@@ -493,6 +491,10 @@ public class PdfReader {
                 if (page.get(key) == null)
                     page.put(key, dic.get(key));
             }
+            if (page.get(PdfName.MEDIABOX) == null) {
+                PdfArray arr = new PdfArray(new float[]{0,0,PageSize.LETTER.right(),PageSize.LETTER.top()});
+                page.put(PdfName.MEDIABOX, arr);
+            }
             pages[pagesCount++] = page;
         }
         else {
@@ -520,31 +522,67 @@ public class PdfReader {
         pageInh = null;
     }
     
+    protected void PRSimpleRecursive(PdfObject obj) throws IOException {
+        switch (obj.type()) {
+            case PdfObject.DICTIONARY:
+            case PdfObject.STREAM:
+                PdfDictionary dic = (PdfDictionary)obj;
+                for (Iterator it = dic.getKeys().iterator(); it.hasNext();) {
+                    PdfName key = (PdfName)it.next();
+                    PRSimpleRecursive(dic.get(key));
+                }
+                break;
+            case PdfObject.ARRAY:
+                ArrayList list = ((PdfArray)obj).getArrayList();
+                for (int k = 0; k < list.size(); ++k) {
+                    PRSimpleRecursive((PdfObject)list.get(k));
+                }
+                break;
+            case PdfObject.INDIRECT:
+                PRIndirectReference ref = (PRIndirectReference)obj;
+                int num = ref.getNumber();
+                if (!visited[num]) {
+                    visited[num] = true;
+                    newHits.put(num, 1);
+                }
+                break;
+        }
+    }
+        
     protected void readDocObj() throws IOException {
         ArrayList streams = new ArrayList();
         xrefObj = new PdfObject[xref.length];
-        for (int k = 1; k < xrefObj.length; ++k) {
-            int pos = xref[k];
-            if (pos <= 0)
-                continue;
-            tokens.seek(pos);
-            tokens.nextValidToken();
-            if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-                tokens.throwError("Invalid object number.");
-            objNum = tokens.intValue();
-            tokens.nextValidToken();
-            if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
-                tokens.throwError("Invalid generation number.");
-            objGen = tokens.intValue();
-            tokens.nextValidToken();
-            if (!tokens.getStringValue().equals("obj"))
-                tokens.throwError("Token 'obj' expected.");
-            PdfObject obj = readPRObject();
-            xrefObj[k] = obj;
-            if (obj.type() == PdfObject.STREAM) {
-                streams.add(obj);
+        visited = new boolean[xref.length];
+        newHits = new IntHashtable();
+        PRSimpleRecursive(trailer);
+        while (!newHits.isEmpty()) {
+            int hits[] = newHits.getKeys();
+            newHits.clear();
+            for (int k = 0; k < hits.length; ++k) {
+                int pos = xref[hits[k]];
+                if (pos <= 0)
+                    continue;
+                tokens.seek(pos);
+                tokens.nextValidToken();
+                if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+                    tokens.throwError("Invalid object number.");
+                objNum = tokens.intValue();
+                tokens.nextValidToken();
+                if (tokens.getTokenType() != PRTokeniser.TK_NUMBER)
+                    tokens.throwError("Invalid generation number.");
+                objGen = tokens.intValue();
+                tokens.nextValidToken();
+                if (!tokens.getStringValue().equals("obj"))
+                    tokens.throwError("Token 'obj' expected.");
+                PdfObject obj = readPRObject();
+                xrefObj[hits[k]] = obj;
+                if (obj.isStream()) {
+                    streams.add(obj);
+                }
             }
         }
+        visited = null;
+        newHits = null;
         int fileLength = tokens.length();
         byte tline[] = new byte[16];
         for (int k = 0; k < streams.size(); ++k) {
@@ -559,9 +597,9 @@ public class PdfReader {
                 tokens.seek(start + streamLength);
                 String line = tokens.readString(20);
                 if (!line.startsWith("\nendstream") &&
-                    !line.startsWith("\r\nendstream") &&
-                    !line.startsWith("\rendstream") &&
-                    !line.startsWith("endstream"))
+                !line.startsWith("\r\nendstream") &&
+                !line.startsWith("\rendstream") &&
+                !line.startsWith("endstream"))
                     calc = true;
             }
             if (calc) {
@@ -589,12 +627,12 @@ public class PdfReader {
         }
         xref = null;
     }
-    
+
     static PdfObject killIndirect(PdfObject obj) {
-        if (obj == null || obj.type() == PdfObject.NULL)
+        if (obj == null || obj.isNull())
             return null;
-        PdfObject ret = PdfReader.getPdfObject(obj);
-        if (obj.type() == PdfObject.INDIRECT) {
+        PdfObject ret = getPdfObject(obj);
+        if (obj.isIndirect()) {
             PRIndirectReference ref = (PRIndirectReference)obj;
             ref.getReader().xrefObj[ref.getNumber()] = null;
         }
@@ -816,14 +854,20 @@ public class PdfReader {
             case PRTokeniser.TK_NUMBER:
                 return new PdfNumber(tokens.getStringValue());
             case PRTokeniser.TK_STRING:
-                PdfString str = new PdfString(tokens.getStringValue(), null);
+                PdfString str = new PdfString(tokens.getStringValue(), null).setWritingMode(tokens.isHexString());
                 str.setObjNum(objNum, objGen);
                 strings.add(str);
                 return str;
             case PRTokeniser.TK_NAME:
                 return new PdfName(tokens.getStringValue());
             case PRTokeniser.TK_REF:
-                return new PRIndirectReference(this, tokens.getReference(), tokens.getGeneration());
+                int num = tokens.getReference();
+                PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
+                if (visited != null && !visited[num]) {
+                    visited[num] = true;
+                    newHits.put(num, 1);
+                }
+                return ref;
             default:
                 return new PdfLiteral(-type, tokens.getStringValue());
         }
@@ -1005,16 +1049,16 @@ public class PdfReader {
         if (contents == null)
             return new byte[0];
         ByteArrayOutputStream bout = null;
-        if (contents.type() == PdfObject.STREAM) {
+        if (contents.isStream()) {
             return getStreamBytes((PRStream)contents, file);
         }
-        else if (contents.type() == PdfObject.ARRAY) {
+        else if (contents.isArray()) {
             PdfArray array = (PdfArray)contents;
             ArrayList list = array.getArrayList();
             bout = new ByteArrayOutputStream();
             for (int k = 0; k < list.size(); ++k) {
                 PdfObject item = getPdfObject((PdfObject)list.get(k));
-                if (item == null || item.type() != PdfObject.STREAM)
+                if (item == null || item.isStream())
                     continue;
                 byte[] b = getStreamBytes((PRStream)item, file);
                 bout.write(b);
@@ -1030,7 +1074,7 @@ public class PdfReader {
     protected void killXref(PdfObject obj) {
         if (obj == null)
             return;
-        if ((obj instanceof PdfIndirectReference) && obj.type() != PdfObject.INDIRECT)
+        if ((obj instanceof PdfIndirectReference) && !obj.isIndirect())
             return;
         switch (obj.type()) {
             case PdfObject.INDIRECT: {
@@ -1113,10 +1157,10 @@ public class PdfReader {
         }
         ArrayList filters = new ArrayList();
         if (filter != null) {
-            if (filter.type() == PdfObject.NAME) {
+            if (filter.isName()) {
                 filters.add(filter);
             }
-            else if (filter.type() == PdfObject.ARRAY) {
+            else if (filter.isArray()) {
                 filters = ((PdfArray)filter).getArrayList();
             }
         }
@@ -1154,7 +1198,7 @@ public class PdfReader {
             PdfObject contents = getPdfObject(page.get(PdfName.CONTENTS));
             if (contents == null)
                 continue;
-            if (contents.type() == PdfObject.STREAM) {
+            if (contents.isStream()) {
                 PRIndirectReference ref = (PRIndirectReference)page.get(PdfName.CONTENTS);
                 if (visited.containsKey(ref.getNumber())) {
                     // need to duplicate
@@ -1286,7 +1330,7 @@ public class PdfReader {
     
     static boolean existsName(PdfDictionary dic, PdfName key, PdfName value) {
         PdfObject type = getPdfObject(dic.get(key));
-        if (type == null || type.type() != PdfObject.NAME)
+        if (type == null || !type.isName())
             return false;
         PdfName name = (PdfName)type;
         return name.equals(value);
@@ -1294,7 +1338,7 @@ public class PdfReader {
     
     static String getFontName(PdfDictionary dic) {
         PdfObject type = getPdfObject(dic.get(PdfName.BASEFONT));
-        if (type == null || type.type() != PdfObject.NAME)
+        if (type == null || !type.isName())
             return null;
         return PdfName.decodeName(type.toString());
     }
@@ -1321,7 +1365,7 @@ public class PdfReader {
         int total = 0;
         for (int k = 1; k < xrefObj.length; ++k) {
             PdfObject obj = xrefObj[k];
-            if (obj == null || obj.type() != PdfObject.DICTIONARY)
+            if (obj == null || !obj.isDictionary())
                 continue;
             PdfDictionary dic = (PdfDictionary)obj;
             if (!existsName(dic, PdfName.TYPE, PdfName.FONT))
@@ -1375,7 +1419,7 @@ public class PdfReader {
         int total = 0;
         for (int k = 1; k < xrefObj.length; ++k) {
             PdfObject obj = xrefObj[k];
-            if (obj == null || obj.type() != PdfObject.DICTIONARY)
+            if (obj == null || !obj.isDictionary())
                 continue;
             PdfDictionary dic = (PdfDictionary)obj;
             if (!existsName(dic, PdfName.TYPE, PdfName.FONT))
@@ -1405,28 +1449,131 @@ public class PdfReader {
         return total;
     }
     
-    private static void processNamedNode(PdfDictionary node, HashMap names) {
-        PdfArray nn = (PdfArray)getPdfObject(node.get(PdfName.NAMES));
-        if (nn != null) {
-            ArrayList arr = nn.getArrayList();
-            for (int k = 0; k < arr.size(); ++k) {
-                PdfString s = (PdfString)getPdfObject((PdfObject)arr.get(k++));
-                PdfObject obj = getPdfObject((PdfObject)arr.get(k));
-                if (obj.type() == PdfObject.ARRAY)
-                    names.put(s.toString(), obj);
-                else if (obj.type() == PdfObject.DICTIONARY) {
-                    PdfObject arr2 = getPdfObject(((PdfDictionary)obj).get(PdfName.D));
-                    if (arr2 != null && arr2.type() == PdfObject.ARRAY)
-                        names.put(s.toString(), arr2);
+    private static PdfArray getNameArray(PdfObject obj) {
+        if (obj == null)
+            return null;
+        obj = getPdfObject(obj);
+        if (obj.isArray())
+            return (PdfArray)obj;
+        else if (obj.isDictionary()) {
+            PdfObject arr2 = getPdfObject(((PdfDictionary)obj).get(PdfName.D));
+            if (arr2 != null && arr2.isArray())
+                return (PdfArray)arr2;
+        }
+        return null;
+    }
+
+    public HashMap getNamedDestination() {
+        HashMap names = getNamedDestinationFromNames();
+        names.putAll(getNamedDestinationFromStrings());
+        return names;
+    }
+    
+    public HashMap getNamedDestinationFromNames() {
+        HashMap names = new HashMap();
+        if (catalog.get(PdfName.DESTS) != null) {
+            PdfDictionary dic = (PdfDictionary)getPdfObject(catalog.get(PdfName.DESTS));
+            Set keys = dic.getKeys();
+            for (Iterator it = keys.iterator(); it.hasNext();) {
+                PdfName key = (PdfName)it.next();
+                String name = PdfName.decodeName(key.toString());
+                PdfArray arr = getNameArray(dic.get(key));
+                if (arr != null)
+                    names.put(name, arr);
+            }
+        }
+        return names;
+    }
+
+    public HashMap getNamedDestinationFromStrings() {
+        if (catalog.get(PdfName.NAMES) != null) {
+            PdfDictionary dic = (PdfDictionary)getPdfObject(catalog.get(PdfName.NAMES));
+            dic = (PdfDictionary)getPdfObject(dic.get(PdfName.DESTS));
+            if (dic != null) {
+                HashMap names = PdfNameTree.readTree(dic);
+                for (Iterator it = names.entrySet().iterator(); it.hasNext();) {
+                    Map.Entry entry = (Map.Entry)it.next();
+                    PdfArray arr = getNameArray((PdfObject)entry.getValue());
+                    if (arr != null)
+                        entry.setValue(arr);
+                    else
+                        it.remove();
+                }
+                return names;
+            }
+        }
+        return new HashMap();
+    }
+    
+    private static void replaceNamedDestination(PdfObject obj, HashMap names) {
+        if (obj != null && obj.isDictionary()) {
+            PdfObject ob2 = getPdfObject(((PdfDictionary)obj).get(PdfName.DEST));
+            String name = null;
+            if (ob2 != null) {
+                if (ob2.isName())
+                    name = PdfName.decodeName(ob2.toString());
+                else if (ob2.isString())
+                    name = ob2.toString();
+                PdfArray dest = (PdfArray)names.get(name);
+                if (dest != null)
+                    ((PdfDictionary)obj).put(PdfName.DEST, dest);
+            }
+            else if ((ob2 = getPdfObject(((PdfDictionary)obj).get(PdfName.A))) != null) {
+                PdfDictionary dic = (PdfDictionary)ob2;
+                PdfName type = (PdfName)getPdfObject(dic.get(PdfName.S));
+                if (PdfName.GOTO.equals(type)) {
+                    ob2 = getPdfObject(dic.get(PdfName.D));
+                    if (ob2.isName())
+                        name = PdfName.decodeName(ob2.toString());
+                    else if (ob2.isString())
+                        name = ob2.toString();
+                    PdfArray dest = (PdfArray)names.get(name);
+                    if (dest != null)
+                        dic.put(PdfName.D, dest);
                 }
             }
         }
-        else if ((nn = (PdfArray)getPdfObject(node.get(PdfName.KIDS))) != null) {
-            ArrayList arr = nn.getArrayList();
-            for (int k = 0; k < arr.size(); ++k) {
-                PdfDictionary dic = (PdfDictionary)getPdfObject((PdfObject)arr.get(k));
-                processNamedNode(dic, names);
+    }
+    
+    /**
+     * Removes all the fields from the document.
+     */    
+    public void removeFields() {
+        for (int k = 0; k < pages.length; ++k) {
+            PdfDictionary page = pages[k];
+            PdfArray annots = (PdfArray)getPdfObject(page.get(PdfName.ANNOTS));
+            if (annots == null)
+                continue;
+            ArrayList arr = annots.getArrayList();
+            for (int j = 0; j < arr.size(); ++j) {
+                PdfDictionary annot = (PdfDictionary)getPdfObject((PdfObject)arr.get(j));
+                if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE)))
+                    arr.remove(j--);
             }
+            if (arr.isEmpty())
+                page.remove(PdfName.ANNOTS);
+        }
+        catalog.remove(PdfName.ACROFORM);
+    }
+    
+    /**
+     * Removes all the annotations and fields from the document.
+     */    
+    public void removeAnnotations() {
+        for (int k = 0; k < pages.length; ++k) {
+            pages[k].remove(PdfName.ANNOTS);
+        }
+        catalog.remove(PdfName.ACROFORM);
+    }
+    
+    private void iterateBookmarks(PdfDictionary outline, HashMap names) {
+        while (outline != null) {
+            replaceNamedDestination(outline, names);
+            PdfDictionary first = (PdfDictionary)getPdfObject(outline.get(PdfName.FIRST));
+            if (first != null) {
+                iterateBookmarks(first, names);
+            }
+            outline = (PdfDictionary)getPdfObject(outline.get(PdfName.NEXT));
         }
     }
     
@@ -1435,30 +1582,7 @@ public class PdfReader {
         if (consolidateNamedDestinations)
             return;
         consolidateNamedDestinations = true;
-        HashMap names = new HashMap();
-        if (catalog.get(PdfName.DESTS) != null) {
-            PdfDictionary dic = (PdfDictionary)getPdfObject(catalog.get(PdfName.DESTS));
-            Set keys = dic.getKeys();
-            for (Iterator it = keys.iterator(); it.hasNext();) {
-                PdfName key = (PdfName)it.next();
-                String name = PdfName.decodeName(key.toString());
-                PdfObject obj = getPdfObject(dic.get(key));
-                if (obj.type() == PdfObject.ARRAY)
-                    names.put(name, obj);
-                else if (obj.type() == PdfObject.DICTIONARY) {
-                    PdfObject arr = getPdfObject(((PdfDictionary)obj).get(PdfName.D));
-                    if (arr != null && arr.type() == PdfObject.ARRAY)
-                        names.put(name, arr);
-                }
-            }
-        }
-        if (catalog.get(PdfName.NAMES) != null) {
-            PdfDictionary dic = (PdfDictionary)getPdfObject(catalog.get(PdfName.NAMES));
-            dic = (PdfDictionary)getPdfObject(dic.get(PdfName.DESTS));
-            if (dic != null) {
-                processNamedNode(dic, names);
-            }
-        }
+        HashMap names = getNamedDestination();
         if (names.size() == 0)
             return;
         for (int k = 0; k < pages.length; ++k) {
@@ -1468,35 +1592,13 @@ public class PdfReader {
             ArrayList list = arr.getArrayList();
             for (int an = 0; an < list.size(); ++an) {
                 PdfObject obj = getPdfObject((PdfObject)list.get(an));
-                if (obj != null && obj.type() == PdfObject.DICTIONARY) {
-                    PdfObject ob2 = getPdfObject(((PdfDictionary)obj).get(PdfName.DEST));
-                    String name = null;
-                    if (ob2 != null) {
-                        if (ob2.type() == PdfObject.NAME)
-                            name = PdfName.decodeName(ob2.toString());
-                        else if (ob2.type() == PdfObject.STRING)
-                            name = ob2.toString();
-                        PdfArray dest = (PdfArray)names.get(name);
-                        if (dest != null)
-                            ((PdfDictionary)obj).put(PdfName.DEST, dest);
-                    }
-                    else if ((ob2 = getPdfObject(((PdfDictionary)obj).get(PdfName.A))) != null) {
-                        PdfDictionary dic = (PdfDictionary)ob2;
-                        PdfName type = (PdfName)getPdfObject(dic.get(PdfName.S));
-                        if (PdfName.GOTO.equals(type)) {
-                            ob2 = getPdfObject(dic.get(PdfName.D));
-                            if (ob2.type() == PdfObject.NAME)
-                                name = PdfName.decodeName(ob2.toString());
-                            else if (ob2.type() == PdfObject.STRING)
-                                name = ob2.toString();
-                            PdfArray dest = (PdfArray)names.get(name);
-                            if (dest != null)
-                                dic.put(PdfName.D, dest);
-                        }
-                    }
-                }
+                replaceNamedDestination(obj, names);
             }
         }
+        PdfDictionary outlines = (PdfDictionary)getPdfObject(catalog.get(PdfName.OUTLINES));
+        if (outlines == null)
+            return;
+        iterateBookmarks((PdfDictionary)getPdfObject(outlines.get(PdfName.FIRST)), names);
     }
     
     protected static PdfDictionary duplicatePdfDictionary(PdfDictionary original, PdfDictionary copy, PdfReader newReader) {
@@ -1585,5 +1687,12 @@ public class PdfReader {
             }
         }
         return total;
+    }
+    
+    /** Gets a read-only version of <CODE>AcroFields</CODE>.
+     * @return a read-only version of <CODE>AcroFields</CODE>
+     */    
+    public AcroFields getAcroFields() {
+        return new AcroFields(this, null);
     }
 }

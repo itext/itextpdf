@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 
 import java.net.URL;
 import com.lowagie.text.ExceptionConverter;
+import java.io.IOException;
 
 /**
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.
@@ -211,6 +212,31 @@ public class PdfAction extends PdfDictionary {
         }
     }
     
+    /** Launchs an application or a document.
+     * @param application the application to be launched or the document to be opened or printed.
+     * @param parameters (Windows-specific) A parameter string to be passed to the application.
+     * It can be <CODE>null</CODE>.
+     * @param operation (Windows-specific) the operation to perform: "open" - Open a document,
+     * "print" - Print a document.
+     * It can be <CODE>null</CODE>.
+     * @param defaultDir (Windows-specific) the default directory in standard DOS syntax.
+     * It can be <CODE>null</CODE>.
+     * @return a Launch action
+     */
+    public static PdfAction createLaunch(String application, String parameters, String operation, String defaultDir) {
+        return new PdfAction(application, parameters, operation, defaultDir);
+    }
+    
+     /**Creates a Rendition action*/
+    public static PdfAction rendition(String file, PdfFileSpecification fs, String mimeType, PdfIndirectReference ref) throws IOException {
+        PdfAction js = new PdfAction();
+        js.put(PdfName.S, PdfName.RENDITION);
+        js.put(PdfName.R, new PdfRendition(file, fs, mimeType));
+        js.put(new PdfName("OP"), new PdfNumber(0));
+        js.put(new PdfName("AN"), ref);
+        return js;
+     }
+  
     /** Creates a JavaScript action. If the JavaScript is smaller than
      * 50 characters it will be placed as a string, otherwise it will
      * be placed as a compressed stream.
@@ -326,7 +352,7 @@ public class PdfAction extends PdfDictionary {
         PdfObject nextAction = get(PdfName.NEXT);
         if (nextAction == null)
             put(PdfName.NEXT, na);
-        else if (nextAction.type() == PdfObject.DICTIONARY) {
+        else if (nextAction.isDictionary()) {
             PdfArray array = new PdfArray(nextAction);
             array.add(na);
             put(PdfName.NEXT, array);
@@ -348,6 +374,43 @@ public class PdfAction extends PdfDictionary {
         PdfAction action = new PdfAction();
         action.put(PdfName.S, PdfName.GOTO);
         action.put(PdfName.D, dest);
+        return action;
+    }
+
+    /**
+     * Creates a GoTo action to a named destination.
+     * @param dest the named destination
+     * @param isName if true sets the destination as a name, if false sets it as a String
+     * @return a GoToR action
+     */
+    public static PdfAction gotoLocalPage(String dest, boolean isName) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.S, PdfName.GOTO);
+        if (isName)
+            action.put(PdfName.D, new PdfName(dest));
+        else
+            action.put(PdfName.D, new PdfString(dest, null));
+        return action;
+    }
+
+    /**
+     * Creates a GoToR action to a named destination.
+     * @param filename the file name to go to
+     * @param dest the destination name
+     * @param newWindow open the document in a new window if <CODE>true</CODE>
+     * @param isName if true sets the destination as a name, if false sets it as a String
+     * @return a GoToR action
+     */
+    public static PdfAction gotoRemotePage(String filename, String dest, boolean isName, boolean newWindow) {
+        PdfAction action = new PdfAction();
+        action.put(PdfName.F, new PdfString(filename));
+        action.put(PdfName.S, PdfName.GOTOR);
+        if (isName)
+            action.put(PdfName.D, new PdfName(dest));
+        else
+            action.put(PdfName.D, new PdfString(dest, null));
+        if (newWindow)
+            action.put(PdfName.NEWWINDOW, PdfBoolean.PDFTRUE);
         return action;
     }
 }

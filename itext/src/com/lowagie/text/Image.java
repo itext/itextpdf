@@ -1113,7 +1113,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
      */
     
     public static URL toURL(String filename) throws MalformedURLException {
-        if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("jar:")) {
+        if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("https://") || filename.startsWith("jar:")) {
             return new URL(filename);
         }
         File f = new File(filename);

@@ -470,6 +470,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName LOCATION = new PdfName("Location");
     /** A name */
+    public static final PdfName LOCK = new PdfName("Lock");
+    /** A name */
     public static final PdfName LZWDECODE = new PdfName("LZWDecode");
     /** A name */
     public static final PdfName M = new PdfName("M");
@@ -504,15 +506,21 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName NEEDAPPEARANCES = new PdfName("NeedAppearances");
     /** A name */
+    public static final PdfName NEWWINDOW = new PdfName("NewWindow");
+    /** A name */
     public static final PdfName NEXT = new PdfName("Next");
     /** A name */
     public static final PdfName NEXTPAGE = new PdfName("NextPage");
+    /** A name */
+    public static final PdfName NM = new PdfName("NM");
     /** A name */
     public static final PdfName NONFULLSCREENPAGEMODE = new PdfName("NonFullScreenPageMode");
     /** A name */
     public static final PdfName NUMS = new PdfName("Nums");
     /** A name */
     public static final PdfName O = new PdfName("O");
+    /** A name */
+    public static final PdfName OC = new PdfName("OC");
     /** A name */
     public static final PdfName OFF = new PdfName("Off");
     /** A name */
@@ -596,6 +604,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName RELATIVECALORIMETRIC = new PdfName("RelativeColorimetric");
     /** A name */
+    public static final PdfName RENDITION = new PdfName("Rendition");
+    /** A name */
     public static final PdfName RESETFORM = new PdfName("ResetForm");
     /** A name */
     public static final PdfName RESOURCES = new PdfName("Resources");
@@ -610,9 +620,13 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName RUNLENGTHDECODE = new PdfName("RunLengthDecode");
     /** A name */
+    public static final PdfName RV = new PdfName("RV");
+    /** A name */
     public static final PdfName S = new PdfName("S");
     /** A name */
     public static final PdfName SATURATION = new PdfName("Saturation");
+    /** A name */
+    public static final PdfName SCREEN = new PdfName("Screen");
     /** A name */
     public static final PdfName SEPARATION = new PdfName("Separation");
     /** A name */
@@ -642,6 +656,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName STRIKEOUT = new PdfName("StrikeOut");
     /** A name */
+    public static final PdfName STRUCTPARENT = new PdfName("StructParent");
+    /** A name */
     public static final PdfName STYLE = new PdfName("Style");
     /** A name */
     public static final PdfName STEMV = new PdfName("StemV");
@@ -655,6 +671,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SUBTYPE = new PdfName("Subtype");
     /** A name */
     public static final PdfName SUPPLEMENT = new PdfName("Supplement");
+    /** A name */
+    public static final PdfName SV = new PdfName("SV");
     /** A name */
     public static final PdfName SW = new PdfName("SW");
     /** A name of a base 14 type 1 font */

@@ -72,11 +72,11 @@ public class RtfTOCEntry extends Chunk implements RtfField {
 
     private boolean         hidePageNumber = false;    
 
-    private final String    entryName;
+    private String    entryName;
 
-    private final Font      entryFont;    
+    private Font      entryFont;    
 
-    private final Font      contentFont;    
+    private Font      contentFont;    
 
 
     public RtfTOCEntry( String content, Font contentFont ) {

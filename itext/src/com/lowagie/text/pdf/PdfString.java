@@ -80,6 +80,7 @@ public class PdfString extends PdfObject {
     protected String encoding = TEXT_PDFDOCENCODING;
     protected int objNum = 0;
     protected int objGen = 0;
+    protected boolean hexWriting = false;
 
     // constructors
     
@@ -136,19 +137,26 @@ public class PdfString extends PdfObject {
      */
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
-        byte b[];
-        if (encoding != null && encoding.equals(TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
-            b = PdfEncodings.convertToBytes(value, TEXT_PDFDOCENCODING);
-        else
-            b = PdfEncodings.convertToBytes(value, encoding);
+        byte b[] = getBytes();
         PdfEncryption crypto = null;
         if (writer != null)
             crypto = writer.getEncryption();
         if (crypto != null) {
+            b = (byte[])bytes.clone();
             crypto.prepareKey();
             crypto.encryptRC4(b);
         }
-        os.write(PdfContentByte.escapeString(b));
+        if (hexWriting) {
+            ByteBuffer buf = new ByteBuffer();
+            buf.append('<');
+            int len = b.length;
+            for (int k = 0; k < len; ++k)
+                buf.appendHex(b[k]);
+            buf.append('>');
+            os.write(buf.toByteArray());
+        }
+        else
+            os.write(PdfContentByte.escapeString(b));
     }
     
     /**
@@ -176,11 +184,11 @@ public class PdfString extends PdfObject {
     public String toUnicodeString() {
         if (encoding != null && encoding.length() != 0)
             return value;
-        byte b[] = PdfEncodings.convertToBytes(value, null);
-        if (b.length >= 2 && b[0] == (byte)254 && b[1] == (byte)255)
-            return PdfEncodings.convertToString(b, PdfObject.TEXT_UNICODE);
+        getBytes();
+        if (bytes.length >= 2 && bytes[0] == (byte)254 && bytes[1] == (byte)255)
+            return PdfEncodings.convertToString(bytes, PdfObject.TEXT_UNICODE);
         else
-            return PdfEncodings.convertToString(b, PdfObject.TEXT_PDFDOCENCODING);
+            return PdfEncodings.convertToString(bytes, PdfObject.TEXT_PDFDOCENCODING);
     }
     
     void setObjNum(int objNum, int objGen) {
@@ -193,9 +201,24 @@ public class PdfString extends PdfObject {
         if (decrypt != null) {
             decrypt.setHashKey(objNum, objGen);
             decrypt.prepareKey();
-            byte b[] = PdfEncodings.convertToBytes(value, null);
-            decrypt.encryptRC4(b);
-            value = PdfEncodings.convertToString(b,  null);
+            bytes = PdfEncodings.convertToBytes(value, null);
+            decrypt.encryptRC4(bytes);
+            value = PdfEncodings.convertToString(bytes, null);
         }
+    }
+    
+    public byte[] getBytes() {
+        if (bytes == null) {
+            if (encoding != null && encoding.equals(TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
+                bytes = PdfEncodings.convertToBytes(value, TEXT_PDFDOCENCODING);
+            else
+                bytes = PdfEncodings.convertToBytes(value, encoding);
+        }
+        return bytes;
+    }
+    
+    public PdfString setWritingMode(boolean hexWriting) {
+        this.hexWriting = hexWriting;
+        return this;
     }
 }

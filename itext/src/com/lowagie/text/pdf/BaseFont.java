@@ -187,7 +187,7 @@ public abstract class BaseFont {
     public static final boolean NOT_CACHED = false;
     
     /** The path to the font resources. */    
-    public static final String RESOURCE_PATH = "fonts/";
+    public static final String RESOURCE_PATH = "com/lowagie/text/pdf/fonts/";
     /** The fake CID code that represents a newline. */    
     public static final char CID_NEWLINE = '\u7fff';
     
@@ -676,6 +676,24 @@ public abstract class BaseFont {
         return fontBuilt.getFullFontName();
     }
     
+    /** Gets all the names from the font. Only the required tables are read.
+     * @param name the name of the font
+     * @param encoding the encoding of the font
+     * @param ttfAfm the true type font or the afm in a byte array
+     * @throws DocumentException on error
+     * @throws IOException on error
+     * @return an array of Object[] built with {getPostscriptFontName(), getFamilyFontName(), getFullFontName()}
+     */    
+    public static Object[] getAllFontNames(String name, String encoding, byte ttfAfm[]) throws DocumentException, IOException {
+        String nameBase = getBaseName(name);
+        BaseFont fontBuilt = null;
+        if (nameBase.toLowerCase().endsWith(".ttf") || nameBase.toLowerCase().endsWith(".otf") || nameBase.toLowerCase().indexOf(".ttc,") > 0)
+            fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true);
+        else
+            fontBuilt = createFont(name, encoding, false, false, ttfAfm, null);
+        return new Object[]{fontBuilt.getPostscriptFontName(), fontBuilt.getFamilyFontName(), fontBuilt.getFullFontName()};
+    }
+    
     /** Gets the family name of the font. If it is a True Type font
      * each array element will have {Platform ID, Platform Encoding ID,
      * Language ID, font name}. The interpretation of this values can be
@@ -788,12 +806,29 @@ public abstract class BaseFont {
     }
 
     /** Gets the font resources.
-     * @param key the name of the resource
+     * @param key the full name of the resource
      * @return the <CODE>InputStream</CODE> to get the resource or
      * <CODE>null</CODE> if not found
      */    
     public static InputStream getResourceStream(String key) {
+        return getResourceStream(key, null);
+    }
+    
+    /** Gets the font resources.
+     * @param key the full name of the resource
+     * @param loader the ClassLoader to load the resource or null to try the ones available
+     * @return the <CODE>InputStream</CODE> to get the resource or
+     * <CODE>null</CODE> if not found
+     */    
+    public static InputStream getResourceStream(String key, ClassLoader loader) {
+        if (key.startsWith("/"))
+            key = key.substring(1);
         InputStream is = null;
+        if (loader != null) {
+            is = loader.getResourceAsStream(key);
+            if (is != null)
+                return is;
+        }
         // Try to use Context Class Loader to load the properties file.
         try {
             java.lang.reflect.Method getCCL =
@@ -802,12 +837,16 @@ public abstract class BaseFont {
                 ClassLoader contextClassLoader =
                     (ClassLoader)getCCL.invoke(Thread.currentThread(),
                                                new Object[0]);
-                is = contextClassLoader.getResourceAsStream(key);
+                if (contextClassLoader != null)
+                    is = contextClassLoader.getResourceAsStream(key);
             }
-        } catch (Exception e) {}
+        } catch (Throwable e) {}
 
         if (is == null) {
-            is = BaseFont.class.getResourceAsStream(key);
+            is = BaseFont.class.getResourceAsStream("/" + key);
+        }
+        if (is == null) {
+            is = ClassLoader.getSystemResourceAsStream(key);
         }
         return is;
     }
@@ -835,4 +874,30 @@ public abstract class BaseFont {
      * @return <CODE>true</CODE> if the font has any kerning pairs
      */    
     public abstract boolean hasKernPairs();
+    
+    /**
+     * Checks if a character exists in this font.
+     * @param c the character to check
+     * @return <CODE>true</CODE> if the character has a glyph,
+     * <CODE>false</CODE> otherwise
+     */    
+    public boolean charExists(char c) {
+        byte b[] = convertToBytes(new String(new char[]{c}));
+        return b.length > 0;
+    }
+    
+    /**
+     * Sets the character advance.
+     * @param c the character
+     * @param advance the character advance normalized to 1000 units
+     * @return <CODE>true</CODE> if the advance was set,
+     * <CODE>false</CODE> otherwise
+     */    
+    public boolean setCharAdvance(char c, int advance) {
+        byte b[] = convertToBytes(new String(new char[]{c}));
+        if (b.length == 0)
+            return false;
+        widths[0xff & b[0]] = advance;
+        return true;
+    }
 }

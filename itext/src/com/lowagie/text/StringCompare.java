@@ -71,28 +71,7 @@ public class StringCompare implements Comparator {
  */
     
     public int compare(Object o1, Object o2) {
-        return compare((String)o1, (String)o2);
+        return ((String)o1).compareTo((String)o2);
     }
     
-/**
- * Compares 2 strings.
- *
- * @param   s1  a first string
- * @param   s2  a second string
- * @return  a value
- */
-    
-    public int compare(String s1, String s2) {
-        return s1.compareTo(s2);
-    }
-    
-/**
- * We need this function if we want to implement the Comparable interface, but we don't use this method.
- *
- * @return  always true
- */
-    
-    public boolean equals(Object o) {
-        return true;
-    }
 }

@@ -103,9 +103,10 @@ public class PRTokeniser {
     protected String stringValue;
     protected int reference;
     protected int generation;
+    protected boolean hexString;
     
     private static final int LINE_SEGMENT_SIZE = 256;
-
+    
     public PRTokeniser(String filename) throws IOException {
         file = new RandomAccessFileOrArray(filename);
     }
@@ -326,6 +327,7 @@ public class PRTokeniser {
                 }
                 outBuf = new StringBuffer();
                 type = TK_STRING;
+                hexString = true;
                 int v2 = 0;
                 while (true) {
                     while (isWhitespace(v1))
@@ -364,6 +366,7 @@ public class PRTokeniser {
             {
                 outBuf = new StringBuffer();
                 type = TK_STRING;
+                hexString = false;
                 int nesting = 0;
                 while (true) {
                     ch = file.read();
@@ -557,4 +560,9 @@ public class PRTokeniser {
         }
         return null;
     }
+    
+    public boolean isHexString() {
+        return this.hexString;
+    }
+    
 }

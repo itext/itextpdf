@@ -327,4 +327,8 @@ public abstract class PdfObject {
     public boolean isStream() {
         return (this.type == STREAM);
     }
+
+    public boolean isIndirect() {
+        return (this.type == INDIRECT);
+    }
 }

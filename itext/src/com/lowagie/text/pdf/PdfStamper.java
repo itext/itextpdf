@@ -51,6 +51,7 @@ import java.io.IOException;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.DocWriter;
 import java.util.HashMap;
+import java.util.List;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -230,4 +231,27 @@ public class PdfStamper {
         stamper.addAnnotation(annot, page);
     }
     
+    /**
+     * Sets the bookmarks. The list structure is defined in
+     * <CODE>SimpleBookmark#</CODE>.
+     * @param outlines the bookmarks or <CODE>null</CODE> to remove any
+     * @throws IOException on error
+     */    
+    public void setOutlines(List outlines) throws IOException {
+        stamper.setOutlines(outlines);
+    }
+
+    /**
+     * Adds <CODE>name</CODE> to the list of fields that will be flattened on close,
+     * all the other fields will remain. If this method is never called or is called
+     * with invalid field names, all the fields will be flattened.
+     * <p>
+     * Calling <CODE>setFormFlattening(true)</CODE> is needed to have any kind of
+     * flattening.
+     * @param name the field name
+     * @return <CODE>true</CODE> if the field exists, <CODE>false</CODE> otherwise
+     */    
+    public boolean partialFormFlattening(String name) {
+        return stamper.partialFormFlattening(name);
+    }
 }

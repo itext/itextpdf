@@ -164,7 +164,7 @@ public class Barcode39 extends Barcode{
      * stop characters
      * @return the bars
      */    
-    static byte[] getBarsCode39(String text) {
+    public static byte[] getBarsCode39(String text) {
         text = "*" + text + "*";
         byte bars[] = new byte[text.length() * 10 - 1];
         for (int k = 0; k < text.length(); ++k) {
@@ -181,7 +181,7 @@ public class Barcode39 extends Barcode{
      * @param text the extended text
      * @return the escaped text
      */    
-    static String getCode39Ex(String text) {
+    public static String getCode39Ex(String text) {
         String out = "";
         for (int k = 0; k < text.length(); ++k) {
             char c = text.charAt(k);

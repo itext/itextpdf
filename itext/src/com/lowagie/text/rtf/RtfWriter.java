@@ -874,8 +874,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 case Element.IMGTEMPLATE:
                 case Element.JPEG:
                     Image img = (Image)element;
-                    if (img.url() != null)
-                        writeImage(img, out);
+                    writeImage(img, out);
                     break;
 
                 case Element.AUTHOR:
@@ -970,6 +969,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 out.write(alignCenter);
                 break;
             case Element.ALIGN_JUSTIFIED:
+            case Element.ALIGN_JUSTIFIED_ALL:
                 out.write(escape);
                 out.write(alignJustify);
                 break;
@@ -2175,7 +2175,7 @@ public class RtfWriter extends DocWriter implements DocListener {
             } else if (ch == '\n') {
                 ret.append("\\par ");
             } else if (((int) ch) > z) {
-                ret.append("\\u").append((long) ch).append('G');
+                ret.append("\\u").append((long) ch).append('?');
             } else {
                 ret.append(ch);
             }

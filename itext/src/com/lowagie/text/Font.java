@@ -611,4 +611,109 @@ public class Font implements Comparable {
     public BaseFont getBaseFont() {
         return baseFont;
     }
+
+    /** Gets the <CODE>BaseFont</CODE> this class represents.
+     * For the built-in fonts a <CODE>BaseFont</CODE> is calculated.
+     * @param specialEncoding <CODE>true</CODE> to use the special encoding for Symbol and ZapfDingbats,
+     * <CODE>false</CODE> to always use <CODE>Cp1252</CODE>
+     * @return the <CODE>BaseFont</CODE> this class represents
+     */    
+    public BaseFont getCalculatedBaseFont(boolean specialEncoding) {
+        if (baseFont != null)
+            return baseFont;
+        int style = this.style;
+        if (style == UNDEFINED) {
+            style = NORMAL;
+        }
+        String fontName = BaseFont.HELVETICA;
+        String encoding = BaseFont.WINANSI;
+        BaseFont cfont = null;
+        switch(family) {
+            case COURIER:
+                switch(style & BOLDITALIC) {
+                    case BOLD:
+                        fontName = BaseFont.COURIER_BOLD;
+                        break;
+                    case ITALIC:
+                        fontName = BaseFont.COURIER_OBLIQUE;
+                        break;
+                    case BOLDITALIC:
+                        fontName = BaseFont.COURIER_BOLDOBLIQUE;
+                        break;
+                    default:
+                    //case NORMAL:
+                        fontName = BaseFont.COURIER;
+                        break;
+                }
+                break;
+            case TIMES_ROMAN:
+                switch(style & BOLDITALIC) {
+                    case BOLD:
+                        fontName = BaseFont.TIMES_BOLD;
+                        break;
+                    case ITALIC:
+                        fontName = BaseFont.TIMES_ITALIC;
+                        break;
+                    case BOLDITALIC:
+                        fontName = BaseFont.TIMES_BOLDITALIC;
+                        break;
+                        default:
+                    case NORMAL:
+                        fontName = BaseFont.TIMES_ROMAN;
+                        break;
+                }
+                break;
+            case SYMBOL:
+                fontName = BaseFont.SYMBOL;
+                if (specialEncoding)
+                    encoding = BaseFont.SYMBOL;
+                break;
+            case ZAPFDINGBATS:
+                fontName = BaseFont.ZAPFDINGBATS;
+                if (specialEncoding)
+                    encoding = BaseFont.ZAPFDINGBATS;
+                break;
+            default:
+            //case Font.HELVETICA:
+                switch(style & BOLDITALIC) {
+                    case BOLD:
+                        fontName = BaseFont.HELVETICA_BOLD;
+                        break;
+                    case ITALIC:
+                        fontName = BaseFont.HELVETICA_OBLIQUE;
+                        break;
+                    case BOLDITALIC:
+                        fontName = BaseFont.HELVETICA_BOLDOBLIQUE;
+                        break;
+                        default:
+                    case NORMAL:
+                        fontName = BaseFont.HELVETICA;
+                        break;
+                }
+                break;
+        }
+        try {
+            cfont = BaseFont.createFont(fontName, encoding, false);
+        }
+        catch (Exception ee) {
+            throw new ExceptionConverter(ee);
+        }
+        return cfont;
+    }
+    
+    /** Gets the style that can be used with the calculated <CODE>BaseFont</CODE>.
+     * @return the style that can be used with the calculated <CODE>BaseFont</CODE>
+     */    
+    public int getCalculatedStyle() {
+        int style = this.style;
+        if (style == UNDEFINED) {
+            style = NORMAL;
+        }
+        if (baseFont != null)
+            return style;
+        if (family == SYMBOL || family == ZAPFDINGBATS)
+            return style;
+        else
+            return style & (~BOLDITALIC);
+    }
 }

@@ -492,15 +492,15 @@ public class FontFactory extends java.lang.Object {
     
     public static void register(String path, String alias) {
         try {
-            if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf")) {
-                BaseFont bf = BaseFont.createFont(path, BaseFont.WINANSI, false, false, null, null);
-                trueTypeFonts.setProperty(bf.getPostscriptFontName(), path);
+            if (path.toLowerCase().endsWith(".ttf") || path.toLowerCase().endsWith(".otf") || path.toLowerCase().indexOf(".ttc,") > 0) {
+                Object allNames[] = BaseFont.getAllFontNames(path, BaseFont.WINANSI, null);
+                trueTypeFonts.setProperty((String)allNames[0], path);
                 if (alias != null) {
                     trueTypeFonts.setProperty(alias, path);
                 }
                 String fullName = null;
                 String familyName = null;
-                String[][] names = bf.getFullFontName();
+                String[][] names = (String[][])allNames[2];
                 for (int i = 0; i < names.length; i++) {
                     if ("0".equals(names[i][2])) {
                         fullName = names[i][3];
@@ -512,7 +512,7 @@ public class FontFactory extends java.lang.Object {
                     trueTypeFonts.setProperty(names[i][3], path);
                 }
                 if (fullName != null) {
-                    names = bf.getFamilyFontName();
+                    names = (String[][])allNames[1];
                     for (int i = 0; i < names.length; i++) {
                         if ("0".equals(names[i][2])) {
                             familyName = names[i][3];
@@ -528,12 +528,11 @@ public class FontFactory extends java.lang.Object {
                 }
             }
             else if (path.toLowerCase().endsWith(".ttc")) {
+                if (alias != null)
+                    System.err.println("class FontFactory: You can't define an alias for a true type collection.");
                 String[] names = BaseFont.enumerateTTCNames(path);
                 for (int i = 0; i < names.length; i++) {
-                    trueTypeFonts.setProperty(names[i], path + "," + i);
-                }
-                if (alias != null) {
-                    System.err.println("class FontFactory: You can't define an alias for a true type collection.");
+                    register(path + "," + i);
                 }
             }
             else if (path.toLowerCase().endsWith(".afm")) {
@@ -556,25 +555,30 @@ public class FontFactory extends java.lang.Object {
      * @return the number of fonts registered
      */    
     public static int registerDirectory(String dir) {
-        File file = new File(dir);
-        if (!file.exists() || !file.isDirectory())
-            return 0;
-        String files[] = file.list();
-        if (files == null)
-            return 0;
         int count = 0;
-        for (int k = 0; k < files.length; ++k) {
-            file = new File(dir, files[k]);
-            String name = file.getPath().toLowerCase();
-            try {
-                if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm") || name.endsWith(".ttc")) {
-                    register(file.getPath(), null);
-                    ++count;
+        try {
+            File file = new File(dir);
+            if (!file.exists() || !file.isDirectory())
+                return 0;
+            String files[] = file.list();
+            if (files == null)
+                return 0;
+            for (int k = 0; k < files.length; ++k) {
+                try {
+                    file = new File(dir, files[k]);
+                    String name = file.getPath().toLowerCase();
+                    if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm") || name.endsWith(".ttc")) {
+                        register(file.getPath(), null);
+                        ++count;
+                    }
+                }
+                catch (Exception e) {
+                    //empty on purpose
                 }
             }
-            catch (Exception e) {
-                //empty on purpose
-            }
+        }
+        catch (Exception e) {
+            //empty on purpose
         }
         return count;
     }
