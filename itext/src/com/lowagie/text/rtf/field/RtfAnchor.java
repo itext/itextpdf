@@ -98,6 +98,7 @@ public class RtfAnchor extends RtfField {
      * type to HYPERLINK and then writes the url.
      * 
      * @return The field instructions for this RtfAnchor
+     * @throws IOException
      */
     protected byte[] writeFieldInstContent() throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -114,6 +115,7 @@ public class RtfAnchor extends RtfField {
      * of the RtfPhrase.
      * 
      * @return The field result for this RtfAnchor
+     * @throws IOException
      */
     protected byte[] writeFieldResultContent() throws IOException  {
         return content.write();

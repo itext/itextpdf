@@ -62,6 +62,7 @@ import java.net.URL;
 import com.lowagie.text.pdf.PdfAction;
 import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.HyphenationEvent;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
 
@@ -92,6 +93,11 @@ public class Chunk implements Element, MarkupAttributes {
 /** This is a Chunk containing a newline. */
     public static final Chunk NEWLINE = new Chunk("\n");
 
+/** This is a Chunk containing a newpage. */
+    public static final Chunk NEXTPAGE = new Chunk("");
+    static {
+    	NEXTPAGE.setNewPage();
+    }
 /** Key for sub/superscript. */
     public static final String SUBSUPSCRIPT = "SUBSUPSCRIPT";
 
@@ -381,6 +387,17 @@ public class Chunk implements Element, MarkupAttributes {
     }
 
 /**
+ * Gets the width of the Chunk in points.
+ * @return a width in points
+ */
+    public float getWidthPoint() {
+        if (getImage() != null) {
+            return getImage().scaledWidth();
+        }
+    	return font.getCalculatedBaseFont(true).getWidthPoint(content(), font.getCalculatedSize()) * getHorizontalScaling();
+    }
+    
+/**
  * Sets the text displacement relative to the baseline. Positive values rise the text,
  * negative values lower the text.
  * <P>
@@ -391,6 +408,18 @@ public class Chunk implements Element, MarkupAttributes {
 
     public Chunk setTextRise(float rise) {
         return setAttribute(SUBSUPSCRIPT, new Float(rise));
+    }
+    
+    /**
+     * Gets the text displacement relatiev to the baseline.
+     * @return a displacement in points
+     */
+    public float getTextRise() {
+    	if (attributes.containsKey(SUBSUPSCRIPT)) {
+    		Float f = (Float)attributes.get(SUBSUPSCRIPT);
+    		return f.floatValue();
+    	}
+    	return 0.0f;
     }
 
     /** Sets the text rendering mode. It can outline text, simulate bold and make
@@ -421,13 +450,24 @@ public class Chunk implements Element, MarkupAttributes {
     }
 
     /**
-     * Sets the text horizontal scaling. A vaue of 1 is normal and a value of 0.5f
+     * Sets the text horizontal scaling. A value of 1 is normal and a value of 0.5f
      * shrinks the text to half it's width.
      * @param scale the horizontal scaling factor
      * @return this <CODE>Chunk</CODE>
      */    
     public Chunk setHorizontalScaling(float scale) {
         return setAttribute(HSCALE, new Float(scale));
+    }
+    
+    /**
+     * Gets the horizontal scaling.
+     * @return a percentage in float
+     */
+    public float getHorizontalScaling() {
+    	if (attributes == null) return 1f;
+    	Float f = (Float)attributes.get(HSCALE);
+    	if (f == null) return 1f;
+    	return f.floatValue();
     }
     
 /**
@@ -494,6 +534,19 @@ public class Chunk implements Element, MarkupAttributes {
      */
     public Chunk setBackground(Color color, float extraLeft, float extraBottom, float extraRight, float extraTop) {
         return setAttribute(BACKGROUND, new Object[]{color, new float[]{extraLeft, extraBottom, extraRight, extraTop}});
+    }
+
+    /**
+     * Sets an horizontal line that can be an underline or a strikethrough.
+     * Actually, the line can be anywhere vertically and has always the
+     * <CODE>Chunk</CODE> width. Multiple call to this method will
+     * produce multiple lines.
+     * @param thickness the absolute thickness of the line
+     * @param yPosition the absolute y position relative to the baseline
+     * @return this <CODE>Chunk</CODE>
+     */    
+    public Chunk setUnderline(float thickness, float yPosition) {
+        return setUnderline(null, thickness, 0f, yPosition, 0f, PdfContentByte.LINE_CAP_BUTT);
     }
 
     /**
@@ -723,6 +776,11 @@ public class Chunk implements Element, MarkupAttributes {
         return markupAttributes;
     }
 
+    /**
+     * Gets the keys of a Hashtable
+     * @param table a Hashtable
+     * @return the keyset of a Hashtable (or an empty set if table is null)
+     */
     public static Set getKeySet(Hashtable table) {
         return (table == null) ? Collections.EMPTY_SET : table.keySet();
     }

@@ -60,7 +60,7 @@ import com.lowagie.text.DocumentException;
 
 
 /**
- * Generates an XXX file from an iText XML file.
+ * Generates an specific file from an iText XML file.
  *
  * @version 1.0
  * @author <a href="mailto:orangeherbert@users.sourceforge.net">Matt Benson</a>
@@ -137,6 +137,8 @@ public abstract class XmlToXXX
 /**
  * Add a <CODE>DocWriter</CODE> for the specified <CODE>Document</CODE> and
  * <CODE>OutputStream</CODE>.
+ * @param doc The document to which content will be added
+ * @param out The outputstream to which the document will be sent
  * @throws DocumentException if document errors occur.
  */	
 	protected abstract void addWriter(Document doc, OutputStream out)

@@ -772,6 +772,8 @@ public class PdfSignatureAppearance {
             lit = new PdfLiteral(80);
             exclusionLocations.put(PdfName.BYTERANGE, lit);
             sigStandard.put(PdfName.BYTERANGE, lit);
+            if (signatureEvent != null)
+                signatureEvent.getSignatureDictionary(sigStandard);
             writer.addToBody(sigStandard, refSig, false);
         }
         else {
@@ -786,6 +788,8 @@ public class PdfSignatureAppearance {
                 exclusionLocations.put(key, lit);
                 cryptoDictionary.put(key, lit);
             }
+            if (signatureEvent != null)
+                signatureEvent.getSignatureDictionary(cryptoDictionary);
             writer.addToBody(cryptoDictionary, refSig, false);
         }
         writer.close(stamper.getMoreInfo());
@@ -1055,6 +1059,22 @@ public class PdfSignatureAppearance {
     }
     
     /**
+     * Getter for property signatureEvent.
+     * @return Value of property signatureEvent.
+     */
+    public SignatureEvent getSignatureEvent() {
+        return this.signatureEvent;
+    }
+    
+    /**
+     * Sets the signature event to allow modification of the signature dictionary.
+     * @param signatureEvent the signature event
+     */
+    public void setSignatureEvent(SignatureEvent signatureEvent) {
+        this.signatureEvent = signatureEvent;
+    }
+    
+    /**
      * Commands to draw a yellow question mark in a stream content
      */    
     public static final String questionMark = 
@@ -1127,6 +1147,11 @@ public class PdfSignatureAppearance {
     private int runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
     
     /**
+     * Holds value of property signatureEvent.
+     */
+    private SignatureEvent signatureEvent;
+    
+    /**
      *
      */    
     private static class RangeStream extends InputStream {
@@ -1180,5 +1205,16 @@ public class PdfSignatureAppearance {
             }
             return -1;
         }
+    }
+    
+    /**
+     * An interface to retrieve the signature dictionary for modification.
+     */    
+    public interface SignatureEvent {
+        /**
+         * Allows modification of the signature dictionary.
+         * @param sig the signature dictionary
+         */        
+        public void getSignatureDictionary(PdfDictionary sig);
     }
 }

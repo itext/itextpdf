@@ -108,6 +108,7 @@ public class Chapter extends Section implements TextElementArray {
  * Creates a new <CODE>Chapter</CODE> following a set of attributes.
  *
  * @param	attributes	the attributes
+ * @param number a userdefined Chapter number
  */
     
     public Chapter(Properties attributes, int number) {

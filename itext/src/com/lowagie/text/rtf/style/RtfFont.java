@@ -227,6 +227,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      *
      * @param doc The RtfDocument this font appears in
      * @param font The Font to use as a base
+     * @param superSubScript a value for sub- or superscript
      */
     public RtfFont(RtfDocument doc, Font font, float superSubScript) {
         this.document = doc;
@@ -369,6 +370,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
 
     /**
      * Unused
+     * @return an empty byte array
      */
     public byte[] write() {
         return new byte[0];
@@ -414,6 +416,9 @@ public class RtfFont extends Font implements RtfExtendedElement {
         return this.fontName;
     }
 
+    /**
+     * @see com.lowagie.text.Font#getFamilyname()
+     */
     public String getFamilyname() {
         return this.fontName;
     }
@@ -469,12 +474,14 @@ public class RtfFont extends Font implements RtfExtendedElement {
 
     /**
      * Unused
+     * @param inTable
      */
     public void setInTable(boolean inTable) {
     }
     
     /**
      * Unused
+     * @param inHeader
      */
     public void setInHeader(boolean inHeader) {
     }

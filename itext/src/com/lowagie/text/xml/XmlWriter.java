@@ -216,7 +216,8 @@ public class XmlWriter extends DocWriter implements DocListener {
     
 /**
  * Signals that an <CODE>Element</CODE> was added to the <CODE>Document</CODE>.
- *
+ * 
+ * @param element A high level object that will be added to the XML
  * @return  <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
  * @throws  DocumentException when a document isn't open yet, or has been closed
  */
@@ -316,6 +317,7 @@ public class XmlWriter extends DocWriter implements DocListener {
  *
  * @param   element     the element
  * @param   indent      the indentation
+ * @throws IOException
  */
     
     private void write(Element element, int indent) throws IOException {
@@ -705,6 +707,7 @@ public class XmlWriter extends DocWriter implements DocListener {
  *
  * @param   section     the section to write
  * @param   indent      the indentation
+ * @throws IOException
  */
     
     private void writeSection(Section section, int indent) throws IOException {
@@ -752,6 +755,7 @@ public class XmlWriter extends DocWriter implements DocListener {
  * Writes the XML representation of this <CODE>Rectangle</CODE>.
  *
  * @param rectangle     a <CODE>Rectangle</CODE>
+ * @throws IOException
  */
     
     private void write(Rectangle rectangle) throws IOException {
@@ -789,6 +793,7 @@ public class XmlWriter extends DocWriter implements DocListener {
  * Encodes a <CODE>String</CODE>.
  *
  * @param   string     the <CODE>String</CODE> to encode
+ * @param indent counter that keeps the number of tabs that has to be added for indentation
  * @return  the encoded <CODE>String</CODE>
  */
     
@@ -833,6 +838,7 @@ public class XmlWriter extends DocWriter implements DocListener {
  * Writes the XML representation of a <CODE>Font</CODE>.
  *
  * @param font  a <CODE>Font</CODE>
+ * @throws IOException
  */
     
     private void write(Font font) throws IOException {

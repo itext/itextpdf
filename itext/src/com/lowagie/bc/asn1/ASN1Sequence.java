@@ -94,7 +94,7 @@ public abstract class ASN1Sequence
     /**
      * return the object at the sequence postion indicated by index.
      *
-     * @param the sequence number (starting at zero) of the object
+     * @param index the sequence number (starting at zero) of the object
      * @return the object at the sequence postion indicated by index.
      */
     public DEREncodable getObjectAt(

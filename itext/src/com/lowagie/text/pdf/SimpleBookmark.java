@@ -244,7 +244,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
 	
 	/**
 	 * Gets number of indirect. If type of directed indirect is PAGES, it refers PAGE object through KIDS.
-	 * @author Kazuya Ujihara
+	 * (Contributed by Kazuya Ujihara)
 	 * @param indirect 
 	 * 2004-06-13
 	 */

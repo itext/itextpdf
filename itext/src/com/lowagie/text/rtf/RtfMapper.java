@@ -109,6 +109,7 @@ public class RtfMapper {
      * 
      * @param element The Element to wrap
      * @return A RtfBasicElement wrapping the Element
+     * @throws DocumentException
      */
     public RtfBasicElement mapElement(Element element) throws DocumentException {
         RtfBasicElement rtfElement = null;

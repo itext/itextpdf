@@ -79,7 +79,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
     }
     
     /** Reads an XFDF form.
-     * @param pdfIn the byte array with the form
+     * @param xfdfIn the byte array with the form
      * @throws IOException on error
      */    
     public XfdfReader(byte xfdfIn[]) throws IOException {

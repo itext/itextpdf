@@ -412,6 +412,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * Performs extra checks when executing table code (currently only when cells are added).
+     * @param aDebug
      */
     public void setDebug(boolean aDebug) {
         mDebug = aDebug;
@@ -420,6 +421,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     /**
      * Sets the default layout of the Table to
      * the provided Cell
+     * @param value a cell with all the defaults
      */
     public void setDefaultLayout(Cell value) {
         defaultLayout = value;
@@ -538,6 +540,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * @param       aCell    The <CODE>Cell</CODE> to add
      * @param       row     The row where the <CODE>Cell</CODE> will be added
      * @param       column  The column where the <CODE>Cell</CODE> will be added
+     * @throws BadElementException
      */
     
     public void addCell(Cell aCell, int row, int column) throws BadElementException {
@@ -549,6 +552,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      *
      * @param       aCell        The <CODE>Cell</CODE> to add
      * @param       aLocation    The location where the <CODE>Cell</CODE> will be added
+     * @throws BadElementException
      */
     
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
@@ -705,7 +709,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         setCurrentLocationToNextValidPosition(aLocation);
     }
     
-/*
+/**
  * Will fill empty cells with valid blank <CODE>Cell</CODE>s
  */
     
@@ -874,6 +878,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * Deletes a column in this table.
      *
      * @param       column  the number of the column that has to be deleted
+     * @throws BadElementException
      */
     
     public void deleteColumn(int column) throws BadElementException {
@@ -919,7 +924,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * Deletes all rows in this table.
-     * @author dperezcar
+	 * (contributed by dperezcar@fcc.es)
      */
     
     public void deleteAllRows() {
@@ -1089,6 +1094,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * 25% for the second and third column.
      *
      * @param       widths  an array with values
+     * @throws BadElementException
      */
     
     public void setWidths(float[] widths) throws BadElementException {
@@ -1120,6 +1126,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * The values will be recalculated as percentages of this sum.
      *
      * @param       widths  an array with values
+     * @throws DocumentException
      */
     
     public void setWidths(int[] widths) throws DocumentException {
@@ -1231,6 +1238,15 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     }
     
     /**
+     * Gets the last number of the rows that contain headers.
+     *  
+     * @return a rownumber
+     */
+    public int lastHeaderRow() {
+        return this.lastHeaderRow;
+    }
+    
+    /**
      * Gets the dimension of this table
      *
      * @return  dimension
@@ -1243,7 +1259,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     /**
      * returns the element at the position row, column
      *          (Cast to Cell or Table)
-     *
+     * 
+     * @param row
+     * @param column
      * @return  dimension
      */
     
@@ -1411,20 +1429,15 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                                 if(convertWidth(wb)==convertWidth(wt)) break;
                             }
                             
-                            if(convertWidth(wb)==convertWidth(wt) == false) {
+                            /* if(convertWidth(wb)==convertWidth(wt) == false) {
                                 System.out.println( "error w !=w2");
-                            }
+                            } */
                         }
                         colMap[cb] = lDummyColumn+ct;
                         
                         // need to change this to work out how many cols to span
                         for (int k=0; k < lDummyTable.getDimension().height; k++) {
-                            if(lNewWidths.length==23 && i==2 && k==3) {
-                                System.out.println( "1");
-                            }
-                            
                             for (int l=0; l < lDummyTable.getDimension().width; l++) {
-                                
                                 int yy=l;
                                 lDummyElement = lDummyTable.getElement(k,l);
                                 if (lDummyElement != null) {
@@ -1497,6 +1510,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      *
      * @param   aCell       the cell that has to be checked
      * @param   aLocation   the location where the cell has to be placed
+     * @return true if the location was valid
      */
     private boolean isValidLocation(Cell aCell, Point aLocation) {
         // rowspan not beyond last column
@@ -1636,6 +1650,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      *  Sets current col/row to valid(empty) pos after addCell/Table
+     * @param aLocation a location in the Table
      */
     private void setCurrentLocationToNextValidPosition(Point aLocation)    {
         // set latest location to next valid position
@@ -1695,6 +1710,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @return NA
      */
     public float top() {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
@@ -1702,6 +1718,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @return NA
      */
     public float bottom() {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
@@ -1709,6 +1726,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @return NA
      */
     public float left() {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
@@ -1716,6 +1734,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @return NA
      */
     public float right() {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
@@ -1723,6 +1742,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @param margin NA
+     * @return NA
      */
     public float top(int margin) {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
@@ -1730,6 +1751,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @param margin NA
+     * @return NA
      */
     public float bottom(int margin) {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
@@ -1737,6 +1760,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @param margin NA
+     * @return NA
      */
     public float left(int margin) {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
@@ -1744,6 +1769,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @param margin NA
+     * @return NA
      */
     public float right(int margin) {
         throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
@@ -1751,6 +1778,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @param value NA
      */
     public void setTop(int value) {
         throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
@@ -1758,6 +1786,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @param value NA
      */
     public void setBottom(int value) {
         throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
@@ -1765,6 +1794,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @param value NA
      */
     public void setLeft(int value) {
         throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
@@ -1772,6 +1802,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * This method throws an <CODE>UnsupportedOperationException</CODE>.
+     * @param value NA
      */
     public void setRight(int value) {
         throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
@@ -1779,7 +1810,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * Returns the next row 0-based index where a new cell would be added.
-     * @author dperezcar
+	 * (contributed by dperezcar@fcc.es)
+     * @return x coordinate for the next row
      */
     public int getNextRow() {
         return curPosition.x;
@@ -1787,7 +1819,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /**
      * Returns the next column 0-based index where a new cell would be added.
-     * @author dperezcar
+	 * (contributed by dperezcar@fcc.es)
+     * @return y coordinate for the next row
      */
     public int getNextColumn() {
         return curPosition.y;

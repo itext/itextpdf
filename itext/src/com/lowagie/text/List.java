@@ -150,6 +150,12 @@ public class List implements TextElementArray, MarkupAttributes {
         this.symbolIndent = symbolIndent;
     }
     
+    /**
+     * Creates a list
+     * @param numbered has the list to be numbered?
+     * @param lettered has the list to be 'numbered' with letters
+     * @param symbolIndent the indentation of the symbol
+     */
     public List(boolean numbered, boolean lettered, float symbolIndent ) {
         this.numbered = numbered;
         this.lettered = lettered;
@@ -256,6 +262,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
  *
  * @param	o		the object to add.
+ * @return true if adding the object succeeded
  */
     
     public boolean add(Object o) {
@@ -406,6 +413,7 @@ public class List implements TextElementArray, MarkupAttributes {
     
 /**
  * Gets the symbol indentation.
+ * @return the symbol indentation
  */
     
     public float symbolIndent() {
@@ -413,7 +421,8 @@ public class List implements TextElementArray, MarkupAttributes {
     }
     
 /**
- * Gets the symbol indentation.
+ * Gets the Chunk containing the symbol.
+ * @return a Chunk with a symbol
  */
     
     public Chunk symbol() {
@@ -422,6 +431,7 @@ public class List implements TextElementArray, MarkupAttributes {
     
 /**
  * Gets the first number        .
+ * @return a number
  */
     
     public int first() {

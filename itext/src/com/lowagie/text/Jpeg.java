@@ -88,9 +88,12 @@ public class Jpeg extends Image implements Element {
     /** Jpeg markers without additional parameters. */
     public static final int[] NOPARAM_MARKERS = {0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0x01};
     
+    /** Marker value */
     public static final int M_APP0 = 0xE0;
+    /** Marker value */
     public static final int M_APPE = 0xEE;
     
+    /** sequence that is used in all Jpeg files */
     public static final byte JFIF_ID[] = {0x4A, 0x46, 0x49, 0x46, 0x00};
     // Constructors
     
@@ -102,6 +105,8 @@ public class Jpeg extends Image implements Element {
      * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
      *
      * @param		url			the <CODE>URL</CODE> where the image can be found
+     * @throws BadElementException
+     * @throws IOException
      */
     
     public Jpeg(URL url) throws BadElementException, IOException {
@@ -113,6 +118,10 @@ public class Jpeg extends Image implements Element {
      * Constructs a <CODE>Jpeg</CODE>-object, using an <VAR>url</VAR>.
      *
      * @param		url			the <CODE>URL</CODE> where the image can be found.
+     * @param width new width of the Jpeg
+     * @param height new height of the Jpeg
+     * @throws BadElementException
+     * @throws IOException
      * @deprecated	use Image.getInstance(...) to create an Image
      */
     
@@ -126,6 +135,9 @@ public class Jpeg extends Image implements Element {
      * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
      *
      * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+     * @throws BadElementException
+     * @throws MalformedURLException
+     * @throws IOException
      * @deprecated	use Image.getInstance(...) to create an Image
      */
     
@@ -137,6 +149,11 @@ public class Jpeg extends Image implements Element {
      * Constructs a <CODE>Jpeg</CODE>-object, using a <VAR>filename</VAR>.
      *
      * @param		filename	a <CODE>String</CODE>-representation of the file that contains the Image.
+     * @param width new width of the Jpeg
+     * @param height new height of the Jpeg
+     * @throws BadElementException
+     * @throws MalformedURLException
+     * @throws IOException
      * @deprecated	use Image.getInstance(...) to create an Image
      */
     
@@ -148,6 +165,8 @@ public class Jpeg extends Image implements Element {
      * Constructs a <CODE>Jpeg</CODE>-object from memory.
      *
      * @param		img		the memory image
+     * @throws BadElementException
+     * @throws IOException
      */
     
     public Jpeg(byte[] img) throws BadElementException, IOException {
@@ -163,6 +182,8 @@ public class Jpeg extends Image implements Element {
      * @param		img			the memory image.
      * @param		width		the width you want the image to have
      * @param		height		the height you want the image to have
+     * @throws BadElementException
+     * @throws IOException
      */
     
     public Jpeg(byte[] img, float width, float height) throws BadElementException, IOException {
@@ -178,6 +199,7 @@ public class Jpeg extends Image implements Element {
      *
      * @param	is		the <CODE>InputStream</CODE>
      * @return	an int
+     * @throws IOException
      */
     
     private static final int getShort(InputStream is) throws IOException {
@@ -214,6 +236,8 @@ public class Jpeg extends Image implements Element {
     
     /**
      * This method checks if the image is a valid JPEG and processes some parameters.
+     * @throws BadElementException
+     * @throws IOException
      */
     
     private void processParameters() throws BadElementException, IOException {

@@ -181,6 +181,8 @@ public class RtfCell {
      * @param cellWidth The default width of a cell
      * @param x The column index of this <code>RtfCell</code>
      * @param y The row index of this <code>RtfCell</code>
+     * @param cellpadding the cellpadding
+     * @return the position of the right side of the cell
      */
     public int importCell(Cell cell, int cellLeft, int cellWidth, int x, int y, int cellpadding) {
         this.cellpadding = cellpadding;
@@ -227,6 +229,8 @@ public class RtfCell {
      *
      * @param os The <code>OutputStream</code> to which to write the properties
      * of the <code>RtfCell</code> to.
+     * @return true if writing the cell settings succeeded
+     * @throws DocumentException
      */
     public boolean writeCellSettings(ByteArrayOutputStream os) throws DocumentException {
         try {
@@ -416,6 +420,8 @@ public class RtfCell {
      *
      * @param os The <code>OutputStream</code> to which to write the content of
      * the <code>RtfCell</code> to.
+     * @return true if writing the cell content succeeded
+     * @throws DocumentException
      */
     public boolean writeCellContent(ByteArrayOutputStream os) throws DocumentException {
         try {
@@ -507,28 +513,37 @@ public class RtfCell {
         return cellWidth;
     }
 
-
+    /**
+     * sets the width of the cell
+     * @param value a width
+     */
     public void setCellWidth(int value) {
         cellWidth = value;
     }
 
     /**
      * Get the position of the right border of this <code>RtfCell</code>.
+     * @return position of the right border
      */
     public int getCellRight() {
         return cellRight;
     }
 
 
+    /**
+     * Sets the right position of the cell
+     * @param value a cell position
+     */
     public void setCellRight(int value) {
         cellRight = value;
     }
 
-    /*
+    /**
      * Write an Integer to the Outputstream.
      *
      * @param out The <code>OutputStream</code> to be written to.
      * @param i The int to be written.
+     * @throws IOException
      */
     private void writeInt(ByteArrayOutputStream out, int i) throws IOException {
         out.write(Integer.toString(i).getBytes());

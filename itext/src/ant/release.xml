@@ -50,7 +50,9 @@
 	
 	<target name="release.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
-		<copy file="${itext.dist}/iText.jar" tofile="${itext.sf}/itext-${releasenumber}.jar" overwrite="yes"/>
+        <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${releasenumber}.jar" overwrite="yes"/>
+		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${releasenumber}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/itext-src-${releasenumber}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${releasenumber}.tar.gz" overwrite="yes"/>
@@ -59,7 +61,9 @@
 	
 	<target name="earlyaccess.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
-		<copy file="${itext.dist}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
+        <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
+		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.zip" overwrite="yes"/>
 		<copy file="${itext.dist}/src.tar.gz" tofile="${itext.sf}/itext-src-${earlyaccesslowagie}.tar.gz" overwrite="yes"/>
 		<copy file="${itext.dist}/docs.tar.gz" tofile="${itext.sf}/itext-docs-${earlyaccesslowagie}.tar.gz" overwrite="yes"/>

@@ -91,6 +91,7 @@ public class RtfTableOfContents extends RtfField {
      * Writes the field instruction content
      * 
      * @return A byte array containing with the field instructions
+     * @throws IOException
      */
     protected byte[] writeFieldInstContent() throws IOException {
         return "TOC \\\\f \\\\h \\\\u \\\\o \"1-5\" ".getBytes();
@@ -100,6 +101,7 @@ public class RtfTableOfContents extends RtfField {
      * Writes the field result content
      * 
      * @return An byte array containing the default text
+     * @throws IOException
      */
     protected byte[] writeFieldResultContent() throws IOException {
         return defaultText.getBytes();

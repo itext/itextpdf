@@ -63,6 +63,10 @@ package com.lowagie.text;
 public class DocumentException extends Exception {
     private Exception ex;
 
+    /**
+     * Creates a Document exception.
+     * @param ex an exception that has to be turned into a DocumentException
+     */
     public DocumentException(Exception ex) {
         this.ex = ex;
     }
@@ -87,7 +91,10 @@ public class DocumentException extends Exception {
         super(message);
     }
 
-    /** We print the message of the checked exception */
+    /**
+     * We print the message of the checked exception 
+     * @return the error message
+     */
     public String getMessage() {
         if (ex == null)
             return super.getMessage();
@@ -95,7 +102,10 @@ public class DocumentException extends Exception {
             return ex.getMessage();
     }
 
-    /** and make sure we also produce a localized version */
+    /**
+     * and make sure we also produce a localized version 
+     * @return a localized message
+     */
     public String getLocalizedMessage() {
         if (ex == null)
             return super.getLocalizedMessage();
@@ -103,7 +113,10 @@ public class DocumentException extends Exception {
             return ex.getLocalizedMessage();
     }
 
-    /** The toString() is changed to be prefixed with ExceptionConverter */
+    /**
+     * The toString() is changed to be prefixed with ExceptionConverter 
+     * @return the String version of the exception
+     */
     public String toString() {
         if (ex == null)
             return super.toString();
@@ -116,8 +129,11 @@ public class DocumentException extends Exception {
         printStackTrace(System.err);
     }
 
-    /** here we prefix, with s.print(), not s.println(), the stack
-     * trace with "ExceptionConverter:" */
+    /**
+     * here we prefix, with s.print(), not s.println(), the stack
+     * trace with "ExceptionConverter:" 
+     * @param s a printstream object
+     */
     public void printStackTrace(java.io.PrintStream s) {
         if (ex == null)
             super.printStackTrace(s);
@@ -129,7 +145,10 @@ public class DocumentException extends Exception {
         }
     }
 
-    /** Again, we prefix the stack trace with "ExceptionConverter:" */
+    /**
+     * Again, we prefix the stack trace with "ExceptionConverter:" 
+     * @param s A PrintWriter object
+     */
     public void printStackTrace(java.io.PrintWriter s) {
         if (ex == null)
             super.printStackTrace(s);
@@ -141,6 +160,11 @@ public class DocumentException extends Exception {
         }
     }
 
+    /**
+     * Removes everything in a String that comes before a '.'
+     * @param s the original string
+     * @return the part that comes after the dot
+     */
     private static String split(String s) {
         int i = s.lastIndexOf('.');
         if (i < 0)

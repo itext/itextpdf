@@ -68,7 +68,7 @@ import com.lowagie.text.*;
  */
 
 public class TagMap extends HashMap {
-    
+
     class AttributeHandler extends DefaultHandler {
         
 /** This is a tag */
@@ -110,6 +110,8 @@ public class TagMap extends HashMap {
 /**
  * This method gets called when a start tag is encountered.
  *
+ * @param   uri 		the Uniform Resource Identifier
+ * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
  * @param	tag 		the name of the tag that is encountered
  * @param	attrs		the list of attributes
  */
@@ -164,6 +166,8 @@ public class TagMap extends HashMap {
 /**
  * This method gets called when an end tag is encountered.
  *
+ * @param   uri 		the Uniform Resource Identifier
+ * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
  * @param	tag		the name of the tag that ends
  */
         
@@ -173,6 +177,10 @@ public class TagMap extends HashMap {
         }
     }
     
+    /**
+     * Constructs a TagMap
+     * @param tagfile the path to an XML file with the tagmap
+     */
     public TagMap(String tagfile) {
         super();
         try {
@@ -182,6 +190,10 @@ public class TagMap extends HashMap {
         }
     }
 
+    /**
+     * Constructs a TagMap.
+     * @param in	An InputStream with the tagmap xml
+     */
     public TagMap(InputStream in) {
         super();
         init(in);

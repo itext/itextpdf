@@ -78,6 +78,7 @@ public class Watermark extends Image implements Element {
  * @param		image		an <CODE>Image</CODE>-object
  * @param		offsetX		the offset in x-direction
  * @param		offsetY		the offset in y-direction
+ * @throws MalformedURLException
  */
     
     public Watermark(Image image, float offsetX, float offsetY) throws MalformedURLException {

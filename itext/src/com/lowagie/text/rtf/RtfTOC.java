@@ -70,7 +70,7 @@ import com.lowagie.text.ExceptionConverter;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2004/09/24 15:23:46 $
+ * @version $Revision$Date: 2004/12/14 10:05:44 $
  */
 public class RtfTOC extends Chunk implements RtfField {
 
@@ -91,7 +91,9 @@ public class RtfTOC extends Chunk implements RtfField {
         super( tocName, tocFont );
     }
 
-
+    /**
+     * @see com.lowagie.text.rtf.RtfField#write(com.lowagie.text.rtf.RtfWriter, java.io.OutputStream)
+     */
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
 
         writer.writeInitialFontSignature( out, this );
@@ -162,6 +164,11 @@ public class RtfTOC extends Chunk implements RtfField {
     }
 
     
+    /**
+     * Add a toc entry
+     * @param entryName	the name of the entry
+     * @param entryFont the font to be used for the entry
+     */
     public void addTOCAsTOCEntry( String entryName, Font entryFont ) {
         this.addTOCAsTOCEntry = true;
         this.entryFont = entryFont;
@@ -169,6 +176,10 @@ public class RtfTOC extends Chunk implements RtfField {
     }
 
     
+    /**
+     * Sets the default text of the Table of Contents
+     * @param text the default text
+     */
     public void setDefaultText( String text ) {
         this.defaultText = text;
     }

@@ -90,6 +90,8 @@ public class XmlToPdf
 /**
  * Add a <CODE>DocWriter</CODE> for the specified <CODE>Document</CODE> and
  * <CODE>OutputStream</CODE>.
+ * @param doc The document to which content will be added
+ * @param out The outputstream to which the PDF will be sent
  * @throws DocumentException if document errors occur.
  */	
 	protected final void addWriter(Document doc, OutputStream out)

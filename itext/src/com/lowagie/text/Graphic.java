@@ -95,6 +95,7 @@ public class Graphic extends PdfContentByte implements Element {
  *
  * @param	listener	an <CODE>ElementListener</CODE>
  * <CODE>true</CODE> if the element was processed successfully
+ * @return true if processing this object succeeded
  */
     
     public boolean process(ElementListener listener) {
@@ -174,6 +175,11 @@ public class Graphic extends PdfContentByte implements Element {
     
 /**
  * draws a horizontal line.
+ * @param lineWidth width of the line
+ * @param color color of the line
+ * @param x1 start position of the line
+ * @param x2 end position of the line
+ * @param y y-coordinate of the line
  */
     
     public void drawHorizontalLine(float lineWidth, Color color, float x1, float x2, float y) {
@@ -187,6 +193,8 @@ public class Graphic extends PdfContentByte implements Element {
     
 /**
  * Orders this graphic to draw a horizontal line.
+ * @param linewidth linewidth of the border
+ * @param extraSpace extraspace needed as marging on the page
  */
     
     public void setBorder(float linewidth, float extraSpace) {
@@ -196,6 +204,9 @@ public class Graphic extends PdfContentByte implements Element {
     
 /**
  * Orders this graphic to draw a horizontal line.
+ * @param linewidth linewidth of the border
+ * @param extraSpace extraspace needed as marging on the page
+ * @param color color of the borderbox
  */
     
     public void setBorder(float linewidth, float extraSpace, Color color) {
@@ -205,6 +216,12 @@ public class Graphic extends PdfContentByte implements Element {
     
 /**
  * Draws a border
+ * @param lineWidth linewidth of the border
+ * @param color color of the borderbox
+ * @param llx lower left x coordinate
+ * @param lly lower left y coordinate
+ * @param urx upper right x coordinate
+ * @param ury upper right y coordinate
  */
     public void drawBorder(float lineWidth, Color color, float llx, float lly, float urx, float ury) {
         setLineWidth(lineWidth);
@@ -216,6 +233,11 @@ public class Graphic extends PdfContentByte implements Element {
     
 /**
  * Processes the attributes of this object.
+ * @param llx lower left x coordinate
+ * @param lly lower left y coordinate
+ * @param urx upper right x coordinate
+ * @param ury upper right y coordinate
+ * @param y
  */
     
     public void processAttributes(float llx, float lly, float urx, float ury, float y) {

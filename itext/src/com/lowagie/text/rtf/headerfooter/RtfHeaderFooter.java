@@ -194,8 +194,7 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
     
     /**
      * Constructs a RtfHeaderFooter for any Element.
-     * 
-     * @param doc The RtfDocument this RtfHeaderFooter belongs to
+     *
      * @param element The Element to display as content of this RtfHeaderFooter
      */
     public RtfHeaderFooter(Element element) {
@@ -296,12 +295,14 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
 
     /**
      * Unused
+     * @param inTable
      */
     public void setInTable(boolean inTable) {
     }
     
     /**
      * Unused
+     * @param inHeader
      */
     public void setInHeader(boolean inHeader) {
     }

@@ -192,28 +192,35 @@ public class PRStream extends PdfStream {
             else {
                 byte buf[] = new byte[Math.min(length, 4092)];
                 RandomAccessFileOrArray file = writer.getReaderFile(reader);
-                file.seek(offset);
-                int size = length;
-                
-                //added by ujihara for decryption
-                PdfEncryption decrypt = reader.getDecrypt();
-                if (decrypt != null) {
-                    decrypt.setHashKey(objNum, objGen);
-                    decrypt.prepareKey();
-                }
-                
-                if (crypto != null)
-                    crypto.prepareKey();
-                while (size > 0) {
-                    int r = file.read(buf, 0, Math.min(size, buf.length));
-                    size -= r;
-                    
-                    if (decrypt != null)
-                        decrypt.encryptRC4(buf, 0, r); //added by ujihara for decryption
-                    
+                boolean isOpen = file.isOpen();
+                try {
+                    file.seek(offset);
+                    int size = length;
+
+                    //added by ujihara for decryption
+                    PdfEncryption decrypt = reader.getDecrypt();
+                    if (decrypt != null) {
+                        decrypt.setHashKey(objNum, objGen);
+                        decrypt.prepareKey();
+                    }
+
                     if (crypto != null)
-                        crypto.encryptRC4(buf, 0, r);
-                    os.write(buf, 0, r);
+                        crypto.prepareKey();
+                    while (size > 0) {
+                        int r = file.read(buf, 0, Math.min(size, buf.length));
+                        size -= r;
+
+                        if (decrypt != null)
+                            decrypt.encryptRC4(buf, 0, r); //added by ujihara for decryption
+
+                        if (crypto != null)
+                            crypto.encryptRC4(buf, 0, r);
+                        os.write(buf, 0, r);
+                    }
+                }
+                finally {
+                    if (!isOpen)
+                        try{file.close();}catch(Exception e){}
                 }
             }
         }

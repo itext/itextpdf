@@ -63,8 +63,9 @@ public class ZapfDingbatsList extends List {
 	protected int zn;
 
 	/**
-	 * Initialisierung
+	 * Creates a ZapfDingbatsList
 	 * 
+	 * @param zn a char-number
 	 * @param symbolIndent	indent
 	 */
 	public ZapfDingbatsList(int zn, int symbolIndent) {
@@ -76,6 +77,7 @@ public class ZapfDingbatsList extends List {
 
 	/**
 	 * set the char-number 
+	 * @param zn a char-number
 	 */
 	public void setCharNumber(int zn) {
 		this.zn = zn;
@@ -94,6 +96,7 @@ public class ZapfDingbatsList extends List {
 	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
 	 *
 	 * @param	o	the object to add.
+	 * @return true if adding the object succeeded
 	 */
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {

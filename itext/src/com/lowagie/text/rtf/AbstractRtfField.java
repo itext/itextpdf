@@ -80,6 +80,8 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * public constructor
+     * @param content the content of the field
+     * @param font the font of the field
      */
     public AbstractRtfField(String content, Font font) {
         super(content, font);
@@ -202,12 +204,16 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
     /**
      * Abstract method for writing custom stuff to the Field
      * Initialization Stuff part of an RtfField.
+     * @param out
+     * @throws IOException
      */
     public abstract void writeRtfFieldInitializationStuff(OutputStream out) throws IOException;
 
     /**
      * Abstract method for writing custom stuff to the Field Result
      * part of an RtfField.
+     * @param out
+     * @throws IOException
      */
     public abstract void writeRtfFieldResultStuff(OutputStream out) throws IOException;
 
@@ -232,6 +238,7 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * empty implementation for Chunk.
+     * @return an empty string
      */
     public final String content() {
         return "";
@@ -239,6 +246,9 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * For Interface RtfField.
+     * @param writer
+     * @param out
+     * @throws IOException
      */
     public void write( RtfWriter writer, OutputStream out ) throws IOException {
         writeRtfFieldBegin(out);
@@ -256,6 +266,8 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * Write the beginning of an RtfField to the OutputStream.
+     * @param out
+     * @throws IOException
      */
     protected final void writeRtfFieldBegin(OutputStream out)  throws IOException {
         out.write(RtfWriter.openGroup);
@@ -265,6 +277,8 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * Write the modifiers defined for a RtfField to the OutputStream.
+     * @param out
+     * @throws IOException
      */
     protected final void writeRtfFieldModifiers(OutputStream out) throws IOException {
         if (isDirty()) {
@@ -286,6 +300,8 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * Write RtfField Initialization Stuff to OutputStream.
+     * @param out
+     * @throws IOException
      */
     protected final void writeRtfFieldInstBegin(OutputStream out) throws IOException {
         out.write( RtfWriter.openGroup );        
@@ -296,6 +312,8 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * Write end of RtfField Initialization Stuff to OutputStream.
+     * @param out
+     * @throws IOException
      */
     protected final void writeRtfFieldInstEnd(OutputStream out) throws IOException {
         if (isAlt()) {
@@ -308,6 +326,8 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * Write beginning of RtfField Result to OutputStream.
+     * @param out
+     * @throws IOException
      */
     protected final void writeRtfFieldResultBegin(OutputStream out) throws IOException {
         out.write( RtfWriter.openGroup );        
@@ -318,6 +338,8 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * Write end of RtfField Result to OutputStream.
+     * @param out
+     * @throws IOException
      */
     protected final void writeRtfFieldResultEnd(OutputStream out) throws IOException {
         out.write( RtfWriter.delimiter );
@@ -326,6 +348,8 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
 
     /**
      * Close the RtfField.
+     * @param out
+     * @throws IOException
      */
     protected final void writeRtfFieldEnd(OutputStream out) throws IOException {
         out.write( RtfWriter.closeGroup );

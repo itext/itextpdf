@@ -262,6 +262,9 @@ public class Rectangle implements Element, MarkupAttributes {
     
     // methods
     
+    /**
+     * Switches lowerleft with upperright
+     */
     public void normalize() {
         if (llx > urx) {
             float a = llx;
@@ -410,21 +413,37 @@ public class Rectangle implements Element, MarkupAttributes {
         color = value;
     }
 
-   public void setBorderColorRight(Color value)
+/**
+ * Sets the value of the border color
+ * @param value a color value
+ */
+public void setBorderColorRight(Color value)
    {
       borderColorRight = value;
    }
 
+/**
+ * Sets the value of the border color
+ * @param value a color value
+ */
    public void setBorderColorLeft(Color value)
    {
       borderColorLeft = value;
    }
 
+   /**
+    * Sets the value of the border color
+    * @param value a color value
+    */
    public void setBorderColorTop(Color value)
    {
       borderColorTop = value;
    }
 
+   /**
+    * Sets the value of the border color
+    * @param value a color value
+    */
    public void setBorderColorBottom(Color value)
    {
       borderColorBottom = value;
@@ -635,6 +654,10 @@ public class Rectangle implements Element, MarkupAttributes {
         return grayFill;
     }
     
+    /**
+     * Gets the rotation of the rectangle
+     * @return a rotation value
+     */
     public int getRotation() {
         return rotation;
     }
@@ -676,64 +699,112 @@ public class Rectangle implements Element, MarkupAttributes {
         return markupAttributes;
     }
 
-   public Color getBorderColorLeft()
+/**
+ * Gets the color of a border.
+ * @return a color value
+ */
+public Color getBorderColorLeft()
    {
       return borderColorLeft;
    }
 
+/**
+ * Gets the color of a border.
+ * @return a color value
+ */
    public Color getBorderColorRight()
    {
       return borderColorRight;
    }
 
+   /**
+    * Gets the color of a border.
+    * @return a color value
+    */
    public Color getBorderColorTop()
    {
       return borderColorTop;
    }
 
+   /**
+    * Gets the color of a border.
+    * @return a color value
+    */
    public Color getBorderColorBottom()
    {
       return borderColorBottom;
    }
 
+   /**
+    * Gets the width of a border.
+    * @return a width
+    */
    public float getBorderWidthLeft()
    {
       return getVariableBorderWidth( borderWidthLeft, LEFT );
    }
-
-   public void setBorderWidthLeft( float borderWidthLeft )
+   
+/**
+ * Sets the width of a border
+ * @param borderWidthLeft a width
+ */
+public void setBorderWidthLeft( float borderWidthLeft )
    {
       this.borderWidthLeft = borderWidthLeft;
       updateBorderBasedOnWidth(borderWidthLeft, LEFT);
    }
 
+   /**
+    * Gets the width of a border.
+    * @return a width
+    */
    public float getBorderWidthRight()
    {
       return getVariableBorderWidth( borderWidthRight, RIGHT );
    }
 
+/**
+ * Sets the width of a border
+ * @param borderWidthRight a width
+ */
    public void setBorderWidthRight( float borderWidthRight )
    {
       this.borderWidthRight = borderWidthRight;
       updateBorderBasedOnWidth(borderWidthRight, RIGHT);
    }
 
+   /**
+    * Gets the width of a border.
+    * @return a width
+    */
    public float getBorderWidthTop()
    {
       return getVariableBorderWidth( borderWidthTop, TOP );
    }
-
+   
+/**
+ * Sets the width of a border
+ * @param borderWidthTop a width
+ */
    public void setBorderWidthTop( float borderWidthTop )
    {
       this.borderWidthTop = borderWidthTop;
       updateBorderBasedOnWidth(borderWidthTop, TOP);
    }
 
+   /**
+    * Gets the width of a border.
+    * @return a width
+    */
    public float getBorderWidthBottom()
    {
       return getVariableBorderWidth( borderWidthBottom, BOTTOM );
    }
-
+   
+/**
+ * Sets the width of a border
+ * @param borderWidthBottom a width
+ */
    public void setBorderWidthBottom( float borderWidthBottom )
    {
       this.borderWidthBottom = borderWidthBottom;
@@ -786,7 +857,11 @@ public class Rectangle implements Element, MarkupAttributes {
       return useVariableBorders;
    }
 
-   public void setUseVariableBorders(boolean useVariableBorders)
+/**
+ * Sets a parameter indicating if the rectangle has variable borders
+ * @param useVariableBorders indication if the rectangle has variable borders
+ */
+public void setUseVariableBorders(boolean useVariableBorders)
    {
       this.useVariableBorders = useVariableBorders;
    }

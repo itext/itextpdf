@@ -153,6 +153,7 @@ public class PdfChunk implements SplitCharacter{
  * Constructs a <CODE>PdfChunk</CODE>-object.
  *
  * @param string the content of the <CODE>PdfChunk</CODE>-object
+ * @param other Chunk with the same style you want for the new Chunk
  */
     
     PdfChunk(String string, PdfChunk other) {
@@ -539,6 +540,18 @@ public class PdfChunk implements SplitCharacter{
         return width() + (value.length() * charSpacing + numberOfSpaces * wordSpacing);
     }
     
+    /**
+     * Gets the text displacement relatiev to the baseline.
+     * @return a displacement in points
+     */
+    public float getTextRise() {
+    	Float f = (Float) getAttribute(Chunk.SUBSUPSCRIPT);
+    	if (f != null) {
+    		return f.floatValue();
+    	}
+    	return 0.0f;
+    }
+    
 /**
  * Trims the last space.
  * @return the width of the space trimmed, otherwise 0
@@ -661,6 +674,7 @@ public class PdfChunk implements SplitCharacter{
     
 /**
  * sets the value.
+ * @param value content of the Chunk
  */
     
     void setValue(String value)
@@ -668,12 +682,16 @@ public class PdfChunk implements SplitCharacter{
         this.value = value;
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
         return value;
     }
 
     /**
      * Tells you if this string is in Chinese, Japanese, Korean or Identity-H.
+     * @return true if the Chunk has a special encoding
      */
     
     boolean isSpecialEncoding() {
@@ -697,8 +715,12 @@ public class PdfChunk implements SplitCharacter{
  * Checks if a character can be used to split a <CODE>PdfString</CODE>.
  * <P>
  * for the moment every character less than or equal to SPACE and the character '-' are 'splitCharacters'.
- *
- * @param	c		the character that has to be checked
+ * 
+ * @param start start position in the array
+ * @param current current position in the array
+ * @param end end position in the array
+ * @param	cc		the character array that has to be checked
+ * @param ck chunk array
  * @return	<CODE>true</CODE> if the character can be used to split a string, <CODE>false</CODE> otherwise
  */
     public boolean isSplitCharacter(int start, int current, int end, char[] cc, PdfChunk[] ck) {

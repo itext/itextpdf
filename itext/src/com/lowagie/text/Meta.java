@@ -197,8 +197,9 @@ public class Meta implements Element, MarkupAttributes {
     
 /**
  * Returns the name of the meta information.
- *
- * @return	a <CODE>String</CODE>
+ * 
+ * @param tag iText tag for meta information
+ * @return	the Element value corresponding with the given tag
  */
     
     public static int getType(String tag) {

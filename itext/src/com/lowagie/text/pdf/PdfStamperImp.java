@@ -59,6 +59,8 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.ExceptionConverter;
 
 class PdfStamperImp extends PdfWriter {
+    HashMap readers2intrefs = new HashMap();
+    HashMap readers2file = new HashMap();
     RandomAccessFileOrArray file;
     PdfReader reader;
     IntHashtable myXref = new IntHashtable();
@@ -331,6 +333,15 @@ class PdfStamperImp extends PdfWriter {
     }
     
     protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
+        IntHashtable ref = (IntHashtable)readers2intrefs.get(reader);
+        if (ref != null) {
+            int n = ref.get(number);
+            if (n == 0) {
+                n = getIndirectReferenceNumber();
+                ref.put(number, n);
+            }
+            return n;
+        }
         if (currentPdfReaderInstance == null) {
             if (append)
                 return number;
@@ -346,10 +357,111 @@ class PdfStamperImp extends PdfWriter {
     }
     
     RandomAccessFileOrArray getReaderFile(PdfReader reader) {
+        if (readers2intrefs.containsKey(reader)) {
+            RandomAccessFileOrArray raf = (RandomAccessFileOrArray)readers2file.get(reader);
+            if (raf != null)
+                return raf;
+            return reader.getSafeFile();
+        }
         if (currentPdfReaderInstance == null)
             return file;
         else
             return currentPdfReaderInstance.getReaderFile();
+    }
+    
+    public void registerReader(PdfReader reader, boolean openFile) throws IOException {
+        if (readers2intrefs.containsKey(reader))
+            return;
+        readers2intrefs.put(reader, new IntHashtable());
+        if (openFile) {
+            RandomAccessFileOrArray raf = reader.getSafeFile();
+            readers2file.put(reader, raf);
+            raf.reOpen();
+        }
+    }
+    
+    public void unRegisterReader(PdfReader reader) {
+        if (!readers2intrefs.containsKey(reader))
+            return;
+        readers2intrefs.remove(reader);
+        RandomAccessFileOrArray raf = (RandomAccessFileOrArray)readers2file.get(reader);
+        if (raf == null)
+            return;
+        readers2file.remove(reader);
+        try{raf.close();}catch(Exception e){}
+    }
+
+    static void findAllObjects(PdfReader reader, PdfObject obj, IntHashtable hits) {
+        if (obj == null)
+            return;
+        switch (obj.type()) {
+            case PdfObject.INDIRECT:
+                PRIndirectReference iref = (PRIndirectReference)obj;
+                if (reader != iref.getReader())
+                    return;
+                if (hits.containsKey(iref.getNumber()))
+                    return;
+                hits.put(iref.getNumber(), 1);
+                findAllObjects(reader, PdfReader.getPdfObject(obj), hits);
+                return;
+            case PdfObject.ARRAY:
+                ArrayList lst = ((PdfArray)obj).getArrayList();
+                for (int k = 0; k < lst.size(); ++k) {
+                    findAllObjects(reader, (PdfObject)lst.get(k), hits);
+                }
+                return;
+            case PdfObject.DICTIONARY:
+                PdfDictionary dic = (PdfDictionary)obj;
+                for (Iterator it = dic.getKeys().iterator(); it.hasNext();) {
+                    PdfName name = (PdfName)it.next();
+                    findAllObjects(reader, dic.get(name), hits);
+                }
+                return;
+        }
+    }
+    
+    public void addComments(FdfReader fdf) throws IOException{
+        if (readers2intrefs.containsKey(fdf))
+            return;
+        PdfDictionary catalog = fdf.getCatalog();
+        catalog = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.FDF));
+        if (catalog == null)
+            return;
+        PdfArray annots = (PdfArray)PdfReader.getPdfObject(catalog.get(PdfName.ANNOTS));
+        if (annots == null || annots.size() == 0)
+            return;
+        registerReader(fdf, false);
+        IntHashtable hits = new IntHashtable();
+        ArrayList an = new ArrayList();
+        ArrayList ar = annots.getArrayList();
+        for (int k = 0; k < ar.size(); ++k) {
+            PdfObject obj = (PdfObject)ar.get(k);
+            PdfDictionary annot = (PdfDictionary)PdfReader.getPdfObject(obj);
+            PdfNumber page = (PdfNumber)PdfReader.getPdfObject(annot.get(PdfName.PAGE));
+            if (page == null || page.intValue() >= reader.getNumberOfPages())
+                continue;
+            findAllObjects(fdf, obj, hits);
+            an.add(obj);
+        }
+        int arhits[] = hits.getKeys();
+        for (int k = 0; k < arhits.length; ++k) {
+            int n = arhits[k];
+            addToBody(fdf.xrefObj[n], getNewObjectNumber(fdf, n, 0));
+        }
+        for (int k = 0; k < an.size(); ++k) {
+            PdfObject obj = (PdfObject)an.get(k);
+            PdfDictionary annot = (PdfDictionary)PdfReader.getPdfObject(obj);
+            PdfNumber page = (PdfNumber)PdfReader.getPdfObject(annot.get(PdfName.PAGE));
+            PdfDictionary dic = reader.getPageN(page.intValue() + 1);
+            PdfArray annotsp = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.ANNOTS), dic);
+            if (annotsp == null) {
+                annotsp = new PdfArray();
+                dic.put(PdfName.ANNOTS, annotsp);
+                markUsed(dic);
+            }
+            markUsed(annotsp);
+            annotsp.add(obj);
+        }
     }
     
     PageStamp getPageStamp(int pageNum) {

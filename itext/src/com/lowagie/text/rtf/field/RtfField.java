@@ -184,6 +184,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the field beginning. Also writes field properties.
      * 
      * @return A byte array with the field beginning.
+     * @throws IOException
      */
     private byte[] writeFieldBegin() throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -211,6 +212,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the beginning of the field instruction area.
      * 
      * @return The beginning of the field instruction area
+     * @throws IOException
      */
     private byte[] writeFieldInstBegin() throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -235,6 +237,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the end of the field instruction area.
      * 
      * @return A byte array containing the end of the field instruction area
+     * @throws IOException
      */
     private byte[] writeFieldInstEnd() throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -252,6 +255,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the beginning of the field result area
      * 
      * @return A byte array containing the beginning of the field result area
+     * @throws IOException
      */
     private byte[] writeFieldResultBegin() throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -276,6 +280,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the end of the field result area
      * 
      * @return A byte array containing the end of the field result area
+     * @throws IOException
      */
     private byte[] writeFieldResultEnd() throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -290,6 +295,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      * Writes the end of the field
      * 
      * @return A byte array containing the end of the field
+     * @throws IOException
      */
     private byte[] writeFieldEnd() throws IOException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -414,7 +420,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     /**
      * Sets whether this RtfField is in a table
      * 
-     * @param isInTable <code>True</code> if this RtfField is in a table, <code>false</code> otherwise
+     * @param inTable <code>True</code> if this RtfField is in a table, <code>false</code> otherwise
      */
     public void setInTable(boolean inTable) {
         this.inTable = inTable;
@@ -423,7 +429,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     /**
      * Sets whether this RtfField is in a header
      * 
-     * @param isInHeader <code>True</code> if this RtfField is in a header, <code>false</code> otherwise
+     * @param inHeader <code>True</code> if this RtfField is in a header, <code>false</code> otherwise
      */
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;

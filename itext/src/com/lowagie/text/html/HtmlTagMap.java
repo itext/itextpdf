@@ -227,6 +227,8 @@ public class HtmlTagMap extends HashMap {
     
 /**
  * Checks if this is the root tag.
+ * @param tag a tagvalue
+ * @return true if tag is HTML or html
  */
     
     public boolean isHtml(String tag) {
@@ -235,6 +237,8 @@ public class HtmlTagMap extends HashMap {
     
 /**
  * Checks if this is the head tag.
+ * @param tag a tagvalue
+ * @return true if tag is HEAD or head
  */
     
     public boolean isHead(String tag) {
@@ -243,6 +247,8 @@ public class HtmlTagMap extends HashMap {
     
 /**
  * Checks if this is the meta tag.
+ * @param tag a tagvalue
+ * @return true if tag is META or meta
  */
     
     public boolean isMeta(String tag) {
@@ -250,7 +256,9 @@ public class HtmlTagMap extends HashMap {
     }
     
 /**
- * Checks if this is the root tag.
+ * Checks if this is the linl tag.
+ * @param tag a tagvalue
+ * @return true if tag is LINK or link
  */
     
     public boolean isLink(String tag) {
@@ -258,7 +266,9 @@ public class HtmlTagMap extends HashMap {
     }
     
 /**
- * Checks if this is the root tag.
+ * Checks if this is the title tag.
+ * @param tag a tagvalue
+ * @return true if tag is TITLE or title
  */
     
     public boolean isTitle(String tag) {
@@ -267,6 +277,8 @@ public class HtmlTagMap extends HashMap {
     
 /**
  * Checks if this is the root tag.
+ * @param tag a tagvalue
+ * @return true if tag is BODY or body
  */
     
     public boolean isBody(String tag) {
@@ -275,6 +287,8 @@ public class HtmlTagMap extends HashMap {
     
 /**
  * Checks if this is a special tag.
+ * @param tag a tagvalue
+ * @return true if tag is a HTML, HEAD, META, LINK or BODY tag (case insensitive)
  */
     public boolean isSpecialTag(String tag) {
         return isHtml(tag) || isHead(tag) || isMeta(tag) || isLink(tag) || isBody(tag);

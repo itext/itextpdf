@@ -131,6 +131,10 @@ public class Font implements Comparable {
     
 // constructors
  
+    /**
+     * Copy constructor of a Font
+     * @param other the font that has to be copied
+     */
     public Font(Font other) {
         this.color = other.color;
         this.family = other.family;
@@ -733,5 +737,16 @@ public class Font implements Comparable {
             return style;
         else
             return style & (~BOLDITALIC);
+    }
+    
+    /** Gets the size that can be used with the calculated <CODE>BaseFont</CODE>.
+     * @return the size that can be used with the calculated <CODE>BaseFont</CODE>
+     */    
+    public float getCalculatedSize() {
+        float s = this.size;
+        if (s == UNDEFINED) {
+            s = DEFAULTSIZE;
+        }
+        return s;
     }
 }

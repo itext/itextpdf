@@ -60,6 +60,8 @@ public class HtmlPeer extends XmlPeer {
     
 /**
  * Creates a XmlPeer.
+ * @param name the iText name of the tag
+ * @param alias the Html name of the tag
  */
     
     public HtmlPeer(String name, String alias) {

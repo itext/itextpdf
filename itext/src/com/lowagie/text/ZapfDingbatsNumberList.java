@@ -63,8 +63,8 @@ public class ZapfDingbatsNumberList extends List {
 	protected int type;
 
 	/**
-	 * Initialisierung
-	 * 
+	 * Creates a ZapdDingbatsNumberList
+	 * @param type the type of list
 	 * @param symbolIndent	indent
 	 */
 	public ZapfDingbatsNumberList(int type, int symbolIndent) {
@@ -96,6 +96,7 @@ public class ZapfDingbatsNumberList extends List {
 	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
 	 *
 	 * @param	o	the object to add.
+	 * @return true if adding the object succeeded
 	 */
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {

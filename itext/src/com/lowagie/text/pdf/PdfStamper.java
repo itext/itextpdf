@@ -344,7 +344,7 @@ public class PdfStamper {
     }
 
     /** Determines if the fields are flattened on close. The fields added with
-     * {@link addAnnotation(PdfAnnotation,int)} will never be flattened.
+     * {@link #addAnnotation(PdfAnnotation,int)} will never be flattened.
      * @param flat <CODE>true</CODE> to flatten the fields, <CODE>false</CODE>
      * to keep the fields
      */
@@ -361,6 +361,15 @@ public class PdfStamper {
         stamper.addAnnotation(annot, page);
     }
 
+    /**
+     * Adds the comments present in an FDF file.
+     * @param fdf the FDF file
+     * @throws IOException on error
+     */    
+    public void addComments(FdfReader fdf) throws IOException {
+        stamper.addComments(fdf);
+    }
+    
     /**
      * Sets the bookmarks. The list structure is defined in
      * {@link SimpleBookmark}.

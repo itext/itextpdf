@@ -127,7 +127,7 @@ public class RtfBorderGroup extends RtfElement {
      * 
      * @param doc The RtfDocument this RtfBorderGroup belongs to
      * @param borderType The type of borders this RtfBorderGroup contains
-     * @param bordersToAdd The borders to add (Rectangle.LEFT, Rectangle.RIGHT, Rectangle.TOP, Rectangle.BOTTOM, Rectangle.BOX)
+     * @param bordersToUse The borders to add (Rectangle.LEFT, Rectangle.RIGHT, Rectangle.TOP, Rectangle.BOTTOM, Rectangle.BOX)
      * @param borderWidth The border width to use
      * @param borderColor The border color to use
      */
@@ -142,7 +142,7 @@ public class RtfBorderGroup extends RtfElement {
      * Sets a border in the Hashtable of borders
      * 
      * @param borderPosition The position of this RtfBorder
-     * @param borderType The type of borders this RtfBorderGroup contains
+     * @param borderStyle The type of borders this RtfBorderGroup contains
      * @param borderWidth The border width to use
      * @param borderColor The border color to use
      */
@@ -181,7 +181,7 @@ public class RtfBorderGroup extends RtfElement {
     /**
      * Removes borders from the list of borders
      * 
-     * @param borderPosition The borders to remove (from Rectangle)
+     * @param bordersToRemove The borders to remove (from Rectangle)
      */
     public void removeBorder(int bordersToRemove) {
         if((bordersToRemove & Rectangle.LEFT) == Rectangle.LEFT) {
