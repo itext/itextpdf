@@ -513,6 +513,20 @@ public class Rectangle implements Element {
         return grayFill;
     }
     
+/**
+ * Gets the rotation.
+ *
+ * @param   rotation    the value of the rotation
+ */
+    public final void setRotation(int rotation) {
+        this.rotation = rotation;
+    }
+    
+/**
+ * Gets the rotation.
+ *
+ * @return  the rotation value
+ */
     public final int getRotation() {
         return rotation;
     }
