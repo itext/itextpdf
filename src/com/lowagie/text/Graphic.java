@@ -181,13 +181,9 @@ public class Graphic extends PdfContentByte implements Element {
     public void drawBorder(float lineWidth, Color color, float llx, float lly, float urx, float ury) {
         setLineWidth(lineWidth);
         setColorStroke(color);
-        moveTo(llx, lly);
-        lineTo(llx, ury);
-        lineTo(urx, ury);
-        lineTo(urx, lly);
-        lineTo(lly, lly);
-        resetRGBColorStroke();
+        rectangle(llx, lly, urx - llx, ury - lly);
         stroke();
+        resetRGBColorStroke();
     }
     
 /**
