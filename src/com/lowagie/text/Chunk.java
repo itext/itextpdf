@@ -723,6 +723,11 @@ public class Chunk implements Element, MarkupAttributes {
         return markupAttributes;
     }
 
+    /**
+     * Gets the keys of a Hashtable
+     * @param table a Hashtable
+     * @return the keyset of a Hashtable (or an empty set if table is null)
+     */
     public static Set getKeySet(Hashtable table) {
         return (table == null) ? Collections.EMPTY_SET : table.keySet();
     }

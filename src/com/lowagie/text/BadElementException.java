@@ -61,6 +61,10 @@ package com.lowagie.text;
 public class BadElementException extends DocumentException {
     
     // constructors
+    /**
+     * Constructs a BadElementException
+     * @param ex an Exception object that has to be turned into a BadElementException
+     */
     public BadElementException(Exception ex) {
         super(ex);
     }

@@ -139,6 +139,10 @@ public class Annotation implements Element, MarkupAttributes {
     
 /**
  * Constructs an <CODE>Annotation</CODE> with a certain title and some text.
+ * @param llx lower left x coordinate
+ * @param lly lower left y coordinate
+ * @param urx upper right x coordinate
+ * @param ury upper right y coordinate
  */
     
     private Annotation(float llx, float lly, float urx, float ury) {

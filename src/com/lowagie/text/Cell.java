@@ -97,7 +97,10 @@ public class Cell extends Rectangle implements TextElementArray {
 	// static final membervariable
 
     // This accessor replaces the dangerous static member DUMMY_CELL
-    /** Get dummy cell used when merging inner tables. */
+    /**
+     * Get dummy cell used when merging inner tables. 
+     * @return a cell with colspan 3 and no border
+     */
     public static Cell getDummyCell() {
         Cell cell = new Cell(true);
         cell.setColspan(3);
@@ -761,6 +764,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @return NA
  */
 	public float top() {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
@@ -768,6 +772,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @return NA
  */
 	public float bottom() {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
@@ -775,6 +780,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @return NA
  */
 	public float left() {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
@@ -782,6 +788,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @return NA
  */
 	public float right() {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
@@ -789,6 +796,8 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @param margin
+ * @return NA
  */
 	public float top(int margin) {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
@@ -796,6 +805,8 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @param margin
+ * @return NA
  */
 	public float bottom(int margin) {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
@@ -803,6 +814,8 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @param margin
+ * @return NA
  */
 	public float left(int margin) {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
@@ -810,6 +823,8 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @param margin NA
+ * @return NA
  */
 	public float right(int margin) {
 		throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
@@ -817,6 +832,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @param value NA
  */
 	public void setTop(int value) {
 		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
@@ -824,6 +840,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @param value NA
  */
 	public void setBottom(int value) {
 		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
@@ -831,6 +848,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @param value NA
  */
 	public void setLeft(int value) {
 		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
@@ -838,6 +856,7 @@ public class Cell extends Rectangle implements TextElementArray {
 
 /**
  * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ * @param value NA
  */
 	public void setRight(int value) {
 		throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
@@ -877,11 +896,17 @@ public class Cell extends Rectangle implements TextElementArray {
 		groupChange = value;
 	}
 	
-	/**Getter for {@link #maxLines}*/
+	/**
+	 * Getter for {@link #maxLines}
+	 * @return the maxLines value
+	 */
 	public int getMaxLines() {
 		return maxLines;
 	}
-	/**Setter for {@link #maxLines}*/
+	/**
+	 * Setter for {@link #maxLines}
+	 * @param value the maximum number of lines
+	 */
 	public void setMaxLines(int value) {
 		maxLines = value;
 	}
@@ -894,7 +919,10 @@ public class Cell extends Rectangle implements TextElementArray {
 	public void setShowTruncation(String value) {
 		showTruncation = value;
 	}
-	/**Getter for {@link #showTruncation}*/
+	/**
+	 * Getter for {@link #showTruncation}
+	 * @return the showTruncation value
+	 */
 	public String getShowTruncation() {
 		return showTruncation;
 	}
