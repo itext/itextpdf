@@ -527,7 +527,10 @@ class PdfDocument extends Document implements DocListener {
 	 * @since	iText0.30
 	 */
 
-	public void close() { 
+	public void close() {
+		if (close) {
+			return;
+		}
 		try {
 			newPage();
 			newPage();

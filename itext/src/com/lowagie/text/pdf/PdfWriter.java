@@ -137,17 +137,10 @@ public class PdfWriter extends DocWriter {
 			 */
 
 			final byte[] toPdf() {
-
-				// This code makes it more difficult to port the lib to JDK1.1.x:
-				// StringBuffer off = new StringBuffer("0000000000").append(offset);
-				// off.delete(0, off.length() - 10);
-				// StringBuffer gen = new StringBuffer("00000").append(generation);
-				// gen.delete(0, gen.length() - 5);
-
-				String s = "0000000000" + offset;
-				StringBuffer off = new StringBuffer(s.substring(s.length() - 10));
-				s = "00000" + generation;
-				StringBuffer gen = new StringBuffer(s.substring(s.length() - 5));
+				StringBuffer off = new StringBuffer("0000000000").append(offset);
+				off.delete(0, off.length() - 10);
+				StringBuffer gen = new StringBuffer("00000").append(generation);
+				gen.delete(0, gen.length() - 5);
 
 				if (generation == 65535) {
 					return off.append(' ').append(gen).append(" f \n").toString().getBytes();
@@ -591,6 +584,7 @@ public class PdfWriter extends DocWriter {
      */
 
     public void close() {
+		pdf.close();
 		try {
 			// add the root to the body
 			PdfIndirectObject rootObject = body.add(root);
