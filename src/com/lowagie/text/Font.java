@@ -738,4 +738,15 @@ public class Font implements Comparable {
         else
             return style & (~BOLDITALIC);
     }
+    
+    /** Gets the size that can be used with the calculated <CODE>BaseFont</CODE>.
+     * @return the size that can be used with the calculated <CODE>BaseFont</CODE>
+     */    
+    public float getCalculatedSize() {
+        float s = this.size;
+        if (s == UNDEFINED) {
+            s = DEFAULTSIZE;
+        }
+        return s;
+    }
 }
