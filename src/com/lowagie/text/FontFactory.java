@@ -210,10 +210,10 @@ public class FontFactory extends java.lang.Object {
         if (trueTypeFonts == null) trueTypeFonts = new Properties();
         try {
             if (path.toLowerCase().endsWith(".ttf")) {
-                BaseFont bf = BaseFont.createFont(path, BaseFont.WINANSI, false);
+                BaseFont bf = BaseFont.createFont(path, BaseFont.WINANSI, false, false, null, null);
                 trueTypeFonts.setProperty(bf.getPostscriptFontName(), path);
             }
-            else if (path.toLowerCase().endsWith(".ttc") > 0) {
+            else if (path.toLowerCase().endsWith(".ttc")) {
                 String[] names = BaseFont.enumerateTTCNames(path);
                 for (int i = 0; i < names.length; i++) {
                     trueTypeFonts.setProperty(names[i], path + "," + (i + 1));                
