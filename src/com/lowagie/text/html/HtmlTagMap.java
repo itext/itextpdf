@@ -136,6 +136,15 @@ public class HtmlTagMap extends HashMap {
         peer.addValue(ElementTags.STYLE, ElementTags.STRIKETHRU);
         put(peer.getAlias(), peer);
         
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.CODE);
+        peer.addValue(ElementTags.FONT, ElementTags.COURIER);
+        put(peer.getAlias(), peer);
+        
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.VAR);
+        peer.addValue(ElementTags.FONT, ElementTags.COURIER);
+        peer.addValue(ElementTags.STYLE, ElementTags.ITALIC);
+        put(peer.getAlias(), peer);
+        
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.U);
         peer.addValue(ElementTags.STYLE, ElementTags.UNDERLINE);
         put(peer.getAlias(), peer);

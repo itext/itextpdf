@@ -105,6 +105,12 @@ public class HtmlTags {
 /** the phrase tag */
     public static final String PHRASE = "font";
     
+/** the phrase tag */
+    public static final String CODE = "code";
+    
+/** the phrase tag */
+    public static final String VAR = "var";
+    
 /** the anchor tag */
     public static final String ANCHOR = "a";
     
