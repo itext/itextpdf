@@ -283,11 +283,12 @@ public class Table extends Rectangle implements Element {
         if ((value = attributes.getProperty(ElementTags.WIDTHS)) != null) {
             StringTokenizer widthTokens = new StringTokenizer(value, ";");
             int i = 0;
-            while (widthTokens.hasMoreTokens() && i < columns) {
+            while (widthTokens.hasMoreTokens()) {
                 value = (String) widthTokens.nextToken();
                 widths[i] = Float.parseFloat(value + "f");
                 i++;
             }
+            columns = i;
         }
         if ((value = attributes.getProperty(ElementTags.BORDERWIDTH)) != null) {
             setBorderWidth(Float.parseFloat(value + "f"));
