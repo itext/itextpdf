@@ -138,6 +138,7 @@ class PdfChunk extends PdfString {
             offsetX = ((Float)obj[1]).floatValue();
             offsetY = ((Float)obj[2]).floatValue();
         }
+        encoding = font.getFont().getEncoding();
     }
     
     /** Constructs a <CODE>PdfFont</CODE>-object.
@@ -254,6 +255,7 @@ class PdfChunk extends PdfString {
             offsetY = ((Float)obj[2]).floatValue();
         }
         font.setImage(image);
+        encoding = font.getFont().getEncoding();
     }
     
     // methods
