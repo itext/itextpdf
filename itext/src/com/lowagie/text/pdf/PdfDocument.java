@@ -1295,6 +1295,9 @@ class PdfDocument extends Document implements DocListener {
                         table.setTableFitsPage(true);
                         Cell cell = new Cell(paragraph);
                         cell.setBorder(Table.NO_BORDER);
+                        //patch by Matt Benson 11/01/2002 - 14:32:00
+                        cell.setHorizontalAlignment(paragraph.alignment());
+                        //end patch by Matt Benson
                         table.addCell(cell);
                         this.add(table);
                         break;
