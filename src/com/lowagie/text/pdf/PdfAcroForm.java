@@ -55,6 +55,7 @@ import java.util.Iterator;
 import java.util.HashMap;
 
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * Each PDF document can contain maximum 1 AcroForm.
@@ -166,6 +167,26 @@ public class PdfAcroForm extends PdfDictionary {
     
     public void addSingleLineTextField(String text, BaseFont font, float fontSize, String name, float llx, float lly, float urx, float ury) {
         PdfFormField field = PdfFormField.createTextField(writer, PdfFormField.SINGLELINE, PdfFormField.PLAINTEXT, 0);
+        setTextFieldParams(field, text, name, llx, lly, urx, ury);
+        drawSingleLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
+        addFormField(field);
+    }
+    
+    public void addMultiLineTextField(String text, BaseFont font, float fontSize, String name, float llx, float lly, float urx, float ury) {
+        PdfFormField field = PdfFormField.createTextField(writer, PdfFormField.MULTILINE, PdfFormField.PLAINTEXT, 0);
+        setTextFieldParams(field, text, name, llx, lly, urx, ury);
+        drawMultiLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
+        addFormField(field);
+    }
+    
+    public void addSingleLinePasswordField(String text, BaseFont font, float fontSize, String name, float llx, float lly, float urx, float ury) {
+        PdfFormField field = PdfFormField.createTextField(writer, PdfFormField.SINGLELINE, PdfFormField.PASSWORD, 0);
+        setTextFieldParams(field, text, name, llx, lly, urx, ury);
+        drawSingleLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
+        addFormField(field);
+    }
+    
+    public void setTextFieldParams(PdfFormField field, String text, String name, float llx, float lly, float urx, float ury) {
         field.setWidget(new Rectangle(llx, lly, urx, ury), PdfAnnotation.HIGHLIGHT_INVERT);
         field.setValueAsString(text);
         field.setDefaultValueAsString(text);
@@ -173,6 +194,9 @@ public class PdfAcroForm extends PdfDictionary {
         field.setFlags(PdfAnnotation.FLAGS_PRINT);
         field.setPage();
         field.setBorderStyle(new PdfBorderDictionary(2, PdfBorderDictionary.STYLE_SOLID));
+    }
+    
+    public void drawSingleLineOfText(PdfFormField field, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
         PdfContentByte da = new PdfContentByte(writer);
         da.setFontAndSize(font, fontSize);
         da.resetRGBColorFill();
@@ -196,6 +220,125 @@ public class PdfAcroForm extends PdfDictionary {
         tp.endVariableText();
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, tp);
         field.setAppearance(PdfAnnotation.APPEARANCE_DOWN, tp);
+    }
+    
+    public void drawMultiLineOfText(PdfFormField field, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
+        PdfContentByte da = new PdfContentByte(writer);
+        da.setFontAndSize(font, fontSize);
+        da.resetRGBColorFill();
+        field.setDefaultAppearanceString(da);
+        PdfContentByte cb = writer.getDirectContent();
+        cb.moveTo(0, 0);
+        PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
+        tp.drawTextField(0f, 0f, urx - llx, ury - lly);
+        tp.beginVariableText();
+        tp.saveState();
+        tp.rectangle(3f, 3f, urx - llx - 6f, ury - lly - 6f);
+        tp.clip();
+        tp.newPath();
+        tp.beginText();
+        tp.setFontAndSize(font, fontSize);
+        tp.resetRGBColorFill();
+        tp.setTextMatrix(4, 5);
+        java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(text, "\n");
+        float yPos = ury - lly;
+        while (tokenizer.hasMoreTokens()) {
+            yPos -= fontSize * 1.5f;
+            tp.showTextAligned(PdfContentByte.ALIGN_LEFT, tokenizer.nextToken(), 3, yPos, 0);
+        }
+        tp.endText();
+        tp.restoreState();
+        tp.endVariableText();
+        field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, tp);
+        field.setAppearance(PdfAnnotation.APPEARANCE_DOWN, tp);
+    }
+    
+    public void addCheckBox(String name, String value, boolean status, float llx, float lly, float urx, float ury) {
+        PdfFormField field = PdfFormField.createCheckBox(writer);
+        setCheckBoxParams(field, name, value, status, llx, lly, urx, ury);
+        drawCheckBoxAppearences(field, value, llx, lly, urx, ury);
         addFormField(field);
+    }
+    
+    public void setCheckBoxParams(PdfFormField field, String name, String value, boolean status, float llx, float lly, float urx, float ury) {
+        field.setWidget(new Rectangle(llx, lly, urx, ury), PdfAnnotation.HIGHLIGHT_TOGGLE);
+        field.setFieldName(name);
+        if (status) {
+            field.setValueAsName(value);
+            field.setAppearanceState(value);
+        }
+        else {
+            field.setValueAsName("Off");
+            field.setAppearanceState("Off");
+        }
+        field.setFlags(PdfAnnotation.FLAGS_PRINT);
+        field.setPage();
+        field.setBorderStyle(new PdfBorderDictionary(1, PdfBorderDictionary.STYLE_SOLID));
+    }
+    
+    public void drawCheckBoxAppearences(PdfFormField field, String value, float llx, float lly, float urx, float ury) {
+        BaseFont font = null;
+        try {
+            font = BaseFont.createFont(BaseFont.ZAPFDINGBATS, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+        }
+        catch(Exception e) {
+            throw new ExceptionConverter(e);
+        }
+        float size = (ury - lly);
+        PdfContentByte da = new PdfContentByte(writer);
+        da.setFontAndSize(font, size);
+        da.resetRGBColorFill();
+        field.setDefaultAppearanceString(da);
+        PdfContentByte cb = writer.getDirectContent();
+        cb.moveTo(0, 0);
+        PdfAppearance tpOn = cb.createAppearance(urx - llx, ury - lly);
+        tpOn.drawTextField(0f, 0f, urx - llx, ury - lly);
+        tpOn.saveState();
+        tpOn.resetRGBColorFill();
+        tpOn.beginText();
+        tpOn.setFontAndSize(font, size);
+        tpOn.showTextAligned(PdfContentByte.ALIGN_CENTER, "4", (urx - llx) / 2, (ury - lly) / 2 - (size * 0.3f), 0);
+        tpOn.endText();
+        tpOn.restoreState();
+        field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, value, tpOn);
+        PdfAppearance tpOff = cb.createAppearance(urx - llx, ury - lly);
+        tpOff.drawTextField(0f, 0f, urx - llx, ury - lly);
+        field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, "Off", tpOff);
+    }
+    
+    public PdfFormField getRadioGroup(String name, String defaultValue, boolean noToggleToOff) {
+        PdfFormField radio = PdfFormField.createRadioButton(writer, noToggleToOff);
+        radio.setFieldName(name);
+        radio.setValueAsName(defaultValue);
+        return radio;
+    }
+    
+    public void addRadioGroup(PdfFormField radiogroup) {
+        addFormField(radiogroup);
+    }
+    
+    public void addRadioButton(PdfFormField radiogroup, String value, float llx, float lly, float urx, float ury) {
+        PdfFormField radio = PdfFormField.createEmpty(writer);
+        radio.setWidget(new Rectangle(llx, lly, urx, ury), PdfAnnotation.HIGHLIGHT_TOGGLE);
+        String name = ((PdfName)radiogroup.get(PdfName.V)).toString().substring(1);
+        if (name.equals(value)) {
+            radio.setAppearanceState(value);
+        }
+        else {
+            radio.setAppearanceState("Off");
+        }
+        drawRadioAppearences(radio, value, llx, lly, urx, ury);
+        radiogroup.addKid(radio);
+    }
+
+    public void drawRadioAppearences(PdfFormField field, String value, float llx, float lly, float urx, float ury) {
+        PdfContentByte cb = writer.getDirectContent();
+        cb.moveTo(0, 0);
+        PdfAppearance tpOn = cb.createAppearance(urx - llx, ury - lly);
+        tpOn.drawRadioField(0f, 0f, urx - llx, ury - lly, true);
+        field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, value, tpOn);
+        PdfAppearance tpOff = cb.createAppearance(urx - llx, ury - lly);
+        tpOff.drawRadioField(0f, 0f, urx - llx, ury - lly, false);
+        field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, "Off", tpOff);
     }
 }

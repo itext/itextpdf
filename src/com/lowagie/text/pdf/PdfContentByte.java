@@ -2011,6 +2011,41 @@ public class PdfContentByte {
  * Draws a TextField.
  */
     
+    public void drawRadioField(float llx, float lly, float urx, float ury, boolean on) {
+        if (llx > urx) { float x = llx; llx = urx; urx = x; }
+        if (lly > ury) { float y = lly; lly = ury; ury = y; }
+        // silver circle
+        setLineWidth(1);
+        setLineCap(1);
+        setColorStroke(new Color(0xC0, 0xC0, 0xC0));
+        arc(llx + 1f, lly + 1f, urx - 1f, ury - 1f, 0f, 360f);
+        stroke();
+        // gray circle-segment
+        setLineWidth(1);
+        setLineCap(1);
+        setColorStroke(new Color(0xA0, 0xA0, 0xA0));
+        arc(llx + 0.5f, lly + 0.5f, urx - 0.5f, ury - 0.5f, 45, 180);
+        stroke();
+        // black circle-segment
+        setLineWidth(1);
+        setLineCap(1);
+        setColorStroke(new Color(0x00, 0x00, 0x00));
+        arc(llx + 1.5f, lly + 1.5f, urx - 1.5f, ury - 1.5f, 45, 180);
+        stroke();
+        if (on) {
+            // gray circle
+            setLineWidth(1);
+            setLineCap(1);
+            setColorFill(new Color(0x00, 0x00, 0x00));
+            arc(llx + 4f, lly + 4f, urx - 4f, ury - 4f, 0, 360);
+            fill();
+        }
+    }
+    
+/**
+ * Draws a TextField.
+ */
+    
     public void drawTextField(float llx, float lly, float urx, float ury) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
         if (lly > ury) { float y = lly; lly = ury; ury = y; }
