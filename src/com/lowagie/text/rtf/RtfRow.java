@@ -1,3 +1,21 @@
+/** 
+ * $Id$
+ * $Name$
+ *
+ * Copyright 2001 by Mark Hall
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Library General Public License as published
+ * by the Free Software Foundation; either versioni 2 of the License, or any
+ * later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library General Public License for more
+ * details.
+ *
+ */
+
 package com.lowagie.text.rtf;
 
 import com.lowagie.text.*;
@@ -7,44 +25,85 @@ import java.util.*;
 import java.io.*;
 import java.awt.Color;
 
+/**
+ * A Helper Class for the <CODE>RtfWriter</CODE>
+ * <P>
+ * Do not use it directly
+ */
 public class RtfRow
 {
+  /* Table border solid */
   public static final byte[] tableBorder = "brdrs".getBytes();
+  /* Table border width */
   public static final byte[] tableBorderWidth = "brdrw".getBytes();
+  /* Table border color */
   public static final byte[] tableBorderColor = "brdrcf".getBytes();
 
+  /* Table row defaults */
   private static final byte[] rowBegin = "trowd".getBytes();
+  /* End of table row */
   private static final byte[] rowEnd = "row".getBytes();
+  /* Table row autofit */
   private static final byte[] rowAutofit = "trautofit1".getBytes();
   private static final byte[] graphLeft = "trgraph".getBytes();
+  /* Row border left */
   private static final byte[] rowBorderLeft = "trbrdrl".getBytes();
+  /* Row border right */
   private static final byte[] rowBorderRight = "trbrdrr".getBytes();
+  /* Row border top */
   private static final byte[] rowBorderTop = "trbrdrt".getBytes();
+  /* Row border bottom */
   private static final byte[] rowBorderBottom = "trbrdrb".getBytes();
+  /* Default cell spacing left */
   private static final byte[] rowSpacingLeft = "trspdl".getBytes();
+  /* Default cell spacing right */
   private static final byte[] rowSpacingRight = "trspdr".getBytes();
+  /* Default cell spacing top */
   private static final byte[] rowSpacingTop = "trspdt".getBytes();
+  /* Default cell spacing bottom */
   private static final byte[] rowSpacingBottom = "trspdb".getBytes();
+  /* Default cell spacing format left */
   private static final byte[] rowSpacingLeftStyle = "trspdfl3".getBytes();
+  /* Default cell spacing format right */
   private static final byte[] rowSpacingRightStyle = "trspdfr3".getBytes();
+  /* Default cell spacing format top */
   private static final byte[] rowSpacingTopStyle = "trspdft3".getBytes();
+  /* Default cell spacing format bottom */
   private static final byte[] rowSpacingBottomStyle = "trspdfb3".getBytes();
+  /* Default cell padding left */
   private static final byte[] rowPaddingLeft = "trpaddl".getBytes();
+  /* Default cell padding right */
   private static final byte[] rowPaddingRight = "trpaddr".getBytes();
+  /* Default cell padding format left */
   private static final byte[] rowPaddingLeftStyle = "trpaddfl3".getBytes();
+  /* Default cell padding format right */
   private static final byte[] rowPaddingRightStyle = "trpaddfr3".getBytes();
 
+  /** List of <code>RtfCell</code>s in this <code>RtfRow</code> */
   private ArrayList cells = new ArrayList();
+  /** The <code>RtfWriter</code> to which this <code>RtfRow</code> belongs */
   private RtfWriter writer = null;
+  /** The <coce>RtfTable</code> to which this <code>RtfRow</code> belongs */
   private RtfTable mainTable = null;
 
+  /** The width of this <code>RtfRow</code> (in percent) */
   private int width = 100;
+  /** The default cellpadding of <code>RtfCells</code> in this <code>RtfRow</code> */
   private int cellpadding = 115;
+  /** The default cellspacing of <code>RtfCells</code> in this <code>RtfRow</code> */
   private int cellspacing = 14;
+  /** The borders of this <code>RtfRow</code> */
   private int borders = 0;
+  /** The border color of this <code>RtfRow</code> */
   private java.awt.Color borderColor = null;
+  /** The border width of this <code>RtfRow</code> */
   private float borderWidth = 0;
 
+  /** 
+   * Create a new <code>RtfRow</code>
+   * @param writer The <code>RtfWriter</code> that this <code>RtfRow</code> belongs to
+   * @param table The <code>RtfTable</code> that created this <code>RtfRow</code>
+   */
   public RtfRow(RtfWriter writer, RtfTable mainTable)
   {
     super();
@@ -52,6 +111,11 @@ public class RtfRow
     this.mainTable = mainTable;
   }
 
+  /**
+   * Pregenerate the <code>RtfCell</code>s in this <code>RtfRow</code>
+   *
+   * @param columns The number of <code>RtfCell</code>s to be generated.
+  */
   public void pregenerateRows(int columns)
   {
     for(int i = 0; i < columns; i++)
@@ -61,6 +125,11 @@ public class RtfRow
       }
   }
 
+  /**
+   * Import a <code>Row</code>
+   * <BR>
+   * All the parameters are taken from the <code>RtfTable</code> which contains this <code>RtfRow</code> and they do exactely what they say
+   */
   public boolean importRow(Row row, int width, int pageWidth, int cellpadding, int cellspacing, int borders, java.awt.Color borderColor, float borderWidth, int y)
   {
     this.width = width;
@@ -94,6 +163,11 @@ public class RtfRow
     return true;
   }
 
+  /**
+   * Write the <code>RtfRow</code> to the specified <code>OutputStream</code>
+   *
+   * @param os The <code>OutputStream</code> to which this <code>RtfRow</code> should be written to.
+   */
   public boolean writeRow(OutputStream os) throws DocumentException, IOException
   {
     os.write(RtfWriter.escape);
@@ -209,12 +283,25 @@ public class RtfRow
     return true;
   }
 
+  /**
+   * <code>RtfTable</code>s call this method from their own setMerge() to specify that a certain other cell is to be merged with it
+   *
+   * @param x The column position of the cell to be merged
+   * @param mergeType The merge type specifies the kind of merge to be applied (MERGE_HORIZ_PREV, MERGE_VERT_PREV, MERGE_BOTH_PREV)
+   * @param mergeCell The <code>RtfCell</code> that the cell at x and y is to be merged with
+   */
   public void setMerge(int x, int mergeType, RtfCell mergeCell)
   {
     RtfCell cell = (RtfCell) cells.get(x);
     cell.setMerge(mergeType, mergeCell);
   }
 
+  /*
+   * Write an Integer to the Outputstream
+   *
+   * @param out The <code>OutputStream</code> to be written to.
+   * @param i The int to be written.
+   */
   private void writeInt(OutputStream out, int i) throws IOException
   {
     out.write(Integer.toString(i).getBytes());
