@@ -38,6 +38,7 @@ import java.awt.Color;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -71,9 +72,11 @@ class PdfChunk extends PdfString {
         keysAttributes.put(Chunk.LINK, null);
         keysAttributes.put(Chunk.STRIKETHRU, null);
         keysAttributes.put(Chunk.UNDERLINE, null);
+        keysAttributes.put(Chunk.REMOTEGOTO, null);
         keysAttributes.put(Chunk.LOCALGOTO, null);
         keysAttributes.put(Chunk.LOCALDESTINATION, null);
         keysAttributes.put(Chunk.GENERICTAG, null);
+        keysAttributes.put(Chunk.IMAGE, null);
         keysNoStroke.put(Chunk.SUBSUPSCRIPT, null);
     }
 
@@ -100,6 +103,18 @@ class PdfChunk extends PdfString {
  */    
     protected boolean newlineSplit;
     
+/** The image in this <CODE>PdfChunk</CODE>, if it has one
+ */    
+    protected Image image;
+    
+/** The offset in the x direction for the image
+ */    
+    protected float offsetX;
+    
+/** The offset in the y direction for the image
+ */    
+    protected float offsetY;
+    
     // constructors
     
     /** Constructs a <CODE>PdfChunk</CODE>-object.
@@ -115,6 +130,14 @@ class PdfChunk extends PdfString {
         this.font = font;
         this.attributes = attributes;
         this.noStroke = noStroke;
+        Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
+        if (obj == null)
+            image = null;
+        else {
+            image = (Image)obj[0];
+            offsetX = ((Float)obj[1]).floatValue();
+            offsetY = ((Float)obj[2]).floatValue();
+        }
     }
     
     /** Constructs a <CODE>PdfFont</CODE>-object.
@@ -222,6 +245,15 @@ class PdfChunk extends PdfString {
         // the color can't be stored in a PdfFont
         noStroke.put(Chunk.COLOR, f.color());
         noStroke.put(Chunk.ENCODING, font.getFont().getEncoding());
+        Object obj[] = (Object[])attributes.get(Chunk.IMAGE);
+        if (obj == null)
+            image = null;
+        else {
+            image = (Image)obj[0];
+            offsetX = ((Float)obj[1]).floatValue();
+            offsetY = ((Float)obj[2]).floatValue();
+        }
+        font.setImage(image);
     }
     
     // methods
@@ -239,6 +271,18 @@ class PdfChunk extends PdfString {
     
     PdfChunk split(float width) {
         newlineSplit = false;
+        if (image != null) {
+            if (image.scaledWidth() > width) {
+                PdfChunk pc = new PdfChunk("", font, attributes, noStroke);
+                value = "";
+                attributes.remove(Chunk.IMAGE);
+                image = null;
+                font = new PdfFont(PdfFontMetrics.HELVETICA, 12);
+                return pc;
+            }
+            else
+                return null;
+        }
         int currentPosition = 0;
         int splitPosition = -1;
         float currentWidth = 0;
@@ -307,6 +351,18 @@ class PdfChunk extends PdfString {
      */
     
     PdfChunk truncate(float width) {
+        if (image != null) {
+            if (image.scaledWidth() > width) {
+                PdfChunk pc = new PdfChunk("", font, attributes, noStroke);
+                value = "";
+                attributes.remove(Chunk.IMAGE);
+                image = null;
+                font = new PdfFont(PdfFontMetrics.HELVETICA, 12);
+                return pc;
+            }
+            else
+                return null;
+        }
         
         int currentPosition = 0;
         float currentWidth = 0;
@@ -386,6 +442,8 @@ class PdfChunk extends PdfString {
      */
     
     float width() {
+        if (image != null)
+            return image.scaledWidth();
         return font.getFont().getWidthPoint(value, font.size());
     }
         
@@ -405,6 +463,9 @@ class PdfChunk extends PdfString {
  */    
     public float getWidthCorrected(float charSpacing, float wordSpacing)
     {
+        if (image != null) {
+            return image.scaledWidth() + charSpacing;
+        }
         int numberOfSpaces = 0;
         int idx = -1;
         while ((idx = value.indexOf(' ', idx + 1)) >= 0)
@@ -454,6 +515,38 @@ class PdfChunk extends PdfString {
     boolean isStroked()
     {
         return (attributes.size() > 0);
+    }
+    
+/** Checks if there is an image in the <CODE>PdfChunk</CODE>.
+ * @return <CODE>true</CODE> if an image is present
+ */    
+    boolean isImage()
+    {
+        return image != null;
+    }
+    
+/** Gets the image in the <CODE>PdfChunk</CODE>.
+ * @return the image or <CODE>null</CODE>
+ */    
+    Image getImage()
+    {
+        return image;
+    }
+    
+/** Gets the image offset in the x direction
+ * @return the image offset in the x direction
+ */    
+    float getImageOffsetX()
+    {
+        return offsetX;
+    }
+
+/** Gets the image offset in the y direction
+ * @return Gets the image offset in the y direction
+ */    
+    float getImageOffsetY()
+    {
+        return offsetY;
     }
 
 }

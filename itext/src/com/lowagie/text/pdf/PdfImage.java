@@ -111,6 +111,15 @@ class PdfImage extends PdfStream {
 					dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
 				}
 				dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
+                int transparency[] = image.getTransparency();
+                if (transparency != null) {
+                    String s = "[";
+                    for (int k = 0; k < transparency.length; ++k)
+                        s += transparency[k] + " ";
+                    s += "]";
+                    dictionary.put(PdfName.MASK, new PdfLiteral(s));
+                }
+                    
 				bytes = image.rawData();
 				dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
 				try {
@@ -151,6 +160,41 @@ class PdfImage extends PdfStream {
 						}
 						Png.getInt(is);
 					}
+					else if (Png.tRNS.equals(marker)) {
+                        switch (colorType) {
+                            case 0:
+                                if (len >= 2) {
+                                    len -= 2;
+                                    int gray = Png.getWord(is);
+                                    dictionary.put(PdfName.MASK, new PdfLiteral("["+gray+" "+gray+"]"));
+                                }
+                                break;
+                            case 2:
+                                if (len >= 6) {
+                                    len -= 6;
+                                    int red = Png.getWord(is);
+                                    int green = Png.getWord(is);
+                                    int blue = Png.getWord(is);
+                                    dictionary.put(PdfName.MASK, new PdfLiteral("["+red+" "+red+" "+green+" "+green+" "+blue+" "+blue+"]"));
+                                }
+                                break;
+                            case 3:
+                                if (len > 0) {
+                                    int idx = 0;
+                                    while (len-- != 0) {
+                                        if (is.read() == 0) {
+                                            dictionary.put(PdfName.MASK, new PdfLiteral("["+idx+" "+idx+"]"));
+                                            break;
+                                        }
+                                        ++idx;
+                                    }
+                                }
+                                break;
+                        }
+						for (int j = -4; j < len; j++) {
+							is.read();
+						}
+                    }
 					else if (Png.IHDR.equals(marker)) {
 						int w = Png.getInt(is);
 						int h = Png.getInt(is);

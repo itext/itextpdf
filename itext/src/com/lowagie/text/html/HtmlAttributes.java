@@ -58,7 +58,7 @@ class HtmlAttributes extends TreeMap {
 	 */
 
 	public HtmlAttributes() {
-		super(new com.lowagie.text.html.StringCompare());
+		super(new com.lowagie.text.StringCompare());
 	}
 
 // methods

@@ -155,7 +155,7 @@ class PdfArray extends PdfObject {
 	 * @since		rugPdf0.20
 	 */
 
-	private final ArrayList getArrayList() {
+	final ArrayList getArrayList() {
 		 return arrayList;
 	}
 

@@ -88,6 +88,9 @@ import java.util.Date;
 
 public class Document implements DocListener {
 
+/** Allows the pdf documents to be produced without compression for debugging purposes.
+ */    
+    public static boolean compress = true;
 // membervariables
 
 	/** The DocListener. */

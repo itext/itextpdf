@@ -65,7 +65,7 @@ public class PdfOutline extends PdfDictionary {
 	/** value of the <B>Parent</B>-key */
 	private PdfOutline parent;
 
-	/** value of the <B>Parent</B>-key */
+	/** value of the <B>Destination</B>-key */
 	private PdfDestination destination;
     
     /** <CODE>true</CODE> if it's children are visible */
@@ -248,6 +248,14 @@ public class PdfOutline extends PdfDictionary {
 		}
 		return destination.addPage(pageReference);
 	}
+    
+/** Gets the destination for this outline.
+ * @return the destination
+ */    
+    public PdfDestination getPdfDestination()
+    {
+        return destination;
+    }
 
 	/** Increments the count.
      *

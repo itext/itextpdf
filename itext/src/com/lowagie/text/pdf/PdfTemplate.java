@@ -19,13 +19,20 @@ public class PdfTemplate extends PdfContentByte
     /** The indirect reference to thsi template */
     protected PdfIndirectReference thisReference;
     /** The fonts used by this template */
-    protected PdfFontDictionary fontDictionary = new PdfFontDictionary();
+    protected PdfFontDictionary fontDictionary;
     /** The images and other templates used by this template */
-    protected PdfXObjectDictionary xObjectDictionary = new PdfXObjectDictionary();
+    protected PdfXObjectDictionary xObjectDictionary;
     /** The bounding width of this template */
     protected float width;
     /** The bounding heigth of this template */
     protected float height;
+
+/** Creates a <CODE>PdfTemplate</CODE>.
+ */    
+    private PdfTemplate()
+    {
+        super(null);
+    }
 
     /** Creates new PdfTemplate
      *
@@ -34,6 +41,8 @@ public class PdfTemplate extends PdfContentByte
     public PdfTemplate(PdfWriter wr)
     {
         super(wr);
+        fontDictionary = new PdfFontDictionary();
+        xObjectDictionary = new PdfXObjectDictionary();
         thisReference = writer.getPdfIndirectReference();
     }
     
@@ -180,5 +189,23 @@ public class PdfTemplate extends PdfContentByte
         content.append(name.toPdf()).append(' ').append(size).append(" Tf\n");
         fontDictionary.put(name, (PdfIndirectReference)obj[1]);
     }
+    
+/** Gets a duplicate of this <CODE>PdfTemplate</CODE>. All
+ * the members are copied by reference but the buffer stays different.
+ * @return a copy of this <CODE>PdfTemplate</CODE>
+ */    
+    public PdfContentByte getDuplicate()
+    {
+        PdfTemplate tpl = new PdfTemplate();
+        tpl.writer = writer;
+        tpl.pdf = pdf;
+        tpl.thisReference = thisReference;
+        tpl.fontDictionary = fontDictionary;
+        tpl.xObjectDictionary = xObjectDictionary;
+        tpl.width = width;
+        tpl.height = height;
+        return tpl;
+    }
+
 
 }
