@@ -50,10 +50,10 @@ public class HtmlTags {
     public static final String HEAD = "head";
     
 /** This is a possible HTML attribute for the HEAD tag. */
-    public static final String CONTENT = "CONTENT";
+    public static final String CONTENT = "content";
     
 /** This is a possible HTML-tag. */
-    public static final String LINK = "LINK";
+    public static final String LINK = "link";
     
 /** This is a possible HTML attribute for the LINK tag. */
     public static final String CSS = "text/css";
@@ -65,7 +65,7 @@ public class HtmlTags {
     public static final String STYLESHEET = "stylesheet";
     
 /** This is a possible HTML attribute for the LINK tag. */
-    public static final String TYPE = "TYPE";
+    public static final String TYPE = "type";
     
 /** the meta tag */
     public static final String META = "meta";
@@ -86,16 +86,16 @@ public class HtmlTags {
     public static final String BODY = "body";
     
 /** This is a possible HTML attribute for the BODY tag. */
-    public static final String TOPMARGIN = "TOPMARGIN";
+    public static final String TOPMARGIN = "topmargin";
     
 /** This is a possible HTML attribute for the BODY tag. */
-    public static final String BOTTOMMARGIN = "BOTTOMMARGIN";
+    public static final String BOTTOMMARGIN = "bottommargin";
     
 /** This is a possible HTML attribute for the BODY tag. */
-    public static final String LEFTMARGIN = "LEFTMARGIN";
+    public static final String LEFTMARGIN = "leftmargin";
     
 /** This is a possible HTML attribute for the BODY tag. */
-    public static final String RIGHTMARGIN = "RIGHTMARGIN";
+    public static final String RIGHTMARGIN = "rightmargin";
     
     // Phrases, Anchors, Lists and Paragraphs
     

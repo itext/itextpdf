@@ -54,16 +54,16 @@ import com.lowagie.text.*;
 public class SAXiTextHandler extends HandlerBase {
     
 /** This is the resulting document. */
-    private Document document;
+    protected Document document;
     
 /** This is a <CODE>Stack</CODE> of objects, waiting to be added to the document. */
-    private Stack stack;
+    protected Stack stack;
     
 /** Counts the number of chapters in this document. */
-    private int chapters = 0;
+    protected int chapters = 0;
     
 /** This is the current chunk to which characters can be added. */
-    private Chunk currentChunk = null;
+    protected Chunk currentChunk = null;
     
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
