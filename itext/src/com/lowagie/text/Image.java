@@ -539,9 +539,9 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         Image image = Image.getInstance((String)attributes.remove(ElementTags.URL));
         int align = 0;
         if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
-            if (ElementTags.ALIGN_LEFT.equals(value)) align |= Image.LEFT;
-            else if (ElementTags.ALIGN_RIGHT.equals(value)) align |= Image.RIGHT;
-            else if (ElementTags.ALIGN_MIDDLE.equals(value)) align |= Image.MIDDLE;
+            if (ElementTags.ALIGN_LEFT.equalsIgnoreCase(value)) align |= Image.LEFT;
+            else if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(value)) align |= Image.RIGHT;
+            else if (ElementTags.ALIGN_MIDDLE.equalsIgnoreCase(value)) align |= Image.MIDDLE;
         }
         if ((value = (String)attributes.remove(ElementTags.UNDERLYING)) != null) {
             if (new Boolean(value).booleanValue()) align |= Image.UNDERLYING;
