@@ -92,12 +92,13 @@ public class BuildTutorial {
 		}
 		else if (source.getName().equals("index.xml")) {
 			System.out.println("... transformed");
-			File buildfile = new File(destination, "build.xml");
-			convert(source, xsl_examples, buildfile);
 			convert(source, xsl_site, new File(destination, "index.html"));
-			build.write("\t<ant antfile=\"${basedir}");
+			File buildfile = new File(destination, "build.xml");
 			String path = buildfile.getCanonicalPath().substring(root.length());
 			path = path.replace(File.separatorChar, '/');
+			if ("/build.xml".equals(path)) return;
+			convert(source, xsl_examples, buildfile);
+			build.write("\t<ant antfile=\"${basedir}");
 			build.write(path);
 			build.write("\" inheritAll=\"false\" />\n");
 		}
@@ -128,6 +129,17 @@ public class BuildTutorial {
 
 			// Use the template to create a transformer
 			Transformer xformer = template.newTransformer();
+			
+			// passing 2 parameters
+			String branch = outfile.getParentFile().getCanonicalPath().substring(root.length());
+			branch = branch.replace(File.separatorChar, '/');
+			StringBuffer path = new StringBuffer();
+			for (int i = 0; i < branch.length(); i++) {
+				if (branch.charAt(i) == '/') path.append("/..");
+			}
+			
+			xformer.setParameter("branch", branch);
+			xformer.setParameter("root", path.toString());
 
 			// Prepare the input and output files
 			Source source = new StreamSource(new FileInputStream(infile));
