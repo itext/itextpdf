@@ -55,12 +55,24 @@ package com.lowagie.text.pdf;
  */
 
 public class PdfLiteral extends PdfObject {
+    
+    /**
+     * Holds value of property position.
+     */
+    private int position;
+        
     public PdfLiteral(String text) {
         super(0, text);
     }
     
     public PdfLiteral(byte b[]) {
         super(0, b);
+    }
+
+    public PdfLiteral(int size) {
+        super(0, (byte[])null);
+        bytes = new byte[size];
+        java.util.Arrays.fill(bytes, (byte)32);
     }
 
     public PdfLiteral(int type, String text) {
@@ -70,4 +82,30 @@ public class PdfLiteral extends PdfObject {
     public PdfLiteral(int type, byte b[]) {
         super(type, b);
     }
+    
+    public void toPdf(PdfWriter writer, java.io.OutputStream os) throws java.io.IOException {
+        if (os instanceof OutputStreamCounter)
+            position = ((OutputStreamCounter)os).getCounter();
+        super.toPdf(writer, os);
+    }
+    
+    /**
+     * Getter for property position.
+     * @return Value of property position.
+     */
+    public int getPosition() {
+        return this.position;
+    }
+    
+    /**
+     * Getter for property posLength.
+     * @return Value of property posLength.
+     */
+    public int getPosLength() {
+        if (bytes != null)
+            return bytes.length;
+        else
+            return 0;
+    }
+    
 }

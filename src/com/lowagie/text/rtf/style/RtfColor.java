@@ -62,7 +62,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
 /**
  * The RtfColor stores one rtf color value for a rtf document
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfColor extends RtfElement implements RtfExtendedElement {

@@ -67,7 +67,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * The RtfTable wraps a Table.
  * INTERNAL USE ONLY
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
  * @author Benoit WIART <b.wiart@proxiad.com>

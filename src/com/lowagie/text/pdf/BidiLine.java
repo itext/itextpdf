@@ -311,15 +311,7 @@ public class BidiLine {
                 ++src;
             }
             int arabicWordSize = src - startArabicIdx;
-//            for (int h = 0; h < arabicWordSize; ++h)
-//                System.out.print(Integer.toHexString((int)text[h + startArabicIdx]) + " ");
-//            System.out.println();
-//            int size = arabic.shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize);
             int size = ArabicLigaturizer.arabic_shape(text, startArabicIdx, arabicWordSize, text, dest, arabicWordSize, arabicOptions /*PangoArabicShapping.ar_novowel PangoArabicShapping.ar_lig | PangoArabicShapping.ar_composedtashkeel*/);
-//            for (int h = 0; h < size; ++h)
-//                System.out.print(Integer.toHexString((int)text[h + dest]) + " ");
-//            System.out.println();
-//            System.out.println();
             if (startArabicIdx != dest) {
                 for (int k = 0; k < size; ++k) {
                     detailChunks[dest] = detailChunks[startArabicIdx];
@@ -363,7 +355,7 @@ public class BidiLine {
             if (PdfChunk.noPrint(uniC))
                 continue;
             charWidth = ck.getCharWidth(c);
-            if (ck.isExtSplitCharacter(uniC))
+            if (ck.isExtSplitCharacter(oldCurrentChar, currentChar, totalTextLength, text, detailChunks))
                 lastSplit = currentChar;
             if (width - charWidth < 0)
                 break;

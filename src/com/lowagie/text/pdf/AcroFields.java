@@ -94,7 +94,10 @@ public class AcroFields {
                 continue;
             ArrayList arr = annots.getArrayList();
             for (int j = 0; j < arr.size(); ++j) {
-                PdfDictionary annot = (PdfDictionary)PdfReader.getPdfObject((PdfObject)arr.get(j));
+                PdfObject annoto = PdfReader.getPdfObject((PdfObject)arr.get(j));
+                if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect())
+                    continue;
+                PdfDictionary annot = (PdfDictionary)annoto;
                 if (!PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE)))
                     continue;
                 PdfDictionary widget = annot;

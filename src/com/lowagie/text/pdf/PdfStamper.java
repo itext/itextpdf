@@ -61,6 +61,7 @@ import java.io.IOException;
 import java.io.EOFException;
 import java.io.RandomAccessFile;
 import java.io.File;
+import java.io.InputStream;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocWriter;
@@ -181,15 +182,20 @@ public class PdfStamper {
         PdfSigGenericPKCS sig = sigApp.getSigStandard();
         byte buf[] = new byte[8192];
         int n;
+        InputStream inp = sigApp.getRangeStream();
         try {
-            while ((n = sigApp.getDocumentBytes(buf)) > 0) {
+            while ((n = inp.read(buf)) > 0) {
                 sig.getSigner().update(buf, 0, n);
             }
         }
         catch (SignatureException se) {
             throw new ExceptionConverter(se);
         }
-        sigApp.close(sig.getSignerContents());
+        PdfString str = new PdfString(sig.getSignerContents());
+        str.setHexWriting(true);
+        PdfDictionary dic = new PdfDictionary();
+        dic.put(PdfName.CONTENTS, str);
+        sigApp.close(dic);
     }
 
     private static int indexArray(byte bout[], int position, String search) {
@@ -328,7 +334,8 @@ public class PdfStamper {
         return stamper.getAcroFields();
     }
 
-    /** Determines if the fields are flattened on close.
+    /** Determines if the fields are flattened on close. The fields added with
+     * {@link addAnnotation(PdfAnnotation,int)} will never be flattened.
      * @param flat <CODE>true</CODE> to flatten the fields, <CODE>false</CODE>
      * to keep the fields
      */
@@ -337,7 +344,7 @@ public class PdfStamper {
     }
 
     /** Adds an annotation of form filed in a specific page. This page number
-     * can be overridden with <code>PdfAnnotation.setPlaceInPage()</code>.
+     * can be overridden with {@link PdfAnnotation#setPlaceInPage(int)}.
      * @param annot the annotation
      * @param page the page
      */
@@ -347,7 +354,7 @@ public class PdfStamper {
 
     /**
      * Sets the bookmarks. The list structure is defined in
-     * <CODE>SimpleBookmark#</CODE>.
+     * {@link SimpleBookmark}.
      * @param outlines the bookmarks or <CODE>null</CODE> to remove any
      * @throws IOException on error
      */

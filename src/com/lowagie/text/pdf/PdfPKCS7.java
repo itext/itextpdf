@@ -681,9 +681,12 @@ public class PdfPKCS7 {
     }
     
     /**
-     * Sets the digest to an external calculated value.
-     * @param digest the digest
-     * @param RSAdata the extra data
+     * Sets the digest/signature to an external calculated value.
+     * @param digest the digest. This is the actual signature
+     * @param RSAdata the extra data that goes into the data tag in PKCS#7
+     * @param digestEncryptionAlgorithm the encryption algorithm. It may must be <CODE>null</CODE> if the <CODE>digest</CODE>
+     * is also <CODE>null</CODE>. If the <CODE>digest</CODE> is not <CODE>null</CODE>
+     * then it may be "RSA" or "DSA"
      */    
     public void setExternalDigest(byte digest[], byte RSAdata[], String digestEncryptionAlgorithm) {
         externalDigest = digest;
@@ -996,6 +999,29 @@ public class PdfPKCS7 {
             }
         }
         
+        public X509Name(String dirName) {
+            X509NameTokenizer   nTok = new X509NameTokenizer(dirName);
+            
+            while (nTok.hasMoreTokens()) {
+                String  token = nTok.nextToken();
+                int index = token.indexOf('=');
+                
+                if (index == -1) {
+                    throw new IllegalArgumentException("badly formated directory string");
+                }
+                
+                String id = token.substring(0, index).toUpperCase();
+                String value = token.substring(index + 1);
+                ArrayList vs = (ArrayList)values.get(id);
+                if (vs == null) {
+                    vs = new ArrayList();
+                    values.put(id, vs);
+                }
+                vs.add(value);
+            }
+            
+        }
+        
         public String getField(String name) {
             ArrayList vs = (ArrayList)values.get(name);
             return vs == null ? null : (String)vs.get(0);
@@ -1012,6 +1038,87 @@ public class PdfPKCS7 {
         
         public String toString() {
             return values.toString();
+        }
+    }
+    
+    /**
+     * class for breaking up an X500 Name into it's component tokens, ala
+     * java.util.StringTokenizer. We need this class as some of the
+     * lightweight Java environment don't support classes like
+     * StringTokenizer.
+     */
+    public static class X509NameTokenizer
+    {
+        private String          oid;
+        private int             index;
+        private StringBuffer    buf = new StringBuffer();
+
+        public X509NameTokenizer(
+            String oid)
+        {
+            this.oid = oid;
+            this.index = -1;
+        }
+
+        public boolean hasMoreTokens()
+        {
+            return (index != oid.length());
+        }
+
+        public String nextToken()
+        {
+            if (index == oid.length())
+            {
+                return null;
+            }
+
+            int     end = index + 1;
+            boolean quoted = false;
+            boolean escaped = false;
+
+            buf.setLength(0);
+
+            while (end != oid.length())
+            {
+                char    c = oid.charAt(end);
+
+                if (c == '"')
+                {
+                    if (!escaped)
+                    {
+                        quoted = !quoted;
+                    }
+                    else
+                    {
+                        buf.append(c);
+                    }
+                    escaped = false;
+                }
+                else
+                {
+                    if (escaped || quoted)
+                    {
+                        buf.append(c);
+                        escaped = false;
+                    }
+                    else if (c == '\\')
+                    {
+                        escaped = true;
+                    }
+                    else if (c == ',')
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        buf.append(c);
+                    }
+                }
+                end++;
+            }
+
+            index = end;
+            return buf.toString().trim();
         }
     }
 }

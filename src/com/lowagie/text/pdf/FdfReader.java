@@ -46,6 +46,7 @@
  */
 package com.lowagie.text.pdf;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.net.URL;
@@ -79,6 +80,15 @@ public class FdfReader extends PdfReader {
      */    
     public FdfReader(URL url) throws IOException {
         super(url);
+    }
+    
+    /** Reads an FDF form.
+     * @param is the <CODE>InputStream</CODE> containing the document. The stream is read to the
+     * end but is not closed
+     * @throws IOException on error
+     */    
+    public FdfReader(InputStream is) throws IOException {
+        super(is);
     }
     
     protected void readPdf() throws IOException {

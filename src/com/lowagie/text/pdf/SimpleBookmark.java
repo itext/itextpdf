@@ -142,20 +142,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
             try {
                 PdfObject dest = PdfReader.getPdfObject(outline.get(PdfName.DEST));
                 if (dest != null) {
-                    if (dest.isString())
-                        map.put("Named", dest.toString());
-                    else if (dest.isName())
-                        map.put("Named", PdfName.decodeName(dest.toString()));
-                    else if (dest.isArray()) {
-                        ArrayList arr = ((PdfArray)dest).getArrayList();
-                        StringBuffer s = new StringBuffer();
-                        s.append(pages.get(((PdfIndirectReference)arr.get(0)).getNumber()));
-                        s.append(' ').append(arr.get(1).toString().substring(1));
-                        for (int k = 2; k < arr.size(); ++k)
-                            s.append(' ').append(arr.get(k).toString());
-                        map.put("Page", s.toString());
-                    }
-                    map.put("Action", "GoTo");
+                    mapGotoBookmark(map, dest, pages); //changed by ujihara 2004-06-13
                 }
                 else {
                     PdfDictionary action = (PdfDictionary)PdfReader.getPdfObject(outline.get(PdfName.A));
@@ -163,20 +150,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                         if (PdfName.GOTO.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
                             dest = PdfReader.getPdfObject(action.get(PdfName.D));
                             if (dest != null) {
-                                if (dest.isString())
-                                    map.put("Named", dest.toString());
-                                else if (dest.isName())
-                                    map.put("Named", PdfName.decodeName(dest.toString()));
-                                else if (dest.isArray()) {
-                                    ArrayList arr = ((PdfArray)dest).getArrayList();
-                                    StringBuffer s = new StringBuffer();
-                                    s.append(pages.get(((PdfIndirectReference)arr.get(0)).getNumber()));
-                                    s.append(' ').append(arr.get(1).toString().substring(1));
-                                    for (int k = 2; k < arr.size(); ++k)
-                                        s.append(' ').append(arr.get(k).toString());
-                                    map.put("Page", s.toString());
-                                }
-                                map.put("Action", "GoTo");
+                                mapGotoBookmark(map, dest, pages);
                             }
                         }
                         else if (PdfName.URI.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
@@ -245,6 +219,45 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
         }
         return list;
     }
+    
+	private static void mapGotoBookmark(HashMap map, PdfObject dest, IntHashtable pages) 
+	{
+		if (dest.isString())
+			map.put("Named", dest.toString());
+		else if (dest.isName())
+			map.put("Named", PdfName.decodeName(dest.toString()));
+		else if (dest.isArray()) 
+			map.put("Page", makeBookmarkParam((PdfArray)dest, pages)); //changed by ujihara 2004-06-13
+		map.put("Action", "GoTo");
+	}
+
+	private static String makeBookmarkParam(PdfArray dest, IntHashtable pages)
+	{
+		ArrayList arr = ((PdfArray)dest).getArrayList();
+		StringBuffer s = new StringBuffer();
+		s.append(pages.get(getNumber((PdfIndirectReference)arr.get(0)))); //changed by ujihara 2004-06-13
+		s.append(' ').append(arr.get(1).toString().substring(1));
+		for (int k = 2; k < arr.size(); ++k)
+			s.append(' ').append(arr.get(k).toString());
+		return s.toString();
+	}
+	
+	/**
+	 * Gets number of indirect. If type of directed indirect is PAGES, it refers PAGE object through KIDS.
+	 * @author Kazuya Ujihara
+	 * @param indirect 
+	 * 2004-06-13
+	 */
+	private static int getNumber(PdfIndirectReference indirect)
+	{
+		PdfDictionary pdfObj = (PdfDictionary)PdfReader.getPdfObject(indirect);
+		if (pdfObj.contains(PdfName.TYPE) && pdfObj.get(PdfName.TYPE).equals(PdfName.PAGES) && pdfObj.contains(PdfName.KIDS)) 
+		{
+			PdfArray kids = (PdfArray)pdfObj.get(PdfName.KIDS);
+			indirect = (PdfIndirectReference)kids.arrayList.get(0);
+		}
+		return indirect.getNumber();
+	}
     
     /**
      * Gets a <CODE>List</CODE> with the bookmarks. It returns <CODE>null</CODE> if

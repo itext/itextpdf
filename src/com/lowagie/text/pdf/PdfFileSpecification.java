@@ -48,6 +48,7 @@
 package com.lowagie.text.pdf;
 
 import java.io.*;
+import java.net.URL;
 /** Specifies a file or an URL. The file can be extern or embedded.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -77,7 +78,7 @@ public class PdfFileSpecification extends PdfDictionary {
 
     /**
      * Creates a file specification with the file embedded. The file may
-     * come from the file system or from a byte array.
+     * come from the file system or from a byte array. The data is flate compressed.
      * @param writer the <CODE>PdfWriter</CODE>
      * @param filePath the file path
      * @param fileDisplay the file information that is presented to the user
@@ -87,37 +88,62 @@ public class PdfFileSpecification extends PdfDictionary {
      * @return the file specification
      */    
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[]) throws IOException {
+        return fileEmbedded(writer, filePath, fileDisplay, fileStore, true);
+    }
+    
+    
+    /**
+     * Creates a file specification with the file embedded. The file may
+     * come from the file system or from a byte array.
+     * @param writer the <CODE>PdfWriter</CODE>
+     * @param filePath the file path
+     * @param fileDisplay the file information that is presented to the user
+     * @param fileStore the byte array with the file. If it is not <CODE>null</CODE>
+     * it takes precedence over <CODE>filePath</CODE>
+     * @param compress sets the compression on the data. Multimedia content will benefit little
+     * from compression
+     * @throws IOException on error
+     * @return the file specification
+     */    
+    public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress) throws IOException {
         PdfFileSpecification fs = new PdfFileSpecification();
         fs.writer = writer;
         fs.put(PdfName.F, new PdfString(fileDisplay));
         PdfStream stream;
-        if (fileStore == null) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte buf[] = new byte[4192];
-            FileInputStream in = new FileInputStream(filePath);
-            try {
-                while (true) {
-                    int r = in.read(buf);
-                    if (r < 0)
-                        break;
-                    out.write(buf, 0, r);
+        InputStream in = null;
+        PdfIndirectReference ref;
+        try {
+            if (fileStore == null) {
+                File file = new File(filePath);
+                if (file.canRead()) {
+                    in = new FileInputStream(filePath);
                 }
+                else {
+                    if (filePath.startsWith("file:/") || filePath.startsWith("http://") || filePath.startsWith("https://") || filePath.startsWith("jar:")) {
+                        in = new URL(filePath).openStream();
+                    }
+                    else {
+                        in = BaseFont.getResourceStream(filePath);
+                        if (in == null)
+                            throw new IOException(filePath + " not found as file or resource.");
+                    }
+                }
+                stream = new PdfStream(in, writer);
             }
-            finally {
-                try {
-                    in.close();
-                }
-                catch (Exception e) {
-                    // empty on purpose
-                }
+            else
+                stream = new PdfStream(fileStore);
+            stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
+            if (compress)
+                stream.flateCompress();
+            ref = writer.addToBody(stream).getIndirectReference();
+            if (fileStore == null) {
+                stream.writeLength();
             }
-            stream = new PdfStream(out.toByteArray());
         }
-        else
-            stream = new PdfStream(fileStore);
-        stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
-        stream.flateCompress();
-        PdfIndirectReference ref = writer.addToBody(stream).getIndirectReference();
+        finally {
+            if (in != null)
+                try{in.close();}catch(Exception e){}
+        }
         PdfDictionary f = new PdfDictionary();
         f.put(PdfName.F, ref);
         fs.put(PdfName.EF, f);

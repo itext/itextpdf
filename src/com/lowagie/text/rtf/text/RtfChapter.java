@@ -62,7 +62,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfChapter wraps a Chapter element.
  * INTERNAL CLASS
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfChapter extends RtfSection {

@@ -63,7 +63,7 @@ import com.lowagie.text.rtf.style.RtfFont;
  * The RtfChunk contains one piece of text. The smallest text element available
  * in iText.
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfChunk extends RtfElement {

@@ -1799,7 +1799,6 @@ class PdfDocument extends Document implements DocListener {
                 case Element.IMGTEMPLATE: {
                     carriageReturn();
                     add((Image) element);
-                    pageEmpty = false;
                     break;
                 }
                 case Element.GRAPHIC: {
@@ -1861,10 +1860,10 @@ class PdfDocument extends Document implements DocListener {
      */
     
     private void add(Image image) throws PdfException, DocumentException {
-        pageEmpty = false;
         
         if (image.hasAbsolutePosition()) {
             addImage(graphics, image, 0, 0, 0, 0, 0, 0);
+            pageEmpty = false;
             return;
         }
         
@@ -1880,6 +1879,7 @@ class PdfDocument extends Document implements DocListener {
                 return;
             }
         }
+        pageEmpty = false;
         // avoid endless loops
         if (image == imageWait)
             imageWait = null;

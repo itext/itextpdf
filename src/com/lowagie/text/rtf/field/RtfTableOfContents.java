@@ -65,7 +65,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * and the user will have to update it first. A text to inform the user of this is
  * displayed instead.
  * 
- * @version $Id$
+ * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
  */
