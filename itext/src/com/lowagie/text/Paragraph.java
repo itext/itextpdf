@@ -87,6 +87,9 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
 /** The indentation of this paragraph on the right side. */
     protected float indentationRight;
     
+/** Does the paragraph has to be kept together on 1 page. */
+    protected boolean keeptogether = false;
+    
     // constructors
     
 /**
@@ -219,6 +222,9 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
+        if ((value = (String)attributes.remove(ElementTags.KEEPTOGETHER)) != null) {
+            keeptogether = new Boolean(value).booleanValue();
+        }
         if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
@@ -313,6 +319,26 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     
     public final void setIndentationRight(float indentation) {
         this.indentationRight = indentation;
+    }
+    
+/**
+ * Indicates that the paragraph has to be kept together on one page.
+ *
+ * @param   keeptogether    true of the paragraph may not be split over 2 pages
+ */
+    
+    public final void setKeepTogether(boolean keeptogether) {
+        this.keeptogether = keeptogether;
+    }
+    
+/**
+ * Checks if this paragraph has to be kept together on one page.
+ *
+ * @return  true if the paragraph may not be split over 2 pages.
+ */
+    
+    public final boolean getKeepTogether() {
+        return keeptogether;
     }
     
     // methods to retrieve information

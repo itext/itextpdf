@@ -53,7 +53,7 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.StringCompare;
 import com.lowagie.text.Anchor;
 import com.lowagie.text.Annotation;
-import java.util.Comparator;
+import com.lowagie.text.Cell;
 import com.lowagie.text.DocListener;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -80,6 +80,7 @@ import java.awt.Color;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Iterator;
@@ -1127,13 +1128,22 @@ class PdfDocument extends Document implements DocListener {
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraph(writer, this, indentTop() - currentHeight);
                     
+                    // if a paragraph has to be kept together, we wrap it in a table object
+                    if (paragraph.getKeepTogether()) {
+                        Table table = new Table(1, 1);
+                        table.setOffset(0f);
+                        table.setBorder(Table.NO_BORDER);
+                        table.setWidth(100f);
+                        table.setTableFitsPage(true);
+                        Cell cell = new Cell(paragraph);
+                        cell.setBorder(Table.NO_BORDER);
+                        table.addCell(cell);
+                        this.add(table);
+                        break;
+                    }
+                    else
                     // we process the paragraph
                     element.process(this);
-                    // if the last line is justified, it should be aligned to the left
-                    //				if (line.hasToBeJustified()) {
-                    //					line.resetAlignment();
-                    //				}
-                    // some parameters are set back to normal again
                     
                     //add by Jin-Hsia Yang and blowagie
                     paraIndent -= paragraph.indentationLeft();
@@ -1313,6 +1323,7 @@ class PdfDocument extends Document implements DocListener {
                     PdfTable table = new PdfTable((Table) element, indentLeft(), indentRight(), currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
                     
                     boolean tableHasToFit = ((Table) element).hasToFitPageTable() ? table.bottom() < indentBottom() : false;
+                    if (pageEmpty) tableHasToFit = false;
                     boolean cellsHaveToFit = ((Table) element).hasToFitPageCells();
                     
                     // drawing the table
