@@ -499,7 +499,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                         write(chunk.font());
                     }
                     os.write(GT);
-                    writeFontStyleStart(chunk.font().style());
                     if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
                         if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
                             writeStart(HtmlTags.SUP);
@@ -521,7 +520,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                         }
                         os.write(GT);
                     }
-                    writeFontStyleEnd(chunk.font().style());
                     writeEnd(HtmlTags.CHUNK);
                 }
                 return;
@@ -534,22 +532,10 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 writeStart(HtmlTags.PHRASE);
                 write(phrase.font());
                 os.write(GT);
-                if (phrase.font().style() != Font.UNDEFINED && phrase.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleStart(phrase.font().style());
-                    os.write(NEWLINE);
-                }
                 os.write(NEWLINE);
-                
                 for (Iterator i = phrase.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
                 }
-                if (phrase.font().style() != Font.UNDEFINED && phrase.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleEnd(phrase.font().style());
-                    os.write(NEWLINE);
-                }
-                
                 addTabs(indent);
                 writeEnd(HtmlTags.PHRASE);
                 return;
@@ -563,12 +549,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeStart(HtmlTags.PHRASE);
                     write(anchor.font());
                     os.write(GT);
-                    os.write(NEWLINE);
-                }
-                
-                if (anchor.font().style() != Font.UNDEFINED && anchor.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleStart(anchor.font().style());
                     os.write(NEWLINE);
                 }
                 
@@ -590,15 +570,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 addTabs(indent);
                 writeEnd(HtmlTags.ANCHOR);
                 
-                if (anchor.font().style() != Font.UNDEFINED && anchor.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleEnd(anchor.font().style());
-                    os.write(NEWLINE);
-                }
-                
                 if (!anchor.font().isStandardFont()) {
                     addTabs(indent);
-                    writeEnd(HtmlTags.PHRASE);;
+                    writeEnd(HtmlTags.PHRASE);
                 }
                 return;
             }
@@ -622,18 +596,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     os.write(GT);
                     os.write(NEWLINE);
                 }
-                if (paragraph.font().style() != Font.UNDEFINED && paragraph.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleStart(paragraph.font().style());
-                    os.write(NEWLINE);
-                }
+                
                 for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
-                }
-                if (paragraph.font().style() != Font.UNDEFINED && paragraph.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleEnd(paragraph.font().style());
-                    os.write(NEWLINE);
                 }
                 if (!paragraph.font().isStandardFont()) {
                     addTabs(indent);
@@ -697,18 +662,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     os.write(GT);
                     os.write(NEWLINE);
                 }
-                if (listItem.font().style() != Font.UNDEFINED && listItem.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleStart(listItem.font().style());
-                    os.write(NEWLINE);
-                }
                 for (Iterator i = listItem.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
-                }
-                if (listItem.font().style() != Font.UNDEFINED && listItem.font().style() != Font.NORMAL) {
-                    addTabs(indent);
-                    writeFontStyleEnd(listItem.font().style());
-                    os.write(NEWLINE);
                 }
                 if (!listItem.font().isStandardFont()) {
                     addTabs(indent);
@@ -922,136 +877,76 @@ public class HtmlWriter extends DocWriter implements DocListener {
         }
         addTabs(indent);
     }
+        
+    /**
+     * Writes the HTML representation of a <CODE>Font</CODE>.
+     *
+     * @param	a <CODE>Font</CODE>
+     * @author  "Steve Ogryzek" <steve@ogryzek.com>
+     */
     
-/**
- * Writes the HTML representation of a <CODE>Font</CODE>.
- *
- * @param	a <CODE>Font</CODE>
- */
-    
-    protected void write(Font font) throws IOException {
-        switch(font.family()) {
-            case Font.COURIER:
-                write(HtmlTags.FONT, "Courier");
-                break;
-            case Font.HELVETICA:
-                write(HtmlTags.FONT, "Helvetica");
-                break;
-            case Font.TIMES_NEW_ROMAN:
-                write(HtmlTags.FONT, "Times New Roman");
-                break;
-            case Font.SYMBOL:
-                write(HtmlTags.FONT, "Symbol");
-                break;
-            case Font.ZAPFDINGBATS:
-                write(HtmlTags.FONT, "ZapfDingbats");
-                break;
-                default:
+    private void write(Font font) throws IOException {
+        write(" ");
+        write(HtmlTags.STYLE);
+        write("=\"");
+        switch (font.family()) {
+        case Font.COURIER:
+            writeCssProperty(HtmlTags.CSS_FONTFAMILY, "Courier");
+            break;
+        case Font.HELVETICA:
+            writeCssProperty(HtmlTags.CSS_FONTFAMILY, "Helvetica");
+            break;
+        case Font.TIMES_NEW_ROMAN:
+            writeCssProperty(HtmlTags.CSS_FONTFAMILY, "Times New Roman");
+            break;
+        case Font.SYMBOL:
+            writeCssProperty(HtmlTags.CSS_FONTFAMILY, "Symbol");
+            break;
+        case Font.ZAPFDINGBATS:
+            writeCssProperty(HtmlTags.CSS_FONTFAMILY, "ZapfDingbats");
+            break;
+        default:
         }
+
         if (font.size() != Font.UNDEFINED) {
-            write(HtmlTags.SIZE, String.valueOf(font.size()));
+            writeCssProperty(HtmlTags.CSS_FONTSIZE, String.valueOf(font.size()) + "px");
         }
         if (font.color() != null) {
-            write(HtmlTags.COLOR, HtmlEncoder.encode(font.color()));
+            writeCssProperty(HtmlTags.CSS_COLOR, HtmlEncoder.encode(font.color()));
         }
-    }
     
-/**
- * Writes the HTML representation of a <CODE>Font</CODE>.
- *
- * @param	a <CODE>Font</CODE>
- */
-    
-    protected void writeFontStyleStart(int fontstyle) throws IOException {
-        if (fontstyle == Font.UNDEFINED || fontstyle == Font.NORMAL) {
-            return;
-        }
-        os.write(LT);
-        switch(fontstyle & Font.BOLDITALIC) {
+        int fontstyle = font.style();
+        if (fontstyle != Font.UNDEFINED && fontstyle != Font.NORMAL) {
+            switch (fontstyle & Font.BOLDITALIC) {
             case Font.BOLD:
-                write(HtmlTags.B);
+                writeCssProperty(HtmlTags.CSS_FONTWEIGHT, "bold");
                 break;
             case Font.ITALIC:
-                write(HtmlTags.I);
+                writeCssProperty(HtmlTags.CSS_FONTSTYLE, "italic");
                 break;
             case Font.BOLDITALIC:
-                write(HtmlTags.B);
-                os.write(GT);
-                os.write(LT);
-                write(HtmlTags.I);
+                writeCssProperty(HtmlTags.CSS_FONTWEIGHT, "bold");
+                writeCssProperty(HtmlTags.CSS_FONTSTYLE, "italic");
                 break;
-        }
-        if ((fontstyle & Font.UNDERLINE) > 0) {
-            if ((fontstyle & Font.BOLDITALIC) > 0) {
-                os.write(GT);
-                os.write(LT);
-                write(HtmlTags.U);
             }
-            else {
-                write(HtmlTags.U);
+
+            // CSS only supports one decoration tag so if both are specified
+            // only one of the two will display
+            if ((fontstyle & Font.UNDERLINE) > 0) {
+                writeCssProperty(HtmlTags.CSS_TEXTDECORATION, "underline");
             }
-        }
-        if ((fontstyle & Font.STRIKETHRU) > 0) {
-            if ((fontstyle & Font.BOLDITALIC) > 0 || (fontstyle & Font.UNDERLINE) > 0) {
-                os.write(GT);
-                os.write(LT);
-                write(HtmlTags.S);
-            }
-            else {
-                write(HtmlTags.S);
+            if ((fontstyle & Font.STRIKETHRU) > 0) {
+                writeCssProperty(HtmlTags.CSS_TEXTDECORATION, "line-through");
             }
         }
-        os.write(GT);
+
+        write("\"");
     }
     
-/**
- * Writes the HTML representation of a <CODE>Font</CODE>.
- *
- * @param	a <CODE>Font</CODE>
- */
-    
-    protected void writeFontStyleEnd(int fontstyle) throws IOException {
-        if (fontstyle == Font.UNDEFINED || fontstyle == Font.NORMAL) {
-            return;
-        }
-        os.write(LT);
-        os.write(FORWARD);
-        if ((fontstyle & Font.STRIKETHRU) > 0) {
-            write(HtmlTags.S);
-        }
-        if ((fontstyle& Font.UNDERLINE) > 0) {
-            if ((fontstyle & Font.STRIKETHRU) > 0) {
-                os.write(GT);
-                os.write(LT);
-                os.write(FORWARD);
-                write(HtmlTags.U);
-            }
-            else {
-                write(HtmlTags.U);
-            }
-        }
-        if ((fontstyle & Font.BOLDITALIC) > 0) {
-            if((fontstyle & Font.STRIKETHRU) > 0 || (fontstyle & Font.UNDERLINE) > 0) {
-                os.write(GT);
-                os.write(LT);
-                os.write(FORWARD);
-            }
-            switch(fontstyle & Font.BOLDITALIC) {
-                case Font.BOLD:
-                    write(HtmlTags.B);
-                    break;
-                case Font.ITALIC:
-                    write(HtmlTags.I);
-                    break;
-                case Font.BOLDITALIC:
-                    write(HtmlTags.I);
-                    os.write(GT);
-                    os.write(LT);
-                    os.write(FORWARD);
-                    write(HtmlTags.B);
-                    break;
-            }
-        }
-        os.write(GT);
+    /**
+     * Writes out a CSS property.
+     */
+    private void writeCssProperty(String prop, String value) throws IOException {
+        write(new StringBuffer(prop).append(": ").append(value).append("; ").toString());
     }
 }
