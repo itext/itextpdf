@@ -43,6 +43,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Graphic;
 import com.lowagie.text.Header;
+import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
@@ -352,6 +353,86 @@ class PdfDocument extends Document implements DocListener {
 		}
 		this.pageSize = pageSize;
 		return true;
+	}
+
+	/**
+	 * Changes the header of this document.
+	 * 
+	 * @param	header		the new header
+	 * @return	<CODE>void</CODE>
+	 *
+	 * @since	iText0.30
+	 */
+
+	public void setHeader(HeaderFooter header) {
+		if (writer != null && writer.isPaused()) {
+			return;
+		}
+		super.setHeader(header);
+	}
+
+	/**
+	 * Resets the header of this document.
+	 * 
+	 * @param	header		the new header
+	 * @return	<CODE>void</CODE>
+	 *
+	 * @since	iText0.30
+	 */
+
+	public void resetHeader() {
+		if (writer != null && writer.isPaused()) {
+			return;
+		}
+		super.resetHeader();
+	}
+
+	/**
+	 * Changes the footer of this document.
+	 * 
+	 * @param	footer		the new footer
+	 */
+
+	public void setFooter(HeaderFooter footer) {
+		if (writer != null && writer.isPaused()) {
+			return;
+		}
+		super.setFooter(footer);
+	}
+
+	/**
+	 * Resets the footer of this document.
+	 */
+
+	public void resetFooter() {
+		if (writer != null && writer.isPaused()) {
+			return;
+		}
+		super.resetFooter();
+	}
+	
+	/**
+	 * Sets the page number to 0.
+	 */
+
+	public void resetPageCount() { 
+		if (writer != null && writer.isPaused()) {
+			return;
+		}
+		super.resetPageCount();
+	}
+
+	/**
+	 * Sets the page number.
+	 *
+	 * @param	pageN		the new page number
+	 */
+
+	public void setPageCount(int pageN) {
+		if (writer != null && writer.isPaused()) {
+			return;
+		}
+		super.setPageCount(pageN);
 	}
 
     /**
