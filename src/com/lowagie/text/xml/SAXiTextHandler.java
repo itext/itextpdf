@@ -58,7 +58,7 @@ import java.util.Properties;
 import java.util.Stack;
 
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.AttributeList;
+import org.xml.sax.Attributes;
 
 import com.lowagie.text.*;
 
@@ -103,12 +103,12 @@ public class SAXiTextHandler extends DefaultHandler {
  * @param	attrs		the list of attributes
  */
     
-    public void startElement(String uri, String name, String qname, AttributeList attrs) {
+    public void startElement(String uri, String lname, String name, Attributes attrs) {
         
         Properties attributes = new Properties();
         if (attrs != null) {
             for (int i = 0; i < attrs.getLength(); i++) {
-                String attribute = attrs.getName(i);
+                String attribute = attrs.getQName(i);
                 attributes.setProperty(attribute, attrs.getValue(i));
             }
         }
@@ -478,7 +478,7 @@ public class SAXiTextHandler extends DefaultHandler {
  * @param	name		the name of the tag that ends
  */
     
-    public void endElement(String uri, String name, String qname) {
+    public void endElement(String uri, String lname, String name) {
         handleEndingTags(name);
     }
     
@@ -491,7 +491,7 @@ public class SAXiTextHandler extends DefaultHandler {
     
     public void handleEndingTags(String name) {
         
-        //.err.println("Stop: " + name);
+        //System.err.println("Stop: " + name);
         
         if (ElementTags.IGNORE.equals(name)) {
             ignore = false;
@@ -671,6 +671,7 @@ public class SAXiTextHandler extends DefaultHandler {
             
             // the documentroot
             if (isDocumentRoot(name)) {
+        System.err.println("End of the document");
                 try {
                     while (true) {
                         Element element = (Element) stack.pop();
@@ -687,6 +688,7 @@ public class SAXiTextHandler extends DefaultHandler {
                 catch(EmptyStackException ese) {
                     // empty on purpose
                 }
+        System.err.println("Closing it");
                 document.close();
                 return;
             }

@@ -53,8 +53,7 @@ package com.lowagie.text.xml;
 import java.util.HashMap;
 import java.util.Properties;
 
-import org.xml.sax.HandlerBase;
-import org.xml.sax.AttributeList;
+import org.xml.sax.Attributes;
 
 import com.lowagie.text.*;
 
@@ -86,7 +85,7 @@ public class SAXmyHandler extends SAXiTextHandler {
  * @param	attrs		the list of attributes
  */
     
-    public void startElement(String name, AttributeList attrs) {
+    public void startElement(String uri, String lname, String name, Attributes attrs) {
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
             handleStartingTags(peer.getTag(), peer.getAttributes(attrs));
@@ -95,7 +94,7 @@ public class SAXmyHandler extends SAXiTextHandler {
             Properties attributes = new Properties();
             if (attrs != null) {
                 for (int i = 0; i < attrs.getLength(); i++) {
-                    String attribute = attrs.getName(i);
+                    String attribute = attrs.getQName(i);
                     attributes.setProperty(attribute, attrs.getValue(i));
                 }
             }
@@ -109,7 +108,7 @@ public class SAXmyHandler extends SAXiTextHandler {
  * @param	name		the name of the tag that ends
  */
     
-    public void endElement(String name) {
+    public void endElement(String uri, String lname, String name) {
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
             handleEndingTags(peer.getTag());

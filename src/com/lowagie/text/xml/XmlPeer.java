@@ -51,7 +51,7 @@
 package com.lowagie.text.xml;
 
 import java.util.Properties;
-import org.xml.sax.AttributeList;
+import org.xml.sax.Attributes;
 
 import com.lowagie.text.ElementTags;
 
@@ -102,7 +102,7 @@ public class XmlPeer {
     }
     
 /** Gets the list of attributes of the peer. */
-    public Properties getAttributes(AttributeList attrs) {
+    public Properties getAttributes(Attributes attrs) {
         Properties attributes = new Properties();
         attributes.putAll(attributeValues);
         if (defaultContent != null) {
@@ -110,7 +110,7 @@ public class XmlPeer {
         }
         if (attrs != null) {
             for (int i = 0; i < attrs.getLength(); i++) {
-                String attribute = getName(attrs.getName(i));
+                String attribute = getName(attrs.getQName(i));
                 attributes.setProperty(attribute, attrs.getValue(i));
             }
         }
