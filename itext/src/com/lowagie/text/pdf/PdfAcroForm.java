@@ -192,6 +192,13 @@ public class PdfAcroForm extends PdfDictionary {
         button.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, pa);
     }
     
+    public void addHiddenField(String name, String value) {
+        PdfFormField hidden = PdfFormField.createEmpty(writer);
+        hidden.setFieldName(name);
+        hidden.setValueAsName(value);
+        addFormField(hidden);
+    }
+    
     public void addSingleLineTextField(String name, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
         PdfFormField field = PdfFormField.createTextField(writer, PdfFormField.SINGLELINE, PdfFormField.PLAINTEXT, 0);
         setTextFieldParams(field, text, name, llx, lly, urx, ury);
