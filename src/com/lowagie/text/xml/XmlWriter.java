@@ -825,7 +825,7 @@ public class XmlWriter extends DocWriter implements DocListener {
             default:
                 com.lowagie.text.pdf.BaseFont bf = font.getBaseFont();
                 if (bf != null) {
-                    writeCssProperty(HtmlTags.CSS_FONTFAMILY, bf.getPostscriptFontName());
+                    write(ElementTags.FONT, bf.getPostscriptFontName());
                 }
         }
         if (font.size() != Font.UNDEFINED) {
