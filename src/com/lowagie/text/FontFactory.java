@@ -84,7 +84,7 @@ public class FontFactory extends java.lang.Object {
  * @param	color	    the <CODE>Color</CODE> of this font.
  */
     
-    public static Font getFont(String fontname, String encoding, boolean embedded, int size, int style, Color color) {
+    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color) {
         BaseFont basefont = null;
         try {
             try {
@@ -114,6 +114,47 @@ public class FontFactory extends java.lang.Object {
 /**
  * Constructs a <CODE>Font</CODE>-object.
  *
+ * @param   attributes  the attributes of a <CODE>Font</CODE> object.
+ */
+    
+    public static Font getFont(Properties attributes) {
+        String value;
+        String fontname = (String)attributes.remove(ElementTags.FONT);
+        String encoding = (String)attributes.remove(ElementTags.ENCODING);
+        boolean embedded = true;
+        if ("false".equals((String) attributes.remove(ElementTags.EMBEDDED))) {
+            embedded = false;
+        }
+        float size = Font.UNDEFINED;
+        if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
+            size = Float.valueOf(value + "f").floatValue();
+        }
+        int style = Font.UNDEFINED;
+        if ((value = (String)attributes.remove(ElementTags.STYLE)) != null) {
+            style = Font.getStyleValue(value);
+        }
+        Color color = null;
+        String r = (String)attributes.remove(ElementTags.RED);
+        String g = (String)attributes.remove(ElementTags.GREEN);
+        String b = (String)attributes.remove(ElementTags.BLUE);
+        if (r != null || g != null || b != null) {
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            if (r != null) red = Integer.parseInt(r);
+            if (g != null) green = Integer.parseInt(g);
+            if (b != null) blue = Integer.parseInt(b);
+            color = new Color(red, green, blue);
+        }
+        else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
+            color = ElementTags.decodeColor(value);
+        }
+        return getFont(fontname, encoding, embedded, size, style, color);
+    }
+    
+/**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
  * @param	fontname    the name of the font
  * @param	encoding    the encoding of the font
  * @param       embedded    true if the font is to be embedded in the PDF
@@ -121,7 +162,7 @@ public class FontFactory extends java.lang.Object {
  * @param	style	    the style of this font
  */
     
-    public static Font getFont(String fontname, String encoding, boolean embedded, int size, int style) {
+    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style) {
         return getFont(fontname, encoding, embedded, size, style, null);
     }
     
@@ -134,7 +175,7 @@ public class FontFactory extends java.lang.Object {
  * @param	size	    the size of this font
  */
     
-    public static Font getFont(String fontname, String encoding, boolean embedded, int size) {
+    public static Font getFont(String fontname, String encoding, boolean embedded, float size) {
         return getFont(fontname, encoding, embedded, size, Font.UNDEFINED, null);
     }
     
@@ -160,7 +201,7 @@ public class FontFactory extends java.lang.Object {
  * @param	color	    the <CODE>Color</CODE> of this font.
  */
     
-    public static Font getFont(String fontname, String encoding, int size, int style, Color color) {
+    public static Font getFont(String fontname, String encoding, float size, int style, Color color) {
         return getFont(fontname, encoding, false, size, style, color);
     }
     
@@ -173,7 +214,7 @@ public class FontFactory extends java.lang.Object {
  * @param	style	    the style of this font
  */
     
-    public static Font getFont(String fontname, String encoding, int size, int style) {
+    public static Font getFont(String fontname, String encoding, float size, int style) {
         return getFont(fontname, encoding, false, size, style, null);
     }
     
@@ -185,7 +226,7 @@ public class FontFactory extends java.lang.Object {
  * @param	size	    the size of this font
  */
     
-    public static Font getFont(String fontname, String encoding, int size) {
+    public static Font getFont(String fontname, String encoding, float size) {
         return getFont(fontname, encoding, false, size, Font.UNDEFINED, null);
     }
     
