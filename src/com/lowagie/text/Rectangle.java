@@ -150,7 +150,7 @@ public class Rectangle implements Element {
 /**
  * Constructs a <CODE>Rectangle</CODE>-object.
  *
- * @para		rect	another <CODE>Rectangle</CODE>
+ * @param		rect	another <CODE>Rectangle</CODE>
  */
     
     public Rectangle(Rectangle rect) {

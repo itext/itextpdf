@@ -243,7 +243,6 @@ public class Annotation implements Element {
  * the value of some <VAR>attributes</VAR>.
  *
  * @param	attributes		Some attributes
- * @return	an <CODE>Annotation</CODE>
  */
     
     public Annotation(Properties attrs) {

@@ -98,7 +98,7 @@ public interface PdfPrintable {
 /**
  * Checks if this <CODE>PdfPrintable</CODE> is of the type <CODE>PdfNull</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     public boolean isNull();
@@ -106,7 +106,7 @@ public interface PdfPrintable {
 /**
  * Checks if this <CODE>PdfPrintable</CODE> is of the type <CODE>PdfBoolean</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     public boolean isBoolean();
@@ -114,7 +114,7 @@ public interface PdfPrintable {
 /**
  * Checks if this <CODE>PdfPrintable</CODE> is of the type <CODE>PdfNumber</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     public boolean isNumber();
@@ -122,7 +122,7 @@ public interface PdfPrintable {
 /**
  * Checks if this <CODE>PdfPrintable</CODE> is of the type <CODE>PdfString</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     public boolean isString();

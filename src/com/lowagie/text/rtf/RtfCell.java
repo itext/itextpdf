@@ -58,7 +58,7 @@ import java.io.*;
 import java.awt.Color;
 
 /**
- * A Helper Class for the <CODE>RtfWriter</CODE>
+ * A Helper Class for the <CODE>RtfWriter</CODE>.
  * <P>
  * Do not use it directly
  *
@@ -146,9 +146,9 @@ public class RtfCell
     private int mergeType = 0;
     
   /**
-   * Create a new <code>RtfCell</code>
-   * @param writer The <code>RtfWriter</code> that this <code>RtfCell</code>
-   * belongs to
+   * Create a new <code>RtfCell</code>.
+   *
+   * @param writer The <code>RtfWriter</code> that this <code>RtfCell</code> belongs to
    * @param table The <code>RtfTable</code> that created the
    * <code>RtfRow</code> that created the <code>RtfCell</code> :-)
    */
@@ -160,8 +160,8 @@ public class RtfCell
     }
     
   /**
-   * Import a <code>Cell</code>
-   * <BR>
+   * Import a <code>Cell</code>.
+   * <P>
    * @param cell The <code>Cell</code> containing the data for this
    * <code>RtfCell</code>
    * @param cellLeft The position of the left border
@@ -231,7 +231,7 @@ public class RtfCell
     }
     
   /**
-   * Write the properties of the <code>RtfCell</code>
+   * Write the properties of the <code>RtfCell</code>.
    *
    * @param os The <code>OutputStream</code> to which to write the properties
    * of the <code>RtfCell</code> to.
@@ -369,7 +369,7 @@ public class RtfCell
     }
     
   /**
-   * Write the content of the <code>RtfCell</code>
+   * Write the content of the <code>RtfCell</code>.
    *
    * @param os The <code>OutputStream</code> to which to write the content of
    * the <code>RtfCell</code> to.
@@ -447,7 +447,7 @@ public class RtfCell
     }
     
   /**
-   * Get the <code>Cell</code> with the actual content
+   * Get the <code>Cell</code> with the actual content.
    *
    * @return <code>Cell</code> which is contained in the <code>RtfCell</code>
    */
@@ -473,7 +473,7 @@ public class RtfCell
     }
     
   /**
-   * Get the position of the right border of this <code>RtfCell</code>
+   * Get the position of the right border of this <code>RtfCell</code>.
    */
     public int getCellRight()
     {
@@ -487,7 +487,7 @@ public class RtfCell
     }
     
   /*
-   * Write an Integer to the Outputstream
+   * Write an Integer to the Outputstream.
    *
    * @param out The <code>OutputStream</code> to be written to.
    * @param i The int to be written.
@@ -497,4 +497,3 @@ public class RtfCell
         out.write(Integer.toString(i).getBytes());
     }
 }
-

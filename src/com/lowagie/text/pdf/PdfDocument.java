@@ -354,7 +354,8 @@ class PdfDocument extends Document implements DocListener {
     // membervariables
     
     /**
-     * The ratio between the extra word spacing and the extra character spacing.<BR>
+     * The ratio between the extra word spacing and the extra character spacing.
+     * <P>
      * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
      */
     static final float ratio = 2.5f;

@@ -793,8 +793,9 @@ public class PdfWriter extends DocWriter {
     }
     
     /**
-     * Sometimes it is necessary to know where the just added <CODE>Table</CODE> ends,
-     * e.g. to avoid to add another table in a page that is ending up, because
+     * Sometimes it is necessary to know where the just added <CODE>Table</CODE> ends.
+     *
+     * For instance to avoid to add another table in a page that is ending up, because
      * the new table will be probably splitted just after the header (it is an
      * unpleasant effect, isn't it?).
      *
@@ -803,7 +804,6 @@ public class PdfWriter extends DocWriter {
      * francesco.demilato@tiscalinet.it
      *
      * @return	the bottom height of the just added table
-     * @author  francesco.demilato@tiscalinet.it
      */
     
     public float getTableBottom(Table table) {

@@ -46,6 +46,9 @@
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
+ *
+ * Some methods in this class were contributed by Geert Poels, Kris Jespers and
+ * Steve Ogryzek. Check the CVS repository.
  */
 
 package com.lowagie.text;
@@ -261,7 +264,6 @@ public class Table extends Rectangle implements Element {
  * the value of some <VAR>attributes</VAR>.
  *
  * @param    attributes        Some attributes
- * @return    a <CODE>Table</CODE>
  */
     
     public Table(Properties attributes) {
@@ -389,8 +391,7 @@ public class Table extends Rectangle implements Element {
     }
 
 /**
- * Performs extra checks when executing table code (currently only when cells are added)
- * @author Geert Poels  -  Geert.Poels@skynet.be
+ * Performs extra checks when executing table code (currently only when cells are added).
  */
     public void setDebug(boolean aDebug) {
             mDebug = aDebug;
@@ -403,7 +404,6 @@ public class Table extends Rectangle implements Element {
  * Disabling is recommended to increase speed. (empty cells should be added through extra code then)
  *
  * @param       aDoAutoFill   enable/disable autofill
- * @author Geert Poels  -  Geert.Poels@skynet.be
  */
     
     public void setAutoFillEmptyCells(boolean aDoAutoFill) {
@@ -438,7 +438,6 @@ public class Table extends Rectangle implements Element {
  * @param       cell    The <CODE>Cell</CODE> to add
  * @param       row     The row where the <CODE>Cell</CODE> will be added
  * @param       column  The column where the <CODE>Cell</CODE> will be added
- * @author Geert Poels  -  Geert.Poels@skynet.be
  */
     
     public void addCell(Cell aCell, int row, int column) throws BadElementException {
@@ -450,7 +449,6 @@ public class Table extends Rectangle implements Element {
  *
  * @param       cell        The <CODE>Cell</CODE> to add
  * @param       location    The location where the <CODE>Cell</CODE> will be added
- * @author Geert Poels  -  Geert.Poels@skynet.be
  */
     
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
@@ -554,7 +552,6 @@ public class Table extends Rectangle implements Element {
  * generateTable will of course re-arrange the widths of the columns
  *
  * @param   aTable      the table you want to insert
- * @author Geert Poels  -  Geert.Poels@skynet.be
  */
     
     public void insertTable(Table aTable) {
@@ -568,7 +565,6 @@ public class Table extends Rectangle implements Element {
  *
  * @param   aTable      the table you want to insert
  * @param   aLocation   a <CODE>Point</CODE>
- * @author Geert Poels  -  Geert.Poels@skynet.be
  */
     public void insertTable(Table aTable, Point aLocation) {
 
@@ -594,7 +590,6 @@ public class Table extends Rectangle implements Element {
     
 /*
  * Will fill empty cells with valid blank <CODE>Cell</CODE>s
- * @author Geert Poels  -  Geert.Poels@skynet.be
  */
     
     public final void complete() throws DocumentException {
@@ -713,12 +708,11 @@ public class Table extends Rectangle implements Element {
     
     // methods
 
-    /**
-     * Sets the unset cell properties to be the table defaults.
-     *
-     * @param aCell The cell to set to table defaults as necessary.
-     * @author  Steve Ogryzek <steve@ogryzek.com>
-     */
+/**
+ * Sets the unset cell properties to be the table defaults.
+ *
+ * @param aCell The cell to set to table defaults as necessary.
+ */
     
     private void assumeTableDefaults(Cell aCell) {
 
@@ -932,7 +926,6 @@ public class Table extends Rectangle implements Element {
  * Sets the width of this table (in percentage of the available space).
  *
  * @param   width           the width
- * @author  Evelyne De Cordier
  */
     
     public final void setAbsWidth(String width) {
@@ -1070,7 +1063,6 @@ public class Table extends Rectangle implements Element {
  * Gets the table width (a percentage).
  *
  * @return      the table width
- * @author      Leslie Baski
  */
     
     public float widthPercentage() {
@@ -1081,7 +1073,6 @@ public class Table extends Rectangle implements Element {
  * Gets the table width (in pixels).
  *
  * @return  the table width
- * @author  Evelyne De Cordier
  */
     
     public String absWidth() {
@@ -1102,7 +1093,6 @@ public class Table extends Rectangle implements Element {
  * Gets the dimension of this table
  *
  * @return  dimension
- * @author  Geert Poels
  */
     
     public Dimension getDimension() {
@@ -1114,7 +1104,6 @@ public class Table extends Rectangle implements Element {
  *          (Cast to Cell or Table)
  *
  * @return  dimension
- * @author  Geert Poels
  */
     
     public Object getElement(int row, int column) {
@@ -1123,8 +1112,6 @@ public class Table extends Rectangle implements Element {
     
 /**
  * Integrates all added tables and recalculates column widths.
- *
- * @author  Geert Poels
  */
     
     private void mergeInsertedTables() throws DocumentException {
@@ -1248,8 +1235,7 @@ public class Table extends Rectangle implements Element {
     }
     
 /**
- * adds new<CODE>Cell</CODE>'s to empty/null spaces
- * @author  Geert Poels
+ * adds new<CODE>Cell</CODE>'s to empty/null spaces.
  */
     
     private void fillEmptyMatrixCells() throws BadElementException {
@@ -1274,8 +1260,7 @@ public class Table extends Rectangle implements Element {
  *
  * @param   aCell       the cell that has to be checked
  * @param   aLocation   the location where the cell has to be placed
- * @author  Geert Poels
-    **/
+ */
     private boolean isValidLocation(Cell aCell, Point aLocation)
     {
         // rowspan not beyond last column
@@ -1311,7 +1296,6 @@ public class Table extends Rectangle implements Element {
  * @param   someRows    some rows
  * @param   aCell       the cell that has to be inserted
  * @param   aPosition   the position where the cell has to be placed
- * @author  Geert Poels
  */
     
     private void placeCell(ArrayList someRows, Cell aCell, Point aPosition) {
@@ -1355,8 +1339,6 @@ public class Table extends Rectangle implements Element {
  *
  * This library will throw a warning in case such a situation is detected.
  * It will replace a row consisting of only empty cells because of several rowspans.
- *
- * @author  Kris Jespers  kris.jespers@pandora.be
  */
     protected void checkIllegalRowspan() throws BadElementException {
         // find lowest cell
@@ -1459,9 +1441,7 @@ public class Table extends Rectangle implements Element {
     }
     
 /**
- * returns the element at a given location
- *
- * @author  Geert Poels
+ * returns the element at a given location.
  */
     
     private Object getElement(ArrayList al, int row, int column) {
@@ -1469,8 +1449,7 @@ public class Table extends Rectangle implements Element {
     }
     
 /**
- * returns the element type name (Cell, Tabl, Objt)
- * @author  Geert Poels
+ * returns the element type name (Cell, Tabl, Objt).
  */
     
     private String getElementType(Object aElement) {
@@ -1492,9 +1471,7 @@ public class Table extends Rectangle implements Element {
     
 /**
  * returns the element type name (Cell, Tabl, Objt) of
- * an element in the table at point(aRow, aColumn)
- *
- * @author  Geert Poels
+ * an element in the table at point(aRow, aColumn).
  */
     
     private String getElementType(int aRow, int aColumn) {
@@ -1503,9 +1480,7 @@ public class Table extends Rectangle implements Element {
     
 /**
  * returns the element type name (Cell, Tabl, Objt) of
- * an element in the table at point(aRow, aColumn)
- *
- * @author  Geert Poels
+ * an element in the table at point(aRow, aColumn).
  */
     
     private String getElementType(ArrayList al, int aRow, int aColumn) {
@@ -1550,10 +1525,9 @@ public class Table extends Rectangle implements Element {
         return w;
     }
     
-    /*
-    *  Sets current col/row to valid(empty) pos after addCell/Table
-    * @author  Geert Poels
-    **/
+/**
+ *  Sets current col/row to valid(empty) pos after addCell/Table
+ */
     private void setCurrentLocationToNextValidPosition(Point aLocation)    {
         // set latest location to next valid position
         int i, j;
@@ -1588,14 +1562,18 @@ public class Table extends Rectangle implements Element {
         return ElementTags.TABLE.equals(tag);
     }
 
-    /*
-    *    Only for debugging purposes : printing table's structure and contents
-    * @author  Geert Poels
-    **/
+/**
+ *    Only for debugging purposes: printing table's structure and contents.
+ */
+    
     private void printTableMatrix()
     {
         printTableMatrix(rows);
     }
+
+/**
+ *    Only for debugging purposes: printing table's structure and contents.
+ */
         
     private void printTableMatrix(ArrayList aAl)
     {
@@ -1635,10 +1613,10 @@ public class Table extends Rectangle implements Element {
         }
     }
 
-    /*
-    * Method to briefly print all cell contents, an aid when debugging
-    * @author  Geert Poels
-    **/
+/**
+ * Method to briefly print all cell contents, an aid when debugging.
+ */
+    
     private void printTableMatrixContents()
     {
         int lineNumberCount = -1;

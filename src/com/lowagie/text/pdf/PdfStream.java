@@ -191,9 +191,6 @@ class PdfStream extends PdfObject {
  *
  * @return		<CODE>void<CODE>
  * @throws		<CODE>PdfException<CODE> if a filter is allready defined
- *
- * @author		Troy Harrison
- * @author		Bruno Lowagie
  */
     
     synchronized final void flateCompress() throws PdfException {

@@ -171,7 +171,6 @@ public class Chunk implements Element {
  * the value of some <VAR>attributes</VAR>.
  *
  * @param	attributes		Some attributes
- * @return	a <CODE>Chunk</CODE>
  */
     
     public Chunk(Properties attributes) {
@@ -305,6 +304,7 @@ public class Chunk implements Element {
     
 /**
  * Sets an action for this <CODE>Chunk</CODE>.
+ *
  * @param action the action
  * @return this <CODE>Chunk</CODE>
  */
@@ -315,6 +315,7 @@ public class Chunk implements Element {
     
 /**
  * Sets an anchor for this <CODE>Chunk</CODE>.
+ *
  * @param url the <CODE>URL</CODE> to link to
  * @return this <CODE>Chunk</CODE>
  */
@@ -325,6 +326,7 @@ public class Chunk implements Element {
     
 /**
  * Sets an anchor for this <CODE>Chunk</CODE>.
+ *
  * @param url the url to link to
  * @return this <CODE>Chunk</CODE>
  */
@@ -335,6 +337,7 @@ public class Chunk implements Element {
     
 /**
  * Sets a local goto for this <CODE>Chunk</CODE>.
+ * <P>
  * There must be a local destination matching the name.
  * @param name the name of the destination to go to
  * @return this <CODE>Chunk</CODE>
@@ -346,6 +349,7 @@ public class Chunk implements Element {
     
 /**
  * Sets a goto for a remote destination for this <CODE>Chunk</CODE>.
+ *
  * @param filename the file name of the destination document
  * @param name the name of the destination to go to
  * @return this <CODE>Chunk</CODE>
@@ -357,6 +361,7 @@ public class Chunk implements Element {
     
 /**
  * Sets a goto for a remote destination for this <CODE>Chunk</CODE>.
+ *
  * @param filename the file name of the destination document
  * @param page the page of the destination to go to. First page is 1
  * @return this <CODE>Chunk</CODE>
@@ -368,6 +373,7 @@ public class Chunk implements Element {
     
 /**
  * Sets a local destination for this <CODE>Chunk</CODE>.
+ *
  * @param name the name for this destination
  * @return this <CODE>Chunk</CODE>
  */
@@ -377,7 +383,9 @@ public class Chunk implements Element {
     
 /**
  * Sets the generic tag <CODE>Chunk</CODE>.
+ * <P>
  * The text for this tag can be retrieved with <CODE>PdfPageEvent</CODE>.
+ *
  * @param text the text for the tag
  * @return this <CODE>Chunk</CODE>
  */
@@ -388,6 +396,7 @@ public class Chunk implements Element {
     
 /**
  * Sets the split characters.
+ *
  * @param splitCharacter the <CODE>SplitCharacter</CODE> interface
  * @return this <CODE>Chunk</CODE>
  */
@@ -409,6 +418,7 @@ public class Chunk implements Element {
     
 /**
  * Sets an arbitrary attribute.
+ *
  * @param name the key for the attribute
  * @param obj the value of the attribute
  * @return this <CODE>Chunk</CODE>
@@ -422,8 +432,10 @@ public class Chunk implements Element {
     }
     
 /**
- * Gets the attributes for this <CODE>Chunk</CODE>.<BR>
+ * Gets the attributes for this <CODE>Chunk</CODE>.
+ * <P>
  * It may be null.
+ *
  * @return the attributes for this <CODE>Chunk</CODE>
  */
     
@@ -432,7 +444,7 @@ public class Chunk implements Element {
     }
     
 /**
- * Checks the attributes of this <CODE>Chunk</CODE>.<BR>
+ * Checks the attributes of this <CODE>Chunk</CODE>.
  *
  * @return false if there aren't any.
  */
