@@ -89,7 +89,7 @@ public class PdfPatternPainter extends PdfTemplate {
     }
     
     /**
-     * Sets the xstep of this pattern.
+     * Sets the horizontal interval of this pattern.
      *
      * @param xstep the xstep in horizontal painting
      */
@@ -99,7 +99,7 @@ public class PdfPatternPainter extends PdfTemplate {
     }
     
     /**
-     * Sets the ystep of this pattern.
+     * Sets the vertical interval of this pattern.
      *
      * @param ystep in vertical painting
      */
@@ -108,18 +108,39 @@ public class PdfPatternPainter extends PdfTemplate {
         this.ystep = ystep;
     }
     
+    /**
+     * Returns the horizontal interval when repeating the pattern.
+     * @return a value
+     */
     public float getXStep() {
         return this.xstep;
     }
     
+    /**
+     * Returns the vertical interval when repeating the pattern.
+     * @return a value
+     */
     public float getYStep() {
         return this.ystep;
     }
     
+    /**
+     * Tells you if this pattern is colored/uncolored (stencil = uncolored).
+     * @return true if the pattern is an uncolored tiling pattern (stencil).
+     */
     public boolean isStencil() {
         return stencil;
     }
     
+    /**
+     * Sets the transformation matrix for the pattern.
+     * @param a
+     * @param b
+     * @param c
+     * @param d
+     * @param e
+     * @param f
+     */
     public void setPatternMatrix(float a, float b, float c, float d, float e, float f) {
         setMatrix(a, b, c, d, e, f);
     }
@@ -154,132 +175,210 @@ public class PdfPatternPainter extends PdfTemplate {
         return tpl;
     }
     
+    /**
+     * Returns the default color of the pattern.
+     * @return a Color
+     */
     public Color getDefaultColor() {
         return defaultColor;
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setGrayFill(float)
+     */
     public void setGrayFill(float gray) {
         checkNoColor();
         super.setGrayFill(gray);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#resetGrayFill()
+     */
     public void resetGrayFill() {
         checkNoColor();
         super.resetGrayFill();
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setGrayStroke(float)
+     */
     public void setGrayStroke(float gray) {
         checkNoColor();
         super.setGrayStroke(gray);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#resetGrayStroke()
+     */
     public void resetGrayStroke() {
         checkNoColor();
         super.resetGrayStroke();
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setRGBColorFillF(float, float, float)
+     */
     public void setRGBColorFillF(float red, float green, float blue) {
         checkNoColor();
         super.setRGBColorFillF(red, green, blue);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#resetRGBColorFill()
+     */
     public void resetRGBColorFill() {
         checkNoColor();
         super.resetRGBColorFill();
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setRGBColorStrokeF(float, float, float)
+     */
     public void setRGBColorStrokeF(float red, float green, float blue) {
         checkNoColor();
         super.setRGBColorStrokeF(red, green, blue);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#resetRGBColorStroke()
+     */
     public void resetRGBColorStroke() {
         checkNoColor();
         super.resetRGBColorStroke();
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setCMYKColorFillF(float, float, float, float)
+     */
     public void setCMYKColorFillF(float cyan, float magenta, float yellow, float black) {
         checkNoColor();
         super.setCMYKColorFillF(cyan, magenta, yellow, black);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#resetCMYKColorFill()
+     */
     public void resetCMYKColorFill() {
         checkNoColor();
         super.resetCMYKColorFill();
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setCMYKColorStrokeF(float, float, float, float)
+     */
     public void setCMYKColorStrokeF(float cyan, float magenta, float yellow, float black) {
         checkNoColor();
         super.setCMYKColorStrokeF(cyan, magenta, yellow, black);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#resetCMYKColorStroke()
+     */
     public void resetCMYKColorStroke() {
         checkNoColor();
         super.resetCMYKColorStroke();
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#addImage(com.lowagie.text.Image, float, float, float, float, float, float)
+     */
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
         if (stencil && !image.isMask())
             checkNoColor();
         super.addImage(image, a, b, c, d, e, f);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setCMYKColorFill(int, int, int, int)
+     */
     public void setCMYKColorFill(int cyan, int magenta, int yellow, int black) {
         checkNoColor();
         super.setCMYKColorFill(cyan, magenta, yellow, black);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setCMYKColorStroke(int, int, int, int)
+     */
     public void setCMYKColorStroke(int cyan, int magenta, int yellow, int black) {
         checkNoColor();
         super.setCMYKColorStroke(cyan, magenta, yellow, black);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setRGBColorFill(int, int, int)
+     */
     public void setRGBColorFill(int red, int green, int blue) {
         checkNoColor();
         super.setRGBColorFill(red, green, blue);
     }
     
-    
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setRGBColorStroke(int, int, int)
+     */
     public void setRGBColorStroke(int red, int green, int blue) {
         checkNoColor();
         super.setRGBColorStroke(red, green, blue);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setColorStroke(java.awt.Color)
+     */
     public void setColorStroke(Color color) {
         checkNoColor();
         super.setColorStroke(color);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setColorFill(java.awt.Color)
+     */
     public void setColorFill(Color color) {
         checkNoColor();
         super.setColorFill(color);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setColorFill(com.lowagie.text.pdf.PdfSpotColor, float)
+     */
     public void setColorFill(PdfSpotColor sp, float tint) {
         checkNoColor();
         super.setColorFill(sp, tint);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setColorStroke(com.lowagie.text.pdf.PdfSpotColor, float)
+     */
     public void setColorStroke(PdfSpotColor sp, float tint) {
         checkNoColor();
         super.setColorStroke(sp, tint);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setPatternFill(com.lowagie.text.pdf.PdfPatternPainter)
+     */
     public void setPatternFill(PdfPatternPainter p) {
         checkNoColor();
         super.setPatternFill(p);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setPatternFill(com.lowagie.text.pdf.PdfPatternPainter, java.awt.Color, float)
+     */
     public void setPatternFill(PdfPatternPainter p, Color color, float tint) {
         checkNoColor();
         super.setPatternFill(p, color, tint);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setPatternStroke(com.lowagie.text.pdf.PdfPatternPainter, java.awt.Color, float)
+     */
     public void setPatternStroke(PdfPatternPainter p, Color color, float tint) {
         checkNoColor();
         super.setPatternStroke(p, color, tint);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfContentByte#setPatternStroke(com.lowagie.text.pdf.PdfPatternPainter)
+     */
     public void setPatternStroke(PdfPatternPainter p) {
         checkNoColor();
         super.setPatternStroke(p);
