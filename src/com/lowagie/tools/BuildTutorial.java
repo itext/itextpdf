@@ -25,14 +25,9 @@ import javax.xml.transform.stream.*;
  */
 public class BuildTutorial {
 
-	public static class XmlFileFilter implements FilenameFilter {
-		public boolean accept(File dir, String name) {
-			if (name.endsWith(".xml"))
-				return true;
-			return false;
-		}
-	}
-
+	static String root;
+	static FileWriter build;
+	
 	//~ Methods
 	// ----------------------------------------------------------------
 
@@ -41,14 +36,22 @@ public class BuildTutorial {
 	 */
 
 	public static void main(String[] args) {
-		System.out.println("Building tutorial:");
 		if (args.length == 4) {
 			File srcdir = new File(args[0]);
 			File destdir = new File(args[1]);
 			File xsl_examples = new File(srcdir, args[2]);
 			File xsl_site = new File(srcdir, args[3]);
 			try {
+				System.out.print("Building tutorial: ");
+				root = new File(args[1], srcdir.getName()).getCanonicalPath();
+				System.out.println(root);
+				build = new FileWriter(new File(root, "build.xml"));
+				build.write("<project name=\"tutorial\" default=\"all\" basedir=\".\">\n");
+				build.write("<target name=\"all\">\n");
 				action(srcdir, destdir, xsl_examples, xsl_site);
+				build.write("</target>\n</project>");
+				build.flush();
+				build.close();
 			}
 			catch(IOException ioe) {
 				ioe.printStackTrace();
@@ -62,24 +65,31 @@ public class BuildTutorial {
 	/**
 	 *  Inspects a file or directory that is given and performs the necessary actions on it (transformation or recursion).
 	 */
-	public static void action(File current, File destination, File xsl_examples, File xsl_site) throws IOException {
-		if ("CVS".equals(current.getName())) return;
-		System.out.println(current.getName());
-		if (current.isDirectory()) {
-			System.out.println(current.getCanonicalPath());
-			File dest = new File(destination, current.getName());
+	public static void action(File source, File destination, File xsl_examples, File xsl_site) throws IOException {
+		if ("CVS".equals(source.getName())) return;
+		System.out.print(source.getName());
+		if (source.isDirectory()) {
+			System.out.print(" ");
+			System.out.println(source.getCanonicalPath());
+			File dest = new File(destination, source.getName());
 			dest.mkdir();
-			File cursor;
-			File[] xmlFiles = current.listFiles();
+			File current;
+			File[] xmlFiles = source.listFiles();
 			for (int i = 0; i < xmlFiles.length; i++) {
-				cursor = xmlFiles[i];
-				action(cursor, dest, xsl_examples, xsl_site);
+				current = xmlFiles[i];
+				action(current, dest, xsl_examples, xsl_site);
 			}
 		}
-		else if (current.getName().equals("index.xml")) {
+		else if (source.getName().equals("index.xml")) {
 			System.out.println("... transformed");
-			convert(current, xsl_examples, new File(destination, "build.xml"));
-			convert(current, xsl_site, new File(destination, "index.html"));
+			File buildfile = new File(destination, "build.xml");
+			convert(source, xsl_examples, buildfile);
+			convert(source, xsl_site, new File(destination, "index.html"));
+			build.write("\t<ant antfile=\"${basedir}");
+			String path = buildfile.getCanonicalPath().substring(root.length());
+			path = path.replace(File.separatorChar, '/');
+			build.write(path);
+			build.write("\" inheritAll=\"false\" />\n");
 		}
 		else {
 			System.out.println("... skipped");
