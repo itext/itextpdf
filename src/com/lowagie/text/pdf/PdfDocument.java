@@ -1789,9 +1789,10 @@ class PdfDocument extends Document implements DocListener {
  */
     
     float bottom(Table table) {
-        // constructing the PdfTable
-        PdfTable tmp = new PdfTable(table, indentLeft(), indentRight(),
-        currentHeight > 0 ? indentTop() - currentHeight : indentTop());
+        // where will the table begin?
+        float h = (currentHeight > 0) ? indentTop() - currentHeight - 2f * leading : indentTop();
+        // constructing a PdfTable
+        PdfTable tmp = new PdfTable(table, indentLeft(), indentRight(), h);
         return tmp.bottom();
     }
     
