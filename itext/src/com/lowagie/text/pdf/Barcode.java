@@ -77,9 +77,9 @@ public abstract class Barcode {
     /** A type of barcode */
     public static final int CODE128_UCC = 10;
     /** A type of barcode */
-    public static final int CODE128_RAW = 10;
+    public static final int CODE128_RAW = 11;
     /** A type of barcode */
-    public static final int CODABAR = 11;
+    public static final int CODABAR = 12;
 
     /** The minimum bar width.
      */

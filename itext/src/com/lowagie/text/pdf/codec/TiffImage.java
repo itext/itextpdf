@@ -208,7 +208,19 @@ public class TiffImage {
                             g4.encodeT6Lines(outBuf, 0, height);
                             break;
                         case TIFFConstants.COMPRESSION_CCITTFAX3:
-                            decoder.decode2D(outBuf, im, 0, height, tiffT4Options);
+                            try {
+                                decoder.decode2D(outBuf, im, 0, height, tiffT4Options);
+                            }
+                            catch (Exception e) {
+                                // let's flip the fill bits and try again...
+                                tiffT4Options ^= TIFFConstants.GROUP3OPT_FILLBITS;
+                                try {
+                                    decoder.decode2D(outBuf, im, 0, height, tiffT4Options);
+                                }
+                                catch (Exception e2) {
+                                    throw e;
+                                }
+                            }
                             g4.encodeT6Lines(outBuf, 0, height);
                             break;
                         case TIFFConstants.COMPRESSION_CCITTFAX4:

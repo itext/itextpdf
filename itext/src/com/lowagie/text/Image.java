@@ -451,6 +451,8 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
                 }
                 if (shades)
                     transparency = null;
+                else
+                    smask = null;
             }
             Image img = Image.getInstance(w, h, 3, 8, pixelsByte, transparency);
             if (smask != null) {
@@ -1084,6 +1086,10 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
     
     public int[] getTransparency() {
         return transparency;
+    }
+    
+    public void setTransparency(int transparency[]) {
+        this.transparency = transparency;
     }
     
     /**
