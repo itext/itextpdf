@@ -2553,7 +2553,7 @@ class PdfDocument extends Document implements DocListener {
                         graphics.setColorFill((Color)bgr[0]);
                         float extra[] = (float[])bgr[1];
                         graphics.rectangle(xMarker - extra[0],
-                            yMarker + descender - extra[1],
+                            yMarker + descender - extra[1] + chunk.getTextRise(),
                             width - subtract + extra[0] + extra[2],
                             ascender - descender + extra[1] + extra[3]);
                         graphics.fill();

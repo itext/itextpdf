@@ -540,6 +540,18 @@ public class PdfChunk implements SplitCharacter{
         return width() + (value.length() * charSpacing + numberOfSpaces * wordSpacing);
     }
     
+    /**
+     * Gets the text displacement relatiev to the baseline.
+     * @return a displacement in points
+     */
+    public float getTextRise() {
+    	Float f = (Float) getAttribute(Chunk.SUBSUPSCRIPT);
+    	if (f != null) {
+    		return f.floatValue();
+    	}
+    	return 0.0f;
+    }
+    
 /**
  * Trims the last space.
  * @return the width of the space trimmed, otherwise 0

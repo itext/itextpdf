@@ -62,6 +62,7 @@ import java.net.URL;
 import com.lowagie.text.pdf.PdfAction;
 import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.HyphenationEvent;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
 
@@ -398,6 +399,18 @@ public class Chunk implements Element, MarkupAttributes {
     public Chunk setTextRise(float rise) {
         return setAttribute(SUBSUPSCRIPT, new Float(rise));
     }
+    
+    /**
+     * Gets the text displacement relatiev to the baseline.
+     * @return a displacement in points
+     */
+    public float getTextRise() {
+    	if (attributes.containsKey(SUBSUPSCRIPT)) {
+    		Float f = (Float)attributes.get(SUBSUPSCRIPT);
+    		return f.floatValue();
+    	}
+    	return 0.0f;
+    }
 
     /** Sets the text rendering mode. It can outline text, simulate bold and make
      * text invisible.
@@ -500,6 +513,19 @@ public class Chunk implements Element, MarkupAttributes {
      */
     public Chunk setBackground(Color color, float extraLeft, float extraBottom, float extraRight, float extraTop) {
         return setAttribute(BACKGROUND, new Object[]{color, new float[]{extraLeft, extraBottom, extraRight, extraTop}});
+    }
+
+    /**
+     * Sets an horizontal line that can be an underline or a strikethrough.
+     * Actually, the line can be anywhere vertically and has always the
+     * <CODE>Chunk</CODE> width. Multiple call to this method will
+     * produce multiple lines.
+     * @param thickness the absolute thickness of the line
+     * @param yPosition the absolute y position relative to the baseline
+     * @return this <CODE>Chunk</CODE>
+     */    
+    public Chunk setUnderline(float thickness, float yPosition) {
+        return setUnderline(null, thickness, 0f, yPosition, 0f, PdfContentByte.LINE_CAP_BUTT);
     }
 
     /**
