@@ -104,6 +104,22 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
      * Constant for the section page height
      */
     private static final byte[] SECTION_PAGE_HEIGHT = "\\pghsxn".getBytes();
+    /**
+     * Constant for the section left margin
+     */
+    private static final byte[] SECTION_MARGIN_LEFT = "\\marglsxn".getBytes();
+    /**
+     * Constant for the section right margin
+     */
+    private static final byte[] SECTION_MARGIN_RIGHT = "\\margrsxn".getBytes();
+    /**
+     * Constant for the section top margin
+     */
+    private static final byte[] SECTION_MARGIN_TOP = "\\margtsxn".getBytes();
+    /**
+     * Constant for the section bottom margin
+     */
+    private static final byte[] SECTION_MARGIN_BOTTOM = "\\margbsxn".getBytes();
     
     /**
      * The page width to use
@@ -192,6 +208,14 @@ public class RtfPageSetting extends RtfElement implements RtfExtendedElement {
                 result.write(intToByteArray(pageHeight));
                 result.write((byte)'\n');
             }
+            result.write(SECTION_MARGIN_LEFT);
+            result.write(intToByteArray(marginLeft));
+            result.write(SECTION_MARGIN_RIGHT);
+            result.write(intToByteArray(marginRight));
+            result.write(SECTION_MARGIN_TOP);
+            result.write(intToByteArray(marginTop));
+            result.write(SECTION_MARGIN_BOTTOM);
+            result.write(intToByteArray(marginBottom));
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }

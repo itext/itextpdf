@@ -76,8 +76,8 @@ import java.util.Properties;
  * Paragraph someSectionText = new Paragraph("This is some silly paragraph in a chapter and/or section. It contains some text to test the functionality of Chapters and Section.");
  * <STRONG>section1.add(someSectionText);</STRONG>
  * Paragraph title211 = new Paragraph("This is SubSection 1 in Section 1 in Chapter 2", FontFactory.getFont(FontFactory.HELVETICA, 14, Font.BOLD, new Color(255, 0, 0)));
- * <STRONG>Section section11 = section1.addSection(40, title211, 2);<STRONG>
- * <STRONG>section11.add(someSectionText);<STRONG>
+ * <STRONG>Section section11 = section1.addSection(40, title211, 2);</STRONG>
+ * <STRONG>section11.add(someSectionText);</STRONG>
  * </PRE></BLOCKQUOTE>
  */
 

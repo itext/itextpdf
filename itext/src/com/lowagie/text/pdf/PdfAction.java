@@ -91,6 +91,22 @@ public class PdfAction extends PdfDictionary {
     /** a possible submitvalue */
     public static final int SUBMIT_COORDINATES = 16;
     /** a possible submitvalue */
+    public static final int SUBMIT_XFDF = 32;
+    /** a possible submitvalue */
+    public static final int SUBMIT_INCLUDE_APPEND_SAVES = 64;
+    /** a possible submitvalue */
+    public static final int SUBMIT_INCLUDE_ANNOTATIONS = 128;
+    /** a possible submitvalue */
+    public static final int SUBMIT_PDF = 256;
+    /** a possible submitvalue */
+    public static final int SUBMIT_CANONICAL_FORMAT = 512;
+    /** a possible submitvalue */
+    public static final int SUBMIT_EXCL_NON_USER_ANNOTS = 1024;
+    /** a possible submitvalue */
+    public static final int SUBMIT_EXCL_F_KEY = 2048;
+    /** a possible submitvalue */
+    public static final int SUBMIT_EMBED_FORM = 8196;
+    /** a possible submitvalue */
     public static final int RESET_EXCLUDE = 1;
 
     // constructors

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2004 Paulo Soares
+ * Copyright 2001, 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999-2005 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000-2005 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -48,38 +48,24 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.pdf.codec.wmf;
 
-import java.io.FilterOutputStream;
-import java.io.OutputStream;
-import java.io.IOException;
+public class MetaObject {
+    public static final int META_NOT_SUPPORTED = 0;
+    public static final int META_PEN = 1;
+    public static final int META_BRUSH = 2;
+    public static final int META_FONT = 3;
+    public int type = META_NOT_SUPPORTED;
 
-public class PdfEncryptionStream extends FilterOutputStream {
-    
-    protected PdfEncryption enc;
-    private byte buf[] = new byte[1];
-    
-    public PdfEncryptionStream(OutputStream out, PdfEncryption enc) {
-        super(out);
-        this.enc = enc;
+    public MetaObject() {
+    }
+
+    public MetaObject(int type) {
+        this.type = type;
     }
     
-    public void write(byte[] b, int off, int len) throws IOException {
-        if ((off | len | (b.length - (len + off)) | (off + len)) < 0)
-            throw new IndexOutOfBoundsException();
-        enc.encryptRC4(b, off, len);
-        out.write(b, off, len);
+    public int getType() {
+        return type;
     }
-    
-    public void close() throws IOException {
-    }
-    
-    public void write(int b) throws IOException {
-        buf[0] = (byte)b;
-        write(buf);
-    }
-    
-    public void flush() throws IOException {
-    }
-    
+
 }

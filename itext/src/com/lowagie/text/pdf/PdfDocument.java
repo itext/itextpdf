@@ -1721,7 +1721,7 @@ class PdfDocument extends Document implements DocListener {
                 case Element.JPEG:
                 case Element.IMGRAW:
                 case Element.IMGTEMPLATE: {
-                    carriageReturn();
+                    //carriageReturn(); suggestion by Marc Campforts
                     add((Image) element);
                     break;
                 }

@@ -48,7 +48,7 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf.wmf;
+package com.lowagie.text.pdf.codec.wmf;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import com.lowagie.text.pdf.*;

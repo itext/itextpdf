@@ -48,24 +48,44 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf.wmf;
+package com.lowagie.text.pdf.codec.wmf;
+import java.io.IOException;
+import java.awt.Color;
 
-public class MetaObject {
-    public static final int META_NOT_SUPPORTED = 0;
-    public static final int META_PEN = 1;
-    public static final int META_BRUSH = 2;
-    public static final int META_FONT = 3;
-    public int type = META_NOT_SUPPORTED;
+public class MetaPen extends MetaObject {
 
-    public MetaObject() {
+    public static final int PS_SOLID = 0;
+    public static final int PS_DASH = 1;
+    public static final int PS_DOT = 2;
+    public static final int PS_DASHDOT = 3;
+    public static final int PS_DASHDOTDOT = 4;
+    public static final int PS_NULL = 5;
+    public static final int PS_INSIDEFRAME = 6;
+
+    int style = PS_SOLID;
+    int penWidth = 1;
+    Color color = Color.black;
+
+    public MetaPen() {
+        type = META_PEN;
     }
 
-    public MetaObject(int type) {
-        this.type = type;
+    public void init(InputMeta in) throws IOException {
+        style = in.readWord();
+        penWidth = in.readShort();
+        in.readWord();
+        color = in.readColor();
     }
     
-    public int getType() {
-        return type;
+    public int getStyle() {
+        return style;
     }
-
+    
+    public int getPenWidth() {
+        return penWidth;
+    }
+    
+    public Color getColor() {
+        return color;
+    }
 }

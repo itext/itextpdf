@@ -48,66 +48,50 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf.wmf;
+package com.lowagie.text.pdf.codec.postscript;
 
 import java.io.*;
-import java.awt.Color;
+import java.awt.*;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.*;
 
-public class InputMeta {
-    
-    InputStream in;
-    int length;
-    
-    public InputMeta(InputStream in) {
-        this.in = in;
+public class MetaDoPS {
+
+  public PdfContentByte cb;
+  InputStream in;
+  int left;
+  int top;
+  int right;
+  int bottom;
+  int inch;
+
+  public MetaDoPS(InputStream in, PdfContentByte cb) {
+    this.cb = cb;
+    this.in = in;
+  }
+
+  public void readAll() throws IOException, DocumentException {
+
+    cb.saveState();
+    java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
+        width(), PageSize.A4.height());
+    try {
+      PAContext context = new PAContext( (Graphics2D) g2,
+                                        new Dimension( (int) PageSize.A4.width(),
+          (int) PageSize.A4.height()));
+      context.draw(new BufferedInputStream(in));
+      // ( (Graphics2D) backBuffer.getGraphics()).dispose();
+      in.close();
+    }
+    catch (IOException ex) {
+      ex.printStackTrace();
+    }
+    catch (PainterException ex) {
+      ex.printStackTrace();
     }
 
-    public int readWord() throws IOException{
-        length += 2;
-        int k1 = in.read();
-        if (k1 < 0)
-            return 0;
-        return (k1 + (in.read() << 8)) & 0xffff;
-    }
+    cb.restoreState();
 
-    public int readShort() throws IOException{
-        int k = readWord();
-        if (k > 0x7fff)
-            k -= 0x10000;
-        return k;
-    }
+  }
 
-    public int readInt() throws IOException{
-        length += 4;
-        int k1 = in.read();
-        if (k1 < 0)
-            return 0;
-        int k2 = in.read() << 8;
-        int k3 = in.read() << 16;
-        return k1 + k2 + k3 + (in.read() << 24);
-    }
-    
-    public int readByte() throws IOException{
-        ++length;
-        return in.read() & 0xff;
-    }
-    
-    public void skip(int len) throws IOException{
-        length += len;
-        while (len > 0) {
-            len -= in.skip(len);
-        }
-    }
-    
-    public int getLength() {
-        return length;
-    }
-    
-    public Color readColor() throws IOException{
-        int red = readByte();
-        int green = readByte();
-        int blue = readByte();
-        readByte();
-        return new Color(red, green, blue);
-    }
 }

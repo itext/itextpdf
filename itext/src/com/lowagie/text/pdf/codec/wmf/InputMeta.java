@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2004 Paulo Soares
+ * Copyright 2001, 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999-2005 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000-2005 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -48,38 +48,66 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.pdf.codec.wmf;
 
-import java.io.FilterOutputStream;
-import java.io.OutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.awt.Color;
 
-public class PdfEncryptionStream extends FilterOutputStream {
+public class InputMeta {
     
-    protected PdfEncryption enc;
-    private byte buf[] = new byte[1];
+    InputStream in;
+    int length;
     
-    public PdfEncryptionStream(OutputStream out, PdfEncryption enc) {
-        super(out);
-        this.enc = enc;
+    public InputMeta(InputStream in) {
+        this.in = in;
+    }
+
+    public int readWord() throws IOException{
+        length += 2;
+        int k1 = in.read();
+        if (k1 < 0)
+            return 0;
+        return (k1 + (in.read() << 8)) & 0xffff;
+    }
+
+    public int readShort() throws IOException{
+        int k = readWord();
+        if (k > 0x7fff)
+            k -= 0x10000;
+        return k;
+    }
+
+    public int readInt() throws IOException{
+        length += 4;
+        int k1 = in.read();
+        if (k1 < 0)
+            return 0;
+        int k2 = in.read() << 8;
+        int k3 = in.read() << 16;
+        return k1 + k2 + k3 + (in.read() << 24);
     }
     
-    public void write(byte[] b, int off, int len) throws IOException {
-        if ((off | len | (b.length - (len + off)) | (off + len)) < 0)
-            throw new IndexOutOfBoundsException();
-        enc.encryptRC4(b, off, len);
-        out.write(b, off, len);
+    public int readByte() throws IOException{
+        ++length;
+        return in.read() & 0xff;
     }
     
-    public void close() throws IOException {
+    public void skip(int len) throws IOException{
+        length += len;
+        while (len > 0) {
+            len -= in.skip(len);
+        }
     }
     
-    public void write(int b) throws IOException {
-        buf[0] = (byte)b;
-        write(buf);
+    public int getLength() {
+        return length;
     }
     
-    public void flush() throws IOException {
+    public Color readColor() throws IOException{
+        int red = readByte();
+        int green = readByte();
+        int blue = readByte();
+        readByte();
+        return new Color(red, green, blue);
     }
-    
 }

@@ -48,7 +48,7 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf.wmf;
+package com.lowagie.text.pdf.codec.wmf;
 import java.io.*;
 import com.lowagie.text.pdf.*;
 import com.lowagie.text.pdf.codec.BmpImage;

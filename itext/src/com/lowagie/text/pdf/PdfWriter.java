@@ -69,6 +69,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
+import com.lowagie.text.ImgPostscript;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -921,12 +922,22 @@ public class PdfWriter extends DocWriter {
             if (image.isImgTemplate()) {
                 name = new PdfName("img" + images.size());
                 if (image.templateData() == null) {
-                    try {
-                        ImgWMF wmf = (ImgWMF)image;
-                        wmf.readWMF(getDirectContent().createTemplate(0, 0));
-                    }
-                    catch (Exception e) {
-                        throw new DocumentException(e);
+                    if(image instanceof ImgWMF){
+                        try {
+                            ImgWMF wmf = (ImgWMF)image;
+                            wmf.readWMF(getDirectContent().createTemplate(0, 0));
+                        }
+                        catch (Exception e) {
+                            throw new DocumentException(e);
+                        }
+                    }else{
+                        try {
+                            ((ImgPostscript)image).readPostscript(getDirectContent().createTemplate(0, 0));
+                        }
+                        catch (Exception e) {
+                            throw new DocumentException(e);
+                        }
+                        
                     }
                 }
             }

@@ -132,6 +132,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName BG = new PdfName("BG");
     /** A name */
+    public static final PdfName BIGFIVE = new PdfName("BigFive");
+    /** A name */
     public static final PdfName BITSPERCOMPONENT = new PdfName("BitsPerComponent");
     /** A name */
     public static final PdfName BITSPERSAMPLE = new PdfName("BitsPerSample");
@@ -326,6 +328,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName F = new PdfName("F");
     /** A name */
+    public static final PdfName FB = new PdfName("FB");
+    /** A name */
     public static final PdfName FDECODEPARMS = new PdfName("FDecodeParms");
     /** A name */
     public static final PdfName FDF = new PdfName("FDF");
@@ -406,6 +410,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name of an attribute. */
     public static final PdfName GAMMA = new PdfName("Gamma");
     /** A name of an attribute. */
+    public static final PdfName GBK = new PdfName("GBK");
+    /** A name of an attribute. */
     public static final PdfName GLITTER = new PdfName("Glitter");
     /** A name of an attribute. */
     public static final PdfName GOTO = new PdfName("GoTo");
@@ -479,6 +485,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName INTERPOLATE = new PdfName("Interpolate");
     /** A name */
     public static final PdfName ISMAP = new PdfName("IsMap");
+    /** A name */
+    public static final PdfName IRT = new PdfName("IRT");
     /** A name */
     public static final PdfName ITALICANGLE = new PdfName("ItalicAngle");
     /** A name */
@@ -682,6 +690,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PROPERTIES = new PdfName("Properties");
     /** A name */
+    public static final PdfName PS = new PdfName("PS");
+    /** A name */
     public static final PdfName Q = new PdfName("Q");
     /** A name */
     public static final PdfName QUADPOINTS = new PdfName("QuadPoints");
@@ -737,6 +747,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SHADING = new PdfName("Shading");
     /** A name */
     public static final PdfName SHADINGTYPE = new PdfName("ShadingType");
+    /** A name */
+    public static final PdfName SHIFT_JIS = new PdfName("Shift?JIS");
     /** A name */
     public static final PdfName SIG = new PdfName("Sig");
     /** A name */
@@ -841,6 +853,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName TYPE1 = new PdfName("Type1");
     /** A name of an attribute. */
     public static final PdfName U = new PdfName("U");
+    /** A name of an attribute. */
+    public static final PdfName UHC = new PdfName("UHC");
     /** A name of an attribute. */
     public static final PdfName UNDERLINE = new PdfName("Underline");
     /** A name */

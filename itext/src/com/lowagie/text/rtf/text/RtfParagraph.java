@@ -97,6 +97,22 @@ public class RtfParagraph extends RtfPhrase {
      * Constant for right indentation
      */
     public static final byte[] INDENT_RIGHT = "\\ri".getBytes();
+    /**
+     * Constant for keeping the paragraph together on one page
+     */
+    public static final byte[] KEEP_TOGETHER = "\\keep".getBytes();
+    /**
+     * Constant for keeping the paragraph toghether with the next one on one page
+     */
+    public static final byte[] KEEP_TOGETHER_WITH_NEXT = "\\keepn".getBytes();
+    /**
+     * Constant for the space before the paragraph.
+     */
+    private static final byte[] SPACING_BEFORE = "\\sb".getBytes();
+    /**
+     * Constant for the space after the paragraph.
+     */
+    private static final byte[] SPACING_AFTER = "\\sa".getBytes();
     
     /**
      * The alignment of this RtfParagraph
@@ -110,6 +126,22 @@ public class RtfParagraph extends RtfPhrase {
      * The right indentation of this RtfParagraph
      */
     private int indentRight = 0;
+    /**
+     * Whether this RtfParagraph must stay on one page.
+     */
+    private boolean keepTogether = false;
+    /**
+     * Whether this RtfParagraph must stay on the same page as the next paragraph.
+     */
+    private boolean keepTogetherWithNext = false;
+    /**
+     * The space before this paragraph.
+     */
+    private int spacingBefore = 0;
+    /**
+     * The space after this paragraph.
+     */
+    private int spacingAfter = 0;
     
     /**
      * Constructs a RtfParagraph belonging to a RtfDocument based on a Paragraph.
@@ -123,6 +155,18 @@ public class RtfParagraph extends RtfPhrase {
         this.alignment = paragraph.alignment();
         this.indentLeft = (int) (paragraph.indentationLeft() * RtfElement.TWIPS_FACTOR);
         this.indentRight = (int) (paragraph.indentationRight() * RtfElement.TWIPS_FACTOR);
+        this.keepTogether = paragraph.getKeepTogether();
+        this.spacingBefore = (int) (paragraph.spacingBefore() * RtfElement.TWIPS_FACTOR);
+        this.spacingAfter = (int) (paragraph.spacingAfter() * RtfElement.TWIPS_FACTOR);
+    }
+    
+    /**
+     * Set whether this RtfParagraph must stay on the same page as the next one.
+     *  
+     * @param keepTogetherWithNext Whether this RtfParagraph must keep together with the next.
+     */
+    public void setKeepTogetherWithNext(boolean keepTogetherWithNext) {
+        this.keepTogetherWithNext = keepTogetherWithNext;
     }
     
     /**
@@ -135,6 +179,12 @@ public class RtfParagraph extends RtfPhrase {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(PARAGRAPH_DEFAULTS);
+            if(this.keepTogether) {
+                result.write(KEEP_TOGETHER);
+            }
+            if(this.keepTogetherWithNext) {
+                result.write(KEEP_TOGETHER_WITH_NEXT);
+            }
             if(inTable) {
                 result.write(IN_TABLE);
             }
@@ -157,6 +207,18 @@ public class RtfParagraph extends RtfPhrase {
     	    result.write(intToByteArray(indentLeft));
     	    result.write(INDENT_RIGHT);
     	    result.write(intToByteArray(indentRight));
+    	    if(this.spacingBefore > 0) {
+    	        result.write(SPACING_BEFORE);
+    	        result.write(intToByteArray(this.spacingBefore));
+    	    }
+    	    if(this.spacingAfter > 0) {
+    	        result.write(SPACING_AFTER);
+    	        result.write(intToByteArray(this.spacingAfter));
+    	    }
+            if(this.lineLeading > 0) {
+                result.write(LINE_SPACING);
+                result.write(intToByteArray(this.lineLeading));
+            }
             for(int i = 0; i < chunks.size(); i++) {
                 result.write(((RtfBasicElement) chunks.get(i)).write());
             }

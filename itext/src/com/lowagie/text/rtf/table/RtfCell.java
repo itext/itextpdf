@@ -93,7 +93,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * This cell is a child cell of a vertical merge operation
      */
     private static final int MERGE_VERT_CHILD = 2;
-    
+
     /**
      * The parent RtfRow of this RtfCell
      */
@@ -356,10 +356,16 @@ public class RtfCell extends Cell implements RtfExtendedElement {
         try {
             if(this.content.size() == 0) {
                 result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+                if(this.parentRow.getParentTable().getTableFitToPage()) {
+                    result.write(RtfParagraph.KEEP_TOGETHER_WITH_NEXT);
+                }
                 result.write("\\intbl".getBytes());
             } else {
                 for(int i = 0; i < this.content.size(); i++) {
                     RtfBasicElement rtfElement = (RtfBasicElement) this.content.get(i);
+                    if(rtfElement instanceof RtfParagraph) {
+                        ((RtfParagraph) rtfElement).setKeepTogetherWithNext(this.parentRow.getParentTable().getTableFitToPage());
+                    }
                     result.write(rtfElement.write());
                     if(rtfElement instanceof RtfParagraph && i < (this.content.size() - 1)) {
                         result.write(RtfParagraph.PARAGRAPH);

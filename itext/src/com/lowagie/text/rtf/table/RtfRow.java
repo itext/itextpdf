@@ -272,7 +272,7 @@ public class RtfRow extends RtfElement {
             result.write(ROW_WIDTH_STYLE);
             result.write(ROW_WIDTH);
             result.write(intToByteArray(this.width));
-            if(this.parentTable.getFitToPage()) {
+            if(this.parentTable.getCellsFitToPage()) {
                 result.write(ROW_KEEP_TOGETHER);
             }
             if(this.rowNumber <= this.parentTable.getHeaderRows()) {
