@@ -213,7 +213,6 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         listNumber = document.getDocumentHeader().getListNumber(this);
         
         items = new ArrayList();
-        System.out.println(list.indentationLeft() + ", " + list.symbolIndent());
         firstIndent = (int) ((list.symbolIndent() - list.indentationLeft()) * RtfElement.TWIPS_FACTOR * -1);
         leftIndent = (int) ((list.indentationLeft() + list.symbolIndent()) * RtfElement.TWIPS_FACTOR);
         rightIndent = (int) (list.indentationRight() * RtfElement.TWIPS_FACTOR);
