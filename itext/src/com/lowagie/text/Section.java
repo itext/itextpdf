@@ -589,6 +589,9 @@ public class Section extends ArrayList implements TextElementArray {
             buf.insert(0, ((Integer) numbers.get(i)).intValue());
         }
         Paragraph result = new Paragraph(title);
+        result.setAlignment(title.alignment());
+        result.setIndentationLeft(title.indentationLeft());
+        result.setIndentationRight(title.indentationRight());
         result.setMarkupAttributes(title.getMarkupAttributes());
         result.add(0, new Chunk(buf.toString(), title.font()));
         return result;
