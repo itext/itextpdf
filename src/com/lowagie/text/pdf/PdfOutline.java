@@ -112,6 +112,8 @@ public class PdfOutline extends PdfDictionary {
      * Constructs a <CODE>PdfOutline</CODE>.
      * <P>
      * This is the constructor for the <CODE>outlines object</CODE>.
+     * 
+     * @param writer The PdfWriter you are adding the outline to
      */
     
     PdfOutline(PdfWriter writer) {
@@ -407,7 +409,8 @@ public class PdfOutline extends PdfDictionary {
      * Returns the PDF representation of this <CODE>PdfOutline</CODE>.
      *
      * @param writer the encryption information
-     * @return an array of <CODE>byte</CODE>
+     * @param os
+     * @throws IOException
      */
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
@@ -435,14 +438,26 @@ public class PdfOutline extends PdfDictionary {
         super.toPdf(writer, os);
     }
     
+    /**
+     * Adds a kid to the outline
+     * @param outline
+     */
     public void addKid(PdfOutline outline) {
         kids.add(outline);
     }
     
+    /**
+     * Returns the kids of this outline
+     * @return an ArrayList with PdfOutlines
+     */
     public ArrayList getKids() {
         return kids;
     }
     
+    /**
+     * Sets the kids of this outline
+     * @param kids
+     */
     public void setKids(ArrayList kids) {
         this.kids = kids;
     }
@@ -461,11 +476,19 @@ public class PdfOutline extends PdfDictionary {
         this.tag = tag;
     }
     
+    /**
+     * Gets the title of this outline
+     * @return the title as a String
+     */
     public String getTitle() {
         PdfString title = (PdfString)get(PdfName.TITLE);
         return title.toString();
     }
     
+    /**
+     * Sets the title of this outline
+     * @param title
+     */
     public void setTitle(String title) {
         put(PdfName.TITLE, new PdfString(title, PdfObject.TEXT_UNICODE));
     }
