@@ -65,6 +65,9 @@ class PdfTable extends Rectangle {
 /** this is the cellpadding of the table. */
     private float cellpadding;
     
+/** this is the cellspacing of the table. */
+    private float cellspacing;
+    
     // constructors
     
 /**
@@ -88,6 +91,7 @@ class PdfTable extends Rectangle {
         
         // initialisation of some parameters
         this.cellpadding = table.cellpadding();
+        this.cellspacing = table.cellspacing();
         float[] positions = table.getWidths(left, right - left);
         setLeft(positions[0]);
         setRight(positions[positions.length - 1]);
@@ -188,5 +192,15 @@ class PdfTable extends Rectangle {
     
     float cellpadding() {
         return cellpadding;
+    }
+    
+/**
+ * Returns the cellspacing of the table.
+ *
+ * @return	the cellspacing
+ */
+    
+    float cellspacing() {
+        return cellspacing;
     }
 }
