@@ -231,6 +231,7 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
         if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
             setAlignment(value);
         }
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

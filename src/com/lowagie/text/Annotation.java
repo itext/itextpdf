@@ -120,7 +120,7 @@ public class Annotation implements Element, MarkupAttributes {
     protected int annotationtype;
     
 /** This is the title of the <CODE>Annotation</CODE>. */
-    protected HashMap attributes = new HashMap();
+    protected HashMap annotationAttributes = new HashMap();
 
 /** Contains extra markupAttributes */
     protected Properties markupAttributes;
@@ -156,8 +156,8 @@ public class Annotation implements Element, MarkupAttributes {
     
     public Annotation(String title, String text) {
         annotationtype = TEXT;
-        attributes.put(TITLE, title);
-        attributes.put(CONTENT, text);
+        annotationAttributes.put(TITLE, title);
+        annotationAttributes.put(CONTENT, text);
     }
     
 /**
@@ -174,8 +174,8 @@ public class Annotation implements Element, MarkupAttributes {
     public Annotation(String title, String text, float llx, float lly, float urx, float ury) {
         this(llx, lly, urx, ury);
         annotationtype = TEXT;
-        attributes.put(TITLE, title);
-        attributes.put(CONTENT, text);
+        annotationAttributes.put(TITLE, title);
+        annotationAttributes.put(CONTENT, text);
     }
     
 /**
@@ -185,7 +185,7 @@ public class Annotation implements Element, MarkupAttributes {
     public Annotation(float llx, float lly, float urx, float ury, URL url) {
         this(llx, lly, urx, ury);
         annotationtype = URL_NET;
-        attributes.put(URL, url);
+        annotationAttributes.put(URL, url);
     }
     
 /**
@@ -195,7 +195,7 @@ public class Annotation implements Element, MarkupAttributes {
     public Annotation(float llx, float lly, float urx, float ury, String url) {
         this(llx, lly, urx, ury);
         annotationtype = URL_AS_STRING;
-        attributes.put(FILE, url);
+        annotationAttributes.put(FILE, url);
     }
     
 /**
@@ -205,8 +205,8 @@ public class Annotation implements Element, MarkupAttributes {
     public Annotation(float llx, float lly, float urx, float ury, String file, String dest) {
         this(llx, lly, urx, ury);
         annotationtype = FILE_DEST;
-        attributes.put(FILE, file);
-        attributes.put(DESTINATION, dest);
+        annotationAttributes.put(FILE, file);
+        annotationAttributes.put(DESTINATION, dest);
     }
     
 /**
@@ -216,8 +216,8 @@ public class Annotation implements Element, MarkupAttributes {
     public Annotation(float llx, float lly, float urx, float ury, String file, int page) {
         this(llx, lly, urx, ury);
         annotationtype = FILE_PAGE;
-        attributes.put(FILE, file);
-        attributes.put(PAGE, new Integer(page));
+        annotationAttributes.put(FILE, file);
+        annotationAttributes.put(PAGE, new Integer(page));
     }
     
 /**
@@ -227,7 +227,7 @@ public class Annotation implements Element, MarkupAttributes {
     public Annotation(float llx, float lly, float urx, float ury, int named) {
         this(llx, lly, urx, ury);
         annotationtype = NAMED_DEST;
-        attributes.put(NAMED, new Integer(named));
+        annotationAttributes.put(NAMED, new Integer(named));
     }
     
 /**
@@ -237,10 +237,10 @@ public class Annotation implements Element, MarkupAttributes {
     public Annotation(float llx, float lly, float urx, float ury, String application, String parameters, String operation, String defaultdir) {
         this(llx, lly, urx, ury);
         annotationtype = LAUNCH;
-        attributes.put(APPLICATION, application);
-        attributes.put(PARAMETERS, parameters);
-        attributes.put(OPERATION, operation);
-        attributes.put(DEFAULTDIR, defaultdir);
+        annotationAttributes.put(APPLICATION, application);
+        annotationAttributes.put(PARAMETERS, parameters);
+        annotationAttributes.put(OPERATION, operation);
+        annotationAttributes.put(DEFAULTDIR, defaultdir);
     }
     
 /**
@@ -250,17 +250,18 @@ public class Annotation implements Element, MarkupAttributes {
  * @param	attributes		Some attributes
  */
     
-    public Annotation(Properties attrs) {
-        String title = (String)attrs.remove(ElementTags.TITLE);
-        String text = (String)attrs.remove(ElementTags.CONTENT);
+    public Annotation(Properties attributes) {
+        String title = (String)attributes.remove(ElementTags.TITLE);
+        String text = (String)attributes.remove(ElementTags.CONTENT);
         if (title == null) {
             title = "";
         }
         if (text == null) {
             text = "";
         }
-        attributes.put(TITLE, title);
-        attributes.put(CONTENT, text);
+        annotationAttributes.put(TITLE, title);
+        annotationAttributes.put(CONTENT, text);
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -411,7 +412,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public final String title() {
-        String s = (String)attributes.get(TITLE);
+        String s = (String)annotationAttributes.get(TITLE);
         if (s == null) s = "";
         return s;
     }
@@ -423,7 +424,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public final String content() {
-        String s = (String)attributes.get(CONTENT);
+        String s = (String)annotationAttributes.get(CONTENT);
         if (s == null) s = "";
         return s;
     }
@@ -435,7 +436,7 @@ public class Annotation implements Element, MarkupAttributes {
  */
     
     public final HashMap attributes() {
-        return attributes;
+        return annotationAttributes;
     }
     
 /**

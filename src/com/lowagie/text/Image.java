@@ -568,6 +568,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         if ((value = (String)attributes.remove(ElementTags.ROTATION)) != null) {
             image.setRotation(Float.valueOf(value + "f").floatValue());
         }
+        image.setMarkupAttributes(attributes);
         return image;
     }
     

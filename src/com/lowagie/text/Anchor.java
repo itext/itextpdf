@@ -202,6 +202,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
         if ((value = (String)attributes.remove(ElementTags.REFERENCE)) != null) {
             setReference(value);
         }
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
