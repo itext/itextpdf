@@ -595,6 +595,7 @@ public class Section extends ArrayList implements TextElementArray {
             buf.insert(0, ((Integer) numbers.get(i)).intValue());
         }
         Paragraph result = new Paragraph(title);
+        result.setMarkupAttributes(title.getMarkupAttributes());
         result.add(0, new Chunk(buf.toString(), title.font()));
         return result;
     }
@@ -636,34 +637,40 @@ public class Section extends ArrayList implements TextElementArray {
         this.bookmarkOpen = bookmarkOpen;
     }
     
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
- */
-    public Set getMarkupAttributeNames()
-    {
-        return (markupAttributes == null) ?
-        Collections.EMPTY_SET : markupAttributes.keySet();
-    }
-    
     
 /**
  * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
-    public void setMarkupAttribute(String name, String value)
-    {
-        markupAttributes = (markupAttributes == null) ?
-        new Properties() : markupAttributes;
+    public void setMarkupAttribute(String name, String value) {
+        markupAttributes = (markupAttributes == null) ? new Properties() : markupAttributes;
         markupAttributes.put(name, value);
     }
     
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
+ */
+    public void setMarkupAttributes(Properties markupAttributes) {
+        this.markupAttributes = markupAttributes;
+    }
     
 /**
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
  */
-    public String getMarkupAttribute(String name)
-    {
-        return (markupAttributes == null) ?
-        null : String.valueOf(markupAttributes.get(name));
+    public String getMarkupAttribute(String name) {
+        return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
     }
     
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
+    public Set getMarkupAttributeNames() {
+        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+    }
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
+ */
+    public Properties getMarkupAttributes() {
+        return markupAttributes;
+    }
 }

@@ -510,11 +510,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 if (chunk.isEmpty()) return;
                 HashMap attributes = chunk.getAttributes();
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (chunk.font().isStandardFont() && attributes == null
-                 && !(hasMarkupAttributes(chunk)))
+                && !(hasMarkupAttributes(chunk)))
                 {
-// end patch by Matt Benson 02/21/2002
+                    // end patch by Matt Benson 02/21/2002
                     addTabs(indent);
                     write(HtmlEncoder.encode(chunk.content()));
                     os.write(NEWLINE);
@@ -529,12 +529,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     if (! chunk.font().isStandardFont()) {
                         write(chunk.font());
                     }
-// patch by Matt Benson 02/21/2002
+                    // patch by Matt Benson 02/21/2002
                     if (hasMarkupAttributes(chunk))
                     {
-                      writeMarkupAttributes((MarkupAttributes)chunk);
+                        writeMarkupAttributes((MarkupAttributes)chunk);
                     }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                    // end patch by Matt Benson 02/21/2002
                     os.write(GT);
                     if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
                         if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
@@ -568,12 +568,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 addTabs(indent);
                 writeStart(HtmlTags.PHRASE);
                 write(phrase.font());
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(phrase))
                 {
-                  writeMarkupAttributes((MarkupAttributes)phrase);
+                    writeMarkupAttributes((MarkupAttributes)phrase);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = phrase.iterator(); i.hasNext(); ) {
@@ -603,12 +603,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (anchor.reference() != null) {
                     write(HtmlTags.REFERENCE, anchor.reference());
                 }
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(anchor))
                 {
-                  writeMarkupAttributes((MarkupAttributes)anchor);
+                    writeMarkupAttributes((MarkupAttributes)anchor);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 
@@ -643,16 +643,16 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     addTabs(indent);
                     writeStart(HtmlTags.PHRASE);
                     if (!paragraph.font().isStandardFont()) {
-                      write(paragraph.font());
+                        write(paragraph.font());
                     }
-
-// patch by Matt Benson 02/21/2002
+                    
+                    // patch by Matt Benson 02/21/2002
                     if (hasMarkupAttributes(paragraph))
                     {
-                      writeMarkupAttributes((MarkupAttributes)paragraph);
+                        writeMarkupAttributes((MarkupAttributes)paragraph);
                     }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
-
+                    // end patch by Matt Benson 02/21/2002
+                    
                     os.write(GT);
                     os.write(NEWLINE);
                 }
@@ -676,12 +676,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(section))
                 {
-                  writeMarkupAttributes((MarkupAttributes)section);
+                    writeMarkupAttributes((MarkupAttributes)section);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 writeSection(section, indent);
                 writeEnd(HtmlTags.DIV);
                 return;
@@ -698,12 +698,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 else {
                     writeStart(HtmlTags.UNORDEREDLIST);
                 }
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(list))
                 {
-                  writeMarkupAttributes((MarkupAttributes)list);
+                    writeMarkupAttributes((MarkupAttributes)list);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
@@ -724,12 +724,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.LISTITEM);
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(listItem))
                 {
-                  writeMarkupAttributes((MarkupAttributes)listItem);
+                    writeMarkupAttributes((MarkupAttributes)listItem);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 
@@ -791,12 +791,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (cell.noWrap()) {
                     write(HtmlTags.NOWRAP, String.valueOf(true));
                 }
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(cell))
                 {
-                  writeMarkupAttributes((MarkupAttributes)cell);
+                    writeMarkupAttributes((MarkupAttributes)cell);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 if (cell.isEmpty()) {
@@ -821,12 +821,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(HtmlTags.ROW);
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(row))
                 {
-                  writeMarkupAttributes((MarkupAttributes)row);
+                    writeMarkupAttributes((MarkupAttributes)row);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 Element cell;
@@ -873,12 +873,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (table.backgroundColor() != null) {
                     write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.encode(table.backgroundColor()));
                 }
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(table))
                 {
-                  writeMarkupAttributes((MarkupAttributes)table);
+                    writeMarkupAttributes((MarkupAttributes)table);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 os.write(GT);
                 os.write(NEWLINE);
                 Row row;
@@ -894,14 +894,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Annotation annotation = (Annotation) element;
                 writeComment(annotation.title() + ": " + annotation.content());
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(annotation))
                 {
-                  os.write(BEGINCOMMENT);
-                  writeMarkupAttributes((MarkupAttributes)annotation);
-                  os.write(ENDCOMMENT);
+                    os.write(BEGINCOMMENT);
+                    writeMarkupAttributes((MarkupAttributes)annotation);
+                    os.write(ENDCOMMENT);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 return;
             }
             case Element.GIF:
@@ -939,12 +939,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 write(HtmlTags.PLAINWIDTH, String.valueOf(image.scaledWidth()));
                 write(HtmlTags.PLAINHEIGHT, String.valueOf(image.scaledHeight()));
-// patch by Matt Benson 02/21/2002
+                // patch by Matt Benson 02/21/2002
                 if (hasMarkupAttributes(image))
                 {
-                  writeMarkupAttributes((MarkupAttributes)image);
+                    writeMarkupAttributes((MarkupAttributes)image);
                 }//end if this Element has MarkupAttributes
-// end patch by Matt Benson 02/21/2002
+                // end patch by Matt Benson 02/21/2002
                 writeEnd();
                 return;
             }
@@ -974,6 +974,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
             String alignment = HtmlEncoder.getAlignment(section.title().alignment());
             if (!"".equals(alignment)) {
                 write(HtmlTags.ALIGN, alignment);
+            }
+            if (hasMarkupAttributes(section.title())) {
+                writeMarkupAttributes((MarkupAttributes)section.title());
             }
             os.write(GT);
             os.write(NEWLINE);

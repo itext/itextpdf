@@ -49,6 +49,7 @@ package com.lowagie.text;
 
 
 import java.util.Set;
+import java.util.Properties;
 
 
 /**
@@ -61,25 +62,41 @@ import java.util.Set;
 public interface MarkupAttributes extends com.lowagie.text.Element {
     
 /**
- * Returns a <CODE>Set</CODE> of <CODE>String</CODE> attribute names for the
- * <CODE>MarkupAttributes</CODE> implementor.
- * @return <CODE>Set</CODE>.
- */
-    public Set getMarkupAttributeNames();
-    
-/**
  * Sets the specified attribute.
+ *
  * @param name    <CODE>String</CODE> attribute name.
  * @param value   <CODE>String</CODE> attribute value.
  */
     public void setMarkupAttribute(String name, String value);
     
+/**
+ * Sets the markupAttributes.
+ *
+ * @param   markupAttributes    a <CODE>Properties</CODE>-object containing markupattributes 
+ */
+    public void setMarkupAttributes(Properties markupAttributes);
     
 /**
  * Returns the value of the specified attribute.
+ *
  * @param name   <CODE>String</CODE> attribute name.
  * @return <CODE>String</CODE>.
  */
     public String getMarkupAttribute(String name);
+    
+/**
+ * Returns a <CODE>Set</CODE> of <CODE>String</CODE> attribute names for the
+ * <CODE>MarkupAttributes</CODE> implementor.
+ *
+ * @return <CODE>Set</CODE>.
+ */
+    public Set getMarkupAttributeNames();
+    
+/**
+ * Return a <CODE>Properties</CODE>-object containing all the markupAttributes.
+ *
+ * @return <CODE>Properties</CODE>
+ */
+    public Properties getMarkupAttributes();
     
 }
