@@ -78,7 +78,7 @@ import com.lowagie.text.pdf.PdfOCG;
 
 public abstract class Image extends Rectangle implements Element, MarkupAttributes {
     
-    // static membervariables (concerning the presence of borders)
+    // static membervariables
     
     /** this is a kind of image alignment. */
     public static final int DEFAULT = 0;
@@ -311,7 +311,7 @@ public abstract class Image extends Rectangle implements Element, MarkupAttribut
         this.spacingAfter = image.spacingAfter;
         this.spacingBefore = image.spacingBefore;
         this.widthPercentage = image.widthPercentage;
-        this.layer = layer;
+        this.layer = image.layer;
     }
     
     /**
