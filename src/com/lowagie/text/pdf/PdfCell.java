@@ -361,9 +361,12 @@ public class PdfCell extends Rectangle {
 		// we loop over the lines
 		int size = lines.size();
 		boolean aboveBottom = true;
+		// <ea>
+		float height[] = null;
 		for (int i = 0; i < size && aboveBottom; i++) {
 			curLine = (PdfLine) lines.get(i);
-			lineHeight = curLine.height();
+			height =  curLine.height();
+			lineHeight = height[0] + height[1];
 			currentPosition -= lineHeight;
 			// if the currentPosition is higher than the bottom, we add the line to the result
 			if (currentPosition > (bottom + cellpadding)) { // bugfix by Tom Ring and Veerendra Namineni
@@ -381,7 +384,8 @@ public class PdfCell extends Rectangle {
 				size = result.size();
 				for (int i = 0; i < size; i++) {
 					curLine = (PdfLine) lines.remove(0);
-					difference += curLine.height();
+					height = curLine.height();
+					difference += height[0] + height[1];
 				}
 			}
 		}
