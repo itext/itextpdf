@@ -527,13 +527,15 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (attributes != null && attributes.get(Chunk.NEWPAGE) != null) {
                     return;
                 }
-                if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
-                    float p = (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() * 100f) / chunk.font().size();
-                    styleAttributes = new Properties();
-                    styleAttributes.setProperty(MarkupTags.CSS_VERTICALALIGN, "" + p + "%");
-                }
+                // This doesn't seem to work:
+                //if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
+                //    float p = (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() * 100f) / chunk.font().size();
+                //    styleAttributes = new Properties();
+                //    styleAttributes.setProperty(MarkupTags.CSS_VERTICALALIGN, "" + p + "%");
+                //}
                 boolean tag = isOtherFont(chunk.font()) || hasMarkupAttributes(chunk) || styleAttributes != null;
                 if (tag) {
+                    // start span tag
                     addTabs(indent);
                     writeStart(MarkupTags.SPAN);
                     if (isOtherFont(chunk.font())) {
@@ -544,15 +546,39 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     }
                     os.write(GT);
                 }
+                if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
+                    // start sup or sub tag
+                    if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
+                        writeStart(HtmlTags.SUP);
+                    }
+                    else {
+                        writeStart(HtmlTags.SUB);
+                    }
+                    os.write(GT);
+                }
+                // contents
                 write(HtmlEncoder.encode(chunk.content()));
+                if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
+                    // end sup or sub tag
+                    os.write(LT);
+                    os.write(FORWARD);
+                    if (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() > 0) {
+                        write(HtmlTags.SUP);
+                    }
+                    else {
+                        write(HtmlTags.SUB);
+                    }
+                    os.write(GT);
+                }
                 if (tag) {
+                    // end tag
                     writeEnd(MarkupTags.SPAN);
                 }
                 return;
             }
             case Element.PHRASE:
             {
-                Phrase phrase = (Phrase) element;  
+                Phrase phrase = (Phrase) element;
                 styleAttributes = new Properties();
                 styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(phrase.leading()) + "pt");
                 
