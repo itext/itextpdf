@@ -1,11 +1,8 @@
 /*
- * @(#)PdfPageElement.java			0.23 2000/02/02
- *       release rugPdf0.10:		0.02 99/03/30
- *               rugPdf0.20:		0.12 99/11/26
- *               iText0.3:			0.23 2000/02/14
- *               iText0.35:         0.23 2000/08/11
- * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -31,7 +28,7 @@
  * BELGIUM
  * tel. +32 (0)9 228.10.97
  * bruno@lowagie.com
- *  
+ *
  */
 
 package com.lowagie.text.pdf;
