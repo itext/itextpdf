@@ -316,6 +316,9 @@ public abstract class DocWriter implements DocListener {
     
     public static final byte[] getISOBytes(String text)
     {
+        if (text == null) {
+            return null;
+        }
         try {
             return text.getBytes("ISO8859_1");
         }
