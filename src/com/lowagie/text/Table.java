@@ -771,6 +771,10 @@ public class Table extends Rectangle implements Element {
             row.deleteColumn(column);
             rows.set(i, row);
         }
+        if (column == columns) {
+            currentRow++;
+            currentColumn = 0;
+        }
     }
     
 /**
