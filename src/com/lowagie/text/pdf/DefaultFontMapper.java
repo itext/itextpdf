@@ -223,7 +223,7 @@ public class DefaultFontMapper implements FontMapper {
             file = files[k];
             String name = file.getPath().toLowerCase();
             try {
-                if (name.endsWith(".ttf") || name.endsWith(".afm")) {
+                if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm")) {
                     String names[][] = BaseFont.getFullFontName(file.getPath(), BaseFont.CP1252, null);
                     insertNames(names, file.getPath());
                     ++count;

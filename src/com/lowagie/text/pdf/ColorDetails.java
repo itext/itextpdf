@@ -50,8 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.HashMap;
-import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 /** Each spotcolor in the document will have an instance of this class
  *
@@ -72,7 +70,7 @@ class ColorDetails {
     /** Each spot color used in a document has an instance of this class.
      * @param colorName the color name
      * @param indirectReference the indirect reference to the font
-     * @param spotColor the <CODE>PDfSpotColor</CODE>
+     * @param scolor the <CODE>PDfSpotColor</CODE>
      */
     ColorDetails(PdfName colorName, PdfIndirectReference indirectReference, PdfSpotColor scolor) {
         this.colorName = colorName;

@@ -259,7 +259,7 @@ public class Hyphenator {
     }
     
     /** Setter for property hyphenDir.
-     * @param hyphenDir New value of property hyphenDir.
+     * @param _hyphenDir New value of property hyphenDir.
      */
     public static void setHyphenDir(String _hyphenDir) {
         hyphenDir = _hyphenDir;

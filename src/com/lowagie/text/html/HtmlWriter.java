@@ -129,7 +129,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Constructs a <CODE>HtmlWriter</CODE>.
  *
- * @param document  The <CODE>Document</CODE> that has to be written as HTML
+ * @param doc     The <CODE>Document</CODE> that has to be written as HTML
  * @param os      The <CODE>OutputStream</CODE> the writer has to write to.
  */
     
@@ -349,7 +349,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Writes a Metatag in the header.
  *
- * @param element   the element that has to be written
+ * @param   meta   the element that has to be written
  * @throws  IOException
  */
     
@@ -377,7 +377,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Writes a link in the header.
  *
- * @param element   the element that has to be written
+ * @param   header   the element that has to be written
  * @throws  IOException
  */
     
@@ -411,7 +411,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
 /**
  * Changes the standardfont.
  *
- * @param standardfont  The font
+ * @param standardFont  The font
  */
     
     public void setStandardFont(Font standardFont) {
@@ -446,7 +446,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * necessary to use a relative path or a special path to some
  * images directory.
  *
- * @param the new imagepath
+ * @param imagepath the new imagepath
  */
     
     public void setImagepath(String imagepath) {
@@ -961,7 +961,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
     /**
      * Writes the representation of a <CODE>Font</CODE>.
      *
-     * @param a <CODE>Font</CODE>
+     * @param font              a <CODE>Font</CODE>
+     * @param styleAttributes   the style of the font
      */
     
     protected void write(Font font, Properties styleAttributes) throws IOException {

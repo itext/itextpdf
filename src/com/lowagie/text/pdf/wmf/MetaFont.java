@@ -51,9 +51,7 @@
 package com.lowagie.text.pdf.wmf;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.awt.Color;
 import com.lowagie.text.pdf.*;
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 
 public class MetaFont extends MetaObject {

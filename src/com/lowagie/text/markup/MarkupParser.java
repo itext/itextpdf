@@ -213,14 +213,14 @@ public class MarkupParser {
  * @return	the HTML representation of this <COLOR>Color</COLOR>
  */
     
-    public static Color decodeColor(String string) {
+    public static Color decodeColor(String color) {
         int red = 0;
         int green = 0;
         int blue = 0;
         try {
-            red = Integer.parseInt(string.substring(1, 3), 16);
-            green = Integer.parseInt(string.substring(3, 5), 16);
-            blue = Integer.parseInt(string.substring(5), 16);
+            red = Integer.parseInt(color.substring(1, 3), 16);
+            green = Integer.parseInt(color.substring(3, 5), 16);
+            blue = Integer.parseInt(color.substring(5), 16);
         }
         catch(Exception sioobe) {
             // empty on purpose
