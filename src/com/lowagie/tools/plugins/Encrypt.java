@@ -59,6 +59,7 @@ import javax.swing.JOptionPane;
 import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.tools.arguments.BitsetArgument;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.OptionArgument;
 import com.lowagie.tools.arguments.PdfFilter;
@@ -77,6 +78,16 @@ public class Encrypt extends AbstractTool {
             PdfWriter.AllowScreenReaders,
             PdfWriter.AllowAssembly,
             PdfWriter.AllowDegradedPrinting};
+    private final static String PERMISSION_OPTIONS[] = {
+    		"AllowPrinting",
+			"AllowModifyContents",
+			"AllowCopy",
+			"AllowModifyAnnotations",
+			"AllowFillIn (128 bit only)",
+			"AllowScreenReaders (128 bit only)",
+			"AllowAssembly (128 bit only)",
+			"AllowDegradedPrinting (128 bit only)"
+    		};
 
 	
 	/**
@@ -89,7 +100,7 @@ public class Encrypt extends AbstractTool {
 		arguments.add(new FileArgument(this, "destfile", "The file to which the encrypted PDF has to be written", true, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "userpassword", "The userpassword you want to add to the PDF file", String.class.getName()));
 		arguments.add(new ToolArgument(this, "ownerpassword", "The ownerpassword you want to add to the PDF file", String.class.getName()));
-		arguments.add(new ToolArgument(this, "permissions", "Permissions on the file", String.class.getName()));
+		arguments.add(new BitsetArgument(this, "permissions", "Permissions on the file", PERMISSION_OPTIONS));
 		OptionArgument oa = new OptionArgument(this, "strength", "Strength of the encryption");
 		oa.addOption("40 bit encryption", "40");
 		oa.addOption("128 bit encryption", "128");
