@@ -536,8 +536,10 @@ public class SAXiTextHandler extends HandlerBase {
                 Collections.reverse(cells);
                 String width;
                 float[] cellWidths = new float[columns];
+                boolean[] cellNulls = new boolean[columns];
                 for (int i = 0; i < columns; i++) {
                     cellWidths[i] = 0;
+                    cellNulls[i] = true;
                 }
                 float total = 0;
                 int j = 0;
@@ -551,6 +553,9 @@ public class SAXiTextHandler extends HandlerBase {
                             }
                             catch(Exception e) {
                             }
+                        }
+                        else if (cell.colspan() == 1) {
+                            cellNulls[j] = false;
                         }
                     }
                     else if (cell.colspan() == 1 && width.endsWith("%")) {
@@ -567,8 +572,8 @@ public class SAXiTextHandler extends HandlerBase {
                 float widths[] = table.getProportionalWidths();
                 if (widths.length == columns) {
                     float left = 0.0f;
-                    for (int i = 0; i < widths.length; i++) {
-                        if (cellWidths[i] == 0 && widths[i] != 0) {
+                    for (int i = 0; i < columns; i++) {
+                        if (cellNulls[i] && widths[i] != 0) {
                             left += widths[i];
                             cellWidths[i] = widths[i];
                         }
