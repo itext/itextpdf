@@ -53,14 +53,7 @@ package com.lowagie.text.pdf;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.lowagie.text.Cell;
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Element;
-import com.lowagie.text.List;
-import com.lowagie.text.ListItem;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Anchor;
-import com.lowagie.text.Image;
+import com.lowagie.text.*;
 
 /**
  * A <CODE>PdfCell</CODE> is the PDF translation of a <CODE>Cell</CODE>.
@@ -200,7 +193,20 @@ public class PdfCell extends Rectangle {
                     line = new PdfLine(left, right, alignment, leading);
                     break;
                     // if the element is something else
-                    default:
+                    default:          				// flush the current line
+				        if (line.size() > 0) {
+					        line.resetAlignment();
+					        lines.add(line);
+				        }
+				        int parAlignment = 0;
+				        float parLeading = 0;
+				        if (element.type() == Element.PARAGRAPH) {
+					        Paragraph para = (Paragraph)element;
+					        parAlignment = (para.alignment() == Element.ALIGN_UNDEFINED ? alignment : para.alignment()) ;
+					        parLeading = (Float.isNaN(para.leading()) ? leading : para.leading());
+				        } // end of if (element.type == Element.PARAGRAPH)
+
+				        line = new PdfLine(left, right, parAlignment, parLeading);
                         allActions = new ArrayList();
                         processActions(element, null, allActions);
                         aCounter = 0;
