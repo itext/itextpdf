@@ -69,6 +69,7 @@
     	        <pathelement location="${itext.bin}/crimson.jar" />
         	</classpath>
 		</java>
+		<ant antfile="${itext.tutorial}/build.xml" inheritAll="false" />
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
