@@ -58,6 +58,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -154,7 +155,7 @@ import com.lowagie.text.pdf.PdfWriter;
  * @see         Cell
  */
 
-public class Table extends Rectangle implements Element {
+public class Table extends Rectangle implements Element, MarkupAttributes {
     
     // membervariables
     
@@ -198,18 +199,22 @@ public class Table extends Rectangle implements Element {
     
 /** This is an array containing the widths (in percentages) of every column. */
     private float[] widths;
-
+    
 /** Boolean to track errors (some checks will be performed) */
     boolean mDebug = false;
-
+    
 /** Boolean to track if a table was inserted (to avoid unnecessary computations afterwards) */
     boolean mTableInserted = false;
-
-/** Boolean to automatically fill empty cells before a table is rendered
+    
+/**
+ * Boolean to automatically fill empty cells before a table is rendered
  *  (takes CPU so may be set to false in case of certainty)
  */
     boolean mAutoFillEmptyCells = true;
-
+    
+/** contains the attributes that are added to each odd (or even) row */
+    protected Hashtable alternatingRowAttributes;
+    
     // constructors
     
 /**
@@ -246,9 +251,7 @@ public class Table extends Rectangle implements Element {
         
         // a certain number of rows are created
         for (int i = 0; i < rows; i++) {
-// patch by Matt Benson 02/21/2002
-            this.rows.add(createRow(columns));
-// end patch by Matt Benson 02/21/2002
+            this.rows.add(new Row(columns));
         }
         currentRow = 0;
         currentColumn = 0;
@@ -285,9 +288,7 @@ public class Table extends Rectangle implements Element {
             }
         }
         
-// patch by Matt Benson 02/21/2002
-        rows.add(createRow(columns));
-// end patch by Matt Benson 02/21/2002
+        rows.add(new Row(columns));
         currentRow = 0;
         
         if ((value = (String)attributes.remove(ElementTags.LASTHEADERROW)) != null) {
@@ -393,14 +394,14 @@ public class Table extends Rectangle implements Element {
             return false;
         }
     }
-
+    
 /**
  * Performs extra checks when executing table code (currently only when cells are added).
  */
     public void setDebug(boolean aDebug) {
-            mDebug = aDebug;
+        mDebug = aDebug;
     }
-
+    
 /**
  * Enables/disables automatic insertion of empty cells before table is rendered. (default = true)
  * As some people may want to create a table, fill only a couple of the cells and don't bother with
@@ -413,7 +414,7 @@ public class Table extends Rectangle implements Element {
     public void setAutoFillEmptyCells(boolean aDoAutoFill) {
         mAutoFillEmptyCells = aDoAutoFill;
     }
-
+    
 /**
  * Gets the type of the text element.
  *
@@ -462,7 +463,7 @@ public class Table extends Rectangle implements Element {
             if (aLocation.x < 0) throw new BadElementException("row coordinate of location must be >= 0");
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
             if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
-        }        
+        }
         placeCell(rows, aCell, aLocation);
         setCurrentLocationToNextValidPosition(aLocation);
     }
@@ -571,24 +572,22 @@ public class Table extends Rectangle implements Element {
  * @param   aLocation   a <CODE>Point</CODE>
  */
     public void insertTable(Table aTable, Point aLocation) {
-
+        
         if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
         if (aLocation == null) throw new NullPointerException("insertTable - point has null-value");
         mTableInserted = true;
         if (mDebug == true) {
             if (aLocation.y > columns) System.err.println("insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
         }
-    
+        
         int rowCount = aLocation.x + 1 - rows.size();
         int i = 0;
         if ( rowCount > 0 ) {   //create new rows ?
             for (; i < rowCount; i++) {
-// patch by Matt Benson 02/21/2002
-                rows.add(createRow(columns));
-// end patch by Matt Benson 02/21/2002
+                rows.add(new Row(columns));
             }
         }
-
+        
         ((Row) rows.get(aLocation.x)).setElement(aTable,aLocation.y);
         
         setCurrentLocationToNextValidPosition(aLocation);
@@ -606,8 +605,22 @@ public class Table extends Rectangle implements Element {
         if (mAutoFillEmptyCells == true) {
             fillEmptyMatrixCells();
         }
-        if (false == true) {
-            checkIllegalRowspan();
+        if (alternatingRowAttributes != null) {
+            Properties even = new Properties();
+            Properties odd = new Properties();
+            String name;
+            String[] value;
+            for (Iterator iterator = alternatingRowAttributes.keySet().iterator(); iterator.hasNext(); ) {
+                name = String.valueOf(iterator.next());
+                value = (String[])alternatingRowAttributes.get(name);
+                even.setProperty(name, value[0]);
+                odd.setProperty(name, value[1]);
+            }
+            Row row;
+            for (int i = 0; i < rows.size(); i++) {
+                row = (Row) rows.get(i);
+                row.setMarkupAttributes(i % 2 == 0 ? even : odd);
+            }
         }
     }
     
@@ -713,7 +726,7 @@ public class Table extends Rectangle implements Element {
     }
     
     // methods
-
+    
 /**
  * Sets the unset cell properties to be the table defaults.
  *
@@ -721,7 +734,7 @@ public class Table extends Rectangle implements Element {
  */
     
     private void assumeTableDefaults(Cell aCell) {
-
+        
         if (aCell.border() == Rectangle.UNDEFINED) {
             aCell.setBorder(defaultLayout.border());
         }
@@ -855,7 +868,7 @@ public class Table extends Rectangle implements Element {
         }
         this.alignment = Element.ALIGN_CENTER;
     }
-   
+    
 /**
  * Sets the cellpadding.
  *
@@ -885,7 +898,7 @@ public class Table extends Rectangle implements Element {
     public final void setPadding(float value) {
         cellpadding = value;
     }
-
+    
 /**
  * Sets the cellspacing.
  *
@@ -895,7 +908,7 @@ public class Table extends Rectangle implements Element {
     public final void setSpacing(float value) {
         cellspacing = value;
     }
-
+    
 /**
  * Sets the cellspacing (the meaning of cellpadding and cellspacing was inverted by mistake).
  *
@@ -1193,9 +1206,7 @@ public class Table extends Rectangle implements Element {
             // copy old values
             newRows = new ArrayList(lTotalRows);
             for (i = 0; i < lTotalRows; i++) {
-// patch by Matt Benson 02/21/2002
-                newRows.add(createRow(lTotalColumns));
-// end patch by Matt Benson 02/21/2002
+                newRows.add(new Row(lTotalColumns));
             }
             int lDummyRow = 0, lDummyColumn = 0;        // to remember where we are in the new, larger table
             Object lDummyElement = null;
@@ -1221,7 +1232,7 @@ public class Table extends Rectangle implements Element {
                         Object aElement = getElement(i,j);
                         
                         if ( Cell.class.isInstance(aElement) ) {
-
+                            
                             // adjust spans for cell
                             ((Cell) aElement).setRowspan(((Cell) ((Row) rows.get(i)).getCell(j)).rowspan() + lDummyHeights[i] - 1);
                             ((Cell) aElement).setColspan(((Cell) ((Row) rows.get(i)).getCell(j)).colspan() + lDummyWidths[j] - 1);
@@ -1294,7 +1305,7 @@ public class Table extends Rectangle implements Element {
                 return false;
             }
         }
-
+        
         return true;
     }
     
@@ -1315,9 +1326,7 @@ public class Table extends Rectangle implements Element {
         if ( (aPosition.x + aCell.rowspan()) > someRows.size() )        //create new rows ?
         {
             for (i = 0; i < rowCount; i++) {
-// patch by Matt Benson 02/21/2002
-                row = createRow(lColumns);
-// end patch by Matt Benson 02/21/2002
+                row = new Row(lColumns);
                 someRows.add(row);
             }
         }
@@ -1325,7 +1334,7 @@ public class Table extends Rectangle implements Element {
         // reserve cell in rows below
         for (i = aPosition.x + 1; i < (aPosition.x  + aCell.rowspan()); i++) {
             if ( !((Row) someRows.get(i)).reserve(aPosition.y, aCell.colspan())) {
-
+                
                 // should be impossible to come here :-)
                 throw new RuntimeException("addCell - error in reserve");
             }
@@ -1334,56 +1343,6 @@ public class Table extends Rectangle implements Element {
         row = (Row) someRows.get(aPosition.x);
         row.addElement(aCell, aPosition.y);
         
-    }
-    
-/**
- * Checks if there are no rowspan difficulties in the table.
- * <P>
- * Using rowspan to cover a number of cells may have unexpected consequences!!
- *  fe. : a table with two columns, each spanning multiple rows may result in
- *        a table with only one visible row  !!
- *        (because the rows to be spanned actually don't exist)<BR>
- *
- * Lowagie's library, like HTML, requires an element at the lowest point or below
- * the lowest row, targetted by the rowspan.<BR>
- *
- * This library will throw a warning in case such a situation is detected.
- * It will replace a row consisting of only empty cells because of several rowspans.
- */
-    protected void checkIllegalRowspan() throws BadElementException {
-        // find lowest cell
-        int i = rows.size() - 1, j = columns - 1;
-        
-        // check rowspans
-        i = rows.size() - 1;
-        int lIllegalRowCount = 0;
-        while ( i >= 0 ) {
-            j = 0;
-            while ( (j < columns) && (((Row) rows.get(i)).getCell(j) != null) && (!Cell.class.isInstance(((Row) rows.get(i)).getCell(j))) &&
-            (Object.class.isInstance(((Row) rows.get(i)).getCell(j))) ) {
-                j++;
-            }
-            
-            if ( j == columns ) // found a row with only 'spanned' cells
-            {
-                lIllegalRowCount++;
-                i--;
-            }
-            else {
-                break;
-            }
-        }
-        if ( lIllegalRowCount > 0 ) {
-            //int lNrOfReplacedColumns = replaceEmptyAreasWithEmptyCells();
-            System.err.println("*************************************************** !!!!!!! ***************************************************");
-            System.err.println("WARNING: This table contains " + lIllegalRowCount + " rows with rowspans without valid cells.");
-            System.err.println("WARNING: An empty column has been added to solve the problem...");
-            System.err.println("*************************************************** !!!!!!! ***************************************************");
-            addColumn(1);
-            for (i = 0; i < rows.size(); i++) {
-                addCell(new Cell(new Paragraph(" ")), new Point(i, columns-1));
-            }
-        }
     }
     
 /**
@@ -1398,9 +1357,7 @@ public class Table extends Rectangle implements Element {
         int newColumns = columns + aColumns;
         Row row;
         for (int i = 0; i < rows.size(); i++) {
-// patch by Matt Benson 02/21/2002
-            row = createRow(newColumns);
-// end patch by Matt Benson 02/21/2002
+            row = new Row(newColumns);
             for (int j = 0; j < columns; j++) {
                 row.setElement(((Row) rows.get(i)).getCell(j) ,j);
             }
@@ -1422,20 +1379,6 @@ public class Table extends Rectangle implements Element {
         widths = newWidths;
         rows = newRows;
     }
-
-// patch by Matt Benson 02/21/2002
-    
-/**
- * Creates and returns a new <CODE>Row</CODE> with the specified number of
- * columns.  This can be overridden by subclasses.
- * @return <CODE>Row</CODE>.
- */
-    protected Row createRow(int columns)
-    {
-      return new Row(columns);
-    }//end createRow
-
-// end patch by Matt Benson 02/21/2002
     
 /**
  * Gives you the possibility to add columns.
@@ -1448,9 +1391,7 @@ public class Table extends Rectangle implements Element {
         int length = ((Row) rows.get(0)).columns();             // old nr of cols
         
         for (int i = 0; i < rows.size(); i++) {
-// patch by Matt Benson 02/21/2002
-            this.rows.add(createRow(length + aColumns));
-// end patch by Matt Benson 02/21/2002
+            this.rows.add(new Row(length + aColumns));
             for (int j = 0; j < length; j++) {
                 ((Row) rows.get(i)).setElement( ((Row) rows.get(i)).getCell(j) ,j);
             }
@@ -1570,15 +1511,15 @@ public class Table extends Rectangle implements Element {
                 j++;
             }
         }
-        while ( 
-            (i < rows.size()) && (j < columns) && (((Row) rows.get(i)).isReserved(j) == true)
+        while (
+        (i < rows.size()) && (j < columns) && (((Row) rows.get(i)).isReserved(j) == true)
         );
         currentRow        = i;
         currentColumn    = j;
     }
     
-  
-  
+    
+    
 /**
  * Checks if a given tag corresponds with this object.
  *
@@ -1589,7 +1530,7 @@ public class Table extends Rectangle implements Element {
     public static boolean isTag(String tag) {
         return ElementTags.TABLE.equals(tag);
     }
-
+    
 /**
  *    Only for debugging purposes: printing table's structure and contents.
  */
@@ -1598,11 +1539,11 @@ public class Table extends Rectangle implements Element {
     {
         printTableMatrix(rows);
     }
-
+    
 /**
  *    Only for debugging purposes: printing table's structure and contents.
  */
-        
+    
     private void printTableMatrix(ArrayList aAl)
     {
         printReserved(aAl);
@@ -1626,7 +1567,7 @@ public class Table extends Rectangle implements Element {
         }
         printTableMatrixContents();
     }
-
+    
     private void printReserved(ArrayList aAl) {
         Row lRow = null;
         String lStatus = null;
@@ -1640,7 +1581,7 @@ public class Table extends Rectangle implements Element {
             }
         }
     }
-
+    
 /**
  * Method to briefly print all cell contents, an aid when debugging.
  */
@@ -1666,8 +1607,8 @@ public class Table extends Rectangle implements Element {
                 if ( Cell.class.isInstance(lElement) )
                 {
                     ArrayList al = ((Cell) lElement).getChunks();
-                    if (al.size() > 0)    
-                    {    
+                    if (al.size() > 0)
+                    {
                         if (((Chunk) al.get(0)).content().length() >= 6)
                         {
                             lLine.append(" - " + ((Chunk) al.get(0)).content().substring(0,6) + " - ");
@@ -1696,5 +1637,28 @@ public class Table extends Rectangle implements Element {
                 }
             }
         }
+    }
+    
+/**
+ * Allows clients to set up alternating attributes for each Row in the Table.
+ * <P>
+ * This code was contributed by Matt Benson.
+ *
+ * @param   name    the name of the attribute
+ * @param   value0  the value of the attribute for even rows
+ * @param   value1  the value of the attribute for odd rows
+ */
+    public void setAlternatingRowAttribute(String name, String value0, String value1) {
+        if (value0 == null || value1 == null) {
+            throw new NullPointerException("MarkupTable#setAlternatingRowAttribute(): null values are not permitted.");
+        }
+        alternatingRowAttributes = (alternatingRowAttributes == null) ?  new Hashtable() : alternatingRowAttributes;
+        
+        // we could always use new Arrays but this is big enough
+        String[] value = (String[])(alternatingRowAttributes.get(name));
+        value = (value == null) ? new String[2] : value;
+        value[0] = value0;
+        value[1] = value1;
+        alternatingRowAttributes.put(name, value);
     }
 }

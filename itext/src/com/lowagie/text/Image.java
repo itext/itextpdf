@@ -55,7 +55,9 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.util.Collections;
 import java.util.Properties;
+import java.util.Set;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.CCITTG4Encoder;
 
@@ -67,7 +69,7 @@ import com.lowagie.text.pdf.CCITTG4Encoder;
  * @see		Rectangle
  */
 
-public abstract class Image extends Rectangle implements Element {
+public abstract class Image extends Rectangle implements Element, MarkupAttributes {
     
     // static membervariables (concerning the presence of borders)
     
@@ -183,6 +185,9 @@ public abstract class Image extends Rectangle implements Element {
     
     /** Holds value of property interpolation. */
     protected boolean interpolation;
+
+/** Contains extra markupAttributes */
+    protected Properties markupAttributes;
     
     // constructors
     
@@ -1121,6 +1126,36 @@ public abstract class Image extends Rectangle implements Element {
      */
     public void setInterpolation(boolean interpolation) {
         this.interpolation = interpolation;
+    }
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
+    public Set getMarkupAttributeNames()
+    {
+        return (markupAttributes == null) ?
+        Collections.EMPTY_SET : markupAttributes.keySet();
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ */
+    public void setMarkupAttribute(String name, String value)
+    {
+        markupAttributes = (markupAttributes == null) ?
+        new Properties() : markupAttributes;
+        markupAttributes.put(name, value);
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ */
+    public String getMarkupAttribute(String name)
+    {
+        return (markupAttributes == null) ?
+        null : String.valueOf(markupAttributes.get(name));
     }
     
 }

@@ -53,8 +53,10 @@ package com.lowagie.text;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * An <CODE>Annotation</CODE> is a little note that can be added to a page
@@ -64,7 +66,7 @@ import java.util.Properties;
  * @see		Anchor
  */
 
-public class Annotation implements Element {
+public class Annotation implements Element, MarkupAttributes {
     
     // membervariables
     
@@ -115,19 +117,22 @@ public class Annotation implements Element {
     public static String URY = "ury";
     
 /** This is the type of annotation. */
-    private int annotationtype;
+    protected int annotationtype;
     
 /** This is the title of the <CODE>Annotation</CODE>. */
-    private HashMap attributes = new HashMap();
+    protected HashMap attributes = new HashMap();
+
+/** Contains extra markupAttributes */
+    protected Properties markupAttributes;
     
 /** This is the lower left x-value */
-    private float llx = Float.MIN_VALUE;
+    protected float llx = Float.MIN_VALUE;
 /** This is the lower left y-value */
-    private float lly = Float.MIN_VALUE;
+    protected float lly = Float.MIN_VALUE;
 /** This is the upper right x-value */
-    private float urx = Float.MIN_VALUE;
+    protected float urx = Float.MIN_VALUE;
 /** This is the upper right y-value */
-    private float ury = Float.MIN_VALUE;
+    protected float ury = Float.MIN_VALUE;
     
     // constructors
     
@@ -442,5 +447,29 @@ public class Annotation implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.ANNOTATION.equals(tag);
+    }
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
+    public Set getMarkupAttributeNames() {
+        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ */
+    public void setMarkupAttribute(String name, String value) {
+        markupAttributes = (markupAttributes == null) ? new Properties() : markupAttributes;
+        markupAttributes.put(name, value);
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ */
+    public String getMarkupAttribute(String name) {
+        return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
     }
 }

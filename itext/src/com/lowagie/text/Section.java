@@ -52,8 +52,10 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * A <CODE>Section</CODE> is a part of a <CODE>Document</CODE> containing
@@ -108,6 +110,9 @@ public class Section extends ArrayList implements TextElementArray {
     
     /** false if the bookmark children are not visible */
     protected boolean bookmarkOpen = true;
+
+/** Contains extra markupAttributes */
+    protected Properties markupAttributes;
     
     // constructors
     
@@ -629,6 +634,36 @@ public class Section extends ArrayList implements TextElementArray {
      */
     public void setBookmarkOpen(boolean bookmarkOpen) {
         this.bookmarkOpen = bookmarkOpen;
+    }
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
+    public Set getMarkupAttributeNames()
+    {
+        return (markupAttributes == null) ?
+        Collections.EMPTY_SET : markupAttributes.keySet();
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ */
+    public void setMarkupAttribute(String name, String value)
+    {
+        markupAttributes = (markupAttributes == null) ?
+        new Properties() : markupAttributes;
+        markupAttributes.put(name, value);
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ */
+    public String getMarkupAttribute(String name)
+    {
+        return (markupAttributes == null) ?
+        null : String.valueOf(markupAttributes.get(name));
     }
     
 }

@@ -68,7 +68,7 @@ import com.lowagie.text.Phrase;
  * </PRE></BLOCKQUOTE>
  */
 
-public class HeaderFooter extends Rectangle {
+public class HeaderFooter extends Rectangle implements MarkupAttributes {
     
     // membervariables
     

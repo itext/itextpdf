@@ -52,8 +52,10 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
@@ -82,7 +84,7 @@ import java.util.Properties;
  * @see		Anchor
  */
 
-public class Phrase extends ArrayList implements TextElementArray {
+public class Phrase extends ArrayList implements TextElementArray, MarkupAttributes {
     
     // membervariables
     
@@ -91,6 +93,9 @@ public class Phrase extends ArrayList implements TextElementArray {
     
 /** This is the font of this phrase. */
     protected Font font = new Font();
+
+/** Contains extra markupAttributes */
+    protected Properties markupAttributes;
     
     // constructors
     
@@ -482,5 +487,35 @@ public class Phrase extends ArrayList implements TextElementArray {
     
     public static boolean isTag(String tag) {
         return ElementTags.PHRASE.equals(tag);
+    }
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
+    public Set getMarkupAttributeNames()
+    {
+        return (markupAttributes == null) ?
+        Collections.EMPTY_SET : markupAttributes.keySet();
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ */
+    public void setMarkupAttribute(String name, String value)
+    {
+        markupAttributes = (markupAttributes == null) ?
+        new Properties() : markupAttributes;
+        markupAttributes.put(name, value);
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ */
+    public String getMarkupAttribute(String name)
+    {
+        return (markupAttributes == null) ?
+        null : String.valueOf(markupAttributes.get(name));
     }
 }

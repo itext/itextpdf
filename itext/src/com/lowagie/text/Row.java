@@ -52,6 +52,9 @@ package com.lowagie.text;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * A <CODE>Row</CODE> is part of a <CODE>Table</CODE>
@@ -69,7 +72,7 @@ import java.util.ArrayList;
  * @see   Table
  */
 
-public class Row implements Element {
+public class Row implements Element, MarkupAttributes {
     
     // membervariables
     
@@ -83,22 +86,25 @@ public class Row implements Element {
     public static final int TABLE = 2;
     
 /** This is the number of columns in the <CODE>Row</CODE>. */
-    private int columns;
+    protected int columns;
     
 /** This is a valid position the <CODE>Row</CODE>. */
-    private int currentColumn;
+    protected int currentColumn;
     
 /** This is the array that keeps track of reserved cells. */
-    private boolean[] reserved;
+    protected boolean[] reserved;
     
 /** This is the array of Objects (<CODE>Cell</CODE> or <CODE>Table</CODE>). */
-    private Object[] cells;
+    protected Object[] cells;
     
 /** This is the vertical alignment. */
-    private int horizontalAlignment;
+    protected int horizontalAlignment;
     
 /** This is the vertical alignment. */
-    private int verticalAlignment;
+    protected int verticalAlignment;
+
+/** Contains extra markupAttributes */
+    protected Properties markupAttributes;
     
     // constructors
     
@@ -427,5 +433,42 @@ public class Row implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.ROW.equals(tag);
+    }
+    
+/**
+ * Sets the markupAttributes.
+ */
+    public void setMarkupAttributes(Properties markupAttributes) {
+        this.markupAttributes = markupAttributes;
+    }
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
+    public Set getMarkupAttributeNames()
+    {
+        return (markupAttributes == null) ?
+        Collections.EMPTY_SET : markupAttributes.keySet();
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ */
+    public void setMarkupAttribute(String name, String value)
+    {
+        markupAttributes = (markupAttributes == null) ?
+        new Properties() : markupAttributes;
+        markupAttributes.put(name, value);
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ */
+    public String getMarkupAttribute(String name)
+    {
+        return (markupAttributes == null) ?
+        null : String.valueOf(markupAttributes.get(name));
     }
 }

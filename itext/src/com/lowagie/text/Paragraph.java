@@ -74,7 +74,7 @@ import java.util.Properties;
  * @see		ListItem
  */
 
-public class Paragraph extends Phrase implements TextElementArray {
+public class Paragraph extends Phrase implements TextElementArray, MarkupAttributes {
     
     // membervariables
     

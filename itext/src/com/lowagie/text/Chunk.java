@@ -52,9 +52,11 @@ package com.lowagie.text;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
 import java.net.URL;
 
 import com.lowagie.text.pdf.PdfAction;
@@ -82,13 +84,16 @@ public class Chunk implements Element {
     public static final Chunk NEWLINE = new Chunk("\n");
     
 /** This is the content of this chunk of text. */
-    private StringBuffer content;
+    protected StringBuffer content;
     
 /** This is the <CODE>Font</CODE> of this chunk of text. */
-    private Font font;
+    protected Font font;
     
 /** Contains some of the attributes for this Chunk. */
-    private HashMap attributes;
+    protected HashMap attributes;
+
+/** Contains extra markupAttributes */
+    protected Properties markupAttributes;
     
 /** Key for sub/superscript. */
     public static final String SUBSUPSCRIPT = "SUBSUPSCRIPT";
@@ -475,5 +480,35 @@ public class Chunk implements Element {
     
     public static boolean isTag(String tag) {
         return ElementTags.CHUNK.equals(tag);
+    }
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
+ */
+    public Set getMarkupAttributeNames()
+    {
+        return (markupAttributes == null) ?
+        Collections.EMPTY_SET : markupAttributes.keySet();
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
+ */
+    public void setMarkupAttribute(String name, String value)
+    {
+        markupAttributes = (markupAttributes == null) ?
+        new Properties() : markupAttributes;
+        markupAttributes.put(name, value);
+    }
+    
+    
+/**
+ * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
+ */
+    public String getMarkupAttribute(String name)
+    {
+        return (markupAttributes == null) ?
+        null : String.valueOf(markupAttributes.get(name));
     }
 }

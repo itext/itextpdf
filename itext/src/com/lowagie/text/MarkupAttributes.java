@@ -45,95 +45,41 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.markup;
+package com.lowagie.text;
 
 
 import java.util.Set;
-import java.util.Properties;
-import java.util.Collections;
-
-import com.lowagie.text.Font;
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Image;
 
 
 /**
- * A <CODE>Chunk</CODE> that implements <CODE>MarkupAttributes</CODE>.
+ * Defines the interface for an <CODE>Element</CODE> with markup attributes--
+ * that is, random String-to-String properties for representation in markup
+ * languages such as HTML and XML.
  *
  * @author <a href="mailto:orangeherbert@users.sourceforge.net">Matt Benson</a>
  */
-public class MarkupChunk
- extends Chunk
- implements MarkupAttributes
-{
-	
-	// to be lazily instantiated
-	private Properties markupAttributes;
-
+public interface MarkupAttributes extends com.lowagie.text.Element {
+    
 /**
- * @see com.lowagie.text.Chunk#Chunk(com.lowagie.text.Image, float, float)
+ * Returns a <CODE>Set</CODE> of <CODE>String</CODE> attribute names for the
+ * <CODE>MarkupAttributes</CODE> implementor.
+ * @return <CODE>Set</CODE>.
  */
-	public MarkupChunk(Image image, float offsetX, float offsetY)
-	{
-		super(image, offsetX, offsetY);
-	}//end constructor(Image, float, float)
-	
-	
+    public Set getMarkupAttributeNames();
+    
 /**
- * @see com.lowagie.text.Chunk#Chunk(Properties)
+ * Sets the specified attribute.
+ * @param name    <CODE>String</CODE> attribute name.
+ * @param value   <CODE>String</CODE> attribute value.
  */
-	public MarkupChunk(Properties attributes)
-	{
-		super(attributes);
-	}//end constructor(Properties)
-	
-	
+    public void setMarkupAttribute(String name, String value);
+    
+    
 /**
- * @see com.lowagie.text.Chunk#Chunk(com.lowagie.text.Image, float, float)
+ * Returns the value of the specified attribute.
+ * @param name   <CODE>String</CODE> attribute name.
+ * @return <CODE>String</CODE>.
  */
-	public MarkupChunk(String content)
-	{
-		super(content);
-	}//end constructor(String)
-	
-	
-/**
- * @see com.lowagie.text.Chunk#Chunk(com.lowagie.text.Image, float, float)
- */
-	public MarkupChunk(String content, Font font)
-	{
-		super(content, font);
-	}//end constructor(String, Font)
-
-	
-/**
- * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttributeNames()
- */
-  public Set getMarkupAttributeNames()
-	{
-		return (markupAttributes == null) ?
-		 Collections.EMPTY_SET : markupAttributes.keySet();
-	}//end getMarkupAttributeNames
-	
-	
-/**
- * @see com.lowagie.text.markup.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
-  public void setMarkupAttribute(String name, String value)
-	{
-		markupAttributes = (markupAttributes == null) ?
-		 new Properties() : markupAttributes;
-		markupAttributes.put(name, value);
-	}//end setMarkupAttribute
-	
-	
-/**
- * @see com.lowagie.text.markup.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
-  public String getMarkupAttribute(String name)
-	{
-		return (markupAttributes == null) ?
-		 null : String.valueOf(markupAttributes.get(name));
-	}//end getMarkupAttribute
-
-}//end class MarkupChunk
+    public String getMarkupAttribute(String name);
+    
+}

@@ -77,7 +77,7 @@ import java.util.Properties;
  * </PRE></BLOCKQUOTE>
  */
 
-public class Chapter extends Section implements TextElementArray {
+public class Chapter extends Section implements TextElementArray, MarkupAttributes {
     
     // constructors
     
