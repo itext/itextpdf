@@ -50,12 +50,10 @@
 package com.lowagie.tools.arguments;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.util.Iterator;
 import java.util.TreeMap;
 
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import com.lowagie.tools.plugins.AbstractTool;
@@ -97,6 +95,37 @@ public class OptionArgument extends ToolArgument {
 		public String toString() {
 			return description.toString();
 		}
+		/**
+		 * Gets the value of the String.
+		 * @return the toString of the value
+		 */
+		public String getValueToString() {
+			return value.toString();
+		}
+		/**
+		 * @return Returns the description.
+		 */
+		public Object getDescription() {
+			return description;
+		}
+		/**
+		 * @param description The description to set.
+		 */
+		public void setDescription(Object description) {
+			this.description = description;
+		}
+		/**
+		 * @return Returns the value.
+		 */
+		public Object getValue() {
+			return value;
+		}
+		/**
+		 * @param value The value to set.
+		 */
+		public void setValue(Object value) {
+			this.value = value;
+		}
 	}
 	
 	private TreeMap options = new TreeMap();
@@ -117,7 +146,7 @@ public class OptionArgument extends ToolArgument {
 	 * @param value the value of the option
 	 */
 	public void addOption(Object description, Object value) {
-		options.put(description.toString(), new Entry(description, value));
+		options.put(value.toString(), new Entry(description, value));
 	}
 	
 	/**
@@ -137,7 +166,7 @@ public class OptionArgument extends ToolArgument {
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent evt) {
 		Object[] message = new Object[2];
 		message[0] = "Choose one of the following options:";
 		JComboBox cb = new JComboBox();
@@ -155,5 +184,9 @@ public class OptionArgument extends ToolArgument {
 	 		    null,
 				null
 	 		);
+		if (result == 0) {
+			Entry entry = (Entry)cb.getSelectedItem();
+			setValue(entry.getValueToString());
+		}
 	}
 }

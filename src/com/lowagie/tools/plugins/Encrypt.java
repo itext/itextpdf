@@ -60,6 +60,7 @@ import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.tools.arguments.FileArgument;
+import com.lowagie.tools.arguments.OptionArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
@@ -89,7 +90,10 @@ public class Encrypt extends AbstractTool {
 		arguments.add(new ToolArgument(this, "userpassword", "The userpassword you want to add to the PDF file", String.class.getName()));
 		arguments.add(new ToolArgument(this, "ownerpassword", "The ownerpassword you want to add to the PDF file", String.class.getName()));
 		arguments.add(new ToolArgument(this, "permissions", "Permissions on the file", String.class.getName()));
-		arguments.add(new ToolArgument(this, "strength", "40|128", String.class.getName()));
+		OptionArgument oa = new OptionArgument(this, "strength", "Strength of the encryption");
+		oa.addOption("40 bit encryption", "40");
+		oa.addOption("128 bit encryption", "128");
+		arguments.add(oa);
 		
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
