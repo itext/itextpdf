@@ -261,15 +261,15 @@ public class Paragraph extends Phrase implements TextElementArray {
  */
     
     public final void setAlignment(String alignment) {
-        if (ElementTags.ALIGN_CENTER.equals(alignment)) {
+        if (ElementTags.ALIGN_CENTER.equalsIgnoreCase(alignment)) {
             this.alignment = Element.ALIGN_CENTER;
             return;
         }
-        if (ElementTags.ALIGN_RIGHT.equals(alignment)) {
+        if (ElementTags.ALIGN_RIGHT.equalsIgnoreCase(alignment)) {
             this.alignment = Element.ALIGN_RIGHT;
             return;
         }
-        if (ElementTags.ALIGN_JUSTIFIED.equals(alignment)) {
+        if (ElementTags.ALIGN_JUSTIFIED.equalsIgnoreCase(alignment)) {
             this.alignment = Element.ALIGN_JUSTIFIED;
             return;
         }
