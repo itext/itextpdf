@@ -467,10 +467,7 @@ public class Font implements Comparable {
         int style2 = font.style();
         if (style1 == UNDEFINED) style1 = 0;
         if (style2 == UNDEFINED) style2 = 0;
-        /* bugfix by Lars Martin */
-        int mask = style1 | style2;
-        difference.style = mask == style1 ? style1 : style2 ^ mask; // the bugfix didn't work for me, so I changed it
-        /* end bugfix */
+        difference.style = style1 | style2;
         if (font.color == null) {
             difference.color = this.color;
         }
