@@ -1,0 +1,219 @@
+/*
+ * $Id$
+ * $Name$
+ *
+ * Copyright (c) 2001 Bruno Lowagie.
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Library General Public License as published
+ * by the Free Software Foundation; either version 2 of the License, or any
+ * later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Library General Public License along
+ * with this library; if not, write to the Free Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA.
+ *
+ * If you didn't download this code from the following link, you should check if
+ * you aren't using an obsolete version:
+ * http://www.lowagie.com/iText/
+ *
+ * ir-arch Bruno Lowagie,
+ * Adolf Baeyensstraat 121
+ * 9040 Sint-Amandsberg
+ * BELGIUM
+ * tel. +32 (0)9 228.10.97
+ * bruno@lowagie.com
+ *
+ */
+
+package com.lowagie.text.html;
+
+import java.util.HashMap;
+
+import com.lowagie.text.ElementTags;
+
+/**
+ * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
+ */
+
+public class HtmlTagMap extends HashMap {
+
+/**
+ * Constructs an HtmlTagMap.
+ */
+
+    public HtmlTagMap() {
+        super();
+        HtmlPeer peer;
+
+        peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.CHUNK);
+        peer.addAlias(ElementTags.FONT, HtmlTags.FONT);
+        peer.addAlias(ElementTags.SIZE, HtmlTags.SIZE);
+        peer.addAlias(ElementTags.COLOR, HtmlTags.COLOR);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.PHRASE);
+        peer.addAlias(ElementTags.FONT, HtmlTags.FONT);
+        peer.addAlias(ElementTags.SIZE, HtmlTags.SIZE);
+        peer.addAlias(ElementTags.COLOR, HtmlTags.COLOR);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.ANCHOR, HtmlTags.ANCHOR);
+        peer.addAlias(ElementTags.NAME, HtmlTags.NAME);
+        peer.addAlias(ElementTags.REFERENCE, HtmlTags.REFERENCE);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.PARAGRAPH);
+        peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.DIV);
+        peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.LIST, HtmlTags.ORDEREDLIST);
+        peer.addValue(ElementTags.NUMBERED, "true");
+        peer.addValue(ElementTags.SYMBOLINDENT, "20");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.LIST, HtmlTags.UNORDEREDLIST);
+        peer.addValue(ElementTags.NUMBERED, "false");
+        peer.addValue(ElementTags.SYMBOLINDENT, "20");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.LISTITEM, HtmlTags.LISTITEM);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.I);
+        peer.addValue(ElementTags.STYLE, ElementTags.ITALIC);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.EM);
+        peer.addValue(ElementTags.STYLE, ElementTags.ITALIC);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.B);
+        peer.addValue(ElementTags.STYLE, ElementTags.BOLD);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.STRONG);
+        peer.addValue(ElementTags.STYLE, ElementTags.BOLD);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.S);
+        peer.addValue(ElementTags.STYLE, ElementTags.STRIKETHRU);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.U);
+        peer.addValue(ElementTags.STYLE, ElementTags.UNDERLINE);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.SUP);
+        peer.addValue(ElementTags.SUBSUPSCRIPT, "6.0");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.SUB);
+        peer.addValue(ElementTags.SUBSUPSCRIPT, "-6.0");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.TABLE, HtmlTags.TABLE);
+        peer.addAlias(ElementTags.WIDTH, HtmlTags.WIDTH);
+        peer.addAlias(ElementTags.BACKGROUNDCOLOR, HtmlTags.BACKGROUNDCOLOR);
+        peer.addAlias(ElementTags.BORDERCOLOR, HtmlTags.BORDERCOLOR);
+        peer.addAlias(ElementTags.COLUMNS, HtmlTags.COLUMNS);
+        peer.addAlias(ElementTags.CELLPADDING, HtmlTags.CELLPADDING);
+        peer.addAlias(ElementTags.CELLSPACING, HtmlTags.CELLSPACING);
+        peer.addAlias(ElementTags.BORDERWIDTH, HtmlTags.BORDERWIDTH);
+        peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.ROW, HtmlTags.ROW);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.CELL, HtmlTags.CELL);
+        peer.addAlias(ElementTags.WIDTH, HtmlTags.WIDTH);
+        peer.addAlias(ElementTags.BACKGROUNDCOLOR, HtmlTags.BACKGROUNDCOLOR);
+        peer.addAlias(ElementTags.BORDERCOLOR, HtmlTags.BORDERCOLOR);
+        peer.addAlias(ElementTags.COLSPAN, HtmlTags.COLSPAN);
+        peer.addAlias(ElementTags.ROWSPAN, HtmlTags.ROWSPAN);
+        peer.addAlias(ElementTags.NOWRAP, HtmlTags.NOWRAP);
+        peer.addAlias(ElementTags.HORIZONTALALIGN, HtmlTags.HORIZONTALALIGN);
+        peer.addAlias(ElementTags.VERTICALALIGN, HtmlTags.VERTICALALIGN);
+        peer.addValue(ElementTags.HEADER, "false");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.CELL, HtmlTags.HEADERCELL);
+        peer.addAlias(ElementTags.WIDTH, HtmlTags.WIDTH);
+        peer.addAlias(ElementTags.BACKGROUNDCOLOR, HtmlTags.BACKGROUNDCOLOR);
+        peer.addAlias(ElementTags.BORDERCOLOR, HtmlTags.BORDERCOLOR);
+        peer.addAlias(ElementTags.COLSPAN, HtmlTags.COLSPAN);
+        peer.addAlias(ElementTags.ROWSPAN, HtmlTags.ROWSPAN);
+        peer.addAlias(ElementTags.NOWRAP, HtmlTags.NOWRAP);
+        peer.addAlias(ElementTags.HORIZONTALALIGN, HtmlTags.HORIZONTALALIGN);
+        peer.addAlias(ElementTags.VERTICALALIGN, HtmlTags.VERTICALALIGN);
+        peer.addValue(ElementTags.HEADER, "true");
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.IMAGE, HtmlTags.IMAGE);
+        peer.addAlias(ElementTags.URL, HtmlTags.URL);
+        peer.addAlias(ElementTags.ALT, HtmlTags.ALT);
+        peer.addAlias(ElementTags.PLAINWIDTH, HtmlTags.PLAINWIDTH);
+        peer.addAlias(ElementTags.PLAINHEIGHT, HtmlTags.PLAINHEIGHT);
+        put(peer.getAlias(), peer);
+
+        peer = new HtmlPeer(ElementTags.NEWLINE, HtmlTags.NEWLINE);
+        put(peer.getAlias(), peer);
+    }
+    
+/**
+ * Checks if this is the root tag.
+ */
+ 
+    public boolean isHtml(String tag) {
+        return HtmlTags.HTML.equalsIgnoreCase(tag);
+    }
+    
+/**
+ * Checks if this is the head tag.
+ */
+ 
+    public boolean isHead(String tag) {
+        return HtmlTags.HEAD.equalsIgnoreCase(tag);
+    }
+    
+/**
+ * Checks if this is the meta tag.
+ */
+ 
+    public boolean isMeta(String tag) {
+        return HtmlTags.META.equalsIgnoreCase(tag);
+    }
+    
+/**
+ * Checks if this is the root tag.
+ */
+ 
+    public boolean isLink(String tag) {
+        return HtmlTags.LINK.equalsIgnoreCase(tag);
+    }
+    
+/**
+ * Checks if this is the root tag.
+ */
+ 
+    public boolean isBody(String tag) {
+        return HtmlTags.BODY.equalsIgnoreCase(tag);
+    }
+    
+/**
+ * Checks if this is a special tag.
+ */
+    public boolean isSpecialTag(String tag) {
+        return isHtml(tag) || isHead(tag) || isMeta(tag) || isLink(tag) || isBody(tag);
+    }
+}

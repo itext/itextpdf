@@ -31,14 +31,14 @@
  *
  */
 
-package com.lowagie.text.xml;
+package com.lowagie.text.html;
 
 import java.util.HashMap;
 import java.util.Properties;
 
-import org.xml.sax.HandlerBase;
 import org.xml.sax.AttributeList;
 
+import com.lowagie.text.xml.*;
 import com.lowagie.text.*;
 
 /**
@@ -47,10 +47,7 @@ import com.lowagie.text.*;
  * @author  bruno@lowagie.com
  */
 
-public class SAXmyHandler extends SAXiTextHandler {
-    
-/** This hashmap contains all the custom keys and peers. */
-    protected HashMap myTags;
+public class SAXmyHtmlHandler extends SAXmyHandler {
     
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
@@ -59,9 +56,18 @@ public class SAXmyHandler extends SAXiTextHandler {
  * @param	document	this is the document on which events must be triggered
  */
     
-    public SAXmyHandler(Document document, HashMap myTags) {
-        super(document);
-        this.myTags = myTags;
+    public SAXmyHtmlHandler(Document document) {
+        super(document, new HtmlTagMap());    }
+    
+/**
+ * Constructs a new SAXiTextHandler that will translate all the events
+ * triggered by the parser to actions on the <CODE>Document</CODE>-object.
+ *
+ * @param	document	this is the document on which events must be triggered
+ */
+    
+    public SAXmyHtmlHandler(Document document, HashMap htmlTags) {
+        super(document, htmlTags);
     }
     
 /**
@@ -72,9 +78,17 @@ public class SAXmyHandler extends SAXiTextHandler {
  */
     
     public void startElement(String name, AttributeList attrs) {
-        if (myTags.containsKey(name)) {
+        //System.err.println(name);
+        
+        if (((HtmlTagMap)myTags).isSpecialTag(name)) {
+            if (((HtmlTagMap)myTags).isBody(name)) {
+                XmlPeer peer = new XmlPeer(ElementTags.ITEXT, HtmlTags.BODY);
+                super.handleStartingTags(peer.getTag(), peer.getAttributes(attrs));
+            }
+        }
+        else if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
-            handleStartingTags(peer.getTag(), peer.getAttributes(attrs));
+            super.handleStartingTags(peer.getTag(), peer.getAttributes(attrs));
         }
         else {
             Properties attributes = new Properties();
@@ -85,7 +99,7 @@ public class SAXmyHandler extends SAXiTextHandler {
                     attributes.setProperty(attribute, attrs.getValue(i));
                 }
             }
-            handleStartingTags(name, attributes);
+            super.handleStartingTags(name, attributes);
         }        
     }
     
@@ -96,12 +110,20 @@ public class SAXmyHandler extends SAXiTextHandler {
  */
     
     public void endElement(String name) {
-        if (myTags.containsKey(name)) {
+        //System.err.println(name);
+        
+        if (((HtmlTagMap)myTags).isSpecialTag(name)) {
+            if (((HtmlTagMap)myTags).isBody(name)) {
+                XmlPeer peer = new XmlPeer(ElementTags.ITEXT, HtmlTags.BODY);
+                super.handleEndingTags(peer.getTag());
+            }
+        }
+        else if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
-            handleEndingTags(peer.getTag());
+            super.handleEndingTags(peer.getTag());
         }
         else {
-            handleEndingTags(name);
+            super.handleEndingTags(name);
         }
     }
 }

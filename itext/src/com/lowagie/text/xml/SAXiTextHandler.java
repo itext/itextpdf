@@ -298,7 +298,7 @@ public class SAXiTextHandler extends HandlerBase {
  */
     
     public void ignorableWhitespace(char[] ch, int start, int length) {
-        // do nothing
+        // do nothing: we handle white space ourselves in the characters method
     }
     
 /**
@@ -330,8 +330,10 @@ public class SAXiTextHandler extends HandlerBase {
                     }
                     break;
                 case '\n':
-                    if (i > 0) newline = true;
-                    buf.append(' ');
+                    if (i > 0) {
+                        newline = true;
+                        buf.append(' ');
+                    }
                     break;
                 case '\r':
                     break;
