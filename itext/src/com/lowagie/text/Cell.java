@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -657,6 +657,90 @@ public class Cell extends Rectangle implements TextElementArray {
     public final void clear() {
         arrayList.clear();
     }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float top() {
+       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float bottom() {
+       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float left() {
+       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float right() {
+       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float top(int margin) {
+       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float bottom(int margin) {
+       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float left(int margin) {
+       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public float right(int margin) {
+       throw new UnsupportedOperationException("Dimensions of a Cell can't be calculated. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public void setTop(int value) {
+       throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public void setBottom(int value) {
+       throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public void setLeft(int value) {
+       throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+   }
+    
+/**
+ * This method throws an <CODE>UnsupportedOperationException</CODE>.
+ */
+   public void setRight(int value) {
+       throw new UnsupportedOperationException("Dimensions of a Cell are attributed automagically. See the FAQ.");
+   }
     
 /**
  * Checks if a given tag corresponds with this object.

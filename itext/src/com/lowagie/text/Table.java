@@ -212,6 +212,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  */
     boolean mAutoFillEmptyCells = true;
     
+/** If true this table may not split a cell over two pages. */
+    boolean hasToFitPage = false;
+    
 /** contains the attributes that are added to each odd (or even) row */
     protected Hashtable alternatingRowAttributes;
     
@@ -414,6 +417,33 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     public void setAutoFillEmptyCells(boolean aDoAutoFill) {
         mAutoFillEmptyCells = aDoAutoFill;
+    }
+
+
+    
+
+    
+/**
+ * Allows you to control when a page break occurs.
+ * <P>
+ * When a cell doesn't fit a page, it is split in two parts.
+ * If you want to avoid this, you should set the hasToFitPage value to true.
+ *
+ * @param   hasToFitPage    enter true if you don't want to split cells
+ */
+ 
+    public void setHasToFitPage(boolean hasToFitPage) {
+        this.hasToFitPage = hasToFitPage;
+    }
+    
+/**
+ * Checks if the cells of this <CODE>Table</CODE> have to fit a page.
+ *
+ * @return  true if the cells may not be split
+ */
+ 
+    public boolean hasToFitPage() {
+        return hasToFitPage;
     }
     
 /**
@@ -624,7 +654,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             }
             Row row;
             for (int i = lastHeaderRow + 1; i < rows.size(); i++) {
-                row = (Row) rows.get(i);
+                row = (Row)rows.get(i);
                 row.setMarkupAttributes(i % 2 == 0 ? even : odd);
             }
         }

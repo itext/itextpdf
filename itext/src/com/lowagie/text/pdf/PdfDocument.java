@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -83,6 +83,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.io.IOException;
 
 /**
@@ -1319,8 +1320,29 @@ class PdfDocument extends Document implements DocListener {
                         
                         // loop over the cells
                         boolean cellsShown = false;
-                        for (Iterator iterator = cells.iterator(); iterator.hasNext(); ) {
+                        int currentRownumber = 0;
+                        for (ListIterator iterator = cells.listIterator(); iterator.hasNext(); ) {
                             cell = (PdfCell) iterator.next();
+                            if (cell.rownumber() != currentRownumber && !cell.isHeader() && ((Table) element).hasToFitPage()) {
+                                currentRownumber = cell.rownumber();
+                                int cellCount = 0;
+                                boolean cellsFit = true;
+                                System.err.println(cell.bottom());
+                                while (cell.rownumber() == currentRownumber && cellsFit && iterator.hasNext()) {
+                                    if (cell.bottom() < indentBottom()) {
+                                        cellsFit = false;
+                                    }
+                                    cell = (PdfCell) iterator.next();
+                                    cellCount++;
+                                }
+                                if (!cellsFit) {
+                                    System.err.println("OeiOei");
+                                    break;
+                                }
+                                for (int i = cellCount; i >= 0; i--) {
+                                    cell = (PdfCell) iterator.previous();
+                                }
+                            }
                             lines = cell.getLines(pagetop, indentBottom());
                             // if there are lines to add, add them
                             if (lines != null && lines.size() > 0) {
