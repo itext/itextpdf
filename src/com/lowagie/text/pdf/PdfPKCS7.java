@@ -132,7 +132,9 @@ public class PdfPKCS7 {
     private static final String ID_CONTENT_TYPE = "1.2.840.113549.1.9.3";
     private static final String ID_MESSAGE_DIGEST = "1.2.840.113549.1.9.4";
     private static final String ID_SIGNING_TIME = "1.2.840.113549.1.9.5";
-    
+    private static final String ID_MD2RSA = "1.2.840.113549.1.1.2";
+    private static final String ID_MD5RSA = "1.2.840.113549.1.1.4";
+    private static final String ID_SHA1RSA = "1.2.840.113549.1.1.5";
     /**
      * Holds value of property reason.
      */
@@ -520,13 +522,13 @@ public class PdfPKCS7 {
     public String getHashAlgorithm() {
         String da = digestAlgorithm;
         
-        if (digestAlgorithm.equals(ID_MD5)) {
+        if (digestAlgorithm.equals(ID_MD5) || digestAlgorithm.equals(ID_MD5RSA)) {
             da = "MD5";
         }
-        else if (digestAlgorithm.equals(ID_MD2)) {
+        else if (digestAlgorithm.equals(ID_MD2) || digestAlgorithm.equals(ID_MD2RSA)) {
             da = "MD2";
         }
-        else if (digestAlgorithm.equals(ID_SHA1)) {
+        else if (digestAlgorithm.equals(ID_SHA1) || digestAlgorithm.equals(ID_SHA1RSA)) {
             da = "SHA1";
         }
         return da;
