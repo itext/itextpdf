@@ -52,8 +52,9 @@ package com.lowagie.tools;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.Iterator;
-import java.util.TreeMap;
+import java.util.Properties;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -65,19 +66,18 @@ import javax.swing.JMenuItem;
 /**
  * This is a utility that allows you to use a number of iText tools.
  */
-public class Toolbox extends JFrame implements ActionListener {
-
+public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
+	
+	/** The DesktopPane of the toolbox. */
 	private JDesktopPane desktop;
-	private TreeMap toolmap = new TreeMap();
+	/** The list of tools in the toolbox. */
+	private Properties toolmap = new Properties();
 	
 	/**
 	 * Constructs the Toolbox object.
 	 */
 	public Toolbox() {
 		super();
-		
-		toolmap.put("Dvd Cover", "com.lowagie.tools.DvdCover");
-		
 		setSize(600, 400);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(true);
@@ -101,14 +101,21 @@ public class Toolbox extends JFrame implements ActionListener {
 	 * @return a menubar
 	 */
 	private JMenuBar getMenubar() {
+		if (toolmap.size() == 0) {
+			try {
+				toolmap.load(Toolbox.class.getClassLoader().getResourceAsStream("com/lowagie/tools/tools.txt"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		JMenuBar menubar = new JMenuBar();
-		JMenu file = new JMenu("File");
+		JMenu file = new JMenu(FILE);
 		file.setMnemonic(KeyEvent.VK_F);
-		JMenuItem close = new JMenuItem("Close");
+		JMenuItem close = new JMenuItem(CLOSE);
 		close.setMnemonic(KeyEvent.VK_C);
 		close.addActionListener(this);
 		file.add(close);
-		JMenu tools = new JMenu("Tools");
+		JMenu tools = new JMenu(TOOLS);
 		file.setMnemonic(KeyEvent.VK_T);
 		JMenuItem item;
 		String name;
@@ -141,7 +148,7 @@ public class Toolbox extends JFrame implements ActionListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent evt) {
-		if ("Close".equals(evt.getActionCommand())) {
+		if (CLOSE.equals(evt.getActionCommand())) {
 			System.exit(0);
 		}
 		else {

@@ -64,7 +64,7 @@ import javax.swing.JOptionPane;
 /**
  * Every iText tool has to implement this interface.
  */
-public abstract class AbstractTool implements ActionListener {
+public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	
 	/** The internal frame of the tool. */
 	protected JInternalFrame internalFrame;
@@ -77,26 +77,26 @@ public abstract class AbstractTool implements ActionListener {
 	 */
 	public JMenuBar getMenubar() {
 		JMenuBar menubar = new JMenuBar();
-		JMenu file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_F);
-		JMenuItem usage = new JMenuItem("Usage");
+		JMenu tool = new JMenu(TOOL);
+		tool.setMnemonic(KeyEvent.VK_F);
+		JMenuItem usage = new JMenuItem(USAGE);
 		usage.setMnemonic(KeyEvent.VK_U);
 		usage.addActionListener(this);
-		file.add(usage);
-		JMenuItem args = new JMenuItem("Arguments");
+		tool.add(usage);
+		JMenuItem args = new JMenuItem(ARGUMENTS);
 		args.setMnemonic(KeyEvent.VK_A);
 		args.addActionListener(this);
-		file.add(args);
-		JMenuItem execute = new JMenuItem("Execute");
+		tool.add(args);
+		JMenuItem execute = new JMenuItem(EXECUTE);
 		execute.setMnemonic(KeyEvent.VK_E);
 		execute.addActionListener(this);
-		file.add(execute);
-		JMenuItem close = new JMenuItem("Close");
+		tool.add(execute);
+		JMenuItem close = new JMenuItem(CLOSE);
 		close.setMnemonic(KeyEvent.VK_C);
 		close.addActionListener(this);
-		file.add(close);
-		JMenu params = new JMenu("Arguments");
-		file.setMnemonic(KeyEvent.VK_T);
+		tool.add(close);
+		JMenu params = new JMenu(ARGUMENTS);
+		tool.setMnemonic(KeyEvent.VK_T);
 		JMenuItem item;
 		ToolArgument argument;
 		for (Iterator i = arguments.iterator(); i.hasNext(); ) {
@@ -106,10 +106,15 @@ public abstract class AbstractTool implements ActionListener {
 			item.addActionListener(argument);
 			params.add(item);
 		}
-		menubar.add(file);
+		menubar.add(tool);
 		menubar.add(params);
 		return menubar;
 	}
+
+	/**
+	 * Executes the tool (in most cases this generates a PDF file).
+	 */
+	public abstract void execute();
 	
 	/**
 	 * Gets the usage of the tool.
@@ -131,11 +136,6 @@ public abstract class AbstractTool implements ActionListener {
 		}
 		return buf.toString();
 	}
-
-	/**
-	 * Executes the tool (in most cases this generates a PDF file).
-	 */
-	public abstract void execute();
 	
 	/**
 	 * Gets the current arguments of the tool.
@@ -181,16 +181,16 @@ public abstract class AbstractTool implements ActionListener {
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent evt) {
-		if ("Close".equals(evt.getActionCommand())) {
-			System.exit(0);
+		if (CLOSE.equals(evt.getActionCommand())) {
+			internalFrame.dispose();
 		}
-		if ("Usage".equals(evt.getActionCommand())) {
+		if (USAGE.equals(evt.getActionCommand())) {
 			JOptionPane.showMessageDialog(internalFrame, getUsage());
 		}
-		if ("Arguments".equals(evt.getActionCommand())) {
+		if (ARGUMENTS.equals(evt.getActionCommand())) {
 			JOptionPane.showMessageDialog(internalFrame, getArgs());
 		}
-		if ("Execute".equals(evt.getActionCommand())) {
+		if (EXECUTE.equals(evt.getActionCommand())) {
 			this.execute();
 		}
 	}
