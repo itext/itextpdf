@@ -53,6 +53,8 @@ package com.lowagie.text;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
@@ -456,7 +458,7 @@ public class Annotation implements Element, MarkupAttributes {
 /**
  * Returns the lower left x-value.
  *
- * @param   def    the default value
+ * @param       the default value
  * @return	a value
  */
     
@@ -480,7 +482,7 @@ public class Annotation implements Element, MarkupAttributes {
 /**
  * Returns the upper right x-value.
  *
- * @param   def    the default value
+ * @param       the default value
  * @return	a value
  */
     
@@ -492,7 +494,7 @@ public class Annotation implements Element, MarkupAttributes {
 /**
  * Returns the upper right y-value.
  *
- * @param   def    the default value
+ * @param       the default value
  * @return	a value
  */
     

@@ -144,6 +144,12 @@ class TrueTypeFont extends BaseFont {
      */
     protected String fileName;
     
+    protected boolean cff = false;
+    
+    protected int cffOffset;
+    
+    protected int cffLength;
+    
     /** The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font.
      */    
@@ -351,11 +357,11 @@ class TrueTypeFont extends BaseFont {
         ttcIndex = "";
         if (ttcName.length() < nameBase.length())
             ttcIndex = nameBase.substring(ttcName.length() + 1);
-        if (fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".ttc")) {
+        if (fileName.toLowerCase().endsWith(".ttf") || fileName.toLowerCase().endsWith(".otf") || fileName.toLowerCase().endsWith(".ttc")) {
             process(ttfAfm);
         }
         else
-            throw new DocumentException(fileName + style + " is not a TTF or TTC font file.");
+            throw new DocumentException(fileName + style + " is not a TTF, OTF or TTC font file.");
         try {
             " ".getBytes(enc); // check if the encoding exists
             createEncoding();
@@ -549,6 +555,16 @@ class TrueTypeFont extends BaseFont {
             thisName[k] = (String[])names.get(k);
         return thisName;
     }
+    
+    void checkCff() throws DocumentException, IOException {
+        int table_location[];
+        table_location = (int[])tables.get("CFF ");
+        if (table_location != null) {
+            cff = true;
+            cffOffset = table_location[0];
+            cffLength = table_location[1];
+        }
+    }
 
     /** Reads the font data.
      * @param ttfAfm the font as a <CODE>byte</CODE> array, possibly <CODE>null</CODE>
@@ -578,8 +594,9 @@ class TrueTypeFont extends BaseFont {
                 directoryOffset = rf.readInt();
             }
             rf.seek(directoryOffset);
-            if (rf.readInt() != 0x00010000)
-                throw new DocumentException(fileName + " is not a valid TTF file.");
+            int ttId = rf.readInt();
+            if (ttId != 0x00010000 && ttId != 0x4F54544F)
+                throw new DocumentException(fileName + " is not a valid TTF or OTF file.");
             int num_tables = rf.readUnsignedShort();
             rf.skipBytes(6);
             for (int k = 0; k < num_tables; ++k) {
@@ -590,6 +607,7 @@ class TrueTypeFont extends BaseFont {
                 table_location[1] = rf.readInt();
                 tables.put(tag, table_location);
             }
+            checkCff();
             fontName = getBaseFont();
             fullName = getNames(4); //full name
             familyName = getNames(1); //family name
@@ -895,8 +913,12 @@ class TrueTypeFont extends BaseFont {
         dic.put(new PdfName("FontName"), new PdfName(subsetPrefix + fontName + style));
         dic.put(new PdfName("ItalicAngle"), new PdfNumber(italicAngle));
         dic.put(new PdfName("StemV"), new PdfNumber(80));
-        if (fontStream != null)
-            dic.put(new PdfName("FontFile2"), fontStream);
+        if (fontStream != null) {
+            if (cff)
+                dic.put(new PdfName("FontFile3"), fontStream);
+            else
+                dic.put(new PdfName("FontFile2"), fontStream);
+        }
         int flags = 0;
         if (isFixedPitch)
             flags |= 1;
@@ -921,7 +943,10 @@ class TrueTypeFont extends BaseFont {
      */
     protected PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) throws DocumentException {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
-        dic.put(PdfName.SUBTYPE, new PdfName("TrueType"));
+        if (cff)
+            dic.put(PdfName.SUBTYPE, new PdfName("Type1"));
+        else
+            dic.put(PdfName.SUBTYPE, new PdfName("TrueType"));
         dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName + style));
         if (!fontSpecific) {
             for (int k = firstChar; k <= lastChar; ++k) {
@@ -988,25 +1013,46 @@ class TrueTypeFont extends BaseFont {
         PdfIndirectObject obj = null;
         String subsetPrefix = "";
         if (embedded) {
-            subsetPrefix = createSubsetPrefix();
-            HashMap glyphs = new HashMap();
-            for (int k = firstChar; k <= lastChar; ++k) {
-                if (shortTag[k] != 0) {
-                    int metrics[];
-                    if (fontSpecific)
-                        metrics = getMetricsTT(k);
-                    else
-                        metrics = getMetricsTT(unicodeDifferences[k]);
-                    if (metrics != null)
-                        glyphs.put(new Integer(metrics[0]), null);
+            if (cff) {
+                byte b[] = new byte[cffLength];
+                try {
+                    rf.reOpen();
+                    rf.seek(cffOffset);
+                    rf.readFully(b);
                 }
+                finally {
+                    try {
+                        rf.close();
+                    }
+                    catch (Exception e) {
+                        // empty on purpose
+                    }
+                }
+                pobj = new StreamFont(b, "Type1C");
+                obj = writer.addToBody(pobj);
+                ind_font = obj.getIndirectReference();
             }
-            TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, glyphs, directoryOffset, true);
-            byte b[] = sb.process();
-            int lengths[] = new int[]{b.length};
-            pobj = new StreamFont(b, lengths);
-            obj = writer.addToBody(pobj);
-            ind_font = obj.getIndirectReference();
+            else {
+                subsetPrefix = createSubsetPrefix();
+                HashMap glyphs = new HashMap();
+                for (int k = firstChar; k <= lastChar; ++k) {
+                    if (shortTag[k] != 0) {
+                        int metrics[];
+                        if (fontSpecific)
+                            metrics = getMetricsTT(k);
+                        else
+                            metrics = getMetricsTT(unicodeDifferences[k]);
+                        if (metrics != null)
+                            glyphs.put(new Integer(metrics[0]), null);
+                    }
+                }
+                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, rf, glyphs, directoryOffset, true);
+                byte b[] = sb.process();
+                int lengths[] = new int[]{b.length};
+                pobj = new StreamFont(b, lengths);
+                obj = writer.addToBody(pobj);
+                ind_font = obj.getIndirectReference();
+            }
         }
         pobj = getFontDescriptor(ind_font, subsetPrefix);
         if (pobj != null){

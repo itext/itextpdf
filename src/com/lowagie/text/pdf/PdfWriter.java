@@ -168,6 +168,7 @@ public class PdfWriter extends DocWriter {
         /** the current byteposition in the body. */
         private int position;
         private PdfWriter writer;
+        private boolean simple;
         // constructors
         
         /**
@@ -177,9 +178,15 @@ public class PdfWriter extends DocWriter {
          */
         
         PdfBody(int offset, PdfWriter writer) {
+            this(offset, writer, false);
+        }
+        
+        PdfBody(int offset, PdfWriter writer, boolean simple) {
+            this.simple = simple;
             xrefs = new ArrayList();
             xrefs.add(new PdfCrossReference(0, 65535));
-            xrefs.add(new PdfCrossReference(0));
+            if (!simple)
+                xrefs.add(new PdfCrossReference(0));
             position = offset;
             this.writer = writer;
         }
@@ -307,8 +314,10 @@ public class PdfWriter extends DocWriter {
                 stream.write(getISOBytes("xref\n0 "));
                 stream.write(getISOBytes(String.valueOf(size())));
                 stream.write(getISOBytes("\n"));
-                // we set the ROOT object
-                xrefs.set(PdfWriter.ROOT, new PdfCrossReference(rootOffset));
+                if (!simple) {
+                    // we set the ROOT object
+                    xrefs.set(PdfWriter.ROOT, new PdfCrossReference(rootOffset));
+                }
                 // all the other objects
                 PdfCrossReference entry;
                 for (Iterator i = xrefs.iterator(); i.hasNext(); ) {
@@ -465,7 +474,7 @@ public class PdfWriter extends DocWriter {
     
     private static final int VPOINT = 7;
     /** this is the header of a PDF document */
-    private byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e0\u00e1\u00e2\u00e3\n");
+    protected byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e0\u00e1\u00e2\u00e3\n");
     
     /** byte offset of the Body */
     private int OFFSET = HEADER.length;
@@ -524,7 +533,7 @@ public class PdfWriter extends DocWriter {
     // membervariables
     
     /** body of the PDF document */
-    private PdfBody body = new PdfBody(OFFSET, this);
+    protected PdfBody body = new PdfBody(OFFSET, this);
     
     /** the pdfdocument object. */
     private PdfDocument pdf;
@@ -532,7 +541,7 @@ public class PdfWriter extends DocWriter {
     /** The <CODE>PdfPageEvent</CODE> for this document. */
     private PdfPageEvent pageEvent;
     
-    private PdfEncryption crypto;
+    protected PdfEncryption crypto;
     
     private HashMap importedPages = new HashMap();
     

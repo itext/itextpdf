@@ -53,6 +53,7 @@ import java.awt.Color;
 import com.lowagie.text.Image;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
+import java.io.UnsupportedEncodingException;
 import com.lowagie.text.Image;
 import java.util.ArrayList;
 
@@ -1124,6 +1125,7 @@ public class PdfContentByte {
      * Escapes a <CODE>byte</CODE> array according to the PDF conventions.
      *
      * @param b the <CODE>byte</CODE> array to escape
+     * @return an escaped <CODE>byte</CODE> array
      */
     static void escapeString(byte b[], ByteBuffer content) {
         content.append_i('(');
