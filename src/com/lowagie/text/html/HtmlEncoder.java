@@ -143,11 +143,12 @@ public class HtmlEncoder {
         for (int i = 0; i < n; i++) {
             character = string.charAt(i);
             // the Htmlcode of these characters are added to a StringBuffer one by one
-            try {
+            if (character < 256) {
                 buffer.append(htmlCode[character]);
             }
-            catch(ArrayIndexOutOfBoundsException aioobe) {
-                buffer.append(character);
+            else {
+                // Improvement posted by Joachim Eyrich
+                buffer.append("&#").append((int)character).append(";");
             }
         }
         return buffer.toString().trim();
