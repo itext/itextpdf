@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2003 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,48 +44,53 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
-/**
- * <CODE>PdfResources</CODE> is the PDF Resources-object.
- * <P>
- * The marking operations for drawing a page are stored in a stream that is the value of the
- * <B>Contents</B> key in the Page object's dictionary. Each marking context includes a list
- * of the named resources it uses. This resource list is stored as a dictionary that is the
- * value of the context's <B>Resources</B> key, and it serves two functions: it enumerates
- * the named resources in the contents stream, and it established the mapping from the names
- * to the objects used by the marking operations.<BR>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 7.5 (page 195-197).
+/** The graphic state dictionary.
  *
- * @see		PdfResource
- * @see		PdfProcSet
- * @see		PdfFontDictionary
- * @see		PdfPage
+ * @author Paulo Soares (psoares@consiste.pt)
  */
+public class PdfGState extends PdfDictionary {
+    
+    public static final PdfName BM_NORMAL = new PdfName("Normal");
+    public static final PdfName BM_MULTIPLY = new PdfName("Multiply");
+    public static final PdfName BM_SCREEN = new PdfName("Screen");
+    public static final PdfName BM_OVERLAY = new PdfName("Overlay");
+    public static final PdfName BM_DARKEN = new PdfName("Darken");
+    public static final PdfName BM_LIGHTEN = new PdfName("Lighten");
+    public static final PdfName BM_COLORDODGE = new PdfName("ColorDodge");
+    public static final PdfName BM_COLORBURN = new PdfName("ColorBurn");
+    public static final PdfName BM_HARDLIGHT = new PdfName("HardLight");
+    public static final PdfName BM_SOFTLIGHT = new PdfName("SoftLight");
+    public static final PdfName BM_DIFFERENCE = new PdfName("Difference");
+    public static final PdfName BM_EXCLUSION = new PdfName("Exclusion");
+    
+    public void setOverPrintStroking(boolean ov) {
+        put(PdfName.OP, ov ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
+    }
 
-class PdfResources extends PdfDictionary {
-    
-    // constructor
-    
-/**
- * Constructs a PDF ResourcesDictionary.
- */
-    
-    PdfResources() {
-        super();
+    public void setOverPrintNonStroking(boolean ov) {
+        put(PdfName.op, ov ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
     }
     
-    // methods
-    
-    void add(PdfName key, PdfDictionary resource) {
-        if (resource.size() == 0)
-            return;
-        PdfDictionary dic = (PdfDictionary)get(key);
-        if (dic == null)
-            put(key, resource);
-        else
-            dic.putAll(resource);
+    public void setStrokeOpacity(float n) {
+        put(PdfName.CA, new PdfNumber(n));
     }
+    
+    public void setFillOpacity(float n) {
+        put(PdfName.ca, new PdfNumber(n));
+    }
+    
+    public void setAlphaIsShape(boolean v) {
+        put(PdfName.AIS, v ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
+    }
+    
+    public void setTextKnockout(boolean v) {
+        put(PdfName.TK, v ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
+    }
+    
+    public void setBlendMode(PdfName bm) {
+        put(PdfName.BM, bm);
+    }
+    
 }

@@ -111,7 +111,7 @@ public class PdfPage extends PdfDictionary {
  * @param		rotate			a value for the <B>Rotate</B> key
  */
     
-    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfResources resources, PdfNumber rotate) {
+    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfDictionary resources, PdfNumber rotate) {
         super(PAGE);
         this.mediaBox = mediaBox;
         put(PdfName.MEDIABOX, mediaBox);
@@ -141,7 +141,7 @@ public class PdfPage extends PdfDictionary {
  * @param		resources		an indirect reference to a <CODE>PdfResources</CODE>-object
  */
     
-    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfResources resources) {
+    PdfPage(PdfRectangle mediaBox, Rectangle cropBox, PdfDictionary resources) {
         this(mediaBox, cropBox, resources, null);
     }
     

@@ -78,6 +78,7 @@ public class TiffImage {
         int dpi = 0;
         switch (resolutionUnit) {
             case TIFFConstants.RESUNIT_INCH:
+            case TIFFConstants.RESUNIT_NONE:
                 dpi = (int)frac;
                 break;
             case TIFFConstants.RESUNIT_CENTIMETER:
@@ -129,11 +130,18 @@ public class TiffImage {
             int w = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_IMAGEWIDTH);
             int dpiX = 0;
             int dpiY = 0;
+            float XYRatio = 0;
             int resolutionUnit = TIFFConstants.RESUNIT_INCH;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_RESOLUTIONUNIT))
                 resolutionUnit = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_RESOLUTIONUNIT);
             dpiX = getDpi(dir.getField(TIFFConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
             dpiY = getDpi(dir.getField(TIFFConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
+            if (resolutionUnit == TIFFConstants.RESUNIT_NONE) {
+                if (dpiY != 0)
+                    XYRatio = (float)dpiX / (float)dpiY;
+                dpiX = 0;
+                dpiY = 0;
+            }
             long tstrip = dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             int rowsStrip = (int)Math.min((long)h, tstrip);
             TIFFField field = dir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS);
@@ -214,6 +222,7 @@ public class TiffImage {
                 img = Image.getInstance((int) w, (int) h, false, Image.CCITTG4, params & Image.CCITT_BLACKIS1, g4pic);
             }
             img.setDpi(dpiX, dpiY);
+            img.setXYRatio(XYRatio);
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
                 TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
                 img.tagICC(ICC_Profile.getInstance(fd.getAsBytes()));
@@ -369,7 +378,9 @@ public class TiffImage {
                 indexed.add(PdfName.DEVICERGB);
                 indexed.add(new PdfNumber(gColor - 1));
                 indexed.add(new PdfString(palette));
-                img.setIndexed(indexed);
+                PdfDictionary additional = new PdfDictionary();
+                additional.put(PdfName.COLORSPACE, indexed);
+                img.setAdditional(additional);
             }
             if (photometric == TIFFConstants.PHOTOMETRIC_MINISWHITE)
                 img.setInverted(true);

@@ -82,7 +82,10 @@ import com.lowagie.text.DocumentException;
  */
 
 public class ColumnText {
-    
+    public static final int AR_NOVOWEL = 1;
+    public static final int AR_COMPOSEDTASHKEEL = 4;
+    public static final int AR_LIG = 8;
+
     protected int runDirection = PdfWriter.RUN_DIRECTION_DEFAULT;
     public static final float GLOBAL_SPACE_CHAR_RATIO = 0;
     
@@ -169,6 +172,9 @@ public class ColumnText {
     
     /** Holds value of property linesWritten. */
     private int linesWritten;
+    
+    /** Holds value of property arabicOptions. */
+    private int arabicOptions = 0;
     
     /**
      * Creates a <CODE>ColumnText</CODE>.
@@ -537,7 +543,7 @@ public class ColumnText {
                     break;
                 }
                 float yTemp = yLine;
-                PdfLine line = bidiLine.processLine(rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection);
+                PdfLine line = bidiLine.processLine(rectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
                 if (line == null) {
                     status = NO_MORE_TEXT;
                     break;
@@ -593,7 +599,7 @@ public class ColumnText {
                     text.beginText();
                     dirty = true;
                 }
-                PdfLine line = bidiLine.processLine(x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection);
+                PdfLine line = bidiLine.processLine(x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, arabicOptions);
                 if (line == null) {
                     status = NO_MORE_TEXT;
                     yLine = yTemp;
@@ -681,6 +687,21 @@ public class ColumnText {
      */
     public int getLinesWritten() {
         return this.linesWritten;
+    }
+    
+    /** Gets the arabic shaping options.
+     * @return the arabic shaping options
+     */
+    public int getArabicOptions() {
+        return this.arabicOptions;
+    }
+    
+    /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
+     * AR_COMPOSEDTASHKEEL and AR_LIG.
+     * @param arabicOptions the arabic shaping options
+     */
+    public void setArabicOptions(int arabicOptions) {
+        this.arabicOptions = arabicOptions;
     }
     
 }

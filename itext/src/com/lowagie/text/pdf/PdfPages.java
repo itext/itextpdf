@@ -154,12 +154,14 @@ public class PdfPages {
     }
     
     void setLinearMode(PdfIndirectReference topParent) {
-        if (topParent == null) {
+        if (parents.size() > 1)
+            throw new RuntimeException("Linear page mode can only be called with a single parent.");
+        if (topParent != null) {
             this.topParent = topParent;
             parents.clear();
             parents.add(topParent);
         }
-        leafSize = 0x7ffffff;
+        leafSize = 10000000;
     }
 
     void addPage(PdfIndirectReference page) {

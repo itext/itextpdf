@@ -51,11 +51,12 @@ import java.util.Iterator;
 
 class PageResources {
     
-    protected PdfFontDictionary fontDictionary = new PdfFontDictionary();
-    protected PdfXObjectDictionary xObjectDictionary = new PdfXObjectDictionary();
-    protected PdfColorDictionary colorDictionary = new PdfColorDictionary();
-    protected PdfPatternDictionary patternDictionary = new PdfPatternDictionary();
-    protected PdfShadingDictionary shadingDictionary = new PdfShadingDictionary();
+    protected PdfDictionary fontDictionary = new PdfDictionary();
+    protected PdfDictionary xObjectDictionary = new PdfDictionary();
+    protected PdfDictionary colorDictionary = new PdfDictionary();
+    protected PdfDictionary patternDictionary = new PdfDictionary();
+    protected PdfDictionary shadingDictionary = new PdfDictionary();
+    protected PdfDictionary extGStateDictionary = new PdfDictionary();
     protected HashMap forbiddenNames;
     protected PdfDictionary originalResources;
     protected int namePtr = 0;
@@ -127,21 +128,23 @@ class PageResources {
         return name;
     }
 
-    PdfResources getResources() {
-        PdfResources resources = new PdfResources();
+    PdfName addExtGState(PdfName name, PdfIndirectReference reference) {
+        name = translateName(name);
+        extGStateDictionary.put(name, reference);
+        return name;
+    }
+
+    PdfDictionary getResources() {
+       PdfResources resources = new PdfResources();
         if (originalResources != null)
             resources.putAll(originalResources);
         resources.put(PdfName.PROCSET, new PdfLiteral("[/PDF /Text /ImageB /ImageC /ImageI]"));
-        if (fontDictionary.containsFont())
-            resources.add(fontDictionary);
-        if (xObjectDictionary.containsXObject())
-            resources.add(xObjectDictionary);
-        if (colorDictionary.containsColorSpace())
-            resources.add(colorDictionary);
-        if (patternDictionary.containsPattern())
-            resources.add(patternDictionary);
-        if (shadingDictionary.containsShading())
-            resources.add(shadingDictionary);
+        resources.add(PdfName.FONT, fontDictionary);
+        resources.add(PdfName.XOBJECT, xObjectDictionary);
+        resources.add(PdfName.COLORSPACE, colorDictionary);
+        resources.add(PdfName.PATTERN, patternDictionary);
+        resources.add(PdfName.SHADING, shadingDictionary);
+        resources.add(PdfName.EXTGSTATE, extGStateDictionary);
         return resources;
     }
 }
