@@ -58,6 +58,10 @@ public class PdfPSXObject extends PdfTemplate {
         super();
     }
     
+    /**
+     * Constructs a PSXObject
+     * @param wr
+     */
     public PdfPSXObject(PdfWriter wr) {
         super(wr);
     }
@@ -66,6 +70,7 @@ public class PdfPSXObject extends PdfTemplate {
      * Gets the stream representing this object.
      *
      * @return the stream representing this object
+     * @throws IOException
      */
     
     PdfStream getFormXObject() throws IOException {
