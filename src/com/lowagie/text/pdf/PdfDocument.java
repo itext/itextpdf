@@ -1105,18 +1105,6 @@ class PdfDocument extends Document implements DocListener {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     
-                    if (paragraph.getKeepTogether()) {
-                        Table table = new Table(1, 1);
-                        table.setBorder(Table.NO_BORDER);
-                        table.setWidth(100f);
-                        table.setTableFitsPage(true);
-                        Cell cell = new Cell(paragraph);
-                        cell.setBorder(Table.NO_BORDER);
-                        table.addCell(cell);
-                        this.add(table);
-                        break;
-                    }
-                    
                     // we adjust the parameters of the document
                     alignment = paragraph.alignment();
                     leading = paragraph.leading();
@@ -1140,13 +1128,21 @@ class PdfDocument extends Document implements DocListener {
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraph(writer, this, indentTop() - currentHeight);
                     
+                    // if a paragraph has to be kept together, we wrap it in a table object
+                    if (paragraph.getKeepTogether()) {
+                        Table table = new Table(1, 1);
+                        table.setBorder(Table.NO_BORDER);
+                        table.setWidth(100f);
+                        table.setTableFitsPage(true);
+                        Cell cell = new Cell(paragraph);
+                        cell.setBorder(Table.NO_BORDER);
+                        table.addCell(cell);
+                        this.add(table);
+                        break;
+                    }
+                    else
                     // we process the paragraph
                     element.process(this);
-                    // if the last line is justified, it should be aligned to the left
-                    //				if (line.hasToBeJustified()) {
-                    //					line.resetAlignment();
-                    //				}
-                    // some parameters are set back to normal again
                     
                     //add by Jin-Hsia Yang and blowagie
                     paraIndent -= paragraph.indentationLeft();
