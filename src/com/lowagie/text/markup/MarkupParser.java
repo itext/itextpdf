@@ -91,6 +91,43 @@ public class MarkupParser {
         }
         return result;
     }
+/**
+ * This method parses the value of 'font' attribute and returns a Properties object.
+ *
+ * @param   string   a String of this form: 'style1 ... styleN size/leading font1 ... fontN'
+ * @return  a Properties object
+ */
+
+    public static Properties parseFont(String string) {
+        Properties result = new Properties();
+        if (string == null) return result;
+        int pos = 0;
+        String value;
+        while (string.length() > 0) {
+            pos = string.indexOf(" ", pos);
+            if (pos == -1) {
+                value = string;
+                string = "";
+            }
+            else {
+                value = string.substring(0, pos); 
+                string = string.substring(pos).trim();
+            }
+            if (value.equalsIgnoreCase("bold")) {
+                result.setProperty(MarkupTags.CSS_FONTWEIGHT, MarkupTags.CSS_BOLD);
+                continue;
+            }
+            if (value.equalsIgnoreCase("italic")) {
+                result.setProperty(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_ITALIC);
+                continue;
+            }
+            if (value.equalsIgnoreCase("oblique")) {
+                result.setProperty(MarkupTags.CSS_FONTSTYLE, MarkupTags.CSS_OBLIQUE);
+                continue;
+            }
+        }
+        return result;
+    }
     
 /**
  * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>Color</CODE>.
