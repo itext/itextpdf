@@ -395,7 +395,7 @@ public class Section extends ArrayList implements TextElementArray {
  * Creates a given <CODE>Section</CODE> following a set of attributes and adds it to this one.
  *
  * @param	attributes	the attributes
- * @return      a new section
+ * @return      a Section
  */
     
     public Section addSection(Properties attributes) {

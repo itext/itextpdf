@@ -187,7 +187,9 @@ class TrueTypeFont extends BaseFont {
      * normalized 1000 units as an <CODE>Integer</CODE>. This value is usually negative.
      */
     protected HashMap kerning;
-    /** The font name. this name is usually extracted from the table 'name' with
+    /**
+     * The font name.
+     * This name is usually extracted from the table 'name' with
      * the 'Name ID' 6.
      */
     protected String fontName;

@@ -465,7 +465,8 @@ public class PdfContentByte {
     }
     
     /**
-     * Helper to validate and write the CMYK color components
+     * Helper to validate and write the CMYK color components.
+     *
      * @param	cyan	the intensity of cyan. A value between 0 and 1
      * @param	magenta	the intensity of magenta. A value between 0 and 1
      * @param	yellow	the intensity of yellow. A value between 0 and 1
@@ -1365,7 +1366,9 @@ public class PdfContentByte {
         arc(x1, y1, x2, y2, 0f, 360f);
     }
     
-    /** Create a new colored tiling pattern.
+    /**
+     * Create a new colored tiling pattern.
+     *
      * @param width the width of the pattern
      * @param height the height of the pattern
      * @param xstep the desired horizontal spacing between pattern cells.
@@ -1387,7 +1390,8 @@ public class PdfContentByte {
         return painter;
     }
     
-    /** Create a new colored tiling pattern. xstep and ystep are set to the same values
+    /**
+     * Create a new colored tiling pattern. Variables xstep and ystep are set to the same values
      * of width and height.
      * @param width the width of the pattern
      * @param height the height of the pattern
@@ -1397,7 +1401,9 @@ public class PdfContentByte {
         return createPattern(width, height, width, height);
     }
     
-    /** Create a new uncolored tiling pattern.
+    /**
+     * Create a new uncolored tiling pattern.
+     *
      * @param width the width of the pattern
      * @param height the height of the pattern
      * @param xstep the desired horizontal spacing between pattern cells.
@@ -1420,7 +1426,9 @@ public class PdfContentByte {
         return painter;
     }
     
-    /** Create a new uncolored tiling pattern. xstep and ystep are set to the same values
+    /**
+     * Create a new uncolored tiling pattern.
+     * Variables xstep and ystep are set to the same values
      * of width and height.
      * @param width the width of the pattern
      * @param height the height of the pattern
@@ -1797,7 +1805,7 @@ public class PdfContentByte {
     /**
      * Check if we have a valid PdfWriter.
      *
-     * @throw NullPointerException the writer is invalid
+     * @throws NullPointerException the writer is invalid
      */
     protected void checkWriter() {
         if (writer == null)
@@ -1876,6 +1884,7 @@ public class PdfContentByte {
     /**
      * Gets a duplicate of this <CODE>PdfContentByte</CODE>. All
      * the members are copied by reference but the buffer stays different.
+     *
      * @return a copy of this <CODE>PdfContentByte</CODE>
      */
     public PdfContentByte getDuplicate() {

@@ -276,7 +276,9 @@ public class PdfPTable implements Element{
         defaultCell.setPhrase(null);
     }
     
-    /** Writes the selected rows to the document.<br>
+    /**
+     * Writes the selected rows to the document.
+     * <P>
      * <CODE>canvases</CODE> is obtained from <CODE>beginWrittingRows()</CODE>.
      * @param rowStart the first row to be written, zero index
      * @param rowEnd the last row to be written - 1. If it is -1 all the
@@ -319,7 +321,9 @@ public class PdfPTable implements Element{
         return yPos;
     }
     
-    /** Writes the selected rows to the document.
+    /**
+     * Writes the selected rows to the document.
+     * 
      * @param rowStart the first row to be written, zero index
      * @param rowEnd the last row to be written - 1. If it is -1 all the
      * rows to the end are written

@@ -317,10 +317,9 @@ public class Row implements Element {
     }
     
 /**
- * Returns the type-id of the element in a Row
+ * Returns the type-id of the element in a Row.
  *
  * @param       column  the column of which you'd like to know the type
- * @author Geert Poels
  */
     
     public int getElementID(int column) {
@@ -333,10 +332,9 @@ public class Row implements Element {
     
     
 /**
- * Returns the type-id of an Object
+ * Returns the type-id of an Object.
  *
  * @param       object the object of which you'd like to know the type-id, -1 if invalid
- * @author Geert Poels
  */
     
     public int getObjectID(Object element) {

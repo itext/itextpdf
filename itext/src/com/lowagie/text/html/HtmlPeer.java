@@ -57,8 +57,6 @@ import com.lowagie.text.xml.XmlPeer;
 
 /**
  * This interface is implemented by the peer of all the iText objects.
- *
- * @author  blowagie
  */
 
 public class HtmlPeer extends XmlPeer {

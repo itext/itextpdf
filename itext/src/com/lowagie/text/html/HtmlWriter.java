@@ -319,8 +319,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
 /**
  * Adds the header to the top of the </CODE>Document</CODE>
- *
- * @author	David Freels
  */
     
     protected void initHeader() {
@@ -336,8 +334,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
 /**
  *  Adds the header to the top of the </CODE>Document</CODE>
- *
- * @author	David Freels
  */
     
     protected void initFooter() {
@@ -453,8 +449,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * Changes the header of this document.
  *
  * @param	header		the new header
- *
- * @author	David Freels
  */
     
     public void setHeader(HeaderFooter header) {
@@ -465,8 +459,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * Changes the footer of this document.
  *
  * @param	footer		the new footer
- *
- * @author	David Freels
  */
     
     public void setFooter(HeaderFooter footer) {
@@ -478,7 +470,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
  *
  * @return	<CODE>true</CODE> if the string was added, <CODE>false</CODE> if not.
  * @throws	DocumentException	when a document isn't open yet, or has been closed
- * @author      Evelyne De Cordier
  */
     
     public boolean add(String string) throws DocumentException{
@@ -919,7 +910,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
      * Writes the HTML representation of a <CODE>Font</CODE>.
      *
      * @param	a <CODE>Font</CODE>
-     * @author  "Steve Ogryzek" <steve@ogryzek.com>
      */
     
     private void write(Font font) throws IOException {

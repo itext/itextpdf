@@ -213,7 +213,6 @@ public class Phrase extends ArrayList implements TextElementArray {
  * the value of some <VAR>attributes</VAR>.
  *
  * @param	attributes		Some attributes
- * @return	a <CODE>Phrase</CODE>
  */
     
     public Phrase(Properties attributes) {

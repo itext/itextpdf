@@ -125,8 +125,6 @@ public class Gif extends Image implements Element {
  * Constructs a <CODE>Gif</CODE>-object from memory.
  *
  * @param		img		the memory image
- *
- * @author		Paulo Soares
  */
     
     public Gif(byte[] img) throws BadElementException, IOException {
@@ -141,8 +139,6 @@ public class Gif extends Image implements Element {
  * @param		img			the memory image
  * @param		width		the width you want the image to have
  * @param		height		the height you want the image to have
- *
- * @author		Paulo Soares
  */
     
     public Gif(byte[] img, float width, float height) throws BadElementException, IOException {

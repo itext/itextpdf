@@ -150,7 +150,7 @@ class Type1Font extends BaseFont
 /** <CODE>true</CODE> if this font is one of the 14 built in fonts.
  */
     private boolean builtinFont = false;
-/** Types of records in a PFB file. 1 is ASCII and 2 is BINARY.
+/** Types of records in a PFB file. ASCII is 1 and BINARY is 2.
  *  They have to appear in the PFB file in this sequence.
  */
     private final static int pfbTypes[] = {1, 2, 1};

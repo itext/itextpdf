@@ -205,7 +205,6 @@ public class Cell extends Rectangle implements TextElementArray {
  * the value of some <VAR>attributes</VAR>.
  *
  * @param	attributes		Some attributes
- * @return	a <CODE>Cell</CODE>
  */
     
     public Cell(Properties attributes) {

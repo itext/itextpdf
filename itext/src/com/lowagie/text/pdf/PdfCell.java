@@ -417,7 +417,7 @@ public class PdfCell extends Rectangle {
     }
     
 /**
- * Gets the cellspacing of a cell. .
+ * Gets the cellspacing of a cell.
  *
  * @return	a value
  */

@@ -181,7 +181,6 @@ public class Anchor extends Phrase implements TextElementArray {
  * the value of some <VAR>attributes</VAR>.
  *
  * @param	attributes		Some attributes
- * @return	an <CODE>Anchor</CODE>
  */
     
     public Anchor(Properties attributes) {

@@ -57,7 +57,7 @@ import java.util.*;
 import java.io.*;
 
 /**
- * A Helper Class for the <CODE>RtfWriter</CODE>
+ * A Helper Class for the <CODE>RtfWriter</CODE>.
  * <P>
  * Do not use it directly, except if you want to write a <CODE>DocumentListener</CODE> for Rtf
  *
@@ -66,19 +66,20 @@ import java.io.*;
  */
 public class RtfTable
 {
-  /** Stores the different rows */
+  /** Stores the different rows. */
   private ArrayList rowsList = new ArrayList();
-  /** Stores the RtfWriter, which created this RtfTable */
+  /** Stores the RtfWriter, which created this RtfTable. */
   private RtfWriter writer = null;
   // <!-- steffen
-  /** Stores the Table, which this RtfTable is based on */
+  /** Stores the Table, which this RtfTable is based on. */
   private Table origTable = null;
   // -->
   
   
 
   /** 
-   * Create a new <code>RtfTable</code>
+   * Create a new <code>RtfTable</code>.
+   *
    * @param writer The <code>RtfWriter</code> that created this Table
    */
   public RtfTable(RtfWriter writer)
@@ -88,7 +89,7 @@ public class RtfTable
   }
 
   /** 
-   * Import a <CODE>Table</CODE> into the <CODE>RtfTable</CODE>
+   * Import a <CODE>Table</CODE> into the <CODE>RtfTable</CODE>.
    * <P>
    * @param table A <code>Table</code> specifying the <code>Table</code> to be imported
    * @param pageWidth An <code>int</code> specifying the page width
@@ -132,7 +133,7 @@ public class RtfTable
   }
 
   /**
-   * Output the content of the <CODE>RtfTable</CODE> to an OutputStream
+   * Output the content of the <CODE>RtfTable</CODE> to an OutputStream.
    *
    * @param os The <code>OutputStream</code> that the content of the <code>RtfTable</code> is to be written to
    */
@@ -153,7 +154,7 @@ public class RtfTable
   }
 
   /**
-   * <code>RtfCell</code>s call this method to specify that a certain other cell is to be merged with it
+   * <code>RtfCell</code>s call this method to specify that a certain other cell is to be merged with it.
    *
    * @param x The column position of the cell to be merged
    * @param y The row position of the cell to be merged

@@ -58,7 +58,7 @@ import java.io.*;
 import java.awt.Color;
 
 /**
- * A Helper Class for the <CODE>RtfWriter</CODE>
+ * A Helper Class for the <CODE>RtfWriter</CODE>.
  * <P>
  * Do not use it directly
  *
@@ -150,9 +150,9 @@ public class RtfRow
     private float borderWidth = 0;
     
   /**
-   * Create a new <code>RtfRow</code>
-   * @param writer The <code>RtfWriter</code> that this <code>RtfRow</code>
-   * belongs to
+   * Create a new <code>RtfRow</code>.
+   *
+   * @param writer The <code>RtfWriter</code> that this <code>RtfRow</code> belongs to
    * @param table The <code>RtfTable</code> that created this
    * <code>RtfRow</code>
    */
@@ -164,7 +164,7 @@ public class RtfRow
     }
     
   /**
-   * Pregenerate the <code>RtfCell</code>s in this <code>RtfRow</code>
+   * Pregenerate the <code>RtfCell</code>s in this <code>RtfRow</code>.
    *
    * @param columns The number of <code>RtfCell</code>s to be generated.
    */
@@ -178,8 +178,8 @@ public class RtfRow
     }
     
   /**
-   * Import a <code>Row</code>
-   * <BR>
+   * Import a <code>Row</code>.
+   * <P>
    * All the parameters are taken from the <code>RtfTable</code> which contains
    * this <code>RtfRow</code> and they do exactely what they say
    * @param propWiths in percent   
@@ -260,7 +260,7 @@ public class RtfRow
     }
     
   /**
-   * Write the <code>RtfRow</code> to the specified <code>OutputStream</code>
+   * Write the <code>RtfRow</code> to the specified <code>OutputStream</code>.
    *
    * @param os The <code>OutputStream</code> to which this <code>RtfRow</code>
    * should be written to.
@@ -404,7 +404,7 @@ public class RtfRow
     
   /**
    * <code>RtfTable</code>s call this method from their own setMerge() to
-   * specify that a certain other cell is to be merged with it
+   * specify that a certain other cell is to be merged with it.
    *
    * @param x The column position of the cell to be merged
    * @param mergeType The merge type specifies the kind of merge to be applied
@@ -419,7 +419,7 @@ public class RtfRow
     }
     
   /*
-   * Write an Integer to the Outputstream
+   * Write an Integer to the Outputstream.
    *
    * @param out The <code>OutputStream</code> to be written to.
    * @param i The int to be written.

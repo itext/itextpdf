@@ -252,7 +252,7 @@ abstract class PdfObject {
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfNull</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     public final boolean isNull() {
@@ -262,7 +262,7 @@ abstract class PdfObject {
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfBoolean</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     public final boolean isBoolean() {
@@ -272,7 +272,7 @@ abstract class PdfObject {
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfNumber</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     public final boolean isNumber() {
@@ -282,7 +282,7 @@ abstract class PdfObject {
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfString</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     public final boolean isString() {
@@ -292,7 +292,7 @@ abstract class PdfObject {
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfName</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     final boolean isName() {
@@ -302,7 +302,7 @@ abstract class PdfObject {
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfArray</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     final boolean isArray() {
@@ -312,7 +312,7 @@ abstract class PdfObject {
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfDictionary</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     final boolean isDictionary() {
@@ -322,7 +322,7 @@ abstract class PdfObject {
 /**
  * Checks if this <CODE>PdfObject</CODE> is of the type <CODE>PdfStream</CODE>.
  *
- * @returns		<CODE>true</CODE> or <CODE>false</CODE>
+ * @return		<CODE>true</CODE> or <CODE>false</CODE>
  */
     
     final boolean isStream() {

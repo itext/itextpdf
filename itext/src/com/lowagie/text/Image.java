@@ -429,8 +429,6 @@ public abstract class Image extends Rectangle implements Element {
  *
  * @param	a byte array
  * @return	an object of type <CODE>Gif</CODE>, <CODE>Jpeg</CODE> or <CODE>Png</CODE>
- *
- * @author	Paulo Soares
  */
     
     public static Image getInstance(byte[] img) throws BadElementException, MalformedURLException, IOException {
@@ -607,8 +605,6 @@ public abstract class Image extends Rectangle implements Element {
  *
  * @param		newWidth	the new width
  * @param		newHeight	the new height
- *
- * @author		Paulo Soares
  */
     
     public void scaleAbsolute(float newWidth, float newHeight) {
@@ -649,8 +645,6 @@ public abstract class Image extends Rectangle implements Element {
  * Scale the image to a certain percentage.
  *
  * @param		percent		the scaling percentage
- *
- * @author		Paulo Soares
  */
     
     public void scalePercent(float percent) {
@@ -662,8 +656,6 @@ public abstract class Image extends Rectangle implements Element {
  *
  * @param		percentX	the scaling percentage of the width
  * @param		percentY	the scaling percentage of the height
- *
- * @author		Paulo Soares
  */
     
     public void scalePercent(float percentX, float percentY) {
@@ -691,8 +683,6 @@ public abstract class Image extends Rectangle implements Element {
  * Sets the rotation of the image in radians.
  *
  * @param		r		rotation in radians
- *
- * @author		Paulo Soares
  */
     
     public void setRotation(float r) {
@@ -710,8 +700,6 @@ public abstract class Image extends Rectangle implements Element {
  * Sets the rotation of the image in degrees.
  *
  * @param		r		rotation in degrees
- *
- * @author		Paulo Soares
  */
     
     public void setRotationDegrees(float deg) {
@@ -738,8 +726,6 @@ public abstract class Image extends Rectangle implements Element {
  * Remark: this only makes sense for Images of the type <CODE>RawImage</CODE>.
  *
  * @return		the raw data
- *
- * @author		Paulo Soares
  */
     
     public byte[] rawData() {
@@ -752,8 +738,6 @@ public abstract class Image extends Rectangle implements Element {
  * Remark: this only makes sense for Images of the type <CODE>ImgTemplate</CODE>.
  *
  * @return		the template
- *
- * @author		Paulo Soares
  */
     
     public PdfTemplate templateData() {
@@ -838,8 +822,6 @@ public abstract class Image extends Rectangle implements Element {
  * Returns <CODE>true</CODE> if the image is a <CODE>ImgRaw</CODE>-object.
  *
  * @return		a <CODE>boolean</CODE>
- *
- * @author		Paulo Soares
  */
     
     public boolean isImgRaw() {
@@ -849,8 +831,6 @@ public abstract class Image extends Rectangle implements Element {
  * Returns <CODE>true</CODE> if the image is an <CODE>ImgTemplate</CODE>-object.
  *
  * @return		a <CODE>boolean</CODE>
- *
- * @author		Paulo Soares
  */
     
     public boolean isImgTemplate() {
@@ -913,8 +893,6 @@ public abstract class Image extends Rectangle implements Element {
  * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
  *
  * @return		a colorspace value
- *
- * @author		Paulo Soares
  */
     
     public int colorspace() {
@@ -925,8 +903,6 @@ public abstract class Image extends Rectangle implements Element {
  * Returns the transformation matrix of the image.
  *
  * @return		an array [AX, AY, BX, BY, CX, CY, DX, DY]
- *
- * @author		Paulo Soares
  */
     
     public float[] matrix() {
@@ -970,8 +946,6 @@ public abstract class Image extends Rectangle implements Element {
  *
  * @param	is		the <CODE>InputStream</CODE>
  * @param	size	the number of bytes to skip
- *
- * @author		Paulo Soares
  */
     
     static public void skip(InputStream is, int size) throws IOException {
@@ -988,8 +962,6 @@ public abstract class Image extends Rectangle implements Element {
  *
  * @param        filename        a given filename
  * @return        a valid URL
- *
- * @author                Paulo Soares
  */
     
     public static URL toURL(String filename) throws MalformedURLException {
@@ -1012,8 +984,6 @@ public abstract class Image extends Rectangle implements Element {
     
 /**
  * Returns the transparency.
- *
- * @author                Paulo Soares
  */
     
     public int[] getTransparency()

@@ -146,8 +146,6 @@ public class Jpeg extends Image implements Element {
  * Constructs a <CODE>Jpeg</CODE>-object from memory.
  *
  * @param		img		the memory image
- *
- * @author		Paulo Soares
  */
     
     public Jpeg(byte[] img) throws BadElementException, IOException {
@@ -162,8 +160,6 @@ public class Jpeg extends Image implements Element {
  * @param		img			the memory image.
  * @param		width		the width you want the image to have
  * @param		height		the height you want the image to have
- *
- * @author		Paulo Soares
  */
     
     public Jpeg(byte[] img, float width, float height) throws BadElementException, IOException {

@@ -157,7 +157,6 @@ public class List implements TextElementArray {
          * the value of some <VAR>attributes</VAR>.
          *
          * @param	attributes		Some attributes
-         * @return	a <CODE>List</CODE>
          */
     
     public List(Properties attributes) {
