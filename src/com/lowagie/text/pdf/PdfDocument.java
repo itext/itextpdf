@@ -1131,6 +1131,7 @@ class PdfDocument extends Document implements DocListener {
                     // if a paragraph has to be kept together, we wrap it in a table object
                     if (paragraph.getKeepTogether()) {
                         Table table = new Table(1, 1);
+                        table.setOffset(0f);
                         table.setBorder(Table.NO_BORDER);
                         table.setWidth(100f);
                         table.setTableFitsPage(true);
@@ -1322,6 +1323,7 @@ class PdfDocument extends Document implements DocListener {
                     PdfTable table = new PdfTable((Table) element, indentLeft(), indentRight(), currentHeight > 0 ? (pagetop - currentHeight) - 6 : pagetop);
                     
                     boolean tableHasToFit = ((Table) element).hasToFitPageTable() ? table.bottom() < indentBottom() : false;
+                    if (pageEmpty) tableHasToFit = false;
                     boolean cellsHaveToFit = ((Table) element).hasToFitPageCells();
                     
                     // drawing the table
