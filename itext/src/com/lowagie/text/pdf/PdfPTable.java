@@ -1,34 +1,7 @@
 /*
- * $Id$
- * $Name$
+ * PdfPTable.java
  *
- * Copyright 2001 by Paulo Soares.
- *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Library General Public License as published
- * by the Free Software Foundation; either version 2 of the License, or any
- * later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
- * details.
- *
- * You should have received a copy of the GNU Library General Public License along
- * with this library; if not, write to the Free Foundation, Inc., 59 Temple Place,
- * Suite 330, Boston, MA 02111-1307 USA.
- *
- * If you didn't download this code from the following link, you should check if
- * you aren't using an obsolete version:
- * http://www.lowagie.com/iText/
- *
- * ir-arch Bruno Lowagie,
- * Adolf Baeyensstraat 121
- * 9040 Sint-Amandsberg
- * BELGIUM
- * tel. +32 (0)9 228.10.97
- * bruno@lowagie.com
- *
+ * Created on June 30, 2001, 6:44 PM
  */
 
 package com.lowagie.text.pdf;
@@ -38,12 +11,16 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Element;
 import com.lowagie.text.ElementListener;
 import com.lowagie.text.DocumentException;
-
+import com.lowagie.text.BadElementException;
 /**
- * This is a table that can be put at an absolute position.
+ *
+ * @author Paulo Soares (psoares@consiste.pt)
  */
- 
-public class PdfPTable implements Element {
+public class PdfPTable implements Element{
+    static final int BASECANVAS = 0;
+    static final int BACKGROUNDCANVAS = 1;
+    static final int LINECANVAS = 2;
+    static final int TEXTCANVAS = 3;
     
     protected ArrayList rows = new ArrayList();
     protected float totalHeight = 0;
@@ -54,13 +31,13 @@ public class PdfPTable implements Element {
     protected float relativeWidths[];
     protected float absoluteWidths[];
     
-/** Holds value of property headerRows. */
+    /** Holds value of property headerRows. */
     protected int headerRows;
     
-/** Holds value of property widthPercentage. */
+    /** Holds value of property widthPercentage. */
     protected float widthPercentage = 80;
     
-/** Holds value of property horizontalAlignment. */
+    /** Holds value of property horizontalAlignment. */
     private int horizontalAlignment = Element.ALIGN_CENTER;
     
     public PdfPTable(float relativeWidths[]) {
@@ -106,6 +83,24 @@ public class PdfPTable implements Element {
         }
     }
     
+    public void setWidths(float relativeWidths[]) throws DocumentException {
+        if (relativeWidths.length != this.relativeWidths.length)
+            throw new DocumentException("Wrong number of columns.");
+        this.relativeWidths = new float[relativeWidths.length];
+        System.arraycopy(relativeWidths, 0, this.relativeWidths, 0, relativeWidths.length);
+        absoluteWidths = new float[relativeWidths.length];
+        totalHeight = 0;
+        calculateWidths();
+        calculateHeights();
+    }
+
+    public void setWidths(int relativeWidths[]) throws DocumentException {
+        float tb[] = new float[relativeWidths.length];
+        for (int k = 0; k < relativeWidths.length; ++k)
+            tb[k] = relativeWidths[k];
+        setWidths(tb);
+    }
+
     private void calculateWidths() {
         if (totalWidth <= 0)
             return;
@@ -142,7 +137,7 @@ public class PdfPTable implements Element {
         return defaultCell;
     }
     
-    public void add(PdfPCell cell) {
+    public void addCell(PdfPCell cell) {
         PdfPCell ncell = new PdfPCell(cell);
         currentRow[currentRowIdx++] = ncell;
         if (currentRowIdx >= currentRow.length) {
@@ -157,19 +152,23 @@ public class PdfPTable implements Element {
         }
     }
     
-    public float writeRows(float xPos, float yPos, PdfContentByte canvas) {
-        if (totalWidth <= 0)
-            throw new RuntimeException("The width must be greater than zero.");
-        return writeSelectedRows(0, -1, xPos, yPos, canvas);
+    public void addCell(String text) {
+        addCell(new Phrase(text));
     }
     
-    public float writeRows(float xPos, float yPos, PdfContentByte lines, PdfContentByte backgr, PdfContentByte text) {
-        if (totalWidth <= 0)
-            throw new RuntimeException("The width must be greater than zero.");
-        return writeSelectedRows(0, -1, xPos, yPos, lines, backgr, text);
+    public void addCell(PdfPTable table) {
+        defaultCell.setTable(table);
+        addCell(defaultCell);
+        defaultCell.setTable(null);
     }
     
-    public float writeSelectedRows(int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte lines, PdfContentByte backgr, PdfContentByte text) {
+    public void addCell(Phrase phrase) {
+        defaultCell.setPhrase(phrase);
+        addCell(defaultCell);
+        defaultCell.setPhrase(null);
+    }
+    
+    public float writeSelectedRows(int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte[] canvases) {
         if (totalWidth <= 0)
             throw new RuntimeException("The width must be greater than zero.");
         int size = rows.size();
@@ -180,43 +179,39 @@ public class PdfPTable implements Element {
         rowEnd = Math.min(rowEnd, size);
         for (int k = rowStart; k < rowEnd; ++k) {
             PdfPRow row = (PdfPRow)rows.get(k);
-            row.writeCells(xPos, yPos, lines, backgr, text);
+            row.writeCells(xPos, yPos, canvases);
             yPos -= row.getMaxHeights();
         }
         return yPos;
     }
     
     public float writeSelectedRows(int rowStart, int rowEnd, float xPos, float yPos, PdfContentByte canvas) {
-        PdfContentByte lines = canvas.getDuplicate();
-        PdfContentByte backgr = canvas.getDuplicate();
-        PdfContentByte text = canvas.getDuplicate();
-        float y = writeSelectedRows(rowStart, rowEnd, xPos, yPos, lines, backgr, text);
+        PdfContentByte[] canvases = beginWritingRows(canvas);
+        float y = writeSelectedRows(rowStart, rowEnd, xPos, yPos, canvases);
+        endWritingRows(canvases);
+        return y;
+    }
+    
+    public static PdfContentByte[] beginWritingRows(PdfContentByte canvas) {
+        return new PdfContentByte[]{
+            canvas,
+            canvas.getDuplicate(),
+            canvas.getDuplicate(),
+            canvas.getDuplicate(),
+        };
+    }
+    
+    public static void endWritingRows(PdfContentByte[] canvases) {
+        PdfContentByte canvas = canvases[BASECANVAS];
         canvas.saveState();
-        canvas.add(backgr);
+        canvas.add(canvases[BACKGROUNDCANVAS]);
         canvas.restoreState();
         canvas.saveState();
         canvas.setLineCap(2);
         canvas.resetRGBColorStroke();
-        canvas.add(lines);
+        canvas.add(canvases[LINECANVAS]);
         canvas.restoreState();
-        canvas.add(text);
-        return y;
-    }
-    
-    public void add(String text) {
-        add(new Phrase(text));
-    }
-    
-    public void add(PdfPTable table) {
-        defaultCell.setTable(table);
-        add(defaultCell);
-        defaultCell.setTable(null);
-    }
-    
-    public void add(Phrase phrase) {
-        defaultCell.setPhrase(phrase);
-        add(defaultCell);
-        defaultCell.setPhrase(null);
+        canvas.add(canvases[TEXTCANVAS]);
     }
     
     public int size() {
@@ -234,76 +229,82 @@ public class PdfPTable implements Element {
         return row.getMaxHeights();
     }
     
-    public void deleteLastRow() {
-        int size = rows.size();
-        if (size > 0) {
-            --size;
-            if (totalWidth > 0) {
-                PdfPRow row = (PdfPRow)rows.get(size);
-                totalHeight -= row.getMaxHeights();
-            }
-            rows.remove(size);
+    public float getHeaderHeight() {
+        float total = 0;
+        int size = Math.min(rows.size(), headerRows);
+        for (int k = 0; k < size; ++k) {
+            PdfPRow row = (PdfPRow)rows.get(k);
+            total += row.getMaxHeights();
         }
+        return total;
     }
     
-/**
- * Getter for property headerRows.
- * @return Value of property headerRows.
- */
+    public boolean deleteRow(int rowNumber) {
+        if (rowNumber < 0 || rowNumber >= rows.size()) {
+            return false;
+        }
+        if (totalWidth > 0) {
+            PdfPRow row = (PdfPRow)rows.get(rowNumber);
+            totalHeight -= row.getMaxHeights();
+        }
+        rows.remove(rowNumber);
+        return true;
+    }
+    
+    public boolean deleteLastRow() {
+        return deleteRow(rows.size() - 1);
+    }
+    
+    /** Getter for property headerRows.
+     * @return Value of property headerRows.
+     */
     public int getHeaderRows() {
         return headerRows;
     }
     
-/** Setter for property headerRows.
- * @param headerRows New value of property headerRows.
- */
+    /** Setter for property headerRows.
+     * @param headerRows New value of property headerRows.
+     */
     public void setHeaderRows(int headerRows) {
+        if (headerRows < 0)
+            headerRows = 0;
         this.headerRows = headerRows;
     }
     
-/**
- * Gets all the chunks in this element.
- *
- * @return	an <CODE>ArrayList</CODE>
- */
+    /**
+     * Gets all the chunks in this element.
+     *
+     * @return	an <CODE>ArrayList</CODE>
+     */
     public ArrayList getChunks() {
         return new ArrayList();
     }
     
-/**
- * Gets the content of the text element.
- *
- * @return	a type
- */
-    public String toXml(int indent) {
-        return "";
-    }
-    
-/**
- * Gets the content of the text element.
- *
- * @return	a type
- */
+    /**
+     * Gets the content of the text element.
+     *
+     * @return	a type
+     */
     public String toString() {
         return "PdfPTable instance";
     }
     
-/**
- * Gets the type of the text element.
- *
- * @return	a type
- */
+    /**
+     * Gets the type of the text element.
+     *
+     * @return	a type
+     */
     public int type() {
         return Element.PTABLE;
     }
     
-/**
- * Processes the element by adding it (or the different parts) to an
- * <CODE>ElementListener</CODE>.
- *
- * @param	listener	an <CODE>ElementListener</CODE>
- * @return	<CODE>true</CODE> if the element was processed successfully
- */
+    /**
+     * Processes the element by adding it (or the different parts) to an
+     * <CODE>ElementListener</CODE>.
+     *
+     * @param	listener	an <CODE>ElementListener</CODE>
+     * @return	<CODE>true</CODE> if the element was processed successfully
+     */
     public boolean process(ElementListener listener) {
         try {
             return listener.add(this);
@@ -313,34 +314,30 @@ public class PdfPTable implements Element {
         }
     }
     
-/**
- * Getter for property widthPercentage.
- * @return Value of property widthPercentage.
- */
+    /** Getter for property widthPercentage.
+     * @return Value of property widthPercentage.
+     */
     public float getWidthPercentage() {
         return widthPercentage;
     }
     
-/**
- * Setter for property widthPercentage.
- * @param widthPercentage New value of property widthPercentage.
- */
+    /** Setter for property widthPercentage.
+     * @param widthPercentage New value of property widthPercentage.
+     */
     public void setWidthPercentage(float widthPercentage) {
         this.widthPercentage = widthPercentage;
     }
     
-/**
- * Getter for property horizontalAlignment.
- * @return Value of property horizontalAlignment.
- */
+    /** Getter for property horizontalAlignment.
+     * @return Value of property horizontalAlignment.
+     */
     public int getHorizontalAlignment() {
         return horizontalAlignment;
     }
     
-/**
- * Setter for property horizontalAlignment.
- * @param horizontalAlignment New value of property horizontalAlignment.
- */
+    /** Setter for property horizontalAlignment.
+     * @param horizontalAlignment New value of property horizontalAlignment.
+     */
     public void setHorizontalAlignment(int horizontalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
     }
