@@ -168,6 +168,7 @@ public class RtfCell {
         this.writer = writer;
         this.mainTable = mainTable;
         this.store = new Cell("");
+        store.setBorder(mainTable.getOriginalTable().border());
     }
 
     /**
