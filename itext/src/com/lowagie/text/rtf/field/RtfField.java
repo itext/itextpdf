@@ -434,4 +434,11 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     public void setInHeader(boolean inHeader) {
         this.inHeader = inHeader;
     }
+    
+    /**
+     * An RtfField is never empty.
+     */
+    public boolean isEmpty() {
+        return false;
+    }
 }
