@@ -63,7 +63,7 @@ class PdfTable extends Rectangle {
     private ArrayList cells;
     
 /** this is the cellpadding of the table. */
-    private float cellpadding;
+    private float cellspacing;
     
     // constructors
     
@@ -87,7 +87,7 @@ class PdfTable extends Rectangle {
         setGrayFill(table.grayFill());
         
         // initialisation of some parameters
-        this.cellpadding = table.cellpadding();
+        this.cellspacing = table.cellspacing();
         float[] positions = table.getWidths(left, right - left);
         setLeft(positions[0]);
         setRight(positions[positions.length - 1]);
@@ -102,7 +102,7 @@ class PdfTable extends Rectangle {
         int rows = table.size() + 1;
         float[] offsets = new float[rows];
         for (int i = 0; i < rows; i++) {
-            offsets[i] = top - cellpadding;
+            offsets[i] = top - cellspacing;
         }
         
         // loop over all the rows
@@ -112,10 +112,10 @@ class PdfTable extends Rectangle {
                 for(int i = 0; i < row.columns(); i++) {
                     cell = (Cell) row.getCell(i);
                     if (cell != null) {
-                        currentCell = new PdfCell(cell, rowNumber, positions[i], positions[i + cell.colspan()], offsets[rowNumber], table.cellspacing(), cellpadding);
+                        currentCell = new PdfCell(cell, rowNumber, positions[i], positions[i + cell.colspan()], offsets[rowNumber], table.cellpadding(), cellspacing);
                         try {
-                            if (offsets[rowNumber] - currentCell.height() - cellpadding < offsets[rowNumber + currentCell.rowspan()]) {
-                                offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() - cellpadding;
+                            if (offsets[rowNumber] - currentCell.height() - cellspacing < offsets[rowNumber + currentCell.rowspan()]) {
+                                offsets[rowNumber + currentCell.rowspan()] = offsets[rowNumber] - currentCell.height() - cellspacing;
                             }
                         }
                         catch(ArrayIndexOutOfBoundsException aioobe) {
@@ -145,7 +145,7 @@ class PdfTable extends Rectangle {
                 currentCell.setBottom(offsets[offsets.length - 1]);
             }
         }
-        setBottom(offsets[offsets.length - 1] - cellpadding);
+        setBottom(offsets[offsets.length - 1] - cellspacing);
     }
     
     // methods
@@ -186,7 +186,7 @@ class PdfTable extends Rectangle {
  * @return	the cellpadding
  */
     
-    float cellpadding() {
-        return cellpadding;
+    float cellspacing() {
+        return cellspacing;
     }
 }

@@ -1169,12 +1169,12 @@ class PdfDocument extends Document implements DocListener {
                             if (size > 0) {
                                 // this is the top of the headersection
                                 cell = (PdfCell) headercells.get(0);
-                                float oldTop = cell.top(-table.cellpadding());
+                                float oldTop = cell.top(-table.cellspacing());
                                 // loop over all the cells of the table header
                                 for (int i = 0; i < size; i++) {
                                     cell = (PdfCell) headercells.get(i);
                                     // calculation of the new cellpositions
-                                    newTop = indentTop() + cell.top(-table.cellpadding()) - oldTop;
+                                    newTop = indentTop() + cell.top(-table.cellspacing()) - oldTop;
                                     cell.setTop(newTop);
                                     newBottom = indentTop() + cell.bottom() - oldTop;
                                     cell.setBottom(newBottom);
@@ -1189,18 +1189,18 @@ class PdfDocument extends Document implements DocListener {
                                     text.moveText(0, cellDisplacement);
                                 }
                                 
-                                currentHeight =  indentTop() - pagetop - table.cellpadding();
-                                text.moveText(0, pagetop - indentTop() + table.cellpadding() - currentHeight);
+                                currentHeight =  indentTop() - pagetop - table.cellspacing();
+                                text.moveText(0, pagetop - indentTop() + table.cellspacing() - currentHeight);
                             }
                             oldHeight = currentHeight;
                             
                             // calculating the new positions of the table and the cells
                             table.setTop(indentTop());
-                            table.setBottom(pagetop - difference + table.bottom(table.cellpadding()));
+                            table.setBottom(pagetop - difference + table.bottom(table.cellspacing()));
                             size = cells.size();
                             for (int i = 0; i < size; i++) {
                                 cell = (PdfCell) cells.get(i);
-                                newTop = pagetop - difference + cell.top(-table.cellpadding());
+                                newTop = pagetop - difference + cell.top(-table.cellspacing());
                                 newBottom = pagetop - difference + cell.bottom();
                                 cell.setTop(newTop);
                                 cell.setBottom(newBottom);
