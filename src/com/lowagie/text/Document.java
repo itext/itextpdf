@@ -188,14 +188,6 @@ public class Document implements DocListener {
         this.marginBottom = marginBottom;
     }
     
-/**
- * Closes the <CODE>Document</CODE> when gc is invoked.
- */
-    
-    public void finalize() {
-        close();
-    }
-    
     // listener methods
     
 /**

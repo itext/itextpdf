@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -138,7 +139,7 @@ class PdfIndirectObject {
                 stream = (PdfStream)object;
         }
         catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     

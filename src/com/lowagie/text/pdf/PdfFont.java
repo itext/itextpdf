@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import java.util.ArrayList;
 import java.util.Iterator;
 import com.lowagie.text.Image;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * <CODE>PdfFont</CODE> is the Pdf Font object.
@@ -189,7 +190,7 @@ class PdfFont implements Comparable {
             font = BaseFont.createFont(fontName, BaseFont.WINANSI, false);
         }
         catch (Exception ee) {
-            throw new NullPointerException(ee.getMessage());
+            throw new ExceptionConverter(ee);
         }
     }
     

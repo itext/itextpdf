@@ -54,88 +54,96 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import java.io.IOException;
+import java.awt.Color;
 
 /**
  * Implements the form XObject.
  */
 
 public class PdfTemplate extends PdfContentByte {
-    
-/** The indirect reference to this template */
+    public final static int TYPE_TEMPLATE = 1;
+    public final static int TYPE_IMPORTED = 2;
+    public final static int TYPE_PATTERN = 3;
+    protected int type;
+    /** The indirect reference to this template */
     protected PdfIndirectReference thisReference;
     
-/** The fonts used by this template */
+    /** The fonts used by this template */
     protected PdfFontDictionary fontDictionary;
     
-/** The images and other templates used by this template */
+    /** The images and other templates used by this template */
     protected PdfXObjectDictionary xObjectDictionary;
-
-    protected PdfColorDictionary colorDictionary;    
-/** The bounding box of this template */
+    
+    protected PdfColorDictionary colorDictionary;
+    
+    protected PdfPatternDictionary patternDictionary;
+    
+    /** The bounding box of this template */
     protected Rectangle bBox = new Rectangle(0, 0);
     
-/**
- *Creates a <CODE>PdfTemplate</CODE>.
- */
+    /**
+     *Creates a <CODE>PdfTemplate</CODE>.
+     */
     
     protected PdfTemplate() {
         super(null);
+        type = TYPE_TEMPLATE;
     }
     
-/**
- * Creates new PdfTemplate
- *
- * @param wr the <CODE>PdfWriter</CODE>
- */
+    /**
+     * Creates new PdfTemplate
+     *
+     * @param wr the <CODE>PdfWriter</CODE>
+     */
     
     PdfTemplate(PdfWriter wr) {
         super(wr);
+        type = TYPE_TEMPLATE;
         fontDictionary = new PdfFontDictionary();
         xObjectDictionary = new PdfXObjectDictionary();
         colorDictionary = new PdfColorDictionary();
+        patternDictionary = new PdfPatternDictionary();
         thisReference = writer.getPdfIndirectReference();
     }
     
-/**
- * Sets the bounding width of this template.
- *
- * @param width the bounding width
- */
+    /**
+     * Sets the bounding width of this template.
+     *
+     * @param width the bounding width
+     */
     
     public void setWidth(float width) {
         bBox.setLeft(0);
         bBox.setRight(width);
     }
     
-/**
- * Sets the bounding heigth of this template.
- *
- * @param height the bounding height
- */
+    /**
+     * Sets the bounding heigth of this template.
+     *
+     * @param height the bounding height
+     */
     
     public void setHeight(float height) {
         bBox.setBottom(0);
         bBox.setTop(height);
     }
     
-/**
- * Gets the bounding width of this template.
- *
- * @return width the bounding width
- */
-    public float getWidth()
-    {
+    /**
+     * Gets the bounding width of this template.
+     *
+     * @return width the bounding width
+     */
+    public float getWidth() {
         return bBox.width();
     }
     
-/**
- * Gets the bounding heigth of this template.
- *
- * @return heigth the bounding height
- */
+    /**
+     * Gets the bounding heigth of this template.
+     *
+     * @return heigth the bounding height
+     */
     
-    public float getHeight()
-    {
+    public float getHeight() {
         return bBox.height();
     }
     
@@ -147,29 +155,30 @@ public class PdfTemplate extends PdfContentByte {
         this.bBox = bBox;
     }
     
-/**
- * Gets the indirect reference to this template.
- *
- * @return the indirect reference to this template
- */
+    /**
+     * Gets the indirect reference to this template.
+     *
+     * @return the indirect reference to this template
+     */
     
     PdfIndirectReference getIndirectReference() {
         return thisReference;
     }
     
-/**
- * Adds a template to this template.
- *
- * @param template the template
- * @param a an element of the transformation matrix
- * @param b an element of the transformation matrix
- * @param c an element of the transformation matrix
- * @param d an element of the transformation matrix
- * @param e an element of the transformation matrix
- * @param f an element of the transformation matrix
- */
+    /**
+     * Adds a template to this template.
+     *
+     * @param template the template
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     */
     
     public void addTemplate(PdfTemplate template, float a, float b, float c, float d, float e, float f) {
+        checkNoPattern(template);
         PdfName name = writer.addDirectTemplateSimple(template);
         content.append("q ");
         content.append(a).append(' ');
@@ -182,19 +191,19 @@ public class PdfTemplate extends PdfContentByte {
         xObjectDictionary.put(name, template.getIndirectReference());
     }
     
-/**
- * Adds an <CODE>Image</CODE> to this template. The positioning of the <CODE>Image</CODE>
- * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
- * use addImage(image, image_width, 0, 0, image_height, x, y).
- * @param image the <CODE>Image</CODE> object
- * @param a an element of the transformation matrix
- * @param b an element of the transformation matrix
- * @param c an element of the transformation matrix
- * @param d an element of the transformation matrix
- * @param e an element of the transformation matrix
- * @param f an element of the transformation matrix
- * @throws DocumentException on error
- */
+    /**
+     * Adds an <CODE>Image</CODE> to this template. The positioning of the <CODE>Image</CODE>
+     * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
+     * use addImage(image, image_width, 0, 0, image_height, x, y).
+     * @param image the <CODE>Image</CODE> object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @throws DocumentException on error
+     */
     
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
         try {
@@ -229,7 +238,7 @@ public class PdfTemplate extends PdfContentByte {
             throw new DocumentException(ee.getMessage());
         }
     }
-
+    
     public void setColorFill(PdfSpotColor sp, float tint) {
         state.colorDetails = writer.addSimple(sp);
         colorDictionary.put(state.colorDetails.getColorName(), state.colorDetails.getIndirectReference());
@@ -242,11 +251,59 @@ public class PdfTemplate extends PdfContentByte {
         content.append(state.colorDetails.getColorName().toPdf(null)).append(" CS ").append(tint).append(" SCN\n");
     }
     
-/**
- * Constructs the resources used by this template.
- *
- * @return the resources used by this template
- */
+    public void setPatternFill(PdfPatternPainter p) {
+        if (p.isStencil()) {
+            setPatternFill(p, p.getDefaultColor());
+            return;
+        }
+        checkWriter();
+        PdfName name = writer.addSimplePattern(p);
+        patternDictionary.put(name, p.getIndirectReference());
+        content.append(PdfName.PATTERN.toPdf(null)).append(" cs ").append(name.toPdf(null)).append(" scn\n");
+    }
+    
+    public void setPatternStroke(PdfPatternPainter p) {
+        if (p.isStencil()) {
+            setPatternStroke(p, p.getDefaultColor());
+            return;
+        }
+        checkWriter();
+        PdfName name = writer.addSimplePattern(p);
+        patternDictionary.put(name, p.getIndirectReference());
+        content.append(PdfName.PATTERN.toPdf(null)).append(" CS ").append(name.toPdf(null)).append(" SCN\n");
+    }
+
+    public void setPatternFill(PdfPatternPainter p, Color color, float tint) {
+        checkWriter();
+        if (!p.isStencil())
+            throw new RuntimeException("An uncolored pattern was expected.");
+        PdfName name = writer.addSimplePattern(p);
+        patternDictionary.put(name, p.getIndirectReference());
+        ColorDetails csDetail = writer.addSimplePatternColorspace(color);
+        colorDictionary.put(csDetail.getColorName(), csDetail.getIndirectReference());
+        content.append(csDetail.getColorName().toPdf(null)).append(" cs\n");
+        outputColorNumbers(color, tint);
+        content.append(' ').append(name.toPdf(null)).append(" scn\n");
+    }
+    
+    public void setPatternStroke(PdfPatternPainter p, Color color, float tint) {
+        checkWriter();
+        if (!p.isStencil())
+            throw new RuntimeException("An uncolored pattern was expected.");
+        PdfName name = writer.addSimplePattern(p);
+        patternDictionary.put(name, p.getIndirectReference());
+        ColorDetails csDetail = writer.addSimplePatternColorspace(color);
+        colorDictionary.put(csDetail.getColorName(), csDetail.getIndirectReference());
+        content.append(csDetail.getColorName().toPdf(null)).append(" CS\n");
+        outputColorNumbers(color, tint);
+        content.append(' ').append(name.toPdf(null)).append(" SCN\n");
+    }
+    
+    /**
+     * Constructs the resources used by this template.
+     *
+     * @return the resources used by this template
+     */
     
     PdfObject getResources() {
         PdfResources resources = new PdfResources();
@@ -261,26 +318,28 @@ public class PdfTemplate extends PdfContentByte {
         }
         if (colorDictionary.containsColorSpace())
             resources.add(colorDictionary);
+        if (patternDictionary.containsPattern())
+            resources.add(patternDictionary);
         resources.add(new PdfProcSet(procset));
         return resources;
     }
     
-/**
- * Gets the stream representing this template.
- *
- * @return the stream representing this template
- */
+    /**
+     * Gets the stream representing this template.
+     *
+     * @return the stream representing this template
+     */
     
     PdfStream getFormXObject() throws IOException {
         return new PdfFormXObject(this);
     }
     
-/**
- * Set the font and the size for the subsequent text writing.
- *
- * @param bf the font
- * @param size the font size in points
- */
+    /**
+     * Set the font and the size for the subsequent text writing.
+     *
+     * @param bf the font
+     * @param size the font size in points
+     */
     
     public void setFontAndSize(BaseFont bf, float size) {
         state.size = size;
@@ -290,11 +349,11 @@ public class PdfTemplate extends PdfContentByte {
         fontDictionary.put(name, state.fontDetails.getIndirectReference());
     }
     
-/**
- * Gets a duplicate of this <CODE>PdfTemplate</CODE>. All
- * the members are copied by reference but the buffer stays different.
- * @return a copy of this <CODE>PdfTemplate</CODE>
- */
+    /**
+     * Gets a duplicate of this <CODE>PdfTemplate</CODE>. All
+     * the members are copied by reference but the buffer stays different.
+     * @return a copy of this <CODE>PdfTemplate</CODE>
+     */
     
     public PdfContentByte getDuplicate() {
         PdfTemplate tpl = new PdfTemplate();
@@ -303,11 +362,13 @@ public class PdfTemplate extends PdfContentByte {
         tpl.thisReference = thisReference;
         tpl.fontDictionary = fontDictionary;
         tpl.xObjectDictionary = xObjectDictionary;
+        tpl.colorDictionary = colorDictionary;
+        tpl.patternDictionary = patternDictionary;
         tpl.bBox = new Rectangle(bBox);
         return tpl;
     }
     
-    public boolean isImportedPage() {
-        return false;
+    public int getType() {
+        return type;
     }
 }

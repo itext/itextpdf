@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 
 import java.security.MessageDigest;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  *
@@ -92,7 +93,8 @@ public final class PdfEncryption {
             md5 = MessageDigest.getInstance("MD5");
         }
         catch (Exception e) {
-        }
+             throw new ExceptionConverter(e);
+       }
     }
     
     public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) {

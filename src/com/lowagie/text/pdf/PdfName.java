@@ -49,6 +49,7 @@
  */
 
 package com.lowagie.text.pdf;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * <CODE>PdfName</CODE> is an object that can be used as a name in a PDF-file.
@@ -240,6 +241,9 @@ public class PdfName extends PdfObject {
     public static final PdfName FIRSTCHAR = new PdfName("/FirstChar", 0);
     
     /** This is a static final PdfName */
+    public static final PdfName FIRSTPAGE = new PdfName("/FirstPage", 0);
+    
+    /** This is a static final PdfName */
     public static final PdfName FIT = new PdfName("/Fit", 0);
     
     /** This is a static final PdfName */
@@ -363,6 +367,12 @@ public class PdfName extends PdfObject {
     public static final PdfName LASTCHAR = new PdfName("/LastChar", 0);
     
     /** This is a static final PdfName */
+    public static final PdfName LASTPAGE = new PdfName("/LastPage", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName LAUNCH = new PdfName("/Launch", 0);
+    
+    /** This is a static final PdfName */
     public static final PdfName LENGTH = new PdfName("/Length", 0);
     
     /** This is a static final PdfName */
@@ -393,13 +403,22 @@ public class PdfName extends PdfObject {
     public static final PdfName MODDATE = new PdfName("/ModDate", 0);
     
     /** This is a static final PdfName */
+    public static final PdfName N = new PdfName("/N", 0);
+    
+    /** This is a static final PdfName */
     public static final PdfName NAME = new PdfName("/Name", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName NAMED = new PdfName("/Named", 0);
     
     /** This is a static final PdfName */
     public static final PdfName NAMES = new PdfName("/Names", 0);
     
     /** This is a static final PdfName */
     public static final PdfName NEXT = new PdfName("/Next", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName NEXTPAGE = new PdfName("/NextPage", 0);
     
     /** This is a static final PdfName */
     public static final PdfName NONFULLSCREENPAGEMODE = new PdfName("/NonFullScreenPageMode", 0);
@@ -454,6 +473,9 @@ public class PdfName extends PdfObject {
     
     /** This is a static final PdfName */
     public static final PdfName PREV = new PdfName("/Prev", 0);
+    
+    /** This is a static final PdfName */
+    public static final PdfName PREVPAGE = new PdfName("/PrevPage", 0);
     
     /** This is a static final PdfName */
     public static final PdfName PROCSET = new PdfName("/ProcSet", 0);
@@ -591,6 +613,9 @@ public class PdfName extends PdfObject {
     public static final PdfName WIDTHS = new PdfName("/Widths", 0);
     
     /** This is a static final PdfName of an encoding */
+    public static final PdfName WIN = new PdfName("/Win", 0);
+    
+    /** This is a static final PdfName of an encoding */
     public static final PdfName WIN_ANSI_ENCODING = new PdfName("/WinAnsiEncoding", 0);
     
     /** This is a static final PdfName */
@@ -720,7 +745,7 @@ public class PdfName extends PdfObject {
             return new String(bytes, PdfObject.ENCODING);
         }
         catch (Exception e) {
-            return new String(bytes);
+            throw new ExceptionConverter(e);
         }
     }
 }

@@ -51,6 +51,7 @@
 package com.lowagie.text.pdf;
 
 import java.io.UnsupportedEncodingException;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * <CODE>PdfObject</CODE> is the abstract superclass of all PDF objects.
@@ -141,7 +142,7 @@ abstract class PdfObject {
             bytes = content.getBytes(ENCODING);
         }
         catch(UnsupportedEncodingException uee) {
-            bytes = content.getBytes();
+            throw new ExceptionConverter(uee);
         }
         this.type = type;
     }
@@ -198,7 +199,7 @@ abstract class PdfObject {
             return new String(toPdf(null), ENCODING);
         }
         catch (Exception e) {
-            return new String(toPdf(null));
+            throw new ExceptionConverter(e);
         }
     }
     
@@ -232,7 +233,7 @@ abstract class PdfObject {
             bytes = content.getBytes(ENCODING);
         }
         catch(UnsupportedEncodingException uee) {
-            bytes = content.getBytes();
+            throw new ExceptionConverter(uee);
         }
     }
     

@@ -67,6 +67,7 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
         this.pageNumber = pageNumber;
         thisReference = writer.getPdfIndirectReference();
         bBox = readerInstance.getReader().getPageSize(pageNumber);
+        type = TYPE_IMPORTED;
     }
 
     /** Always throws an error. This operation is not allowed.
@@ -126,13 +127,6 @@ public class PdfImportedPage extends com.lowagie.text.pdf.PdfTemplate {
     
     void throwError() {
         throw new RuntimeException("Content can not be added to a PdfImportedPage.");
-    }
-    
-    /** Always return <CODE>true</CODE>.
-     * @return always return <CODE>true</CODE>
-     */    
-    public boolean isImportedPage() {
-        return true;
     }
     
     PdfReaderInstance getPdfReaderInstance() {

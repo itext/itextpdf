@@ -57,6 +57,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.zip.DeflaterOutputStream;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -239,7 +240,7 @@ class PdfStream extends PdfObject {
             compressed = true;
         }
         catch(IOException ioe) {
-            System.err.println("The stream was not compressed: " + ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
 

@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.afm.*;
 import java.util.HashMap;
@@ -226,6 +227,7 @@ class Type1Font extends BaseFont
                         rf.close();
                     }
                     catch (Exception e) {
+                        // empty on purpose
                     }
                 }
             }
@@ -244,6 +246,7 @@ class Type1Font extends BaseFont
                         rf.close();
                     }
                     catch (Exception e) {
+                        // empty on purpose
                     }
                 }
             }
@@ -291,6 +294,7 @@ class Type1Font extends BaseFont
             }
         }
         catch (Exception e) {
+            throw new ExceptionConverter(e);
         }
         return 0;
     }
@@ -516,6 +520,7 @@ class Type1Font extends BaseFont
                     rf.close();
                 }
                 catch (Exception e) {
+                    // empty on purpose
                 }
             }
         }

@@ -68,6 +68,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Png;
 
@@ -170,6 +171,7 @@ class PdfImage extends PdfStream {
                         flateCompress();
                     }
                     catch(PdfException pe) {
+                        throw new ExceptionConverter(pe);
                     }
                 }
                 if (image.isMask())
@@ -483,6 +485,7 @@ class PdfImage extends PdfStream {
                     is.close();
                 }
                 catch (Exception ee) {
+                    // empty on purpose
                 }
             }
         }

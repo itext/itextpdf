@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
 import com.lowagie.text.DocWriter;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * <CODE>PdfDictionary</CODE> is the Pdf dictionary object.
@@ -155,7 +156,7 @@ class PdfDictionary extends PdfObject {
             return stream.toByteArray();
         }
         catch(IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     

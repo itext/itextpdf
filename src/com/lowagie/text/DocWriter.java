@@ -135,17 +135,6 @@ public abstract class DocWriter implements DocListener {
         open = true;
     }
     
-    // destructor
-    
-/**
- * Closes the <CODE>DocWriter</CODE> when gc is invoked.
- */
-    
-    public void finalize() {
-        if (open)
-            close();
-    }
-    
     // implementation of the DocListener methods
     
 /**
@@ -319,7 +308,7 @@ public abstract class DocWriter implements DocListener {
             os.close();
         }
         catch(IOException ioe) {
-            //	System.err.println("Error: " + ioe.getMessage());
+            throw new ExceptionConverter(ioe);
         }
     }
     
@@ -340,8 +329,7 @@ public abstract class DocWriter implements DocListener {
             return text.getBytes("ISO8859_1");
         }
         catch (Exception e) {
-            System.err.println("ISO8859_1 conversion error " + e.getMessage());
-            return text.getBytes();
+            throw new ExceptionConverter(e);
         }
     }
     
@@ -370,6 +358,7 @@ public abstract class DocWriter implements DocListener {
             os.flush();
         }
         catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
     }
     

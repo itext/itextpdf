@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.ExceptionConverter;
 import java.awt.Color;
 /**
  * A <CODE>PdfSpotColor</CODE> defines a ColorSpace
@@ -88,7 +89,9 @@ public class PdfSpotColor extends PdfArray {
         try {
             this.name = new PdfName(name);
             add(this.name);
-        } catch (BadPdfFormatException bfe) {}
+        } catch (BadPdfFormatException bfe) {
+            throw new ExceptionConverter(bfe);
+        }
         if (altcs instanceof ExtendedColor) {
             int type = ((ExtendedColor)altcs).type;
             switch (type) {
@@ -136,6 +139,7 @@ public class PdfSpotColor extends PdfArray {
             PdfNumber nval = new PdfNumber(1.0);
             func.put(n, nval);
         } catch (BadPdfFormatException bfe) {
+            throw new ExceptionConverter(bfe);
         }
         this.tint = tint;
         this.altcs = altcs;

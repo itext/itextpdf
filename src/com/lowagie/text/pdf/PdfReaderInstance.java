@@ -138,11 +138,13 @@ class PdfReaderInstance {
                     file.seek(stream.getOffset());
                     file.readFully(b);
                     filters = new ArrayList();
-                    if (filter.type() == PdfObject.NAME) {
-                        filters.add(filter);
-                    }
-                    else if (filter.type() == PdfObject.ARRAY) {
-                        filters = ((PRArray)filter).getArrayList();
+                    if (filter != null) {
+                        if (filter.type() == PdfObject.NAME) {
+                            filters.add(filter);
+                        }
+                        else if (filter.type() == PdfObject.ARRAY) {
+                            filters = ((PRArray)filter).getArrayList();
+                        }
                     }
                     String name;
                     for (int j = 0; j < filters.size(); ++j) {
@@ -157,6 +159,8 @@ class PdfReaderInstance {
                             throw new IOException("The filter " + name + " is not supported.");
                     }
                     bout.write(b);
+                    if (k != list.size() - 1)
+                       bout.write('\n');
                 }
             }
         }

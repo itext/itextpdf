@@ -92,9 +92,6 @@ public class Chunk implements Element {
 /** Contains some of the attributes for this Chunk. */
     private HashMap attributes;
     
-/** Key for an URL link. */
-    public static final String LINK = "LINK";
-    
 /** Key for sub/superscript. */
     public static final String SUBSUPSCRIPT = "SUBSUPSCRIPT";
     
@@ -130,6 +127,9 @@ public class Chunk implements Element {
     
 /** Key for split character. */
     public static final String SPLITCHARACTER = "SPLITCHARACTER";
+    
+/** Key for Action. */
+    public static final String ACTION = "ACTION";
     
     // constructors
     
@@ -306,13 +306,23 @@ public class Chunk implements Element {
     }
     
 /**
+ * Sets an action for this <CODE>Chunk</CODE>.
+ * @param action the action
+ * @return this <CODE>Chunk</CODE>
+ */
+    
+    public Chunk setAction(PdfAction action) {
+        return setAttribute(ACTION, action);
+    }
+    
+/**
  * Sets an anchor for this <CODE>Chunk</CODE>.
  * @param url the <CODE>URL</CODE> to link to
  * @return this <CODE>Chunk</CODE>
  */
     
     public Chunk setAnchor(URL url) {
-        return setAttribute(LINK, new PdfAction(url.toExternalForm()));
+        return setAttribute(ACTION, new PdfAction(url.toExternalForm()));
     }
     
 /**
@@ -322,7 +332,7 @@ public class Chunk implements Element {
  */
     
     public Chunk setAnchor(String url) {
-        return setAttribute(LINK, new PdfAction(url));
+        return setAttribute(ACTION, new PdfAction(url));
     }
     
 /**

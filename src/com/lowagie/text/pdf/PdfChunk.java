@@ -81,7 +81,7 @@ class PdfChunk extends PdfString implements SplitCharacter{
     private static final HashMap keysNoStroke = new HashMap();
     
     static {
-        keysAttributes.put(Chunk.LINK, null);
+        keysAttributes.put(Chunk.ACTION, null);
         keysAttributes.put(Chunk.STRIKETHRU, null);
         keysAttributes.put(Chunk.UNDERLINE, null);
         keysAttributes.put(Chunk.REMOTEGOTO, null);
@@ -262,7 +262,7 @@ class PdfChunk extends PdfString implements SplitCharacter{
         if (f.isStrikethru())
             attributes.put(Chunk.STRIKETHRU, null);
         if (action != null)
-            attributes.put(Chunk.LINK, action);
+            attributes.put(Chunk.ACTION, action);
         // the color can't be stored in a PdfFont
         noStroke.put(Chunk.COLOR, f.color());
         noStroke.put(Chunk.ENCODING, font.getFont().getEncoding());

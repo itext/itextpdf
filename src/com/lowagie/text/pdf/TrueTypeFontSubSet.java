@@ -56,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Arrays;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 
 /** Subsets a True Type font by removing the unneeded glyphs from
  * the font.
@@ -143,6 +144,7 @@ class TrueTypeFontSubSet {
                 rf.close();
             }
             catch (Exception e) {
+                // empty on purpose
             }
         }
     }
@@ -379,7 +381,7 @@ class TrueTypeFontSubSet {
             return new String(buf, PdfObject.ENCODING);
         }
         catch (Exception e) {
-            return new String(buf);
+            throw new ExceptionConverter(e);
         }
     }
     
@@ -401,7 +403,7 @@ class TrueTypeFontSubSet {
             b = s.getBytes(PdfObject.ENCODING);
         }
         catch (Exception e) {
-            b = s.getBytes();
+            throw new ExceptionConverter(e);
         }
         System.arraycopy(b, 0, outFont, fontPtr, b.length);
         fontPtr += b.length;
