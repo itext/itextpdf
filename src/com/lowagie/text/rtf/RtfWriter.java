@@ -1,4 +1,4 @@
-/**
+/*
  * $Id$
  * $Name$
  *
@@ -1287,7 +1287,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                 out.write(escape);
                 out.write(fontNumber);
                 if (list.isNumbered()) {
-                    writeInt(out, addFont(new Font(Font.TIMES_NEW_ROMAN, Font.NORMAL, 10, new Color(0, 0, 0))));
+                    writeInt(out, addFont(new Font(Font.TIMES_ROMAN, Font.NORMAL, 10, new Color(0, 0, 0))));
                 } else {
                     writeInt(out, fontNr);
                 }
@@ -1708,7 +1708,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                     os.write(delimiter);
                     os.write(fontSymbol);
                     break;
-                case Font.TIMES_NEW_ROMAN:
+                case Font.TIMES_ROMAN:
                     os.write(fontRoman);
                     os.write(escape);
                     os.write(fontCharset);
@@ -1945,7 +1945,7 @@ public class RtfWriter extends DocWriter implements DocListener {
         listoverride = new ByteArrayOutputStream();
         document.addProducer();
         document.addCreationDate();
-        addFont(new Font(Font.TIMES_NEW_ROMAN, 10, Font.NORMAL));
+        addFont(new Font(Font.TIMES_ROMAN, 10, Font.NORMAL));
         addColor(new Color(0, 0, 0));
         addColor(new Color(255, 255, 255));
         listIds = new Vector();
