@@ -398,6 +398,18 @@ public class Chunk implements Element, MarkupAttributes {
     public Chunk setTextRise(float rise) {
         return setAttribute(SUBSUPSCRIPT, new Float(rise));
     }
+    
+    /**
+     * Gets the text displacement relatiev to the baseline.
+     * @return a displacement in points
+     */
+    public float getTextRise() {
+    	if (attributes.containsKey(SUBSUPSCRIPT)) {
+    		Float f = (Float)attributes.get(SUBSUPSCRIPT);
+    		return f.floatValue();
+    	}
+    	return 0.0f;
+    }
 
     /** Sets the text rendering mode. It can outline text, simulate bold and make
      * text invisible.

@@ -2482,8 +2482,8 @@ class PdfDocument extends Document implements DocListener {
                             int cap2 = (int)ps[4];
                             if (cap2 != 0)
                                 graphics.setLineCap(cap2);
-                            graphics.moveTo(xMarker, yMarker + shift);
-                            graphics.lineTo(xMarker + width - subtract, yMarker + shift);
+                            graphics.moveTo(xMarker, yMarker + shift + chunk.getTextRise());
+                            graphics.lineTo(xMarker + width - subtract, yMarker + shift + chunk.getTextRise());
                             graphics.stroke();
                             if (scolor != null)
                                 graphics.resetGrayStroke();
@@ -2553,7 +2553,7 @@ class PdfDocument extends Document implements DocListener {
                         graphics.setColorFill((Color)bgr[0]);
                         float extra[] = (float[])bgr[1];
                         graphics.rectangle(xMarker - extra[0],
-                            yMarker + descender - extra[1],
+                            yMarker + descender - extra[1] + chunk.getTextRise(),
                             width - subtract + extra[0] + extra[2],
                             ascender - descender + extra[1] + extra[3]);
                         graphics.fill();
