@@ -88,6 +88,20 @@ public class BitsetArgument extends ToolArgument {
 	}
 	
 	/**
+	 * @see com.lowagie.tools.arguments.ToolArgument#getUsage()
+	 */
+	public String getUsage() {
+		StringBuffer buf = new StringBuffer(super.getUsage());
+		buf.append("    possible options:\n");
+		for (int i = 0; i < options.length; i++) {
+			buf.append("    - ");
+			buf.append(options[i].getText());
+			buf.append("\n");
+		}
+		return buf.toString();
+	}
+	
+	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent evt) {

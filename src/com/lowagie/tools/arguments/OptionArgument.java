@@ -164,6 +164,24 @@ public class OptionArgument extends ToolArgument {
 	}
 	
 	/**
+	 * @see com.lowagie.tools.arguments.ToolArgument#getUsage()
+	 */
+	public String getUsage() {
+		StringBuffer buf = new StringBuffer(super.getUsage());
+		buf.append("    possible options:\n");
+		Entry entry;
+		for (Iterator i = options.values().iterator(); i.hasNext(); ) {
+			entry = (Entry)i.next();
+			buf.append("    - ");
+			buf.append(entry.getValueToString());
+			buf.append(": ");
+			buf.append(entry.toString());
+			buf.append("\n");
+		}
+		return buf.toString();
+	}
+	
+	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent evt) {
