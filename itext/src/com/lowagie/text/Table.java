@@ -413,26 +413,7 @@ public class Table extends Rectangle implements Element {
         Assert.assert(isValidLocation(aCell, aLocation) == true,"Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
         
         placeCell(rows, aCell, aLocation);
-        
-        // set latest location to next valid position
-        int i, j;
-        i = aLocation.x;
-        j = aLocation.y;
-        do {
-            if ( (j + 1)  == columns ) // goto next row
-            {
-                i++;
-                j = 0;
-            }
-            else {
-                j++;
-            }
-        }
-        while (
-        (i < rows.size()) && (j < columns) && (((Row) rows.get(i)).isReserved(j) == true)
-        );
-        currentRow              = i;
-        currentColumn   = j;
+        setCurrentLocationToNextValidPosition(aLocation);
     }
     
     
@@ -546,7 +527,40 @@ public class Table extends Rectangle implements Element {
         if (aLocation == null) throw new NullPointerException("insertTable - point has null-value");
         
         Assert.assert(aLocation.y <= columns,"insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
+        int rowCount = aLocation.x + 1 - rows.size();
+        int i = 0;
+        if ( rowCount > 0  ) { //create new rows ?
+            for (; i < rowCount; i++) {
+                rows.add(new Row(columns));
+            }
+        }
         ((Row) rows.get(aLocation.x)).setElement(aTable,aLocation.y);
+        setCurrentLocationToNextValidPosition(aLocation);
+    }
+    
+/**
+ *  Sets current col/row to valid(empty) pos after addCell/Table
+ * @author  Geert Poels
+ */
+ 
+    private void setCurrentLocationToNextValidPosition(Point aLocation) {    
+        // set latest location to next valid position
+        int i, j;
+        i = aLocation.x;
+        j = aLocation.y;
+
+        do {
+            if ( (j + 1)  == columns ) { // goto next row
+                i++;
+                j = 0;
+            }
+            else {
+                j++;
+            }
+        }
+        while ((i < rows.size()) && (j < columns) && (((Row)rows.get(i)).isReserved(j) == true));
+        currentRow = i;
+        currentColumn = j;
     }
     
 /*
