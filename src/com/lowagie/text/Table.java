@@ -176,7 +176,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     // these variables contain the layout of the table
     
 /** This Empty Cell contains the DEFAULT layout of each Cell added with the method addCell(String content). */
-    private Cell defaultLayout = new Cell(true);
+    private Cell defaultLayout = new Cell();
     
 /** This is the number of the last row of the table headers. */
     private int lastHeaderRow = -1;
@@ -210,16 +210,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * Boolean to automatically fill empty cells before a table is rendered
  *  (takes CPU so may be set to false in case of certainty)
  */
-    boolean mAutoFillEmptyCells = false;
-    
-/** If true this table may not be split over two pages. */
-    boolean tableFitsPage = false;
-    
-/** If true cells may not be split over two pages. */
-    boolean cellsFitPage = false;
-    
-/** This is the offset of the table. */
-    float offset = Float.MIN_VALUE;
+    boolean mAutoFillEmptyCells = true;
     
 /** contains the attributes that are added to each odd (or even) row */
     protected Hashtable alternatingRowAttributes;
@@ -312,9 +303,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.CELLPADDING)) != null) {
             setPadding(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(ElementTags.OFFSET)) != null) {
-            setOffset(Float.valueOf(value + "f").floatValue());
-        }
         if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
             if (value.endsWith("%"))
                 setWidth(Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue());
@@ -334,12 +322,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 i++;
             }
             columns = i;
-        }
-        if ((value = (String)attributes.remove(ElementTags.TABLEFITSPAGE)) != null) {
-            tableFitsPage = new Boolean(value).booleanValue();
-        }
-        if ((value = (String)attributes.remove(ElementTags.CELLSFITPAGE)) != null) {
-            cellsFitPage = new Boolean(value).booleanValue();
         }
         if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
             setBorderWidth(Float.valueOf(value + "f").floatValue());
@@ -392,7 +374,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.valueOf(value + "f").floatValue());
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -422,7 +404,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     }
     
 /**
- * Enables/disables automatic insertion of empty cells before table is rendered. (default = false)
+ * Enables/disables automatic insertion of empty cells before table is rendered. (default = true)
  * As some people may want to create a table, fill only a couple of the cells and don't bother with
  * investigating which empty ones need to be added, this default behaviour may be very welcome.
  * Disabling is recommended to increase speed. (empty cells should be added through extra code then)
@@ -432,78 +414,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     public void setAutoFillEmptyCells(boolean aDoAutoFill) {
         mAutoFillEmptyCells = aDoAutoFill;
-    }
-   
-/**
- * Allows you to control when a page break occurs.
- * <P>
- * When a table doesn't fit a page, it is split in two parts.
- * If you want to avoid this, you should set the <VAR>tableFitsPage</VAR> value to true.
- *
- * @param   fitPage    enter true if you don't want to split cells
- */
- 
-    public void setTableFitsPage(boolean fitPage) {
-        this.tableFitsPage = fitPage;
-        if (fitPage) setCellsFitPage(true);
-    }
-
-/**
- * Allows you to control when a page break occurs.
- * <P>
- * When a cell doesn't fit a page, it is split in two parts.
- * If you want to avoid this, you should set the <VAR>cellsFitPage</VAR> value to true.
- *
- * @param   fitPage    enter true if you don't want to split cells
- */
- 
-    public void setCellsFitPage(boolean fitPage) {
-        this.cellsFitPage = fitPage;
-    }
-    
-/**
- * Checks if this <CODE>Table</CODE> has to fit a page.
- *
- * @return  true if the table may not be split
- */
- 
-    public boolean hasToFitPageTable() {
-        return tableFitsPage;
-    }
-    
-/**
- * Checks if the cells of this <CODE>Table</CODE> have to fit a page.
- *
- * @return  true if the cells may not be split
- */
- 
-    public boolean hasToFitPageCells() {
-        return cellsFitPage;
-    }
-    
-/**
- * Sets the offset of this table.
- *
- * Normally a newline is added before you add a Table object.
- * This newline uses the current leading.
- * If you want to control the space between the table and the previous
- * element yourself, you have to set the offset of this table.
- *
- * @param   offset  the space between this table and the previous object.
- */
-    
-    public void setOffset(float offset) {
-        this.offset = offset;
-    }
-    
-/**
- * Gets the offset of this table.
- *
- * @return  the space between this table and the previous element.
- */
-    
-    public float getOffset() {
-        return offset;
     }
     
 /**
@@ -550,7 +460,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     public void addCell(Cell aCell, Point aLocation) throws BadElementException {
         if (aCell == null) throw new NullPointerException("addCell - cell has null-value");
         if (aLocation == null) throw new NullPointerException("addCell - point has null-value");
-        if (aCell.isTable()) insertTable((Table)aCell.getElements().next(), aLocation);
         if (mDebug == true) {
             if (aLocation.x < 0) throw new BadElementException("row coordinate of location must be >= 0");
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
@@ -646,33 +555,19 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
 /**
  * To put a table within the existing table at the current position
- * generateTable will of course re-arrange the widths of the columns.
+ * generateTable will of course re-arrange the widths of the columns
  *
  * @param   aTable      the table you want to insert
  */
     
     public void insertTable(Table aTable) {
         if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
-        insertTable(aTable, new Point(currentRow, currentColumn));
+        insertTable(aTable, new Point(currentRow,currentColumn));
     }
     
 /**
  * To put a table within the existing table at the given position
- * generateTable will of course re-arrange the widths of the columns.
- *
- * @param       aTable  The <CODE>Table</CODE> to add
- * @param       row     The row where the <CODE>Cell</CODE> will be added
- * @param       column  The column where the <CODE>Cell</CODE> will be added
- */
-    
-    public void insertTable(Table aTable, int row, int column) {
-        if (aTable == null) throw new NullPointerException("insertTable - table has null-value");
-        insertTable(aTable, new Point(row, column));
-    }
-    
-/**
- * To put a table within the existing table at the given position
- * generateTable will of course re-arrange the widths of the columns.
+ * generateTable will of course re-arrange the widths of the columns
  *
  * @param   aTable      the table you want to insert
  * @param   aLocation   a <CODE>Point</CODE>
@@ -721,15 +616,15 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             Properties odd = new Properties();
             String name;
             String[] value;
-            for (Iterator iterator = alternatingRowAttributes.keySet().iterator(); iterator.hasNext(); ) {
+            for (Iterator iterator = Chunk.getKeySet(alternatingRowAttributes).iterator(); iterator.hasNext(); ) {
                 name = String.valueOf(iterator.next());
                 value = (String[])alternatingRowAttributes.get(name);
-                even.setProperty(name, value[0]);
-                odd.setProperty(name, value[1]);
+                even.put(name, value[0]);
+                odd.put(name, value[1]);
             }
             Row row;
             for (int i = lastHeaderRow + 1; i < rows.size(); i++) {
-                row = (Row)rows.get(i);
+                row = (Row) rows.get(i);
                 row.setMarkupAttributes(i % 2 == 0 ? even : odd);
             }
         }
@@ -1376,7 +1271,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             for (int i=0; i < rows.size(); i++) {
                 for (int j=0; j < columns; j++) {
                     if ( ((Row) rows.get(i)).isReserved(j) == false) {
-                        addCell(defaultLayout, new Point(i, j));
+                        addCell(new Cell(new Paragraph(" ")), new Point(i, j));
                     }
                 }
             }
@@ -1454,6 +1349,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 throw new RuntimeException("addCell - error in reserve");
             }
         }
+        
         row = (Row) someRows.get(aPosition.x);
         row.addElement(aCell, aPosition.y);
         
@@ -1476,7 +1372,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 row.setElement(((Row) rows.get(i)).getCell(j) ,j);
             }
             for (int j = columns; j < newColumns && i < currentRow; j++) {
-                row.setElement(defaultLayout, j);
+                row.setElement(Cell.EMPTY_CELL, j);
             }
             newRows.add(row);
         }
@@ -1775,88 +1671,4 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         value[1] = value1;
         alternatingRowAttributes.put(name, value);
     }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public float top() {
-       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public float bottom() {
-       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public float left() {
-       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public float right() {
-       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public float top(int margin) {
-       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public float bottom(int margin) {
-       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public float left(int margin) {
-       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public float right(int margin) {
-       throw new UnsupportedOperationException("Dimensions of a Table can't be calculated. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public void setTop(int value) {
-       throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public void setBottom(int value) {
-       throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public void setLeft(int value) {
-       throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
-   }
-    
-/**
- * This method throws an <CODE>UnsupportedOperationException</CODE>.
- */
-   public void setRight(int value) {
-       throw new UnsupportedOperationException("Dimensions of a Table are attributed automagically. See the FAQ.");
-   }
 }

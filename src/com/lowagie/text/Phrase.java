@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -73,9 +73,9 @@ import java.util.Set;
  * // In this example the leading is passed as a parameter
  * <STRONG>Phrase phrase2 = new Phrase(16, "this is a phrase with leading 16");</STRONG>
  * // When a Font is passed (explicitely or embedded in a chunk), the default leading = 1.5 * size of the font
- * <STRONG>Phrase phrase3 = new Phrase("this is a phrase with a red, normal font Courier, size 12", FontFactory.getFont(FontFactory.COURIER, 12, Font.NORMAL, new Color(255, 0, 0)));</STRONG>
+ * <STRONG>Phrase phrase3 = new Phrase("this is a phrase with a red, normal font Courier, size 12", new Font(Font.COURIER, 12, Font.NORMAL, new Color(255, 0, 0)));</STRONG>
  * <STRONG>Phrase phrase4 = new Phrase(new Chunk("this is a phrase"));</STRONG>
- * <STRONG>Phrase phrase5 = new Phrase(18, new Chunk("this is a phrase", FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));</STRONG>
+ * <STRONG>Phrase phrase5 = new Phrase(18, new Chunk("this is a phrase", new Font(Font.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));</STRONG>
  * </PRE></BLOCKQUOTE>
  *
  * @see		Element
@@ -221,7 +221,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public Phrase(Properties attributes) {
-        this("", FontFactory.getFont(attributes));
+        this("", new Font(attributes));
         clear();
         String value = (String)attributes.remove(ElementTags.LEADING);
         if (value != null) {
@@ -234,7 +234,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
             }
             add(chunk);
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -517,7 +517,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
  */
     public Set getMarkupAttributeNames() {
-        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+        return Chunk.getKeySet(markupAttributes);
     }
     
 /**

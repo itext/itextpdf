@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -69,15 +69,15 @@ import java.util.Set;
  * <P>
  * Example:
  * <BLOCKQUOTE><PRE>
- * Paragraph title2 = new Paragraph("This is Chapter 2", FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255)));
+ * Paragraph title2 = new Paragraph("This is Chapter 2", new Font(Font.HELVETICA, 18, Font.BOLDITALIC, new Color(0, 0, 255)));
  * Chapter chapter2 = new Chapter(title2, 2);
  * Paragraph someText = new Paragraph("This is some text");
  * chapter2.add(someText);
- * Paragraph title21 = new Paragraph("This is Section 1 in Chapter 2", FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));
+ * Paragraph title21 = new Paragraph("This is Section 1 in Chapter 2", new Font(Font.HELVETICA, 16, Font.BOLD, new Color(255, 0, 0)));
  * <STRONG>Section section1 = chapter2.addSection(title21);</STRONG>
  * Paragraph someSectionText = new Paragraph("This is some silly paragraph in a chapter and/or section. It contains some text to test the functionality of Chapters and Section.");
  * <STRONG>section1.add(someSectionText);</STRONG>
- * Paragraph title211 = new Paragraph("This is SubSection 1 in Section 1 in Chapter 2", FontFactory.getFont(FontFactory.HELVETICA, 14, Font.BOLD, new Color(255, 0, 0)));
+ * Paragraph title211 = new Paragraph("This is SubSection 1 in Section 1 in Chapter 2", new Font(Font.HELVETICA, 14, Font.BOLD, new Color(255, 0, 0)));
  * <STRONG>Section section11 = section1.addSection(40, title211, 2);<STRONG>
  * <STRONG>section11.add(someSectionText);<STRONG>
  * </PRE></BLOCKQUOTE>
@@ -417,10 +417,6 @@ public class Section extends ArrayList implements TextElementArray {
     
     public Section addSection(Properties attributes) {
         Section section = new Section(new Paragraph(""), 1);
-        String value;
-        if ((value = (String)attributes.remove(ElementTags.NUMBER)) != null) {
-            subsections = Integer.parseInt(value) - 1;
-        }
         section.set(attributes);
         add(section);
         return section;
@@ -449,7 +445,7 @@ public class Section extends ArrayList implements TextElementArray {
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
+        setMarkupAttributes(attributes);
     }
     
 /**
@@ -669,7 +665,7 @@ public class Section extends ArrayList implements TextElementArray {
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
  */
     public Set getMarkupAttributeNames() {
-        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+        return Chunk.getKeySet(markupAttributes);
     }
     
 /**

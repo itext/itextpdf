@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the “GNU LIBRARY GENERAL PUBLIC LICENSE”), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -169,7 +169,7 @@ public class List implements TextElementArray, MarkupAttributes {
         if (value == null) {
             value = "-";
         }
-        symbol = new Chunk(value, FontFactory.getFont(attributes));
+        symbol = new Chunk(value, new Font(attributes));
         
         this.numbered = false;
         if ((value = (String)attributes.remove(ElementTags.NUMBERED)) != null) {
@@ -202,7 +202,7 @@ public class List implements TextElementArray, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.valueOf(value + "f").floatValue());
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
+        setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -517,7 +517,7 @@ public class List implements TextElementArray, MarkupAttributes {
  * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
  */
     public Set getMarkupAttributeNames() {
-        return (markupAttributes == null) ? Collections.EMPTY_SET : markupAttributes.keySet();
+        return Chunk.getKeySet(markupAttributes);
     }
     
 /**
