@@ -153,39 +153,39 @@ class Type1Font extends BaseFont
             builtinFont = true;
             try {
                 String afm = null;
-                if (afmFile.equals("Courier"))
+                if (afmFile.equals(BaseFont.COURIER))
                     afm = Courier.afm;
-                else if (afmFile.equals("Courier-Bold"))
+                else if (afmFile.equals(BaseFont.COURIER_BOLD))
                     afm = CourierBold.afm;
-                else if (afmFile.equals("Courier-BoldOblique"))
+                else if (afmFile.equals(BaseFont.COURIER_BOLDOBLIQUE))
                     afm = CourierBoldOblique.afm;
-                else if (afmFile.equals("Courier-Oblique"))
+                else if (afmFile.equals(BaseFont.COURIER_OBLIQUE))
                     afm = CourierOblique.afm;
-                else if (afmFile.equals("Helvetica-Bold")) {
+                else if (afmFile.equals(BaseFont.HELVETICA_BOLD)) {
                     afm = HelveticaBold1.afm;
                     afm += HelveticaBold2.afm;
                 }
-                else if (afmFile.equals("Helvetica-BoldOblique")) {
+                else if (afmFile.equals(BaseFont.HELVETICA_BOLDOBLIQUE)) {
                     afm = HelveticaBoldOblique1.afm;
                     afm += HelveticaBoldOblique2.afm;
                 }
-                else if (afmFile.equals("Helvetica-Oblique")) {
+                else if (afmFile.equals(BaseFont.HELVETICA_OBLIQUE)) {
                     afm = HelveticaOblique1.afm;
                     afm += HelveticaOblique2.afm;
                 }
-                else if (afmFile.equals("Symbol"))
+                else if (afmFile.equals(BaseFont.SYMBOL))
                     afm = Symbol.afm;
-                else if (afmFile.equals("Times-Roman"))
+                else if (afmFile.equals(BaseFont.TIMES_ROMAN))
                     afm = TimesRoman.afm;
-                else if (afmFile.equals("Times-Bold"))
+                else if (afmFile.equals(BaseFont.TIMES_BOLD))
                     afm = TimesBold.afm;
-                else if (afmFile.equals("Times-BoldItalic"))
+                else if (afmFile.equals(BaseFont.TIMES_BOLDITALIC))
                     afm = TimesBoldItalic.afm;
-                else if (afmFile.equals("Times-Italic")) {
+                else if (afmFile.equals(BaseFont.TIMES_ITALIC)) {
                     afm = TimesItalic1.afm;
                     afm += TimesItalic2.afm;
                 }
-                else if (afmFile.equals("ZapfDingbats"))
+                else if (afmFile.equals(BaseFont.ZAPFDINGBATS))
                     afm = ZapfDingbats.afm;
                 else {
                     afm = Helvetica1.afm;

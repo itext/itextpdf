@@ -125,54 +125,54 @@ class PdfFont implements Comparable {
     
     PdfFont(String name, int f, float s, int e)
     {
-        String fontName = "Helvetica";
+        String fontName = BaseFont.HELVETICA;
         size = s;
         switch (f) {
             case COURIER:
-                fontName = "Courier";
+                fontName = BaseFont.COURIER;
                 break;
             case COURIER_BOLD:
-                fontName = "Courier-Bold";
+                fontName = BaseFont.COURIER_BOLD;
                 break;
             case COURIER_OBLIQUE:
-                fontName = "Courier-Oblique";
+                fontName = BaseFont.COURIER_OBLIQUE;
                 break;
             case COURIER_BOLDOBLIQUE:
-                fontName = "Courier-BoldOblique";
+                fontName = BaseFont.COURIER_BOLDOBLIQUE;
                 break;
             case HELVETICA:
-                fontName = "Helvetica";
+                fontName = BaseFont.HELVETICA;
                 break;
             case HELVETICA_BOLD:
-                fontName = "Helvetica-Bold";
+                fontName = BaseFont.HELVETICA_BOLD;
                 break;
             case HELVETICA_OBLIQUE:
-                fontName = "Helvetica-Oblique";
+                fontName = BaseFont.HELVETICA_OBLIQUE;
                 break;
             case HELVETICA_BOLDOBLIQUE:
-                fontName = "Helvetica-BoldOblique";
+                fontName = BaseFont.HELVETICA_BOLDOBLIQUE;
                 break;
             case SYMBOL:
-                fontName = "Symbol";
+                fontName = BaseFont.SYMBOL;
                 break;
             case TIMES_ROMAN:
-                fontName = "Times-Roman";
+                fontName = BaseFont.TIMES_ROMAN;
                 break;
             case TIMES_BOLD:
-                fontName = "Times-Bold";
+                fontName = BaseFont.TIMES_BOLD;
                 break;
             case TIMES_ITALIC:
-                fontName = "Times-Italic";
+                fontName = BaseFont.TIMES_ITALIC;
                 break;
             case TIMES_BOLDITALIC:
-                fontName = "Times-BoldItalic";
+                fontName = BaseFont.TIMES_BOLDITALIC;
                 break;
             case ZAPFDINGBATS:
-                fontName = "ZapfDingbats";
+                fontName = BaseFont.ZAPFDINGBATS;
                 break;
         }
         try {
-            font = BaseFont.createFont(fontName, "winansi", false);
+            font = BaseFont.createFont(fontName, BaseFont.WINANSI, false);
         }
         catch (Exception ee) {
             throw new NullPointerException(ee.getMessage());
