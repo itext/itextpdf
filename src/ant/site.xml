@@ -28,16 +28,16 @@
     <target name="lowagie.com" description="--> building the pages for lowagie.com">
         <mkdir dir="${itext.lowagie}" />
 		<copy todir="${itext.lowagie}/images" overwrite="no">
-			<fileset dir="${itext.xml.lowagie}/images" />
+			<fileset dir="${itext.src.lowagie}/images" />
 		</copy>
 		<copy todir="${itext.lowagie}/ant" overwrite="no">
 			<fileset dir="${itext.src}/ant" />
 		</copy>
 		<copy file="${itext.src}/build.xml" todir="${itext.lowagie}" overwrite="no" />
-		<copy file="${itext.xml.lowagie}/style.css" todir="${itext.lowagie}" overwrite="no" />
-		<copy file="${itext.xml.lowagie}/MPL-1.1.txt" todir="${itext.lowagie}" overwrite="no" />
-		<copy file="${itext.xml.lowagie}/lgpl.txt" todir="${itext.lowagie}" overwrite="no" />
-        <xslt basedir="${itext.xml.lowagie}" destdir="${itext.lowagie}" extension=".html" style="${itext.xml.lowagie}/lowagie.xsl" includes="*.xml">
+		<copy file="${itext.src.lowagie}/style.css" todir="${itext.lowagie}" overwrite="no" />
+		<copy file="${itext.src.lowagie}/MPL-1.1.txt" todir="${itext.lowagie}" overwrite="no" />
+		<copy file="${itext.src.lowagie}/lgpl.txt" todir="${itext.lowagie}" overwrite="no" />
+        <xslt basedir="${itext.src.lowagie}" destdir="${itext.lowagie}" extension=".html" style="${itext.src.lowagie}/lowagie.xsl" includes="*.xml">
 			<param name="releasenumber" expression="${releasenumber}"/>
 			<param name="releasedate" expression="${releasedate}"/>
 			<param name="earlyaccessnumber" expression="${earlyaccessnumber}"/>
@@ -52,9 +52,15 @@
 
     <target name="tutorial" description="--> building the pages for lowagie.com">
         <mkdir dir="${itext.tutorial}" />
-		<copy file="${itext.xml.tutorial}/style.css" todir="${itext.tutorial}" overwrite="no" />
+        <mkdir dir="${itext.examples}" />
+		<copy file="${itext.src.tutorial}/style.css" todir="${itext.tutorial}" overwrite="no" />
+        <copy todir="${itext.examples}" overwrite="yes">
+            <fileset dir="${itext.src.examples}">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
 		<java classname="com.lowagie.tools.BuildTutorial">
-			<arg value="${basedir}/${itext.xml.tutorial}" />
+			<arg value="${basedir}/${itext.src.tutorial}" />
 			<arg value="${basedir}/${itext.build}" />
 			<arg value="examples.xsl" />
 			<arg value="tutorial.xsl" />
@@ -63,6 +69,18 @@
     	        <pathelement location="${itext.bin}/crimson.jar" />
         	</classpath>
 		</java>
+    </target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Building and archiving the tutorial                              -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="tutorial.tar.gz" depends="tutorial" description="--> makes a tar.gz-file with the complete javadoc documentation">
+        <mkdir dir="${itext.dist}" />
+        <mkdir dir="${itext.downloads}" />
+        <tar tarfile="${itext.downloads}/tutorial.tar" basedir="${itext.build}" includes="tutorial/**, examples/**" />
+        <gzip zipfile="${itext.dist}/tutorial.tar.gz" src="${itext.downloads}/tutorial.tar" />
+        <delete file="${itext.downloads}/tutorial.tar" />
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
