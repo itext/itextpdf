@@ -2365,7 +2365,6 @@ public class PdfContentByte {
      * @param urx
      * @param ury
      * @param on
-     * @deprecated
      */
     public void drawRadioField(float llx, float lly, float urx, float ury, boolean on) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
@@ -2404,7 +2403,6 @@ public class PdfContentByte {
      * @param lly
      * @param urx
      * @param ury
-     * @deprecated
      */   
     public void drawTextField(float llx, float lly, float urx, float ury) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
@@ -2456,7 +2454,6 @@ public class PdfContentByte {
      * @param text
      * @param bf
      * @param size
-     * @deprecated
      */
     public void drawButton(float llx, float lly, float urx, float ury, String text, BaseFont bf, float size) {
         if (llx > urx) { float x = llx; llx = urx; urx = x; }
