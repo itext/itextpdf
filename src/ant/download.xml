@@ -58,8 +58,8 @@
         <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/iTextAsian.jar" dest="${itext.bin}/iTextAsian.jar" verbose="true" />
         <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/iTextAsianCmaps.jar" dest="${itext.bin}/iTextAsianCmaps.jar" verbose="true" />
         <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/servlet.jar" dest="${itext.bin}/servlet.jar" verbose="true" />
-        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/jfreechart.jar" dest="${itext.bin}/jfreechart.zip" verbose="true" />
-        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/jcommon.jar" dest="${itext.bin}/jcommon.zip" verbose="true" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/jfreechart.jar" dest="${itext.bin}/jfreechart.jar" verbose="true" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/jcommon.jar" dest="${itext.bin}/jcommon.jar" verbose="true" />
         <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/barcodefonts.zip" dest="${itext.bin}/barcodefonts.zip" verbose="true" />
     </target>
 </project>
