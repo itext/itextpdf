@@ -1,12 +1,8 @@
 /*
- * @(#)PdfDocument.java				0.39 2000/11/23
- *       release rugPdf0.10:		0.09 1999/04/04
- *               rugPdf0.20:		0.12 1999/11/30
- *               iText0.3:			0.295 2000/02/14
- *               iText0.36:			0.36 2000/08/10
- *               iText0.37:			0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -77,8 +73,6 @@ import java.util.Iterator;
  * @see		PdfWriter
  * 
  * @author  bruno@lowagie.com
- * @version 0.37 2000/10/05
- * @since   rugPdf0.10
  */
 
 class PdfDocument extends Document implements DocListener {
@@ -93,8 +87,6 @@ class PdfDocument extends Document implements DocListener {
 	 * section 6.10 (page 120-121)
 	 *
 	 * @author  bruno@lowagie.com
-	 * @version 0.39 2000/11/23
-	 * @since   rugPdf0.10
 	 */
 
 	public class PdfInfo extends PdfDictionary {
@@ -103,8 +95,6 @@ class PdfDocument extends Document implements DocListener {
 
 		/**
 		 * Construct a <CODE>PdfInfo</CODE>-object.
-		 *
-		 * @since		iText0.30
 		 */
 
 		PdfInfo() {
@@ -119,8 +109,6 @@ class PdfDocument extends Document implements DocListener {
 		 * @param		author		name of the author of the document
 		 * @param		title		title of the document
 		 * @param		subject		subject of the document
-		 *
-		 * @since		rugPdf0.10
 		 */
 
 		PdfInfo(String author, String title, String subject) {
@@ -136,8 +124,6 @@ class PdfDocument extends Document implements DocListener {
 		 * @param	title		the title of the document
 		 *
 		 * @return	<CODE>void</CODE>
-		 *
-		 * @since		iText0.30
 		 */
 
 		void addTitle(String title) {
@@ -150,8 +136,6 @@ class PdfDocument extends Document implements DocListener {
 		 * @param	subject		the subject of the document
 		 *
 		 * @return	<CODE>void</CODE>
-		 *
-		 * @since		iText0.30
 		 */
 
 		void addSubject(String subject) {
@@ -164,8 +148,6 @@ class PdfDocument extends Document implements DocListener {
 		 * @param	keywords		the keywords of the document
 		 *
 		 * @return	<CODE>void</CODE>
-		 *
-		 * @since		iText0.30
 		 */
 
 		void addKeywords(String keywords) {
@@ -178,8 +160,6 @@ class PdfDocument extends Document implements DocListener {
 		 * @param	author		the name of the author
 		 *
 		 * @return	<CODE>void</CODE>
-		 *
-		 * @since		iText0.30
 		 */
 
 		void addAuthor(String author) {
@@ -190,8 +170,6 @@ class PdfDocument extends Document implements DocListener {
 		 * Adds the name of the producer to the document.
 		 *
 		 * @return	<CODE>void</CODE>
-		 *
-		 * @since		iText0.30
 		 */
 
 		void addProducer() {
@@ -202,8 +180,6 @@ class PdfDocument extends Document implements DocListener {
 		 * Adds the date of creation to the document.
 		 *
 		 * @return	<CODE>void</CODE>
-		 *
-		 * @since		iText0.30
 		 */
 
 		void addCreationDate() {
@@ -225,8 +201,6 @@ class PdfDocument extends Document implements DocListener {
 	 * section 6.2 (page 67-71)
 	 *
 	 * @author  bruno@lowagie.com
-	 * @version 0.22 2000/02/02
-	 * @since   rugPdf0.10
 	 */
 
 	class PdfCatalog extends PdfDictionary {
@@ -237,8 +211,6 @@ class PdfDocument extends Document implements DocListener {
 		 * Constructs a <CODE>PdfCatalog</CODE>.
 		 *
 		 * @param		pages		an indirect reference to the root of the document's Pages tree.
-		 *
-		 * @since		rugPdf0.10
 		 */
 
 		PdfCatalog(PdfIndirectReference pages) {
@@ -251,8 +223,6 @@ class PdfDocument extends Document implements DocListener {
 		 *
 		 * @param		pages		an indirect reference to the root of the document's Pages tree.
 		 * @param		outlines	an indirect reference to the outline tree.
-		 *
-		 * @since		iText0.39
 		 */
 
 		PdfCatalog(PdfIndirectReference pages, PdfIndirectReference outlines) {
@@ -311,6 +281,9 @@ class PdfDocument extends Document implements DocListener {
 	/** This represents the current indentation of the PDF Elements on the bottom side. */
 	private int indentBottom = 0;
 
+	/** This checks if the page is empty. */
+	private boolean pageEmpty = true;
+
 	// resources
 
 	/** This is the size of the current Page. */
@@ -354,8 +327,6 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * Constructs a new PDF document.
-	 *
-	 * @since		iText0.30
 	 */
 
 	public PdfDocument() throws DocumentException {
@@ -372,8 +343,6 @@ class PdfDocument extends Document implements DocListener {
 	 * @param	writer		the <CODE>PdfWriter</CODE> that writes everything
 	 *                      what is added to this document to an outputstream.
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void addWriter(PdfWriter writer) throws DocumentException {
@@ -389,8 +358,6 @@ class PdfDocument extends Document implements DocListener {
 	 *
 	 * @param	pageSize	the new pagesize
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since		iText0.30
 	 */
 
 	public boolean setPageSize(Rectangle pageSize) {
@@ -402,8 +369,6 @@ class PdfDocument extends Document implements DocListener {
      * Sets the <CODE>Watermark</CODE>. 
      *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-	 *
-     * @since   iText0.31
      */
 
     public boolean add(Watermark watermark) {
@@ -413,8 +378,6 @@ class PdfDocument extends Document implements DocListener {
 
 	/**
 	 * Removes the <CODE>Watermark</CODE>.
-	 *
-	 * @since	iText0.31;
 	 */
 
 	public void removeWatermark() {
@@ -429,8 +392,6 @@ class PdfDocument extends Document implements DocListener {
 	 * @param	marginTop		the margin on the top
 	 * @param	marginBottom	the margin on the bottom
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since		iText0.30
 	 */
 
 	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom) {
@@ -445,12 +406,10 @@ class PdfDocument extends Document implements DocListener {
 	 * Makes a new page and sends it to the <CODE>PdfWriter</CODE>.
 	 *
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean newPage() throws DocumentException {
-		if (currentHeight == 0 && imageWait == null) {
+		if (pageEmpty) {
 			return false;
 		}
 		// we flush the arraylist with recently written lines
@@ -496,8 +455,6 @@ class PdfDocument extends Document implements DocListener {
 	 * to the body of the document.
 	 *
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void open() {
@@ -523,8 +480,6 @@ class PdfDocument extends Document implements DocListener {
 	 * the body. After that nothing can be written to the body anymore.
 	 *
 	 * @return	<CODE>void</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public void close() {
@@ -595,8 +550,6 @@ class PdfDocument extends Document implements DocListener {
      *
 	 * @param	font		the <CODE>PdfFont</CODE> to add
 	 * @throws	PdfException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
      */
 
     private void add(PdfFont font) throws PdfException {
@@ -611,8 +564,6 @@ class PdfDocument extends Document implements DocListener {
      *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
      */
 
     public boolean add(Element element) throws DocumentException {
@@ -682,6 +633,7 @@ class PdfDocument extends Document implements DocListener {
 						graphics.stroke();
 					}
 				}
+				pageEmpty = false;
 				break;
 
 			case Element.ANCHOR:
@@ -732,6 +684,7 @@ class PdfDocument extends Document implements DocListener {
 						annotations.add(new PdfAnnotation(beginx, indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3), indentRight() - line.widthLeft(), indentTop() - currentHeight - line.height() - (aChunk.font().size() / 3) + aChunk.font().size(), action));
 					}
 				}
+				pageEmpty = false;
 				break;
 
 			case Element.ANNOTATION:												   
@@ -740,6 +693,7 @@ class PdfDocument extends Document implements DocListener {
 				}
 				Annotation annot = (Annotation) element;
 				annotations.add(new PdfAnnotation(indentRight() - line.widthLeft(), indentTop() - currentHeight, indentRight() - line.widthLeft() + 20, indentTop() - currentHeight - 20, new PdfString(annot.title()), new PdfString(annot.content())));
+				pageEmpty = false;
 				break;
 
 			case Element.PHRASE:
@@ -852,6 +806,7 @@ class PdfDocument extends Document implements DocListener {
 			case Element.RECTANGLE:
 				Rectangle rectangle = (Rectangle) element;
 				graphics.rectangle(rectangle);
+				pageEmpty = false;
 				break;
 
 			case Element.TABLE:
@@ -993,10 +948,12 @@ class PdfDocument extends Document implements DocListener {
 			case Element.IMGRAW:
 				carriageReturn(); 
 				add((Image) element);
+				pageEmpty = false;
 				break;
 
 			case Element.GRAPHIC:
 				graphics.add((Graphic) element);
+				pageEmpty = false;
 				break;
 
 			default:
@@ -1015,8 +972,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Adds an image to the document.
 	 *
 	 * @param	image	the <CODE>Image</CODE> to add.
-	 *
-	 * @since	iText0.31
 	 */
 
 	private void add(Image image) throws PdfException, DocumentException {
@@ -1092,8 +1047,6 @@ class PdfDocument extends Document implements DocListener {
 	 * If the footer/header is set, it is printed.
 	 *
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */			
 
 	private void initPage() throws DocumentException {
@@ -1186,6 +1139,8 @@ class PdfDocument extends Document implements DocListener {
 			currentHeight = 0;
 		}
 
+		pageEmpty = true;
+
 		// if there is an image waiting to be drawn, draw it
 		try {
 			if (imageWait != null) {
@@ -1206,8 +1161,6 @@ class PdfDocument extends Document implements DocListener {
 	 * of lines and a new empty line is added.  
 	 *
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void carriageReturn() throws DocumentException {
@@ -1243,8 +1196,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Adds the current line to the list of lines and also adds an empty line.  
 	 *
 	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	private void newLine() throws DocumentException {
@@ -1260,14 +1211,12 @@ class PdfDocument extends Document implements DocListener {
 	 * Writes all the lines to the <CODE>PdfText</CODE>-object.
 	 *
 	 * @return	the displacement that was caused
-	 *
-	 * @since	iText0.30
 	 */
 
 	private int flushLines() throws DocumentException {
 
-		// checks if the ArrayList with the lines is not null or empty
-		if (lines == null || lines.size() == 0) {
+		// checks if the ArrayList with the lines is not null
+		if (lines == null) {
 			return 0;
 		}
 			 
@@ -1275,6 +1224,11 @@ class PdfDocument extends Document implements DocListener {
 		if (line != null && line.size() > 0) {
 			lines.add(line);
 			line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
+		}
+
+		// checks if the ArrayList with the lines is empty
+		if (lines.size() == 0) {
+			return 0;
 		}
 
 		// initialisation of some parameters
@@ -1357,8 +1311,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Gets the <CODE>PdfInfo</CODE>-object.
 	 *
 	 * @return	<CODE>PdfInfo</COPE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	PdfInfo getInfo() {
@@ -1369,8 +1321,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Gets the <CODE>PdfInfo</CODE>-object.
 	 *
 	 * @return	<CODE>PdfInfo</COPE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	PdfCatalog getCatalog(PdfIndirectReference pages) {
@@ -1388,8 +1338,6 @@ class PdfDocument extends Document implements DocListener {
 	 *
 	 * @param	table	the table that may or may not be added to this document
 	 * @return	a bottom value
-	 *
-	 * @since	iText0.31
 	 */
 	
 	int bottom(Table table) {
@@ -1403,8 +1351,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Gets the indentation on the left side.
 	 *
 	 * @return	a margin
-	 *
-	 * @since	iText0.30
 	 */
 
 	private int indentLeft() {
@@ -1415,8 +1361,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Gets the indentation on the right side.
 	 *
 	 * @return	a margin
-	 *
-	 * @since	iText0.30
 	 */
 
 	private int indentRight() {
@@ -1427,8 +1371,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Gets the indentation on the top side.
 	 *
 	 * @return	a margin
-	 *
-	 * @since	iText0.30
 	 */
 
 	private int indentTop() {
@@ -1439,8 +1381,6 @@ class PdfDocument extends Document implements DocListener {
 	 * Gets the indentation on the bottom side.
 	 *
 	 * @return	a margin
-	 *
-	 * @since	iText0.30
 	 */
 
 	int indentBottom() {
