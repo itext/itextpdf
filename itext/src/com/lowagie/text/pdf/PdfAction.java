@@ -60,6 +60,18 @@ public class PdfAction extends PdfDictionary {
     }
     
 /**
+ * Constructs a new <CODE>PdfAction</CODE> of Subtype URI.
+ *
+ * @param url the url to go to
+ */
+    
+    public PdfAction(String url) {
+        super(PdfName.ACTION);
+        put(PdfName.S, PdfName.URI);
+        put(PdfName.URI, new PdfString(url));
+    }
+    
+/**
  * Constructs a new <CODE>PdfAction</CODE> of Subtype GoTo.
  * @param destination the destination to go to
  */

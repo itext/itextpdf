@@ -188,7 +188,7 @@ public class Png extends Image implements Element {
     // private methods
     
 /**
- * This method checks if the image is a valid JPEG and processes some parameters.
+ * This method checks if the image is a valid PNG and processes some parameters.
  *
  * @author	Paulo Soares
  */

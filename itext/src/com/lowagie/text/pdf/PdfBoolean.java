@@ -46,7 +46,8 @@ package com.lowagie.text.pdf;
 class PdfBoolean extends PdfObject implements PdfPrintable {
     
     // static membervariables (possible values of a boolean object)
-    
+    static final PdfBoolean PDFTRUE = new PdfBoolean(true);
+    static final PdfBoolean PDFFALSE = new PdfBoolean(false);
 /** A possible value of <CODE>PdfBoolean</CODE> */
     public static final String TRUE = "true";
     

@@ -333,7 +333,7 @@ public class PdfWriter extends DocWriter {
                 stream.write(dictionary.toPdf());
                 stream.write(getISOBytes("\nstartxref\n"));
                 stream.write(getISOBytes(String.valueOf(offset)));
-                stream.write(getISOBytes("\n%%EOF"));
+                stream.write(getISOBytes("\n%%EOF\n"));
             }
             catch (IOException ioe) {
                 throw new RuntimeException("Error in PdfTrailer!  Error was: " + ioe);

@@ -67,7 +67,14 @@ class PdfIndirectObject {
     protected int type;
     
 /** The object ready to stream out */
-    ByteArrayOutputStream bytes;
+    protected ByteArrayOutputStream bytes;
+    
+    static final byte STARTOBJ[] = DocWriter.getISOBytes(" obj\n");
+    static final byte ENDOBJ[] = DocWriter.getISOBytes("\nendobj\n");
+    static final int SIZEOBJ = STARTOBJ.length + ENDOBJ.length;
+    static final PdfStream DUMMYSTREAM = new PdfStream();
+    boolean isStream = false;
+    PdfStream stream;
     
     // constructors
     
@@ -94,14 +101,19 @@ class PdfIndirectObject {
         this.number = number;
         this.generation = generation;
         type = object.type();
+        isStream = (object.type() == object.STREAM);
         try {
             bytes = new ByteArrayOutputStream();
             bytes.write(DocWriter.getISOBytes(String.valueOf(number)));
-            bytes.write(DocWriter.getISOBytes(" "));
+            bytes.write(32);
             bytes.write(DocWriter.getISOBytes(String.valueOf(generation)));
-            bytes.write(DocWriter.getISOBytes(" obj\n"));
-            bytes.write(object.toPdf());
-            bytes.write(DocWriter.getISOBytes("\nendobj\n"));
+            if (!isStream) {
+                bytes.write(STARTOBJ);
+                bytes.write(object.toPdf());
+                bytes.write(ENDOBJ);
+            }
+            else
+                stream = (PdfStream)object;
         }
         catch (IOException ioe) {
             throw new RuntimeException(ioe.getMessage());
@@ -117,7 +129,10 @@ class PdfIndirectObject {
  */
     
     public final int length() {
-        return bytes.size();
+        if (isStream)
+            return bytes.size() + SIZEOBJ + stream.getStreamLength();
+        else
+            return bytes.size();
     }
     
     
@@ -139,6 +154,13 @@ class PdfIndirectObject {
  */
     final void writeTo(OutputStream out) throws IOException
     {
-        bytes.writeTo(out);
+        if (isStream) {
+            bytes.writeTo(out);
+            out.write(STARTOBJ);
+            stream.writeTo(out);
+            out.write(ENDOBJ);
+        }
+        else
+            bytes.writeTo(out);
     }
 }
