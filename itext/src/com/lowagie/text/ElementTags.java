@@ -206,6 +206,9 @@ public class ElementTags {
     public static final String LOCALGOTO = Chunk.LOCALGOTO.toLowerCase();
     
 /** attribute of the chunk tag */
+    public static final String REMOTEGOTO = Chunk.REMOTEGOTO.toLowerCase();
+    
+/** attribute of the chunk tag */
     public static final String LOCALDESTINATION = Chunk.LOCALDESTINATION.toLowerCase();
     
 /** attribute of the chunk tag */

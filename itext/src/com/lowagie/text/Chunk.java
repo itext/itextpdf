@@ -187,6 +187,16 @@ public class Chunk implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.LOCALGOTO)) != null) {
             setLocalGoto(value);
         }
+        if ((value = (String)attributes.remove(ElementTags.REMOTEGOTO)) != null) {
+            String destination = (String) attributes.remove(ElementTags.DESTINATION);
+            String page = (String) attributes.remove(ElementTags.PAGE);
+            if (page != null) { 
+                setRemoteGoto(value, Integer.valueOf(page).intValue());
+            }
+            else if (destination != null) {
+                setRemoteGoto(value, destination);
+            }
+        }
         if ((value = (String)attributes.remove(ElementTags.LOCALDESTINATION)) != null) {
             setLocalDestination(value);
         }
