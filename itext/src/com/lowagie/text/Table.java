@@ -739,7 +739,8 @@ public class Table extends Rectangle implements Element {
  */
     
     public int endHeaders() {
-        lastHeaderRow = currentRow;
+        /* patch sep 8 2001 Francesco De Milato */
+        lastHeaderRow = currentRow - 1;
         return lastHeaderRow;
     }
     
