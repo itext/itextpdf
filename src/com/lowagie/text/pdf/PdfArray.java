@@ -100,7 +100,7 @@ class PdfArray extends PdfObject {
  * @return		an array of <CODE>byte</CODE>s
  */
     
-    public byte[] toPdf() {
+    public byte[] toPdf(PdfEncryption crypto) {
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             stream.write(DocWriter.getISOBytes("["));
@@ -109,12 +109,12 @@ class PdfArray extends PdfObject {
             PdfObject object;
             if (i.hasNext()) {
                 object = (PdfObject) i.next();
-                stream.write(object.toPdf());
+                stream.write(object.toPdf(crypto));
             }
             while (i.hasNext()) {
                 object = (PdfObject) i.next();
                 stream.write(DocWriter.getISOBytes(" "));
-                stream.write(object.toPdf());
+                stream.write(object.toPdf(crypto));
             }
             stream.write(DocWriter.getISOBytes("]"));
             

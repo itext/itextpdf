@@ -70,7 +70,7 @@ public class PdfFormXObject extends PdfStream {
  * @param		template		the template
  */
     
-    PdfFormXObject(PdfTemplate template)// throws BadPdfFormatException
+    PdfFormXObject(PdfTemplate template) // throws BadPdfFormatException
     {
         super();
         dictionary.put(PdfName.TYPE, PdfName.XOBJECT);
@@ -79,7 +79,7 @@ public class PdfFormXObject extends PdfStream {
         dictionary.put(PdfName.BBOX, new PdfRectangle(0, 0, template.getWidth(), template.getHeight()));
         dictionary.put(PdfName.FORMTYPE, ONE);
         dictionary.put(PdfName.MATRIX, MATRIX);
-        bytes = template.toPdf();
+        bytes = template.toPdf(null);
         dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
         try {flateCompress();} catch (Exception e){}
         //compress()

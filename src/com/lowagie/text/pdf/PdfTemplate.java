@@ -237,7 +237,7 @@ public class PdfTemplate extends PdfContentByte {
         state.size = size;
         Object[] obj = writer.addSimple(bf);
         PdfName name = (PdfName)obj[0];
-        content.append(name.toPdf()).append(' ').append(size).append(" Tf\n");
+        content.append(name.toPdf(null)).append(' ').append(size).append(" Tf\n");
         fontDictionary.put(name, (PdfIndirectReference)obj[1]);
     }
     

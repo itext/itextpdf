@@ -728,4 +728,8 @@ public class Document implements DocListener {
     {
         return this.pageSize;
     }
+    
+    public boolean isOpen() {
+        return open;
+    }
 }

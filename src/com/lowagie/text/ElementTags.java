@@ -373,9 +373,6 @@ public class ElementTags {
 /** the possible value of a fontstyle */
     public static final String STRIKETHRU = "strike";
     
-/** the possible value of a tag */
-    public static final String HORIZONTALRULE = "horizontalrule";
-    
     // methods
     
 /**

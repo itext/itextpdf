@@ -1,8 +1,9 @@
 /*
- * $Id$
- * $Name$
+ * @(#)PdfImage.java				0.36 2000/09/10
+ *               iText0.35*:		0.35* 2000/08/21
+ *               iText0.36:			0.36 2000/09/10
  *
- * Copyright 1999, 2000, 2001 by Bruno Lowagie.
+ * Copyright (c) 1999, 2000 Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -58,26 +59,34 @@ import com.lowagie.text.Png;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.IOException;
 
 /**
  * <CODE>PdfImage</CODE> is a <CODE>PdfStream</CODE> containing an image-<CODE>Dictionary</CODE> and -stream.
+ *
+ * @author  bruno@lowagie.com
+ * @version 0.36 2000/08/21
+ * @since   iText0.31
  */
 
 class PdfImage extends PdfStream {
-    
+
+    static final int TRANSFERSIZE = 4096;
     // membervariables
     
-/** This is the <CODE>PdfName</CODE> of the image. */
+    /** This is the <CODE>PdfName</CODE> of the image. */
     protected PdfName name = null;
     
     // constructor
     
-/**
- * Constructs a <CODE>PdfImage</CODE>-object.
- *
- * @param		Image		the <CODE>Image</CODE>-object
- */
+    /**
+     * Constructs a <CODE>PdfImage</CODE>-object.
+     *
+     * @param image the <CODE>Image</CODE>-object
+     * @param name the <CODE>PdfName</CODE> for this image
+     * @throws BadPdfFormatException on error
+     */
     
     public PdfImage(Image image, String name) throws BadPdfFormatException {
         super();
@@ -92,18 +101,8 @@ class PdfImage extends PdfStream {
             
             // Raw Image data
             if (image.isImgRaw()) {
-                switch(image.colorspace()) {
-                    case 1:
-                        dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
-                        break;
-                    case 3:
-                        dictionary.put(PdfName.COLORSPACE, PdfName.DEVICERGB);
-                        break;
-                    case 4:
-                        default:
-                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
-                }
-                dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
+                // will also have the CCITT parameters
+                int colorspace = image.colorspace();
                 int transparency[] = image.getTransparency();
                 if (transparency != null) {
                     String s = "[";
@@ -112,13 +111,47 @@ class PdfImage extends PdfStream {
                     s += "]";
                     dictionary.put(PdfName.MASK, new PdfLiteral(s));
                 }
-                
                 bytes = image.rawData();
                 dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
-                try {
-                    flateCompress();
+                int bpc = image.bpc();
+                if (bpc > 0xff) {
+                    dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
+                    dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(1));
+                    dictionary.put(PdfName.FILTER, PdfName.CCITTFAXDECODE);
+                    int k = bpc - Image.CCITTG3_1D;
+                    PdfDictionary decodeparms = new PdfDictionary();
+                    if (k != 0)
+                        decodeparms.put(PdfName.K, new PdfNumber(k));
+                    if ((colorspace & Image.CCITT_BLACKIS1) != 0)
+                        decodeparms.put(PdfName.BLACKIS1, PdfBoolean.PDFTRUE);
+                    if ((colorspace & Image.CCITT_ENCODEDBYTEALIGN) != 0)
+                        decodeparms.put(PdfName.ENCODEDBYTEALIGN, PdfBoolean.PDFTRUE);
+                    if ((colorspace & Image.CCITT_ENDOFLINE) != 0)
+                        decodeparms.put(PdfName.ENDOFLINE, PdfBoolean.PDFTRUE);
+                    if ((colorspace & Image.CCITT_ENDOFBLOCK) != 0)
+                        decodeparms.put(PdfName.ENDOFBLOCK, PdfBoolean.PDFFALSE);
+                    decodeparms.put(PdfName.COLUMNS, new PdfNumber(image.width()));
+                    decodeparms.put(PdfName.ROWS, new PdfNumber(image.height()));
+                    dictionary.put(PdfName.DECODEPARMS, decodeparms);
                 }
-                catch(PdfException pe) {
+                else {
+                    switch(colorspace) {
+                        case 1:
+                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
+                            break;
+                        case 3:
+                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICERGB);
+                            break;
+                        case 4:
+                        default:
+                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+                    }
+                    dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
+                    try {
+                        flateCompress();
+                    }
+                    catch(PdfException pe) {
+                    }
                 }
                 return;
             }
@@ -133,7 +166,7 @@ class PdfImage extends PdfStream {
                 is = new java.io.ByteArrayInputStream(image.rawData());
                 errorID = "Byte array";
             }
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            streamBytes = new ByteArrayOutputStream();
             int i = 0;
             switch(image.type()) {
                 case Image.PNG:
@@ -148,9 +181,7 @@ class PdfImage extends PdfStream {
                         int len = Png.getInt(is);
                         String marker = Png.getString(is);
                         if (Png.IDAT.equals(marker)) {
-                            for (int j = 0; j < len; j++) {
-                                stream.write(is.read());
-                            }
+                            transferBytes(is, streamBytes, len);
                             Png.getInt(is);
                         }
                         else if (Png.tRNS.equals(marker)) {
@@ -184,9 +215,7 @@ class PdfImage extends PdfStream {
                                     }
                                     break;
                             }
-                            for (int j = -4; j < len; j++) {
-                                is.read();
-                            }
+                            Image.skip(is, len + 4);
                         }
                         else if (Png.IHDR.equals(marker)) {
                             int w = Png.getInt(is);
@@ -236,14 +265,12 @@ class PdfImage extends PdfStream {
                                 while ((len--) > 0) {
                                     colortable.append_i(is.read());
                                 }
-                                colorspace.add(new PdfLiteral(PdfContentByte.escapeString(colortable.toByteArray())));
+                                colorspace.add(new PdfStringLiteral(colortable.toByteArray()));
                                 dictionary.put(PdfName.COLORSPACE, colorspace);
                                 Png.getInt(is);
                             }
                             else {
-                                for (int j = -4; j < len; j++) {
-                                    is.read();
-                                }
+                                Image.skip(is, len + 4);
                             }
                         }
                         else if (Png.IEND.equals(marker)) {
@@ -266,13 +293,16 @@ class PdfImage extends PdfStream {
                         case 3:
                             dictionary.put(PdfName.COLORSPACE, PdfName.DEVICERGB);
                             break;
-                            default:
-                                dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+                        default:
+                            dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
                     }
                     dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(8));
-                    while ((i = is.read()) >= 0) {
-                        stream.write(i);
+                    if (image.rawData() != null){
+                        bytes = image.rawData();
+                        dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+                        return;
                     }
+                    transferBytes(is, streamBytes, -1);
                     break;
                 case Image.GIF:
                     // HEADER + INFO + COLORTABLE
@@ -317,7 +347,7 @@ class PdfImage extends PdfStream {
                         colortable.append_i(is.read());	// green
                         colortable.append_i(is.read());	// blue
                     }
-                    colorspace.add(new PdfLiteral(PdfContentByte.escapeString(colortable.toByteArray())));
+                    colorspace.add(new PdfStringLiteral(colortable.toByteArray()));
                     dictionary.put(PdfName.COLORSPACE, colorspace);
                     dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(8));
                     
@@ -397,7 +427,7 @@ class PdfImage extends PdfStream {
                         bitstowrite += (code << (bitsleft - codelength + 1));
                         bitsleft -= codelength;
                         while (bitsleft < 16) {
-                            stream.write(bitstowrite >> 16);
+                            streamBytes.write(bitstowrite >> 16);
                             byteswritten++;
                             bitstowrite = (bitstowrite & 0xFFFF) << 8;
                             bitsleft += 8;
@@ -417,11 +447,10 @@ class PdfImage extends PdfStream {
                         throw new BadPdfFormatException(errorID + " is not a supported GIF-file (unexpected end of data block).");
                     }
                     break;
-                    default:
-                        throw new BadPdfFormatException(errorID + " is an unknown Image format.");
+                default:
+                    throw new BadPdfFormatException(errorID + " is an unknown Image format.");
             }
-            bytes = stream.toByteArray();
-            dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+            dictionary.put(PdfName.LENGTH, new PdfNumber(streamBytes.size()));
         }
         catch(IOException ioe) {
             throw new BadPdfFormatException(ioe.getMessage());
@@ -437,13 +466,29 @@ class PdfImage extends PdfStream {
         }
     }
     
-/**
- * Returns the <CODE>PdfName</CODE> of the image.
- *
- * @return		the name
- */
+    /**
+     * Returns the <CODE>PdfName</CODE> of the image.
+     *
+     * @return		the name
+     *
+     * @since		iText0.31
+     */
     
     public final PdfName name() {
         return name;
+    }
+    
+    static void transferBytes(InputStream in, OutputStream out, int len) throws IOException {
+        byte buffer[] = new byte[TRANSFERSIZE];
+        if (len < 0)
+            len = 0x7ffffff;
+        int size;
+        while (len != 0) {
+            size = in.read(buffer, 0, Math.min(len, TRANSFERSIZE));
+            if (size < 0)
+                return;
+            out.write(buffer, 0, size);
+            len -= size;
+        }
     }
 }

@@ -151,7 +151,7 @@ abstract class PdfObject {
  * @return		an array of <CODE>byte</CODE>
  */
     
-    public byte[] toPdf() {
+    public byte[] toPdf(PdfEncryption crypto) {
         return bytes;
     }
     
@@ -169,7 +169,7 @@ abstract class PdfObject {
  */
     
     final int pdfLength() {
-        return toPdf().length;
+        return toPdf(null).length;
     }
     
 /**
@@ -180,10 +180,10 @@ abstract class PdfObject {
     
     public String toString() {
         try {
-            return new String(toPdf(), ENCODING);
+            return new String(toPdf(null), ENCODING);
         }
         catch (Exception e) {
-            return new String(toPdf());
+            return new String(toPdf(null));
         }
     }
     
