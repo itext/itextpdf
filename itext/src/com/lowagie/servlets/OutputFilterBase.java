@@ -71,7 +71,6 @@ import javax.servlet.http.HttpServletResponse;
  *  available to said method.</p>
  *
  *  @author     Marcelo Vanzin
- *  @created    18/Abr/2002
  */
 public abstract class OutputFilterBase implements Filter {
 
@@ -213,7 +212,7 @@ public abstract class OutputFilterBase implements Filter {
      *  <p>Dumps the data from the InputStream passed to the ServletResponse's
      *  OutputStream.</p>
      *
-     *  @param  data    An input stream.
+     *  @param  in      An input stream.
      *  @param  res     A ServletResponse where to dump the data to.
      */
     protected void dump(InputStream in, ServletResponse res) 

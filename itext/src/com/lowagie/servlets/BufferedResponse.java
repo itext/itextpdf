@@ -52,11 +52,8 @@ package com.lowagie.servlets;
 
 
 //Import General
-import java.io.Writer;
 import java.io.PrintWriter;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -71,7 +68,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
  *  memory buffer.</p>
  *
  *  @author     Marcelo Vanzin
- *  @created    18/Abr/2002
  */
 public class BufferedResponse extends HttpServletResponseWrapper {
 
