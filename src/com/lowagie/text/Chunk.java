@@ -329,7 +329,7 @@ public class Chunk implements Element, MarkupAttributes {
  */
     
     public final boolean isEmpty() {
-        return (content.toString().trim().length() == 0) && (attributes == null);
+        return (content.toString().trim().length() == 0) && (content.indexOf("\n") == -1) && (attributes == null);
     }
     
 /**
