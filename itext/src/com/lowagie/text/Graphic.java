@@ -138,8 +138,8 @@ public class Graphic extends PdfContentByte implements Element {
         setRGBColorStroke(color.getRed(), color.getGreen(), color.getBlue());
         moveTo(x1, y);
         lineTo(x2, y);
-        resetRGBColorStroke();
         stroke();
+        resetRGBColorStroke();
     }
     
 /**
