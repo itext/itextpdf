@@ -98,7 +98,7 @@ public class ByteBuffer {
      * @param   size    the size of the cache
      */
     
-    public void setCacheSize(int size) {
+    public static void setCacheSize(int size) {
         if (size <= LONG_CACHE_SIZE) {
             return;
         }
@@ -106,11 +106,17 @@ public class ByteBuffer {
         for (int i = 0; i < LONG_CACHE_SIZE; i++) {
             tmpCache[i] = longCache[i];
         }
-        longCache = tmpCache[];
+        longCache = tmpCache;
         LONG_CACHE_SIZE = size;
     }
     
-    public void fillCache(int decimals) {
+    /**
+     * You can fill the cache in advance if you want to.
+     *
+     * @param   decimals
+     */
+    
+    public static void fillCache(int decimals) {
         int step = 1;
         switch(decimals) {
             case 0:
@@ -121,14 +127,15 @@ public class ByteBuffer {
                 break;
         }
         for (int i = 0; i < LONG_CACHE_SIZE; i += step) {
-            int size = (Math.log(i) / Math.log(10)) - 1;
+            if (longCache[i] != null) continue;
+            int size = (int)Math.floor(Math.log(i) / Math.log(10)) - 1;
             if (i % 100 != 0) {
                 size += 2;
             }
             if (i % 10 != 0) {
                 size++;
             }
-            cache = new byte[size];
+            byte[] cache = new byte[size];
             int add = 0;
             if (i >= 1000000) {
                 cache[add++] = bytes[(i / 1000000)];
