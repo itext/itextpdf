@@ -1,9 +1,8 @@
 /*
- * @(#)BadElementException.java		0.23 2000/02/02
- *       release iText0.3:			0.23 2000/02/14
- *       release iText0.35:         0.23 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -42,9 +41,6 @@ package com.lowagie.text;
  * @see		Table
  *
  * @author  bruno@lowagie.com
- * @version 0.23, 2000/02/02
- *
- * @since   iText0.30
  */
 
 public class BadElementException extends DocumentException {
@@ -52,9 +48,7 @@ public class BadElementException extends DocumentException {
 // constructors
 
     /**
-     * Constructs a <CODE>BadElementException</CODE> whithout a message. 
-     *
-     * @since		iText0.30
+     * Constructs a <CODE>BadElementException</CODE> whithout a message.
      */
 
     BadElementException() {
@@ -65,7 +59,6 @@ public class BadElementException extends DocumentException {
      * Constructs a <code>BadElementException</code> with a message. 
      *
      * @param		message			a message describing the exception
-     * @since		iText0.30
      */
 
     public BadElementException(String message) {

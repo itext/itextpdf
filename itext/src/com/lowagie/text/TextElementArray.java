@@ -52,7 +52,7 @@ public interface TextElementArray extends Element {
    /**
      * Adds an object to the <CODE>TextElementArray</CODE>.
      *
-	 * @paran	o			an object that has to be added
+	 * @param	o			an object that has to be added
      * @return	<CODE>true</CODE> if the addition succeeded; <CODE>false</CODE> otherwise
      */
 

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001 by Bruno Lowagie.
+ * Copyright 2001 by Bruno Lowagie, David Freels.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published

@@ -1,7 +1,8 @@
 /*
- * @(#)Annotation.java					0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -43,9 +44,6 @@ import java.util.Iterator;
  * @see		Anchor
  *
  * @author  bruno@lowagie.com
- * @version 0.37, 2000/10/05
- *
- * @since   iText0.37
  */
 
 public class Annotation implements Element {
@@ -65,8 +63,6 @@ public class Annotation implements Element {
 	 *
 	 * @param	title	the title of the annotation
 	 * @param	text	the content of the annotation
-	 *
-	 * @since	iText0.37
 	 */
 
 	public Annotation(String title, String text) {
@@ -80,7 +76,6 @@ public class Annotation implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-     * @since	iText0.37
      */
 
     public final int type() {
@@ -90,14 +85,14 @@ public class Annotation implements Element {
 // methods
 
     /**
-     * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+     * Processes the element by adding it (or the different parts) to an
+	 * <CODE>ElementListener</CODE>. 
      *
-	 * <CODE>true</CODE> if the element was processed successfully
-     * @since   iText0.37
+	 * @param	listener 	an <CODE>ElementListener</CODE>
+	 * @return	<CODE>true</CODE> if the element was processed successfully
      */
 
-    public boolean process(DocListener listener) {
+    public boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
 		}
@@ -106,13 +101,10 @@ public class Annotation implements Element {
 		}
 	}
 
-
 	/**
 	 * Gets an iterator of <CODE>Element</CODE>s. 
      *
-     * @return	an <CODE>Iterator</CODE>.
-	 *
-     * @since	iText0.37
+     * @return	an <CODE>Iterator</CODE>
 	 */
 
 	public final Iterator getElements() {
@@ -123,8 +115,6 @@ public class Annotation implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.37
      */
 
     public ArrayList getChunks() {
@@ -137,7 +127,6 @@ public class Annotation implements Element {
 	 * Returns the title of this <CODE>Annotation</CODE>.
 	 *
 	 * @return	a name
-	 * @since	iText0.37
 	 */
 
 	public final String title() {
@@ -148,7 +137,6 @@ public class Annotation implements Element {
 	 * Gets the content of this <CODE>Annotation</CODE>.
 	 *
 	 * @return	a reference
-	 * @since	iText0.37
 	 */
 
 	public final String content() {
@@ -159,7 +147,6 @@ public class Annotation implements Element {
 	 * Returns a representation of this <CODE>Anchor</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 * @since	iText0.30
 	 */
 
 	public String toString() {

@@ -1,9 +1,8 @@
 /*
- * @(#)PageSize.java				0.22 2000/02/02
- *               iText0.3:			0.22 2000/02/14
- *       release iText0.35:         0.22 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published

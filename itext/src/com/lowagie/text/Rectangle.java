@@ -1,9 +1,8 @@
 /*
- * @(#)Rectangle.java				0.24 2000/02/13
- *       release iText0.3:			0.24 2000/02/14
- *       release iText0.35:			0.24 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -46,8 +45,6 @@ import java.util.ArrayList;
  * @see		HeaderFooter
  * 
  * @author  bruno@lowagie.com
- * @version 0.24 2000/02/13
- * @since   iText0.30
  */
 
 public class Rectangle implements Element {
@@ -113,8 +110,6 @@ public class Rectangle implements Element {
 	 * @param		lly			lower left y
 	 * @param		urx			upper right x
 	 * @param		ury			upper right y
-	 *
-	 * @since		iText0.30
 	 */
 
 	public Rectangle(int llx, int lly, int urx, int ury) {
@@ -129,8 +124,6 @@ public class Rectangle implements Element {
 	 *
 	 * @param		urx			upper right x
 	 * @param		ury			upper right y
-	 *
-	 * @since		iText0.30
 	 */
 
 	public Rectangle(int urx, int ury) {
@@ -141,8 +134,6 @@ public class Rectangle implements Element {
 	 * Constructs a <CODE>Rectangle</CODE>-object.
 	 *
 	 * @para		rect	another <CODE>Rectangle</CODE>
-	 *
-	 * @since		iText0.30
 	 */
 
 	public Rectangle(Rectangle rect) {
@@ -152,14 +143,14 @@ public class Rectangle implements Element {
 // implementation of the Element interface
 
     /**
-     * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+     * Processes the element by adding it (or the different parts) to an
+	 * <CODE>ElementListener</CODE>. 
      *
-	 * <CODE>true</CODE> if the element was processed successfully
-     * @since   iText0.30
+	 * @param	listener	an <CODE>ElementListener</CODE>
+	 * @return	<CODE>true</CODE> if the element was processed successfully
      */
 
-    public boolean process(DocListener listener) {
+    public boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
 		}
@@ -172,7 +163,6 @@ public class Rectangle implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-     * @since	iText0.30
      */
 
     public int type() {
@@ -183,8 +173,6 @@ public class Rectangle implements Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public ArrayList getChunks() {
@@ -199,8 +187,6 @@ public class Rectangle implements Element {
 	 * @param	top		the top position
 	 * @param	bottom	the bottom position
 	 * @return	a <CODE>Rectangle</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Rectangle rectangle(int top, int bottom) {
@@ -225,8 +211,6 @@ public class Rectangle implements Element {
 	 * Swaps the values of urx and ury and of lly and llx in order to rotate the rectangle.
 	 * 
 	 * @return		a <CODE>Rectangle</CODE>
-	 *
-	 * @since		iText0.30
 	 */
 
 	public Rectangle rotate() {
@@ -239,9 +223,6 @@ public class Rectangle implements Element {
 	 * Sets the lower left x-coordinate.
 	 *
 	 * @param	value	the new value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setLeft(int value) {
@@ -252,9 +233,6 @@ public class Rectangle implements Element {
 	 * Sets the upper right x-coordinate.
 	 *
 	 * @param	value	the new value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setRight(int value) {
@@ -265,9 +243,6 @@ public class Rectangle implements Element {
 	 * Sets the upper right y-coordinate.
 	 *
 	 * @param	value	the new value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setTop(int value) {
@@ -278,9 +253,6 @@ public class Rectangle implements Element {
 	 * Sets the lower left y-coordinate.
 	 *
 	 * @param	value	the new value
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setBottom(int value) {
@@ -291,9 +263,6 @@ public class Rectangle implements Element {
      * Sets the border. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public void setBorder(int value) {
@@ -304,9 +273,6 @@ public class Rectangle implements Element {
      * Sets the borderwidth of the table. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public void setBorderWidth(double value) {
@@ -317,9 +283,6 @@ public class Rectangle implements Element {
      * Sets the color of the border. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public void setBorderColor(Color value) {
@@ -330,9 +293,6 @@ public class Rectangle implements Element {
      * Sets the backgroundcolor of the rectangle. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public void setBackgroundColor(Color value) {
@@ -343,9 +303,6 @@ public class Rectangle implements Element {
      * Sets the grayscale of the rectangle. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public void setGrayFill(double value) {
@@ -360,8 +317,6 @@ public class Rectangle implements Element {
 	 * Returns the lower left x-coordinate.
 	 *
 	 * @return		the lower left x-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int left() {
@@ -372,8 +327,6 @@ public class Rectangle implements Element {
 	 * Returns the upper right x-coordinate.
 	 *
 	 * @return		the upper right x-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int right() {
@@ -384,8 +337,6 @@ public class Rectangle implements Element {
 	 * Returns the upper right y-coordinate.
 	 *
 	 * @return		the upper right y-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int top() {
@@ -396,8 +347,6 @@ public class Rectangle implements Element {
 	 * Returns the lower left y-coordinate.
 	 *
 	 * @return		the lower left y-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int bottom() {
@@ -409,8 +358,6 @@ public class Rectangle implements Element {
 	 *
 	 * @param		margin		a margin
 	 * @return		the lower left x-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int left(int margin) {
@@ -422,8 +369,6 @@ public class Rectangle implements Element {
 	 *
 	 * @param		margin		a margin
 	 * @return		the upper right x-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int right(int margin) {
@@ -435,8 +380,6 @@ public class Rectangle implements Element {
 	 *
 	 * @param		margin		a margin
 	 * @return		the upper right y-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int top(int margin) {
@@ -448,8 +391,6 @@ public class Rectangle implements Element {
 	 *
 	 * @param		margin		a margin
 	 * @return		the lower left y-coordinate
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int bottom(int margin) {
@@ -460,8 +401,6 @@ public class Rectangle implements Element {
 	 * Returns the width of the rectangle.
 	 *
 	 * @return		a width
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int width() {
@@ -472,8 +411,6 @@ public class Rectangle implements Element {
 	 * Returns the height of the rectangle.
 	 *
 	 * @return		a height
-	 *
-	 * @since		iText0.30
 	 */
 
 	public int height() {
@@ -484,8 +421,6 @@ public class Rectangle implements Element {
      * Indicates if the table has borders. 
      *
      * @return	a boolean
-	 *
-     * @since	iText0.30
      */
 
     public final boolean hasBorders() {
@@ -497,8 +432,6 @@ public class Rectangle implements Element {
      *
 	 * @param	the type of border
      * @return	a boolean
-	 *
-     * @since	iText0.30
      */
 
     public final boolean hasBorder(int type) {
@@ -509,8 +442,6 @@ public class Rectangle implements Element {
 	 * Returns the exact type of the border.
 	 * 
 	 * @return	a value
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final int border() {
@@ -521,8 +452,6 @@ public class Rectangle implements Element {
      * Gets the borderwidth. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public double borderWidth() {
@@ -533,8 +462,6 @@ public class Rectangle implements Element {
      * Gets the color of the border. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final Color borderColor() {
@@ -545,8 +472,6 @@ public class Rectangle implements Element {
      * Gets the backgroundcolor. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final Color backgroundColor() {
@@ -557,8 +482,6 @@ public class Rectangle implements Element {
      * Gets the grayscale. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final double grayFill() {
@@ -569,8 +492,6 @@ public class Rectangle implements Element {
 	 * Returns a representation of this <CODE>Rectangle</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-	 * @since		iText0.30
 	 */
 
 	public String toString() {

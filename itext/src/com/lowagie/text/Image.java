@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -194,6 +194,7 @@ public abstract class Image extends Rectangle implements Element {
 			int c1 = is.read();
 			int c2 = is.read();
 			is.close();
+
             is = null;
 			if (c1 == 'G' && c2 == 'I') {
 				return new Gif(url);
@@ -414,7 +415,7 @@ public abstract class Image extends Rectangle implements Element {
 	public byte[] rawData() {
 		return rawData;
 	}
-
+	
 	/**
 	 * Checks if the <CODE>Images</CODE> has to be added at an absolute position.
 	 *
@@ -552,6 +553,7 @@ public abstract class Image extends Rectangle implements Element {
 	 * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
 	 *
 	 * @return		a colorspace value
+
 	 *
 	 * @author		Paulo Soares
 	 */
@@ -564,6 +566,7 @@ public abstract class Image extends Rectangle implements Element {
 	 * Returns the transformation matrix of the image.
 	 *
 	 * @return		an array [AX, AY, BX, BY, CX, CY, DX, DY]
+
 	 *
 	 * @author		Paulo Soares
 	 */

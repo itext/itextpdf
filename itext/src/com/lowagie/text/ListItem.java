@@ -1,9 +1,8 @@
 /*
- * @(#)ListItem.java				0.39 2000/11/23
- *       release iText0.3:			0.23 2000/02/14
- *       release iText0.35:         0.23 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -83,9 +82,6 @@ import java.util.Iterator;
  * @see	Paragraph
  *
  * @author  bruno@lowagie.com
- * @version 0.39 2000/11/23
- *
- * @since   iText0.30
  */
 
 public class ListItem extends Paragraph implements TextElementArray {
@@ -99,8 +95,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 
 	/**
 	 * Constructs a <CODE>ListItem</CODE>.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem() {
@@ -111,8 +105,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * Constructs a <CODE>ListItem</CODE> with a certain leading.
 	 *
 	 * @param	leading		the leading
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem(int leading) {
@@ -123,8 +115,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>.
 	 *
 	 * @param	chunk		a <CODE>Chunk</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem(Chunk chunk) {
@@ -135,8 +125,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>.
 	 *
 	 * @param	string		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem(String string) {
@@ -149,8 +137,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 *
 	 * @param	string		a <CODE>String</CODE>
 	 * @param	font		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem(String string, Font font) {
@@ -163,8 +149,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 *
 	 * @param	leading		the leading
 	 * @param	chunk		a <CODE>Chunk</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem(int leading, Chunk chunk) {
@@ -177,8 +161,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 *
 	 * @param	leading		the leading
 	 * @param	string		a <CODE>String</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem(int leading, String string) {
@@ -192,8 +174,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * @param	leading		the leading
 	 * @param	string		a <CODE>String</CODE>
 	 * @param	font		a <CODE>Font</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem(int leading, String string, Font font) {
@@ -204,8 +184,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Phrase</CODE>.
 	 *
 	 * @param	phrase		a <CODE>Phrase</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public ListItem(Phrase phrase) {
@@ -218,8 +196,6 @@ public class ListItem extends Paragraph implements TextElementArray {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public int type() {
@@ -232,9 +208,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * Sets the listsymbol.
 	 *
 	 * @param	symbol	a <CODE>Chunk</CODE>
-	 * @return	void
-	 *
-     * @since	iText0.30
 	 */
 
 	public final void setListSymbol(Chunk symbol) {
@@ -249,9 +222,7 @@ public class ListItem extends Paragraph implements TextElementArray {
 	/**
 	 * Returns the listsymbol.
 	 *
-	 * @return	a <CODE>Chunk</CODE>					  
-	 *
-     * @since	iText0.30
+	 * @return	a <CODE>Chunk</CODE>
 	 */
 
 	public final Chunk listSymbol() {
@@ -262,8 +233,6 @@ public class ListItem extends Paragraph implements TextElementArray {
 	 * Returns a representation of this <CODE>ListItem</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-     * @since	iText0.30
 	 */
 
 	public String toString() {

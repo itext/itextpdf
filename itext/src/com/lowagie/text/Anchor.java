@@ -1,10 +1,8 @@
 /*
- * @(#)Anchor.java					0.37 2000/10/05
- *       release iText0.3:			0.22 2000/02/14
- *       release iText0.35:         0.22 2000/08/11
- *       release iText0.37:         0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -57,9 +55,6 @@ import java.util.Iterator;
  * @see		Phrase
  *
  * @author  bruno@lowagie.com
- * @version 0.22, 2000/02/02
- *
- * @since   iText0.30
  */
 
 public class Anchor extends Phrase implements TextElementArray {
@@ -76,8 +71,6 @@ public class Anchor extends Phrase implements TextElementArray {
 
 	/**
 	 * Constructs an <CODE>Anchor</CODE> without specifying a leading.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Anchor() {
@@ -88,7 +81,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Constructs an <CODE>Anchor</CODE> with a certain leading.
 	 *
 	 * @param	leading		the leading
-	 * @since	iText0.30
 	 */
 
 	public Anchor(int leading) {
@@ -99,7 +91,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Constructs an <CODE>Anchor</CODE> with a certain <CODE>Chunk</CODE>.
 	 *
 	 * @param	chunk		a <CODE>Chunk</CODE>
-	 * @since	iText0.30
 	 */
 
 	public Anchor(Chunk chunk) {
@@ -110,7 +101,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Constructs an <CODE>Anchor</CODE> with a certain <CODE>String</CODE>.
 	 *
 	 * @param	string		a <CODE>String</CODE>
-	 * @since	iText0.30
 	 */
 
 	public Anchor(String string) {
@@ -123,7 +113,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 *
 	 * @param	string		a <CODE>String</CODE>
 	 * @param	font		a <CODE>Font</CODE>
-	 * @since	iText0.30
 	 */
 
 	public Anchor(String string, Font font) {
@@ -136,7 +125,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 *
 	 * @param	leading		the leading
 	 * @param	chunk		a <CODE>Chunk</CODE>
-	 * @since	iText0.30
 	 */
 
 	public Anchor(int leading, Chunk chunk) {
@@ -149,7 +137,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 *
 	 * @param	leading		the leading
 	 * @param	string		a <CODE>String</CODE>
-	 * @since	iText0.30
 	 */
 
 	public Anchor(int leading, String string) {
@@ -163,7 +150,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * @param	leading		the leading
 	 * @param	string		a <CODE>String</CODE>
 	 * @param	font		a <CODE>Font</CODE>
-	 * @since	iText0.30
 	 */
 
 	public Anchor(int leading, String string, Font font) {
@@ -176,7 +162,6 @@ public class Anchor extends Phrase implements TextElementArray {
      * Gets the type of the text element. 
      *
      * @return	a type
-     * @since	iText0.30
      */
 
     public final int type() {
@@ -188,9 +173,7 @@ public class Anchor extends Phrase implements TextElementArray {
 	/**
 	 * Gets an iterator of <CODE>Element</CODE>s. 
      *
-     * @return	an <CODE>Iterator</CODE>.
-	 *
-     * @since	iText0.37
+     * @return	an <CODE>Iterator</CODE>
 	 */
 
 	// suggestion by by Curt Thompson
@@ -202,8 +185,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Sets the name of this <CODE>Anchor</CODE>.
 	 *
 	 * @param	name		a new name
-	 * @return	<CODE>void</CODE>
-	 * @since	iText0.30
 	 */
 
 	public final void setName(String name) {
@@ -214,8 +195,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Sets the reference of this <CODE>Anchor</CODE>.
 	 *
 	 * @param	reference		a new reference
-	 * @return	<CODE>void</CODE>
-	 * @since	iText0.30
 	 */
 
 	public final void setReference(String reference) {
@@ -228,7 +207,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Returns the name of this <CODE>Anchor</CODE>.
 	 *
 	 * @return	a name
-	 * @since	iText0.30
 	 */
 
 	public final String name() {
@@ -239,7 +217,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Gets the reference of this <CODE>Anchor</CODE>.
 	 *
 	 * @return	a reference
-	 * @since	iText0.30
 	 */
 
 	public final String reference() {
@@ -250,7 +227,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Gets the reference of this <CODE>Anchor</CODE>.
 	 *
 	 * @return	an <CODE>URL</CODE>
-	 * @since	iText0.37
 	 */
 
 	public final URL url() {
@@ -266,7 +242,6 @@ public class Anchor extends Phrase implements TextElementArray {
 	 * Returns a representation of this <CODE>Anchor</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 * @since	iText0.30
 	 */
 
 	public String toString() {

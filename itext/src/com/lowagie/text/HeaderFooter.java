@@ -1,9 +1,8 @@
 /*
- * @(#)Header.java					0.23 2000/02/02
- *       release iText0.3:			0.23 2000/02/14
- *       release iText0.35:         0.23 2000/08/11
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -52,9 +51,6 @@ import com.lowagie.text.Phrase;
  * </PRE></BLOCKQUOTE>
  *
  * @author  bruno@lowagie.com
- * @version 0.23 2000/02/02
- *
- * @since   iText0.30
  */
 
 public class HeaderFooter extends Rectangle {
@@ -83,8 +79,6 @@ public class HeaderFooter extends Rectangle {
 	 *
 	 * @param	before		the <CODE>Phrase</CODE> before the pagenumber
 	 * @param	after		the <CODE>Phrase</CODE> before the pagenumber
-	 *
-	 * @since	iText0.30
 	 */
 
 	public HeaderFooter(Phrase before, Phrase after) {
@@ -102,8 +96,6 @@ public class HeaderFooter extends Rectangle {
 	 *
 	 * @param	before		the <CODE>Phrase</CODE> before the pagenumber
 	 * @param	numbered	<CODE>true</CODE> if the page has to be numbered
-	 *
-	 * @since	iText0.30
 	 */
 
 	public HeaderFooter(Phrase before, boolean numbered) {
@@ -121,9 +113,6 @@ public class HeaderFooter extends Rectangle {
 	 * Sets the page number.
 	 *
 	 * @param		pageN		the new page number
-	 * @return		<CODE>void</CODE>
-	 *
-	 * @since		iText0.30
 	 */
 
 	public final void setPageNumber(int pageN) {
@@ -134,9 +123,6 @@ public class HeaderFooter extends Rectangle {
 	 * Sets the alignment.
 	 *
 	 * @param		alignment	the new alignment
-	 * @return		<CODE>void</CODE>
-	 *
-	 * @since		iText0.30
 	 */
 
 	public final void setAlignment(int alignment) {
@@ -149,8 +135,6 @@ public class HeaderFooter extends Rectangle {
 	 * Gets the <CODE>Paragraph</CODE> that can be used as header or footer.
 	 *
 	 * @return		a <CODE>Paragraph</CODE>
-	 *
-	 * @since		iText0.30
 	 */
 
 	public final Paragraph paragraph() {
@@ -169,8 +153,6 @@ public class HeaderFooter extends Rectangle {
 	 * Returns a representation of this <CODE>Section</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public String toString() {

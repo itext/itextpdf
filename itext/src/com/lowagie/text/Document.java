@@ -1,11 +1,8 @@
 /*
- * @(#)Document.java				0.37 2000/10/05
- *       release iText0.3:			0.26 2000/02/14
- *       release iText0.35:			0.33 2000/08/11
- *       release iText0.36:			0.36 2000/09/08
- *       release iText0.37:			0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -87,9 +84,6 @@ import java.util.Date;
  * </PRE></BLOCKQUOTE>
  *
  * @author  bruno@lowagie.com
- * @version 0.37, 2000/10/05
- *
- * @since   iText0.30
  */
 
 public class Document implements DocListener {
@@ -140,8 +134,6 @@ public class Document implements DocListener {
 
 	/**
 	 * Constructs a new <CODE>Document</CODE>-object.
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Document() {
@@ -152,8 +144,6 @@ public class Document implements DocListener {
 	 * Constructs a new <CODE>Document</CODE>-object.
 	 *
 	 * @param	pageSize	the pageSize
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Document(Rectangle pageSize) {
@@ -168,8 +158,6 @@ public class Document implements DocListener {
 	 * @param	marginRight		the margin on the right
 	 * @param	marginTop		the margin on the top
 	 * @param	marginBottom	the margin on the bottom
-	 *
-	 * @since	iText0.30
 	 */
 
 	public Document(Rectangle pageSize, int marginLeft, int marginRight, int marginTop, int marginBottom) {
@@ -182,8 +170,6 @@ public class Document implements DocListener {
 
 	/**
 	 * Closes the <CODE>Document</CODE> when gc is invoked.
-	 *
-     * @since   iText0.30
 	 */
 
 	public void finalize() {
@@ -196,9 +182,6 @@ public class Document implements DocListener {
 	 * Adds a <CODE>DocListener</CODE> to the <CODE>Document</CODE>.
 	 *
 	 * @param	listener	the new DocListener.
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void addDocListener(DocListener listener) {
@@ -209,9 +192,6 @@ public class Document implements DocListener {
 	 * Removes a <CODE>DocListener</CODE> from the <CODE>Document</CODE>.
 	 *
 	 * @param	listener	the DocListener that has to be removed.
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public final void removeDocListener(DocListener listener) {
@@ -225,8 +205,6 @@ public class Document implements DocListener {
      *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
      */
 
     public boolean add(Element element) throws DocumentException {
@@ -239,7 +217,9 @@ public class Document implements DocListener {
 				type == Element.PHRASE ||
 				type == Element.PARAGRAPH ||
 				type == Element.TABLE ||
+
 				type == Element.ANCHOR ||
+
 				type == Element.ANNOTATION ||
 				type == Element.CHAPTER ||
 				type == Element.SECTION ||
@@ -248,7 +228,9 @@ public class Document implements DocListener {
 				type == Element.RECTANGLE ||
 				type == Element.PNG ||
 				type == Element.JPEG ||
+
 				type == Element.GIF ||
+
 				type == Element.IMGRAW ||
 				type == Element.GRAPHIC)) {
 				throw new DocumentException("The document is open; you can only add Elements with content.");
@@ -280,10 +262,6 @@ public class Document implements DocListener {
 	 * Once the document is opened, you can't write any Header- or Meta-information
 	 * anymore. You have to open the document before you can begin to add content
 	 * to the body of the document.
-	 *
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void open() {
@@ -304,8 +282,6 @@ public class Document implements DocListener {
 	 *
 	 * @param	pageSize	the new pagesize
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean setPageSize(Rectangle pageSize) {
@@ -322,8 +298,6 @@ public class Document implements DocListener {
      * Sets the <CODE>Watermark</CODE>. 
      *
 	 * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-	 *
-     * @since   iText0.31
      */
 
     public boolean add(Watermark watermark) {
@@ -338,8 +312,6 @@ public class Document implements DocListener {
 
 	/**
 	 * Removes the <CODE>Watermark</CODE>.
-	 *
-	 * @since	iText0.31;
 	 */
 
 	public void removeWatermark() {
@@ -359,8 +331,6 @@ public class Document implements DocListener {
 	 * @param	marginTop		the margin on the top
 	 * @param	marginBottom	the margin on the bottom
 	 * @return	a <CODE>boolean</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean setMargins(int marginLeft, int marginRight, int marginTop, int marginBottom) {
@@ -381,8 +351,6 @@ public class Document implements DocListener {
      *
 	 * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
 	 * @throws	DocumentException	when a document isn't open yet, or has been closed
-	 *
-     * @since   iText0.30
      */
 
     public boolean newPage() throws DocumentException {
@@ -401,9 +369,6 @@ public class Document implements DocListener {
 	 * Changes the header of this document.
 	 * 
 	 * @param	header		the new header
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setHeader(HeaderFooter header) {
@@ -419,9 +384,6 @@ public class Document implements DocListener {
 	 * Resets the header of this document.
 	 * 
 	 * @param	header		the new header
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void resetHeader() {
@@ -437,9 +399,6 @@ public class Document implements DocListener {
 	 * Changes the footer of this document.
 	 * 
 	 * @param	footer		the new footer
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setFooter(HeaderFooter footer) {
@@ -453,10 +412,6 @@ public class Document implements DocListener {
 
 	/**
 	 * Resets the footer of this document.
-	 *
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void resetFooter() {
@@ -470,10 +425,6 @@ public class Document implements DocListener {
 	
 	/**
 	 * Sets the page number to 0.
-	 *
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void resetPageCount() {
@@ -489,9 +440,6 @@ public class Document implements DocListener {
 	 * Sets the page number.
 	 *
 	 * @param	pageN		the new page number
-	 * @return	<CODE>void</CODE>
-	 *
-	 * @since	iText0.30
 	 */
 
 	public void setPageCount(int pageN) {
@@ -520,10 +468,6 @@ public class Document implements DocListener {
 	 * <P>
 	 * Once all the content has been written in the body, you have to close
 	 * the body. After that nothing can be written to the body anymore.
-	 *
-	 * @return	<CODE>void</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public void close() {
@@ -546,8 +490,6 @@ public class Document implements DocListener {
 	 * @param	name	the name of the header
 	 * @param	content	the content of the header
 	 * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
-	 *
-	 * @since	iText0.30	
 	 */
 
 	public boolean addHeader(String name, String content) {
@@ -564,8 +506,6 @@ public class Document implements DocListener {
 	 *
 	 * @param	title	the title
 	 * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean addTitle(String title) {
@@ -582,8 +522,6 @@ public class Document implements DocListener {
 	 *
 	 * @param	subject		the subject
 	 * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean addSubject(String subject) {
@@ -600,8 +538,6 @@ public class Document implements DocListener {
 	 *
 	 * @param	keuwords	the keywords
 	 * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean addKeywords(String keywords) {
@@ -618,8 +554,6 @@ public class Document implements DocListener {
 	 *
 	 * @param	author		the name of the author
 	 * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean addAuthor(String author) {
@@ -635,8 +569,6 @@ public class Document implements DocListener {
 	 * Adds the producer to a Document.
 	 *
 	 * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean addProducer() {
@@ -652,8 +584,6 @@ public class Document implements DocListener {
 	 * Adds the current date and time to a Document.
 	 *
 	 * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
-	 *
-	 * @since	iText0.30
 	 */
 
 	public boolean addCreationDate() {
@@ -671,8 +601,6 @@ public class Document implements DocListener {
 	 * Returns the left margin.
 	 *
 	 * @return	the left margin
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int leftMargin() {
@@ -683,8 +611,6 @@ public class Document implements DocListener {
 	 * Return the right margin.
 	 *
 	 * @return	the right margin
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int rightMargin() {
@@ -695,8 +621,6 @@ public class Document implements DocListener {
 	 * Returns the top margin.
 	 *
 	 * @return	the top margin
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int topMargin() {
@@ -707,8 +631,6 @@ public class Document implements DocListener {
 	 * Returns the bottom margin.
 	 *
 	 * @return	the bottom margin
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int bottomMargin() {
@@ -719,8 +641,6 @@ public class Document implements DocListener {
 	 * Returns the lower left x-coordinate.
 	 *
 	 * @return	the lower left x-coordinate
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int left() {
@@ -731,8 +651,6 @@ public class Document implements DocListener {
 	 * Returns the upper right x-coordinate.
 	 *
 	 * @return	the upper right x-coordinate
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int right() {
@@ -743,8 +661,6 @@ public class Document implements DocListener {
 	 * Returns the upper right y-coordinate.
 	 *
 	 * @return	the upper right y-coordinate
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int top() {
@@ -755,8 +671,6 @@ public class Document implements DocListener {
 	 * Returns the lower left y-coordinate.
 	 *
 	 * @return	the lower left y-coordinate
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int bottom() {
@@ -768,8 +682,6 @@ public class Document implements DocListener {
 	 *
 	 * @param	margin			a margin
 	 * @return	the lower left x-coordinate
-	 *
-	 * @since	iText.30
 	 */
 
 	public int left(int margin) {
@@ -781,8 +693,6 @@ public class Document implements DocListener {
 	 *
 	 * @param	margin			a margin
 	 * @return	the upper right x-coordinate
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int right(int margin) {
@@ -794,8 +704,6 @@ public class Document implements DocListener {
 	 *
 	 * @param	margin			a margin
 	 * @return	the upper right y-coordinate
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int top(int margin) {
@@ -807,8 +715,6 @@ public class Document implements DocListener {
 	 *										   
 	 * @param	margin			a margin
 	 * @return	the lower left y-coordinate
-	 *
-	 * @since	iText0.30
 	 */
 
 	public int bottom(int margin) {

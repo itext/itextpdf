@@ -1,10 +1,8 @@
 /*
- * @(#)Cell.java					0.36 2000/09/08
- *       release iText0.3:			0.29 2000/02/14
- *       release iText0.35:			0.29 2000/08/11
- *       release iText0.36:			0.36 2000/09/08
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -74,9 +72,6 @@ import java.util.Iterator;
  * @see		Row
  *
  * @author  bruno@lowagie.com
- * @version 0.36, 2000/09/08
- *
- * @since   iText0.30
  */
 
 public class Cell extends Rectangle implements TextElementArray {
@@ -116,8 +111,6 @@ public class Cell extends Rectangle implements TextElementArray {
 
 	/**
 	 * Constructs an empty <CODE>Cell</CODE>.
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public Cell() {
@@ -143,8 +136,6 @@ public class Cell extends Rectangle implements TextElementArray {
 	 *
 	 * @param	content		a <CODE>String</CODE>
 	 * @throws	BadElementException this can never happen with this creator
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public Cell(String content) throws BadElementException {
@@ -159,8 +150,6 @@ public class Cell extends Rectangle implements TextElementArray {
 	 *
 	 * @param	element		the element
 	 * @throws	BadElementException when the creator was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
-	 * 
-	 * @since	iText0.30
 	 */
 
 	public Cell(Element element) throws BadElementException {
@@ -177,15 +166,14 @@ public class Cell extends Rectangle implements TextElementArray {
 // implementation of the Element-methods
 
     /**
-     * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+     * Processes the element by adding it (or the different parts) to an
+	 * <CODE>ElementListener</CODE>. 
      *
-	 * <CODE>true</CODE> if the element was processed successfully
-	 *
-     * @since   iText0.30
+	 * @param	listener	an <CODE>ElementListener</CODE>
+	 * @return	<CODE>true</CODE> if the element was processed successfully
      */
 
-    public final boolean process(DocListener listener) {
+    public final boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
 		}
@@ -198,8 +186,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public final int type() {
@@ -210,8 +196,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final ArrayList getChunks() {
@@ -230,10 +214,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Remark: you can't add <CODE>ListItem</CODE>s, <CODE>Row</CODE>s, <CODE>Cell</CODE>s,
 	 * <CODE>JPEG</CODE>s, <CODE>GIF</CODE>s or <CODE>PNG</CODE>s to a <CODE>Cell</CODE>.
 	 *
-     * @return	<CODE>void</CODE>
 	 * @throws	BadElementException if the method was called with a <CODE>ListItem</CODE>, <CODE>Row</CODE> or <CODE>Cell</CODE>
-	 *
-     * @since	iText0.30
 	 */
 
 	public final void addElement(Element element) throws BadElementException {
@@ -283,9 +264,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Sets the leading. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setLeading(int value) {
@@ -296,9 +274,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Sets the horizontal alignment. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setHorizontalAlignment(int value) {
@@ -309,9 +284,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Sets the vertical alignment. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setVerticalAlignment(int value) {
@@ -322,9 +294,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Sets the colspan. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setColspan(int value) {
@@ -335,9 +304,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Sets the rowspan. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setRowspan(int value) {
@@ -348,9 +314,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Sets header. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setHeader(boolean value) {
@@ -361,9 +324,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Set nowrap. 
      *
 	 * @param	value	the new value
-     * @return	<CODE>void</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public final void setNoWrap(boolean value) {
@@ -376,8 +336,6 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Gets the number of <CODE>Element</CODE>s in the Cell. 
      *
      * @return	a <CODE>size</CODE>.
-	 *
-     * @since	iText0.30
 	 */
 
 	public final int size() {
@@ -388,8 +346,6 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Checks if the <CODE>Cell</CODE> is empty. 
      *
      * @return	<CODE>false</CODE> if there are non-empty <CODE>Element</CODE>s in the <CODE>Cell</CODE>.
-	 *
-     * @since	iText0.30
 	 */
 
 	public final boolean isEmpty() {
@@ -415,8 +371,6 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Gets an iterator of <CODE>Element</CODE>s. 
      *
      * @return	an <CODE>Iterator</CODE>.
-	 *
-     * @since	iText0.30
 	 */
 
 	public final Iterator getElements() {
@@ -427,8 +381,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Gets the horizontal alignment. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final int horizontalAlignment() {
@@ -439,8 +391,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Gets the vertical alignment. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final int verticalAlignment() {
@@ -451,8 +401,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Gets the colspan. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final int colspan() {
@@ -463,8 +411,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Gets the rowspan. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final int rowspan() {
@@ -475,8 +421,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Gets the leading. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public final int leading() {
@@ -490,8 +434,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Is this <CODE>Cell</CODE> a header? 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public boolean header() {
@@ -502,8 +444,6 @@ public class Cell extends Rectangle implements TextElementArray {
      * Get nowrap. 
      *
      * @return	a value
-	 *
-     * @since	iText0.30
      */
 
     public boolean noWrap() {
@@ -514,8 +454,6 @@ public class Cell extends Rectangle implements TextElementArray {
 	 * Returns a representation of this <CODE>Cell</CODE>.
 	 *
 	 * @return	a <CODE>String</CODE>
-	 *
-     * @since	iText0.30
 	 */
 
 	public String toString() {

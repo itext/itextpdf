@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  * 
- * Copyright 1999, 2000 by Bruno Lowagie.
+ * Copyright 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -46,6 +46,7 @@ import java.net.URL;
  * @see		Element
  * @see		Image
  * @see		Jpeg
+ * @see		Png
  * 
  * @author  bruno@lowagie.com
  */
@@ -71,6 +72,7 @@ public class Gif extends Image implements Element {
 	 * @param		url			the <CODE>URL</CODE> where the image can be found.
 	 * @param		width		the width you want the image to have
 	 * @param		height		the height you want the image to have.
+
 	 * @deprecated	use Image.getInstance(...) to create an Image
 	 */
 
@@ -103,6 +105,7 @@ public class Gif extends Image implements Element {
 	public Gif(String filename, int width, int height)  throws BadElementException, MalformedURLException, IOException {
 		this(new File(filename).toURL(), width, height);
 	}
+
 	/**
 	 * Constructs a <CODE>Gif</CODE>-object from memory.
 	 *
@@ -131,8 +134,8 @@ public class Gif extends Image implements Element {
 		this(img);
 		scaledWidth = width;
 		scaledHeight = height;
-	}
-    
+	}    
+
 // private methods
 
 	/**

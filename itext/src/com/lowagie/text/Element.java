@@ -1,10 +1,8 @@
 /*
- * @(#)Element.java					0.37 2000/10/05
- *       release iText0.3:			0.26 2000/02/14
- *       release iText0.35:			0.31 2000/08/11
- *       release iText0.37:			0.36 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -71,9 +69,6 @@ import java.util.ArrayList;
  * @see		Table 
  *
  * @author  bruno@lowagie.com
- * @version 0.37, 2000/10/05
- *
- * @since   iText0.30
  */
 
 public interface Element {
@@ -225,22 +220,19 @@ public interface Element {
 // methods
 
     /**
-     * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+     * Processes the element by adding it (or the different parts) to an
+	 * <CODE>ElementListener</CODE>. 
      *
+	 * @param	listener	an <CODE>ElementListener</CODE>
 	 * @return	<CODE>true</CODE> if the element was processed successfully
-	 *
-     * @since   iText0.30
      */
 
-    public boolean process(DocListener listener);
+    public boolean process(ElementListener listener);
 
     /**
      * Gets the type of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public int type();
@@ -249,8 +241,6 @@ public interface Element {
      * Gets all the chunks in this element. 
      *
      * @return	an <CODE>ArrayList</CODE>
-	 *
-     * @since	iText0.30
      */
 
     public ArrayList getChunks();
@@ -259,8 +249,6 @@ public interface Element {
      * Gets the content of the text element. 
      *
      * @return	a type
-	 *
-     * @since	iText0.30
      */
 
     public String toString();

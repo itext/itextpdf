@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -78,13 +78,13 @@ public class Meta implements Element {
 
     /**
      * Processes the element by adding it (or the different parts) to a
-	 * <CODE>DocListener</CODE>. 
+	 * <CODE>ElementListener</CODE>. 
      *
-	 * @param	listener		the <CODE>DocListener</CODE>
+	 * @param	listener		the <CODE>ElementListener</CODE>
 	 * @return	<CODE>true</CODE> if the element was processed successfully
      */
 
-    public final boolean process(DocListener listener) {
+    public final boolean process(ElementListener listener) {
 		try {
 			return listener.add(this);
 		}
@@ -177,5 +177,4 @@ public class Meta implements Element {
 		buf.append("\" />\n");
 		return buf.toString();
 	}
-
 }

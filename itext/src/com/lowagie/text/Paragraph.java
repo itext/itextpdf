@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 1999, 2000, 2001 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -185,6 +185,8 @@ public class Paragraph extends Phrase implements TextElementArray {
 
 // methods
 
+
+
 	/**
 	 * Adds a <CODE>List</CODE> to the <CODE>Paragraph</CODE>.
 	 * 
@@ -213,7 +215,6 @@ public class Paragraph extends Phrase implements TextElementArray {
 	 * Sets the alignment of this paragraph.
 	 *
 	 * @param	alignment		the new alignment
-	 * @return	<CODE>void</CODE>
 	 */
 
 	public final void setAlignment(int alignment) {
@@ -224,7 +225,6 @@ public class Paragraph extends Phrase implements TextElementArray {
 	 * Sets the alignment of this paragraph.
 	 *
 	 * @param	alignment		the new alignment as a <CODE>String</CODE>
-	 * @return	<CODE>void</CODE>
 	 */
 
 	public final void setAlignment(String alignment) {
@@ -247,7 +247,6 @@ public class Paragraph extends Phrase implements TextElementArray {
 	 * Sets the indentation of this paragraph on the left side.
 	 *
 	 * @param	indentation		the new indentation
-	 * @return	<CODE>void</CODE>
 	 */
 
 	public final void setIndentationLeft(int indentation) {
@@ -258,7 +257,6 @@ public class Paragraph extends Phrase implements TextElementArray {
 	 * Sets the indentation of this paragraph on the right side.
 	 *
 	 * @param	indentation		the new indentation
-	 * @return	<CODE>void</CODE>
 	 */
 
 	public final void setIndentationRight(int indentation) {

@@ -1,9 +1,8 @@
 /*
- * @(#)Watermark.java				0.37 2000/10/05
- *       release iText0.35:			0.31 2000/08/11
- *       release iText0.37:			0.37 2000/10/05
+ * $Id$
+ * $Name$
  * 
- * Copyright (c) 1999, 2000 Bruno Lowagie.
+ * Copyright 2000 by Bruno Lowagie.
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Library General Public License as published
@@ -42,11 +41,10 @@ import java.net.MalformedURLException;
  *
  * @see		Element
  * @see		Jpeg  
- * @see		Gif
+ * @see		Gif  
+ * @see		Png
  * 
  * @author  bruno@lowagie.com
- * @version 0.37 2000/10/05
- * @since   iText0.31
  */
 
 public class Watermark extends Image implements Element {
@@ -67,8 +65,6 @@ public class Watermark extends Image implements Element {
 	 * @param		image		an <CODE>Image</CODE>-object
 	 * @param		offsetX		the offset in x-direction
 	 * @param		offsetY		the offset in y-direction
-	 *
-	 * @since		iText0.36
 	 */
 
 	public Watermark(Image image, int offsetX, int offsetY) throws MalformedURLException {
@@ -83,7 +79,6 @@ public class Watermark extends Image implements Element {
      * Gets the type of the text element. 
      *
      * @return	a type
-     * @since	iText0.31
      */
 
     public int type() {
@@ -96,8 +91,6 @@ public class Watermark extends Image implements Element {
 	 * Returns the offset in x direction.
 	 *
 	 * @return		an offset
-	 *
-	 * @since		iText0.31 
 	 */
 
 	public int offsetX() {
@@ -107,9 +100,7 @@ public class Watermark extends Image implements Element {
 	/**
 	 * Returns the offset in y direction.
 	 *
-	 * @return		an offset
-	 *
-	 * @since		iText0.31 
+	 * @return		an offset 
 	 */
 
 	public int offsetY() {
@@ -120,8 +111,6 @@ public class Watermark extends Image implements Element {
 	 * Returns a representation of this <CODE>Rectangle</CODE>.
 	 *
 	 * @return		a <CODE>String</CODE>
-	 *
-	 * @since		iText0.31
 	 */
 
 	public String toString() {
