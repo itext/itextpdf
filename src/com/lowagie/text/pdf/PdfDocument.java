@@ -1125,6 +1125,10 @@ class PdfDocument extends Document implements DocListener {
                             graphics.rectangle(table.rectangle(indentTop(), indentBottom()));
                         }
                         
+                        /* start patch sep 8 2001 Francesco De Milato */
+                        float lostTableBottom = 0;
+                        float lostTableTop = 0;
+                        /* end patch sep 8 2001 Francesco De Milato */
                         
                         // loop over the cells
                         for (Iterator iterator = cells.iterator(); iterator.hasNext(); ) {
@@ -1140,8 +1144,13 @@ class PdfDocument extends Document implements DocListener {
                                     graphics.rectangle(cell.rectangle(pagetop, indentBottom()));
                                 }
                                 
+                                /* start patch sep 8 2001 Francesco De Milato */
+                                lostTableBottom = cell.bottom();
+                                lostTableTop = cell.top();
+                                /* stop patch sep 8 2001 Francesco De Milato */
+                                
                                 // we write the text
-                                float cellTop = cell.top(pagetop - oldHeight);
+                                float cellTop = cell.top(pagetop - oldHeight) - 6;
                                 text.moveText(0, cellTop);
                                 cellDisplacement = flushLines() - cellTop;
                                 text.moveText(0, cellDisplacement);
@@ -1157,6 +1166,26 @@ class PdfDocument extends Document implements DocListener {
                         
                         // if the table continues on the next page
                         if (newPage && ! cells.isEmpty()) {
+                            /* start patch sep 8 2001 Francesco De Milato */
+                            // Get the border's width
+                            graphics.setLineWidth(table.borderWidth());
+                            
+                            // Draw the bottom line
+                            graphics.moveTo(table.left(),lostTableBottom);
+                            graphics.lineTo(table.right(), lostTableBottom);
+                            graphics.stroke();
+                            
+                            // Connect the bottom line with the left table's border
+                            graphics.moveTo(table.left(),lostTableBottom);
+                            graphics.lineTo(table.left(), lostTableTop);
+                            graphics.stroke();
+                            
+                            // Connect the bottom line with the right table's border
+                            graphics.moveTo(table.right(), lostTableBottom);
+                            graphics.lineTo(table.right(), lostTableTop);
+                            graphics.stroke();
+                            /* end patch sep 8 2001 Francesco De Milato */
+                            
                             float difference = indentBottom() + leading;
                             pageEmpty = false;
                             newPage();
@@ -1183,7 +1212,7 @@ class PdfDocument extends Document implements DocListener {
                                     graphics.rectangle(cell.rectangle(indentTop() - leading / 2, indentBottom()));
                                     // we write the text of the cell
                                     lines = cell.getLines(indentTop(), indentBottom());
-                                    float cellTop = cell.top(indentTop());
+                                    float cellTop = cell.top(indentTop()) - 6;
                                     text.moveText(0, cellTop);
                                     cellDisplacement = flushLines() - cellTop;
                                     text.moveText(0, cellDisplacement);
@@ -1302,7 +1331,7 @@ class PdfDocument extends Document implements DocListener {
         // if it's a new image, add it to the document
         else {
             if (image.isImgTemplate()) {
-                name = new PdfName("img" + images.size());   
+                name = new PdfName("img" + images.size());
             }
             else {
                 PdfImage i = new PdfImage(image, "img" + images.size());

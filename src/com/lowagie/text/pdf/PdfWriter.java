@@ -361,7 +361,7 @@ public class PdfWriter extends DocWriter {
     public static final int PageLayoutTwoColumnLeft = 4;
 /** A viewer preference */
     public static final int PageLayoutTwoColumnRight = 8;
-
+    
 /** A viewer preference */
     public static final int PageModeUseNone = 16;
 /** A viewer preference */
@@ -370,7 +370,7 @@ public class PdfWriter extends DocWriter {
     public static final int PageModeUseThumbs = 64;
 /** A viewer preference */
     public static final int PageModeFullScreen = 128;
-
+    
 /** A viewer preference */
     public static final int HideToolbar = 256;
 /** A viewer preference */
@@ -381,14 +381,14 @@ public class PdfWriter extends DocWriter {
     public static final int FitWindow = 2048;
 /** A viewer preference */
     public static final int CenterWindow = 4096;
-
+    
 /** A viewer preference */
     public static final int NonFullScreenPageModeUseNone = 8192;
 /** A viewer preference */
     public static final int NonFullScreenPageModeUseOutlines = 16384;
 /** A viewer preference */
     public static final int NonFullScreenPageModeUseThumbs = 32768;
-
+    
 /** A viewer preference */
     public static final int DirectionL2R = 65536;
 /** A viewer preference */
@@ -671,6 +671,25 @@ public class PdfWriter extends DocWriter {
     }
     
 /**
+ * Sometimes it is necessary to know where the just added <CODE>Table</CODE> ends,
+ * e.g. to avoid to add another table in a page that is ending up, because
+ * the new table will be probably splitted just after the header (it is an
+ * unpleasant effect, isn't it?).
+ *
+ * Added on September 8th, 2001
+ * by Francesco De Milato
+ * francesco.demilato@tiscalinet.it
+ *
+ * @return	the bottom height of the just added table
+ * @author  francesco.demilato@tiscalinet.it
+ */
+    
+    public float getTableBottom(Table table)
+    {
+        return pdf.bottom(table) - pdf.indentBottom();
+    }
+    
+/**
  * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
  *
  * @param	table	the table that has to be checked
@@ -703,7 +722,7 @@ public class PdfWriter extends DocWriter {
     public boolean fitsPage(PdfPTable table, float margin) {
         return pdf.fitsPage(table, margin);
     }
-
+    
 /**
  * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
  *
@@ -939,7 +958,7 @@ public class PdfWriter extends DocWriter {
  *   </ul>
  * </ul>
  * @param preferences the viewer preferences
- */ 
+ */
     
     public void setViewerPreferences(int preferences) {
         pdf.setViewerPreferences(preferences);
