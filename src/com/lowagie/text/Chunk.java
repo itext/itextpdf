@@ -94,9 +94,8 @@ public class Chunk implements Element, MarkupAttributes {
     public static final Chunk NEWLINE = new Chunk("\n");
 
 /** This is a Chunk containing a newpage. */
-    public static final Chunk NEXTPAGE;
+    public static final Chunk NEXTPAGE = new Chunk("");
     static {
-    	NEXTPAGE = new Chunk("");
     	NEXTPAGE.setNewPage();
     }
 /** Key for sub/superscript. */

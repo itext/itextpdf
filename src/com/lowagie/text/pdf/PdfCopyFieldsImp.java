@@ -80,6 +80,8 @@ class PdfCopyFieldsImp extends PdfWriter {
     boolean closing = false;
     Document nd;
     private HashMap tabOrder;
+    private ArrayList calculationOrder = new ArrayList();
+    private ArrayList calculationOrderRefs;
     
     PdfCopyFieldsImp(OutputStream os) throws DocumentException, IOException {
         this(os, '\0');
@@ -126,8 +128,47 @@ class PdfCopyFieldsImp extends PdfWriter {
         pages2intrefs.put(reader, refs);
         visited.put(reader, new IntHashtable());
         fields.add(reader.getAcroFields());
+        updateCalculationOrder(reader);
     }
     
+    private static String getCOName(PdfReader reader, PRIndirectReference ref) {
+        String name = "";
+        while (ref != null) {
+            PdfObject obj = PdfReader.getPdfObject(ref);
+            if (obj == null || obj.type() != PdfObject.DICTIONARY)
+                break;
+            PdfDictionary dic = (PdfDictionary)obj;
+            PdfString t = (PdfString)PdfReader.getPdfObject(dic.get(PdfName.T));
+            if (t != null) {
+                name = t.toUnicodeString()+ "." + name;
+            }
+            ref = (PRIndirectReference)dic.get(PdfName.PARENT);
+        }
+        if (name.endsWith("."))
+            name = name.substring(0, name.length() - 1);
+        return name;
+    }
+    
+    private void updateCalculationOrder(PdfReader reader) {
+        PdfDictionary catalog = reader.getCatalog();
+        PdfDictionary acro = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM));
+        if (acro == null)
+            return;
+        PdfArray co = (PdfArray)PdfReader.getPdfObject(acro.get(PdfName.CO));
+        if (co == null || co.size() == 0)
+            return;
+        AcroFields af = reader.getAcroFields();
+        ArrayList coa = co.getArrayList();
+        for (int k = 0; k < coa.size(); ++k) {
+            String name = getCOName(reader, (PRIndirectReference)coa.get(k));
+            if (af.getFieldItem(name) == null)
+                continue;
+            name = "." + name;
+            if (calculationOrder.contains(name))
+                continue;
+            calculationOrder.add(name);
+        }
+    }
     
     void propagate(PdfObject obj, PdfIndirectReference refo, boolean restricted) throws IOException {
         if (obj == null)
@@ -210,7 +251,7 @@ class PdfCopyFieldsImp extends PdfWriter {
         }
     }
     
-    protected PdfArray branchForm(HashMap level, PdfIndirectReference parent) throws IOException {
+    protected PdfArray branchForm(HashMap level, PdfIndirectReference parent, String fname) throws IOException {
         PdfArray arr = new PdfArray();
         for (Iterator it = level.keySet().iterator(); it.hasNext();) {
             String name = (String)it.next();
@@ -220,8 +261,12 @@ class PdfCopyFieldsImp extends PdfWriter {
             if (parent != null)
                 dic.put(PdfName.PARENT, parent);
             dic.put(PdfName.T, new PdfString(name, PdfObject.TEXT_UNICODE));
+            String fname2 = fname + "." + name;
+            int coidx = calculationOrder.indexOf(fname2);
+            if (coidx >= 0)
+                calculationOrderRefs.set(coidx, ind);
             if (obj instanceof HashMap) {
-                dic.put(PdfName.KIDS, branchForm((HashMap)obj, ind));
+                dic.put(PdfName.KIDS, branchForm((HashMap)obj, ind, fname2));
                 arr.add(ind);
                 addToBody(dic, ind);
             }
@@ -276,20 +321,16 @@ class PdfCopyFieldsImp extends PdfWriter {
         propagate(resources, null, false);
         form.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
         tabOrder = new HashMap();
-        form.put(PdfName.FIELDS, branchForm(fieldTree, null));
-//        PdfArray co = new PdfArray();
-//        for (int k = 0; k < readers.size(); ++k) {
-//            PdfReader reader = (PdfReader)readers.get(k);
-//            PdfDictionary dic = reader.getCatalog();
-//            dic = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.ACROFORM));
-//            if (dic == null)
-//                continue;
-//            co.add((PdfArray)PdfReader.getPdfObject(dic.get(PdfName.CO)));
-//        }
-//        if (co.size() > 0) {
-//            form.put(PdfName.CO, co);
-//            propagate(co, null, false);
-//        }
+        calculationOrderRefs = new ArrayList(calculationOrder);
+        form.put(PdfName.FIELDS, branchForm(fieldTree, null, ""));
+        PdfArray co = new PdfArray();
+        for (int k = 0; k < calculationOrderRefs.size(); ++k) {
+            Object obj = calculationOrderRefs.get(k);
+            if (obj instanceof PdfIndirectReference)
+                co.add((PdfIndirectReference)obj);
+        }
+        if (co.size() > 0)
+            form.put(PdfName.CO, co);
     }
     
     public void close() {
