@@ -504,7 +504,7 @@ public class Document implements DocListener {
 
 	/**
 	 * Closes the document.
-	 * <B>
+	 * <P>
 	 * Once all the content has been written in the body, you have to close
 	 * the body. After that nothing can be written to the body anymore.
 	 *
