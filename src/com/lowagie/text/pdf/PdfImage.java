@@ -48,7 +48,8 @@
  *   very special thanks to klee@informatik.unibw-muenchen.de for the algorithm
  *   to extract the LZW data from a GIF.
  *
- * Very special thanks to Paulo Soares for the algorithm to parse the PNG format.
+ * Very special thanks to Paulo Soares for the algorithm to parse the PNG format
+ * and for the Raw Image data functionality.
  */
 
 package com.lowagie.text.pdf;
@@ -93,8 +94,43 @@ class PdfImage extends PdfStream {
 		dictionary.put(PdfName.NAME, this.name);
 		dictionary.put(PdfName.WIDTH, new PdfNumber(image.width()));
 		dictionary.put(PdfName.HEIGHT, new PdfNumber(image.height()));
+		InputStream is = null;
 		try {
-			InputStream is = image.url().openStream();
+
+			// Raw Image data
+			if (image.isImgRaw()) {
+				switch(image.colorspace()) {
+				case 1:
+					dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
+					break;
+				case 3:	
+					dictionary.put(PdfName.COLORSPACE, PdfName.DEVICERGB);
+					break;
+				case 4:
+				default: 
+					dictionary.put(PdfName.COLORSPACE, PdfName.DEVICECMYK);
+				}
+				dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(image.bpc()));
+				bytes = image.rawData();
+				dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
+				try {
+					flateCompress();
+				}
+				catch(PdfException pe) {
+				}  
+				return;
+			}
+
+			// GIF, JPEG or PNG
+            String errorID;
+            if (image.rawData() == null){
+			    is = image.url().openStream();
+                errorID = image.url().toString();
+            }
+            else{
+                is = new java.io.ByteArrayInputStream(image.rawData());
+                errorID = "Byte array";
+            }
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			int i = 0;
 			switch(image.type()) {
@@ -102,7 +138,7 @@ class PdfImage extends PdfStream {
 				dictionary.put(PdfName.FILTER, PdfName.FLATEDECODE);
 				for (int j = 0; j < Png.PNGID.length; j++) {
 					if (Png.PNGID[j] != is.read()) {
-						throw new BadPdfFormatException(image.url().toString() + " is not a PNG file.");
+						throw new BadPdfFormatException(errorID + " is not a PNG file.");
 					}
 				}
 				int colorType = 0;
@@ -121,13 +157,13 @@ class PdfImage extends PdfStream {
 
 						int bitDepth = is.read();
 						if (bitDepth == 16) {
-							throw new BadPdfFormatException(image.url().toString() + " Bit depth 16 is not suported.");
+							throw new BadPdfFormatException(errorID + " Bit depth 16 is not suported.");
 						}
 						dictionary.put(PdfName.BITSPERCOMPONENT, new PdfNumber(bitDepth));
 
 						colorType = is.read();
 						if (! (colorType == 0 || colorType == 2 || colorType == 3)) {
-							throw new BadPdfFormatException(image.url().toString() + " Colortype " + colorType + " is not suported.");
+							throw new BadPdfFormatException(errorID + " Colortype " + colorType + " is not suported.");
 						}
 						if (colorType == 0) {
 							dictionary.put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
@@ -141,7 +177,7 @@ class PdfImage extends PdfStream {
 
 						int interlaceMethod = is.read();
 						if (interlaceMethod != 0) {
-							throw new BadPdfFormatException(image.url().toString() + " Interlace method " + interlaceMethod + " is not suported.");
+							throw new BadPdfFormatException(errorID + " Interlace method " + interlaceMethod + " is not suported.");
 						}
 
 						PdfDictionary decodeparms = new PdfDictionary();
@@ -207,7 +243,7 @@ class PdfImage extends PdfStream {
 				// Byte 0-2: header
 				// checks if the file really is a GIF-file
 				if (is.read() != 'G' || is.read() != 'I' || is.read() != 'F') {
-					throw new BadPdfFormatException(image.url().toString() + " is not a GIF-file (GIF header not found).");
+					throw new BadPdfFormatException(errorID + " is not a GIF-file (GIF header not found).");
 				}
 
 				dictionary.put(PdfName.FILTER, PdfName.LZWDECODE);
@@ -228,7 +264,7 @@ class PdfImage extends PdfStream {
 				}
 				// Byte 10: bit 1: Global Color Table Flag
 				if ((i & 0x80) == 0) {
-					throw new BadPdfFormatException(image.url().toString() + " is not a supported GIF-file (there is no global color table present).");
+					throw new BadPdfFormatException(errorID + " is not a supported GIF-file (there is no global color table present).");
 				} 
 				// Byte 10: bit 6-8: Size of Global Color Table
 				int nColors = 1 << ((i & 7) + 1);
@@ -254,7 +290,7 @@ class PdfImage extends PdfStream {
 				// only simple gif files with image immediate following global color table are supported
 				// 0x2c is a fixed value for the image separator
 				if (is.read() != 0x2c) {
-					throw new BadPdfFormatException(image.url().toString() + " is not a supported GIF-file (the image separator '0x2c' is not found after reading the color table).");
+					throw new BadPdfFormatException(errorID + " is not a supported GIF-file (the image separator '0x2c' is not found after reading the color table).");
 				}
 				// Byte 1-2: Image Left Position
 				// Byte 3-4: Image Top Position
@@ -268,12 +304,12 @@ class PdfImage extends PdfStream {
 				// Byte 9: bit 1: Local Color Table Flag
 				// Byte 9: bit 2: Interlace Flag
 				if ((is.read() & 0xc0) > 0) {
-					throw new BadPdfFormatException(image.url().toString() + " is not a supported GIF-file (interlaced gifs or gifs using local color table can't be inserted).");
+					throw new BadPdfFormatException(errorID + " is not a supported GIF-file (interlaced gifs or gifs using local color table can't be inserted).");
 				}
 
 				// Byte 10: LZW initial code
 				if (is.read() != 0x08) {
-					throw new BadPdfFormatException(image.url().toString() + " is not a supported GIF-file (initial LZW code not supported).");
+					throw new BadPdfFormatException(errorID + " is not a supported GIF-file (initial LZW code not supported).");
 				}
 				// Read the Image Data
 				int code = 0;
@@ -290,7 +326,7 @@ class PdfImage extends PdfStream {
 				int size = is.read();
 				// Check if there is any data in the GIF
 				if (size < 1) {
-					throw new BadPdfFormatException(image.url().toString() + " is not a supported GIF-file. (no image data found).");
+					throw new BadPdfFormatException(errorID + " is not a supported GIF-file. (no image data found).");
 				}
 				// if possible, we read the first 24 bits of data
 				size--; bytesread++; bitsread = is.read();
@@ -341,11 +377,11 @@ class PdfImage extends PdfStream {
 					}
 				}
 				if (bytesread - byteswritten > 2) {
-					throw new BadPdfFormatException(image.url().toString() + " is not a supported GIF-file (unexpected end of data block).");
+					throw new BadPdfFormatException(errorID + " is not a supported GIF-file (unexpected end of data block).");
 				}
 				break;
 			default:
-				throw new BadPdfFormatException(image.url().toString() + " is an unknown Image format.");
+				throw new BadPdfFormatException(errorID + " is an unknown Image format.");
 			}
 			bytes = stream.toByteArray();
 			dictionary.put(PdfName.LENGTH, new PdfNumber(bytes.length));
@@ -353,6 +389,15 @@ class PdfImage extends PdfStream {
 		catch(IOException ioe) {
 			throw new BadPdfFormatException(ioe.getMessage());
 		}
+        finally {
+			if (is != null) {
+                try{
+				    is.close();
+                }
+                catch (Exception ee) {
+				}
+			}
+        }
 	}
 
 	/**
