@@ -113,6 +113,8 @@ public class MultiColumnText implements Element {
     
     private float nextY = AUTOMATIC;
     
+    private int result = 0;
+    
     private PdfDocument document;
     /**
      * Default constructor.  Sets height to <CODE>AUTOMATIC</CODE>.
@@ -269,7 +271,7 @@ public class MultiColumnText implements Element {
                     columnText.setColumns(left, right);
                 }
 
-                int result = columnText.go();
+                result = columnText.go();
                 if ((result & ColumnText.NO_MORE_TEXT) != 0) {
                     done = true;
                     top = columnText.getYLine();
@@ -388,6 +390,14 @@ public class MultiColumnText implements Element {
      */
     public int getCurrentColumn() {
         return currentColumn;
+    }
+    
+    /**
+     * Gets the current status of the ColumnText.
+     * @return the status of the ColumnText
+     */
+    public int getStatus() {
+    	return result;
     }
     
     /**
