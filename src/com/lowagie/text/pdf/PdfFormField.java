@@ -100,7 +100,7 @@ public class PdfFormField extends PdfAnnotation {
         put(PdfName.SUBTYPE, PdfName.WIDGET);
         annotation = true;
     }
-    
+
     /** Creates new PdfFormField */
     protected PdfFormField(PdfWriter writer) {
         super(writer, null);
@@ -410,5 +410,23 @@ public class PdfFormField extends PdfAnnotation {
     
     public void setMKTextPosition(int tp) {
         getMK().put(PdfName.TP, new PdfNumber(tp));
+    }
+    
+    public static PdfAnnotation shallowDuplicate(PdfAnnotation annot) {
+        PdfAnnotation dup;
+        if (annot.isForm()) {
+            dup = new PdfFormField(annot.writer);
+            PdfFormField dupField = (PdfFormField)dup;
+            PdfFormField srcField = (PdfFormField)annot;
+            dupField.parent = srcField.parent;
+            dupField.kids = srcField.kids;
+        }
+        else
+            dup = new PdfAnnotation(annot.writer, null);
+        dup.merge(annot);
+        dup.form = annot.form;
+        dup.annotation = annot.annotation;
+        dup.templates = annot.templates;
+        return dup;
     }
 }

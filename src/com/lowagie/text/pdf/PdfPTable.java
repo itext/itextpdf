@@ -101,6 +101,9 @@ public class PdfPTable implements Element{
 /** Holds value of property horizontalAlignment. */
     private int horizontalAlignment = Element.ALIGN_CENTER;
     
+/** Holds value of property skipFirstHeader. */
+    private boolean skipFirstHeader = false;
+
     protected boolean isColspan = false;
     
     /** Constructs a <CODE>PdfPTable</CODE> with the relative column widths.
@@ -575,5 +578,21 @@ public class PdfPTable implements Element{
                 widths[k] = width;
         }
         return widths;
+    }
+
+
+    /** Getter for property skipFirstHeader.
+     * @return Value of property skipFirstHeader.
+     */
+    public boolean getSkipFirstHeader() {
+        return skipFirstHeader;
+    }
+    
+    /** Skips the printing of the first header. Used when printing
+     * tables in succession belonging to the same printed table aspect.
+     * @param skipFirstHeader New value of property skipFirstHeader.
+     */
+    public void setSkipFirstHeader(boolean skipFirstHeader) {
+        this.skipFirstHeader = skipFirstHeader;
     }
 }

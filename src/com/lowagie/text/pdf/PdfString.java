@@ -178,12 +178,12 @@ class PdfString extends PdfObject implements PdfPrintable {
     }
     
 /**
- * Tells you if this string is in Chinese, Japanese or Korean.
+ * Tells you if this string is in Chinese, Japanese, Korean or Identity-H.
  */
     
-    boolean isCJKEncoding()
+    boolean isSpecialEncoding()
     {
-        return encoding.equals(CJKFont.CJK_ENCODING);
+        return encoding.equals(CJKFont.CJK_ENCODING) || encoding.equals(BaseFont.IDENTITY_H);
     }
     
 /**

@@ -63,6 +63,8 @@ import java.util.Set;
 import java.net.URL;
 
 import com.lowagie.text.pdf.PdfAction;
+import com.lowagie.text.pdf.PdfAnnotation;
+import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.markup.MarkupTags;
 
 /**
@@ -125,6 +127,15 @@ public class Chunk implements Element, MarkupAttributes {
     
 /** Key for Action. */
     public static final String ACTION = "ACTION";
+    
+/** Key for background. */
+    public static final String BACKGROUND = "BACKGROUND";
+    
+/** Key for annotation. */
+    public static final String PDFANNOTATION = "PDFANNOTATION";
+    
+/** Key for hyphenation. */
+    public static final String HYPHENATION = "HYPHENATION";
     
 // member variables
     
@@ -377,6 +388,18 @@ public class Chunk implements Element, MarkupAttributes {
     
     public Chunk setLocalGoto(String name) {
         return setAttribute(LOCALGOTO, name);
+    }
+    
+    public Chunk setBackground(Color color) {
+        return setAttribute(BACKGROUND, color);
+    }
+    
+    public Chunk setAnnotation(PdfAnnotation annotation) {
+        return setAttribute(PDFANNOTATION, annotation);
+    }
+    
+    public Chunk setHyphenation(HyphenationEvent hyphenation) {
+        return setAttribute(HYPHENATION, hyphenation);
     }
     
 /**

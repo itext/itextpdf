@@ -323,7 +323,7 @@ public abstract class DocWriter implements DocListener {
             return null;
         }
         try {
-            return text.getBytes("ISO8859_1");
+            return text.getBytes("ISO-8859-1");
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);

@@ -279,7 +279,7 @@ public class Jpeg extends Image implements Element {
                             byteappe[k] = (byte)is.read();
                         }
                         if (byteappe.length > 12) {
-                            String appe = new String(byteappe, 0, 5, "ISO8859_1");
+                            String appe = new String(byteappe, 0, 5, "ISO-8859-1");
                             if (appe.equals("Adobe")) {
                                 invert = true;
                             }

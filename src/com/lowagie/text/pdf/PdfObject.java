@@ -105,7 +105,7 @@ abstract class PdfObject {
     public static final String NOTHING = "";
     
 /** This is the default encoding to be used for converting Strings into bytes and vice versa. */
-    public static final String ENCODING = "Cp1252";
+    public static final String ENCODING = "ISO-8859-1";
     
 /** This is the encoding to be used to output text in Unicode. */
     public static final String TEXT_UNICODE = "UnicodeBig";
