@@ -167,7 +167,8 @@ public class PdfLine {
             }
             // if the chunck couldn't even be truncated, we add everything, so be it
             else {
-                line.add(overflow);
+                if (overflow != null)
+                    line.add(overflow);
                 return null;
             }
         }

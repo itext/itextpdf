@@ -2106,6 +2106,16 @@ public class PdfContentByte {
      * @param r radius of the arc corner
      */
     public void roundRectangle(float x, float y, float w, float h, float r) {
+        if (w < 0) {
+            x += w;
+            w = -w;
+        }
+        if (h < 0) {
+            y += h;
+            h = -h;
+        }
+        if (r < 0)
+            r = -r;
         float b = 0.4477f;
         moveTo(x + r, y);
         lineTo(x + w - r, y);

@@ -406,8 +406,10 @@ public class PdfWriter extends DocWriter {
     public static final int DirectionL2R = 65536;
     /** A viewer preference */
     public static final int DirectionR2L = 131072;
+    /** A viewer preference */
+    public static final int DisplayDocTitle = 131072 * 2;
     /** The mask to decide if a ViewerPreferences dictionary is needed */
-    static final int ViewerPreferencesMask = 0x3ff00;
+    static final int ViewerPreferencesMask = 0x7ff00;
     /** The operation permitted when the document is opened with the user password */
     public static final int AllowPrinting = 4 + 2048;
     /** The operation permitted when the document is opened with the user password */
@@ -972,6 +974,32 @@ public class PdfWriter extends DocWriter {
     }
     
     /**
+	 * Gets a pre-rendered table.
+	 * @param table		Contains the table definition.  Its contents are deleted, after being pre-rendered.
+	 * @author dperezcar
+	 */
+	
+	public PdfTable getPdfTable(Table table) {
+		return pdf.getPdfTable(table, true);
+	}
+
+	/**
+	 * Row additions to the original {@link Table} used to build the {@link PdfTable} are processed and pre-rendered,
+	 * and then the contents are deleted. 
+	 * If the pre-rendered table doesn't fit, then it is fully rendered and its data discarded.  
+	 * There shouldn't be any column change in the underlying {@link Table} object.
+	 *
+	 * @param	table		The pre-rendered table obtained from {@link #getPdfTable(Table)} 
+	 * @return	true if the table is rendered and emptied.
+	 * @see #getPdfTable(Table)
+	 * @author dperezcar
+	 */
+	
+	public boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {
+		return pdf.breakTableIfDoesntFit(table);
+	}
+    
+    /**
      * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
      *
      * @param	table	the table that has to be checked
@@ -1343,6 +1371,8 @@ public class PdfWriter extends DocWriter {
      *     fit the size of the first displayed page.
      * <li><b>CenterWindow</b> - A flag specifying whether to position the document's window
      *     in the center of the screen.
+     * <li><b>DisplayDocTitle</b> - A flag specifying whether to display the document's title
+     *     in the top bar.
      * <li>The document's page mode, specifying how to display the
      *     document on exiting full-screen mode. It is meaningful only
      *     if the page mode is <b>PageModeFullScreen</b> (choose one).
@@ -1968,5 +1998,16 @@ public class PdfWriter extends DocWriter {
         if (cs == null || cs.isNull())
             defaultColorspace.remove(key);
         defaultColorspace.put(key, cs);
+    }
+
+    /** Split up the cells in a table to fit to the size of a page, so that no
+     * rows are silently dropped from the output. Currently this function only
+     * breaks up nested tables to accomplish this, it can't handle blocks of
+     * text 
+     * @see com.lowagie.text.pdf.PdfPTable#fitCellsToPageSize(float,float)
+     */
+    public void fitCellsToPageSize(PdfPTable table)
+    {
+        getPdfDocument().fitCellsToPageSize(table);
     }
 }

@@ -2178,20 +2178,22 @@ public class RtfWriter extends DocWriter implements DocListener {
                 if(useHex) {
                     ret.append("\\\'").append(Long.toHexString((long) ch));
                 } else {
-                    ret.append("\\u").append((long) ch).append('?');
+                ret.append("\\u").append((long) ch).append('?');
                 }
             } else {
                 ret.append(ch);
             }
         }
-        if(ret.indexOf("$newpage$") >= 0) {
-            String before = ret.substring(0, ret.indexOf("$newpage$"));
-            String after = ret.substring(ret.indexOf("$newpage$") + 9);
+        String s = ret.toString();
+        if(s.indexOf("$newpage$") >= 0) {
+            String before = s.substring(0, s.indexOf("$newpage$"));
+            String after = s.substring(s.indexOf("$newpage$") + 9);
             ret = new StringBuffer(before);
             ret.append("\\page\\par ");
             ret.append(after);
+            return ret.toString();
         }
-        return ret.toString();
+        return s;
     }
 
     private void addHeaderFooterFontColor(HeaderFooter hf) {

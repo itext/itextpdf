@@ -55,7 +55,9 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.Phrase;
 import java.awt.Color;
+import java.util.ArrayList;
 
 /**
  * A row in a PdfPTable.
@@ -416,5 +418,65 @@ public class PdfPRow {
             }
         }
         return width;
+    }
+
+    /** split the row into multiple rows that each fit within a given page
+     * height. Do so by breaking tables into multiple tables
+     */
+    public ArrayList splitToPageSize(float maxWidth, float maxHeight)
+    {
+        ArrayList splitRows = new ArrayList();
+        splitRows.add(this);
+        for(int i = 0; i < cells.length; i++)
+        {
+            float height = cells[i].getFixedHeight();
+            if (height <= 0)
+                height = cells[i].height();
+            if (height < cells[i].getFixedHeight())
+                height = cells[i].getFixedHeight();
+            else if (height < cells[i].getMinimumHeight())
+                height = cells[i].getMinimumHeight();
+
+            if(height > maxHeight) {
+                PdfPTable table = cells[i].getTable();
+                Image img = cells[i].getImage();
+                if(img != null) {
+                    //the image will automatically be scaled to fit
+                    continue;
+                }
+                else if(table != null) { 
+                    //split the table into pieces
+                    ArrayList splitTables = table.splitToPageSize(widths[i] - cells[i].getPaddingLeft() - cells[i].getPaddingRight(), maxHeight - cells[i].getPaddingBottom() - cells[i].getPaddingTop());
+                    if(splitTables.size() == 1) {
+                        cells[i].setTable((PdfPTable)splitTables.get(0));
+                        continue;
+                    }
+                    else {
+                        //create new rows to hold the table pieces if we don't have enough
+                        while(splitTables.size() > splitRows.size()) {
+                            PdfPCell[] newRowCells = new PdfPCell[cells.length];
+                            for(int index = 0; index < newRowCells.length; index++) {
+                                PdfPCell newCell = new PdfPCell(cells[index]);
+                                newCell.setTable(null);
+                                newCell.setImage(null);
+                                newCell.setPhrase(new Phrase(""));
+                                newRowCells[index] = newCell;
+                            }
+                            splitRows.add(new PdfPRow(newRowCells));
+                        }
+
+                        //add each piece of the table to our new rows
+                        for(int newRowIndex = 0; newRowIndex < splitRows.size(); newRowIndex++) {
+                            ((PdfPRow)splitRows.get(newRowIndex)).cells[i].setTable((PdfPTable)splitTables.get(newRowIndex));
+                        }
+                    }
+                }
+                else {
+                    //break up a block of text that is larger than a page. This functionality is not yet implimented.
+                }
+            }
+        }
+
+        return splitRows;
     }
 }
