@@ -297,13 +297,13 @@ public class PdfCell extends Rectangle {
     /**
      * Adds an image to this Cell.
      *
-     * @param   image   the image to add
+     * @param   i   the image to add
      * @param   left    the left border
      * @param   right   the right border
      */
     
-    private float addImage(Image image, float left, float right, float height, int alignment) {
-        Image image = Image.getInstance(image);
+    private float addImage(Image i, float left, float right, float height, int alignment) {
+        Image image = Image.getInstance(i);
         if (image.scaledWidth() > right - left) {
             image.scaleToFit(right - left, Float.MAX_VALUE);
         }
@@ -311,15 +311,11 @@ public class PdfCell extends Rectangle {
         line = new PdfLine(left, right, alignment, image.scaledHeight() + 0.4f * leading);
         lines.add(line);
         line = new PdfLine(left, right, alignment, leading);
-        switch (image.alignment() & (Image.MIDDLE | Image.RIGHT)) { // fix Uwe Zimmerman
-            case Image.RIGHT:
-                left = right - image.scaledWidth();
-                break;
-            case Image.MIDDLE:
-                left = left + ((right - left - image.scaledWidth()) / 2f);
-                break;
-            case Image.LEFT:
-            default:
+        if ((image.alignment() & Image.RIGHT) == Image.RIGHT) { // fix Uwe Zimmerman
+            left = right - image.scaledWidth();
+        }
+        else if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) {
+            left = left + ((right - left - image.scaledWidth()) / 2f);
         }
         image.setAbsolutePosition(left, height + (lines.size() - 2) * leading + image.scaledHeight() + 0.4f * leading);
         images.add(image);
