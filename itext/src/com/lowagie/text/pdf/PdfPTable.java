@@ -816,6 +816,10 @@ public class PdfPTable implements Element{
     }
     
     float [][] getEventWidths(float xPos, int firstRow, int lastRow, boolean includeHeaders) {
+        if (includeHeaders) {
+            firstRow = Math.max(firstRow, headerRows);
+            lastRow = Math.max(lastRow, headerRows);
+        }
         float widths[][] = new float[(includeHeaders ? headerRows : 0) + lastRow - firstRow][];
         if (isColspan) {
             int n = 0;

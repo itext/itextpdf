@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2001, 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,57 +48,66 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.pdf.codec.wmf;
 
-import com.lowagie.text.ExceptionConverter;
-/**
- * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
- */
+import java.io.*;
+import java.awt.Color;
 
-public class PdfFormXObject extends PdfStream {
+public class InputMeta {
     
-    // public static final variables
+    InputStream in;
+    int length;
     
-/** This is a PdfNumber representing 0. */
-    public static final PdfNumber ZERO = new PdfNumber(0);
-    
-/** This is a PdfNumber representing 1. */
-    public static final PdfNumber ONE = new PdfNumber(1);
-    
-/** This is the 1 - matrix. */
-    public static final PdfLiteral MATRIX = new PdfLiteral("[1 0 0 1 0 0]");
-    
-    // membervariables
-    
-    
-    // constructor
-    
-/**
- * Constructs a <CODE>PdfFormXObject</CODE>-object.
- *
- * @param		template		the template
- */
-    
-    PdfFormXObject(PdfTemplate template) // throws BadPdfFormatException
-    {
-        super();
-        put(PdfName.TYPE, PdfName.XOBJECT);
-        put(PdfName.SUBTYPE, PdfName.FORM);
-        put(PdfName.RESOURCES, template.getResources());
-        put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
-        put(PdfName.FORMTYPE, ONE);
-        if (template.getLayer() != null)
-            put(PdfName.OC, template.getLayer().getRef());
-        if (template.getGroup() != null)
-            put(PdfName.GROUP, template.getGroup());
-        PdfArray matrix = template.getMatrix();
-        if (matrix == null)
-            put(PdfName.MATRIX, MATRIX);
-        else
-            put(PdfName.MATRIX, matrix);
-        bytes = template.toPdf(null);
-        put(PdfName.LENGTH, new PdfNumber(bytes.length));
-        flateCompress();
+    public InputMeta(InputStream in) {
+        this.in = in;
+    }
+
+    public int readWord() throws IOException{
+        length += 2;
+        int k1 = in.read();
+        if (k1 < 0)
+            return 0;
+        return (k1 + (in.read() << 8)) & 0xffff;
+    }
+
+    public int readShort() throws IOException{
+        int k = readWord();
+        if (k > 0x7fff)
+            k -= 0x10000;
+        return k;
+    }
+
+    public int readInt() throws IOException{
+        length += 4;
+        int k1 = in.read();
+        if (k1 < 0)
+            return 0;
+        int k2 = in.read() << 8;
+        int k3 = in.read() << 16;
+        return k1 + k2 + k3 + (in.read() << 24);
     }
     
+    public int readByte() throws IOException{
+        ++length;
+        return in.read() & 0xff;
+    }
+    
+    public void skip(int len) throws IOException{
+        length += len;
+        while (len > 0) {
+            len -= in.skip(len);
+        }
+    }
+    
+    public int getLength() {
+        return length;
+    }
+    
+    public Color readColor() throws IOException{
+        int red = readByte();
+        int green = readByte();
+        int blue = readByte();
+        readByte();
+        return new Color(red, green, blue);
+    }
 }

@@ -1,0 +1,289 @@
+options {
+        LOOKAHEAD=1;
+	JAVA_UNICODE_ESCAPE = true;
+	STATIC = false;
+}
+
+PARSER_BEGIN(PAParser)
+
+package com.lowagie.text.pdf.codec.postscript;
+
+import java.lang.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.color.*;
+import java.awt.font.*;
+
+import java.io.*;
+import java.net.URL;
+
+public class PAParser extends Object {
+
+}
+
+PARSER_END(PAParser)
+
+
+/* WHITE SPACE */
+
+SKIP :
+{
+  < WHITESPACE: " " | "\t" | "\n" | "\r" | "\f" >
+|
+  < "%" ( ~["\n"] )* "\n" >
+      |
+  < "%" ( ~["\r"] )* "\r" >
+}
+
+/* LITERALS */
+
+TOKEN :
+{
+  < INTEGER_LITERAL:
+      ("-")? (  <DECIMAL_LITERAL> (["l","L"])?
+      | <HEX_LITERAL> (["l","L"])?
+       )
+  >
+|
+  < #DECIMAL_LITERAL: ["0"-"9"] (["0"-"9"])* >
+|
+  < #HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+|
+  < FLOATING_POINT_LITERAL:
+        ((["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?)
+      | ("." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?)
+      | ((["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?)
+      | ((["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"])
+      | ("-" (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?)
+      | ("-" "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?)
+      | ("-" (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?)
+      | ("-" (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"])
+  >
+|
+  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+|
+  < STRING_LITERAL:
+      "("
+      (   (~[")","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'",")", "\n"]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      ")"
+  >
+}
+
+/* IDENTIFIERS */
+
+TOKEN :
+{
+  < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>|"-"|".")* >
+|
+  < KEY_IDENTIFIER: "/" <IDENTIFIER> >
+|
+  < IMMEDIATE_IDENTIFIER: "//" <IDENTIFIER> >
+|
+  < #LETTER:
+      [
+       "\u0024",
+       "\u0041"-"\u005a",
+       "\u005f",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff",
+       "\u3040"-"\u318f",
+       "\u3300"-"\u337f",
+       "\u3400"-"\u3d2d",
+       "\u4e00"-"\u9fff",
+       "\uf900"-"\ufaff"
+      ]
+  >
+|
+  < #DIGIT:
+      [
+       "\u0030"-"\u0039",
+       "\u0660"-"\u0669",
+       "\u06f0"-"\u06f9",
+       "\u0966"-"\u096f",
+       "\u09e6"-"\u09ef",
+       "\u0a66"-"\u0a6f",
+       "\u0ae6"-"\u0aef",
+       "\u0b66"-"\u0b6f",
+       "\u0be7"-"\u0bef",
+       "\u0c66"-"\u0c6f",
+       "\u0ce6"-"\u0cef",
+       "\u0d66"-"\u0d6f",
+       "\u0e50"-"\u0e59",
+       "\u0ed0"-"\u0ed9",
+       "\u1040"-"\u1049"
+      ]
+  >
+}
+
+/* SEPARATORS */
+
+TOKEN :
+{
+
+  < LBRACE: "{" >
+| < RBRACE: "}" >
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+
+}
+
+JAVACODE
+void error_skipto(int kind){
+ParseException e=generateParseException();
+Token t;
+String dump="";
+do{
+if(getToken(1).kind==kind)break;
+t=getNextToken();
+dump+=t.image;
+}while(t.kind!=kind);
+System.out.println("Ignoriere >"+dump+"<");
+}
+
+
+void parse(PAContext context) :
+{
+        Token x = null;
+}
+{
+  try{
+       (
+      (
+              (  (
+                        x = <INTEGER_LITERAL>
+                        {
+                                try {
+                                        context.engine.process(new Integer(x.image));
+                                } catch(NumberFormatException e) {
+                                        throw new ParseException(e.toString());
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                |
+                (
+                        x = <FLOATING_POINT_LITERAL>
+                        {
+                                try {
+                                        context.engine.process(new Double(x.image));
+                                } catch(NumberFormatException e) {
+                                        throw new ParseException(e.toString());
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                |
+                (
+                        x = <STRING_LITERAL>
+                        {
+                                try {
+	  	                        context.engine.process(x.image.substring(1, x.image.length() -1));
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                |
+                (
+                        x = <IDENTIFIER>
+                        {
+                                try {
+	  	                        context.engine.process(new PAToken(x.image, PAToken.IDENTIFIER));
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                |
+                (
+                        x = <KEY_IDENTIFIER>
+                        {
+                                try {
+	  	                        context.engine.process(new PAToken(x.image.substring(1, x.image.length()), PAToken.KEY));
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                |
+                (
+                        x = <IMMEDIATE_IDENTIFIER>
+                        {
+                                try {
+	  	                        context.engine.process(new PAToken(x.image.substring(2, x.image.length()), PAToken.IMMEDIATE));
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                ) )
+                |
+                (
+                        <LBRACE>
+                        {
+                                try {
+                                        context.engine.process(new PAToken(null, PAToken.START_PROCEDURE));
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                |
+                (
+                        <RBRACE>
+                        {
+                                try {
+                                        context.engine.process(new PAToken(null, PAToken.END_PROCEDURE));
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                |
+                (
+                        <LBRACKET>
+                        {
+                                try {
+                                        context.engine.process(new PAToken(null, PAToken.START_ARRAY));
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                |
+                (
+                        <RBRACKET>
+                        {
+                                try {
+                                        context.engine.process(new PAToken(null, PAToken.END_ARRAY));
+                                } catch(PainterException e) {
+                                        throw new ParseException(e.toString());
+                                }
+                        }
+                )
+                )//{System.out.println(">>>"+token.image+"");System.out.flush();}
+        )*
+
+  }catch(ParseException e){
+                  //System.out.println("Fehlerhaftes Element in Spalte "+e.currentToken.beginColumn+" in Eingabedatei in Zeile="+e.currentToken.next.beginLine+" in Zeichen Nr. "+e.currentToken.next.beginColumn+". >"+e.currentToken.next.image+"< wurde hier nicht erwartet.");
+                  //System.err.println("Fehler:"+e);
+                  e.printStackTrace();
+                  error_skipto(WHITESPACE);
+              }
+}
+
+
+

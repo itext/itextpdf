@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 2001, 2002 Paulo Soares
+ * Copyright 2005 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,48 +44,51 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.text.pdf;
 
-package com.lowagie.text.pdf.wmf;
 import java.io.IOException;
-import java.awt.Color;
 
-public class MetaBrush extends MetaObject {
-
-    public static final int BS_SOLID = 0;
-    public static final int BS_NULL = 1;
-    public static final int BS_HATCHED = 2;
-    public static final int BS_PATTERN = 3;
-    public static final int BS_DIBPATTERN = 5;
-    public static final int HS_HORIZONTAL = 0;
-    public static final int HS_VERTICAL = 1;
-    public static final int HS_FDIAGONAL = 2;
-    public static final int HS_BDIAGONAL = 3;
-    public static final int HS_CROSS = 4;
-    public static final int HS_DIAGCROSS = 5;
-
-    int style = BS_SOLID;
-    int hatch;
-    Color color = Color.white;
-
-    public MetaBrush() {
-        type = META_BRUSH;
-    }
-
-    public void init(InputMeta in) throws IOException {
-        style = in.readWord();
-        color = in.readColor();
-        hatch = in.readWord();
+/**
+ * Implements the PostScript XObject.
+ */
+public class PdfPSXObject extends PdfTemplate {
+    
+    /** Creates a new instance of PdfPSXObject */
+    protected PdfPSXObject() {
+        super();
     }
     
-    public int getStyle() {
-        return style;
+    public PdfPSXObject(PdfWriter wr) {
+        super(wr);
     }
+
+    /**
+     * Gets the stream representing this object.
+     *
+     * @return the stream representing this object
+     */
     
-    public int getHatch() {
-        return hatch;
+    PdfStream getFormXObject() throws IOException {
+        PdfStream s = new PdfStream(content.toByteArray());
+        s.put(PdfName.TYPE, PdfName.XOBJECT);
+        s.put(PdfName.SUBTYPE, PdfName.PS);
+        s.flateCompress();
+        return s;
     }
+        
+    /**
+     * Gets a duplicate of this <CODE>PdfPSXObject</CODE>. All
+     * the members are copied by reference but the buffer stays different.
+     * @return a copy of this <CODE>PdfPSXObject</CODE>
+     */
     
-    public Color getColor() {
-        return color;
+    public PdfContentByte getDuplicate() {
+        PdfPSXObject tpl = new PdfPSXObject();
+        tpl.writer = writer;
+        tpl.pdf = pdf;
+        tpl.thisReference = thisReference;
+        tpl.pageResources = pageResources;
+        tpl.separator = separator;
+        return tpl;
     }
 }

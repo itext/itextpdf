@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2001, 2002 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,57 +48,24 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.pdf.codec.wmf;
 
-import com.lowagie.text.ExceptionConverter;
-/**
- * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
- */
+public class MetaObject {
+    public static final int META_NOT_SUPPORTED = 0;
+    public static final int META_PEN = 1;
+    public static final int META_BRUSH = 2;
+    public static final int META_FONT = 3;
+    public int type = META_NOT_SUPPORTED;
 
-public class PdfFormXObject extends PdfStream {
-    
-    // public static final variables
-    
-/** This is a PdfNumber representing 0. */
-    public static final PdfNumber ZERO = new PdfNumber(0);
-    
-/** This is a PdfNumber representing 1. */
-    public static final PdfNumber ONE = new PdfNumber(1);
-    
-/** This is the 1 - matrix. */
-    public static final PdfLiteral MATRIX = new PdfLiteral("[1 0 0 1 0 0]");
-    
-    // membervariables
-    
-    
-    // constructor
-    
-/**
- * Constructs a <CODE>PdfFormXObject</CODE>-object.
- *
- * @param		template		the template
- */
-    
-    PdfFormXObject(PdfTemplate template) // throws BadPdfFormatException
-    {
-        super();
-        put(PdfName.TYPE, PdfName.XOBJECT);
-        put(PdfName.SUBTYPE, PdfName.FORM);
-        put(PdfName.RESOURCES, template.getResources());
-        put(PdfName.BBOX, new PdfRectangle(template.getBoundingBox()));
-        put(PdfName.FORMTYPE, ONE);
-        if (template.getLayer() != null)
-            put(PdfName.OC, template.getLayer().getRef());
-        if (template.getGroup() != null)
-            put(PdfName.GROUP, template.getGroup());
-        PdfArray matrix = template.getMatrix();
-        if (matrix == null)
-            put(PdfName.MATRIX, MATRIX);
-        else
-            put(PdfName.MATRIX, matrix);
-        bytes = template.toPdf(null);
-        put(PdfName.LENGTH, new PdfNumber(bytes.length));
-        flateCompress();
+    public MetaObject() {
+    }
+
+    public MetaObject(int type) {
+        this.type = type;
     }
     
+    public int getType() {
+        return type;
+    }
+
 }

@@ -146,6 +146,7 @@ public abstract class Image extends Rectangle implements Element,
 	public static final int ORIGINAL_WMF = 6;
 
 	// membervariables
+    public static final int ORIGINAL_PS = 7;
 
 	/** Image color inversion */
 	protected boolean invert = false;
@@ -384,16 +385,16 @@ public abstract class Image extends Rectangle implements Element,
 			}
 			if (c1 == PngImage.PNGID[0] && c2 == PngImage.PNGID[1]
 					&& c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
-				Image img = PngImage.getImage(url);
-				return img;
+				return PngImage.getImage(url);
 			}
+            if (c1 == '%' && c2 == '!' && c3 == 'P' && c4 == 'S') {
+               return new ImgPostscript(url);
+            }
 			if (c1 == 0xD7 && c2 == 0xCD) {
-				Image img = new ImgWMF(url);
-				return img;
+				return new ImgWMF(url);
 			}
 			if (c1 == 'B' && c2 == 'M') {
-				Image img = BmpImage.getImage(url);
-				return img;
+				return  BmpImage.getImage(url);
 			}
 			if ((c1 == 'M' && c2 == 'M' && c3 == 0 && c4 == 42)
 					|| (c1 == 'I' && c2 == 'I' && c3 == 42 && c4 == 0)) {
@@ -455,6 +456,9 @@ public abstract class Image extends Rectangle implements Element,
 					&& c3 == PngImage.PNGID[2] && c4 == PngImage.PNGID[3]) {
 				return PngImage.getImage(imgb);
 			}
+            if (c1 == '%' && c2 == '!' && c3 == 'P' && c4 == 'S') {
+               return new ImgPostscript(imgb);
+            }
 			if (c1 == 0xD7 && c2 == 0xCD) {
 				return new ImgWMF(imgb);
 			}

@@ -48,41 +48,44 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf.wmf;
+package com.lowagie.text.pdf.codec.wmf;
 import java.io.IOException;
 import java.awt.Color;
 
-public class MetaPen extends MetaObject {
+public class MetaBrush extends MetaObject {
 
-    public static final int PS_SOLID = 0;
-    public static final int PS_DASH = 1;
-    public static final int PS_DOT = 2;
-    public static final int PS_DASHDOT = 3;
-    public static final int PS_DASHDOTDOT = 4;
-    public static final int PS_NULL = 5;
-    public static final int PS_INSIDEFRAME = 6;
+    public static final int BS_SOLID = 0;
+    public static final int BS_NULL = 1;
+    public static final int BS_HATCHED = 2;
+    public static final int BS_PATTERN = 3;
+    public static final int BS_DIBPATTERN = 5;
+    public static final int HS_HORIZONTAL = 0;
+    public static final int HS_VERTICAL = 1;
+    public static final int HS_FDIAGONAL = 2;
+    public static final int HS_BDIAGONAL = 3;
+    public static final int HS_CROSS = 4;
+    public static final int HS_DIAGCROSS = 5;
 
-    int style = PS_SOLID;
-    int penWidth = 1;
-    Color color = Color.black;
+    int style = BS_SOLID;
+    int hatch;
+    Color color = Color.white;
 
-    public MetaPen() {
-        type = META_PEN;
+    public MetaBrush() {
+        type = META_BRUSH;
     }
 
     public void init(InputMeta in) throws IOException {
         style = in.readWord();
-        penWidth = in.readShort();
-        in.readWord();
         color = in.readColor();
+        hatch = in.readWord();
     }
     
     public int getStyle() {
         return style;
     }
     
-    public int getPenWidth() {
-        return penWidth;
+    public int getHatch() {
+        return hatch;
     }
     
     public Color getColor() {

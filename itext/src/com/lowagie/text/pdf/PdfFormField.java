@@ -71,6 +71,7 @@ public class PdfFormField extends PdfAnnotation {
     public static final int FF_DONOTSPELLCHECK = 4194304;
     public static final int FF_DONOTSCROLL = 8388608;
     public static final int FF_COMB = 16777216;
+    public static final int FF_RADIOSINUNISON = 1 << 25;
     public static final int Q_LEFT = 0;
     public static final int Q_CENTER = 1;
     public static final int Q_RIGHT = 2;

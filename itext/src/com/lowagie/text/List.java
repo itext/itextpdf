@@ -486,19 +486,30 @@ public class List implements TextElementArray, MarkupAttributes {
  * @return  String contains the next character (A-Z or a-z)
  */
     private String nextLetter() {
-
-         int num_in_list = list.size();
-         int max_ival = (lastCh + 0);
-         int ival = (firstCh + num_in_list);
-         while ( ival > max_ival ) {
-             ival -= 26;
-         }
-         char[] new_char = new char[1];
-         new_char[0] = (char) ival;
-         String ret = new String( new_char );
-         return ret;
+        int num_in_list = listItemsInList(); //list.size();
+        int max_ival = (lastCh + 0);
+        int ival = (firstCh + num_in_list);
+        while ( ival > max_ival ) {
+            ival -= 26;
+        }
+        char[] new_char = new char[1];
+        new_char[0] = (char) ival;
+        String ret = new String( new_char );
+        return ret;
     }
     
+    /**
+     * Counts the number of ListItems in the list ommiting nested lists
+     *
+     * @return  Integer number of ListItems in the list
+     */
+    private int listItemsInList() {
+        int result = 0;
+        for (Iterator i = list.iterator(); i.hasNext(); ) {
+            if (!(i.next() instanceof List)) result++;
+        }
+        return result;
+    }
     
 /**
  * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)

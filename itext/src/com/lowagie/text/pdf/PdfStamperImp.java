@@ -83,6 +83,7 @@ class PdfStamperImp extends PdfWriter {
     protected boolean append;
     protected IntHashtable marked;
     protected int initialXrefSize;
+    protected PdfAction openAction;
     
     /** Creates new PdfStamperImp.
      * @param reader the read PDF
@@ -154,6 +155,9 @@ class PdfStamperImp extends PdfWriter {
         addSharedObjectsToBody();
         setOutlines();
         setJavaScript();
+        if (openAction != null) {
+            reader.getCatalog().put(PdfName.OPENACTION, openAction);
+        }
         PRIndirectReference iInfo = null;
         try {
             file.reOpen();
@@ -418,6 +422,7 @@ class PdfStamperImp extends PdfWriter {
                 }
                 return;
             case PdfObject.DICTIONARY:
+            case PdfObject.STREAM:
                 PdfDictionary dic = (PdfDictionary)obj;
                 for (Iterator it = dic.getKeys().iterator(); it.hasNext();) {
                     PdfName name = (PdfName)it.next();
@@ -439,6 +444,7 @@ class PdfStamperImp extends PdfWriter {
             return;
         registerReader(fdf, false);
         IntHashtable hits = new IntHashtable();
+        HashMap irt = new HashMap();
         ArrayList an = new ArrayList();
         ArrayList ar = annots.getArrayList();
         for (int k = 0; k < ar.size(); ++k) {
@@ -449,11 +455,29 @@ class PdfStamperImp extends PdfWriter {
                 continue;
             findAllObjects(fdf, obj, hits);
             an.add(obj);
+            if (obj.type() == PdfObject.INDIRECT) {
+                PdfObject nm = PdfReader.getPdfObject(annot.get(PdfName.NM));
+                if (nm != null && nm.type() == PdfObject.STRING)
+                    irt.put(nm.toString(), obj);
+            }
         }
         int arhits[] = hits.getKeys();
         for (int k = 0; k < arhits.length; ++k) {
             int n = arhits[k];
-            addToBody((PdfObject)fdf.xrefObj.get(n), getNewObjectNumber(fdf, n, 0));
+            PdfObject obj = (PdfObject)fdf.xrefObj.get(n);
+            if (obj.type() == PdfObject.DICTIONARY) {
+                PdfObject str = PdfReader.getPdfObject(((PdfDictionary)obj).get(PdfName.IRT));
+                if (str != null && str.type() == PdfObject.STRING) {
+                   PdfObject i = (PdfObject)irt.get(str.toString());
+                   if (i != null) {
+                       PdfDictionary dic2 = new PdfDictionary();
+                       dic2.merge((PdfDictionary)obj);
+                       dic2.put(PdfName.IRT, i);
+                       obj = dic2;
+                   }
+                }
+            }
+            addToBody(obj, getNewObjectNumber(fdf, n, 0));
         }
         for (int k = 0; k < an.size(); ++k) {
             PdfObject obj = (PdfObject)an.get(k);
@@ -1145,6 +1169,14 @@ class PdfStamperImp extends PdfWriter {
             aa.put(actionType, action);
     }
 
+    public void setOpenAction(PdfAction action) {
+        openAction = action;
+    }
+    
+    public void setOpenAction(String name) {
+        throw new UnsupportedOperationException("Open actions by name are not supported.");
+    }
+    
     static class PageStamp {
         
         PdfDictionary pageN;
