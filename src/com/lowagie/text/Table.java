@@ -176,7 +176,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     // these variables contain the layout of the table
     
 /** This Empty Cell contains the DEFAULT layout of each Cell added with the method addCell(String content). */
-    private Cell defaultLayout = new Cell();
+    private Cell defaultLayout = new Cell(true);
     
 /** This is the number of the last row of the table headers. */
     private int lastHeaderRow = -1;
@@ -210,7 +210,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  * Boolean to automatically fill empty cells before a table is rendered
  *  (takes CPU so may be set to false in case of certainty)
  */
-    boolean mAutoFillEmptyCells = true;
+    boolean mAutoFillEmptyCells = false;
     
 /** If true this table may not be split over two pages. */
     boolean tableFitsPage = false;
@@ -416,7 +416,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     }
     
 /**
- * Enables/disables automatic insertion of empty cells before table is rendered. (default = true)
+ * Enables/disables automatic insertion of empty cells before table is rendered. (default = false)
  * As some people may want to create a table, fill only a couple of the cells and don't bother with
  * investigating which empty ones need to be added, this default behaviour may be very welcome.
  * Disabling is recommended to increase speed. (empty cells should be added through extra code then)
@@ -1344,7 +1344,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             for (int i=0; i < rows.size(); i++) {
                 for (int j=0; j < columns; j++) {
                     if ( ((Row) rows.get(i)).isReserved(j) == false) {
-                        addCell(new Cell(new Paragraph(" ")), new Point(i, j));
+                        addCell(defaultLayout, new Point(i, j));
                     }
                 }
             }

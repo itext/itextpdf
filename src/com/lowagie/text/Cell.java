@@ -149,6 +149,17 @@ public class Cell extends Rectangle implements TextElementArray {
     }
     
 /**
+ * Constructs an empty <CODE>Cell</CODE> (for internal use only).
+ *
+ * @param   dummy   a dummy value
+ */
+    
+    public Cell(boolean dummy) {
+        this();
+        arrayList.add(new Paragraph(0));
+    }
+    
+/**
  * Constructs a <CODE>Cell</CODE> with a certain content.
  * <P>
  * The <CODE>String</CODE> will be converted into a <CODE>Paragraph</CODE>.
@@ -209,7 +220,6 @@ public class Cell extends Rectangle implements TextElementArray {
     
     public Cell(Properties attributes) {
         this();
-        arrayList.clear();
         String value;
         if ((value = (String)attributes.remove(ElementTags.HORIZONTALALIGN)) != null) {
             setHorizontalAlignment(value);
