@@ -211,8 +211,8 @@ public class PdfWriter extends DocWriter {
         PdfIndirectObject add(PdfObject object) throws IOException {
             PdfIndirectObject indirect = new PdfIndirectObject(size(), object, writer);
             xrefs.add(new PdfCrossReference(position));
-            indirect.writeTo(writer.os);
-            position = writer.os.getCounter();
+            indirect.writeTo(writer.getOutputStreamCounter());
+            position = writer.getOutputStreamCounter().getCounter();
             return indirect;
         }
         
@@ -249,16 +249,16 @@ public class PdfWriter extends DocWriter {
         PdfIndirectObject add(PdfObject object, PdfIndirectReference ref) throws IOException {
             PdfIndirectObject indirect = new PdfIndirectObject(ref.getNumber(), object, writer);
             xrefs.set(ref.getNumber(), new PdfCrossReference(position));
-            indirect.writeTo(writer.os);
-            position = writer.os.getCounter();
+            indirect.writeTo(writer.getOutputStreamCounter());
+            position = writer.getOutputStreamCounter().getCounter();
             return indirect;
         }
         
         PdfIndirectObject add(PdfObject object, int refNumber) throws IOException {
             PdfIndirectObject indirect = new PdfIndirectObject(refNumber, object, writer);
             xrefs.set(refNumber, new PdfCrossReference(position));
-            indirect.writeTo(writer.os);
-            position = writer.os.getCounter();
+            indirect.writeTo(writer.getOutputStreamCounter());
+            position = writer.getOutputStreamCounter().getCounter();
             return indirect;
         }
         
@@ -283,8 +283,8 @@ public class PdfWriter extends DocWriter {
         PdfIndirectObject add(PdfPages object) throws IOException {
             PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object, writer);
             rootOffset = position;
-            indirect.writeTo(writer.os);
-            position = writer.os.getCounter();
+            indirect.writeTo(writer.getOutputStreamCounter());
+            position = writer.getOutputStreamCounter().getCounter();
             return indirect;
         }
         
@@ -587,12 +587,23 @@ public class PdfWriter extends DocWriter {
      */
     
     protected PdfWriter(PdfDocument document, OutputStream os) {
-        super(document, os);
+        super(document, new OutputStreamCounter(os));
         pdf = document;
         directContent = new PdfContentByte(this);
         directContentUnder = new PdfContentByte(this);
     }
     
+    /**
+     * Returns the OutputStreamCounter object.
+     * Necessary for inner classes (compilers will not complain, but you will get
+     * errors at Runtime if you don't use this).
+     *
+     * Bugfix by Matt Benson.
+     */
+    private OutputStreamCounter getOutputStreamCounter() {
+        return (OutputStreamCounter)os;
+    }//end getOutputStreamCounter
+     
     // get an instance of the PdfWriter
     
     /**
