@@ -46,32 +46,31 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Font;
-import com.lowagie.text.Element;
-import com.lowagie.text.DocumentException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
+import java.io.EOFException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.security.PrivateKey;
+import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.cert.CRL;
-import java.security.PrivateKey;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.EOFException;
-import java.io.RandomAccessFile;
-import java.io.File;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Font;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 
 /**
  * This class takes care of the cryptographic options and appearances that form a signature.
@@ -126,6 +125,7 @@ public class PdfSignatureAppearance {
     private byte externalRSAdata[];
     private String digestEncryptionAlgorithm;
     private HashMap exclusionLocations;
+    private String imageFileName;
         
     PdfSignatureAppearance(PdfStamperImp writer) {
         this.writer = writer;
@@ -310,6 +310,23 @@ public class PdfSignatureAppearance {
     }
     
     /**
+     * Sets an image filename for a background image.
+     * (support for background image contributed by Cesar jz)
+     * @param imageFileName
+     */
+    public void setImageFileName(String imageFileName){
+    	this.imageFileName = imageFileName ;
+    }
+    /**
+     * Gets the image filename for the background image.
+     * (support for background image contributed by Cesar jz)
+     * @return an imageFileName
+     */
+    public String getImageFileName(){
+    	return this.imageFileName;
+    }
+    
+    /**
      * Gets the main appearance layer.
      * <p>
      * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
@@ -321,9 +338,28 @@ public class PdfSignatureAppearance {
     public PdfTemplate getAppearance() throws DocumentException, IOException {
         if (app[0] == null) {
             PdfTemplate t = app[0] = new PdfTemplate(writer);
-            t.setBoundingBox(new Rectangle(100, 100));
+            if (rect!=null){
+            	t.setBoundingBox(new Rectangle(rect.width(), rect.height()));
+            }
+            else {
+            	t.setBoundingBox(new Rectangle(100, 100));
+            }
             writer.addDirectTemplateSimple(t, new PdfName("n0"));
-            t.setLiteral("% DSBlank\n");
+            // support for background image contributed by Cesar jz
+            if (imageFileName != null){
+            	com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(imageFileName);
+            	image.setAbsolutePosition(0,0);
+            	if (rect!=null){
+            		image.scaleToFit(rect.width(), rect.height());
+            	}
+            	else{
+            		image.scaleToFit(100, 100);
+            	}
+            	t.addImage(image);
+            }
+            else {
+            	t.setLiteral("% DSBlank\n");
+            }
         }
         if (app[1] == null && !acro6Layers) {
             PdfTemplate t = app[1] = new PdfTemplate(writer);
@@ -1167,6 +1203,9 @@ public class PdfSignatureAppearance {
             this.range = range;
         }
         
+        /**
+         * @see java.io.InputStream#read()
+         */
         public int read() throws IOException {
             int n = read(b);
             if (n != 1)
@@ -1174,6 +1213,9 @@ public class PdfSignatureAppearance {
             return b[0] & 0xff;
         }
         
+        /**
+         * @see java.io.InputStream#read(byte[], int, int)
+         */
         public int read(byte[] b, int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();
