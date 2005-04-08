@@ -53,6 +53,7 @@
 
     <target name="download.bin" description="--> downloads files that hardly ever change">
         <mkdir dir="${itext.bin}" />
+        <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/.keystore" dest="${itext.bin}/.keystore" verbose="true" />
         <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/crimson.jar" dest="${itext.bin}/crimson.jar" verbose="true" />
         <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/iTextHYPH.jar" dest="${itext.bin}/iTextHYPH.jar" verbose="true" />
         <get usetimestamp="true" src="http://itext.sourceforge.net/downloads/iTextAsian.jar" dest="${itext.bin}/iTextAsian.jar" verbose="true" />
