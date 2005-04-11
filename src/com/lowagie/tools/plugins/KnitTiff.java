@@ -53,12 +53,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
@@ -66,33 +63,28 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
 import com.lowagie.text.pdf.codec.TiffImage;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.ImageFilter;
-import com.lowagie.tools.arguments.OptionArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Converts a Tiff file to a PDF file.
+ * Knits two TIFF files, one with the even pages and another with the odd pages, together.
  */
-public class Tiff2Pdf extends AbstractTool {
+public class KnitTiff extends AbstractTool {
 	/**
 	 * Constructs a Tiff2Pdf object.
 	 */
-	public Tiff2Pdf() {
+	public KnitTiff() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to convert", false, new ImageFilter(false, false, false, false, false, true)));
+		arguments.add(new FileArgument(this, "odd", "The tiff file with the odd pages", false, new ImageFilter(false, false, false, false, false, true)));
+		arguments.add(new FileArgument(this, "even", "The tiff file with the even pages", false, new ImageFilter(false, false, false, false, false, true)));
 		arguments.add(new FileArgument(this, "destfile", "The file to which the converted TIFF has to be written", true, new PdfFilter()));
-		OptionArgument oa = new OptionArgument(this, "pagesize", "Pagesize");
-		oa.addOption("A4", "A4");
-		oa.addOption("Letter", "LETTER");
-		oa.addOption("Original format", "ORIGINAL");
-		arguments.add(oa);
 	}
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Tiff2Pdf", true, true, true);
+		internalFrame = new JInternalFrame("KnitTiff", true, true, true);
 		internalFrame.setSize(550, 250);
 		internalFrame.setJMenuBar(getMenubar());
 		internalFrame.getContentPane().add(getConsole(40, 30));
@@ -103,54 +95,48 @@ public class Tiff2Pdf extends AbstractTool {
 	 */
 	public void execute() {
 		try {
-			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
-			File tiff_file = (File)getValue("srcfile");
+			if (getValue("odd") == null) throw new InstantiationException("You need to choose a sourcefile for the odd pages");
+			File odd_file = (File)getValue("odd");
+			if (getValue("even") == null) throw new InstantiationException("You need to choose a sourcefile for the even pages");
+			File even_file = (File)getValue("even");
 			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
 			File pdf_file = (File)getValue("destfile");
-			RandomAccessFileOrArray ra = new RandomAccessFileOrArray(tiff_file.getAbsolutePath());
-            int comps = TiffImage.getNumberOfPages(ra);
-			boolean adjustSize = false;
-			Document document = new Document(PageSize.A4);
-			if ("ORIGINAL".equals(getValue("pagesize"))) {
-				Image img = TiffImage.getTiffImage(ra, 1);
-				document.setPageSize(new Rectangle(img.scaledWidth(), img.scaledHeight()));
-				adjustSize = true;
-			}
-			else if ("LETTER".equals(getValue("pagesize"))) {
-				document.setPageSize(PageSize.LETTER);
-			}
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_file));
+			RandomAccessFileOrArray odd = new RandomAccessFileOrArray(odd_file.getAbsolutePath());
+			RandomAccessFileOrArray even = new RandomAccessFileOrArray(even_file.getAbsolutePath());
+			Image img = TiffImage.getTiffImage(odd, 1);
+			Document document = new Document(new Rectangle(img.scaledWidth(),
+					img.scaledHeight()));
+			PdfWriter writer = PdfWriter.getInstance(document,
+					new FileOutputStream(pdf_file));
 			document.open();
 			PdfContentByte cb = writer.getDirectContent();
-            for (int c = 0; c < comps; ++c) {
-                Image img = TiffImage.getTiffImage(ra, c + 1);
-                if (img != null) {
-                	if (adjustSize) {
-    					document.setPageSize(new Rectangle(img.scaledWidth(),
-    							img.scaledHeight()));
-                        document.newPage();
-                		img.setAbsolutePosition(0, 0);
-                	}
-                	else {
-                		if (img.scaledWidth() > 500 || img.scaledHeight() > 700) {
-                			img.scaleToFit(500, 700);
-                		}
-                		img.setAbsolutePosition(20, 20);
-                        document.newPage();
-                        document.add(new Paragraph(tiff_file + " - page " + (c + 1)));
-                	}
-                    cb.addImage(img);
-                    System.out.println("Finished page " + (c + 1));
-                }
-            }
-            ra.close();
-            document.close();
-		} catch (Exception e) {
-        	JOptionPane.showMessageDialog(internalFrame,
-        		    e.getMessage(),
-        		    e.getClass().getName(),
-        		    JOptionPane.ERROR_MESSAGE);
-            System.err.println(e.getMessage());
+			int count = Math.max(TiffImage.getNumberOfPages(odd), TiffImage
+					.getNumberOfPages(even));
+			for (int c = 0; c < count; ++c) {
+				try {
+					Image imgOdd = TiffImage.getTiffImage(odd, c + 1);
+					Image imgEven = TiffImage.getTiffImage(even, count - c);
+					document.setPageSize(new Rectangle(imgOdd.scaledWidth(),
+							imgOdd.scaledHeight()));
+					document.newPage();
+					imgOdd.setAbsolutePosition(0, 0);
+					cb.addImage(imgOdd);
+					document.setPageSize(new Rectangle(imgEven.scaledWidth(),
+							imgEven.scaledHeight()));
+					document.newPage();
+					imgEven.setAbsolutePosition(0, 0);
+					cb.addImage(imgEven);
+
+				} catch (Throwable e) {
+					System.out.println("Exception page " + (c + 1) + " "
+							+ e.getMessage());
+				}
+			}
+			odd.close();
+			even.close();
+			document.close();
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -171,8 +157,8 @@ public class Tiff2Pdf extends AbstractTool {
      * @param args
      */
 	public static void main(String[] args) {
-    	Tiff2Pdf tool = new Tiff2Pdf();
-    	if (args.length < 2) {
+    	KnitTiff tool = new KnitTiff();
+    	if (args.length < 3) {
     		System.err.println(tool.getUsage());
     	}
     	tool.setArguments(args);
