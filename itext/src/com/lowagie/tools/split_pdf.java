@@ -27,8 +27,7 @@ import com.lowagie.text.pdf.*;
 public class split_pdf extends java.lang.Object {
     
     /**
-     * This class can be used to concatenate existing PDF files.
-     * (This was an example known as PdfCopy.java)
+     * This class can be used to split an existing PDF file.
      * @param args the command line arguments
      */
     public static void main(String args[]) {

@@ -51,48 +51,40 @@ package com.lowagie.tools.plugins;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.RandomAccessFileOrArray;
-import com.lowagie.text.pdf.codec.TiffImage;
+import com.lowagie.text.pdf.PRAcroForm;
+import com.lowagie.text.pdf.PdfCopy;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.SimpleBookmark;
 import com.lowagie.tools.arguments.FileArgument;
-import com.lowagie.tools.arguments.ImageFilter;
-import com.lowagie.tools.arguments.OptionArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Converts a Tiff file to a PDF file.
+ * Concatenates two PDF files
  */
-public class Tiff2Pdf extends AbstractTool {
+public class Concat extends AbstractTool {
 	/**
 	 * Constructs a Tiff2Pdf object.
 	 */
-	public Tiff2Pdf() {
+	public Concat() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to convert", false, new ImageFilter(false, false, false, false, false, true)));
-		arguments.add(new FileArgument(this, "destfile", "The file to which the converted TIFF has to be written", true, new PdfFilter()));
-		OptionArgument oa = new OptionArgument(this, "pagesize", "Pagesize");
-		oa.addOption("A4", "A4");
-		oa.addOption("Letter", "LETTER");
-		oa.addOption("Original format", "ORIGINAL");
-		arguments.add(oa);
+		arguments.add(new FileArgument(this, "srcfile1", "The first PDF file", false, new PdfFilter()));
+		arguments.add(new FileArgument(this, "srcfile2", "The second PDF file", false, new PdfFilter()));
+		arguments.add(new FileArgument(this, "destfile", "The file to which the concatenated PDF has to be written", true, new PdfFilter()));
 	}
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Tiff2Pdf", true, true, true);
+		internalFrame = new JInternalFrame("Concatenate 2 PDF files", true, true, true);
 		internalFrame.setSize(550, 250);
 		internalFrame.setJMenuBar(getMenubar());
 		internalFrame.getContentPane().add(getConsole(40, 30));
@@ -103,56 +95,60 @@ public class Tiff2Pdf extends AbstractTool {
 	 */
 	public void execute() {
 		try {
-			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
-			File tiff_file = (File)getValue("srcfile");
+			String[] files = new String[2];
+			if (getValue("srcfile1") == null) throw new InstantiationException("You need to choose a first sourcefile");
+			files[0] = ((File)getValue("srcfile1")).getAbsolutePath();
+			if (getValue("srcfile2") == null) throw new InstantiationException("You need to choose a second sourcefile");
+			files[1] = ((File)getValue("srcfile2")).getAbsolutePath();
 			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
 			File pdf_file = (File)getValue("destfile");
-			RandomAccessFileOrArray ra = new RandomAccessFileOrArray(tiff_file.getAbsolutePath());
-            int comps = TiffImage.getNumberOfPages(ra);
-			boolean adjustSize = false;
-			Document document = new Document(PageSize.A4);
-			if ("ORIGINAL".equals(getValue("pagesize"))) {
-				Image img = TiffImage.getTiffImage(ra, 1);
-				document.setPageSize(new Rectangle(img.scaledWidth(), img.scaledHeight()));
-				adjustSize = true;
-			}
-			else if ("LETTER".equals(getValue("pagesize"))) {
-				document.setPageSize(PageSize.LETTER);
-			}
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_file));
-			document.open();
-			PdfContentByte cb = writer.getDirectContent();
-            for (int c = 0; c < comps; ++c) {
-                Image img = TiffImage.getTiffImage(ra, c + 1);
-                if (img != null) {
-                	if (adjustSize) {
-    					document.setPageSize(new Rectangle(img.scaledWidth(),
-    							img.scaledHeight()));
-                        document.newPage();
-                		img.setAbsolutePosition(0, 0);
-                	}
-                	else {
-                		if (img.scaledWidth() > 500 || img.scaledHeight() > 700) {
-                			img.scaleToFit(500, 700);
-                		}
-                		img.setAbsolutePosition(20, 20);
-                        document.newPage();
-                        document.add(new Paragraph(tiff_file + " - page " + (c + 1)));
-                	}
-                    cb.addImage(img);
-                    System.out.println("Finished page " + (c + 1));
+            int pageOffset = 0;
+            ArrayList master = new ArrayList();
+            Document document = null;
+            PdfCopy  writer = null;
+            for (int i = 0; i < 2; i++) {
+            	// we create a reader for a certain document
+                PdfReader reader = new PdfReader(files[i]);
+                reader.consolidateNamedDestinations();
+                // we retrieve the total number of pages
+                int n = reader.getNumberOfPages();
+                List bookmarks = SimpleBookmark.getBookmark(reader);
+                if (bookmarks != null) {
+                    if (pageOffset != 0)
+                        SimpleBookmark.shiftPageNumbers(bookmarks, pageOffset, null);
+                    master.addAll(bookmarks);
                 }
+                pageOffset += n;
+                System.out.println("There are " + n + " pages in " + files[i]);
+                if (i == 0) {
+                    // step 1: creation of a document-object
+                    document = new Document(reader.getPageSizeWithRotation(1));
+                    // step 2: we create a writer that listens to the document
+                    writer = new PdfCopy(document, new FileOutputStream(pdf_file));
+                    // step 3: we open the document
+                    document.open();
+                }
+                // step 4: we add content
+                PdfImportedPage page;
+                for (int p = 0; p < n; ) {
+                    ++p;
+                    page = writer.getImportedPage(reader, p);
+                    writer.addPage(page);
+                    System.out.println("Processed page " + p);
+                }
+                PRAcroForm form = reader.getAcroForm();
+                if (form != null)
+                    writer.copyAcroForm(reader);
             }
-            ra.close();
+            if (master.size() > 0)
+                writer.setOutlines(master);
+            // step 5: we close the document
             document.close();
-		} catch (Exception e) {
-        	JOptionPane.showMessageDialog(internalFrame,
-        		    e.getMessage(),
-        		    e.getClass().getName(),
-        		    JOptionPane.ERROR_MESSAGE);
-            System.err.println(e.getMessage());
 		}
-	}
+		catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#valueHasChanged(com.lowagie.tools.arguments.ToolArgument)
@@ -167,11 +163,11 @@ public class Tiff2Pdf extends AbstractTool {
 
 	
     /**
-     * Converts a tiff file to PDF.
+     * Concatenates two PDF files.
      * @param args
      */
 	public static void main(String[] args) {
-    	Tiff2Pdf tool = new Tiff2Pdf();
+    	Concat tool = new Concat();
     	if (args.length < 2) {
     		System.err.println(tool.getUsage());
     	}
@@ -185,4 +181,5 @@ public class Tiff2Pdf extends AbstractTool {
 	protected File getDestPathPDF() throws InstantiationException {
 		return (File)getValue("destfile");
 	}
+    
 }
