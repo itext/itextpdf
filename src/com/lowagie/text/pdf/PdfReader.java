@@ -322,6 +322,11 @@ public class PdfReader {
         return getPageSizeWithRotation((PdfDictionary)pages.get(index - 1));
     }
     
+    /**
+     * Gets the pagesize without rotation.
+     * @param page
+     * @return a Rectangle object
+     */
     public Rectangle getPageSizeWithRotation(PdfDictionary page) {
         Rectangle rect = getPageSize(page);
         int rotation = getPageRotation(page);
@@ -341,6 +346,11 @@ public class PdfReader {
         return getPageSize((PdfDictionary)pages.get(index - 1));
     }
     
+    /**
+     * Gets the pagesize.
+     * @param page
+     * @return a Rectangle
+     */
     public Rectangle getPageSize(PdfDictionary page) {
         PdfArray mediaBox = (PdfArray)getPdfObject(page.get(PdfName.MEDIABOX));
         return getNormalizedRectangle(mediaBox);
@@ -483,6 +493,8 @@ public class PdfReader {
     }
     
     /**
+     * Reads a decrypted object.
+     * @throws IOException
      */
     private void readDecryptedDocObj() throws IOException {
         if (encrypted)
@@ -579,6 +591,12 @@ public class PdfReader {
         }
     }
     
+    /**
+     * Gets a PDF object
+     * @param obj
+     * @param parent
+     * @return a PDF object
+     */
     public static PdfObject getPdfObject(PdfObject obj, PdfObject parent) {
         if (obj == null)
             return null;
@@ -1207,6 +1225,11 @@ public class PdfReader {
         return b;
     }
     
+    /**
+     * @param in
+     * @param dicPar
+     * @return a byte array
+     */
     public static byte[] decodePredictor(byte in[], PdfObject dicPar) {
         if (dicPar == null || !dicPar.isDictionary())
             return in;
@@ -2330,6 +2353,11 @@ public class PdfReader {
         removeUnusedObjects();
     }
 
+    /**
+     * Sets the viewerpreferences.
+     * @param preferences
+     * @param catalog
+     */
     public static void setViewerPreferences(int preferences, PdfDictionary catalog) {
         catalog.remove(PdfName.PAGELAYOUT);
         catalog.remove(PdfName.PAGEMODE);
@@ -2382,10 +2410,18 @@ public class PdfReader {
         catalog.put(PdfName.VIEWERPREFERENCES, vp);
     }
 
+    /**
+     * Sets the viewerpreferences.
+     * @param preferences
+     */
     public void setViewerPreferences(int preferences) {
         setViewerPreferences(preferences, catalog);
     }
     
+    /**
+     * Gets the viewerpreferences.
+     * @return a combination (bitset) of viewerpreferences returned as an int
+     */
     public int getViewerPreferences() {
         int prefs = 0;
         PdfName name = null;
