@@ -262,7 +262,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 if (stack.empty())
                     document.add(currentParagraph);
                 else {
-                    Object obj = stack.pop();;
+                    Object obj = stack.pop();
                     if (obj instanceof TextElementArray) {
                         TextElementArray current = (TextElementArray)obj;
                         current.add(currentParagraph);
