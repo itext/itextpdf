@@ -74,7 +74,6 @@ public class Executable {
 	private static Process action(final String fileName,
 			String parameters, boolean waitForTermination) throws IOException {
 		Process process = null;
-		String commandline;
 		if (parameters.trim().length() > 0) {
 			parameters = " " + parameters.trim();
 		}

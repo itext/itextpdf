@@ -80,12 +80,12 @@ public class Chapter extends Section implements TextElementArray {
     
     // constructors
     
-/**
- * Constructs a new <CODE>Chapter</CODE>.
- *
- * @param	title		the Chapter title (as a <CODE>Paragraph</CODE>)
- * @param	number		the Chapter number
- */
+	/**
+	 * Constructs a new <CODE>Chapter</CODE>.
+	 *
+	 * @param	title		the Chapter title (as a <CODE>Paragraph</CODE>)
+	 * @param	number		the Chapter number
+     */
     
     public Chapter(Paragraph title, int number) {
         super(title, 1);

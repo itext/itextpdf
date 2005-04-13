@@ -436,7 +436,7 @@ public class Row implements Element, MarkupAttributes {
  * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
     public void setMarkupAttribute(String name, String value) {
-        markupAttributes = (markupAttributes == null) ? new Properties() : markupAttributes;
+        if (markupAttributes == null) markupAttributes = new Properties();
         markupAttributes.put(name, value);
     }
     

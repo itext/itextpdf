@@ -127,7 +127,7 @@ public class KnitTiff extends AbstractTool {
 					imgEven.setAbsolutePosition(0, 0);
 					cb.addImage(imgEven);
 
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					System.out.println("Exception page " + (c + 1) + " "
 							+ e.getMessage());
 				}
@@ -135,7 +135,7 @@ public class KnitTiff extends AbstractTool {
 			odd.close();
 			even.close();
 			document.close();
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
