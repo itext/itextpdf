@@ -250,7 +250,7 @@ public class RtfRow extends RtfElement {
                     }
                     if(rtfCell.getColspan() > 1) {
                         int k = rtfCell.getColspan();
-                        while(k > 1) {
+                        while(k > 1 && (realCellIndex + 1 < mergeRow.getCells().size())) {
                             mergeRow.getCells().remove(realCellIndex + 1);
                             k--;
                         }
