@@ -1578,8 +1578,7 @@ public abstract class Image extends Rectangle implements Element,
 	 *      java.lang.String)
 	 */
 	public void setMarkupAttribute(String name, String value) {
-		markupAttributes = (markupAttributes == null) ? new Properties()
-				: markupAttributes;
+		if (markupAttributes == null) markupAttributes = new Properties();
 		markupAttributes.put(name, value);
 	}
 

@@ -1698,11 +1698,11 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if (value0 == null || value1 == null) {
             throw new NullPointerException("MarkupTable#setAlternatingRowAttribute(): null values are not permitted.");
         }
-        alternatingRowAttributes = (alternatingRowAttributes == null) ?  new Hashtable() : alternatingRowAttributes;
+        if (alternatingRowAttributes == null) alternatingRowAttributes = new Hashtable();
         
         // we could always use new Arrays but this is big enough
         String[] value = (String[])(alternatingRowAttributes.get(name));
-        value = (value == null) ? new String[2] : value;
+        if (value == null) value = new String[2];
         value[0] = value0;
         value[1] = value1;
         alternatingRowAttributes.put(name, value);
