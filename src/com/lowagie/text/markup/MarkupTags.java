@@ -56,90 +56,97 @@ package com.lowagie.text.markup;
 
 public class MarkupTags {
 
-/** a CSS value */
-    public static final String CSS_NORMAL = "normal";
-/** a CSS value */
-    public static final String CSS_NONE = "none";
-    
-/** This is a possible HTML-tag. */
-    public static final String LINK = "link";
-    
-/** This is a possible HTML attribute for the LINK tag. */
-    public static final String CSS = "text/css";
+	/** a CSS value */
+	public static final String CSS_NORMAL = "normal";
 
-/** This is a possible value for the language attribute (SCRIPT tag). */
-    public static final String JAVASCRIPT = "text/javascript";
+	/** a CSS value */
+	public static final String CSS_NONE = "none";
 
-/** attribute for specifying externally defined CSS class */
-    public static final String CLASS = "class";
-    
-/** This is a possible HTML attribute for the LINK tag. */
-    public static final String REL = "rel";
-    
-/** This is a possible HTML attribute for the TD tag. */
-    public static final String STYLESHEET = "stylesheet";
+	/** This is a possible HTML-tag. */
+	public static final String LINK = "link";
 
-/** This is used for inline css style information */
-    public static final String STYLE = "style";
-    
-/** This is a possible HTML attribute for the LINK tag. */
-    public static final String TYPE = "type";
+	/** This is a possible HTML attribute for the LINK tag. */
+	public static final String CSS = "text/css";
 
-/** The SPAN tag. */
-    public static final String SPAN = "span";
-    
-/** The DIV tag. */
-    public static final String DIV = "div";
+	/** This is a possible value for the language attribute (SCRIPT tag). */
+	public static final String JAVASCRIPT = "text/javascript";
 
-/** the CSS tag for the font size */
-    public static final String CSS_FONT = "font";
+	/** attribute for specifying externally defined CSS class */
+	public static final String CLASS = "class";
 
-/** the CSS tag for the font size */
-    public static final String CSS_FONTSIZE = "font-size";
+	/** The ID attribute. */
+	public static final String ID = "id";
 
-/** the CSS tag for the font style */
-    public static final String CSS_FONTSTYLE = "font-style";
+	/** This is a possible HTML attribute for the LINK tag. */
+	public static final String REL = "rel";
 
-/** a CSS value for text font style */
-    public static final String CSS_ITALIC = "italic";
+	/** This is a possible HTML attribute. */
+	public static final String STYLESHEET = "stylesheet";
 
-/** a CSS value for text font style */
-    public static final String CSS_OBLIQUE = "oblique";
+	/** This is used for inline css style information */
+	public static final String STYLE = "style";
 
-/** the CSS tag for the font weight */
-    public static final String CSS_FONTWEIGHT = "font-weight";
+	/** This is a possible HTML attribute for the LINK tag. */
+	public static final String TYPE = "type";
 
-/** a CSS value for text font weight */
-    public static final String CSS_BOLD = "bold";
-    
-/** the CSS tag for the font family */
-    public static final String CSS_FONTFAMILY = "font-family";
+	/** The SPAN tag. */
+	public static final String SPAN = "span";
 
-/** the CSS tag for text decorations */
-    public static final String CSS_TEXTDECORATION = "text-decoration";
+	/** The DIV tag. */
+	public static final String DIV = "div";
 
-/** the CSS tag for text decorations */
-    public static final String CSS_LINEHEIGHT = "line-height";
-    
-/** the CSS tag for text decorations */
-    public static final String CSS_VERTICALALIGN = "vertical-align";
+	/** the CSS tag for the font size */
+	public static final String CSS_FONT = "font";
 
-/** a CSS value for text decoration */
-    public static final String CSS_UNDERLINE = "underline";
+	/** the CSS tag for the font size */
+	public static final String CSS_FONTSIZE = "font-size";
 
-/** a CSS value for text decoration */
-    public static final String CSS_LINETHROUGH = "line-through";
+	/** the CSS tag for the font style */
+	public static final String CSS_FONTSTYLE = "font-style";
 
-/** the CSS tag for text color */
-    public static final String CSS_COLOR = "color";
+	/** a CSS value for text font style */
+	public static final String CSS_ITALIC = "italic";
 
-/** the CSS tag for background color */
-    public static final String CSS_BGCOLOR = "background-color";
- 
-/** the CSS tag for adding a page break when the document is printed */
-    public static final String PAGE_BREAK_BEFORE = "page-break-before";
- 
-/** value for the CSS tag for adding a page break when the document is printed */
-    public static final String ALWAYS = "always";
+	/** a CSS value for text font style */
+	public static final String CSS_OBLIQUE = "oblique";
+
+	/** the CSS tag for the font weight */
+	public static final String CSS_FONTWEIGHT = "font-weight";
+
+	/** a CSS value for text font weight */
+	public static final String CSS_BOLD = "bold";
+
+	/** the CSS tag for the font family */
+	public static final String CSS_FONTFAMILY = "font-family";
+
+	/** the CSS tag for text decorations */
+	public static final String CSS_TEXTDECORATION = "text-decoration";
+
+	/** the CSS tag for text decorations */
+	public static final String CSS_LINEHEIGHT = "line-height";
+
+	/** the CSS tag for text decorations */
+	public static final String CSS_VERTICALALIGN = "vertical-align";
+
+	/** a CSS value for text decoration */
+	public static final String CSS_UNDERLINE = "underline";
+
+	/** a CSS value for text decoration */
+	public static final String CSS_LINETHROUGH = "line-through";
+
+	/** the CSS tag for text color */
+	public static final String CSS_COLOR = "color";
+
+	/** the CSS tag for background color */
+	public static final String CSS_BGCOLOR = "background-color";
+
+	/** the CSS tag for adding a page break when the document is printed */
+	public static final String PAGE_BREAK_BEFORE = "page-break-before";
+
+	/**
+	 * value for the CSS tag for adding a page break when the document is
+	 * printed
+	 */
+	public static final String ALWAYS = "always";
 
 }
