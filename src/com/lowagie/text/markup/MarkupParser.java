@@ -51,6 +51,9 @@
 package com.lowagie.text.markup;
 
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -61,10 +64,39 @@ import com.lowagie.text.FontFactory;
  * 
  * @author blowagie
  */
-public class MarkupParser {
+public class MarkupParser extends Properties {
 
-	/** Creates new MarkupParser */
-	private MarkupParser() {
+	/**
+	 * Creates new MarkupParser
+	 * @param file the path to a CSS file.
+	 * @throws IOException
+	 */
+	public MarkupParser(String file) throws IOException {
+		super();
+		FileReader reader = new FileReader(file);
+		BufferedReader br = new BufferedReader(reader);
+		StringBuffer buf = new StringBuffer();
+		String line;
+        while ((line = br.readLine()) != null) {
+           buf.append(line.trim()); 
+        }
+		String string = buf.toString();
+		removeComment(string, "/*", "*/");
+		StringTokenizer tokenizer = new StringTokenizer(string, "}");
+		String tmp;
+		int pos;
+		String selector;
+		String attributes;
+		while (tokenizer.hasMoreTokens()) {
+			tmp = tokenizer.nextToken();
+			pos = tmp.indexOf("{");
+			if (pos > 0) {
+				selector = tmp.substring(0, pos).trim();
+				attributes = tmp.substring(pos + 1).trim();
+				if (attributes.endsWith("}")) attributes = attributes.substring(0, attributes.length() - 1);
+				put(selector, attributes);
+			}
+		}
 	}
 
 	/**
