@@ -54,9 +54,11 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 
 /**
@@ -65,7 +67,9 @@ import com.lowagie.text.FontFactory;
  * @author blowagie
  */
 public class MarkupParser extends Properties {
-
+	/** fontcache */
+	protected HashMap fontcache = new HashMap();
+	
 	/**
 	 * Creates new MarkupParser
 	 * @param file the path to a CSS file.
@@ -81,7 +85,7 @@ public class MarkupParser extends Properties {
            buf.append(line.trim()); 
         }
 		String string = buf.toString();
-		removeComment(string, "/*", "*/");
+		string = removeComment(string, "/*", "*/");
 		StringTokenizer tokenizer = new StringTokenizer(string, "}");
 		String tmp;
 		int pos;
@@ -97,6 +101,83 @@ public class MarkupParser extends Properties {
 				put(selector, attributes);
 			}
 		}
+	}
+	/**
+	 * Returns a font based on the ID and CLASS attributes of a DIV/SPAN tag.
+	 * @param attributes a Properties object with the attributes of the tag.
+	 * @return a Font;
+	 */
+	public Font getFont(Properties attributes) {
+		String id = attributes.getProperty(MarkupTags.ID);
+		String cl = attributes.getProperty(MarkupTags.CLASS);
+		if (id == null) {
+			id = "";
+		}
+		else {
+			id = "#" + id;
+		}
+		if (cl == null) {
+			cl = "";
+		}
+		else {
+			cl = "." + cl;
+		}
+		Font f = (Font)fontcache.get(id + cl);
+		if (f != null) {
+			return f;
+		}
+		else {
+			Properties props = parseAttributes(getProperty(id));
+			props.putAll(parseAttributes(getProperty(cl)));
+			f = retrieveFont(props);
+			fontcache.put(id + cl, f);
+		}
+		return f;
+	}
+	
+	/**
+	 * Retrieves a font from the FontFactory.
+	 */
+	    
+	public static Font retrieveFont(Properties styleAttributes) {
+	    String fontname = null;
+	    String encoding = FontFactory.defaultEncoding;
+	    boolean embedded = FontFactory.defaultEmbedding;
+	    float size = Font.UNDEFINED;
+	    int style = Font.NORMAL;
+	    Color color = null;
+	    String value = (String)styleAttributes.remove(MarkupTags.CSS_FONTFAMILY);
+	    if (value != null) {
+	    	if (value.indexOf(",") == -1) {
+	    		fontname = value.trim();
+	    	}
+	        else {
+	        	String tmp;
+	        	while (value.indexOf(",") != -1) {
+	        		tmp = value.substring(0, value.indexOf(",")).trim();
+	        		if (FontFactory.isRegistered(tmp)) {
+	        			fontname = tmp;
+	        			break;
+	        		}
+	        		else {
+	        			value = value.substring(value.indexOf(",") + 1);
+	        		}
+	        	}
+	        }
+	    }
+	    if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
+	         size = MarkupParser.parseLength(value);
+	    }
+	    if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
+	        style |= Font.getStyleValue(value);
+	    }
+	    if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
+	        style |= Font.getStyleValue(value);
+	    }
+	    if ((value = (String)styleAttributes.remove(MarkupTags.CSS_COLOR)) != null) {
+	        color = MarkupParser.decodeColor(value);
+	    }
+	    return FontFactory.getFont(fontname, encoding, embedded, size, style, color);
 	}
 
 	/**
@@ -130,7 +211,6 @@ public class MarkupParser extends Properties {
 	 *            keyN="valueN" '
 	 * @return a Properties object
 	 */
-
 	public static Properties parseAttributes(String string) {
 		Properties result = new Properties();
 		if (string == null)
@@ -167,7 +247,6 @@ public class MarkupParser extends Properties {
 	 *            ... fontN'
 	 * @return a Properties object
 	 */
-
 	public static Properties parseFont(String string) {
 		Properties result = new Properties();
 		if (string == null)
