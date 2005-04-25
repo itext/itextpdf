@@ -58,17 +58,24 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 
 /**
  * This class contains several static methods that can be used to parse markup.
  * 
  * @author blowagie
  */
-public class MarkupParser extends Properties {
+public class MarkupParser extends HashMap {
+	/** stylecache */
+	protected HashMap stylecache = new HashMap();
 	/** fontcache */
 	protected HashMap fontcache = new HashMap();
+	
+// processing CSS	
 	
 	/**
 	 * Creates new MarkupParser
@@ -98,86 +105,9 @@ public class MarkupParser extends Properties {
 				selector = tmp.substring(0, pos).trim();
 				attributes = tmp.substring(pos + 1).trim();
 				if (attributes.endsWith("}")) attributes = attributes.substring(0, attributes.length() - 1);
-				put(selector, attributes);
+				put(selector, parseAttributes(attributes));
 			}
 		}
-	}
-	/**
-	 * Returns a font based on the ID and CLASS attributes of a DIV/SPAN tag.
-	 * @param attributes a Properties object with the attributes of the tag.
-	 * @return a Font;
-	 */
-	public Font getFont(Properties attributes) {
-		String id = attributes.getProperty(MarkupTags.ID);
-		String cl = attributes.getProperty(MarkupTags.CLASS);
-		if (id == null) {
-			id = "";
-		}
-		else {
-			id = "#" + id;
-		}
-		if (cl == null) {
-			cl = "";
-		}
-		else {
-			cl = "." + cl;
-		}
-		Font f = (Font)fontcache.get(id + cl);
-		if (f != null) {
-			return f;
-		}
-		else {
-			Properties props = parseAttributes(getProperty(id));
-			props.putAll(parseAttributes(getProperty(cl)));
-			f = retrieveFont(props);
-			fontcache.put(id + cl, f);
-		}
-		return f;
-	}
-	
-	/**
-	 * Retrieves a font from the FontFactory.
-	 */
-	    
-	public static Font retrieveFont(Properties styleAttributes) {
-	    String fontname = null;
-	    String encoding = FontFactory.defaultEncoding;
-	    boolean embedded = FontFactory.defaultEmbedding;
-	    float size = Font.UNDEFINED;
-	    int style = Font.NORMAL;
-	    Color color = null;
-	    String value = (String)styleAttributes.remove(MarkupTags.CSS_FONTFAMILY);
-	    if (value != null) {
-	    	if (value.indexOf(",") == -1) {
-	    		fontname = value.trim();
-	    	}
-	        else {
-	        	String tmp;
-	        	while (value.indexOf(",") != -1) {
-	        		tmp = value.substring(0, value.indexOf(",")).trim();
-	        		if (FontFactory.isRegistered(tmp)) {
-	        			fontname = tmp;
-	        			break;
-	        		}
-	        		else {
-	        			value = value.substring(value.indexOf(",") + 1);
-	        		}
-	        	}
-	        }
-	    }
-	    if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSIZE)) != null) {
-	         size = MarkupParser.parseLength(value);
-	    }
-	    if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTWEIGHT)) != null) {
-	        style |= Font.getStyleValue(value);
-	    }
-	    if ((value = (String)styleAttributes.remove(MarkupTags.CSS_FONTSTYLE)) != null) {
-	        style |= Font.getStyleValue(value);
-	    }
-	    if ((value = (String)styleAttributes.remove(MarkupTags.CSS_COLOR)) != null) {
-	        color = MarkupParser.decodeColor(value);
-	    }
-	    return FontFactory.getFont(fontname, encoding, embedded, size, style, color);
 	}
 
 	/**
@@ -238,70 +168,7 @@ public class MarkupParser extends Properties {
 		return result;
 	}
 
-	/**
-	 * This method parses the value of 'font' attribute and returns a Properties
-	 * object.
-	 * 
-	 * @param string
-	 *            a String of this form: 'style1 ... styleN size/leading font1
-	 *            ... fontN'
-	 * @return a Properties object
-	 */
-	public static Properties parseFont(String string) {
-		Properties result = new Properties();
-		if (string == null)
-			return result;
-		int pos = 0;
-		String value;
-		string = string.trim();
-		while (string.length() > 0) {
-			pos = string.indexOf(" ", pos);
-			if (pos == -1) {
-				value = string;
-				string = "";
-			} else {
-				value = string.substring(0, pos);
-				string = string.substring(pos).trim();
-			}
-			if (value.equalsIgnoreCase("bold")) {
-				result.setProperty(MarkupTags.CSS_FONTWEIGHT,
-						MarkupTags.CSS_BOLD);
-				continue;
-			}
-			if (value.equalsIgnoreCase("italic")) {
-				result.setProperty(MarkupTags.CSS_FONTSTYLE,
-						MarkupTags.CSS_ITALIC);
-				continue;
-			}
-			if (value.equalsIgnoreCase("oblique")) {
-				result.setProperty(MarkupTags.CSS_FONTSTYLE,
-						MarkupTags.CSS_OBLIQUE);
-				continue;
-			}
-			float f;
-			if ((f = parseLength(value)) > 0) {
-				result.setProperty(MarkupTags.CSS_FONTSIZE, String.valueOf(f)
-						+ "pt");
-				int p = value.indexOf("/");
-				if (p > -1 && p < value.length() - 1) {
-					result.setProperty(MarkupTags.CSS_LINEHEIGHT, String
-							.valueOf(value.substring(p + 1))
-							+ "pt");
-				}
-			}
-			if (value.endsWith(",")) {
-				value = value.substring(0, value.length() - 1);
-				if (FontFactory.contains(value)) {
-					result.setProperty(MarkupTags.CSS_FONTFAMILY, value);
-					return result;
-				}
-			}
-			if ("".equals(string) && FontFactory.contains(value)) {
-				result.setProperty(MarkupTags.CSS_FONTFAMILY, value);
-			}
-		}
-		return result;
-	}
+// reading attributevalues
 
 	/**
 	 * Parses a length.
@@ -384,5 +251,159 @@ public class MarkupParser extends Properties {
 			// empty on purpose
 		}
 		return new Color(red, green, blue);
+	}
+
+// helper methods
+	
+	/**
+	 * Generates a key for an id/class combination and adds the style attributes to the stylecache.
+	 * @param attributes a Properties object with the tagname and the attributes of the tag.
+	 * @return a key 
+	 */
+	private String getKey(Properties attributes) {
+		String id = attributes.getProperty(MarkupTags.ID);
+		String cl = attributes.getProperty(MarkupTags.CLASS);
+		if (id == null) {
+			id = "";
+		}
+		else {
+			id = "#" + id;
+		}
+		if (cl == null) {
+			cl = "";
+		}
+		else {
+			cl = "." + cl;
+		}
+		String key = id + cl;
+		if (!stylecache.containsKey(key) && key.length() > 0) {
+			Properties props = new Properties();
+			Properties idprops = (Properties)get(id);
+			Properties clprops = (Properties)get(cl);
+			if (idprops != null) props.putAll(idprops);
+			if (clprops != null) props.putAll(clprops);
+			stylecache.put(key, props);
+		}
+		return key;
+	}
+	
+// getting the objects based on the tag and its attributes
+	
+	/**
+	 * Returns an object based on a tag and its attributes.
+	 * @param attributes a Properties object with the tagname and the attributes of the tag.
+	 * @return an iText object
+	 */
+	public Element getObject(Properties attributes) {
+		String key = getKey(attributes);
+		Properties styleattributes = (Properties)stylecache.get(key);
+		String tag = attributes.getProperty(MarkupTags.CSS_TAG);
+		if (MarkupTags.SPAN.equals(tag)) {
+			return retrievePhrase(getFont(attributes), styleattributes);
+		}
+		else if (MarkupTags.DIV.equals(tag)) {
+			return retrieveParagraph(getFont(attributes), styleattributes);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a font based on the ID and CLASS attributes of a tag.
+	 * @param attributes a Properties object with the tagname and the attributes of the tag.
+	 * @return an iText Font;
+	 */
+	public Font getFont(Properties attributes) {
+		String key = getKey(attributes);
+		Font f = (Font)fontcache.get(key);
+		if (f != null) {
+			return f;
+		}
+		else {
+			Properties styleattributes = (Properties)stylecache.get(key);
+			f = retrieveFont(styleattributes);
+			fontcache.put(key, f);
+		}
+		return f;
+	}
+	
+// retrieving objects based on the styleAttributes
+	
+	/**
+	 * Retrieves a Phrase based on some style attributes.
+	 * @param styleAttributes a Properties object containing keys and values
+	 * @return an iText Phrase object
+	 */
+	public Phrase retrievePhrase(Font font, Properties styleattributes) {
+		Phrase p = new Phrase("", font);
+		if (styleattributes == null) return p;
+		String leading = styleattributes.getProperty(MarkupTags.CSS_LINEHEIGHT);
+		if (leading != null) {
+			if (leading.endsWith("%")) {
+				p.setLeading(p.font().size() * (parseLength(leading) / 100f));
+			}
+			else {
+				p.setLeading(parseLength(leading));
+			}
+		}
+		return p;
+	}
+
+	/**
+	 * Retrieves a Paragraph based on some style attributes.
+	 * @param styleAttributes a Properties object containing keys and values
+	 * @return an iText Paragraph object
+	 */
+	public Phrase retrieveParagraph(Font font, Properties styleattributes) {
+		Paragraph p = new Paragraph(retrievePhrase(font, styleattributes));
+		return p;
+	}
+	
+	/**
+	 * Retrieves a font from the FontFactory based on some style attributes.
+	 * Looks for the font-family, font-size, font-weight, font-style and color.
+	 * Takes the default encoding and embedded value.
+	 * @param styleAttributes a Properties object containing keys and values
+	 * @return an iText Font object
+	 */
+	    
+	public Font retrieveFont(Properties styleAttributes) {
+	    String fontname = null;
+	    String encoding = FontFactory.defaultEncoding;
+	    boolean embedded = FontFactory.defaultEmbedding;
+	    float size = Font.UNDEFINED;
+	    int style = Font.NORMAL;
+	    Color color = null;
+	    String value = (String)styleAttributes.get(MarkupTags.CSS_FONTFAMILY);
+	    if (value != null) {
+	    	if (value.indexOf(",") == -1) {
+	    		fontname = value.trim();
+	    	}
+	        else {
+	        	String tmp;
+	        	while (value.indexOf(",") != -1) {
+	        		tmp = value.substring(0, value.indexOf(",")).trim();
+	        		if (FontFactory.isRegistered(tmp)) {
+	        			fontname = tmp;
+	        			break;
+	        		}
+	        		else {
+	        			value = value.substring(value.indexOf(",") + 1);
+	        		}
+	        	}
+	        }
+	    }
+	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_FONTSIZE)) != null) {
+	         size = MarkupParser.parseLength(value);
+	    }
+	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_FONTWEIGHT)) != null) {
+	        style |= Font.getStyleValue(value);
+	    }
+	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_FONTSTYLE)) != null) {
+	        style |= Font.getStyleValue(value);
+	    }
+	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_COLOR)) != null) {
+	        color = MarkupParser.decodeColor(value);
+	    }
+	    return FontFactory.getFont(fontname, encoding, embedded, size, style, color);
 	}
 }

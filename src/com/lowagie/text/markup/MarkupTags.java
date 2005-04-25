@@ -55,7 +55,9 @@ package com.lowagie.text.markup;
  */
 
 public class MarkupTags {
-
+	/** the key for any tag */
+	public static final String CSS_TAG = "tag";
+	
 	/** a CSS value */
 	public static final String CSS_NORMAL = "normal";
 

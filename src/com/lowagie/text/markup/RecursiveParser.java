@@ -88,7 +88,6 @@ public class RecursiveParser extends DefaultHandler {
 	protected Stack filestack;
 	protected Stack outline;
 	protected Stack tagstack;
-	protected Stack attributestack;
 	protected Stack objectstack;
 	protected Chunk currentChunk = null;
 	/* Output objects */
@@ -115,15 +114,19 @@ public class RecursiveParser extends DefaultHandler {
 	 */
 	public RecursiveParser(String srcdir, String title, String[] structures, String[] titles, int[] counterParents) {
 		tagstack = new Stack();
-		attributestack = new Stack();
 		filestack = new Stack();
 		filestack.push(srcdir);
 		objectstack = new Stack();
 		this.title = title;
-		this.structures = structures;
-		this.titles = titles;
-		this.counterParents = counterParents;
-		counters = new int[counterParents.length];
+		if (structures == null || titles == null || counterParents == null) {
+			counters = new int[0];
+		}
+		else {
+			this.structures = structures;
+			this.titles = titles;
+			this.counterParents = counterParents;
+			counters = new int[counterParents.length];
+		}
 	}
 	
 	/**
@@ -178,171 +181,19 @@ public class RecursiveParser extends DefaultHandler {
 	}
 	
 	/**
-	 * Gets the file on top of the filestack,
-	 * parses it
-	 * and removes it from the stack.
-	 */
-	private void parse() throws ParserConfigurationException, IOException, SAXException {
-		// gets the file on top of the filestack
-		String file = filestack.peek() + "/index.xml";
-		// create the parser
-		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance(); 
-		SAXParser saxParser = saxParserFactory.newSAXParser(); 
-		XMLReader parser = saxParser.getXMLReader();
-		parser.setContentHandler(this);
-		// parse the file
-	    parser.parse(new InputSource(file));
-	    // remove the file from the stack
-	    filestack.pop();
-	}
-	
-	/**
 	 * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
 	 */
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
 		// push tagname and attributes to the stack
-		tagstack.push(qName);
 		Properties attrs = new Properties();
+		attrs.put(MarkupTags.CSS_TAG, qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			attrs.put(attributes.getQName(i), attributes.getValue(i));
 		}
-		attributestack.push(attrs);
-		flushCurrentChunk();
-		if (attrs != null && title.equals(attrs.getProperty(MarkupTags.ID))) {
-			for (int i = 0; i < counters.length; i++) {
-				if (structures[i].equals(attrs.getProperty(MarkupTags.CLASS))) {
-					counters[i]++;
-					for (int j = i + 1; j < counters.length; j++) {
-						if (counterParents[j] == i) {
-							counters[j] = 0;
-							break;
-						}
-					}
-					String s = titles[i];
-					if (s == null) {
-						s = "";
-						int j = counterParents[i];
-						while (j > 1) {
-							s = String.valueOf(counters[j]) + "." + s;
-							j = counterParents[j];
-						}
-						if (i > 0) {
-							s += String.valueOf(counters[i]) + " ";
-						}
-					}
-					else {
-						s += " " + counters[i] + ": ";
-					}
-					objectstack.push(new Paragraph(s, markup.getFont(attrs)));
-					return;
-				}
-			}
-		}
-		if (MarkupTags.DIV.equals(qName)) {
-			objectstack.push(new Paragraph("", markup.getFont(attrs)));
-		}
-		else if (MarkupTags.SPAN.equals(qName)) {
-			currentChunk = new Chunk("", markup.getFont(attrs));
-		}
-	}
-	
-	/**
-	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public void endElement(String uri, String localName, String qName) throws SAXException {
-		Properties attrs = (Properties)attributestack.peek();
-		PdfOutline bookmark = null;
-		flushCurrentChunk();
-		if (attrs != null && title.equals(attrs.getProperty(MarkupTags.ID)) && outline != null) {
-			PdfOutline parent = (PdfOutline)outline.peek();
-			PdfDestination dest = new PdfDestination(PdfDestination.FITH, writer.getVerticalPosition(false));
-			Paragraph p = (Paragraph)objectstack.peek();
-			bookmark = new PdfOutline(parent, dest, p);
-		}
-		tagstack.pop();
-		attributestack.pop();
-		flushObject();
-		if (bookmark != null) {
-			outline.push(bookmark);
-		}
-	}
-	
-	/** flushing the CurrentChunk. */
-	private void flushCurrentChunk() {
-		if (currentChunk != null) {
-			TextElementArray current;
-			try {
-				current = (TextElementArray) objectstack.pop();
-			} catch (EmptyStackException ese) {
-				current = new Paragraph();
-			}
-			current.add(currentChunk);
-			objectstack.push(current);
-			currentChunk = null;
-		}
-	}
-	
-	/** flushing the CurrentChunk. */
-	private void addToCurrentChunk(String s) {
-		if (currentChunk != null) {
-			currentChunk.append(s);
-		}
-		else {
-			try {
-				currentChunk = new Chunk(s, ((Paragraph) objectstack.peek()).font());
-			} catch (EmptyStackException ese) {
-				currentChunk = new Chunk(s);
-			}
-		}
-	}
-	
-	/**
-	 * Adds the object on top of the objectstack.
-	 * @return false if there was no valid object on the objectstack. 
-	 */
-	private boolean flushObject() {
-		if (objectstack.size() == 0) {
-			return false;
-		}
-		Element current = (Element) objectstack.pop();
-		try {
-			TextElementArray previous = (TextElementArray) objectstack.pop();
-			previous.add(current);
-			objectstack.push(previous);
-			return true;
-		} catch (EmptyStackException ese) {
-			try {
-				document.add(current);
-				return true;
-			} catch (DocumentException e) {
-				return false;
-			}
-		}
-	}
-	
-	/**
-	 * @see org.xml.sax.ContentHandler#processingInstruction(java.lang.String, java.lang.String)
-	 */
-	public void processingInstruction(String instruction, String parameter)
-			throws SAXException {
-		try {
-			// parse all the sublevels of the current directory
-			if ("parse".equals(instruction)) {
-				String file;
-				StringTokenizer sublevels = new StringTokenizer(parameter, ",");
-				while (sublevels.hasMoreTokens()) {
-					file = sublevels.nextToken();
-					if (filestack.size() > 0) file = filestack.peek() + "/" + file;
-					filestack.push(file.trim());
-					parse();
-					if (outline != null) outline.pop();
-				}
-			}
-		}
-		catch(Exception e) {
-			throw new SAXException(e);
-		}
+		tagstack.push(attrs);
+		// add the object to the objectstack
+		addObject();
 	}
 	
 	/**
@@ -388,5 +239,173 @@ public class RecursiveParser extends DefaultHandler {
 			}
 		}
 		addToCurrentChunk(buf.toString());
+	}
+	
+	/**
+	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+		Properties attrs = (Properties)tagstack.peek();
+		PdfOutline bookmark = null;
+		flushCurrentChunk();
+		if (attrs != null && title.equals(attrs.getProperty(MarkupTags.ID)) && outline != null) {
+			PdfOutline parent = (PdfOutline)outline.peek();
+			PdfDestination dest = new PdfDestination(PdfDestination.FITH, writer.getVerticalPosition(false));
+			Paragraph p = (Paragraph)objectstack.peek();
+			bookmark = new PdfOutline(parent, dest, p);
+		}
+		tagstack.pop();
+		flushObject();
+		if (bookmark != null) {
+			outline.push(bookmark);
+		}
+	}
+	
+	/**
+	 * @see org.xml.sax.ContentHandler#processingInstruction(java.lang.String, java.lang.String)
+	 */
+	public void processingInstruction(String instruction, String parameter)
+			throws SAXException {
+		try {
+			// parse all the sublevels of the current directory
+			if ("parse".equals(instruction)) {
+				String file;
+				StringTokenizer sublevels = new StringTokenizer(parameter, ",");
+				while (sublevels.hasMoreTokens()) {
+					file = sublevels.nextToken();
+					if (filestack.size() > 0) file = filestack.peek() + "/" + file;
+					filestack.push(file.trim());
+					parse();
+					if (outline != null) outline.pop();
+				}
+			}
+		}
+		catch(Exception e) {
+			throw new SAXException(e);
+		}
+	}
+	
+	/** flushing the CurrentChunk. */
+	private void flushCurrentChunk() {
+		if (currentChunk != null) {
+			TextElementArray current;
+			try {
+				current = (TextElementArray) objectstack.pop();
+			} catch (EmptyStackException ese) {
+				current = new Paragraph();
+			}
+			current.add(currentChunk);
+			objectstack.push(current);
+			currentChunk = null;
+		}
+	}
+	
+	/** extending the CurrentChunk. */
+	private void addToCurrentChunk(String s) {
+		if (currentChunk != null) {
+			currentChunk.append(s);
+		}
+		else {
+			try {
+				currentChunk = new Chunk(s, ((Paragraph) objectstack.peek()).font());
+			} catch (EmptyStackException ese) {
+				currentChunk = new Chunk(s);
+			}
+		}
+	}
+	
+	/**
+	 * Creates a new Object and puts it on top of the objectstack.
+	 */
+	private void addObject() {
+		// first we flush the content that wasn't inside a tag.
+		flushCurrentChunk();
+		// now we get the attributes on top of the tagstack
+		Properties attrs = (Properties)tagstack.peek();
+		if (attrs == null) {
+			return;
+		}
+		// we ask the markup parser for the corresponing object.
+		Element element = markup.getObject(attrs);
+		if (element == null) return;
+		// if it's a Paragraph, it could be a title
+		if (element instanceof Paragraph && title.equals(attrs.getProperty(MarkupTags.ID))) {
+			for (int i = 0; i < counters.length; i++) {
+				// where does this title fit in the hierarchy of the document?
+				if (structures[i].equals(attrs.getProperty(MarkupTags.CLASS))) {
+					// we increment the number of this hierarchy element
+					counters[i]++;
+					// we set the counter of the child to 0 if necessary
+					for (int j = i + 1; j < counters.length; j++) {
+						if (counterParents[j] == i) {
+							counters[j] = 0;
+							break;
+						}
+					}
+					// we construct the string that will proceed the title
+					String s = titles[i];
+					if (s == null) {
+						s = "";
+						int j = counterParents[i];
+						while (j > 1) {
+							s = String.valueOf(counters[j]) + "." + s;
+							j = counterParents[j];
+						}
+						if (i > 0) {
+							s += String.valueOf(counters[i]) + " ";
+						}
+					}
+					else {
+						s += " " + counters[i] + ": ";
+					}
+					((Paragraph)element).add(new Chunk(s));
+				}
+			}
+		}
+		// we put the element on top of the objectstack
+		objectstack.push(element);
+	}
+	
+	/**
+	 * Deals with the object on top of the objectstack.
+	 * @return false if there was no valid object on the objectstack. 
+	 */
+	private boolean flushObject() {
+		if (objectstack.size() == 0) {
+			return false;
+		}
+		Element current = (Element) objectstack.pop();
+		try {
+			TextElementArray previous = (TextElementArray) objectstack.pop();
+			previous.add(current);
+			objectstack.push(previous);
+			return true;
+		} catch (EmptyStackException ese) {
+			try {
+				document.add(current);
+				return true;
+			} catch (DocumentException e) {
+				return false;
+			}
+		}
+	}
+	
+	/**
+	 * Gets the file on top of the filestack,
+	 * parses it
+	 * and removes it from the stack.
+	 */
+	private void parse() throws ParserConfigurationException, IOException, SAXException {
+		// gets the file on top of the filestack
+		String file = filestack.peek() + "/index.xml";
+		// create the parser
+		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance(); 
+		SAXParser saxParser = saxParserFactory.newSAXParser(); 
+		XMLReader parser = saxParser.getXMLReader();
+		parser.setContentHandler(this);
+		// parse the file
+	    parser.parse(new InputSource(file));
+	    // remove the file from the stack
+	    filestack.pop();
 	}
 }
