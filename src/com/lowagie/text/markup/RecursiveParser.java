@@ -245,6 +245,7 @@ public class RecursiveParser extends DefaultHandler {
 	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
+//System.err.println("end: " + qName);
 		Properties attrs = (Properties)tagstack.peek();
 		PdfOutline bookmark = null;
 		flushCurrentChunk();
@@ -256,6 +257,15 @@ public class RecursiveParser extends DefaultHandler {
 		}
 		tagstack.pop();
 		flushObject();
+		if(markup.getPageBreakAfter(attrs)) {
+			while(flushObject());
+			try {
+				document.newPage();
+			}
+			catch(DocumentException de) {
+				// this shouldn't happen
+			}
+		}
 		if (bookmark != null) {
 			outline.push(bookmark);
 		}
@@ -360,6 +370,15 @@ public class RecursiveParser extends DefaultHandler {
 					}
 					((Paragraph)element).add(new Chunk(s));
 				}
+			}
+		}
+		if(markup.getPageBreakBefore(attrs)) {
+			while(flushObject());
+			try {
+				document.newPage();
+			}
+			catch(DocumentException de) {
+				// this shouldn't happen
 			}
 		}
 		// we put the element on top of the objectstack
