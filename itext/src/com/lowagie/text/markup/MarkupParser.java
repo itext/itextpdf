@@ -288,6 +288,26 @@ public class MarkupParser extends HashMap {
 	}
 	
 // getting the objects based on the tag and its attributes
+
+	/** Returns pagebreak information. */
+	public boolean getPageBreakBefore(Properties attributes) {
+		String key = getKey(attributes);
+		Properties styleattributes = (Properties)stylecache.get(key);
+		if (styleattributes != null && MarkupTags.ALWAYS.equals(styleattributes.getProperty(MarkupTags.PAGE_BREAK_BEFORE))) {
+			return true;
+		}
+		return false;
+	}
+	
+	/** Returns pagebreak information. */
+	public boolean getPageBreakAfter(Properties attributes) {
+		String key = getKey(attributes);
+		Properties styleattributes = (Properties)stylecache.get(key);
+		if (styleattributes != null && MarkupTags.ALWAYS.equals(styleattributes.getProperty(MarkupTags.PAGE_BREAK_AFTER))) {
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * Returns an object based on a tag and its attributes.
@@ -297,6 +317,9 @@ public class MarkupParser extends HashMap {
 	public Element getObject(Properties attributes) {
 		String key = getKey(attributes);
 		Properties styleattributes = (Properties)stylecache.get(key);
+		if (styleattributes != null && MarkupTags.HIDDEN.equals(styleattributes.get(MarkupTags.CSS_VISIBILITY))) {
+			return null;
+		}
 		String tag = attributes.getProperty(MarkupTags.CSS_TAG);
 		if (MarkupTags.SPAN.equals(tag)) {
 			return retrievePhrase(getFont(attributes), styleattributes);
@@ -355,6 +378,49 @@ public class MarkupParser extends HashMap {
 	 */
 	public Phrase retrieveParagraph(Font font, Properties styleattributes) {
 		Paragraph p = new Paragraph(retrievePhrase(font, styleattributes));
+		if (styleattributes == null) return p;
+		String margin = styleattributes.getProperty(MarkupTags.CSS_MARGIN);
+		float f;
+		if (margin != null) {
+			f = parseLength(margin);
+			p.setIndentationLeft(f);
+			p.setIndentationRight(f);
+			p.setSpacingBefore(f);
+			p.setSpacingAfter(f);
+		}
+		margin = styleattributes.getProperty(MarkupTags.CSS_MARGINLEFT);
+		if (margin != null) {
+			f = parseLength(margin);
+			p.setIndentationLeft(f);
+		}
+		margin = styleattributes.getProperty(MarkupTags.CSS_MARGINRIGHT);
+		if (margin != null) {
+			f = parseLength(margin);
+			p.setIndentationRight(f);
+		}
+		margin = styleattributes.getProperty(MarkupTags.CSS_MARGINTOP);
+		if (margin != null) {
+			f = parseLength(margin);
+			p.setSpacingBefore(f);
+		}
+		margin = styleattributes.getProperty(MarkupTags.CSS_MARGINBOTTOM);
+		if (margin != null) {
+			f = parseLength(margin);
+			p.setSpacingAfter(f);
+		}
+		String align = styleattributes.getProperty(MarkupTags.CSS_TEXTALIGN);
+		if (MarkupTags.CSS_TEXTALIGNLEFT.equals(align)) {
+			p.setAlignment(Element.ALIGN_LEFT);
+		}
+		else if (MarkupTags.CSS_TEXTALIGNRIGHT.equals(align)) {
+			p.setAlignment(Element.ALIGN_RIGHT);
+		}
+		else if (MarkupTags.CSS_TEXTALIGNCENTER.equals(align)) {
+			p.setAlignment(Element.ALIGN_CENTER);
+		}
+		else if (MarkupTags.CSS_TEXTALIGNJUSTIFY.equals(align)) {
+			p.setAlignment(Element.ALIGN_JUSTIFIED);
+		}
 		return p;
 	}
 	

@@ -142,6 +142,45 @@ public class MarkupTags {
 	/** the CSS tag for background color */
 	public static final String CSS_BGCOLOR = "background-color";
 
+	/** the CSS tag for the horizontal alignment of an object */
+	public static final String CSS_TEXTALIGN = "text-align";
+	
+	/** the CSS value for a horizontal alignment of an object */
+	public static final String CSS_TEXTALIGNLEFT = "left";
+	
+	/** the CSS value for a horizontal alignment of an object */
+	public static final String CSS_TEXTALIGNRIGHT = "right";
+	
+	/** the CSS value for a horizontal alignment of an object */
+	public static final String CSS_TEXTALIGNCENTER = "center";
+	
+	/** the CSS value for a horizontal alignment of an object */
+	public static final String CSS_TEXTALIGNJUSTIFY = "justify";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_MARGIN = "margin";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_MARGINLEFT = "margin-left";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_MARGINRIGHT = "margin-right";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_MARGINTOP = "margin-top";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_MARGINBOTTOM = "margin-bottom";
+
+	/** the CSS tag for the visibility of objects */
+	public static final String CSS_VISIBILITY = "visibility";
+	
+	/** the value if you want to hide objects. */
+	public static final String HIDDEN = "hidden";
+
+	/** the CSS tag for adding a page break when the document is printed */
+	public static final String PAGE_BREAK_AFTER = "page-break-after";
+
 	/** the CSS tag for adding a page break when the document is printed */
 	public static final String PAGE_BREAK_BEFORE = "page-break-before";
 
