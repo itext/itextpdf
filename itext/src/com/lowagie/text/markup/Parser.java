@@ -82,7 +82,7 @@ import com.lowagie.text.rtf.RtfWriter;
 /**
  * This class allows you to parse index.xml files in a tree.
  */
-public class RecursiveParser extends DefaultHandler {
+public class Parser extends DefaultHandler {
 
 	/* Stacks */
 	protected Stack filestack;
@@ -105,14 +105,14 @@ public class RecursiveParser extends DefaultHandler {
 	/**
 	 * Constructs a recursive parser object.
 	 */
-	public RecursiveParser(String srcdir) {
+	public Parser(String srcdir) {
 		this(srcdir, "title", null, null, null);
 	}
 	
 	/**
 	 * Constructs a recursive parser object.
 	 */
-	public RecursiveParser(String srcdir, String title, String[] structures, String[] titles, int[] counterParents) {
+	public Parser(String srcdir, String title, String[] structures, String[] titles, int[] counterParents) {
 		tagstack = new Stack();
 		filestack = new Stack();
 		filestack.push(srcdir);
