@@ -53,7 +53,6 @@ package com.lowagie.text.markup;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -63,6 +62,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 
 /**
  * This class contains several static methods that can be used to parse markup.
@@ -75,38 +75,42 @@ public class MarkupParser extends HashMap {
 	/** fontcache */
 	protected HashMap fontcache = new HashMap();
 	
-// processing CSS	
+// processing CSS
 	
 	/**
 	 * Creates new MarkupParser
 	 * @param file the path to a CSS file.
-	 * @throws IOException
 	 */
-	public MarkupParser(String file) throws IOException {
+	public MarkupParser(String file) {
 		super();
-		FileReader reader = new FileReader(file);
-		BufferedReader br = new BufferedReader(reader);
-		StringBuffer buf = new StringBuffer();
-		String line;
-        while ((line = br.readLine()) != null) {
-           buf.append(line.trim()); 
-        }
-		String string = buf.toString();
-		string = removeComment(string, "/*", "*/");
-		StringTokenizer tokenizer = new StringTokenizer(string, "}");
-		String tmp;
-		int pos;
-		String selector;
-		String attributes;
-		while (tokenizer.hasMoreTokens()) {
-			tmp = tokenizer.nextToken();
-			pos = tmp.indexOf("{");
-			if (pos > 0) {
-				selector = tmp.substring(0, pos).trim();
-				attributes = tmp.substring(pos + 1).trim();
-				if (attributes.endsWith("}")) attributes = attributes.substring(0, attributes.length() - 1);
-				put(selector, parseAttributes(attributes));
+		try {
+			FileReader reader = new FileReader(file);
+			BufferedReader br = new BufferedReader(reader);
+			StringBuffer buf = new StringBuffer();
+			String line;
+			while ((line = br.readLine()) != null) {
+				buf.append(line.trim()); 
 			}
+			String string = buf.toString();
+			string = removeComment(string, "/*", "*/");
+			StringTokenizer tokenizer = new StringTokenizer(string, "}");
+			String tmp;
+			int pos;
+			String selector;
+			String attributes;
+			while (tokenizer.hasMoreTokens()) {
+				tmp = tokenizer.nextToken();
+				pos = tmp.indexOf("{");
+				if (pos > 0) {
+					selector = tmp.substring(0, pos).trim();
+					attributes = tmp.substring(pos + 1).trim();
+					if (attributes.endsWith("}")) attributes = attributes.substring(0, attributes.length() - 1);
+					put(selector, parseAttributes(attributes));
+				}
+			}
+		}
+		catch(Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -289,7 +293,10 @@ public class MarkupParser extends HashMap {
 	
 // getting the objects based on the tag and its attributes
 
-	/** Returns pagebreak information. */
+	/** Returns pagebreak information. 
+	 * @param attributes
+	 * @return true if a page break is needed before the tag
+	 */
 	public boolean getPageBreakBefore(Properties attributes) {
 		String key = getKey(attributes);
 		Properties styleattributes = (Properties)stylecache.get(key);
@@ -299,7 +306,10 @@ public class MarkupParser extends HashMap {
 		return false;
 	}
 	
-	/** Returns pagebreak information. */
+	/** Returns pagebreak information. 
+	 * @param attributes
+	 * @return true if a page break is needed after the tag
+	 */
 	public boolean getPageBreakAfter(Properties attributes) {
 		String key = getKey(attributes);
 		Properties styleattributes = (Properties)stylecache.get(key);
@@ -348,12 +358,34 @@ public class MarkupParser extends HashMap {
 		}
 		return f;
 	}
+
+	/**
+	 * Returns a rectangle based on the width and height attributes of a tag,
+	 * can be overridden by the ID and CLASS attributes.
+	 * @param attrs the attributes that came with the tag
+	 * @return an iText Rectangle object
+	 */
+	public Rectangle getRectangle(Properties attrs) {
+		String width = null;
+		String height = null;
+		String key = getKey(attrs);
+		Properties styleattributes = (Properties)stylecache.get(key);
+		if (styleattributes != null) {
+			width = styleattributes.getProperty(MarkupTags.WIDTH);
+			height = styleattributes.getProperty(MarkupTags.HEIGHT);
+		}
+		if (width == null) width = attrs.getProperty(MarkupTags.WIDTH);
+		if (height == null) height = attrs.getProperty(MarkupTags.HEIGHT);
+		if (width == null || height == null) return null;
+		return new Rectangle(parseLength(width), parseLength(height));
+	}
 	
 // retrieving objects based on the styleAttributes
 	
 	/**
 	 * Retrieves a Phrase based on some style attributes.
-	 * @param styleAttributes a Properties object containing keys and values
+	 * @param font
+	 * @param styleattributes a Properties object containing keys and values
 	 * @return an iText Phrase object
 	 */
 	public Phrase retrievePhrase(Font font, Properties styleattributes) {
@@ -373,7 +405,8 @@ public class MarkupParser extends HashMap {
 
 	/**
 	 * Retrieves a Paragraph based on some style attributes.
-	 * @param styleAttributes a Properties object containing keys and values
+	 * @param font
+	 * @param styleattributes a Properties object containing keys and values
 	 * @return an iText Paragraph object
 	 */
 	public Phrase retrieveParagraph(Font font, Properties styleattributes) {

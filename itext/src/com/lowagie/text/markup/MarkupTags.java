@@ -190,4 +190,21 @@ public class MarkupTags {
 	 */
 	public static final String ALWAYS = "always";
 
+	/**
+	 * the markup for the body part of a file
+	 */
+	public static final String BODY = "body";
+	/**
+	 * the markup for a width.
+	 */
+	public static final String WIDTH = "width";
+	/**
+	 * markup for a height.
+	 */
+	public static final String HEIGHT = "height";
+	/**
+	 * markup for a href.
+	 */
+	public static final String HREF= "href";
+
 }
