@@ -49,7 +49,7 @@
  */
 package com.lowagie.text.markup;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.EmptyStackException;
@@ -72,7 +72,9 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
+import com.lowagie.text.html.HtmlWriter;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfDestination;
 import com.lowagie.text.pdf.PdfOutline;
@@ -80,7 +82,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.rtf.RtfWriter;
 
 /**
- * This class allows you to parse index.xml files in a tree.
+ * This class allows you to parse files in a tree.
  */
 public class Parser extends DefaultHandler {
 
@@ -104,19 +106,26 @@ public class Parser extends DefaultHandler {
 	
 	/**
 	 * Constructs a recursive parser object.
+	 * @param srcfile the file that has to be parsed.
 	 */
-	public Parser(String srcdir) {
-		this(srcdir, "title", null, null, null);
+	public Parser(String srcfile) {
+		this(srcfile, "title", null, null, null);
 	}
 	
 	/**
 	 * Constructs a recursive parser object.
+	 * @param srcfile the file that has to be parsed
+	 * @param title the value of the id selector marking a title
+	 * @param structures an array with the values of the class selectors marking titles in the complete structure
+	 * @param titles the strings that have to be added to the titlenumber
+	 * @param counterParents an array with references from each child in the structure to its parent
 	 */
-	public Parser(String srcdir, String title, String[] structures, String[] titles, int[] counterParents) {
+	public Parser(String srcfile, String title, String[] structures, String[] titles, int[] counterParents) {
+		// stacks
 		tagstack = new Stack();
-		filestack = new Stack();
-		filestack.push(srcdir);
 		objectstack = new Stack();
+		filestack = new Stack();
+		filestack.push(srcfile);
 		this.title = title;
 		if (structures == null || titles == null || counterParents == null) {
 			counters = new int[0];
@@ -127,57 +136,17 @@ public class Parser extends DefaultHandler {
 			this.counterParents = counterParents;
 			counters = new int[counterParents.length];
 		}
-	}
-	
-	/**
-	 * Initializes the recursive parser to produce pdf.
-	 * @param document the document to which content will be added.
-	 * @param dest the path to the destination file
-	 * @param markup the path to the markup file
-	 * @param outline if true, an outline tree will be made
-	 * @throws DocumentException
-	 * @throws FileNotFoundException
-	 */
-	public void initPdfWriter(Document document, String dest, String markupfile, boolean outlines) throws IOException, FileNotFoundException, DocumentException {
-		if (this.document != null) throw new DocumentException("You can initialize only one writer per document!");
-		markup = new MarkupParser(markupfile);
-		this.document = document;
-		writer = PdfWriter.getInstance(document, new FileOutputStream(dest));
-		document.open();
-		if (outlines) {
-			outline = new Stack();
-			PdfContentByte cb = writer.getDirectContent();
-			outline.push(cb.getRootOutline());
-		}
+		// create the document
+		document = new Document();
+		// parse the file
 		try {
 			parse();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		while(flushObject());
-	}
-
-	/**
-	 * Initializes the recursive parser to produce pdf.
-	 * @param document the document to which content will be added.
-	 * @param dest the path to the destination file
-	 * @param markup the path to the markup file
-	 * @param outline if true, an outline tree will be made
-	 * @throws DocumentException
-	 * @throws FileNotFoundException
-	 */
-	public void initRtfWriter(Document document, String dest, String markupfile, boolean outlines) throws IOException, FileNotFoundException, DocumentException {
-		if (document != null) throw new DocumentException("You can initialize only one writer per document!");
-		markup = new MarkupParser(markupfile);
-		this.document = document;
-		RtfWriter.getInstance(document, new FileOutputStream(dest));
-		document.open();
-		try {
-			parse();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		while(flushObject());
+		// close the document
+		document.close();
 	}
 	
 	/**
@@ -185,6 +154,7 @@ public class Parser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
+//System.err.println("start: " + qName);
 		// push tagname and attributes to the stack
 		Properties attrs = new Properties();
 		attrs.put(MarkupTags.CSS_TAG, qName);
@@ -193,7 +163,33 @@ public class Parser extends DefaultHandler {
 		}
 		tagstack.push(attrs);
 		// add the object to the objectstack
-		addObject();
+		if (document.isOpen()) {
+			addObject();
+		}
+		else {
+			// check if the document should be opened
+			if (MarkupTags.BODY.equals(qName)) {
+				Rectangle rect = markup.getRectangle(attrs);
+				if (rect != null) document.setPageSize(rect);
+				document.open();
+				if (writer != null) {
+					outline = new Stack();
+					PdfContentByte cb = writer.getDirectContent();
+					outline.push(cb.getRootOutline());
+				}
+			}
+			else if (MarkupTags.LINK.equals(qName) && MarkupTags.STYLESHEET.equals(attrs.getProperty(MarkupTags.REL))) {
+				String parent = new File((String)filestack.peek()).getParent();
+				String markupfile = attrs.getProperty(MarkupTags.HREF);
+				if (markupfile.startsWith("/")) {
+					markupfile = parent + markupfile;
+				}
+				else {
+					markupfile = parent + "/" + markupfile;
+				}
+				markup = new MarkupParser(markupfile);
+			}
+		}
 	}
 	
 	/**
@@ -276,6 +272,7 @@ public class Parser extends DefaultHandler {
 	 */
 	public void processingInstruction(String instruction, String parameter)
 			throws SAXException {
+//System.err.println("Processing: " + instruction);
 		try {
 			// parse all the sublevels of the current directory
 			if ("parse".equals(instruction)) {
@@ -283,11 +280,22 @@ public class Parser extends DefaultHandler {
 				StringTokenizer sublevels = new StringTokenizer(parameter, ",");
 				while (sublevels.hasMoreTokens()) {
 					file = sublevels.nextToken();
-					if (filestack.size() > 0) file = filestack.peek() + "/" + file;
-					filestack.push(file.trim());
+					if (filestack.size() > 0) file = new File((String)filestack.peek()).getParent() + "/" + file.trim();
+					filestack.push(file);
 					parse();
 					if (outline != null) outline.pop();
 				}
+			}
+			if (document.isOpen()) return;
+			// start listening with the PDF writer
+			if ("pdfwriter".equals(instruction)) {
+				writer = PdfWriter.getInstance(document, new FileOutputStream(parameter));
+			}
+			else if ("htmlwriter".equals(instruction)) {
+				HtmlWriter.getInstance(document, new FileOutputStream(parameter));
+			}
+			else if ("rtfwriter".equals(instruction)) {
+				RtfWriter.getInstance(document, new FileOutputStream(parameter));
 			}
 		}
 		catch(Exception e) {
@@ -297,20 +305,20 @@ public class Parser extends DefaultHandler {
 	
 	/** flushing the CurrentChunk. */
 	private void flushCurrentChunk() {
-		if (currentChunk != null) {
-			TextElementArray current;
-			try {
-				current = (TextElementArray) objectstack.pop();
-			} catch (EmptyStackException ese) {
-				current = new Paragraph();
-			}
-			current.add(currentChunk);
-			objectstack.push(current);
-			currentChunk = null;
+		if (currentChunk == null || !document.isOpen()) return;
+		TextElementArray current;
+		try {
+			current = (TextElementArray) objectstack.pop();
+		} catch (EmptyStackException ese) {
+			current = new Paragraph();
 		}
+		current.add(currentChunk);
+		objectstack.push(current);
+		currentChunk = null;
 	}
 	
-	/** extending the CurrentChunk. */
+	/** extending the CurrentChunk. 
+	 * @param s*/
 	private void addToCurrentChunk(String s) {
 		if (currentChunk != null) {
 			currentChunk.append(s);
@@ -413,10 +421,13 @@ public class Parser extends DefaultHandler {
 	 * Gets the file on top of the filestack,
 	 * parses it
 	 * and removes it from the stack.
+	 * @throws ParserConfigurationException
+	 * @throws IOException
+	 * @throws SAXException
 	 */
 	private void parse() throws ParserConfigurationException, IOException, SAXException {
 		// gets the file on top of the filestack
-		String file = filestack.peek() + "/index.xml";
+		String file = (String) filestack.peek();
 		// create the parser
 		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance(); 
 		SAXParser saxParser = saxParserFactory.newSAXParser(); 

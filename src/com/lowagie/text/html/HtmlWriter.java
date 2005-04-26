@@ -693,7 +693,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 Paragraph paragraph = (Paragraph) element;
                 styleAttributes = new Properties();
                 if (paragraph.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_LINEHEIGHT, String.valueOf(paragraph.leading()) + "pt");
-                
                 // start tag
                 addTabs(indent);
                 writeStart(MarkupTags.DIV);
