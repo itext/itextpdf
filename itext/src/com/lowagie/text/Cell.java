@@ -56,6 +56,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import com.lowagie.text.markup.*;
+import com.lowagie.text.pdf.PdfPCell;
 
 /**
  * A <CODE>Cell</CODE> is a <CODE>Rectangle</CODE> containing other
@@ -980,4 +981,25 @@ public class Cell extends Rectangle implements TextElementArray {
     public boolean isUseBorderPadding() {
         return useBorderPadding;
     }
+
+	/**
+	 * Creates a PdfPCell based on this Cell object.
+	 * @return a PdfPCell
+	 * @throws BadElementException
+	 */
+	public PdfPCell createPdfPCell() throws BadElementException {
+		if (rowspan > 1) throw new BadElementException("PdfPCells can't have a rowspan > 1");
+		if (isTable()) return new PdfPCell(((Table)arrayList.get(0)).createPdfPTable());
+		PdfPCell cell = new PdfPCell();
+		cell.setVerticalAlignment(verticalAlignment);
+		cell.setHorizontalAlignment(horizontalAlignment);
+		cell.setColspan(colspan);
+		cell.setUseBorderPadding(useBorderPadding);
+		cell.setUseDescender(useDescender);
+		cell.setLeading(leading(), 0);
+		for (Iterator i = getChunks().iterator(); i.hasNext(); ) {
+			cell.addElement((Element)i.next());
+		}
+		return cell;
+	}
 }
