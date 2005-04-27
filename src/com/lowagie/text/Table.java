@@ -63,6 +63,9 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import com.lowagie.text.markup.*;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+
 import java.text.DecimalFormat;
 /**
  * A <CODE>Table</CODE> is a <CODE>Rectangle</CODE> that contains <CODE>Cell</CODE>s,
@@ -1842,4 +1845,52 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     }
     
     private static DecimalFormat widthFormat = new DecimalFormat( "0.00");
+    
+    /**
+     * Create a PdfPTable based on this Table object.
+     * @return a PdfPTable object
+     * @throws BadElementException
+     */
+    public PdfPTable createPdfPTable() throws BadElementException {
+    	complete();
+    	PdfPTable pdfptable = new PdfPTable(columns);
+    	pdfptable.setHorizontalAlignment(alignment);
+    	if (absWidth.length() > 0) {
+    		try {
+    			pdfptable.setTotalWidth(Float.parseFloat(absWidth));
+    		}
+    		catch(Exception e1) {
+    			try {
+    				pdfptable.setTotalWidth((float)Integer.parseInt(absWidth));
+    			}
+    			catch(Exception e2) {
+    				pdfptable.setWidthPercentage(widthPercentage);
+    			}
+    		}
+    	}
+    	else {
+    		pdfptable.setWidthPercentage(widthPercentage);
+    	}
+    	Row row;
+        for (Iterator iterator = iterator(); iterator.hasNext(); ) {
+            row = (Row) iterator.next();
+            Element cell;
+            PdfPCell pcell;
+            for (int i = 0; i < row.columns(); i++) {
+                if ((cell = (Element)row.getCell(i)) != null) {
+                	if (cell instanceof Table) {
+                		pcell = new PdfPCell(((Table)cell).createPdfPTable());
+                	}
+                	else if (cell instanceof Cell) {
+                		pcell = ((Cell)cell).createPdfPCell();
+                	}
+                	else {
+                		pcell = new PdfPCell();
+                	}
+                	pdfptable.addCell(pcell);
+                }
+            }
+        }
+    	return pdfptable;
+    }
 }
