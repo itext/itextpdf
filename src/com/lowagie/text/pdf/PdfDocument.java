@@ -62,6 +62,7 @@ import java.util.TreeMap;
 
 import com.lowagie.text.Anchor;
 import com.lowagie.text.Annotation;
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocListener;
@@ -1703,15 +1704,30 @@ class PdfDocument extends Document implements DocListener {
                     	table = (PdfTable)element;
 						table.updateRowAdditions();
                     } else if (element instanceof Table) {
-                        // constructing the PdfTable
-                        // Before the table, add a blank line using offset or default leading
-                        float offset = ((Table)element).getOffset();
-                        if (Float.isNaN(offset))
-                            offset = leading;
-                        carriageReturn();
-                        lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
-                        currentHeight += offset;
-	                    table = getPdfTable((Table)element, false);
+
+                    	try {
+                    		PdfPTable ptable = ((Table)element).createPdfPTable();
+                    		if (ptable.size() <= ptable.getHeaderRows())
+                                break; //nothing to do
+
+                            // before every table, we add a new line and flush all lines
+                            ensureNewLine();
+                            flushLines();
+                            addPTable(ptable);                    
+                            pageEmpty = false;
+                            break;
+                    	}
+                    	catch(BadElementException bee) {
+                    		// constructing the PdfTable
+                            // Before the table, add a blank line using offset or default leading
+                            float offset = ((Table)element).getOffset();
+                            if (Float.isNaN(offset))
+                                offset = leading;
+                            carriageReturn();
+                            lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
+                            currentHeight += offset;
+    	                    table = getPdfTable((Table)element, false);
+                    	}
 					} else {
 						return false;
 					}
