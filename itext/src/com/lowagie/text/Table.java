@@ -196,6 +196,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     /** This is the width of the table (in pixels). */
     private String absWidth = "";
     
+    /** The original widths */
+    private float[] originalwidths;
+    
     /** This is an array containing the widths (in percentages) of every column. */
     private float[] widths;
     
@@ -222,6 +225,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /** contains the attributes that are added to each odd (or even) row */
     protected Hashtable alternatingRowAttributes = null;
+    
+    /** if you want to generate tables the old way, set this value to true. */
+    protected boolean oldstyle = true;
     
     // constructors
     
@@ -1101,6 +1107,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
     
     public void setWidths(float[] widths) throws BadElementException {
+    	originalwidths = widths;
         if (widths.length != columns) {
             throw new BadElementException("Wrong number of columns.");
         }
@@ -1136,6 +1143,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         float tb[] = new float[widths.length];
         for (int k = 0; k < widths.length; ++k)
             tb[k] = widths[k];
+        originalwidths = tb;
         setWidths(tb);
     }
     // methods to retrieve the membervariables
@@ -1852,8 +1860,19 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * @throws BadElementException
      */
     public PdfPTable createPdfPTable() throws BadElementException {
+    	if (oldstyle) {
+    		throw new BadElementException("No error, just an old style table");
+    	}
+        setAutoFillEmptyCells(true);
     	complete();
-    	PdfPTable pdfptable = new PdfPTable(columns);
+    	PdfPTable pdfptable;
+    	if (originalwidths == null) {
+    		pdfptable = new PdfPTable(columns);
+    	}
+    	else {
+    		pdfptable = new PdfPTable(originalwidths);
+    	}
+    	pdfptable.setHeaderRows(lastHeaderRow + 1);
     	pdfptable.setHorizontalAlignment(alignment);
     	if (absWidth.length() > 0) {
     		try {
@@ -1893,4 +1912,19 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         }
     	return pdfptable;
     }
+	/**
+	 * Method to check if the Table should be converted to a PdfPTable or not.
+	 * @return true if the table should be handled the oldfashioned way.
+	 */
+	public boolean isOldstyle() {
+		return oldstyle;
+	}
+	/**
+	 * If oldstyle is false, iText will try to convert the Table to a PdfPTable;
+	 * If you don't want this, set the oldstyle to true.
+	 * @param oldstyle false if you want iText to try to convert the Table to a PdfPTable
+	 */
+	public void setOldstyle(boolean oldstyle) {
+		this.oldstyle = oldstyle;
+	}
 }

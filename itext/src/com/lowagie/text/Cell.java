@@ -997,7 +997,8 @@ public class Cell extends Rectangle implements TextElementArray {
 		cell.setUseBorderPadding(useBorderPadding);
 		cell.setUseDescender(useDescender);
 		cell.setLeading(leading(), 0);
-		for (Iterator i = getChunks().iterator(); i.hasNext(); ) {
+		cell.cloneNonPositionParameters(this);
+		for (Iterator i = getElements(); i.hasNext(); ) {
 			cell.addElement((Element)i.next());
 		}
 		return cell;
