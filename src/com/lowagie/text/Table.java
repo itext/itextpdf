@@ -227,7 +227,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     protected Hashtable alternatingRowAttributes = null;
     
     /** if you want to generate tables the old way, set this value to true. */
-    protected boolean oldstyle = true;
+    protected boolean oldstyle = false;
     
     // constructors
     
