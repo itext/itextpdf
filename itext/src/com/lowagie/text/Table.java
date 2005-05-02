@@ -196,9 +196,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     /** This is the width of the table (in pixels). */
     private String absWidth = "";
     
-    /** The original widths */
-    private float[] originalwidths;
-    
     /** This is an array containing the widths (in percentages) of every column. */
     private float[] widths;
     
@@ -914,8 +911,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             curPosition.setLocation(curPosition.x+1, 0);
         }
     }
-    
-    /**
+
+	/**
      * Deletes a row.
      *
      * @param       row             the number of the row to delete
@@ -1107,7 +1104,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      */
     
     public void setWidths(float[] widths) throws BadElementException {
-    	originalwidths = widths;
         if (widths.length != columns) {
             throw new BadElementException("Wrong number of columns.");
         }
@@ -1143,7 +1139,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         float tb[] = new float[widths.length];
         for (int k = 0; k < widths.length; ++k)
             tb[k] = widths[k];
-        originalwidths = tb;
         setWidths(tb);
     }
     // methods to retrieve the membervariables
@@ -1853,7 +1848,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     }
     
     private static DecimalFormat widthFormat = new DecimalFormat( "0.00");
-    
+
     /**
      * Create a PdfPTable based on this Table object.
      * @return a PdfPTable object
@@ -1865,13 +1860,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     	}
         setAutoFillEmptyCells(true);
     	complete();
-    	PdfPTable pdfptable;
-    	if (originalwidths == null) {
-    		pdfptable = new PdfPTable(columns);
-    	}
-    	else {
-    		pdfptable = new PdfPTable(originalwidths);
-    	}
+    	PdfPTable pdfptable = new PdfPTable(widths);
     	pdfptable.setHeaderRows(lastHeaderRow + 1);
     	pdfptable.setSplitLate(!cellsFitPage);
     	if (!Float.isNaN(offset)) {
