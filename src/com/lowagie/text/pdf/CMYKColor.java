@@ -61,10 +61,24 @@ public class CMYKColor extends ExtendedColor {
     float yellow;
     float black;
 
+    /**
+     * Constructs a CMYK Color beased on 4 colorvalues (values are integers from 0 to 255).
+     * @param intCyan
+     * @param intMagenta
+     * @param intYellow
+     * @param intBlack
+     */
     public CMYKColor(int intCyan, int intMagenta, int intYellow, int intBlack) {
         this((float)intCyan / 255f, (float)intMagenta / 255f, (float)intYellow / 255f, (float)intBlack / 255f);
     }
 
+    /**
+     * Construct a CMYK Color.
+     * @param floatCyan
+     * @param floatMagenta
+     * @param floatYellow
+     * @param floatBlack
+     */
     public CMYKColor(float floatCyan, float floatMagenta, float floatYellow, float floatBlack) {
         super(TYPE_CMYK, 1f - floatCyan - floatBlack, 1f - floatMagenta - floatBlack, 1f - floatYellow - floatBlack);
         cyan = normalize(floatCyan);
@@ -73,18 +87,42 @@ public class CMYKColor extends ExtendedColor {
         black = normalize(floatBlack);
     }
     
+    /**
+     * Generates a CMYK Color based on a hex string, for example #000000ff for black
+     * (contributed by Michael Glauche).
+     * @param color a 4 Byte hex string representing the cmyk color
+     */
+    public CMYKColor(String color) {
+        super(Integer.parseInt(color.substring(1,3),16),
+                Integer.parseInt(color.substring(3,5),16),
+                Integer.parseInt(color.substring(5,7),16),
+                Integer.parseInt(color.substring(7,9),16));
+    }
+    
+    /**
+     * @return the cyan value
+     */
     public float getCyan() {
         return cyan;
     }
 
+    /**
+     * @return the magenta value
+     */
     public float getMagenta() {
         return magenta;
     }
 
+    /**
+     * @return the yellow value
+     */
     public float getYellow() {
         return yellow;
     }
 
+    /**
+     * @return the black value
+     */
     public float getBlack() {
         return black;
     }
