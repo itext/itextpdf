@@ -226,8 +226,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     /** contains the attributes that are added to each odd (or even) row */
     protected Hashtable alternatingRowAttributes = null;
     
-    /** if you want to generate tables the old way, set this value to true. */
-    protected boolean oldstyle = false;
+    /** if you want to generate tables the old way, set this value to false. */
+    protected boolean convert2pdfptable = false;
     
     // constructors
     
@@ -1860,7 +1860,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
      * @throws BadElementException
      */
     public PdfPTable createPdfPTable() throws BadElementException {
-    	if (oldstyle) {
+    	if (!convert2pdfptable) {
     		throw new BadElementException("No error, just an old style table");
     	}
         setAutoFillEmptyCells(true);
@@ -1873,6 +1873,10 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     		pdfptable = new PdfPTable(originalwidths);
     	}
     	pdfptable.setHeaderRows(lastHeaderRow + 1);
+    	pdfptable.setSplitLate(!cellsFitPage);
+    	if (!Float.isNaN(offset)) {
+    		pdfptable.setSpacingBefore(offset);
+    	}
     	pdfptable.setHorizontalAlignment(alignment);
     	if (absWidth.length() > 0) {
     		try {
@@ -1912,19 +1916,19 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         }
     	return pdfptable;
     }
+    
 	/**
 	 * Method to check if the Table should be converted to a PdfPTable or not.
-	 * @return true if the table should be handled the oldfashioned way.
+	 * @return false if the table should be handled the oldfashioned way.
 	 */
-	public boolean isOldstyle() {
-		return oldstyle;
+	public boolean isConvert2pdfptable() {
+		return convert2pdfptable;
 	}
 	/**
-	 * If oldstyle is false, iText will try to convert the Table to a PdfPTable;
-	 * If you don't want this, set the oldstyle to true.
-	 * @param oldstyle false if you want iText to try to convert the Table to a PdfPTable
+	 * If set to true, iText will try to convert the Table to a PdfPTable.
+	 * @param convert2pdfptable true if you want iText to try to convert the Table to a PdfPTable
 	 */
-	public void setOldstyle(boolean oldstyle) {
-		this.oldstyle = oldstyle;
+	public void setConvert2pdfptable(boolean convert2pdfptable) {
+		this.convert2pdfptable = convert2pdfptable;
 	}
 }
