@@ -1709,7 +1709,7 @@ class PdfDocument extends Document implements DocListener {
                     		PdfPTable ptable = ((Table)element).createPdfPTable();
                     		if (ptable.size() <= ptable.getHeaderRows())
                                 break; //nothing to do
-
+                    		
                             // before every table, we add a new line and flush all lines
                             ensureNewLine();
                             flushLines();
