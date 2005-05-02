@@ -88,18 +88,6 @@ public class CMYKColor extends ExtendedColor {
     }
     
     /**
-     * Generates a CMYK Color based on a hex string, for example #000000ff for black
-     * (contributed by Michael Glauche).
-     * @param color a 4 Byte hex string representing the cmyk color
-     */
-    public CMYKColor(String color) {
-        super(Integer.parseInt(color.substring(1,3),16),
-                Integer.parseInt(color.substring(3,5),16),
-                Integer.parseInt(color.substring(5,7),16),
-                Integer.parseInt(color.substring(7,9),16));
-    }
-    
-    /**
      * @return the cyan value
      */
     public float getCyan() {
