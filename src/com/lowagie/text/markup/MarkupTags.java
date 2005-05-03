@@ -76,9 +76,6 @@ public class MarkupTags {
 	public static final String HTML_TAG_SPAN = "span";
 
 	// HTML attributes
-	
-	/** This is a possible HTML attribute for the LINK tag. */
-	public static final String HTML_ATTR_CSS = "text/css";
 
 	/** the height attribute. */
 	public static final String HTML_ATTR_HEIGHT = "height";
@@ -111,6 +108,9 @@ public class MarkupTags {
 	
 	/** This is a possible value for the language attribute (SCRIPT tag). */
 	public static final String HTML_VALUE_JAVASCRIPT = "text/javascript";
+	
+	/** This is a possible HTML attribute for the LINK tag. */
+	public static final String HTML_VALUE_CSS = "text/css";
 
 	// CSS keys
 
@@ -122,9 +122,6 @@ public class MarkupTags {
 
 	/** CSS key that indicate the way something has to be displayed */
 	public static final String CSS_KEY_DISPLAY = "display";
-	
-	/** the CSS tag for the font size */
-	public static final String CSS_KEY_FONT = "font";
 
 	/** the CSS tag for the font family */
 	public static final String CSS_KEY_FONTFAMILY = "font-family";

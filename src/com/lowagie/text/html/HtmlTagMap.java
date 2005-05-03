@@ -73,7 +73,7 @@ public class HtmlTagMap extends HashMap {
         peer = new HtmlPeer(ElementTags.ITEXT, HtmlTags.HTML);
         put(peer.getAlias(), peer);
         
-        peer = new HtmlPeer(ElementTags.PHRASE, MarkupTags.HTML_TAG_SPAN);
+        peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.SPAN);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.CHUNK);
@@ -91,7 +91,7 @@ public class HtmlTagMap extends HashMap {
         peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
         put(peer.getAlias(), peer);
         
-        peer = new HtmlPeer(ElementTags.PARAGRAPH, MarkupTags.HTML_TAG_DIV);
+        peer = new HtmlPeer(ElementTags.PARAGRAPH, HtmlTags.DIV);
         peer.addAlias(ElementTags.ALIGN, HtmlTags.ALIGN);
         put(peer.getAlias(), peer);
         
@@ -153,7 +153,7 @@ public class HtmlTagMap extends HashMap {
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.CODE);
-        peer.addValue(MarkupTags.CSS_KEY_FONT, FontFactory.COURIER);
+        peer.addValue(ElementTags.FONT, FontFactory.COURIER);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.VAR);
@@ -262,7 +262,7 @@ public class HtmlTagMap extends HashMap {
  */
     
     public boolean isLink(String tag) {
-        return MarkupTags.HTML_TAG_LINK.equalsIgnoreCase(tag);
+        return HtmlTags.LINK.equalsIgnoreCase(tag);
     }
     
 /**

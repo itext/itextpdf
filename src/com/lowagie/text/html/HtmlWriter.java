@@ -178,9 +178,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     public boolean newPage() throws DocumentException {
         try {
-            writeStart(MarkupTags.HTML_TAG_DIV);
+            writeStart(HtmlTags.DIV);
             write(" ");
-            write(MarkupTags.HTML_ATTR_STYLE);
+            write(HtmlTags.STYLE);
             write("=\"");
             writeCssProperty(MarkupTags.CSS_KEY_PAGE_BREAK_BEFORE, MarkupTags.CSS_VALUE_ALWAYS);
             write("\" /");
@@ -210,7 +210,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 case Element.HEADER:
                     try {
                         Header h = (Header) element;
-                        if (MarkupTags.HTML_ATTR_STYLESHEET.equals(h.name())) {
+                        if (HtmlTags.STYLESHEET.equals(h.name())) {
                             writeLink(h);
                         }
                         else if (HtmlTags.JAVASCRIPT.equals(h.name())) {
@@ -396,9 +396,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
     protected void writeLink(Header header) throws IOException {
         addTabs(2);
-        writeStart(MarkupTags.HTML_TAG_LINK);
-        write(MarkupTags.HTML_ATTR_REL, header.name());
-        write(MarkupTags.HTML_ATTR_TYPE, MarkupTags.HTML_ATTR_CSS);
+        writeStart(HtmlTags.LINK);
+        write(HtmlTags.REL, header.name());
+        write(HtmlTags.TYPE, HtmlTags.TEXT_CSS);
         write(HtmlTags.REFERENCE, header.content());
         writeEnd();
     }
@@ -432,7 +432,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
            * //-->
            * </script>
            */ 
-          write(MarkupTags.HTML_ATTR_TYPE, MarkupTags.HTML_VALUE_JAVASCRIPT);
+          write(HtmlTags.TYPE, MarkupTags.HTML_VALUE_JAVASCRIPT);
           os.write(GT);
           addTabs(2);
           write(new String(BEGINCOMMENT) + "\n");
@@ -593,7 +593,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (tag) {
                     // start span tag
                     addTabs(indent);
-                    writeStart(MarkupTags.HTML_TAG_SPAN);
+                    writeStart(HtmlTags.SPAN);
                     if (isOtherFont(chunk.font())) {
                         write(chunk.font(), styleAttributes);
                     }
@@ -695,7 +695,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (paragraph.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, String.valueOf(paragraph.leading()) + "pt");
                 // start tag
                 addTabs(indent);
-                writeStart(MarkupTags.HTML_TAG_DIV);
+                writeStart(HtmlTags.DIV);
                 if (hasMarkupAttributes(paragraph)) {
                     writeMarkupAttributes((MarkupAttributes)paragraph);
                 }
@@ -712,7 +712,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 // end tag
                 addTabs(indent);
-                writeEnd(MarkupTags.HTML_TAG_DIV);
+                writeEnd(HtmlTags.DIV);
                 currentfont.pop();
                 return;
             }
@@ -1025,7 +1025,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
     protected void write(Font font, Properties styleAttributes) throws IOException {
         if (font == null || !isOtherFont(font) /* || styleAttributes == null*/) return;
         write(" ");
-        write(MarkupTags.HTML_ATTR_STYLE);
+        write(HtmlTags.STYLE);
         write("=\"");
         if (styleAttributes != null) {
             String key;
