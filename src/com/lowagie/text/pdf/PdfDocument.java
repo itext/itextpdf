@@ -1222,8 +1222,7 @@ class PdfDocument extends Document implements DocListener {
 						text.moveText(0, cellTop-heightCorrection);
 						cellDisplacement = flushLines() - cellTop+heightCorrection;
 						text.moveText(0, cellDisplacement);
-					}
-                                
+					}           
 					currentHeight = indentTop() - pagetop + table.cellspacing();
 					text.moveText(0, pagetop - indentTop() - currentHeight);
 				}
@@ -1254,11 +1253,12 @@ class PdfDocument extends Document implements DocListener {
 				table.setBottom(pagetop - difference + table.bottom(table.cellspacing()));
 				for (i = 0; i < size; i++) {
 					cell = (PdfCell) cells.get(i);
+					float newBottom = pagetop - difference + cell.bottom();
 					float newTop = pagetop - difference + cell.top(-table.cellspacing());
 					if (newTop > indentTop() - currentHeight) {
 						newTop = indentTop() - currentHeight;
 					}
-               float newBottom = newTop - cell.height();
+					//float newBottom = newTop - cell.height();
 					cell.setTop(newTop );
 					cell.setBottom(newBottom );
 				}
