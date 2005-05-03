@@ -158,7 +158,7 @@ public class Parser extends DefaultHandler {
 //System.err.println("start: " + qName);
 		// push tagname and attributes to the stack
 		Properties attrs = new Properties();
-		attrs.put(MarkupTags.CSS_TAG, qName);
+		attrs.put(MarkupTags.ITEXT_TAG, qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			attrs.put(attributes.getQName(i), attributes.getValue(i));
 		}
@@ -169,7 +169,7 @@ public class Parser extends DefaultHandler {
 		}
 		else {
 			// check if the document should be opened
-			if (MarkupTags.BODY.equals(qName)) {
+			if (MarkupTags.HTML_TAG_BODY.equals(qName)) {
 				Rectangle rect = markup.getRectangle(attrs);
 				if (rect != null) document.setPageSize(rect);
 				document.open();
@@ -179,9 +179,9 @@ public class Parser extends DefaultHandler {
 					outline.push(cb.getRootOutline());
 				}
 			}
-			else if (MarkupTags.LINK.equals(qName) && MarkupTags.STYLESHEET.equals(attrs.getProperty(MarkupTags.REL))) {
+			else if (MarkupTags.HTML_TAG_LINK.equals(qName) && MarkupTags.HTML_ATTR_STYLESHEET.equals(attrs.getProperty(MarkupTags.HTML_ATTR_REL))) {
 				String parent = new File((String)filestack.peek()).getParent();
-				String markupfile = attrs.getProperty(MarkupTags.HREF);
+				String markupfile = attrs.getProperty(MarkupTags.HTML_ATTR_HREF);
 				if (markupfile.startsWith("/")) {
 					markupfile = parent + markupfile;
 				}
@@ -247,7 +247,7 @@ public class Parser extends DefaultHandler {
 		Properties attrs = (Properties)tagstack.peek();
 		PdfOutline bookmark = null;
 		flushCurrentChunk();
-		if (attrs != null && title.equals(attrs.getProperty(MarkupTags.ID)) && outline != null) {
+		if (attrs != null && title.equals(attrs.getProperty(MarkupTags.HTML_ATTR_CSS_ID)) && outline != null) {
 			PdfOutline parent = (PdfOutline)outline.peek();
 			PdfDestination dest = new PdfDestination(PdfDestination.FITH, writer.getVerticalPosition(false));
 			Paragraph p = (Paragraph)objectstack.peek();
@@ -349,10 +349,10 @@ public class Parser extends DefaultHandler {
 		Element element = markup.getObject(attrs);
 		if (element == null) return;
 		// if it's a Paragraph, it could be a title
-		if (element instanceof Paragraph && title.equals(attrs.getProperty(MarkupTags.ID))) {
+		if (element instanceof Paragraph && title.equals(attrs.getProperty(MarkupTags.HTML_ATTR_CSS_ID))) {
 			for (int i = 0; i < counters.length; i++) {
 				// where does this title fit in the hierarchy of the document?
-				if (structures[i].equals(attrs.getProperty(MarkupTags.CLASS))) {
+				if (structures[i].equals(attrs.getProperty(MarkupTags.HTML_ATTR_CSS_CLASS))) {
 					// we increment the number of this hierarchy element
 					counters[i]++;
 					// we set the counter of the child to 0 if necessary
