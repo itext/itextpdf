@@ -272,9 +272,9 @@ public class MarkupParser extends HashMap {
 	 * @return a key 
 	 */
 	private String getKey(Properties attributes) {
-		String tag = attributes.getProperty(MarkupTags.CSS_TAG);
-		String id = attributes.getProperty(MarkupTags.ID);
-		String cl = attributes.getProperty(MarkupTags.CLASS);
+		String tag = attributes.getProperty(MarkupTags.ITEXT_TAG);
+		String id = attributes.getProperty(MarkupTags.HTML_ATTR_CSS_ID);
+		String cl = attributes.getProperty(MarkupTags.HTML_ATTR_CSS_CLASS);
 		if (id == null) {
 			id = "";
 		}
@@ -314,7 +314,7 @@ public class MarkupParser extends HashMap {
 	public boolean getPageBreakBefore(Properties attributes) {
 		String key = getKey(attributes);
 		Properties styleattributes = (Properties)stylecache.get(key);
-		if (styleattributes != null && MarkupTags.ALWAYS.equals(styleattributes.getProperty(MarkupTags.PAGE_BREAK_BEFORE))) {
+		if (styleattributes != null && MarkupTags.CSS_VALUE_ALWAYS.equals(styleattributes.getProperty(MarkupTags.CSS_KEY_PAGE_BREAK_BEFORE))) {
 			return true;
 		}
 		return false;
@@ -327,7 +327,7 @@ public class MarkupParser extends HashMap {
 	public boolean getPageBreakAfter(Properties attributes) {
 		String key = getKey(attributes);
 		Properties styleattributes = (Properties)stylecache.get(key);
-		if (styleattributes != null && MarkupTags.ALWAYS.equals(styleattributes.getProperty(MarkupTags.PAGE_BREAK_AFTER))) {
+		if (styleattributes != null && MarkupTags.CSS_VALUE_ALWAYS.equals(styleattributes.getProperty(MarkupTags.CSS_KEY_PAGE_BREAK_AFTER))) {
 			return true;
 		}
 		return false;
@@ -341,24 +341,24 @@ public class MarkupParser extends HashMap {
 	public Element getObject(Properties attributes) {
 		String key = getKey(attributes);
 		Properties styleattributes = (Properties)stylecache.get(key);
-		if (styleattributes != null && MarkupTags.HIDDEN.equals(styleattributes.get(MarkupTags.CSS_VISIBILITY))) {
+		if (styleattributes != null && MarkupTags.CSS_VALUE_HIDDEN.equals(styleattributes.get(MarkupTags.CSS_KEY_VISIBILITY))) {
 			return null;
 		}
-		String display = styleattributes.getProperty(MarkupTags.CSS_DISPLAY);
+		String display = styleattributes.getProperty(MarkupTags.CSS_KEY_DISPLAY);
 		Element element = null;
-		if (MarkupTags.CSS_INLINE.equals(display)) {
+		if (MarkupTags.CSS_VALUE_INLINE.equals(display)) {
 			element = retrievePhrase(getFont(attributes), styleattributes);
 		}
-		else if (MarkupTags.CSS_BLOCK.equals(display)) {
+		else if (MarkupTags.CSS_VALUE_BLOCK.equals(display)) {
 			element = retrieveParagraph(getFont(attributes), styleattributes);
 		}
-		else if (MarkupTags.CSS_LISTITEM.equals(display)) {
+		else if (MarkupTags.CSS_VALUE_LISTITEM.equals(display)) {
 			element = retrieveListItem(getFont(attributes), styleattributes);
 		}
-		else if (MarkupTags.CSS_TABLECELL.equals(display)) {
+		else if (MarkupTags.CSS_VALUE_TABLECELL.equals(display)) {
 			element = retrieveTableCell(getFont(attributes), styleattributes);
 		}
-		else if (MarkupTags.CSS_TABLE.equals(display)) {
+		else if (MarkupTags.CSS_VALUE_TABLE.equals(display)) {
 			element = retrieveTable(styleattributes);
 		}
 		return element;
@@ -395,11 +395,11 @@ public class MarkupParser extends HashMap {
 		String key = getKey(attrs);
 		Properties styleattributes = (Properties)stylecache.get(key);
 		if (styleattributes != null) {
-			width = styleattributes.getProperty(MarkupTags.WIDTH);
-			height = styleattributes.getProperty(MarkupTags.HEIGHT);
+			width = styleattributes.getProperty(MarkupTags.HTML_ATTR_WIDTH);
+			height = styleattributes.getProperty(MarkupTags.HTML_ATTR_HEIGHT);
 		}
-		if (width == null) width = attrs.getProperty(MarkupTags.WIDTH);
-		if (height == null) height = attrs.getProperty(MarkupTags.HEIGHT);
+		if (width == null) width = attrs.getProperty(MarkupTags.HTML_ATTR_WIDTH);
+		if (height == null) height = attrs.getProperty(MarkupTags.HTML_ATTR_HEIGHT);
 		if (width == null || height == null) return null;
 		return new Rectangle(parseLength(width), parseLength(height));
 	}
@@ -415,7 +415,7 @@ public class MarkupParser extends HashMap {
 	public Element retrievePhrase(Font font, Properties styleattributes) {
 		Phrase p = new Phrase("", font);
 		if (styleattributes == null) return p;
-		String leading = styleattributes.getProperty(MarkupTags.CSS_LINEHEIGHT);
+		String leading = styleattributes.getProperty(MarkupTags.CSS_KEY_LINEHEIGHT);
 		if (leading != null) {
 			if (leading.endsWith("%")) {
 				p.setLeading(p.font().size() * (parseLength(leading) / 100f));
@@ -436,7 +436,7 @@ public class MarkupParser extends HashMap {
 	public Element retrieveParagraph(Font font, Properties styleattributes) {
 		Paragraph p = new Paragraph((Phrase)retrievePhrase(font, styleattributes));
 		if (styleattributes == null) return p;
-		String margin = styleattributes.getProperty(MarkupTags.CSS_MARGIN);
+		String margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGIN);
 		float f;
 		if (margin != null) {
 			f = parseLength(margin);
@@ -445,37 +445,37 @@ public class MarkupParser extends HashMap {
 			p.setSpacingBefore(f);
 			p.setSpacingAfter(f);
 		}
-		margin = styleattributes.getProperty(MarkupTags.CSS_MARGINLEFT);
+		margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGINLEFT);
 		if (margin != null) {
 			f = parseLength(margin);
 			p.setIndentationLeft(f);
 		}
-		margin = styleattributes.getProperty(MarkupTags.CSS_MARGINRIGHT);
+		margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGINRIGHT);
 		if (margin != null) {
 			f = parseLength(margin);
 			p.setIndentationRight(f);
 		}
-		margin = styleattributes.getProperty(MarkupTags.CSS_MARGINTOP);
+		margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGINTOP);
 		if (margin != null) {
 			f = parseLength(margin);
 			p.setSpacingBefore(f);
 		}
-		margin = styleattributes.getProperty(MarkupTags.CSS_MARGINBOTTOM);
+		margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGINBOTTOM);
 		if (margin != null) {
 			f = parseLength(margin);
 			p.setSpacingAfter(f);
 		}
-		String align = styleattributes.getProperty(MarkupTags.CSS_TEXTALIGN);
-		if (MarkupTags.CSS_TEXTALIGNLEFT.equals(align)) {
+		String align = styleattributes.getProperty(MarkupTags.CSS_KEY_TEXTALIGN);
+		if (MarkupTags.CSS_VALUE_TEXTALIGNLEFT.equals(align)) {
 			p.setAlignment(Element.ALIGN_LEFT);
 		}
-		else if (MarkupTags.CSS_TEXTALIGNRIGHT.equals(align)) {
+		else if (MarkupTags.CSS_VALUE_TEXTALIGNRIGHT.equals(align)) {
 			p.setAlignment(Element.ALIGN_RIGHT);
 		}
-		else if (MarkupTags.CSS_TEXTALIGNCENTER.equals(align)) {
+		else if (MarkupTags.CSS_VALUE_TEXTALIGNCENTER.equals(align)) {
 			p.setAlignment(Element.ALIGN_CENTER);
 		}
-		else if (MarkupTags.CSS_TEXTALIGNJUSTIFY.equals(align)) {
+		else if (MarkupTags.CSS_VALUE_TEXTALIGNJUSTIFY.equals(align)) {
 			p.setAlignment(Element.ALIGN_JUSTIFIED);
 		}
 		return p;
@@ -528,7 +528,7 @@ public class MarkupParser extends HashMap {
 	    float size = Font.UNDEFINED;
 	    int style = Font.NORMAL;
 	    Color color = null;
-	    String value = (String)styleAttributes.get(MarkupTags.CSS_FONTFAMILY);
+	    String value = (String)styleAttributes.get(MarkupTags.CSS_KEY_FONTFAMILY);
 	    if (value != null) {
 	    	if (value.indexOf(",") == -1) {
 	    		fontname = value.trim();
@@ -547,16 +547,16 @@ public class MarkupParser extends HashMap {
 	        	}
 	        }
 	    }
-	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_FONTSIZE)) != null) {
+	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_KEY_FONTSIZE)) != null) {
 	         size = MarkupParser.parseLength(value);
 	    }
-	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_FONTWEIGHT)) != null) {
+	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_KEY_FONTWEIGHT)) != null) {
 	        style |= Font.getStyleValue(value);
 	    }
-	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_FONTSTYLE)) != null) {
+	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_KEY_FONTSTYLE)) != null) {
 	        style |= Font.getStyleValue(value);
 	    }
-	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_COLOR)) != null) {
+	    if ((value = (String)styleAttributes.get(MarkupTags.CSS_KEY_COLOR)) != null) {
 	        color = MarkupParser.decodeColor(value);
 	    }
 	    return FontFactory.getFont(fontname, encoding, embedded, size, style, color);

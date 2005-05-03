@@ -277,7 +277,7 @@ public class Chunk implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.SUBSUPSCRIPT)) != null) {
             setTextRise(Float.valueOf(value + "f").floatValue());
         }
-        if ((value = (String)attributes.remove(MarkupTags.CSS_VERTICALALIGN)) != null && value.endsWith("%")) {
+        if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_VERTICALALIGN)) != null && value.endsWith("%")) {
             float p = Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue() / 100f;
             setTextRise(p * font.size());
         }
