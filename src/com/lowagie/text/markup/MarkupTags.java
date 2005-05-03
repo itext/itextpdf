@@ -207,4 +207,19 @@ public class MarkupTags {
 	 */
 	public static final String HREF= "href";
 
+	/** CSS key that indicate the way something has to be displayed */
+	public static final String CSS_DISPLAY = "display";
+	/** A possible value for the DISPLAY key */
+	public static final String CSS_BLOCK = "block";
+	/** A possible value for the DISPLAY key */
+	public static final String CSS_INLINE = "inline";
+	/** A possible value for the DISPLAY key */
+	public static final String CSS_LISTITEM = "list-item";
+	/** A possible value for the DISPLAY key */
+	public static final String CSS_TABLE = "table";
+	/** A possible value for the DISPLAY key */
+	public static final String CSS_TABLEROW = "table-row";
+	/** A possible value for the DISPLAY key */
+	public static final String CSS_TABLECELL = "table-cell";
+
 }

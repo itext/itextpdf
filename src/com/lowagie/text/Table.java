@@ -1944,6 +1944,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 			float[] width = widths[0];
 			Rectangle rect = new Rectangle(width[0], heights[heights.length - 1], width[width.length - 1], heights[0]);
 			rect.cloneNonPositionParameters(rectangle);
+			canvases[PdfPTable.BACKGROUNDCANVAS].rectangle(rect);
+			rect.setBackgroundColor(null);
 			canvases[PdfPTable.LINECANVAS].rectangle(rect);
 		}
 	}

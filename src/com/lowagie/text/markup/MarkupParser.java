@@ -65,14 +65,21 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 
 /**
- * This class contains several static methods that can be used to parse markup.
+ * This class is a HashMap that contains selectors (String) and styles (a Properties object).
+ * Given a tag and its attributes (id/class), this class can return an iText object with the according style.
  * 
  * @author blowagie
  */
 public class MarkupParser extends HashMap {
-	/** stylecache */
+	/**
+	 * HashMap with styles for each known combination of tag/id/class.
+	 * The key is a String-combination, the value a Properties object.
+	 */
 	protected HashMap stylecache = new HashMap();
-	/** fontcache */
+	/**
+	 * HashMap with fonts for each known combination of tag/id/class.
+	 * The key is the same String-combination used for the stylecache.
+	 */
 	protected HashMap fontcache = new HashMap();
 	
 // processing CSS
@@ -260,11 +267,12 @@ public class MarkupParser extends HashMap {
 // helper methods
 	
 	/**
-	 * Generates a key for an id/class combination and adds the style attributes to the stylecache.
+	 * Generates a key for an tag/id/class combination and adds the style attributes to the stylecache.
 	 * @param attributes a Properties object with the tagname and the attributes of the tag.
 	 * @return a key 
 	 */
 	private String getKey(Properties attributes) {
+		String tag = attributes.getProperty(MarkupTags.CSS_TAG);
 		String id = attributes.getProperty(MarkupTags.ID);
 		String cl = attributes.getProperty(MarkupTags.CLASS);
 		if (id == null) {
@@ -279,13 +287,19 @@ public class MarkupParser extends HashMap {
 		else {
 			cl = "." + cl;
 		}
-		String key = id + cl;
+		String key = tag + id + cl;
 		if (!stylecache.containsKey(key) && key.length() > 0) {
 			Properties props = new Properties();
+			Properties tagprops = (Properties)get(tag);
 			Properties idprops = (Properties)get(id);
 			Properties clprops = (Properties)get(cl);
+			Properties tagidprops = (Properties)get(tag + id);
+			Properties tagclprops = (Properties)get(tag + cl);
+			if (tagprops != null) props.putAll(tagprops);
 			if (idprops != null) props.putAll(idprops);
 			if (clprops != null) props.putAll(clprops);
+			if (tagidprops != null) props.putAll(tagidprops);
+			if (tagclprops != null) props.putAll(tagclprops);
 			stylecache.put(key, props);
 		}
 		return key;
@@ -330,16 +344,26 @@ public class MarkupParser extends HashMap {
 		if (styleattributes != null && MarkupTags.HIDDEN.equals(styleattributes.get(MarkupTags.CSS_VISIBILITY))) {
 			return null;
 		}
-		String tag = attributes.getProperty(MarkupTags.CSS_TAG);
-		if (MarkupTags.SPAN.equals(tag)) {
-			return retrievePhrase(getFont(attributes), styleattributes);
+		String display = styleattributes.getProperty(MarkupTags.CSS_DISPLAY);
+		Element element = null;
+		if (MarkupTags.CSS_INLINE.equals(display)) {
+			element = retrievePhrase(getFont(attributes), styleattributes);
 		}
-		else if (MarkupTags.DIV.equals(tag)) {
-			return retrieveParagraph(getFont(attributes), styleattributes);
+		else if (MarkupTags.CSS_BLOCK.equals(display)) {
+			element = retrieveParagraph(getFont(attributes), styleattributes);
 		}
-		return null;
+		else if (MarkupTags.CSS_LISTITEM.equals(display)) {
+			element = retrieveListItem(getFont(attributes), styleattributes);
+		}
+		else if (MarkupTags.CSS_TABLECELL.equals(display)) {
+			element = retrieveTableCell(getFont(attributes), styleattributes);
+		}
+		else if (MarkupTags.CSS_TABLE.equals(display)) {
+			element = retrieveTable(styleattributes);
+		}
+		return element;
 	}
-	
+
 	/**
 	 * Returns a font based on the ID and CLASS attributes of a tag.
 	 * @param attributes a Properties object with the tagname and the attributes of the tag.
@@ -388,7 +412,7 @@ public class MarkupParser extends HashMap {
 	 * @param styleattributes a Properties object containing keys and values
 	 * @return an iText Phrase object
 	 */
-	public Phrase retrievePhrase(Font font, Properties styleattributes) {
+	public Element retrievePhrase(Font font, Properties styleattributes) {
 		Phrase p = new Phrase("", font);
 		if (styleattributes == null) return p;
 		String leading = styleattributes.getProperty(MarkupTags.CSS_LINEHEIGHT);
@@ -409,8 +433,8 @@ public class MarkupParser extends HashMap {
 	 * @param styleattributes a Properties object containing keys and values
 	 * @return an iText Paragraph object
 	 */
-	public Phrase retrieveParagraph(Font font, Properties styleattributes) {
-		Paragraph p = new Paragraph(retrievePhrase(font, styleattributes));
+	public Element retrieveParagraph(Font font, Properties styleattributes) {
+		Paragraph p = new Paragraph((Phrase)retrievePhrase(font, styleattributes));
 		if (styleattributes == null) return p;
 		String margin = styleattributes.getProperty(MarkupTags.CSS_MARGIN);
 		float f;
@@ -455,6 +479,38 @@ public class MarkupParser extends HashMap {
 			p.setAlignment(Element.ALIGN_JUSTIFIED);
 		}
 		return p;
+	}
+	
+	/**
+	 * Gets a table based on the styleattributes.
+	 * @param styleattributes
+	 * @return an iText Table
+	 */
+	private Element retrieveTable(Properties styleattributes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns a Cell based on the styleattributes.
+	 * @param font
+	 * @param styleattributes
+	 * @return an iText Cell
+	 */
+	private Element retrieveTableCell(Font font, Properties styleattributes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns a ListItem based on the styleattributes.
+	 * @param font
+	 * @param styleattributes
+	 * @return an iText ListItem
+	 */
+	private Element retrieveListItem(Font font, Properties styleattributes) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/**

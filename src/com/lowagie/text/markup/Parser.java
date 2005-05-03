@@ -72,6 +72,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
 import com.lowagie.text.html.HtmlWriter;
@@ -204,6 +205,7 @@ public class Parser extends DefaultHandler {
 	 */
 	public void characters(char[] ch, int start, int length) {
 		String content = new String(ch, start, length);
+//System.err.println("Characters: " + content);
 		if (content.trim().length() == 0) {
 			return;
 		}
@@ -325,7 +327,7 @@ public class Parser extends DefaultHandler {
 		}
 		else {
 			try {
-				currentChunk = new Chunk(s, ((Paragraph) objectstack.peek()).font());
+				currentChunk = new Chunk(s, ((Phrase) objectstack.peek()).font());
 			} catch (EmptyStackException ese) {
 				currentChunk = new Chunk(s);
 			}
