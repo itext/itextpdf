@@ -592,7 +592,17 @@ public class XmlWriter extends DocWriter implements DocListener {
             }
             case Element.TABLE:
             {
-                Table table = (Table) element;
+                Table table;
+                try {
+                	table = (Table) element;
+                }
+                catch(ClassCastException cce) {
+                	try {
+						table = ((SimpleTable)element).createTable();
+					} catch (BadElementException e) {
+						throw new ExceptionConverter(e);
+					}
+                }
                 table.complete();
                 addTabs(indent);
                 writeStart(ElementTags.TABLE);

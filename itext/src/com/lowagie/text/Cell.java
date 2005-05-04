@@ -55,7 +55,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.lowagie.text.markup.*;
+import com.lowagie.text.markup.MarkupParser;
 import com.lowagie.text.pdf.PdfPCell;
 
 /**
@@ -997,7 +997,7 @@ public class Cell extends Rectangle implements TextElementArray {
 		cell.setUseBorderPadding(useBorderPadding);
 		cell.setUseDescender(useDescender);
 		cell.setLeading(leading(), 0);
-		cell.cloneNonPositionParameters(this);
+		cell.setBorder(PdfPCell.NO_BORDER);
 		for (Iterator i = getElements(); i.hasNext(); ) {
 			cell.addElement((Element)i.next());
 		}
