@@ -98,6 +98,16 @@ public class PdfEncryption {
         }
     }
 
+    public PdfEncryption(PdfEncryption enc) {
+        super();
+        mkey = (byte[])enc.mkey.clone();
+        ownerKey = (byte[])enc.ownerKey.clone();
+        userKey = (byte[])enc.userKey.clone();
+        permissions = enc.permissions;
+        if (enc.documentID != null)
+            documentID = (byte[])enc.documentID.clone();
+    }
+    
     /**
      */
     private byte[] padPassword(byte userPassword[]) {

@@ -56,17 +56,16 @@ package com.lowagie.text;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import com.lowagie.text.markup.*;
+import com.lowagie.text.markup.MarkupParser;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-
-import java.text.DecimalFormat;
 /**
  * A <CODE>Table</CODE> is a <CODE>Rectangle</CODE> that contains <CODE>Cell</CODE>s,
  * ordered in some kind of matrix.
@@ -1896,8 +1895,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 	}
                 	else if (cell instanceof Cell) {
                 		pcell = ((Cell)cell).createPdfPCell();
-                		pcell.setPadding(cellpadding + cellspacing / 2f);
-                    	pcell.setCellEvent(SimpleCell.getDimensionlessInstance((Cell)cell, cellspacing));
+                		 pcell.setPadding(cellpadding + cellspacing / 2f);
+                         pcell.setCellEvent(SimpleCell.getDimensionlessInstance((Cell)cell, cellspacing));
                 	}
                 	else {
                 		pcell = new PdfPCell();

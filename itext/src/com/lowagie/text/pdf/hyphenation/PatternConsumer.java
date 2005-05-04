@@ -1,7 +1,17 @@
 /*
- * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For license details please refer to http://xml.apache.org/fop
+ * Copyright 1999-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.lowagie.text.pdf.hyphenation;
@@ -21,8 +31,9 @@ public interface PatternConsumer {
      * A character class defines characters that are considered
      * equivalent for the purpose of hyphenation (e.g. "aA"). It
      * usually means to ignore case.
+     * @param chargroup character group
      */
-    public void addClass(String chargroup);
+    void addClass(String chargroup);
 
     /**
      * Add a hyphenation exception. An exception replaces the
@@ -31,14 +42,14 @@ public interface PatternConsumer {
      * A hyphenatedword is a vector of alternating String's and
      * {@link Hyphen Hyphen} instances
      */
-    public void addException(String word, ArrayList hyphenatedword);
+    void addException(String word, ArrayList hyphenatedword);
 
     /**
      * Add hyphenation patterns.
-     * @param pattern
+     * @param pattern the pattern
      * @param values interletter values expressed as a string of
      * digit characters.
      */
-    public void addPattern(String pattern, String values);
+    void addPattern(String pattern, String values);
 
 }

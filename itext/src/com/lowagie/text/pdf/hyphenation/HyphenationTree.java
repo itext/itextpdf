@@ -1,14 +1,34 @@
 /*
- * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For license details please refer to http://xml.apache.org/fop
+ * Copyright 1999-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
+/* $Id$ */
+ 
 package com.lowagie.text.pdf.hyphenation;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * This tree structure stores the hyphenation patterns in an efficient
@@ -17,8 +37,8 @@ import java.util.Hashtable;
  *
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
-public class HyphenationTree extends TernaryTree implements PatternConsumer,
-        Serializable {
+public class HyphenationTree extends TernaryTree 
+            implements PatternConsumer, Serializable {
 
     /**
      * value space: stores the inteletter values
@@ -28,7 +48,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
     /**
      * This map stores hyphenation exceptions
      */
-    protected Hashtable stoplist;
+    protected HashMap stoplist;
 
     /**
      * This map stores the character classes
@@ -41,7 +61,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
     private transient TernaryTree ivalues;
 
     public HyphenationTree() {
-        stoplist = new Hashtable(23);    // usually a small table
+        stoplist = new HashMap(23);    // usually a small table
         classmap = new TernaryTree();
         vspace = new ByteVector();
         vspace.alloc(1);    // this reserves index 0, which we don't use
@@ -64,10 +84,11 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
         for (i = 0; i < n; i++) {
             int j = i >> 1;
             byte v = (byte)((values.charAt(i) - '0' + 1) & 0x0f);
-            if ((i & 1) == 1)
+            if ((i & 1) == 1) {
                 va[j + offset] = (byte)(va[j + offset] | v);
-            else
+            } else {
                 va[j + offset] = (byte)(v << 4);    // big endian
+            }
         }
         va[m - 1 + offset] = 0;    // terminator
         return offset;
@@ -80,8 +101,9 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
             char c = (char)((v >>> 4) - 1 + '0');
             buf.append(c);
             c = (char)(v & 0x0f);
-            if (c == 0)
+            if (c == 0) {
                 break;
+            }
             c = (char)(c - 1 + '0');
             buf.append(c);
             v = vspace.get(k++);
@@ -89,33 +111,11 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
         return buf.toString();
     }
 
-    /**
-     * Read hyphenation patterns from an XML file.
-     */
-/*    public void loadPatterns(String filename) throws HyphenationException {
-        PatternParser pp = new PatternParser(this);
+    public void loadSimplePatterns(InputStream stream) throws HyphenationException {
+        SimplePatternParser pp = new SimplePatternParser();
         ivalues = new TernaryTree();
 
-        pp.parse(filename);
-
-        // patterns/values should be now in the tree
-        // let's optimize a bit
-        trimToSize();
-        vspace.trimToSize();
-        classmap.trimToSize();
-
-        // get rid of the auxiliary map
-        ivalues = null;
-    }*/
-
-    /**
-     * Read hyphenation patterns from an internal format file.
-     */
-    public void loadInternalPatterns(String filename) throws HyphenationException {
-        PatternInternalParser pp = new PatternInternalParser(this);
-        ivalues = new TernaryTree();
-
-        pp.parse(filename);
+        pp.parse(stream, this);
 
         // patterns/values should be now in the tree
         // let's optimize a bit
@@ -127,29 +127,12 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
         ivalues = null;
     }
 
-    /**
-     * Read hyphenation patterns from an internal format file.
-     */
-    public void loadInternalPatterns(InputStream is) throws HyphenationException {
-        PatternInternalParser pp = new PatternInternalParser(this);
-        ivalues = new TernaryTree();
-
-        pp.parse(is);
-
-        // patterns/values should be now in the tree
-        // let's optimize a bit
-        trimToSize();
-        vspace.trimToSize();
-        classmap.trimToSize();
-
-        // get rid of the auxiliary map
-        ivalues = null;
-    }
 
     public String findPattern(String pat) {
         int k = super.find(pat);
-        if (k >= 0)
+        if (k >= 0) {
             return unpackValues(k);
+        }
         return "";
     }
 
@@ -158,11 +141,14 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
      * t is a substring of s
      */
     protected int hstrcmp(char[] s, int si, char[] t, int ti) {
-        for (; s[si] == t[ti]; si++, ti++)
-            if (s[si] == 0)
+        for (; s[si] == t[ti]; si++, ti++) {
+            if (s[si] == 0) {
                 return 0;
-        if (t[ti] == 0)
+            }
+        }
+        if (t[ti] == 0) {
             return 0;
+        }
         return s[si] - t[ti];
     }
 
@@ -173,15 +159,17 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
             char c = (char)((v >>> 4) - 1);
             buf.append(c);
             c = (char)(v & 0x0f);
-            if (c == 0)
+            if (c == 0) {
                 break;
+            }
             c = (char)(c - 1);
             buf.append(c);
             v = vspace.get(k++);
         }
         byte[] res = new byte[buf.length()];
-        for (int i = 0; i < res.length; i++)
+        for (int i = 0; i < res.length; i++) {
             res[i] = (byte)buf.charAt(i);
+        }
         return res;
     }
 
@@ -222,8 +210,9 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
                     values = getValues(eq[p]);    // data pointer is in eq[]
                     int j = index;
                     for (int k = 0; k < values.length; k++) {
-                        if (j < il.length && values[k] > il[j])
+                        if (j < il.length && values[k] > il[j]) {
                             il[j] = values[k];
+                        }
                         j++;
                     }
                 }
@@ -264,8 +253,9 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
                          */
                     }
                 }
-            } else
+            } else {
                 p = d < 0 ? lo[p] : hi[p];
+            }
         }
     }
 
@@ -286,6 +276,29 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
     }
 
     /**
+     * w = "****nnllllllnnn*****",
+     * where n is a non-letter, l is a letter,
+     * all n may be absent, the first n is at offset,
+     * the first l is at offset + iIgnoreAtBeginning;
+     * word = ".llllll.'\0'***",
+     * where all l in w are copied into word.
+     * In the first part of the routine len = w.length,
+     * in the second part of the routine len = word.length.
+     * Three indices are used:
+     * index(w), the index in w,
+     * index(word), the index in word,
+     * letterindex(word), the index in the letter part of word.
+     * The following relations exist:
+     * index(w) = offset + i - 1
+     * index(word) = i - iIgnoreAtBeginning
+     * letterindex(word) = index(word) - 1
+     * (see first loop).
+     * It follows that:
+     * index(w) - index(word) = offset - 1 + iIgnoreAtBeginning
+     * index(w) = letterindex(word) + offset + iIgnoreAtBeginning
+     */
+
+    /**
      * Hyphenate word and return an array of hyphenation points.
      * @param w char array that contains the word
      * @param offset Offset to first character in word
@@ -304,13 +317,33 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
 
         // normalize word
         char[] c = new char[2];
+        int iIgnoreAtBeginning = 0;
+        int iLength = len;
+        boolean bEndOfLetters = false;
         for (i = 1; i <= len; i++) {
             c[0] = w[offset + i - 1];
             int nc = classmap.find(c, 0);
-            if (nc < 0) {    // found a non-letter character, abort
-                return null;
+            if (nc < 0) {    // found a non-letter character ...
+                if (i == (1 + iIgnoreAtBeginning)) {
+                    // ... before any letter character
+                    iIgnoreAtBeginning ++;
+                } else {
+                    // ... after a letter character
+                    bEndOfLetters = true;
+                }
+                iLength --;
+            } else {
+                if (!bEndOfLetters) {
+                    word[i - iIgnoreAtBeginning] = (char)nc;
+                } else {
+                    return null;
+                }
             }
-            word[i] = (char)nc;
+        }
+        len = iLength;
+        if (len < (remainCharCount + pushCharCount)) {
+            // word is too short to be hyphenated
+            return null;
         }
         int[] result = new int[len + 1];
         int k = 0;
@@ -323,10 +356,13 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
             int j = 0;
             for (i = 0; i < hw.size(); i++) {
                 Object o = hw.get(i);
+                // j = index(sw) = letterindex(word)?
+                // result[k] = corresponding index(w)
                 if (o instanceof String) {
                     j += ((String)o).length();
-                    if (j >= remainCharCount && j < (len - pushCharCount))
-                        result[k++] = j;
+                    if (j >= remainCharCount && j < (len - pushCharCount)) {
+                        result[k++] = j + iIgnoreAtBeginning;
+                    }
                 }
             }
         } else {
@@ -340,10 +376,13 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
             }
 
             // hyphenation points are located where interletter value is odd
+            // i is letterindex(word),
+            // i + 1 is index(word),
+            // result[k] = corresponding index(w)
             for (i = 0; i < len; i++) {
                 if (((il[i + 1] & 1) == 1) && i >= remainCharCount
-                        && i < (len - pushCharCount)) {
-                    result[k++] = i;
+                        && i <= (len - pushCharCount)) {
+                    result[k++] = i + iIgnoreAtBeginning;
                 }
             }
         }
@@ -361,7 +400,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
 
     /**
      * Add a character class to the tree. It is used by
-     * PatternParser as callback to
+     * {@link SimplePatternParser SimplePatternParser} as callback to
      * add character classes. Character classes define the
      * valid word characters for hyphenation. If a word contains
      * a character not defined in any of the classes, it is not hyphenated.
@@ -385,7 +424,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
 
     /**
      * Add an exception to the tree. It is used by
-     * PatternParser class as callback to
+     * {@link SimplePatternParser SimplePatternParser} class as callback to
      * store the hyphenation exceptions.
      * @param word normalized word
      * @param hyphenatedword a vector of alternating strings and
@@ -397,7 +436,7 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
 
     /**
      * Add a pattern to the tree. Mainly, to be used by
-     * PatternParser class as callback to
+     * {@link SimplePatternParser SimplePatternParser} class as callback to
      * add a pattern to the tree.
      * @param pattern the hyphenation pattern
      * @param ivalue interletter weight values indicating the
@@ -418,115 +457,5 @@ public class HyphenationTree extends TernaryTree implements PatternConsumer,
         System.out.println("Value space size = "
                            + Integer.toString(vspace.length()));
         super.printStats();
-
     }
-/*
-    public static void main(String[] argv) throws Exception {
-        HyphenationTree ht = null;
-        int minCharCount = 2;
-        BufferedReader in =
-            new BufferedReader(new InputStreamReader(System.in));
-        for (; ; ) {
-            System.out.print("l:\tload patterns from XML\nL:\tload patterns from serialized object\ns:\tset minimun character count\nw:\twrite hyphenation tree to object file\nh:\thyphenate\nf:\tfind pattern\nb:\tbenchmark\nq:\tquit\n\nCommand:");
-            String token = in.readLine().trim();
-            if (token.equals("f")) {
-                System.out.print("Pattern: ");
-                token = in.readLine().trim();
-                System.out.println("Values: " + ht.findPattern(token));
-            } else if (token.equals("s")) {
-                System.out.print("Minimun value: ");
-                token = in.readLine().trim();
-                minCharCount = Integer.parseInt(token);
-            } else if (token.equals("l")) {
-                ht = new HyphenationTree();
-                System.out.print("XML file name: ");
-                token = in.readLine().trim();
-                ht.loadPatterns(token);
-            } else if (token.equals("L")) {
-                ObjectInputStream ois = null;
-                System.out.print("Object file name: ");
-                token = in.readLine().trim();
-                try {
-                    ois = new ObjectInputStream(new FileInputStream(token));
-                    ht = (HyphenationTree)ois.readObject();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                finally {
-                    if (ois != null) {
-                        try {
-                            ois.close();
-                        } catch (IOException e) {}
-                    }
-                }
-            } else if (token.equals("w")) {
-                System.out.print("Object file name: ");
-                token = in.readLine().trim();
-                ObjectOutputStream oos = null;
-                try {
-                    oos = new ObjectOutputStream(new FileOutputStream(token));
-                    oos.writeObject(ht);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                finally {
-                    if (oos != null) {
-                        try {
-                            oos.flush();
-                        } catch (IOException e) {}
-                        try {
-                            oos.close();
-                        } catch (IOException e) {}
-                    }
-                }
-            } else if (token.equals("h")) {
-                System.out.print("Word: ");
-                token = in.readLine().trim();
-                System.out.print("Hyphenation points: ");
-                System.out.println(ht.hyphenate(token, minCharCount,
-                                                minCharCount));
-            } else if (token.equals("b")) {
-                if (ht == null) {
-                    System.out.println("No patterns has been loaded.");
-                    break;
-                }
-                System.out.print("Word list filename: ");
-                token = in.readLine().trim();
-                long starttime = 0;
-                int counter = 0;
-                ;
-                try {
-                    BufferedReader reader =
-                        new BufferedReader(new FileReader(token));
-                    String line;
-
-                    starttime = System.currentTimeMillis();
-                    while ((line = reader.readLine()) != null) {
-                        // System.out.print("\nline: ");
-                        Hyphenation hyp = ht.hyphenate(line, minCharCount,
-                                                       minCharCount);
-                        if (hyp != null) {
-                            String hword = hyp.toString();
-                            // System.out.println(line);
-                            // System.out.println(hword);
-                        } else {
-                            // System.out.println("No hyphenation");
-                        }
-                        counter++;
-                    }
-                } catch (Exception ioe) {
-                    System.out.println("Exception " + ioe);
-                    ioe.printStackTrace();
-                }
-                long endtime = System.currentTimeMillis();
-                long result = endtime - starttime;
-                System.out.println(counter + " words in " + result
-                                   + " Millisekunden hyphenated");
-
-            } else if (token.equals("q"))
-                break;
-        }
-
-    }*/
-
 }

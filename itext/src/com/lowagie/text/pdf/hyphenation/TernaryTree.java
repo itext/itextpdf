@@ -1,7 +1,17 @@
 /*
- * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For license details please refer to http://xml.apache.org/fop
+ * Copyright 1999-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.lowagie.text.pdf.hyphenation;
@@ -11,7 +21,7 @@ import java.util.Stack;
 import java.io.Serializable;
 
 /**
- * <h2>Ternary Search Tree</h2>
+ * <h2>Ternary Search Tree.</h2>
  *
  * <p>A ternary search tree is a hibrid between a binary tree and
  * a digital search tree (trie). Keys are limited to strings.
@@ -79,7 +89,7 @@ public class TernaryTree implements Cloneable, Serializable {
     protected char[] eq;
 
     /**
-     * <P>The character stored in this node: splitchar
+     * <P>The character stored in this node: splitchar.
      * Two special values are reserved:</P>
      * <ul><li>0x0000 as string terminator</li>
      * <li>0xFFFF to indicate that the branch starting at
@@ -127,8 +137,9 @@ public class TernaryTree implements Cloneable, Serializable {
         // make sure we have enough room in the arrays
         int len = key.length()
                   + 1;    // maximum number of nodes that may be generated
-        if (freenode + len > eq.length)
+        if (freenode + len > eq.length) {
             redimNodeArrays(eq.length + BLOCK_SIZE);
+        }
         char strkey[] = new char[len--];
         key.getChars(0, len, strkey, 0);
         strkey[len] = 0;
@@ -137,8 +148,9 @@ public class TernaryTree implements Cloneable, Serializable {
 
     public void insert(char[] key, int start, char val) {
         int len = strlen(key) + 1;
-        if (freenode + len > eq.length)
+        if (freenode + len > eq.length) {
             redimNodeArrays(eq.length + BLOCK_SIZE);
+        }
         root = insert(root, key, start, val);
     }
 
@@ -184,9 +196,10 @@ public class TernaryTree implements Cloneable, Serializable {
                     lo[pp] = 0;
                     sc[pp] = 0;
                     hi[pp] = 0;
-                } else
-                    sc[pp] =
-                        0xFFFF;    // we only got first char of key, rest is still there
+                } else {
+                    // we only got first char of key, rest is still there
+                    sc[pp] = 0xFFFF;
+                }
             } else {
                 // In this case we can save a node by swapping the new node
                 // with the compressed node
@@ -199,18 +212,18 @@ public class TernaryTree implements Cloneable, Serializable {
             }
         }
         char s = key[start];
-        if (s < sc[p])
+        if (s < sc[p]) {
             lo[p] = insert(lo[p], key, start, val);
-        else if (s == sc[p]) {
-            if (s != 0)
+        } else if (s == sc[p]) {
+            if (s != 0) {
                 eq[p] = insert(eq[p], key, start + 1, val);
-            else {
+            } else {
                 // key already in tree, overwrite data
                 eq[p] = val;
             }
-
-        } else
+        } else {
             hi[p] = insert(hi[p], key, start, val);
+        }
         return p;
     }
 
@@ -218,9 +231,11 @@ public class TernaryTree implements Cloneable, Serializable {
      * Compares 2 null terminated char arrays
      */
     public static int strcmp(char[] a, int startA, char[] b, int startB) {
-        for (; a[startA] == b[startB]; startA++, startB++)
-            if (a[startA] == 0)
+        for (; a[startA] == b[startB]; startA++, startB++) {
+            if (a[startA] == 0) {
                 return 0;
+            }
+        }
         return a[startA] - b[startB];
     }
 
@@ -231,27 +246,32 @@ public class TernaryTree implements Cloneable, Serializable {
         int i, d, len = str.length();
         for (i = 0; i < len; i++) {
             d = (int)str.charAt(i) - a[start + i];
-            if (d != 0)
+            if (d != 0) {
                 return d;
-            if (a[start + i] == 0)
+            }
+            if (a[start + i] == 0) {
                 return d;
         }
-        if (a[start + i] != 0)
+        }
+        if (a[start + i] != 0) {
             return (int)-a[start + i];
+        }
         return 0;
 
     }
 
     public static void strcpy(char[] dst, int di, char[] src, int si) {
-        while (src[si] != 0)
+        while (src[si] != 0) {
             dst[di++] = src[si++];
+        }
         dst[di] = 0;
     }
 
     public static int strlen(char[] a, int start) {
         int len = 0;
-        for (int i = start; i < a.length && a[i] != 0; i++)
+        for (int i = start; i < a.length && a[i] != 0; i++) {
             len++;
+        }
         return len;
     }
 
@@ -276,22 +296,25 @@ public class TernaryTree implements Cloneable, Serializable {
 
         while (p != 0) {
             if (sc[p] == 0xFFFF) {
-                if (strcmp(key, i, kv.getArray(), lo[p]) == 0)
+                if (strcmp(key, i, kv.getArray(), lo[p]) == 0) {
                     return eq[p];
-                else
+                } else {
                     return -1;
+            }
             }
             c = key[i];
             d = c - sc[p];
             if (d == 0) {
-                if (c == 0)
+                if (c == 0) {
                     return eq[p];
+                }
                 i++;
                 p = eq[p];
-            } else if (d < 0)
+            } else if (d < 0) {
                 p = lo[p];
-            else
+            } else {
                 p = hi[p];
+        }
         }
         return -1;
     }
@@ -343,8 +366,9 @@ public class TernaryTree implements Cloneable, Serializable {
      */
     protected void insertBalanced(String[] k, char[] v, int offset, int n) {
         int m;
-        if (n < 1)
+        if (n < 1) {
             return;
+        }
         m = n >> 1;
 
         insert(k[m + offset], v[m + offset]);
@@ -406,8 +430,9 @@ public class TernaryTree implements Cloneable, Serializable {
 
     private void compact(CharVector kx, TernaryTree map, char p) {
         int k;
-        if (p == 0)
+        if (p == 0) {
             return;
+        }
         if (sc[p] == 0xFFFF) {
             k = map.find(kv.getArray(), lo[p]);
             if (k < 0) {
@@ -418,8 +443,9 @@ public class TernaryTree implements Cloneable, Serializable {
             lo[p] = (char)k;
         } else {
             compact(kx, map, lo[p]);
-            if (sc[p] != 0)
+            if (sc[p] != 0) {
                 compact(kx, map, eq[p]);
+            }
             compact(kx, map, hi[p]);
         }
     }
@@ -493,8 +519,9 @@ public class TernaryTree implements Cloneable, Serializable {
         }
 
         public char getValue() {
-            if (cur >= 0)
+            if (cur >= 0) {
                 return eq[cur];
+            }
             return 0;
         }
 
@@ -509,11 +536,13 @@ public class TernaryTree implements Cloneable, Serializable {
             Item i = new Item();
             int res = 0;
 
-            if (ns.empty())
+            if (ns.empty()) {
                 return -1;
+            }
 
-            if (cur != 0 && sc[cur] == 0)
+            if (cur != 0 && sc[cur] == 0) {
                 return lo[cur];
+            }
 
             boolean climb = true;
 
@@ -537,14 +566,16 @@ public class TernaryTree implements Cloneable, Serializable {
                 case 2:
                     res = hi[i.parent];
                     ns.push(i.clone());
-                    if (ks.length() > 0)
+                    if (ks.length() > 0) {
                         ks.setLength(ks.length() - 1);    // pop
+                    }
                     climb = false;
                     break;
 
                 default:
-                    if (ns.empty())
+                    if (ns.empty()) {
                         return -1;
+                    }
                     climb = true;
                     break;
                 }
@@ -556,11 +587,12 @@ public class TernaryTree implements Cloneable, Serializable {
          * traverse the tree to find next key
          */
         private int run() {
-            if (cur == -1)
+            if (cur == -1) {
                 return -1;
+            }
 
             boolean leaf = false;
-            for (; ; ) {
+            while (true) {
                 // first go down on low branch until leaf or compressed branch
                 while (cur != 0) {
                     if (sc[cur] == 0xFFFF) {
@@ -574,8 +606,9 @@ public class TernaryTree implements Cloneable, Serializable {
                     }
                     cur = lo[cur];
                 }
-                if (leaf)
+                if (leaf) {
                     break;
+                }
                     // nothing found, go up one node and try again
                 cur = up();
                 if (cur == -1) {
@@ -587,8 +620,9 @@ public class TernaryTree implements Cloneable, Serializable {
             StringBuffer buf = new StringBuffer(ks.toString());
             if (sc[cur] == 0xFFFF) {
                 int p = lo[cur];
-                while (kv.get(p) != 0)
+                while (kv.get(p) != 0) {
                     buf.append(kv.get(p++));
+            }
             }
             curkey = buf.toString();
             return 0;

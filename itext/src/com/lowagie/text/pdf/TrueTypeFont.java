@@ -816,7 +816,6 @@ class TrueTypeFont extends BaseFont {
      * @throws IOException the font file could not be read
      */
     HashMap readFormat4() throws IOException {
-        int mask = (fontSpecific ? 0xff : 0xffff);
         HashMap h = new HashMap();
         int table_lenght = rf.readUnsignedShort();
         rf.skipBytes(2);
@@ -858,7 +857,7 @@ class TrueTypeFont extends BaseFont {
                 int r[] = new int[2];
                 r[0] = glyph;
                 r[1] = getGlyphWidth(r[0]);
-                h.put(new Integer(j & mask), r);
+                h.put(new Integer(fontSpecific ? ((j & 0xff00) == 0xf000 ? j & 0xff : j) : j), r);
             }
         }
         return h;

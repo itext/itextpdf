@@ -997,7 +997,7 @@ public class Cell extends Rectangle implements TextElementArray {
 		cell.setUseBorderPadding(useBorderPadding);
 		cell.setUseDescender(useDescender);
 		cell.setLeading(leading(), 0);
-		cell.setBorder(PdfPCell.NO_BORDER);
+		cell.cloneNonPositionParameters(this);
 		for (Iterator i = getElements(); i.hasNext(); ) {
 			cell.addElement((Element)i.next());
 		}
