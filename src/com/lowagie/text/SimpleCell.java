@@ -114,7 +114,6 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element {
 		super(0f, 0f, 0f, 0f);
 		cellgroup = row;
 		setBorder(BOX);
-		setBorderWidth(1);
 	}
 	
 	/**
