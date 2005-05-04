@@ -617,8 +617,10 @@ public class PdfWriter extends DocWriter {
     public static final int DirectionR2L = 1 << 17;
     /** A viewer preference */
     public static final int DisplayDocTitle = 1 << 18;
+    /** A viewer preference */
+    public static final int PrintScalingNone = 1 << 20;
     /** The mask to decide if a ViewerPreferences dictionary is needed */
-    static final int ViewerPreferencesMask = 0xfff00;
+    static final int ViewerPreferencesMask = 0xffff00;
     /** The operation permitted when the document is opened with the user password */
     public static final int AllowPrinting = 4 + 2048;
     /** The operation permitted when the document is opened with the user password */
@@ -1741,7 +1743,8 @@ public class PdfWriter extends DocWriter {
     }
     
     /**
-     * Sets the viewer preferences by ORing some of these constants:<br>
+     * Sets the viewer preferences by ORing some constants.
+     * <p>
      * <ul>
      * <li>The page layout to be used when the document is opened (choose one).
      *   <ul>
@@ -1793,6 +1796,7 @@ public class PdfWriter extends DocWriter {
      *   <li><b>NonFullScreenPageModeUseThumbs</b> - Thumbnail images visible
      *   <li><b>NonFullScreenPageModeUseOC</b> - Optional content group panel visible
      *   </ul>
+     * <li><b>PrintScalingNone</b> - Indicates that the print dialog should reflect no page scaling.
      * </ul>
      * @param preferences the viewer preferences
      */
@@ -2215,8 +2219,9 @@ public class PdfWriter extends DocWriter {
         pdf.setStrictImageSequence(strictImageSequence);
     }
     
-    /** If you use setPageEmpty(false), invoking newPage() after a blank page will add a newPage.
-     * @param pageEmpty
+    /**
+     * If you use setPageEmpty(false), invoking newPage() after a blank page will add a newPage.
+     * @param pageEmpty the state
      */
     public void setPageEmpty(boolean pageEmpty) {
         pdf.setPageEmpty(pageEmpty);
@@ -2523,4 +2528,15 @@ public class PdfWriter extends DocWriter {
             return;
         OCGRadioGroup.add(ar);
     }
+    
+    /**
+     * Sets the the thumbnail image for the current page.
+     * @param image the image
+     * @throws PdfException on error
+     * @throws DocumentException or error
+     */    
+    public void setThumbnail(Image image) throws PdfException, DocumentException {
+        pdf.setThumbnail(image);
+    }
+
 }

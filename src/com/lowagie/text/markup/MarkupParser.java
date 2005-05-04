@@ -60,12 +60,9 @@ import java.util.StringTokenizer;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
-import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.SimpleCell;
-import com.lowagie.text.SimpleTable;
 
 /**
  * This class is a HashMap that contains selectors (String) and styles (a Properties object).
@@ -359,13 +356,10 @@ public class MarkupParser extends HashMap {
 			element = retrieveListItem(getFont(attributes), styleattributes);
 		}
 		else if (MarkupTags.CSS_VALUE_TABLECELL.equals(display)) {
-			element = retrieveTableCell(attributes, styleattributes);
-		}
-		else if (MarkupTags.CSS_VALUE_TABLEROW.equals(display)) {
-			element = retrieveTableRow(attributes, styleattributes);
+			element = retrieveTableCell(getFont(attributes), styleattributes);
 		}
 		else if (MarkupTags.CSS_VALUE_TABLE.equals(display)) {
-			element = retrieveTable(attributes, styleattributes);
+			element = retrieveTable(styleattributes);
 		}
 		return element;
 	}
@@ -489,36 +483,23 @@ public class MarkupParser extends HashMap {
 	
 	/**
 	 * Gets a table based on the styleattributes.
-	 * @param attributes
 	 * @param styleattributes
 	 * @return an iText Table
 	 */
-	private Element retrieveTable(Properties attributes, Properties styleattributes) {
-		SimpleTable table = new SimpleTable();
-		return table;
+	private Element retrieveTable(Properties styleattributes) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
 	 * Returns a Cell based on the styleattributes.
-	 * @param attributes
+	 * @param font
 	 * @param styleattributes
 	 * @return an iText Cell
 	 */
-	private Element retrieveTableRow(Properties attributes, Properties styleattributes) {
-		SimpleCell row = new SimpleCell(SimpleCell.ROW);
-		return row;
-	}
-
-	/**
-	 * Returns a Cell based on the styleattributes.
-	 * @param attributes
-	 * @param styleattributes
-	 * @return an iText Cell
-	 */
-	private Element retrieveTableCell(Properties attributes, Properties styleattributes) {
-		SimpleCell cell = (SimpleCell) retrieveTableRow(attributes, styleattributes);
-		cell.setCellgroup(false);
-		return cell;
+	private Element retrieveTableCell(Font font, Properties styleattributes) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -528,8 +509,8 @@ public class MarkupParser extends HashMap {
 	 * @return an iText ListItem
 	 */
 	private Element retrieveListItem(Font font, Properties styleattributes) {
-		ListItem li = new ListItem();
-		return li;
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	/**

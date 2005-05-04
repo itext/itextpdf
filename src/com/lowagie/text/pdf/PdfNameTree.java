@@ -139,18 +139,18 @@ public class PdfNameTree {
     }
     
     private static void iterateItems(PdfDictionary dic, HashMap items) {
-        PdfArray nn = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.NAMES));
+        PdfArray nn = (PdfArray)PdfReader.getPdfObjectRelease(dic.get(PdfName.NAMES));
         if (nn != null) {
             ArrayList arr = nn.getArrayList();
             for (int k = 0; k < arr.size(); ++k) {
-                PdfString s = (PdfString)PdfReader.getPdfObject((PdfObject)arr.get(k++));
+                PdfString s = (PdfString)PdfReader.getPdfObjectRelease((PdfObject)arr.get(k++));
                 items.put(s.toString(), arr.get(k));
             }
         }
-        else if ((nn = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.KIDS))) != null) {
+        else if ((nn = (PdfArray)PdfReader.getPdfObjectRelease(dic.get(PdfName.KIDS))) != null) {
             ArrayList arr = nn.getArrayList();
             for (int k = 0; k < arr.size(); ++k) {
-                PdfDictionary kid = (PdfDictionary)PdfReader.getPdfObject((PdfObject)arr.get(k));
+                PdfDictionary kid = (PdfDictionary)PdfReader.getPdfObjectRelease((PdfObject)arr.get(k));
                 iterateItems(kid, items);
             }
         }

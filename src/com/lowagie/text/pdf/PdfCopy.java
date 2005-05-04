@@ -148,6 +148,7 @@ public class PdfCopy extends PdfWriter {
         if (currentPdfReaderInstance != null) {
             if (currentPdfReaderInstance.getReader() != reader) {
                 try {
+                    currentPdfReaderInstance.getReader().close();
                     currentPdfReaderInstance.getReaderFile().close();
                 }
                 catch (IOException ioe) {
@@ -190,7 +191,7 @@ public class PdfCopy extends PdfWriter {
             indirects.put(key, iRef);
         }
         iRef.setCopied();
-        PdfObject obj = copyObject((PdfObject)PdfReader.getPdfObject(in));
+        PdfObject obj = copyObject((PdfObject)PdfReader.getPdfObjectRelease(in));
         PdfIndirectObject theObj = addToBody(obj, theRef);
         return theRef;
     }
@@ -324,6 +325,7 @@ public class PdfCopy extends PdfWriter {
         
         PdfDictionary thePage = reader.getPageN(pageNum);
         PRIndirectReference origRef = reader.getPageOrigRef(pageNum);
+        reader.releasePage(pageNum);
         RefKey key = new RefKey(origRef);
         PdfIndirectReference pageRef;
         IndirectReferences iRef = (IndirectReferences)indirects.get(key);
@@ -437,6 +439,7 @@ public class PdfCopy extends PdfWriter {
             super.close();
             if (ri != null) {
                 try {
+                    ri.getReader().close();
                     ri.getReaderFile().close();
                 }
                 catch (IOException ioe) {

@@ -1,13 +1,29 @@
 /*
- * $Id$
- * Copyright (C) 2001 The Apache Software Foundation. All rights reserved.
- * For license details please refer to http://xml.apache.org/fop
+ * Copyright 1999-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.lowagie.text.pdf.hyphenation;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.Hashtable;
+import com.lowagie.text.pdf.BaseFont;
 
 /**
  * This class is the main entry point to the hyphenation package.
@@ -16,12 +32,15 @@ import java.util.Hashtable;
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
 public class Hyphenator {
-    static Hashtable hyphenTrees = new Hashtable();
+    
+    /**@todo Don't use statics */
+    private static Hashtable hyphenTrees = new Hashtable();
 
     private HyphenationTree hyphenTree = null;
     private int remainCharCount = 2;
     private int pushCharCount = 2;
     private static boolean errorDump = false;
+    private static final String defaultHyphLocation = "com/lowagie/text/pdf/hyphenation/hyph/";
    
     /** Holds value of property hyphenDir. */
     private static String hyphenDir = "";    
@@ -37,167 +56,64 @@ public class Hyphenator {
             String country) {
         String key = lang;
         // check whether the country code has been used
-        if (country != null &&!country.equals("none"))
+        if (country != null && !country.equals("none")) {
             key += "_" + country;
-            // first try to find it in the cache
-        if (hyphenTrees.containsKey(key))
-            return (HyphenationTree)hyphenTrees.get(key);
-        if (hyphenTrees.containsKey(lang))
-            return (HyphenationTree)hyphenTrees.get(lang);
-
-        HyphenationTree hTree = getFopHyphenationTree(key);
-        if (hTree == null) {
-            //String hyphenDir = "e:\\winprog2\\Fop-0.20.2\\hyph";
-                //Configuration.getStringValue("hyphenation-dir");
-            if (hyphenDir != null) {
-                hTree = getUserHyphenationTree(key, hyphenDir);
-            }
         }
+            // first try to find it in the cache
+        if (hyphenTrees.containsKey(key)) {
+            return (HyphenationTree)hyphenTrees.get(key);
+        }
+        if (hyphenTrees.containsKey(lang)) {
+            return (HyphenationTree)hyphenTrees.get(lang);
+        }
+
+        HyphenationTree hTree = getResourceHyphenationTree(key);
+        if (hTree == null)
+            hTree = getFileHyphenationTree(key);
         // put it into the pattern cache
         if (hTree != null) {
             hyphenTrees.put(key, hTree);
-        } else {
-            System.out.println("Couldn't find hyphenation pattern "
-                                   + key);
         }
         return hTree;
     }
 
-    private static InputStream getResourceStream(String key) {
-        InputStream is = null;
-        // Try to use Context Class Loader to load the properties file.
+    public static HyphenationTree getResourceHyphenationTree(String key) {
         try {
-            java.lang.reflect.Method getCCL =
-                Thread.class.getMethod("getContextClassLoader", new Class[0]);
-            if (getCCL != null) {
-                ClassLoader contextClassLoader =
-                    (ClassLoader)getCCL.invoke(Thread.currentThread(),
-                                               new Object[0]);
-                is = contextClassLoader.getResourceAsStream("hyph/" + key
-                                                            + ".hyp");
-            }
-        } catch (Exception e) {}
-
-        if (is == null) {
-            is = Hyphenator.class.getResourceAsStream("hyph/" + key
-                                                      + ".hyp");
-        }
-
-        return is;
-    }
-
-    public static HyphenationTree getFopHyphenationTree(String key) {
-        HyphenationTree hTree = null;
-        InputStream is = null;
-        try {
-            is = getResourceStream(key);
-            if (is == null) {
-                if (key.length() == 5) {
-                    is = getResourceStream(key.substring(0, 2));
-                    if (is != null) {
-                        System.out.println("Couldn't find hyphenation pattern  "
-                                               + key
-                                               + "\nusing general language pattern "
-                                               + key.substring(0, 2)
-                                               + " instead.");
-                    } else {
-                        if (errorDump) {
-                            System.out.println("Couldn't find precompiled "
-                                                   + "hyphenation pattern "
-                                                   + key + ".hyp");
-                        }
-                        return null;
-                    }
-                } else {
-                    if (errorDump) {
-                        System.out.println("Couldn't find precompiled "
-                                               + "hyphenation pattern "
-                                               + key + ".hyp");
-                    }
-                    return null;
-                }
-            }
-            hTree = new HyphenationTree();
-            hTree.loadInternalPatterns(is);
-        } catch (Exception e) {
-            // empty on purpose
-        }
-        finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    System.out.println("can't close hyphenation stream");
-                }
-            }
-        }
-        return hTree;
-    }
-
-    /**
-     * load tree from serialized file or xml file
-     * using configuration settings
-     */
-    public static HyphenationTree getUserHyphenationTree(String key,
-            String hyphenDir) {
-        HyphenationTree hTree = null;
-        // I use here the following convention. The file name specified in
-        // the configuration is taken as the base name. First we try
-        // name + ".hyp" assuming a serialized HyphenationTree. If that fails
-        // we try name + ".xml", assumming a raw hyphenation pattern file.
-
-        // first try serialized object
-        File hyphenFile = new File(hyphenDir, key + ".hyp");
-        if (hyphenFile.exists()) {
-            ObjectInputStream ois = null;
-            try {
-                ois = new ObjectInputStream(new FileInputStream(hyphenFile));
-                hTree = (HyphenationTree)ois.readObject();
-            } catch (Exception e) {
-                // empty on purpose
-            }
-            finally {
-                if (ois != null) {
-                    try {
-                        ois.close();
-                    } catch (IOException e) {}
-                }
-            }
-            return hTree;
-        } else {
-
-            // try the file
-            hyphenFile = new File(hyphenDir, key + ".hyp");
-            if (hyphenFile.exists()) {
-                hTree = new HyphenationTree();
-                if (errorDump) {
-                    System.out.println("reading " + hyphenDir + key
-                                           + ".hyp");
-                }
-                try {
-                    hTree.loadInternalPatterns(hyphenFile.getPath());
-                    if (errorDump) {
-                        System.out.println("Stats: ");
-                        hTree.printStats();
-                    }
-                    return hTree;
-                } catch (HyphenationException ex) {
-                    if (errorDump) {
-                        System.out.println("Can't load user patterns "
-                                               + "from file " + hyphenDir
-                                               + key + ".hyp");
-                    }
-                    return null;
-                }
-            } else {
-                if (errorDump) {
-                    System.out.println("Tried to load "
-                                           + hyphenFile.toString()
-                                           + "\nCannot find compiled nor xml file for "
-                                           + "hyphenation pattern" + key);
-                }
+            InputStream stream = BaseFont.getResourceStream(defaultHyphLocation + key + ".xml");
+            if (stream == null && key.length() > 2)
+                stream = BaseFont.getResourceStream(defaultHyphLocation + key.substring(0, 2) + ".xml");
+            if (stream == null)
                 return null;
+            HyphenationTree hTree = new HyphenationTree();
+            hTree.loadSimplePatterns(stream);
+            return hTree;
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static HyphenationTree getFileHyphenationTree(String key) {
+        try {
+            if (hyphenDir == null)
+                return null;
+            InputStream stream = null;
+            File hyphenFile = new File(hyphenDir, key + ".xml");
+            if (hyphenFile.canRead())
+                stream = new FileInputStream(hyphenFile);
+            if (stream == null && key.length() > 2) {
+                hyphenFile = new File(hyphenDir, key.substring(0, 2) + ".xml");
+                if (hyphenFile.canRead())
+                    stream = new FileInputStream(hyphenFile);
             }
+            if (stream == null)
+                return null;
+            HyphenationTree hTree = new HyphenationTree();
+            hTree.loadSimplePatterns(stream);
+            return hTree;
+        }
+        catch (Exception e) {
+            return null;
         }
     }
 
@@ -206,8 +122,8 @@ public class Hyphenator {
                                         int rightMin) {
         HyphenationTree hTree = getHyphenationTree(lang, country);
         if (hTree == null) {
-            System.out.println("Error building hyphenation tree for language "
-                                   + lang);
+            //log.error("Error building hyphenation tree for language "
+            //                       + lang);
             return null;
         }
         return hTree.hyphenate(word, leftMin, rightMin);
@@ -218,8 +134,8 @@ public class Hyphenator {
                                         int leftMin, int rightMin) {
         HyphenationTree hTree = getHyphenationTree(lang, country);
         if (hTree == null) {
-            System.out.println("Error building hyphenation tree for language "
-                                   + lang);
+            //log.error("Error building hyphenation tree for language "
+            //                       + lang);
             return null;
         }
         return hTree.hyphenate(word, offset, len, leftMin, rightMin);
@@ -238,15 +154,17 @@ public class Hyphenator {
     }
 
     public Hyphenation hyphenate(char[] word, int offset, int len) {
-        if (hyphenTree == null)
+        if (hyphenTree == null) {
             return null;
+        }
         return hyphenTree.hyphenate(word, offset, len, remainCharCount,
                                     pushCharCount);
     }
 
     public Hyphenation hyphenate(String word) {
-        if (hyphenTree == null)
+        if (hyphenTree == null) {
             return null;
+        }
         return hyphenTree.hyphenate(word, remainCharCount, pushCharCount);
     }
 

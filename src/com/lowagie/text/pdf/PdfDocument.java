@@ -82,7 +82,6 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
 import com.lowagie.text.StringCompare;
 import com.lowagie.text.Table;
-import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Watermark;
 
 /**
@@ -345,6 +344,7 @@ class PdfDocument extends Document implements DocListener {
     }
     
     // membervariables
+    private PdfIndirectReference thumb;
     
     /** The characters to be applied the hanging ponctuation. */
     static final String hangingPunctuation = ".,;:'";
@@ -801,6 +801,11 @@ class PdfDocument extends Document implements DocListener {
             PdfArray array = rotateAnnotations();
             if (array.size() != 0)
                 page.put(PdfName.ANNOTS, array);
+        }
+        // we add the thumbs
+        if (thumb != null) {
+            page.put(PdfName.THUMB, thumb);
+            thumb = null;
         }
         if (!open || close) {
             throw new PdfException("The document isn't open.");
@@ -1704,17 +1709,6 @@ class PdfDocument extends Document implements DocListener {
                     	// Already pre-rendered
                     	table = (PdfTable)element;
 						table.updateRowAdditions();
-                    } else if (element instanceof SimpleTable) {
-                		PdfPTable ptable = ((SimpleTable)element).createPdfPTable();
-                		if (ptable.size() <= ptable.getHeaderRows())
-                            break; //nothing to do
-                		
-                        // before every table, we add a new line and flush all lines
-                        ensureNewLine();
-                        flushLines();
-                        addPTable(ptable);                    
-                        pageEmpty = false;
-                        break;
                     } else if (element instanceof Table) {
 
                     	try {
@@ -2970,5 +2964,9 @@ class PdfDocument extends Document implements DocListener {
             return false;
         }
         return super.setMarginMirroring(MarginMirroring);
+    }
+    
+    void setThumbnail(Image image) throws PdfException, DocumentException {
+        thumb = writer.getImageReference(writer.addDirectImageSimple(image));
     }
 }

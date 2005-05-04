@@ -516,7 +516,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public boolean leadingDefined() {
-        if (leading == Float.NaN) {
+        if (Float.isNaN(leading)) {
             return false;
         }
         return true;

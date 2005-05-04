@@ -126,20 +126,32 @@ public class AcroFields {
 
     void fill() {
         fields = new HashMap();
-        PdfDictionary top = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM));
+        PdfDictionary top = (PdfDictionary)PdfReader.getPdfObjectRelease(reader.getCatalog().get(PdfName.ACROFORM));
+        if (top == null)
+            return;
+        PdfArray arrfds = (PdfArray)PdfReader.getPdfObjectRelease(top.get(PdfName.FIELDS));
+        if (arrfds == null || arrfds.size() == 0)
+            return;
+        arrfds = null;
         for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
-            PdfDictionary page = reader.getPageN(k);
-            PdfArray annots = (PdfArray)PdfReader.getPdfObject(page.get(PdfName.ANNOTS), page);
+            if ((k % 100) == 0)
+                System.out.println(k);
+            PdfDictionary page = reader.getPageNRelease(k);
+            PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
             if (annots == null)
                 continue;
             ArrayList arr = annots.getArrayList();
             for (int j = 0; j < arr.size(); ++j) {
                 PdfObject annoto = PdfReader.getPdfObject((PdfObject)arr.get(j), annots);
-                if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect())
+                if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect()) {
+                    PdfReader.releaseLastXrefPartial((PdfObject)arr.get(j));
                     continue;
+                }
                 PdfDictionary annot = (PdfDictionary)annoto;
-                if (!PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE)))
+                if (!PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE))) {
+                    PdfReader.releaseLastXrefPartial((PdfObject)arr.get(j));
                     continue;
+                }
                 PdfDictionary widget = annot;
                 PdfDictionary dic = new PdfDictionary();
                 dic.putAll(annot);
@@ -152,7 +164,7 @@ public class AcroFields {
                     if (t != null)
                         name = t.toUnicodeString() + "." + name;
                     if (lastV == null && annot.get(PdfName.V) != null)
-                        lastV = PdfReader.getPdfObject(annot.get(PdfName.V));
+                        lastV = PdfReader.getPdfObjectRelease(annot.get(PdfName.V));
                     if (value == null &&  t != null) {
                         value = annot;
                         if (annot.get(PdfName.V) == null && lastV  != null)

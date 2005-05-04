@@ -63,8 +63,10 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import com.lowagie.text.markup.*;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfPTableEvent;
 
 import java.text.DecimalFormat;
 /**
@@ -1861,7 +1863,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         setAutoFillEmptyCells(true);
     	complete();
     	PdfPTable pdfptable = new PdfPTable(widths);
-    	pdfptable.setTableEvent(SimpleTable.getDimensionlessInstance(this, cellspacing));
+    	pdfptable.setTableEvent(new BorderEvent(this));
     	pdfptable.setHeaderRows(lastHeaderRow + 1);
     	pdfptable.setSplitLate(cellsFitPage);
     	if (!Float.isNaN(offset)) {
@@ -1896,8 +1898,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 	}
                 	else if (cell instanceof Cell) {
                 		pcell = ((Cell)cell).createPdfPCell();
-                		pcell.setPadding(cellpadding + cellspacing / 2f);
-                    	pcell.setCellEvent(SimpleCell.getDimensionlessInstance((Cell)cell, cellspacing));
+                		pcell.setPadding(cellpadding);
                 	}
                 	else {
                 		pcell = new PdfPCell();
@@ -1922,5 +1923,30 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
 	 */
 	public void setConvert2pdfptable(boolean convert2pdfptable) {
 		this.convert2pdfptable = convert2pdfptable;
+	}
+
+	/**
+	 * Event class to draw the Border of a Table when converted to a PdfPTable.
+	 */
+	public class BorderEvent implements PdfPTableEvent {
+		private Rectangle rectangle;
+		/**
+		 * The Table that has to get a Border.
+		 * @param table
+		 */
+		public BorderEvent(Table table) {
+			this.rectangle = table;
+		}
+    	/**
+	     * @see com.lowagie.text.pdf.PdfPTableEvent#tableLayout(com.lowagie.text.pdf.PdfPTable, float[][], float[], int, int, com.lowagie.text.pdf.PdfContentByte[])
+	 	 */
+		public void tableLayout(PdfPTable table, float[][] widths, float[] heights, int headerRows, int rowStart, PdfContentByte[] canvases) {
+			float[] width = widths[0];
+			Rectangle rect = new Rectangle(width[0], heights[heights.length - 1], width[width.length - 1], heights[0]);
+			rect.cloneNonPositionParameters(rectangle);
+			canvases[PdfPTable.BACKGROUNDCANVAS].rectangle(rect);
+			rect.setBackgroundColor(null);
+			canvases[PdfPTable.LINECANVAS].rectangle(rect);
+		}
 	}
 }

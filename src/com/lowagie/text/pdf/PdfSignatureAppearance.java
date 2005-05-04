@@ -46,31 +46,33 @@
  */
 package com.lowagie.text.pdf;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.security.PrivateKey;
-import java.security.cert.CRL;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Font;
+import com.lowagie.text.Element;
+import com.lowagie.text.Image;
+import com.lowagie.text.DocumentException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Font;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
+import java.util.Iterator;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.security.cert.CRL;
+import java.security.PrivateKey;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.EOFException;
+import java.io.RandomAccessFile;
+import java.io.File;
+import java.io.InputStream;
 
 /**
  * This class takes care of the cryptographic options and appearances that form a signature.
@@ -125,7 +127,6 @@ public class PdfSignatureAppearance {
     private byte externalRSAdata[];
     private String digestEncryptionAlgorithm;
     private HashMap exclusionLocations;
-    private String imageFileName;
         
     PdfSignatureAppearance(PdfStamperImp writer) {
         this.writer = writer;
@@ -310,23 +311,6 @@ public class PdfSignatureAppearance {
     }
     
     /**
-     * Sets an image filename for a background image.
-     * (support for background image contributed by Cesar jz)
-     * @param imageFileName
-     */
-    public void setImageFileName(String imageFileName){
-    	this.imageFileName = imageFileName ;
-    }
-    /**
-     * Gets the image filename for the background image.
-     * (support for background image contributed by Cesar jz)
-     * @return an imageFileName
-     */
-    public String getImageFileName(){
-    	return this.imageFileName;
-    }
-    
-    /**
      * Gets the main appearance layer.
      * <p>
      * Consult <A HREF="http://partners.adobe.com/asn/developer/pdfs/tn/PPKAppearances.pdf">PPKAppearances.pdf</A>
@@ -338,28 +322,9 @@ public class PdfSignatureAppearance {
     public PdfTemplate getAppearance() throws DocumentException, IOException {
         if (app[0] == null) {
             PdfTemplate t = app[0] = new PdfTemplate(writer);
-            if (rect!=null){
-            	t.setBoundingBox(new Rectangle(rect.width(), rect.height()));
-            }
-            else {
-            	t.setBoundingBox(new Rectangle(100, 100));
-            }
+            t.setBoundingBox(new Rectangle(100, 100));
             writer.addDirectTemplateSimple(t, new PdfName("n0"));
-            // support for background image contributed by Cesar jz
-            if (imageFileName != null){
-            	com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(imageFileName);
-            	image.setAbsolutePosition(0,0);
-            	if (rect!=null){
-            		image.scaleToFit(rect.width(), rect.height());
-            	}
-            	else{
-            		image.scaleToFit(100, 100);
-            	}
-            	t.addImage(image);
-            }
-            else {
-            	t.setLiteral("% DSBlank\n");
-            }
+            t.setLiteral("% DSBlank\n");
         }
         if (app[1] == null && !acro6Layers) {
             PdfTemplate t = app[1] = new PdfTemplate(writer);
@@ -385,6 +350,21 @@ public class PdfSignatureAppearance {
             PdfTemplate t = app[2] = new PdfTemplate(writer);
             t.setBoundingBox(rect);
             writer.addDirectTemplateSimple(t, new PdfName("n2"));
+            if (image != null) {
+                if (imageScale == 0) {
+                    t.addImage(image, rect.width(), 0, 0, rect.height(), 0, 0);
+                }
+                else {
+                    float usableScale = imageScale;
+                    if (imageScale < 0)
+                        usableScale = Math.min(rect.width() / image.width(), rect.height() / image.height());
+                    float w = image.width() * usableScale;
+                    float h = image.height() * usableScale;
+                    float x = (rect.width() - w) / 2;
+                    float y = (rect.height() - h) / 2;
+                    t.addImage(image, w, 0, 0, h, x, y);
+                }
+            }
             Font font;
             if (layer2Font == null)
                 font = new Font();
@@ -1111,6 +1091,41 @@ public class PdfSignatureAppearance {
     }
     
     /**
+     * Gets the background image for the layer 2.
+     * @return the background image for the layer 2
+     */
+    public Image getImage() {
+        return this.image;
+    }
+    
+    /**
+     * Sets the background image for the layer 2.
+     * @param image the background image for the layer 2
+     */
+    public void setImage(Image image) {
+        this.image = image;
+    }
+    
+    /**
+     * Gets the scaling to be applied to the background image.
+     * @return the scaling to be applied to the background image
+     */
+    public float getImageScale() {
+        return this.imageScale;
+    }
+    
+    /**
+     * Sets the scaling to be applied to the background image. If it's zero the image
+     * will fully fill the rectangle. If it's less than zero the image will fill the rectangle but
+     * will keep the proportions. If it's greater than zero that scaling will be applied.
+     * In any of the cases the image will always be centered. It's zero by default.
+     * @param imageScale the scaling to be applied to the background image
+     */
+    public void setImageScale(float imageScale) {
+        this.imageScale = imageScale;
+    }
+    
+    /**
      * Commands to draw a yellow question mark in a stream content
      */    
     public static final String questionMark = 
@@ -1186,6 +1201,16 @@ public class PdfSignatureAppearance {
      * Holds value of property signatureEvent.
      */
     private SignatureEvent signatureEvent;
+    
+    /**
+     * Holds value of property image.
+     */
+    private Image image;
+    
+    /**
+     * Holds value of property imageScale.
+     */
+    private float imageScale;
     
     /**
      *

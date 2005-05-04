@@ -877,12 +877,7 @@ public class RtfWriter extends DocWriter implements DocListener {
                     writeList((com.lowagie.text.List) element, out);
                     break;
                 case Element.TABLE:
-                	try {
-                		writeTable((Table) element, out);
-                	}
-                	catch(ClassCastException cce) {
-                		writeTable(((SimpleTable)element).createTable(), out);
-                	}
+                    writeTable((Table) element, out);
                     break;
                 case Element.ANNOTATION:
                     writeAnnotation((Annotation) element, out);

@@ -213,6 +213,7 @@ public class ColumnText {
     /** The width of the line when the column is defined as a simple rectangle. */
     protected float rectangularWidth = -1;
     
+    protected boolean rectangularMode = false;
     /** Holds value of property spaceCharRatio. */
     private float spaceCharRatio = GLOBAL_SPACE_CHAR_RATIO;
 
@@ -295,6 +296,7 @@ public class ColumnText {
         rightIndent = org.rightIndent;
         extraParagraphSpace = org.extraParagraphSpace;
         rectangularWidth = org.rectangularWidth;
+        rectangularMode = org.rectangularMode;
         spaceCharRatio = org.spaceCharRatio;
         lastWasNewline = org.lastWasNewline;
         linesWritten = org.linesWritten;
@@ -411,7 +413,7 @@ public class ColumnText {
         if (element.type() == Element.CHUNK) {
         	element = new Paragraph((Chunk)element);
         }
-        if (element.type() == Element.PHRASE) {
+        else if (element.type() == Element.PHRASE) {
         	element = new Paragraph((Phrase)element);
         }
         if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.GRAPHIC)
@@ -544,6 +546,7 @@ public class ColumnText {
         rightWall = convertColumn(rightLine);
         leftWall = convertColumn(leftLine);
         rectangularWidth = -1;
+        rectangularMode = false;
     }
     
     /**
@@ -590,6 +593,9 @@ public class ColumnText {
         rightX = Math.max(llx, urx);
         yLine = maxY;
         rectangularWidth = rightX - leftX;
+        if (rectangularWidth < 0)
+            rectangularWidth = 0;
+        rectangularMode = true;
     }
     /**
      * Sets the leading to fixed
@@ -765,7 +771,7 @@ public class ColumnText {
         float firstIndent = 0;
         
         int status = 0;
-        if (rectangularWidth > 0) {
+        if (rectangularMode) {
             for (;;) {
                 firstIndent = (lastWasNewline ? indent : followingIndent);
                 if (rectangularWidth <= firstIndent + rightIndent) {
@@ -1049,7 +1055,7 @@ public class ColumnText {
     }
 
     protected int goComposite(boolean simulate) throws DocumentException {
-        if (rectangularWidth <= 0)
+        if (!rectangularMode)
             throw new DocumentException("Irregular columns are not supported in composite mode.");
         linesWritten = 0;
         descender = 0;
@@ -1087,6 +1093,7 @@ public class ColumnText {
                     compositeColumn.rightX = rightX;
                     compositeColumn.yLine = yLine;
                     compositeColumn.rectangularWidth = rectangularWidth;
+                    compositeColumn.rectangularMode = rectangularMode;
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = (para.getKeepTogether() && createHere && !firstPass);
@@ -1181,6 +1188,7 @@ public class ColumnText {
                     compositeColumn.rightX = rightX;
                     compositeColumn.yLine = yLine;
                     compositeColumn.rectangularWidth = rectangularWidth;
+                    compositeColumn.rectangularMode = rectangularMode;
                     compositeColumn.minY = minY;
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = (item.getKeepTogether() && createHere && !firstPass);
