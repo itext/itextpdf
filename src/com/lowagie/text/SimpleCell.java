@@ -61,7 +61,7 @@ import com.lowagie.text.pdf.PdfPTable;
  * Rectangle that can be used for Cells.
  * This Rectangle is padded and knows how to draw itself in a PdfPTable or PdfPcellEvent.
  */
-public class SimpleCell extends Rectangle implements PdfPCellEvent, Element {
+public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, TextElementArray {
 
 	/** the CellAttributes object represents a row. */
 	public static final boolean ROW = true;
@@ -441,5 +441,21 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element {
 	 */
 	ArrayList getContent() {
 		return content;
+	}
+
+	/**
+	 * @see com.lowagie.text.TextElementArray#add(java.lang.Object)
+	 */
+	public boolean add(Object o) {
+		try {
+			addElement((Element)o);
+			return true;
+		}
+		catch(ClassCastException e) {
+			return false;
+		}
+		catch(BadElementException e) {
+			throw new ExceptionConverter(e);
+		}
 	}
 }

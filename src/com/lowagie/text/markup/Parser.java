@@ -165,7 +165,20 @@ public class Parser extends DefaultHandler {
 		tagstack.push(attrs);
 		// add the object to the objectstack
 		if (document.isOpen()) {
-			addObject();
+			// first we flush the content that wasn't inside a tag.
+			flushCurrentChunk();
+			// we ask the markup parser for the corresponing object.
+			Element element = markup.getObject(attrs);
+			if (element != null) {
+				switch(element.type()) {
+				case Element.PHRASE:
+					addObject((Phrase)element);
+					break;
+				case Element.PARAGRAPH:
+					addObject((Paragraph)element);
+					break;
+				}
+			}
 		}
 		else {
 			// check if the document should be opened
@@ -336,20 +349,25 @@ public class Parser extends DefaultHandler {
 	
 	/**
 	 * Creates a new Object and puts it on top of the objectstack.
+	 * @param phrase
 	 */
-	private void addObject() {
-		// first we flush the content that wasn't inside a tag.
-		flushCurrentChunk();
+	private void addObject(Phrase phrase) {
+		// we put the element on top of the objectstack
+		objectstack.push(phrase);
+	}
+	
+	/**
+	 * Creates a new Object and puts it on top of the objectstack.
+	 * @param paragraph
+	 */
+	private void addObject(Paragraph paragraph) {
 		// now we get the attributes on top of the tagstack
 		Properties attrs = (Properties)tagstack.peek();
 		if (attrs == null) {
 			return;
 		}
-		// we ask the markup parser for the corresponing object.
-		Element element = markup.getObject(attrs);
-		if (element == null) return;
 		// if it's a Paragraph, it could be a title
-		if (element instanceof Paragraph && title.equals(attrs.getProperty(MarkupTags.HTML_ATTR_CSS_ID))) {
+		if (title.equals(attrs.getProperty(MarkupTags.HTML_ATTR_CSS_ID))) {
 			for (int i = 0; i < counters.length; i++) {
 				// where does this title fit in the hierarchy of the document?
 				if (structures[i].equals(attrs.getProperty(MarkupTags.HTML_ATTR_CSS_CLASS))) {
@@ -378,7 +396,7 @@ public class Parser extends DefaultHandler {
 					else {
 						s += " " + counters[i] + ": ";
 					}
-					((Paragraph)element).add(new Chunk(s));
+					((Paragraph)paragraph).add(new Chunk(s));
 				}
 			}
 		}
@@ -392,7 +410,7 @@ public class Parser extends DefaultHandler {
 			}
 		}
 		// we put the element on top of the objectstack
-		objectstack.push(element);
+		objectstack.push(paragraph);
 	}
 	
 	/**
