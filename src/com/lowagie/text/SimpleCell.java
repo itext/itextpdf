@@ -128,6 +128,8 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element {
 				if(((SimpleCell)element).isCellgroup()) {
 					throw new BadElementException("You can't add one row to another row.");
 				}
+				content.add(element);
+				return;
 			}
 			else {
 				throw new BadElementException("You can only add cells to rows, no objects of type " + element.getClass().getName());
