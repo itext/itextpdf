@@ -103,7 +103,7 @@ public class RtfRow extends RtfElement {
     /**
      * Constant for center alignment of this RtfRow
      */
-    private static final byte[] ROW_ALIGN_CENTER = "\\trql".getBytes();
+    private static final byte[] ROW_ALIGN_CENTER = "\\trqc".getBytes();
     /**
      * Constant for justified alignment of this RtfRow
      */
