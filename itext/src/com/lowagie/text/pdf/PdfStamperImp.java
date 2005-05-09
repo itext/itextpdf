@@ -556,7 +556,7 @@ class PdfStamperImp extends PdfWriter {
             reader.pageRefs.insertPage(pageNumber, pref);
         }
         else {
-            --pageNumber;
+            //--pageNumber;
             if (pageNumber < 0)
                 pageNumber = 0;
             PdfDictionary firstPage = reader.getPageN(pageNumber);
