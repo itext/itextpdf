@@ -58,6 +58,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.Image;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
@@ -214,6 +215,7 @@ public class PdfStamper {
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.CONTENTS, str);
         sigApp.close(dic);
+        stamper.reader.close();
     }
 
     private static int indexArray(byte bout[], int position, String search) {
@@ -363,7 +365,8 @@ public class PdfStamper {
         stamper.setFormFlattening(flat);
     }
 
-    /** Adds an annotation of form filed in a specific page. This page number
+    /**
+     * Adds an annotation of form filed in a specific page. This page number
      * can be overridden with {@link PdfAnnotation#setPlaceInPage(int)}.
      * @param annot the annotation
      * @param page the page
@@ -391,6 +394,17 @@ public class PdfStamper {
         stamper.setOutlines(outlines);
     }
 
+    /**
+     * Sets the thumbnail image for a page.
+     * @param image the image
+     * @param page the page
+     * @throws PdfException on error
+     * @throws DocumentException on error
+     */    
+    public void setThumbnail(Image image, int page) throws PdfException, DocumentException {
+        stamper.setThumbnail(image, page);
+    }
+    
     /**
      * Adds <CODE>name</CODE> to the list of fields that will be flattened on close,
      * all the other fields will remain. If this method is never called or is called

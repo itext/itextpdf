@@ -315,6 +315,8 @@ public class CCITTG4Encoder {
         int                 sixtyfours;
         int        mask;
         
+        if (count < 0)
+            return;
         sixtyfours = count >>> 6;    // count / 64;
         count = count & 0x3f;       // count % 64
         if (sixtyfours != 0) {
@@ -475,6 +477,8 @@ public class CCITTG4Encoder {
                     add2DBits(horz, 0);
                     add1DBits(a1-a0, color);
                     add1DBits(a2-a1, color^1);
+                    if (a2 <= a0)
+                        throw new RuntimeException("G4 encoding error.");
                     a0 = a2;
                 }
             }

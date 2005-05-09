@@ -272,7 +272,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
         }
-        else if ((value = (String)attributes.remove(MarkupTags.CSS_LINEHEIGHT)) != null) {
+        else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
@@ -561,7 +561,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
  */
     public void setMarkupAttribute(String name, String value) {
-        markupAttributes = (markupAttributes == null) ? new Properties() : markupAttributes;
+		if (markupAttributes == null) markupAttributes = new Properties();
         markupAttributes.put(name, value);
     }
     

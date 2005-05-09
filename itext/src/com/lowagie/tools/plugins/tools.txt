@@ -4,8 +4,11 @@
 # Made by Bruno Lowagie:
 
 # Allows you to create a DVD Cover in PDF
+Concat: com.lowagie.tools.plugins.Concat
+Split: com.lowagie.tools.plugins.Split
 DvdCover: com.lowagie.tools.plugins.DvdCover
 Encrypt: com.lowagie.tools.plugins.Encrypt
 Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
 Tiff2Pdf: com.lowagie.tools.plugins.Tiff2Pdf
+KnitTiff: com.lowagie.tools.plugins.KnitTiff
 Handouts: com.lowagie.tools.plugins.Handouts

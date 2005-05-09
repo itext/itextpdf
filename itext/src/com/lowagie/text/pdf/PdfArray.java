@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ListIterator;
 
 /**
  * <CODE>PdfArray</CODE> is the PDF Array object.
@@ -214,5 +215,9 @@ public class PdfArray extends PdfObject {
     
     public boolean contains(PdfObject object) {
         return arrayList.contains(object);
+    }
+    
+    public ListIterator listIterator() {
+        return arrayList.listIterator();
     }
 }

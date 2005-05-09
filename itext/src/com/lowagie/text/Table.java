@@ -56,14 +56,16 @@ package com.lowagie.text;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import com.lowagie.text.markup.*;
-import java.text.DecimalFormat;
+import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 /**
  * A <CODE>Table</CODE> is a <CODE>Rectangle</CODE> that contains <CODE>Cell</CODE>s,
  * ordered in some kind of matrix.
@@ -219,6 +221,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     /** contains the attributes that are added to each odd (or even) row */
     protected Hashtable alternatingRowAttributes = null;
+    
+    /** if you want to generate tables the old way, set this value to false. */
+    protected boolean convert2pdfptable = false;
     
     // constructors
     
@@ -905,8 +910,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             curPosition.setLocation(curPosition.x+1, 0);
         }
     }
-    
-    /**
+
+	/**
      * Deletes a row.
      *
      * @param       row             the number of the row to delete
@@ -1698,11 +1703,11 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if (value0 == null || value1 == null) {
             throw new NullPointerException("MarkupTable#setAlternatingRowAttribute(): null values are not permitted.");
         }
-        alternatingRowAttributes = (alternatingRowAttributes == null) ?  new Hashtable() : alternatingRowAttributes;
+        if (alternatingRowAttributes == null) alternatingRowAttributes = new Hashtable();
         
         // we could always use new Arrays but this is big enough
         String[] value = (String[])(alternatingRowAttributes.get(name));
-        value = (value == null) ? new String[2] : value;
+        if (value == null) value = new String[2];
         value[0] = value0;
         value[1] = value1;
         alternatingRowAttributes.put(name, value);
@@ -1842,4 +1847,79 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     }
     
     private static DecimalFormat widthFormat = new DecimalFormat( "0.00");
+
+    /**
+     * Create a PdfPTable based on this Table object.
+     * @return a PdfPTable object
+     * @throws BadElementException
+     */
+    public PdfPTable createPdfPTable() throws BadElementException {
+    	if (!convert2pdfptable) {
+    		throw new BadElementException("No error, just an old style table");
+    	}
+        setAutoFillEmptyCells(true);
+    	complete();
+    	PdfPTable pdfptable = new PdfPTable(widths);
+    	pdfptable.setTableEvent(SimpleTable.getDimensionlessInstance(this, cellspacing));
+    	pdfptable.setHeaderRows(lastHeaderRow + 1);
+    	pdfptable.setSplitLate(cellsFitPage);
+    	if (!Float.isNaN(offset)) {
+    		pdfptable.setSpacingBefore(offset);
+    	}
+    	pdfptable.setHorizontalAlignment(alignment);
+    	if (absWidth.length() > 0) {
+    		try {
+    			pdfptable.setTotalWidth(Float.parseFloat(absWidth));
+    		}
+    		catch(Exception e1) {
+    			try {
+    				pdfptable.setTotalWidth((float)Integer.parseInt(absWidth));
+    			}
+    			catch(Exception e2) {
+    				pdfptable.setWidthPercentage(widthPercentage);
+    			}
+    		}
+    	}
+    	else {
+    		pdfptable.setWidthPercentage(widthPercentage);
+    	}
+    	Row row;
+        for (Iterator iterator = iterator(); iterator.hasNext(); ) {
+            row = (Row) iterator.next();
+            Element cell;
+            PdfPCell pcell;
+            for (int i = 0; i < row.columns(); i++) {
+                if ((cell = (Element)row.getCell(i)) != null) {
+                	if (cell instanceof Table) {
+                		pcell = new PdfPCell(((Table)cell).createPdfPTable());
+                	}
+                	else if (cell instanceof Cell) {
+                		pcell = ((Cell)cell).createPdfPCell();
+                		 pcell.setPadding(cellpadding + cellspacing / 2f);
+                         pcell.setCellEvent(SimpleCell.getDimensionlessInstance((Cell)cell, cellspacing));
+                	}
+                	else {
+                		pcell = new PdfPCell();
+                	}
+                	pdfptable.addCell(pcell);
+                }
+            }
+        }
+    	return pdfptable;
+    }
+    
+	/**
+	 * Method to check if the Table should be converted to a PdfPTable or not.
+	 * @return false if the table should be handled the oldfashioned way.
+	 */
+	public boolean isConvert2pdfptable() {
+		return convert2pdfptable;
+	}
+	/**
+	 * If set to true, iText will try to convert the Table to a PdfPTable.
+	 * @param convert2pdfptable true if you want iText to try to convert the Table to a PdfPTable
+	 */
+	public void setConvert2pdfptable(boolean convert2pdfptable) {
+		this.convert2pdfptable = convert2pdfptable;
+	}
 }

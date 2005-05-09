@@ -421,6 +421,12 @@ public class PdfLine {
         return isRTL;
     }
     
+    /**
+     * Gets a width corrected with a charSpacing and wordSpacing.
+     * @param charSpacing
+     * @param wordSpacing
+     * @return a corrected width
+     */
     public float getWidthCorrected(float charSpacing, float wordSpacing) {
         float total = 0;
         for (int k = 0; k < line.size(); ++k) {

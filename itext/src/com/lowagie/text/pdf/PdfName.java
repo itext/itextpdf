@@ -590,6 +590,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName NM = new PdfName("NM");
     /** A name */
+    public static final PdfName NONE = new PdfName("None");
+    /** A name */
     public static final PdfName NONFULLSCREENPAGEMODE = new PdfName("NonFullScreenPageMode");
     /** A name */
     public static final PdfName NUMS = new PdfName("Nums");
@@ -681,6 +683,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName PREVPAGE = new PdfName("PrevPage");
     /** A name */
     public static final PdfName PRINT = new PdfName("Print");
+    /** A name */
+    public static final PdfName PRINTSCALING = new PdfName("PrintScaling");
     /** A name */
     public static final PdfName PRINTSTATE = new PdfName("PrintState");
     /** A name */
@@ -943,7 +947,7 @@ public class PdfName extends PdfObject implements Comparable{
         // The minimum number of characters in a name is 0, the maximum is 127 (the '/' not included)
         int length = name.length();
         if (length > 127) {
-            throw new IllegalArgumentException("The name is too long (" + bytes.length + " characters).");
+            throw new IllegalArgumentException("The name '" + name + "' is too long (" + length + " characters).");
         }
         // The name has to be checked for illegal characters
         // every special character has to be substituted

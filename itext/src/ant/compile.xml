@@ -51,10 +51,14 @@
             <fileset dir="${itext.src}/com/lowagie/text/pdf/fonts">
                 <include name="**/*.afm"/>
             </fileset>
+        </copy>
+        <copy todir="${itext.classes}/com/lowagie/text/" overwrite="yes">
             <fileset dir="${itext.src}/com/lowagie/text/">
                 <include name="**/*.txt"/>
             </fileset>
-            <fileset dir="${itext.src}/com/lowagie/tools/">
+        </copy>
+        <copy todir="${itext.classes}/com/lowagie/tools/plugins" overwrite="yes">
+            <fileset dir="${itext.src}/com/lowagie/tools/plugins/">
                 <include name="**/*.txt"/>
             </fileset>
         </copy>

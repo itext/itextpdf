@@ -123,8 +123,10 @@ class PdfCopyFieldsImp extends PdfWriter {
         readers.add(reader);
         int len = reader.getNumberOfPages();
         IntHashtable refs = new IntHashtable();
-        for (int p = 1; p <= len; ++p)
+        for (int p = 1; p <= len; ++p) {
             refs.put(reader.getPageOrigRef(p).getNumber(), 1);
+            reader.releasePage(p);
+        }
         pages2intrefs.put(reader, refs);
         visited.put(reader, new IntHashtable());
         fields.add(reader.getAcroFields());
@@ -190,7 +192,7 @@ class PdfCopyFieldsImp extends PdfWriter {
                         PRIndirectReference ind = (PRIndirectReference)ob;
                         if (!setVisited(ind) && !isPage(ind)) {
                             PdfIndirectReference ref = getNewReference(ind);
-                            propagate(PdfReader.getPdfObject(ind), ref, restricted);
+                            propagate(PdfReader.getPdfObjectRelease(ind), ref, restricted);
                         }
                     }
                     else
@@ -207,7 +209,7 @@ class PdfCopyFieldsImp extends PdfWriter {
                         PRIndirectReference ind = (PRIndirectReference)ob;
                         if (!isVisited(ind) && !isPage(ind)) {
                             PdfIndirectReference ref = getNewReference(ind);
-                            propagate(PdfReader.getPdfObject(ind), ref, restricted);
+                            propagate(PdfReader.getPdfObjectRelease(ind), ref, restricted);
                         }
                     }
                     else
@@ -371,28 +373,27 @@ class PdfCopyFieldsImp extends PdfWriter {
                 }
         }
         for (Iterator it = readers2intrefs.keySet().iterator(); it.hasNext();) {
+            PdfReader reader = (PdfReader)it.next();
             try {
-                PdfReader reader = (PdfReader)it.next();
                 file = reader.getSafeFile();
                 file.reOpen();
                 IntHashtable t = (IntHashtable)readers2intrefs.get(reader);
                 int keys[] = t.toOrderedKeys();
                 for (int k = 0; k < keys.length; ++k) {
                     PRIndirectReference ref = new PRIndirectReference(reader, keys[k]);
-                    addToBody(PdfReader.getPdfObject(ref), t.get(keys[k]));
+                    addToBody(PdfReader.getPdfObjectRelease(ref), t.get(keys[k]));
                 }
-                file.close();
             }
             finally {
                 try {
                     file.close();
+                    reader.close();
                 }
                 catch (Exception e) {
                     // empty on purpose
                 }
             }
         }
-            
         pdf.close();
     }
     

@@ -234,7 +234,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.valueOf(value + "f").floatValue());
         }
-        else if ((value = (String)attributes.remove(MarkupTags.CSS_LINEHEIGHT)) != null) {
+        else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));
         }
         else {

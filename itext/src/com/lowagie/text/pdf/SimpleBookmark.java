@@ -113,9 +113,9 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
         ArrayList list = new ArrayList();
         while (outline != null) {
             HashMap map = new HashMap();
-            PdfString title = (PdfString)PdfReader.getPdfObject(outline.get(PdfName.TITLE));
+            PdfString title = (PdfString)PdfReader.getPdfObjectRelease(outline.get(PdfName.TITLE));
             map.put("Title", title.toUnicodeString());
-            PdfArray color = (PdfArray)PdfReader.getPdfObject(outline.get(PdfName.C));
+            PdfArray color = (PdfArray)PdfReader.getPdfObjectRelease(outline.get(PdfName.C));
             if (color != null && color.getArrayList().size() == 3) {
                 ByteBuffer out = new ByteBuffer();
                 ArrayList arr = color.getArrayList();
@@ -124,7 +124,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                 out.append(((PdfNumber)arr.get(2)).floatValue());
                 map.put("Color", PdfEncodings.convertToString(out.toByteArray(), null));
             }
-            PdfNumber style = (PdfNumber)PdfReader.getPdfObject(outline.get(PdfName.F));
+            PdfNumber style = (PdfNumber)PdfReader.getPdfObjectRelease(outline.get(PdfName.F));
             if (style != null) {
                 int f = style.intValue();
                 String s = "";
@@ -136,29 +136,29 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                 if (s.length() != 0) 
                     map.put("Style", s);
             }
-            PdfNumber count = (PdfNumber)PdfReader.getPdfObject(outline.get(PdfName.COUNT));
+            PdfNumber count = (PdfNumber)PdfReader.getPdfObjectRelease(outline.get(PdfName.COUNT));
             if (count != null && count.intValue() < 0)
                 map.put("Open", "false");
             try {
-                PdfObject dest = PdfReader.getPdfObject(outline.get(PdfName.DEST));
+                PdfObject dest = PdfReader.getPdfObjectRelease(outline.get(PdfName.DEST));
                 if (dest != null) {
                     mapGotoBookmark(map, dest, pages); //changed by ujihara 2004-06-13
                 }
                 else {
-                    PdfDictionary action = (PdfDictionary)PdfReader.getPdfObject(outline.get(PdfName.A));
+                    PdfDictionary action = (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.A));
                     if (action != null) {
-                        if (PdfName.GOTO.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
-                            dest = PdfReader.getPdfObject(action.get(PdfName.D));
+                        if (PdfName.GOTO.equals(PdfReader.getPdfObjectRelease(action.get(PdfName.S)))) {
+                            dest = PdfReader.getPdfObjectRelease(action.get(PdfName.D));
                             if (dest != null) {
                                 mapGotoBookmark(map, dest, pages);
                             }
                         }
-                        else if (PdfName.URI.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
+                        else if (PdfName.URI.equals(PdfReader.getPdfObjectRelease(action.get(PdfName.S)))) {
                             map.put("Action", "URI");
-                            map.put("URI", ((PdfString)PdfReader.getPdfObject(action.get(PdfName.URI))).toUnicodeString());
+                            map.put("URI", ((PdfString)PdfReader.getPdfObjectRelease(action.get(PdfName.URI))).toUnicodeString());
                         }
-                        else if (PdfName.GOTOR.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
-                            dest = PdfReader.getPdfObject(action.get(PdfName.D));
+                        else if (PdfName.GOTOR.equals(PdfReader.getPdfObjectRelease(action.get(PdfName.S)))) {
+                            dest = PdfReader.getPdfObjectRelease(action.get(PdfName.D));
                             if (dest != null) {
                                 if (dest.isString())
                                     map.put("Named", dest.toString());
@@ -175,7 +175,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                                 }
                             }
                             map.put("Action", "GoToR");
-                            PdfObject file = PdfReader.getPdfObject(action.get(PdfName.F));
+                            PdfObject file = PdfReader.getPdfObjectRelease(action.get(PdfName.F));
                             if (file != null) {
                                 if (file.isString())
                                     map.put("File", ((PdfString)file).toUnicodeString());
@@ -185,20 +185,20 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                                         map.put("File", ((PdfString)file).toUnicodeString());
                                 }
                             }
-                            PdfObject newWindow = PdfReader.getPdfObject(action.get(PdfName.NEWWINDOW));
+                            PdfObject newWindow = PdfReader.getPdfObjectRelease(action.get(PdfName.NEWWINDOW));
                             if (newWindow != null)
                                 map.put("NewWindow", newWindow.toString());
                         }
-                        else if (PdfName.LAUNCH.equals(PdfReader.getPdfObject(action.get(PdfName.S)))) {
+                        else if (PdfName.LAUNCH.equals(PdfReader.getPdfObjectRelease(action.get(PdfName.S)))) {
                             map.put("Action", "Launch");
-                            PdfObject file = PdfReader.getPdfObject(action.get(PdfName.F));
+                            PdfObject file = PdfReader.getPdfObjectRelease(action.get(PdfName.F));
                             if (file == null)
-                                file = PdfReader.getPdfObject(action.get(PdfName.WIN));
+                                file = PdfReader.getPdfObjectRelease(action.get(PdfName.WIN));
                             if (file != null) {
                                 if (file.isString())
                                     map.put("File", ((PdfString)file).toUnicodeString());
                                 else if (file.isDictionary()) {
-                                    file = PdfReader.getPdfObject(((PdfDictionary)file).get(PdfName.F));
+                                    file = PdfReader.getPdfObjectRelease(((PdfDictionary)file).get(PdfName.F));
                                     if (file.isString())
                                         map.put("File", ((PdfString)file).toUnicodeString());
                                 }
@@ -210,12 +210,12 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
             catch (Exception e) {
                 //empty on purpose
             }
-            PdfDictionary first = (PdfDictionary)PdfReader.getPdfObject(outline.get(PdfName.FIRST));
+            PdfDictionary first = (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.FIRST));
             if (first != null) {
                 map.put("Kids", bookmarkDepth(reader, first, pages));
             }
             list.add(map);
-            outline = (PdfDictionary)PdfReader.getPdfObject(outline.get(PdfName.NEXT));
+            outline = (PdfDictionary)PdfReader.getPdfObjectRelease(outline.get(PdfName.NEXT));
         }
         return list;
     }
@@ -250,7 +250,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
 	 */
 	private static int getNumber(PdfIndirectReference indirect)
 	{
-		PdfDictionary pdfObj = (PdfDictionary)PdfReader.getPdfObject(indirect);
+		PdfDictionary pdfObj = (PdfDictionary)PdfReader.getPdfObjectRelease(indirect);
 		if (pdfObj.contains(PdfName.TYPE) && pdfObj.get(PdfName.TYPE).equals(PdfName.PAGES) && pdfObj.contains(PdfName.KIDS)) 
 		{
 			PdfArray kids = (PdfArray)pdfObj.get(PdfName.KIDS);
@@ -268,14 +268,16 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
      */    
     public static List getBookmark(PdfReader reader) {
         PdfDictionary catalog = reader.getCatalog();
-        PdfDictionary outlines = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.OUTLINES));
+        PdfDictionary outlines = (PdfDictionary)PdfReader.getPdfObjectRelease(catalog.get(PdfName.OUTLINES));
         if (outlines == null)
             return null;
         IntHashtable pages = new IntHashtable();
         int numPages = reader.getNumberOfPages();
-        for (int k = 1; k <= numPages; ++k)
+        for (int k = 1; k <= numPages; ++k) {
             pages.put(reader.getPageOrigRef(k).getNumber(), k);
-        return bookmarkDepth(reader, (PdfDictionary)PdfReader.getPdfObject(outlines.get(PdfName.FIRST)), pages);
+            reader.releasePage(k);
+        }
+        return bookmarkDepth(reader, (PdfDictionary)PdfReader.getPdfObjectRelease(outlines.get(PdfName.FIRST)), pages);
     }
     
     /**

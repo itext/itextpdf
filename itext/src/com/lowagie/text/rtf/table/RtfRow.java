@@ -103,7 +103,7 @@ public class RtfRow extends RtfElement {
     /**
      * Constant for center alignment of this RtfRow
      */
-    private static final byte[] ROW_ALIGN_CENTER = "\\trql".getBytes();
+    private static final byte[] ROW_ALIGN_CENTER = "\\trqc".getBytes();
     /**
      * Constant for justified alignment of this RtfRow
      */
@@ -250,7 +250,7 @@ public class RtfRow extends RtfElement {
                     }
                     if(rtfCell.getColspan() > 1) {
                         int k = rtfCell.getColspan();
-                        while(k > 1) {
+                        while(k > 1 && (realCellIndex + 1 < mergeRow.getCells().size())) {
                             mergeRow.getCells().remove(realCellIndex + 1);
                             k--;
                         }
@@ -260,13 +260,8 @@ public class RtfRow extends RtfElement {
             realCellIndex = realCellIndex + rtfCell.getColspan();
         }
     }
-                              
-    /**
-     * Writes the content of this RtfRow
-     * 
-     * @return A byte array with the content of this RtfRow
-     */
-    public byte[] write() {
+       
+    private byte[] writeRowDefinitions() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(ROW_BEGIN);
@@ -327,6 +322,21 @@ public class RtfRow extends RtfElement {
                 RtfCell rtfCell = (RtfCell) this.cells.get(i);
                 result.write(rtfCell.writeDefinition());
             }
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+        return result.toByteArray();
+    }
+    
+    /**
+     * Writes the content of this RtfRow
+     * 
+     * @return A byte array with the content of this RtfRow
+     */
+    public byte[] write() {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        try {
+            result.write(writeRowDefinitions());
             
             for(int i = 0; i < this.cells.size(); i++) {
                 RtfCell rtfCell = (RtfCell) this.cells.get(i);
@@ -334,6 +344,9 @@ public class RtfRow extends RtfElement {
             }
 
             result.write(DELIMITER);
+
+            result.write(writeRowDefinitions());
+
             result.write(ROW_END);
             result.write("\n".getBytes());
         } catch(IOException ioe) {

@@ -51,6 +51,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Font;
 import com.lowagie.text.Element;
+import com.lowagie.text.Image;
 import com.lowagie.text.DocumentException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -349,6 +350,21 @@ public class PdfSignatureAppearance {
             PdfTemplate t = app[2] = new PdfTemplate(writer);
             t.setBoundingBox(rect);
             writer.addDirectTemplateSimple(t, new PdfName("n2"));
+            if (image != null) {
+                if (imageScale == 0) {
+                    t.addImage(image, rect.width(), 0, 0, rect.height(), 0, 0);
+                }
+                else {
+                    float usableScale = imageScale;
+                    if (imageScale < 0)
+                        usableScale = Math.min(rect.width() / image.width(), rect.height() / image.height());
+                    float w = image.width() * usableScale;
+                    float h = image.height() * usableScale;
+                    float x = (rect.width() - w) / 2;
+                    float y = (rect.height() - h) / 2;
+                    t.addImage(image, w, 0, 0, h, x, y);
+                }
+            }
             Font font;
             if (layer2Font == null)
                 font = new Font();
@@ -1075,6 +1091,41 @@ public class PdfSignatureAppearance {
     }
     
     /**
+     * Gets the background image for the layer 2.
+     * @return the background image for the layer 2
+     */
+    public Image getImage() {
+        return this.image;
+    }
+    
+    /**
+     * Sets the background image for the layer 2.
+     * @param image the background image for the layer 2
+     */
+    public void setImage(Image image) {
+        this.image = image;
+    }
+    
+    /**
+     * Gets the scaling to be applied to the background image.
+     * @return the scaling to be applied to the background image
+     */
+    public float getImageScale() {
+        return this.imageScale;
+    }
+    
+    /**
+     * Sets the scaling to be applied to the background image. If it's zero the image
+     * will fully fill the rectangle. If it's less than zero the image will fill the rectangle but
+     * will keep the proportions. If it's greater than zero that scaling will be applied.
+     * In any of the cases the image will always be centered. It's zero by default.
+     * @param imageScale the scaling to be applied to the background image
+     */
+    public void setImageScale(float imageScale) {
+        this.imageScale = imageScale;
+    }
+    
+    /**
      * Commands to draw a yellow question mark in a stream content
      */    
     public static final String questionMark = 
@@ -1152,6 +1203,16 @@ public class PdfSignatureAppearance {
     private SignatureEvent signatureEvent;
     
     /**
+     * Holds value of property image.
+     */
+    private Image image;
+    
+    /**
+     * Holds value of property imageScale.
+     */
+    private float imageScale;
+    
+    /**
      *
      */    
     private static class RangeStream extends InputStream {
@@ -1167,6 +1228,9 @@ public class PdfSignatureAppearance {
             this.range = range;
         }
         
+        /**
+         * @see java.io.InputStream#read()
+         */
         public int read() throws IOException {
             int n = read(b);
             if (n != 1)
@@ -1174,6 +1238,9 @@ public class PdfSignatureAppearance {
             return b[0] & 0xff;
         }
         
+        /**
+         * @see java.io.InputStream#read(byte[], int, int)
+         */
         public int read(byte[] b, int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();

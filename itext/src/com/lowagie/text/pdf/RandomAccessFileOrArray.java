@@ -245,16 +245,9 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public void reOpen() throws IOException {
-        isBack = false;
-        if (filename != null) {
-            close();
+        if (filename != null && rf == null)
             rf = new RandomAccessFile(filename, "r");
-            if (startOffset != 0)
-                rf.seek(startOffset);
-        }
-        else {
-            arrayInPtr = startOffset;
-        }
+        seek(0);
     }
     
     protected void insureOpen() throws IOException {
@@ -276,8 +269,10 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public int length() throws IOException {
-        if (arrayIn == null)
+        if (arrayIn == null) {
+            insureOpen();
             return (int)rf.length() - startOffset;
+        }
         else
             return arrayIn.length - startOffset;
     }
@@ -298,9 +293,11 @@ public class RandomAccessFileOrArray implements DataInput {
     }
     
     public int getFilePointer() throws IOException {
+        insureOpen();
         int n = isBack ? 1 : 0;
-        if (arrayIn == null)
+        if (arrayIn == null) {
             return (int)rf.getFilePointer() - n - startOffset;
+        }
         else
             return arrayInPtr - n - startOffset;
     }

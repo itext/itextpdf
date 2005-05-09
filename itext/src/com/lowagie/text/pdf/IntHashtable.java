@@ -8,6 +8,8 @@
 package com.lowagie.text.pdf;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
+import java.util.Iterator;
 
 /// A Hashtable that uses ints as the keys.
 // <P>
@@ -19,7 +21,7 @@ import java.util.Arrays;
 // <P>
 // @see java.util.Hashtable
 
-public class IntHashtable {
+public class IntHashtable implements Cloneable {
     /// The hash table data.
     private IntHashtableEntry table[];
     
@@ -215,6 +217,21 @@ public class IntHashtable {
         count = 0;
     }
     
+    public Object clone() {
+        try {
+            IntHashtable t = (IntHashtable)super.clone();
+            t.table = new IntHashtableEntry[table.length];
+            for (int i = table.length ; i-- > 0 ; ) {
+                t.table[i] = (table[i] != null)
+                ? (IntHashtableEntry)table[i].clone() : null;
+            }
+            return t;
+        } catch (CloneNotSupportedException e) {
+            // this shouldn't happen, since we are Cloneable
+            throw new InternalError();
+        }
+    }
+
     public int[] toOrderedKeys() {
         int res[] = getKeys();
         Arrays.sort(res);
@@ -254,5 +271,68 @@ public class IntHashtable {
         int key;
         int value;
         IntHashtableEntry next;
+        
+        public int getKey() {
+            return key;
+        }
+        
+        public int getValue() {
+            return value;
+        }
+        
+        protected Object clone() {
+            IntHashtableEntry entry = new IntHashtableEntry();
+            entry.hash = hash;
+            entry.key = key;
+            entry.value = value;
+            entry.next = (next != null) ? (IntHashtableEntry)next.clone() : null;
+            return entry;
+        }
     }    
+
+    public Iterator getEntryIterator() {
+        return new IntHashtableIterator(table);
+    }
+    
+    static class IntHashtableIterator implements Iterator {
+        //    boolean keys;
+        int index;
+        IntHashtableEntry table[];
+        IntHashtableEntry entry;
+        
+        IntHashtableIterator(IntHashtableEntry table[] /* , boolean keys */) {
+            this.table = table;
+            //	this.keys = keys;
+            this.index = table.length;
+        }
+        
+        public boolean hasNext() {
+            if (entry != null) {
+                return true;
+            }
+            while (index-- > 0) {
+                if ((entry = table[index]) != null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public Object next() {
+            if (entry == null) {
+                while ((index-- > 0) && ((entry = table[index]) == null));
+            }
+            if (entry != null) {
+                IntHashtableEntry e = entry;
+                entry = e.next;
+                return entry;
+            }
+            throw new NoSuchElementException("IntHashtableIterator");
+        }
+        
+        public void remove() {
+            throw new UnsupportedOperationException("remove() not supported.");
+        }
+        
+    }
 }

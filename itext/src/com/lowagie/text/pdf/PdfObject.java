@@ -99,7 +99,7 @@ public abstract class PdfObject {
 
 /** a possible type of <CODE>PdfObject</CODE> */
     public static final int NULL = 8;
-
+    
     /** a possible type of <CODE>PdfObject</CODE> */
     public static final int INDIRECT = 10;    
 

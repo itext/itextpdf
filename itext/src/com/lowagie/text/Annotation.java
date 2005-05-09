@@ -692,8 +692,7 @@ public class Annotation implements Element, MarkupAttributes {
 	 *      java.lang.String)
 	 */
 	public void setMarkupAttribute(String name, String value) {
-		markupAttributes = (markupAttributes == null) ? new Properties()
-				: markupAttributes;
+		if (markupAttributes == null) markupAttributes = new Properties();
 		markupAttributes.put(name, value);
 	}
 

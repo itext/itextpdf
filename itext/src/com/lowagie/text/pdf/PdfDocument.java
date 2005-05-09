@@ -62,6 +62,7 @@ import java.util.TreeMap;
 
 import com.lowagie.text.Anchor;
 import com.lowagie.text.Annotation;
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocListener;
@@ -79,6 +80,7 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
+import com.lowagie.text.SimpleTable;
 import com.lowagie.text.StringCompare;
 import com.lowagie.text.Table;
 import com.lowagie.text.Watermark;
@@ -343,6 +345,7 @@ class PdfDocument extends Document implements DocListener {
     }
     
     // membervariables
+    private PdfIndirectReference thumb;
     
     /** The characters to be applied the hanging ponctuation. */
     static final String hangingPunctuation = ".,;:'";
@@ -800,6 +803,11 @@ class PdfDocument extends Document implements DocListener {
             if (array.size() != 0)
                 page.put(PdfName.ANNOTS, array);
         }
+        // we add the thumbs
+        if (thumb != null) {
+            page.put(PdfName.THUMB, thumb);
+            thumb = null;
+        }
         if (!open || close) {
             throw new PdfException("The document isn't open.");
         }
@@ -1221,8 +1229,7 @@ class PdfDocument extends Document implements DocListener {
 						text.moveText(0, cellTop-heightCorrection);
 						cellDisplacement = flushLines() - cellTop+heightCorrection;
 						text.moveText(0, cellDisplacement);
-					}
-                                
+					}           
 					currentHeight = indentTop() - pagetop + table.cellspacing();
 					text.moveText(0, pagetop - indentTop() - currentHeight);
 				}
@@ -1253,11 +1260,12 @@ class PdfDocument extends Document implements DocListener {
 				table.setBottom(pagetop - difference + table.bottom(table.cellspacing()));
 				for (i = 0; i < size; i++) {
 					cell = (PdfCell) cells.get(i);
+					float newBottom = pagetop - difference + cell.bottom();
 					float newTop = pagetop - difference + cell.top(-table.cellspacing());
 					if (newTop > indentTop() - currentHeight) {
 						newTop = indentTop() - currentHeight;
 					}
-               float newBottom = newTop - cell.height();
+					//float newBottom = newTop - cell.height();
 					cell.setTop(newTop );
 					cell.setBottom(newBottom );
 				}
@@ -1702,16 +1710,42 @@ class PdfDocument extends Document implements DocListener {
                     	// Already pre-rendered
                     	table = (PdfTable)element;
 						table.updateRowAdditions();
+                    } else if (element instanceof SimpleTable) {
+                    	PdfPTable ptable = ((SimpleTable)element).createPdfPTable();
+                    	if (ptable.size() <= ptable.getHeaderRows())
+                    		break; //nothing to do
+            		
+                    	// before every table, we add a new line and flush all lines
+                    	ensureNewLine();
+                    	flushLines();
+                    	addPTable(ptable);                    
+                    	pageEmpty = false;
+                    	break;
                     } else if (element instanceof Table) {
-                        // constructing the PdfTable
-                        // Before the table, add a blank line using offset or default leading
-                        float offset = ((Table)element).getOffset();
-                        if (Float.isNaN(offset))
-                            offset = leading;
-                        carriageReturn();
-                        lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
-                        currentHeight += offset;
-	                    table = getPdfTable((Table)element, false);
+
+                    	try {
+                    		PdfPTable ptable = ((Table)element).createPdfPTable();
+                    		if (ptable.size() <= ptable.getHeaderRows())
+                                break; //nothing to do
+                    		
+                            // before every table, we add a new line and flush all lines
+                            ensureNewLine();
+                            flushLines();
+                            addPTable(ptable);                    
+                            pageEmpty = false;
+                            break;
+                    	}
+                    	catch(BadElementException bee) {
+                    		// constructing the PdfTable
+                            // Before the table, add a blank line using offset or default leading
+                            float offset = ((Table)element).getOffset();
+                            if (Float.isNaN(offset))
+                                offset = leading;
+                            carriageReturn();
+                            lines.add(new PdfLine(indentLeft(), indentRight(), alignment, offset));
+                            currentHeight += offset;
+    	                    table = getPdfTable((Table)element, false);
+                    	}
 					} else {
 						return false;
 					}
@@ -2942,5 +2976,9 @@ class PdfDocument extends Document implements DocListener {
             return false;
         }
         return super.setMarginMirroring(MarginMirroring);
+    }
+    
+    void setThumbnail(Image image) throws PdfException, DocumentException {
+        thumb = writer.getImageReference(writer.addDirectImageSimple(image));
     }
 }
