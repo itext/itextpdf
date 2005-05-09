@@ -97,6 +97,11 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     private static final byte[] FONT_STRIKETHROUGH = "\\strike".getBytes();
     /**
+     * Constant for hidden text.
+     */
+    private static final byte[] FONT_HIDDEN = "\\v".getBytes();
+    
+    /**
      * Constant for a plain font
      */
     public static final int STYLE_NONE = 0;
@@ -116,6 +121,10 @@ public class RtfFont extends Font implements RtfExtendedElement {
      * Constant for a strikethrough font
      */
     public static final int STYLE_STRIKETHROUGH = 8;
+    /**
+     * Constant for a font that hides the actual text.
+     */
+    public static final int STYLE_HIDDEN = 16;
 
     /**
      * The font name. Defaults to "Times New Roman"
@@ -142,7 +151,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     private int charset = 0;
     /**
-     * The RtfDocument this RtfFont belongs to;
+     * The RtfDocument this RtfFont belongs to.
      */
     private RtfDocument document = null;
     
@@ -256,18 +265,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
         }
 
         this.fontSize = (int)font.size();
-        if(font.isBold()) {
-            this.fontStyle = this.fontStyle | STYLE_BOLD;
-        }
-        if(font.isItalic()) {
-            this.fontStyle = this.fontStyle | STYLE_ITALIC;
-        }
-        if(font.isUnderlined()) {
-            this.fontStyle = this.fontStyle | STYLE_UNDERLINE;
-        }
-        if(font.isStrikethru()) {
-            this.fontStyle = this.fontStyle | STYLE_STRIKETHROUGH;
-        }
+        this.fontStyle = font.style();
         if(document != null) {
             this.fontNumber = document.getDocumentHeader().getFontNumber(this);
         }
@@ -317,6 +315,9 @@ public class RtfFont extends Font implements RtfExtendedElement {
             if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
                 result.write(FONT_STRIKETHROUGH);
             }
+            if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
+                result.write(FONT_HIDDEN);
+            }
             result.write(color.writeBegin());
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -346,6 +347,10 @@ public class RtfFont extends Font implements RtfExtendedElement {
             }
             if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
                 result.write(FONT_STRIKETHROUGH);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
+                result.write(FONT_HIDDEN);
                 result.write(intToByteArray(0));
             }
         } catch(IOException ioe) {
