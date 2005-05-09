@@ -16,13 +16,11 @@
 
 package com.lowagie.text.pdf.hyphenation;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.Hashtable;
+
 import com.lowagie.text.pdf.BaseFont;
 
 /**
@@ -33,7 +31,7 @@ import com.lowagie.text.pdf.BaseFont;
  */
 public class Hyphenator {
     
-    /**@todo Don't use statics */
+    /** TODO: Don't use statics */
     private static Hashtable hyphenTrees = new Hashtable();
 
     private HyphenationTree hyphenTree = null;
@@ -45,6 +43,12 @@ public class Hyphenator {
     /** Holds value of property hyphenDir. */
     private static String hyphenDir = "";    
 
+    /**
+     * @param lang
+     * @param country
+     * @param leftMin
+     * @param rightMin
+     */
     public Hyphenator(String lang, String country, int leftMin,
                       int rightMin) {
         hyphenTree = getHyphenationTree(lang, country);
@@ -52,6 +56,11 @@ public class Hyphenator {
         pushCharCount = rightMin;
     }
 
+    /**
+     * @param lang
+     * @param country
+     * @return the hyphenation tree
+     */
     public static HyphenationTree getHyphenationTree(String lang,
             String country) {
         String key = lang;
@@ -77,6 +86,10 @@ public class Hyphenator {
         return hTree;
     }
 
+    /**
+     * @param key
+     * @return a hyphenation tree
+     */
     public static HyphenationTree getResourceHyphenationTree(String key) {
         try {
             InputStream stream = BaseFont.getResourceStream(defaultHyphLocation + key + ".xml");
@@ -93,6 +106,10 @@ public class Hyphenator {
         }
     }
 
+    /**
+     * @param key
+     * @return a hyphenation tree
+     */
     public static HyphenationTree getFileHyphenationTree(String key) {
         try {
             if (hyphenDir == null)
@@ -117,6 +134,14 @@ public class Hyphenator {
         }
     }
 
+    /**
+     * @param lang
+     * @param country
+     * @param word
+     * @param leftMin
+     * @param rightMin
+     * @return a hyphenation object
+     */
     public static Hyphenation hyphenate(String lang, String country,
                                         String word, int leftMin,
                                         int rightMin) {
@@ -129,6 +154,16 @@ public class Hyphenator {
         return hTree.hyphenate(word, leftMin, rightMin);
     }
 
+    /**
+     * @param lang
+     * @param country
+     * @param word
+     * @param offset
+     * @param len
+     * @param leftMin
+     * @param rightMin
+     * @return a hyphenation object
+     */
     public static Hyphenation hyphenate(String lang, String country,
                                         char[] word, int offset, int len,
                                         int leftMin, int rightMin) {
@@ -141,18 +176,34 @@ public class Hyphenator {
         return hTree.hyphenate(word, offset, len, leftMin, rightMin);
     }
 
+    /**
+     * @param min
+     */
     public void setMinRemainCharCount(int min) {
         remainCharCount = min;
     }
 
+    /**
+     * @param min
+     */
     public void setMinPushCharCount(int min) {
         pushCharCount = min;
     }
 
+    /**
+     * @param lang
+     * @param country
+     */
     public void setLanguage(String lang, String country) {
         hyphenTree = getHyphenationTree(lang, country);
     }
 
+    /**
+     * @param word
+     * @param offset
+     * @param len
+     * @return a hyphenation object
+     */
     public Hyphenation hyphenate(char[] word, int offset, int len) {
         if (hyphenTree == null) {
             return null;
@@ -161,6 +212,10 @@ public class Hyphenator {
                                     pushCharCount);
     }
 
+    /**
+     * @param word
+     * @return a hyphenation object
+     */
     public Hyphenation hyphenate(String word) {
         if (hyphenTree == null) {
             return null;
