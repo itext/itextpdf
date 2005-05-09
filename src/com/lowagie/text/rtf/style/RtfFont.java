@@ -97,7 +97,27 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     private static final byte[] FONT_STRIKETHROUGH = "\\strike".getBytes();
     /**
-     * Constant for hidden text.
+     * Constant for the double strikethrough flag
+     */
+    private static final byte[] FONT_DOUBLE_STRIKETHROUGH = "\\striked".getBytes();
+    /**
+     * Constant for the shadow flag
+     */
+    private static final byte[] FONT_SHADOW = "\\shad".getBytes();
+    /**
+     * Constant for the outline flag
+     */
+    private static final byte[] FONT_OUTLINE = "\\outl".getBytes();
+    /**
+     * Constant for the embossed flag
+     */
+    private static final byte[] FONT_EMBOSSED = "\\embo".getBytes();
+    /**
+     * Constant for the engraved flag
+     */
+    private static final byte[] FONT_ENGRAVED = "\\impr".getBytes();
+    /**
+     * Constant for hidden text flag
      */
     private static final byte[] FONT_HIDDEN = "\\v".getBytes();
     
@@ -122,9 +142,29 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public static final int STYLE_STRIKETHROUGH = 8;
     /**
+     * Constant for a double strikethrough font
+     */
+    public static final int STYLE_DOUBLE_STRIKETHROUGH = 16;
+    /**
+     * Constant for a shadowed font
+     */
+    public static final int STYLE_SHADOW = 32;
+    /**
+     * Constant for an outlined font
+     */
+    public static final int STYLE_OUTLINE = 64;
+    /**
+     * Constant for an embossed font
+     */
+    public static final int STYLE_EMBOSSED = 128;
+    /**
+     * Constant for an engraved font
+     */
+    public static final int STYLE_ENGRAVED = 256;
+    /**
      * Constant for a font that hides the actual text.
      */
-    public static final int STYLE_HIDDEN = 16;
+    public static final int STYLE_HIDDEN = 512;
 
     /**
      * The font name. Defaults to "Times New Roman"
@@ -318,6 +358,22 @@ public class RtfFont extends Font implements RtfExtendedElement {
             if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
                 result.write(FONT_HIDDEN);
             }
+            if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
+                result.write(FONT_DOUBLE_STRIKETHROUGH);
+                result.write(intToByteArray(1));
+            }
+            if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
+                result.write(FONT_SHADOW);
+            }
+            if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
+                result.write(FONT_OUTLINE);
+            }
+            if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
+                result.write(FONT_EMBOSSED);
+            }
+            if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
+                result.write(FONT_ENGRAVED);
+            }
             result.write(color.writeBegin());
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -351,6 +407,26 @@ public class RtfFont extends Font implements RtfExtendedElement {
             }
             if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
                 result.write(FONT_HIDDEN);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
+                result.write(FONT_DOUBLE_STRIKETHROUGH);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
+                result.write(FONT_SHADOW);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
+                result.write(FONT_OUTLINE);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
+                result.write(FONT_EMBOSSED);
+                result.write(intToByteArray(0));
+            }
+            if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
+                result.write(FONT_ENGRAVED);
                 result.write(intToByteArray(0));
             }
         } catch(IOException ioe) {
