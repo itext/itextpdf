@@ -64,6 +64,7 @@
 	<target name="earlyaccess.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
         <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-signed.jar" overwrite="yes"/>
 		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/itext-signed.jar" alias="itext" storepass="fdptext1" />
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
