@@ -50,12 +50,14 @@
 
 package com.lowagie.text.rtf.text;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.style.RtfColor;
 import com.lowagie.text.rtf.style.RtfFont;
 
 
@@ -80,6 +82,10 @@ public class RtfChunk extends RtfElement {
      * Constant for the end of sub / superscript flag
      */
     private static final byte[] FONT_END_SUPER_SUBSCRIPT = "\\nosupersub".getBytes();
+    /**
+     * Constant for background colour.
+     */
+    private static final byte[] HIGHLIGHT = "\\highlight".getBytes();
 
     /**
      * The font of this RtfChunk
@@ -97,6 +103,10 @@ public class RtfChunk extends RtfElement {
      * The super / subscript of this RtfChunk
      */
     private float superSubScript = 0;
+    /**
+     * An optional background colour.
+     */
+    private RtfColor background = null;
 
     /**
      * Constructs a RtfChunk based on the content of a Chunk
@@ -114,6 +124,9 @@ public class RtfChunk extends RtfElement {
         if(chunk.getAttributes() != null && chunk.getAttributes().get(Chunk.SUBSUPSCRIPT) != null) {
             this.superSubScript = ((Float)chunk.getAttributes().get(Chunk.SUBSUPSCRIPT)).floatValue();
         }
+        if(chunk.getAttributes() != null && chunk.getAttributes().get(Chunk.BACKGROUND) != null) {
+            this.background = new RtfColor(this.document, (Color) ((Object[]) chunk.getAttributes().get(Chunk.BACKGROUND))[0]);
+        }
         font = new RtfFont(doc, chunk.font());
         content = chunk.content();
     }
@@ -127,11 +140,19 @@ public class RtfChunk extends RtfElement {
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
+            if(this.background != null) {
+                result.write(OPEN_GROUP);
+            }
+            
             result.write(font.writeBegin());
             if(superSubScript < 0) {
                 result.write(FONT_SUBSCRIPT);
             } else if(superSubScript > 0) {
                 result.write(FONT_SUPERSCRIPT);
+            }
+            if(this.background != null) {
+                result.write(HIGHLIGHT);
+                result.write(intToByteArray(this.background.getColorNumber()));
             }
             result.write(DELIMITER);
             
@@ -141,6 +162,10 @@ public class RtfChunk extends RtfElement {
                 result.write(FONT_END_SUPER_SUBSCRIPT);
             }
             result.write(font.writeEnd());
+            
+            if(this.background != null) {
+                result.write(CLOSE_GROUP);
+            }
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
