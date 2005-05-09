@@ -55,7 +55,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.lowagie.text.markup.*;
+import com.lowagie.text.markup.MarkupParser;
 import com.lowagie.text.pdf.PdfPCell;
 
 /**
