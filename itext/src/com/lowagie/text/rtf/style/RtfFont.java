@@ -101,13 +101,13 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public static final int STYLE_NONE = 0;
     /**
-     * Constant for an italic font
-     */
-    public static final int STYLE_ITALIC = 1;
-    /**
      * Constant for a bold font
      */
-    public static final int STYLE_BOLD = 2;
+    public static final int STYLE_BOLD = 1;
+    /**
+     * Constant for an italic font
+     */
+    public static final int STYLE_ITALIC = 2;
     /**
      * Constant for an underlined font
      */
