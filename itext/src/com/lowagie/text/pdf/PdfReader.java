@@ -539,6 +539,7 @@ public class PdfReader {
     }
     
     /**
+     * @throws IOException
      */
     private void readDecryptedDocObj() throws IOException {
         if (encrypted)
@@ -593,6 +594,10 @@ public class PdfReader {
             xrefObj.set(((PRIndirectReference)encDic).getNumber(), null);
     }
     
+    /**
+     * @param obj
+     * @return a PdfObject
+     */
     public static PdfObject getPdfObjectRelease(PdfObject obj) {
         PdfObject obj2 = getPdfObject(obj);
         releaseLastXrefPartial(obj);
@@ -654,7 +659,7 @@ public class PdfReader {
      * to save memory.
      * @param obj the <CODE>PdfObject</CODE> to read
      * @param parent
-     * @return
+     * @return a PdfObject
      */    
     public static PdfObject getPdfObjectRelease(PdfObject obj, PdfObject parent) {
         PdfObject obj2 = getPdfObject(obj, parent);
@@ -662,6 +667,11 @@ public class PdfReader {
         return obj2;
     }
     
+    /**
+     * @param obj
+     * @param parent
+     * @return a PdfObject
+     */
     public static PdfObject getPdfObject(PdfObject obj, PdfObject parent) {
         if (obj == null)
             return null;
@@ -686,12 +696,20 @@ public class PdfReader {
         return getPdfObject(obj);
     }
     
+    /**
+     * @param idx
+     * @return a PdfObject
+     */
     public PdfObject getPdfObjectRelease(int idx) {
         PdfObject obj = getPdfObject(idx);
         releaseLastXrefPartial();
         return obj;
     }
     
+    /**
+     * @param idx
+     * @return aPdfObject
+     */
     public PdfObject getPdfObject(int idx) {
         try {
             lastXrefPartial = -1;
@@ -713,10 +731,16 @@ public class PdfReader {
         }
     }
 
+    /**
+     * 
+     */
     public void resetLastXrefPartial() {
         lastXrefPartial = -1;
     }
     
+    /**
+     * 
+     */
     public void releaseLastXrefPartial() {
         if (partial && lastXrefPartial != -1) {
             xrefObj.set(lastXrefPartial, null);
@@ -724,6 +748,9 @@ public class PdfReader {
         }
     }
 
+    /**
+     * @param obj
+     */
     public static void releaseLastXrefPartial(PdfObject obj) {
         if (obj == null)
             return;
@@ -743,6 +770,10 @@ public class PdfReader {
         xrefObj.set(idx, obj);
     }
     
+    /**
+     * @param obj
+     * @return an indirect reference
+     */
     public PRIndirectReference addPdfObject(PdfObject obj) {
         xrefObj.add(obj);
         return new PRIndirectReference(this, xrefObj.size() - 1);
@@ -886,6 +917,9 @@ public class PdfReader {
         }
     }
 
+    /**
+     * @return the percentage of the cross reference table that has been read
+     */
     public double dumpPerc() {
         int total = 0;
         for (int k = 0; k < xrefObj.size(); ++k) {
@@ -1435,6 +1469,11 @@ public class PdfReader {
         return b;
     }
     
+    /**
+     * @param in
+     * @param dicPar
+     * @return a byte array
+     */
     public static byte[] decodePredictor(byte in[], PdfObject dicPar) {
         if (dicPar == null || !dicPar.isDictionary())
             return in;
@@ -1688,16 +1727,26 @@ public class PdfReader {
         return dic;
     }
     
+    /**
+     * @param pageNum
+     * @return a Dictionary object
+     */
     public PdfDictionary getPageNRelease(int pageNum) {
         PdfDictionary dic = getPageN(pageNum);
         pageRefs.releasePage(pageNum);
         return dic;
     }
     
+    /**
+     * @param pageNum
+     */
     public void releasePage(int pageNum) {
         pageRefs.releasePage(pageNum);
     }
     
+    /**
+     * 
+     */
     public void resetReleasePage() {
         pageRefs.resetReleasePage();
     }
@@ -2440,6 +2489,9 @@ public class PdfReader {
         }
     }
     
+    /**
+     * Closes the reader
+     */
     public void close() {
         if (!partial)
             return;
@@ -2640,6 +2692,10 @@ public class PdfReader {
         removeUnusedObjects();*/
     }
 
+    /**
+     * @param preferences
+     * @param catalog
+     */
     public static void setViewerPreferences(int preferences, PdfDictionary catalog) {
         catalog.remove(PdfName.PAGELAYOUT);
         catalog.remove(PdfName.PAGEMODE);
@@ -2694,10 +2750,16 @@ public class PdfReader {
         catalog.put(PdfName.VIEWERPREFERENCES, vp);
     }
 
+    /**
+     * @param preferences
+     */
     public void setViewerPreferences(int preferences) {
         setViewerPreferences(preferences, catalog);
     }
     
+    /**
+     * @return an int that contains the Viewer Preferences.
+     */
     public int getViewerPreferences() {
         int prefs = 0;
         PdfName name = null;
@@ -2867,12 +2929,20 @@ public class PdfReader {
             return (PdfDictionary)PdfReader.getPdfObject(ref);
         }
 
+        /**
+         * @param pageNum
+         * @return a dictionary object
+         */
         public PdfDictionary getPageNRelease(int pageNum) {
             PdfDictionary page = getPageN(pageNum);
             releasePage(pageNum);
             return page;
         }
 
+        /**
+         * @param pageNum
+         * @return an indirect reference
+         */
         public PRIndirectReference getPageOrigRefRelease(int pageNum) {
             PRIndirectReference ref = getPageOrigRef(pageNum);
             releasePage(pageNum);
@@ -2914,6 +2984,9 @@ public class PdfReader {
             }
         }
         
+        /**
+         * @param pageNum
+         */
         public void releasePage(int pageNum) {
             if (refsp == null)
                 return;
@@ -2928,6 +3001,9 @@ public class PdfReader {
             refsp.remove(pageNum);
         }
         
+        /**
+         * 
+         */
         public void resetReleasePage() {
             if (refsp == null)
                 return;
