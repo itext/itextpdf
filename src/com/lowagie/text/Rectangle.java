@@ -937,5 +937,16 @@ public class Rectangle implements Element, MarkupAttributes {
 	public void setUseVariableBorders(boolean useVariableBorders) {
 		this.useVariableBorders = useVariableBorders;
 	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buf = new StringBuffer("Rectangle: ");
+		buf.append(width());
+		buf.append("x");
+		buf.append(height());
+		return buf.toString();
+	}
 
 }
