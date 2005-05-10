@@ -60,12 +60,12 @@ import javax.swing.JOptionPane;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
-import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.OptionArgument;
+import com.lowagie.tools.arguments.PageSizeArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
@@ -80,9 +80,7 @@ public class Txt2Pdf extends AbstractTool {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW | MENU_EXECUTE_PRINT_SILENT;
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to convert", false));
 		arguments.add(new FileArgument(this, "destfile", "The file to which the converted text has to be written", true, new PdfFilter()));
-		OptionArgument oa1 = new OptionArgument(this, "pagesize", "Pagesize");
-		oa1.addOption("A4", "A4");
-		oa1.addOption("Letter", "LETTER");
+		PageSizeArgument oa1 = new PageSizeArgument(this, "pagesize", "Pagesize");
 		arguments.add(oa1);
 		OptionArgument oa2 = new OptionArgument(this, "orientation", "Orientation of the page");
 		oa2.addOption("Portrait", "PORTRAIT");
@@ -107,13 +105,7 @@ public class Txt2Pdf extends AbstractTool {
             String line = null;
             Document document;
             Font f;
-            Rectangle pagesize;
-            if ("LETTER".equals(getValue("pagesize"))) {
-            	pagesize = PageSize.LETTER;
-            }
-            else {
-            	pagesize = PageSize.A4;
-            }
+            Rectangle pagesize = (Rectangle)getValue("pagesize");
             if ("LANDSCAPE".equals(getValue("orientation"))) {
                 f = FontFactory.getFont(FontFactory.COURIER, 10);
                 document = new Document(pagesize.rotate(), 36, 9, 36, 36);
