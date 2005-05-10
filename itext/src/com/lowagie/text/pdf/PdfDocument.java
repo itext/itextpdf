@@ -1062,16 +1062,20 @@ class PdfDocument extends Document implements DocListener {
 					if( !cell.isHeader() ) {
 						if (cell.getGroupNumber() != currentGroupNumber) {
 							boolean cellsFit = true;
+							boolean atLeastOneFits = false;
 							currentGroupNumber = cell.getGroupNumber();
 							int cellCount = 0;
 							while (cell.getGroupNumber() == currentGroupNumber && cellsFit && iterator.hasNext()) {
 								if (cell.bottom() < indentBottom()) {
 									cellsFit = false;
 								}
+								else {
+									atLeastOneFits |= true;
+								}
 								cell = (PdfCell) iterator.next();
 								cellCount++;
 							}
-							if (!cellsFit) {
+							if (!(cellsFit || atLeastOneFits)) {
 								break;
 							}
 							for (int i = cellCount; i >= 0; i--) {
@@ -1083,11 +1087,15 @@ class PdfDocument extends Document implements DocListener {
 						if( !headerChecked ) {
 							headerChecked = true;
 							boolean cellsFit = true;
+							boolean atLeastOneFits = false;
 							int cellCount = 0;
 							float firstTop = cell.top();
 							while (cell.isHeader() && cellsFit && iterator.hasNext()) {
 								if (firstTop - cell.bottom(0) > indentTop() - currentHeight - indentBottom()) {
 									cellsFit = false;
+								}
+								else {
+									atLeastOneFits |= true;
 								}
 								cell = (PdfCell) iterator.next();
 								cellCount++;
@@ -1097,13 +1105,16 @@ class PdfDocument extends Document implements DocListener {
 								if (firstTop - cell.bottom(0) > indentTop() - currentHeight - indentBottom() - 10.0) {
 									cellsFit = false;
 								}
+								else {
+									atLeastOneFits |= true;
+								}
 								cell = (PdfCell) iterator.next();
 								cellCount++;
 							}
 							for (int i = cellCount; i >= 0; i--) {
 								cell = (PdfCell) iterator.previous();
 							}
-							if (!cellsFit) {
+							if (!(cellsFit || atLeastOneFits)) {
 								while( cell.isHeader() ) {
 									iterator.remove();
 									cell = (PdfCell) iterator.next();
@@ -2493,6 +2504,25 @@ class PdfDocument extends Document implements DocListener {
                     width = chunk.width();
                 if (chunk.isStroked()) {
                     PdfChunk nextChunk = line.getChunk(chunkStrokeIdx + 1);
+                    if (chunk.isAttribute(Chunk.BACKGROUND)) {
+                        float subtract = lastBaseFactor;
+                        if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND))
+                            subtract = 0;
+                        if (nextChunk == null)
+                            subtract += hangingCorrection;
+                        float fontSize = chunk.font().size();
+                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
+                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
+                        Object bgr[] = (Object[])chunk.getAttribute(Chunk.BACKGROUND);
+                        graphics.setColorFill((Color)bgr[0]);
+                        float extra[] = (float[])bgr[1];
+                        graphics.rectangle(xMarker - extra[0],
+                            yMarker + descender - extra[1] + chunk.getTextRise(),
+                            width - subtract + extra[0] + extra[2],
+                            ascender - descender + extra[1] + extra[3]);
+                        graphics.fill();
+                        graphics.setGrayFill(0);
+                    }
                     if (chunk.isAttribute(Chunk.UNDERLINE)) {
                         float subtract = lastBaseFactor;
                         if (nextChunk != null && nextChunk.isAttribute(Chunk.UNDERLINE))
@@ -2573,25 +2603,6 @@ class PdfDocument extends Document implements DocListener {
                         PdfPageEvent pev = writer.getPageEvent();
                         if (pev != null)
                             pev.onGenericTag(writer, this, rect, (String)chunk.getAttribute(Chunk.GENERICTAG));
-                    }
-                    if (chunk.isAttribute(Chunk.BACKGROUND)) {
-                        float subtract = lastBaseFactor;
-                        if (nextChunk != null && nextChunk.isAttribute(Chunk.BACKGROUND))
-                            subtract = 0;
-                        if (nextChunk == null)
-                            subtract += hangingCorrection;
-                        float fontSize = chunk.font().size();
-                        float ascender = chunk.font().getFont().getFontDescriptor(BaseFont.ASCENT, fontSize);
-                        float descender = chunk.font().getFont().getFontDescriptor(BaseFont.DESCENT, fontSize);
-                        Object bgr[] = (Object[])chunk.getAttribute(Chunk.BACKGROUND);
-                        graphics.setColorFill((Color)bgr[0]);
-                        float extra[] = (float[])bgr[1];
-                        graphics.rectangle(xMarker - extra[0],
-                            yMarker + descender - extra[1] + chunk.getTextRise(),
-                            width - subtract + extra[0] + extra[2],
-                            ascender - descender + extra[1] + extra[3]);
-                        graphics.fill();
-                        graphics.setGrayFill(0);
                     }
                     if (chunk.isAttribute(Chunk.PDFANNOTATION)) {
                         float subtract = lastBaseFactor;
