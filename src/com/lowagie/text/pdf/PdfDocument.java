@@ -1058,12 +1058,13 @@ class PdfDocument extends Document implements DocListener {
 			boolean headerChecked = false;
 			for (ListIterator iterator = cells.listIterator(); iterator.hasNext() && !tableHasToFit;) {
 				cell = (PdfCell) iterator.next();
+				boolean atLeastOneFits = false;
 				if( cellsHaveToFit ) {
 					if( !cell.isHeader() ) {
 						if (cell.getGroupNumber() != currentGroupNumber) {
 							boolean cellsFit = true;
-							boolean atLeastOneFits = false;
 							currentGroupNumber = cell.getGroupNumber();
+							cellsHaveToFit = table.hasToFitPageCells();
 							int cellCount = 0;
 							while (cell.getGroupNumber() == currentGroupNumber && cellsFit && iterator.hasNext()) {
 								if (cell.bottom() < indentBottom()) {
@@ -1075,7 +1076,10 @@ class PdfDocument extends Document implements DocListener {
 								cell = (PdfCell) iterator.next();
 								cellCount++;
 							}
-							if (!(cellsFit || atLeastOneFits)) {
+							if (!atLeastOneFits) {
+								cellsHaveToFit = false;
+							}
+							if (!cellsFit) {
 								break;
 							}
 							for (int i = cellCount; i >= 0; i--) {
@@ -1087,15 +1091,11 @@ class PdfDocument extends Document implements DocListener {
 						if( !headerChecked ) {
 							headerChecked = true;
 							boolean cellsFit = true;
-							boolean atLeastOneFits = false;
 							int cellCount = 0;
 							float firstTop = cell.top();
 							while (cell.isHeader() && cellsFit && iterator.hasNext()) {
 								if (firstTop - cell.bottom(0) > indentTop() - currentHeight - indentBottom()) {
 									cellsFit = false;
-								}
-								else {
-									atLeastOneFits |= true;
 								}
 								cell = (PdfCell) iterator.next();
 								cellCount++;
@@ -1105,16 +1105,13 @@ class PdfDocument extends Document implements DocListener {
 								if (firstTop - cell.bottom(0) > indentTop() - currentHeight - indentBottom() - 10.0) {
 									cellsFit = false;
 								}
-								else {
-									atLeastOneFits |= true;
-								}
 								cell = (PdfCell) iterator.next();
 								cellCount++;
 							}
 							for (int i = cellCount; i >= 0; i--) {
 								cell = (PdfCell) iterator.previous();
 							}
-							if (!(cellsFit || atLeastOneFits)) {
+							if (!cellsFit) {
 								while( cell.isHeader() ) {
 									iterator.remove();
 									cell = (PdfCell) iterator.next();
