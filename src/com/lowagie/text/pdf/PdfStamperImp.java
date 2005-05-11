@@ -91,7 +91,9 @@ class PdfStamperImp extends PdfWriter {
      * @param os the output destination
      * @param pdfVersion the new pdf version or '\0' to keep the same version as the original
      * document
+     * @param append
      * @throws DocumentException on error
+     * @throws IOException
      */
     PdfStamperImp(PdfReader reader, OutputStream os, char pdfVersion, boolean append) throws DocumentException, IOException {
         super(new PdfDocument(), os);
@@ -384,6 +386,11 @@ class PdfStamperImp extends PdfWriter {
             return currentPdfReaderInstance.getReaderFile();
     }
     
+    /**
+     * @param reader
+     * @param openFile
+     * @throws IOException
+     */
     public void registerReader(PdfReader reader, boolean openFile) throws IOException {
         if (readers2intrefs.containsKey(reader))
             return;
@@ -395,6 +402,9 @@ class PdfStamperImp extends PdfWriter {
         }
     }
     
+    /**
+     * @param reader
+     */
     public void unRegisterReader(PdfReader reader) {
         if (!readers2intrefs.containsKey(reader))
             return;
@@ -436,6 +446,10 @@ class PdfStamperImp extends PdfWriter {
         }
     }
     
+    /**
+     * @param fdf
+     * @throws IOException
+     */
     public void addComments(FdfReader fdf) throws IOException{
         if (readers2intrefs.containsKey(fdf))
             return;
@@ -556,9 +570,8 @@ class PdfStamperImp extends PdfWriter {
             reader.pageRefs.insertPage(pageNumber, pref);
         }
         else {
-            //--pageNumber;
-            if (pageNumber < 0)
-                pageNumber = 0;
+            if (pageNumber < 1)
+                pageNumber = 1;
             PdfDictionary firstPage = reader.getPageN(pageNumber);
             PRIndirectReference firstPageRef = (PRIndirectReference)reader.getPageOrigRef(pageNumber);
             reader.releasePage(pageNumber);
@@ -800,6 +813,9 @@ class PdfStamperImp extends PdfWriter {
         }
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfWriter#getPageReference(int)
+     */
     public PdfIndirectReference getPageReference(int page) {
         PdfIndirectReference ref = reader.getPageOrigRef(page);
         if (ref == null)
@@ -807,6 +823,9 @@ class PdfStamperImp extends PdfWriter {
         return ref;
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfWriter#addAnnotation(com.lowagie.text.pdf.PdfAnnotation)
+     */
     public void addAnnotation(PdfAnnotation annot) {
         throw new RuntimeException("Unsupported in this context. Use PdfStamper.addAnnotation()");
     }
@@ -1171,14 +1190,23 @@ class PdfStamperImp extends PdfWriter {
             aa.put(actionType, action);
     }
 
+    /**
+     * @see com.lowagie.text.pdf.PdfWriter#setOpenAction(com.lowagie.text.pdf.PdfAction)
+     */
     public void setOpenAction(PdfAction action) {
         openAction = action;
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfWriter#setOpenAction(java.lang.String)
+     */
     public void setOpenAction(String name) {
         throw new UnsupportedOperationException("Open actions by name are not supported.");
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfWriter#setThumbnail(com.lowagie.text.Image)
+     */
     public void setThumbnail(com.lowagie.text.Image image) {
         throw new UnsupportedOperationException("Use PdfStamper.setThumbnail().");
     }

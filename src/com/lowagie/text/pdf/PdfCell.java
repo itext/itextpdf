@@ -335,6 +335,7 @@ public class PdfCell extends Rectangle {
     /**
      * Sets the bottom of the Rectangle and determines the proper {link #verticalOffset}
      * to appropriately align the contents vertically.
+     * @param value
      */
     public void setBottom(float value) {
         super.setBottom(value);
@@ -439,6 +440,7 @@ public class PdfCell extends Rectangle {
      * Calculates what the height of the first line should be so that the content will be
      * flush with the top.  For text, this is the height of the ascender.  For an image,
      * it is the actual height of the image.
+     * @return the real height of the first line
      */
     private float firstLineRealHeight() {
         float firstLineRealHeight = 0f;
@@ -461,6 +463,7 @@ public class PdfCell extends Rectangle {
      * For non-variable width borders this is only 1/2 the border width on that side.  This
      * always returns 0 if {@link #useBorderPadding} is false;
      * @param side the side to check.  One of the side constants in {@link com.lowagie.text.Rectangle}
+     * @return the borderwidth inside the cell
      */
     private float getBorderWidthInside(int side) {
         float width = 0f;
@@ -499,6 +502,7 @@ public class PdfCell extends Rectangle {
      * @param right       the right border
      * @param extraHeight extra height to add above image
      * @param alignment   horizontal alignment (constant from Element class)
+     * @return the height of the image
      */
 
     private float addImage(Image i, float left, float right, float extraHeight, int alignment) {
@@ -749,6 +753,9 @@ public class PdfCell extends Rectangle {
 
     /**
      * Processes all actions contained in the cell.
+     * @param element	an element in the cell
+     * @param action	an action that should be coupled to the cell
+     * @param allActions
      */
 
     protected void processActions(Element element, PdfAction action, ArrayList allActions) {
@@ -804,6 +811,7 @@ public class PdfCell extends Rectangle {
 
     /**
      * Sets the group number.
+     * @param number
      */
 
     void setGroupNumber(int number) {
