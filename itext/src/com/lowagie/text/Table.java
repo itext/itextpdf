@@ -1323,7 +1323,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                             else {
                                 tmpWidthsN[totI] = btW-totW;
                                 btI++;
-                                if( btW == tpW) {
+                                if(Math.abs(btW - tpW) < 0.0001) {
                                     tpI++;
                                     if(tpI<tmpWidths.length) {
                                         tpW+=tmpWidths[tpI];
@@ -1431,12 +1431,8 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                             float wt=0;
                             while( ct<lDummyWidths[j]) {
                                 wt+=lDummyColumnWidths[j][ct++];
-                                if(convertWidth(wb)==convertWidth(wt)) break;
+                                if(Math.abs(convertWidth(wb) - convertWidth(wt)) < 0.0001) break;
                             }
-                            
-                            /* if(convertWidth(wb)==convertWidth(wt) == false) {
-                                System.out.println( "error w !=w2");
-                            } */
                         }
                         colMap[cb] = lDummyColumn+ct;
                         
