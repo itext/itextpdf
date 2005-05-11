@@ -998,6 +998,7 @@ public class Cell extends Rectangle implements TextElementArray {
 		cell.setUseDescender(useDescender);
 		cell.setLeading(leading(), 0);
 		cell.cloneNonPositionParameters(this);
+		cell.setNoWrap(noWrap());
 		for (Iterator i = getElements(); i.hasNext(); ) {
 			cell.addElement((Element)i.next());
 		}
