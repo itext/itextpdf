@@ -165,8 +165,8 @@ public class PdfDictionary extends PdfObject {
  * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
     
-    public PdfObject put(PdfName key, PdfObject value) {
-        return (PdfObject) hashMap.put(key, value);
+    public void put(PdfName key, PdfObject value) {
+        hashMap.put(key, value);
     }
     
 /**
@@ -177,10 +177,10 @@ public class PdfDictionary extends PdfObject {
  * @param		value	value of the entry (a <CODE>PdfObject</CODE>)
  * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
-    public PdfObject putEx(PdfName key, PdfObject value) {
+    public void putEx(PdfName key, PdfObject value) {
         if (value == null)
-            return null;
-        return (PdfObject) hashMap.put(key, value);
+            return;
+        hashMap.put(key, value);
     }
     
 /**
@@ -191,10 +191,12 @@ public class PdfDictionary extends PdfObject {
  * @param		value	value of the entry (a <CODE>PdfObject</CODE>)
  * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
-    public PdfObject putDel(PdfName key, PdfObject value) {
-        if (value == null)
-            return (PdfObject) hashMap.remove(key);;
-        return (PdfObject) hashMap.put(key, value);
+    public void putDel(PdfName key, PdfObject value) {
+        if (value == null) {
+            hashMap.remove(key);
+            return;
+        }
+        hashMap.put(key, value);
     }
     
 /**
@@ -204,8 +206,8 @@ public class PdfDictionary extends PdfObject {
  * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
     
-    public PdfObject remove(PdfName key) {
-        return (PdfObject) hashMap.remove(key);
+    public void remove(PdfName key) {
+        hashMap.remove(key);
     }
     
 /**
