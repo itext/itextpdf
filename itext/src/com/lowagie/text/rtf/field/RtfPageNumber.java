@@ -15,12 +15,17 @@ import com.lowagie.text.rtf.document.RtfDocument;
 /**
  * The RtfPageNumber provides the page number field in rtf documents.
  * 
- * @version $Version:$
+ * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
  */
 public class RtfPageNumber extends RtfField {
 
+    /**
+     * Constant for the page number
+     */
+    private static final byte[] PAGE_NUMBER = "PAGE".getBytes();
+    
     /**
      * Constructs a RtfPageNumber. This can be added anywhere to add a page number field.
      */
@@ -63,7 +68,7 @@ public class RtfPageNumber extends RtfField {
      * @throws IOException
      */
     protected byte[] writeFieldInstContent() throws IOException {
-        return "PAGE".getBytes();
+        return PAGE_NUMBER;
     }
 
     /**
