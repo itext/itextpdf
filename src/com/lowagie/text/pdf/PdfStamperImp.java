@@ -541,6 +541,23 @@ class PdfStamperImp extends PdfWriter {
         return ps.over;
     }
     
+    void correctAcroFieldPages(int page) {
+        if (acroFields == null)
+            return;
+        if (page > reader.getNumberOfPages())
+            return;
+        HashMap fields = acroFields.getFields();
+        for (Iterator it = fields.values().iterator(); it.hasNext();) {
+            AcroFields.Item item = (AcroFields.Item)it.next();
+            ArrayList pages = item.page;
+            for (int k = 0; k < pages.size(); ++k) {
+                int p = ((Integer)pages.get(k)).intValue();
+                if (p >= page)
+                    pages.set(k, new Integer(p + 1));
+            }
+        }
+    }
+    
     void insertPage(int pageNumber, Rectangle mediabox) {
         Rectangle media = new Rectangle(mediabox);
         int rotation = media.getRotation() % 360;
@@ -593,6 +610,7 @@ class PdfStamperImp extends PdfWriter {
                 throw new RuntimeException("Internal inconsistence.");
             markUsed(kids);
             reader.pageRefs.insertPage(pageNumber, pref);
+            correctAcroFieldPages(pageNumber);
         }
         page.put(PdfName.PARENT, parentRef);
         while (parent != null) {
