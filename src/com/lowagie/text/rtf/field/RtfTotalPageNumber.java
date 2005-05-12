@@ -123,7 +123,7 @@ public class RtfTotalPageNumber extends RtfField {
      * @throws IOException
      */
     protected byte[] writeFieldResultContent() throws IOException {
-        return "1".getBytes();
+        return "0".getBytes();
     }
 }
 
