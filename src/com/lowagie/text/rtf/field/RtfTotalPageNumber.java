@@ -58,10 +58,10 @@ import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.field.RtfField;
 
 /**
- * The RtfPageNumber provides the page number field in rtf documents.
+ * The RtfTotalPageNumber provides the total number of pages field in rtf documents.
  * 
  * @version $Version:$
- * @author Jose Hurtado <a href="mailto:jose.hurtado@gft.com">jose.hurtado@gft.com</a>
+ * @author Jose Hurtado (jose.hurtado@gft.com)
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfTotalPageNumber extends RtfField {
@@ -72,15 +72,15 @@ public class RtfTotalPageNumber extends RtfField {
     private static final byte[] ARABIC_TOTAL_PAGES = "NUMPAGES \\\\* Arabic".getBytes();
     
     /**
-     * Constructs a RtfPageNumber. This can be added anywhere to add a page number field.
+     * Constructs a RtfTotalPageNumber. This can be added anywhere to add a total number of pages field.
      */
     public RtfTotalPageNumber() {
         super(null);
     }
     
     /**
-     * Constructs a RtfPageNumber with a specified Font. This can be added anywhere to
-     * add a page number field.
+     * Constructs a RtfTotalPageNumber with a specified Font. This can be added anywhere
+     * to add a total number of pages field.
      * @param font
      */
     public RtfTotalPageNumber(Font font) {
@@ -88,18 +88,18 @@ public class RtfTotalPageNumber extends RtfField {
     }
     
     /**
-     * Constructs a RtfPageNumber object.
+     * Constructs a RtfTotalPageNumber object.
      * 
-     * @param doc The RtfDocument this RtfPageNumber belongs to
+     * @param doc The RtfDocument this RtfTotalPageNumber belongs to
      */
     public RtfTotalPageNumber(RtfDocument doc) {
         super(doc);
     }
     
     /**
-     * Constructs a RtfPageNumber object with a specific font.
+     * Constructs a RtfTotalPageNumber object with a specific font.
      * 
-     * @param doc The RtfDocument this RtfPageNumber belongs to
+     * @param doc The RtfDocument this RtfTotalPageNumber belongs to
      * @param font The Font to use
      */
     public RtfTotalPageNumber(RtfDocument doc, Font font) {
@@ -123,7 +123,6 @@ public class RtfTotalPageNumber extends RtfField {
      * @throws IOException
      */
     protected byte[] writeFieldResultContent() throws IOException {
-        return "0".getBytes();
+        return "1".getBytes();
     }
 }
-
