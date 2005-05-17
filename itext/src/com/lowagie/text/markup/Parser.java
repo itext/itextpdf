@@ -102,6 +102,7 @@ public class Parser extends DefaultHandler {
 	protected String[] titles;
 	protected int[] counterParents;
 	protected int[] counters;
+	protected int previoustitle = -1;
 	/* Markup properties */
 	protected MarkupParser markup;
 	
@@ -298,7 +299,6 @@ public class Parser extends DefaultHandler {
 					if (filestack.size() > 0) file = new File((String)filestack.peek()).getParent() + "/" + file.trim();
 					filestack.push(file);
 					parse();
-					if (outline != null) outline.pop();
 				}
 			}
 			if (document.isOpen()) return;
@@ -373,6 +373,11 @@ public class Parser extends DefaultHandler {
 				if (structures[i].equals(attrs.getProperty(MarkupTags.HTML_ATTR_CSS_CLASS))) {
 					// we increment the number of this hierarchy element
 					counters[i]++;
+					while (previoustitle > -1 && counterParents[previoustitle] >= counterParents[i]) {
+						outline.pop();
+						previoustitle = counterParents[previoustitle];
+					}
+					previoustitle = i;
 					// we set the counter of the child to 0 if necessary
 					for (int j = i + 1; j < counters.length; j++) {
 						if (counterParents[j] == i) {
@@ -448,6 +453,7 @@ public class Parser extends DefaultHandler {
 	private void parse() throws ParserConfigurationException, IOException, SAXException {
 		// gets the file on top of the filestack
 		String file = (String) filestack.peek();
+//System.err.println("Parsing: " + file);
 		// create the parser
 		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance(); 
 		SAXParser saxParser = saxParserFactory.newSAXParser(); 
