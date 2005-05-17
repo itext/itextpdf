@@ -1,4 +1,6 @@
 /*
+ * $Id$
+ * $Name$
  * Copyright 2004 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
