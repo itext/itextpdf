@@ -380,7 +380,7 @@ public class Parser extends DefaultHandler {
 					previoustitle = i;
 					// we set the counter of the child to 0 if necessary
 					for (int j = i + 1; j < counters.length; j++) {
-						if (counterParents[j] == i) {
+						if (counterParents[j] == i && titles[i] == null) {
 							counters[j] = 0;
 							break;
 						}
