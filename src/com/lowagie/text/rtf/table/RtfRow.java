@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002, 2003, 2004 by Mark Hall
+ * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ public class RtfRow extends RtfElement {
      */
     private void importRow(Row row) {
         this.cells = new ArrayList();
-        this.width = this.document.getDocumentHeader().getPageSetting().getPageWidth() - this.document.getDocumentHeader().getPageSetting().getMarginLeft() - this.document.getDocumentHeader().getPageSetting().getMarginLeft();
+        this.width = this.document.getDocumentHeader().getPageSetting().getPageWidth() - this.document.getDocumentHeader().getPageSetting().getMarginLeft() - this.document.getDocumentHeader().getPageSetting().getMarginRight();
         this.width = (int) (this.width / 100 * this.parentTable.getTableWidthPercent());
         
         int cellRight = 0;
@@ -345,7 +345,9 @@ public class RtfRow extends RtfElement {
 
             result.write(DELIMITER);
 
-            result.write(writeRowDefinitions());
+            if(this.document.getDocumentSettings().isOutputTableRowDefinitionAfter()) {
+                result.write(writeRowDefinitions());
+            }
 
             result.write(ROW_END);
             result.write("\n".getBytes());
