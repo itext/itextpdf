@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002, 2003, 2004 by Mark Hall
+ * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import com.lowagie.text.ListItem;
+import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.text.RtfChunk;
 import com.lowagie.text.rtf.text.RtfParagraph;
@@ -86,10 +87,11 @@ public class RtfListItem extends RtfParagraph {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             for(int i = 0; i < chunks.size(); i++) {
-                RtfChunk rtfChunk = (RtfChunk) chunks.get(i);
-                rtfChunk.setSoftLineBreaks(true);
-                result.write(rtfChunk.write());
-                result.write(RtfParagraph.PARAGRAPH);
+                RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
+                if(rtfElement instanceof RtfChunk) {
+                    ((RtfChunk) rtfElement).setSoftLineBreaks(true);
+                }
+                result.write(rtfElement.write());
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
