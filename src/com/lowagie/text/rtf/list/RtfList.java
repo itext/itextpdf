@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002, 2003, 2004 by Mark Hall
+ * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -387,6 +387,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     result.write(TAB);
                     result.write(CLOSE_GROUP);
                     result.write(rtfElement.write());
+                    result.write(RtfParagraph.PARAGRAPH);
                     result.write("\n".getBytes());
                 } else if(rtfElement instanceof RtfList) {
                     result.write(rtfElement.write());
