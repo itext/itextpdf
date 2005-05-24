@@ -95,6 +95,10 @@ public class RtfDocument extends RtfElement {
      * Whether data has been written to the RtfDataCache.
      */
     private boolean dataWritten = false;
+    /**
+     * The RtfDocumentSettings for this RtfDocument.
+     */
+    private RtfDocumentSettings documentSettings = null;
     
     /**
      * Constant for the Rtf document start
@@ -111,6 +115,7 @@ public class RtfDocument extends RtfElement {
         documentHeader = new RtfDocumentHeader(this);
         documentHeader.init();
         previousRandomInts = new ArrayList();
+        this.documentSettings = new RtfDocumentSettings();
     }
 
     /**
@@ -265,5 +270,14 @@ public class RtfDocument extends RtfElement {
             case RtfDataCache.CACHE_DISK   : this.data = new RtfDiskCache(); break;
             default                        : this.data = new RtfMemoryCache(); break;
         }
+    }
+    
+    /**
+     * Gets the RtfDocumentSettings that specify how the rtf document is generated.
+     * 
+     * @return The current RtfDocumentSettings.
+     */
+    public RtfDocumentSettings getDocumentSettings() {
+        return this.documentSettings;
     }
 }
