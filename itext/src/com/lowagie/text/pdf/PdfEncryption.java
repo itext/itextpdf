@@ -99,7 +99,7 @@ public class PdfEncryption {
     }
 
     public PdfEncryption(PdfEncryption enc) {
-        super();
+        this();
         mkey = (byte[])enc.mkey.clone();
         ownerKey = (byte[])enc.ownerKey.clone();
         userKey = (byte[])enc.userKey.clone();
