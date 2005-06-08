@@ -752,7 +752,7 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName SHADINGTYPE = new PdfName("ShadingType");
     /** A name */
-    public static final PdfName SHIFT_JIS = new PdfName("Shift?JIS");
+    public static final PdfName SHIFT_JIS = new PdfName("Shift-JIS");
     /** A name */
     public static final PdfName SIG = new PdfName("Sig");
     /** A name */

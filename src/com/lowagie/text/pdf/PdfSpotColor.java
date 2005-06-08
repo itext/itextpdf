@@ -123,7 +123,7 @@ public class PdfSpotColor{
         }
         else {
             array.add(PdfName.DEVICERGB);
-            func = PdfFunction.type2(writer, new float[]{0, 1}, null, new float[]{0, 0, 0},
+            func = PdfFunction.type2(writer, new float[]{0, 1}, null, new float[]{1, 1, 1},
                 new float[]{(float)altcs.getRed() / 255, (float)altcs.getGreen() / 255, (float)altcs.getBlue() / 255}, 1);
         }
         array.add(func.getReference());
