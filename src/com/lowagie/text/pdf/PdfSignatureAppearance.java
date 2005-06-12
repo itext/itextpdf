@@ -782,7 +782,7 @@ public class PdfSignatureAppearance {
             sigStandard.put(PdfName.M, new PdfDate(getSignDate()));
             sigStandard.setSignInfo(getPrivKey(), getCertChain(), getCrlList());
             PdfString contents = (PdfString)sigStandard.get(PdfName.CONTENTS);
-            PdfLiteral lit = new PdfLiteral(contents.toString().length() * 2 + 2);
+            PdfLiteral lit = new PdfLiteral((contents.toString().length() + 64) * 2 + 2);
             exclusionLocations.put(PdfName.CONTENTS, lit);
             sigStandard.put(PdfName.CONTENTS, lit);
             lit = new PdfLiteral(80);
@@ -881,7 +881,7 @@ public class PdfSignatureAppearance {
                 bf.reset();
                 obj.toPdf(null, bf);
                 if (bf.size() > lit.getPosLength())
-                    throw new IllegalArgumentException("The key " + key.toString() + " is too big.");
+                    throw new IllegalArgumentException("The key " + key.toString() + " is too big. Is " + bf.size() + ", reserved " + lit.getPosLength());
                 if (tempFile == null)
                     System.arraycopy(bf.getBuffer(), 0, bout, lit.getPosition(), bf.size());
                 else {
