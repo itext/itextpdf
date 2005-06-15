@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- * itext@lowagie.com
+ * itext-questions@list.sourceforge.net
  */
 package com.lowagie.tools.plugins;
 
