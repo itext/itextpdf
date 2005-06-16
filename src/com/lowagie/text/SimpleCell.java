@@ -74,7 +74,13 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, Tex
 	/** the widthpercentage of the Cell. */
 	private float widthpercentage = 0f;
 	/** an extra spacing variable */
-	private float spacing = Float.NaN;
+	private float spacing_left = Float.NaN;
+	/** an extra spacing variable */
+	private float spacing_right = Float.NaN;
+	/** an extra spacing variable */
+	private float spacing_top = Float.NaN;
+	/** an extra spacing variable */
+	private float spacing_bottom = Float.NaN;
 	/** an extra padding variable */
 	private float padding_left = Float.NaN;
 	/** an extra padding variable */
@@ -179,7 +185,10 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, Tex
 		PdfPCell cell = new PdfPCell();
 		cell.setBorder(NO_BORDER);
 		SimpleCell tmp = new SimpleCell(CELL);
-		tmp.setSpacing(spacing);
+		tmp.setSpacing_left(spacing_left);
+		tmp.setSpacing_right(spacing_right);
+		tmp.setSpacing_top(spacing_top);
+		tmp.setSpacing_bottom(spacing_bottom);
 		tmp.cloneNonPositionParameters(rowAttributes);
 		tmp.softCloneNonPositionParameters(this);
 		cell.setCellEvent(tmp);
@@ -200,20 +209,26 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, Tex
 		if (useDescender)
 			cell.setUseDescender(useDescender);
 		float p;
-		float sp = spacing;
-		if (Float.isNaN(sp)) sp = 0f;
+		float sp_left = spacing_left;
+		if (Float.isNaN(sp_left)) sp_left = 0f;
+		float sp_right = spacing_right;
+		if (Float.isNaN(sp_right)) sp_right = 0f;
+		float sp_top = spacing_top;
+		if (Float.isNaN(sp_top)) sp_top = 0f;
+		float sp_bottom = spacing_bottom;
+		if (Float.isNaN(sp_bottom)) sp_bottom = 0f;
 		p = padding_left;
 		if (Float.isNaN(p)) p = 0f; 
-		cell.setPaddingLeft(p + sp / 2f);
+		cell.setPaddingLeft(p + sp_left);
 		p = padding_right;
 		if (Float.isNaN(p)) p = 0f; 
-		cell.setPaddingRight(p + sp / 2f);
+		cell.setPaddingRight(p + sp_right);
 		p = padding_top;
 		if (Float.isNaN(p)) p = 0f; 
-		cell.setPaddingTop(p + sp / 2f);
+		cell.setPaddingTop(p + sp_top);
 		p = padding_bottom;
 		if (Float.isNaN(p)) p = 0f; 
-		cell.setPaddingBottom(p + sp / 2f);
+		cell.setPaddingBottom(p + sp_bottom);
 		Element element;
 		for (Iterator i = content.iterator(); i.hasNext(); ) {
 			element = (Element)i.next();
@@ -230,7 +245,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, Tex
 	public static SimpleCell getDimensionlessInstance(Rectangle rectangle, float spacing) {
 		SimpleCell event = new SimpleCell(CELL);
 		event.cloneNonPositionParameters(rectangle);
-		event.setSpacing(spacing);
+		event.setSpacing(spacing * 2f);
 		return event;
 	}
 
@@ -238,10 +253,15 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, Tex
 	 * @see com.lowagie.text.pdf.PdfPCellEvent#cellLayout(com.lowagie.text.pdf.PdfPCell, com.lowagie.text.Rectangle, com.lowagie.text.pdf.PdfContentByte[])
 	 */
 	public void cellLayout(PdfPCell cell, Rectangle position, PdfContentByte[] canvases) {
-		float sp = spacing;
-		if (Float.isNaN(sp)) sp = 0f;
-		sp = sp / 2f;
-		Rectangle rect = new Rectangle(position.left(sp), position.bottom(sp), position.right(sp), position.top(sp));
+		float sp_left = spacing_left;
+		if (Float.isNaN(sp_left)) sp_left = 0f;
+		float sp_right = spacing_right;
+		if (Float.isNaN(sp_right)) sp_right = 0f;
+		float sp_top = spacing_top;
+		if (Float.isNaN(sp_top)) sp_top = 0f;
+		float sp_bottom = spacing_bottom;
+		if (Float.isNaN(sp_bottom)) sp_bottom = 0f;
+		Rectangle rect = new Rectangle(position.left(sp_left), position.bottom(sp_bottom), position.right(sp_right), position.top(sp_top));
 		rect.cloneNonPositionParameters(this);
 		canvases[PdfPTable.BACKGROUNDCANVAS].rectangle(rect);
 		rect.setBackgroundColor(null);
@@ -328,15 +348,64 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, Tex
 	/**
 	 * @return Returns the spacing.
 	 */
-	public float getSpacing() {
-		return spacing;
+	public float getSpacing_left() {
+		return spacing_left;
+	}
+	/**
+	 * @return Returns the spacing.
+	 */
+	public float getSpacing_right() {
+		return spacing_right;
+	}
+	/**
+	 * @return Returns the spacing.
+	 */
+	public float getSpacing_top() {
+		return spacing_top;
+	}
+	/**
+	 * @return Returns the spacing.
+	 */
+	public float getSpacing_bottom() {
+		return spacing_bottom;
 	}
 	
 	/**
 	 * @param spacing The spacing to set.
 	 */
 	public void setSpacing(float spacing) {
-		this.spacing = spacing;
+		this.spacing_left = spacing;
+		this.spacing_right = spacing;
+		this.spacing_top = spacing;
+		this.spacing_bottom = spacing;
+	}
+	
+	/**
+	 * @param spacing The spacing to set.
+	 */
+	public void setSpacing_left(float spacing) {
+		this.spacing_left = spacing;
+	}
+	
+	/**
+	 * @param spacing The spacing to set.
+	 */
+	public void setSpacing_right(float spacing) {
+		this.spacing_right = spacing;
+	}
+	
+	/**
+	 * @param spacing The spacing to set.
+	 */
+	public void setSpacing_top(float spacing) {
+		this.spacing_top = spacing;
+	}
+	
+	/**
+	 * @param spacing The spacing to set.
+	 */
+	public void setSpacing_bottom(float spacing) {
+		this.spacing_bottom = spacing;
 	}
 	
 	/**

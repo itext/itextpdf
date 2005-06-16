@@ -547,6 +547,18 @@ public class MarkupParser extends HashMap {
 	private Element retrieveTableRow(Properties attributes,
 			Properties styleattributes) {
 		SimpleCell row = new SimpleCell(SimpleCell.ROW);
+		String width = null;
+		if (attributes != null)
+			width = attributes.getProperty(MarkupTags.HTML_ATTR_WIDTH);
+		if (width == null)
+			width = styleattributes.getProperty(MarkupTags.HTML_ATTR_WIDTH);
+		if (width != null) {
+			if (width.endsWith("%")) {
+				row.setWidthpercentage(parseLength(width));
+			} else {
+				row.setWidth(parseLength(width));
+			}
+		}
 		return row;
 	}
 
