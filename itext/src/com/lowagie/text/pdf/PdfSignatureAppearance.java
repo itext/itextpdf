@@ -782,7 +782,7 @@ public class PdfSignatureAppearance {
             sigStandard.put(PdfName.M, new PdfDate(getSignDate()));
             sigStandard.setSignInfo(getPrivKey(), getCertChain(), getCrlList());
             PdfString contents = (PdfString)sigStandard.get(PdfName.CONTENTS);
-            PdfLiteral lit = new PdfLiteral((contents.toString().length() + 64) * 2 + 2);
+            PdfLiteral lit = new PdfLiteral((contents.toString().length() + (PdfName.ADOBE_PPKLITE.equals(getFilter())?0:64)) * 2 + 2);
             exclusionLocations.put(PdfName.CONTENTS, lit);
             sigStandard.put(PdfName.CONTENTS, lit);
             lit = new PdfLiteral(80);
