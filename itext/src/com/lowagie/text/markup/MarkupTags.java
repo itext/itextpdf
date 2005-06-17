@@ -153,6 +153,39 @@ public class MarkupTags {
 	/** the CSS tag for the margin of an object */
 	public static final String CSS_KEY_MARGINBOTTOM = "margin-bottom";
 
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_PADDING = "padding";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_PADDINGLEFT = "padding-left";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_PADDINGRIGHT = "padding-right";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_PADDINGTOP = "padding-top";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_PADDINGBOTTOM = "padding-bottom";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_BORDERCOLOR = "border-color";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_BORDERWIDTH = "border-width";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_BORDERWIDTHLEFT = "border-left-width";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_BORDERWIDTHRIGHT = "border-right-width";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_BORDERWIDTHTOP = "border-top-width";
+
+	/** the CSS tag for the margin of an object */
+	public static final String CSS_KEY_BORDERWIDTHBOTTOM = "border-bottom-width";
+
 	/** the CSS tag for adding a page break when the document is printed */
 	public static final String CSS_KEY_PAGE_BREAK_AFTER = "page-break-after";
 
