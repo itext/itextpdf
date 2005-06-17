@@ -527,4 +527,10 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, Tex
 			throw new ExceptionConverter(e);
 		}
 	}
+	/**
+	 * @see com.lowagie.text.Element#type()
+	 */
+	public int type() {
+		return Element.CELL;
+	}
 }
