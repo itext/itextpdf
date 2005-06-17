@@ -534,6 +534,7 @@ public class MarkupParser extends HashMap {
 	private Element retrieveTable(Properties attributes,
 			Properties styleattributes) {
 		SimpleTable table = new SimpleTable();
+		applyBordersColors(table, attributes, styleattributes);
 		return table;
 	}
 
@@ -547,6 +548,7 @@ public class MarkupParser extends HashMap {
 	private Element retrieveTableRow(Properties attributes,
 			Properties styleattributes) {
 		SimpleCell row = new SimpleCell(SimpleCell.ROW);
+		applyBordersColors(row, attributes, styleattributes);
 		String width = null;
 		if (attributes != null)
 			width = attributes.getProperty(MarkupTags.HTML_ATTR_WIDTH);
@@ -558,6 +560,57 @@ public class MarkupParser extends HashMap {
 			} else {
 				row.setWidth(parseLength(width));
 			}
+		}
+		String margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGIN);
+		float f;
+		if (margin != null) {
+			f = parseLength(margin);
+			row.setSpacing(f);
+		}
+		margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGINLEFT);
+		if (margin != null) {
+			f = parseLength(margin);
+			row.setSpacing_left(f);
+		}
+		margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGINRIGHT);
+		if (margin != null) {
+			f = parseLength(margin);
+			row.setSpacing_right(f);
+		}
+		margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGINTOP);
+		if (margin != null) {
+			f = parseLength(margin);
+			row.setSpacing_top(f);
+		}
+		margin = styleattributes.getProperty(MarkupTags.CSS_KEY_MARGINBOTTOM);
+		if (margin != null) {
+			f = parseLength(margin);
+			row.setSpacing_bottom(f);
+		}
+		String padding = styleattributes.getProperty(MarkupTags.CSS_KEY_PADDING);
+		if (padding != null) {
+			f = parseLength(padding);
+			row.setPadding(f);
+		}
+		padding = styleattributes.getProperty(MarkupTags.CSS_KEY_PADDINGLEFT);
+		if (padding != null) {
+			f = parseLength(padding);
+			row.setSpacing_left(f);
+		}
+		padding = styleattributes.getProperty(MarkupTags.CSS_KEY_PADDINGRIGHT);
+		if (padding != null) {
+			f = parseLength(padding);
+			row.setSpacing_right(f);
+		}
+		padding = styleattributes.getProperty(MarkupTags.CSS_KEY_PADDINGTOP);
+		if (padding != null) {
+			f = parseLength(padding);
+			row.setSpacing_top(f);
+		}
+		padding = styleattributes.getProperty(MarkupTags.CSS_KEY_PADDINGBOTTOM);
+		if (padding != null) {
+			f = parseLength(padding);
+			row.setSpacing_bottom(f);
 		}
 		return row;
 	}
@@ -587,6 +640,45 @@ public class MarkupParser extends HashMap {
 	private Element retrieveListItem(Font font, Properties styleattributes) {
 		ListItem li = new ListItem();
 		return li;
+	}
+	
+	/**
+	 * Applies colors to a Rectangle object.
+	 * @param rect
+	 * @param attributes
+	 * @param styleattributes
+	 */
+	private void applyBordersColors(Rectangle rect, Properties attributes,	Properties styleattributes) {
+		String s = styleattributes.getProperty(MarkupTags.CSS_KEY_BORDERWIDTH);
+		float f;
+		if (s != null) {
+			f = parseLength(s);
+			rect.setBorderWidth(f);
+		}
+		s = styleattributes.getProperty(MarkupTags.CSS_KEY_BORDERWIDTHLEFT);
+		if (s != null) {
+			f = parseLength(s);
+			rect.setBorderWidthLeft(f);
+		}
+		s = styleattributes.getProperty(MarkupTags.CSS_KEY_BORDERWIDTHRIGHT);
+		if (s != null) {
+			f = parseLength(s);
+			rect.setBorderWidthRight(f);
+		}
+		s = styleattributes.getProperty(MarkupTags.CSS_KEY_BORDERWIDTHTOP);
+		if (s != null) {
+			f = parseLength(s);
+			rect.setBorderWidthTop(f);
+		}
+		s = styleattributes.getProperty(MarkupTags.CSS_KEY_BORDERWIDTHBOTTOM);
+		if (s != null) {
+			f = parseLength(s);
+			rect.setBorderWidthBottom(f);
+		}
+		s = styleattributes.getProperty(MarkupTags.CSS_KEY_BORDERCOLOR);
+		if (s != null) {
+			rect.setBorderColor(decodeColor(s));
+		}
 	}
 
 	/**
