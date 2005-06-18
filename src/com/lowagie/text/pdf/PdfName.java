@@ -660,6 +660,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PANOSE = new PdfName("Panose");
     /** A name */
+    public static final PdfName PARAMS = new PdfName("Params");
+    /** A name */
     public static final PdfName PARENT = new PdfName("Parent");
     /** A name */
     public static final PdfName PATTERN = new PdfName("Pattern");
