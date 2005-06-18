@@ -93,6 +93,7 @@ public class PdfStream extends PdfDictionary {
     protected PdfIndirectReference ref;
     protected int inputStreamLength = -1;
     protected PdfWriter writer;
+    protected int rawLength;
         
     static final byte STARTSTREAM[] = DocWriter.getISOBytes("stream\n");
     static final byte ENDSTREAM[] = DocWriter.getISOBytes("\nendstream");
@@ -110,6 +111,7 @@ public class PdfStream extends PdfDictionary {
         super();
         type = STREAM;
         this.bytes = bytes;
+        rawLength = bytes.length;
         put(PdfName.LENGTH, new PdfNumber(bytes.length));
     }
   
@@ -160,6 +162,10 @@ public class PdfStream extends PdfDictionary {
         if (inputStreamLength == -1)
             throw new IOException("writeLength() can only be called after output of the stream body.");
         writer.addToBody(new PdfNumber(inputStreamLength), ref, false);
+    }
+    
+    public int getRawLength() {
+        return rawLength;
     }
     
     /**
@@ -242,6 +248,7 @@ public class PdfStream extends PdfDictionary {
         if (crypto != null)
             crypto.prepareKey();
         if (inputStream != null) {
+            rawLength = 0;
             DeflaterOutputStream def = null;
             PdfEncryptionStream encs = null;
             OutputStreamCounter osc = new OutputStreamCounter(os);
@@ -257,6 +264,7 @@ public class PdfStream extends PdfDictionary {
                 if (n <= 0)
                     break;
                 fout.write(buf, 0, n);
+                rawLength += n;
             }
             if (def != null)
                 def.finish();

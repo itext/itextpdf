@@ -112,7 +112,9 @@ public class PdfFileSpecification extends PdfDictionary {
         PdfStream stream;
         InputStream in = null;
         PdfIndirectReference ref;
+        PdfIndirectReference refFileLength;
         try {
+            refFileLength = writer.getPdfIndirectReference();
             if (fileStore == null) {
                 File file = new File(filePath);
                 if (file.canRead()) {
@@ -135,10 +137,14 @@ public class PdfFileSpecification extends PdfDictionary {
             stream.put(PdfName.TYPE, PdfName.EMBEDDEDFILE);
             if (compress)
                 stream.flateCompress();
+            stream.put(PdfName.PARAMS, refFileLength);
             ref = writer.addToBody(stream).getIndirectReference();
             if (fileStore == null) {
                 stream.writeLength();
             }
+            PdfDictionary params = new PdfDictionary();
+            params.put(PdfName.SIZE, new PdfNumber(stream.getRawLength()));
+            writer.addToBody(params, refFileLength);
         }
         finally {
             if (in != null)
