@@ -271,4 +271,13 @@ public class RtfImage extends RtfElement {
         }
         return result.toByteArray();
     }
+    
+    /**
+     * Sets the alignment of this RtfImage. Uses the alignments from com.lowagie.text.Element.
+     * 
+     * @param alignment The alignment to use.
+     */
+    public void setAlignment(int alignment) {
+        this.alignment = alignment;
+    }
 }
