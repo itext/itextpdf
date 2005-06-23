@@ -58,6 +58,7 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.graphic.RtfImage;
 
 
 /**
@@ -158,6 +159,12 @@ public class RtfParagraph extends RtfPhrase {
         this.keepTogether = paragraph.getKeepTogether();
         this.spacingBefore = (int) (paragraph.spacingBefore() * RtfElement.TWIPS_FACTOR);
         this.spacingAfter = (int) (paragraph.spacingAfter() * RtfElement.TWIPS_FACTOR);
+        
+        for(int i = 0; i < this.chunks.size(); i++) {
+            if(chunks.get(i) instanceof RtfImage) {
+                ((RtfImage) chunks.get(i)).setAlignment(this.alignment);
+            }
+        }
     }
     
     /**
