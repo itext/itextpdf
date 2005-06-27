@@ -207,7 +207,7 @@ public class TiffImage {
                         case TIFFConstants.COMPRESSION_CCITTRLEW:
                         case TIFFConstants.COMPRESSION_CCITTRLE:
                             decoder.decode1D(outBuf, im, 0, height);
-                            g4.encodeT6Lines(outBuf, 0, height);
+                            g4.fax4Encode(outBuf,height);
                             break;
                         case TIFFConstants.COMPRESSION_CCITTFAX3:
                             try {
@@ -223,11 +223,11 @@ public class TiffImage {
                                     throw e;
                                 }
                             }
-                            g4.encodeT6Lines(outBuf, 0, height);
+                            g4.fax4Encode(outBuf, height);
                             break;
                         case TIFFConstants.COMPRESSION_CCITTFAX4:
                             decoder.decodeT6(outBuf, im, 0, height, tiffT6Options);
-                            g4.encodeT6Lines(outBuf, 0, height);
+                            g4.fax4Encode(outBuf, height);
                             break;
                     }
                     rowsLeft -= rowsStrip;
@@ -363,7 +363,7 @@ public class TiffImage {
                         break;
                 }
                 if (bitsPerSample == 1 && samplePerPixel == 1) {
-                    g4.encodeT6Lines(outBuf, 0, height);
+                    g4.fax4Encode(outBuf, height);
                 }
                 else {
                     zip.write(outBuf);
