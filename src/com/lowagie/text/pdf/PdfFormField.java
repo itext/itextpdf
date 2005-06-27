@@ -268,7 +268,8 @@ public class PdfFormField extends PdfAnnotation {
     }
     
     public void setFieldName(String s) {
-        put(PdfName.T, new PdfString(s, PdfObject.TEXT_UNICODE));
+        if (s != null)
+            put(PdfName.T, new PdfString(s, PdfObject.TEXT_UNICODE));
     }
     
     public void setUserName(String s) {
