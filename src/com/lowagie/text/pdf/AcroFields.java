@@ -1022,7 +1022,10 @@ public class AcroFields {
                     merged.put(PdfName.V, v);
                     merged.put(PdfName.AS, v);
                     PdfDictionary widget = (PdfDictionary)item.widgets.get(idx);
-                    widget.put(PdfName.AS, v);
+                    if (isInAP(widget,  v))
+                        widget.put(PdfName.AS, v);
+                    else
+                        widget.put(PdfName.AS, PdfName.Off);
                     markUsed(widget);
                 }
             }
