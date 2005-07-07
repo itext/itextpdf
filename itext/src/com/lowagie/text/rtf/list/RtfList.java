@@ -214,14 +214,25 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     public RtfList(RtfDocument doc, List list) {
         super(doc);
         
-        listNumber = document.getDocumentHeader().getListNumber(this);
+        this.listNumber = document.getDocumentHeader().getListNumber(this);
         
-        items = new ArrayList();
-        firstIndent = (int) ((list.symbolIndent() - list.indentationLeft()) * RtfElement.TWIPS_FACTOR * -1);
-        leftIndent = (int) ((list.indentationLeft() + list.symbolIndent()) * RtfElement.TWIPS_FACTOR);
-        rightIndent = (int) (list.indentationRight() * RtfElement.TWIPS_FACTOR);
+        this.items = new ArrayList();
+        if(list.symbolIndent() > 0 && list.indentationLeft() > 0) {
+            this.firstIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR * -1);
+            this.leftIndent = (int) ((list.indentationLeft() + list.symbolIndent()) * RtfElement.TWIPS_FACTOR);
+        } else if(list.symbolIndent() > 0) {
+            this.firstIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR * -1);
+            this.leftIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR);
+        } else if(list.indentationLeft() > 0) {
+            this.firstIndent = 0;
+            this.leftIndent = (int) (list.indentationLeft() * RtfElement.TWIPS_FACTOR);
+        } else {
+            this.firstIndent = 0;
+            this.leftIndent = 0;
+        }
+        this.rightIndent = (int) (list.indentationRight() * RtfElement.TWIPS_FACTOR);
         this.symbolIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR);
-        numbered = list.isNumbered();
+        this.numbered = list.isNumbered();
         
         for(int i = 0; i < list.getItems().size(); i++) {
             try {
