@@ -200,6 +200,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * The RtfFont for bulleted lists
      */
     private RtfFont fontBullet;
+    /**
+     * The alignment of this RtfList
+     */
+    private int alignment = Element.ALIGN_LEFT;
     
     /**
      * Constructs a new RtfList for the specified List.
@@ -224,6 +228,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 Element element = (Element) list.getItems().get(i);
                 if(element.type() == Element.CHUNK) {
                     element = new ListItem((Chunk) element);
+                }
+                if(element instanceof ListItem) {
+                    this.alignment = ((ListItem) element).alignment();
                 }
                 RtfBasicElement rtfElement = doc.getMapper().mapElement(element);
                 if(rtfElement instanceof RtfList) {
@@ -336,7 +343,21 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-            result.write(RtfParagraph.ALIGN_LEFT);
+            switch (this.alignment) {
+                case Element.ALIGN_LEFT:
+                    result.write(RtfParagraph.ALIGN_LEFT);
+                    break;
+                case Element.ALIGN_RIGHT:
+                    result.write(RtfParagraph.ALIGN_RIGHT);
+                    break;
+                case Element.ALIGN_CENTER:
+                    result.write(RtfParagraph.ALIGN_CENTER);
+                    break;
+                case Element.ALIGN_JUSTIFIED:
+                case Element.ALIGN_JUSTIFIED_ALL:
+                    result.write(RtfParagraph.ALIGN_JUSTIFY);
+                    break;
+            }
             result.write(writeIndentations());
             result.write(RtfFont.FONT_SIZE);
             result.write(intToByteArray(fontNumber.getFontSize() * 2));
