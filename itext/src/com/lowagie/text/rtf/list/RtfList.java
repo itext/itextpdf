@@ -231,7 +231,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             this.leftIndent = 0;
         }
         this.rightIndent = (int) (list.indentationRight() * RtfElement.TWIPS_FACTOR);
-        this.symbolIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR);
+        this.symbolIndent = (int) ((list.symbolIndent() + list.indentationLeft()) * RtfElement.TWIPS_FACTOR);
         this.numbered = list.isNumbered();
         
         for(int i = 0; i < list.getItems().size(); i++) {
@@ -377,6 +377,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             if(listLevel > 0) {
                 result.write(LIST_LEVEL_NUMBER);
                 result.write(intToByteArray(listLevel));
+            }
+            if(this.symbolIndent > 0) { // TODO This is a slight hack. Replace with a call to tab support when implemented.
+                result.write("\\tx".getBytes());
+                result.write(intToByteArray(this.symbolIndent));
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
