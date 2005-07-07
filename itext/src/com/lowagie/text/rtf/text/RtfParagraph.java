@@ -196,19 +196,19 @@ public class RtfParagraph extends RtfPhrase {
                 result.write(IN_TABLE);
             }
             switch (alignment) {
-            	case Element.ALIGN_LEFT:
-            		result.write(ALIGN_LEFT);
-            		break;
-            	case Element.ALIGN_RIGHT:
-            		result.write(ALIGN_RIGHT);
-            		break;
-            	case Element.ALIGN_CENTER:
-            		result.write(ALIGN_CENTER);
-            		break;
-            	case Element.ALIGN_JUSTIFIED:
-            	case Element.ALIGN_JUSTIFIED_ALL:
-            		result.write(ALIGN_JUSTIFY);
-            		break;
+                case Element.ALIGN_LEFT:
+                    result.write(ALIGN_LEFT);
+                    break;
+                case Element.ALIGN_RIGHT:
+                    result.write(ALIGN_RIGHT);
+                    break;
+                case Element.ALIGN_CENTER:
+                    result.write(ALIGN_CENTER);
+                    break;
+                case Element.ALIGN_JUSTIFIED:
+                case Element.ALIGN_JUSTIFIED_ALL:
+                    result.write(ALIGN_JUSTIFY);
+                    break;
             }
     	    result.write(INDENT_LEFT);
     	    result.write(intToByteArray(indentLeft));
