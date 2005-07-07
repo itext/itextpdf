@@ -211,7 +211,7 @@ public class RtfDocument extends RtfElement {
                     ret.append("\\par ");
                 }
             } else if (ch == '\t') {
-                ret.append("\\tab");
+                ret.append("\\tab ");
             } else if (((int) ch) > z) {
                 if(useHex) {
                     ret.append("\\\'").append(Long.toHexString((long) ch));
