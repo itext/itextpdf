@@ -27,12 +27,12 @@
 
 	<target name="src.zip" description="--> makes a zipfile with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties" />
+		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties, META-INF/MANIFEST.MF" />
 	</target>
 	
 	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<tar tarfile="${itext.dist}/src.tar" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties" />
+		<tar tarfile="${itext.dist}/src.tar" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties, META-INF/MANIFEST.MF" />
 		<gzip zipfile="${itext.dist}/src.tar.gz" src="${itext.dist}/src.tar"/>
 		<delete file="${itext.dist}/src.tar"/>
 	</target>

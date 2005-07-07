@@ -95,7 +95,6 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	 * @param args no arguments needed
 	 */
 	public static void main(String[] args) {
-		JFrame.setDefaultLookAndFeelDecorated(true);
 		Toolbox toolbox = new Toolbox();
 	}
 	
