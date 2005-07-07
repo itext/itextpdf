@@ -58,6 +58,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.ListItem;
@@ -125,7 +126,7 @@ public class MarkupParser extends HashMap {
 				}
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new ExceptionConverter(e);
 		}
 	}
 
