@@ -58,6 +58,8 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.Annotation;
+import java.io.IOException;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -131,6 +133,7 @@ public class PdfContentByte {
     /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_CLIP = 7;
     
+    private static final float[] unitRect = {0, 0, 0, 1, 1, 0, 1, 1};
     // membervariables
     
     /** This is the actual content */
@@ -1023,6 +1026,30 @@ public class PdfContentByte {
                 content.append(f).append(" cm ");
                 content.append(name.getBytes()).append(" Do Q").append_i(separator);
             }
+            Annotation annot = image.annotation();
+            if (annot == null)
+                return;
+            float[] r = new float[unitRect.length];
+            for (int k = 0; k < unitRect.length; k += 2) {
+                r[k] = a * unitRect[k] + c * unitRect[k + 1] + e;
+                r[k + 1] = b * unitRect[k] + d * unitRect[k + 1] + f;
+            }
+            float llx = r[0];
+            float lly = r[1];
+            float urx = llx;
+            float ury = lly;
+            for (int k = 2; k < r.length; k += 2) {
+                llx = Math.min(llx, r[k]);
+                lly = Math.min(lly, r[k + 1]);
+                urx = Math.max(urx, r[k]);
+                ury = Math.max(ury, r[k + 1]);
+            }
+            annot = new Annotation(annot);
+            annot.setDimensions(llx, lly, urx, ury);
+            PdfAnnotation an = PdfDocument.convertAnnotation(writer, annot);
+            if (an == null)
+                return;
+            addAnnotation(an);
         }
         catch (Exception ee) {
             throw new DocumentException(ee);
