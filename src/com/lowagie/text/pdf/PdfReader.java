@@ -2887,7 +2887,7 @@ public class PdfReader {
         PageRefs(PageRefs other, PdfReader reader) {
             this.reader = reader;
             this.sizep = other.sizep;
-            if (refsn != null) {
+            if (other.refsn != null) {
                 refsn = new ArrayList(other.refsn);
                 for (int k = 0; k < refsn.size(); ++k) {
                     refsn.set(k, duplicatePdfObject((PdfObject)refsn.get(k), reader));
