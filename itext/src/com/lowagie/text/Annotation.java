@@ -184,6 +184,16 @@ public class Annotation implements Element, MarkupAttributes {
 		this.ury = ury;
 	}
 
+    public Annotation(Annotation an) {
+        annotationtype = an.annotationtype;
+        annotationAttributes = an.annotationAttributes;
+        markupAttributes = an.markupAttributes;
+        llx = an.llx;
+        lly = an.lly;
+        urx = an.urx;
+        ury = an.ury;
+    }
+    
 	/**
 	 * Constructs an <CODE>Annotation</CODE> with a certain title and some
 	 * text.

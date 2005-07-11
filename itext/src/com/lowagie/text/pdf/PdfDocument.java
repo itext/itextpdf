@@ -1142,7 +1142,7 @@ class PdfDocument extends Document implements DocListener {
 				for (Iterator i = images.iterator(); i.hasNext();) {
 					cellsShown = true;
 					Image image = (Image) i.next();
-					addImage(graphics, image, 0, 0, 0, 0, 0, 0);
+					graphics.addImage(image);
 				}
 				// if a cell is allready added completely, remove it
 				if (cell.mayBeRemoved()) {
@@ -1230,7 +1230,7 @@ class PdfDocument extends Document implements DocListener {
 						for (Iterator im = images.iterator(); im.hasNext();) {
 							cellsShown = true;
 							Image image = (Image) im.next();
-							addImage(graphics, image, 0, 0, 0, 0, 0, 0);
+							graphics.addImage(image);
 						}
 						lines = cell.getLines(indentTop(), indentBottom());
 						float cellTop = cell.top(indentTop());
@@ -1374,45 +1374,8 @@ class PdfDocument extends Document implements DocListener {
                         carriageReturn();
                     }
                     Annotation annot = (Annotation) element;
-                    switch(annot.annotationType()) {
-                        case Annotation.URL_NET:
-                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((URL) annot.attributes().get(Annotation.URL))));
-                            break;
-                        case Annotation.URL_AS_STRING:
-                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE))));
-                            break;
-                        case Annotation.FILE_DEST:
-                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), (String) annot.attributes().get(Annotation.DESTINATION))));
-                            break;
-                        case Annotation.SCREEN:
-                            boolean sparams[] = (boolean[])annot.attributes().get(Annotation.PARAMETERS);
-                            String fname = (String) annot.attributes().get(Annotation.FILE);
-                            String mimetype = (String) annot.attributes().get(Annotation.MIMETYPE);
-                            PdfFileSpecification fs;
-                            if (sparams[0])
-                                fs = PdfFileSpecification.fileEmbedded(writer, fname, fname, null);
-                            else
-                                fs = PdfFileSpecification.fileExtern(writer, fname);
-                            PdfAnnotation ann = PdfAnnotation.createScreen(writer, new Rectangle(annot.llx(), annot.lly(), annot.urx(), annot.ury()),
-                                    fname, fs, mimetype, sparams[1]);
-                            annotations.add(ann);
-                            break;
-                        case Annotation.FILE_PAGE:
-                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), ((Integer) annot.attributes().get(Annotation.PAGE)).intValue())));
-                            break;
-                        case Annotation.NAMED_DEST:
-                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction(((Integer) annot.attributes().get(Annotation.NAMED)).intValue())));
-                            break;
-                        case Annotation.LAUNCH:
-                            annotations.add(new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR))));
-                            break;
-                        default:
-                            PdfAnnotation an = new PdfAnnotation(writer, annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content()));
-                            //PdfAnnotation pop = PdfAnnotation.createPopup(writer, new Rectangle(annot.llx(indentRight() - line.widthLeft()), annot.lly(indentTop() - currentHeight), annot.urx(indentRight() - line.widthLeft() + 20), annot.ury(indentTop() - currentHeight - 20)), null, true);
-                            //an.setPopup(pop);
-                            annotations.add(an);
-                            //annotations.add(pop);
-                    }
+                    PdfAnnotation an = convertAnnotation(writer, annot);
+                    annotations.add(an);
                     pageEmpty = false;
                     break;
                 }
@@ -1788,38 +1751,6 @@ class PdfDocument extends Document implements DocListener {
     // methods to add Content
         
     /**
-     * Adds an image to the Graphics object.
-     * 
-     * @param graphics the PdfContentByte holding the graphics layer of this PdfDocument
-     * @param image the image
-     * @param a an element of the transformation matrix
-     * @param b an element of the transformation matrix
-     * @param c an element of the transformation matrix
-     * @param d an element of the transformation matrix
-     * @param e an element of the transformation matrix
-     * @param f an element of the transformation matrix
-     * @throws DocumentException
-     */
-    
-    private void addImage(PdfContentByte graphics, Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
-        Annotation annotation = image.annotation();
-        if (image.hasAbsolutePosition()) {
-            graphics.addImage(image);
-            if (annotation != null) {
-                annotation.setDimensions(image.absoluteX(), image.absoluteY(), image.absoluteX() + image.scaledWidth(), image.absoluteY() + image.scaledHeight());
-                add(annotation);
-            }
-        }
-        else {
-            graphics.addImage(image, a, b, c, d, e, f);
-            if (annotation != null) {
-                annotation.setDimensions(e, f, e + image.scaledWidth(), f + image.scaledHeight());
-                add(annotation);
-            }
-        }
-    }
-    
-    /**
      * Adds an image to the document.
      * @param image the <CODE>Image</CODE> to add
      * @throws PdfException on error
@@ -1829,7 +1760,7 @@ class PdfDocument extends Document implements DocListener {
     private void add(Image image) throws PdfException, DocumentException {
         
         if (image.hasAbsolutePosition()) {
-            addImage(graphics, image, 0, 0, 0, 0, 0, 0);
+            graphics.addImage(image);
             pageEmpty = false;
             return;
         }
@@ -1863,7 +1794,7 @@ class PdfDocument extends Document implements DocListener {
         if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
         if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.scaledWidth()) / 2) - mt[4];
         if (image.hasAbsoluteX()) startPosition = image.absoluteX();
-        addImage(graphics, image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
+        graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
                 imageEnd = currentHeight + image.scaledHeight() + diff;
@@ -1945,7 +1876,7 @@ class PdfDocument extends Document implements DocListener {
         // if there is a watermark, the watermark is added
         if (watermark != null) {
             float mt[] = watermark.matrix();
-            addImage(graphics, watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
+            graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
         
         // if there is a footer, the footer is added
@@ -2214,7 +2145,7 @@ class PdfDocument extends Document implements DocListener {
                     float yMarker = text.getYTLM();
                     matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                     matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
-                    addImage(graphics, image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+                    graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                 }
                 else {
                     text.showText(chunk.toString());
@@ -2631,7 +2562,7 @@ class PdfDocument extends Document implements DocListener {
                         float matrix[] = image.matrix();
                         matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
                         matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
-                        addImage(graphics, image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+                        graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                         text.moveText(xMarker + lastBaseFactor + image.scaledWidth() - text.getXTLM(), 0);
                     }
                 }
@@ -2988,5 +2919,40 @@ class PdfDocument extends Document implements DocListener {
     
     void setThumbnail(Image image) throws PdfException, DocumentException {
         thumb = writer.getImageReference(writer.addDirectImageSimple(image));
+    }
+    
+    static PdfAnnotation convertAnnotation(PdfWriter writer, Annotation annot) throws IOException {
+         switch(annot.annotationType()) {
+            case Annotation.URL_NET:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((URL) annot.attributes().get(Annotation.URL)));
+            case Annotation.URL_AS_STRING:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE)));
+            case Annotation.FILE_DEST:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), (String) annot.attributes().get(Annotation.DESTINATION)));
+            case Annotation.SCREEN:
+                boolean sparams[] = (boolean[])annot.attributes().get(Annotation.PARAMETERS);
+                String fname = (String) annot.attributes().get(Annotation.FILE);
+                String mimetype = (String) annot.attributes().get(Annotation.MIMETYPE);
+                PdfFileSpecification fs;
+                if (sparams[0])
+                    fs = PdfFileSpecification.fileEmbedded(writer, fname, fname, null);
+                else
+                    fs = PdfFileSpecification.fileExtern(writer, fname);
+                PdfAnnotation ann = PdfAnnotation.createScreen(writer, new Rectangle(annot.llx(), annot.lly(), annot.urx(), annot.ury()),
+                        fname, fs, mimetype, sparams[1]);
+                return ann;
+            case Annotation.FILE_PAGE:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), ((Integer) annot.attributes().get(Annotation.PAGE)).intValue()));
+            case Annotation.NAMED_DEST:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction(((Integer) annot.attributes().get(Annotation.NAMED)).intValue()));
+            case Annotation.LAUNCH:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR)));
+            default:
+                PdfDocument doc = writer.getPdfDocument();
+                if (doc.line == null)
+                    return null;
+                PdfAnnotation an = new PdfAnnotation(writer, annot.llx(doc.indentRight() - doc.line.widthLeft()), annot.lly(doc.indentTop() - doc.currentHeight), annot.urx(doc.indentRight() - doc.line.widthLeft() + 20), annot.ury(doc.indentTop() - doc.currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content()));
+                return an;
+        }
     }
 }
