@@ -50,6 +50,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
@@ -247,29 +248,25 @@ public class FdfWriter {
      * @param pdf the <CODE>PdfReader</CODE>
      */    
     public void setFields(PdfReader pdf) {
-        PRAcroForm acro = pdf.getAcroForm();
-        ArrayList f = acro.getFields();
-        for (int k = 0; k < f.size(); ++k) {
-            PRAcroForm.FieldInformation inf = (PRAcroForm.FieldInformation)f.get(k);
-            PdfObject obj = inf.getInfo().get(PdfName.V);
-            if (obj == null)
-                continue;
-            setField(inf.name, obj);
-        }
+        setFields(pdf.getAcroFields());
     }
     
     /** Sets all the fields from this <CODE>AcroFields</CODE>
      * @param acro the <CODE>AcroFields</CODE>
      */    
-    public void setFields(AcroFields acro) {
-        HashMap map = acro.getFields();
-        for (Iterator it = map.keySet().iterator(); it.hasNext();) {
-            String key = (String)it.next();
-            AcroFields.Item item = (AcroFields.Item)map.get(key);
-            PdfObject obj = ((PdfDictionary)item.merged.get(0)).get(PdfName.V);
-            if (obj == null)
+    public void setFields(AcroFields af) {
+        for (Iterator it = af.getFields().entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry)it.next();
+            String fn = (String)entry.getKey();
+            AcroFields.Item item = (AcroFields.Item)entry.getValue();
+            PdfDictionary dic = (PdfDictionary)item.merged.get(0);
+            PdfObject v = PdfReader.getPdfObjectRelease(dic.get(PdfName.V));
+            if (v == null)
                 continue;
-            setField(key, obj);
+            PdfObject ft = PdfReader.getPdfObjectRelease(dic.get(PdfName.FT));
+            if (ft == null || PdfName.SIG.equals(ft))
+                continue;
+            setField(fn, v);
         }
     }
     
