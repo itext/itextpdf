@@ -1024,6 +1024,14 @@ public class PdfContentByte {
                 content.append(f).append(" cm ");
                 content.append(name.getBytes()).append(" Do Q").append_i(separator);
             }
+            if (image.hasBorders()) {
+                saveState();
+                float w = image.width();
+                float h = image.height();
+                concatCTM(a / w, b / w, c / h, d / h, e, f);
+                rectangle(image);
+                restoreState();
+            }
             if (image.getLayer() != null)
                 endLayer();
             Annotation annot = image.annotation();
