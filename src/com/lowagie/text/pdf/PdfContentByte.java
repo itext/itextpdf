@@ -996,16 +996,14 @@ public class PdfContentByte {
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
         try {
             
+            if (image.getLayer() != null)
+                beginLayer(image.getLayer());
             if (image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
                 PdfTemplate template = image.templateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
-                if (image.getLayer() != null)
-                    beginLayer(image.getLayer());
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
-                if (image.getLayer() != null)
-                    endLayer();
             }
             else {
                 PdfName name;
@@ -1026,6 +1024,8 @@ public class PdfContentByte {
                 content.append(f).append(" cm ");
                 content.append(name.getBytes()).append(" Do Q").append_i(separator);
             }
+            if (image.getLayer() != null)
+                endLayer();
             Annotation annot = image.annotation();
             if (annot == null)
                 return;
