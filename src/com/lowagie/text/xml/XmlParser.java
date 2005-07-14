@@ -127,6 +127,25 @@ public class XmlParser {
         }
     }
     
+    /**
+     * Parses a given file.
+     * @param document The document that will listen to the parser
+     * @param is the inputsource with the content
+     * @param tagmap an inputstream to a userdefined tagmap
+     */
+        
+        public void go(DocListener document, InputSource is, InputStream tagmap) {
+            try {
+                parser.parse(is, new SAXmyHandler(document, new TagMap(tagmap)));
+            }
+            catch(SAXException se) {
+                throw new ExceptionConverter(se);
+            }
+            catch(IOException ioe) {
+                throw new ExceptionConverter(ioe);
+            }
+        }
+    
 /**
  * Parses a given file.
  * @param document The document that will listen to the parser
