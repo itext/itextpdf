@@ -797,6 +797,10 @@ class PdfDocument extends Document implements DocListener {
             }
             pageAA = null;
         }
+        // we check if the userunit is defined
+        if (writer.getUserunit() > 0f) {
+        	page.put(PdfName.USERUNIT, new PdfNumber(writer.getUserunit()));
+        }
         // we add the annotations
         if (annotations.size() > 0) {
             PdfArray array = rotateAnnotations();

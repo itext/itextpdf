@@ -735,6 +735,7 @@ public class PdfWriter extends DocWriter {
     protected PdfArray OCGRadioGroup = new PdfArray();
     
     protected PdfDictionary defaultColorspace = new PdfDictionary();
+    protected float userunit = 0f;
     
     /** PDF/X value */
     public static final int PDFXNONE = 0;
@@ -2539,4 +2540,26 @@ public class PdfWriter extends DocWriter {
         pdf.setThumbnail(image);
     }
 
+	/**
+	 * A UserUnit is a value that defines the default user space unit.
+	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+	 * The maximum UserUnit is 75,000.
+	 * Remark that this userunit only works starting with PDF1.6!
+	 * @return Returns the userunit.
+	 */
+	public float getUserunit() {
+		return userunit;
+	}
+	/**
+	 * A UserUnit is a value that defines the default user space unit.
+	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+	 * The maximum UserUnit is 75,000.
+	 * Remark that this userunit only works starting with PDF1.6!
+	 * @param userunit The userunit to set.
+	 * @throws DocumentException
+	 */
+	public void setUserunit(float userunit) throws DocumentException {
+		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
+		this.userunit = userunit;
+	}
 }
