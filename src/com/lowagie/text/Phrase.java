@@ -343,6 +343,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public void add(int index, Object o) {
+    	if (o == null) return;
         try {
             Element element = (Element) o;
             if (element.type() == Element.CHUNK) {
@@ -378,6 +379,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
  */
     
     public boolean add(Object o) {
+    	if (o == null) return false;
         if (o instanceof String) {
             return super.add(new Chunk((String) o, font));
         }
