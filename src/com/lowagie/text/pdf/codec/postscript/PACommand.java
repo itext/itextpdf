@@ -12,8 +12,6 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.lang.*;
-
 public interface PACommand {
 
     public void execute(PAContext context) throws PainterException;

@@ -110,7 +110,6 @@
  ********************************************************************/
 package com.lowagie.text.pdf;
 
-import java.util.*;
 import java.io.*;
 
 /**

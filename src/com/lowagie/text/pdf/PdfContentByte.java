@@ -59,7 +59,6 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Annotation;
-import java.io.IOException;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned

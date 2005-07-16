@@ -88,7 +88,6 @@ import java.awt.image.renderable.RenderableImage;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.text.CharacterIterator;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
 import java.util.HashMap;

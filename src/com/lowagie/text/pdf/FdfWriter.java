@@ -252,7 +252,7 @@ public class FdfWriter {
     }
     
     /** Sets all the fields from this <CODE>AcroFields</CODE>
-     * @param acro the <CODE>AcroFields</CODE>
+     * @param af the <CODE>AcroFields</CODE>
      */    
     public void setFields(AcroFields af) {
         for (Iterator it = af.getFields().entrySet().iterator(); it.hasNext();) {

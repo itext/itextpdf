@@ -50,10 +50,8 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocumentException;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 import com.lowagie.text.pdf.fonts.FontsResourceAnchor;
 import java.io.*;
