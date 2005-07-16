@@ -204,6 +204,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * The alignment of this RtfList
      */
     private int alignment = Element.ALIGN_LEFT;
+    /**
+     * The parent List in multi-level lists.
+     */
+    private RtfList parentList = null;
     
     /**
      * Constructs a new RtfList for the specified List.
@@ -247,11 +251,16 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 if(rtfElement instanceof RtfList) {
                     ((RtfList) rtfElement).setListNumber(listNumber);
                     ((RtfList) rtfElement).setListLevel(listLevel + 1);
+                    ((RtfList) rtfElement).setParent(this);
                 }
                 items.add(rtfElement);
             } catch(DocumentException de) {
                 de.printStackTrace();
             }
+        }
+        
+        if(this.listLevel == 0) {
+            correctIndentation();
         }
         
         fontNumber = new RtfFont(document, new Font(Font.TIMES_ROMAN, 10, Font.NORMAL, new Color(0, 0, 0)));
@@ -329,7 +338,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             }
             result.write(writeIndentations());
             result.write(LIST_LEVEL_SYMBOL_INDENT);
-            result.write(intToByteArray(symbolIndent));
+            result.write(intToByteArray(this.leftIndent));
             result.write(CLOSE_GROUP);
             result.write("\n".getBytes());
             for(int i = 0; i < items.size(); i++) {
@@ -380,7 +389,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             }
             if(this.symbolIndent > 0) { // TODO This is a slight hack. Replace with a call to tab support when implemented.
                 result.write("\\tx".getBytes());
-                result.write(intToByteArray(this.symbolIndent));
+                result.write(intToByteArray(this.leftIndent));
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -459,9 +468,24 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         this.listLevel = listLevel;
         if(this.listLevel != 0) {
             document.getDocumentHeader().freeListNumber(this);
+            for(int i = 0; i < this.items.size(); i++) {
+                if(this.items.get(i) instanceof RtfList) {
+                    ((RtfList) this.items.get(i)).setListNumber(this.listNumber);
+                    ((RtfList) this.items.get(i)).setListLevel(this.listLevel + 1);
+                }
+            }
         } else {
             this.listNumber = document.getDocumentHeader().getListNumber(this);
         }
+    }
+    
+    /**
+     * Sets the parent RtfList of this RtfList
+     * 
+     * @param parent The parent RtfList to use.
+     */
+    private void setParent(RtfList parent) {
+        this.parentList = parent;
     }
     
     /**
@@ -506,5 +530,38 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         for(int i = 0; i < this.items.size(); i++) {
             ((RtfBasicElement) this.items.get(i)).setInHeader(inHeader);
         }
+    }
+
+    /**
+     * Correct the indentation of this RtfList by adding left/first line indentation
+     * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
+     */
+    private void correctIndentation() {
+        if(this.parentList != null) {
+            this.leftIndent = this.leftIndent + this.parentList.getLeftIndent() + this.parentList.getFirstIndent();
+        }
+        for(int i = 0; i < this.items.size(); i++) {
+            if(this.items.get(i) instanceof RtfList) {
+                ((RtfList) this.items.get(i)).correctIndentation();
+            }
+        }
+    }
+
+    /**
+     * Get the left indentation of this RtfList.
+     * 
+     * @return The left indentation.
+     */
+    private int getLeftIndent() {
+        return this.leftIndent;
+    }
+    
+    /**
+     * Get the first line indentation of this RtfList.
+     * 
+     * @return The first line indentation.
+     */
+    private int getFirstIndent() {
+        return this.firstIndent;
     }
 }
