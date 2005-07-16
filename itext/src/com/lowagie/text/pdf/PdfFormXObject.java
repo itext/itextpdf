@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 /**
  * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
  */

@@ -12,13 +12,7 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.lang.*;
-import java.lang.reflect.*;
 import java.util.*;
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.color.*;
-import java.awt.font.*;
 
 
 public class PAEngine extends Object {

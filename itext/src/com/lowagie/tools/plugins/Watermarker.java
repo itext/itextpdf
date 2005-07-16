@@ -47,8 +47,6 @@ public class Watermarker extends AbstractTool {
 
 	/**
 	 * Creates the internal frame.
-	 * 
-	 * @todo Implement this com.lowagie.tools.plugins.AbstractTool method
 	 */
 	protected void createFrame() {
 		internalFrame = new JInternalFrame("Watermark", true, true, true);
@@ -58,8 +56,6 @@ public class Watermarker extends AbstractTool {
 
 	/**
 	 * Executes the tool (in most cases this generates a PDF file).
-	 * 
-	 * @todo Implement this com.lowagie.tools.plugins.AbstractTool method
 	 */
 	public void execute() {
 		try {
@@ -125,7 +121,6 @@ public class Watermarker extends AbstractTool {
 	 * 
 	 * @return the PDF file that should be generated
 	 * @throws InstantiationException
-	 * @todo Implement this com.lowagie.tools.plugins.AbstractTool method
 	 */
 	protected File getDestPathPDF() throws InstantiationException {
 		return (File) getValue("destfile");
@@ -136,7 +131,6 @@ public class Watermarker extends AbstractTool {
 	 * 
 	 * @param arg
 	 *            the argument that has changed
-	 * @todo Implement this com.lowagie.tools.plugins.AbstractTool method
 	 */
 	public void valueHasChanged(ToolArgument arg) {
 		if (internalFrame == null) {
