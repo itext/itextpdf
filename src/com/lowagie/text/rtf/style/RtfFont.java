@@ -575,7 +575,9 @@ public class RtfFont extends Font implements RtfExtendedElement {
         if(document != null) {
             this.fontNumber = document.getDocumentHeader().getFontNumber(this);
         }
-        this.color.setRtfDocument(this.document);
+        if(this.color != null) {
+            this.color.setRtfDocument(this.document);
+        }
     }
 
     /**
