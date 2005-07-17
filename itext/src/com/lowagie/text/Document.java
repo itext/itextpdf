@@ -803,10 +803,10 @@ public class Document implements DocListener {
     
 	/**
 	 * Gets the iText version.
-	 * 
+	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @return iText version
      */    
-    public static String getVersion() {
+    public static final String getVersion() {
         return ITEXT_VERSION;
     }
 
