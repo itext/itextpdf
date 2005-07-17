@@ -267,7 +267,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
     public void open() {
         super.open();
         try {
-            writeComment("Producer: iTextXML by lowagie.com");
+            writeComment(Document.getVersion());
             writeComment("CreationDate: " + new Date().toString());
             addTabs(1);
             writeEnd(HtmlTags.HEAD);
