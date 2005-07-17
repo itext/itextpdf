@@ -806,7 +806,7 @@ public class Document implements DocListener {
 	 * 
      * @return iText version
      */    
-    public static String getVersion() {
+    public static final String getVersion() {
         return ITEXT_VERSION;
     }
 
