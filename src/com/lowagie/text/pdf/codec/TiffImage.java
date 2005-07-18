@@ -47,6 +47,7 @@
 package com.lowagie.text.pdf.codec;
 import com.lowagie.text.pdf.*;
 import com.lowagie.text.Image;
+import com.lowagie.text.Jpeg;
 import com.lowagie.text.ExceptionConverter;
 import java.io.*;
 import java.util.zip.*;
@@ -277,6 +278,7 @@ public class TiffImage {
                 case TIFFConstants.PHOTOMETRIC_RGB:
                 case TIFFConstants.PHOTOMETRIC_SEPARATED:
                 case TIFFConstants.PHOTOMETRIC_PALETTE:
+                case TIFFConstants.COMPRESSION_OJPEG:
                     break;
                 default:
                     throw new IllegalArgumentException("The photometric " + photometric + " is not supported.");
@@ -338,7 +340,8 @@ public class TiffImage {
             }
             else {
                 stream = new ByteArrayOutputStream();
-                zip = new DeflaterOutputStream(stream);
+                if (compression != TIFFConstants.COMPRESSION_OJPEG)
+                    zip = new DeflaterOutputStream(stream);
             }
             for (int k = 0; k < offset.length; ++k) {
                 byte im[] = new byte[(int)size[k]];
@@ -361,11 +364,14 @@ public class TiffImage {
                     case TIFFConstants.COMPRESSION_LZW:
                         lzwDecoder.decode(im, outBuf, height);
                         break;
+                    case TIFFConstants.COMPRESSION_OJPEG: 
+                        stream.write(im);
+                        break;
                 }
                 if (bitsPerSample == 1 && samplePerPixel == 1) {
                     g4.fax4Encode(outBuf, height);
                 }
-                else {
+                else if (compression != TIFFConstants.COMPRESSION_OJPEG) {
                     zip.write(outBuf);
                 }
                 rowsLeft -= rowsStrip;
@@ -375,45 +381,52 @@ public class TiffImage {
                     photometric == TIFFConstants.PHOTOMETRIC_MINISBLACK ? Image.CCITT_BLACKIS1 : 0, g4.close());
             }
             else {
-                zip.close();
-                img = Image.getInstance(w, h, samplePerPixel, bitsPerSample, stream.toByteArray());
-                img.setDeflated(true);
+                if (compression == TIFFConstants.COMPRESSION_OJPEG) {
+                    img = new Jpeg(stream.toByteArray());                  
+                }
+                else {
+                    zip.close();
+                    img = Image.getInstance(w, h, samplePerPixel, bitsPerSample, stream.toByteArray());
+                    img.setDeflated(true);
+                }
             }
             img.setDpi(dpiX, dpiY);
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
-                try {
-                    TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
-                    ICC_Profile icc_prof = ICC_Profile.getInstance(fd.getAsBytes());
-                    if (samplePerPixel == icc_prof.getNumComponents())
-                        img.tagICC(icc_prof);
+            if (compression != TIFFConstants.COMPRESSION_OJPEG) {
+                if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
+                    try {
+                        TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
+                        ICC_Profile icc_prof = ICC_Profile.getInstance(fd.getAsBytes());
+                        if (samplePerPixel == icc_prof.getNumComponents())
+                            img.tagICC(icc_prof);
+                    }
+                    catch (Exception e) {
+                        //empty
+                    }
                 }
-                catch (Exception e) {
-                    //empty
+                if (dir.isTagPresent(TIFFConstants.TIFFTAG_COLORMAP)) {
+                    TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_COLORMAP);
+                    char rgb[] = fd.getAsChars();
+                    byte palette[] = new byte[rgb.length];
+                    int gColor = rgb.length / 3;
+                    int bColor = gColor * 2;
+                    for (int k = 0; k < gColor; ++k) {
+                        palette[k * 3] = (byte)(rgb[k] >>> 8);
+                        palette[k * 3 + 1] = (byte)(rgb[k + gColor] >>> 8);
+                        palette[k * 3 + 2] = (byte)(rgb[k + bColor] >>> 8);
+                    }
+                    PdfArray indexed = new PdfArray();
+                    indexed.add(PdfName.INDEXED);
+                    indexed.add(PdfName.DEVICERGB);
+                    indexed.add(new PdfNumber(gColor - 1));
+                    indexed.add(new PdfString(palette));
+                    PdfDictionary additional = new PdfDictionary();
+                    additional.put(PdfName.COLORSPACE, indexed);
+                    img.setAdditional(additional);
                 }
-            }
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_COLORMAP)) {
-                TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_COLORMAP);
-                char rgb[] = fd.getAsChars();
-                byte palette[] = new byte[rgb.length];
-                int gColor = rgb.length / 3;
-                int bColor = gColor * 2;
-                for (int k = 0; k < gColor; ++k) {
-                    palette[k * 3] = (byte)(rgb[k] >>> 8);
-                    palette[k * 3 + 1] = (byte)(rgb[k + gColor] >>> 8);
-                    palette[k * 3 + 2] = (byte)(rgb[k + bColor] >>> 8);
-                }
-                PdfArray indexed = new PdfArray();
-                indexed.add(PdfName.INDEXED);
-                indexed.add(PdfName.DEVICERGB);
-                indexed.add(new PdfNumber(gColor - 1));
-                indexed.add(new PdfString(palette));
-                PdfDictionary additional = new PdfDictionary();
-                additional.put(PdfName.COLORSPACE, indexed);
-                img.setAdditional(additional);
+                img.setOriginalType(Image.ORIGINAL_TIFF);
             }
             if (photometric == TIFFConstants.PHOTOMETRIC_MINISWHITE)
                 img.setInverted(true);
-            img.setOriginalType(Image.ORIGINAL_TIFF);
             return img;
         }
         catch (Exception e) {

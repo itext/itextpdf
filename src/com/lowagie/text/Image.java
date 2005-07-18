@@ -471,7 +471,8 @@ public abstract class Image extends Rectangle implements Element,
 				try {
 					ra = new RandomAccessFileOrArray(imgb);
 					Image img = TiffImage.getTiffImage(ra, 1);
-					img.setOriginalData(imgb);
+                    if (img.getOriginalData() == null)
+                        img.setOriginalData(imgb);
 					return img;
 				} finally {
 					if (ra != null)
