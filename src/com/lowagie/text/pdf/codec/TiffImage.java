@@ -267,6 +267,7 @@ public class TiffImage {
                 case TIFFConstants.COMPRESSION_LZW:
                 case TIFFConstants.COMPRESSION_PACKBITS:
                 case TIFFConstants.COMPRESSION_DEFLATE:
+                case TIFFConstants.COMPRESSION_OJPEG:
                     break;
                 default:
                     throw new IllegalArgumentException("The compression " + compression + " is not supported.");
@@ -278,7 +279,6 @@ public class TiffImage {
                 case TIFFConstants.PHOTOMETRIC_RGB:
                 case TIFFConstants.PHOTOMETRIC_SEPARATED:
                 case TIFFConstants.PHOTOMETRIC_PALETTE:
-                case TIFFConstants.COMPRESSION_OJPEG:
                     break;
                 default:
                     throw new IllegalArgumentException("The photometric " + photometric + " is not supported.");
