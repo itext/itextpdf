@@ -739,7 +739,13 @@ public class PdfSignatureAppearance {
         AcroFields af = writer.getAcroFields();
         String name = getFieldName();
         boolean fieldExists = !(isInvisible() || isNewField());
+        int flags = 132;
         if (fieldExists) {
+            flags = 0;
+            ArrayList merged = af.getFieldItem(name).merged;
+            PdfObject obj = PdfReader.getPdfObjectRelease(((PdfDictionary)merged.get(0)).get(PdfName.F));
+            if (obj != null && obj.isNumber())
+                flags = ((PdfNumber)obj).intValue();
             af.removeField(name);
         }
         writer.setSigFlags(3);
@@ -747,7 +753,7 @@ public class PdfSignatureAppearance {
         sigField.setFieldName(name);
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
         sigField.put(PdfName.V, refSig);
-        sigField.setFlags(132);
+        sigField.setFlags(flags);
 
         int pagen = getPage();
         PdfReader reader = writer.reader;
