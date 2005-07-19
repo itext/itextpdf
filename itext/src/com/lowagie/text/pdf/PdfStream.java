@@ -292,4 +292,16 @@ public class PdfStream extends PdfDictionary {
         }
         os.write(ENDSTREAM);
     }
+    
+    /**
+     * Writes the data content to an <CODE>OutputStream</CODE>.
+     * @param os the destination to write to
+     * @throws IOException on error
+     */    
+    public void writeContent(OutputStream os) throws IOException {
+        if (streamBytes != null)
+            streamBytes.writeTo(os);
+        else if (bytes != null)
+            os.write(bytes);
+    }
 }

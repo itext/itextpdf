@@ -51,6 +51,8 @@
 package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PrinterJob;
 
@@ -156,6 +158,21 @@ public class PdfContentByte {
     /** The separator between commands.
      */
     protected int separator = '\n';
+    
+    private static HashMap abrev = new HashMap();
+    
+    static {
+        abrev.put(PdfName.BITSPERCOMPONENT, "/BPC ");
+        abrev.put(PdfName.COLORSPACE, "/CS ");
+        abrev.put(PdfName.DECODE, "/D ");
+        abrev.put(PdfName.DECODEPARMS, "/DP ");
+        abrev.put(PdfName.FILTER, "/F ");
+        abrev.put(PdfName.HEIGHT, "/H ");
+        abrev.put(PdfName.IMAGEMASK, "/IM ");
+        abrev.put(PdfName.INTENT, "/Intent ");
+        abrev.put(PdfName.INTERPOLATE, "/I ");
+        abrev.put(PdfName.WIDTH, "/W ");
+    }
     
     // constructors
     
@@ -971,12 +988,23 @@ public class PdfContentByte {
      * @throws DocumentException if the <CODE>Image</CODE> does not have absolute positioning
      */
     public void addImage(Image image) throws DocumentException {
+        addImage(image, false);
+    }
+    
+    /**
+     * Adds an <CODE>Image</CODE> to the page. The <CODE>Image</CODE> must have
+     * absolute positioning. The image can be placed inline.
+     * @param image the <CODE>Image</CODE> object
+     * @param inlineImage <CODE>true</CODE> to place this image inline, <CODE>false</CODE> otherwise
+     * @throws DocumentException if the <CODE>Image</CODE> does not have absolute positioning
+     */
+    public void addImage(Image image, boolean inlineImage) throws DocumentException {
         if (!image.hasAbsolutePosition())
             throw new DocumentException("The image must have absolute positioning.");
         float matrix[] = image.matrix();
         matrix[Image.CX] = image.absoluteX() - matrix[Image.CX];
         matrix[Image.CY] = image.absoluteY() - matrix[Image.CY];
-        addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+        addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], inlineImage);
     }
     
     /**
@@ -993,8 +1021,37 @@ public class PdfContentByte {
      * @throws DocumentException on error
      */
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
+        addImage(image, a, b, c, d, e, f, false);
+    }
+    
+    private PdfObject simplifyColorspace(PdfObject obj) {
+        if (obj == null || !obj.isArray())
+            return obj;
+        PdfObject first = (PdfObject)(((PdfArray)obj).getArrayList().get(0));
+        if (PdfName.CALGRAY.equals(first))
+            return PdfName.DEVICEGRAY;
+        else if (PdfName.CALRGB.equals(first))
+            return PdfName.DEVICERGB;
+        else
+            return obj;
+    }
+    
+    /**
+     * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
+     * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
+     * use addImage(image, image_width, 0, 0, image_height, x, y). The image can be placed inline.
+     * @param image the <CODE>Image</CODE> object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param inlineImage <CODE>true</CODE> to place this image inline, <CODE>false</CODE> otherwise
+     * @throws DocumentException on error
+     */
+    public void addImage(Image image, float a, float b, float c, float d, float e, float f, boolean inlineImage) throws DocumentException {
         try {
-            
             if (image.getLayer() != null)
                 beginLayer(image.getLayer());
             if (image.isImgTemplate()) {
@@ -1005,23 +1062,57 @@ public class PdfContentByte {
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
             }
             else {
-                PdfName name;
-                PageResources prs = getPageResources();
-                Image maskImage = image.getImageMask();
-                if (maskImage != null) {
-                    name = writer.addDirectImageSimple(maskImage);
-                    prs.addXObject(name, writer.getImageReference(name));
-                }
-                name = writer.addDirectImageSimple(image);
-                name = prs.addXObject(name, writer.getImageReference(name));
                 content.append("q ");
                 content.append(a).append(' ');
                 content.append(b).append(' ');
                 content.append(c).append(' ');
                 content.append(d).append(' ');
                 content.append(e).append(' ');
-                content.append(f).append(" cm ");
-                content.append(name.getBytes()).append(" Do Q").append_i(separator);
+                content.append(f).append(" cm");
+                if (inlineImage) {
+                    content.append("\nBI\n");
+                    PdfImage pimage = new PdfImage(image, "", null);
+                    for (Iterator it = pimage.getKeys().iterator(); it.hasNext();) {
+                        PdfName key = (PdfName)it.next();
+                        PdfObject value = pimage.get(key);
+                        String s = (String)abrev.get(key);
+                        if (s == null)
+                            continue;
+                        content.append(s);
+                        if (key.equals(PdfName.COLORSPACE) && value.isArray()) {
+                            PdfObject cs = simplifyColorspace(value);
+                            if (cs.isName())
+                                value = cs;
+                            else {
+                                PdfObject first = (PdfObject)(((PdfArray)value).getArrayList().get(0));
+                                if (PdfName.INDEXED.equals(first)) {
+                                    value = new PdfArray((PdfArray)value);
+                                    ArrayList array = ((PdfArray)value).getArrayList();
+                                    if (array.size() >= 2 && ((PdfObject)array.get(1)).isArray()) {
+                                         array.set(1, simplifyColorspace((PdfObject)array.get(1)));
+                                    }
+                                }
+                            }
+                        }
+                        value.toPdf(null, content);
+                        content.append('\n');
+                    }
+                    content.append("ID\n");
+                    pimage.writeContent(content);
+                    content.append("\nEI\nQ").append_i(separator);
+                }
+                else {
+                    PdfName name;
+                    PageResources prs = getPageResources();
+                    Image maskImage = image.getImageMask();
+                    if (maskImage != null) {
+                        name = writer.addDirectImageSimple(maskImage);
+                        prs.addXObject(name, writer.getImageReference(name));
+                    }
+                    name = writer.addDirectImageSimple(image);
+                    name = prs.addXObject(name, writer.getImageReference(name));
+                    content.append(' ').append(name.getBytes()).append(" Do Q").append_i(separator);
+                }
             }
             if (image.hasBorders()) {
                 saveState();
