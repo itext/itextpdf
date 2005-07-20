@@ -325,7 +325,7 @@ public class IntHashtable implements Cloneable {
             if (entry != null) {
                 IntHashtableEntry e = entry;
                 entry = e.next;
-                return entry;
+                return e;
             }
             throw new NoSuchElementException("IntHashtableIterator");
         }
