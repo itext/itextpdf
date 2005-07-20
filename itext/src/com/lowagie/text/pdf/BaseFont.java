@@ -159,6 +159,9 @@ public abstract class BaseFont {
     /** A font already inside the document.
      */    
     public static final int FONT_TYPE_DOCUMENT = 4;
+    /** A Type3 font.
+     */    
+    public static final int FONT_TYPE_T3 = 5;
     /** The Unicode encoding with horizontal writing.
      */    
     public static final String IDENTITY_H = "Identity-H";
