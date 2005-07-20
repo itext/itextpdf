@@ -152,6 +152,8 @@ class FontDetails {
     byte[] convertToBytes(String text) {
         byte b[] = null;
         switch (fontType) {
+            case BaseFont.FONT_TYPE_T3:
+                return baseFont.convertToBytes(text);
             case BaseFont.FONT_TYPE_T1:
             case BaseFont.FONT_TYPE_TT: {
                 b = baseFont.convertToBytes(text);
@@ -219,6 +221,9 @@ class FontDetails {
     void writeFont(PdfWriter writer) {
         try {
             switch (fontType) {
+                case BaseFont.FONT_TYPE_T3:
+                    baseFont.writeFont(writer, indirectReference, null);
+                    break;
                 case BaseFont.FONT_TYPE_T1:
                 case BaseFont.FONT_TYPE_TT: {
                     int firstChar;
