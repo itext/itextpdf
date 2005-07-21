@@ -1024,18 +1024,6 @@ public class PdfContentByte {
         addImage(image, a, b, c, d, e, f, false);
     }
     
-    private PdfObject simplifyColorspace(PdfObject obj) {
-        if (obj == null || !obj.isArray())
-            return obj;
-        PdfObject first = (PdfObject)(((PdfArray)obj).getArrayList().get(0));
-        if (PdfName.CALGRAY.equals(first))
-            return PdfName.DEVICEGRAY;
-        else if (PdfName.CALRGB.equals(first))
-            return PdfName.DEVICERGB;
-        else
-            return obj;
-    }
-    
     /**
      * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
      * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
@@ -1079,20 +1067,24 @@ public class PdfContentByte {
                         if (s == null)
                             continue;
                         content.append(s);
+                        boolean check = true;
                         if (key.equals(PdfName.COLORSPACE) && value.isArray()) {
-                            PdfObject cs = simplifyColorspace(value);
-                            if (cs.isName())
-                                value = cs;
-                            else {
-                                PdfObject first = (PdfObject)(((PdfArray)value).getArrayList().get(0));
-                                if (PdfName.INDEXED.equals(first)) {
-                                    value = new PdfArray((PdfArray)value);
-                                    ArrayList array = ((PdfArray)value).getArrayList();
-                                    if (array.size() >= 2 && ((PdfObject)array.get(1)).isArray()) {
-                                         array.set(1, simplifyColorspace((PdfObject)array.get(1)));
-                                    }
-                                }
+                            ArrayList ar = ((PdfArray)value).getArrayList();
+                            if (ar.size() == 4 
+                                && PdfName.INDEXED.equals(ar.get(0)) 
+                                && ((PdfObject)ar.get(1)).isName()
+                                && ((PdfObject)ar.get(2)).isNumber()
+                                && ((PdfObject)ar.get(3)).isString()
+                            ) {
+                                check = false;
                             }
+                            
+                        }
+                        if (check && key.equals(PdfName.COLORSPACE) && !value.isName()) {
+                            PdfName cs = writer.getColorspaceName();
+                            PageResources prs = getPageResources();
+                            prs.addColor(cs, writer.addToBody(value).getIndirectReference());
+                            value = cs;
                         }
                         value.toPdf(null, content);
                         content.append('\n');

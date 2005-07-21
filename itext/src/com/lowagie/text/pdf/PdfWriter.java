@@ -1508,6 +1508,10 @@ public class PdfWriter extends DocWriter {
         }
     }
     
+    PdfName getColorspaceName() {
+        return new PdfName("CS" + (colorNumber++));
+    }
+    
     /**
      * Adds a <CODE>SpotColor</CODE> to the document but not to the page resources.
      * @param spc the <CODE>SpotColor</CODE> to add
@@ -1518,7 +1522,7 @@ public class PdfWriter extends DocWriter {
     ColorDetails addSimple(PdfSpotColor spc) {
         ColorDetails ret = (ColorDetails)documentColors.get(spc);
         if (ret == null) {
-            ret = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), spc);
+            ret = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), spc);
             documentColors.put(spc, ret);
         }
         return ret;
@@ -1532,7 +1536,7 @@ public class PdfWriter extends DocWriter {
             switch (type) {
                 case ExtendedColor.TYPE_RGB:
                     if (patternColorspaceRGB == null) {
-                        patternColorspaceRGB = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
+                        patternColorspaceRGB = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICERGB);
                         PdfIndirectObject cobj = addToBody(array, patternColorspaceRGB.getIndirectReference());
@@ -1540,7 +1544,7 @@ public class PdfWriter extends DocWriter {
                     return patternColorspaceRGB;
                 case ExtendedColor.TYPE_CMYK:
                     if (patternColorspaceCMYK == null) {
-                        patternColorspaceCMYK = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
+                        patternColorspaceCMYK = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICECMYK);
                         PdfIndirectObject cobj = addToBody(array, patternColorspaceCMYK.getIndirectReference());
@@ -1548,7 +1552,7 @@ public class PdfWriter extends DocWriter {
                     return patternColorspaceCMYK;
                 case ExtendedColor.TYPE_GRAY:
                     if (patternColorspaceGRAY == null) {
-                        patternColorspaceGRAY = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
+                        patternColorspaceGRAY = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICEGRAY);
                         PdfIndirectObject cobj = addToBody(array, patternColorspaceGRAY.getIndirectReference());
@@ -1558,7 +1562,7 @@ public class PdfWriter extends DocWriter {
                     ColorDetails details = addSimple(((SpotColor)color).getPdfSpotColor());
                     ColorDetails patternDetails = (ColorDetails)documentSpotPatterns.get(details);
                     if (patternDetails == null) {
-                        patternDetails = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
+                        patternDetails = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(details.getIndirectReference());
                         PdfIndirectObject cobj = addToBody(array, patternDetails.getIndirectReference());
