@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 by Paulo Soares.
+ * Copyright 2003-2005 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -123,6 +123,17 @@ public class TiffImage {
                 default:
                     return getTiffImageColor(dir, s);
             }
+            float rotation = 0;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
+                int rot = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ORIENTATION);
+                if (rot == TIFFConstants.ORIENTATION_BOTRIGHT || rot == TIFFConstants.ORIENTATION_BOTLEFT)
+                    rotation = (float)Math.PI;
+                else if (rot == TIFFConstants.ORIENTATION_LEFTTOP || rot == TIFFConstants.ORIENTATION_LEFTBOT)
+                    rotation = (float)(Math.PI / 2.0);
+                else if (rot == TIFFConstants.ORIENTATION_RIGHTTOP || rot == TIFFConstants.ORIENTATION_RIGHTBOT)
+                    rotation = -(float)(Math.PI / 2.0);
+            }
+
             Image img = null;
             long tiffT4Options = 0;
             long tiffT6Options = 0;
@@ -250,6 +261,8 @@ public class TiffImage {
                 }
             }
             img.setOriginalType(Image.ORIGINAL_TIFF);
+            if (rotation != 0)
+                img.setInitialRotation(rotation);
             return img;
         }
         catch (Exception e) {
@@ -282,6 +295,16 @@ public class TiffImage {
                     break;
                 default:
                     throw new IllegalArgumentException("The photometric " + photometric + " is not supported.");
+            }
+            float rotation = 0;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
+                int rot = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ORIENTATION);
+                if (rot == TIFFConstants.ORIENTATION_BOTRIGHT || rot == TIFFConstants.ORIENTATION_BOTLEFT)
+                    rotation = (float)Math.PI;
+                else if (rot == TIFFConstants.ORIENTATION_LEFTTOP || rot == TIFFConstants.ORIENTATION_LEFTBOT)
+                    rotation = (float)(Math.PI / 2.0);
+                else if (rot == TIFFConstants.ORIENTATION_RIGHTTOP || rot == TIFFConstants.ORIENTATION_RIGHTBOT)
+                    rotation = -(float)(Math.PI / 2.0);
             }
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PLANARCONFIG)
                 && dir.getFieldAsLong(TIFFConstants.TIFFTAG_PLANARCONFIG) == TIFFConstants.PLANARCONFIG_SEPARATE)
@@ -427,6 +450,8 @@ public class TiffImage {
             }
             if (photometric == TIFFConstants.PHOTOMETRIC_MINISWHITE)
                 img.setInverted(true);
+            if (rotation != 0)
+                img.setInitialRotation(rotation);
             return img;
         }
         catch (Exception e) {
