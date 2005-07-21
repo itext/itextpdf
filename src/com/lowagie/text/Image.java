@@ -57,6 +57,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import java.util.Properties;
 import java.util.Set;
+import java.util.ArrayList;
 import java.awt.color.ICC_Profile;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.codec.CCITTG4Encoder;
@@ -68,6 +69,9 @@ import com.lowagie.text.pdf.codec.PngImage;
 import com.lowagie.text.pdf.codec.TiffImage;
 import com.lowagie.text.pdf.codec.BmpImage;
 import com.lowagie.text.pdf.PdfOCG;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfArray;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -268,6 +272,11 @@ public abstract class Image extends Rectangle implements Element,
 
 	protected PdfOCG layer;
 
+    /**
+     * Holds value of property initialRotation.
+     */
+    private float initialRotation;
+    
 	// constructors
 
 	/**
@@ -329,6 +338,7 @@ public abstract class Image extends Rectangle implements Element,
 		this.spacingBefore = image.spacingBefore;
 		this.widthPercentage = image.widthPercentage;
 		this.layer = image.layer;
+        this.initialRotation = initialRotation;
 	}
 
 	/**
@@ -1026,7 +1036,7 @@ public abstract class Image extends Rectangle implements Element,
 
 	public void setRotation(float r) {
 		double d = Math.PI; //__IDS__
-		rotation = (float) (r % (2.0 * d)); //__IDS__
+		rotation = (float) ((r + initialRotation) % (2.0 * d)); //__IDS__
 		if (rotation < 0) {
 			rotation += 2.0 * d; //__IDS__
 		}
@@ -1890,4 +1900,59 @@ public abstract class Image extends Rectangle implements Element,
 		this.layer = layer;
 	}
 
+    private PdfObject simplifyColorspace(PdfObject obj) {
+        if (obj == null || !obj.isArray())
+            return obj;
+        PdfObject first = (PdfObject)(((PdfArray)obj).getArrayList().get(0));
+        if (PdfName.CALGRAY.equals(first))
+            return PdfName.DEVICEGRAY;
+        else if (PdfName.CALRGB.equals(first))
+            return PdfName.DEVICERGB;
+        else
+            return obj;
+    }
+
+    /**
+     * Replaces CalRGB and CalGray colorspaces with DeviceRGB and DeviceGray.
+     */    
+    public void simplifyColorspace() {
+        if (additional == null)
+            return;
+        PdfObject value = additional.get(PdfName.COLORSPACE);
+        if (value == null || !value.isArray())
+            return;
+        PdfObject cs = simplifyColorspace(value);
+        if (cs.isName())
+            value = cs;
+        else {
+            PdfObject first = (PdfObject)(((PdfArray)value).getArrayList().get(0));
+            if (PdfName.INDEXED.equals(first)) {
+                ArrayList array = ((PdfArray)value).getArrayList();
+                if (array.size() >= 2 && ((PdfObject)array.get(1)).isArray()) {
+                     array.set(1, simplifyColorspace((PdfObject)array.get(1)));
+                }
+            }
+        }
+        additional.put(PdfName.COLORSPACE, value);
+    }
+    
+    /**
+     * Getter for property initialRotation.
+     * @return Value of property initialRotation.
+     */
+    public float getInitialRotation() {
+        return this.initialRotation;
+    }
+    
+    /**
+     * Some image formats, like TIFF may present the images rotated that have
+     * to be compensated.
+     * @param initialRotation New value of property initialRotation.
+     */
+    public void setInitialRotation(float initialRotation) {
+        float old_rot = rotation - this.initialRotation;
+        this.initialRotation = initialRotation;
+        setRotation(old_rot);
+    }
+    
 }
