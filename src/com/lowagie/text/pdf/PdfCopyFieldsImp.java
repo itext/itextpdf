@@ -164,7 +164,10 @@ class PdfCopyFieldsImp extends PdfWriter {
         AcroFields af = reader.getAcroFields();
         ArrayList coa = co.getArrayList();
         for (int k = 0; k < coa.size(); ++k) {
-            String name = getCOName(reader, (PRIndirectReference)coa.get(k));
+            PdfObject obj = (PdfObject)coa.get(k);
+            if (obj == null || !obj.isIndirect())
+                continue;
+            String name = getCOName(reader, (PRIndirectReference)obj);
             if (af.getFieldItem(name) == null)
                 continue;
             name = "." + name;
