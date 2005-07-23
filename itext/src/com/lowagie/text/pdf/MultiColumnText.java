@@ -254,10 +254,10 @@ public class MultiColumnText implements Element {
         try {
             while (!done) {
                 if (nextY == AUTOMATIC) {
-                    nextY = documentY;
+                    nextY = document.getVerticalPosition(true); // RS - 07/07/2005 - - Get current doc writing position for top of columns on new page.
                 }
                 if (top == AUTOMATIC) {
-                    top = documentY;  // shouldn't I be able to get this from the document?
+                    top = document.getVerticalPosition(true); // RS - 07/07/2005 - Get current doc writing position for top of columns on new page.
                 }
 
                 ColumnDef currentDef = (ColumnDef) columnDefs.get(getCurrentColumn());
