@@ -69,6 +69,10 @@ public class RtfDocumentSettings {
      * Whether to output the line breaks that make the rtf document source more readable.
      */
     private boolean outputDebugLineBreaks = true;
+    /**
+     * Whether to always generate soft linebreaks for \n in Chunks.
+     */
+    private boolean alwaysGenerateSoftLinebreaks = false;
 
     
     /**
@@ -109,5 +113,23 @@ public class RtfDocumentSettings {
     public void setOutputTableRowDefinitionAfter(
             boolean outputTableRowDefinitionAfter) {
         this.outputTableRowDefinitionAfter = outputTableRowDefinitionAfter;
+    }
+    
+    /**
+     * Gets whether all linebreaks inside Chunks are generated as soft linebreaks.
+     * 
+     * @return <code>True</code> if soft linebreaks are generated, <code>false</code> for hard linebreaks.
+     */
+    public boolean isAlwaysGenerateSoftLinebreaks() {
+        return this.alwaysGenerateSoftLinebreaks;
+    }
+
+    /**
+     * Sets whether to always generate soft linebreaks.
+     * 
+     * @param alwaysGenerateSoftLinebreaks Whether to always generate soft linebreaks.
+     */
+    public void setAlwaysGenerateSoftLinebreaks(boolean alwaysGenerateSoftLinebreaks) {
+        this.alwaysGenerateSoftLinebreaks = alwaysGenerateSoftLinebreaks;
     }
 }

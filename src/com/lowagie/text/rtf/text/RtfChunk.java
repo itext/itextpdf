@@ -156,7 +156,7 @@ public class RtfChunk extends RtfElement {
             }
             result.write(DELIMITER);
             
-            result.write(document.filterSpecialChar(content, false, softLineBreaks).getBytes());
+            result.write(document.filterSpecialChar(content, false, softLineBreaks || this.document.getDocumentSettings().isAlwaysGenerateSoftLinebreaks()).getBytes());
             
             if(superSubScript != 0) {
                 result.write(FONT_END_SUPER_SUBSCRIPT);
