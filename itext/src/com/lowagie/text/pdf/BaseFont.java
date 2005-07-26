@@ -1094,4 +1094,25 @@ public abstract class BaseFont {
     }
     
     protected abstract int[] getRawCharBBox(int c, String name);
+
+    /**
+     * iText expects Arabic Diactrics (tashkeel) to have zero advance but some fonts,
+     * most notably those that come with Windows, like times.ttf, have non-zero
+     * advance for those characters. This method makes those character to have zero
+     * width advance and work correctly in the iText Arabic shaping and reordering
+     * context.
+     */    
+    public void correctArabicAdvance() {
+        for (char c = '\u064b'; c <= '\u0658'; ++c)
+            setCharAdvance(c, 0);
+        setCharAdvance('\u0670', 0);
+        for (char c = '\u06d6'; c <= '\u06dc'; ++c)
+            setCharAdvance(c, 0);
+        for (char c = '\u06df'; c <= '\u06e4'; ++c)
+            setCharAdvance(c, 0);
+        for (char c = '\u06e7'; c <= '\u06e8'; ++c)
+            setCharAdvance(c, 0);
+        for (char c = '\u06ea'; c <= '\u06ed'; ++c)
+            setCharAdvance(c, 0);
+    }
 }
