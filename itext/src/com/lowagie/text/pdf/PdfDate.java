@@ -105,7 +105,7 @@ public class PdfDate extends PdfString {
         }
         if (timezone != 0) {
             date.append(setLength(timezone, 2)).append("'");
-            int zone = Math.abs(d.get(Calendar.ZONE_OFFSET) / (60 * 1000)) - (timezone * 60);
+            int zone = Math.abs((d.get(Calendar.ZONE_OFFSET) + d.get(Calendar.DST_OFFSET)) / (60 * 1000)) - (timezone * 60);
             date.append(setLength(zone, 2)).append("'");
         }
         value = date.toString();
