@@ -926,8 +926,9 @@ class PdfDocument extends Document implements DocListener {
             return;
         }
         try {
+            boolean wasImage = (imageWait != null);
             newPage();
-            if (imageWait != null) newPage();
+            if (imageWait != null || wasImage) newPage();
             if (annotations.size() > 0)
                 throw new RuntimeException(annotations.size() + " annotations had invalid placement pages.");
             PdfPageEvent pageEvent = writer.getPageEvent();
