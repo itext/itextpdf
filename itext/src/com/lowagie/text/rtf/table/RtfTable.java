@@ -173,22 +173,6 @@ public class RtfTable extends RtfElement {
             }
             
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-            result.write(RtfParagraph.PARAGRAPH);
-            switch (this.alignment) {
-                case Element.ALIGN_LEFT:
-                	result.write(RtfParagraph.ALIGN_LEFT);
-                    break;
-                case Element.ALIGN_RIGHT:
-                    result.write(RtfParagraph.ALIGN_RIGHT);
-                    break;
-                case Element.ALIGN_CENTER:
-                    result.write(RtfParagraph.ALIGN_CENTER);
-                    break;
-                case Element.ALIGN_JUSTIFIED:
-                case Element.ALIGN_JUSTIFIED_ALL:
-                    result.write(RtfParagraph.ALIGN_JUSTIFY);
-                    break;
-            }
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }

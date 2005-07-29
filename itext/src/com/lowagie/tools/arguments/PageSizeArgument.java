@@ -47,119 +47,126 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.tools;
+package com.lowagie.tools.arguments;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.TreeMap;
 
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Rectangle;
 import com.lowagie.tools.plugins.AbstractTool;
 
 /**
- * This is a utility that allows you to use a number of iText tools.
+ * Argument that can be one of several options.
  */
-public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
-	
-	/** The DesktopPane of the toolbox. */
-	private JDesktopPane desktop;
-	/** The list of tools in the toolbox. */
-	private Properties toolmap = new Properties();
-	
+public class PageSizeArgument extends OptionArgument {
+
+	private TreeMap options = new TreeMap();
+
 	/**
-	 * Constructs the Toolbox object.
+	 * Constructs an OptionArgument.
+	 * 
+	 * @param tool
+	 *            the tool that needs this argument
+	 * @param name
+	 *            the name of the argument
+	 * @param description
+	 *            the description of the argument
 	 */
-	public Toolbox() {
-		super();
-		setSize(600, 400);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setResizable(true);
-		setTitle("iText Toolbox");
-		setJMenuBar(getMenubar());
-		desktop = new JDesktopPane();
-		setContentPane(desktop);
-		setVisible(true);
-	}
-	
-	/**
-	 * Starts the Toolbox utility.
-	 * @param args no arguments needed
-	 */
-	public static void main(String[] args) {
-		Toolbox toolbox = new Toolbox();
-	}
-	
-	/**
-	 * Gets the menubar.
-	 * @return a menubar
-	 */
-	private JMenuBar getMenubar() {
-		if (toolmap.size() == 0) {
-			try {
-				toolmap.load(Toolbox.class.getClassLoader().getResourceAsStream("com/lowagie/tools/plugins/tools.txt"));
-			} catch (IOException e) {
-				e.printStackTrace();
+	public PageSizeArgument(AbstractTool tool, String name, String description) {
+		super(tool, name, description);
+		Class ps = PageSize.class;
+		Field[] sizes = ps.getDeclaredFields();
+		try {
+			for (int i = 0; i < sizes.length; i++) {
+				addOption(sizes[i].getName(), sizes[i].get(null));
 			}
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
-		JMenuBar menubar = new JMenuBar();
-		JMenu file = new JMenu(FILE);
-		file.setMnemonic(KeyEvent.VK_F);
-		JMenuItem close = new JMenuItem(CLOSE);
-		close.setMnemonic(KeyEvent.VK_C);
-		close.addActionListener(this);
-		file.add(close);
-		JMenu tools = new JMenu(TOOLS);
-		file.setMnemonic(KeyEvent.VK_T);
-		JMenuItem item;
-		String name;
-		for (Iterator i = toolmap.keySet().iterator(); i.hasNext(); ) {
-			name = (String)i.next();
-			item = new JMenuItem(name);
-			item.addActionListener(this);
-			tools.add(item);
-		}
-		menubar.add(file);
-		menubar.add(tools);
-		return menubar;
 	}
 	
 	/**
-	 * Creates an Internal Frame.
-	 * @param name the name of the app
-	 * @throws ClassNotFoundException
-	 * @throws IllegalAccessException
+	 * Adds an Option.
+	 * @param description the description of the option
+	 * @param value the value of the option
+	 */
+	public void addOption(Object description, Object value) {
+		options.put(description, value);
+	}
+	
+	/**
+	 * Gets the options.
+	 * @return Returns the options.
+	 */
+	public TreeMap getOptions() {
+		return options;
+	}
+	
+	/**
+	 * Gets the argument as an object.
+	 * @return an object
 	 * @throws InstantiationException
 	 */
-	private void createFrame(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-		AbstractTool ti = (AbstractTool)Class.forName((String)toolmap.get(name)).newInstance();
-		JInternalFrame f = ti.getInternalFrame();
-		f.setVisible(true);
-		desktop.add(f);
+	public Object getArgument() throws InstantiationException {
+		if (value == null) return null;
+		try {
+			return ((Rectangle)options.get(value));
+		} catch (Exception e) {
+			throw new InstantiationException(e.getMessage());
+		}
 	}
-
+	
+	/**
+	 * @see com.lowagie.tools.arguments.ToolArgument#getUsage()
+	 */
+	public String getUsage() {
+		StringBuffer buf = new StringBuffer("  ");
+		buf.append(name);
+		buf.append(" -  ");
+		buf.append(description);
+		buf.append("\n");
+		buf.append("    possible options:\n");
+		String s;
+		for (Iterator i = options.keySet().iterator(); i.hasNext(); ) {
+			s  = (String)i.next();
+			buf.append("    - ");
+			buf.append(s);
+			buf.append("\n");
+		}
+		return buf.toString();
+	}
+	
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	public void actionPerformed(ActionEvent evt) {
-		if (CLOSE.equals(evt.getActionCommand())) {
-			System.exit(0);
+		Object[] message = new Object[2];
+		message[0] = "Choose one of the following pagesizes:";
+		JComboBox cb = new JComboBox();
+		for(Iterator i = options.keySet().iterator(); i.hasNext(); ) {
+			cb.addItem(i.next());
 		}
-		else {
-			try {
-				createFrame(evt.getActionCommand());
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}
+		message[1] = cb;
+		int result = JOptionPane.showOptionDialog( 
+	 		    tool.getInternalFrame(),
+	 		    message, 
+	 		    description,
+	 		    JOptionPane.OK_CANCEL_OPTION, 
+	 		    JOptionPane.QUESTION_MESSAGE,
+	 		    null,
+	 		    null,
+				null
+	 		);
+		if (result == 0) {
+			setValue((String)cb.getSelectedItem());
 		}
 	}
 }

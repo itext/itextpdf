@@ -735,6 +735,7 @@ public class PdfWriter extends DocWriter {
     protected PdfArray OCGRadioGroup = new PdfArray();
     
     protected PdfDictionary defaultColorspace = new PdfDictionary();
+    protected float userunit = 0f;
     
     /** PDF/X value */
     public static final int PDFXNONE = 0;
@@ -1507,6 +1508,10 @@ public class PdfWriter extends DocWriter {
         }
     }
     
+    PdfName getColorspaceName() {
+        return new PdfName("CS" + (colorNumber++));
+    }
+    
     /**
      * Adds a <CODE>SpotColor</CODE> to the document but not to the page resources.
      * @param spc the <CODE>SpotColor</CODE> to add
@@ -1517,7 +1522,7 @@ public class PdfWriter extends DocWriter {
     ColorDetails addSimple(PdfSpotColor spc) {
         ColorDetails ret = (ColorDetails)documentColors.get(spc);
         if (ret == null) {
-            ret = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), spc);
+            ret = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), spc);
             documentColors.put(spc, ret);
         }
         return ret;
@@ -1531,7 +1536,7 @@ public class PdfWriter extends DocWriter {
             switch (type) {
                 case ExtendedColor.TYPE_RGB:
                     if (patternColorspaceRGB == null) {
-                        patternColorspaceRGB = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
+                        patternColorspaceRGB = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICERGB);
                         PdfIndirectObject cobj = addToBody(array, patternColorspaceRGB.getIndirectReference());
@@ -1539,7 +1544,7 @@ public class PdfWriter extends DocWriter {
                     return patternColorspaceRGB;
                 case ExtendedColor.TYPE_CMYK:
                     if (patternColorspaceCMYK == null) {
-                        patternColorspaceCMYK = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
+                        patternColorspaceCMYK = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICECMYK);
                         PdfIndirectObject cobj = addToBody(array, patternColorspaceCMYK.getIndirectReference());
@@ -1547,7 +1552,7 @@ public class PdfWriter extends DocWriter {
                     return patternColorspaceCMYK;
                 case ExtendedColor.TYPE_GRAY:
                     if (patternColorspaceGRAY == null) {
-                        patternColorspaceGRAY = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
+                        patternColorspaceGRAY = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICEGRAY);
                         PdfIndirectObject cobj = addToBody(array, patternColorspaceGRAY.getIndirectReference());
@@ -1557,7 +1562,7 @@ public class PdfWriter extends DocWriter {
                     ColorDetails details = addSimple(((SpotColor)color).getPdfSpotColor());
                     ColorDetails patternDetails = (ColorDetails)documentSpotPatterns.get(details);
                     if (patternDetails == null) {
-                        patternDetails = new ColorDetails(new PdfName("CS" + (colorNumber++)), body.getPdfIndirectReference(), null);
+                        patternDetails = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(details.getIndirectReference());
                         PdfIndirectObject cobj = addToBody(array, patternDetails.getIndirectReference());
@@ -2539,4 +2544,26 @@ public class PdfWriter extends DocWriter {
         pdf.setThumbnail(image);
     }
 
+	/**
+	 * A UserUnit is a value that defines the default user space unit.
+	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+	 * The maximum UserUnit is 75,000.
+	 * Remark that this userunit only works starting with PDF1.6!
+	 * @return Returns the userunit.
+	 */
+	public float getUserunit() {
+		return userunit;
+	}
+	/**
+	 * A UserUnit is a value that defines the default user space unit.
+	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+	 * The maximum UserUnit is 75,000.
+	 * Remark that this userunit only works starting with PDF1.6!
+	 * @param userunit The userunit to set.
+	 * @throws DocumentException
+	 */
+	public void setUserunit(float userunit) throws DocumentException {
+		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
+		this.userunit = userunit;
+	}
 }

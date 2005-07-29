@@ -62,6 +62,7 @@ import com.lowagie.text.rtf.text.RtfPhrase;
  * 
  * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Werner Daehn (Werner.Daehn@BusinessObjects.com)
  */
 public class RtfAnchor extends RtfField {
 
@@ -87,9 +88,7 @@ public class RtfAnchor extends RtfField {
      */
     public RtfAnchor(RtfDocument doc, Anchor anchor) {
         super(doc);
-        if(anchor.url() != null) {
-            this.url = anchor.url().toString();
-        }
+        this.url = anchor.reference();
         this.content = new RtfPhrase(doc, anchor);
     }
     

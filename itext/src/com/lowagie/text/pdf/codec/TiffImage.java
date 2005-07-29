@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 by Paulo Soares.
+ * Copyright 2003-2005 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@
 package com.lowagie.text.pdf.codec;
 import com.lowagie.text.pdf.*;
 import com.lowagie.text.Image;
+import com.lowagie.text.Jpeg;
 import com.lowagie.text.ExceptionConverter;
 import java.io.*;
 import java.util.zip.*;
@@ -122,6 +123,17 @@ public class TiffImage {
                 default:
                     return getTiffImageColor(dir, s);
             }
+            float rotation = 0;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
+                int rot = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ORIENTATION);
+                if (rot == TIFFConstants.ORIENTATION_BOTRIGHT || rot == TIFFConstants.ORIENTATION_BOTLEFT)
+                    rotation = (float)Math.PI;
+                else if (rot == TIFFConstants.ORIENTATION_LEFTTOP || rot == TIFFConstants.ORIENTATION_LEFTBOT)
+                    rotation = (float)(Math.PI / 2.0);
+                else if (rot == TIFFConstants.ORIENTATION_RIGHTTOP || rot == TIFFConstants.ORIENTATION_RIGHTBOT)
+                    rotation = -(float)(Math.PI / 2.0);
+            }
+
             Image img = null;
             long tiffT4Options = 0;
             long tiffT6Options = 0;
@@ -207,7 +219,7 @@ public class TiffImage {
                         case TIFFConstants.COMPRESSION_CCITTRLEW:
                         case TIFFConstants.COMPRESSION_CCITTRLE:
                             decoder.decode1D(outBuf, im, 0, height);
-                            g4.encodeT6Lines(outBuf, 0, height);
+                            g4.fax4Encode(outBuf,height);
                             break;
                         case TIFFConstants.COMPRESSION_CCITTFAX3:
                             try {
@@ -223,11 +235,11 @@ public class TiffImage {
                                     throw e;
                                 }
                             }
-                            g4.encodeT6Lines(outBuf, 0, height);
+                            g4.fax4Encode(outBuf, height);
                             break;
                         case TIFFConstants.COMPRESSION_CCITTFAX4:
                             decoder.decodeT6(outBuf, im, 0, height, tiffT6Options);
-                            g4.encodeT6Lines(outBuf, 0, height);
+                            g4.fax4Encode(outBuf, height);
                             break;
                     }
                     rowsLeft -= rowsStrip;
@@ -249,6 +261,8 @@ public class TiffImage {
                 }
             }
             img.setOriginalType(Image.ORIGINAL_TIFF);
+            if (rotation != 0)
+                img.setInitialRotation(rotation);
             return img;
         }
         catch (Exception e) {
@@ -266,6 +280,7 @@ public class TiffImage {
                 case TIFFConstants.COMPRESSION_LZW:
                 case TIFFConstants.COMPRESSION_PACKBITS:
                 case TIFFConstants.COMPRESSION_DEFLATE:
+                case TIFFConstants.COMPRESSION_OJPEG:
                     break;
                 default:
                     throw new IllegalArgumentException("The compression " + compression + " is not supported.");
@@ -280,6 +295,16 @@ public class TiffImage {
                     break;
                 default:
                     throw new IllegalArgumentException("The photometric " + photometric + " is not supported.");
+            }
+            float rotation = 0;
+            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
+                int rot = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ORIENTATION);
+                if (rot == TIFFConstants.ORIENTATION_BOTRIGHT || rot == TIFFConstants.ORIENTATION_BOTLEFT)
+                    rotation = (float)Math.PI;
+                else if (rot == TIFFConstants.ORIENTATION_LEFTTOP || rot == TIFFConstants.ORIENTATION_LEFTBOT)
+                    rotation = (float)(Math.PI / 2.0);
+                else if (rot == TIFFConstants.ORIENTATION_RIGHTTOP || rot == TIFFConstants.ORIENTATION_RIGHTBOT)
+                    rotation = -(float)(Math.PI / 2.0);
             }
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_PLANARCONFIG)
                 && dir.getFieldAsLong(TIFFConstants.TIFFTAG_PLANARCONFIG) == TIFFConstants.PLANARCONFIG_SEPARATE)
@@ -338,7 +363,8 @@ public class TiffImage {
             }
             else {
                 stream = new ByteArrayOutputStream();
-                zip = new DeflaterOutputStream(stream);
+                if (compression != TIFFConstants.COMPRESSION_OJPEG)
+                    zip = new DeflaterOutputStream(stream);
             }
             for (int k = 0; k < offset.length; ++k) {
                 byte im[] = new byte[(int)size[k]];
@@ -361,11 +387,14 @@ public class TiffImage {
                     case TIFFConstants.COMPRESSION_LZW:
                         lzwDecoder.decode(im, outBuf, height);
                         break;
+                    case TIFFConstants.COMPRESSION_OJPEG: 
+                        stream.write(im);
+                        break;
                 }
                 if (bitsPerSample == 1 && samplePerPixel == 1) {
-                    g4.encodeT6Lines(outBuf, 0, height);
+                    g4.fax4Encode(outBuf, height);
                 }
-                else {
+                else if (compression != TIFFConstants.COMPRESSION_OJPEG) {
                     zip.write(outBuf);
                 }
                 rowsLeft -= rowsStrip;
@@ -375,45 +404,54 @@ public class TiffImage {
                     photometric == TIFFConstants.PHOTOMETRIC_MINISBLACK ? Image.CCITT_BLACKIS1 : 0, g4.close());
             }
             else {
-                zip.close();
-                img = Image.getInstance(w, h, samplePerPixel, bitsPerSample, stream.toByteArray());
-                img.setDeflated(true);
+                if (compression == TIFFConstants.COMPRESSION_OJPEG) {
+                    img = new Jpeg(stream.toByteArray());                  
+                }
+                else {
+                    zip.close();
+                    img = Image.getInstance(w, h, samplePerPixel, bitsPerSample, stream.toByteArray());
+                    img.setDeflated(true);
+                }
             }
             img.setDpi(dpiX, dpiY);
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
-                try {
-                    TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
-                    ICC_Profile icc_prof = ICC_Profile.getInstance(fd.getAsBytes());
-                    if (samplePerPixel == icc_prof.getNumComponents())
-                        img.tagICC(icc_prof);
+            if (compression != TIFFConstants.COMPRESSION_OJPEG) {
+                if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
+                    try {
+                        TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
+                        ICC_Profile icc_prof = ICC_Profile.getInstance(fd.getAsBytes());
+                        if (samplePerPixel == icc_prof.getNumComponents())
+                            img.tagICC(icc_prof);
+                    }
+                    catch (Exception e) {
+                        //empty
+                    }
                 }
-                catch (Exception e) {
-                    //empty
+                if (dir.isTagPresent(TIFFConstants.TIFFTAG_COLORMAP)) {
+                    TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_COLORMAP);
+                    char rgb[] = fd.getAsChars();
+                    byte palette[] = new byte[rgb.length];
+                    int gColor = rgb.length / 3;
+                    int bColor = gColor * 2;
+                    for (int k = 0; k < gColor; ++k) {
+                        palette[k * 3] = (byte)(rgb[k] >>> 8);
+                        palette[k * 3 + 1] = (byte)(rgb[k + gColor] >>> 8);
+                        palette[k * 3 + 2] = (byte)(rgb[k + bColor] >>> 8);
+                    }
+                    PdfArray indexed = new PdfArray();
+                    indexed.add(PdfName.INDEXED);
+                    indexed.add(PdfName.DEVICERGB);
+                    indexed.add(new PdfNumber(gColor - 1));
+                    indexed.add(new PdfString(palette));
+                    PdfDictionary additional = new PdfDictionary();
+                    additional.put(PdfName.COLORSPACE, indexed);
+                    img.setAdditional(additional);
                 }
-            }
-            if (dir.isTagPresent(TIFFConstants.TIFFTAG_COLORMAP)) {
-                TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_COLORMAP);
-                char rgb[] = fd.getAsChars();
-                byte palette[] = new byte[rgb.length];
-                int gColor = rgb.length / 3;
-                int bColor = gColor * 2;
-                for (int k = 0; k < gColor; ++k) {
-                    palette[k * 3] = (byte)(rgb[k] >>> 8);
-                    palette[k * 3 + 1] = (byte)(rgb[k + gColor] >>> 8);
-                    palette[k * 3 + 2] = (byte)(rgb[k + bColor] >>> 8);
-                }
-                PdfArray indexed = new PdfArray();
-                indexed.add(PdfName.INDEXED);
-                indexed.add(PdfName.DEVICERGB);
-                indexed.add(new PdfNumber(gColor - 1));
-                indexed.add(new PdfString(palette));
-                PdfDictionary additional = new PdfDictionary();
-                additional.put(PdfName.COLORSPACE, indexed);
-                img.setAdditional(additional);
+                img.setOriginalType(Image.ORIGINAL_TIFF);
             }
             if (photometric == TIFFConstants.PHOTOMETRIC_MINISWHITE)
                 img.setInverted(true);
-            img.setOriginalType(Image.ORIGINAL_TIFF);
+            if (rotation != 0)
+                img.setInitialRotation(rotation);
             return img;
         }
         catch (Exception e) {

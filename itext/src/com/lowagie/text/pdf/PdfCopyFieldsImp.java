@@ -1,4 +1,6 @@
 /*
+ * $Id$
+ * $Name$
  * Copyright 2004 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
@@ -162,7 +164,10 @@ class PdfCopyFieldsImp extends PdfWriter {
         AcroFields af = reader.getAcroFields();
         ArrayList coa = co.getArrayList();
         for (int k = 0; k < coa.size(); ++k) {
-            String name = getCOName(reader, (PRIndirectReference)coa.get(k));
+            PdfObject obj = (PdfObject)coa.get(k);
+            if (obj == null || !obj.isIndirect())
+                continue;
+            String name = getCOName(reader, (PRIndirectReference)obj);
             if (af.getFieldItem(name) == null)
                 continue;
             name = "." + name;
@@ -284,7 +289,9 @@ class PdfCopyFieldsImp extends PdfWriter {
                         annots = new PdfArray();
                         pageDic.put(PdfName.ANNOTS, annots);
                     }
-                    adjustTabOrder(annots, ind, (PdfNumber)dic.remove(iTextTag));
+                    PdfNumber nn = (PdfNumber)dic.get(iTextTag);
+                    dic.remove(iTextTag);
+                    adjustTabOrder(annots, ind, nn);
                 }
                 else {
                     PdfArray kids = new PdfArray();
@@ -299,7 +306,8 @@ class PdfCopyFieldsImp extends PdfWriter {
                         PdfDictionary widget = new PdfDictionary();
                         widget.merge((PdfDictionary)list.get(k + 1));
                         widget.put(PdfName.PARENT, ind);
-                        PdfNumber nn = (PdfNumber)widget.remove(iTextTag);
+                        PdfNumber nn = (PdfNumber)widget.get(iTextTag);
+                        widget.remove(iTextTag);
                         PdfIndirectReference wref = addToBody(widget).getIndirectReference();
                         adjustTabOrder(annots, wref, nn);
                         kids.add(wref);

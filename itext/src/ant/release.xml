@@ -27,12 +27,12 @@
 
 	<target name="src.zip" description="--> makes a zipfile with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties" />
+		<zip zipfile="${itext.dist}/src.zip" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties, META-INF/MANIFEST.MF" />
 	</target>
 	
 	<target name="src.tar.gz" description="--> makes a tar.gz-file with the source code">
 		<mkdir dir="${itext.dist}"/>
-		<tar tarfile="${itext.dist}/src.tar" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties" />
+		<tar tarfile="${itext.dist}/src.tar" basedir="${itext.src}" includes="**/*.java, **/*.txt, **/*.afm, **/*.xml, ant/.ant.properties, META-INF/MANIFEST.MF" />
 		<gzip zipfile="${itext.dist}/src.tar.gz" src="${itext.dist}/src.tar"/>
 		<delete file="${itext.dist}/src.tar"/>
 	</target>
@@ -64,6 +64,7 @@
 	<target name="earlyaccess.sf" description="--> makes a complete iText release ready to publish on SourceForge">
 		<mkdir dir="${itext.sf}"/>
         <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
+		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-signed.jar" overwrite="yes"/>
 		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/itext-signed.jar" alias="itext" storepass="fdptext1" />
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${earlyaccesslowagie}.jar" overwrite="yes"/>

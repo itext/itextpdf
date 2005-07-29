@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002, 2003, 2004 by Mark Hall
+ * Copyright 2001, 2002, 2003, 2004, 2005 by Mark Hall
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -200,6 +200,14 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * The RtfFont for bulleted lists
      */
     private RtfFont fontBullet;
+    /**
+     * The alignment of this RtfList
+     */
+    private int alignment = Element.ALIGN_LEFT;
+    /**
+     * The parent List in multi-level lists.
+     */
+    private RtfList parentList = null;
     
     /**
      * Constructs a new RtfList for the specified List.
@@ -210,14 +218,25 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
     public RtfList(RtfDocument doc, List list) {
         super(doc);
         
-        listNumber = document.getDocumentHeader().getListNumber(this);
+        this.listNumber = document.getDocumentHeader().getListNumber(this);
         
-        items = new ArrayList();
-        firstIndent = (int) ((list.symbolIndent() - list.indentationLeft()) * RtfElement.TWIPS_FACTOR * -1);
-        leftIndent = (int) ((list.indentationLeft() + list.symbolIndent()) * RtfElement.TWIPS_FACTOR);
-        rightIndent = (int) (list.indentationRight() * RtfElement.TWIPS_FACTOR);
-        this.symbolIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR);
-        numbered = list.isNumbered();
+        this.items = new ArrayList();
+        if(list.symbolIndent() > 0 && list.indentationLeft() > 0) {
+            this.firstIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR * -1);
+            this.leftIndent = (int) ((list.indentationLeft() + list.symbolIndent()) * RtfElement.TWIPS_FACTOR);
+        } else if(list.symbolIndent() > 0) {
+            this.firstIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR * -1);
+            this.leftIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR);
+        } else if(list.indentationLeft() > 0) {
+            this.firstIndent = 0;
+            this.leftIndent = (int) (list.indentationLeft() * RtfElement.TWIPS_FACTOR);
+        } else {
+            this.firstIndent = 0;
+            this.leftIndent = 0;
+        }
+        this.rightIndent = (int) (list.indentationRight() * RtfElement.TWIPS_FACTOR);
+        this.symbolIndent = (int) ((list.symbolIndent() + list.indentationLeft()) * RtfElement.TWIPS_FACTOR);
+        this.numbered = list.isNumbered();
         
         for(int i = 0; i < list.getItems().size(); i++) {
             try {
@@ -225,15 +244,23 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 if(element.type() == Element.CHUNK) {
                     element = new ListItem((Chunk) element);
                 }
+                if(element instanceof ListItem) {
+                    this.alignment = ((ListItem) element).alignment();
+                }
                 RtfBasicElement rtfElement = doc.getMapper().mapElement(element);
                 if(rtfElement instanceof RtfList) {
                     ((RtfList) rtfElement).setListNumber(listNumber);
                     ((RtfList) rtfElement).setListLevel(listLevel + 1);
+                    ((RtfList) rtfElement).setParent(this);
                 }
                 items.add(rtfElement);
             } catch(DocumentException de) {
                 de.printStackTrace();
             }
+        }
+        
+        if(this.listLevel == 0) {
+            correctIndentation();
         }
         
         fontNumber = new RtfFont(document, new Font(Font.TIMES_ROMAN, 10, Font.NORMAL, new Color(0, 0, 0)));
@@ -311,7 +338,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             }
             result.write(writeIndentations());
             result.write(LIST_LEVEL_SYMBOL_INDENT);
-            result.write(intToByteArray(symbolIndent));
+            result.write(intToByteArray(this.leftIndent));
             result.write(CLOSE_GROUP);
             result.write("\n".getBytes());
             for(int i = 0; i < items.size(); i++) {
@@ -336,7 +363,21 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
-            result.write(RtfParagraph.ALIGN_LEFT);
+            switch (this.alignment) {
+                case Element.ALIGN_LEFT:
+                    result.write(RtfParagraph.ALIGN_LEFT);
+                    break;
+                case Element.ALIGN_RIGHT:
+                    result.write(RtfParagraph.ALIGN_RIGHT);
+                    break;
+                case Element.ALIGN_CENTER:
+                    result.write(RtfParagraph.ALIGN_CENTER);
+                    break;
+                case Element.ALIGN_JUSTIFIED:
+                case Element.ALIGN_JUSTIFIED_ALL:
+                    result.write(RtfParagraph.ALIGN_JUSTIFY);
+                    break;
+            }
             result.write(writeIndentations());
             result.write(RtfFont.FONT_SIZE);
             result.write(intToByteArray(fontNumber.getFontSize() * 2));
@@ -345,6 +386,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             if(listLevel > 0) {
                 result.write(LIST_LEVEL_NUMBER);
                 result.write(intToByteArray(listLevel));
+            }
+            if(this.symbolIndent > 0) { // TODO This is a slight hack. Replace with a call to tab support when implemented.
+                result.write("\\tx".getBytes());
+                result.write(intToByteArray(this.leftIndent));
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -387,6 +432,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     result.write(TAB);
                     result.write(CLOSE_GROUP);
                     result.write(rtfElement.write());
+                    result.write(RtfParagraph.PARAGRAPH);
                     result.write("\n".getBytes());
                 } else if(rtfElement instanceof RtfList) {
                     result.write(rtfElement.write());
@@ -422,9 +468,24 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         this.listLevel = listLevel;
         if(this.listLevel != 0) {
             document.getDocumentHeader().freeListNumber(this);
+            for(int i = 0; i < this.items.size(); i++) {
+                if(this.items.get(i) instanceof RtfList) {
+                    ((RtfList) this.items.get(i)).setListNumber(this.listNumber);
+                    ((RtfList) this.items.get(i)).setListLevel(this.listLevel + 1);
+                }
+            }
         } else {
             this.listNumber = document.getDocumentHeader().getListNumber(this);
         }
+    }
+    
+    /**
+     * Sets the parent RtfList of this RtfList
+     * 
+     * @param parent The parent RtfList to use.
+     */
+    private void setParent(RtfList parent) {
+        this.parentList = parent;
     }
     
     /**
@@ -469,5 +530,38 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         for(int i = 0; i < this.items.size(); i++) {
             ((RtfBasicElement) this.items.get(i)).setInHeader(inHeader);
         }
+    }
+
+    /**
+     * Correct the indentation of this RtfList by adding left/first line indentation
+     * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
+     */
+    private void correctIndentation() {
+        if(this.parentList != null) {
+            this.leftIndent = this.leftIndent + this.parentList.getLeftIndent() + this.parentList.getFirstIndent();
+        }
+        for(int i = 0; i < this.items.size(); i++) {
+            if(this.items.get(i) instanceof RtfList) {
+                ((RtfList) this.items.get(i)).correctIndentation();
+            }
+        }
+    }
+
+    /**
+     * Get the left indentation of this RtfList.
+     * 
+     * @return The left indentation.
+     */
+    private int getLeftIndent() {
+        return this.leftIndent;
+    }
+    
+    /**
+     * Get the first line indentation of this RtfList.
+     * 
+     * @return The first line indentation.
+     */
+    private int getFirstIndent() {
+        return this.firstIndent;
     }
 }

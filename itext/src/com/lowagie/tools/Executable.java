@@ -261,7 +261,7 @@ public class Executable {
 	 */
 	public static boolean isWindows9X() {
 		String os = System.getProperty("os.name").toLowerCase();
-		return os.equals("Windows 95") || os.equals("Windows 98");
+		return os.equals("windows 95") || os.equals("windows 98");
 	}
 
 	/**

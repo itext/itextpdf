@@ -51,6 +51,8 @@
 package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PrinterJob;
 
@@ -58,6 +60,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.Annotation;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -131,6 +134,7 @@ public class PdfContentByte {
     /** A possible text rendering value */
     public static final int TEXT_RENDER_MODE_CLIP = 7;
     
+    private static final float[] unitRect = {0, 0, 0, 1, 1, 0, 1, 1};
     // membervariables
     
     /** This is the actual content */
@@ -154,6 +158,21 @@ public class PdfContentByte {
     /** The separator between commands.
      */
     protected int separator = '\n';
+    
+    private static HashMap abrev = new HashMap();
+    
+    static {
+        abrev.put(PdfName.BITSPERCOMPONENT, "/BPC ");
+        abrev.put(PdfName.COLORSPACE, "/CS ");
+        abrev.put(PdfName.DECODE, "/D ");
+        abrev.put(PdfName.DECODEPARMS, "/DP ");
+        abrev.put(PdfName.FILTER, "/F ");
+        abrev.put(PdfName.HEIGHT, "/H ");
+        abrev.put(PdfName.IMAGEMASK, "/IM ");
+        abrev.put(PdfName.INTENT, "/Intent ");
+        abrev.put(PdfName.INTERPOLATE, "/I ");
+        abrev.put(PdfName.WIDTH, "/W ");
+    }
     
     // constructors
     
@@ -969,12 +988,23 @@ public class PdfContentByte {
      * @throws DocumentException if the <CODE>Image</CODE> does not have absolute positioning
      */
     public void addImage(Image image) throws DocumentException {
+        addImage(image, false);
+    }
+    
+    /**
+     * Adds an <CODE>Image</CODE> to the page. The <CODE>Image</CODE> must have
+     * absolute positioning. The image can be placed inline.
+     * @param image the <CODE>Image</CODE> object
+     * @param inlineImage <CODE>true</CODE> to place this image inline, <CODE>false</CODE> otherwise
+     * @throws DocumentException if the <CODE>Image</CODE> does not have absolute positioning
+     */
+    public void addImage(Image image, boolean inlineImage) throws DocumentException {
         if (!image.hasAbsolutePosition())
             throw new DocumentException("The image must have absolute positioning.");
         float matrix[] = image.matrix();
         matrix[Image.CX] = image.absoluteX() - matrix[Image.CX];
         matrix[Image.CY] = image.absoluteY() - matrix[Image.CY];
-        addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+        addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], inlineImage);
     }
     
     /**
@@ -991,38 +1021,125 @@ public class PdfContentByte {
      * @throws DocumentException on error
      */
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
+        addImage(image, a, b, c, d, e, f, false);
+    }
+    
+    /**
+     * Adds an <CODE>Image</CODE> to the page. The positioning of the <CODE>Image</CODE>
+     * is done with the transformation matrix. To position an <CODE>image</CODE> at (x,y)
+     * use addImage(image, image_width, 0, 0, image_height, x, y). The image can be placed inline.
+     * @param image the <CODE>Image</CODE> object
+     * @param a an element of the transformation matrix
+     * @param b an element of the transformation matrix
+     * @param c an element of the transformation matrix
+     * @param d an element of the transformation matrix
+     * @param e an element of the transformation matrix
+     * @param f an element of the transformation matrix
+     * @param inlineImage <CODE>true</CODE> to place this image inline, <CODE>false</CODE> otherwise
+     * @throws DocumentException on error
+     */
+    public void addImage(Image image, float a, float b, float c, float d, float e, float f, boolean inlineImage) throws DocumentException {
         try {
-            
+            if (image.getLayer() != null)
+                beginLayer(image.getLayer());
             if (image.isImgTemplate()) {
                 writer.addDirectImageSimple(image);
                 PdfTemplate template = image.templateData();
                 float w = template.getWidth();
                 float h = template.getHeight();
-                if (image.getLayer() != null)
-                    beginLayer(image.getLayer());
                 addTemplate(template, a / w, b / w, c / h, d / h, e, f);
-                if (image.getLayer() != null)
-                    endLayer();
             }
             else {
-                PdfName name;
-                PageResources prs = getPageResources();
-                Image maskImage = image.getImageMask();
-                if (maskImage != null) {
-                    name = writer.addDirectImageSimple(maskImage);
-                    prs.addXObject(name, writer.getImageReference(name));
-                }
-                name = writer.addDirectImageSimple(image);
-                name = prs.addXObject(name, writer.getImageReference(name));
                 content.append("q ");
                 content.append(a).append(' ');
                 content.append(b).append(' ');
                 content.append(c).append(' ');
                 content.append(d).append(' ');
                 content.append(e).append(' ');
-                content.append(f).append(" cm ");
-                content.append(name.getBytes()).append(" Do Q").append_i(separator);
+                content.append(f).append(" cm");
+                if (inlineImage) {
+                    content.append("\nBI\n");
+                    PdfImage pimage = new PdfImage(image, "", null);
+                    for (Iterator it = pimage.getKeys().iterator(); it.hasNext();) {
+                        PdfName key = (PdfName)it.next();
+                        PdfObject value = pimage.get(key);
+                        String s = (String)abrev.get(key);
+                        if (s == null)
+                            continue;
+                        content.append(s);
+                        boolean check = true;
+                        if (key.equals(PdfName.COLORSPACE) && value.isArray()) {
+                            ArrayList ar = ((PdfArray)value).getArrayList();
+                            if (ar.size() == 4 
+                                && PdfName.INDEXED.equals(ar.get(0)) 
+                                && ((PdfObject)ar.get(1)).isName()
+                                && ((PdfObject)ar.get(2)).isNumber()
+                                && ((PdfObject)ar.get(3)).isString()
+                            ) {
+                                check = false;
+                            }
+                            
+                        }
+                        if (check && key.equals(PdfName.COLORSPACE) && !value.isName()) {
+                            PdfName cs = writer.getColorspaceName();
+                            PageResources prs = getPageResources();
+                            prs.addColor(cs, writer.addToBody(value).getIndirectReference());
+                            value = cs;
+                        }
+                        value.toPdf(null, content);
+                        content.append('\n');
+                    }
+                    content.append("ID\n");
+                    pimage.writeContent(content);
+                    content.append("\nEI\nQ").append_i(separator);
+                }
+                else {
+                    PdfName name;
+                    PageResources prs = getPageResources();
+                    Image maskImage = image.getImageMask();
+                    if (maskImage != null) {
+                        name = writer.addDirectImageSimple(maskImage);
+                        prs.addXObject(name, writer.getImageReference(name));
+                    }
+                    name = writer.addDirectImageSimple(image);
+                    name = prs.addXObject(name, writer.getImageReference(name));
+                    content.append(' ').append(name.getBytes()).append(" Do Q").append_i(separator);
+                }
             }
+            if (image.hasBorders()) {
+                saveState();
+                float w = image.width();
+                float h = image.height();
+                concatCTM(a / w, b / w, c / h, d / h, e, f);
+                rectangle(image);
+                restoreState();
+            }
+            if (image.getLayer() != null)
+                endLayer();
+            Annotation annot = image.annotation();
+            if (annot == null)
+                return;
+            float[] r = new float[unitRect.length];
+            for (int k = 0; k < unitRect.length; k += 2) {
+                r[k] = a * unitRect[k] + c * unitRect[k + 1] + e;
+                r[k + 1] = b * unitRect[k] + d * unitRect[k + 1] + f;
+            }
+            float llx = r[0];
+            float lly = r[1];
+            float urx = llx;
+            float ury = lly;
+            for (int k = 2; k < r.length; k += 2) {
+                llx = Math.min(llx, r[k]);
+                lly = Math.min(lly, r[k + 1]);
+                urx = Math.max(urx, r[k]);
+                ury = Math.max(ury, r[k + 1]);
+            }
+            annot = new Annotation(annot);
+            annot.setDimensions(llx, lly, urx, ury);
+            PdfAnnotation an = PdfDocument.convertAnnotation(writer, annot);
+            if (an == null)
+                return;
+            addAnnotation(an);
         }
         catch (Exception ee) {
             throw new DocumentException(ee);

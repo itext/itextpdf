@@ -2,7 +2,8 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002 Paulo Soares
+ * Copyright 2005 Jose Hurtado <a href="mailto:jose.hurtado@gft.com">jose.hurtado@gft.com</a>
+ * Parts Copyright 2005 Mark Hall
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -24,7 +25,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -48,36 +49,80 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.text.rtf.field;
+
+import java.io.IOException;
+
+import com.lowagie.text.Font;
+import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.field.RtfField;
 
 /**
- *
- * @author  psoares
+ * The RtfTotalPageNumber provides the total number of pages field in rtf documents.
+ * 
+ * @version $Version:$
+ * @author Jose Hurtado (jose.hurtado@gft.com)
+ * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
-public class SpotColor extends ExtendedColor {
+public class RtfTotalPageNumber extends RtfField {
 
-    PdfSpotColor spot;
-    float tint;
-
-    public SpotColor(PdfSpotColor spot, float tint) {
-        super(TYPE_SEPARATION,
-            ((float)spot.getAlternativeCS().getRed() / 255f - 1f) * tint + 1,
-            ((float)spot.getAlternativeCS().getGreen() / 255f - 1f) * tint + 1,
-            ((float)spot.getAlternativeCS().getBlue() / 255f - 1f) * tint + 1);
-        this.spot = spot;
-        this.tint = tint;
+    /**
+     * Constant for arabic total page numbers.
+     */
+    private static final byte[] ARABIC_TOTAL_PAGES = "NUMPAGES \\\\* Arabic".getBytes();
+    
+    /**
+     * Constructs a RtfTotalPageNumber. This can be added anywhere to add a total number of pages field.
+     */
+    public RtfTotalPageNumber() {
+        super(null);
     }
     
-    public SpotColor(PdfSpotColor spot) {
-        this(spot, spot.getTint());
+    /**
+     * Constructs a RtfTotalPageNumber with a specified Font. This can be added anywhere
+     * to add a total number of pages field.
+     * @param font
+     */
+    public RtfTotalPageNumber(Font font) {
+        super(null, font);
     }
     
-    public PdfSpotColor getPdfSpotColor() {
-        return spot;
+    /**
+     * Constructs a RtfTotalPageNumber object.
+     * 
+     * @param doc The RtfDocument this RtfTotalPageNumber belongs to
+     */
+    public RtfTotalPageNumber(RtfDocument doc) {
+        super(doc);
     }
     
-    public float getTint() {
-        return tint;
+    /**
+     * Constructs a RtfTotalPageNumber object with a specific font.
+     * 
+     * @param doc The RtfDocument this RtfTotalPageNumber belongs to
+     * @param font The Font to use
+     */
+    public RtfTotalPageNumber(RtfDocument doc, Font font) {
+        super(doc, font);
+    }
+    
+    /**
+     * Writes the field NUMPAGES instruction with Arabic format
+     * 
+     * @return A byte array containing "NUMPAGES \\\\* Arabic".
+     * @throws IOException
+     */
+    protected byte[] writeFieldInstContent() throws IOException {
+        return ARABIC_TOTAL_PAGES;
     }
 
+    /**
+     * Writes the field result content
+     * 
+     * @return An byte array containing "1".
+     * @throws IOException
+     */
+    protected byte[] writeFieldResultContent() throws IOException {
+        return "1".getBytes();
+    }
 }

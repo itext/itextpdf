@@ -74,6 +74,8 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.SimpleCell;
+import com.lowagie.text.SimpleTable;
 import com.lowagie.text.TextElementArray;
 import com.lowagie.text.html.HtmlWriter;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -102,6 +104,7 @@ public class Parser extends DefaultHandler {
 	protected String[] titles;
 	protected int[] counterParents;
 	protected int[] counters;
+	protected int previoustitle = -1;
 	/* Markup properties */
 	protected MarkupParser markup;
 	
@@ -176,6 +179,12 @@ public class Parser extends DefaultHandler {
 					break;
 				case Element.PARAGRAPH:
 					addObject((Paragraph)element);
+					break;
+				case Element.TABLE:
+					addObject((SimpleTable)element);
+					break;
+				case Element.CELL:
+					addObject((SimpleCell)element);
 					break;
 				}
 			}
@@ -298,7 +307,6 @@ public class Parser extends DefaultHandler {
 					if (filestack.size() > 0) file = new File((String)filestack.peek()).getParent() + "/" + file.trim();
 					filestack.push(file);
 					parse();
-					if (outline != null) outline.pop();
 				}
 			}
 			if (document.isOpen()) return;
@@ -341,7 +349,7 @@ public class Parser extends DefaultHandler {
 		else {
 			try {
 				currentChunk = new Chunk(s, ((Phrase) objectstack.peek()).font());
-			} catch (EmptyStackException ese) {
+			} catch (Exception e) {
 				currentChunk = new Chunk(s);
 			}
 		}
@@ -354,6 +362,24 @@ public class Parser extends DefaultHandler {
 	private void addObject(Phrase phrase) {
 		// we put the element on top of the objectstack
 		objectstack.push(phrase);
+	}
+	
+	/**
+	 * Creates a new Object and puts it on top of the objectstack.
+	 * @param table
+	 */
+	private void addObject(SimpleTable table) {
+		// we put the element on top of the objectstack
+		objectstack.push(table);
+	}
+	
+	/**
+	 * Creates a new Object and puts it on top of the objectstack.
+	 * @param cell
+	 */
+	private void addObject(SimpleCell cell) {
+		// we put the element on top of the objectstack
+		objectstack.push(cell);
 	}
 	
 	/**
@@ -373,9 +399,14 @@ public class Parser extends DefaultHandler {
 				if (structures[i].equals(attrs.getProperty(MarkupTags.HTML_ATTR_CSS_CLASS))) {
 					// we increment the number of this hierarchy element
 					counters[i]++;
+					while (previoustitle > -1 && counterParents[previoustitle] >= counterParents[i]) {
+						outline.pop();
+						previoustitle = counterParents[previoustitle];
+					}
+					previoustitle = i;
 					// we set the counter of the child to 0 if necessary
 					for (int j = i + 1; j < counters.length; j++) {
-						if (counterParents[j] == i) {
+						if (counterParents[j] == i && titles[j] == null) {
 							counters[j] = 0;
 							break;
 						}
@@ -423,9 +454,9 @@ public class Parser extends DefaultHandler {
 		}
 		Element current = (Element) objectstack.pop();
 		try {
-			TextElementArray previous = (TextElementArray) objectstack.pop();
+			TextElementArray previous = (TextElementArray) objectstack.peek();
 			previous.add(current);
-			objectstack.push(previous);
+			//objectstack.push(previous);
 			return true;
 		} catch (EmptyStackException ese) {
 			try {
@@ -448,6 +479,7 @@ public class Parser extends DefaultHandler {
 	private void parse() throws ParserConfigurationException, IOException, SAXException {
 		// gets the file on top of the filestack
 		String file = (String) filestack.peek();
+//System.err.println("Parsing: " + file);
 		// create the parser
 		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance(); 
 		SAXParser saxParser = saxParserFactory.newSAXParser(); 

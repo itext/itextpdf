@@ -1,509 +1,600 @@
 /*
- * Copyright (c) 2001 Sun Microsystems, Inc. All Rights Reserved.
+ * Copyright 2005 by Paulo Soares.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * The contents of this file are subject to the Mozilla Public License Version 1.1
+ * (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.mozilla.org/MPL/
  *
- * -Redistributions of source code must retain the above copyright notice, this
- * list of conditions and the following disclaimer.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the License.
  *
- * -Redistribution in binary form must reproduct the above copyright notice,
- * this list of conditions and the following disclaimer in the documentation
- * and/or other materials provided with the distribution.
+ * The Original Code is 'iText, a free JAVA-PDF library'.
  *
- * Neither the name of Sun Microsystems, Inc. or the names of contributors may
- * be used to endorse or promote products derived from this software without
- * specific prior written permission.
+ * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
+ * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * All Rights Reserved.
+ * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
+ * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
  *
- * This software is provided "AS IS," without a warranty of any kind. ALL
- * EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY
- * IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR
- * NON-INFRINGEMENT, ARE HEREBY EXCLUDED. SUN AND ITS LICENSORS SHALL NOT BE
- * LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING
- * OR DISTRIBUTING THE SOFTWARE OR ITS DERIVATIVES. IN NO EVENT WILL SUN OR ITS
- * LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT,
- * INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER
- * CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF
- * OR INABILITY TO USE SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES.
+ * Contributor(s): all the names of the contributors are added in the source code
+ * where applicable.
  *
- * You acknowledge that Software is not designed,licensed or intended for use in
- * the design, construction, operation or maintenance of any nuclear facility.
+ * Alternatively, the contents of this file may be used under the terms of the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * provisions of LGPL are applicable instead of those above.  If you wish to
+ * allow use of your version of this file only under the terms of the LGPL
+ * License and not to allow others to use your version of this file under
+ * the MPL, indicate your decision by deleting the provisions above and
+ * replace them with the notice and other provisions required by the LGPL.
+ * If you do not delete the provisions above, a recipient may use your version
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE.
  *
- * Modified by Paulo Soares for iText.
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the MPL as stated above or under the terms of the GNU
+ * Library General Public License as published by the Free Software Foundation;
+ * either version 2 of the License, or any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * details.
+ *
+ * If you didn't download this code from the following link, you should check if
+ * you aren't using an obsolete version:
+ * http://www.lowagie.com/iText/
+ *
+ * This code is base in the libtiff encoder
  */
 package com.lowagie.text.pdf.codec;
-import com.lowagie.text.pdf.*;
 
+import com.lowagie.text.pdf.ByteBuffer;
+
+/**
+ * Encodes data in the CCITT G4 FAX format.
+ */
 public class CCITTG4Encoder {
-    
-    /**
-     * The CCITT numerical definition of white.
-     */
-    private static final int WHITE = 0;
-    
-    /**
-     * The CCITT numerical definition of black.
-     */
-    private static final int BLACK = 1;
-    
-    // --- Begin tables for CCITT compression ---
-    
-    private static byte[] byteTable = new byte[] {
-        8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,     // 0 to 15
-        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,     // 16 to 31
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,     // 32 to 47
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,     // 48 to 63
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,     // 64 to 79
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,     // 80 to 95
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,     // 96 to 111
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,     // 112 to 127
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 128 to 143
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 144 to 159
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 160 to 175
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 176 to 191
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 192 to 207
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 208 to 223
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 224 to 239
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0      // 240 to 255
-    };
-    
-    /**
-     * Terminating codes for black runs.
-     */
-    private static int[] termCodesBlack = new int[] {
-        /*     0 0x0000 */     0x0dc0000a, 0x40000003, 0xc0000002, 0x80000002,
-        /*     4 0x0004 */     0x60000003, 0x30000004, 0x20000004, 0x18000005,
-        /*     8 0x0008 */     0x14000006, 0x10000006, 0x08000007, 0x0a000007,
-        /*    12 0x000c */     0x0e000007, 0x04000008, 0x07000008, 0x0c000009,
-        /*    16 0x0010 */     0x05c0000a, 0x0600000a, 0x0200000a, 0x0ce0000b,
-        /*    20 0x0014 */     0x0d00000b, 0x0d80000b, 0x06e0000b, 0x0500000b,
-        /*    24 0x0018 */     0x02e0000b, 0x0300000b, 0x0ca0000c, 0x0cb0000c,
-        /*    28 0x001c */     0x0cc0000c, 0x0cd0000c, 0x0680000c, 0x0690000c,
-        /*    32 0x0020 */     0x06a0000c, 0x06b0000c, 0x0d20000c, 0x0d30000c,
-        /*    36 0x0024 */     0x0d40000c, 0x0d50000c, 0x0d60000c, 0x0d70000c,
-        /*    40 0x0028 */     0x06c0000c, 0x06d0000c, 0x0da0000c, 0x0db0000c,
-        /*    44 0x002c */     0x0540000c, 0x0550000c, 0x0560000c, 0x0570000c,
-        /*    48 0x0030 */     0x0640000c, 0x0650000c, 0x0520000c, 0x0530000c,
-        /*    52 0x0034 */     0x0240000c, 0x0370000c, 0x0380000c, 0x0270000c,
-        /*    56 0x0038 */     0x0280000c, 0x0580000c, 0x0590000c, 0x02b0000c,
-        /*    60 0x003c */     0x02c0000c, 0x05a0000c, 0x0660000c, 0x0670000c
-    };
-    
-    /**
-     * Terminating codes for white runs.
-     */
-    private static int[] termCodesWhite = new int[] {
-        /*     0 0x0000 */     0x35000008, 0x1c000006, 0x70000004, 0x80000004,
-        /*     4 0x0004 */     0xb0000004, 0xc0000004, 0xe0000004, 0xf0000004,
-        /*     8 0x0008 */     0x98000005, 0xa0000005, 0x38000005, 0x40000005,
-        /*    12 0x000c */     0x20000006, 0x0c000006, 0xd0000006, 0xd4000006,
-        /*    16 0x0010 */     0xa8000006, 0xac000006, 0x4e000007, 0x18000007,
-        /*    20 0x0014 */     0x10000007, 0x2e000007, 0x06000007, 0x08000007,
-        /*    24 0x0018 */     0x50000007, 0x56000007, 0x26000007, 0x48000007,
-        /*    28 0x001c */     0x30000007, 0x02000008, 0x03000008, 0x1a000008,
-        /*    32 0x0020 */     0x1b000008, 0x12000008, 0x13000008, 0x14000008,
-        /*    36 0x0024 */     0x15000008, 0x16000008, 0x17000008, 0x28000008,
-        /*    40 0x0028 */     0x29000008, 0x2a000008, 0x2b000008, 0x2c000008,
-        /*    44 0x002c */     0x2d000008, 0x04000008, 0x05000008, 0x0a000008,
-        /*    48 0x0030 */     0x0b000008, 0x52000008, 0x53000008, 0x54000008,
-        /*    52 0x0034 */     0x55000008, 0x24000008, 0x25000008, 0x58000008,
-        /*    56 0x0038 */     0x59000008, 0x5a000008, 0x5b000008, 0x4a000008,
-        /*    60 0x003c */     0x4b000008, 0x32000008, 0x33000008, 0x34000008
-    };
-    
-    /**
-     * Make-up codes for black runs.
-     */
-    private static int[] makeupCodesBlack = new int[] {
-        /*     0 0x0000 */     0x00000000, 0x03c0000a, 0x0c80000c, 0x0c90000c,
-        /*     4 0x0004 */     0x05b0000c, 0x0330000c, 0x0340000c, 0x0350000c,
-        /*     8 0x0008 */     0x0360000d, 0x0368000d, 0x0250000d, 0x0258000d,
-        /*    12 0x000c */     0x0260000d, 0x0268000d, 0x0390000d, 0x0398000d,
-        /*    16 0x0010 */     0x03a0000d, 0x03a8000d, 0x03b0000d, 0x03b8000d,
-        /*    20 0x0014 */     0x0290000d, 0x0298000d, 0x02a0000d, 0x02a8000d,
-        /*    24 0x0018 */     0x02d0000d, 0x02d8000d, 0x0320000d, 0x0328000d,
-        /*    28 0x001c */     0x0100000b, 0x0180000b, 0x01a0000b, 0x0120000c,
-        /*    32 0x0020 */     0x0130000c, 0x0140000c, 0x0150000c, 0x0160000c,
-        /*    36 0x0024 */     0x0170000c, 0x01c0000c, 0x01d0000c, 0x01e0000c,
-        /*    40 0x0028 */     0x01f0000c, 0x00000000, 0x00000000, 0x00000000,
-        /*    44 0x002c */     0x00000000, 0x00000000, 0x00000000, 0x00000000,
-        /*    48 0x0030 */     0x00000000, 0x00000000, 0x00000000, 0x00000000,
-        /*    52 0x0034 */     0x00000000, 0x00000000, 0x00000000, 0x00000000,
-        /*    56 0x0038 */     0x00000000, 0x00000000, 0x00000000, 0x00000000
-    };
-    
-    /**
-     * Make-up codes for white runs.
-     */
-    private static int[] makeupCodesWhite = new int[] {
-        /*     0 0x0000 */     0x00000000, 0xd8000005, 0x90000005, 0x5c000006,
-        /*     4 0x0004 */     0x6e000007, 0x36000008, 0x37000008, 0x64000008,
-        /*     8 0x0008 */     0x65000008, 0x68000008, 0x67000008, 0x66000009,
-        /*    12 0x000c */     0x66800009, 0x69000009, 0x69800009, 0x6a000009,
-        /*    16 0x0010 */     0x6a800009, 0x6b000009, 0x6b800009, 0x6c000009,
-        /*    20 0x0014 */     0x6c800009, 0x6d000009, 0x6d800009, 0x4c000009,
-        /*    24 0x0018 */     0x4c800009, 0x4d000009, 0x60000006, 0x4d800009,
-        /*    28 0x001c */     0x0100000b, 0x0180000b, 0x01a0000b, 0x0120000c,
-        /*    32 0x0020 */     0x0130000c, 0x0140000c, 0x0150000c, 0x0160000c,
-        /*    36 0x0024 */     0x0170000c, 0x01c0000c, 0x01d0000c, 0x01e0000c,
-        /*    40 0x0028 */     0x01f0000c, 0x00000000, 0x00000000, 0x00000000,
-        /*    44 0x002c */     0x00000000, 0x00000000, 0x00000000, 0x00000000,
-        /*    48 0x0030 */     0x00000000, 0x00000000, 0x00000000, 0x00000000,
-        /*    52 0x0034 */     0x00000000, 0x00000000, 0x00000000, 0x00000000,
-        /*    56 0x0038 */     0x00000000, 0x00000000, 0x00000000, 0x00000000
-    };
-    
-    /**
-     * Pass mode table.
-     */
-    private static int[] passMode = new int[] {
-        0x10000004            // 0001
-    };
-    
-    /**
-     * Vertical mode table.
-     */
-    private static int[] vertMode = new int[] {
-        0x06000007,            // 0000011
-        0x0c000006,            // 000011
-        0x60000003,            // 011
-        0x80000001,            // 1
-        0x40000003,            // 010
-        0x08000006,            // 000010
-        0x04000007            // 0000010
-    };
-    
-    /**
-     * Horizontal mode table.
-     */
-    private static int[] horzMode = new int[] {
-        0x20000003            // 001
-    };
-    
-    /**
-     * Black and white terminating code table.
-     */
-    private static int[][] termCodes =
-    new int[][] {termCodesWhite, termCodesBlack};
-    
-    /**
-     * Black and white make-up code table.
-     */
-    private static int[][] makeupCodes =
-        new int[][] {makeupCodesWhite, makeupCodesBlack};
-    
-    /**
-     * Black and white pass mode table.
-     */
-    private static int[][] pass = new int[][] {passMode, passMode};
-    
-    /**
-     * Black and white vertical mode table.
-     */
-    private static int[][] vert = new int[][] {vertMode, vertMode};
-    
-    /**
-     * Black and white horizontal mode table.
-     */
-    private static int[][] horz = new int[][] {horzMode, horzMode};
-    
-    // --- End tables for CCITT compression ---
-    
-    /**
-     * Output bit buffer.
-     */
-    private int bits;
-    
-    /**
-     * Number of bits in the output bit buffer.
-     */
-    private int ndex;
+    private int rowbytes;
+    private int rowpixels;
+    private int bit = 8;
+    private int data;
+    private byte[] refline;
     private ByteBuffer outBuf = new ByteBuffer(1024);
-    private int width;
-    private int lineStride;
-    byte[] refData = null;
+    private byte[] dataBp;
+    private int offsetData;
+    private int sizeData;
     
     /**
-     * Constructs a <code>TIFFFaxEncoder</code> for CCITT bilevel encoding.
-     */
+     * Creates a new encoder.
+     * @param width the line width
+     */    
     public CCITTG4Encoder(int width) {
-        this.width = width;
-        lineStride = (width + 7) / 8;
-        initBitBuf();
+        rowpixels = width;
+        rowbytes = (rowpixels + 7) / 8;
+        refline = new byte[rowbytes];
     }
     
+    /**
+     * Encodes a number of lines.
+     * @param data the data to be encoded
+     * @param offset the offset into the data
+     * @param size the size of the data to be encoded
+     */    
+    public void fax4Encode(byte[] data, int offset, int size) {
+        dataBp = data;
+        offsetData = offset;
+        sizeData = size;
+        while (sizeData > 0) {
+            Fax3Encode2DRow();
+            System.arraycopy(dataBp, offsetData, refline, 0, rowbytes);
+            offsetData += rowbytes;
+            sizeData -= rowbytes;
+        }
+    }
+    
+
+    /**
+     * Encodes a full image.
+     * @param data the data to encode
+     * @param width the image width
+     * @param height the image height
+     * @return the encoded image
+     */    
     public static byte[] compress(byte[] data, int width, int height) {
         CCITTG4Encoder g4 = new CCITTG4Encoder(width);
-        int yPos = 0;
-        while (height-- != 0) {
-            g4.encodeT6Line(data, yPos);
-            yPos += g4.lineStride;
-        }
+        g4.fax4Encode(data, 0, g4.rowbytes * height);
         return g4.close();
     }
     
-    public void encodeT6Lines(byte data[], int lineAddr, int height) {
-        int yPos = lineAddr;
-        while (height-- != 0) {
-            encodeT6Line(data, yPos);
-            yPos += lineStride;
-        }
-    }
     /**
-     * Return min of <code>maxOffset</code> or offset of first pixel
-     * different from pixel at <code>bitOffset</code>.
-     */
-    private int nextState(byte[] data,
-        int    base,
-        int    bitOffset,
-        int    maxOffset) {
-        if(data == null) {
-            return maxOffset;
-        }
-        
-        int next  = base + (bitOffset>>>3);
-        int end   = base + (maxOffset>>>3);
-        if(end == data.length) { // Prevents out of bounds exception below
-            end--;
-        }
-        if (next == data.length) // and so does this
-            --next;
-        int extra = bitOffset & 0x7;
-        
-        int  testbyte;
-        if((data[next] & (0x80 >>> extra)) != 0) {    // look for "0"
-            testbyte = ~(data[next]) & (0xff >>> extra);
-            while (next < end) {
-                if (testbyte != 0) {
-                    break;
-                }
-                testbyte = ~(data[++next]) & 0xff;
-            }
-        } else {                // look for "1"
-            if ((testbyte = (data[next] & (0xff >>> extra))) != 0) {
-                bitOffset = (next-base)*8 + byteTable[testbyte];
-                return ((bitOffset < maxOffset) ? bitOffset : maxOffset);
-            }
-            while (next < end) {
-                if ((testbyte = data[++next]&0xff) != 0) {
-                    // "1" is in current byte
-                    bitOffset = (next-base)*8 + byteTable[testbyte];
-                    return ((bitOffset < maxOffset) ? bitOffset : maxOffset);
-                }
-            }
-        }
-        bitOffset = (next-base)*8 + byteTable[testbyte];
-        return ((bitOffset < maxOffset) ? bitOffset : maxOffset);
+     * Encodes a number of lines.
+     * @param data the data to be encoded
+     * @param height the number of lines to encode
+     */    
+    public void fax4Encode(byte[] data, int height) {
+        fax4Encode(data, 0, rowbytes * height);
+    }
+
+    private void putcode(int[] table) {
+        putBits(table[CODE], table[LENGTH]);
     }
     
-    /**
-     * Initialize bit buffer machinery.
-     */
-    private void initBitBuf() {
-        ndex = 0;
-        bits = 0x00000000;
-    }
-    
-    /**
-     * Get code for run and add to compressed bitstream.
-     */
-    private void add1DBits(
-        int    count, // #pixels in run
-        int    color) // color of run
-    {
-        int                 sixtyfours;
-        int        mask;
+    private void putspan(int span, int[][] tab) {
+        int code, length;
         
-        if (count < 0)
-            return;
-        sixtyfours = count >>> 6;    // count / 64;
-        count = count & 0x3f;       // count % 64
-        if (sixtyfours != 0) {
-            for ( ; sixtyfours > 40; sixtyfours -= 40) {
-                mask = makeupCodes[color][40];
-                bits |= (mask & 0xfff80000) >>> ndex;
-                ndex += (int)(mask & 0x0000ffff);
-                while (ndex > 7) {
-                    outBuf.append((byte)(bits >>> 24));
-                    bits <<= 8;
-                    ndex -= 8;
-                }
-            }
-            
-            mask = makeupCodes[color][sixtyfours];
-            bits |= (mask & 0xfff80000) >>> ndex;
-            ndex += (int)(mask & 0x0000ffff);
-            while (ndex > 7) {
-                outBuf.append((byte)(bits >>> 24));
-                bits <<= 8;
-                ndex -= 8;
-            }
+        while (span >= 2624) {
+            int[] te = tab[63 + (2560>>6)];
+            code = te[CODE];
+            length = te[LENGTH];
+            putBits(code, length);
+            span -= te[RUNLEN];
         }
-        
-        mask = termCodes[color][count];
-        bits |= (mask & 0xfff80000) >>> ndex;
-        ndex += (int)(mask & 0x0000ffff);
-        while (ndex > 7) {
-            outBuf.append((byte)(bits >>> 24));
-            bits <<= 8;
-            ndex -= 8;
-        }        
+        if (span >= 64) {
+            int[] te = tab[63 + (span>>6)];
+            code = te[CODE];
+            length = te[LENGTH];
+            putBits(code, length);
+            span -= te[RUNLEN];
+        }
+        code = tab[span][CODE];
+        length = tab[span][LENGTH];
+        putBits(code, length);
     }
     
-    /**
-     * Place entry from mode table into compressed bitstream.
-     */
-    private void add2DBits(
-        int[][] mode,  // 2-D mode to be encoded
-        int     entry) // mode entry (0 unless vertical)
-    {
-        int        mask;
-        int                 color = 0;
-        
-        mask = mode[color][entry];
-        bits |= (mask & 0xfff80000) >>> ndex;
-        ndex += (int)(mask & 0x0000ffff);
-        while (ndex > 7) {
-            outBuf.append((byte)(bits >>> 24));
-            bits <<= 8;
-            ndex -= 8;
+    private void putBits(int bits, int length) {
+        while (length > bit) {
+            data |= bits >> (length - bit);
+            length -= bit;
+            outBuf.append((byte)data);
+            data = 0;
+            bit = 8;
+        }
+        data |= (bits & msbmask[length]) << (bit - length);
+        bit -= length;
+        if (bit == 0) {
+            outBuf.append((byte)data);
+            data = 0;
+            bit = 8;
         }
     }
     
-    /**
-     * Add an End-of-Line (EOL == 0x001) to the compressed bitstream
-     * with optional byte alignment.
-     */
-    private void addEOL(boolean is1DMode,// 1D encoding
-    boolean addFill, // byte aligned EOLs
-    boolean add1    // add1 ? EOL+1 : EOL+0
-    )
-    {
+    private void Fax3Encode2DRow() {
+        int a0 = 0;
+        int a1 = (pixel(dataBp, offsetData, 0) != 0 ? 0 : finddiff(dataBp, offsetData, 0, rowpixels, 0));
+        int b1 = (pixel(refline, 0, 0) != 0 ? 0 : finddiff(refline, 0, 0, rowpixels, 0));
+        int a2, b2;
         
-        //
-        // Add zero-valued fill bits such that the EOL is aligned as
-        //
-        //     xxxx 0000 0000 0001
-        //
-        if(addFill) {
-            //
-            // Simply increment the bit count. No need to feed bits into
-            // the output buffer at this point as there are at most 7 bits
-            // in the bit buffer, at most 7 are added here, and at most
-            // 13 below making the total 7+7+13 = 27 before the bit feed
-            // at the end of this routine.
-            //
-            ndex += ((ndex <= 4) ? 4 - ndex : 12 - ndex);
-        }
-        
-        //
-        // Write EOL into buffer
-        //
-        if(is1DMode) {
-            bits |= 0x00100000 >>> ndex;
-            ndex += 12;
-        } else {
-            bits |= (add1 ? 0x00180000 : 0x00100000) >>> ndex;
-            ndex += 13;
-        }
-        
-        while (ndex > 7) {
-            outBuf.append((byte)(bits >>> 24));
-            bits <<= 8;
-            ndex -= 8;
-        }
-    }
-    
-    /**
-     * Add an End-of-Facsimile-Block (EOFB == 0x001001) to the compressed
-     * bitstream.
-     */
-    private void addEOFB()
-    {
-        //
-        // eofb code
-        //
-        bits |= 0x00100100 >>> ndex;
-        
-        //
-        // eofb code length
-        //
-        ndex += 24;
-        
-        //
-        // flush all pending bits
-        //
-        while(ndex > 0) {
-            outBuf.append((byte)(bits >>> 24));
-            bits <<= 8;
-            ndex -= 8;
-        }
-    }
-
-    public void encodeT6Line(byte data[], int lineAddr) {
-        int a0   = 0;
-        int last = a0 + width;
-
-        int testbit = 
-        ((data[lineAddr + (a0>>>3)]&0xff) >>>
-        (7-(a0 & 0x7))) & 0x1;
-        int a1 = testbit != 0 ?
-        a0 : nextState(data, lineAddr, a0, last);
-
-        testbit = refData == null ?
-        0: ((refData[(a0>>>3)]&0xff) >>>
-        (7-(a0 & 0x7))) & 0x1;
-        int b1 = testbit != 0 ?
-        a0 : nextState(refData, 0, a0, last);
-
-        //
-        // The current color is set to WHITE at line start
-        //
-        int color = WHITE;
-
-        while(true) {
-            int b2 = nextState(refData, 0, b1, last);
-            if(b2 < a1) {          // pass mode
-                add2DBits(pass, 0);
-                a0 = b2;
-            } else {
-                int tmp = b1 - a1 + 3;
-                if((tmp <= 6) && (tmp >= 0)) { // vertical mode
-                    add2DBits(vert, tmp);
-                    a0 = a1;
-                } else {            // horizontal mode
-                    int a2 = nextState(data, lineAddr, a1, last);
-                    add2DBits(horz, 0);
-                    add1DBits(a1-a0, color);
-                    add1DBits(a2-a1, color^1);
-                    if (a2 <= a0)
-                        throw new RuntimeException("G4 encoding error.");
+        for (;;) {
+            b2 = finddiff2(refline, 0, b1, rowpixels, pixel(refline, 0,b1));
+            if (b2 >= a1) {
+                int d = b1 - a1;
+                if (!(-3 <= d && d <= 3)) {	/* horizontal mode */
+                    a2 = finddiff2(dataBp, offsetData, a1, rowpixels, pixel(dataBp, offsetData,a1));
+                    putcode(horizcode);
+                    if (a0+a1 == 0 || pixel(dataBp, offsetData, a0) == 0) {
+                        putspan(a1-a0, TIFFFaxWhiteCodes);
+                        putspan(a2-a1, TIFFFaxBlackCodes);
+                    } else {
+                        putspan(a1-a0, TIFFFaxBlackCodes);
+                        putspan(a2-a1, TIFFFaxWhiteCodes);
+                    }
                     a0 = a2;
+                } else {			/* vertical mode */
+                    putcode(vcodes[d+3]);
+                    a0 = a1;
                 }
+            } else {				/* pass mode */
+                putcode(passcode);
+                a0 = b2;
             }
-            if(a0 >= last) {
+            if (a0 >= rowpixels)
                 break;
-            }
-            color = ((data[lineAddr + (a0>>>3)]&0xff) >>>
-            (7-(a0 & 0x7))) & 0x1;
-            a1 = nextState(data, lineAddr, a0, last);
-            b1 = nextState(refData, 0, a0, last);
-            testbit = refData == null ?
-            0: ((refData[(b1>>>3)]&0xff) >>>
-            (7-(b1 & 0x7))) & 0x1;
-            if(testbit == color) {
-                b1 = nextState(refData, 0, b1, last);
-            }
+            a1 = finddiff(dataBp, offsetData, a0, rowpixels, pixel(dataBp, offsetData,a0));
+            b1 = finddiff(refline, 0, a0, rowpixels, pixel(dataBp, offsetData,a0) ^ 1);
+            b1 = finddiff(refline, 0, b1, rowpixels, pixel(dataBp, offsetData,a0));
         }
-
-        if (refData == null)
-            refData = new byte[lineStride + 1];
-        System.arraycopy(data, lineAddr, refData, 0, lineStride);
     }
     
+    private void Fax4PostEncode() {
+        putBits(EOL, 12);
+        putBits(EOL, 12);
+        if (bit != 8) {
+            outBuf.append((byte)data);
+            data = 0;
+            bit = 8;
+        }
+    }
+    
+    /**
+     * Closes the encoder and returns the encoded data.
+     * @return the encoded data
+     */    
     public byte[] close() {
-        addEOFB();
+        Fax4PostEncode();
         return outBuf.toByteArray();
     }
+    
+    private int pixel(byte[] data, int offset, int bit) {
+        if (bit >= rowpixels)
+            return 0;
+        return ((data[offset + (bit >> 3)] & 0xff) >> (7-((bit)&7))) & 1;
+    }
+    
+    private static int find1span(byte[] bp, int offset, int bs, int be) {
+        int bits = be - bs;
+        int n, span;
+        
+        int pos = offset + (bs >> 3);
+        /*
+         * Check partial byte on lhs.
+         */
+        if (bits > 0 && (n = (bs & 7)) != 0) {
+            span = oneruns[((int)bp[pos] << n) & 0xff];
+            if (span > 8-n)		/* table value too generous */
+                span = 8-n;
+            if (span > bits)	/* constrain span to bit range */
+                span = bits;
+            if (n+span < 8)		/* doesn't extend to edge of byte */
+                return (span);
+            bits -= span;
+            pos++;
+        } else
+            span = 0;
+        /*
+         * Scan full bytes for all 1's.
+         */
+        while (bits >= 8) {
+            if (bp[pos] != -1)	/* end of run */
+                return (span + oneruns[bp[pos] & 0xff]);
+            span += 8;
+            bits -= 8;
+            pos++;
+        }
+        /*
+         * Check partial byte on rhs.
+         */
+        if (bits > 0) {
+            n = oneruns[bp[pos] & 0xff];
+            span += (n > bits ? bits : n);
+        }
+        return (span);
+    }
+    
+    private static int find0span(byte[] bp, int offset, int bs, int be) {
+        int bits = be - bs;
+        int n, span;
+        
+        int pos = offset + (bs >> 3);
+        /*
+         * Check partial byte on lhs.
+         */
+        if (bits > 0 && (n = (bs & 7)) != 0) {
+            span = zeroruns[((int)bp[pos] << n) & 0xff];
+            if (span > 8-n)		/* table value too generous */
+                span = 8-n;
+            if (span > bits)	/* constrain span to bit range */
+                span = bits;
+            if (n+span < 8)		/* doesn't extend to edge of byte */
+                return (span);
+            bits -= span;
+            pos++;
+        } else
+            span = 0;
+        /*
+         * Scan full bytes for all 1's.
+         */
+        while (bits >= 8) {
+            if (bp[pos] != 0)	/* end of run */
+                return (span + zeroruns[bp[pos] & 0xff]);
+            span += 8;
+            bits -= 8;
+            pos++;
+        }
+        /*
+         * Check partial byte on rhs.
+         */
+        if (bits > 0) {
+            n = zeroruns[bp[pos] & 0xff];
+            span += (n > bits ? bits : n);
+        }
+        return (span);
+    }
+    
+    private static int finddiff(byte[] bp, int offset, int bs, int be, int color) {
+        return bs + (color != 0 ? find1span(bp, offset, bs, be) : find0span(bp, offset, bs, be));
+    }
+    
+    private static int finddiff2(byte[] bp, int offset, int bs, int be, int color) {
+        return bs < be ? finddiff(bp, offset, bs, be, color) : be;
+    }
+    
+    private static byte zeroruns[] = {
+        8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,	/* 0x00 - 0x0f */
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,	/* 0x10 - 0x1f */
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,	/* 0x20 - 0x2f */
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,	/* 0x30 - 0x3f */
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 0x40 - 0x4f */
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 0x50 - 0x5f */
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 0x60 - 0x6f */
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 0x70 - 0x7f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x80 - 0x8f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x90 - 0x9f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0xa0 - 0xaf */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0xb0 - 0xbf */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0xc0 - 0xcf */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0xd0 - 0xdf */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0xe0 - 0xef */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	/* 0xf0 - 0xff */
+    };
+    
+    private static byte oneruns[] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x00 - 0x0f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x10 - 0x1f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x20 - 0x2f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x30 - 0x3f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x40 - 0x4f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x50 - 0x5f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x60 - 0x6f */
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x70 - 0x7f */
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 0x80 - 0x8f */
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 0x90 - 0x9f */
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 0xa0 - 0xaf */
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	/* 0xb0 - 0xbf */
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,	/* 0xc0 - 0xcf */
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,	/* 0xd0 - 0xdf */
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,	/* 0xe0 - 0xef */
+        4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 7, 8	/* 0xf0 - 0xff */
+    };
+
+    private static final int LENGTH = 0; /* bit length of g3 code */
+    private static final int CODE = 1;   /* g3 code */
+    private static final int RUNLEN = 2; /* run length in bits */
+
+    private static final int EOL = 0x001; /* EOL code value - 0000 0000 0000 1 */
+
+    /* status values returned instead of a run length */
+    private static final int G3CODE_EOL	= -1;     /* NB: ACT_EOL - ACT_WRUNT */
+    private static final int G3CODE_INVALID = -2; /* NB: ACT_INVALID - ACT_WRUNT */
+    private static final int G3CODE_EOF = -3;     /* end of input data */
+    private static final int G3CODE_INCOMP = -4;  /* incomplete run code */
+
+    private int[][] TIFFFaxWhiteCodes = {
+        { 8, 0x35, 0 },	/* 0011 0101 */
+        { 6, 0x7, 1 },	/* 0001 11 */
+        { 4, 0x7, 2 },	/* 0111 */
+        { 4, 0x8, 3 },	/* 1000 */
+        { 4, 0xB, 4 },	/* 1011 */
+        { 4, 0xC, 5 },	/* 1100 */
+        { 4, 0xE, 6 },	/* 1110 */
+        { 4, 0xF, 7 },	/* 1111 */
+        { 5, 0x13, 8 },	/* 1001 1 */
+        { 5, 0x14, 9 },	/* 1010 0 */
+        { 5, 0x7, 10 },	/* 0011 1 */
+        { 5, 0x8, 11 },	/* 0100 0 */
+        { 6, 0x8, 12 },	/* 0010 00 */
+        { 6, 0x3, 13 },	/* 0000 11 */
+        { 6, 0x34, 14 },	/* 1101 00 */
+        { 6, 0x35, 15 },	/* 1101 01 */
+        { 6, 0x2A, 16 },	/* 1010 10 */
+        { 6, 0x2B, 17 },	/* 1010 11 */
+        { 7, 0x27, 18 },	/* 0100 111 */
+        { 7, 0xC, 19 },	/* 0001 100 */
+        { 7, 0x8, 20 },	/* 0001 000 */
+        { 7, 0x17, 21 },	/* 0010 111 */
+        { 7, 0x3, 22 },	/* 0000 011 */
+        { 7, 0x4, 23 },	/* 0000 100 */
+        { 7, 0x28, 24 },	/* 0101 000 */
+        { 7, 0x2B, 25 },	/* 0101 011 */
+        { 7, 0x13, 26 },	/* 0010 011 */
+        { 7, 0x24, 27 },	/* 0100 100 */
+        { 7, 0x18, 28 },	/* 0011 000 */
+        { 8, 0x2, 29 },	/* 0000 0010 */
+        { 8, 0x3, 30 },	/* 0000 0011 */
+        { 8, 0x1A, 31 },	/* 0001 1010 */
+        { 8, 0x1B, 32 },	/* 0001 1011 */
+        { 8, 0x12, 33 },	/* 0001 0010 */
+        { 8, 0x13, 34 },	/* 0001 0011 */
+        { 8, 0x14, 35 },	/* 0001 0100 */
+        { 8, 0x15, 36 },	/* 0001 0101 */
+        { 8, 0x16, 37 },	/* 0001 0110 */
+        { 8, 0x17, 38 },	/* 0001 0111 */
+        { 8, 0x28, 39 },	/* 0010 1000 */
+        { 8, 0x29, 40 },	/* 0010 1001 */
+        { 8, 0x2A, 41 },	/* 0010 1010 */
+        { 8, 0x2B, 42 },	/* 0010 1011 */
+        { 8, 0x2C, 43 },	/* 0010 1100 */
+        { 8, 0x2D, 44 },	/* 0010 1101 */
+        { 8, 0x4, 45 },	/* 0000 0100 */
+        { 8, 0x5, 46 },	/* 0000 0101 */
+        { 8, 0xA, 47 },	/* 0000 1010 */
+        { 8, 0xB, 48 },	/* 0000 1011 */
+        { 8, 0x52, 49 },	/* 0101 0010 */
+        { 8, 0x53, 50 },	/* 0101 0011 */
+        { 8, 0x54, 51 },	/* 0101 0100 */
+        { 8, 0x55, 52 },	/* 0101 0101 */
+        { 8, 0x24, 53 },	/* 0010 0100 */
+        { 8, 0x25, 54 },	/* 0010 0101 */
+        { 8, 0x58, 55 },	/* 0101 1000 */
+        { 8, 0x59, 56 },	/* 0101 1001 */
+        { 8, 0x5A, 57 },	/* 0101 1010 */
+        { 8, 0x5B, 58 },	/* 0101 1011 */
+        { 8, 0x4A, 59 },	/* 0100 1010 */
+        { 8, 0x4B, 60 },	/* 0100 1011 */
+        { 8, 0x32, 61 },	/* 0011 0010 */
+        { 8, 0x33, 62 },	/* 0011 0011 */
+        { 8, 0x34, 63 },	/* 0011 0100 */
+        { 5, 0x1B, 64 },	/* 1101 1 */
+        { 5, 0x12, 128 },	/* 1001 0 */
+        { 6, 0x17, 192 },	/* 0101 11 */
+        { 7, 0x37, 256 },	/* 0110 111 */
+        { 8, 0x36, 320 },	/* 0011 0110 */
+        { 8, 0x37, 384 },	/* 0011 0111 */
+        { 8, 0x64, 448 },	/* 0110 0100 */
+        { 8, 0x65, 512 },	/* 0110 0101 */
+        { 8, 0x68, 576 },	/* 0110 1000 */
+        { 8, 0x67, 640 },	/* 0110 0111 */
+        { 9, 0xCC, 704 },	/* 0110 0110 0 */
+        { 9, 0xCD, 768 },	/* 0110 0110 1 */
+        { 9, 0xD2, 832 },	/* 0110 1001 0 */
+        { 9, 0xD3, 896 },	/* 0110 1001 1 */
+        { 9, 0xD4, 960 },	/* 0110 1010 0 */
+        { 9, 0xD5, 1024 },	/* 0110 1010 1 */
+        { 9, 0xD6, 1088 },	/* 0110 1011 0 */
+        { 9, 0xD7, 1152 },	/* 0110 1011 1 */
+        { 9, 0xD8, 1216 },	/* 0110 1100 0 */
+        { 9, 0xD9, 1280 },	/* 0110 1100 1 */
+        { 9, 0xDA, 1344 },	/* 0110 1101 0 */
+        { 9, 0xDB, 1408 },	/* 0110 1101 1 */
+        { 9, 0x98, 1472 },	/* 0100 1100 0 */
+        { 9, 0x99, 1536 },	/* 0100 1100 1 */
+        { 9, 0x9A, 1600 },	/* 0100 1101 0 */
+        { 6, 0x18, 1664 },	/* 0110 00 */
+        { 9, 0x9B, 1728 },	/* 0100 1101 1 */
+        { 11, 0x8, 1792 },	/* 0000 0001 000 */
+        { 11, 0xC, 1856 },	/* 0000 0001 100 */
+        { 11, 0xD, 1920 },	/* 0000 0001 101 */
+        { 12, 0x12, 1984 },	/* 0000 0001 0010 */
+        { 12, 0x13, 2048 },	/* 0000 0001 0011 */
+        { 12, 0x14, 2112 },	/* 0000 0001 0100 */
+        { 12, 0x15, 2176 },	/* 0000 0001 0101 */
+        { 12, 0x16, 2240 },	/* 0000 0001 0110 */
+        { 12, 0x17, 2304 },	/* 0000 0001 0111 */
+        { 12, 0x1C, 2368 },	/* 0000 0001 1100 */
+        { 12, 0x1D, 2432 },	/* 0000 0001 1101 */
+        { 12, 0x1E, 2496 },	/* 0000 0001 1110 */
+        { 12, 0x1F, 2560 },	/* 0000 0001 1111 */
+        { 12, 0x1, G3CODE_EOL },	/* 0000 0000 0001 */
+        { 9, 0x1, G3CODE_INVALID },	/* 0000 0000 1 */
+        { 10, 0x1, G3CODE_INVALID },	/* 0000 0000 01 */
+        { 11, 0x1, G3CODE_INVALID },	/* 0000 0000 001 */
+        { 12, 0x0, G3CODE_INVALID }	/* 0000 0000 0000 */
+    };
+
+    private int[][] TIFFFaxBlackCodes = {
+        { 10, 0x37, 0 },	/* 0000 1101 11 */
+        { 3, 0x2, 1 },	/* 010 */
+        { 2, 0x3, 2 },	/* 11 */
+        { 2, 0x2, 3 },	/* 10 */
+        { 3, 0x3, 4 },	/* 011 */
+        { 4, 0x3, 5 },	/* 0011 */
+        { 4, 0x2, 6 },	/* 0010 */
+        { 5, 0x3, 7 },	/* 0001 1 */
+        { 6, 0x5, 8 },	/* 0001 01 */
+        { 6, 0x4, 9 },	/* 0001 00 */
+        { 7, 0x4, 10 },	/* 0000 100 */
+        { 7, 0x5, 11 },	/* 0000 101 */
+        { 7, 0x7, 12 },	/* 0000 111 */
+        { 8, 0x4, 13 },	/* 0000 0100 */
+        { 8, 0x7, 14 },	/* 0000 0111 */
+        { 9, 0x18, 15 },	/* 0000 1100 0 */
+        { 10, 0x17, 16 },	/* 0000 0101 11 */
+        { 10, 0x18, 17 },	/* 0000 0110 00 */
+        { 10, 0x8, 18 },	/* 0000 0010 00 */
+        { 11, 0x67, 19 },	/* 0000 1100 111 */
+        { 11, 0x68, 20 },	/* 0000 1101 000 */
+        { 11, 0x6C, 21 },	/* 0000 1101 100 */
+        { 11, 0x37, 22 },	/* 0000 0110 111 */
+        { 11, 0x28, 23 },	/* 0000 0101 000 */
+        { 11, 0x17, 24 },	/* 0000 0010 111 */
+        { 11, 0x18, 25 },	/* 0000 0011 000 */
+        { 12, 0xCA, 26 },	/* 0000 1100 1010 */
+        { 12, 0xCB, 27 },	/* 0000 1100 1011 */
+        { 12, 0xCC, 28 },	/* 0000 1100 1100 */
+        { 12, 0xCD, 29 },	/* 0000 1100 1101 */
+        { 12, 0x68, 30 },	/* 0000 0110 1000 */
+        { 12, 0x69, 31 },	/* 0000 0110 1001 */
+        { 12, 0x6A, 32 },	/* 0000 0110 1010 */
+        { 12, 0x6B, 33 },	/* 0000 0110 1011 */
+        { 12, 0xD2, 34 },	/* 0000 1101 0010 */
+        { 12, 0xD3, 35 },	/* 0000 1101 0011 */
+        { 12, 0xD4, 36 },	/* 0000 1101 0100 */
+        { 12, 0xD5, 37 },	/* 0000 1101 0101 */
+        { 12, 0xD6, 38 },	/* 0000 1101 0110 */
+        { 12, 0xD7, 39 },	/* 0000 1101 0111 */
+        { 12, 0x6C, 40 },	/* 0000 0110 1100 */
+        { 12, 0x6D, 41 },	/* 0000 0110 1101 */
+        { 12, 0xDA, 42 },	/* 0000 1101 1010 */
+        { 12, 0xDB, 43 },	/* 0000 1101 1011 */
+        { 12, 0x54, 44 },	/* 0000 0101 0100 */
+        { 12, 0x55, 45 },	/* 0000 0101 0101 */
+        { 12, 0x56, 46 },	/* 0000 0101 0110 */
+        { 12, 0x57, 47 },	/* 0000 0101 0111 */
+        { 12, 0x64, 48 },	/* 0000 0110 0100 */
+        { 12, 0x65, 49 },	/* 0000 0110 0101 */
+        { 12, 0x52, 50 },	/* 0000 0101 0010 */
+        { 12, 0x53, 51 },	/* 0000 0101 0011 */
+        { 12, 0x24, 52 },	/* 0000 0010 0100 */
+        { 12, 0x37, 53 },	/* 0000 0011 0111 */
+        { 12, 0x38, 54 },	/* 0000 0011 1000 */
+        { 12, 0x27, 55 },	/* 0000 0010 0111 */
+        { 12, 0x28, 56 },	/* 0000 0010 1000 */
+        { 12, 0x58, 57 },	/* 0000 0101 1000 */
+        { 12, 0x59, 58 },	/* 0000 0101 1001 */
+        { 12, 0x2B, 59 },	/* 0000 0010 1011 */
+        { 12, 0x2C, 60 },	/* 0000 0010 1100 */
+        { 12, 0x5A, 61 },	/* 0000 0101 1010 */
+        { 12, 0x66, 62 },	/* 0000 0110 0110 */
+        { 12, 0x67, 63 },	/* 0000 0110 0111 */
+        { 10, 0xF, 64 },	/* 0000 0011 11 */
+        { 12, 0xC8, 128 },	/* 0000 1100 1000 */
+        { 12, 0xC9, 192 },	/* 0000 1100 1001 */
+        { 12, 0x5B, 256 },	/* 0000 0101 1011 */
+        { 12, 0x33, 320 },	/* 0000 0011 0011 */
+        { 12, 0x34, 384 },	/* 0000 0011 0100 */
+        { 12, 0x35, 448 },	/* 0000 0011 0101 */
+        { 13, 0x6C, 512 },	/* 0000 0011 0110 0 */
+        { 13, 0x6D, 576 },	/* 0000 0011 0110 1 */
+        { 13, 0x4A, 640 },	/* 0000 0010 0101 0 */
+        { 13, 0x4B, 704 },	/* 0000 0010 0101 1 */
+        { 13, 0x4C, 768 },	/* 0000 0010 0110 0 */
+        { 13, 0x4D, 832 },	/* 0000 0010 0110 1 */
+        { 13, 0x72, 896 },	/* 0000 0011 1001 0 */
+        { 13, 0x73, 960 },	/* 0000 0011 1001 1 */
+        { 13, 0x74, 1024 },	/* 0000 0011 1010 0 */
+        { 13, 0x75, 1088 },	/* 0000 0011 1010 1 */
+        { 13, 0x76, 1152 },	/* 0000 0011 1011 0 */
+        { 13, 0x77, 1216 },	/* 0000 0011 1011 1 */
+        { 13, 0x52, 1280 },	/* 0000 0010 1001 0 */
+        { 13, 0x53, 1344 },	/* 0000 0010 1001 1 */
+        { 13, 0x54, 1408 },	/* 0000 0010 1010 0 */
+        { 13, 0x55, 1472 },	/* 0000 0010 1010 1 */
+        { 13, 0x5A, 1536 },	/* 0000 0010 1101 0 */
+        { 13, 0x5B, 1600 },	/* 0000 0010 1101 1 */
+        { 13, 0x64, 1664 },	/* 0000 0011 0010 0 */
+        { 13, 0x65, 1728 },	/* 0000 0011 0010 1 */
+        { 11, 0x8, 1792 },	/* 0000 0001 000 */
+        { 11, 0xC, 1856 },	/* 0000 0001 100 */
+        { 11, 0xD, 1920 },	/* 0000 0001 101 */
+        { 12, 0x12, 1984 },	/* 0000 0001 0010 */
+        { 12, 0x13, 2048 },	/* 0000 0001 0011 */
+        { 12, 0x14, 2112 },	/* 0000 0001 0100 */
+        { 12, 0x15, 2176 },	/* 0000 0001 0101 */
+        { 12, 0x16, 2240 },	/* 0000 0001 0110 */
+        { 12, 0x17, 2304 },	/* 0000 0001 0111 */
+        { 12, 0x1C, 2368 },	/* 0000 0001 1100 */
+        { 12, 0x1D, 2432 },	/* 0000 0001 1101 */
+        { 12, 0x1E, 2496 },	/* 0000 0001 1110 */
+        { 12, 0x1F, 2560 },	/* 0000 0001 1111 */
+        { 12, 0x1, G3CODE_EOL },	/* 0000 0000 0001 */
+        { 9, 0x1, G3CODE_INVALID },	/* 0000 0000 1 */
+        { 10, 0x1, G3CODE_INVALID },	/* 0000 0000 01 */
+        { 11, 0x1, G3CODE_INVALID },	/* 0000 0000 001 */
+        { 12, 0x0, G3CODE_INVALID }	/* 0000 0000 0000 */
+    };
+    
+    private int[] horizcode =
+        { 3, 0x1, 0 };		/* 001 */
+    private int[] passcode =
+        { 4, 0x1, 0 };		/* 0001 */
+    private int[][] vcodes = {
+        { 7, 0x03, 0 },	/* 0000 011 */
+        { 6, 0x03, 0 },	/* 0000 11 */
+        { 3, 0x03, 0 },	/* 011 */
+        { 1, 0x1, 0 },		/* 1 */
+        { 3, 0x2, 0 },		/* 010 */
+        { 6, 0x02, 0 },	/* 0000 10 */
+        { 7, 0x02, 0 }		/* 0000 010 */
+    };
+    private int[] msbmask =
+    { 0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
 }

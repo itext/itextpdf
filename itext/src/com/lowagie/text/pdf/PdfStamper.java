@@ -199,6 +199,8 @@ public class PdfStamper {
         }
         sigApp.preClose();
         PdfSigGenericPKCS sig = sigApp.getSigStandard();
+        PdfLiteral lit = (PdfLiteral)sig.get(PdfName.CONTENTS);
+        int totalBuf = (lit.getPosLength() - 2) / 2;
         byte buf[] = new byte[8192];
         int n;
         InputStream inp = sigApp.getRangeStream();
@@ -210,7 +212,10 @@ public class PdfStamper {
         catch (SignatureException se) {
             throw new ExceptionConverter(se);
         }
-        PdfString str = new PdfString(sig.getSignerContents());
+        buf = new byte[totalBuf];
+        byte[] bsig = sig.getSignerContents();
+        System.arraycopy(bsig, 0, buf, 0, bsig.length);
+        PdfString str = new PdfString(buf);
         str.setHexWriting(true);
         PdfDictionary dic = new PdfDictionary();
         dic.put(PdfName.CONTENTS, str);

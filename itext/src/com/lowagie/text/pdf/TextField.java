@@ -116,10 +116,17 @@ public class TextField extends BaseField {
         else
             app.setColorFill(textColor);
         app.beginText();
+        String ptext = text; //fixed by Kazuya Ujihara (ujihara.jp)
+        if ((options & PASSWORD) != 0) { 
+            char[] pchar = new char[text.length()];
+            for (int i = 0; i < text.length(); i++)
+                pchar[i] = '*';
+            ptext = new String(pchar);
+        }
         if ((options & MULTILINE) != 0) {
             float usize = fontSize;
             float width = box.width() - 3 * offsetX;
-            ArrayList breaks = getHardBreaks(text);
+            ArrayList breaks = getHardBreaks(ptext);
             ArrayList lines = breaks;
             float factor = ufont.getFontDescriptor(BaseFont.BBOXURY, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1);
             if (usize == 0) {
@@ -177,7 +184,7 @@ public class TextField extends BaseField {
             float usize = fontSize;
             if (usize == 0) {
                 float maxCalculatedSize = h / (ufont.getFontDescriptor(BaseFont.BBOXURX, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1));
-                float wd = ufont.getWidthPoint(text, 1);
+                float wd = ufont.getWidthPoint(ptext, 1);
                 if (wd == 0)
                     usize = maxCalculatedSize;
                 else
@@ -197,7 +204,7 @@ public class TextField extends BaseField {
                 offsetY = Math.min(ny, Math.max(offsetY, dy));
             }
             if ((options & COMB) != 0 && maxCharacterLength > 0) {
-                int textLen = Math.min(maxCharacterLength, text.length());
+                int textLen = Math.min(maxCharacterLength, ptext.length());
                 int position = 0;
                 if (alignment == Element.ALIGN_RIGHT) {
                     position = maxCharacterLength - textLen;
@@ -208,7 +215,7 @@ public class TextField extends BaseField {
                 float step = box.width() / maxCharacterLength;
                 float start = step / 2 + position * step;
                 for (int k = 0; k < textLen; ++k) {
-                    String c = text.substring(k, k + 1);
+                    String c = ptext.substring(k, k + 1);
                     float wd = ufont.getWidthPoint(c, usize);
                     app.setTextMatrix(start - wd / 2, offsetY);
                     app.showText(c);
@@ -217,16 +224,16 @@ public class TextField extends BaseField {
             }
             else {
                 if (alignment == Element.ALIGN_RIGHT) {
-                    float wd = ufont.getWidthPoint(text, usize);
+                    float wd = ufont.getWidthPoint(ptext, usize);
                     app.moveText(box.width() - 2 * offsetX - wd, offsetY);
                 }
                 else if (alignment == Element.ALIGN_CENTER) {
-                    float wd = ufont.getWidthPoint(text, usize);
+                    float wd = ufont.getWidthPoint(ptext, usize);
                     app.moveText(box.width() / 2  - wd / 2, offsetY);
                 }
                 else
                     app.moveText(2 * offsetX, offsetY);
-                app.showText(text);
+                app.showText(ptext);
             }
         }
         app.endText();
@@ -404,7 +411,7 @@ public class TextField extends BaseField {
         int topChoice = choiceSelection;
         if (topChoice >= uchoices.length)
             topChoice = uchoices.length - 1;
-        text = "";
+        if (text == null) text = ""; //fixed by Kazuya Ujihara (ujihara.jp)
         if (topChoice >= 0)
             text = uchoices[topChoice];
         if (topChoice < 0)

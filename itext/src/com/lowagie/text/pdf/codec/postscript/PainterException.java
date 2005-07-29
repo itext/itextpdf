@@ -12,8 +12,6 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.lang.*;
-
 public class PainterException extends Exception {
 
     public PainterException(String msg){

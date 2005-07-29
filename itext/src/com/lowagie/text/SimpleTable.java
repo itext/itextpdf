@@ -190,8 +190,17 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, Element, T
 			pos = 0;
 			for (Iterator cells = row.getContent().iterator(); cells.hasNext(); ) {
 				cell = (SimpleCell)cells.next();
-				if (Float.isNaN(cell.getSpacing()))	{
-					cell.setSpacing(cellspacing);
+				if (Float.isNaN(cell.getSpacing_left()))	{
+					cell.setSpacing_left(cellspacing / 2f);
+				}
+				if (Float.isNaN(cell.getSpacing_right()))	{
+					cell.setSpacing_right(cellspacing / 2f);
+				}
+				if (Float.isNaN(cell.getSpacing_top()))	{
+					cell.setSpacing_top(cellspacing / 2f);
+				}
+				if (Float.isNaN(cell.getSpacing_bottom()))	{
+					cell.setSpacing_bottom(cellspacing / 2f);
 				}
 				cell.setPadding(cellpadding);
 				table.addCell(cell.createPdfPCell(row));

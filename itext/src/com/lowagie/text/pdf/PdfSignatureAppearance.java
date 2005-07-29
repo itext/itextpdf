@@ -55,14 +55,12 @@ import com.lowagie.text.Image;
 import com.lowagie.text.DocumentException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.text.SimpleDateFormat;
-import java.text.DateFormat;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.cert.CRL;
@@ -741,7 +739,13 @@ public class PdfSignatureAppearance {
         AcroFields af = writer.getAcroFields();
         String name = getFieldName();
         boolean fieldExists = !(isInvisible() || isNewField());
+        int flags = 132;
         if (fieldExists) {
+            flags = 0;
+            ArrayList merged = af.getFieldItem(name).merged;
+            PdfObject obj = PdfReader.getPdfObjectRelease(((PdfDictionary)merged.get(0)).get(PdfName.F));
+            if (obj != null && obj.isNumber())
+                flags = ((PdfNumber)obj).intValue();
             af.removeField(name);
         }
         writer.setSigFlags(3);
@@ -749,7 +753,7 @@ public class PdfSignatureAppearance {
         sigField.setFieldName(name);
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
         sigField.put(PdfName.V, refSig);
-        sigField.setFlags(132);
+        sigField.setFlags(flags);
 
         int pagen = getPage();
         PdfReader reader = writer.reader;
@@ -782,7 +786,7 @@ public class PdfSignatureAppearance {
             sigStandard.put(PdfName.M, new PdfDate(getSignDate()));
             sigStandard.setSignInfo(getPrivKey(), getCertChain(), getCrlList());
             PdfString contents = (PdfString)sigStandard.get(PdfName.CONTENTS);
-            PdfLiteral lit = new PdfLiteral(contents.toString().length() * 2 + 2);
+            PdfLiteral lit = new PdfLiteral((contents.toString().length() + (PdfName.ADOBE_PPKLITE.equals(getFilter())?0:64)) * 2 + 2);
             exclusionLocations.put(PdfName.CONTENTS, lit);
             sigStandard.put(PdfName.CONTENTS, lit);
             lit = new PdfLiteral(80);
@@ -881,7 +885,7 @@ public class PdfSignatureAppearance {
                 bf.reset();
                 obj.toPdf(null, bf);
                 if (bf.size() > lit.getPosLength())
-                    throw new IllegalArgumentException("The key " + key.toString() + " is too big.");
+                    throw new IllegalArgumentException("The key " + key.toString() + " is too big. Is " + bf.size() + ", reserved " + lit.getPosLength());
                 if (tempFile == null)
                     System.arraycopy(bf.getBuffer(), 0, bout, lit.getPosition(), bf.size());
                 else {

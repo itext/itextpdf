@@ -190,6 +190,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName CH = new PdfName("Ch");
     /** A name */
+    public static final PdfName CHARPROCS = new PdfName("CharProcs");
+    /** A name */
     public static final PdfName CIDFONTTYPE0 = new PdfName("CIDFontType0");
     /** A name */
     public static final PdfName CIDFONTTYPE2 = new PdfName("CIDFontType2");
@@ -385,6 +387,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName FONTFILE2 = new PdfName("FontFile2");
     /** A name */
     public static final PdfName FONTFILE3 = new PdfName("FontFile3");
+    /** A name */
+    public static final PdfName FONTMATRIX = new PdfName("FontMatrix");
     /** A name */
     public static final PdfName FONTNAME = new PdfName("FontName");
     /** A name */
@@ -660,6 +664,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PANOSE = new PdfName("Panose");
     /** A name */
+    public static final PdfName PARAMS = new PdfName("Params");
+    /** A name */
     public static final PdfName PARENT = new PdfName("Parent");
     /** A name */
     public static final PdfName PATTERN = new PdfName("Pattern");
@@ -752,7 +758,7 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName SHADINGTYPE = new PdfName("ShadingType");
     /** A name */
-    public static final PdfName SHIFT_JIS = new PdfName("Shift?JIS");
+    public static final PdfName SHIFT_JIS = new PdfName("Shift-JIS");
     /** A name */
     public static final PdfName SIG = new PdfName("Sig");
     /** A name */
@@ -856,6 +862,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName TYPE1 = new PdfName("Type1");
     /** A name of an attribute. */
+    public static final PdfName TYPE3 = new PdfName("Type3");
+    /** A name of an attribute. */
     public static final PdfName U = new PdfName("U");
     /** A name of an attribute. */
     public static final PdfName UHC = new PdfName("UHC");
@@ -875,6 +883,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName USEOUTLINES = new PdfName("UseOutlines");
     /** A name */
     public static final PdfName USER = new PdfName("User");
+    /** A name */
+    public static final PdfName USERUNIT = new PdfName("UserUnit");
     /** A name */
     public static final PdfName USETHUMBS = new PdfName("UseThumbs");
     /** A name */

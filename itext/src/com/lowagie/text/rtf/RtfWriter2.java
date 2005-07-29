@@ -52,6 +52,7 @@ package com.lowagie.text.rtf;
 
 import com.lowagie.text.*;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.document.RtfDocumentSettings;
 import com.lowagie.text.rtf.text.RtfNewPage;
 
 import java.io.IOException;
@@ -251,5 +252,14 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      */
     public void setDataCacheStyle(int dataCacheStyle) throws DocumentException, IOException {
         this.rtfDoc.setDataCacheStyle(dataCacheStyle);
+    }
+    
+    /**
+     * Gets the RtfDocumentSettings that specify how the rtf document is generated.
+     * 
+     * @return The current RtfDocumentSettings.
+     */
+    public RtfDocumentSettings getDocumentSettings() {
+        return this.rtfDoc.getDocumentSettings();
     }
 }

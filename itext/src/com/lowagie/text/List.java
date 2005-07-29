@@ -189,7 +189,7 @@ public class List implements TextElementArray, MarkupAttributes {
         }
         this.symbolIndent = 0;
         if ((value = (String)attributes.remove(ElementTags.SYMBOLINDENT)) != null) {
-            this.symbolIndent = Integer.parseInt(value);
+            this.symbolIndent = Float.parseFloat(value);
         }
         
         if ((value = (String)attributes.remove(ElementTags.FIRST)) != null) {

@@ -172,4 +172,14 @@ class PageResources {
         resources.add(PdfName.PROPERTIES, LayerDictionary);
         return resources;
     }
+    
+    boolean hasResources() {
+        return (fontDictionary.size() > 0
+            || xObjectDictionary.size() > 0
+            || colorDictionary.size() > 0
+            || patternDictionary.size() > 0
+            || shadingDictionary.size() > 0
+            || extGStateDictionary.size() > 0
+            || LayerDictionary.size() > 0);
+    }
 }
