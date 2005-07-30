@@ -2515,7 +2515,7 @@ public class PdfReader {
                     PdfObject v = dic.get(key);
                     if (v.isIndirect()) {
                         int num = ((PRIndirectReference)v).getNumber();
-                        if (num >= xrefObj.size() || xrefObj.get(num) == null) {
+                        if (num >= xrefObj.size() || (!partial && xrefObj.get(num) == null)) {
                             dic.put(key, PdfNull.PDFNULL);
                             continue;
                         }
@@ -2530,7 +2530,7 @@ public class PdfReader {
                     PdfObject v = (PdfObject)list.get(k);
                     if (v.isIndirect()) {
                         int num = ((PRIndirectReference)v).getNumber();
-                        if (xrefObj.get(num) == null) {
+                        if (num >= xrefObj.size() || (!partial && xrefObj.get(num) == null)) {
                             list.set(k, PdfNull.PDFNULL);
                             continue;
                         }
@@ -2641,7 +2641,7 @@ public class PdfReader {
     /**
      * Selects the pages to keep in the document. The pages are described as
      * ranges. The page ordering can be changed but
-     * no page repetitions are allowed.
+     * no page repetitions are allowed. Note that it may be very slow in partial mode.
      * @param ranges the comma separated ranges as described in {@link SequenceList}
      */    
     public void selectPages(String ranges) {
@@ -2651,45 +2651,12 @@ public class PdfReader {
     /**
      * Selects the pages to keep in the document. The pages are described as a
      * <CODE>List</CODE> of <CODE>Integer</CODE>. The page ordering can be changed but
-     * no page repetitions are allowed.
+     * no page repetitions are allowed. Note that it may be very slow in partial mode.
      * @param pagesToKeep the pages to keep in the document
      */    
     public void selectPages(List pagesToKeep) {
-        throw new UnsupportedOperationException("Later.");
-/*
-        IntHashtable pg = new IntHashtable();
-        ArrayList finalPages = new ArrayList();
-        for (Iterator it = pagesToKeep.iterator(); it.hasNext();) {
-            Integer pi = (Integer)it.next();
-            int p = pi.intValue();
-            if (p >= 1 && p <= pages.size() && pg.put(p, 1) == 0)
-                finalPages.add(pi);
-        }
-        PRIndirectReference parent = (PRIndirectReference)catalog.get(PdfName.PAGES);
-        PdfDictionary topPages = (PdfDictionary)getPdfObject(parent);
-        PRIndirectReference newPageRefs[] = new PRIndirectReference[finalPages.size()];
-        PdfDictionary newPages[] = new PdfDictionary[finalPages.size()];
-        topPages.put(PdfName.COUNT, new PdfNumber(finalPages.size()));
-        PdfArray kids = new PdfArray();
-        for (int k = 0; k < finalPages.size(); ++k) {
-            int p = ((Integer)finalPages.get(k)).intValue() - 1;
-            kids.add(newPageRefs[k] = (PRIndirectReference)pageRefs.get(p));
-            newPages[k] = (PdfDictionary)pages.get(p);
-            newPages[k].put(PdfName.PARENT, parent);
-            pageRefs.set(p, null);
-        }
-        topPages.put(PdfName.KIDS, kids);
-        AcroFields af = getAcroFields();
-        for (int k = 0; k < pageRefs.size(); ++k) {
-            PRIndirectReference ref = (PRIndirectReference)pageRefs.get(k);
-            if (ref != null) {
-                af.removeFieldsFromPage(k + 1);
-                xrefObj.set(ref.getNumber(), null);
-            }
-        }
-        pages = new ArrayList(Arrays.asList(newPages));
-        pageRefs = new ArrayList(Arrays.asList(newPageRefs));
-        removeUnusedObjects();*/
+        pageRefs.selectPages(pagesToKeep);
+        removeUnusedObjects();
     }
 
     /**
@@ -3116,6 +3083,55 @@ public class PdfReader {
                     base += acn;
                 }
             }
+        }
+        
+        private void selectPages(List pagesToKeep) {
+            IntHashtable pg = new IntHashtable();
+            ArrayList finalPages = new ArrayList();
+            int psize = size();
+            for (Iterator it = pagesToKeep.iterator(); it.hasNext();) {
+                Integer pi = (Integer)it.next();
+                int p = pi.intValue();
+                if (p >= 1 && p <= psize && pg.put(p, 1) == 0)
+                    finalPages.add(pi);
+            }
+            if (reader.partial) {
+                for (int k = 1; k <= psize; ++k) {
+                    getPageOrigRef(k);
+                    resetReleasePage();
+                }
+            }
+            PRIndirectReference parent = (PRIndirectReference)reader.catalog.get(PdfName.PAGES);
+            PdfDictionary topPages = (PdfDictionary)PdfReader.getPdfObject(parent);
+            ArrayList newPageRefs = new ArrayList(finalPages.size());
+            PdfArray kids = new PdfArray();
+            for (int k = 0; k < finalPages.size(); ++k) {
+                int p = ((Integer)finalPages.get(k)).intValue();
+                PRIndirectReference pref = getPageOrigRef(p);
+                resetReleasePage();
+                kids.add(pref);
+                newPageRefs.add(pref);
+                getPageN(p).put(PdfName.PARENT, parent);
+            }
+            AcroFields af = reader.getAcroFields();
+            boolean removeFields = (af.getFields().size() > 0);
+            for (int k = 1; k <= psize; ++k) {
+                if (!pg.containsKey(k)) {
+                    if (removeFields)
+                        af.removeFieldsFromPage(k);
+                    PRIndirectReference pref = getPageOrigRef(k);
+                    int nref = pref.getNumber();
+                    reader.xrefObj.set(nref, null);
+                    if (reader.partial) {
+                        reader.xref[nref * 2] = -1;
+                        reader.xref[nref * 2 + 1] = 0;
+                    }
+                }
+            }
+            topPages.put(PdfName.COUNT, new PdfNumber(finalPages.size()));
+            topPages.put(PdfName.KIDS, kids);
+            refsp = null;
+            refsn = newPageRefs;
         }
     }
 }
