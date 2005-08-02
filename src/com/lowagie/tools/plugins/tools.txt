@@ -13,3 +13,4 @@ Tiff2Pdf: com.lowagie.tools.plugins.Tiff2Pdf
 KnitTiff: com.lowagie.tools.plugins.KnitTiff
 Handouts: com.lowagie.tools.plugins.Handouts
 Watermarker: com.lowagie.tools.plugins.Watermarker
+PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum
