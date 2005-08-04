@@ -38,7 +38,7 @@ public class Split extends AbstractTool {
 	 * Constructs an Encrypt object.
 	 */
 	public Split() {
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to encrypt", false, new PdfFilter()));
+		arguments.add(new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter()));
 		arguments.add(new FileArgument(this, "destfile1", "The file to which the first part of the original PDF has to be written", true, new PdfFilter()));
 		arguments.add(new FileArgument(this, "destfile2", "The file to which the second part of the original PDF has to be written", true, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "pagenumber", "The pagenumber where you want to split", String.class.getName()));
@@ -48,7 +48,7 @@ public class Split extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Encrypt", true, true, true);
+		internalFrame = new JInternalFrame("Split", true, true, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
