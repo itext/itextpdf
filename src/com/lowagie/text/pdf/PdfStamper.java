@@ -306,7 +306,7 @@ public class PdfStamper {
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
         if (stamper.isAppend())
-            throw new DocumentException("Append mode does not support encryption.");
+            throw new DocumentException("Append mode does not support changing the encryption status.");
         if (stamper.isContentWritten())
             throw new DocumentException("Content was already written to the output.");
         stamper.setEncryption(userPassword, ownerPassword, permissions, strength128Bits);
