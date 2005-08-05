@@ -285,6 +285,7 @@ public class PdfEncryption {
         for (int k = 0; k < 16; ++k)
             buf.appendHex(id[k]);
         buf.append('>').append('<');
+        id = createDocumentId();
         for (int k = 0; k < 16; ++k)
             buf.appendHex(id[k]);
         buf.append('>').append(']');
