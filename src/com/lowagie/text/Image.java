@@ -338,7 +338,7 @@ public abstract class Image extends Rectangle implements Element,
 		this.spacingBefore = image.spacingBefore;
 		this.widthPercentage = image.widthPercentage;
 		this.layer = image.layer;
-        this.initialRotation = initialRotation;
+        this.initialRotation = image.initialRotation;
 	}
 
 	/**
