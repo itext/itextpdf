@@ -2565,5 +2565,6 @@ public class PdfWriter extends DocWriter {
 	public void setUserunit(float userunit) throws DocumentException {
 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
 		this.userunit = userunit;
+        setPdfVersion(VERSION_1_6);
 	}
 }
