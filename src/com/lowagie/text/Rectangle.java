@@ -946,9 +946,9 @@ public class Rectangle implements Element, MarkupAttributes {
 		buf.append(width());
 		buf.append("x");
 		buf.append(height());
-		buf.append(" rotated ");
+		buf.append(" (rot: ");
 		buf.append(rotation);
-		buf.append(" degrees");
+		buf.append(" degrees)");
 		return buf.toString();
 	}
 
