@@ -618,7 +618,7 @@ public class PdfWriter extends DocWriter {
     /** A viewer preference */
     public static final int DisplayDocTitle = 1 << 18;
     /** A viewer preference */
-    public static final int PrintScalingNone = 1 << 20;
+    public static final int PrintScalingNone = 1 << 21;
     /** The mask to decide if a ViewerPreferences dictionary is needed */
     static final int ViewerPreferencesMask = 0xffff00;
     /** The operation permitted when the document is opened with the user password */
