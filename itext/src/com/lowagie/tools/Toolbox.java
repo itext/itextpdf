@@ -55,6 +55,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.TreeMap;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -62,6 +63,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import com.lowagie.tools.plugins.AbstractTool;
 
@@ -103,32 +105,45 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	 * @return a menubar
 	 */
 	private JMenuBar getMenubar() {
-		if (toolmap.size() == 0) {
-			try {
-				toolmap.load(Toolbox.class.getClassLoader().getResourceAsStream("com/lowagie/tools/plugins/tools.txt"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		Properties p = new Properties();
+		try {
+			p.load(Toolbox.class.getClassLoader().getResourceAsStream("com/lowagie/tools/plugins/tools.txt"));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		toolmap = new Properties();
+		TreeMap tmp = new TreeMap();
+		tmp.putAll(p);
 		JMenuBar menubar = new JMenuBar();
 		JMenu file = new JMenu(FILE);
-		file.setMnemonic(KeyEvent.VK_F);
 		JMenuItem close = new JMenuItem(CLOSE);
 		close.setMnemonic(KeyEvent.VK_C);
 		close.addActionListener(this);
 		file.add(close);
 		JMenu tools = new JMenu(TOOLS);
 		file.setMnemonic(KeyEvent.VK_T);
-		JMenuItem item;
 		String name;
-		for (Iterator i = toolmap.keySet().iterator(); i.hasNext(); ) {
+		JMenu current = null;
+		JMenuItem item;
+		for (Iterator i = tmp.keySet().iterator(); i.hasNext(); ) {
 			name = (String)i.next();
-			item = new JMenuItem(name);
+			if (current == null || !name.startsWith(current.getText())) {
+				current = new JMenu(name.substring(0, name.indexOf(".")));
+				tools.add(current);
+			}
+			item = new JMenuItem(name.substring(current.getText().length() + 1));
 			item.addActionListener(this);
-			tools.add(item);
+			toolmap.put(item.getText(), (String)tmp.get(name));
+			current.add(item);
 		}
+		JMenu help = new JMenu(HELP);
+		JMenuItem about = new JMenuItem(ABOUT);
+		about.setMnemonic(KeyEvent.VK_A);
+		about.addActionListener(this);
+		help.add(about);
 		menubar.add(file);
 		menubar.add(tools);
+		menubar.add(help);
 		return menubar;
 	}
 	
@@ -151,7 +166,17 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		if (CLOSE.equals(evt.getActionCommand())) {
+			System.out.println("The Toolbox is closed.");
 			System.exit(0);
+		}
+		else if (ABOUT.equals(evt.getActionCommand())) {
+			System.out.println("The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://www.lowagie.com/iText/toolbox.html for more info.");
+			try {
+				Executable.launchBrowser("http://www.lowagie.com/iText/toolbox.html");
+			}
+			catch(IOException ioe) {
+				JOptionPane.showMessageDialog(this, "The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://www.lowagie.com/iText/toolbox.html for more info.");
+			}
 		}
 		else {
 			try {

@@ -4,14 +4,14 @@
 # Made by Bruno Lowagie:
 
 # Allows you to create a DVD Cover in PDF
-Concat: com.lowagie.tools.plugins.Concat
-Split: com.lowagie.tools.plugins.Split
-DvdCover: com.lowagie.tools.plugins.DvdCover
-Encrypt: com.lowagie.tools.plugins.Encrypt
-Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
-Tiff2Pdf: com.lowagie.tools.plugins.Tiff2Pdf
-KnitTiff: com.lowagie.tools.plugins.KnitTiff
-Handouts: com.lowagie.tools.plugins.Handouts
-Watermarker: com.lowagie.tools.plugins.Watermarker
-PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum
-SinglePages: com.lowagie.tools.plugins.SinglePages
+Manipulate.Watermarker: com.lowagie.tools.plugins.Watermarker
+Manipulate.Concat: com.lowagie.tools.plugins.Concat
+Manipulate.Split: com.lowagie.tools.plugins.Split
+Manipulate.Burst: com.lowagie.tools.plugins.SinglePages
+Convert2Pdf.PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum
+Convert2Pdf.Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
+Convert2Pdf.Tiff2Pdf: com.lowagie.tools.plugins.Tiff2Pdf
+Convert2Pdf.KnitTiff: com.lowagie.tools.plugins.KnitTiff
+Encryption.Encrypt: com.lowagie.tools.plugins.Encrypt
+Other.DvdCover: com.lowagie.tools.plugins.DvdCover
+Other.Handouts: com.lowagie.tools.plugins.Handouts
