@@ -148,7 +148,7 @@ public class Txt2Pdf extends AbstractTool {
      */
 	public static void main(String[] args) {
     	Txt2Pdf tool = new Txt2Pdf();
-    	if (args.length < 2) {
+    	if (args.length < 3) {
     		System.err.println(tool.getUsage());
     	}
     	tool.setArguments(args);

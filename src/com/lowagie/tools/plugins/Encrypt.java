@@ -95,8 +95,8 @@ public class Encrypt extends AbstractTool {
 	public Encrypt() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to encrypt", false, new PdfFilter()));
 		arguments.add(new FileArgument(this, "destfile", "The file to which the encrypted PDF has to be written", true, new PdfFilter()));
-		arguments.add(new ToolArgument(this, "userpassword", "The userpassword you want to add to the PDF file", String.class.getName()));
 		arguments.add(new ToolArgument(this, "ownerpassword", "The ownerpassword you want to add to the PDF file", String.class.getName()));
+		arguments.add(new ToolArgument(this, "userpassword", "The userpassword you want to add to the PDF file", String.class.getName()));
 		arguments.add(new BitsetArgument(this, "permissions", "Permissions on the file", PERMISSION_OPTIONS));
 		OptionArgument oa = new OptionArgument(this, "strength", "Strength of the encryption");
 		oa.addOption("40 bit encryption", "40");

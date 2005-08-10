@@ -51,6 +51,7 @@ package com.lowagie.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 /**
  * This class enables you to call an executable that will show a PDF file.
@@ -242,6 +243,41 @@ public class Executable {
 	 */
 	public static final Process printDocumentSilent(File file) throws IOException {
 		return printDocumentSilent(file, false);
+	}
+	
+	/**
+	 * Launches a browser opening an URL.
+	 * This code was based on the Public Domain class BareBonesBrowserLaunch,
+	 * found at <a href="http://www.centerkey.com/java/browser/myapp/BareBonesBrowserLaunch.java">Centerkey</a>.
+	 * 
+	 * @param url the URL you want to open in the browser
+	 * @throws IOException
+	 */
+	public static final void launchBrowser(String url) throws IOException {
+		try {
+			if (isMac()) {
+				Class macUtils = Class.forName("com.apple.mrj.MRJFileUtils");
+				Method openURL = macUtils.getDeclaredMethod("openURL", new Class[] {String.class});
+				openURL.invoke(null, new Object[] {url});
+			}
+			else if (isWindows())
+				Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+			else { //assume Unix or Linux
+	            String[] browsers = {
+	               "firefox", "opera", "konqueror", "mozilla", "netscape" };
+	            String browser = null;
+	            for (int count = 0; count < browsers.length && browser == null; count++)
+	               if (Runtime.getRuntime().exec(new String[] {"which", browsers[count]}).waitFor() == 0)
+	                  browser = browsers[count];
+	            if (browser == null)
+	               throw new Exception("Could not find web browser.");
+	            else
+	               Runtime.getRuntime().exec(new String[] {browser, url});
+	            }
+	         }
+	      catch (Exception e) {
+	         throw new IOException("Error attempting to launch web browser");
+	      }
 	}
 
 	/**
