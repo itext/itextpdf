@@ -121,6 +121,6 @@ public class SinglePages extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#getDestPathPDF()
 	 */
 	protected File getDestPathPDF() throws InstantiationException {
-		throw new InstantiationException("There are more than one destfile.");
+		throw new InstantiationException("There is more than one destfile.");
 	}
 }
