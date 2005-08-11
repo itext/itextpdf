@@ -201,12 +201,14 @@ public class HtmlBookmarks extends AbstractTool {
 		Paragraph title = new Paragraph((String)bookmark.get("Title"));
 		String action = (String)bookmark.get("Action");
 		if ("GoTo".equals(action)) {
-			String page = (String)bookmark.get("Page");
-			StringTokenizer tokens = new StringTokenizer(page);
-			String token = tokens.nextToken();
-			Anchor anchor = new Anchor(" page" + token);
-			anchor.setReference(pdf + "#page=" + token);
-			title.add(anchor);
+			if (bookmark.get("Page") != null) {
+				String page = (String)bookmark.get("Page");
+				StringTokenizer tokens = new StringTokenizer(page);
+				String token = tokens.nextToken();
+				Anchor anchor = new Anchor(" page" + token);
+				anchor.setReference(pdf + "#page=" + token);
+				title.add(anchor);
+			}
 		}
 		else if ("URI".equals(action)) {
 			String url = (String)bookmark.get("URI");
