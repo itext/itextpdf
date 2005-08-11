@@ -212,11 +212,11 @@ public class RtfDocument extends RtfElement {
                 }
             } else if (ch == '\t') {
                 ret.append("\\tab ");
-            } else if (((int) ch) > z) {
+            } else if (((int) ch) > z && this.documentSettings.isAlwaysUseUnicode()) {
                 if(useHex) {
                     ret.append("\\\'").append(Long.toHexString((long) ch));
                 } else {
-                ret.append("\\u").append((long) ch).append('?');
+                    ret.append("\\u").append((long) ch).append('?');
                 }
             } else {
                 ret.append(ch);
