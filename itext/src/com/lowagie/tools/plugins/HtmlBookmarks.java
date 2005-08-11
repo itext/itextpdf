@@ -199,6 +199,7 @@ public class HtmlBookmarks extends AbstractTool {
 	private static Section createBookmark(String pdf, Section section, HashMap bookmark) {
 		Section s;
 		Paragraph title = new Paragraph((String)bookmark.get("Title"));
+		System.out.println((String)bookmark.get("Title"));
 		String action = (String)bookmark.get("Action");
 		if ("GoTo".equals(action)) {
 			if (bookmark.get("Page") != null) {

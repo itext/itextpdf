@@ -32,11 +32,11 @@ import com.lowagie.tools.arguments.ToolArgument;
 /**
  * This tool lets you split a PDF in two separate PDF files.
  */
-public class SinglePages extends AbstractTool {
+public class Burst extends AbstractTool {
 	/**
 	 * Constructs an Encrypt object.
 	 */
-	public SinglePages() {
+	public Burst() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter()));
 	}
 
@@ -44,7 +44,7 @@ public class SinglePages extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Single Pages", true, true, true);
+		internalFrame = new JInternalFrame("Burst", true, true, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
@@ -109,7 +109,7 @@ public class SinglePages extends AbstractTool {
      * @param args
      */
 	public static void main(String[] args) {
-    	SinglePages tool = new SinglePages();
+    	Burst tool = new Burst();
     	if (args.length < 1) {
     		System.err.println(tool.getUsage());
     	}
