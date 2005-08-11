@@ -148,7 +148,6 @@ public class HtmlBookmarks extends AbstractTool {
 				document.add(new Paragraph("This document has no bookmarks."));
 			}
 			else {
-				SimpleBookmark.exportToXML(list, System.out, "ISO8859-1", true);
 				HashMap c;
 				for (Iterator i = list.iterator(); i.hasNext(); ) {
 					c = (HashMap) i.next(); 
@@ -177,6 +176,7 @@ public class HtmlBookmarks extends AbstractTool {
 	
 	/**
 	 * Recursive method to write Bookmark titles to the System.out. 
+	 * @param pdf the path to the PDF file
 	 * @param section the section to which the bookmarks should be added
 	 * @param bookmark a HashMap containing a Bookmark (and possible kids)
 	 */
@@ -191,8 +191,10 @@ public class HtmlBookmarks extends AbstractTool {
 	
 	/**
 	 * Adds a line with the title and an anchor.
+	 * @param pdf the link to the PDF file
 	 * @param section the section that gets the line
 	 * @param bookmark the bookmark that has the data for the line
+	 * @return a subsection of section
 	 */
 	private static Section createBookmark(String pdf, Section section, HashMap bookmark) {
 		Section s;
