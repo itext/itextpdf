@@ -125,7 +125,7 @@ public class PdfInfo extends AbstractTool {
 				System.out.println("There is no XML Metadata in the file");
 			}
 			else {
-				System.out.println("XML Metadata: " + reader.getMetadata());
+				System.out.println("XML Metadata: " + new String(reader.getMetadata()));
 			}
 		}
 		catch(Exception e) {
