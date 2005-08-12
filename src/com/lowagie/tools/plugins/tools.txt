@@ -8,7 +8,7 @@ Manipulate.Watermarker: com.lowagie.tools.plugins.Watermarker
 Manipulate.Concat: com.lowagie.tools.plugins.Concat
 Manipulate.Split: com.lowagie.tools.plugins.Split
 Manipulate.Burst: com.lowagie.tools.plugins.Burst
-Properties.PdfInfo: com.lowagie.tools.plugins.InspectPDF
+Properties.InspectPDF: com.lowagie.tools.plugins.InspectPDF
 Properties.HtmlBookmarks: com.lowagie.tools.plugins.HtmlBookmarks
 Convert2Pdf.PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum
 Convert2Pdf.Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
