@@ -8,12 +8,12 @@ Manipulate.Watermarker: com.lowagie.tools.plugins.Watermarker
 Manipulate.Concat: com.lowagie.tools.plugins.Concat
 Manipulate.Split: com.lowagie.tools.plugins.Split
 Manipulate.Burst: com.lowagie.tools.plugins.Burst
-Inspect.PdfInfo: com.lowagie.tools.plugins.PdfInfo
-Inspect.HtmlBookmarks: com.lowagie.tools.plugins.HtmlBookmarks
+Properties.PdfInfo: com.lowagie.tools.plugins.InspectPDF
+Properties.HtmlBookmarks: com.lowagie.tools.plugins.HtmlBookmarks
 Convert2Pdf.PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum
 Convert2Pdf.Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
 Convert2Pdf.Tiff2Pdf: com.lowagie.tools.plugins.Tiff2Pdf
 Convert2Pdf.KnitTiff: com.lowagie.tools.plugins.KnitTiff
 Encryption.Encrypt: com.lowagie.tools.plugins.Encrypt
-Other.DvdCover: com.lowagie.tools.plugins.DvdCover
-Other.Handouts: com.lowagie.tools.plugins.Handouts
+Various.DvdCover: com.lowagie.tools.plugins.DvdCover
+Various.Handouts: com.lowagie.tools.plugins.Handouts
