@@ -65,13 +65,13 @@ import com.lowagie.tools.arguments.ToolArgument;
 /**
  * Allows you to encrypt an existing PDF file.
  */
-public class PdfInfo extends AbstractTool {
+public class InspectPDF extends AbstractTool {
 
 	
 	/**
 	 * Constructs an Encrypt object.
 	 */
-	public PdfInfo() {
+	public InspectPDF() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to inspect", false, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "ownerpassword", "The owner password if the file is encrypt", String.class.getName()));
 	}
@@ -110,7 +110,7 @@ public class PdfInfo extends AbstractTool {
 				System.out.println("Permissions: " + PdfEncryptor.getPermissionsVerbose(reader.getPermissions()));
 				System.out.println("128 bit? " + reader.is128Key());
 			}
-			System.out.println("Valid? " + (!reader.isRebuilt()));
+			System.out.println("Rebuilt? " + (!reader.isRebuilt()));
 			// Some metadata
 			System.out.println("=== Metadata ===");
 			HashMap info = reader.getInfo();
@@ -153,7 +153,7 @@ public class PdfInfo extends AbstractTool {
      * @param args
      */
     public static void main(String[] args) {
-    	PdfInfo tool = new PdfInfo();
+    	InspectPDF tool = new InspectPDF();
     	if (args.length < 1) {
     		System.err.println(tool.getUsage());
     	}

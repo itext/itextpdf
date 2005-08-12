@@ -428,6 +428,32 @@ public class MultiColumnText implements Element {
     	columnsRightToLeft = direction;
     }
     
+    /** Sets the ratio between the extra word spacing and the extra character spacing
+     * when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
+     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
+     * will be zero.
+     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
+     */
+    public void setSpaceCharRatio(float spaceCharRatio) {
+        columnText.setSpaceCharRatio(spaceCharRatio);
+    }
+
+    /** Sets the run direction. 
+     * @param runDirection the run direction
+     */    
+    public void setRunDirection(int runDirection) {
+        columnText.setRunDirection(runDirection);
+    }
+    
+    /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
+     * AR_COMPOSEDTASHKEEL and AR_LIG.
+     * @param arabicOptions the arabic shaping options
+     */
+    public void setArabicOptions(int arabicOptions) {
+        columnText.setArabicOptions(arabicOptions);
+    }
+    
     /**
      * Inner class used to define a column
      */
