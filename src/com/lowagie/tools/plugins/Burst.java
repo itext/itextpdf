@@ -63,15 +63,20 @@ public class Burst extends AbstractTool {
 			PdfReader reader = new PdfReader(src.getAbsolutePath());
 			// we retrieve the total number of pages
 			int n = reader.getNumberOfPages();
+			int digits = 1 + (n % 10);
 			System.out.println("There are " + n + " pages in the original file.");
 			Document document;
 			int pagenumber;
+			String filename;
             for (int i = 0; i < n; i++) {
             	pagenumber = i + 1;
+            	filename = String.valueOf(pagenumber);
+            	while (filename.length() < digits) filename = "0" + filename;
+            	filename = "_" + filename + ".pdf";
             	// step 1: creation of a document-object
             	document = new Document(reader.getPageSizeWithRotation(pagenumber)); 
 				// step 2: we create a writer that listens to the document
-            	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(new File(directory, name + "_" + pagenumber + ".pdf")));
+            	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(new File(directory, name + filename)));
             	// step 3: we open the document
             	document.open();
             	PdfContentByte cb = writer.getDirectContent();
