@@ -281,11 +281,11 @@ public class MultiColumnText implements Element {
                     top = nextY;
                 } else {  // check if we are done because of height
                     totalHeight += currentHeight;
-
                     if ((desiredHeight != AUTOMATIC) && (totalHeight >= desiredHeight)) {
                         overflow = true;
                         break;
                     } else {  // need to start new page and reset the columns
+                        documentY = nextY;
                         newPage();
                         currentHeight = 0;
                     }
@@ -294,6 +294,9 @@ public class MultiColumnText implements Element {
         } catch (DocumentException ex) {
             ex.printStackTrace();
             throw ex;
+        }
+        if (desiredHeight == AUTOMATIC && columnDefs.size() == 1) {
+        	currentHeight = documentY - columnText.getYLine();
         }
         return currentHeight;
     }
