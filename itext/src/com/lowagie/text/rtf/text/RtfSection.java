@@ -69,7 +69,7 @@ import com.lowagie.text.rtf.field.RtfTOCEntry;
  * The RtfSection wraps a Section element.
  * INTERNAL CLASS
  * 
- * @version $Version:$
+ * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfSection extends RtfElement {
@@ -115,11 +115,14 @@ public class RtfSection extends RtfElement {
             }
             Iterator iterator = section.iterator();
             while(iterator.hasNext()) {
-                RtfBasicElement rtfElement = doc.getMapper().mapElement((Element) iterator.next());
+                Element element = (Element) iterator.next();
+                RtfBasicElement rtfElement = doc.getMapper().mapElement(element);
                 if(rtfElement != null) {
                     items.add(rtfElement);
                 }
             }
+            
+            updateIndentation(section.indentationLeft(), section.indentationRight(), section.indentation());
         } catch(DocumentException de) {
             de.printStackTrace();
         }
@@ -133,14 +136,13 @@ public class RtfSection extends RtfElement {
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
+            result.write(RtfParagraph.PARAGRAPH);
             if(this.title != null) {
                 result.write(this.title.write());
-                result.write(RtfParagraph.PARAGRAPH);
             }
             for(int i = 0; i < items.size(); i++) {
                 result.write(((RtfBasicElement) items.get(i)).write());
             }
-            result.write(RtfParagraph.PARAGRAPH);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
@@ -170,6 +172,30 @@ public class RtfSection extends RtfElement {
         super.setInHeader(inHeader);
         for(int i = 0; i < this.items.size(); i++) {
             ((RtfBasicElement) this.items.get(i)).setInHeader(inHeader);
+        }
+    }
+
+    /**
+     * Updates the left, right and content indentation of all RtfParagraph and RtfSection
+     * elements that this RtfSection contains.
+     * 
+     * @param indentLeft The left indentation to add.
+     * @param indentRight The right indentation to add.
+     * @param indentContent The content indentation to add.
+     */
+    private void updateIndentation(float indentLeft, float indentRight, float indentContent) {
+        if(this.title != null) {
+            this.title.setIndentLeft((int) (this.title.getIndentLeft() + indentLeft * RtfElement.TWIPS_FACTOR));
+            this.title.setIndentRight((int) (this.title.getIndentRight() + indentRight * RtfElement.TWIPS_FACTOR));
+        }
+        for(int i = 0; i < this.items.size(); i++) {
+            RtfBasicElement rtfElement = (RtfElement) this.items.get(i);
+            if(rtfElement instanceof RtfSection) {
+                ((RtfSection) rtfElement).updateIndentation(indentLeft + indentContent, indentRight, 0);
+            } else if(rtfElement instanceof RtfParagraph) {
+                ((RtfParagraph) rtfElement).setIndentLeft((int) (((RtfParagraph) rtfElement).getIndentLeft() + (indentLeft + indentContent) * RtfElement.TWIPS_FACTOR));
+                ((RtfParagraph) rtfElement).setIndentRight((int) (((RtfParagraph) rtfElement).getIndentRight() + indentRight * RtfElement.TWIPS_FACTOR));
+            }
         }
     }
 }
