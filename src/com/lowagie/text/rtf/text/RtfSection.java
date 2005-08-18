@@ -58,7 +58,6 @@ import java.util.ArrayList;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
-import com.lowagie.text.Paragraph;
 import com.lowagie.text.Section;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
@@ -117,14 +116,6 @@ public class RtfSection extends RtfElement {
             Iterator iterator = section.iterator();
             while(iterator.hasNext()) {
                 Element element = (Element) iterator.next();
-                if(element instanceof Paragraph) {
-                    //((Paragraph) element).setIndentationLeft(((Paragraph) element).indentationLeft() + section.indentation() + section.indentationLeft());
-                    //((Paragraph) element).setIndentationRight(((Paragraph) element).indentationRight() + section.indentationRight());
-                } else if(element instanceof Section) {
-                    //((Section) element).setIndentation(((Section) element).indentation() + section.indentation() + section.indentationLeft());
-                    //((Section) element).setIndentationLeft(((Section) element).indentationLeft() + section.indentationLeft());
-                    //((Section) element).setIndentationRight(((Section) element).indentationRight() + section.indentationRight());
-                }
                 RtfBasicElement rtfElement = doc.getMapper().mapElement(element);
                 if(rtfElement != null) {
                     items.add(rtfElement);
