@@ -347,7 +347,11 @@ public class PdfGraphics2D extends Graphics2D {
             cb.beginText();
             cb.setFontAndSize(baseFont, fontSize);
             cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
-            double width = font.deriveFont(IDENTITY).getStringBounds(s, getFontRenderContext()).getWidth();
+            double width = 0;
+            if (font.getSize2D() > 0) {
+                float scale = 1000 / font.getSize2D();
+                width = font.deriveFont(AffineTransform.getScaleInstance(scale, scale)).getStringBounds(s, getFontRenderContext()).getWidth() / scale;
+            }
             if (s.length() > 1) {
                 float adv = ((float)width - baseFont.getWidthPoint(s, fontSize)) / (s.length() - 1);
                 cb.setCharacterSpacing(adv);
