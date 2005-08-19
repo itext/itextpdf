@@ -137,7 +137,7 @@ public class PdfGraphics2D extends Graphics2D {
     
     private boolean kid = false;
     
-    private Graphics dg2 = new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB).getGraphics();
+    private Graphics2D dg2 = new BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB).createGraphics();
     
     private boolean onlyShapes = false;
     
@@ -161,6 +161,8 @@ public class PdfGraphics2D extends Graphics2D {
     private float jpegQuality = .95f;
 
     private PdfGraphics2D() {
+        dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
     }
     
     /**
@@ -169,6 +171,8 @@ public class PdfGraphics2D extends Graphics2D {
      */
     PdfGraphics2D(PdfContentByte cb, float width, float height, FontMapper fontMapper, boolean onlyShapes, boolean convertImagesToJPEG, float quality) {
         super();
+        dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         try {
             Class.forName("com.sun.image.codec.jpeg.JPEGCodec");
         }
@@ -449,7 +453,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#getDeviceConfiguration()
      */
     public GraphicsConfiguration getDeviceConfiguration() {
-        return ((Graphics2D)dg2).getDeviceConfiguration();
+        return dg2.getDeviceConfiguration();
     }
     
     /**
@@ -713,7 +717,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#getFontRenderContext()
      */
     public FontRenderContext getFontRenderContext() {
-        return new FontRenderContext(null, true, true);
+        return new FontRenderContext(null, false, true);
     }
     
     /**
