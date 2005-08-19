@@ -57,6 +57,7 @@ import com.lowagie.text.rtf.RtfMapper;
 import com.lowagie.text.rtf.document.output.RtfDataCache;
 import com.lowagie.text.rtf.document.output.RtfDiskCache;
 import com.lowagie.text.rtf.document.output.RtfMemoryCache;
+import com.lowagie.text.rtf.graphic.RtfImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -148,6 +149,9 @@ public class RtfDocument extends RtfElement {
                 this.documentHeader.addInfoElement((RtfInfoElement) element);
             } else {
                 this.dataWritten = true;
+                if(element instanceof RtfImage) {
+                    ((RtfImage) element).setTopLevelElement(true);
+                }
                 data.getOutputStream().write(element.write());
             }
         } catch(IOException ioe) {
