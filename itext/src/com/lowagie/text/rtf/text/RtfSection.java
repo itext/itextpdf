@@ -189,7 +189,7 @@ public class RtfSection extends RtfElement {
             this.title.setIndentRight((int) (this.title.getIndentRight() + indentRight * RtfElement.TWIPS_FACTOR));
         }
         for(int i = 0; i < this.items.size(); i++) {
-            RtfBasicElement rtfElement = (RtfElement) this.items.get(i);
+            RtfBasicElement rtfElement = (RtfBasicElement) this.items.get(i);
             if(rtfElement instanceof RtfSection) {
                 ((RtfSection) rtfElement).updateIndentation(indentLeft + indentContent, indentRight, 0);
             } else if(rtfElement instanceof RtfParagraph) {
