@@ -313,7 +313,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
         }
         return result.toByteArray();
     }
-
+    
     /**
      * Writes the font beginning
      *
@@ -330,36 +330,38 @@ public class RtfFont extends Font implements RtfExtendedElement {
                 result.write(FONT_SIZE);
                 result.write(intToByteArray(fontSize * 2));
             }
-            if((fontStyle & STYLE_BOLD) == STYLE_BOLD) {
-                result.write(FONT_BOLD);
-            }
-            if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
-                result.write(FONT_ITALIC);
-            }
-            if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
-                result.write(FONT_UNDERLINE);
-            }
-            if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
-                result.write(FONT_STRIKETHROUGH);
-            }
-            if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
-                result.write(FONT_HIDDEN);
-            }
-            if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
-                result.write(FONT_DOUBLE_STRIKETHROUGH);
-                result.write(intToByteArray(1));
-            }
-            if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
-                result.write(FONT_SHADOW);
-            }
-            if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
-                result.write(FONT_OUTLINE);
-            }
-            if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
-                result.write(FONT_EMBOSSED);
-            }
-            if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
-                result.write(FONT_ENGRAVED);
+            if(this.fontStyle != UNDEFINED) {
+                if((fontStyle & STYLE_BOLD) == STYLE_BOLD) {
+                    result.write(FONT_BOLD);
+                }
+                if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
+                    result.write(FONT_ITALIC);
+                }
+                if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
+                    result.write(FONT_UNDERLINE);
+                }
+                if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
+                    result.write(FONT_STRIKETHROUGH);
+                }
+                if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
+                    result.write(FONT_HIDDEN);
+                }
+                if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
+                    result.write(FONT_DOUBLE_STRIKETHROUGH);
+                    result.write(intToByteArray(1));
+                }
+                if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
+                    result.write(FONT_SHADOW);
+                }
+                if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
+                    result.write(FONT_OUTLINE);
+                }
+                if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
+                    result.write(FONT_EMBOSSED);
+                }
+                if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
+                    result.write(FONT_ENGRAVED);
+                }
             }
             if(color != null) {
                 result.write(color.writeBegin());
@@ -369,7 +371,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
         }
         return result.toByteArray();
     }
-
+    
     /**
      * Write the font end
      *
@@ -378,45 +380,47 @@ public class RtfFont extends Font implements RtfExtendedElement {
     public byte[] writeEnd() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            if((fontStyle & STYLE_BOLD) == STYLE_BOLD) {
-                result.write(FONT_BOLD);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
-                result.write(FONT_ITALIC);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
-                result.write(FONT_UNDERLINE);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
-                result.write(FONT_STRIKETHROUGH);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
-                result.write(FONT_HIDDEN);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
-                result.write(FONT_DOUBLE_STRIKETHROUGH);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
-                result.write(FONT_SHADOW);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
-                result.write(FONT_OUTLINE);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
-                result.write(FONT_EMBOSSED);
-                result.write(intToByteArray(0));
-            }
-            if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
-                result.write(FONT_ENGRAVED);
-                result.write(intToByteArray(0));
+            if(this.fontStyle != UNDEFINED) {
+                if((fontStyle & STYLE_BOLD) == STYLE_BOLD) {
+                    result.write(FONT_BOLD);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_ITALIC) == STYLE_ITALIC) {
+                    result.write(FONT_ITALIC);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_UNDERLINE) == STYLE_UNDERLINE) {
+                    result.write(FONT_UNDERLINE);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_STRIKETHROUGH) == STYLE_STRIKETHROUGH) {
+                    result.write(FONT_STRIKETHROUGH);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_HIDDEN) == STYLE_HIDDEN) {
+                    result.write(FONT_HIDDEN);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_DOUBLE_STRIKETHROUGH) == STYLE_DOUBLE_STRIKETHROUGH) {
+                    result.write(FONT_DOUBLE_STRIKETHROUGH);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_SHADOW) == STYLE_SHADOW) {
+                    result.write(FONT_SHADOW);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_OUTLINE) == STYLE_OUTLINE) {
+                    result.write(FONT_OUTLINE);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_EMBOSSED) == STYLE_EMBOSSED) {
+                    result.write(FONT_EMBOSSED);
+                    result.write(intToByteArray(0));
+                }
+                if((fontStyle & STYLE_ENGRAVED) == STYLE_ENGRAVED) {
+                    result.write(FONT_ENGRAVED);
+                    result.write(intToByteArray(0));
+                }
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
