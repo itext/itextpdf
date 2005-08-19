@@ -292,6 +292,12 @@ public class RtfImage extends RtfElement {
         this.alignment = alignment;
     }
     
+    /**
+     * Set whether this RtfImage should behave like a top level element
+     * and enclose itself in a paragraph.
+     * 
+     * @param topLevelElement Whether to behave like a top level element.
+     */
     public void setTopLevelElement(boolean topLevelElement) {
         this.topLevelElement = topLevelElement;
     }
