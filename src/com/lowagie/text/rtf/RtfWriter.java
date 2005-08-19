@@ -1447,7 +1447,7 @@ public class RtfWriter extends DocWriter implements DocListener {
         inTable = true;
         table.complete();
         RtfTable rtfTable = new RtfTable(this);
-        rtfTable.importTable(table, pageWidth);
+        rtfTable.importTable(table, pageWidth - marginLeft - marginRight);
         rtfTable.writeTable(out);
         inTable = false;
     }
