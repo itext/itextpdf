@@ -108,11 +108,11 @@ public class RtfImage extends RtfElement {
     /**
      * Constant for the picture width scale
      */
-    private static final byte[] PICTURE_SCALE_X = "\\picscalex".getBytes();
+    private static final byte[] PICTURE_SCALED_WIDTH = "\\picwgoal".getBytes();
     /**
      * Constant for the picture height scale
      */
-    private static final byte[] PICTURE_SCALE_Y = "\\picscaley".getBytes();
+    private static final byte[] PICTURE_SCALED_HEIGHT = "\\pichgoal".getBytes();
     
     /**
      * The type of image this is.
@@ -142,6 +142,11 @@ public class RtfImage extends RtfElement {
      * The intended display height of this picture
      */
     private float plainHeight = 0;
+    /**
+     * Whether this RtfImage is a top level element and should
+     * be an extra paragraph.
+     */
+    private boolean topLevelElement = false;
     
     /**
      * Constructs a RtfImage for an Image.
@@ -218,6 +223,9 @@ public class RtfImage extends RtfElement {
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
+            if(this.topLevelElement) {
+                result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+            }
             switch(alignment) {
             	case Element.ALIGN_LEFT:
             		result.write(RtfParagraph.ALIGN_LEFT);
@@ -249,22 +257,25 @@ public class RtfImage extends RtfElement {
             		break;
             }
             result.write(PICTURE_WIDTH);
-            result.write(intToByteArray((int) (plainWidth * RtfElement.TWIPS_FACTOR)));
+            result.write(intToByteArray((int) width));
             result.write(PICTURE_HEIGHT);
-            result.write(intToByteArray((int) (plainHeight * RtfElement.TWIPS_FACTOR)));
-            if(width > 0) {
-                result.write(PICTURE_SCALE_X);
-                result.write(intToByteArray((int) (100 / width * plainWidth)));
+            result.write(intToByteArray((int) height));
+            if(width != plainWidth) {
+                result.write(PICTURE_SCALED_WIDTH);
+                result.write(intToByteArray((int) (plainWidth * RtfElement.TWIPS_FACTOR)));
             }
-            if(height > 0) {
-                result.write(PICTURE_SCALE_Y);
-                result.write(intToByteArray((int) (100 / height * plainHeight)));
+            if(height != plainHeight) {
+                result.write(PICTURE_SCALED_HEIGHT);
+                result.write(intToByteArray((int) (plainHeight * RtfElement.TWIPS_FACTOR)));
             }
             result.write(DELIMITER);
             result.write((byte) '\n');
             result.write(image);
             result.write(CLOSE_GROUP);
             result.write(CLOSE_GROUP);
+            if(this.topLevelElement) {
+                result.write(RtfParagraph.PARAGRAPH);
+            }
             result.write((byte) '\n');
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -279,5 +290,9 @@ public class RtfImage extends RtfElement {
      */
     public void setAlignment(int alignment) {
         this.alignment = alignment;
+    }
+    
+    public void setTopLevelElement(boolean topLevelElement) {
+        this.topLevelElement = topLevelElement;
     }
 }
