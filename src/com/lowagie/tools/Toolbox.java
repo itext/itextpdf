@@ -57,6 +57,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.TreeMap;
 
+import javax.swing.Box;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -76,6 +77,10 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	private JDesktopPane desktop;
 	/** The list of tools in the toolbox. */
 	private Properties toolmap = new Properties();
+	/** x-coordinate of the location of a new internal frame. */
+	private int locationX = 0;
+	/** y-coordinate of the location of a new internal frame. */
+	private int locationY = 0;
 	
 	/**
 	 * Constructs the Toolbox object.
@@ -143,6 +148,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		help.add(about);
 		menubar.add(file);
 		menubar.add(tools);
+		menubar.add(Box.createGlue());
 		menubar.add(help);
 		return menubar;
 	}
@@ -157,6 +163,11 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	private void createFrame(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		AbstractTool ti = (AbstractTool)Class.forName((String)toolmap.get(name)).newInstance();
 		JInternalFrame f = ti.getInternalFrame();
+		f.setLocation(locationX, locationY);
+		locationX += 25;
+		if (locationX > this.getWidth() + 50) locationX = 0;
+		locationY += 25;
+		if (locationY > this.getHeight() + 50) locationY = 0;
 		f.setVisible(true);
 		desktop.add(f);
 	}
