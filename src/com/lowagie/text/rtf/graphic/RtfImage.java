@@ -275,6 +275,7 @@ public class RtfImage extends RtfElement {
             result.write(CLOSE_GROUP);
             if(this.topLevelElement) {
                 result.write(RtfParagraph.PARAGRAPH);
+                result.write(RtfParagraph.PARAGRAPH);
             }
             result.write((byte) '\n');
         } catch(IOException ioe) {
