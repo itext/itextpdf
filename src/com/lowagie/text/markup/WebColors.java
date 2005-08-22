@@ -241,7 +241,6 @@ public class WebColors extends HashMap {
 			throw new IllegalArgumentException("Color '" + name
 					+ "' not found.");
 		c = (int[]) NAMES.get(name);
-System.err.println("-> " + c[0] + ", " + c[1] + ", " + c[2] + ", " + c[3]);
 		return new Color(c[0], c[1], c[2], c[3]);
 	}
 }
