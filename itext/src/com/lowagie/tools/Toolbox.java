@@ -52,6 +52,7 @@ package com.lowagie.tools;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
@@ -159,8 +160,9 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	 * @throws ClassNotFoundException
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
+	 * @throws PropertyVetoException
 	 */
-	private void createFrame(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	private void createFrame(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, PropertyVetoException {
 		AbstractTool ti = (AbstractTool)Class.forName((String)toolmap.get(name)).newInstance();
 		JInternalFrame f = ti.getInternalFrame();
 		f.setLocation(locationX, locationY);
@@ -170,6 +172,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		if (locationY > this.getHeight() + 50) locationY = 0;
 		f.setVisible(true);
 		desktop.add(f);
+		f.setSelected(true);
 	}
 
 	/**
