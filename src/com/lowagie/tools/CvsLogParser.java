@@ -49,6 +49,7 @@ public class CvsLogParser implements Enumeration {
 		BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
 		st = new StreamTokenizer(r);
 		st.eolIsSignificant(true);
+		st.ordinaryChar('/');
 		more = true;
 	}
 
