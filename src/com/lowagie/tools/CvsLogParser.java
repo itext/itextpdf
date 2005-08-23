@@ -50,6 +50,7 @@ public class CvsLogParser implements Enumeration {
 		st = new StreamTokenizer(r);
 		st.eolIsSignificant(true);
 		st.ordinaryChar('/');
+		st.ordinaryChar('\'');
 		more = true;
 	}
 
