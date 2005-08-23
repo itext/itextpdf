@@ -18,8 +18,22 @@
         <echo>archive.src: archiving the source</echo>
         <echo>ant.zip: makes a zip file with the ANT scripts</echo>
         <echo>release.sf: making the release for SourceForge</echo>
+        <echo>changelog: parsing a changelog.txt file</echo>
         <echo />
 	</target>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Parsing the changelog                                            -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+    <target name="changelog" description="--> parsing a changelog">
+		<java classname="com.lowagie.tools.CvsLogParser" dir="${basedir}" fork="true">
+			<arg value="${itext.home}/changelog.txt" />
+	        <classpath>
+    	        <pathelement location="${itext.bin}/iText.jar" />
+        	</classpath>
+		</java>
+    </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Archiving the code                                               -->
