@@ -62,7 +62,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * The RtfChapter wraps a Chapter element.
  * INTERNAL CLASS
  * 
- * @version $Version:$
+ * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfChapter extends RtfSection {
@@ -85,11 +85,11 @@ public class RtfChapter extends RtfSection {
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
+            result.write("\\page".getBytes());
             result.write("\\sectd".getBytes());
             result.write(document.getDocumentHeader().writeSectionDefinition());
             if(this.title != null) {
                 result.write(this.title.write());
-                result.write(RtfParagraph.PARAGRAPH);
             }
             for(int i = 0; i < items.size(); i++) {
                 result.write(((RtfBasicElement) items.get(i)).write());

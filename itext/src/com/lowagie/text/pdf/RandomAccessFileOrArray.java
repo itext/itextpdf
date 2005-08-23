@@ -120,7 +120,7 @@ public class RandomAccessFileOrArray implements DataInput {
         this.arrayIn = InputStreamToArray(is);
     }
     
-    public byte[] InputStreamToArray(InputStream is) throws IOException {
+    public static byte[] InputStreamToArray(InputStream is) throws IOException {
         byte b[] = new byte[8192];
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         while (true) {

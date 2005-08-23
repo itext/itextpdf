@@ -61,6 +61,10 @@ public interface ToolMenuItems {
 	/** An item in the menubar. */
 	public static final String TOOLS = "Tools";
 	/** An item in the menubar. */
+	public static final String HELP = "Help";
+	/** An item in the menubar. */
+	public static final String ABOUT = "About";
+	/** An item in the menubar. */
 	public static final String TOOL = "Tool";
 	/** An item in the menubar. */
 	public static final String USAGE = "Usage";

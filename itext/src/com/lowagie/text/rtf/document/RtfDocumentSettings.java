@@ -73,6 +73,10 @@ public class RtfDocumentSettings {
      * Whether to always generate soft linebreaks for \n in Chunks.
      */
     private boolean alwaysGenerateSoftLinebreaks = false;
+    /**
+     * Whether to always translate characters past 'z' into unicode representations.
+     */
+    private boolean alwaysUseUnicode = true;
 
     
     /**
@@ -131,5 +135,23 @@ public class RtfDocumentSettings {
      */
     public void setAlwaysGenerateSoftLinebreaks(boolean alwaysGenerateSoftLinebreaks) {
         this.alwaysGenerateSoftLinebreaks = alwaysGenerateSoftLinebreaks;
+    }
+    
+    /**
+     * Gets whether all characters bigger than 'z' are represented as unicode.
+     * 
+     * @return <code>True</code> if unicode representation is used, <code>false</code> otherwise.
+     */
+    public boolean isAlwaysUseUnicode() {
+        return this.alwaysUseUnicode;
+    }
+    
+    /**
+     * Sets whether to represent all characters bigger than 'z' as unicode.
+     * 
+     * @param alwaysUseUnicode <code>True</code> to use unicode representation, <code>false</code> otherwise.
+     */
+    public void setAlwaysUseUnicode(boolean alwaysUseUnicode) {
+        this.alwaysUseUnicode = alwaysUseUnicode;
     }
 }

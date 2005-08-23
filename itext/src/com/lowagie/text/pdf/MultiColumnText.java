@@ -265,6 +265,18 @@ public class MultiColumnText implements Element {
 
                 float[] left = currentDef.resolvePositions(Rectangle.LEFT);
                 float[] right = currentDef.resolvePositions(Rectangle.RIGHT);
+                if (document.isMarginMirroring() && document.getPageNumber() % 2 == 0){
+                    float delta = document.rightMargin() - document.left();
+                    left = (float[])left.clone();
+                    right = (float[])right.clone();
+                    for (int i = 0; i < left.length; i += 2) {
+                        left[i] -= delta;
+                    }
+                    for (int i = 0; i < right.length; i += 2) {
+                        right[i] -= delta;
+                    }
+                }
+                
                 currentHeight = Math.max(currentHeight, getHeight(left, right));
 
                 if (currentDef.isSimple()) {
@@ -281,11 +293,11 @@ public class MultiColumnText implements Element {
                     top = nextY;
                 } else {  // check if we are done because of height
                     totalHeight += currentHeight;
-
                     if ((desiredHeight != AUTOMATIC) && (totalHeight >= desiredHeight)) {
                         overflow = true;
                         break;
                     } else {  // need to start new page and reset the columns
+                        documentY = nextY;
                         newPage();
                         currentHeight = 0;
                     }
@@ -294,6 +306,9 @@ public class MultiColumnText implements Element {
         } catch (DocumentException ex) {
             ex.printStackTrace();
             throw ex;
+        }
+        if (desiredHeight == AUTOMATIC && columnDefs.size() == 1) {
+        	currentHeight = documentY - columnText.getYLine();
         }
         return currentHeight;
     }
@@ -426,6 +441,32 @@ public class MultiColumnText implements Element {
      */
     public void setColumnsRightToLeft(boolean direction) {
     	columnsRightToLeft = direction;
+    }
+    
+    /** Sets the ratio between the extra word spacing and the extra character spacing
+     * when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
+     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
+     * will be zero.
+     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
+     */
+    public void setSpaceCharRatio(float spaceCharRatio) {
+        columnText.setSpaceCharRatio(spaceCharRatio);
+    }
+
+    /** Sets the run direction. 
+     * @param runDirection the run direction
+     */    
+    public void setRunDirection(int runDirection) {
+        columnText.setRunDirection(runDirection);
+    }
+    
+    /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
+     * AR_COMPOSEDTASHKEEL and AR_LIG.
+     * @param arabicOptions the arabic shaping options
+     */
+    public void setArabicOptions(int arabicOptions) {
+        columnText.setArabicOptions(arabicOptions);
     }
     
     /**

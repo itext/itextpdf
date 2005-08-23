@@ -107,7 +107,7 @@ class PdfStamperImp extends PdfWriter {
             if (reader.isRebuilt())
                 throw new DocumentException("Append mode requires a document without errors even if recovery was possible.");
             if (reader.isEncrypted())
-                throw new DocumentException("Append mode requires a document without encryption.");
+                crypto = new PdfEncryption(reader.getDecrypt());
             HEADER = getISOBytes("\n");
             file.reOpen();
             byte buf[] = new byte[8192];
@@ -207,8 +207,14 @@ class PdfStamperImp extends PdfWriter {
         PdfIndirectReference encryption = null;
         PdfObject fileID = null;
         if (crypto != null) {
-            PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
-            encryption = encryptionObject.getIndirectReference();
+            if (append) {
+                PdfIndirectReference cryref = (PdfIndirectReference)reader.trailer.get(PdfName.ENCRYPT);
+                encryption = new PdfIndirectReference(0, cryref.getNumber(), cryref.getGeneration());
+            }
+            else {
+                PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
+                encryption = encryptionObject.getIndirectReference();
+            }
             fileID = crypto.getFileID();
         }
         PRIndirectReference iRoot = (PRIndirectReference)reader.trailer.get(PdfName.ROOT);

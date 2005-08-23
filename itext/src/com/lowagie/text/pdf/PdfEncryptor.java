@@ -155,4 +155,22 @@ public class PdfEncryptor {
         stamper.setMoreInfo(newInfo);
         stamper.close();
     }
+    
+    /**
+     * Give you a verbose analysis of the permissions.
+     * @param permissions the permissions value of a PDF file
+     * @return a String that explains the meaning of the permissions value
+     */
+    public static String getPermissionsVerbose(int permissions) {
+    	StringBuffer buf = new StringBuffer("Allowed:");
+    	if ((PdfWriter.AllowPrinting & permissions) != 0) buf.append(" Printing");
+        if ((PdfWriter.AllowModifyContents & permissions) != 0) buf.append(" Modify contents");
+        if ((PdfWriter.AllowCopy & permissions) != 0) buf.append(" Copy");
+        if ((PdfWriter.AllowModifyAnnotations & permissions) != 0) buf.append(" Modify annotations");
+        if ((PdfWriter.AllowFillIn & permissions) != 0) buf.append(" Fill in");
+        if ((PdfWriter.AllowScreenReaders & permissions) != 0) buf.append(" Screen readers");
+        if ((PdfWriter.AllowAssembly & permissions) != 0) buf.append(" Assembly");
+        if ((PdfWriter.AllowDegradedPrinting & permissions) != 0) buf.append(" Degraded printing");
+        return buf.toString();
+    }
 }

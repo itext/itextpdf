@@ -65,7 +65,7 @@ import com.lowagie.text.rtf.graphic.RtfImage;
  * The RtfParagraph is an extension of the RtfPhrase that adds alignment and
  * indentation properties. It wraps a Paragraph.
  * 
- * @version $Version:$
+ * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
 public class RtfParagraph extends RtfPhrase {
@@ -236,5 +236,41 @@ public class RtfParagraph extends RtfPhrase {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+    
+    /**
+     * Gets the left indentation of this RtfParagraph.
+     * 
+     * @return The left indentation.
+     */
+    public int getIndentLeft() {
+        return this.indentLeft;
+    }
+    
+    /**
+     * Sets the left indentation of this RtfParagraph.
+     * 
+     * @param indentLeft The left indentation to use.
+     */
+    public void setIndentLeft(int indentLeft) {
+        this.indentLeft = indentLeft;
+    }
+    
+    /**
+     * Gets the right indentation of this RtfParagraph.
+     * 
+     * @return The right indentation.
+     */
+    public int getIndentRight()  {
+        return this.indentRight;
+    }
+    
+    /**
+     * Sets the right indentation of this RtfParagraph.
+     * 
+     * @param indentRight The right indentation to use.
+     */
+    public void setIndentRight(int indentRight) {
+        this.indentRight = indentRight;
     }
 }

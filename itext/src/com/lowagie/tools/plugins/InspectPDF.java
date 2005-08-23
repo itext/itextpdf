@@ -50,67 +50,40 @@
 package com.lowagie.tools.plugins;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
 import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.tools.arguments.BitsetArgument;
 import com.lowagie.tools.arguments.FileArgument;
-import com.lowagie.tools.arguments.OptionArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
  * Allows you to encrypt an existing PDF file.
  */
-public class Encrypt extends AbstractTool {
-    private final static int PERMISSIONS[] = {
-            PdfWriter.AllowPrinting,
-            PdfWriter.AllowModifyContents,
-            PdfWriter.AllowCopy,
-            PdfWriter.AllowModifyAnnotations,
-            PdfWriter.AllowFillIn,
-            PdfWriter.AllowScreenReaders,
-            PdfWriter.AllowAssembly,
-            PdfWriter.AllowDegradedPrinting};
-    private final static String PERMISSION_OPTIONS[] = {
-    		"AllowPrinting",
-			"AllowModifyContents",
-			"AllowCopy",
-			"AllowModifyAnnotations",
-			"AllowFillIn (128 bit only)",
-			"AllowScreenReaders (128 bit only)",
-			"AllowAssembly (128 bit only)",
-			"AllowDegradedPrinting (128 bit only)"
-    		};
+public class InspectPDF extends AbstractTool {
 
 	
 	/**
 	 * Constructs an Encrypt object.
 	 */
-	public Encrypt() {
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to encrypt", false, new PdfFilter()));
-		arguments.add(new FileArgument(this, "destfile", "The file to which the encrypted PDF has to be written", true, new PdfFilter()));
-		arguments.add(new ToolArgument(this, "ownerpassword", "The ownerpassword you want to add to the PDF file", String.class.getName()));
-		arguments.add(new ToolArgument(this, "userpassword", "The userpassword you want to add to the PDF file", String.class.getName()));
-		arguments.add(new BitsetArgument(this, "permissions", "Permissions on the file", PERMISSION_OPTIONS));
-		OptionArgument oa = new OptionArgument(this, "strength", "Strength of the encryption");
-		oa.addOption("40 bit encryption", "40");
-		oa.addOption("128 bit encryption", "128");
-		arguments.add(oa);
+	public InspectPDF() {
+		arguments.add(new FileArgument(this, "srcfile", "The file you want to inspect", false, new PdfFilter()));
+		arguments.add(new ToolArgument(this, "ownerpassword", "The owner password if the file is encrypt", String.class.getName()));
 	}
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Encrypt", true, true, true);
-		internalFrame.setSize(300, 80);
+		internalFrame = new JInternalFrame("Pdf Information", true, true, true);
+		internalFrame.setSize(500, 300);
 		internalFrame.setJMenuBar(getMenubar());
+		internalFrame.getContentPane().add(getConsole(40, 30));
 	}
 	
 	/**
@@ -119,31 +92,41 @@ public class Encrypt extends AbstractTool {
 	public void execute() {
 		try {
 			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
-			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
-			int permissions = 0;
-			String p = (String)getValue("permissions");
-			if (p != null) {
-				for (int k = 0; k < p.length(); ++k) {
-					permissions |= (p.charAt(k) == '0' ? 0 : PERMISSIONS[k]);
-				}
+			PdfReader reader;
+			if (getValue("ownerpassword") == null) {
+				reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath());
 			}
-			byte[] userpassword = null;
-			if (getValue("userpassword") != null) {
-				userpassword = ((String)getValue("userpassword")).getBytes();
+			else {
+				reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath(), ((String)getValue("ownerpassword")).getBytes());
 			}
-			byte[] ownerpassword = null;
-			if (getValue("ownerpassword") != null) {
-				userpassword = ((String)getValue("ownerpassword")).getBytes();
+			// Some general document information and page size
+			System.out.println("=== Document Information ===");
+			System.out.println("PDF Version: " + reader.getPdfVersion());
+			System.out.println("Number of pages: " + reader.getNumberOfPages());
+			System.out.println("Number of PDF objects: " + reader.getXrefSize());
+			System.out.println("File length: " + reader.getFileLength());
+			System.out.println("Encrypted? " + reader.isEncrypted());
+			if (reader.isEncrypted()) {
+				System.out.println("Permissions: " + PdfEncryptor.getPermissionsVerbose(reader.getPermissions()));
+				System.out.println("128 bit? " + reader.is128Key());
 			}
-			PdfReader reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath());
-			PdfEncryptor.encrypt(
-        		reader,
-				new FileOutputStream((File)getValue("destfile")),
-				userpassword,
-				ownerpassword,
-				permissions,
-				"128".equals(getValue("strength"))
-				);
+			System.out.println("Rebuilt? " + (!reader.isRebuilt()));
+			// Some metadata
+			System.out.println("=== Metadata ===");
+			HashMap info = reader.getInfo();
+			String key;
+			String value;
+			for (Iterator i = info.keySet().iterator(); i.hasNext(); ) {
+				key = (String) i.next();
+				value = (String) info.get(key);
+				System.out.println(key + ": " + value);
+			}
+			if (reader.getMetadata() == null) {
+				System.out.println("There is no XML Metadata in the file");
+			}
+			else {
+				System.out.println("XML Metadata: " + new String(reader.getMetadata()));
+			}
 		}
 		catch(Exception e) {
         	JOptionPane.showMessageDialog(internalFrame,
@@ -170,8 +153,8 @@ public class Encrypt extends AbstractTool {
      * @param args
      */
     public static void main(String[] args) {
-    	Encrypt tool = new Encrypt();
-    	if (args.length < 2) {
+    	InspectPDF tool = new InspectPDF();
+    	if (args.length < 1) {
     		System.err.println(tool.getUsage());
     	}
     	tool.setArguments(args);
@@ -182,7 +165,7 @@ public class Encrypt extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#getDestPathPDF()
 	 */
 	protected File getDestPathPDF() throws InstantiationException {
-		return (File)getValue("destfile");
+		throw new InstantiationException("There is no file to show.");
 	}
 
 }

@@ -104,4 +104,8 @@
 		<ant antfile="ant/release.xml" inheritAll="false" target="ant.zip" />
 	</target>
 	
+	<target name="changelog">
+		<ant antfile="ant/release.xml" inheritAll="false" target="changelog" />
+	</target>
+	
 </project>

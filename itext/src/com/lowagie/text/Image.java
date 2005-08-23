@@ -338,7 +338,7 @@ public abstract class Image extends Rectangle implements Element,
 		this.spacingBefore = image.spacingBefore;
 		this.widthPercentage = image.widthPercentage;
 		this.layer = image.layer;
-        this.initialRotation = initialRotation;
+        this.initialRotation = image.initialRotation;
 	}
 
 	/**
@@ -1022,8 +1022,9 @@ public abstract class Image extends Rectangle implements Element,
 	 */
 
 	public void scaleToFit(float fitWidth, float fitHeight) {
-		float percentX = (fitWidth * 100) / width();
-		float percentY = (fitHeight * 100) / height();
+        scalePercent(100);
+		float percentX = (fitWidth * 100) / scaledWidth();
+		float percentY = (fitHeight * 100) / scaledHeight();
 		scalePercent(percentX < percentY ? percentX : percentY);
 	}
 
