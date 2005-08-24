@@ -222,9 +222,9 @@ public class WebColors extends HashMap {
 		int[] c = { 0, 0, 0, 0 };
 		if (name.startsWith("#")) {
 			if (name.length() == 4) {
-				c[0] = Integer.parseInt(name.substring(1, 2), 16);
-				c[1] = Integer.parseInt(name.substring(2, 3), 16);
-				c[2] = Integer.parseInt(name.substring(3), 16);
+				c[0] = Integer.parseInt(name.substring(1, 2), 16) * 16;
+				c[1] = Integer.parseInt(name.substring(2, 3), 16) * 16;
+				c[2] = Integer.parseInt(name.substring(3), 16) * 16;
 				return new Color(c[0], c[1], c[2], c[3]);
 			}
 			if (name.length() == 7) {
