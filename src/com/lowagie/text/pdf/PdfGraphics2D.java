@@ -717,7 +717,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#getFontRenderContext()
      */
     public FontRenderContext getFontRenderContext() {
-        return new FontRenderContext(null, false, true);
+        return new FontRenderContext(null, true, true);
     }
     
     /**
