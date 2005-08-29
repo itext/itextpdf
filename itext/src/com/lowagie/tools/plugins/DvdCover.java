@@ -74,6 +74,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  */
 public class DvdCover extends AbstractTool {
 	
+	static {
+		addVersion("$Id$");
+	}
+	
 	/**
 	 * Constructs a DvdCover object.
 	 */

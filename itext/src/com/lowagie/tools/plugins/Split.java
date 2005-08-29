@@ -34,6 +34,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * This tool lets you split a PDF in two separate PDF files.
  */
 public class Split extends AbstractTool {
+	
+	static {
+		addVersion("$Id$");
+	}
 	/**
 	 * Constructs an Encrypt object.
 	 */

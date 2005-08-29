@@ -79,7 +79,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Allows you to encrypt an existing PDF file.
  */
 public class HtmlBookmarks extends AbstractTool {
-
+	
+	static {
+		addVersion("$Id$");
+	}
 	
 	/**
 	 * Constructs an Encrypt object.
