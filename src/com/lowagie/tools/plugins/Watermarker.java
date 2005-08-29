@@ -29,6 +29,10 @@ import com.lowagie.tools.arguments.*;
  * This tool lets you add a text watermark to all pages of a document.
  */
 public class Watermarker extends AbstractTool {
+	
+	static {
+		versionsarray.add("$Id$");
+	}
 
 	/**
 	 * This tool lets you add a text watermark to all pages of a document.

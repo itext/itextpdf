@@ -147,6 +147,9 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		about.setMnemonic(KeyEvent.VK_A);
 		about.addActionListener(this);
 		help.add(about);
+		JMenuItem versions = new JMenuItem(VERSION);
+		versions.addActionListener(this);
+		help.add(versions);
 		menubar.add(file);
 		menubar.add(tools);
 		menubar.add(Box.createGlue());
@@ -191,6 +194,10 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 			catch(IOException ioe) {
 				JOptionPane.showMessageDialog(this, "The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://www.lowagie.com/iText/toolbox.html for more info.");
 			}
+		}
+		else if(VERSION.equals(evt.getActionCommand())) {
+			JFrame f = new Versions();
+			f.setVisible(true);
 		}
 		else {
 			try {

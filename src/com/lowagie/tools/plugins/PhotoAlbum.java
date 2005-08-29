@@ -72,6 +72,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * and an answer by Hans-Werner Hilse.
  */
 public class PhotoAlbum extends AbstractTool {
+	
+	static {
+		versionsarray.add("$Id$");
+	}
 	/**
 	 * Constructs a Tiff2Pdf object.
 	 */

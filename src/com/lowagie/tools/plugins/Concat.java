@@ -70,6 +70,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Concatenates two PDF files
  */
 public class Concat extends AbstractTool {
+	
+	static {
+		versionsarray.add("$Id$");
+	}
 	/**
 	 * Constructs a Tiff2Pdf object.
 	 */

@@ -76,7 +76,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Every iText tool has to implement this interface.
  */
 public abstract class AbstractTool implements ToolMenuItems, ActionListener {
-	   
+	 
+	/** An array with the versions of the tool. */
+	public static ArrayList versionsarray = new ArrayList(); 
+	
     /**
      * A Class that redirects output to System.out and System.err.
      */

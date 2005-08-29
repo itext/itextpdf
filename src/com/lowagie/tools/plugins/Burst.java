@@ -33,8 +33,13 @@ import com.lowagie.tools.arguments.ToolArgument;
  * This tool lets you split a PDF in two separate PDF files.
  */
 public class Burst extends AbstractTool {
+	
+	static {
+		versionsarray.add("$Id$");
+	}
+	
 	/**
-	 * Constructs an Encrypt object.
+	 * Constructs an Burst object.
 	 */
 	public Burst() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter()));

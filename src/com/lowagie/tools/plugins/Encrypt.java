@@ -68,6 +68,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Allows you to encrypt an existing PDF file.
  */
 public class Encrypt extends AbstractTool {
+	
+	static {
+		versionsarray.add("$Id$");
+	}
     private final static int PERMISSIONS[] = {
             PdfWriter.AllowPrinting,
             PdfWriter.AllowModifyContents,

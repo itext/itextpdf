@@ -33,6 +33,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * This tool lets you select pages from an existing PDF and copy them into a new PDF.
  */
 public class SelectedPages extends AbstractTool {
+	
+	static {
+		versionsarray.add("$Id$");
+	}
 	/**
 	 * Constructs an Encrypt object.
 	 */

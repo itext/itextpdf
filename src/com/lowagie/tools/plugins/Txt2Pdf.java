@@ -73,6 +73,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Converts a monospaced txt file to a PDF file.
  */
 public class Txt2Pdf extends AbstractTool {
+	
+	static {
+		versionsarray.add("$Id$");
+	}
 	/**
 	 * Constructs a Tiff2Pdf object.
 	 */

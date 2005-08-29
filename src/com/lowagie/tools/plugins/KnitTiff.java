@@ -70,6 +70,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Knits two TIFF files, one with the even pages and another with the odd pages, together.
  */
 public class KnitTiff extends AbstractTool {
+	
+	static {
+		versionsarray.add("$Id$");
+	}
 	/**
 	 * Constructs a Tiff2Pdf object.
 	 */
