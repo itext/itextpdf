@@ -35,7 +35,7 @@ import com.lowagie.tools.arguments.ToolArgument;
 public class Burst extends AbstractTool {
 	
 	static {
-		versionsarray.add("$Id$");
+		addVersion("$Id$");
 	}
 	
 	/**

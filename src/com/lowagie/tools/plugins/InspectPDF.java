@@ -67,7 +67,7 @@ import com.lowagie.tools.arguments.ToolArgument;
  */
 public class InspectPDF extends AbstractTool {
 	static {
-		versionsarray.add("$Id$");
+		addVersion("$Id$");
 	}
 	
 	/**

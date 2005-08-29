@@ -31,7 +31,7 @@ import com.lowagie.tools.arguments.*;
 public class Watermarker extends AbstractTool {
 	
 	static {
-		versionsarray.add("$Id$");
+		addVersion("$Id$");
 	}
 
 	/**

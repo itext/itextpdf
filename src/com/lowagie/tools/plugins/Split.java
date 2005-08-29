@@ -36,7 +36,7 @@ import com.lowagie.tools.arguments.ToolArgument;
 public class Split extends AbstractTool {
 	
 	static {
-		versionsarray.add("$Id$");
+		addVersion("$Id$");
 	}
 	/**
 	 * Constructs an Encrypt object.

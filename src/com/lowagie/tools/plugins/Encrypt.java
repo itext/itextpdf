@@ -70,7 +70,7 @@ import com.lowagie.tools.arguments.ToolArgument;
 public class Encrypt extends AbstractTool {
 	
 	static {
-		versionsarray.add("$Id$");
+		addVersion("$Id$");
 	}
     private final static int PERMISSIONS[] = {
             PdfWriter.AllowPrinting,

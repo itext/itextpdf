@@ -128,7 +128,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		file.add(close);
 		JMenu tools = new JMenu(TOOLS);
 		file.setMnemonic(KeyEvent.VK_T);
-		String name;
+		String name, tool;
 		JMenu current = null;
 		JMenuItem item;
 		for (Iterator i = tmp.keySet().iterator(); i.hasNext(); ) {
@@ -139,8 +139,14 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 			}
 			item = new JMenuItem(name.substring(current.getText().length() + 1));
 			item.addActionListener(this);
-			toolmap.put(item.getText(), (String)tmp.get(name));
-			current.add(item);
+			tool = (String)tmp.get(name);
+			try {
+				Class.forName(tool);
+				toolmap.put(item.getText(), tool);
+				current.add(item);
+			} catch (ClassNotFoundException e) {
+				System.err.println("Plugin " + name + " was not found in your CLASSPATH.");
+			}
 		}
 		JMenu help = new JMenu(HELP);
 		JMenuItem about = new JMenuItem(ABOUT);

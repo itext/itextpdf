@@ -81,7 +81,7 @@ import com.lowagie.tools.arguments.ToolArgument;
 public class HtmlBookmarks extends AbstractTool {
 	
 	static {
-		versionsarray.add("$Id$");
+		addVersion("$Id$");
 	}
 	
 	/**

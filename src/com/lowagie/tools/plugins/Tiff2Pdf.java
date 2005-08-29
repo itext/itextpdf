@@ -76,7 +76,7 @@ import com.lowagie.tools.arguments.ToolArgument;
 public class Tiff2Pdf extends AbstractTool {
 	
 	static {
-		versionsarray.add("$Id$");
+		addVersion("$Id$");
 	}
 	/**
 	 * Constructs a Tiff2Pdf object.

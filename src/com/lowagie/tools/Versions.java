@@ -63,38 +63,12 @@ public class Versions extends JFrame {
 	 * @throws HeadlessException
 	 */
 	public Versions() throws HeadlessException {
-		super();
+		super("Plugins and their version");
 		try {
 			jbInit();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	/**
-	 * Constructs a JFrame.
-	 * @param gc
-	 */
-	public Versions(GraphicsConfiguration gc) {
-		super(gc);
-	}
-
-	/**
-	 * Constructs a JFrame.
-	 * @param title
-	 * @throws HeadlessException
-	 */
-	public Versions(String title) throws HeadlessException {
-		super(title);
-	}
-
-	/**
-	 * Constructs a JFrame.
-	 * @param title
-	 * @param gc
-	 */
-	public Versions(String title, GraphicsConfiguration gc) {
-		super(title, gc);
 	}
 
 	/**
@@ -109,7 +83,7 @@ public class Versions extends JFrame {
 		this.getContentPane().setLayout(borderLayout1);
 		this.getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
 		StringBuffer sb = new StringBuffer();
-		sb.append("<html><p>Versionsliste:</p>");
+		sb.append("<html>");
 		for (int i = 0; i < AbstractTool.versionsarray.size(); i++) {
 			sb.append("<p>");
 			sb.append(AbstractTool.versionsarray.get(i));

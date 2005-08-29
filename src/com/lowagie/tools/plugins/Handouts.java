@@ -73,7 +73,7 @@ import com.lowagie.tools.arguments.ToolArgument;
 public class Handouts extends AbstractTool {
 
 	static {
-		versionsarray.add("$Id$");
+		addVersion("$Id$");
 	}
 	
 	/**
