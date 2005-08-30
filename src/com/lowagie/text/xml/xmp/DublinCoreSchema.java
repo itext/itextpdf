@@ -96,4 +96,42 @@ public class DublinCoreSchema extends XmpSchema {
 		super("xmlns:dc='http://purl.org/dc/elements/1.1'", shorthand);
 		setProperty(FORMAT, "application/pdf");
 	}
+	
+	/**
+	 * Adds a title.
+	 * @param title
+	 */
+	public void addTitle(String title) {
+		setProperty(TITLE, title);
+	}
+	
+	/**
+	 * Adds a subject.
+	 * @param subject
+	 */
+	public void addSubject(String subject) {
+		setProperty(SUBJECT, subject);
+	}
+	
+	/**
+	 * Adds an author.
+	 * @param author
+	 */
+	public void addAuthor(String author) {
+		XmpArray array = new XmpArray(XmpArray.ORDERED);
+		array.add(author);
+		setProperty(CREATOR, array.toString());
+	}
+	
+	/**
+	 * Adds an array of authors.
+	 * @param author
+	 */
+	public void addAuthors(String[] author) {
+		XmpArray array = new XmpArray(XmpArray.ORDERED);
+		for (int i = 0; i < author.length; i++) {
+			array.add(author[i]);
+		}
+		setProperty(CREATOR, array.toString());
+	}
 }
