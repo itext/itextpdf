@@ -91,8 +91,17 @@ public class BarcodePDF417 {
      * bit one for black. It has only effect for the raw bitmap.
      */    
     public static final int PDF417_INVERT_BITMAP = 128;
+    /** Use Macro PDF417 Encoding
+     * @see #setMacroFileId(String)
+     * @see #setMacroSegmentId(int)
+     * @see #setMacroSegmentCount(int)
+     */    
+    public static final int PDF417_USE_MACRO = 256;
     
 
+    private int macroSegmentCount=0;
+    private int macroSegmentId=-1;
+    private String macroFileId;
     protected int bitPtr;
     protected int cwPtr;
     protected SegmentList segmentList;
@@ -102,6 +111,32 @@ public class BarcodePDF417 {
         setDefaultParameters();
     }
     
+    /**
+     * Sets the segment id for macro PDF417 encoding
+     * @param id the id (starting at 0)
+     * @see #setMacroSegmentCount(int)
+     */
+    public void setMacroSegmentId(int id) {
+        this.macroSegmentId = id;
+    }
+    
+    /**
+     * Sets the segment count for macro PDF417 encoding
+     * @param cnt the number of macro segments
+     * @see #setMacroSegmentId(int)
+     */
+    public void setMacroSegmentCount(int cnt) {
+        this.macroSegmentCount = cnt;
+    }
+
+    /**
+     * Sets the File ID for macro PDF417 encoding 
+     * @param id the file id
+     */
+    public void setMacroFileId(String id) {
+        this.macroFileId = id;        
+    }
+       
     protected boolean checkSegmentType(Segment segment, char type) {
         if (segment == null)
             return false;
@@ -227,10 +262,10 @@ public class BarcodePDF417 {
             codewords[dest + k] = (MOD - codewords[dest + k]) % MOD;
     }
     
-    protected int getTextTypeAndValue(int maxLength, int idx) {
+    private static int getTextTypeAndValue(byte[] input, int maxLength, int idx) {
         if (idx >= maxLength)
             return 0;
-        char c = (char)(text[idx] & 0xff);
+        char c = (char)(input[idx] & 0xff);
         if (c >= 'A' && c <= 'Z')
             return (ALPHA + c - 'A');
         if (c >= 'a' && c <= 'z')
@@ -248,7 +283,11 @@ public class BarcodePDF417 {
         return (PUNCTUATION + ps);
     }
     
-    protected void textCompaction(int start, int length) {
+    protected int getTextTypeAndValue(int maxLength, int idx) {
+        return getTextTypeAndValue(text, maxLength,idx);
+    }
+    
+    private void textCompaction(byte[] input, int start, int length) {
         int dest[] = new int[ABSOLUTE_MAX_TEXT_SIZE * 2];
         int mode = ALPHA;
         int ptr = 0;
@@ -258,7 +297,7 @@ public class BarcodePDF417 {
         int size;
         length += start;
         for (k = start; k < length; ++k) {
-            v = getTextTypeAndValue(length, k);
+            v = getTextTypeAndValue(input, length, k);
             if ((v & mode) != 0) {
                 dest[ptr++] = v & 0xff;
                 continue;
@@ -285,7 +324,7 @@ public class BarcodePDF417 {
                     dest[ptr++] = v & 0xff;
                     mode = MIXED;
                 }
-                else if ((getTextTypeAndValue(length, k + 1) & getTextTypeAndValue(length, k + 2) & PUNCTUATION) != 0) {
+                else if ((getTextTypeAndValue(input, length, k + 1) & getTextTypeAndValue(input, length, k + 2) & PUNCTUATION) != 0) {
                     dest[ptr++] = ML;
                     dest[ptr++] = PL;
                     dest[ptr++] = v & 0xff;
@@ -298,7 +337,7 @@ public class BarcodePDF417 {
                 break;
             case LOWER:
                 if ((v & ALPHA) != 0) {
-                    if ((getTextTypeAndValue(length, k + 1) & getTextTypeAndValue(length, k + 2) & ALPHA) != 0) {
+                    if ((getTextTypeAndValue(input, length, k + 1) & getTextTypeAndValue(input, length, k + 2) & ALPHA) != 0) {
                         dest[ptr++] = ML;
                         dest[ptr++] = AL;
                         mode = ALPHA;
@@ -313,7 +352,7 @@ public class BarcodePDF417 {
                     dest[ptr++] = v & 0xff;
                     mode = MIXED;
                 }
-                else if ((getTextTypeAndValue(length, k + 1) & getTextTypeAndValue(length, k + 2) & PUNCTUATION) != 0) {
+                else if ((getTextTypeAndValue(input, length, k + 1) & getTextTypeAndValue(input, length, k + 2) & PUNCTUATION) != 0) {
                     dest[ptr++] = ML;
                     dest[ptr++] = PL;
                     dest[ptr++] = v & 0xff;
@@ -335,7 +374,7 @@ public class BarcodePDF417 {
                     dest[ptr++] = v & 0xff;
                     mode = ALPHA;
                 }
-                else if ((getTextTypeAndValue(length, k + 1) & getTextTypeAndValue(length, k + 2) & PUNCTUATION) != 0) {
+                else if ((getTextTypeAndValue(input, length, k + 1) & getTextTypeAndValue(input, length, k + 2) & PUNCTUATION) != 0) {
                     dest[ptr++] = PL;
                     dest[ptr++] = v & 0xff;
                     mode = PUNCTUATION;
@@ -370,8 +409,15 @@ public class BarcodePDF417 {
                 codewords[cwPtr++] = v * 30 + dest[ptr++];
         }
     }
+    protected void textCompaction(int start, int length) {
+        textCompaction(text, start, length);
+    }
 
     protected void basicNumberCompaction(int start, int length) {
+        basicNumberCompaction(text, start, length);
+    }
+
+    private void basicNumberCompaction(byte[] input, int start, int length) {
         int ret = cwPtr;
         int retLast = length / 3;
         int ni, k;
@@ -385,7 +431,7 @@ public class BarcodePDF417 {
             for (k = retLast; k >= 0; --k)
                 codewords[ret + k] *= 10;
             // add the digit
-            codewords[ret + retLast] += text[ni] - '0';
+            codewords[ret + retLast] += input[ni] - '0';
             // propagate carry
             for (k = retLast; k > 0; --k) {
                 codewords[ret + k - 1] += codewords[ret + k] / 900;
@@ -394,7 +440,7 @@ public class BarcodePDF417 {
         }
     }
 
-    protected void numberCompaction(int start, int length) {
+    private void numberCompaction(byte[] input, int start, int length) {
         int full = (length / 44) * 15;
         int size = length % 44;
         int k;
@@ -408,8 +454,12 @@ public class BarcodePDF417 {
         length += start;
         for (k = start; k < length; k += 44) {
             size = length - k < 44 ? length - k : 44;
-            basicNumberCompaction(k, size);
+            basicNumberCompaction(input, k, size);
+        }        
         }
+    
+    protected void numberCompaction(int start, int length) {
+        numberCompaction(text, start, length);
     }
 
     protected void byteCompaction6(int start) {
@@ -613,7 +663,57 @@ public class BarcodePDF417 {
                 break;
             }
         }
+
+        if ((options & PDF417_USE_MACRO) != 0) {
+            macroCodes();
+        }
+
     }
+    
+    private void macroCodes() {
+        if (macroSegmentId < 0) {
+            throw new IllegalStateException("macroSegmentId must be >=0");
+        }
+        if (macroSegmentId >= macroSegmentCount) {
+            throw new IllegalStateException("macroSegmentId must be < macroSemgentCount");
+        }
+        if (macroSegmentCount < 1) {
+            throw new IllegalStateException("macroSemgentCount must be > 0");
+        }
+
+        codewords[cwPtr++] = MACRO_SEGMENT_ID;
+        append(macroSegmentId, 5);
+            
+        if (macroFileId != null) {
+            append(macroFileId);
+        }
+        
+        codewords[cwPtr++] = MACRO_SEGMENT_COUNT;
+        codewords[cwPtr++] = 1;
+        append(macroSegmentCount, 5);
+        
+        if (macroSegmentId >= macroSegmentCount-1) {
+            codewords[cwPtr++] = MACRO_LAST_SEGMENT;
+        }
+        
+    }
+    
+    private void append(int in, int len) {
+        StringBuffer sb = new StringBuffer(len+1);
+        sb.append(Integer.toString(in));
+        for(int i = sb.length(); i < len; i++) {
+            sb.insert(0, "0");
+        }
+    
+        byte[] bytes = PdfEncodings.convertToBytes(sb.toString(), "cp437");
+        numberCompaction(bytes, 0, bytes.length);
+    }    
+    
+    private void append(String s) {
+        byte[] bytes = PdfEncodings.convertToBytes(s, "cp437");
+        textCompaction(bytes, 0, bytes.length);
+    }    
+    
     
     protected static int maxPossibleErrorLevel(int remain) {
         int level = 8;
@@ -984,6 +1084,9 @@ public class BarcodePDF417 {
     protected static final int NUMERIC_MODE = 902;
     protected static final int ABSOLUTE_MAX_TEXT_SIZE = 5420;
     protected static final int MAX_DATA_CODEWORDS = 926;
+    protected static final int MACRO_SEGMENT_ID=928;
+    protected static final int MACRO_SEGMENT_COUNT=923;
+    protected static final int MACRO_LAST_SEGMENT=922;
 
     static String MIXED_SET = "0123456789&\r\t,:#-.$/+%*=^";
     static String PUNCTUATION_SET = ";<>@[\\]_`~!\r\t,:\n-.$/\"|*()?{}'";
