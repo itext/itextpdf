@@ -73,10 +73,6 @@ import java.util.SimpleTimeZone;
 
 public class PdfDate extends PdfString {
 
-	/**
-	 * Date format following the <code>W3C</code> standard.
-	 */
-	public static final SimpleDateFormat W3C = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final int dateSpace[] = {Calendar.YEAR, 4, 0, Calendar.MONTH, 2, -1, Calendar.DAY_OF_MONTH, 2, 0,
         Calendar.HOUR_OF_DAY, 2, 0, Calendar.MINUTE, 2, 0, Calendar.SECOND, 2, 0};
     
@@ -148,8 +144,9 @@ public class PdfDate extends PdfString {
      * @return a formatted date
      */
     public String getW3CDate() {
+    	SimpleDateFormat w3c = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     	Calendar c = decode(value);
-		return W3C.format(c.getTime());
+		return w3c.format(c.getTime());
     }
     
     /**
