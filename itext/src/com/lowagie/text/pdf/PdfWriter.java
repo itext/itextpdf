@@ -2584,4 +2584,11 @@ public class PdfWriter extends DocWriter {
 	public void setXmpMetadata(byte[] xmpMetadata) {
 		this.xmpMetadata = xmpMetadata;
 	}
+	
+	/**
+	 * Creates XMP Metadata based on the metadata in the PdfDocument.
+	 */
+	public void createXmpMetadata() {
+		setXmpMetadata(pdf.createXmpMetadata());
+	}
 }

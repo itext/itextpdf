@@ -50,49 +50,50 @@
 
 package com.lowagie.text.xml.xmp;
 
-import com.lowagie.text.Document;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
- * An implementation of an XmpSchema.
+ * StringBuffer to construct an XMP array.
  */
-public class PdfSchema extends XmpSchema {
+public class XmpArray extends ArrayList {
+
+	/** An array that is unordered. */
+	public static final String UNORDERED = "rdf:Bag";
+	/** An array that is ordered. */
+	public static final String ORDERED = "rdf:Seq";
+	/** An array with alternatives. */
+	public static final String ALTERNATIVE = "rdf:Alt";
 	
-	/** Keywords. */
-	public static final String KEYWORDS = "pdf:Keywords";
-	/** The PDF file version (for example: 1.0, 1.3, and so on). */
-	public static final String VERSION = "pdf:PDFVersion";
-	/** The Producer. */
-	public static final String PRODUCER = "pdf:Producer";
+	/** the type of array. */
+	protected String type;
 	
 	/**
-	 * @param shorthand
-	 * @throws IOException
+	 * Creates an XmpArray.
+	 * @param type the type of array: UNORDERED, ORDERED or ALTERNATIVE.
 	 */
-	public PdfSchema(boolean shorthand) throws IOException {
-		super("xmlns:dc='http://ns.adobe.com/pdf/1.3/'", shorthand);
-		addProducer(Document.getVersion());
-	}
-	/**
-	 * @throws IOException
-	 */
-	public PdfSchema() throws IOException {
-		this(true);
+	public XmpArray(String type) {
+		this.type = type;
 	}
 	
 	/**
-	 * Adds keywords.
-	 * @param keywords
+	 * Returns the String representation of the XmpArray.
+	 * @return a String representation
 	 */
-	public void addKeywords(String keywords) {
-		setProperty(KEYWORDS, keywords);
-	}
-	
-	/**
-	 * Adds the producer.
-	 * @param producer
-	 */
-	public void addProducer(String producer) {
-		setProperty(PRODUCER, producer);
+	public String toString() {
+		StringBuffer buf = new StringBuffer("<");
+		buf.append(type);
+		buf.append(">");
+		String s;
+		for (Iterator i = iterator(); i.hasNext(); ) {
+			s = (String) i.next();
+			buf.append("<rdf:li>");
+			buf.append(s);
+			buf.append("</rdf:li>");
+		}
+		buf.append("</");
+		buf.append(type);
+		buf.append(">");
+		return buf.toString();
 	}
 }

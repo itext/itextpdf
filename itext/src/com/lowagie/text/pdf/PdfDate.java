@@ -50,6 +50,7 @@
 
 package com.lowagie.text.pdf;
 
+import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.util.SimpleTimeZone;
@@ -71,7 +72,7 @@ import java.util.SimpleTimeZone;
  */
 
 public class PdfDate extends PdfString {
-    
+
     private static final int dateSpace[] = {Calendar.YEAR, 4, 0, Calendar.MONTH, 2, -1, Calendar.DAY_OF_MONTH, 2, 0,
         Calendar.HOUR_OF_DAY, 2, 0, Calendar.MINUTE, 2, 0, Calendar.SECOND, 2, 0};
     
@@ -136,6 +137,16 @@ public class PdfDate extends PdfString {
         }
         tmp.setLength(length);
         return tmp.toString();
+    }
+    
+    /**
+     * Gives the W3C format of the PdfDate.
+     * @return a formatted date
+     */
+    public String getW3CDate() {
+    	SimpleDateFormat w3c = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    	Calendar c = decode(value);
+		return w3c.format(c.getTime());
     }
     
     /**

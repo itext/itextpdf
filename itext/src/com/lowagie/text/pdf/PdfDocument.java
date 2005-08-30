@@ -51,6 +51,7 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -84,6 +85,7 @@ import com.lowagie.text.SimpleTable;
 import com.lowagie.text.StringCompare;
 import com.lowagie.text.Table;
 import com.lowagie.text.Watermark;
+import com.lowagie.text.xml.xmp.XmpWriter;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -2959,5 +2961,20 @@ class PdfDocument extends Document implements DocListener {
                 PdfAnnotation an = new PdfAnnotation(writer, annot.llx(doc.indentRight() - doc.line.widthLeft()), annot.lly(doc.indentTop() - doc.currentHeight), annot.urx(doc.indentRight() - doc.line.widthLeft() + 20), annot.ury(doc.indentTop() - doc.currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content()));
                 return an;
         }
+    }
+    
+    /**
+     * @return an XmpMetadata byte array
+     */
+    public byte[] createXmpMetadata() {
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	try {
+    		XmpWriter xmp = new XmpWriter(baos, getInfo());
+    		xmp.close();
+    	}
+    	catch(IOException ioe) {
+    		ioe.printStackTrace();
+    	}
+    	return baos.toByteArray();
     }
 }

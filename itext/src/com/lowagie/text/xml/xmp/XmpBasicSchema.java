@@ -52,8 +52,6 @@ package com.lowagie.text.xml.xmp;
 
 import java.io.IOException;
 
-import com.lowagie.text.Document;
-
 /**
  * An implementation of an XmpSchema.
  */
@@ -84,6 +82,29 @@ public class XmpBasicSchema extends XmpSchema {
 	 */
 	public XmpBasicSchema(boolean shorthand) throws IOException {
 		super("xmlns:dc='http://ns.adobe.com/xap/1.0'", shorthand);
-		setProperty(CREATORTOOL, Document.getVersion());
+	}
+	
+	/**
+	 * Adds the creatortool.
+	 * @param creator
+	 */
+	public void addCreator(String creator) {
+		setProperty(CREATORTOOL, creator);
+	}
+	
+	/**
+	 * Adds the creation date.
+	 * @param date
+	 */
+	public void addCreationDate(String date) {
+		setProperty(CREATEDATE, date);
+	}
+	
+	/**
+	 * Adds the modification date.
+	 * @param date
+	 */
+	public void addModDate(String date) {
+		setProperty(MODIFYDATE, date);
 	}
 }
