@@ -442,6 +442,15 @@ public class PdfStamper {
     }
 
     /**
+     * Sets the XMP metadata.
+     * @param xmp
+     * @see PdfWriter#setXmpMetadata(byte[])
+     */
+    public void setXmpMetadata(byte[] xmp) {
+        stamper.setXmpMetadata(xmp);
+    }
+
+    /**
      * Gets the 1.5 compression status.
      * @return <code>true</code> if the 1.5 compression is on
      */
