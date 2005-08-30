@@ -805,6 +805,8 @@ public class PdfWriter extends DocWriter {
     /** Holds value of property extraCatalog. */
     private PdfDictionary extraCatalog;
     
+    /** XMP Metadata for the document. */
+    private byte[] xmpMetadata = null;
     /**
      * Holds value of property fullCompression.
      */
@@ -1234,6 +1236,13 @@ public class PdfWriter extends DocWriter {
                 PdfIndirectReference rootRef = root.writePageTree();
                 // make the catalog-object and add it to the body
                 PdfDictionary catalog = getCatalog(rootRef);
+                // if there is XMP data to add: add it
+                if (xmpMetadata != null) {
+                	PdfStream xmp = new PdfStream(xmpMetadata);
+                	xmp.put(PdfName.TYPE, PdfName.METADATA);
+                	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+                	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
+                }
                 // make pdfx conformant
                 PdfDictionary info = getInfo();
                 if (pdfxConformance != PDFXNONE) {
@@ -2566,5 +2575,13 @@ public class PdfWriter extends DocWriter {
 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
 		this.userunit = userunit;
         setPdfVersion(VERSION_1_6);
+	}
+    
+	/**
+	 * Sets XMP Metadata.
+	 * @param xmpMetadata The xmpMetadata to set.
+	 */
+	public void setXmpMetadata(byte[] xmpMetadata) {
+		this.xmpMetadata = xmpMetadata;
 	}
 }
