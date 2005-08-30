@@ -164,6 +164,10 @@ public class PdfStream extends PdfDictionary {
         writer.addToBody(new PdfNumber(inputStreamLength), ref, false);
     }
     
+    /**
+     * Gets the raw length of the stream.
+     * @return the raw length of the stream
+     */
     public int getRawLength() {
         return rawLength;
     }
@@ -237,6 +241,9 @@ public class PdfStream extends PdfDictionary {
         super.toPdf(writer, os);
     }
     
+    /**
+     * @see com.lowagie.text.pdf.PdfDictionary#toPdf(com.lowagie.text.pdf.PdfWriter, java.io.OutputStream)
+     */
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         if (inputStream != null && compressed)
             put(PdfName.FILTER, PdfName.FLATEDECODE);
