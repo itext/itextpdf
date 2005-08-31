@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.lowagie.text.pdf.PdfDate;
@@ -207,9 +208,11 @@ public class XmpWriter {
         	DublinCoreSchema dc = new DublinCoreSchema(XmpSchema.FULL);
         	PdfSchema p = new PdfSchema(XmpSchema.SHORTHAND);
         	XmpBasicSchema basic = new XmpBasicSchema(XmpSchema.FULL);
+        	PdfName key;
+        	PdfObject obj;
         	for (Iterator it = info.getKeys().iterator(); it.hasNext();) {
-        		PdfName key = (PdfName)it.next();
-        		PdfObject obj = info.get(key);
+        		key = (PdfName)it.next();
+        		obj = info.get(key);
         		if (obj == null)
         			continue;
         		if (PdfName.TITLE.equals(key)) {
@@ -235,6 +238,55 @@ public class XmpWriter {
         		}
         		if (PdfName.MODDATE.equals(key)) {
         			basic.addModDate(((PdfDate)obj).getW3CDate());
+        		}
+        	}
+        	if (dc.size() > 0) addRdfDescription(dc);
+        	if (p.size() > 0) addRdfDescription(p);
+        	if (basic.size() > 0) addRdfDescription(basic);
+        }
+    }
+    
+    /**
+     * @param os
+     * @param info
+     * @throws IOException
+     */
+    public XmpWriter(OutputStream os, HashMap info) throws IOException {
+        this(os);
+        if (info != null) {
+        	DublinCoreSchema dc = new DublinCoreSchema(XmpSchema.FULL);
+        	PdfSchema p = new PdfSchema(XmpSchema.SHORTHAND);
+        	XmpBasicSchema basic = new XmpBasicSchema(XmpSchema.FULL);
+        	String key;
+        	String value;
+        	for (Iterator it = info.keySet().iterator(); it.hasNext();) {
+        		key = (String)it.next();
+        		value = (String)info.get(key);
+        		if (value == null)
+        			continue;
+        		if ("Title".equals(key)) {
+        			dc.addTitle(value);
+        		}
+        		if ("Author".equals(key)) {
+        			dc.addAuthor(value);
+        		}
+        		if ("Subject".equals(key)) {
+        			dc.addSubject(value);
+        		}
+        		if ("Keywords".equals(key)) {
+        			p.addKeywords(value);
+        		}
+        		if ("Creator".equals(key)) {
+        			basic.addCreator(value);
+        		}
+        		if ("Producer".equals(key)) {
+        			p.addProducer(value);
+        		}
+        		if ("CreationDate".equals(key)) {
+        			basic.addCreationDate(PdfDate.getW3CDate(value));
+        		}
+        		if ("ModDate".equals(key)) {
+        			basic.addModDate(PdfDate.getW3CDate(value));
         		}
         	}
         	if (dc.size() > 0) addRdfDescription(dc);

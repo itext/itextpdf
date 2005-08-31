@@ -806,7 +806,7 @@ public class PdfWriter extends DocWriter {
     private PdfDictionary extraCatalog;
     
     /** XMP Metadata for the document. */
-    private byte[] xmpMetadata = null;
+    protected byte[] xmpMetadata = null;
     /**
      * Holds value of property fullCompression.
      */
