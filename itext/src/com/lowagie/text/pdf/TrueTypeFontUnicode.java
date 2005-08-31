@@ -209,7 +209,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         // sivan; cff
         if (cff) {
 			dic.put(PdfName.SUBTYPE, PdfName.CIDFONTTYPE0);
-            dic.put(PdfName.BASEFONT, new PdfName(fontName+"-"+encoding));
+            dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix+fontName+"-"+encoding));
         }
 		else {
 			dic.put(PdfName.SUBTYPE, PdfName.CIDFONTTYPE2);
@@ -265,7 +265,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         dic.put(PdfName.SUBTYPE, PdfName.TYPE0);
         // The PDF Reference manual advises to add -encoding to CID font names
 		if (cff)
-		  dic.put(PdfName.BASEFONT, new PdfName(fontName+"-"+encoding));
+		  dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix+fontName+"-"+encoding));
 		  //dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix+fontName));
 		else
 		  dic.put(PdfName.BASEFONT, new PdfName(subsetPrefix + fontName));
