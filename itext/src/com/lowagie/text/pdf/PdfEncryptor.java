@@ -163,7 +163,7 @@ public class PdfEncryptor {
      */
     public static String getPermissionsVerbose(int permissions) {
     	StringBuffer buf = new StringBuffer("Allowed:");
-    	if ((PdfWriter.AllowPrinting & permissions) != 0) buf.append(" Printing");
+    	if (((PdfWriter.AllowPrinting - PdfWriter.AllowDegradedPrinting) & permissions) != 0) buf.append(" Printing");
         if ((PdfWriter.AllowModifyContents & permissions) != 0) buf.append(" Modify contents");
         if ((PdfWriter.AllowCopy & permissions) != 0) buf.append(" Copy");
         if ((PdfWriter.AllowModifyAnnotations & permissions) != 0) buf.append(" Modify annotations");
