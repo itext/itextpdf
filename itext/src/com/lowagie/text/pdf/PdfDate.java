@@ -150,6 +150,17 @@ public class PdfDate extends PdfString {
     }
     
     /**
+     * Gives the W3C format of the PdfDate.
+     * @param d
+     * @return a formatted date
+     */
+    public static String getW3CDate(String d) {
+    	SimpleDateFormat w3c = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    	Calendar c = decode(d);
+		return w3c.format(c.getTime());
+    }
+    
+    /**
      * Converts a PDF string representing a date into a Calendar.
      * @param s the PDF string representing a date
      * @return a <CODE>Calendar</CODE> representing the date or <CODE>null</CODE> if the string
