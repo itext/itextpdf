@@ -21,12 +21,9 @@ import java.io.FileOutputStream;
 import javax.swing.JInternalFrame;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.tools.arguments.FileArgument;
@@ -50,11 +47,13 @@ public class NUp extends AbstractTool {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to N-up", false, new PdfFilter()));
 		arguments.add(new FileArgument(this, "destfile", "The resulting PDF", true, new PdfFilter()));
-		OptionArgument oa = new OptionArgument(this, "pages", "The number of pages you want to copy to 1 page");
+		OptionArgument oa = new OptionArgument(this, "pow2", "The number of pages you want to copy to 1 page");
 		oa.addOption("2", "1");
 		oa.addOption("4", "2");
 		oa.addOption("8", "3");
 		oa.addOption("16", "4");
+		oa.addOption("32", "5");
+		oa.addOption("64", "6");
 		arguments.add(oa);
 	}
 
@@ -77,68 +76,52 @@ public class NUp extends AbstractTool {
 			File src = (File)getValue("srcfile");
 			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
 			File dest = (File)getValue("destfile");
-			int pages;
+			int pow2;
 			try {
-				pages = Integer.parseInt((String) getValue("pages"));
+				pow2 = Integer.parseInt((String) getValue("pow2"));
 			}
 			catch(Exception e) {
-				pages = 1;
+				pow2 = 1;
 			}
 			// we create a reader for a certain document
 			PdfReader reader = new PdfReader(src.getAbsolutePath());
 			// we retrieve the total number of pages and the page size
 			int total = reader.getNumberOfPages();
 			System.out.println("There are " + total + " pages in the original file.");
-            Rectangle pageSize = reader.getPageSizeWithRotation(1);
-            boolean rotate = false;
-            if (pages % 2 == 1) {
-            	rotate = true;
-            	pageSize = pageSize.rotate();
+            Rectangle pageSize = reader.getPageSize(1);
+            Rectangle newSize = (pow2 % 2) == 0 ? new Rectangle(pageSize.width(), pageSize.height()) : new Rectangle(pageSize.height(), pageSize.width());
+            Rectangle unitSize = new Rectangle(pageSize.width(), pageSize.height());
+            Rectangle currentSize;
+            for (int i = 0; i < pow2; i++) {
+            	unitSize = new Rectangle(unitSize.height() / 2, unitSize.width());
             }
+            int n = (int)Math.pow(2, pow2);
+            int r = (int)Math.pow(2, (int)pow2 / 2);
+            int c = n / r;
 			// step 1: creation of a document-object
-			Document document = new Document(pageSize, 0, 0, 0, 0);
+			Document document = new Document(newSize, 0, 0, 0, 0);
 			// step 2: we create a writer that listens to the document
 			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(dest));
 			// step 3: we open the document
 			document.open();
+			// step 4: adding the content
 			PdfContentByte cb = writer.getDirectContent();
-			Image page;
-			int n = (int)Math.pow(2, pages);
-			int c = 0;
-			int r = 0;
-			switch(pages) {
-			case 1:
-				c = 2;
-				r = 1;
-				break;
-			case 2:
-				c = 2;
-				r = 2;
-				break;
-			case 3:
-				c = 4;
-				r = 2;
-				break;
-			case 4:
-				c = 4;
-				r = 4;
-			}
-			// step 4: we add content
-			PdfPTable table = null;
-			Image image;
+			PdfImportedPage page;
+			float offsetX, offsetY, factor;
+			int rotation, p;
 			for (int i = 0; i < total; i++) {
 				if (i % n == 0) {
-					if (table != null) document.add(table);
-					table = new PdfPTable(c);
-					table.setTotalWidth(pageSize.width());
-					table.setLockedWidth(true);
+					document.newPage();
 				}
-				image = Image.getInstance(writer.getImportedPage(reader, i + 1));
-				if (rotate) image.rotate();
-				PdfPCell cell = new PdfPCell(image, true);
-				cell.setFixedHeight(pageSize.width() / r);
-				cell.setPadding(0f);
-				table.addCell(cell);
+				p = i + 1;
+				offsetX = unitSize.width() * ((i % n) % c);
+				offsetY = newSize.height() - (unitSize.height() * (((i % n) / c) + 1));
+				currentSize = reader.getPageSize(p);
+				factor = Math.min(unitSize.width() / currentSize.width(), unitSize.height() / currentSize.height());
+				offsetX += (unitSize.width() - (currentSize.width() * factor)) / 2f;
+				offsetY += (unitSize.height() - (currentSize.height() * factor)) / 2f;
+				page = writer.getImportedPage(reader, p);
+				cb.addTemplate(page, factor, 0, 0, factor, offsetX, offsetY);
 			}
 			// step 5: we close the document
 			document.close();
