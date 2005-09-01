@@ -172,6 +172,7 @@ public class XmpWriter {
 		writer.write("' ");
 		writer.write(s.getXmlns());
 		if (s.isShorthand()) {
+			writer.write(" ");
 			writer.write(s.toString());
 			writer.write("/>\n");
 		}
