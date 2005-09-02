@@ -1038,9 +1038,8 @@ class PdfDocument extends Document implements DocListener {
 		float cellDisplacement;
 		PdfCell cell;
 		PdfContentByte cellGraphics = new PdfContentByte(writer);
-	                    
 		boolean tableHasToFit =
-			table.hasToFitPageTable() ? table.bottom() < indentBottom() : false;
+			table.hasToFitPageTable() ? (table.bottom() < indentBottom() && table.height() < (top() - bottom())) : false;
 		if (pageEmpty)
 			tableHasToFit = false;
 		boolean cellsHaveToFit = table.hasToFitPageCells();
