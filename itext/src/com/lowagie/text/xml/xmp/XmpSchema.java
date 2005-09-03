@@ -120,4 +120,47 @@ public abstract class XmpSchema extends Properties {
 	public String getXmlns() {
 		return xmlns;
 	}
+	
+	/**
+	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
+	 */
+	public synchronized Object setProperty(String key, String value) {
+		return super.setProperty(key, escape(value));
+	}
+	
+	/**
+	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
+	 */
+	public synchronized Object setProperty(String key, XmpArray value) {
+		return super.setProperty(key, value.toString());
+	}
+	/**
+	 * @param content
+	 * @return
+	 */
+	public static String escape(String content) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < content.length(); i++) {
+			switch(content.charAt(i)) {
+			case '<':
+				buf.append("&lt;");
+				break;
+			case '>':
+				buf.append("&gt;");
+				break;
+			case '\'':
+				buf.append("&apos;");
+				break;
+			case '\"':
+				buf.append("&quot;");
+				break;
+			case '&':
+				buf.append("&amp;");
+				break;
+			default:
+				buf.append(content.charAt(i));
+			}
+		}
+		return buf.toString();
+	}
 }
