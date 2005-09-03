@@ -53,7 +53,6 @@ package com.lowagie.text.xml.xmp;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -78,6 +77,8 @@ public class XmpWriter {
 	public static final int UTF16BE = 2;
 	/** A possible charset for the XMP. */
 	public static final int UTF16LE = 3;
+	/** All possible charsets for the XMP. */
+	public static final String[] CHARSET = { "UTF-8" , "UTF-16", "UTF-16BE", "UTF-16LE" };
 	
 	/** String used to fill the extra space. */
 	public static final String EXTRASPACE = "                                                                                                   \n";
@@ -103,21 +104,7 @@ public class XmpWriter {
 	 */
 	public XmpWriter(OutputStream os, int utfEncoding, int extraSpace) throws IOException {
 		this.extraSpace = extraSpace;
-		Charset charset;
-		switch(utfEncoding) {
-		case UTF16:
-			charset = Charset.forName("UTF-16");
-			break;
-		case UTF16BE:
-			charset = Charset.forName("UTF-16BE");
-			break;
-		case UTF16LE:
-			charset = Charset.forName("UTF-16LE");
-			break;
-		default:
-			charset = Charset.forName("UTF-8");
-		}
-		writer = new OutputStreamWriter(os, charset);
+		writer = new OutputStreamWriter(os, CHARSET[utfEncoding]);
 		writer.write("<?xpacket begin='\uFEFF' id='W5M0MpCehiHzreSzNTczkc9d' ?>\n");
 		writer.write("<x:xmpmeta xmlns:x='adobe:ns:meta/'>\n");
 		writer.write("<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>\n");

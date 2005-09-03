@@ -120,7 +120,7 @@ public class DublinCoreSchema extends XmpSchema {
 	public void addAuthor(String author) {
 		XmpArray array = new XmpArray(XmpArray.ORDERED);
 		array.add(author);
-		setProperty(CREATOR, array.toString());
+		setProperty(CREATOR, array);
 	}
 	
 	/**
@@ -132,6 +132,6 @@ public class DublinCoreSchema extends XmpSchema {
 		for (int i = 0; i < author.length; i++) {
 			array.add(author[i]);
 		}
-		setProperty(CREATOR, array.toString());
+		setProperty(CREATOR, array);
 	}
 }

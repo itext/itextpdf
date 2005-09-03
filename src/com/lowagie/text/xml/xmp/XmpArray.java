@@ -88,7 +88,7 @@ public class XmpArray extends ArrayList {
 		for (Iterator i = iterator(); i.hasNext(); ) {
 			s = (String) i.next();
 			buf.append("<rdf:li>");
-			buf.append(s);
+			buf.append(XmpSchema.escape(s));
 			buf.append("</rdf:li>");
 		}
 		buf.append("</");
