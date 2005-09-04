@@ -144,9 +144,7 @@ public class PdfDate extends PdfString {
      * @return a formatted date
      */
     public String getW3CDate() {
-    	SimpleDateFormat w3c = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    	Calendar c = decode(value);
-		return w3c.format(c.getTime());
+        return getW3CDate(value);
     }
     
     /**
