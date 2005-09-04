@@ -69,15 +69,9 @@ public class PdfSchema extends XmpSchema {
 	 * @param shorthand
 	 * @throws IOException
 	 */
-	public PdfSchema(boolean shorthand) throws IOException {
-		super("xmlns:dc='http://ns.adobe.com/pdf/1.3/'", shorthand);
-		addProducer(Document.getVersion());
-	}
-	/**
-	 * @throws IOException
-	 */
 	public PdfSchema() throws IOException {
-		this(true);
+		super("xmlns:dc='http://ns.adobe.com/pdf/1.3/'");
+		addProducer(Document.getVersion());
 	}
 	
 	/**

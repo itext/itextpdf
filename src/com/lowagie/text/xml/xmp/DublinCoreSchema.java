@@ -92,8 +92,8 @@ public class DublinCoreSchema extends XmpSchema {
 	 * @param shorthand
 	 * @throws IOException
 	 */
-	public DublinCoreSchema(boolean shorthand) throws IOException {
-		super("xmlns:dc='http://purl.org/dc/elements/1.1'", shorthand);
+	public DublinCoreSchema() throws IOException {
+		super("xmlns:dc='http://purl.org/dc/elements/1.1'");
 		setProperty(FORMAT, "application/pdf");
 	}
 	

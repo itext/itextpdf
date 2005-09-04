@@ -57,10 +57,6 @@ import java.util.Properties;
  * Abstract superclass of the XmpSchemas supported by iText.
  */
 public abstract class XmpSchema extends Properties {
-	/** A possible value for the shorthand variable. */
-	public static final boolean SHORTHAND = true;
-	/** A possible value for the shorthand variable. */
-	public static final boolean FULL = false;
 	
 	/** the namesspace */
 	protected String xmlns;
@@ -70,10 +66,9 @@ public abstract class XmpSchema extends Properties {
 	/** Constructs an XMP schema. 
 	 * @param xmlns
 	 * @param shorthand*/
-	public XmpSchema(String xmlns, boolean shorthand) {
+	public XmpSchema(String xmlns) {
 		super();
 		this.xmlns = xmlns;
-		this.shorthand = shorthand;
 	}
 	/**
 	 * The String representation of the contents.

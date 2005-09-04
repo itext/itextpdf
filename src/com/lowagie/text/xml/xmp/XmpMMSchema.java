@@ -87,6 +87,6 @@ public class XmpMMSchema extends XmpSchema {
 	 * @throws IOException
 	 */
 	public XmpMMSchema(boolean shorthand) throws IOException {
-		super("xmlns:dc='http://purl.org/dc/elements/1.1'", shorthand);
+		super("xmlns:dc='http://purl.org/dc/elements/1.1'");
 	}
 }
