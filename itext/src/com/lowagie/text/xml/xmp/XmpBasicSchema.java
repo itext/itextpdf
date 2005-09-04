@@ -80,8 +80,8 @@ public class XmpBasicSchema extends XmpSchema {
 	 * @param shorthand
 	 * @throws IOException
 	 */
-	public XmpBasicSchema(boolean shorthand) throws IOException {
-		super("xmlns:dc='http://ns.adobe.com/xap/1.0'", shorthand);
+	public XmpBasicSchema() throws IOException {
+		super("xmlns:dc='http://ns.adobe.com/xap/1.0'");
 	}
 	
 	/**

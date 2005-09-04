@@ -70,15 +70,13 @@ import com.lowagie.text.pdf.PdfString;
 public class XmpWriter {
 
 	/** A possible charset for the XMP. */
-	public static final int UTF8 = 0;
+	public static final String UTF8 = "UTF-8";
 	/** A possible charset for the XMP. */
-	public static final int UTF16 = 1;
+	public static final String UTF16 = "UTF-16";
 	/** A possible charset for the XMP. */
-	public static final int UTF16BE = 2;
+	public static final String UTF16BE = "UTF-16BE";
 	/** A possible charset for the XMP. */
-	public static final int UTF16LE = 3;
-	/** All possible charsets for the XMP. */
-	public static final String[] CHARSET = { "UTF-8" , "UTF-16", "UTF-16BE", "UTF-16LE" };
+	public static final String UTF16LE = "UTF-16LE";
 	
 	/** String used to fill the extra space. */
 	public static final String EXTRASPACE = "                                                                                                   \n";
@@ -102,9 +100,9 @@ public class XmpWriter {
 	 * @param extraSpace
 	 * @throws IOException
 	 */
-	public XmpWriter(OutputStream os, int utfEncoding, int extraSpace) throws IOException {
+	public XmpWriter(OutputStream os, String utfEncoding, int extraSpace) throws IOException {
 		this.extraSpace = extraSpace;
-		writer = new OutputStreamWriter(os, CHARSET[utfEncoding]);
+		writer = new OutputStreamWriter(os, utfEncoding);
 		writer.write("<?xpacket begin='\uFEFF' id='W5M0MpCehiHzreSzNTczkc9d' ?>\n");
 		writer.write("<x:xmpmeta xmlns:x='adobe:ns:meta/'>\n");
 		writer.write("<rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>\n");
@@ -193,9 +191,9 @@ public class XmpWriter {
     public XmpWriter(OutputStream os, PdfDictionary info) throws IOException {
         this(os);
         if (info != null) {
-        	DublinCoreSchema dc = new DublinCoreSchema(XmpSchema.FULL);
-        	PdfSchema p = new PdfSchema(XmpSchema.SHORTHAND);
-        	XmpBasicSchema basic = new XmpBasicSchema(XmpSchema.FULL);
+        	DublinCoreSchema dc = new DublinCoreSchema();
+        	PdfSchema p = new PdfSchema();
+        	XmpBasicSchema basic = new XmpBasicSchema();
         	PdfName key;
         	PdfObject obj;
         	for (Iterator it = info.getKeys().iterator(); it.hasNext();) {
@@ -242,9 +240,9 @@ public class XmpWriter {
     public XmpWriter(OutputStream os, HashMap info) throws IOException {
         this(os);
         if (info != null) {
-        	DublinCoreSchema dc = new DublinCoreSchema(XmpSchema.FULL);
-        	PdfSchema p = new PdfSchema(XmpSchema.SHORTHAND);
-        	XmpBasicSchema basic = new XmpBasicSchema(XmpSchema.FULL);
+        	DublinCoreSchema dc = new DublinCoreSchema();
+        	PdfSchema p = new PdfSchema();
+        	XmpBasicSchema basic = new XmpBasicSchema();
         	String key;
         	String value;
         	for (Iterator it = info.keySet().iterator(); it.hasNext();) {
