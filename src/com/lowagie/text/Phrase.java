@@ -409,6 +409,9 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
                     return super.add((Annotation) o);
                 case Element.TABLE: // case added by David Freels
                     return super.add((Table) o);
+                case Element.PTABLE: // case added by Karen Vardanyan
+                	// This will only work for PDF!!! Not for RTF/HTML
+                    return super.add((com.lowagie.text.pdf.PdfPTable) o);
                 case Element.LIST:
                     return super.add((List) o);
                 case Element.GRAPHIC: // suggested by Steven Balthazor
