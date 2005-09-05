@@ -313,7 +313,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            // TODO Add font handling
+            result.write(this.font.writeBegin());
             result.write(writeFieldBegin());
             result.write(writeFieldInstBegin());
             result.write(writeFieldInstContent());
@@ -322,6 +322,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
             result.write(writeFieldResultContent());
             result.write(writeFieldResultEnd());
             result.write(writeFieldEnd());
+            result.write(this.font.writeEnd());
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
