@@ -55,64 +55,36 @@ import java.io.FileOutputStream;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
-import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.tools.arguments.BitsetArgument;
+import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.tools.arguments.FileArgument;
-import com.lowagie.tools.arguments.OptionArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
  * Allows you to encrypt an existing PDF file.
  */
-public class Encrypt extends AbstractTool {
+public class Decrypt extends AbstractTool {
 	
 	static {
 		addVersion("$Id$");
 	}
-    private final static int PERMISSIONS[] = {
-            PdfWriter.AllowPrinting,
-            PdfWriter.AllowModifyContents,
-            PdfWriter.AllowCopy,
-            PdfWriter.AllowModifyAnnotations,
-            PdfWriter.AllowFillIn,
-            PdfWriter.AllowScreenReaders,
-            PdfWriter.AllowAssembly,
-            PdfWriter.AllowDegradedPrinting};
-    private final static String PERMISSION_OPTIONS[] = {
-    		"AllowPrinting",
-			"AllowModifyContents",
-			"AllowCopy",
-			"AllowModifyAnnotations",
-			"AllowFillIn (128 bit only)",
-			"AllowScreenReaders (128 bit only)",
-			"AllowAssembly (128 bit only)",
-			"AllowDegradedPrinting (128 bit only)"
-    		};
 
 	
 	/**
 	 * Constructs an Encrypt object.
 	 */
-	public Encrypt() {
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to encrypt", false, new PdfFilter()));
-		arguments.add(new FileArgument(this, "destfile", "The file to which the encrypted PDF has to be written", true, new PdfFilter()));
+	public Decrypt() {
+		arguments.add(new FileArgument(this, "srcfile", "The file you want to decrypt", false, new PdfFilter()));
+		arguments.add(new FileArgument(this, "destfile", "The file to which the decrypted PDF has to be written", true, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "ownerpassword", "The ownerpassword you want to add to the PDF file", String.class.getName()));
-		arguments.add(new ToolArgument(this, "userpassword", "The userpassword you want to add to the PDF file", String.class.getName()));
-		arguments.add(new BitsetArgument(this, "permissions", "Permissions on the file", PERMISSION_OPTIONS));
-		OptionArgument oa = new OptionArgument(this, "strength", "Strength of the encryption");
-		oa.addOption("40 bit encryption", "40");
-		oa.addOption("128 bit encryption", "128");
-		arguments.add(oa);
 	}
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Encrypt", true, true, true);
+		internalFrame = new JInternalFrame("Decrypt", true, true, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
@@ -124,30 +96,13 @@ public class Encrypt extends AbstractTool {
 		try {
 			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
 			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
-			int permissions = 0;
-			String p = (String)getValue("permissions");
-			if (p != null) {
-				for (int k = 0; k < p.length(); ++k) {
-					permissions |= (p.charAt(k) == '0' ? 0 : PERMISSIONS[k]);
-				}
-			}
-			byte[] userpassword = null;
-			if (getValue("userpassword") != null) {
-				userpassword = ((String)getValue("userpassword")).getBytes();
-			}
 			byte[] ownerpassword = null;
 			if (getValue("ownerpassword") != null) {
 				ownerpassword = ((String)getValue("ownerpassword")).getBytes();
 			}
-			PdfReader reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath());
-			PdfEncryptor.encrypt(
-        		reader,
-				new FileOutputStream((File)getValue("destfile")),
-				userpassword,
-				ownerpassword,
-				permissions,
-				"128".equals(getValue("strength"))
-				);
+			PdfReader reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath(), ownerpassword);
+			PdfStamper stamper = new PdfStamper(reader, new FileOutputStream((File)getValue("destfile")));
+			stamper.close();
 		}
 		catch(Exception e) {
         	JOptionPane.showMessageDialog(internalFrame,
@@ -174,7 +129,7 @@ public class Encrypt extends AbstractTool {
      * @param args
      */
     public static void main(String[] args) {
-    	Encrypt tool = new Encrypt();
+    	Decrypt tool = new Decrypt();
     	if (args.length < 2) {
     		System.err.println(tool.getUsage());
     	}
