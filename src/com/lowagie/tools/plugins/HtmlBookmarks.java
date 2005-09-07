@@ -64,8 +64,10 @@ import com.lowagie.text.Anchor;
 import com.lowagie.text.Chapter;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
+import com.lowagie.text.Header;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Section;
+import com.lowagie.text.html.HtmlTags;
 import com.lowagie.text.html.HtmlWriter;
 import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.pdf.PdfReader;
@@ -90,6 +92,7 @@ public class HtmlBookmarks extends AbstractTool {
 	public HtmlBookmarks() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to inspect", false, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "ownerpassword", "The owner password if the file is encrypt", String.class.getName()));
+		arguments.add(new ToolArgument(this, "css", "The path to a CSS file", String.class.getName()));
 	}
 
 	/**
@@ -122,6 +125,10 @@ public class HtmlBookmarks extends AbstractTool {
             File html = new File(directory, name + "_index.html");
 			Document document = new Document();
 			HtmlWriter.getInstance(document, new FileOutputStream(html));
+			String css = getValue("css").toString();
+			if (css != null) {
+				document.add(new Header(HtmlTags.STYLESHEET, css));
+			}
 			Object title = reader.getInfo().get("Title");
 			if (title == null)
 				document.addTitle("Index for " + src.getName());
