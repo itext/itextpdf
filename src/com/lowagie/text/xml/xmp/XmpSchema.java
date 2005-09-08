@@ -101,6 +101,15 @@ public abstract class XmpSchema extends Properties {
 	}	
 	
 	/**
+	 * @param key
+	 * @param value
+	 * @return the previous property (null if there wasn't one)
+	 */
+	public synchronized Object addProperty(String key, String value) {
+		return this.setProperty(key, value);
+	}
+	
+	/**
 	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
 	 */
 	public synchronized Object setProperty(String key, String value) {
@@ -112,7 +121,7 @@ public abstract class XmpSchema extends Properties {
 	 * 
 	 * @param key
 	 * @param value
-	 * @return a property
+	 * @return the previous property (null if there wasn't one)
 	 */
 	public synchronized Object setProperty(String key, XmpArray value) {
 		return super.setProperty(key, value.toString());
