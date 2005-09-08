@@ -17,5 +17,6 @@ Convert2Pdf.Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
 Convert2Pdf.Tiff2Pdf: com.lowagie.tools.plugins.Tiff2Pdf
 Convert2Pdf.KnitTiff: com.lowagie.tools.plugins.KnitTiff
 Encryption.Encrypt: com.lowagie.tools.plugins.Encrypt
+Encryption.Decrypt: com.lowagie.tools.plugins.Decrypt
 Various.DvdCover: com.lowagie.tools.plugins.DvdCover
 Various.Handouts: com.lowagie.tools.plugins.Handouts
