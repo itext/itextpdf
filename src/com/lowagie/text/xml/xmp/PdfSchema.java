@@ -57,6 +57,11 @@ import java.io.IOException;
  * An implementation of an XmpSchema.
  */
 public class PdfSchema extends XmpSchema {
+
+	/** default namespace identifier*/
+	public static final String DEFAULT_XPATH_ID = "pdf";
+	/** default namespace uri*/
+	public static final String DEFAULT_XPATH_URI = "http://ns.adobe.com/pdf/1.3/";
 	
 	/** Keywords. */
 	public static final String KEYWORDS = "pdf:Keywords";
@@ -64,13 +69,13 @@ public class PdfSchema extends XmpSchema {
 	public static final String VERSION = "pdf:PDFVersion";
 	/** The Producer. */
 	public static final String PRODUCER = "pdf:Producer";
-	
+
+
 	/**
-	 * @param shorthand
 	 * @throws IOException
 	 */
 	public PdfSchema() throws IOException {
-		super("xmlns:dc='http://ns.adobe.com/pdf/1.3/'");
+		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
 		addProducer(Document.getVersion());
 	}
 	
@@ -88,5 +93,13 @@ public class PdfSchema extends XmpSchema {
 	 */
 	public void addProducer(String producer) {
 		setProperty(PRODUCER, producer);
+	}
+
+	/**
+	 * Adds the version.
+	 * @param version
+	 */
+	public void addVersion(String version) {
+		setProperty(VERSION, version);
 	}
 }

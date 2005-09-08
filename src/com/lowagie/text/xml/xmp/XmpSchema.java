@@ -60,12 +60,10 @@ public abstract class XmpSchema extends Properties {
 	
 	/** the namesspace */
 	protected String xmlns;
-	/** indicates if the description has be be added in shorthand. */
-	protected boolean shorthand;
 	
 	/** Constructs an XMP schema. 
 	 * @param xmlns
-	 * @param shorthand*/
+	 */
 	public XmpSchema(String xmlns) {
 		super();
 		this.xmlns = xmlns;
@@ -87,34 +85,20 @@ public abstract class XmpSchema extends Properties {
 	 * @param p
 	 */
 	protected void process(StringBuffer buf, Object p) {
-		if (shorthand) {
-			buf.append(p);
-			buf.append("='");
-			buf.append(this.get(p));
-			buf.append("' ");
-		}
-		else {
-			buf.append("<");
-			buf.append(p);
-			buf.append(">");
-			buf.append(this.get(p));
-			buf.append("</");
-			buf.append(p);
-			buf.append(">");
-		}
-	}
-	/**
-	 * @return Returns the shorthand.
-	 */
-	public boolean isShorthand() {
-		return shorthand;
+		buf.append("<");
+		buf.append(p);
+		buf.append(">");
+		buf.append(this.get(p));
+		buf.append("</");
+		buf.append(p);
+		buf.append(">");
 	}
 	/**
 	 * @return Returns the xmlns.
 	 */
 	public String getXmlns() {
 		return xmlns;
-	}
+	}	
 	
 	/**
 	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
@@ -125,13 +109,17 @@ public abstract class XmpSchema extends Properties {
 	
 	/**
 	 * @see java.util.Properties#setProperty(java.lang.String, java.lang.String)
+	 * 
+	 * @param key
+	 * @param value
+	 * @return a property
 	 */
 	public synchronized Object setProperty(String key, XmpArray value) {
 		return super.setProperty(key, value.toString());
 	}
 	/**
 	 * @param content
-	 * @return
+	 * @return an escaped string
 	 */
 	public static String escape(String content) {
 		StringBuffer buf = new StringBuffer();

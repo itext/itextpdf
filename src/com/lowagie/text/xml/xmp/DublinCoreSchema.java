@@ -56,6 +56,11 @@ import java.io.IOException;
  * An implementation of an XmpSchema.
  */
 public class DublinCoreSchema extends XmpSchema {
+
+	/** default namespace identifier*/
+	public static final String DEFAULT_XPATH_ID = "dc";
+	/** default namespace uri*/
+	public static final String DEFAULT_XPATH_URI = "http://purl.org/dc/elements/1.1/";
 	
 	/** External Contributors to the resource (other than the authors). */
 	public static final String CONTRIBUTOR = "dc:contributor";
@@ -87,13 +92,13 @@ public class DublinCoreSchema extends XmpSchema {
 	public static final String TITLE = "dc:title";
 	/** A document type; for example, novel, poem, or working paper. */
 	public static final String TYPE = "dc:type";
+
 	
 	/**
-	 * @param shorthand
 	 * @throws IOException
 	 */
 	public DublinCoreSchema() throws IOException {
-		super("xmlns:dc='http://purl.org/dc/elements/1.1'");
+		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
 		setProperty(FORMAT, "application/pdf");
 	}
 	
@@ -104,17 +109,40 @@ public class DublinCoreSchema extends XmpSchema {
 	public void addTitle(String title) {
 		setProperty(TITLE, title);
 	}
-	
+
+	/**
+	 * Adds a description.
+	 * @param desc
+	 */
+	public void addDescription(String desc) {
+		setProperty(DESCRIPTION, desc);
+	}
+
 	/**
 	 * Adds a subject.
 	 * @param subject
 	 */
 	public void addSubject(String subject) {
-		setProperty(SUBJECT, subject);
+		XmpArray array = new XmpArray(XmpArray.UNORDERED);
+		array.add(subject);
+		setProperty(SUBJECT, array);
+	}
+
+	
+	/**
+	 * Adds a subject.
+	 * @param subject array of subjects
+	 */
+	public void addSubject(String[] subject) {
+		XmpArray array = new XmpArray(XmpArray.UNORDERED);
+		for (int i = 0; i < subject.length; i++) {
+			array.add(subject[i]);
+		}
+		setProperty(SUBJECT, array);
 	}
 	
 	/**
-	 * Adds an author.
+	 * Adds a single author.
 	 * @param author
 	 */
 	public void addAuthor(String author) {
@@ -122,16 +150,38 @@ public class DublinCoreSchema extends XmpSchema {
 		array.add(author);
 		setProperty(CREATOR, array);
 	}
-	
+
 	/**
 	 * Adds an array of authors.
 	 * @param author
 	 */
-	public void addAuthors(String[] author) {
+	public void addAuthor(String[] author) {
 		XmpArray array = new XmpArray(XmpArray.ORDERED);
 		for (int i = 0; i < author.length; i++) {
 			array.add(author[i]);
 		}
 		setProperty(CREATOR, array);
+	}
+
+	/**
+	 * Adds a single publisher.
+	 * @param publisher
+	 */
+	public void addPublisher(String publisher) {
+		XmpArray array = new XmpArray(XmpArray.ORDERED);
+		array.add(publisher);
+		setProperty(PUBLISHER, array);
+	}
+
+	/**
+	 * Adds an array of publishers.
+	 * @param publisher
+	 */
+	public void addPublisher(String[] publisher) {
+		XmpArray array = new XmpArray(XmpArray.ORDERED);
+		for (int i = 0; i < publisher.length; i++) {
+			array.add(publisher[i]);
+		}
+		setProperty(PUBLISHER, array);
 	}
 }

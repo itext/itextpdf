@@ -156,16 +156,9 @@ public class XmpWriter {
 		writer.write(about);
 		writer.write("' ");
 		writer.write(s.getXmlns());
-		if (s.isShorthand()) {
-			writer.write(" ");
-			writer.write(s.toString());
-			writer.write("/>\n");
-		}
-		else {
-			writer.write(">");
-			writer.write(s.toString());
-			writer.write("</rdf:Description>\n");
-		}
+		writer.write(">");
+		writer.write(s.toString());
+		writer.write("</rdf:Description>\n");
 	}
 	
 	/**
@@ -214,13 +207,13 @@ public class XmpWriter {
         			p.addKeywords(((PdfString)obj).toUnicodeString());
         		}
         		if (PdfName.CREATOR.equals(key)) {
-        			basic.addCreator(((PdfString)obj).toUnicodeString());
+        			basic.addCreatorTool(((PdfString)obj).toUnicodeString());
         		}
         		if (PdfName.PRODUCER.equals(key)) {
         			p.addProducer(((PdfString)obj).toUnicodeString());
         		}
         		if (PdfName.CREATIONDATE.equals(key)) {
-        			basic.addCreationDate(((PdfDate)obj).getW3CDate());
+        			basic.addCreateDate(((PdfDate)obj).getW3CDate());
         		}
         		if (PdfName.MODDATE.equals(key)) {
         			basic.addModDate(((PdfDate)obj).getW3CDate());
@@ -263,13 +256,13 @@ public class XmpWriter {
         			p.addKeywords(value);
         		}
         		if ("Creator".equals(key)) {
-        			basic.addCreator(value);
+        			basic.addCreatorTool(value);
         		}
         		if ("Producer".equals(key)) {
         			p.addProducer(value);
         		}
         		if ("CreationDate".equals(key)) {
-        			basic.addCreationDate(PdfDate.getW3CDate(value));
+        			basic.addCreateDate(PdfDate.getW3CDate(value));
         		}
         		if ("ModDate".equals(key)) {
         			basic.addModDate(PdfDate.getW3CDate(value));
