@@ -57,7 +57,6 @@ import java.util.List;
 import javax.swing.JInternalFrame;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PRAcroForm;
 import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
@@ -140,9 +139,6 @@ public class Concat extends AbstractTool {
                     writer.addPage(page);
                     System.out.println("Processed page " + p);
                 }
-                PRAcroForm form = reader.getAcroForm();
-                if (form != null)
-                    writer.copyAcroForm(reader);
             }
             if (master.size() > 0)
                 writer.setOutlines(master);
