@@ -163,14 +163,14 @@ public class PdfEncryptor {
      */
     public static String getPermissionsVerbose(int permissions) {
     	StringBuffer buf = new StringBuffer("Allowed:");
-    	if (((PdfWriter.AllowPrinting - PdfWriter.AllowDegradedPrinting) & permissions) != 0) buf.append(" Printing");
-        if ((PdfWriter.AllowModifyContents & permissions) != 0) buf.append(" Modify contents");
-        if ((PdfWriter.AllowCopy & permissions) != 0) buf.append(" Copy");
-        if ((PdfWriter.AllowModifyAnnotations & permissions) != 0) buf.append(" Modify annotations");
-        if ((PdfWriter.AllowFillIn & permissions) != 0) buf.append(" Fill in");
-        if ((PdfWriter.AllowScreenReaders & permissions) != 0) buf.append(" Screen readers");
-        if ((PdfWriter.AllowAssembly & permissions) != 0) buf.append(" Assembly");
-        if ((PdfWriter.AllowDegradedPrinting & permissions) != 0) buf.append(" Degraded printing");
+    	if ((PdfWriter.AllowPrinting & permissions) == PdfWriter.AllowPrinting) buf.append(" Printing");
+        if ((PdfWriter.AllowModifyContents & permissions) == PdfWriter.AllowModifyContents) buf.append(" Modify contents");
+        if ((PdfWriter.AllowCopy & permissions) == PdfWriter.AllowCopy) buf.append(" Copy");
+        if ((PdfWriter.AllowModifyAnnotations & permissions) == PdfWriter.AllowModifyAnnotations) buf.append(" Modify annotations");
+        if ((PdfWriter.AllowFillIn & permissions) == PdfWriter.AllowFillIn) buf.append(" Fill in");
+        if ((PdfWriter.AllowScreenReaders & permissions) == PdfWriter.AllowScreenReaders) buf.append(" Screen readers");
+        if ((PdfWriter.AllowAssembly & permissions) == PdfWriter.AllowAssembly) buf.append(" Assembly");
+        if ((PdfWriter.AllowDegradedPrinting & permissions) == PdfWriter.AllowDegradedPrinting) buf.append(" Degraded printing");
         return buf.toString();
     }
 }
