@@ -209,9 +209,11 @@ public class PdfCopy extends PdfWriter {
             PdfName key = (PdfName)it.next();
             PdfObject value = (PdfObject) in.get(key);
             //	    System.out.println("Copy " + key);
-            if (key.equals(PdfName.PARENT) &&
-            type != null && ((PdfName)type).equals(PdfName.PAGE)) {
-                out.put(PdfName.PARENT, topPageParent);
+            if (type != null && PdfName.PAGE.equals(type)) {
+                if (key.equals(PdfName.PARENT))
+                    out.put(PdfName.PARENT, topPageParent);
+                else if (!key.equals(PdfName.B))
+                    out.put(key, copyObject(value));
             }
             else
                 out.put(key, copyObject(value));
