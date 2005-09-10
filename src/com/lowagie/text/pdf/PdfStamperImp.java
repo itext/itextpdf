@@ -72,6 +72,7 @@ class PdfStamperImp extends PdfWriter {
     private boolean rotateContents = true;
     protected AcroFields acroFields;
     protected boolean flat = false;
+    protected boolean flatFreeText = false;
     protected int namePtr[] = {0};
     protected boolean namedAsNames;
     protected List newBookmarks;
@@ -146,6 +147,8 @@ class PdfStamperImp extends PdfWriter {
         }
         if (flat)
             flatFields();
+        if (flatFreeText)
+        	flatFreeTextFields();
         addFieldResources();
         if (sigFlags != 0) {
             PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM), reader.getCatalog());
@@ -665,6 +668,10 @@ class PdfStamperImp extends PdfWriter {
         this.flat = flat;
     }
     
+	void setFreeTextFlattening(boolean flat) {
+		this.flatFreeText = flat;
+    }
+    
     boolean partialFormFlattening(String name) {
         getAcroFields();
         if (!acroFields.getFields().containsKey(name))
@@ -845,6 +852,101 @@ class PdfStamperImp extends PdfWriter {
             sweepKids((PdfObject)ar.get(k));
         }
     }
+    
+    private void flatFreeTextFields() 
+	{
+		if (append)
+			throw new IllegalArgumentException("FreeText flattening is not supported in append mode.");
+		
+		for (int page = 1; page <= reader.getNumberOfPages(); ++page) 
+		{
+			PdfDictionary pageDic = reader.getPageN(page);
+			PdfArray annots = (PdfArray)PdfReader.getPdfObject(pageDic.get(PdfName.ANNOTS));
+			if (annots == null)
+				continue;
+			ArrayList ar = annots.getArrayList();
+			for (int idx = 0; idx < ar.size(); ++idx) 
+			{
+				PdfObject annoto = PdfReader.getPdfObject((PdfObject)ar.get(idx));
+				if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect())
+					continue;
+				
+				PdfDictionary annDic = (PdfDictionary)annoto;
+ 				if (!((PdfName)annDic.get(PdfName.SUBTYPE)).equals(PdfName.FREETEXT)) 
+					continue;
+				PdfNumber ff = (PdfNumber)PdfReader.getPdfObject(annDic.get(PdfName.F));
+                int flags = (ff != null) ? ff.intValue() : 0;
+			
+				if ( (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) 
+				{
+					PdfObject obj1 = (PdfObject) annDic.get(PdfName.AP);
+					if (obj1 == null) 
+						continue;
+					PdfDictionary appDic = (obj1 instanceof PdfIndirectReference) ?
+							(PdfDictionary) PdfReader.getPdfObject((PdfIndirectReference) obj1) : (PdfDictionary) obj1;			
+					PdfObject obj = appDic.get(PdfName.N);
+					PdfAppearance app = null;
+					PdfObject objReal = PdfReader.getPdfObject(obj);
+					
+					if (obj instanceof PdfIndirectReference && !obj.isIndirect())
+						app = new PdfAppearance((PdfIndirectReference)obj);
+					else if (objReal instanceof PdfStream) 
+					{
+						((PdfDictionary)objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+						app = new PdfAppearance((PdfIndirectReference)obj);
+					}
+					else 
+					{
+						if (objReal.isDictionary()) 
+						{
+							PdfName as_p = (PdfName)PdfReader.getPdfObject(appDic.get(PdfName.AS));
+							if (as_p != null) 
+							{
+								PdfIndirectReference iref = (PdfIndirectReference)((PdfDictionary)objReal).get(as_p);
+								if (iref != null) 
+								{
+									app = new PdfAppearance(iref);
+									if (iref.isIndirect()) 
+									{
+										objReal = PdfReader.getPdfObject(iref);
+										((PdfDictionary)objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+									}
+								}
+							}
+						}
+					}
+					if (app != null) 
+					{
+						Rectangle box = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(annDic.get(PdfName.RECT)));
+						PdfContentByte cb = getOverContent(page);
+						cb.setLiteral("Q ");
+						cb.addTemplate(app, box.left(), box.bottom());
+						cb.setLiteral("q ");
+					}
+				}
+				if (partialFlattening.size() == 0)
+					continue;
+			}
+			for (int idx = 0; idx < ar.size(); ++idx) 
+			{
+				PdfObject annoto = PdfReader.getPdfObject((PdfObject)ar.get(idx));
+				if ((annoto instanceof PdfIndirectReference) && annoto.isIndirect())
+				{
+					PdfDictionary annot = (PdfDictionary)annoto;
+					if (PdfName.FREETEXT.equals(annot.get(PdfName.SUBTYPE)))
+					{
+						ar.remove(idx);
+						--idx;
+					}
+				}
+			}
+			if (ar.size() == 0) 
+			{
+				PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
+				pageDic.remove(PdfName.ANNOTS);
+			}
+		}
+	}
     
     /**
      * @see com.lowagie.text.pdf.PdfWriter#getPageReference(int)
