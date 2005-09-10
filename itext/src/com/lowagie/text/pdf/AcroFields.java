@@ -997,6 +997,7 @@ public class AcroFields {
                         merged.put(PdfName.AP, appDic);
                     }
                     appDic.put(PdfName.N, app.getIndirectReference());
+                    writer.releaseTemplate(app);
                 }
                 else {
                     widget.remove(PdfName.AP);
