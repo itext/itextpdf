@@ -100,6 +100,10 @@ public class RtfDocument extends RtfElement {
      * The RtfDocumentSettings for this RtfDocument.
      */
     private RtfDocumentSettings documentSettings = null;
+    /**
+     * The last RtfBasicElement that was added directly to the RtfDocument.
+     */
+    private RtfBasicElement lastElementWritten = null;
     
     /**
      * Constant for the Rtf document start
@@ -153,6 +157,7 @@ public class RtfDocument extends RtfElement {
                     ((RtfImage) element).setTopLevelElement(true);
                 }
                 data.getOutputStream().write(element.write());
+                this.lastElementWritten = element;
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -283,5 +288,14 @@ public class RtfDocument extends RtfElement {
      */
     public RtfDocumentSettings getDocumentSettings() {
         return this.documentSettings;
+    }
+    
+    /**
+     * Gets the last RtfBasicElement that was directly added to the RtfDocument.
+     *  
+     * @return The last RtfBasicElement that was directly added to the RtfDocument.
+     */
+    public RtfBasicElement getLastElementWritten() {
+        return this.lastElementWritten;
     }
 }
