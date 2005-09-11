@@ -75,10 +75,14 @@ public class RandomAccessFileOrArray implements DataInput {
     
     /** Holds value of property startOffset. */
     private int startOffset = 0;
-    
+
     public RandomAccessFileOrArray(String filename) throws IOException {
+    	this(filename, false);
+    }
+    
+    public RandomAccessFileOrArray(String filename, boolean forceRead) throws IOException {
         File file = new File(filename);
-        if (!file.canRead()) {
+        if (forceRead || !file.canRead()) {
             if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("https://") || filename.startsWith("jar:")) {
                 InputStream is = new URL(filename).openStream();
                 try {
