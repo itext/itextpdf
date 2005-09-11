@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 
 import java.io.DataInputStream;
 import java.io.DataInput;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.EOFException;
 import java.io.RandomAccessFile;
@@ -75,8 +76,12 @@ public class RandomAccessFileOrArray implements DataInput {
     
     /** Holds value of property startOffset. */
     private int startOffset = 0;
-    
+
     public RandomAccessFileOrArray(String filename) throws IOException {
+    	this(filename, false);
+    }
+    
+    public RandomAccessFileOrArray(String filename, boolean forceRead) throws IOException {
         File file = new File(filename);
         if (!file.canRead()) {
             if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("https://") || filename.startsWith("jar:")) {
@@ -101,6 +106,17 @@ public class RandomAccessFileOrArray implements DataInput {
                     try {is.close();}catch(IOException ioe){}
                 }
             }
+        }
+        else if (forceRead) {
+            InputStream s = null;
+            try {
+                s = new FileInputStream(file);
+                this.arrayIn = InputStreamToArray(s);
+            }
+            finally {
+                try {s.close();}catch(Exception e){}
+            }
+        	return;
         }
         this.filename = filename;
         rf = new RandomAccessFile(filename, "r");
