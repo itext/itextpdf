@@ -115,6 +115,9 @@ public class AcroFields {
     
     private HashMap localFonts = new HashMap();
     
+    private float extraMarginLeft;
+    private float extraMarginTop;
+    
     AcroFields(PdfReader reader, PdfWriter writer) {
         this.reader = reader;
         this.writer = writer;
@@ -396,6 +399,7 @@ public class AcroFields {
         TextField tx = null;
         if (fieldCache == null || !fieldCache.containsKey(fieldName)) {
             tx = new TextField(writer, null, null);
+            tx.setExtraMargin(extraMarginLeft, extraMarginTop);
             tx.setBorderWidth(0);
             // the text size and color
             PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
@@ -1611,6 +1615,16 @@ public class AcroFields {
         this.fieldCache = fieldCache;
     }
     
+    /**
+     * Sets extra margins in text fields to better mimic the Acrobat layout.
+     * @param extraMarginLeft the extra marging left
+     * @param extraMarginTop the extra margin top
+     */    
+    public void setExtraMargin(float extraMarginLeft, float extraMarginTop) {
+        this.extraMarginLeft = extraMarginLeft;
+        this.extraMarginTop = extraMarginTop;
+    }
+
     private static final HashMap stdFieldFontNames = new HashMap();
     
     /**
