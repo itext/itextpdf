@@ -168,10 +168,13 @@ public class RtfWriter2 extends DocWriter implements DocListener {
     public void close() {
         try {
             os.write(rtfDoc.writeDocument());
-            os.close();
+            if(this.closeStream) {
+                os.close();
+            }
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
+        this.rtfDoc = new RtfDocument();
     }
 
     /**
