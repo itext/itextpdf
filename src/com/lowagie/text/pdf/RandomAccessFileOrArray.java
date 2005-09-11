@@ -52,6 +52,7 @@ package com.lowagie.text.pdf;
 
 import java.io.DataInputStream;
 import java.io.DataInput;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.EOFException;
 import java.io.RandomAccessFile;
@@ -82,7 +83,7 @@ public class RandomAccessFileOrArray implements DataInput {
     
     public RandomAccessFileOrArray(String filename, boolean forceRead) throws IOException {
         File file = new File(filename);
-        if (forceRead || !file.canRead()) {
+        if (!file.canRead()) {
             if (filename.startsWith("file:/") || filename.startsWith("http://") || filename.startsWith("https://") || filename.startsWith("jar:")) {
                 InputStream is = new URL(filename).openStream();
                 try {
@@ -105,6 +106,10 @@ public class RandomAccessFileOrArray implements DataInput {
                     try {is.close();}catch(IOException ioe){}
                 }
             }
+        }
+        else if (forceRead) {
+        	this.arrayIn = InputStreamToArray(new FileInputStream(file));
+        	return;
         }
         this.filename = filename;
         rf = new RandomAccessFile(filename, "r");
