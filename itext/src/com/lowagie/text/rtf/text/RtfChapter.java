@@ -85,7 +85,9 @@ public class RtfChapter extends RtfSection {
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write("\\page".getBytes());
+            if(this.document.getLastElementWritten() != null && !(this.document.getLastElementWritten() instanceof RtfChapter)) {
+                result.write("\\page".getBytes());
+            }
             result.write("\\sectd".getBytes());
             result.write(document.getDocumentHeader().writeSectionDefinition());
             if(this.title != null) {
