@@ -374,7 +374,7 @@ public class PdfGraphics2D extends Graphics2D {
                 //
                 double d = asPoints((double)UnderlineThickness, (int)fontSize);
                 setStroke(new BasicStroke((float)d));
-                y = (float)((double)(y) + asPoints((double)(-UnderlineThickness), (int)fontSize));
+                y = (float)((double)(y) + asPoints((double)(UnderlineThickness), (int)fontSize));
                 Line2D line = new Line2D.Double((double)x, (double)y, (double)(width+x), (double)y);
                 draw(line);
             }
