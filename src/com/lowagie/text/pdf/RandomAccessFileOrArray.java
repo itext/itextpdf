@@ -108,7 +108,14 @@ public class RandomAccessFileOrArray implements DataInput {
             }
         }
         else if (forceRead) {
-        	this.arrayIn = InputStreamToArray(new FileInputStream(file));
+            InputStream s = null;
+            try {
+                s = new FileInputStream(file);
+                this.arrayIn = InputStreamToArray(s);
+            }
+            finally {
+                try {s.close();}catch(Exception e){}
+            }
         	return;
         }
         this.filename = filename;
