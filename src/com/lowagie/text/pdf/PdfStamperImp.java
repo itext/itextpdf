@@ -841,7 +841,7 @@ class PdfStamperImp extends PdfWriter {
     
     void sweepKids(PdfObject obj) {
         PdfObject oo = PdfReader.killIndirect(obj);
-        if (!oo.isDictionary())
+        if (oo == null || !oo.isDictionary())
             return;
         PdfDictionary dic = (PdfDictionary)oo;
         PdfArray kids = (PdfArray)PdfReader.killIndirect(dic.get(PdfName.KIDS));
