@@ -130,7 +130,7 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
         this.document = doc;
         this.type = type;
         this.mode = MODE_SINGLE;
-        headerAll = new RtfHeaderFooter(doc, headerFooter, type);
+        headerAll = new RtfHeaderFooter(doc, headerFooter, RtfHeaderFooter.DISPLAY_ALL_PAGES);
         headerAll.setType(this.type);
     }
     
@@ -273,11 +273,21 @@ public class RtfHeaderFooterGroup extends HeaderFooter implements RtfBasicElemen
     public void setHasFacingPages() {
         if(this.mode == MODE_SINGLE) {
             this.mode = MODE_MULTIPLE;
-            headerLeft = new RtfHeaderFooter(this.document, headerAll, RtfHeaderFooter.DISPLAY_LEFT_PAGES);
-            headerLeft.setType(this.type);
-            headerRight = new RtfHeaderFooter(this.document, headerAll, RtfHeaderFooter.DISPLAY_RIGHT_PAGES);
-            headerRight.setType(this.type);
-            headerAll = null;
+            this.headerLeft = new RtfHeaderFooter(this.document, this.headerAll, RtfHeaderFooter.DISPLAY_LEFT_PAGES);
+            this.headerLeft.setType(this.type);
+            this.headerRight = new RtfHeaderFooter(this.document, this.headerAll, RtfHeaderFooter.DISPLAY_RIGHT_PAGES);
+            this.headerRight.setType(this.type);
+            this.headerAll = null;
+        } else if(this.mode == MODE_MULTIPLE) {
+            if(this.headerLeft == null && this.headerAll != null) {
+                this.headerLeft = new RtfHeaderFooter(this.document, this.headerAll, RtfHeaderFooter.DISPLAY_LEFT_PAGES);
+                this.headerLeft.setType(this.type);
+            }
+            if(this.headerRight == null && this.headerAll != null) {
+                this.headerRight = new RtfHeaderFooter(this.document, this.headerAll, RtfHeaderFooter.DISPLAY_RIGHT_PAGES);
+                this.headerRight.setType(this.type);
+            }
+            this.headerAll = null;
         }
     }
     
