@@ -125,9 +125,9 @@ public class HtmlBookmarks extends AbstractTool {
             File html = new File(directory, name + "_index.html");
 			Document document = new Document();
 			HtmlWriter.getInstance(document, new FileOutputStream(html));
-			String css = getValue("css").toString();
+			Object css = getValue("css");
 			if (css != null) {
-				document.add(new Header(HtmlTags.STYLESHEET, css));
+				document.add(new Header(HtmlTags.STYLESHEET, css.toString()));
 			}
 			Object title = reader.getInfo().get("Title");
 			if (title == null)
