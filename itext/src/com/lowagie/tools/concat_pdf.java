@@ -80,9 +80,6 @@ public class concat_pdf {
                         writer.addPage(page);
                         System.out.println("Processed page " + i);
                     }
-                    PRAcroForm form = reader.getAcroForm();
-                    if (form != null)
-                        writer.copyAcroForm(reader);
                     f++;
                 }
                 if (master.size() > 0)

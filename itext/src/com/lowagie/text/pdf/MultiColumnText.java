@@ -469,6 +469,13 @@ public class MultiColumnText implements Element {
         columnText.setArabicOptions(arabicOptions);
     }
     
+    /** Sets the default alignment
+     * @param alignment the default alignment
+     */
+    public void setAlignment(int alignment) {
+        columnText.setAlignment(alignment);
+    }
+    
     /**
      * Inner class used to define a column
      */

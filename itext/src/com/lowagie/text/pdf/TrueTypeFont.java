@@ -968,9 +968,9 @@ class TrueTypeFont extends BaseFont {
         (int)head.yMax * 1000 / head.unitsPerEm));
         if (cff) {
             if (encoding.startsWith("Identity-"))
-                dic.put(PdfName.FONTNAME, new PdfName(fontName+"-"+encoding));
+                dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName+"-"+encoding));
             else
-                dic.put(PdfName.FONTNAME, new PdfName(fontName + style));
+                dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName + style));
         }
         else
             dic.put(PdfName.FONTNAME, new PdfName(subsetPrefix + fontName + style));

@@ -51,108 +51,60 @@ package com.lowagie.tools.plugins;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Iterator;
-import java.util.TreeSet;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPageLabels;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Converts a Tiff file to a PDF file.
- * Inspired by a comp.text.pdf question by Sebastian Schubert
- * and an answer by Hans-Werner Hilse.
+ * Allows you to encrypt an existing PDF file.
  */
-public class PhotoAlbum extends AbstractTool {
+public class Decrypt extends AbstractTool {
 	
 	static {
 		addVersion("$Id$");
 	}
+
+	
 	/**
-	 * Constructs a Tiff2Pdf object.
+	 * Constructs an Encrypt object.
 	 */
-	public PhotoAlbum() {
-		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
-		arguments.add(new FileArgument(this, "srcdir", "The directory containing the image files", false));
-		arguments.add(new FileArgument(this, "destfile", "The file to which the converted TIFF has to be written", true, new PdfFilter()));
+	public Decrypt() {
+		arguments.add(new FileArgument(this, "srcfile", "The file you want to decrypt", false, new PdfFilter()));
+		arguments.add(new FileArgument(this, "destfile", "The file to which the decrypted PDF has to be written", true, new PdfFilter()));
+		arguments.add(new ToolArgument(this, "ownerpassword", "The ownerpassword you want to add to the PDF file", String.class.getName()));
 	}
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("PhotoAlbum", true, true, true);
-		internalFrame.setSize(550, 250);
+		internalFrame = new JInternalFrame("Decrypt", true, true, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
 	}
-
+	
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
 	public void execute() {
 		try {
-			if (getValue("srcdir") == null) throw new InstantiationException("You need to choose a source directory");
-			File directory = (File)getValue("srcdir");
-			if (directory.isFile()) directory = directory.getParentFile();
+			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
 			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
-			File pdf_file = (File)getValue("destfile");
-			Document document = new Document();
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_file));
-			writer.setViewerPreferences(PdfWriter.PageModeUseThumbs);
-			PdfPageLabels pageLabels = new PdfPageLabels();
-			int dpiX, dpiY;
-			float imgWidthPica, imgHeightPica;
-			TreeSet images = new TreeSet();
-			File[] files = directory.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isFile()) images.add(files[i]);
+			byte[] ownerpassword = null;
+			if (getValue("ownerpassword") != null) {
+				ownerpassword = ((String)getValue("ownerpassword")).getBytes();
 			}
-			File image;
-            for (Iterator i = images.iterator(); i.hasNext(); ) {
-            	image = (File) i.next();
-            	System.out.println("Testing image: " + image.getName());
-            	try {
-            		Image img = Image.getInstance(image.getAbsolutePath());
-            		dpiX=img.getDpiX();
-                    if (dpiX == 0) dpiX=72;
-                    dpiY=img.getDpiY();
-                    if (dpiY == 0) dpiY=72;
-                    imgWidthPica=(72*img.plainWidth()) / dpiX;
-                    imgHeightPica=(72*img.plainHeight()) / dpiY;
-                    img.scaleAbsolute(imgWidthPica,imgHeightPica);
-                    document.setPageSize(new Rectangle(imgWidthPica, imgHeightPica));
-                	if (document.isOpen()) {
-                		document.newPage();
-                	}
-                	else {
-                		document.open();
-                	}
-                	img.setAbsolutePosition(0, 0);
-                    document.add(img);
-                    pageLabels.addPageLabel(writer.getPageNumber(), PdfPageLabels.EMPTY, image.getName());
-                    System.out.println("Added image: " + image.getName());
-                }
-            	catch(Exception e) {
-            		System.err.println(e.getMessage());
-            	}
-            }
-        	if (document.isOpen()) {
-        		writer.setPageLabels(pageLabels);
-        	    document.close();
-        	}
-        	else {
-        		System.err.println("No images were found in directory " + directory.getAbsolutePath());
-        	}
-		} catch (Exception e) {
+			PdfReader reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath(), ownerpassword);
+			PdfStamper stamper = new PdfStamper(reader, new FileOutputStream((File)getValue("destfile")));
+			stamper.close();
+		}
+		catch(Exception e) {
         	JOptionPane.showMessageDialog(internalFrame,
         		    e.getMessage(),
         		    e.getClass().getName(),
@@ -171,20 +123,19 @@ public class PhotoAlbum extends AbstractTool {
 		}
 		// represent the changes of the argument in the internal frame
 	}
-
 	
     /**
-     * Converts a tiff file to PDF.
+     * Encrypts an existing PDF file.
      * @param args
      */
-	public static void main(String[] args) {
-    	PhotoAlbum tool = new PhotoAlbum();
+    public static void main(String[] args) {
+    	Decrypt tool = new Decrypt();
     	if (args.length < 2) {
     		System.err.println(tool.getUsage());
     	}
     	tool.setArguments(args);
         tool.execute();
-	}
+    }
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#getDestPathPDF()
@@ -192,4 +143,5 @@ public class PhotoAlbum extends AbstractTool {
 	protected File getDestPathPDF() throws InstantiationException {
 		return (File)getValue("destfile");
 	}
+
 }

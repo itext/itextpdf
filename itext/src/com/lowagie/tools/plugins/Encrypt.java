@@ -68,6 +68,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Allows you to encrypt an existing PDF file.
  */
 public class Encrypt extends AbstractTool {
+	
+	static {
+		addVersion("$Id$");
+	}
     private final static int PERMISSIONS[] = {
             PdfWriter.AllowPrinting,
             PdfWriter.AllowModifyContents,
@@ -133,7 +137,7 @@ public class Encrypt extends AbstractTool {
 			}
 			byte[] ownerpassword = null;
 			if (getValue("ownerpassword") != null) {
-				userpassword = ((String)getValue("ownerpassword")).getBytes();
+				ownerpassword = ((String)getValue("ownerpassword")).getBytes();
 			}
 			PdfReader reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath());
 			PdfEncryptor.encrypt(

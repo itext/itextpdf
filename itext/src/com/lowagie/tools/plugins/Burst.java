@@ -33,8 +33,13 @@ import com.lowagie.tools.arguments.ToolArgument;
  * This tool lets you split a PDF in two separate PDF files.
  */
 public class Burst extends AbstractTool {
+	
+	static {
+		addVersion("$Id$");
+	}
+	
 	/**
-	 * Constructs an Encrypt object.
+	 * Constructs an Burst object.
 	 */
 	public Burst() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter()));
@@ -63,7 +68,7 @@ public class Burst extends AbstractTool {
 			PdfReader reader = new PdfReader(src.getAbsolutePath());
 			// we retrieve the total number of pages
 			int n = reader.getNumberOfPages();
-			int digits = 1 + (n % 10);
+			int digits = 1 + (n / 10);
 			System.out.println("There are " + n + " pages in the original file.");
 			Document document;
 			int pagenumber;

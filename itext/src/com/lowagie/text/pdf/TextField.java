@@ -73,6 +73,10 @@ public class TextField extends BaseField {
     private int choiceSelection;
     
     private int topFirst;
+    
+    private float extraMarginLeft;
+    private float extraMarginTop;
+    
     /** Creates a new <CODE>TextField</CODE>.
      * @param writer the document <CODE>PdfWriter</CODE>
      * @param box the field location and dimensions
@@ -104,6 +108,7 @@ public class TextField extends BaseField {
             h -= borderWidth * 2;
             bw2 *= 2;
         }
+        h -= extraMarginTop;
         float offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
         offsetX = Math.max(offsetX, 1);
         float offX = Math.min(bw2, offsetX);
@@ -125,7 +130,7 @@ public class TextField extends BaseField {
         }
         if ((options & MULTILINE) != 0) {
             float usize = fontSize;
-            float width = box.width() - 3 * offsetX;
+            float width = box.width() - 3 * offsetX - extraMarginLeft;
             ArrayList breaks = getHardBreaks(ptext);
             ArrayList lines = breaks;
             float factor = ufont.getFontDescriptor(BaseFont.BBOXURY, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1);
@@ -154,15 +159,15 @@ public class TextField extends BaseField {
             String nt = (String)lines.get(0);
             if (alignment == Element.ALIGN_RIGHT) {
                 float wd = ufont.getWidthPoint(nt, usize);
-                app.moveText(box.width() - 2 * offsetX - wd, offsetY);
+                app.moveText(extraMarginLeft + box.width() - 2 * offsetX - wd, offsetY);
             }
             else if (alignment == Element.ALIGN_CENTER) {
                 nt = nt.trim();
                 float wd = ufont.getWidthPoint(nt, usize);
-                app.moveText(box.width() / 2  - wd / 2, offsetY);
+                app.moveText(extraMarginLeft + box.width() / 2  - wd / 2, offsetY);
             }
             else
-                app.moveText(2 * offsetX, offsetY);
+                app.moveText(extraMarginLeft + 2 * offsetX, offsetY);
             app.showText(nt);
             int maxline = (int)(h / usize / factor) + 1;
             maxline = Math.min(maxline, lines.size());
@@ -170,12 +175,12 @@ public class TextField extends BaseField {
                 nt = (String)lines.get(k);
                 if (alignment == Element.ALIGN_RIGHT) {
                     float wd = ufont.getWidthPoint(nt, usize);
-                    app.moveText(box.width() - 2 * offsetX - wd - app.getXTLM(), 0);
+                    app.moveText(extraMarginLeft + box.width() - 2 * offsetX - wd - app.getXTLM(), 0);
                 }
                 else if (alignment == Element.ALIGN_CENTER) {
                     nt = nt.trim();
                     float wd = ufont.getWidthPoint(nt, usize);
-                    app.moveText(box.width() / 2  - wd / 2 - app.getXTLM(), 0);
+                    app.moveText(extraMarginLeft + box.width() / 2  - wd / 2 - app.getXTLM(), 0);
                 }
                 app.newlineShowText(nt);
             }
@@ -188,7 +193,7 @@ public class TextField extends BaseField {
                 if (wd == 0)
                     usize = maxCalculatedSize;
                 else
-                    usize = (box.width() - 2 * offsetX) / wd;
+                    usize = (box.width() - extraMarginLeft - 2 * offsetX) / wd;
                 if (usize > maxCalculatedSize)
                     usize = maxCalculatedSize;
                 if (usize < 4)
@@ -212,12 +217,12 @@ public class TextField extends BaseField {
                 else if (alignment == Element.ALIGN_CENTER) {
                     position = (maxCharacterLength - textLen) / 2;
                 }
-                float step = box.width() / maxCharacterLength;
+                float step = (box.width() - extraMarginLeft) / maxCharacterLength;
                 float start = step / 2 + position * step;
                 for (int k = 0; k < textLen; ++k) {
                     String c = ptext.substring(k, k + 1);
                     float wd = ufont.getWidthPoint(c, usize);
-                    app.setTextMatrix(start - wd / 2, offsetY);
+                    app.setTextMatrix(extraMarginLeft + start - wd / 2, offsetY - extraMarginTop);
                     app.showText(c);
                     start += step;
                 }
@@ -225,14 +230,14 @@ public class TextField extends BaseField {
             else {
                 if (alignment == Element.ALIGN_RIGHT) {
                     float wd = ufont.getWidthPoint(ptext, usize);
-                    app.moveText(box.width() - 2 * offsetX - wd, offsetY);
+                    app.moveText(extraMarginLeft + box.width() - 2 * offsetX - wd, offsetY - extraMarginTop);
                 }
                 else if (alignment == Element.ALIGN_CENTER) {
                     float wd = ufont.getWidthPoint(ptext, usize);
-                    app.moveText(box.width() / 2  - wd / 2, offsetY);
+                    app.moveText(extraMarginLeft + box.width() / 2  - wd / 2, offsetY - extraMarginTop);
                 }
                 else
-                    app.moveText(2 * offsetX, offsetY);
+                    app.moveText(extraMarginLeft + 2 * offsetX, offsetY - extraMarginTop);
                 app.showText(ptext);
             }
         }
@@ -559,5 +564,15 @@ public class TextField extends BaseField {
     
     int getTopFirst() {
         return topFirst;
+    }
+    
+    /**
+     * Sets extra margins in text fields to better mimic the Acrobat layout.
+     * @param extraMarginLeft the extra marging left
+     * @param extraMarginTop the extra margin top
+     */    
+    public void setExtraMargin(float extraMarginLeft, float extraMarginTop) {
+        this.extraMarginLeft = extraMarginLeft;
+        this.extraMarginTop = extraMarginTop;
     }
 }

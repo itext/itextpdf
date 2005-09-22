@@ -128,7 +128,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		file.add(close);
 		JMenu tools = new JMenu(TOOLS);
 		file.setMnemonic(KeyEvent.VK_T);
-		String name;
+		String name, tool;
 		JMenu current = null;
 		JMenuItem item;
 		for (Iterator i = tmp.keySet().iterator(); i.hasNext(); ) {
@@ -139,14 +139,23 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 			}
 			item = new JMenuItem(name.substring(current.getText().length() + 1));
 			item.addActionListener(this);
-			toolmap.put(item.getText(), (String)tmp.get(name));
-			current.add(item);
+			tool = (String)tmp.get(name);
+			try {
+				Class.forName(tool);
+				toolmap.put(item.getText(), tool);
+				current.add(item);
+			} catch (ClassNotFoundException e) {
+				System.err.println("Plugin " + name + " was not found in your CLASSPATH.");
+			}
 		}
 		JMenu help = new JMenu(HELP);
 		JMenuItem about = new JMenuItem(ABOUT);
 		about.setMnemonic(KeyEvent.VK_A);
 		about.addActionListener(this);
 		help.add(about);
+		JMenuItem versions = new JMenuItem(VERSION);
+		versions.addActionListener(this);
+		help.add(versions);
 		menubar.add(file);
 		menubar.add(tools);
 		menubar.add(Box.createGlue());
@@ -191,6 +200,10 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 			catch(IOException ioe) {
 				JOptionPane.showMessageDialog(this, "The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://www.lowagie.com/iText/toolbox.html for more info.");
 			}
+		}
+		else if(VERSION.equals(evt.getActionCommand())) {
+			JFrame f = new Versions();
+			f.setVisible(true);
 		}
 		else {
 			try {

@@ -255,7 +255,7 @@ public class SequenceList {
         boolean sair = false;
         while (!sair) {
             sair = parse.getAttributes();
-            if (parse.low == -1 && parse.high == -1)
+            if (parse.low == -1 && parse.high == -1 && !parse.even && !parse.odd)
                 continue;
             if (parse.low < 1)
                 parse.low = 1;
@@ -303,8 +303,9 @@ public class SequenceList {
                         else
                             parse.low += ((parse.low & 1) == 1 ? 1 : 0);
                     }
-                    for (int k = parse.low; k <= parse.high; k += inc)
+                    for (int k = parse.low; k <= parse.high; k += inc) {
                         list.add(new Integer(k));
+                    }
                 }
             }
 //            for (int k = 0; k < list.size(); ++k)

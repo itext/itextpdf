@@ -12,8 +12,10 @@ import java.io.IOException;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Table;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.field.RtfPageNumber;
@@ -305,5 +307,20 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
      * @param inHeader
      */
     public void setInHeader(boolean inHeader) {
+    }
+    
+    /**
+     * Set the alignment of this RtfHeaderFooter. Passes the setting
+     * on to the contained element.
+     */
+    public void setAlignment(int alignment) {
+        super.setAlignment(alignment);
+        if(this.content instanceof Paragraph) {
+            ((Paragraph) this.content).setAlignment(alignment);
+        } else if(this.content instanceof Table) {
+            ((Table) this.content).setAlignment(alignment);
+        } else if(this.content instanceof Image) {
+            ((Image) this.content).setAlignment(alignment);
+        }
     }
 }

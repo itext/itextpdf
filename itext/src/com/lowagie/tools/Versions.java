@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002 by Mark Hall
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -47,59 +47,54 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.tools;
 
-package com.lowagie.text.rtf.text;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import com.lowagie.text.Chapter;
-import com.lowagie.text.rtf.RtfBasicElement;
-import com.lowagie.text.rtf.document.RtfDocument;
-
+import java.awt.*;
+import javax.swing.*;
+import java.awt.BorderLayout;
+import com.lowagie.tools.plugins.*;
 
 /**
- * The RtfChapter wraps a Chapter element.
- * INTERNAL CLASS
- * 
- * @version $Revision$
- * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * JFrame that shows the versions of all the plugins.
  */
-public class RtfChapter extends RtfSection {
+public class Versions extends JFrame {
+	/**
+	 * Constructs a JFrame.
+	 * @throws HeadlessException
+	 */
+	public Versions() throws HeadlessException {
+		super("Plugins and their version");
+		try {
+			jbInit();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 
-    /**
-     * Constructs a RtfChapter for a given Chapter
-     * 
-     * @param doc The RtfDocument this RtfChapter belongs to
-     * @param chapter The Chapter this RtfChapter is based on
-     */
-    public RtfChapter(RtfDocument doc, Chapter chapter) {
-        super(doc, chapter);
-    }
+	/**
+	 * Main method (test purposes only)
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Versions untitled1 = new Versions();
+	}
 
-    /**
-     * Writes the RtfChapter and its contents
-     * 
-     * @return A byte array containing the RtfChapter and its contents 
-     */
-    public byte[] write() {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        try {
-            if(this.document.getLastElementWritten() != null && !(this.document.getLastElementWritten() instanceof RtfChapter)) {
-                result.write("\\page".getBytes());
-            }
-            result.write("\\sectd".getBytes());
-            result.write(document.getDocumentHeader().writeSectionDefinition());
-            if(this.title != null) {
-                result.write(this.title.write());
-            }
-            for(int i = 0; i < items.size(); i++) {
-                result.write(((RtfBasicElement) items.get(i)).write());
-            }
-            result.write("\\sect".getBytes());
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-        return result.toByteArray();
-    }
+	private void jbInit() throws Exception {
+		this.getContentPane().setLayout(borderLayout1);
+		this.getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>");
+		for (int i = 0; i < AbstractTool.versionsarray.size(); i++) {
+			sb.append("<p>");
+			sb.append(AbstractTool.versionsarray.get(i));
+			sb.append("</p>");
+		}
+		sb.append("</html>");
+		jLabel1.setText(sb.toString());
+		pack();
+	}
+
+	JLabel jLabel1 = new JLabel();
+
+	BorderLayout borderLayout1 = new BorderLayout();
 }

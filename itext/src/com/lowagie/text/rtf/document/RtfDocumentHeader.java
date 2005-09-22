@@ -272,7 +272,7 @@ public class RtfDocumentHeader extends RtfElement {
             if(footer instanceof RtfHeaderFooterGroup) {
                 this.footer = new RtfHeaderFooterGroup(this.document, (RtfHeaderFooterGroup) footer, RtfHeaderFooter.TYPE_FOOTER);
             } else if(footer instanceof RtfHeaderFooter) {
-                this.footer = new RtfHeaderFooterGroup(this.document, (RtfHeaderFooter) footer, RtfHeaderFooter.TYPE_HEADER);
+                this.footer = new RtfHeaderFooterGroup(this.document, (RtfHeaderFooter) footer, RtfHeaderFooter.TYPE_FOOTER);
             } else {
                 this.footer = new RtfHeaderFooterGroup(this.document, footer, RtfHeaderFooter.TYPE_FOOTER);
             }

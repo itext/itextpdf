@@ -370,8 +370,16 @@ public class PdfStamper {
         stamper.setFormFlattening(flat);
     }
 
+    /** Determines if the FreeText annotations are flattened on close. 
+     * @param flat <CODE>true</CODE> to flatten the FreeText annotations, <CODE>false</CODE>
+     * (the default) to keep the FreeText annotations as active content.
+     */
+    public void setFreeTextFlattening(boolean flat) {
+    	stamper.setFreeTextFlattening(flat);
+	}
+
     /**
-     * Adds an annotation of form filed in a specific page. This page number
+     * Adds an annotation of form field in a specific page. This page number
      * can be overridden with {@link PdfAnnotation#setPlaceInPage(int)}.
      * @param annot the annotation
      * @param page the page
@@ -439,6 +447,15 @@ public class PdfStamper {
      */
     public void setViewerPreferences(int preferences) {
         stamper.setViewerPreferences(preferences);
+    }
+
+    /**
+     * Sets the XMP metadata.
+     * @param xmp
+     * @see PdfWriter#setXmpMetadata(byte[])
+     */
+    public void setXmpMetadata(byte[] xmp) {
+        stamper.setXmpMetadata(xmp);
     }
 
     /**

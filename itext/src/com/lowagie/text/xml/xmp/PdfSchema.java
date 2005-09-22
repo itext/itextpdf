@@ -15,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2005 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2005 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -31,7 +31,7 @@
  * the MPL, indicate your decision by deleting the provisions above and
  * replace them with the notice and other provisions required by the LGPL.
  * If you do not delete the provisions above, a recipient may use your version
- * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE.
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE 
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the MPL as stated above or under the terms of the GNU
@@ -40,45 +40,66 @@
  *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * FOR A PARTICULAR PURPOSE. See the GNU LIBRARY GENERAL PUBLIC LICENSE for more
  * details.
  *
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.tools;
+
+package com.lowagie.text.xml.xmp;
+
+import com.lowagie.text.Document;
+import java.io.IOException;
 
 /**
- * Keeps all the possible menuitems.
+ * An implementation of an XmpSchema.
  */
-public interface ToolMenuItems {
-	
-	/** An item in the menubar. */
-	public static final String FILE = "File";
-	/** An item in the menubar. */
-	public static final String CLOSE = "Close";
-	/** An item in the menubar. */
-	public static final String TOOLS = "Tools";
-	/** An item in the menubar. */
-	public static final String HELP = "Help";
-	/** An item in the menubar. */
-	public static final String VERSION = "Version";
-	/** An item in the menubar. */
-	public static final String ABOUT = "About";
-	/** An item in the menubar. */
-	public static final String TOOL = "Tool";
-	/** An item in the menubar. */
-	public static final String USAGE = "Usage";
-	/** An item in the menubar. */
-	public static final String ARGUMENTS = "Arguments";
-	/** An item in the menubar. */
-	public static final String EXECUTE = "Execute";
-	/** An item in the menubar. */
-	public static final String EXECUTESHOW = "Execute+Open";
-	/** An item in the menubar. */
-	public static final String EXECUTEPRINT = "Execute+Printdialog";
-	/** An item in the menubar. */
-	public static final String EXECUTEPRINTSILENT = "Execute+Print";
+public class PdfSchema extends XmpSchema {
 
+	/** default namespace identifier*/
+	public static final String DEFAULT_XPATH_ID = "pdf";
+	/** default namespace uri*/
+	public static final String DEFAULT_XPATH_URI = "http://ns.adobe.com/pdf/1.3/";
+	
+	/** Keywords. */
+	public static final String KEYWORDS = "pdf:Keywords";
+	/** The PDF file version (for example: 1.0, 1.3, and so on). */
+	public static final String VERSION = "pdf:PDFVersion";
+	/** The Producer. */
+	public static final String PRODUCER = "pdf:Producer";
+
+
+	/**
+	 * @throws IOException
+	 */
+	public PdfSchema() throws IOException {
+		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
+		addProducer(Document.getVersion());
+	}
+	
+	/**
+	 * Adds keywords.
+	 * @param keywords
+	 */
+	public void addKeywords(String keywords) {
+		setProperty(KEYWORDS, keywords);
+	}
+	
+	/**
+	 * Adds the producer.
+	 * @param producer
+	 */
+	public void addProducer(String producer) {
+		setProperty(PRODUCER, producer);
+	}
+
+	/**
+	 * Adds the version.
+	 * @param version
+	 */
+	public void addVersion(String version) {
+		setProperty(VERSION, version);
+	}
 }

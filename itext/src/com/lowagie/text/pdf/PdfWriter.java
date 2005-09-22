@@ -805,6 +805,8 @@ public class PdfWriter extends DocWriter {
     /** Holds value of property extraCatalog. */
     private PdfDictionary extraCatalog;
     
+    /** XMP Metadata for the document. */
+    protected byte[] xmpMetadata = null;
     /**
      * Holds value of property fullCompression.
      */
@@ -1234,6 +1236,13 @@ public class PdfWriter extends DocWriter {
                 PdfIndirectReference rootRef = root.writePageTree();
                 // make the catalog-object and add it to the body
                 PdfDictionary catalog = getCatalog(rootRef);
+                // if there is XMP data to add: add it
+                if (xmpMetadata != null) {
+                	PdfStream xmp = new PdfStream(xmpMetadata);
+                	xmp.put(PdfName.TYPE, PdfName.METADATA);
+                	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+                	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
+                }
                 // make pdfx conformant
                 PdfDictionary info = getInfo();
                 if (pdfxConformance != PDFXNONE) {
@@ -2555,16 +2564,52 @@ public class PdfWriter extends DocWriter {
 		return userunit;
 	}
 	/**
-	 * A UserUnit is a value that defines the default user space unit.
-	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
-	 * The maximum UserUnit is 75,000.
-	 * Remark that this userunit only works starting with PDF1.6!
-	 * @param userunit The userunit to set.
-	 * @throws DocumentException
-	 */
+     * A UserUnit is a value that defines the default user space unit.
+     * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+     * The maximum UserUnit is 75,000.
+     * Remark that this userunit only works starting with PDF1.6!
+     * @param userunit The userunit to set.
+     * @throws DocumentException
+     */
 	public void setUserunit(float userunit) throws DocumentException {
 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
 		this.userunit = userunit;
         setPdfVersion(VERSION_1_6);
 	}
+    
+	/**
+	 * Sets XMP Metadata.
+	 * @param xmpMetadata The xmpMetadata to set.
+	 */
+	public void setXmpMetadata(byte[] xmpMetadata) {
+		this.xmpMetadata = xmpMetadata;
+	}
+	
+	/**
+	 * Creates XMP Metadata based on the metadata in the PdfDocument.
+	 */
+	public void createXmpMetadata() {
+		setXmpMetadata(pdf.createXmpMetadata());
+	}
+    
+    /**
+     * Releases the memory used by a template by writing it to the output. The template
+     * can still be added to any content but changes to the template itself won't have
+     * any effect.
+     * @param tp the template to release
+     * @throws IOException on error
+     */    
+    public void releaseTemplate(PdfTemplate tp) throws IOException {
+        PdfIndirectReference ref = tp.getIndirectReference();
+        Object[] objs = (Object[])formXObjects.get(ref);
+        if (objs == null || objs[1] == null)
+            return;
+        PdfTemplate template = (PdfTemplate)objs[1];
+        if (template.getIndirectReference() instanceof PRIndirectReference)
+            return;
+        if (template.getType() == PdfTemplate.TYPE_TEMPLATE) {
+            addToBody(template.getFormXObject(), template.getIndirectReference());
+            objs[1] = null;
+        }
+    }
 }
