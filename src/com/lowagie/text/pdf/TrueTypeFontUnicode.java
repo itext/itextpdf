@@ -353,12 +353,20 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 			obj = writer.addToBody(pobj);
 			ind_font = obj.getIndirectReference();
         } else {
-          TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), longTag, directoryOffset, false);
-          byte b[] = sb.process();
-          int lengths[] = new int[]{b.length};
-          pobj = new StreamFont(b, lengths);
-          obj = writer.addToBody(pobj);
-          ind_font = obj.getIndirectReference();
+            byte[] b;
+            if (subset || directoryOffset != 0) {
+                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), longTag, directoryOffset, false);
+                b = sb.process();
+            }
+            else {
+                RandomAccessFileOrArray r = new RandomAccessFileOrArray(rf);
+                b = new byte[r.length()];
+                r.readFully(b);
+            }
+            int lengths[] = new int[]{b.length};
+            pobj = new StreamFont(b, lengths);
+            obj = writer.addToBody(pobj);
+            ind_font = obj.getIndirectReference();
         }
         String subsetPrefix = createSubsetPrefix();
         //if (cff) subsetPrefix = "";
