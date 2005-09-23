@@ -553,8 +553,8 @@ public class AcroFields {
                 return tx.getAppearance();
             }
             int idx = 0;
-            for (int k = 0; k < choices.length; ++k) {
-                if (text.equals(choices[k])) {
+            for (int k = 0; k < choicesExp.length; ++k) {
+                if (text.equals(choicesExp[k])) {
                     idx = k;
                     break;
                 }
