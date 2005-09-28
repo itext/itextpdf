@@ -86,10 +86,8 @@ public class ChapterAutoNumber extends Chapter {
      * @param title  the Section title (as a <CODE>String</CODE>)
      * @return Returns the new section.
      */
-    public SectionAutoNumber createSection(final String title) {
-        SectionAutoNumber section = new SectionAutoNumber(title, 2);
-        add(section);
-        return section;
+    public Section addSection(final String title) {
+        return addSection(title, 2);
     }
 
     /**
@@ -98,38 +96,8 @@ public class ChapterAutoNumber extends Chapter {
      * @param title  the Section title (as a <CODE>Paragraph</CODE>)
      * @return Returns the new section.
      */
-    public SectionAutoNumber createSection(final Paragraph title) {
-        SectionAutoNumber section = new SectionAutoNumber(title, 2);
-        add(section);
-        return section;
-    }
-
-    /**
-     * Create a new section for this chapter and ad it.
-     *
-     * @param title         the Section title (as a <CODE>String</CODE>)
-     * @param numberdepth   the numberdepth
-     * @return Returns the new section.
-     */
-    public SectionAutoNumber createSection(final String title,
-            final int numberdepth) {
-        SectionAutoNumber section = new SectionAutoNumber(title, numberdepth);
-        add(section);
-        return section;
-    }
-
-    /**
-     * Create a new section for this chapter and add it.
-     *
-     * @param title  the Section title (as a <CODE>Paragraph</CODE>)
-     * @param numberdepth   the numberdepth
-     * @return Returns the new section.
-     */
-    public SectionAutoNumber createSection(final Paragraph title,
-            final int numberdepth) {
-        SectionAutoNumber section = new SectionAutoNumber(title, numberdepth);
-        add(section);
-        return section;
+    public Section addSection(final Paragraph title) {
+        return addSection(title, 2);
     }
 
 }
