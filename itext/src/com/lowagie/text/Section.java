@@ -341,7 +341,7 @@ public class Section extends ArrayList implements TextElementArray {
  */
     
     public Section addSection(Paragraph title) {
-        Section section = new Section(title, 1);
+        Section section = new Section(title, numberDepth + 1);
         add(section);
         return section;
     }
@@ -399,7 +399,7 @@ public class Section extends ArrayList implements TextElementArray {
  */
     
     public Section addSection(String title) {
-        Section section = new Section(new Paragraph(title), 1);
+        Section section = new Section(new Paragraph(title), numberDepth + 1);
         add(section);
         return section;
     }
