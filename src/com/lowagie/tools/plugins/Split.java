@@ -45,6 +45,7 @@ public class Split extends AbstractTool {
 	public Split() {
 		FileArgument f = new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter());
 		f.setLabel(new LabelAccessory());
+		arguments.add(f);
 		arguments.add(new FileArgument(this, "destfile1", "The file to which the first part of the original PDF has to be written", true, new PdfFilter()));
 		arguments.add(new FileArgument(this, "destfile2", "The file to which the second part of the original PDF has to be written", true, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "pagenumber", "The pagenumber where you want to split", String.class.getName()));
