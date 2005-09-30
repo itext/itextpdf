@@ -65,6 +65,8 @@ public class FileArgument extends ToolArgument {
 	private FileFilter filter;
 	/** indicates if the argument has to point to a new or an existing file. */
 	private boolean newFile;
+	/** the label */
+	LabelAccessory label = null;
 	
 	/**
 	 * Constructs a FileArgument. 
@@ -110,6 +112,11 @@ public class FileArgument extends ToolArgument {
 	public void actionPerformed(ActionEvent e) {
 		JFileChooser fc = new JFileChooser();
 		if (filter != null) fc.setFileFilter(filter);
+		if (label != null) {
+			fc.setAccessory(label);
+			fc.addPropertyChangeListener(
+				JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, label);
+		}
 		if (newFile) {
 			fc.showSaveDialog(tool.getInternalFrame());
 		}
@@ -123,4 +130,28 @@ public class FileArgument extends ToolArgument {
 		}
 	}
 
+	/**
+	 * @return Returns the filter.
+	 */
+	public FileFilter getFilter() {
+		return filter;
+	}
+	/**
+	 * @param filter The filter to set.
+	 */
+	public void setFilter(FileFilter filter) {
+		this.filter = filter;
+	}
+	/**
+	 * @return Returns the label.
+	 */
+	public LabelAccessory getLabel() {
+		return label;
+	}
+	/**
+	 * @param label The label to set.
+	 */
+	public void setLabel(LabelAccessory label) {
+		this.label = label;
+	}
 }

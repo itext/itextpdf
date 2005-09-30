@@ -78,7 +78,7 @@ import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Allows you to encrypt an existing PDF file.
+ * Allows you to generate an index file in HTML containing Bookmarks to an existing PDF file.
  */
 public class HtmlBookmarks extends AbstractTool {
 	
@@ -87,7 +87,7 @@ public class HtmlBookmarks extends AbstractTool {
 	}
 	
 	/**
-	 * Constructs an Encrypt object.
+	 * Constructs an HtmlBookmarks object.
 	 */
 	public HtmlBookmarks() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to inspect", false, new PdfFilter()));
@@ -266,7 +266,7 @@ public class HtmlBookmarks extends AbstractTool {
 	}
 	
     /**
-     * Encrypts an existing PDF file.
+     * Allows you to generate an index file in HTML containing Bookmarks to an existing PDF file.
      * @param args
      */
     public static void main(String[] args) {

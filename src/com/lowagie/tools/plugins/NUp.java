@@ -41,7 +41,7 @@ public class NUp extends AbstractTool {
 	}
 	
 	/**
-	 * Constructs an Burst object.
+	 * Constructs an NUp object.
 	 */
 	public NUp() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
@@ -144,7 +144,7 @@ public class NUp extends AbstractTool {
 
 	
     /**
-     * Concatenates two PDF files.
+     * Generates an NUp version of an existing PDF file.
      * @param args
      */
 	public static void main(String[] args) {

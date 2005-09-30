@@ -38,7 +38,7 @@ public class SelectedPages extends AbstractTool {
 		addVersion("$Id$");
 	}
 	/**
-	 * Constructs an Encrypt object.
+	 * Constructs a SelectedPages object.
 	 */
 	public SelectedPages() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
@@ -107,7 +107,7 @@ public class SelectedPages extends AbstractTool {
 
 	
     /**
-     * Concatenates two PDF files.
+     * Generates a PDF file with selected pages from an existing PDF.
      * @param args
      */
 	public static void main(String[] args) {

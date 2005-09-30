@@ -27,6 +27,7 @@ import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.tools.arguments.FileArgument;
+import com.lowagie.tools.arguments.LabelAccessory;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
@@ -39,10 +40,11 @@ public class Split extends AbstractTool {
 		addVersion("$Id$");
 	}
 	/**
-	 * Constructs an Encrypt object.
+	 * Constructs an Split object.
 	 */
 	public Split() {
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter()));
+		FileArgument f = new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter());
+		f.setLabel(new LabelAccessory());
 		arguments.add(new FileArgument(this, "destfile1", "The file to which the first part of the original PDF has to be written", true, new PdfFilter()));
 		arguments.add(new FileArgument(this, "destfile2", "The file to which the second part of the original PDF has to be written", true, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "pagenumber", "The pagenumber where you want to split", String.class.getName()));
@@ -143,7 +145,7 @@ public class Split extends AbstractTool {
 
 	
     /**
-     * Concatenates two PDF files.
+     * Split a PDF in two separate PDF files.
      * @param args
      */
 	public static void main(String[] args) {

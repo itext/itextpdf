@@ -78,7 +78,7 @@ public class Txt2Pdf extends AbstractTool {
 		addVersion("$Id$");
 	}
 	/**
-	 * Constructs a Tiff2Pdf object.
+	 * Constructs a Txt2Pdf object.
 	 */
 	public Txt2Pdf() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW | MENU_EXECUTE_PRINT_SILENT;
@@ -147,7 +147,7 @@ public class Txt2Pdf extends AbstractTool {
 
 	
     /**
-     * Converts a tiff file to PDF.
+     * Converts a monospaced txt file to a PDF file.
      * @param args
      */
 	public static void main(String[] args) {

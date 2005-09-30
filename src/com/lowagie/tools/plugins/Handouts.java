@@ -68,7 +68,7 @@ import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Converts a Tiff file to a PDF file.
+ * Generates a PDF file that is useable as Handout.
  */
 public class Handouts extends AbstractTool {
 
@@ -77,11 +77,11 @@ public class Handouts extends AbstractTool {
 	}
 	
 	/**
-	 * Constructs a Tiff2Pdf object.
+	 * Constructs a Handouts object.
 	 */
 	public Handouts() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to convert", false, new PdfFilter()));
-		arguments.add(new FileArgument(this, "destfile", "The file to which the converted TIFF has to be written", true, new PdfFilter()));
+		arguments.add(new FileArgument(this, "destfile", "The file to which the handout has to be written", true, new PdfFilter()));
 		OptionArgument oa = new OptionArgument(this, "pages", "The number of pages you want on one handout page");
 		oa.addOption("2 pages on 1", "2");
 		oa.addOption("3 pages on 1", "3");
@@ -211,7 +211,7 @@ public class Handouts extends AbstractTool {
 
 	
     /**
-     * Converts a tiff file to PDF.
+     * Generates handouts.
      * @param args
      */
 	public static void main(String[] args) {

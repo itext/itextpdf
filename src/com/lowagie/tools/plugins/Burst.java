@@ -26,11 +26,12 @@ import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.tools.arguments.FileArgument;
+import com.lowagie.tools.arguments.LabelAccessory;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * This tool lets you split a PDF in two separate PDF files.
+ * This tool lets you split a PDF in several separate PDF files (1 per page).
  */
 public class Burst extends AbstractTool {
 	
@@ -39,10 +40,12 @@ public class Burst extends AbstractTool {
 	}
 	
 	/**
-	 * Constructs an Burst object.
+	 * Constructs a Burst object.
 	 */
 	public Burst() {
-		arguments.add(new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter()));
+		FileArgument f = new FileArgument(this, "srcfile", "The file you want to split", false, new PdfFilter());
+		f.setLabel(new LabelAccessory());
+		arguments.add(f);
 	}
 
 	/**
@@ -115,7 +118,7 @@ public class Burst extends AbstractTool {
 
 	
     /**
-     * Concatenates two PDF files.
+     * Divide a PDF file into separate pages (1 per page).
      * @param args
      */
 	public static void main(String[] args) {

@@ -77,7 +77,7 @@ public class PhotoAlbum extends AbstractTool {
 		addVersion("$Id$");
 	}
 	/**
-	 * Constructs a Tiff2Pdf object.
+	 * Constructs a PhotoAlbum object.
 	 */
 	public PhotoAlbum() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
