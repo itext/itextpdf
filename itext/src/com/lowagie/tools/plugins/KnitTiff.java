@@ -75,7 +75,7 @@ public class KnitTiff extends AbstractTool {
 		addVersion("$Id$");
 	}
 	/**
-	 * Constructs a Tiff2Pdf object.
+	 * Constructs a KnitTiff object.
 	 */
 	public KnitTiff() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
