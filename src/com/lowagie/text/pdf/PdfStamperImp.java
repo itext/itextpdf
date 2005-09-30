@@ -166,10 +166,12 @@ class PdfStamperImp extends PdfWriter {
         }
         // if there is XMP data to add: add it
         if (xmpMetadata != null) {
-        	PdfStream xmp = new PdfStream(xmpMetadata);
+        	PdfDictionary catalog = reader.getCatalog();        	
+            PdfStream xmp = new PdfStream(xmpMetadata);
         	xmp.put(PdfName.TYPE, PdfName.METADATA);
         	xmp.put(PdfName.SUBTYPE, PdfName.XML);
-        	reader.getCatalog().put(PdfName.METADATA, body.add(xmp).getIndirectReference());
+        	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
+        	markUsed(catalog);
         }
         PRIndirectReference iInfo = null;
         try {
