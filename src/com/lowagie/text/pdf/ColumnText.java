@@ -400,6 +400,17 @@ public class ColumnText {
                 t.setWidthPercentage(w);
             t.setSpacingAfter(img.spacingAfter());
             t.setSpacingBefore(img.spacingBefore());
+            switch (img.alignment()) {
+                case Image.LEFT:
+                    t.setHorizontalAlignment(Element.ALIGN_LEFT);
+                    break;
+                case Image.RIGHT:
+                    t.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                    break;
+                default:
+                    t.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    break;
+            }
             PdfPCell c = new PdfPCell(img, true);
             c.setPadding(0);
             c.setBorder(img.border());
