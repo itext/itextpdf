@@ -21,3 +21,4 @@ Encryption.Encrypt: com.lowagie.tools.plugins.Encrypt
 Encryption.Decrypt: com.lowagie.tools.plugins.Decrypt
 Various.DvdCover: com.lowagie.tools.plugins.DvdCover
 Various.Handouts: com.lowagie.tools.plugins.Handouts
+Various.RemoveLaunchApplication: com.lowagie.tools.plugins.RemoveLaunchApplication
