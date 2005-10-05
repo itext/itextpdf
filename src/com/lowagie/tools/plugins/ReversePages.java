@@ -164,7 +164,7 @@ public class ReversePages
    */
   public static void main(String[] args) {
     ReversePages tool = new ReversePages();
-    if (args.length < 4) {
+    if (args.length < 2) {
       System.err.println(tool.getUsage());
     }
     tool.setArguments(args);
