@@ -89,11 +89,6 @@ public class Font implements Comparable {
 	/** a possible value of a font family. */
 	public static final int ZAPFDINGBATS = 4;
 
-	/** the default font family. */
-	public static String[] defaultFont = { BaseFont.HELVETICA,
-			BaseFont.HELVETICA_BOLD, BaseFont.HELVETICA_OBLIQUE,
-			BaseFont.HELVETICA_BOLDOBLIQUE };
-
 	// static membervariables for the different styles
 
 	/** this is a possible style. */
@@ -747,6 +742,7 @@ public class Font implements Comparable {
 			if (specialEncoding)
 				encoding = BaseFont.ZAPFDINGBATS;
 			break;
+		default:
 		case Font.HELVETICA:
 			switch (style & BOLDITALIC) {
 			case BOLD:
@@ -761,23 +757,6 @@ public class Font implements Comparable {
 			default:
 			case NORMAL:
 				fontName = BaseFont.HELVETICA;
-				break;
-			}
-			break;
-		default:
-			switch (style & BOLDITALIC) {
-			case BOLD:
-				fontName = defaultFont[1];
-				break;
-			case ITALIC:
-				fontName = defaultFont[2];
-				break;
-			case BOLDITALIC:
-				fontName = defaultFont[3];
-				break;
-			default:
-			case NORMAL:
-				fontName = defaultFont[0];
 				break;
 			}
 			break;
@@ -823,34 +802,5 @@ public class Font implements Comparable {
 			s = DEFAULTSIZE;
 		}
 		return s;
-	}
-	
-	/**
-	 * Changes the static value that is used to define the default font.
-	 * 
-	 * @param font you can only use Font.COURIER, Font.HELVETICA or Font.ROMAN
-	 */
-	public static void changeDefault(int font) {
-		switch(font) {
-		case COURIER:
-			defaultFont[0] = BaseFont.COURIER;
-			defaultFont[1] = BaseFont.COURIER_BOLD;
-			defaultFont[2] = BaseFont.COURIER_OBLIQUE;
-			defaultFont[3] = BaseFont.COURIER_BOLDOBLIQUE;
-			break;
-		case TIMES_ROMAN:
-			defaultFont[0] = BaseFont.TIMES_ROMAN;
-			defaultFont[1] = BaseFont.TIMES_BOLD;
-			defaultFont[2] = BaseFont.TIMES_ITALIC;
-			defaultFont[3] = BaseFont.TIMES_BOLDITALIC;
-			break;
-		default:
-		case HELVETICA:
-			defaultFont[0] = BaseFont.HELVETICA;
-			defaultFont[1] = BaseFont.HELVETICA_BOLD;
-			defaultFont[2] = BaseFont.HELVETICA_OBLIQUE;
-			defaultFont[3] = BaseFont.HELVETICA_BOLDOBLIQUE;
-			break;
-		}
 	}
 }
