@@ -1329,8 +1329,12 @@ public abstract class Image extends Rectangle implements Element,
 	 */
 
 	static public void skip(InputStream is, int size) throws IOException {
+        long n;
 		while (size > 0) {
-			size -= is.skip(size);
+            n = is.skip(size);
+            if (n <= 0)
+                break;
+			size -= n;
 		}
 	}
 
