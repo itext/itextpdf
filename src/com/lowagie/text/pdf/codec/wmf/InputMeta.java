@@ -52,6 +52,7 @@ package com.lowagie.text.pdf.codec.wmf;
 
 import java.io.*;
 import java.awt.Color;
+import com.lowagie.text.Image;
 
 public class InputMeta {
     
@@ -94,9 +95,7 @@ public class InputMeta {
     
     public void skip(int len) throws IOException{
         length += len;
-        while (len > 0) {
-            len -= in.skip(len);
-        }
+        Image.skip(in, len);
     }
     
     public int getLength() {
