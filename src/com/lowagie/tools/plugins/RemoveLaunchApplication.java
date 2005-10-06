@@ -54,6 +54,7 @@ import java.io.FileOutputStream;
 
 import javax.swing.JInternalFrame;
 
+import com.lowagie.text.pdf.PRIndirectReference;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
@@ -123,8 +124,15 @@ public class RemoveLaunchApplication
       	o = (PdfObject)reader.getPdfObject(i);
       	if (o instanceof PdfDictionary) {
       		d = (PdfDictionary)o;
-      		l = (PdfDictionary)d.get(PdfName.A);
-      		if (l == null) continue;
+      		o = d.get(PdfName.A);
+      		if (o == null) continue;
+      		if (o instanceof PdfDictionary) {
+      			l = (PdfDictionary)o;
+      		}
+      		else {
+      			PRIndirectReference r =(PRIndirectReference)o;
+      			l = (PdfDictionary)reader.getPdfObject(r.getNumber());
+      		}
       		n = (PdfName)l.get(PdfName.S);
       		if (PdfName.LAUNCH.equals(n)) {
       			if (l.get(PdfName.F) != null) {
