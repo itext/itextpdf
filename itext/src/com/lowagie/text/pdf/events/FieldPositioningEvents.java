@@ -44,7 +44,7 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.text.pdf;
+package com.lowagie.text.pdf.events;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -53,6 +53,15 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfFormField;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPCellEvent;
+import com.lowagie.text.pdf.PdfPageEventHelper;
+import com.lowagie.text.pdf.PdfRectangle;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.TextField;
 
 /**
  * Class for an index.
