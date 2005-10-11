@@ -1333,6 +1333,8 @@ public class PdfReader {
             if (line[0] == 't') {
                 if (!PdfEncodings.convertToString(line, null).startsWith("trailer"))
                     continue;
+                tokens.seek(pos);
+                tokens.nextToken();
                 pos = tokens.getFilePointer();
                 try {
                     PdfDictionary dic = (PdfDictionary)readPRObject();
