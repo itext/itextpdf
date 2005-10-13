@@ -196,7 +196,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
     /**
      * The RtfDocument this RtfFont belongs to.
      */
-    private RtfDocument document = null;
+    protected RtfDocument document = null;
     
     /**
      * Constructs a RtfFont with the given font name and all other properties
@@ -283,16 +283,18 @@ public class RtfFont extends Font implements RtfExtendedElement {
                 }
             }
         }
+
+        setSize(font.size());
+        setStyle(font.style());
+        setColor(font.color());
+
         if(this.fontName.equalsIgnoreCase("unknown")) {
             return;
         }
 
-        setSize(font.size());
-        setStyle(font.style());
         if(document != null) {
-            this.fontNumber = document.getDocumentHeader().getFontNumber(this);
+            setRtfDocument(document);
         }
-        setColor(font.color());
     }
 
     /**
@@ -450,8 +452,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
         RtfFont font = (RtfFont) obj;
         boolean result = true;
         result = result & this.fontName.equals(font.getFontName());
-        result = result & (this.fontSize == font.getFontSize());
-        result = result & (this.fontStyle == font.getFontStyle());
+
         return result;
     }
 
@@ -625,7 +626,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      * @param i The integer to convert
      * @return A byte array representing the integer
      */
-    private byte[] intToByteArray(int i) {
+    protected byte[] intToByteArray(int i) {
         return Integer.toString(i).getBytes();
     }
 
