@@ -697,28 +697,30 @@ class PdfDocument extends Document implements DocListener {
                 array.add(dic.getIndirectReference());
                 if (!dic.isUsed()) {
                     PdfRectangle rect = (PdfRectangle)dic.get(PdfName.RECT);
-                    switch (rotation) {
-                        case 90:
-                            dic.put(PdfName.RECT, new PdfRectangle(
-                            pageSize.top() - rect.bottom(),
-                            rect.left(),
-                            pageSize.top() - rect.top(),
-                            rect.right()));
-                            break;
-                        case 180:
-                            dic.put(PdfName.RECT, new PdfRectangle(
-                            pageSize.right() - rect.left(),
-                            pageSize.top() - rect.bottom(),
-                            pageSize.right() - rect.right(),
-                            pageSize.top() - rect.top()));
-                            break;
-                        case 270:
-                            dic.put(PdfName.RECT, new PdfRectangle(
-                            rect.bottom(),
-                            pageSize.right() - rect.left(),
-                            rect.top(),
-                            pageSize.right() - rect.right()));
-                            break;
+                    if (rect != null) {
+                        switch (rotation) {
+                            case 90:
+                                dic.put(PdfName.RECT, new PdfRectangle(
+                                pageSize.top() - rect.bottom(),
+                                rect.left(),
+                                pageSize.top() - rect.top(),
+                                rect.right()));
+                                break;
+                            case 180:
+                                dic.put(PdfName.RECT, new PdfRectangle(
+                                pageSize.right() - rect.left(),
+                                pageSize.top() - rect.bottom(),
+                                pageSize.right() - rect.right(),
+                                pageSize.top() - rect.top()));
+                                break;
+                            case 270:
+                                dic.put(PdfName.RECT, new PdfRectangle(
+                                rect.bottom(),
+                                pageSize.right() - rect.left(),
+                                rect.top(),
+                                pageSize.right() - rect.right()));
+                                break;
+                        }
                     }
                 }
             }
