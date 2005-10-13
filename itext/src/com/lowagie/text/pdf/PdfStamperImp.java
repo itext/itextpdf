@@ -167,7 +167,7 @@ class PdfStamperImp extends PdfWriter {
         // if there is XMP data to add: add it
         if (xmpMetadata != null) {
         	PdfDictionary catalog = reader.getCatalog();        	
-            PdfStream xmp = new PdfStream(xmpMetadata);
+        	PdfStream xmp = new PdfStream(xmpMetadata);
         	xmp.put(PdfName.TYPE, PdfName.METADATA);
         	xmp.put(PdfName.SUBTYPE, PdfName.XML);
         	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
@@ -1060,7 +1060,7 @@ class PdfStamperImp extends PdfWriter {
                     markUsed(annots);
                     if (!annot.isUsed()) {
                         PdfRectangle rect = (PdfRectangle)annot.get(PdfName.RECT);
-                        if (rect.left() != 0 || rect.right() != 0 || rect.top() != 0 || rect.bottom() != 0) {
+                        if (rect != null && (rect.left() != 0 || rect.right() != 0 || rect.top() != 0 || rect.bottom() != 0)) {
                             int rotation = reader.getPageRotation(pageN);
                             Rectangle pageSize = reader.getPageSizeWithRotation(pageN);
                             switch (rotation) {
