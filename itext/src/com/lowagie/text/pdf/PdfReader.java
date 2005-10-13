@@ -1976,7 +1976,7 @@ public class PdfReader {
                 else
                     visited.put(ref.getNumber(), 1);
             }
-            else {
+            else if (contents.isArray()) {
                 PdfArray array = (PdfArray)contents;
                 ArrayList list = array.getArrayList();
                 for (int j = 0; j < list.size(); ++j) {
