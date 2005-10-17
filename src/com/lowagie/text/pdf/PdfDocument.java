@@ -505,7 +505,8 @@ class PdfDocument extends Document implements DocListener {
     /** Holds the type of the last element, that has been added to the document. */
     private int lastElementType = -1;    
     
-    
+    protected int markPoint;
+       
     // constructors
     
     /**
@@ -782,6 +783,8 @@ class PdfDocument extends Document implements DocListener {
         PdfPage page;
         int rotation = pageSize.getRotation();
         page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
+        if (writer.isTagged())
+            page.put(PdfName.STRUCTPARENTS, new PdfNumber(writer.getCurrentPageNumber() - 1));
         // we add the transitions
         if (this.transition!=null) {
             page.put(PdfName.TRANS, this.transition.getTransitionDictionary());
@@ -1834,6 +1837,7 @@ class PdfDocument extends Document implements DocListener {
     private void initPage() throws DocumentException {
         
         // initialisation of some page objects
+        markPoint = 0;
         annotations = delayedAnnotations;
         delayedAnnotations = new ArrayList();
         pageResources = new PageResources();
@@ -2977,5 +2981,13 @@ class PdfDocument extends Document implements DocListener {
     		ioe.printStackTrace();
     	}
     	return baos.toByteArray();
+    }
+    
+    int getMarkPoint() {
+        return markPoint;
+    }
+    
+    void incMarkPoint() {
+        ++markPoint;
     }
 }

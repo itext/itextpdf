@@ -728,7 +728,7 @@ public class PdfWriter extends DocWriter {
     
     protected HashMap documentExtGState = new HashMap();
     
-    protected HashMap documentLayers = new HashMap();
+    protected HashMap documentProperties = new HashMap();
     protected HashSet documentOCG = new HashSet();
     protected ArrayList documentOCGorder = new ArrayList();
     protected PdfOCProperties OCProperties;
@@ -811,7 +811,11 @@ public class PdfWriter extends DocWriter {
      * Holds value of property fullCompression.
      */
     protected boolean fullCompression = false;
-        
+    
+    protected boolean tagged = false;
+    
+    protected PdfStructureTreeRoot structureTreeRoot;
+   
     // constructor
     
     protected PdfWriter() {
@@ -1147,6 +1151,18 @@ public class PdfWriter extends DocWriter {
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj)
     {
         PdfDictionary catalog = ((PdfDocument)document).getCatalog(rootObj);
+        if (tagged) {
+            try {
+                getStructureTreeRoot().buildTree();
+            }
+            catch (Exception e) {
+                throw new ExceptionConverter(e);
+            }
+            catalog.put(PdfName.STRUCTTREEROOT, structureTreeRoot.getReference());
+            PdfDictionary mi = new PdfDictionary();
+            mi.put(PdfName.MARKED, PdfBoolean.PDFTRUE);
+            catalog.put(PdfName.MARKINFO, mi);
+        }
         if (documentOCG.size() == 0)
             return catalog;
         fillOCProperties(false);
@@ -1202,11 +1218,17 @@ public class PdfWriter extends DocWriter {
             PdfObject obj[] = (PdfObject[])documentExtGState.get(gstate);
             addToBody(gstate, (PdfIndirectReference)obj[1]);
         }
-        // add the layers
-        for (Iterator it = documentLayers.keySet().iterator(); it.hasNext();) {
-            PdfOCG layer = (PdfOCG)it.next();
-            if (layer instanceof PdfLayerMembership)
+        // add the properties
+        for (Iterator it = documentProperties.keySet().iterator(); it.hasNext();) {
+            Object prop = it.next();
+            PdfObject[] obj = (PdfObject[])documentProperties.get(prop);
+            if (prop instanceof PdfLayerMembership){
+                PdfLayerMembership layer = (PdfLayerMembership)prop;
                 addToBody(layer.getPdfObject(), layer.getRef());
+            }
+            else if ((prop instanceof PdfDictionary) && !(prop instanceof PdfLayer)){
+                addToBody((PdfDictionary)prop, (PdfIndirectReference)obj[1]);
+            }
         }
         for (Iterator it = documentOCG.iterator(); it.hasNext();) {
             PdfOCG layer = (PdfOCG)it.next();
@@ -1630,14 +1652,18 @@ public class PdfWriter extends DocWriter {
             throw new IllegalArgumentException("Only PdfLayer is accepted.");
     }
     
-    PdfName addSimpleLayer(PdfOCG layer) {
-        if (!documentLayers.containsKey(layer)) {
-            checkPDFXConformance(this, PDFXKEY_LAYER, null);
-            documentLayers.put(layer, new PdfName("OC" + (documentLayers.size() + 1)));
+    PdfObject[] addSimpleProperty(Object prop, PdfIndirectReference refi) {
+        if (!documentProperties.containsKey(prop)) {
+            if (prop instanceof PdfOCG)
+                checkPDFXConformance(this, PDFXKEY_LAYER, null);
+            documentProperties.put(prop, new PdfObject[]{new PdfName("Pr" + (documentProperties.size() + 1)), refi});
         }
-        return (PdfName)documentLayers.get(layer);
+        return (PdfObject[])documentProperties.get(prop);
     }
-    
+
+    boolean propertyExists(Object prop) {
+        return documentProperties.containsKey(prop);
+    }
     /**
      * Gets the <CODE>PdfDocument</CODE> associated with this writer.
      * @return the <CODE>PdfDocument</CODE>
@@ -2611,5 +2637,32 @@ public class PdfWriter extends DocWriter {
             addToBody(template.getFormXObject(), template.getIndirectReference());
             objs[1] = null;
         }
+    }
+    
+    /**
+     * Mark this document for tagging. It must be called before open.
+     */    
+    public void setTagged() {
+        if (open)
+            throw new IllegalArgumentException("Tagging must be set before opening the document.");
+        tagged = true;
+    }
+    
+    /**
+     * Check if the document is marked for tagging.
+     * @return <CODE>true</CODE> if the document is marked for tagging
+     */    
+    public boolean isTagged() {
+        return tagged;
+    }
+    
+    /**
+     * Gets the structure tree root. If the document is not marked for tagging it will return <CODE>null</CODE>.
+     * @return the structure tree root
+     */    
+    public PdfStructureTreeRoot getStructureTreeRoot() {
+        if (tagged && structureTreeRoot == null)
+            structureTreeRoot = new PdfStructureTreeRoot(this);
+        return structureTreeRoot;
     }
 }
