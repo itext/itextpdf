@@ -548,6 +548,10 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name of an encoding */
     public static final PdfName MAC_ROMAN_ENCODING = new PdfName("MacRomanEncoding");
     /** A name */
+    public static final PdfName MARKED = new PdfName("Marked");
+    /** A name */
+    public static final PdfName MARKINFO = new PdfName("MarkInfo");
+    /** A name */
     public static final PdfName MASK = new PdfName("Mask");
     /** A name */
     public static final PdfName MAX = new PdfName("max");
@@ -555,6 +559,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName MAXLEN = new PdfName("MaxLen");
     /** A name */
     public static final PdfName MEDIABOX = new PdfName("MediaBox");
+    /** A name */
+    public static final PdfName MCID = new PdfName("MCID");
     /** A name */
     public static final PdfName METADATA = new PdfName("Metadata");
     /** A name */
@@ -668,6 +674,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PARENT = new PdfName("Parent");
     /** A name */
+    public static final PdfName PARENTTREE = new PdfName("ParentTree");
+    /** A name */
     public static final PdfName PATTERN = new PdfName("Pattern");
     /** A name */
     public static final PdfName PATTERNTYPE = new PdfName("PatternType");
@@ -675,6 +683,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName PDF = new PdfName("PDF");
     /** A name */
     public static final PdfName PERCEPTUAL = new PdfName("Perceptual");
+    /** A name */
+    public static final PdfName PG = new PdfName("Pg");
     /** A name */
     public static final PdfName POPUP = new PdfName("Popup");
     /** A name */
@@ -734,6 +744,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName RI = new PdfName("RI");
     /** A name */
+    public static final PdfName ROLEMAP = new PdfName("RoleMap");
+    /** A name */
     public static final PdfName ROOT = new PdfName("Root");
     /** A name */
     public static final PdfName ROTATE = new PdfName("Rotate");
@@ -785,6 +797,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName STRIKEOUT = new PdfName("StrikeOut");
     /** A name */
     public static final PdfName STRUCTPARENT = new PdfName("StructParent");
+    /** A name */
+    public static final PdfName STRUCTPARENTS = new PdfName("StructParents");
+    /** A name */
+    public static final PdfName STRUCTTREEROOT = new PdfName("StructTreeRoot");
     /** A name */
     public static final PdfName STYLE = new PdfName("Style");
     /** A name */
