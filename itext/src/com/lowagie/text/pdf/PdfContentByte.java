@@ -2846,16 +2846,38 @@ public class PdfContentByte {
     
     /**
      * Begins a marked content sequence. This sequence will be tagged with the structure <CODE>struc</CODE>.
+     * The same structure can be used several times to connect text that belongs to the same logical segment
+     * but is in a different location, like the same paragraph crossing to another page, for example.
      * @param struc the tagging structure
      */    
     public void beginMarkedContentSequence(PdfStructureElement struc) {
         PdfObject obj = struc.get(PdfName.K);
-        if (struc.get(PdfName.K) != null)
-            throw new IllegalArgumentException("The structure was already used.");
         int mark = pdf.getMarkPoint();
+        if (obj != null) {
+            PdfArray ar = null;
+            if (obj.isNumber()) {
+                ar = new PdfArray();
+                ar.add(obj);
+                struc.put(PdfName.K, ar);
+            }
+            else if (obj.isArray()) {
+                ar = (PdfArray)obj;
+                if (!((PdfObject)ar.getArrayList().get(0)).isNumber())
+                    throw new IllegalArgumentException("The structure has kids.");
+            }
+            else
+                throw new IllegalArgumentException("Unknown object at /K " + obj.getClass().toString());
+            PdfDictionary dic = new PdfDictionary(PdfName.MCR);
+            dic.put(PdfName.PG, writer.getCurrentPage());
+            dic.put(PdfName.MCID, new PdfNumber(mark));
+            ar.add(dic);
+            struc.setPageMark(writer.getPageNumber() - 1, -1);
+        }
+        else {
+            struc.setPageMark(writer.getPageNumber() - 1, mark);
+            struc.put(PdfName.PG, writer.getCurrentPage());
+        }
         pdf.incMarkPoint();
-        struc.setPageMark(writer.getPageNumber() - 1, mark);
-        struc.put(PdfName.PG, writer.getCurrentPage());
         content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
     }
     
