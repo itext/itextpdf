@@ -117,7 +117,7 @@ public class PdfStructureTreeRoot extends PdfDictionary {
     
     private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference) throws IOException {
         PdfObject obj = struc.get(PdfName.K);
-        if (obj != null && obj.isArray()) {
+        if (obj != null && obj.isArray() && !((PdfObject)((PdfArray)obj).getArrayList().get(0)).isNumber()) {
             PdfArray ar = (PdfArray)obj;
             ArrayList a = ar.getArrayList();
             for (int k = 0; k < a.size(); ++k) {

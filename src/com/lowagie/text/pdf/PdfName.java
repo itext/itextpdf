@@ -562,6 +562,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName MCID = new PdfName("MCID");
     /** A name */
+    public static final PdfName MCR = new PdfName("MCR");
+    /** A name */
     public static final PdfName METADATA = new PdfName("Metadata");
     /** A name */
     public static final PdfName MIN = new PdfName("min");
