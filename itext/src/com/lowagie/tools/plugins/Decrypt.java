@@ -65,12 +65,12 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Allows you to decrypt an existing PDF file.
  */
 public class Decrypt extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
 
-	
+
 	/**
 	 * Constructs an Decrypt object.
 	 */
@@ -88,7 +88,7 @@ public class Decrypt extends AbstractTool {
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
@@ -123,7 +123,7 @@ public class Decrypt extends AbstractTool {
 		}
 		// represent the changes of the argument in the internal frame
 	}
-	
+
     /**
      * Decrypts an existing PDF file.
      * @param args

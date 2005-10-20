@@ -130,7 +130,7 @@ public class BitsetArgument extends ToolArgument {
 					buf.append("0");
 				}
 			}
-			setValue(buf.toString());
+			setValue(buf.toString(), null);
 		}
 	}
 }

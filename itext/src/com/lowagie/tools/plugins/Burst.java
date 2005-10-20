@@ -34,11 +34,11 @@ import com.lowagie.tools.arguments.ToolArgument;
  * This tool lets you split a PDF in several separate PDF files (1 per page).
  */
 public class Burst extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
-	
+
 	/**
 	 * Constructs a Burst object.
 	 */
@@ -56,12 +56,12 @@ public class Burst extends AbstractTool {
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
 	public void execute() {
-        try {			
+        try {
 			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
 			File src = (File)getValue("srcfile");
             File directory = src.getParentFile();
@@ -82,7 +82,7 @@ public class Burst extends AbstractTool {
             	while (filename.length() < digits) filename = "0" + filename;
             	filename = "_" + filename + ".pdf";
             	// step 1: creation of a document-object
-            	document = new Document(reader.getPageSizeWithRotation(pagenumber)); 
+            	document = new Document(reader.getPageSizeWithRotation(pagenumber));
 				// step 2: we create a writer that listens to the document
             	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(new File(directory, name + filename)));
             	// step 3: we open the document
@@ -116,9 +116,9 @@ public class Burst extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-	
+
     /**
-     * Divide a PDF file into separate pages (1 per page).
+     * Divide PDF file into pages.
      * @param args
      */
 	public static void main(String[] args) {

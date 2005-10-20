@@ -69,7 +69,7 @@ public class InspectPDF extends AbstractTool {
 	static {
 		addVersion("$Id$");
 	}
-	
+
 	/**
 	 * Constructs an InpectPDF object.
 	 */
@@ -87,7 +87,7 @@ public class InspectPDF extends AbstractTool {
 		internalFrame.setJMenuBar(getMenubar());
 		internalFrame.getContentPane().add(getConsole(40, 30));
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
@@ -149,7 +149,7 @@ public class InspectPDF extends AbstractTool {
 		}
 		// represent the changes of the argument in the internal frame
 	}
-	
+
     /**
      * Inspects an existing PDF file.
      * @param args

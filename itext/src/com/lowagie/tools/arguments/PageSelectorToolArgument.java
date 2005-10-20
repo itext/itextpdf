@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Carsten Hammer.
+ * Copyright 2005 by Anonymous known by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,62 +47,66 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.tools;
+package com.lowagie.tools.arguments;
 
-import java.awt.*;
-import javax.swing.*;
-import java.awt.BorderLayout;
-import com.lowagie.tools.plugins.*;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+
+import com.lowagie.tools.plugins.AbstractTool;
 
 /**
- * JFrame that shows the versions of all the plugins.
+ * Argument that allows you to select a (set of) page(s).
  */
-public class Versions
-    extends JFrame {
-  /**
-   * Constructs a JFrame.
-   * @throws HeadlessException
-   */
-  public Versions() throws HeadlessException {
-    super("Plugins and their version");
-    try {
-      jbInit();
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
+public class PageSelectorToolArgument
+    extends ToolArgument {
+  public final static String PROPERTYFILENAME = "inputfilename";
+  public final static String PROPERTYPAGESELECTIONSTRING =
+      "pageselectionstring";
+
+  public PageSelectorToolArgument(AbstractTool tool, String name,
+                                  String description,
+                                  String classname) {
+    super(tool, name, description, classname);
+
+  }
+
+  public void actionPerformed(ActionEvent e) {
+    if (jDialog1 != null) {
+      jDialog1.show();
     }
   }
 
-  /**
-   * Main method (test purposes only)
-   * @param args
-   */
-  public static void main(String[] args) {
-    Versions untitled1 = new Versions();
-  }
-
-  private void jbInit() throws Exception {
-    this.getContentPane().setLayout(borderLayout1);
-    this.getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
-    StringBuffer sb = new StringBuffer();
-    sb.append("<html>");
-
-    Iterator it = new TreeSet(AbstractTool.versionsarray).iterator();
-
-    while (it.hasNext()) {
-    	sb.append("<p>");
-    	sb.append((String)it.next());
-    	sb.append("</p>");
+  public Object getArgument() throws InstantiationException {
+    if (value == null) {
+      return null;
     }
-
-    sb.append("</html>");
-    jLabel1.setText(sb.toString());
-    pack();
+    return value;
   }
 
-  JLabel jLabel1 = new JLabel();
+  public void propertyChange(PropertyChangeEvent evt) {
+    String propertyname = evt.getPropertyName();
+    if (jDialog1 == null) {
+      actionPerformed(null);
+    }
+    if (propertyname == null) {
+      return;
+    }
+    else if (propertyname.equals(PROPERTYFILENAME)) {
+      String filename = (String) evt.getNewValue();
+      if(jDialog1!=null)jDialog1.hide();
+      jDialog1 = new PageSelectionTableDialog(tool.getInternalFrame());
+      jDialog1.show();
+      jDialog1.addPropertyChangeListener(this);
+      jDialog1.setDataModel(new PageTableModel(filename));
+      jDialog1.setTitle(filename);
+    }
+    else if (propertyname.equals(PROPERTYPAGESELECTIONSTRING)) {
+      String pageselectionstring = (String) evt.getNewValue();
+      System.out.print(" Oldvalue:" + evt.getOldValue());
+      System.out.println(" Newvalue:" + pageselectionstring);
+      setValue(pageselectionstring, PROPERTYPAGESELECTIONSTRING);
+    }
+  }
 
-  BorderLayout borderLayout1 = new BorderLayout();
+  PageSelectionTableDialog jDialog1 = null;
 }
