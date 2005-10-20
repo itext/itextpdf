@@ -57,6 +57,10 @@ import javax.swing.*;
 
 import com.lowagie.text.pdf.*;
 import java.util.HashMap;
+import java.util.TimeZone;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.Date;
 
 /**
  * Label for the FileChooser
@@ -83,7 +87,7 @@ public class LabelAccessory
       this.add(jPanel2, java.awt.BorderLayout.CENTER);
       jScrollPane1.setPreferredSize(new Dimension(200, 200));
       jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-    jScrollPane1.setViewportView(jLabel1);
+      jScrollPane1.setViewportView(jLabel1);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -123,10 +127,14 @@ public class LabelAccessory
           sb.append("Producer= " + pdfinfo.get("Producer") + "<p>");
         }
         if (pdfinfo.get("ModDate") != null) {
-          sb.append("ModDate= " + pdfinfo.get("ModDate") + "<p>");
+          sb.append("ModDate= " +
+                    decryptPDFDate(pdfinfo.get("ModDate").toString()) +
+                    "<p>");
         }
         if (pdfinfo.get("CreationDate") != null) {
-          sb.append("CreationDate= " + pdfinfo.get("CreationDate") + "<p>");
+          sb.append("CreationDate= " +
+                    decryptPDFDate(pdfinfo.get("CreationDate").toString()) +
+                    "<p>");
         }
         sb.append("</html>");
         jLabel1.setText(sb.toString());
@@ -147,4 +155,64 @@ public class LabelAccessory
       }
     }
   }
+
+  private int parseint(int offset, int length, int fallback, String text) {
+    try {
+      return Integer.parseInt(text.substring(offset, offset + length), 10);
+    }
+    catch (Exception ex) {
+      return fallback;
+    }
+  }
+
+  public Date decryptPDFDate(String datestring) {
+    if (!datestring.startsWith("D:")) {
+      return null;
+    }
+    Calendar calendar = Calendar.getInstance(Locale.getDefault());
+    int i = datestring.indexOf('+');
+    i = i != -1 ? i : datestring.indexOf('-');
+    i = i != -1 ? i : datestring.indexOf('Z');
+    if (i != -1) {
+      TimeZone timezone = TimeZone.getDefault();
+      String datestringpart = datestring.substring(i);
+      String zonestring = datestringpart;
+      char prefix = zonestring.charAt(0);
+      zonestring = zonestring.substring(1);
+      int start = zonestring.indexOf("'");
+      int end = zonestring.lastIndexOf("'");
+      int hours = 0;
+      int minutes = 0;
+      if (start >= 0) {
+        try {
+          hours = Integer.parseInt(zonestring.substring(0, start), 10);
+        }
+        catch (Exception ex) {
+          hours = 0;
+        }
+      }
+      if (start >= 0 && end >= 0) {
+        try {
+          minutes = Integer.parseInt(zonestring.substring(start + 1, end), 10);
+        }
+        catch (Exception ex) {
+          minutes = 0;
+        }
+      }
+      int zone = (hours * 60 * 60 + minutes * 60) * 1000;
+      if (prefix == '-') {
+        zone *= -1;
+      }
+      timezone.setRawOffset(zone);
+      datestring = datestring.substring(0, i);
+      calendar.setTimeZone(timezone);
+    }
+    datestring = datestring.substring(2);
+    calendar.set(parseint(0, 4, 0, datestring),
+                 parseint(4, 2, 1, datestring) - 1,
+                 parseint(6, 2, 1, datestring), parseint(8, 2, 0, datestring),
+                 parseint(10, 2, 0, datestring), parseint(12, 2, 0, datestring));
+    return calendar.getTime();
+  }
+
 }

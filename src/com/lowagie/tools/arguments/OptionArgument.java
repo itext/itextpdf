@@ -204,7 +204,7 @@ public class OptionArgument extends ToolArgument {
 	 		);
 		if (result == 0) {
 			Entry entry = (Entry)cb.getSelectedItem();
-			setValue(entry.getValueToString());
+			setValue(entry.getValueToString(), null);
 		}
 	}
 }

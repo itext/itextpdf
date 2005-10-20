@@ -75,13 +75,13 @@ public class Handouts extends AbstractTool {
 	static {
 		addVersion("$Id$");
 	}
-	
+
 	/**
 	 * Constructs a Handouts object.
 	 */
 	public Handouts() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to convert", false, new PdfFilter()));
-		arguments.add(new FileArgument(this, "destfile", "The file to which the handout has to be written", true, new PdfFilter()));
+		arguments.add(new FileArgument(this, "destfile", "The file to which the Handout has to be written", true, new PdfFilter()));
 		OptionArgument oa = new OptionArgument(this, "pages", "The number of pages you want on one handout page");
 		oa.addOption("2 pages on 1", "2");
 		oa.addOption("3 pages on 1", "3");
@@ -119,30 +119,30 @@ public class Handouts extends AbstractTool {
 			catch(Exception e) {
 				pages = 4;
 			}
-            
+
 			float x1 = 30f;
 			float x2 = 280f;
 			float x3 = 320f;
 			float x4 = 565f;
-            
+
 			float[] y1 = new float[pages];
 			float[] y2 = new float[pages];
-            
+
 			float height = (778f - (20f * (pages - 1))) / pages;
 			y1[0] = 812f;
 			y2[0] = 812f - height;
-            
+
 			for (int i = 1; i < pages; i++) {
 				y1[i] = y2[i - 1] - 20f;
 				y2[i] = y1[i] - height;
 			}
-            
+
 			// we create a reader for a certain document
 			PdfReader reader = new PdfReader(src.getAbsolutePath());
 			// we retrieve the total number of pages
 			int n = reader.getNumberOfPages();
 			System.out.println("There are " + n + " pages in the original file.");
-            
+
 			// step 1: creation of a document-object
 			Document document = new Document(PageSize.A4);
 			// step 2: we create a writer that listens to the document
@@ -209,9 +209,9 @@ public class Handouts extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-	
+
     /**
-     * Generates handouts.
+     * Converts a PDF file to a PDF file useable as Handout.
      * @param args
      */
 	public static void main(String[] args) {

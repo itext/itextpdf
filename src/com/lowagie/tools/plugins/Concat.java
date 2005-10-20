@@ -69,7 +69,7 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Concatenates two PDF files
  */
 public class Concat extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
@@ -161,7 +161,7 @@ public class Concat extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-	
+
     /**
      * Concatenates two PDF files.
      * @param args
@@ -181,5 +181,5 @@ public class Concat extends AbstractTool {
 	protected File getDestPathPDF() throws InstantiationException {
 		return (File)getValue("destfile");
 	}
-    
+
 }

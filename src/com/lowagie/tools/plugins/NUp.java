@@ -35,11 +35,11 @@ import com.lowagie.tools.arguments.ToolArgument;
  * This tool lets you generate a PDF that shows N pages on 1.
  */
 public class NUp extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
-	
+
 	/**
 	 * Constructs an NUp object.
 	 */
@@ -66,7 +66,7 @@ public class NUp extends AbstractTool {
 		internalFrame.setJMenuBar(getMenubar());
 		internalFrame.getContentPane().add(getConsole(30, 30));
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
@@ -142,7 +142,7 @@ public class NUp extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-	
+
     /**
      * Generates an NUp version of an existing PDF file.
      * @param args

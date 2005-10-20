@@ -49,159 +49,223 @@
  */
 package com.lowagie.tools.arguments;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import java.beans.*;
+import java.io.*;
+import java.util.*;
 
-import javax.swing.JColorChooser;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 import com.lowagie.text.Image;
-import com.lowagie.tools.plugins.AbstractTool;
+import com.lowagie.tools.plugins.*;
 
 /**
  * This is an argument of one of the tools in the toolbox.
  */
-public class ToolArgument implements ActionListener {
-	/** reference to the internal frame */
-	protected AbstractTool tool;
-	/** describes the argument. */
-	protected String description;
-	/** short name for the argument. */
-	protected String name;
-	/** type of the argument. */
-	protected String classname;
-	/** value of the argument. */
-	protected String value = null;
-	
-	/** Constructs a ToolArgument. */
-	public ToolArgument() {}
-	
-	/**
-	 * Constructs a ToolArgument. 
-	 * @param tool	the tool that needs this argument
-	 * @param name	the name of the argument
-	 * @param description	the description of the argument
-	 * @param classname		the type of the argument
-	 */
-	public ToolArgument(AbstractTool tool, String name, String description, String classname) {
-		this.tool = tool;
-		this.name = name;
-		this.description = description;
-		this.classname = classname;
-	}
-	
-	/**
-	 * Gets the argument as an object.
-	 * @return an object
-	 * @throws InstantiationException
-	 */
-	public Object getArgument() throws InstantiationException {
-		if (value == null) return null;
-		try {
-			if (String.class.getName().equals(classname)) return value;
-			if (Image.class.getName().equals(classname)) return Image.getInstance(value);
-			if (File.class.getName().equals(classname)) return new File(value);
-			if (Color.class.getName().equals(classname)) return Color.decode(value);
-		} catch (Exception e) {
-			throw new InstantiationException(e.getMessage());
-		}
-		return value;
-	}
-	
-	/**
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (String.class.getName().equals(classname))
-			setValue(JOptionPane.showInputDialog(tool.getInternalFrame(), "Enter a value for " + name + ":"));
-		if (Image.class.getName().equals(classname)) {
-			JFileChooser fc = new JFileChooser();
-			fc.showOpenDialog(tool.getInternalFrame());
-			setValue(fc.getSelectedFile().getAbsolutePath());
-		}
-		if (File.class.getName().equals(classname)) {
-			JFileChooser fc = new JFileChooser();
-			fc.showOpenDialog(tool.getInternalFrame());
-			setValue(fc.getSelectedFile().getAbsolutePath());
-		}
-		if (Color.class.getName().equals(classname)) {
-			Color initialColor = new Color(0xFF, 0xFF, 0xFF);
-			if (value != null) initialColor = Color.decode(value);
-			Color newColor = JColorChooser.showDialog(tool.getInternalFrame(), "Choose Color", initialColor);
-			setValue("0x" + Integer.toHexString((newColor.getRed() << 16) | (newColor.getGreen() << 8) | (newColor.getBlue() << 0)).toUpperCase());
-		}
-	}
-	
-	/**
-	 * Give you a String that can be used in a usage description.
-	 * @return a String
-	 */
-	public String getUsage() {
-		StringBuffer buf = new StringBuffer("  ");
-		buf.append(name);
-		buf.append(" -  ");
-		buf.append(description);
-		buf.append("\n");
-		return buf.toString();
-	}
-	
-	/**
-	 * @return Returns the classname.
-	 */
-	public String getClassname() {
-		return classname;
-	}
-	
-	/**
-	 * @param classname The classname to set.
-	 */
-	public void setClassname(String classname) {
-		this.classname = classname;
-	}
-	
-	/**
-	 * @return Returns the description.
-	 */
-	public String getDescription() {
-		return description;
-	}
-	
-	/**
-	 * @param description The description to set.
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	/**
-	 * @return Returns the name.
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/**
-	 * @return Returns the value.
-	 */
-	public String getValue() {
-		return value;
-	}
-	
-	/**
-	 * @param value The value to set.
-	 */
-	public void setValue(String value) {
-		this.value = value;
-		tool.valueHasChanged(this);
-	}
+public class ToolArgument
+    implements ActionListener, PropertyChangeListener {
+  /** reference to the internal frame */
+  protected AbstractTool tool;
+  /** describes the argument. */
+  protected String description;
+  /** short name for the argument. */
+  protected String name;
+  /** type of the argument. */
+  protected String classname;
+  /** value of the argument. */
+  protected String value = null;
+
+  /** Constructs a ToolArgument. */
+  public ToolArgument() {}
+
+  /**
+   * Constructs a ToolArgument.
+   * @param tool	the tool that needs this argument
+   * @param name	the name of the argument
+   * @param description	the description of the argument
+   * @param classname		the type of the argument
+   */
+  public ToolArgument(AbstractTool tool, String name, String description,
+                      String classname) {
+    this.tool = tool;
+    this.name = name;
+    this.description = description;
+    this.classname = classname;
+  }
+
+  /**
+   * Gets the argument as an object.
+   * @return an object
+   * @throws InstantiationException
+   */
+  public Object getArgument() throws InstantiationException {
+    if (value == null) {
+      return null;
+    }
+    try {
+      if (String.class.getName().equals(classname)) {
+        return value;
+      }
+      if (Image.class.getName().equals(classname)) {
+        return Image.getInstance(value);
+      }
+      if (File.class.getName().equals(classname)) {
+        return new File(value);
+      }
+      if (Color.class.getName().equals(classname)) {
+        return Color.decode(value);
+      }
+    }
+    catch (Exception e) {
+      throw new InstantiationException(e.getMessage());
+    }
+    return value;
+  }
+
+  /**
+   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+   */
+  public void actionPerformed(ActionEvent e) {
+    if (String.class.getName().equals(classname)) {
+      setValue(JOptionPane.showInputDialog(tool.getInternalFrame(),
+                                           "Enter a value for " + name + ":"), null);
+    }
+    if (Image.class.getName().equals(classname)) {
+      JFileChooser fc = new JFileChooser();
+      fc.showOpenDialog(tool.getInternalFrame());
+      setValue(fc.getSelectedFile().getAbsolutePath(), null);
+    }
+    if (File.class.getName().equals(classname)) {
+      JFileChooser fc = new JFileChooser();
+      fc.showOpenDialog(tool.getInternalFrame());
+      setValue(fc.getSelectedFile().getAbsolutePath(), null);
+    }
+    if (Color.class.getName().equals(classname)) {
+      Color initialColor = new Color(0xFF, 0xFF, 0xFF);
+      if (value != null) {
+        initialColor = Color.decode(value);
+      }
+      Color newColor = JColorChooser.showDialog(tool.getInternalFrame(),
+                                                "Choose Color", initialColor);
+      setValue("0x" +
+               Integer.toHexString( (newColor.getRed() << 16) |
+                                   (newColor.getGreen() << 8) |
+                                   (newColor.getBlue() << 0)).toUpperCase(), null);
+    }
+  }
+
+  /**
+   * Give you a String that can be used in a usage description.
+   * @return a String
+   */
+  public String getUsage() {
+    StringBuffer buf = new StringBuffer("  ");
+    buf.append(name);
+    buf.append(" -  ");
+    buf.append(description);
+    buf.append("\n");
+    return buf.toString();
+  }
+
+  /**
+   * @return Returns the classname.
+   */
+  public String getClassname() {
+    return classname;
+  }
+
+  /**
+   * @param classname The classname to set.
+   */
+  public void setClassname(String classname) {
+    this.classname = classname;
+  }
+
+  /**
+   * @return Returns the description.
+   */
+  public String getDescription() {
+    return description;
+  }
+
+  /**
+   * @param description The description to set.
+   */
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  /**
+   * @return Returns the name.
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @param name The name to set.
+   */
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  /**
+   * @return Returns the value.
+   */
+  public String getValue() {
+    return value;
+  }
+
+  /**
+   * @param value The value to set.
+   */
+  public void setValue(String value, String propertyname) {
+    Object oldvalue = this.value;
+    this.value = value;
+    tool.valueHasChanged(this);
+    this.firePropertyChange(new PropertyChangeEvent(this, propertyname,
+        oldvalue, this.value));
+  }
+
+  transient Vector propertyChangeListeners;
+  public synchronized void addPropertyChangeListener(PropertyChangeListener l) {
+
+    Vector v = propertyChangeListeners == null ? new Vector(2) :
+        (Vector) propertyChangeListeners.clone();
+    if (!v.contains(l)) {
+      v.addElement(l);
+      propertyChangeListeners = v;
+    }
+  }
+
+  public synchronized void removePropertyChangeListener(PropertyChangeListener
+      l) {
+    if (propertyChangeListeners != null && propertyChangeListeners.contains(l)) {
+      Vector v = (Vector) propertyChangeListeners.clone();
+      v.removeElement(l);
+      propertyChangeListeners = v;
+    }
+
+  }
+
+  protected void firePropertyChange(PropertyChangeEvent evt) {
+    if (propertyChangeListeners != null) {
+      Vector listeners = propertyChangeListeners;
+      int count = listeners.size();
+      for (int i = 0; i < count; i++) {
+        ( (PropertyChangeListener) listeners.elementAt(i)).propertyChange(evt);
+      }
+    }
+  }
+
+  /**
+   * This method gets called when a bound property is changed.
+   *
+   * @param evt A PropertyChangeEvent object describing the event source and the property that has
+   *   changed.
+   * @todo Implement this java.beans.PropertyChangeListener method
+   */
+  public void propertyChange(PropertyChangeEvent evt) {
+  }
 }

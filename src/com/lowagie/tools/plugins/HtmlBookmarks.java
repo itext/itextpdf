@@ -81,11 +81,11 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Allows you to generate an index file in HTML containing Bookmarks to an existing PDF file.
  */
 public class HtmlBookmarks extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
-	
+
 	/**
 	 * Constructs an HtmlBookmarks object.
 	 */
@@ -104,7 +104,7 @@ public class HtmlBookmarks extends AbstractTool {
 		internalFrame.setJMenuBar(getMenubar());
 		internalFrame.getContentPane().add(getConsole(40, 30));
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
@@ -160,7 +160,7 @@ public class HtmlBookmarks extends AbstractTool {
 			else {
 				HashMap c;
 				for (Iterator i = list.iterator(); i.hasNext(); ) {
-					c = (HashMap) i.next(); 
+					c = (HashMap) i.next();
 					Chapter chapter = (Chapter)createBookmark(src.getName(), null, c);
 					ArrayList kids = (ArrayList) c.get("Kids");
 					if (kids != null) {
@@ -183,9 +183,9 @@ public class HtmlBookmarks extends AbstractTool {
             System.err.println(e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Recursive method to write Bookmark titles to the System.out. 
+	 * Recursive method to write Bookmark titles to the System.out.
 	 * @param pdf the path to the PDF file
 	 * @param section the section to which the bookmarks should be added
 	 * @param bookmark a HashMap containing a Bookmark (and possible kids)
@@ -198,7 +198,7 @@ public class HtmlBookmarks extends AbstractTool {
 			addBookmark(pdf, s, (HashMap)i.next());
 		}
 	}
-	
+
 	/**
 	 * Adds a line with the title and an anchor.
 	 * @param pdf the link to the PDF file
@@ -264,9 +264,9 @@ public class HtmlBookmarks extends AbstractTool {
 		}
 		// represent the changes of the argument in the internal frame
 	}
-	
+
     /**
-     * Allows you to generate an index file in HTML containing Bookmarks to an existing PDF file.
+     * Allows you to HtmlBookmarks an existing PDF file.
      * @param args
      */
     public static void main(String[] args) {

@@ -11,6 +11,7 @@ Manipulate.N-up: com.lowagie.tools.plugins.NUp
 Manipulate.Burst: com.lowagie.tools.plugins.Burst
 Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
 Manipulate.SelectedPages: com.lowagie.tools.plugins.SelectedPages
+Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
 Properties.InspectPDF: com.lowagie.tools.plugins.InspectPDF
 Properties.HtmlBookmarks: com.lowagie.tools.plugins.HtmlBookmarks
 Convert2Pdf.PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum

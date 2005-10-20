@@ -178,7 +178,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
         for (Iterator i = arguments.iterator(); i.hasNext(); ) {
         	argument = (ToolArgument) i.next();
         	if (args.length > counter) {
-        		argument.setValue(args[counter]);
+        		argument.setValue(args[counter], null);
         	}
         	else {
         		break;

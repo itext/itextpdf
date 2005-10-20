@@ -35,7 +35,7 @@ import com.lowagie.tools.arguments.ToolArgument;
  * This tool lets you split a PDF in two separate PDF files.
  */
 public class Split extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
@@ -59,12 +59,12 @@ public class Split extends AbstractTool {
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
 	public void execute() {
-        try {			
+        try {
 			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
 			File src = (File)getValue("srcfile");
         	if (getValue("destfile1") == null) throw new InstantiationException("You need to choose a destination file for the first part of the PDF");
@@ -72,17 +72,17 @@ public class Split extends AbstractTool {
         	if (getValue("destfile2") == null) throw new InstantiationException("You need to choose a destination file for the second part of the PDF");
         	File file2 = (File)getValue("destfile2");
         	int pagenumber = Integer.parseInt((String)getValue("pagenumber"));
-                
+
         	// we create a reader for a certain document
 			PdfReader reader = new PdfReader(src.getAbsolutePath());
 			// we retrieve the total number of pages
 			int n = reader.getNumberOfPages();
 			System.out.println("There are " + n + " pages in the original file.");
-                
+
 			if (pagenumber < 2 || pagenumber > n) {
 				throw new DocumentException("You can't split this document at page " + pagenumber + "; there is no such page.");
 			}
-                
+
 			// step 1: creation of a document-object
 			Document document1 = new Document(reader.getPageSizeWithRotation(1));
 			Document document2 = new Document(reader.getPageSizeWithRotation(pagenumber));
@@ -144,7 +144,7 @@ public class Split extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-	
+
     /**
      * Split a PDF in two separate PDF files.
      * @param args

@@ -53,48 +53,64 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.BorderLayout;
 import com.lowagie.tools.plugins.*;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 /**
  * JFrame that shows the versions of all the plugins.
  */
-public class Versions extends JFrame {
-	/**
-	 * Constructs a JFrame.
-	 * @throws HeadlessException
-	 */
-	public Versions() throws HeadlessException {
-		super("Plugins and their version");
-		try {
-			jbInit();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+public class Versions
+    extends JFrame {
+  /**
+   * Constructs a JFrame.
+   * @throws HeadlessException
+   */
+  public Versions() throws HeadlessException {
+    super("Plugins and their version");
+    try {
+      jbInit();
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
 
-	/**
-	 * Main method (test purposes only)
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		Versions untitled1 = new Versions();
-	}
+  /**
+   * Main method (test purposes only)
+   * @param args
+   */
+  public static void main(String[] args) {
+    Versions untitled1 = new Versions();
+  }
 
-	private void jbInit() throws Exception {
-		this.getContentPane().setLayout(borderLayout1);
-		this.getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
-		StringBuffer sb = new StringBuffer();
-		sb.append("<html>");
-		for (int i = 0; i < AbstractTool.versionsarray.size(); i++) {
-			sb.append("<p>");
-			sb.append(AbstractTool.versionsarray.get(i));
-			sb.append("</p>");
-		}
-		sb.append("</html>");
-		jLabel1.setText(sb.toString());
-		pack();
-	}
+  private void jbInit() throws Exception {
+    this.getContentPane().setLayout(borderLayout1);
+    this.getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
+    StringBuffer sb = new StringBuffer();
+    sb.append("<html>");
 
-	JLabel jLabel1 = new JLabel();
+    Iterator it = AbstractTool.versionsarray.iterator();
+    TreeSet mynewlist = new TreeSet();
 
-	BorderLayout borderLayout1 = new BorderLayout();
+    while (it.hasNext()) {
+      mynewlist.add(it.next());
+    }
+
+    it = mynewlist.iterator();
+
+    while (it.hasNext()) {
+      String versionstring = (String) it.next();
+      sb.append("<p>");
+      sb.append(versionstring);
+      sb.append("</p>");
+    }
+
+    sb.append("</html>");
+    jLabel1.setText(sb.toString());
+    pack();
+  }
+
+  JLabel jLabel1 = new JLabel();
+
+  BorderLayout borderLayout1 = new BorderLayout();
 }

@@ -72,7 +72,7 @@ import com.lowagie.tools.arguments.ToolArgument;
  * and an answer by Hans-Werner Hilse.
  */
 public class PhotoAlbum extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
@@ -172,7 +172,7 @@ public class PhotoAlbum extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-	
+
     /**
      * Converts a tiff file to PDF.
      * @param args
