@@ -1333,6 +1333,8 @@ public class PdfReader {
             if (line[0] == 't') {
                 if (!PdfEncodings.convertToString(line, null).startsWith("trailer"))
                     continue;
+                tokens.seek(pos);
+                tokens.nextToken();
                 pos = tokens.getFilePointer();
                 try {
                     PdfDictionary dic = (PdfDictionary)readPRObject();
@@ -1974,7 +1976,7 @@ public class PdfReader {
                 else
                     visited.put(ref.getNumber(), 1);
             }
-            else {
+            else if (contents.isArray()) {
                 PdfArray array = (PdfArray)contents;
                 ArrayList list = array.getArrayList();
                 for (int j = 0; j < list.size(); ++j) {

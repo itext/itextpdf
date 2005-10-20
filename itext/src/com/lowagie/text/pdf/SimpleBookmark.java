@@ -489,7 +489,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
         }
     }
 
-    static Object[] iterateOutlines(PdfWriter writer, PdfIndirectReference parent, List kids, boolean namedAsNames) throws IOException {
+    public static Object[] iterateOutlines(PdfWriter writer, PdfIndirectReference parent, List kids, boolean namedAsNames) throws IOException {
         PdfIndirectReference refs[] = new PdfIndirectReference[kids.size()];
         for (int k = 0; k < refs.length; ++k)
             refs[k] = writer.getPdfIndirectReference();

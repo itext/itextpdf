@@ -61,6 +61,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Annotation;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -2798,9 +2799,9 @@ public class PdfContentByte {
     }
     
     private void beginLayer2(PdfOCG layer) {
-        PdfName name = writer.addSimpleLayer(layer);
+        PdfName name = (PdfName)writer.addSimpleProperty(layer, layer.getRef())[0];
         PageResources prs = getPageResources();
-        name = prs.addLayer(name, layer.getRef());
+        name = prs.addProperty(name, layer.getRef());
         content.append("/OC ").append(name.getBytes()).append(" BDC").append_i(separator);
     }
     
@@ -2841,5 +2842,92 @@ public class PdfContentByte {
     public void setDefaultColorspace(PdfName name, PdfObject obj) {
         PageResources prs = getPageResources();
         prs.addDefaultColor(name, obj);
+    }
+    
+    /**
+     * Begins a marked content sequence. This sequence will be tagged with the structure <CODE>struc</CODE>.
+     * The same structure can be used several times to connect text that belongs to the same logical segment
+     * but is in a different location, like the same paragraph crossing to another page, for example.
+     * @param struc the tagging structure
+     */    
+    public void beginMarkedContentSequence(PdfStructureElement struc) {
+        PdfObject obj = struc.get(PdfName.K);
+        int mark = pdf.getMarkPoint();
+        if (obj != null) {
+            PdfArray ar = null;
+            if (obj.isNumber()) {
+                ar = new PdfArray();
+                ar.add(obj);
+                struc.put(PdfName.K, ar);
+            }
+            else if (obj.isArray()) {
+                ar = (PdfArray)obj;
+                if (!((PdfObject)ar.getArrayList().get(0)).isNumber())
+                    throw new IllegalArgumentException("The structure has kids.");
+            }
+            else
+                throw new IllegalArgumentException("Unknown object at /K " + obj.getClass().toString());
+            PdfDictionary dic = new PdfDictionary(PdfName.MCR);
+            dic.put(PdfName.PG, writer.getCurrentPage());
+            dic.put(PdfName.MCID, new PdfNumber(mark));
+            ar.add(dic);
+            struc.setPageMark(writer.getPageNumber() - 1, -1);
+        }
+        else {
+            struc.setPageMark(writer.getPageNumber() - 1, mark);
+            struc.put(PdfName.PG, writer.getCurrentPage());
+        }
+        pdf.incMarkPoint();
+        content.append(struc.get(PdfName.S).getBytes()).append(" <</MCID ").append(mark).append(">> BDC").append_i(separator);
+    }
+    
+    /**
+     * Ends a marked content sequence
+     */    
+    public void endMarkedContentSequence() {
+        content.append("EMC").append_i(separator);
+    }
+    
+    /**
+     * Begins a marked content sequence. If property is <CODE>null</CODE> the mark will be of the type
+     * <CODE>BMC</CODE> otherwise it will be <CODE>BDC</CODE>.
+     * @param tag the tag
+     * @param property the property
+     * @param inline <CODE>true</CODE> to include the property in the content or <CODE>false</CODE>
+     * to include the property in the resource dictionary with the possibility of reusing
+     */    
+    public void beginMarkedContentSequence(PdfName tag, PdfDictionary property, boolean inline) {
+        if (property == null) {
+            content.append(tag.getBytes()).append(" BMC").append_i(separator);
+            return;
+        }
+        content.append(tag.getBytes()).append(' ');
+        if (inline)
+            try {
+                property.toPdf(writer, content);
+            }
+            catch (Exception e) {
+                throw new ExceptionConverter(e);
+            }
+        else {
+            PdfObject[] objs;
+            if (writer.propertyExists(property))
+                objs = writer.addSimpleProperty(property, null);
+            else
+                objs = writer.addSimpleProperty(property, writer.getPdfIndirectReference());
+            PdfName name = (PdfName)objs[0];
+            PageResources prs = getPageResources();
+            name = prs.addProperty(name, (PdfIndirectReference)objs[1]);
+            content.append(name.getBytes());
+        }
+        content.append(" BDC").append_i(separator);
+    }
+    
+    /**
+     * This is just a shorthand to <CODE>beginMarkedContentSequence(tag, null, false)</CODE>.
+     * @param tag the tag
+     */    
+    public void beginMarkedContentSequence(PdfName tag) {
+        beginMarkedContentSequence(tag, null, false);
     }
 }

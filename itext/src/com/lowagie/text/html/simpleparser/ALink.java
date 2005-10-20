@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 by Michael Niedermair.
+ * Copyright 2005 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -45,59 +45,13 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text;
+package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.Chapter;
 import com.lowagie.text.Paragraph;
-
 /**
- * Chapter with auto numbering.
  *
- * @author Michael Niedermair
+ * @author  psoares
  */
-public class ChapterAutoNumber extends Chapter {
-
-    /**
-     * the chapter number (for all instance)
-     */
-    private static int chapternumber = 0;
-
-    /**
-     * Create a new object.
-     *
-     * @param para     the Chapter title (as a <CODE>Paragraph</CODE>)
-     */
-    public ChapterAutoNumber(final Paragraph para) {
-        super(para, ++chapternumber);
-    }
-
-    /**
-     * Create a new objet.
-     * 
-     * @param title	    the Chapter title (as a <CODE>String</CODE>)
-     */
-    public ChapterAutoNumber(final String title) {
-        super(title, ++chapternumber);
-    }
-
-    /**
-     * Create a new section for this chapter and ad it.
-     *
-     * @param title  the Section title (as a <CODE>String</CODE>)
-     * @return Returns the new section.
-     */
-    public Section addSection(final String title) {
-        return addSection(title, 2);
-    }
-
-    /**
-     * Create a new section for this chapter and add it.
-     *
-     * @param title  the Section title (as a <CODE>Paragraph</CODE>)
-     * @return Returns the new section.
-     */
-    public Section addSection(final Paragraph title) {
-        return addSection(title, 2);
-    }
-
+public interface ALink {
+    boolean process(Paragraph current, ChainedProperties cprops);
 }

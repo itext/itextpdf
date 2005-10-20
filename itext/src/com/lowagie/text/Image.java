@@ -1329,11 +1329,17 @@ public abstract class Image extends Rectangle implements Element,
 	 */
 
 	static public void skip(InputStream is, int size) throws IOException {
+        long n;
 		while (size > 0) {
-			size -= is.skip(size);
+            n = is.skip(size);
+            if (n <= 0)
+                break;
+			size -= n;
 		}
 	}
 
+    private static String excUri = " <>#%\"{}[]|\\\u005E\u0060";
+    private static String[] excUriEsc = {"%20", "%3C", "%3E", "%23", "%25", "%22", "%7B", "%7D", "%5B", "%5D", "%7C", "%5C", "%5E", "%60"};
 	/**
 	 * This method makes a valid URL from a given filename.
 	 * <P>
@@ -1363,7 +1369,17 @@ public abstract class Image extends Rectangle implements Element,
 		if (!path.endsWith("/") && f.isDirectory()) {
 			path = path + "/";
 		}
-		return new URL("file", "", path);
+        char[] t = path.toCharArray();
+        StringBuffer sb = new StringBuffer();
+        for (int k = 0; k < t.length; ++k) {
+            char c = t[k];
+            int a = excUri.indexOf(c);
+            if (a >= 0)
+                sb.append(excUriEsc[a]);
+            else
+                sb.append(c);
+        }
+		return new URL("file", "", sb.toString());
 	}
 
 	/**

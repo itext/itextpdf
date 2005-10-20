@@ -505,7 +505,8 @@ class PdfDocument extends Document implements DocListener {
     /** Holds the type of the last element, that has been added to the document. */
     private int lastElementType = -1;    
     
-    
+    protected int markPoint;
+       
     // constructors
     
     /**
@@ -697,28 +698,30 @@ class PdfDocument extends Document implements DocListener {
                 array.add(dic.getIndirectReference());
                 if (!dic.isUsed()) {
                     PdfRectangle rect = (PdfRectangle)dic.get(PdfName.RECT);
-                    switch (rotation) {
-                        case 90:
-                            dic.put(PdfName.RECT, new PdfRectangle(
-                            pageSize.top() - rect.bottom(),
-                            rect.left(),
-                            pageSize.top() - rect.top(),
-                            rect.right()));
-                            break;
-                        case 180:
-                            dic.put(PdfName.RECT, new PdfRectangle(
-                            pageSize.right() - rect.left(),
-                            pageSize.top() - rect.bottom(),
-                            pageSize.right() - rect.right(),
-                            pageSize.top() - rect.top()));
-                            break;
-                        case 270:
-                            dic.put(PdfName.RECT, new PdfRectangle(
-                            rect.bottom(),
-                            pageSize.right() - rect.left(),
-                            rect.top(),
-                            pageSize.right() - rect.right()));
-                            break;
+                    if (rect != null) {
+                        switch (rotation) {
+                            case 90:
+                                dic.put(PdfName.RECT, new PdfRectangle(
+                                pageSize.top() - rect.bottom(),
+                                rect.left(),
+                                pageSize.top() - rect.top(),
+                                rect.right()));
+                                break;
+                            case 180:
+                                dic.put(PdfName.RECT, new PdfRectangle(
+                                pageSize.right() - rect.left(),
+                                pageSize.top() - rect.bottom(),
+                                pageSize.right() - rect.right(),
+                                pageSize.top() - rect.top()));
+                                break;
+                            case 270:
+                                dic.put(PdfName.RECT, new PdfRectangle(
+                                rect.bottom(),
+                                pageSize.right() - rect.left(),
+                                rect.top(),
+                                pageSize.right() - rect.right()));
+                                break;
+                        }
                     }
                 }
             }
@@ -780,6 +783,8 @@ class PdfDocument extends Document implements DocListener {
         PdfPage page;
         int rotation = pageSize.getRotation();
         page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
+        if (writer.isTagged())
+            page.put(PdfName.STRUCTPARENTS, new PdfNumber(writer.getCurrentPageNumber() - 1));
         // we add the transitions
         if (this.transition!=null) {
             page.put(PdfName.TRANS, this.transition.getTransitionDictionary());
@@ -1832,6 +1837,7 @@ class PdfDocument extends Document implements DocListener {
     private void initPage() throws DocumentException {
         
         // initialisation of some page objects
+        markPoint = 0;
         annotations = delayedAnnotations;
         delayedAnnotations = new ArrayList();
         pageResources = new PageResources();
@@ -2975,5 +2981,13 @@ class PdfDocument extends Document implements DocListener {
     		ioe.printStackTrace();
     	}
     	return baos.toByteArray();
+    }
+    
+    int getMarkPoint() {
+        return markPoint;
+    }
+    
+    void incMarkPoint() {
+        ++markPoint;
     }
 }

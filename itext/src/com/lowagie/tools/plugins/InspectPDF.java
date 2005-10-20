@@ -63,7 +63,7 @@ import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Allows you to encrypt an existing PDF file.
+ * Allows you to inspect an existing PDF file.
  */
 public class InspectPDF extends AbstractTool {
 	static {
@@ -71,7 +71,7 @@ public class InspectPDF extends AbstractTool {
 	}
 	
 	/**
-	 * Constructs an Encrypt object.
+	 * Constructs an InpectPDF object.
 	 */
 	public InspectPDF() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to inspect", false, new PdfFilter()));
@@ -151,7 +151,7 @@ public class InspectPDF extends AbstractTool {
 	}
 	
     /**
-     * Encrypts an existing PDF file.
+     * Inspects an existing PDF file.
      * @param args
      */
     public static void main(String[] args) {

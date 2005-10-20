@@ -9,6 +9,7 @@ Manipulate.Concat: com.lowagie.tools.plugins.Concat
 Manipulate.Split: com.lowagie.tools.plugins.Split
 Manipulate.N-up: com.lowagie.tools.plugins.NUp
 Manipulate.Burst: com.lowagie.tools.plugins.Burst
+Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
 Manipulate.SelectedPages: com.lowagie.tools.plugins.SelectedPages
 Properties.InspectPDF: com.lowagie.tools.plugins.InspectPDF
 Properties.HtmlBookmarks: com.lowagie.tools.plugins.HtmlBookmarks
@@ -20,3 +21,4 @@ Encryption.Encrypt: com.lowagie.tools.plugins.Encrypt
 Encryption.Decrypt: com.lowagie.tools.plugins.Decrypt
 Various.DvdCover: com.lowagie.tools.plugins.DvdCover
 Various.Handouts: com.lowagie.tools.plugins.Handouts
+Various.RemoveLaunchApplication: com.lowagie.tools.plugins.RemoveLaunchApplication

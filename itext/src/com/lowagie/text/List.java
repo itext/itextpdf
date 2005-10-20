@@ -103,6 +103,15 @@ import java.util.Set;
 public class List implements TextElementArray, MarkupAttributes {
     
     // membervariables
+	/** a possible value for the numbered parameter */
+	public static final boolean ORDERED = true;
+	/** a possible value for the numbered parameter */
+	public static final boolean UNORDERED = false;
+	/** a possible value for the lettered parameter */
+	public static final boolean NUMBERICAL = false;
+	/** a possible value for the lettered parameter */
+	public static final boolean ALPHABETICAL = true;
+	
     
 /** This is the <CODE>ArrayList</CODE> containing the different <CODE>ListItem</CODE>s. */
     protected ArrayList list = new ArrayList();
@@ -270,10 +279,10 @@ public class List implements TextElementArray, MarkupAttributes {
             ListItem item = (ListItem) o;
             if (numbered || lettered) {
                 Chunk chunk;
-                if ( numbered )
-                    chunk = new Chunk(String.valueOf(first + list.size()), symbol.font());
-                else
+                if ( lettered )
                     chunk = new Chunk(nextLetter(), symbol.font());
+                else
+                    chunk = new Chunk(String.valueOf(first + list.size()), symbol.font());
                 chunk.append(".");
                 item.setListSymbol(chunk);
             }

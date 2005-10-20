@@ -74,7 +74,7 @@ public class Concat extends AbstractTool {
 		addVersion("$Id$");
 	}
 	/**
-	 * Constructs a Tiff2Pdf object.
+	 * Constructs a Concat object.
 	 */
 	public Concat() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;

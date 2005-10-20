@@ -1,5 +1,7 @@
 /*
- * Copyright 2003 by Paulo Soares.
+ * $Id$
+ *
+ * Copyright 2003-2005 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -57,7 +59,7 @@ class PageResources {
     protected PdfDictionary patternDictionary = new PdfDictionary();
     protected PdfDictionary shadingDictionary = new PdfDictionary();
     protected PdfDictionary extGStateDictionary = new PdfDictionary();
-    protected PdfDictionary LayerDictionary = new PdfDictionary();
+    protected PdfDictionary propertyDictionary = new PdfDictionary();
     protected HashMap forbiddenNames;
     protected PdfDictionary originalResources;
     protected int namePtr[] = {0};
@@ -152,9 +154,9 @@ class PageResources {
         return name;
     }
 
-    PdfName addLayer(PdfName name, PdfIndirectReference reference) {
+    PdfName addProperty(PdfName name, PdfIndirectReference reference) {
         name = translateName(name);
-        LayerDictionary.put(name, reference);
+        propertyDictionary.put(name, reference);
         return name;
     }
 
@@ -169,7 +171,7 @@ class PageResources {
         resources.add(PdfName.PATTERN, patternDictionary);
         resources.add(PdfName.SHADING, shadingDictionary);
         resources.add(PdfName.EXTGSTATE, extGStateDictionary);
-        resources.add(PdfName.PROPERTIES, LayerDictionary);
+        resources.add(PdfName.PROPERTIES, propertyDictionary);
         return resources;
     }
     
@@ -180,6 +182,6 @@ class PageResources {
             || patternDictionary.size() > 0
             || shadingDictionary.size() > 0
             || extGStateDictionary.size() > 0
-            || LayerDictionary.size() > 0);
+            || propertyDictionary.size() > 0);
     }
 }

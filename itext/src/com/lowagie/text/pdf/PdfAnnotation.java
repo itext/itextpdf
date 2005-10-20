@@ -135,7 +135,7 @@ public class PdfAnnotation extends PdfDictionary {
     private int placeInPage = -1;
     
     // constructors
-    protected PdfAnnotation(PdfWriter writer, Rectangle rect) {
+    public PdfAnnotation(PdfWriter writer, Rectangle rect) {
         this.writer = writer;
         if (rect != null)
             put(PdfName.RECT, new PdfRectangle(rect));

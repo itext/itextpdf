@@ -62,7 +62,7 @@ import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Allows you to encrypt an existing PDF file.
+ * Allows you to decrypt an existing PDF file.
  */
 public class Decrypt extends AbstractTool {
 	
@@ -72,7 +72,7 @@ public class Decrypt extends AbstractTool {
 
 	
 	/**
-	 * Constructs an Encrypt object.
+	 * Constructs an Decrypt object.
 	 */
 	public Decrypt() {
 		arguments.add(new FileArgument(this, "srcfile", "The file you want to decrypt", false, new PdfFilter()));
@@ -125,7 +125,7 @@ public class Decrypt extends AbstractTool {
 	}
 	
     /**
-     * Encrypts an existing PDF file.
+     * Decrypts an existing PDF file.
      * @param args
      */
     public static void main(String[] args) {
