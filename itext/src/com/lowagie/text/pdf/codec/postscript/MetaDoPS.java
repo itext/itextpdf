@@ -89,7 +89,7 @@ public class MetaDoPS {
     catch (PainterException ex) {
       ex.printStackTrace();
     }
-
+    g2.dispose();
     cb.restoreState();
 
   }
