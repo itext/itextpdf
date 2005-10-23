@@ -74,6 +74,15 @@ implements Element {
         super(image);
     }
     
+    public ImgPostscript(byte[] content,float width,float height) throws
+    BadElementException, IOException {
+        super( (URL)null);
+        rawData = content;
+        originalData = content;
+        processParameters();
+        this.urx=width;
+        this.ury=height;
+    }
     /**
      * Constructs an <CODE>ImgPostscript</CODE>-object, using an <VAR>url</VAR>.
      *
