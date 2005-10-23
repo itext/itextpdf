@@ -15,14 +15,20 @@
  */
 package com.lowagie.tools.plugins;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JInternalFrame;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
-import com.lowagie.tools.arguments.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PRAcroForm;
+import com.lowagie.text.pdf.PdfCopy;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.tools.arguments.FileArgument;
+import com.lowagie.tools.arguments.PageSelectorToolArgument;
+import com.lowagie.tools.arguments.PdfFilter;
+import com.lowagie.tools.arguments.ToolArgument;
 
 /**
  * This tool lets you select pages from an existing PDF and copy them into a new PDF.

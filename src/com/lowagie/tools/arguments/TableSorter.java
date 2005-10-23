@@ -1,3 +1,4 @@
+/** Code contributed by Anonymous; looks like code that was reused from another application. */
 package com.lowagie.tools.arguments;
 
 import java.awt.event.InputEvent;

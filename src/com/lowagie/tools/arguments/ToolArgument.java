@@ -49,16 +49,20 @@
  */
 package com.lowagie.tools.arguments;
 
-import java.beans.*;
-import java.io.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.util.Vector;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import com.lowagie.text.Image;
-import com.lowagie.tools.plugins.*;
+import com.lowagie.tools.plugins.AbstractTool;
 
 /**
  * This is an argument of one of the tools in the toolbox.

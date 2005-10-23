@@ -9,7 +9,6 @@ Manipulate.Concat: com.lowagie.tools.plugins.Concat
 Manipulate.Split: com.lowagie.tools.plugins.Split
 Manipulate.N-up: com.lowagie.tools.plugins.NUp
 Manipulate.Burst: com.lowagie.tools.plugins.Burst
-Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
 Manipulate.SelectedPages: com.lowagie.tools.plugins.SelectedPages
 Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
 Properties.InspectPDF: com.lowagie.tools.plugins.InspectPDF

@@ -49,15 +49,13 @@
  */
 package com.lowagie.tools.arguments;
 
-import java.io.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.io.File;
 
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import com.lowagie.tools.plugins.*;
+import com.lowagie.tools.plugins.AbstractTool;
 
 /**
  * ToolArgument class if the argument is a java.io.File.
@@ -113,11 +111,6 @@ public class FileArgument extends ToolArgument {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		JFileChooser fc = new JFileChooser();
-//                LabelAccessory accessory = new LabelAccessory();
-//    fc.setAccessory(accessory);
-//    fc.addPropertyChangeListener(JFileChooser.
-//                                          SELECTED_FILE_CHANGED_PROPERTY,
-//                                          accessory);
 
 		if (filter != null) fc.setFileFilter(filter);
 		if (label != null) {

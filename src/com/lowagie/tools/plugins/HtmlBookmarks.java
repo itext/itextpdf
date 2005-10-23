@@ -266,7 +266,7 @@ public class HtmlBookmarks extends AbstractTool {
 	}
 
     /**
-     * Allows you to HtmlBookmarks an existing PDF file.
+     * Allows you to generate an index file in HTML containing Bookmarks to an existing PDF file.
      * @param args
      */
     public static void main(String[] args) {

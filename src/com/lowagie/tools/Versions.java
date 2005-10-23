@@ -93,16 +93,9 @@ public class Versions
     TreeSet mynewlist = new TreeSet();
 
     while (it.hasNext()) {
-      mynewlist.add(it.next());
-    }
-
-    it = mynewlist.iterator();
-
-    while (it.hasNext()) {
-      String versionstring = (String) it.next();
-      sb.append("<p>");
-      sb.append(versionstring);
-      sb.append("</p>");
+    	sb.append("<p>");
+    	sb.append((String)it.next());
+    	sb.append("</p>");
     }
 
     sb.append("</html>");
