@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 by Paulo Soares.
+ * Copyright 2003-2005 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -240,6 +240,110 @@ public class AcroFields {
         }
         String out[] = new String[names.size()];
         return (String[])names.keySet().toArray(out);
+    }
+    
+    private String[] getListOption(String fieldName, int idx) {
+        Item fd = (Item)fields.get(fieldName);
+        if (fd == null)
+            return null;
+        PdfObject obj = PdfReader.getPdfObject(((PdfDictionary)fd.merged.get(0)).get(PdfName.OPT));
+        if (obj == null || !obj.isArray())
+            return null;
+        PdfArray ar = (PdfArray)obj;
+        String[] ret = new String[ar.size()];
+        ArrayList a = ar.getArrayList();
+        for (int k = 0; k < a.size(); ++k) {
+            obj = PdfReader.getPdfObject((PdfObject)a.get(k));
+            try {
+                if (obj.isArray()) {
+                    obj = (PdfObject)((PdfArray)obj).getArrayList().get(idx);
+                }
+                if (obj.isString())
+                    ret[k] = ((PdfString)obj).toUnicodeString();
+                else
+                    ret[k] = obj.toString();
+            }
+            catch (Exception e) {
+                ret[k] = "";
+            }
+        }
+        return ret;
+    }
+    
+    /**
+     * Gets the list of export option values from fields of type list or combo.
+     * If the field doesn't exist or the field type is not list or combo it will return
+     * <CODE>null</CODE>.
+     * @param fieldName the field name
+     * @return the list of export option values from fields of type list or combo
+     */    
+    public String[] getListOptionExport(String fieldName) {
+        return getListOption(fieldName, 0);
+    }
+    
+    /**
+     * Gets the list of display option values from fields of type list or combo.
+     * If the field doesn't exist or the field type is not list or combo it will return
+     * <CODE>null</CODE>.
+     * @param fieldName the field name
+     * @return the list of export option values from fields of type list or combo
+     */    
+    public String[] getListOptionDisplay(String fieldName) {
+        return getListOption(fieldName, 1);
+    }
+    
+    /**
+     * Sets the option list for fields of type list or combo. One of <CODE>exportValues</CODE>
+     * or <CODE>displayValues</CODE> may be <CODE>null</CODE> but not both. This method will only
+     * set the list but will not set the value or appearance. For that, calling <CODE>setField()</CODE>
+     * is required.
+     * <p>
+     * An example:
+     * <p>
+     * <PRE>
+     * PdfReader pdf = new PdfReader("input.pdf");
+     * PdfStamper stp = new PdfStamper(pdf, new FileOutputStream("output.pdf"));
+     * AcroFields af = stp.getAcroFields();
+     * af.setListOption("ComboBox", new String[]{"a", "b", "c"}, new String[]{"first", "second", "third"});
+     * af.setField("ComboBox", "b");
+     * stp.close();
+     * </PRE>
+     * @param fieldName the field name
+     * @param exportValues the export values
+     * @param displayValues the display values
+     * @return <CODE>true</CODE> if the operation succeeded, <CODE>false</CODE> otherwise
+     */    
+    public boolean setListOption(String fieldName, String[] exportValues, String[] displayValues) {
+        if (exportValues == null && displayValues == null)
+            return false;
+        if (exportValues != null && displayValues != null && exportValues.length != displayValues.length)
+            throw new IllegalArgumentException("The export and the display array must have the same size.");
+        int ftype = getFieldType(fieldName);
+        if (ftype != FIELD_TYPE_COMBO && ftype != FIELD_TYPE_LIST)
+            return false;
+        Item fd = (Item)fields.get(fieldName);
+        String[] sing = null;
+        if (exportValues == null && displayValues != null)
+            sing = displayValues;
+        else if (exportValues != null && displayValues == null)
+            sing = exportValues;
+        PdfArray opt = new PdfArray();
+        if (sing != null) {
+            for (int k = 0; k < sing.length; ++k)
+                opt.add(new PdfString(sing[k], PdfObject.TEXT_UNICODE));
+        }
+        else {
+            for (int k = 0; k < exportValues.length; ++k) {
+                PdfArray a = new PdfArray();
+                a.add(new PdfString(exportValues[k], PdfObject.TEXT_UNICODE));
+                a.add(new PdfString(displayValues[k], PdfObject.TEXT_UNICODE));
+                opt.add(a);
+            }
+        }
+        ((PdfDictionary)fd.values.get(0)).put(PdfName.OPT, opt);
+        for (int j = 0; j < fd.merged.size(); ++j)
+            ((PdfDictionary)fd.merged.get(j)).put(PdfName.OPT, opt);
+        return true;
     }
     
     /**
