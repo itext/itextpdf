@@ -89,8 +89,7 @@ public class Versions
     StringBuffer sb = new StringBuffer();
     sb.append("<html>");
 
-    Iterator it = AbstractTool.versionsarray.iterator();
-    TreeSet mynewlist = new TreeSet();
+    Iterator it = new TreeSet(AbstractTool.versionsarray).iterator();
 
     while (it.hasNext()) {
     	sb.append("<p>");
