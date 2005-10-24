@@ -63,7 +63,7 @@ public class PdfFilter extends FileFilter {
 	 */
 	public boolean accept(File f) {
 		if (f.isDirectory()) return true;
-		if (f.getName().endsWith(".pdf")) return true;
+		if (f.getName().toLowerCase().endsWith(".pdf")) return true;
 		return false;
 	}
 
