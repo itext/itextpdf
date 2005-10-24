@@ -1041,6 +1041,7 @@ class PdfDocument extends Document implements DocListener {
 		float pagetop = indentTop();
 		float oldHeight = currentHeight;
 		float cellDisplacement;
+		float headerDisplacement = 0;
 		PdfCell cell;
 		PdfContentByte cellGraphics = new PdfContentByte(writer);
 		boolean tableHasToFit =
@@ -1221,6 +1222,7 @@ class PdfDocument extends Document implements DocListener {
 					flushLines();
 				}
                             
+				float beforeHeaderCells = currentHeight;
 				// this part repeats the table headers (if any)
 				int size = headercells.size();
 				if (size > 0) {
@@ -1259,7 +1261,8 @@ class PdfDocument extends Document implements DocListener {
 					}
 				}
 				oldHeight = currentHeight - heightCorrection;
-                            
+                float afterHeaderCells = currentHeight;
+                headerDisplacement = afterHeaderCells - beforeHeaderCells;
 				// calculating the new positions of the table and the cells
 				size = Math.min(cells.size(), table.columns());
 				int i = 0;
@@ -1295,8 +1298,8 @@ class PdfDocument extends Document implements DocListener {
 		}
                     
         float tableHeight = table.top() - table.bottom();
-        currentHeight = oldHeight + tableHeight;
-        text.moveText(0, -tableHeight );
+        currentHeight = oldHeight + tableHeight - headerDisplacement;
+        text.moveText(0, -tableHeight + 2 * headerDisplacement );
         pageEmpty = false;
     }
 
