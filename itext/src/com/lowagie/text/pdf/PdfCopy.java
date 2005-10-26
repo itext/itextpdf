@@ -372,6 +372,7 @@ public class PdfCopy extends PdfWriter {
         PdfObject o = catalog.get(PdfName.ACROFORM);
         if (o != null && o.type() == PdfObject.INDIRECT)
             hisRef = (PRIndirectReference)o;
+        if (hisRef == null) return; // bugfix by John Englar
         RefKey key = new RefKey(hisRef);
         PdfIndirectReference myRef;
         IndirectReferences iRef = (IndirectReferences)indirects.get(key);
