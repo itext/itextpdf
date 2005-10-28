@@ -1071,12 +1071,12 @@ class PdfDocument extends Document implements DocListener {
 			for (ListIterator iterator = cells.listIterator(); iterator.hasNext() && !tableHasToFit;) {
 				cell = (PdfCell) iterator.next();
 				boolean atLeastOneFits = false;
+				cellsHaveToFit = table.hasToFitPageCells();
 				if( cellsHaveToFit ) {
 					if( !cell.isHeader() ) {
 						if (cell.getGroupNumber() != currentGroupNumber) {
 							boolean cellsFit = true;
 							currentGroupNumber = cell.getGroupNumber();
-							cellsHaveToFit = table.hasToFitPageCells();
 							int cellCount = 0;
 							while (cell.getGroupNumber() == currentGroupNumber && cellsFit && iterator.hasNext()) {
 								if (cell.bottom() < indentBottom()) {
@@ -1084,6 +1084,7 @@ class PdfDocument extends Document implements DocListener {
 								}
 								else {
 									atLeastOneFits |= true;
+									break;
 								}
 								cell = (PdfCell) iterator.next();
 								cellCount++;
