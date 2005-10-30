@@ -70,6 +70,7 @@ import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.ImgPostscript;
+import com.lowagie.text.pdf.events.PdfPageEventForwarder;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -1738,8 +1739,16 @@ public class PdfWriter extends DocWriter {
      * @param pageEvent the <CODE>PdfPageEvent</CODE> for this document
      */
     
-    public void setPageEvent(PdfPageEvent pageEvent) {
-        this.pageEvent = pageEvent;
+    public void setPageEvent(PdfPageEvent event) {
+    	if (event == null) this.pageEvent = null;
+    	else if (this.pageEvent == null) this.pageEvent = event;
+    	else if (this.pageEvent instanceof PdfPageEventForwarder) ((PdfPageEventForwarder)this.pageEvent).addPageEvent(event);
+    	else {
+    		PdfPageEventForwarder forward = new PdfPageEventForwarder();
+    		forward.addPageEvent(this.pageEvent);
+    		forward.addPageEvent(event);
+    		this.pageEvent = forward;
+    	}
     }
     
     /**
