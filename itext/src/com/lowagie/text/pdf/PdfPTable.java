@@ -57,6 +57,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.ElementListener;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.events.PdfPTableEventForwarder;
 
 /** This is a table that can be put at an absolute position but can also
  * be added to the document as the class <CODE>Table</CODE>.
@@ -798,7 +799,15 @@ public class PdfPTable implements Element{
      * @param event the table event for this table
      */    
     public void setTableEvent(PdfPTableEvent event) {
-        tableEvent = event;
+    	if (event == null) this.tableEvent = null;
+    	else if (this.tableEvent == null) this.tableEvent = event;
+    	else if (this.tableEvent instanceof PdfPTableEventForwarder) ((PdfPTableEventForwarder)this.tableEvent).addTableEvent(event);
+    	else {
+    		PdfPTableEventForwarder forward = new PdfPTableEventForwarder();
+    		forward.addTableEvent(this.tableEvent);
+    		forward.addTableEvent(event);
+    		this.tableEvent = forward;
+    	}
     }
     
     /** Gets the table event for this page.
