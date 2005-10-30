@@ -57,7 +57,7 @@ import javax.swing.JOptionPane;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
-import com.lowagie.tools.arguments.LPR;
+import com.lowagie.tools.LPR;
 
 /**
  * Allows you to print an existing PDF file via lpr.

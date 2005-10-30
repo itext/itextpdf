@@ -1,7 +1,7 @@
 /*
  * Class based on freeware by Mario Muller (http://www.hemasoft.de/dev/lprj/ )
  * posted by Anonymous. */
-package com.lowagie.tools.arguments;
+package com.lowagie.tools;
 
 import java.io.*;
 import java.net.*;
