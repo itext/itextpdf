@@ -72,6 +72,7 @@ import com.lowagie.text.pdf.PdfOCG;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PRTokeniser;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -412,6 +413,7 @@ public abstract class Image extends Rectangle implements Element,
 				try {
 					if (url.getProtocol().equals("file")) {
 						String file = url.getFile();
+                        file = unEscapeURL(file);
 						ra = new RandomAccessFileOrArray(file);
 					} else
 						ra = new RandomAccessFileOrArray(url);
@@ -1382,6 +1384,36 @@ public abstract class Image extends Rectangle implements Element,
 		return new URL("file", "", sb.toString());
 	}
 
+    /**
+     * Unescapes an URL. All the "%xx" are replaced by the 'xx' hex char value.
+     * @param src the url to unescape
+     * @return the eunescaped value
+     */    
+    public static String unEscapeURL(String src) {
+        StringBuffer bf = new StringBuffer();
+        char[] s = src.toCharArray();
+        for (int k = 0; k < s.length; ++k) {
+            char c = s[k];
+            if (c == '%') {
+                if (k + 2 >= s.length) {
+                    bf.append(c);
+                    continue;
+                }
+                int a0 = PRTokeniser.getHex((int)s[k + 1]);
+                int a1 = PRTokeniser.getHex((int)s[k + 2]);
+                if (a0 < 0 || a1 < 0) {
+                    bf.append(c);
+                    continue;
+                }
+                bf.append((char)(a0 * 16 + a1));
+                k += 2;
+            }
+            else
+                bf.append(c);
+        }
+        return bf.toString();
+    }
+    
 	/**
 	 * Returns the transparency.
 	 * 
