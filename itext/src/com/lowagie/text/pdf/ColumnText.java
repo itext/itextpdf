@@ -62,6 +62,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
+import com.lowagie.text.SimpleTable;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -427,7 +428,14 @@ public class ColumnText {
         else if (element.type() == Element.PHRASE) {
         	element = new Paragraph((Phrase)element);
         }
-        if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.GRAPHIC)
+        if (element instanceof SimpleTable) {
+        	try {
+				element = ((SimpleTable)element).createPdfPTable();
+			} catch (DocumentException e) {
+				throw new IllegalArgumentException("Element not allowed.");
+			}
+        }
+        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.GRAPHIC)
             throw new IllegalArgumentException("Element not allowed.");
         if (!composite) {
             composite = true;
