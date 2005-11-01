@@ -49,7 +49,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.ArrayList;
 /**
  * This is a node in a document logical structure. It may contain a mark point or it may contain
  * other nodes.

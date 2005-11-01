@@ -466,7 +466,6 @@ public class SAXiTextHandler extends DefaultHandler {
 					}
 				} else if (ElementTags.ORIENTATION.equals(key)) {
 					try {
-						String pageSizeName = value;
 						if ("landscape".equals(value)) {
 							orientation = "landscape";
 						}

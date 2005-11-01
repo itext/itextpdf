@@ -154,7 +154,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
     		String	fName = (String) h.get( "name" );
     		fieldNames.push( fName );
     	} else if ( tag.equals("value") ) {
-    		fieldValues.push( (String)"" );
+    		fieldValues.push( "" );
     	}
     }
     /**

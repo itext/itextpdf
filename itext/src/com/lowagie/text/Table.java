@@ -331,7 +331,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             StringTokenizer widthTokens = new StringTokenizer(value, ";");
             int i = 0;
             while (widthTokens.hasMoreTokens()) {
-                value = (String) widthTokens.nextToken();
+                value = widthTokens.nextToken();
                 widths[i] = Float.valueOf(value + "f").floatValue();
                 i++;
             }
@@ -1439,7 +1439,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                         // need to change this to work out how many cols to span
                         for (int k=0; k < lDummyTable.getDimension().height; k++) {
                             for (int l=0; l < lDummyTable.getDimension().width; l++) {
-                                int yy=l;
                                 lDummyElement = lDummyTable.getElement(k,l);
                                 if (lDummyElement != null) {
                                     int col=lDummyColumn+l;
@@ -1869,7 +1868,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     		}
     		catch(Exception e1) {
     			try {
-    				pdfptable.setTotalWidth((float)Integer.parseInt(absWidth));
+    				pdfptable.setTotalWidth(Integer.parseInt(absWidth));
     			}
     			catch(Exception e2) {
     				pdfptable.setWidthPercentage(widthPercentage);

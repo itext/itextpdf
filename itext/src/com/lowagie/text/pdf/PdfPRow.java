@@ -292,10 +292,8 @@ public class PdfPRow {
 			if (cell == null)
 				continue;
 			writeBorderAndBackground(xPos, yPos, cell, canvases);
-			PdfPTable table = cell.getTable();
 			Image img = cell.getImage();
 			float tly = 0;
-			boolean alignTop = false;
 			switch (cell.getVerticalAlignment()) {
 			case Element.ALIGN_BOTTOM:
 				tly = cell.top() + yPos - maxHeight + cell.height()
@@ -306,7 +304,6 @@ public class PdfPRow {
 						- cell.getEffectivePaddingTop();
 				break;
 			default:
-				alignTop = true;
 				tly = cell.top() + yPos - cell.getEffectivePaddingTop();
 				break;
 			}

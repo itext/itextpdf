@@ -458,11 +458,11 @@ public class Annotation implements Element, MarkupAttributes {
 			} else if ((value = (String) attributes.remove(ElementTags.NAMED)) != null) {
 				annotationtype = LAUNCH;
 				annotationAttributes.put(APPLICATION, value);
-				annotationAttributes.put(PARAMETERS, (String) attributes
+				annotationAttributes.put(PARAMETERS, attributes
 						.remove(ElementTags.PARAMETERS));
-				annotationAttributes.put(OPERATION, (String) attributes
+				annotationAttributes.put(OPERATION, attributes
 						.remove(ElementTags.OPERATION));
-				annotationAttributes.put(DEFAULTDIR, (String) attributes
+				annotationAttributes.put(DEFAULTDIR, attributes
 						.remove(ElementTags.DEFAULTDIR));
 			}
 		}

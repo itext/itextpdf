@@ -1184,7 +1184,7 @@ public class PdfWriter extends DocWriter {
             if (template != null && template.getIndirectReference() instanceof PRIndirectReference)
                 continue;
             if (template != null && template.getType() == PdfTemplate.TYPE_TEMPLATE) {
-                PdfIndirectObject obj = addToBody(template.getFormXObject(), template.getIndirectReference());
+                addToBody(template.getFormXObject(), template.getIndirectReference());
             }
         }
         // add all the dependencies in the imported pages
@@ -1196,12 +1196,12 @@ public class PdfWriter extends DocWriter {
         // add the color
         for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
             ColorDetails color = (ColorDetails)it.next();
-            PdfIndirectObject cobj = addToBody(color.getSpotColor(this), color.getIndirectReference());
+            addToBody(color.getSpotColor(this), color.getIndirectReference());
         }
         // add the pattern
         for (Iterator it = documentPatterns.keySet().iterator(); it.hasNext();) {
             PdfPatternPainter pat = (PdfPatternPainter)it.next();
-            PdfIndirectObject pobj = addToBody(pat.getPattern(), pat.getIndirectReference());
+            addToBody(pat.getPattern(), pat.getIndirectReference());
         }
         // add the shading patterns
         for (Iterator it = documentShadingPatterns.keySet().iterator(); it.hasNext();) {
@@ -1571,7 +1571,7 @@ public class PdfWriter extends DocWriter {
                         patternColorspaceRGB = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICERGB);
-                        PdfIndirectObject cobj = addToBody(array, patternColorspaceRGB.getIndirectReference());
+                        addToBody(array, patternColorspaceRGB.getIndirectReference());
                     }
                     return patternColorspaceRGB;
                 case ExtendedColor.TYPE_CMYK:
@@ -1579,7 +1579,7 @@ public class PdfWriter extends DocWriter {
                         patternColorspaceCMYK = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICECMYK);
-                        PdfIndirectObject cobj = addToBody(array, patternColorspaceCMYK.getIndirectReference());
+                        addToBody(array, patternColorspaceCMYK.getIndirectReference());
                     }
                     return patternColorspaceCMYK;
                 case ExtendedColor.TYPE_GRAY:
@@ -1587,7 +1587,7 @@ public class PdfWriter extends DocWriter {
                         patternColorspaceGRAY = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(PdfName.DEVICEGRAY);
-                        PdfIndirectObject cobj = addToBody(array, patternColorspaceGRAY.getIndirectReference());
+                        addToBody(array, patternColorspaceGRAY.getIndirectReference());
                     }
                     return patternColorspaceGRAY;
                 case ExtendedColor.TYPE_SEPARATION: {
@@ -1597,7 +1597,7 @@ public class PdfWriter extends DocWriter {
                         patternDetails = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
                         PdfArray array = new PdfArray(PdfName.PATTERN);
                         array.add(details.getIndirectReference());
-                        PdfIndirectObject cobj = addToBody(array, patternDetails.getIndirectReference());
+                        addToBody(array, patternDetails.getIndirectReference());
                         documentSpotPatterns.put(details, patternDetails);
                     }
                     return patternDetails;
@@ -1777,7 +1777,7 @@ public class PdfWriter extends DocWriter {
                 throw new RuntimeException("The name '" + name + "' has no local destination.");
             if (obj[1] == null)
                 obj[1] = getPdfIndirectReference();
-            PdfIndirectObject iob = addToBody(destination, (PdfIndirectReference)obj[1]);
+            addToBody(destination, (PdfIndirectReference)obj[1]);
         }
     }
     
@@ -2400,7 +2400,7 @@ public class PdfWriter extends DocWriter {
                                 throw new PdfXConformanceException("Colorspace RGB is not allowed.");
                         }
                         else if (cs.isArray()) {
-                            if (PdfName.CALRGB.equals((PdfObject)((PdfArray)cs).getArrayList().get(0)))
+                            if (PdfName.CALRGB.equals(((PdfArray)cs).getArrayList().get(0)))
                                 throw new PdfXConformanceException("Colorspace CalRGB is not allowed.");
                         }
                         break;

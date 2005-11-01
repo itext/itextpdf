@@ -427,7 +427,7 @@ public class Parser extends DefaultHandler {
 					else {
 						s += " " + counters[i] + ": ";
 					}
-					((Paragraph)paragraph).add(new Chunk(s));
+					paragraph.add(new Chunk(s));
 				}
 			}
 		}

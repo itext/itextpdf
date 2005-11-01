@@ -752,7 +752,6 @@ public class PngImage {
                 dstX = xOffset;
                 for (srcX = 0; srcX < width; srcX++) {
                     int idx = out[srcX];
-                    int r = 255;
                     if (idx < trans.length)
                         v[0] = trans[idx];
                     setPixel(smask, v, 0, 1, dstX, y, 8, yStride);
@@ -768,7 +767,6 @@ public class PngImage {
                     dstX = xOffset;
                     for (srcX = 0; srcX < width; srcX++) {
                         int idx = out[srcX];
-                        int r = 0;
                         if (idx < trans.length)
                             v[0] = (trans[idx] == 0 ? 1 : 0);
                         setPixel(smask, v, 0, 1, dstX, y, 1, yStride);

@@ -383,7 +383,7 @@ public class GifImage {
         gf.iy = iy;
         frames.add(gf);   // add image to frame list
         
-        resetFrame();
+        //resetFrame();
         
     }
     
@@ -391,7 +391,7 @@ public class GifImage {
         int NullCode = -1;
         int npix = iw * ih;
         int available, clear, code_mask, code_size, end_of_information, in_code, old_code,
-        bits, code, count, i, datum, data_size, first, top, bi, pi;
+        bits, code, count, i, datum, data_size, first, top, bi;
         boolean skipZero = false;
         
         if (prefix == null)
@@ -424,7 +424,7 @@ public class GifImage {
         
         //  Decode GIF pixel stream.
         
-        datum = bits = count = first = top = pi = bi = 0;
+        datum = bits = count = first = top = bi = 0;
         
         for (i = 0; i < npix; ) {
             if (top == 0) {
@@ -555,8 +555,9 @@ public class GifImage {
      * Resets frame state for reading next image.
      */
     protected void resetFrame() {
-        boolean transparency = false;
-        int delay = 0;
+        // it does nothing in the pdf context
+        //boolean transparency = false;
+        //int delay = 0;
     }
 
     /**

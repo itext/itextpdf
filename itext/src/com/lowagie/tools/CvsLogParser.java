@@ -68,12 +68,11 @@ public class CvsLogParser implements Enumeration {
 	public Object nextElement(){
 		StringBuffer token = new StringBuffer();
 		StringBuffer line = new StringBuffer();
-		String type;
 		boolean moreToken = true;
 		changes = false;
 		try {
 			while (more && moreToken) {
-				int i = st.nextToken();
+				st.nextToken();
 				switch(st.ttype) {
 				case StreamTokenizer.TT_EOF:
 					more = false;

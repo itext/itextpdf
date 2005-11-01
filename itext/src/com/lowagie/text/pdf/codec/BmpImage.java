@@ -625,10 +625,6 @@ public class BmpImage {
             
             // The number of bands in the SampleModel is determined by
             // the length of the mask array passed in.
-            int[] bitMasks = numBands == 3 ?
-            new int[] {redMask, greenMask, blueMask} :
-                new int[] {redMask, greenMask, blueMask, alphaMask};
-                
         } else {
             numBands = 3;
         }
@@ -651,8 +647,6 @@ public class BmpImage {
     
     private Image getImage() throws IOException, BadElementException {
         byte bdata[] = null; // buffer for byte data
-        short sdata[] = null; // buffer for short data
-        int idata[] = null; // buffer for int data
         
         //	if (sampleModel.getDataType() == DataBuffer.TYPE_BYTE)
         //	    bdata = (byte[])((DataBufferByte)tile.getDataBuffer()).getData();
@@ -1031,8 +1025,6 @@ public class BmpImage {
         int l=0;
         int v;
         if (isBottomUp) {
-            int max = width*height-1;
-
             for (int i=height - 1; i >= 0; --i) {
                 l = width * 3 * i;
                 for (int j=0; j<width; j++) {
@@ -1075,14 +1067,6 @@ public class BmpImage {
             imSize = (int)(bitmapFileSize - bitmapOffset);
         }
         
-        int padding = 0;
-        // If width is not 32 bit aligned, then while uncompressing each
-        // scanline will have padding bytes, calculate the amount of padding
-        int remainder = width % 4;
-        if (remainder != 0) {
-            padding = 4 - remainder;
-        }
-        
         // Read till we have the whole image
         byte values[] = new byte[imSize];
         int bytesRead = 0;
@@ -1123,14 +1107,6 @@ public class BmpImage {
             imSize = (int)(bitmapFileSize - bitmapOffset);
         }
         
-        int padding = 0;
-        // If width is not 32 byte aligned, then while uncompressing each
-        // scanline will have padding bytes, calculate the amount of padding
-        int remainder = width % 4;
-        if (remainder != 0) {
-            padding = 4 - remainder;
-        }
-        
         // Read till we have the whole image
         byte values[] = new byte[imSize];
         int bytesRead = 0;
@@ -1160,7 +1136,6 @@ public class BmpImage {
         int stride = ((width + 1) / 2);
         byte bdata[] = new byte[stride * height];
         int ptr = 0;
-        boolean flip = true;
         int sh = 0;
         for (int h = 0; h < height; ++h) {
             for (int w = 0; w < width; ++w) {

@@ -177,7 +177,6 @@ class PdfStamperImp extends PdfWriter {
         try {
             file.reOpen();
             alterContents();
-            int idx = 1;
             iInfo = (PRIndirectReference)reader.trailer.get(PdfName.INFO);
             int skip = -1;
             if (iInfo != null)
@@ -608,7 +607,7 @@ class PdfStamperImp extends PdfWriter {
             if (pageNumber < 1)
                 pageNumber = 1;
             PdfDictionary firstPage = reader.getPageN(pageNumber);
-            PRIndirectReference firstPageRef = (PRIndirectReference)reader.getPageOrigRef(pageNumber);
+            PRIndirectReference firstPageRef = reader.getPageOrigRef(pageNumber);
             reader.releasePage(pageNumber);
             parentRef = (PRIndirectReference)firstPage.get(PdfName.PARENT);
             parentRef = new PRIndirectReference(reader, parentRef.getNumber());
@@ -881,11 +880,11 @@ class PdfStamperImp extends PdfWriter {
 			
 				if ( (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) 
 				{
-					PdfObject obj1 = (PdfObject) annDic.get(PdfName.AP);
+					PdfObject obj1 = annDic.get(PdfName.AP);
 					if (obj1 == null) 
 						continue;
 					PdfDictionary appDic = (obj1 instanceof PdfIndirectReference) ?
-							(PdfDictionary) PdfReader.getPdfObject((PdfIndirectReference) obj1) : (PdfDictionary) obj1;			
+							(PdfDictionary) PdfReader.getPdfObject(obj1) : (PdfDictionary) obj1;			
 					PdfObject obj = appDic.get(PdfName.N);
 					PdfAppearance app = null;
 					PdfObject objReal = PdfReader.getPdfObject(obj);

@@ -338,7 +338,6 @@ public class PushbuttonField extends BaseField {
         offsetX = Math.max(offsetX, 1);
         float offX = Math.min(bw2, offsetX);
         tp = null;
-        Rectangle bounds = null;
         float textX = Float.NaN;
         float textY = 0;
         float fsize = fontSize;

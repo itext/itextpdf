@@ -257,11 +257,10 @@ public class PdfStream extends PdfDictionary {
         if (inputStream != null) {
             rawLength = 0;
             DeflaterOutputStream def = null;
-            PdfEncryptionStream encs = null;
             OutputStreamCounter osc = new OutputStreamCounter(os);
             OutputStream fout = osc;
             if (crypto != null)
-                fout = encs = new PdfEncryptionStream(fout, crypto);
+                fout = new PdfEncryptionStream(fout, crypto);
             if (compressed)    
                 fout = def = new DeflaterOutputStream(fout, new Deflater(Deflater.BEST_COMPRESSION), 0x8000);
             

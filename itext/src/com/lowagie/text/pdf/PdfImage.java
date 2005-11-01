@@ -200,7 +200,6 @@ class PdfImage extends PdfStream {
                 is = new java.io.ByteArrayInputStream(image.rawData());
                 errorID = "Byte array";
             }
-            int i = 0;
             switch(image.type()) {
                 case Image.JPEG:
                     put(PdfName.FILTER, PdfName.DCTDECODE);

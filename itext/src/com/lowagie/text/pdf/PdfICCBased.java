@@ -63,7 +63,6 @@ class PdfICCBased extends PdfStream {
         super();
         try {
             NumberOfComponents = profile.getNumComponents();
-            PdfNumber pNumber = new PdfNumber(NumberOfComponents);
             switch (NumberOfComponents) {
                 case 1:
                     put(PdfName.ALTERNATE, PdfName.DEVICEGRAY);
