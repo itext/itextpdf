@@ -68,21 +68,26 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import com.lowagie.tools.plugins.AbstractTool;
+import java.awt.Toolkit;
+import java.awt.Dimension;
 
 /**
  * This is a utility that allows you to use a number of iText tools.
  */
 public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
-	
+
 	/** The DesktopPane of the toolbox. */
 	private JDesktopPane desktop;
+
 	/** The list of tools in the toolbox. */
 	private Properties toolmap = new Properties();
+
 	/** x-coordinate of the location of a new internal frame. */
 	private int locationX = 0;
+
 	/** y-coordinate of the location of a new internal frame. */
 	private int locationY = 0;
-	
+
 	/**
 	 * Constructs the Toolbox object.
 	 */
@@ -95,25 +100,30 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		setJMenuBar(getMenubar());
 		desktop = new JDesktopPane();
 		setContentPane(desktop);
+		centerFrame(this);
 		setVisible(true);
 	}
-	
+
 	/**
 	 * Starts the Toolbox utility.
-	 * @param args no arguments needed
+	 * 
+	 * @param args
+	 *            no arguments needed
 	 */
 	public static void main(String[] args) {
 		Toolbox toolbox = new Toolbox();
 	}
-	
+
 	/**
 	 * Gets the menubar.
+	 * 
 	 * @return a menubar
 	 */
 	private JMenuBar getMenubar() {
 		Properties p = new Properties();
 		try {
-			p.load(Toolbox.class.getClassLoader().getResourceAsStream("com/lowagie/tools/plugins/tools.txt"));
+			p.load(Toolbox.class.getClassLoader().getResourceAsStream(
+					"com/lowagie/tools/plugins/tools.txt"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -131,21 +141,22 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		String name, tool;
 		JMenu current = null;
 		JMenuItem item;
-		for (Iterator i = tmp.keySet().iterator(); i.hasNext(); ) {
-			name = (String)i.next();
+		for (Iterator i = tmp.keySet().iterator(); i.hasNext();) {
+			name = (String) i.next();
 			if (current == null || !name.startsWith(current.getText())) {
 				current = new JMenu(name.substring(0, name.indexOf(".")));
 				tools.add(current);
 			}
 			item = new JMenuItem(name.substring(current.getText().length() + 1));
 			item.addActionListener(this);
-			tool = (String)tmp.get(name);
+			tool = (String) tmp.get(name);
 			try {
 				Class.forName(tool);
 				toolmap.put(item.getText(), tool);
 				current.add(item);
 			} catch (ClassNotFoundException e) {
-				System.err.println("Plugin " + name + " was not found in your CLASSPATH.");
+				System.err.println("Plugin " + name
+						+ " was not found in your CLASSPATH.");
 			}
 		}
 		JMenu help = new JMenu(HELP);
@@ -162,26 +173,47 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		menubar.add(help);
 		return menubar;
 	}
-	
+
 	/**
 	 * Creates an Internal Frame.
-	 * @param name the name of the app
+	 * 
+	 * @param name
+	 *            the name of the app
 	 * @throws ClassNotFoundException
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 * @throws PropertyVetoException
 	 */
-	private void createFrame(String name) throws InstantiationException, IllegalAccessException, ClassNotFoundException, PropertyVetoException {
-		AbstractTool ti = (AbstractTool)Class.forName((String)toolmap.get(name)).newInstance();
+	private void createFrame(String name) throws InstantiationException,
+			IllegalAccessException, ClassNotFoundException,
+			PropertyVetoException {
+		AbstractTool ti = (AbstractTool) Class.forName(
+				(String) toolmap.get(name)).newInstance();
 		JInternalFrame f = ti.getInternalFrame();
 		f.setLocation(locationX, locationY);
 		locationX += 25;
-		if (locationX > this.getWidth() + 50) locationX = 0;
+		if (locationX > this.getWidth() + 50)
+			locationX = 0;
 		locationY += 25;
-		if (locationY > this.getHeight() + 50) locationY = 0;
+		if (locationY > this.getHeight() + 50)
+			locationY = 0;
 		f.setVisible(true);
 		desktop.add(f);
 		f.setSelected(true);
+	}
+
+	public static void centerFrame(JFrame f) {
+		//Das Fenster zentrieren
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension frameSize = f.getSize();
+		if (frameSize.height > screenSize.height) {
+			frameSize.height = screenSize.height;
+		}
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+		f.setLocation((screenSize.width - frameSize.width) / 2,
+				(screenSize.height - frameSize.height) / 2);
 	}
 
 	/**
@@ -191,25 +223,26 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		if (CLOSE.equals(evt.getActionCommand())) {
 			System.out.println("The Toolbox is closed.");
 			System.exit(0);
-		}
-		else if (ABOUT.equals(evt.getActionCommand())) {
-			System.out.println("The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://www.lowagie.com/iText/toolbox.html for more info.");
+		} else if (ABOUT.equals(evt.getActionCommand())) {
+			System.out
+					.println("The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://www.lowagie.com/iText/toolbox.html for more info.");
 			try {
-				Executable.launchBrowser("http://www.lowagie.com/iText/toolbox.html");
+				Executable
+						.launchBrowser("http://www.lowagie.com/iText/toolbox.html");
+			} catch (IOException ioe) {
+				JOptionPane
+						.showMessageDialog(
+								this,
+								"The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://www.lowagie.com/iText/toolbox.html for more info.");
 			}
-			catch(IOException ioe) {
-				JOptionPane.showMessageDialog(this, "The iText Toolbox is part of iText, a Free Java-PDF Library.\nVisit http://www.lowagie.com/iText/toolbox.html for more info.");
-			}
-		}
-		else if(VERSION.equals(evt.getActionCommand())) {
+		} else if (VERSION.equals(evt.getActionCommand())) {
 			JFrame f = new Versions();
+			centerFrame(f);
 			f.setVisible(true);
-		}
-		else {
+		} else {
 			try {
 				createFrame(evt.getActionCommand());
-			}
-			catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
