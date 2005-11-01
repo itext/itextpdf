@@ -157,8 +157,7 @@ public class TiffImage {
             long tstrip = 0xFFFFFFFFL;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ROWSPERSTRIP))
                 tstrip = dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
-            int rowsStrip = (int)Math.min((long)h, tstrip);
-            TIFFField field = dir.getField(TIFFConstants.TIFFTAG_STRIPOFFSETS);
+            int rowsStrip = (int)Math.min(h, tstrip);
             long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
             boolean reverse = false;
@@ -202,18 +201,18 @@ public class TiffImage {
                 byte im[] = new byte[(int)size[0]];
                 s.seek(offset[0]);
                 s.readFully(im);
-                img = Image.getInstance((int) w, (int) h, reverse, imagecomp, params, im);
+                img = Image.getInstance(w, h, reverse, imagecomp, params, im);
                 img.setInverted(true);
             }
             else {
                 int rowsLeft = h;
-                CCITTG4Encoder g4 = new CCITTG4Encoder((int)w);
+                CCITTG4Encoder g4 = new CCITTG4Encoder(w);
                 for (int k = 0; k < offset.length; ++k) {
                     byte im[] = new byte[(int)size[k]];
                     s.seek(offset[k]);
                     s.readFully(im);
                     int height = Math.min(rowsStrip, rowsLeft);
-                    TIFFFaxDecoder decoder = new TIFFFaxDecoder(fillOrder, (int)w, height);
+                    TIFFFaxDecoder decoder = new TIFFFaxDecoder(fillOrder, w, height);
                     byte outBuf[] = new byte[(w + 7) / 8 * height];
                     switch (compression) {
                         case TIFFConstants.COMPRESSION_CCITTRLEW:
@@ -245,7 +244,7 @@ public class TiffImage {
                     rowsLeft -= rowsStrip;
                 }
                 byte g4pic[] = g4.close();
-                img = Image.getInstance((int) w, (int) h, false, Image.CCITTG4, params & Image.CCITT_BLACKIS1, g4pic);
+                img = Image.getInstance(w, h, false, Image.CCITTG4, params & Image.CCITT_BLACKIS1, g4pic);
             }
             img.setDpi(dpiX, dpiY);
             img.setXYRatio(XYRatio);

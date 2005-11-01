@@ -121,7 +121,7 @@ public class RemoveLaunchApplication
       PdfDictionary l;
       PdfName n;
       for (int i = 1; i < reader.getXrefSize(); i++) {
-      	o = (PdfObject)reader.getPdfObject(i);
+      	o = reader.getPdfObject(i);
       	if (o instanceof PdfDictionary) {
       		d = (PdfDictionary)o;
       		o = d.get(PdfName.A);

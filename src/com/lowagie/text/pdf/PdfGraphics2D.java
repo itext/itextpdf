@@ -369,7 +369,7 @@ public class PdfGraphics2D extends Graphics2D {
             if(underline)
             {
                 // These two are supposed to be taken from the .AFM file
-                int UnderlinePosition = -100;
+                //int UnderlinePosition = -100;
                 int UnderlineThickness = 50;
                 //
                 double d = asPoints((double)UnderlineThickness, (int)fontSize);

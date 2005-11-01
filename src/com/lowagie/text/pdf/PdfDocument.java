@@ -826,7 +826,7 @@ class PdfDocument extends Document implements DocListener {
             text.endText();
         else
             text = null;
-        PdfIndirectReference pageReference = writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
+        writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
         // we initialize the new page
         initPage();
         
@@ -2247,8 +2247,6 @@ class PdfDocument extends Document implements DocListener {
      */
     
     float bottom(Table table) {
-        // where will the table begin?
-        float h = (currentHeight > 0) ? indentTop() - currentHeight - 2f * leading : indentTop();
         // constructing a PdfTable
         PdfTable tmp = getPdfTable(table, false);
         return tmp.bottom();
@@ -2475,7 +2473,6 @@ class PdfDocument extends Document implements DocListener {
                             subtract += hangingCorrection;
                         Object unders[][] = (Object[][])chunk.getAttribute(Chunk.UNDERLINE);
                         Color scolor = null;
-                        int cap = 0;
                         for (int k = 0; k < unders.length; ++k) {
                             Object obj[] = unders[k];
                             scolor = (Color)obj[0];
@@ -2564,7 +2561,7 @@ class PdfDocument extends Document implements DocListener {
                     float params[] = (float[])chunk.getAttribute(Chunk.SKEW);
                     Float hs = (Float)chunk.getAttribute(Chunk.HSCALE);
                     if (params != null || hs != null) {
-                        float a = 1, b = 0, c = 0;
+                        float b = 0, c = 0;
                         if (params != null) {
                             b = params[0];
                             c = params[1];

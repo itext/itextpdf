@@ -136,14 +136,11 @@ implements Element {
         originalType = ORIGINAL_PS;
         InputStream is = null;
         try {
-            String errorID;
             if (rawData == null) {
                 is = url.openStream();
-                errorID = url.toString();
             }
             else {
                 is = new java.io.ByteArrayInputStream(rawData);
-                errorID = "Byte array";
             }
             String boundingbox=null;
             Reader r = new BufferedReader(new InputStreamReader(is));

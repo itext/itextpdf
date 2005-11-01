@@ -297,7 +297,7 @@ public class PdfEncodings {
                 planes = (char[][])cmaps.get(name);
             }
             if (planes == null) {
-                planes = readCmap(name, (byte[][])newline);
+                planes = readCmap(name, newline);
                 synchronized (cmaps) {
                     cmaps.put(name, planes);
                 }

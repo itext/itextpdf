@@ -311,7 +311,7 @@ public class FontFactory extends java.lang.Object {
         if ((value = (String)attributes.remove(ElementTags.ENCODING)) != null) {
             encoding = value;
         }
-        if ("true".equals((String) attributes.remove(ElementTags.EMBEDDED))) {
+        if ("true".equals(attributes.remove(ElementTags.EMBEDDED))) {
             embedded = true;
         }
         if ((value = (String)attributes.remove(ElementTags.FONT)) != null) {

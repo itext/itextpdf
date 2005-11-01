@@ -257,7 +257,7 @@ public class DefaultFontMapper implements FontMapper {
         for (int k = 0; k < names.length; ++k) {
             aliases.put(names[k][3], main);
         }
-        aliases.put((String)allNames[0], main);
+        aliases.put(allNames[0], main);
     }
     
     /** Inserts all the fonts recognized by iText in the

@@ -437,7 +437,6 @@ public class ArabicLigaturizer {
    *
    * Note: We have to unshape each character first!
    */
-        int j = 0;
         int join;
         int which;
         char nextletter;

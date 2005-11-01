@@ -208,7 +208,7 @@ public class TIFFDirectory extends Object implements Serializable {
     
     private void initialize(RandomAccessFileOrArray stream) throws IOException {
         long nextTagOffset = 0L;
-        long maxOffset = (long) stream.length();
+        long maxOffset = stream.length();
         int i, j;
         
         IFDOffset = stream.getFilePointer();
@@ -220,7 +220,6 @@ public class TIFFDirectory extends Object implements Serializable {
             int tag = readUnsignedShort(stream);
             int type = readUnsignedShort(stream);
             int count = (int)(readUnsignedInt(stream));
-            int value = 0;
             boolean processTag = true;
             
             // The place to return to to read the next tag

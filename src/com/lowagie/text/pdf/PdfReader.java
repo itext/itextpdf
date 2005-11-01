@@ -426,7 +426,7 @@ public class PdfReader {
             return map;
         for (Iterator it = info.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName)it.next();
-            PdfObject obj = (PdfObject)getPdfObject(info.get(key));
+            PdfObject obj = getPdfObject(info.get(key));
             if (obj == null)
                 continue;
             String value = obj.toString();
@@ -786,16 +786,6 @@ public class PdfReader {
         pageRefs = new PageRefs(this);
     }
     
-    protected PRIndirectReference getSinglePage(int n) throws IOException {
-        PdfDictionary acc = new PdfDictionary();
-        PdfDictionary top = rootPages;
-        int base = 0;
-        while (true) {
-            break;
-        }
-        return null;
-    }
-    
     protected void PRSimpleRecursive(PdfObject obj) throws IOException {
         switch (obj.type()) {
             case PdfObject.DICTIONARY:
@@ -880,13 +870,11 @@ public class PdfReader {
     
     protected PdfObject readOneObjStm(PRStream stream, int idx) throws IOException {
         int first = ((PdfNumber)getPdfObject(stream.get(PdfName.FIRST))).intValue();
-        int n = ((PdfNumber)getPdfObject(stream.get(PdfName.N))).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
         PRTokeniser saveTokens = tokens;
         tokens = new PRTokeniser(b);
         try {
             int address = 0;
-            int objNumber = 0;
             boolean ok = true;
             ++idx;
             for (int k = 0; k < idx; ++k) {
@@ -897,7 +885,7 @@ public class PdfReader {
                     ok = false;
                     break;
                 }
-                objNumber = tokens.intValue();
+                tokens.intValue();
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
@@ -961,8 +949,6 @@ public class PdfReader {
             }
             xrefObj.set(k / 2, obj);
         }
-        int fileLength = tokens.length();
-        byte tline[] = new byte[16];
         for (int k = 0; k < streams.size(); ++k) {
             checkPRStreamLength((PRStream)streams.get(k));
         }
@@ -1264,7 +1250,6 @@ public class PdfReader {
             int length = ((PdfNumber)sections.get(idx + 1)).intValue();
             ensureXrefSize((start + length) * 2);
             while (length-- > 0) {
-                int total = 0;
                 int type = 1;
                 if (wc[0] > 0) {
                     type = 0;
@@ -2372,7 +2357,6 @@ public class PdfReader {
                 continue;
             }
             ArrayList arr = annots.getArrayList();
-            int startSize = arr.size();
             for (int j = 0; j < arr.size(); ++j) {
                 PdfDictionary annot = (PdfDictionary)getPdfObjectRelease((PdfObject)arr.get(j));
                 if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE)))

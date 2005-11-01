@@ -839,7 +839,7 @@ public class PdfContentByte {
             resetRGBColorFill();
         }
         else if (rectangle.grayFill() > 0.0) {
-            setGrayFill((float)rectangle.grayFill());
+            setGrayFill(rectangle.grayFill());
             rectangle(x1, y1, x2 - x1, y2 - y1);
             fill();
             resetGrayFill();
@@ -860,7 +860,7 @@ public class PdfContentByte {
         else {
             // the width is set to the width of the element
             if (rectangle.borderWidth() != Rectangle.UNDEFINED) {
-                setLineWidth((float)rectangle.borderWidth());
+                setLineWidth(rectangle.borderWidth());
             }
 
             // the color is set to the color of the element

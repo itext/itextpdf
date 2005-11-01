@@ -191,8 +191,8 @@ public class PdfCopy extends PdfWriter {
             indirects.put(key, iRef);
         }
         iRef.setCopied();
-        PdfObject obj = copyObject((PdfObject)PdfReader.getPdfObjectRelease(in));
-        PdfIndirectObject theObj = addToBody(obj, theRef);
+        PdfObject obj = copyObject(PdfReader.getPdfObjectRelease(in));
+        addToBody(obj, theRef);
         return theRef;
     }
     
@@ -207,7 +207,7 @@ public class PdfCopy extends PdfWriter {
         
         for (Iterator it = in.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName)it.next();
-            PdfObject value = (PdfObject) in.get(key);
+            PdfObject value = in.get(key);
             //	    System.out.println("Copy " + key);
             if (type != null && PdfName.PAGE.equals(type)) {
                 if (key.equals(PdfName.PARENT))
@@ -229,7 +229,7 @@ public class PdfCopy extends PdfWriter {
         
         for (Iterator it = in.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName) it.next();
-            PdfObject value = (PdfObject)in.get(key);
+            PdfObject value = in.get(key);
             out.put(key, copyObject(value));
         }
         
@@ -346,7 +346,7 @@ public class PdfCopy extends PdfWriter {
             iRef.setCopied();
             PdfDictionary newPage = copyDictionary(thePage);
             newPage.put(PdfName.PARENT, topPageParent);
-            PdfIndirectObject pageObj = addToBody(newPage, pageRef);
+            addToBody(newPage, pageRef);
         }
         root.addPage(pageRef);
         pageNumbersToRefs.add(pageRef);
@@ -387,7 +387,7 @@ public class PdfCopy extends PdfWriter {
         if (! iRef.getCopied()) {
             iRef.setCopied();
             PdfDictionary theForm = copyDictionary((PdfDictionary)PdfReader.getPdfObject(hisRef));
-            PdfIndirectObject myObj = addToBody(theForm, myRef);
+            addToBody(theForm, myRef);
         }
     }
     

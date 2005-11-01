@@ -630,7 +630,6 @@ public class AcroFields {
             tx.setText(text);
             return tx.getAppearance();
         }
-        int arrsize = 0;
         if (opt != null) {
             ArrayList op = opt.getArrayList();
             String choices[] = new String[op.size()];
@@ -1019,7 +1018,6 @@ public class AcroFields {
      * @throws DocumentException on error
      */    
     public void setFields(FdfReader fdf) throws IOException, DocumentException {
-        HashMap fd = fdf.getFields();
         for (Iterator i = fields.keySet().iterator(); i.hasNext();) {
             String f = (String)i.next();
             String v = fdf.getFieldValue(f);
@@ -1035,7 +1033,6 @@ public class AcroFields {
      */
     
     public void setFields(XfdfReader xfdf) throws IOException, DocumentException {
-        HashMap fd = xfdf.getFields();
         for (Iterator i = fields.keySet().iterator(); i.hasNext();) {
             String f = (String)i.next();
             String v = xfdf.getFieldValue(f);
@@ -1502,7 +1499,6 @@ public class AcroFields {
             return null;
         Item item = (Item)fields.get(name);
         PdfDictionary merged = (PdfDictionary)item.merged.get(0);
-        PdfObject vo = PdfReader.getPdfObject(merged.get(PdfName.V));
         return (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.V));
     }
     

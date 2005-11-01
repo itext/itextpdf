@@ -756,7 +756,6 @@ public class PdfSignatureAppearance {
         sigField.setFlags(flags);
 
         int pagen = getPage();
-        PdfReader reader = writer.reader;
         if (!isInvisible()) {
             sigField.setWidget(getPageRect(), null);
             sigField.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, getAppearance());

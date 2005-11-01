@@ -233,7 +233,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
 
 	private static String makeBookmarkParam(PdfArray dest, IntHashtable pages)
 	{
-		ArrayList arr = ((PdfArray)dest).getArrayList();
+		ArrayList arr = dest.getArrayList();
 		StringBuffer s = new StringBuffer();
 		s.append(pages.get(getNumber((PdfIndirectReference)arr.get(0)))); //changed by ujihara 2004-06-13
 		s.append(' ').append(arr.get(1).toString().substring(1));
@@ -507,7 +507,6 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                 outline.put(PdfName.FIRST, (PdfIndirectReference)lower[0]);
                 outline.put(PdfName.LAST, (PdfIndirectReference)lower[1]);
                 int n = ((Integer)lower[2]).intValue();
-                int tc;
                 if ("false".equals(map.get("Open"))) {
                     outline.put(PdfName.COUNT, new PdfNumber(-n));
                 }

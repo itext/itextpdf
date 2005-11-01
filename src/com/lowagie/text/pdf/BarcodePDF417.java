@@ -510,7 +510,7 @@ public class BarcodePDF417 {
         int startN = 0;
         int nd = 0;
         char c = 0;
-        int k, ptrS, j;
+        int k, j;
         boolean lastTxt, txt;
         Segment v;
         Segment vp;
@@ -526,7 +526,6 @@ public class BarcodePDF417 {
             if (nd >= 13) {
                 if (lastP != startN) {
                     c = (char)(text[lastP] & 0xff);
-                    ptrS = lastP;
                     lastTxt = (c >= ' ' && c < 127) || c == '\r' || c == '\n' || c == '\t';
                     for (j = lastP; j < startN; ++j) {
                         c = (char)(text[j] & 0xff);
@@ -548,7 +547,6 @@ public class BarcodePDF417 {
             startN = textLength;
         if (lastP != startN) {
             c = (char)(text[lastP] & 0xff);
-            ptrS = lastP;
             lastTxt = (c >= ' ' && c < 127) || c == '\r' || c == '\n' || c == '\t';
             for (j = lastP; j < startN; ++j) {
                 c = (char)(text[j] & 0xff);
