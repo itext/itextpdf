@@ -199,7 +199,7 @@ public class MetaState {
     public void saveState(PdfContentByte cb) {
         cb.saveState();
         MetaState state = new MetaState(this);
-        savedStates.push(this);
+        savedStates.push(state);
     }
 
     public void restoreState(int index, PdfContentByte cb) {
