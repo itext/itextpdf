@@ -786,33 +786,6 @@ public class PdfReader {
         pageRefs = new PageRefs(this);
     }
     
-    protected void PRSimpleRecursive(PdfObject obj) throws IOException {
-        switch (obj.type()) {
-            case PdfObject.DICTIONARY:
-            case PdfObject.STREAM:
-                PdfDictionary dic = (PdfDictionary)obj;
-                for (Iterator it = dic.getKeys().iterator(); it.hasNext();) {
-                    PdfName key = (PdfName)it.next();
-                    PRSimpleRecursive(dic.get(key));
-                }
-                break;
-            case PdfObject.ARRAY:
-                ArrayList list = ((PdfArray)obj).getArrayList();
-                for (int k = 0; k < list.size(); ++k) {
-                    PRSimpleRecursive((PdfObject)list.get(k));
-                }
-                break;
-            case PdfObject.INDIRECT:
-                PRIndirectReference ref = (PRIndirectReference)obj;
-                int num = ref.getNumber();
-                if (!visited[num]) {
-                    visited[num] = true;
-                    newHits.put(num, 1);
-                }
-                break;
-        }
-    }
-        
     protected void readDocObjPartial() throws IOException {
         xrefObj = new ArrayList(xref.length / 2);
         xrefObj.addAll(Collections.nCopies(xref.length / 2, null));
