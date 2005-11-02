@@ -1018,7 +1018,8 @@ public class AcroFields {
      * @throws DocumentException on error
      */    
     public void setFields(FdfReader fdf) throws IOException, DocumentException {
-        for (Iterator i = fields.keySet().iterator(); i.hasNext();) {
+        HashMap fd = fdf.getFields();
+        for (Iterator i = fd.keySet().iterator(); i.hasNext();) {
             String f = (String)i.next();
             String v = fdf.getFieldValue(f);
             if (v != null)
@@ -1033,7 +1034,8 @@ public class AcroFields {
      */
     
     public void setFields(XfdfReader xfdf) throws IOException, DocumentException {
-        for (Iterator i = fields.keySet().iterator(); i.hasNext();) {
+        HashMap fd = xfdf.getFields();
+        for (Iterator i = fd.keySet().iterator(); i.hasNext();) {
             String f = (String)i.next();
             String v = xfdf.getFieldValue(f);
             if (v != null)
