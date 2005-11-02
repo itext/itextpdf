@@ -143,6 +143,9 @@ public class ColumnText {
     /** the space char ratio */
     public static final float GLOBAL_SPACE_CHAR_RATIO = 0;
     
+    /** Initial value of the status. */
+    public static final int START_COLUMN = 0;
+    
     /** Signals that there is no more text available. */
     public static final int NO_MORE_TEXT = 1;
     
