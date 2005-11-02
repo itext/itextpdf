@@ -858,7 +858,6 @@ public class PdfReader {
                     ok = false;
                     break;
                 }
-                tokens.intValue();
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
