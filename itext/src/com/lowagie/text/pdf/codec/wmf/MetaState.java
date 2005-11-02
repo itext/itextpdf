@@ -251,8 +251,8 @@ public class MetaState {
     }
     
     public float transformAngle(float angle) {
-        float ta = extentWy < 0 ? -angle : angle;
-        return extentWx < 0 ? 180 - ta : ta;
+        float ta = scalingY < 0 ? -angle : angle;
+        return (float)(scalingX < 0 ? Math.PI - ta : ta);
     }
     
     public void setCurrentPoint(Point p) {
