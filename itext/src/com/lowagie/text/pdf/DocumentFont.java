@@ -184,8 +184,8 @@ public class DocumentFont extends BaseFont {
             ury = bf.getFontDescriptor(BBOXURY, 1000);
         }
         if (first != null && last != null && newWidths != null) {
-            int f = (first).intValue();
-            ArrayList ar = (newWidths).getArrayList();
+            int f = first.intValue();
+            ArrayList ar = newWidths.getArrayList();
             for (int k = 0; k < ar.size(); ++k) {
                 widths[f + k] = ((PdfNumber)ar.get(k)).intValue();
             }
