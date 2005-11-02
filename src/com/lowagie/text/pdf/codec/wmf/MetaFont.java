@@ -52,6 +52,8 @@ package com.lowagie.text.pdf.codec.wmf;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import com.lowagie.text.pdf.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
 import com.lowagie.text.ExceptionConverter;
 
 public class MetaFont extends MetaObject {
@@ -128,6 +130,10 @@ public class MetaFont extends MetaObject {
     }
     
     public BaseFont getFont() {
+        if (font != null)
+            return font;
+        Font ff2 = FontFactory.getFont(faceName, BaseFont.CP1252, true, 10, ((italic != 0) ? Font.ITALIC : 0) | ((bold != 0) ? Font.BOLD : 0));
+        font = ff2.getBaseFont();
         if (font != null)
             return font;
         String fontName;
