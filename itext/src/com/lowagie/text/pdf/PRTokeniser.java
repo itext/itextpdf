@@ -275,8 +275,8 @@ public class PRTokeniser {
                         return;
                     }
                     type = TK_REF;
-                    reference = Integer.valueOf(n1).intValue();
-                    generation = Integer.valueOf(n2).intValue();
+                    reference = Integer.parseInt(n1);
+                    generation = Integer.parseInt(n2);
                     return;
                 }
             }
@@ -487,7 +487,7 @@ public class PRTokeniser {
     }
     
     public int intValue() {
-        return Integer.valueOf(stringValue).intValue();
+        return Integer.parseInt(stringValue);
     }
     
     public boolean readLineSegment(byte input[]) throws IOException {
