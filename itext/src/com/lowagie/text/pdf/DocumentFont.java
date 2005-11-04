@@ -81,6 +81,11 @@ public class DocumentFont extends BaseFont {
         "UniCNS-UCS2-H", "UniKS-UCS2-H", "UniKS-UCS2-H", "UniCNS-UCS2-H", "UniGB-UCS2-H",
         "UniKS-UCS2-H", "UniJIS-UCS2-H"};
         
+    String cjkNames2[] = {"MSungStd-Light", "STSongStd-Light", "HYSMyeongJoStd-Medium", "KozMinPro-Regular"};
+        
+    String cjkEncs2[] = {"UniCNS-UCS2-H", "UniGB-UCS2-H", "UniKS-UCS2-H", "UniJIS-UCS2-H",
+        "UniCNS-UTF16-H", "UniGB-UTF16-H", "UniKS-UTF16-H", "UniJIS-UTF16-H"};
+        
     static final int stdEnc[] = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -116,6 +121,20 @@ public class DocumentFont extends BaseFont {
                     fontName = cjkNames[k];
                     try {
                         cjkMirror = BaseFont.createFont(fontName, cjkEncs[k], false);
+                    }
+                    catch (Exception e) {
+                        throw new ExceptionConverter(e);
+                    }
+                    return;
+                }
+            }
+            String enc = PdfName.decodeName(((PdfName)PdfReader.getPdfObject(font.get(PdfName.ENCODING))).toString());
+            for (int k = 0; k < cjkEncs2.length; ++k) {
+                if (enc.startsWith(cjkEncs2[k])) {
+                    try {
+                        if (k > 3)
+                            k -= 4;
+                        cjkMirror = BaseFont.createFont(cjkNames2[k], cjkEncs2[k], false);
                     }
                     catch (Exception e) {
                         throw new ExceptionConverter(e);
