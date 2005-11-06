@@ -67,6 +67,83 @@ public class LPRClient extends AbstractTool {
 		addVersion("$Id$");
 	}
 
+String fallback="%!PS\n"+
+       "/vpos 720 def\n"+
+       "/newline\n"+
+      " {\n"+
+       "/vpos vpos 15 sub def\n"+
+       "72 vpos moveto\n"+
+       "} def \n"+
+       "/printword\n"+
+       "{\n"+
+       "show\n"+
+       "newline\n"+
+       "vpos 100 le { \n"+
+       "showpage\n"+
+       "100 100 moveto\n"+
+       "/vpos 720 def\n"+
+       "/Helvetica findfont 15 scalefont setfont\n"+
+       "} if\n"+
+       "} def \n"+
+       "/nstr 9 string def\n"+
+       "/prt-n\n"+
+       "{\n"+
+       "nstr cvs printword\n"+
+       "} def\n"+
+       "100 100 moveto\n"+
+       "/Helvetica findfont 15 scalefont setfont\n"+
+       "(---) printword \n"+
+       "(Postscript Engine Testpage) printword\n"+
+       "() printword\n"+
+       "() printword\n"+
+       "(Defaultpagesize) printword\n"+
+       "currentpagedevice /PageSize get\n"+
+       "(Width: ) show \n"+
+       "0 get prt-n\n"+
+       "currentpagedevice /PageSize get\n"+
+       "(Height: ) show \n"+
+       "1 get prt-n\n"+
+       "() printword\n"+
+       "(Printerresolution) printword\n"+
+       "currentpagedevice /HWResolution get\n"+
+       "(X: ) show \n"+
+       "0 get prt-n\n"+
+       "currentpagedevice /HWResolution get\n"+
+       "(Y: ) show \n"+
+       "1 get prt-n\n"+
+       "() printword\n"+
+       "(Information about Postscriptengine) printword\n"+
+       "(Postscriptengine Type: ) show\n"+
+       "product printword\n"+
+       "(Version: ) show\n"+
+       "version printword\n"+
+       "() printword \n"+
+       "mark\n"+
+       "(\n) \n"+
+       "revision 10 mod \n"+
+       "revision 100 mod 10 idiv (.)\n"+
+       "revision 100 idiv \n"+
+       "(Revision: )\n"+
+       "(\n) \n"+
+       "counttomark\n"+
+       "{ 17 string cvs show\n"+
+       "} repeat pop  \n"+
+       "() printword \n"+
+       "(Postscript Languagelevel: ) show\n"+
+       "/languagelevel where\n"+
+       "{pop languagelevel}\n"+
+       "{1}\n"+
+       "ifelse\n"+
+       "3 string cvs printword \n"+
+       "usertime \n"+
+       "prt-n \n"+
+       "vmstatus\n"+
+       "(Printerram Max.: ) show\n"+
+       "prt-n\n"+
+       "(Printerram Cur.: ) show\n"+
+       "prt-n\n"+
+       "() printword\n"+
+       "showpage";
 	/**
 	 * Constructs an LPRClient object.
 	 */
@@ -96,11 +173,16 @@ public class LPRClient extends AbstractTool {
 	 */
 	public void execute() {
 		try {
-			if (getValue("srcfile") == null)
-				throw new InstantiationException(
-						"You need to choose a sourcefile");
-			String filename = getValue("srcfile").toString();
-			File pdffile = new File(filename);
+                  String filename=null;
+                  File pdffile=null;
+			if (getValue("srcfile") == null){
+                          filename=null;
+                        }else{
+                          filename = getValue("srcfile").toString();
+                          pdffile = new File(filename);
+                        }
+//				throw new InstantiationException(
+//						"You need to choose a sourcefile");
 			if (getValue("hostname") == null)
 				throw new InstantiationException(
 						"You need to choose a hostname");
@@ -113,8 +195,13 @@ public class LPRClient extends AbstractTool {
 			LPR lpr = new LPR(getValue("hostname").toString(), System
 					.getProperty("user.name"));
 			lpr.setCopies(Integer.parseInt(getValue("copies").toString()));
-			lpr.print(getValue("queuename").toString(), pdffile, pdffile
-					.getName());
+                        if(filename==null){
+                          lpr.print(getValue("queuename").toString(), fallback, "Version");
+                        }else{
+                          lpr.print(getValue("queuename").toString(), pdffile, pdffile
+                                    .getName());
+                        }
+
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(internalFrame, e.getMessage(), e
 					.getClass().getName(), JOptionPane.ERROR_MESSAGE);
@@ -136,7 +223,7 @@ public class LPRClient extends AbstractTool {
 
 	/**
 	 * Prints a PDF file via lpr.
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String[] args) {
