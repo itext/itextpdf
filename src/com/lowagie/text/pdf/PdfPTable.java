@@ -141,6 +141,12 @@ public class PdfPTable implements Element{
      */
     private boolean splitLate = true;
     
+    /**
+     * Defines if the table should be kept
+     * on one page if possible
+     */
+    private boolean keepTogether;
+    
     protected PdfPTable() {
     }
     
@@ -157,6 +163,7 @@ public class PdfPTable implements Element{
         absoluteWidths = new float[relativeWidths.length];
         calculateWidths();
         currentRow = new PdfPCell[absoluteWidths.length];
+        keepTogether = false;
     }
     
     /** Constructs a <CODE>PdfPTable</CODE> with <CODE>numColumns</CODE> columns.
@@ -171,6 +178,7 @@ public class PdfPTable implements Element{
         absoluteWidths = new float[relativeWidths.length];
         calculateWidths();
         currentRow = new PdfPCell[absoluteWidths.length];
+        keepTogether = false;
     }
     
     /** Constructs a copy of a <CODE>PdfPTable</CODE>.
@@ -230,6 +238,7 @@ public class PdfPTable implements Element{
         splitLate = sourceTable.splitLate;
         skipFirstHeader = sourceTable.skipFirstHeader;
         horizontalAlignment = sourceTable.horizontalAlignment;
+        keepTogether = sourceTable.keepTogether;
     }
 
     /** Sets the relative widths of the table.
@@ -1020,4 +1029,18 @@ public class PdfPTable implements Element{
         this.splitLate = splitLate;
     }
     
+    /**
+     * If true the table will be kept on one page if it fits, by forcing a 
+     * new page if it doesn't fit on the current page. The default is to
+     * split the table over multiple pages.
+     *
+     * @param p_KeepTogether whether to try to keep the table on one page
+     */
+    public void setKeepTogether(boolean p_KeepTogether) {
+        keepTogether = p_KeepTogether;
+    }
+     
+    public boolean getKeepTogether() {
+        return keepTogether;
+    }
 }
