@@ -1000,7 +1000,13 @@ public class Cell extends Rectangle implements TextElementArray {
 		cell.cloneNonPositionParameters(this);
 		cell.setNoWrap(noWrap());
 		for (Iterator i = getElements(); i.hasNext(); ) {
-			cell.addElement((Element)i.next());
+            Element e = (Element)i.next();
+            if (e.type() == Element.PHRASE || e.type() == Element.PARAGRAPH) {
+                Paragraph p = new Paragraph((Phrase)e);
+                p.setAlignment(horizontalAlignment);
+                e = p;
+            }
+			cell.addElement(e);
 		}
 		return cell;
 	}
