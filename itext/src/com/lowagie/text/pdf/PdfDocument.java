@@ -968,6 +968,10 @@ class PdfDocument extends Document implements DocListener {
             Paragraph p = new Paragraph();
             p.setLeading(0);
             ct.addElement(p);
+            //if the table prefers to be on a single page, and it wouldn't
+            //fit on the current page, start a new page.
+            if (ptable.getKeepTogether() && !fitsPage(ptable, 0f))
+                newPage();
         }
         ct.addElement(ptable);
         boolean he = ptable.isHeadersInEvent();
