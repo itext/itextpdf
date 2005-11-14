@@ -72,6 +72,29 @@ public class FactoryProperties {
         return ck;
     }
     
+    private static void setParagraphLeading(Paragraph p, String leading) {
+        if (leading == null) {
+            p.setLeading(0, 1.5f);
+            return;
+        }
+        try {
+            StringTokenizer tk = new StringTokenizer(leading, " ,");
+            String v = tk.nextToken();
+            float v1 = Float.valueOf(v).floatValue();
+            if (!tk.hasMoreTokens()) {
+                p.setLeading(v1, 0);
+                return;
+            }
+            v = tk.nextToken();
+            float v2 = Float.valueOf(v).floatValue();
+            p.setLeading(v1, v2);
+        }
+        catch (Exception e) {
+            p.setLeading(0, 1.5f);
+        }
+
+    }
+
     public static Paragraph createParagraph(HashMap props) {
         Paragraph p = new Paragraph();
         String value = (String)props.get("align");
@@ -83,12 +106,11 @@ public class FactoryProperties {
             else if (value.equalsIgnoreCase("justify"))
                 p.setAlignment(Element.ALIGN_JUSTIFIED);
         }
-        p.setLeading(0, 1.5f);
+        setParagraphLeading(p, (String)props.get("leading"));
         return p;
     }
     
-    public static Paragraph createParagraph(ChainedProperties props) {
-        Paragraph p = new Paragraph();
+    public static void createParagraph(Paragraph p, ChainedProperties props) {
         String value = props.getProperty("align");
         if (value != null) {
             if (value.equalsIgnoreCase("center"))
@@ -98,10 +120,42 @@ public class FactoryProperties {
             else if (value.equalsIgnoreCase("justify"))
                 p.setAlignment(Element.ALIGN_JUSTIFIED);
         }
-        p.setLeading(0, 1.5f);
+        setParagraphLeading(p, props.getProperty("leading"));
+        value = props.getProperty("before");
+        if (value != null) {
+            try {
+                p.setSpacingBefore(Float.valueOf(value).floatValue());
+            }
+            catch (Exception e) {}
+        }
+        value = props.getProperty("after");
+        if (value != null) {
+            try {
+                p.setSpacingAfter(Float.valueOf(value).floatValue());
+            }
+            catch (Exception e) {}
+        }
+        value = props.getProperty("extraparaspace");
+        if (value != null) {
+            try {
+                p.setExtraParagraphSpace(Float.valueOf(value).floatValue());
+            }
+            catch (Exception e) {}
+        }
+    }
+
+    public static Paragraph createParagraph(ChainedProperties props) {
+        Paragraph p = new Paragraph();
+        createParagraph(p, props);
         return p;
     }
-    
+
+    public static ListItem createListItem(ChainedProperties props) {
+        ListItem p = new ListItem();
+        createParagraph(p, props);
+        return p;
+    }
+
     public static Font getFont(ChainedProperties props) {
         String face = props.getProperty("face");
         if (face != null) {
@@ -124,7 +178,10 @@ public class FactoryProperties {
         if (value != null)
             size = Float.valueOf(value).floatValue();
         Color color = decodeColor(props.getProperty("color"));
-        return FontFactory.getFont(face, BaseFont.WINANSI, true, size, style, color);
+        String encoding = props.getProperty("encoding");
+        if (encoding == null)
+            encoding = BaseFont.WINANSI;
+        return FontFactory.getFont(face, encoding, true, size, style, color);
     }
     
     public static Color decodeColor(String s) {
