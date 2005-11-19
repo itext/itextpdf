@@ -147,6 +147,11 @@ public class PdfPTable implements Element{
      */
     private boolean keepTogether;
     
+    /**
+     * Holds value of property footerRows.
+     */
+    private int footerRows;
+    
     protected PdfPTable() {
     }
     
@@ -231,6 +236,7 @@ public class PdfPTable implements Element{
         spacingAfter = sourceTable.spacingAfter;
         spacingBefore = sourceTable.spacingBefore;
         headerRows = sourceTable.headerRows;
+        footerRows = sourceTable.footerRows;
         lockedWidth = sourceTable.lockedWidth;
         extendLastRow = sourceTable.extendLastRow;
         headersInEvent = sourceTable.headersInEvent;
@@ -1043,4 +1049,33 @@ public class PdfPTable implements Element{
     public boolean getKeepTogether() {
         return keepTogether;
     }
+    
+    /**
+     * Gets the number of rows in the footer.
+     * @return the number of rows in the footer
+     */
+    public int getFooterRows() {
+        return this.footerRows;
+    }
+    
+    /**
+     * Sets the number of rows to be used for the footer. The number
+     * of footer rows are subtracted from the header rows. For
+     * example, for a table with two header rows and one footer row the
+     * code would be:
+     * <p>
+     * <PRE>
+     * table.setHeaderRows(3);
+     * table.setFooterRows(1);
+     * </PRE>
+     * <p>
+     * Row 0 and 1 will be the header rows and row 2 will be the footer row.
+     * @param footerRows the number of rows to be used for the footer
+     */
+    public void setFooterRows(int footerRows) {
+        if (footerRows < 0)
+            footerRows = 0;
+        this.footerRows = footerRows;
+    }
+    
 }
