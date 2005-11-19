@@ -1331,27 +1331,34 @@ public class ColumnText {
                         default:
                             x1 += (rectangularWidth - tableWidth) / 2f;
                     }
+                    int realHeaderRows = table.getHeaderRows();
+                    int footerRows = table.getFooterRows();
+                    if (footerRows > realHeaderRows)
+                        footerRows = realHeaderRows;
+                    realHeaderRows -= footerRows;
                     PdfPTable nt = PdfPTable.shallowCopy(table);
                     ArrayList rows = table.getRows();
                     ArrayList sub = nt.getRows();
                     if (!skipHeader) {
-                        for (int j = 0; j < table.getHeaderRows(); ++j)
+                        for (int j = 0; j < realHeaderRows; ++j)
                             sub.add(rows.get(j));
                     }
                     else
-                        nt.setHeaderRows(0);
+                        nt.setHeaderRows(footerRows);
                     for (int j = listIdx; j < k; ++j)
                         sub.add(rows.get(j));
+                    for (int j = 0; j < footerRows; ++j)
+                        sub.add(rows.get(j + realHeaderRows));
                     float rowHeight = 0;
                     if (table.isExtendLastRow()) {
-                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1);
+                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
                         rowHeight = last.getMaxHeights();
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
                     }
                     nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
                     if (table.isExtendLastRow()) {
-                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1);
+                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
                         last.setMaxHeights(rowHeight);
                     }
                 }
