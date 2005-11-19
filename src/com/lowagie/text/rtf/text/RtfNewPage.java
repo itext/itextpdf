@@ -44,7 +44,7 @@ public class RtfNewPage extends RtfElement {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(NEW_PAGE);
-            result.write(RtfParagraph.PARAGRAPH);
+            result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
