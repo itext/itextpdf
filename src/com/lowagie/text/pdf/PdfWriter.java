@@ -952,6 +952,13 @@ public class PdfWriter extends DocWriter {
                 }
             }
             else {
+                PdfIndirectReference dref = image.getDirectReference();
+                if (dref != null) {
+                    PdfName rname = new PdfName("img" + images.size());
+                    images.put(image.getMySerialId(), rname);
+                    imageDictionary.put(rname, dref);
+                    return rname;
+                }
                 Image maskImage = image.getImageMask();
                 PdfIndirectReference maskRef = null;
                 if (maskImage != null) {

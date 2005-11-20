@@ -73,6 +73,10 @@ import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PRTokeniser;
+import com.lowagie.text.pdf.PdfIndirectReference;
+import com.lowagie.text.pdf.PRIndirectReference;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfNumber;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -340,6 +344,7 @@ public abstract class Image extends Rectangle implements Element,
 		this.widthPercentage = image.widthPercentage;
 		this.layer = image.layer;
         this.initialRotation = image.initialRotation;
+        this.directReference = image.directReference;
 	}
 
 	/**
@@ -724,6 +729,35 @@ public abstract class Image extends Rectangle implements Element,
 			int bpc, byte data[]) throws BadElementException {
 		return Image.getInstance(width, height, components, bpc, data, null);
 	}
+
+    /**
+     * Reuses an existing image.
+     * @param ref the reference to the image dictionary
+     * @throws BadElementException on error
+     * @return the image
+     */    
+    public static Image getInstance(PRIndirectReference ref) throws BadElementException {
+        PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObjectRelease(ref);
+        int width = ((PdfNumber)PdfReader.getPdfObjectRelease(dic.get(PdfName.WIDTH))).intValue();
+        int height = ((PdfNumber)PdfReader.getPdfObjectRelease(dic.get(PdfName.HEIGHT))).intValue();
+        Image imask = null;
+        PdfObject obj = dic.get(PdfName.SMASK);
+        if (obj != null && obj.isIndirect()) {
+            imask = getInstance((PRIndirectReference)obj);
+        }
+        else {
+            obj = dic.get(PdfName.MASK);
+            if (obj != null && obj.isIndirect()) {
+                PdfObject obj2 = PdfReader.getPdfObjectRelease(obj);
+                if (obj2 instanceof PdfDictionary)
+                    imask = getInstance((PRIndirectReference)obj);
+            }
+        }
+        Image img = new ImgRaw(width, height, 1, 1, null);
+        img.imageMask = imask;
+        img.directReference = ref;
+        return img;
+    }
 
 	/**
 	 * gets an instance of an Image
@@ -1342,6 +1376,12 @@ public abstract class Image extends Rectangle implements Element,
 
     private static String excUri = " <>#%\"{}[]|\\\u005E\u0060";
     private static String[] excUriEsc = {"%20", "%3C", "%3E", "%23", "%25", "%22", "%7B", "%7D", "%5B", "%5D", "%7C", "%5C", "%5E", "%60"};
+    
+    /**
+     * Holds value of property directReference.
+     */
+    private PdfIndirectReference directReference;
+    
 	/**
 	 * This method makes a valid URL from a given filename.
 	 * <P>
@@ -2002,6 +2042,22 @@ public abstract class Image extends Rectangle implements Element,
         float old_rot = rotation - this.initialRotation;
         this.initialRotation = initialRotation;
         setRotation(old_rot);
+    }
+    
+    /**
+     * Getter for property directReference.
+     * @return Value of property directReference.
+     */
+    public PdfIndirectReference getDirectReference() {
+        return this.directReference;
+    }
+    
+    /**
+     * Setter for property directReference.
+     * @param directReference New value of property directReference.
+     */
+    public void setDirectReference(PdfIndirectReference directReference) {
+        this.directReference = directReference;
     }
     
 }
