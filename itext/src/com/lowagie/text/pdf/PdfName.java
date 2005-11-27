@@ -944,6 +944,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName X = new PdfName("X");
     /** A name */
+    public static final PdfName XFA = new PdfName("XFA");
+    /** A name */
     public static final PdfName XML = new PdfName("XML");
     /** A name */
     public static final PdfName XOBJECT = new PdfName("XObject");
