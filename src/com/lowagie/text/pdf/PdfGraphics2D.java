@@ -296,6 +296,7 @@ public class PdfGraphics2D extends Graphics2D {
                     underline = true;
             }
             else if(textattribute.equals(TextAttribute.SUPERSCRIPT)) {
+                throw new RuntimeException("TextAttribute.SUPERSCRIPT not supported");
                 /*
                 iter.getAttributes().get(textattribute);
                 Integer _tmp = TextAttribute.SUPERSCRIPT_SUPER;
@@ -314,14 +315,18 @@ public class PdfGraphics2D extends Graphics2D {
                     font1 = getFont().deriveFont(getFont().getStyle(), f);
                 }
                 else {
-                    //System.out.println("Unknown type for attribute SIZE");
-                    return;
+                    throw new RuntimeException("Unknown type " + obj.getClass() + " for attribute SIZE");
                 }
                 setFont(font1);
             }
+            else if(textattribute.equals(TextAttribute.FOREGROUND)) {
+                setColor((Color) iter.getAttributes().get(textattribute));
+            }
+            else if(textattribute.equals(TextAttribute.BACKGROUND)) {
+                throw new RuntimeException("Background color not supported");
+            }
             else {
-                String s = "only FONT/SIZE/UNDERLINE/SUPERSCRIPT supported";
-                throw new RuntimeException(s);
+                throw new RuntimeException("Unknown TextAttribute: " + textattribute);
             }
         }
     }
