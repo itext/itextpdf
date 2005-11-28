@@ -516,7 +516,7 @@ public class FontFactory extends java.lang.Object {
                 Object allNames[] = BaseFont.getAllFontNames(path, BaseFont.WINANSI, null);
                 trueTypeFonts.setProperty(((String)allNames[0]).toLowerCase(), path);
                 if (alias != null) {
-                    trueTypeFonts.setProperty(alias, path);
+                    trueTypeFonts.setProperty(alias.toLowerCase(), path);
                 }
                 // register all the font names with all the locales
                 String[][] names = (String[][])allNames[2]; //full name
