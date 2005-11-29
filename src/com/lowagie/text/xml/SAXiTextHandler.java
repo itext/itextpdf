@@ -148,8 +148,8 @@ public class SAXiTextHandler extends DefaultHandler {
 
     public SAXiTextHandler(DocListener document) throws DocumentException,
             IOException {
-        this(document, BaseFont.createFont("helvetica", BaseFont.IDENTITY_H,
-                true));
+        this(document, BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252,
+                BaseFont.NOT_EMBEDDED));
     }
 
     /**
