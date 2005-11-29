@@ -197,65 +197,9 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
             if (attrs != null) {
                 for (int i = 0; i < attrs.getLength(); i++) {
                     String attribute = attrs.getQName(i);
-                    if (attribute.equalsIgnoreCase("style")) {// eventually
-                        // HTML_ATTR_STYLE instead of MarkupTags.STYLE
+                    if (attribute.equalsIgnoreCase("style")) {
                         content = attrs.getValue(i);
-                        // Properties styleAttributes = MarkupParser
-                        // .parseAttributes(content);
-                        // if (styleAttributes.size() == 0) {
-                        bodyAttributes.put("style"// eventually
-                                // HTML_ATTR_STYLE instead of MarkupTags.STYLE
-                                , content);
-                        // } else {
-                        // String fontname = (String) styleAttributes
-                        // .remove("font-family"// MarkupTags.CSS_KEY_FONTFAMILY
-                        // );
-                        // if (fontname != null) {
-                        // String tmp;
-                        // while (fontname.indexOf(",") != -1) {
-                        // tmp = fontname.substring(0, fontname
-                        // .indexOf(","));
-                        // if (FontFactory.isRegistered(tmp)) {
-                        // fontname = tmp;
-                        // } else {
-                        // fontname = fontname.substring(fontname
-                        // .indexOf(",") + 1);
-                        // }
-                        // }
-                        // }
-                        // // if ((value =
-                        // //
-                        // (String)styleAttributes.remove(MarkupTags.CSS_KEY_FONTSIZE))
-                        // // != null) {
-                        // // size = MarkupParser.parseLength(value);
-                        // // }
-                        // // if ((value =
-                        // //
-                        // (String)styleAttributes.remove(MarkupTags.CSS_KEY_FONTWEIGHT))
-                        // // != null) {
-                        // // style |= Font.getStyleValue(value);
-                        // // }
-                        // // if ((value =
-                        // //
-                        // (String)styleAttributes.remove(MarkupTags.CSS_KEY_FONTSTYLE))
-                        // // != null) {
-                        // // style |= Font.getStyleValue(value);
-                        // // }
-                        // // if ((value =
-                        // //
-                        // (String)styleAttributes.remove(MarkupTags.CSS_KEY_COLOR))
-                        // // != null) {
-                        // // color = MarkupParser.decodeColor(value);
-                        // // }
-                        // bodyAttributes.put("fontname",fontname);
-                       
-                        // bodyAttributes.putAll(styleAttributes);
-                        // for (Enumeration e = styleAttributes.keys();
-                        // e.hasMoreElements();) {
-                        // Object o = e.nextElement();
-                        // bodyAttributes.put(o, styleAttributes.get(o));
-                        // }
-                        // }
+                        bodyAttributes.put("style", content);
                     }
                 }
             }
