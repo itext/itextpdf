@@ -63,6 +63,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.lowagie.text.DocListener;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 
 /**
@@ -105,7 +106,9 @@ public class XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
+        } catch (DocumentException e) {
+            throw new ExceptionConverter(e);
+		}
     }
     
 /**
@@ -124,6 +127,9 @@ public class XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
+        }
+        catch(DocumentException de) {
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -144,6 +150,9 @@ public class XmlParser {
             catch(IOException ioe) {
                 throw new ExceptionConverter(ioe);
             }
+            catch(DocumentException de) {
+                throw new ExceptionConverter(de);
+            }
         }
     
 /**
@@ -163,6 +172,9 @@ public class XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
+        catch(DocumentException de) {
+            throw new ExceptionConverter(de);
+        }
     }
     
 /**
@@ -180,6 +192,9 @@ public class XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
+        }
+        catch(DocumentException de) {
+            throw new ExceptionConverter(de);
         }
     }
     
@@ -200,6 +215,9 @@ public class XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
+        catch(DocumentException de) {
+            throw new ExceptionConverter(de);
+        }
     }
     
 /**
@@ -218,6 +236,9 @@ public class XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
+        }
+        catch(DocumentException de) {
+            throw new ExceptionConverter(de);
         }
     }
     
