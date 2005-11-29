@@ -220,4 +220,8 @@ public class PdfArray extends PdfObject {
     public ListIterator listIterator() {
         return arrayList.listIterator();
     }
+    
+    public String toString() {
+    	return arrayList.toString();
+    }
 }

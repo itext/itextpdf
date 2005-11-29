@@ -162,10 +162,10 @@ String fallback="%!PS\n"+
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("LPR", true, true, true);
+		internalFrame = new JInternalFrame("LPR", true, false, true);
 		internalFrame.setSize(500, 300);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
+		System.out.println("=== LPR OPENED ===");
 	}
 
 	/**

@@ -97,10 +97,10 @@ public class Handouts extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Handouts", true, true, true);
-		internalFrame.setSize(300, 250);
+		internalFrame = new JInternalFrame("Handouts", true, false, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(20, 10));
+		System.out.println("=== Handouts OPENED ===");
 	}
 
 	/**

@@ -63,10 +63,10 @@ public class SelectedPages
    * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
    */
   protected void createFrame() {
-    internalFrame = new JInternalFrame("SelectedPages", true, true, true);
-    internalFrame.setSize(300, 120);
+    internalFrame = new JInternalFrame("SelectedPages", true, false, true);
+    internalFrame.setSize(300, 80);
     internalFrame.setJMenuBar(getMenubar());
-    internalFrame.getContentPane().add(getConsole(40, 30));
+	System.out.println("=== SelectedPages OPENED ===");
   }
 
   /**

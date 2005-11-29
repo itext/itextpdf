@@ -366,5 +366,4 @@ public abstract class PdfObject {
     public void setIndRef(PRIndirectReference indRef) {
         this.indRef = indRef;
     }
-    
 }

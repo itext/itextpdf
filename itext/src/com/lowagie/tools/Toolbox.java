@@ -54,6 +54,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -66,8 +69,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 
 import com.lowagie.tools.plugins.AbstractTool;
+
 import java.awt.Toolkit;
 import java.awt.Dimension;
 
@@ -78,6 +85,8 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 
 	/** The DesktopPane of the toolbox. */
 	private JDesktopPane desktop;
+	/** The ConsolePane of the toolbox. */
+	private JScrollPane console;
 
 	/** The list of tools in the toolbox. */
 	private Properties toolmap = new Properties();
@@ -93,13 +102,25 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	 */
 	public Toolbox() {
 		super();
-		setSize(600, 400);
+		setSize(600, 500);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(true);
 		setTitle("iText Toolbox");
 		setJMenuBar(getMenubar());
 		desktop = new JDesktopPane();
-		setContentPane(desktop);
+		Console c;
+		try {
+			c = new Console();
+			console = new JScrollPane(c.textArea);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, desktop, console); 
+        splitPane.setContinuousLayout(true); 
+     	splitPane.setOneTouchExpandable(true); 
+     	splitPane.setDividerLocation(300);
+		setContentPane(splitPane);
 		centerFrame(this);
 		setVisible(true);
 	}
@@ -203,7 +224,6 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	}
 
 	public static void centerFrame(JFrame f) {
-		//Das Fenster zentrieren
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = f.getSize();
 		if (frameSize.height > screenSize.height) {
@@ -247,4 +267,66 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 			}
 		}
 	}
+    /**
+     * A Class that redirects output to System.out and System.err.
+     */
+    public class Console {
+        PipedInputStream piOut;
+        PipedInputStream piErr;
+        PipedOutputStream poOut;
+        PipedOutputStream poErr;
+        JTextArea textArea = new JTextArea();
+    
+        /**
+         * Creates a new Console object.
+         * @param columns
+         * @param rows
+         * @throws IOException
+         */
+        public Console() throws IOException {
+            // Set up System.out
+            piOut = new PipedInputStream();
+            poOut = new PipedOutputStream(piOut);
+            System.setOut(new PrintStream(poOut, true));
+    
+            // Set up System.err
+            piErr = new PipedInputStream();
+            poErr = new PipedOutputStream(piErr);
+            System.setErr(new PrintStream(poErr, true));
+    
+            // Add a scrolling text area
+            textArea.setEditable(false);
+    
+            // Create reader threads
+            new ReaderThread(piOut).start();
+            new ReaderThread(piErr).start();
+        }
+    
+        class ReaderThread extends Thread {
+            PipedInputStream pi;
+    
+            ReaderThread(PipedInputStream pi) {
+                this.pi = pi;
+            }
+    
+            /**
+             * @see java.lang.Thread#run()
+             */
+            public void run() {
+                final byte[] buf = new byte[1024];
+                try {
+                    while (true) {
+                        final int len = pi.read(buf);
+                        if (len == -1) {
+                            break;
+                        }
+                        textArea.append(new String(buf, 0, len));
+                        textArea.setCaretPosition(textArea.getDocument().getLength());
+                    }
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+	
 }

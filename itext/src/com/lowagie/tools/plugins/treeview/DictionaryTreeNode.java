@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2005 by Anonymous.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,40 +48,58 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.tools.plugins.treeview;
+
+import java.util.Set;
+import java.util.Iterator;
+import com.lowagie.text.pdf.PdfDictionary;
 
 /**
- * <CODE>PdfNull</CODE> is the Null object represented by the keyword <VAR>null</VAR>.
- * <P>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.9 (page 53).
+ * <p>Title: </p>
  *
- * @see		PdfObject
+ * <p>Description: </p>
+ *
+ * <p>Copyright: Copyright (c) 2005</p>
+ *
+ * <p>Company: </p>
+ *
+ * @author not attributable
+ * @version 1.0
  */
+public class DictionaryTreeNode
+    extends UpdateableTreeNode {
+  PdfDictionary dictionary;
 
-public class PdfNull extends PdfObject {
-    
-    // static membervariables
-    
-/** This is an instance of the <CODE>PdfNull</CODE>-object. */
-    public static final PdfNull	PDFNULL = new PdfNull();
-    
-/** This is the content of a <CODE>PdfNull</CODE>-object. */
-    private static final String CONTENT = "null";
-    
-    // constructors
-    
-/**
- * Constructs a <CODE>PdfNull</CODE>-object.
- * <P>
- * You never need to do this yourself, you can always use the static final object <VAR>PDFNULL</VAR>.
- */
-    
-    public PdfNull() {
-        super(NULL, CONTENT);
+  public DictionaryTreeNode(Object userObject, PdfDictionary dictionary) {
+    super(userObject);
+    this.dictionary = dictionary;
+  }
+
+  public DictionaryTreeNode(Object userObject, boolean allowchildren) {
+    super(userObject, allowchildren);
+  }
+
+  /**
+   * updateview
+   *
+   * @param updateobject IUpdatenodeview
+   * @todo Implement this com.lowagie.tools.plugins.treeview.UpdateableTreeNode method
+   */
+  public void updateview(IUpdatenodeview updateobject) {
+    StringBuffer sb = new StringBuffer();
+    sb.append("<html>");
+    sb.append("<p>");
+    sb.append(this.userObject);
+    sb.append("</p>");
+    Set set = dictionary.getKeys();
+    Iterator it = set.iterator();
+    while (it.hasNext()) {
+      sb.append("<p>");
+      sb.append("Key " + it.next().toString());
+      sb.append("</p>");
     }
-    
-    public String toString() {
-    	return "null";
-    }
+    sb.append("</html>");
+    updateobject.showvalues(sb.toString());
+  }
+
 }

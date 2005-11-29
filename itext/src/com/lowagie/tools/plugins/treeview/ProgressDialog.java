@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2005 by Anonymous.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,40 +48,77 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.tools.plugins.treeview;
 
-/**
- * <CODE>PdfNull</CODE> is the Null object represented by the keyword <VAR>null</VAR>.
- * <P>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.9 (page 53).
- *
- * @see		PdfObject
- */
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
-public class PdfNull extends PdfObject {
-    
-    // static membervariables
-    
-/** This is an instance of the <CODE>PdfNull</CODE>-object. */
-    public static final PdfNull	PDFNULL = new PdfNull();
-    
-/** This is the content of a <CODE>PdfNull</CODE>-object. */
-    private static final String CONTENT = "null";
-    
-    // constructors
-    
-/**
- * Constructs a <CODE>PdfNull</CODE>-object.
- * <P>
- * You never need to do this yourself, you can always use the static final object <VAR>PDFNULL</VAR>.
- */
-    
-    public PdfNull() {
-        super(NULL, CONTENT);
+
+public class ProgressDialog extends JDialog {
+  JPanel panel1 = new JPanel();
+  BorderLayout borderLayout1 = new BorderLayout();
+  JPanel jPanel1 = new JPanel();
+  BorderLayout borderLayout2 = new BorderLayout();
+  BorderLayout borderLayout3 = new BorderLayout();
+  JLabel jLabel1 = new JLabel();
+  JProgressBar jProgressBar1 = new JProgressBar();
+  private int anzahlseiten;
+  private int aktuelleseite;
+
+  public ProgressDialog(Frame frame, String title, boolean modal) {
+    super(frame, title, modal);
+    try {
+      jbInit();
+      pack();
     }
-    
-    public String toString() {
-    	return "null";
+    catch(Exception ex) {
+      ex.printStackTrace();
     }
+  }
+
+  public ProgressDialog() {
+    this(null, "", false);
+  }
+
+  private void jbInit() throws Exception {
+    panel1.setLayout(borderLayout1);
+    this.getContentPane().setLayout(borderLayout2);
+    jPanel1.setLayout(borderLayout3);
+    jLabel1.setText("Analysefortschritt");
+    jProgressBar1.setStringPainted(true);
+    getContentPane().add(panel1, BorderLayout.CENTER);
+    panel1.add(jPanel1,  BorderLayout.CENTER);
+    jPanel1.add(jProgressBar1,  BorderLayout.CENTER);
+    this.getContentPane().add(jLabel1, BorderLayout.NORTH);
+    //Das Fenster zentrieren
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    Dimension frameSize = getSize();
+    if (frameSize.height > screenSize.height) {
+      frameSize.height = screenSize.height;
+    }
+    if (frameSize.width > screenSize.width) {
+      frameSize.width = screenSize.width;
+    }
+    setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
+  }
+  public int getAnzahlseiten() {
+    return anzahlseiten;
+  }
+  public void setAnzahlseiten(int anzahlseiten) {
+    this.anzahlseiten = anzahlseiten;
+    jProgressBar1.setMaximum(anzahlseiten);
+  }
+  public int getAktuelleseite() {
+    return aktuelleseite;
+  }
+  public void setAktuelleseite(int aktuelleseite) {
+    this.aktuelleseite = aktuelleseite;
+    jProgressBar1.setValue(aktuelleseite);
+  }
 }

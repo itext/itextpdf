@@ -88,10 +88,10 @@ public class KnitTiff extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("KnitTiff", true, true, true);
-		internalFrame.setSize(550, 250);
+		internalFrame = new JInternalFrame("KnitTiff", true, false, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
+		System.out.println("=== KnitTiff OPENED ===");
 	}
 
 	/**

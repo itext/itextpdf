@@ -100,9 +100,9 @@ public class HtmlBookmarks extends AbstractTool {
 	 */
 	protected void createFrame() {
 		internalFrame = new JInternalFrame("Html Bookmarks", true, true, true);
-		internalFrame.setSize(500, 300);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
+		System.out.println("=== Html Bookmarks OPENED ===");
 	}
 
 	/**

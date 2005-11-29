@@ -99,6 +99,7 @@ public class Txt2Pdf extends AbstractTool {
 		internalFrame = new JInternalFrame("Txt2Pdf", true, true, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
+		System.out.println("=== Txt2Pdf OPENED ===");
 	}
 
 	/**

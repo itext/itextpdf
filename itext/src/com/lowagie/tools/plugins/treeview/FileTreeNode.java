@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 2005 by Anonymous.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -48,40 +48,32 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf;
+package com.lowagie.tools.plugins.treeview;
 
-/**
- * <CODE>PdfNull</CODE> is the Null object represented by the keyword <VAR>null</VAR>.
- * <P>
- * This object is described in the 'Portable Document Format Reference Manual version 1.3'
- * section 4.9 (page 53).
- *
- * @see		PdfObject
- */
+import com.lowagie.text.pdf.*;
 
-public class PdfNull extends PdfObject {
-    
-    // static membervariables
-    
-/** This is an instance of the <CODE>PdfNull</CODE>-object. */
-    public static final PdfNull	PDFNULL = new PdfNull();
-    
-/** This is the content of a <CODE>PdfNull</CODE>-object. */
-    private static final String CONTENT = "null";
-    
-    // constructors
-    
-/**
- * Constructs a <CODE>PdfNull</CODE>-object.
- * <P>
- * You never need to do this yourself, you can always use the static final object <VAR>PDFNULL</VAR>.
- */
-    
-    public PdfNull() {
-        super(NULL, CONTENT);
-    }
-    
-    public String toString() {
-    	return "null";
-    }
+public class FileTreeNode
+    extends UpdateableTreeNode {
+
+  PdfReader reader;
+  public FileTreeNode(Object p0, PdfReader reader) {
+    super(p0);
+    this.reader = reader;
+  }
+
+  public void updateview(IUpdatenodeview updateobject) {
+    StringBuffer sb = new StringBuffer();
+    sb.append("<html>");
+    sb.append("<p>");
+    sb.append(this.userObject);
+    sb.append("</p>");
+    sb.append("<p>");
+    sb.append("PDF Version 1." + this.reader.getPdfVersion());
+    sb.append("</p>");
+    sb.append("<p>");
+    sb.append("Number of Pages: " + this.reader.getNumberOfPages());
+    sb.append("</p>");
+    sb.append("</html>");
+    updateobject.showvalues(sb.toString());
+  }
 }

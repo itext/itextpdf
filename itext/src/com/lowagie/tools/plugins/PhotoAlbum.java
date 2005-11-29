@@ -89,10 +89,10 @@ public class PhotoAlbum extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("PhotoAlbum", true, true, true);
-		internalFrame.setSize(550, 250);
+		internalFrame = new JInternalFrame("PhotoAlbum", true, false, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
+		System.out.println("=== PhotoAlbum OPENED ===");
 	}
 
 	/**

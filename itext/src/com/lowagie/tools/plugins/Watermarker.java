@@ -53,9 +53,10 @@ public class Watermarker extends AbstractTool {
 	 * Creates the internal frame.
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Watermark", true, true, true);
+		internalFrame = new JInternalFrame("Watermark", true, false, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
+		System.out.println("=== Watermark OPENED ===");
 	}
 
 	/**
