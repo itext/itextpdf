@@ -12,6 +12,7 @@ Manipulate.Burst: com.lowagie.tools.plugins.Burst
 Manipulate.SelectedPages: com.lowagie.tools.plugins.SelectedPages
 Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
 Properties.InspectPDF: com.lowagie.tools.plugins.InspectPDF
+Properties.TreeViewPDF: com.lowagie.tools.plugins.TreeViewPDF
 Properties.HtmlBookmarks: com.lowagie.tools.plugins.HtmlBookmarks
 Convert2Pdf.PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum
 Convert2Pdf.Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf

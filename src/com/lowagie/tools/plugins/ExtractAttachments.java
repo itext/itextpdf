@@ -84,9 +84,10 @@ public class ExtractAttachments extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("ExtractAttachements", true, true, true);
+		internalFrame = new JInternalFrame("ExtractAttachments", true, false, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
+		System.out.println("=== ExtractAttachments OPENED ===");
 	}
 
 	/**

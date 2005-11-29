@@ -55,9 +55,10 @@ public class Split extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Split", true, true, true);
+		internalFrame = new JInternalFrame("Split", true, false, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
+		System.out.println("=== Split OPENED ===");
 	}
 
 	/**

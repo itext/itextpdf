@@ -84,9 +84,10 @@ public class Decrypt extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Decrypt", true, true, true);
+		internalFrame = new JInternalFrame("Decrypt", true, false, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
+		System.out.println("=== Decrypt OPENED ===");
 	}
 
 	/**

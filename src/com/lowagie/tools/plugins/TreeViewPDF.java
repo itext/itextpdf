@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Bruno Lowagie
+ * Copyright 2005 by Anonymous.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -50,53 +50,47 @@
 package com.lowagie.tools.plugins;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
-import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
 
-import com.lowagie.text.pdf.PRIndirectReference;
-import com.lowagie.text.pdf.PdfDictionary;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfObject;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
-import com.lowagie.text.pdf.PdfString;
 import com.lowagie.tools.arguments.FileArgument;
+import com.lowagie.tools.arguments.LabelAccessory;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
+import com.lowagie.tools.plugins.treeview.TreeViewInternalFrame;
 
 /**
- * This tool copies an existing PDF and removes potentially dangerous code that launches an application.
+ * Allows you to inspect an existing PDF file.
  */
-public class RemoveLaunchApplication
+public class TreeViewPDF
     extends AbstractTool {
-
   static {
-    addVersion(
-        "$Id$");
+    addVersion("$Id$");
   }
 
+  TreeViewInternalFrame ul;
+  FileArgument inputfile;
   /**
-   * Constructs a ReversePages object.
+   * Constructs an TreeViewPDF object.
    */
-  public RemoveLaunchApplication() {
-    menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
-    arguments.add(new FileArgument(this, "srcfile",
-                                   "The file from which you want to remove Launch Application actions", false,
-                                   new PdfFilter()));
-    arguments.add(new FileArgument(this, "destfile",
-                                   "The file to which the cleaned up version of the original PDF has to be written", true,
-                                   new PdfFilter()));
+  public TreeViewPDF() {
+    inputfile = new FileArgument(this, "srcfile",
+                                 "The file you want to inspect", false,
+                                 new PdfFilter());
+    inputfile.setLabel(new LabelAccessory());
+    arguments.add(inputfile);
   }
 
   /**
    * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
    */
   protected void createFrame() {
-    internalFrame = new JInternalFrame("Remove Launch Applications", true, false, true);
-    internalFrame.setSize(300, 80);
+    ul = new TreeViewInternalFrame("Pdf Analysis", true, false, true);
+    internalFrame = ul;
+    internalFrame.setSize(500, 300);
     internalFrame.setJMenuBar(getMenubar());
-	System.out.println("=== Remove Launch Applications OPENED ===");
+    inputfile.addPropertyChangeListener(ul);
+	System.out.println("=== Pdf Analysis OPENED ===");
   }
 
   /**
@@ -107,52 +101,14 @@ public class RemoveLaunchApplication
       if (getValue("srcfile") == null) {
         throw new InstantiationException("You need to choose a sourcefile");
       }
-      File src = (File) getValue("srcfile");
-      if (getValue("destfile") == null) {
-        throw new InstantiationException(
-            "You need to choose a destination file");
-      }
-      File dest = (File) getValue("destfile");
 
-      // we create a reader for a certain document
-      PdfReader reader = new PdfReader(src.getAbsolutePath());
-      PdfObject o;
-      PdfDictionary d;
-      PdfDictionary l;
-      PdfName n;
-      for (int i = 1; i < reader.getXrefSize(); i++) {
-      	o = reader.getPdfObject(i);
-      	if (o instanceof PdfDictionary) {
-      		d = (PdfDictionary)o;
-      		o = d.get(PdfName.A);
-      		if (o == null) continue;
-      		if (o instanceof PdfDictionary) {
-      			l = (PdfDictionary)o;
-      		}
-      		else {
-      			PRIndirectReference r =(PRIndirectReference)o;
-      			l = (PdfDictionary)reader.getPdfObject(r.getNumber());
-      		}
-      		n = (PdfName)l.get(PdfName.S);
-      		if (PdfName.LAUNCH.equals(n)) {
-      			if (l.get(PdfName.F) != null) {
-      				System.out.println("Removed: " + l.get(PdfName.F));
-      				l.remove(PdfName.F);
-      			}
-      			if (l.get(PdfName.WIN) != null) {
-      				System.out.println("Removed: " + l.get(PdfName.WIN));
-      				l.remove(PdfName.WIN);
-      			}
-      			l.put(PdfName.S, PdfName.JAVASCRIPT);
-      			l.put(PdfName.JS, new PdfString("app.alert('Launch Application Action removed by iText');\r"));
-      		}
-      	}
-      }
-      PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));
-      stamper.close();
     }
     catch (Exception e) {
-      e.printStackTrace();
+      JOptionPane.showMessageDialog(internalFrame,
+                                    e.getMessage(),
+                                    e.getClass().getName(),
+                                    JOptionPane.ERROR_MESSAGE);
+      System.err.println(e.getMessage());
     }
   }
 
@@ -168,22 +124,18 @@ public class RemoveLaunchApplication
   }
 
   /**
-   * Copy an existing PDF and replace the Launch Application Action with JavaScript alerts.
+   * Inspects an existing PDF file.
    * @param args
    */
   public static void main(String[] args) {
-    RemoveLaunchApplication tool = new RemoveLaunchApplication();
-    if (args.length < 2) {
-      System.err.println(tool.getUsage());
-    }
-    tool.setArguments(args);
-    tool.execute();
+    throw new RuntimeException("GUI only Application!");
   }
 
   /**
    * @see com.lowagie.tools.plugins.AbstractTool#getDestPathPDF()
    */
   protected File getDestPathPDF() throws InstantiationException {
-    return (File) getValue("destfile");
+    throw new InstantiationException("There is no file to show.");
   }
+
 }

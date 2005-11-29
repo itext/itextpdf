@@ -314,4 +314,8 @@ public class PdfDictionary extends PdfObject {
     public boolean contains(PdfName key) {
         return hashMap.containsKey(key);
     }
+    
+    public String toString() {
+    	return "Dictionary of type: " + get(PdfName.TYPE);
+    }
 }

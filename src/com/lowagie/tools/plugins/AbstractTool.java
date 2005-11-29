@@ -53,10 +53,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -65,8 +61,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import com.lowagie.tools.Executable;
 import com.lowagie.tools.ToolMenuItems;
@@ -79,71 +73,6 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	 
 	/** An array with the versions of the tool. */
 	public static ArrayList versionsarray = new ArrayList(); 
-	
-    /**
-     * A Class that redirects output to System.out and System.err.
-     */
-    public class Console {
-        PipedInputStream piOut;
-        PipedInputStream piErr;
-        PipedOutputStream poOut;
-        PipedOutputStream poErr;
-        JTextArea textArea = new JTextArea();
-    
-        /**
-         * Creates a new Console object.
-         * @param columns
-         * @param rows
-         * @throws IOException
-         */
-        public Console(int columns, int rows) throws IOException {
-            // Set up System.out
-            piOut = new PipedInputStream();
-            poOut = new PipedOutputStream(piOut);
-            System.setOut(new PrintStream(poOut, true));
-    
-            // Set up System.err
-            piErr = new PipedInputStream();
-            poErr = new PipedOutputStream(piErr);
-            System.setErr(new PrintStream(poErr, true));
-    
-            // Add a scrolling text area
-            textArea.setEditable(false);
-            textArea.setRows(rows);
-            textArea.setColumns(columns);
-    
-            // Create reader threads
-            new ReaderThread(piOut).start();
-            new ReaderThread(piErr).start();
-        }
-    
-        class ReaderThread extends Thread {
-            PipedInputStream pi;
-    
-            ReaderThread(PipedInputStream pi) {
-                this.pi = pi;
-            }
-    
-            /**
-             * @see java.lang.Thread#run()
-             */
-            public void run() {
-                final byte[] buf = new byte[1024];
-                try {
-                    while (true) {
-                        final int len = pi.read(buf);
-                        if (len == -1) {
-                            break;
-                        }
-                        textArea.append(new String(buf, 0, len));
-                        textArea.setCaretPosition(textArea.getDocument().getLength());
-                    }
-                } catch (IOException e) {
-                }
-            }
-        }
-    }
-	
 	
 	/** The internal frame of the tool. */
 	protected JInternalFrame internalFrame = null;
@@ -291,23 +220,6 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	}
 	
 	/**
-	 * Gets a console JScrollPanel that listens to the System.err and System.out.
-	 * @param columns a number of columns for the console
-	 * @param rows	 a number of rows for the console
-	 * @return a JScrollPane with a Console that shows everything that was written to System.out or System.err
-	 */
-	public JScrollPane getConsole(int columns, int rows) {
-		try {
-			Console console = new Console(columns, rows);
-			return new JScrollPane(console.textArea);
-		}
-		catch(IOException ioe) {
-			ioe.printStackTrace();
-			return null;
-		}
-	}
-	
-	/**
 	 * Gets the usage of the tool.
 	 * @return a String describing how to use the tool.
 	 */
@@ -356,6 +268,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		if (CLOSE.equals(evt.getActionCommand())) {
+			System.out.println("=== " + getInternalFrame().getTitle() + " CLOSED ===");
 			internalFrame.dispose();
 		}
 		if (USAGE.equals(evt.getActionCommand())) {

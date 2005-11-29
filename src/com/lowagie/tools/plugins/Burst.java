@@ -52,9 +52,10 @@ public class Burst extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Burst", true, true, true);
+		internalFrame = new JInternalFrame("Burst", true, false, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
+		System.out.println("=== Burst OPENED ===");
 	}
 
 	/**

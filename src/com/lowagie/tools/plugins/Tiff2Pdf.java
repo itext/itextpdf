@@ -96,10 +96,10 @@ public class Tiff2Pdf extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Tiff2Pdf", true, true, true);
+		internalFrame = new JInternalFrame("Tiff2Pdf", true, false, true);
 		internalFrame.setSize(550, 250);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
+		System.out.println("=== Tiff2Pdf OPENED ===");
 	}
 
 	/**

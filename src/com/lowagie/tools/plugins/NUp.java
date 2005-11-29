@@ -61,10 +61,10 @@ public class NUp extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("N-up", true, true, true);
-		internalFrame.setSize(300, 160);
+		internalFrame = new JInternalFrame("N-up", true, false, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(30, 30));
+		System.out.println("=== N-up OPENED ===");
 	}
 	
 	/**
