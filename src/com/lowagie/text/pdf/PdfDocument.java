@@ -57,8 +57,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.lowagie.text.Anchor;
@@ -504,6 +506,8 @@ class PdfDocument extends Document implements DocListener {
 
     /** Holds the type of the last element, that has been added to the document. */
     private int lastElementType = -1;    
+    
+    private boolean isNewPagePending;
     
     protected int markPoint;
     
@@ -1044,7 +1048,7 @@ class PdfDocument extends Document implements DocListener {
         float maxCellHeight;
         
         Map rowspanMap;
-        Map pagespanMap;
+        Map pageMap = new HashMap();
         /**
          * A PdfPTable
          */
@@ -1086,6 +1090,47 @@ class PdfDocument extends Document implements DocListener {
             } else {
                 return i.intValue();
             }
+        }
+        
+        public int cellRendered(PdfCell cell, int pageNumber) {
+            Integer i = (Integer) pageMap.get(cell);
+            if (i == null) {
+                i = new Integer(1);
+            } else {
+                i = new Integer(i.intValue() + 1);
+            }
+            pageMap.put(cell, i);
+
+            Integer pageInteger = new Integer(pageNumber);
+            Set set = (Set) pageMap.get(pageInteger);
+            
+            if (set == null) {
+                set = new HashSet();
+                pageMap.put(pageInteger, set);
+            }
+            
+            set.add(cell);
+            
+            return i.intValue();
+        }
+
+        public int numCellRendered(PdfCell cell) {
+            Integer i = (Integer) pageMap.get(cell);
+            if (i == null) {
+                i = new Integer(0);
+            } 
+            return i.intValue();
+        }
+        
+        public boolean isCellRenderedOnPage(PdfCell cell, int pageNumber) {
+            Integer pageInteger = new Integer(pageNumber);
+            Set set = (Set) pageMap.get(pageInteger);
+            
+            if (set != null) {
+                return set.contains(cell);
+            }
+            
+            return false;
         }
     };
     
@@ -1253,7 +1298,6 @@ class PdfDocument extends Document implements DocListener {
 				}
 			}*/
 
-            try {
             // draw the cells (line by line)
             
             Iterator iterator = rows.iterator();
@@ -1274,7 +1318,9 @@ class PdfDocument extends Document implements DocListener {
                 atLeastOneFits = true;
             }
 
-            cells = new ArrayList();
+//          compose cells array list for subsequent code
+            cells.clear();
+            Set opt = new HashSet();
             iterator = rows.iterator();
             while (iterator.hasNext()) {
                 ArrayList row = (ArrayList) iterator.next();
@@ -1283,15 +1329,11 @@ class PdfDocument extends Document implements DocListener {
                 while (cellIterator.hasNext()) {
                     cell = (PdfCell) cellIterator.next();
                     
-                    if (!cells.contains(cell)) {
+                    if (!opt.contains(cell)) {
                         cells.add(cell);
+                        opt.add(cell);
                     }
                 }
-            }
-            
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(0);
             }
             
             tableHasToFit = false;
@@ -1318,7 +1360,7 @@ class PdfDocument extends Document implements DocListener {
             ctx.cellGraphics = new PdfContentByte(null);
 			// if the table continues on the next page
             
-			if (!cells.isEmpty()) {
+			if (!rows.isEmpty()) {
 				graphics.setLineWidth(table.borderWidth());
 				if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) {
 					// Draw the bottom line
@@ -1442,7 +1484,10 @@ class PdfDocument extends Document implements DocListener {
         pageEmpty = false;
         
         if (ctx.countPageBreaks > 0) {
-            newPage();
+            // in case of tables covering more that one page have to have
+            // a newPage followed to reset some internal state. Otherwise
+            // subsequent tables are rendered incorrectly.
+            isNewPagePending = true;
         }
     }
 
@@ -1549,46 +1594,57 @@ class PdfDocument extends Document implements DocListener {
         
         while (iterator.hasNext()) {
             cell = (PdfCell) iterator.next();
-                                        
-            lines = cell.getLines(ctx.pagetop, indentBottom());
+            if (!ctx.isCellRenderedOnPage(cell, getPageNumber())) {
 
-            // if there is still text to render we render it
-            if (lines != null && lines.size() > 0) {
+                float correction = 0;
+                if (ctx.numCellRendered(cell) >= 1) {
+                    correction = 1.0f;
+                }
+            
+                lines = cell.getLines(ctx.pagetop, indentBottom() - correction);
                 
-                // we write the text
-                float cellTop = cell.top(ctx.pagetop - ctx.oldHeight);
-                text.moveText(0, cellTop);
-                float cellDisplacement = flushLines() - cellTop;
-                text.moveText(0, cellDisplacement);
-                if (ctx.oldHeight + cellDisplacement > currentHeight) {
-                    currentHeight = ctx.oldHeight + cellDisplacement;
+                // if there is still text to render we render it
+                if (lines != null && lines.size() > 0) {
+                    
+                    // we write the text
+                    float cellTop = cell.top(ctx.pagetop - ctx.oldHeight);
+                    text.moveText(0, cellTop);
+                    float cellDisplacement = flushLines() - cellTop;
+                    
+                    text.moveText(0, cellDisplacement);
+                    if (ctx.oldHeight + cellDisplacement > currentHeight) {
+                        currentHeight = ctx.oldHeight + cellDisplacement;
+                    }
+
+                    ctx.cellRendered(cell, getPageNumber());
                 } 
-            } 
-                        
-            float indentBottom = indentBottom();
-            
-            if (ctx.maxCellBottom != 0) {
-                indentBottom = Math.max(ctx.maxCellBottom, indentBottom);
+                            
+                float indentBottom = indentBottom();
+                
+                if (ctx.maxCellBottom != 0) {
+                    indentBottom = Math.max(ctx.maxCellBottom, indentBottom);
+                }
+    
+                Rectangle tableRect = ctx.table.rectangle(ctx.pagetop, indentBottom());
+                
+                indentBottom = Math.max(tableRect.bottom(), indentBottom);
+                
+                // we paint the borders of the cells
+                Rectangle cellRect = cell.rectangle(tableRect.top(), indentBottom);
+                cellRect.setBottom(cellRect.bottom());
+                if (cellRect.height() > 0) {
+                    ctx.lostTableBottom = indentBottom;
+                    ctx.cellGraphics.rectangle(cellRect);
+                }
+    
+                // and additional graphics
+                ArrayList images = cell.getImages(ctx.pagetop, indentBottom());
+                for (Iterator i = images.iterator(); i.hasNext();) {
+                    Image image = (Image) i.next();
+                    graphics.addImage(image);
+                }
+                
             }
-
-            Rectangle tableRect = ctx.table.rectangle(ctx.pagetop, indentBottom());
-            
-            indentBottom = Math.max(tableRect.bottom(), indentBottom);
-            
-            // we paint the borders of the cells
-            Rectangle cellRect = cell.rectangle(tableRect.top(), indentBottom);
-            if (cellRect.height() > 0) {
-                ctx.lostTableBottom = indentBottom;
-                ctx.cellGraphics.rectangle(cellRect);
-            }
-
-            // and additional graphics
-            ArrayList images = cell.getImages(ctx.pagetop, indentBottom());
-            for (Iterator i = images.iterator(); i.hasNext();) {
-                Image image = (Image) i.next();
-                graphics.addImage(image);
-            }
-
         }
         
     }
@@ -1607,7 +1663,11 @@ class PdfDocument extends Document implements DocListener {
             return false;
         }
         try {
-            
+//        	 resolves problem described in add(PdfTable)
+            if (isNewPagePending) {
+                isNewPagePending = false;
+                newPage();
+            }
             switch(element.type()) {
                 
                 // Information (headers)
@@ -2536,6 +2596,8 @@ class PdfDocument extends Document implements DocListener {
      */
     
     float bottom(Table table) {
+//    	 where will the table begin?
+        float h = (currentHeight > 0) ? indentTop() - currentHeight - 2f * leading : indentTop();
         // constructing a PdfTable
         PdfTable tmp = getPdfTable(table, false);
         return tmp.bottom();
