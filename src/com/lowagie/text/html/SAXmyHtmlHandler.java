@@ -50,77 +50,122 @@
 
 package com.lowagie.text.html;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 
 import org.xml.sax.Attributes;
 
-import com.lowagie.text.xml.*;
-import com.lowagie.text.*;
+import com.lowagie.text.Cell;
+import com.lowagie.text.DocListener;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ElementTags;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Table;
+import com.lowagie.text.html.HtmlTagMap;
+import com.lowagie.text.html.HtmlTags;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.xml.SAXiTextHandler;
+import com.lowagie.text.xml.XmlPeer;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
  */
 
-public class SAXmyHtmlHandler extends SAXmyHandler {
-    
-/** These are the properties of the body section. */
+public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
+{
+
+    /** These are the properties of the body section. */
     private Properties bodyAttributes = new Properties();
-    
-/** This is the status of the table border. */
+
+    /** This is the status of the table border. */
     private boolean tableBorder = false;
-    
-/**
- * Constructs a new SAXiTextHandler that will translate all the events
- * triggered by the parser to actions on the <CODE>Document</CODE>-object.
- *
- * @param	document	this is the document on which events must be triggered
- */
-    
-    public SAXmyHtmlHandler(DocListener document) {
+
+    /**
+     * Constructs a new SAXiTextHandler that will translate all the events
+     * triggered by the parser to actions on the <CODE>Document</CODE>-object.
+     * 
+     * @param document
+     *            this is the document on which events must be triggered
+     * @throws DefaultException
+     * @throws IOException
+     * @throws DocumentException
+     */
+
+    public SAXmyHtmlHandler(DocListener document)
+            throws DocumentException, IOException {
         super(document, new HtmlTagMap());
     }
-    
-/**
- * Constructs a new SAXiTextHandler that will translate all the events
- * triggered by the parser to actions on the <CODE>Document</CODE>-object.
- *
- * @param	document	this is the document on which events must be triggered
- * @param htmlTags a tagmap translating HTML tags to iText tags
- */
-    
-    public SAXmyHtmlHandler(DocListener document, HashMap htmlTags) {
+    /**
+     * Constructs a new SAXiTextHandler that will translate all the events
+     * triggered by the parser to actions on the <CODE>Document</CODE>-object.
+     * 
+     * @param document
+     *            this is the document on which events must be triggered
+     * @throws DefaultException
+     * @throws IOException
+     * @throws DocumentException
+     */
+
+    public SAXmyHtmlHandler(DocListener document, BaseFont bf)
+            throws DocumentException, IOException {
+        super(document, new HtmlTagMap(), bf);
+    }
+
+    /**
+     * Constructs a new SAXiTextHandler that will translate all the events
+     * triggered by the parser to actions on the <CODE>Document</CODE>-object.
+     * 
+     * @param document
+     *            this is the document on which events must be triggered
+     * @param htmlTags
+     *            a tagmap translating HTML tags to iText tags
+     * @throws DefaultException
+     * @throws IOException
+     * @throws DocumentException
+     */
+
+    public SAXmyHtmlHandler(DocListener document, HashMap htmlTags)
+            throws DocumentException, IOException {
         super(document, htmlTags);
     }
-    
-/**
- * This method gets called when a start tag is encountered.
- *
- * @param   uri 		the Uniform Resource Identifier
- * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
- * @param	name		the name of the tag that is encountered
- * @param	attrs		the list of attributes
- */
-    
-    public void startElement(String uri, String lname, String name, Attributes attrs) {
-       //System.err.println("Start: " + name);
-        
+
+    /**
+     * This method gets called when a start tag is encountered.
+     * 
+     * @param uri
+     *            the Uniform Resource Identifier
+     * @param lname
+     *            the local name (without prefix), or the empty string if
+     *            Namespace processing is not being performed.
+     * @param name
+     *            the name of the tag that is encountered
+     * @param attrs
+     *            the list of attributes
+     */
+
+    public void startElement(String uri, String lname, String name,
+            Attributes attrs) {
+        // System.err.println("Start: " + name);
+
         // super.handleStartingTags is replaced with handleStartingTags
         // suggestion by Vu Ngoc Tan/Hop
-        
-        if (((HtmlTagMap)myTags).isHtml(name)) {
+
+        if (((HtmlTagMap) myTags).isHtml(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap)myTags).isHead(name)) {
+        if (((HtmlTagMap) myTags).isHead(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap)myTags).isTitle(name)) {
+        if (((HtmlTagMap) myTags).isTitle(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap)myTags).isMeta(name)) {
+        if (((HtmlTagMap) myTags).isMeta(name)) {
             // we look if we can change the body attributes
             String meta = null;
             String content = null;
@@ -138,14 +183,82 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
             }
             return;
         }
-        if (((HtmlTagMap)myTags).isLink(name)) {
-            // we do nothing for the moment, in a later version we could extract the style sheet
+        if (((HtmlTagMap) myTags).isLink(name)) {
+            // we do nothing for the moment, in a later version we could extract
+            // the style sheet
             return;
         }
-        if (((HtmlTagMap)myTags).isBody(name)) {
-            // maybe we could extract some info about the document: color, margins,...
+        if (((HtmlTagMap) myTags).isBody(name)) {
+            // maybe we could extract some info about the document: color,
+            // margins,...
             // but that's for a later version...
             XmlPeer peer = new XmlPeer(ElementTags.ITEXT, name);
+            String content = null;
+            if (attrs != null) {
+                for (int i = 0; i < attrs.getLength(); i++) {
+                    String attribute = attrs.getQName(i);
+                    if (attribute.equalsIgnoreCase("style")) {// eventually
+                        // HTML_ATTR_STYLE instead of MarkupTags.STYLE
+                        content = attrs.getValue(i);
+                        // Properties styleAttributes = MarkupParser
+                        // .parseAttributes(content);
+                        // if (styleAttributes.size() == 0) {
+                        bodyAttributes.put("style"// eventually
+                                // HTML_ATTR_STYLE instead of MarkupTags.STYLE
+                                , content);
+                        // } else {
+                        // String fontname = (String) styleAttributes
+                        // .remove("font-family"// MarkupTags.CSS_KEY_FONTFAMILY
+                        // );
+                        // if (fontname != null) {
+                        // String tmp;
+                        // while (fontname.indexOf(",") != -1) {
+                        // tmp = fontname.substring(0, fontname
+                        // .indexOf(","));
+                        // if (FontFactory.isRegistered(tmp)) {
+                        // fontname = tmp;
+                        // } else {
+                        // fontname = fontname.substring(fontname
+                        // .indexOf(",") + 1);
+                        // }
+                        // }
+                        // }
+                        // // if ((value =
+                        // //
+                        // (String)styleAttributes.remove(MarkupTags.CSS_KEY_FONTSIZE))
+                        // // != null) {
+                        // // size = MarkupParser.parseLength(value);
+                        // // }
+                        // // if ((value =
+                        // //
+                        // (String)styleAttributes.remove(MarkupTags.CSS_KEY_FONTWEIGHT))
+                        // // != null) {
+                        // // style |= Font.getStyleValue(value);
+                        // // }
+                        // // if ((value =
+                        // //
+                        // (String)styleAttributes.remove(MarkupTags.CSS_KEY_FONTSTYLE))
+                        // // != null) {
+                        // // style |= Font.getStyleValue(value);
+                        // // }
+                        // // if ((value =
+                        // //
+                        // (String)styleAttributes.remove(MarkupTags.CSS_KEY_COLOR))
+                        // // != null) {
+                        // // color = MarkupParser.decodeColor(value);
+                        // // }
+                        // bodyAttributes.put("fontname",fontname);
+                       
+                        // bodyAttributes.putAll(styleAttributes);
+                        // for (Enumeration e = styleAttributes.keys();
+                        // e.hasMoreElements();) {
+                        // Object o = e.nextElement();
+                        // bodyAttributes.put(o, styleAttributes.get(o));
+                        // }
+                        // }
+                    }
+                }
+            }
             handleStartingTags(peer.getTag(), bodyAttributes);
             return;
         }
@@ -154,7 +267,8 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
             if (Table.isTag(peer.getTag()) || Cell.isTag(peer.getTag())) {
                 Properties p = peer.getAttributes(attrs);
                 String value;
-                if (Table.isTag(peer.getTag()) && (value = p.getProperty(ElementTags.BORDERWIDTH)) != null) {
+                if (Table.isTag(peer.getTag())
+                        && (value = p.getProperty(ElementTags.BORDERWIDTH)) != null) {
                     if (Float.valueOf(value + "f").floatValue() > 0) {
                         tableBorder = true;
                     }
@@ -180,44 +294,48 @@ public class SAXmyHtmlHandler extends SAXmyHandler {
         }
         handleStartingTags(name, attributes);
     }
-    
-/**
- * This method gets called when an end tag is encountered.
- *
- * @param   uri 		the Uniform Resource Identifier
- * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
- * @param	name		the name of the tag that ends
- */
-    
+
+    /**
+     * This method gets called when an end tag is encountered.
+     * 
+     * @param uri
+     *            the Uniform Resource Identifier
+     * @param lname
+     *            the local name (without prefix), or the empty string if
+     *            Namespace processing is not being performed.
+     * @param name
+     *            the name of the tag that ends
+     */
+
     public void endElement(String uri, String lname, String name) {
-        //System.err.println("End: " + name);
-		if (Paragraph.isTag(name)) {
-			try {
-				document.add((Element) stack.pop());
-				return;
-			} catch (DocumentException e) {
-				throw new ExceptionConverter(e);
-			}
-		}        
-        if (((HtmlTagMap)myTags).isHead(name)) {
+        // System.err.println("End: " + name);
+        if (Paragraph.isTag(name)) {
+            try {
+                document.add((Element) stack.pop());
+                return;
+            } catch (DocumentException e) {
+                throw new ExceptionConverter(e);
+            }
+        }
+        if (((HtmlTagMap) myTags).isHead(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap)myTags).isTitle(name)) {
+        if (((HtmlTagMap) myTags).isTitle(name)) {
             if (currentChunk != null) {
                 bodyAttributes.put(ElementTags.TITLE, currentChunk.content());
             }
             return;
         }
-        if (((HtmlTagMap)myTags).isMeta(name)) {
+        if (((HtmlTagMap) myTags).isMeta(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap)myTags).isLink(name)) {
+        if (((HtmlTagMap) myTags).isLink(name)) {
             // we do nothing
             return;
         }
-        if (((HtmlTagMap)myTags).isBody(name)) {
+        if (((HtmlTagMap) myTags).isBody(name)) {
             // we do nothing
             return;
         }
