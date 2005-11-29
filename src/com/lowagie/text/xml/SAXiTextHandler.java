@@ -136,52 +136,21 @@ public class SAXiTextHandler extends DefaultHandler {
     float bottomMargin = 36;
 
     /**
-     * Constructs a new SAXiTextHandler that will translate all the events
-     * triggered by the parser to actions on the <CODE>Document</CODE>
-     * -object.
-     * 
-     * @param document
-     *            this is the document on which events must be triggered
-     * @throws IOException
-     * @throws DocumentException
-     */
-
-    public SAXiTextHandler(DocListener document) throws DocumentException,
-            IOException {
-        this(document, BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252,
-                BaseFont.NOT_EMBEDDED));
-    }
-
-    /**
      * @param document
      * @param bf
      * @throws DocumentException
      * @throws IOException
      */
-    public SAXiTextHandler(DocListener document, BaseFont bf)
-            throws DocumentException, IOException {
+    public SAXiTextHandler(DocListener document)
+            throws IOException {
         super();
         this.document = document;
         stack = new Stack();
-        this.bf = bf;
-        // this.bf = BaseFont.createFont(// "helvetica"//
-        // "arial", ""// BaseFont.IDENTITY_H
-        // com.lowagie.text.DocumentException: Font 'arial' with
-        // 'Identity-H' is not recognized.
-        // at
-        // com.lowagie.text.pdf.BaseFont.createFont(BaseFont.java:403)
-        // at
-        // com.lowagie.text.pdf.BaseFont.createFont(BaseFont.java:342)
-        // at
-        // com.lowagie.text.xml.SAXiTextHandler.<init>(SAXiTextHandler.java:153)
-
-        // need a font that exists everywhere
-        // , true);
-
-        // as per unicode_font.java
-        // this.bf =
-
-        // Globals.getInstance().getBaseFontPdf();
+        try {
+        	this.bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+        }
+        catch(DocumentException de) {
+        }
     }
 
     protected HashMap myTags;
@@ -193,9 +162,9 @@ public class SAXiTextHandler extends DefaultHandler {
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HtmlTagMap myTags)
-            throws DocumentException, IOException {
-        this(document, myTags, BaseFont.createFont("helvetica",
-                BaseFont.IDENTITY_H, true));
+            throws IOException {
+        this(document);
+        this.myTags = myTags;
     }
 
     /**
@@ -206,10 +175,9 @@ public class SAXiTextHandler extends DefaultHandler {
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HtmlTagMap myTags,
-            BaseFont bf) throws DocumentException, IOException {
-        this(document, bf);
-
-        this.myTags = myTags;
+            BaseFont bf) throws IOException {
+        this(document, myTags);
+        this.bf = bf;
     }
 
     /**
@@ -219,7 +187,7 @@ public class SAXiTextHandler extends DefaultHandler {
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HashMap myTags)
-            throws DocumentException, IOException {
+            throws IOException {
         this(document);
         this.myTags = myTags;
     }
@@ -291,9 +259,7 @@ public class SAXiTextHandler extends DefaultHandler {
             try {
                 current = (TextElementArray) stack.pop();
             } catch (EmptyStackException ese) {
-                Paragraph pa = new Paragraph("", new Font(this.bf));
-                // pa.setFont(new Font(this.bf));
-                current = pa;
+                current = new Paragraph("", new Font(this.bf));
             }
             current.add(currentChunk);
             stack.push(current);
@@ -675,6 +641,10 @@ public class SAXiTextHandler extends DefaultHandler {
     }
 
     private BaseFont bf = null;
+    
+    public void setBaseFont(BaseFont bf) {
+    	this.bf = bf;
+    }
 
     /**
      * This method gets called when an end tag is encountered.
