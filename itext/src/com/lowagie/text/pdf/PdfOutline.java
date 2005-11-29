@@ -210,7 +210,7 @@ public class PdfOutline extends PdfDictionary {
      * @param open <CODE>true</CODE> if the children are visible
      */
     public PdfOutline(PdfOutline parent, PdfAction action, PdfString title, boolean open) {
-        this(parent, action, title.toString(), true);
+        this(parent, action, title.toString(), open);
     }
     
     /**
