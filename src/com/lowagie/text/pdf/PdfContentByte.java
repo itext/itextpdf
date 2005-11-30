@@ -93,6 +93,15 @@ public class PdfContentByte {
         
         /** The current text leading. */
         protected float leading = 0;
+
+        /** The current horizontal scaling */
+        protected float scale = 100;
+
+        /** The current character spacing */
+        protected float charSpace = 0;
+
+        /** The current word spacing */
+        protected float wordSpace = 0;
     }
     
     /** The alignement is center */
@@ -195,7 +204,7 @@ public class PdfContentByte {
     /**
      * Returns the <CODE>String</CODE> representation of this <CODE>PdfContentByte</CODE>-object.
      *
-     * @return		a <CODE>String</CODE>
+     * @return      a <CODE>String</CODE>
      */
     
     public String toString() {
@@ -225,7 +234,7 @@ public class PdfContentByte {
     /**
      * Adds the content of another <CODE>PdfContent</CODE>-object to this object.
      *
-     * @param		other		another <CODE>PdfByteContent</CODE>-object
+     * @param       other       another <CODE>PdfByteContent</CODE>-object
      */
     
     public void add(PdfContentByte other) {
@@ -262,12 +271,39 @@ public class PdfContentByte {
     }
     
     /**
+     * Gets the current character spacing.
+     *
+     * @return the current character spacing
+     */
+    public float getCharacterSpacing() {
+        return state.charSpace;
+    }
+
+    /**
+     * Gets the current word spacing.
+     *
+     * @return the current word spacing
+     */
+    public float getWordSpacing() {
+        return state.wordSpace;
+    }
+
+    /**
+     * Gets the current character spacing.
+     *
+     * @return the current character spacing
+     */
+    public float getHorizontalScaling() {
+        return state.scale;
+    }
+
+    /**
      * Changes the <VAR>Flatness</VAR>.
      * <P>
      * <VAR>Flatness</VAR> sets the maximum permitted distance in device pixels between the
      * mathematically correct path and an approximation constructed from straight line segments.<BR>
      *
-     * @param		flatness		a value
+     * @param       flatness        a value
      */
     
     public void setFlatness(float flatness) {
@@ -283,7 +319,7 @@ public class PdfContentByte {
      * when they are stroked.<BR>
      * Allowed values are LINE_CAP_BUTT, LINE_CAP_ROUND and LINE_CAP_PROJECTING_SQUARE.<BR>
      *
-     * @param		style		a value
+     * @param       style       a value
      */
     
     public void setLineCap(int style) {
@@ -300,7 +336,7 @@ public class PdfContentByte {
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
      * pattern to start the dash.<BR>
      *
-     * @param		phase		the value of the phase
+     * @param       phase       the value of the phase
      */
     
     public void setLineDash(float phase) {
@@ -315,8 +351,8 @@ public class PdfContentByte {
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
      * pattern to start the dash.<BR>
      *
-     * @param		phase		the value of the phase
-     * @param		unitsOn		the number of units that must be 'on' (equals the number of units that must be 'off').
+     * @param       phase       the value of the phase
+     * @param       unitsOn     the number of units that must be 'on' (equals the number of units that must be 'off').
      */
     
     public void setLineDash(float unitsOn, float phase) {
@@ -331,9 +367,9 @@ public class PdfContentByte {
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
      * pattern to start the dash.<BR>
      *
-     * @param		phase		the value of the phase
-     * @param		unitsOn		the number of units that must be 'on'
-     * @param		unitsOff	the number of units that must be 'off'
+     * @param       phase       the value of the phase
+     * @param       unitsOn     the number of units that must be 'on'
+     * @param       unitsOff    the number of units that must be 'off'
      */
     
     public void setLineDash(float unitsOn, float unitsOff, float phase) {
@@ -348,8 +384,8 @@ public class PdfContentByte {
      * of the alternating dashes and gaps. The phase specifies the distance into the dash
      * pattern to start the dash.<BR>
      *
-     * @param		array		length of the alternating dashes and gaps
-     * @param		phase		the value of the phase
+     * @param       array       length of the alternating dashes and gaps
+     * @param       phase       the value of the phase
      */
     
     public final void setLineDash(float[] array, float phase) {
@@ -368,7 +404,7 @@ public class PdfContentByte {
      * that are stroked.<BR>
      * Allowed values are LINE_JOIN_MITER (Miter joins), LINE_JOIN_ROUND (Round joins) and LINE_JOIN_BEVEL (Bevel joins).<BR>
      *
-     * @param		style		a value
+     * @param       style       a value
      */
     
     public void setLineJoin(int style) {
@@ -383,7 +419,7 @@ public class PdfContentByte {
      * The line width specifies the thickness of the line used to stroke a path and is measured
      * in used space units.<BR>
      *
-     * @param		w			a width
+     * @param       w           a width
      */
     
     public void setLineWidth(float w) {
@@ -398,7 +434,7 @@ public class PdfContentByte {
      * stroking path. The miter limit imposes a maximum on the ratio of the miter length to the line
      * witdh. When the limit is exceeded, the join is converted from a miter to a bevel.<BR>
      *
-     * @param		miterLimit		a miter limit
+     * @param       miterLimit      a miter limit
      */
     
     public void setMiterLimit(float miterLimit) {
@@ -432,7 +468,7 @@ public class PdfContentByte {
      * Sets the color space to <B>DeviceGray</B> (or the <B>DefaultGray</B> color space),
      * and sets the gray tint to use for filling paths.</P>
      *
-     * @param	gray	a value between 0 (black) and 1 (white)
+     * @param   gray    a value between 0 (black) and 1 (white)
      */
     
     public void setGrayFill(float gray) {
@@ -453,7 +489,7 @@ public class PdfContentByte {
      * Sets the color space to <B>DeviceGray</B> (or the <B>DefaultGray</B> color space),
      * and sets the gray tint to use for stroking paths.</P>
      *
-     * @param	gray	a value between 0 (black) and 1 (white)
+     * @param   gray    a value between 0 (black) and 1 (white)
      */
     
     public void setGrayStroke(float gray) {
@@ -470,9 +506,9 @@ public class PdfContentByte {
     
     /**
      * Helper to validate and write the RGB color components
-     * @param	red		the intensity of red. A value between 0 and 1
-     * @param	green	the intensity of green. A value between 0 and 1
-     * @param	blue	the intensity of blue. A value between 0 and 1
+     * @param   red     the intensity of red. A value between 0 and 1
+     * @param   green   the intensity of green. A value between 0 and 1
+     * @param   blue    the intensity of blue. A value between 0 and 1
      */
     private void HelperRGB(float red, float green, float blue) {
         PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_RGB, null);
@@ -500,9 +536,9 @@ public class PdfContentByte {
      * Following the PDF manual, each operand must be a number between 0 (minimum intensity) and
      * 1 (maximum intensity).</P>
      *
-     * @param	red		the intensity of red. A value between 0 and 1
-     * @param	green	the intensity of green. A value between 0 and 1
-     * @param	blue	the intensity of blue. A value between 0 and 1
+     * @param   red     the intensity of red. A value between 0 and 1
+     * @param   green   the intensity of green. A value between 0 and 1
+     * @param   blue    the intensity of blue. A value between 0 and 1
      */
     
     public void setRGBColorFillF(float red, float green, float blue) {
@@ -527,9 +563,9 @@ public class PdfContentByte {
      * Following the PDF manual, each operand must be a number between 0 (miniumum intensity) and
      * 1 (maximum intensity).
      *
-     * @param	red		the intensity of red. A value between 0 and 1
-     * @param	green	the intensity of green. A value between 0 and 1
-     * @param	blue	the intensity of blue. A value between 0 and 1
+     * @param   red     the intensity of red. A value between 0 and 1
+     * @param   green   the intensity of green. A value between 0 and 1
+     * @param   blue    the intensity of blue. A value between 0 and 1
      */
     
     public void setRGBColorStrokeF(float red, float green, float blue) {
@@ -549,10 +585,10 @@ public class PdfContentByte {
     /**
      * Helper to validate and write the CMYK color components.
      *
-     * @param	cyan	the intensity of cyan. A value between 0 and 1
-     * @param	magenta	the intensity of magenta. A value between 0 and 1
-     * @param	yellow	the intensity of yellow. A value between 0 and 1
-     * @param	black	the intensity of black. A value between 0 and 1
+     * @param   cyan    the intensity of cyan. A value between 0 and 1
+     * @param   magenta the intensity of magenta. A value between 0 and 1
+     * @param   yellow  the intensity of yellow. A value between 0 and 1
+     * @param   black   the intensity of black. A value between 0 and 1
      */
     private void HelperCMYK(float cyan, float magenta, float yellow, float black) {
         if (cyan < 0)
@@ -583,10 +619,10 @@ public class PdfContentByte {
      * Following the PDF manual, each operand must be a number between 0 (no ink) and
      * 1 (maximum ink).</P>
      *
-     * @param	cyan	the intensity of cyan. A value between 0 and 1
-     * @param	magenta	the intensity of magenta. A value between 0 and 1
-     * @param	yellow	the intensity of yellow. A value between 0 and 1
-     * @param	black	the intensity of black. A value between 0 and 1
+     * @param   cyan    the intensity of cyan. A value between 0 and 1
+     * @param   magenta the intensity of magenta. A value between 0 and 1
+     * @param   yellow  the intensity of yellow. A value between 0 and 1
+     * @param   black   the intensity of black. A value between 0 and 1
      */
     
     public void setCMYKColorFillF(float cyan, float magenta, float yellow, float black) {
@@ -612,10 +648,10 @@ public class PdfContentByte {
      * Following the PDF manual, each operand must be a number between 0 (miniumum intensity) and
      * 1 (maximum intensity).
      *
-     * @param	cyan	the intensity of cyan. A value between 0 and 1
-     * @param	magenta	the intensity of magenta. A value between 0 and 1
-     * @param	yellow	the intensity of yellow. A value between 0 and 1
-     * @param	black	the intensity of black. A value between 0 and 1
+     * @param   cyan    the intensity of cyan. A value between 0 and 1
+     * @param   magenta the intensity of magenta. A value between 0 and 1
+     * @param   yellow  the intensity of yellow. A value between 0 and 1
+     * @param   black   the intensity of black. A value between 0 and 1
      */
     
     public void setCMYKColorStrokeF(float cyan, float magenta, float yellow, float black) {
@@ -635,8 +671,8 @@ public class PdfContentByte {
     /**
      * Move the current point <I>(x, y)</I>, omitting any connecting line segment.
      *
-     * @param		x				new x-coordinate
-     * @param		y				new y-coordinate
+     * @param       x               new x-coordinate
+     * @param       y               new y-coordinate
      */
     
     public void moveTo(float x, float y) {
@@ -647,8 +683,8 @@ public class PdfContentByte {
      * Appends a straight line segment from the current point <I>(x, y)</I>. The new current
      * point is <I>(x, y)</I>.
      *
-     * @param		x				new x-coordinate
-     * @param		y				new y-coordinate
+     * @param       x               new x-coordinate
+     * @param       y               new y-coordinate
      */
     
     public void lineTo(float x, float y) {
@@ -658,12 +694,12 @@ public class PdfContentByte {
     /**
      * Appends a Bêzier curve to the path, starting from the current point.
      *
-     * @param		x1		x-coordinate of the first control point
-     * @param		y1		y-coordinate of the first control point
-     * @param		x2		x-coordinate of the second control point
-     * @param		y2		y-coordinate of the second control point
-     * @param		x3		x-coordinaat of the ending point (= new current point)
-     * @param		y3		y-coordinaat of the ending point (= new current point)
+     * @param       x1      x-coordinate of the first control point
+     * @param       y1      y-coordinate of the first control point
+     * @param       x2      x-coordinate of the second control point
+     * @param       y2      y-coordinate of the second control point
+     * @param       x3      x-coordinaat of the ending point (= new current point)
+     * @param       y3      y-coordinaat of the ending point (= new current point)
      */
     
     public void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
@@ -673,10 +709,10 @@ public class PdfContentByte {
     /**
      * Appends a Bêzier curve to the path, starting from the current point.
      *
-     * @param		x2		x-coordinate of the second control point
-     * @param		y2		y-coordinate of the second control point
-     * @param		x3		x-coordinaat of the ending point (= new current point)
-     * @param		y3		y-coordinaat of the ending point (= new current point)
+     * @param       x2      x-coordinate of the second control point
+     * @param       y2      y-coordinate of the second control point
+     * @param       x3      x-coordinaat of the ending point (= new current point)
+     * @param       y3      y-coordinaat of the ending point (= new current point)
      */
     
     public void curveTo(float x2, float y2, float x3, float y3) {
@@ -686,10 +722,10 @@ public class PdfContentByte {
     /**
      * Appends a Bêzier curve to the path, starting from the current point.
      *
-     * @param		x1		x-coordinate of the first control point
-     * @param		y1		y-coordinate of the first control point
-     * @param		x3		x-coordinaat of the ending point (= new current point)
-     * @param		y3		y-coordinaat of the ending point (= new current point)
+     * @param       x1      x-coordinate of the first control point
+     * @param       y1      y-coordinate of the first control point
+     * @param       x3      x-coordinaat of the ending point (= new current point)
+     * @param       y3      y-coordinaat of the ending point (= new current point)
      */
     
     public void curveFromTo(float x1, float y1, float x3, float y3) {
@@ -716,10 +752,10 @@ public class PdfContentByte {
     /**
      * Adds a rectangle to the current path.
      *
-     * @param		x		x-coordinate of the starting point
-     * @param		y		y-coordinate of the starting point
-     * @param		w		width
-     * @param		h		height
+     * @param       x       x-coordinate of the starting point
+     * @param       y       y-coordinate of the starting point
+     * @param       w       width
+     * @param       h       height
      */
     
     public void rectangle(float x, float y, float w, float h) {
@@ -732,7 +768,7 @@ public class PdfContentByte {
      * Adds a variable width border to the current path.
      * Only use if {@link com.lowagie.text.Rectangle#isUseVariableBorders() Rectangle.isUseVariableBorders}
      * = true.
-     * @param		rect		a <CODE>Rectangle</CODE>
+     * @param       rect        a <CODE>Rectangle</CODE>
      */
     public void variableRectangle(Rectangle rect) {
         float limit = 0f;
@@ -820,7 +856,7 @@ public class PdfContentByte {
     /**
      * Adds a border (complete or partially) to the current path..
      *
-     * @param		rectangle		a <CODE>Rectangle</CODE>
+     * @param       rectangle       a <CODE>Rectangle</CODE>
      */
     
     public void rectangle(Rectangle rectangle) {
@@ -1197,27 +1233,30 @@ public class PdfContentByte {
     /**
      * Sets the character spacing parameter.
      *
-     * @param		charSpace			a parameter
+     * @param       charSpace           a parameter
      */
     public void setCharacterSpacing(float charSpace) {
+        state.charSpace = charSpace;
         content.append(charSpace).append(" Tc").append_i(separator);
     }
     
     /**
      * Sets the word spacing parameter.
      *
-     * @param		wordSpace			a parameter
+     * @param       wordSpace           a parameter
      */
     public void setWordSpacing(float wordSpace) {
+        state.wordSpace = wordSpace;
         content.append(wordSpace).append(" Tw").append_i(separator);
     }
     
     /**
      * Sets the horizontal scaling parameter.
      *
-     * @param		scale				a parameter
+     * @param       scale               a parameter
      */
     public void setHorizontalScaling(float scale) {
+        state.scale = scale;
         content.append(scale).append(" Tz").append_i(separator);
     }
     
@@ -1227,7 +1266,7 @@ public class PdfContentByte {
      * The leading parameter is measured in text space units. It specifies the vertical distance
      * between the baselines of adjacent lines of text.</P>
      *
-     * @param		leading			the new leading
+     * @param       leading         the new leading
      */
     public void setLeading(float leading) {
         state.leading = leading;
@@ -1253,7 +1292,7 @@ public class PdfContentByte {
     /**
      * Sets the text rendering parameter.
      *
-     * @param		rendering				a parameter
+     * @param       rendering               a parameter
      */
     public void setTextRenderingMode(int rendering) {
         content.append(rendering).append(" Tr").append_i(separator);
@@ -1264,7 +1303,7 @@ public class PdfContentByte {
      * <P>
      * This allows to write text in subscript or superscript mode.</P>
      *
-     * @param		rise				a parameter
+     * @param       rise                a parameter
      */
     public void setTextRise(float rise) {
         content.append(rise).append(" Ts").append_i(separator);
@@ -1352,8 +1391,8 @@ public class PdfContentByte {
     /**
      * Moves to the next line and shows text string, using the given values of the character and word spacing parameters.
      *
-     * @param		wordSpacing		a parameter
-     * @param		charSpacing		a parameter
+     * @param       wordSpacing     a parameter
+     * @param       charSpacing     a parameter
      * @param text the text to write
      */
     public void newlineShowText(float wordSpacing, float charSpacing, String text) {
@@ -1361,6 +1400,11 @@ public class PdfContentByte {
         content.append(wordSpacing).append(' ').append(charSpacing);
         showText2(text);
         content.append("\"").append_i(separator);
+        
+        // The " operator sets charSpace and wordSpace into graphics state
+        // (cfr PDF reference v1.6, table 5.6)
+        state.charSpace = charSpacing;
+        state.wordSpace = wordSpacing;
     }
     
     /**
@@ -1368,12 +1412,12 @@ public class PdfContentByte {
      * <P>
      * Remark: this operation also initializes the current point position.</P>
      *
-     * @param		a			operand 1,1 in the matrix
-     * @param		b			operand 1,2 in the matrix
-     * @param		c			operand 2,1 in the matrix
-     * @param		d			operand 2,2 in the matrix
-     * @param		x			operand 3,1 in the matrix
-     * @param		y			operand 3,2 in the matrix
+     * @param       a           operand 1,1 in the matrix
+     * @param       b           operand 1,2 in the matrix
+     * @param       c           operand 2,1 in the matrix
+     * @param       d           operand 2,2 in the matrix
+     * @param       x           operand 3,1 in the matrix
+     * @param       y           operand 3,2 in the matrix
      */
     public void setTextMatrix(float a, float b, float c, float d, float x, float y) {
         state.xTLM = x;
@@ -1388,8 +1432,8 @@ public class PdfContentByte {
      * <P>
      * Remark: this operation also initializes the current point position.</P>
      *
-     * @param		x			operand 3,1 in the matrix
-     * @param		y			operand 3,2 in the matrix
+     * @param       x           operand 3,1 in the matrix
+     * @param       y           operand 3,2 in the matrix
      */
     public void setTextMatrix(float x, float y) {
         setTextMatrix(1, 0, 0, 1, x, y);
@@ -1398,8 +1442,8 @@ public class PdfContentByte {
     /**
      * Moves to the start of the next line, offset from the start of the current line.
      *
-     * @param		x			x-coordinate of the new current point
-     * @param		y			y-coordinate of the new current point
+     * @param       x           x-coordinate of the new current point
+     * @param       y           y-coordinate of the new current point
      */
     public void moveText(float x, float y) {
         state.xTLM += x;
@@ -1412,8 +1456,8 @@ public class PdfContentByte {
      * <P>
      * As a side effect, this sets the leading parameter in the text state.</P>
      *
-     * @param		x			offset of the new current point
-     * @param		y			y-coordinate of the new current point
+     * @param       x           offset of the new current point
+     * @param       y           y-coordinate of the new current point
      */
     public void moveTextWithLeading(float x, float y) {
         state.xTLM += x;
@@ -1520,6 +1564,44 @@ public class PdfContentByte {
     }
     
     /**
+     * Computes the width of the given string taking in account
+     * the current values of "Character spacing", "Word Spacing"
+     * and "Horizontal Scaling".
+     * The additional spacing is not computed for the last character
+     * of the string.
+     * @param text the string to get width of
+     * @param kerned the kerning option
+     * @return the width
+     */
+
+    public float getEffectiveStringWidth(String text, boolean kerned) {
+        BaseFont bf = state.fontDetails.getBaseFont();
+        
+        float w;
+        if (kerned)
+            w = bf.getWidthPointKerned(text, state.size);
+        else
+            w = bf.getWidthPoint(text, state.size);
+        
+        if (state.charSpace != 0.0f && text.length() > 1) {
+            w += state.charSpace * (text.length() -1);
+        }
+        
+        int ft = bf.getFontType();
+        if (state.wordSpace != 0.0f && (ft == BaseFont.FONT_TYPE_T1 || ft == BaseFont.FONT_TYPE_TT || ft == BaseFont.FONT_TYPE_T3)) {
+            for (int i = 0; i < (text.length() -1); i++) {
+                if (text.charAt(i) == ' ')
+                    w += state.wordSpace;
+            }
+        }
+        if (state.scale != 100.0)
+            w = (w * state.scale) / 100.0f;
+        
+        //System.out.println("String width = " + Float.toString(w));
+        return w;
+    }
+    
+    /**
      * Shows text right, left or center aligned with rotation.
      * @param alignment the alignment can be ALIGN_CENTER, ALIGN_RIGHT or ALIGN_LEFT
      * @param text the text to show
@@ -1528,20 +1610,26 @@ public class PdfContentByte {
      * @param rotation the rotation to be applied in degrees counterclockwise
      */
     public void showTextAligned(int alignment, String text, float x, float y, float rotation) {
+        showTextAligned(alignment, text, x, y, rotation, false);
+    }
+    
+    private void showTextAligned(int alignment, String text, float x, float y, float rotation, boolean kerned) {
         if (state.fontDetails == null)
             throw new NullPointerException("Font and size must be set before writing any text");
-        BaseFont bf = state.fontDetails.getBaseFont();
         if (rotation == 0) {
             switch (alignment) {
                 case ALIGN_CENTER:
-                    x -= bf.getWidthPoint(text, state.size) / 2;
+                    x -= getEffectiveStringWidth(text, kerned) / 2;
                     break;
                 case ALIGN_RIGHT:
-                    x -= bf.getWidthPoint(text, state.size);
+                    x -= getEffectiveStringWidth(text, kerned);
                     break;
             }
             setTextMatrix(x, y);
-            showText(text);
+            if (kerned)
+                showTextKerned(text);
+            else
+                showText(text);
         }
         else {
             double alpha = rotation * Math.PI / 180.0;
@@ -1550,67 +1638,35 @@ public class PdfContentByte {
             float len;
             switch (alignment) {
                 case ALIGN_CENTER:
-                    len = bf.getWidthPoint(text, state.size) / 2;
+                    len = getEffectiveStringWidth(text, kerned) / 2;
                     x -=  len * cos;
                     y -=  len * sin;
                     break;
                 case ALIGN_RIGHT:
-                    len = bf.getWidthPoint(text, state.size);
+                    len = getEffectiveStringWidth(text, kerned);
                     x -=  len * cos;
                     y -=  len * sin;
                     break;
             }
             setTextMatrix(cos, sin, -sin, cos, x, y);
-            showText(text);
+            if (kerned)
+                showTextKerned(text);
+            else
+                showText(text);
             setTextMatrix(0f, 0f);
         }
     }
     
     /**
      * Shows text kerned right, left or center aligned with rotation.
-     * @param alignement the alignment can be ALIGN_CENTER, ALIGN_RIGHT or ALIGN_LEFT
+     * @param alignment the alignment can be ALIGN_CENTER, ALIGN_RIGHT or ALIGN_LEFT
      * @param text the text to show
      * @param x the x pivot position
      * @param y the y pivot position
      * @param rotation the rotation to be applied in degrees counterclockwise
      */
-    public void showTextAlignedKerned(int alignement, String text, float x, float y, float rotation) {
-        if (state.fontDetails == null)
-            throw new NullPointerException("Font and size must be set before writing any text");
-        BaseFont bf = state.fontDetails.getBaseFont();
-        if (rotation == 0) {
-            switch (alignement) {
-                case ALIGN_CENTER:
-                    x -= bf.getWidthPointKerned(text, state.size) / 2;
-                    break;
-                case ALIGN_RIGHT:
-                    x -= bf.getWidthPointKerned(text, state.size);
-                    break;
-            }
-            setTextMatrix(x, y);
-            showTextKerned(text);
-        }
-        else {
-            double alpha = rotation * Math.PI / 180.0;
-            float cos = (float)Math.cos(alpha);
-            float sin = (float)Math.sin(alpha);
-            float len;
-            switch (alignement) {
-                case ALIGN_CENTER:
-                    len = bf.getWidthPointKerned(text, state.size) / 2;
-                    x -=  len * cos;
-                    y -=  len * sin;
-                    break;
-                case ALIGN_RIGHT:
-                    len = bf.getWidthPointKerned(text, state.size);
-                    x -=  len * cos;
-                    y -=  len * sin;
-                    break;
-            }
-            setTextMatrix(cos, sin, -sin, cos, x, y);
-            showTextKerned(text);
-            setTextMatrix(0f, 0f);
-        }
+    public void showTextAlignedKerned(int alignment, String text, float x, float y, float rotation) {
+        showTextAligned(alignment, text, x, y, rotation, true);
     }
     
     /**
