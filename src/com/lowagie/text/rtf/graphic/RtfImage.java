@@ -260,11 +260,11 @@ public class RtfImage extends RtfElement {
             result.write(intToByteArray((int) width));
             result.write(PICTURE_HEIGHT);
             result.write(intToByteArray((int) height));
-            if(width != plainWidth) {
+            if(width != plainWidth || this.imageType == Image.ORIGINAL_BMP) {
                 result.write(PICTURE_SCALED_WIDTH);
                 result.write(intToByteArray((int) (plainWidth * RtfElement.TWIPS_FACTOR)));
             }
-            if(height != plainHeight) {
+            if(height != plainHeight || this.imageType == Image.ORIGINAL_BMP) {
                 result.write(PICTURE_SCALED_HEIGHT);
                 result.write(intToByteArray((int) (plainHeight * RtfElement.TWIPS_FACTOR)));
             }
