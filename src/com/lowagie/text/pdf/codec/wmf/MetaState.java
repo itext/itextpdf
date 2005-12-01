@@ -218,6 +218,12 @@ public class MetaState {
         setMetaState(state);
     }
     
+    public void cleanup(PdfContentByte cb) {
+        int k = savedStates.size();
+        while (k-- > 0)
+            cb.restoreState();
+    }
+    
     public float transformX(int x) {
         return ((float)x - offsetWx) * scalingX / extentWx;
     }

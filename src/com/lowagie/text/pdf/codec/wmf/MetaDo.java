@@ -565,7 +565,7 @@ public class MetaDo {
             }
             in.skip((tsize * 2) - (in.getLength() - lenMarker));
         }
-        
+        state.cleanup(cb);
     }
     
     public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws IOException {
