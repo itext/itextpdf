@@ -151,7 +151,7 @@ public class Pagetreenode
 
         while (it.hasNext()) {
           Object obj = it.next();
-          System.out.println("Feld:" + obj);
+          System.out.println("Field:" + obj);
 
           Object value = PdfReader.getPdfObject(prstr.get( (PdfName) obj));
           System.out.println("Value:" + value);
