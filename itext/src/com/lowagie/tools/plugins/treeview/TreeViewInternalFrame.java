@@ -89,6 +89,7 @@ public class TreeViewInternalFrame
     //jSplitPane2.setOrientation(JSplitPane.VERTICAL_SPLIT);
     //jPanel3.setLayout(borderLayout4);
     jSplitPane1.setMinimumSize(new Dimension(150, 100));
+    jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
     jTree1.addTreeSelectionListener(new Untitled1_jTree1_treeSelectionAdapter(this));
     jTextPane1.setText("jTextPane1");
     jPanel4.setLayout(borderLayout3);
@@ -173,7 +174,7 @@ public class TreeViewInternalFrame
     if (event.equalsIgnoreCase("class javax.swing.event.TreeSelectionEvent")) {
       UpdateableTreeNode selectednode = (UpdateableTreeNode) jTree1.
           getLastSelectedPathComponent();
-      System.out.println("Auswahl " + selectednode);
+      System.out.println("Selected node: " + selectednode);
       if (selectednode != null) {
         selectednode.updateview(this);
       }

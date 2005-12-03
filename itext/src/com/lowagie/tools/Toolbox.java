@@ -314,16 +314,18 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
              */
             public void run() {
                 final byte[] buf = new byte[1024];
-                try {
-                    while (true) {
+
+                while (true) {
+                	try {
                         final int len = pi.read(buf);
                         if (len == -1) {
                             break;
                         }
                         textArea.append(new String(buf, 0, len));
                         textArea.setCaretPosition(textArea.getDocument().getLength());
-                    }
-                } catch (IOException e) {
+                    
+                	} catch (IOException e) {
+                	}
                 }
             }
         }
