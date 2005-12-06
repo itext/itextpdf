@@ -66,6 +66,7 @@ import java.util.Iterator;
 public class AnalyzePDF
     extends Thread implements TreeModel, ICommonAnalyzer {
   DefaultMutableTreeNode root;
+  DefaultMutableTreeNode filenode;
   int pagecount;
   ProgressDialog blubb;
   int numberofpages;
@@ -79,7 +80,10 @@ public class AnalyzePDF
 
     try {
       reader = new PdfReader(infile);
-      root = new FileTreeNode(infile, reader);
+      root=new SimpletextTreeNode("Dokument");
+       filenode = new FileTreeNode(infile, reader);
+      root.add(filenode);
+
       this.numberofpages = reader.getNumberOfPages();
     }
     catch (IOException ex) {
@@ -121,7 +125,44 @@ public class AnalyzePDF
     }
 
   }
+  protected void iterateOutlines(PdfDictionary outlines, PdfReader pdfreader,
+     DefaultMutableTreeNode node) {
+      DefaultMutableTreeNode leaf;
 
+//  PdfNumber amountkids=(PdfNumber) PdfReader.getPdfObject(outlines.get(PdfName.COUNT));
+//  int kidscounter=amountkids.intValue();
+  PdfDictionary kid=outlines;
+  while(kid.get(PdfName.NEXT)!=null){
+    kid = (PdfDictionary) pdfreader.getPdfObject(kid.get(PdfName.NEXT));
+    PdfString title = (PdfString) pdfreader.getPdfObject(
+          kid.get(PdfName.TITLE));
+       leaf = new OutlinelistTreeNode(title,kid);
+       node.add(leaf);
+       PdfDictionary first = (PdfDictionary) PdfReader.getPdfObject( (
+            PRIndirectReference) kid.get(PdfName.FIRST));
+      if(first!=null){
+        iterateOutlines(first,pdfreader,leaf);
+      }else{
+        PdfDictionary se = (PdfDictionary) PdfReader.getPdfObject( (
+            PRIndirectReference) kid.get(new PdfName("SE")));
+        if(se!=null){
+          iterateObjects(se, pdfreader, leaf);
+        }
+       PdfObject dest = (PdfObject) pdfreader.getPdfObject(kid.get(PdfName.DEST));
+        if(dest!=null)
+        {
+          iterateObjects(dest, pdfreader, leaf);
+        }
+        PdfObject a = (PdfObject) pdfreader.getPdfObject(kid.get(PdfName.A));
+        if(a!=null)
+        {
+          iterateObjects(a, pdfreader, leaf);
+        }
+
+      }
+  }
+
+  }
   /**
    * Recursive investigate PDF Objecttree (other than pagetree objects!)
    * @param pdfobj PdfObject
@@ -360,14 +401,22 @@ public class AnalyzePDF
       PdfDictionary rootPages = (PdfDictionary) PdfReader.getPdfObject(
           catalog.get(PdfName.PAGES));
       DefaultMutableTreeNode rootPagesGUI = new SimpletextTreeNode("Pagetree "+rootPages);
-      root.add(rootPagesGUI);
+      filenode.add(rootPagesGUI);
       iteratePages(rootPages, reader, rootPagesGUI);
 
-      DefaultMutableTreeNode outlinetree = new SimpletextTreeNode("Outlinetree");
-      root.add(outlinetree);
+
       PdfDictionary rootOutlines = (PdfDictionary) PdfReader.getPdfObject(
           catalog.get(PdfName.OUTLINES));
-//      iteratePages(rootOutlines, reader, 0, outlinetree);
+
+          DefaultMutableTreeNode outlinetree = new SimpletextTreeNode("Outlinetree "+rootOutlines);
+      filenode.add(outlinetree);
+      PdfDictionary first = (PdfDictionary) PdfReader.getPdfObject( (
+            PRIndirectReference) rootOutlines.get(PdfName.FIRST));
+      if(first!=null){
+        iterateOutlines(first,reader,outlinetree);
+      }
+
+//      iterateOutlines(rootOutlines, reader, outlinetree);
       System.out.println(" Pagecount= " + pagecount);
       blubb.setVisible(false);
     }

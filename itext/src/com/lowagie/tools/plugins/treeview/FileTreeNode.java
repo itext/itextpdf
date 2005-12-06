@@ -57,7 +57,7 @@ public class FileTreeNode
 
   PdfReader reader;
   public FileTreeNode(Object p0, PdfReader reader) {
-    super(p0);
+    super(p0,true);
     this.reader = reader;
   }
 

@@ -185,6 +185,7 @@ public class TreeViewInternalFrame
     jTextPane1.setText(text);
     cardLayout2.show(jPanel2, "text");
     jPanel2.repaint();
+    jTextPane1.repaint();
   }
 
   public void showempty() {

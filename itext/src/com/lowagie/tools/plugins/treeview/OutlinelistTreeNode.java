@@ -50,30 +50,41 @@
 
 package com.lowagie.tools.plugins.treeview;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.ArrayList;
 
-import com.lowagie.text.pdf.PdfObject;
-import com.lowagie.text.pdf.PdfReader;
-/**
- *
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
- * <p>Company: </p>
- *
- * @author not attributable
- * @version 1.0
- */
-public interface ICommonAnalyzer {
-  /**
-   *
-   * @param pdfobj PdfObject
-   * @param pdfreader PdfReader
-   * @param node DefaultMutableTreeNode
-   */
-  void iterateObjects(PdfObject pdfobj, PdfReader pdfreader,
-  DefaultMutableTreeNode node);
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDictionary;
+import java.util.Set;
+import java.util.Iterator;
+
+public class OutlinelistTreeNode
+    extends UpdateableTreeNode {
+  private com.lowagie.text.pdf.PdfDictionary dictionary;
+  public OutlinelistTreeNode(Object userObject, PdfDictionary dictionary) {
+    super(userObject);
+    this.dictionary = dictionary;
+  }
+
+  public OutlinelistTreeNode(PdfDictionary dictionary) {
+    super("Outlinenode " + dictionary);
+    this.dictionary = dictionary;
+  }
+
+  public void updateview(IUpdatenodeview updateobject) {
+    StringBuffer sb = new StringBuffer();
+    sb.append("<html>");
+    sb.append("<p>");
+    sb.append(this.userObject);
+    sb.append("</p>");
+    Set set = dictionary.getKeys();
+    Iterator it = set.iterator();
+    while (it.hasNext()) {
+      sb.append("<p>");
+      sb.append("Key " + it.next().toString());
+      sb.append("</p>");
+    }
+    sb.append("</html>");
+    updateobject.showvalues(sb.toString());
+
+  }
 }
