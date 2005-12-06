@@ -640,6 +640,8 @@ public class FontFactory extends java.lang.Object {
         count += registerDirectory("/usr/openwin/lib/X11/fonts/TrueType");
         count += registerDirectory("/usr/share/fonts/default/TrueType");
         count += registerDirectory("/usr/X11R6/lib/X11/fonts/ttf");
+        count += registerDirectory("/Library/Fonts");
+        count += registerDirectory("/System/LIbrary/Fonts");
         return count;
     }
 
