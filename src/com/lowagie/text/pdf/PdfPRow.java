@@ -377,7 +377,7 @@ public class PdfPRow {
 								+ cell.getEffectivePaddingBottom();
 					}
 				}
-				if (tly > bry || ct.zeroHeightElement()) {
+				if ((tly > bry || ct.zeroHeightElement()) && leftLimit < rightLimit) {
 					ct
 							.setSimpleColumn(leftLimit, bry - 0.001f,
 									rightLimit, tly);
