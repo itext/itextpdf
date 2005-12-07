@@ -199,6 +199,8 @@ public class ColumnText {
     /** The <CODE>PdfContent</CODE> where the text will be written to. */
     protected PdfContentByte canvas;
     
+    protected PdfContentByte[] canvases;
+    
     /** The line status when trying to fit a line to a column. */
     protected int lineStatus;
     
@@ -294,6 +296,7 @@ public class ColumnText {
         fixedLeading = org.fixedLeading;
         multipliedLeading = org.multipliedLeading;
         canvas = org.canvas;
+        canvases = org.canvases;
         lineStatus = org.lineStatus;
         indent = org.indent;
         followingIndent = org.followingIndent;
@@ -1356,7 +1359,10 @@ public class ColumnText {
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
                     }
-                    nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
+                    if (canvases != null)
+                        nt.writeSelectedRows(0, -1, x1, yLineWrite, canvases);
+                    else
+                        nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
                     if (table.isExtendLastRow()) {
                         PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
                         last.setMaxHeights(rowHeight);
@@ -1419,8 +1425,28 @@ public class ColumnText {
      */
     public void setCanvas(PdfContentByte canvas) {
         this.canvas = canvas;
+        this.canvases = null;
         if (compositeColumn != null)
             compositeColumn.setCanvas(canvas);
+    }
+    
+    /**
+     * Sets the canvases.
+     * @param canvases
+     */
+    public void setCanvases(PdfContentByte[] canvases) {
+        this.canvases = canvases;
+        this.canvas = canvases[PdfPTable.TEXTCANVAS];
+        if (compositeColumn != null)
+            compositeColumn.setCanvases(canvases);
+    }
+    
+    /**
+     * Gets the canvases.
+     * @return an array of PdfContentByte
+     */
+    public PdfContentByte[] getCanvases() {
+        return canvases;
     }
     
     /**
