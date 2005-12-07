@@ -365,7 +365,7 @@ public class PdfPRow {
 					}
 				}
 				ColumnText ct = ColumnText.duplicate(cell.getColumn());
-				ct.setCanvas(canvases[PdfPTable.TEXTCANVAS]);
+				ct.setCanvases(canvases);
 				float bry = tly
 						- (maxHeight /* cell.height() */
 								- cell.getEffectivePaddingTop() - cell
