@@ -55,6 +55,7 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Image;
 import com.lowagie.text.Chunk;
+import com.lowagie.text.pdf.events.PdfPCellEventForwarder;
 
 /** A cell in a PdfPTable.
  */
@@ -628,8 +629,16 @@ public class PdfPCell extends Rectangle{
      * @param cellEvent the cell event
      *
      */
-    public void setCellEvent(PdfPCellEvent cellEvent) {
-        this.cellEvent = cellEvent;
+    public void setCellEvent(PdfPCellEvent event) {
+    	if (event == null) this.cellEvent = null;
+    	else if (this.cellEvent == null) this.cellEvent = event;
+    	else if (this.cellEvent instanceof PdfPCellEventForwarder) ((PdfPCellEventForwarder)this.cellEvent).addCellEvent(event);
+    	else {
+    		PdfPCellEventForwarder forward = new PdfPCellEventForwarder();
+    		forward.addCellEvent(this.cellEvent);
+    		forward.addCellEvent(event);
+    		this.cellEvent = forward;
+    	}
     }
     
     /** Gets the arabic shaping options.

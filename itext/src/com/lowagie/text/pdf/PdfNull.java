@@ -80,4 +80,8 @@ public class PdfNull extends PdfObject {
     public PdfNull() {
         super(NULL, CONTENT);
     }
+    
+    public String toString() {
+    	return "null";
+    }
 }

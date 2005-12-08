@@ -382,7 +382,6 @@ public final class BidiOrder {
      * types array supplied to constructor)
      */
     private int reinsertExplicitCodes(int textLength) {
-        int r = textLength;
         for (int i = initialTypes.length; --i >= 0;) {
             byte t = initialTypes[i];
             if (t == LRE || t == RLE || t == LRO || t == RLO || t == PDF || t == BN) {

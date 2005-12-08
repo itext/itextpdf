@@ -62,6 +62,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
+import com.lowagie.text.SimpleTable;
 
 /**
  * Formats text in a columnwise form. The text is bound
@@ -142,6 +143,9 @@ public class ColumnText {
     /** the space char ratio */
     public static final float GLOBAL_SPACE_CHAR_RATIO = 0;
     
+    /** Initial value of the status. */
+    public static final int START_COLUMN = 0;
+    
     /** Signals that there is no more text available. */
     public static final int NO_MORE_TEXT = 1;
     
@@ -194,6 +198,8 @@ public class ColumnText {
     
     /** The <CODE>PdfContent</CODE> where the text will be written to. */
     protected PdfContentByte canvas;
+    
+    protected PdfContentByte[] canvases;
     
     /** The line status when trying to fit a line to a column. */
     protected int lineStatus;
@@ -290,6 +296,7 @@ public class ColumnText {
         fixedLeading = org.fixedLeading;
         multipliedLeading = org.multipliedLeading;
         canvas = org.canvas;
+        canvases = org.canvases;
         lineStatus = org.lineStatus;
         indent = org.indent;
         followingIndent = org.followingIndent;
@@ -427,7 +434,14 @@ public class ColumnText {
         else if (element.type() == Element.PHRASE) {
         	element = new Paragraph((Phrase)element);
         }
-        if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.GRAPHIC)
+        if (element instanceof SimpleTable) {
+        	try {
+				element = ((SimpleTable)element).createPdfPTable();
+			} catch (DocumentException e) {
+				throw new IllegalArgumentException("Element not allowed.");
+			}
+        }
+        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.GRAPHIC)
             throw new IllegalArgumentException("Element not allowed.");
         if (!composite) {
             composite = true;
@@ -1320,27 +1334,37 @@ public class ColumnText {
                         default:
                             x1 += (rectangularWidth - tableWidth) / 2f;
                     }
+                    int realHeaderRows = table.getHeaderRows();
+                    int footerRows = table.getFooterRows();
+                    if (footerRows > realHeaderRows)
+                        footerRows = realHeaderRows;
+                    realHeaderRows -= footerRows;
                     PdfPTable nt = PdfPTable.shallowCopy(table);
                     ArrayList rows = table.getRows();
                     ArrayList sub = nt.getRows();
                     if (!skipHeader) {
-                        for (int j = 0; j < table.getHeaderRows(); ++j)
+                        for (int j = 0; j < realHeaderRows; ++j)
                             sub.add(rows.get(j));
                     }
                     else
-                        nt.setHeaderRows(0);
+                        nt.setHeaderRows(footerRows);
                     for (int j = listIdx; j < k; ++j)
                         sub.add(rows.get(j));
+                    for (int j = 0; j < footerRows; ++j)
+                        sub.add(rows.get(j + realHeaderRows));
                     float rowHeight = 0;
                     if (table.isExtendLastRow()) {
-                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1);
+                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
                         rowHeight = last.getMaxHeights();
                         last.setMaxHeights(yTemp - minY + rowHeight);
                         yTemp = minY;
                     }
-                    nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
+                    if (canvases != null)
+                        nt.writeSelectedRows(0, -1, x1, yLineWrite, canvases);
+                    else
+                        nt.writeSelectedRows(0, -1, x1, yLineWrite, canvas);
                     if (table.isExtendLastRow()) {
-                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1);
+                        PdfPRow last = (PdfPRow)sub.get(sub.size() - 1 - footerRows);
                         last.setMaxHeights(rowHeight);
                     }
                 }
@@ -1401,8 +1425,28 @@ public class ColumnText {
      */
     public void setCanvas(PdfContentByte canvas) {
         this.canvas = canvas;
+        this.canvases = null;
         if (compositeColumn != null)
             compositeColumn.setCanvas(canvas);
+    }
+    
+    /**
+     * Sets the canvases.
+     * @param canvases
+     */
+    public void setCanvases(PdfContentByte[] canvases) {
+        this.canvases = canvases;
+        this.canvas = canvases[PdfPTable.TEXTCANVAS];
+        if (compositeColumn != null)
+            compositeColumn.setCanvases(canvases);
+    }
+    
+    /**
+     * Gets the canvases.
+     * @return an array of PdfContentByte
+     */
+    public PdfContentByte[] getCanvases() {
+        return canvases;
     }
     
     /**
@@ -1427,5 +1471,12 @@ public class ColumnText {
      */
     public void setUseAscender(boolean use) {
         useAscender = use;
+    }
+    
+    /**
+     * Checks the status variable and looks if there's still some text.
+     */
+    public static boolean hasMoreText(int status) {
+    	return (status & ColumnText.NO_MORE_TEXT) == 0;
     }
 }

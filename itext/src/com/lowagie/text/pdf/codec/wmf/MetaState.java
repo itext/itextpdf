@@ -199,7 +199,7 @@ public class MetaState {
     public void saveState(PdfContentByte cb) {
         cb.saveState();
         MetaState state = new MetaState(this);
-        savedStates.push(this);
+        savedStates.push(state);
     }
 
     public void restoreState(int index, PdfContentByte cb) {
@@ -216,6 +216,12 @@ public class MetaState {
             state = (MetaState)savedStates.pop();
         }
         setMetaState(state);
+    }
+    
+    public void cleanup(PdfContentByte cb) {
+        int k = savedStates.size();
+        while (k-- > 0)
+            cb.restoreState();
     }
     
     public float transformX(int x) {
@@ -251,8 +257,8 @@ public class MetaState {
     }
     
     public float transformAngle(float angle) {
-        float ta = extentWy < 0 ? -angle : angle;
-        return extentWx < 0 ? 180 - ta : ta;
+        float ta = scalingY < 0 ? -angle : angle;
+        return (float)(scalingX < 0 ? Math.PI - ta : ta);
     }
     
     public void setCurrentPoint(Point p) {

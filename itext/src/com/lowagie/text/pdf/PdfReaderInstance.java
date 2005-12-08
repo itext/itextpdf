@@ -115,7 +115,6 @@ class PdfReaderInstance {
         PdfObject contents = PdfReader.getPdfObjectRelease(page.get(PdfName.CONTENTS));
         PdfDictionary dic = new PdfDictionary();
         byte bout[] = null;
-        ArrayList filters = null;
         if (contents != null) {
             if (contents.isStream())
                 dic.putAll((PRStream)contents);

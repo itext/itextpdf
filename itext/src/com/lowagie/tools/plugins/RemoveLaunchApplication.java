@@ -93,10 +93,10 @@ public class RemoveLaunchApplication
    * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
    */
   protected void createFrame() {
-    internalFrame = new JInternalFrame("Remove Launch Applications", true, true, true);
-    internalFrame.setSize(300, 120);
+    internalFrame = new JInternalFrame("Remove Launch Applications", true, false, true);
+    internalFrame.setSize(300, 80);
     internalFrame.setJMenuBar(getMenubar());
-    internalFrame.getContentPane().add(getConsole(40, 30));
+	System.out.println("=== Remove Launch Applications OPENED ===");
   }
 
   /**
@@ -121,7 +121,7 @@ public class RemoveLaunchApplication
       PdfDictionary l;
       PdfName n;
       for (int i = 1; i < reader.getXrefSize(); i++) {
-      	o = (PdfObject)reader.getPdfObject(i);
+      	o = reader.getPdfObject(i);
       	if (o instanceof PdfDictionary) {
       		d = (PdfDictionary)o;
       		o = d.get(PdfName.A);

@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.File;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     
@@ -71,6 +72,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     public boolean isPRE = false;
     public Stack tableState = new Stack();
     public boolean skipText = false;
+    public HashMap interfaceProps;
     
     /** Creates a new instance of HTMLWorker */
     public HTMLWorker(DocListener document) {
@@ -86,10 +88,15 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     }
     
     public static ArrayList parseToList(Reader reader, StyleSheet style) throws IOException {
+        return parseToList(reader, style, null);
+    }
+    
+    public static ArrayList parseToList(Reader reader, StyleSheet style, HashMap interfaceProps) throws IOException {
         HTMLWorker worker = new HTMLWorker(null);
         if (style != null)
             worker.style = style;
         worker.document = worker;
+        worker.interfaceProps = interfaceProps;
         worker.objectList = new ArrayList();
         worker.parse(reader);
         return worker.objectList;
@@ -117,109 +124,180 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     public void startElement(String tag, HashMap h) {
         if (!tagsSupported.containsKey(tag))
             return;
-        style.applyStyle(tag, h);
-        String follow = (String)FactoryProperties.followTags.get(tag);
-        if (follow != null) {
-            HashMap prop = new HashMap();
-            prop.put(follow, null);
-            cprops.addToChain(follow, prop);
-            return;
-        }
-        if (tag.equals("a")) {
-            cprops.addToChain(tag, h);
-            if (currentParagraph == null)
-                currentParagraph = new Paragraph();
-            stack.push(currentParagraph);
-            currentParagraph = new Paragraph();
-            return;
-        }
-        if (tag.equals("br")) {
-            if (currentParagraph == null)
-                currentParagraph = new Paragraph();
-            currentParagraph.add(FactoryProperties.createChunk("\n", cprops));
-            return;
-        }
-        if (tag.equals("font") || tag.equals("span")) {
-            cprops.addToChain(tag, h);
-            return;
-        }
-        endElement("p");
-        if (tag.equals("h1") || tag.equals("h2") || tag.equals("h3") || tag.equals("h4") || tag.equals("h5") || tag.equals("h6")) {
-            if (!h.containsKey("size"))
-                h.put("size", tag.substring(1));
-            cprops.addToChain(tag, h);
-            return;
-        }
-        if (tag.equals("ul")) {
-            if (pendingLI)
-                endElement("li");
-            skipText = true;
-            cprops.addToChain(tag, h);
-            com.lowagie.text.List list = new com.lowagie.text.List(false, 10);
-            list.setListSymbol("\u2022");
-            stack.push(list);
-            return;
-        }
-        if (tag.equals("ol")) {
-            if (pendingLI)
-                endElement("li");
-            skipText = true;
-            cprops.addToChain(tag, h);
-            com.lowagie.text.List list = new com.lowagie.text.List(true, 10);
-            stack.push(list);
-            return;
-        }
-        if (tag.equals("li")) {
-            if (pendingLI)
-                endElement("li");
-            skipText = false;
-            pendingLI = true;
-            cprops.addToChain(tag, h);
-            stack.push(new com.lowagie.text.ListItem());
-            return;
-        }
-        if (tag.equals("div") || tag.equals("body")) {
-            cprops.addToChain(tag, h);
-            return;
-        }
-        if (tag.equals("pre")) {
-            if (!h.containsKey("face")) {
-                h.put("face", "Courier");
+        try {
+            style.applyStyle(tag, h);
+            String follow = (String)FactoryProperties.followTags.get(tag);
+            if (follow != null) {
+                HashMap prop = new HashMap();
+                prop.put(follow, null);
+                cprops.addToChain(follow, prop);
+                return;
             }
-            cprops.addToChain(tag, h);
-            isPRE = true;
-            return;
+            if (tag.equals("a")) {
+                cprops.addToChain(tag, h);
+                if (currentParagraph == null)
+                    currentParagraph = new Paragraph();
+                stack.push(currentParagraph);
+                currentParagraph = new Paragraph();
+                return;
+            }
+            if (tag.equals("br")) {
+                if (currentParagraph == null)
+                    currentParagraph = new Paragraph();
+                currentParagraph.add(FactoryProperties.createChunk("\n", cprops));
+                return;
+            }
+            if (tag.equals("font") || tag.equals("span")) {
+                cprops.addToChain(tag, h);
+                return;
+            }
+            if (tag.equals("img")) {
+                String src = (String)h.get("src");
+                if (src == null)
+                    return;
+                cprops.addToChain(tag, h);
+                Image img = null;
+                if (interfaceProps != null) {
+                    HashMap images = (HashMap)interfaceProps.get("img_static");
+                    if (images != null) {
+                        Image tim = (Image)images.get(src);
+                        if (tim != null)
+                            img = Image.getInstance(tim);
+                    }
+                }
+                if (img == null) {
+                    String path = cprops.getProperty("image_path");
+                    if (path == null)
+                        path = "";
+                    src = new File(path, src).getPath();
+                    img = Image.getInstance(src);
+                }
+                String align = (String)h.get("align");
+                String width = (String)h.get("width");
+                String height = (String)h.get("height");
+                String before = cprops.getProperty("before");
+                String after = cprops.getProperty("after");
+                if (before != null)
+                    img.setSpacingBefore(Float.valueOf(before).floatValue());
+                if (after != null)
+                    img.setSpacingAfter(Float.valueOf(after).floatValue());
+                float wp = lengthParse(width, (int)img.width());
+                float lp = lengthParse(height, (int)img.height());
+                if (wp > 0 && lp > 0)
+                    img.scalePercent(wp > lp ? lp : wp);
+                else if (wp > 0)
+                    img.scalePercent(wp);
+                else if (lp > 0)
+                    img.scalePercent(lp);
+                img.setWidthPercentage(0);
+                if (align != null) {
+                    endElement("p");
+                    int ralign = Image.MIDDLE;
+                    if (align.equalsIgnoreCase("left"))
+                        ralign = Image.LEFT;
+                    else if (align.equalsIgnoreCase("right"))
+                        ralign = Image.RIGHT;
+                    img.setAlignment(ralign);
+                    Img i = null;
+                    boolean skip = false;
+                    if (interfaceProps != null) {
+                        i = (Img)interfaceProps.get("img_interface");
+                        if (i != null)
+                            skip = i.process(img, h, cprops, document);
+                    }
+                    if (!skip)
+                        document.add(img);
+                    cprops.removeChain(tag);
+                }
+                else {
+                    cprops.removeChain(tag);
+                    if (currentParagraph == null)
+                        currentParagraph = FactoryProperties.createParagraph(cprops);
+                    currentParagraph.add(new Chunk(img, 0, 0));
+                }
+                return;
+            }
+            endElement("p");
+            if (tag.equals("h1") || tag.equals("h2") || tag.equals("h3") || tag.equals("h4") || tag.equals("h5") || tag.equals("h6")) {
+                if (!h.containsKey("size"))
+                    h.put("size", tag.substring(1));
+                cprops.addToChain(tag, h);
+                return;
+            }
+            if (tag.equals("ul")) {
+                if (pendingLI)
+                    endElement("li");
+                skipText = true;
+                cprops.addToChain(tag, h);
+                com.lowagie.text.List list = new com.lowagie.text.List(false, 10);
+                list.setListSymbol("\u2022");
+                stack.push(list);
+                return;
+            }
+            if (tag.equals("ol")) {
+                if (pendingLI)
+                    endElement("li");
+                skipText = true;
+                cprops.addToChain(tag, h);
+                com.lowagie.text.List list = new com.lowagie.text.List(true, 10);
+                stack.push(list);
+                return;
+            }
+            if (tag.equals("li")) {
+                if (pendingLI)
+                    endElement("li");
+                skipText = false;
+                pendingLI = true;
+                cprops.addToChain(tag, h);
+                stack.push(FactoryProperties.createListItem(cprops));
+                return;
+            }
+            if (tag.equals("div") || tag.equals("body")) {
+                cprops.addToChain(tag, h);
+                return;
+            }
+            if (tag.equals("pre")) {
+                if (!h.containsKey("face")) {
+                    h.put("face", "Courier");
+                }
+                cprops.addToChain(tag, h);
+                isPRE = true;
+                return;
+            }
+            if (tag.equals("p")) {
+                cprops.addToChain(tag, h);
+                currentParagraph = FactoryProperties.createParagraph(h);
+                return;
+            }
+            if (tag.equals("tr")) {
+                if (pendingTR)
+                    endElement("tr");
+                skipText = true;
+                pendingTR = true;
+                cprops.addToChain("tr", h);
+                return;
+            }
+            if (tag.equals("td") || tag.equals("th")) {
+                if (pendingTD)
+                    endElement(tag);
+                skipText = false;
+                pendingTD = true;
+                cprops.addToChain("td", h);
+                stack.push(new IncCell(tag, cprops));
+                return;
+            }
+            if (tag.equals("table")) {
+                cprops.addToChain("table", h);
+                IncTable table = new IncTable(h);
+                stack.push(table);
+                tableState.push(new boolean[]{pendingTR, pendingTD});
+                pendingTR = pendingTD = false;
+                skipText = true;
+                return;
+            }
         }
-        if (tag.equals("p")) {
-            cprops.addToChain(tag, h);
-            currentParagraph = FactoryProperties.createParagraph(h);
-            return;
-        }
-        if (tag.equals("tr")) {
-            if (pendingTR)
-                endElement("tr");
-            skipText = true;
-            pendingTR = true;
-            cprops.addToChain("tr", h);
-            return;
-        }
-        if (tag.equals("td") || tag.equals("th")) {
-            if (pendingTD)
-                endElement(tag);
-            skipText = false;
-            pendingTD = true;
-            cprops.addToChain("td", h);
-            stack.push(new IncCell(tag, cprops));
-            return;
-        }
-        if (tag.equals("table")) {
-            cprops.addToChain("table", h);
-            IncTable table = new IncTable(h);
-            stack.push(table);
-            tableState.push(new boolean[]{pendingTR, pendingTD});
-            pendingTR = pendingTD = false;
-            skipText = true;
-            return;
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
         }
     }
     
@@ -237,14 +315,23 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 return;
             }
             if (tag.equals("a")) {
-                String href = cprops.getProperty("href");
                 if (currentParagraph == null)
                     currentParagraph = new Paragraph();
-                if (href != null) {
-                    ArrayList chunks = currentParagraph.getChunks();
-                    for (int k = 0; k < chunks.size(); ++k) {
-                        Chunk ck = (Chunk)chunks.get(k);
-                        ck.setAnchor(href);
+                ALink i = null;
+                boolean skip = false;
+                if (interfaceProps != null) {
+                    i = (ALink)interfaceProps.get("alink_interface");
+                    if (i != null)
+                        skip = i.process(currentParagraph, cprops);
+                }
+                if (!skip) {
+                    String href = cprops.getProperty("href");
+                    if (href != null) {
+                        ArrayList chunks = currentParagraph.getChunks();
+                        for (int k = 0; k < chunks.size(); ++k) {
+                            Chunk ck = (Chunk)chunks.get(k);
+                            ck.setAnchor(href);
+                        }
                     }
                 }
                 Paragraph tmp = (Paragraph)stack.pop();
@@ -488,7 +575,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     }
     
     public static final String tagsSupportedString = "ol ul li a pre font span br p div body table td th tr i b u sub sup em strong"
-        + " h1 h2 h3 h4 h5 h6";
+        + " h1 h2 h3 h4 h5 h6 img";
     
     public static final HashMap tagsSupported = new HashMap();
     
@@ -496,5 +583,16 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         StringTokenizer tok = new StringTokenizer(tagsSupportedString);
         while (tok.hasMoreTokens())
             tagsSupported.put(tok.nextToken(), null);
+    }
+    
+    private static float lengthParse(String txt, int c) {
+        if (txt == null)
+            return -1;
+        if (txt.endsWith("%")) {
+            float vf = Float.valueOf(txt.substring(0, txt.length() - 1)).floatValue();
+            return vf;
+        }
+        int v = Integer.parseInt(txt);
+        return (float)v / c * 100f;
     }
 }

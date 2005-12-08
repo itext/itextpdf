@@ -612,7 +612,6 @@ public class PdfPKCS7 {
     public static Object[] verifyCertificates(Certificate certs[], KeyStore keystore, Collection crls, Calendar calendar) {
         if (calendar == null)
             calendar = new GregorianCalendar();
-        ArrayList fails = new ArrayList();
         for (int k = 0; k < certs.length; ++k) {
             X509Certificate cert = (X509Certificate)certs[k];
             String err = verifyCertificate(cert, crls, calendar);

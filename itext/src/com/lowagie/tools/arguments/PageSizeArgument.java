@@ -70,7 +70,7 @@ public class PageSizeArgument extends OptionArgument {
 
 	/**
 	 * Constructs an OptionArgument.
-	 * 
+	 *
 	 * @param tool
 	 *            the tool that needs this argument
 	 * @param name
@@ -92,7 +92,7 @@ public class PageSizeArgument extends OptionArgument {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Adds an Option.
 	 * @param description the description of the option
@@ -101,7 +101,7 @@ public class PageSizeArgument extends OptionArgument {
 	public void addOption(Object description, Object value) {
 		options.put(description, value);
 	}
-	
+
 	/**
 	 * Gets the options.
 	 * @return Returns the options.
@@ -109,7 +109,7 @@ public class PageSizeArgument extends OptionArgument {
 	public TreeMap getOptions() {
 		return options;
 	}
-	
+
 	/**
 	 * Gets the argument as an object.
 	 * @return an object
@@ -123,7 +123,7 @@ public class PageSizeArgument extends OptionArgument {
 			throw new InstantiationException(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.arguments.ToolArgument#getUsage()
 	 */
@@ -143,7 +143,7 @@ public class PageSizeArgument extends OptionArgument {
 		}
 		return buf.toString();
 	}
-	
+
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -155,18 +155,18 @@ public class PageSizeArgument extends OptionArgument {
 			cb.addItem(i.next());
 		}
 		message[1] = cb;
-		int result = JOptionPane.showOptionDialog( 
+		int result = JOptionPane.showOptionDialog(
 	 		    tool.getInternalFrame(),
-	 		    message, 
+	 		    message,
 	 		    description,
-	 		    JOptionPane.OK_CANCEL_OPTION, 
+	 		    JOptionPane.OK_CANCEL_OPTION,
 	 		    JOptionPane.QUESTION_MESSAGE,
 	 		    null,
 	 		    null,
 				null
 	 		);
 		if (result == 0) {
-			setValue((String)cb.getSelectedItem());
+			setValue((String)cb.getSelectedItem(), null);
 		}
 	}
 }

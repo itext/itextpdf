@@ -72,6 +72,11 @@ import com.lowagie.text.pdf.PdfOCG;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PRTokeniser;
+import com.lowagie.text.pdf.PdfIndirectReference;
+import com.lowagie.text.pdf.PRIndirectReference;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfNumber;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -339,6 +344,7 @@ public abstract class Image extends Rectangle implements Element,
 		this.widthPercentage = image.widthPercentage;
 		this.layer = image.layer;
         this.initialRotation = image.initialRotation;
+        this.directReference = image.directReference;
 	}
 
 	/**
@@ -412,6 +418,7 @@ public abstract class Image extends Rectangle implements Element,
 				try {
 					if (url.getProtocol().equals("file")) {
 						String file = url.getFile();
+                        file = unEscapeURL(file);
 						ra = new RandomAccessFileOrArray(file);
 					} else
 						ra = new RandomAccessFileOrArray(url);
@@ -722,6 +729,35 @@ public abstract class Image extends Rectangle implements Element,
 			int bpc, byte data[]) throws BadElementException {
 		return Image.getInstance(width, height, components, bpc, data, null);
 	}
+
+    /**
+     * Reuses an existing image.
+     * @param ref the reference to the image dictionary
+     * @throws BadElementException on error
+     * @return the image
+     */    
+    public static Image getInstance(PRIndirectReference ref) throws BadElementException {
+        PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObjectRelease(ref);
+        int width = ((PdfNumber)PdfReader.getPdfObjectRelease(dic.get(PdfName.WIDTH))).intValue();
+        int height = ((PdfNumber)PdfReader.getPdfObjectRelease(dic.get(PdfName.HEIGHT))).intValue();
+        Image imask = null;
+        PdfObject obj = dic.get(PdfName.SMASK);
+        if (obj != null && obj.isIndirect()) {
+            imask = getInstance((PRIndirectReference)obj);
+        }
+        else {
+            obj = dic.get(PdfName.MASK);
+            if (obj != null && obj.isIndirect()) {
+                PdfObject obj2 = PdfReader.getPdfObjectRelease(obj);
+                if (obj2 instanceof PdfDictionary)
+                    imask = getInstance((PRIndirectReference)obj);
+            }
+        }
+        Image img = new ImgRaw(width, height, 1, 1, null);
+        img.imageMask = imask;
+        img.directReference = ref;
+        return img;
+    }
 
 	/**
 	 * gets an instance of an Image
@@ -1340,6 +1376,12 @@ public abstract class Image extends Rectangle implements Element,
 
     private static String excUri = " <>#%\"{}[]|\\\u005E\u0060";
     private static String[] excUriEsc = {"%20", "%3C", "%3E", "%23", "%25", "%22", "%7B", "%7D", "%5B", "%5D", "%7C", "%5C", "%5E", "%60"};
+    
+    /**
+     * Holds value of property directReference.
+     */
+    private PdfIndirectReference directReference;
+    
 	/**
 	 * This method makes a valid URL from a given filename.
 	 * <P>
@@ -1382,6 +1424,36 @@ public abstract class Image extends Rectangle implements Element,
 		return new URL("file", "", sb.toString());
 	}
 
+    /**
+     * Unescapes an URL. All the "%xx" are replaced by the 'xx' hex char value.
+     * @param src the url to unescape
+     * @return the eunescaped value
+     */    
+    public static String unEscapeURL(String src) {
+        StringBuffer bf = new StringBuffer();
+        char[] s = src.toCharArray();
+        for (int k = 0; k < s.length; ++k) {
+            char c = s[k];
+            if (c == '%') {
+                if (k + 2 >= s.length) {
+                    bf.append(c);
+                    continue;
+                }
+                int a0 = PRTokeniser.getHex((int)s[k + 1]);
+                int a1 = PRTokeniser.getHex((int)s[k + 2]);
+                if (a0 < 0 || a1 < 0) {
+                    bf.append(c);
+                    continue;
+                }
+                bf.append((char)(a0 * 16 + a1));
+                k += 2;
+            }
+            else
+                bf.append(c);
+        }
+        return bf.toString();
+    }
+    
 	/**
 	 * Returns the transparency.
 	 * 
@@ -1970,6 +2042,22 @@ public abstract class Image extends Rectangle implements Element,
         float old_rot = rotation - this.initialRotation;
         this.initialRotation = initialRotation;
         setRotation(old_rot);
+    }
+    
+    /**
+     * Getter for property directReference.
+     * @return Value of property directReference.
+     */
+    public PdfIndirectReference getDirectReference() {
+        return this.directReference;
+    }
+    
+    /**
+     * Setter for property directReference.
+     * @param directReference New value of property directReference.
+     */
+    public void setDirectReference(PdfIndirectReference directReference) {
+        this.directReference = directReference;
     }
     
 }

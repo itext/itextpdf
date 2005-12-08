@@ -126,4 +126,8 @@ public class PdfIndirectReference extends PdfObject {
     public int getGeneration() {
         return generation;
     }
+    
+    public String toString() {
+    	return new StringBuffer().append(number).append(" ").append(generation).append(" R").toString();
+    }
 }

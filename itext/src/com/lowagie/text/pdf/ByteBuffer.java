@@ -313,7 +313,7 @@ public class ByteBuffer extends OutputStream {
         boolean negative = false;
         if (Math.abs(d) < 0.000015) {
             if (buf != null) {
-                buf.append((byte)ZERO);
+                buf.append(ZERO);
                 return null;
             } else {
                 return "0";
@@ -484,7 +484,7 @@ public class ByteBuffer extends OutputStream {
                 return null;
             } else {
                 StringBuffer res = new StringBuffer();
-                if (negative) res.append((char)'-');
+                if (negative) res.append('-');
                 if (v >= 1000000) {
                     res.append( chars[(v / 1000000)] );
                 }
@@ -502,7 +502,7 @@ public class ByteBuffer extends OutputStream {
                 }
                 
                 if (v % 100 != 0) {
-                    res.append((char)'.');
+                    res.append('.');
                     res.append( chars[(v / 10) % 10] );
                     if (v % 10 != 0) {
                         res.append( chars[v % 10] );

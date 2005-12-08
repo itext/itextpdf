@@ -575,7 +575,7 @@ public class PdfCell extends Rectangle {
             } else {
                 size = result.size();
                 for (int i = 0; i < size; i++) {
-                    line = (PdfLine) removeLine(0);
+                    line = removeLine(0);
                     difference += line.height();
                 }
             }
@@ -786,7 +786,6 @@ public class PdfCell extends Rectangle {
                 }
                 break;
             default:
-                ArrayList tmp = element.getChunks();
                 int n = element.getChunks().size();
                 while (n-- > 0)
                     allActions.add(action);

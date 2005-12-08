@@ -53,7 +53,7 @@ package com.lowagie.text.xml.xmp;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 
 import com.lowagie.text.pdf.PdfDate;
@@ -230,7 +230,7 @@ public class XmpWriter {
      * @param info
      * @throws IOException
      */
-    public XmpWriter(OutputStream os, HashMap info) throws IOException {
+    public XmpWriter(OutputStream os, Map info) throws IOException {
         this(os);
         if (info != null) {
         	DublinCoreSchema dc = new DublinCoreSchema();

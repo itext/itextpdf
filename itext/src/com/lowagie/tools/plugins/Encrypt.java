@@ -112,9 +112,10 @@ public class Encrypt extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Encrypt", true, true, true);
+		internalFrame = new JInternalFrame("Encrypt", true, false, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
+		System.out.println("=== Encrypt OPENED ===");
 	}
 	
 	/**

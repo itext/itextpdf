@@ -311,7 +311,7 @@ public class FontFactory extends java.lang.Object {
         if ((value = (String)attributes.remove(ElementTags.ENCODING)) != null) {
             encoding = value;
         }
-        if ("true".equals((String) attributes.remove(ElementTags.EMBEDDED))) {
+        if ("true".equals(attributes.remove(ElementTags.EMBEDDED))) {
             embedded = true;
         }
         if ((value = (String)attributes.remove(ElementTags.FONT)) != null) {
@@ -516,7 +516,7 @@ public class FontFactory extends java.lang.Object {
                 Object allNames[] = BaseFont.getAllFontNames(path, BaseFont.WINANSI, null);
                 trueTypeFonts.setProperty(((String)allNames[0]).toLowerCase(), path);
                 if (alias != null) {
-                    trueTypeFonts.setProperty(alias, path);
+                    trueTypeFonts.setProperty(alias.toLowerCase(), path);
                 }
                 // register all the font names with all the locales
                 String[][] names = (String[][])allNames[2]; //full name
@@ -640,6 +640,8 @@ public class FontFactory extends java.lang.Object {
         count += registerDirectory("/usr/openwin/lib/X11/fonts/TrueType");
         count += registerDirectory("/usr/share/fonts/default/TrueType");
         count += registerDirectory("/usr/X11R6/lib/X11/fonts/ttf");
+        count += registerDirectory("/Library/Fonts");
+        count += registerDirectory("/System/LIbrary/Fonts");
         return count;
     }
 

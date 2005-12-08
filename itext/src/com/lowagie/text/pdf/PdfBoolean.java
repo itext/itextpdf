@@ -127,4 +127,8 @@ public class PdfBoolean extends PdfObject {
     public boolean booleanValue() {
         return value;
     }
+    
+    public String toString() {
+    	return String.valueOf(value);
+    }
 }

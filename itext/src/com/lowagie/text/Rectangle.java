@@ -778,6 +778,7 @@ public class Rectangle implements Element, MarkupAttributes {
 	 * @return a color value
 	 */
 	public Color getBorderColorLeft() {
+		if (borderColorLeft == null) return color;
 		return borderColorLeft;
 	}
 
@@ -787,6 +788,7 @@ public class Rectangle implements Element, MarkupAttributes {
 	 * @return a color value
 	 */
 	public Color getBorderColorRight() {
+		if (borderColorRight == null) return color;
 		return borderColorRight;
 	}
 
@@ -796,6 +798,7 @@ public class Rectangle implements Element, MarkupAttributes {
 	 * @return a color value
 	 */
 	public Color getBorderColorTop() {
+		if (borderColorTop == null) return color;
 		return borderColorTop;
 	}
 
@@ -805,6 +808,7 @@ public class Rectangle implements Element, MarkupAttributes {
 	 * @return a color value
 	 */
 	public Color getBorderColorBottom() {
+		if (borderColorBottom == null) return color;
 		return borderColorBottom;
 	}
 

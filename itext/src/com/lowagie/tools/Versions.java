@@ -52,7 +52,12 @@ package com.lowagie.tools;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.BorderLayout;
+import com.lowagie.text.Document;
 import com.lowagie.tools.plugins.*;
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.awt.Dimension;
+import java.util.Properties;
 
 /**
  * JFrame that shows the versions of all the plugins.
@@ -60,6 +65,7 @@ import com.lowagie.tools.plugins.*;
 public class Versions extends JFrame {
 	/**
 	 * Constructs a JFrame.
+	 * 
 	 * @throws HeadlessException
 	 */
 	public Versions() throws HeadlessException {
@@ -73,6 +79,7 @@ public class Versions extends JFrame {
 
 	/**
 	 * Main method (test purposes only)
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -81,20 +88,58 @@ public class Versions extends JFrame {
 
 	private void jbInit() throws Exception {
 		this.getContentPane().setLayout(borderLayout1);
-		this.getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
 		StringBuffer sb = new StringBuffer();
 		sb.append("<html>");
-		for (int i = 0; i < AbstractTool.versionsarray.size(); i++) {
+
+		Iterator it = new TreeSet(AbstractTool.versionsarray).iterator();
+
+		while (it.hasNext()) {
 			sb.append("<p>");
-			sb.append(AbstractTool.versionsarray.get(i));
+			sb.append((String) it.next());
 			sb.append("</p>");
 		}
+
 		sb.append("</html>");
 		jLabel1.setText(sb.toString());
+		jScrollPane1.setMinimumSize(new Dimension(160, 140));
+		this.getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+		Properties properties = System.getProperties();
+		Runtime runtime = Runtime.getRuntime();
+		sb = new StringBuffer();
+		sb.append("<html>");
+		sb.append("<p>iText version: "
+				+ Document.getVersion() + "</p>");
+		sb.append("<p>java.version: "
+				+ properties.getProperty("java.version") + "</p>");
+		sb.append("<p>java.vendor: "
+				+ properties.getProperty("java.vendor") + "</p>");
+		sb.append("<p>java.home: " + properties.getProperty("java.home")
+				+ "</p>");
+		sb.append("<p>java.freeMemory: "
+				+ String.valueOf(runtime.freeMemory()) + " bytes" + "</p>");
+		sb.append("<p>java.totalMemory: "
+				+ String.valueOf(runtime.totalMemory()) + " bytes" + "</p>");
+		sb.append("<p>user.home: " + properties.getProperty("user.home")
+				+ "</p>");
+		sb.append("<p>os.name: " + properties.getProperty("os.name")
+				+ "</p>");
+		sb.append("<p>os.arch: " + properties.getProperty("os.arch")
+				+ "</p>");
+		sb.append("<p>os.version: " + properties.getProperty("os.version")
+				+ "</p>");
+		sb.append("</html>");
+		jLabel2.setText(sb.toString());
+		jScrollPane1.setViewportView(jLabel1);
+		this.getContentPane().add(jLabel2, java.awt.BorderLayout.NORTH);
 		pack();
 	}
 
 	JLabel jLabel1 = new JLabel();
 
 	BorderLayout borderLayout1 = new BorderLayout();
+
+	JLabel jLabel2 = new JLabel();
+
+	JScrollPane jScrollPane1 = new JScrollPane();
 }
+

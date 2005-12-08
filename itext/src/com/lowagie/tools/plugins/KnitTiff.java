@@ -70,7 +70,7 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Knits two TIFF files, one with the even pages and another with the odd pages, together.
  */
 public class KnitTiff extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
@@ -88,10 +88,10 @@ public class KnitTiff extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("KnitTiff", true, true, true);
-		internalFrame.setSize(550, 250);
+		internalFrame = new JInternalFrame("KnitTiff", true, false, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
+		System.out.println("=== KnitTiff OPENED ===");
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class KnitTiff extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-	
+
     /**
      * Converts a tiff file to PDF.
      * @param args

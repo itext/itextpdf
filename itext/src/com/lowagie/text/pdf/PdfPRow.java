@@ -292,10 +292,8 @@ public class PdfPRow {
 			if (cell == null)
 				continue;
 			writeBorderAndBackground(xPos, yPos, cell, canvases);
-			PdfPTable table = cell.getTable();
 			Image img = cell.getImage();
 			float tly = 0;
-			boolean alignTop = false;
 			switch (cell.getVerticalAlignment()) {
 			case Element.ALIGN_BOTTOM:
 				tly = cell.top() + yPos - maxHeight + cell.height()
@@ -306,7 +304,6 @@ public class PdfPRow {
 						- cell.getEffectivePaddingTop();
 				break;
 			default:
-				alignTop = true;
 				tly = cell.top() + yPos - cell.getEffectivePaddingTop();
 				break;
 			}
@@ -368,7 +365,7 @@ public class PdfPRow {
 					}
 				}
 				ColumnText ct = ColumnText.duplicate(cell.getColumn());
-				ct.setCanvas(canvases[PdfPTable.TEXTCANVAS]);
+				ct.setCanvases(canvases);
 				float bry = tly
 						- (maxHeight /* cell.height() */
 								- cell.getEffectivePaddingTop() - cell
@@ -380,7 +377,7 @@ public class PdfPRow {
 								+ cell.getEffectivePaddingBottom();
 					}
 				}
-				if (tly > bry || ct.zeroHeightElement()) {
+				if ((tly > bry || ct.zeroHeightElement()) && leftLimit < rightLimit) {
 					ct
 							.setSimpleColumn(leftLimit, bry - 0.001f,
 									rightLimit, tly);

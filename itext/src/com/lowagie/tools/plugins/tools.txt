@@ -9,9 +9,10 @@ Manipulate.Concat: com.lowagie.tools.plugins.Concat
 Manipulate.Split: com.lowagie.tools.plugins.Split
 Manipulate.N-up: com.lowagie.tools.plugins.NUp
 Manipulate.Burst: com.lowagie.tools.plugins.Burst
-Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
 Manipulate.SelectedPages: com.lowagie.tools.plugins.SelectedPages
+Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
 Properties.InspectPDF: com.lowagie.tools.plugins.InspectPDF
+Properties.TreeViewPDF: com.lowagie.tools.plugins.TreeViewPDF
 Properties.HtmlBookmarks: com.lowagie.tools.plugins.HtmlBookmarks
 Convert2Pdf.PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum
 Convert2Pdf.Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
@@ -19,6 +20,8 @@ Convert2Pdf.Tiff2Pdf: com.lowagie.tools.plugins.Tiff2Pdf
 Convert2Pdf.KnitTiff: com.lowagie.tools.plugins.KnitTiff
 Encryption.Encrypt: com.lowagie.tools.plugins.Encrypt
 Encryption.Decrypt: com.lowagie.tools.plugins.Decrypt
+Various.ExtractAttachments: com.lowagie.tools.plugins.ExtractAttachments
+Various.LPRClient: com.lowagie.tools.plugins.LPRClient
 Various.DvdCover: com.lowagie.tools.plugins.DvdCover
 Various.Handouts: com.lowagie.tools.plugins.Handouts
 Various.RemoveLaunchApplication: com.lowagie.tools.plugins.RemoveLaunchApplication

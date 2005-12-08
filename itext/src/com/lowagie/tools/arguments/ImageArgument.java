@@ -108,7 +108,7 @@ public class ImageArgument extends ToolArgument {
 		if (filter != null) fc.setFileFilter(filter);
 		fc.showOpenDialog(tool.getInternalFrame());
 		try {
-			setValue(fc.getSelectedFile().getAbsolutePath());
+			setValue(fc.getSelectedFile().getAbsolutePath(), null);
 		}
 		catch(NullPointerException npe) {
 		}

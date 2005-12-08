@@ -294,7 +294,7 @@ public class Chunk implements Element, MarkupAttributes {
 					.remove(ElementTags.DESTINATION);
 			String page = (String) attributes.remove(ElementTags.PAGE);
 			if (page != null) {
-				setRemoteGoto(value, Integer.valueOf(page).intValue());
+				setRemoteGoto(value, Integer.parseInt(page));
 			} else if (destination != null) {
 				setRemoteGoto(value, destination);
 			}

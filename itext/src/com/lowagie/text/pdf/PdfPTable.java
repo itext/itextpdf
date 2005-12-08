@@ -57,6 +57,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.ElementListener;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.events.PdfPTableEventForwarder;
 
 /** This is a table that can be put at an absolute position but can also
  * be added to the document as the class <CODE>Table</CODE>.
@@ -140,6 +141,17 @@ public class PdfPTable implements Element{
      */
     private boolean splitLate = true;
     
+    /**
+     * Defines if the table should be kept
+     * on one page if possible
+     */
+    private boolean keepTogether;
+    
+    /**
+     * Holds value of property footerRows.
+     */
+    private int footerRows;
+    
     protected PdfPTable() {
     }
     
@@ -156,6 +168,7 @@ public class PdfPTable implements Element{
         absoluteWidths = new float[relativeWidths.length];
         calculateWidths();
         currentRow = new PdfPCell[absoluteWidths.length];
+        keepTogether = false;
     }
     
     /** Constructs a <CODE>PdfPTable</CODE> with <CODE>numColumns</CODE> columns.
@@ -170,6 +183,7 @@ public class PdfPTable implements Element{
         absoluteWidths = new float[relativeWidths.length];
         calculateWidths();
         currentRow = new PdfPCell[absoluteWidths.length];
+        keepTogether = false;
     }
     
     /** Constructs a copy of a <CODE>PdfPTable</CODE>.
@@ -222,6 +236,7 @@ public class PdfPTable implements Element{
         spacingAfter = sourceTable.spacingAfter;
         spacingBefore = sourceTable.spacingBefore;
         headerRows = sourceTable.headerRows;
+        footerRows = sourceTable.footerRows;
         lockedWidth = sourceTable.lockedWidth;
         extendLastRow = sourceTable.extendLastRow;
         headersInEvent = sourceTable.headersInEvent;
@@ -229,6 +244,7 @@ public class PdfPTable implements Element{
         splitLate = sourceTable.splitLate;
         skipFirstHeader = sourceTable.skipFirstHeader;
         horizontalAlignment = sourceTable.horizontalAlignment;
+        keepTogether = sourceTable.keepTogether;
     }
 
     /** Sets the relative widths of the table.
@@ -798,7 +814,15 @@ public class PdfPTable implements Element{
      * @param event the table event for this table
      */    
     public void setTableEvent(PdfPTableEvent event) {
-        tableEvent = event;
+    	if (event == null) this.tableEvent = null;
+    	else if (this.tableEvent == null) this.tableEvent = event;
+    	else if (this.tableEvent instanceof PdfPTableEventForwarder) ((PdfPTableEventForwarder)this.tableEvent).addTableEvent(event);
+    	else {
+    		PdfPTableEventForwarder forward = new PdfPTableEventForwarder();
+    		forward.addTableEvent(this.tableEvent);
+    		forward.addTableEvent(event);
+    		this.tableEvent = forward;
+    	}
     }
     
     /** Gets the table event for this page.
@@ -1009,6 +1033,49 @@ public class PdfPTable implements Element{
      */
     public void setSplitLate(boolean splitLate) {
         this.splitLate = splitLate;
+    }
+    
+    /**
+     * If true the table will be kept on one page if it fits, by forcing a 
+     * new page if it doesn't fit on the current page. The default is to
+     * split the table over multiple pages.
+     *
+     * @param p_KeepTogether whether to try to keep the table on one page
+     */
+    public void setKeepTogether(boolean p_KeepTogether) {
+        keepTogether = p_KeepTogether;
+    }
+     
+    public boolean getKeepTogether() {
+        return keepTogether;
+    }
+    
+    /**
+     * Gets the number of rows in the footer.
+     * @return the number of rows in the footer
+     */
+    public int getFooterRows() {
+        return this.footerRows;
+    }
+    
+    /**
+     * Sets the number of rows to be used for the footer. The number
+     * of footer rows are subtracted from the header rows. For
+     * example, for a table with two header rows and one footer row the
+     * code would be:
+     * <p>
+     * <PRE>
+     * table.setHeaderRows(3);
+     * table.setFooterRows(1);
+     * </PRE>
+     * <p>
+     * Row 0 and 1 will be the header rows and row 2 will be the footer row.
+     * @param footerRows the number of rows to be used for the footer
+     */
+    public void setFooterRows(int footerRows) {
+        if (footerRows < 0)
+            footerRows = 0;
+        this.footerRows = footerRows;
     }
     
 }

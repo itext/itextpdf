@@ -69,7 +69,7 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Concatenates two PDF files
  */
 public class Concat extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
@@ -87,10 +87,10 @@ public class Concat extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Concatenate 2 PDF files", true, true, true);
-		internalFrame.setSize(550, 250);
+		internalFrame = new JInternalFrame("Concatenate 2 PDF files", true, false, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
+		System.out.println("=== Concat OPENED ===");
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class Concat extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-	
+
     /**
      * Concatenates two PDF files.
      * @param args
@@ -181,5 +181,5 @@ public class Concat extends AbstractTool {
 	protected File getDestPathPDF() throws InstantiationException {
 		return (File)getValue("destfile");
 	}
-    
+
 }

@@ -61,10 +61,10 @@ public class NUp extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("N-up", true, true, true);
-		internalFrame.setSize(300, 160);
+		internalFrame = new JInternalFrame("N-up", true, false, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(30, 30));
+		System.out.println("=== N-up OPENED ===");
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class NUp extends AbstractTool {
 			PdfContentByte cb = writer.getDirectContent();
 			PdfImportedPage page;
 			float offsetX, offsetY, factor;
-			int rotation, p;
+			int p;
 			for (int i = 0; i < total; i++) {
 				if (i % n == 0) {
 					document.newPage();

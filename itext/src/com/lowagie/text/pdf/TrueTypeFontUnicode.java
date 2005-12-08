@@ -125,7 +125,6 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         int total = 0;
         if (fontSpecific) {
             char cc[] = text.toCharArray();
-            char ptr = 0;
             int len = cc.length;
             for (int k = 0; k < len; ++k) {
                 char c = cc[k];

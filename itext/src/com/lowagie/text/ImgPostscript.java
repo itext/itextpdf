@@ -74,6 +74,15 @@ implements Element {
         super(image);
     }
     
+    public ImgPostscript(byte[] content,float width,float height) throws
+    BadElementException, IOException {
+        super( (URL)null);
+        rawData = content;
+        originalData = content;
+        processParameters();
+        this.urx=width;
+        this.ury=height;
+    }
     /**
      * Constructs an <CODE>ImgPostscript</CODE>-object, using an <VAR>url</VAR>.
      *
@@ -127,14 +136,11 @@ implements Element {
         originalType = ORIGINAL_PS;
         InputStream is = null;
         try {
-            String errorID;
             if (rawData == null) {
                 is = url.openStream();
-                errorID = url.toString();
             }
             else {
                 is = new java.io.ByteArrayInputStream(rawData);
-                errorID = "Byte array";
             }
             String boundingbox=null;
             Reader r = new BufferedReader(new InputStreamReader(is));

@@ -69,7 +69,7 @@ public class InspectPDF extends AbstractTool {
 	static {
 		addVersion("$Id$");
 	}
-	
+
 	/**
 	 * Constructs an InpectPDF object.
 	 */
@@ -82,12 +82,12 @@ public class InspectPDF extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("Pdf Information", true, true, true);
-		internalFrame.setSize(500, 300);
+		internalFrame = new JInternalFrame("Pdf Information", true, false, true);
+		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		internalFrame.getContentPane().add(getConsole(40, 30));
+		System.out.println("=== Pdf Information OPENED ===");
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
@@ -149,7 +149,7 @@ public class InspectPDF extends AbstractTool {
 		}
 		// represent the changes of the argument in the internal frame
 	}
-	
+
     /**
      * Inspects an existing PDF file.
      * @param args

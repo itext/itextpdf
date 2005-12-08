@@ -426,7 +426,7 @@ public class PdfReader {
             return map;
         for (Iterator it = info.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName)it.next();
-            PdfObject obj = (PdfObject)getPdfObject(info.get(key));
+            PdfObject obj = getPdfObject(info.get(key));
             if (obj == null)
                 continue;
             String value = obj.toString();
@@ -786,43 +786,6 @@ public class PdfReader {
         pageRefs = new PageRefs(this);
     }
     
-    protected PRIndirectReference getSinglePage(int n) throws IOException {
-        PdfDictionary acc = new PdfDictionary();
-        PdfDictionary top = rootPages;
-        int base = 0;
-        while (true) {
-            break;
-        }
-        return null;
-    }
-    
-    protected void PRSimpleRecursive(PdfObject obj) throws IOException {
-        switch (obj.type()) {
-            case PdfObject.DICTIONARY:
-            case PdfObject.STREAM:
-                PdfDictionary dic = (PdfDictionary)obj;
-                for (Iterator it = dic.getKeys().iterator(); it.hasNext();) {
-                    PdfName key = (PdfName)it.next();
-                    PRSimpleRecursive(dic.get(key));
-                }
-                break;
-            case PdfObject.ARRAY:
-                ArrayList list = ((PdfArray)obj).getArrayList();
-                for (int k = 0; k < list.size(); ++k) {
-                    PRSimpleRecursive((PdfObject)list.get(k));
-                }
-                break;
-            case PdfObject.INDIRECT:
-                PRIndirectReference ref = (PRIndirectReference)obj;
-                int num = ref.getNumber();
-                if (!visited[num]) {
-                    visited[num] = true;
-                    newHits.put(num, 1);
-                }
-                break;
-        }
-    }
-        
     protected void readDocObjPartial() throws IOException {
         xrefObj = new ArrayList(xref.length / 2);
         xrefObj.addAll(Collections.nCopies(xref.length / 2, null));
@@ -880,13 +843,11 @@ public class PdfReader {
     
     protected PdfObject readOneObjStm(PRStream stream, int idx) throws IOException {
         int first = ((PdfNumber)getPdfObject(stream.get(PdfName.FIRST))).intValue();
-        int n = ((PdfNumber)getPdfObject(stream.get(PdfName.N))).intValue();
         byte b[] = getStreamBytes(stream, tokens.getFile());
         PRTokeniser saveTokens = tokens;
         tokens = new PRTokeniser(b);
         try {
             int address = 0;
-            int objNumber = 0;
             boolean ok = true;
             ++idx;
             for (int k = 0; k < idx; ++k) {
@@ -897,7 +858,6 @@ public class PdfReader {
                     ok = false;
                     break;
                 }
-                objNumber = tokens.intValue();
                 ok = tokens.nextToken();
                 if (!ok)
                     break;
@@ -961,8 +921,6 @@ public class PdfReader {
             }
             xrefObj.set(k / 2, obj);
         }
-        int fileLength = tokens.length();
-        byte tline[] = new byte[16];
         for (int k = 0; k < streams.size(); ++k) {
             checkPRStreamLength((PRStream)streams.get(k));
         }
@@ -1264,7 +1222,6 @@ public class PdfReader {
             int length = ((PdfNumber)sections.get(idx + 1)).intValue();
             ensureXrefSize((start + length) * 2);
             while (length-- > 0) {
-                int total = 0;
                 int type = 1;
                 if (wc[0] > 0) {
                     type = 0;
@@ -1864,29 +1821,15 @@ public class PdfReader {
         xrefObj.set(freeXref, new PRStream(this, content));
     }
     
-    /** Get the content from a stream.
+    /** Get the content from a stream applying the required filters.
      * @param stream the stream
      * @param file the location where the stream is
      * @throws IOException on error
      * @return the stream content
      */    
     public static byte[] getStreamBytes(PRStream stream, RandomAccessFileOrArray file) throws IOException {
-        PdfReader reader = stream.getReader();
         PdfObject filter = getPdfObjectRelease(stream.get(PdfName.FILTER));
-        byte b[];
-        if (stream.getOffset() < 0)
-            b = stream.getBytes();
-        else {
-            b = new byte[stream.getLength()];
-            file.seek(stream.getOffset());
-            file.readFully(b);
-            PdfEncryption decrypt = reader.getDecrypt();
-            if (decrypt != null) {
-                decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
-                decrypt.prepareKey();
-                decrypt.encryptRC4(b);
-            }
-        }
+        byte[] b = getStreamBytesRaw(stream, file);
         ArrayList filters = new ArrayList();
         if (filter != null) {
             if (filter.isName())
@@ -1933,7 +1876,7 @@ public class PdfReader {
         return b;
     }
     
-    /** Get the content from a stream.
+    /** Get the content from a stream applying the required filters.
      * @param stream the stream
      * @throws IOException on error
      * @return the stream content
@@ -1943,6 +1886,47 @@ public class PdfReader {
         try {
             rf.reOpen();
             return PdfReader.getStreamBytes(stream, rf);
+        }
+        finally {
+            try{rf.close();}catch(Exception e){}
+        }
+    }
+    
+    /** Get the content from a stream as it is without applying any filter.
+     * @param stream the stream
+     * @param file the location where the stream is
+     * @throws IOException on error
+     * @return the stream content
+     */    
+    public static byte[] getStreamBytesRaw(PRStream stream, RandomAccessFileOrArray file) throws IOException {
+        PdfReader reader = stream.getReader();
+        byte b[];
+        if (stream.getOffset() < 0)
+            b = stream.getBytes();
+        else {
+            b = new byte[stream.getLength()];
+            file.seek(stream.getOffset());
+            file.readFully(b);
+            PdfEncryption decrypt = reader.getDecrypt();
+            if (decrypt != null) {
+                decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
+                decrypt.prepareKey();
+                decrypt.encryptRC4(b);
+            }
+        }
+        return b;
+    }
+    
+    /** Get the content from a stream as it is without applying any filter.
+     * @param stream the stream
+     * @throws IOException on error
+     * @return the stream content
+     */    
+    public static byte[] getStreamBytesRaw(PRStream stream) throws IOException {
+        RandomAccessFileOrArray rf = stream.getReader().getSafeFile();
+        try {
+            rf.reOpen();
+            return PdfReader.getStreamBytesRaw(stream, rf);
         }
         finally {
             try{rf.close();}catch(Exception e){}
@@ -2372,7 +2356,6 @@ public class PdfReader {
                 continue;
             }
             ArrayList arr = annots.getArrayList();
-            int startSize = arr.size();
             for (int j = 0; j < arr.size(); ++j) {
                 PdfDictionary annot = (PdfDictionary)getPdfObjectRelease((PdfObject)arr.get(j));
                 if (PdfName.WIDGET.equals(annot.get(PdfName.SUBTYPE)))
