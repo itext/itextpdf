@@ -1821,29 +1821,15 @@ public class PdfReader {
         xrefObj.set(freeXref, new PRStream(this, content));
     }
     
-    /** Get the content from a stream.
+    /** Get the content from a stream applying the required filters.
      * @param stream the stream
      * @param file the location where the stream is
      * @throws IOException on error
      * @return the stream content
      */    
     public static byte[] getStreamBytes(PRStream stream, RandomAccessFileOrArray file) throws IOException {
-        PdfReader reader = stream.getReader();
         PdfObject filter = getPdfObjectRelease(stream.get(PdfName.FILTER));
-        byte b[];
-        if (stream.getOffset() < 0)
-            b = stream.getBytes();
-        else {
-            b = new byte[stream.getLength()];
-            file.seek(stream.getOffset());
-            file.readFully(b);
-            PdfEncryption decrypt = reader.getDecrypt();
-            if (decrypt != null) {
-                decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
-                decrypt.prepareKey();
-                decrypt.encryptRC4(b);
-            }
-        }
+        byte[] b = getStreamBytesRaw(stream, file);
         ArrayList filters = new ArrayList();
         if (filter != null) {
             if (filter.isName())
@@ -1890,7 +1876,7 @@ public class PdfReader {
         return b;
     }
     
-    /** Get the content from a stream.
+    /** Get the content from a stream applying the required filters.
      * @param stream the stream
      * @throws IOException on error
      * @return the stream content
@@ -1900,6 +1886,47 @@ public class PdfReader {
         try {
             rf.reOpen();
             return PdfReader.getStreamBytes(stream, rf);
+        }
+        finally {
+            try{rf.close();}catch(Exception e){}
+        }
+    }
+    
+    /** Get the content from a stream as it is without applying any filter.
+     * @param stream the stream
+     * @param file the location where the stream is
+     * @throws IOException on error
+     * @return the stream content
+     */    
+    public static byte[] getStreamBytesRaw(PRStream stream, RandomAccessFileOrArray file) throws IOException {
+        PdfReader reader = stream.getReader();
+        byte b[];
+        if (stream.getOffset() < 0)
+            b = stream.getBytes();
+        else {
+            b = new byte[stream.getLength()];
+            file.seek(stream.getOffset());
+            file.readFully(b);
+            PdfEncryption decrypt = reader.getDecrypt();
+            if (decrypt != null) {
+                decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
+                decrypt.prepareKey();
+                decrypt.encryptRC4(b);
+            }
+        }
+        return b;
+    }
+    
+    /** Get the content from a stream as it is without applying any filter.
+     * @param stream the stream
+     * @throws IOException on error
+     * @return the stream content
+     */    
+    public static byte[] getStreamBytesRaw(PRStream stream) throws IOException {
+        RandomAccessFileOrArray rf = stream.getReader().getSafeFile();
+        try {
+            rf.reOpen();
+            return PdfReader.getStreamBytesRaw(stream, rf);
         }
         finally {
             try{rf.close();}catch(Exception e){}
