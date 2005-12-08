@@ -71,8 +71,8 @@ import com.lowagie.text.markup.MarkupParser;
  * document.
  * <P>
  * Most elements can be divided in one or more <CODE>Chunk</CODE>s. A chunk
- * is a <CODE>String</CODE> with a certain <CODE>Font</CODE>. all other
- * layoutparameters should be defined in the object to which this chunk of text
+ * is a <CODE>String</CODE> with a certain <CODE>Font</CODE>. All other
+ * layout parameters should be defined in the object to which this chunk of text
  * is added.
  * <P>
  * Example: <BLOCKQUOTE>
@@ -182,6 +182,26 @@ public class Chunk implements Element, MarkupAttributes {
 	protected Chunk() {
 	}
 
+    /**
+     * A <CODE>Chunk</CODE> copy constructor.
+     * @param ck the <CODE>Chunk</CODE> to be copied
+     */    
+    public Chunk(Chunk ck) {
+        if (ck.content != null) {
+            content = new StringBuffer(ck.content.toString());
+        }
+        if (ck.font != null) {
+            font = new Font(ck.font);
+        }
+        if (ck.attributes != null) {
+            attributes = new HashMap(ck.attributes);
+        }
+        if (ck.markupAttributes != null) {
+            markupAttributes = new Properties();
+            markupAttributes.putAll(ck.markupAttributes);
+        }
+    }
+    
 	/**
 	 * Constructs a chunk of text with a certain content and a certain <CODE>
 	 * Font</CODE>.
