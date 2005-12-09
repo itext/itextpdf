@@ -925,8 +925,8 @@ public class PAContext
     });
 
     // PENDING(uweh): I have to convert these puppies myself to rgb ?
-    // setcmybcolor
-    systemDict.put("setcmybcolor", new PACommand() {
+    // setcmykcolor
+    systemDict.put("setcmykcolor", new PACommand() {
       public void execute(PAContext context) throws PainterException {
         double data[];
         int rd, gr, bl;
