@@ -874,13 +874,6 @@ public class PdfContentByte {
             fill();
             resetRGBColorFill();
         }
-        else if (rectangle.grayFill() > 0.0) {
-            setGrayFill(rectangle.grayFill());
-            rectangle(x1, y1, x2 - x1, y2 - y1);
-            fill();
-            resetGrayFill();
-        }
-
 
         // if the element hasn't got any borders, nothing is added
         if (! rectangle.hasBorders()) {
