@@ -213,6 +213,7 @@ public class PdfPRow {
 						- maxHeight + yPos, cell.right() + xPos, cell.top()
 						+ yPos);
 				borderRect.cloneNonPositionParameters(cell);
+                borderRect.setBackgroundColor(null);
 				lines.rectangle(borderRect);
 			} else {
 				// the width is set to the width of the element
