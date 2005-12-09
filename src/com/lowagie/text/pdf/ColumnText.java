@@ -424,7 +424,6 @@ public class ColumnText {
             c.setBorderColor(img.borderColor());
             c.setBorderWidth(img.borderWidth());
             c.setBackgroundColor(img.backgroundColor());
-            c.setGrayFill(img.grayFill());
             t.addCell(c);
             element = t;
         }

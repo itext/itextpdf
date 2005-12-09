@@ -223,13 +223,10 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, cell.border(), cell.borderWidth(), cell.borderColor());
         }
         this.verticalAlignment = cell.verticalAlignment();
-        if(cell.backgroundColor() == null && cell.grayFill() == 0) {
+        if(cell.backgroundColor() == null) {
             this.backgroundColor = new RtfColor(this.document, 255, 255, 255);
-        } else if(cell.backgroundColor() != null ){
-            this.backgroundColor = new RtfColor(this.document, cell.backgroundColor());
         } else {
-            int grayScale = (int) (cell.grayFill() * 255);
-            this.backgroundColor = new RtfColor(this.document, grayScale, grayScale, grayScale);
+            this.backgroundColor = new RtfColor(this.document, cell.backgroundColor());
         }
         
         this.cellPadding = (int) this.parentRow.getParentTable().getCellPadding();

@@ -204,11 +204,7 @@ public class PdfPRow {
 			backgr.setColorFill(background);
 			backgr.rectangle(x1, y1, x2 - x1, y2 - y1);
 			backgr.fill();
-		} else if (cell.grayFill() > 0) {
-			backgr.setGrayFill(cell.grayFill());
-			backgr.rectangle(x1, y1, x2 - x1, y2 - y1);
-			backgr.fill();
-		}
+        }
 		// if the element hasn't got any borders, nothing is added
 		if (cell.hasBorders()) {
 			if (cell.isUseVariableBorders()) {
