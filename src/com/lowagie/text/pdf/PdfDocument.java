@@ -2039,6 +2039,7 @@ class PdfDocument extends Document implements DocListener {
                      * Paulo Soares
                      * Gerald Fehringer
                      * Steve Appling
+                     * Karsten Klein
                      */
 	                    
 					PdfTable table;
