@@ -530,7 +530,6 @@ public class Rectangle implements Element, MarkupAttributes {
 	 */
 
 	public void setGrayFill(float value) {
-		if (value == 1 && !(color instanceof GrayColor)) return;
         background = new GrayColor(value);
 	}
 
@@ -718,7 +717,7 @@ public class Rectangle implements Element, MarkupAttributes {
         if (background instanceof GrayColor)
             return ((GrayColor)background).getGray();
         else
-            return 1;
+            return 0;
 	}
 
 	/**

@@ -1344,13 +1344,11 @@ class PdfDocument extends Document implements DocListener {
 			tablerec.setBorderWidth(table.borderWidth());
 			tablerec.setBorderColor(table.borderColor());
 			tablerec.setBackgroundColor(table.backgroundColor());
-			tablerec.setGrayFill(table.grayFill());
 			PdfContentByte under = writer.getDirectContentUnder();
 			under.rectangle(tablerec.rectangle(top(), indentBottom()));
 			under.add(ctx.cellGraphics);
 			// bugfix by Gerald Fehringer: now again add the border for the table
 			// since it might have been covered by cell backgrounds
-			tablerec.setGrayFill(0);
 			tablerec.setBackgroundColor(null);
 			tablerec = tablerec.rectangle(top(), indentBottom());
 			tablerec.setBorder(table.border());
