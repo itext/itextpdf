@@ -62,6 +62,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Annotation;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.pdf.ExtendedColor;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -762,95 +763,150 @@ public class PdfContentByte {
         content.append(x).append(' ').append(y).append(' ').append(w).append(' ').append(h).append(" re").append_i(separator);
     }
     
-
-    // Contribution by Barry Richards and Prabhakar Chaganti
+    private boolean compareColors(Color c1, Color c2) {
+        if (c1 == null && c2 == null)
+            return true;
+        if (c1 == null || c2 == null)
+            return false;
+        if (c1 instanceof ExtendedColor)
+            return c1.equals(c2);
+        return c2.equals(c1);
+    }
+    
     /**
      * Adds a variable width border to the current path.
      * Only use if {@link com.lowagie.text.Rectangle#isUseVariableBorders() Rectangle.isUseVariableBorders}
      * = true.
-     * @param       rect        a <CODE>Rectangle</CODE>
+     * @param rect a <CODE>Rectangle</CODE>
      */
     public void variableRectangle(Rectangle rect) {
-        float limit = 0f;
-        float startX = rect.left();
-        float startY = rect.bottom();
+        float t = rect.top();
+        float b = rect.bottom();
+        float r = rect.right();
+        float l = rect.left();
+        float wt = rect.getBorderWidthTop();
+        float wb = rect.getBorderWidthBottom();
+        float wr = rect.getBorderWidthRight();
+        float wl = rect.getBorderWidthLeft();
+        Color ct = rect.getBorderColorTop();
+        Color cb = rect.getBorderColorBottom();
+        Color cr = rect.getBorderColorRight();
+        Color cl = rect.getBorderColorLeft();
+        saveState();
+        setLineCap(PdfContentByte.LINE_CAP_BUTT);
+        setLineJoin(PdfContentByte.LINE_JOIN_MITER);
+        float clw = 0;
+        boolean cdef = false;
+        Color ccol = null;
+        boolean cdefi = false;
+        Color cfil = null;
+        // draw top
+        if (wt > 0) {
+            setLineWidth(clw = wt);
+            cdef = true;
+            if (ct == null)
+                resetRGBColorStroke();
+            else
+                setColorStroke(ct);
+            ccol = ct;
+            moveTo(l, t - wt / 2f);
+            lineTo(r, t - wt / 2f);
+            stroke();
+        }
+
+        // Draw bottom
+        if (wb > 0) {
+            if (wb != clw)
+                setLineWidth(clw = wb);
+            if (!cdef || !compareColors(ccol, cb)) {
+                cdef = true;
+                if (cb == null)
+                    resetRGBColorStroke();
+                else
+                    setColorStroke(cb);
+                ccol = cb;
+            }
+            moveTo(r, b + wb / 2f);
+            lineTo(l, b + wb / 2f);
+            stroke();
+        }
+
+        // Draw right
+        if (wr > 0) {
+            if (wr != clw)
+                setLineWidth(clw = wr);
+            if (!cdef || !compareColors(ccol, cr)) {
+                cdef = true;
+                if (cr == null)
+                    resetRGBColorStroke();
+                else
+                    setColorStroke(cr);
+                ccol = cr;
+            }
+            boolean bt = compareColors(ct, cr);
+            boolean bb = compareColors(cb, cr);
+            moveTo(r - wr / 2f, bt ? t : t - wt);
+            lineTo(r - wr / 2f, bb ? b : b + wb);
+            stroke();
+            if (!bt || !bb) {
+                cdefi = true;
+                if (cr == null)
+                    resetRGBColorFill();
+                else
+                    setColorFill(cr);
+                cfil = cr;
+                if (!bt) {
+                    moveTo(r, t);
+                    lineTo(r, t - wt);
+                    lineTo(r - wr, t - wt);
+                    fill();
+                }
+                if (!bb) {
+                    moveTo(r, b);
+                    lineTo(r, b + wb);
+                    lineTo(r - wr, b + wb);
+                    fill();
+                }
+            }
+        }
         
-        // start at the origin
-        // draw bottom
-        if (rect.getBorderWidthBottom() > limit) {
-            moveTo(startX, startY);
-            if (rect.getBorderColorBottom() == null)
-                resetRGBColorFill();
-            else
-                setColorFill(rect.getBorderColorBottom());
-            // DRAW BOTTOM EDGE.
-            lineTo(startX + rect.width(), startY);
-            // DRAW RIGHT EDGE.
-            lineTo((startX + rect.width()) - rect.getBorderWidthRight(), startY + rect.getBorderWidthBottom());
-            //DRAW TOP EDGE.
-            lineTo((startX + rect.getBorderWidthLeft()), startY + rect.getBorderWidthBottom());
-            lineTo(startX, startY);
-            fill();
+        // Draw Left
+        if (wl > 0) {
+            if (wl != clw)
+                setLineWidth(wl);
+            if (!cdef || !compareColors(ccol, cl)) {
+                if (cl == null)
+                    resetRGBColorStroke();
+                else
+                    setColorStroke(cl);
+            }
+            boolean bt = compareColors(ct, cl);
+            boolean bb = compareColors(cb, cl);
+            moveTo(l + wl / 2f, bt ? t : t - wt);
+            lineTo(l + wl / 2f, bb ? b : b + wb);
+            stroke();
+            if (!bt || !bb) {
+                if (!cdefi || !compareColors(cfil, cl)) {
+                    if (cl == null)
+                        resetRGBColorFill();
+                    else
+                        setColorFill(cl);
+                }
+                if (!bt) {
+                    moveTo(l, t);
+                    lineTo(l, t - wt);
+                    lineTo(l + wl, t - wt);
+                    fill();
+                }
+                if (!bb) {
+                    moveTo(l, b);
+                    lineTo(l, b + wb);
+                    lineTo(l + wl, b + wb);
+                    fill();
+                }
+            }
         }
-
-        // Draw left
-        if (rect.getBorderWidthLeft() > limit) {
-            moveTo(startX, startY);
-            if (rect.getBorderColorLeft() == null)
-                resetRGBColorFill();
-            else
-                setColorFill(rect.getBorderColorLeft());
-            // DRAW BOTTOM EDGE.
-            lineTo(startX, startY + rect.height());
-            // DRAW RIGHT EDGE.
-            lineTo(startX + rect.getBorderWidthLeft(), (startY + rect.height()) - rect.getBorderWidthTop());
-            //DRAW TOP EDGE.
-            lineTo(startX + rect.getBorderWidthLeft(), startY + rect.getBorderWidthBottom());
-
-            lineTo(startX, startY);
-            fill();
-        }
-
-
-        startX = startX + rect.width();
-        startY = startY + rect.height();
-
-        // Draw top
-        if (rect.getBorderWidthTop() > limit) {
-            moveTo(startX, startY);
-            if (rect.getBorderColorTop() == null)
-                resetRGBColorFill();
-            else
-                setColorFill(rect.getBorderColorTop());
-            // DRAW LONG EDGE.
-            lineTo(startX - rect.width(), startY);
-            // DRAW LEFT EDGE.
-            lineTo(startX - rect.width() + rect.getBorderWidthLeft(), startY - rect.getBorderWidthTop());
-            //DRAW SHORT EDGE.
-            lineTo(startX - rect.getBorderWidthRight(), startY - rect.getBorderWidthTop());
-
-            lineTo(startX, startY);
-            fill();
-        }
-
-        // Draw Right
-        if (rect.getBorderWidthRight() > limit) {
-            moveTo(startX, startY);
-            if (rect.getBorderColorRight() == null)
-                resetRGBColorFill();
-            else
-                setColorFill(rect.getBorderColorRight());
-            // DRAW LONG EDGE.
-            lineTo(startX, startY - rect.height());
-            // DRAW LEFT EDGE.
-            lineTo(startX - rect.getBorderWidthRight(), startY - rect.height() + rect.getBorderWidthBottom());
-            //DRAW SHORT EDGE.
-            lineTo(startX - rect.getBorderWidthRight(), startY - rect.getBorderWidthTop());
-
-            lineTo(startX, startY);
-            fill();
-        }
-        resetRGBColorFill();
+        restoreState();
     }
 
     /**

@@ -80,4 +80,11 @@ public class SpotColor extends ExtendedColor {
         return tint;
     }
 
+    public boolean equals(Object obj) {
+        return this == obj;
+    }
+    
+    public int hashCode() {
+        return spot.hashCode() ^ Float.floatToIntBits(tint);
+    }
 }

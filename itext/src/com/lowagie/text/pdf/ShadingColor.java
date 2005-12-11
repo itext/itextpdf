@@ -71,4 +71,13 @@ public class ShadingColor extends ExtendedColor {
     public PdfShadingPattern getPdfShadingPattern() {
         return shadingPattern;
     }
+    
+    public boolean equals(Object obj) {
+        return this == obj;
+    }
+    
+    public int hashCode() {
+        return shadingPattern.hashCode();
+    }
+    
 }
