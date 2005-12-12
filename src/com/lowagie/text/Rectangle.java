@@ -530,10 +530,7 @@ public class Rectangle implements Element, MarkupAttributes {
 	 */
 
 	public void setGrayFill(float value) {
-        if (value == 0 && background instanceof GrayColor)
-            background = null;
-        else
-            background = new GrayColor(value);
+        background = new GrayColor(value);
 	}
 
 	// methods to get the membervariables
