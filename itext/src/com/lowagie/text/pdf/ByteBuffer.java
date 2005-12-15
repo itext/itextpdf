@@ -53,6 +53,9 @@ import java.io.UnsupportedEncodingException;
 import java.io.OutputStream;
 import java.io.IOException;
 import com.lowagie.text.DocWriter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 /**
  * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
@@ -73,6 +76,12 @@ public class ByteBuffer extends OutputStream {
     public static byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private static final byte[] bytes = new byte[] {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
+    /**
+     * If <CODE>true</CODE> always output floating point numbers with 6 decimal digits.
+     * If <CODE>false</CODE> uses the faster, although less precise, representation.
+     */    
+    public static boolean HIGH_PRECISION = false;
+    private static final DecimalFormatSymbols dfs = new DecimalFormatSymbols(Locale.US);
     
     /** Creates new ByteBuffer with capacity 128 */
     public ByteBuffer() {
@@ -305,11 +314,22 @@ public class ByteBuffer extends OutputStream {
     /**
      * Outputs a <CODE>double</CODE> into a format suitable for the PDF.
      * @param d a double
+     * @param buf a ByteBuffer
      * @return the <CODE>String</CODE> representation of the <CODE>double</CODE> if
-     * <CODE>d</CODE> is <CODE>null</CODE>. If <CODE>d</CODE> is <B>not</B> <CODE>null</CODE>,
+     * <CODE>buf</CODE> is <CODE>null</CODE>. If <CODE>buf</CODE> is <B>not</B> <CODE>null</CODE>,
      * then the double is appended directly to the buffer and this methods returns <CODE>null</CODE>.
      */
     public static String formatDouble(double d, ByteBuffer buf) {
+        if (HIGH_PRECISION) {
+            DecimalFormat dn = new DecimalFormat("0.######", dfs);
+            String sform = dn.format(d);
+            if (buf == null)
+                return sform;
+            else {
+                buf.append(sform);
+                return null;
+            }
+        }
         boolean negative = false;
         if (Math.abs(d) < 0.000015) {
             if (buf != null) {
