@@ -59,20 +59,20 @@ import java.io.File;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     
-    public ArrayList objectList;
-    public DocListener document;
-    public Paragraph currentParagraph;
-    public ChainedProperties cprops = new ChainedProperties();
-    public Stack stack = new Stack();
-    public boolean pendingP = false;
-    public boolean pendingTR = false;
-    public boolean pendingTD = false;
-    public boolean pendingLI = false;
-    public StyleSheet style = new StyleSheet();
-    public boolean isPRE = false;
-    public Stack tableState = new Stack();
-    public boolean skipText = false;
-    public HashMap interfaceProps;
+    private ArrayList objectList;
+    private DocListener document;
+    private Paragraph currentParagraph;
+    private ChainedProperties cprops = new ChainedProperties();
+    private Stack stack = new Stack();
+    private boolean pendingTR = false;
+    private boolean pendingTD = false;
+    private boolean pendingLI = false;
+    private StyleSheet style = new StyleSheet();
+    private boolean isPRE = false;
+    private Stack tableState = new Stack();
+    private boolean skipText = false;
+    private HashMap interfaceProps;
+    private FactoryProperties factoryProperties = new FactoryProperties();
     
     /** Creates a new instance of HTMLWorker */
     public HTMLWorker(DocListener document) {
@@ -81,6 +81,22 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     
     public void setStyleSheet(StyleSheet style) {
         this.style = style;
+    }
+    
+    public StyleSheet getStyleSheet() {
+        return style;
+    }
+    
+    public void setInterfaceProps(HashMap interfaceProps) {
+        this.interfaceProps = interfaceProps;
+        FontFactoryImp ff = null;
+        if (interfaceProps != null)
+            ff = (FontFactoryImp)interfaceProps.get("font_factory");
+        factoryProperties.setFontImp(ff);
+    }
+    
+    public HashMap getInterfaceProps() {
+        return interfaceProps;
     }
     
     public void parse(Reader reader) throws IOException {
@@ -96,7 +112,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         if (style != null)
             worker.style = style;
         worker.document = worker;
-        worker.interfaceProps = interfaceProps;
+        worker.setInterfaceProps(interfaceProps);
         worker.objectList = new ArrayList();
         worker.parse(reader);
         return worker.objectList;
@@ -144,7 +160,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             if (tag.equals("br")) {
                 if (currentParagraph == null)
                     currentParagraph = new Paragraph();
-                currentParagraph.add(FactoryProperties.createChunk("\n", cprops));
+                currentParagraph.add(factoryProperties.createChunk("\n", cprops));
                 return;
             }
             if (tag.equals("font") || tag.equals("span")) {
@@ -415,7 +431,6 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             }
             if (tag.equals("p")) {
                 cprops.removeChain(tag);
-                pendingP = false;
                 return;
             }
             if (tag.equals("h1") || tag.equals("h2") || tag.equals("h3") || tag.equals("h4") || tag.equals("h5") || tag.equals("h6")) {
@@ -481,7 +496,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         if (isPRE) {
             if (currentParagraph == null)
                 currentParagraph = new Paragraph();
-            currentParagraph.add(FactoryProperties.createChunk(content, cprops));
+            currentParagraph.add(factoryProperties.createChunk(content, cprops));
             return;
         }
         if (content.trim().length() == 0 && content.indexOf(' ') < 0) {
@@ -516,7 +531,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         }
         if (currentParagraph == null)
             currentParagraph = FactoryProperties.createParagraph(cprops);
-        currentParagraph.add(FactoryProperties.createChunk(buf.toString(), cprops));
+        currentParagraph.add(factoryProperties.createChunk(buf.toString(), cprops));
     }
     
     public boolean add(Element element) throws DocumentException {
