@@ -57,9 +57,9 @@ import java.util.Collections;
  * @author  psoares
  */
 public class IncTable {
-    public HashMap props = new HashMap();
-    public ArrayList rows = new ArrayList();
-    public ArrayList cols;
+    private HashMap props = new HashMap();
+    private ArrayList rows = new ArrayList();
+    private ArrayList cols;
     /** Creates a new instance of IncTable */
     public IncTable(HashMap props) {
         this.props.putAll(props);
