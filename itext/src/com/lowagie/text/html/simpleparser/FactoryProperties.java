@@ -59,11 +59,13 @@ import java.awt.Color;
  */
 public class FactoryProperties {
     
+    private FontFactoryImp fontImp;
+    
     /** Creates a new instance of FactoryProperties */
     public FactoryProperties() {
     }
     
-    public static Chunk createChunk(String text, ChainedProperties props) {
+    public Chunk createChunk(String text, ChainedProperties props) {
         Chunk ck = new Chunk(text, getFont(props));
         if (props.hasProperty("sub"))
             ck.setTextRise(-6);
@@ -156,7 +158,7 @@ public class FactoryProperties {
         return p;
     }
 
-    public static Font getFont(ChainedProperties props) {
+    public Font getFont(ChainedProperties props) {
         String face = props.getProperty("face");
         if (face != null) {
             StringTokenizer tok = new StringTokenizer(face, ",");
@@ -181,7 +183,10 @@ public class FactoryProperties {
         String encoding = props.getProperty("encoding");
         if (encoding == null)
             encoding = BaseFont.WINANSI;
-        return FontFactory.getFont(face, encoding, true, size, style, color);
+        FontFactoryImp ff = fontImp;
+        if (ff == null)
+            ff = FontFactory.getFontImp();
+        return ff.getFont(face, encoding, true, size, style, color);
     }
     
     public static Color decodeColor(String s) {
@@ -200,6 +205,14 @@ public class FactoryProperties {
         return null;
     }
     
+    public FontFactoryImp getFontImp() {
+        return fontImp;
+    }
+    
+    public void setFontImp(FontFactoryImp fontImp) {
+        this.fontImp = fontImp;
+    }
+
     public static HashMap colorTable = new HashMap();
     public static HashMap followTags = new HashMap();
     static {
