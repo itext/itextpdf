@@ -385,7 +385,7 @@ public class FontFactory {
      * Gets the font factory implementation.
      * @return the font factory implementation
      */    
-    public FontFactoryImp getFontImp() {
+    public static FontFactoryImp getFontImp() {
         return fontImp;
     }
     
@@ -393,9 +393,9 @@ public class FontFactory {
      * Sets the font factory implementation.
      * @param fontImp the font factory implementation
      */    
-    public void setFontImp(FontFactoryImp fontImp) {
+    public static void setFontImp(FontFactoryImp fontImp) {
         if (fontImp == null)
             throw new NullPointerException("FontFactoryImp cannot be null.");
-        this.fontImp = fontImp;
+        FontFactory.fontImp = fontImp;
     }
 }
