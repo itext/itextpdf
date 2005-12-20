@@ -56,8 +56,8 @@ import java.util.ArrayList;
  */
 public class IncCell implements TextElementArray {
     
-    public ArrayList chunks = new ArrayList();
-    public PdfPCell cell;
+    private ArrayList chunks = new ArrayList();
+    private PdfPCell cell;
     
     /** Creates a new instance of IncCell */
     public IncCell(String tag, ChainedProperties props) {
