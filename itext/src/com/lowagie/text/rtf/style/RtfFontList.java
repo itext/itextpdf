@@ -103,6 +103,9 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
      * @return The index of the font
      */
     public int getFontNumber(RtfFont font) {
+        if(font instanceof RtfParagraphStyle) {
+            font = new RtfFont(this.document, (RtfParagraphStyle) font);
+        }
         int fontIndex = -1;
         for(int i = 0; i < fontList.size(); i++) {
             if(fontList.get(i).equals(font)) {
