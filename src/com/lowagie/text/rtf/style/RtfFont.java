@@ -477,6 +477,18 @@ public class RtfFont extends Font implements RtfExtendedElement {
     }
 
     /**
+     * Sets the font name of this RtfFont.
+     * 
+     * @param fontName The font name to use 
+     */
+    protected void setFontName(String fontName) {
+        this.fontName = fontName;
+        if(document != null) {
+            this.fontNumber = document.getDocumentHeader().getFontNumber(this);
+        }
+    }
+    
+    /**
      * @see com.lowagie.text.Font#getFamilyname()
      */
     public String getFamilyname() {
@@ -533,7 +545,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public void setSize(float size){
         super.setSize(size);
-        this.fontSize = (int)size();
+        this.fontSize = (int) size();
     }
 
     /**
