@@ -66,6 +66,7 @@ import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.style.RtfFont;
 import com.lowagie.text.rtf.style.RtfFontList;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
 import com.lowagie.text.rtf.text.RtfParagraph;
 import com.lowagie.text.rtf.document.RtfDocument;
 
@@ -272,9 +273,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         try {
             result.write(LIST_LEVEL_FIRST_INDENT);
             result.write(intToByteArray(firstIndent));
-            result.write(RtfParagraph.INDENT_LEFT);
+            result.write(RtfParagraphStyle.INDENT_LEFT);
             result.write(intToByteArray(leftIndent));
-            result.write(RtfParagraph.INDENT_RIGHT);
+            result.write(RtfParagraphStyle.INDENT_RIGHT);
             result.write(intToByteArray(rightIndent));
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -365,17 +366,17 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
             switch (this.alignment) {
                 case Element.ALIGN_LEFT:
-                    result.write(RtfParagraph.ALIGN_LEFT);
+                    result.write(RtfParagraphStyle.ALIGN_LEFT);
                     break;
                 case Element.ALIGN_RIGHT:
-                    result.write(RtfParagraph.ALIGN_RIGHT);
+                    result.write(RtfParagraphStyle.ALIGN_RIGHT);
                     break;
                 case Element.ALIGN_CENTER:
-                    result.write(RtfParagraph.ALIGN_CENTER);
+                    result.write(RtfParagraphStyle.ALIGN_CENTER);
                     break;
                 case Element.ALIGN_JUSTIFIED:
                 case Element.ALIGN_JUSTIFIED_ALL:
-                    result.write(RtfParagraph.ALIGN_JUSTIFY);
+                    result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
                     break;
             }
             result.write(writeIndentations());
