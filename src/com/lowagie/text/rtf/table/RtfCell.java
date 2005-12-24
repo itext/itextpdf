@@ -65,6 +65,7 @@ import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.style.RtfColor;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
 import com.lowagie.text.rtf.text.RtfParagraph;
 
 
@@ -354,7 +355,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             if(this.content.size() == 0) {
                 result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
                 if(this.parentRow.getParentTable().getTableFitToPage()) {
-                    result.write(RtfParagraph.KEEP_TOGETHER_WITH_NEXT);
+                    result.write(RtfParagraphStyle.KEEP_TOGETHER_WITH_NEXT);
                 }
                 result.write("\\intbl".getBytes());
             } else {
