@@ -120,7 +120,7 @@ public class RtfDocument extends RtfElement {
         documentHeader = new RtfDocumentHeader(this);
         documentHeader.init();
         previousRandomInts = new ArrayList();
-        this.documentSettings = new RtfDocumentSettings();
+        this.documentSettings = new RtfDocumentSettings(this);
     }
 
     /**

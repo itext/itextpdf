@@ -50,6 +50,8 @@
 
 package com.lowagie.text.rtf.document;
 
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
+
 
 /**
  * The RtfDocumentSettings contains output specific settings. These settings modify
@@ -61,6 +63,10 @@ package com.lowagie.text.rtf.document;
  */
 public class RtfDocumentSettings {
 
+    /**
+     * The RtfDocument this RtfDocumentSettings belongs to.
+     */
+    private RtfDocument document = null;
     /**
      * Whether to also output the table row definition after the cell content.
      */
@@ -78,6 +84,15 @@ public class RtfDocumentSettings {
      */
     private boolean alwaysUseUnicode = true;
 
+    
+    /**
+     * Constructs a new RtfDocumentSettings object.
+     * 
+     * @param document The RtfDocument this RtfDocumentSettings belong to.
+     */
+    public RtfDocumentSettings(RtfDocument document) {
+        this.document = document;
+    }
     
     /**
      * Gets whether to output the line breaks for increased rtf document readability.
@@ -153,5 +168,15 @@ public class RtfDocumentSettings {
      */
     public void setAlwaysUseUnicode(boolean alwaysUseUnicode) {
         this.alwaysUseUnicode = alwaysUseUnicode;
+    }
+
+    /**
+     * Registers the RtfParagraphStyle for further use in the document. This does not need to be
+     * done for the default styles in the RtfParagraphStyle object. Those are added automatically.
+     * 
+     * @param rtfParagraphStyle The RtfParagraphStyle to register.
+     */
+    public void registerParagraphStyle(RtfParagraphStyle rtfParagraphStyle) {
+        this.document.getDocumentHeader().registerParagraphStyle(rtfParagraphStyle);
     }
 }
