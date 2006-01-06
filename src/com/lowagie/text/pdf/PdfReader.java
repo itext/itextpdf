@@ -2666,6 +2666,10 @@ public class PdfReader {
             catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNLEFT);
         else if ((preferences & PdfWriter.PageLayoutTwoColumnRight) != 0)
             catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNRIGHT);
+        else if ((preferences & PdfWriter.PageLayoutTwoPageLeft) != 0)
+            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGELEFT);
+        else if ((preferences & PdfWriter.PageLayoutTwoPageRight) != 0)
+            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGERIGHT);
         if ((preferences & PdfWriter.PageModeUseNone) != 0)
             catalog.put(PdfName.PAGEMODE, PdfName.USENONE);
         else if ((preferences & PdfWriter.PageModeUseOutlines) != 0)
@@ -2732,6 +2736,10 @@ public class PdfReader {
                 prefs |= PdfWriter.PageLayoutTwoColumnLeft;
             else if (name.equals(PdfName.TWOCOLUMNRIGHT))
                 prefs |= PdfWriter.PageLayoutTwoColumnRight;
+            else if (name.equals(PdfName.TWOPAGELEFT))
+                prefs |= PdfWriter.PageLayoutTwoPageLeft;
+            else if (name.equals(PdfName.TWOPAGERIGHT))
+                prefs |= PdfWriter.PageLayoutTwoPageRight;
         }
         obj = getPdfObjectRelease(catalog.get(PdfName.PAGEMODE));
         if (obj != null && obj.isName()) {

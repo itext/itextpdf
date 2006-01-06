@@ -872,6 +872,10 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName TWOCOLUMNRIGHT = new PdfName("TwoColumnRight");
     /** A name */
+    public static final PdfName TWOPAGELEFT = new PdfName("TwoPageLeft");
+    /** A name */
+    public static final PdfName TWOPAGERIGHT = new PdfName("TwoPageRight");
+    /** A name */
     public static final PdfName TX = new PdfName("Tx");
     /** A name */
     public static final PdfName TYPE = new PdfName("Type");
