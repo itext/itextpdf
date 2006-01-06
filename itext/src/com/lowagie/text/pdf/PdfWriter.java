@@ -580,6 +580,10 @@ public class PdfWriter extends DocWriter {
     public static final int PageLayoutTwoColumnLeft = 4;
     /** A viewer preference */
     public static final int PageLayoutTwoColumnRight = 8;
+    /** A viewer preference */
+    public static final int PageLayoutTwoPageLeft = 1 << 22;
+    /** A viewer preference */
+    public static final int PageLayoutTwoPageRight = 1 << 23;
     
     /** A viewer preference */
     public static final int PageModeUseNone = 16;
@@ -1809,6 +1813,10 @@ public class PdfWriter extends DocWriter {
      *   <li><b>PageLayoutTwoColumnLeft</b> - Display the pages in two columns, with
      *       oddnumbered pages on the left.
      *   <li><b>PageLayoutTwoColumnRight</b> - Display the pages in two columns, with
+     *       oddnumbered pages on the right.
+     *   <li><b>PageLayoutTwoPageLeft</b> - Display the pages two at a time, with
+     *       oddnumbered pages on the left.
+     *   <li><b>PageLayoutTwoPageRight</b> - Display the pages two at a time, with
      *       oddnumbered pages on the right.
      *   </ul>
      * <li>The page mode how the document should be displayed
