@@ -2679,6 +2679,8 @@ public class PdfReader {
         else if ((preferences & PdfWriter.PageModeFullScreen) != 0)
             catalog.put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
         else if ((preferences & PdfWriter.PageModeUseOC) != 0)
+            catalog.put(PdfName.PAGEMODE, PdfName.USEATTACHMENTS);
+        else if ((preferences & PdfWriter.PageModeUseAttachments) != 0)
             catalog.put(PdfName.PAGEMODE, PdfName.USEOC);
         if ((preferences & PdfWriter.ViewerPreferencesMask) == 0)
             return;
@@ -2752,6 +2754,8 @@ public class PdfReader {
                 prefs |= PdfWriter.PageModeUseThumbs;
             else if (name.equals(PdfName.USEOC))
                 prefs |= PdfWriter.PageModeUseOC;
+            else if (name.equals(PdfName.USEATTACHMENTS))
+                prefs |= PdfWriter.PageModeUseAttachments;
         }
         obj = getPdfObjectRelease(catalog.get(PdfName.VIEWERPREFERENCES));
         if (obj == null || !obj.isDictionary())

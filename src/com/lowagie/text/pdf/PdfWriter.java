@@ -595,6 +595,8 @@ public class PdfWriter extends DocWriter {
     public static final int PageModeFullScreen = 128;
     /** A viewer preference */
     public static final int PageModeUseOC = 1 << 20;
+    /** A viewer preference */
+    public static final int PageModeUseAttachments = 1 << 24;
     
     /** A viewer preference */
     public static final int HideToolbar = 256;
@@ -1828,6 +1830,7 @@ public class PdfWriter extends DocWriter {
      *   <li><b>PageModeFullScreen</b> - Full-screen mode, with no menu bar, window
      *       controls, or any other window visible.
      *   <li><b>PageModeUseOC</b> - Optional content group panel visible
+     *   <li><b>PageModeUseAttachments</b> - Attachments panel visible
      *   </ul>
      * <li><b>HideToolbar</b> - A flag specifying whether to hide the viewer application's tool
      *     bars when the document is active.
