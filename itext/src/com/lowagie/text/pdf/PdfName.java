@@ -898,6 +898,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName USAGE = new PdfName("Usage");
     /** A name */
+    public static final PdfName USEATTACHMENTS = new PdfName("UseAttachments");
+    /** A name */
     public static final PdfName USENONE = new PdfName("UseNone");
     /** A name */
     public static final PdfName USEOC = new PdfName("UseOC");
