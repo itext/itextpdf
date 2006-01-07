@@ -117,6 +117,7 @@ public class PhotoAlbum extends AbstractTool {
 				if (files[i].isFile()) images.add(files[i]);
 			}
 			File image;
+			String label;
             for (Iterator i = images.iterator(); i.hasNext(); ) {
             	image = (File) i.next();
             	System.out.println("Testing image: " + image.getName());
@@ -138,7 +139,10 @@ public class PhotoAlbum extends AbstractTool {
                 	}
                 	img.setAbsolutePosition(0, 0);
                     document.add(img);
-                    pageLabels.addPageLabel(writer.getPageNumber(), PdfPageLabels.EMPTY, image.getName());
+                    label = image.getName();
+                    if (label.lastIndexOf(".") > 0);
+                    	label = label.substring(0, label.lastIndexOf("."));
+                    pageLabels.addPageLabel(writer.getPageNumber(), PdfPageLabels.EMPTY, label);
                     System.out.println("Added image: " + image.getName());
                 }
             	catch(Exception e) {
