@@ -2679,9 +2679,9 @@ public class PdfReader {
         else if ((preferences & PdfWriter.PageModeFullScreen) != 0)
             catalog.put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
         else if ((preferences & PdfWriter.PageModeUseOC) != 0)
-            catalog.put(PdfName.PAGEMODE, PdfName.USEATTACHMENTS);
-        else if ((preferences & PdfWriter.PageModeUseAttachments) != 0)
             catalog.put(PdfName.PAGEMODE, PdfName.USEOC);
+        else if ((preferences & PdfWriter.PageModeUseAttachments) != 0)
+            catalog.put(PdfName.PAGEMODE, PdfName.USEATTACHMENTS);
         if ((preferences & PdfWriter.ViewerPreferencesMask) == 0)
             return;
         PdfDictionary vp = new PdfDictionary();
