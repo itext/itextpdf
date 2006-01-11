@@ -714,23 +714,25 @@ class PdfStamperImp extends PdfWriter {
                 if (appDic != null && (flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) == 0) {
                     PdfObject obj = appDic.get(PdfName.N);
                     PdfAppearance app = null;
-                    PdfObject objReal = PdfReader.getPdfObject(obj);
-                    if (obj instanceof PdfIndirectReference && !obj.isIndirect())
-                        app = new PdfAppearance((PdfIndirectReference)obj);
-                    else if (objReal instanceof PdfStream) {
-                        ((PdfDictionary)objReal).put(PdfName.SUBTYPE, PdfName.FORM);
-                        app = new PdfAppearance((PdfIndirectReference)obj);
-                    }
-                    else {
-                        if (objReal.isDictionary()) {
-                            PdfName as = (PdfName)PdfReader.getPdfObject(merged.get(PdfName.AS));
-                            if (as != null) {
-                                PdfIndirectReference iref = (PdfIndirectReference)((PdfDictionary)objReal).get(as);
-                                if (iref != null) {
-                                    app = new PdfAppearance(iref);
-                                    if (iref.isIndirect()) {
-                                        objReal = PdfReader.getPdfObject(iref);
-                                        ((PdfDictionary)objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+                    if (obj != null) {
+                        PdfObject objReal = PdfReader.getPdfObject(obj);
+                        if (obj instanceof PdfIndirectReference && !obj.isIndirect())
+                            app = new PdfAppearance((PdfIndirectReference)obj);
+                        else if (objReal instanceof PdfStream) {
+                            ((PdfDictionary)objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+                            app = new PdfAppearance((PdfIndirectReference)obj);
+                        }
+                        else {
+                            if (objReal.isDictionary()) {
+                                PdfName as = (PdfName)PdfReader.getPdfObject(merged.get(PdfName.AS));
+                                if (as != null) {
+                                    PdfIndirectReference iref = (PdfIndirectReference)((PdfDictionary)objReal).get(as);
+                                    if (iref != null) {
+                                        app = new PdfAppearance(iref);
+                                        if (iref.isIndirect()) {
+                                            objReal = PdfReader.getPdfObject(iref);
+                                            ((PdfDictionary)objReal).put(PdfName.SUBTYPE, PdfName.FORM);
+                                        }
                                     }
                                 }
                             }
