@@ -551,6 +551,18 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     }
     
 /**
+ * Returns the content as a String object.
+ * This method differs from toString because toString will return an ArrayList with the toString value of the Chunks in this Phrase.
+ */
+    public String content() {
+    	StringBuffer buf = new StringBuffer();
+    	for (Iterator i = getChunks().iterator(); i.hasNext(); ) {
+    		buf.append(i.next().toString());
+    	}
+    	return buf.toString();
+    }
+    
+/**
  * Checks if a given tag corresponds with this object.
  *
  * @param   tag     the given tag
