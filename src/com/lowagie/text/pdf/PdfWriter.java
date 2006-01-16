@@ -2521,7 +2521,22 @@ public class PdfWriter extends DocWriter {
     public void setBoxSize(String boxName, Rectangle size) {
         pdf.setBoxSize(boxName, size);
     }
-    
+
+    /**
+     * Gives the size of a trim, art, crop or bleed box, or null if not defined.
+     * @param boxName crop, trim, art or bleed
+     */
+    public Rectangle getBoxSize(String boxName) {
+    	return pdf.getBoxSize(boxName);
+    }
+
+    /**
+     * Gives the size of the media box.
+     * @return a Rectangle
+     */
+    public Rectangle getPageSize() {
+    	return pdf.getPageSize();
+    }
     /**
      * Gets the default colorspaces.
      * @return the default colorspaces

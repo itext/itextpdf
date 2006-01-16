@@ -149,6 +149,13 @@ public class PdfRectangle extends PdfArray {
     }
     
     // methods
+    /**
+     * Returns the high level version of this PdfRectangle
+     * @return this PdfRectangle translated to class Rectangle
+     */
+    public Rectangle getRectangle() {
+    	return new Rectangle(left(), bottom(), right(), top());
+    }
     
 /**
  * Overrides the <CODE>add</CODE>-method in <CODE>PdfArray</CODE> in order to prevent the adding of extra object to the array.
