@@ -55,6 +55,7 @@ import java.util.Iterator;
 
 import com.lowagie.text.Element;
 import com.lowagie.text.ListItem;
+import com.lowagie.text.Chunk;
 
 /**
  * <CODE>PdfLine</CODE> defines an array with <CODE>PdfChunk</CODE>-objects
@@ -81,7 +82,7 @@ public class PdfLine {
     protected float height;
     
     /** The listsymbol (if necessary). */
-    protected PdfChunk listSymbol = null;
+    protected Chunk listSymbol = null;
     
     /** The listsymbol (if necessary). */
     protected float symbolIndent;
@@ -299,7 +300,7 @@ public class PdfLine {
      */
     
     public void setListItem(ListItem listItem) {
-        this.listSymbol = new PdfChunk(listItem.listSymbol(), null);
+        this.listSymbol = listItem.listSymbol();
         this.symbolIndent = listItem.indentationLeft();
     }
     
@@ -309,7 +310,7 @@ public class PdfLine {
      * @return	a <CODE>PdfChunk</CODE> if the line has a listsymbol; <CODE>null</CODE> otherwise
      */
     
-    public PdfChunk listSymbol() {
+    public Chunk listSymbol() {
         return listSymbol;
     }
     
