@@ -193,16 +193,12 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
             // margins,...
             // but that's for a later version...
             XmlPeer peer = new XmlPeer(ElementTags.ITEXT, name);
+            peer.addAlias(ElementTags.TOP, HtmlTags.TOPMARGIN);
+            peer.addAlias(ElementTags.BOTTOM, HtmlTags.BOTTOMMARGIN);
+            peer.addAlias(ElementTags.RIGHT, HtmlTags.RIGHTMARGIN);
+            peer.addAlias(ElementTags.LEFT, HtmlTags.LEFTMARGIN);
             String content = null;
-            if (attrs != null) {
-                for (int i = 0; i < attrs.getLength(); i++) {
-                    String attribute = attrs.getQName(i);
-                    if (attribute.equalsIgnoreCase("style")) {
-                        content = attrs.getValue(i);
-                        bodyAttributes.put("style", content);
-                    }
-                }
-            }
+            bodyAttributes.putAll(peer.getAttributes(attrs));
             handleStartingTags(peer.getTag(), bodyAttributes);
             return;
         }
