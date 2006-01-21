@@ -50,33 +50,37 @@
 
 package com.lowagie.text;
 
+import java.awt.Graphics2D;
+import java.awt.color.ICC_Profile;
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Set;
-import java.util.ArrayList;
-import java.awt.color.ICC_Profile;
-import com.lowagie.text.pdf.PdfTemplate;
-import com.lowagie.text.pdf.codec.CCITTG4Encoder;
-import java.lang.reflect.Constructor;
-import com.lowagie.text.pdf.RandomAccessFileOrArray;
+
+import com.lowagie.text.pdf.PRIndirectReference;
+import com.lowagie.text.pdf.PRTokeniser;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfIndirectReference;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
+import com.lowagie.text.pdf.PdfOCG;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.RandomAccessFileOrArray;
+import com.lowagie.text.pdf.codec.BmpImage;
+import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 import com.lowagie.text.pdf.codec.GifImage;
 import com.lowagie.text.pdf.codec.PngImage;
 import com.lowagie.text.pdf.codec.TiffImage;
-import com.lowagie.text.pdf.codec.BmpImage;
-import com.lowagie.text.pdf.PdfOCG;
-import com.lowagie.text.pdf.PdfObject;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfArray;
-import com.lowagie.text.pdf.PRTokeniser;
-import com.lowagie.text.pdf.PdfIndirectReference;
-import com.lowagie.text.pdf.PRIndirectReference;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfNumber;
 
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
@@ -688,6 +692,60 @@ public abstract class Image extends Rectangle implements Element,
 	public static Image getInstance(java.awt.Image image, java.awt.Color color)
 			throws BadElementException, IOException {
 		return Image.getInstance(image, color, false);
+	}
+	
+	/**
+	 * Gets an instance of a Image from a java.awt.Image.
+	 * The image is added as a JPEG with a userdefined quality.
+	 * 
+	 * @param writer
+	 *            the <CODE>PdfWriter</CODE> object to which the image will be added
+	 * @param image
+	 *            the <CODE>java.awt.Image</CODE> to convert
+	 * @param quality
+	 *            a float value between 0 and 1
+	 * @return an object of type <CODE>PdfTemplate</CODE>
+	 * @throws BadElementException
+	 *             on error
+	 * @throws IOException
+	 */
+	public static Image getInstance(PdfWriter writer, java.awt.Image awtImage, float quality) throws BadElementException, IOException {
+		return getInstance(writer.getDirectContent(), awtImage, quality);
+	}
+	
+	/**
+	 * Gets an instance of a Image from a java.awt.Image.
+	 * The image is added as a JPEG with a userdefined quality.
+	 * 
+	 * @param cb
+	 *            the <CODE>PdfContentByte</CODE> object to which the image will be added
+	 * @param image
+	 *            the <CODE>java.awt.Image</CODE> to convert
+	 * @param quality
+	 *            a float value between 0 and 1
+	 * @return an object of type <CODE>PdfTemplate</CODE>
+	 * @throws BadElementException
+	 *             on error
+	 * @throws IOException
+	 */
+	public static Image getInstance(PdfContentByte cb, java.awt.Image awtImage, float quality) throws BadElementException, IOException {
+		java.awt.image.PixelGrabber pg = new java.awt.image.PixelGrabber(awtImage,
+				0, 0, -1, -1, true);
+		try {
+			pg.grabPixels();
+		} catch (InterruptedException e) {
+			throw new IOException(
+					"java.awt.Image Interrupted waiting for pixels!");
+		}
+		if ((pg.getStatus() & java.awt.image.ImageObserver.ABORT) != 0) {
+			throw new IOException("java.awt.Image fetch aborted or errored");
+		}
+		int w = pg.getWidth();
+		int h = pg.getHeight();
+		PdfTemplate tp = cb.createTemplate(w, h);
+		Graphics2D g2d = tp.createGraphics(w, h, true, quality);
+		g2d.drawImage(awtImage, 0, 0, null);
+		return getInstance(tp);
 	}
 
 	/**
