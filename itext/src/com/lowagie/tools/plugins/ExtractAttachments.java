@@ -75,7 +75,8 @@ public class ExtractAttachments extends AbstractTool {
 	 * Constructs a ExtractAttachements object.
 	 */
 	public ExtractAttachments() {
-		FileArgument f = new FileArgument(this, "srcfile", "The file you want to operate on", false, new PdfFilter());
+		FileArgument f = new FileArgument(this, "srcfile",
+				"The file you want to operate on", false, new PdfFilter());
 		f.setLabel(new LabelAccessory());
 		arguments.add(f);
 	}
@@ -84,7 +85,8 @@ public class ExtractAttachments extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("ExtractAttachments", true, false, true);
+		internalFrame = new JInternalFrame("ExtractAttachments", true, false,
+				true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
 		System.out.println("=== ExtractAttachments OPENED ===");
@@ -94,68 +96,77 @@ public class ExtractAttachments extends AbstractTool {
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
 	public void execute() {
-        try {
-			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
-			File src = (File)getValue("srcfile");
+		try {
+			if (getValue("srcfile") == null)
+				throw new InstantiationException(
+						"You need to choose a sourcefile");
+			File src = (File) getValue("srcfile");
 
-        	// we create a reader for a certain document
+			// we create a reader for a certain document
 			PdfReader reader = new PdfReader(src.getAbsolutePath());
-           String outPath = src.getParentFile().getName();
-           PdfDictionary catalog = reader.getCatalog();
-           PdfDictionary names = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.NAMES));
-           if (names != null) {
-               PdfDictionary embFiles = (PdfDictionary)PdfReader.getPdfObject(names.get(new PdfName("EmbeddedFiles")));
-               if (embFiles != null) {
-                   HashMap embMap = PdfNameTree.readTree(embFiles);
-                   for (Iterator i = embMap.values().iterator(); i.hasNext();) {
-                       PdfDictionary filespec = (PdfDictionary)PdfReader.getPdfObject((PdfObject)i.next());
-                       unpackFile(reader, filespec, outPath);
-                   }
-               }
-           }
-           for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
-               PdfArray annots = (PdfArray)PdfReader.getPdfObject(reader.getPageN(k).get(PdfName.ANNOTS));
-               if (annots == null)
-                   continue;
-               for (Iterator i = annots.listIterator(); i.hasNext();) {
-                   PdfDictionary annot = (PdfDictionary)PdfReader.getPdfObject((PdfObject)i.next());
-                   PdfName subType = (PdfName)PdfReader.getPdfObject(annot.get(PdfName.SUBTYPE));
-                   if (!PdfName.FILEATTACHMENT.equals(subType))
-                       continue;
-                   PdfDictionary filespec = (PdfDictionary)PdfReader.getPdfObject(annot.get(PdfName.FS));
-                   unpackFile(reader, filespec, outPath);
-               }
-           }
+			String outPath = src.getParentFile().getAbsolutePath();
+			PdfDictionary catalog = reader.getCatalog();
+			PdfDictionary names = (PdfDictionary) PdfReader
+					.getPdfObject(catalog.get(PdfName.NAMES));
+			if (names != null) {
+				PdfDictionary embFiles = (PdfDictionary) PdfReader
+						.getPdfObject(names.get(new PdfName("EmbeddedFiles")));
+				if (embFiles != null) {
+					HashMap embMap = PdfNameTree.readTree(embFiles);
+					for (Iterator i = embMap.values().iterator(); i.hasNext();) {
+						PdfDictionary filespec = (PdfDictionary) PdfReader
+								.getPdfObject((PdfObject) i.next());
+						unpackFile(reader, filespec, outPath);
+					}
+				}
+			}
+			for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
+				PdfArray annots = (PdfArray) PdfReader.getPdfObject(reader
+						.getPageN(k).get(PdfName.ANNOTS));
+				if (annots == null)
+					continue;
+				for (Iterator i = annots.listIterator(); i.hasNext();) {
+					PdfDictionary annot = (PdfDictionary) PdfReader
+							.getPdfObject((PdfObject) i.next());
+					PdfName subType = (PdfName) PdfReader.getPdfObject(annot
+							.get(PdfName.SUBTYPE));
+					if (!PdfName.FILEATTACHMENT.equals(subType))
+						continue;
+					PdfDictionary filespec = (PdfDictionary) PdfReader
+							.getPdfObject(annot.get(PdfName.FS));
+					unpackFile(reader, filespec, outPath);
+				}
+			}
 
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#valueHasChanged(com.lowagie.tools.arguments.ToolArgument)
 	 */
 	public void valueHasChanged(ToolArgument arg) {
 		if (internalFrame == null) {
-			// if the internal frame is null, the tool was called from the commandline
+			// if the internal frame is null, the tool was called from the
+			// commandline
 			return;
 		}
 		// represent the changes of the argument in the internal frame
 	}
 
-
-    /**
-     * Extract the attachements of a PDF.
-     * @param args
-     */
+	/**
+	 * Extract the attachements of a PDF.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
-    	ExtractAttachments tool = new ExtractAttachments();
-    	if (args.length < 1) {
-    		System.err.println(tool.getUsage());
-    	}
-    	tool.setArguments(args);
-        tool.execute();
+		ExtractAttachments tool = new ExtractAttachments();
+		if (args.length < 1) {
+			System.err.println(tool.getUsage());
+		}
+		tool.setArguments(args);
+		tool.execute();
 	}
 
 	/**
@@ -165,33 +176,37 @@ public class ExtractAttachments extends AbstractTool {
 		throw new InstantiationException("There is more than one destfile.");
 	}
 
-        public static void unpackFile(PdfReader reader, PdfDictionary filespec, String outPath) {
-       if (filespec == null)
-           return;
-       try {
-           PdfName type = (PdfName)PdfReader.getPdfObject(filespec.get(PdfName.TYPE));
-           if (!PdfName.F.equals(type) && !PdfName.FILESPEC.equals(type))
-               return;
-           PdfDictionary ef = (PdfDictionary)PdfReader.getPdfObject(filespec.get(PdfName.EF));
-           if (ef == null)
-               return;
-           PdfString fn = (PdfString)PdfReader.getPdfObject(filespec.get(PdfName.F));
-           if (fn == null)
-               return;
-           File fLast = new File(fn.toUnicodeString());
-           File fullPath = new File(outPath, fLast.getName());
-           if (fullPath.exists())
-               return;
-           PRStream prs = (PRStream)PdfReader.getPdfObject(ef.get(PdfName.F));
-           if (prs == null)
-               return;
-           byte b[] = PdfReader.getStreamBytes(prs);
-           FileOutputStream fout = new FileOutputStream(fullPath);
-           fout.write(b);
-           fout.close();
-       }
-       catch (Exception e) {
-       }
-   }
+	public static void unpackFile(PdfReader reader, PdfDictionary filespec,
+			String outPath) {
+		if (filespec == null)
+			return;
+		try {
+			PdfName type = (PdfName) PdfReader.getPdfObject(filespec
+					.get(PdfName.TYPE));
+			if (!PdfName.F.equals(type) && !PdfName.FILESPEC.equals(type))
+				return;
+			PdfDictionary ef = (PdfDictionary) PdfReader.getPdfObject(filespec
+					.get(PdfName.EF));
+			if (ef == null)
+				return;
+			PdfString fn = (PdfString) PdfReader.getPdfObject(filespec
+					.get(PdfName.F));
+			System.out.println("Unpacking file '" + fn + "' to " + outPath);
+			if (fn == null)
+				return;
+			File fLast = new File(fn.toUnicodeString());
+			File fullPath = new File(outPath, fLast.getName());
+			if (fullPath.exists())
+				return;
+			PRStream prs = (PRStream) PdfReader.getPdfObject(ef.get(PdfName.F));
+			if (prs == null)
+				return;
+			byte b[] = PdfReader.getStreamBytes(prs);
+			FileOutputStream fout = new FileOutputStream(fullPath);
+			fout.write(b);
+			fout.close();
+		} catch (Exception e) {
+		}
+	}
 
 }
