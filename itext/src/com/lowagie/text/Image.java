@@ -1123,6 +1123,18 @@ public abstract class Image extends Rectangle implements Element,
 		scalePercent(percentX < percentY ? percentX : percentY);
 	}
 
+    /**
+     * Gets the current image rotation in radians.
+     * @return the current image rotation in radians
+     */
+    public float getImageRotation() {
+		float rot = (float) ((rotation - initialRotation) % (2.0 * Math.PI));
+		if (rot < 0) {
+			rot += 2.0 * Math.PI; //__IDS__
+		}
+        return rot;
+    }
+    
 	/**
 	 * Sets the rotation of the image in radians.
 	 * 

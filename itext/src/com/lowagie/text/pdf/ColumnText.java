@@ -328,6 +328,7 @@ public class ColumnText {
         firstLineYDone = org.firstLineYDone;
         waitPhrase = org.waitPhrase;
         useAscender = org.useAscender;
+        filledWidth = org.filledWidth;
     }
     
     private void addWaitingPhrase() {
@@ -833,6 +834,7 @@ public class ColumnText {
                 if (Float.isNaN(firstLineY)) {
                     firstLineY = yLine;
                 }
+                updateFilledWidth(rectangularWidth - line.widthLeft());
                 if (!simulate) {
                     currentValues[0] = currentFont;
                     text.setTextMatrix(leftX + (line.isRTL() ? rightIndent : firstIndent) + line.indentLeft(), yLine);
@@ -1122,6 +1124,7 @@ public class ColumnText {
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = (para.getKeepTogether() && createHere && !firstPass);
                     status = compositeColumn.go(simulate || (keepCandidate && keep == 0));
+                    updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
                         compositeColumn = null;
                         yLine = lastY;
@@ -1217,6 +1220,7 @@ public class ColumnText {
                     compositeColumn.maxY = maxY;
                     boolean keepCandidate = (item.getKeepTogether() && createHere && !firstPass);
                     status = compositeColumn.go(simulate || (keepCandidate && keep == 0));
+                    updateFilledWidth(compositeColumn.filledWidth);
                     if ((status & NO_MORE_TEXT) == 0 && keepCandidate) {
                         compositeColumn = null;
                         yLine = lastY;
@@ -1266,8 +1270,10 @@ public class ColumnText {
                     return NO_MORE_COLUMN;
                 float x1 = leftX;
                 float tableWidth;
-                if (table.isLockedWidth())
+                if (table.isLockedWidth()) {
                     tableWidth = table.getTotalWidth();
+                    updateFilledWidth(tableWidth);
+                }
                 else {
                     tableWidth = rectangularWidth * table.getWidthPercentage() / 100f;
                     table.setTotalWidth(tableWidth);
@@ -1477,5 +1483,38 @@ public class ColumnText {
      */
     public static boolean hasMoreText(int status) {
     	return (status & ColumnText.NO_MORE_TEXT) == 0;
+    }
+
+    /**
+     * Holds value of property filledWidth.
+     */
+    private float filledWidth;
+
+    /**
+     * Gets the real width used by the largest line.
+     * @return the real width used by the largest line
+     */
+    public float getFilledWidth() {
+
+        return this.filledWidth;
+    }
+
+    /**
+     * Sets the real width used by the largest line. Only used to set it
+     * to zero to start another measurement.
+     * @param filledWidth the real width used by the largest line
+     */
+    public void setFilledWidth(float filledWidth) {
+
+        this.filledWidth = filledWidth;
+    }
+    
+    /**
+     * Replaces the <CODE>filledWidth</CODE> if greater than the existing one.
+     * @param w the new <CODE>filledWidth</CODE> if greater than the existing one
+     */
+    public void updateFilledWidth(float w) {
+        if (w > filledWidth)
+            filledWidth = w;
     }
 }
