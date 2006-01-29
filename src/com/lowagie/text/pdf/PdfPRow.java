@@ -138,34 +138,58 @@ public class PdfPRow {
 			Image img = cell.getImage();
 			if (img != null) {
 				img.scalePercent(100);
-				float scale = (cell.right() - cell.getEffectivePaddingRight()
-						- cell.getEffectivePaddingLeft() - cell.left())
-						/ img.scaledWidth();
-				img.scalePercent(scale * 100);
-				cell
-						.setBottom(cell.top() - cell.getEffectivePaddingTop()
-								- cell.getEffectivePaddingBottom()
-								- img.scaledHeight());
+                float refWidth = img.scaledWidth();
+                float refHeight = img.scaledHeight();
+                if (cell.getRotation() == 90 || cell.getRotation() == 270) {
+                    refWidth = img.scaledHeight();
+                    refHeight = img.scaledWidth();
+                }
+                float scale = (cell.right() - cell.getEffectivePaddingRight()
+                    - cell.getEffectivePaddingLeft() - cell.left())
+                    / refWidth;
+                img.scalePercent(scale * 100);
+                cell.setBottom(cell.top() - cell.getEffectivePaddingTop()
+                    - cell.getEffectivePaddingBottom()
+                    - refHeight);
 			} else {
-				float rightLimit = cell.isNoWrap() ? 20000 : cell.right()
-						- cell.getEffectivePaddingRight();
-				float bry = (cell.getFixedHeight() > 0) ? cell.top()
-						- cell.getEffectivePaddingTop()
-						+ cell.getEffectivePaddingBottom()
-						- cell.getFixedHeight() : BOTTOM_LIMIT;
-				ColumnText ct = ColumnText.duplicate(cell.getColumn());
-				ct.setSimpleColumn(
-						cell.left() + cell.getEffectivePaddingLeft(), bry,
-						rightLimit, cell.top() - cell.getEffectivePaddingTop());
-				try {
-					ct.go(true);
-				} catch (DocumentException e) {
-					throw new ExceptionConverter(e);
-				}
-				float yLine = ct.getYLine();
-				if (cell.isUseDescender())
-					yLine += ct.getDescender();
-				cell.setBottom(yLine - cell.getEffectivePaddingBottom());
+                if (cell.getRotation() == 0 || cell.getRotation() == 180) {
+                    float rightLimit = cell.isNoWrap() ? 20000 : cell.right()
+                            - cell.getEffectivePaddingRight();
+                    float bry = (cell.getFixedHeight() > 0) ? cell.top()
+                            - cell.getEffectivePaddingTop()
+                            + cell.getEffectivePaddingBottom()
+                            - cell.getFixedHeight() : BOTTOM_LIMIT;
+                    ColumnText ct = ColumnText.duplicate(cell.getColumn());
+                    ct.setSimpleColumn(
+                            cell.left() + cell.getEffectivePaddingLeft(), bry,
+                            rightLimit, cell.top() - cell.getEffectivePaddingTop());
+                    try {
+                        ct.go(true);
+                    } catch (DocumentException e) {
+                        throw new ExceptionConverter(e);
+                    }
+                    float yLine = ct.getYLine();
+                    if (cell.isUseDescender())
+                        yLine += ct.getDescender();
+                    cell.setBottom(yLine - cell.getEffectivePaddingBottom());
+                }
+                else {
+                    if (cell.getFixedHeight() > 0) {
+                        cell.setBottom(cell.top() - cell.getFixedHeight());
+                    }
+                    else {
+                        ColumnText ct = ColumnText.duplicate(cell.getColumn());
+                        ct.setSimpleColumn(0, cell.left() + cell.getEffectivePaddingLeft(),
+                                20000, cell.right() - cell.getEffectivePaddingRight());
+                        try {
+                            ct.go(true);
+                        } catch (DocumentException e) {
+                            throw new ExceptionConverter(e);
+                        }
+                        cell.setBottom(cell.top() - cell.getEffectivePaddingTop() 
+                            - cell.getEffectivePaddingBottom() - ct.getFilledWidth());
+                    }
+                }
 			}
 			float height = cell.getFixedHeight();
 			if (height <= 0)
@@ -305,6 +329,10 @@ public class PdfPRow {
 				break;
 			}
 			if (img != null) {
+                if (cell.getRotation() != 0) {
+                    img = Image.getInstance(img);
+                    img.setRotation(img.getImageRotation() + (float)(cell.getRotation() * Math.PI / 180.0));
+                }
 				boolean vf = false;
 				if (cell.height() > maxHeight) {
 					img.scalePercent(100);
@@ -342,49 +370,143 @@ public class PdfPRow {
 					throw new ExceptionConverter(e);
 				}
 			} else {
-				float fixedHeight = cell.getFixedHeight();
-				float rightLimit = cell.right() + xPos
-						- cell.getEffectivePaddingRight();
-				float leftLimit = cell.left() + xPos
-						+ cell.getEffectivePaddingLeft();
-				if (cell.isNoWrap()) {
-					switch (cell.getHorizontalAlignment()) {
-					case Element.ALIGN_CENTER:
-						rightLimit += 10000;
-						leftLimit -= 10000;
-						break;
-					case Element.ALIGN_RIGHT:
-						leftLimit -= 20000;
-						break;
-					default:
-						rightLimit += 20000;
-						break;
-					}
-				}
-				ColumnText ct = ColumnText.duplicate(cell.getColumn());
-				ct.setCanvases(canvases);
-				float bry = tly
-						- (maxHeight /* cell.height() */
-								- cell.getEffectivePaddingTop() - cell
-								.getEffectivePaddingBottom());
-				if (fixedHeight > 0) {
-					if (cell.height() > maxHeight) {
-						tly = cell.top() + yPos - cell.getEffectivePaddingTop();
-						bry = cell.top() + yPos - maxHeight
-								+ cell.getEffectivePaddingBottom();
-					}
-				}
-				if ((tly > bry || ct.zeroHeightElement()) && leftLimit < rightLimit) {
-					ct
-							.setSimpleColumn(leftLimit, bry - 0.001f,
-									rightLimit, tly);
-					try {
-						ct.go();
-					} catch (DocumentException e) {
-						throw new ExceptionConverter(e);
-					}
-				}
-			}
+                // rotation sponsored by Connection GmbH
+                if (cell.getRotation() == 90 || cell.getRotation() == 270) {
+                    float netWidth = maxHeight - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom();
+                    float netHeight = cell.width() - cell.getEffectivePaddingLeft() - cell.getEffectivePaddingRight();
+                    ColumnText ct = ColumnText.duplicate(cell.getColumn());
+                    ct.setCanvases(canvases);
+                    ct.setSimpleColumn(0, 0, netWidth + 0.001f, -netHeight);
+                    try {
+                        ct.go(true);
+                    } catch (DocumentException e) {
+                        throw new ExceptionConverter(e);
+                    }
+                    float calcHeight = -ct.getYLine();
+                    if (calcHeight > 0) {
+                        if (cell.isUseDescender())
+                            calcHeight -= ct.getDescender();
+                        ct = ColumnText.duplicate(cell.getColumn());
+                        ct.setCanvases(canvases);
+                        ct.setSimpleColumn(0, -0.001f, netWidth + 0.001f, calcHeight);
+                        float pivotX;
+                        float pivotY;
+                        if (cell.getRotation() == 90) {
+                            pivotY = cell.top() + yPos - maxHeight + cell.getEffectivePaddingBottom();
+                            switch (cell.getVerticalAlignment()) {
+                            case Element.ALIGN_BOTTOM:
+                                pivotX = xPos + cell.width() - cell.getEffectivePaddingRight();
+                                break;
+                            case Element.ALIGN_MIDDLE:
+                                pivotX = xPos + (cell.width() + cell.getEffectivePaddingLeft() - cell.getEffectivePaddingRight() + calcHeight) / 2;
+                                break;
+                            default: //top
+                                pivotX = xPos + cell.getEffectivePaddingLeft() + calcHeight;
+                                break;
+                            }
+                            canvases[PdfPTable.BASECANVAS].saveState();
+                            canvases[PdfPTable.BASECANVAS].concatCTM(0,1,-1,0,pivotX,pivotY);
+                            canvases[PdfPTable.BACKGROUNDCANVAS].saveState();
+                            canvases[PdfPTable.BACKGROUNDCANVAS].concatCTM(0,1,-1,0,pivotX,pivotY);
+                            canvases[PdfPTable.LINECANVAS].saveState();
+                            canvases[PdfPTable.LINECANVAS].concatCTM(0,1,-1,0,pivotX,pivotY);
+                            canvases[PdfPTable.TEXTCANVAS].saveState();
+                            canvases[PdfPTable.TEXTCANVAS].concatCTM(0,1,-1,0,pivotX,pivotY);
+                        }
+                        else {
+                            pivotY = cell.top() + yPos - cell.getEffectivePaddingTop();
+                            switch (cell.getVerticalAlignment()) {
+                            case Element.ALIGN_BOTTOM:
+                                pivotX = xPos + cell.getEffectivePaddingLeft();
+                                break;
+                            case Element.ALIGN_MIDDLE:
+                                pivotX = xPos + (cell.width() + cell.getEffectivePaddingLeft() - cell.getEffectivePaddingRight() - calcHeight) / 2;
+                                break;
+                            default: //top
+                                pivotX = xPos + cell.width() - cell.getEffectivePaddingRight() - calcHeight;
+                                break;
+                            }
+                            canvases[PdfPTable.BASECANVAS].saveState();
+                            canvases[PdfPTable.BASECANVAS].concatCTM(0,-1,1,0,pivotX,pivotY);
+                            canvases[PdfPTable.BACKGROUNDCANVAS].saveState();
+                            canvases[PdfPTable.BACKGROUNDCANVAS].concatCTM(0,-1,1,0,pivotX,pivotY);
+                            canvases[PdfPTable.LINECANVAS].saveState();
+                            canvases[PdfPTable.LINECANVAS].concatCTM(0,-1,1,0,pivotX,pivotY);
+                            canvases[PdfPTable.TEXTCANVAS].saveState();
+                            canvases[PdfPTable.TEXTCANVAS].concatCTM(0,-1,1,0,pivotX,pivotY);
+                        }
+                        try {
+                            ct.go();
+                        } catch (DocumentException e) {
+                            throw new ExceptionConverter(e);
+                        } finally {
+                            canvases[PdfPTable.BASECANVAS].restoreState();
+                            canvases[PdfPTable.BACKGROUNDCANVAS].restoreState();
+                            canvases[PdfPTable.LINECANVAS].restoreState();
+                            canvases[PdfPTable.TEXTCANVAS].restoreState();
+                        }
+                    }
+                } 
+                else {
+                    float fixedHeight = cell.getFixedHeight();
+                    float rightLimit = cell.right() + xPos
+                            - cell.getEffectivePaddingRight();
+                    float leftLimit = cell.left() + xPos
+                            + cell.getEffectivePaddingLeft();
+                    if (cell.isNoWrap()) {
+                        switch (cell.getHorizontalAlignment()) {
+                            case Element.ALIGN_CENTER:
+                                rightLimit += 10000;
+                                leftLimit -= 10000;
+                                break;
+                            case Element.ALIGN_RIGHT:
+                                leftLimit -= 20000;
+                                break;
+                            default:
+                                rightLimit += 20000;
+                                break;
+                        }
+                    }
+                    ColumnText ct = ColumnText.duplicate(cell.getColumn());
+                    ct.setCanvases(canvases);
+                    float bry = tly
+                            - (maxHeight /* cell.height() */
+                            - cell.getEffectivePaddingTop() - cell.getEffectivePaddingBottom());
+                    if (fixedHeight > 0) {
+                        if (cell.height() > maxHeight) {
+                            tly = cell.top() + yPos - cell.getEffectivePaddingTop();
+                            bry = cell.top() + yPos - maxHeight + cell.getEffectivePaddingBottom();
+                        }
+                    }
+                    if ((tly > bry || ct.zeroHeightElement()) && leftLimit < rightLimit) {
+                        ct.setSimpleColumn(leftLimit, bry - 0.001f,	rightLimit, tly);
+                        if (cell.getRotation() == 180) {
+                            float shx = leftLimit + rightLimit;
+                            float shy = bry - 0.001f + tly;
+                            canvases[PdfPTable.BASECANVAS].saveState();
+                            canvases[PdfPTable.BASECANVAS].concatCTM(-1,0,0,-1,shx,shy);
+                            canvases[PdfPTable.BACKGROUNDCANVAS].saveState();
+                            canvases[PdfPTable.BACKGROUNDCANVAS].concatCTM(-1,0,0,-1,shx,shy);
+                            canvases[PdfPTable.LINECANVAS].saveState();
+                            canvases[PdfPTable.LINECANVAS].concatCTM(-1,0,0,-1,shx,shy);
+                            canvases[PdfPTable.TEXTCANVAS].saveState();
+                            canvases[PdfPTable.TEXTCANVAS].concatCTM(-1,0,0,-1,shx,shy);
+                        }
+                        try {
+                            ct.go();
+                        } catch (DocumentException e) {
+                            throw new ExceptionConverter(e);
+                        } finally {
+                            if (cell.getRotation() == 180) {
+                                canvases[PdfPTable.BASECANVAS].restoreState();
+                                canvases[PdfPTable.BACKGROUNDCANVAS].restoreState();
+                                canvases[PdfPTable.LINECANVAS].restoreState();
+                                canvases[PdfPTable.TEXTCANVAS].restoreState();
+                            }
+                        }
+                    }
+                }
+            }
 			PdfPCellEvent evt = cell.getCellEvent();
 			if (evt != null) {
 				Rectangle rect = new Rectangle(cell.left() + xPos, cell.top()
@@ -472,17 +594,27 @@ public class PdfPRow {
 					allEmpty = false;
 				}
 			} else {
-				float rightLimit = cell.isNoWrap() ? 20000 : cell.right()
-						- cell.getEffectivePaddingRight();
+                int status;
+                float y;
 				ColumnText ct = ColumnText.duplicate(cell.getColumn());
-				float y1 = cell.top() - newHeight
-						+ cell.getEffectivePaddingBottom();
-				float y2 = cell.top() - cell.getEffectivePaddingTop();
-				float y = Math.max(y1, y2);
-				int status;
-				ct.setSimpleColumn(
-						cell.left() + cell.getEffectivePaddingLeft(), y1,
-						rightLimit, y2);
+                if (cell.getRotation() == 90 || cell.getRotation() == 270) {
+                    ct.setSimpleColumn(
+                            cell.top() - newHeight + cell.getEffectivePaddingBottom(),
+                            cell.left() + cell.getEffectivePaddingLeft(),
+                            cell.top() - cell.getEffectivePaddingTop(),
+                            y = cell.right() - cell.getEffectivePaddingRight());
+                }
+                else {
+                    float rightLimit = cell.isNoWrap() ? 20000 : cell.right()
+                            - cell.getEffectivePaddingRight();
+                    float y1 = cell.top() - newHeight
+                            + cell.getEffectivePaddingBottom();
+                    float y2 = cell.top() - cell.getEffectivePaddingTop();
+                    y = Math.max(y1, y2);
+                    ct.setSimpleColumn(
+                            cell.left() + cell.getEffectivePaddingLeft(), y1,
+                            rightLimit, y2);
+                }
 				try {
 					status = ct.go(true);
 				} catch (DocumentException e) {
@@ -494,6 +626,7 @@ public class PdfPRow {
 				allEmpty = (allEmpty && thisEmpty);
 				if ((status & ColumnText.NO_MORE_TEXT) == 0 || thisEmpty) {
 					c2.setColumn(ct);
+                    ct.setFilledWidth(0);
 				} else {
 					c2.setPhrase(null);
 				}

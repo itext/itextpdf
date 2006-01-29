@@ -208,6 +208,7 @@ public class PdfPCell extends Rectangle{
         useDescender = cell.useDescender;
         column = ColumnText.duplicate(cell.column);
         useBorderPadding = cell.useBorderPadding;
+        rotation = cell.rotation;
     }
     
     /**
@@ -702,5 +703,33 @@ public class PdfPCell extends Rectangle{
      */
     public void setColumn(ColumnText column) {
         this.column = column;
+    }
+
+    /**
+     * The rotation of the cell. Possible values are
+     * 0, 90, 180 and 270.
+     */
+    private int rotation;
+
+    /**
+     * Gets the rotation of the cell.
+     * @return the rotation of the cell.
+     */
+    public int getRotation() {
+        return this.rotation;
+    }
+
+    /**
+     * Sets the rotation of the cell. Possible values are
+     * 0, 90, 180 and 270.
+     * @param rotation the rotation of the cell
+     */
+    public void setRotation(int rotation) {
+        rotation %= 360;
+        if (rotation < 0)
+            rotation += 360;
+        if ((rotation % 90) != 0)
+            throw new IllegalArgumentException("Rotation must be a multiple of 90.");
+        this.rotation = rotation;
     }
 }
