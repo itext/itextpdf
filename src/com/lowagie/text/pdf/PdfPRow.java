@@ -395,13 +395,13 @@ public class PdfPRow {
                             pivotY = cell.top() + yPos - maxHeight + cell.getEffectivePaddingBottom();
                             switch (cell.getVerticalAlignment()) {
                             case Element.ALIGN_BOTTOM:
-                                pivotX = xPos + cell.width() - cell.getEffectivePaddingRight();
+                                pivotX = cell.left() + xPos + cell.width() - cell.getEffectivePaddingRight();
                                 break;
                             case Element.ALIGN_MIDDLE:
-                                pivotX = xPos + (cell.width() + cell.getEffectivePaddingLeft() - cell.getEffectivePaddingRight() + calcHeight) / 2;
+                                pivotX = cell.left() + xPos + (cell.width() + cell.getEffectivePaddingLeft() - cell.getEffectivePaddingRight() + calcHeight) / 2;
                                 break;
                             default: //top
-                                pivotX = xPos + cell.getEffectivePaddingLeft() + calcHeight;
+                                pivotX = cell.left() + xPos + cell.getEffectivePaddingLeft() + calcHeight;
                                 break;
                             }
                             canvases[PdfPTable.BASECANVAS].saveState();
@@ -417,13 +417,13 @@ public class PdfPRow {
                             pivotY = cell.top() + yPos - cell.getEffectivePaddingTop();
                             switch (cell.getVerticalAlignment()) {
                             case Element.ALIGN_BOTTOM:
-                                pivotX = xPos + cell.getEffectivePaddingLeft();
+                                pivotX = cell.left() + xPos + cell.getEffectivePaddingLeft();
                                 break;
                             case Element.ALIGN_MIDDLE:
-                                pivotX = xPos + (cell.width() + cell.getEffectivePaddingLeft() - cell.getEffectivePaddingRight() - calcHeight) / 2;
+                                pivotX = cell.left() + xPos + (cell.width() + cell.getEffectivePaddingLeft() - cell.getEffectivePaddingRight() - calcHeight) / 2;
                                 break;
                             default: //top
-                                pivotX = xPos + cell.width() - cell.getEffectivePaddingRight() - calcHeight;
+                                pivotX = cell.left() + xPos + cell.width() - cell.getEffectivePaddingRight() - calcHeight;
                                 break;
                             }
                             canvases[PdfPTable.BASECANVAS].saveState();
