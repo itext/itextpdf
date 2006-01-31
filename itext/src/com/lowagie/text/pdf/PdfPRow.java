@@ -75,6 +75,8 @@ public class PdfPRow {
 	protected float maxHeight = 0;
 
 	protected boolean calculated = false;
+    
+    private int[] canvasesPos;
 
 	/**
 	 * Constructs a new PdfPRow with the cells in the array that was passed as a parameter.
@@ -282,6 +284,31 @@ public class PdfPRow {
 		}
 	}
 
+    private void saveAndRotateCanvases(PdfContentByte[] canvases, float a, float b, float c, float d, float e, float f) {
+        int last = PdfPTable.TEXTCANVAS + 1;
+        if (canvasesPos == null) {
+            canvasesPos = new int[last * 2];
+        }
+        for (int k = 0; k < last; ++k) {
+            ByteBuffer bb = canvases[k].getInternalBuffer();
+            canvasesPos[k * 2] = bb.size();
+            canvases[k].saveState();
+            canvases[k].concatCTM(a, b, c, d, e, f);
+            canvasesPos[k * 2 + 1] = bb.size();
+        }
+    }
+    
+    private void restoreCanvases(PdfContentByte[] canvases) {
+        int last = PdfPTable.TEXTCANVAS + 1;
+        for (int k = 0; k < last; ++k) {
+            ByteBuffer bb = canvases[k].getInternalBuffer();
+            int p1 = bb.size();
+            canvases[k].restoreState();
+            if (p1 == canvasesPos[k * 2 + 1])
+                bb.setSize(canvasesPos[k * 2]);
+        }
+    }
+    
 	/**
 	 * Writes a number of cells (not necessarily all cells).
 	 * @param colStart
@@ -404,14 +431,7 @@ public class PdfPRow {
                                 pivotX = cell.left() + xPos + cell.getEffectivePaddingLeft() + calcHeight;
                                 break;
                             }
-                            canvases[PdfPTable.BASECANVAS].saveState();
-                            canvases[PdfPTable.BASECANVAS].concatCTM(0,1,-1,0,pivotX,pivotY);
-                            canvases[PdfPTable.BACKGROUNDCANVAS].saveState();
-                            canvases[PdfPTable.BACKGROUNDCANVAS].concatCTM(0,1,-1,0,pivotX,pivotY);
-                            canvases[PdfPTable.LINECANVAS].saveState();
-                            canvases[PdfPTable.LINECANVAS].concatCTM(0,1,-1,0,pivotX,pivotY);
-                            canvases[PdfPTable.TEXTCANVAS].saveState();
-                            canvases[PdfPTable.TEXTCANVAS].concatCTM(0,1,-1,0,pivotX,pivotY);
+                            saveAndRotateCanvases(canvases, 0,1,-1,0,pivotX,pivotY);
                         }
                         else {
                             pivotY = cell.top() + yPos - cell.getEffectivePaddingTop();
@@ -426,24 +446,14 @@ public class PdfPRow {
                                 pivotX = cell.left() + xPos + cell.width() - cell.getEffectivePaddingRight() - calcHeight;
                                 break;
                             }
-                            canvases[PdfPTable.BASECANVAS].saveState();
-                            canvases[PdfPTable.BASECANVAS].concatCTM(0,-1,1,0,pivotX,pivotY);
-                            canvases[PdfPTable.BACKGROUNDCANVAS].saveState();
-                            canvases[PdfPTable.BACKGROUNDCANVAS].concatCTM(0,-1,1,0,pivotX,pivotY);
-                            canvases[PdfPTable.LINECANVAS].saveState();
-                            canvases[PdfPTable.LINECANVAS].concatCTM(0,-1,1,0,pivotX,pivotY);
-                            canvases[PdfPTable.TEXTCANVAS].saveState();
-                            canvases[PdfPTable.TEXTCANVAS].concatCTM(0,-1,1,0,pivotX,pivotY);
+                            saveAndRotateCanvases(canvases, 0,-1,1,0,pivotX,pivotY);
                         }
                         try {
                             ct.go();
                         } catch (DocumentException e) {
                             throw new ExceptionConverter(e);
                         } finally {
-                            canvases[PdfPTable.BASECANVAS].restoreState();
-                            canvases[PdfPTable.BACKGROUNDCANVAS].restoreState();
-                            canvases[PdfPTable.LINECANVAS].restoreState();
-                            canvases[PdfPTable.TEXTCANVAS].restoreState();
+                            restoreCanvases(canvases);
                         }
                     }
                 } 
@@ -483,14 +493,7 @@ public class PdfPRow {
                         if (cell.getRotation() == 180) {
                             float shx = leftLimit + rightLimit;
                             float shy = bry - 0.001f + tly;
-                            canvases[PdfPTable.BASECANVAS].saveState();
-                            canvases[PdfPTable.BASECANVAS].concatCTM(-1,0,0,-1,shx,shy);
-                            canvases[PdfPTable.BACKGROUNDCANVAS].saveState();
-                            canvases[PdfPTable.BACKGROUNDCANVAS].concatCTM(-1,0,0,-1,shx,shy);
-                            canvases[PdfPTable.LINECANVAS].saveState();
-                            canvases[PdfPTable.LINECANVAS].concatCTM(-1,0,0,-1,shx,shy);
-                            canvases[PdfPTable.TEXTCANVAS].saveState();
-                            canvases[PdfPTable.TEXTCANVAS].concatCTM(-1,0,0,-1,shx,shy);
+                            saveAndRotateCanvases(canvases, -1,0,0,-1,shx,shy);
                         }
                         try {
                             ct.go();
@@ -498,10 +501,7 @@ public class PdfPRow {
                             throw new ExceptionConverter(e);
                         } finally {
                             if (cell.getRotation() == 180) {
-                                canvases[PdfPTable.BASECANVAS].restoreState();
-                                canvases[PdfPTable.BACKGROUNDCANVAS].restoreState();
-                                canvases[PdfPTable.LINECANVAS].restoreState();
-                                canvases[PdfPTable.TEXTCANVAS].restoreState();
+                                restoreCanvases(canvases);
                             }
                         }
                     }

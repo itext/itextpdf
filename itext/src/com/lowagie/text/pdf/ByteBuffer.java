@@ -568,6 +568,12 @@ public class ByteBuffer extends OutputStream {
         return count;
     }
     
+    public void setSize(int size) {
+        if (size > count || size < 0)
+            throw new IndexOutOfBoundsException("The new size must be positive and <= of the current size");
+        count = size;
+    }
+    
     /**
      * Converts the buffer's contents into a string, translating bytes into
      * characters according to the platform's default character encoding.
