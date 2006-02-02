@@ -160,6 +160,9 @@ public class TiffImage {
             int rowsStrip = (int)Math.min(h, tstrip);
             long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
+            if (size == null && h == rowsStrip) { // some TIFF producers are really lousy, so...
+                size = new long[]{s.length() - (int)offset[0]};
+            }
             boolean reverse = false;
             TIFFField fillOrderField =  dir.getField(TIFFConstants.TIFFTAG_FILLORDER);
             if (fillOrderField != null)
@@ -339,6 +342,9 @@ public class TiffImage {
             int rowsStrip = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_ROWSPERSTRIP);
             long offset[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPOFFSETS);
             long size[] = getArrayLongShort(dir, TIFFConstants.TIFFTAG_STRIPBYTECOUNTS);
+            if (size == null && h == rowsStrip) { // some TIFF producers are really lousy, so...
+                size = new long[]{s.length() - (int)offset[0]};
+            }
             if (compression == TIFFConstants.COMPRESSION_LZW) {
                 TIFFField predictorField = dir.getField(TIFFConstants.TIFFTAG_PREDICTOR);
                 if (predictorField != null) {
