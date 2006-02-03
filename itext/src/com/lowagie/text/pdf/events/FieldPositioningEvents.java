@@ -92,6 +92,9 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
     /** Creates a new event. This constructor will be used if you need to position fields with Chunk objects. */
     public FieldPositioningEvents() {}
     
+    /** Some extra padding that will be taken into account when defining the widget. */
+    public float padding;
+    
     /**
      * Add a PdfFormField that has to be tied to a generic Chunk.
      */
@@ -130,7 +133,14 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 		tf.setFontSize(14);
 		cellField = tf.getTextField();
 	}  
-    
+
+	/**
+	 * @param padding The padding to set.
+	 */
+	public void setPadding(float padding) {
+		this.padding = padding;
+	}
+	
 	/**
 	 * @param parent The parent to set.
 	 */
@@ -145,7 +155,7 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 		rect.setBottom(rect.bottom() - 3);
 		PdfFormField field = (PdfFormField) genericChunkFields.get(text);
 		if (field == null) {
-			TextField tf = new TextField(writer, rect, text);
+			TextField tf = new TextField(writer, new Rectangle(rect.left(padding), rect.bottom(padding), rect.right(padding), rect.top(padding)), text);
 			tf.setFontSize(14);
 			try {
 				field = tf.getTextField();
@@ -154,7 +164,7 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 			}
 		}
 		else {
-			field.put(PdfName.RECT, new PdfRectangle(rect));
+			field.put(PdfName.RECT,  new PdfRectangle(rect.left(padding), rect.bottom(padding), rect.right(padding), rect.top(padding)));
 		}
 		if (parent == null)
 			writer.addAnnotation(field);
@@ -165,9 +175,9 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 	/**
 	 * @see com.lowagie.text.pdf.PdfPCellEvent#cellLayout(com.lowagie.text.pdf.PdfPCell, com.lowagie.text.Rectangle, com.lowagie.text.pdf.PdfContentByte[])
 	 */
-	public void cellLayout(PdfPCell cell, Rectangle position, PdfContentByte[] canvases) {
-		if (cellField == null || fieldWriter == null) throw new ExceptionConverter(new IllegalArgumentException("You have used the wrong constructor for this FieldPositioningEvents class."));
-		cellField.put(PdfName.RECT, new PdfRectangle(position));
+	public void cellLayout(PdfPCell cell, Rectangle rect, PdfContentByte[] canvases) {
+		if (cellField == null || (fieldWriter == null && parent == null)) throw new ExceptionConverter(new IllegalArgumentException("You have used the wrong constructor for this FieldPositioningEvents class."));
+		cellField.put(PdfName.RECT, new PdfRectangle(rect.left(padding), rect.bottom(padding), rect.right(padding), rect.top(padding)));
 		if (parent == null)
 			fieldWriter.addAnnotation(cellField);
 		else
