@@ -84,6 +84,10 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
      * The PdfWriter to use when a field has to added in a cell event. 
      */
     protected PdfWriter fieldWriter = null;
+    /**
+     * The PdfFormField that is the parent of the field added in a cell event. 
+     */
+    protected PdfFormField parent = null;
     
     /** Creates a new event. This constructor will be used if you need to position fields with Chunk objects. */
     public FieldPositioningEvents() {}
@@ -101,6 +105,12 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
     	this.fieldWriter = writer;
     }  
     
+    /** Creates a new event. This constructor will be used if you need to position fields with a Cell Event. */
+    public FieldPositioningEvents(PdfFormField parent, PdfFormField field) {
+    	this.cellField = field;
+    	this.parent = parent;
+    }
+    
     /** Creates a new event. This constructor will be used if you need to position fields with a Cell Event. 
      * @throws DocumentException
      * @throws IOException*/
@@ -111,6 +121,22 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 		cellField = tf.getTextField();
 	}   
     
+    /** Creates a new event. This constructor will be used if you need to position fields with a Cell Event. 
+     * @throws DocumentException
+     * @throws IOException*/
+    public FieldPositioningEvents(PdfWriter writer, PdfFormField parent, String text) throws IOException, DocumentException {
+    	this.parent = parent;
+    	TextField tf = new TextField(writer, new Rectangle(0, 0), text);
+		tf.setFontSize(14);
+		cellField = tf.getTextField();
+	}  
+    
+	/**
+	 * @param parent The parent to set.
+	 */
+	public void setParent(PdfFormField parent) {
+		this.parent = parent;
+	}
 	/**
 	 * @see com.lowagie.text.pdf.PdfPageEvent#onGenericTag(com.lowagie.text.pdf.PdfWriter, com.lowagie.text.Document, com.lowagie.text.Rectangle, java.lang.String)
 	 */
@@ -130,7 +156,10 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 		else {
 			field.put(PdfName.RECT, new PdfRectangle(rect));
 		}
-		writer.addAnnotation(field);
+		if (parent == null)
+			writer.addAnnotation(field);
+		else
+			parent.addKid(field);
 	}
 
 	/**
@@ -139,6 +168,9 @@ public class FieldPositioningEvents extends PdfPageEventHelper implements PdfPCe
 	public void cellLayout(PdfPCell cell, Rectangle position, PdfContentByte[] canvases) {
 		if (cellField == null || fieldWriter == null) throw new ExceptionConverter(new IllegalArgumentException("You have used the wrong constructor for this FieldPositioningEvents class."));
 		cellField.put(PdfName.RECT, new PdfRectangle(position));
-		fieldWriter.addAnnotation(cellField);
+		if (parent == null)
+			fieldWriter.addAnnotation(cellField);
+		else
+			parent.addKid(cellField);
 	}
 }
