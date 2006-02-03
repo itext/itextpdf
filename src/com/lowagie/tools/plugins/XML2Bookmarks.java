@@ -57,9 +57,8 @@ import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.SimpleBookmark;
 import com.lowagie.tools.arguments.FileArgument;
@@ -108,13 +107,10 @@ public class XML2Bookmarks extends AbstractTool {
             PdfReader reader = new PdfReader(((File)getValue("pdffile")).getAbsolutePath());
             reader.consolidateNamedDestinations();
             int n = reader.getNumberOfPages();
-            Document document = new Document();
-            PdfCopy writer = new PdfCopy(document, new FileOutputStream((File)getValue("destfile")));
-            document.open();
-            for(int i=1; i<=n; i++) writer.addPage(writer.getImportedPage(reader, i));
-            writer.setOutlines(bookmarks);
-            writer.setViewerPreferences(reader.getViewerPreferences() | PdfWriter.PageModeUseOutlines);
-            document.close();
+            PdfStamper stamper = new PdfStamper(reader, new FileOutputStream((File)getValue("destfile")));
+            stamper.setOutlines(bookmarks);
+            stamper.setViewerPreferences(reader.getViewerPreferences() | PdfWriter.PageModeUseOutlines);
+            stamper.close();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
