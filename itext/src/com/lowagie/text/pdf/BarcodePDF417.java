@@ -84,9 +84,9 @@ public class BarcodePDF417 {
     /** The error level correction is set by the user. It can be 0 to 8. */    
     public static final int PDF417_USE_ERROR_LEVEL = 16;
     /**
-     * No text segmentation is done and one single byte segment is used
+     * One single binary segment is used
      */
-    public static final int PDF417_FORCE_BYTES = 32;
+    public static final int PDF417_FORCE_BINARY = 32;
     /** No <CODE>text</CODE> interpretation is done and the content of <CODE>codewords</CODE>
      * is used directly.
      */    
@@ -520,7 +520,7 @@ public class BarcodePDF417 {
         Segment vp;
         Segment vn;
         
-        if ((options & PDF417_FORCE_BYTES) != 0) {
+        if ((options & PDF417_FORCE_BINARY) != 0) {
             segmentList.add('B', 0, textLength);
             return;
         }
