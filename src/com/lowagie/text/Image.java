@@ -710,7 +710,7 @@ public abstract class Image extends Rectangle implements Element,
 	 * @throws IOException
 	 */
 	public static Image getInstance(PdfWriter writer, java.awt.Image awtImage, float quality) throws BadElementException, IOException {
-		return getInstance(writer.getDirectContent(), awtImage, quality);
+		return getInstance(new PdfContentByte(writer), awtImage, quality);
 	}
 	
     /**
