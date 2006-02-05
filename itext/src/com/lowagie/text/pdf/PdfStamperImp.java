@@ -1356,7 +1356,7 @@ class PdfStamperImp extends PdfWriter {
         dic.put(PdfName.THUMB, thumb);
         reader.resetReleasePage();
     }
-/*
+
     public PdfContentByte getDirectContentUnder() {
         throw new UnsupportedOperationException("Use PdfStamper.getUnderContent() or PdfStamper.getOverContent()");
     }
@@ -1364,7 +1364,7 @@ class PdfStamperImp extends PdfWriter {
     public PdfContentByte getDirectContent() {
         throw new UnsupportedOperationException("Use PdfStamper.getUnderContent() or PdfStamper.getOverContent()");
     }
- */  
+    
     static class PageStamp {
         
         PdfDictionary pageN;
