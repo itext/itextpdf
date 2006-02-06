@@ -1085,9 +1085,12 @@ public class AcroFields {
         if (PdfName.TX.equals(type) || PdfName.CH.equals(type)) {
             PdfString v = new PdfString(value, PdfObject.TEXT_UNICODE);
             for (int idx = 0; idx < item.values.size(); ++idx) {
-                ((PdfDictionary)item.values.get(idx)).put(PdfName.V, v);
-                markUsed((PdfDictionary)item.values.get(idx));
+                PdfDictionary valueDic = (PdfDictionary)item.values.get(idx);
+                valueDic.put(PdfName.V, v);
+                valueDic.remove(PdfName.I);
+                markUsed(valueDic);                
                 PdfDictionary merged = (PdfDictionary)item.merged.get(idx);
+                merged.remove(PdfName.I);
                 merged.put(PdfName.V, v);
                 PdfDictionary widget = (PdfDictionary)item.widgets.get(idx);
                 if (generateAppearances) {
