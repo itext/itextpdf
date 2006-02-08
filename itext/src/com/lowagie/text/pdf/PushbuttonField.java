@@ -71,7 +71,7 @@ import java.io.IOException;
  * bt.setBorderStyle(PdfBorderDictionary.STYLE_SOLID);
  * bt.setBorderColor(Color.red);
  * bt.setBorderWidth(3);
- * PdfFormField ff = bt.getButton();
+ * PdfFormField ff = bt.getField();
  * PdfAction ac = PdfAction.createSubmitForm("http://www.submit-site.com", null, 0);
  * ff.setAction(ac);
  * writer.addAnnotation(ff);
@@ -318,7 +318,7 @@ public class PushbuttonField extends BaseField {
      * @throws DocumentException on error
      * @return the button appearance
      */    
-    protected PdfAppearance getAppearance() throws IOException, DocumentException {
+    public PdfAppearance getAppearance() throws IOException, DocumentException {
         PdfAppearance app = getBorderAppearance();
         Rectangle box = new Rectangle(app.getBoundingBox());
         if ((text == null || text.length() == 0) && (layout == LAYOUT_LABEL_ONLY || (image == null && template == null))) {
