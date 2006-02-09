@@ -364,6 +364,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+            if(this.inTable) {
+                result.write(RtfParagraph.IN_TABLE);
+            }
             switch (this.alignment) {
                 case Element.ALIGN_LEFT:
                     result.write(RtfParagraphStyle.ALIGN_LEFT);
@@ -416,6 +419,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     result.write(OPEN_GROUP);
                     result.write(LIST_TEXT);
                     result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+                    if(this.inTable) {
+                        result.write(RtfParagraph.IN_TABLE);
+                    }
                     result.write(RtfFontList.FONT_NUMBER);
                     if(numbered) {
                         result.write(intToByteArray(fontNumber.getFontNumber()));
@@ -442,7 +448,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 }
             }
             result.write(CLOSE_GROUP);
-            result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+            if(!this.inTable) {
+                result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
+            }
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
