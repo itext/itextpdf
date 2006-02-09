@@ -63,7 +63,7 @@ import java.io.IOException;
  * PdfContentByte cb = writer.getDirectContent();
  * RadioCheckField bt = new RadioCheckField(writer, new Rectangle(100, 100, 200, 200), "radio", "v1");
  * bt.setCheckType(RadioCheckField.TYPE_CIRCLE);
- * bt.setBackgroundColor(Color.CYAN);
+ * bt.setBackgroundColor(Color.cyan);
  * bt.setBorderStyle(PdfBorderDictionary.STYLE_SOLID);
  * bt.setBorderColor(Color.red);
  * bt.setTextColor(Color.yellow);

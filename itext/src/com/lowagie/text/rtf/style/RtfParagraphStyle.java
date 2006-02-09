@@ -66,7 +66,7 @@ public class RtfParagraphStyle extends RtfFont {
     /**
      * The NORMAL/STANDARD style.
      */
-    public static final RtfParagraphStyle STYLE_NORMAL = new RtfParagraphStyle("Normal", "Arial", 12, Font.NORMAL, Color.BLACK);
+    public static final RtfParagraphStyle STYLE_NORMAL = new RtfParagraphStyle("Normal", "Arial", 12, Font.NORMAL, Color.black);
     /**
      * The style for level 1 headings.
      */
@@ -211,7 +211,6 @@ public class RtfParagraphStyle extends RtfFont {
      */
     public RtfParagraphStyle(String styleName, String fontName, int fontSize, int fontStyle, Color fontColor) {
         super(null, new RtfFont(fontName, fontSize, fontStyle, fontColor));
-        this.styleName = styleName;
     }
     
     /**
