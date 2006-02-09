@@ -79,7 +79,7 @@ public class RtfPhrase extends RtfElement {
     /**
      * Constant for phrase in a table indication
      */
-    protected static final byte[] IN_TABLE = "\\intbl".getBytes();
+    public static final byte[] IN_TABLE = "\\intbl".getBytes();
     /**
      * Constant for the line spacing.
      */
