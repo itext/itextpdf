@@ -70,7 +70,8 @@ import com.lowagie.text.ExceptionConverter;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
- * @version $Revision$Date: 2004/12/14 10:05:44 $
+ * @version $Revision$Date: 2004/12/14 15:14:43 $
+ * @deprecated Please move to the RtfWriter2 and associated classes. com.lowagie.text.rtf.field.RtfTableOfContents replaces the functionality of this class.
  */
 public class RtfTOC extends Chunk implements RtfField {
 

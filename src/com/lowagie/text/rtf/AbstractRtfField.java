@@ -70,6 +70,7 @@ import java.io.IOException;
  * @author <a href="mailto:Dirk.Weigenand@smb-tec.com">Dirk Weigenand</a>
  * @version $Id$
  * @since Mon Aug 19 14:50:39 2002
+ * @deprecated Please move to the RtfWriter2 and associated classes.
  */
 abstract class AbstractRtfField extends Chunk implements RtfField {
     private static final byte[] fldDirty = "\\flddirty".getBytes();
