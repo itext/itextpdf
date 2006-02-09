@@ -1,5 +1,7 @@
 /*
- * Copyright 2002 by Paulo Soares.
+ * $Id$
+ *
+ * Copyright 2002-2006 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -448,6 +450,28 @@ public abstract class Barcode {
      *
      */
     public void setInkSpreading(float inkSpreading) {
+    }
+
+    /**
+     * The alternate text to be used, if present.
+     */
+    protected String altText;
+
+    /**
+     * Gets the alternate text.
+     * @return the alternate text
+     */
+    public String getAltText() {
+        return this.altText;
+    }
+
+    /**
+     * Sets the alternate text. If present, this text will be used instead of the
+     * text derived from the supplied code.
+     * @param altText the alternate text
+     */
+    public void setAltText(String altText) {
+        this.altText = altText;
     }
     
 }

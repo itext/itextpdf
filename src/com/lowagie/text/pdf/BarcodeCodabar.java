@@ -1,5 +1,7 @@
 /*
- * Copyright 2002 by Paulo Soares.
+ * $Id$
+ *
+ * Copyright 2002-2006 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -176,7 +178,7 @@ public class BarcodeCodabar extends Barcode{
                 fontY = baseline - font.getFontDescriptor(BaseFont.DESCENT, size);
             else
                 fontY = -baseline + size;
-            fontX = font.getWidthPoint(text, size);
+            fontX = font.getWidthPoint(altText != null ? altText : text, size);
         }
         text = code;
         if (generateChecksum)
@@ -237,7 +239,7 @@ public class BarcodeCodabar extends Barcode{
             fullCode = fullCode.substring(1, fullCode.length() - 1);
         float fontX = 0;
         if (font != null) {
-            fontX = font.getWidthPoint(fullCode, size);
+            fontX = font.getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
         }
         byte bars[] = getBarsCodabar(generateChecksum ? calculateChecksum(code) : code);
         int wide = 0;
