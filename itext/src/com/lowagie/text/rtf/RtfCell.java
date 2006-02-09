@@ -66,6 +66,7 @@ import java.awt.Color;
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
  * Updates by Benoit WIART <b.wiart@proxiad.com>
+ * @deprecated Please move to the RtfWriter2 and associated classes.
  */
 public class RtfCell {
     /** Constants for merging Cells */

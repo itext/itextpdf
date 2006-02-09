@@ -68,6 +68,7 @@ import com.lowagie.text.Font;
  * @author <a href="mailto:Dirk.Weigenand@smb-tec.com">Dirk Weigenand</a>
  * @version $Id$
  * @since Mon Aug 19 14:50:39 2002
+ * @deprecated Please move to the RtfWriter2 and associated classes.
  */
 public class GenericRtfField extends AbstractRtfField implements RtfField {
     /**

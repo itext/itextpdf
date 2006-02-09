@@ -113,6 +113,7 @@ import com.lowagie.text.pdf.codec.wmf.MetaDo;
  * @author Steffen Stundzig
  * @author <a href="ericmattes@yahoo.com">Eric Mattes</a>
  * @author <a href="raul.wegmann@uam.es">Raul Wegmann</a>
+ * @deprecated The RtfWriter is deprecated and will be removed from the iText library end of 2007
  */
 public class RtfWriter extends DocWriter implements DocListener {
     /**

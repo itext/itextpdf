@@ -67,6 +67,7 @@ import java.awt.Color;
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
  * Code added by c
+ * @deprecated Please move to the RtfWriter2 and associated classes.
  */
 public class RtfRow {
     /** Table border solid */
