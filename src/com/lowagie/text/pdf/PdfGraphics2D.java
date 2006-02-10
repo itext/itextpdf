@@ -222,8 +222,11 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#drawImage(BufferedImage, BufferedImageOp, int, int)
      */
     public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
-        BufferedImage result = op.createCompatibleDestImage(img, img.getColorModel());
-        result = op.filter(img, result);
+        BufferedImage result = img;
+        if (op != null) {
+            result = op.createCompatibleDestImage(img, img.getColorModel());
+            result = op.filter(img, result);
+        }
         drawImage(result, x, y, null);
     }
     
