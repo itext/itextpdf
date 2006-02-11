@@ -598,14 +598,6 @@ class PdfCopyFieldsImp extends PdfWriter {
             nd.open();
     }    
     
-    public PdfContentByte getDirectContentUnder() {
-        throw new UnsupportedOperationException();
-    }
-
-    public PdfContentByte getDirectContent() {
-        throw new UnsupportedOperationException();
-    }
-
     protected static final HashMap widgetKeys = new HashMap();
     protected static final HashMap fieldKeys = new HashMap();
     static {
