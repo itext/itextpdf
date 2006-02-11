@@ -451,6 +451,13 @@ public class PdfCopy extends PdfWriter {
             }
         }
     }
+    public PdfContentByte getDirectContentUnder() {
+        throw new UnsupportedOperationException();
+    }
+
+    public PdfContentByte getDirectContent() {
+        throw new UnsupportedOperationException();
+    }
     PdfIndirectReference add(PdfImage pdfImage) throws PdfException  { return null; }
     public PdfIndirectReference add(PdfOutline outline) { return null; }
     public void addAnnotation(PdfAnnotation annot) {  }
