@@ -141,15 +141,17 @@ public class PdfPRow {
 			if (img != null) {
 				img.scalePercent(100);
                 float refWidth = img.scaledWidth();
-                float refHeight = img.scaledHeight();
                 if (cell.getRotation() == 90 || cell.getRotation() == 270) {
                     refWidth = img.scaledHeight();
-                    refHeight = img.scaledWidth();
                 }
                 float scale = (cell.right() - cell.getEffectivePaddingRight()
                     - cell.getEffectivePaddingLeft() - cell.left())
                     / refWidth;
                 img.scalePercent(scale * 100);
+                float refHeight = img.scaledHeight();
+                if (cell.getRotation() == 90 || cell.getRotation() == 270) {
+                    refHeight = img.scaledWidth();
+                }
                 cell.setBottom(cell.top() - cell.getEffectivePaddingTop()
                     - cell.getEffectivePaddingBottom()
                     - refHeight);
