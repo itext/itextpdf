@@ -700,7 +700,7 @@ public abstract class Image extends Rectangle implements Element,
 	 * 
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> object to which the image will be added
-	 * @param image
+	 * @param awtImage
 	 *            the <CODE>java.awt.Image</CODE> to convert
 	 * @param quality
 	 *            a float value between 0 and 1
@@ -719,7 +719,7 @@ public abstract class Image extends Rectangle implements Element,
      *
      * @param cb
      *            the <CODE>PdfContentByte</CODE> object to which the image will be added
-     * @param image
+     * @param awtImage
      *            the <CODE>java.awt.Image</CODE> to convert
      * @param quality
      *            a float value between 0 and 1

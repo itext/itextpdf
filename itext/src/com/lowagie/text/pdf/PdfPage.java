@@ -58,7 +58,6 @@ import java.util.HashMap;
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 6.4 (page 73-81)
  *
- * @see		PdfPageElement
  * @see		PdfPages
  */
 
