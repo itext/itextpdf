@@ -627,7 +627,7 @@ public class PdfPCell extends Rectangle{
     }
     
     /** Sets the cell event for this cell.
-     * @param cellEvent the cell event
+     * @param event the cell event
      *
      */
     public void setCellEvent(PdfPCellEvent event) {

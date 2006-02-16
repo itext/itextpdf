@@ -1749,7 +1749,7 @@ public class PdfWriter extends DocWriter {
     
     /**
      * Sets the <CODE>PdfPageEvent</CODE> for this document.
-     * @param pageEvent the <CODE>PdfPageEvent</CODE> for this document
+     * @param event the <CODE>PdfPageEvent</CODE> for this document
      */
     
     public void setPageEvent(PdfPageEvent event) {
