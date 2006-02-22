@@ -56,7 +56,10 @@ package com.lowagie.text.pdf;
  */
 public class GrayColor extends ExtendedColor {
 
-    float gray;
+    private float gray;
+    
+    public static final GrayColor GRAYBLACK = new GrayColor(0f);
+    public static final GrayColor GRAYWHITE = new GrayColor(1f);
 
     public GrayColor(int intGray) {
         this((float)intGray / 255f);
