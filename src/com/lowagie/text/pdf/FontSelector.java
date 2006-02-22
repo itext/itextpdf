@@ -106,7 +106,7 @@ public class FontSelector {
                         if (sb.length() > 0 && lastidx != -1) {
                             Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx));
                             ret.add(ck);
-                            sb = new StringBuffer();
+                            sb.setLength(0);
                         }
                         sb.append(c);
                         lastidx = f;
