@@ -179,6 +179,8 @@ public class PdfContentParser {
                 return str;
             case PRTokeniser.TK_NAME:
                 return new PdfName(tokeniser.getStringValue());
+            case PRTokeniser.TK_NUMBER:
+                return new PdfNumber(tokeniser.getStringValue());
             case PRTokeniser.TK_OTHER:
                 return new PdfLiteral(COMMAND_TYPE, tokeniser.getStringValue());
             default:
