@@ -75,6 +75,7 @@ public class AcroFields {
     static private final int DA_FONT = 0;
     static private final int DA_SIZE = 1;
     static private final int DA_COLOR = 2;
+    private HashMap extensionFonts = new HashMap();
     /**
      * A field type invalid or not found.
      */    
@@ -117,6 +118,7 @@ public class AcroFields {
     
     private float extraMarginLeft;
     private float extraMarginTop;
+    private ArrayList substitutionFonts;
     
     AcroFields(PdfReader reader, PdfWriter writer) {
         this.reader = reader;
@@ -505,6 +507,7 @@ public class AcroFields {
             tx = new TextField(writer, null, null);
             tx.setExtraMargin(extraMarginLeft, extraMarginTop);
             tx.setBorderWidth(0);
+            tx.setSubstitutionFonts(substitutionFonts);
             // the text size and color
             PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
             if (da != null) {
@@ -519,8 +522,37 @@ public class AcroFields {
                         font = (PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONT));
                         if (font != null) {
                             PdfObject po = font.get(new PdfName((String)dab[DA_FONT]));
-                            if (po != null && po.type() == PdfObject.INDIRECT)
-                                tx.setFont(new DocumentFont((PRIndirectReference)po));
+                            if (po != null && po.type() == PdfObject.INDIRECT) {
+                                PRIndirectReference por = (PRIndirectReference)po;
+                                BaseFont bp = new DocumentFont((PRIndirectReference)po);
+                                tx.setFont(bp);
+                                Integer porkey = new Integer(por.getNumber());
+                                BaseFont porf = (BaseFont)extensionFonts.get(porkey);
+                                if (porf == null) {
+                                    if (!extensionFonts.containsKey(porkey)) {
+                                        PdfDictionary fo = (PdfDictionary)PdfReader.getPdfObject(po);
+                                        PdfDictionary fd = (PdfDictionary)PdfReader.getPdfObject(fo.get(PdfName.FONTDESCRIPTOR));
+                                        if (fd != null) {
+                                            PRStream prs = (PRStream)PdfReader.getPdfObject(fd.get(PdfName.FONTFILE2));
+                                            if (prs == null)
+                                                prs = (PRStream)PdfReader.getPdfObject(fd.get(PdfName.FONTFILE3));
+                                            if (prs == null) {
+                                                extensionFonts.put(porkey, null);
+                                            }
+                                            else {
+                                                try {
+                                                    porf = BaseFont.createFont("font.ttf", BaseFont.IDENTITY_H, true, false, PdfReader.getStreamBytes(prs), null);
+                                                }
+                                                catch (Exception e) {
+                                                    porf = null;
+                                                }
+                                                extensionFonts.put(porkey, porf);
+                                            }
+                                        }
+                                    }
+                                }
+                                tx.setExtensionFont(porf);
+                            }
                             else {
                                 BaseFont bf = (BaseFont)localFonts.get(dab[DA_FONT]);
                                 if (bf == null) {
@@ -1729,6 +1761,17 @@ public class AcroFields {
         this.extraMarginLeft = extraMarginLeft;
         this.extraMarginTop = extraMarginTop;
     }
+    
+    /**
+     * Adds a substitution font to the list. The fonts in this list will be used if the original
+     * font doesn't contain the needed glyphs.
+     * @param font the font
+     */
+    public void addSubstitutionFont(BaseFont font) {
+        if (substitutionFonts == null)
+            substitutionFonts = new ArrayList();
+        substitutionFonts.add(font);
+    }
 
     private static final HashMap stdFieldFontNames = new HashMap();
     
@@ -1818,5 +1861,23 @@ public class AcroFields {
             int n2 = ((int[])((Object[])o2)[1])[0];
             return n1 - n2;
         }        
+    }
+
+    /**
+     * Gets the list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can be <CODE>null</CODE>. The fonts in this list will be used if the original
+     * font doesn't contain the needed glyphs.
+     * @return the list
+     */
+    public ArrayList getSubstitutionFonts() {
+        return substitutionFonts;
+    }
+
+    /**
+     * Sets a list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can also be <CODE>null</CODE>. The fonts in this list will be used if the original
+     * font doesn't contain the needed glyphs.
+     * @param substitutionFonts the list
+     */
+    public void setSubstitutionFonts(ArrayList substitutionFonts) {
+        this.substitutionFonts = substitutionFonts;
     }
 }

@@ -124,8 +124,12 @@ public class PdfAppearance extends PdfTemplate {
             state.fontDetails = writer.addSimple(bf);
         PdfName psn = (PdfName)stdFieldFontNames.get(bf.getPostscriptFontName());
         if (psn == null) {
-            psn = new PdfName(bf.getPostscriptFontName());
-            bf.setSubset(false);
+            if (bf.isSubset() && bf.getFontType() == BaseFont.FONT_TYPE_TTUNI)
+                psn = state.fontDetails.getFontName();
+            else {
+                psn = new PdfName(bf.getPostscriptFontName());
+                state.fontDetails.setSubset(false);
+            }
         }
         PageResources prs = getPageResources();
 //        PdfName name = state.fontDetails.getFontName();

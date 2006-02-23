@@ -228,34 +228,26 @@ class FontDetails {
                 case BaseFont.FONT_TYPE_TT: {
                     int firstChar;
                     int lastChar;
-                    if (subset) {
-                        for (firstChar = 0; firstChar < 256; ++firstChar) {
-                            if (shortTag[firstChar] != 0)
-                                break;
-                        }
-                        for (lastChar = 255; lastChar >= firstChar; --lastChar) {
-                            if (shortTag[lastChar] != 0)
-                                break;
-                        }
-                        if (firstChar > 255) {
-                            firstChar = 255;
-                            lastChar = 255;
-                        }
+                    for (firstChar = 0; firstChar < 256; ++firstChar) {
+                        if (shortTag[firstChar] != 0)
+                            break;
                     }
-                    else {
-                        for (int k = 0; k < shortTag.length; ++k)
-                            shortTag[k] = 1;
-                        firstChar = 0;
-                        lastChar = shortTag.length - 1;
+                    for (lastChar = 255; lastChar >= firstChar; --lastChar) {
+                        if (shortTag[lastChar] != 0)
+                            break;
                     }
-                    baseFont.writeFont(writer, indirectReference, new Object[]{new Integer(firstChar), new Integer(lastChar), shortTag});
+                    if (firstChar > 255) {
+                        firstChar = 255;
+                        lastChar = 255;
+                    }
+                    baseFont.writeFont(writer, indirectReference, new Object[]{new Integer(firstChar), new Integer(lastChar), shortTag, new Boolean(subset)});
                     break;
                 }
                 case BaseFont.FONT_TYPE_CJK:
                     baseFont.writeFont(writer, indirectReference, new Object[]{cjkTag});
                     break;
                 case BaseFont.FONT_TYPE_TTUNI:
-                    baseFont.writeFont(writer, indirectReference, new Object[]{longTag});
+                    baseFont.writeFont(writer, indirectReference, new Object[]{longTag, new Boolean(subset)});
                     break;
             }
         }
