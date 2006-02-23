@@ -647,7 +647,8 @@ class Type1Font extends BaseFont
         int firstChar = ((Integer)params[0]).intValue();
         int lastChar = ((Integer)params[1]).intValue();
         byte shortTag[] = (byte[])params[2];
-        if (!subset) {
+        boolean subsetp = ((Boolean)params[3]).booleanValue() && subset;
+        if (!subsetp) {
             firstChar = 0;
             lastChar = shortTag.length - 1;
             for (int k = 0; k < shortTag.length; ++k)

@@ -67,6 +67,8 @@ class TrueTypeFontSubSet {
         "hhea", "hmtx", "loca", "maxp", "prep"};
     static final String tableNamesCmap[] = {"cmap", "cvt ", "fpgm", "glyf", "head",
         "hhea", "hmtx", "loca", "maxp", "prep"};
+    static final String tableNamesExtra[] = {"OS/2", "cmap", "cvt ", "fpgm", "glyf", "head",
+        "hhea", "hmtx", "loca", "maxp", "name, prep"};
     static final int entrySelectors[] = {0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,4,4,4,4,4};
     static final int TABLE_CHECKSUM = 0;
     static final int TABLE_OFFSET = 1;
@@ -93,6 +95,7 @@ class TrueTypeFontSubSet {
      */
     protected String fileName;
     protected boolean includeCmap;
+    protected boolean includeExtras;
     protected boolean locaShortTable;
     protected int locaTable[];
     protected HashMap glyphsUsed;
@@ -113,11 +116,12 @@ class TrueTypeFontSubSet {
      * @param glyphsUsed the glyphs used
      * @param includeCmap <CODE>true</CODE> if the table cmap is to be included in the generated font
      */
-    TrueTypeFontSubSet(String fileName, RandomAccessFileOrArray rf, HashMap glyphsUsed, int directoryOffset, boolean includeCmap) {
+    TrueTypeFontSubSet(String fileName, RandomAccessFileOrArray rf, HashMap glyphsUsed, int directoryOffset, boolean includeCmap, boolean includeExtras) {
         this.fileName = fileName;
         this.rf = rf;
         this.glyphsUsed = glyphsUsed;
         this.includeCmap = includeCmap;
+        this.includeExtras = includeExtras;
         this.directoryOffset = directoryOffset;
         glyphsInList = new ArrayList(glyphsUsed.keySet());
     }
@@ -152,10 +156,14 @@ class TrueTypeFontSubSet {
         int tableLocation[];
         int fullFontSize = 0;
         String tableNames[];
-        if (includeCmap)
-            tableNames = tableNamesCmap;
-        else
-            tableNames = tableNamesSimple;
+        if (includeExtras)
+            tableNames = tableNamesExtra;
+        else {
+            if (includeCmap)
+                tableNames = tableNamesCmap;
+            else
+                tableNames = tableNamesSimple;
+        }
         int tablesUsed = 2;
         int len = 0;
         for (int k = 0; k < tableNames.length; ++k) {

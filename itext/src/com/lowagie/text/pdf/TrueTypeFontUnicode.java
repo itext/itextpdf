@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 import com.lowagie.text.DocumentException;
 /** Represents a True Type font with Unicode encoding. All the character
@@ -161,7 +162,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
         "/CMapName /Adobe-Identity-UCS def\n" +
         "/CMapType 2 def\n" +
         "1 begincodespacerange\n" +
-        toHex(((int[])metrics[0])[0]) + toHex(((int[])metrics[metrics.length - 1])[0]) + "\n" +
+        "<0000><FFFF>\n" +
         "endcodespacerange\n");
         int size = 0;
         for (int k = 0; k < metrics.length; ++k) {
@@ -290,7 +291,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             return 0;
         return 1;
     }
-
+    
     /** Outputs to the writer the font dictionaries and streams.
      * @param writer the writer for this document
      * @param ref the font indirect reference
@@ -300,6 +301,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      */
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object params[]) throws DocumentException, IOException {
         HashMap longTag = (HashMap)params[0];
+        addRangeUni(longTag, true, subset);
         Object metrics[] = longTag.values().toArray();
         Arrays.sort(metrics, this);
         PdfIndirectReference ind_font = null;
@@ -320,55 +322,30 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
 					// empty on purpose
 				}
 			}
-			/*
-			CFFFont cffFont = new CFFFont(new RandomAccessFileOrArray(b));
-			// test if we can find the font by name and if it's a type1 CFF
-			if (cffFont.exists(fontName) && !cffFont.isCID(fontName)) {
-				byte[] cid = cffFont.getCID( (cffFont.getNames())[0] );
-				if (cid != null) b=cid;
-			}
-			
-			*/
-			
-			CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
-			b = cff.Process( (cff.getNames())[0] );
-			
-			// if the font is already CID, or not found by name, or 
-			// getCID returned null, we just use the data in the CFF
-			// table and hope for the best.
-		  
-				
-			// for debugging, force a reparsing
-			/*
-			java.lang.System.err.println("");
-			java.lang.System.err.println("");
-			java.lang.System.err.println("");
-			CFFFont dummy = new CFFFont(java.nio.ByteBuffer.wrap(b));	
-			java.lang.System.err.println("");
-			java.lang.System.err.println("");
-			java.lang.System.err.println("");
-			*/	
+            if (subset || subsetRanges != null) {
+                CFFFontSubset cff = new CFFFontSubset(new RandomAccessFileOrArray(b),longTag);
+                b = cff.Process( (cff.getNames())[0] );
+            }
 			pobj = new StreamFont(b, "CIDFontType0C");
 			obj = writer.addToBody(pobj);
 			ind_font = obj.getIndirectReference();
         } else {
             byte[] b;
             if (subset || directoryOffset != 0) {
-                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), longTag, directoryOffset, false);
+                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), longTag, directoryOffset, false, false);
                 b = sb.process();
             }
             else {
-                RandomAccessFileOrArray r = new RandomAccessFileOrArray(rf);
-                b = new byte[r.length()];
-                r.readFully(b);
+                b = getFullFont();
             }
             int lengths[] = new int[]{b.length};
             pobj = new StreamFont(b, lengths);
             obj = writer.addToBody(pobj);
             ind_font = obj.getIndirectReference();
         }
-        String subsetPrefix = createSubsetPrefix();
-        //if (cff) subsetPrefix = "";
+        String subsetPrefix = "";
+        if (subset)
+            subsetPrefix = createSubsetPrefix();
         PdfDictionary dic = getFontDescriptor(ind_font, subsetPrefix);
         obj = writer.addToBody(dic);
         ind_font = obj.getIndirectReference();
