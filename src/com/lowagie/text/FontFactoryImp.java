@@ -442,6 +442,36 @@ public class FontFactoryImp {
         return getFont(fontname, defaultEncoding, defaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
     }
     
+    /**
+     * Register a font by giving explicitly the font family and name.
+     * @param familyName the font family
+     * @param fullName the font name
+     * @param path the font path
+     */
+    public void registerFamily(String familyName, String fullName, String path) {
+        if (path != null)
+            trueTypeFonts.setProperty(fullName, path);
+        ArrayList tmp = (ArrayList) fontFamilies.get(familyName);
+        if (tmp == null) {
+            tmp = new ArrayList();
+            tmp.add(fullName);
+            fontFamilies.put(familyName, tmp);
+        }
+        else {
+            int fullNameLength = fullName.length();
+            boolean inserted = false;
+            for (int j = 0; j < tmp.size(); ++j) {
+                if (((String)tmp.get(j)).length() >= fullNameLength) {
+                    tmp.add(j, fullName);
+                    inserted = true;
+                    break;
+                }
+            }
+            if (!inserted)
+                tmp.add(fullName);
+        }
+    }
+    
 /**
  * Register a ttf- or a ttc-file.
  *
@@ -494,25 +524,7 @@ public class FontFactoryImp {
                                 if (fullName.equals(lastName))
                                     continue;
                                 lastName = fullName;
-                                ArrayList tmp = (ArrayList) fontFamilies.get(familyName);
-                                if (tmp == null) {
-                                    tmp = new ArrayList();
-                                    tmp.add(fullName);
-                                    fontFamilies.put(familyName, tmp);
-                                }
-                                else {
-                                    int fullNameLength = fullName.length();
-                                    boolean inserted = false;
-                                    for (int j = 0; j < tmp.size(); ++j) {
-                                        if (((String)tmp.get(j)).length() >= fullNameLength) {
-                                            tmp.add(j, fullName);
-                                            inserted = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!inserted)
-                                        tmp.add(fullName);
-                                }
+                                registerFamily(familyName, fullName, null);
                                 break;
                             }
                         }
@@ -527,10 +539,14 @@ public class FontFactoryImp {
                     register(path + "," + i);
                 }
             }
-            else if (path.toLowerCase().endsWith(".afm")) {
+            else if (path.toLowerCase().endsWith(".afm") || path.toLowerCase().endsWith(".pfm")) {
                 BaseFont bf = BaseFont.createFont(path, BaseFont.CP1252, false);
-                trueTypeFonts.setProperty(bf.getPostscriptFontName().toLowerCase(), path);
-                trueTypeFonts.setProperty((bf.getFullFontName()[0][3]).toLowerCase(), path);
+                String fullName = (bf.getFullFontName()[0][3]).toLowerCase();
+                String familyName = (bf.getFamilyFontName()[0][3]).toLowerCase();
+                String psName = bf.getPostscriptFontName().toLowerCase();
+                registerFamily(familyName, fullName, null);
+                trueTypeFonts.setProperty(psName, path);
+                trueTypeFonts.setProperty(fullName, path);
             }
         }
         catch(DocumentException de) {
@@ -559,7 +575,7 @@ public class FontFactoryImp {
                 try {
                     file = new File(dir, files[k]);
                     String name = file.getPath().toLowerCase();
-                    if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm") || name.endsWith(".ttc")) {
+                    if (name.endsWith(".ttf") || name.endsWith(".otf") || name.endsWith(".afm") || name.endsWith(".pfm") || name.endsWith(".ttc")) {
                         register(file.getPath(), null);
                         ++count;
                     }

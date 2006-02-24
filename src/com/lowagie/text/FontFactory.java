@@ -305,6 +305,16 @@ public class FontFactory {
         return getFont(fontname, defaultEncoding, defaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
     }
     
+    /**
+     * Register a font by giving explicitly the font family and name.
+     * @param familyName the font family
+     * @param fullName the font name
+     * @param path the font path
+     */
+    public void registerFamily(String familyName, String fullName, String path) {
+        fontImp.registerFamily(familyName, fullName, path);
+    }
+    
 /**
  * Register a ttf- or a ttc-file.
  *
