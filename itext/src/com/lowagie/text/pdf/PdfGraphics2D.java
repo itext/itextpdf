@@ -342,8 +342,10 @@ public class PdfGraphics2D extends Graphics2D {
             return;
         setFillPaint();
         if (onlyShapes) {
-            TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
-            tl.draw(this, x, y);
+//            TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
+//            tl.draw(this, x, y);
+            drawGlyphVector(this.font.layoutGlyphVector(new FontRenderContext(new AffineTransform(), true, false), s.toCharArray(), 0, s.length(), java.awt.Font.LAYOUT_LEFT_TO_RIGHT), x, y);
+//            drawGlyphVector(this.font.createGlyphVector(new FontRenderContext(new AffineTransform(), true, false), s), x, y);
         }
         else {
             AffineTransform at = getTransform();
