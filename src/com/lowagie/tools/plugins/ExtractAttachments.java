@@ -176,6 +176,12 @@ public class ExtractAttachments extends AbstractTool {
 		throw new InstantiationException("There is more than one destfile.");
 	}
 
+	/**
+	 * Unpacks a file attachment.
+	 * @param reader The object that reads the PDF document
+	 * @param filespec The dictonary containing the file specifications
+	 * @param outPath The path where the attachment has to be written
+	 */
 	public static void unpackFile(PdfReader reader, PdfDictionary filespec,
 			String outPath) {
 		if (filespec == null)
