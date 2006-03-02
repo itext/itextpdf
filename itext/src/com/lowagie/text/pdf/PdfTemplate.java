@@ -186,7 +186,7 @@ public class PdfTemplate extends PdfContentByte {
      * @return the indirect reference to this template
      */
     
-    PdfIndirectReference getIndirectReference() {
+    public PdfIndirectReference getIndirectReference() {
         return thisReference;
     }
         
