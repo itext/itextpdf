@@ -79,7 +79,7 @@ public class RtfPhrase extends RtfElement {
     /**
      * Constant for phrase in a table indication
      */
-    protected static final byte[] IN_TABLE = "\\intbl".getBytes();
+    public static final byte[] IN_TABLE = "\\intbl".getBytes();
     /**
      * Constant for the line spacing.
      */
@@ -92,7 +92,16 @@ public class RtfPhrase extends RtfElement {
     /**
      * The height of each line.
      */
-    protected int lineLeading = 0; 
+    private int lineLeading = 0; 
+    
+    /**
+     * A basically empty constructor that is used by the RtfParagraph.
+     * 
+     * @param doc The RtfDocument this RtfPhrase belongs to.
+     */
+    protected RtfPhrase(RtfDocument doc) {
+        super(doc);
+    }
     
     /**
      * Constructs a new RtfPhrase for the RtfDocument with the given Phrase

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Bruno Lowagie.
+ * Copyright 2005 by Hans-Werner Hilse.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -51,48 +51,42 @@ package com.lowagie.tools.plugins;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.List;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.Image;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPageLabels;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.SimpleBookmark;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 
 /**
- * Converts a Tiff file to a PDF file.
- * Inspired by a comp.text.pdf question by Sebastian Schubert
- * and an answer by Hans-Werner Hilse.
+ * Allows you to add bookmarks to an existing PDF file
  */
-public class PhotoAlbum extends AbstractTool {
+public class Bookmarks2XML extends AbstractTool {
 
 	static {
 		addVersion("$Id$");
 	}
+
 	/**
-	 * Constructs a PhotoAlbum object.
+	 * Constructs an Bookmarks2XML object.
 	 */
-	public PhotoAlbum() {
-		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
-		arguments.add(new FileArgument(this, "srcdir", "The directory containing the image files", false));
-		arguments.add(new FileArgument(this, "destfile", "The file to which the converted TIFF has to be written", true, new PdfFilter()));
+	public Bookmarks2XML() {
+		arguments.add(new FileArgument(this, "pdffile", "the PDF from which you want to extract bookmarks", false, new PdfFilter()));
+		arguments.add(new FileArgument(this, "xmlfile", "the resulting bookmarks file in XML", true));
 	}
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#createFrame()
 	 */
 	protected void createFrame() {
-		internalFrame = new JInternalFrame("PhotoAlbum", true, false, true);
+		internalFrame = new JInternalFrame("Bookmarks2XML", true, true, true);
 		internalFrame.setSize(300, 80);
 		internalFrame.setJMenuBar(getMenubar());
-		System.out.println("=== PhotoAlbum OPENED ===");
+		System.out.println("=== Bookmarks2XML OPENED ===");
 	}
 
 	/**
@@ -100,63 +94,18 @@ public class PhotoAlbum extends AbstractTool {
 	 */
 	public void execute() {
 		try {
-			if (getValue("srcdir") == null) throw new InstantiationException("You need to choose a source directory");
-			File directory = (File)getValue("srcdir");
-			if (directory.isFile()) directory = directory.getParentFile();
-			if (getValue("destfile") == null) throw new InstantiationException("You need to choose a destination file");
-			File pdf_file = (File)getValue("destfile");
-			Document document = new Document();
-			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_file));
-			writer.setViewerPreferences(PdfWriter.PageModeUseThumbs);
-			PdfPageLabels pageLabels = new PdfPageLabels();
-			int dpiX, dpiY;
-			float imgWidthPica, imgHeightPica;
-			TreeSet images = new TreeSet();
-			File[] files = directory.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isFile()) images.add(files[i]);
-			}
-			File image;
-			String label;
-            for (Iterator i = images.iterator(); i.hasNext(); ) {
-            	image = (File) i.next();
-            	System.out.println("Testing image: " + image.getName());
-            	try {
-            		Image img = Image.getInstance(image.getAbsolutePath());
-            		dpiX=img.getDpiX();
-                    if (dpiX == 0) dpiX=72;
-                    dpiY=img.getDpiY();
-                    if (dpiY == 0) dpiY=72;
-                    imgWidthPica=(72*img.plainWidth()) / dpiX;
-                    imgHeightPica=(72*img.plainHeight()) / dpiY;
-                    img.scaleAbsolute(imgWidthPica,imgHeightPica);
-                    document.setPageSize(new Rectangle(imgWidthPica, imgHeightPica));
-                	if (document.isOpen()) {
-                		document.newPage();
-                	}
-                	else {
-                		document.open();
-                	}
-                	img.setAbsolutePosition(0, 0);
-                    document.add(img);
-                    label = image.getName();
-                    if (label.lastIndexOf(".") > 0);
-                    	label = label.substring(0, label.lastIndexOf("."));
-                    pageLabels.addPageLabel(writer.getPageNumber(), PdfPageLabels.EMPTY, label);
-                    System.out.println("Added image: " + image.getName());
-                }
-            	catch(Exception e) {
-            		System.err.println(e.getMessage());
-            	}
-            }
-        	if (document.isOpen()) {
-        		writer.setPageLabels(pageLabels);
-        	    document.close();
-        	}
-        	else {
-        		System.err.println("No images were found in directory " + directory.getAbsolutePath());
-        	}
-		} catch (Exception e) {
+			if (getValue("xmlfile") == null) throw new InstantiationException("You need to choose an xml file");
+			if (getValue("pdffile") == null) throw new InstantiationException("You need to choose a source PDF file");
+			PdfReader reader = new PdfReader(((File)getValue("pdffile")).getAbsolutePath());
+            reader.consolidateNamedDestinations();
+            List bookmarks = SimpleBookmark.getBookmark( reader );
+            // save them in XML format
+            FileOutputStream bmWriter = new FileOutputStream( (File)getValue("xmlfile") );
+            SimpleBookmark.exportToXML(bookmarks, bmWriter, "UTF-8", false);
+            bmWriter.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
         	JOptionPane.showMessageDialog(internalFrame,
         		    e.getMessage(),
         		    e.getClass().getName(),
@@ -176,24 +125,24 @@ public class PhotoAlbum extends AbstractTool {
 		// represent the changes of the argument in the internal frame
 	}
 
-
     /**
-     * Converts a tiff file to PDF.
+     * Allows you to generate an index file in HTML containing Bookmarks to an existing PDF file.
      * @param args
      */
-	public static void main(String[] args) {
-    	PhotoAlbum tool = new PhotoAlbum();
+    public static void main(String[] args) {
+    	Bookmarks2XML tool = new Bookmarks2XML();
     	if (args.length < 2) {
     		System.err.println(tool.getUsage());
     	}
     	tool.setArguments(args);
         tool.execute();
-	}
+    }
 
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#getDestPathPDF()
 	 */
 	protected File getDestPathPDF() throws InstantiationException {
-		return (File)getValue("destfile");
+		throw new InstantiationException("There is no file to show.");
 	}
+
 }

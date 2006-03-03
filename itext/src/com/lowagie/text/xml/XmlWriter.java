@@ -794,9 +794,6 @@ public class XmlWriter extends DocWriter implements DocListener {
             write(ElementTags.BGGREEN, String.valueOf(rectangle.backgroundColor().getGreen()));
             write(ElementTags.BGBLUE, String.valueOf(rectangle.backgroundColor().getBlue()));
         }
-        if (rectangle.grayFill() > 0) {
-            write(ElementTags.GRAYFILL, String.valueOf(rectangle.grayFill()));
-        }
     }
     
 /**

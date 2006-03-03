@@ -64,7 +64,6 @@ import com.lowagie.text.ExceptionConverter;
  * This object is described in the 'Portable Document Format Reference Manual version 1.3'
  * section 6.3 (page 71-73)
  *
- * @see		PdfPageElement
  * @see		PdfPage
  */
 

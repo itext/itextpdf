@@ -1028,7 +1028,13 @@ public class PdfReader {
         }
     }
     
-    static PdfObject killIndirect(PdfObject obj) {
+    /**
+     * Eliminates the reference to the object freeing the memory used by it and clearing
+     * the xref entry.
+     * @param obj the object. If it's an indirect reference it will be eliminated
+     * @return the object or the already erased dereferenced object
+     */    
+    public static PdfObject killIndirect(PdfObject obj) {
         if (obj == null || obj.isNull())
             return null;
         PdfObject ret = getPdfObjectRelease(obj);
@@ -2660,6 +2666,10 @@ public class PdfReader {
             catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNLEFT);
         else if ((preferences & PdfWriter.PageLayoutTwoColumnRight) != 0)
             catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNRIGHT);
+        else if ((preferences & PdfWriter.PageLayoutTwoPageLeft) != 0)
+            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGELEFT);
+        else if ((preferences & PdfWriter.PageLayoutTwoPageRight) != 0)
+            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGERIGHT);
         if ((preferences & PdfWriter.PageModeUseNone) != 0)
             catalog.put(PdfName.PAGEMODE, PdfName.USENONE);
         else if ((preferences & PdfWriter.PageModeUseOutlines) != 0)
@@ -2670,6 +2680,8 @@ public class PdfReader {
             catalog.put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
         else if ((preferences & PdfWriter.PageModeUseOC) != 0)
             catalog.put(PdfName.PAGEMODE, PdfName.USEOC);
+        else if ((preferences & PdfWriter.PageModeUseAttachments) != 0)
+            catalog.put(PdfName.PAGEMODE, PdfName.USEATTACHMENTS);
         if ((preferences & PdfWriter.ViewerPreferencesMask) == 0)
             return;
         PdfDictionary vp = new PdfDictionary();
@@ -2726,6 +2738,10 @@ public class PdfReader {
                 prefs |= PdfWriter.PageLayoutTwoColumnLeft;
             else if (name.equals(PdfName.TWOCOLUMNRIGHT))
                 prefs |= PdfWriter.PageLayoutTwoColumnRight;
+            else if (name.equals(PdfName.TWOPAGELEFT))
+                prefs |= PdfWriter.PageLayoutTwoPageLeft;
+            else if (name.equals(PdfName.TWOPAGERIGHT))
+                prefs |= PdfWriter.PageLayoutTwoPageRight;
         }
         obj = getPdfObjectRelease(catalog.get(PdfName.PAGEMODE));
         if (obj != null && obj.isName()) {
@@ -2738,6 +2754,8 @@ public class PdfReader {
                 prefs |= PdfWriter.PageModeUseThumbs;
             else if (name.equals(PdfName.USEOC))
                 prefs |= PdfWriter.PageModeUseOC;
+            else if (name.equals(PdfName.USEATTACHMENTS))
+                prefs |= PdfWriter.PageModeUseAttachments;
         }
         obj = getPdfObjectRelease(catalog.get(PdfName.VIEWERPREFERENCES));
         if (obj == null || !obj.isDictionary())

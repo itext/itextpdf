@@ -66,6 +66,7 @@ import java.awt.Color;
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
  * Updates by Benoit WIART <b.wiart@proxiad.com>
+ * @deprecated Please move to the RtfWriter2 and associated classes.
  */
 public class RtfCell {
     /** Constants for merging Cells */
@@ -366,13 +367,10 @@ public class RtfCell {
             }
             os.write(RtfWriter.escape);
             os.write(cellBackgroundColor);
-            if ((store.backgroundColor() == null) && (store.grayFill() == 0)) {
+            if (store.backgroundColor() == null) {
                 writeInt(os, writer.addColor(new Color(255, 255, 255)));
-            } else if (store.backgroundColor() != null) {
-                writeInt(os, writer.addColor(store.backgroundColor()));
             } else {
-                int shadeColor = (int) (store.grayFill() * 255);
-                writeInt(os, writer.addColor(new Color(shadeColor, shadeColor, shadeColor)));
+                writeInt(os, writer.addColor(store.backgroundColor()));
             }
             os.write((byte) '\n');
             os.write(RtfWriter.escape);

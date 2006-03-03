@@ -1344,13 +1344,11 @@ class PdfDocument extends Document implements DocListener {
 			tablerec.setBorderWidth(table.borderWidth());
 			tablerec.setBorderColor(table.borderColor());
 			tablerec.setBackgroundColor(table.backgroundColor());
-			tablerec.setGrayFill(table.grayFill());
 			PdfContentByte under = writer.getDirectContentUnder();
 			under.rectangle(tablerec.rectangle(top(), indentBottom()));
 			under.add(ctx.cellGraphics);
 			// bugfix by Gerald Fehringer: now again add the border for the table
 			// since it might have been covered by cell backgrounds
-			tablerec.setGrayFill(0);
 			tablerec.setBackgroundColor(null);
 			tablerec = tablerec.rectangle(top(), indentBottom());
 			tablerec.setBorder(table.border());
@@ -2039,6 +2037,7 @@ class PdfDocument extends Document implements DocListener {
                      * Paulo Soares
                      * Gerald Fehringer
                      * Steve Appling
+                     * Karsten Klein
                      */
 	                    
 					PdfTable table;
@@ -2233,8 +2232,7 @@ class PdfDocument extends Document implements DocListener {
         thisBoxSize = new HashMap(boxSize);
         if (pageSize.backgroundColor() != null
         || pageSize.hasBorders()
-        || pageSize.borderColor() != null
-        || pageSize.grayFill() > 0) {
+        || pageSize.borderColor() != null) {
             add(pageSize);
         }
         
@@ -2472,7 +2470,6 @@ class PdfDocument extends Document implements DocListener {
         PdfFont currentFont = null;
         float displacement = 0;
         PdfLine l;
-        PdfChunk chunk;
         Float lastBaseFactor = new Float(0);
         currentValues[1] = lastBaseFactor;
         // looping over all the lines
@@ -2491,31 +2488,7 @@ class PdfDocument extends Document implements DocListener {
             
             // is the line preceeded by a symbol?
             if (l.listSymbol() != null) {
-                chunk = l.listSymbol();
-                text.moveText(- l.listIndent(), 0);
-                if (chunk.font().compareTo(currentFont) != 0) {
-                    currentFont = chunk.font();
-                    text.setFontAndSize(currentFont.getFont(), currentFont.size());
-                }
-                if (chunk.color() != null) {
-                    Color color = chunk.color();
-                    text.setColorFill(color);
-                    text.showText(chunk.toString());
-                    text.resetRGBColorFill();
-                }
-                else if (chunk.isImage()) {
-                    Image image = chunk.getImage();
-                    float matrix[] = image.matrix();
-                    float xMarker = text.getXTLM();
-                    float yMarker = text.getYTLM();
-                    matrix[Image.CX] = xMarker + chunk.getImageOffsetX() - matrix[Image.CX];
-                    matrix[Image.CY] = yMarker + chunk.getImageOffsetY() - matrix[Image.CY];
-                    graphics.addImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
-                }
-                else {
-                    text.showText(chunk.toString());
-                }
-                text.moveText(l.listIndent(), 0);
+                ColumnText.showTextAligned(graphics, Element.ALIGN_LEFT, new Phrase(l.listSymbol()), text.getXTLM() - l.listIndent(), text.getYTLM(), 0);
             }
             
             currentValues[0] = currentFont;
@@ -3180,6 +3153,16 @@ class PdfDocument extends Document implements DocListener {
     
     void addCalculationOrder(PdfFormField formField) {
         acroForm.addCalculationOrder(formField);
+    }
+    
+    /**
+     * Gives the size of a trim, art, crop or bleed box, or null if not defined.
+     * @param boxName crop, trim, art or bleed
+     */
+    Rectangle getBoxSize(String boxName) {
+    	PdfRectangle r = (PdfRectangle)thisBoxSize.get(boxName);
+    	if (r != null) return r.getRectangle();
+    	return null;
     }
     
     void setSigFlags(int f) {

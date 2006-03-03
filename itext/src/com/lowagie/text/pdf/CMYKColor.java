@@ -115,4 +115,15 @@ public class CMYKColor extends ExtendedColor {
         return black;
     }
 
+    public boolean equals(Object obj) {
+        if (!(obj instanceof CMYKColor))
+            return false;
+        CMYKColor c2 = (CMYKColor)obj;
+        return (cyan == c2.cyan && magenta == c2.magenta && yellow == c2.yellow && black == c2.black);
+    }
+    
+    public int hashCode() {
+        return Float.floatToIntBits(cyan) ^ Float.floatToIntBits(magenta) ^ Float.floatToIntBits(yellow) ^ Float.floatToIntBits(black); 
+    }
+    
 }

@@ -54,6 +54,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Set;
+import com.lowagie.text.pdf.GrayColor;
 
 /**
  * A <CODE>Rectangle</CODE> is the representation of a geometric figure.
@@ -148,9 +149,6 @@ public class Rectangle implements Element, MarkupAttributes {
 	/** This is the color of the background of this rectangle. */
 	protected Color background = null;
 
-	/** This is the grayscale value of the background of this rectangle. */
-	protected float grayFill = 0;
-
 	protected int rotation = 0;
 
 	/** Contains extra markupAttributes */
@@ -218,7 +216,6 @@ public class Rectangle implements Element, MarkupAttributes {
 		this.borderWidth = rect.borderWidth;
 		this.color = rect.color;
 		this.background = rect.background;
-		this.grayFill = rect.grayFill;
 		this.borderColorLeft = rect.borderColorLeft;
 		this.borderColorRight = rect.borderColorRight;
 		this.borderColorTop = rect.borderColorTop;
@@ -249,8 +246,6 @@ public class Rectangle implements Element, MarkupAttributes {
 			this.color = rect.color;
 		if (rect.background != null)
 			this.background = rect.background;
-		if (rect.grayFill != 0)
-			this.grayFill = rect.grayFill;
 		if (rect.borderColorLeft != null)
 			this.borderColorLeft = rect.borderColorLeft;
 		if (rect.borderColorRight != null)
@@ -535,9 +530,7 @@ public class Rectangle implements Element, MarkupAttributes {
 	 */
 
 	public void setGrayFill(float value) {
-		if (value >= 0 && value <= 1.0) {
-			grayFill = value;
-		}
+        background = new GrayColor(value);
 	}
 
 	// methods to get the membervariables
@@ -721,7 +714,10 @@ public class Rectangle implements Element, MarkupAttributes {
 	 */
 
 	public float grayFill() {
-		return grayFill;
+        if (background instanceof GrayColor)
+            return ((GrayColor)background).getGray();
+        else
+            return 0;
 	}
 
 	/**

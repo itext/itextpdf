@@ -267,26 +267,28 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public RtfFont(RtfDocument doc, Font font) {
         this.document = doc;
-        if(font instanceof RtfFont) {
-            this.fontName = ((RtfFont) font).getFontName();
-        } else {
-            setToDefaultFamily(font.getFamilyname());
-        }
-        if(font.getBaseFont() != null) {
-            String[][] fontNames = font.getBaseFont().getFullFontName();
-            for(int i = 0; i < fontNames.length; i++) {
-                if(fontNames[i][2].equals("0")) {
-                    this.fontName = fontNames[i][3];
-                    break;
-                } else if(fontNames[i][2].equals("1033") || fontNames[i][2].equals("")) {
-                    this.fontName = fontNames[i][3];
+        if(font != null) {
+            if(font instanceof RtfFont) {
+                this.fontName = ((RtfFont) font).getFontName();
+            } else {
+                setToDefaultFamily(font.getFamilyname());
+            }
+            if(font.getBaseFont() != null) {
+                String[][] fontNames = font.getBaseFont().getFullFontName();
+                for(int i = 0; i < fontNames.length; i++) {
+                    if(fontNames[i][2].equals("0")) {
+                        this.fontName = fontNames[i][3];
+                        break;
+                    } else if(fontNames[i][2].equals("1033") || fontNames[i][2].equals("")) {
+                        this.fontName = fontNames[i][3];
+                    }
                 }
             }
+            
+            setSize(font.size());
+            setStyle(font.style());
+            setColor(font.color());
         }
-
-        setSize(font.size());
-        setStyle(font.style());
-        setColor(font.color());
 
         if(this.fontName.equalsIgnoreCase("unknown")) {
             return;
@@ -477,6 +479,18 @@ public class RtfFont extends Font implements RtfExtendedElement {
     }
 
     /**
+     * Sets the font name of this RtfFont.
+     * 
+     * @param fontName The font name to use 
+     */
+    protected void setFontName(String fontName) {
+        this.fontName = fontName;
+        if(document != null) {
+            this.fontNumber = document.getDocumentHeader().getFontNumber(this);
+        }
+    }
+    
+    /**
      * @see com.lowagie.text.Font#getFamilyname()
      */
     public String getFamilyname() {
@@ -533,7 +547,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
      */
     public void setSize(float size){
         super.setSize(size);
-        this.fontSize = (int)size();
+        this.fontSize = (int) size();
     }
 
     /**

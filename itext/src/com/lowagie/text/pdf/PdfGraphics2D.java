@@ -222,8 +222,11 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#drawImage(BufferedImage, BufferedImageOp, int, int)
      */
     public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
-        BufferedImage result = op.createCompatibleDestImage(img, img.getColorModel());
-        result = op.filter(img, result);
+        BufferedImage result = img;
+        if (op != null) {
+            result = op.createCompatibleDestImage(img, img.getColorModel());
+            result = op.filter(img, result);
+        }
         drawImage(result, x, y, null);
     }
     
@@ -339,8 +342,10 @@ public class PdfGraphics2D extends Graphics2D {
             return;
         setFillPaint();
         if (onlyShapes) {
-            TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
-            tl.draw(this, x, y);
+//            TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
+//            tl.draw(this, x, y);
+            drawGlyphVector(this.font.layoutGlyphVector(new FontRenderContext(new AffineTransform(), true, false), s.toCharArray(), 0, s.length(), java.awt.Font.LAYOUT_LEFT_TO_RIGHT), x, y);
+//            drawGlyphVector(this.font.createGlyphVector(new FontRenderContext(new AffineTransform(), true, false), s), x, y);
         }
         else {
             AffineTransform at = getTransform();

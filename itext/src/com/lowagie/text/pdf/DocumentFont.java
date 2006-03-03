@@ -51,42 +51,45 @@ import java.util.ArrayList;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
+import java.util.HashMap;
 
 /**
  *
  * @author  psoares
  */
 public class DocumentFont extends BaseFont {
+    // code, [glyph, width]
+    private HashMap metrics = new HashMap();
+    private String fontName;
+    private PRIndirectReference refFont;
+    private PdfDictionary font;
+    private IntHashtable uni2byte = new IntHashtable();
+    private float Ascender = 800;
+    private float CapHeight = 700;
+    private float Descender = -200;
+    private float ItalicAngle = 0;
+    private float llx = -50;
+    private float lly = -200;
+    private float urx = 100;
+    private float ury = 900;
+    private boolean isType0 = false;
     
-    String fontName;
-    PRIndirectReference refFont;
-    PdfDictionary font;
-    IntHashtable uni2byte = new IntHashtable();
-    float Ascender = 800;
-    float CapHeight = 700;
-    float Descender = -200;
-    float ItalicAngle = 0;
-    float llx = -50;
-    float lly = -200;
-    float urx = 100;
-    float ury = 900;
+    private BaseFont cjkMirror;
     
-    BaseFont cjkMirror;
-    
-    String cjkNames[] = {"HeiseiMin-W3", "HeiseiKakuGo-W5", "STSong-Light", "MHei-Medium",
+    private static String cjkNames[] = {"HeiseiMin-W3", "HeiseiKakuGo-W5", "STSong-Light", "MHei-Medium",
         "MSung-Light", "HYGoThic-Medium", "HYSMyeongJo-Medium", "MSungStd-Light", "STSongStd-Light",
         "HYSMyeongJoStd-Medium", "KozMinPro-Regular"};
         
-    String cjkEncs[] = {"UniJIS-UCS2-H", "UniJIS-UCS2-H", "UniGB-UCS2-H", "UniCNS-UCS2-H",
+    private static String cjkEncs[] = {"UniJIS-UCS2-H", "UniJIS-UCS2-H", "UniGB-UCS2-H", "UniCNS-UCS2-H",
         "UniCNS-UCS2-H", "UniKS-UCS2-H", "UniKS-UCS2-H", "UniCNS-UCS2-H", "UniGB-UCS2-H",
         "UniKS-UCS2-H", "UniJIS-UCS2-H"};
         
-    String cjkNames2[] = {"MSungStd-Light", "STSongStd-Light", "HYSMyeongJoStd-Medium", "KozMinPro-Regular"};
+    private static String cjkNames2[] = {"MSungStd-Light", "STSongStd-Light", "HYSMyeongJoStd-Medium", "KozMinPro-Regular"};
         
-    String cjkEncs2[] = {"UniCNS-UCS2-H", "UniGB-UCS2-H", "UniKS-UCS2-H", "UniJIS-UCS2-H",
+    private static String cjkEncs2[] = {"UniCNS-UCS2-H", "UniGB-UCS2-H", "UniKS-UCS2-H", "UniJIS-UCS2-H",
         "UniCNS-UTF16-H", "UniGB-UTF16-H", "UniKS-UTF16-H", "UniJIS-UTF16-H"};
         
-    static final int stdEnc[] = {
+    private static final int stdEnc[] = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         32,33,34,35,36,37,38,8217,40,41,42,43,44,45,46,47,
@@ -142,10 +145,131 @@ public class DocumentFont extends BaseFont {
                     return;
                 }
             }
+            if (PdfName.TYPE0.equals(subType) && enc.equals("Identity-H")) {
+                processType0(font);
+                isType0 = true;
+            }
         }
     }
     
-    public void doType1TT() {
+    private void processType0(PdfDictionary font) {
+        try {
+            byte[] touni = PdfReader.getStreamBytes((PRStream)PdfReader.getPdfObjectRelease(font.get(PdfName.TOUNICODE)));
+            PdfArray df = (PdfArray)PdfReader.getPdfObjectRelease(font.get(PdfName.DESCENDANTFONTS));
+            PdfDictionary cidft = (PdfDictionary)PdfReader.getPdfObjectRelease((PdfObject)df.getArrayList().get(0));
+            PdfNumber dwo = (PdfNumber)PdfReader.getPdfObjectRelease(cidft.get(PdfName.DW));
+            int dw = 1000;
+            if (dwo != null)
+                dw = dwo.intValue();
+            IntHashtable widths = readWidths((PdfArray)PdfReader.getPdfObjectRelease(cidft.get(PdfName.W)));
+            PdfDictionary fontDesc = (PdfDictionary)PdfReader.getPdfObjectRelease(cidft.get(PdfName.FONTDESCRIPTOR));
+            fillFontDesc(fontDesc);
+            fillMetrics(touni, widths, dw);
+        } catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    
+    private IntHashtable readWidths(PdfArray ws) {
+        IntHashtable hh = new IntHashtable();
+        if (ws == null)
+            return hh;
+        ArrayList ar = ws.getArrayList();
+        for (int k = 0; k < ar.size(); ++k) {
+            int c1 = ((PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)ar.get(k))).intValue();
+            PdfObject obj = PdfReader.getPdfObjectRelease((PdfObject)ar.get(++k));
+            if (obj.isArray()) {
+                ArrayList ar2 = ((PdfArray)obj).getArrayList();
+                for (int j = 0; j < ar2.size(); ++j) {
+                    int c2 = ((PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)ar2.get(j))).intValue();
+                    hh.put(c1++, c2);
+                }
+            }
+            else {
+                int c2 = ((PdfNumber)obj).intValue();
+                int w = ((PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)ar.get(++k))).intValue();
+                for (; c1 <= c2; ++c1)
+                    hh.put(c1, w);
+            }
+        }
+        return hh;
+    }
+    
+    private String decodeString(PdfString ps) {
+        if (ps.isHexWriting())
+            return PdfEncodings.convertToString(ps.getBytes(), "UnicodeBigUnmarked");
+        else
+            return ps.toUnicodeString();
+    }
+    
+    private void fillMetrics(byte[] touni, IntHashtable widths, int dw) {
+        try {
+            PdfContentParser ps = new PdfContentParser(new PRTokeniser(touni));
+            PdfObject ob = null;
+            PdfObject last = null;
+            while ((ob = ps.readPRObject()) != null) {
+                if (ob.type() == PdfContentParser.COMMAND_TYPE) {
+                    if (ob.toString().equals("beginbfchar")) {
+                        int n = ((PdfNumber)last).intValue();
+                        for (int k = 0; k < n; ++k) {
+                            String cid = decodeString((PdfString)ps.readPRObject());
+                            String uni = decodeString((PdfString)ps.readPRObject());
+                            if (uni.length() == 1) {
+                                int cidc = (int)cid.charAt(0);
+                                int unic = (int)uni.charAt(uni.length() - 1);
+                                int w = dw;
+                                if (widths.containsKey(cidc))
+                                    w = widths.get(cidc);
+                                metrics.put(new Integer(unic), new int[]{cidc, w});
+                            }
+                        }
+                    }
+                    else if (ob.toString().equals("beginbfrange")) {
+                        int n = ((PdfNumber)last).intValue();
+                        for (int k = 0; k < n; ++k) {
+                            String cid1 = decodeString((PdfString)ps.readPRObject());
+                            String cid2 = decodeString((PdfString)ps.readPRObject());
+                            int cid1c = (int)cid1.charAt(0);
+                            int cid2c = (int)cid2.charAt(0);
+                            PdfObject ob2 = ps.readPRObject();
+                            if (ob2.isString()) {
+                                String uni = decodeString((PdfString)ob2);
+                                if (uni.length() == 1) {
+                                    int unic = (int)uni.charAt(uni.length() - 1);
+                                    for (; cid1c <= cid2c; cid1c++, unic++) {
+                                        int w = dw;
+                                        if (widths.containsKey(cid1c))
+                                            w = widths.get(cid1c);
+                                        metrics.put(new Integer(unic), new int[]{cid1c, w});
+                                    }
+                                }
+                            }
+                            else {
+                                ArrayList ar = ((PdfArray)ob2).getArrayList();
+                                for (int j = 0; j < ar.size(); ++j, ++cid1c) {
+                                    String uni = decodeString((PdfString)ar.get(j));
+                                    if (uni.length() == 1) {
+                                        int unic = (int)uni.charAt(uni.length() - 1);
+                                        int w = dw;
+                                        if (widths.containsKey(cid1c))
+                                            w = widths.get(cid1c);
+                                        metrics.put(new Integer(unic), new int[]{cid1c, w});
+                                    }
+                                }
+                            }
+                        }                        
+                    }
+                }
+                else
+                    last = ob;
+            }
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
+    
+    private void doType1TT() {
         PdfObject enc = PdfReader.getPdfObject(font.get(PdfName.ENCODING));
         if (enc == null)
             fillEncoding(null);
@@ -209,11 +333,10 @@ public class DocumentFont extends BaseFont {
                 widths[f + k] = ((PdfNumber)ar.get(k)).intValue();
             }
         }
-        fillFontDesc();
+        fillFontDesc((PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONTDESCRIPTOR)));
     }
     
-    void fillFontDesc() {
-        PdfDictionary fontDesc = (PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONTDESCRIPTOR));
+    private void fillFontDesc(PdfDictionary fontDesc) {
         if (fontDesc == null)
             return;
         PdfNumber v = (PdfNumber)PdfReader.getPdfObject(fontDesc.get(PdfName.ASCENT));
@@ -248,7 +371,7 @@ public class DocumentFont extends BaseFont {
         }
     }
     
-    void fillEncoding(PdfName encoding) {
+    private void fillEncoding(PdfName encoding) {
         if (PdfName.MAC_ROMAN_ENCODING.equals(encoding) || PdfName.WIN_ANSI_ENCODING.equals(encoding)) {
             byte b[] = new byte[256];
             for (int k = 0; k < 256; ++k)
@@ -383,6 +506,17 @@ public class DocumentFont extends BaseFont {
     public int getWidth(String text) {
         if (cjkMirror != null)
             return cjkMirror.getWidth(text);
+        else if (isType0) {
+            char[] chars = text.toCharArray();
+            int len = chars.length;
+            int total = 0;
+            for (int k = 0; k < len; ++k) {
+                int[] ws = (int[])metrics.get(new Integer((int)chars[k]));
+                if (ws != null)
+                    total += ws[1];
+            }
+            return total;
+        }
         else
             return super.getWidth(text);
     }
@@ -390,12 +524,42 @@ public class DocumentFont extends BaseFont {
     byte[] convertToBytes(String text) {
         if (cjkMirror != null)
             return PdfEncodings.convertToBytes(text, CJKFont.CJK_ENCODING);
+        else if (isType0) {
+            char[] chars = text.toCharArray();
+            int len = chars.length;
+            byte[] b = new byte[len * 2];
+            int bptr = 0;
+            for (int k = 0; k < len; ++k) {
+                int[] ws = (int[])metrics.get(new Integer((int)chars[k]));
+                if (ws != null) {
+                    int g = ws[0];
+                    b[bptr++] = (byte)(g / 256);
+                    b[bptr++] = (byte)(g);
+                }
+            }
+            if (bptr == b.length)
+                return b;
+            else {
+                byte[] nb = new byte[bptr];
+                System.arraycopy(b, 0, nb, 0, bptr);
+                return nb;
+            }
+        }
         else {
             char cc[] = text.toCharArray();
             byte b[] = new byte[cc.length];
-            for (int k = 0; k < cc.length; ++k)
-                b[k] = (byte)uni2byte.get(cc[k]);
-            return b;
+            int ptr = 0;
+            for (int k = 0; k < cc.length; ++k) {
+                if (uni2byte.containsKey(cc[k]))
+                    b[ptr++] = (byte)uni2byte.get(cc[k]);
+            }
+            if (ptr == b.length)
+                return b;
+            else {
+                byte[] b2 = new byte[ptr];
+                System.arraycopy(b, 0, b2, 0, ptr);
+                return b2;
+            }
         }
     }
     
@@ -406,6 +570,9 @@ public class DocumentFont extends BaseFont {
     public boolean charExists(char c) {
         if (cjkMirror != null)
             return cjkMirror.charExists(c);
+        else if (isType0) {
+            return metrics.containsKey(new Integer((int)c));
+        }
         else
             return super.charExists(c);
     }

@@ -65,10 +65,8 @@ import java.util.Properties;
 public class Versions extends JFrame {
 	/**
 	 * Constructs a JFrame.
-	 * 
-	 * @throws HeadlessException
 	 */
-	public Versions() throws HeadlessException {
+	public Versions() {
 		super("Plugins and their version");
 		try {
 			jbInit();

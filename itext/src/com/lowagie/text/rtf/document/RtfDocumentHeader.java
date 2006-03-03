@@ -63,6 +63,8 @@ import com.lowagie.text.rtf.style.RtfColor;
 import com.lowagie.text.rtf.style.RtfColorList;
 import com.lowagie.text.rtf.style.RtfFont;
 import com.lowagie.text.rtf.style.RtfFontList;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
+import com.lowagie.text.rtf.style.RtfStylesheetList;
 
 
 /**
@@ -99,6 +101,10 @@ public class RtfDocumentHeader extends RtfElement {
      */
     private RtfListTable listTable = null;
     /**
+     * Stores all paragraph styles used in the document.
+     */
+    private RtfStylesheetList stylesheetList = null;
+    /**
      * The information group with author/subject/keywords/title/producer/creationdate data
      */
     private RtfInfoGroup infoGroup = null;
@@ -128,14 +134,15 @@ public class RtfDocumentHeader extends RtfElement {
      * Initialises the RtfDocumentHeader.
      */
     protected void init() {
-        codePage = new RtfCodePage(this.document);
-        colorList = new RtfColorList(this.document);
-        fontList = new RtfFontList(this.document);
-        listTable = new RtfListTable(this.document);
-        infoGroup = new RtfInfoGroup(this.document);
-        pageSetting = new RtfPageSetting(this.document);
-        header = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_HEADER);
-        footer = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_FOOTER);
+        this.codePage = new RtfCodePage(this.document);
+        this.colorList = new RtfColorList(this.document);
+        this.fontList = new RtfFontList(this.document);
+        this.listTable = new RtfListTable(this.document);
+        this.stylesheetList = new RtfStylesheetList(this.document);
+        this.infoGroup = new RtfInfoGroup(this.document);
+        this.pageSetting = new RtfPageSetting(this.document);
+        this.header = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_HEADER);
+        this.footer = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_FOOTER);
     }
     
     /**
@@ -146,12 +153,13 @@ public class RtfDocumentHeader extends RtfElement {
     public byte[] write() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
-            result.write(codePage.writeDefinition());
-            result.write(fontList.writeDefinition());
-            result.write(colorList.writeDefinition());
-            result.write(listTable.writeDefinition());
-            result.write(infoGroup.write());
-            result.write(pageSetting.writeDefinition());
+            result.write(this.codePage.writeDefinition());
+            result.write(this.fontList.writeDefinition());
+            result.write(this.colorList.writeDefinition());
+            result.write(this.stylesheetList.writeDefinition());
+            result.write(this.listTable.writeDefinition());
+            result.write(this.infoGroup.write());
+            result.write(this.pageSetting.writeDefinition());
             result.write(writeSectionDefinition());
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -217,6 +225,16 @@ public class RtfDocumentHeader extends RtfElement {
     }
     
     /**
+     * Gets the RtfParagraphStyle with the given style name.
+     * 
+     * @param styleName The style name of the RtfParagraphStyle to get. 
+     * @return The RtfParagraphStyle with the given style name or null.
+     */
+    public RtfParagraphStyle getRtfParagraphStyle(String styleName) {
+        return this.stylesheetList.getRtfParagraphStyle(styleName);
+    }
+    
+    /**
      * Removes a RtfList from the list table
      * 
      * @param list The RtfList to remove
@@ -279,5 +297,14 @@ public class RtfDocumentHeader extends RtfElement {
         } else {
             this.footer = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_FOOTER);
         }
+    }
+    
+    /**
+     * Registers the RtfParagraphStyle for further use in the document.
+     * 
+     * @param rtfParagraphStyle The RtfParagraphStyle to register.
+     */
+    public void registerParagraphStyle(RtfParagraphStyle rtfParagraphStyle) {
+        this.stylesheetList.registerParagraphStyle(rtfParagraphStyle);
     }
 }

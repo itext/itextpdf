@@ -66,6 +66,7 @@ import java.io.*;
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
  * Updates Benoit WIART <b.wiart@proxiad.com>
+ * @deprecated Please move to the RtfWriter2 and associated classes.
  */
 public class RtfTable {
     /** Stores the different rows. */

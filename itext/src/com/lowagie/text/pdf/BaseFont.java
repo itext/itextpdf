@@ -184,7 +184,11 @@ public abstract class BaseFont {
     /** A possible encoding. */    
     public static final String MACROMAN = "MacRoman";
     
-    
+    public static final int[] CHAR_RANGE_LATIN = {0, 0x17f, 0x2000, 0x206f, 0x20a0, 0x20cf, 0xfb00, 0xfb06};
+    public static final int[] CHAR_RANGE_ARABIC = {0, 0x7f, 0x0600, 0x067f, 0x20a0, 0x20cf, 0xfb50, 0xfbff, 0xfe70, 0xfeff};
+    public static final int[] CHAR_RANGE_HEBREW = {0, 0x7f, 0x0590, 0x05ff, 0x20a0, 0x20cf, 0xfb1d, 0xfb4f};
+    public static final int[] CHAR_RANGE_CYRILLIC = {0, 0x7f, 0x0400, 0x052f, 0x2000, 0x206f, 0x20a0, 0x20cf};
+
 /** if the font has to be embedded */
     public static final boolean EMBEDDED = true;
     
@@ -200,6 +204,7 @@ public abstract class BaseFont {
     /** The fake CID code that represents a newline. */    
     public static final char CID_NEWLINE = '\u7fff';
     
+    protected ArrayList subsetRanges;
     /** The font type.
      */    
     int fontType;
@@ -901,8 +906,10 @@ public abstract class BaseFont {
     }
     
     /** Indicates if all the glyphs and widths for that particular
-     * encoding should be included in the document. Set to <CODE>false</CODE>
-     * to include all.
+     * encoding should be included in the document. When set to <CODE>true</CODE>
+     * only the glyphs used will be included in the font. When set to <CODE>false</CODE>
+     * and {@link #addSubsetRange(int[])} was not called the full font will be included
+     * otherwise just the characters ranges will be included.
      * @param subset new value of property subset
      */
     public void setSubset(boolean subset) {
@@ -1114,5 +1121,17 @@ public abstract class BaseFont {
             setCharAdvance(c, 0);
         for (char c = '\u06ea'; c <= '\u06ed'; ++c)
             setCharAdvance(c, 0);
+    }
+    
+    /**
+     * Adds a character range when subsetting. The range is an <CODE>int</CODE> array
+     * where the first element is the start range inclusive and the second element is the
+     * end range inclusive. Several ranges are allowed in the same array.
+     * @param range the character range
+     */
+    public void addSubsetRange(int[] range) {
+        if (subsetRanges == null)
+            subsetRanges = new ArrayList();
+        subsetRanges.add(range);
     }
 }

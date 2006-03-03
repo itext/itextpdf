@@ -622,7 +622,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         cell.setBorderWidth(defaultLayout.borderWidth());
         cell.setBorderColor(defaultLayout.borderColor());
         cell.setBackgroundColor(defaultLayout.backgroundColor());
-        cell.setGrayFill(defaultLayout.grayFill());
         cell.setHorizontalAlignment(defaultLayout.horizontalAlignment());
         cell.setVerticalAlignment(defaultLayout.verticalAlignment());
         cell.setColspan(defaultLayout.colspan());
@@ -867,9 +866,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         }
         if (aCell.backgroundColor() == null) {
             aCell.setBackgroundColor(defaultLayout.backgroundColor());
-        }
-        if (aCell.grayFill() == Rectangle.UNDEFINED) {
-            aCell.setGrayFill(defaultLayout.grayFill());
         }
         if (aCell.horizontalAlignment() == Element.ALIGN_UNDEFINED) {
             aCell.setHorizontalAlignment(defaultLayout.horizontalAlignment());

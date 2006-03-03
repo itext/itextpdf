@@ -55,6 +55,7 @@ import java.util.Properties;
  * A <code>Cell</code> with extended style attributes
  * 
  * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
+ * @deprecated Please move to the RtfWriter2 and associated classes. com.lowagie.text.rtf.table.RtfCell replaces the functionality of this class.
  */
 public class RtfTableCell extends Cell
 {

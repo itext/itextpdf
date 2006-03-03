@@ -53,12 +53,16 @@ package com.lowagie.text.rtf.text;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.graphic.RtfImage;
+import com.lowagie.text.rtf.style.RtfFont;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
 
 
 /**
@@ -74,75 +78,11 @@ public class RtfParagraph extends RtfPhrase {
      * Constant for the end of a paragraph
      */
     public static final byte[] PARAGRAPH = "\\par".getBytes();
-    /**
-     * Constant for left alignment
-     */
-    public static final byte[] ALIGN_LEFT = "\\ql".getBytes();
-    /**
-     * Constant for right alignment
-     */
-    public static final byte[] ALIGN_RIGHT = "\\qr".getBytes();
-    /**
-     * Constant for center alignment
-     */
-    public static final byte[] ALIGN_CENTER = "\\qc".getBytes();
-    /**
-     * Constant for justified alignment
-     */
-    public static final byte[] ALIGN_JUSTIFY = "\\qj".getBytes();
-    /**
-     * Constant for left indentation
-     */
-    public static final byte[] INDENT_LEFT = "\\li".getBytes();
-    /**
-     * Constant for right indentation
-     */
-    public static final byte[] INDENT_RIGHT = "\\ri".getBytes();
-    /**
-     * Constant for keeping the paragraph together on one page
-     */
-    public static final byte[] KEEP_TOGETHER = "\\keep".getBytes();
-    /**
-     * Constant for keeping the paragraph toghether with the next one on one page
-     */
-    public static final byte[] KEEP_TOGETHER_WITH_NEXT = "\\keepn".getBytes();
-    /**
-     * Constant for the space before the paragraph.
-     */
-    private static final byte[] SPACING_BEFORE = "\\sb".getBytes();
-    /**
-     * Constant for the space after the paragraph.
-     */
-    private static final byte[] SPACING_AFTER = "\\sa".getBytes();
     
     /**
-     * The alignment of this RtfParagraph
+     * An optional RtfParagraphStyle to use for styling.
      */
-    private int alignment = Element.ALIGN_UNDEFINED;
-    /**
-     * The left indentation of this RtfParagraph
-     */
-    private int indentLeft = 0;
-    /**
-     * The right indentation of this RtfParagraph
-     */
-    private int indentRight = 0;
-    /**
-     * Whether this RtfParagraph must stay on one page.
-     */
-    private boolean keepTogether = false;
-    /**
-     * Whether this RtfParagraph must stay on the same page as the next paragraph.
-     */
-    private boolean keepTogetherWithNext = false;
-    /**
-     * The space before this paragraph.
-     */
-    private int spacingBefore = 0;
-    /**
-     * The space after this paragraph.
-     */
-    private int spacingAfter = 0;
+    private RtfParagraphStyle paragraphStyle = null;
     
     /**
      * Constructs a RtfParagraph belonging to a RtfDocument based on a Paragraph.
@@ -151,18 +91,36 @@ public class RtfParagraph extends RtfPhrase {
      * @param paragraph The Paragraph that this RtfParagraph is based on
      */
     public RtfParagraph(RtfDocument doc, Paragraph paragraph) {
-        super(doc, paragraph);
+        super(doc);
         
-        this.alignment = paragraph.alignment();
-        this.indentLeft = (int) (paragraph.indentationLeft() * RtfElement.TWIPS_FACTOR);
-        this.indentRight = (int) (paragraph.indentationRight() * RtfElement.TWIPS_FACTOR);
-        this.keepTogether = paragraph.getKeepTogether();
-        this.spacingBefore = (int) (paragraph.spacingBefore() * RtfElement.TWIPS_FACTOR);
-        this.spacingAfter = (int) (paragraph.spacingAfter() * RtfElement.TWIPS_FACTOR);
+        RtfFont baseFont = null;
+        if(paragraph.font() instanceof RtfParagraphStyle) {
+            this.paragraphStyle = this.document.getDocumentHeader().getRtfParagraphStyle(((RtfParagraphStyle) paragraph.font()).getStyleName());
+            baseFont = this.paragraphStyle;
+        } else {
+            baseFont = new RtfFont(this.document, paragraph.font());
+            this.paragraphStyle = new RtfParagraphStyle(this.document, this.document.getDocumentHeader().getRtfParagraphStyle("Normal"));
+            this.paragraphStyle.setAlignment(paragraph.alignment());
+            this.paragraphStyle.setIndentLeft((int) (paragraph.indentationLeft() * RtfElement.TWIPS_FACTOR));
+            this.paragraphStyle.setIndentRight((int) (paragraph.indentationRight() * RtfElement.TWIPS_FACTOR));
+            this.paragraphStyle.setSpacingBefore((int) (paragraph.spacingBefore() * RtfElement.TWIPS_FACTOR));
+            this.paragraphStyle.setSpacingAfter((int) (paragraph.spacingAfter() * RtfElement.TWIPS_FACTOR));
+            if(paragraph.leadingDefined()) {
+                this.paragraphStyle.setLineLeading((int) (paragraph.leading() * RtfElement.TWIPS_FACTOR));
+            }
+            this.paragraphStyle.setKeepTogether(paragraph.getKeepTogether());
+        }
         
-        for(int i = 0; i < this.chunks.size(); i++) {
-            if(chunks.get(i) instanceof RtfImage) {
-                ((RtfImage) chunks.get(i)).setAlignment(this.alignment);
+        for(int i = 0; i < paragraph.size(); i++) {
+            Element chunk = (Element) paragraph.get(i);
+            if(chunk instanceof Chunk) {
+                ((Chunk) chunk).setFont(baseFont.difference(((Chunk) chunk).font()));
+            } else if(chunk instanceof RtfImage) {
+                ((RtfImage) chunks.get(i)).setAlignment(this.paragraphStyle.getAlignment());
+            }
+            try {
+                chunks.add(doc.getMapper().mapElement(chunk));
+            } catch(DocumentException de) {
             }
         }
     }
@@ -173,7 +131,7 @@ public class RtfParagraph extends RtfPhrase {
      * @param keepTogetherWithNext Whether this RtfParagraph must keep together with the next.
      */
     public void setKeepTogetherWithNext(boolean keepTogetherWithNext) {
-        this.keepTogetherWithNext = keepTogetherWithNext;
+        this.paragraphStyle.setKeepTogetherWithNext(keepTogetherWithNext);
     }
     
     /**
@@ -186,51 +144,28 @@ public class RtfParagraph extends RtfPhrase {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(PARAGRAPH_DEFAULTS);
-            if(this.keepTogether) {
-                result.write(KEEP_TOGETHER);
-            }
-            if(this.keepTogetherWithNext) {
-                result.write(KEEP_TOGETHER_WITH_NEXT);
-            }
+
             if(inTable) {
                 result.write(IN_TABLE);
             }
-            switch (alignment) {
-                case Element.ALIGN_LEFT:
-                    result.write(ALIGN_LEFT);
-                    break;
-                case Element.ALIGN_RIGHT:
-                    result.write(ALIGN_RIGHT);
-                    break;
-                case Element.ALIGN_CENTER:
-                    result.write(ALIGN_CENTER);
-                    break;
-                case Element.ALIGN_JUSTIFIED:
-                case Element.ALIGN_JUSTIFIED_ALL:
-                    result.write(ALIGN_JUSTIFY);
-                    break;
+            
+            if(this.paragraphStyle != null) {
+                result.write(this.paragraphStyle.writeBegin());
             }
-    	    result.write(INDENT_LEFT);
-    	    result.write(intToByteArray(indentLeft));
-    	    result.write(INDENT_RIGHT);
-    	    result.write(intToByteArray(indentRight));
-    	    if(this.spacingBefore > 0) {
-    	        result.write(SPACING_BEFORE);
-    	        result.write(intToByteArray(this.spacingBefore));
-    	    }
-    	    if(this.spacingAfter > 0) {
-    	        result.write(SPACING_AFTER);
-    	        result.write(intToByteArray(this.spacingAfter));
-    	    }
-            if(this.lineLeading > 0) {
-                result.write(LINE_SPACING);
-                result.write(intToByteArray(this.lineLeading));
-            }
+            
             for(int i = 0; i < chunks.size(); i++) {
                 result.write(((RtfBasicElement) chunks.get(i)).write());
             }
+            
+            if(this.paragraphStyle != null) {
+                result.write(this.paragraphStyle.writeEnd());
+            }
+            
             if(!inTable) {
                 result.write(PARAGRAPH);
+            }
+            if(this.document.getDocumentSettings().isOutputDebugLineBreaks()) {
+                result.write('\n');
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -244,7 +179,7 @@ public class RtfParagraph extends RtfPhrase {
      * @return The left indentation.
      */
     public int getIndentLeft() {
-        return this.indentLeft;
+        return this.paragraphStyle.getIndentLeft();
     }
     
     /**
@@ -253,7 +188,7 @@ public class RtfParagraph extends RtfPhrase {
      * @param indentLeft The left indentation to use.
      */
     public void setIndentLeft(int indentLeft) {
-        this.indentLeft = indentLeft;
+        this.paragraphStyle.setIndentLeft(indentLeft);
     }
     
     /**
@@ -262,7 +197,7 @@ public class RtfParagraph extends RtfPhrase {
      * @return The right indentation.
      */
     public int getIndentRight()  {
-        return this.indentRight;
+        return this.paragraphStyle.getIndentRight();
     }
     
     /**
@@ -271,6 +206,6 @@ public class RtfParagraph extends RtfPhrase {
      * @param indentRight The right indentation to use.
      */
     public void setIndentRight(int indentRight) {
-        this.indentRight = indentRight;
+        this.paragraphStyle.setIndentRight(indentRight);
     }
 }

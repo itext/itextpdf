@@ -60,11 +60,13 @@ import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.List;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.style.RtfColor;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
 import com.lowagie.text.rtf.text.RtfParagraph;
 
 
@@ -223,13 +225,10 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             this.borders = new RtfBorderGroup(this.document, RtfBorder.CELL_BORDER, cell.border(), cell.borderWidth(), cell.borderColor());
         }
         this.verticalAlignment = cell.verticalAlignment();
-        if(cell.backgroundColor() == null && cell.grayFill() == 0) {
+        if(cell.backgroundColor() == null) {
             this.backgroundColor = new RtfColor(this.document, 255, 255, 255);
-        } else if(cell.backgroundColor() != null ){
-            this.backgroundColor = new RtfColor(this.document, cell.backgroundColor());
         } else {
-            int grayScale = (int) (cell.grayFill() * 255);
-            this.backgroundColor = new RtfColor(this.document, grayScale, grayScale, grayScale);
+            this.backgroundColor = new RtfColor(this.document, cell.backgroundColor());
         }
         
         this.cellPadding = (int) this.parentRow.getParentTable().getCellPadding();
@@ -241,7 +240,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                 try {
                     Element element = (Element) cellIterator.next();
                     // should we wrap it in a paragraph
-                    if(!(element instanceof Paragraph)) {
+                    if(!(element instanceof Paragraph) && !(element instanceof List)) {
                         if(container != null) {
                             container.add(element);
                         } else {
@@ -261,7 +260,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                         if (element instanceof Paragraph && ((Paragraph) element).alignment() == Element.ALIGN_UNDEFINED) {
                             ((Paragraph) element).setAlignment(cell.horizontalAlignment());
                         }
-                        
+
                         RtfBasicElement rtfElement = this.document.getMapper().mapElement(element);
                         rtfElement.setInTable(true);
                         this.content.add(rtfElement);
@@ -357,9 +356,9 @@ public class RtfCell extends Cell implements RtfExtendedElement {
             if(this.content.size() == 0) {
                 result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
                 if(this.parentRow.getParentTable().getTableFitToPage()) {
-                    result.write(RtfParagraph.KEEP_TOGETHER_WITH_NEXT);
+                    result.write(RtfParagraphStyle.KEEP_TOGETHER_WITH_NEXT);
                 }
-                result.write("\\intbl".getBytes());
+                result.write(RtfParagraph.IN_TABLE);
             } else {
                 for(int i = 0; i < this.content.size(); i++) {
                     RtfBasicElement rtfElement = (RtfBasicElement) this.content.get(i);

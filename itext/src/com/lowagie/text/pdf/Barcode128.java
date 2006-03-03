@@ -1,5 +1,7 @@
 /*
- * Copyright 2002 by Paulo Soares.
+ * $Id$
+ *
+ * Copyright 2002-2006 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -538,7 +540,7 @@ public class Barcode128 extends Barcode{
                 fullCode = getHumanReadableUCCEAN(code);
             else
                 fullCode = removeFNC1(code);
-            fontX = font.getWidthPoint(fullCode, size);
+            fontX = font.getWidthPoint(altText != null ? altText : fullCode, size);
         }
         if (codeType == CODE128_RAW) {
             int idx = code.indexOf('\uffff');
@@ -608,7 +610,7 @@ public class Barcode128 extends Barcode{
             fullCode = removeFNC1(code);
         float fontX = 0;
         if (font != null) {
-            fontX = font.getWidthPoint(fullCode, size);
+            fontX = font.getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
         }
         String bCode;
         if (codeType == CODE128_RAW) {

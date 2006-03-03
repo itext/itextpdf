@@ -51,6 +51,9 @@ import java.awt.Color;
 import com.lowagie.text.Element;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Font;
+import com.lowagie.text.Chunk;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -87,12 +90,64 @@ public class TextField extends BaseField {
         super(writer, box, fieldName);
     }
     
-    /**
-     * Gets the appearance for this TextField.
-     * @return the appearance object for this TextField
-     * @throws IOException
-     * @throws DocumentException
-     */
+    private static boolean checkRTL(String text) {
+        if (text == null || text.length() == 0)
+            return false;
+        char[] cc = text.toCharArray();
+        for (int k = 0; k < cc.length; ++k) {
+            int c = (int)cc[k];
+            if (c >= 0x590 && c < 0x0780)
+                return true;
+        }
+        return false;
+    }
+    
+    private static void changeFontSize(Phrase p, float size) {
+        for (int k = 0; k < p.size(); ++k) {
+            ((Chunk)p.get(k)).font().setSize(size);
+        }
+    }
+    
+    private Phrase composePhrase(String text, BaseFont ufont, Color color, float fontSize) {
+        Phrase phrase = null;
+        if (extensionFont == null && (substitutionFonts == null || substitutionFonts.size() == 0))
+            phrase = new Phrase(new Chunk(text, new Font(ufont, fontSize, 0, color)));
+        else {
+            FontSelector fs = new FontSelector();
+            fs.addFont(new Font(ufont, fontSize, 0, color));
+            if (extensionFont != null)
+                fs.addFont(new Font(extensionFont, fontSize, 0, color));
+            if (substitutionFonts != null) {
+                for (int k = 0; k < substitutionFonts.size(); ++k) {
+                    fs.addFont(new Font((BaseFont)substitutionFonts.get(k), fontSize, 0, color));
+                }
+            }
+            phrase = fs.process(text);
+        }
+        return phrase;
+    }
+    
+    private static String removeCRLF(String text) {
+        if (text.indexOf('\n') >= 0 || text.indexOf('\r') >= 0) {
+            char[] p = text.toCharArray();
+            StringBuffer sb = new StringBuffer(p.length);
+            for (int k = 0; k < p.length; ++k) {
+                char c = p[k];
+                if (c == '\n')
+                    sb.append(' ');
+                else if (c == '\r') {
+                    sb.append(' ');
+                    if (k < p.length - 1 && p[k + 1] == '\n')
+                        ++k;
+                }
+                else
+                    sb.append(c);
+            }
+            return sb.toString();
+        }
+        return text;
+    }
+    
     public PdfAppearance getAppearance() throws IOException, DocumentException {
         PdfAppearance app = getBorderAppearance();
         app.beginVariableText();
@@ -116,11 +171,7 @@ public class TextField extends BaseField {
         app.rectangle(offX, offX, box.width() - 2 * offX, box.height() - 2 * offX);
         app.clip();
         app.newPath();
-        if (textColor == null)
-            app.setGrayFill(0);
-        else
-            app.setColorFill(textColor);
-        app.beginText();
+        Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
         String ptext = text; //fixed by Kazuya Ujihara (ujihara.jp)
         if ((options & PASSWORD) != 0) { 
             char[] pchar = new char[text.length()];
@@ -128,78 +179,66 @@ public class TextField extends BaseField {
                 pchar[i] = '*';
             ptext = new String(pchar);
         }
+        int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
+        if ((options & MULTILINE) == 0) {
+            ptext = removeCRLF(text);
+        }
+        Phrase phrase = composePhrase(ptext, ufont, fcolor, fontSize);
         if ((options & MULTILINE) != 0) {
             float usize = fontSize;
-            float width = box.width() - 3 * offsetX - extraMarginLeft;
-            ArrayList breaks = getHardBreaks(ptext);
-            ArrayList lines = breaks;
+            float width = box.width() - 4 * offsetX - extraMarginLeft;
             float factor = ufont.getFontDescriptor(BaseFont.BBOXURY, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1);
+            ColumnText ct = new ColumnText(null);
             if (usize == 0) {
-                usize = h / breaks.size() / factor;
+                usize = h / factor;
                 if (usize > 4) {
                     if (usize > 12)
                         usize = 12;
                     float step = Math.max((usize - 4) / 10, 0.2f);
+                    ct.setSimpleColumn(0, -h, width, 0);
+                    ct.setAlignment(alignment);
+                    ct.setRunDirection(rtl);
                     for (; usize > 4; usize -= step) {
-                        lines = breakLines(breaks, ufont, usize, width);
-                        if (lines.size() * usize * factor <= h)
+                        ct.setYLine(0);
+                        changeFontSize(phrase, usize);
+                        ct.setText(phrase);
+                        ct.setLeading(factor * usize);
+                        int status = ct.go(true);
+                        if ((status & ColumnText.NO_MORE_COLUMN) == 0)
                             break;
                     }
                 }
-                if (usize <= 4) {
+                if (usize < 4) {
                     usize = 4;
-                    lines = breakLines(breaks, ufont, usize, width);
                 }
             }
-            else
-                lines = breakLines(breaks, ufont, usize, width);
-            app.setFontAndSize(ufont, usize);
-            app.setLeading(usize * factor);
+            changeFontSize(phrase, usize);
+            ct.setCanvas(app);
+            float leading = usize * factor;
             float offsetY = offsetX + h - ufont.getFontDescriptor(BaseFont.BBOXURY, usize);
-            String nt = (String)lines.get(0);
-            if (alignment == Element.ALIGN_RIGHT) {
-                float wd = ufont.getWidthPoint(nt, usize);
-                app.moveText(extraMarginLeft + box.width() - 2 * offsetX - wd, offsetY);
-            }
-            else if (alignment == Element.ALIGN_CENTER) {
-                nt = nt.trim();
-                float wd = ufont.getWidthPoint(nt, usize);
-                app.moveText(extraMarginLeft + box.width() / 2  - wd / 2, offsetY);
-            }
-            else
-                app.moveText(extraMarginLeft + 2 * offsetX, offsetY);
-            app.showText(nt);
-            int maxline = (int)(h / usize / factor) + 1;
-            maxline = Math.min(maxline, lines.size());
-            for (int k = 1; k < maxline; ++k) {
-                nt = (String)lines.get(k);
-                if (alignment == Element.ALIGN_RIGHT) {
-                    float wd = ufont.getWidthPoint(nt, usize);
-                    app.moveText(extraMarginLeft + box.width() - 2 * offsetX - wd - app.getXTLM(), 0);
-                }
-                else if (alignment == Element.ALIGN_CENTER) {
-                    nt = nt.trim();
-                    float wd = ufont.getWidthPoint(nt, usize);
-                    app.moveText(extraMarginLeft + box.width() / 2  - wd / 2 - app.getXTLM(), 0);
-                }
-                app.newlineShowText(nt);
-            }
+            ct.setSimpleColumn(extraMarginLeft + 2 * offsetX, -20000, box.width() - 2 * offsetX, offsetY + leading);
+            ct.setLeading(leading);
+            ct.setAlignment(alignment);
+            ct.setRunDirection(rtl);
+            ct.setText(phrase);
+            ct.go();
         }
         else {
             float usize = fontSize;
             if (usize == 0) {
                 float maxCalculatedSize = h / (ufont.getFontDescriptor(BaseFont.BBOXURX, 1) - ufont.getFontDescriptor(BaseFont.BBOXLLY, 1));
-                float wd = ufont.getWidthPoint(ptext, 1);
+                changeFontSize(phrase, 1);
+                float wd = ColumnText.getWidth(phrase, rtl, 0);
                 if (wd == 0)
                     usize = maxCalculatedSize;
                 else
-                    usize = (box.width() - extraMarginLeft - 2 * offsetX) / wd;
+                    usize = (box.width() - extraMarginLeft - 4 * offsetX) / wd;
                 if (usize > maxCalculatedSize)
                     usize = maxCalculatedSize;
                 if (usize < 4)
                     usize = 4;
             }
-            app.setFontAndSize(ufont, usize);
+            changeFontSize(phrase, usize);
             float offsetY = offX + ((box.height() - 2*offX) - ufont.getFontDescriptor(BaseFont.ASCENT, usize)) / 2;
             if (offsetY < offX)
                 offsetY = offX;
@@ -219,29 +258,37 @@ public class TextField extends BaseField {
                 }
                 float step = (box.width() - extraMarginLeft) / maxCharacterLength;
                 float start = step / 2 + position * step;
-                for (int k = 0; k < textLen; ++k) {
-                    String c = ptext.substring(k, k + 1);
-                    float wd = ufont.getWidthPoint(c, usize);
-                    app.setTextMatrix(extraMarginLeft + start - wd / 2, offsetY - extraMarginTop);
-                    app.showText(c);
-                    start += step;
+                if (textColor == null)
+                    app.setGrayFill(0);
+                else
+                    app.setColorFill(textColor);
+                app.beginText();
+                for (int k = 0; k < phrase.size(); ++k) {
+                    Chunk ck = (Chunk)phrase.get(k);
+                    BaseFont bf = ck.font().getBaseFont();
+                    app.setFontAndSize(bf, usize);
+                    StringBuffer sb = ck.append("");
+                    for (int j = 0; j < sb.length(); ++j) {
+                        String c = sb.substring(j, j + 1);
+                        float wd = bf.getWidthPoint(c, usize);
+                        app.setTextMatrix(extraMarginLeft + start - wd / 2, offsetY - extraMarginTop);
+                        app.showText(c);
+                        start += step;
+                    }
                 }
+                app.endText();
             }
             else {
                 if (alignment == Element.ALIGN_RIGHT) {
-                    float wd = ufont.getWidthPoint(ptext, usize);
-                    app.moveText(extraMarginLeft + box.width() - 2 * offsetX - wd, offsetY - extraMarginTop);
+                    ColumnText.showTextAligned(app, Element.ALIGN_RIGHT, phrase, extraMarginLeft + box.width() - 2 * offsetX, offsetY - extraMarginTop, 0, rtl, 0);
                 }
                 else if (alignment == Element.ALIGN_CENTER) {
-                    float wd = ufont.getWidthPoint(ptext, usize);
-                    app.moveText(extraMarginLeft + box.width() / 2  - wd / 2, offsetY - extraMarginTop);
+                    ColumnText.showTextAligned(app, Element.ALIGN_CENTER, phrase, extraMarginLeft + box.width() / 2, offsetY - extraMarginTop, 0, rtl, 0);
                 }
                 else
-                    app.moveText(extraMarginLeft + 2 * offsetX, offsetY - extraMarginTop);
-                app.showText(ptext);
+                    ColumnText.showTextAligned(app, Element.ALIGN_LEFT, phrase, extraMarginLeft + 2 * offsetX, offsetY - extraMarginTop, 0, rtl, 0);
             }
         }
-        app.endText();
         app.restoreState();
         app.endVariableText();
         return app;
@@ -288,29 +335,19 @@ public class TextField extends BaseField {
         app.rectangle(offsetX, offsetX, box.width() - 2 * offsetX, box.height() - 2 * offsetX);
         app.clip();
         app.newPath();
-        Color mColor;
-        if (textColor == null)
-            mColor = new GrayColor(0);
-        else
-            mColor = textColor;
+        Color fcolor = (textColor == null) ? GrayColor.GRAYBLACK : textColor;
         app.setColorFill(new Color(10, 36, 106));
         app.rectangle(offsetX, offsetX + h - (topChoice - first + 1) * leading, box.width() - 2 * offsetX, leading);
         app.fill();
-        app.beginText();
-        app.setFontAndSize(ufont, usize);
-        app.setLeading(leading);
-        app.moveText(offsetX * 2, offsetX + h - ufont.getFontDescriptor(BaseFont.BBOXURY, usize) + leading);
-        app.setColorFill(mColor);
-        for (int idx = first; idx < last; ++idx) {
-            if (idx == topChoice) {
-                app.setGrayFill(1);
-                app.newlineShowText(choices[idx]);
-                app.setColorFill(mColor);
-            }
-            else
-                app.newlineShowText(choices[idx]);
+        float xp = offsetX * 2;
+        float yp = offsetX + h - ufont.getFontDescriptor(BaseFont.BBOXURY, usize);
+        for (int idx = first; idx < last; ++idx, yp -= leading) {
+            String ptext = choices[idx];
+            int rtl = checkRTL(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
+            ptext = removeCRLF(ptext);
+            Phrase phrase = composePhrase(ptext, ufont, (idx == topChoice) ? GrayColor.GRAYWHITE : fcolor, usize);
+            ColumnText.showTextAligned(app, Element.ALIGN_LEFT, phrase, xp, yp, 0, rtl, 0);
         }
-        app.endText();
         app.restoreState();
         app.endVariableText();
         return app;
@@ -574,5 +611,51 @@ public class TextField extends BaseField {
     public void setExtraMargin(float extraMarginLeft, float extraMarginTop) {
         this.extraMarginLeft = extraMarginLeft;
         this.extraMarginTop = extraMarginTop;
+    }
+
+    /**
+     * Holds value of property substitutionFonts.
+     */
+    private ArrayList substitutionFonts;
+
+    /**
+     * Gets the list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can be <CODE>null</CODE>. The fonts in this list will be used if the original
+     * font doesn't contain the needed glyphs.
+     * @return the list
+     */
+    public ArrayList getSubstitutionFonts() {
+        return this.substitutionFonts;
+    }
+
+    /**
+     * Sets a list of substitution fonts. The list is composed of <CODE>BaseFont</CODE> and can also be <CODE>null</CODE>. The fonts in this list will be used if the original
+     * font doesn't contain the needed glyphs.
+     * @param substitutionFonts the list
+     */
+    public void setSubstitutionFonts(ArrayList substitutionFonts) {
+        this.substitutionFonts = substitutionFonts;
+    }
+
+    /**
+     * Holds value of property extensionFont.
+     */
+    private BaseFont extensionFont;
+
+    /**
+     * Gets the extensionFont. This font will be searched before the
+     * substitution fonts. It may be <code>null</code>.
+     * @return the extensionFont
+     */
+    public BaseFont getExtensionFont() {
+        return this.extensionFont;
+    }
+
+    /**
+     * Sets the extensionFont. This font will be searched before the
+     * substitution fonts. It may be <code>null</code>.
+     * @param extensionFont New value of property extensionFont.
+     */
+    public void setExtensionFont(BaseFont extensionFont) {
+        this.extensionFont = extensionFont;
     }
 }

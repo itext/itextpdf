@@ -1,5 +1,7 @@
 /*
- * Copyright 2002 by Paulo Soares.
+ * $Id$
+ *
+ * Copyright 2002-2006 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -228,7 +230,7 @@ public class Barcode39 extends Barcode{
                 fullCode += getChecksum(fullCode);
             if (startStopText)
                 fullCode = "*" + fullCode + "*";
-            fontX = font.getWidthPoint(fullCode, size);
+            fontX = font.getWidthPoint(altText != null ? altText : fullCode, size);
         }
         String fullCode = code;
         if (extended)
@@ -286,7 +288,7 @@ public class Barcode39 extends Barcode{
                 fullCode += getChecksum(fullCode);
             if (startStopText)
                 fullCode = "*" + fullCode + "*";
-            fontX = font.getWidthPoint(fullCode, size);
+            fontX = font.getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
         }
         String bCode = code;
         if (extended)

@@ -121,7 +121,7 @@ public class ImageFilter extends FileFilter {
 	public boolean accept(File f) {
 		if (f.isDirectory()) return true;
 		for (int i = 0; i < IMAGES.length; i++) {
-			if (filter[i] && f.getName().endsWith(IMAGES[i])) return true;
+			if (filter[i] && f.getName().toLowerCase().endsWith(IMAGES[i])) return true;
 		}
 		return false;
 	}

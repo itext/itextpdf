@@ -53,6 +53,8 @@ package com.lowagie.text.pdf;
 import java.io.*;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 /** Reads a Truetype font
@@ -1058,13 +1060,79 @@ class TrueTypeFont extends BaseFont {
         return dic;
     }
     
-    private byte[] getFullFont() throws IOException {
-        RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(rf);
-        rf2.reOpen();
-        byte b[] = new byte[rf2.length()];
-        rf2.readFully(b);
-        rf2.close();
-        return b;
+    protected byte[] getFullFont() throws IOException {
+        RandomAccessFileOrArray rf2 = null;
+        try {
+            rf2 = new RandomAccessFileOrArray(rf);
+            rf2.reOpen();
+            byte b[] = new byte[rf2.length()];
+            rf2.readFully(b);
+            return b;
+        } 
+        finally {
+            try {rf2.close();} catch (Exception e) {}
+        }
+    }
+    
+    protected static int[] compactRanges(ArrayList ranges) {
+        ArrayList simp = new ArrayList();
+        for (int k = 0; k < ranges.size(); ++k) {
+            int[] r = (int[])ranges.get(k);
+            for (int j = 0; j < r.length; j += 2) {
+                simp.add(new int[]{Math.max(0, Math.min(r[j], r[j + 1])), Math.min(0xffff, Math.max(r[j], r[j + 1]))});
+            }
+        }
+        for (int k1 = 0; k1 < simp.size() - 1; ++k1) {
+            for (int k2 = k1 + 1; k2 < simp.size(); ++k2) {
+                int[] r1 = (int[])simp.get(k1);
+                int[] r2 = (int[])simp.get(k2);
+                if ((r1[0] >= r2[0] && r1[0] <= r2[1]) || (r1[1] >= r2[0] && r1[0] <= r2[1])) {
+                    r1[0] = Math.min(r1[0], r2[0]);
+                    r1[1] = Math.max(r1[1], r2[1]);
+                    simp.remove(k2);
+                    --k2;
+                }
+            }
+        }
+        int[] s = new int[simp.size() * 2];
+        for (int k = 0; k < simp.size(); ++k) {
+            int[] r = (int[])simp.get(k);
+            s[k * 2] = r[0];
+            s[k * 2 + 1] = r[1];
+        }
+        return s;
+    }
+    
+    protected void addRangeUni(HashMap longTag, boolean includeMetrics, boolean subsetp) {
+        if (!subsetp && (subsetRanges != null || directoryOffset > 0)) {
+            int[] rg = (subsetRanges == null && directoryOffset > 0) ? new int[]{0, 0xffff} : compactRanges(subsetRanges);
+            HashMap usemap;
+            if (!fontSpecific && cmap31 != null) 
+                usemap = cmap31;
+            else if (fontSpecific && cmap10 != null) 
+                usemap = cmap10;
+            else if (cmap31 != null) 
+                usemap = cmap31;
+            else 
+                usemap = cmap10;
+            for (Iterator it = usemap.entrySet().iterator(); it.hasNext();) {
+                Map.Entry e = (Map.Entry)it.next();
+                int[] v = (int[])e.getValue();
+                Integer gi = new Integer(v[0]);
+                if (longTag.containsKey(gi))
+                    continue;
+                int c = ((Integer)e.getKey()).intValue();
+                boolean skip = true;
+                for (int k = 0; k < rg.length; k += 2) {
+                    if (c >= rg[k] && c <= rg[k + 1]) {
+                        skip = false;
+                        break;
+                    }
+                }
+                if (!skip)
+                    longTag.put(gi, includeMetrics ? new int[]{v[0], v[1], c} : null);
+            }
+        }
     }
     
     /** Outputs to the writer the font dictionaries and streams.
@@ -1078,7 +1146,9 @@ class TrueTypeFont extends BaseFont {
         int firstChar = ((Integer)params[0]).intValue();
         int lastChar = ((Integer)params[1]).intValue();
         byte shortTag[] = (byte[])params[2];
-        if (!subset) {
+        boolean subsetp = ((Boolean)params[3]).booleanValue() && subset;
+        
+        if (!subsetp) {
             firstChar = 0;
             lastChar = shortTag.length - 1;
             for (int k = 0; k < shortTag.length; ++k)
@@ -1110,7 +1180,7 @@ class TrueTypeFont extends BaseFont {
                 ind_font = obj.getIndirectReference();
             }
             else {
-                if (subset)
+                if (subsetp)
                     subsetPrefix = createSubsetPrefix();
                 HashMap glyphs = new HashMap();
                 for (int k = firstChar; k <= lastChar; ++k) {
@@ -1124,8 +1194,15 @@ class TrueTypeFont extends BaseFont {
                             glyphs.put(new Integer(metrics[0]), null);
                     }
                 }
-                TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), glyphs, directoryOffset, true);
-                byte b[] = sb.process();
+                addRangeUni(glyphs, false, subsetp);
+                byte[] b = null;
+                if (subsetp || directoryOffset != 0 || subsetRanges != null) {
+                    TrueTypeFontSubSet sb = new TrueTypeFontSubSet(fileName, new RandomAccessFileOrArray(rf), glyphs, directoryOffset, true, !subsetp);
+                    b = sb.process();
+                }
+                else {
+                    b = getFullFont();
+                }
                 int lengths[] = new int[]{b.length};
                 pobj = new StreamFont(b, lengths);
                 obj = writer.addToBody(pobj);

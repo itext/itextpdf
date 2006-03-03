@@ -168,7 +168,7 @@ public abstract class BaseField {
     }
     
     protected PdfAppearance getBorderAppearance() throws IOException, DocumentException {
-        PdfAppearance app = writer.getDirectContent().createAppearance(box.width(), box.height());
+        PdfAppearance app = new PdfContentByte(writer).createAppearance(box.width(), box.height());
         switch (rotation) {
             case 90:
                 app.setMatrix(0, 1, -1, 0, box.height(), 0);

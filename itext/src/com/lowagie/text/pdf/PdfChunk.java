@@ -66,7 +66,6 @@ import java.util.Iterator;
  * <CODE>PdfFont</CODE> and <CODE>Color</CODE>.
  *
  * @see		PdfString
- * @see		PdfFont
  * @see		com.lowagie.text.Chunk
  * @see		com.lowagie.text.Font
  */

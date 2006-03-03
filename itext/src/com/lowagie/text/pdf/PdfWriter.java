@@ -580,6 +580,10 @@ public class PdfWriter extends DocWriter {
     public static final int PageLayoutTwoColumnLeft = 4;
     /** A viewer preference */
     public static final int PageLayoutTwoColumnRight = 8;
+    /** A viewer preference */
+    public static final int PageLayoutTwoPageLeft = 1 << 22;
+    /** A viewer preference */
+    public static final int PageLayoutTwoPageRight = 1 << 23;
     
     /** A viewer preference */
     public static final int PageModeUseNone = 16;
@@ -591,6 +595,8 @@ public class PdfWriter extends DocWriter {
     public static final int PageModeFullScreen = 128;
     /** A viewer preference */
     public static final int PageModeUseOC = 1 << 20;
+    /** A viewer preference */
+    public static final int PageModeUseAttachments = 1 << 24;
     
     /** A viewer preference */
     public static final int HideToolbar = 256;
@@ -1743,7 +1749,7 @@ public class PdfWriter extends DocWriter {
     
     /**
      * Sets the <CODE>PdfPageEvent</CODE> for this document.
-     * @param pageEvent the <CODE>PdfPageEvent</CODE> for this document
+     * @param event the <CODE>PdfPageEvent</CODE> for this document
      */
     
     public void setPageEvent(PdfPageEvent event) {
@@ -1810,6 +1816,10 @@ public class PdfWriter extends DocWriter {
      *       oddnumbered pages on the left.
      *   <li><b>PageLayoutTwoColumnRight</b> - Display the pages in two columns, with
      *       oddnumbered pages on the right.
+     *   <li><b>PageLayoutTwoPageLeft</b> - Display the pages two at a time, with
+     *       oddnumbered pages on the left.
+     *   <li><b>PageLayoutTwoPageRight</b> - Display the pages two at a time, with
+     *       oddnumbered pages on the right.
      *   </ul>
      * <li>The page mode how the document should be displayed
      *     when opened (choose one).
@@ -1820,6 +1830,7 @@ public class PdfWriter extends DocWriter {
      *   <li><b>PageModeFullScreen</b> - Full-screen mode, with no menu bar, window
      *       controls, or any other window visible.
      *   <li><b>PageModeUseOC</b> - Optional content group panel visible
+     *   <li><b>PageModeUseAttachments</b> - Attachments panel visible
      *   </ul>
      * <li><b>HideToolbar</b> - A flag specifying whether to hide the viewer application's tool
      *     bars when the document is active.
@@ -2510,7 +2521,22 @@ public class PdfWriter extends DocWriter {
     public void setBoxSize(String boxName, Rectangle size) {
         pdf.setBoxSize(boxName, size);
     }
-    
+
+    /**
+     * Gives the size of a trim, art, crop or bleed box, or null if not defined.
+     * @param boxName crop, trim, art or bleed
+     */
+    public Rectangle getBoxSize(String boxName) {
+    	return pdf.getBoxSize(boxName);
+    }
+
+    /**
+     * Gives the size of the media box.
+     * @return a Rectangle
+     */
+    public Rectangle getPageSize() {
+    	return pdf.getPageSize();
+    }
     /**
      * Gets the default colorspaces.
      * @return the default colorspaces

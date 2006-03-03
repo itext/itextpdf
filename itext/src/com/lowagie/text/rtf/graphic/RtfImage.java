@@ -61,6 +61,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.pdf.codec.wmf.MetaDo;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.document.RtfDocument;
+import com.lowagie.text.rtf.style.RtfParagraphStyle;
 import com.lowagie.text.rtf.text.RtfParagraph;
 
 
@@ -228,16 +229,16 @@ public class RtfImage extends RtfElement {
             }
             switch(alignment) {
             	case Element.ALIGN_LEFT:
-            		result.write(RtfParagraph.ALIGN_LEFT);
+            		result.write(RtfParagraphStyle.ALIGN_LEFT);
             		break;
             	case Element.ALIGN_RIGHT:
-            		result.write(RtfParagraph.ALIGN_RIGHT);
+            		result.write(RtfParagraphStyle.ALIGN_RIGHT);
             		break;
             	case Element.ALIGN_CENTER:
-            		result.write(RtfParagraph.ALIGN_CENTER);
+            		result.write(RtfParagraphStyle.ALIGN_CENTER);
             		break;
             	case Element.ALIGN_JUSTIFIED:
-            		result.write(RtfParagraph.ALIGN_JUSTIFY);
+            		result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
             		break;
             }
             result.write(OPEN_GROUP);

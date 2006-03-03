@@ -205,6 +205,8 @@ public class PdfSignatureAppearance {
      */    
     public void setVisibleSignature(Rectangle pageRect, int page, String fieldName) {
         if (fieldName != null) {
+            if (fieldName.indexOf('.') >= 0)
+                throw new IllegalArgumentException("Field names cannot contain a dot.");
             AcroFields af = writer.getAcroFields();
             AcroFields.Item item = af.getFieldItem(fieldName);
             if (item != null)
@@ -740,30 +742,42 @@ public class PdfSignatureAppearance {
         String name = getFieldName();
         boolean fieldExists = !(isInvisible() || isNewField());
         int flags = 132;
-        if (fieldExists) {
-            flags = 0;
-            ArrayList merged = af.getFieldItem(name).merged;
-            PdfObject obj = PdfReader.getPdfObjectRelease(((PdfDictionary)merged.get(0)).get(PdfName.F));
-            if (obj != null && obj.isNumber())
-                flags = ((PdfNumber)obj).intValue();
-            af.removeField(name);
-        }
-        writer.setSigFlags(3);
-        PdfFormField sigField = PdfFormField.createSignature(writer);
-        sigField.setFieldName(name);
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
-        sigField.put(PdfName.V, refSig);
-        sigField.setFlags(flags);
-
-        int pagen = getPage();
-        if (!isInvisible()) {
-            sigField.setWidget(getPageRect(), null);
-            sigField.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, getAppearance());
+        if (fieldExists && name.indexOf('.') >= 0) {
+            ArrayList widgets = af.getFieldItem(name).widgets;
+            PdfDictionary widget = (PdfDictionary)widgets.get(0);
+            writer.markUsed(widget);
+            widget.put(PdfName.P, writer.getPageReference(getPage()));
+            widget.put(PdfName.V, refSig);
+            PdfDictionary ap = new PdfDictionary();
+            ap.put(PdfName.N, getAppearance().getIndirectReference());
+            widget.put(PdfName.AP, ap);
         }
-        else
-            sigField.setWidget(new Rectangle(0, 0), null);
-        sigField.setPage(pagen);
-        writer.addAnnotation(sigField, pagen);
+        else {
+            if (fieldExists) {
+                flags = 0;
+                ArrayList merged = af.getFieldItem(name).merged;
+                PdfObject obj = PdfReader.getPdfObjectRelease(((PdfDictionary)merged.get(0)).get(PdfName.F));
+                if (obj != null && obj.isNumber())
+                    flags = ((PdfNumber)obj).intValue();
+                af.removeField(name);
+            }
+            writer.setSigFlags(3);
+            PdfFormField sigField = PdfFormField.createSignature(writer);
+            sigField.setFieldName(name);
+            sigField.put(PdfName.V, refSig);
+            sigField.setFlags(flags);
+
+            int pagen = getPage();
+            if (!isInvisible()) {
+                sigField.setWidget(getPageRect(), null);
+                sigField.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, getAppearance());
+            }
+            else
+                sigField.setWidget(new Rectangle(0, 0), null);
+            sigField.setPage(pagen);
+            writer.addAnnotation(sigField, pagen);
+        }
 
         exclusionLocations = new HashMap();
         if (cryptoDictionary == null) {
