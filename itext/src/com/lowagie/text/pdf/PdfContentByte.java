@@ -418,7 +418,7 @@ public class PdfContentByte {
      * Changes the <VAR>line width</VAR>.
      * <P>
      * The line width specifies the thickness of the line used to stroke a path and is measured
-     * in used space units.<BR>
+     * in user space units.<BR>
      *
      * @param       w           a width
      */
