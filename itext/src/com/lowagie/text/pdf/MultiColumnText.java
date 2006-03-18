@@ -316,6 +316,7 @@ public class MultiColumnText implements Element {
     private void newPage() throws DocumentException {
         resetCurrentColumn();
         top = nextY = AUTOMATIC;
+        totalHeight = 0;
         if (document != null) {
             document.newPage();
         }
