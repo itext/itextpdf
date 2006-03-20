@@ -2157,7 +2157,6 @@ class PdfDocument extends Document implements DocListener {
         if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
         if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.scaledWidth()) / 2) - mt[4];
         if (image.hasAbsoluteX()) startPosition = image.absoluteX();
-        graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
                 imageEnd = currentHeight + image.scaledHeight() + diff;
@@ -2171,6 +2170,12 @@ class PdfDocument extends Document implements DocListener {
                 imageIndentLeft += image.scaledWidth() + image.indentationRight();
             }
         }
+        else {
+        	if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition -= image.indentationRight();
+        	else if ((image.alignment() & Image.LEFT) == Image.LEFT) startPosition += image.indentationLeft();
+        	else if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition += image.indentationLeft() - image.indentationRight();
+        }
+        graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
         if (!(textwrap || underlying)) {
             currentHeight += image.scaledHeight() + diff;
             flushLines();
