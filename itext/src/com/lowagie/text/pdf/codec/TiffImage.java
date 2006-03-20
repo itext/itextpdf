@@ -188,7 +188,7 @@ public class TiffImage {
                     if (t4OptionsField != null) {
                         tiffT4Options = t4OptionsField.getAsLong(0);
                     if ((tiffT4Options & TIFFConstants.GROUP3OPT_2DENCODING) != 0)
-                        compression = Image.CCITTG3_2D;
+                        imagecomp = Image.CCITTG3_2D;
                     if ((tiffT4Options & TIFFConstants.GROUP3OPT_FILLBITS) != 0)
                         params |= Image.CCITT_ENCODEDBYTEALIGN;
                     }
