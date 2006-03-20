@@ -29,7 +29,7 @@ import com.lowagie.tools.arguments.*;
  * This tool lets you add a text watermark to all pages of a document.
  */
 public class Watermarker extends AbstractTool {
-	
+
 	static {
 		addVersion("$Id$");
 	}
@@ -43,6 +43,7 @@ public class Watermarker extends AbstractTool {
 				"The file you want to watermark", false, new PdfFilter()));
 		arguments.add(new ToolArgument(this, "watermark", "The text that can be used as watermark", String.class.getName()));
 		arguments.add(new ToolArgument(this, "fontsize", "The fontsize of the watermark text", String.class.getName()));
+                arguments.add(new ToolArgument(this, "opacity", "The opacity of the watermark text", String.class.getName()));
 		arguments.add(new FileArgument(this, "destfile",
 				"The file to which the watermarked PDF has to be written",
 				true, new PdfFilter()));
@@ -77,13 +78,14 @@ public class Watermarker extends AbstractTool {
 						"You need to add a text for the watermark");
 			}
         	int fontsize = Integer.parseInt((String)getValue("fontsize"));
+                float opacity = Float.parseFloat((String)getValue("opacity"));
 			BaseFont bf = BaseFont.createFont("Helvetica", BaseFont.WINANSI,
 					false);
 			PdfReader reader = new PdfReader(((File) getValue("srcfile"))
 					.getAbsolutePath());
 			int pagecount = reader.getNumberOfPages();
 			PdfGState gs1 = new PdfGState();
-			gs1.setFillOpacity(0.5f);
+			gs1.setFillOpacity(opacity);
 			String text = (String)getValue("watermark");
 			PdfStamper stamp = new PdfStamper(reader, new FileOutputStream(
 					(File) getValue("destfile")));
@@ -123,7 +125,7 @@ public class Watermarker extends AbstractTool {
 	/**
 	 * Gets the PDF file that should be generated (or null if the output isn't a
 	 * PDF file).
-	 * 
+	 *
 	 * @return the PDF file that should be generated
 	 * @throws InstantiationException
 	 */
@@ -133,7 +135,7 @@ public class Watermarker extends AbstractTool {
 
 	/**
 	 * Indicates that the value of an argument has changed.
-	 * 
+	 *
 	 * @param arg
 	 *            the argument that has changed
 	 */
@@ -152,7 +154,7 @@ public class Watermarker extends AbstractTool {
 	 */
 	public static void main(String[] args) {
 		Watermarker watermarker = new Watermarker();
-    	if (args.length != 4) {
+    	if (args.length != 5) {
     		System.err.println(watermarker.getUsage());
     	}
     	watermarker.setArguments(args);
