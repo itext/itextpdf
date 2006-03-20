@@ -141,6 +141,23 @@ public class MultiColumnText implements Element {
     }
 
     /**
+     * Construct a MultiColumnText container of the specified height
+     * starting at the specified Y position.
+     *
+     * @param height
+     * @param top
+     */
+    public MultiColumnText(float top, float height) {
+        columnDefs = new ArrayList();
+        desiredHeight = height;
+        this.top = top;
+        nextY = top;
+        // canvas will be set later
+        columnText = new ColumnText(null);
+        totalHeight = 0f;
+    }
+    
+    /**
      * Indicates that all of the text did not fit in the
      * specified height. Note that isOverflow will return
      * false before the MultiColumnText object has been
@@ -315,7 +332,12 @@ public class MultiColumnText implements Element {
 
     private void newPage() throws DocumentException {
         resetCurrentColumn();
-        top = nextY = AUTOMATIC;
+        if (desiredHeight == AUTOMATIC) {
+        	top = nextY = AUTOMATIC;
+        }
+        else {
+        	top = nextY;
+        }
         totalHeight = 0;
         if (document != null) {
             document.newPage();
