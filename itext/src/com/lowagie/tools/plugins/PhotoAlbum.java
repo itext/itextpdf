@@ -62,6 +62,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.tools.arguments.DirFilter;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
@@ -81,7 +82,7 @@ public class PhotoAlbum extends AbstractTool {
 	 */
 	public PhotoAlbum() {
 		menuoptions = MENU_EXECUTE | MENU_EXECUTE_SHOW;
-		arguments.add(new FileArgument(this, "srcdir", "The directory containing the image files", false));
+		arguments.add(new FileArgument(this, "srcdir", "The directory containing the image files", false, new DirFilter()));
 		arguments.add(new FileArgument(this, "destfile", "The file to which the converted TIFF has to be written", true, new PdfFilter()));
 	}
 

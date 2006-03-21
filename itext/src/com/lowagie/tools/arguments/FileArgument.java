@@ -112,7 +112,11 @@ public class FileArgument extends ToolArgument {
 	public void actionPerformed(ActionEvent e) {
 		JFileChooser fc = new JFileChooser();
 
-		if (filter != null) fc.setFileFilter(filter);
+		if (filter != null) {
+			fc.setFileFilter(filter);
+			if (filter instanceof DirFilter)
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
 		if (label != null) {
 			fc.setAccessory(label);
 			fc.addPropertyChangeListener(
