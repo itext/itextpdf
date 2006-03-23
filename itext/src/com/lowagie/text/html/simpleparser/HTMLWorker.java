@@ -59,8 +59,8 @@ import java.io.File;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     
-    private ArrayList objectList;
-    private DocListener document;
+    protected ArrayList objectList;
+    protected DocListener document;
     private Paragraph currentParagraph;
     private ChainedProperties cprops = new ChainedProperties();
     private Stack stack = new Stack();
