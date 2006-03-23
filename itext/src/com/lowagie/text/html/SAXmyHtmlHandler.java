@@ -89,7 +89,6 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      * 
      * @param document
      *            this is the document on which events must be triggered
-     * @throws DefaultException
      * @throws IOException
      * @throws DocumentException
      */
@@ -104,7 +103,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      * 
      * @param document
      *            this is the document on which events must be triggered
-     * @throws DefaultException
+     * @param bf
      * @throws IOException
      * @throws DocumentException
      */
@@ -122,7 +121,6 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      *            this is the document on which events must be triggered
      * @param htmlTags
      *            a tagmap translating HTML tags to iText tags
-     * @throws DefaultException
      * @throws IOException
      * @throws DocumentException
      */
@@ -152,7 +150,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
 
         // super.handleStartingTags is replaced with handleStartingTags
         // suggestion by Vu Ngoc Tan/Hop
-
+    	name = name.toLowerCase();
         if (((HtmlTagMap) myTags).isHtml(name)) {
             // we do nothing
             return;
@@ -228,8 +226,8 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         Properties attributes = new Properties();
         if (attrs != null) {
             for (int i = 0; i < attrs.getLength(); i++) {
-                String attribute = attrs.getQName(i);
-                attributes.setProperty(attribute, attrs.getValue(i));
+                String attribute = attrs.getQName(i).toLowerCase();
+                attributes.setProperty(attribute, attrs.getValue(i).toLowerCase());
             }
         }
         handleStartingTags(name, attributes);
@@ -249,6 +247,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
 
     public void endElement(String uri, String lname, String name) {
         // System.err.println("End: " + name);
+    	name = name.toLowerCase();
         if (Paragraph.isTag(name)) {
             try {
                 document.add((Element) stack.pop());
