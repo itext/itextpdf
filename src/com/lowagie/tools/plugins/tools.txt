@@ -15,6 +15,7 @@ Bookmarks.Bookmarks2XML: com.lowagie.tools.plugins.Bookmarks2XML
 Bookmarks.XML2Bookmarks: com.lowagie.tools.plugins.XML2Bookmarks
 Properties.InspectPDF: com.lowagie.tools.plugins.InspectPDF
 Properties.TreeViewPDF: com.lowagie.tools.plugins.TreeViewPDF
+Properties.ImageXRefViewer: com.lowagie.tools.plugins.ImageXRefViewer
 Bookmarks.HtmlBookmarks: com.lowagie.tools.plugins.HtmlBookmarks
 Convert2Pdf.PhotoAlbum: com.lowagie.tools.plugins.PhotoAlbum
 Convert2Pdf.Txt2Pdf: com.lowagie.tools.plugins.Txt2Pdf
