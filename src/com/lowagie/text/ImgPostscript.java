@@ -67,13 +67,13 @@ import java.util.StringTokenizer;
 public class ImgPostscript
 extends Image
 implements Element {
-    
+
     // Constructors
-    
+
     ImgPostscript(Image image) {
         super(image);
     }
-    
+
     public ImgPostscript(byte[] content,float width,float height) throws
     BadElementException, IOException {
         super( (URL)null);
@@ -90,12 +90,12 @@ implements Element {
      * @throws BadElementException on error
      * @throws IOException on error
      */
-    
+
     public ImgPostscript(URL url) throws BadElementException, IOException {
         super(url);
         processParameters();
     }
-    
+
     /**
      * Constructs an <CODE>ImgPostscript</CODE>-object, using a <VAR>filename</VAR>.
      *
@@ -104,12 +104,12 @@ implements Element {
      * @throws MalformedURLException on error
      * @throws IOException on error
      */
-    
+
     public ImgPostscript(String filename) throws BadElementException,
     MalformedURLException, IOException {
         this(Image.toURL(filename));
     }
-    
+
     /**
      * Constructs an <CODE>ImgPostscript</CODE>-object from memory.
      *
@@ -117,20 +117,21 @@ implements Element {
      * @throws BadElementException on error
      * @throws IOException on error
      */
-    
+
     public ImgPostscript(byte[] img) throws BadElementException, IOException {
         super( (URL)null);
         rawData = img;
         originalData = img;
         processParameters();
     }
-    
+
+
     /**
      * This method checks if the image is a valid Postscript and processes some parameters.
      * @throws BadElementException
      * @throws IOException
      */
-    
+
     private void processParameters() throws BadElementException, IOException {
         type = IMGTEMPLATE;
         originalType = ORIGINAL_PS;
@@ -148,13 +149,13 @@ implements Element {
             while (r.ready()) {
                 char c;
                 StringBuffer sb = new StringBuffer();
-                while ( (c = ( (char) r.read())) != '\n') {
+                while ( (c = ( (char) r.read())) != '\n'&&c!='\r') {
                     sb.append(c);
                 }
                 //System.out.println("<<" + sb.toString() + ">>");
                 if (sb.toString().startsWith("%%BoundingBox:")) {
                     boundingbox = sb.toString();
-                    
+
                 }
                 if (sb.toString().startsWith("%%TemplateBox:")) {
                     boundingbox = sb.toString();
@@ -162,16 +163,22 @@ implements Element {
                 if (sb.toString().startsWith("%%EndComments")) {
                     break;
                 }
-                
+
             }
-            if(boundingbox==null)return;
+            if(boundingbox==null){
+              scaledHeight=800;
+            setTop(scaledHeight);
+            scaledWidth=800;
+            setRight(scaledWidth);
+              return;
+            }
             StringTokenizer st=new StringTokenizer(boundingbox,": \r\n");
             st.nextElement();
             String xx1=st.nextToken();
             String yy1=st.nextToken();
             String xx2=st.nextToken();
             String yy2=st.nextToken();
-            
+
             int left = Integer.parseInt(xx1);
             int top = Integer.parseInt(yy1);
             int right = Integer.parseInt(xx2);
@@ -194,7 +201,7 @@ implements Element {
             plainHeight = height();
         }
     }
-    
+
     /** Reads the Postscript into a template.
      * @param template the template to read to
      * @throws IOException on error
