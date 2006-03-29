@@ -52,10 +52,7 @@ package com.lowagie.tools.plugins;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Toolkit;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JInternalFrame;
@@ -163,7 +160,7 @@ public class ImageXRefViewer
 	 */
 	public void jSpinner_propertyChange(ChangeEvent evt) {
 	    int blatt = Integer.parseInt(jSpinner1.getValue().toString());
-	    if (blatt < 1) blatt = 1;
+	    if (blatt < 0) blatt = 0;
 	    if (blatt >= picturenumber) blatt = picturenumber - 1;
 	    this.cardLayout1.show(jPanel2, String.valueOf(blatt));
 	    jPanel2.repaint();
@@ -209,13 +206,7 @@ public class ImageXRefViewer
 		            System.out.println("bitspercomponent:" +
 		                               pdfdict.get(PdfName.BITSPERCOMPONENT));
 		            byte[] barr = PdfReader.getStreamBytesRaw( (PRStream) pdfdict);
-		            InputStream is = new ByteArrayInputStream(barr);
 		            try {
-		              ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		              int aByte;
-		              while ( (aByte = is.read()) >= 0) {
-		                bout.write(aByte);
-		              }
 		              java.awt.Image im = Toolkit.getDefaultToolkit().createImage(barr);
 		              javax.swing.ImageIcon ii = new javax.swing.ImageIcon(im);
 
