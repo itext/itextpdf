@@ -137,8 +137,6 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * @param document
-     * @param bf
-     * @throws DocumentException
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document)
@@ -158,7 +156,6 @@ public class SAXiTextHandler extends DefaultHandler {
     /**
      * @param document
      * @param myTags
-     * @throws DocumentException
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HtmlTagMap myTags)
@@ -171,7 +168,6 @@ public class SAXiTextHandler extends DefaultHandler {
      * @param document
      * @param myTags
      * @param bf
-     * @throws DocumentException
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HtmlTagMap myTags,
@@ -183,7 +179,6 @@ public class SAXiTextHandler extends DefaultHandler {
     /**
      * @param document
      * @param myTags
-     * @throws DocumentException
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HashMap myTags)
@@ -509,10 +504,10 @@ public class SAXiTextHandler extends DefaultHandler {
         if (isDocumentRoot(name)) {
             String key;
             String value;
-            // pagesize and orientation specific code suggested by Samuel
-            // Gabriel
-            Rectangle pageSize = PageSize.A4;
-            String orientation = "portrait";
+            // pagesize and orientation specific code suggested by Samuel Gabriel
+            // Updated by Ricardo Coutinho. Only use if set in html!
+			Rectangle pageSize = null;
+			String orientation = null;
             for (Iterator i = attributes.keySet().iterator(); i.hasNext();) {
                 key = (String) i.next();
                 value = attributes.getProperty(key);
@@ -548,7 +543,6 @@ public class SAXiTextHandler extends DefaultHandler {
                         throw new ExceptionConverter(ex);
                     }
                 } else {
-
                     try {
                         document.add(new Meta(key, value));
                     } catch (DocumentException de) {
@@ -556,10 +550,12 @@ public class SAXiTextHandler extends DefaultHandler {
                     }
                 }
             }
-
-            if ("landscape".equals(orientation))
-                pageSize = pageSize.rotate();
-            document.setPageSize(pageSize);
+            if(pageSize != null) {
+            	if ("landscape".equals(orientation)) {
+            		pageSize = pageSize.rotate();
+            	}
+            	document.setPageSize(pageSize);
+            }
             document.setMargins(leftMargin, rightMargin, topMargin,
                     bottomMargin);
 
@@ -642,6 +638,10 @@ public class SAXiTextHandler extends DefaultHandler {
 
     private BaseFont bf = null;
     
+    /**
+     * Sets the font that has to be used.
+     * @param bf
+     */
     public void setBaseFont(BaseFont bf) {
     	this.bf = bf;
     }
