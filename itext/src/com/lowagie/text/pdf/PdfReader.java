@@ -3047,7 +3047,13 @@ public class PdfReader {
                 pushPageAttributes(page);
                 ArrayList kids = kidsPR.getArrayList();
                 for (int k = 0; k < kids.size(); ++k){
-                    iteratePages((PRIndirectReference)kids.get(k));
+                    PdfObject obj = (PdfObject)kids.get(k);
+                    if (!obj.isIndirect()) {
+                        while (k < kids.size())
+                            kids.remove(k);
+                        break;
+                    }
+                    iteratePages((PRIndirectReference)obj);
                 }
                 popPageAttributes();
             }
