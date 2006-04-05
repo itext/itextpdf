@@ -72,6 +72,10 @@ import com.lowagie.text.pdf.PdfStream;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
+import javax.swing.JScrollPane;
+import com.lowagie.tools.SwingWorker;
+import java.io.*;
+import java.awt.Cursor;
 
 /**
  * Allows you to inspect the Image XObjects inside a PDF file.
@@ -81,7 +85,7 @@ public class ImageXRefViewer
 	static {
 		addVersion("$Id$");
 	}
-	
+
 	class ViewXRefImages_jSpinner1_propertyChangeAdapter
     	implements javax.swing.event.ChangeListener {
 		private ImageXRefViewer adaptee;
@@ -95,7 +99,7 @@ public class ImageXRefViewer
 			adaptee.jSpinner_propertyChange(e);
 		}
 	}
-	
+
 	JPanel jPanel1 = new JPanel();
 	BorderLayout borderLayout1 = new BorderLayout();
 	JLabel jLabel1 = new JLabel();
@@ -107,7 +111,8 @@ public class ImageXRefViewer
 	JSpinner jSpinner1 = new JSpinner();
 	BorderLayout borderLayout3 = new BorderLayout();
 	SpinnerModel spinnerModel1 = jSpinner1.getModel();
-	
+        JScrollPane jScrollPane1 = new JScrollPane();
+
 
 	/**
 	 * Creates a ViewImageXObjects object.
@@ -140,10 +145,11 @@ public class ImageXRefViewer
 	    ViewXRefImages_jSpinner1_propertyChangeAdapter(this));
 	    jPanel2.setBorder(BorderFactory.createEtchedBorder());
 	    internalFrame.getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
-	    jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
 	    jPanel3.add(jSpinner1, java.awt.BorderLayout.CENTER);
 	    jPanel3.add(jLabel1, java.awt.BorderLayout.NORTH);
 	    jPanel1.add(jPanel3, java.awt.BorderLayout.NORTH);
+            jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+             jScrollPane1.setViewportView(jPanel2);
 		System.out.println("=== Image XObject Viewer OPENED ===");
 	}
 
@@ -153,7 +159,7 @@ public class ImageXRefViewer
 	public void valueHasChanged(ToolArgument arg) {
 		// do nothing
 	}
-	
+
 	/**
 	 * Reflects the change event in the JSpinner object.
 	 * @param evt
@@ -177,7 +183,7 @@ public class ImageXRefViewer
     	tool.setArguments(args);
         tool.execute();
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.plugins.AbstractTool#execute()
 	 */
@@ -185,40 +191,59 @@ public class ImageXRefViewer
 		picturenumber = 0;
 		try {
 			if (getValue("srcfile") == null) throw new InstantiationException("You need to choose a sourcefile");
-			PdfReader reader = new PdfReader(((File)getValue("srcfile")).getAbsolutePath());
-		      for (int i = 0; i < reader.getXrefSize(); i++) {
-		        PdfObject pdfobj = reader.getPdfObject(i);
-		        if (pdfobj != null) {
-		          if (pdfobj.isStream()) {
-		            PdfStream pdfdict = (PdfStream) pdfobj;
-		            PdfObject pdfsubtype = pdfdict.get(PdfName.SUBTYPE);
-		            if (pdfsubtype == null) {
-		              continue;
-		            }
-		            if (!pdfsubtype.toString().equals(PdfName.IMAGE.toString())) {
-		              continue;
-		            }
-		            System.out.println("picturenumber: " + picturenumber);
-		            System.out.println("height:" +
-		                               pdfdict.get(PdfName.HEIGHT));
-		            System.out.println("width:" +
-		                               pdfdict.get(PdfName.WIDTH));
-		            System.out.println("bitspercomponent:" +
-		                               pdfdict.get(PdfName.BITSPERCOMPONENT));
-		            byte[] barr = PdfReader.getStreamBytesRaw( (PRStream) pdfdict);
-		            try {
-		              java.awt.Image im = Toolkit.getDefaultToolkit().createImage(barr);
-		              javax.swing.ImageIcon ii = new javax.swing.ImageIcon(im);
 
-		              JLabel jLabel1 = new JLabel();
-		              jLabel1.setIcon(ii);
-		              jPanel2.add(jLabel1, "" + picturenumber++);
-		            }
-		            catch (Exception ex1) {
-		            }
-		          }
-		        }
-		      }
+                       SwingWorker work= new SwingWorker(){
+
+                          public Object construct() {
+                            try {
+                              PdfReader reader = new PdfReader( ( (File)
+                                  getValue("srcfile")).getAbsolutePath());
+                              for (int i = 0; i < reader.getXrefSize(); i++) {
+                                PdfObject pdfobj = reader.getPdfObject(i);
+                                if (pdfobj != null) {
+                                  if (pdfobj.isStream()) {
+                                    PdfStream pdfdict = (PdfStream) pdfobj;
+                                    PdfObject pdfsubtype = pdfdict.get(PdfName.
+                                        SUBTYPE);
+                                    if (pdfsubtype == null) {
+                                      continue;
+                                    }
+                                    if (!pdfsubtype.toString().equals(PdfName.
+                                        IMAGE.toString())) {
+                                      continue;
+                                    }
+                                    System.out.println("picturenumber: " +
+                                        picturenumber);
+                                    System.out.println("height:" +
+                                        pdfdict.get(PdfName.HEIGHT));
+                                    System.out.println("width:" +
+                                        pdfdict.get(PdfName.WIDTH));
+                                    System.out.println("bitspercomponent:" +
+                                        pdfdict.get(PdfName.BITSPERCOMPONENT));
+                                    byte[] barr = PdfReader.getStreamBytesRaw( (
+                                        PRStream) pdfdict);
+                                    java.awt.Image im = Toolkit.
+                                        getDefaultToolkit().createImage(barr);
+                                    javax.swing.ImageIcon ii = new javax.swing.
+                                        ImageIcon(im);
+
+                                    JLabel jLabel1 = new JLabel();
+                                    jLabel1.setIcon(ii);
+                                    jPanel2.add(jLabel1, "" + picturenumber++);
+                                  }
+                                }
+                              }
+                            }
+                            catch (InstantiationException ex) {
+                            }
+                            catch (IOException ex) {
+                            }
+                            internalFrame.setCursor(Cursor.getDefaultCursor());
+                             return null;
+                          }
+                        };
+                        internalFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        work.start();
 		}
 		catch(Exception e) {
         	JOptionPane.showMessageDialog(internalFrame,
