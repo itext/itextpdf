@@ -68,7 +68,10 @@ public class PAEngine extends Object {
         if(token == null){
             throw new IllegalStateException("Null token encountered; last unknown identifier was " + this.context.getLastUnknownIdentifier());
         }
-       // System.out.println("==>"+token.toString());
+        if(PAContext.DebugExecution){
+          System.out.print("==>" + token.toString());
+          System.out.flush();
+        }
         if(token instanceof PAToken && ((PAToken) token).type == PAToken.IMMEDIATE){
             Object foundValue = this.context.findIdentifier(((PAToken) token).value);
             this.process(foundValue);
@@ -101,6 +104,12 @@ public class PAEngine extends Object {
                 case PAToken.END_ARRAY:
                     this.context.collectArray();
                     break;
+                case PAToken.START_DICT:
+                  this.context.operands.push(token);
+                  break;
+                case PAToken.END_DICT:
+                  this.context.collectDict();
+                  break;
                 default:
                     throw new IllegalStateException("Unknown token encountered" + token);
                 }

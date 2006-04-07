@@ -16,6 +16,8 @@ import java.util.*;
 import java.io.*;
 import java.awt.*;
 import java.awt.geom.*;
+import com.lowagie.text.pdf.PdfGraphics2D;
+import com.lowagie.text.pdf.PdfContentByte;
 
 public class PAContext
     extends Object {
@@ -28,7 +30,8 @@ public class PAContext
   protected Random randomNumberGenerator;
 
   protected Object lastUnknownIdentifier;
-  public static boolean IgnoreUnknownCommands=true;
+  public static boolean IgnoreUnknownCommands=false;
+  public static boolean DebugExecution=false;
 
   public PAContext(Component component) {
     this(new PAPencil(component));
@@ -85,13 +88,13 @@ public class PAContext
         objectValue = this.operands.pop();
       }
       catch (EmptyStackException e) {
-        throw new PainterException("Operand stack is empty");
+        throw new PainterException("Operand stack is empty poping "+n+" number operands");
       }
       if (objectValue instanceof Number) {
         doubleValue = ( (Number) objectValue).doubleValue();
       }
       else {
-        throw new PainterException("Number expected on operand stack");
+        throw new PainterException("Number expected on operand stack poping "+n+" number operands");
       }
       result[i] = doubleValue;
     }
@@ -107,7 +110,7 @@ public class PAContext
         objectValue = this.operands.pop();
       }
       catch (EmptyStackException e) {
-        throw new PainterException("Operand stack is empty");
+        throw new PainterException("Operand stack is empty poping "+n+" operands");
       }
       result[i] = objectValue;
     }
@@ -121,7 +124,7 @@ public class PAContext
       objectValue = this.operands.peek();
     }
     catch (EmptyStackException e) {
-      throw new PainterException("Operand stack is empty");
+      throw new PainterException("Operand stack is empty peeking operand");
     }
     return objectValue;
   }
@@ -190,7 +193,7 @@ public class PAContext
         objectValue = this.operands.pop();
       }
       catch (EmptyStackException e) {
-        throw new PainterException("Operand stack is empty");
+        throw new PainterException("Operand stack is empty collecting array elements");
       }
       result.set(j - i - 1, objectValue);
     }
@@ -198,10 +201,54 @@ public class PAContext
       this.operands.pop(); // the start array mark itself
     }
     catch (EmptyStackException e) {
-      throw new PainterException("Operand stack is empty");
+      throw new PainterException("Operand stack is empty removing begin array mark");
     }
     this.operands.push(result);
   }
+
+  public void collectDict() throws PainterException {
+//      ArrayList result;
+      HashMap result; // = new HashMap();
+      Object objectValue;
+      int i, n;
+      boolean found = false;
+
+      n = this.operands.size();
+      for (i = n - 1; i >= 0; i--) {
+        objectValue = this.operands.elementAt(i);
+        if (objectValue instanceof PAToken &&
+            ( (PAToken) objectValue).type == PAToken.START_DICT) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        throw new PainterException("No dict was started");
+      }
+//      result = new ArrayList(n - i - 1);
+      result=new HashMap();
+//      for (int j = 0; j < n - i - 1; j++) {
+//        result.add(null);
+//      }
+      for (int j = n - 1; j > i; j-=2) {
+        Object targetValue;
+        try {
+          objectValue = this.operands.pop();
+          targetValue = this.operands.pop();
+        }
+        catch (EmptyStackException e) {
+          throw new PainterException("Operand stack is empty collecting hashmap elements");
+        }
+        result.put(objectValue,targetValue);
+      }
+      try {
+        this.operands.pop(); // the start array mark itself
+      }
+      catch (EmptyStackException e) {
+        throw new PainterException("Operand stack is empty removing begin array mark");
+      }
+      this.operands.push(result);
+    }
 
   protected HashMap constructGlobalDict() {
     HashMap globalDict = new HashMap();
@@ -215,6 +262,7 @@ public class PAContext
     // newpath
     systemDict.put("newpath", new PACommand() {
       public void execute(PAContext context) throws PainterException {
+//        if(DebugExecution)System.out.println("");
         context.pencil.newpath();
       }
     });
@@ -666,7 +714,15 @@ public class PAContext
         context.operands.push(new Double( -data[0]));
       }
     });
+    // ceiling
+     systemDict.put("ceiling", new PACommand() {
+       public void execute(PAContext context) throws PainterException {
+         double data[];
 
+         data = context.popNumberOperands(1);
+         context.operands.push(new Double(Math.ceil(data[0])));
+       }
+    });
     // sub
     systemDict.put("sub", new PACommand() {
       public void execute(PAContext context) throws PainterException {
@@ -716,7 +772,15 @@ public class PAContext
         context.operands.push(new Double(Math.sqrt(data[0])));
       }
     });
+    // ln
+    systemDict.put("log", new PACommand() {
+      public void execute(PAContext context) throws PainterException {
+        double data[];
 
+        data = context.popNumberOperands(1);
+        context.operands.push(new Double(Math.log(data[0])));
+      }
+    });
     // exch
     systemDict.put("exch", new PACommand() {
       public void execute(PAContext context) throws PainterException {
@@ -1446,7 +1510,7 @@ public class PAContext
         double data[];
 
         data = context.popNumberOperands(1);
-        context.operands.push(new HashMap());
+        context.operands.push(new HashMap((int)data[0]));
       }
     });
 
@@ -1456,7 +1520,7 @@ public class PAContext
         double data[];
 
         data = context.popNumberOperands(1);
-        context.operands.push(new HashMap());
+        context.operands.push(new HashMap((int)data[0]));
       }
     });
     // put
@@ -1507,7 +1571,44 @@ public class PAContext
         }
       }
     });
-
+    // getinterval
+     systemDict.put("getinterval", new PACommand() {
+       public void execute(PAContext context) throws PainterException {
+         Object data[];
+         PAToken patoken;
+         data = context.popOperands(3);
+         if (! (data[0] instanceof HashMap) && ! (data[0] instanceof ArrayList)) {
+           throw new PainterException("getinterval: wrong arguments");
+         }
+         if (data[0] instanceof HashMap) {
+           if (! (data[1] instanceof PAToken)) {
+             throw new PainterException("getinterval: wrong arguments");
+           }
+           patoken = (PAToken) data[1];
+           if (! (patoken.type == PAToken.KEY)) {
+             throw new PainterException("getinterval: wrong arguments");
+           }
+           if (! (data[2] instanceof Number)) {
+            throw new PainterException("getinterval: wrong arguments");
+          }
+          HashMap target=new HashMap();
+           context.operands.push( ( (HashMap) data[0]).get(patoken.value));
+         }
+         else if (data[0] instanceof ArrayList) {
+           if (! (data[1] instanceof Number)) {
+             throw new PainterException("getinterval: wrong arguments");
+           }
+           if (! (data[2] instanceof Number)) {
+             throw new PainterException("getinterval: wrong arguments");
+           }
+           ArrayList source=( (ArrayList) data[0]);
+           int from=( (Number) data[1]).intValue();
+           int to=from+( (Number) data[2]).intValue();
+           ArrayList target=new ArrayList(source.subList(from,to));
+           context.operands.push( target);
+         }
+       }
+    });
     // load
     systemDict.put("load", new PACommand() {
       public void execute(PAContext context) throws PainterException {
@@ -1700,6 +1801,10 @@ public class PAContext
       public void execute(PAContext context) throws PainterException {
         if(!PAContext.IgnoreUnknownCommands)
         context.operands.push(new Double(1.0f));
+//      PdfGraphics2D pdfg2d=(PdfGraphics2D)context.pencil.graphics;
+//PdfContentByte cb=pdfg2d.getContent();
+//;
+
       }
     });
 
@@ -2058,7 +2163,11 @@ systemDict.put("initclip", new PACommand() {
 // save
     systemDict.put("save", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-         context.pencil.gsave(); // Wrong! but at the moment not there..
+        PdfGraphics2D pdfg2d=(PdfGraphics2D)context.pencil.graphics;
+        PdfContentByte cb=pdfg2d.getContent();
+        cb.saveState();
+        context.operands.push(new Long(System.currentTimeMillis()));
+//         context.pencil.gsave(); // Wrong! but at the moment not there..
 //        if(!PAContext.IgnoreUnknownCommands)
 //        throw new UnsupportedOperationException("save");
       }
@@ -2066,8 +2175,12 @@ systemDict.put("initclip", new PACommand() {
 // restore
     systemDict.put("restore", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        context.pencil.grestore(); // Wrong! but at the moment not there..
-
+//        context.pencil.grestore(); // Wrong! but at the moment not there..
+        PdfGraphics2D pdfg2d=(PdfGraphics2D)context.pencil.graphics;
+         PdfContentByte cb=pdfg2d.getContent();
+        cb.restoreState();
+        Object data[];
+data = context.popOperands(1);
 //        if(!PAContext.IgnoreUnknownCommands)
 //        throw new UnsupportedOperationException("restore");
       }
@@ -2079,6 +2192,14 @@ systemDict.put("initclip", new PACommand() {
         throw new UnsupportedOperationException("clear");
       }
     });
+    // readonly
+    systemDict.put("readonly", new PACommand() {
+      public void execute(PAContext context) throws PainterException {
+//        if(!PAContext.IgnoreUnknownCommands)
+//        throw new UnsupportedOperationException("readonly");
+      }
+    });
+
 // currentfile
     systemDict.put("currentfile", new PACommand() {
       public void execute(PAContext context) throws PainterException {
@@ -2128,20 +2249,20 @@ systemDict.put("initclip", new PACommand() {
      }
 });
 
-    // systemdict
-    systemDict.put("systemdict", new PACommand() {
-      public void execute(PAContext context) throws PainterException {
-        if(!PAContext.IgnoreUnknownCommands)
-        throw new UnsupportedOperationException("systemdict");
-      }
-});
-    // statusdict
-    systemDict.put("statusdict", new PACommand() {
-      public void execute(PAContext context) throws PainterException {
-        if(!PAContext.IgnoreUnknownCommands)
-        throw new UnsupportedOperationException("statusdict");
-      }
-});
+//    // systemdict
+//    systemDict.put("systemdict", new PACommand() {
+//      public void execute(PAContext context) throws PainterException {
+//        if(!PAContext.IgnoreUnknownCommands)
+//        throw new UnsupportedOperationException("systemdict");
+//      }
+//});
+//    // statusdict
+//    systemDict.put("statusdict", new PACommand() {
+//      public void execute(PAContext context) throws PainterException {
+//        if(!PAContext.IgnoreUnknownCommands)
+//        throw new UnsupportedOperationException("statusdict");
+//      }
+//});
 
 // cleardictstack
     systemDict.put("cleardictstack", new PACommand() {
@@ -2189,7 +2310,7 @@ systemDict.put("initclip", new PACommand() {
         context.operands.push(new Boolean(false));
       }
     });
-
+    systemDict.put("systemdict",systemDict);
     return systemDict;
   }
 
