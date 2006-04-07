@@ -20,6 +20,8 @@ public interface PAParserConstants {
   int RBRACE = 16;
   int LBRACKET = 17;
   int RBRACKET = 18;
+  int LDICT = 19;
+  int RDICT = 20;
 
   int DEFAULT = 0;
 
@@ -43,6 +45,8 @@ public interface PAParserConstants {
     "\"}\"",
     "\"[\"",
     "\"]\"",
+    "\"<<\"",
+    "\">>\"",
   };
 
 }
