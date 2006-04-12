@@ -260,10 +260,12 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
  */
     
     public void setListSymbol(Chunk symbol) {
-        this.symbol = symbol;
-        if (this.symbol.font().isStandardFont()) {
-            this.symbol.setFont(font);
-        }
+    	if (this.symbol == null) {
+    		this.symbol = symbol;
+    		if (this.symbol.font().isStandardFont()) {
+    			this.symbol.setFont(font);
+    		}
+    	}
     }
     
     // methods to retrieve information
