@@ -144,11 +144,6 @@ public class SAXiTextHandler extends DefaultHandler {
         super();
         this.document = document;
         stack = new Stack();
-        try {
-        	this.bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-        }
-        catch(DocumentException de) {
-        }
     }
 
     protected HashMap myTags;
@@ -254,7 +249,12 @@ public class SAXiTextHandler extends DefaultHandler {
             try {
                 current = (TextElementArray) stack.pop();
             } catch (EmptyStackException ese) {
-                current = new Paragraph("", new Font(this.bf));
+            	if (bf == null) {
+            		current = new Paragraph("", new Font());
+            	}
+            	else {
+            		current = new Paragraph("", new Font(this.bf));
+            	}
             }
             current.add(currentChunk);
             stack.push(current);
@@ -264,7 +264,9 @@ public class SAXiTextHandler extends DefaultHandler {
         // chunks
         if (Chunk.isTag(name)) {
             currentChunk = new Chunk(attributes);
-            currentChunk.setFont(new Font(this.bf));
+            if (bf != null) {
+            	currentChunk.setFont(new Font(this.bf));
+            }
             return;
         }
 
@@ -468,7 +470,9 @@ public class SAXiTextHandler extends DefaultHandler {
                 current = (TextElementArray) stack.pop();
                 Chunk newPage = new Chunk("");
                 newPage.setNewPage();
-                newPage.setFont(new Font(this.bf));
+                if (bf != null) {
+                	newPage.setFont(new Font(this.bf));
+                }
                 current.add(newPage);
                 stack.push(current);
             } catch (EmptyStackException ese) {
@@ -630,7 +634,12 @@ public class SAXiTextHandler extends DefaultHandler {
             }
         }
         if (currentChunk == null) {
-            currentChunk = new Chunk(buf.toString(), new Font(this.bf));
+        	if (bf == null) {
+        		currentChunk = new Chunk(buf.toString());
+        	}
+        	else {
+        		currentChunk = new Chunk(buf.toString(), new Font(this.bf));
+        	}
         } else {
             currentChunk.append(buf.toString());
         }
