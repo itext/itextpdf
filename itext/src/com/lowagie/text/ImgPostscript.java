@@ -144,6 +144,7 @@ implements Element {
                 is = new java.io.ByteArrayInputStream(rawData);
             }
             String boundingbox=null;
+            String templatebox=null;
             Reader r = new BufferedReader(new InputStreamReader(is));
             //  StreamTokenizer st = new StreamTokenizer(r);
             while (r.ready()) {
@@ -158,17 +159,20 @@ implements Element {
 
                 }
                 if (sb.toString().startsWith("%%TemplateBox:")) {
-                    boundingbox = sb.toString();
+                    templatebox = sb.toString();
                 }
                 if (sb.toString().startsWith("%%EndComments")) {
                     break;
                 }
+                if ((!sb.toString().startsWith("%%"))&&(!sb.toString().startsWith("%!"))) {
+                   break;
+               }
 
             }
             if(boundingbox==null){
-              scaledHeight=800;
+              scaledHeight=PageSize.A4.height();
             setTop(scaledHeight);
-            scaledWidth=800;
+            scaledWidth=PageSize.A4.width();
             setRight(scaledWidth);
               return;
             }
@@ -180,18 +184,16 @@ implements Element {
             String yy2=st.nextToken();
 
             int left = Integer.parseInt(xx1);
-            int top = Integer.parseInt(yy1);
+            int bottom = Integer.parseInt(yy1);
             int right = Integer.parseInt(xx2);
-            int bottom = Integer.parseInt(yy2);
+            int top = Integer.parseInt(yy2);
             int inch = 1;
             dpiX = 72;
             dpiY = 72;
-            scaledHeight = (float) (bottom - top) / inch *1f;
-            scaledHeight=800;
-            setTop(scaledHeight);
+            scaledHeight = (float) (top-bottom ) / inch *1f;
+            setTop(top);
             scaledWidth = (float) (right - left) / inch * 1f;
-            scaledWidth=800;
-            setRight(scaledWidth);
+            setRight(right);
         }
         finally {
             if (is != null) {
