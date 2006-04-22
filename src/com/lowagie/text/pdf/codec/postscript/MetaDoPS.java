@@ -79,7 +79,8 @@ public class MetaDoPS {
       PAContext context = new PAContext( (Graphics2D) g2,
                                         new Dimension( (int) PageSize.A4.width(),
           (int) PageSize.A4.height()));
-      context.draw(new BufferedInputStream(in));
+      context.draw(in);
+//      context.draw(new BufferedInputStream(in));
       // ( (Graphics2D) backBuffer.getGraphics()).dispose();
       in.close();
     }

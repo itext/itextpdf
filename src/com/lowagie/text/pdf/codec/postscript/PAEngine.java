@@ -66,11 +66,11 @@ public class PAEngine extends Object {
 
     public void process(Object token) throws PainterException {
         if(token == null){
-            throw new IllegalStateException("Null token encountered; last unknown identifier was " + this.context.getLastUnknownIdentifier());
+            throw new IllegalStateException("Null token encountered; last unknown identifier was " + this.context.getLastUnknownIdentifier()+" at line "+this.context.poorscript.token.beginLine);
         }
         if(PAContext.DebugExecution){
           System.out.print("==>" + token.toString());
-          System.out.flush();
+//          System.out.flush();
         }
         if(token instanceof PAToken && ((PAToken) token).type == PAToken.IMMEDIATE){
             Object foundValue = this.context.findIdentifier(((PAToken) token).value);
@@ -140,6 +140,15 @@ public class PAEngine extends Object {
                 this.procedure.push(token);
             }
         }
+    }
+
+    public String litMode(){
+      switch(this.mode){
+        case MODE_ARRAY: return "Array";
+          case MODE_PROCEDURE: return "Proc"+innerProcedures;
+            case MODE_STACK: return "Stack";
+              default: return "Unknown";
+      }
     }
 
 }

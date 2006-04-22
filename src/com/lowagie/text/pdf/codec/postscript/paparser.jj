@@ -2,6 +2,7 @@ options {
         LOOKAHEAD=1;
 	JAVA_UNICODE_ESCAPE = true;
 	STATIC = false;
+//        USER_CHAR_STREAM = true;
 }
 
 PARSER_BEGIN(PAParser)
@@ -89,6 +90,9 @@ TOKEN :
 |
   < #LETTER:
       [
+       "+",
+       "-",
+       "?",
        "\u0024",
        "\u0041"-"\u005a",
        "\u005f",
@@ -152,6 +156,11 @@ dump+=t.image;
 System.out.println("Ignoriere >"+dump+"<");
 }
 
+JAVACODE
+String ExceptionString(String hint,JavaCharStream jj_input_stream,PAContext context,Token t,Exception e ){
+  return "\nparser "+hint+" ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+t.image+"\" in line "+t.beginLine+" column "+t.beginColumn+"\n"+e.toString();
+}
+
 
 void parse(PAContext context) :
 {
@@ -166,12 +175,12 @@ void parse(PAContext context) :
                         x = <INTEGER_LITERAL>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                         context.engine.process(new Integer(x.image));
                                 } catch(NumberFormatException e) {
-                                        throw new ParseException(e.toString());
+                                        throw new ParseException(ExceptionString("int_literal",jj_input_stream,context,token,e));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
+                                        throw new ParseException(ExceptionString("int_literal",jj_input_stream,context,token,e));
                                 }
                         }
                 )
@@ -180,12 +189,12 @@ void parse(PAContext context) :
                         x = <FLOATING_POINT_LITERAL>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new Double(x.image));
                                 } catch(NumberFormatException e) {
-                                        throw new ParseException(e.toString());
+                                        throw new ParseException(ExceptionString("float_literal",jj_input_stream,context,token,e));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
+                                        throw new ParseException(ExceptionString("float_literal",jj_input_stream,context,token,e));
                                 }
                         }
                 )
@@ -194,11 +203,11 @@ void parse(PAContext context) :
                         x = <STRING_LITERAL>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                       context.engine.process(x.image.substring(1, x.image.length() -1));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
-                                }
+                                      throw new ParseException(ExceptionString("string_literal",jj_input_stream,context,token,e));
+                                 }
                         }
                 )
                 |
@@ -206,10 +215,10 @@ void parse(PAContext context) :
                         x = <IDENTIFIER>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                               context.engine.process(new PAToken(x.image, PAToken.IDENTIFIER));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
+                                             throw new ParseException(ExceptionString("identifier",jj_input_stream,context,token,e));
                                 }
                         }
                 )
@@ -218,11 +227,11 @@ void parse(PAContext context) :
                         x = <KEY_IDENTIFIER>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                             context.engine.process(new PAToken(x.image.substring(1, x.image.length()), PAToken.KEY));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
-                                }
+                                  throw new ParseException(ExceptionString("key_identifier",jj_input_stream,context,token,e));
+                                 }
                         }
                 )
                 |
@@ -230,10 +239,10 @@ void parse(PAContext context) :
                         x = <IMMEDIATE_IDENTIFIER>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                             context.engine.process(new PAToken(x.image.substring(2, x.image.length()), PAToken.IMMEDIATE));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
+                                         throw new ParseException(ExceptionString("immediate_identifier",jj_input_stream,context,token,e));
                                 }
                         }
                 ) )
@@ -242,10 +251,10 @@ void parse(PAContext context) :
                         <LBRACE>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                              context.engine.process(new PAToken(null, PAToken.START_PROCEDURE));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
+                                  throw new ParseException(ExceptionString("lbrace",jj_input_stream,context,token,e));
                                 }
                         }
                 )
@@ -254,11 +263,11 @@ void parse(PAContext context) :
                         <RBRACE>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                       context.engine.process(new PAToken(null, PAToken.END_PROCEDURE));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
-                                }
+                                  throw new ParseException(ExceptionString("rbrace",jj_input_stream,context,token,e));
+                               }
                         }
                 )
                 |
@@ -266,10 +275,10 @@ void parse(PAContext context) :
                         <LBRACKET>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.START_ARRAY));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
+                                  throw new ParseException(ExceptionString("lbracket",jj_input_stream,context,token,e));
                                 }
                         }
                 )
@@ -278,10 +287,10 @@ void parse(PAContext context) :
                         <RBRACKET>
                         {
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.END_ARRAY));
                                 } catch(PainterException e) {
-                                        throw new ParseException(e.toString());
+                                  throw new ParseException(ExceptionString("rbracket",jj_input_stream,context,token,e));
                                 }
                         }
                 )
@@ -290,11 +299,11 @@ void parse(PAContext context) :
                        <LDICT>
                        {
                                try {
-                                 {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                 {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                       context.engine.process(new PAToken(null, PAToken.START_DICT));
                                } catch(PainterException e) {
-                                       throw new ParseException(e.toString());
-                               }
+                                 throw new ParseException(ExceptionString("ldict",jj_input_stream,context,token,e));
+                                }
                        }
                )
                |
@@ -302,11 +311,11 @@ void parse(PAContext context) :
                        <RDICT>
                        {
                                try {
-                                 {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                 {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.END_DICT));
                                } catch(PainterException e) {
-                                       throw new ParseException(e.toString());
-                               }
+                                 throw new ParseException(ExceptionString("rdict",jj_input_stream,context,token,e));
+                                 }
                        }
                )
 
@@ -319,6 +328,7 @@ void parse(PAContext context) :
                   //System.err.println("Fehler:"+e);
                   e.printStackTrace();
                   error_skipto(WHITESPACE);
+                  System.exit(0);
               }
 }
 

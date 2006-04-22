@@ -25,6 +25,10 @@ dump+=t.image;
 System.out.println("Ignoriere >"+dump+"<");
   }
 
+  String ExceptionString(String hint,JavaCharStream jj_input_stream,PAContext context,Token t,Exception e) throws ParseException {
+  return "\nparser "+hint+" ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+t.image+"\" in line "+t.beginLine+" column "+t.beginColumn+"\n"+e.toString();
+  }
+
   final public void parse(PAContext context) throws ParseException {
         Token x = null;
     try {
@@ -60,59 +64,59 @@ System.out.println("Ignoriere >"+dump+"<");
           case INTEGER_LITERAL:
             x = jj_consume_token(INTEGER_LITERAL);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                         context.engine.process(new Integer(x.image));
                                 } catch(NumberFormatException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                        {if (true) throw new ParseException(ExceptionString("int_literal",jj_input_stream,context,token,e));}
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                        {if (true) throw new ParseException(ExceptionString("int_literal",jj_input_stream,context,token,e));}
                                 }
             break;
           case FLOATING_POINT_LITERAL:
             x = jj_consume_token(FLOATING_POINT_LITERAL);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new Double(x.image));
                                 } catch(NumberFormatException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                        {if (true) throw new ParseException(ExceptionString("float_literal",jj_input_stream,context,token,e));}
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                        {if (true) throw new ParseException(ExceptionString("float_literal",jj_input_stream,context,token,e));}
                                 }
             break;
           case STRING_LITERAL:
             x = jj_consume_token(STRING_LITERAL);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                       context.engine.process(x.image.substring(1, x.image.length() -1));
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
-                                }
+                                      {if (true) throw new ParseException(ExceptionString("string_literal",jj_input_stream,context,token,e));}
+                                 }
             break;
           case IDENTIFIER:
             x = jj_consume_token(IDENTIFIER);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                               context.engine.process(new PAToken(x.image, PAToken.IDENTIFIER));
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                             {if (true) throw new ParseException(ExceptionString("identifier",jj_input_stream,context,token,e));}
                                 }
             break;
           case KEY_IDENTIFIER:
             x = jj_consume_token(KEY_IDENTIFIER);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                             context.engine.process(new PAToken(x.image.substring(1, x.image.length()), PAToken.KEY));
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
-                                }
+                                  {if (true) throw new ParseException(ExceptionString("key_identifier",jj_input_stream,context,token,e));}
+                                 }
             break;
           case IMMEDIATE_IDENTIFIER:
             x = jj_consume_token(IMMEDIATE_IDENTIFIER);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                             context.engine.process(new PAToken(x.image.substring(2, x.image.length()), PAToken.IMMEDIATE));
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                         {if (true) throw new ParseException(ExceptionString("immediate_identifier",jj_input_stream,context,token,e));}
                                 }
             break;
           default:
@@ -124,56 +128,56 @@ System.out.println("Ignoriere >"+dump+"<");
         case LBRACE:
           jj_consume_token(LBRACE);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                              context.engine.process(new PAToken(null, PAToken.START_PROCEDURE));
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                  {if (true) throw new ParseException(ExceptionString("lbrace",jj_input_stream,context,token,e));}
                                 }
           break;
         case RBRACE:
           jj_consume_token(RBRACE);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                       context.engine.process(new PAToken(null, PAToken.END_PROCEDURE));
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
-                                }
+                                  {if (true) throw new ParseException(ExceptionString("rbrace",jj_input_stream,context,token,e));}
+                               }
           break;
         case LBRACKET:
           jj_consume_token(LBRACKET);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.START_ARRAY));
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                  {if (true) throw new ParseException(ExceptionString("lbracket",jj_input_stream,context,token,e));}
                                 }
           break;
         case RBRACKET:
           jj_consume_token(RBRACKET);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.END_ARRAY));
                                 } catch(PainterException e) {
-                                        {if (true) throw new ParseException(e.toString());}
+                                  {if (true) throw new ParseException(ExceptionString("rbracket",jj_input_stream,context,token,e));}
                                 }
           break;
         case LDICT:
           jj_consume_token(LDICT);
                                try {
-                                 {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                 {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                       context.engine.process(new PAToken(null, PAToken.START_DICT));
                                } catch(PainterException e) {
-                                       {if (true) throw new ParseException(e.toString());}
-                               }
+                                 {if (true) throw new ParseException(ExceptionString("ldict",jj_input_stream,context,token,e));}
+                                }
           break;
         case RDICT:
           jj_consume_token(RDICT);
                                try {
-                                 {if(PAContext.DebugExecution){System.out.print("\nparser:\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                 {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.END_DICT));
                                } catch(PainterException e) {
-                                       {if (true) throw new ParseException(e.toString());}
-                               }
+                                 {if (true) throw new ParseException(ExceptionString("rdict",jj_input_stream,context,token,e));}
+                                 }
           break;
         default:
           jj_la1[2] = jj_gen;
@@ -187,6 +191,7 @@ System.out.println("Ignoriere >"+dump+"<");
                   //System.err.println("Fehler:"+e);
                   e.printStackTrace();
                   error_skipto(WHITESPACE);
+                  System.exit(0);
     }
   }
 

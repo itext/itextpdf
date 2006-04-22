@@ -16,11 +16,13 @@ import java.util.*;
 import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfGraphics2D;
 
 
-public class PAPencil extends Object {
+public class PAPencil {
 
-    static protected class State extends Object implements Cloneable {
+    static protected class State implements Cloneable {
         public Stroke stroke;
         public Paint paint;
         public AffineTransform at;
@@ -159,23 +161,22 @@ public class PAPencil extends Object {
     }
 
     public void initgraphics(){
-       // AffineTransform at = new AffineTransform();
+      AffineTransform at = new AffineTransform();
+      // turn anti-aliasing and high-quality rendering on
+      this.graphics.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+      this.graphics.setRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
 
-        // turn anti-aliasing and high-quality rendering on
-	this.graphics.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
-	this.graphics.setRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
+      // initialize to a postscript coordinate system
+      at.translate(0, this.size.getHeight());
+      at.scale(1, -1);
+      this.graphics.setTransform(at);
+      //        this.graphics.translate(0, this.size.getHeight());
+      //        this.graphics.scale(1, -1);
 
-        // initialize to a postscript coordinate system
-//        at.translate(0, this.size.getHeight());
-//        at.scale(1, -1);
-//        this.graphics.setTransform(at);
-        this.graphics.translate(0, this.size.getHeight());
-        this.graphics.scale(1, -1);
-
-        // state, stack and page
-	this.state = new State(this.graphics);
-	this.gStack = new Stack();
-	this.erasepage();
+      // state, stack and page
+      this.state = new State(this.graphics);
+      this.gStack = new Stack();
+      this.erasepage();
     }
 
     //
@@ -279,29 +280,50 @@ public class PAPencil extends Object {
 
     // PENDING(uweh): just a placeholder for now
     public void clippath(){
-        this.rectpath(0.0d, 0.0d, 800.0d, 800.0d);
+        this.rectpath(0.0d, 0.0d, size.width, size.height);
     }
-
+    public void clip(){
+       PdfGraphics2D pdfg2d = (PdfGraphics2D) this.graphics;
+       pdfg2d.clip(this.state.path);
+        this.newpath();
+//      Area currentclip=new Area(this.state.clipShape);
+//      Area addclip=new Area(this.state.path.createTransformedShape(AffineTransform.getTranslateInstance(0,0)));
+//      currentclip.intersect(addclip);
+//      this.graphics.clip(currentclip );
+    }
     public void erasepage(){
-	this.graphics.clearRect(0, 0, 800, 800);
+	this.graphics.clearRect(0, 0, size.width, size.height);
     }
 
-    public void charpath(String aString, boolean adjustForStroking){
-	GlyphVector glyphVector = this.state.font.createGlyphVector(this.graphics.getFontRenderContext(), aString);
-
+    public void charpath(String aString, boolean adjustForStroking)throws PainterException{
+      FontRenderContext frc=this.graphics.getFontRenderContext();
+      Font fn=this.state.font;
+//      System.out.println("Fonthoehe:"+fn.getSize2D());
+	GlyphVector glyphVector = fn.createGlyphVector(frc, aString);
+        Point2D currentPoint = this.state.path.getCurrentPoint();
         Shape glyphShape = glyphVector.getOutline();
+        AffineTransform currentTransform = AffineTransform.getScaleInstance(1,-1);
+        glyphShape=currentTransform.createTransformedShape(glyphShape);
+        AffineTransform currentTransform2 = AffineTransform.getTranslateInstance((float)currentPoint.getX(),(float)currentPoint.getY());
+        glyphShape=currentTransform2.createTransformedShape(glyphShape);
         this.state.path.append(glyphShape, false);
     }
 
     public void showpage(){
-
+      PdfGraphics2D pdfg2d = (PdfGraphics2D) this.graphics;
+        PdfContentByte cb = pdfg2d.getContent();
+      try {
+        cb.getPdfWriter().newPage();
+      }
+      catch (com.lowagie.text.DocumentException ex) {
+        ex.printStackTrace();
+      }
     }
 
     public void show(String string) throws PainterException {
         Point2D currentPoint = this.state.path.getCurrentPoint();
         AffineTransform currentTransform = this.graphics.getTransform();
         Point2D tranformedPoint = currentTransform.transform(currentPoint, null);
-
 
 	if(currentPoint == null){
 	    throw new PainterException("no current point");
@@ -323,9 +345,10 @@ public class PAPencil extends Object {
         this.newpath();
     }
 
-    public void stroke(){
-        this.graphics.draw(this.state.path);
+    public void stroke()throws PainterException{
+       this.graphics.draw(this.state.path);
         this.newpath();
+
     }
 
     public void rectfill(double x, double y, double width, double height){
@@ -339,14 +362,14 @@ public class PAPencil extends Object {
         this.rectfill(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 
-    public void rectstroke(double x, double y, double width, double height){
+    public void rectstroke(double x, double y, double width, double height)throws PainterException{
 	this.gsave();
 	this.rectpath(x, y, width, height);
 	this.stroke();
 	this.grestore();
     }
 
-    public void rectstroke(Rectangle2D rect){
+    public void rectstroke(Rectangle2D rect)throws PainterException{
 	this.rectstroke(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 
@@ -392,7 +415,8 @@ public class PAPencil extends Object {
         }
         result = (Font) this.fonts.get(fontname);
         if(result == null){
-            result = new Font("SansSerif", Font.PLAIN, 12);
+//            result = new Font("SansSerif", Font.PLAIN, 12);
+                result = new Font("Arial", Font.PLAIN, 12);
         }
         return result;
     }
