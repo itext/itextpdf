@@ -80,6 +80,7 @@ public class concat_pdf {
                         writer.addPage(page);
                         System.out.println("Processed page " + i);
                     }
+                    writer.freeReader(reader);
                     f++;
                 }
                 if (master.size() > 0)
