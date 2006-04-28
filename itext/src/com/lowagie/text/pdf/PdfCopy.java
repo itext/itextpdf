@@ -455,4 +455,20 @@ public class PdfCopy extends PdfWriter {
     public PdfIndirectReference add(PdfOutline outline) { return null; }
     public void addAnnotation(PdfAnnotation annot) {  }
     PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException { return null; }
+
+    public void freeReader(PdfReader reader) throws IOException {
+        indirectMap.remove(reader);
+        if (currentPdfReaderInstance != null) {
+            if (currentPdfReaderInstance.getReader() == reader) {
+                try {
+                    currentPdfReaderInstance.getReader().close();
+                    currentPdfReaderInstance.getReaderFile().close();
+                }
+                catch (IOException ioe) {
+                    // empty on purpose
+                }
+                currentPdfReaderInstance = null;
+            }
+        }
+    }
 }
