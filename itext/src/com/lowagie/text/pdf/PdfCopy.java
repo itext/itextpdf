@@ -451,7 +451,7 @@ public class PdfCopy extends PdfWriter {
             }
         }
     }
-    PdfIndirectReference add(PdfImage pdfImage) throws PdfException  { return null; }
+    PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException  { return null; }
     public PdfIndirectReference add(PdfOutline outline) { return null; }
     public void addAnnotation(PdfAnnotation annot) {  }
     PdfIndirectReference add(PdfPage page, PdfContents contents) throws PdfException { return null; }
