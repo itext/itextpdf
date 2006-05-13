@@ -20,6 +20,7 @@ import com.lowagie.text.pdf.PdfGraphics2D;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.*;
+import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 public class PAContext {
 
@@ -29,7 +30,7 @@ public class PAContext {
   public PAEngine engine;
   PAParser poorscript = null;
   protected Random randomNumberGenerator;
-  InputStream is;
+  InputStream is=null;
 
   protected Object lastUnknownIdentifier;
   public static boolean IgnoreUnknownCommands = false;
@@ -70,7 +71,15 @@ public class PAContext {
     try {
       poorscript = new PAParser(PAContext.class.getResourceAsStream("init.ps"));
       poorscript.parse(this);
-      is = inputStream;
+//      byte[] b=null;
+//      try {
+//        b = RandomAccessFileOrArray.InputStreamToArray(inputStream);
+//      }
+//      catch (IOException ex) {
+//        ex.printStackTrace();
+//      }
+//      ByteArrayInputStream bar=new ByteArrayInputStream(b);
+//      is = bar;
       poorscript.ReInit(inputStream);
       poorscript.parse(this);
       // pencil.graphics.dispose();
@@ -2266,7 +2275,21 @@ public class PAContext {
 // currentfile
     systemDict.put("currentfile", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        context.operands.push(is);
+        final JavaCharStream jcs=context.poorscript.jj_input_stream;
+        InputStream ins=new InputStream(){
+          /**
+           * Reads the next byte of data from the input stream.
+           *
+           * @return the next byte of data, or <code>-1</code> if the end of the stream is reached.
+           * @throws IOException if an I/O error occurs.
+           * @todo Implement this java.io.InputStream method
+           */
+          public int read() throws IOException {
+            return jcs.readChar();
+          }
+
+        };
+        context.operands.push(ins);
       }
     });
     // flushfile
@@ -2375,8 +2398,45 @@ public class PAContext {
 
         InputStream dis;
         if (filtername.equals("ASCIIHexDecode")) {
-//          dis = new ASCIIHexInputStream(datasrc);
-          dis=datasrc;
+          //          dis = new ASCIIHexInputStream(datasrc);
+          final InputStream is=datasrc;
+          dis=new InputStream(){
+
+            /**
+             * Reads the next byte of data from the input stream.
+             *
+             * @return the next byte of data, or <code>-1</code> if the end of the stream is reached.
+             * @throws IOException if an I/O error occurs.
+             * @todo Implement this java.io.InputStream method
+             */
+            public int read() throws IOException {
+              int firstchar,secondchar;
+              for(;;){
+                firstchar=is.read();
+                if(firstchar==-1)return -1;
+                if(firstchar=='>')return -1;
+                if(firstchar=='\n')continue;
+                if(firstchar=='\r')continue;
+                break;
+              }
+              for(;;){
+                secondchar=is.read();
+                if(secondchar=='>')return -1;
+                if(secondchar==-1)return -1;
+                if(secondchar=='\n')continue;
+                if(secondchar=='\r')continue;
+                break;
+              }
+              int highbyte=0;
+              if(firstchar>=48&&firstchar<=57)highbyte=firstchar-48;
+              if(firstchar>=65&&firstchar<=70)highbyte=firstchar-55;
+              int lowbyte=0;
+              if(secondchar>=48&&secondchar<=57)lowbyte=secondchar-48;
+              if(secondchar>=65&&secondchar<=70)lowbyte=secondchar-55;
+
+              return(highbyte*16+lowbyte);
+            }
+          };
         }
 //        else
 //        if (filtername.equals("DCTDecode")) {
@@ -2470,31 +2530,29 @@ public class PAContext {
             if (token.value.toString().equals("ImageMatrix")) {
               imagematrix = ( (Object) hsm.get(token));
             }
-
           }
+
           try {
             byte[] barr = {};
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             int aByte;
-            while ( (aByte = datasrc.read()) >= 0) {
+          while ( (aByte = datasrc.read()) >= 0) {
               bout.write(aByte);
+//              System.out.print((char)aByte);
             }
             System.out.println("I " + width + "*" + height + " " +
                                bitspercomponent + " " + imagetype + " " +
                                decode + " " + imagematrix + " " + datasrc);
-            int col=poorscript.token.endColumn;
-            int lin=poorscript.token.endLine;
-            System.out.println("Filepos " +lin+":"+col+" "+poorscript.token_source.curChar);
             barr = bout.toByteArray();
-            com.lowagie.text.Image img = new ImgRaw(width, height, 1,
-                bitspercomponent, barr);
+//            com.lowagie.text.Image img = new ImgRaw(width, height, 1,
+//                bitspercomponent, barr);
+            com.lowagie.text.Image img = new Jpeg(barr);
             try {
-              cb.addImage(img, width, 0, 0, height, width, height);
+              cb.addImage(img,width,0,0,height,0,0);
             }
             catch (DocumentException ex1) {
               ex1.printStackTrace();
             }
-
           }
           catch (IOException ex) {
             ex.printStackTrace();
