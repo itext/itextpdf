@@ -226,25 +226,32 @@ public class PAPencil {
         this.state.path.lineTo((float) (currentPoint.getX() + dx) , (float) (currentPoint.getY() + dy));
     }
 
+    /**
+     *
+     * @param cx double Centerpoint x
+     * @param cy double Centerpoint y
+     * @param r double  Radius r
+     * @param ang1 double first angle
+     * @param ang2 double second angle
+     */
     public void arc(double cx, double cy, double r, double ang1, double ang2){
-        Arc2D.Float arc = new Arc2D.Float((float) cx, (float) cy, (float) r, (float) r,
-                                          (float) ang1, (float) (ang2 - ang1), Arc2D.OPEN);
+        Arc2D.Float arc = new Arc2D.Float((float) ( cx - r ), (float) ( cy
+                - r ), (float) r * 2f, (float) r * 2f,- (float) ang1,- (float) ( ang2 -
+                ang1 ), Arc2D.OPEN );
         Point2D currentPoint = this.state.path.getCurrentPoint();
-
-	if(currentPoint == null){
+        if(currentPoint == null){
             this.state.path.append(arc, false);
         } else {
             this.state.path.append(arc, true);
         }
     }
-
-    public void arcn(double cx, double cy, double r,
-    		      double ang1, double ang2) {
-	Arc2D.Float arc = new Arc2D.Float((float) cx, (float) cy, (float) r, (float) r,
-                                          (float) ang1, (float) (ang1 - ang2), Arc2D.OPEN);
-       Point2D currentPoint = this.state.path.getCurrentPoint();
-
-	if(currentPoint == null){
+    
+    public void arcn(double cx, double cy, double r, double ang1, double ang2) {
+        Arc2D.Float arc = new Arc2D.Float((float) ( cx - r ), (float)
+        ( cy - r ), (float) r * 2f, (float) r * 2f,- (float) ang1, -(float) (
+                ang2 - ang1 ), Arc2D.OPEN );
+        Point2D currentPoint = this.state.path.getCurrentPoint();
+        if(currentPoint == null){
             this.state.path.append(arc, false);
         } else {
             this.state.path.append(arc, true);
