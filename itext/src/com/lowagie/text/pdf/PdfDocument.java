@@ -1212,7 +1212,7 @@ class PdfDocument extends Document implements DocListener {
         
         ArrayList cells = dataCells;
         ArrayList rows = extractRows(cells, ctx);
-        
+        boolean isContinue = false;
 		while (!cells.isEmpty()) {
 			// initialisation of some extra parameters;
 			ctx.lostTableBottom = 0;
@@ -1282,6 +1282,7 @@ class PdfDocument extends Document implements DocListener {
 			// if the table continues on the next page
             
 			if (!rows.isEmpty()) {
+				isContinue = true;
 				graphics.setLineWidth(table.borderWidth());
 				if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) {
 					// Draw the bottom line
@@ -1399,9 +1400,16 @@ class PdfDocument extends Document implements DocListener {
 		}
         
         float tableHeight = table.top() - table.bottom();
-        currentHeight = ctx.oldHeight + tableHeight;
-
-        text.moveText(0, -tableHeight );
+        // bugfix by Adauto Martins when have more than two tables and more than one page 
+        // If continuation of table in other page (bug report #1460051)
+        if (isContinue) {
+        	currentHeight = tableHeight;
+        	text.moveText(0, -(tableHeight - (ctx.oldHeight * 2)));
+        } else {
+        	currentHeight = ctx.oldHeight + tableHeight;
+        	text.moveText(0, -tableHeight);
+        }
+        // end bugfix
         pageEmpty = false;
         
         if (ctx.countPageBreaks > 0) {
@@ -1482,16 +1490,15 @@ class PdfDocument extends Document implements DocListener {
         // fill row information with rowspan cells to get complete "scan lines"
         for (int i = rows.size() - 1; i >= 0; i--) {
             ArrayList row = (ArrayList) rows.get(i);
-
             // iterator through row
             for (int j = 0; j < row.size(); j++) {
                 PdfCell c = (PdfCell) row.get(j);
-                int rowspan = c.rowspan();
-                
+                int rowspan = c.rowspan();                
                 // fill in missing rowspan cells to complete "scan line"
                 for (int k = 1; k < rowspan; k++) {
                     ArrayList spannedRow = ((ArrayList) rows.get(i + k));
-                    spannedRow.add(j, c);
+                    if (spannedRow.size() > j)
+                    	spannedRow.add(j, c);
                 }
             }
         }
