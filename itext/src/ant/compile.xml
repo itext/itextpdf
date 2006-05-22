@@ -62,6 +62,11 @@
                 <include name="**/*.txt"/>
             </fileset>
         </copy>
+        <copy todir="${itext.classes}/com/lowagie/text/pdf/codec/postscript" overwrite="yes">
+            <fileset dir="${itext.src}/com/lowagie/text/pdf/codec/postscript/">
+                <include name="**/*.ps"/>
+            </fileset>
+        </copy>
         <jar jarfile="${itext.bin}/iText.jar" basedir="${itext.classes}" manifest="../META-INF/MANIFEST.MF" excludes="com/lowagie/examples/**,**/*.cmap,**/*.properties,com/lowagie/text/pdf/fonts/cmaps/**" />
     </target>
 

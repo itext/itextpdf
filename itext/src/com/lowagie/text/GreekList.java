@@ -120,9 +120,9 @@ public class GreekList extends List {
 			ListItem item = (ListItem) o;
 			Chunk chunk;
 			if (greeklower)
-				chunk = SpecialSymbol.get((char) (first + list.size() + 912), symbol.font());
-			else
 				chunk = SpecialSymbol.get((char) (first + list.size() + 944), symbol.font());
+			else
+				chunk = SpecialSymbol.get((char) (first + list.size() + 912), symbol.font());
 			chunk.append(".");
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent);

@@ -253,6 +253,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     ((RtfList) rtfElement).setListNumber(listNumber);
                     ((RtfList) rtfElement).setListLevel(listLevel + 1);
                     ((RtfList) rtfElement).setParent(this);
+                } else if(rtfElement instanceof RtfListItem) {
+                    ((RtfListItem) rtfElement).setParent(this);
+                    ((RtfListItem) rtfElement).inheritListSettings(listNumber, listLevel + 1);
                 }
                 items.add(rtfElement);
             } catch(DocumentException de) {
@@ -347,6 +350,12 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 if(rtfElement instanceof RtfList) {
                     result.write(((RtfList) rtfElement).writeDefinition());
                     break;
+                } else if(rtfElement instanceof RtfListItem) {
+                    byte[] data = ((RtfListItem) rtfElement).writeDefinition();
+                    if(data.length > 0) {
+                        result.write(data);
+                        break;
+                    }
                 }
             }
         } catch(IOException ioe) {
@@ -360,7 +369,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * 
      * @return A byte array containing the initialisation part
      */
-    private byte[] writeListBeginning() {
+    protected byte[] writeListBeginning() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(RtfParagraph.PARAGRAPH_DEFAULTS);
@@ -385,15 +394,29 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
             result.write(writeIndentations());
             result.write(RtfFont.FONT_SIZE);
             result.write(intToByteArray(fontNumber.getFontSize() * 2));
+            if(this.symbolIndent > 0) { // TODO This is a slight hack. Replace with a call to tab support when implemented.
+                result.write("\\tx".getBytes());
+                result.write(intToByteArray(this.leftIndent));
+            }
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+        return result.toByteArray();
+    }
+
+    /**
+     * Writes only the list number and list level number.
+     * 
+     * @return The list number and list level number of this RtfList.
+     */
+    protected byte[] writeListNumbers() {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        try {
             result.write(RtfListTable.LIST_NUMBER);
             result.write(intToByteArray(listNumber));
             if(listLevel > 0) {
                 result.write(LIST_LEVEL_NUMBER);
                 result.write(intToByteArray(listLevel));
-            }
-            if(this.symbolIndent > 0) { // TODO This is a slight hack. Replace with a call to tab support when implemented.
-                result.write("\\tx".getBytes());
-                result.write(intToByteArray(this.leftIndent));
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
@@ -410,6 +433,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(writeListBeginning());
+            result.write(writeListNumbers());
             result.write(OPEN_GROUP);
             int itemNr = 0;
             for(int i = 0; i < items.size(); i++) {
@@ -440,6 +464,9 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     result.write(CLOSE_GROUP);
                     result.write(rtfElement.write());
                     result.write(RtfParagraph.PARAGRAPH);
+                    if(((RtfListItem) rtfElement).isContainsInnerList()) {
+                        result.write(writeListNumbers());
+                    }
                     result.write("\n".getBytes());
                 } else if(rtfElement instanceof RtfList) {
                     result.write(rtfElement.write());
@@ -493,7 +520,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * 
      * @param parent The parent RtfList to use.
      */
-    private void setParent(RtfList parent) {
+    protected void setParent(RtfList parent) {
         this.parentList = parent;
     }
     
@@ -545,13 +572,15 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
      * Correct the indentation of this RtfList by adding left/first line indentation
      * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
      */
-    private void correctIndentation() {
+    protected void correctIndentation() {
         if(this.parentList != null) {
             this.leftIndent = this.leftIndent + this.parentList.getLeftIndent() + this.parentList.getFirstIndent();
         }
         for(int i = 0; i < this.items.size(); i++) {
             if(this.items.get(i) instanceof RtfList) {
                 ((RtfList) this.items.get(i)).correctIndentation();
+            } else if(this.items.get(i) instanceof RtfListItem) {
+                ((RtfListItem) this.items.get(i)).correctIndentation();
             }
         }
     }

@@ -59,8 +59,8 @@ import java.io.File;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     
-    private ArrayList objectList;
-    private DocListener document;
+    protected ArrayList objectList;
+    protected DocListener document;
     private Paragraph currentParagraph;
     private ChainedProperties cprops = new ChainedProperties();
     private Stack stack = new Stack();
@@ -179,13 +179,23 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                         Image tim = (Image)images.get(src);
                         if (tim != null)
                             img = Image.getInstance(tim);
+                    } else {
+                        if (!src.startsWith("http")) { // relative src references only
+                            String baseurl = (String)interfaceProps.get("img_baseurl");
+                            if (baseurl != null) {
+                                src = baseurl+src;
+                                img = Image.getInstance(src);
+                            }
+                        }
                     }
                 }
                 if (img == null) {
-                    String path = cprops.getProperty("image_path");
-                    if (path == null)
-                        path = "";
-                    src = new File(path, src).getPath();
+                    if (!src.startsWith("http")) {
+                        String path = cprops.getProperty("image_path");
+                        if (path == null)
+                            path = "";
+                        src = new File(path, src).getPath();
+                    }
                     img = Image.getInstance(src);
                 }
                 String align = (String)h.get("align");

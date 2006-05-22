@@ -1223,96 +1223,19 @@ class PdfDocument extends Document implements DocListener {
 			boolean headerChecked = false;
             
             float headerHeight = 0;
-           /* 
-			for (ListIterator iterator = cells.listIterator(); iterator.hasNext() && !tableHasToFit;) {
-				cell = (PdfCell) iterator.next();
-				boolean atLeastOneFits = false;
-				cellsHaveToFit = table.hasToFitPageCells();
-				if( cellsHaveToFit ) {
-					if( !cell.isHeader() ) {
-						if (cell.getGroupNumber() != currentGroupNumber) {
-							boolean cellsFit = true;
-							currentGroupNumber = cell.getGroupNumber();
-							int cellCount = 0;
-							while (cell.getGroupNumber() == currentGroupNumber && cellsFit && iterator.hasNext()) {
-								if (cell.bottom() < indentBottom()) {
-                                    float cellHeight = cell.height();
-                                    float pageSize = indentTop() - indentBottom() - headerHeight - 30;
-								    if (cellHeight < pageSize) {
-								        cellsFit = false;
-                                    }
-								}
-								else {
-									atLeastOneFits |= true;
-									break;
-								}
-								cell = (PdfCell) iterator.next();
-								cellCount++;
-							}
-							if (!atLeastOneFits) {
-								cellsHaveToFit = false;
-							}
-							if (!cellsFit) {
-								break;
-							}
-							for (int i = cellCount; i >= 0; i--) {
-								cell = (PdfCell) iterator.previous();
-							}
-						}
-					}
-					else {
-                        headerHeight = cell.height();
-                        if( !headerChecked ) {
-							headerChecked = true;
-							boolean cellsFit = true;
-							int cellCount = 0;
-							float firstTop = cell.top();
-							while (cell.isHeader() && cellsFit && iterator.hasNext()) {
-								if (firstTop - cell.bottom(0) > indentTop() - currentHeight - indentBottom()) {
-									cellsFit = false;
-								}
-								cell = (PdfCell) iterator.next();
-								cellCount++;
-							}
-							currentGroupNumber = cell.getGroupNumber();
-							while (cell.getGroupNumber() == currentGroupNumber && cellsFit && iterator.hasNext()) {
-								if (firstTop - cell.bottom(0) > indentTop() - currentHeight - indentBottom() - 10.0) {
-									cellsFit = false;
-								}
-								cell = (PdfCell) iterator.next();
-								cellCount++;
-							}
-							for (int i = cellCount; i >= 0; i--) {
-								cell = (PdfCell) iterator.previous();
-							}
-							if (!cellsFit) {
-								while( cell.isHeader() ) {
-									iterator.remove();
-									cell = (PdfCell) iterator.next();
-								}
-                                // never break headers
-//								break;
-							}
-						}
-					}
-				}
-			}*/
 
             // draw the cells (line by line)
-            
             Iterator iterator = rows.iterator();
               
             boolean atLeastOneFits = false;
             while (iterator.hasNext()) {
                 ArrayList row = (ArrayList) iterator.next();
-                                       
                 analyzeRow(rows, ctx);
                 renderCells(ctx, row, table.hasToFitPageCells() & atLeastOneFits);
                                 
                 if (!mayBeRemoved(row)) {
                     break;
                 }
-                
                 consumeRowspan(row, ctx);
                 iterator.remove();
                 atLeastOneFits = true;
@@ -1616,20 +1539,13 @@ class PdfDocument extends Document implements DocListener {
 
                     ctx.cellRendered(cell, getPageNumber());
                 } 
-                            
-                float indentBottom = indentBottom();
-                
-                if (ctx.maxCellBottom != 0) {
-                    indentBottom = Math.max(ctx.maxCellBottom, indentBottom);
-                }
-    
+                float indentBottom = Math.max(cell.bottom(), indentBottom());
                 Rectangle tableRect = ctx.table.rectangle(ctx.pagetop, indentBottom());
-                
                 indentBottom = Math.max(tableRect.bottom(), indentBottom);
                 
                 // we paint the borders of the cells
                 Rectangle cellRect = cell.rectangle(tableRect.top(), indentBottom);
-                cellRect.setBottom(cellRect.bottom());
+ 				//cellRect.setBottom(cellRect.bottom());
                 if (cellRect.height() > 0) {
                     ctx.lostTableBottom = indentBottom;
                     ctx.cellGraphics.rectangle(cellRect);
@@ -2157,7 +2073,6 @@ class PdfDocument extends Document implements DocListener {
         if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition = indentRight() - image.scaledWidth() - mt[4];
         if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition = indentLeft() + ((indentRight() - indentLeft() - image.scaledWidth()) / 2) - mt[4];
         if (image.hasAbsoluteX()) startPosition = image.absoluteX();
-        graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
         if (textwrap) {
             if (imageEnd < 0 || imageEnd < currentHeight + image.scaledHeight() + diff) {
                 imageEnd = currentHeight + image.scaledHeight() + diff;
@@ -2171,6 +2086,12 @@ class PdfDocument extends Document implements DocListener {
                 imageIndentLeft += image.scaledWidth() + image.indentationRight();
             }
         }
+        else {
+        	if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition -= image.indentationRight();
+        	else if ((image.alignment() & Image.LEFT) == Image.LEFT) startPosition += image.indentationLeft();
+        	else if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition += image.indentationLeft() - image.indentationRight();
+        }
+        graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
         if (!(textwrap || underlying)) {
             currentHeight += image.scaledHeight() + diff;
             flushLines();

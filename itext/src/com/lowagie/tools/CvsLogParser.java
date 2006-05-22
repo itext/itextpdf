@@ -24,7 +24,7 @@ import java.util.Enumeration;
 
 /**
  * If you get a changelog from CVS, for instance:
- * cvs -d:ext:blowagie@cvs.sourceforge.net:/cvsroot/itext log -d ">2005-07-29"
+ * cvs -d:ext:blowagie@itext.cvs.sourceforge.net:/cvsroot/itext log -d ">2005-07-29"
  * you get an overview that contains all the changes.
  * With this class, you can parse out the important entries.
  *

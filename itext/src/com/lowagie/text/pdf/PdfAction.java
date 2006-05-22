@@ -465,7 +465,7 @@ public class PdfAction extends PdfDictionary {
      * Creates a GoTo action to a named destination.
      * @param dest the named destination
      * @param isName if true sets the destination as a name, if false sets it as a String
-     * @return a GoToR action
+     * @return a GoTo action
      */
     public static PdfAction gotoLocalPage(String dest, boolean isName) {
         PdfAction action = new PdfAction();

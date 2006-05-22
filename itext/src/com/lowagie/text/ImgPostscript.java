@@ -67,13 +67,13 @@ import java.util.StringTokenizer;
 public class ImgPostscript
 extends Image
 implements Element {
-    
+
     // Constructors
-    
+
     ImgPostscript(Image image) {
         super(image);
     }
-    
+
     public ImgPostscript(byte[] content,float width,float height) throws
     BadElementException, IOException {
         super( (URL)null);
@@ -90,12 +90,12 @@ implements Element {
      * @throws BadElementException on error
      * @throws IOException on error
      */
-    
+
     public ImgPostscript(URL url) throws BadElementException, IOException {
         super(url);
         processParameters();
     }
-    
+
     /**
      * Constructs an <CODE>ImgPostscript</CODE>-object, using a <VAR>filename</VAR>.
      *
@@ -104,12 +104,12 @@ implements Element {
      * @throws MalformedURLException on error
      * @throws IOException on error
      */
-    
+
     public ImgPostscript(String filename) throws BadElementException,
     MalformedURLException, IOException {
         this(Image.toURL(filename));
     }
-    
+
     /**
      * Constructs an <CODE>ImgPostscript</CODE>-object from memory.
      *
@@ -117,20 +117,21 @@ implements Element {
      * @throws BadElementException on error
      * @throws IOException on error
      */
-    
+
     public ImgPostscript(byte[] img) throws BadElementException, IOException {
         super( (URL)null);
         rawData = img;
         originalData = img;
         processParameters();
     }
-    
+
+
     /**
      * This method checks if the image is a valid Postscript and processes some parameters.
      * @throws BadElementException
      * @throws IOException
      */
-    
+
     private void processParameters() throws BadElementException, IOException {
         type = IMGTEMPLATE;
         originalType = ORIGINAL_PS;
@@ -143,48 +144,56 @@ implements Element {
                 is = new java.io.ByteArrayInputStream(rawData);
             }
             String boundingbox=null;
+            String templatebox=null;
             Reader r = new BufferedReader(new InputStreamReader(is));
             //  StreamTokenizer st = new StreamTokenizer(r);
             while (r.ready()) {
                 char c;
                 StringBuffer sb = new StringBuffer();
-                while ( (c = ( (char) r.read())) != '\n') {
+                while ( (c = ( (char) r.read())) != '\n'&&c!='\r') {
                     sb.append(c);
                 }
                 //System.out.println("<<" + sb.toString() + ">>");
                 if (sb.toString().startsWith("%%BoundingBox:")) {
                     boundingbox = sb.toString();
-                    
+
                 }
                 if (sb.toString().startsWith("%%TemplateBox:")) {
-                    boundingbox = sb.toString();
+                    templatebox = sb.toString();
                 }
                 if (sb.toString().startsWith("%%EndComments")) {
                     break;
                 }
-                
+                if ((!sb.toString().startsWith("%%"))&&(!sb.toString().startsWith("%!"))) {
+                   break;
+               }
+
             }
-            if(boundingbox==null)return;
+            if(boundingbox==null){
+              scaledHeight=PageSize.A4.height();
+            setTop(scaledHeight);
+            scaledWidth=PageSize.A4.width();
+            setRight(scaledWidth);
+              return;
+            }
             StringTokenizer st=new StringTokenizer(boundingbox,": \r\n");
             st.nextElement();
             String xx1=st.nextToken();
             String yy1=st.nextToken();
             String xx2=st.nextToken();
             String yy2=st.nextToken();
-            
+
             int left = Integer.parseInt(xx1);
-            int top = Integer.parseInt(yy1);
+            int bottom = Integer.parseInt(yy1);
             int right = Integer.parseInt(xx2);
-            int bottom = Integer.parseInt(yy2);
+            int top = Integer.parseInt(yy2);
             int inch = 1;
             dpiX = 72;
             dpiY = 72;
-            scaledHeight = (float) (bottom - top) / inch *1f;
-            scaledHeight=800;
-            setTop(scaledHeight);
+            scaledHeight = (float) (top-bottom ) / inch *1f;
+            setTop(top);
             scaledWidth = (float) (right - left) / inch * 1f;
-            scaledWidth=800;
-            setRight(scaledWidth);
+            setRight(right);
         }
         finally {
             if (is != null) {
@@ -194,7 +203,7 @@ implements Element {
             plainHeight = height();
         }
     }
-    
+
     /** Reads the Postscript into a template.
      * @param template the template to read to
      * @throws IOException on error

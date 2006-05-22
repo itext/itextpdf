@@ -69,6 +69,15 @@ import com.lowagie.text.rtf.text.RtfParagraph;
 public class RtfListItem extends RtfParagraph {
 
     /**
+     * The RtfList this RtfListItem belongs to.
+     */
+    private RtfList parentList = null;
+    /**
+     * Whether this RtfListItem contains further RtfLists.
+     */
+    private boolean containsInnerList = false;
+    
+    /**
      * Constructs a RtfListItem for a ListItem belonging to a RtfDocument.
      * 
      * @param doc The RtfDocument this RtfListItem belongs to.
@@ -90,12 +99,84 @@ public class RtfListItem extends RtfParagraph {
                 RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
                 if(rtfElement instanceof RtfChunk) {
                     ((RtfChunk) rtfElement).setSoftLineBreaks(true);
+                } else if(rtfElement instanceof RtfList) {
+                    result.write(RtfParagraph.PARAGRAPH);
+                    this.containsInnerList = true;
                 }
                 result.write(rtfElement.write());
+                if(rtfElement instanceof RtfList) {
+                    result.write(this.parentList.writeListBeginning());
+                    result.write("\\tab".getBytes());
+                }
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
         return result.toByteArray();
+    }
+
+    /**
+     * Returns the definition of the first list contained in this RtfListItem or
+     * an empty byte array if no inner RtfLists exist.
+     * 
+     * @return The definition of the first inner RtfList or an empty byte array.
+     */
+    public byte[] writeDefinition() {
+        for(int i = 0; i < chunks.size(); i++) {
+            RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
+            if(rtfElement instanceof RtfList) {
+                return ((RtfList) rtfElement).writeDefinition();
+            }
+        }
+        return new byte[0];
+    }
+    
+    /**
+     * Inherit the list settings from the parent list to RtfLists that
+     * are contained in this RtfListItem.
+     * 
+     * @param listNumber The list number to inherit.
+     * @param listLevel The list level to inherit.
+     */
+    public void inheritListSettings(int listNumber, int listLevel) {
+        for(int i = 0; i < chunks.size(); i++) {
+            RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
+            if(rtfElement instanceof RtfList) {
+                ((RtfList) rtfElement).setListNumber(listNumber);
+                ((RtfList) rtfElement).setListLevel(listLevel);
+                ((RtfList) rtfElement).setParent(this.parentList);
+            }
+        }
+    }
+        
+    /**
+     * Correct the indentation of RtfLists in this RtfListItem by adding left/first line indentation
+     * from the parent RtfList. Also calls correctIndentation on all child RtfLists.
+     */
+    protected void correctIndentation() {
+        for(int i = 0; i < chunks.size(); i++) {
+            RtfBasicElement rtfElement = (RtfBasicElement) chunks.get(i);
+            if(rtfElement instanceof RtfList) {
+                ((RtfList) rtfElement).correctIndentation();
+            }
+        }
+    }
+    
+    /**
+     * Set the parent RtfList.
+     * 
+     * @param parentList The parent RtfList to use.
+     */
+    public void setParent(RtfList parentList) {
+        this.parentList = parentList;
+    }
+
+    /**
+     * Gets whether this RtfListItem contains further RtfLists.
+     * 
+     * @return Whether this RtfListItem contains further RtfLists.
+     */
+    public boolean isContainsInnerList() {
+        return this.containsInnerList;
     }
 }

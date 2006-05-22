@@ -1,8 +1,5 @@
 /*
- * $Id$
- * $Name$
- *
- * Copyright 2001, 2002 Paulo Soares
+ * Copyright 2005 by Johannes Schindelin.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -14,14 +11,6 @@
  *
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
- * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
- * All Rights Reserved.
- * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
- *
- * Contributor(s): all the names of the contributors are added in the source code
- * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
  * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
@@ -47,52 +36,30 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.tools.arguments;
 
-package com.lowagie.text.pdf.codec.postscript;
+import java.io.File;
 
-import java.io.*;
-import java.awt.*;
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
+import javax.swing.filechooser.FileFilter;
 
-public class MetaDoPS {
+/**
+ * Filters directories in a JFileChooser.
+ */
+public class DirFilter extends FileFilter {
 
-  public PdfContentByte cb;
-  InputStream in;
-  int left;
-  int top;
-  int right;
-  int bottom;
-  int inch;
+	/**
+	 * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
+	 */
+	public boolean accept(File f) {
+		if (f.isDirectory()) return true;
+		return false;
+	}
 
-  public MetaDoPS(InputStream in, PdfContentByte cb) {
-    this.cb = cb;
-    this.in = in;
-  }
-
-  public void readAll() throws IOException, DocumentException {
-
-    cb.saveState();
-    java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
-        width(), PageSize.A4.height());
-    try {
-      PAContext context = new PAContext( (Graphics2D) g2,
-                                        new Dimension( (int) PageSize.A4.width(),
-          (int) PageSize.A4.height()));
-      context.draw(in);
-//      context.draw(new BufferedInputStream(in));
-      // ( (Graphics2D) backBuffer.getGraphics()).dispose();
-      in.close();
-    }
-    catch (IOException ex) {
-      ex.printStackTrace();
-    }
-    catch (PainterException ex) {
-      ex.printStackTrace();
-    }
-    g2.dispose();
-    cb.restoreState();
-
-  }
+	/**
+	 * @see javax.swing.filechooser.FileFilter#getDescription()
+	 */
+	public String getDescription() {
+		return "directories";
+	}
 
 }

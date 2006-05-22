@@ -920,14 +920,29 @@ public class PdfWriter extends DocWriter {
         return null;
     }
     
-    /** Adds an image to the document but not to the page resources. It is used with
+    /**
+     * Adds an image to the document but not to the page resources. It is used with
      * templates and <CODE>Document.add(Image)</CODE>.
      * @param image the <CODE>Image</CODE> to add
      * @return the name of the image added
      * @throws PdfException on error
      * @throws DocumentException on error
      */
-    PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
+    public PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
+        return addDirectImageSimple(image, null);
+    }
+    
+    /**
+     * Adds an image to the document but not to the page resources. It is used with
+     * templates and <CODE>Document.add(Image)</CODE>.
+     * @param image the <CODE>Image</CODE> to add
+     * @param fixedRef the reference to used. It may be <CODE>null</CODE>,
+     * a <CODE>PdfIndirectReference</CODE> or a <CODE>PRIndirectReference</CODE>.
+     * @return the name of the image added
+     * @throws PdfException on error
+     * @throws DocumentException on error
+     */
+    public PdfName addDirectImageSimple(Image image, PdfIndirectReference fixedRef) throws PdfException, DocumentException {
         PdfName name;
         // if the images is already added, just retrieve the name
         if (images.containsKey(image.getMySerialId())) {
@@ -989,7 +1004,7 @@ public class PdfWriter extends DocWriter {
                     else
                         i.put(PdfName.COLORSPACE, iccArray);
                 }
-                add(i);
+                add(i, fixedRef);
                 name = i.name();
             }
             images.put(image.getMySerialId(), name);
@@ -1005,18 +1020,24 @@ public class PdfWriter extends DocWriter {
      * @throws PdfException when a document isn't open yet, or has been closed
      */
     
-    PdfIndirectReference add(PdfImage pdfImage) throws PdfException {
+    PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
         if (! imageDictionary.contains(pdfImage.name())) {
             checkPDFXConformance(this, PDFXKEY_IMAGE, pdfImage);
-            PdfIndirectObject object;
+            if (fixedRef != null && fixedRef instanceof PRIndirectReference) {
+                PRIndirectReference r2 = (PRIndirectReference)fixedRef;
+                fixedRef = new PdfIndirectReference(0, getNewObjectNumber(r2.getReader(), r2.getNumber(), r2.getGeneration()));
+            }
             try {
-                object = addToBody(pdfImage);
+                if (fixedRef == null)
+                    fixedRef = addToBody(pdfImage).getIndirectReference();
+                else
+                    addToBody(pdfImage, fixedRef);
             }
             catch(IOException ioe) {
                 throw new ExceptionConverter(ioe);
             }
-            imageDictionary.put(pdfImage.name(), object.getIndirectReference());
-            return object.getIndirectReference();
+            imageDictionary.put(pdfImage.name(), fixedRef);
+            return fixedRef;
         }
         return (PdfIndirectReference) imageDictionary.get(pdfImage.name());
     }

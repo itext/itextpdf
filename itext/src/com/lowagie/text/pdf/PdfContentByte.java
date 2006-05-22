@@ -103,6 +103,21 @@ public class PdfContentByte {
 
         /** The current word spacing */
         protected float wordSpace = 0;
+        
+        GraphicState() {
+        }
+
+        GraphicState(GraphicState cp) {
+            fontDetails = cp.fontDetails;
+            colorDetails = cp.colorDetails;
+            size = cp.size;
+            xTLM = cp.xTLM;
+            yTLM = cp.yTLM;
+            leading = cp.leading;
+            scale = cp.scale;
+            charSpace = cp.charSpace;
+            wordSpace = cp.wordSpace;
+        }
     }
     
     /** The alignement is center */
@@ -418,7 +433,7 @@ public class PdfContentByte {
      * Changes the <VAR>line width</VAR>.
      * <P>
      * The line width specifies the thickness of the line used to stroke a path and is measured
-     * in used space units.<BR>
+     * in user space units.<BR>
      *
      * @param       w           a width
      */
@@ -1263,7 +1278,7 @@ public class PdfContentByte {
      */
     public void saveState() {
         content.append("q").append_i(separator);
-        stateList.add(state);
+        stateList.add(new GraphicState(state));
     }
     
     /**

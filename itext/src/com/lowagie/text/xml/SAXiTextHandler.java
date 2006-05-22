@@ -137,8 +137,6 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * @param document
-     * @param bf
-     * @throws DocumentException
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document)
@@ -146,11 +144,6 @@ public class SAXiTextHandler extends DefaultHandler {
         super();
         this.document = document;
         stack = new Stack();
-        try {
-        	this.bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-        }
-        catch(DocumentException de) {
-        }
     }
 
     protected HashMap myTags;
@@ -158,7 +151,6 @@ public class SAXiTextHandler extends DefaultHandler {
     /**
      * @param document
      * @param myTags
-     * @throws DocumentException
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HtmlTagMap myTags)
@@ -171,7 +163,6 @@ public class SAXiTextHandler extends DefaultHandler {
      * @param document
      * @param myTags
      * @param bf
-     * @throws DocumentException
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HtmlTagMap myTags,
@@ -183,7 +174,6 @@ public class SAXiTextHandler extends DefaultHandler {
     /**
      * @param document
      * @param myTags
-     * @throws DocumentException
      * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HashMap myTags)
@@ -259,7 +249,12 @@ public class SAXiTextHandler extends DefaultHandler {
             try {
                 current = (TextElementArray) stack.pop();
             } catch (EmptyStackException ese) {
-                current = new Paragraph("", new Font(this.bf));
+            	if (bf == null) {
+            		current = new Paragraph("", new Font());
+            	}
+            	else {
+            		current = new Paragraph("", new Font(this.bf));
+            	}
             }
             current.add(currentChunk);
             stack.push(current);
@@ -269,7 +264,9 @@ public class SAXiTextHandler extends DefaultHandler {
         // chunks
         if (Chunk.isTag(name)) {
             currentChunk = new Chunk(attributes);
-            currentChunk.setFont(new Font(this.bf));
+            if (bf != null) {
+            	currentChunk.setFont(new Font(this.bf));
+            }
             return;
         }
 
@@ -473,7 +470,9 @@ public class SAXiTextHandler extends DefaultHandler {
                 current = (TextElementArray) stack.pop();
                 Chunk newPage = new Chunk("");
                 newPage.setNewPage();
-                newPage.setFont(new Font(this.bf));
+                if (bf != null) {
+                	newPage.setFont(new Font(this.bf));
+                }
                 current.add(newPage);
                 stack.push(current);
             } catch (EmptyStackException ese) {
@@ -509,10 +508,10 @@ public class SAXiTextHandler extends DefaultHandler {
         if (isDocumentRoot(name)) {
             String key;
             String value;
-            // pagesize and orientation specific code suggested by Samuel
-            // Gabriel
-            Rectangle pageSize = PageSize.A4;
-            String orientation = "portrait";
+            // pagesize and orientation specific code suggested by Samuel Gabriel
+            // Updated by Ricardo Coutinho. Only use if set in html!
+			Rectangle pageSize = null;
+			String orientation = null;
             for (Iterator i = attributes.keySet().iterator(); i.hasNext();) {
                 key = (String) i.next();
                 value = attributes.getProperty(key);
@@ -548,7 +547,6 @@ public class SAXiTextHandler extends DefaultHandler {
                         throw new ExceptionConverter(ex);
                     }
                 } else {
-
                     try {
                         document.add(new Meta(key, value));
                     } catch (DocumentException de) {
@@ -556,10 +554,12 @@ public class SAXiTextHandler extends DefaultHandler {
                     }
                 }
             }
-
-            if ("landscape".equals(orientation))
-                pageSize = pageSize.rotate();
-            document.setPageSize(pageSize);
+            if(pageSize != null) {
+            	if ("landscape".equals(orientation)) {
+            		pageSize = pageSize.rotate();
+            	}
+            	document.setPageSize(pageSize);
+            }
             document.setMargins(leftMargin, rightMargin, topMargin,
                     bottomMargin);
 
@@ -634,7 +634,12 @@ public class SAXiTextHandler extends DefaultHandler {
             }
         }
         if (currentChunk == null) {
-            currentChunk = new Chunk(buf.toString(), new Font(this.bf));
+        	if (bf == null) {
+        		currentChunk = new Chunk(buf.toString());
+        	}
+        	else {
+        		currentChunk = new Chunk(buf.toString(), new Font(this.bf));
+        	}
         } else {
             currentChunk.append(buf.toString());
         }
@@ -642,6 +647,10 @@ public class SAXiTextHandler extends DefaultHandler {
 
     private BaseFont bf = null;
     
+    /**
+     * Sets the font that has to be used.
+     * @param bf
+     */
     public void setBaseFont(BaseFont bf) {
     	this.bf = bf;
     }
