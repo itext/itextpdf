@@ -53,13 +53,13 @@
 
     <target name="download.bin" description="--> downloads files that hardly ever change">
         <mkdir dir="${itext.bin}" />
-        <get usetimestamp="true" src="http://osdn.dl.sourceforge.net/sourceforge/itext/keystore" dest="${itext.bin}/.keystore" verbose="true" />
-        <get usetimestamp="true" src="http://osdn.dl.sourceforge.net/sourceforge/itext/crimson.jar" dest="${itext.bin}/crimson.jar" verbose="true" />
-        <get usetimestamp="true" src="http://osdn.dl.sourceforge.net/sourceforge/itext/itext-hyph-xml.jar" dest="${itext.bin}/itext-hyph-xml.jar" verbose="true" />
-        <get usetimestamp="true" src="http://osdn.dl.sourceforge.net/sourceforge/itext/iTextAsian.jar" dest="${itext.bin}/iTextAsian.jar" verbose="true" />
-        <get usetimestamp="true" src="http://osdn.dl.sourceforge.net/sourceforge/itext/iTextAsianCmaps.jar" dest="${itext.bin}/iTextAsianCmaps.jar" verbose="true" />
-        <get usetimestamp="true" src="http://osdn.dl.sourceforge.net/sourceforge/itext/servlet.jar" dest="${itext.bin}/servlet.jar" verbose="true" />
-        <get usetimestamp="true" src="http://osdn.dl.sourceforge.net/sourceforge/itext/jfreechart.jar" dest="${itext.bin}/jfreechart.jar" verbose="true" />
-        <get usetimestamp="true" src="http://osdn.dl.sourceforge.net/sourceforge/itext/jcommon.jar" dest="${itext.bin}/jcommon.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/keystore" dest="${itext.bin}/.keystore" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/crimson.jar" dest="${itext.bin}/crimson.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/itext-hyph-xml.jar" dest="${itext.bin}/itext-hyph-xml.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/iTextAsian.jar" dest="${itext.bin}/iTextAsian.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/iTextAsianCmaps.jar" dest="${itext.bin}/iTextAsianCmaps.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/servlet.jar" dest="${itext.bin}/servlet.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/jfreechart.jar" dest="${itext.bin}/jfreechart.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/jcommon.jar" dest="${itext.bin}/jcommon.jar" verbose="true" />
     </target>
 </project>

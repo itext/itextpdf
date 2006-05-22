@@ -1212,7 +1212,7 @@ class PdfDocument extends Document implements DocListener {
         
         ArrayList cells = dataCells;
         ArrayList rows = extractRows(cells, ctx);
-        
+        boolean isContinue = false;
 		while (!cells.isEmpty()) {
 			// initialisation of some extra parameters;
 			ctx.lostTableBottom = 0;
@@ -1399,9 +1399,16 @@ class PdfDocument extends Document implements DocListener {
 		}
         
         float tableHeight = table.top() - table.bottom();
-        currentHeight = ctx.oldHeight + tableHeight;
-
-        text.moveText(0, -tableHeight );
+        // bugfix by Adauto Martins when have more than two tables and more than one page 
+        // If continuation of table in other page (bug report #1460051)
+        if (isContinue) {
+        	currentHeight = tableHeight;
+        	text.moveText(0, -(tableHeight - (ctx.oldHeight * 2)));
+        } else {
+        	currentHeight = ctx.oldHeight + tableHeight;
+        	text.moveText(0, -tableHeight);
+        }
+        // end bugfix
         pageEmpty = false;
         
         if (ctx.countPageBreaks > 0) {
