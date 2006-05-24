@@ -1282,6 +1282,7 @@ class PdfDocument extends Document implements DocListener {
 			// if the table continues on the next page
             
 			if (!rows.isEmpty()) {
+				isContinue = true;
 				graphics.setLineWidth(table.borderWidth());
 				if (cellsShown && (table.border() & Rectangle.BOTTOM) == Rectangle.BOTTOM) {
 					// Draw the bottom line
