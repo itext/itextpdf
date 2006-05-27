@@ -1364,7 +1364,7 @@ public class PdfReader {
                 break;
             if (tokens.getTokenType() != PRTokeniser.TK_NAME)
                 tokens.throwError("Dictionary key is not a name.");
-            PdfName name = new PdfName(tokens.getStringValue());
+            PdfName name = new PdfName(tokens.getStringValue(), false);
             PdfObject obj = readPRObject();
             int type = obj.type();
             if (-type == PRTokeniser.TK_END_DIC)
@@ -1425,7 +1425,7 @@ public class PdfReader {
                     strings.add(str);
                 return str;
             case PRTokeniser.TK_NAME:
-                return new PdfName(tokens.getStringValue());
+                return new PdfName(tokens.getStringValue(), false);
             case PRTokeniser.TK_REF:
                 int num = tokens.getReference();
                 PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());

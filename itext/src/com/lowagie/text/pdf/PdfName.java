@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
+ * Copyright 1999-2006 Bruno Lowagie
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -974,17 +974,27 @@ public class PdfName extends PdfObject implements Comparable{
     
     // constructors
     
+
     /**
-     * Constructs a <CODE>PdfName</CODE>-object.
-     *
-     * @param		name		the new Name.
+     * Constructs a new <CODE>PdfName</CODE>. The name length will be checked.
+     * @param name the new name
+     */
+    public PdfName(String name) {
+        this(name, true);
+    }
+    
+    /**
+     * Constructs a new <CODE>PdfName</CODE>.
+     * @param name the new name
+     * @param lengthCheck if <CODE>true</CODE> check the lenght validity, if <CODE>false</CODE> the name can
+     * have any length
      */
     
-    public PdfName(String name) {
+    public PdfName(String name, boolean lengthCheck) {
         super(PdfObject.NAME);
         // The minimum number of characters in a name is 0, the maximum is 127 (the '/' not included)
         int length = name.length();
-        if (length > 127) {
+        if (lengthCheck && length > 127) {
             throw new IllegalArgumentException("The name '" + name + "' is too long (" + length + " characters).");
         }
         // The name has to be checked for illegal characters
@@ -1030,7 +1040,7 @@ public class PdfName extends PdfObject implements Comparable{
     
     /**
      * Constructs a PdfName.
-     * @param bytes
+     * @param bytes the byte representation of the name
      */
     public PdfName(byte bytes[]) {
         super(PdfObject.NAME, bytes);
@@ -1041,12 +1051,9 @@ public class PdfName extends PdfObject implements Comparable{
      * Compares this object with the specified object for order.  Returns a
      * negative integer, zero, or a positive integer as this object is less
      * than, equal to, or greater than the specified object.<p>
-     *
-     *
-     * @param   object the Object to be compared.
-     * @return  a negative integer, zero, or a positive integer as this object
-     *		is less than, equal to, or greater than the specified object.
-     *
+     * @param object the Object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     * 		is less than, equal to, or greater than the specified object.
      * @throws ClassCastException if the specified object's type prevents it
      *         from being compared to this Object.
      */
