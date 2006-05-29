@@ -5,31 +5,36 @@ public interface PAParserConstants {
 
   int EOF = 0;
   int WHITESPACE = 1;
-  int INTEGER_LITERAL = 4;
-  int DECIMAL_LITERAL = 5;
-  int HEX_LITERAL = 6;
-  int FLOATING_POINT_LITERAL = 7;
-  int EXPONENT = 8;
-  int STRING_LITERAL = 9;
-  int IDENTIFIER = 10;
-  int KEY_IDENTIFIER = 11;
-  int IMMEDIATE_IDENTIFIER = 12;
-  int LETTER = 13;
-  int DIGIT = 14;
-  int LBRACE = 15;
-  int RBRACE = 16;
-  int LBRACKET = 17;
-  int RBRACKET = 18;
-  int LDICT = 19;
-  int RDICT = 20;
+  int INTEGER_LITERAL = 5;
+  int DECIMAL_LITERAL = 6;
+  int HEX_LITERAL = 7;
+  int FLOATING_POINT_LITERAL = 8;
+  int EXPONENT = 9;
+  int STRING_LITERAL = 10;
+  int IDENTIFIER = 11;
+  int KEY_IDENTIFIER = 12;
+  int IMMEDIATE_IDENTIFIER = 13;
+  int LETTER = 14;
+  int DIGIT = 15;
+  int LBRACE = 16;
+  int RBRACE = 17;
+  int LBRACKET = 18;
+  int RBRACKET = 19;
+  int LDICT = 20;
+  int RDICT = 21;
+  int Nextchar = 22;
+  int HEX_STRING_LITERAL = 23;
+  int Instring = 24;
 
   int DEFAULT = 0;
+  int WITHINSTRING = 1;
 
   String[] tokenImage = {
     "<EOF>",
     "<WHITESPACE>",
     "<token of kind 2>",
     "<token of kind 3>",
+    "<token of kind 4>",
     "<INTEGER_LITERAL>",
     "<DECIMAL_LITERAL>",
     "<HEX_LITERAL>",
@@ -47,6 +52,9 @@ public interface PAParserConstants {
     "\"]\"",
     "\"<<\"",
     "\">>\"",
+    "<Nextchar>",
+    "\">\"",
+    "\"<\"",
   };
 
 }

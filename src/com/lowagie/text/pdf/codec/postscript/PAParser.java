@@ -47,6 +47,7 @@ System.out.println("Ignoriere >"+dump+"<");
         case RBRACKET:
         case LDICT:
         case RDICT:
+        case Instring:
           ;
           break;
         default:
@@ -60,11 +61,12 @@ System.out.println("Ignoriere >"+dump+"<");
         case IDENTIFIER:
         case KEY_IDENTIFIER:
         case IMMEDIATE_IDENTIFIER:
+        case Instring:
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case INTEGER_LITERAL:
             x = jj_consume_token(INTEGER_LITERAL);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                         context.engine.process(new Integer(x.image));
                                 } catch(NumberFormatException e) {
                                         {if (true) throw new ParseException(ExceptionString("int_literal",jj_input_stream,context,token,e));}
@@ -75,7 +77,7 @@ System.out.println("Ignoriere >"+dump+"<");
           case FLOATING_POINT_LITERAL:
             x = jj_consume_token(FLOATING_POINT_LITERAL);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new Double(x.image));
                                 } catch(NumberFormatException e) {
                                         {if (true) throw new ParseException(ExceptionString("float_literal",jj_input_stream,context,token,e));}
@@ -83,19 +85,29 @@ System.out.println("Ignoriere >"+dump+"<");
                                         {if (true) throw new ParseException(ExceptionString("float_literal",jj_input_stream,context,token,e));}
                                 }
             break;
+          case Instring:
+            jj_consume_token(Instring);
+            x = jj_consume_token(HEX_STRING_LITERAL);
+                                try {
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                      context.engine.process((x.image.substring(1, x.image.length() -1)));
+                                } catch(PainterException e) {
+                                      {if (true) throw new ParseException(ExceptionString("hex_string_literal",jj_input_stream,context,token,e));}
+                                 }
+            break;
           case STRING_LITERAL:
             x = jj_consume_token(STRING_LITERAL);
-                                try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
-                                      context.engine.process(x.image.substring(1, x.image.length() -1));
-                                } catch(PainterException e) {
-                                      {if (true) throw new ParseException(ExceptionString("string_literal",jj_input_stream,context,token,e));}
-                                 }
+                               try {
+                                 {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                     context.engine.process(x.image.substring(1, x.image.length() -1));
+                               } catch(PainterException e) {
+                                     {if (true) throw new ParseException(ExceptionString("string_literal",jj_input_stream,context,token,e));}
+                                }
             break;
           case IDENTIFIER:
             x = jj_consume_token(IDENTIFIER);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                               context.engine.process(new PAToken(x.image, PAToken.IDENTIFIER));
                                 } catch(PainterException e) {
                                              {if (true) throw new ParseException(ExceptionString("identifier",jj_input_stream,context,token,e));}
@@ -104,7 +116,7 @@ System.out.println("Ignoriere >"+dump+"<");
           case KEY_IDENTIFIER:
             x = jj_consume_token(KEY_IDENTIFIER);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                             context.engine.process(new PAToken(x.image.substring(1, x.image.length()), PAToken.KEY));
                                 } catch(PainterException e) {
                                   {if (true) throw new ParseException(ExceptionString("key_identifier",jj_input_stream,context,token,e));}
@@ -113,7 +125,7 @@ System.out.println("Ignoriere >"+dump+"<");
           case IMMEDIATE_IDENTIFIER:
             x = jj_consume_token(IMMEDIATE_IDENTIFIER);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
                                             context.engine.process(new PAToken(x.image.substring(2, x.image.length()), PAToken.IMMEDIATE));
                                 } catch(PainterException e) {
                                          {if (true) throw new ParseException(ExceptionString("immediate_identifier",jj_input_stream,context,token,e));}
@@ -128,7 +140,7 @@ System.out.println("Ignoriere >"+dump+"<");
         case LBRACE:
           jj_consume_token(LBRACE);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                              context.engine.process(new PAToken(null, PAToken.START_PROCEDURE));
                                 } catch(PainterException e) {
                                   {if (true) throw new ParseException(ExceptionString("lbrace",jj_input_stream,context,token,e));}
@@ -137,7 +149,7 @@ System.out.println("Ignoriere >"+dump+"<");
         case RBRACE:
           jj_consume_token(RBRACE);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                       context.engine.process(new PAToken(null, PAToken.END_PROCEDURE));
                                 } catch(PainterException e) {
                                   {if (true) throw new ParseException(ExceptionString("rbrace",jj_input_stream,context,token,e));}
@@ -146,7 +158,7 @@ System.out.println("Ignoriere >"+dump+"<");
         case LBRACKET:
           jj_consume_token(LBRACKET);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.START_ARRAY));
                                 } catch(PainterException e) {
                                   {if (true) throw new ParseException(ExceptionString("lbracket",jj_input_stream,context,token,e));}
@@ -155,7 +167,7 @@ System.out.println("Ignoriere >"+dump+"<");
         case RBRACKET:
           jj_consume_token(RBRACKET);
                                 try {
-                                  {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.END_ARRAY));
                                 } catch(PainterException e) {
                                   {if (true) throw new ParseException(ExceptionString("rbracket",jj_input_stream,context,token,e));}
@@ -164,7 +176,7 @@ System.out.println("Ignoriere >"+dump+"<");
         case LDICT:
           jj_consume_token(LDICT);
                                try {
-                                 {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                 {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                       context.engine.process(new PAToken(null, PAToken.START_DICT));
                                } catch(PainterException e) {
                                  {if (true) throw new ParseException(ExceptionString("ldict",jj_input_stream,context,token,e));}
@@ -173,7 +185,7 @@ System.out.println("Ignoriere >"+dump+"<");
         case RDICT:
           jj_consume_token(RDICT);
                                try {
-                                 {if(PAContext.DebugExecution){System.out.print("\nparser "+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
+                                 {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+token.image+"\"");System.out.flush();System.err.flush();}}
                                        context.engine.process(new PAToken(null, PAToken.END_DICT));
                                } catch(PainterException e) {
                                  {if (true) throw new ParseException(ExceptionString("rdict",jj_input_stream,context,token,e));}
@@ -201,7 +213,7 @@ System.out.println("Ignoriere >"+dump+"<");
   private int jj_ntk;
   private int jj_gen;
   final private int[] jj_la1 = new int[3];
-  final private int[] jj_la1_0 = {0x1f9e90,0x1e90,0x1f9e90,};
+  final private int[] jj_la1_0 = {0x13f3d20,0x1003d20,0x13f3d20,};
 
   public PAParser(java.io.InputStream stream) {
     jj_input_stream = new JavaCharStream(stream, 1, 1);
@@ -299,8 +311,8 @@ System.out.println("Ignoriere >"+dump+"<");
 
   final public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[21];
-    for (int i = 0; i < 21; i++) {
+    boolean[] la1tokens = new boolean[25];
+    for (int i = 0; i < 25; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -316,7 +328,7 @@ System.out.println("Ignoriere >"+dump+"<");
         }
       }
     }
-    for (int i = 0; i < 21; i++) {
+    for (int i = 0; i < 25; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
