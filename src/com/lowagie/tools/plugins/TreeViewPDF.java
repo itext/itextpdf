@@ -58,6 +58,8 @@ import com.lowagie.tools.arguments.LabelAccessory;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 import com.lowagie.tools.plugins.treeview.TreeViewInternalFrame;
+import com.lowagie.tools.Toolbox;
+import java.beans.*;
 
 /**
  * Allows you to inspect an existing PDF file.
@@ -128,7 +130,24 @@ public class TreeViewPDF
    * @param args
    */
   public static void main(String[] args) {
-    throw new RuntimeException("GUI only Application!");
+  try {
+    Toolbox toolbox = new Toolbox();
+    AbstractTool tool = toolbox.createFrame("TreeViewPDF");
+    if (args.length > 1) {
+     System.err.println(tool.getUsage());
+   }
+   tool.setArguments(args);
+   tool.execute();
+  }
+  catch (PropertyVetoException ex) {
+  }
+  catch (ClassNotFoundException ex) {
+  }
+  catch (IllegalAccessException ex) {
+  }
+  catch (InstantiationException ex) {
+  }
+//    throw new RuntimeException("GUI only Application!");
   }
 
   /**

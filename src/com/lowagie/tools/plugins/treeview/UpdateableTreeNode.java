@@ -51,6 +51,8 @@
 package com.lowagie.tools.plugins.treeview;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.ImageIcon;
+import javax.swing.Icon;
 
 public abstract class UpdateableTreeNode
     extends DefaultMutableTreeNode {
@@ -65,4 +67,8 @@ public abstract class UpdateableTreeNode
       super(userObject,allowchildren);
   }
   public abstract void updateview(IUpdatenodeview updateobject);
-}
+  public Icon getIcon(){
+    return null;
+  }
+  }
+
