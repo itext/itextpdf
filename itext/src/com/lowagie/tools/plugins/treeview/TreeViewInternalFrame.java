@@ -64,11 +64,15 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import com.lowagie.tools.SwingWorker;
+import java.awt.Cursor;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.Component;
+import javax.swing.table.TableColumnModel;
 
 public class TreeViewInternalFrame
     extends JInternalFrame implements PropertyChangeListener, IUpdatenodeview {
-  final static String PROPERTYFILENAME = "inputfilename";
-  AnalyzePDF bla;
+  AnalyzePDF analyzer;
 
   public TreeViewInternalFrame(String title, boolean resizable,
                                boolean closable,
@@ -86,31 +90,35 @@ public class TreeViewInternalFrame
     this.getContentPane().setLayout(borderLayout1);
     jPanel1.setLayout(borderLayout2);
     jPanel2.setLayout(cardLayout2);
-    //jSplitPane2.setOrientation(JSplitPane.VERTICAL_SPLIT);
-    //jPanel3.setLayout(borderLayout4);
     jSplitPane1.setMinimumSize(new Dimension(150, 100));
     jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
     jTree1.addTreeSelectionListener(new Untitled1_jTree1_treeSelectionAdapter(this));
-    jTextPane1.setText("jTextPane1");
     jPanel4.setLayout(borderLayout3);
     jPanel5.setLayout(borderLayout5);
-    jLabel1.setText("jLabel1");
     jTree1.setModel(defaultree);
+    jPanel3.setLayout(borderLayout6);
+    jPanel6.setLayout(borderLayout7);
+    jSplitPane2.setDividerSize(3);
     jPanel1.add(jSplitPane1, java.awt.BorderLayout.CENTER);
-    //jSplitPane2.add(jPanel3, JSplitPane.BOTTOM);
-    //jSplitPane2.add(jPanel1, JSplitPane.TOP);
     this.getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
     jPanel2.add(jPanel4, "empty");
     jPanel2.add(jPanel5, "values");
     jScrollPane3.setViewportView(jLabel1);
     jScrollPane2.setViewportView(jTextPane1);
-    jScrollPane1.setViewportView(jTree1);
-    jSplitPane1.add(jPanel2, JSplitPane.RIGHT);
-    jSplitPane1.add(jScrollPane1, JSplitPane.LEFT);
     jPanel2.add(jScrollPane2, "text");
+    jSplitPane1.add(jPanel3, JSplitPane.TOP);
     jPanel5.add(jScrollPane3, java.awt.BorderLayout.CENTER);
+    jSplitPane1.add(jPanel2, JSplitPane.BOTTOM);
+    jSplitPane2.add(jScrollPane1, JSplitPane.TOP);
+    jSplitPane2.add(jPanel6, JSplitPane.BOTTOM);
+    jScrollPane4.setViewportView(jTable1);
+    jPanel3.add(jSplitPane2, java.awt.BorderLayout.CENTER);
+    jPanel6.add(jScrollPane4, java.awt.BorderLayout.CENTER);
+    jScrollPane1.setViewportView(jTree1);
     jSplitPane1.setDividerLocation(170);
-
+    jSplitPane2.setDividerLocation(200);
+    PDFTreeCellRenderer renderer=new PDFTreeCellRenderer();
+    jTree1.setCellRenderer(renderer);
   }
 
   public void setTreemodel(TreeModel treemodel) {
@@ -124,8 +132,6 @@ public class TreeViewInternalFrame
   JTree jTree1 = new JTree();
   JPanel jPanel2 = new JPanel();
   BorderLayout borderLayout2 = new BorderLayout();
-  //JSplitPane jSplitPane2 = new JSplitPane();
-  //JPanel jPanel3 = new JPanel();
   BorderLayout borderLayout4 = new BorderLayout();
   CardLayout cardLayout2 = new CardLayout();
   JPanel jPanel4 = new JPanel();
@@ -136,7 +142,15 @@ public class TreeViewInternalFrame
   JLabel jLabel1 = new JLabel();
   JScrollPane jScrollPane2 = new JScrollPane();
   JScrollPane jScrollPane3 = new JScrollPane();
-  DefaultTreeModel defaultree=new DefaultTreeModel(new DefaultMutableTreeNode());
+  DefaultTreeModel defaultree = new DefaultTreeModel(new DefaultMutableTreeNode());
+  JPanel jPanel3 = new JPanel();
+  BorderLayout borderLayout6 = new BorderLayout();
+  JPanel jPanel6 = new JPanel();
+  JTable jTable1 = new JTable();
+  BorderLayout borderLayout7 = new BorderLayout();
+  JSplitPane jSplitPane2 = new JSplitPane();
+  JScrollPane jScrollPane4 = new JScrollPane();
+  TableColumnModel tableColumnModel1 = jTable1.getColumnModel();
   /**
    * This method gets called when a bound property is changed.
    *
@@ -151,21 +165,35 @@ public class TreeViewInternalFrame
     if (propertyname == null) {
       return;
     }
-    else if (propertyname.equals(PROPERTYFILENAME)) {
-      String filename = (String) evt.getNewValue();
-      ProgressDialog blubb;
+    else if (propertyname.equals("srcfile")) {
+      final String filename = (String) evt.getNewValue();
+      final ProgressDialog blubb;
       blubb = new ProgressDialog(null, "PDF Analysefortschritt", false);
+
+      final JInternalFrame jif = this;
+      SwingWorker work = new SwingWorker() {
+
+        public Object construct() {
+          AnalyzePDF analyzer = new AnalyzePDF(filename, blubb);
+          jif.setCursor(Cursor.getDefaultCursor());
+          return analyzer;
+        }
+      };
+      jif.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      work.start();
       blubb.show();
-      bla = new AnalyzePDF(filename, blubb);
+      analyzer = (AnalyzePDF) work.get();
+
       Timer activitymonitor = new Timer(250, new ActionListener() {
         public void actionPerformed(ActionEvent event) {
-          bla.updatecount();
+          analyzer.updatecount();
         }
       });
 
-      bla.start();
+      analyzer.start();
       activitymonitor.start();
-      setTreemodel(bla);
+      setTreemodel(analyzer);
+      this.jTable1.setModel(analyzer.getXReftable());
     }
   }
 
@@ -181,6 +209,11 @@ public class TreeViewInternalFrame
     }
   }
 
+  /**
+   * This method fills the bottom window with the given text in a JtextPane
+   * IUpdatenodeview method
+   * @param text String Plain text
+   */
   public void showtext(String text) {
     jTextPane1.setText(text);
     cardLayout2.show(jPanel2, "text");
@@ -188,16 +221,40 @@ public class TreeViewInternalFrame
     jTextPane1.repaint();
   }
 
+  /**
+   * This method clears the bottom window
+   * IUpdatenodeview method
+   */
   public void showempty() {
     cardLayout2.show(jPanel2, "empty");
     jPanel2.repaint();
   }
 
+  /**
+   * This method fills the bottom window with the given text in a JLabel
+   * IUpdatenodeview method
+   * @param text String HTML formatted text
+   */
   public void showvalues(String text) {
     jLabel1.setText(text);
     cardLayout2.show(jPanel2, "values");
   }
 
+   class PDFTreeCellRenderer extends DefaultTreeCellRenderer{
+     public Component getTreeCellRendererComponent(JTree tree,Object value,boolean selected,boolean expanded,boolean leaf,int row,boolean hasFocus){
+       super.getTreeCellRendererComponent(tree,value,selected,expanded,leaf,row,hasFocus);
+       DefaultMutableTreeNode node=(DefaultMutableTreeNode)value;
+       if(node instanceof UpdateableTreeNode){
+         UpdateableTreeNode utn=(UpdateableTreeNode)node;
+         Object o = node.getUserObject();
+         setFont(getFont().deriveFont(12.1f));
+//         setIcon(new ImageIcon(TreeViewInternalFrame.class.getResource(
+//             "icon16.gif")));
+         setIcon(utn.getIcon());
+       }
+       return this;
+     }
+  }
 }
 
 class Untitled1_jTree1_treeSelectionAdapter
@@ -210,4 +267,6 @@ class Untitled1_jTree1_treeSelectionAdapter
   public void valueChanged(TreeSelectionEvent e) {
     adaptee.jTree1_valueChanged(e);
   }
+
+
 }

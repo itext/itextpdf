@@ -116,9 +116,9 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, desktop, console); 
-        splitPane.setContinuousLayout(true); 
-     	splitPane.setOneTouchExpandable(true); 
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, desktop, console);
+        splitPane.setContinuousLayout(true);
+     	splitPane.setOneTouchExpandable(true);
      	splitPane.setDividerLocation(300);
 		setContentPane(splitPane);
 		centerFrame(this);
@@ -127,17 +127,36 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 
 	/**
 	 * Starts the Toolbox utility.
-	 * 
+	 *
 	 * @param args
 	 *            no arguments needed
 	 */
 	public static void main(String[] args) {
-		Toolbox toolbox = new Toolbox();
+          Toolbox toolbox = new Toolbox();
+          if(args.length==0){
+
+          }else{
+            try {
+              AbstractTool tool = toolbox.createFrame(args[0]);
+              String[] nargs=new String[args.length-1];
+              System.arraycopy(args,1,nargs,0,args.length-1);
+              tool.setArguments(nargs);
+              tool.execute();
+            }
+            catch (PropertyVetoException ex) {
+            }
+            catch (ClassNotFoundException ex) {
+            }
+            catch (IllegalAccessException ex) {
+            }
+            catch (InstantiationException ex) {
+            }
+          }
 	}
 
 	/**
 	 * Gets the menubar.
-	 * 
+	 *
 	 * @return a menubar
 	 */
 	private JMenuBar getMenubar() {
@@ -197,7 +216,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 
 	/**
 	 * Creates an Internal Frame.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the app
 	 * @throws ClassNotFoundException
@@ -205,7 +224,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 	 * @throws InstantiationException
 	 * @throws PropertyVetoException
 	 */
-	private void createFrame(String name) throws InstantiationException,
+	public AbstractTool createFrame(String name) throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException,
 			PropertyVetoException {
 		AbstractTool ti = (AbstractTool) Class.forName(
@@ -221,6 +240,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		f.setVisible(true);
 		desktop.add(f);
 		f.setSelected(true);
+                return ti;
 	}
 
 	public static void centerFrame(JFrame f) {
@@ -276,7 +296,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
         PipedOutputStream poOut;
         PipedOutputStream poErr;
         JTextArea textArea = new JTextArea();
-    
+
         /**
          * Creates a new Console object.
          * @param columns
@@ -288,27 +308,27 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
             piOut = new PipedInputStream();
             poOut = new PipedOutputStream(piOut);
             System.setOut(new PrintStream(poOut, true));
-    
+
             // Set up System.err
             piErr = new PipedInputStream();
             poErr = new PipedOutputStream(piErr);
             System.setErr(new PrintStream(poErr, true));
-    
+
             // Add a scrolling text area
             textArea.setEditable(false);
-    
+
             // Create reader threads
             new ReaderThread(piOut).start();
             new ReaderThread(piErr).start();
         }
-    
+
         class ReaderThread extends Thread {
             PipedInputStream pi;
-    
+
             ReaderThread(PipedInputStream pi) {
                 this.pi = pi;
             }
-    
+
             /**
              * @see java.lang.Thread#run()
              */
@@ -323,12 +343,12 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
                         }
                         textArea.append(new String(buf, 0, len));
                         textArea.setCaretPosition(textArea.getDocument().getLength());
-                    
+
                 	} catch (IOException e) {
                 	}
                 }
             }
         }
     }
-	
+
 }
