@@ -149,6 +149,24 @@ public class FontFactory {
 /**
  * Constructs a <CODE>Font</CODE>-object.
  *
+ * @param	fontname    the name of the font
+ * @param	encoding    the encoding of the font
+ * @param       embedded    true if the font is to be embedded in the PDF
+ * @param	size	    the size of this font
+ * @param	style	    the style of this font
+ * @param	color	    the <CODE>Color</CODE> of this font.
+ * @param	cached 		true if the font comes from the cache or is added to
+ * 				the cache if new, false if the font is always created new
+ * @return the Font constructed based on the parameters
+ */
+    
+    public static Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color, boolean cached) {
+        return fontImp.getFont(fontname, encoding, embedded, size, style, color, cached);
+    }
+    
+/**
+ * Constructs a <CODE>Font</CODE>-object.
+ *
  * @param   attributes  the attributes of a <CODE>Font</CODE> object.
  * @return the Font constructed based on the attributes
  */
