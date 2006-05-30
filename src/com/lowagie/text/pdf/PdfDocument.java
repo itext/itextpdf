@@ -1490,16 +1490,15 @@ class PdfDocument extends Document implements DocListener {
         // fill row information with rowspan cells to get complete "scan lines"
         for (int i = rows.size() - 1; i >= 0; i--) {
             ArrayList row = (ArrayList) rows.get(i);
-
             // iterator through row
             for (int j = 0; j < row.size(); j++) {
                 PdfCell c = (PdfCell) row.get(j);
-                int rowspan = c.rowspan();
-                
+                int rowspan = c.rowspan();                
                 // fill in missing rowspan cells to complete "scan line"
                 for (int k = 1; k < rowspan; k++) {
                     ArrayList spannedRow = ((ArrayList) rows.get(i + k));
-                    spannedRow.add(j, c);
+                    if (spannedRow.size() > j)
+                    	spannedRow.add(j, c);
                 }
             }
         }
