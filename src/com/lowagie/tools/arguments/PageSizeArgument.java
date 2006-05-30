@@ -166,7 +166,7 @@ public class PageSizeArgument extends OptionArgument {
 				null
 	 		);
 		if (result == 0) {
-			setValue((String)cb.getSelectedItem(), null);
+			setValue((String)cb.getSelectedItem());
 		}
 	}
 }

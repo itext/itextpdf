@@ -62,6 +62,8 @@ import javax.swing.tree.TreePath;
 import com.lowagie.text.pdf.*;
 import java.util.Set;
 import java.util.Iterator;
+import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 
 public class AnalyzePDF
     extends Thread implements TreeModel, ICommonAnalyzer {
@@ -77,19 +79,64 @@ public class AnalyzePDF
   public AnalyzePDF(String infile,
                     com.lowagie.tools.plugins.treeview.ProgressDialog blubb) {
     this.progressdialog = blubb;
-
     try {
       reader = new PdfReader(infile);
       root = new SimpletextTreeNode("Dokument");
       filenode = new FileTreeNode(infile, reader);
       root.add(filenode);
-
       this.numberofpages = reader.getNumberOfPages();
     }
     catch (IOException ex) {
     }
     pagecount = 0;
+  }
 
+  public TableModel getXReftable() {
+    TableModel tm = new AbstractTableModel() {
+      public int getColumnCount() {
+        return 2;
+      }
+
+      public int getRowCount() {
+        return reader.getXrefSize() - 1;
+      }
+
+      public Object getValueAt(int rowIndex, int columnIndex) {
+        switch (columnIndex) {
+          case 0:
+            return new Integer(rowIndex + 1);
+          case 1:
+            PdfObject pdfob=reader.getPdfObject(rowIndex + 1);
+            if(pdfob.isStream()){
+             return "Stream "+pdfob;
+            }else{
+              return pdfob;
+            }
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Returns the name of the column at <code>columnIndex</code>.
+       *
+       * @param columnIndex the index of the column
+       * @return the name of the column
+       * @todo Implement this javax.swing.table.TableModel method
+       */
+      public String getColumnName(int columnIndex) {
+        switch (columnIndex) {
+         case 0:
+           return "XRefNr";
+         case 1:
+           return "Object";
+         default:
+           return null;
+       }
+
+      }
+    };
+    return tm;
   }
 
   /**
@@ -120,15 +167,12 @@ public class AnalyzePDF
             PRIndirectReference) kids.get(k));
         iteratePages(kid, pdfreader, leaf);
       }
-
     }
-
   }
 
   protected void iterateOutlines(PdfDictionary outlines, PdfReader pdfreader,
                                  DefaultMutableTreeNode node) {
     DefaultMutableTreeNode leaf;
-
     PdfDictionary kid = outlines;
     do {
       PdfString title = (PdfString) pdfreader.getPdfObject(
@@ -155,10 +199,9 @@ public class AnalyzePDF
         if (a != null) {
           iterateObjects(a, pdfreader, leaf);
         }
-
       }
-    }while((kid = (PdfDictionary) pdfreader.getPdfObject(kid.get(PdfName.NEXT))) != null);
-
+    }
+    while ( (kid = (PdfDictionary) pdfreader.getPdfObject(kid.get(PdfName.NEXT))) != null);
   }
 
   /**
@@ -170,7 +213,6 @@ public class AnalyzePDF
   public void iterateObjects(PdfObject pdfobj, PdfReader pdfreader,
                              DefaultMutableTreeNode node) {
     DefaultMutableTreeNode leaf;
-
     if (pdfobj.isDictionary()) {
       leaf = new DictionaryTreeNode("PdfDictionary " + pdfobj,
                                     (PdfDictionary) pdfobj);
@@ -247,6 +289,35 @@ public class AnalyzePDF
 //      leaf = new SimpletextTreeNode("String " + pdfobj);
 //      node.add(leaf);
     }
+ else if (pdfobj.isStream()) {
+      leaf = new TextpaneTreeNode(pdfobj,"Stream");
+      node.add(leaf);
+      leaf = new DictionaryTreeNode("PdfDictionary " + pdfobj,
+                                  (PdfDictionary) pdfobj);
+    node.add(leaf);
+    Set s = ( (PdfDictionary) pdfobj).getKeys();
+    Iterator it = s.iterator();
+    int i = 0;
+    while (it.hasNext()) {
+      i++;
+      Object obj = it.next();
+//        System.out.println("Feld:" + obj);
+
+      PdfObject value = PdfReader.getPdfObject( ( (PdfDictionary) pdfobj).get( (
+          PdfName) obj));
+//        System.out.println("Value:" + value);
+      SimpletextTreeNode sttn = new SimpletextTreeNode(obj + " " + value);
+      leaf.add(sttn);
+      if (obj.equals(PdfName.PARENT)) {
+        continue;
+      }
+      if (value != null) {
+        iterateObjects(value, pdfreader, sttn);
+      }
+    }
+
+ }
+
     else {
       leaf = new SimpletextTreeNode("Unknown " + pdfobj);
       node.add(leaf);
@@ -394,9 +465,7 @@ public class AnalyzePDF
    * @todo Diese java.lang.Runnable-Methode implementieren
    */
   public void run() {
-
     try {
-
       PdfDictionary catalog = reader.getCatalog();
       PdfDictionary rootPages = (PdfDictionary) PdfReader.getPdfObject(
           catalog.get(PdfName.PAGES));
@@ -426,7 +495,6 @@ public class AnalyzePDF
     catch (Exception e) {
       e.printStackTrace(System.out);
     }
-
   }
 
   public int getPagecount() {

@@ -53,14 +53,18 @@ package com.lowagie.tools.plugins.treeview;
 import java.io.IOException;
 
 import com.lowagie.text.pdf.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 public class TextpaneTreeNode
     extends UpdateableTreeNode {
   PdfObject contents;
+  String marker;
 
-  public TextpaneTreeNode(PdfObject contents) {
+  public TextpaneTreeNode(PdfObject contents,String marker) {
     super(contents,false);
     this.contents = contents;
+    this.marker=marker;
   }
 
   public void updateview(IUpdatenodeview updateobject) {
@@ -76,6 +80,12 @@ public class TextpaneTreeNode
   }
 
   public String toString() {
-    return "Content";
+    return marker;
   }
+
+  public Icon getIcon(){
+    return new ImageIcon(TreeViewInternalFrame.class.getResource(
+             "string.gif"));
+  }
+
 }

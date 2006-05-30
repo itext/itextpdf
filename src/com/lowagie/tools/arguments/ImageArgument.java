@@ -63,9 +63,9 @@ import com.lowagie.tools.plugins.AbstractTool;
 public class ImageArgument extends ToolArgument {
 	/** a filter to put on the FileChooser. */
 	private FileFilter filter;
-	
+
 	/**
-	 * Constructs a FileArgument. 
+	 * Constructs a FileArgument.
 	 * @param tool	the tool that needs this argument
 	 * @param name	the name of the argument
 	 * @param description	the description of the argument
@@ -75,9 +75,9 @@ public class ImageArgument extends ToolArgument {
 		super(tool, name, description, Image.class.getName());
 		this.filter = filter;
 	}
-	
+
 	/**
-	 * Constructs a FileArgument. 
+	 * Constructs a FileArgument.
 	 * @param tool	the tool that needs this argument
 	 * @param name	the name of the argument
 	 * @param description	the description of the argument
@@ -85,7 +85,7 @@ public class ImageArgument extends ToolArgument {
 	public ImageArgument(AbstractTool tool, String name, String description) {
 		this(tool, name, description, new ImageFilter());
 	}
-	
+
 	/**
 	 * Gets the argument as an object.
 	 * @return an object
@@ -99,7 +99,7 @@ public class ImageArgument extends ToolArgument {
 			throw new InstantiationException(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -108,7 +108,7 @@ public class ImageArgument extends ToolArgument {
 		if (filter != null) fc.setFileFilter(filter);
 		fc.showOpenDialog(tool.getInternalFrame());
 		try {
-			setValue(fc.getSelectedFile().getAbsolutePath(), null);
+			setValue(fc.getSelectedFile().getAbsolutePath());
 		}
 		catch(NullPointerException npe) {
 		}

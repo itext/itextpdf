@@ -67,7 +67,7 @@ public class FileArgument extends ToolArgument {
 	private boolean newFile;
 	/** the label */
 	LabelAccessory label = null;
-        final static String PROPERTYFILENAME="inputfilename";
+//        final static String PROPERTYFILENAME="inputfilename";
 	/**
 	 * Constructs a FileArgument.
 	 * @param tool	the tool that needs this argument
@@ -129,7 +129,7 @@ public class FileArgument extends ToolArgument {
 			fc.showOpenDialog(tool.getInternalFrame());
 		}
 		try {
-			setValue(fc.getSelectedFile().getAbsolutePath(), PROPERTYFILENAME);
+			setValue(fc.getSelectedFile().getAbsolutePath());
 		}
 		catch(NullPointerException npe) {
 		}

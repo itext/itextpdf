@@ -51,6 +51,8 @@ package com.lowagie.tools.plugins.treeview;
 
 import com.lowagie.text.pdf.PdfArray;
 import java.util.ArrayList;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  * <p>Title: </p>
@@ -98,5 +100,8 @@ public class ArrayTreeNode
    sb.append("</html>");
      updateobject.showvalues(sb.toString());
    }
-
+   public Icon getIcon(){
+        return new ImageIcon(TreeViewInternalFrame.class.getResource(
+                 "array.gif"));
+  }
 }

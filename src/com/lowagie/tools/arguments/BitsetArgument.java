@@ -62,7 +62,7 @@ import com.lowagie.tools.plugins.AbstractTool;
 public class BitsetArgument extends ToolArgument {
 	/** These are the different options that can be true or false. */
 	private JCheckBox[] options;
-	
+
 	/**
 	 * Constructs an BitsetArgument.
 	 * @param tool the tool that needs this argument
@@ -77,7 +77,7 @@ public class BitsetArgument extends ToolArgument {
 			this.options[i] = new JCheckBox(options[i]);
 		}
 	}
-	
+
 	/**
 	 * Gets the argument as an object.
 	 * @return an object
@@ -86,7 +86,7 @@ public class BitsetArgument extends ToolArgument {
 	public Object getArgument() throws InstantiationException {
 		return value;
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.arguments.ToolArgument#getUsage()
 	 */
@@ -100,7 +100,7 @@ public class BitsetArgument extends ToolArgument {
 		}
 		return buf.toString();
 	}
-	
+
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -110,11 +110,11 @@ public class BitsetArgument extends ToolArgument {
 		for(int i = 0; i < options.length; i++ ) {
 			message[i+1] = options[i];
 		}
-		int result = JOptionPane.showOptionDialog( 
+		int result = JOptionPane.showOptionDialog(
 	 		    tool.getInternalFrame(),
-	 		    message, 
+	 		    message,
 	 		    description,
-	 		    JOptionPane.OK_CANCEL_OPTION, 
+	 		    JOptionPane.OK_CANCEL_OPTION,
 	 		    JOptionPane.QUESTION_MESSAGE,
 	 		    null,
 	 		    null,
@@ -130,7 +130,7 @@ public class BitsetArgument extends ToolArgument {
 					buf.append("0");
 				}
 			}
-			setValue(buf.toString(), null);
+			setValue(buf.toString());
 		}
 	}
 }

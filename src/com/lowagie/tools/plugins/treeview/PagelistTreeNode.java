@@ -53,6 +53,8 @@ package com.lowagie.tools.plugins.treeview;
 import java.util.ArrayList;
 
 import com.lowagie.text.pdf.PdfArray;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 public class PagelistTreeNode
     extends UpdateableTreeNode {
@@ -76,5 +78,10 @@ public class PagelistTreeNode
     }
     sb.append("</html>");
     updateobject.showvalues(sb.toString());
+  }
+
+  public Icon getIcon(){
+    return new ImageIcon(TreeViewInternalFrame.class.getResource(
+             "pageonly.gif"));
   }
 }

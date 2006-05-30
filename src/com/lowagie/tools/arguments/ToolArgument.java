@@ -133,17 +133,17 @@ public class ToolArgument
   public void actionPerformed(ActionEvent e) {
     if (String.class.getName().equals(classname)) {
       setValue(JOptionPane.showInputDialog(tool.getInternalFrame(),
-                                           "Enter a value for " + name + ":"), null);
+                                           "Enter a value for " + name + ":"));
     }
     if (Image.class.getName().equals(classname)) {
       JFileChooser fc = new JFileChooser();
       fc.showOpenDialog(tool.getInternalFrame());
-      setValue(fc.getSelectedFile().getAbsolutePath(), null);
+      setValue(fc.getSelectedFile().getAbsolutePath());
     }
     if (File.class.getName().equals(classname)) {
       JFileChooser fc = new JFileChooser();
       fc.showOpenDialog(tool.getInternalFrame());
-      setValue(fc.getSelectedFile().getAbsolutePath(), null);
+      setValue(fc.getSelectedFile().getAbsolutePath());
     }
     if (Color.class.getName().equals(classname)) {
       Color initialColor = new Color(0xFF, 0xFF, 0xFF);
@@ -155,7 +155,7 @@ public class ToolArgument
       setValue("0x" +
                Integer.toHexString( (newColor.getRed() << 16) |
                                    (newColor.getGreen() << 8) |
-                                   (newColor.getBlue() << 0)).toUpperCase(), null);
+                                   (newColor.getBlue() << 0)).toUpperCase());
     }
   }
 
@@ -224,14 +224,20 @@ public class ToolArgument
   /**
    * @param value The value to set.
    */
-  public void setValue(String value, String propertyname) {
+  public void setValue(String value) {
     Object oldvalue = this.value;
     this.value = value;
     tool.valueHasChanged(this);
-    this.firePropertyChange(new PropertyChangeEvent(this, propertyname,
+    this.firePropertyChange(new PropertyChangeEvent(this, name,
         oldvalue, this.value));
   }
-
+  public void setValue(String value, String propertyname) {
+      Object oldvalue = this.value;
+      this.value = value;
+      tool.valueHasChanged(this);
+      this.firePropertyChange(new PropertyChangeEvent(this, propertyname,
+          oldvalue, this.value));
+  }
   transient Vector propertyChangeListeners;
   public synchronized void addPropertyChangeListener(PropertyChangeListener l) {
 
