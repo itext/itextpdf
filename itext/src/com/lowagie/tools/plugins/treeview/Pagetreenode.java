@@ -58,6 +58,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 public class Pagetreenode
     extends UpdateableTreeNode {
@@ -141,7 +143,7 @@ public class Pagetreenode
 
     PdfObject contents = PdfReader.getPdfObject(page.get(PdfName.CONTENTS));
     if (contents != null) {
-      this.add(new TextpaneTreeNode(contents));
+      this.add(new TextpaneTreeNode(contents,"Content"));
 
       if (contents.isStream()) {
         PRStream prstr = (PRStream) contents;
@@ -196,4 +198,11 @@ public class Pagetreenode
     sb.append("</html>");
     updateobject.showvalues(sb.toString());
   }
+
+  public Icon getIcon(){
+    return new ImageIcon(TreeViewInternalFrame.class.getResource(
+             "pageonly.gif"));
+  }
+
+
 }

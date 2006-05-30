@@ -56,6 +56,8 @@ import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfDictionary;
 import java.util.Set;
 import java.util.Iterator;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 public class OutlinelistTreeNode
     extends UpdateableTreeNode {
@@ -87,4 +89,10 @@ public class OutlinelistTreeNode
     updateobject.showvalues(sb.toString());
 
   }
+
+  public Icon getIcon(){
+    return new ImageIcon(TreeViewInternalFrame.class.getResource(
+             "bookmarks.gif"));
+  }
+
 }

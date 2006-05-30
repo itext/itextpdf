@@ -59,7 +59,7 @@ import com.lowagie.tools.plugins.AbstractTool;
  */
 public class PageSelectorToolArgument
     extends ToolArgument {
-  public final static String PROPERTYFILENAME = "inputfilename";
+//  public final static String PROPERTYFILENAME = "inputfilename";
   public final static String PROPERTYPAGESELECTIONSTRING =
       "pageselectionstring";
 
@@ -91,7 +91,7 @@ public class PageSelectorToolArgument
     if (propertyname == null) {
       return;
     }
-    else if (propertyname.equals(PROPERTYFILENAME)) {
+    else if (propertyname.equals(name)) {
       String filename = (String) evt.getNewValue();
       if(jDialog1!=null)jDialog1.hide();
       jDialog1 = new PageSelectionTableDialog(tool.getInternalFrame());

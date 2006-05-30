@@ -70,10 +70,10 @@ import com.lowagie.tools.arguments.ToolArgument;
  * Every iText tool has to implement this interface.
  */
 public abstract class AbstractTool implements ToolMenuItems, ActionListener {
-	 
+
 	/** An array with the versions of the tool. */
-	public static ArrayList versionsarray = new ArrayList(); 
-	
+	public static ArrayList versionsarray = new ArrayList();
+
 	/** The internal frame of the tool. */
 	protected JInternalFrame internalFrame = null;
 	/** The list of arguments needed by the tool. */
@@ -88,7 +88,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	public static final int MENU_EXECUTE_PRINT = 4;
 	/** a menu option */
 	public static final int MENU_EXECUTE_PRINT_SILENT = 8;
-	
+
 	/**
 	 * Sets the arguments.
 	 * @param arguments The arguments to set.
@@ -96,7 +96,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	public void setArguments(ArrayList arguments) {
 		this.arguments = arguments;
 	}
-	
+
 	/**
 	 * Sets the arguments.
 	 * @param args the arguments as String-array.
@@ -107,7 +107,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
         for (Iterator i = arguments.iterator(); i.hasNext(); ) {
         	argument = (ToolArgument) i.next();
         	if (args.length > counter) {
-        		argument.setValue(args[counter], null);
+        		argument.setValue(args[counter]);
         	}
         	else {
         		break;
@@ -115,7 +115,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
         	counter++;
         }
 	}
-	
+
 	/**
 	 * Gets the arguments.
 	 * @return Returns the arguments.
@@ -123,7 +123,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	public ArrayList getArguments() {
 		return arguments;
 	}
-	
+
 	/**
 	 * Gets the value of a given argument.
 	 * @param name the name of the argument
@@ -148,7 +148,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	public void setInternalFrame(JInternalFrame internalFrame) {
 		this.internalFrame = internalFrame;
 	}
-	
+
 	/**
 	 * Returns the internal frame. Creates one if it's null.
 	 * @return Returns the internalFrame.
@@ -159,7 +159,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		}
 		return internalFrame;
 	}
-	
+
 	/**
 	 * Gets the menubar.
 	 * @return a menubar for this tool
@@ -218,7 +218,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		}
 		return menubar;
 	}
-	
+
 	/**
 	 * Gets the usage of the tool.
 	 * @return a String describing how to use the tool.
@@ -239,7 +239,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		}
 		return buf.toString();
 	}
-	
+
 	/**
 	 * Gets the current arguments of the tool.
 	 * @return a String with the list of arguments and their values.
@@ -305,14 +305,14 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets the PDF file that should be generated (or null if the output isn't a PDF file).
-	 * @return the PDF file that should be generated 
+	 * @return the PDF file that should be generated
 	 * @throws InstantiationException
 	 */
 	protected abstract File getDestPathPDF() throws InstantiationException;
-	
+
 	/**
 	 * Creates the internal frame.
 	 */
@@ -322,13 +322,13 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	 * Executes the tool (in most cases this generates a PDF file).
 	 */
 	public abstract void execute();
-	
+
 	/**
 	 * Indicates that the value of an argument has changed.
 	 * @param arg the argument that has changed
 	 */
 	public abstract void valueHasChanged(ToolArgument arg);
-	
+
 	/**
 	 * Add the version of the plugin to the versions array.
 	 * @param version the version to add.

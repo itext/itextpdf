@@ -72,7 +72,7 @@ public class OptionArgument extends ToolArgument {
 		/** Holds the actual value of the option. */
 		private Object value;
 		/**
-		 * Constructs an entry. 
+		 * Constructs an entry.
 		 * @param value the value of the entry (that wil be identical to the description)
 		 */
 		public Entry(Object value) {
@@ -80,7 +80,7 @@ public class OptionArgument extends ToolArgument {
 			this.description = value;
 		}
 		/**
-		 * Constructs an entry. 
+		 * Constructs an entry.
 		 * @param description the description of the entry
 		 * @param value the value of the entry
 		 */
@@ -127,9 +127,9 @@ public class OptionArgument extends ToolArgument {
 			this.value = value;
 		}
 	}
-	
+
 	private TreeMap options = new TreeMap();
-	
+
 	/**
 	 * Constructs an OptionArgument.
 	 * @param tool the tool that needs this argument
@@ -139,7 +139,7 @@ public class OptionArgument extends ToolArgument {
 	public OptionArgument(AbstractTool tool, String name, String description) {
 		super(tool, name, description, Entry.class.getName());
 	}
-	
+
 	/**
 	 * Adds an Option.
 	 * @param description the description of the option
@@ -148,7 +148,7 @@ public class OptionArgument extends ToolArgument {
 	public void addOption(Object description, Object value) {
 		options.put(value.toString(), new Entry(description, value));
 	}
-	
+
 	/**
 	 * Gets the argument as an object.
 	 * @return an object
@@ -162,7 +162,7 @@ public class OptionArgument extends ToolArgument {
 			throw new InstantiationException(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * @see com.lowagie.tools.arguments.ToolArgument#getUsage()
 	 */
@@ -180,7 +180,7 @@ public class OptionArgument extends ToolArgument {
 		}
 		return buf.toString();
 	}
-	
+
 	/**
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -192,11 +192,11 @@ public class OptionArgument extends ToolArgument {
 			cb.addItem(i.next());
 		}
 		message[1] = cb;
-		int result = JOptionPane.showOptionDialog( 
+		int result = JOptionPane.showOptionDialog(
 	 		    tool.getInternalFrame(),
-	 		    message, 
+	 		    message,
 	 		    description,
-	 		    JOptionPane.OK_CANCEL_OPTION, 
+	 		    JOptionPane.OK_CANCEL_OPTION,
 	 		    JOptionPane.QUESTION_MESSAGE,
 	 		    null,
 	 		    null,
@@ -204,7 +204,7 @@ public class OptionArgument extends ToolArgument {
 	 		);
 		if (result == 0) {
 			Entry entry = (Entry)cb.getSelectedItem();
-			setValue(entry.getValueToString(), null);
+			setValue(entry.getValueToString());
 		}
 	}
 }

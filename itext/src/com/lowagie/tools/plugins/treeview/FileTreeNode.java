@@ -51,6 +51,8 @@
 package com.lowagie.tools.plugins.treeview;
 
 import com.lowagie.text.pdf.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 public class FileTreeNode
     extends UpdateableTreeNode {
@@ -76,4 +78,9 @@ public class FileTreeNode
     sb.append("</html>");
     updateobject.showvalues(sb.toString());
   }
+  public Icon getIcon(){
+    return new ImageIcon(TreeViewInternalFrame.class.getResource(
+             "icon16.gif"));
+  }
+
 }

@@ -53,6 +53,8 @@ package com.lowagie.tools.plugins.treeview;
 import java.util.Set;
 import java.util.Iterator;
 import com.lowagie.text.pdf.PdfDictionary;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  * <p>Title: </p>
@@ -100,6 +102,11 @@ public class DictionaryTreeNode
     }
     sb.append("</html>");
     updateobject.showvalues(sb.toString());
+  }
+
+  public Icon getIcon(){
+        return new ImageIcon(TreeViewInternalFrame.class.getResource(
+                 "dictionary.gif"));
   }
 
 }
