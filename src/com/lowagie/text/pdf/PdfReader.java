@@ -128,6 +128,7 @@ public class PdfReader {
     private boolean hybridXref;
     private int lastXrefPartial = -1;
     private boolean partial;
+    private PRIndirectReference cryptoRef;
 
     /**
      * Holds value of property appendable.
@@ -266,6 +267,7 @@ public class PdfReader {
         this.hybridXref = reader.hybridXref;
         this.objStmToOffset = reader.objStmToOffset;
         this.xref = reader.xref;
+        this.cryptoRef = (PRIndirectReference)duplicatePdfObject(reader.cryptoRef, this);
     }
 
     /** Gets a new file instance of the original PDF
@@ -606,8 +608,10 @@ public class PdfReader {
             PdfString str = (PdfString)strings.get(k);
             str.decrypt(this);
         }
-        if (encDic.isIndirect())
-            xrefObj.set(((PRIndirectReference)encDic).getNumber(), null);
+        if (encDic.isIndirect()) {
+            cryptoRef = (PRIndirectReference)encDic;
+            xrefObj.set(cryptoRef.getNumber(), null);
+        }
     }
 
     /**
@@ -3158,5 +3162,11 @@ public class PdfReader {
             refsp = null;
             refsn = newPageRefs;
         }
+    }
+    
+    PdfIndirectReference getCryptoRef() {
+        if (cryptoRef == null)
+            return null;
+        return new PdfIndirectReference(0, cryptoRef.getNumber(), cryptoRef.getGeneration());
     }
 }

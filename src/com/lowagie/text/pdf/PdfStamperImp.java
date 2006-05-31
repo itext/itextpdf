@@ -219,8 +219,7 @@ class PdfStamperImp extends PdfWriter {
         PdfObject fileID = null;
         if (crypto != null) {
             if (append) {
-                PdfIndirectReference cryref = (PdfIndirectReference)reader.trailer.get(PdfName.ENCRYPT);
-                encryption = new PdfIndirectReference(0, cryref.getNumber(), cryref.getGeneration());
+                encryption = reader.getCryptoRef();
             }
             else {
                 PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
