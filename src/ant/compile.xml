@@ -62,6 +62,11 @@
                 <include name="**/*.txt"/>
             </fileset>
         </copy>
+        <copy todir="${itext.classes}/com/lowagie/tools/plugins/treeview" overwrite="yes">
+            <fileset dir="${itext.src}/com/lowagie/tools/plugins/treeview/">
+                <include name="**/*.gif"/>
+            </fileset>
+        </copy>
         <copy todir="${itext.classes}/com/lowagie/text/pdf/codec/postscript" overwrite="yes">
             <fileset dir="${itext.src}/com/lowagie/text/pdf/codec/postscript/">
                 <include name="**/*.ps"/>
