@@ -805,6 +805,8 @@ public class PdfSignatureAppearance {
             lit = new PdfLiteral(80);
             exclusionLocations.put(PdfName.BYTERANGE, lit);
             sigStandard.put(PdfName.BYTERANGE, lit);
+            if (certified)
+                addDocMDP(sigStandard);
             if (signatureEvent != null)
                 signatureEvent.getSignatureDictionary(sigStandard);
             writer.addToBody(sigStandard, refSig, false);
@@ -821,9 +823,17 @@ public class PdfSignatureAppearance {
                 exclusionLocations.put(key, lit);
                 cryptoDictionary.put(key, lit);
             }
+            if (certified)
+                addDocMDP(cryptoDictionary);
             if (signatureEvent != null)
                 signatureEvent.getSignatureDictionary(cryptoDictionary);
             writer.addToBody(cryptoDictionary, refSig, false);
+        }
+        if (certified) {
+          // add DocMDP entry to root
+             PdfDictionary docmdp = new PdfDictionary();
+             docmdp.put(new PdfName("DocMDP"), refSig);
+             writer.reader.getCatalog().put(new PdfName("Perms"), docmdp);
         }
         writer.close(stamper.getMoreInfo());
         
@@ -935,6 +945,20 @@ public class PdfSignatureAppearance {
             if (originalout != null)
                 try{originalout.close();}catch(Exception e){}
         }
+    }
+    
+    private void addDocMDP(PdfDictionary crypto) {
+         PdfDictionary reference = new PdfDictionary();
+         PdfDictionary transformParams = new PdfDictionary();
+         transformParams.put(PdfName.P, new PdfNumber(1));
+         transformParams.put(PdfName.V, new PdfName("1.2"));
+         transformParams.put(PdfName.TYPE, new PdfName("TransformParams"));
+         reference.put(new PdfName("TransformMethod"), new PdfName("DocMDP"));
+         reference.put(PdfName.TYPE, new PdfName("SigRef"));
+         reference.put(new PdfName("TransformParams"), transformParams);
+         PdfArray types = new PdfArray();
+         types.add(reference);
+         crypto.put(new PdfName("Reference"), types);
     }
     
     private static int indexArray(byte bout[], int position, String search) {
@@ -1300,5 +1324,26 @@ public class PdfSignatureAppearance {
          * @param sig the signature dictionary
          */        
         public void getSignatureDictionary(PdfDictionary sig);
+    }
+
+    /**
+     * Holds value of property certified.
+     */
+    private boolean certified;
+
+    /**
+     * Gets the certified status of this document.
+     * @return the certified status
+     */
+    public boolean isCertified() {
+        return this.certified;
+    }
+
+    /**
+     * Sets the document type to certified instead of simply signed. The certified document doesn't allow any changes.
+     * @param certified <code>true</code> to certify the document, <code>false</code> to just apply a simple signature
+     */
+    public void setCertified(boolean certified) {
+        this.certified = certified;
     }
 }
