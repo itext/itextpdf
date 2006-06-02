@@ -62,7 +62,7 @@ public class PdfNumberTree {
     /**
      * Creates a number tree.
      * @param items the item of the number tree. The key is an <CODE>Integer</CODE>
-     * and the value is a <CODE>PdfIndirectReference</CODE>.
+     * and the value is a <CODE>PdfObject</CODE>.
      * @param writer the writer
      * @throws IOException on error
      * @return the dictionary with the number tree.
@@ -78,7 +78,7 @@ public class PdfNumberTree {
             PdfArray ar = new PdfArray();
             for (int k = 0; k < numbers.length; ++k) {
                 ar.add(new PdfNumber(numbers[k].intValue()));
-                ar.add((PdfIndirectReference)items.get(numbers[k]));
+                ar.add((PdfObject)items.get(numbers[k]));
             }
             dic.put(PdfName.NUMS, ar);
             return dic;
@@ -96,7 +96,7 @@ public class PdfNumberTree {
             arr = new PdfArray();
             for (; offset < end; ++offset) {
                 arr.add(new PdfNumber(numbers[offset].intValue()));
-                arr.add((PdfIndirectReference)items.get(numbers[offset]));
+                arr.add((PdfObject)items.get(numbers[offset]));
             }
             dic.put(PdfName.NUMS, arr);
             kids[k] = writer.addToBody(dic).getIndirectReference();
