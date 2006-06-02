@@ -64,14 +64,14 @@ public class PdfNameTree {
     /**
      * Creates a name tree.
      * @param items the item of the name tree. The key is a <CODE>String</CODE>
-     * and the value is a <CODE>PdfIndirectReference</CODE>. Note that although the
+     * and the value is a <CODE>PdfObject</CODE>. Note that although the
      * keys are strings only the lower byte is used and no check is made for chars
      * with the same lower byte and different upper byte. This will generate a wrong
      * tree name.
      * @param writer the writer
      * @throws IOException on error
      * @return the dictionary with the name tree. This dictionary is the one
-     * generally pointed to by the key /Dests
+     * generally pointed to by the key /Dests, for example
      */    
     public static PdfDictionary writeTree(HashMap items, PdfWriter writer) throws IOException {
         if (items.size() == 0)
@@ -84,7 +84,7 @@ public class PdfNameTree {
             PdfArray ar = new PdfArray();
             for (int k = 0; k < names.length; ++k) {
                 ar.add(new PdfString(names[k], null));
-                ar.add((PdfIndirectReference)items.get(names[k]));
+                ar.add((PdfObject)items.get(names[k]));
             }
             dic.put(PdfName.NAMES, ar);
             return dic;
@@ -102,7 +102,7 @@ public class PdfNameTree {
             arr = new PdfArray();
             for (; offset < end; ++offset) {
                 arr.add(new PdfString(names[offset], null));
-                arr.add((PdfIndirectReference)items.get(names[offset]));
+                arr.add((PdfObject)items.get(names[offset]));
             }
             dic.put(PdfName.NAMES, arr);
             kids[k] = writer.addToBody(dic).getIndirectReference();
