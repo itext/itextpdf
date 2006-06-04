@@ -144,7 +144,7 @@ public class PdfNameTree {
             ArrayList arr = nn.getArrayList();
             for (int k = 0; k < arr.size(); ++k) {
                 PdfString s = (PdfString)PdfReader.getPdfObjectRelease((PdfObject)arr.get(k++));
-                items.put(s.toString(), arr.get(k));
+                items.put(PdfEncodings.convertToString(s.getBytes(), null), arr.get(k));
             }
         }
         else if ((nn = (PdfArray)PdfReader.getPdfObjectRelease(dic.get(PdfName.KIDS))) != null) {

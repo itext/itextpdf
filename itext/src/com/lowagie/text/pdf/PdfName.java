@@ -256,6 +256,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName DEFAULTRGB = new PdfName("DefaultRGB");
     /** A name */
+    public static final PdfName DESC = new PdfName("Desc");
+    /** A name */
     public static final PdfName DESCENDANTFONTS = new PdfName("DescendantFonts");
     /** A name */
     public static final PdfName DESCENT = new PdfName("Descent");
@@ -305,6 +307,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName EF = new PdfName("EF");
     /** A name */
     public static final PdfName EMBEDDEDFILE = new PdfName("EmbeddedFile");
+    /** A name */
+    public static final PdfName EMBEDDEDFILES = new PdfName("EmbeddedFiles");
     /** A name */
     public static final PdfName ENCODE = new PdfName("Encode");
     /** A name */
