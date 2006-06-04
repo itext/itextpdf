@@ -438,7 +438,8 @@ public class PdfAnnotation extends PdfDictionary {
     public static PdfAnnotation createFileAttachment(PdfWriter writer, Rectangle rect, String contents, PdfFileSpecification fs) throws IOException {
         PdfAnnotation annot = new PdfAnnotation(writer, rect);
         annot.put(PdfName.SUBTYPE, PdfName.FILEATTACHMENT);
-        annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
+        if (contents != null)
+            annot.put(PdfName.CONTENTS, new PdfString(contents, PdfObject.TEXT_UNICODE));
         annot.put(PdfName.FS, fs.getReference());
         return annot;
     }

@@ -161,6 +161,7 @@ class PdfStamperImp extends PdfWriter {
         addSharedObjectsToBody();
         setOutlines();
         setJavaScript();
+        addFileAttachments();
         if (openAction != null) {
             reader.getCatalog().put(PdfName.OPENACTION, openAction);
         }
@@ -1153,7 +1154,34 @@ class PdfStamperImp extends PdfWriter {
         PdfDictionary tree = PdfNameTree.writeTree(maptree, this);
         names.put(PdfName.JAVASCRIPT, addToBody(tree).getIndirectReference());
     }
-        
+
+    void addFileAttachments() throws IOException {
+        HashMap fs = pdf.getDocumentFileAttachment();
+        if (fs.size() == 0)
+            return;
+        PdfDictionary catalog = reader.getCatalog();
+        PdfDictionary names = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.NAMES), catalog);
+        if (names == null) {
+            names = new PdfDictionary();
+            catalog.put(PdfName.NAMES, names);
+            markUsed(catalog);
+        }
+        markUsed(names);
+        HashMap old = PdfNameTree.readTree((PdfDictionary)PdfReader.getPdfObjectRelease(names.get(PdfName.EMBEDDEDFILES)));
+        for (Iterator it = fs.keySet().iterator(); it.hasNext();) {
+            String name = (String)it.next();
+            int k = 0;
+            String nn = name;
+            while (old.containsKey(nn)) {
+                ++k;
+                nn += " " + k;
+            }
+            old.put(nn, fs.get(name));
+        }
+        PdfDictionary tree = PdfNameTree.writeTree(old, this);
+        names.put(PdfName.EMBEDDEDFILES, addToBody(tree).getIndirectReference());
+    }
+
     void setOutlines() throws IOException {
         if (newBookmarks == null)
             return;

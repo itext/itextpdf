@@ -274,8 +274,8 @@ class PdfDocument extends Document implements DocListener {
          * @param documentJavaScript the javascript used in the document
          * @param writer the writer the catalog applies to
          */
-        void addNames(TreeMap localDestinations, ArrayList documentJavaScript, PdfWriter writer) {
-            if (localDestinations.size() == 0 && documentJavaScript.size() == 0)
+        void addNames(TreeMap localDestinations, ArrayList documentJavaScript, HashMap documentFileAttachment, PdfWriter writer) {
+            if (localDestinations.size() == 0 && documentJavaScript.size() == 0 && documentFileAttachment.size() == 0)
                 return;
             try {
                 PdfDictionary names = new PdfDictionary();
@@ -305,6 +305,9 @@ class PdfDocument extends Document implements DocListener {
                     PdfDictionary js = new PdfDictionary();
                     js.put(PdfName.NAMES, ar);
                     names.put(PdfName.JAVASCRIPT, writer.addToBody(js).getIndirectReference());
+                }
+                if (documentFileAttachment.size() > 0) {
+                    names.put(PdfName.EMBEDDEDFILES, writer.addToBody(PdfNameTree.writeTree(documentFileAttachment, writer)).getIndirectReference());
                 }
                 put(PdfName.NAMES, writer.addToBody(names).getIndirectReference());
             }
@@ -466,6 +469,8 @@ class PdfDocument extends Document implements DocListener {
     private TreeMap localDestinations = new TreeMap(new StringCompare());
     
     private ArrayList documentJavaScript = new ArrayList();
+    
+    private HashMap documentFileAttachment = new HashMap();
     
     /** these are the viewerpreferences of the document */
     private int viewerPreferences = 0;
@@ -2474,7 +2479,7 @@ class PdfDocument extends Document implements DocListener {
         
         if (pageLabels != null)
             catalog.setPageLabels(pageLabels);
-        catalog.addNames(localDestinations, documentJavaScript, writer);
+        catalog.addNames(localDestinations, documentJavaScript, documentFileAttachment, writer);
         catalog.setViewerPreferences(viewerPreferences);
         if (acroForm.isValid()) {
             try {
@@ -3194,6 +3199,25 @@ class PdfDocument extends Document implements DocListener {
     
     void setThumbnail(Image image) throws PdfException, DocumentException {
         thumb = writer.getImageReference(writer.addDirectImageSimple(image));
+    }
+
+    void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
+        if (description == null)
+            description = "";
+        fs.put(PdfName.DESC, new PdfString(description, PdfObject.TEXT_UNICODE));
+        if (description.length() == 0)
+            description = "Unnamed";
+        String fn = PdfEncodings.convertToString(new PdfString(description, PdfObject.TEXT_UNICODE).getBytes(), null);
+        int k = 0;
+        while (documentFileAttachment.containsKey(fn)) {
+            ++k;
+            fn = PdfEncodings.convertToString(new PdfString(description + " " + k, PdfObject.TEXT_UNICODE).getBytes(), null);
+        }
+        documentFileAttachment.put(fn, fs.getReference());
+    }
+    
+    HashMap getDocumentFileAttachment() {
+        return documentFileAttachment;
     }
 
     static PdfAnnotation convertAnnotation(PdfWriter writer, Annotation annot) throws IOException {
