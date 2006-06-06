@@ -1106,6 +1106,7 @@ public class PdfGraphics2D extends Graphics2D {
         Graphics g = mask.getGraphics();
         g.fillRect(sx1,sy1, (int)swidth, (int)sheight);
         drawImage(img, mask, tx, null, observer);
+        g.dispose();
         return true;
     }
     
@@ -1124,7 +1125,11 @@ public class PdfGraphics2D extends Graphics2D {
                 g2.cb.restoreState();
                 g2.cb.restoreState();
                 cb.add(g2.cb);
+                g2.dg2.dispose();
+                g2.dg2 = null;
             }
+            dg2.dispose();
+            dg2 = null;
         }
     }
     
@@ -1417,6 +1422,8 @@ public class PdfGraphics2D extends Graphics2D {
                     tx.translate(-xoffset,-yoffset);
                     g.drawImage(img,tx,null);
                 }
+                g.dispose();
+                g = null;
                 com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(img, null);
                 PdfPatternPainter pattern = cb.createPattern(width, height);
                 image.setAbsolutePosition(0,0);
