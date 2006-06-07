@@ -1164,44 +1164,32 @@ public class PdfGraphics2D extends Graphics2D {
         else
             points = s.getPathIterator(transform);
         float[] coords = new float[6];
-        if (s instanceof Rectangle) {
-            // more efficient to use the 're' operator.
-            Rectangle rec = (Rectangle) s;
-            float x = (float) rec.getMinX();
-            float lilY = normalizeY((float) rec.getMinY());
-            float bigY = normalizeY((float) rec.getMaxY());
-            float w = (float) rec.getWidth();
-            float h = bigY - lilY; // more fun with Java->PDF coordinates: h is negative.  Whee.
-            cb.rectangle( x, lilY, w, h );
-            traces = 4; //any non-zero value is fine, 4 happens to be accurate.
-        } else {
-            while(!points.isDone()) {
-                ++traces;
-                int segtype = points.currentSegment(coords);
-                normalizeY(coords);
-                switch(segtype) {
-                    case PathIterator.SEG_CLOSE:
-                        cb.closePath();
-                        break;
+        while(!points.isDone()) {
+            ++traces;
+            int segtype = points.currentSegment(coords);
+            normalizeY(coords);
+            switch(segtype) {
+                case PathIterator.SEG_CLOSE:
+                    cb.closePath();
+                    break;
 
-                    case PathIterator.SEG_CUBICTO:
-                        cb.curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
-                        break;
+                case PathIterator.SEG_CUBICTO:
+                    cb.curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+                    break;
 
-                    case PathIterator.SEG_LINETO:
-                        cb.lineTo(coords[0], coords[1]);
-                        break;
+                case PathIterator.SEG_LINETO:
+                    cb.lineTo(coords[0], coords[1]);
+                    break;
 
-                    case PathIterator.SEG_MOVETO:
-                        cb.moveTo(coords[0], coords[1]);
-                        break;
+                case PathIterator.SEG_MOVETO:
+                    cb.moveTo(coords[0], coords[1]);
+                    break;
 
-                    case PathIterator.SEG_QUADTO:
-                        cb.curveTo(coords[0], coords[1], coords[2], coords[3]);
-                        break;
-                }
-                points.next();
+                case PathIterator.SEG_QUADTO:
+                    cb.curveTo(coords[0], coords[1], coords[2], coords[3]);
+                    break;
             }
+            points.next();
         }
         switch (drawType) {
         case FILL:
