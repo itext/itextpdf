@@ -289,7 +289,10 @@ public class PdfGraphics2D extends Graphics2D {
         underline = false;
         Set set = iter.getAttributes().keySet();
         for(Iterator iterator = set.iterator(); iterator.hasNext();) {
-            TextAttribute textattribute = (TextAttribute)iterator.next();
+            AttributedCharacterIterator.Attribute attribute = (AttributedCharacterIterator.Attribute)iterator.next();
+            if (!(attribute instanceof TextAttribute))
+                continue;
+            TextAttribute textattribute = (TextAttribute)attribute;
             if(textattribute.equals(TextAttribute.FONT)) {
                 Font font = (Font)iter.getAttributes().get(textattribute);
                 setFont(font);
