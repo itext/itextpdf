@@ -289,7 +289,10 @@ public class PdfGraphics2D extends Graphics2D {
         underline = false;
         Set set = iter.getAttributes().keySet();
         for(Iterator iterator = set.iterator(); iterator.hasNext();) {
-            TextAttribute textattribute = (TextAttribute)iterator.next();
+            AttributedCharacterIterator.Attribute attribute = (AttributedCharacterIterator.Attribute)iterator.next();
+            if (!(attribute instanceof TextAttribute))
+                continue;
+            TextAttribute textattribute = (TextAttribute)attribute;
             if(textattribute.equals(TextAttribute.FONT)) {
                 Font font = (Font)iter.getAttributes().get(textattribute);
                 setFont(font);
@@ -1106,6 +1109,7 @@ public class PdfGraphics2D extends Graphics2D {
         Graphics g = mask.getGraphics();
         g.fillRect(sx1,sy1, (int)swidth, (int)sheight);
         drawImage(img, mask, tx, null, observer);
+        g.dispose();
         return true;
     }
     
@@ -1124,7 +1128,11 @@ public class PdfGraphics2D extends Graphics2D {
                 g2.cb.restoreState();
                 g2.cb.restoreState();
                 cb.add(g2.cb);
+                g2.dg2.dispose();
+                g2.dg2 = null;
             }
+            dg2.dispose();
+            dg2 = null;
         }
     }
     
@@ -1159,44 +1167,32 @@ public class PdfGraphics2D extends Graphics2D {
         else
             points = s.getPathIterator(transform);
         float[] coords = new float[6];
-        if (s instanceof Rectangle) {
-            // more efficient to use the 're' operator.
-            Rectangle rec = (Rectangle) s;
-            float x = (float) rec.getMinX();
-            float lilY = normalizeY((float) rec.getMinY());
-            float bigY = normalizeY((float) rec.getMaxY());
-            float w = (float) rec.getWidth();
-            float h = bigY - lilY; // more fun with Java->PDF coordinates: h is negative.  Whee.
-            cb.rectangle( x, lilY, w, h );
-            traces = 4; //any non-zero value is fine, 4 happens to be accurate.
-        } else {
-            while(!points.isDone()) {
-                ++traces;
-                int segtype = points.currentSegment(coords);
-                normalizeY(coords);
-                switch(segtype) {
-                    case PathIterator.SEG_CLOSE:
-                        cb.closePath();
-                        break;
+        while(!points.isDone()) {
+            ++traces;
+            int segtype = points.currentSegment(coords);
+            normalizeY(coords);
+            switch(segtype) {
+                case PathIterator.SEG_CLOSE:
+                    cb.closePath();
+                    break;
 
-                    case PathIterator.SEG_CUBICTO:
-                        cb.curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
-                        break;
+                case PathIterator.SEG_CUBICTO:
+                    cb.curveTo(coords[0], coords[1], coords[2], coords[3], coords[4], coords[5]);
+                    break;
 
-                    case PathIterator.SEG_LINETO:
-                        cb.lineTo(coords[0], coords[1]);
-                        break;
+                case PathIterator.SEG_LINETO:
+                    cb.lineTo(coords[0], coords[1]);
+                    break;
 
-                    case PathIterator.SEG_MOVETO:
-                        cb.moveTo(coords[0], coords[1]);
-                        break;
+                case PathIterator.SEG_MOVETO:
+                    cb.moveTo(coords[0], coords[1]);
+                    break;
 
-                    case PathIterator.SEG_QUADTO:
-                        cb.curveTo(coords[0], coords[1], coords[2], coords[3]);
-                        break;
-                }
-                points.next();
+                case PathIterator.SEG_QUADTO:
+                    cb.curveTo(coords[0], coords[1], coords[2], coords[3]);
+                    break;
             }
+            points.next();
         }
         switch (drawType) {
         case FILL:
@@ -1417,6 +1413,8 @@ public class PdfGraphics2D extends Graphics2D {
                     tx.translate(-xoffset,-yoffset);
                     g.drawImage(img,tx,null);
                 }
+                g.dispose();
+                g = null;
                 com.lowagie.text.Image image = com.lowagie.text.Image.getInstance(img, null);
                 PdfPatternPainter pattern = cb.createPattern(width, height);
                 image.setAbsolutePosition(0,0);

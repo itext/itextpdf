@@ -137,20 +137,38 @@ public class FontFactoryImp {
         fontFamilies.put(FontFactory.ZAPFDINGBATS.toLowerCase(), tmp);
     }
     
-/**
- * Constructs a <CODE>Font</CODE>-object.
- *
- * @param	fontname    the name of the font
- * @param	encoding    the encoding of the font
- * @param       embedded    true if the font is to be embedded in the PDF
- * @param	size	    the size of this font
- * @param	style	    the style of this font
- * @param	color	    the <CODE>Color</CODE> of this font.
- * @return the Font constructed based on the parameters
- */
-    
+    /**
+     * Constructs a <CODE>Font</CODE>-object.
+     *
+     * @param	fontname    the name of the font
+     * @param	encoding    the encoding of the font
+     * @param       embedded    true if the font is to be embedded in the PDF
+     * @param	size	    the size of this font
+     * @param	style	    the style of this font
+     * @param	color	    the <CODE>Color</CODE> of this font.
+     * @return the Font constructed based on the parameters
+     */
     public Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color) {
-        if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
+        return getFont(fontname, encoding, embedded, size, style, color, false);
+    }
+    
+    
+    
+    /**
+     * Constructs a <CODE>Font</CODE>-object.
+     *
+     * @param	fontname    the name of the font
+     * @param	encoding    the encoding of the font
+     * @param       embedded    true if the font is to be embedded in the PDF
+     * @param	size	    the size of this font
+     * @param	style	    the style of this font
+     * @param	color	    the <CODE>Color</CODE> of this font.
+     * @param	cached 		true if the font comes from the cache or is added to
+     * 				the cache if new, false if the font is always created new
+     * @return the Font constructed based on the parameters
+     */
+    public Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color, boolean cached) {
+    	if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
         String lowercasefontname = fontname.toLowerCase();
         ArrayList tmp = (ArrayList) fontFamilies.get(lowercasefontname);
         if (tmp != null) {
@@ -178,7 +196,7 @@ public class FontFactoryImp {
         try {
             try {
                 // the font is a type 1 font or CJK font
-                basefont = BaseFont.createFont(fontname, encoding, embedded);
+                basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null);
             }
             catch(DocumentException de) {
                 // the font is a true type font or an unknown font
@@ -186,7 +204,7 @@ public class FontFactoryImp {
                 // the font is not registered as truetype font
                 if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
                 // the font is registered as truetype font
-                basefont = BaseFont.createFont(fontname, encoding, embedded);
+                basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null);
             }
         }
         catch(DocumentException de) {
@@ -203,6 +221,7 @@ public class FontFactoryImp {
         }
         return new Font(basefont, size, style, color);
     }
+    
     
 /**
  * Constructs a <CODE>Font</CODE>-object.

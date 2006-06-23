@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2001, 2002, 2003, 2004 by Mark Hall
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * Co-Developer of the code is Mark Hall. Portions created by the Co-Developer are
+ * Copyright (C) 2006 by Mark Hall. All Rights Reserved
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
  *
  * Alternatively, the contents of this file may be used under the terms of the
- * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * LGPL license (the ?GNU LIBRARY GENERAL PUBLIC LICENSE?), in which case the
  * provisions of LGPL are applicable instead of those above.  If you wish to
  * allow use of your version of this file only under the terms of the LGPL
  * License and not to allow others to use your version of this file under
@@ -48,27 +50,78 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.tools.plugins.treeview;
+package com.lowagie.text.rtf;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.ImageIcon;
-import javax.swing.Icon;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Font;
+import com.lowagie.text.rtf.document.RtfDocument;
 
-public abstract class UpdateableTreeNode
-    extends DefaultMutableTreeNode {
-  public UpdateableTreeNode() {
-    super();
-  }
+/**
+ * The RtfAddableElement is the superclass for all rtf specific elements
+ * that need to be added to an iText document. It is an extension of Chunk
+ * and it also implements RtfBasicElement. It is an abstract class thus it
+ * cannot be instantiated itself and has to be subclassed to be used.
+ * 
+ * @version $Revision$
+ * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ */
+public abstract class RtfAddableElement extends Chunk implements RtfBasicElement {
 
-  public UpdateableTreeNode(Object userObject) {
-    super(userObject);
-  }
-  public UpdateableTreeNode(Object userObject,boolean allowchildren) {
-      super(userObject,allowchildren);
-  }
-  public abstract void updateview(IUpdatenodeview updateobject);
-  public Icon getIcon(){
-    return null;
-  }
-  }
+	/**
+	 * The RtfDocument this RtfAddableElement belongs to.
+	 */
+	protected RtfDocument doc = null;
+	/**
+	 * Whether this RtfAddableElement is contained in a table.
+	 */
+	protected boolean inTable = false;
+	/**
+	 * Whether this RtfAddableElement is contained in a header.
+	 */
+	protected boolean inHeader = false;
+	
+	/**
+	 * Constructs a new RtfAddableElement. The Chunk content is
+	 * set to an empty string and the font to the default Font().
+	 */
+	public RtfAddableElement() {
+		super("", new Font());
+	}
 
+	/**
+	 * Subclasses have to implement this method.
+	 */
+	public abstract byte[] write();
+
+	/**
+	 * Sets the RtfDocument this RtfAddableElement belongs to
+	 */
+	public void setRtfDocument(RtfDocument doc) {
+		this.doc = doc;
+	}
+
+	/**
+	 * Sets whether this RtfAddableElement is contained in a table.
+	 */
+	public void setInTable(boolean inTable) {
+		this.inTable = inTable;
+	}
+
+	/**
+	 * Sets whether this RtfAddableElement is contained in a header/footer.
+	 */
+	public void setInHeader(boolean inHeader) {
+		this.inHeader = inHeader;
+	}
+
+    /**
+     * Transforms an integer into its String representation and then returns the bytes
+     * of that string.
+     *
+     * @param i The integer to convert
+     * @return A byte array representing the integer
+     */
+    public byte[] intToByteArray(int i) {
+        return Integer.toString(i).getBytes();
+    }
+}

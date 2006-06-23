@@ -2101,6 +2101,27 @@ public class PdfWriter extends DocWriter {
         addJavaScript(code, false);
     }
     
+    /** Adds a file attachment at the document level.
+     * @param description the file description
+     * @param fileStore an array with the file. If it's <CODE>null</CODE>
+     * the file will be read from the disk
+     * @param file the path to the file. It will only be used if
+     * <CODE>fileStore</CODE> is not <CODE>null</CODE>
+     * @param fileDisplay the actual file name stored in the pdf
+     * @throws IOException on error
+     */    
+    public void addFileAttachment(String description, byte fileStore[], String file, String fileDisplay) throws IOException {
+        addFileAttachment(description, PdfFileSpecification.fileEmbedded(this, file, fileDisplay, fileStore));
+    }
+
+    /** Adds a file attachment at the document level.
+     * @param description the file description
+     * @param fs the file specification
+     */    
+    public void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
+        pdf.addFileAttachment(description, fs);
+    }
+    
     /** Sets the crop box. The crop box should not be rotated even if the
      * page is rotated. This change only takes effect in the next
      * page.

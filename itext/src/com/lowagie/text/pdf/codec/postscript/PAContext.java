@@ -69,8 +69,19 @@ public class PAContext {
    */
   public void draw(InputStream inputStream) throws PainterException {
     try {
-      poorscript = new PAParser(PAContext.class.getResourceAsStream("init.ps"));
+      String filename="init.ps";
+//      poorscript = new PAParser(new NamedInputStream(PAContext.class.getResourceAsStream(filename),filename));
+      InputStream inpstr=PAContext.class.getResourceAsStream(filename);
+      poorscript = new PAParser(inpstr);
       poorscript.parse(this);
+      try {
+        inpstr.close();
+      }
+      catch (IOException ex) {
+        ex.printStackTrace();
+      }
+//      poorscript.enable_tracing();
+//      poorscript.token_source.setDebugStream(System.err);
 //      byte[] b=null;
 //      try {
 //        b = RandomAccessFileOrArray.InputStreamToArray(inputStream);
@@ -89,6 +100,8 @@ public class PAContext {
       throw new PainterException(e.toString());
     }
   }
+
+
 
   public Object getLastUnknownIdentifier() {
     return this.lastUnknownIdentifier;
@@ -557,6 +570,59 @@ public class PAContext {
         }
       }
     });
+    // currentmatrix
+    systemDict.put("currentmatrix", new PACommand() {
+      public void execute(PAContext context) throws PainterException {
+        Object data[];
+       data = context.popOperands(1);
+       if (! (data[0] instanceof ArrayList)) {
+         throw new PainterException("currentmatrix: wrong argument");
+       }
+       ArrayList array = (ArrayList) data[0];
+
+         double[] entries = new double[6];
+
+         if (! (array.size() == 6)) {
+           throw new PainterException("currentmatrix: wrong arguments");
+         }
+
+
+         AffineTransform ctm = context.pencil.graphics.getTransform();
+         ctm.getMatrix(entries);
+
+         for (int i = 0; i < 6; i++) {
+           array.set(i, new Double(entries[i]));
+         }
+         context.operands.push(array);
+      }
+    });
+
+    // setmatrix
+  systemDict.put("setmatrix", new PACommand() {
+    public void execute(PAContext context) throws PainterException {
+      Object data[];
+      data = context.popOperands(1);
+      if (! (data[0] instanceof ArrayList)) {
+        throw new PainterException("setmatrix: wrong argument");
+      }
+      ArrayList array = (ArrayList) data[0];
+
+      double[] entries = new double[6];
+
+      if (! (array.size() == 6)) {
+        throw new PainterException("setmatrix: wrong arguments");
+      }
+         entries[0] = ((Number)array.get(0)).doubleValue();
+         entries[1] = ((Number)array.get(1)).doubleValue();
+         entries[2] = ((Number)array.get(2)).doubleValue();
+         entries[3] = ((Number)array.get(3)).doubleValue();
+         entries[4] = ((Number)array.get(4)).doubleValue();
+         entries[5] = ((Number)array.get(5)).doubleValue();
+
+      AffineTransform at = new AffineTransform(entries);
+      context.pencil.graphics.setTransform(at);
+    }
+  });
 
     // stroke
     systemDict.put("stroke", new PACommand() {
@@ -635,6 +701,22 @@ public class PAContext {
         context.operands.push(context.pencil.findFont( (String) patoken.value));
       }
     });
+
+    // makefont
+        systemDict.put("makefont", new PACommand() {
+          public void execute(PAContext context) throws PainterException {
+            Object data[];
+            data = context.popOperands(2);
+            if (! (data[0] instanceof java.awt.Font)) {
+              throw new PainterException("makefont: wrong arguments");
+            }
+            if (! (data[1] instanceof ArrayList)) {
+              throw new PainterException("makefont: wrong arguments");
+            }
+            // @TODO implement!!!
+            context.operands.push(data[0]);
+          }
+        });
 
     // scalefont
     systemDict.put("scalefont", new PACommand() {
@@ -1051,6 +1133,18 @@ public class PAContext {
         context.pencil.graphics.setPaint(new Color(fv[0], fv[1], fv[2]));
       }
     });
+
+    // currentrgbcolor
+systemDict.put("currentrgbcolor", new PACommand() {
+  public void execute(PAContext context) throws PainterException {
+    Color cl=context.pencil.graphics.getColor();
+    float[] fv = cl.getRGBComponents(null);
+    context.operands.push(new Float(fv[0]));
+    context.operands.push(new Float(fv[1]));
+    context.operands.push(new Float(fv[2]));
+  }
+});
+
 
     // PENDING(uweh): color stuff still shaky
     // sethsbcolor
@@ -2564,6 +2658,20 @@ public class PAContext {
         }
       }
     });
+
+    // imagemask
+   systemDict.put("imagemask", new PACommand() {
+     public void execute(PAContext context) throws PainterException {
+       Object data[];
+       data = context.popOperands(5);
+//       if (data[0] instanceof PAToken) {
+//         PAToken token = (PAToken) data[0];
+//         context.engine.process(token);
+//       }
+     }
+   });
+
+
     // exec
     systemDict.put("exec", new PACommand() {
       public void execute(PAContext context) throws PainterException {
@@ -2638,4 +2746,27 @@ public class PAContext {
     return systemDict;
   }
 
+  /**
+   * <p>Title: </p>
+   *
+   * <p>Description: </p>
+   *
+   * <p>Copyright: Copyright (c) 2006</p>
+   *
+   * <p>Company: </p>
+   * @author not attributable
+   * @version 1.0
+   */
+  private class NamedInputStream extends InputStream{
+    public String filename;
+    InputStream in;
+    NamedInputStream(InputStream in,String filename) {
+      super();
+      this.filename=filename;
+      this.in=in;
+    }
+  public int read() throws IOException {
+         return in.read();
+       }
+    }
 }

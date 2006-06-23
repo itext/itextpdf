@@ -128,6 +128,7 @@ public class PdfReader {
     private boolean hybridXref;
     private int lastXrefPartial = -1;
     private boolean partial;
+    private PRIndirectReference cryptoRef;
 
     /**
      * Holds value of property appendable.
@@ -266,6 +267,7 @@ public class PdfReader {
         this.hybridXref = reader.hybridXref;
         this.objStmToOffset = reader.objStmToOffset;
         this.xref = reader.xref;
+        this.cryptoRef = (PRIndirectReference)duplicatePdfObject(reader.cryptoRef, this);
     }
 
     /** Gets a new file instance of the original PDF
@@ -606,8 +608,10 @@ public class PdfReader {
             PdfString str = (PdfString)strings.get(k);
             str.decrypt(this);
         }
-        if (encDic.isIndirect())
-            xrefObj.set(((PRIndirectReference)encDic).getNumber(), null);
+        if (encDic.isIndirect()) {
+            cryptoRef = (PRIndirectReference)encDic;
+            xrefObj.set(cryptoRef.getNumber(), null);
+        }
     }
 
     /**
@@ -1364,7 +1368,7 @@ public class PdfReader {
                 break;
             if (tokens.getTokenType() != PRTokeniser.TK_NAME)
                 tokens.throwError("Dictionary key is not a name.");
-            PdfName name = new PdfName(tokens.getStringValue());
+            PdfName name = new PdfName(tokens.getStringValue(), false);
             PdfObject obj = readPRObject();
             int type = obj.type();
             if (-type == PRTokeniser.TK_END_DIC)
@@ -1425,7 +1429,7 @@ public class PdfReader {
                     strings.add(str);
                 return str;
             case PRTokeniser.TK_NAME:
-                return new PdfName(tokens.getStringValue());
+                return new PdfName(tokens.getStringValue(), false);
             case PRTokeniser.TK_REF:
                 int num = tokens.getReference();
                 PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
@@ -3158,5 +3162,11 @@ public class PdfReader {
             refsp = null;
             refsn = newPageRefs;
         }
+    }
+    
+    PdfIndirectReference getCryptoRef() {
+        if (cryptoRef == null)
+            return null;
+        return new PdfIndirectReference(0, cryptoRef.getNumber(), cryptoRef.getGeneration());
     }
 }

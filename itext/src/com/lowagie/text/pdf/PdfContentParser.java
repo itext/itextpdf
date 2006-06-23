@@ -127,7 +127,7 @@ public class PdfContentParser {
                     break;
                 if (tokeniser.getTokenType() != PRTokeniser.TK_NAME)
                     throw new IOException("Dictionary key is not a name.");
-                PdfName name = new PdfName(tokeniser.getStringValue());
+                PdfName name = new PdfName(tokeniser.getStringValue(), false);
                 PdfObject obj = readPRObject();
                 int type = obj.type();
                 if (-type == PRTokeniser.TK_END_DIC)
@@ -178,7 +178,7 @@ public class PdfContentParser {
                 PdfString str = new PdfString(tokeniser.getStringValue(), null).setHexWriting(tokeniser.isHexString());
                 return str;
             case PRTokeniser.TK_NAME:
-                return new PdfName(tokeniser.getStringValue());
+                return new PdfName(tokeniser.getStringValue(), false);
             case PRTokeniser.TK_NUMBER:
                 return new PdfNumber(tokeniser.getStringValue());
             case PRTokeniser.TK_OTHER:
