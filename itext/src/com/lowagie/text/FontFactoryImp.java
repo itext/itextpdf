@@ -149,7 +149,7 @@ public class FontFactoryImp {
      * @return the Font constructed based on the parameters
      */
     public Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color) {
-        return getFont(fontname, encoding, embedded, size, style, color, false);
+        return getFont(fontname, encoding, embedded, size, style, color, true);
     }
     
     
