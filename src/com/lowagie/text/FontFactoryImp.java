@@ -196,7 +196,7 @@ public class FontFactoryImp {
         try {
             try {
                 // the font is a type 1 font or CJK font
-                basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null);
+                basefont = BaseFont.createFont(fontname, encoding, embedded);
             }
             catch(DocumentException de) {
                 // the font is a true type font or an unknown font
