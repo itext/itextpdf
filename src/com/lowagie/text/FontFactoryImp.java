@@ -149,7 +149,7 @@ public class FontFactoryImp {
      * @return the Font constructed based on the parameters
      */
     public Font getFont(String fontname, String encoding, boolean embedded, float size, int style, Color color) {
-        return getFont(fontname, encoding, embedded, size, style, color, false);
+        return getFont(fontname, encoding, embedded, size, style, color, true);
     }
     
     
@@ -196,7 +196,7 @@ public class FontFactoryImp {
         try {
             try {
                 // the font is a type 1 font or CJK font
-                basefont = BaseFont.createFont(fontname, encoding, embedded);
+                basefont = BaseFont.createFont(fontname, encoding, embedded, cached, null, null);
             }
             catch(DocumentException de) {
                 // the font is a true type font or an unknown font
