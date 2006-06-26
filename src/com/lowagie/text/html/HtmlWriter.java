@@ -955,14 +955,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     }
                 }
                 write(HtmlTags.URL, path);
-                if ((image.alignment() & Image.LEFT) > 0) {
-                    write(HtmlTags.ALIGN, HtmlTags.ALIGN_LEFT);
-                }
-                else if ((image.alignment() & Image.RIGHT) > 0) {
+                if ((image.alignment() & Image.RIGHT) > 0) {
                     write(HtmlTags.ALIGN, HtmlTags.ALIGN_RIGHT);
                 }
                 else if ((image.alignment() & Image.MIDDLE) > 0) {
                     write(HtmlTags.ALIGN, HtmlTags.ALIGN_MIDDLE);
+                }
+                else {
+                    write(HtmlTags.ALIGN, HtmlTags.ALIGN_LEFT);
                 }
                 if (image.alt() != null) {
                     write(HtmlTags.ALT, image.alt());
