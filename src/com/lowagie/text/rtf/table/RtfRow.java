@@ -225,18 +225,17 @@ public class RtfRow extends RtfElement {
      * Performs a second pass over all cells to handle cell row/column spanning.
      */
     protected void handleCellSpanning() {
-        int realCellIndex = 0;
+        RtfCell deletedCell = new RtfCell(true);
         for(int i = 0; i < this.cells.size(); i++) {
             RtfCell rtfCell = (RtfCell) this.cells.get(i);
             if(rtfCell.getColspan() > 1) {
-                int j = rtfCell.getColspan();
-                while(j > 1) {
-                    if(i + 1 < this.cells.size()) {
-                        RtfCell rtfCellMerge = (RtfCell) this.cells.get(i + 1);
+                int cSpan = rtfCell.getColspan();
+                for(int j = i + 1; j < i + cSpan; j++) {
+                    if(j < this.cells.size()) {
+                        RtfCell rtfCellMerge = (RtfCell) this.cells.get(j);
                         rtfCell.setCellRight(rtfCell.getCellRight() + rtfCellMerge.getCellWidth());
                         rtfCell.setCellWidth(rtfCell.getCellWidth() + rtfCellMerge.getCellWidth());
-                        this.cells.remove(i + 1);
-                        j--;
+                        this.cells.set(j, deletedCell);
                     }
                 }
             }
@@ -245,22 +244,41 @@ public class RtfRow extends RtfElement {
                 for(int j = 1; j < rtfCell.getRowspan(); j++) {
                     RtfRow mergeRow = (RtfRow) rows.get(this.rowNumber + j);
                     if(this.rowNumber + j < rows.size()) {
-                        RtfCell rtfCellMerge = (RtfCell) mergeRow.getCells().get(realCellIndex);
+                        RtfCell rtfCellMerge = (RtfCell) mergeRow.getCells().get(i);
                         rtfCellMerge.setCellMergeChild(rtfCell);
                     }
                     if(rtfCell.getColspan() > 1) {
-                        int k = rtfCell.getColspan();
-                        while(k > 1 && (realCellIndex + 1 < mergeRow.getCells().size())) {
-                            mergeRow.getCells().remove(realCellIndex + 1);
-                            k--;
+                        int cSpan = rtfCell.getColspan();
+                        for(int k = i + 1; k < i + cSpan; k++) {
+                            if(k < mergeRow.getCells().size()) {
+                                mergeRow.getCells().set(k, deletedCell);
+                            }
                         }
                     }
                 }
             }
-            realCellIndex = realCellIndex + rtfCell.getColspan();
         }
     }
-       
+
+    /**
+     * Cleans the deleted RtfCells from the total RtfCells.
+     */
+    protected void cleanRow() {
+        int i = 0;
+        while(i < this.cells.size()) {
+            if(((RtfCell) this.cells.get(i)).isDeleted()) {
+                this.cells.remove(i);
+            } else {
+                i++;
+            }
+        }
+    }
+    
+    /**
+     * Writes the row definition/settings.
+     * 
+     * @return A byte array with the row definitions/settings.
+     */
     private byte[] writeRowDefinitions() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {

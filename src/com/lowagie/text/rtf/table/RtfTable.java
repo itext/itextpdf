@@ -150,6 +150,7 @@ public class RtfTable extends RtfElement {
         }
         for(i = 0; i < this.rows.size(); i++) {
             ((RtfRow) this.rows.get(i)).handleCellSpanning();
+            ((RtfRow) this.rows.get(i)).cleanRow();
         }
         this.headerRows = table.lastHeaderRow();
         this.cellsFitToPage = table.hasToFitPageCells();
