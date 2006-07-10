@@ -344,11 +344,9 @@ public class PdfGraphics2D extends Graphics2D {
             return;
         setFillPaint();
         if (onlyShapes) {
-//            TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
-//            tl.draw(this, x, y);
-            drawGlyphVector(this.font.layoutGlyphVector(new FontRenderContext(new AffineTransform(), true, false), s.toCharArray(), 0, s.length(), java.awt.Font.LAYOUT_LEFT_TO_RIGHT), x, y);
+            drawGlyphVector(this.font.layoutGlyphVector(getFontRenderContext(), s.toCharArray(), 0, s.length(), java.awt.Font.LAYOUT_LEFT_TO_RIGHT), x, y);
 //            Use the following line to compile in JDK 1.3    
-//            drawGlyphVector(this.font.createGlyphVector(new FontRenderContext(new AffineTransform(), true, false), s), x, y);
+//            drawGlyphVector(this.font.createGlyphVector(getFontRenderContext(), s), x, y);
         }
         else {
             AffineTransform at = getTransform();
@@ -730,7 +728,9 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#getFontRenderContext()
      */
     public FontRenderContext getFontRenderContext() {
-        return new FontRenderContext(null, true, true);
+        boolean antialias = RenderingHints.VALUE_TEXT_ANTIALIAS_ON.equals(getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
+        boolean fractions = RenderingHints.VALUE_FRACTIONALMETRICS_ON.equals(getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS));
+        return new FontRenderContext(new AffineTransform(), antialias, fractions);
     }
     
     /**
