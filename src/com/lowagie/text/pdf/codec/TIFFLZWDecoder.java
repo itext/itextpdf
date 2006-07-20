@@ -171,10 +171,12 @@ public class TIFFLZWDecoder {
      * Write out the string just uncompressed.
      */
     public void writeString(byte string[]) {
-        
-        for (int i=0; i<string.length; i++) {
-            uncompData[dstIndex++] = string[i];
-        }
+        // Fix for broken tiff files
+        int max = uncompData.length - dstIndex;
+        if (string.length < max)
+            max = string.length;
+        System.arraycopy(string, 0, uncompData, dstIndex, max);
+        dstIndex += max;
     }
     
     /**
