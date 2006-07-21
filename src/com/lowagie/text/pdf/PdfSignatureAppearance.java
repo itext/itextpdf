@@ -1,5 +1,7 @@
 /*
- * Copyright 2004 by Paulo Soares.
+ * $Id$
+ *
+ * Copyright 2004-2006 by Paulo Soares.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -53,6 +55,8 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Chunk;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
@@ -77,6 +81,19 @@ import java.io.InputStream;
  */
 public class PdfSignatureAppearance {
     
+    /**
+     * The rendering mode is just the description
+     */  
+    public static final int SignatureRenderDescription = 0;
+    /**
+     * The rendering mode is the name of the signer and the description
+     */
+    public static final int SignatureRenderNameAndDescription = 1;
+    /**
+     * The rendering mode is an image and the description
+     */
+    public static final int SignatureRenderGraphicAndDescription = 2;
+
     /**
      * The self signed filter.
      */
@@ -132,6 +149,46 @@ public class PdfSignatureAppearance {
         fieldName = getNewSigName();
     }
     
+    private int render = SignatureRenderDescription;
+
+    /**
+    * Gets the rendering mode for this signature.
+    * @return the rendering mode for this signature
+    */    
+    public int getRender() {
+        return render;
+    }
+
+    /**
+     * Sets the rendering mode for this signature.
+     * The rendering modes can be the constants <CODE>SignatureRenderDescription</CODE>,
+     * <CODE>SignatureRenderNameAndDescription</CODE> or <CODE>SignatureRenderGraphicAndDescription</CODE>.
+     * The two last modes should be used with Acrobat 6 layer type.
+     * @param render the render mode
+     */    
+    public void setRender(int render) {
+        this.render = render;
+    }
+
+    private Image signatureGraphic = null;
+
+    /**
+    * Gets the Image object to render.
+    * @return the image
+    */    
+    public Image getSignatureGraphic() {
+        return signatureGraphic;
+    }
+
+    /**
+     * Sets the Image object to render when Render is set to <CODE>SignatureRenderGraphicAndDescription</CODE>
+     * @param signatureGraphic image rendered. If <CODE>null</CODE> the mode is defaulted
+     * to <CODE>SignatureRenderDescription</CODE>
+     */    
+    public void setSignatureGraphic(Image signatureGraphic) {
+        this.signatureGraphic = signatureGraphic;
+    }
+
     /**
      * Sets the signature text identifying the signer.
      * @param text the signature text identifying the signer. If <CODE>null</CODE> or not set
@@ -371,13 +428,85 @@ public class PdfSignatureAppearance {
             else
                 font = new Font(layer2Font);
             float size = font.size();
+
+            Rectangle dataRect = null;
+            Rectangle signatureRect = null;
+
+            if (render == SignatureRenderNameAndDescription || 
+                (render == SignatureRenderGraphicAndDescription && this.signatureGraphic != null)) {
+                // origin is the bottom-left
+                signatureRect = new Rectangle(
+                    margin, 
+                    margin, 
+                    rect.width() / 2 - margin,
+                    rect.height() - margin);
+                dataRect = new Rectangle(
+                    rect.width() / 2 +  margin / 2, 
+                    margin, 
+                    rect.width() - margin / 2,
+                    rect.height() - margin);
+
+                if (rect.height() > rect.width()) {
+                    signatureRect = new Rectangle(
+                        margin, 
+                        rect.height() / 2, 
+                        rect.width() - margin,
+                        rect.height());
+                    dataRect = new Rectangle(
+                        margin, 
+                        margin, 
+                        rect.width() - margin,
+                        rect.height() / 2 - margin);
+                }
+            }
+            else {
+                dataRect = new Rectangle(
+                    margin, 
+                    margin, 
+                    rect.width() - margin,
+                    rect.height() * (1 - topSection) - margin);
+            }
+
+            if (render == SignatureRenderNameAndDescription) {
+                String signedBy = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
+                Rectangle sr2 = new Rectangle(signatureRect.width() - margin, signatureRect.height() - margin );
+                float signedSize = fitText(font, signedBy, sr2, -1, runDirection);
+
+                ColumnText ct2 = new ColumnText(t);
+                ct2.setRunDirection(runDirection);
+                ct2.setSimpleColumn(new Phrase(signedBy, font), signatureRect.left(), signatureRect.bottom(), signatureRect.right(), signatureRect.top(), signedSize, Element.ALIGN_LEFT);
+
+                ct2.go();
+            }
+            else if (render == SignatureRenderGraphicAndDescription) {
+                ColumnText ct2 = new ColumnText(t);
+                ct2.setRunDirection(runDirection);
+                ct2.setSimpleColumn(signatureRect.left(), signatureRect.bottom(), signatureRect.right(), signatureRect.top(), 0, Element.ALIGN_RIGHT);
+
+                Image im = Image.getInstance(signatureGraphic);
+                im.scaleToFit(signatureRect.width(), signatureRect.height());
+
+                Paragraph p = new Paragraph();
+                // must calculate the point to draw from to make image appear in middle of column
+                float x = 0;
+                // experimentation found this magic number to counteract Adobe's signature graphic, which
+                // offsets the y co-ordinate by 15 units
+                float y = -im.scaledHeight() + 15;
+
+                x = x + (signatureRect.width() - im.scaledWidth()) / 2;
+                y = y - (signatureRect.height() - im.scaledHeight()) / 2;
+                p.add(new Chunk(im, x + (signatureRect.width() - im.scaledWidth()) / 2, y, false));
+                ct2.addElement(p);
+                ct2.go();
+            }
+            
             if (size <= 0) {
-                Rectangle sr = new Rectangle(rect.width() - 2 * margin, rect.height() * (1 - topSection) - 2 * margin);
+                Rectangle sr = new Rectangle(dataRect.width(), dataRect.height());
                 size = fitText(font, text, sr, 12, runDirection);
             }
             ColumnText ct = new ColumnText(t);
             ct.setRunDirection(runDirection);
-            ct.setSimpleColumn(new Phrase(text, font), margin, 0, rect.width() - margin, rect.height() * (1 - topSection) - margin, size, Element.ALIGN_LEFT);
+            ct.setSimpleColumn(new Phrase(text, font), dataRect.left(), dataRect.bottom(), dataRect.right(), dataRect.top(), size, Element.ALIGN_LEFT);
             ct.go();
         }
         if (app[3] == null && !acro6Layers) {
