@@ -283,6 +283,7 @@ public class TiffImage {
                 case TIFFConstants.COMPRESSION_PACKBITS:
                 case TIFFConstants.COMPRESSION_DEFLATE:
                 case TIFFConstants.COMPRESSION_OJPEG:
+                case TIFFConstants.COMPRESSION_JPEG:
                     break;
                 default:
                     throw new IllegalArgumentException("The compression " + compression + " is not supported.");
@@ -370,49 +371,66 @@ public class TiffImage {
             }
             else {
                 stream = new ByteArrayOutputStream();
-                if (compression != TIFFConstants.COMPRESSION_OJPEG)
+                if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG)
                     zip = new DeflaterOutputStream(stream);
             }
-            for (int k = 0; k < offset.length; ++k) {
-                byte im[] = new byte[(int)size[k]];
-                s.seek(offset[k]);
-                s.readFully(im);
-                int height = Math.min(rowsStrip, rowsLeft);
-                byte outBuf[] = null;
-                if (compression != TIFFConstants.COMPRESSION_NONE)
-                    outBuf = new byte[(w * bitsPerSample * samplePerPixel + 7) / 8 * height];
-                switch (compression) {
-                    case TIFFConstants.COMPRESSION_DEFLATE:
-                        inflate(im, outBuf);
-                        break;
-                    case TIFFConstants.COMPRESSION_NONE:
-                        outBuf = im;
-                        break;
-                    case TIFFConstants.COMPRESSION_PACKBITS:
-                        decodePackbits(im,  outBuf);
-                        break;
-                    case TIFFConstants.COMPRESSION_LZW:
-                        lzwDecoder.decode(im, outBuf, height);
-                        break;
-                    case TIFFConstants.COMPRESSION_OJPEG: 
-                        stream.write(im);
-                        break;
+            if (compression == TIFFConstants.COMPRESSION_OJPEG) {
+                if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))
+                || (!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT))) {
+                    throw new RuntimeException("Missing tag(s) for OJPEG compression.");
+                }
+                int jpegOffset = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFOFFSET);
+                int jpegLength = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT) +
+                        (int)size[0];
+
+                byte[] jpeg = new byte[Math.min(jpegLength, s.length() - jpegOffset)];
+
+                int posFilePointer = s.getFilePointer();
+                s.readFully(jpeg);
+                img = new Jpeg(jpeg);
+            } 
+            else if (compression == TIFFConstants.COMPRESSION_JPEG) {
+                if (size.length > 1)
+                    throw new IOException("Compression JPEG is only supported with a single strip. This image has " + size.length + " strips.");
+                byte[] jpeg = new byte[(int)size[0]];
+                s.seek(offset[0]);
+                s.readFully(jpeg);
+                img = new Jpeg(jpeg);
+            } 
+            else {
+                for (int k = 0; k < offset.length; ++k) {
+                    byte im[] = new byte[(int)size[k]];
+                    s.seek(offset[k]);
+                    s.readFully(im);
+                    int height = Math.min(rowsStrip, rowsLeft);
+                    byte outBuf[] = null;
+                    if (compression != TIFFConstants.COMPRESSION_NONE)
+                        outBuf = new byte[(w * bitsPerSample * samplePerPixel + 7) / 8 * height];
+                    switch (compression) {
+                        case TIFFConstants.COMPRESSION_DEFLATE:
+                            inflate(im, outBuf);
+                            break;
+                        case TIFFConstants.COMPRESSION_NONE:
+                            outBuf = im;
+                            break;
+                        case TIFFConstants.COMPRESSION_PACKBITS:
+                            decodePackbits(im,  outBuf);
+                            break;
+                        case TIFFConstants.COMPRESSION_LZW:
+                            lzwDecoder.decode(im, outBuf, height);
+                            break;
+                    }
+                    if (bitsPerSample == 1 && samplePerPixel == 1) {
+                        g4.fax4Encode(outBuf, height);
+                    }
+                    else {
+                        zip.write(outBuf);
+                    }
+                    rowsLeft -= rowsStrip;
                 }
                 if (bitsPerSample == 1 && samplePerPixel == 1) {
-                    g4.fax4Encode(outBuf, height);
-                }
-                else if (compression != TIFFConstants.COMPRESSION_OJPEG) {
-                    zip.write(outBuf);
-                }
-                rowsLeft -= rowsStrip;
-            }
-            if (bitsPerSample == 1 && samplePerPixel == 1) {
-                img = Image.getInstance(w, h, false, Image.CCITTG4, 
-                    photometric == TIFFConstants.PHOTOMETRIC_MINISBLACK ? Image.CCITT_BLACKIS1 : 0, g4.close());
-            }
-            else {
-                if (compression == TIFFConstants.COMPRESSION_OJPEG) {
-                    img = new Jpeg(stream.toByteArray());                  
+                    img = Image.getInstance(w, h, false, Image.CCITTG4, 
+                        photometric == TIFFConstants.PHOTOMETRIC_MINISBLACK ? Image.CCITT_BLACKIS1 : 0, g4.close());
                 }
                 else {
                     zip.close();
@@ -421,7 +439,7 @@ public class TiffImage {
                 }
             }
             img.setDpi(dpiX, dpiY);
-            if (compression != TIFFConstants.COMPRESSION_OJPEG) {
+            if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG) {
                 if (dir.isTagPresent(TIFFConstants.TIFFTAG_ICCPROFILE)) {
                     try {
                         TIFFField fd = dir.getField(TIFFConstants.TIFFTAG_ICCPROFILE);
