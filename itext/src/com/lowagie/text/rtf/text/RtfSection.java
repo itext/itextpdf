@@ -108,7 +108,7 @@ public class RtfSection extends RtfElement {
                     }
                 }
                 if(titleText.toString().trim().length() > 0) {
-                    RtfTOCEntry tocEntry = new RtfTOCEntry(titleText.toString(), section.title().font());
+                    RtfTOCEntry tocEntry = new RtfTOCEntry(titleText.toString());
                     tocEntry.setRtfDocument(this.document);
                     this.items.add(tocEntry);
                 }
