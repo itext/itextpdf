@@ -80,10 +80,9 @@ public class RtfTableOfContents extends RtfField {
      * before the user updates the table of contents
      * 
      * @param defaultText The default text to display
-     * @param font The Font to use
      */
-    public RtfTableOfContents(String defaultText, Font font) {
-        super(null, font);
+    public RtfTableOfContents(String defaultText) {
+        super(null, new Font());
         this.defaultText = defaultText;
     }
 
