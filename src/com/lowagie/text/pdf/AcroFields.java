@@ -1251,7 +1251,7 @@ public class AcroFields {
     /**
      * Gets the field box positions in the document. The return is an array of <CODE>float</CODE>
      * multiple of 5. For each of this groups the values are: [page, llx, lly, urx,
-     * ury].
+     * ury]. The coordinates have the page rotation in consideration.
      * @param name the field name
      * @return the positions or <CODE>null</CODE> if field does not exist
      */    
