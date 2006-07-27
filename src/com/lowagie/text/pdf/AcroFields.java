@@ -1268,8 +1268,36 @@ public class AcroFields {
                 if (rect == null)
                     continue;
                 Rectangle r = PdfReader.getNormalizedRectangle(rect);
-                ret[ptr] = ((Integer)item.page.get(k)).floatValue();
-                ++ptr;
+                int page = ((Integer)item.page.get(k)).intValue();
+                int rotation = reader.getPageRotation(page);
+                ret[ptr++] = page;
+                if (rotation != 0) {
+                    Rectangle pageSize = reader.getPageSize(page);
+                    switch (rotation) {
+                        case 270:
+                            r = new Rectangle(
+                                pageSize.top() - r.bottom(),
+                                r.left(),
+                                pageSize.top() - r.top(),
+                                r.right());
+                            break;
+                        case 180:
+                            r = new Rectangle(
+                                pageSize.right() - r.left(),
+                                pageSize.top() - r.bottom(),
+                                pageSize.right() - r.right(),
+                                pageSize.top() - r.top());
+                            break;
+                        case 90:
+                            r = new Rectangle(
+                                r.bottom(),
+                                pageSize.right() - r.left(),
+                                r.top(),
+                                pageSize.right() - r.right());
+                            break;
+                    }
+                    r.normalize();
+                }
                 ret[ptr++] = r.left();
                 ret[ptr++] = r.bottom();
                 ret[ptr++] = r.right();
