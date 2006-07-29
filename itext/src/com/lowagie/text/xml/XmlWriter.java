@@ -677,14 +677,14 @@ public class XmlWriter extends DocWriter implements DocListener {
                 addTabs(indent);
                 writeStart(ElementTags.IMAGE);
                 write(ElementTags.URL, image.url().toString());
-                if ((image.alignment() & Image.LEFT) > 0) {
-                    write(ElementTags.ALIGN, ElementTags.ALIGN_LEFT);
-                }
-                else if ((image.alignment() & Image.RIGHT) > 0) {
+                if ((image.alignment() & Image.RIGHT) > 0) {
                     write(ElementTags.ALIGN, ElementTags.ALIGN_RIGHT);
                 }
                 else if ((image.alignment() & Image.MIDDLE) > 0) {
                     write(ElementTags.ALIGN, ElementTags.ALIGN_MIDDLE);
+                }
+                else {
+                    write(ElementTags.ALIGN, ElementTags.ALIGN_LEFT);
                 }
                 if ((image.alignment() & Image.UNDERLYING) > 0) {
                     write(ElementTags.UNDERLYING, String.valueOf(true));

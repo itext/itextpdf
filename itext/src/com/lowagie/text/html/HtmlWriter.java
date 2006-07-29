@@ -61,6 +61,7 @@ import java.util.Stack;
 import java.util.EmptyStackException;
 
 import com.lowagie.text.*;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.markup.MarkupTags;
 
 /**
@@ -955,14 +956,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     }
                 }
                 write(HtmlTags.URL, path);
-                if ((image.alignment() & Image.LEFT) > 0) {
-                    write(HtmlTags.ALIGN, HtmlTags.ALIGN_LEFT);
-                }
-                else if ((image.alignment() & Image.RIGHT) > 0) {
+                if ((image.alignment() & Image.RIGHT) > 0) {
                     write(HtmlTags.ALIGN, HtmlTags.ALIGN_RIGHT);
                 }
                 else if ((image.alignment() & Image.MIDDLE) > 0) {
                     write(HtmlTags.ALIGN, HtmlTags.ALIGN_MIDDLE);
+                }
+                else {
+                    write(HtmlTags.ALIGN, HtmlTags.ALIGN_LEFT);
                 }
                 if (image.alt() != null) {
                     write(HtmlTags.ALT, image.alt());
@@ -1055,6 +1056,20 @@ public class HtmlWriter extends DocWriter implements DocListener {
             }
             
             int fontstyle = font.style();
+            BaseFont bf = font.getBaseFont();
+            if (bf != null) {
+                String ps = bf.getPostscriptFontName().toLowerCase();
+                if (ps.indexOf("bold") >= 0) {
+                    if (fontstyle == Font.UNDEFINED)
+                        fontstyle = 0;
+                    fontstyle |= Font.BOLD;
+                }
+                if (ps.indexOf("italic") >= 0 || ps.indexOf("oblique") >= 0) {
+                    if (fontstyle == Font.UNDEFINED)
+                        fontstyle = 0;
+                    fontstyle |= Font.ITALIC;
+                }
+            }
             if (fontstyle != Font.UNDEFINED && fontstyle != Font.NORMAL) {
                 switch (fontstyle & Font.BOLDITALIC) {
                     case Font.BOLD:

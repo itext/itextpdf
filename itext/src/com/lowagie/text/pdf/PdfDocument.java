@@ -2100,8 +2100,8 @@ class PdfDocument extends Document implements DocListener {
         }
         else {
         	if ((image.alignment() & Image.RIGHT) == Image.RIGHT) startPosition -= image.indentationRight();
-        	else if ((image.alignment() & Image.LEFT) == Image.LEFT) startPosition += image.indentationLeft();
         	else if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) startPosition += image.indentationLeft() - image.indentationRight();
+        	else startPosition += image.indentationLeft();
         }
         graphics.addImage(image, mt[0], mt[1], mt[2], mt[3], startPosition, lowerleft - mt[5]);
         if (!(textwrap || underlying)) {

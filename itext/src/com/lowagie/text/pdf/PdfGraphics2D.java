@@ -301,38 +301,37 @@ public class PdfGraphics2D extends Graphics2D {
                 if(iter.getAttributes().get(textattribute) == TextAttribute.UNDERLINE_ON)
                     underline = true;
             }
-            else if(textattribute.equals(TextAttribute.SUPERSCRIPT)) {
-                throw new RuntimeException("TextAttribute.SUPERSCRIPT not supported");
-                /*
-                iter.getAttributes().get(textattribute);
-                Integer _tmp = TextAttribute.SUPERSCRIPT_SUPER;
-                subscript = true;
-                 */
-            }
             else if(textattribute.equals(TextAttribute.SIZE)) {
                 Object obj = iter.getAttributes().get(textattribute);
-                Font font1 = null;
                 if(obj instanceof Integer) {
                     int i = ((Integer)obj).intValue();
-                    font1 = getFont().deriveFont(getFont().getStyle(), i);
+                    setFont(getFont().deriveFont(getFont().getStyle(), i));
                 }
                 else if(obj instanceof Float) {
                     float f = ((Float)obj).floatValue();
-                    font1 = getFont().deriveFont(getFont().getStyle(), f);
+                    setFont(getFont().deriveFont(getFont().getStyle(), f));
                 }
-                else {
-                    throw new RuntimeException("Unknown type " + obj.getClass() + " for attribute SIZE");
-                }
-                setFont(font1);
             }
             else if(textattribute.equals(TextAttribute.FOREGROUND)) {
                 setColor((Color) iter.getAttributes().get(textattribute));
             }
-            else if(textattribute.equals(TextAttribute.BACKGROUND)) {
-                throw new RuntimeException("Background color not supported");
+            else if(textattribute.equals(TextAttribute.FAMILY)) {
+              Font font = getFont();
+              Map fontAttributes = font.getAttributes();
+              fontAttributes.put(TextAttribute.FAMILY, iter.getAttributes().get(textattribute));
+              setFont(font.deriveFont(fontAttributes));
             }
-            else {
-                throw new RuntimeException("Unknown TextAttribute: " + textattribute);
+            else if(textattribute.equals(TextAttribute.POSTURE)) {
+              Font font = getFont();
+              Map fontAttributes = font.getAttributes();
+              fontAttributes.put(TextAttribute.POSTURE, iter.getAttributes().get(textattribute));
+              setFont(font.deriveFont(fontAttributes)); 
+            }
+            else if(textattribute.equals(TextAttribute.WEIGHT)) {
+              Font font = getFont();
+              Map fontAttributes = font.getAttributes();
+              fontAttributes.put(TextAttribute.WEIGHT, iter.getAttributes().get(textattribute));
+              setFont(font.deriveFont(fontAttributes)); 
             }
         }
     }
@@ -345,11 +344,9 @@ public class PdfGraphics2D extends Graphics2D {
             return;
         setFillPaint();
         if (onlyShapes) {
-//            TextLayout tl = new TextLayout(s, this.font, new FontRenderContext(new AffineTransform(), false, true));
-//            tl.draw(this, x, y);
-            drawGlyphVector(this.font.layoutGlyphVector(new FontRenderContext(new AffineTransform(), true, false), s.toCharArray(), 0, s.length(), java.awt.Font.LAYOUT_LEFT_TO_RIGHT), x, y);
+            drawGlyphVector(this.font.layoutGlyphVector(getFontRenderContext(), s.toCharArray(), 0, s.length(), java.awt.Font.LAYOUT_LEFT_TO_RIGHT), x, y);
 //            Use the following line to compile in JDK 1.3    
-//            drawGlyphVector(this.font.createGlyphVector(new FontRenderContext(new AffineTransform(), true, false), s), x, y);
+//            drawGlyphVector(this.font.createGlyphVector(getFontRenderContext(), s), x, y);
         }
         else {
             AffineTransform at = getTransform();
@@ -731,7 +728,9 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#getFontRenderContext()
      */
     public FontRenderContext getFontRenderContext() {
-        return new FontRenderContext(null, true, true);
+        boolean antialias = RenderingHints.VALUE_TEXT_ANTIALIAS_ON.equals(getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING));
+        boolean fractions = RenderingHints.VALUE_FRACTIONALMETRICS_ON.equals(getRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS));
+        return new FontRenderContext(new AffineTransform(), antialias, fractions);
     }
     
     /**

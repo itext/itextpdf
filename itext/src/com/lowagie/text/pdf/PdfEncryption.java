@@ -134,7 +134,7 @@ public class PdfEncryption {
             byte mkey[] = new byte[keylength/8];
             // only use for the input as many bit as the key consists of
             for (int k = 0; k < 50; ++k)
-                System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
+                System.arraycopy(md5.digest(digest), 0, digest, 0, mkey.length);
             System.arraycopy(userPad, 0, ownerKey, 0, 32);
             for (int i = 0; i < 20; ++i) {
                 for (int j = 0; j < mkey.length ; ++j)

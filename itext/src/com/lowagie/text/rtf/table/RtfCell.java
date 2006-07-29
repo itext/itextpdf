@@ -148,6 +148,10 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      * Whether this RtfCell is in a header
      */
     private boolean inHeader = false;
+    /**
+     * Whether this RtfCell is a placeholder for a removed table cell.
+     */
+    private boolean deleted = false;
 
     /**
      * Constructs an empty RtfCell
@@ -186,6 +190,16 @@ public class RtfCell extends Cell implements RtfExtendedElement {
     public RtfCell(Properties properties) {
         super(properties);
         this.borders = new RtfBorderGroup();
+    }
+    
+    /**
+     * Constructs a deleted RtfCell.
+     * 
+     * @param deleted Whether this RtfCell is actually deleted.
+     */
+    protected RtfCell(boolean deleted) {
+        super();
+        this.deleted = deleted;
     }
     
     /**
@@ -530,5 +544,15 @@ public class RtfCell extends Cell implements RtfExtendedElement {
      */
     private byte[] intToByteArray(int i) {
         return Integer.toString(i).getBytes();
+    }
+    
+    /**
+     * Checks whether this RtfCell is a placeholder for
+     * a table cell that has been removed due to col/row spanning.
+     * 
+     * @return <code>True</code> if this RtfCell is deleted, <code>false</code> otherwise.
+     */
+    public boolean isDeleted() {
+        return this.deleted;
     }
 }

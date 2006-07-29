@@ -95,7 +95,7 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
     /**
      * The content of this RtfHeaderFooter
      */
-    private Object content = null;
+    private Object[] content = null;
     /**
      * The display type of this RtfHeaderFooter. TYPE_HEADER or TYPE_FOOTER
      */
@@ -132,11 +132,12 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
             par.add(headerFooter.getAfter());
         }
         try {
+            this.content = new Object[1];
             if(this.document != null) {
-                content = this.document.getMapper().mapElement(par);
-                ((RtfBasicElement) this.content).setInHeader(true);
+                this.content[0] = this.document.getMapper().mapElement(par);
+                ((RtfBasicElement) this.content[0]).setInHeader(true);
             } else {
-                content = par;
+                this.content[0] = par;
             }
         } catch(DocumentException de) {
             de.printStackTrace();
@@ -156,14 +157,18 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
         this.document = doc;
         this.content = headerFooter.getContent();
         this.displayAt = displayAt;
-        if(this.content instanceof Element) {
-            try {
-                this.content = this.document.getMapper().mapElement((Element) this.content);
-            } catch(DocumentException de) {
-                de.printStackTrace();
+        for(int i = 0; i < this.content.length; i++) {
+            if(this.content[i] instanceof Element) {
+                try {
+                    this.content[i] = this.document.getMapper().mapElement((Element) this.content[i]);
+                } catch(DocumentException de) {
+                    de.printStackTrace();
+                }
+            }
+            if(this.content[i] instanceof RtfBasicElement) {
+                ((RtfBasicElement) this.content[i]).setInHeader(true);
             }
         }
-        ((RtfBasicElement) this.content).setInHeader(true);
     }
     
     /**
@@ -187,8 +192,9 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
             par.add(headerFooter.getAfter());
         }
         try {
-            content = doc.getMapper().mapElement(par);
-            ((RtfBasicElement) this.content).setInHeader(true);
+            this.content = new Object[1];
+            this.content[0] = doc.getMapper().mapElement(par);
+            ((RtfBasicElement) this.content[0]).setInHeader(true);
         } catch(DocumentException de) {
             de.printStackTrace();
         }
@@ -200,8 +206,20 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
      * @param element The Element to display as content of this RtfHeaderFooter
      */
     public RtfHeaderFooter(Element element) {
+        this(new Element[]{element});
+    }
+
+    /**
+     * Constructs a RtfHeaderFooter for an array of Elements.
+     * 
+     * @param elements The Elements to display as the content of this RtfHeaderFooter.
+     */
+    public RtfHeaderFooter(Element[] elements) {
         super(new Phrase(""), false);
-        this.content = element;
+        this.content = new Object[elements.length];
+        for(int i = 0; i < elements.length; i++) {
+            this.content[i] = elements[i];
+        }
     }
     
     /**
@@ -212,16 +230,18 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
     public void setRtfDocument(RtfDocument doc) {
         this.document = doc;
         if(this.document != null) {
-            try {
-                if(this.content instanceof Element) {
-                    this.content = this.document.getMapper().mapElement((Element) this.content);
-                    ((RtfBasicElement) this.content).setInHeader(true);
-                } else if(this.content instanceof RtfBasicElement){
-                    ((RtfBasicElement) this.content).setRtfDocument(this.document);
-                    ((RtfBasicElement) this.content).setInHeader(true);
+            for(int i = 0; i < this.content.length; i++) {
+                try {
+                    if(this.content[i] instanceof Element) {
+                        this.content[i] = this.document.getMapper().mapElement((Element) this.content[i]);
+                        ((RtfBasicElement) this.content[i]).setInHeader(true);
+                    } else if(this.content[i] instanceof RtfBasicElement){
+                        ((RtfBasicElement) this.content[i]).setRtfDocument(this.document);
+                        ((RtfBasicElement) this.content[i]).setInHeader(true);
+                    }
+                } catch(DocumentException de) {
+                    de.printStackTrace();
                 }
-            } catch(DocumentException de) {
-                de.printStackTrace();
             }
         }
     }
@@ -257,8 +277,10 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
                 }
             }
             result.write(DELIMITER);
-            if(content instanceof RtfBasicElement) {
-                result.write(((RtfBasicElement) this.content).write());
+            for(int i = 0; i < this.content.length; i++) {
+                if(this.content[i] instanceof RtfBasicElement) {
+                    result.write(((RtfBasicElement) this.content[i]).write());
+                }
             }
             result.write(CLOSE_GROUP);
         } catch(IOException ioe) {
@@ -291,7 +313,7 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
      * 
      * @return The content of this RtfHeaderFooter
      */
-    private Object getContent() {
+    private Object[] getContent() {
         return this.content;
     }
 
@@ -315,12 +337,14 @@ public class RtfHeaderFooter extends HeaderFooter implements RtfBasicElement {
      */
     public void setAlignment(int alignment) {
         super.setAlignment(alignment);
-        if(this.content instanceof Paragraph) {
-            ((Paragraph) this.content).setAlignment(alignment);
-        } else if(this.content instanceof Table) {
-            ((Table) this.content).setAlignment(alignment);
-        } else if(this.content instanceof Image) {
-            ((Image) this.content).setAlignment(alignment);
+        for(int i = 0; i < this.content.length; i++) {
+            if(this.content[i] instanceof Paragraph) {
+                ((Paragraph) this.content[i]).setAlignment(alignment);
+            } else if(this.content[i] instanceof Table) {
+                ((Table) this.content[i]).setAlignment(alignment);
+            } else if(this.content[i] instanceof Image) {
+                ((Image) this.content[i]).setAlignment(alignment);
+            }     
         }
     }
 }

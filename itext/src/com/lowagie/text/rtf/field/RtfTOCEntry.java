@@ -99,10 +99,9 @@ public class RtfTOCEntry extends RtfField {
      * Constructs a RtfTOCEntry with a certain entry text.
      * 
      * @param entry The entry text to display
-     * @param font The Font to use
      */
-    public RtfTOCEntry(String entry, Font font) {
-        super(null, font);
+    public RtfTOCEntry(String entry) {
+        super(null, new Font());
         if(entry != null) {
             this.entry = entry;
         }

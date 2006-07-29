@@ -50,6 +50,7 @@
         <copy todir="${itext.classes}/com/lowagie/text/pdf/fonts" overwrite="yes">
             <fileset dir="${itext.src}/com/lowagie/text/pdf/fonts">
                 <include name="**/*.afm"/>
+                <include name="**/*.html"/>
             </fileset>
         </copy>
         <copy todir="${itext.classes}/com/lowagie/text/" overwrite="yes">
