@@ -433,7 +433,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     }
     
 /**
- * Gets the spacing before this paragraph.
+ * Gets the spacing after this paragraph.
  *
  * @return	the spacing
  */
