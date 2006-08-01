@@ -1,3 +1,5 @@
+/* see bouncycastle_license.txt */
+
 package com.lowagie.bc.asn1;
 
 /**
