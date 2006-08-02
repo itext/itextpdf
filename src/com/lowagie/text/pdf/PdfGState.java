@@ -93,6 +93,14 @@ public class PdfGState extends PdfDictionary {
     public void setOverPrintNonStroking(boolean ov) {
         put(PdfName.op, ov ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
     }
+
+    /**
+     * Sets the flag whether to apply overprint for stroking.
+     * @param ov
+     */
+    public void setOverPrintMode(int ov) {
+        put(PdfName.OPM, new PdfNumber(ov));
+    }
     
     /**
      * Sets the current stroking alpha constant, specifying the constant shape or
