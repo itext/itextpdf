@@ -276,7 +276,7 @@ public class Row implements Element, MarkupAttributes {
             if (reserved[i] == true) {
                 // undo reserve
                 for(int j=i; j >= column; j--) {
-                    reserved[i] = false;
+                    reserved[j] = false;
                 }
                 return false;
             }
