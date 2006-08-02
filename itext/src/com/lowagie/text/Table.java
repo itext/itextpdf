@@ -343,6 +343,9 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.CELLSFITPAGE)) != null) {
             cellsFitPage = new Boolean(value).booleanValue();
         }
+        if ((value = (String)attributes.remove(ElementTags.CONVERT2PDFP)) != null) {
+            convert2pdfptable = new Boolean(value).booleanValue();
+        }
         if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
             setBorderWidth(Float.valueOf(value + "f").floatValue());
         }
@@ -1854,6 +1857,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     	pdfptable.setTableEvent(SimpleTable.getDimensionlessInstance(this, cellspacing));
     	pdfptable.setHeaderRows(lastHeaderRow + 1);
     	pdfptable.setSplitLate(cellsFitPage);
+    	pdfptable.setKeepTogether(tableFitsPage);
     	if (!Float.isNaN(offset)) {
     		pdfptable.setSpacingBefore(offset);
     	}

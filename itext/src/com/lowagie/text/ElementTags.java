@@ -237,7 +237,10 @@ public class ElementTags {
     
 /** attribute of the table tag */
     public static final String CELLSFITPAGE = "cellsfitpage";
-    
+
+/** attribute of the table tag */
+    public static final String CONVERT2PDFP = "convert2pdfp";
+            
 /** attribute of the cell tag */
     public static final String HORIZONTALALIGN = "horizontalalign";
     
