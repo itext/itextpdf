@@ -65,7 +65,6 @@ import com.lowagie.text.rtf.style.RtfColor;
  * 
  * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
- * @author Unknown
  */
 public class RtfBorder extends RtfElement {
 
