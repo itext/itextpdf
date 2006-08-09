@@ -164,7 +164,7 @@ public class PdfPRow {
                             + cell.getEffectivePaddingBottom()
                             - cell.getFixedHeight() : BOTTOM_LIMIT;
                     ColumnText ct = ColumnText.duplicate(cell.getColumn());
-                    ct.setSimpleColumn(
+                    setColumn(ct,
                             cell.left() + cell.getEffectivePaddingLeft(), bry,
                             rightLimit, cell.top() - cell.getEffectivePaddingTop());
                     try {
@@ -183,7 +183,7 @@ public class PdfPRow {
                     }
                     else {
                         ColumnText ct = ColumnText.duplicate(cell.getColumn());
-                        ct.setSimpleColumn(0, cell.left() + cell.getEffectivePaddingLeft(),
+                        setColumn(ct, 0, cell.left() + cell.getEffectivePaddingLeft(),
                                 20000, cell.right() - cell.getEffectivePaddingRight());
                         try {
                             ct.go(true);
@@ -311,6 +311,15 @@ public class PdfPRow {
         }
     }
     
+    private float setColumn(ColumnText ct, float llx, float lly, float urx, float ury) {
+        if (llx > urx)
+            urx = llx;
+        if (lly > ury)
+            ury = lly;
+        ct.setSimpleColumn(llx, lly, urx, ury);
+        return ury;
+    }
+    
 	/**
 	 * Writes a number of cells (not necessarily all cells).
 	 * @param colStart
@@ -412,6 +421,8 @@ public class PdfPRow {
                         throw new ExceptionConverter(e);
                     }
                     float calcHeight = -ct.getYLine();
+                    if (netWidth <= 0 || netHeight >= 0)
+                        calcHeight = 0;
                     if (calcHeight > 0) {
                         if (cell.isUseDescender())
                             calcHeight -= ct.getDescender();
@@ -600,11 +611,11 @@ public class PdfPRow {
                 float y;
 				ColumnText ct = ColumnText.duplicate(cell.getColumn());
                 if (cell.getRotation() == 90 || cell.getRotation() == 270) {
-                    ct.setSimpleColumn(
+                    y = setColumn(ct,
                             cell.top() - newHeight + cell.getEffectivePaddingBottom(),
                             cell.left() + cell.getEffectivePaddingLeft(),
                             cell.top() - cell.getEffectivePaddingTop(),
-                            y = cell.right() - cell.getEffectivePaddingRight());
+                            cell.right() - cell.getEffectivePaddingRight());
                 }
                 else {
                     float rightLimit = cell.isNoWrap() ? 20000 : cell.right()
@@ -612,8 +623,7 @@ public class PdfPRow {
                     float y1 = cell.top() - newHeight
                             + cell.getEffectivePaddingBottom();
                     float y2 = cell.top() - cell.getEffectivePaddingTop();
-                    y = Math.max(y1, y2);
-                    ct.setSimpleColumn(
+                    y = setColumn(ct,
                             cell.left() + cell.getEffectivePaddingLeft(), y1,
                             rightLimit, y2);
                 }
