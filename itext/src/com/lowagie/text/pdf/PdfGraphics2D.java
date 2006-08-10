@@ -1,4 +1,6 @@
 /*
+ * $Id$
+ *
  * Copyright 2002 by Jim Moore <jim@scolamoore.com>.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
@@ -189,7 +191,6 @@ public class PdfGraphics2D extends Graphics2D {
             if (this.fontMapper == null)
                 this.fontMapper = new DefaultFontMapper();
         }
-        this.kids = new ArrayList();
         paint = Color.black;
         background = Color.white;
         setFont(new Font("sanserif", Font.PLAIN, 12));
@@ -742,7 +743,6 @@ public class PdfGraphics2D extends Graphics2D {
         g2.transform = new AffineTransform(this.transform);
         g2.baseFonts = this.baseFonts;
         g2.fontMapper = this.fontMapper;
-        g2.kids = this.kids;
         g2.paint = this.paint;
         g2.fillGState = this.fillGState;
         g2.strokeGState = this.strokeGState;
@@ -767,9 +767,10 @@ public class PdfGraphics2D extends Graphics2D {
         if (g2.clip != null)
             g2.followPath(g2.clip, CLIP);
         g2.kid = true;
-        synchronized (kids) {
-            kids.add(g2);
-        }
+        if (this.kids == null)
+            this.kids = new ArrayList();
+        this.kids.add(new Integer(cb.getInternalBuffer().size()));
+        this.kids.add(g2);
         return g2;
     }
     
@@ -1122,17 +1123,36 @@ public class PdfGraphics2D extends Graphics2D {
             disposeCalled = true;
             cb.restoreState();
             cb.restoreState();
-            for (int k = 0; k < kids.size(); ++k) {
-                PdfGraphics2D g2 = (PdfGraphics2D)kids.get(k);
-                g2.cb.restoreState();
-                g2.cb.restoreState();
-                cb.add(g2.cb);
-                g2.dg2.dispose();
-                g2.dg2 = null;
-            }
             dg2.dispose();
             dg2 = null;
+            if (kids != null) {
+                ByteBuffer buf = new ByteBuffer();
+                internalDispose(buf);
+                ByteBuffer buf2 = cb.getInternalBuffer();
+                buf2.reset();
+                buf2.append(buf);
+            }
         }
+    }
+    
+    private void internalDispose(ByteBuffer buf) {
+        int last = 0;
+        int pos = 0;
+        ByteBuffer buf2 = cb.getInternalBuffer();
+        if (kids != null) {
+            for (int k = 0; k < kids.size(); k += 2) {
+                pos = ((Integer)kids.get(k)).intValue();
+                PdfGraphics2D g2 = (PdfGraphics2D)kids.get(k + 1);
+                g2.cb.restoreState();
+                g2.cb.restoreState();
+                buf.append(buf2.getBuffer(), last, pos - last);
+                g2.dg2.dispose();
+                g2.dg2 = null;
+                g2.internalDispose(buf);
+                last = pos;
+            }
+        }
+        buf.append(buf2.getBuffer(), last, buf2.size() - last);
     }
     
     ///////////////////////////////////////////////
