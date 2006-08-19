@@ -95,11 +95,11 @@ public class PdfGState extends PdfDictionary {
     }
 
     /**
-     * Sets the flag whether to apply overprint for stroking.
-     * @param ov
+     * Sets the flag whether to toogle knockout behavior for overprinted objects.
+     * @param ov - accepts 0 or 1
      */
     public void setOverPrintMode(int ov) {
-        put(PdfName.OPM, new PdfNumber(ov));
+        put(PdfName.OPM, new PdfNumber(ov==1 ? 1 : 0));
     }
     
     /**
