@@ -96,6 +96,14 @@ public class PdfGState extends PdfDictionary {
 
     /**
      * Sets the flag whether to toogle knockout behavior for overprinted objects.
+     * @param ov
+     */
+    public void setOverPrintMode(boolean ov) {
+        put(PdfName.OPM, new PdfNumber(ov ? 1 : 0));
+    }
+
+    /**
+     * Sets the flag whether to toogle knockout behavior for overprinted objects.
      * @param ov - accepts 0 or 1
      */
     public void setOverPrintMode(int ov) {
