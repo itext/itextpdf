@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -55,53 +55,49 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
- * <p>Company: </p>
- *
- * @author not attributable
- * @version 1.0
+ * TreeNode for PdfArray objects.
  */
-public class ArrayTreeNode
-    extends UpdateableTreeNode {
-  PdfArray arr;
+public class ArrayTreeNode extends UpdateableTreeNode {
 
-  public ArrayTreeNode(Object userObject,PdfArray arr) {
-    super(userObject);
-    this.arr=arr;
-  }
+	private static final long serialVersionUID = -7673793409827312609L;
 
-  public ArrayTreeNode(Object userObject, boolean allowchildren) {
-    super(userObject, allowchildren);
-  }
+	PdfArray arr;
 
-  /**
-   * updateview
-   *
-   * @param updateobject IUpdatenodeview
-   * @todo Implement this com.lowagie.tools.plugins.treeview.UpdateableTreeNode method
-   */
-  public void updateview(IUpdatenodeview updateobject) {
-     StringBuffer sb = new StringBuffer();
-     sb.append("<html>");
-     sb.append("<p>");
-     sb.append(this.userObject);
-     sb.append("</p>");
-     ArrayList arl = arr.getArrayList();
-   for (int i = 0; i < arl.size(); i++) {
-     sb.append("<p>");
-     sb.append(" " + arl.get(i).toString());
-     sb.append("</p>");
-   }
-   sb.append("</html>");
-     updateobject.showvalues(sb.toString());
-   }
-   public Icon getIcon(){
-        return new ImageIcon(TreeViewInternalFrame.class.getResource(
-                 "array.gif"));
-  }
+	public ArrayTreeNode(Object userObject, PdfArray arr) {
+		super(userObject);
+		this.arr = arr;
+	}
+
+	public ArrayTreeNode(Object userObject, boolean allowchildren) {
+		super(userObject, allowchildren);
+	}
+
+	/**
+	 * updateview
+	 * 
+	 * @param updateobject
+	 *            IUpdatenodeview
+	 * @todo Implement this
+	 *       com.lowagie.tools.plugins.treeview.UpdateableTreeNode method
+	 */
+	public void updateview(IUpdatenodeview updateobject) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>");
+		sb.append("<p>");
+		sb.append(this.userObject);
+		sb.append("</p>");
+		ArrayList arl = arr.getArrayList();
+		for (int i = 0; i < arl.size(); i++) {
+			sb.append("<p>");
+			sb.append(" " + arl.get(i).toString());
+			sb.append("</p>");
+		}
+		sb.append("</html>");
+		updateobject.showvalues(sb.toString());
+	}
+
+	public Icon getIcon() {
+		return new ImageIcon(TreeViewInternalFrame.class
+				.getResource("array.gif"));
+	}
 }
