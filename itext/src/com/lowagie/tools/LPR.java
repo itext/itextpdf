@@ -408,7 +408,7 @@ public class LPR {
 
 				out.writeBytes(queue + " \n");
 
-				LineNumberReader lnr = new LineNumberReader(in);
+				new LineNumberReader(in);
 				String line = in.readLine();
 				close(printer, in, out);
 
