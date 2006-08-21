@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -61,148 +61,152 @@ import com.lowagie.text.pdf.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-public class Pagetreenode
-    extends UpdateableTreeNode {
-  private com.lowagie.text.pdf.PdfDictionary dictionary;
+public class Pagetreenode extends UpdateableTreeNode {
 
-  private int seitennummer;
-  private float width;
-  private float height;
+	private static final long serialVersionUID = -3463874220927052895L;
 
-  public Pagetreenode(com.lowagie.text.pdf.PdfDictionary page, int seitennummer,
-                      ICommonAnalyzer pageanalyzer, PdfReader pdfreader) {
-    super();
-    this.dictionary = page;
-    this.seitennummer = seitennummer;
-    DefaultMutableTreeNode info;
+	private com.lowagie.text.pdf.PdfDictionary dictionary;
 
-    PdfArray arr = (PdfArray) page.get(PdfName.MEDIABOX);
-    float curwidth = 0;
-    float curheight = 0;
-    if (arr != null) {
-      ArrayList arl = arr.getArrayList();
-      curwidth = Float.parseFloat(arl.get(2).toString());
-      curheight = Float.parseFloat(arl.get(3).toString());
-      info = new SimpletextTreeNode(PdfName.MEDIABOX + " " + curwidth + "*" +
-                                    curheight);
-      this.add(info);
+	private int pagenumber;
 
-    }
-    PdfArray arrcrop = (PdfArray) page.get(PdfName.CROPBOX);
-    float curwidthcrop = 0;
-    float curheightcrop = 0;
-    if (arrcrop != null) {
-      ArrayList arl = arrcrop.getArrayList();
-      curwidthcrop = Float.parseFloat(arl.get(2).toString());
-      curheightcrop = Float.parseFloat(arl.get(3).toString());
-      info = new SimpletextTreeNode(PdfName.CROPBOX + " " + curwidthcrop + "*" +
-                                    curheightcrop);
-      this.add(info);
+	private float width;
 
-    }
+	private float height;
 
-    PdfNumber rotation = (PdfNumber) PdfReader.getPdfObject(page.get(PdfName.
-        ROTATE));
+	public Pagetreenode(com.lowagie.text.pdf.PdfDictionary page,
+			int seitennummer, ICommonAnalyzer pageanalyzer, PdfReader pdfreader) {
+		super();
+		this.dictionary = page;
+		this.pagenumber = seitennummer;
+		DefaultMutableTreeNode info;
 
-    if (rotation == null) {
-      System.out.println("Rotation missing");
-      rotation = new PdfNumber(0);
-    }
-    else {
-      info = new SimpletextTreeNode(PdfName.
-                                    ROTATE + " " + rotation);
-      this.add(info);
-    }
-    Rectangle rect = new Rectangle(curwidthcrop,
-                                   curheightcrop);
+		PdfArray arr = (PdfArray) page.get(PdfName.MEDIABOX);
+		float curwidth = 0;
+		float curheight = 0;
+		if (arr != null) {
+			ArrayList arl = arr.getArrayList();
+			curwidth = Float.parseFloat(arl.get(2).toString());
+			curheight = Float.parseFloat(arl.get(3).toString());
+			info = new SimpletextTreeNode(PdfName.MEDIABOX + " " + curwidth
+					+ "*" + curheight);
+			this.add(info);
 
-    if ( (rotation.floatValue() == 90) || (rotation.floatValue() == 270)) {
-      rect = rect.rotate();
-    }
+		}
+		PdfArray arrcrop = (PdfArray) page.get(PdfName.CROPBOX);
+		float curwidthcrop = 0;
+		float curheightcrop = 0;
+		if (arrcrop != null) {
+			ArrayList arl = arrcrop.getArrayList();
+			curwidthcrop = Float.parseFloat(arl.get(2).toString());
+			curheightcrop = Float.parseFloat(arl.get(3).toString());
+			info = new SimpletextTreeNode(PdfName.CROPBOX + " " + curwidthcrop
+					+ "*" + curheightcrop);
+			this.add(info);
 
-    width = rect.width();
-    height = rect.height();
+		}
 
-    //  ??? Dont want a backreference! PdfDictionary parent = (PdfDictionary) PdfReader.getPdfObject(page.get(PdfName.PARENT));
-    PdfArray dict = (PdfArray) PdfReader.getPdfObject(page.get(PdfName.ANNOTS));
-    if (dict != null) {
-      this.add(new SimpletextTreeNode(PdfName.ANNOTS + " " + dict.length()));
-      SimpletextTreeNode sttn = new SimpletextTreeNode(PdfName.ANNOTS + " " +
-         dict.type());
-     this.add(sttn);
-     pageanalyzer.iterateObjects(dict, pdfreader, sttn);
+		PdfNumber rotation = (PdfNumber) PdfReader.getPdfObject(page
+				.get(PdfName.ROTATE));
 
-    }
-    PdfObject reso = PdfReader.getPdfObject(page.get(PdfName.RESOURCES));
-    if (reso != null) {
-      SimpletextTreeNode sttn = new SimpletextTreeNode(PdfName.RESOURCES + " " +
-          reso.type());
-      this.add(sttn);
-      pageanalyzer.iterateObjects(reso, pdfreader, sttn);
-    }
+		if (rotation == null) {
+			System.out.println("Rotation missing");
+			rotation = new PdfNumber(0);
+		} else {
+			info = new SimpletextTreeNode(PdfName.ROTATE + " " + rotation);
+			this.add(info);
+		}
+		Rectangle rect = new Rectangle(curwidthcrop, curheightcrop);
 
-    PdfObject contents = PdfReader.getPdfObject(page.get(PdfName.CONTENTS));
-    if (contents != null) {
-      this.add(new TextpaneTreeNode(contents,"Content"));
+		if ((rotation.floatValue() == 90) || (rotation.floatValue() == 270)) {
+			rect = rect.rotate();
+		}
 
-      if (contents.isStream()) {
-        PRStream prstr = (PRStream) contents;
+		width = rect.width();
+		height = rect.height();
 
-        Set s = prstr.getKeys();
-        Iterator it = s.iterator();
+		// ??? Dont want a backreference! PdfDictionary parent = (PdfDictionary)
+		// PdfReader.getPdfObject(page.get(PdfName.PARENT));
+		PdfArray dict = (PdfArray) PdfReader.getPdfObject(page
+				.get(PdfName.ANNOTS));
+		if (dict != null) {
+			this.add(new SimpletextTreeNode(PdfName.ANNOTS + " "
+					+ dict.length()));
+			SimpletextTreeNode sttn = new SimpletextTreeNode(PdfName.ANNOTS
+					+ " " + dict.type());
+			this.add(sttn);
+			pageanalyzer.iterateObjects(dict, pdfreader, sttn);
 
-        while (it.hasNext()) {
-          Object obj = it.next();
-          System.out.println("Field:" + obj);
+		}
+		PdfObject reso = PdfReader.getPdfObject(page.get(PdfName.RESOURCES));
+		if (reso != null) {
+			SimpletextTreeNode sttn = new SimpletextTreeNode(PdfName.RESOURCES
+					+ " " + reso.type());
+			this.add(sttn);
+			pageanalyzer.iterateObjects(reso, pdfreader, sttn);
+		}
 
-          Object value = PdfReader.getPdfObject(prstr.get( (PdfName) obj));
-          System.out.println("Value:" + value);
-        }
-      }
-    }
-  }
+		PdfObject contents = PdfReader.getPdfObject(page.get(PdfName.CONTENTS));
+		if (contents != null) {
+			this.add(new TextpaneTreeNode(contents, "Content"));
 
-  public int getSeitennummer() {
-    return seitennummer;
-  }
+			if (contents.isStream()) {
+				PRStream prstr = (PRStream) contents;
 
-  public String toString() {
-    return "Page " + seitennummer;
-  }
+				Set s = prstr.getKeys();
+				Iterator it = s.iterator();
 
-  public float getWidth() {
-    return width;
-  }
+				while (it.hasNext()) {
+					Object obj = it.next();
+					System.out.println("Field:" + obj);
 
-  public float getHeight() {
-    return height;
-  }
+					Object value = PdfReader.getPdfObject(prstr
+							.get((PdfName) obj));
+					System.out.println("Value:" + value);
+				}
+			}
+		}
+	}
 
-  public void updateview(IUpdatenodeview updateobject) {
-    StringBuffer sb = new StringBuffer();
-    sb.append("<html>");
-    sb.append("<p>");
-    sb.append("Page " + getSeitennummer());
-    sb.append("</p>");
-    sb.append("<p>");
-    sb.append("Size: " + getWidth() + "*" + getHeight());
-    sb.append("</p>");
+	public int getPagenumber() {
+		return pagenumber;
+	}
 
-    Set set = dictionary.getKeys();
-    Iterator it = set.iterator();
-    while (it.hasNext()) {
-      sb.append("<p>");
-      sb.append("Key " + it.next().toString());
-      sb.append("</p>");
-    }
-    sb.append("</html>");
-    updateobject.showvalues(sb.toString());
-  }
+	public String toString() {
+		return "Page " + pagenumber;
+	}
 
-  public Icon getIcon(){
-    return new ImageIcon(TreeViewInternalFrame.class.getResource(
-             "pageonly.gif"));
-  }
+	public float getWidth() {
+		return width;
+	}
 
+	public float getHeight() {
+		return height;
+	}
+
+	public void updateview(IUpdatenodeview updateobject) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>");
+		sb.append("<p>");
+		sb.append("Page " + getPagenumber());
+		sb.append("</p>");
+		sb.append("<p>");
+		sb.append("Size: " + getWidth() + "*" + getHeight());
+		sb.append("</p>");
+
+		Set set = dictionary.getKeys();
+		Iterator it = set.iterator();
+		while (it.hasNext()) {
+			sb.append("<p>");
+			sb.append("Key " + it.next().toString());
+			sb.append("</p>");
+		}
+		sb.append("</html>");
+		updateobject.showvalues(sb.toString());
+	}
+
+	public Icon getIcon() {
+		return new ImageIcon(TreeViewInternalFrame.class
+				.getResource("pageonly.gif"));
+	}
 
 }
