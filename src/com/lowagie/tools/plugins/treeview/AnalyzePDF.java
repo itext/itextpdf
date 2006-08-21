@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -60,448 +60,475 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import com.lowagie.text.pdf.*;
+
 import java.util.Set;
 import java.util.Iterator;
 import javax.swing.table.TableModel;
 import javax.swing.table.AbstractTableModel;
 
-public class AnalyzePDF
-    extends Thread implements TreeModel, ICommonAnalyzer {
-  DefaultMutableTreeNode root;
-  DefaultMutableTreeNode filenode;
-  int pagecount;
-  ProgressDialog progressdialog;
-  int numberofpages;
-  ArrayList pageInh = new ArrayList();
-  private transient Vector treeModelListeners;
-  PdfReader reader;
+public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
+	DefaultMutableTreeNode root;
 
-  public AnalyzePDF(String infile,
-                    com.lowagie.tools.plugins.treeview.ProgressDialog blubb) {
-    this.progressdialog = blubb;
-    try {
-      reader = new PdfReader(infile);
-      root = new SimpletextTreeNode("Dokument");
-      filenode = new FileTreeNode(infile, reader);
-      root.add(filenode);
-      this.numberofpages = reader.getNumberOfPages();
-    }
-    catch (IOException ex) {
-    }
-    pagecount = 0;
-  }
+	DefaultMutableTreeNode filenode;
 
-  public TableModel getXReftable() {
-    TableModel tm = new AbstractTableModel() {
-      public int getColumnCount() {
-        return 2;
-      }
+	int pagecount;
 
-      public int getRowCount() {
-        return reader.getXrefSize() - 1;
-      }
+	ProgressDialog progressdialog;
 
-      public Object getValueAt(int rowIndex, int columnIndex) {
-        switch (columnIndex) {
-          case 0:
-            return new Integer(rowIndex + 1);
-          case 1:
-            PdfObject pdfob=reader.getPdfObject(rowIndex + 1);
-            if(pdfob.isStream()){
-             return "Stream "+pdfob;
-            }else{
-              return pdfob;
-            }
-          default:
-            return null;
-        }
-      }
+	int numberofpages;
 
-      /**
-       * Returns the name of the column at <code>columnIndex</code>.
-       *
-       * @param columnIndex the index of the column
-       * @return the name of the column
-       * @todo Implement this javax.swing.table.TableModel method
-       */
-      public String getColumnName(int columnIndex) {
-        switch (columnIndex) {
-         case 0:
-           return "XRefNr";
-         case 1:
-           return "Object";
-         default:
-           return null;
-       }
+	ArrayList pageInh = new ArrayList();
 
-      }
-    };
-    return tm;
-  }
+	private transient Vector treeModelListeners;
 
-  /**
-   * Walk down the Pagetree
-   * @param page PdfDictionary
-   * @param pdfreader PdfReader
-   * @param count_in_leaf int
-   * @param node DefaultMutableTreeNode
-   */
-  protected void iteratePages(PdfDictionary page, PdfReader pdfreader,
-                              DefaultMutableTreeNode node) {
-    DefaultMutableTreeNode leaf;
+	PdfReader reader;
 
-    PdfArray kidsPR = (PdfArray) PdfReader.getPdfObject(page.get(PdfName.KIDS));
-    if (kidsPR == null) {
-      node.add(new Pagetreenode(page, pagecount, this, pdfreader));
-      System.out.println("Page= " + (pagecount + 1));
-      pageInh.add(pagecount, page);
-      pagecount++;
-    }
-    else {
-      leaf = new PagelistTreeNode(kidsPR);
-      node.add(leaf);
-      page.put(PdfName.TYPE, PdfName.PAGES);
-      ArrayList kids = kidsPR.getArrayList();
-      for (int k = 0; k < kids.size(); ++k) {
-        PdfDictionary kid = (PdfDictionary) PdfReader.getPdfObject( (
-            PRIndirectReference) kids.get(k));
-        iteratePages(kid, pdfreader, leaf);
-      }
-    }
-  }
+	public AnalyzePDF(String infile,
+			com.lowagie.tools.plugins.treeview.ProgressDialog blubb) {
+		this.progressdialog = blubb;
+		try {
+			reader = new PdfReader(infile);
+			root = new SimpletextTreeNode("Dokument");
+			filenode = new FileTreeNode(infile, reader);
+			root.add(filenode);
+			this.numberofpages = reader.getNumberOfPages();
+		} catch (IOException ex) {
+		}
+		pagecount = 0;
+	}
 
-  protected void iterateOutlines(PdfDictionary outlines, PdfReader pdfreader,
-                                 DefaultMutableTreeNode node) {
-    DefaultMutableTreeNode leaf;
-    PdfDictionary kid = outlines;
-    do {
-      PdfString title = (PdfString) pdfreader.getPdfObject(
-          kid.get(PdfName.TITLE));
-      leaf = new OutlinelistTreeNode(title, kid);
-      node.add(leaf);
-      PdfDictionary first = (PdfDictionary) PdfReader.getPdfObject( (
-          PRIndirectReference) kid.get(PdfName.FIRST));
-      if (first != null) {
-        iterateOutlines(first, pdfreader, leaf);
-      }
-      else {
-        PdfDictionary se = (PdfDictionary) PdfReader.getPdfObject( (
-            PRIndirectReference) kid.get(new PdfName("SE")));
-        if (se != null) {
-          iterateObjects(se, pdfreader, leaf);
-        }
-        PdfObject dest = (PdfObject) pdfreader.getPdfObject(kid.get(PdfName.
-            DEST));
-        if (dest != null) {
-          iterateObjects(dest, pdfreader, leaf);
-        }
-        PdfObject a = (PdfObject) pdfreader.getPdfObject(kid.get(PdfName.A));
-        if (a != null) {
-          iterateObjects(a, pdfreader, leaf);
-        }
-      }
-    }
-    while ( (kid = (PdfDictionary) pdfreader.getPdfObject(kid.get(PdfName.NEXT))) != null);
-  }
+	public TableModel getXReftable() {
+		TableModel tm = new AbstractTableModel() {
 
-  /**
-   * Recursive investigate PDF Objecttree (other than pagetree objects!)
-   * @param pdfobj PdfObject
-   * @param pdfreader PdfReader
-   * @param node DefaultMutableTreeNode
-   */
-  public void iterateObjects(PdfObject pdfobj, PdfReader pdfreader,
-                             DefaultMutableTreeNode node) {
-    DefaultMutableTreeNode leaf;
-    if (pdfobj.isDictionary()) {
-      leaf = new DictionaryTreeNode("PdfDictionary " + pdfobj,
-                                    (PdfDictionary) pdfobj);
-      node.add(leaf);
-      Set s = ( (PdfDictionary) pdfobj).getKeys();
-      Iterator it = s.iterator();
-      int i = 0;
-      while (it.hasNext()) {
-        i++;
-        Object obj = it.next();
-//        System.out.println("Feld:" + obj);
+			private static final long serialVersionUID = 8820950528057757413L;
 
-        PdfObject value = PdfReader.getPdfObject( ( (PdfDictionary) pdfobj).get( (
-            PdfName) obj));
-//        System.out.println("Value:" + value);
-        SimpletextTreeNode sttn = new SimpletextTreeNode(obj + " " + value);
-        leaf.add(sttn);
-        if (obj.equals(PdfName.PARENT)) {
-          continue;
-        }
-        if (value != null) {
-          iterateObjects(value, pdfreader, sttn);
-        }
-      }
-    }
-    else if (pdfobj.isArray()) {
-      leaf = new ArrayTreeNode("PdfArray " + pdfobj, (PdfArray) pdfobj);
-      node.add(leaf);
-      ArrayList kids = ( (PdfArray) pdfobj).getArrayList();
-      for (int k = 0; k < kids.size(); ++k) {
-        PdfObject curkid = (PdfObject) kids.get(k);
-        if (curkid.isIndirect()) {
-          PdfObject kid = PdfReader.getPdfObject( (
-              PRIndirectReference) kids.get(k));
-          if (kid != null) {
-            iterateObjects(kid, pdfreader, leaf);
-          }
-        }
-        else if (curkid.isNumber()) {
+			public int getColumnCount() {
+				return 2;
+			}
 
-        }
-        else {
-          PdfObject kid = (PdfObject) kids.get(k);
-          iterateObjects(kid, pdfreader, leaf);
-        }
-      }
-    }
-    else if (pdfobj.isIndirect()) {
-      leaf = new SimpletextTreeNode("PRIndirectReference " + pdfobj);
-      node.add(leaf);
-      PdfObject target = PdfReader.getPdfObject( (
-          PRIndirectReference) pdfobj);
-      if (target != null) {
-        iterateObjects(target, pdfreader, leaf);
-      }
-    }
-    else if (pdfobj.isBoolean()) {
-//      leaf = new SimpletextTreeNode("Boolean " + pdfobj);
-//      node.add(leaf);
-    }
-    else if (pdfobj.isName()) {
-//      leaf = new SimpletextTreeNode("Name " + pdfobj);
-//      node.add(leaf);
-    }
-    else if (pdfobj.isNull()) {
-//      leaf = new SimpletextTreeNode("Null " + pdfobj);
-//      node.add(leaf);
-    }
-    else if (pdfobj.isNumber()) {
-//      leaf = new SimpletextTreeNode("Number " + pdfobj);
-//      node.add(leaf);
-    }
-    else if (pdfobj.isString()) {
-//      leaf = new SimpletextTreeNode("String " + pdfobj);
-//      node.add(leaf);
-    }
- else if (pdfobj.isStream()) {
-      leaf = new TextpaneTreeNode(pdfobj,"Stream");
-      node.add(leaf);
-      leaf = new DictionaryTreeNode("PdfDictionary " + pdfobj,
-                                  (PdfDictionary) pdfobj);
-    node.add(leaf);
-    Set s = ( (PdfDictionary) pdfobj).getKeys();
-    Iterator it = s.iterator();
-    int i = 0;
-    while (it.hasNext()) {
-      i++;
-      Object obj = it.next();
-//        System.out.println("Feld:" + obj);
+			public int getRowCount() {
+				return reader.getXrefSize() - 1;
+			}
 
-      PdfObject value = PdfReader.getPdfObject( ( (PdfDictionary) pdfobj).get( (
-          PdfName) obj));
-//        System.out.println("Value:" + value);
-      SimpletextTreeNode sttn = new SimpletextTreeNode(obj + " " + value);
-      leaf.add(sttn);
-      if (obj.equals(PdfName.PARENT)) {
-        continue;
-      }
-      if (value != null) {
-        iterateObjects(value, pdfreader, sttn);
-      }
-    }
+			public Object getValueAt(int rowIndex, int columnIndex) {
+				switch (columnIndex) {
+				case 0:
+					return new Integer(rowIndex + 1);
+				case 1:
+					PdfObject pdfob = reader.getPdfObject(rowIndex + 1);
+					if (pdfob.isStream()) {
+						return "Stream " + pdfob;
+					} else {
+						return pdfob;
+					}
+				default:
+					return null;
+				}
+			}
 
- }
+			/**
+			 * Returns the name of the column at <code>columnIndex</code>.
+			 * 
+			 * @param columnIndex
+			 *            the index of the column
+			 * @return the name of the column
+			 * @todo Implement this javax.swing.table.TableModel method
+			 */
+			public String getColumnName(int columnIndex) {
+				switch (columnIndex) {
+				case 0:
+					return "XRefNr";
+				case 1:
+					return "Object";
+				default:
+					return null;
+				}
 
-    else {
-      leaf = new SimpletextTreeNode("Unknown " + pdfobj);
-      node.add(leaf);
-    }
+			}
+		};
+		return tm;
+	}
 
-  }
+	/**
+	 * Walk down the Pagetree
+	 * 
+	 * @param page
+	 *            PdfDictionary
+	 * @param pdfreader
+	 *            PdfReader
+	 * @param count_in_leaf
+	 *            int
+	 * @param node
+	 *            DefaultMutableTreeNode
+	 */
+	protected void iteratePages(PdfDictionary page, PdfReader pdfreader,
+			DefaultMutableTreeNode node) {
+		DefaultMutableTreeNode leaf;
 
-  /**
-   * Returns the root of the tree.
-   *
-   * @return the root of the tree
-   * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
-   */
-  public Object getRoot() {
-    return root;
-  }
+		PdfArray kidsPR = (PdfArray) PdfReader.getPdfObject(page
+				.get(PdfName.KIDS));
+		if (kidsPR == null) {
+			node.add(new Pagetreenode(page, pagecount, this, pdfreader));
+			System.out.println("Page= " + (pagecount + 1));
+			pageInh.add(pagecount, page);
+			pagecount++;
+		} else {
+			leaf = new PagelistTreeNode(kidsPR);
+			node.add(leaf);
+			page.put(PdfName.TYPE, PdfName.PAGES);
+			ArrayList kids = kidsPR.getArrayList();
+			for (int k = 0; k < kids.size(); ++k) {
+				PdfDictionary kid = (PdfDictionary) PdfReader
+						.getPdfObject((PRIndirectReference) kids.get(k));
+				iteratePages(kid, pdfreader, leaf);
+			}
+		}
+	}
 
-  /**
-   * Returns the child of <code>parent</code> at index <code>index</code> in the
-   * parent's child array.
-   *
-   * @param parent a node in the tree, obtained from this data source
-   * @param index int
-   * @return the child of <code>parent</code> at index <code>index</code>
-   * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
-   */
-  public Object getChild(Object parent, int index) {
-    DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
-    return node.getChildAt(index);
-  }
+	protected void iterateOutlines(PdfDictionary outlines, PdfReader pdfreader,
+			DefaultMutableTreeNode node) {
+		DefaultMutableTreeNode leaf;
+		PdfDictionary kid = outlines;
+		do {
+			PdfString title = (PdfString) PdfReader.getPdfObject(kid
+					.get(PdfName.TITLE));
+			leaf = new OutlinelistTreeNode(title, kid);
+			node.add(leaf);
+			PdfDictionary first = (PdfDictionary) PdfReader
+					.getPdfObject((PRIndirectReference) kid.get(PdfName.FIRST));
+			if (first != null) {
+				iterateOutlines(first, pdfreader, leaf);
+			} else {
+				PdfDictionary se = (PdfDictionary) PdfReader
+						.getPdfObject((PRIndirectReference) kid
+								.get(new PdfName("SE")));
+				if (se != null) {
+					iterateObjects(se, pdfreader, leaf);
+				}
+				PdfObject dest = (PdfObject) PdfReader.getPdfObject(kid
+						.get(PdfName.DEST));
+				if (dest != null) {
+					iterateObjects(dest, pdfreader, leaf);
+				}
+				PdfObject a = (PdfObject) PdfReader.getPdfObject(kid
+						.get(PdfName.A));
+				if (a != null) {
+					iterateObjects(a, pdfreader, leaf);
+				}
+			}
+		} while ((kid = (PdfDictionary) PdfReader.getPdfObject(kid
+				.get(PdfName.NEXT))) != null);
+	}
 
-  /**
-   * Returns the number of children of <code>parent</code>.
-   *
-   * @param parent a node in the tree, obtained from this data source
-   * @return the number of children of the node <code>parent</code>
-   * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
-   */
-  public int getChildCount(Object parent) {
-    DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
-    return node.getChildCount();
-  }
+	/**
+	 * Recursive investigate PDF Objecttree (other than pagetree objects!)
+	 * 
+	 * @param pdfobj
+	 *            PdfObject
+	 * @param pdfreader
+	 *            PdfReader
+	 * @param node
+	 *            DefaultMutableTreeNode
+	 */
+	public void iterateObjects(PdfObject pdfobj, PdfReader pdfreader,
+			DefaultMutableTreeNode node) {
+		DefaultMutableTreeNode leaf;
+		if (pdfobj.isDictionary()) {
+			leaf = new DictionaryTreeNode("PdfDictionary " + pdfobj,
+					(PdfDictionary) pdfobj);
+			node.add(leaf);
+			Set s = ((PdfDictionary) pdfobj).getKeys();
+			Iterator it = s.iterator();
+			int i = 0;
+			while (it.hasNext()) {
+				i++;
+				Object obj = it.next();
+				// System.out.println("Feld:" + obj);
 
-  /**
-   * Returns <code>true</code> if <code>node</code> is a leaf.
-   *
-   * @param node a node in the tree, obtained from this data source
-   * @return true if <code>node</code> is a leaf
-   * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
-   */
-  public boolean isLeaf(Object node) {
-    DefaultMutableTreeNode leaf = (DefaultMutableTreeNode) node;
-    return leaf.isLeaf();
-  }
+				PdfObject value = PdfReader
+						.getPdfObject(((PdfDictionary) pdfobj)
+								.get((PdfName) obj));
+				// System.out.println("Value:" + value);
+				SimpletextTreeNode sttn = new SimpletextTreeNode(obj + " "
+						+ value);
+				leaf.add(sttn);
+				if (obj.equals(PdfName.PARENT)) {
+					continue;
+				}
+				if (value != null) {
+					iterateObjects(value, pdfreader, sttn);
+				}
+			}
+		} else if (pdfobj.isArray()) {
+			leaf = new ArrayTreeNode("PdfArray " + pdfobj, (PdfArray) pdfobj);
+			node.add(leaf);
+			ArrayList kids = ((PdfArray) pdfobj).getArrayList();
+			for (int k = 0; k < kids.size(); ++k) {
+				PdfObject curkid = (PdfObject) kids.get(k);
+				if (curkid.isIndirect()) {
+					PdfObject kid = PdfReader
+							.getPdfObject((PRIndirectReference) kids.get(k));
+					if (kid != null) {
+						iterateObjects(kid, pdfreader, leaf);
+					}
+				} else if (curkid.isNumber()) {
 
-  /**
-   * Messaged when the user has altered the value for the item identified by
-   * <code>path</code> to <code>newValue</code>.
-   *
-   * @param path path to the node that the user has altered
-   * @param newValue the new value from the TreeCellEditor
-   * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
-   */
-  public void valueForPathChanged(TreePath path, Object newValue) {
-    throw new RuntimeException("Manipulation of objecttree not yet supported!");
-  }
+				} else {
+					PdfObject kid = (PdfObject) kids.get(k);
+					iterateObjects(kid, pdfreader, leaf);
+				}
+			}
+		} else if (pdfobj.isIndirect()) {
+			leaf = new SimpletextTreeNode("PRIndirectReference " + pdfobj);
+			node.add(leaf);
+			PdfObject target = PdfReader
+					.getPdfObject((PRIndirectReference) pdfobj);
+			if (target != null) {
+				iterateObjects(target, pdfreader, leaf);
+			}
+		} else if (pdfobj.isBoolean()) {
+			// leaf = new SimpletextTreeNode("Boolean " + pdfobj);
+			// node.add(leaf);
+		} else if (pdfobj.isName()) {
+			// leaf = new SimpletextTreeNode("Name " + pdfobj);
+			// node.add(leaf);
+		} else if (pdfobj.isNull()) {
+			// leaf = new SimpletextTreeNode("Null " + pdfobj);
+			// node.add(leaf);
+		} else if (pdfobj.isNumber()) {
+			// leaf = new SimpletextTreeNode("Number " + pdfobj);
+			// node.add(leaf);
+		} else if (pdfobj.isString()) {
+			// leaf = new SimpletextTreeNode("String " + pdfobj);
+			// node.add(leaf);
+		} else if (pdfobj.isStream()) {
+			leaf = new TextpaneTreeNode(pdfobj, "Stream");
+			node.add(leaf);
+			leaf = new DictionaryTreeNode("PdfDictionary " + pdfobj,
+					(PdfDictionary) pdfobj);
+			node.add(leaf);
+			Set s = ((PdfDictionary) pdfobj).getKeys();
+			Iterator it = s.iterator();
+			int i = 0;
+			while (it.hasNext()) {
+				i++;
+				Object obj = it.next();
+				// System.out.println("Feld:" + obj);
 
-  /**
-   * Returns the index of child in parent.
-   *
-   * @param parent a note in the tree, obtained from this data source
-   * @param child the node we are interested in
-   * @return the index of the child in the parent, or -1 if either
-   *   <code>child</code> or <code>parent</code> are <code>null</code>
-   * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
-   */
-  public int getIndexOfChild(Object parent, Object child) {
-    DefaultMutableTreeNode parentobj = (DefaultMutableTreeNode) parent;
-    DefaultMutableTreeNode childobj = (DefaultMutableTreeNode) child;
-    return parentobj.getIndex(childobj);
-  }
+				PdfObject value = PdfReader
+						.getPdfObject(((PdfDictionary) pdfobj)
+								.get((PdfName) obj));
+				// System.out.println("Value:" + value);
+				SimpletextTreeNode sttn = new SimpletextTreeNode(obj + " "
+						+ value);
+				leaf.add(sttn);
+				if (obj.equals(PdfName.PARENT)) {
+					continue;
+				}
+				if (value != null) {
+					iterateObjects(value, pdfreader, sttn);
+				}
+			}
 
-  public synchronized void removeTreeModelListener(TreeModelListener l) {
-    if (treeModelListeners != null && treeModelListeners.contains(l)) {
-      Vector v = (Vector) treeModelListeners.clone();
-      v.removeElement(l);
-      treeModelListeners = v;
-    }
-  }
+		}
 
-  public synchronized void addTreeModelListener(TreeModelListener l) {
-    Vector v = treeModelListeners == null ? new Vector(2) :
-        (Vector) treeModelListeners.clone();
-    if (!v.contains(l)) {
-      v.addElement(l);
-      treeModelListeners = v;
-    }
-  }
+		else {
+			leaf = new SimpletextTreeNode("Unknown " + pdfobj);
+			node.add(leaf);
+		}
 
-  protected void fireTreeNodesChanged(TreeModelEvent e) {
-    if (treeModelListeners != null) {
-      Vector listeners = treeModelListeners;
-      int count = listeners.size();
-      for (int i = 0; i < count; i++) {
-        ( (TreeModelListener) listeners.elementAt(i)).treeNodesChanged(e);
-      }
-    }
-  }
+	}
 
-  protected void fireTreeNodesInserted(TreeModelEvent e) {
-    if (treeModelListeners != null) {
-      Vector listeners = treeModelListeners;
-      int count = listeners.size();
-      for (int i = 0; i < count; i++) {
-        ( (TreeModelListener) listeners.elementAt(i)).treeNodesInserted(e);
-      }
-    }
-  }
+	/**
+	 * Returns the root of the tree.
+	 * 
+	 * @return the root of the tree
+	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
+	 */
+	public Object getRoot() {
+		return root;
+	}
 
-  protected void fireTreeNodesRemoved(TreeModelEvent e) {
-    if (treeModelListeners != null) {
-      Vector listeners = treeModelListeners;
-      int count = listeners.size();
-      for (int i = 0; i < count; i++) {
-        ( (TreeModelListener) listeners.elementAt(i)).treeNodesRemoved(e);
-      }
-    }
-  }
+	/**
+	 * Returns the child of <code>parent</code> at index <code>index</code>
+	 * in the parent's child array.
+	 * 
+	 * @param parent
+	 *            a node in the tree, obtained from this data source
+	 * @param index
+	 *            int
+	 * @return the child of <code>parent</code> at index <code>index</code>
+	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
+	 */
+	public Object getChild(Object parent, int index) {
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
+		return node.getChildAt(index);
+	}
 
-  protected void fireTreeStructureChanged(TreeModelEvent e) {
-    if (treeModelListeners != null) {
-      Vector listeners = treeModelListeners;
-      int count = listeners.size();
-      for (int i = 0; i < count; i++) {
-        ( (TreeModelListener) listeners.elementAt(i)).treeStructureChanged(e);
-      }
-    }
-  }
+	/**
+	 * Returns the number of children of <code>parent</code>.
+	 * 
+	 * @param parent
+	 *            a node in the tree, obtained from this data source
+	 * @return the number of children of the node <code>parent</code>
+	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
+	 */
+	public int getChildCount(Object parent) {
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
+		return node.getChildCount();
+	}
 
-  /**
-   * When an object implementing interface <code>Runnable</code> is used to
-   * create a thread, starting the thread causes the object's <code>run</code>
-   * method to be called in that separately executing thread.
-   *
-   * @todo Diese java.lang.Runnable-Methode implementieren
-   */
-  public void run() {
-    try {
-      PdfDictionary catalog = reader.getCatalog();
-      PdfDictionary rootPages = (PdfDictionary) PdfReader.getPdfObject(
-          catalog.get(PdfName.PAGES));
-      DefaultMutableTreeNode rootPagesGUI = new SimpletextTreeNode("Pagetree " +
-          rootPages);
-      filenode.add(rootPagesGUI);
-      iteratePages(rootPages, reader, rootPagesGUI);
+	/**
+	 * Returns <code>true</code> if <code>node</code> is a leaf.
+	 * 
+	 * @param node
+	 *            a node in the tree, obtained from this data source
+	 * @return true if <code>node</code> is a leaf
+	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
+	 */
+	public boolean isLeaf(Object node) {
+		DefaultMutableTreeNode leaf = (DefaultMutableTreeNode) node;
+		return leaf.isLeaf();
+	}
 
-      PdfDictionary rootOutlines = (PdfDictionary) PdfReader.getPdfObject(
-          catalog.get(PdfName.OUTLINES));
-      if (rootOutlines != null) {
-        DefaultMutableTreeNode outlinetree = new SimpletextTreeNode(
-            "Outlinetree " + rootOutlines);
-        filenode.add(outlinetree);
-        PdfObject firstindref = rootOutlines.get(PdfName.FIRST);
-        if (firstindref != null) {
-          PdfDictionary first = (PdfDictionary) PdfReader.getPdfObject( (
-              PRIndirectReference) firstindref);
-          if (first != null) {
-            iterateOutlines(first, reader, outlinetree);
-          }
-        }
-      }
-      System.out.println(" Pagecount= " + pagecount);
-      progressdialog.setVisible(false);
-    }
-    catch (Exception e) {
-      e.printStackTrace(System.out);
-    }
-  }
+	/**
+	 * Messaged when the user has altered the value for the item identified by
+	 * <code>path</code> to <code>newValue</code>.
+	 * 
+	 * @param path
+	 *            path to the node that the user has altered
+	 * @param newValue
+	 *            the new value from the TreeCellEditor
+	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
+	 */
+	public void valueForPathChanged(TreePath path, Object newValue) {
+		throw new RuntimeException(
+				"Manipulation of objecttree not yet supported!");
+	}
 
-  public int getPagecount() {
-    return pagecount;
-  }
+	/**
+	 * Returns the index of child in parent.
+	 * 
+	 * @param parent
+	 *            a note in the tree, obtained from this data source
+	 * @param child
+	 *            the node we are interested in
+	 * @return the index of the child in the parent, or -1 if either
+	 *         <code>child</code> or <code>parent</code> are
+	 *         <code>null</code>
+	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
+	 */
+	public int getIndexOfChild(Object parent, Object child) {
+		DefaultMutableTreeNode parentobj = (DefaultMutableTreeNode) parent;
+		DefaultMutableTreeNode childobj = (DefaultMutableTreeNode) child;
+		return parentobj.getIndex(childobj);
+	}
 
-  public void updatecount() {
-    progressdialog.setAktuelleseite(getPagecount());
-  }
+	public synchronized void removeTreeModelListener(TreeModelListener l) {
+		if (treeModelListeners != null && treeModelListeners.contains(l)) {
+			Vector v = (Vector) treeModelListeners.clone();
+			v.removeElement(l);
+			treeModelListeners = v;
+		}
+	}
+
+	public synchronized void addTreeModelListener(TreeModelListener l) {
+		Vector v = treeModelListeners == null ? new Vector(2)
+				: (Vector) treeModelListeners.clone();
+		if (!v.contains(l)) {
+			v.addElement(l);
+			treeModelListeners = v;
+		}
+	}
+
+	protected void fireTreeNodesChanged(TreeModelEvent e) {
+		if (treeModelListeners != null) {
+			Vector listeners = treeModelListeners;
+			int count = listeners.size();
+			for (int i = 0; i < count; i++) {
+				((TreeModelListener) listeners.elementAt(i))
+						.treeNodesChanged(e);
+			}
+		}
+	}
+
+	protected void fireTreeNodesInserted(TreeModelEvent e) {
+		if (treeModelListeners != null) {
+			Vector listeners = treeModelListeners;
+			int count = listeners.size();
+			for (int i = 0; i < count; i++) {
+				((TreeModelListener) listeners.elementAt(i))
+						.treeNodesInserted(e);
+			}
+		}
+	}
+
+	protected void fireTreeNodesRemoved(TreeModelEvent e) {
+		if (treeModelListeners != null) {
+			Vector listeners = treeModelListeners;
+			int count = listeners.size();
+			for (int i = 0; i < count; i++) {
+				((TreeModelListener) listeners.elementAt(i))
+						.treeNodesRemoved(e);
+			}
+		}
+	}
+
+	protected void fireTreeStructureChanged(TreeModelEvent e) {
+		if (treeModelListeners != null) {
+			Vector listeners = treeModelListeners;
+			int count = listeners.size();
+			for (int i = 0; i < count; i++) {
+				((TreeModelListener) listeners.elementAt(i))
+						.treeStructureChanged(e);
+			}
+		}
+	}
+
+	/**
+	 * When an object implementing interface <code>Runnable</code> is used to
+	 * create a thread, starting the thread causes the object's <code>run</code>
+	 * method to be called in that separately executing thread.
+	 * 
+	 * @todo Diese java.lang.Runnable-Methode implementieren
+	 */
+	public void run() {
+		try {
+			PdfDictionary catalog = reader.getCatalog();
+			PdfDictionary rootPages = (PdfDictionary) PdfReader
+					.getPdfObject(catalog.get(PdfName.PAGES));
+			DefaultMutableTreeNode rootPagesGUI = new SimpletextTreeNode(
+					"Pagetree " + rootPages);
+			filenode.add(rootPagesGUI);
+			iteratePages(rootPages, reader, rootPagesGUI);
+
+			PdfDictionary rootOutlines = (PdfDictionary) PdfReader
+					.getPdfObject(catalog.get(PdfName.OUTLINES));
+			if (rootOutlines != null) {
+				DefaultMutableTreeNode outlinetree = new SimpletextTreeNode(
+						"Outlinetree " + rootOutlines);
+				filenode.add(outlinetree);
+				PdfObject firstindref = rootOutlines.get(PdfName.FIRST);
+				if (firstindref != null) {
+					PdfDictionary first = (PdfDictionary) PdfReader
+							.getPdfObject((PRIndirectReference) firstindref);
+					if (first != null) {
+						iterateOutlines(first, reader, outlinetree);
+					}
+				}
+			}
+			System.out.println(" Pagecount= " + pagecount);
+			progressdialog.setVisible(false);
+		} catch (Exception e) {
+			e.printStackTrace(System.out);
+		}
+	}
+
+	public int getPagecount() {
+		return pagecount;
+	}
+
+	public void updatecount() {
+		progressdialog.setAktuelleseite(getPagecount());
+	}
 }
