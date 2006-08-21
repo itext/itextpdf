@@ -297,7 +297,8 @@ public class TiffImage {
                 case TIFFConstants.PHOTOMETRIC_PALETTE:
                     break;
                 default:
-                    throw new IllegalArgumentException("The photometric " + photometric + " is not supported.");
+                    if (compression != TIFFConstants.COMPRESSION_OJPEG && compression != TIFFConstants.COMPRESSION_JPEG)
+                        throw new IllegalArgumentException("The photometric " + photometric + " is not supported.");
             }
             float rotation = 0;
             if (dir.isTagPresent(TIFFConstants.TIFFTAG_ORIENTATION)) {
@@ -386,6 +387,8 @@ public class TiffImage {
                 byte[] jpeg = new byte[Math.min(jpegLength, s.length() - jpegOffset)];
 
                 int posFilePointer = s.getFilePointer();
+                posFilePointer += jpegOffset;
+                s.seek(posFilePointer);
                 s.readFully(jpeg);
                 img = new Jpeg(jpeg);
             } 
