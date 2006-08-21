@@ -85,9 +85,14 @@ public class BuildTutorial {
 			dest.mkdir();
 			File current;
 			File[] xmlFiles = source.listFiles();
-			for (int i = 0; i < xmlFiles.length; i++) {
-				current = xmlFiles[i];
-				action(current, dest, xsl_examples, xsl_site);
+			if (xmlFiles != null) {
+				for (int i = 0; i < xmlFiles.length; i++) {
+					current = xmlFiles[i];
+					action(current, dest, xsl_examples, xsl_site);
+				}
+			}
+			else {
+				System.out.println("... skipped");
 			}
 		}
 		else if (source.getName().equals("index.xml")) {
