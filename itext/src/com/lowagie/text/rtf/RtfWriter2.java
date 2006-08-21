@@ -51,12 +51,15 @@
 package com.lowagie.text.rtf;
 
 import com.lowagie.text.*;
+import com.lowagie.text.rtf.direct.RtfImportMappings;
+import com.lowagie.text.rtf.direct.RtfParser;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.document.RtfDocumentSettings;
 import com.lowagie.text.rtf.text.RtfNewPage;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Reader;
 
 /**
  * The RtfWriter allows the creation of rtf documents via the iText system
@@ -68,7 +71,7 @@ public class RtfWriter2 extends DocWriter implements DocListener {
     /**
      * The RtfDocument this RtfWriter is creating
      */
-    RtfDocument rtfDoc = null;
+    private RtfDocument rtfDoc = null;
     
     /**
      * Constructs a new RtfWriter that listens to the specified Document and
@@ -159,6 +162,7 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      * Opens the RtfDocument
      */
     public void open() {
+    	super.open();
     }
     
     /**
@@ -175,6 +179,7 @@ public class RtfWriter2 extends DocWriter implements DocListener {
             ioe.printStackTrace();
         }
         this.rtfDoc = new RtfDocument();
+    	super.close();
     }
 
     /**
@@ -264,5 +269,41 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      */
     public RtfDocumentSettings getDocumentSettings() {
         return this.rtfDoc.getDocumentSettings();
+    }
+    
+    /**
+     * Adds the complete RTF document to the current RTF document being generated.
+     * It will parse the font and color tables and correct the font and color references
+     * so that the imported RTF document retains its formattings.
+     * 
+     * @param documentSource The Reader to read the RTF document from.
+     * @throws IOException On errors reading the RTF document.
+     * @throws DocumentException On errors adding to this RTF document.
+     */
+    public void importRtfDocument(Reader documentSource) throws IOException, DocumentException {
+    	if(!this.open) {
+    		throw new DocumentException("The document must be open to import RTF documents.");
+    	}
+    	RtfParser rtfImport = new RtfParser();
+    	rtfImport.importRtfDocument(documentSource, this.rtfDoc);
+    }
+    
+    /**
+     * Adds a fragment of an RTF document to the current RTF document being generated.
+     * Since this fragment doesn't contain font or color tables, all fonts and colors
+     * are mapped to the default font and color. If the font and color mappings are
+     * known, they can be specified via the mappings parameter.
+     * 
+     * @param documentSource The Reader to read the RTF fragment from.
+     * @param mappings The RtfImportMappings that contain font and color mappings to apply to the fragment.
+     * @throws IOException On errors reading the RTF fragment.
+     * @throws DocumentException On errors adding to this RTF fragment.
+     */
+    public void importRtfFragment(Reader documentSource, RtfImportMappings mappings) throws IOException, DocumentException {
+    	if(!this.open) {
+    		throw new DocumentException("The document must be open to import RTF fragments.");
+    	}
+    	RtfParser rtfImport = new RtfParser();
+    	rtfImport.importRtfFragment(documentSource, this.rtfDoc, mappings);
     }
 }
