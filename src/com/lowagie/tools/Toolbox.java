@@ -83,6 +83,7 @@ import java.awt.Dimension;
  */
 public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 
+	private static final long serialVersionUID = -3766198389452935073L;
 	/** The DesktopPane of the toolbox. */
 	private JDesktopPane desktop;
 	/** The ConsolePane of the toolbox. */
