@@ -529,6 +529,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	}
 
 	public void updatecount() {
-		progressdialog.setAktuelleseite(getPagecount());
+		progressdialog.setCurrentPage(getPagecount());
 	}
 }
