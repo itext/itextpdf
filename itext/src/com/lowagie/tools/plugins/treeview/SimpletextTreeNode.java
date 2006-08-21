@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -50,20 +50,21 @@
 
 package com.lowagie.tools.plugins.treeview;
 
-public class SimpletextTreeNode
-    extends UpdateableTreeNode {
+public class SimpletextTreeNode extends UpdateableTreeNode {
 
-  public SimpletextTreeNode(Object p0) {
-    super(p0);
-  }
+	private static final long serialVersionUID = -3607980103983635182L;
 
-  public void updateview(IUpdatenodeview updateobject) {
-    StringBuffer sb = new StringBuffer();
-    sb.append("<html>");
-    sb.append("<p>");
-    sb.append(this.userObject);
-    sb.append("</p>");
-    sb.append("</html>");
-    updateobject.showvalues(sb.toString());
-  }
+	public SimpletextTreeNode(Object p0) {
+		super(p0);
+	}
+
+	public void updateview(IUpdatenodeview updateobject) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>");
+		sb.append("<p>");
+		sb.append(this.userObject);
+		sb.append("</p>");
+		sb.append("</html>");
+		updateobject.showvalues(sb.toString());
+	}
 }

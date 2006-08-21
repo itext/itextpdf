@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -55,25 +55,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
 /**
- *
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
- * <p>Company: </p>
- *
- * @author not attributable
- * @version 1.0
+ * Interface with one method to iterate over iText PDF objects.
  */
 public interface ICommonAnalyzer {
   /**
-   *
+   * Method that iterates over the iText PDF objects in a node.
    * @param pdfobj PdfObject
    * @param pdfreader PdfReader
    * @param node DefaultMutableTreeNode
    */
   void iterateObjects(PdfObject pdfobj, PdfReader pdfreader,
-  DefaultMutableTreeNode node);
+		  DefaultMutableTreeNode node);
 }

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -56,36 +56,38 @@ import com.lowagie.text.pdf.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-public class TextpaneTreeNode
-    extends UpdateableTreeNode {
-  PdfObject contents;
-  String marker;
+public class TextpaneTreeNode extends UpdateableTreeNode {
 
-  public TextpaneTreeNode(PdfObject contents,String marker) {
-    super(contents,false);
-    this.contents = contents;
-    this.marker=marker;
-  }
+	private static final long serialVersionUID = -4383073664537340974L;
 
-  public void updateview(IUpdatenodeview updateobject) {
-    if (contents.isStream()) {
-      PRStream prstr = (PRStream) contents;
-      try {
-        byte barr[] = PdfReader.getStreamBytes(prstr);
-        updateobject.showtext(new String(barr));
-      }
-      catch (IOException ex) {
-      }
-    }
-  }
+	PdfObject contents;
 
-  public String toString() {
-    return marker;
-  }
+	String marker;
 
-  public Icon getIcon(){
-    return new ImageIcon(TreeViewInternalFrame.class.getResource(
-             "string.gif"));
-  }
+	public TextpaneTreeNode(PdfObject contents, String marker) {
+		super(contents, false);
+		this.contents = contents;
+		this.marker = marker;
+	}
+
+	public void updateview(IUpdatenodeview updateobject) {
+		if (contents.isStream()) {
+			PRStream prstr = (PRStream) contents;
+			try {
+				byte barr[] = PdfReader.getStreamBytes(prstr);
+				updateobject.showtext(new String(barr));
+			} catch (IOException ex) {
+			}
+		}
+	}
+
+	public String toString() {
+		return marker;
+	}
+
+	public Icon getIcon() {
+		return new ImageIcon(TreeViewInternalFrame.class
+				.getResource("string.gif"));
+	}
 
 }
