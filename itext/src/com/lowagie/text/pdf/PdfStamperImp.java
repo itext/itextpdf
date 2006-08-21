@@ -150,8 +150,13 @@ class PdfStamperImp extends PdfWriter {
         if (flatFreeText)
         	flatFreeTextFields();
         addFieldResources();
+        PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM), reader.getCatalog());
+        if (acroFields != null && acroFields.getXfa().isChanged()) {
+            markUsed(acroForm);
+            if (!flat)
+                acroFields.getXfa().setXfa(this);
+        }
         if (sigFlags != 0) {
-            PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM), reader.getCatalog());
             if (acroForm != null) {
                 acroForm.put(PdfName.SIGFLAGS, new PdfNumber(sigFlags));
                 markUsed(acroForm);
@@ -675,6 +680,8 @@ class PdfStamperImp extends PdfWriter {
     
     boolean partialFormFlattening(String name) {
         getAcroFields();
+        if (acroFields.getXfa().isXfaPresent())
+            throw new UnsupportedOperationException("Partial form flattening is not supported with XFA forms.");
         if (!acroFields.getFields().containsKey(name))
             return false;
         partialFlattening.add(name);
@@ -830,6 +837,8 @@ class PdfStamperImp extends PdfWriter {
         if (acro == null)
             return;
         PdfDictionary acrodic = (PdfDictionary)PdfReader.getPdfObject(acro);
+        reader.killXref(acrodic.get(PdfName.XFA));
+        acrodic.remove(PdfName.XFA);
         PdfObject iFields = acrodic.get(PdfName.FIELDS);
         if (iFields != null) {
             PdfDictionary kids = new PdfDictionary();
