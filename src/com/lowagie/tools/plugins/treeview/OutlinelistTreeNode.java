@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2006 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2006 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -50,49 +50,50 @@
 
 package com.lowagie.tools.plugins.treeview;
 
-import java.util.ArrayList;
-
-import com.lowagie.text.pdf.PdfArray;
-import com.lowagie.text.pdf.PdfDictionary;
-import java.util.Set;
 import java.util.Iterator;
+import java.util.Set;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-public class OutlinelistTreeNode
-    extends UpdateableTreeNode {
-  private com.lowagie.text.pdf.PdfDictionary dictionary;
-  public OutlinelistTreeNode(Object userObject, PdfDictionary dictionary) {
-    super(userObject);
-    this.dictionary = dictionary;
-  }
+import com.lowagie.text.pdf.PdfDictionary;
 
-  public OutlinelistTreeNode(PdfDictionary dictionary) {
-    super("Outlinenode " + dictionary);
-    this.dictionary = dictionary;
-  }
+public class OutlinelistTreeNode extends UpdateableTreeNode {
+	private static final long serialVersionUID = -3096577836241588955L;
 
-  public void updateview(IUpdatenodeview updateobject) {
-    StringBuffer sb = new StringBuffer();
-    sb.append("<html>");
-    sb.append("<p>");
-    sb.append(this.userObject);
-    sb.append("</p>");
-    Set set = dictionary.getKeys();
-    Iterator it = set.iterator();
-    while (it.hasNext()) {
-      sb.append("<p>");
-      sb.append("Key " + it.next().toString());
-      sb.append("</p>");
-    }
-    sb.append("</html>");
-    updateobject.showvalues(sb.toString());
+	private com.lowagie.text.pdf.PdfDictionary dictionary;
 
-  }
+	public OutlinelistTreeNode(Object userObject, PdfDictionary dictionary) {
+		super(userObject);
+		this.dictionary = dictionary;
+	}
 
-  public Icon getIcon(){
-    return new ImageIcon(TreeViewInternalFrame.class.getResource(
-             "bookmarks.gif"));
-  }
+	public OutlinelistTreeNode(PdfDictionary dictionary) {
+		super("Outlinenode " + dictionary);
+		this.dictionary = dictionary;
+	}
+
+	public void updateview(IUpdatenodeview updateobject) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>");
+		sb.append("<p>");
+		sb.append(this.userObject);
+		sb.append("</p>");
+		Set set = dictionary.getKeys();
+		Iterator it = set.iterator();
+		while (it.hasNext()) {
+			sb.append("<p>");
+			sb.append("Key " + it.next().toString());
+			sb.append("</p>");
+		}
+		sb.append("</html>");
+		updateobject.showvalues(sb.toString());
+
+	}
+
+	public Icon getIcon() {
+		return new ImageIcon(TreeViewInternalFrame.class
+				.getResource("bookmarks.gif"));
+	}
 
 }
