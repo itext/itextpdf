@@ -114,6 +114,8 @@ public class PhotoAlbum extends AbstractTool {
 			float imgWidthPica, imgHeightPica;
 			TreeSet images = new TreeSet();
 			File[] files = directory.listFiles();
+			if (files == null)
+				throw new NullPointerException("listFiles() returns null");
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isFile()) images.add(files[i]);
 			}
