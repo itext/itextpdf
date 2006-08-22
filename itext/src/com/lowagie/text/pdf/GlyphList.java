@@ -2197,4 +2197,17 @@ public class GlyphList
     {
         return (String)unicode2names.get(new Integer(num));
     }
+    
+    /**
+     * Put a entry in the glyphlist.
+     * Method suggested by Michael Niedermair.
+     * @param num       The unicode number.
+     * @param glyphname The glyph name.
+     */
+    public static void put(final int num, final String glyphname) {
+        if (glyphname != null) {
+            names2unicode.put(glyphname, new int[]{num});
+            unicode2names.put(new Integer(num), glyphname);
+        }
+    }
 }
