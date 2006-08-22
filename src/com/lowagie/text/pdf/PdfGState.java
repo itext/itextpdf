@@ -95,7 +95,7 @@ public class PdfGState extends PdfDictionary {
     }
 
     /**
-     * Sets the flag whether to toogle knockout behavior for overprinted objects.
+     * Sets the flag whether to toggle knockout behavior for overprinted objects.
      * @param ov - accepts 0 or 1
      */
     public void setOverPrintMode(int ov) {
