@@ -50,6 +50,7 @@
 
 package com.lowagie.text.rtf.document;
 
+import com.lowagie.text.rtf.document.output.RtfDataCache;
 import com.lowagie.text.rtf.style.RtfParagraphStyle;
 
 
@@ -83,6 +84,10 @@ public class RtfDocumentSettings {
      * Whether to always translate characters past 'z' into unicode representations.
      */
     private boolean alwaysUseUnicode = true;
+    /**
+     * How to cache the document during generation. Defaults to RtfDataCache.CACHE_MEMORY;
+     */
+    private int dataCacheStyle = RtfDataCache.CACHE_MEMORY;
 
     
     /**
@@ -178,5 +183,38 @@ public class RtfDocumentSettings {
      */
     public void registerParagraphStyle(RtfParagraphStyle rtfParagraphStyle) {
         this.document.getDocumentHeader().registerParagraphStyle(rtfParagraphStyle);
+    }
+    
+    /**
+     * Sets the data cache style. This controls where the document is cached during
+     * generation. Two cache styles are supported:
+     * <ul>
+     *   <li>RtfDataCache.CACHE_MEMORY: The document is cached in memory. This is fast,
+     *     but places a limit on how big the document can get before causing
+     *     OutOfMemoryExceptions.</li>
+     *   <li>RtfDataCache.CACHE_DISK: The document is cached on disk. This is slower
+     *     than the CACHE_MEMORY setting, but the document size is now only constrained
+     *     by the amount of free disk space.</li>
+     * </ul>
+     * 
+     * @param dataCacheStyle The data cache style to set. Valid constants can be found
+     *  in RtfDataCache.
+     * @see com.lowagie.text.rtf.document.output.output.RtfDataCache.
+     */
+    public void setDataCacheStyle(int dataCacheStyle) {
+        switch(dataCacheStyle) {
+            case RtfDataCache.CACHE_MEMORY : this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;
+            case RtfDataCache.CACHE_DISK   : this.dataCacheStyle = RtfDataCache.CACHE_DISK;
+            default                        : this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;
+        }
+    }
+    
+    /**
+     * Gets the current data cache style.
+     * 
+     * @return The current data cache style.
+     */
+    public int getDataCacheStyle() {
+        return this.dataCacheStyle;
     }
 }

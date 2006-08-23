@@ -61,6 +61,7 @@ import com.lowagie.text.rtf.graphic.RtfImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 /**
@@ -93,10 +94,6 @@ public class RtfDocument extends RtfElement {
      */
     private boolean autogenerateTOCEntries = false;
     /**
-     * Whether data has been written to the RtfDataCache.
-     */
-    private boolean dataWritten = false;
-    /**
      * The RtfDocumentSettings for this RtfDocument.
      */
     private RtfDocumentSettings documentSettings = null;
@@ -126,20 +123,36 @@ public class RtfDocument extends RtfElement {
     /**
      * Writes the document
      *
-     * @return A byte array containing the complete rtf document
+     * @param out The <code>OutputStream</code> to write the RTF document to.
      */
-    public byte[] writeDocument() {
-        ByteArrayOutputStream docStream = new ByteArrayOutputStream();
+    public void writeDocument(OutputStream out) {
         try {
-            docStream.write(OPEN_GROUP);
-            docStream.write(RtfDocument.RTF_DOCUMENT);
-            docStream.write(documentHeader.write());
-            data.writeTo(docStream);
-            docStream.write(CLOSE_GROUP);
+            out.write(OPEN_GROUP);
+            out.write(RtfDocument.RTF_DOCUMENT);
+            out.write(documentHeader.write());
+            data.writeTo(out);
+            out.write(CLOSE_GROUP);
         } catch(IOException ioe) {
             ioe.printStackTrace();
         }
-        return docStream.toByteArray();
+    }
+    
+    /**
+     * Opens the RtfDocument and initialises the data cache. If the data cache is
+     * set to CACHE_DISK, but the cache cannot be initialised then the memory cache
+     * is used.
+     */
+    public void open() {
+        try {
+            switch(this.documentSettings.getDataCacheStyle()) {
+                case RtfDataCache.CACHE_MEMORY : this.data = new RtfMemoryCache();
+                case RtfDataCache.CACHE_DISK   : this.data = new RtfDiskCache();
+            }
+        } catch(IOException ioe) {
+            System.err.println("Could not initialise disk cache. Using memory cache.");
+            ioe.printStackTrace();
+            this.data = new RtfMemoryCache();
+        }
     }
     
     /**
@@ -152,7 +165,6 @@ public class RtfDocument extends RtfElement {
             if(element instanceof RtfInfoElement) {
                 this.documentHeader.addInfoElement((RtfInfoElement) element);
             } else {
-                this.dataWritten = true;
                 if(element instanceof RtfImage) {
                     ((RtfImage) element).setTopLevelElement(true);
                 }
@@ -260,25 +272,6 @@ public class RtfDocument extends RtfElement {
      */
     public boolean getAutogenerateTOCEntries() {
         return this.autogenerateTOCEntries;
-    }
-    
-    /**
-     * Sets the rtf data cache style to use. Valid values are given in the 
-     * RtfDataCache class.
-     *  
-     * @param dataCacheStyle The style to use.
-     * @throws DocumentException If data has already been written into the data cache.
-     * @throws IOException If the disk cache could not be initialised.
-     */
-    public void setDataCacheStyle(int dataCacheStyle) throws DocumentException, IOException {
-        if(dataWritten) {
-            throw new DocumentException("Data has already been written into the data cache. You can not change the cache style anymore.");
-        }
-        switch(dataCacheStyle) {
-            case RtfDataCache.CACHE_MEMORY : this.data = new RtfMemoryCache(); break;
-            case RtfDataCache.CACHE_DISK   : this.data = new RtfDiskCache(); break;
-            default                        : this.data = new RtfMemoryCache(); break;
-        }
     }
     
     /**

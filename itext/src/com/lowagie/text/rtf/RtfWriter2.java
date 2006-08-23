@@ -160,9 +160,11 @@ public class RtfWriter2 extends DocWriter implements DocListener {
 
     /**
      * Opens the RtfDocument
+     * @throws IOException 
      */
     public void open() {
     	super.open();
+        this.rtfDoc.open();
     }
     
     /**
@@ -171,7 +173,7 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      */
     public void close() {
         try {
-            os.write(rtfDoc.writeDocument());
+            rtfDoc.writeDocument(os);
             if(this.closeStream) {
                 os.close();
             }
@@ -257,9 +259,10 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      * @param dataCacheStyle The style to use.
      * @throws DocumentException If data has already been written into the data cache.
      * @throws IOException If the disk cache could not be initialised.
+     * @deprecated Use RtfWriter2.getDocumentSettings().setDataCacheStyle(...);
      */
     public void setDataCacheStyle(int dataCacheStyle) throws DocumentException, IOException {
-        this.rtfDoc.setDataCacheStyle(dataCacheStyle);
+        this.rtfDoc.getDocumentSettings().setDataCacheStyle(dataCacheStyle);
     }
     
     /**
