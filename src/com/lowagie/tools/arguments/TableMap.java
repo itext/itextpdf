@@ -1,4 +1,5 @@
 package com.lowagie.tools.arguments;
+
 /*
  * @(#)TableMap.java    1.4 97/12/17
  *
@@ -35,55 +36,58 @@ import javax.swing.table.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
 
-public class TableMap extends AbstractTableModel implements TableModelListener
-{
-    protected TableModel model;
+public class TableMap extends AbstractTableModel implements TableModelListener {
 
-    public TableModel  getModel() {
-        return model;
-    }
+	private static final long serialVersionUID = 4836265678767159398L;
 
-    public void  setModel(TableModel model) {
-        this.model = model;
-        model.addTableModelListener(this);
-    }
+	protected TableModel model;
 
-    // By default, Implement TableModel by forwarding all messages
-    // to the model.
+	public TableModel getModel() {
+		return model;
+	}
 
-    public Object getValueAt(int aRow, int aColumn) {
-        return model.getValueAt(aRow, aColumn);
-    }
+	public void setModel(TableModel model) {
+		this.model = model;
+		model.addTableModelListener(this);
+	}
 
-    public void setValueAt(Object aValue, int aRow, int aColumn) {
-        model.setValueAt(aValue, aRow, aColumn);
-    }
+	// By default, Implement TableModel by forwarding all messages
+	// to the model.
 
-    public int getRowCount() {
-        return (model == null) ? 0 : model.getRowCount();
-    }
+	public Object getValueAt(int aRow, int aColumn) {
+		return model.getValueAt(aRow, aColumn);
+	}
 
-    public int getColumnCount() {
-        return (model == null) ? 0 : model.getColumnCount();
-    }
+	public void setValueAt(Object aValue, int aRow, int aColumn) {
+		model.setValueAt(aValue, aRow, aColumn);
+	}
 
-    public String getColumnName(int aColumn) {
-        return model.getColumnName(aColumn);
-    }
+	public int getRowCount() {
+		return (model == null) ? 0 : model.getRowCount();
+	}
 
-    public Class getColumnClass(int aColumn) {
-        return model.getColumnClass(aColumn);
-    }
+	public int getColumnCount() {
+		return (model == null) ? 0 : model.getColumnCount();
+	}
 
-    public boolean isCellEditable(int row, int column) {
-         return model.isCellEditable(row, column);
-    }
-//
-// Implementation of the TableModelListener interface,
-//
+	public String getColumnName(int aColumn) {
+		return model.getColumnName(aColumn);
+	}
 
-    // By default forward all events to all the listeners.
-    public void tableChanged(TableModelEvent e) {
-        fireTableChanged(e);
-    }
+	public Class getColumnClass(int aColumn) {
+		return model.getColumnClass(aColumn);
+	}
+
+	public boolean isCellEditable(int row, int column) {
+		return model.isCellEditable(row, column);
+	}
+
+	//
+	// Implementation of the TableModelListener interface,
+	//
+
+	// By default forward all events to all the listeners.
+	public void tableChanged(TableModelEvent e) {
+		fireTableChanged(e);
+	}
 }
