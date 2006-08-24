@@ -57,6 +57,7 @@ import java.io.IOException;
  */
 public class XmpMMSchema extends XmpSchema {
 
+	private static final long serialVersionUID = 1408509596611634862L;
 	/** default namespace identifier*/
 	public static final String DEFAULT_XPATH_ID = "xmpMM";
 	/** default namespace uri*/
