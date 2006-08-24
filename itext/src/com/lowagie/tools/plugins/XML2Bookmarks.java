@@ -106,7 +106,6 @@ public class XML2Bookmarks extends AbstractTool {
             bmReader.close();
             PdfReader reader = new PdfReader(((File)getValue("pdffile")).getAbsolutePath());
             reader.consolidateNamedDestinations();
-            int n = reader.getNumberOfPages();
             PdfStamper stamper = new PdfStamper(reader, new FileOutputStream((File)getValue("destfile")));
             stamper.setOutlines(bookmarks);
             stamper.setViewerPreferences(reader.getViewerPreferences() | PdfWriter.PageModeUseOutlines);
