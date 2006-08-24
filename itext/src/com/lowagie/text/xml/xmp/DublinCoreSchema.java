@@ -57,6 +57,7 @@ import java.io.IOException;
  */
 public class DublinCoreSchema extends XmpSchema {
 
+	private static final long serialVersionUID = -4551741356374797330L;
 	/** default namespace identifier*/
 	public static final String DEFAULT_XPATH_ID = "dc";
 	/** default namespace uri*/
