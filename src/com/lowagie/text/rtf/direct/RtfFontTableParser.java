@@ -55,7 +55,7 @@ public class RtfFontTableParser {
 	 * @param groupLevel The current group nesting level.
 	 */
 	public void handleCtrlWord(String ctrlWord, int groupLevel) {
-		if(ctrlWord.matches("^\\\\f[0-9]+$") && groupLevel == 3) {
+		if(RtfColorTableParser.stringMatches(ctrlWord, "\\f") && groupLevel == 3) {
 			this.fontNr = ctrlWord.substring(2);
 		}
 	}

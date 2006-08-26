@@ -180,11 +180,11 @@ public class RtfParser {
 	 */
 	public void handleCtrlWord(String ctrlWord, int groupLevel) throws DocumentException {
 		if(this.state == PARSER_IN_DOCUMENT) {
-			if(ctrlWord.matches("^\\\\f[0-9]+$")) {
+			if(RtfColorTableParser.stringMatches(ctrlWord, "\\f")) {
 				ctrlWord = "\\f" + this.importHeader.mapFontNr(ctrlWord.substring(2));
-			} else if(ctrlWord.matches("^\\\\cf[0-9]+$")) {
+			} else if(RtfColorTableParser.stringMatches(ctrlWord, "\\cf")) {
 				ctrlWord = "\\cf" + this.importHeader.mapColorNr(ctrlWord.substring(3));
-			} else if(ctrlWord.matches("^\\\\cb[0-9]+$")) {
+			} else if(RtfColorTableParser.stringMatches(ctrlWord, "\\cb")) {
 				ctrlWord = "\\cb" + this.importHeader.mapColorNr(ctrlWord.substring(3));
 			}
 			this.rtfDoc.add(new RtfDirectContent(ctrlWord));
