@@ -145,8 +145,8 @@ public class RtfDocument extends RtfElement {
     public void open() {
         try {
             switch(this.documentSettings.getDataCacheStyle()) {
-                case RtfDataCache.CACHE_MEMORY : this.data = new RtfMemoryCache();
-                case RtfDataCache.CACHE_DISK   : this.data = new RtfDiskCache();
+                case RtfDataCache.CACHE_MEMORY : this.data = new RtfMemoryCache();break;
+                case RtfDataCache.CACHE_DISK   : this.data = new RtfDiskCache();break;
             }
         } catch(IOException ioe) {
             System.err.println("Could not initialise disk cache. Using memory cache.");
