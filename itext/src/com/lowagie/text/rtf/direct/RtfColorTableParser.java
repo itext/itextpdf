@@ -45,6 +45,21 @@ public class RtfColorTableParser {
 		this.blue = -1;
 	}
 
+    public static boolean stringMatches(String text, String start) {
+        if (!text.startsWith(start))
+            return false;
+        int first = start.length();
+        int last = text.length();
+        if (first == last)
+            return false;
+        for (int k = first; k < last; ++k) {
+            char c = text.charAt(k);
+            if (c < '0' || c > '9')
+                return false;
+        }
+        return true;
+    }
+    
 	/**
 	 * Handle RTF control words. The relevant control words are
 	 * \red, \green and \blue each with a number specifying the
@@ -54,13 +69,12 @@ public class RtfColorTableParser {
 	 * @param groupLevel Unused
 	 */
 	public void handleCtrlWord(String ctrlWord, int groupLevel) {
-		if(ctrlWord.matches("^\\\\red[0-9]+$")) {
-			this.red = Integer.parseInt(ctrlWord.substring(4));
-		} else if(ctrlWord.matches("^\\\\green[0-9]+$")) {
-			this.green = Integer.parseInt(ctrlWord.substring(6));
-		} else if(ctrlWord.matches("^\\\\blue[0-9]+$")) {
-			this.blue = Integer.parseInt(ctrlWord.substring(5));
-		}
+        if (stringMatches(ctrlWord, "\\red"))
+            this.red = Integer.parseInt(ctrlWord.substring(4));
+        else if (stringMatches(ctrlWord, "\\green"))
+            this.red = Integer.parseInt(ctrlWord.substring(6));
+        else if (stringMatches(ctrlWord, "\\blue"))
+            this.red = Integer.parseInt(ctrlWord.substring(5));
 	}
 	
 	/**
