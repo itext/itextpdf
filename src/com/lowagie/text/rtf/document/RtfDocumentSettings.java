@@ -203,9 +203,9 @@ public class RtfDocumentSettings {
      */
     public void setDataCacheStyle(int dataCacheStyle) {
         switch(dataCacheStyle) {
-            case RtfDataCache.CACHE_MEMORY : this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;
-            case RtfDataCache.CACHE_DISK   : this.dataCacheStyle = RtfDataCache.CACHE_DISK;
-            default                        : this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;
+            case RtfDataCache.CACHE_MEMORY : this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;break;
+            case RtfDataCache.CACHE_DISK   : this.dataCacheStyle = RtfDataCache.CACHE_DISK;break;
+            default                        : this.dataCacheStyle = RtfDataCache.CACHE_MEMORY;break;
         }
     }
     
