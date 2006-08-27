@@ -48,7 +48,11 @@ public class RtfColorTableParser {
     public static boolean stringMatches(String text, String start) {
         if (!text.startsWith(start))
             return false;
-        for (int k = start.length(); k < text.length(); ++k) {
+        int first = start.length();
+        int last = text.length();
+        if (first == last)
+            return false;
+        for (int k = first; k < last; ++k) {
             char c = text.charAt(k);
             if (c < '0' || c > '9')
                 return false;
@@ -65,17 +69,12 @@ public class RtfColorTableParser {
 	 * @param groupLevel Unused
 	 */
 	public void handleCtrlWord(String ctrlWord, int groupLevel) {
-        try {
-            if (stringMatches(ctrlWord, "\\red"))
-                this.red = Integer.parseInt(ctrlWord.substring(4));
-            else if (stringMatches(ctrlWord, "\\green"))
-                this.red = Integer.parseInt(ctrlWord.substring(6));
-            else if (stringMatches(ctrlWord, "\\blue"))
-                this.red = Integer.parseInt(ctrlWord.substring(5));
-        }
-        catch (Exception e) {
-            //empty on purpose
-        }
+        if (stringMatches(ctrlWord, "\\red"))
+            this.red = Integer.parseInt(ctrlWord.substring(4));
+        else if (stringMatches(ctrlWord, "\\green"))
+            this.red = Integer.parseInt(ctrlWord.substring(6));
+        else if (stringMatches(ctrlWord, "\\blue"))
+            this.red = Integer.parseInt(ctrlWord.substring(5));
 	}
 	
 	/**
