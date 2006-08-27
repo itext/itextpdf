@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002 Paulo Soares
+ * Copyright 2001-2006 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -273,7 +273,8 @@ class Type1Font extends BaseFont
             if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
                 fontSpecific = false;
             }
-            PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
+            if (!encoding.startsWith("#"))
+                PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
             createEncoding();
         }
         catch (RuntimeException re) {
@@ -343,7 +344,7 @@ class Type1Font extends BaseFont
         boolean isMetrics = false;
         while ((line = rf.readLine()) != null)
         {
-            StringTokenizer tok = new StringTokenizer(line);
+            StringTokenizer tok = new StringTokenizer(line, " ,\n\r\t\f");
             if (!tok.hasMoreTokens())
                 continue;
             String ident = tok.nextToken();
@@ -591,7 +592,7 @@ class Type1Font extends BaseFont
         dic.put(PdfName.SUBTYPE, PdfName.TYPE1);
         dic.put(PdfName.BASEFONT, new PdfName(FontName));
         boolean stdEncoding = encoding.equals("Cp1252") || encoding.equals("MacRoman");
-        if (!fontSpecific) {
+        if (!fontSpecific || specialMap != null) {
             for (int k = firstChar; k <= lastChar; ++k) {
                 if (!differences[k].equals(notdef)) {
                     firstChar = k;
@@ -619,7 +620,7 @@ class Type1Font extends BaseFont
                 dic.put(PdfName.ENCODING, enc);
             }
         }
-        if (forceWidthsOutput || !(builtinFont && (fontSpecific || stdEncoding))) {
+        if (specialMap != null || forceWidthsOutput || !(builtinFont && (fontSpecific || stdEncoding))) {
             dic.put(PdfName.FIRSTCHAR, new PdfNumber(firstChar));
             dic.put(PdfName.LASTCHAR, new PdfNumber(lastChar));
             PdfArray wd = new PdfArray();
