@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2001, 2002 Paulo Soares
+ * Copyright 2001-2006 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -367,7 +367,8 @@ class TrueTypeFont extends BaseFont {
         }
         else
             throw new DocumentException(fileName + style + " is not a TTF, OTF or TTC font file.");
-        PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
+        if (!encoding.startsWith("#"))
+            PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
         createEncoding();
     }
     
@@ -1185,11 +1186,18 @@ class TrueTypeFont extends BaseFont {
                 HashMap glyphs = new HashMap();
                 for (int k = firstChar; k <= lastChar; ++k) {
                     if (shortTag[k] != 0) {
-                        int metrics[];
-                        if (fontSpecific)
-                            metrics = getMetricsTT(k);
-                        else
-                            metrics = getMetricsTT(unicodeDifferences[k]);
+                        int[] metrics = null;
+                        if (specialMap != null) {
+                            int[] cd = GlyphList.nameToUnicode(differences[k]);
+                            if (cd != null)
+                                metrics = getMetricsTT(cd[0]);
+                        }
+                        else {
+                            if (fontSpecific)
+                                metrics = getMetricsTT(k);
+                            else
+                                metrics = getMetricsTT(unicodeDifferences[k]);
+                        }
                         if (metrics != null)
                             glyphs.put(new Integer(metrics[0]), null);
                     }
