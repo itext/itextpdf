@@ -8,6 +8,7 @@ Manipulate.Watermarker: com.lowagie.tools.plugins.Watermarker
 Manipulate.Concat: com.lowagie.tools.plugins.Concat
 Manipulate.Split: com.lowagie.tools.plugins.Split
 Manipulate.N-up: com.lowagie.tools.plugins.NUp
+Manipulate.Divide: com.lowagie.tools.plugins.Divide
 Manipulate.Burst: com.lowagie.tools.plugins.Burst
 Manipulate.SelectedPages: com.lowagie.tools.plugins.SelectedPages
 Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages

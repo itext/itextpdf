@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -56,32 +56,35 @@ import com.lowagie.text.pdf.PdfArray;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-public class PagelistTreeNode
-    extends UpdateableTreeNode {
-  private com.lowagie.text.pdf.PdfArray pdfarray;
-  public PagelistTreeNode(PdfArray pdfarray) {
-    super("Pagesnode " + pdfarray);
-    this.pdfarray = pdfarray;
-  }
+public class PagelistTreeNode extends UpdateableTreeNode {
 
-  public void updateview(IUpdatenodeview updateobject) {
-    StringBuffer sb = new StringBuffer();
-    sb.append("<html>");
-    sb.append("<p>");
-    sb.append(this.userObject);
-    sb.append("</p>");
-    ArrayList arl = pdfarray.getArrayList();
-    for (int i = 0; i < arl.size(); i++) {
-      sb.append("<p>");
-      sb.append(" " + arl.get(i).toString());
-      sb.append("</p>");
-    }
-    sb.append("</html>");
-    updateobject.showvalues(sb.toString());
-  }
+	private static final long serialVersionUID = 2775679522245844152L;
 
-  public Icon getIcon(){
-    return new ImageIcon(TreeViewInternalFrame.class.getResource(
-             "pageonly.gif"));
-  }
+	private com.lowagie.text.pdf.PdfArray pdfarray;
+
+	public PagelistTreeNode(PdfArray pdfarray) {
+		super("Pagesnode " + pdfarray);
+		this.pdfarray = pdfarray;
+	}
+
+	public void updateview(IUpdatenodeview updateobject) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>");
+		sb.append("<p>");
+		sb.append(this.userObject);
+		sb.append("</p>");
+		ArrayList arl = pdfarray.getArrayList();
+		for (int i = 0; i < arl.size(); i++) {
+			sb.append("<p>");
+			sb.append(" " + arl.get(i).toString());
+			sb.append("</p>");
+		}
+		sb.append("</html>");
+		updateobject.showvalues(sb.toString());
+	}
+
+	public Icon getIcon() {
+		return new ImageIcon(TreeViewInternalFrame.class
+				.getResource("pageonly.gif"));
+	}
 }

@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -51,24 +51,24 @@
 package com.lowagie.tools.plugins.treeview;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.ImageIcon;
 import javax.swing.Icon;
 
-public abstract class UpdateableTreeNode
-    extends DefaultMutableTreeNode {
-  public UpdateableTreeNode() {
-    super();
-  }
+public abstract class UpdateableTreeNode extends DefaultMutableTreeNode {
+	public UpdateableTreeNode() {
+		super();
+	}
 
-  public UpdateableTreeNode(Object userObject) {
-    super(userObject);
-  }
-  public UpdateableTreeNode(Object userObject,boolean allowchildren) {
-      super(userObject,allowchildren);
-  }
-  public abstract void updateview(IUpdatenodeview updateobject);
-  public Icon getIcon(){
-    return null;
-  }
-  }
+	public UpdateableTreeNode(Object userObject) {
+		super(userObject);
+	}
 
+	public UpdateableTreeNode(Object userObject, boolean allowchildren) {
+		super(userObject, allowchildren);
+	}
+
+	public abstract void updateview(IUpdatenodeview updateobject);
+
+	public Icon getIcon() {
+		return null;
+	}
+}

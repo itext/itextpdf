@@ -102,7 +102,7 @@ public class HtmlPeer extends XmlPeer {
 			String attribute, value;
 			for (int i = 0; i < attrs.getLength(); i++) {
 				attribute = getName(attrs.getQName(i).toLowerCase());
-				value = attrs.getValue(i).toLowerCase();
+				value = attrs.getValue(i);
 				attributes.setProperty(attribute, value);
 			}
 		}

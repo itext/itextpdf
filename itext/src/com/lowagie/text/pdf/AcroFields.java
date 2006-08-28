@@ -59,6 +59,7 @@ import com.lowagie.text.DocumentException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.awt.Color;
+import org.w3c.dom.Node;
 
 /** Query and change fields in existing documents either by method
  * calls or by FDF merging.
@@ -76,6 +77,7 @@ public class AcroFields {
     static private final int DA_SIZE = 1;
     static private final int DA_COLOR = 2;
     private HashMap extensionFonts = new HashMap();
+    private XfaForm xfa;
     /**
      * A field type invalid or not found.
      */    
@@ -123,6 +125,12 @@ public class AcroFields {
     AcroFields(PdfReader reader, PdfWriter writer) {
         this.reader = reader;
         this.writer = writer;
+        try {
+            xfa = new XfaForm(reader);
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
         if (writer instanceof PdfStamperImp) {
             append = ((PdfStamperImp)writer).isAppend();
         }
@@ -724,6 +732,13 @@ public class AcroFields {
      * @return the field value
      */    
     public String getField(String name) {
+        if (xfa.isXfaPresent()) {
+            name = xfa.findFieldName(name, this);
+            if (name == null)
+                return null;
+            name = XfaForm.Xml2Som.getShortName(name);
+            return XfaForm.getNodeText(xfa.findDatasetsNode(name));
+        }
         Item item = (Item)fields.get(name);
         if (item == null)
             return null;
@@ -1044,6 +1059,21 @@ public class AcroFields {
         return true;
     }
     
+    /**
+     * Merges an XML data structure into this form.
+     * @param n the top node of the data structure
+     * @throws java.io.IOException on error
+     * @throws com.lowagie.text.DocumentException o error
+     */
+    public void mergeXfaData(Node n) throws IOException, DocumentException {
+        XfaForm.Xml2SomDatasets data = new XfaForm.Xml2SomDatasets(n);
+        for (Iterator it = data.getOrder().iterator(); it.hasNext();) {
+            String name = (String)it.next();
+            String text = XfaForm.getNodeText((Node)data.getName2Node().get(name));
+            setField(name, text);
+        }
+    }
+    
     /** Sets the fields by FDF merging.
      * @param fdf the FDF form
      * @throws IOException on error
@@ -1076,7 +1106,7 @@ public class AcroFields {
     }
 
     /** Sets the field value.
-     * @param name the fully qualified field name
+     * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
      * @throws IOException on error
      * @throws DocumentException on error
@@ -1091,7 +1121,7 @@ public class AcroFields {
      * is used to build the appearance in the cases where the value
      * is modified by Acrobat with JavaScript and the algorithm is
      * known.
-     * @param name the fully qualified field name
+     * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
      * @param display the string that is used for the appearance
      * @return <CODE>true</CODE> if the field was found and changed,
@@ -1102,6 +1132,13 @@ public class AcroFields {
     public boolean setField(String name, String value, String display) throws IOException, DocumentException {
         if (writer == null)
             throw new DocumentException("This AcroFields instance is read-only.");
+        if (xfa.isXfaPresent()) {
+            name = xfa.findFieldName(name, this);
+            if (name == null)
+                return false;
+            String shortName = XfaForm.Xml2Som.getShortName(name);
+            xfa.setNodeText(xfa.findDatasetsNode(shortName), value);
+        }
         Item item = (Item)fields.get(name);
         if (item == null)
             return false;
@@ -1907,5 +1944,13 @@ public class AcroFields {
      */
     public void setSubstitutionFonts(ArrayList substitutionFonts) {
         this.substitutionFonts = substitutionFonts;
+    }
+
+    /**
+     * Gets the XFA form processor.
+     * @return the XFA form processor
+     */
+    public XfaForm getXfa() {
+        return xfa;
     }
 }

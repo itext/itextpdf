@@ -290,7 +290,6 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
  * @return	an <CODE>Iterator</CODE>
  */
     
-    // suggestion by by Curt Thompson
     public Iterator getElements() {
         return this.iterator();
     }

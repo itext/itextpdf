@@ -272,6 +272,8 @@ public class DefaultFontMapper implements FontMapper {
         if (!file.exists() || !file.isDirectory())
             return 0;
         File files[] = file.listFiles();
+        if (files == null)
+        	return 0;
         int count = 0;
         for (int k = 0; k < files.length; ++k) {
             file = files[k];

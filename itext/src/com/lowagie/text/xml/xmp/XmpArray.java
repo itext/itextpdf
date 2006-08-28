@@ -58,6 +58,7 @@ import java.util.Iterator;
  */
 public class XmpArray extends ArrayList {
 
+	private static final long serialVersionUID = 5722854116328732742L;
 	/** An array that is unordered. */
 	public static final String UNORDERED = "rdf:Bag";
 	/** An array that is ordered. */

@@ -58,6 +58,7 @@ import java.io.IOException;
  */
 public class PdfSchema extends XmpSchema {
 
+	private static final long serialVersionUID = -1541148669123992185L;
 	/** default namespace identifier*/
 	public static final String DEFAULT_XPATH_ID = "pdf";
 	/** default namespace uri*/

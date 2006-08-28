@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 2005 by Anonymous.
+ * Copyright 2005 by Carsten Hammer.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -57,56 +57,51 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2005</p>
- *
- * <p>Company: </p>
- *
- * @author not attributable
- * @version 1.0
+ * Treenode for PdfDictionary objects.
  */
-public class DictionaryTreeNode
-    extends UpdateableTreeNode {
-  PdfDictionary dictionary;
+public class DictionaryTreeNode extends UpdateableTreeNode {
 
-  public DictionaryTreeNode(Object userObject, PdfDictionary dictionary) {
-    super(userObject);
-    this.dictionary = dictionary;
-  }
+	private static final long serialVersionUID = -450788211803629233L;
 
-  public DictionaryTreeNode(Object userObject, boolean allowchildren) {
-    super(userObject, allowchildren);
-  }
+	PdfDictionary dictionary;
 
-  /**
-   * updateview
-   *
-   * @param updateobject IUpdatenodeview
-   * @todo Implement this com.lowagie.tools.plugins.treeview.UpdateableTreeNode method
-   */
-  public void updateview(IUpdatenodeview updateobject) {
-    StringBuffer sb = new StringBuffer();
-    sb.append("<html>");
-    sb.append("<p>");
-    sb.append(this.userObject);
-    sb.append("</p>");
-    Set set = dictionary.getKeys();
-    Iterator it = set.iterator();
-    while (it.hasNext()) {
-      sb.append("<p>");
-      sb.append("Key " + it.next().toString());
-      sb.append("</p>");
-    }
-    sb.append("</html>");
-    updateobject.showvalues(sb.toString());
-  }
+	public DictionaryTreeNode(Object userObject, PdfDictionary dictionary) {
+		super(userObject);
+		this.dictionary = dictionary;
+	}
 
-  public Icon getIcon(){
-        return new ImageIcon(TreeViewInternalFrame.class.getResource(
-                 "dictionary.gif"));
-  }
+	public DictionaryTreeNode(Object userObject, boolean allowchildren) {
+		super(userObject, allowchildren);
+	}
+
+	/**
+	 * updateview
+	 * 
+	 * @param updateobject
+	 *            IUpdatenodeview
+	 * @todo Implement this
+	 *       com.lowagie.tools.plugins.treeview.UpdateableTreeNode method
+	 */
+	public void updateview(IUpdatenodeview updateobject) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html>");
+		sb.append("<p>");
+		sb.append(this.userObject);
+		sb.append("</p>");
+		Set set = dictionary.getKeys();
+		Iterator it = set.iterator();
+		while (it.hasNext()) {
+			sb.append("<p>");
+			sb.append("Key " + it.next().toString());
+			sb.append("</p>");
+		}
+		sb.append("</html>");
+		updateobject.showvalues(sb.toString());
+	}
+
+	public Icon getIcon() {
+		return new ImageIcon(TreeViewInternalFrame.class
+				.getResource("dictionary.gif"));
+	}
 
 }

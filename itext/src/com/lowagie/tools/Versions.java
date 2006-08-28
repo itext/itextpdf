@@ -49,20 +49,25 @@
  */
 package com.lowagie.tools;
 
-import java.awt.*;
-import javax.swing.*;
 import java.awt.BorderLayout;
-import com.lowagie.text.Document;
-import com.lowagie.tools.plugins.*;
-import java.util.Iterator;
-import java.util.TreeSet;
 import java.awt.Dimension;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.TreeSet;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+
+import com.lowagie.text.Document;
+import com.lowagie.tools.plugins.AbstractTool;
 
 /**
  * JFrame that shows the versions of all the plugins.
  */
 public class Versions extends JFrame {
+	private static final long serialVersionUID = 2925242862240301106L;
+
 	/**
 	 * Constructs a JFrame.
 	 */
@@ -81,7 +86,7 @@ public class Versions extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Versions untitled1 = new Versions();
+		new Versions();
 	}
 
 	private void jbInit() throws Exception {

@@ -440,6 +440,8 @@ public class Cell extends Rectangle implements TextElementArray {
 				tmp.setBorder(NO_BORDER);
 				table.addCell(tmp);
 				table.insertTable((Table)element);
+				tmp = new Cell();
+				tmp.setBorder(NO_BORDER);
 				table.addCell(tmp);
 				table.addCell(getDummyCell());
 				clear();
