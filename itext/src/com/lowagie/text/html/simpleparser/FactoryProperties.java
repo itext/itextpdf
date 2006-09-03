@@ -48,10 +48,13 @@
 package com.lowagie.text.html.simpleparser;
 
 import com.lowagie.text.*;
+import com.lowagie.text.markup.*;
 import com.lowagie.text.pdf.*;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.awt.Color;
+import java.util.Iterator;
+import java.util.Properties;
 
 /**
  *
@@ -59,7 +62,7 @@ import java.awt.Color;
  */
 public class FactoryProperties {
     
-    private FontFactoryImp fontImp;
+    private FontFactoryImp fontImp = FontFactory.getFontImp();
     
     /** Creates a new instance of FactoryProperties */
     public FactoryProperties() {
@@ -94,7 +97,6 @@ public class FactoryProperties {
         catch (Exception e) {
             p.setLeading(0, 1.5f);
         }
-
     }
 
     public static Paragraph createParagraph(HashMap props) {
@@ -164,7 +166,11 @@ public class FactoryProperties {
             StringTokenizer tok = new StringTokenizer(face, ",");
             while (tok.hasMoreTokens()) {
                 face = tok.nextToken().trim();
-                if (FontFactory.isRegistered(face))
+                if (face.startsWith("\""))
+                    face = face.substring(1);
+                if (face.endsWith("\""))
+                    face = face.substring(0, face.length() - 1);
+                if (fontImp.isRegistered(face))
                     break;
             }
         }
@@ -179,30 +185,66 @@ public class FactoryProperties {
         float size = 12;
         if (value != null)
             size = Float.valueOf(value).floatValue();
-        Color color = decodeColor(props.getProperty("color"));
+        Color color = MarkupParser.decodeColor(props.getProperty("color"));
         String encoding = props.getProperty("encoding");
         if (encoding == null)
             encoding = BaseFont.WINANSI;
-        FontFactoryImp ff = fontImp;
-        if (ff == null)
-            ff = FontFactory.getFontImp();
-        return ff.getFont(face, encoding, true, size, style, color);
+        return fontImp.getFont(face, encoding, true, size, style, color);
     }
     
-    public static Color decodeColor(String s) {
-        if (s == null)
-            return null;
-        s = s.toLowerCase().trim();
-        Color c = (Color)colorTable.get(s);
-        if (c != null)
-            return c;
-        try {
-            if (s.startsWith("#"))
-                return new Color(Integer.parseInt(s.substring(1), 16));
+    public static void insertStyle(HashMap h) {
+        String style = (String)h.get("style");
+        if (style == null)
+            return;
+        Properties prop = MarkupParser.parseAttributes(style);
+        for (Iterator it = prop.keySet().iterator(); it.hasNext();) {
+            String key = (String)it.next();
+            if (key.equals(MarkupTags.CSS_KEY_FONTFAMILY)) {
+                h.put("face", prop.getProperty(key));
+            }
+            else if (key.equals(MarkupTags.CSS_KEY_FONTSIZE)) {
+                h.put("size", Float.toString(MarkupParser.parseLength(prop.getProperty(key))) + "px");
+            }
+            else if (key.equals(MarkupTags.CSS_KEY_FONTSTYLE)) {
+                String ss = prop.getProperty(key).trim().toLowerCase();
+                if (ss.equals("italic") || ss.equals("oblique"))
+                    h.put("i", null);
+            }
+            else if (key.equals(MarkupTags.CSS_KEY_FONTWEIGHT)) {
+                String ss = prop.getProperty(key).trim().toLowerCase();
+                if (ss.equals("bold") || ss.equals("700") || ss.equals("800") || ss.equals("900"))
+                    h.put("b", null);
+            }
+            else if (key.equals(MarkupTags.CSS_KEY_FONTWEIGHT)) {
+                String ss = prop.getProperty(key).trim().toLowerCase();
+                if (ss.equals("underline"))
+                    h.put("u", null);
+            }
+            else if (key.equals(MarkupTags.CSS_KEY_COLOR)) {
+                Color c = MarkupParser.decodeColor(prop.getProperty(key));
+                if (c != null) {
+                    int hh = c.getRGB();
+                    String hs = Integer.toHexString(hh);
+                    hs = "000000" + hs;
+                    hs = "#" + hs.substring(hs.length() - 6);
+                    h.put("color", hs);
+                }
+            }
+            else if (key.equals(MarkupTags.CSS_KEY_LINEHEIGHT)) {
+                String ss = prop.getProperty(key).trim();
+                float v = MarkupParser.parseLength(prop.getProperty(key));
+                if (ss.endsWith("%")) {
+                    h.put("leading", "0," + (v / 100));
+                }
+                else {
+                    h.put("leading", v + ",0");
+                }
+            }
+            else if (key.equals(MarkupTags.CSS_KEY_TEXTALIGN)) {
+                String ss = prop.getProperty(key).trim().toLowerCase();
+                h.put("align", ss);
+            }
         }
-        catch (Exception e) {
-        }
-        return null;
     }
     
     public FontFactoryImp getFontImp() {
@@ -213,7 +255,6 @@ public class FactoryProperties {
         this.fontImp = fontImp;
     }
 
-    public static HashMap colorTable = new HashMap();
     public static HashMap followTags = new HashMap();
     static {
         followTags.put("i", "i");
@@ -223,22 +264,5 @@ public class FactoryProperties {
         followTags.put("sup", "sup");
         followTags.put("em", "i");
         followTags.put("strong", "b");
-        
-        colorTable.put("black", new Color(0x000000));
-        colorTable.put("green", new Color(0x008000));
-        colorTable.put("silver", new Color(0xC0C0C0));
-        colorTable.put("lime", new Color(0x00FF00));
-        colorTable.put("gray", new Color(0x808080));
-        colorTable.put("olive", new Color(0x808000));
-        colorTable.put("white", new Color(0xFFFFFF));
-        colorTable.put("yellow", new Color(0xFFFF00));
-        colorTable.put("maroon", new Color(0x800000));
-        colorTable.put("navy", new Color(0x000080));
-        colorTable.put("red", new Color(0xFF0000));
-        colorTable.put("blue", new Color(0x0000FF));
-        colorTable.put("purple", new Color(0x800080));
-        colorTable.put("teal", new Color(0x008080));
-        colorTable.put("fuchsia", new Color(0xFF00FF));
-        colorTable.put("aqua", new Color(0x00FFFF));
     }
 }

@@ -48,6 +48,7 @@
 package com.lowagie.text.html.simpleparser;
 
 import com.lowagie.text.*;
+import com.lowagie.text.markup.*;
 import com.lowagie.text.pdf.*;
 import java.util.ArrayList;
 /**
@@ -96,7 +97,7 @@ public class IncCell implements TextElementArray {
             cell.setPadding(Float.valueOf(value).floatValue());
         cell.setUseDescender(true);
         value = props.getProperty("bgcolor");
-        cell.setBackgroundColor(FactoryProperties.decodeColor(value));
+        cell.setBackgroundColor(MarkupParser.decodeColor(value));
     }
     
     public boolean add(Object o) {
