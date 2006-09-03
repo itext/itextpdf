@@ -187,7 +187,7 @@ public class MarkupParser extends HashMap {
 				value = value.substring(1);
 			if (value.endsWith("\""))
 				value = value.substring(0, value.length() - 1);
-			result.setProperty(key, value);
+			result.setProperty(key.toLowerCase(), value);
 		}
 		return result;
 	}
@@ -263,18 +263,49 @@ public class MarkupParser extends HashMap {
 	 * @return the HTML representation of this <COLOR>Color </COLOR>
 	 */
 
-	public static Color decodeColor(String color) {
-		int red = 0;
-		int green = 0;
-		int blue = 0;
-		try {
-			red = Integer.parseInt(color.substring(1, 3), 16);
-			green = Integer.parseInt(color.substring(3, 5), 16);
-			blue = Integer.parseInt(color.substring(5), 16);
-		} catch (Exception sioobe) {
-			// empty on purpose
-		}
-		return new Color(red, green, blue);
+	public static Color decodeColor(String s) {
+        if (s == null)
+            return null;
+        s = s.toLowerCase().trim();
+        Color c = (Color)colorTable.get(s);
+        if (c != null)
+            return c;
+        try {
+            if (s.startsWith("#")) {
+                if (s.length() == 4)
+                    s = "#" + s.substring(1, 2) + s.substring(1, 2)
+                        + s.substring(2, 3) + s.substring(2, 3) 
+                        + s.substring(3, 4) + s.substring(3, 4);
+                if (s.length() == 7)
+                    return new Color(Integer.parseInt(s.substring(1), 16));
+            }
+            else if (s.startsWith("rgb")) {
+                StringTokenizer tk = new StringTokenizer(s.substring(3), " \t\r\n\f(),");
+                int[] cc = new int [3];
+                for (int k = 0; k < 3; ++k) {
+                    if (!tk.hasMoreTokens())
+                        return null;
+                    String t = tk.nextToken();
+                    float n;
+                    if (t.endsWith("%")) {
+                        n = Float.parseFloat(t.substring(0, t.length() - 1));
+                        n = n * 255f / 100f;
+                    }
+                    else
+                        n = Float.parseFloat(t);
+                    int ni = (int)n;
+                    if (ni > 255)
+                        ni = 255;
+                    else if (ni < 0)
+                        ni = 0;
+                    cc[k] = ni;
+                }
+                return new Color(cc[0], cc[1], cc[2]);
+            }
+        }
+        catch (Exception e) {
+        }
+        return null;
 	}
 
 	// helper methods
@@ -733,4 +764,25 @@ public class MarkupParser extends HashMap {
 		return FontFactory.getFont(fontname, encoding, embedded, size, style,
 				color);
 	}
+    
+    public static HashMap colorTable = new HashMap();
+
+    static {
+        colorTable.put("black", new Color(0x000000));
+        colorTable.put("green", new Color(0x008000));
+        colorTable.put("silver", new Color(0xC0C0C0));
+        colorTable.put("lime", new Color(0x00FF00));
+        colorTable.put("gray", new Color(0x808080));
+        colorTable.put("olive", new Color(0x808000));
+        colorTable.put("white", new Color(0xFFFFFF));
+        colorTable.put("yellow", new Color(0xFFFF00));
+        colorTable.put("maroon", new Color(0x800000));
+        colorTable.put("navy", new Color(0x000080));
+        colorTable.put("red", new Color(0xFF0000));
+        colorTable.put("blue", new Color(0x0000FF));
+        colorTable.put("purple", new Color(0x800080));
+        colorTable.put("teal", new Color(0x008080));
+        colorTable.put("fuchsia", new Color(0xFF00FF));
+        colorTable.put("aqua", new Color(0x00FFFF));
+    }
 }
