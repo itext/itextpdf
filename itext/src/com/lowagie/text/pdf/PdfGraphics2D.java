@@ -49,6 +49,7 @@
 
 package com.lowagie.text.pdf;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -71,7 +72,6 @@ import java.awt.Stroke;
 import java.awt.Transparency;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
@@ -161,6 +161,15 @@ public class PdfGraphics2D extends Graphics2D {
 
     private boolean convertImagesToJPEG = false;
     private float jpegQuality = .95f;
+
+	// Added by Alexej Suchov
+	private float alpha;
+
+	// Added by Alexej Suchov
+	private Composite composite;
+
+	// Added by Alexej Suchov
+	private Paint realPaint;
 
     private PdfGraphics2D() {
         dg2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -470,19 +479,56 @@ public class PdfGraphics2D extends Graphics2D {
     
     /**
      * @see Graphics2D#setComposite(Composite)
+	 * @author Alexej Suchov
      */
     public void setComposite(Composite comp) {
         
+		if (comp instanceof AlphaComposite) {
+
+			AlphaComposite composite = (AlphaComposite) comp;
+
+			if (composite.getRule() == 3) {
+
+				alpha = composite.getAlpha();
+				this.composite = composite;
+
+				if (realPaint != null && (realPaint instanceof Color)) {
+
+					Color c = (Color) realPaint;
+					paint = new Color(c.getRed(), c.getGreen(), c.getBlue(),
+							(int) ((float) c.getAlpha() * alpha));
+				}
+				return;
+			}
+		}
+
+		this.composite = comp;
+		alpha = 1.0F;
+
     }
     
     /**
      * @see Graphics2D#setPaint(Paint)
+	 * 
+	 * @author Alexej Suchov
      */
     public void setPaint(Paint paint) {
         if (paint == null)
             return;
         this.paint = paint;
-//        setPaint(paint, false, 0, 0);
+		realPaint = paint;
+
+		if ((composite instanceof AlphaComposite) && (paint instanceof Color)) {
+			
+			AlphaComposite co = (AlphaComposite) composite;
+			
+			if (co.getRule() == 3) {
+				Color c = (Color) paint;
+				this.paint = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) ((float) c.getAlpha() * alpha));
+				realPaint = paint;
+			}
+		}
+
     }
 
     private Stroke transformStroke(Stroke stroke) {
@@ -691,10 +737,15 @@ public class PdfGraphics2D extends Graphics2D {
     
     /**
      * @see Graphics2D#getPaint()
+	 * @author Alexej Suchov
      */
     public Paint getPaint() {
-        return paint;
-    }
+        if (realPaint != null) {
+            return realPaint;
+        } else {
+            return paint;
+        }
+	}
     
     /**
      * @see Graphics2D#getComposite()
