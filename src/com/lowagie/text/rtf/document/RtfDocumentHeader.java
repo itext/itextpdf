@@ -115,11 +115,11 @@ public class RtfDocumentHeader extends RtfElement {
     /**
      * The current RtfHeaderFooterGroup for the header
      */
-    private RtfHeaderFooterGroup header = null;
+    private HeaderFooter header = null;
     /**
      * The current RtfHeaderFooterGroup for the footer
      */
-    private RtfHeaderFooterGroup footer = null;
+    private HeaderFooter footer = null;
 
     /**
      * Constructs a RtfDocumentHeader for a RtfDocument
@@ -175,6 +175,8 @@ public class RtfDocumentHeader extends RtfElement {
     public byte[] writeSectionDefinition() {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
+            RtfHeaderFooterGroup header = convertHeaderFooter(this.header, RtfHeaderFooter.TYPE_HEADER);
+            RtfHeaderFooterGroup footer = convertHeaderFooter(this.footer, RtfHeaderFooter.TYPE_FOOTER);
             if(header.hasTitlePage() || footer.hasTitlePage()) {
                 result.write(TITLE_PAGE);
                 header.setHasTitlePage();
@@ -267,17 +269,7 @@ public class RtfDocumentHeader extends RtfElement {
      * @param header The HeaderFooter to use as header
      */
     public void setHeader(HeaderFooter header) {
-        if(header != null) {
-            if(header instanceof RtfHeaderFooterGroup) {
-                this.header = new RtfHeaderFooterGroup(this.document, (RtfHeaderFooterGroup) header, RtfHeaderFooter.TYPE_HEADER);
-            } else if(header instanceof RtfHeaderFooter) {
-                this.header = new RtfHeaderFooterGroup(this.document, (RtfHeaderFooter) header, RtfHeaderFooter.TYPE_HEADER);
-            } else {
-                this.header = new RtfHeaderFooterGroup(this.document, header, RtfHeaderFooter.TYPE_HEADER);
-            }
-        } else {
-            this.header = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_HEADER);
-        }
+        this.header = header;
     }
     
     /**
@@ -286,17 +278,7 @@ public class RtfDocumentHeader extends RtfElement {
      * @param footer The HeaderFooter to use as footer
      */
     public void setFooter(HeaderFooter footer) {
-        if(footer != null) {
-            if(footer instanceof RtfHeaderFooterGroup) {
-                this.footer = new RtfHeaderFooterGroup(this.document, (RtfHeaderFooterGroup) footer, RtfHeaderFooter.TYPE_FOOTER);
-            } else if(footer instanceof RtfHeaderFooter) {
-                this.footer = new RtfHeaderFooterGroup(this.document, (RtfHeaderFooter) footer, RtfHeaderFooter.TYPE_FOOTER);
-            } else {
-                this.footer = new RtfHeaderFooterGroup(this.document, footer, RtfHeaderFooter.TYPE_FOOTER);
-            }
-        } else {
-            this.footer = new RtfHeaderFooterGroup(this.document, RtfHeaderFooter.TYPE_FOOTER);
-        }
+        this.footer = footer;
     }
     
     /**
@@ -306,5 +288,29 @@ public class RtfDocumentHeader extends RtfElement {
      */
     public void registerParagraphStyle(RtfParagraphStyle rtfParagraphStyle) {
         this.stylesheetList.registerParagraphStyle(rtfParagraphStyle);
+    }
+    
+    /**
+     * Converts a HeaderFooter into a RtfHeaderFooterGroup. Depending on which class
+     * the HeaderFooter is, the correct RtfHeaderFooterGroup is created.
+     * 
+     * @param hf The HeaderFooter to convert.
+     * @param type Whether the conversion is being done on a footer or header
+     * @return The converted RtfHeaderFooterGroup.
+     * @see com.lowagie.text.rtf.headerfooter.RtfHeaderFooter
+     * @see com.lowagie.text.rtf.headerfooter.RtfHeaderFooterGroup
+     */
+    private RtfHeaderFooterGroup convertHeaderFooter(HeaderFooter hf, int type) {
+        if(hf != null) {
+            if(hf instanceof RtfHeaderFooterGroup) {
+                return new RtfHeaderFooterGroup(this.document, (RtfHeaderFooterGroup) hf, type);
+            } else if(hf instanceof RtfHeaderFooter) {
+                return new RtfHeaderFooterGroup(this.document, (RtfHeaderFooter) hf, type);
+            } else {
+                return new RtfHeaderFooterGroup(this.document, hf, type);
+            }
+        } else {
+            return new RtfHeaderFooterGroup(this.document, type);
+        }
     }
 }
