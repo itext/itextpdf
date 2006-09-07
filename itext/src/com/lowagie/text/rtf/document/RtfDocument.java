@@ -50,7 +50,6 @@
 
 package com.lowagie.text.rtf.document;
 
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfMapper;
@@ -59,7 +58,6 @@ import com.lowagie.text.rtf.document.output.RtfDiskCache;
 import com.lowagie.text.rtf.document.output.RtfMemoryCache;
 import com.lowagie.text.rtf.graphic.RtfImage;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
