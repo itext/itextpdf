@@ -520,7 +520,7 @@ public class PdfCell extends Rectangle {
         right = right - left;
         left = 0f;
 
-        if ((image.alignment() & Image.RIGHT) == Image.RIGHT) { // fix Uwe Zimmerman
+        if ((image.alignment() & Image.RIGHT) == Image.RIGHT) {
             left = right - image.scaledWidth();
         } else if ((image.alignment() & Image.MIDDLE) == Image.MIDDLE) {
             left = left + ((right - left - image.scaledWidth()) / 2f);
@@ -560,7 +560,7 @@ public class PdfCell extends Rectangle {
             lineHeight = line.height();
             currentPosition -= lineHeight;
             // if the currentPosition is higher than the bottom, we add the line to the result
-            if (currentPosition > (bottom + cellpadding + getBorderWidthInside(BOTTOM))) { // bugfix by Tom Ring and Veerendra Namineni
+            if (currentPosition > (bottom + cellpadding + getBorderWidthInside(BOTTOM))) {
                 result.add(line);
             } else {
                 aboveBottom = false;
