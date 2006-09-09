@@ -505,7 +505,7 @@ public class PdfPRow {
                         ct.setSimpleColumn(leftLimit, bry - 0.001f,	rightLimit, tly);
                         if (cell.getRotation() == 180) {
                             float shx = leftLimit + rightLimit;
-                            float shy = yPos + yPos - maxHeight;
+                            float shy = yPos + yPos - maxHeight + cell.getEffectivePaddingBottom() - cell.getEffectivePaddingTop();
                             saveAndRotateCanvases(canvases, -1,0,0,-1,shx,shy);
                         }
                         try {
