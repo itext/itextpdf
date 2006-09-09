@@ -421,7 +421,7 @@ public class PdfPRow {
                         throw new ExceptionConverter(e);
                     }
                     float calcHeight = -ct.getYLine();
-                    if (netWidth <= 0 || netHeight >= 0)
+                    if (netWidth <= 0 || netHeight <= 0)
                         calcHeight = 0;
                     if (calcHeight > 0) {
                         if (cell.isUseDescender())
@@ -505,7 +505,7 @@ public class PdfPRow {
                         ct.setSimpleColumn(leftLimit, bry - 0.001f,	rightLimit, tly);
                         if (cell.getRotation() == 180) {
                             float shx = leftLimit + rightLimit;
-                            float shy = bry - 0.001f + tly;
+                            float shy = yPos + yPos - maxHeight;
                             saveAndRotateCanvases(canvases, -1,0,0,-1,shx,shy);
                         }
                         try {
