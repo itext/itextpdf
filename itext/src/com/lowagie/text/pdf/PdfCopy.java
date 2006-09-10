@@ -255,6 +255,8 @@ public class PdfCopy extends PdfWriter {
      * Translate a PR-object to a Pdf-object
      */
     protected PdfObject copyObject(PdfObject in) throws IOException,BadPdfFormatException {
+        if (in == null)
+            return PdfNull.PDFNULL;
         switch (in.type) {
             case PdfObject.DICTIONARY:
                 //	        System.out.println("Dictionary: " + in.toString());

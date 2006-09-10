@@ -480,11 +480,11 @@ public class PdfAnnotation extends PdfDictionary {
     }
     
     public void setBorder(PdfBorderArray border) {
-        putDel(PdfName.BORDER, border);
+        put(PdfName.BORDER, border);
     }
 
     public void setBorderStyle(PdfBorderDictionary border) {
-        putDel(PdfName.BS, border);
+        put(PdfName.BS, border);
     }
     
     /**
@@ -543,7 +543,7 @@ public class PdfAnnotation extends PdfDictionary {
     }
     
     public void setColor(Color color) {
-        putDel(PdfName.C, new PdfColor(color));
+        put(PdfName.C, new PdfColor(color));
     }
     
     public void setTitle(String title) {
@@ -560,7 +560,7 @@ public class PdfAnnotation extends PdfDictionary {
     }
     
     public void setAction(PdfAction action) {
-        putDel(PdfName.A, action);
+        put(PdfName.A, action);
     }
     
     public void setAdditionalActions(PdfName key, PdfAction action) {

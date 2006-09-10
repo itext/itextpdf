@@ -1134,7 +1134,7 @@ public abstract class BaseFont {
     
     private static void addFont(PRIndirectReference fontRef, IntHashtable hits, ArrayList fonts) {
         PdfObject obj = PdfReader.getPdfObject(fontRef);
-        if (!obj.isDictionary())
+        if (obj == null || !obj.isDictionary())
             return;
         PdfDictionary font = (PdfDictionary)obj;
         PdfName subtype = (PdfName)PdfReader.getPdfObject(font.get(PdfName.SUBTYPE));
