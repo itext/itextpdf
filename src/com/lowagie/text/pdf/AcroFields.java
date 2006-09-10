@@ -156,7 +156,7 @@ public class AcroFields {
             ArrayList arr = annots.getArrayList();
             for (int j = 0; j < arr.size(); ++j) {
                 PdfObject annoto = PdfReader.getPdfObject((PdfObject)arr.get(j), annots);
-                if ((annoto instanceof PdfIndirectReference) && !annoto.isIndirect()) {
+                if (!(annoto instanceof PdfDictionary)) {
                     PdfReader.releaseLastXrefPartial((PdfObject)arr.get(j));
                     continue;
                 }

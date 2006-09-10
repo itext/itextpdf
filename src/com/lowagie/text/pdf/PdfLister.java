@@ -171,6 +171,8 @@ public class PdfLister {
         PdfDictionary page = reader.getPageN(pageNum);
         listDict(page);
         PdfObject obj = PdfReader.getPdfObject(page.get(PdfName.CONTENTS));
+        if (obj == null)
+            return;
         switch (obj.type) {
         case PdfObject.STREAM:
             listStream((PRStream)obj, readerInst);
