@@ -4,7 +4,7 @@
  *
  * Copyright 2004 by Mark Hall
  * Uses code Copyright 2002
- *   <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
+ *   Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ import com.lowagie.text.Font;
  * 
  * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
- * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a> 
+ * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
  */
 public class RtfTableOfContents extends RtfField {
 

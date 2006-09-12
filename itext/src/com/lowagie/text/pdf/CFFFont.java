@@ -68,10 +68,6 @@
 
 package com.lowagie.text.pdf;
 
-/**
- * @author stoledo
- */
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import com.lowagie.text.ExceptionConverter;
@@ -490,9 +486,6 @@ public class CFFFont {
         }
     }
     /**
-     * 
-     * @author orly manor
-     *
      * TODO To change the template for this generated type comment go to
      * Window - Preferences - Java - Code Generation - Code and Comments
      */
@@ -974,7 +967,6 @@ public class CFFFont {
     }
     /**
      * A random Access File or an array
-     * (contributed by orly manor)
      */
     protected RandomAccessFileOrArray buf;
     private int offSize;
@@ -989,7 +981,6 @@ public class CFFFont {
     protected int[] gsubrOffsets;
     
     /**
-     * @author orly manor
      * TODO Changed from private to protected by Ygal&Oren
      */
     protected final class Font {
