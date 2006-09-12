@@ -79,7 +79,7 @@ import com.lowagie.text.Element;
  * </PRE></BLOCKQUOTE><P>
  * for more info: see O'Reilly; "HTML: The Definitive Guide" (page 164)
  *
- * @author  mario.maccarini@rug.ac.be
+ * @author  mario.maccarini@ugent.be
  */
 
 public class HtmlEncoder {
