@@ -61,7 +61,7 @@ import java.util.*;
  * This class provides methods for the Line Printer Daemon Protocol <BR>
  * <A HREF="http://www.hemasoft.de/dev/lprj/">more info about LPD/LPR </A>
  * 
- * @author <A HREF=mailto:supermario@gmx.net>Mario M&uuml;ller </A>
+ * based on code by Mario M&uuml;ller (supermario@gmx.net)
  * @version 1.0 (12/98)
  */
 public class LPR {
