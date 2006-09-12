@@ -61,7 +61,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * 
  * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
- * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
+ * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com)
  */
 public class RtfPageNumber extends RtfField {
 

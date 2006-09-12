@@ -3,7 +3,7 @@
  *
  * Copyright 2002 by 
  * <a href="http://www.smb-tec.com">SMB</a> 
- * <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
+ * Steffen.Stundzig (Steffen.Stundzig@smb-tec.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -62,9 +62,9 @@ import com.lowagie.text.Font;
  * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
  * This class is based on the RtfWriter-package from Mark Hall.
- * @author <a href="mailto:Steffen.Stundzig@smb-tec.com">Steffen.Stundzig@smb-tec.com</a>
+ * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com)
  * @author <a href="mailto:mhall@myrealbox.com">mhall@myrealbox.com</a>
- * @version $Revision$Date: 2004/12/14 15:14:44 $
+ * @version $Revision$Date: 2006/02/09 17:25:25 $
  * @deprecated Please move to the RtfWriter2 and associated classes. com.lowagie.text.rtf.field.RtfPageNumber replaces the functionality of this class.
  */
 public class RtfPageNumber extends GenericRtfField implements RtfField {
