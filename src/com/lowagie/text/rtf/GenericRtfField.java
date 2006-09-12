@@ -3,7 +3,7 @@
  *
  * Copyright 2002 by 
  * <a href="http://www.smb-tec.com">SMB</a> 
- * <a href="mailto:Dirk.Weigenand@smb-tec.com">Dirk.Weigenand@smb-tec.com</a>
+ * Dirk Weigenand (Dirk.Weigenand@smb-tec.com)
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ import com.lowagie.text.Font;
  * 
  * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
- * @author <a href="mailto:Dirk.Weigenand@smb-tec.com">Dirk Weigenand</a>
+ * @author Dirk Weigenand (Dirk.Weigenand@smb-tec.com)
  * @version $Id$
  * @since Mon Aug 19 14:50:39 2002
  * @deprecated Please move to the RtfWriter2 and associated classes.

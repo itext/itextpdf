@@ -61,7 +61,7 @@ import java.awt.*;
  * 
  * ONLY FOR USE WITH THE RtfWriter NOT with the RtfWriter2.
  *
- * @author <a href="mhall@myrealbox.com">mhall@myrealbox.com</a>
+ * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @deprecated Please move to the RtfWriter2 and associated classes. com.lowagie.text.rtf.style.RtfFont replaces the functionality of this class.
  */
 public class RtfFont extends Font {

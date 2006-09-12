@@ -57,7 +57,7 @@ import java.util.Properties;
  * that is, random String-to-String properties for representation in markup
  * languages such as HTML and XML.
  *
- * @author <a href="mailto:orangeherbert@users.sourceforge.net">Matt Benson</a>
+ * @author Matt Benson (orangeherbert@users.sourceforge.net or gudnabrsam@yahoo.com)
  */
 public interface MarkupAttributes extends com.lowagie.text.Element {
     

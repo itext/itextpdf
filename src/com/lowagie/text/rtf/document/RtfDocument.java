@@ -68,7 +68,7 @@ import java.util.ArrayList;
  *
  * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
- * @author Todd Bush (Todd.Bush@canopysystems.com) [Tab support]
+ * @author Todd Bush [Tab support]
  */
 public class RtfDocument extends RtfElement {
     /**
