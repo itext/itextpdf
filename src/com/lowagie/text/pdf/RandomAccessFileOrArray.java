@@ -55,7 +55,6 @@ import java.io.DataInput;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.EOFException;
-import java.io.RandomAccessFile;
 import java.io.File;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,7 +66,7 @@ import java.net.URL;
  */
 public class RandomAccessFileOrArray implements DataInput {
     
-    RandomAccessFile rf;
+    MappedRandomAccessFile rf;
     String filename;
     byte arrayIn[];
     int arrayInPtr;
@@ -119,7 +118,7 @@ public class RandomAccessFileOrArray implements DataInput {
         	return;
         }
         this.filename = filename;
-        rf = new RandomAccessFile(filename, "r");
+        rf = new MappedRandomAccessFile(filename, "r");
     }
 
     public RandomAccessFileOrArray(URL url) throws IOException {
@@ -262,7 +261,7 @@ public class RandomAccessFileOrArray implements DataInput {
     
     public void reOpen() throws IOException {
         if (filename != null && rf == null)
-            rf = new RandomAccessFile(filename, "r");
+            rf = new MappedRandomAccessFile(filename, "r");
         seek(0);
     }
     
