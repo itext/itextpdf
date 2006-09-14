@@ -283,7 +283,7 @@ private static final long serialVersionUID = 7852314969733375514L;
             return super.add(list);
         }
         else if (o instanceof Image) {
-            super.addSpecial((Image) o);
+            super.addSpecial(o);
             return true;
         }
         else if (o instanceof Paragraph) {

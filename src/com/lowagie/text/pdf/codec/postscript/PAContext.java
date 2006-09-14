@@ -2688,10 +2688,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
               height = ( (Number) hsm.get(token)).intValue();
             }
             if (token.value.toString().equals("Decode")) {
-              decode = ( (Object) hsm.get(token));
+              decode = hsm.get(token);
             }
             if (token.value.toString().equals("ImageMatrix")) {
-              imagematrix = ( (Object) hsm.get(token));
+              imagematrix = hsm.get(token);
             }
           }
 
