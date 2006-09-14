@@ -56,20 +56,20 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.zip.InflaterInputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.InflaterInputStream;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.StringCompare;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.StringCompare;
 
 /** Reads a PDF document.
  * @author Paulo Soares (psoares@consiste.pt)

@@ -62,17 +62,36 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.util.*;
-import java.io.*;
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Stack;
+import java.util.TreeSet;
 
 import javax.swing.WindowConstants;
 
-import com.lowagie.text.pdf.PdfGraphics2D;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Jpeg;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfGraphics2D;
 import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.*;
 
 public class PAContext {
 

@@ -48,13 +48,14 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Element;
-import com.lowagie.text.Rectangle;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Canvas;
 import java.awt.image.MemoryImageSource;
+
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
 
 /** Implements the code codabar. The default parameters are:
  * <pre>

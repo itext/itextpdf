@@ -50,12 +50,13 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DocWriter;
-import com.lowagie.text.Document;
-import com.lowagie.text.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.zip.DeflaterOutputStream;
+
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.Document;
+import com.lowagie.text.Rectangle;
 
 /**
  * <CODE>PdfContents</CODE> is a <CODE>PdfStream</CODE> containing the contents (text + graphics) of a <CODE>PdfPage</CODE>.

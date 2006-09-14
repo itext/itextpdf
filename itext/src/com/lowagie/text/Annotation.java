@@ -51,8 +51,8 @@
 package com.lowagie.text;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 

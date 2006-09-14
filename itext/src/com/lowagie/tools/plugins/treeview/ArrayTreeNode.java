@@ -49,10 +49,12 @@
  */
 package com.lowagie.tools.plugins.treeview;
 
-import com.lowagie.text.pdf.PdfArray;
 import java.util.ArrayList;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import com.lowagie.text.pdf.PdfArray;
 
 /**
  * TreeNode for PdfArray objects.

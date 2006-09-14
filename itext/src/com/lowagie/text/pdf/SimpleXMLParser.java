@@ -46,9 +46,14 @@
  */
 package com.lowagie.text.pdf;
 
-import java.io.*;
-import java.util.Stack;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
+import java.util.Stack;
 
 /**
  * A simple XML and HTML parser.  This parser is, like the SAX parser,

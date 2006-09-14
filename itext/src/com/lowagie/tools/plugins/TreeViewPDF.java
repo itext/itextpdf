@@ -49,17 +49,17 @@
  */
 package com.lowagie.tools.plugins;
 
+import java.beans.PropertyVetoException;
 import java.io.File;
 
 import javax.swing.JOptionPane;
 
+import com.lowagie.tools.Toolbox;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.LabelAccessory;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
 import com.lowagie.tools.plugins.treeview.TreeViewInternalFrame;
-import com.lowagie.tools.Toolbox;
-import java.beans.*;
 
 /**
  * Allows you to inspect an existing PDF file.

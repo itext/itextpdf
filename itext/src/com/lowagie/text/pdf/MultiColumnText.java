@@ -50,9 +50,14 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.*;
-
 import java.util.ArrayList;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ElementListener;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 
 /**
  * Formats content into one or more columns bounded by a

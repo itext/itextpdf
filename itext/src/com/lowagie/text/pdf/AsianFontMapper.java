@@ -48,9 +48,6 @@ package com.lowagie.text.pdf;
 
 import java.awt.Font;
 
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.DefaultFontMapper;
-
 public class AsianFontMapper extends DefaultFontMapper {
 	
 	public static String ChineseSimplifiedFont = "STSong-Light";

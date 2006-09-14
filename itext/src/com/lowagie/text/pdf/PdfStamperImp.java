@@ -55,9 +55,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Image;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 
 class PdfStamperImp extends PdfWriter {
     HashMap readers2intrefs = new HashMap();

@@ -46,18 +46,18 @@
  */
 package com.lowagie.text.pdf;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.io.BufferedWriter;
-import java.io.InputStream;
 import java.io.Reader;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  *

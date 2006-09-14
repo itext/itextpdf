@@ -54,12 +54,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.*;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import com.lowagie.text.pdf.PRStream;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
 
 public class Pagetreenode extends UpdateableTreeNode {
 

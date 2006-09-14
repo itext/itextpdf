@@ -52,8 +52,8 @@ package com.lowagie.text;
 
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.

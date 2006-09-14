@@ -50,6 +50,10 @@
 
 package com.lowagie.text.rtf.document;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfMapper;
@@ -57,10 +61,6 @@ import com.lowagie.text.rtf.document.output.RtfDataCache;
 import com.lowagie.text.rtf.document.output.RtfDiskCache;
 import com.lowagie.text.rtf.document.output.RtfMemoryCache;
 import com.lowagie.text.rtf.graphic.RtfImage;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
 
 /**
  * The RtfDocument stores all document related data and also the main data stream.

@@ -50,13 +50,15 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DocumentException;
-import java.io.*;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.StringTokenizer;
+
+import com.lowagie.text.DocumentException;
 
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.

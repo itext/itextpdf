@@ -48,10 +48,11 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.OutputStream;
 import java.io.IOException;
-import com.lowagie.text.DocumentException;
+import java.io.OutputStream;
 import java.util.HashMap;
+
+import com.lowagie.text.DocumentException;
 
 /** This class takes any PDF and returns exactly the same but
  * encrypted. All the content, links, outlines, etc, are kept.

@@ -50,8 +50,8 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Image;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
 
 /**
  * <CODE>PdfFont</CODE> is the Pdf Font object.

@@ -49,11 +49,11 @@
  */
 package com.lowagie.text.pdf;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ArrayList;
-import java.io.*;
 
 /**
  * This Class subsets a CFF Type Font. The subset is preformed for CID fonts and NON CID fonts.

@@ -50,11 +50,14 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DocumentException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.fonts.FontsResourceAnchor;
-import java.io.*;
 
 /** Reads a Type1 font
  *

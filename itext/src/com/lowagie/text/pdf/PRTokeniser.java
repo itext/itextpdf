@@ -49,7 +49,7 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.*;
+import java.io.IOException;
 /**
  *
  * @author  Paulo Soares (psoares@consiste.pt)

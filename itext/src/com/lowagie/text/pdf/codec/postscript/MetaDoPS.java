@@ -50,10 +50,13 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.io.*;
-import java.awt.*;
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.lowagie.text.PageSize;
+import com.lowagie.text.pdf.PdfContentByte;
 
 public class MetaDoPS {
 

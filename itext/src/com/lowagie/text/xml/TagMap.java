@@ -50,18 +50,17 @@
 
 package com.lowagie.text.xml;
 
+import java.io.InputStream;
 import java.util.HashMap;
-
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import java.io.InputStream;
+import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.helpers.DefaultHandler;
 
-import com.lowagie.text.*;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.

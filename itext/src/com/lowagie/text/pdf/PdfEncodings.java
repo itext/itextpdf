@@ -46,15 +46,16 @@
  */
 
 package com.lowagie.text.pdf;
-import com.lowagie.text.ExceptionConverter;
-import java.io.UnsupportedEncodingException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+
+import com.lowagie.text.ExceptionConverter;
 /** Supports fast encodings for winansi and PDFDocEncoding.
  * Supports conversions from CJK encodings to CID.
  * Supports custom encodings.

@@ -47,9 +47,10 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DocumentException;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import com.lowagie.text.DocumentException;
 
 /**
  * A class to support Type3 fonts.

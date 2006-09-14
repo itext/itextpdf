@@ -50,11 +50,17 @@
 
 package com.lowagie.text;
 
-import java.io.*;
-import java.net.*;
-import com.lowagie.text.pdf.*;
-import com.lowagie.text.pdf.codec.postscript.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.StringTokenizer;
+
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.codec.postscript.MetaDoPS;
 
 /**
  * An <CODE>ImgPostscript</CODE> is the representation of an EPS

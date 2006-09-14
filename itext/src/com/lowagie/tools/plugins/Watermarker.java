@@ -49,13 +49,21 @@
  */
 package com.lowagie.tools.plugins;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 
-import javax.swing.*;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
-import com.lowagie.tools.arguments.*;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfGState;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.tools.arguments.FileArgument;
+import com.lowagie.tools.arguments.PdfFilter;
+import com.lowagie.tools.arguments.ToolArgument;
 
 /**
  * This tool lets you add a text watermark to all pages of a document.

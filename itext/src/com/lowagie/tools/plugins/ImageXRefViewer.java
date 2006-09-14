@@ -51,14 +51,17 @@ package com.lowagie.tools.plugins;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SwingConstants;
@@ -69,13 +72,10 @@ import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStream;
+import com.lowagie.tools.SwingWorker;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
-import javax.swing.JScrollPane;
-import com.lowagie.tools.SwingWorker;
-import java.io.*;
-import java.awt.Cursor;
 
 /**
  * Allows you to inspect the Image XObjects inside a PDF file.

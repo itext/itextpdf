@@ -47,14 +47,22 @@
 
 package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.*;
-import com.lowagie.text.markup.*;
-import com.lowagie.text.pdf.*;
-import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.StringTokenizer;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.FontFactoryImp;
+import com.lowagie.text.ListItem;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.pdf.BaseFont;
 
 /**
  *

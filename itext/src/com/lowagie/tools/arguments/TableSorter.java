@@ -51,12 +51,6 @@
  */
 package com.lowagie.tools.arguments;
 
-import java.awt.event.InputEvent;
-
-// Imports for picking up mouse events from the JTable.
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 /*
  * @(#)TableSorter.java 1.5 97/12/17
  * 
@@ -92,7 +86,13 @@ import java.awt.event.MouseEvent;
  * @version 1.5 12/17/97
  * @author Philip Milne
  */
-import java.util.*;
+
+
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Date;
+import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;

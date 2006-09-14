@@ -50,12 +50,15 @@
 
 package com.lowagie.tools;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.pdf.*;
-import java.util.List;
-import java.util.ArrayList;
+import com.lowagie.text.pdf.PdfCopy;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.SimpleBookmark;
 
 /**
  * Tool that can be used to concatenate existing PDF files.

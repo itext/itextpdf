@@ -52,9 +52,10 @@ package com.lowagie.tools.plugins.treeview;
 
 import java.util.ArrayList;
 
-import com.lowagie.text.pdf.PdfArray;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import com.lowagie.text.pdf.PdfArray;
 
 public class PagelistTreeNode extends UpdateableTreeNode {
 

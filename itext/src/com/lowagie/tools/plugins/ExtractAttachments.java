@@ -57,7 +57,14 @@ import java.util.Iterator;
 
 import javax.swing.JInternalFrame;
 
-import com.lowagie.text.pdf.*;
+import com.lowagie.text.pdf.PRStream;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNameTree;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfString;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.LabelAccessory;
 import com.lowagie.tools.arguments.PdfFilter;

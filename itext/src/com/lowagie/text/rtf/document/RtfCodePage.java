@@ -50,11 +50,11 @@
 
 package com.lowagie.text.rtf.document;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
-
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
 
 /**
  * The RtfCodePage class allows different code pages to be used in the rtf document.

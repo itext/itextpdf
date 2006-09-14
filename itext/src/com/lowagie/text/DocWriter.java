@@ -51,9 +51,10 @@
 package com.lowagie.text;
 
 import java.io.BufferedOutputStream;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
+
 import com.lowagie.text.pdf.OutputStreamCounter;
 
 /**

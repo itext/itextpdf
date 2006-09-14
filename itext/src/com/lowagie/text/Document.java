@@ -52,9 +52,8 @@ package com.lowagie.text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * A generic Document class.

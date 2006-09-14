@@ -49,8 +49,8 @@
 package com.lowagie.text.pdf;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Stack;
 

@@ -47,9 +47,9 @@
 package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.ArrayList;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 /** Reads an FDF form and makes the fields available
  * @author Paulo Soares (psoares@consiste.pt)
  */

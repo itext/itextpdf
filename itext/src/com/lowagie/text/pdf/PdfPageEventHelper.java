@@ -50,8 +50,8 @@
 
 package com.lowagie.text.pdf;
 import com.lowagie.text.Document;
-import com.lowagie.text.Rectangle;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 
 /**
  * Helps the use of <CODE>PdfPageEvent</CODE> by implementing all the interface methods.

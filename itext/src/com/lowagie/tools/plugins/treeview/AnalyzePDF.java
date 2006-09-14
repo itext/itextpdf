@@ -51,20 +51,25 @@ package com.lowagie.tools.plugins.treeview;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import com.lowagie.text.pdf.*;
-
-import java.util.Set;
-import java.util.Iterator;
-import javax.swing.table.TableModel;
-import javax.swing.table.AbstractTableModel;
+import com.lowagie.text.pdf.PRIndirectReference;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfString;
 
 public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	DefaultMutableTreeNode root;

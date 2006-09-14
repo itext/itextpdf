@@ -48,10 +48,11 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Image;
 import java.awt.Color;
+
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 /** Base class containing properties and methods commom to all
  * barcode types.
  *

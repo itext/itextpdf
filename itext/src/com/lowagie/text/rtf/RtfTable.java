@@ -50,11 +50,15 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.*;
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.io.*;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Row;
+import com.lowagie.text.Table;
 
 /**
  * A Helper Class for the <CODE>RtfWriter</CODE>.

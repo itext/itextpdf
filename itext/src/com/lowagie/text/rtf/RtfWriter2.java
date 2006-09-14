@@ -50,16 +50,23 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Reader;
+
+import com.lowagie.text.DocListener;
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.Watermark;
 import com.lowagie.text.rtf.direct.RtfImportMappings;
 import com.lowagie.text.rtf.direct.RtfParser;
 import com.lowagie.text.rtf.document.RtfDocument;
 import com.lowagie.text.rtf.document.RtfDocumentSettings;
 import com.lowagie.text.rtf.text.RtfNewPage;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Reader;
 
 /**
  * The RtfWriter allows the creation of rtf documents via the iText system

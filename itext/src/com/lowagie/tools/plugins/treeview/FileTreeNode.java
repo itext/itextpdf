@@ -50,9 +50,10 @@
 
 package com.lowagie.tools.plugins.treeview;
 
-import com.lowagie.text.pdf.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import com.lowagie.text.pdf.PdfReader;
 
 public class FileTreeNode extends UpdateableTreeNode {
 

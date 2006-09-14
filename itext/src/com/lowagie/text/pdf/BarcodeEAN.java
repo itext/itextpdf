@@ -46,13 +46,14 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.ExceptionConverter;
-import java.util.Arrays;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Canvas;
 import java.awt.image.MemoryImageSource;
+import java.util.Arrays;
+
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
 
 /** Generates barcodes in several formats: EAN13, EAN8, UPCA, UPCE,
  * supplemental 2 and 5. The default parameters are:

@@ -50,14 +50,14 @@
 
 package com.lowagie.text;
 
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * An <CODE>Anchor</CODE> can be a reference or a destination of a reference.

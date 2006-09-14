@@ -50,11 +50,12 @@
 
 package com.lowagie.text.pdf.codec.wmf;
 
+import java.awt.Color;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Stack;
-import java.awt.Point;
-import java.awt.Color;
-import com.lowagie.text.pdf.*;
+
+import com.lowagie.text.pdf.PdfContentByte;
 
 public class MetaState {
     
