@@ -45,11 +45,12 @@
  * http://www.lowagie.com/iText/
  */
 package com.lowagie.text.pdf;
-import com.lowagie.text.Rectangle;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Canvas;
 import java.awt.image.MemoryImageSource;
+
+import com.lowagie.text.Rectangle;
 
 /** Implements the Postnet and Planet barcodes. The default parameters are:
  * <pre>

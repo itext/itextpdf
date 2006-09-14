@@ -48,13 +48,14 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
-import com.lowagie.text.Element;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Rectangle;
 
 /** Common field variables.
  * @author Paulo Soares (psoares@consiste.pt)

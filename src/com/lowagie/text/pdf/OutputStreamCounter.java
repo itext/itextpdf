@@ -45,8 +45,8 @@
  * http://www.lowagie.com/iText/
  */
 package com.lowagie.text.pdf;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  *

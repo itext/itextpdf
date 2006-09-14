@@ -51,10 +51,11 @@
 package com.lowagie.text.pdf.codec.wmf;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import com.lowagie.text.pdf.*;
+
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
-import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.pdf.BaseFont;
 
 public class MetaFont extends MetaObject {
     static final String fontNames[] = {

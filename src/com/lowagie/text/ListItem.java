@@ -52,8 +52,8 @@ package com.lowagie.text;
 
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>

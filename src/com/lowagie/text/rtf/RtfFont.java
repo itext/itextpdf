@@ -50,9 +50,9 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.Font;
+import java.awt.Color;
 
-import java.awt.*;
+import com.lowagie.text.Font;
 
 /**
  * The RtfFont class enables you to add arbitrary Fonts to a rtf document by specifying

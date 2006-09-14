@@ -50,14 +50,39 @@
 
 package com.lowagie.text.xml;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
-import java.util.HashMap;
 
-import com.lowagie.text.*;
+import com.lowagie.text.Anchor;
+import com.lowagie.text.Annotation;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.Cell;
+import com.lowagie.text.Chapter;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocListener;
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ElementTags;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.List;
+import com.lowagie.text.ListItem;
+import com.lowagie.text.MarkupAttributes;
+import com.lowagie.text.Meta;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.Row;
+import com.lowagie.text.Section;
+import com.lowagie.text.SimpleTable;
+import com.lowagie.text.Table;
 import com.lowagie.text.markup.MarkupTags;
 
 /**

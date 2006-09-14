@@ -50,11 +50,11 @@
 
 package com.lowagie.text.pdf;
 
+import com.lowagie.text.Chunk;
 import com.lowagie.text.Element;
+import com.lowagie.text.Image;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.Image;
-import com.lowagie.text.Chunk;
 import com.lowagie.text.pdf.events.PdfPCellEventForwarder;
 
 /** A cell in a PdfPTable.

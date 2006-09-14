@@ -32,9 +32,10 @@ package com.lowagie.tools.arguments;
  * @version 1.4 12/17/97
  * @author Philip Milne */
 
-import javax.swing.table.*;
-import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 public class TableMap extends AbstractTableModel implements TableModelListener {
 

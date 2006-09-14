@@ -46,22 +46,23 @@
  */
 package com.lowagie.text.pdf;
 
-import java.security.SignatureException;
-import java.io.OutputStream;
+import java.io.EOFException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.EOFException;
-import java.io.RandomAccessFile;
-import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.security.SignatureException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import com.lowagie.text.DocWriter;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.DocWriter;
-import com.lowagie.text.Rectangle;
 import com.lowagie.text.Image;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Iterator;
+import com.lowagie.text.Rectangle;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte

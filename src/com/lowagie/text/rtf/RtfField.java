@@ -52,10 +52,8 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.rtf.RtfWriter;
-
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 
 /**
@@ -66,7 +64,7 @@ import java.io.IOException;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
- * @version $Revision$Date: 2006/02/09 17:25:25 $
+ * @version $Revision$Date: 2006/09/12 12:16:35 $
  * @deprecated Please move to the RtfWriter2 and associated classes.
  */
 public interface RtfField {

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.IOException;
 /** Each spotcolor in the document will have an instance of this class
  *
  * @author Phillip Pan (phillip@formstar.com)

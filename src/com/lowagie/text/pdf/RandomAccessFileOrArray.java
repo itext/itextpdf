@@ -50,14 +50,14 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.DataInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
 import java.net.URL;
 /** An implementation of a RandomAccessFile for input only
  * that accepts a file or a byte array as data source.

@@ -56,8 +56,8 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.

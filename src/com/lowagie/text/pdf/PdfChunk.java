@@ -51,13 +51,13 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.SplitCharacter;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * A <CODE>PdfChunk</CODE> is the PDF translation of a <CODE>Chunk</CODE>.

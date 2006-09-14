@@ -55,7 +55,6 @@ import java.io.IOException;
 
 import com.lowagie.text.Font;
 import com.lowagie.text.rtf.document.RtfDocument;
-import com.lowagie.text.rtf.field.RtfField;
 
 /**
  * The RtfTotalPageNumber provides the total number of pages field in rtf documents.

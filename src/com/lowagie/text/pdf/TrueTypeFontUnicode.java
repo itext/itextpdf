@@ -54,7 +54,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.ArrayList;
 
 import com.lowagie.text.DocumentException;
 /** Represents a True Type font with Unicode encoding. All the character

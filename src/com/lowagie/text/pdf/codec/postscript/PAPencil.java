@@ -62,10 +62,31 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.font.*;
-import java.awt.geom.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Composite;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Stack;
+
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGraphics2D;
 

@@ -46,10 +46,11 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.DocumentException;
 import java.io.IOException;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
 
 /**
  * Creates a radio or a check field.

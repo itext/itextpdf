@@ -47,8 +47,8 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.pdf.hyphenation.Hyphenator;
 import com.lowagie.text.pdf.hyphenation.Hyphenation;
+import com.lowagie.text.pdf.hyphenation.Hyphenator;
 
 /** Hyphenates words automatically accordingly to the language and country.
  * The hyphenator engine was taken from FOP and uses the TEX patterns. If a language

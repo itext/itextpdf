@@ -47,7 +47,10 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 /** Specifies a file or an URL. The file can be extern or embedded.
  *

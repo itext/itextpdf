@@ -31,12 +31,13 @@
  * the design, construction, operation or maintenance of any nuclear facility.
  */
 package com.lowagie.text.pdf.codec;
-import java.io.IOException;
 import java.io.EOFException;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.ArrayList;
+
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 /**

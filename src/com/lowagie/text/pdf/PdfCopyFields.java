@@ -46,11 +46,11 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.DocWriter;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.DocumentException;
 
 /**
  * Concatenates PDF documents including form fields. The rules for the form field

@@ -47,9 +47,10 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Font;
-import com.lowagie.text.ExceptionConverter;
-import java.util.HashMap;
 import java.io.File;
+import java.util.HashMap;
+
+import com.lowagie.text.ExceptionConverter;
 /** Default class to map awt fonts to BaseFont.
  * @author Paulo Soares (psoares@consiste.pt)
  */

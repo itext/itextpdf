@@ -49,11 +49,13 @@
  */
 package com.lowagie.tools.arguments;
 
-import javax.swing.table.*;
-import com.lowagie.text.pdf.PdfReader;
-import java.io.*;
-import com.lowagie.text.Rectangle;
+import java.io.IOException;
 import java.text.DecimalFormat;
+
+import javax.swing.table.AbstractTableModel;
+
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfReader;
 
 /**
  * A table that shows info about the pages in a PDF document.

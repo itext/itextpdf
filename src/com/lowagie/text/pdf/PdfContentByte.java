@@ -50,19 +50,18 @@
 
 package com.lowagie.text.pdf;
 import java.awt.Color;
+import java.awt.geom.AffineTransform;
+import java.awt.print.PrinterJob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.awt.geom.AffineTransform;
-import java.awt.print.PrinterJob;
 
+import com.lowagie.text.Annotation;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.Annotation;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.pdf.ExtendedColor;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned

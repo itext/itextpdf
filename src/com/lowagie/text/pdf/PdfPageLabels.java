@@ -51,8 +51,8 @@
 package com.lowagie.text.pdf;
 
 import java.util.Comparator;
-import java.util.TreeMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 /** Page labels are used to identify each
  * page visually on the screen or in print.

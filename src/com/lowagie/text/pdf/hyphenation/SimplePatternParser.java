@@ -47,13 +47,15 @@
 
 package com.lowagie.text.pdf.hyphenation;
 
-import com.lowagie.text.pdf.*;
-import com.lowagie.text.ExceptionConverter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.FileInputStream;
+
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.pdf.SimpleXMLDocHandler;
+import com.lowagie.text.pdf.SimpleXMLParser;
 
 /** Parses the xml hyphenation pattern.
  *

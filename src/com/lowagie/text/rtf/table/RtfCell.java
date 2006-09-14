@@ -52,9 +52,9 @@ package com.lowagie.text.rtf.table;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.ArrayList;
 
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;

@@ -50,19 +50,43 @@
 
 package com.lowagie.text.html;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.EmptyStackException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Stack;
-import java.util.EmptyStackException;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.Anchor;
+import com.lowagie.text.Annotation;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.Cell;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocListener;
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Font;
+import com.lowagie.text.Header;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Image;
+import com.lowagie.text.List;
+import com.lowagie.text.ListItem;
+import com.lowagie.text.Meta;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.Row;
+import com.lowagie.text.Section;
+import com.lowagie.text.SimpleTable;
+import com.lowagie.text.Table;
 import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.pdf.BaseFont;
 
 /**
  * A <CODE>DocWriter</CODE> class for HTML.

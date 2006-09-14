@@ -48,16 +48,17 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Document;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  *

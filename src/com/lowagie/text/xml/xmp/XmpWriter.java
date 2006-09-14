@@ -53,8 +53,8 @@ package com.lowagie.text.xml.xmp;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.lowagie.text.pdf.PdfDate;
 import com.lowagie.text.pdf.PdfDictionary;

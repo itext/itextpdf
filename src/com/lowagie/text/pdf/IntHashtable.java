@@ -8,8 +8,8 @@
 package com.lowagie.text.pdf;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /// A Hashtable that uses ints as the keys.
 // <P>

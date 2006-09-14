@@ -47,8 +47,8 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.HashSet;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Content typically belongs to a single optional content group,

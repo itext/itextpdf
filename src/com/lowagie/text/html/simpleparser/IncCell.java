@@ -47,10 +47,14 @@
 
 package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.*;
-import com.lowagie.text.markup.*;
-import com.lowagie.text.pdf.*;
 import java.util.ArrayList;
+
+import com.lowagie.text.Element;
+import com.lowagie.text.ElementListener;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.TextElementArray;
+import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.pdf.PdfPCell;
 /**
  *
  * @author  psoares

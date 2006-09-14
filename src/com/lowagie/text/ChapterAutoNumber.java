@@ -47,8 +47,6 @@
 
 package com.lowagie.text;
 
-import com.lowagie.text.Chapter;
-import com.lowagie.text.Paragraph;
 
 /**
  * Chapter with auto numbering.

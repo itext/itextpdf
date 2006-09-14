@@ -50,8 +50,9 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.HashMap;
+
 import com.lowagie.text.DocumentException;
 /** Enumerates all the fonts inside a True Type Collection.
  *

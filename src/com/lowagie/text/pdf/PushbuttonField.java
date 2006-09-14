@@ -46,10 +46,11 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Image;
-import com.lowagie.text.DocumentException;
 import java.io.IOException;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 /**
  * Creates a pushbutton field. It supports all the text and icon alignments.
  * The icon may be an image or a template.

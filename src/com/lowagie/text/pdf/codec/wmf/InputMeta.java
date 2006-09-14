@@ -50,8 +50,10 @@
 
 package com.lowagie.text.pdf.codec.wmf;
 
-import java.io.*;
 import java.awt.Color;
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.lowagie.text.Image;
 
 public class InputMeta {

@@ -50,10 +50,14 @@
 
 package com.lowagie.tools;
 
-import java.io.*;
+import java.io.FileOutputStream;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * This class demonstrates how to split a PDF file using iText.

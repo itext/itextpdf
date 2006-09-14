@@ -62,7 +62,9 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Stack;
+import java.util.Vector;
 
 
 public class PAEngine extends Object {

@@ -50,8 +50,6 @@
 
 package com.lowagie.text;
 
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 
 /**
  * A <CODE>HeaderFooter</CODE>-object is a <CODE>Rectangle</CODe> with text

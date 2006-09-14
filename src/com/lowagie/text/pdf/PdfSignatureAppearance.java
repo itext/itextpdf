@@ -48,33 +48,34 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Font;
-import com.lowagie.text.Element;
-import com.lowagie.text.Image;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Chunk;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.text.SimpleDateFormat;
+import java.io.EOFException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.security.PrivateKey;
+import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.cert.CRL;
-import java.security.PrivateKey;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.EOFException;
-import java.io.RandomAccessFile;
-import java.io.File;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 
 /**
  * This class takes care of the cryptographic options and appearances that form a signature.

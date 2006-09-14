@@ -50,7 +50,6 @@
 
 package com.lowagie.text.xml.xmp;
 
-import java.io.IOException;
 
 /**
  * An implementation of an XmpSchema.

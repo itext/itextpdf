@@ -80,11 +80,22 @@
  */
 package com.lowagie.text.pdf.codec;
 
-import com.lowagie.text.pdf.*;
-import com.lowagie.text.*;
-import java.io.*;
-import java.util.HashMap;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
+import com.lowagie.text.ImgRaw;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
+import com.lowagie.text.pdf.PdfString;
 
 /** Reads a BMP image. All types of BMP can be read.
  * <p>

@@ -45,13 +45,22 @@
  * http://www.lowagie.com/iText/
  */
 package com.lowagie.text.pdf.codec;
-import com.lowagie.text.pdf.*;
+import java.awt.color.ICC_Profile;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.Inflater;
+
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Jpeg;
-import com.lowagie.text.ExceptionConverter;
-import java.io.*;
-import java.util.zip.*;
-import java.awt.color.ICC_Profile;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
+import com.lowagie.text.pdf.PdfString;
+import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 /** Reads TIFF images
  * @author Paulo Soares (psoares@consiste.pt)

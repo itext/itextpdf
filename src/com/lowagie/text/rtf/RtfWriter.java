@@ -50,17 +50,40 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.*;
-
-import java.io.*;
+import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.ListIterator;
-import java.util.Iterator;
 import java.util.Calendar;
 import java.util.Date;
-import java.awt.Color;
-import java.text.SimpleDateFormat;
-import java.text.ParsePosition;
+import java.util.Iterator;
+import java.util.ListIterator;
+
+import com.lowagie.text.Anchor;
+import com.lowagie.text.Annotation;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocListener;
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Image;
+import com.lowagie.text.ListItem;
+import com.lowagie.text.Meta;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.Section;
+import com.lowagie.text.SimpleTable;
+import com.lowagie.text.Table;
 import com.lowagie.text.pdf.codec.wmf.MetaDo;
 
 /**

@@ -16,9 +16,9 @@
 
 package com.lowagie.text.pdf.hyphenation;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Stack;
-import java.io.Serializable;
 
 /**
  * <h2>Ternary Search Tree.</h2>

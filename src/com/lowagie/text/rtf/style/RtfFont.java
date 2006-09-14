@@ -50,13 +50,13 @@
 
 package com.lowagie.text.rtf.style;
 
-import com.lowagie.text.rtf.RtfExtendedElement;
-import com.lowagie.text.rtf.document.RtfDocument;
-import com.lowagie.text.Font;
-
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import com.lowagie.text.Font;
+import com.lowagie.text.rtf.RtfExtendedElement;
+import com.lowagie.text.rtf.document.RtfDocument;
 
 /**
  * The RtfFont class stores one font for an rtf document. It extends Font,

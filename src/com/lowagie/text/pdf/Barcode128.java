@@ -47,13 +47,14 @@
  * http://www.lowagie.com/iText/
  */
 package com.lowagie.text.pdf;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Element;
-import com.lowagie.text.ExceptionConverter;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Canvas;
 import java.awt.image.MemoryImageSource;
+
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
 
 /**
  * Implements the code 128 and UCC/EAN-128. Other symbologies are allowed in raw mode.<p>

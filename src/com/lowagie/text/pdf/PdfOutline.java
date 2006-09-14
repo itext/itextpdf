@@ -50,15 +50,15 @@
 
 package com.lowagie.text.pdf;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.lowagie.text.Chunk;
-import com.lowagie.text.Paragraph;
-import java.util.ArrayList;
-import java.awt.Color;
 import com.lowagie.text.Font;
-import java.io.OutputStream;
-import java.io.IOException;
+import com.lowagie.text.Paragraph;
 
 /**
  * <CODE>PdfOutline</CODE> is an object that represents a PDF outline entry.

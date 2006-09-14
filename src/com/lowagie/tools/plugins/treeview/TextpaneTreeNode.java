@@ -52,9 +52,12 @@ package com.lowagie.tools.plugins.treeview;
 
 import java.io.IOException;
 
-import com.lowagie.text.pdf.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import com.lowagie.text.pdf.PRStream;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
 
 public class TextpaneTreeNode extends UpdateableTreeNode {
 
