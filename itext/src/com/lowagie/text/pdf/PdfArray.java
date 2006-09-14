@@ -137,10 +137,14 @@ public class PdfArray extends PdfObject {
         int type = 0;
         if (i.hasNext()) {
             object = (PdfObject) i.next();
+            if (object == null)
+                object = PdfNull.PDFNULL;
             object.toPdf(writer, os);
         }
         while (i.hasNext()) {
             object = (PdfObject) i.next();
+            if (object == null)
+                object = PdfNull.PDFNULL;
             type = object.type();
             if (type != PdfObject.ARRAY && type != PdfObject.DICTIONARY && type != PdfObject.NAME && type != PdfObject.STRING)
                 os.write(' ');

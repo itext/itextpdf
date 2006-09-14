@@ -70,7 +70,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
- * @author Benoit WIART <b.wiart@proxiad.com>
+ * @author Benoit Wiart
  */
 public class RtfTable extends RtfElement {
 

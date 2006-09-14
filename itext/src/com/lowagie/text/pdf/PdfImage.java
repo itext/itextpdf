@@ -46,24 +46,6 @@
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
- *
- * REMARK:
- * LZW/GIF is covered by a software patent which is owned by Unisys Corporation.
- * Unisys refuses to license this patent for PDF-related use in software
- * even when this software is released for free and may be freely distributed.
- * HOWEVER:
- * This library doesn't compress or decompress data using the LZW
- * algorithm, nor does it create or visualize GIF-images in any way;
- * it only copies parts of an existing GIF file into a PDF file.
- *
- * More information about the GIF format can be found in the following documents:
- * * GRAPHICS INTERCHANGE FORMAT(sm) Version 89a
- *   (c)1987,1988,1989,1990 Copyright CompuServe Incorporated. Columbus, Ohio
- * * LZW and GIF explained
- *   Steve Blackstock
- * * http://mistress.informatik.unibw-muenchen.de/
- *   very special thanks to klee@informatik.unibw-muenchen.de for the algorithm
- *   to extract the LZW data from a GIF.
  */
 
 package com.lowagie.text.pdf;

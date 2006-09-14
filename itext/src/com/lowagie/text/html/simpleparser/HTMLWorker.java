@@ -92,7 +92,8 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         FontFactoryImp ff = null;
         if (interfaceProps != null)
             ff = (FontFactoryImp)interfaceProps.get("font_factory");
-        factoryProperties.setFontImp(ff);
+        if (ff != null)
+            factoryProperties.setFontImp(ff);
     }
     
     public HashMap getInterfaceProps() {
@@ -149,6 +150,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 cprops.addToChain(follow, prop);
                 return;
             }
+            FactoryProperties.insertStyle(h);
             if (tag.equals("a")) {
                 cprops.addToChain(tag, h);
                 if (currentParagraph == null)
@@ -245,8 +247,10 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
             }
             endElement("p");
             if (tag.equals("h1") || tag.equals("h2") || tag.equals("h3") || tag.equals("h4") || tag.equals("h5") || tag.equals("h6")) {
-                if (!h.containsKey("size"))
-                    h.put("size", tag.substring(1));
+                if (!h.containsKey("size")) {
+                    int v = 7 - Integer.parseInt(tag.substring(1));
+                    h.put("size", Integer.toString(v));
+                }
                 cprops.addToChain(tag, h);
                 return;
             }

@@ -78,7 +78,7 @@ import com.lowagie.text.rtf.text.RtfParagraph;
  * @version $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
- * @author Benoit WIART <b.wiart@proxiad.com>
+ * @author Benoit Wiart
  * @see com.lowagie.text.rtf.table.RtfBorder
  */
 public class RtfCell extends Cell implements RtfExtendedElement {

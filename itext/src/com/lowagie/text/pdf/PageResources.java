@@ -78,7 +78,7 @@ class PageResources {
             return;
         for (Iterator i = resources.getKeys().iterator(); i.hasNext();) {
             PdfObject sub = PdfReader.getPdfObject(resources.get((PdfName)i.next()));
-            if (sub.isDictionary()) {
+            if (sub != null && sub.isDictionary()) {
                 PdfDictionary dic = (PdfDictionary)sub;
                 for (Iterator j = dic.getKeys().iterator(); j.hasNext();) {
                     forbiddenNames.put(j.next(), null);

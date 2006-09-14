@@ -247,9 +247,7 @@ public class Executable {
 	
 	/**
 	 * Launches a browser opening an URL.
-	 * This code was based on the Public Domain class BareBonesBrowserLaunch,
-	 * found at <a href="http://www.centerkey.com/java/browser/myapp/BareBonesBrowserLaunch.java">Centerkey</a>.
-	 * 
+	 *
 	 * @param url the URL you want to open in the browser
 	 * @throws IOException
 	 */

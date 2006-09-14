@@ -68,7 +68,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * @version $Version:$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  * @author Steffen Stundzig
- * @author Lorenz Maierhofer <larry@sbox.tugraz.at>
+ * @author Lorenz Maierhofer
  */
 public class RtfRow extends RtfElement {
 

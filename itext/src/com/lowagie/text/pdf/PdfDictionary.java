@@ -159,14 +159,17 @@ public class PdfDictionary extends PdfObject {
     
 /**
  * Adds a <CODE>PdfObject</CODE> and its key to the <CODE>PdfDictionary</CODE>.
+ * If the value is <CODE>null</CODE> or <CODE>PdfNull</CODE> the key is deleted.
  *
  * @param		key		key of the entry (a <CODE>PdfName</CODE>)
  * @param		value	value of the entry (a <CODE>PdfObject</CODE>)
- * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
     
     public void put(PdfName key, PdfObject value) {
-        hashMap.put(key, value);
+        if (value == null || value.isNull())
+            hashMap.remove(key);
+        else
+            hashMap.put(key, value);
     }
     
 /**
@@ -175,35 +178,17 @@ public class PdfDictionary extends PdfObject {
  *
  * @param		key		key of the entry (a <CODE>PdfName</CODE>)
  * @param		value	value of the entry (a <CODE>PdfObject</CODE>)
- * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
     public void putEx(PdfName key, PdfObject value) {
         if (value == null)
             return;
-        hashMap.put(key, value);
-    }
-    
-/**
- * Adds a <CODE>PdfObject</CODE> and its key to the <CODE>PdfDictionary</CODE>.
- * If the value is null the key is deleted.
- *
- * @param		key		key of the entry (a <CODE>PdfName</CODE>)
- * @param		value	value of the entry (a <CODE>PdfObject</CODE>)
- * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
- */
-    public void putDel(PdfName key, PdfObject value) {
-        if (value == null) {
-            hashMap.remove(key);
-            return;
-        }
-        hashMap.put(key, value);
+        put(key, value);
     }
     
 /**
  * Removes a <CODE>PdfObject</CODE> and its key from the <CODE>PdfDictionary</CODE>.
  *
  * @param		key		key of the entry (a <CODE>PdfName</CODE>)
- * @return		the previous </CODE>PdfObject</CODE> corresponding with the <VAR>key</VAR>
  */
     
     public void remove(PdfName key) {

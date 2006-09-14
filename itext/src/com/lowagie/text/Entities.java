@@ -342,7 +342,7 @@ public class Entities {
  /**
   * Gets a chunk with a symbol character.
   * @param e a symbol value (see Entities class: alfa is greek alfa,...)
-  * @param font the font if the symbol isn't found (otherwise Font.SYMBIL)
+  * @param font the font if the symbol isn't found (otherwise Font.SYMBOL)
   * @return a Chunk
   */
     

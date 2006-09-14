@@ -65,7 +65,7 @@ import java.io.*;
  *
  * Parts of this Class were contributed by Steffen Stundzig. Many thanks for the
  * improvements.
- * Updates Benoit WIART <b.wiart@proxiad.com>
+ * Updates Benoit Wiart
  * @deprecated Please move to the RtfWriter2 and associated classes.
  */
 public class RtfTable {
@@ -137,7 +137,7 @@ public class RtfTable {
     public boolean writeTable(ByteArrayOutputStream os) throws DocumentException, IOException {
     	
         if(!this.writer.writingHeaderFooter()) {
-            // Added by Benoit WIART <b.wiart@proxiad.com>
+            // Added by Benoit Wiart (b.wiart@proxiad.com)
             // Add a new line before each table
             os.write(RtfWriter.escape);
             os.write(RtfWriter.paragraph);
