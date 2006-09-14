@@ -50,8 +50,6 @@
 
 package com.lowagie.text.xml.xmp;
 
-import java.io.IOException;
-
 /**
  * An implementation of an XmpSchema.
  */
@@ -89,10 +87,7 @@ public class XmpMMSchema extends XmpSchema {
 	/** The version history associated with this resource.*/
 	public static final String VERSIONS = "xmpMM:Versions";
 	
-	/**
-	 * @throws IOException
-	 */
-	public XmpMMSchema() throws IOException {
+	public XmpMMSchema() {
 		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
 	}
 }

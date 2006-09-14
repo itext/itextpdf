@@ -374,9 +374,8 @@ public class PdfSignatureAppearance {
      * for further details.
      * @return the main appearance layer
      * @throws DocumentException on error
-     * @throws IOException on error
      */    
-    public PdfTemplate getAppearance() throws DocumentException, IOException {
+    public PdfTemplate getAppearance() throws DocumentException {
         if (app[0] == null) {
             PdfTemplate t = app[0] = new PdfTemplate(writer);
             t.setBoundingBox(new Rectangle(100, 100));

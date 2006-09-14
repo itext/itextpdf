@@ -85,11 +85,11 @@ class PdfCopyFieldsImp extends PdfWriter {
     private ArrayList calculationOrder = new ArrayList();
     private ArrayList calculationOrderRefs;
     
-    PdfCopyFieldsImp(OutputStream os) throws DocumentException, IOException {
+    PdfCopyFieldsImp(OutputStream os) throws DocumentException {
         this(os, '\0');
     }
     
-    PdfCopyFieldsImp(OutputStream os, char pdfVersion) throws DocumentException, IOException {
+    PdfCopyFieldsImp(OutputStream os, char pdfVersion) throws DocumentException {
         super(new PdfDocument(), os);
         pdf.addWriter(this);
         if (pdfVersion != 0)
@@ -357,7 +357,7 @@ class PdfCopyFieldsImp extends PdfWriter {
         }
     }
     
-    protected void closeIt() throws DocumentException, IOException {
+    protected void closeIt() throws IOException {
         for (int k = 0; k < readers.size(); ++k) {
             ((PdfReader)readers.get(k)).removeFields();
         }

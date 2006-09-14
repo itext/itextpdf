@@ -92,9 +92,6 @@ public class HtmlParser extends XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
     }
     
 /**
@@ -123,9 +120,6 @@ public class HtmlParser extends XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
         }
     }
     
@@ -156,9 +150,6 @@ public class HtmlParser extends XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
     }
     
 /**
@@ -187,9 +178,6 @@ public class HtmlParser extends XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
         }
     }
     

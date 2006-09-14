@@ -147,7 +147,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
      * @throws DocumentException on error
      * @return the stream representing this CMap or <CODE>null</CODE>
      */    
-    private PdfStream getToUnicode(Object metrics[]) throws DocumentException {
+    private PdfStream getToUnicode(Object metrics[]) {
         if (metrics.length == 0)
             return null;
         StringBuffer buf = new StringBuffer(

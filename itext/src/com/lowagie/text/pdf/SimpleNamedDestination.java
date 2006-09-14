@@ -170,7 +170,7 @@ public class SimpleNamedDestination implements SimpleXMLDocHandler {
         return names.xmlNames;
     }
 
-    static PdfArray createDestinationArray(String value, PdfWriter writer) throws IOException {
+    static PdfArray createDestinationArray(String value, PdfWriter writer) {
         PdfArray ar = new PdfArray();
         StringTokenizer tk = new StringTokenizer(value);
         int n = Integer.parseInt(tk.nextToken());
@@ -195,7 +195,7 @@ public class SimpleNamedDestination implements SimpleXMLDocHandler {
         return ar;
     }
     
-    public static PdfDictionary outputNamedDestinationAsNames(HashMap names, PdfWriter writer) throws IOException {
+    public static PdfDictionary outputNamedDestinationAsNames(HashMap names, PdfWriter writer) {
         PdfDictionary dic = new PdfDictionary();
         for (Iterator it = names.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry)it.next();

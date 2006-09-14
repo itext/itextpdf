@@ -137,10 +137,8 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * @param document
-     * @throws IOException
      */
-    public SAXiTextHandler(DocListener document)
-            throws IOException {
+    public SAXiTextHandler(DocListener document) {
         super();
         this.document = document;
         stack = new Stack();
@@ -151,10 +149,8 @@ public class SAXiTextHandler extends DefaultHandler {
     /**
      * @param document
      * @param myTags
-     * @throws IOException
      */
-    public SAXiTextHandler(DocListener document, HtmlTagMap myTags)
-            throws IOException {
+    public SAXiTextHandler(DocListener document, HtmlTagMap myTags) {
         this(document);
         this.myTags = myTags;
     }
@@ -163,10 +159,9 @@ public class SAXiTextHandler extends DefaultHandler {
      * @param document
      * @param myTags
      * @param bf
-     * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HtmlTagMap myTags,
-            BaseFont bf) throws IOException {
+            BaseFont bf){
         this(document, myTags);
         this.bf = bf;
     }
@@ -174,10 +169,8 @@ public class SAXiTextHandler extends DefaultHandler {
     /**
      * @param document
      * @param myTags
-     * @throws IOException
      */
-    public SAXiTextHandler(DocListener document, HashMap myTags)
-            throws IOException {
+    public SAXiTextHandler(DocListener document, HashMap myTags) {
         this(document);
         this.myTags = myTags;
     }

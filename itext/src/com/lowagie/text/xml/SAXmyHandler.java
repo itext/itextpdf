@@ -50,7 +50,6 @@
 
 package com.lowagie.text.xml;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -73,11 +72,10 @@ public class SAXmyHandler extends SAXiTextHandler {
  *
  * @param	document	this is the document on which events must be triggered
  * @param myTags a userdefined tagmap
- * @throws IOException
  * @throws DocumentException
  */
     
-    public SAXmyHandler(DocListener document, HashMap myTags) throws DocumentException, IOException {
+    public SAXmyHandler(DocListener document, HashMap myTags) {
         super(document);
         this.myTags = myTags;
     }

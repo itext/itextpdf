@@ -385,7 +385,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
         }
     }
     
-    static void createOutlineAction(PdfDictionary outline, HashMap map, PdfWriter writer, boolean namedAsNames) throws IOException {
+    static void createOutlineAction(PdfDictionary outline, HashMap map, PdfWriter writer, boolean namedAsNames) {
         try {
             String action = (String)map.get("Action");
             if ("GoTo".equals(action)) {

@@ -557,7 +557,7 @@ class TrueTypeFont extends BaseFont {
         return thisName;
     }
     
-    void checkCff() throws DocumentException, IOException {
+    void checkCff() {
         int table_location[];
         table_location = (int[])tables.get("CFF ");
         if (table_location != null) {
@@ -959,7 +959,7 @@ class TrueTypeFont extends BaseFont {
      * @param fontStream the indirect reference to a PdfStream containing the font or <CODE>null</CODE>
      * @throws DocumentException if there is an error
      */
-    protected PdfDictionary getFontDescriptor(PdfIndirectReference fontStream, String subsetPrefix) throws DocumentException {
+    protected PdfDictionary getFontDescriptor(PdfIndirectReference fontStream, String subsetPrefix) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONTDESCRIPTOR);
         dic.put(PdfName.ASCENT, new PdfNumber((int)os_2.sTypoAscender * 1000 / head.unitsPerEm));
         dic.put(PdfName.CAPHEIGHT, new PdfNumber((int)os_2.sCapHeight * 1000 / head.unitsPerEm));
@@ -1007,7 +1007,7 @@ class TrueTypeFont extends BaseFont {
      * @param fontDescriptor the indirect reference to a PdfDictionary containing the font descriptor or <CODE>null</CODE>
      * @throws DocumentException if there is an error
      */
-    protected PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) throws DocumentException {
+    protected PdfDictionary getFontBaseType(PdfIndirectReference fontDescriptor, String subsetPrefix, int firstChar, int lastChar, byte shortTag[]) {
         PdfDictionary dic = new PdfDictionary(PdfName.FONT);
         if (cff) {
             dic.put(PdfName.SUBTYPE, PdfName.TYPE1);

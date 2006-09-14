@@ -167,7 +167,7 @@ public abstract class BaseField {
             return font;
     }
     
-    protected PdfAppearance getBorderAppearance() throws IOException, DocumentException {
+    protected PdfAppearance getBorderAppearance() {
         PdfAppearance app = new PdfContentByte(writer).createAppearance(box.width(), box.height());
         switch (rotation) {
             case 90:

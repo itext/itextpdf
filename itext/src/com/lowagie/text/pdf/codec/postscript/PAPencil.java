@@ -352,7 +352,7 @@ public class PAPencil {
 	this.graphics.clearRect(0, 0, size.width, size.height);
     }
 
-    public void charpath(String aString, boolean adjustForStroking)throws PainterException{
+    public void charpath(String aString, boolean adjustForStroking) {
       FontRenderContext frc=this.graphics.getFontRenderContext();
       Font fn=this.state.font;
 //      System.out.println("Fonthoehe:"+fn.getSize2D());
@@ -402,7 +402,7 @@ public class PAPencil {
         this.newpath();
     }
 
-    public void stroke()throws PainterException{
+    public void stroke(){
        this.graphics.draw(this.state.path);
         this.newpath();
 
@@ -419,14 +419,14 @@ public class PAPencil {
         this.rectfill(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 
-    public void rectstroke(double x, double y, double width, double height)throws PainterException{
+    public void rectstroke(double x, double y, double width, double height){
 	this.gsave();
 	this.rectpath(x, y, width, height);
 	this.stroke();
 	this.grestore();
     }
 
-    public void rectstroke(Rectangle2D rect)throws PainterException{
+    public void rectstroke(Rectangle2D rect){
 	this.rectstroke(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 

@@ -401,9 +401,8 @@ public class PdfStamper {
      * Sets the bookmarks. The list structure is defined in
      * {@link SimpleBookmark}.
      * @param outlines the bookmarks or <CODE>null</CODE> to remove any
-     * @throws IOException on error
      */
-    public void setOutlines(List outlines) throws IOException {
+    public void setOutlines(List outlines) {
         stamper.setOutlines(outlines);
     }
 

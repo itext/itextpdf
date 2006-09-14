@@ -126,9 +126,6 @@ public class XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
     }
     
     /**
@@ -148,9 +145,6 @@ public class XmlParser {
             catch(IOException ioe) {
                 throw new ExceptionConverter(ioe);
             }
-            catch(DocumentException de) {
-                throw new ExceptionConverter(de);
-            }
         }
     
 /**
@@ -169,9 +163,6 @@ public class XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
         }
     }
     
@@ -210,9 +201,6 @@ public class XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
     }
     
 /**
@@ -231,9 +219,6 @@ public class XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
         }
     }
     

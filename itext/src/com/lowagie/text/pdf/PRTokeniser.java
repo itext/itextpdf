@@ -134,7 +134,7 @@ public class PRTokeniser {
         return file.length();
     }
 
-    public int read() throws IOException {
+    public int read() {
         return file.read();
     }
     
@@ -146,7 +146,7 @@ public class PRTokeniser {
         return file;
     }
     
-    public String readString(int size) throws IOException {
+    public String readString(int size) {
         StringBuffer buf = new StringBuffer();
         int ch;
         while ((size--) > 0) {
@@ -186,7 +186,7 @@ public class PRTokeniser {
         return generation;
     }
     
-    public void backOnePosition(int ch) throws IOException {
+    public void backOnePosition(int ch) {
         if (ch != -1)
             file.pushBack((byte)ch);
     }

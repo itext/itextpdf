@@ -74,8 +74,7 @@ implements Element {
         super(image);
     }
 
-    public ImgPostscript(byte[] content,float width,float height) throws
-    BadElementException, IOException {
+    public ImgPostscript(byte[] content,float width,float height) throws IOException {
         super( (URL)null);
         rawData = content;
         originalData = content;
@@ -91,7 +90,7 @@ implements Element {
      * @throws IOException on error
      */
 
-    public ImgPostscript(URL url) throws BadElementException, IOException {
+    public ImgPostscript(URL url) throws IOException {
         super(url);
         processParameters();
     }
@@ -105,7 +104,7 @@ implements Element {
      * @throws IOException on error
      */
 
-    public ImgPostscript(String filename) throws BadElementException,
+    public ImgPostscript(String filename) throws
     MalformedURLException, IOException {
         this(Image.toURL(filename));
     }
@@ -118,7 +117,7 @@ implements Element {
      * @throws IOException on error
      */
 
-    public ImgPostscript(byte[] img) throws BadElementException, IOException {
+    public ImgPostscript(byte[] img) throws IOException {
         super( (URL)null);
         rawData = img;
         originalData = img;
@@ -132,7 +131,7 @@ implements Element {
      * @throws IOException
      */
 
-    private void processParameters() throws BadElementException, IOException {
+    private void processParameters() throws IOException {
         type = IMGTEMPLATE;
         originalType = ORIGINAL_PS;
         InputStream is = null;
@@ -209,8 +208,7 @@ implements Element {
      * @throws IOException on error
      * @throws DocumentException on error
      */
-    public void readPostscript(PdfTemplate template) throws IOException,
-    DocumentException {
+    public void readPostscript(PdfTemplate template) throws IOException {
         setTemplateData(template);
         template.setWidth(width());
         template.setHeight(height());

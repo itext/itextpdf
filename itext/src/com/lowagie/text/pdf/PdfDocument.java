@@ -523,7 +523,7 @@ class PdfDocument extends Document implements DocListener {
      * @throws DocumentException on error
      */
     
-    public PdfDocument() throws DocumentException {
+    public PdfDocument() {
         super();
         addProducer();
         addCreationDate();

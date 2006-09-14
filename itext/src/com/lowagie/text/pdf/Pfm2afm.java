@@ -165,7 +165,7 @@ public class Pfm2afm {
         return new String(b, 0, k, "ISO-8859-1");
     }
     
-    private String readString() throws IOException {
+    private String readString() {
         StringBuffer buf = new StringBuffer();
         while (true) {
             int c = in.read();

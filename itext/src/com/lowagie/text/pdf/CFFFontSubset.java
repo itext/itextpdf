@@ -1023,9 +1023,8 @@ public class CFFFontSubset extends CFFFont {
 	 * The function builds the new output stream according to the subset process
 	 * @param Font the font
 	 * @return the subseted font stream
-	 * @throws IOException
 	 */
-	protected byte[] BuildNewFile(int Font)throws IOException
+	protected byte[] BuildNewFile(int Font)
     {
 		// Prepare linked list for new font components
 		OutputList = new LinkedList();
@@ -1384,9 +1383,8 @@ public class CFFFontSubset extends CFFFont {
 	/**
 	 * Function reconstructs the FDArray, PrivateDict and LSubr for CID fonts
 	 * @param Font the font
-	 * @throws IOException
 	 */
-	void Reconstruct(int Font)throws IOException
+	void Reconstruct(int Font)
 	{
 		// Init for later use
 		OffsetItem[] fdPrivate = new DictOffsetItem[fonts[Font].FDArrayOffsets.length-1];
@@ -1402,9 +1400,8 @@ public class CFFFontSubset extends CFFFont {
 	 * Function subsets the FDArray and builds the new one with new offsets
 	 * @param Font The font
 	 * @param fdPrivate OffsetItem Array (one for each FDArray)
-	 * @throws IOException
 	 */
-	void ReconstructFDArray(int Font,OffsetItem[] fdPrivate)throws IOException
+	void ReconstructFDArray(int Font,OffsetItem[] fdPrivate)
 	{
 		// Build the header of the index
 		BuildIndexHeader(fonts[Font].FDArrayCount,fonts[Font].FDArrayOffsize,1);
@@ -1468,10 +1465,9 @@ public class CFFFontSubset extends CFFFont {
 	 * @param fdPrivate OffsetItem array one element for each private
 	 * @param fdPrivateBase IndexBaseItem array one element for each private
 	 * @param fdSubrs OffsetItem array one element for each private
-	 * @throws IOException
 	 */
 	void ReconstructPrivateDict(int Font,OffsetItem[] fdPrivate,IndexBaseItem[] fdPrivateBase,
-			OffsetItem[] fdSubrs)throws IOException
+			OffsetItem[] fdSubrs)
 	{
 		
 		// For each fdarray private dict check if that FD is used.
@@ -1512,11 +1508,10 @@ public class CFFFontSubset extends CFFFont {
 	 * @param Font  The index of the font
 	 * @param fdPrivateBase The IndexBaseItem array for the linked list
 	 * @param fdSubrs OffsetItem array for the linked list
-	 * @throws IOException
 	 */
 	
 	void ReconstructPrivateSubrs(int Font,IndexBaseItem[] fdPrivateBase,
-			OffsetItem[] fdSubrs)throws IOException
+			OffsetItem[] fdSubrs)
 	{
 		// For each private dict
         for (int i=0;i<fonts[Font].fdprivateLengths.length;i++)
@@ -1621,9 +1616,8 @@ public class CFFFontSubset extends CFFFont {
 	 * @param Font the font
 	 * @param PrivateBase IndexBaseItem for the private that's referencing to the subrs
 	 * @param Subrs OffsetItem for the subrs
-	 * @throws IOException
 	 */
-	void CreateNonCIDSubrs(int Font,IndexBaseItem PrivateBase,OffsetItem Subrs)throws IOException
+	void CreateNonCIDSubrs(int Font,IndexBaseItem PrivateBase,OffsetItem Subrs)
 	{
 		// Mark the beginning of the Subrs index
 		OutputList.addLast(new SubrMarkerItem(Subrs,PrivateBase));

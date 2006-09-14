@@ -50,8 +50,6 @@
 
 package com.lowagie.text;
 
-import java.net.MalformedURLException;
-
 /**
  * A <CODE>Watermark</CODE> is a graphic element (GIF or JPEG)
  * that is shown on a certain position on each page.
@@ -78,10 +76,9 @@ public class Watermark extends Image implements Element {
  * @param		image		an <CODE>Image</CODE>-object
  * @param		offsetX		the offset in x-direction
  * @param		offsetY		the offset in y-direction
- * @throws MalformedURLException
  */
     
-    public Watermark(Image image, float offsetX, float offsetY) throws MalformedURLException {
+    public Watermark(Image image, float offsetX, float offsetY) {
         super(image);
         this.offsetX = offsetX;
         this.offsetY = offsetY;

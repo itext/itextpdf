@@ -162,7 +162,7 @@ public class RandomAccessFileOrArray implements DataInput {
         isBack = true;
     }
     
-    public int read() throws IOException {
+    public int read() {
         if(isBack) {
             isBack = false;
             return back & 0xff;
@@ -176,7 +176,7 @@ public class RandomAccessFileOrArray implements DataInput {
         }
     }
     
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) {
         if (len == 0)
             return 0;
         int n = 0;
@@ -206,7 +206,7 @@ public class RandomAccessFileOrArray implements DataInput {
         }
     }
     
-    public int read(byte b[]) throws IOException {
+    public int read(byte b[]) {
         return read(b, 0, b.length);
     }
     

@@ -121,7 +121,7 @@ public class RtfParser {
 	 * @throws IOException On I/O errors.
 	 * @throws DocumentException On document writing errors.
 	 */
-	public void importRtfDocument(Reader reader, RtfDocument rtfDoc) throws IOException, DocumentException {
+	public void importRtfDocument(Reader reader, RtfDocument rtfDoc) throws IOException {
 		this.rtfDoc = rtfDoc;
 		this.state = PARSER_IN_HEADER;
 		this.importHeader = new RtfImportHeader(this.rtfDoc);
@@ -140,7 +140,7 @@ public class RtfParser {
 	 * @throws IOException On I/O errors.
 	 * @throws DocumentException On document writing errors.
 	 */
-	public void importRtfFragment(Reader reader, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException, DocumentException {
+	public void importRtfFragment(Reader reader, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
 		this.rtfDoc = rtfDoc;
 		this.state = PARSER_IN_DOCUMENT;
 		this.importHeader = new RtfImportHeader(this.rtfDoc);
@@ -176,7 +176,7 @@ public class RtfParser {
 	 * @param groupLevel The current group nesting level.
 	 * @throws DocumentException On document writing errors.
 	 */
-	public void handleOpenGroup(int groupLevel) throws DocumentException {
+	public void handleOpenGroup(int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT) {
 			this.rtfDoc.add(new RtfDirectContent("{"));
 		}
@@ -189,7 +189,7 @@ public class RtfParser {
 	 * @param groupLevel The current group nesting level.
 	 * @throws DocumentException On document writing errors.
 	 */
-	public void handleCloseGroup(int groupLevel) throws DocumentException {
+	public void handleCloseGroup(int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT && groupLevel > 1) {
 			this.rtfDoc.add(new RtfDirectContent("}"));
 		} else if(this.state == PARSER_IN_INFO_GROUP && groupLevel == 2) {
@@ -211,7 +211,7 @@ public class RtfParser {
 	 * @param groupLevel The current group nesting level.
 	 * @throws DocumentException On document writing errors.
 	 */
-	public void handleCtrlCharacter(String ctrlCharacter, int groupLevel) throws DocumentException {
+	public void handleCtrlCharacter(String ctrlCharacter, int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT) {
 			this.rtfDoc.add(new RtfDirectContent(ctrlCharacter));
 		}
@@ -227,7 +227,7 @@ public class RtfParser {
 	 * @param groupLevel The current group nesting level.
 	 * @throws DocumentException On document writing errors.
 	 */
-	public void handleCtrlWord(String ctrlWord, int groupLevel) throws DocumentException {
+	public void handleCtrlWord(String ctrlWord, int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT) {
 			if(RtfColorTableParser.stringMatches(ctrlWord, "\\f")) {
 				ctrlWord = "\\f" + this.importHeader.mapFontNr(ctrlWord.substring(2));
@@ -261,7 +261,7 @@ public class RtfParser {
 	 * @param groupLevel The current group nesting level.
 	 * @throws DocumentException On document writing errors.
 	 */
-	public void handleText(String text, int groupLevel) throws DocumentException {
+	public void handleText(String text, int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT) {
 			this.rtfDoc.add(new RtfDirectContent(text));
 		} else if(this.state == PARSER_IN_FONT_TABLE) {
