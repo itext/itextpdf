@@ -1042,7 +1042,7 @@ public class PdfWriter extends DocWriter {
         return (PdfIndirectReference) imageDictionary.get(pdfImage.name());
     }
     
-    protected PdfIndirectReference add(PdfICCBased icc) throws PdfException {
+    protected PdfIndirectReference add(PdfICCBased icc) {
         PdfIndirectObject object;
         try {
             object = addToBody(icc);

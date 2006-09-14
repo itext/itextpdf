@@ -70,7 +70,7 @@ public class MetaDoPS {
     this.in = in;
   }
 
-  public void readAll() throws IOException, DocumentException {
+  public void readAll() {
 
     cb.saveState();
     java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.

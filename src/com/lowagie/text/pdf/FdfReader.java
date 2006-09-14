@@ -135,7 +135,7 @@ public class FdfReader extends PdfReader {
         }
     }
     
-    protected void readFields() throws IOException {
+    protected void readFields() {
         catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
         PdfDictionary fdf = (PdfDictionary)getPdfObject(catalog.get(PdfName.FDF));
         PdfString fs = (PdfString)getPdfObject(fdf.get(PdfName.F));

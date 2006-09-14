@@ -138,7 +138,7 @@ class PdfStamperImp extends PdfWriter {
         initialXrefSize = reader.getXrefSize();
     }
     
-    void close(HashMap moreInfo) throws DocumentException, IOException {
+    void close(HashMap moreInfo) throws IOException {
         if (closed)
             return;
         if (useVp) {

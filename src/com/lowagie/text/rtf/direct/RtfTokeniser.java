@@ -122,7 +122,7 @@ public class RtfTokeniser {
 	 * @throws IOException On I/O errors.
 	 * @throws DocumentException On errors writing the document.
 	 */
-	public void tokenise(Reader reader) throws IOException, DocumentException {
+	public void tokenise(Reader reader) throws IOException {
 		char[] nextChar = new char[1];
 		String temp = "";
 		this.state = TOKENISER_STATE_READY;

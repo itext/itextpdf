@@ -107,9 +107,8 @@ public class MappedRandomAccessFile {
     /**
      * @see java.io.RandomAccessFile#read()
      * @return int next integer or -1 on EOF
-     * @throws IOException
      */
-    public int read() throws IOException {
+    public int read() {
         try {
             byte b = mappedByteBuffer.get();
             int n = b & 0xff;
@@ -126,9 +125,8 @@ public class MappedRandomAccessFile {
      * @param off int offset
      * @param len int length
      * @return int bytes read or -1 on EOF
-     * @throws IOException
      */
-    public int read(byte bytes[], int off, int len) throws IOException {
+    public int read(byte bytes[], int off, int len) {
         int pos = mappedByteBuffer.position();
         int limit = mappedByteBuffer.limit();
         if (pos == limit)
@@ -144,27 +142,24 @@ public class MappedRandomAccessFile {
     /**
      * @see java.io.RandomAccessFile#getFilePointer()
      * @return long
-     * @throws IOException
      */
-    public long getFilePointer() throws IOException {
+    public long getFilePointer() {
         return mappedByteBuffer.position();
     }
     
     /**
      * @see java.io.RandomAccessFile#seek(long)
      * @param pos long position
-     * @throws IOException
      */
-    public void seek(long pos) throws IOException {
+    public void seek(long pos) {
         mappedByteBuffer.position((int) pos);
     }
     
     /**
      * @see java.io.RandomAccessFile#length()
      * @return long length
-     * @throws IOException
      */
-    public long length() throws IOException {
+    public long length() {
         return mappedByteBuffer.limit();
     }
     

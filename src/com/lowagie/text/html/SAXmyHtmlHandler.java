@@ -50,7 +50,6 @@
 
 package com.lowagie.text.html;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -89,12 +88,9 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      * 
      * @param document
      *            this is the document on which events must be triggered
-     * @throws IOException
-     * @throws DocumentException
      */
 
-    public SAXmyHtmlHandler(DocListener document)
-            throws DocumentException, IOException {
+    public SAXmyHtmlHandler(DocListener document) {
         super(document, new HtmlTagMap());
     }
     /**
@@ -104,12 +100,9 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      * @param document
      *            this is the document on which events must be triggered
      * @param bf
-     * @throws IOException
-     * @throws DocumentException
      */
 
-    public SAXmyHtmlHandler(DocListener document, BaseFont bf)
-            throws DocumentException, IOException {
+    public SAXmyHtmlHandler(DocListener document, BaseFont bf) {
         super(document, new HtmlTagMap(), bf);
     }
 
@@ -121,12 +114,9 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      *            this is the document on which events must be triggered
      * @param htmlTags
      *            a tagmap translating HTML tags to iText tags
-     * @throws IOException
-     * @throws DocumentException
      */
 
-    public SAXmyHtmlHandler(DocListener document, HashMap htmlTags)
-            throws DocumentException, IOException {
+    public SAXmyHtmlHandler(DocListener document, HashMap htmlTags) {
         super(document, htmlTags);
     }
 

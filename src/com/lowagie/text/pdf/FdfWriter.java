@@ -73,10 +73,9 @@ public class FdfWriter {
 
     /** Writes the content to a stream.
      * @param os the stream
-     * @throws DocumentException on error
      * @throws IOException on error
      */    
-    public void writeTo(OutputStream os) throws DocumentException, IOException {
+    public void writeTo(OutputStream os) throws IOException {
         Wrt wrt = new Wrt(os, this);
         wrt.writeTo();
     }
@@ -288,14 +287,14 @@ public class FdfWriter {
     static class Wrt extends PdfWriter {
         private FdfWriter fdf;
        
-        Wrt(OutputStream os, FdfWriter fdf) throws DocumentException, IOException {
+        Wrt(OutputStream os, FdfWriter fdf) throws IOException {
             super(new PdfDocument(), os);
             this.fdf = fdf;
             this.os.write(HEADER_FDF);
             body = new PdfBody(this);
         }
         
-        void writeTo() throws DocumentException, IOException {
+        void writeTo() throws IOException {
             PdfDictionary dic = new PdfDictionary();
             dic.put(PdfName.FIELDS, calculate(fdf.fields));
             if (fdf.file != null)

@@ -152,7 +152,7 @@ class TrueTypeFontSubSet {
         }
     }
     
-    protected void assembleFont() throws IOException, DocumentException {
+    protected void assembleFont() throws IOException {
         int tableLocation[];
         int fullFontSize = 0;
         String tableNames[];

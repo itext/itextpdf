@@ -161,14 +161,13 @@ public class PdfPKCS7 {
      * @param certsKey the /Cert key
      * @param provider the provider or <code>null</code> for the default provider
      * @throws SecurityException on error
-     * @throws CRLException on error
      * @throws InvalidKeyException on error
      * @throws CertificateException on error
      * @throws NoSuchProviderException on error
      * @throws NoSuchAlgorithmException on error
      * @throws IOException on error
      */    
-    public PdfPKCS7(byte[] contentsKey, byte[] certsKey, String provider) throws SecurityException, CRLException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, IOException {
+    public PdfPKCS7(byte[] contentsKey, byte[] certsKey, String provider) throws SecurityException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, IOException {
         CertificateFactory cf;
         if (provider == null)
             cf = CertificateFactory.getInstance("X.509");

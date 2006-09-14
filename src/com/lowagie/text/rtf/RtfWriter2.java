@@ -261,7 +261,7 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      * @throws IOException If the disk cache could not be initialised.
      * @deprecated Use RtfWriter2.getDocumentSettings().setDataCacheStyle(...);
      */
-    public void setDataCacheStyle(int dataCacheStyle) throws DocumentException, IOException {
+    public void setDataCacheStyle(int dataCacheStyle) {
         this.rtfDoc.getDocumentSettings().setDataCacheStyle(dataCacheStyle);
     }
     

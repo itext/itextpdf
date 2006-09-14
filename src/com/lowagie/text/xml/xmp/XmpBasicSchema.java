@@ -83,10 +83,7 @@ public class XmpBasicSchema extends XmpSchema {
 	public static final String THUMBNAILS = "xmp:Thumbnails";
 
 	
-	/**
-	 * @throws IOException
-	 */
-	public XmpBasicSchema() throws IOException {
+	public XmpBasicSchema() {
 		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
 	}
 	

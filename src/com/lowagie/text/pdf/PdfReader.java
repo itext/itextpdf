@@ -1833,9 +1833,8 @@ public class PdfReader {
     /** Sets the contents of the page.
      * @param content the new page content
      * @param pageNum the page number. 1 is the first
-     * @throws IOException on error
      */
-    public void setPageContent(int pageNum, byte content[]) throws IOException{
+    public void setPageContent(int pageNum, byte content[]) {
         PdfDictionary page = getPageN(pageNum);
         if (page == null)
             return;
@@ -3098,7 +3097,7 @@ public class PdfReader {
             }
         }
 
-        protected PRIndirectReference getSinglePage(int n) throws IOException {
+        protected PRIndirectReference getSinglePage(int n) {
             PdfDictionary acc = new PdfDictionary();
             PdfDictionary top = reader.rootPages;
             int base = 0;

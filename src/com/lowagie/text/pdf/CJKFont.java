@@ -121,9 +121,8 @@ class CJKFont extends BaseFont {
      * @param enc the encoding of the font
      * @param emb always <CODE>false</CODE>. CJK font and not embedded
      * @throws DocumentException on error
-     * @throws IOException on error
      */
-    CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException {
+    CJKFont(String fontName, String enc, boolean emb) throws DocumentException {
         loadProperties();
         fontType = FONT_TYPE_CJK;
         String nameBase = getBaseName(fontName);

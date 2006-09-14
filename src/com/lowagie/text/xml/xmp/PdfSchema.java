@@ -51,7 +51,6 @@
 package com.lowagie.text.xml.xmp;
 
 import com.lowagie.text.Document;
-import java.io.IOException;
 
 /**
  * An implementation of an XmpSchema.
@@ -72,10 +71,7 @@ public class PdfSchema extends XmpSchema {
 	public static final String PRODUCER = "pdf:Producer";
 
 
-	/**
-	 * @throws IOException
-	 */
-	public PdfSchema() throws IOException {
+	public PdfSchema() {
 		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
 		addProducer(Document.getVersion());
 	}

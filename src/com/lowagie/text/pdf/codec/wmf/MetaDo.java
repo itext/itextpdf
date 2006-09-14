@@ -568,7 +568,7 @@ public class MetaDo {
         state.cleanup(cb);
     }
     
-    public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws IOException {
+    public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) {
         MetaFont font = state.getCurrentFont();
         float refX = state.transformX(x);
         float refY = state.transformY(y);

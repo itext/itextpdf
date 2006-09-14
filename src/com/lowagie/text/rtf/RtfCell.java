@@ -233,7 +233,7 @@ public class RtfCell {
      * @return true if writing the cell settings succeeded
      * @throws DocumentException
      */
-    public boolean writeCellSettings(ByteArrayOutputStream os) throws DocumentException {
+    public boolean writeCellSettings(ByteArrayOutputStream os) {
         try {
             float lWidth, tWidth, rWidth, bWidth;
             byte[] lStyle, tStyle, rStyle, bStyle;

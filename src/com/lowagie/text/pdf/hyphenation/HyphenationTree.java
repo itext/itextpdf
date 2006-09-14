@@ -104,7 +104,7 @@ public class HyphenationTree extends TernaryTree
         return buf.toString();
     }
 
-    public void loadSimplePatterns(InputStream stream) throws HyphenationException {
+    public void loadSimplePatterns(InputStream stream) {
         SimplePatternParser pp = new SimplePatternParser();
         ivalues = new TernaryTree();
 

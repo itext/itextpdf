@@ -544,7 +544,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
-    public boolean add(String string) throws DocumentException{
+    public boolean add(String string) {
         if (pause) {
             return false;
         }
