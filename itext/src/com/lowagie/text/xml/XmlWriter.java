@@ -387,12 +387,12 @@ public class XmlWriter extends DocWriter implements DocListener {
                                 write(key.toLowerCase(), value);
                             }
                             if (key.equals(Chunk.SUBSUPSCRIPT)) {
-                                write(key.toLowerCase(), String.valueOf((Float) attributes.get(key)));
+                                write(key.toLowerCase(), String.valueOf(attributes.get(key)));
                             }
                         }
                     }
                     if (hasMarkupAttributes(chunk)) {
-                      writeMarkupAttributes((MarkupAttributes)chunk);
+                      writeMarkupAttributes(chunk);
                     }
                     os.write(GT);
                     write(encode(chunk.content(), indent));
@@ -410,7 +410,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 write(ElementTags.LEADING, String.valueOf(phrase.leading()));
                 write(phrase.font());
                 if (hasMarkupAttributes(phrase)) {
-                  writeMarkupAttributes((MarkupAttributes)phrase);
+                  writeMarkupAttributes(phrase);
                 }
                 os.write(GT);
                 
@@ -438,7 +438,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                     write(ElementTags.REFERENCE, anchor.reference());
                 }
                 if (hasMarkupAttributes(anchor)) {
-                  writeMarkupAttributes((MarkupAttributes)anchor);
+                  writeMarkupAttributes(anchor);
                 }
                 os.write(GT);
                 for (Iterator i = anchor.iterator(); i.hasNext(); ) {
@@ -465,7 +465,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                     write(ElementTags.INDENTATIONRIGHT, String.valueOf(paragraph.indentationRight()));
                 }
                 if (hasMarkupAttributes(paragraph)) {
-                  writeMarkupAttributes((MarkupAttributes)paragraph);
+                  writeMarkupAttributes(paragraph);
                 }
                 os.write(GT);
                 for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
@@ -521,7 +521,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 }
                 write(list.symbol().font());
                 if (hasMarkupAttributes(list)) {
-                  writeMarkupAttributes((MarkupAttributes)list);
+                  writeMarkupAttributes(list);
                 }
                 os.write(GT);
                 for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
@@ -547,7 +547,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                     write(ElementTags.INDENTATIONRIGHT, String.valueOf(listItem.indentationRight()));
                 }
                 if (hasMarkupAttributes(listItem)) {
-                  writeMarkupAttributes((MarkupAttributes)listItem);
+                  writeMarkupAttributes(listItem);
                 }
                 os.write(GT);
                 for (Iterator i = listItem.iterator(); i.hasNext(); ) {
@@ -563,7 +563,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 
                 addTabs(indent);
                 writeStart(ElementTags.CELL);
-                write((Rectangle) cell);
+                write(cell);
                 write(ElementTags.HORIZONTALALIGN, ElementTags.getAlignment(cell.horizontalAlignment()));
                 write(ElementTags.VERTICALALIGN, ElementTags.getAlignment(cell.verticalAlignment()));
                 if (cell.cellWidth() != null) {
@@ -585,7 +585,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                     write(ElementTags.LEADING, String.valueOf(cell.leading()));
                 }
                 if (hasMarkupAttributes(cell)) {
-                  writeMarkupAttributes((MarkupAttributes)cell);
+                  writeMarkupAttributes(cell);
                 }
                 os.write(GT);
                 for (Iterator i = cell.getElements(); i.hasNext(); ) {
@@ -602,7 +602,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 addTabs(indent);
                 writeStart(ElementTags.ROW);
                 if (hasMarkupAttributes(row)){
-                  writeMarkupAttributes((MarkupAttributes)row);
+                  writeMarkupAttributes(row);
                 }
                 os.write(GT);
                 Element cell;
@@ -658,9 +658,9 @@ public class XmlWriter extends DocWriter implements DocListener {
                     write(String.valueOf(widths[i]));
                 }
                 os.write(QUOTE);
-                write((Rectangle) table);
+                write(table);
                 if (hasMarkupAttributes(table)) {
-                  writeMarkupAttributes((MarkupAttributes)table);
+                  writeMarkupAttributes(table);
                 }
                 os.write(GT);
                 Row row;
@@ -685,7 +685,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                     write(ElementTags.CONTENT, annotation.content());
                 }
                 if (hasMarkupAttributes(annotation)) {
-                  writeMarkupAttributes((MarkupAttributes)annotation);
+                  writeMarkupAttributes(annotation);
                 }
                 writeEnd();
                 return;
@@ -727,7 +727,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 write(ElementTags.PLAINWIDTH, String.valueOf(image.plainWidth()));
                 write(ElementTags.PLAINHEIGHT, String.valueOf(image.plainHeight()));
                 if (hasMarkupAttributes(image)) {
-                  writeMarkupAttributes((MarkupAttributes)image);
+                  writeMarkupAttributes(image);
                 }
                 writeEnd();
                 return;

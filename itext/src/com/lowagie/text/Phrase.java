@@ -406,18 +406,13 @@ private static final long serialVersionUID = 2643594602455068231L;
                     }
                     return success;
                 case Element.ANCHOR:
-                    return super.add((Anchor) o);
                 case Element.ANNOTATION:
-                    return super.add((Annotation) o);
                 case Element.TABLE: // case added by David Freels
-                    return super.add((Table) o);
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
                 	// This will only work for PDF!!! Not for RTF/HTML
-                    return super.add((com.lowagie.text.pdf.PdfPTable) o);
                 case Element.LIST:
-                    return super.add((List) o);
                 case Element.GRAPHIC: // suggested by Steven Balthazor
-                	return super.add((Graphic) o);
+                	return super.add(o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
             }

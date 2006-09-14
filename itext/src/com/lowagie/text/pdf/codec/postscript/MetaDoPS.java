@@ -79,7 +79,7 @@ public class MetaDoPS {
     java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
         width(), PageSize.A4.height());
     try {
-      PAContext context = new PAContext( (Graphics2D) g2,
+      PAContext context = new PAContext(g2,
                                         new Dimension( (int) PageSize.A4.width(),
           (int) PageSize.A4.height()));
       context.draw(in);

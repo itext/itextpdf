@@ -200,22 +200,22 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 			leaf = new OutlinelistTreeNode(title, kid);
 			node.add(leaf);
 			PdfDictionary first = (PdfDictionary) PdfReader
-					.getPdfObject((PRIndirectReference) kid.get(PdfName.FIRST));
+					.getPdfObject(kid.get(PdfName.FIRST));
 			if (first != null) {
 				iterateOutlines(first, pdfreader, leaf);
 			} else {
 				PdfDictionary se = (PdfDictionary) PdfReader
-						.getPdfObject((PRIndirectReference) kid
+						.getPdfObject(kid
 								.get(new PdfName("SE")));
 				if (se != null) {
 					iterateObjects(se, pdfreader, leaf);
 				}
-				PdfObject dest = (PdfObject) PdfReader.getPdfObject(kid
+				PdfObject dest = PdfReader.getPdfObject(kid
 						.get(PdfName.DEST));
 				if (dest != null) {
 					iterateObjects(dest, pdfreader, leaf);
 				}
-				PdfObject a = (PdfObject) PdfReader.getPdfObject(kid
+				PdfObject a = PdfReader.getPdfObject(kid
 						.get(PdfName.A));
 				if (a != null) {
 					iterateObjects(a, pdfreader, leaf);
@@ -287,7 +287,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 			leaf = new SimpletextTreeNode("PRIndirectReference " + pdfobj);
 			node.add(leaf);
 			PdfObject target = PdfReader
-					.getPdfObject((PRIndirectReference) pdfobj);
+					.getPdfObject(pdfobj);
 			if (target != null) {
 				iterateObjects(target, pdfreader, leaf);
 			}
@@ -516,7 +516,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 				PdfObject firstindref = rootOutlines.get(PdfName.FIRST);
 				if (firstindref != null) {
 					PdfDictionary first = (PdfDictionary) PdfReader
-							.getPdfObject((PRIndirectReference) firstindref);
+							.getPdfObject(firstindref);
 					if (first != null) {
 						iterateOutlines(first, reader, outlinetree);
 					}

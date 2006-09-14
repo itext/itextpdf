@@ -432,7 +432,7 @@ public class Cell extends Rectangle implements TextElementArray {
 					tmp.setBorder(NO_BORDER);
 					tmp.setColspan(3);
 					for (Iterator i = arrayList.iterator(); i.hasNext(); ) {
-						tmp.add((Element) i.next());
+						tmp.add(i.next());
 					}
 					table.addCell(tmp);
 				}
