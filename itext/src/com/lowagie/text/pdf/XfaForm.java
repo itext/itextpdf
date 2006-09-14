@@ -391,7 +391,9 @@ public class XfaForm {
      * the porting to other languages.
      */
     public static class Stack2 extends ArrayList {
-        /**
+        private static final long serialVersionUID = -7451476576174095212L;
+
+		/**
          * Looks at the object at the top of this stack without removing it from the stack.
          * @return the object at the top of this stack
          */

@@ -90,6 +90,8 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     
     // membervariables
     
+private static final long serialVersionUID = 2643594602455068231L;
+
 /** This is the leading of this phrase. */
     protected float leading = Float.NaN;
     

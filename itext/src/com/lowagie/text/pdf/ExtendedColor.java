@@ -57,6 +57,7 @@ import java.awt.Color;
  */
 public class ExtendedColor extends Color{
     
+	private static final long serialVersionUID = 2722660170712380080L;
 	/** a type of extended color. */
     public static final int TYPE_RGB = 0;
     /** a type of extended color. */

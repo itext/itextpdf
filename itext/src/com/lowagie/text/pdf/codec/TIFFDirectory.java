@@ -63,7 +63,9 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  */
 public class TIFFDirectory extends Object implements Serializable {
     
-    /** A boolean storing the endianness of the stream. */
+    private static final long serialVersionUID = -168636766193675380L;
+
+	/** A boolean storing the endianness of the stream. */
     boolean isBigEndian;
     
     /** The number of entries in the IFD. */

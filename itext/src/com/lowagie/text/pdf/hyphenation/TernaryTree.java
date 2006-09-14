@@ -72,7 +72,9 @@ public class TernaryTree implements Cloneable, Serializable {
      * if it ain't broken, don't fix it.
      */
 
-    /**
+    private static final long serialVersionUID = 5313366505322983510L;
+
+	/**
      * Pointer to low branch and to rest of the key when it is
      * stored directly in this node, we don't have unions in java!
      */

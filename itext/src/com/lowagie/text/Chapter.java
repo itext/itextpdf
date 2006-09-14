@@ -80,6 +80,8 @@ public class Chapter extends Section implements TextElementArray {
     
     // constructors
     
+	private static final long serialVersionUID = 1791000695779357361L;
+
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
 	 *

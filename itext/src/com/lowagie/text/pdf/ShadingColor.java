@@ -53,7 +53,8 @@ package com.lowagie.text.pdf;
  */
 public class ShadingColor extends ExtendedColor {
 
-    PdfShadingPattern shadingPattern;
+    private static final long serialVersionUID = 4817929454941328671L;
+	PdfShadingPattern shadingPattern;
 
     /**
      * Creates a shading color.

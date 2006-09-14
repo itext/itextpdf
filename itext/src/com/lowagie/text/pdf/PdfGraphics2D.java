@@ -1515,5 +1515,7 @@ public class PdfGraphics2D extends Graphics2D {
     }
         
     static private class fakeComponent extends Component {
+
+		private static final long serialVersionUID = 6450197945596086638L;
     }
 }

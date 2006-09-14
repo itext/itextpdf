@@ -52,7 +52,9 @@ import java.io.Serializable;
  */
 public class TIFFField extends Object implements Comparable, Serializable {
 
-    /** Flag for 8 bit unsigned integers. */
+    private static final long serialVersionUID = 9088332901412823834L;
+
+	/** Flag for 8 bit unsigned integers. */
     public static final int TIFF_BYTE      =  1;
 
     /** Flag for null-terminated ASCII strings. */

@@ -68,7 +68,9 @@ import com.lowagie.text.ExceptionConverter;
 
 public class TagMap extends HashMap {
 
-    class AttributeHandler extends DefaultHandler {
+    private static final long serialVersionUID = -6809383366554350820L;
+
+	class AttributeHandler extends DefaultHandler {
         
 /** This is a tag */
         public static final String TAG = "tag";

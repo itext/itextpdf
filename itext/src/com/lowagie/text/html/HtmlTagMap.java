@@ -62,6 +62,8 @@ import com.lowagie.text.markup.MarkupTags;
 
 public class HtmlTagMap extends HashMap {
     
+private static final long serialVersionUID = 5287430058473705350L;
+
 /**
  * Constructs an HtmlTagMap.
  */
