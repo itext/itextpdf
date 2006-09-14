@@ -80,6 +80,8 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     
     // membervariables
     
+private static final long serialVersionUID = 7852314969733375514L;
+
 /** The alignment of the text. */
     protected int alignment = Element.ALIGN_UNDEFINED;
     

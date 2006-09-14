@@ -85,6 +85,8 @@ public class Section extends ArrayList implements TextElementArray {
     
     // membervariables
     
+private static final long serialVersionUID = 3324172577544748043L;
+
 /** This is the title of this section. */
     protected Paragraph title;
     

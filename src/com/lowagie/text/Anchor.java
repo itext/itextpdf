@@ -80,6 +80,8 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
     
     // membervariables
     
+private static final long serialVersionUID = -852278536049236911L;
+
 /** This is the anchor tag. */
     public static final String ANCHOR = "anchor";
     

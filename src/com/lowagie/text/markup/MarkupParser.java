@@ -76,6 +76,8 @@ import com.lowagie.text.SimpleTable;
  * @author blowagie
  */
 public class MarkupParser extends HashMap {
+	private static final long serialVersionUID = 3724008022202507040L;
+
 	/**
 	 * HashMap with styles for each known combination of tag/id/class. The key
 	 * is a String-combination, the value a Properties object.

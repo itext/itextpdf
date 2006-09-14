@@ -62,7 +62,9 @@ public class PdfException extends DocumentException {
     
     // constructors
     
-    public PdfException(Exception ex) {
+    private static final long serialVersionUID = 6767433960955483999L;
+
+	public PdfException(Exception ex) {
         super(ex);
     }
 

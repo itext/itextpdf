@@ -61,7 +61,8 @@ package com.lowagie.text;
  */
 
 public class DocumentException extends Exception {
-    private Exception ex;
+    private static final long serialVersionUID = -2191131489390840739L;
+	private Exception ex;
 
     /**
      * Creates a Document exception.

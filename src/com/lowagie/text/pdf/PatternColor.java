@@ -49,7 +49,8 @@ package com.lowagie.text.pdf;
 /** Represents a pattern. Can be used in high-level constructs (Paragraph, Cell, etc.).
  */
 public class PatternColor extends ExtendedColor {
-    /**
+    private static final long serialVersionUID = -1185448552860615964L;
+	/**
      * The actual pattern.
      */    
     PdfPatternPainter painter;

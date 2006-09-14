@@ -106,6 +106,7 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
     
     // membervariables
     
+private static final long serialVersionUID = 1970670787169329006L;
 /** this is the symbol that wil proceed the listitem. */
     private Chunk symbol;
     

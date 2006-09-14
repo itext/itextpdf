@@ -62,6 +62,7 @@ import java.util.HashMap;
  */
 public class WebColors extends HashMap {
 
+	private static final long serialVersionUID = 3542523100813372896L;
 	/** HashMap containing all the names and corresponding color values. */
 	public static final WebColors NAMES = new WebColors();
 	static {
