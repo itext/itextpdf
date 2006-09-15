@@ -53,8 +53,6 @@ package com.lowagie.text.rtf.direct;
 import java.io.IOException;
 import java.io.Reader;
 
-import com.lowagie.text.DocumentException;
-
 /**
  * The RtfTokeniser takes an RTF document stream and
  * turns it into a set of RTF tokens. Five groups of
@@ -120,7 +118,6 @@ public class RtfTokeniser {
 	 * 
 	 * @param reader The Reader to read the RTF document from.
 	 * @throws IOException On I/O errors.
-	 * @throws DocumentException On errors writing the document.
 	 */
 	public void tokenise(Reader reader) throws IOException {
 		char[] nextChar = new char[1];

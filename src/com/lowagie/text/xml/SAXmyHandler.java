@@ -56,7 +56,6 @@ import java.util.Properties;
 import org.xml.sax.Attributes;
 
 import com.lowagie.text.DocListener;
-import com.lowagie.text.DocumentException;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
@@ -73,7 +72,6 @@ public class SAXmyHandler extends SAXiTextHandler {
  *
  * @param	document	this is the document on which events must be triggered
  * @param myTags a userdefined tagmap
- * @throws DocumentException
  */
     
     public SAXmyHandler(DocListener document, HashMap myTags) {
