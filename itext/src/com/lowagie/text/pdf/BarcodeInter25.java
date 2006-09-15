@@ -78,7 +78,7 @@ public class BarcodeInter25 extends Barcode{
 
     /** The bars to generate the code.
      */    
-    static byte BARS[][] =
+	private static final byte BARS[][] =
     {
         {0,0,1,1,0},
         {1,0,0,0,1},

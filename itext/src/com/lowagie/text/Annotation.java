@@ -93,52 +93,52 @@ public class Annotation implements Element, MarkupAttributes {
 	public static final int SCREEN = 7;
 
 	/** This is a possible attribute. */
-	public static String TITLE = "title";
+	public static final String TITLE = "title";
 
 	/** This is a possible attribute. */
-	public static String CONTENT = "content";
+	public static final String CONTENT = "content";
 
 	/** This is a possible attribute. */
-	public static String URL = "url";
+	public static final String URL = "url";
 
 	/** This is a possible attribute. */
-	public static String FILE = "file";
+	public static final String FILE = "file";
 
 	/** This is a possible attribute. */
-	public static String DESTINATION = "destination";
+	public static final String DESTINATION = "destination";
 
 	/** This is a possible attribute. */
-	public static String PAGE = "page";
+	public static final String PAGE = "page";
 
 	/** This is a possible attribute. */
-	public static String NAMED = "named";
+	public static final String NAMED = "named";
 
 	/** This is a possible attribute. */
-	public static String APPLICATION = "application";
+	public static final String APPLICATION = "application";
 
 	/** This is a possible attribute. */
-	public static String PARAMETERS = "parameters";
+	public static final String PARAMETERS = "parameters";
 
 	/** This is a possible attribute. */
-	public static String OPERATION = "operation";
+	public static final String OPERATION = "operation";
 
 	/** This is a possible attribute. */
-	public static String DEFAULTDIR = "defaultdir";
+	public static final String DEFAULTDIR = "defaultdir";
 
 	/** This is a possible attribute. */
-	public static String LLX = "llx";
+	public static final String LLX = "llx";
 
 	/** This is a possible attribute. */
-	public static String LLY = "lly";
+	public static final String LLY = "lly";
 
 	/** This is a possible attribute. */
-	public static String URX = "urx";
+	public static final String URX = "urx";
 
 	/** This is a possible attribute. */
-	public static String URY = "ury";
+	public static final String URY = "ury";
 
 	/** This is a possible attribute. */
-	public static String MIMETYPE = "mime";
+	public static final String MIMETYPE = "mime";
 
 	/** This is the type of annotation. */
 	protected int annotationtype;

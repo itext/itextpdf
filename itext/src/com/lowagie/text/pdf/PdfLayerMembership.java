@@ -64,19 +64,19 @@ public class PdfLayerMembership extends PdfDictionary implements PdfOCG {
     /**
      * Visible only if all of the entries are <B>ON</B>.
      */    
-    public static PdfName ALLON = new PdfName("AllOn");
+    public static final PdfName ALLON = new PdfName("AllOn");
     /**
      * Visible if any of the entries are <B>ON</B>.
      */    
-    public static PdfName ANYON = new PdfName("AnyOn");
+    public static final PdfName ANYON = new PdfName("AnyOn");
     /**
      * Visible if any of the entries are <B>OFF</B>.
      */    
-    public static PdfName ANYOFF = new PdfName("AnyOff");
+    public static final PdfName ANYOFF = new PdfName("AnyOff");
     /**
      * Visible only if all of the entries are <B>OFF</B>.
      */    
-    public static PdfName ALLOFF = new PdfName("AllOff");
+    public static final PdfName ALLOFF = new PdfName("AllOff");
 
     PdfIndirectReference ref;
     PdfArray members = new PdfArray();

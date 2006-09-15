@@ -67,7 +67,7 @@ public class BarcodePostnet extends Barcode{
 
     /** The bars for each character.
      */    
-    static byte BARS[][] = 
+	private static final byte BARS[][] = 
     {
         {1,1,0,0,0},
         {0,0,0,1,1},

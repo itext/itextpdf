@@ -81,7 +81,7 @@ public class Barcode128 extends Barcode{
 
     /** The bars to generate the code.
      */    
-    static byte BARS[][] = 
+    private static final byte BARS[][] = 
     {
         {2, 1, 2, 2, 2, 2},
         {2, 2, 2, 1, 2, 2},
@@ -193,7 +193,7 @@ public class Barcode128 extends Barcode{
     
     /** The stop bars.
      */    
-    static byte BARS_STOP[] = {2, 3, 3, 1, 1, 1, 2};
+    private static final byte BARS_STOP[] = {2, 3, 3, 1, 1, 1, 2};
     /** The charset code change.
      */
     public static final char CODE_AB_TO_C = 99;
