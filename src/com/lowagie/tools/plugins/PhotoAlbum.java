@@ -143,8 +143,8 @@ public class PhotoAlbum extends AbstractTool {
                 	img.setAbsolutePosition(0, 0);
                     document.add(img);
                     label = image.getName();
-                    if (label.lastIndexOf(".") > 0);
-                    	label = label.substring(0, label.lastIndexOf("."));
+                    if (label.lastIndexOf('.') > 0)
+                    	label = label.substring(0, label.lastIndexOf('.'));
                     pageLabels.addPageLabel(writer.getPageNumber(), PdfPageLabels.EMPTY, label);
                     System.out.println("Added image: " + image.getName());
                 }
