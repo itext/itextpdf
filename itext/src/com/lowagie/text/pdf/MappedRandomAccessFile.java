@@ -179,8 +179,8 @@ public class MappedRandomAccessFile {
      * @see java.lang.Object#finalize()
      */
     protected void finalize() throws Throwable {
-        super.finalize();
         close();
+        super.finalize();
     }
     
     /**
