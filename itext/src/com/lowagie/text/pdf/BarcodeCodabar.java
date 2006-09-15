@@ -105,7 +105,7 @@ public class BarcodeCodabar extends Barcode{
      */    
 	private static final String CHARS = "0123456789-$:/.+ABCD";
     
-    static final int START_STOP_IDX = 16;    
+    private static final int START_STOP_IDX = 16;    
     /** Creates a new BarcodeCodabar.
      */    
     public BarcodeCodabar() {
