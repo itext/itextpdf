@@ -183,7 +183,6 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
             peer.addAlias(ElementTags.BOTTOM, HtmlTags.BOTTOMMARGIN);
             peer.addAlias(ElementTags.RIGHT, HtmlTags.RIGHTMARGIN);
             peer.addAlias(ElementTags.LEFT, HtmlTags.LEFTMARGIN);
-            String content = null;
             bodyAttributes.putAll(peer.getAttributes(attrs));
             handleStartingTags(peer.getTag(), bodyAttributes);
             return;

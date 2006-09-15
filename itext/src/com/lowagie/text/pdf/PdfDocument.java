@@ -1201,7 +1201,6 @@ class PdfDocument extends Document implements DocListener {
 			table.hasToFitPageTable() ? (table.bottom() < indentBottom() && table.height() < (top() - bottom())) : false;
 		if (pageEmpty)
 			tableHasToFit = false;
-		boolean cellsHaveToFit = table.hasToFitPageCells();
 
 		// drawing the table
 		ArrayList dataCells = table.getCells();
@@ -1224,10 +1223,6 @@ class PdfDocument extends Document implements DocListener {
                         
 			// loop over the cells
 			boolean cellsShown = false;
-			int currentGroupNumber = 0;
-			boolean headerChecked = false;
-            
-            float headerHeight = 0;
 
             // draw the cells (line by line)
             Iterator iterator = rows.iterator();

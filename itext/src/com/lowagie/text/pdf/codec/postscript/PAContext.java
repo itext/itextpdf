@@ -2044,8 +2044,6 @@ systemDict.put("currentrgbcolor", new PACommand() {
     // currentflat PENDING(uweh):placeholder for now
     systemDict.put("currentflat", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
-        PdfContentByte cb = pdfg2d.getContent();
         context.operands.push(new Double(1.0f));
       }
     });
@@ -2295,16 +2293,16 @@ systemDict.put("currentrgbcolor", new PACommand() {
     // initmatrix
     systemDict.put("initmatrix", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
-        PdfContentByte cb = pdfg2d.getContent();
+//       PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
+//       PdfContentByte cb = pdfg2d.getContent();
 //       cb.transform(Affine);
       }
     });
     // initclip
     systemDict.put("initclip", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
-        PdfContentByte cb = pdfg2d.getContent();
+//       PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
+//       PdfContentByte cb = pdfg2d.getContent();
         context.pencil.clippath();
 //       pdfg2d.setClip(context.);
 //    if(!PAContext.IgnoreUnknownCommands)
@@ -2551,8 +2549,7 @@ systemDict.put("currentrgbcolor", new PACommand() {
       public void execute(PAContext context) throws PainterException {
         String filtername;
         filtername = (String) ( (PAToken) context.popOperands(1)[0]).value;
-        Object obj;
-        while (! ( (obj = context.peekOperand()) instanceof InputStream)) {
+        while (! ( (context.peekOperand()) instanceof InputStream)) {
           Object param = context.popOperands(1);
         }
 
