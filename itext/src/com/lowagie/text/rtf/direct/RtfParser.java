@@ -54,7 +54,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.rtf.document.RtfDocument;
 
 /**
@@ -119,7 +118,6 @@ public class RtfParser {
 	 * @param reader The Reader to read the RTF document from.
 	 * @param rtfDoc The RtfDocument to add the imported document to.
 	 * @throws IOException On I/O errors.
-	 * @throws DocumentException On document writing errors.
 	 */
 	public void importRtfDocument(Reader reader, RtfDocument rtfDoc) throws IOException {
 		this.rtfDoc = rtfDoc;
@@ -138,7 +136,6 @@ public class RtfParser {
 	 * @param rtfDoc The RTF document to add the RTF fragment to.
 	 * @param importMappings The RtfImportMappings defining font and color mappings for the fragment.
 	 * @throws IOException On I/O errors.
-	 * @throws DocumentException On document writing errors.
 	 */
 	public void importRtfFragment(Reader reader, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
 		this.rtfDoc = rtfDoc;
@@ -174,7 +171,6 @@ public class RtfParser {
 	 * Handles open group tokens.
 	 * 
 	 * @param groupLevel The current group nesting level.
-	 * @throws DocumentException On document writing errors.
 	 */
 	public void handleOpenGroup(int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT) {
@@ -187,7 +183,6 @@ public class RtfParser {
 	 * being parsed the parse state may change.
 	 * 
 	 * @param groupLevel The current group nesting level.
-	 * @throws DocumentException On document writing errors.
 	 */
 	public void handleCloseGroup(int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT && groupLevel > 1) {
@@ -209,7 +204,6 @@ public class RtfParser {
 	 * 
 	 * @param ctrlCharacter The control character to handle.
 	 * @param groupLevel The current group nesting level.
-	 * @throws DocumentException On document writing errors.
 	 */
 	public void handleCtrlCharacter(String ctrlCharacter, int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT) {
@@ -225,7 +219,6 @@ public class RtfParser {
 	 * 
 	 * @param ctrlWord The control word to handle.
 	 * @param groupLevel The current group nesting level.
-	 * @throws DocumentException On document writing errors.
 	 */
 	public void handleCtrlWord(String ctrlWord, int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT) {
@@ -259,7 +252,6 @@ public class RtfParser {
 	 * 
 	 * @param text The text token to handle.
 	 * @param groupLevel The current group nesting level.
-	 * @throws DocumentException On document writing errors.
 	 */
 	public void handleText(String text, int groupLevel) {
 		if(this.state == PARSER_IN_DOCUMENT) {
