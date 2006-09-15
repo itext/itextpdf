@@ -220,7 +220,7 @@ public class TreeViewInternalFrame extends JInternalFrame implements
 			};
 			jif.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			work.start();
-			blubb.show();
+			blubb.setVisible(true);
 			analyzer = (AnalyzePDF) work.get();
 
 			Timer activitymonitor = new Timer(250, new ActionListener() {

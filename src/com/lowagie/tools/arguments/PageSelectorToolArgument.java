@@ -72,7 +72,7 @@ public class PageSelectorToolArgument
 
   public void actionPerformed(ActionEvent e) {
     if (jDialog1 != null) {
-      jDialog1.show();
+      jDialog1.setVisible(true);
     }
   }
 
@@ -93,9 +93,9 @@ public class PageSelectorToolArgument
     }
     else if (propertyname.equals(name)) {
       String filename = (String) evt.getNewValue();
-      if(jDialog1!=null)jDialog1.hide();
+      if(jDialog1!=null)jDialog1.setVisible(false);
       jDialog1 = new PageSelectionTableDialog(tool.getInternalFrame());
-      jDialog1.show();
+      jDialog1.setVisible(true);
       jDialog1.addPropertyChangeListener(this);
       jDialog1.setDataModel(new PageTableModel(filename));
       jDialog1.setTitle(filename);
