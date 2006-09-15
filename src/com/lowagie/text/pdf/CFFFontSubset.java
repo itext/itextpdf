@@ -238,7 +238,7 @@ public class CFFFontSubset extends CFFFont {
     int CountRange(int NumofGlyphs,int Type){
     	int num=0;
     	char Sid;
-    	int i=1,nLeft,Places;
+    	int i=1,nLeft;
     	while (i<NumofGlyphs){
     		num++;
     		Sid = getCard16();
