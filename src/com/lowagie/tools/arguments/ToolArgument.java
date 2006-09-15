@@ -168,7 +168,7 @@ public class ToolArgument
     buf.append(name);
     buf.append(" -  ");
     buf.append(description);
-    buf.append("\n");
+    buf.append('\n');
     return buf.toString();
   }
 

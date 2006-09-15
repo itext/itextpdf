@@ -248,13 +248,13 @@ public class FontFactoryImp {
                 fontname = (String)styleAttributes.remove(MarkupTags.CSS_KEY_FONTFAMILY);
                 if (fontname != null) {
                     String tmp;
-                    while (fontname.indexOf(",") != -1) {
-                        tmp = fontname.substring(0, fontname.indexOf(","));
+                    while (fontname.indexOf(',') != -1) {
+                        tmp = fontname.substring(0, fontname.indexOf(','));
                         if (isRegistered(tmp)) {
                             fontname = tmp;
                         }
                         else {
-                            fontname = fontname.substring(fontname.indexOf(",") + 1);
+                            fontname = fontname.substring(fontname.indexOf(',') + 1);
                         }
                     }
                 }
@@ -287,7 +287,7 @@ public class FontFactoryImp {
             fontname = value;
         }
         if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
-            size = Float.valueOf(value + "f").floatValue();
+            size = Float.parseFloat(value + "f");
         }
         if ((value = (String)attributes.remove(MarkupTags.HTML_ATTR_STYLE)) != null) {
             style |= Font.getStyleValue(value);

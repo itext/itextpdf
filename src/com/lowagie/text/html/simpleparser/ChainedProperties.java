@@ -89,11 +89,11 @@ public class ChainedProperties {
             }
             else {
                 int s = 0;
-                if (value.startsWith("+") || value.startsWith("-")) {
+                if (value.charAt(0) == '+' || value.charAt(0) == '-') {
                     String old = getProperty("basefontsize");
                     if (old == null)
                         old = "12";
-                    float f = Float.valueOf(old).floatValue();
+                    float f = Float.parseFloat(old);
                     int c = (int)f;
                     for (int k = fontSizes.length - 1; k >= 0; --k) {
                         if (c >= fontSizes[k]) {
@@ -101,7 +101,7 @@ public class ChainedProperties {
                             break;
                         }
                     }
-                    int inc = Integer.parseInt(value.startsWith("+") ? value.substring(1) : value);
+                    int inc = Integer.parseInt(value.charAt(0) == '+' ? value.substring(1) : value);
                     s += inc;
                 }
                 else

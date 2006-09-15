@@ -607,7 +607,7 @@ public class XfaForm {
          * @return the split name
          */
         public static Stack2 splitParts(String name) {
-            while (name.startsWith("."))
+            while (name.charAt(0) == '.')
                 name = name.substring(1);
             Stack2 parts = new Stack2();
             int last = 0;
@@ -911,13 +911,13 @@ public class XfaForm {
                         int max = 1;
                         Node a = n2.getAttributes().getNamedItem("initial");
                         if (a != null)
-                            try{initial = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){};
+                            try{initial = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){}
                         a = n2.getAttributes().getNamedItem("min");
                         if (a != null)
-                            try{min = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){};
+                            try{min = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){}
                         a = n2.getAttributes().getNamedItem("max");
                         if (a != null)
-                            try{max = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){};
+                            try{max = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){}
                         if (initial != min || min != max)
                             dynamicForm = true;
                     }

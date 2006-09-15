@@ -361,7 +361,7 @@ public class SimpleXMLParser {
                             sb.append('&').append(cent).append(';');
                         }
                     }
-                    else if(cent.startsWith("#")) {
+                    else if(cent.charAt(0) == '#') {
                         try {
                             char ci = (char)Integer.parseInt(cent.substring(1));
                             sb.append(ci);
@@ -489,7 +489,7 @@ public class SimpleXMLParser {
                     quotec = c;
                     mode = QUOTE;
                 } else if(Character.isWhitespace((char)c)) {
-                    ;
+                    // empty
                 } else if (html && c == '>') {
                     attrs.put(lvalue,sb.toString());
                     sb.setLength(0);
@@ -534,7 +534,7 @@ public class SimpleXMLParser {
                 if(c == '=') {
                     mode = ATTRIBUTE_RVALUE;
                 } else if(Character.isWhitespace((char)c)) {
-                    ;
+                    // empty
                 } else if (html && c == '>') {
                     sb.setLength(0);
                     mode = popMode(st);
@@ -563,7 +563,7 @@ public class SimpleXMLParser {
                 } else if(c == '/') {
                     mode = SINGLE_TAG;
                 } else if(Character.isWhitespace((char)c)) {
-                    ;
+                    // empty
                 } else {
                     mode = ATTRIBUTE_LVALUE;
                     sb.append((char)c);
@@ -612,7 +612,7 @@ public class SimpleXMLParser {
                     break;
                 default:
                     if (onlyASCII && c > 127)
-                        sb.append("&#").append(c).append(";");
+                        sb.append("&#").append(c).append(';');
                     else
                         sb.append((char)c);
             }

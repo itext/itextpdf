@@ -525,7 +525,7 @@ public abstract class BaseFont {
      * Creates the <CODE>widths</CODE> and the <CODE>differences</CODE> arrays
      */
     protected void createEncoding() {
-        if (encoding.startsWith("#")) {
+        if (encoding.charAt(0) == '#') {
             specialMap = new IntHashtable();
             StringTokenizer tok = new StringTokenizer(encoding.substring(1), " ,\t\n\r\f");
             if (tok.nextToken().equals("full")) {
@@ -534,7 +534,7 @@ public abstract class BaseFont {
                     String name = tok.nextToken();
                     char uni = (char)Integer.parseInt(tok.nextToken(), 16);
                     int orderK;
-                    if (order.startsWith("'"))
+                    if (order.charAt(0) == '\'')
                         orderK = (int)order.charAt(1);
                     else
                         orderK = Integer.parseInt(order);
@@ -1054,7 +1054,7 @@ public abstract class BaseFont {
      * <CODE>null</CODE> if not found
      */    
     public static InputStream getResourceStream(String key, ClassLoader loader) {
-        if (key.startsWith("/"))
+        if (key.charAt(0) == '/')
             key = key.substring(1);
         InputStream is = null;
         if (loader != null) {

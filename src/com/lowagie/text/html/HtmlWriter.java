@@ -661,7 +661,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Phrase phrase = (Phrase) element;
                 styleAttributes = new Properties();
-                if (phrase.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, String.valueOf(phrase.leading()) + "pt");
+                if (phrase.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, phrase.leading() + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -686,7 +686,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Anchor anchor = (Anchor) element;
                 styleAttributes = new Properties();
-                if (anchor.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, String.valueOf(anchor.leading()) + "pt");
+                if (anchor.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, anchor.leading() + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -717,7 +717,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Paragraph paragraph = (Paragraph) element;
                 styleAttributes = new Properties();
-                if (paragraph.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, String.valueOf(paragraph.leading()) + "pt");
+                if (paragraph.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, paragraph.leading() + "pt");
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
@@ -781,7 +781,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 ListItem listItem = (ListItem) element;
                 styleAttributes = new Properties();
-                if (listItem.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, String.valueOf(listItem.leading()) + "pt");
+                if (listItem.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, listItem.leading() + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -972,8 +972,8 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 writeStart(HtmlTags.IMAGE);
                 String path = image.url().toString();
                 if (imagepath != null) {
-                    if (path.indexOf("/") > 0) {
-                        path = imagepath + path.substring(path.lastIndexOf("/") + 1);
+                    if (path.indexOf('/') > 0) {
+                        path = imagepath + path.substring(path.lastIndexOf('/') + 1);
                     }
                     else {
                         path = imagepath + path;
@@ -1021,7 +1021,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 depth = 5;
             }
             Properties styleAttributes = new Properties();
-            if (section.title().leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, String.valueOf(section.title().leading()) + "pt");
+            if (section.title().leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, section.title().leading() + "pt");
             // start tag
             addTabs(indent);
             writeStart(HtmlTags.H[depth]);
@@ -1073,7 +1073,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             writeCssProperty(MarkupTags.CSS_KEY_FONTFAMILY, font.getFamilyname());
             
             if (font.size() != Font.UNDEFINED) {
-                writeCssProperty(MarkupTags.CSS_KEY_FONTSIZE, String.valueOf(font.size()) + "pt");
+                writeCssProperty(MarkupTags.CSS_KEY_FONTSIZE, font.size() + "pt");
             }
             if (font.color() != null) {
                 writeCssProperty(MarkupTags.CSS_KEY_COLOR, HtmlEncoder.encode(font.color()));

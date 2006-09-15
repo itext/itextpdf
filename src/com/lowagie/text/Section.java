@@ -439,13 +439,13 @@ private static final long serialVersionUID = 3324172577544748043L;
             setNumberDepth(Integer.parseInt(value));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENT)) != null) {
-            setIndentation(Float.valueOf(value + "f").floatValue());
+            setIndentation(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.valueOf(value + "f").floatValue());
+            setIndentationLeft(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.valueOf(value + "f").floatValue());
+            setIndentationRight(Float.parseFloat(value + "f"));
         }
     }
     

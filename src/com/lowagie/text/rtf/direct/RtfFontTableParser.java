@@ -117,8 +117,8 @@ public class RtfFontTableParser {
 	 * @param groupLevel The current group nesting level.
 	 */
 	public void handleText(String text, int groupLevel) {
-		if(text.indexOf(";") >= 0 && groupLevel == 3) {
-			this.fontName = text.substring(0, text.indexOf(";"));
+		if(text.indexOf(';') >= 0 && groupLevel == 3) {
+			this.fontName = text.substring(0, text.indexOf(';'));
 		}
 	}
 }

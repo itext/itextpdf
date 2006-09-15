@@ -131,14 +131,14 @@ public class PageSizeArgument extends OptionArgument {
 		buf.append(name);
 		buf.append(" -  ");
 		buf.append(description);
-		buf.append("\n");
+		buf.append('\n');
 		buf.append("    possible options:\n");
 		String s;
 		for (Iterator i = options.keySet().iterator(); i.hasNext(); ) {
 			s  = (String)i.next();
 			buf.append("    - ");
 			buf.append(s);
-			buf.append("\n");
+			buf.append('\n');
 		}
 		return buf.toString();
 	}

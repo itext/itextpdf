@@ -184,7 +184,7 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		for (Iterator i = tmp.keySet().iterator(); i.hasNext();) {
 			name = (String) i.next();
 			if (current == null || !name.startsWith(current.getText())) {
-				current = new JMenu(name.substring(0, name.indexOf(".")));
+				current = new JMenu(name.substring(0, name.indexOf('.')));
 				tools.add(current);
 			}
 			item = new JMenuItem(name.substring(current.getText().length() + 1));

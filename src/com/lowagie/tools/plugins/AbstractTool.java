@@ -229,10 +229,10 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		ToolArgument argument;
 		for (Iterator i = arguments.iterator(); i.hasNext(); ) {
 			argument = (ToolArgument) i.next();
-			buf.append(" ");
+			buf.append(' ');
 			buf.append(argument.getName());
 		}
-		buf.append("\n");
+		buf.append('\n');
 		for (Iterator i = arguments.iterator(); i.hasNext(); ) {
 			argument = (ToolArgument) i.next();
 			buf.append(argument.getUsage());
@@ -335,7 +335,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 	 */
 	protected static void  addVersion(String version) {
 		version = version.substring(5, version.length() - 7);
-		version = version.substring(0, version.lastIndexOf(" "));
+		version = version.substring(0, version.lastIndexOf(' '));
 		versionsarray.add(version);
 	}
 }

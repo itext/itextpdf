@@ -83,7 +83,7 @@ public class OutlinelistTreeNode extends UpdateableTreeNode {
 		Iterator it = set.iterator();
 		while (it.hasNext()) {
 			sb.append("<p>");
-			sb.append("Key " + it.next().toString());
+			sb.append("Key ").append(it.next().toString());
 			sb.append("</p>");
 		}
 		sb.append("</html>");

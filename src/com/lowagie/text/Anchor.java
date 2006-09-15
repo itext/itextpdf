@@ -198,7 +198,7 @@ private static final long serialVersionUID = -852278536049236911L;
             add(chunk);
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
         else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));
@@ -226,7 +226,7 @@ private static final long serialVersionUID = -852278536049236911L;
         try {
             Chunk chunk;
             Iterator i = getChunks().iterator();
-            boolean localDestination = (reference != null && reference.startsWith("#"));
+            boolean localDestination = (reference != null && reference.charAt(0) == '#');
             boolean notGotoOK = true;
             while (i.hasNext()) {
                 chunk = (Chunk) i.next();
@@ -256,7 +256,7 @@ private static final long serialVersionUID = -852278536049236911L;
         ArrayList tmp = new ArrayList();
         Chunk chunk;
         Iterator i = iterator();
-        boolean localDestination = (reference != null && reference.startsWith("#"));
+        boolean localDestination = (reference != null && reference.charAt(0) == '#');
         boolean notGotoOK = true;
         while (i.hasNext()) {
             chunk = (Chunk) i.next();

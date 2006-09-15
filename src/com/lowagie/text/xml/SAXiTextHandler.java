@@ -510,13 +510,13 @@ public class SAXiTextHandler extends DefaultHandler {
                 try {
                     // margin specific code suggested by Reza Nasiri
                     if (ElementTags.LEFT.equalsIgnoreCase(key))
-                        leftMargin = Float.valueOf(value + "f").floatValue();
+                        leftMargin = Float.parseFloat(value + "f");
                     if (ElementTags.RIGHT.equalsIgnoreCase(key))
-                        rightMargin = Float.valueOf(value + "f").floatValue();
+                        rightMargin = Float.parseFloat(value + "f");
                     if (ElementTags.TOP.equalsIgnoreCase(key))
-                        topMargin = Float.valueOf(value + "f").floatValue();
+                        topMargin = Float.parseFloat(value + "f");
                     if (ElementTags.BOTTOM.equalsIgnoreCase(key))
-                        bottomMargin = Float.valueOf(value + "f").floatValue();
+                        bottomMargin = Float.parseFloat(value + "f");
                 } catch (Exception ex) {
                     throw new ExceptionConverter(ex);
                 }
@@ -797,9 +797,9 @@ public class SAXiTextHandler extends DefaultHandler {
                         }
                     } else if (cell.colspan() == 1 && width.endsWith("%")) {
                         try {
-                            cellWidths[j] = Float.valueOf(
+                            cellWidths[j] = Float.parseFloat(
                                     width.substring(0, width.length() - 1)
-                                            + "f").floatValue();
+                                            + "f");
                             total += cellWidths[j];
                         } catch (Exception e) {
                             // empty on purpose

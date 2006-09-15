@@ -276,7 +276,7 @@ class Type1Font extends BaseFont
             if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
                 fontSpecific = false;
             }
-            if (!encoding.startsWith("#"))
+            if (encoding.charAt(0) != '#')
                 PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
             createEncoding();
         }
@@ -360,36 +360,36 @@ class Type1Font extends BaseFont
             else if (ident.equals("Weight"))
                 Weight = tok.nextToken("\u00ff").substring(1);
             else if (ident.equals("ItalicAngle"))
-                ItalicAngle = Float.valueOf(tok.nextToken()).floatValue();
+                ItalicAngle = Float.parseFloat(tok.nextToken());
             else if (ident.equals("IsFixedPitch"))
                 IsFixedPitch = tok.nextToken().equals("true");
             else if (ident.equals("CharacterSet"))
                 CharacterSet = tok.nextToken("\u00ff").substring(1);
             else if (ident.equals("FontBBox"))
             {
-                llx = (int)Float.valueOf(tok.nextToken()).floatValue();
-                lly = (int)Float.valueOf(tok.nextToken()).floatValue();
-                urx = (int)Float.valueOf(tok.nextToken()).floatValue();
-                ury = (int)Float.valueOf(tok.nextToken()).floatValue();
+                llx = (int)Float.parseFloat(tok.nextToken());
+                lly = (int)Float.parseFloat(tok.nextToken());
+                urx = (int)Float.parseFloat(tok.nextToken());
+                ury = (int)Float.parseFloat(tok.nextToken());
             }
             else if (ident.equals("UnderlinePosition"))
-                UnderlinePosition = (int)Float.valueOf(tok.nextToken()).floatValue();
+                UnderlinePosition = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("UnderlineThickness"))
-                UnderlineThickness = (int)Float.valueOf(tok.nextToken()).floatValue();
+                UnderlineThickness = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("EncodingScheme"))
                 EncodingScheme = tok.nextToken("\u00ff").substring(1);
             else if (ident.equals("CapHeight"))
-                CapHeight = (int)Float.valueOf(tok.nextToken()).floatValue();
+                CapHeight = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("XHeight"))
-                XHeight = (int)Float.valueOf(tok.nextToken()).floatValue();
+                XHeight = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("Ascender"))
-                Ascender = (int)Float.valueOf(tok.nextToken()).floatValue();
+                Ascender = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("Descender"))
-                Descender = (int)Float.valueOf(tok.nextToken()).floatValue();
+                Descender = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("StdHW"))
-                StdHW = (int)Float.valueOf(tok.nextToken()).floatValue();
+                StdHW = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("StdVW"))
-                StdVW = (int)Float.valueOf(tok.nextToken()).floatValue();
+                StdVW = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("StartCharMetrics"))
             {
                 isMetrics = true;
@@ -424,7 +424,7 @@ class Type1Font extends BaseFont
                 if (ident.equals("C"))
                     C = Integer.valueOf(tokc.nextToken());
                 else if (ident.equals("WX"))
-                    WX = new Integer(Float.valueOf(tokc.nextToken()).intValue());
+                    WX = new Integer((int)Float.parseFloat(tokc.nextToken()));
                 else if (ident.equals("N"))
                     N = tokc.nextToken();
                 else if (ident.equals("B")) {
@@ -467,7 +467,7 @@ class Type1Font extends BaseFont
             {
                 String first = tok.nextToken();
                 String second = tok.nextToken();
-                Integer width = new Integer(Float.valueOf(tok.nextToken()).intValue());
+                Integer width = new Integer((int)Float.parseFloat(tok.nextToken()));
                 Object relates[] = (Object[])KernPairs.get(first);
                 if (relates == null)
                     KernPairs.put(first, new Object[]{second, width});

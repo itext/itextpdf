@@ -222,9 +222,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 String before = cprops.getProperty("before");
                 String after = cprops.getProperty("after");
                 if (before != null)
-                    img.setSpacingBefore(Float.valueOf(before).floatValue());
+                    img.setSpacingBefore(Float.parseFloat(before));
                 if (after != null)
-                    img.setSpacingAfter(Float.valueOf(after).floatValue());
+                    img.setSpacingAfter(Float.parseFloat(after));
                 float wp = lengthParse(width, (int)img.width());
                 float lp = lengthParse(height, (int)img.height());
                 if (wp > 0 && lp > 0)
@@ -634,7 +634,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         if (txt == null)
             return -1;
         if (txt.endsWith("%")) {
-            float vf = Float.valueOf(txt.substring(0, txt.length() - 1)).floatValue();
+            float vf = Float.parseFloat(txt.substring(0, txt.length() - 1));
             return vf;
         }
         int v = Integer.parseInt(txt);

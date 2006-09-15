@@ -84,7 +84,7 @@ public class XmpArray extends ArrayList {
 	public String toString() {
 		StringBuffer buf = new StringBuffer("<");
 		buf.append(type);
-		buf.append(">");
+		buf.append('>');
 		String s;
 		for (Iterator i = iterator(); i.hasNext(); ) {
 			s = (String) i.next();
@@ -94,7 +94,7 @@ public class XmpArray extends ArrayList {
 		}
 		buf.append("</");
 		buf.append(type);
-		buf.append(">");
+		buf.append('>');
 		return buf.toString();
 	}
 }

@@ -175,7 +175,7 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
             --size;
             int metric[] = (int[])metrics[k];
             String fromTo = toHex(metric[0]);
-            buf.append(fromTo).append(fromTo).append(toHex(metric[2])).append("\n");
+            buf.append(fromTo).append(fromTo).append(toHex(metric[2])).append('\n');
         }
         buf.append(
         "endbfrange\n" +
@@ -233,14 +233,14 @@ class TrueTypeFontUnicode extends TrueTypeFont implements Comparator{
                     continue;
                 int m = metric[0];
                 if (m == lastNumber + 1) {
-                    buf.append(" ").append(metric[1]);
+                    buf.append(' ').append(metric[1]);
                 }
                 else {
                     if (!firstTime) {
-                        buf.append("]");
+                        buf.append(']');
                     }
                     firstTime = false;
-                    buf.append(m).append("[").append(metric[1]);
+                    buf.append(m).append('[').append(metric[1]);
                 }
                 lastNumber = m;
             }

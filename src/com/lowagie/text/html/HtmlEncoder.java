@@ -148,7 +148,7 @@ public class HtmlEncoder {
             }
             else {
                 // Improvement posted by Joachim Eyrich
-                buffer.append("&#").append((int)character).append(";");
+                buffer.append("&#").append((int)character).append(';');
             }
         }
         return buffer.toString().trim();

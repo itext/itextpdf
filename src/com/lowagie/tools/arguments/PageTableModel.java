@@ -128,7 +128,7 @@ public class PageTableModel extends AbstractTableModel {
 	}
 
 	public String getColumnName(int column) {
-		String name = new Integer(column + 1).toString();
+		String name = Integer.toString(column + 1);
 		switch (column) {
 		case 0:
 			name = "<html>Pagenr<p>" + name + "</html>";

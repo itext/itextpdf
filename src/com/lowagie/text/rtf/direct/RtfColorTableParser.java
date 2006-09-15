@@ -134,7 +134,7 @@ public class RtfColorTableParser {
 	 * @param groupLevel Unused.
 	 */
 	public void handleText(String text, int groupLevel) {
-		if(text.indexOf(";") != -1) {
+		if(text.indexOf(';') != -1) {
 			if(red != -1 && green != -1 && blue != -1) {
 				this.importHeader.importColor(Integer.toString(this.colorNr), new Color(this.red, this.green, this.blue));
 			}

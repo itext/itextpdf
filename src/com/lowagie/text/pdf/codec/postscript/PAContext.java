@@ -1480,14 +1480,14 @@ systemDict.put("currentrgbcolor", new PACommand() {
     // true
     systemDict.put("true", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        context.operands.push(new Boolean(true));
+        context.operands.push(Boolean.TRUE);
       }
     });
 
     // false
     systemDict.put("false", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        context.operands.push(new Boolean(false));
+        context.operands.push(Boolean.FALSE);
       }
     });
 
@@ -1508,10 +1508,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 < d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1522,10 +1522,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.compareTo(s1) < 0) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
       }
@@ -1548,10 +1548,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 > d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1562,10 +1562,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.compareTo(s1) > 0) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
       }
@@ -1587,10 +1587,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 >= d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1601,10 +1601,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.compareTo(s1) >= 0) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
       }
@@ -1626,10 +1626,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 != d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1640,10 +1640,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.equals(s1)) {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
           else {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
         }
       }
@@ -1666,10 +1666,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 == d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1680,10 +1680,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.compareTo(s1) == 0) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
       }
@@ -1957,10 +1957,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
         }
         foundObject = context.findIdentifier(patoken.value);
         if (foundObject != null) {
-          context.operands.push(new Boolean(true));
+          context.operands.push(Boolean.TRUE);
         }
         else {
-          context.operands.push(new Boolean(false));
+          context.operands.push(Boolean.FALSE);
         }
       }
     });
@@ -1981,10 +1981,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
         foundObject = context.findDictionary(patoken.value);
         if (foundObject != null) {
           context.operands.push(foundObject);
-          context.operands.push(new Boolean(true));
+          context.operands.push(Boolean.TRUE);
         }
         else {
-          context.operands.push(new Boolean(false));
+          context.operands.push(Boolean.FALSE);
         }
       }
     });
@@ -2805,7 +2805,7 @@ systemDict.put("currentrgbcolor", new PACommand() {
           throw new PainterException("stopped: wrong arguments");
         }
         context.engine.process(patoken);
-        context.operands.push(new Boolean(false));
+        context.operands.push(Boolean.FALSE);
       }
     });
     systemDict.put("systemdict", systemDict);

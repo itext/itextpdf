@@ -94,11 +94,11 @@ public class IncCell implements TextElementArray {
         value = props.getProperty("border");
         float border = 0;
         if (value != null)
-            border = Float.valueOf(value).floatValue();
+            border = Float.parseFloat(value);
         cell.setBorderWidth(border);
         value = props.getProperty("cellpadding");
         if (value != null)
-            cell.setPadding(Float.valueOf(value).floatValue());
+            cell.setPadding(Float.parseFloat(value));
         cell.setUseDescender(true);
         value = props.getProperty("bgcolor");
         cell.setBackgroundColor(MarkupParser.decodeColor(value));

@@ -112,9 +112,7 @@ public class ByteBuffer extends OutputStream {
         if (size > 3276700) size = 3276700;
         if (size <= byteCacheSize) return;
         byte[][] tmpCache = new byte[size][];
-        for (int i = 0; i < byteCacheSize; i++) {
-            tmpCache[i] = byteCache[i];
-        }
+        System.arraycopy(byteCache, 0, tmpCache, 0, byteCacheSize);
         byteCache = tmpCache;
         byteCacheSize = size;
     }

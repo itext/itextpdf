@@ -85,13 +85,13 @@ public abstract class XmpSchema extends Properties {
 	 * @param p
 	 */
 	protected void process(StringBuffer buf, Object p) {
-		buf.append("<");
+		buf.append('<');
 		buf.append(p);
-		buf.append(">");
+		buf.append('>');
 		buf.append(this.get(p));
 		buf.append("</");
 		buf.append(p);
-		buf.append(">");
+		buf.append('>');
 	}
 	/**
 	 * @return Returns the xmlns.
