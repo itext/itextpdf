@@ -77,10 +77,6 @@ public class StyleSheet {
         props.putAll(temp);
     }
     
-    private void applyMap(HashMap map, HashMap props) {
-        
-    }
-    
     public void loadStyle(String style, HashMap props) {
         classMap.put(style.toLowerCase(), props);
     }
