@@ -51,7 +51,6 @@ package com.lowagie.text.pdf;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.image.MemoryImageSource;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import com.lowagie.text.BadElementException;
@@ -1017,7 +1016,6 @@ public class BarcodePDF417 {
     /** Sets the text that will form the barcode. This text is converted
      * to bytes using the encoding Cp437.
      * @param s the text that will form the barcode
-     * @throws UnsupportedEncodingException if the encoding Cp437 is not supported
      */    
     public void setText(String s) {
         this.text = PdfEncodings.convertToBytes(s, "cp437");
