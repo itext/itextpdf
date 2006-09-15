@@ -167,7 +167,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
             for (int k = 0; k < fieldNames.size(); ++k) {
                 fName += "." + (String)fieldNames.elementAt(k);
             }
-            if (fName.startsWith("."))
+            if (fName.charAt(0) == '.')
                 fName = fName.substring(1);
             String	fVal = (String) fieldValues.pop();
             fields.put( fName, fVal );
@@ -183,7 +183,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
      */    
     public void startDocument()
     {
-        fileSpec = new String("");	// and this too...
+        fileSpec = "";
     }
     /**
      * Called after the document is parsed.

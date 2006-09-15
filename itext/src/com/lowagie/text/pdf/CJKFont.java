@@ -251,7 +251,7 @@ class CJKFont extends BaseFont {
         if (w != null)
             dic.put(PdfName.W, new PdfLiteral(w));
         if (vertical) {
-            w = convertToVCIDMetrics(keys, vMetrics, hMetrics);;
+            w = convertToVCIDMetrics(keys, vMetrics, hMetrics);
             if (w != null)
                 dic.put(PdfName.W2, new PdfLiteral(w));
         }

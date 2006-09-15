@@ -109,7 +109,7 @@ public class IndexEvents extends PdfPageEventHelper {
             final String in3) {
 
         Chunk chunk = new Chunk(text);
-        String tag = "idx_" + String.valueOf(indexcounter++);
+        String tag = "idx_" + (indexcounter++);
         chunk.setGenericTag(tag);
         chunk.setLocalDestination(tag);
         Entry entry = new Entry(in1, in2, in3, tag);
@@ -151,7 +151,7 @@ public class IndexEvents extends PdfPageEventHelper {
     public void create(final Chunk text, final String in1, final String in2,
             final String in3) {
 
-        String tag = "idx_" + String.valueOf(indexcounter++);
+        String tag = "idx_" + (indexcounter++);
         text.setGenericTag(tag);
         text.setLocalDestination(tag);
         Entry entry = new Entry(in1, in2, in3, tag);
@@ -389,11 +389,11 @@ public class IndexEvents extends PdfPageEventHelper {
          */
         public String toString() {
             StringBuffer buf = new StringBuffer();
-            buf.append(in1).append(" ");
-            buf.append(in2).append(" ");
-            buf.append(in3).append(" ");
+            buf.append(in1).append(' ');
+            buf.append(in2).append(' ');
+            buf.append(in3).append(' ');
             for (int i = 0; i < pagenumbers.size(); i++) {
-                buf.append(pagenumbers.get(i)).append(" ");
+                buf.append(pagenumbers.get(i)).append(' ');
             }
             return buf.toString();
         }

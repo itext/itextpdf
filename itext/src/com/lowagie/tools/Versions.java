@@ -119,9 +119,9 @@ public class Versions extends JFrame {
 		sb.append("<p>java.home: " + properties.getProperty("java.home")
 				+ "</p>");
 		sb.append("<p>java.freeMemory: "
-				+ String.valueOf(runtime.freeMemory()) + " bytes" + "</p>");
+				+ runtime.freeMemory() + " bytes" + "</p>");
 		sb.append("<p>java.totalMemory: "
-				+ String.valueOf(runtime.totalMemory()) + " bytes" + "</p>");
+				+ runtime.totalMemory() + " bytes" + "</p>");
 		sb.append("<p>user.home: " + properties.getProperty("user.home")
 				+ "</p>");
 		sb.append("<p>os.name: " + properties.getProperty("os.name")

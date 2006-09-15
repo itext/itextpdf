@@ -234,7 +234,7 @@ private static final long serialVersionUID = 7852314969733375514L;
             setAlignment(value);
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
         else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));
@@ -243,10 +243,10 @@ private static final long serialVersionUID = 7852314969733375514L;
             setLeading(16);
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.valueOf(value + "f").floatValue());
+            setIndentationLeft(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.valueOf(value + "f").floatValue());
+            setIndentationRight(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.KEEPTOGETHER)) != null) {
             keeptogether = new Boolean(value).booleanValue();

@@ -223,16 +223,16 @@ private static final long serialVersionUID = 1970670787169329006L;
             add(new Chunk(value));
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
         else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.valueOf(value + "f").floatValue());
+            setIndentationLeft(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.valueOf(value + "f").floatValue());
+            setIndentationRight(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
             setAlignment(value);

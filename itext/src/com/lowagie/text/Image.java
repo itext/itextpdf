@@ -981,17 +981,17 @@ public abstract class Image extends Rectangle implements Element,
 		String y;
 		if (((x = (String) attributes.remove(ElementTags.ABSOLUTEX)) != null)
 				&& ((y = (String) attributes.remove(ElementTags.ABSOLUTEY)) != null)) {
-			image.setAbsolutePosition(Float.valueOf(x + "f").floatValue(),
-					Float.valueOf(y + "f").floatValue());
+			image.setAbsolutePosition(Float.parseFloat(x + "f"),
+					Float.parseFloat(y + "f"));
 		}
 		if ((value = (String) attributes.remove(ElementTags.PLAINWIDTH)) != null) {
-			image.scaleAbsoluteWidth(Float.valueOf(value + "f").floatValue());
+			image.scaleAbsoluteWidth(Float.parseFloat(value + "f"));
 		}
 		if ((value = (String) attributes.remove(ElementTags.PLAINHEIGHT)) != null) {
-			image.scaleAbsoluteHeight(Float.valueOf(value + "f").floatValue());
+			image.scaleAbsoluteHeight(Float.parseFloat(value + "f"));
 		}
 		if ((value = (String) attributes.remove(ElementTags.ROTATION)) != null) {
-			image.setRotation(Float.valueOf(value + "f").floatValue());
+			image.setRotation(Float.parseFloat(value + "f"));
 		}
 		if (attributes.size() > 0)
 			image.setMarkupAttributes(attributes);
@@ -1476,7 +1476,7 @@ public abstract class Image extends Rectangle implements Element,
 		if (File.separatorChar != '/') {
 			path = path.replace(File.separatorChar, '/');
 		}
-		if (!path.startsWith("/")) {
+		if (path.charAt(0) != '/') {
 			path = "/" + path;
 		}
 		if (!path.endsWith("/") && f.isDirectory()) {

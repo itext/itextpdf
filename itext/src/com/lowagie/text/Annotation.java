@@ -416,19 +416,19 @@ public class Annotation implements Element, MarkupAttributes {
 	public Annotation(Properties attributes) {
 		String value = (String) attributes.remove(ElementTags.LLX);
 		if (value != null) {
-			llx = Float.valueOf(value + "f").floatValue();
+			llx = Float.parseFloat(value + "f");
 		}
 		value = (String) attributes.remove(ElementTags.LLY);
 		if (value != null) {
-			lly = Float.valueOf(value + "f").floatValue();
+			lly = Float.parseFloat(value + "f");
 		}
 		value = (String) attributes.remove(ElementTags.URX);
 		if (value != null) {
-			urx = Float.valueOf(value + "f").floatValue();
+			urx = Float.parseFloat(value + "f");
 		}
 		value = (String) attributes.remove(ElementTags.URY);
 		if (value != null) {
-			ury = Float.valueOf(value + "f").floatValue();
+			ury = Float.parseFloat(value + "f");
 		}
 		String title = (String) attributes.remove(ElementTags.TITLE);
 		String text = (String) attributes.remove(ElementTags.CONTENT);

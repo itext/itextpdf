@@ -95,19 +95,19 @@ public class PdfDate extends PdfString {
         date.append(setLength(d.get(Calendar.SECOND), 2));
         int timezone = (d.get(Calendar.ZONE_OFFSET) + d.get(Calendar.DST_OFFSET)) / (60 * 60 * 1000);
         if (timezone == 0) {
-            date.append("Z");
+            date.append('Z');
         }
         else if (timezone < 0) {
-            date.append("-");
+            date.append('-');
             timezone = -timezone;
         }
         else {
-            date.append("+");
+            date.append('+');
         }
         if (timezone != 0) {
-            date.append(setLength(timezone, 2)).append("'");
+            date.append(setLength(timezone, 2)).append('\'');
             int zone = Math.abs((d.get(Calendar.ZONE_OFFSET) + d.get(Calendar.DST_OFFSET)) / (60 * 1000)) - (timezone * 60);
-            date.append(setLength(zone, 2)).append("'");
+            date.append(setLength(zone, 2)).append('\'');
         }
         value = date.toString();
     }

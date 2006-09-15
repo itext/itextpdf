@@ -842,7 +842,7 @@ public class XmlWriter extends DocWriter implements DocListener {
                 case ' ':
                     if ((i - pos) > 60) {
                         pos = i;
-                        buf.append("\n");
+                        buf.append('\n');
                         addTabs(buf, indent);
                         break;
                     }
@@ -862,7 +862,7 @@ public class XmlWriter extends DocWriter implements DocListener {
     
     static final void addTabs(StringBuffer buf, int indent) {
         for (int i = 0; i < indent; i++) {
-            buf.append("\t");
+            buf.append('\t');
         }
     }
     

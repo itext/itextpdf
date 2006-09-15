@@ -181,7 +181,7 @@ public class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         else {
             String fn = tk.nextToken();
-            if (fn.startsWith("/"))
+            if (fn.charAt(0) == '/')
                 fn = fn.substring(1);
             ar.add(new PdfName(fn));
             for (int k = 0; k < 4 && tk.hasMoreTokens(); ++k) {

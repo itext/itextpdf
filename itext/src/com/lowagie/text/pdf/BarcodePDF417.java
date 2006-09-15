@@ -575,7 +575,7 @@ public class BarcodePDF417 {
         for (k = 0; k < segmentList.size(); ++k) {
             v = segmentList.get(k);
             vp = segmentList.get(k - 1);
-            vn = segmentList.get(k + 1);;
+            vn = segmentList.get(k + 1);
             if (checkSegmentType(v, 'B') && getSegmentLength(v) == 1) {
                 if (checkSegmentType(vp, 'T') && checkSegmentType(vn, 'T') 
                     && getSegmentLength(vp) + getSegmentLength(vn) >= 3) {
@@ -591,7 +591,7 @@ public class BarcodePDF417 {
         for (k = 0; k < segmentList.size(); ++k) {
             v = segmentList.get(k);
             vp = segmentList.get(k - 1);
-            vn = segmentList.get(k + 1);;
+            vn = segmentList.get(k + 1);
             if (checkSegmentType(v, 'T') && getSegmentLength(v) >= 5) {
                 boolean redo = false;
                 if ((checkSegmentType(vp, 'B') && getSegmentLength(vp) == 1) || checkSegmentType(vp, 'T')) {
@@ -615,7 +615,7 @@ public class BarcodePDF417 {
         for (k = 0; k < segmentList.size(); ++k) {
             v = segmentList.get(k);
             vp = segmentList.get(k - 1);
-            vn = segmentList.get(k + 1);;
+            vn = segmentList.get(k + 1);
             if (checkSegmentType(v, 'B')) {
                 boolean redo = false;
                 if ((checkSegmentType(vp, 'T') && getSegmentLength(vp) < 5) || checkSegmentType(vp, 'B')) {

@@ -121,7 +121,7 @@ public class HtmlBookmarks extends AbstractTool {
 			}
             File directory = src.getParentFile();
             String name = src.getName();
-            name = name.substring(0, name.lastIndexOf("."));
+            name = name.substring(0, name.lastIndexOf('.'));
             File html = new File(directory, name + "_index.html");
 			Document document = new Document();
 			HtmlWriter.getInstance(document, new FileOutputStream(html));

@@ -353,7 +353,7 @@ public class CFFFont {
                             if (nibble >= 0 && nibble <= 9)
                                 item += String.valueOf(nibble);
                             else {
-                                item += "<NIBBLE ERROR: "+String.valueOf(nibble)+">";
+                                item += "<NIBBLE ERROR: " + nibble + '>';
                                 done = true;
                             }
                             break;

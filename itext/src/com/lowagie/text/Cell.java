@@ -254,7 +254,7 @@ public class Cell extends Rectangle implements TextElementArray {
 			setRowspan(Integer.parseInt(value));
 		}
 		if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-			setLeading(Float.valueOf(value + "f").floatValue());
+			setLeading(Float.parseFloat(value + "f"));
 		}
 		if ((value = (String)attributes.remove(ElementTags.HEADER)) != null) {
 			setHeader(new Boolean(value).booleanValue());
@@ -263,7 +263,7 @@ public class Cell extends Rectangle implements TextElementArray {
 			setNoWrap(new Boolean(value).booleanValue());
 		}
 		if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
-			setBorderWidth(Float.valueOf(value + "f").floatValue());
+			setBorderWidth(Float.parseFloat(value + "f"));
 		}
 		int border = 0;
 		if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
@@ -310,7 +310,7 @@ public class Cell extends Rectangle implements TextElementArray {
 			setBackgroundColor(MarkupParser.decodeColor(value));
 		}
 		if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
-			setGrayFill(Float.valueOf(value + "f").floatValue());
+			setGrayFill(Float.parseFloat(value + "f"));
 		}
 		if (attributes.size() > 0) setMarkupAttributes(attributes);
 	}

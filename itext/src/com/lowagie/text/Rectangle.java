@@ -945,7 +945,7 @@ public class Rectangle implements Element, MarkupAttributes {
 	public String toString() {
 		StringBuffer buf = new StringBuffer("Rectangle: ");
 		buf.append(width());
-		buf.append("x");
+		buf.append('x');
 		buf.append(height());
 		buf.append(" (rot: ");
 		buf.append(rotation);

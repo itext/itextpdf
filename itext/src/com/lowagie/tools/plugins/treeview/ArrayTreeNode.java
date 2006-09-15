@@ -91,7 +91,7 @@ public class ArrayTreeNode extends UpdateableTreeNode {
 		ArrayList arl = arr.getArrayList();
 		for (int i = 0; i < arl.size(); i++) {
 			sb.append("<p>");
-			sb.append(" " + arl.get(i).toString());
+			sb.append(' ').append(arl.get(i).toString());
 			sb.append("</p>");
 		}
 		sb.append("</html>");

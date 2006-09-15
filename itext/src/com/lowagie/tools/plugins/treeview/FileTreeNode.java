@@ -73,10 +73,10 @@ public class FileTreeNode extends UpdateableTreeNode {
 		sb.append(this.userObject);
 		sb.append("</p>");
 		sb.append("<p>");
-		sb.append("PDF Version 1." + this.reader.getPdfVersion());
+		sb.append("PDF Version 1.").append(this.reader.getPdfVersion());
 		sb.append("</p>");
 		sb.append("<p>");
-		sb.append("Number of Pages: " + this.reader.getNumberOfPages());
+		sb.append("Number of Pages: ").append(this.reader.getNumberOfPages());
 		sb.append("</p>");
 		sb.append("</html>");
 		updateobject.showvalues(sb.toString());

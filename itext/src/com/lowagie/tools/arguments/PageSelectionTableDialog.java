@@ -193,7 +193,7 @@ public class PageSelectionTableDialog extends JDialog {
 		for (int i = 0; i < max; i++) {
 			sb.append(swappedvalues[i]);
 			if ((i + 1) < max) {
-				sb.append(",");
+				sb.append(',');
 			}
 		}
 

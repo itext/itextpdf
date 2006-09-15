@@ -209,7 +209,7 @@ public class BarcodeEAN extends Barcode{
      * code could not be converted
      */    
     static public String convertUPCAtoUPCE(String text) {
-        if (text.length() != 12 || !(text.startsWith("0") || text.startsWith("1")))
+        if (text.length() != 12 || !(text.charAt(0) == '0' || text.charAt(0) == '1'))
             return null;
         if (text.substring(3, 6).equals("000") || text.substring(3, 6).equals("100")
             || text.substring(3, 6).equals("200")) {

@@ -269,7 +269,7 @@ public class Chunk implements Element, MarkupAttributes {
 		Image copyImage = Image.getInstance(image);
 		copyImage.setAbsolutePosition(Float.NaN, Float.NaN);
 		setAttribute(IMAGE, new Object[] { copyImage, new Float(offsetX),
-				new Float(offsetY), new Boolean(false) });
+				new Float(offsetY), Boolean.FALSE });
 	}
 
 	/**
@@ -323,13 +323,13 @@ public class Chunk implements Element, MarkupAttributes {
 			setLocalDestination(value);
 		}
 		if ((value = (String) attributes.remove(ElementTags.SUBSUPSCRIPT)) != null) {
-			setTextRise(Float.valueOf(value + "f").floatValue());
+			setTextRise(Float.parseFloat(value + "f"));
 		}
 		if ((value = (String) attributes
 				.remove(MarkupTags.CSS_KEY_VERTICALALIGN)) != null
 				&& value.endsWith("%")) {
-			float p = Float.valueOf(
-					value.substring(0, value.length() - 1) + "f").floatValue() / 100f;
+			float p = Float.parseFloat(
+					value.substring(0, value.length() - 1) + "f") / 100f;
 			setTextRise(p * font.size());
 		}
 		if ((value = (String) attributes.remove(ElementTags.GENERICTAG)) != null) {

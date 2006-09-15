@@ -117,7 +117,7 @@ public class MarkupParser extends HashMap {
 			String attributes;
 			while (tokenizer.hasMoreTokens()) {
 				tmp = tokenizer.nextToken();
-				pos = tmp.indexOf("{");
+				pos = tmp.indexOf('{');
 				if (pos > 0) {
 					selector = tmp.substring(0, pos).trim();
 					attributes = tmp.substring(pos + 1).trim();
@@ -233,8 +233,8 @@ public class MarkupParser extends HashMap {
 		if (pos == 0)
 			return 0f;
 		if (pos == length)
-			return Float.valueOf(string + "f").floatValue();
-		float f = Float.valueOf(string.substring(0, pos) + "f").floatValue();
+			return Float.parseFloat(string + "f");
+		float f = Float.parseFloat(string.substring(0, pos) + "f");
 		string = string.substring(pos);
 		// inches
 		if (string.startsWith("in")) {
@@ -273,7 +273,7 @@ public class MarkupParser extends HashMap {
         if (c != null)
             return c;
         try {
-            if (s.startsWith("#")) {
+            if (s.charAt(0) == '#') {
                 if (s.length() == 4)
                     s = "#" + s.substring(1, 2) + s.substring(1, 2)
                         + s.substring(2, 3) + s.substring(2, 3) 
@@ -735,17 +735,17 @@ public class MarkupParser extends HashMap {
 		String value = (String) styleAttributes
 				.get(MarkupTags.CSS_KEY_FONTFAMILY);
 		if (value != null) {
-			if (value.indexOf(",") == -1) {
+			if (value.indexOf(',') == -1) {
 				fontname = value.trim();
 			} else {
 				String tmp;
-				while (value.indexOf(",") != -1) {
-					tmp = value.substring(0, value.indexOf(",")).trim();
+				while (value.indexOf(',') != -1) {
+					tmp = value.substring(0, value.indexOf(',')).trim();
 					if (FontFactory.isRegistered(tmp)) {
 						fontname = tmp;
 						break;
 					} else {
-						value = value.substring(value.indexOf(",") + 1);
+						value = value.substring(value.indexOf(',') + 1);
 					}
 				}
 			}
