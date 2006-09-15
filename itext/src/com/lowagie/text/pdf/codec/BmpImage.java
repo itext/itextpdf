@@ -529,7 +529,7 @@ public class BmpImage {
                 palette = new byte[sizeOfPalette];
                 inputStream.read(palette, 0, sizeOfPalette);
                 
-                if (palette != null || palette.length != 0) {
+                if (palette != null && palette.length != 0) {
                     properties.put("palette", palette);
                 }
                 
