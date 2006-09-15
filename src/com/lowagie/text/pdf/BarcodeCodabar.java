@@ -77,7 +77,7 @@ public class BarcodeCodabar extends Barcode{
 
     /** The bars to generate the code.
      */    
-    static byte BARS[][] = 
+	private static final byte BARS[][] = 
     {
         {0,0,0,0,0,1,1}, // 0
         {0,0,0,0,1,1,0}, // 1
@@ -103,7 +103,7 @@ public class BarcodeCodabar extends Barcode{
  
     /** The index chars to <CODE>BARS</CODE>.
      */    
-    static String CHARS = "0123456789-$:/.+ABCD";
+	private static final String CHARS = "0123456789-$:/.+ABCD";
     
     static final int START_STOP_IDX = 16;    
     /** Creates a new BarcodeCodabar.

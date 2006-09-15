@@ -62,25 +62,25 @@ public class PdfPageLabels implements Comparator {
 
     /** Logical pages will have the form 1,2,3,...
      */    
-    public static int DECIMAL_ARABIC_NUMERALS = 0;
+    public static final int DECIMAL_ARABIC_NUMERALS = 0;
     /** Logical pages will have the form I,II,III,IV,...
      */    
-    public static int UPPERCASE_ROMAN_NUMERALS = 1;
+    public static final int UPPERCASE_ROMAN_NUMERALS = 1;
     /** Logical pages will have the form i,ii,iii,iv,...
      */    
-    public static int LOWERCASE_ROMAN_NUMERALS = 2;
+    public static final int LOWERCASE_ROMAN_NUMERALS = 2;
     /** Logical pages will have the form of uppercase letters
      * (A to Z for the first 26 pages, AA to ZZ for the next 26, and so on)
      */    
-    public static int UPPERCASE_LETTERS = 3;
+    public static final int UPPERCASE_LETTERS = 3;
     /** Logical pages will have the form of uppercase letters
      * (a to z for the first 26 pages, aa to zz for the next 26, and so on)
      */    
-    public static int LOWERCASE_LETTERS = 4;
+    public static final int LOWERCASE_LETTERS = 4;
     /** No logical page numbers are generated but fixed text may
      * still exist
      */    
-    public static int EMPTY = 5;
+    public static final int EMPTY = 5;
     /** Dictionary values to set the logical page styles
      */    
     static PdfName numberingStyle[] = new PdfName[]{PdfName.D, PdfName.R,

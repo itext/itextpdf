@@ -1096,10 +1096,10 @@ public class BarcodePDF417 {
     protected static final int MACRO_SEGMENT_COUNT=923;
     protected static final int MACRO_LAST_SEGMENT=922;
 
-    static String MIXED_SET = "0123456789&\r\t,:#-.$/+%*=^";
-    static String PUNCTUATION_SET = ";<>@[\\]_`~!\r\t,:\n-.$/\"|*()?{}'";
+    private static final String MIXED_SET = "0123456789&\r\t,:#-.$/+%*=^";
+    private static final String PUNCTUATION_SET = ";<>@[\\]_`~!\r\t,:\n-.$/\"|*()?{}'";
 
-    static int CLUSTERS[][] =
+    private static final int CLUSTERS[][] =
     {{
          0x1d5c0, 0x1eaf0, 0x1f57c, 0x1d4e0, 0x1ea78, 0x1f53e, 0x1a8c0, 0x1d470,
          0x1a860, 0x15040, 0x1a830, 0x15020, 0x1adc0, 0x1d6f0, 0x1eb7c, 0x1ace0,
@@ -1456,7 +1456,7 @@ public class BarcodePDF417 {
         0x1c7ea
     }};
     
-    static int ERROR_LEVEL[][] =
+    private static final int ERROR_LEVEL[][] =
     {{
          27, 917
     }, {

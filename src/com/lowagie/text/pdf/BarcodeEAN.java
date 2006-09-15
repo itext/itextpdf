@@ -73,21 +73,21 @@ import com.lowagie.text.Rectangle;
 public class BarcodeEAN extends Barcode{
         
     /** The bar positions that are guard bars.*/    
-    static int GUARD_EMPTY[] = {};
+	private static final int GUARD_EMPTY[] = {};
     /** The bar positions that are guard bars.*/    
-    static int GUARD_UPCA[] = {0, 2, 4, 6, 28, 30, 52, 54, 56, 58};
+	private static final int GUARD_UPCA[] = {0, 2, 4, 6, 28, 30, 52, 54, 56, 58};
     /** The bar positions that are guard bars.*/    
-    static int GUARD_EAN13[] = {0, 2, 28, 30, 56, 58};
+	private static final int GUARD_EAN13[] = {0, 2, 28, 30, 56, 58};
     /** The bar positions that are guard bars.*/    
-    static int GUARD_EAN8[] = {0, 2, 20, 22, 40, 42};
+	private static final int GUARD_EAN8[] = {0, 2, 20, 22, 40, 42};
     /** The bar positions that are guard bars.*/    
-    static int GUARD_UPCE[] = {0, 2, 28, 30, 32};
+	private static final int GUARD_UPCE[] = {0, 2, 28, 30, 32};
     /** The x coordinates to place the text.*/
-    static float TEXTPOS_EAN13[] = {6.5f, 13.5f, 20.5f, 27.5f, 34.5f, 41.5f, 53.5f, 60.5f, 67.5f, 74.5f, 81.5f, 88.5f};
+	private static final float TEXTPOS_EAN13[] = {6.5f, 13.5f, 20.5f, 27.5f, 34.5f, 41.5f, 53.5f, 60.5f, 67.5f, 74.5f, 81.5f, 88.5f};
     /** The x coordinates to place the text.*/
-    static float TEXTPOS_EAN8[] = {6.5f, 13.5f, 20.5f, 27.5f, 39.5f, 46.5f, 53.5f, 60.5f};
+	private static final float TEXTPOS_EAN8[] = {6.5f, 13.5f, 20.5f, 27.5f, 39.5f, 46.5f, 53.5f, 60.5f};
     /** The basic bar widths.*/
-    static byte BARS[][] = 
+	private static final byte BARS[][] = 
     {
         {3, 2, 1, 1}, // 0
         {2, 2, 2, 1}, // 1
@@ -102,22 +102,22 @@ public class BarcodeEAN extends Barcode{
     };
     
     /** The total number of bars for EAN13.*/
-    static final int TOTALBARS_EAN13 = 11 + 12 * 4;
+	private static final int TOTALBARS_EAN13 = 11 + 12 * 4;
     /** The total number of bars for EAN8.*/
-    static final int TOTALBARS_EAN8 = 11 + 8 * 4;
+	private static final int TOTALBARS_EAN8 = 11 + 8 * 4;
     /** The total number of bars for UPCE.*/
-    static final int TOTALBARS_UPCE = 9 + 6 * 4;
+	private static final int TOTALBARS_UPCE = 9 + 6 * 4;
     /** The total number of bars for supplemental 2.*/
-    static final int TOTALBARS_SUPP2 = 13;
+	private static final int TOTALBARS_SUPP2 = 13;
     /** The total number of bars for supplemental 5.*/
-    static final int TOTALBARS_SUPP5 = 31;
+	private static final int TOTALBARS_SUPP5 = 31;
     /** Marker for odd parity.*/
-    static final int ODD = 0;
+	private static final int ODD = 0;
     /** Marker for even parity.*/
-    static final int EVEN = 1;
+	private static final int EVEN = 1;
     
     /** Sequence of parities to be used with EAN13.*/
-    static byte PARITY13[][] =
+    private static final byte PARITY13[][] =
     {
         {ODD, ODD,  ODD,  ODD,  ODD,  ODD},  // 0
         {ODD, ODD,  EVEN, ODD,  EVEN, EVEN}, // 1
@@ -132,7 +132,7 @@ public class BarcodeEAN extends Barcode{
     };
     
     /** Sequence of parities to be used with supplemental 2.*/
-    static byte PARITY2[][] =
+    private static final byte PARITY2[][] =
     {
         {ODD,  ODD},   // 0
         {ODD,  EVEN},  // 1
@@ -141,7 +141,7 @@ public class BarcodeEAN extends Barcode{
     };
     
     /** Sequence of parities to be used with supplemental 2.*/
-    static byte PARITY5[][] =
+    private static final byte PARITY5[][] =
     {
         {EVEN, EVEN, ODD,  ODD,  ODD},  // 0
         {EVEN, ODD,  EVEN, ODD,  ODD},  // 1
@@ -156,7 +156,7 @@ public class BarcodeEAN extends Barcode{
     };
     
     /** Sequence of parities to be used with UPCE.*/
-    static byte PARITYE[][] =
+    private static final byte PARITYE[][] =
     {
         {EVEN, EVEN, EVEN, ODD,  ODD,  ODD},  // 0
         {EVEN, EVEN, ODD,  EVEN, ODD,  ODD},  // 1

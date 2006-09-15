@@ -74,7 +74,7 @@ public class ByteBuffer extends OutputStream {
     private static int byteCacheSize = 0;
     
     private static byte[][] byteCache = new byte[byteCacheSize][];
-    public static byte ZERO = (byte)'0';
+    public static final byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private static final byte[] bytes = new byte[] {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
     /**

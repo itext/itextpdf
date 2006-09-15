@@ -107,7 +107,7 @@ public class PdfGraphics2D extends Graphics2D {
     private static final int CLIP = 3;
     private BasicStroke strokeOne = new BasicStroke(1);
     
-    private static AffineTransform IDENTITY = new AffineTransform();
+    private static final AffineTransform IDENTITY = new AffineTransform();
     
     private Font font;
     private BaseFont baseFont;
@@ -156,7 +156,7 @@ public class PdfGraphics2D extends Graphics2D {
     protected int currentFillGState = 255;
     protected int currentStrokeGState = 255;
     
-    public static int AFM_DIVISOR = 1000; // used to calculate coordinates
+    public static final int AFM_DIVISOR = 1000; // used to calculate coordinates
 
     private boolean convertImagesToJPEG = false;
     private float jpegQuality = .95f;

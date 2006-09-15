@@ -78,7 +78,7 @@ public class Barcode39 extends Barcode{
 
     /** The bars to generate the code.
      */    
-    static byte BARS[][] = 
+    private static final byte BARS[][] = 
     {
         {0,0,0,1,1,0,1,0,0},
         {1,0,0,1,0,0,0,0,1},
@@ -128,11 +128,11 @@ public class Barcode39 extends Barcode{
  
     /** The index chars to <CODE>BARS</CODE>.
      */    
-    static String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%*";
+    private static final String CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%*";
     
     /** The character combinations to make the code 39 extended.
      */    
-    static String EXTENDED = "%U" +
+    private static final String EXTENDED = "%U" +
         "$A$B$C$D$E$F$G$H$I$J$K$L$M$N$O$P$Q$R$S$T$U$V$W$X$Y$Z" +
         "%A%B%C%D%E  /A/B/C/D/E/F/G/H/I/J/K/L - ./O" +
         " 0 1 2 3 4 5 6 7 8 9/Z%F%G%H%I%J%V" +
