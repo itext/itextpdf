@@ -136,7 +136,6 @@ public class PdfSignatureAppearance {
     private PdfSigGenericPKCS sigStandard;
     private int range[];
     private RandomAccessFile raf;
-    private int rangePosition = 0;
     private byte bout[];
     private int boutLen;
     private byte externalDigest[];

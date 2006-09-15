@@ -103,9 +103,7 @@ public class PRTokeniser {
     protected int reference;
     protected int generation;
     protected boolean hexString;
-    
-    private static final int LINE_SEGMENT_SIZE = 256;
-    
+       
     public PRTokeniser(String filename) throws IOException {
         file = new RandomAccessFileOrArray(filename);
     }
