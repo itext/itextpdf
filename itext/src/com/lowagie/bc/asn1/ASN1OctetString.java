@@ -112,7 +112,7 @@ public abstract class ASN1OctetString
     public boolean equals(
         Object  o)
     {
-        if (o == null || !(o instanceof DEROctetString))
+        if (!(o instanceof DEROctetString))
         {
             return false;
         }

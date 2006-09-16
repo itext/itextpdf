@@ -448,7 +448,7 @@ public class TIFFDirectory extends Object implements Serializable {
      */
     public long getFieldAsLong(int tag, int index) {
         Integer i = (Integer)fieldIndex.get(new Integer(tag));
-        return (fields[i.intValue()]).getAsLong(index);
+        return fields[i.intValue()].getAsLong(index);
     }
     
     /**

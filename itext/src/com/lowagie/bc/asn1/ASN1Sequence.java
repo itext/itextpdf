@@ -136,7 +136,7 @@ public abstract class ASN1Sequence
     public boolean equals(
         Object  o)
     {
-        if (o == null || !(o instanceof ASN1Sequence))
+        if (!(o instanceof ASN1Sequence))
         {
             return false;
         }

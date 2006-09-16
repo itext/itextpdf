@@ -149,7 +149,7 @@ abstract public class ASN1Set
     public boolean equals(
         Object  o)
     {
-        if (o == null || !(o instanceof ASN1Set))
+        if (!(o instanceof ASN1Set))
         {
             return false;
         }

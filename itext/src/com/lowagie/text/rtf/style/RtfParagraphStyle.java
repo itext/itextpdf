@@ -679,7 +679,7 @@ public class RtfParagraphStyle extends RtfFont {
      * is determined via the name.
      */
     public boolean equals(Object o) {
-        if(o == null || !(o instanceof RtfParagraphStyle)) {
+        if(!(o instanceof RtfParagraphStyle)) {
             return false;
         }
         RtfParagraphStyle paragraphStyle = (RtfParagraphStyle) o;

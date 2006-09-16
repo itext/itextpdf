@@ -222,7 +222,7 @@ public class Row implements Element, MarkupAttributes {
         
         int lColspan = ( (Cell.class.isInstance(element)) ? ((Cell) element).colspan() : 1);
         
-        if ( reserve(column, lColspan) == false ) {
+        if (!reserve(column, lColspan)) {
             return -1;
         }
         
@@ -240,7 +240,7 @@ public class Row implements Element, MarkupAttributes {
  */
     
     void setElement(Object aElement, int column) {
-        if (reserved[column] == true) throw new IllegalArgumentException("setElement - position already taken");
+        if (reserved[column]) throw new IllegalArgumentException("setElement - position already taken");
         
         cells[column] = aElement;
         if (aElement != null) {
@@ -273,7 +273,7 @@ public class Row implements Element, MarkupAttributes {
         
         for(int i=column; i < column + size; i++)
         {
-            if (reserved[i] == true) {
+            if (reserved[i]) {
                 // undo reserve
                 for(int j=i; j >= column; j--) {
                     reserved[j] = false;

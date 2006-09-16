@@ -100,7 +100,7 @@ public class FdfWriter {
                     return false;
             }
             else {
-                if (obj == null || !(obj instanceof HashMap)) {
+                if (!(obj instanceof HashMap)) {
                     map.put(s, value);
                     return true;
                 }

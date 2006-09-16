@@ -1023,7 +1023,7 @@ public class PdfWriter extends DocWriter {
     PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
         if (! imageDictionary.contains(pdfImage.name())) {
             checkPDFXConformance(this, PDFXKEY_IMAGE, pdfImage);
-            if (fixedRef != null && fixedRef instanceof PRIndirectReference) {
+            if (fixedRef instanceof PRIndirectReference) {
                 PRIndirectReference r2 = (PRIndirectReference)fixedRef;
                 fixedRef = new PdfIndirectReference(0, getNewObjectNumber(r2.getReader(), r2.getNumber(), r2.getGeneration()));
             }
