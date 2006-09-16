@@ -73,7 +73,7 @@ import java.util.SimpleTimeZone;
 
 public class PdfDate extends PdfString {
 
-    private static final int dateSpace[] = {Calendar.YEAR, 4, 0, Calendar.MONTH, 2, -1, Calendar.DAY_OF_MONTH, 2, 0,
+    private static final int DATE_SPACE[] = {Calendar.YEAR, 4, 0, Calendar.MONTH, 2, -1, Calendar.DAY_OF_MONTH, 2, 0,
         Calendar.HOUR_OF_DAY, 2, 0, Calendar.MINUTE, 2, 0, Calendar.SECOND, 2, 0};
     
     // constructors
@@ -195,11 +195,11 @@ public class PdfDate extends PdfString {
             }
             calendar.clear();
             idx = 0;
-            for (int k = 0; k < dateSpace.length; k += 3) {
+            for (int k = 0; k < DATE_SPACE.length; k += 3) {
                 if (idx >= slen)
                     break;
-                calendar.set(dateSpace[k], Integer.parseInt(s.substring(idx, idx + dateSpace[k + 1])) + dateSpace[k + 2]);
-                idx += dateSpace[k + 1];
+                calendar.set(DATE_SPACE[k], Integer.parseInt(s.substring(idx, idx + DATE_SPACE[k + 1])) + DATE_SPACE[k + 2]);
+                idx += DATE_SPACE[k + 1];
             }
             return calendar;
         }

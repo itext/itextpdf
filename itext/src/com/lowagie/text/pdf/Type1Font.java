@@ -157,7 +157,7 @@ class Type1Font extends BaseFont
 /** Types of records in a PFB file. ASCII is 1 and BINARY is 2.
  *  They have to appear in the PFB file in this sequence.
  */
-    private static final int pfbTypes[] = {1, 2, 1};
+    private static final int PFB_TYPES[] = {1, 2, 1};
     
     /** Creates a new Type1 font.
      * @param ttfAfm the AFM file if the input is made with a <CODE>byte</CODE> array
@@ -516,7 +516,7 @@ class Type1Font extends BaseFont
             for (int k = 0; k < 3; ++k) {
                 if (rf.read() != 0x80)
                     throw new DocumentException("Start marker missing in " + filePfb);
-                if (rf.read() != pfbTypes[k])
+                if (rf.read() != PFB_TYPES[k])
                     throw new DocumentException("Incorrect segment type in " + filePfb);
                 int size = rf.read();
                 size += rf.read() << 8;
