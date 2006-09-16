@@ -462,7 +462,7 @@ public class PdfPKCS7 {
      * @return the X.509 certificates associated with this PKCS#7 object
      */
     public Certificate[] getCertificates() {
-        return (X509Certificate[])certs.toArray(new X509Certificate[0]);
+        return (X509Certificate[])certs.toArray(new X509Certificate[certs.size()]);
     }
     
     /**

@@ -106,7 +106,7 @@ public class DERInteger
     public boolean equals(
         Object  o)
     {
-        if (o == null || !(o instanceof DERInteger))
+        if (!(o instanceof DERInteger))
         {
             return false;
         }

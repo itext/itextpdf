@@ -113,7 +113,7 @@ public class XfaForm {
             ArrayList ar = ((PdfArray)xfa).getArrayList();
             for (int k = 1; k < ar.size(); k += 2) {
                 PdfObject ob = PdfReader.getPdfObject((PdfObject)ar.get(k));
-                if (ob != null && ob instanceof PRStream) {
+                if (ob instanceof PRStream) {
                     byte[] b = PdfReader.getStreamBytes((PRStream)ob);
                     bout.write(b);
                 }

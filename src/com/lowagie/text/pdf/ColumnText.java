@@ -1460,7 +1460,7 @@ public class ColumnText {
      * @return true or false
      */
     public boolean zeroHeightElement() {
-        return composite == true && compositeElements.size() > 0 && ((Element)compositeElements.getFirst()).type() == Element.GRAPHIC;
+        return composite && compositeElements.size() > 0 && ((Element)compositeElements.getFirst()).type() == Element.GRAPHIC;
     }
 
     /**

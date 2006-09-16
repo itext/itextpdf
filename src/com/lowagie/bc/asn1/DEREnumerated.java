@@ -85,7 +85,7 @@ public class DEREnumerated
     public boolean equals(
         Object  o)
     {
-        if (o == null || !(o instanceof DEREnumerated))
+        if (!(o instanceof DEREnumerated))
         {
             return false;
         }

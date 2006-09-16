@@ -724,7 +724,7 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @return    a new <CODE>RtfWriter</CODE>
      */
     public static RtfWriter getInstance(Document document, OutputStream os) {
-        return (new RtfWriter(document, os));
+        return new RtfWriter(document, os);
     }
 
     /**

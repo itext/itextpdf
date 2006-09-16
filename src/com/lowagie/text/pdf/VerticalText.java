@@ -223,7 +223,7 @@ public class VerticalText {
         if (text != null) {
             graphics = text.getDuplicate();
         }
-        else if (simulate == false)
+        else if (!simulate)
             throw new NullPointerException("VerticalText.go with simulate==false and text==null.");
         int status = 0;
         for (;;) {
