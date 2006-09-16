@@ -369,7 +369,7 @@ class TrueTypeFont extends BaseFont {
         }
         else
             throw new DocumentException(fileName + style + " is not a TTF, OTF or TTC font file.");
-        if (encoding.charAt(0) != '#')
+        if (!encoding.startsWith("#"))
             PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
         createEncoding();
     }

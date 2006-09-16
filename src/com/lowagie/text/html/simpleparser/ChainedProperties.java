@@ -89,7 +89,7 @@ public class ChainedProperties {
             }
             else {
                 int s = 0;
-                if (value.charAt(0) == '+' || value.charAt(0) == '-') {
+                if (value.startsWith("+") || value.startsWith("-")) {
                     String old = getProperty("basefontsize");
                     if (old == null)
                         old = "12";
@@ -101,7 +101,7 @@ public class ChainedProperties {
                             break;
                         }
                     }
-                    int inc = Integer.parseInt(value.charAt(0) == '+' ? value.substring(1) : value);
+                    int inc = Integer.parseInt(value.startsWith("+") ? value.substring(1) : value);
                     s += inc;
                 }
                 else

@@ -221,7 +221,7 @@ public class WebColors extends HashMap {
 	public static Color getRGBColor(String name)
 			throws IllegalArgumentException {
 		int[] c = { 0, 0, 0, 0 };
-		if (name.charAt(0) == '#') {
+		if (name.startsWith("#")) {
 			if (name.length() == 4) {
 				c[0] = Integer.parseInt(name.substring(1, 2), 16) * 16;
 				c[1] = Integer.parseInt(name.substring(2, 3), 16) * 16;

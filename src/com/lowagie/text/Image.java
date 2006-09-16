@@ -1476,7 +1476,7 @@ public abstract class Image extends Rectangle implements Element,
 		if (File.separatorChar != '/') {
 			path = path.replace(File.separatorChar, '/');
 		}
-		if (path.charAt(0) != '/') {
+		if (!path.startsWith("/")) {
 			path = "/" + path;
 		}
 		if (!path.endsWith("/") && f.isDirectory()) {

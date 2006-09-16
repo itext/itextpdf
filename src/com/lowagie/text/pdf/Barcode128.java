@@ -732,7 +732,7 @@ public class Barcode128 extends Barcode{
      * @param code the code to generate
      */
     public void setCode(String code) {
-        if (getCodeType() == Barcode128.CODE128_UCC && code.charAt(0) == '(') {
+        if (getCodeType() == Barcode128.CODE128_UCC && code.startsWith("(")) {
             int idx = 0;
             String ret = "";
             while (idx >= 0) {

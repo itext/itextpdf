@@ -607,7 +607,7 @@ public class XfaForm {
          * @return the split name
          */
         public static Stack2 splitParts(String name) {
-            while (name.charAt(0) == '.')
+            while (name.startsWith("."))
                 name = name.substring(1);
             Stack2 parts = new Stack2();
             int last = 0;
