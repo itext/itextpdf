@@ -2760,13 +2760,13 @@ systemDict.put("currentrgbcolor", new PACommand() {
     systemDict.put("cleardictstack", new PACommand() {
       public void execute(PAContext context) throws PainterException {
         context.dictionaries.clear();
-        HashMap systemDict = context.constructSystemDict();
-        context.dictionaries.push(systemDict);
+        HashMap newSystemDict = context.constructSystemDict();
+        context.dictionaries.push(newSystemDict);
         HashMap globalDict = context.constructGlobalDict();
         context.dictionaries.push(globalDict);
         HashMap userDict = context.constructUserDict();
-        systemDict.put("userdict", userDict);
-        systemDict.put("globaldict", globalDict);
+        newSystemDict.put("userdict", userDict);
+        newSystemDict.put("globaldict", globalDict);
         context.dictionaries.push(userDict);
       }
     });
