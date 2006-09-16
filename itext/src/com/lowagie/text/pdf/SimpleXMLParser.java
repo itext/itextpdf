@@ -361,7 +361,7 @@ public class SimpleXMLParser {
                             sb.append('&').append(cent).append(';');
                         }
                     }
-                    else if(cent.charAt(0) == '#') {
+                    else if(cent.startsWith("#")) {
                         try {
                             char ci = (char)Integer.parseInt(cent.substring(1));
                             sb.append(ci);

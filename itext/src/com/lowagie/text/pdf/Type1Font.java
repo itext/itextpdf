@@ -276,7 +276,7 @@ class Type1Font extends BaseFont
             if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
                 fontSpecific = false;
             }
-            if (encoding.charAt(0) != '#')
+            if (!encoding.startsWith("#"))
                 PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
             createEncoding();
         }

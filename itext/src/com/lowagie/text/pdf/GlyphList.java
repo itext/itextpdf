@@ -83,7 +83,7 @@ public class GlyphList {
             StringTokenizer tk = new StringTokenizer(s, "\r\n");
             while (tk.hasMoreTokens()) {
                 String line = tk.nextToken();
-                if (line.charAt(0) == '#')
+                if (line.startsWith("#"))
                     continue;
                 StringTokenizer t2 = new StringTokenizer(line, " ;\r\n\t\f");
                 String name = null;

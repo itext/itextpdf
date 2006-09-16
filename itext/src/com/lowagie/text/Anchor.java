@@ -226,7 +226,7 @@ private static final long serialVersionUID = -852278536049236911L;
         try {
             Chunk chunk;
             Iterator i = getChunks().iterator();
-            boolean localDestination = (reference != null && reference.charAt(0) == '#');
+            boolean localDestination = (reference != null && reference.startsWith("#"));
             boolean notGotoOK = true;
             while (i.hasNext()) {
                 chunk = (Chunk) i.next();
@@ -256,7 +256,7 @@ private static final long serialVersionUID = -852278536049236911L;
         ArrayList tmp = new ArrayList();
         Chunk chunk;
         Iterator i = iterator();
-        boolean localDestination = (reference != null && reference.charAt(0) == '#');
+        boolean localDestination = (reference != null && reference.startsWith("#"));
         boolean notGotoOK = true;
         while (i.hasNext()) {
             chunk = (Chunk) i.next();

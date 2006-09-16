@@ -273,7 +273,7 @@ public class MarkupParser extends HashMap {
         if (c != null)
             return c;
         try {
-            if (s.charAt(0) == '#') {
+            if (s.startsWith("#")) {
                 if (s.length() == 4)
                     s = "#" + s.substring(1, 2) + s.substring(1, 2)
                         + s.substring(2, 3) + s.substring(2, 3) 

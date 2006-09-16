@@ -167,7 +167,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
             for (int k = 0; k < fieldNames.size(); ++k) {
                 fName += "." + (String)fieldNames.elementAt(k);
             }
-            if (fName.charAt(0) == '.')
+            if (fName.startsWith("."))
                 fName = fName.substring(1);
             String	fVal = (String) fieldValues.pop();
             fields.put( fName, fVal );
