@@ -108,8 +108,8 @@ public class PdfSignatureAppearance {
      */
     public static final PdfName WINCER_SIGNED = PdfName.ADOBE_PPKMS;
 
-    private static final float topSection = 0.3f;
-    private static final float margin = 2;
+    private static final float TOP_SECTION = 0.3f;
+    private static final float MARGIN = 2;
     private Rectangle rect;
     private Rectangle pageRect;
     private PdfTemplate app[] = new PdfTemplate[5];
@@ -435,40 +435,40 @@ public class PdfSignatureAppearance {
                 (render == SignatureRenderGraphicAndDescription && this.signatureGraphic != null)) {
                 // origin is the bottom-left
                 signatureRect = new Rectangle(
-                    margin, 
-                    margin, 
-                    rect.width() / 2 - margin,
-                    rect.height() - margin);
+                    MARGIN, 
+                    MARGIN, 
+                    rect.width() / 2 - MARGIN,
+                    rect.height() - MARGIN);
                 dataRect = new Rectangle(
-                    rect.width() / 2 +  margin / 2, 
-                    margin, 
-                    rect.width() - margin / 2,
-                    rect.height() - margin);
+                    rect.width() / 2 +  MARGIN / 2, 
+                    MARGIN, 
+                    rect.width() - MARGIN / 2,
+                    rect.height() - MARGIN);
 
                 if (rect.height() > rect.width()) {
                     signatureRect = new Rectangle(
-                        margin, 
+                        MARGIN, 
                         rect.height() / 2, 
-                        rect.width() - margin,
+                        rect.width() - MARGIN,
                         rect.height());
                     dataRect = new Rectangle(
-                        margin, 
-                        margin, 
-                        rect.width() - margin,
-                        rect.height() / 2 - margin);
+                        MARGIN, 
+                        MARGIN, 
+                        rect.width() - MARGIN,
+                        rect.height() / 2 - MARGIN);
                 }
             }
             else {
                 dataRect = new Rectangle(
-                    margin, 
-                    margin, 
-                    rect.width() - margin,
-                    rect.height() * (1 - topSection) - margin);
+                    MARGIN, 
+                    MARGIN, 
+                    rect.width() - MARGIN,
+                    rect.height() * (1 - TOP_SECTION) - MARGIN);
             }
 
             if (render == SignatureRenderNameAndDescription) {
                 String signedBy = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
-                Rectangle sr2 = new Rectangle(signatureRect.width() - margin, signatureRect.height() - margin );
+                Rectangle sr2 = new Rectangle(signatureRect.width() - MARGIN, signatureRect.height() - MARGIN );
                 float signedSize = fitText(font, signedBy, sr2, -1, runDirection);
 
                 ColumnText ct2 = new ColumnText(t);
@@ -516,7 +516,7 @@ public class PdfSignatureAppearance {
         }
         if (app[4] == null && !acro6Layers) {
             PdfTemplate t = app[4] = new PdfTemplate(writer);
-            t.setBoundingBox(new Rectangle(0, rect.height() * (1 - topSection), rect.right(), rect.top()));
+            t.setBoundingBox(new Rectangle(0, rect.height() * (1 - TOP_SECTION), rect.right(), rect.top()));
             writer.addDirectTemplateSimple(t, new PdfName("n4"));
             Font font;
             if (layer2Font == null)
@@ -527,11 +527,11 @@ public class PdfSignatureAppearance {
             String text = "Signature Not Verified";
             if (layer4Text != null)
                 text = layer4Text;
-            Rectangle sr = new Rectangle(rect.width() - 2 * margin, rect.height() * topSection - 2 * margin);
+            Rectangle sr = new Rectangle(rect.width() - 2 * MARGIN, rect.height() * TOP_SECTION - 2 * MARGIN);
             size = fitText(font, text, sr, 15, runDirection);
             ColumnText ct = new ColumnText(t);
             ct.setRunDirection(runDirection);
-            ct.setSimpleColumn(new Phrase(text, font), margin, 0, rect.width() - margin, rect.height() - margin, size, Element.ALIGN_LEFT);
+            ct.setSimpleColumn(new Phrase(text, font), MARGIN, 0, rect.width() - MARGIN, rect.height() - MARGIN, size, Element.ALIGN_LEFT);
             ct.go();
         }
         int rotation = writer.reader.getPageRotation(page);
