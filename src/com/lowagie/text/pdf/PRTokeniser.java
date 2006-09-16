@@ -132,7 +132,7 @@ public class PRTokeniser {
         return file.length();
     }
 
-    public int read() {
+    public int read() throws IOException {
         return file.read();
     }
     
@@ -144,7 +144,7 @@ public class PRTokeniser {
         return file;
     }
     
-    public String readString(int size) {
+    public String readString(int size) throws IOException {
         StringBuffer buf = new StringBuffer();
         int ch;
         while ((size--) > 0) {
