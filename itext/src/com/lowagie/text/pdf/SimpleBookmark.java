@@ -527,7 +527,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                     PdfArray arr = new PdfArray();
                     StringTokenizer tk = new StringTokenizer(color);
                     for (int k = 0; k < 3; ++k) {
-                        float f = Float.valueOf(tk.nextToken()).intValue();
+                        float f = Float.parseFloat(tk.nextToken());
                         if (f < 0) f = 0;
                         if (f > 1) f = 1;
                         arr.add(new PdfNumber(f));
