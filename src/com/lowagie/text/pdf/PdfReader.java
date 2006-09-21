@@ -121,8 +121,6 @@ public class PdfReader {
     protected int pValue;
     private int objNum;
     private int objGen;
-    private boolean visited[];
-    private IntHashtable newHits;
     private int fileLength;
     private boolean hybridXref;
     private int lastXrefPartial = -1;
@@ -1428,10 +1426,6 @@ public class PdfReader {
             case PRTokeniser.TK_REF:
                 int num = tokens.getReference();
                 PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
-                if (visited != null && !visited[num]) {
-                    visited[num] = true;
-                    newHits.put(num, 1);
-                }
                 return ref;
             default:
                 String sv = tokens.getStringValue();
