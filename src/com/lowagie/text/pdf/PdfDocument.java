@@ -84,7 +84,6 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
-import com.lowagie.text.StringCompare;
 import com.lowagie.text.Table;
 import com.lowagie.text.Watermark;
 import com.lowagie.text.xml.xmp.XmpWriter;
@@ -297,7 +296,7 @@ class PdfDocument extends Document implements DocListener {
                     String s[] = new String[documentJavaScript.size()];
                     for (int k = 0; k < s.length; ++k)
                         s[k] = Integer.toHexString(k);
-                    Arrays.sort(s, new StringCompare());
+                    Arrays.sort(s);
                     PdfArray ar = new PdfArray();
                     for (int k = 0; k < s.length; ++k) {
                         ar.add(new PdfString(s[k]));
@@ -467,7 +466,7 @@ class PdfDocument extends Document implements DocListener {
      * Stores the destinations keyed by name. Value is
      * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
      */
-    private TreeMap localDestinations = new TreeMap(new StringCompare());
+    private TreeMap localDestinations = new TreeMap();
     
     private ArrayList documentJavaScript = new ArrayList();
     
