@@ -158,7 +158,7 @@ public class XmlWriter extends DocWriter implements DocListener {
     // membervariables
     
 /** This is the meta information of the document. */
-    private TreeMap itext = new TreeMap(new com.lowagie.text.StringCompare());
+    private TreeMap itext = new TreeMap();
     
     // constructors
     

@@ -51,8 +51,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import com.lowagie.text.StringCompare;
-
 /**
  * Creates a name tree.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -60,7 +58,6 @@ import com.lowagie.text.StringCompare;
 public class PdfNameTree {
     
     private static final int leafSize = 64;
-    private static final StringCompare stringCompare = new StringCompare();
     
     /**
      * Creates a name tree.
@@ -79,7 +76,7 @@ public class PdfNameTree {
             return null;
         String names[] = new String[items.size()];
         names = (String[])items.keySet().toArray(names);
-        Arrays.sort(names, stringCompare);
+        Arrays.sort(names);
         if (names.length <= leafSize) {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();

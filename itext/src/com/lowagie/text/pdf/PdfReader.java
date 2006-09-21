@@ -69,7 +69,6 @@ import java.util.zip.InflaterInputStream;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.StringCompare;
 
 /** Reads a PDF document.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -2628,7 +2627,7 @@ public class PdfReader {
         HashMap jscript = PdfNameTree.readTree(js);
         String sortedNames[] = new String[jscript.size()];
         sortedNames = (String[])jscript.keySet().toArray(sortedNames);
-        Arrays.sort(sortedNames, new StringCompare());
+        Arrays.sort(sortedNames);
         StringBuffer buf = new StringBuffer();
         for (int k = 0; k < sortedNames.length; ++k) {
             PdfDictionary j = (PdfDictionary)getPdfObjectRelease((PdfIndirectReference)jscript.get(sortedNames[k]));
