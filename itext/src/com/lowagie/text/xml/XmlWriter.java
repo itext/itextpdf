@@ -55,6 +55,7 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 
 import com.lowagie.text.Anchor;
@@ -287,9 +288,10 @@ public class XmlWriter extends DocWriter implements DocListener {
             itext.put(ElementTags.CREATIONDATE, new Date().toString());
             writeStart(ElementTags.ITEXT);
             String key;
-            for (java.util.Iterator i = itext.keySet().iterator(); i.hasNext(); ) {
-                key = (String) i.next();
-                write(key, (String) itext.get(key));
+            for (java.util.Iterator i = itext.entrySet().iterator(); i.hasNext(); ) {
+                Map.Entry entry = (Map.Entry) i.next();
+                key = (String) entry.getKey();
+                write(key, (String) entry.getValue());
             }
             os.write(GT);
         }
@@ -378,16 +380,17 @@ public class XmlWriter extends DocWriter implements DocListener {
                         write(chunk.font());
                     }
                     if (attributes != null) {
-                        for (Iterator i = attributes.keySet().iterator(); i.hasNext(); ) {
-                            String key = (String) i.next();
+                        for (Iterator i = attributes.entrySet().iterator(); i.hasNext(); ) {
+                            Map.Entry entry = (Map.Entry) i.next();
+                            String key = (String) entry.getKey();
                             if (key.equals(Chunk.LOCALGOTO)
                             || key.equals(Chunk.LOCALDESTINATION)
                             || key.equals(Chunk.GENERICTAG)) {
-                                String value = (String) attributes.get(key);
+                                String value = (String) entry.getValue();
                                 write(key.toLowerCase(), value);
                             }
                             if (key.equals(Chunk.SUBSUPSCRIPT)) {
-                                write(key.toLowerCase(), String.valueOf(attributes.get(key)));
+                                write(key.toLowerCase(), String.valueOf(entry.getValue()));
                             }
                         }
                     }

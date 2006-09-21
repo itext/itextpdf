@@ -53,6 +53,7 @@ package com.lowagie.text.pdf;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
@@ -213,13 +214,14 @@ public class PdfChunk implements SplitCharacter{
         // other style possibilities
         HashMap attr = chunk.getAttributes();
         if (attr != null) {
-            for (Iterator i = attr.keySet().iterator(); i.hasNext();) {
-                Object name = i.next();
+            for (Iterator i = attr.entrySet().iterator(); i.hasNext();) {
+                Map.Entry entry = (Map.Entry) i.next();
+                Object name = entry.getKey();
                 if (keysAttributes.containsKey(name)) {
-                    attributes.put(name, attr.get(name));
+                    attributes.put(name, entry.getValue());
                 }
                 else if (keysNoStroke.containsKey(name)) {
-                    noStroke.put(name, attr.get(name));
+                    noStroke.put(name, entry.getValue());
                 }
             }
             if ("".equals(attr.get(Chunk.GENERICTAG))) {

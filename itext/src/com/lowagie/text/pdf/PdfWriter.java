@@ -57,6 +57,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -1248,15 +1249,17 @@ public class PdfWriter extends DocWriter {
             shading.addToBody();
         }
         // add the extgstate
-        for (Iterator it = documentExtGState.keySet().iterator(); it.hasNext();) {
-            PdfDictionary gstate = (PdfDictionary)it.next();
-            PdfObject obj[] = (PdfObject[])documentExtGState.get(gstate);
+        for (Iterator it = documentExtGState.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            PdfDictionary gstate = (PdfDictionary) entry.getKey();
+            PdfObject obj[] = (PdfObject[]) entry.getValue();
             addToBody(gstate, (PdfIndirectReference)obj[1]);
         }
         // add the properties
-        for (Iterator it = documentProperties.keySet().iterator(); it.hasNext();) {
-            Object prop = it.next();
-            PdfObject[] obj = (PdfObject[])documentProperties.get(prop);
+        for (Iterator it = documentProperties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            Object prop = entry.getKey();
+            PdfObject[] obj = (PdfObject[]) entry.getValue();
             if (prop instanceof PdfLayerMembership){
                 PdfLayerMembership layer = (PdfLayerMembership)prop;
                 addToBody(layer.getPdfObject(), layer.getRef());
@@ -1803,9 +1806,10 @@ public class PdfWriter extends DocWriter {
      */
     
     void addLocalDestinations(TreeMap dest) throws IOException {
-        for (Iterator i = dest.keySet().iterator(); i.hasNext();) {
-            String name = (String)i.next();
-            Object obj[] = (Object[])dest.get(name);
+        for (Iterator i = dest.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            String name = (String) entry.getKey();
+            Object obj[] = (Object[]) entry.getValue();
             PdfDestination destination = (PdfDestination)obj[2];
             if (destination == null)
                 throw new RuntimeException("The name '" + name + "' has no local destination.");

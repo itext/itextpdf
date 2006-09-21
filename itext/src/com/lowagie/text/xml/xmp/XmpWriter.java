@@ -238,9 +238,10 @@ public class XmpWriter {
         	XmpBasicSchema basic = new XmpBasicSchema();
         	String key;
         	String value;
-        	for (Iterator it = info.keySet().iterator(); it.hasNext();) {
-        		key = (String)it.next();
-        		value = (String)info.get(key);
+        	for (Iterator it = info.entrySet().iterator(); it.hasNext();) {
+        		Map.Entry entry = (Map.Entry) it.next();
+        		key = (String) entry.getKey();
+        		value = (String) entry.getValue();
         		if (value == null)
         			continue;
         		if ("Title".equals(key)) {

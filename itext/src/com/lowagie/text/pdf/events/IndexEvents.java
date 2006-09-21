@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -238,13 +237,7 @@ public class IndexEvents extends PdfPageEventHelper {
         }
 
         // copy to a list and sort it
-        List sorted = new ArrayList(grouped.size());
-        Iterator it = grouped.keySet().iterator();
-        while (it.hasNext()) {
-            String key = (String) it.next();
-            Entry e = (Entry) grouped.get(key);
-            sorted.add(e);
-        }
+        List sorted = new ArrayList(grouped.values());
         Collections.sort(sorted, comparator);
         return sorted;
     }

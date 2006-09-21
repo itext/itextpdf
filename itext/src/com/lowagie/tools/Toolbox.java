@@ -60,6 +60,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -181,15 +182,16 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		String name, tool;
 		JMenu current = null;
 		JMenuItem item;
-		for (Iterator i = tmp.keySet().iterator(); i.hasNext();) {
-			name = (String) i.next();
+		for (Iterator i = tmp.entrySet().iterator(); i.hasNext();) {
+			Map.Entry entry = (Map.Entry) i.next();
+			name = (String) entry.getKey();
 			if (current == null || !name.startsWith(current.getText())) {
 				current = new JMenu(name.substring(0, name.indexOf('.')));
 				tools.add(current);
 			}
 			item = new JMenuItem(name.substring(current.getText().length() + 1));
 			item.addActionListener(this);
-			tool = (String) tmp.get(name);
+			tool = (String) entry.getValue();
 			try {
 				Class.forName(tool);
 				toolmap.put(item.getText(), tool);

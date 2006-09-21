@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
@@ -246,10 +247,11 @@ class PdfStamperImp extends PdfWriter {
             }
         }
         if (moreInfo != null) {
-            for (Iterator i = moreInfo.keySet().iterator(); i.hasNext();) {
-                String key = (String)i.next();
+            for (Iterator i = moreInfo.entrySet().iterator(); i.hasNext();) {
+                Map.Entry entry = (Map.Entry) i.next();
+                String key = (String) entry.getKey();
                 PdfName keyName = new PdfName(key);
-                String value = (String)moreInfo.get(key);
+                String value = (String) entry.getValue();
                 if (value == null)
                     newInfo.remove(keyName);
                 else
@@ -705,11 +707,12 @@ class PdfStamperImp extends PdfWriter {
             if (array != null)
                 acroFds = array.getArrayList();
         }
-        for (Iterator i = fields.keySet().iterator(); i.hasNext();) {
-            String name = (String)i.next();
+        for (Iterator i = fields.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            String name = (String) entry.getKey();
             if (!partialFlattening.isEmpty() && !partialFlattening.contains(name))
                 continue;
-            AcroFields.Item item = (AcroFields.Item)fields.get(name);
+            AcroFields.Item item = (AcroFields.Item) entry.getValue();
             for (int k = 0; k < item.merged.size(); ++k) {
                 PdfDictionary merged = (PdfDictionary)item.merged.get(k);
                 PdfNumber ff = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.F));
@@ -1177,15 +1180,16 @@ class PdfStamperImp extends PdfWriter {
         }
         markUsed(names);
         HashMap old = PdfNameTree.readTree((PdfDictionary)PdfReader.getPdfObjectRelease(names.get(PdfName.EMBEDDEDFILES)));
-        for (Iterator it = fs.keySet().iterator(); it.hasNext();) {
-            String name = (String)it.next();
+        for (Iterator it = fs.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String name = (String) entry.getKey();
             int k = 0;
             String nn = name;
             while (old.containsKey(nn)) {
                 ++k;
                 nn += " " + k;
             }
-            old.put(nn, fs.get(name));
+            old.put(nn, entry.getValue());
         }
         PdfDictionary tree = PdfNameTree.writeTree(old, this);
         names.put(PdfName.EMBEDDEDFILES, addToBody(tree).getIndirectReference());
