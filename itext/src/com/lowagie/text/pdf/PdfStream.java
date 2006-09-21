@@ -189,13 +189,15 @@ public class PdfStream extends PdfDictionary {
             return;
         }
         // check if a filter already exists
-        PdfObject filter = get(PdfName.FILTER);
+        PdfObject filter = PdfReader.getPdfObject(PdfName.FILTER);
         if (filter != null) {
-            if (filter.isName() && ((PdfName) filter).compareTo(PdfName.FLATEDECODE) == 0) {
-                return;
+            if (filter.isName()) {
+                if (PdfName.FLATEDECODE.equals(filter))
+                    return;
             }
-            else if (filter.isArray() && ((PdfArray) filter).contains(PdfName.FLATEDECODE)) {
-                return;
+            else if (filter.isArray()) {
+                if (((PdfArray) filter).contains(PdfName.FLATEDECODE))
+                    return;
             }
             else {
                 throw new RuntimeException("Stream could not be compressed: filter is not a name or array.");
