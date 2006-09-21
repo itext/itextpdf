@@ -1089,38 +1089,6 @@ public class PdfSignatureAppearance {
          crypto.put(new PdfName("Reference"), types);
     }
     
-    private static int indexArray(byte bout[], int position, String search) {
-        byte ss[] = PdfEncodings.convertToBytes(search, null);
-        while (true) {
-            int k;
-            for (k = 0; k < ss.length; ++k) {
-                if (ss[k] != bout[position + k])
-                    break;
-            }
-            if (k == ss.length)
-                return position;
-            ++position;
-        }
-    }
-
-    private static int indexFile(RandomAccessFile raf, int position, String search) throws IOException {
-        byte ss[] = PdfEncodings.convertToBytes(search, null);
-        while (true) {
-            raf.seek(position);
-            int k;
-            for (k = 0; k < ss.length; ++k) {
-                int b = raf.read();
-                if (b < 0)
-                    throw new EOFException("Unexpected EOF");
-                if (ss[k] != (byte)b)
-                    break;
-            }
-            if (k == ss.length)
-                return position;
-            ++position;
-        }
-    }
-    
     /**
      * Gets the document bytes that are hashable when using external signatures. The general sequence is:
      * preClose(), getRangeStream() and close().
