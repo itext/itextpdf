@@ -50,7 +50,6 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -58,7 +57,7 @@ import java.util.TreeMap;
  * page visually on the screen or in print.
  * @author  Paulo Soares (psoares@consiste.pt)
  */
-public class PdfPageLabels implements Comparator {
+public class PdfPageLabels {
 
     /** Logical pages will have the form 1,2,3,...
      */    
@@ -92,33 +91,10 @@ public class PdfPageLabels implements Comparator {
     /** Creates a new PdfPageLabel with a default logical page 1
      */
     public PdfPageLabels() {
-        map = new TreeMap(this);
+        map = new TreeMap();
         addPageLabel(1, DECIMAL_ARABIC_NUMERALS, null, 1);
     }
 
-    /** Compares two <CODE>Integer</CODE>.
-     * @param obj the first <CODE>Integer</CODE>
-     * @param obj1 the second <CODE>Integer</CODE>
-     * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second
-     */    
-    public int compare(Object obj, Object obj1) {
-        int v1 = ((Integer)obj).intValue();
-        int v2 = ((Integer)obj1).intValue();
-        if (v1 < v2)
-            return -1;
-        if (v1 == v2)
-            return 0;
-        return 1;
-    }
-    
-    /** Not used
-     * @param obj not used
-     * @return always <CODE>true</CODE>
-     */    
-    public boolean equals(Object obj) {
-        return true;
-    }
-    
     /** Adds or replaces a page label.
      * @param page the real page to start the numbering. First page is 1
      * @param numberStyle the numbering style such as LOWERCASE_ROMAN_NUMERALS
