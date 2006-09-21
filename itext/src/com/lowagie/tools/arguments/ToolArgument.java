@@ -259,7 +259,7 @@ public class ToolArgument
 
   }
 
-  protected void firePropertyChange(PropertyChangeEvent evt) {
+  protected synchronized void firePropertyChange(PropertyChangeEvent evt) {
     if (propertyChangeListeners != null) {
       Vector listeners = propertyChangeListeners;
       int count = listeners.size();
