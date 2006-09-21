@@ -185,18 +185,14 @@ public class List implements TextElementArray, MarkupAttributes {
         }
         symbol = new Chunk(value, FontFactory.getFont(attributes));
         
-        this.numbered = false;
         if ((value = (String)attributes.remove(ElementTags.NUMBERED)) != null) {
             this.numbered = new Boolean(value).booleanValue();
-            if ( this.lettered && this.numbered )
-                this.lettered = false;
         }
         if ((value = (String)attributes.remove(ElementTags.LETTERED)) != null) {
             this.lettered = new Boolean(value).booleanValue();
             if ( this.numbered && this.lettered )
                 this.numbered = false;
         }
-        this.symbolIndent = 0;
         if ((value = (String)attributes.remove(ElementTags.SYMBOLINDENT)) != null) {
             this.symbolIndent = Float.parseFloat(value);
         }
