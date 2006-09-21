@@ -337,7 +337,7 @@ class PdfDocument extends Document implements DocListener {
             try {
                 put(PdfName.AA, writer.addToBody(actions).getIndirectReference());
             } catch (Exception e) {
-                new ExceptionConverter(e);
+                throw new ExceptionConverter(e);
             }
         }
         
