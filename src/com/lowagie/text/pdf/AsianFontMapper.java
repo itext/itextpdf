@@ -50,29 +50,29 @@ import java.awt.Font;
 
 public class AsianFontMapper extends DefaultFontMapper {
 	
-	public static String ChineseSimplifiedFont = "STSong-Light";
-	public static String ChineseSimplifiedEncoding_H = "UniGB-UCS2-H";
-	public static String ChineseSimplifiedEncoding_V = "UniGB-UCS2-V";
+	public static final String ChineseSimplifiedFont = "STSong-Light";
+	public static final String ChineseSimplifiedEncoding_H = "UniGB-UCS2-H";
+	public static final String ChineseSimplifiedEncoding_V = "UniGB-UCS2-V";
 	
-	public static String ChineseTraditionalFont_MHei = "MHei-Medium";
-	public static String ChineseTraditionalFont_MSung = "MSung-Light";
-	public static String ChineseTraditionalEncoding_H = "UniCNS-UCS2-H";
-	public static String ChineseTraditionalEncoding_V = "UniCNS-UCS2-V";
+	public static final String ChineseTraditionalFont_MHei = "MHei-Medium";
+	public static final String ChineseTraditionalFont_MSung = "MSung-Light";
+	public static final String ChineseTraditionalEncoding_H = "UniCNS-UCS2-H";
+	public static final String ChineseTraditionalEncoding_V = "UniCNS-UCS2-V";
 	
-	public static String JapaneseFont_Go = "HeiseiKakuGo-W5";
-	public static String JapaneseFont_Min = "HeiseiMin-W3";
-	public static String JapaneseEncoding_H = "UniJIS-UCS2-H";
-	public static String JapaneseEncoding_V = "UniJIS-UCS2-V";
-	public static String JapaneseEncoding_HW_H = "UniJIS-UCS2-HW-H";
-	public static String JapaneseEncoding_HW_V = "UniJIS-UCS2-HW-V";
+	public static final String JapaneseFont_Go = "HeiseiKakuGo-W5";
+	public static final String JapaneseFont_Min = "HeiseiMin-W3";
+	public static final String JapaneseEncoding_H = "UniJIS-UCS2-H";
+	public static final String JapaneseEncoding_V = "UniJIS-UCS2-V";
+	public static final String JapaneseEncoding_HW_H = "UniJIS-UCS2-HW-H";
+	public static final String JapaneseEncoding_HW_V = "UniJIS-UCS2-HW-V";
 	
-	public static String KoreanFont_GoThic = "HYGoThic-Medium";
-	public static String KoreanFont_SMyeongJo = "HYSMyeongJo-Medium";
-	public static String KoreanEncoding_H = "UniKS-UCS2-H";
-	public static String KoreanEncoding_V = "UniKS-UCS2-V";
+	public static final String KoreanFont_GoThic = "HYGoThic-Medium";
+	public static final String KoreanFont_SMyeongJo = "HYSMyeongJo-Medium";
+	public static final String KoreanEncoding_H = "UniKS-UCS2-H";
+	public static final String KoreanEncoding_V = "UniKS-UCS2-V";
 	
-	private String defaultFont;
-	private String encoding;
+	private final String defaultFont;
+	private final String encoding;
 
 	public AsianFontMapper(String font, String encoding) {
 		super();
