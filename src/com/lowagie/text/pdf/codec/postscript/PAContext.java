@@ -80,9 +80,9 @@ import java.util.EmptyStackException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.Stack;
-import java.util.TreeSet;
 
 import javax.swing.WindowConstants;
 
@@ -374,11 +374,11 @@ public class PAContext {
     jf.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     PAContext pac = new PAContext(new PAPencil(jf));
     HashMap hm = (HashMap) pac.findDictionary("systemdict");
-    Iterator it = new TreeSet(hm.keySet()).iterator();
+    Iterator it = hm.entrySet().iterator();
     while (it.hasNext()) {
-
-      String obname = it.next().toString();
-      Object ob = hm.get(obname);
+      Map.Entry entry = (Map.Entry) it.next();
+      String obname = entry.getKey().toString();
+      Object ob = entry.getValue();
       String typname = ob.getClass().getName();
       System.out.println(obname + ":" + typname);
     }
@@ -2660,35 +2660,37 @@ systemDict.put("currentrgbcolor", new PACommand() {
         }
         else if (data[0] instanceof HashMap){
           HashMap hsm = (HashMap) data[0];
-          Iterator it = hsm.keySet().iterator();
+          Iterator it = hsm.entrySet().iterator();
           int width = 0, height = 0, bitspercomponent = 0;
           int imagetype = 0;
           InputStream datasrc = null;
           Object decode = null;
           Object imagematrix = null;
           while (it.hasNext()) {
-            PAToken token = (PAToken) it.next();
-            if (token.value.toString().equals("ImageType")) {
-              imagetype = ( (Number) hsm.get(token)).intValue();
+            Map.Entry entry = (Map.Entry) it.next();
+            PAToken token = (PAToken) entry.getKey();
+            String tokenString = token.value.toString();
+            Object value = entry.getValue();
+            if (tokenString.equals("ImageType")) {
+              imagetype = ( (Number) value).intValue();
             }
-            if (token.value.toString().equals("DataSource")) {
-              datasrc = (InputStream) hsm.get(token);
+            else if (tokenString.equals("DataSource")) {
+              datasrc = (InputStream) value;
             }
-
-            if (token.value.toString().equals("BitsPerComponent")) {
-              bitspercomponent = ( (Number) hsm.get(token)).intValue();
+            else if (tokenString.equals("BitsPerComponent")) {
+              bitspercomponent = ( (Number) value).intValue();
             }
-            if (token.value.toString().equals("Width")) {
-              width = ( (Number) hsm.get(token)).intValue();
+            else if (tokenString.equals("Width")) {
+              width = ( (Number) value).intValue();
             }
-            if (token.value.toString().equals("Height")) {
-              height = ( (Number) hsm.get(token)).intValue();
+            else if (tokenString.equals("Height")) {
+              height = ( (Number) value).intValue();
             }
-            if (token.value.toString().equals("Decode")) {
-              decode = hsm.get(token);
+            else if (tokenString.equals("Decode")) {
+              decode = value;
             }
-            if (token.value.toString().equals("ImageMatrix")) {
-              imagematrix = hsm.get(token);
+            else if (tokenString.equals("ImageMatrix")) {
+              imagematrix = value;
             }
           }
 

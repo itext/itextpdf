@@ -281,9 +281,10 @@ class PdfDocument extends Document implements DocListener {
                 PdfDictionary names = new PdfDictionary();
                 if (localDestinations.size() > 0) {
                     PdfArray ar = new PdfArray();
-                    for (Iterator i = localDestinations.keySet().iterator(); i.hasNext();) {
-                        String name = (String)i.next();
-                        Object obj[] = (Object[])localDestinations.get(name);
+                    for (Iterator i = localDestinations.entrySet().iterator(); i.hasNext();) {
+                        Map.Entry entry = (Map.Entry) i.next();
+                        String name = (String) entry.getKey();
+                        Object obj[] = (Object[]) entry.getValue();
                         PdfIndirectReference ref = (PdfIndirectReference)obj[1];
                         ar.add(new PdfString(name));
                         ar.add(ref);

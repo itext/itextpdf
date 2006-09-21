@@ -111,9 +111,10 @@ public class FdfWriter {
     }
     
     void iterateFields(HashMap values, HashMap map, String name) {
-        for (Iterator it = map.keySet().iterator(); it.hasNext();) {
-            String s = (String)it.next();
-            Object obj = map.get(s);
+        for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String s = (String) entry.getKey();
+            Object obj = entry.getValue();
             if (obj instanceof HashMap)
                 iterateFields(values, (HashMap)obj, name + "." + s);
             else
@@ -232,9 +233,10 @@ public class FdfWriter {
      */    
     public void setFields(FdfReader fdf) {
         HashMap map = fdf.getFields();
-        for (Iterator it = map.keySet().iterator(); it.hasNext();) {
-            String key = (String)it.next();
-            PdfDictionary dic = (PdfDictionary)map.get(key);
+        for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String key = (String) entry.getKey();
+            PdfDictionary dic = (PdfDictionary) entry.getValue();
             PdfObject v = dic.get(PdfName.V);
             if (v != null) {
                 setField(key, v);
@@ -312,9 +314,10 @@ public class FdfWriter {
         
         PdfArray calculate(HashMap map) throws IOException {
             PdfArray ar = new PdfArray();
-            for (Iterator it = map.keySet().iterator(); it.hasNext();) {
-                String key = (String)it.next();
-                Object v = map.get(key);
+            for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+                Map.Entry entry = (Map.Entry) it.next();
+                String key = (String) entry.getKey();
+                Object v = entry.getValue();
                 PdfDictionary dic = new PdfDictionary();
                 dic.put(PdfName.T, new PdfString(key, PdfObject.TEXT_UNICODE));
                 if (v instanceof HashMap) {

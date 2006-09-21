@@ -52,6 +52,7 @@ package com.lowagie.tools.plugins;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
@@ -118,9 +119,10 @@ public class InspectPDF extends AbstractTool {
 			HashMap info = reader.getInfo();
 			String key;
 			String value;
-			for (Iterator i = info.keySet().iterator(); i.hasNext(); ) {
-				key = (String) i.next();
-				value = (String) info.get(key);
+			for (Iterator i = info.entrySet().iterator(); i.hasNext(); ) {
+				Map.Entry entry = (Map.Entry) i.next();
+				key = (String) entry.getKey();
+				value = (String) entry.getValue();
 				System.out.println(key + ": " + value);
 			}
 			if (reader.getMetadata() == null) {

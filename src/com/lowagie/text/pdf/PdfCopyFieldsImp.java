@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.lowagie.text.Document;
@@ -261,9 +262,10 @@ class PdfCopyFieldsImp extends PdfWriter {
     
     protected PdfArray branchForm(HashMap level, PdfIndirectReference parent, String fname) throws IOException {
         PdfArray arr = new PdfArray();
-        for (Iterator it = level.keySet().iterator(); it.hasNext();) {
-            String name = (String)it.next();
-            Object obj = level.get(name);
+        for (Iterator it = level.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String name = (String) entry.getKey();
+            Object obj = entry.getValue();
             PdfIndirectReference ind = getPdfIndirectReference();
             PdfDictionary dic = new PdfDictionary();
             if (parent != null)
@@ -381,12 +383,13 @@ class PdfCopyFieldsImp extends PdfWriter {
                     propagate(dic, pageRef, false);
                 }
         }
-        for (Iterator it = readers2intrefs.keySet().iterator(); it.hasNext();) {
-            PdfReader reader = (PdfReader)it.next();
+        for (Iterator it = readers2intrefs.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            PdfReader reader = (PdfReader) entry.getKey();
             try {
                 file = reader.getSafeFile();
                 file.reOpen();
-                IntHashtable t = (IntHashtable)readers2intrefs.get(reader);
+                IntHashtable t = (IntHashtable) entry.getValue();
                 int keys[] = t.toOrderedKeys();
                 for (int k = 0; k < keys.length; ++k) {
                     PRIndirectReference ref = new PRIndirectReference(reader, keys[k]);
@@ -503,9 +506,10 @@ class PdfCopyFieldsImp extends PdfWriter {
     }
     
     void mergeWithMaster(HashMap fd) {
-        for (Iterator it = fd.keySet().iterator(); it.hasNext();) {
-            String name = (String)it.next();
-            mergeField(name, (AcroFields.Item)fd.get(name));
+        for (Iterator it = fd.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String name = (String) entry.getKey();
+            mergeField(name, (AcroFields.Item) entry.getValue());
         }
     }
     
