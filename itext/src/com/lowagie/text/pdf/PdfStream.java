@@ -189,7 +189,7 @@ public class PdfStream extends PdfDictionary {
             return;
         }
         // check if a filter already exists
-        PdfObject filter = PdfReader.getPdfObject(PdfName.FILTER);
+        PdfObject filter = PdfReader.getPdfObject(get(PdfName.FILTER));
         if (filter != null) {
             if (filter.isName()) {
                 if (PdfName.FLATEDECODE.equals(filter))
