@@ -2509,7 +2509,7 @@ public class PdfWriter extends DocWriter {
         if (registryName != null)
             out.put(PdfName.REGISTRYNAME, new PdfString(registryName, PdfObject.TEXT_UNICODE));
         if (info != null)
-            out.put(PdfName.INFO, new PdfString(registryName, PdfObject.TEXT_UNICODE));
+            out.put(PdfName.INFO, new PdfString(info, PdfObject.TEXT_UNICODE));
         if (destOutputProfile != null) {
             PdfStream stream = new PdfStream(destOutputProfile);
             stream.flateCompress();
