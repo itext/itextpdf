@@ -163,21 +163,13 @@ public class PdfWriter extends DocWriter {
              */
             
             public void toPdf(OutputStream os) throws IOException {
-                // This code makes it more difficult to port the lib to JDK1.1.x:
-                // StringBuffer off = new StringBuffer("0000000000").append(offset);
-                // off.delete(0, off.length() - 10);
-                // StringBuffer gen = new StringBuffer("00000").append(generation);
-                // gen.delete(0, gen.length() - 5);
-                // so it was changed into this:
-                String s = "0000000000" + offset;
-                StringBuffer off = new StringBuffer(s.substring(s.length() - 10));
-                s = "00000" + generation;
-                String gen = s.substring(s.length() - 5);
-                if (generation == 65535) {
-                    os.write(getISOBytes(off.append(' ').append(gen).append(" f \n").toString()));
-                }
-                else
-                    os.write(getISOBytes(off.append(' ').append(gen).append(" n \n").toString()));
+                StringBuffer off = new StringBuffer("0000000000").append(offset);
+                off.delete(0, off.length() - 10);
+                StringBuffer gen = new StringBuffer("00000").append(generation);
+                gen.delete(0, gen.length() - 5);
+
+                off.append(' ').append(gen).append(generation == 65535 ? " f \n" : " n \n");
+                os.write(getISOBytes(off.toString()));
             }
             
             /**
