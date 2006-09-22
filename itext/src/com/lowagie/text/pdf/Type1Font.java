@@ -271,21 +271,14 @@ class Type1Font extends BaseFont
         }
         else
             throw new DocumentException(afmFile + " is not an AFM or PFM font file.");
-        try {
-            EncodingScheme = EncodingScheme.trim();
-            if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
-                fontSpecific = false;
-            }
-            if (!encoding.startsWith("#"))
-                PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
-            createEncoding();
+
+        EncodingScheme = EncodingScheme.trim();
+        if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
+            fontSpecific = false;
         }
-        catch (RuntimeException re) {
-            throw re;
-        }
-        catch (Exception e) {
-            throw new DocumentException(e);
-        }
+        if (!encoding.startsWith("#"))
+            PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
+        createEncoding();
     }
     
 /** Gets the width from the font according to the <CODE>name</CODE> or,
