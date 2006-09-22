@@ -213,7 +213,14 @@ public class PdfWriter extends DocWriter {
                 else
                     return false;
             }
-            
+
+            /**
+             * @see java.lang.Object#hashCode()
+             */
+            public int hashCode() {
+				return refnum;
+			}
+
         }
         
         // membervariables
