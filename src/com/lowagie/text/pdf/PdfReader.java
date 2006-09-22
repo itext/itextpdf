@@ -478,9 +478,9 @@ public class PdfReader {
             try {
                 readDocObj();
             }
-            catch (IOException ne) {
+            catch (Exception ne) {
                 if (rebuilt)
-                    throw ne;
+                    throw new IOException(ne.getMessage());
                 rebuilt = true;
                 encrypted = false;
                 rebuildXref();
