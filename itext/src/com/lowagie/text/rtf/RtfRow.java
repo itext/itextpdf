@@ -221,7 +221,7 @@ public class RtfRow {
         // the width of this row is the absolute witdh, calculated from the
         // proportional with of the table and the total width of the page
         this.origRow = row;
-        this.width = pageWidth / 100 * tableWidth;
+        this.width = pageWidth * tableWidth / 100;
         this.cellpadding = cellpadding;
         this.cellspacing = cellspacing;
         this.borders = borders;
@@ -237,7 +237,7 @@ public class RtfRow {
             // cellWidth is an absolute argument
             // it's based on the absolute of this row and the proportional
             // width of this column
-            int cellWidth = (int) (width / 100 * propWidths[i]);
+            int cellWidth = (int) (width * propWidths[i] / 100);
             if (cell != null) {
                 if (cell.type() == Element.CELL) {
                     RtfCell rtfCell = (RtfCell) cells.get(i);
