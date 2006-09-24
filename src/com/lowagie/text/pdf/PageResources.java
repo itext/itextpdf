@@ -71,18 +71,23 @@ class PageResources {
     void setOriginalResources(PdfDictionary resources, int newNamePtr[]) {
         if (newNamePtr != null)
             namePtr = newNamePtr;
-        originalResources = resources;
         forbiddenNames = new HashMap();
         usedNames = new HashMap();
         if (resources == null)
             return;
+        originalResources = new PdfDictionary();
+        originalResources.merge(resources);
         for (Iterator i = resources.getKeys().iterator(); i.hasNext();) {
-            PdfObject sub = PdfReader.getPdfObject(resources.get((PdfName)i.next()));
+            PdfName key = (PdfName)i.next();
+            PdfObject sub = PdfReader.getPdfObject(resources.get(key));
             if (sub != null && sub.isDictionary()) {
                 PdfDictionary dic = (PdfDictionary)sub;
                 for (Iterator j = dic.getKeys().iterator(); j.hasNext();) {
                     forbiddenNames.put(j.next(), null);
                 }
+                PdfDictionary dic2 = new PdfDictionary();
+                dic2.merge(dic);
+                originalResources.put(key, dic2);
             }
         }
     }
