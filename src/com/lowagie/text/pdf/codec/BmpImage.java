@@ -324,9 +324,7 @@ public class BmpImage {
                 }
                 bitmapOffset = size + sizeOfPalette;
             }
-            palette = new byte[sizeOfPalette];
-            inputStream.read(palette, 0, sizeOfPalette);
-            properties.put("palette", palette);
+            readPalette(sizeOfPalette);
         } else {
             
             compression = readDWord(inputStream);
@@ -413,9 +411,7 @@ public class BmpImage {
                             }
                             bitmapOffset = size + sizeOfPalette;
                         }
-                        palette = new byte[sizeOfPalette];
-                        inputStream.read(palette, 0, sizeOfPalette);
-                        properties.put("palette", palette);
+                        readPalette(sizeOfPalette);
                                                 
                         properties.put("bmp_version", "BMP v. 3.x");
                         break;
@@ -440,9 +436,7 @@ public class BmpImage {
                         if (colorsUsed != 0) {
                             // there is a palette
                             sizeOfPalette = (int)colorsUsed*4;
-                            palette = new byte[sizeOfPalette];
-                            inputStream.read(palette, 0, sizeOfPalette);
-                            properties.put("palette", palette);
+                            readPalette(sizeOfPalette);
                         }
                         
                         properties.put("bmp_version", "BMP v. 3.x NT");
@@ -526,12 +520,7 @@ public class BmpImage {
                     }
                     bitmapOffset = size + sizeOfPalette;
                 }
-                palette = new byte[sizeOfPalette];
-                inputStream.read(palette, 0, sizeOfPalette);
-                
-                if (palette != null && palette.length != 0) {
-                    properties.put("palette", palette);
-                }
+                readPalette(sizeOfPalette);
                 
                 switch((int)csType) {
                     case LCS_CALIBRATED_RGB:
@@ -787,6 +776,23 @@ public class BmpImage {
         ad.put(PdfName.COLORSPACE, colorspace);
         img.setAdditional(ad);
         return img;
+    }
+    
+    private void readPalette(int sizeOfPalette) throws IOException {
+        if (sizeOfPalette == 0) {
+            return;
+        }
+
+        palette = new byte[sizeOfPalette];
+        int bytesRead = 0;
+        while (bytesRead < sizeOfPalette) {
+            int r = inputStream.read(palette, bytesRead, sizeOfPalette - bytesRead);
+            if (r < 0) {
+                throw new RuntimeException("incomplete palette");
+            }
+            bytesRead += r;
+        }
+        properties.put("palette", palette);
     }
     
     // Deal with 1 Bit images using IndexColorModels
