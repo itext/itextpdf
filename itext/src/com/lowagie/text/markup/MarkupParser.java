@@ -405,8 +405,9 @@ public class MarkupParser extends HashMap {
 	public Element getObject(Properties attributes) {
 		String key = getKey(attributes);
 		Properties styleattributes = (Properties) stylecache.get(key);
-		if (styleattributes != null
-				&& MarkupTags.CSS_VALUE_HIDDEN.equals(styleattributes
+        if (styleattributes == null)
+            return null;
+		if (MarkupTags.CSS_VALUE_HIDDEN.equals(styleattributes
 						.get(MarkupTags.CSS_KEY_VISIBILITY))) {
 			return null;
 		}

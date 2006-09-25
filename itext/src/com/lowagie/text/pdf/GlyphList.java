@@ -67,7 +67,7 @@ public class GlyphList {
             is = BaseFont.getResourceStream(BaseFont.RESOURCE_PATH + "glyphlist.txt", new FontsResourceAnchor().getClass().getClassLoader());
             if (is == null) {
                 String msg = "glyphlist.txt not found as resource. (It must exist as resource in the package com.lowagie.text.pdf.fonts)";
-                System.err.println(msg);
+                throw new Exception(msg);
             }
             byte buf[] = new byte[1024];
             ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -115,6 +115,7 @@ public class PdfCopy extends PdfWriter {
             return (gen<<16)+num;
         }
         public boolean equals(Object o) {
+            if (!(o instanceof RefKey)) return false;
             RefKey other = (RefKey)o;
             return this.gen == other.gen && this.num == other.num;
         }
