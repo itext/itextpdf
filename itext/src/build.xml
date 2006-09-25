@@ -76,6 +76,10 @@
 		<ant antfile="ant/compile.xml" inheritAll="false" target="jar.debug" />
 	</target>
 	
+	<target name="update-parser">
+		<ant antfile="ant/compile.xml" inheritAll="false" target="update-parser" />
+	</target>
+	
 	<target name="javadoc">
 		<ant antfile="ant/site.xml" inheritAll="false" target="javadoc" />
 	</target>

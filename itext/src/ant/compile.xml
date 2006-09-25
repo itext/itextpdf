@@ -88,4 +88,47 @@
 	
     <target name="jar.debug"  depends="compile.debug, make.jar" description="--> makes a jarfile from the iText code" />
 
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Updating the JavaCC generated files for the postscript grammar   -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <target name="update-parser" description="updates the JavaCC generated files for the postscript grammar" >
+        <fail message="JavaCC location is not defined properly">
+            <condition>
+                <not>
+                    <available file="${javacc.home}" type="dir" />
+                </not>
+            </condition>
+        </fail>
+
+        <property name="parser_input.dir" value="${itext.src}/com/lowagie/text/pdf/codec/postscript" />
+        <property name="parser_output.dir" value="${itext.build}/parser" />
+
+        <mkdir dir="${parser_output.dir}" />
+        <javacc
+            target="${parser_input.dir}/paparser.jj"
+            outputdirectory="${parser_output.dir}"
+            javacchome="${javacc.home}"
+            static="false" />
+
+        <macrodef name="insertlicense">
+            <attribute name="name"/>
+            <sequential>
+                <concat destfile="${parser_input.dir}/@{name}">
+                    <filelist dir="${parser_input.dir}" files="license.txt"/>
+                    <filelist dir="${parser_output.dir}" files="@{name}"/>
+                </concat>
+            </sequential>
+        </macrodef>
+
+        <insertlicense name="JavaCharStream.java" />
+        <insertlicense name="PAParser.java" />
+        <insertlicense name="PAParserConstants.java" />
+        <insertlicense name="PAParserTokenManager.java" />
+        <insertlicense name="ParseException.java" />
+        <insertlicense name="Token.java" />
+        <insertlicense name="TokenMgrError.java" />
+
+        <delete dir="${parser_output.dir}" />
+    </target>
+
 </project>
