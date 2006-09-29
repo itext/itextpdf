@@ -69,6 +69,7 @@ import com.lowagie.text.rtf.document.RtfDocument;
  * @author Craig Fleming (rythos@rhana.dhs.org)
  * @author Renaud Michel (r.michel@immedia.be)
  * @author Werner Daehn (Werner.Daehn@BusinessObjects.com)
+ * @author Lidong Liu (tmslld@gmail.com)
  */
 public class RtfFont extends Font implements RtfExtendedElement {
     /**
@@ -249,6 +250,21 @@ public class RtfFont extends Font implements RtfExtendedElement {
     }
     
     /**
+     * Constructs a RtfFont with the given font name, font size, font style, colour
+     * and charset. This can be used when generating non latin-1 text.
+     * 
+     * @param fontName The font name to use
+     * @param size the font size to use
+     * @param style The font style to use
+     * @param color The font color to use
+     * @param charset The charset of the font content
+     */
+    public RtfFont(String fontName, float size, int style, Color color, int charset) {
+        this(fontName, size, style, color);
+        this.charset = charset;
+    }
+
+    /**
      * Special constructor for the default font
      *
      * @param doc The RtfDocument this font appears in
@@ -270,6 +286,7 @@ public class RtfFont extends Font implements RtfExtendedElement {
         if(font != null) {
             if(font instanceof RtfFont) {
                 this.fontName = ((RtfFont) font).getFontName();
+                this.charset = ((RtfFont) font).getCharset();
             } else {
                 setToDefaultFamily(font.getFamilyname());
             }
@@ -573,6 +590,24 @@ public class RtfFont extends Font implements RtfExtendedElement {
     public void setStyle(String style) {
         super.setStyle(style);
         fontStyle = style();
+    }
+
+    /**
+     * Gets the charset used for constructing this RtfFont.
+     * 
+     * @return The charset of this RtfFont.
+     */
+    public int getCharset() {
+        return charset;
+    }
+
+    /**
+     * Sets the charset used for constructing this RtfFont.
+     * 
+     * @param charset The charset to use.
+     */
+    public void setCharset(int charset) {
+        this.charset = charset;
     }
 
     /**
