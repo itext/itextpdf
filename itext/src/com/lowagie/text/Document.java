@@ -78,22 +78,20 @@ import java.util.Iterator;
  *
  * <PRE>// creation of the document with a certain size and certain margins
  * <STRONG>Document document = new Document(PageSize.A4, 50, 50, 50, 50);
- * </STRONG> try { // creation of the different writers HtmlWriter.getInstance(
- * <STRONG>document </STRONG>, System.out); PdfWriter.getInstance(
- * <STRONG>document </STRONG>, new FileOutputStream("text.pdf"));
- *    // we add some meta information to the document
- * <STRONG>document.addAuthor("Bruno Lowagie"); </STRONG>
- * <STRONG>document.addSubject("This is the result of a Test."); </STRONG>
- *  // we define a header and a footer HeaderFooter header = new
- * HeaderFooter(new Phrase("This is a header."), false); HeaderFooter footer =
- * new HeaderFooter(new Phrase("This is page "), new Phrase("."));
- *    footer.setAlignment(Element.ALIGN_CENTER);
- * <STRONG>document.setHeader(header); </STRONG>
- * <STRONG>document.setFooter(footer); </STRONG>// we open the document for
- * writing <STRONG>document.open(); </STRONG> <STRONG>document.add(new
- * Paragraph("Hello world")); </STRONG>} catch(DocumentException de) {
- * System.err.println(de.getMessage()); } <STRONG>document.close(); </STRONG>
- * </CODE>
+ * </STRONG> try { 
+ *   // creation of the different writers 
+ *   HtmlWriter.getInstance(<STRONG>document </STRONG>, System.out);
+ *   PdfWriter.getInstance(<STRONG>document </STRONG>, new FileOutputStream("text.pdf"));
+ *   // we add some meta information to the document
+ *   <STRONG>document.addAuthor("Bruno Lowagie"); </STRONG>
+ *   <STRONG>document.addSubject("This is the result of a Test."); </STRONG>
+ *   // we open the document for writing
+ *   <STRONG>document.open(); </STRONG>
+ *   <STRONG>document.add(new Paragraph("Hello world"));</STRONG>
+ *  } catch(DocumentException de) {
+ *   System.err.println(de.getMessage());
+ *  }
+ *  <STRONG>document.close();</STRONG>
  * </PRE>
  * 
  * </BLOCKQUOTE>
