@@ -1073,7 +1073,7 @@ class TrueTypeFont extends BaseFont {
             return b;
         } 
         finally {
-            try {rf2.close();} catch (Exception e) {}
+            try {if (rf2 != null) {rf2.close();}} catch (Exception e) {}
         }
     }
     
