@@ -113,7 +113,7 @@ public class RandomAccessFileOrArray implements DataInput {
                 this.arrayIn = InputStreamToArray(s);
             }
             finally {
-                try {s.close();}catch(Exception e){}
+                try {if (s != null) {s.close();}}catch(Exception e){}
             }
         	return;
         }

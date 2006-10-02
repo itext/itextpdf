@@ -566,7 +566,7 @@ public class PdfPKCS7 {
             throw new ExceptionConverter(e);
         }
         finally {
-            try{fin.close();}catch(Exception ex){}
+            try{if (fin != null) {fin.close();}}catch(Exception ex){}
         }
     }
     

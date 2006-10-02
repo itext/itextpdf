@@ -81,7 +81,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
             SimpleXMLParser.parse(this, fin);
         }
         finally {
-            try{fin.close();}catch(Exception e){}
+            try{if (fin != null) {fin.close();}}catch(Exception e){}
         }
     }
     
