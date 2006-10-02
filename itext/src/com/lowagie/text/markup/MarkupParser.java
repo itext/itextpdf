@@ -52,6 +52,7 @@ package com.lowagie.text.markup;
 
 import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Properties;
@@ -100,9 +101,10 @@ public class MarkupParser extends HashMap {
 	 */
 	public MarkupParser(String file) {
 		super();
+		BufferedReader br = null;
 		try {
 			FileReader reader = new FileReader(file);
-			BufferedReader br = new BufferedReader(reader);
+			br = new BufferedReader(reader);
 			StringBuffer buf = new StringBuffer();
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -129,6 +131,8 @@ public class MarkupParser extends HashMap {
 			}
 		} catch (Exception e) {
 			throw new ExceptionConverter(e);
+		} finally {
+			try { if (br != null) br.close(); } catch (IOException e) {}
 		}
 	}
 
