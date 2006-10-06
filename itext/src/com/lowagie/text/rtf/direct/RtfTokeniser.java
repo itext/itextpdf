@@ -115,7 +115,6 @@ public class RtfTokeniser {
 	}
 	
 	/**
-	private String emptyString = "";
 	 * The main tokenisation method. Implements a LL(1) parser.
 	 * 
 	 * @param reader The Reader to read the RTF document from.
