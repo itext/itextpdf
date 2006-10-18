@@ -157,7 +157,7 @@ public abstract class BaseField {
      */
     public BaseField(PdfWriter writer, Rectangle box, String fieldName) {
         this.writer = writer;
-        this.box = box;
+        setBox(box);
         this.fieldName = fieldName;
     }
     
@@ -536,7 +536,8 @@ public abstract class BaseField {
      * @param box the field dimension and position
      */
     public void setBox(Rectangle box) {
-        this.box = box;
+        this.box = new Rectangle(box);
+        this.box.normalize();
     }
     
     /** Gets the field rotation.
