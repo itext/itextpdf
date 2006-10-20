@@ -187,7 +187,7 @@ public class PdfFileSpecification extends PdfDictionary {
     
     /**
      * Sets the file name (the key /F) string as an hex representation
-     * to support multi byte file names. The name must heve th slash and
+     * to support multi byte file names. The name must have the slash and
      * backslash escaped according to the file specification rules
      * @param fileName the file name as a byte array
      */    

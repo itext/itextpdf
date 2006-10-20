@@ -3245,7 +3245,7 @@ class PdfDocument extends Document implements DocListener {
                 PdfDocument doc = writer.getPdfDocument();
                 if (doc.line == null)
                     return null;
-                PdfAnnotation an = new PdfAnnotation(writer, annot.llx(doc.indentRight() - doc.line.widthLeft()), annot.lly(doc.indentTop() - doc.currentHeight), annot.urx(doc.indentRight() - doc.line.widthLeft() + 20), annot.ury(doc.indentTop() - doc.currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content()));
+                PdfAnnotation an = new PdfAnnotation(writer, annot.llx(doc.indentRight() - doc.line.widthLeft()), annot.lly(doc.indentTop() - doc.currentHeight), annot.urx(doc.indentRight() - doc.line.widthLeft() + 20), annot.ury(doc.indentTop() - doc.currentHeight - 20), new PdfString(annot.title(), PdfObject.TEXT_UNICODE), new PdfString(annot.content(), PdfObject.TEXT_UNICODE));
                 return an;
         }
     }
