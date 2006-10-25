@@ -721,7 +721,7 @@ public class AcroFields {
             case 1:
                 return new GrayColor(((PdfNumber)cc.get(0)).floatValue());
             case 3:
-                return new Color(((PdfNumber)cc.get(0)).floatValue(), ((PdfNumber)cc.get(1)).floatValue(), ((PdfNumber)cc.get(2)).floatValue());
+                return new Color(ExtendedColor.normalize(((PdfNumber)cc.get(0)).floatValue()), ExtendedColor.normalize(((PdfNumber)cc.get(1)).floatValue()), ExtendedColor.normalize(((PdfNumber)cc.get(2)).floatValue()));
             case 4:
                 return new CMYKColor(((PdfNumber)cc.get(0)).floatValue(), ((PdfNumber)cc.get(1)).floatValue(), ((PdfNumber)cc.get(2)).floatValue(), ((PdfNumber)cc.get(3)).floatValue());
             default:
