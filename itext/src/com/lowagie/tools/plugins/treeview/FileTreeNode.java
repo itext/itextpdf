@@ -50,9 +50,10 @@
 
 package com.lowagie.tools.plugins.treeview;
 
-import com.lowagie.text.pdf.*;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import com.lowagie.text.pdf.PdfReader;
 
 public class FileTreeNode extends UpdateableTreeNode {
 
@@ -72,10 +73,10 @@ public class FileTreeNode extends UpdateableTreeNode {
 		sb.append(this.userObject);
 		sb.append("</p>");
 		sb.append("<p>");
-		sb.append("PDF Version 1." + this.reader.getPdfVersion());
+		sb.append("PDF Version 1.").append(this.reader.getPdfVersion());
 		sb.append("</p>");
 		sb.append("<p>");
-		sb.append("Number of Pages: " + this.reader.getNumberOfPages());
+		sb.append("Number of Pages: ").append(this.reader.getNumberOfPages());
 		sb.append("</p>");
 		sb.append("</html>");
 		updateobject.showvalues(sb.toString());

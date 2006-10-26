@@ -33,8 +33,9 @@
  * Adapted from the JAI codecs TIFFLZWDecoder.
  */
 package com.lowagie.text.pdf;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+
 import com.lowagie.text.ExceptionConverter;
 /**
  * A class for performing LZW decoding.

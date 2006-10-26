@@ -205,12 +205,12 @@ public class RtfRow extends RtfElement {
     private void importRow(Row row) {
         this.cells = new ArrayList();
         this.width = this.document.getDocumentHeader().getPageSetting().getPageWidth() - this.document.getDocumentHeader().getPageSetting().getMarginLeft() - this.document.getDocumentHeader().getPageSetting().getMarginRight();
-        this.width = (int) (this.width / 100 * this.parentTable.getTableWidthPercent());
+        this.width = (int) (this.width * this.parentTable.getTableWidthPercent() / 100);
         
         int cellRight = 0;
         int cellWidth = 0;
         for(int i = 0; i < row.columns(); i++) {
-            cellWidth = (int) (this.width / 100 * this.parentTable.getProportionalWidths()[i]);
+            cellWidth = (int) (this.width * this.parentTable.getProportionalWidths()[i] / 100);
             cellRight = cellRight + cellWidth;
             
             Cell cell = (Cell) row.getCell(i);

@@ -47,19 +47,20 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.List;
-import java.util.Iterator;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.StringTokenizer;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.Writer;
-import java.io.Reader;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
+import java.util.StringTokenizer;
 /**
  * Bookmark processing in a simple way. It has some limitations, mainly the only
  * action types supported are GoTo, GoToR, URI and Launch.
@@ -385,7 +386,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
         }
     }
     
-    static void createOutlineAction(PdfDictionary outline, HashMap map, PdfWriter writer, boolean namedAsNames) throws IOException {
+    static void createOutlineAction(PdfDictionary outline, HashMap map, PdfWriter writer, boolean namedAsNames) {
         try {
             String action = (String)map.get("Action");
             if ("GoTo".equals(action)) {
@@ -527,7 +528,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                     PdfArray arr = new PdfArray();
                     StringTokenizer tk = new StringTokenizer(color);
                     for (int k = 0; k < 3; ++k) {
-                        float f = Float.valueOf(tk.nextToken()).intValue();
+                        float f = Float.parseFloat(tk.nextToken());
                         if (f < 0) f = 0;
                         if (f > 1) f = 1;
                         arr.add(new PdfNumber(f));
@@ -572,20 +573,21 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
             out.write(dep);
             out.write("<Title ");
             List kids = null;
-            for (Iterator e = map.keySet().iterator(); e.hasNext();) {
-                String key = (String)e.next();
+            for (Iterator e = map.entrySet().iterator(); e.hasNext();) {
+                Map.Entry entry = (Map.Entry) e.next();
+                String key = (String) entry.getKey();
                 if (key.equals("Title")) {
-                    title = (String)map.get(key);
+                    title = (String) entry.getValue();
                     continue;
                 }
                 else if (key.equals("Kids")) {
-                    kids = (List)map.get(key);
+                    kids = (List) entry.getValue();
                     continue;
                 }
                 else {
                     out.write(key);
                     out.write("=\"");
-                    String value = (String)map.get(key);
+                    String value = (String) entry.getValue();
                     if (key.equals("Named") || key.equals("NamedN"))
                         value = SimpleNamedDestination.escapeBinaryString(value);
                     out.write(SimpleXMLParser.escapeXML(value, onlyASCII));

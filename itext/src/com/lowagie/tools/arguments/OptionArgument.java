@@ -176,7 +176,7 @@ public class OptionArgument extends ToolArgument {
 			buf.append(entry.getValueToString());
 			buf.append(": ");
 			buf.append(entry.toString());
-			buf.append("\n");
+			buf.append('\n');
 		}
 		return buf.toString();
 	}

@@ -50,25 +50,34 @@
 
 package com.lowagie.tools.plugins.treeview;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextPane;
+import javax.swing.JTree;
+import javax.swing.Timer;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import com.lowagie.tools.SwingWorker;
-import java.awt.Cursor;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import java.awt.Component;
 import javax.swing.table.TableColumnModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+
+import com.lowagie.tools.SwingWorker;
 
 public class TreeViewInternalFrame extends JInternalFrame implements
 		PropertyChangeListener, IUpdatenodeview {
@@ -187,7 +196,6 @@ public class TreeViewInternalFrame extends JInternalFrame implements
 	 * @param evt
 	 *            A PropertyChangeEvent object describing the event source and
 	 *            the property that has changed.
-	 * @todo Implement this java.beans.PropertyChangeListener method
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
 
@@ -211,7 +219,7 @@ public class TreeViewInternalFrame extends JInternalFrame implements
 			};
 			jif.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			work.start();
-			blubb.show();
+			blubb.setVisible(true);
 			analyzer = (AnalyzePDF) work.get();
 
 			Timer activitymonitor = new Timer(250, new ActionListener() {

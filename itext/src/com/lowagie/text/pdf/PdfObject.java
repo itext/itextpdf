@@ -49,8 +49,8 @@
  */
 
 package com.lowagie.text.pdf;
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * <CODE>PdfObject</CODE> is the abstract superclass of all PDF objects.

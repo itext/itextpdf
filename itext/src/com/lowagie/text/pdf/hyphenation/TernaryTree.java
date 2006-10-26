@@ -16,9 +16,9 @@
 
 package com.lowagie.text.pdf.hyphenation;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Stack;
-import java.io.Serializable;
 
 /**
  * <h2>Ternary Search Tree.</h2>
@@ -72,7 +72,9 @@ public class TernaryTree implements Cloneable, Serializable {
      * if it ain't broken, don't fix it.
      */
 
-    /**
+    private static final long serialVersionUID = 5313366505322983510L;
+
+	/**
      * Pointer to low branch and to rest of the key when it is
      * stored directly in this node, we don't have unions in java!
      */
@@ -512,7 +514,7 @@ public class TernaryTree implements Cloneable, Serializable {
         }
 
         public Object nextElement() {
-            String res = new String(curkey);
+            String res = curkey;
             cur = up();
             run();
             return res;

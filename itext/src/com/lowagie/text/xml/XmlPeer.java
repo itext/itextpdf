@@ -51,6 +51,7 @@
 package com.lowagie.text.xml;
 
 import java.util.Properties;
+
 import org.xml.sax.Attributes;
 
 import com.lowagie.text.ElementTags;

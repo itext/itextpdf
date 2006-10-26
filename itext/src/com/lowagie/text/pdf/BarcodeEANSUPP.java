@@ -45,8 +45,9 @@
  * http://www.lowagie.com/iText/
  */
 package com.lowagie.text.pdf;
-import com.lowagie.text.Rectangle;
 import java.awt.Color;
+
+import com.lowagie.text.Rectangle;
 
 /** This class takes 2 barcodes, an EAN/UPC and a supplemental
  * and creates a single barcode with both combined in the

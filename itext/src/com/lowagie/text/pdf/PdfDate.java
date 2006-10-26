@@ -51,8 +51,8 @@
 package com.lowagie.text.pdf;
 
 import java.text.SimpleDateFormat;
-import java.util.GregorianCalendar;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.SimpleTimeZone;
 
 /**
@@ -73,7 +73,7 @@ import java.util.SimpleTimeZone;
 
 public class PdfDate extends PdfString {
 
-    private static final int dateSpace[] = {Calendar.YEAR, 4, 0, Calendar.MONTH, 2, -1, Calendar.DAY_OF_MONTH, 2, 0,
+    private static final int DATE_SPACE[] = {Calendar.YEAR, 4, 0, Calendar.MONTH, 2, -1, Calendar.DAY_OF_MONTH, 2, 0,
         Calendar.HOUR_OF_DAY, 2, 0, Calendar.MINUTE, 2, 0, Calendar.SECOND, 2, 0};
     
     // constructors
@@ -95,19 +95,19 @@ public class PdfDate extends PdfString {
         date.append(setLength(d.get(Calendar.SECOND), 2));
         int timezone = (d.get(Calendar.ZONE_OFFSET) + d.get(Calendar.DST_OFFSET)) / (60 * 60 * 1000);
         if (timezone == 0) {
-            date.append("Z");
+            date.append('Z');
         }
         else if (timezone < 0) {
-            date.append("-");
+            date.append('-');
             timezone = -timezone;
         }
         else {
-            date.append("+");
+            date.append('+');
         }
         if (timezone != 0) {
-            date.append(setLength(timezone, 2)).append("'");
+            date.append(setLength(timezone, 2)).append('\'');
             int zone = Math.abs((d.get(Calendar.ZONE_OFFSET) + d.get(Calendar.DST_OFFSET)) / (60 * 1000)) - (timezone * 60);
-            date.append(setLength(zone, 2)).append("'");
+            date.append(setLength(zone, 2)).append('\'');
         }
         value = date.toString();
     }
@@ -195,11 +195,11 @@ public class PdfDate extends PdfString {
             }
             calendar.clear();
             idx = 0;
-            for (int k = 0; k < dateSpace.length; k += 3) {
+            for (int k = 0; k < DATE_SPACE.length; k += 3) {
                 if (idx >= slen)
                     break;
-                calendar.set(dateSpace[k], Integer.parseInt(s.substring(idx, idx + dateSpace[k + 1])) + dateSpace[k + 2]);
-                idx += dateSpace[k + 1];
+                calendar.set(DATE_SPACE[k], Integer.parseInt(s.substring(idx, idx + DATE_SPACE[k + 1])) + DATE_SPACE[k + 2]);
+                idx += DATE_SPACE[k + 1];
             }
             return calendar;
         }

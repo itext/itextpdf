@@ -122,7 +122,7 @@ public class PdfContentParser {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
             if (!nextValidToken())
-                throw new IOException("Unexpected end of file.");;
+                throw new IOException("Unexpected end of file.");
                 if (tokeniser.getTokenType() == PRTokeniser.TK_END_DIC)
                     break;
                 if (tokeniser.getTokenType() != PRTokeniser.TK_NAME)

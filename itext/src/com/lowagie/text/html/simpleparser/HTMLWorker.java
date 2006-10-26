@@ -47,15 +47,31 @@
 
 package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
-import java.util.Stack;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
+import java.util.StringTokenizer;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocListener;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.FontFactoryImp;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Image;
+import com.lowagie.text.ListItem;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.TextElementArray;
+import com.lowagie.text.Watermark;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.SimpleXMLDocHandler;
+import com.lowagie.text.pdf.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     
@@ -206,9 +222,9 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 String before = cprops.getProperty("before");
                 String after = cprops.getProperty("after");
                 if (before != null)
-                    img.setSpacingBefore(Float.valueOf(before).floatValue());
+                    img.setSpacingBefore(Float.parseFloat(before));
                 if (after != null)
-                    img.setSpacingAfter(Float.valueOf(after).floatValue());
+                    img.setSpacingAfter(Float.parseFloat(after));
                 float wp = lengthParse(width, (int)img.width());
                 float lp = lengthParse(height, (int)img.height());
                 if (wp > 0 && lp > 0)
@@ -618,7 +634,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         if (txt == null)
             return -1;
         if (txt.endsWith("%")) {
-            float vf = Float.valueOf(txt.substring(0, txt.length() - 1)).floatValue();
+            float vf = Float.parseFloat(txt.substring(0, txt.length() - 1));
             return vf;
         }
         int v = Integer.parseInt(txt);

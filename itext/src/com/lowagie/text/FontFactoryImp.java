@@ -51,17 +51,18 @@
 package com.lowagie.text;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Enumeration;
-import java.io.File;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.markup.MarkupTags;
+
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.pdf.BaseFont;
 
 /**
  * If you are using True Type fonts, you can declare the paths of the different ttf- and ttc-files
@@ -247,13 +248,13 @@ public class FontFactoryImp {
                 fontname = (String)styleAttributes.remove(MarkupTags.CSS_KEY_FONTFAMILY);
                 if (fontname != null) {
                     String tmp;
-                    while (fontname.indexOf(",") != -1) {
-                        tmp = fontname.substring(0, fontname.indexOf(","));
+                    while (fontname.indexOf(',') != -1) {
+                        tmp = fontname.substring(0, fontname.indexOf(','));
                         if (isRegistered(tmp)) {
                             fontname = tmp;
                         }
                         else {
-                            fontname = fontname.substring(fontname.indexOf(",") + 1);
+                            fontname = fontname.substring(fontname.indexOf(',') + 1);
                         }
                     }
                 }
@@ -286,7 +287,7 @@ public class FontFactoryImp {
             fontname = value;
         }
         if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
-            size = Float.valueOf(value + "f").floatValue();
+            size = Float.parseFloat(value + "f");
         }
         if ((value = (String)attributes.remove(MarkupTags.HTML_ATTR_STYLE)) != null) {
             style |= Font.getStyleValue(value);

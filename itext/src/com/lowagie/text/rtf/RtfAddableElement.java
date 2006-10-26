@@ -124,4 +124,11 @@ public abstract class RtfAddableElement extends Chunk implements RtfBasicElement
     public byte[] intToByteArray(int i) {
         return Integer.toString(i).getBytes();
     }
+    
+    /**
+     *  RtfAddableElement subclasses are never assumed to be empty.
+     */
+    public boolean isEmpty() {
+        return false;
+    }
 }

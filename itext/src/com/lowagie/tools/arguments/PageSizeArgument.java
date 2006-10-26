@@ -58,7 +58,6 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 import com.lowagie.text.PageSize;
-import com.lowagie.text.Rectangle;
 import com.lowagie.tools.plugins.AbstractTool;
 
 /**
@@ -118,7 +117,7 @@ public class PageSizeArgument extends OptionArgument {
 	public Object getArgument() throws InstantiationException {
 		if (value == null) return null;
 		try {
-			return ((Rectangle)options.get(value));
+			return options.get(value);
 		} catch (Exception e) {
 			throw new InstantiationException(e.getMessage());
 		}
@@ -132,14 +131,14 @@ public class PageSizeArgument extends OptionArgument {
 		buf.append(name);
 		buf.append(" -  ");
 		buf.append(description);
-		buf.append("\n");
+		buf.append('\n');
 		buf.append("    possible options:\n");
 		String s;
 		for (Iterator i = options.keySet().iterator(); i.hasNext(); ) {
 			s  = (String)i.next();
 			buf.append("    - ");
 			buf.append(s);
-			buf.append("\n");
+			buf.append('\n');
 		}
 		return buf.toString();
 	}

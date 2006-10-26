@@ -199,7 +199,7 @@ public class RtfDocumentSettings {
      * 
      * @param dataCacheStyle The data cache style to set. Valid constants can be found
      *  in RtfDataCache.
-     * @see com.lowagie.text.rtf.document.output.output.RtfDataCache.
+     * @see com.lowagie.text.rtf.document.output.RtfDataCache
      */
     public void setDataCacheStyle(int dataCacheStyle) {
         switch(dataCacheStyle) {

@@ -45,11 +45,11 @@
 
 package com.lowagie.text.rtf;
 
+import java.util.Properties;
+
+import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Element;
-import com.lowagie.text.BadElementException;
-
-import java.util.Properties;
 
 /**
  * A <code>Cell</code> with extended style attributes

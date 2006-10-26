@@ -51,7 +51,7 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
-import java.io.IOException;
+
 /**
  * A <CODE>PdfSpotColor</CODE> defines a ColorSpace
  *
@@ -100,7 +100,7 @@ public class PdfSpotColor{
         return altcs;
     }
     
-    protected PdfObject getSpotObject(PdfWriter writer) throws IOException {
+    protected PdfObject getSpotObject(PdfWriter writer) {
         PdfArray array = new PdfArray(PdfName.SEPARATION);
         array.add(name);
         PdfFunction func = null;

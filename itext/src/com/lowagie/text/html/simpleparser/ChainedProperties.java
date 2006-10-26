@@ -93,7 +93,7 @@ public class ChainedProperties {
                     String old = getProperty("basefontsize");
                     if (old == null)
                         old = "12";
-                    float f = Float.valueOf(old).floatValue();
+                    float f = Float.parseFloat(old);
                     int c = (int)f;
                     for (int k = fontSizes.length - 1; k >= 0; --k) {
                         if (c >= fontSizes[k]) {

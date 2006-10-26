@@ -50,13 +50,14 @@
 
 package com.lowagie.text;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.codec.wmf.InputMeta;
 import com.lowagie.text.pdf.codec.wmf.MetaDo;
-import com.lowagie.text.pdf.*;
 
 /**
  * An <CODE>ImgWMF</CODE> is the representation of a windows metafile

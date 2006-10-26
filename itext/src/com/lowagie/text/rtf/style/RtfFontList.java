@@ -50,13 +50,13 @@
 
 package com.lowagie.text.rtf.style;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
 import com.lowagie.text.rtf.document.RtfDocument;
-
-import java.util.ArrayList;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * The RtfFontList stores the list of fonts used in the rtf document. It also
@@ -104,7 +104,7 @@ public class RtfFontList extends RtfElement implements RtfExtendedElement {
      */
     public int getFontNumber(RtfFont font) {
         if(font instanceof RtfParagraphStyle) {
-            font = new RtfFont(this.document, (RtfParagraphStyle) font);
+            font = new RtfFont(this.document, font);
         }
         int fontIndex = -1;
         for(int i = 0; i < fontList.size(); i++) {

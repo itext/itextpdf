@@ -50,12 +50,18 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.*;
-
+import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.io.*;
-import java.awt.Color;
+
+import com.lowagie.text.Cell;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.Row;
+import com.lowagie.text.Table;
 
 /**
  * A Helper Class for the <CODE>RtfWriter</CODE>.
@@ -215,7 +221,7 @@ public class RtfRow {
         // the width of this row is the absolute witdh, calculated from the
         // proportional with of the table and the total width of the page
         this.origRow = row;
-        this.width = pageWidth / 100 * tableWidth;
+        this.width = pageWidth * tableWidth / 100;
         this.cellpadding = cellpadding;
         this.cellspacing = cellspacing;
         this.borders = borders;
@@ -231,7 +237,7 @@ public class RtfRow {
             // cellWidth is an absolute argument
             // it's based on the absolute of this row and the proportional
             // width of this column
-            int cellWidth = (int) (width / 100 * propWidths[i]);
+            int cellWidth = (int) (width * propWidths[i] / 100);
             if (cell != null) {
                 if (cell.type() == Element.CELL) {
                     RtfCell rtfCell = (RtfCell) cells.get(i);

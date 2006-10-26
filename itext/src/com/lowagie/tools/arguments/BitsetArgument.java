@@ -96,7 +96,7 @@ public class BitsetArgument extends ToolArgument {
 		for (int i = 0; i < options.length; i++) {
 			buf.append("    - ");
 			buf.append(options[i].getText());
-			buf.append("\n");
+			buf.append('\n');
 		}
 		return buf.toString();
 	}
@@ -107,9 +107,7 @@ public class BitsetArgument extends ToolArgument {
 	public void actionPerformed(ActionEvent evt) {
 		Object[] message = new Object[1 + options.length];
 		message[0] = "Check the options you need:";
-		for(int i = 0; i < options.length; i++ ) {
-			message[i+1] = options[i];
-		}
+		System.arraycopy(options, 0, message, 1, options.length);
 		int result = JOptionPane.showOptionDialog(
 	 		    tool.getInternalFrame(),
 	 		    message,
@@ -124,10 +122,10 @@ public class BitsetArgument extends ToolArgument {
 			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < options.length; i++) {
 				if (options[i].isSelected()) {
-					buf.append("1");
+					buf.append('1');
 				}
 				else {
-					buf.append("0");
+					buf.append('0');
 				}
 			}
 			setValue(buf.toString());

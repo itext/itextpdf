@@ -46,10 +46,11 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.DocumentException;
 import java.io.IOException;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
 
 /**
  * Creates a radio or a check field.
@@ -243,7 +244,7 @@ public class RadioCheckField extends BaseField {
             fsize = Math.min(fsize, nfsize);
         }
         app.saveState();
-        app.rectangle(offX, offX, box.width() - 2 * offX, box.height() - 2 * offX);
+        app.rectangle(offX, offX, wt, ht);
         app.clip();
         app.newPath();
         if (textColor == null)

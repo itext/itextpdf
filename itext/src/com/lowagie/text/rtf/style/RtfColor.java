@@ -234,11 +234,7 @@ public class RtfColor extends RtfElement implements RtfExtendedElement {
             return false;
         }
         RtfColor color = (RtfColor) obj;
-        if(this.red == color.getRed() && this.green == color.getGreen() && this.blue == color.getBlue()) {
-            return true;
-        } else {
-            return false;
-        }
+        return (this.red == color.getRed() && this.green == color.getGreen() && this.blue == color.getBlue());
     }
 
     /**

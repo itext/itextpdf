@@ -44,10 +44,11 @@
  */
 package com.lowagie.text.pdf;
 
+import java.awt.Color;
+
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
-import java.awt.Color;
 
 /**
  * Implements the pattern.

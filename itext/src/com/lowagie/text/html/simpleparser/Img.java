@@ -47,9 +47,10 @@
 
 package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.Image;
-import com.lowagie.text.DocListener;
 import java.util.HashMap;
+
+import com.lowagie.text.DocListener;
+import com.lowagie.text.Image;
 
 /**
  *

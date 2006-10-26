@@ -55,10 +55,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.HashSet;
 
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
@@ -66,10 +67,10 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
+import com.lowagie.text.ImgPostscript;
 import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
-import com.lowagie.text.ImgPostscript;
 import com.lowagie.text.pdf.events.PdfPageEventForwarder;
 
 /**
@@ -162,21 +163,13 @@ public class PdfWriter extends DocWriter {
              */
             
             public void toPdf(OutputStream os) throws IOException {
-                // This code makes it more difficult to port the lib to JDK1.1.x:
-                // StringBuffer off = new StringBuffer("0000000000").append(offset);
-                // off.delete(0, off.length() - 10);
-                // StringBuffer gen = new StringBuffer("00000").append(generation);
-                // gen.delete(0, gen.length() - 5);
-                // so it was changed into this:
-                String s = "0000000000" + offset;
-                StringBuffer off = new StringBuffer(s.substring(s.length() - 10));
-                s = "00000" + generation;
-                String gen = s.substring(s.length() - 5);
-                if (generation == 65535) {
-                    os.write(getISOBytes(off.append(' ').append(gen).append(" f \n").toString()));
-                }
-                else
-                    os.write(getISOBytes(off.append(' ').append(gen).append(" n \n").toString()));
+                StringBuffer off = new StringBuffer("0000000000").append(offset);
+                off.delete(0, off.length() - 10);
+                StringBuffer gen = new StringBuffer("00000").append(generation);
+                gen.delete(0, gen.length() - 5);
+
+                off.append(' ').append(gen).append(generation == 65535 ? " f \n" : " n \n");
+                os.write(getISOBytes(off.toString()));
             }
             
             /**
@@ -212,7 +205,14 @@ public class PdfWriter extends DocWriter {
                 else
                     return false;
             }
-            
+
+            /**
+             * @see java.lang.Object#hashCode()
+             */
+            public int hashCode() {
+				return refnum;
+			}
+
         }
         
         // membervariables
@@ -1023,7 +1023,7 @@ public class PdfWriter extends DocWriter {
     PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
         if (! imageDictionary.contains(pdfImage.name())) {
             checkPDFXConformance(this, PDFXKEY_IMAGE, pdfImage);
-            if (fixedRef != null && fixedRef instanceof PRIndirectReference) {
+            if (fixedRef instanceof PRIndirectReference) {
                 PRIndirectReference r2 = (PRIndirectReference)fixedRef;
                 fixedRef = new PdfIndirectReference(0, getNewObjectNumber(r2.getReader(), r2.getNumber(), r2.getGeneration()));
             }
@@ -1042,7 +1042,7 @@ public class PdfWriter extends DocWriter {
         return (PdfIndirectReference) imageDictionary.get(pdfImage.name());
     }
     
-    protected PdfIndirectReference add(PdfICCBased icc) throws PdfException {
+    protected PdfIndirectReference add(PdfICCBased icc) {
         PdfIndirectObject object;
         try {
             object = addToBody(icc);
@@ -1248,15 +1248,17 @@ public class PdfWriter extends DocWriter {
             shading.addToBody();
         }
         // add the extgstate
-        for (Iterator it = documentExtGState.keySet().iterator(); it.hasNext();) {
-            PdfDictionary gstate = (PdfDictionary)it.next();
-            PdfObject obj[] = (PdfObject[])documentExtGState.get(gstate);
+        for (Iterator it = documentExtGState.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            PdfDictionary gstate = (PdfDictionary) entry.getKey();
+            PdfObject obj[] = (PdfObject[]) entry.getValue();
             addToBody(gstate, (PdfIndirectReference)obj[1]);
         }
         // add the properties
-        for (Iterator it = documentProperties.keySet().iterator(); it.hasNext();) {
-            Object prop = it.next();
-            PdfObject[] obj = (PdfObject[])documentProperties.get(prop);
+        for (Iterator it = documentProperties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            Object prop = entry.getKey();
+            PdfObject[] obj = (PdfObject[]) entry.getValue();
             if (prop instanceof PdfLayerMembership){
                 PdfLayerMembership layer = (PdfLayerMembership)prop;
                 addToBody(layer.getPdfObject(), layer.getRef());
@@ -1803,9 +1805,10 @@ public class PdfWriter extends DocWriter {
      */
     
     void addLocalDestinations(TreeMap dest) throws IOException {
-        for (Iterator i = dest.keySet().iterator(); i.hasNext();) {
-            String name = (String)i.next();
-            Object obj[] = (Object[])dest.get(name);
+        for (Iterator i = dest.entrySet().iterator(); i.hasNext();) {
+            Map.Entry entry = (Map.Entry) i.next();
+            String name = (String) entry.getKey();
+            Object obj[] = (Object[]) entry.getValue();
             PdfDestination destination = (PdfDestination)obj[2];
             if (destination == null)
                 throw new RuntimeException("The name '" + name + "' has no local destination.");
@@ -2505,7 +2508,7 @@ public class PdfWriter extends DocWriter {
         if (registryName != null)
             out.put(PdfName.REGISTRYNAME, new PdfString(registryName, PdfObject.TEXT_UNICODE));
         if (info != null)
-            out.put(PdfName.INFO, new PdfString(registryName, PdfObject.TEXT_UNICODE));
+            out.put(PdfName.INFO, new PdfString(info, PdfObject.TEXT_UNICODE));
         if (destOutputProfile != null) {
             PdfStream stream = new PdfStream(destOutputProfile);
             stream.flateCompress();

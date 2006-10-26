@@ -49,10 +49,12 @@
  */
 package com.lowagie.tools.plugins.treeview;
 
-import com.lowagie.text.pdf.PdfArray;
 import java.util.ArrayList;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import com.lowagie.text.pdf.PdfArray;
 
 /**
  * TreeNode for PdfArray objects.
@@ -77,8 +79,6 @@ public class ArrayTreeNode extends UpdateableTreeNode {
 	 * 
 	 * @param updateobject
 	 *            IUpdatenodeview
-	 * @todo Implement this
-	 *       com.lowagie.tools.plugins.treeview.UpdateableTreeNode method
 	 */
 	public void updateview(IUpdatenodeview updateobject) {
 		StringBuffer sb = new StringBuffer();
@@ -89,7 +89,7 @@ public class ArrayTreeNode extends UpdateableTreeNode {
 		ArrayList arl = arr.getArrayList();
 		for (int i = 0; i < arl.size(); i++) {
 			sb.append("<p>");
-			sb.append(" " + arl.get(i).toString());
+			sb.append(' ').append(arl.get(i).toString());
 			sb.append("</p>");
 		}
 		sb.append("</html>");

@@ -50,7 +50,6 @@
 
 package com.lowagie.text.xml;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -137,10 +136,8 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * @param document
-     * @throws IOException
      */
-    public SAXiTextHandler(DocListener document)
-            throws IOException {
+    public SAXiTextHandler(DocListener document) {
         super();
         this.document = document;
         stack = new Stack();
@@ -151,10 +148,8 @@ public class SAXiTextHandler extends DefaultHandler {
     /**
      * @param document
      * @param myTags
-     * @throws IOException
      */
-    public SAXiTextHandler(DocListener document, HtmlTagMap myTags)
-            throws IOException {
+    public SAXiTextHandler(DocListener document, HtmlTagMap myTags) {
         this(document);
         this.myTags = myTags;
     }
@@ -163,10 +158,9 @@ public class SAXiTextHandler extends DefaultHandler {
      * @param document
      * @param myTags
      * @param bf
-     * @throws IOException
      */
     public SAXiTextHandler(DocListener document, HtmlTagMap myTags,
-            BaseFont bf) throws IOException {
+            BaseFont bf){
         this(document, myTags);
         this.bf = bf;
     }
@@ -174,10 +168,8 @@ public class SAXiTextHandler extends DefaultHandler {
     /**
      * @param document
      * @param myTags
-     * @throws IOException
      */
-    public SAXiTextHandler(DocListener document, HashMap myTags)
-            throws IOException {
+    public SAXiTextHandler(DocListener document, HashMap myTags) {
         this(document);
         this.myTags = myTags;
     }
@@ -518,13 +510,13 @@ public class SAXiTextHandler extends DefaultHandler {
                 try {
                     // margin specific code suggested by Reza Nasiri
                     if (ElementTags.LEFT.equalsIgnoreCase(key))
-                        leftMargin = Float.valueOf(value + "f").floatValue();
+                        leftMargin = Float.parseFloat(value + "f");
                     if (ElementTags.RIGHT.equalsIgnoreCase(key))
-                        rightMargin = Float.valueOf(value + "f").floatValue();
+                        rightMargin = Float.parseFloat(value + "f");
                     if (ElementTags.TOP.equalsIgnoreCase(key))
-                        topMargin = Float.valueOf(value + "f").floatValue();
+                        topMargin = Float.parseFloat(value + "f");
                     if (ElementTags.BOTTOM.equalsIgnoreCase(key))
-                        bottomMargin = Float.valueOf(value + "f").floatValue();
+                        bottomMargin = Float.parseFloat(value + "f");
                 } catch (Exception ex) {
                     throw new ExceptionConverter(ex);
                 }
@@ -805,9 +797,9 @@ public class SAXiTextHandler extends DefaultHandler {
                         }
                     } else if (cell.colspan() == 1 && width.endsWith("%")) {
                         try {
-                            cellWidths[j] = Float.valueOf(
+                            cellWidths[j] = Float.parseFloat(
                                     width.substring(0, width.length() - 1)
-                                            + "f").floatValue();
+                                            + "f");
                             total += cellWidths[j];
                         } catch (Exception e) {
                             // empty on purpose

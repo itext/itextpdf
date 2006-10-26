@@ -309,17 +309,17 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             setAlignment(value);
         }
         if ((value = (String)attributes.remove(ElementTags.CELLSPACING)) != null) {
-            setSpacing(Float.valueOf(value + "f").floatValue());
+            setSpacing(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.CELLPADDING)) != null) {
-            setPadding(Float.valueOf(value + "f").floatValue());
+            setPadding(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.OFFSET)) != null) {
-            setOffset(Float.valueOf(value + "f").floatValue());
+            setOffset(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.WIDTH)) != null) {
             if (value.endsWith("%"))
-                setWidth(Float.valueOf(value.substring(0, value.length() - 1) + "f").floatValue());
+                setWidth(Float.parseFloat(value.substring(0, value.length() - 1) + "f"));
             else
                 setAbsWidth(value);
         }
@@ -332,7 +332,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             int i = 0;
             while (widthTokens.hasMoreTokens()) {
                 value = widthTokens.nextToken();
-                widths[i] = Float.valueOf(value + "f").floatValue();
+                widths[i] = Float.parseFloat(value + "f");
                 i++;
             }
             columns = i;
@@ -347,7 +347,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             convert2pdfptable = new Boolean(value).booleanValue();
         }
         if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
-            setBorderWidth(Float.valueOf(value + "f").floatValue());
+            setBorderWidth(Float.parseFloat(value + "f"));
         }
         int border = 0;
         if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
@@ -394,7 +394,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             setBackgroundColor(MarkupParser.decodeColor(value));
         }
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
-            setGrayFill(Float.valueOf(value + "f").floatValue());
+            setGrayFill(Float.parseFloat(value + "f"));
         }
         if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
@@ -567,7 +567,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if (aCell == null) throw new NullPointerException("addCell - cell has null-value");
         if (aLocation == null) throw new NullPointerException("addCell - point has null-value");
         if (aCell.isTable()) insertTable((Table)aCell.getElements().next(), aLocation);
-        if (mDebug == true) {
+        if (mDebug) {
             if (aLocation.x < 0) throw new BadElementException("row coordinate of location must be >= 0");
             if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
             if (!isValidLocation(aCell, aLocation)) throw new BadElementException("Adding a cell at the location (" + aLocation.x + "," + aLocation.y + ") with a colspan of " + aCell.colspan() + " and a rowspan of " + aCell.rowspan() + " is illegal (beyond boundaries/overlapping).");
@@ -700,7 +700,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if (aLocation == null) throw new NullPointerException("insertTable - point has null-value");
         mTableInserted = true;
         aTable.complete();
-        if (mDebug == true) {
+        if (mDebug) {
             if (aLocation.y > columns) System.err.println("insertTable -- wrong columnposition("+ aLocation.y + ") of location; max =" + columns);
         }
         int rowCount = aLocation.x + 1 - rows.size();
@@ -721,11 +721,11 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
  */
     
     public void complete() {
-        if (mTableInserted == true) {
+        if (mTableInserted) {
             mergeInsertedTables();  // integrate tables in the table
             mTableInserted = false;
         }
-        if (mAutoFillEmptyCells == true) {
+        if (mAutoFillEmptyCells) {
             fillEmptyMatrixCells();
         }
         if (alternatingRowAttributes != null) {
@@ -887,16 +887,10 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
     
     public void deleteColumn(int column) throws BadElementException {
         float newWidths[] = new float[--columns];
-        for (int i = 0; i < column; i++) {
-            newWidths[i] = widths[i];
-        }
-        for (int i = column; i < columns; i++) {
-            newWidths[i] = widths[i + 1];
-        }
+        System.arraycopy(widths, 0, newWidths, 0, column);
+        System.arraycopy(widths, column + 1, newWidths, column, columns - column);
         setWidths(newWidths);
-        for (int i = 0; i < columns; i++) {
-            newWidths[i] = widths[i];
-        }
+        System.arraycopy(widths, 0, newWidths, 0, columns);
         widths = newWidths;
         Row row;
         int size = rows.size();
@@ -1490,7 +1484,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         try {
             for (int i=0; i < rows.size(); i++) {
                 for (int j=0; j < columns; j++) {
-                    if ( ((Row) rows.get(i)).isReserved(j) == false) {
+                    if (!((Row) rows.get(i)).isReserved(j)) {
                         addCell(defaultLayout, new Point(i, j));
                     }
                 }
@@ -1524,7 +1518,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             // no other content at cells targetted by rowspan/colspan
             for (int i=aLocation.x; i < (aLocation.x + difx); i++) {
                 for (int j=aLocation.y; j < (aLocation.y + dify); j++) {
-                    if ( ((Row) rows.get(i)).isReserved(j) == true ) {
+                    if (((Row) rows.get(i)).isReserved(j)) {
                         return false;
                     }
                 }
@@ -1598,9 +1592,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         
         // applied 1 column-fix; last column needs to have a width of 0
         float [] newWidths = new float[newColumns];
-        for (int j = 0; j < columns; j++) {
-            newWidths[j] = widths[j];
-        }
+        System.arraycopy(widths, 0, newWidths, 0, columns);
         for (int j = columns; j < newColumns ; j++) {
             newWidths[j] = 0;
         }
@@ -1666,7 +1658,7 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
             }
         }
         while (
-        (i < rows.size()) && (j < columns) && (((Row) rows.get(i)).isReserved(j) == true)
+        (i < rows.size()) && (j < columns) && (((Row) rows.get(i)).isReserved(j))
         );
         curPosition = new Point(i, j);
     }

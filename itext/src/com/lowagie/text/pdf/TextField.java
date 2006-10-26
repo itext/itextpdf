@@ -48,14 +48,15 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
-import com.lowagie.text.Element;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Font;
-import com.lowagie.text.Chunk;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 
 /** Supports text, combo and list fields generating the correct appearances.
  * All the option in the Acrobat GUI are supported in an easy to use API.

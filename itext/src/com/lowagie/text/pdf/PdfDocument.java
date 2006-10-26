@@ -84,7 +84,6 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
-import com.lowagie.text.StringCompare;
 import com.lowagie.text.Table;
 import com.lowagie.text.Watermark;
 import com.lowagie.text.xml.xmp.XmpWriter;
@@ -281,9 +280,10 @@ class PdfDocument extends Document implements DocListener {
                 PdfDictionary names = new PdfDictionary();
                 if (localDestinations.size() > 0) {
                     PdfArray ar = new PdfArray();
-                    for (Iterator i = localDestinations.keySet().iterator(); i.hasNext();) {
-                        String name = (String)i.next();
-                        Object obj[] = (Object[])localDestinations.get(name);
+                    for (Iterator i = localDestinations.entrySet().iterator(); i.hasNext();) {
+                        Map.Entry entry = (Map.Entry) i.next();
+                        String name = (String) entry.getKey();
+                        Object obj[] = (Object[]) entry.getValue();
                         PdfIndirectReference ref = (PdfIndirectReference)obj[1];
                         ar.add(new PdfString(name));
                         ar.add(ref);
@@ -296,7 +296,7 @@ class PdfDocument extends Document implements DocListener {
                     String s[] = new String[documentJavaScript.size()];
                     for (int k = 0; k < s.length; ++k)
                         s[k] = Integer.toHexString(k);
-                    Arrays.sort(s, new StringCompare());
+                    Arrays.sort(s);
                     PdfArray ar = new PdfArray();
                     for (int k = 0; k < s.length; ++k) {
                         ar.add(new PdfString(s[k]));
@@ -337,7 +337,7 @@ class PdfDocument extends Document implements DocListener {
             try {
                 put(PdfName.AA, writer.addToBody(actions).getIndirectReference());
             } catch (Exception e) {
-                new ExceptionConverter(e);
+                throw new ExceptionConverter(e);
             }
         }
         
@@ -466,7 +466,7 @@ class PdfDocument extends Document implements DocListener {
      * Stores the destinations keyed by name. Value is
      * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
      */
-    private TreeMap localDestinations = new TreeMap(new StringCompare());
+    private TreeMap localDestinations = new TreeMap();
     
     private ArrayList documentJavaScript = new ArrayList();
     
@@ -523,7 +523,7 @@ class PdfDocument extends Document implements DocListener {
      * @throws DocumentException on error
      */
     
-    public PdfDocument() throws DocumentException {
+    public PdfDocument() {
         super();
         addProducer();
         addCreationDate();
@@ -1201,7 +1201,6 @@ class PdfDocument extends Document implements DocListener {
 			table.hasToFitPageTable() ? (table.bottom() < indentBottom() && table.height() < (top() - bottom())) : false;
 		if (pageEmpty)
 			tableHasToFit = false;
-		boolean cellsHaveToFit = table.hasToFitPageCells();
 
 		// drawing the table
 		ArrayList dataCells = table.getCells();
@@ -1224,10 +1223,6 @@ class PdfDocument extends Document implements DocListener {
                         
 			// loop over the cells
 			boolean cellsShown = false;
-			int currentGroupNumber = 0;
-			boolean headerChecked = false;
-            
-            float headerHeight = 0;
 
             // draw the cells (line by line)
             Iterator iterator = rows.iterator();
@@ -3250,7 +3245,7 @@ class PdfDocument extends Document implements DocListener {
                 PdfDocument doc = writer.getPdfDocument();
                 if (doc.line == null)
                     return null;
-                PdfAnnotation an = new PdfAnnotation(writer, annot.llx(doc.indentRight() - doc.line.widthLeft()), annot.lly(doc.indentTop() - doc.currentHeight), annot.urx(doc.indentRight() - doc.line.widthLeft() + 20), annot.ury(doc.indentTop() - doc.currentHeight - 20), new PdfString(annot.title()), new PdfString(annot.content()));
+                PdfAnnotation an = new PdfAnnotation(writer, annot.llx(doc.indentRight() - doc.line.widthLeft()), annot.lly(doc.indentTop() - doc.currentHeight), annot.urx(doc.indentRight() - doc.line.widthLeft() + 20), annot.ury(doc.indentTop() - doc.currentHeight - 20), new PdfString(annot.title(), PdfObject.TEXT_UNICODE), new PdfString(annot.content(), PdfObject.TEXT_UNICODE));
                 return an;
         }
     }

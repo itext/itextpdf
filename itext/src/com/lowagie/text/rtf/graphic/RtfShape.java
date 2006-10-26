@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+
 import com.lowagie.text.rtf.RtfAddableElement;
 
 /**

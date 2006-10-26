@@ -56,7 +56,8 @@ package com.lowagie.text.pdf;
  */
 public class SpotColor extends ExtendedColor {
 
-    PdfSpotColor spot;
+    private static final long serialVersionUID = -6257004582113248079L;
+	PdfSpotColor spot;
     float tint;
 
     public SpotColor(PdfSpotColor spot, float tint) {

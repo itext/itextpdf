@@ -47,8 +47,6 @@
 
 package com.lowagie.text;
 
-import com.lowagie.text.Chapter;
-import com.lowagie.text.Paragraph;
 
 /**
  * Chapter with auto numbering.
@@ -57,7 +55,8 @@ import com.lowagie.text.Paragraph;
  */
 public class ChapterAutoNumber extends Chapter {
 
-    /**
+    private static final long serialVersionUID = -9217457637987854167L;
+	/**
      * the chapter number (for all instance)
      */
     private static int chapternumber = 0;

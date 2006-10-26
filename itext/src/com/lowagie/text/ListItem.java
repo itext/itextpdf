@@ -52,8 +52,8 @@ package com.lowagie.text;
 
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
@@ -106,6 +106,7 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
     
     // membervariables
     
+private static final long serialVersionUID = 1970670787169329006L;
 /** this is the symbol that wil proceed the listitem. */
     private Chunk symbol;
     
@@ -222,16 +223,16 @@ public class ListItem extends Paragraph implements TextElementArray, MarkupAttri
             add(new Chunk(value));
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
         else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.valueOf(value + "f").floatValue());
+            setIndentationLeft(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.valueOf(value + "f").floatValue());
+            setIndentationRight(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
             setAlignment(value);

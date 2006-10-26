@@ -49,13 +49,14 @@
  */
 
 package com.lowagie.text.pdf;
-import java.io.UnsupportedEncodingException;
-import java.io.OutputStream;
 import java.io.IOException;
-import com.lowagie.text.DocWriter;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+
+import com.lowagie.text.DocWriter;
 
 /**
  * Acts like a <CODE>StringBuffer</CODE> but works with <CODE>byte</CODE> arrays.
@@ -73,7 +74,7 @@ public class ByteBuffer extends OutputStream {
     private static int byteCacheSize = 0;
     
     private static byte[][] byteCache = new byte[byteCacheSize][];
-    public static byte ZERO = (byte)'0';
+    public static final byte ZERO = (byte)'0';
     private static final char[] chars = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private static final byte[] bytes = new byte[] {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102};
     /**
@@ -111,9 +112,7 @@ public class ByteBuffer extends OutputStream {
         if (size > 3276700) size = 3276700;
         if (size <= byteCacheSize) return;
         byte[][] tmpCache = new byte[size][];
-        for (int i = 0; i < byteCacheSize; i++) {
-            tmpCache[i] = byteCache[i];
-        }
+        System.arraycopy(byteCache, 0, tmpCache, 0, byteCacheSize);
         byteCache = tmpCache;
         byteCacheSize = size;
     }

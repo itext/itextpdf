@@ -49,7 +49,7 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.*;
+import java.io.IOException;
 /**
  *
  * @author  Paulo Soares (psoares@consiste.pt)
@@ -103,9 +103,7 @@ public class PRTokeniser {
     protected int reference;
     protected int generation;
     protected boolean hexString;
-    
-    private static final int LINE_SEGMENT_SIZE = 256;
-    
+       
     public PRTokeniser(String filename) throws IOException {
         file = new RandomAccessFileOrArray(filename);
     }
@@ -186,7 +184,7 @@ public class PRTokeniser {
         return generation;
     }
     
-    public void backOnePosition(int ch) throws IOException {
+    public void backOnePosition(int ch) {
         if (ch != -1)
             file.pushBack((byte)ch);
     }

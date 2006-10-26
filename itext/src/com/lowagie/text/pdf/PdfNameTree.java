@@ -46,11 +46,10 @@
  */
 package com.lowagie.text.pdf;
 
-import java.util.HashMap;
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.io.IOException;
-import com.lowagie.text.StringCompare;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Creates a name tree.
@@ -59,7 +58,6 @@ import com.lowagie.text.StringCompare;
 public class PdfNameTree {
     
     private static final int leafSize = 64;
-    private static final StringCompare stringCompare = new StringCompare();
     
     /**
      * Creates a name tree.
@@ -78,7 +76,7 @@ public class PdfNameTree {
             return null;
         String names[] = new String[items.size()];
         names = (String[])items.keySet().toArray(names);
-        Arrays.sort(names, stringCompare);
+        Arrays.sort(names);
         if (names.length <= leafSize) {
             PdfDictionary dic = new PdfDictionary();
             PdfArray ar = new PdfArray();

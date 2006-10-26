@@ -47,14 +47,22 @@
 
 package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.*;
-import com.lowagie.text.markup.*;
-import com.lowagie.text.pdf.*;
-import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.StringTokenizer;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.FontFactoryImp;
+import com.lowagie.text.ListItem;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.pdf.BaseFont;
 
 /**
  *
@@ -85,13 +93,13 @@ public class FactoryProperties {
         try {
             StringTokenizer tk = new StringTokenizer(leading, " ,");
             String v = tk.nextToken();
-            float v1 = Float.valueOf(v).floatValue();
+            float v1 = Float.parseFloat(v);
             if (!tk.hasMoreTokens()) {
                 p.setLeading(v1, 0);
                 return;
             }
             v = tk.nextToken();
-            float v2 = Float.valueOf(v).floatValue();
+            float v2 = Float.parseFloat(v);
             p.setLeading(v1, v2);
         }
         catch (Exception e) {
@@ -128,21 +136,21 @@ public class FactoryProperties {
         value = props.getProperty("before");
         if (value != null) {
             try {
-                p.setSpacingBefore(Float.valueOf(value).floatValue());
+                p.setSpacingBefore(Float.parseFloat(value));
             }
             catch (Exception e) {}
         }
         value = props.getProperty("after");
         if (value != null) {
             try {
-                p.setSpacingAfter(Float.valueOf(value).floatValue());
+                p.setSpacingAfter(Float.parseFloat(value));
             }
             catch (Exception e) {}
         }
         value = props.getProperty("extraparaspace");
         if (value != null) {
             try {
-                p.setExtraParagraphSpace(Float.valueOf(value).floatValue());
+                p.setExtraParagraphSpace(Float.parseFloat(value));
             }
             catch (Exception e) {}
         }
@@ -184,7 +192,7 @@ public class FactoryProperties {
         String value = props.getProperty("size");
         float size = 12;
         if (value != null)
-            size = Float.valueOf(value).floatValue();
+            size = Float.parseFloat(value);
         Color color = MarkupParser.decodeColor(props.getProperty("color"));
         String encoding = props.getProperty("encoding");
         if (encoding == null)

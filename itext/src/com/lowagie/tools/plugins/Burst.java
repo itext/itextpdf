@@ -101,7 +101,7 @@ public class Burst extends AbstractTool {
 			File src = (File)getValue("srcfile");
             File directory = src.getParentFile();
             String name = src.getName();
-            name = name.substring(0, name.lastIndexOf("."));
+            name = name.substring(0, name.lastIndexOf('.'));
         	// we create a reader for a certain document
 			PdfReader reader = new PdfReader(src.getAbsolutePath());
 			// we retrieve the total number of pages

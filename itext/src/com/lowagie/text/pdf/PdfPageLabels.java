@@ -50,37 +50,36 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.Comparator;
-import java.util.TreeMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 /** Page labels are used to identify each
  * page visually on the screen or in print.
  * @author  Paulo Soares (psoares@consiste.pt)
  */
-public class PdfPageLabels implements Comparator {
+public class PdfPageLabels {
 
     /** Logical pages will have the form 1,2,3,...
      */    
-    public static int DECIMAL_ARABIC_NUMERALS = 0;
+    public static final int DECIMAL_ARABIC_NUMERALS = 0;
     /** Logical pages will have the form I,II,III,IV,...
      */    
-    public static int UPPERCASE_ROMAN_NUMERALS = 1;
+    public static final int UPPERCASE_ROMAN_NUMERALS = 1;
     /** Logical pages will have the form i,ii,iii,iv,...
      */    
-    public static int LOWERCASE_ROMAN_NUMERALS = 2;
+    public static final int LOWERCASE_ROMAN_NUMERALS = 2;
     /** Logical pages will have the form of uppercase letters
      * (A to Z for the first 26 pages, AA to ZZ for the next 26, and so on)
      */    
-    public static int UPPERCASE_LETTERS = 3;
+    public static final int UPPERCASE_LETTERS = 3;
     /** Logical pages will have the form of uppercase letters
      * (a to z for the first 26 pages, aa to zz for the next 26, and so on)
      */    
-    public static int LOWERCASE_LETTERS = 4;
+    public static final int LOWERCASE_LETTERS = 4;
     /** No logical page numbers are generated but fixed text may
      * still exist
      */    
-    public static int EMPTY = 5;
+    public static final int EMPTY = 5;
     /** Dictionary values to set the logical page styles
      */    
     static PdfName numberingStyle[] = new PdfName[]{PdfName.D, PdfName.R,
@@ -92,33 +91,10 @@ public class PdfPageLabels implements Comparator {
     /** Creates a new PdfPageLabel with a default logical page 1
      */
     public PdfPageLabels() {
-        map = new TreeMap(this);
+        map = new TreeMap();
         addPageLabel(1, DECIMAL_ARABIC_NUMERALS, null, 1);
     }
 
-    /** Compares two <CODE>Integer</CODE>.
-     * @param obj the first <CODE>Integer</CODE>
-     * @param obj1 the second <CODE>Integer</CODE>
-     * @return a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second
-     */    
-    public int compare(Object obj, Object obj1) {
-        int v1 = ((Integer)obj).intValue();
-        int v2 = ((Integer)obj1).intValue();
-        if (v1 < v2)
-            return -1;
-        if (v1 == v2)
-            return 0;
-        return 1;
-    }
-    
-    /** Not used
-     * @param obj not used
-     * @return always <CODE>true</CODE>
-     */    
-    public boolean equals(Object obj) {
-        return true;
-    }
-    
     /** Adds or replaces a page label.
      * @param page the real page to start the numbering. First page is 1
      * @param numberStyle the numbering style such as LOWERCASE_ROMAN_NUMERALS

@@ -18,7 +18,7 @@ import java.util.Vector;
 public class ASN1InputStream
     extends DERInputStream
 {
-	private DERObject END_OF_STREAM = new DERObject() {
+	private static final DERObject END_OF_STREAM = new DERObject() {
 										void encode(
 											DEROutputStream out)
 										throws IOException

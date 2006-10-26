@@ -56,8 +56,8 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
@@ -90,6 +90,8 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
     
     // membervariables
     
+private static final long serialVersionUID = 2643594602455068231L;
+
 /** This is the leading of this phrase. */
     protected float leading = Float.NaN;
     
@@ -270,7 +272,7 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
         clear();
         String value;
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
         else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));
@@ -404,18 +406,13 @@ public class Phrase extends ArrayList implements TextElementArray, MarkupAttribu
                     }
                     return success;
                 case Element.ANCHOR:
-                    return super.add((Anchor) o);
                 case Element.ANNOTATION:
-                    return super.add((Annotation) o);
                 case Element.TABLE: // case added by David Freels
-                    return super.add((Table) o);
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
                 	// This will only work for PDF!!! Not for RTF/HTML
-                    return super.add((com.lowagie.text.pdf.PdfPTable) o);
                 case Element.LIST:
-                    return super.add((List) o);
                 case Element.GRAPHIC: // suggested by Steven Balthazor
-                	return super.add((Graphic) o);
+                	return super.add(o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
             }

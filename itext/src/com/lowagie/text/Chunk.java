@@ -51,20 +51,20 @@
 package com.lowagie.text;
 
 import java.awt.Color;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
-import java.net.URL;
 
+import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfAction;
 import com.lowagie.text.pdf.PdfAnnotation;
-import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.markup.MarkupTags;
-import com.lowagie.text.markup.MarkupParser;
 
 /**
  * This is the smallest significant part of text that can be added to a
@@ -269,7 +269,7 @@ public class Chunk implements Element, MarkupAttributes {
 		Image copyImage = Image.getInstance(image);
 		copyImage.setAbsolutePosition(Float.NaN, Float.NaN);
 		setAttribute(IMAGE, new Object[] { copyImage, new Float(offsetX),
-				new Float(offsetY), new Boolean(false) });
+				new Float(offsetY), Boolean.FALSE });
 	}
 
 	/**
@@ -323,13 +323,13 @@ public class Chunk implements Element, MarkupAttributes {
 			setLocalDestination(value);
 		}
 		if ((value = (String) attributes.remove(ElementTags.SUBSUPSCRIPT)) != null) {
-			setTextRise(Float.valueOf(value + "f").floatValue());
+			setTextRise(Float.parseFloat(value + "f"));
 		}
 		if ((value = (String) attributes
 				.remove(MarkupTags.CSS_KEY_VERTICALALIGN)) != null
 				&& value.endsWith("%")) {
-			float p = Float.valueOf(
-					value.substring(0, value.length() - 1) + "f").floatValue() / 100f;
+			float p = Float.parseFloat(
+					value.substring(0, value.length() - 1) + "f") / 100f;
 			setTextRise(p * font.size());
 		}
 		if ((value = (String) attributes.remove(ElementTags.GENERICTAG)) != null) {

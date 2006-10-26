@@ -52,7 +52,8 @@
 
  package com.lowagie.text.pdf;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 /**
  * List a PDF file in human-readable form (for debugging reasons mostly)

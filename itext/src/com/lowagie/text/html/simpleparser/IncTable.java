@@ -47,10 +47,12 @@
 
 package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.pdf.*;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
 
 /**
  *
@@ -104,9 +106,9 @@ public class IncTable {
             table.setWidthPercentage(100);
         else {
             if (width.endsWith("%"))
-                table.setWidthPercentage(Float.valueOf(width.substring(0, width.length() - 1)).floatValue());
+                table.setWidthPercentage(Float.parseFloat(width.substring(0, width.length() - 1)));
             else {
-                table.setTotalWidth(Float.valueOf(width).floatValue());
+                table.setTotalWidth(Float.parseFloat(width));
                 table.setLockedWidth(true);
             }
         }

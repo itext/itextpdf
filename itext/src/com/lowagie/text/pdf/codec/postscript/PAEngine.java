@@ -62,7 +62,9 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Stack;
+import java.util.Vector;
 
 
 public class PAEngine extends Object {
@@ -82,13 +84,13 @@ public class PAEngine extends Object {
         this.mode = PAEngine.MODE_STACK;
     }
 
-    public void startProcedure() throws PainterException {
+    public void startProcedure() {
         this.procedure = new Stack();
         this.mode = PAEngine.MODE_PROCEDURE;
         this.innerProcedures = 0;
     }
 
-    public void endProcedure() throws PainterException {
+    public void endProcedure() {
         this.context.operands.push(new PAToken(this.procedure, PAToken.PROCEDURE));
         this.mode = PAEngine.MODE_STACK;
     }

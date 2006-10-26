@@ -52,6 +52,7 @@ package com.lowagie.text.markup;
 
 import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Properties;
@@ -76,6 +77,8 @@ import com.lowagie.text.SimpleTable;
  * @author blowagie
  */
 public class MarkupParser extends HashMap {
+	private static final long serialVersionUID = 3724008022202507040L;
+
 	/**
 	 * HashMap with styles for each known combination of tag/id/class. The key
 	 * is a String-combination, the value a Properties object.
@@ -98,9 +101,10 @@ public class MarkupParser extends HashMap {
 	 */
 	public MarkupParser(String file) {
 		super();
+		BufferedReader br = null;
 		try {
 			FileReader reader = new FileReader(file);
-			BufferedReader br = new BufferedReader(reader);
+			br = new BufferedReader(reader);
 			StringBuffer buf = new StringBuffer();
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -115,7 +119,7 @@ public class MarkupParser extends HashMap {
 			String attributes;
 			while (tokenizer.hasMoreTokens()) {
 				tmp = tokenizer.nextToken();
-				pos = tmp.indexOf("{");
+				pos = tmp.indexOf('{');
 				if (pos > 0) {
 					selector = tmp.substring(0, pos).trim();
 					attributes = tmp.substring(pos + 1).trim();
@@ -127,6 +131,8 @@ public class MarkupParser extends HashMap {
 			}
 		} catch (Exception e) {
 			throw new ExceptionConverter(e);
+		} finally {
+			try { if (br != null) br.close(); } catch (IOException e) {}
 		}
 	}
 
@@ -231,8 +237,8 @@ public class MarkupParser extends HashMap {
 		if (pos == 0)
 			return 0f;
 		if (pos == length)
-			return Float.valueOf(string + "f").floatValue();
-		float f = Float.valueOf(string.substring(0, pos) + "f").floatValue();
+			return Float.parseFloat(string + "f");
+		float f = Float.parseFloat(string.substring(0, pos) + "f");
 		string = string.substring(pos);
 		// inches
 		if (string.startsWith("in")) {
@@ -258,7 +264,7 @@ public class MarkupParser extends HashMap {
 	 * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>
 	 * Color</CODE>.
 	 * 
-	 * @param color
+	 * @param s
 	 *            the <CODE>Color</CODE> that has to be converted.
 	 * @return the HTML representation of this <COLOR>Color </COLOR>
 	 */
@@ -403,8 +409,9 @@ public class MarkupParser extends HashMap {
 	public Element getObject(Properties attributes) {
 		String key = getKey(attributes);
 		Properties styleattributes = (Properties) stylecache.get(key);
-		if (styleattributes != null
-				&& MarkupTags.CSS_VALUE_HIDDEN.equals(styleattributes
+        if (styleattributes == null)
+            return null;
+		if (MarkupTags.CSS_VALUE_HIDDEN.equals(styleattributes
 						.get(MarkupTags.CSS_KEY_VISIBILITY))) {
 			return null;
 		}
@@ -733,17 +740,17 @@ public class MarkupParser extends HashMap {
 		String value = (String) styleAttributes
 				.get(MarkupTags.CSS_KEY_FONTFAMILY);
 		if (value != null) {
-			if (value.indexOf(",") == -1) {
+			if (value.indexOf(',') == -1) {
 				fontname = value.trim();
 			} else {
 				String tmp;
-				while (value.indexOf(",") != -1) {
-					tmp = value.substring(0, value.indexOf(",")).trim();
+				while (value.indexOf(',') != -1) {
+					tmp = value.substring(0, value.indexOf(',')).trim();
 					if (FontFactory.isRegistered(tmp)) {
 						fontname = tmp;
 						break;
 					} else {
-						value = value.substring(value.indexOf(",") + 1);
+						value = value.substring(value.indexOf(',') + 1);
 					}
 				}
 			}

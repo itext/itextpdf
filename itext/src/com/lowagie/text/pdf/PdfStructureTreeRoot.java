@@ -48,10 +48,10 @@
  */
 package com.lowagie.text.pdf;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.io.IOException;
 
 /**
  * The structure tree root corresponds to the highest hierarchy level in a tagged PDF.

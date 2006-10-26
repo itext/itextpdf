@@ -50,7 +50,6 @@
 
 package com.lowagie.text.html;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -64,8 +63,6 @@ import com.lowagie.text.ElementTags;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Table;
-import com.lowagie.text.html.HtmlTagMap;
-import com.lowagie.text.html.HtmlTags;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.xml.SAXiTextHandler;
 import com.lowagie.text.xml.XmlPeer;
@@ -89,12 +86,9 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      * 
      * @param document
      *            this is the document on which events must be triggered
-     * @throws IOException
-     * @throws DocumentException
      */
 
-    public SAXmyHtmlHandler(DocListener document)
-            throws DocumentException, IOException {
+    public SAXmyHtmlHandler(DocListener document) {
         super(document, new HtmlTagMap());
     }
     /**
@@ -104,12 +98,9 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      * @param document
      *            this is the document on which events must be triggered
      * @param bf
-     * @throws IOException
-     * @throws DocumentException
      */
 
-    public SAXmyHtmlHandler(DocListener document, BaseFont bf)
-            throws DocumentException, IOException {
+    public SAXmyHtmlHandler(DocListener document, BaseFont bf) {
         super(document, new HtmlTagMap(), bf);
     }
 
@@ -121,12 +112,9 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
      *            this is the document on which events must be triggered
      * @param htmlTags
      *            a tagmap translating HTML tags to iText tags
-     * @throws IOException
-     * @throws DocumentException
      */
 
-    public SAXmyHtmlHandler(DocListener document, HashMap htmlTags)
-            throws DocumentException, IOException {
+    public SAXmyHtmlHandler(DocListener document, HashMap htmlTags) {
         super(document, htmlTags);
     }
 
@@ -195,7 +183,6 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
             peer.addAlias(ElementTags.BOTTOM, HtmlTags.BOTTOMMARGIN);
             peer.addAlias(ElementTags.RIGHT, HtmlTags.RIGHTMARGIN);
             peer.addAlias(ElementTags.LEFT, HtmlTags.LEFTMARGIN);
-            String content = null;
             bodyAttributes.putAll(peer.getAttributes(attrs));
             handleStartingTags(peer.getTag(), bodyAttributes);
             return;
@@ -207,7 +194,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
                 String value;
                 if (Table.isTag(peer.getTag())
                         && (value = p.getProperty(ElementTags.BORDERWIDTH)) != null) {
-                    if (Float.valueOf(value + "f").floatValue() > 0) {
+                    if (Float.parseFloat(value + "f") > 0) {
                         tableBorder = true;
                     }
                 }

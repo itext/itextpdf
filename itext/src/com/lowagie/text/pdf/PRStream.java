@@ -50,12 +50,13 @@
 
 package com.lowagie.text.pdf;
 
-import java.io.*;
-import com.lowagie.text.ExceptionConverter;
-import java.util.zip.DeflaterOutputStream;
-import com.lowagie.text.Document;
-import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.DeflaterOutputStream;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.ExceptionConverter;
 
 public class PRStream extends PdfStream {
     

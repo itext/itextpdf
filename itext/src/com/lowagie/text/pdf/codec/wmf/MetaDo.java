@@ -49,13 +49,21 @@
  */
 
 package com.lowagie.text.pdf.codec.wmf;
-import java.io.*;
-import com.lowagie.text.pdf.*;
-import com.lowagie.text.pdf.codec.BmpImage;
-import com.lowagie.text.*;
-import java.awt.Point;
 import java.awt.Color;
+import java.awt.Point;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Image;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.codec.BmpImage;
 
 public class MetaDo {
     
@@ -568,7 +576,7 @@ public class MetaDo {
         state.cleanup(cb);
     }
     
-    public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) throws IOException {
+    public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) {
         MetaFont font = state.getCurrentFont();
         float refX = state.transformX(x);
         float refY = state.transformY(y);

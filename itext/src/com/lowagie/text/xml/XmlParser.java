@@ -55,15 +55,14 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.HashMap;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import com.lowagie.text.DocListener;
-import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 
 /**
@@ -126,9 +125,6 @@ public class XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
     }
     
     /**
@@ -148,9 +144,6 @@ public class XmlParser {
             catch(IOException ioe) {
                 throw new ExceptionConverter(ioe);
             }
-            catch(DocumentException de) {
-                throw new ExceptionConverter(de);
-            }
         }
     
 /**
@@ -169,9 +162,6 @@ public class XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
         }
     }
     
@@ -210,9 +200,6 @@ public class XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
     }
     
 /**
@@ -231,9 +218,6 @@ public class XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
         }
     }
     

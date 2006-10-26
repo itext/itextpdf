@@ -56,20 +56,20 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.zip.InflaterInputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.InflaterInputStream;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.StringCompare;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Rectangle;
+import java.util.Stack;
 
 /** Reads a PDF document.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -122,13 +122,12 @@ public class PdfReader {
     protected int pValue;
     private int objNum;
     private int objGen;
-    private boolean visited[];
-    private IntHashtable newHits;
     private int fileLength;
     private boolean hybridXref;
     private int lastXrefPartial = -1;
     private boolean partial;
     private PRIndirectReference cryptoRef;
+    private static int rove;
 
     /**
      * Holds value of property appendable.
@@ -481,9 +480,9 @@ public class PdfReader {
             try {
                 readDocObj();
             }
-            catch (IOException ne) {
+            catch (Exception ne) {
                 if (rebuilt)
-                    throw ne;
+                    throw new IOException(ne.getMessage());
                 rebuilt = true;
                 encrypted = false;
                 rebuildXref();
@@ -1429,10 +1428,6 @@ public class PdfReader {
             case PRTokeniser.TK_REF:
                 int num = tokens.getReference();
                 PRIndirectReference ref = new PRIndirectReference(this, num, tokens.getGeneration());
-                if (visited != null && !visited[num]) {
-                    visited[num] = true;
-                    newHits.put(num, 1);
-                }
                 return ref;
             default:
                 String sv = tokens.getStringValue();
@@ -1833,9 +1828,8 @@ public class PdfReader {
     /** Sets the contents of the page.
      * @param content the new page content
      * @param pageNum the page number. 1 is the first
-     * @throws IOException on error
      */
-    public void setPageContent(int pageNum, byte content[]) throws IOException{
+    public void setPageContent(int pageNum, byte content[]) {
         PdfDictionary page = getPageN(pageNum);
         if (page == null)
             return;
@@ -2530,15 +2524,75 @@ public class PdfReader {
     }
 
     protected void removeUnusedNode(PdfObject obj, boolean hits[]) {
-        if (obj == null)
-            return;
-        switch (obj.type()) {
-            case PdfObject.DICTIONARY:
-            case PdfObject.STREAM: {
-                PdfDictionary dic = (PdfDictionary)obj;
-                PdfName[] keys = new PdfName[dic.size()];
-                dic.getKeys().toArray(keys);
-                for (int k = 0; k < keys.length; ++k) {
+        Stack state = new Stack();
+        state.push(obj);
+        while (!state.empty()) {
+            Object current = state.pop();
+            if (current == null)
+                continue;
+            ArrayList ar = null;
+            PdfDictionary dic = null;
+            PdfName[] keys = null;
+            Object[] objs = null;
+            int idx = 0;
+            if (current instanceof PdfObject) {
+                obj = (PdfObject)current;
+                switch (obj.type()) {
+                    case PdfObject.DICTIONARY:
+                    case PdfObject.STREAM:
+                        dic = (PdfDictionary)obj;
+                        keys = new PdfName[dic.size()];
+                        dic.getKeys().toArray(keys);
+                        break;
+                    case PdfObject.ARRAY:
+                         ar = ((PdfArray)obj).getArrayList();
+                         break;
+                    case PdfObject.INDIRECT:
+                        PRIndirectReference ref = (PRIndirectReference)obj;
+                        int num = ref.getNumber();
+                        if (!hits[num]) {
+                            hits[num] = true;
+                            state.push(getPdfObjectRelease(ref));
+                        }
+                        continue;
+                    default:
+                        continue;
+                }
+            }
+            else {
+                objs = (Object[])current;
+                if (objs[0] instanceof ArrayList) {
+                    ar = (ArrayList)objs[0];
+                    idx = ((Integer)objs[1]).intValue();
+                }
+                else {
+                    keys = (PdfName[])objs[0];
+                    dic = (PdfDictionary)objs[1];
+                    idx = ((Integer)objs[2]).intValue();
+                }
+            }
+            if (ar != null) {
+                for (int k = idx; k < ar.size(); ++k) {
+                    PdfObject v = (PdfObject)ar.get(k);
+                    if (v.isIndirect()) {
+                        int num = ((PRIndirectReference)v).getNumber();
+                        if (num >= xrefObj.size() || (!partial && xrefObj.get(num) == null)) {
+                            ar.set(k, PdfNull.PDFNULL);
+                            continue;
+                        }
+                    }
+                    if (objs == null)
+                        state.push(new Object[]{ar, new Integer(k + 1)});
+                    else {
+                        objs[1] = new Integer(k + 1);
+                        state.push(objs);
+                    }
+                    state.push(v);
+                    break;
+                }
+            }
+            else {
+                for (int k = idx; k < keys.length; ++k) {
                     PdfName key = keys[k];
                     PdfObject v = dic.get(key);
                     if (v.isIndirect()) {
@@ -2548,36 +2602,19 @@ public class PdfReader {
                             continue;
                         }
                     }
-                    removeUnusedNode(v, hits);
-                }
-                break;
-            }
-            case PdfObject.ARRAY: {
-                ArrayList list = ((PdfArray)obj).getArrayList();
-                for (int k = 0; k < list.size(); ++k) {
-                    PdfObject v = (PdfObject)list.get(k);
-                    if (v.isIndirect()) {
-                        int num = ((PRIndirectReference)v).getNumber();
-                        if (num >= xrefObj.size() || (!partial && xrefObj.get(num) == null)) {
-                            list.set(k, PdfNull.PDFNULL);
-                            continue;
-                        }
+                    if (objs == null)
+                        state.push(new Object[]{keys, dic, new Integer(k + 1)});
+                    else {
+                        objs[2] = new Integer(k + 1);
+                        state.push(objs);
                     }
-                    removeUnusedNode(v, hits);
-                }
-                break;
-            }
-            case PdfObject.INDIRECT: {
-                PRIndirectReference ref = (PRIndirectReference)obj;
-                int num = ref.getNumber();
-                if (!hits[num]) {
-                    hits[num] = true;
-                    removeUnusedNode(getPdfObjectRelease(ref), hits);
+                    state.push(v);
+                    break;
                 }
             }
         }
     }
-
+        
     /** Removes all the unreachable objects.
      * @return the number of indirect objects removed
      */
@@ -2629,7 +2666,7 @@ public class PdfReader {
         HashMap jscript = PdfNameTree.readTree(js);
         String sortedNames[] = new String[jscript.size()];
         sortedNames = (String[])jscript.keySet().toArray(sortedNames);
-        Arrays.sort(sortedNames, new StringCompare());
+        Arrays.sort(sortedNames);
         StringBuffer buf = new StringBuffer();
         for (int k = 0; k < sortedNames.length; ++k) {
             PdfDictionary j = (PdfDictionary)getPdfObjectRelease((PdfIndirectReference)jscript.get(sortedNames[k]));
@@ -3098,7 +3135,7 @@ public class PdfReader {
             }
         }
 
-        protected PRIndirectReference getSinglePage(int n) throws IOException {
+        protected PRIndirectReference getSinglePage(int n) {
             PdfDictionary acc = new PdfDictionary();
             PdfDictionary top = reader.rootPages;
             int base = 0;

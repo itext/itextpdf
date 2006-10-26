@@ -46,22 +46,20 @@
  */
 package com.lowagie.text.pdf;
 
-import java.security.SignatureException;
-import java.io.OutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.EOFException;
-import java.io.RandomAccessFile;
-import java.io.File;
 import java.io.InputStream;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.DocWriter;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Image;
+import java.io.OutputStream;
+import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Iterator;
+
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -160,29 +158,6 @@ public class PdfStamper {
         return sigApp;
     }
 
-    private String getNewSigName() {
-        AcroFields af = getAcroFields();
-        String name = "Signature";
-        int step = 0;
-        boolean found = false;
-        while (!found) {
-            ++step;
-            String n1 = name + step;
-            if (af.getFieldItem(n1) != null)
-                continue;
-            n1 += ".";
-            found = true;
-            for (Iterator it = af.getFields().keySet().iterator(); it.hasNext();) {
-                String fn = (String)it.next();
-                if (fn.startsWith(n1)) {
-                    found = false;
-                    break;
-                }
-            }
-        }
-        name += step;
-        return name;
-    }
     /**
      * Closes the document. No more content can be written after the
      * document is closed.
@@ -221,38 +196,6 @@ public class PdfStamper {
         dic.put(PdfName.CONTENTS, str);
         sigApp.close(dic);
         stamper.reader.close();
-    }
-
-    private static int indexArray(byte bout[], int position, String search) {
-        byte ss[] = PdfEncodings.convertToBytes(search, null);
-        while (true) {
-            int k;
-            for (k = 0; k < ss.length; ++k) {
-                if (ss[k] != bout[position + k])
-                    break;
-            }
-            if (k == ss.length)
-                return position;
-            ++position;
-        }
-    }
-
-    private static int indexFile(RandomAccessFile raf, int position, String search) throws IOException {
-        byte ss[] = PdfEncodings.convertToBytes(search, null);
-        while (true) {
-            raf.seek(position);
-            int k;
-            for (k = 0; k < ss.length; ++k) {
-                int b = raf.read();
-                if (b < 0)
-                    throw new EOFException("Unexpected EOF");
-                if (ss[k] != (byte)b)
-                    break;
-            }
-            if (k == ss.length)
-                return position;
-            ++position;
-        }
     }
 
     /** Gets a <CODE>PdfContentByte</CODE> to write under the page of
@@ -401,9 +344,8 @@ public class PdfStamper {
      * Sets the bookmarks. The list structure is defined in
      * {@link SimpleBookmark}.
      * @param outlines the bookmarks or <CODE>null</CODE> to remove any
-     * @throws IOException on error
      */
-    public void setOutlines(List outlines) throws IOException {
+    public void setOutlines(List outlines) {
         stamper.setOutlines(outlines);
     }
 

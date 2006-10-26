@@ -48,10 +48,10 @@ package com.lowagie.text.pdf;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
-import java.util.HashMap;
 
 /**
  *
@@ -178,7 +178,7 @@ public class DocumentFont extends BaseFont {
         for (int k = 0; k < ar.size(); ++k) {
             int c1 = ((PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)ar.get(k))).intValue();
             PdfObject obj = PdfReader.getPdfObjectRelease((PdfObject)ar.get(++k));
-            if (obj != null && obj.isArray()) {
+            if (obj.isArray()) {
                 ArrayList ar2 = ((PdfArray)obj).getArrayList();
                 for (int j = 0; j < ar2.size(); ++j) {
                     int c2 = ((PdfNumber)PdfReader.getPdfObjectRelease((PdfObject)ar2.get(j))).intValue();

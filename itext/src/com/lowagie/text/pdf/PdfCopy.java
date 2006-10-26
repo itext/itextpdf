@@ -51,14 +51,16 @@
  */
 package com.lowagie.text.pdf;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.io.*;
-import com.lowagie.text.ExceptionConverter;
+import java.util.List;
+
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * Make copies of PDF documents. Documents can be edited after reading and
@@ -113,6 +115,7 @@ public class PdfCopy extends PdfWriter {
             return (gen<<16)+num;
         }
         public boolean equals(Object o) {
+            if (!(o instanceof RefKey)) return false;
             RefKey other = (RefKey)o;
             return this.gen == other.gen && this.num == other.num;
         }

@@ -62,10 +62,31 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.font.*;
-import java.awt.geom.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Composite;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Stack;
+
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfGraphics2D;
 
@@ -352,7 +373,7 @@ public class PAPencil {
 	this.graphics.clearRect(0, 0, size.width, size.height);
     }
 
-    public void charpath(String aString, boolean adjustForStroking)throws PainterException{
+    public void charpath(String aString, boolean adjustForStroking) {
       FontRenderContext frc=this.graphics.getFontRenderContext();
       Font fn=this.state.font;
 //      System.out.println("Fonthoehe:"+fn.getSize2D());
@@ -402,7 +423,7 @@ public class PAPencil {
         this.newpath();
     }
 
-    public void stroke()throws PainterException{
+    public void stroke(){
        this.graphics.draw(this.state.path);
         this.newpath();
 
@@ -419,14 +440,14 @@ public class PAPencil {
         this.rectfill(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 
-    public void rectstroke(double x, double y, double width, double height)throws PainterException{
+    public void rectstroke(double x, double y, double width, double height){
 	this.gsave();
 	this.rectpath(x, y, width, height);
 	this.stroke();
 	this.grestore();
     }
 
-    public void rectstroke(Rectangle2D rect)throws PainterException{
+    public void rectstroke(Rectangle2D rect){
 	this.rectstroke(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 

@@ -46,11 +46,11 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.DocWriter;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+
+import com.lowagie.text.DocWriter;
+import com.lowagie.text.DocumentException;
 
 /**
  * Concatenates PDF documents including form fields. The rules for the form field
@@ -66,9 +66,8 @@ public class PdfCopyFields {
      * Creates a new instance.
      * @param os the output stream
      * @throws DocumentException on error
-     * @throws IOException on error
      */    
-    public PdfCopyFields(OutputStream os) throws DocumentException, IOException {
+    public PdfCopyFields(OutputStream os) throws DocumentException {
         fc = new PdfCopyFieldsImp(os);
     }
     
@@ -77,9 +76,8 @@ public class PdfCopyFields {
      * @param os the output stream
      * @param pdfVersion the pdf version the output will have
      * @throws DocumentException on error
-     * @throws IOException on error
      */    
-    public PdfCopyFields(OutputStream os, char pdfVersion) throws DocumentException, IOException {
+    public PdfCopyFields(OutputStream os, char pdfVersion) throws DocumentException {
         fc = new PdfCopyFieldsImp(os, pdfVersion);
     }
     

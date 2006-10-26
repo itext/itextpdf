@@ -56,8 +56,8 @@ import java.io.OutputStream;
 
 import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Font;
 
 /**
  * This class can be used to insert a table of contents into 
@@ -70,7 +70,7 @@ import com.lowagie.text.ExceptionConverter;
  *
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com) 
- * @version $Revision$Date: 2006/02/09 17:25:25 $
+ * @version $Revision$Date: 2006/09/12 12:16:35 $
  * @deprecated Please move to the RtfWriter2 and associated classes. com.lowagie.text.rtf.field.RtfTableOfContents replaces the functionality of this class.
  */
 public class RtfTOC extends Chunk implements RtfField {

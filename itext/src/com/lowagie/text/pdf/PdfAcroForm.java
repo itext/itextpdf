@@ -50,11 +50,11 @@
 
 package com.lowagie.text.pdf;
 
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 
-import com.lowagie.text.Rectangle;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
 
 /**
  * Each PDF document can contain maximum 1 AcroForm.
@@ -574,7 +574,7 @@ public class PdfAcroForm extends PdfDictionary {
         setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
         StringBuffer text = new StringBuffer();
         for (int i = 0; i < options.length; i++) {
-            text.append(options[i]).append("\n");
+            text.append(options[i]).append('\n');
         }
         drawMultiLineOfText(choice, text.toString(), font, fontSize, llx, lly, urx, ury);
         addFormField(choice);
@@ -598,7 +598,7 @@ public class PdfAcroForm extends PdfDictionary {
         setChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
         StringBuffer text = new StringBuffer();
         for (int i = 0; i < options.length; i++) {
-            text.append(options[i][1]).append("\n");
+            text.append(options[i][1]).append('\n');
         }
         drawMultiLineOfText(choice, text.toString(), font, fontSize, llx, lly, urx, ury);
         addFormField(choice);

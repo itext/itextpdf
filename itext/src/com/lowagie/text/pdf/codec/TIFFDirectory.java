@@ -31,12 +31,13 @@
  * the design, construction, operation or maintenance of any nuclear facility.
  */
 package com.lowagie.text.pdf.codec;
-import java.io.IOException;
 import java.io.EOFException;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.ArrayList;
+
 import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 /**
@@ -62,7 +63,9 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  */
 public class TIFFDirectory extends Object implements Serializable {
     
-    /** A boolean storing the endianness of the stream. */
+    private static final long serialVersionUID = -168636766193675380L;
+
+	/** A boolean storing the endianness of the stream. */
     boolean isBigEndian;
     
     /** The number of entries in the IFD. */
@@ -445,7 +448,7 @@ public class TIFFDirectory extends Object implements Serializable {
      */
     public long getFieldAsLong(int tag, int index) {
         Integer i = (Integer)fieldIndex.get(new Integer(tag));
-        return (fields[i.intValue()]).getAsLong(index);
+        return fields[i.intValue()].getAsLong(index);
     }
     
     /**

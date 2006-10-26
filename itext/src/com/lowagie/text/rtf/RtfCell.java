@@ -50,11 +50,16 @@
 
 package com.lowagie.text.rtf;
 
-import com.lowagie.text.*;
-
-import java.util.Iterator;
-import java.io.*;
 import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
+
+import com.lowagie.text.Cell;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 
 /**
  * A Helper Class for the <CODE>RtfWriter</CODE>.
@@ -233,7 +238,7 @@ public class RtfCell {
      * @return true if writing the cell settings succeeded
      * @throws DocumentException
      */
-    public boolean writeCellSettings(ByteArrayOutputStream os) throws DocumentException {
+    public boolean writeCellSettings(ByteArrayOutputStream os) {
         try {
             float lWidth, tWidth, rWidth, bWidth;
             byte[] lStyle, tStyle, rStyle, bStyle;

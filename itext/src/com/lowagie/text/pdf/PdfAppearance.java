@@ -46,8 +46,9 @@
  */
 
 package com.lowagie.text.pdf;
-import com.lowagie.text.Rectangle;
 import java.util.HashMap;
+
+import com.lowagie.text.Rectangle;
 
 /**
  * Implements the appearance stream to be used with form fields..

@@ -62,17 +62,36 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.util.*;
-import java.io.*;
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
+import java.util.Stack;
 
 import javax.swing.WindowConstants;
 
-import com.lowagie.text.pdf.PdfGraphics2D;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Jpeg;
 import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfGraphics2D;
 import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.*;
 
 public class PAContext {
 
@@ -355,11 +374,11 @@ public class PAContext {
     jf.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     PAContext pac = new PAContext(new PAPencil(jf));
     HashMap hm = (HashMap) pac.findDictionary("systemdict");
-    Iterator it = new TreeSet(hm.keySet()).iterator();
+    Iterator it = hm.entrySet().iterator();
     while (it.hasNext()) {
-
-      String obname = it.next().toString();
-      Object ob = hm.get(obname);
+      Map.Entry entry = (Map.Entry) it.next();
+      String obname = entry.getKey().toString();
+      Object ob = entry.getValue();
       String typname = ob.getClass().getName();
       System.out.println(obname + ":" + typname);
     }
@@ -798,9 +817,7 @@ public class PAContext {
         }
         java.awt.Font fn=(java.awt.Font)data[0];
         System.out.println("Fonthoehe:"+fn.getSize2D());
-        /**
-         * @todo two times the same?
-         */
+        //todo two times the same?
         context.pencil.graphics.setFont( fn);
         context.pencil.state.font=fn;
       }
@@ -1263,9 +1280,7 @@ systemDict.put("currentrgbcolor", new PACommand() {
           newStroke = new BasicStroke( (float) data[0], BasicStroke.CAP_ROUND,
                                       BasicStroke.JOIN_ROUND);
         }
-        /**
-         * @todo two times the same?
-         */
+        //todo two times the same?
         context.pencil.graphics.setStroke(newStroke);
 //        context.pencil.state.stroke=newStroke;
       }
@@ -1461,14 +1476,14 @@ systemDict.put("currentrgbcolor", new PACommand() {
     // true
     systemDict.put("true", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        context.operands.push(new Boolean(true));
+        context.operands.push(Boolean.TRUE);
       }
     });
 
     // false
     systemDict.put("false", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        context.operands.push(new Boolean(false));
+        context.operands.push(Boolean.FALSE);
       }
     });
 
@@ -1489,10 +1504,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 < d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1503,10 +1518,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.compareTo(s1) < 0) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
       }
@@ -1529,10 +1544,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 > d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1543,10 +1558,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.compareTo(s1) > 0) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
       }
@@ -1568,10 +1583,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 >= d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1582,10 +1597,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.compareTo(s1) >= 0) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
       }
@@ -1607,10 +1622,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 != d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1621,10 +1636,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.equals(s1)) {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
           else {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
         }
       }
@@ -1647,10 +1662,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           d0 = ( (Number) data[0]).doubleValue();
           d1 = ( (Number) data[1]).doubleValue();
           if (d0 == d1) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
         else {
@@ -1661,10 +1676,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           s0 = (String) data[0];
           s1 = (String) data[1];
           if (s0.compareTo(s1) == 0) {
-            context.operands.push(new Boolean(true));
+            context.operands.push(Boolean.TRUE);
           }
           else {
-            context.operands.push(new Boolean(false));
+            context.operands.push(Boolean.FALSE);
           }
         }
       }
@@ -1938,10 +1953,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
         }
         foundObject = context.findIdentifier(patoken.value);
         if (foundObject != null) {
-          context.operands.push(new Boolean(true));
+          context.operands.push(Boolean.TRUE);
         }
         else {
-          context.operands.push(new Boolean(false));
+          context.operands.push(Boolean.FALSE);
         }
       }
     });
@@ -1962,10 +1977,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
         foundObject = context.findDictionary(patoken.value);
         if (foundObject != null) {
           context.operands.push(foundObject);
-          context.operands.push(new Boolean(true));
+          context.operands.push(Boolean.TRUE);
         }
         else {
-          context.operands.push(new Boolean(false));
+          context.operands.push(Boolean.FALSE);
         }
       }
     });
@@ -2025,8 +2040,6 @@ systemDict.put("currentrgbcolor", new PACommand() {
     // currentflat PENDING(uweh):placeholder for now
     systemDict.put("currentflat", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
-        PdfContentByte cb = pdfg2d.getContent();
         context.operands.push(new Double(1.0f));
       }
     });
@@ -2276,16 +2289,16 @@ systemDict.put("currentrgbcolor", new PACommand() {
     // initmatrix
     systemDict.put("initmatrix", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
-        PdfContentByte cb = pdfg2d.getContent();
+//       PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
+//       PdfContentByte cb = pdfg2d.getContent();
 //       cb.transform(Affine);
       }
     });
     // initclip
     systemDict.put("initclip", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
-        PdfContentByte cb = pdfg2d.getContent();
+//       PdfGraphics2D pdfg2d = (PdfGraphics2D) context.pencil.graphics;
+//       PdfContentByte cb = pdfg2d.getContent();
         context.pencil.clippath();
 //       pdfg2d.setClip(context.);
 //    if(!PAContext.IgnoreUnknownCommands)
@@ -2426,9 +2439,9 @@ systemDict.put("currentrgbcolor", new PACommand() {
            *
            * @return the next byte of data, or <code>-1</code> if the end of the stream is reached.
            * @throws IOException if an I/O error occurs.
-           * @todo Implement this java.io.InputStream method
            */
           public int read() throws IOException {
+        	//todo: implement this java.io.InputStream method
             return jcs.readChar();
           }
 
@@ -2532,8 +2545,7 @@ systemDict.put("currentrgbcolor", new PACommand() {
       public void execute(PAContext context) throws PainterException {
         String filtername;
         filtername = (String) ( (PAToken) context.popOperands(1)[0]).value;
-        Object obj;
-        while (! ( (obj = context.peekOperand()) instanceof InputStream)) {
+        while (! ( (context.peekOperand()) instanceof InputStream)) {
           Object param = context.popOperands(1);
         }
 
@@ -2551,9 +2563,9 @@ systemDict.put("currentrgbcolor", new PACommand() {
              *
              * @return the next byte of data, or <code>-1</code> if the end of the stream is reached.
              * @throws IOException if an I/O error occurs.
-             * @todo Implement this java.io.InputStream method
              */
             public int read() throws IOException {
+              //todo: implement this java.io.InputStream method
               int firstchar,secondchar;
               for(;;){
                 firstchar=is.read();
@@ -2644,35 +2656,37 @@ systemDict.put("currentrgbcolor", new PACommand() {
         }
         else if (data[0] instanceof HashMap){
           HashMap hsm = (HashMap) data[0];
-          Iterator it = hsm.keySet().iterator();
+          Iterator it = hsm.entrySet().iterator();
           int width = 0, height = 0, bitspercomponent = 0;
           int imagetype = 0;
           InputStream datasrc = null;
           Object decode = null;
           Object imagematrix = null;
           while (it.hasNext()) {
-            PAToken token = (PAToken) it.next();
-            if (token.value.toString().equals("ImageType")) {
-              imagetype = ( (Number) hsm.get(token)).intValue();
+            Map.Entry entry = (Map.Entry) it.next();
+            PAToken token = (PAToken) entry.getKey();
+            String tokenString = token.value.toString();
+            Object value = entry.getValue();
+            if (tokenString.equals("ImageType")) {
+              imagetype = ( (Number) value).intValue();
             }
-            if (token.value.toString().equals("DataSource")) {
-              datasrc = (InputStream) hsm.get(token);
+            else if (tokenString.equals("DataSource")) {
+              datasrc = (InputStream) value;
             }
-
-            if (token.value.toString().equals("BitsPerComponent")) {
-              bitspercomponent = ( (Number) hsm.get(token)).intValue();
+            else if (tokenString.equals("BitsPerComponent")) {
+              bitspercomponent = ( (Number) value).intValue();
             }
-            if (token.value.toString().equals("Width")) {
-              width = ( (Number) hsm.get(token)).intValue();
+            else if (tokenString.equals("Width")) {
+              width = ( (Number) value).intValue();
             }
-            if (token.value.toString().equals("Height")) {
-              height = ( (Number) hsm.get(token)).intValue();
+            else if (tokenString.equals("Height")) {
+              height = ( (Number) value).intValue();
             }
-            if (token.value.toString().equals("Decode")) {
-              decode = ( (Object) hsm.get(token));
+            else if (tokenString.equals("Decode")) {
+              decode = value;
             }
-            if (token.value.toString().equals("ImageMatrix")) {
-              imagematrix = ( (Object) hsm.get(token));
+            else if (tokenString.equals("ImageMatrix")) {
+              imagematrix = value;
             }
           }
 
@@ -2744,13 +2758,13 @@ systemDict.put("currentrgbcolor", new PACommand() {
     systemDict.put("cleardictstack", new PACommand() {
       public void execute(PAContext context) throws PainterException {
         context.dictionaries.clear();
-        HashMap systemDict = context.constructSystemDict();
-        context.dictionaries.push(systemDict);
+        HashMap newSystemDict = context.constructSystemDict();
+        context.dictionaries.push(newSystemDict);
         HashMap globalDict = context.constructGlobalDict();
         context.dictionaries.push(globalDict);
         HashMap userDict = context.constructUserDict();
-        systemDict.put("userdict", userDict);
-        systemDict.put("globaldict", globalDict);
+        newSystemDict.put("userdict", userDict);
+        newSystemDict.put("globaldict", globalDict);
         context.dictionaries.push(userDict);
       }
     });
@@ -2789,7 +2803,7 @@ systemDict.put("currentrgbcolor", new PACommand() {
           throw new PainterException("stopped: wrong arguments");
         }
         context.engine.process(patoken);
-        context.operands.push(new Boolean(false));
+        context.operands.push(Boolean.FALSE);
       }
     });
     systemDict.put("systemdict", systemDict);

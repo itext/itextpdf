@@ -50,10 +50,11 @@
 
 package com.lowagie.text.pdf;
 
-import java.net.URL;
-import com.lowagie.text.ExceptionConverter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.

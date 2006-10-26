@@ -47,9 +47,9 @@
 package com.lowagie.text.pdf;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.ArrayList;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 /** Reads an FDF form and makes the fields available
  * @author Paulo Soares (psoares@consiste.pt)
  */
@@ -135,7 +135,7 @@ public class FdfReader extends PdfReader {
         }
     }
     
-    protected void readFields() throws IOException {
+    protected void readFields() {
         catalog = (PdfDictionary)getPdfObject(trailer.get(PdfName.ROOT));
         PdfDictionary fdf = (PdfDictionary)getPdfObject(catalog.get(PdfName.FDF));
         PdfString fs = (PdfString)getPdfObject(fdf.get(PdfName.F));

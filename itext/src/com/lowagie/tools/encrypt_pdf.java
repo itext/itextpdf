@@ -49,12 +49,12 @@
  */
 package com.lowagie.tools;
 
+import java.io.FileOutputStream;
+import java.util.HashMap;
+
 import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
-
-import java.io.FileOutputStream;
-import java.util.HashMap;
 
 /**
  * Encrypts a PDF document. It needs iText (http://www.lowagie.com/iText).

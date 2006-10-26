@@ -337,40 +337,40 @@ public class ElementTags {
     public static final String ANNOTATION = "annotation";
     
 /** attribute of the annotation tag */
-    public static String FILE = "file";
+    public static final String FILE = "file";
     
 /** attribute of the annotation tag */
-    public static String DESTINATION = "destination";
+    public static final String DESTINATION = "destination";
     
 /** attribute of the annotation tag */
-    public static String PAGE = "page";
+    public static final String PAGE = "page";
     
 /** attribute of the annotation tag */
-    public static String NAMED = "named";
+    public static final String NAMED = "named";
     
 /** attribute of the annotation tag */
-    public static String APPLICATION = "application";
+    public static final String APPLICATION = "application";
     
 /** attribute of the annotation tag */
-    public static String PARAMETERS = "parameters";
+    public static final String PARAMETERS = "parameters";
     
 /** attribute of the annotation tag */
-    public static String OPERATION = "operation";
+    public static final String OPERATION = "operation";
     
 /** attribute of the annotation tag */
-    public static String DEFAULTDIR = "defaultdir";
+    public static final String DEFAULTDIR = "defaultdir";
     
 /** attribute of the annotation tag */
-    public static String LLX = "llx";
+    public static final String LLX = "llx";
     
 /** attribute of the annotation tag */
-    public static String LLY = "lly";
+    public static final String LLY = "lly";
     
 /** attribute of the annotation tag */
-    public static String URX = "urx";
+    public static final String URX = "urx";
     
 /** attribute of the annotation tag */
-    public static String URY = "ury";
+    public static final String URY = "ury";
     
 /** attribute of the annotation tag */
     public static final String CONTENT = "content";

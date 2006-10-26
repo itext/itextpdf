@@ -50,9 +50,10 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
-import java.util.HashMap;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+
+import com.lowagie.text.ExceptionConverter;
 /** Each font in the document will have an instance of this class
  * where the characters used will be represented.
  *

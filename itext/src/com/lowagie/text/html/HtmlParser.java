@@ -57,9 +57,8 @@ import java.io.Reader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.DocListener;
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.xml.XmlParser;
 
 /**
@@ -92,9 +91,6 @@ public class HtmlParser extends XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
     }
     
 /**
@@ -123,9 +119,6 @@ public class HtmlParser extends XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
         }
     }
     
@@ -156,9 +149,6 @@ public class HtmlParser extends XmlParser {
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
         }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
-        }
     }
     
 /**
@@ -187,9 +177,6 @@ public class HtmlParser extends XmlParser {
         }
         catch(IOException ioe) {
             throw new ExceptionConverter(ioe);
-        }
-        catch(DocumentException de) {
-            throw new ExceptionConverter(de);
         }
     }
     

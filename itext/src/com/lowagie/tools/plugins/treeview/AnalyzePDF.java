@@ -51,20 +51,25 @@ package com.lowagie.tools.plugins.treeview;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import com.lowagie.text.pdf.*;
-
-import java.util.Set;
-import java.util.Iterator;
-import javax.swing.table.TableModel;
-import javax.swing.table.AbstractTableModel;
+import com.lowagie.text.pdf.PRIndirectReference;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfString;
 
 public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	DefaultMutableTreeNode root;
@@ -132,7 +137,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 			 * @param columnIndex
 			 *            the index of the column
 			 * @return the name of the column
-			 * @todo Implement this javax.swing.table.TableModel method
 			 */
 			public String getColumnName(int columnIndex) {
 				switch (columnIndex) {
@@ -156,8 +160,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 *            PdfDictionary
 	 * @param pdfreader
 	 *            PdfReader
-	 * @param count_in_leaf
-	 *            int
 	 * @param node
 	 *            DefaultMutableTreeNode
 	 */
@@ -195,22 +197,22 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 			leaf = new OutlinelistTreeNode(title, kid);
 			node.add(leaf);
 			PdfDictionary first = (PdfDictionary) PdfReader
-					.getPdfObject((PRIndirectReference) kid.get(PdfName.FIRST));
+					.getPdfObject(kid.get(PdfName.FIRST));
 			if (first != null) {
 				iterateOutlines(first, pdfreader, leaf);
 			} else {
 				PdfDictionary se = (PdfDictionary) PdfReader
-						.getPdfObject((PRIndirectReference) kid
+						.getPdfObject(kid
 								.get(new PdfName("SE")));
 				if (se != null) {
 					iterateObjects(se, pdfreader, leaf);
 				}
-				PdfObject dest = (PdfObject) PdfReader.getPdfObject(kid
+				PdfObject dest = PdfReader.getPdfObject(kid
 						.get(PdfName.DEST));
 				if (dest != null) {
 					iterateObjects(dest, pdfreader, leaf);
 				}
-				PdfObject a = (PdfObject) PdfReader.getPdfObject(kid
+				PdfObject a = PdfReader.getPdfObject(kid
 						.get(PdfName.A));
 				if (a != null) {
 					iterateObjects(a, pdfreader, leaf);
@@ -282,7 +284,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 			leaf = new SimpletextTreeNode("PRIndirectReference " + pdfobj);
 			node.add(leaf);
 			PdfObject target = PdfReader
-					.getPdfObject((PRIndirectReference) pdfobj);
+					.getPdfObject(pdfobj);
 			if (target != null) {
 				iterateObjects(target, pdfreader, leaf);
 			}
@@ -343,7 +345,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * Returns the root of the tree.
 	 * 
 	 * @return the root of the tree
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public Object getRoot() {
 		return root;
@@ -358,7 +359,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * @param index
 	 *            int
 	 * @return the child of <code>parent</code> at index <code>index</code>
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public Object getChild(Object parent, int index) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
@@ -371,7 +371,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * @param parent
 	 *            a node in the tree, obtained from this data source
 	 * @return the number of children of the node <code>parent</code>
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public int getChildCount(Object parent) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
@@ -384,7 +383,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * @param node
 	 *            a node in the tree, obtained from this data source
 	 * @return true if <code>node</code> is a leaf
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public boolean isLeaf(Object node) {
 		DefaultMutableTreeNode leaf = (DefaultMutableTreeNode) node;
@@ -399,7 +397,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 *            path to the node that the user has altered
 	 * @param newValue
 	 *            the new value from the TreeCellEditor
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public void valueForPathChanged(TreePath path, Object newValue) {
 		throw new RuntimeException(
@@ -416,7 +413,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * @return the index of the child in the parent, or -1 if either
 	 *         <code>child</code> or <code>parent</code> are
 	 *         <code>null</code>
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public int getIndexOfChild(Object parent, Object child) {
 		DefaultMutableTreeNode parentobj = (DefaultMutableTreeNode) parent;
@@ -489,8 +485,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * When an object implementing interface <code>Runnable</code> is used to
 	 * create a thread, starting the thread causes the object's <code>run</code>
 	 * method to be called in that separately executing thread.
-	 * 
-	 * @todo Diese java.lang.Runnable-Methode implementieren
 	 */
 	public void run() {
 		try {
@@ -511,7 +505,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 				PdfObject firstindref = rootOutlines.get(PdfName.FIRST);
 				if (firstindref != null) {
 					PdfDictionary first = (PdfDictionary) PdfReader
-							.getPdfObject((PRIndirectReference) firstindref);
+							.getPdfObject(firstindref);
 					if (first != null) {
 						iterateOutlines(first, reader, outlinetree);
 					}

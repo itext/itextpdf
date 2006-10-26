@@ -50,18 +50,19 @@
 
 package com.lowagie.text.pdf;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
-import java.util.Iterator;
-import com.lowagie.text.Phrase;
+
 import com.lowagie.text.Chunk;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Graphic;
-import com.lowagie.text.ListItem;
-import com.lowagie.text.Element;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Graphic;
 import com.lowagie.text.Image;
+import com.lowagie.text.ListItem;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.SimpleTable;
 
 /**
@@ -1459,7 +1460,7 @@ public class ColumnText {
      * @return true or false
      */
     public boolean zeroHeightElement() {
-        return composite == true && compositeElements.size() > 0 && ((Element)compositeElements.getFirst()).type() == Element.GRAPHIC;
+        return composite && compositeElements.size() > 0 && ((Element)compositeElements.getFirst()).type() == Element.GRAPHIC;
     }
 
     /**

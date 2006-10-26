@@ -49,8 +49,8 @@
 package com.lowagie.text.pdf;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -81,7 +81,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
             SimpleXMLParser.parse(this, fin);
         }
         finally {
-            try{fin.close();}catch(Exception e){}
+            try{if (fin != null) {fin.close();}}catch(Exception e){}
         }
     }
     
@@ -183,7 +183,7 @@ public class XfdfReader implements SimpleXMLDocHandler {
      */    
     public void startDocument()
     {
-        fileSpec = new String("");	// and this too...
+        fileSpec = "";
     }
     /**
      * Called after the document is parsed.

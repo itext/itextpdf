@@ -55,7 +55,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StreamTokenizer;
-
 import java.util.Enumeration;
 
 /**
@@ -123,7 +122,7 @@ public class CvsLogParser implements Enumeration {
 					break;
 				case StreamTokenizer.TT_WORD:
 					line.append(st.sval);
-					line.append(" ");
+					line.append(' ');
 					break;
 				case StreamTokenizer.TT_NUMBER:
 					if (st.nval > 0 && line.toString().endsWith("selected revisions :")) {

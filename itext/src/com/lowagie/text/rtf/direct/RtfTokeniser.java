@@ -53,8 +53,6 @@ package com.lowagie.text.rtf.direct;
 import java.io.IOException;
 import java.io.Reader;
 
-import com.lowagie.text.DocumentException;
-
 /**
  * The RtfTokeniser takes an RTF document stream and
  * turns it into a set of RTF tokens. Five groups of
@@ -70,6 +68,7 @@ import com.lowagie.text.DocumentException;
  * 
  * @version $Revision$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
+ * @author Bullo (bullo70@users.sourceforge.net)
  */
 public class RtfTokeniser {
 	/**
@@ -120,11 +119,10 @@ public class RtfTokeniser {
 	 * 
 	 * @param reader The Reader to read the RTF document from.
 	 * @throws IOException On I/O errors.
-	 * @throws DocumentException On errors writing the document.
 	 */
-	public void tokenise(Reader reader) throws IOException, DocumentException {
+	public void tokenise(Reader reader) throws IOException {
 		char[] nextChar = new char[1];
-		String temp = "";
+		StringBuffer temp = new StringBuffer();
 		this.state = TOKENISER_STATE_READY;
 		this.groupLevel = 0;
 		while(reader.read(nextChar) != -1) {
@@ -137,25 +135,25 @@ public class RtfTokeniser {
 					groupLevel--;
 				} else if(nextChar[0] == '\\') {
 					this.state = TOKENISER_STATE_SLASH;
-					temp = "";
+					temp = new StringBuffer();
 				} else {
 					this.state = TOKENISER_STATE_IN_TEXT;
-					temp = temp + nextChar[0];
+					temp.append(nextChar[0]);
 				}
 			} else if((this.state & TOKENISER_STATE_SLASH) == TOKENISER_STATE_SLASH) { // A slash signals a control character or word or an escaped character
 				if(nextChar[0] == '{') {
 					this.state = TOKENISER_STATE_IN_TEXT;
-					temp = temp + "\\{";
+					temp.append("\\{");
 				} else if(nextChar[0] == '}') {
 					this.state = TOKENISER_STATE_IN_TEXT;
-					temp = temp + "\\}";
+					temp.append("\\}");
 				} else if(nextChar[0] == '\\') {
 					this.state = TOKENISER_STATE_IN_TEXT;
-					temp = temp + "\\\\";
+					temp.append("\\\\");
 				} else {
 					if((this.state & TOKENISER_STATE_IN_TEXT) == TOKENISER_STATE_IN_TEXT) { // A control word or character closes previous text token
-						this.rtfParser.handleText(temp, this.groupLevel);
-						temp = "";
+						this.rtfParser.handleText(temp.toString(), this.groupLevel);
+						temp = new StringBuffer();
 					}
 					if(nextChar[0] == '|') {
 						this.state = TOKENISER_STATE_READY;
@@ -177,7 +175,8 @@ public class RtfTokeniser {
 						this.rtfParser.handleCtrlCharacter("\\*", this.groupLevel);
 					} else {
 						this.state = TOKENISER_STATE_IN_CTRL_WORD;
-						temp = "\\" + nextChar[0];
+						temp = new StringBuffer("\\");
+						temp.append(nextChar[0]);
 					}
 				}
 			} else if(this.state == TOKENISER_STATE_IN_CTRL_WORD) { // Control words run until a space, close or open group or another control word is found.
@@ -185,56 +184,56 @@ public class RtfTokeniser {
 					nextChar[0] = ' ';
 				}
 				if(nextChar[0] == '{') {
-					this.rtfParser.handleCtrlWord(temp, this.groupLevel);
+					this.rtfParser.handleCtrlWord(temp.toString(), this.groupLevel);
 					this.rtfParser.handleOpenGroup(this.groupLevel);
 					groupLevel++;
 					this.state = TOKENISER_STATE_READY;
-					temp = "";
+					temp = new StringBuffer();
 				} else if(nextChar[0] == '}') {
-					this.rtfParser.handleCtrlWord(temp, this.groupLevel);
+					this.rtfParser.handleCtrlWord(temp.toString(), this.groupLevel);
 					this.rtfParser.handleCloseGroup(this.groupLevel);
 					groupLevel--;
 					this.state = TOKENISER_STATE_READY;
-					temp = "";
+					temp = new StringBuffer();
 				} else if(nextChar[0] == '\\') {
-					this.rtfParser.handleCtrlWord(temp, this.groupLevel);
+					this.rtfParser.handleCtrlWord(temp.toString(), this.groupLevel);
 					this.state = TOKENISER_STATE_SLASH;
-					temp = "";
+					temp = new StringBuffer();
 				} else if(nextChar[0] == ' ') {
-					this.rtfParser.handleCtrlWord(temp, this.groupLevel);
+					this.rtfParser.handleCtrlWord(temp.toString(), this.groupLevel);
 					this.rtfParser.handleText(" ", this.groupLevel);
 					this.state = TOKENISER_STATE_READY;
-					temp = "";
+					temp = new StringBuffer();
 				} else if(nextChar[0] == ';') {
-					this.rtfParser.handleCtrlWord(temp, this.groupLevel);
+					this.rtfParser.handleCtrlWord(temp.toString(), this.groupLevel);
 					this.rtfParser.handleText(";", this.groupLevel);
 					this.state = TOKENISER_STATE_READY;
-					temp = "";
+					temp = new StringBuffer();
 				} else {
-					temp = temp + nextChar[0];
+					temp.append(nextChar[0]);
 				}
 			} else if(this.state == TOKENISER_STATE_IN_TEXT) { // Text tokens are closed by control characters or words or open and close groups
 				if(nextChar[0] == '{') {
-					this.rtfParser.handleText(temp, this.groupLevel);
+					this.rtfParser.handleText(temp.toString(), this.groupLevel);
 					this.rtfParser.handleOpenGroup(this.groupLevel);
 					groupLevel++;
 					this.state = TOKENISER_STATE_READY;
-					temp = "";
+					temp = new StringBuffer();
 				} else if(nextChar[0] == '}') {
-					this.rtfParser.handleText(temp, this.groupLevel);
+					this.rtfParser.handleText(temp.toString(), this.groupLevel);
 					this.rtfParser.handleCloseGroup(this.groupLevel);
 					groupLevel--;
 					this.state = TOKENISER_STATE_READY;
-					temp = "";
+					temp = new StringBuffer();
 				} else if(nextChar[0] == '\\') {
 					this.state = TOKENISER_STATE_IN_TEXT | TOKENISER_STATE_SLASH;
 				} else {
-					temp = temp + nextChar[0];
+					temp.append(nextChar[0]);
 				}
 			}
 		}
-		if((this.state & TOKENISER_STATE_IN_TEXT) == TOKENISER_STATE_IN_TEXT && !temp.equals("")) { // If at the end a text token was being parsed, emmit that token. Required for RTF fragments
-			this.rtfParser.handleText(temp, this.groupLevel);
+		if((this.state & TOKENISER_STATE_IN_TEXT) == TOKENISER_STATE_IN_TEXT && !temp.toString().equals("")) { // If at the end a text token was being parsed, emmit that token. Required for RTF fragments
+			this.rtfParser.handleText(temp.toString(), this.groupLevel);
 		}
 	}
 }

@@ -48,33 +48,34 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Font;
-import com.lowagie.text.Element;
-import com.lowagie.text.Image;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Chunk;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.text.SimpleDateFormat;
+import java.io.EOFException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.security.PrivateKey;
+import java.security.cert.CRL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.cert.CRL;
-import java.security.PrivateKey;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.EOFException;
-import java.io.RandomAccessFile;
-import java.io.File;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 
 /**
  * This class takes care of the cryptographic options and appearances that form a signature.
@@ -107,8 +108,8 @@ public class PdfSignatureAppearance {
      */
     public static final PdfName WINCER_SIGNED = PdfName.ADOBE_PPKMS;
 
-    private static final float topSection = 0.3f;
-    private static final float margin = 2;
+    private static final float TOP_SECTION = 0.3f;
+    private static final float MARGIN = 2;
     private Rectangle rect;
     private Rectangle pageRect;
     private PdfTemplate app[] = new PdfTemplate[5];
@@ -135,7 +136,6 @@ public class PdfSignatureAppearance {
     private PdfSigGenericPKCS sigStandard;
     private int range[];
     private RandomAccessFile raf;
-    private int rangePosition = 0;
     private byte bout[];
     private int boutLen;
     private byte externalDigest[];
@@ -374,9 +374,8 @@ public class PdfSignatureAppearance {
      * for further details.
      * @return the main appearance layer
      * @throws DocumentException on error
-     * @throws IOException on error
      */    
-    public PdfTemplate getAppearance() throws DocumentException, IOException {
+    public PdfTemplate getAppearance() throws DocumentException {
         if (app[0] == null) {
             PdfTemplate t = app[0] = new PdfTemplate(writer);
             t.setBoundingBox(new Rectangle(100, 100));
@@ -393,13 +392,13 @@ public class PdfSignatureAppearance {
             String text;
             if (layer2Text == null) {
                 StringBuffer buf = new StringBuffer();
-                buf.append("Digitally signed by ").append(PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN")).append("\n");
+                buf.append("Digitally signed by ").append(PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN")).append('\n');
                 SimpleDateFormat sd = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss z");
                 buf.append("Date: ").append(sd.format(signDate.getTime()));
                 if (reason != null)
-                    buf.append("\n").append("Reason: ").append(reason);
+                    buf.append('\n').append("Reason: ").append(reason);
                 if (location != null)
-                    buf.append("\n").append("Location: ").append(location);
+                    buf.append('\n').append("Location: ").append(location);
                 text = buf.toString();
             }
             else
@@ -436,40 +435,40 @@ public class PdfSignatureAppearance {
                 (render == SignatureRenderGraphicAndDescription && this.signatureGraphic != null)) {
                 // origin is the bottom-left
                 signatureRect = new Rectangle(
-                    margin, 
-                    margin, 
-                    rect.width() / 2 - margin,
-                    rect.height() - margin);
+                    MARGIN, 
+                    MARGIN, 
+                    rect.width() / 2 - MARGIN,
+                    rect.height() - MARGIN);
                 dataRect = new Rectangle(
-                    rect.width() / 2 +  margin / 2, 
-                    margin, 
-                    rect.width() - margin / 2,
-                    rect.height() - margin);
+                    rect.width() / 2 +  MARGIN / 2, 
+                    MARGIN, 
+                    rect.width() - MARGIN / 2,
+                    rect.height() - MARGIN);
 
                 if (rect.height() > rect.width()) {
                     signatureRect = new Rectangle(
-                        margin, 
+                        MARGIN, 
                         rect.height() / 2, 
-                        rect.width() - margin,
+                        rect.width() - MARGIN,
                         rect.height());
                     dataRect = new Rectangle(
-                        margin, 
-                        margin, 
-                        rect.width() - margin,
-                        rect.height() / 2 - margin);
+                        MARGIN, 
+                        MARGIN, 
+                        rect.width() - MARGIN,
+                        rect.height() / 2 - MARGIN);
                 }
             }
             else {
                 dataRect = new Rectangle(
-                    margin, 
-                    margin, 
-                    rect.width() - margin,
-                    rect.height() * (1 - topSection) - margin);
+                    MARGIN, 
+                    MARGIN, 
+                    rect.width() - MARGIN,
+                    rect.height() * (1 - TOP_SECTION) - MARGIN);
             }
 
             if (render == SignatureRenderNameAndDescription) {
                 String signedBy = PdfPKCS7.getSubjectFields((X509Certificate)certChain[0]).getField("CN");
-                Rectangle sr2 = new Rectangle(signatureRect.width() - margin, signatureRect.height() - margin );
+                Rectangle sr2 = new Rectangle(signatureRect.width() - MARGIN, signatureRect.height() - MARGIN );
                 float signedSize = fitText(font, signedBy, sr2, -1, runDirection);
 
                 ColumnText ct2 = new ColumnText(t);
@@ -517,7 +516,7 @@ public class PdfSignatureAppearance {
         }
         if (app[4] == null && !acro6Layers) {
             PdfTemplate t = app[4] = new PdfTemplate(writer);
-            t.setBoundingBox(new Rectangle(0, rect.height() * (1 - topSection), rect.right(), rect.top()));
+            t.setBoundingBox(new Rectangle(0, rect.height() * (1 - TOP_SECTION), rect.right(), rect.top()));
             writer.addDirectTemplateSimple(t, new PdfName("n4"));
             Font font;
             if (layer2Font == null)
@@ -528,11 +527,11 @@ public class PdfSignatureAppearance {
             String text = "Signature Not Verified";
             if (layer4Text != null)
                 text = layer4Text;
-            Rectangle sr = new Rectangle(rect.width() - 2 * margin, rect.height() * topSection - 2 * margin);
+            Rectangle sr = new Rectangle(rect.width() - 2 * MARGIN, rect.height() * TOP_SECTION - 2 * MARGIN);
             size = fitText(font, text, sr, 15, runDirection);
             ColumnText ct = new ColumnText(t);
             ct.setRunDirection(runDirection);
-            ct.setSimpleColumn(new Phrase(text, font), margin, 0, rect.width() - margin, rect.height() - margin, size, Element.ALIGN_LEFT);
+            ct.setSimpleColumn(new Phrase(text, font), MARGIN, 0, rect.width() - MARGIN, rect.height() - MARGIN, size, Element.ALIGN_LEFT);
             ct.go();
         }
         int rotation = writer.reader.getPageRotation(page);
@@ -1088,38 +1087,6 @@ public class PdfSignatureAppearance {
          PdfArray types = new PdfArray();
          types.add(reference);
          crypto.put(new PdfName("Reference"), types);
-    }
-    
-    private static int indexArray(byte bout[], int position, String search) {
-        byte ss[] = PdfEncodings.convertToBytes(search, null);
-        while (true) {
-            int k;
-            for (k = 0; k < ss.length; ++k) {
-                if (ss[k] != bout[position + k])
-                    break;
-            }
-            if (k == ss.length)
-                return position;
-            ++position;
-        }
-    }
-
-    private static int indexFile(RandomAccessFile raf, int position, String search) throws IOException {
-        byte ss[] = PdfEncodings.convertToBytes(search, null);
-        while (true) {
-            raf.seek(position);
-            int k;
-            for (k = 0; k < ss.length; ++k) {
-                int b = raf.read();
-                if (b < 0)
-                    throw new EOFException("Unexpected EOF");
-                if (ss[k] != (byte)b)
-                    break;
-            }
-            if (k == ss.length)
-                return position;
-            ++position;
-        }
     }
     
     /**

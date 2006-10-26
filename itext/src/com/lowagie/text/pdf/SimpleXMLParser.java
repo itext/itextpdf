@@ -46,9 +46,14 @@
  */
 package com.lowagie.text.pdf;
 
-import java.io.*;
-import java.util.Stack;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
+import java.util.Stack;
 
 /**
  * A simple XML and HTML parser.  This parser is, like the SAX parser,
@@ -484,7 +489,7 @@ public class SimpleXMLParser {
                     quotec = c;
                     mode = QUOTE;
                 } else if(Character.isWhitespace((char)c)) {
-                    ;
+                    // empty
                 } else if (html && c == '>') {
                     attrs.put(lvalue,sb.toString());
                     sb.setLength(0);
@@ -529,7 +534,7 @@ public class SimpleXMLParser {
                 if(c == '=') {
                     mode = ATTRIBUTE_RVALUE;
                 } else if(Character.isWhitespace((char)c)) {
-                    ;
+                    // empty
                 } else if (html && c == '>') {
                     sb.setLength(0);
                     mode = popMode(st);
@@ -558,7 +563,7 @@ public class SimpleXMLParser {
                 } else if(c == '/') {
                     mode = SINGLE_TAG;
                 } else if(Character.isWhitespace((char)c)) {
-                    ;
+                    // empty
                 } else {
                     mode = ATTRIBUTE_LVALUE;
                     sb.append((char)c);
@@ -607,7 +612,7 @@ public class SimpleXMLParser {
                     break;
                 default:
                     if (onlyASCII && c > 127)
-                        sb.append("&#").append(c).append(";");
+                        sb.append("&#").append(c).append(';');
                     else
                         sb.append((char)c);
             }

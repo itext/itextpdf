@@ -78,7 +78,7 @@ public class PdfNumber extends PdfObject {
     public PdfNumber(String content) {
         super(NUMBER);
         try {
-            value = Double.valueOf(content.trim()).doubleValue();
+            value = Double.parseDouble(content.trim());
             setContent(content);
         }
         catch (NumberFormatException nfe){

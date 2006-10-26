@@ -50,8 +50,8 @@
 
 package com.lowagie.text.pdf;
 import com.lowagie.text.Document;
-import com.lowagie.text.Rectangle;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Rectangle;
 
 /**
  * Allows a class to catch several document events.

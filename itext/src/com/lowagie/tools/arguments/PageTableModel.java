@@ -49,11 +49,13 @@
  */
 package com.lowagie.tools.arguments;
 
-import javax.swing.table.*;
-import com.lowagie.text.pdf.PdfReader;
-import java.io.*;
-import com.lowagie.text.Rectangle;
+import java.io.IOException;
 import java.text.DecimalFormat;
+
+import javax.swing.table.AbstractTableModel;
+
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfReader;
 
 /**
  * A table that shows info about the pages in a PDF document.
@@ -83,9 +85,9 @@ public class PageTableModel extends AbstractTableModel {
 	 * Returns the number of columns in the model.
 	 * 
 	 * @return the number of columns in the model
-	 * @todo Implement this javax.swing.table.TableModel method
 	 */
 	public int getColumnCount() {
+		//todo Implement this javax.swing.table.TableModel method
 		return 4;
 	}
 
@@ -93,9 +95,9 @@ public class PageTableModel extends AbstractTableModel {
 	 * Returns the number of rows in the model.
 	 * 
 	 * @return the number of rows in the model
-	 * @todo Implement this javax.swing.table.TableModel method
 	 */
 	public int getRowCount() {
+		//todo Implement this javax.swing.table.TableModel method
 		return numberOfPages;
 	}
 
@@ -108,9 +110,9 @@ public class PageTableModel extends AbstractTableModel {
 	 * @param columnIndex
 	 *            the column whose value is to be queried
 	 * @return the value Object at the specified cell
-	 * @todo Implement this javax.swing.table.TableModel method
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
+		//todo Implement this javax.swing.table.TableModel method
 		Rectangle rec = reader.getPageSizeWithRotation(rowIndex + 1);
 		switch (columnIndex) {
 		case 0:
@@ -126,7 +128,7 @@ public class PageTableModel extends AbstractTableModel {
 	}
 
 	public String getColumnName(int column) {
-		String name = new Integer(column + 1).toString();
+		String name = Integer.toString(column + 1);
 		switch (column) {
 		case 0:
 			name = "<html>Pagenr<p>" + name + "</html>";

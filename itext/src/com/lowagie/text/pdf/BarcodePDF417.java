@@ -48,14 +48,14 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Image;
-import com.lowagie.text.BadElementException;
-import java.util.ArrayList;
-import java.io.UnsupportedEncodingException;
-import com.lowagie.text.pdf.codec.CCITTG4Encoder;
-import java.awt.Color;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.image.MemoryImageSource;
+import java.util.ArrayList;
+
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.Image;
+import com.lowagie.text.pdf.codec.CCITTG4Encoder;
 
 /** Generates the 2D barcode PDF417. Supports dimensioning auto-sizing, fixed
  * and variable sizes, automatic and manual error levels, raw codeword input,
@@ -575,7 +575,7 @@ public class BarcodePDF417 {
         for (k = 0; k < segmentList.size(); ++k) {
             v = segmentList.get(k);
             vp = segmentList.get(k - 1);
-            vn = segmentList.get(k + 1);;
+            vn = segmentList.get(k + 1);
             if (checkSegmentType(v, 'B') && getSegmentLength(v) == 1) {
                 if (checkSegmentType(vp, 'T') && checkSegmentType(vn, 'T') 
                     && getSegmentLength(vp) + getSegmentLength(vn) >= 3) {
@@ -591,7 +591,7 @@ public class BarcodePDF417 {
         for (k = 0; k < segmentList.size(); ++k) {
             v = segmentList.get(k);
             vp = segmentList.get(k - 1);
-            vn = segmentList.get(k + 1);;
+            vn = segmentList.get(k + 1);
             if (checkSegmentType(v, 'T') && getSegmentLength(v) >= 5) {
                 boolean redo = false;
                 if ((checkSegmentType(vp, 'B') && getSegmentLength(vp) == 1) || checkSegmentType(vp, 'T')) {
@@ -615,7 +615,7 @@ public class BarcodePDF417 {
         for (k = 0; k < segmentList.size(); ++k) {
             v = segmentList.get(k);
             vp = segmentList.get(k - 1);
-            vn = segmentList.get(k + 1);;
+            vn = segmentList.get(k + 1);
             if (checkSegmentType(v, 'B')) {
                 boolean redo = false;
                 if ((checkSegmentType(vp, 'T') && getSegmentLength(vp) < 5) || checkSegmentType(vp, 'B')) {
@@ -1016,7 +1016,6 @@ public class BarcodePDF417 {
     /** Sets the text that will form the barcode. This text is converted
      * to bytes using the encoding Cp437.
      * @param s the text that will form the barcode
-     * @throws UnsupportedEncodingException if the encoding Cp437 is not supported
      */    
     public void setText(String s) {
         this.text = PdfEncodings.convertToBytes(s, "cp437");
@@ -1095,10 +1094,10 @@ public class BarcodePDF417 {
     protected static final int MACRO_SEGMENT_COUNT=923;
     protected static final int MACRO_LAST_SEGMENT=922;
 
-    static String MIXED_SET = "0123456789&\r\t,:#-.$/+%*=^";
-    static String PUNCTUATION_SET = ";<>@[\\]_`~!\r\t,:\n-.$/\"|*()?{}'";
+    private static final String MIXED_SET = "0123456789&\r\t,:#-.$/+%*=^";
+    private static final String PUNCTUATION_SET = ";<>@[\\]_`~!\r\t,:\n-.$/\"|*()?{}'";
 
-    static int CLUSTERS[][] =
+    private static final int CLUSTERS[][] =
     {{
          0x1d5c0, 0x1eaf0, 0x1f57c, 0x1d4e0, 0x1ea78, 0x1f53e, 0x1a8c0, 0x1d470,
          0x1a860, 0x15040, 0x1a830, 0x15020, 0x1adc0, 0x1d6f0, 0x1eb7c, 0x1ace0,
@@ -1455,7 +1454,7 @@ public class BarcodePDF417 {
         0x1c7ea
     }};
     
-    static int ERROR_LEVEL[][] =
+    private static final int ERROR_LEVEL[][] =
     {{
          27, 917
     }, {

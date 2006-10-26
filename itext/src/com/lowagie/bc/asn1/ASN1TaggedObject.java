@@ -60,7 +60,7 @@ public abstract class ASN1TaggedObject
 	public boolean equals(
 		Object o)
 	{
-        if (o == null || !(o instanceof ASN1TaggedObject))
+        if (!(o instanceof ASN1TaggedObject))
         {
             return false;
         }

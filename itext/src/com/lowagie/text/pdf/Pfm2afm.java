@@ -110,7 +110,11 @@
  ********************************************************************/
 package com.lowagie.text.pdf;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 /**
  * Converts a PFM file into an AFM file.

@@ -50,11 +50,14 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DocumentException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.fonts.FontsResourceAnchor;
-import java.io.*;
 
 /** Reads a Type1 font
  *
@@ -154,7 +157,7 @@ class Type1Font extends BaseFont
 /** Types of records in a PFB file. ASCII is 1 and BINARY is 2.
  *  They have to appear in the PFB file in this sequence.
  */
-    private static final int pfbTypes[] = {1, 2, 1};
+    private static final int PFB_TYPES[] = {1, 2, 1};
     
     /** Creates a new Type1 font.
      * @param ttfAfm the AFM file if the input is made with a <CODE>byte</CODE> array
@@ -268,21 +271,14 @@ class Type1Font extends BaseFont
         }
         else
             throw new DocumentException(afmFile + " is not an AFM or PFM font file.");
-        try {
-            EncodingScheme = EncodingScheme.trim();
-            if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
-                fontSpecific = false;
-            }
-            if (!encoding.startsWith("#"))
-                PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
-            createEncoding();
+
+        EncodingScheme = EncodingScheme.trim();
+        if (EncodingScheme.equals("AdobeStandardEncoding") || EncodingScheme.equals("StandardEncoding")) {
+            fontSpecific = false;
         }
-        catch (RuntimeException re) {
-            throw re;
-        }
-        catch (Exception e) {
-            throw new DocumentException(e);
-        }
+        if (!encoding.startsWith("#"))
+            PdfEncodings.convertToBytes(" ", enc); // check if the encoding exists
+        createEncoding();
     }
     
 /** Gets the width from the font according to the <CODE>name</CODE> or,
@@ -357,36 +353,36 @@ class Type1Font extends BaseFont
             else if (ident.equals("Weight"))
                 Weight = tok.nextToken("\u00ff").substring(1);
             else if (ident.equals("ItalicAngle"))
-                ItalicAngle = Float.valueOf(tok.nextToken()).floatValue();
+                ItalicAngle = Float.parseFloat(tok.nextToken());
             else if (ident.equals("IsFixedPitch"))
                 IsFixedPitch = tok.nextToken().equals("true");
             else if (ident.equals("CharacterSet"))
                 CharacterSet = tok.nextToken("\u00ff").substring(1);
             else if (ident.equals("FontBBox"))
             {
-                llx = (int)Float.valueOf(tok.nextToken()).floatValue();
-                lly = (int)Float.valueOf(tok.nextToken()).floatValue();
-                urx = (int)Float.valueOf(tok.nextToken()).floatValue();
-                ury = (int)Float.valueOf(tok.nextToken()).floatValue();
+                llx = (int)Float.parseFloat(tok.nextToken());
+                lly = (int)Float.parseFloat(tok.nextToken());
+                urx = (int)Float.parseFloat(tok.nextToken());
+                ury = (int)Float.parseFloat(tok.nextToken());
             }
             else if (ident.equals("UnderlinePosition"))
-                UnderlinePosition = (int)Float.valueOf(tok.nextToken()).floatValue();
+                UnderlinePosition = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("UnderlineThickness"))
-                UnderlineThickness = (int)Float.valueOf(tok.nextToken()).floatValue();
+                UnderlineThickness = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("EncodingScheme"))
                 EncodingScheme = tok.nextToken("\u00ff").substring(1);
             else if (ident.equals("CapHeight"))
-                CapHeight = (int)Float.valueOf(tok.nextToken()).floatValue();
+                CapHeight = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("XHeight"))
-                XHeight = (int)Float.valueOf(tok.nextToken()).floatValue();
+                XHeight = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("Ascender"))
-                Ascender = (int)Float.valueOf(tok.nextToken()).floatValue();
+                Ascender = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("Descender"))
-                Descender = (int)Float.valueOf(tok.nextToken()).floatValue();
+                Descender = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("StdHW"))
-                StdHW = (int)Float.valueOf(tok.nextToken()).floatValue();
+                StdHW = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("StdVW"))
-                StdVW = (int)Float.valueOf(tok.nextToken()).floatValue();
+                StdVW = (int)Float.parseFloat(tok.nextToken());
             else if (ident.equals("StartCharMetrics"))
             {
                 isMetrics = true;
@@ -421,7 +417,7 @@ class Type1Font extends BaseFont
                 if (ident.equals("C"))
                     C = Integer.valueOf(tokc.nextToken());
                 else if (ident.equals("WX"))
-                    WX = new Integer(Float.valueOf(tokc.nextToken()).intValue());
+                    WX = new Integer((int)Float.parseFloat(tokc.nextToken()));
                 else if (ident.equals("N"))
                     N = tokc.nextToken();
                 else if (ident.equals("B")) {
@@ -464,7 +460,7 @@ class Type1Font extends BaseFont
             {
                 String first = tok.nextToken();
                 String second = tok.nextToken();
-                Integer width = new Integer(Float.valueOf(tok.nextToken()).intValue());
+                Integer width = new Integer((int)Float.parseFloat(tok.nextToken()));
                 Object relates[] = (Object[])KernPairs.get(first);
                 if (relates == null)
                     KernPairs.put(first, new Object[]{second, width});
@@ -513,7 +509,7 @@ class Type1Font extends BaseFont
             for (int k = 0; k < 3; ++k) {
                 if (rf.read() != 0x80)
                     throw new DocumentException("Start marker missing in " + filePfb);
-                if (rf.read() != pfbTypes[k])
+                if (rf.read() != PFB_TYPES[k])
                     throw new DocumentException("Incorrect segment type in " + filePfb);
                 int size = rf.read();
                 size += rf.read() << 8;

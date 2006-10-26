@@ -50,10 +50,12 @@
 
 package com.lowagie.text.pdf.codec.postscript;
 
-import java.io.*;
-import java.awt.*;
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.*;
+import java.awt.Dimension;
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.lowagie.text.PageSize;
+import com.lowagie.text.pdf.PdfContentByte;
 
 public class MetaDoPS {
 
@@ -70,13 +72,13 @@ public class MetaDoPS {
     this.in = in;
   }
 
-  public void readAll() throws IOException, DocumentException {
+  public void readAll() {
 
     cb.saveState();
     java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
         width(), PageSize.A4.height());
     try {
-      PAContext context = new PAContext( (Graphics2D) g2,
+      PAContext context = new PAContext(g2,
                                         new Dimension( (int) PageSize.A4.width(),
           (int) PageSize.A4.height()));
       context.draw(in);

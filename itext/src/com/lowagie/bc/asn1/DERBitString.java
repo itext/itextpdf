@@ -219,7 +219,7 @@ public class DERBitString
     public boolean equals(
         Object  o)
     {
-        if (o == null || !(o instanceof DERBitString))
+        if (!(o instanceof DERBitString))
         {
             return false;
         }

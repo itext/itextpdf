@@ -70,6 +70,7 @@ package com.lowagie.text.pdf;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import com.lowagie.text.ExceptionConverter;
 
 public class CFFFont {
@@ -352,7 +353,7 @@ public class CFFFont {
                             if (nibble >= 0 && nibble <= 9)
                                 item += String.valueOf(nibble);
                             else {
-                                item += "<NIBBLE ERROR: "+String.valueOf(nibble)+">";
+                                item += "<NIBBLE ERROR: " + nibble + '>';
                                 done = true;
                             }
                             break;

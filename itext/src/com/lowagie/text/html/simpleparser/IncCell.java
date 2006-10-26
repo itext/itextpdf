@@ -47,10 +47,14 @@
 
 package com.lowagie.text.html.simpleparser;
 
-import com.lowagie.text.*;
-import com.lowagie.text.markup.*;
-import com.lowagie.text.pdf.*;
 import java.util.ArrayList;
+
+import com.lowagie.text.Element;
+import com.lowagie.text.ElementListener;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.TextElementArray;
+import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.pdf.PdfPCell;
 /**
  *
  * @author  psoares
@@ -90,11 +94,11 @@ public class IncCell implements TextElementArray {
         value = props.getProperty("border");
         float border = 0;
         if (value != null)
-            border = Float.valueOf(value).floatValue();
+            border = Float.parseFloat(value);
         cell.setBorderWidth(border);
         value = props.getProperty("cellpadding");
         if (value != null)
-            cell.setPadding(Float.valueOf(value).floatValue());
+            cell.setPadding(Float.parseFloat(value));
         cell.setUseDescender(true);
         value = props.getProperty("bgcolor");
         cell.setBackgroundColor(MarkupParser.decodeColor(value));

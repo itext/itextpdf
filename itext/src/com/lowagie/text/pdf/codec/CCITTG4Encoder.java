@@ -235,7 +235,7 @@ public class CCITTG4Encoder {
             if (span > bits)	/* constrain span to bit range */
                 span = bits;
             if (n+span < 8)		/* doesn't extend to edge of byte */
-                return (span);
+                return span;
             bits -= span;
             pos++;
         } else
@@ -257,7 +257,7 @@ public class CCITTG4Encoder {
             n = oneruns[bp[pos] & 0xff];
             span += (n > bits ? bits : n);
         }
-        return (span);
+        return span;
     }
     
     private static int find0span(byte[] bp, int offset, int bs, int be) {
@@ -275,7 +275,7 @@ public class CCITTG4Encoder {
             if (span > bits)	/* constrain span to bit range */
                 span = bits;
             if (n+span < 8)		/* doesn't extend to edge of byte */
-                return (span);
+                return span;
             bits -= span;
             pos++;
         } else
@@ -297,7 +297,7 @@ public class CCITTG4Encoder {
             n = zeroruns[bp[pos] & 0xff];
             span += (n > bits ? bits : n);
         }
-        return (span);
+        return span;
     }
     
     private static int finddiff(byte[] bp, int offset, int bs, int be, int color) {

@@ -52,8 +52,8 @@ package com.lowagie.text;
 
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * A <CODE>Paragraph</CODE> is a series of <CODE>Chunk</CODE>s and/or <CODE>Phrases</CODE>.
@@ -80,6 +80,8 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
     
     // membervariables
     
+private static final long serialVersionUID = 7852314969733375514L;
+
 /** The alignment of the text. */
     protected int alignment = Element.ALIGN_UNDEFINED;
     
@@ -232,7 +234,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
             setAlignment(value);
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
         else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));
@@ -241,10 +243,10 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
             setLeading(16);
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.valueOf(value + "f").floatValue());
+            setIndentationLeft(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.valueOf(value + "f").floatValue());
+            setIndentationRight(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.KEEPTOGETHER)) != null) {
             keeptogether = new Boolean(value).booleanValue();
@@ -281,7 +283,7 @@ public class Paragraph extends Phrase implements TextElementArray, MarkupAttribu
             return super.add(list);
         }
         else if (o instanceof Image) {
-            super.addSpecial((Image) o);
+            super.addSpecial(o);
             return true;
         }
         else if (o instanceof Paragraph) {

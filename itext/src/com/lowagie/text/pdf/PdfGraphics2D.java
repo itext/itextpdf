@@ -56,28 +56,32 @@ import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
-import java.awt.Paint;
-import java.awt.GradientPaint;
-import java.awt.TexturePaint;
 import java.awt.MediaTracker;
+import java.awt.Paint;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.TexturePaint;
 import java.awt.Transparency;
+import java.awt.RenderingHints.Key;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -87,19 +91,14 @@ import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.renderable.RenderableImage;
-import java.awt.RenderingHints.Key;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
+import java.io.ByteArrayOutputStream;
 import java.text.AttributedCharacterIterator;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.ArrayList;
-import java.io.ByteArrayOutputStream;
-//
-import java.util.Set;
 import java.util.Iterator;
-import java.awt.font.TextAttribute;
+import java.util.Map;
+import java.util.Set;
 
 public class PdfGraphics2D extends Graphics2D {
     
@@ -108,7 +107,7 @@ public class PdfGraphics2D extends Graphics2D {
     private static final int CLIP = 3;
     private BasicStroke strokeOne = new BasicStroke(1);
     
-    private static AffineTransform IDENTITY = new AffineTransform();
+    private static final AffineTransform IDENTITY = new AffineTransform();
     
     private Font font;
     private BaseFont baseFont;
@@ -157,7 +156,7 @@ public class PdfGraphics2D extends Graphics2D {
     protected int currentFillGState = 255;
     protected int currentStrokeGState = 255;
     
-    public static int AFM_DIVISOR = 1000; // used to calculate coordinates
+    public static final int AFM_DIVISOR = 1000; // used to calculate coordinates
 
     private boolean convertImagesToJPEG = false;
     private float jpegQuality = .95f;
@@ -478,8 +477,8 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
+	 * Method contributed by Alexej Suchov
      * @see Graphics2D#setComposite(Composite)
-	 * @author Alexej Suchov
      */
     public void setComposite(Composite comp) {
         
@@ -508,9 +507,8 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
+	 * Method contributed by Alexej Suchov
      * @see Graphics2D#setPaint(Paint)
-	 * 
-	 * @author Alexej Suchov
      */
     public void setPaint(Paint paint) {
         if (paint == null)
@@ -736,8 +734,8 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
+	 * Method contributed by Alexej Suchov
      * @see Graphics2D#getPaint()
-	 * @author Alexej Suchov
      */
     public Paint getPaint() {
         if (realPaint != null) {
@@ -1516,5 +1514,7 @@ public class PdfGraphics2D extends Graphics2D {
     }
         
     static private class fakeComponent extends Component {
+
+		private static final long serialVersionUID = 6450197945596086638L;
     }
 }

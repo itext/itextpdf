@@ -65,6 +65,8 @@ public class BadPdfFormatException extends PdfException {
     
     // constructors
     
+private static final long serialVersionUID = 1802317735708833538L;
+
 /**
  * Constructs a <CODE>BadPdfFormatException</CODE> whithout a message.
  */

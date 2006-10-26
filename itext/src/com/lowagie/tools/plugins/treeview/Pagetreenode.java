@@ -54,12 +54,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.*;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import com.lowagie.text.pdf.PRStream;
+import com.lowagie.text.pdf.PdfArray;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfNumber;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
 
 public class Pagetreenode extends UpdateableTreeNode {
 
@@ -187,17 +192,17 @@ public class Pagetreenode extends UpdateableTreeNode {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<html>");
 		sb.append("<p>");
-		sb.append("Page " + getPagenumber());
+		sb.append("Page ").append(getPagenumber());
 		sb.append("</p>");
 		sb.append("<p>");
-		sb.append("Size: " + getWidth() + "*" + getHeight());
+		sb.append("Size: ").append(getWidth()).append('*').append(getHeight());
 		sb.append("</p>");
 
 		Set set = dictionary.getKeys();
 		Iterator it = set.iterator();
 		while (it.hasNext()) {
 			sb.append("<p>");
-			sb.append("Key " + it.next().toString());
+			sb.append("Key ").append(it.next().toString());
 			sb.append("</p>");
 		}
 		sb.append("</html>");

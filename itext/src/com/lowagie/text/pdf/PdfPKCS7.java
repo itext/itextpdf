@@ -48,15 +48,17 @@ package com.lowagie.text.pdf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Signature;
-import java.security.MessageDigest;
 import java.security.SignatureException;
 import java.security.cert.CRL;
 import java.security.cert.CRLException;
@@ -65,37 +67,35 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.security.KeyStore;
-import java.io.File;
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import com.lowagie.text.ExceptionConverter;
 
+import com.lowagie.bc.asn1.ASN1EncodableVector;
 import com.lowagie.bc.asn1.ASN1InputStream;
-import com.lowagie.bc.asn1.DERObject;
+import com.lowagie.bc.asn1.ASN1OutputStream;
 import com.lowagie.bc.asn1.ASN1Sequence;
 import com.lowagie.bc.asn1.ASN1Set;
-import com.lowagie.bc.asn1.DERObjectIdentifier;
-import com.lowagie.bc.asn1.DEROctetString;
-import com.lowagie.bc.asn1.DERTaggedObject;
-import com.lowagie.bc.asn1.DERInteger;
 import com.lowagie.bc.asn1.ASN1TaggedObject;
 import com.lowagie.bc.asn1.DERConstructedSet;
-import com.lowagie.bc.asn1.DERSequence;
+import com.lowagie.bc.asn1.DERInteger;
 import com.lowagie.bc.asn1.DERNull;
-import com.lowagie.bc.asn1.ASN1EncodableVector;
+import com.lowagie.bc.asn1.DERObject;
+import com.lowagie.bc.asn1.DERObjectIdentifier;
+import com.lowagie.bc.asn1.DEROctetString;
+import com.lowagie.bc.asn1.DERSequence;
 import com.lowagie.bc.asn1.DERSet;
 import com.lowagie.bc.asn1.DERString;
+import com.lowagie.bc.asn1.DERTaggedObject;
 import com.lowagie.bc.asn1.DERUTCTime;
-import com.lowagie.bc.asn1.ASN1OutputStream;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * This class does all the processing related to signing and verifying a PKCS#7
@@ -161,14 +161,13 @@ public class PdfPKCS7 {
      * @param certsKey the /Cert key
      * @param provider the provider or <code>null</code> for the default provider
      * @throws SecurityException on error
-     * @throws CRLException on error
      * @throws InvalidKeyException on error
      * @throws CertificateException on error
      * @throws NoSuchProviderException on error
      * @throws NoSuchAlgorithmException on error
      * @throws IOException on error
      */    
-    public PdfPKCS7(byte[] contentsKey, byte[] certsKey, String provider) throws SecurityException, CRLException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, IOException {
+    public PdfPKCS7(byte[] contentsKey, byte[] certsKey, String provider) throws SecurityException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, IOException {
         CertificateFactory cf;
         if (provider == null)
             cf = CertificateFactory.getInstance("X.509");
@@ -463,7 +462,7 @@ public class PdfPKCS7 {
      * @return the X.509 certificates associated with this PKCS#7 object
      */
     public Certificate[] getCertificates() {
-        return (X509Certificate[])certs.toArray(new X509Certificate[0]);
+        return (X509Certificate[])certs.toArray(new X509Certificate[certs.size()]);
     }
     
     /**
@@ -567,7 +566,7 @@ public class PdfPKCS7 {
             throw new ExceptionConverter(e);
         }
         finally {
-            try{fin.close();}catch(Exception ex){}
+            try{if (fin != null) {fin.close();}}catch(Exception ex){}
         }
     }
     

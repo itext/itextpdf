@@ -50,7 +50,6 @@
 
 package com.lowagie.text.xml.xmp;
 
-import java.io.IOException;
 
 /**
  * An implementation of an XmpSchema.
@@ -95,10 +94,7 @@ public class DublinCoreSchema extends XmpSchema {
 	public static final String TYPE = "dc:type";
 
 	
-	/**
-	 * @throws IOException
-	 */
-	public DublinCoreSchema() throws IOException {
+	public DublinCoreSchema() {
 		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
 		setProperty(FORMAT, "application/pdf");
 	}

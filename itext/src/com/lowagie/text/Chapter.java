@@ -80,6 +80,8 @@ public class Chapter extends Section implements TextElementArray {
     
     // constructors
     
+	private static final long serialVersionUID = 1791000695779357361L;
+
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
 	 *
@@ -119,13 +121,13 @@ public class Chapter extends Section implements TextElementArray {
             setNumberDepth(Integer.parseInt(value));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENT)) != null) {
-            setIndentation(Float.valueOf(value + "f").floatValue());
+            setIndentation(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
-            setIndentationLeft(Float.valueOf(value + "f").floatValue());
+            setIndentationLeft(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
-            setIndentationRight(Float.valueOf(value + "f").floatValue());
+            setIndentationRight(Float.parseFloat(value + "f"));
         }
     }
     

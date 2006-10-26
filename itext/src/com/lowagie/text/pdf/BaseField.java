@@ -48,13 +48,14 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
-import com.lowagie.text.Element;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
+
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Rectangle;
 
 /** Common field variables.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -156,7 +157,7 @@ public abstract class BaseField {
      */
     public BaseField(PdfWriter writer, Rectangle box, String fieldName) {
         this.writer = writer;
-        this.box = box;
+        setBox(box);
         this.fieldName = fieldName;
     }
     
@@ -167,7 +168,7 @@ public abstract class BaseField {
             return font;
     }
     
-    protected PdfAppearance getBorderAppearance() throws IOException, DocumentException {
+    protected PdfAppearance getBorderAppearance() {
         PdfAppearance app = new PdfContentByte(writer).createAppearance(box.width(), box.height());
         switch (rotation) {
             case 90:
@@ -535,7 +536,13 @@ public abstract class BaseField {
      * @param box the field dimension and position
      */
     public void setBox(Rectangle box) {
-        this.box = box;
+    	if (box == null) {
+    		this.box = null;
+    	}
+    	else {
+    		this.box = new Rectangle(box);
+    		this.box.normalize();
+    	}
     }
     
     /** Gets the field rotation.

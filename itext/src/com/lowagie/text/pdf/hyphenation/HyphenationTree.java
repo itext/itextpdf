@@ -33,7 +33,9 @@ import java.util.HashMap;
 public class HyphenationTree extends TernaryTree 
             implements PatternConsumer, Serializable {
 
-    /**
+    private static final long serialVersionUID = -7763254239309429432L;
+
+	/**
      * value space: stores the inteletter values
      */
     protected ByteVector vspace;
@@ -104,7 +106,7 @@ public class HyphenationTree extends TernaryTree
         return buf.toString();
     }
 
-    public void loadSimplePatterns(InputStream stream) throws HyphenationException {
+    public void loadSimplePatterns(InputStream stream) {
         SimplePatternParser pp = new SimplePatternParser();
         ivalues = new TernaryTree();
 

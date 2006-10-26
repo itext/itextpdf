@@ -168,7 +168,7 @@ public class ToolArgument
     buf.append(name);
     buf.append(" -  ");
     buf.append(description);
-    buf.append("\n");
+    buf.append('\n');
     return buf.toString();
   }
 
@@ -259,7 +259,7 @@ public class ToolArgument
 
   }
 
-  protected void firePropertyChange(PropertyChangeEvent evt) {
+  protected synchronized void firePropertyChange(PropertyChangeEvent evt) {
     if (propertyChangeListeners != null) {
       Vector listeners = propertyChangeListeners;
       int count = listeners.size();
@@ -274,8 +274,8 @@ public class ToolArgument
    *
    * @param evt A PropertyChangeEvent object describing the event source and the property that has
    *   changed.
-   * @todo Implement this java.beans.PropertyChangeListener method
    */
   public void propertyChange(PropertyChangeEvent evt) {
+	   //todo Implement this java.beans.PropertyChangeListener method
   }
 }

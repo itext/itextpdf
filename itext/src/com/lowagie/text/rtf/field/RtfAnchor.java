@@ -104,7 +104,7 @@ public class RtfAnchor extends RtfField {
         
         result.write(HYPERLINK);
         result.write(DELIMITER);
-        result.write(url.getBytes());
+        result.write(this.document.filterSpecialChar(url, true, true).getBytes());
         
         return result.toByteArray();
     }

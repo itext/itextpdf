@@ -49,6 +49,8 @@
  */
 package com.lowagie.tools;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -58,6 +60,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -74,9 +77,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import com.lowagie.tools.plugins.AbstractTool;
-
-import java.awt.Toolkit;
-import java.awt.Dimension;
 
 /**
  * This is a utility that allows you to use a number of iText tools.
@@ -182,15 +182,16 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 		String name, tool;
 		JMenu current = null;
 		JMenuItem item;
-		for (Iterator i = tmp.keySet().iterator(); i.hasNext();) {
-			name = (String) i.next();
+		for (Iterator i = tmp.entrySet().iterator(); i.hasNext();) {
+			Map.Entry entry = (Map.Entry) i.next();
+			name = (String) entry.getKey();
 			if (current == null || !name.startsWith(current.getText())) {
-				current = new JMenu(name.substring(0, name.indexOf(".")));
+				current = new JMenu(name.substring(0, name.indexOf('.')));
 				tools.add(current);
 			}
 			item = new JMenuItem(name.substring(current.getText().length() + 1));
 			item.addActionListener(this);
-			tool = (String) tmp.get(name);
+			tool = (String) entry.getValue();
 			try {
 				Class.forName(tool);
 				toolmap.put(item.getText(), tool);
@@ -300,8 +301,6 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 
         /**
          * Creates a new Console object.
-         * @param columns
-         * @param rows
          * @throws IOException
          */
         public Console() throws IOException {

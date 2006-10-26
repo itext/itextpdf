@@ -47,13 +47,14 @@
  * http://www.lowagie.com/iText/
  */
 package com.lowagie.text.pdf;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.Element;
-import com.lowagie.text.ExceptionConverter;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Canvas;
 import java.awt.image.MemoryImageSource;
+
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
 
 /**
  * Implements the code 128 and UCC/EAN-128. Other symbologies are allowed in raw mode.<p>
@@ -80,7 +81,7 @@ public class Barcode128 extends Barcode{
 
     /** The bars to generate the code.
      */    
-    static byte BARS[][] = 
+    private static final byte BARS[][] = 
     {
         {2, 1, 2, 2, 2, 2},
         {2, 2, 2, 1, 2, 2},
@@ -192,7 +193,7 @@ public class Barcode128 extends Barcode{
     
     /** The stop bars.
      */    
-    static byte BARS_STOP[] = {2, 3, 3, 1, 1, 1, 2};
+    private static final byte BARS_STOP[] = {2, 3, 3, 1, 1, 1, 2};
     /** The charset code change.
      */
     public static final char CODE_AB_TO_C = 99;

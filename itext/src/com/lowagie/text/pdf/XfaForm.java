@@ -57,9 +57,11 @@ import java.util.Collection;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Iterator;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -111,7 +113,7 @@ public class XfaForm {
             ArrayList ar = ((PdfArray)xfa).getArrayList();
             for (int k = 1; k < ar.size(); k += 2) {
                 PdfObject ob = PdfReader.getPdfObject((PdfObject)ar.get(k));
-                if (ob != null && ob instanceof PRStream) {
+                if (ob instanceof PRStream) {
                     byte[] b = PdfReader.getStreamBytes((PRStream)ob);
                     bout.write(b);
                 }
@@ -389,7 +391,9 @@ public class XfaForm {
      * the porting to other languages.
      */
     public static class Stack2 extends ArrayList {
-        /**
+        private static final long serialVersionUID = -7451476576174095212L;
+
+		/**
          * Looks at the object at the top of this stack without removing it from the stack.
          * @return the object at the top of this stack
          */
@@ -907,13 +911,13 @@ public class XfaForm {
                         int max = 1;
                         Node a = n2.getAttributes().getNamedItem("initial");
                         if (a != null)
-                            try{initial = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){};
+                            try{initial = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){}
                         a = n2.getAttributes().getNamedItem("min");
                         if (a != null)
-                            try{min = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){};
+                            try{min = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){}
                         a = n2.getAttributes().getNamedItem("max");
                         if (a != null)
-                            try{max = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){};
+                            try{max = Integer.parseInt(a.getNodeValue().trim());}catch(Exception e){}
                         if (initial != min || min != max)
                             dynamicForm = true;
                     }

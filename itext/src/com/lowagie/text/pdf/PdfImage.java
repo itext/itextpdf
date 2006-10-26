@@ -50,12 +50,12 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.Image;
-
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
+
+import com.lowagie.text.Image;
 
 /**
  * <CODE>PdfImage</CODE> is a <CODE>PdfStream</CODE> containing an image-<CODE>Dictionary</CODE> and -stream.

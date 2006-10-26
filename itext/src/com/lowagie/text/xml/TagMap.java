@@ -50,18 +50,17 @@
 
 package com.lowagie.text.xml;
 
+import java.io.InputStream;
 import java.util.HashMap;
-
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import java.io.InputStream;
+import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.helpers.DefaultHandler;
 
-import com.lowagie.text.*;
+import com.lowagie.text.ExceptionConverter;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
@@ -69,7 +68,9 @@ import com.lowagie.text.*;
 
 public class TagMap extends HashMap {
 
-    class AttributeHandler extends DefaultHandler {
+    private static final long serialVersionUID = -6809383366554350820L;
+
+	class AttributeHandler extends DefaultHandler {
         
 /** This is a tag */
         public static final String TAG = "tag";

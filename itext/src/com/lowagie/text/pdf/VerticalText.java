@@ -46,13 +46,13 @@
  * http://www.lowagie.com/iText/
  */
 package com.lowagie.text.pdf;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
-import com.lowagie.text.Phrase;
+
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Element;
-import com.lowagie.text.DocumentException;
-import java.awt.Color;
+import com.lowagie.text.Phrase;
 
 /** Writes text vertically. Note that the naming is done according
  * to horizontal text although it referrs to vertical text.
@@ -206,9 +206,8 @@ public class VerticalText {
      * Outputs the lines to the document. It is equivalent to <CODE>go(false)</CODE>.
      * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
      * and/or <CODE>NO_MORE_COLUMN</CODE>
-     * @throws DocumentException on error
      */
-    public int go() throws DocumentException {
+    public int go() {
         return go(false);
     }
     
@@ -217,15 +216,14 @@ public class VerticalText {
      * @param simulate <CODE>true</CODE> to simulate the writting to the document
      * @return returns the result of the operation. It can be <CODE>NO_MORE_TEXT</CODE>
      * and/or <CODE>NO_MORE_COLUMN</CODE>
-     * @throws DocumentException on error
      */
-    public int go(boolean simulate) throws DocumentException {
+    public int go(boolean simulate) {
         boolean dirty = false;
         PdfContentByte graphics = null;
         if (text != null) {
             graphics = text.getDuplicate();
         }
-        else if (simulate == false)
+        else if (!simulate)
             throw new NullPointerException("VerticalText.go with simulate==false and text==null.");
         int status = 0;
         for (;;) {
@@ -259,7 +257,7 @@ public class VerticalText {
         return status;
     }
     
-    void writeLine(PdfLine line, PdfContentByte text, PdfContentByte graphics)  throws DocumentException {
+    void writeLine(PdfLine line, PdfContentByte text, PdfContentByte graphics) {
         PdfFont currentFont = null;
         PdfChunk chunk;
         for (Iterator j = line.iterator(); j.hasNext(); ) {

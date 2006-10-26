@@ -60,7 +60,9 @@ package com.lowagie.text;
 
 public class BadElementException extends DocumentException {
     
-    // constructors
+    private static final long serialVersionUID = -799006030723822254L;
+
+	// constructors
     /**
      * Constructs a BadElementException
      * @param ex an Exception object that has to be turned into a BadElementException

@@ -50,13 +50,15 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.DocumentException;
-import java.io.*;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.StringTokenizer;
+
+import com.lowagie.text.DocumentException;
 
 /**
  * Creates a CJK font compatible with the fonts in the Adobe Asian font Pack.
@@ -121,9 +123,8 @@ class CJKFont extends BaseFont {
      * @param enc the encoding of the font
      * @param emb always <CODE>false</CODE>. CJK font and not embedded
      * @throws DocumentException on error
-     * @throws IOException on error
      */
-    CJKFont(String fontName, String enc, boolean emb) throws DocumentException, IOException {
+    CJKFont(String fontName, String enc, boolean emb) throws DocumentException {
         loadProperties();
         fontType = FONT_TYPE_CJK;
         String nameBase = getBaseName(fontName);
@@ -250,7 +251,7 @@ class CJKFont extends BaseFont {
         if (w != null)
             dic.put(PdfName.W, new PdfLiteral(w));
         if (vertical) {
-            w = convertToVCIDMetrics(keys, vMetrics, hMetrics);;
+            w = convertToVCIDMetrics(keys, vMetrics, hMetrics);
             if (w != null)
                 dic.put(PdfName.W2, new PdfLiteral(w));
         }

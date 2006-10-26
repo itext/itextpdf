@@ -50,14 +50,14 @@
 
 package com.lowagie.text;
 
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.markup.MarkupTags;
 
 /**
  * An <CODE>Anchor</CODE> can be a reference or a destination of a reference.
@@ -80,6 +80,8 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
     
     // membervariables
     
+private static final long serialVersionUID = -852278536049236911L;
+
 /** This is the anchor tag. */
     public static final String ANCHOR = "anchor";
     
@@ -196,7 +198,7 @@ public class Anchor extends Phrase implements TextElementArray, MarkupAttributes
             add(chunk);
         }
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.valueOf(value + "f").floatValue());
+            setLeading(Float.parseFloat(value + "f"));
         }
         else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
             setLeading(MarkupParser.parseLength(value));

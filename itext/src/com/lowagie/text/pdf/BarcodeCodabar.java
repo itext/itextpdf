@@ -48,13 +48,14 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Element;
-import com.lowagie.text.Rectangle;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Canvas;
 import java.awt.image.MemoryImageSource;
+
+import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Rectangle;
 
 /** Implements the code codabar. The default parameters are:
  * <pre>
@@ -76,7 +77,7 @@ public class BarcodeCodabar extends Barcode{
 
     /** The bars to generate the code.
      */    
-    static byte BARS[][] = 
+	private static final byte BARS[][] = 
     {
         {0,0,0,0,0,1,1}, // 0
         {0,0,0,0,1,1,0}, // 1
@@ -102,9 +103,9 @@ public class BarcodeCodabar extends Barcode{
  
     /** The index chars to <CODE>BARS</CODE>.
      */    
-    static String CHARS = "0123456789-$:/.+ABCD";
+	private static final String CHARS = "0123456789-$:/.+ABCD";
     
-    static final int START_STOP_IDX = 16;    
+    private static final int START_STOP_IDX = 16;    
     /** Creates a new BarcodeCodabar.
      */    
     public BarcodeCodabar() {
