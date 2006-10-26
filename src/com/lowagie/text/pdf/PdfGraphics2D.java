@@ -477,8 +477,8 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
+	 * Method contributed by Alexej Suchov
      * @see Graphics2D#setComposite(Composite)
-	 * @author Alexej Suchov
      */
     public void setComposite(Composite comp) {
         
@@ -507,9 +507,8 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
+	 * Method contributed by Alexej Suchov
      * @see Graphics2D#setPaint(Paint)
-	 * 
-	 * @author Alexej Suchov
      */
     public void setPaint(Paint paint) {
         if (paint == null)
@@ -735,8 +734,8 @@ public class PdfGraphics2D extends Graphics2D {
     }
     
     /**
+	 * Method contributed by Alexej Suchov
      * @see Graphics2D#getPaint()
-	 * @author Alexej Suchov
      */
     public Paint getPaint() {
         if (realPaint != null) {

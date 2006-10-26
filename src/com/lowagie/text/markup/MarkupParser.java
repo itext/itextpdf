@@ -264,7 +264,7 @@ public class MarkupParser extends HashMap {
 	 * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>
 	 * Color</CODE>.
 	 * 
-	 * @param color
+	 * @param s
 	 *            the <CODE>Color</CODE> that has to be converted.
 	 * @return the HTML representation of this <COLOR>Color </COLOR>
 	 */

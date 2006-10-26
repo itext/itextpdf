@@ -85,9 +85,9 @@ public class PageTableModel extends AbstractTableModel {
 	 * Returns the number of columns in the model.
 	 * 
 	 * @return the number of columns in the model
-	 * @todo Implement this javax.swing.table.TableModel method
 	 */
 	public int getColumnCount() {
+		//todo Implement this javax.swing.table.TableModel method
 		return 4;
 	}
 
@@ -95,9 +95,9 @@ public class PageTableModel extends AbstractTableModel {
 	 * Returns the number of rows in the model.
 	 * 
 	 * @return the number of rows in the model
-	 * @todo Implement this javax.swing.table.TableModel method
 	 */
 	public int getRowCount() {
+		//todo Implement this javax.swing.table.TableModel method
 		return numberOfPages;
 	}
 
@@ -110,9 +110,9 @@ public class PageTableModel extends AbstractTableModel {
 	 * @param columnIndex
 	 *            the column whose value is to be queried
 	 * @return the value Object at the specified cell
-	 * @todo Implement this javax.swing.table.TableModel method
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
+		//todo Implement this javax.swing.table.TableModel method
 		Rectangle rec = reader.getPageSizeWithRotation(rowIndex + 1);
 		switch (columnIndex) {
 		case 0:
