@@ -137,7 +137,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 			 * @param columnIndex
 			 *            the index of the column
 			 * @return the name of the column
-			 * @todo Implement this javax.swing.table.TableModel method
 			 */
 			public String getColumnName(int columnIndex) {
 				switch (columnIndex) {
@@ -161,8 +160,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 *            PdfDictionary
 	 * @param pdfreader
 	 *            PdfReader
-	 * @param count_in_leaf
-	 *            int
 	 * @param node
 	 *            DefaultMutableTreeNode
 	 */
@@ -348,7 +345,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * Returns the root of the tree.
 	 * 
 	 * @return the root of the tree
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public Object getRoot() {
 		return root;
@@ -363,7 +359,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * @param index
 	 *            int
 	 * @return the child of <code>parent</code> at index <code>index</code>
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public Object getChild(Object parent, int index) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
@@ -376,7 +371,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * @param parent
 	 *            a node in the tree, obtained from this data source
 	 * @return the number of children of the node <code>parent</code>
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public int getChildCount(Object parent) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
@@ -389,7 +383,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * @param node
 	 *            a node in the tree, obtained from this data source
 	 * @return true if <code>node</code> is a leaf
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public boolean isLeaf(Object node) {
 		DefaultMutableTreeNode leaf = (DefaultMutableTreeNode) node;
@@ -404,7 +397,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 *            path to the node that the user has altered
 	 * @param newValue
 	 *            the new value from the TreeCellEditor
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public void valueForPathChanged(TreePath path, Object newValue) {
 		throw new RuntimeException(
@@ -421,7 +413,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * @return the index of the child in the parent, or -1 if either
 	 *         <code>child</code> or <code>parent</code> are
 	 *         <code>null</code>
-	 * @todo Diese javax.swing.tree.TreeModel-Methode implementieren
 	 */
 	public int getIndexOfChild(Object parent, Object child) {
 		DefaultMutableTreeNode parentobj = (DefaultMutableTreeNode) parent;
@@ -494,8 +485,6 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 	 * When an object implementing interface <code>Runnable</code> is used to
 	 * create a thread, starting the thread causes the object's <code>run</code>
 	 * method to be called in that separately executing thread.
-	 * 
-	 * @todo Diese java.lang.Runnable-Methode implementieren
 	 */
 	public void run() {
 		try {

@@ -79,8 +79,6 @@ public class ArrayTreeNode extends UpdateableTreeNode {
 	 * 
 	 * @param updateobject
 	 *            IUpdatenodeview
-	 * @todo Implement this
-	 *       com.lowagie.tools.plugins.treeview.UpdateableTreeNode method
 	 */
 	public void updateview(IUpdatenodeview updateobject) {
 		StringBuffer sb = new StringBuffer();

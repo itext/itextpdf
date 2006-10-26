@@ -274,8 +274,8 @@ public class ToolArgument
    *
    * @param evt A PropertyChangeEvent object describing the event source and the property that has
    *   changed.
-   * @todo Implement this java.beans.PropertyChangeListener method
    */
   public void propertyChange(PropertyChangeEvent evt) {
+	   //todo Implement this java.beans.PropertyChangeListener method
   }
 }

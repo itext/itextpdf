@@ -817,9 +817,7 @@ public class PAContext {
         }
         java.awt.Font fn=(java.awt.Font)data[0];
         System.out.println("Fonthoehe:"+fn.getSize2D());
-        /**
-         * @todo two times the same?
-         */
+        //todo two times the same?
         context.pencil.graphics.setFont( fn);
         context.pencil.state.font=fn;
       }
@@ -1282,9 +1280,7 @@ systemDict.put("currentrgbcolor", new PACommand() {
           newStroke = new BasicStroke( (float) data[0], BasicStroke.CAP_ROUND,
                                       BasicStroke.JOIN_ROUND);
         }
-        /**
-         * @todo two times the same?
-         */
+        //todo two times the same?
         context.pencil.graphics.setStroke(newStroke);
 //        context.pencil.state.stroke=newStroke;
       }
@@ -2443,9 +2439,9 @@ systemDict.put("currentrgbcolor", new PACommand() {
            *
            * @return the next byte of data, or <code>-1</code> if the end of the stream is reached.
            * @throws IOException if an I/O error occurs.
-           * @todo Implement this java.io.InputStream method
            */
           public int read() throws IOException {
+        	//todo: implement this java.io.InputStream method
             return jcs.readChar();
           }
 
@@ -2567,9 +2563,9 @@ systemDict.put("currentrgbcolor", new PACommand() {
              *
              * @return the next byte of data, or <code>-1</code> if the end of the stream is reached.
              * @throws IOException if an I/O error occurs.
-             * @todo Implement this java.io.InputStream method
              */
             public int read() throws IOException {
+              //todo: implement this java.io.InputStream method
               int firstchar,secondchar;
               for(;;){
                 firstchar=is.read();

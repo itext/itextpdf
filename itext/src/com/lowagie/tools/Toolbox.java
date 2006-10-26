@@ -301,8 +301,6 @@ public class Toolbox extends JFrame implements ToolMenuItems, ActionListener {
 
         /**
          * Creates a new Console object.
-         * @param columns
-         * @param rows
          * @throws IOException
          */
         public Console() throws IOException {
