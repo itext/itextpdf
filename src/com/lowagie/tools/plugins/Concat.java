@@ -140,7 +140,7 @@ public class Concat extends AbstractTool {
                     System.out.println("Processed page " + p);
                 }
             }
-            if (master.size() > 0)
+            if (!master.isEmpty())
                 writer.setOutlines(master);
             // step 5: we close the document
             document.close();

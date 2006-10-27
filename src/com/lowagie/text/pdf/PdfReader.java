@@ -1998,7 +1998,7 @@ public class PdfReader {
                 }
             }
         }
-        if (newStreams.size() == 0)
+        if (newStreams.isEmpty())
             return;
         for (int k = 0; k < newStreams.size(); ++k) {
             xrefObj.add(newStreams.get(k));
@@ -2195,7 +2195,7 @@ public class PdfReader {
                 if (arr == null)
                     continue;
                 ArrayList list = arr.getArrayList();
-                if (list.size() == 0)
+                if (list.isEmpty())
                     continue;
                 PdfDictionary desc = (PdfDictionary)getPdfObject((PdfObject)list.get(0));
                 String sde = getSubsetPrefix(desc);
@@ -2439,7 +2439,7 @@ public class PdfReader {
             return;
         consolidateNamedDestinations = true;
         HashMap names = getNamedDestination();
-        if (names.size() == 0)
+        if (names.isEmpty())
             return;
         for (int k = 1; k <= pageRefs.size(); ++k) {
             PdfDictionary page = pageRefs.getPageN(k);
@@ -3085,7 +3085,7 @@ public class PdfReader {
 
         private void pushPageAttributes(PdfDictionary nodePages) {
             PdfDictionary dic = new PdfDictionary();
-            if (pageInh.size() != 0) {
+            if (!pageInh.isEmpty()) {
                 dic.putAll((PdfDictionary)pageInh.get(pageInh.size() - 1));
             }
             for (int k = 0; k < pageInhCandidates.length; ++k) {

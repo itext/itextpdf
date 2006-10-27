@@ -803,7 +803,7 @@ class PdfStamperImp extends PdfWriter {
                         }
                     }
                 }
-                if (ar.size() == 0) {
+                if (ar.isEmpty()) {
                     PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
                     pageDic.remove(PdfName.ANNOTS);
                 }
@@ -826,7 +826,7 @@ class PdfStamperImp extends PdfWriter {
                         --idx;
                     }
                 }
-                if (ar.size() == 0) {
+                if (ar.isEmpty()) {
                     PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
                     pageDic.remove(PdfName.ANNOTS);
                 }
@@ -939,7 +939,7 @@ class PdfStamperImp extends PdfWriter {
 						cb.setLiteral("q ");
 					}
 				}
-				if (partialFlattening.size() == 0)
+				if (partialFlattening.isEmpty())
 					continue;
 			}
 			for (int idx = 0; idx < ar.size(); ++idx) 
@@ -955,7 +955,7 @@ class PdfStamperImp extends PdfWriter {
 					}
 				}
 			}
-			if (ar.size() == 0) 
+			if (ar.isEmpty()) 
 			{
 				PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
 				pageDic.remove(PdfName.ANNOTS);
@@ -999,7 +999,7 @@ class PdfStamperImp extends PdfWriter {
     }
     
     void addFieldResources() {
-        if (fieldTemplates.size() == 0)
+        if (fieldTemplates.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), catalog);
@@ -1144,7 +1144,7 @@ class PdfStamperImp extends PdfWriter {
     
     void setJavaScript() throws IOException {
         ArrayList djs = pdf.getDocumentJavaScript();
-        if (djs.size() == 0)
+        if (djs.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary names = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.NAMES), catalog);
@@ -1169,7 +1169,7 @@ class PdfStamperImp extends PdfWriter {
 
     void addFileAttachments() throws IOException {
         HashMap fs = pdf.getDocumentFileAttachment();
-        if (fs.size() == 0)
+        if (fs.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary names = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.NAMES), catalog);
@@ -1199,7 +1199,7 @@ class PdfStamperImp extends PdfWriter {
         if (newBookmarks == null)
             return;
         deleteOutlines();
-        if (newBookmarks.size() == 0)
+        if (newBookmarks.isEmpty())
             return;
         namedAsNames = (reader.getCatalog().get(PdfName.DESTS) != null);
         PdfDictionary top = new PdfDictionary();

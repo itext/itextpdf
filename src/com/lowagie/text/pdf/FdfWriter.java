@@ -157,7 +157,7 @@ public class FdfWriter {
             map = (HashMap)hist.get(k);
             String s = (String)hist.get(k + 1);
             map.remove(s);
-            if (map.size() > 0)
+            if (!map.isEmpty())
                 break;
         }
         return true;

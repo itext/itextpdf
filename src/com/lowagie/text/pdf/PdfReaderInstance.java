@@ -146,7 +146,7 @@ class PdfReaderInstance {
     }
     
     void writeAllVisited() throws IOException {
-        while (nextRound.size() > 0) {
+        while (!nextRound.isEmpty()) {
             ArrayList vec = nextRound;
             nextRound = new ArrayList();
             for (int k = 0; k < vec.size(); ++k) {

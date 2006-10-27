@@ -1555,7 +1555,7 @@ public class AcroFields {
             sorter.add(new Object[]{entry.getKey(), new int[]{length, 0}});
         }
         Collections.sort(sorter, new AcroFields.SorterComparator());
-        if (sorter.size() > 0) {
+        if (!sorter.isEmpty()) {
             if (((int[])((Object[])sorter.get(sorter.size() - 1))[1])[0] == reader.getFileLength())
                 totalRevisions = sorter.size();
             else

@@ -203,7 +203,7 @@ public class PRAcroForm extends PdfDictionary {
      */
     protected void pushAttrib(PdfDictionary dict) {
         PdfDictionary dic = null;
-        if (stack.size() != 0) {
+        if (!stack.isEmpty()) {
             dic = (PdfDictionary)stack.get(stack.size() - 1);
         }
         dic = mergeAttrib(dic, dict);

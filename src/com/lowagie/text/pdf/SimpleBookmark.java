@@ -317,7 +317,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
             List kids = (List)map.get("Kids");
             if (kids != null) {
                 eliminatePages(kids, pageRange);
-                if (kids.size() == 0) {
+                if (kids.isEmpty()) {
                     map.remove("Kids");
                     kids = null;
                 }
@@ -500,7 +500,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
             HashMap map = (HashMap)it.next();
             Object lower[] = null;
             List subKid = (List)map.get("Kids");
-            if (subKid != null && subKid.size() > 0)
+            if (subKid != null && !subKid.isEmpty())
                 lower = iterateOutlines(writer, refs[ptr], subKid, namedAsNames);
             PdfDictionary outline = new PdfDictionary();
             ++count;

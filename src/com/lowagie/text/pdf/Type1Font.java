@@ -739,7 +739,7 @@ class Type1Font extends BaseFont
      * @return <CODE>true</CODE> if the font has any kerning pairs
      */    
     public boolean hasKernPairs() {
-        return KernPairs.size() > 0;
+        return !KernPairs.isEmpty();
     }
     
     /**

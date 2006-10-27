@@ -111,7 +111,7 @@ public class TextField extends BaseField {
     
     private Phrase composePhrase(String text, BaseFont ufont, Color color, float fontSize) {
         Phrase phrase = null;
-        if (extensionFont == null && (substitutionFonts == null || substitutionFonts.size() == 0))
+        if (extensionFont == null && (substitutionFonts == null || substitutionFonts.isEmpty()))
             phrase = new Phrase(new Chunk(text, new Font(ufont, fontSize, 0, color)));
         else {
             FontSelector fs = new FontSelector();

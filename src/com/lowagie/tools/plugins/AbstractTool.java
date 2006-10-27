@@ -202,7 +202,7 @@ public abstract class AbstractTool implements ToolMenuItems, ActionListener {
 		close.addActionListener(this);
 		tool.add(close);
 		menubar.add(tool);
-		if (arguments.size() > 0) {
+		if (!arguments.isEmpty()) {
 			JMenu params = new JMenu(ARGUMENTS);
 			tool.setMnemonic(KeyEvent.VK_T);
 			JMenuItem item;

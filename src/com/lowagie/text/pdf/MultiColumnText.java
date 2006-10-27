@@ -266,7 +266,7 @@ public class MultiColumnText implements Element {
     public float write(PdfContentByte canvas, PdfDocument document, float documentY) throws DocumentException {
         this.document = document;
         columnText.setCanvas(canvas);
-        if (columnDefs.size() == 0) {
+        if (columnDefs.isEmpty()) {
             throw new DocumentException("MultiColumnText has no columns");
         }
         overflow = false;

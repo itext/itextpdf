@@ -610,7 +610,7 @@ public class PdfChunk implements SplitCharacter{
     
     boolean isStroked()
     {
-        return (attributes.size() > 0);
+        return (!attributes.isEmpty());
     }
     
 /**

@@ -217,7 +217,7 @@ public class PdfTable extends Rectangle {
 	 */
 	
 	int rows() {
-		return cells.size() == 0 ? 0 : ((PdfCell)cells.get(cells.size()-1)).rownumber()+1; 
+		return cells.isEmpty() ? 0 : ((PdfCell)cells.get(cells.size()-1)).rownumber()+1; 
 	}
 
 	/** @see com.lowagie.text.Element#type() */
@@ -242,7 +242,7 @@ public class PdfTable extends Rectangle {
 	 */
     
 	boolean hasHeader() {
-		return headercells.size() > 0;
+		return !headercells.isEmpty();
 	}
     
 	/**

@@ -404,7 +404,7 @@ public class PdfCopy extends PdfWriter {
         try {
             PdfDictionary theCat = ((PdfDocument)document).getCatalog(rootObj);
             if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
-            if (newBookmarks == null || newBookmarks.size() == 0)
+            if (newBookmarks == null || newBookmarks.isEmpty())
                 return theCat;
             PdfDictionary top = new PdfDictionary();
             PdfIndirectReference topRef = getPdfIndirectReference();

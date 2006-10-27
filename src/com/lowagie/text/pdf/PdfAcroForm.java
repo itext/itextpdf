@@ -114,7 +114,7 @@ public class PdfAcroForm extends PdfDictionary {
             put(PdfName.SIGFLAGS, new PdfNumber(sigFlags));
         if (calculationOrder.size() > 0)
             put(PdfName.CO, calculationOrder);
-        if (fieldTemplates.size() == 0) return true;
+        if (fieldTemplates.isEmpty()) return true;
         PdfDictionary dic = new PdfDictionary();
         for (Iterator it = fieldTemplates.keySet().iterator(); it.hasNext();) {
             PdfTemplate template = (PdfTemplate)it.next();
