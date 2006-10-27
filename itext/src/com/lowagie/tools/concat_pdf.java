@@ -116,7 +116,7 @@ public class concat_pdf {
                     writer.freeReader(reader);
                     f++;
                 }
-                if (master.size() > 0)
+                if (!master.isEmpty())
                     writer.setOutlines(master);
                 // step 5: we close the document
                 document.close();

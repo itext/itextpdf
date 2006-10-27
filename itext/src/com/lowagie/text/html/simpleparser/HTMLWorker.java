@@ -445,7 +445,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
                 ListItem item = (ListItem)obj;
                 ((com.lowagie.text.List)list).add(item);
                 ArrayList cks = item.getChunks();
-                if (cks.size() > 0)
+                if (!cks.isEmpty())
                     item.listSymbol().setFont(((Chunk)cks.get(0)).font());
                 stack.push(list);
                 return;

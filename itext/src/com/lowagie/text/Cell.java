@@ -424,7 +424,7 @@ public class Cell extends Rectangle implements TextElementArray {
 				}
 				table.setWidths(widths);
 				Cell tmp;
-				if (arrayList.size() == 0) {
+				if (arrayList.isEmpty()) {
 					table.addCell(getDummyCell());
 				}
 				else {

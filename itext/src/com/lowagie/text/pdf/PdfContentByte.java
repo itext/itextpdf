@@ -1845,7 +1845,7 @@ public class PdfContentByte {
      */
     public void arc(float x1, float y1, float x2, float y2, float startAng, float extent) {
         ArrayList ar = bezierArc(x1, y1, x2, y2, startAng, extent);
-        if (ar.size() == 0)
+        if (ar.isEmpty())
             return;
         float pt[] = (float [])ar.get(0);
         moveTo(pt[0], pt[1]);
@@ -2929,7 +2929,7 @@ public class PdfContentByte {
      */    
     public void endLayer() {
         int n = 1;
-        if (layerDepth != null && layerDepth.size() > 0) {
+        if (layerDepth != null && !layerDepth.isEmpty()) {
             n = ((Integer)layerDepth.get(layerDepth.size() - 1)).intValue();
             layerDepth.remove(layerDepth.size() - 1);
         }

@@ -485,7 +485,7 @@ public class ColumnText {
             maxY = Math.max(maxY, r[1]);
             minY = Math.min(minY, r[0]);
         }
-        if (cc.size() == 0)
+        if (cc.isEmpty())
             throw new RuntimeException("No valid column line found.");
         return cc;
     }
@@ -1460,7 +1460,7 @@ public class ColumnText {
      * @return true or false
      */
     public boolean zeroHeightElement() {
-        return composite && compositeElements.size() > 0 && ((Element)compositeElements.getFirst()).type() == Element.GRAPHIC;
+        return composite && !compositeElements.isEmpty() && ((Element)compositeElements.getFirst()).type() == Element.GRAPHIC;
     }
 
     /**

@@ -320,7 +320,7 @@ public class PdfCell extends Rectangle {
         }
 
         // adjust first line height so that it touches the top
-        if (lines.size() > 0) {
+        if (!lines.isEmpty()) {
             firstLine = (PdfLine) lines.get(0);
             float firstLineRealHeight = firstLineRealHeight();
             contentHeight -= firstLine.height();
@@ -428,7 +428,7 @@ public class PdfCell extends Rectangle {
         PdfLine oldLine = (PdfLine) lines.remove(index);
         contentHeight -= oldLine.height();
         if (index == 0) {
-            if (lines.size() > 0) {
+            if (!lines.isEmpty()) {
                 firstLine = (PdfLine) lines.get(0);
                 float firstLineRealHeight = firstLineRealHeight();
                 contentHeight -= firstLine.height();
@@ -662,7 +662,7 @@ public class PdfCell extends Rectangle {
      */
 
     boolean mayBeRemoved() {
-        return (header || (lines.size() == 0 && images.size() == 0));
+        return (header || (lines.isEmpty() && images.isEmpty()));
     }
 
     /**
@@ -682,7 +682,7 @@ public class PdfCell extends Rectangle {
      */
 
     public int remainingLines() {
-        if (lines.size() == 0) return 0;
+        if (lines.isEmpty()) return 0;
         int result = 0;
         int size = lines.size();
         PdfLine line;

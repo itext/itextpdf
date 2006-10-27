@@ -68,7 +68,7 @@ public class PdfNumberTree {
      * @return the dictionary with the number tree.
      */    
     public static PdfDictionary writeTree(HashMap items, PdfWriter writer) throws IOException {
-        if (items.size() == 0)
+        if (items.isEmpty())
             return null;
         Integer numbers[] = new Integer[items.size()];
         numbers = (Integer[])items.keySet().toArray(numbers);

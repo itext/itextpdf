@@ -1198,7 +1198,7 @@ public class PdfWriter extends DocWriter {
             mi.put(PdfName.MARKED, PdfBoolean.PDFTRUE);
             catalog.put(PdfName.MARKINFO, mi);
         }
-        if (documentOCG.size() == 0)
+        if (documentOCG.isEmpty())
             return catalog;
         fillOCProperties(false);
         catalog.put(PdfName.OCPROPERTIES, OCProperties);
@@ -2540,7 +2540,7 @@ public class PdfWriter extends DocWriter {
         if (outs == null)
             return false;
         ArrayList arr = outs.getArrayList();
-        if (arr.size() == 0)
+        if (arr.isEmpty())
             return false;
         PdfDictionary out = (PdfDictionary)PdfReader.getPdfObject((PdfObject)arr.get(0));
         PdfObject obj = PdfReader.getPdfObject(out.get(PdfName.S));

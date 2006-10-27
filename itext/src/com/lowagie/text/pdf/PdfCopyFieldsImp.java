@@ -327,7 +327,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     }
     
     protected void createAcroForms() throws IOException {
-        if (fieldTree.size() == 0)
+        if (fieldTree.isEmpty())
             return;
         form = new PdfDictionary();
         form.put(PdfName.DR, resources);
@@ -534,7 +534,7 @@ class PdfCopyFieldsImp extends PdfWriter {
                 PdfIndirectReference ref = addToBody(form).getIndirectReference();
                 cat.put(PdfName.ACROFORM, ref);
             }
-            if (newBookmarks == null || newBookmarks.size() == 0)
+            if (newBookmarks == null || newBookmarks.isEmpty())
                 return cat;
             PdfDictionary top = new PdfDictionary();
             PdfIndirectReference topRef = getPdfIndirectReference();

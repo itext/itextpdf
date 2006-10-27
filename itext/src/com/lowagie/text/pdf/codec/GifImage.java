@@ -206,7 +206,7 @@ public class GifImage {
         in = new DataInputStream(new BufferedInputStream(is));
         readHeader();
         readContents();
-        if (frames.size() == 0)
+        if (frames.isEmpty())
             throw new IOException("The file does not contain any valid image.");
     }
     

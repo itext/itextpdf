@@ -1348,7 +1348,7 @@ systemDict.put("currentrgbcolor", new PACommand() {
 
         ArrayList list = (ArrayList) data[0];
 
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
           return;
         }
         float[] dashpattern = new float[list.size()];
