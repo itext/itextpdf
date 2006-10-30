@@ -98,8 +98,6 @@ public class GlyphList {
                 unicode2names.put(num, name);
                 names2unicode.put(name, new int[]{num.intValue()});
             }
-            unicode2names.put(new Integer(32), "space");
-            unicode2names.put(new Integer(124), "bar");
         }
         catch (Exception e) {
             System.err.println("glyphlist.txt loading error: " + e.getMessage());
