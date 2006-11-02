@@ -583,8 +583,6 @@ public class XfaForm {
         public String inverseSearchGlobal(ArrayList parts) {
             if (parts.isEmpty())
                 return null;
-            if (parts.isEmpty())
-                return null;
             InverseStore store = (InverseStore)inverseSearch.get(parts.get(parts.size() - 1));
             if (store == null)
                 return null;
