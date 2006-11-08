@@ -1,6 +1,5 @@
 /*
  * $Id$
- * $Name$
  *
  * Copyright 1999, 2000, 2001, 2002 Bruno Lowagie
  *
@@ -644,10 +643,16 @@ public class PdfWriter extends DocWriter {
     public static final int AllowAssembly = 1024;
     /** The operation permitted when the document is opened with the user password */
     public static final int AllowDegradedPrinting = 4;
-    /** Type of encryption */
+    /** Type of RC4 encryption strength*/
     public static final boolean STRENGTH40BITS = false;
-    /** Type of encryption */
+    /** Type of RC4 encryption strength */
     public static final boolean STRENGTH128BITS = true;
+    /** Type of encryption */
+    public static final int ENCRYPTION_RC4_40 = 0;
+    /** Type of encryption */
+    public static final int ENCRYPTION_RC4_128 = 1;
+    /** Type of encryption */
+    public static final int ENCRYPTION_AES_128 = 2;
     /** action value */
     public static final PdfName DOCUMENT_CLOSE = PdfName.WC;
     /** action value */
@@ -1915,6 +1920,43 @@ public class PdfWriter extends DocWriter {
         crypto.setupAllKeys(userPassword, ownerPassword, permissions, strength128Bits);
     }
     
+    /** Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param encryptionType the type of encryption. It can be ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128
+     * @throws DocumentException if the document is already open
+     */
+    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
+        if (pdf.isOpen())
+            throw new DocumentException("Encryption can only be added before opening the document.");
+        crypto = new PdfEncryption();
+        int keyLength = 0;
+        int revision = 0;
+        switch (encryptionType) {
+            case ENCRYPTION_RC4_40:
+                keyLength = 40;
+                revision = PdfEncryption.RC4_40;
+                break;
+            case ENCRYPTION_RC4_128:
+                keyLength = 128;
+                revision = PdfEncryption.RC4_128;
+                break;
+            case ENCRYPTION_AES_128:
+                keyLength = 128;
+                revision = PdfEncryption.AES_128;
+                break;
+            default:
+                throw new DocumentException("Invalid encryption type");
+        }
+        crypto.setupAllKeys(userPassword, ownerPassword, permissions, keyLength, revision);
+    }
+    
     /**
      * Sets the encryption options for this document. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -1930,6 +1972,23 @@ public class PdfWriter extends DocWriter {
      */
     public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
         setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength);
+    }
+    
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param encryptionType the type of encryption. It can be ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @throws DocumentException if the document is already open
+     */
+    public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, encryptionType);
     }
     
     /**
@@ -2682,7 +2741,7 @@ public class PdfWriter extends DocWriter {
      * The maximum UserUnit is 75,000.
      * Remark that this userunit only works starting with PDF1.6!
      * @param userunit The userunit to set.
-     * @throws DocumentException
+     * @throws DocumentException on error
      */
 	public void setUserunit(float userunit) throws DocumentException {
 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");

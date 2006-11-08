@@ -558,19 +558,24 @@ public class PdfReader {
         byte documentID[] = null;
         if (documentIDs != null) {
             o = (PdfObject)documentIDs.getArrayList().get(0);
+            strings.remove(o);
             s = o.toString();
             documentID = com.lowagie.text.DocWriter.getISOBytes(s);
+            if (documentIDs.size() > 1)
+                strings.remove(documentIDs.getArrayList().get(1));
         }
 
         s = enc.get(PdfName.U).toString();
+        strings.remove(enc.get(PdfName.U));
         byte uValue[] = com.lowagie.text.DocWriter.getISOBytes(s);
         s = enc.get(PdfName.O).toString();
+        strings.remove(enc.get(PdfName.O));
         byte oValue[] = com.lowagie.text.DocWriter.getISOBytes(s);
 
         o = enc.get(PdfName.R);
         if (!o.isNumber()) throw new IOException("Illegal R value.");
         rValue = ((PdfNumber)o).intValue();
-        if (rValue != 2 && rValue != 3) throw new IOException("Unknown encryption type (" + rValue + ")");
+        if (rValue != 2 && rValue != 3 && rValue != 4) throw new IOException("Unknown encryption type (" + rValue + ")");
 
         o = enc.get(PdfName.P);
         if (!o.isNumber()) throw new IOException("Illegal P value.");
@@ -581,10 +586,21 @@ public class PdfReader {
         if ( rValue == 3 ){
             o = enc.get(PdfName.LENGTH);
             if (!o.isNumber())
-              throw new IOException("Illegal Length value.");
+                throw new IOException("Illegal Length value.");
             lengthValue = ( (PdfNumber) o).intValue();
             if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
-              throw new IOException("Illegal Length value.");
+                throw new IOException("Illegal Length value.");
+        }
+        else if (rValue == 4) {
+            lengthValue = 128;
+            PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
+            if (dic == null)
+                throw new IOException("/CF not found (encryption)");
+            dic = (PdfDictionary)dic.get(PdfName.STDCF);
+            if (dic == null)
+                throw new IOException("/StdCF not found (encryption)");
+            if (!PdfName.AESV2.equals(dic.get(PdfName.CFM)))
+                throw new IOException("/AESV2 not found (encryption)");
         } else {
             // Keylength is 40 bit in revision 2
             lengthValue=40;
@@ -596,10 +612,10 @@ public class PdfReader {
 
         //check by user password
         decrypt.setupByUserPassword(documentID, password, oValue, pValue, lengthValue, rValue);
-        if (!equalsArray(uValue, decrypt.userKey, rValue == 3 ? 16 : 32)) {
+        if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
             //check by owner password
             decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue, lengthValue, rValue);
-            if (!equalsArray(uValue, decrypt.userKey, rValue == 3 ? 16 : 32)) {
+            if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
                 throw new IOException("Bad user password");
             }
         }
@@ -1933,8 +1949,7 @@ public class PdfReader {
             PdfEncryption decrypt = reader.getDecrypt();
             if (decrypt != null) {
                 decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
-                decrypt.prepareKey();
-                decrypt.encryptRC4(b);
+                b = decrypt.decryptByteArray(b);
             }
         }
         return b;
