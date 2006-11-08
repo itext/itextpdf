@@ -69,6 +69,15 @@ public class PageSize {
 /** This is the legal format */
     public static final Rectangle LEGAL = new Rectangle(612,1008);
     
+/** This is the tabloid format */
+    public static final Rectangle TABLOID = new Rectangle(792,1224);
+
+/** This is the executive format */
+    public static final Rectangle EXECUTIVE = new Rectangle(522,756);
+
+/** This is the postcard format */
+    public static final Rectangle POSTCARD = new Rectangle(283,416);
+    
 /** This is the a0 format */
     public static final Rectangle A0 = new Rectangle(2384,3370);
     
@@ -76,19 +85,19 @@ public class PageSize {
     public static final Rectangle A1 = new Rectangle(1684,2384);
     
 /** This is the a2 format */
-    public static final Rectangle A2 = new Rectangle(1190,1684);
+    public static final Rectangle A2 = new Rectangle(1191,1684);
     
 /** This is the a3 format */
-    public static final Rectangle A3 = new Rectangle(842,1190);
+    public static final Rectangle A3 = new Rectangle(842,1191);
     
 /** This is the a4 format */
     public static final Rectangle A4 = new Rectangle(595,842);
     
 /** This is the a5 format */
-    public static final Rectangle A5 = new Rectangle(421,595);
+    public static final Rectangle A5 = new Rectangle(420,595);
     
 /** This is the a6 format */
-    public static final Rectangle A6 = new Rectangle(297,421);
+    public static final Rectangle A6 = new Rectangle(297,420);
     
 /** This is the a7 format */
     public static final Rectangle A7 = new Rectangle(210,297);
@@ -100,25 +109,40 @@ public class PageSize {
     public static final Rectangle A9 = new Rectangle(105,148);
     
 /** This is the a10 format */
-    public static final Rectangle A10 = new Rectangle(74,105);
+    public static final Rectangle A10 = new Rectangle(73,105);
     
 /** This is the b0 format */
-    public static final Rectangle B0 = new Rectangle(2836,4008);
+    public static final Rectangle B0 = new Rectangle(2834,4008);
     
 /** This is the b1 format */
-    public static final Rectangle B1 = new Rectangle(2004,2836);
+    public static final Rectangle B1 = new Rectangle(2004,2834);
     
 /** This is the b2 format */
-    public static final Rectangle B2 = new Rectangle(1418,2004);
+    public static final Rectangle B2 = new Rectangle(1417,2004);
     
 /** This is the b3 format */
-    public static final Rectangle B3 = new Rectangle(1002,1418);
+    public static final Rectangle B3 = new Rectangle(1000,1417);
     
 /** This is the b4 format */
-    public static final Rectangle B4 = new Rectangle(709,1002);
+    public static final Rectangle B4 = new Rectangle(708,1000);
     
 /** This is the b5 format */
-    public static final Rectangle B5 = new Rectangle(501,709);
+    public static final Rectangle B5 = new Rectangle(498,708);
+
+/** This is the b6 format */
+    public static final Rectangle B6 = new Rectangle(354,498);
+    
+/** This is the b7 format */
+    public static final Rectangle B7 = new Rectangle(249,354);
+    
+/** This is the b8 format */
+    public static final Rectangle B8 = new Rectangle(175,249);
+
+/** This is the b9 format */
+    public static final Rectangle B9 = new Rectangle(124,175);
+
+/** This is the b10 format */
+    public static final Rectangle B10 = new Rectangle(87,124);
     
 /** This is the archE format */
     public static final Rectangle ARCH_E = new Rectangle(2592,3456);
@@ -135,11 +159,11 @@ public class PageSize {
 /** This is the archA format */
     public static final Rectangle ARCH_A = new Rectangle(648,864);
     
-/** This is the flsa format */
+/** This is the American Foolscap format */
     public static final Rectangle FLSA = new Rectangle(612,936);
     
-/** This is the flse format */
-    public static final Rectangle FLSE = new Rectangle(612,936);
+/** This is the European Foolscap format */
+    public static final Rectangle FLSE = new Rectangle(648,936);
     
 /** This is the halfletter format */
     public static final Rectangle HALFLETTER = new Rectangle(396,612);
@@ -149,4 +173,37 @@ public class PageSize {
     
 /** This is the ledger format */
     public static final Rectangle LEDGER = new Rectangle(1224,792);
+    
+/** This is the Crown Quarto format */
+    public static final Rectangle CROWN_QUARTO = new Rectangle(535,697);
+
+/** This is the Large Crown Quarto format */
+    public static final Rectangle LARGE_CROWN_QUARTO = new Rectangle(569,731);
+    
+/** This is the Demy Quarto format. */
+    public static final Rectangle DEMY_QUARTO = new Rectangle(620,782);
+    
+/** This is the Royal Quarto format. */
+    public static final Rectangle ROYAL_QUARTO = new Rectangle(671,884);
+    
+/** This is the Crown Octavo format */
+    public static final Rectangle CROWN_OCTAVO = new Rectangle(348,527);
+    
+/** This is the Large Crown Octavo format */
+    public static final Rectangle LARGE_CROWN_OCTAVO = new Rectangle(365,561);
+    
+/** This is the Demy Octavo format */
+    public static final Rectangle DEMY_OCTAVO = new Rectangle(391,612);
+    
+/** This is the Royal Octavo format. */
+    public static final Rectangle ROYAL_OCTAVO = new Rectangle(442,663);
+    
+/** This is the small paperback format. */
+    public static final Rectangle SMALL_PAPERBACK = new Rectangle(314,504);
+    
+/** This is the Pengiun small paperback format. */
+    public static final Rectangle PENGUIN_SMALL_PAPERBACK = new Rectangle(314,513);
+    
+/** This is the Penguin large paparback format. */
+    public static final Rectangle PENGUIN_LARGE_PAPERBACK = new Rectangle(365,561);
 }
