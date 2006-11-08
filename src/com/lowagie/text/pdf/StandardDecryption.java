@@ -1,8 +1,7 @@
 /*
  * $Id$
- * $Name$
  *
- * Copyright 2004 Paulo Soares
+ * Copyright 2006 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -15,10 +14,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999-2005 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000-2005 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,39 +46,66 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text.pdf;
 
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.pdf.crypto.AESCipher;
+import com.lowagie.text.pdf.crypto.RC4Encryption;
 
-public class PdfEncryptionStream extends FilterOutputStream {
-    
-    protected PdfEncryption enc;
-    private byte buf[] = new byte[1];
-    
-    public PdfEncryptionStream(OutputStream out, PdfEncryption enc) {
-        super(out);
-        this.enc = enc;
+public class StandardDecryption {
+    protected RC4Encryption rc4;
+    protected AESCipher cipher;
+    private byte[] key;
+    private static final int AES_128 = 4;
+    private boolean aes;
+    private boolean initiated;
+    private byte[] iv = new byte[16];
+    private int ivptr;
+
+    /** Creates a new instance of StandardDecryption */
+    public StandardDecryption(byte key[], int off, int len, int revision) {
+        aes = revision == AES_128;
+        if (aes) {
+            this.key = new byte[len];
+            System.arraycopy(key, off, this.key, 0, len);
+        }
+        else {
+            rc4 = new RC4Encryption();
+            rc4.prepareRC4Key(key, off, len);
+        }
     }
     
-    public void write(byte[] b, int off, int len) throws IOException {
-        if ((off | len | (b.length - (len + off)) | (off + len)) < 0)
-            throw new IndexOutOfBoundsException();
-        enc.encryptRC4(b, off, len);
-        out.write(b, off, len);
+    public byte[] update(byte[] b, int off, int len) {
+        if (aes) {
+            if (initiated)
+                return cipher.update(b, off, len);
+            else {
+                int left = Math.min(iv.length - ivptr, len);
+                System.arraycopy(b, off, iv, ivptr, left);
+                off += left;
+                len -= left;
+                ivptr += left;
+                if (ivptr == iv.length) {
+                    cipher = new AESCipher(false, key, iv);
+                    initiated = true;
+                    if (len > 0)
+                        return cipher.update(b, off, len);
+                }
+                return null;
+            }
+        }
+        else {
+            byte[] b2 = new byte[len];
+            rc4.encryptRC4(b, off, len, b2, 0);
+            return b2;
+        }
     }
     
-    public void close() throws IOException {
+    public byte[] finish() {
+        if (aes) {
+            return cipher.doFinal();
+        }
+        else
+            return null;
     }
-    
-    public void write(int b) throws IOException {
-        buf[0] = (byte)b;
-        write(buf);
-    }
-    
-    public void flush() throws IOException {
-    }
-    
 }

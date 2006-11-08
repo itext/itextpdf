@@ -49,6 +49,7 @@
  */
 
 package com.lowagie.text.pdf;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -143,9 +144,7 @@ public class PdfString extends PdfObject {
         if (writer != null)
             crypto = writer.getEncryption();
         if (crypto != null) {
-            b = (byte[])bytes.clone();
-            crypto.prepareKey();
-            crypto.encryptRC4(b);
+            b = crypto.encryptByteArray(b);
         }
         if (hexWriting) {
             ByteBuffer buf = new ByteBuffer();
@@ -202,9 +201,8 @@ public class PdfString extends PdfObject {
         if (decrypt != null) {
             originalValue = value;
             decrypt.setHashKey(objNum, objGen);
-            decrypt.prepareKey();
             bytes = PdfEncodings.convertToBytes(value, null);
-            decrypt.encryptRC4(bytes);
+            bytes = decrypt.decryptByteArray(bytes);
             value = PdfEncodings.convertToString(bytes, null);
         }
     }

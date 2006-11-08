@@ -255,6 +255,26 @@ public class PdfStamper {
         stamper.setEncryption(userPassword, ownerPassword, permissions, strength128Bits);
     }
 
+    /** Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param encryptionType the type of encryption. It can be ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128
+     * @throws DocumentException if the document is already open
+     */
+    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
+        if (stamper.isAppend())
+            throw new DocumentException("Append mode does not support changing the encryption status.");
+        if (stamper.isContentWritten())
+            throw new DocumentException("Content was already written to the output.");
+        stamper.setEncryption(userPassword, ownerPassword, permissions, encryptionType);
+    }
+
     /**
      * Sets the encryption options for this document. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -270,6 +290,23 @@ public class PdfStamper {
      */
     public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
         setEncryption(DocWriter.getISOBytes(userPassword), DocWriter.getISOBytes(ownerPassword), permissions, strength);
+    }
+
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param encryptionType the type of encryption. It can be ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @throws DocumentException if the document is already open
+     */
+    public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(DocWriter.getISOBytes(userPassword), DocWriter.getISOBytes(ownerPassword), permissions, encryptionType);
     }
 
     /** Gets a page from other PDF document. Note that calling this method more than
