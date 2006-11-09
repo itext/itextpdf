@@ -1235,7 +1235,7 @@ public class BmpImage {
                 }
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             //empty on purpose
         }
         
