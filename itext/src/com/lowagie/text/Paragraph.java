@@ -249,7 +249,7 @@ private static final long serialVersionUID = 7852314969733375514L;
             setIndentationRight(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.KEEPTOGETHER)) != null) {
-            keeptogether = new Boolean(value).booleanValue();
+            keeptogether = Boolean.valueOf(value).booleanValue();
         }
         if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
