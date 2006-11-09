@@ -257,26 +257,26 @@ public class Cell extends Rectangle implements TextElementArray {
 			setLeading(Float.parseFloat(value + "f"));
 		}
 		if ((value = (String)attributes.remove(ElementTags.HEADER)) != null) {
-			setHeader(new Boolean(value).booleanValue());
+			setHeader(Boolean.valueOf(value).booleanValue());
 		}
 		if ((value = (String)attributes.remove(ElementTags.NOWRAP)) != null) {
-			setNoWrap(new Boolean(value).booleanValue());
+			setNoWrap(Boolean.valueOf(value).booleanValue());
 		}
 		if ((value = (String)attributes.remove(ElementTags.BORDERWIDTH)) != null) {
 			setBorderWidth(Float.parseFloat(value + "f"));
 		}
 		int border = 0;
 		if ((value = (String)attributes.remove(ElementTags.LEFT)) != null) {
-			if (new Boolean(value).booleanValue()) border |= Rectangle.LEFT;
+			if (Boolean.valueOf(value).booleanValue()) border |= Rectangle.LEFT;
 		}
 		if ((value = (String)attributes.remove(ElementTags.RIGHT)) != null) {
-			if (new Boolean(value).booleanValue()) border |= Rectangle.RIGHT;
+			if (Boolean.valueOf(value).booleanValue()) border |= Rectangle.RIGHT;
 		}
 		if ((value = (String)attributes.remove(ElementTags.TOP)) != null) {
-			if (new Boolean(value).booleanValue()) border |= Rectangle.TOP;
+			if (Boolean.valueOf(value).booleanValue()) border |= Rectangle.TOP;
 		}
 		if ((value = (String)attributes.remove(ElementTags.BOTTOM)) != null) {
-			if (new Boolean(value).booleanValue()) border |= Rectangle.BOTTOM;
+			if (Boolean.valueOf(value).booleanValue()) border |= Rectangle.BOTTOM;
 		}
 		setBorder(border);
 		String r = (String)attributes.remove(ElementTags.RED);

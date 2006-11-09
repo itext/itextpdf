@@ -966,11 +966,11 @@ public abstract class Image extends Rectangle implements Element,
 				align |= Image.MIDDLE;
 		}
 		if ((value = (String) attributes.remove(ElementTags.UNDERLYING)) != null) {
-			if (new Boolean(value).booleanValue())
+			if (Boolean.valueOf(value).booleanValue())
 				align |= Image.UNDERLYING;
 		}
 		if ((value = (String) attributes.remove(ElementTags.TEXTWRAP)) != null) {
-			if (new Boolean(value).booleanValue())
+			if (Boolean.valueOf(value).booleanValue())
 				align |= Image.TEXTWRAP;
 		}
 		image.setAlignment(align);
