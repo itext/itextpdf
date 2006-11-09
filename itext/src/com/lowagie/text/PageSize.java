@@ -171,6 +171,15 @@ public class PageSize {
 /** This is the 11x17 format */
     public static final Rectangle _11X17 = new Rectangle(792,1224);
     
+/** This is the ISO 7810 ID-1 format (85.60 x 53.98 mm or 3.370 x 2.125 inch) */
+    public static final Rectangle ID_1 = new Rectangle(242.65f,153);
+    
+/** This is the ISO 7810 ID-2 format (A7 rotated) */
+    public static final Rectangle ID_2 = new Rectangle(297,210);
+    
+/** This is the ISO 7810 ID-3 format (B7 rotated) */
+    public static final Rectangle ID_3 = new Rectangle(254,249);
+    
 /** This is the ledger format */
     public static final Rectangle LEDGER = new Rectangle(1224,792);
     
