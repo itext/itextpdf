@@ -1196,11 +1196,6 @@ class PdfDocument extends Document implements DocListener {
         
 		// initialisation of parameters
 		PdfCell cell;
-	                    
-		boolean tableHasToFit =
-			table.hasToFitPageTable() ? (table.bottom() < indentBottom() && table.height() < (top() - bottom())) : false;
-		if (pageEmpty)
-			tableHasToFit = false;
 
 		// drawing the table
 		ArrayList dataCells = table.getCells();
@@ -1258,8 +1253,6 @@ class PdfDocument extends Document implements DocListener {
                     }
                 }
             }
-            
-            tableHasToFit = false;
             
 			// we paint the graphics of the table after looping through all the cells
 			Rectangle tablerec = new Rectangle(table);
@@ -1495,7 +1488,7 @@ class PdfDocument extends Document implements DocListener {
                 PdfCell c = (PdfCell) row.get(j);
                 int rowspan = c.rowspan();                
                 // fill in missing rowspan cells to complete "scan line"
-                for (int k = 1; k < rowspan; k++) {
+                for (int k = 1; k < rowspan && rows.size() <= i+k; k++) {
                     ArrayList spannedRow = ((ArrayList) rows.get(i + k));
                     if (spannedRow.size() > j)
                     	spannedRow.add(j, c);
@@ -2497,8 +2490,6 @@ class PdfDocument extends Document implements DocListener {
      */
     
     float bottom(Table table) {
-//    	 where will the table begin?
-        float h = (currentHeight > 0) ? indentTop() - currentHeight - 2f * leading : indentTop();
         // constructing a PdfTable
         PdfTable tmp = getPdfTable(table, false);
         return tmp.bottom();
