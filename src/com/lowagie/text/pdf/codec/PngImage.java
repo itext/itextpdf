@@ -423,7 +423,7 @@ public class PngImage {
                 try {
                     icc_profile = ICC_Profile.getInstance(iccp);
                 }
-                catch (Exception e) {
+                catch (RuntimeException e) {
                     icc_profile = null;
                 }
             }
