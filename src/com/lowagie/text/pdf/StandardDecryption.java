@@ -48,7 +48,6 @@
  */
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.pdf.crypto.AESCipher;
 import com.lowagie.text.pdf.crypto.RC4Encryption;
 
