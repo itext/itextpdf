@@ -2776,6 +2776,16 @@ public class PdfWriter extends DocWriter {
     }
     
     /**
+     * Returns the name of a PdfTemplate that was added to the writer.
+     * @param tp the template of which you want to know the name
+     */
+    public PdfName getTemplateName(PdfTemplate tp) {
+    	PdfIndirectReference ref = tp.getIndirectReference();
+    	Object[] objs = (Object[])formXObjects.get(ref);
+    	return (PdfName)objs[0];
+    }
+    
+    /**
      * Mark this document for tagging. It must be called before open.
      */    
     public void setTagged() {

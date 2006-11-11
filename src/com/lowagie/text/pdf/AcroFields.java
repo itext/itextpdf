@@ -61,6 +61,7 @@ import org.w3c.dom.Node;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 
 /** Query and change fields in existing documents either by method
@@ -1954,5 +1955,110 @@ public class AcroFields {
      */
     public XfaForm getXfa() {
         return xfa;
+    }
+    
+    /**
+     * Replaces the icon of a pushbutton with a PdfTemplate.
+     * @param field		the name of the pushbutton field
+     * @param template	the new icon
+     * @throws DocumentException if the field isn't a pushbutton
+     * 			or if there's no icon to replace
+     */
+    public void replaceIcon(String field, PdfTemplate template) throws DocumentException {
+    	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
+    		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
+    	AcroFields.Item item = getFieldItem(field);
+		PdfDictionary widget = (PdfDictionary)item.widgets.iterator().next();
+		PdfDictionary mk = (PdfDictionary)widget.get(PdfName.MK);
+		if (mk == null) {
+			//TODO create MK dictionary if there is none
+			throw new DocumentException("There's no appearance characteristics dictionary defined for field '" + field + "'.");
+		}
+		PRIndirectReference icon_ref = (PRIndirectReference)mk.get(PdfName.I);
+		if (icon_ref == null) {
+			//TODO create stream + reference if there is no reference to an icon
+			throw new DocumentException("There's no reference to an icon in field '" + field + "'.");
+		}
+		PRStream icon = (PRStream)reader.getPdfObject(icon_ref.getNumber());
+		if (icon == null) {
+			throw new DocumentException("There's no icon present in field " + field);
+		}
+		PdfDictionary xobject;
+		PdfName name;
+		PdfDictionary resources = (PdfDictionary)icon.get(PdfName.RESOURCES);
+		if (resources == null) {
+			resources = new PdfDictionary();
+			xobject = new PdfDictionary();
+			resources.put(PdfName.XOBJECT, xobject);
+			icon.put(PdfName.RESOURCES, resources);
+		}
+		else {
+			xobject = (PdfDictionary)resources.get(PdfName.XOBJECT);
+			for (Iterator i = xobject.getKeys().iterator(); i.hasNext(); ) {
+				name = (PdfName)i.next();
+				xobject.remove(name);
+			}
+		}
+		name = writer.getTemplateName(template);
+		xobject.put(writer.getTemplateName(template), template.getIndirectReference());
+		ByteBuffer buf = new ByteBuffer();
+		buf.append("q 1 0 0 1 0 0 cm ");
+		buf.append(name.toString());
+		buf.append(" Do Q\n\n");
+		icon.setData(buf.toByteArray());
+	}
+
+    /**
+     * Replaces the icon of a pushbutton with an Image.
+     * @param field		the name of the pushbutton field
+     * @param template	the new icon
+     * @throws DocumentException if the field isn't a pushbutton
+     * 			or if there's no icon to replace
+     */
+    public void replaceIcon(String field, Image img) throws DocumentException {
+    	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
+    		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
+		float[] pos = getFieldPositions("photo");
+		img.scaleToFit(pos[3] - pos[1], pos[4] - pos[2]);
+		float offset_x = (pos[3] - pos[1] - img.scaledWidth()) / 2;
+		float offset_y = (pos[4] - pos[2] - img.scaledHeight()) / 2;
+    	AcroFields.Item item = getFieldItem(field);
+		PdfDictionary widget = (PdfDictionary)item.widgets.iterator().next();
+		PdfDictionary mk = (PdfDictionary)widget.get(PdfName.MK);
+		if (mk == null) {
+			//TODO create MK dictionary if there is none
+			throw new DocumentException("There's no appearance characteristics dictionary defined for field '" + field + "'.");
+		}
+		PRIndirectReference icon_ref = (PRIndirectReference)mk.get(PdfName.I);
+		if (icon_ref == null) {
+			//TODO create stream + reference if there is no reference to an icon
+			throw new DocumentException("There's no reference to an icon in field '" + field + "'.");
+		}
+		PRStream icon = (PRStream)reader.getPdfObject(icon_ref.getNumber());
+		if (icon == null) {
+			throw new DocumentException("There's no icon present in field " + field);
+		}
+		PdfDictionary resources = (PdfDictionary)icon.get(PdfName.RESOURCES);
+		PdfDictionary xobject = (PdfDictionary)resources.get(PdfName.XOBJECT);
+		PdfName name = null;
+		for (Iterator i = xobject.getKeys().iterator(); i.hasNext(); ) {
+			name = (PdfName)i.next();
+			xobject.remove(name);
+		}
+		name = writer.addDirectImageSimple(img);
+		xobject.put(name, writer.getImageReference(name));
+		ByteBuffer buf = new ByteBuffer();
+		buf.append("q ");
+		buf.append(img.scaledWidth());
+		buf.append(" 0 0 ");
+		buf.append(img.scaledHeight());
+		buf.append(' ');
+		buf.append(offset_x);
+		buf.append(' ');
+		buf.append(offset_y);
+		buf.append(" cm ");
+		buf.append(name.toString());
+		buf.append(" Do Q\n\n");
+		icon.setData(buf.toByteArray());
     }
 }
