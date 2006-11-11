@@ -61,6 +61,7 @@ import org.w3c.dom.Node;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 
 /** Query and change fields in existing documents either by method
@@ -1107,6 +1108,24 @@ public class AcroFields {
         }
     }
 
+    /**
+     * Resets the field value.
+     * This is usefull when you change a field property, but not its value,
+     * for instance form.setFieldProperty("f", "bgcolor", Color.BLUE, null);
+     * This won't have any effect, unless you use setField("f"); after changing
+     * the property.
+     * 
+     * @param name the fully qualified field name or the partial name in the case of XFA forms
+     * @throws IOException on error
+     * @throws DocumentException on error
+     * @return <CODE>true</CODE> if the field was found and changed,
+     * <CODE>false</CODE> otherwise
+     */    
+    public boolean refreshField(String name) throws IOException, DocumentException {
+    	String value = getField(name);
+        return setField(name, value, value);
+    }
+
     /** Sets the field value.
      * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
@@ -1954,5 +1973,53 @@ public class AcroFields {
      */
     public XfaForm getXfa() {
         return xfa;
+    }
+    
+    private PushbuttonField getNewPushbuttonField(String field) {
+    	float[] pos = getFieldPositions(field);
+    	Rectangle box = new Rectangle(pos[1], pos[2], pos[3], pos[4]);
+    	PushbuttonField newButton = new PushbuttonField(writer, box, field);
+    	newButton.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
+    	return newButton;
+    }
+    
+    /**
+     * Replaces the icon of a pushbutton with a PdfTemplate.
+     * iText will scales and centers the icon so that it fits
+     * the pushbutton. If no icon is available an icon is added.
+     * 
+     * @param field		the name of the pushbutton field
+     * @param template	the new icon
+     * @throws DocumentException if the field isn't a pushbutton
+     * @throws IOException 
+     */
+    public void setIcon(String field, PdfTemplate template) throws DocumentException, IOException {
+    	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
+    		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
+    	PushbuttonField newButton = getNewPushbuttonField(field);
+    	newButton.setTemplate(template);
+    	float[] pos = getFieldPositions(field);
+    	removeField(field);
+    	writer.addAnnotation(newButton.getField(), (int)pos[0]);
+	}
+    
+    /**
+     * Replaces the icon of a pushbutton with an Image.
+     * iText will scales and centers the icon so that it fits
+     * the pushbutton. If no icon is available an icon is added.
+     * 
+     * @param field		the name of the pushbutton field
+     * @param template	the new icon
+     * @throws DocumentException if the field isn't a pushbutton
+     * @throws IOException 
+     */
+    public void setIcon(String field, Image img) throws DocumentException, IOException {
+    	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
+    		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
+    	PushbuttonField newButton = getNewPushbuttonField(field);
+    	newButton.setImage(img);
+    	float[] pos = getFieldPositions(field);
+    	removeField(field);
+    	writer.addAnnotation(newButton.getField(), (int)pos[0]);
     }
 }
