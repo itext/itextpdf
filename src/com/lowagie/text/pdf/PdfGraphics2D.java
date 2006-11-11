@@ -930,8 +930,11 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#clip(Shape)
      */
     public void clip(Shape s) {
-        if (s != null)
-            s = transform.createTransformedShape(s);
+        if (s == null) {
+            setClip(null);
+            return;
+        }
+        s = transform.createTransformedShape(s);
         if (clip == null)
             clip = new Area(s);
         else
