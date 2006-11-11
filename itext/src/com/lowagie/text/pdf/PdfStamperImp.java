@@ -939,13 +939,11 @@ class PdfStamperImp extends PdfWriter {
 						cb.setLiteral("q ");
 					}
 				}
-				if (partialFlattening.isEmpty())
-					continue;
 			}
 			for (int idx = 0; idx < ar.size(); ++idx) 
 			{
 				PdfObject annoto = PdfReader.getPdfObject((PdfObject)ar.get(idx));
-				if ((annoto instanceof PdfIndirectReference) && annoto.isIndirect())
+				if (annoto != null && annoto.isDictionary())
 				{
 					PdfDictionary annot = (PdfDictionary)annoto;
 					if (PdfName.FREETEXT.equals(annot.get(PdfName.SUBTYPE)))
