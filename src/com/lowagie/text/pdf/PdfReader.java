@@ -1219,6 +1219,8 @@ public class PdfReader {
             if (!PdfName.XREF.equals(stm.get(PdfName.TYPE)))
                 return false;
         }
+        else
+            return false;
         if (trailer == null) {
             trailer = new PdfDictionary();
             trailer.putAll(stm);
@@ -1888,9 +1890,9 @@ public class PdfReader {
         }
         String name;
         for (int j = 0; j < filters.size(); ++j) {
-            name = ((PdfName)PdfReader.getPdfObjectRelease((PdfObject)filters.get(j))).toString();
+            name = ((PdfName)getPdfObjectRelease((PdfObject)filters.get(j))).toString();
             if (name.equals("/FlateDecode") || name.equals("/Fl")) {
-                b = PdfReader.FlateDecode(b);
+                b = FlateDecode(b);
                 PdfObject dicParam = null;
                 if (j < dp.size()) {
                     dicParam = (PdfObject)dp.get(j);
@@ -1898,16 +1900,18 @@ public class PdfReader {
                 }
             }
             else if (name.equals("/ASCIIHexDecode") || name.equals("/AHx"))
-                b = PdfReader.ASCIIHexDecode(b);
+                b = ASCIIHexDecode(b);
             else if (name.equals("/ASCII85Decode") || name.equals("/A85"))
-                b = PdfReader.ASCII85Decode(b);
+                b = ASCII85Decode(b);
             else if (name.equals("/LZWDecode")) {
-                b = PdfReader.LZWDecode(b);
+                b = LZWDecode(b);
                 PdfObject dicParam = null;
                 if (j < dp.size()) {
                     dicParam = (PdfObject)dp.get(j);
                     b = decodePredictor(b, dicParam);
                 }
+            }
+            else if (name.equals("/Crypt")) {
             }
             else
                 throw new IOException("The filter " + name + " is not supported.");
@@ -1924,7 +1928,7 @@ public class PdfReader {
         RandomAccessFileOrArray rf = stream.getReader().getSafeFile();
         try {
             rf.reOpen();
-            return PdfReader.getStreamBytes(stream, rf);
+            return getStreamBytes(stream, rf);
         }
         finally {
             try{rf.close();}catch(Exception e){}
@@ -1964,7 +1968,7 @@ public class PdfReader {
         RandomAccessFileOrArray rf = stream.getReader().getSafeFile();
         try {
             rf.reOpen();
-            return PdfReader.getStreamBytesRaw(stream, rf);
+            return getStreamBytesRaw(stream, rf);
         }
         finally {
             try{rf.close();}catch(Exception e){}
