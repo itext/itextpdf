@@ -168,15 +168,28 @@ class PdfStamperImp extends PdfWriter {
         setOutlines();
         setJavaScript();
         addFileAttachments();
+        PdfDictionary catalog = reader.getCatalog();        	
         if (openAction != null) {
-            reader.getCatalog().put(PdfName.OPENACTION, openAction);
+            catalog.put(PdfName.OPENACTION, openAction);
+        }
+        byte[] altMetadata = xmpMetadata;
+        if (altMetadata == null) {
+            PdfObject xmpo = PdfReader.getPdfObject(catalog.get(PdfName.METADATA));
+            if (xmpo != null && xmpo.isStream()) {
+                altMetadata = PdfReader.getStreamBytesRaw((PRStream)xmpo);
+                PdfReader.killIndirect(xmpo);
+            }
         }
         // if there is XMP data to add: add it
-        if (xmpMetadata != null) {
-        	PdfDictionary catalog = reader.getCatalog();        	
-        	PdfStream xmp = new PdfStream(xmpMetadata);
+        if (altMetadata != null) {
+        	PdfStream xmp = new PdfStream(altMetadata);
         	xmp.put(PdfName.TYPE, PdfName.METADATA);
         	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+            if (crypto != null && !crypto.isMetadataEncrypted()) {
+                PdfArray ar = new PdfArray();
+                ar.add(PdfName.CRYPT);
+                xmp.put(PdfName.FILTER, ar);
+            }
         	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
         	markUsed(catalog);
         }

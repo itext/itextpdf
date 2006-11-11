@@ -244,6 +244,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName CROPBOX = new PdfName("CropBox");
     /** A name */
+    public static final PdfName CRYPT = new PdfName("Crypt");
+    /** A name */
     public static final PdfName CS = new PdfName("CS");
     /** A name */
     public static final PdfName D = new PdfName("D");
@@ -327,6 +329,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName ENCODING = new PdfName("Encoding");
     /** A name */
     public static final PdfName ENCRYPT = new PdfName("Encrypt");
+    /** A name */
+    public static final PdfName ENCRYPTMETADATA = new PdfName("EncryptMetadata");
     /** A name */
     public static final PdfName ENDOFBLOCK = new PdfName("EndOfBlock");
     /** A name */
@@ -933,6 +937,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName USETHUMBS = new PdfName("UseThumbs");
     /** A name */
     public static final PdfName V = new PdfName("V");
+    /** A name */
+    public static final PdfName V2 = new PdfName("V2");
     /** A name */
     public static final PdfName VERISIGN_PPKVS = new PdfName("VeriSign.PPKVS");
     /** A name */

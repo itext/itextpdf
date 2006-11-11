@@ -653,6 +653,9 @@ public class PdfWriter extends DocWriter {
     public static final int ENCRYPTION_RC4_128 = 1;
     /** Type of encryption */
     public static final int ENCRYPTION_AES_128 = 2;
+    static final int ENCRYPTION_MASK = 7;
+    /** Keep the metadata in clear text */
+    public static final int DO_NOT_ENCRYPT_METADATA = 8;
     /** action value */
     public static final PdfName DOCUMENT_CLOSE = PdfName.WC;
     /** action value */
@@ -1305,6 +1308,11 @@ public class PdfWriter extends DocWriter {
                 	PdfStream xmp = new PdfStream(xmpMetadata);
                 	xmp.put(PdfName.TYPE, PdfName.METADATA);
                 	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+                    if (crypto != null && !crypto.isMetadataEncrypted()) {
+                        PdfArray ar = new PdfArray();
+                        ar.add(PdfName.CRYPT);
+                        xmp.put(PdfName.FILTER, ar);
+                    }
                 	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
                 }
                 // make pdfx conformant
@@ -1914,10 +1922,7 @@ public class PdfWriter extends DocWriter {
      * @throws DocumentException if the document is already open
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
-        if (pdf.isOpen())
-            throw new DocumentException("Encryption can only be added before opening the document.");
-        crypto = new PdfEncryption();
-        crypto.setupAllKeys(userPassword, ownerPassword, permissions, strength128Bits);
+        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
     }
     
     /** Sets the encryption options for this document. The userPassword and the
@@ -1929,32 +1934,16 @@ public class PdfWriter extends DocWriter {
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
-     * @param encryptionType the type of encryption. It can be ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128
+     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @throws DocumentException if the document is already open
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
         if (pdf.isOpen())
             throw new DocumentException("Encryption can only be added before opening the document.");
         crypto = new PdfEncryption();
-        int keyLength = 0;
-        int revision = 0;
-        switch (encryptionType) {
-            case ENCRYPTION_RC4_40:
-                keyLength = 40;
-                revision = PdfEncryption.RC4_40;
-                break;
-            case ENCRYPTION_RC4_128:
-                keyLength = 128;
-                revision = PdfEncryption.RC4_128;
-                break;
-            case ENCRYPTION_AES_128:
-                keyLength = 128;
-                revision = PdfEncryption.AES_128;
-                break;
-            default:
-                throw new DocumentException("Invalid encryption type");
-        }
-        crypto.setupAllKeys(userPassword, ownerPassword, permissions, keyLength, revision);
+        crypto.setCryptoMode(encryptionType, 0);
+        crypto.setupAllKeys(userPassword, ownerPassword, permissions);
     }
     
     /**
@@ -1981,7 +1970,8 @@ public class PdfWriter extends DocWriter {
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
      *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      *  The permissions can be combined by ORing them.
-     * @param encryptionType the type of encryption. It can be ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128
+     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions

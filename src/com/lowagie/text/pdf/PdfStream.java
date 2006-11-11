@@ -60,6 +60,7 @@ import java.util.zip.DeflaterOutputStream;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.ExceptionConverter;
+import java.util.ArrayList;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -253,6 +254,18 @@ public class PdfStream extends PdfDictionary {
         PdfEncryption crypto = null;
         if (writer != null)
             crypto = writer.getEncryption();
+        if (crypto != null) {
+            PdfObject filter = get(PdfName.FILTER);
+            if (filter != null) {
+                if (PdfName.CRYPT.equals(filter))
+                    crypto = null;
+                else if (filter.isArray()) {
+                    ArrayList af = ((PdfArray)filter).getArrayList();
+                    if (af.size() > 0 && PdfName.CRYPT.equals(af.get(0)))
+                        crypto = null;
+                }
+            }
+        }
         PdfObject nn = get(PdfName.LENGTH);
         if (crypto != null && nn != null && nn.isNumber()) {
             int sz = ((PdfNumber)nn).intValue();

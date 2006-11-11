@@ -581,8 +581,8 @@ public class PdfReader {
         if (!o.isNumber()) throw new IOException("Illegal P value.");
         pValue = ((PdfNumber)o).intValue();
 
-        // get the Keylength if Revision is 3
-        int lengthValue;
+        int cryptoMode;
+        int lengthValue = 0;
         if ( rValue == 3 ){
             o = enc.get(PdfName.LENGTH);
             if (!o.isNumber())
@@ -590,31 +590,38 @@ public class PdfReader {
             lengthValue = ( (PdfNumber) o).intValue();
             if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
                 throw new IOException("Illegal Length value.");
+            cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
         }
         else if (rValue == 4) {
-            lengthValue = 128;
             PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
             if (dic == null)
                 throw new IOException("/CF not found (encryption)");
             dic = (PdfDictionary)dic.get(PdfName.STDCF);
             if (dic == null)
                 throw new IOException("/StdCF not found (encryption)");
-            if (!PdfName.AESV2.equals(dic.get(PdfName.CFM)))
-                throw new IOException("/AESV2 not found (encryption)");
+            if (PdfName.V2.equals(dic.get(PdfName.CFM)))
+                cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
+            else if (PdfName.AESV2.equals(dic.get(PdfName.CFM)))
+                cryptoMode = PdfWriter.ENCRYPTION_AES_128;
+            else
+                throw new IOException("No compatible encryption found");
+            PdfObject em = enc.get(PdfName.ENCRYPTMETADATA);
+            if (em != null && em.toString().equals("false"))
+                cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
         } else {
-            // Keylength is 40 bit in revision 2
-            lengthValue=40;
+            cryptoMode = PdfWriter.ENCRYPTION_RC4_40;
         }
 
 
 
         decrypt = new PdfEncryption();
+        decrypt.setCryptoMode(cryptoMode, lengthValue);
 
         //check by user password
-        decrypt.setupByUserPassword(documentID, password, oValue, pValue, lengthValue, rValue);
+        decrypt.setupByUserPassword(documentID, password, oValue, pValue);
         if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
             //check by owner password
-            decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue, lengthValue, rValue);
+            decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue);
             if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
                 throw new IOException("Bad user password");
             }
@@ -1952,8 +1959,26 @@ public class PdfReader {
             file.readFully(b);
             PdfEncryption decrypt = reader.getDecrypt();
             if (decrypt != null) {
-                decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
-                b = decrypt.decryptByteArray(b);
+                PdfObject filter = getPdfObjectRelease(stream.get(PdfName.FILTER));
+                ArrayList filters = new ArrayList();
+                if (filter != null) {
+                    if (filter.isName())
+                        filters.add(filter);
+                    else if (filter.isArray())
+                        filters = ((PdfArray)filter).getArrayList();
+                }
+                boolean skip = false;
+                for (int k = 0; k < filters.size(); ++k) {
+                    PdfObject obj = getPdfObjectRelease((PdfObject)filters.get(k));
+                    if (obj != null && obj.toString().equals("/Crypt")) {
+                        skip = true;
+                        break;
+                    }
+                }
+                if (!skip) {
+                    decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
+                    b = decrypt.decryptByteArray(b);
+                }
             }
         }
         return b;
