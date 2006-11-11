@@ -77,6 +77,7 @@ public class PdfEncryption {
         (byte)0x69, (byte)0x7A};
 
     private static final byte[] salt = {(byte)0x73, (byte)0x41, (byte)0x6c, (byte)0x54};
+    private static final byte[] metadataPad = {(byte)255,(byte)255,(byte)255,(byte)255};
     /** The encryption key for a particular object/generation */
     byte key[];
     /** The encryption key length for a particular object/generation */
@@ -96,6 +97,10 @@ public class PdfEncryption {
     static long seq = System.currentTimeMillis();
     private int revision;
     private RC4Encryption rc4 = new RC4Encryption();
+    /** The generic key length. It may be 40 or 128. */
+    private int keyLength;
+    private boolean encryptMetadata;
+    private int cryptoMode;
 
     public PdfEncryption() {
         try {
@@ -115,8 +120,44 @@ public class PdfEncryption {
         if (enc.documentID != null)
             documentID = (byte[])enc.documentID.clone();
         revision = enc.revision;
+        keyLength = enc.keyLength;
+        encryptMetadata = enc.encryptMetadata;
     }
 
+    public void setCryptoMode(int mode, int kl) {
+        cryptoMode = mode;
+        encryptMetadata = (mode & PdfWriter.DO_NOT_ENCRYPT_METADATA) == 0;
+        mode &= PdfWriter.ENCRYPTION_MASK;
+        switch (mode) {
+            case PdfWriter.ENCRYPTION_RC4_40:
+                encryptMetadata = true;
+                keyLength = 40;
+                revision = RC4_40;
+                break;
+            case PdfWriter.ENCRYPTION_RC4_128:
+                if (kl > 0)
+                    keyLength = kl;
+                else
+                    keyLength = 128;
+                revision = RC4_128;
+                break;
+            case PdfWriter.ENCRYPTION_AES_128:
+                keyLength = 128;
+                revision = AES_128;
+                break;
+            default:
+                throw new IllegalArgumentException("No valid encryption mode");
+        }
+    }
+    
+    public int getCryptoMode() {
+        return cryptoMode;
+    }
+    
+    public boolean isMetadataEncrypted() {
+        return encryptMetadata;
+    }
+    
     /**
      */
     private byte[] padPassword(byte userPassword[]) {
@@ -135,12 +176,12 @@ public class PdfEncryption {
 
     /**
      */
-    private byte[] computeOwnerKey(byte userPad[], byte ownerPad[], int keylength) {
+    private byte[] computeOwnerKey(byte userPad[], byte ownerPad[]) {
         byte ownerKey[] = new byte[32];
 
         byte digest[] = md5.digest(ownerPad);
         if (revision == RC4_128 || revision == AES_128) {
-            byte mkey[] = new byte[keylength/8];
+            byte mkey[] = new byte[keyLength/8];
             // only use for the input as many bit as the key consists of
             for (int k = 0; k < 50; ++k)
                 System.arraycopy(md5.digest(digest), 0, digest, 0, mkey.length);
@@ -164,12 +205,12 @@ public class PdfEncryption {
      *
      * ownerKey, documentID must be setuped
      */
-    private void setupGlobalEncryptionKey(byte[] documentID, byte userPad[], byte ownerKey[], int permissions, int keylength) {
+    private void setupGlobalEncryptionKey(byte[] documentID, byte userPad[], byte ownerKey[], int permissions) {
         this.documentID = documentID;
         this.ownerKey = ownerKey;
         this.permissions = permissions;
         // use variable keylength
-        mkey = new byte[keylength/8];
+        mkey = new byte[keyLength/8];
 
         //fixed by ujihara in order to follow PDF refrence
         md5.reset();
@@ -182,7 +223,10 @@ public class PdfEncryption {
         ext[2] = (byte)(permissions >> 16);
         ext[3] = (byte)(permissions >> 24);
         md5.update(ext, 0, 4);
-        if (documentID != null) md5.update(documentID);
+        if (documentID != null)
+            md5.update(documentID);
+        if (!encryptMetadata)
+            md5.update(metadataPad);
 
         byte digest[] = new byte[mkey.length];
         System.arraycopy(md5.digest(), 0, digest, 0, mkey.length);
@@ -223,8 +267,7 @@ public class PdfEncryption {
     }
 
     // gets keylength and revision and uses revison to choose the initial values for permissions
-    public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions, int keylength, int revision) {
-        this.revision = revision;
+    public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions) {
         if (ownerPassword == null || ownerPassword.length == 0)
             ownerPassword = md5.digest(createDocumentId());
         permissions |= (revision == RC4_128 || revision == AES_128) ? 0xfffff0c0 : 0xffffffc0;
@@ -234,14 +277,9 @@ public class PdfEncryption {
         byte userPad[] = padPassword(userPassword);
         byte ownerPad[] = padPassword(ownerPassword);
 
-        this.ownerKey = computeOwnerKey(userPad, ownerPad, keylength);
+        this.ownerKey = computeOwnerKey(userPad, ownerPad);
         documentID = createDocumentId();
-        setupByUserPad(this.documentID, userPad, this.ownerKey, permissions, keylength);
-    }
-
-    // calls the setupAllKeys function with default values to keep the old behavior and signature
-    public void setupAllKeys(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) {
-        setupAllKeys(userPassword, ownerPassword, permissions, strength128Bits?128:40, strength128Bits?3:2);
+        setupByUserPad(this.documentID, userPad, this.ownerKey, permissions);
     }
 
     public static byte[] createDocumentId() {
@@ -260,43 +298,26 @@ public class PdfEncryption {
 
     /**
      */
-    // the following functions use the new parameters for the call of the functions
-    // resp. they map the call of the old functions to the changed in order to keep the
-    // old behaviour and signatures
-    public void setupByUserPassword(byte[] documentID, byte userPassword[], byte ownerKey[], int permissions, boolean strength128Bits) {
-        setupByUserPassword(documentID, userPassword, ownerKey, permissions, strength128Bits?128:40, strength128Bits?RC4_128:RC4_40);
+    public void setupByUserPassword(byte[] documentID, byte userPassword[], byte ownerKey[], int permissions) {
+        setupByUserPad(documentID, padPassword(userPassword), ownerKey, permissions);
     }
 
     /**
      */
-    public void setupByUserPassword(byte[] documentID, byte userPassword[], byte ownerKey[], int permissions, int keylength, int revision) {
-        this.revision = revision;
-        setupByUserPad(documentID, padPassword(userPassword), ownerKey, permissions, keylength);
-    }
-
-    /**
-     */
-    private void setupByUserPad(byte[] documentID, byte userPad[], byte ownerKey[], int permissions, int keylength) {
-        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions, keylength);
+    private void setupByUserPad(byte[] documentID, byte userPad[], byte ownerKey[], int permissions) {
+        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions);
         setupUserKey();
     }
 
     /**
      */
-    public void setupByOwnerPassword(byte[] documentID, byte ownerPassword[], byte userKey[], byte ownerKey[], int permissions, boolean strength128Bits) {
-        setupByOwnerPassword(documentID, ownerPassword, userKey, ownerKey, permissions, strength128Bits?128:40, strength128Bits?3:2);
+    public void setupByOwnerPassword(byte[] documentID, byte ownerPassword[], byte userKey[], byte ownerKey[], int permissions) {
+        setupByOwnerPad(documentID, padPassword(ownerPassword), userKey, ownerKey, permissions);
     }
 
-    /**
-     */
-    public void setupByOwnerPassword(byte[] documentID, byte ownerPassword[], byte userKey[], byte ownerKey[], int permissions, int keylength, int revision) {
-        this.revision = revision;
-        setupByOwnerPad(documentID, padPassword(ownerPassword), userKey, ownerKey, permissions, keylength);
-    }
-
-    private void setupByOwnerPad(byte[] documentID, byte ownerPad[], byte userKey[], byte ownerKey[], int permissions, int keylength) {
-        byte userPad[] = computeOwnerKey(ownerKey, ownerPad, keylength); //userPad will be set in this.ownerKey
-        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions, keylength); //step 3
+    private void setupByOwnerPad(byte[] documentID, byte ownerPad[], byte userKey[], byte ownerKey[], int permissions) {
+        byte userPad[] = computeOwnerKey(ownerKey, ownerPad); //userPad will be set in this.ownerKey
+        setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions); //step 3
         setupUserKey();
     }
 
@@ -340,18 +361,24 @@ public class PdfEncryption {
         if (revision == RC4_40) {
             dic.put(PdfName.V, new PdfNumber(1));
         }
-        else if (revision == RC4_128) {
+        else if (revision == RC4_128 && encryptMetadata) {
             dic.put(PdfName.V, new PdfNumber(2));
             dic.put(PdfName.LENGTH, new PdfNumber(128));
             
         }
-        else if (revision == AES_128) {
+        else {
+            if (!encryptMetadata)
+                dic.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
+            dic.put(PdfName.R, new PdfNumber(AES_128));
             dic.put(PdfName.V, new PdfNumber(4));
             dic.put(PdfName.LENGTH, new PdfNumber(128));
             PdfDictionary stdcf = new PdfDictionary();
             stdcf.put(PdfName.LENGTH, new PdfNumber(16));
             stdcf.put(PdfName.AUTHEVENT, PdfName.DOCOPEN);
-            stdcf.put(PdfName.CFM, PdfName.AESV2);
+            if (revision == AES_128)
+                stdcf.put(PdfName.CFM, PdfName.AESV2);
+            else
+                stdcf.put(PdfName.CFM, PdfName.V2);
             PdfDictionary cf = new PdfDictionary();
             cf.put(PdfName.STDCF, stdcf);
             dic.put(PdfName.CF, cf);
