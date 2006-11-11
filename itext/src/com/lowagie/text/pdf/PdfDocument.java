@@ -759,7 +759,7 @@ class PdfDocument extends Document implements DocListener {
         //add by Jin-Hsia Yang
         isNewpage = true;
         //end add by Jin-Hsia Yang
-        if (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || (writer != null && writer.isPaused()))) {
+        if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
             return false;
         }
         PdfPageEvent pageEvent = writer.getPageEvent();
