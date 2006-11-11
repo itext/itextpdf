@@ -129,6 +129,6 @@ public class PdfBoolean extends PdfObject {
     }
     
     public String toString() {
-    	return String.valueOf(value);
+    	return value ? TRUE : FALSE;
     }
 }
