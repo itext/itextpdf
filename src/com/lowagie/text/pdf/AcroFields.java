@@ -1108,6 +1108,24 @@ public class AcroFields {
         }
     }
 
+    /**
+     * Resets the field value.
+     * This is usefull when you change a field property, but not its value,
+     * for instance form.setFieldProperty("f", "bgcolor", Color.BLUE, null);
+     * This won't have any effect, unless you use setField("f"); after changing
+     * the property.
+     * 
+     * @param name the fully qualified field name or the partial name in the case of XFA forms
+     * @throws IOException on error
+     * @throws DocumentException on error
+     * @return <CODE>true</CODE> if the field was found and changed,
+     * <CODE>false</CODE> otherwise
+     */    
+    public boolean setField(String name) throws IOException, DocumentException {
+    	String value = getField(name);
+        return setField(name, value, value);
+    }
+
     /** Sets the field value.
      * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
