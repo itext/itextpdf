@@ -1986,7 +1986,7 @@ public class AcroFields {
      * @param template	the new icon
      * @throws DocumentException if the field isn't a pushbutton
      */
-    public void replaceIcon(String field, PdfTemplate template) throws DocumentException {
+    public void setIcon(String field, PdfTemplate template) throws DocumentException {
     	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
     		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
     	float[] pos = getFieldPositions(field);
@@ -2011,7 +2011,7 @@ public class AcroFields {
      * @param template	the new icon
      * @throws DocumentException if the field isn't a pushbutton
      */
-    public void replaceIcon(String field, Image img) throws DocumentException {
+    public void setIcon(String field, Image img) throws DocumentException {
     	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
     		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
 		PdfName name = writer.addDirectImageSimple(img);
