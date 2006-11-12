@@ -2042,8 +2042,14 @@ public class AcroFields {
 			if (icon == null) {
 				throw new DocumentException("There's no icon present in the pushbutton field.");
 			}
-			PdfDictionary xobject = removeXObjectResources(icon);
+			PdfDictionary xobject = new PdfDictionary();
 			xobject.put(name, reference);
+			PdfDictionary resources = (PdfDictionary)icon.get(PdfName.RESOURCES);
+			if (resources == null) {
+				resources = new PdfDictionary();
+				icon.put(PdfName.RESOURCES, resources);
+			}
+			resources.put(PdfName.XOBJECT, xobject);
 			icon.setData(buf.toByteArray());
     	}
     	else {
@@ -2063,30 +2069,5 @@ public class AcroFields {
             dr.put(PdfName.XOBJECT, x);
     		mk.put(PdfName.I, template.getIndirectReference());
     	}
-    }
-    
-    /**
-     * Removes all the XObject resources from a stream.
-     * @param stream	a stream describing an icon
-     * @return	the resources dictionary of a stream, made empty
-     */
-    private PdfDictionary removeXObjectResources(PRStream stream) {
-		PdfDictionary resources = (PdfDictionary)stream.get(PdfName.RESOURCES);
-		PdfDictionary xobject;
-		if (resources == null) {
-			resources = new PdfDictionary();
-			xobject = new PdfDictionary();
-			resources.put(PdfName.XOBJECT, xobject);
-			stream.put(PdfName.RESOURCES, resources);
-		}
-		else {
-			xobject = (PdfDictionary)resources.get(PdfName.XOBJECT);
-			PdfName name;
-			for (Iterator i = xobject.getKeys().iterator(); i.hasNext(); ) {
-				name = (PdfName)i.next();
-				xobject.remove(name);
-			}
-		}
-		return xobject;
     }
 }
