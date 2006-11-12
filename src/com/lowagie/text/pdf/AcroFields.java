@@ -1969,20 +1969,15 @@ public class AcroFields {
     public void replaceIcon(String field, PdfTemplate template) throws DocumentException {
     	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
     		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
-    	AcroFields.Item item = getFieldItem(field);
-    	PRIndirectReference icon_ref = getIconReference((PdfDictionary)item.widgets.iterator().next());
-		PRStream icon = (PRStream)reader.getPdfObject(icon_ref.getNumber());
-		if (icon == null) {
-			throw new DocumentException("There's no icon present in field " + field);
-		}
-		PdfDictionary xobject = removeXObjectResources(icon);
-		PdfName name = writer.getTemplateName(template);
-		xobject.put(writer.getTemplateName(template), template.getIndirectReference());
-		ByteBuffer buf = new ByteBuffer();
-		buf.append("q 1 0 0 1 0 0 cm ");
-		buf.append(name.toString());
-		buf.append(" Do Q\n\n");
-		icon.setData(buf.toByteArray());
+    	float[] pos = getFieldPositions(field);
+		float a = (pos[3] - pos[1]) / template.getWidth();
+		float b = (pos[4] - pos[2]) / template.getHeight();
+    	float factor = a < b ? a : b;
+    	float e = ((pos[3] - pos[1]) - (template.getWidth() * factor)) / 2;
+    	float f = ((pos[4] - pos[2]) - (template.getHeight() * factor)) / 2;
+    	PdfName name = writer.getTemplateName(template);
+    	PdfIndirectReference reference = template.getIndirectReference();
+    	updateIcon(field, name, reference, factor, factor, e, f);
 	}
     
     /**
@@ -1997,10 +1992,11 @@ public class AcroFields {
     public void replaceIcon(String field, Image img) throws DocumentException {
     	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
     		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
+		PdfName name = writer.addDirectImageSimple(img);
+		PdfIndirectReference reference = writer.getImageReference(name);
 		float[] pos = getFieldPositions(field);
 		img.scaleToFit(pos[3] - pos[1], pos[4] - pos[2]);
-		PdfName name = writer.addDirectImageSimple(img);
-    	updateIcon(field, name, img.scaledWidth(), img.scaledHeight(),
+    	updateIcon(field, name, reference, img.scaledWidth(), img.scaledHeight(),
     		(pos[3] - pos[1] - img.scaledWidth()) / 2, (pos[4] - pos[2] - img.scaledHeight()) / 2);
     }
 
@@ -2009,7 +2005,7 @@ public class AcroFields {
      * @param widget	the annotation of which you want to replace the icon
      * @throws DocumentException 
      */
-    private void updateIcon(String field, PdfName name, float a, float d, float e, float f) throws DocumentException {
+    private void updateIcon(String field, PdfName name, PdfIndirectReference reference, float a, float d, float e, float f) throws DocumentException {
     	AcroFields.Item item = getFieldItem(field);
     	PRIndirectReference icon_ref = getIconReference((PdfDictionary)item.widgets.iterator().next());
     	PRStream icon = (PRStream)reader.getPdfObject(icon_ref.getNumber());
@@ -2017,7 +2013,7 @@ public class AcroFields {
 			throw new DocumentException("There's no icon present in the pushbutton field.");
 		}
 		PdfDictionary xobject = removeXObjectResources(icon);
-		xobject.put(name, writer.getImageReference(name));
+		xobject.put(name, reference);
 		ByteBuffer buf = new ByteBuffer();
 		buf.append("q ");
 		buf.append(a);
