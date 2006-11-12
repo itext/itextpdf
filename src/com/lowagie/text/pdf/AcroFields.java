@@ -1959,6 +1959,8 @@ public class AcroFields {
     
     /**
      * Replaces the icon of a pushbutton with a PdfTemplate.
+     * iText will scales and centers the icon so that it fits the pushbutton.
+     * 
      * @param field		the name of the pushbutton field
      * @param template	the new icon
      * @throws DocumentException if the field isn't a pushbutton
@@ -1968,38 +1970,13 @@ public class AcroFields {
     	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
     		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
     	AcroFields.Item item = getFieldItem(field);
-		PdfDictionary widget = (PdfDictionary)item.widgets.iterator().next();
-		PdfDictionary mk = (PdfDictionary)widget.get(PdfName.MK);
-		if (mk == null) {
-			//TODO create MK dictionary if there is none
-			throw new DocumentException("There's no appearance characteristics dictionary defined for field '" + field + "'.");
-		}
-		PRIndirectReference icon_ref = (PRIndirectReference)mk.get(PdfName.I);
-		if (icon_ref == null) {
-			//TODO create stream + reference if there is no reference to an icon
-			throw new DocumentException("There's no reference to an icon in field '" + field + "'.");
-		}
+    	PRIndirectReference icon_ref = getIconReference((PdfDictionary)item.widgets.iterator().next());
 		PRStream icon = (PRStream)reader.getPdfObject(icon_ref.getNumber());
 		if (icon == null) {
 			throw new DocumentException("There's no icon present in field " + field);
 		}
-		PdfDictionary xobject;
-		PdfName name;
-		PdfDictionary resources = (PdfDictionary)icon.get(PdfName.RESOURCES);
-		if (resources == null) {
-			resources = new PdfDictionary();
-			xobject = new PdfDictionary();
-			resources.put(PdfName.XOBJECT, xobject);
-			icon.put(PdfName.RESOURCES, resources);
-		}
-		else {
-			xobject = (PdfDictionary)resources.get(PdfName.XOBJECT);
-			for (Iterator i = xobject.getKeys().iterator(); i.hasNext(); ) {
-				name = (PdfName)i.next();
-				xobject.remove(name);
-			}
-		}
-		name = writer.getTemplateName(template);
+		PdfDictionary xobject = removeXObjectResources(icon);
+		PdfName name = writer.getTemplateName(template);
 		xobject.put(writer.getTemplateName(template), template.getIndirectReference());
 		ByteBuffer buf = new ByteBuffer();
 		buf.append("q 1 0 0 1 0 0 cm ");
@@ -2007,9 +1984,11 @@ public class AcroFields {
 		buf.append(" Do Q\n\n");
 		icon.setData(buf.toByteArray());
 	}
-
+    
     /**
      * Replaces the icon of a pushbutton with an Image.
+     * iText will scales and centers the icon so that it fits the pushbutton.
+     * 
      * @param field		the name of the pushbutton field
      * @param template	the new icon
      * @throws DocumentException if the field isn't a pushbutton
@@ -2018,47 +1997,82 @@ public class AcroFields {
     public void replaceIcon(String field, Image img) throws DocumentException {
     	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
     		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
-		float[] pos = getFieldPositions("photo");
+		float[] pos = getFieldPositions(field);
 		img.scaleToFit(pos[3] - pos[1], pos[4] - pos[2]);
-		float offset_x = (pos[3] - pos[1] - img.scaledWidth()) / 2;
-		float offset_y = (pos[4] - pos[2] - img.scaledHeight()) / 2;
+		PdfName name = writer.addDirectImageSimple(img);
+    	updateIcon(field, name, img.scaledWidth(), img.scaledHeight(),
+    		(pos[3] - pos[1] - img.scaledWidth()) / 2, (pos[4] - pos[2] - img.scaledHeight()) / 2);
+    }
+
+    /**
+     * Replaces an icon in a widget annotation
+     * @param widget	the annotation of which you want to replace the icon
+     * @throws DocumentException 
+     */
+    private void updateIcon(String field, PdfName name, float a, float d, float e, float f) throws DocumentException {
     	AcroFields.Item item = getFieldItem(field);
-		PdfDictionary widget = (PdfDictionary)item.widgets.iterator().next();
-		PdfDictionary mk = (PdfDictionary)widget.get(PdfName.MK);
-		if (mk == null) {
-			//TODO create MK dictionary if there is none
-			throw new DocumentException("There's no appearance characteristics dictionary defined for field '" + field + "'.");
-		}
-		PRIndirectReference icon_ref = (PRIndirectReference)mk.get(PdfName.I);
-		if (icon_ref == null) {
-			//TODO create stream + reference if there is no reference to an icon
-			throw new DocumentException("There's no reference to an icon in field '" + field + "'.");
-		}
-		PRStream icon = (PRStream)reader.getPdfObject(icon_ref.getNumber());
+    	PRIndirectReference icon_ref = getIconReference((PdfDictionary)item.widgets.iterator().next());
+    	PRStream icon = (PRStream)reader.getPdfObject(icon_ref.getNumber());
 		if (icon == null) {
-			throw new DocumentException("There's no icon present in field " + field);
+			throw new DocumentException("There's no icon present in the pushbutton field.");
 		}
-		PdfDictionary resources = (PdfDictionary)icon.get(PdfName.RESOURCES);
-		PdfDictionary xobject = (PdfDictionary)resources.get(PdfName.XOBJECT);
-		PdfName name = null;
-		for (Iterator i = xobject.getKeys().iterator(); i.hasNext(); ) {
-			name = (PdfName)i.next();
-			xobject.remove(name);
-		}
-		name = writer.addDirectImageSimple(img);
+		PdfDictionary xobject = removeXObjectResources(icon);
 		xobject.put(name, writer.getImageReference(name));
 		ByteBuffer buf = new ByteBuffer();
 		buf.append("q ");
-		buf.append(img.scaledWidth());
+		buf.append(a);
 		buf.append(" 0 0 ");
-		buf.append(img.scaledHeight());
+		buf.append(d);
 		buf.append(' ');
-		buf.append(offset_x);
+		buf.append(e);
 		buf.append(' ');
-		buf.append(offset_y);
+		buf.append(f);
 		buf.append(" cm ");
 		buf.append(name.toString());
 		buf.append(" Do Q\n\n");
 		icon.setData(buf.toByteArray());
+    }
+    
+    /**
+     * Retrieves the reference to an icon inside the MK dictionary of a widget.
+     * @param widget	the annotation dictionary
+     * @return a PRIndirectReference refering to the stream of the icon
+     */
+    private PRIndirectReference getIconReference(PdfDictionary widget) throws DocumentException {
+    	PdfDictionary mk = (PdfDictionary)widget.get(PdfName.MK);
+		if (mk == null) {
+            mk = new PdfDictionary();
+		}
+		PRIndirectReference icon_ref = (PRIndirectReference)mk.get(PdfName.I);
+		if (icon_ref == null) {
+			//TODO create stream + reference if there is no reference to an icon
+			throw new DocumentException("There's no reference to an icon.");
+		}
+		return icon_ref;
+    }
+    
+    /**
+     * Removes all the XObject resources from a stream.
+     * @param stream	a stream describing an icon
+     * @return	the resources dictionary of a stream, made empty
+     */
+    private PdfDictionary removeXObjectResources(PRStream stream) {
+		PdfDictionary resources = (PdfDictionary)stream.get(PdfName.RESOURCES);
+		PdfDictionary xobject;
+		if (resources == null) {
+			resources = new PdfDictionary();
+			xobject = new PdfDictionary();
+			resources.put(PdfName.XOBJECT, xobject);
+			stream.put(PdfName.RESOURCES, resources);
+		}
+		else {
+			xobject = (PdfDictionary)resources.get(PdfName.XOBJECT);
+			PdfName name;
+			for (Iterator i = xobject.getKeys().iterator(); i.hasNext(); ) {
+				name = (PdfName)i.next();
+				xobject.remove(name);
+			}
+		}
+		return xobject;
     }
 }
