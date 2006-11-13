@@ -1121,7 +1121,7 @@ public class AcroFields {
      * @return <CODE>true</CODE> if the field was found and changed,
      * <CODE>false</CODE> otherwise
      */    
-    public boolean setField(String name) throws IOException, DocumentException {
+    public boolean refreshField(String name) throws IOException, DocumentException {
     	String value = getField(name);
         return setField(name, value, value);
     }
@@ -1975,117 +1975,51 @@ public class AcroFields {
         return xfa;
     }
     
+    private PushbuttonField getNewPushbuttonField(String field) {
+    	float[] pos = getFieldPositions(field);
+    	Rectangle box = new Rectangle(pos[1], pos[2], pos[3], pos[4]);
+    	PushbuttonField newButton = new PushbuttonField(writer, box, field);
+    	newButton.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
+    	return newButton;
+    }
+    
     /**
      * Replaces the icon of a pushbutton with a PdfTemplate.
      * iText will scales and centers the icon so that it fits
-     * the pushbutton. If no icon is available an icon is added,
-     * but you need to let the viewer create the appearances by
-     * setting AcroFields.setGenerateAppearances(false)!
+     * the pushbutton. If no icon is available an icon is added.
      * 
      * @param field		the name of the pushbutton field
      * @param template	the new icon
      * @throws DocumentException if the field isn't a pushbutton
+     * @throws IOException 
      */
-    public void setIcon(String field, PdfTemplate template) throws DocumentException {
+    public void setIcon(String field, PdfTemplate template) throws DocumentException, IOException {
     	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
     		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
+    	PushbuttonField newButton = getNewPushbuttonField(field);
+    	newButton.setTemplate(template);
     	float[] pos = getFieldPositions(field);
-		float a = (pos[3] - pos[1]) / template.getWidth();
-		float b = (pos[4] - pos[2]) / template.getHeight();
-    	float factor = a < b ? a : b;
-    	float e = ((pos[3] - pos[1]) - (template.getWidth() * factor)) / 2;
-    	float f = ((pos[4] - pos[2]) - (template.getHeight() * factor)) / 2;
-    	PdfName name = writer.getTemplateName(template);
-    	PdfIndirectReference reference = template.getIndirectReference();
-    	updateIcon(field, name, reference, factor, factor, e, f);
+    	removeField(field);
+    	writer.addAnnotation(newButton.getField(), (int)pos[0]);
 	}
     
     /**
      * Replaces the icon of a pushbutton with an Image.
      * iText will scales and centers the icon so that it fits
-     * the pushbutton. If no icon is available an icon is added,
-     * but you need to let the viewer create the appearances by
-     * setting AcroFields.setGenerateAppearances(false)!
+     * the pushbutton. If no icon is available an icon is added.
      * 
      * @param field		the name of the pushbutton field
      * @param template	the new icon
      * @throws DocumentException if the field isn't a pushbutton
+     * @throws IOException 
      */
-    public void setIcon(String field, Image img) throws DocumentException {
+    public void setIcon(String field, Image img) throws DocumentException, IOException {
     	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
     		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
-		PdfName name = writer.addDirectImageSimple(img);
-		PdfIndirectReference reference = writer.getImageReference(name);
-		float[] pos = getFieldPositions(field);
-		img.scaleToFit(pos[3] - pos[1], pos[4] - pos[2]);
-    	updateIcon(field, name, reference, img.scaledWidth(), img.scaledHeight(),
-    		(pos[3] - pos[1] - img.scaledWidth()) / 2, (pos[4] - pos[2] - img.scaledHeight()) / 2);
-    }
-
-    /**
-     * Replaces an icon in a widget annotation.
-     * If no icon is available, an icon will be added.
-     * 
-     * @param widget	the annotation of which you want to replace the icon
-     * @throws DocumentException 
-     */
-    private void updateIcon(String field, PdfName name, PdfIndirectReference reference, float a, float d, float e, float f) throws DocumentException {
-    	// PDF Syntax to show the icon
-		ByteBuffer buf = new ByteBuffer();
-		buf.append("q ");
-		buf.append(a);
-		buf.append(" 0 0 ");
-		buf.append(d);
-		buf.append(' ');
-		buf.append(e);
-		buf.append(' ');
-		buf.append(f);
-		buf.append(" cm ");
-		buf.append(name.getBytes());
-		buf.append(" Do Q\n");
-		
-		// update the pushbutton field
-    	AcroFields.Item item = getFieldItem(field);
-    	PdfDictionary widget = (PdfDictionary)item.widgets.iterator().next();
-    	PdfDictionary mk = (PdfDictionary)widget.get(PdfName.MK);
-		if (mk == null) {
-            mk = new PdfDictionary();
-            widget.put(PdfName.MK, mk);
-		}
-		mk.put(PdfName.TP, new PdfNumber(1));
-		PRIndirectReference icon_ref = (PRIndirectReference)mk.get(PdfName.I);
-    	PRStream icon;
-    	if (icon_ref != null) {
-			icon = (PRStream)reader.getPdfObject(icon_ref.getNumber());
-			if (icon == null) {
-				throw new DocumentException("There's no icon present in the pushbutton field.");
-			}
-			PdfDictionary xobject = new PdfDictionary();
-			xobject.put(name, reference);
-			PdfDictionary resources = (PdfDictionary)icon.get(PdfName.RESOURCES);
-			if (resources == null) {
-				resources = new PdfDictionary();
-				icon.put(PdfName.RESOURCES, resources);
-			}
-			resources.put(PdfName.XOBJECT, xobject);
-			icon.setData(buf.toByteArray());
-    	}
-    	else {
-    		PdfTemplate template = new PdfTemplate(writer);
-            PdfArray rect = (PdfArray)widget.get(PdfName.RECT);
-            if (rect == null)
-                throw new DocumentException("The pushbuttonfield has no dimensions.");
-            Rectangle r = PdfReader.getNormalizedRectangle(rect);
-    		template.setBoundingBox(new Rectangle(r.width(), r.height()));
-    		writer.addDirectTemplateSimple(template, null);
-    		template.setLiteral(buf.toString());
-            PageResources prs = template.getPageResources();
-            prs.addXObject(name, reference);
-            PdfDictionary dr = (PdfDictionary)widget.get(PdfName.DR);
-            PdfDictionary x = new PdfDictionary();
-            x.put(PdfName.FRM, template.getIndirectReference());
-            dr.put(PdfName.XOBJECT, x);
-    		mk.put(PdfName.I, template.getIndirectReference());
-    	}
+    	PushbuttonField newButton = getNewPushbuttonField(field);
+    	newButton.setImage(img);
+    	float[] pos = getFieldPositions(field);
+    	removeField(field);
+    	writer.addAnnotation(newButton.getField(), (int)pos[0]);
     }
 }
