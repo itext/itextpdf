@@ -802,7 +802,9 @@ public class PAContext {
         java.awt.Font fn=( (java.awt.Font) data[0]).deriveFont( ( (Number)
             data[1]).
             floatValue());
-        System.out.println("Fonthoehe:"+fn.getSize2D());
+        if (PAContext.DebugExecution) {
+          System.out.println("Fonthoehe:"+fn.getSize2D());
+        }
         context.operands.push(fn );
       }
     });
@@ -816,7 +818,9 @@ public class PAContext {
           throw new PainterException("setfont: wrong arguments");
         }
         java.awt.Font fn=(java.awt.Font)data[0];
-        System.out.println("Fonthoehe:"+fn.getSize2D());
+        if (PAContext.DebugExecution) {
+            System.out.println("Fonthoehe:"+fn.getSize2D());
+        }
         //todo two times the same?
         context.pencil.graphics.setFont( fn);
         context.pencil.state.font=fn;
@@ -1398,12 +1402,14 @@ systemDict.put("currentrgbcolor", new PACommand() {
     // dumpstack
     systemDict.put("dumpstack", new PACommand() {
       public void execute(PAContext context) throws PainterException {
-        Enumeration enumx = context.operands.elements();
-        System.out.println("-------------Stack--------------");
-        while (enumx.hasMoreElements()) {
-          System.out.println(enumx.nextElement());
+        if (PAContext.DebugExecution) {
+          Enumeration enumx = context.operands.elements();
+          System.out.println("-------------Stack--------------");
+          while (enumx.hasMoreElements()) {
+            System.out.println(enumx.nextElement());
+          }
+          System.out.println("--------------------------------");
         }
-        System.out.println("--------------------------------");
       }
     });
 
@@ -2649,8 +2655,10 @@ systemDict.put("currentrgbcolor", new PACommand() {
           int height = ( (Number) data[1]).intValue();
           int bitspercomponent = ( (Number) data[2]).intValue();
           ArrayList ar = (ArrayList) data[3];
-          System.out.println("I " + width + "*" + height + " " +
+          if (PAContext.DebugExecution) {
+              System.out.println("I " + width + "*" + height + " " +
                                         bitspercomponent  + " " + ar);
+          }
 
 //                     context.engine.process(proc);
         }
