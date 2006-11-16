@@ -322,10 +322,10 @@ public class PushbuttonField extends BaseField {
     public PdfAppearance getAppearance() throws IOException, DocumentException {
         PdfAppearance app = getBorderAppearance();
         Rectangle box = new Rectangle(app.getBoundingBox());
-        if ((text == null || text.length() == 0) && (layout == LAYOUT_LABEL_ONLY || (image == null && template == null))) {
+        if ((text == null || text.length() == 0) && (layout == LAYOUT_LABEL_ONLY || (image == null && template == null && iconReference == null))) {
             return app;
         }
-        if (layout == LAYOUT_ICON_ONLY && image == null && template == null)
+        if (layout == LAYOUT_ICON_ONLY && image == null && template == null && iconReference == null)
             return app;
         BaseFont ufont = getRealFont();
         boolean borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
@@ -346,7 +346,7 @@ public class PushbuttonField extends BaseField {
         float ht = box.height() - 2 * offX;
         float adj = (iconFitToBounds ? 0 : offX + 1);
         int nlayout = layout;
-        if (image == null && template == null)
+        if (image == null && template == null && iconReference == null)
             nlayout = LAYOUT_LABEL_ONLY;
         Rectangle iconBox = null;
         while (true) {
@@ -437,23 +437,43 @@ public class PushbuttonField extends BaseField {
             textY = box.bottom() + offX;
         if (iconBox != null && (iconBox.width() <= 0 || iconBox.height() <= 0))
             iconBox = null;
+        boolean haveIcon = false;
+        float boundingBoxWidth = 0;
+        float boundingBoxHeight = 0;
+        PdfArray matrix = null;
         if (iconBox != null) {
             if (image != null) {
                 tp = new PdfTemplate(writer);
                 tp.setBoundingBox(new Rectangle(image));
-                writer.addDirectTemplateSimple(tp, new PdfName("FRM"));
+                writer.addDirectTemplateSimple(tp, PdfName.FRM);
                 tp.addImage(image, image.width(), 0, 0, image.height(), 0, 0);
+                haveIcon = true;
+                boundingBoxWidth = tp.getBoundingBox().width();
+                boundingBoxHeight = tp.getBoundingBox().height();
             }
             else if (template != null) {
                 tp = new PdfTemplate(writer);
                 tp.setBoundingBox(new Rectangle(template.getWidth(), template.getHeight()));
-                writer.addDirectTemplateSimple(tp, new PdfName("FRM"));
+                writer.addDirectTemplateSimple(tp, PdfName.FRM);
                 tp.addTemplate(template, template.getBoundingBox().left(), template.getBoundingBox().bottom());
+                haveIcon = true;
+                boundingBoxWidth = tp.getBoundingBox().width();
+                boundingBoxHeight = tp.getBoundingBox().height();
+            }
+            else if (iconReference != null) {
+                PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObject(iconReference);
+                if (dic != null) {
+                    Rectangle r2 = PdfReader.getNormalizedRectangle((PdfArray)PdfReader.getPdfObject(dic.get(PdfName.BBOX)));
+                    matrix = (PdfArray)PdfReader.getPdfObject(dic.get(PdfName.MATRIX));
+                    haveIcon = true;
+                    boundingBoxWidth = r2.width();
+                    boundingBoxHeight = r2.height();
+                }
             }
         }
-        if (tp != null) {
-            float icx = iconBox.width() / tp.getBoundingBox().width();
-            float icy = iconBox.height() / tp.getBoundingBox().height();
+        if (haveIcon) {
+            float icx = iconBox.width() / boundingBoxWidth;
+            float icy = iconBox.height() / boundingBoxHeight;
             if (proportionalIcon) {
                 switch (scaleIcon) {
                     case SCALE_ICON_IS_TOO_BIG:
@@ -490,13 +510,27 @@ public class PushbuttonField extends BaseField {
                         break;
                 }
             }
-            float xpos = iconBox.left() + (iconBox.width() - (tp.getBoundingBox().width() * icx)) * iconHorizontalAdjustment;
-            float ypos = iconBox.bottom() + (iconBox.height() - (tp.getBoundingBox().height() * icy)) * iconVerticalAdjustment;
+            float xpos = iconBox.left() + (iconBox.width() - (boundingBoxWidth * icx)) * iconHorizontalAdjustment;
+            float ypos = iconBox.bottom() + (iconBox.height() - (boundingBoxHeight * icy)) * iconVerticalAdjustment;
             app.saveState();
             app.rectangle(iconBox.left(), iconBox.bottom(), iconBox.width(), iconBox.height());
             app.clip();
             app.newPath();
-            app.addTemplate(tp, icx, 0, 0, icy, xpos, ypos);
+            if (tp != null)
+                app.addTemplate(tp, icx, 0, 0, icy, xpos, ypos);
+            else {
+                float cox = 0;
+                float coy = 0;
+                if (matrix != null && matrix.size() == 6) {
+                    PdfNumber nm = (PdfNumber)PdfReader.getPdfObject((PdfObject)matrix.getArrayList().get(4));
+                    if (nm != null)
+                        cox = nm.floatValue();
+                    nm = (PdfNumber)PdfReader.getPdfObject((PdfObject)matrix.getArrayList().get(5));
+                    if (nm != null)
+                        coy = nm.floatValue();
+                }
+                app.addTemplateReference(iconReference, PdfName.FRM, icx, 0, 0, icy, xpos - cox * icx, ypos - coy * icy);
+            }
             app.restoreState();
         }
         if (!Float.isNaN(textX)) {
@@ -597,6 +631,27 @@ public class PushbuttonField extends BaseField {
      */
     public void setIconFitToBounds(boolean iconFitToBounds) {
         this.iconFitToBounds = iconFitToBounds;
+    }
+
+    /**
+     * Holds value of property iconReference.
+     */
+    private PRIndirectReference iconReference;
+
+    /**
+     * Gets the reference to an existing icon.
+     * @return the reference to an existing icon.
+     */
+    public PRIndirectReference getIconReference() {
+        return this.iconReference;
+    }
+
+    /**
+     * Sets the reference to an existing icon.
+     * @param iconReference the reference to an existing icon
+     */
+    public void setIconReference(PRIndirectReference iconReference) {
+        this.iconReference = iconReference;
     }
     
 }

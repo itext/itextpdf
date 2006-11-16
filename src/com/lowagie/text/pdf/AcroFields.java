@@ -61,7 +61,6 @@ import org.w3c.dom.Node;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 
 /** Query and change fields in existing documents either by method
@@ -510,144 +509,164 @@ public class AcroFields {
         }
     }
     
+    void decodeGenericDictionary(PdfDictionary merged, BaseField tx) throws IOException, DocumentException {
+        int flags = 0;
+        // the text size and color
+        PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
+        if (da != null) {
+            Object dab[] = splitDAelements(da.toUnicodeString());
+            if (dab[DA_SIZE] != null)
+                tx.setFontSize(((Float)dab[DA_SIZE]).floatValue());
+            if (dab[DA_COLOR] != null)
+                tx.setTextColor((Color)dab[DA_COLOR]);
+            if (dab[DA_FONT] != null) {
+                PdfDictionary font = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.DR));
+                if (font != null) {
+                    font = (PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONT));
+                    if (font != null) {
+                        PdfObject po = font.get(new PdfName((String)dab[DA_FONT]));
+                        if (po != null && po.type() == PdfObject.INDIRECT) {
+                            PRIndirectReference por = (PRIndirectReference)po;
+                            BaseFont bp = new DocumentFont((PRIndirectReference)po);
+                            tx.setFont(bp);
+                            Integer porkey = new Integer(por.getNumber());
+                            BaseFont porf = (BaseFont)extensionFonts.get(porkey);
+                            if (porf == null) {
+                                if (!extensionFonts.containsKey(porkey)) {
+                                    PdfDictionary fo = (PdfDictionary)PdfReader.getPdfObject(po);
+                                    PdfDictionary fd = (PdfDictionary)PdfReader.getPdfObject(fo.get(PdfName.FONTDESCRIPTOR));
+                                    if (fd != null) {
+                                        PRStream prs = (PRStream)PdfReader.getPdfObject(fd.get(PdfName.FONTFILE2));
+                                        if (prs == null)
+                                            prs = (PRStream)PdfReader.getPdfObject(fd.get(PdfName.FONTFILE3));
+                                        if (prs == null) {
+                                            extensionFonts.put(porkey, null);
+                                        }
+                                        else {
+                                            try {
+                                                porf = BaseFont.createFont("font.ttf", BaseFont.IDENTITY_H, true, false, PdfReader.getStreamBytes(prs), null);
+                                            }
+                                            catch (Exception e) {
+                                                porf = null;
+                                            }
+                                            extensionFonts.put(porkey, porf);
+                                        }
+                                    }
+                                }
+                            }
+                            if (tx instanceof TextField)
+                                ((TextField)tx).setExtensionFont(porf);
+                        }
+                        else {
+                            BaseFont bf = (BaseFont)localFonts.get(dab[DA_FONT]);
+                            if (bf == null) {
+                                String fn[] = (String[])stdFieldFontNames.get(dab[DA_FONT]);
+                                if (fn != null) {
+                                    try {
+                                        String enc = "winansi";
+                                        if (fn.length > 1)
+                                            enc = fn[1];
+                                        bf = BaseFont.createFont(fn[0], enc, false);
+                                        tx.setFont(bf);
+                                    }
+                                    catch (Exception e) {
+                                        // empty
+                                    }
+                                }
+                            }
+                            else
+                                tx.setFont(bf);
+                        }
+                    }
+                }
+            }
+        }
+        //rotation, border and backgound color
+        PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.MK));
+        if (mk != null) {
+            PdfArray ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BC));
+            Color border = getMKColor(ar);
+            tx.setBorderColor(border);
+            if (border != null)
+                tx.setBorderWidth(1);
+            ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BG));
+            tx.setBackgroundColor(getMKColor(ar));
+            PdfNumber rotation = (PdfNumber)PdfReader.getPdfObject(mk.get(PdfName.R));
+            if (rotation != null)
+                tx.setRotation(rotation.intValue());
+        }
+        //flags
+        PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.F));
+        flags = 0;
+        if (nfl != null) {
+            flags = nfl.intValue();
+            if ((flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_HIDDEN) != 0)
+                tx.setVisibility(BaseField.HIDDEN);
+            else if ((flags & PdfFormField.FLAGS_PRINT) != 0 && (flags & PdfFormField.FLAGS_NOVIEW) != 0)
+                tx.setVisibility(BaseField.HIDDEN_BUT_PRINTABLE);
+            else if ((flags & PdfFormField.FLAGS_PRINT) != 0)
+                tx.setVisibility(BaseField.VISIBLE);
+            else
+                tx.setVisibility(BaseField.VISIBLE_BUT_DOES_NOT_PRINT);
+        }
+        //multiline
+        nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
+        flags = 0;
+        if (nfl != null)
+            flags = nfl.intValue();
+        tx.setOptions(flags);
+        if ((flags & PdfFormField.FF_COMB) != 0) {
+            PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.MAXLEN));
+            int len = 0;
+            if (maxLen != null)
+                len = maxLen.intValue();
+            tx.setMaxCharacterLength(len);
+        }
+        //alignment
+        nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.Q));
+        if (nfl != null) {
+            if (nfl.intValue() == PdfFormField.Q_CENTER)
+                tx.setAlignment(Element.ALIGN_CENTER);
+            else if (nfl.intValue() == PdfFormField.Q_RIGHT)
+                tx.setAlignment(Element.ALIGN_RIGHT);
+        }
+        //border styles
+        PdfDictionary bs = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.BS));
+        if (bs != null) {
+            PdfNumber w = (PdfNumber)PdfReader.getPdfObject(bs.get(PdfName.W));
+            if (w != null)
+                tx.setBorderWidth(w.floatValue());
+            PdfName s = (PdfName)PdfReader.getPdfObject(bs.get(PdfName.S));
+            if (PdfName.D.equals(s))
+                tx.setBorderStyle(PdfBorderDictionary.STYLE_DASHED);
+            else if (PdfName.B.equals(s))
+                tx.setBorderStyle(PdfBorderDictionary.STYLE_BEVELED);
+            else if (PdfName.I.equals(s))
+                tx.setBorderStyle(PdfBorderDictionary.STYLE_INSET);
+            else if (PdfName.U.equals(s))
+                tx.setBorderStyle(PdfBorderDictionary.STYLE_UNDERLINE);
+        }
+        else {
+            PdfArray bd = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.BORDER));
+            if (bd != null) {
+                ArrayList ar = bd.getArrayList();
+                if (ar.size() >= 3)
+                    tx.setBorderWidth(((PdfNumber)ar.get(2)).floatValue());
+                if (ar.size() >= 4)
+                    tx.setBorderStyle(PdfBorderDictionary.STYLE_DASHED);
+            }
+        }
+    }
+    
     PdfAppearance getAppearance(PdfDictionary merged, String text, String fieldName) throws IOException, DocumentException {
         topFirst = 0;
-        int flags = 0;
         TextField tx = null;
         if (fieldCache == null || !fieldCache.containsKey(fieldName)) {
             tx = new TextField(writer, null, null);
             tx.setExtraMargin(extraMarginLeft, extraMarginTop);
             tx.setBorderWidth(0);
             tx.setSubstitutionFonts(substitutionFonts);
-            // the text size and color
-            PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
-            if (da != null) {
-                Object dab[] = splitDAelements(da.toUnicodeString());
-                if (dab[DA_SIZE] != null)
-                    tx.setFontSize(((Float)dab[DA_SIZE]).floatValue());
-                if (dab[DA_COLOR] != null)
-                    tx.setTextColor((Color)dab[DA_COLOR]);
-                if (dab[DA_FONT] != null) {
-                    PdfDictionary font = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.DR));
-                    if (font != null) {
-                        font = (PdfDictionary)PdfReader.getPdfObject(font.get(PdfName.FONT));
-                        if (font != null) {
-                            PdfObject po = font.get(new PdfName((String)dab[DA_FONT]));
-                            if (po != null && po.type() == PdfObject.INDIRECT) {
-                                PRIndirectReference por = (PRIndirectReference)po;
-                                BaseFont bp = new DocumentFont((PRIndirectReference)po);
-                                tx.setFont(bp);
-                                Integer porkey = new Integer(por.getNumber());
-                                BaseFont porf = (BaseFont)extensionFonts.get(porkey);
-                                if (porf == null) {
-                                    if (!extensionFonts.containsKey(porkey)) {
-                                        PdfDictionary fo = (PdfDictionary)PdfReader.getPdfObject(po);
-                                        PdfDictionary fd = (PdfDictionary)PdfReader.getPdfObject(fo.get(PdfName.FONTDESCRIPTOR));
-                                        if (fd != null) {
-                                            PRStream prs = (PRStream)PdfReader.getPdfObject(fd.get(PdfName.FONTFILE2));
-                                            if (prs == null)
-                                                prs = (PRStream)PdfReader.getPdfObject(fd.get(PdfName.FONTFILE3));
-                                            if (prs == null) {
-                                                extensionFonts.put(porkey, null);
-                                            }
-                                            else {
-                                                try {
-                                                    porf = BaseFont.createFont("font.ttf", BaseFont.IDENTITY_H, true, false, PdfReader.getStreamBytes(prs), null);
-                                                }
-                                                catch (Exception e) {
-                                                    porf = null;
-                                                }
-                                                extensionFonts.put(porkey, porf);
-                                            }
-                                        }
-                                    }
-                                }
-                                tx.setExtensionFont(porf);
-                            }
-                            else {
-                                BaseFont bf = (BaseFont)localFonts.get(dab[DA_FONT]);
-                                if (bf == null) {
-                                    String fn[] = (String[])stdFieldFontNames.get(dab[DA_FONT]);
-                                    if (fn != null) {
-                                        try {
-                                            String enc = "winansi";
-                                            if (fn.length > 1)
-                                                enc = fn[1];
-                                            bf = BaseFont.createFont(fn[0], enc, false);
-                                            tx.setFont(bf);
-                                        }
-                                        catch (Exception e) {
-                                            // empty
-                                        }
-                                    }
-                                }
-                                else
-                                    tx.setFont(bf);
-                            }
-                        }
-                    }
-                }
-            }
-            //rotation, border and backgound color
-            PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.MK));
-            if (mk != null) {
-                PdfArray ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BC));
-                Color border = getMKColor(ar);
-                tx.setBorderColor(border);
-                if (border != null)
-                    tx.setBorderWidth(1);
-                ar = (PdfArray)PdfReader.getPdfObject(mk.get(PdfName.BG));
-                tx.setBackgroundColor(getMKColor(ar));
-                PdfNumber rotation = (PdfNumber)PdfReader.getPdfObject(mk.get(PdfName.R));
-                if (rotation != null)
-                    tx.setRotation(rotation.intValue());
-            }
-            //multiline
-            PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
-            if (nfl != null)
-                flags = nfl.intValue();
-            tx.setOptions(((flags & PdfFormField.FF_MULTILINE) == 0 ? 0 : TextField.MULTILINE) | ((flags & PdfFormField.FF_COMB) == 0 ? 0 : TextField.COMB));
-            if ((flags & PdfFormField.FF_COMB) != 0) {
-                PdfNumber maxLen = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.MAXLEN));
-                int len = 0;
-                if (maxLen != null)
-                    len = maxLen.intValue();
-                tx.setMaxCharacterLength(len);
-            }
-            //alignment
-            nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.Q));
-            if (nfl != null) {
-                if (nfl.intValue() == PdfFormField.Q_CENTER)
-                    tx.setAlignment(Element.ALIGN_CENTER);
-                else if (nfl.intValue() == PdfFormField.Q_RIGHT)
-                    tx.setAlignment(Element.ALIGN_RIGHT);
-            }
-            //border styles
-            PdfDictionary bs = (PdfDictionary)PdfReader.getPdfObject(merged.get(PdfName.BS));
-            if (bs != null) {
-                PdfNumber w = (PdfNumber)PdfReader.getPdfObject(bs.get(PdfName.W));
-                if (w != null)
-                    tx.setBorderWidth(w.floatValue());
-                PdfName s = (PdfName)PdfReader.getPdfObject(bs.get(PdfName.S));
-                if (PdfName.D.equals(s))
-                    tx.setBorderStyle(PdfBorderDictionary.STYLE_DASHED);
-                else if (PdfName.B.equals(s))
-                    tx.setBorderStyle(PdfBorderDictionary.STYLE_BEVELED);
-                else if (PdfName.I.equals(s))
-                    tx.setBorderStyle(PdfBorderDictionary.STYLE_INSET);
-                else if (PdfName.U.equals(s))
-                    tx.setBorderStyle(PdfBorderDictionary.STYLE_UNDERLINE);
-            }
-            else {
-                PdfArray bd = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.BORDER));
-                if (bd != null) {
-                    ArrayList ar = bd.getArrayList();
-                    if (ar.size() >= 3)
-                        tx.setBorderWidth(((PdfNumber)ar.get(2)).floatValue());
-                    if (ar.size() >= 4)
-                        tx.setBorderStyle(PdfBorderDictionary.STYLE_DASHED);
-                }
-            }
+            decodeGenericDictionary(merged, tx);
             //rect
             PdfArray rect = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.RECT));
             Rectangle box = PdfReader.getNormalizedRectangle(rect);
@@ -669,6 +688,10 @@ public class AcroFields {
         if (!PdfName.CH.equals(fieldType))
             throw new DocumentException("An appearance was requested without a variable text field.");
         PdfArray opt = (PdfArray)PdfReader.getPdfObject(merged.get(PdfName.OPT));
+        int flags = 0;
+        PdfNumber nfl = (PdfNumber)PdfReader.getPdfObject(merged.get(PdfName.FF));
+        if (nfl != null)
+            flags = nfl.intValue();
         if ((flags & PdfFormField.FF_COMBO) != 0 && opt == null) {
             tx.setText(text);
             return tx.getAppearance();
@@ -1109,10 +1132,10 @@ public class AcroFields {
     }
 
     /**
-     * Resets the field value.
+     * Regenerates the field appearance.
      * This is usefull when you change a field property, but not its value,
      * for instance form.setFieldProperty("f", "bgcolor", Color.BLUE, null);
-     * This won't have any effect, unless you use setField("f"); after changing
+     * This won't have any effect, unless you use regenerateField("f") after changing
      * the property.
      * 
      * @param name the fully qualified field name or the partial name in the case of XFA forms
@@ -1121,7 +1144,7 @@ public class AcroFields {
      * @return <CODE>true</CODE> if the field was found and changed,
      * <CODE>false</CODE> otherwise
      */    
-    public boolean refreshField(String name) throws IOException, DocumentException {
+    public boolean regenerateField(String name) throws IOException, DocumentException {
     	String value = getField(name);
         return setField(name, value, value);
     }
@@ -1975,51 +1998,101 @@ public class AcroFields {
         return xfa;
     }
     
-    private PushbuttonField getNewPushbuttonField(String field) {
-    	float[] pos = getFieldPositions(field);
-    	Rectangle box = new Rectangle(pos[1], pos[2], pos[3], pos[4]);
-    	PushbuttonField newButton = new PushbuttonField(writer, box, field);
-    	newButton.setLayout(PushbuttonField.LAYOUT_ICON_ONLY);
-    	return newButton;
+    private static final PdfName[] buttonRemove = {PdfName.MK, PdfName.F , PdfName.FF , PdfName.Q , PdfName.BS , PdfName.BORDER};
+    
+    /**
+     * Creates a new pushbutton from an existing field. This pushbutton can be changed and be used to replace 
+     * an existing one, with the same name or other name, as long is it is in the same document. To replace an existing pushbutton
+     * call {@link #replacePushbuttonField(String,PdfFormField)}.
+     * @param field the field name that should be a pushbutton
+     * @return a new pushbutton or <CODE>null</CODE> if the field is not a pushbutton
+     */
+    public PushbuttonField getNewPushbuttonFromField(String field) {
+        try {
+            if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
+                return null;
+            float[] pos = getFieldPositions(field);
+            Rectangle box = new Rectangle(pos[1], pos[2], pos[3], pos[4]);
+            PushbuttonField newButton = new PushbuttonField(writer, box, null);
+            Item item = (Item)fields.get(field);
+            PdfDictionary dic = (PdfDictionary)item.merged.get(0);
+            decodeGenericDictionary(dic, newButton);
+            PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.MK));
+            if (mk != null) {
+                PdfString text = (PdfString)PdfReader.getPdfObject(mk.get(PdfName.CA));
+                if (text != null)
+                    newButton.setText(text.toUnicodeString());
+                PdfNumber tp = (PdfNumber)PdfReader.getPdfObject(mk.get(PdfName.TP));
+                if (tp != null)
+                    newButton.setLayout(tp.intValue() + 1);
+                PdfDictionary ifit = (PdfDictionary)PdfReader.getPdfObject(mk.get(PdfName.IF));
+                if (ifit != null) {
+                    PdfName sw = (PdfName)PdfReader.getPdfObject(ifit.get(PdfName.SW));
+                    if (sw != null) {
+                        int scale = PushbuttonField.SCALE_ICON_ALWAYS;
+                        if (sw.equals(PdfName.B))
+                            scale = PushbuttonField.SCALE_ICON_IS_TOO_BIG;
+                        else if (sw.equals(PdfName.S))
+                            scale = PushbuttonField.SCALE_ICON_IS_TOO_SMALL;
+                        else if (sw.equals(PdfName.N))
+                            scale = PushbuttonField.SCALE_ICON_NEVER;
+                        newButton.setScaleIcon(scale);
+                    }
+                    sw = (PdfName)PdfReader.getPdfObject(ifit.get(PdfName.S));
+                    if (sw != null) {
+                        if (sw.equals(PdfName.A))
+                            newButton.setProportionalIcon(false);
+                    }
+                    PdfArray aj = (PdfArray)PdfReader.getPdfObject(ifit.get(PdfName.A));
+                    if (aj != null && aj.size() == 2) {
+                        float left = ((PdfNumber)PdfReader.getPdfObject((PdfObject)aj.getArrayList().get(0))).floatValue();
+                        float bottom = ((PdfNumber)PdfReader.getPdfObject((PdfObject)aj.getArrayList().get(1))).floatValue();
+                        newButton.setIconHorizontalAdjustment(left);
+                        newButton.setIconVerticalAdjustment(bottom);
+                    }
+                    PdfObject fb = PdfReader.getPdfObject(ifit.get(PdfName.FB));
+                    if (fb != null && fb.toString().equals("true"))
+                        newButton.setIconFitToBounds(true);
+                }
+                PdfObject i = mk.get(PdfName.I);
+                if (i != null && i.isIndirect())
+                    newButton.setIconReference((PRIndirectReference)i);
+            }
+            return newButton;
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
     }
     
     /**
-     * Replaces the icon of a pushbutton with a PdfTemplate.
-     * iText will scales and centers the icon so that it fits
-     * the pushbutton. If no icon is available an icon is added.
-     * 
-     * @param field		the name of the pushbutton field
-     * @param template	the new icon
-     * @throws DocumentException if the field isn't a pushbutton
-     * @throws IOException 
+     * Replaces the field with a new pushbutton. The pushbutton can be created with
+     * {@link #getNewPushbuttonFromField(String)} from the same document or it can be a
+     * generic PdfFormField of the type pushbutton.
+     * @param field the field name
+     * @param button the <CODE>PdfFormField</CODE> representing the pushbutton
+     * @return <CODE>true</CODE> if the field was replaced, <CODE>false</CODE> if the field
+     * was not a pushbutton
      */
-    public void setIcon(String field, PdfTemplate template) throws DocumentException, IOException {
-    	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
-    		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
-    	PushbuttonField newButton = getNewPushbuttonField(field);
-    	newButton.setTemplate(template);
-    	float[] pos = getFieldPositions(field);
-    	removeField(field);
-    	writer.addAnnotation(newButton.getField(), (int)pos[0]);
-	}
-    
-    /**
-     * Replaces the icon of a pushbutton with an Image.
-     * iText will scales and centers the icon so that it fits
-     * the pushbutton. If no icon is available an icon is added.
-     * 
-     * @param field		the name of the pushbutton field
-     * @param template	the new icon
-     * @throws DocumentException if the field isn't a pushbutton
-     * @throws IOException 
-     */
-    public void setIcon(String field, Image img) throws DocumentException, IOException {
-    	if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
-    		throw new DocumentException("Replacing the icon only works for pushbutton fields.");
-    	PushbuttonField newButton = getNewPushbuttonField(field);
-    	newButton.setImage(img);
-    	float[] pos = getFieldPositions(field);
-    	removeField(field);
-    	writer.addAnnotation(newButton.getField(), (int)pos[0]);
+    public boolean replacePushbuttonField(String field, PdfFormField button) {
+        if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
+            return false;
+        Item item = (Item)fields.get(field);
+        PdfDictionary merged = (PdfDictionary)item.merged.get(0);
+        PdfDictionary values = (PdfDictionary)item.values.get(0);
+        PdfDictionary widgets = (PdfDictionary)item.widgets.get(0);
+        for (int k = 0; k < buttonRemove.length; ++k) {
+            merged.remove(buttonRemove[k]);
+            values.remove(buttonRemove[k]);
+            widgets.remove(buttonRemove[k]);
+        }
+        for (Iterator it = button.getKeys().iterator(); it.hasNext();) {
+            PdfName key = (PdfName)it.next();
+            if (key.equals(PdfName.T) || key.equals(PdfName.RECT))
+                continue;
+            merged.put(key, button.get(key));
+            widgets.put(key, button.get(key));
+        }
+        return true;
     }
 }
