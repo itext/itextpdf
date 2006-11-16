@@ -2025,6 +2025,20 @@ public class PdfContentByte {
         content.append(name.getBytes()).append(" Do Q").append_i(separator);
     }
     
+    void addTemplateReference(PdfIndirectReference template, PdfName name, float a, float b, float c, float d, float e, float f) {
+        checkWriter();
+        PageResources prs = getPageResources();
+        name = prs.addXObject(name, template);
+        content.append("q ");
+        content.append(a).append(' ');
+        content.append(b).append(' ');
+        content.append(c).append(' ');
+        content.append(d).append(' ');
+        content.append(e).append(' ');
+        content.append(f).append(" cm ");
+        content.append(name.getBytes()).append(" Do Q").append_i(separator);
+    }
+    
     /**
      * Adds a template to this content.
      *
