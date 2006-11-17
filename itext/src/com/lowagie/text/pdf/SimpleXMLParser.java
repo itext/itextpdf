@@ -70,8 +70,7 @@ import java.util.Stack;
  * <li>It maps lines ending in <code>\r\n</code> and <code>\r</code> to <code>\n</code> on input, in accordance with the XML Specification, Section 2.11
  * </ul>
  * <p>
- * The code is based on <A HREF="http://www.javaworld.com/javaworld/javatips/javatip128/">
- * http://www.javaworld.com/javaworld/javatips/javatip128/</A> with some extra
+ * The code is based on <A HREF="http://www.javaworld.com/javatips/jw-javatip128_p.html">http://www.javaworld.com/javatips/jw-javatip128_p.html</A> with some extra
  * code from XERCES to recognize the encoding.
  */
 public class SimpleXMLParser {
