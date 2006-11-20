@@ -146,7 +146,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     private RtfFont font = null;
 
     /**
-     * Constructs a RtfField for a RtfDocument. This is not very usefull,
+     * Constructs a RtfField for a RtfDocument. This is not very useful,
      * since the RtfField by itself does not do anything. Use one of the
      * subclasses instead.
      * 
@@ -157,7 +157,7 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
     }
     
     /**
-     * Constructs a RtfField for a RtfDocument. This is not very usefull,
+     * Constructs a RtfField for a RtfDocument. This is not very useful,
      * since the RtfField by itself does not do anything. Use one of the
      * subclasses instead.
      * 
@@ -441,5 +441,13 @@ public abstract class RtfField extends Chunk implements RtfBasicElement {
      */
     public boolean isEmpty() {
         return false;
+    }
+    
+    /**
+     * Override setFont to perform the correct font handling.
+     */
+    public void setFont(Font font) {
+        super.setFont(font);
+        this.font = new RtfFont(this.document, font);
     }
 }
