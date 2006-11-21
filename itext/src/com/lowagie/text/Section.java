@@ -111,6 +111,9 @@ private static final long serialVersionUID = 3324172577544748043L;
     /** false if the bookmark children are not visible */
     protected boolean bookmarkOpen = true;
     
+    /** true if the section has to trigger a new page */
+    protected boolean triggerNewPage = false;
+    
     /** The bookmark title if different from the content title */
     protected String bookmarkTitle;
     // constructors
@@ -638,8 +641,22 @@ private static final long serialVersionUID = 3324172577544748043L;
     public void setBookmarkOpen(boolean bookmarkOpen) {
         this.bookmarkOpen = bookmarkOpen;
     }
+
+    /** Getter for property bookmarkOpen.
+     * @return Value of property triggerNewPage.
+     */
+    public boolean isTriggerNewPage() {
+		return triggerNewPage;
+	}
     
-    /**
+    /** Setter for property triggerNewPage.
+     * @param triggerNewPage true if a new page has to be triggered.
+     */
+	public void setTriggerNewPage(boolean triggerNewPage) {
+		this.triggerNewPage = triggerNewPage;
+	}
+
+	/**
      * Gets the bookmark title.
      * @return the bookmark title
      */    

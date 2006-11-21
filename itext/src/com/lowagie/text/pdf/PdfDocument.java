@@ -1785,7 +1785,7 @@ class PdfDocument extends Document implements DocListener {
                     boolean hasTitle = section.title() != null;
                     
                     // if the section is a chapter, we begin a new page
-                    if (section.isChapter()) {
+                    if (section.isTriggerNewPage()) {
                         newPage();
                     }
                     // otherwise, we begin a new line
