@@ -50,6 +50,8 @@
 
 package com.lowagie.text.xml;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 
@@ -187,7 +189,11 @@ public class TagMap extends HashMap {
         try {
             init(TagMap.class.getClassLoader().getResourceAsStream(tagfile));
         }catch(Exception e) {
-            throw new ExceptionConverter(e);
+        	try {
+				init(new FileInputStream(tagfile));
+			} catch (FileNotFoundException fnfe) {
+				throw new ExceptionConverter(fnfe);
+			}
         }
     }
 
