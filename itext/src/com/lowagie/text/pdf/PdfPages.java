@@ -114,7 +114,7 @@ public class PdfPages {
     
     // returns the top parent to include in the catalog
     PdfIndirectReference writePageTree() throws IOException {
-        if (pages.size() == 0)
+        if (pages.isEmpty())
             throw new IOException("The document has no pages.");
         int leaf = 1;
         ArrayList tParents = parents;

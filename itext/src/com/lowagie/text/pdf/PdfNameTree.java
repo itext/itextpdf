@@ -72,7 +72,7 @@ public class PdfNameTree {
      * generally pointed to by the key /Dests, for example
      */    
     public static PdfDictionary writeTree(HashMap items, PdfWriter writer) throws IOException {
-        if (items.size() == 0)
+        if (items.isEmpty())
             return null;
         String names[] = new String[items.size()];
         names = (String[])items.keySet().toArray(names);

@@ -77,44 +77,44 @@ public abstract class BaseField {
     /** The field is hidden but is printable. */    
     public static final int HIDDEN_BUT_PRINTABLE = 3;
     /** The user may not change the value of the field. */    
-    public static final int READ_ONLY = 1;
+    public static final int READ_ONLY = PdfFormField.FF_READ_ONLY;
     /** The field must have a value at the time it is exported by a submit-form
      * action.
      */    
-    public static final int REQUIRED = 2;
+    public static final int REQUIRED = PdfFormField.FF_REQUIRED;
     /** The field may contain multiple lines of text.
      * This flag is only meaningful with text fields.
      */    
-    public static final int MULTILINE = 4;
+    public static final int MULTILINE = PdfFormField.FF_MULTILINE;
     /** The field will not scroll (horizontally for single-line
      * fields, vertically for multiple-line fields) to accommodate more text
      * than will fit within its annotation rectangle. Once the field is full, no
      * further text will be accepted.
      */    
-    public static final int DO_NOT_SCROLL = 8;
+    public static final int DO_NOT_SCROLL = PdfFormField.FF_DONOTSCROLL;
     /** The field is intended for entering a secure password that should
      * not be echoed visibly to the screen.
      */    
-    public static final int PASSWORD = 16;
+    public static final int PASSWORD = PdfFormField.FF_PASSWORD;
     /** The text entered in the field represents the pathname of
      * a file whose contents are to be submitted as the value of the field.
      */    
-    public static final int FILE_SELECTION = 32;
+    public static final int FILE_SELECTION = PdfFormField.FF_FILESELECT;
     /** The text entered in the field will not be spell-checked.
      * This flag is meaningful only in text fields and in combo
      * fields with the <CODE>EDIT</CODE> flag set.
      */    
-    public static final int DO_NOT_SPELL_CHECK = 64;
+    public static final int DO_NOT_SPELL_CHECK = PdfFormField.FF_DONOTSPELLCHECK;
     /** If set the combo box includes an editable text box as well as a drop list; if
      * clear, it includes only a drop list.
      * This flag is only meaningful with combo fields.
      */    
-    public static final int EDIT = 128;
+    public static final int EDIT = PdfFormField.FF_EDIT;
 
     /**
      * combo box flag.
      */
-    public static final int COMB = 256;
+    public static final int COMB = PdfFormField.FF_COMB;
 
     protected float borderWidth = BORDER_WIDTH_THIN;
     protected int borderStyle = PdfBorderDictionary.STYLE_SOLID;

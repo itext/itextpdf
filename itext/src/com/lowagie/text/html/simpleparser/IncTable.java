@@ -93,7 +93,7 @@ public class IncTable {
     }
     
     public PdfPTable buildTable() {
-        if (rows.size() == 0)
+        if (rows.isEmpty())
             return new PdfPTable(1);
         int ncol = 0;
         ArrayList c0 = (ArrayList)rows.get(0);

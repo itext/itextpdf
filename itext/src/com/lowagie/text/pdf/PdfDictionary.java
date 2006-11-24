@@ -218,7 +218,7 @@ public class PdfDictionary extends PdfObject {
  */
     
     public boolean isDictionaryType(PdfName type) {
-        return dictionaryType.compareTo(type) == 0;
+        return type.equals(dictionaryType);
     }
     
 /**
@@ -228,7 +228,7 @@ public class PdfDictionary extends PdfObject {
  */
     
     public boolean isFont() {
-        return dictionaryType.compareTo(FONT) == 0;
+        return FONT.equals(dictionaryType);
     }
     
 /**
@@ -238,7 +238,7 @@ public class PdfDictionary extends PdfObject {
  */
     
     public boolean isPage() {
-        return dictionaryType.compareTo(PAGE) == 0;
+        return PAGE.equals(dictionaryType);
     }
     
 /**
@@ -248,7 +248,7 @@ public class PdfDictionary extends PdfObject {
  */
     
     public boolean isPages() {
-        return dictionaryType.compareTo(PAGES) == 0;
+        return PAGES.equals(dictionaryType);
     }
     
 /**
@@ -258,7 +258,7 @@ public class PdfDictionary extends PdfObject {
  */
     
     public boolean isCatalog() {
-        return dictionaryType.compareTo(CATALOG) == 0;
+        return CATALOG.equals(dictionaryType);
     }
     
 /**
@@ -268,7 +268,7 @@ public class PdfDictionary extends PdfObject {
  */
     
     public boolean isOutlineTree() {
-        return dictionaryType.compareTo(OUTLINES) == 0;
+        return OUTLINES.equals(dictionaryType);
     }
     
     public void merge(PdfDictionary other) {

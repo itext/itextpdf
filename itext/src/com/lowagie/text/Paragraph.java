@@ -211,6 +211,16 @@ private static final long serialVersionUID = 7852314969733375514L;
     public Paragraph(Phrase phrase) {
         super(phrase.leading, "", phrase.font());
         super.add(phrase);
+        if (phrase instanceof Paragraph) {
+        	Paragraph p = (Paragraph)phrase;
+        	setAlignment(p.alignment());
+        	setExtraParagraphSpace(p.getExtraParagraphSpace());
+        	setFirstLineIndent(p.getFirstLineIndent());
+        	setIndentationLeft(p.indentationLeft());
+        	setIndentationRight(p.indentationRight());
+        	setSpacingAfter(p.spacingAfter());
+        	setSpacingBefore(p.spacingBefore());
+        }
     }
     
 /**
@@ -249,7 +259,7 @@ private static final long serialVersionUID = 7852314969733375514L;
             setIndentationRight(Float.parseFloat(value + "f"));
         }
         if ((value = (String)attributes.remove(ElementTags.KEEPTOGETHER)) != null) {
-            keeptogether = new Boolean(value).booleanValue();
+            keeptogether = Boolean.valueOf(value).booleanValue();
         }
         if (attributes.size() > 0) setMarkupAttributes(attributes);
     }

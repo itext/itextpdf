@@ -877,7 +877,7 @@ public class PdfPKCS7 {
             body.add(contentinfo);
             body.add(new DERTaggedObject(false, 0, dercertificates));
             
-            if (crls.size() > 0) {
+            if (!crls.isEmpty()) {
                 v = new ASN1EncodableVector();
                 for (Iterator i = crls.iterator();i.hasNext();) {
                     ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream((((X509CRL)i.next()).getEncoded())));

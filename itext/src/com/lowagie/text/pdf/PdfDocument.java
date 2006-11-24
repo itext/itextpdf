@@ -274,11 +274,11 @@ class PdfDocument extends Document implements DocListener {
          * @param writer the writer the catalog applies to
          */
         void addNames(TreeMap localDestinations, ArrayList documentJavaScript, HashMap documentFileAttachment, PdfWriter writer) {
-            if (localDestinations.size() == 0 && documentJavaScript.size() == 0 && documentFileAttachment.size() == 0)
+            if (localDestinations.isEmpty() && documentJavaScript.isEmpty() && documentFileAttachment.isEmpty())
                 return;
             try {
                 PdfDictionary names = new PdfDictionary();
-                if (localDestinations.size() > 0) {
+                if (!localDestinations.isEmpty()) {
                     PdfArray ar = new PdfArray();
                     for (Iterator i = localDestinations.entrySet().iterator(); i.hasNext();) {
                         Map.Entry entry = (Map.Entry) i.next();
@@ -292,7 +292,7 @@ class PdfDocument extends Document implements DocListener {
                     dests.put(PdfName.NAMES, ar);
                     names.put(PdfName.DESTS, writer.addToBody(dests).getIndirectReference());
                 }
-                if (documentJavaScript.size() > 0) {
+                if (!documentJavaScript.isEmpty()) {
                     String s[] = new String[documentJavaScript.size()];
                     for (int k = 0; k < s.length; ++k)
                         s[k] = Integer.toHexString(k);
@@ -306,7 +306,7 @@ class PdfDocument extends Document implements DocListener {
                     js.put(PdfName.NAMES, ar);
                     names.put(PdfName.JAVASCRIPT, writer.addToBody(js).getIndirectReference());
                 }
-                if (documentFileAttachment.size() > 0) {
+                if (!documentFileAttachment.isEmpty()) {
                     names.put(PdfName.EMBEDDEDFILES, writer.addToBody(PdfNameTree.writeTree(documentFileAttachment, writer)).getIndirectReference());
                 }
                 put(PdfName.NAMES, writer.addToBody(names).getIndirectReference());
@@ -759,7 +759,7 @@ class PdfDocument extends Document implements DocListener {
         //add by Jin-Hsia Yang
         isNewpage = true;
         //end add by Jin-Hsia Yang
-        if (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || (writer != null && writer.isPaused()))) {
+        if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
             return false;
         }
         PdfPageEvent pageEvent = writer.getPageEvent();
@@ -819,7 +819,7 @@ class PdfDocument extends Document implements DocListener {
 	        page.put(PdfName.USERUNIT, new PdfNumber(writer.getUserunit()));
 	    }
         // we add the annotations
-        if (annotations.size() > 0) {
+        if (!annotations.isEmpty()) {
             PdfArray array = rotateAnnotations();
             if (array.size() != 0)
                 page.put(PdfName.ANNOTS, array);
@@ -905,7 +905,7 @@ class PdfDocument extends Document implements DocListener {
     void traverseOutlineCount(PdfOutline outline) {
         ArrayList kids = outline.getKids();
         PdfOutline parent = outline.parent();
-        if (kids.size() == 0) {
+        if (kids.isEmpty()) {
             if (parent != null) {
                 parent.setCount(parent.getCount() + 1);
             }
@@ -946,7 +946,7 @@ class PdfDocument extends Document implements DocListener {
         	boolean wasImage = (imageWait != null);
             newPage();
             if (imageWait != null || wasImage) newPage();
-            if (annotations.size() > 0)
+            if (!annotations.isEmpty())
                 throw new RuntimeException(annotations.size() + " annotations had invalid placement pages.");
             PdfPageEvent pageEvent = writer.getPageEvent();
             if (pageEvent != null)
@@ -1196,18 +1196,13 @@ class PdfDocument extends Document implements DocListener {
         
 		// initialisation of parameters
 		PdfCell cell;
-	                    
-		boolean tableHasToFit =
-			table.hasToFitPageTable() ? (table.bottom() < indentBottom() && table.height() < (top() - bottom())) : false;
-		if (pageEmpty)
-			tableHasToFit = false;
 
 		// drawing the table
 		ArrayList dataCells = table.getCells();
                 
 		ArrayList headercells = table.getHeaderCells();
 		// Check if we have removed header cells in a previous call
-		if (headercells.size() > 0 && (dataCells.size() == 0 || dataCells.get(0) != headercells.get(0))) {
+		if (!headercells.isEmpty() && (dataCells.isEmpty() || dataCells.get(0) != headercells.get(0))) {
 			ArrayList allCells = new ArrayList(dataCells.size()+headercells.size());
 			allCells.addAll(headercells);
 			allCells.addAll(dataCells);
@@ -1258,8 +1253,6 @@ class PdfDocument extends Document implements DocListener {
                     }
                 }
             }
-            
-            tableHasToFit = false;
             
 			// we paint the graphics of the table after looping through all the cells
 			Rectangle tablerec = new Rectangle(table);
@@ -1495,7 +1488,7 @@ class PdfDocument extends Document implements DocListener {
                 PdfCell c = (PdfCell) row.get(j);
                 int rowspan = c.rowspan();                
                 // fill in missing rowspan cells to complete "scan line"
-                for (int k = 1; k < rowspan; k++) {
+                for (int k = 1; k < rowspan && rows.size() <= i+k; k++) {
                     ArrayList spannedRow = ((ArrayList) rows.get(i + k));
                     if (spannedRow.size() > j)
                     	spannedRow.add(j, c);
@@ -1532,7 +1525,7 @@ class PdfDocument extends Document implements DocListener {
                 lines = cell.getLines(ctx.pagetop, indentBottom() - correction);
                 
                 // if there is still text to render we render it
-                if (lines != null && lines.size() > 0) {
+                if (lines != null && !lines.isEmpty()) {
                     
                     // we write the text
                     float cellTop = cell.top(ctx.pagetop - ctx.oldHeight);
@@ -1792,7 +1785,7 @@ class PdfDocument extends Document implements DocListener {
                     boolean hasTitle = section.title() != null;
                     
                     // if the section is a chapter, we begin a new page
-                    if (section.isChapter()) {
+                    if (section.isTriggerNewPage()) {
                         newPage();
                     }
                     // otherwise, we begin a new line
@@ -2352,7 +2345,7 @@ class PdfDocument extends Document implements DocListener {
     private void newLine() throws DocumentException {
         lastElementType = -1;
         carriageReturn();
-        if (lines != null && lines.size() > 0) {
+        if (lines != null && !lines.isEmpty()) {
             lines.add(line);
             currentHeight += line.height();
         }
@@ -2389,7 +2382,7 @@ class PdfDocument extends Document implements DocListener {
         }
         
         // checks if the ArrayList with the lines is empty
-        if (lines.size() == 0) {
+        if (lines.isEmpty()) {
             return 0;
         }
         
@@ -2497,8 +2490,6 @@ class PdfDocument extends Document implements DocListener {
      */
     
     float bottom(Table table) {
-//    	 where will the table begin?
-        float h = (currentHeight > 0) ? indentTop() - currentHeight - 2f * leading : indentTop();
         // constructing a PdfTable
         PdfTable tmp = getPdfTable(table, false);
         return tmp.bottom();

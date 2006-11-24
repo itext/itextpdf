@@ -166,7 +166,7 @@ public class VerticalText {
      * @return the line or null if no more chunks
      */
     protected PdfLine createLine(float width) {
-        if (chunks.size() == 0)
+        if (chunks.isEmpty())
             return null;
         splittedChunkText = null;
         currentStandbyChunk = null;
@@ -229,11 +229,11 @@ public class VerticalText {
         for (;;) {
             if (maxLines <= 0) {
                 status = NO_MORE_COLUMN;
-                if (chunks.size() == 0)
+                if (chunks.isEmpty())
                     status |= NO_MORE_TEXT;
                 break;
             }
-            if (chunks.size() == 0) {
+            if (chunks.isEmpty()) {
                 status = NO_MORE_TEXT;
                 break;
             }

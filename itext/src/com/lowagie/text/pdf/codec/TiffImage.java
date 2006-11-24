@@ -236,13 +236,13 @@ public class TiffImage {
                             try {
                                 decoder.decode2D(outBuf, im, 0, height, tiffT4Options);
                             }
-                            catch (Exception e) {
+                            catch (RuntimeException e) {
                                 // let's flip the fill bits and try again...
                                 tiffT4Options ^= TIFFConstants.GROUP3OPT_FILLBITS;
                                 try {
                                     decoder.decode2D(outBuf, im, 0, height, tiffT4Options);
                                 }
-                                catch (Exception e2) {
+                                catch (RuntimeException e2) {
                                     throw e;
                                 }
                             }
@@ -267,7 +267,7 @@ public class TiffImage {
                     if (icc_prof.getNumComponents() == 1)
                         img.tagICC(icc_prof);
                 }
-                catch (Exception e) {
+                catch (RuntimeException e) {
                     //empty
                 }
             }
@@ -459,7 +459,7 @@ public class TiffImage {
                         if (samplePerPixel == icc_prof.getNumComponents())
                             img.tagICC(icc_prof);
                     }
-                    catch (Exception e) {
+                    catch (RuntimeException e) {
                         //empty
                     }
                 }

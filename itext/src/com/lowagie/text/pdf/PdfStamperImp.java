@@ -168,15 +168,28 @@ class PdfStamperImp extends PdfWriter {
         setOutlines();
         setJavaScript();
         addFileAttachments();
+        PdfDictionary catalog = reader.getCatalog();        	
         if (openAction != null) {
-            reader.getCatalog().put(PdfName.OPENACTION, openAction);
+            catalog.put(PdfName.OPENACTION, openAction);
+        }
+        byte[] altMetadata = xmpMetadata;
+        if (altMetadata == null) {
+            PdfObject xmpo = PdfReader.getPdfObject(catalog.get(PdfName.METADATA));
+            if (xmpo != null && xmpo.isStream()) {
+                altMetadata = PdfReader.getStreamBytesRaw((PRStream)xmpo);
+                PdfReader.killIndirect(xmpo);
+            }
         }
         // if there is XMP data to add: add it
-        if (xmpMetadata != null) {
-        	PdfDictionary catalog = reader.getCatalog();        	
-        	PdfStream xmp = new PdfStream(xmpMetadata);
+        if (altMetadata != null) {
+        	PdfStream xmp = new PdfStream(altMetadata);
         	xmp.put(PdfName.TYPE, PdfName.METADATA);
         	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+            if (crypto != null && !crypto.isMetadataEncrypted()) {
+                PdfArray ar = new PdfArray();
+                ar.add(PdfName.CRYPT);
+                xmp.put(PdfName.FILTER, ar);
+            }
         	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
         	markUsed(catalog);
         }
@@ -803,7 +816,7 @@ class PdfStamperImp extends PdfWriter {
                         }
                     }
                 }
-                if (ar.size() == 0) {
+                if (ar.isEmpty()) {
                     PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
                     pageDic.remove(PdfName.ANNOTS);
                 }
@@ -826,7 +839,7 @@ class PdfStamperImp extends PdfWriter {
                         --idx;
                     }
                 }
-                if (ar.size() == 0) {
+                if (ar.isEmpty()) {
                     PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
                     pageDic.remove(PdfName.ANNOTS);
                 }
@@ -939,13 +952,11 @@ class PdfStamperImp extends PdfWriter {
 						cb.setLiteral("q ");
 					}
 				}
-				if (partialFlattening.size() == 0)
-					continue;
 			}
 			for (int idx = 0; idx < ar.size(); ++idx) 
 			{
 				PdfObject annoto = PdfReader.getPdfObject((PdfObject)ar.get(idx));
-				if ((annoto instanceof PdfIndirectReference) && annoto.isIndirect())
+				if (annoto != null && annoto.isDictionary())
 				{
 					PdfDictionary annot = (PdfDictionary)annoto;
 					if (PdfName.FREETEXT.equals(annot.get(PdfName.SUBTYPE)))
@@ -955,7 +966,7 @@ class PdfStamperImp extends PdfWriter {
 					}
 				}
 			}
-			if (ar.size() == 0) 
+			if (ar.isEmpty()) 
 			{
 				PdfReader.killIndirect(pageDic.get(PdfName.ANNOTS));
 				pageDic.remove(PdfName.ANNOTS);
@@ -999,7 +1010,7 @@ class PdfStamperImp extends PdfWriter {
     }
     
     void addFieldResources() {
-        if (fieldTemplates.size() == 0)
+        if (fieldTemplates.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), catalog);
@@ -1144,7 +1155,7 @@ class PdfStamperImp extends PdfWriter {
     
     void setJavaScript() throws IOException {
         ArrayList djs = pdf.getDocumentJavaScript();
-        if (djs.size() == 0)
+        if (djs.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary names = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.NAMES), catalog);
@@ -1169,7 +1180,7 @@ class PdfStamperImp extends PdfWriter {
 
     void addFileAttachments() throws IOException {
         HashMap fs = pdf.getDocumentFileAttachment();
-        if (fs.size() == 0)
+        if (fs.isEmpty())
             return;
         PdfDictionary catalog = reader.getCatalog();
         PdfDictionary names = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.NAMES), catalog);
@@ -1199,7 +1210,7 @@ class PdfStamperImp extends PdfWriter {
         if (newBookmarks == null)
             return;
         deleteOutlines();
-        if (newBookmarks.size() == 0)
+        if (newBookmarks.isEmpty())
             return;
         namedAsNames = (reader.getCatalog().get(PdfName.DESTS) != null);
         PdfDictionary top = new PdfDictionary();

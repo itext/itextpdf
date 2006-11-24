@@ -1845,7 +1845,7 @@ public class PdfContentByte {
      */
     public void arc(float x1, float y1, float x2, float y2, float startAng, float extent) {
         ArrayList ar = bezierArc(x1, y1, x2, y2, startAng, extent);
-        if (ar.size() == 0)
+        if (ar.isEmpty())
             return;
         float pt[] = (float [])ar.get(0);
         moveTo(pt[0], pt[1]);
@@ -2015,6 +2015,20 @@ public class PdfContentByte {
         PdfName name = writer.addDirectTemplateSimple(template, null);
         PageResources prs = getPageResources();
         name = prs.addXObject(name, template.getIndirectReference());
+        content.append("q ");
+        content.append(a).append(' ');
+        content.append(b).append(' ');
+        content.append(c).append(' ');
+        content.append(d).append(' ');
+        content.append(e).append(' ');
+        content.append(f).append(" cm ");
+        content.append(name.getBytes()).append(" Do Q").append_i(separator);
+    }
+    
+    void addTemplateReference(PdfIndirectReference template, PdfName name, float a, float b, float c, float d, float e, float f) {
+        checkWriter();
+        PageResources prs = getPageResources();
+        name = prs.addXObject(name, template);
         content.append("q ");
         content.append(a).append(' ');
         content.append(b).append(' ');
@@ -2929,7 +2943,7 @@ public class PdfContentByte {
      */    
     public void endLayer() {
         int n = 1;
-        if (layerDepth != null && layerDepth.size() > 0) {
+        if (layerDepth != null && !layerDepth.isEmpty()) {
             n = ((Integer)layerDepth.get(layerDepth.size() - 1)).intValue();
             layerDepth.remove(layerDepth.size() - 1);
         }

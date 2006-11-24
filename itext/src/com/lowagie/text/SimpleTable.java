@@ -103,7 +103,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, Element, T
 	 * @throws BadElementException
 	 */
 	public Table createTable() throws BadElementException {
-		if (content.size() == 0) throw new BadElementException("Trying to create a table without rows.");
+		if (content.isEmpty()) throw new BadElementException("Trying to create a table without rows.");
 		SimpleCell row = (SimpleCell)content.get(0);
 		SimpleCell cell;
 		int columns = 0;
@@ -171,7 +171,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, Element, T
 	 * @throws DocumentException
 	 */
 	public PdfPTable createPdfPTable() throws DocumentException {
-		if (content.size() == 0) throw new BadElementException("Trying to create a table without rows.");
+		if (content.isEmpty()) throw new BadElementException("Trying to create a table without rows.");
 		SimpleCell row = (SimpleCell)content.get(0);
 		SimpleCell cell;
 		int columns = 0;

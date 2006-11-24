@@ -54,19 +54,22 @@ package com.lowagie.text.pdf.codec.postscript;
 public class PAParser extends Object implements PAParserConstants {
 
   void error_skipto(int kind) throws ParseException {
-ParseException e=generateParseException();
-Token t;
-String dump="";
-do{
-if(getToken(1).kind==kind)break;
-t=getNextToken();
-dump+=t.image;
-}while(t.kind!=kind);
-System.out.println("Ignoriere >"+dump+"<");
+    ParseException e=generateParseException();
+    Token t;
+    String dump="";
+    do{
+      if(getToken(1).kind==kind)break;
+      t=getNextToken();
+      dump+=t.image;
+    }while(t.kind!=kind);
+
+    if (PAContext.DebugExecution) {
+      System.out.println("Ignoriere >"+dump+"<");
+    }
   }
 
   String ExceptionString(String hint,JavaCharStream jj_input_stream,PAContext context,Token t,Exception e) throws ParseException {
-  return "\nparser "+hint+" ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+t.image+"\" in line "+t.beginLine+" column "+t.beginColumn+"\n"+e.toString();
+    return "\nparser "+hint+" ["+jj_input_stream.bufpos+"]"+context.engine.litMode()+":\""+t.image+"\" in line "+t.beginLine+" column "+t.beginColumn+"\n"+e.toString();
   }
 
   final public void parse(PAContext context) throws ParseException {
@@ -238,12 +241,13 @@ System.out.println("Ignoriere >"+dump+"<");
         }
       }
     } catch (ParseException e) {
-    System.out.flush();System.err.flush();
-                  //System.out.println("Fehlerhaftes Element in Spalte "+e.currentToken.beginColumn+" in Eingabedatei in Zeile="+e.currentToken.next.beginLine+" in Zeichen Nr. "+e.currentToken.next.beginColumn+". >"+e.currentToken.next.image+"< wurde hier nicht erwartet.");
-                  //System.err.println("Fehler:"+e);
-                  e.printStackTrace();
-                  error_skipto(WHITESPACE);
-                  System.exit(0);
+    if (PAContext.DebugExecution) {
+      System.out.flush();System.err.flush();
+      //System.out.println("Fehlerhaftes Element in Spalte "+e.currentToken.beginColumn+" in Eingabedatei in Zeile="+e.currentToken.next.beginLine+" in Zeichen Nr. "+e.currentToken.next.beginColumn+". >"+e.currentToken.next.image+"< wurde hier nicht erwartet.");
+      //System.err.println("Fehler:"+e);
+      e.printStackTrace();
+    }
+    error_skipto(WHITESPACE);
     }
   }
 

@@ -81,7 +81,7 @@ public class Chapter extends Section implements TextElementArray {
     // constructors
     
 	private static final long serialVersionUID = 1791000695779357361L;
-
+	
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
 	 *
@@ -93,6 +93,7 @@ public class Chapter extends Section implements TextElementArray {
         super(title, 1);
         numbers = new ArrayList();
         numbers.add(new Integer(number));
+        triggerNewPage = true;
     }
     
 /**

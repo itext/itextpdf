@@ -1,8 +1,7 @@
 /*
  * $Id$
- * $Name$
  *
- * Copyright 2004 Paulo Soares
+ * Copyright 2006 Paulo Soares
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -15,10 +14,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999-2005 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000-2005 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,39 +46,37 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.text.pdf.crypto;
 
-package com.lowagie.text.pdf;
-
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
-public class PdfEncryptionStream extends FilterOutputStream {
+/**
+ * An initialization vector generator for a CBC block encryption. It's a random generator based on RC4.
+ * @author Paulo Soares (psoares@consiste.pt)
+ */
+public class IVGenerator {
     
-    protected PdfEncryption enc;
-    private byte buf[] = new byte[1];
+    private static RC4Encryption rc4;
     
-    public PdfEncryptionStream(OutputStream out, PdfEncryption enc) {
-        super(out);
-        this.enc = enc;
+    static {
+        rc4 = new RC4Encryption();
+        long time = System.currentTimeMillis();
+        long mem = Runtime.getRuntime().freeMemory();
+        String s = time + "+" + mem;
+        rc4.prepareRC4Key(s.getBytes());
     }
     
-    public void write(byte[] b, int off, int len) throws IOException {
-        if ((off | len | (b.length - (len + off)) | (off + len)) < 0)
-            throw new IndexOutOfBoundsException();
-        enc.encryptRC4(b, off, len);
-        out.write(b, off, len);
+    /** Creates a new instance of IVGenerator */
+    private IVGenerator() {
     }
     
-    public void close() throws IOException {
+    /**
+     * Gets a 16 byte random initialization vector.
+     * @return a 16 byte random initialization vector
+     */
+    public static byte[] getIV() {
+        byte[] b = new byte[16];
+        synchronized (rc4) {
+            rc4.encryptRC4(b);
+        }
+        return b;
     }
-    
-    public void write(int b) throws IOException {
-        buf[0] = (byte)b;
-        write(buf);
-    }
-    
-    public void flush() throws IOException {
-    }
-    
 }

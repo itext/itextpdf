@@ -60,6 +60,7 @@ import java.util.zip.DeflaterOutputStream;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.ExceptionConverter;
+import java.util.ArrayList;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -250,24 +251,43 @@ public class PdfStream extends PdfDictionary {
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         if (inputStream != null && compressed)
             put(PdfName.FILTER, PdfName.FLATEDECODE);
-        superToPdf(writer, os);
-        os.write(STARTSTREAM);
         PdfEncryption crypto = null;
         if (writer != null)
             crypto = writer.getEncryption();
-        if (crypto != null)
-            crypto.prepareKey();
+        if (crypto != null) {
+            PdfObject filter = get(PdfName.FILTER);
+            if (filter != null) {
+                if (PdfName.CRYPT.equals(filter))
+                    crypto = null;
+                else if (filter.isArray()) {
+                    ArrayList af = ((PdfArray)filter).getArrayList();
+                    if (af.size() > 0 && PdfName.CRYPT.equals(af.get(0)))
+                        crypto = null;
+                }
+            }
+        }
+        PdfObject nn = get(PdfName.LENGTH);
+        if (crypto != null && nn != null && nn.isNumber()) {
+            int sz = ((PdfNumber)nn).intValue();
+            put(PdfName.LENGTH, new PdfNumber(crypto.calculateStreamSize(sz)));
+            superToPdf(writer, os);
+            put(PdfName.LENGTH, nn);
+        }
+        else
+            superToPdf(writer, os);
+        os.write(STARTSTREAM);
         if (inputStream != null) {
             rawLength = 0;
             DeflaterOutputStream def = null;
             OutputStreamCounter osc = new OutputStreamCounter(os);
+            OutputStreamEncryption ose = null;
             OutputStream fout = osc;
             if (crypto != null)
-                fout = new PdfEncryptionStream(fout, crypto);
+                fout = ose = crypto.getEncryptionStream(fout);
             if (compressed)    
                 fout = def = new DeflaterOutputStream(fout, new Deflater(Deflater.BEST_COMPRESSION), 0x8000);
             
-            byte buf[] = new byte[0x10000];
+            byte buf[] = new byte[4192];
             while (true) {
                 int n = inputStream.read(buf);
                 if (n <= 0)
@@ -277,6 +297,8 @@ public class PdfStream extends PdfDictionary {
             }
             if (def != null)
                 def.finish();
+            if (ose != null)
+                ose.finish();
             inputStreamLength = osc.getCounter();
         }
         else {
@@ -289,12 +311,10 @@ public class PdfStream extends PdfDictionary {
             else {
                 byte b[];
                 if (streamBytes != null) {
-                    b = streamBytes.toByteArray();
-                    crypto.encryptRC4(b);
+                    b = crypto.encryptByteArray(streamBytes.toByteArray());
                 }
                 else {
-                    b = new byte[bytes.length];
-                    crypto.encryptRC4(bytes, b);
+                    b = crypto.encryptByteArray(bytes);
                 }
                 os.write(b);
             }

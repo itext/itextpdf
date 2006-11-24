@@ -186,10 +186,10 @@ public class List implements TextElementArray, MarkupAttributes {
         symbol = new Chunk(value, FontFactory.getFont(attributes));
         
         if ((value = (String)attributes.remove(ElementTags.NUMBERED)) != null) {
-            this.numbered = new Boolean(value).booleanValue();
+            this.numbered = Boolean.valueOf(value).booleanValue();
         }
         if ((value = (String)attributes.remove(ElementTags.LETTERED)) != null) {
-            this.lettered = new Boolean(value).booleanValue();
+            this.lettered = Boolean.valueOf(value).booleanValue();
             if ( this.numbered && this.lettered )
                 this.numbered = false;
         }

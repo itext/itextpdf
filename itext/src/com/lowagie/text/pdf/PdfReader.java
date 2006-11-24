@@ -558,48 +558,71 @@ public class PdfReader {
         byte documentID[] = null;
         if (documentIDs != null) {
             o = (PdfObject)documentIDs.getArrayList().get(0);
+            strings.remove(o);
             s = o.toString();
             documentID = com.lowagie.text.DocWriter.getISOBytes(s);
+            if (documentIDs.size() > 1)
+                strings.remove(documentIDs.getArrayList().get(1));
         }
 
         s = enc.get(PdfName.U).toString();
+        strings.remove(enc.get(PdfName.U));
         byte uValue[] = com.lowagie.text.DocWriter.getISOBytes(s);
         s = enc.get(PdfName.O).toString();
+        strings.remove(enc.get(PdfName.O));
         byte oValue[] = com.lowagie.text.DocWriter.getISOBytes(s);
 
         o = enc.get(PdfName.R);
         if (!o.isNumber()) throw new IOException("Illegal R value.");
         rValue = ((PdfNumber)o).intValue();
-        if (rValue != 2 && rValue != 3) throw new IOException("Unknown encryption type (" + rValue + ")");
+        if (rValue != 2 && rValue != 3 && rValue != 4) throw new IOException("Unknown encryption type (" + rValue + ")");
 
         o = enc.get(PdfName.P);
         if (!o.isNumber()) throw new IOException("Illegal P value.");
         pValue = ((PdfNumber)o).intValue();
 
-        // get the Keylength if Revision is 3
-        int lengthValue;
+        int cryptoMode;
+        int lengthValue = 0;
         if ( rValue == 3 ){
             o = enc.get(PdfName.LENGTH);
             if (!o.isNumber())
-              throw new IOException("Illegal Length value.");
+                throw new IOException("Illegal Length value.");
             lengthValue = ( (PdfNumber) o).intValue();
             if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
-              throw new IOException("Illegal Length value.");
+                throw new IOException("Illegal Length value.");
+            cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
+        }
+        else if (rValue == 4) {
+            PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
+            if (dic == null)
+                throw new IOException("/CF not found (encryption)");
+            dic = (PdfDictionary)dic.get(PdfName.STDCF);
+            if (dic == null)
+                throw new IOException("/StdCF not found (encryption)");
+            if (PdfName.V2.equals(dic.get(PdfName.CFM)))
+                cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
+            else if (PdfName.AESV2.equals(dic.get(PdfName.CFM)))
+                cryptoMode = PdfWriter.ENCRYPTION_AES_128;
+            else
+                throw new IOException("No compatible encryption found");
+            PdfObject em = enc.get(PdfName.ENCRYPTMETADATA);
+            if (em != null && em.toString().equals("false"))
+                cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
         } else {
-            // Keylength is 40 bit in revision 2
-            lengthValue=40;
+            cryptoMode = PdfWriter.ENCRYPTION_RC4_40;
         }
 
 
 
         decrypt = new PdfEncryption();
+        decrypt.setCryptoMode(cryptoMode, lengthValue);
 
         //check by user password
-        decrypt.setupByUserPassword(documentID, password, oValue, pValue, lengthValue, rValue);
-        if (!equalsArray(uValue, decrypt.userKey, rValue == 3 ? 16 : 32)) {
+        decrypt.setupByUserPassword(documentID, password, oValue, pValue);
+        if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
             //check by owner password
-            decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue, lengthValue, rValue);
-            if (!equalsArray(uValue, decrypt.userKey, rValue == 3 ? 16 : 32)) {
+            decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue);
+            if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
                 throw new IOException("Bad user password");
             }
         }
@@ -1203,6 +1226,8 @@ public class PdfReader {
             if (!PdfName.XREF.equals(stm.get(PdfName.TYPE)))
                 return false;
         }
+        else
+            return false;
         if (trailer == null) {
             trailer = new PdfDictionary();
             trailer.putAll(stm);
@@ -1872,9 +1897,9 @@ public class PdfReader {
         }
         String name;
         for (int j = 0; j < filters.size(); ++j) {
-            name = ((PdfName)PdfReader.getPdfObjectRelease((PdfObject)filters.get(j))).toString();
+            name = ((PdfName)getPdfObjectRelease((PdfObject)filters.get(j))).toString();
             if (name.equals("/FlateDecode") || name.equals("/Fl")) {
-                b = PdfReader.FlateDecode(b);
+                b = FlateDecode(b);
                 PdfObject dicParam = null;
                 if (j < dp.size()) {
                     dicParam = (PdfObject)dp.get(j);
@@ -1882,16 +1907,18 @@ public class PdfReader {
                 }
             }
             else if (name.equals("/ASCIIHexDecode") || name.equals("/AHx"))
-                b = PdfReader.ASCIIHexDecode(b);
+                b = ASCIIHexDecode(b);
             else if (name.equals("/ASCII85Decode") || name.equals("/A85"))
-                b = PdfReader.ASCII85Decode(b);
+                b = ASCII85Decode(b);
             else if (name.equals("/LZWDecode")) {
-                b = PdfReader.LZWDecode(b);
+                b = LZWDecode(b);
                 PdfObject dicParam = null;
                 if (j < dp.size()) {
                     dicParam = (PdfObject)dp.get(j);
                     b = decodePredictor(b, dicParam);
                 }
+            }
+            else if (name.equals("/Crypt")) {
             }
             else
                 throw new IOException("The filter " + name + " is not supported.");
@@ -1908,7 +1935,7 @@ public class PdfReader {
         RandomAccessFileOrArray rf = stream.getReader().getSafeFile();
         try {
             rf.reOpen();
-            return PdfReader.getStreamBytes(stream, rf);
+            return getStreamBytes(stream, rf);
         }
         finally {
             try{rf.close();}catch(Exception e){}
@@ -1932,9 +1959,26 @@ public class PdfReader {
             file.readFully(b);
             PdfEncryption decrypt = reader.getDecrypt();
             if (decrypt != null) {
-                decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
-                decrypt.prepareKey();
-                decrypt.encryptRC4(b);
+                PdfObject filter = getPdfObjectRelease(stream.get(PdfName.FILTER));
+                ArrayList filters = new ArrayList();
+                if (filter != null) {
+                    if (filter.isName())
+                        filters.add(filter);
+                    else if (filter.isArray())
+                        filters = ((PdfArray)filter).getArrayList();
+                }
+                boolean skip = false;
+                for (int k = 0; k < filters.size(); ++k) {
+                    PdfObject obj = getPdfObjectRelease((PdfObject)filters.get(k));
+                    if (obj != null && obj.toString().equals("/Crypt")) {
+                        skip = true;
+                        break;
+                    }
+                }
+                if (!skip) {
+                    decrypt.setHashKey(stream.getObjNum(), stream.getObjGen());
+                    b = decrypt.decryptByteArray(b);
+                }
             }
         }
         return b;
@@ -1949,7 +1993,7 @@ public class PdfReader {
         RandomAccessFileOrArray rf = stream.getReader().getSafeFile();
         try {
             rf.reOpen();
-            return PdfReader.getStreamBytesRaw(stream, rf);
+            return getStreamBytesRaw(stream, rf);
         }
         finally {
             try{rf.close();}catch(Exception e){}
@@ -1998,7 +2042,7 @@ public class PdfReader {
                 }
             }
         }
-        if (newStreams.size() == 0)
+        if (newStreams.isEmpty())
             return;
         for (int k = 0; k < newStreams.size(); ++k) {
             xrefObj.add(newStreams.get(k));
@@ -2195,7 +2239,7 @@ public class PdfReader {
                 if (arr == null)
                     continue;
                 ArrayList list = arr.getArrayList();
-                if (list.size() == 0)
+                if (list.isEmpty())
                     continue;
                 PdfDictionary desc = (PdfDictionary)getPdfObject((PdfObject)list.get(0));
                 String sde = getSubsetPrefix(desc);
@@ -2439,7 +2483,7 @@ public class PdfReader {
             return;
         consolidateNamedDestinations = true;
         HashMap names = getNamedDestination();
-        if (names.size() == 0)
+        if (names.isEmpty())
             return;
         for (int k = 1; k <= pageRefs.size(); ++k) {
             PdfDictionary page = pageRefs.getPageN(k);
@@ -3085,7 +3129,7 @@ public class PdfReader {
 
         private void pushPageAttributes(PdfDictionary nodePages) {
             PdfDictionary dic = new PdfDictionary();
-            if (pageInh.size() != 0) {
+            if (!pageInh.isEmpty()) {
                 dic.putAll((PdfDictionary)pageInh.get(pageInh.size() - 1));
             }
             for (int k = 0; k < pageInhCandidates.length; ++k) {
