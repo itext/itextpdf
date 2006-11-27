@@ -398,7 +398,7 @@ public class PdfEncryption {
     
     public int calculateStreamSize(int n) {
         if (revision == AES_128)
-            return (n % 0x7ffffff0) + 32;
+            return (n & 0x7ffffff0) + 32;
         else
             return n;
     }
