@@ -574,6 +574,23 @@ public class PdfChunk implements SplitCharacter{
             }
         }
         return 0;
+    }    
+    public float trimFirstSpace()
+    {
+        BaseFont ft = font.getFont();
+        if (ft.getFontType() == BaseFont.FONT_TYPE_CJK && ft.getUnicodeEquivalent(' ') != ' ') {
+            if (value.length() > 1 && value.startsWith("\u0001")) {
+                value = value.substring(1, value.length());
+                return font.width('\u0001');
+            }
+        }
+        else {
+            if (value.length() > 1 && value.startsWith(" ")) {
+                value = value.substring(1, value.length());
+                return font.width(' ');
+            }
+        }
+        return 0;
     }
     
 /**

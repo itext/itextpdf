@@ -1627,6 +1627,7 @@ class PdfDocument extends Document implements DocListener {
                         while ((overflow = line.add(chunk)) != null) {
                             carriageReturn();
                             chunk = overflow;
+                            chunk.trimFirstSpace();
                         }
                     }
                     pageEmpty = false;
