@@ -1158,7 +1158,7 @@ public class AcroFields {
      * <CODE>false</CODE> otherwise
      */    
     public boolean setField(String name, String value) throws IOException, DocumentException {
-        return setField(name, value, value);
+        return setField(name, value, null);
     }
     
     /** Sets the field value and the display string. The display string
@@ -1167,7 +1167,8 @@ public class AcroFields {
      * known.
      * @param name the fully qualified field name or the partial name in the case of XFA forms
      * @param value the field value
-     * @param display the string that is used for the appearance
+     * @param display the string that is used for the appearance. If <CODE>null</CODE>
+     * the <CODE>value</CODE> parameter will be used
      * @return <CODE>true</CODE> if the field was found and changed,
      * <CODE>false</CODE> otherwise
      * @throws IOException on error
@@ -1195,6 +1196,8 @@ public class AcroFields {
             if (len > 0)
                 value = value.substring(0, Math.min(len, value.length()));
         }
+        if (display == null)
+            display = value;
         if (PdfName.TX.equals(type) || PdfName.CH.equals(type)) {
             PdfString v = new PdfString(value, PdfObject.TEXT_UNICODE);
             for (int idx = 0; idx < item.values.size(); ++idx) {
