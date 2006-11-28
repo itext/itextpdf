@@ -1700,14 +1700,13 @@ class PdfDocument extends Document implements DocListener {
 
                     indentLeft += paragraph.indentationLeft();
                     indentRight += paragraph.indentationRight();
-                    
+
                     // Begin removed: Bonf (Marc Schneider) 2003-07-29
                     carriageReturn();
                     // End removed: Bonf (Marc Schneider) 2003-07-29
 
                     
                     //add by Jin-Hsia Yang
-                    
                     paraIndent += paragraph.indentationLeft();
                     //end add by Jin-Hsia Yang
                     
@@ -1765,7 +1764,7 @@ class PdfDocument extends Document implements DocListener {
                     alignment = Element.ALIGN_LEFT;
                     indentLeft -= paragraph.indentationLeft();
                     indentRight -= paragraph.indentationRight();
-                    
+
                     // Begin added: Bonf (Marc Schneider) 2003-07-29
                     carriageReturn();
                     // End added: Bonf (Marc Schneider) 2003-07-29
@@ -1920,9 +1919,14 @@ class PdfDocument extends Document implements DocListener {
                         break; //nothing to do
 
                     // before every table, we add a new line and flush all lines
-                    ensureNewLine();
+                    
+                    indentLeft -= paraIndent;
                     flushLines();
-                    addPTable(ptable);                    
+                    indentLeft += paraIndent;
+                    ensureNewLine();
+                    
+                    addPTable(ptable);
+                    newLine();
                     pageEmpty = false;
                     break;
                 }
