@@ -136,6 +136,7 @@ private static final long serialVersionUID = 2643594602455068231L;
     
     public Phrase(Chunk chunk) {
         super.add(chunk);
+        font = chunk.font();
     }
     
 /**
@@ -149,6 +150,7 @@ private static final long serialVersionUID = 2643594602455068231L;
     public Phrase(float leading, Chunk chunk) {
         this(leading);
         super.add(chunk);
+        font = chunk.font();
     }
     
 /**

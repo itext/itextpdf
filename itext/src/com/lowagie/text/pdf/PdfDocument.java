@@ -1669,7 +1669,6 @@ class PdfDocument extends Document implements DocListener {
                 case Element.PARAGRAPH: {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
-                    
                     float spacingBefore = paragraph.spacingBefore();
                     if (spacingBefore != 0) {
                         leading = spacingBefore;
@@ -1679,7 +1678,7 @@ class PdfDocument extends Document implements DocListener {
                              * Don't add spacing before a paragraph if it's the first
                              * on the page
                              */
-                            Chunk space = new Chunk(" ");
+                            Chunk space = new Chunk(" ", paragraph.font());
                             space.process(this);
                             carriageReturn();
                         }
@@ -1752,7 +1751,7 @@ class PdfDocument extends Document implements DocListener {
                              * Only add spacing after a paragraph if the extra
                              * spacing fits on the page.
                              */
-                            Chunk space = new Chunk(" ");
+                            Chunk space = new Chunk(" ", paragraph.font());
                             space.process(this);
                             carriageReturn();
                         }
@@ -1865,7 +1864,7 @@ class PdfDocument extends Document implements DocListener {
                              * Don't add spacing before a paragraph if it's the first
                              * on the page
                              */
-                            Chunk space = new Chunk(" ");
+                            Chunk space = new Chunk(" ", listItem.font());
                             space.process(this);
                             carriageReturn();
                         }
@@ -1891,7 +1890,7 @@ class PdfDocument extends Document implements DocListener {
                              * Only add spacing after a paragraph if the extra
                              * spacing fits on the page.
                              */
-                            Chunk space = new Chunk(" ");
+                            Chunk space = new Chunk(" ", listItem.font());
                             space.process(this);
                             carriageReturn();
                         }
