@@ -1926,8 +1926,8 @@ class PdfDocument extends Document implements DocListener {
                     ensureNewLine();
                     
                     addPTable(ptable);
-                    newLine();
                     pageEmpty = false;
+                    newLine();
                     break;
                 }
                 case Element.MULTI_COLUMN_TEXT: {
