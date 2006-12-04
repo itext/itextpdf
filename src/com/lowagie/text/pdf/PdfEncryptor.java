@@ -156,6 +156,58 @@ public class PdfEncryptor {
         stamper.setMoreInfo(newInfo);
         stamper.close();
     }
+
+    
+    /** Entry point to encrypt a PDF document. The encryption parameters are the same as in
+     * <code>PdfWriter</code>. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param reader the read PDF
+     * @param os the output destination
+     * @param type the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param newInfo an optional <CODE>String</CODE> map to add or change
+     * the info dictionary. Entries with <CODE>null</CODE>
+     * values delete the key in the original info dictionary
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */
+    public static void encrypt(PdfReader reader, OutputStream os, int type, String userPassword, String ownerPassword, int permissions, HashMap newInfo) throws DocumentException, IOException {
+        PdfStamper stamper = new PdfStamper(reader, os);
+        stamper.setEncryption(type, userPassword, ownerPassword, permissions);
+        stamper.setMoreInfo(newInfo);
+        stamper.close();
+    }
+    
+    /** Entry point to encrypt a PDF document. The encryption parameters are the same as in
+     * <code>PdfWriter</code>. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param reader the read PDF
+     * @param os the output destination
+     * @param type the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * values delete the key in the original info dictionary
+     * @throws DocumentException on error
+     * @throws IOException on error
+     */
+    public static void encrypt(PdfReader reader, OutputStream os, int type, String userPassword, String ownerPassword, int permissions) throws DocumentException, IOException {
+        PdfStamper stamper = new PdfStamper(reader, os);
+        stamper.setEncryption(type, userPassword, ownerPassword, permissions);
+        stamper.close();
+    }
     
     /**
      * Give you a verbose analysis of the permissions.
