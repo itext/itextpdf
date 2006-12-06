@@ -480,11 +480,10 @@ class PdfDocument extends Document implements DocListener {
     private PdfDictionary additionalActions;
     private PdfPageLabels pageLabels;
     
-    //add by Jin-Hsia Yang
     private boolean isNewpage = false;
-    
     private float paraIndent = 0;
-    //end add by Jin-Hsia Yang
+    private float sectionIndentL = 0;
+    private float sectionIndentR = 0;
     
     /** margin in x direction starting from the left. Will be valid in the next page */
     protected float nextMarginLeft;
@@ -756,9 +755,7 @@ class PdfDocument extends Document implements DocListener {
     
     public boolean newPage() throws DocumentException {
         lastElementType = -1;
-        //add by Jin-Hsia Yang
         isNewpage = true;
-        //end add by Jin-Hsia Yang
         if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
             return false;
         }
@@ -840,9 +837,7 @@ class PdfDocument extends Document implements DocListener {
         // we initialize the new page
         initPage();
         
-        //add by Jin-Hsia Yang
         isNewpage = false;
-        //end add by Jin-Hsia Yang
         
         return true;
     }
@@ -1705,10 +1700,7 @@ class PdfDocument extends Document implements DocListener {
                     carriageReturn();
                     // End removed: Bonf (Marc Schneider) 2003-07-29
 
-                    
-                    //add by Jin-Hsia Yang
                     paraIndent += paragraph.indentationLeft();
-                    //end add by Jin-Hsia Yang
                     
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null && isParagraph)
@@ -1734,9 +1726,7 @@ class PdfDocument extends Document implements DocListener {
                         // we process the paragraph
                         element.process(this);
                     
-                    //add by Jin-Hsia Yang and blowagie
                     paraIndent -= paragraph.indentationLeft();
-                    //end add by Jin-Hsia Yang and blowagie
                     
                     // Begin removed: Bonf (Marc Schneider) 2003-07-29
                     //       carriageReturn();
@@ -1768,10 +1758,6 @@ class PdfDocument extends Document implements DocListener {
                     // Begin added: Bonf (Marc Schneider) 2003-07-29
                     carriageReturn();
                     // End added: Bonf (Marc Schneider) 2003-07-29
-
-                    //add by Jin-Hsia Yang
-                    
-                    //end add by Jin-Hsia Yang
                     
                     break;
                 }
@@ -1797,19 +1783,20 @@ class PdfDocument extends Document implements DocListener {
                     int rotation = pageSize.getRotation();
                     if (rotation == 90 || rotation == 180)
                         fith = pageSize.height() - fith;
-                    PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
-                    while (currentOutline.level() >= section.depth()) {
-                        currentOutline = currentOutline.parent();
-                    }
-                    PdfOutline outline = new PdfOutline(currentOutline, destination, section.getBookmarkTitle(), section.isBookmarkOpen());
-                    currentOutline = outline;
+                    	PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
+                    	while (currentOutline.level() >= section.depth()) {
+                    		currentOutline = currentOutline.parent();
+                    	}
+                    	PdfOutline outline = new PdfOutline(currentOutline, destination, section.getBookmarkTitle(), section.isBookmarkOpen());
+                    	currentOutline = outline;
                     }
                     
                     // some values are set
                     carriageReturn();
                     indentLeft += section.indentationLeft();
                     indentRight += section.indentationRight();
-                    
+                    sectionIndentL += section.indentationLeft();
+                    sectionIndentR += section.indentationRight();
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
@@ -1824,11 +1811,14 @@ class PdfDocument extends Document implements DocListener {
                         isParagraph = true;
                     }
                     indentLeft += section.indentation();
+                    sectionIndentL += section.indentation();
                     // we process the section
                     element.process(this);
                     // some parameters are set back to normal again
                     indentLeft -= section.indentationLeft() + section.indentation();
                     indentRight -= section.indentationRight();
+                    sectionIndentL -= section.indentationLeft() + section.indentation();
+                    sectionIndentR -= section.indentationRight();
                     
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
@@ -1920,9 +1910,11 @@ class PdfDocument extends Document implements DocListener {
 
                     // before every table, we add a new line and flush all lines
                     
-                    indentLeft -= paraIndent;
+                    indentLeft -= paraIndent + sectionIndentL;
+                    indentRight -= sectionIndentR;
                     flushLines();
-                    indentLeft += paraIndent;
+                    indentLeft += paraIndent + sectionIndentL;
+                    indentRight += sectionIndentR;
                     ensureNewLine();
                     
                     addPTable(ptable);
@@ -2364,25 +2356,16 @@ class PdfDocument extends Document implements DocListener {
      */
     
     private float flushLines() throws DocumentException {
-        
         // checks if the ArrayList with the lines is not null
         if (lines == null) {
             return 0;
         }
-        
-        //add by Jin-Hsia Yang
         boolean newline=false;
-        //end add by Jin-Hsia Yang
-        
         // checks if a new Line has to be made.
         if (line != null && line.size() > 0) {
             lines.add(line);
             line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
-            
-            //add by Jin-Hsia Yang
             newline=true;
-            //end add by Jin-Hsia Yang
-            
         }
         
         // checks if the ArrayList with the lines is empty
