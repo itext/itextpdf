@@ -93,7 +93,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 		this.progressdialog = blubb;
 		try {
 			reader = new PdfReader(infile);
-			root = new SimpletextTreeNode("Dokument");
+			root = new SimpletextTreeNode("Document");
 			filenode = new FileTreeNode(infile, reader);
 			root.add(filenode);
 			this.numberofpages = reader.getNumberOfPages();
