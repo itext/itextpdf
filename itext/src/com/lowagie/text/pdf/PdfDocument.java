@@ -509,9 +509,7 @@ class PdfDocument extends Document implements DocListener {
     private boolean strictImageSequence = false;    
 
     /** Holds the type of the last element, that has been added to the document. */
-    private int lastElementType = -1;    
-    
-    private boolean isNewPagePending;
+    private int lastElementType = -1;
     
     protected int markPoint;
     
@@ -975,8 +973,9 @@ class PdfDocument extends Document implements DocListener {
             ct.addElement(p);
             // if the table prefers to be on a single page, and it wouldn't
 	        //fit on the current page, start a new page.
-	        if (ptable.getKeepTogether() && !fitsPage(ptable, 0f))
+	        if (ptable.getKeepTogether() && !fitsPage(ptable, 0f))  {
 	        	newPage();
+	        }
         }
         ct.addElement(ptable);
         boolean he = ptable.isHeadersInEvent();
@@ -1036,7 +1035,6 @@ class PdfDocument extends Document implements DocListener {
 	}
     
     private static class RenderingContext {
-        int countPageBreaks = 0;
         float pagetop = -1;
         float oldHeight = -1;
 
@@ -1295,8 +1293,6 @@ class PdfDocument extends Document implements DocListener {
 				// new page
 				newPage();
                 
-				ctx.countPageBreaks++;
-                
 				// G.F.: if something added in page event i.e. currentHeight > 0
 				float heightCorrection = 0;
 				boolean somethingAdded = false;
@@ -1399,13 +1395,6 @@ class PdfDocument extends Document implements DocListener {
         }
         // end bugfix
         pageEmpty = false;
-        
-        if (ctx.countPageBreaks > 0) {
-            // in case of tables covering more that one page have to have
-            // a newPage followed to reset some internal state. Otherwise
-            // subsequent tables are rendered incorrectly.
-            isNewPagePending = true;
-        }
     }
 
     private boolean mayBeRemoved(ArrayList row) {
@@ -1572,11 +1561,6 @@ class PdfDocument extends Document implements DocListener {
             return false;
         }
         try {
-//        	 resolves problem described in add(PdfTable)
-            if (isNewPagePending) {
-                isNewPagePending = false;
-                newPage();
-            }
             switch(element.type()) {
                 
                 // Information (headers)
