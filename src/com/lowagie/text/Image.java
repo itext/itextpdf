@@ -52,6 +52,7 @@ package com.lowagie.text;
 
 import java.awt.Graphics2D;
 import java.awt.color.ICC_Profile;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -529,6 +530,14 @@ public abstract class Image extends Rectangle implements Element,
 
 	public static Image getInstance(java.awt.Image image, java.awt.Color color,
 			boolean forceBW) throws BadElementException, IOException {
+		
+		if(image instanceof BufferedImage){
+			BufferedImage bi = (BufferedImage) image;
+			if(bi.getType()==BufferedImage.TYPE_BYTE_BINARY) {
+				forceBW=true;
+			}
+		}
+		
 		java.awt.image.PixelGrabber pg = new java.awt.image.PixelGrabber(image,
 				0, 0, -1, -1, true);
 		try {
