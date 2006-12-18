@@ -93,7 +93,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 		this.progressdialog = blubb;
 		try {
 			reader = new PdfReader(infile);
-			root = new SimpletextTreeNode("Dokument");
+			root = new SimpletextTreeNode("Document");
 			filenode = new FileTreeNode(infile, reader);
 			root.add(filenode);
 			this.numberofpages = reader.getNumberOfPages();
@@ -121,7 +121,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 					return new Integer(rowIndex + 1);
 				case 1:
 					PdfObject pdfob = reader.getPdfObject(rowIndex + 1);
-					if (pdfob.isStream()) {
+					if (pdfob != null && pdfob.isStream()) {
 						return "Stream " + pdfob;
 					} else {
 						return pdfob;

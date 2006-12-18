@@ -442,6 +442,10 @@ public class PdfStamper {
         stamper.addFileAttachment(description, fs);
     }
 
+    public void makePackage( PdfName initialView ) {
+    	stamper.makePackage( initialView );
+    }
+    
     /**
      * Sets the viewer preferences.
      * @param preferences the viewer preferences
@@ -566,6 +570,12 @@ public class PdfStamper {
         stp.sigApp.setOriginalout(os);
         stp.sigApp.setStamper(stp);
         stp.hasSignature = true;
+        PdfDictionary catalog = reader.getCatalog();
+        PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(catalog.get(PdfName.ACROFORM), catalog);
+        if (acroForm != null) {
+            acroForm.remove(PdfName.NEEDAPPEARANCES);
+            stp.stamper.markUsed(acroForm);
+        }
         return stp;
     }
 

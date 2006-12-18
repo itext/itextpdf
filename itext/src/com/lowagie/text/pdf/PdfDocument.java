@@ -480,11 +480,10 @@ class PdfDocument extends Document implements DocListener {
     private PdfDictionary additionalActions;
     private PdfPageLabels pageLabels;
     
-    //add by Jin-Hsia Yang
     private boolean isNewpage = false;
-    
     private float paraIndent = 0;
-    //end add by Jin-Hsia Yang
+    private float sectionIndentL = 0;
+    private float sectionIndentR = 0;
     
     /** margin in x direction starting from the left. Will be valid in the next page */
     protected float nextMarginLeft;
@@ -510,9 +509,7 @@ class PdfDocument extends Document implements DocListener {
     private boolean strictImageSequence = false;    
 
     /** Holds the type of the last element, that has been added to the document. */
-    private int lastElementType = -1;    
-    
-    private boolean isNewPagePending;
+    private int lastElementType = -1;
     
     protected int markPoint;
     
@@ -756,9 +753,7 @@ class PdfDocument extends Document implements DocListener {
     
     public boolean newPage() throws DocumentException {
         lastElementType = -1;
-        //add by Jin-Hsia Yang
         isNewpage = true;
-        //end add by Jin-Hsia Yang
         if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
             return false;
         }
@@ -840,9 +835,7 @@ class PdfDocument extends Document implements DocListener {
         // we initialize the new page
         initPage();
         
-        //add by Jin-Hsia Yang
         isNewpage = false;
-        //end add by Jin-Hsia Yang
         
         return true;
     }
@@ -980,8 +973,9 @@ class PdfDocument extends Document implements DocListener {
             ct.addElement(p);
             // if the table prefers to be on a single page, and it wouldn't
 	        //fit on the current page, start a new page.
-	        if (ptable.getKeepTogether() && !fitsPage(ptable, 0f))
+	        if (ptable.getKeepTogether() && !fitsPage(ptable, 0f))  {
 	        	newPage();
+	        }
         }
         ct.addElement(ptable);
         boolean he = ptable.isHeadersInEvent();
@@ -1041,7 +1035,6 @@ class PdfDocument extends Document implements DocListener {
 	}
     
     private static class RenderingContext {
-        int countPageBreaks = 0;
         float pagetop = -1;
         float oldHeight = -1;
 
@@ -1300,8 +1293,6 @@ class PdfDocument extends Document implements DocListener {
 				// new page
 				newPage();
                 
-				ctx.countPageBreaks++;
-                
 				// G.F.: if something added in page event i.e. currentHeight > 0
 				float heightCorrection = 0;
 				boolean somethingAdded = false;
@@ -1404,13 +1395,6 @@ class PdfDocument extends Document implements DocListener {
         }
         // end bugfix
         pageEmpty = false;
-        
-        if (ctx.countPageBreaks > 0) {
-            // in case of tables covering more that one page have to have
-            // a newPage followed to reset some internal state. Otherwise
-            // subsequent tables are rendered incorrectly.
-            isNewPagePending = true;
-        }
     }
 
     private boolean mayBeRemoved(ArrayList row) {
@@ -1577,11 +1561,6 @@ class PdfDocument extends Document implements DocListener {
             return false;
         }
         try {
-//        	 resolves problem described in add(PdfTable)
-            if (isNewPagePending) {
-                isNewPagePending = false;
-                newPage();
-            }
             switch(element.type()) {
                 
                 // Information (headers)
@@ -1627,6 +1606,7 @@ class PdfDocument extends Document implements DocListener {
                         while ((overflow = line.add(chunk)) != null) {
                             carriageReturn();
                             chunk = overflow;
+                            chunk.trimFirstSpace();
                         }
                     }
                     pageEmpty = false;
@@ -1668,7 +1648,6 @@ class PdfDocument extends Document implements DocListener {
                 case Element.PARAGRAPH: {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
-                    
                     float spacingBefore = paragraph.spacingBefore();
                     if (spacingBefore != 0) {
                         leading = spacingBefore;
@@ -1678,7 +1657,7 @@ class PdfDocument extends Document implements DocListener {
                              * Don't add spacing before a paragraph if it's the first
                              * on the page
                              */
-                            Chunk space = new Chunk(" ");
+                            Chunk space = new Chunk(" ", paragraph.font());
                             space.process(this);
                             carriageReturn();
                         }
@@ -1700,16 +1679,12 @@ class PdfDocument extends Document implements DocListener {
 
                     indentLeft += paragraph.indentationLeft();
                     indentRight += paragraph.indentationRight();
-                    
+
                     // Begin removed: Bonf (Marc Schneider) 2003-07-29
                     carriageReturn();
                     // End removed: Bonf (Marc Schneider) 2003-07-29
 
-                    
-                    //add by Jin-Hsia Yang
-                    
                     paraIndent += paragraph.indentationLeft();
-                    //end add by Jin-Hsia Yang
                     
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null && isParagraph)
@@ -1735,9 +1710,7 @@ class PdfDocument extends Document implements DocListener {
                         // we process the paragraph
                         element.process(this);
                     
-                    //add by Jin-Hsia Yang and blowagie
                     paraIndent -= paragraph.indentationLeft();
-                    //end add by Jin-Hsia Yang and blowagie
                     
                     // Begin removed: Bonf (Marc Schneider) 2003-07-29
                     //       carriageReturn();
@@ -1752,7 +1725,7 @@ class PdfDocument extends Document implements DocListener {
                              * Only add spacing after a paragraph if the extra
                              * spacing fits on the page.
                              */
-                            Chunk space = new Chunk(" ");
+                            Chunk space = new Chunk(" ", paragraph.font());
                             space.process(this);
                             carriageReturn();
                         }
@@ -1765,14 +1738,10 @@ class PdfDocument extends Document implements DocListener {
                     alignment = Element.ALIGN_LEFT;
                     indentLeft -= paragraph.indentationLeft();
                     indentRight -= paragraph.indentationRight();
-                    
+
                     // Begin added: Bonf (Marc Schneider) 2003-07-29
                     carriageReturn();
                     // End added: Bonf (Marc Schneider) 2003-07-29
-
-                    //add by Jin-Hsia Yang
-                    
-                    //end add by Jin-Hsia Yang
                     
                     break;
                 }
@@ -1798,19 +1767,20 @@ class PdfDocument extends Document implements DocListener {
                     int rotation = pageSize.getRotation();
                     if (rotation == 90 || rotation == 180)
                         fith = pageSize.height() - fith;
-                    PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
-                    while (currentOutline.level() >= section.depth()) {
-                        currentOutline = currentOutline.parent();
-                    }
-                    PdfOutline outline = new PdfOutline(currentOutline, destination, section.getBookmarkTitle(), section.isBookmarkOpen());
-                    currentOutline = outline;
+                    	PdfDestination destination = new PdfDestination(PdfDestination.FITH, fith);
+                    	while (currentOutline.level() >= section.depth()) {
+                    		currentOutline = currentOutline.parent();
+                    	}
+                    	PdfOutline outline = new PdfOutline(currentOutline, destination, section.getBookmarkTitle(), section.isBookmarkOpen());
+                    	currentOutline = outline;
                     }
                     
                     // some values are set
                     carriageReturn();
                     indentLeft += section.indentationLeft();
                     indentRight += section.indentationRight();
-                    
+                    sectionIndentL += section.indentationLeft();
+                    sectionIndentR += section.indentationRight();
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
@@ -1825,11 +1795,14 @@ class PdfDocument extends Document implements DocListener {
                         isParagraph = true;
                     }
                     indentLeft += section.indentation();
+                    sectionIndentL += section.indentation();
                     // we process the section
                     element.process(this);
                     // some parameters are set back to normal again
                     indentLeft -= section.indentationLeft() + section.indentation();
                     indentRight -= section.indentationRight();
+                    sectionIndentL -= section.indentationLeft() + section.indentation();
+                    sectionIndentR -= section.indentationRight();
                     
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
@@ -1865,7 +1838,7 @@ class PdfDocument extends Document implements DocListener {
                              * Don't add spacing before a paragraph if it's the first
                              * on the page
                              */
-                            Chunk space = new Chunk(" ");
+                            Chunk space = new Chunk(" ", listItem.font());
                             space.process(this);
                             carriageReturn();
                         }
@@ -1891,7 +1864,7 @@ class PdfDocument extends Document implements DocListener {
                              * Only add spacing after a paragraph if the extra
                              * spacing fits on the page.
                              */
-                            Chunk space = new Chunk(" ");
+                            Chunk space = new Chunk(" ", listItem.font());
                             space.process(this);
                             carriageReturn();
                         }
@@ -1920,10 +1893,17 @@ class PdfDocument extends Document implements DocListener {
                         break; //nothing to do
 
                     // before every table, we add a new line and flush all lines
-                    ensureNewLine();
+                    
+                    indentLeft -= paraIndent + sectionIndentL;
+                    indentRight -= sectionIndentR;
                     flushLines();
-                    addPTable(ptable);                    
+                    indentLeft += paraIndent + sectionIndentL;
+                    indentRight += sectionIndentR;
+                    ensureNewLine();
+                    
+                    addPTable(ptable);
                     pageEmpty = false;
+                    newLine();
                     break;
                 }
                 case Element.MULTI_COLUMN_TEXT: {
@@ -2360,25 +2340,16 @@ class PdfDocument extends Document implements DocListener {
      */
     
     private float flushLines() throws DocumentException {
-        
         // checks if the ArrayList with the lines is not null
         if (lines == null) {
             return 0;
         }
-        
-        //add by Jin-Hsia Yang
         boolean newline=false;
-        //end add by Jin-Hsia Yang
-        
         // checks if a new Line has to be made.
         if (line != null && line.size() > 0) {
             lines.add(line);
             line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
-            
-            //add by Jin-Hsia Yang
             newline=true;
-            //end add by Jin-Hsia Yang
-            
         }
         
         // checks if the ArrayList with the lines is empty
