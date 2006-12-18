@@ -1206,6 +1206,14 @@ class PdfStamperImp extends PdfWriter {
         names.put(PdfName.EMBEDDEDFILES, addToBody(tree).getIndirectReference());
     }
 
+    void makePackage( PdfName initialView ) {
+        PdfDictionary catalog = reader.getCatalog();
+    	PdfDictionary collections = new PdfDictionary();
+    	collections.put( PdfName.TYPE, PdfName.COLLECTION );
+       	collections.put( PdfName.VIEW, initialView );
+       	catalog.put( PdfName.COLLECTION, collections );
+    }
+ 
     void setOutlines() throws IOException {
         if (newBookmarks == null)
             return;

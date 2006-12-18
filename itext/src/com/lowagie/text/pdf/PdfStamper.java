@@ -442,6 +442,10 @@ public class PdfStamper {
         stamper.addFileAttachment(description, fs);
     }
 
+    public void makePackage( PdfName initialView ) {
+    	stamper.makePackage( initialView );
+    }
+    
     /**
      * Sets the viewer preferences.
      * @param preferences the viewer preferences
