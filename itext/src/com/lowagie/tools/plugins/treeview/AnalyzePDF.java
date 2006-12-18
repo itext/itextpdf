@@ -121,7 +121,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 					return new Integer(rowIndex + 1);
 				case 1:
 					PdfObject pdfob = reader.getPdfObject(rowIndex + 1);
-					if (pdfob.isStream()) {
+					if (pdfob != null && pdfob.isStream()) {
 						return "Stream " + pdfob;
 					} else {
 						return pdfob;
