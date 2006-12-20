@@ -1893,13 +1893,13 @@ class PdfDocument extends Document implements DocListener {
                         break; //nothing to do
 
                     // before every table, we add a new line and flush all lines
-                    
+
                     indentLeft -= paraIndent + sectionIndentL;
                     indentRight -= sectionIndentR;
+                    ensureNewLine();
                     flushLines();
                     indentLeft += paraIndent + sectionIndentL;
                     indentRight += sectionIndentR;
-                    ensureNewLine();
                     
                     addPTable(ptable);
                     pageEmpty = false;
