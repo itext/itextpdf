@@ -434,6 +434,11 @@ class Type1Font extends BaseFont
         }
         if (isMetrics)
             throw new DocumentException("Missing EndCharMetrics in " + fileName);
+        if (!CharMetrics.containsKey("nonbreakingspace")) {
+            Object[] space = (Object[])CharMetrics.get("space");
+            if (space != null)
+                CharMetrics.put("nonbreakingspace", space);
+        }
         while ((line = rf.readLine()) != null)
         {
             StringTokenizer tok = new StringTokenizer(line);
