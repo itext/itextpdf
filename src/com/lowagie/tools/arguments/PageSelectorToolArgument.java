@@ -91,7 +91,7 @@ public class PageSelectorToolArgument
     if (propertyname == null) {
       return;
     }
-    else if (propertyname.equals(name)) {
+    else if (propertyname.equals("srcfile")) {
       String filename = (String) evt.getNewValue();
       if(jDialog1!=null)jDialog1.setVisible(false);
       jDialog1 = new PageSelectionTableDialog(tool.getInternalFrame());
