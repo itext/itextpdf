@@ -300,6 +300,10 @@ class Type1Font extends BaseFont
         }
         if (metrics != null)
             return ((Integer)(metrics[1])).intValue();
+        if ("nonbreakingspace".equals(name))
+        	return getRawWidth(c, "space");
+        if ("softhyphen".equals(name))
+        	return getRawWidth(c, "hyphen");
         return 0;
     }
     
