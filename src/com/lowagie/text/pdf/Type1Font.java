@@ -300,10 +300,6 @@ class Type1Font extends BaseFont
         }
         if (metrics != null)
             return ((Integer)(metrics[1])).intValue();
-        if ("nonbreakingspace".equals(name))
-        	return getRawWidth(c, "space");
-        if ("softhyphen".equals(name))
-        	return getRawWidth(c, "hyphen");
         return 0;
     }
     
@@ -438,6 +434,11 @@ class Type1Font extends BaseFont
         }
         if (isMetrics)
             throw new DocumentException("Missing EndCharMetrics in " + fileName);
+        if (!CharMetrics.containsKey("nonbreakingspace")) {
+            Object[] space = (Object[])CharMetrics.get("space");
+            if (space != null)
+                CharMetrics.put("nonbreakingspace", space);
+        }
         while ((line = rf.readLine()) != null)
         {
             StringTokenizer tok = new StringTokenizer(line);
