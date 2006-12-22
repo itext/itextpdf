@@ -110,6 +110,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName AP = new PdfName("AP");
     /** A name */
+    public static final PdfName APPDEFAULT = new PdfName("AppDefault");
+    /** A name */
     public static final PdfName ARTBOX = new PdfName("ArtBox");
     /** A name */
     public static final PdfName ASCENT = new PdfName("Ascent");
@@ -309,6 +311,12 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DS = new PdfName("DS");
     /** A name */
     public static final PdfName DUR = new PdfName("Dur");
+    /** A name */
+    public static final PdfName DUPLEX = new PdfName("Duplex");
+    /** A name */
+    public static final PdfName DUPLEXFLIPSHORTEDGE = new PdfName("DuplexFlipShortEdge");
+    /** A name */
+    public static final PdfName DUPLEXFLIPLONGEDGE = new PdfName("DuplexFlipLongEdge");
     /** A name */
     public static final PdfName DV = new PdfName("DV");
     /** A name */
@@ -626,6 +634,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName NONFULLSCREENPAGEMODE = new PdfName("NonFullScreenPageMode");
     /** A name */
+    public static final PdfName NUMCOPIES = new PdfName("NumCopies");
+    /** A name */
     public static final PdfName NUMS = new PdfName("Nums");
     /** A name */
     public static final PdfName O = new PdfName("O");
@@ -708,6 +718,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PG = new PdfName("Pg");
     /** A name */
+    public static final PdfName PICKTRAYBYPDFSIZE = new PdfName("PickTrayByPDFSize");
+    /** A name */
     public static final PdfName POPUP = new PdfName("Popup");
     /** A name */
     public static final PdfName PREDICTOR = new PdfName("Predictor");
@@ -721,6 +733,12 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName PREVPAGE = new PdfName("PrevPage");
     /** A name */
     public static final PdfName PRINT = new PdfName("Print");
+    /** A name */
+    public static final PdfName PRINTAREA = new PdfName("PrintArea");
+    /** A name */
+    public static final PdfName PRINTCLIP = new PdfName("PrintClip");
+    /** A name */
+    public static final PdfName PRINTPAGERANGE = new PdfName("PrintPageRange");
     /** A name */
     public static final PdfName PRINTSCALING = new PdfName("PrintScaling");
     /** A name */
@@ -797,6 +815,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SIG = new PdfName("Sig");
     /** A name */
     public static final PdfName SIGFLAGS = new PdfName("SigFlags");
+    /** A name */
+    public static final PdfName SIMPLEX = new PdfName("Simplex");
     /** A name */
     public static final PdfName SINGLEPAGE = new PdfName("SinglePage");
     /** A name */
@@ -945,6 +965,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName VERISIGN_PPKVS = new PdfName("VeriSign.PPKVS");
     /** A name */
     public static final PdfName VIEW = new PdfName("View");
+    /** A name */
+    public static final PdfName VIEWAREA = new PdfName("ViewArea");
+    /** A name */
+    public static final PdfName VIEWCLIP = new PdfName("ViewClip");
     /** A name */
     public static final PdfName VIEWERPREFERENCES = new PdfName("ViewerPreferences");
     /** A name */

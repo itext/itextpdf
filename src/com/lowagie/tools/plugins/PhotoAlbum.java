@@ -62,6 +62,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.internal.PdfViewerPreferences;
 import com.lowagie.tools.arguments.DirFilter;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
@@ -108,7 +109,7 @@ public class PhotoAlbum extends AbstractTool {
 			File pdf_file = (File)getValue("destfile");
 			Document document = new Document();
 			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_file));
-			writer.setViewerPreferences(PdfWriter.PageModeUseThumbs);
+			writer.setViewerPreferences(PdfViewerPreferences.PageModeUseThumbs);
 			PdfPageLabels pageLabels = new PdfPageLabels();
 			int dpiX, dpiY;
 			float imgWidthPica, imgHeightPica;

@@ -86,6 +86,8 @@ import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.Watermark;
+import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 import com.lowagie.text.xml.xmp.XmpWriter;
 
 /**
@@ -101,7 +103,7 @@ import com.lowagie.text.xml.xmp.XmpWriter;
  * @see		PdfWriter
  */
 
-class PdfDocument extends Document implements DocListener {
+class PdfDocument extends Document implements DocListener, PdfViewerPreferences {
     
     /**
      * <CODE>PdfInfo</CODE> is the PDF InfoDictionary.
@@ -318,11 +320,11 @@ class PdfDocument extends Document implements DocListener {
         
         /** Sets the viewer preferences as the sum of several constants.
          * @param preferences the viewer preferences
-         * @see PdfWriter#setViewerPreferences
+         * @see PdfViewerPreferences#setViewerPreferences
          */
         
-        void setViewerPreferences(int preferences) {
-            PdfReader.setViewerPreferences(preferences, this);
+        public void setViewerPreferences(PdfViewerPreferencesImp preferences) {
+            PdfViewerPreferencesImp.setViewerPreferences(preferences, this);
         }
         
         void setOpenAction(PdfAction action) {
@@ -472,8 +474,7 @@ class PdfDocument extends Document implements DocListener {
     
     private HashMap documentFileAttachment = new HashMap();
     
-    /** these are the viewerpreferences of the document */
-    private int viewerPreferences = 0;
+    private PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
     
     private String openActionName;
     private PdfAction openActionAction;
@@ -2975,11 +2976,20 @@ class PdfDocument extends Document implements DocListener {
     
     /** Sets the viewer preferences as the sum of several constants.
      * @param preferences the viewer preferences
-     * @see PdfWriter#setViewerPreferences
+     * @see PdfViewerPreferences#setViewerPreferences
      */
     
     public void setViewerPreferences(int preferences) {
-        viewerPreferences |= preferences;
+        this.viewerPreferences.setViewerPreferences(preferences);
+    }
+    
+    /** Adds a viewer preference
+     * @param preferences the viewer preferences
+     * @see PdfViewerPreferences#addViewerPreference
+     */
+    
+    public void addViewerPreference(PdfName key, PdfObject value) {
+    	this.viewerPreferences.addViewerPreference(key, value);
     }
     
     /** Implements an action in an area.

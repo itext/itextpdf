@@ -69,23 +69,21 @@ import java.util.zip.InflaterInputStream;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
+
 import java.util.Stack;
 
 /** Reads a PDF document.
  * @author Paulo Soares (psoares@consiste.pt)
  * @author Kazuya Ujihara
  */
-public class PdfReader {
+public class PdfReader implements PdfViewerPreferences {
 
     static final PdfName pageInhCandidates[] = {
         PdfName.MEDIABOX, PdfName.ROTATE, PdfName.RESOURCES, PdfName.CROPBOX
     };
-
-    static final PdfName vpnames[] = {PdfName.HIDETOOLBAR, PdfName.HIDEMENUBAR,
-        PdfName.HIDEWINDOWUI, PdfName.FITWINDOW, PdfName.CENTERWINDOW, PdfName.DISPLAYDOCTITLE};
-    static final int vpints[] = {PdfWriter.HideToolbar, PdfWriter.HideMenubar,
-        PdfWriter.HideWindowUI, PdfWriter.FitWindow, PdfWriter.CenterWindow, PdfWriter.DisplayDocTitle};
-
+   
     static final byte endstream[] = PdfEncodings.convertToBytes("endstream", null);
     static final byte endobj[] = PdfEncodings.convertToBytes("endobj", null);
     protected PRTokeniser tokens;
@@ -127,7 +125,7 @@ public class PdfReader {
     private int lastXrefPartial = -1;
     private boolean partial;
     private PRIndirectReference cryptoRef;
-    private static int rove;
+	private PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
 
     /**
      * Holds value of property appendable.
@@ -2770,146 +2768,34 @@ public class PdfReader {
         removeUnusedObjects();
     }
 
-    /**
-     * @param preferences
-     * @param catalog
-     */
-    public static void setViewerPreferences(int preferences, PdfDictionary catalog) {
-        catalog.remove(PdfName.PAGELAYOUT);
-        catalog.remove(PdfName.PAGEMODE);
-        catalog.remove(PdfName.VIEWERPREFERENCES);
-        if ((preferences & PdfWriter.PageLayoutSinglePage) != 0)
-            catalog.put(PdfName.PAGELAYOUT, PdfName.SINGLEPAGE);
-        else if ((preferences & PdfWriter.PageLayoutOneColumn) != 0)
-            catalog.put(PdfName.PAGELAYOUT, PdfName.ONECOLUMN);
-        else if ((preferences & PdfWriter.PageLayoutTwoColumnLeft) != 0)
-            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNLEFT);
-        else if ((preferences & PdfWriter.PageLayoutTwoColumnRight) != 0)
-            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNRIGHT);
-        else if ((preferences & PdfWriter.PageLayoutTwoPageLeft) != 0)
-            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGELEFT);
-        else if ((preferences & PdfWriter.PageLayoutTwoPageRight) != 0)
-            catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGERIGHT);
-        if ((preferences & PdfWriter.PageModeUseNone) != 0)
-            catalog.put(PdfName.PAGEMODE, PdfName.USENONE);
-        else if ((preferences & PdfWriter.PageModeUseOutlines) != 0)
-            catalog.put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
-        else if ((preferences & PdfWriter.PageModeUseThumbs) != 0)
-            catalog.put(PdfName.PAGEMODE, PdfName.USETHUMBS);
-        else if ((preferences & PdfWriter.PageModeFullScreen) != 0)
-            catalog.put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
-        else if ((preferences & PdfWriter.PageModeUseOC) != 0)
-            catalog.put(PdfName.PAGEMODE, PdfName.USEOC);
-        else if ((preferences & PdfWriter.PageModeUseAttachments) != 0)
-            catalog.put(PdfName.PAGEMODE, PdfName.USEATTACHMENTS);
-        if ((preferences & PdfWriter.ViewerPreferencesMask) == 0)
-            return;
-        PdfDictionary vp = new PdfDictionary();
-        if ((preferences & PdfWriter.HideToolbar) != 0)
-            vp.put(PdfName.HIDETOOLBAR, PdfBoolean.PDFTRUE);
-        if ((preferences & PdfWriter.HideMenubar) != 0)
-            vp.put(PdfName.HIDEMENUBAR, PdfBoolean.PDFTRUE);
-        if ((preferences & PdfWriter.HideWindowUI) != 0)
-            vp.put(PdfName.HIDEWINDOWUI, PdfBoolean.PDFTRUE);
-        if ((preferences & PdfWriter.FitWindow) != 0)
-            vp.put(PdfName.FITWINDOW, PdfBoolean.PDFTRUE);
-        if ((preferences & PdfWriter.CenterWindow) != 0)
-            vp.put(PdfName.CENTERWINDOW, PdfBoolean.PDFTRUE);
-        if ((preferences & PdfWriter.DisplayDocTitle) != 0)
-            vp.put(PdfName.DISPLAYDOCTITLE, PdfBoolean.PDFTRUE);
-        if ((preferences & PdfWriter.NonFullScreenPageModeUseNone) != 0)
-            vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USENONE);
-        else if ((preferences & PdfWriter.NonFullScreenPageModeUseOutlines) != 0)
-            vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USEOUTLINES);
-        else if ((preferences & PdfWriter.NonFullScreenPageModeUseThumbs) != 0)
-            vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USETHUMBS);
-        else if ((preferences & PdfWriter.NonFullScreenPageModeUseOC) != 0)
-            vp.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USEOC);
-        if ((preferences & PdfWriter.DirectionL2R) != 0)
-            vp.put(PdfName.DIRECTION, PdfName.L2R);
-        else if ((preferences & PdfWriter.DirectionR2L) != 0)
-            vp.put(PdfName.DIRECTION, PdfName.R2L);
-        if ((preferences & PdfWriter.PrintScalingNone) != 0)
-            vp.put(PdfName.PRINTSCALING, PdfName.NONE);
-        catalog.put(PdfName.VIEWERPREFERENCES, vp);
-    }
-
-    /**
-     * @param preferences
+    /** Sets the viewer preferences as the sum of several constants.
+     * @param preferences the viewer preferences
+     * @see PdfViewerPreferences#setViewerPreferences
      */
     public void setViewerPreferences(int preferences) {
-        setViewerPreferences(preferences, catalog);
+    	this.viewerPreferences.setViewerPreferences(preferences);
+        setViewerPreferences(this.viewerPreferences);
+    }
+    
+    /** Adds a viewer preference
+     * @param preferences the viewer preferences
+     * @see PdfViewerPreferences#addViewerPreference
+     */
+    
+    public void addViewerPreference(PdfName key, PdfObject value) {
+    	this.viewerPreferences.addViewerPreference(key, value);
+        setViewerPreferences(this.viewerPreferences);
+    }
+    
+    void setViewerPreferences(PdfViewerPreferencesImp vp) {
+    	PdfViewerPreferencesImp.setViewerPreferences(vp, catalog);
     }
 
     /**
      * @return an int that contains the Viewer Preferences.
      */
-    public int getViewerPreferences() {
-        int prefs = 0;
-        PdfName name = null;
-        PdfObject obj = getPdfObjectRelease(catalog.get(PdfName.PAGELAYOUT));
-        if (obj != null && obj.isName()) {
-            name = (PdfName)obj;
-            if (name.equals(PdfName.SINGLEPAGE))
-                prefs |= PdfWriter.PageLayoutSinglePage;
-            else if (name.equals(PdfName.ONECOLUMN))
-                prefs |= PdfWriter.PageLayoutOneColumn;
-            else if (name.equals(PdfName.TWOCOLUMNLEFT))
-                prefs |= PdfWriter.PageLayoutTwoColumnLeft;
-            else if (name.equals(PdfName.TWOCOLUMNRIGHT))
-                prefs |= PdfWriter.PageLayoutTwoColumnRight;
-            else if (name.equals(PdfName.TWOPAGELEFT))
-                prefs |= PdfWriter.PageLayoutTwoPageLeft;
-            else if (name.equals(PdfName.TWOPAGERIGHT))
-                prefs |= PdfWriter.PageLayoutTwoPageRight;
-        }
-        obj = getPdfObjectRelease(catalog.get(PdfName.PAGEMODE));
-        if (obj != null && obj.isName()) {
-            name = (PdfName)obj;
-            if (name.equals(PdfName.USENONE))
-                prefs |= PdfWriter.PageModeUseNone;
-            else if (name.equals(PdfName.USEOUTLINES))
-                prefs |= PdfWriter.PageModeUseOutlines;
-            else if (name.equals(PdfName.USETHUMBS))
-                prefs |= PdfWriter.PageModeUseThumbs;
-            else if (name.equals(PdfName.USEOC))
-                prefs |= PdfWriter.PageModeUseOC;
-            else if (name.equals(PdfName.USEATTACHMENTS))
-                prefs |= PdfWriter.PageModeUseAttachments;
-        }
-        obj = getPdfObjectRelease(catalog.get(PdfName.VIEWERPREFERENCES));
-        if (obj == null || !obj.isDictionary())
-            return prefs;
-        PdfDictionary vp = (PdfDictionary)obj;
-        for (int k = 0; k < vpnames.length; ++k) {
-            obj = getPdfObject(vp.get(vpnames[k]));
-            if (obj != null && "true".equals(obj.toString()))
-                prefs |= vpints[k];
-        }
-        obj = getPdfObjectRelease(vp.get(PdfName.PRINTSCALING));
-        if (PdfName.NONE.equals(obj))
-            prefs |= PdfWriter.PrintScalingNone;
-        obj = getPdfObjectRelease(vp.get(PdfName.NONFULLSCREENPAGEMODE));
-        if (obj != null && obj.isName()) {
-            name = (PdfName)obj;
-            if (name.equals(PdfName.USENONE))
-                prefs |= PdfWriter.NonFullScreenPageModeUseNone;
-            else if (name.equals(PdfName.USEOUTLINES))
-                prefs |= PdfWriter.NonFullScreenPageModeUseOutlines;
-            else if (name.equals(PdfName.USETHUMBS))
-                prefs |= PdfWriter.NonFullScreenPageModeUseThumbs;
-            else if (name.equals(PdfName.USEOC))
-                prefs |= PdfWriter.NonFullScreenPageModeUseOC;
-        }
-        obj = getPdfObjectRelease(vp.get(PdfName.DIRECTION));
-        if (obj != null && obj.isName()) {
-            name = (PdfName)obj;
-            if (name.equals(PdfName.L2R))
-                prefs |= PdfWriter.DirectionL2R;
-            else if (name.equals(PdfName.R2L))
-                prefs |= PdfWriter.DirectionR2L;
-        }
-        return prefs;
+    public int getSimpleViewerPreferences() {
+    	return PdfViewerPreferencesImp.getViewerPreferences(catalog).getSimpleViewerPreferences();
     }
 
     /**

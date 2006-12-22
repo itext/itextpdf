@@ -60,6 +60,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.internal.PdfViewerPreferences;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -70,7 +71,7 @@ import com.lowagie.text.Rectangle;
  * flatten them. New fields can be added but not flattened.
  * @author Paulo Soares (psoares@consiste.pt)
  */
-public class PdfStamper {
+public class PdfStamper implements PdfViewerPreferences {
     /**
      * The writer
      */    
@@ -449,10 +450,19 @@ public class PdfStamper {
     /**
      * Sets the viewer preferences.
      * @param preferences the viewer preferences
-     * @see PdfWriter#setViewerPreferences(int)
+     * @see PdfViewerPreferences#setViewerPreferences(int)
      */
     public void setViewerPreferences(int preferences) {
         stamper.setViewerPreferences(preferences);
+    }
+    
+    /** Adds a viewer preference
+     * @param preferences the viewer preferences
+     * @see PdfViewerPreferences#addViewerPreference
+     */
+    
+    public void addViewerPreference(PdfName key, PdfObject value) {
+    	stamper.addViewerPreference(key, value);
     }
 
     /**

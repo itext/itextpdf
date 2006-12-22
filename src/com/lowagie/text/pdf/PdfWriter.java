@@ -71,6 +71,7 @@ import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.events.PdfPageEventForwarder;
+import com.lowagie.text.pdf.internal.PdfViewerPreferences;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -80,7 +81,7 @@ import com.lowagie.text.pdf.events.PdfPageEventForwarder;
  * added to this Document will be written to the outputstream.</P>
  */
 
-public class PdfWriter extends DocWriter {
+public class PdfWriter extends DocWriter implements PdfViewerPreferences {
     
     // inner classes
     
@@ -571,62 +572,6 @@ public class PdfWriter extends DocWriter {
     }
     // static membervariables
     
-    /** A viewer preference */
-    public static final int PageLayoutSinglePage = 1;
-    /** A viewer preference */
-    public static final int PageLayoutOneColumn = 2;
-    /** A viewer preference */
-    public static final int PageLayoutTwoColumnLeft = 4;
-    /** A viewer preference */
-    public static final int PageLayoutTwoColumnRight = 8;
-    /** A viewer preference */
-    public static final int PageLayoutTwoPageLeft = 1 << 22;
-    /** A viewer preference */
-    public static final int PageLayoutTwoPageRight = 1 << 23;
-    
-    /** A viewer preference */
-    public static final int PageModeUseNone = 16;
-    /** A viewer preference */
-    public static final int PageModeUseOutlines = 32;
-    /** A viewer preference */
-    public static final int PageModeUseThumbs = 64;
-    /** A viewer preference */
-    public static final int PageModeFullScreen = 128;
-    /** A viewer preference */
-    public static final int PageModeUseOC = 1 << 20;
-    /** A viewer preference */
-    public static final int PageModeUseAttachments = 1 << 24;
-    
-    /** A viewer preference */
-    public static final int HideToolbar = 256;
-    /** A viewer preference */
-    public static final int HideMenubar = 512;
-    /** A viewer preference */
-    public static final int HideWindowUI = 1024;
-    /** A viewer preference */
-    public static final int FitWindow = 2048;
-    /** A viewer preference */
-    public static final int CenterWindow = 4096;
-    
-    /** A viewer preference */
-    public static final int NonFullScreenPageModeUseNone = 8192;
-    /** A viewer preference */
-    public static final int NonFullScreenPageModeUseOutlines = 16384;
-    /** A viewer preference */
-    public static final int NonFullScreenPageModeUseThumbs = 32768;
-    /** A viewer preference */
-    public static final int NonFullScreenPageModeUseOC = 1 << 19;
-    
-    /** A viewer preference */
-    public static final int DirectionL2R = 1 << 16;
-    /** A viewer preference */
-    public static final int DirectionR2L = 1 << 17;
-    /** A viewer preference */
-    public static final int DisplayDocTitle = 1 << 18;
-    /** A viewer preference */
-    public static final int PrintScalingNone = 1 << 21;
-    /** The mask to decide if a ViewerPreferences dictionary is needed */
-    static final int ViewerPreferencesMask = 0xffff00;
     /** The operation permitted when the document is opened with the user password */
     public static final int AllowPrinting = 4 + 2048;
     /** The operation permitted when the document is opened with the user password */
@@ -1842,71 +1787,22 @@ public class PdfWriter extends DocWriter {
     }
     
     /**
-     * Sets the viewer preferences by ORing some constants.
-     * <p>
-     * <ul>
-     * <li>The page layout to be used when the document is opened (choose one).
-     *   <ul>
-     *   <li><b>PageLayoutSinglePage</b> - Display one page at a time. (default)
-     *   <li><b>PageLayoutOneColumn</b> - Display the pages in one column.
-     *   <li><b>PageLayoutTwoColumnLeft</b> - Display the pages in two columns, with
-     *       oddnumbered pages on the left.
-     *   <li><b>PageLayoutTwoColumnRight</b> - Display the pages in two columns, with
-     *       oddnumbered pages on the right.
-     *   <li><b>PageLayoutTwoPageLeft</b> - Display the pages two at a time, with
-     *       oddnumbered pages on the left.
-     *   <li><b>PageLayoutTwoPageRight</b> - Display the pages two at a time, with
-     *       oddnumbered pages on the right.
-     *   </ul>
-     * <li>The page mode how the document should be displayed
-     *     when opened (choose one).
-     *   <ul>
-     *   <li><b>PageModeUseNone</b> - Neither document outline nor thumbnail images visible. (default)
-     *   <li><b>PageModeUseOutlines</b> - Document outline visible.
-     *   <li><b>PageModeUseThumbs</b> - Thumbnail images visible.
-     *   <li><b>PageModeFullScreen</b> - Full-screen mode, with no menu bar, window
-     *       controls, or any other window visible.
-     *   <li><b>PageModeUseOC</b> - Optional content group panel visible
-     *   <li><b>PageModeUseAttachments</b> - Attachments panel visible
-     *   </ul>
-     * <li><b>HideToolbar</b> - A flag specifying whether to hide the viewer application's tool
-     *     bars when the document is active.
-     * <li><b>HideMenubar</b> - A flag specifying whether to hide the viewer application's
-     *     menu bar when the document is active.
-     * <li><b>HideWindowUI</b> - A flag specifying whether to hide user interface elements in
-     *     the document's window (such as scroll bars and navigation controls),
-     *     leaving only the document's contents displayed.
-     * <li><b>FitWindow</b> - A flag specifying whether to resize the document's window to
-     *     fit the size of the first displayed page.
-     * <li><b>CenterWindow</b> - A flag specifying whether to position the document's window
-     *     in the center of the screen.
-     * <li><b>DisplayDocTitle</b> - A flag specifying whether to display the document's title
-     *     in the top bar.
-     * <li>The predominant reading order for text. This entry has no direct effect on the
-     *     document's contents or page numbering, but can be used to determine the relative
-     *     positioning of pages when displayed side by side or printed <i>n-up</i> (choose one).
-     *   <ul>
-     *   <li><b>DirectionL2R</b> - Left to right
-     *   <li><b>DirectionR2L</b> - Right to left (including vertical writing systems such as
-     *       Chinese, Japanese, and Korean)
-     *   </ul>
-     * <li>The document's page mode, specifying how to display the
-     *     document on exiting full-screen mode. It is meaningful only
-     *     if the page mode is <b>PageModeFullScreen</b> (choose one).
-     *   <ul>
-     *   <li><b>NonFullScreenPageModeUseNone</b> - Neither document outline nor thumbnail images
-     *       visible
-     *   <li><b>NonFullScreenPageModeUseOutlines</b> - Document outline visible
-     *   <li><b>NonFullScreenPageModeUseThumbs</b> - Thumbnail images visible
-     *   <li><b>NonFullScreenPageModeUseOC</b> - Optional content group panel visible
-     *   </ul>
-     * <li><b>PrintScalingNone</b> - Indicates that the print dialog should reflect no page scaling.
-     * </ul>
+     * Sets the viewer preferences as the sum of several constants.
      * @param preferences the viewer preferences
+     * @see PdfViewerPreferences#setViewerPreferences
      */
     
     public void setViewerPreferences(int preferences) {
         pdf.setViewerPreferences(preferences);
+    }
+    
+    /** Adds a viewer preference
+     * @param preferences the viewer preferences
+     * @see PdfViewerPreferences#addViewerPreference
+     */
+    
+    public void addViewerPreference(PdfName key, PdfObject value) {
+    	pdf.addViewerPreference(key, value);
     }
     
     /** Sets the encryption options for this document. The userPassword and the

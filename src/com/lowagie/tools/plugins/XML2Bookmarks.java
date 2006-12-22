@@ -59,8 +59,8 @@ import javax.swing.JOptionPane;
 
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
-import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.SimpleBookmark;
+import com.lowagie.text.pdf.internal.PdfViewerPreferences;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;
@@ -108,7 +108,7 @@ public class XML2Bookmarks extends AbstractTool {
             reader.consolidateNamedDestinations();
             PdfStamper stamper = new PdfStamper(reader, new FileOutputStream((File)getValue("destfile")));
             stamper.setOutlines(bookmarks);
-            stamper.setViewerPreferences(reader.getViewerPreferences() | PdfWriter.PageModeUseOutlines);
+            stamper.setViewerPreferences(reader.getSimpleViewerPreferences() | PdfViewerPreferences.PageModeUseOutlines);
             stamper.close();
 		}
 		catch(Exception e) {

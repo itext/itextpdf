@@ -59,8 +59,10 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
-class PdfStamperImp extends PdfWriter {
+class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
     HashMap readers2intrefs = new HashMap();
     HashMap readers2file = new HashMap();
     RandomAccessFileOrArray file;
@@ -79,7 +81,7 @@ class PdfStamperImp extends PdfWriter {
     protected List newBookmarks;
     protected HashSet partialFlattening = new HashSet();
     protected boolean useVp = false;
-    protected int vp = 0;
+    protected PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
     protected HashMap fieldTemplates = new HashMap();
     protected boolean fieldsAdded = false;
     protected int sigFlags = 0;
@@ -143,7 +145,7 @@ class PdfStamperImp extends PdfWriter {
         if (closed)
             return;
         if (useVp) {
-            reader.setViewerPreferences(vp);
+            reader.setViewerPreferences(viewerPreferences);
             markUsed(reader.getTrailer().get(PdfName.ROOT));
         }
         if (flat)
@@ -1243,7 +1245,16 @@ class PdfStamperImp extends PdfWriter {
      */
     public void setViewerPreferences(int preferences) {
         useVp = true;
-        vp |= preferences;
+        this.viewerPreferences.setViewerPreferences(preferences);
+    }
+    
+    /** Adds a viewer preference
+     * @param preferences the viewer preferences
+     * @see PdfViewerPreferences#addViewerPreference
+     */
+    public void addViewerPreference(PdfName key, PdfObject value) {
+    	useVp = true;
+    	this.viewerPreferences.addViewerPreference(key, value);
     }
     
     /**
