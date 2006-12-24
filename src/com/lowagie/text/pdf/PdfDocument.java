@@ -86,7 +86,7 @@ import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.Watermark;
-import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 import com.lowagie.text.xml.xmp.XmpWriter;
 

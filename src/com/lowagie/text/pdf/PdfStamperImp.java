@@ -59,7 +59,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
 class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {

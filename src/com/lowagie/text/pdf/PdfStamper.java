@@ -60,7 +60,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte

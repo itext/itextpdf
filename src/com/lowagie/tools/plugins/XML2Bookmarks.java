@@ -60,7 +60,7 @@ import javax.swing.JOptionPane;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.SimpleBookmark;
-import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;
 import com.lowagie.tools.arguments.ToolArgument;

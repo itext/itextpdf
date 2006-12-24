@@ -62,7 +62,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.tools.arguments.DirFilter;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.PdfFilter;

@@ -69,7 +69,7 @@ import java.util.zip.InflaterInputStream;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
 import java.util.Stack;
@@ -2795,7 +2795,7 @@ public class PdfReader implements PdfViewerPreferences {
      * @return an int that contains the Viewer Preferences.
      */
     public int getSimpleViewerPreferences() {
-    	return PdfViewerPreferencesImp.getViewerPreferences(catalog).getSimpleViewerPreferences();
+    	return PdfViewerPreferencesImp.getViewerPreferences(catalog).getPageLayoutAndMode();
     }
 
     /**

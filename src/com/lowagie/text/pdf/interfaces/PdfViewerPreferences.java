@@ -47,7 +47,7 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text.pdf.internal;
+package com.lowagie.text.pdf.interfaces;
 
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
@@ -63,6 +63,8 @@ import com.lowagie.text.pdf.PdfObject;
 
 public interface PdfViewerPreferences {
 
+	// page layout (section 13.1.1 of "iText in Action")
+	
     /** A viewer preference */
 	public static final int PageLayoutSinglePage = 1;
 	/** A viewer preference */
@@ -91,6 +93,30 @@ public interface PdfViewerPreferences {
 	/** A viewer preference */
 	public static final int PageModeUseAttachments = 2048;
 
+	// viewer preferences PDF Reference table 8.1
+
+	final PdfName[] VIEWER_PREFERENCES = {
+		PdfName.HIDETOOLBAR,			// 0
+		PdfName.HIDEMENUBAR,            // 1
+		PdfName.HIDEWINDOWUI,           // 2
+		PdfName.FITWINDOW,              // 3
+		PdfName.CENTERWINDOW,			// 4
+		PdfName.DISPLAYDOCTITLE,		// 5
+		PdfName.NONFULLSCREENPAGEMODE,	// 6
+		PdfName.DIRECTION,				// 7
+		PdfName.VIEWAREA,				// 8
+		PdfName.VIEWCLIP,				// 9
+		PdfName.PRINTAREA,				// 10
+		PdfName.PRINTCLIP,				// 11
+		PdfName.PRINTSCALING,			// 12
+		PdfName.DUPLEX,					// 13
+		PdfName.PICKTRAYBYPDFSIZE,		// 14
+		PdfName.PRINTPAGERANGE,			// 15
+		PdfName.NUMCOPIES				// 16
+	};
+	
+	// values for setting viewer preferences in iText versions older than 1.5.x
+	
 	/** A viewer preference */
 	public static final int HideToolbar = 1 << 12;
 	/** A viewer preference */
@@ -123,7 +149,7 @@ public interface PdfViewerPreferences {
 	
 	
     /**
-     * Sets the viewer preferences by ORing some constants.
+     * Sets the page layout and page mode preferences by ORing one or two of these constants.
      * <p>
      * <ul>
      * <li>The page layout to be used when the document is opened (choose one).
@@ -150,6 +176,11 @@ public interface PdfViewerPreferences {
      *   <li><b>PageModeUseOC</b> - Optional content group panel visible
      *   <li><b>PageModeUseAttachments</b> - Attachments panel visible
      *   </ul>
+     * </ul>
+     * For backward compatibility these values are also supported,
+     * but it's better to use method <code>addViewerPreference(key, value)</code>
+     * if you want to change the following preferences:
+     * <ul>
      * <li><b>HideToolbar</b> - A flag specifying whether to hide the viewer application's tool
      *     bars when the document is active.
      * <li><b>HideMenubar</b> - A flag specifying whether to hide the viewer application's

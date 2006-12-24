@@ -71,7 +71,7 @@ import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.events.PdfPageEventForwarder;
-import com.lowagie.text.pdf.internal.PdfViewerPreferences;
+import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
