@@ -73,10 +73,19 @@ public class IVGenerator {
      * @return a 16 byte random initialization vector
      */
     public static byte[] getIV() {
-        byte[] b = new byte[16];
+        return getIV(16);
+    }
+    
+    /**
+     * Gets a random initialization vector.
+     * @param len the length of the initialization vector
+     * @return a random initialization vector
+     */
+    public static byte[] getIV(int len) {
+        byte[] b = new byte[len];
         synchronized (rc4) {
             rc4.encryptRC4(b);
         }
         return b;
-    }
+    }    
 }
