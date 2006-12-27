@@ -1,7 +1,5 @@
 package com.lowagie.text.pdf.internal;
 
-import java.util.Iterator;
-
 import com.lowagie.text.pdf.PdfArray;
 import com.lowagie.text.pdf.PdfBoolean;
 import com.lowagie.text.pdf.PdfDictionary;
@@ -22,27 +20,20 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 	/** The mask to decide if a ViewerPreferences dictionary is needed */
 	private static final int viewerPreferencesMask = 0xfff000;
 
-    /** A series of viewer preferences. */
-    private static final PdfName NONFULLSCREENPAGEMODE_PREFERENCES[] = {
-    	PdfName.USENONE, PdfName.USEOUTLINES, PdfName.USETHUMBS, PdfName.USEOC
-    };
-    /** A series of viewer preferences. */
-    private static final PdfName DIRECTION_PREFERENCES[] = {
-    	PdfName.L2R, PdfName.R2L
-    };
-	/** A series of viewer preferences. */
-	private static final PdfName PAGE_BOUNDARIES[] = {
-		PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.BLEEDBOX, PdfName.TRIMBOX, PdfName.ARTBOX
-	};
-	/** A series of viewer preferences */
-	private static final PdfName PRINTSCALING_PREFERENCES[] = {
-		PdfName.APPDEFAULT, PdfName.NONE
-	};
-	/** A series of viewer preferences. */
-	private static final PdfName DUPLEX_PREFERENCES[] = {
-		PdfName.SIMPLEX, PdfName.DUPLEXFLIPSHORTEDGE, PdfName.DUPLEXFLIPSHORTEDGE
-	};
- 
+	/**
+	 * Returns the page layout and page mode value.
+	 */
+	public int getPageLayoutAndMode() {
+		return pageLayoutAndMode;
+	}
+
+	/**
+	 * Returns the viewer preferences.
+	 */
+	public PdfDictionary getViewerPreferences() {
+		return viewerPreferences;
+	}
+	
 	/**
 	 * Sets the viewer preferences as the sum of several constants.
 	 * 
@@ -54,7 +45,7 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 		this.pageLayoutAndMode |= preferences;
 		// for backwards compatibility, it is also possible
 		// to set the following viewer preferences with this method:
-		if ((preferences & viewerPreferencesMask) == 0) {
+		if ((preferences & viewerPreferencesMask) != 0) {
 			pageLayoutAndMode = ~viewerPreferencesMask & pageLayoutAndMode;
 			if ((preferences & HideToolbar) != 0)
 				viewerPreferences.put(PdfName.HIDETOOLBAR, PdfBoolean.PDFTRUE);
@@ -68,7 +59,7 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 				viewerPreferences.put(PdfName.CENTERWINDOW, PdfBoolean.PDFTRUE);
 			if ((preferences & DisplayDocTitle) != 0)
 				viewerPreferences.put(PdfName.DISPLAYDOCTITLE, PdfBoolean.PDFTRUE);
-
+			
 			if ((preferences & NonFullScreenPageModeUseNone) != 0)
 				viewerPreferences.put(PdfName.NONFULLSCREENPAGEMODE, PdfName.USENONE);
 			else if ((preferences & NonFullScreenPageModeUseOutlines) != 0)
@@ -174,13 +165,6 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 			}
 			break;
 		}
-	}
-
-	/**
-	 * Returns the viewer preferences.
-	 */
-	public int getPageLayoutAndMode() {
-		return pageLayoutAndMode;
 	}
 
 	/**
