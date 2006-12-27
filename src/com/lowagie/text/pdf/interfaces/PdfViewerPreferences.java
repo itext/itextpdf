@@ -113,7 +113,28 @@ public interface PdfViewerPreferences {
 		PdfName.PICKTRAYBYPDFSIZE,		// 14
 		PdfName.PRINTPAGERANGE,			// 15
 		PdfName.NUMCOPIES				// 16
+	};	
+
+    /** A series of viewer preferences. */
+    public static final PdfName NONFULLSCREENPAGEMODE_PREFERENCES[] = {
+    	PdfName.USENONE, PdfName.USEOUTLINES, PdfName.USETHUMBS, PdfName.USEOC
+    };
+    /** A series of viewer preferences. */
+    public static final PdfName DIRECTION_PREFERENCES[] = {
+    	PdfName.L2R, PdfName.R2L
+    };
+	/** A series of viewer preferences. */
+	public static final PdfName PAGE_BOUNDARIES[] = {
+		PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.BLEEDBOX, PdfName.TRIMBOX, PdfName.ARTBOX
 	};
+	/** A series of viewer preferences */
+	public static final PdfName PRINTSCALING_PREFERENCES[] = {
+		PdfName.APPDEFAULT, PdfName.NONE
+	};
+	/** A series of viewer preferences. */
+	public static final PdfName DUPLEX_PREFERENCES[] = {
+		PdfName.SIMPLEX, PdfName.DUPLEXFLIPSHORTEDGE, PdfName.DUPLEXFLIPSHORTEDGE
+	};	
 	
 	// values for setting viewer preferences in iText versions older than 1.5.x
 	
@@ -146,8 +167,7 @@ public interface PdfViewerPreferences {
 
 	/** A viewer preference */
 	public static final int PrintScalingNone = 1 << 24;
-	
-	
+		
     /**
      * Sets the page layout and page mode preferences by ORing one or two of these constants.
      * <p>
@@ -222,6 +242,30 @@ public interface PdfViewerPreferences {
     /**
      * Adds a viewer preference.
      * <ul>
+     * <li>In case the key is one of these values:
+     * 		<ul>
+     * 			<li>PdfName.<b>HIDETOOLBAR</b>
+     * 			<li>PdfName.<b>HIDEMENUBAR</b>
+     * 			<li>PdfName.<b>HIDEWINDOWUI</b>
+     * 			<li>PdfName.<b>FITWINDOW</b>
+     * 			<li>PdfName.<b>CENTERWINDOW</b>
+     * 			<li>PdfName.<b>DISPLAYDOCTITLE</b>
+     * 		</ul>
+     * The value must be a of type PdfBoolean (true or false).
+     * <li>In case the key is PdfName.<b>NONFULLSCREENPAGEMODE</b>,
+     * the value must be one of these names:
+     * 		<ul>
+     * 			<li>PdfName.<b>USENONE</b>
+     * 			<li>PdfName.<b>USEOUTLINES</b>
+     * 			<li>PdfName.<b>USETHUMBS</b>
+     * 			<li>PdfName.<b>USEOC</b>
+     * 		</ul>
+     * <li>In case the key is PdfName.DIRECTION,
+     * the value must be one of these names:
+     * 		<ul>
+     * 			<li>PdfName.<b>L2R</b>
+     * 			<li>PdfName.<b>R2L</b>
+     * 		</ul>
      * <li>In case the key is one of these values:
      * 		<ul>
      * 			<li>PdfName.<b>VIEWAREA</b>
