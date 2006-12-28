@@ -196,7 +196,7 @@ public class PRTokeniser {
     public char checkPdfHeader() throws IOException {
         file.setStartOffset(0);
         String str = readString(1024);
-        int idx = str.indexOf("%PDF-1.");
+        int idx = str.indexOf("%PDF-");
         if (idx < 0)
             throw new IOException("PDF header signature not found.");
         file.setStartOffset(idx);
