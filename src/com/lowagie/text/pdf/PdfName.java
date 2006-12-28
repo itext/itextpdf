@@ -86,6 +86,10 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName ADBE_PKCS7_DETACHED = new PdfName("adbe.pkcs7.detached");
     /** A name */
+    public static final PdfName ADBE_PKCS7_S4 =new PdfName("adbe.pkcs7.s4");
+    /** A name */
+    public static final PdfName ADBE_PKCS7_S5 =new PdfName("adbe.pkcs7.s5");
+    /** A name */
     public static final PdfName ADBE_PKCS7_SHA1 = new PdfName("adbe.pkcs7.sha1");
     /** A name */
     public static final PdfName ADBE_X509_RSA_SHA1 = new PdfName("adbe.x509.rsa_sha1");
@@ -263,6 +267,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DECODE = new PdfName("Decode");
     /** A name */
     public static final PdfName DECODEPARMS = new PdfName("DecodeParms");
+    /** A name */
+    public static final PdfName DEFAULTCRYPTFILER = new PdfName("DefaultCryptFilter");
     /** A name */
     public static final PdfName DEFAULTCMYK = new PdfName("DefaultCMYK");
     /** A name */
@@ -752,6 +758,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PS = new PdfName("PS");
     /** A name */
+    public static final PdfName PUBSEC = new PdfName("Adobe.PubSec");
+    /** A name */
     public static final PdfName Q = new PdfName("Q");
     /** A name */
     public static final PdfName QUADPOINTS = new PdfName("QuadPoints");
@@ -767,6 +775,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName RBGROUPS = new PdfName("RBGroups");
     /** A name */
     public static final PdfName REASON = new PdfName("Reason");
+    /** A name */
+    public static final PdfName RECIPIENTS = new PdfName("Recipients");
     /** A name */
     public static final PdfName RECT = new PdfName("Rect");
     /** A name */
