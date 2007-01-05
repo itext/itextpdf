@@ -153,7 +153,7 @@ public class PdfLine {
             if (overflow != null)
                 chunk.trimLastSpace();
             width -= chunk.width();
-            line.add(chunk);
+            addToLine(chunk);
         }
         
         // if the length == 0 and there were no other chunks added to the line yet,
@@ -163,13 +163,13 @@ public class PdfLine {
             overflow = chunk.truncate(width);
             width -= chunk.width();
             if (chunk.length() > 0) {
-                line.add(chunk);
+                addToLine(chunk);
                 return overflow;
             }
             // if the chunck couldn't even be truncated, we add everything, so be it
             else {
                 if (overflow != null)
-                    line.add(overflow);
+                    addToLine(overflow);
                 return null;
             }
         }
@@ -177,6 +177,14 @@ public class PdfLine {
             width += ((PdfChunk)(line.get(line.size() - 1))).trimLastSpace();
         }
         return overflow;
+    }
+    
+    private void addToLine(PdfChunk chunk) {
+        if (chunk.changeLeading && chunk.isImage()) {
+        	float f = chunk.getImage().scaledHeight() + chunk.getImageOffsetY();
+        	if (f > height) height = f;
+        }
+    	line.add(chunk);
     }
     
     // methods to retrieve information
@@ -377,26 +385,6 @@ public class PdfLine {
      */
     public float getOriginalWidth() {
         return originalWidth;
-    }
-    
-    /**
-     * Gets the maximum size of all the fonts used in this line
-     * including images (if there are images in the line and if
-     * the leading has to be changed).
-     * @return maximum size of all the fonts used in this line
-     */
-    float getMaxSize() {
-        float maxSize = 0;
-        for (int k = 0; k < line.size(); ++k) {
-            PdfChunk chunk = (PdfChunk)line.get(k);
-            if (!chunk.isImage() || !chunk.changeLeading()) {
-                maxSize = Math.max(chunk.font().size(), maxSize);
-            }
-            else {
-                maxSize = Math.max(chunk.getImage().scaledHeight() + chunk.getImageOffsetY() , maxSize);
-            }
-        }
-        return maxSize;
     }
     
     /**
