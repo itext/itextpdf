@@ -1759,8 +1759,8 @@ public class PdfContentByte {
      * such that the curve goes from (x1, y1) to (x4, y4) with (x2, y2) and
      * (x3, y3) as their respective Bezier control points.
      * <P>
-     * Note: this code was taken from ReportLab (www.reportlab.com), an excelent
-     * PDF generator for Python.
+     * Note: this code was taken from ReportLab (www.reportlab.org), an excelent
+     * PDF generator for Python (BSD license: http://www.reportlab.org/devfaq.html#1.3 ).
      *
      * @param x1 a corner of the enclosing rectangle
      * @param y1 a corner of the enclosing rectangle
