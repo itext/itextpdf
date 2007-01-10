@@ -44,15 +44,23 @@ public class PdfCollection extends PdfDictionary {
 	 * Sets the Collection schema dictionary.
 	 * @param schema	an overview of the collection fields
 	 */
-	public void addSchema(PdfCollectionSchema schema) {
+	public void setSchema(PdfCollectionSchema schema) {
 		put(PdfName.SCHEMA, schema);
+	}
+	
+	/**
+	 * Gets the Collection schema dictionary.
+	 * @return schema	an overview of the collection fields
+	 */
+	public PdfCollectionSchema getSchema() {
+		return (PdfCollectionSchema)get(PdfName.SCHEMA);
 	}
 	
 	/**
 	 * Sets the Collection sort dictionary.
 	 * @param sort	a collection sort dictionary
 	 */
-	public void addSort(PdfCollectionSort sort) {
+	public void setSort(PdfCollectionSort sort) {
 		put(PdfName.SORT, sort);
 	}
 }

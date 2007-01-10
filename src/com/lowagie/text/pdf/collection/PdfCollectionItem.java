@@ -11,36 +11,44 @@ import com.lowagie.text.pdf.PdfString;
 
 public class PdfCollectionItem extends PdfDictionary {
 	
+	/** The PdfCollectionSchema with the names and types of the items. */
+	PdfCollectionSchema schema;
+	
 	/**
 	 * Constructs a Collection Item that can be added to a PdfFileSpecification.
 	 */
-	public PdfCollectionItem() {
+	public PdfCollectionItem(PdfCollectionSchema schema) {
 		super(PdfName.COLLECTIONITEM);
+		this.schema = schema;
 	}
 	
 	/**
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, String value) {
-		addItem(field, schemaname, value, false);
+	public void addItem(String key, String value) {
+		addItem(key, value, false);
 	}
 	
 	/**
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, String value, boolean unicode) {
-		put(schemaname, field.getValue(value, unicode));
+	public void addItem(String key, String value, boolean unicode) {
+		PdfName fieldname = new PdfName(key);
+		PdfCollectionField field = (PdfCollectionField)schema.get(fieldname);
+		put(fieldname, field.getValue(value, unicode));
 	}
 	
 	/**
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, PdfString s) {
+	public void addItem(String key, PdfString value) {
+		PdfName fieldname = new PdfName(key);
+		PdfCollectionField field = (PdfCollectionField)schema.get(fieldname);
 		if (field.type == PdfCollectionField.TEXT) {
-			put(schemaname, s);
+			put(fieldname, value);
 		}
 	}
 	
@@ -48,9 +56,11 @@ public class PdfCollectionItem extends PdfDictionary {
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, PdfDate d) {
+	public void addItem(String key, PdfDate d) {
+		PdfName fieldname = new PdfName(key);
+		PdfCollectionField field = (PdfCollectionField)schema.get(fieldname);
 		if (field.type == PdfCollectionField.DATE) {
-			put(schemaname, d);
+			put(fieldname, d);
 		}
 	}
 	
@@ -58,9 +68,11 @@ public class PdfCollectionItem extends PdfDictionary {
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, PdfNumber n) {
+	public void addItem(String key, PdfNumber n) {
+		PdfName fieldname = new PdfName(key);
+		PdfCollectionField field = (PdfCollectionField)schema.get(fieldname);
 		if (field.type == PdfCollectionField.NUMBER) {
-			put(schemaname, n);
+			put(fieldname, n);
 		}
 	}
 	
@@ -68,32 +80,32 @@ public class PdfCollectionItem extends PdfDictionary {
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, Calendar c) {
-		addItem(field, schemaname, new PdfDate(c));
+	public void addItem(String key, Calendar c) {
+		addItem(key, new PdfDate(c));
 	}
 	
 	/**
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, int i) {
-		addItem(field, schemaname, new PdfNumber(i));
+	public void addItem(String key, int i) {
+		addItem(key, new PdfNumber(i));
 	}
 	
 	/**
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, float f) {
-		addItem(field, schemaname, new PdfNumber(f));
+	public void addItem(String key, float f) {
+		addItem(key, new PdfNumber(f));
 	}
 	
 	/**
 	 * Sets the value of the collection item.
 	 * @param value
 	 */
-	public void addItem(PdfCollectionField field, PdfName schemaname, double d) {
-		addItem(field, schemaname, new PdfNumber(d));
+	public void addItem(String key, double d) {
+		addItem(key, new PdfNumber(d));
 	}
 	
 	/**
@@ -102,14 +114,15 @@ public class PdfCollectionItem extends PdfDictionary {
 	 * @param prefix	a prefix
 	 * @param unicode	true if you want the prefix to be in unicode	
 	 */
-	public void setPrefix(PdfCollectionField field, PdfName schemaname, String prefix, boolean unicode) {
-		PdfObject o = get(schemaname);
+	public void setPrefix(String key, String prefix, boolean unicode) {
+		PdfName fieldname = new PdfName(key);
+		PdfObject o = get(fieldname);
 		if (o == null)
 			throw new IllegalArgumentException("You must set a value before adding a prefix.");
 		PdfDictionary dict = new PdfDictionary(PdfName.COLLECTIONSUBITEM);
 		dict.put(PdfName.D, o);
 		dict.put(PdfName.P, new PdfString(prefix, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING));
-		put(schemaname, dict);
+		put(fieldname, dict);
 	}
 	
 	/**
@@ -118,7 +131,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	 * @param prefix	a prefix
 	 * @param unicode	true if you want the prefix to be in unicode	
 	 */
-	public void setPrefix(PdfCollectionField field, PdfName schemaname, String prefix) {
-		setPrefix(field, schemaname, prefix, false);
+	public void setPrefix(String key, String prefix) {
+		setPrefix(key, prefix, false);
 	}
 }
