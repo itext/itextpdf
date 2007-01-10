@@ -16,7 +16,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	/**
 	 * Constructs a Collection Item that can be added to a PdfFileSpecification.
 	 */
-	public PdfCollectionItem(PdfCollectionField field, String value) {
+	public PdfCollectionItem(PdfCollectionField field) {
 		super(PdfName.COLLECTIONITEM);
 		if (!field.isCollectionItem())
 			throw new IllegalArgumentException("The type of the field isn't compatible with a Collection Item.");
