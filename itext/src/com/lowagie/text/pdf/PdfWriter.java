@@ -70,6 +70,7 @@ import com.lowagie.text.ImgPostscript;
 import com.lowagie.text.ImgWMF;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
+import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.events.PdfPageEventForwarder;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 
@@ -1805,6 +1806,14 @@ public class PdfWriter extends DocWriter implements PdfViewerPreferences {
     	pdf.addViewerPreference(key, value);
     }
     
+    /**
+     * Sets the Collection dictionary.
+     * @param collection a dictionary of type PdfCollection
+     */
+    public void setCollection(PdfCollection collection) {
+    	pdf.setCollection(collection);
+    }
+    
     /** Sets the encryption options for this document. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
      *  is replaced by a random string. The open permissions for the document can be
@@ -2068,6 +2077,13 @@ public class PdfWriter extends DocWriter implements PdfViewerPreferences {
      */    
     public void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
         pdf.addFileAttachment(description, fs);
+    }
+
+    /** Adds a file attachment at the document level.
+     * @param fs the file specification
+     */    
+    public void addFileAttachment(PdfFileSpecification fs) throws IOException {
+        pdf.addFileAttachment(null, fs);
     }
     
     /** Sets the crop box. The crop box should not be rotated even if the

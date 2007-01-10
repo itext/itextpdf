@@ -52,6 +52,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+import com.lowagie.text.pdf.collection.PdfCollectionItem;
 /** Specifies a file or an URL. The file can be extern or embedded.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -112,6 +114,7 @@ public class PdfFileSpecification extends PdfDictionary {
         PdfFileSpecification fs = new PdfFileSpecification();
         fs.writer = writer;
         fs.put(PdfName.F, new PdfString(fileDisplay));
+        fs.setUnicodeFileName(fileDisplay, false);
         PdfStream stream;
         InputStream in = null;
         PdfIndirectReference ref;
@@ -155,6 +158,7 @@ public class PdfFileSpecification extends PdfDictionary {
         }
         PdfDictionary f = new PdfDictionary();
         f.put(PdfName.F, ref);
+        f.put(PdfName.UF, ref);
         fs.put(PdfName.EF, f);
         return fs;
     }
@@ -169,6 +173,7 @@ public class PdfFileSpecification extends PdfDictionary {
         PdfFileSpecification fs = new PdfFileSpecification();
         fs.writer = writer;
         fs.put(PdfName.F, new PdfString(filePath));
+        fs.setUnicodeFileName(filePath, false);
         return fs;
     }
     
@@ -193,5 +198,42 @@ public class PdfFileSpecification extends PdfDictionary {
      */    
     public void setMultiByteFileName(byte fileName[]) {
         put(PdfName.F, new PdfString(fileName).setHexWriting(true));
+    }
+    
+    /**
+     * Adds the unicode file name (the key /UF). This entry was introduced
+     * in PDF 1.7. The filename must have the slash and backslash escaped
+     * according to the file specification rules.
+     * @param filename	the filename
+     * @param unicode	if true, the filename is UTF-16BE encoded; otherwise PDFDocEncoding is used;
+     */    
+    public void setUnicodeFileName(String filename, boolean unicode) {
+        put(PdfName.UF, new PdfString(filename, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING));
+    }
+    
+    /**
+     * Sets a flag that indicates whether an external file referenced by the file
+     * specification is volatile. If the value is true, applications should never
+     * cache a copy of the file.
+     * @param volatile_file	if true, the external file should not be cached
+     */
+    public void setVolatile(boolean volatile_file) {
+    	put(PdfName.V, new PdfBoolean(volatile_file));
+    }
+    
+    /**
+     * Adds a description for the file that is specified here.
+     * @param description	some text
+     * @param unicode		if true, the text is added as a unicode string
+     */
+    public void addDescription(String description, boolean unicode) {
+        put(PdfName.DESC, new PdfString(description, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING));
+    }
+    
+    /**
+     * Adds the Collection item dictionary.
+     */
+    public void addCollectionItem(PdfCollectionItem ci) {
+    	put(PdfName.CI, ci);
     }
 }

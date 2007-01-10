@@ -86,6 +86,7 @@ import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.Watermark;
+import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 import com.lowagie.text.xml.xmp.XmpWriter;
@@ -475,6 +476,7 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
     private HashMap documentFileAttachment = new HashMap();
     
     private PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
+    private PdfCollection collection;
     
     private String openActionName;
     private PdfAction openActionAction;
@@ -2441,6 +2443,9 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
             catalog.setPageLabels(pageLabels);
         catalog.addNames(localDestinations, documentJavaScript, documentFileAttachment, writer);
         catalog.setViewerPreferences(viewerPreferences);
+        if (collection != null) {
+        	catalog.put(PdfName.COLLECTION, collection);
+        }
         if (acroForm.isValid()) {
             try {
                 catalog.setAcroForm(writer.addToBody(acroForm).getIndirectReference());
@@ -2991,6 +2996,14 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
     public void addViewerPreference(PdfName key, PdfObject value) {
     	this.viewerPreferences.addViewerPreference(key, value);
     }
+
+    /**
+     * Sets the collection dictionary.
+     * @param collection a dictionary of type PdfCollection
+     */
+	public void setCollection(PdfCollection collection) {
+		this.collection = collection;
+	}
     
     /** Implements an action in an area.
      * @param action the <CODE>PdfAction</CODE>
@@ -3169,9 +3182,16 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
     }
 
     void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
-        if (description == null)
-            description = "";
-        fs.put(PdfName.DESC, new PdfString(description, PdfObject.TEXT_UNICODE));
+        if (description == null) {
+        	PdfString desc = (PdfString)fs.get(PdfName.DESC);
+        	if (desc == null) {
+        		description = ""; 
+        	}
+        	else {
+        		description = PdfEncodings.convertToString(desc.getBytes(), null);
+        	}
+        }
+        fs.addDescription(description, true);
         if (description.length() == 0)
             description = "Unnamed";
         String fn = PdfEncodings.convertToString(new PdfString(description, PdfObject.TEXT_UNICODE).getBytes(), null);
