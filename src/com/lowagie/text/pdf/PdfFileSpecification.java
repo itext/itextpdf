@@ -52,6 +52,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+import com.lowagie.text.pdf.collection.PdfCollectionItem;
 /** Specifies a file or an URL. The file can be extern or embedded.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -226,5 +228,12 @@ public class PdfFileSpecification extends PdfDictionary {
      */
     public void addDescription(String description, boolean unicode) {
         put(PdfName.DESC, new PdfString(description, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING));
+    }
+    
+    /**
+     * Adds the Collection item dictionary.
+     */
+    public void addCollectionItem(PdfCollectionItem ci) {
+    	put(PdfName.CI, ci);
     }
 }

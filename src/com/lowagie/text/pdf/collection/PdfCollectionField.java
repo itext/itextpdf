@@ -119,13 +119,6 @@ public class PdfCollectionField extends PdfDictionary {
 	}
 	
 	/**
-	 * Gets the PdfName of this field.
-	 */
-	public PdfName getName() {
-		return (PdfName)get(PdfName.N);
-	}
-	
-	/**
 	 * Returns a PdfObject that can be used as the value of a Collection Item.
 	 * @param String	value	the value that has to be changed into a PdfObject (PdfString, PdfDate or PdfNumber)	
 	 * @param boolean	unicode	this only makes sense if the type is TEXT
