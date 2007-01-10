@@ -1208,6 +1208,10 @@ class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
         names.put(PdfName.EMBEDDEDFILES, addToBody(tree).getIndirectReference());
     }
 
+    /**
+     * Adds or replaces the Collection Dictionary in the Catalog.
+     * @param	initialView	a name that defines the initial view of the collection.
+     */
     void makePackage( PdfName initialView ) {
         PdfDictionary catalog = reader.getCatalog();
     	PdfDictionary collections = new PdfDictionary();

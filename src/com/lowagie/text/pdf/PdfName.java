@@ -224,6 +224,16 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName COLLECTION = new PdfName("Collection");
     /** A name */
+    public static final PdfName COLLECTIONFIELD = new PdfName("CollectionField");
+    /** A name */
+    public static final PdfName COLLECTIONITEM = new PdfName("CollectionItem");
+    /** A name */
+    public static final PdfName COLLECTIONSCHEMA = new PdfName("CollectionSchema");
+    /** A name */
+    public static final PdfName COLLECTIONSORT = new PdfName("CollectionSort");
+    /** A name */
+    public static final PdfName COLLECTIONSUBITEM = new PdfName("CollectionSubitem");
+    /** A name */
     public static final PdfName COLUMNS = new PdfName("Columns");
     /** A name */
     public static final PdfName CONTACTINFO = new PdfName("ContactInfo");
@@ -810,6 +820,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName SATURATION = new PdfName("Saturation");
     /** A name */
+    public static final PdfName SCHEMA = new PdfName("Schema");
+    /** A name */
     public static final PdfName SCREEN = new PdfName("Screen");
     /** A name */
     public static final PdfName SEPARATION = new PdfName("Separation");
@@ -833,6 +845,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SIZE = new PdfName("Size");
     /** A name */
     public static final PdfName SMASK = new PdfName("SMask");
+    /** A name */
+    public static final PdfName SORT = new PdfName("Sort");
     /** A name */
     public static final PdfName SPLIT = new PdfName("Split");
     /** A name */
@@ -943,6 +957,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName TYPE3 = new PdfName("Type3");
     /** A name of an attribute. */
     public static final PdfName U = new PdfName("U");
+    /** A name of an attribute. */
+    public static final PdfName UF = new PdfName("UF");
     /** A name of an attribute. */
     public static final PdfName UHC = new PdfName("UHC");
     /** A name of an attribute. */
