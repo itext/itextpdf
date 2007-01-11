@@ -104,6 +104,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName ALLPAGES = new PdfName("AllPages");
     /** A name */
+    public static final PdfName ALT = new PdfName("Alt");
+    /** A name */
     public static final PdfName ALTERNATE = new PdfName("Alternate");
     /** A name */
     public static final PdfName ANNOT = new PdfName("Annot");
@@ -315,6 +317,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DIRECTION = new PdfName("Direction");
     /** A name */
     public static final PdfName DISPLAYDOCTITLE = new PdfName("DisplayDocTitle");
+    /** A name */
+    public static final PdfName DIV = new PdfName("Div");
     /** A name */
     public static final PdfName DM = new PdfName("Dm");
     /** A name */
@@ -826,6 +830,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName SCREEN = new PdfName("Screen");
     /** A name */
+    public static final PdfName SECT = new PdfName("Sect");
+    /** A name */
     public static final PdfName SEPARATION = new PdfName("Separation");
     /** A name */
     public static final PdfName SETOCGSTATE = new PdfName("SetOCGState");
@@ -849,6 +855,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SMASK = new PdfName("SMask");
     /** A name */
     public static final PdfName SORT = new PdfName("Sort");
+    /** A name */
+    public static final PdfName SPAN = new PdfName("Span");
     /** A name */
     public static final PdfName SPLIT = new PdfName("Split");
     /** A name */
