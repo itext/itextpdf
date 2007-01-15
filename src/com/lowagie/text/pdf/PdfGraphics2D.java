@@ -634,7 +634,11 @@ public class PdfGraphics2D extends Graphics2D {
      * @param arg1
      */
     public void setRenderingHint(Key arg0, Object arg1) {
-        rhints.put(arg0, arg1);
+        if (arg1 != null) {
+            rhints.put(arg0, arg1);
+        } else {
+            rhints.remove(arg0);
+        }
     }
     
     /**
