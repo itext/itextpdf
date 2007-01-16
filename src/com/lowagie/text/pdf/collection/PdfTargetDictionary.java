@@ -67,10 +67,9 @@ public class PdfTargetDictionary extends PdfDictionary {
 	 * you need to specify the page with setFileAttachmentPage or setFileAttachmentPageName,
 	 * and then specify the name of the attachment added to this page (or use setFileAttachmentIndex).
 	 * @param name		the name of the attachment
-	 * @param unicode	if true the name is stored as a unicode string
 	 */
-	public void setFileAttachmentName(String name, boolean unicode) {
-		put(PdfName.A, new PdfString(name, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING));
+	public void setFileAttachmentName(String name) {
+		put(PdfName.A, new PdfString(name, PdfObject.TEXT_UNICODE));
 	}
 	
 	/**

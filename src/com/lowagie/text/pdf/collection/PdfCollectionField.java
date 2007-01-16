@@ -36,12 +36,11 @@ public class PdfCollectionField extends PdfDictionary {
 	/**
 	 * Creates a PdfCollectionField.
 	 * @param name		the field name
-	 * @param unicode	if true, the field name will be stored as a unicode string
 	 * @param type		the field type
 	 */
-	public PdfCollectionField(String name, boolean unicode, int type) {
+	public PdfCollectionField(String name, int type) {
 		super(PdfName.COLLECTIONFIELD);
-		put(PdfName.N, new PdfString(name, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING));
+		put(PdfName.N, new PdfString(name, PdfObject.TEXT_UNICODE));
 		this.type = type;
 		switch(type) {
 		default:
@@ -71,15 +70,6 @@ public class PdfCollectionField extends PdfDictionary {
 		}
 	}
 	
-	/**
-	 * Creates a PdfCollectionField.
-	 * @param name	the field name
-	 * @param type	the field type
-	 */
-	public PdfCollectionField(String name, int type) {
-		this(name, false, type);
-	}
-
 	/**
 	 * The relative order of the field name. Fields are sorted in ascending order.
 	 * @param i	a number indicating the order of the field
@@ -121,12 +111,11 @@ public class PdfCollectionField extends PdfDictionary {
 	/**
 	 * Returns a PdfObject that can be used as the value of a Collection Item.
 	 * @param String	value	the value that has to be changed into a PdfObject (PdfString, PdfDate or PdfNumber)	
-	 * @param boolean	unicode	this only makes sense if the type is TEXT
 	 */
-	public PdfObject getValue(String v, boolean unicode) {
+	public PdfObject getValue(String v) {
 		switch(type) {
 		case TEXT:
-			return new PdfString(v, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING);
+			return new PdfString(v, PdfObject.TEXT_UNICODE);
 		case DATE:
 			return new PdfDate(PdfDate.decode(v));
 		case NUMBER:
