@@ -740,4 +740,13 @@ public class PdfAnnotation extends PdfDictionary {
     public void setLayer(PdfOCG layer) {
         put(PdfName.OC, layer.getRef());
     }
+    
+    /**
+     * Sets the name of the annotation.
+     * With this name the annotation can be identified among
+     * all the annotations on a page (it has to be unique).
+     */
+    public void setName(String name) {
+    	put(PdfName.NM, new PdfString(name));
+    }
 }
