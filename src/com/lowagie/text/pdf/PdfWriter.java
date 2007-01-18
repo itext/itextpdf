@@ -910,14 +910,14 @@ public class PdfWriter extends DocWriter implements PdfViewerPreferences {
                     if(image instanceof ImgWMF){
                         try {
                             ImgWMF wmf = (ImgWMF)image;
-                            wmf.readWMF(new PdfContentByte(this).createTemplate(0, 0));
+                            wmf.readWMF(PdfTemplate.createTemplate(this, 0, 0));
                         }
                         catch (Exception e) {
                             throw new DocumentException(e);
                         }
                     }else{
                         try {
-                            ((ImgPostscript)image).readPostscript(new PdfContentByte(this).createTemplate(0, 0));
+                            ((ImgPostscript)image).readPostscript(PdfTemplate.createTemplate(this, 0, 0));
                         }
                         catch (Exception e) {
                             throw new DocumentException(e);

@@ -110,6 +110,26 @@ public class PdfAppearance extends PdfTemplate {
     }
     
     /**
+     * Creates a new appearance to be used with form fields.
+     *
+     * @param writer the PdfWriter to use
+     * @param width the bounding box width
+     * @param height the bounding box height
+     * @return the appearance created
+     */
+    public static PdfAppearance createAppearance(PdfWriter writer, float width, float height) {
+        return createAppearance(writer, width, height, null);
+    }
+    
+    static PdfAppearance createAppearance(PdfWriter writer, float width, float height, PdfName forcedName) {
+        PdfAppearance template = new PdfAppearance(writer);
+        template.setWidth(width);
+        template.setHeight(height);
+        writer.addDirectTemplateSimple(template, forcedName);
+        return template;
+    }
+
+    /**
      * Set the font and the size for the subsequent text writing.
      *
      * @param bf the font
