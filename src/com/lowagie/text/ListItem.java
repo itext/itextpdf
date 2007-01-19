@@ -52,8 +52,7 @@ package com.lowagie.text;
 
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupParser;
-import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.Markup;
 
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
@@ -225,8 +224,8 @@ private static final long serialVersionUID = 1970670787169329006L;
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.parseFloat(value + "f"));
         }
-        else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
-            setLeading(MarkupParser.parseLength(value));
+        else if ((value = (String)attributes.remove(Markup.CSS_KEY_LINEHEIGHT)) != null) {
+            setLeading(Markup.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.parseFloat(value + "f"));
