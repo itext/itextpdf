@@ -69,7 +69,7 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Section;
 import com.lowagie.text.html.HtmlTags;
 import com.lowagie.text.html.HtmlWriter;
-import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.Markup;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.SimpleBookmark;
 import com.lowagie.tools.Executable;
@@ -146,11 +146,11 @@ public class HtmlBookmarks extends AbstractTool {
 				t = new Paragraph("Index for " + src.getName());
 			else
 				t = new Paragraph("Index for '" + title + "'");
-			t.setMarkupAttribute(MarkupTags.HTML_ATTR_CSS_CLASS, "title");
+			t.setMarkupAttribute(Markup.HTML_ATTR_CSS_CLASS, "title");
 			document.add(t);
 			if (description != null) {
 				Paragraph d = new Paragraph((String) description);
-				d.setMarkupAttribute(MarkupTags.HTML_ATTR_CSS_CLASS, "description");
+				d.setMarkupAttribute(Markup.HTML_ATTR_CSS_CLASS, "description");
 				document.add(d);
 			}
 			List list = SimpleBookmark.getBookmark(reader);

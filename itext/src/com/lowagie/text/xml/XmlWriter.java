@@ -84,7 +84,7 @@ import com.lowagie.text.Row;
 import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
-import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.Markup;
 
 /**
  * A <CODE>DocWriter</CODE> class for XML (Remark: this class is not finished yet!).
@@ -888,27 +888,27 @@ public class XmlWriter extends DocWriter implements DocListener {
             os.write(QUOTE);
             switch(font.style() & Font.BOLDITALIC) {
                 case Font.NORMAL:
-                    write(MarkupTags.CSS_VALUE_NORMAL);
+                    write(Markup.CSS_VALUE_NORMAL);
                     break;
                 case Font.BOLD:
-                    write(MarkupTags.CSS_VALUE_BOLD);
+                    write(Markup.CSS_VALUE_BOLD);
                     break;
                 case Font.ITALIC:
-                    write(MarkupTags.CSS_VALUE_ITALIC);
+                    write(Markup.CSS_VALUE_ITALIC);
                     break;
                 case Font.BOLDITALIC:
-                    write(MarkupTags.CSS_VALUE_BOLD);
+                    write(Markup.CSS_VALUE_BOLD);
                     write(", ");
-                    write(MarkupTags.CSS_VALUE_ITALIC);
+                    write(Markup.CSS_VALUE_ITALIC);
                     break;
             }
             if ((font.style() & Font.UNDERLINE) > 0) {
                 write(", ");
-                write(MarkupTags.CSS_VALUE_UNDERLINE);
+                write(Markup.CSS_VALUE_UNDERLINE);
             }
             if ((font.style() & Font.STRIKETHRU) > 0) {
                 write(", ");
-                write(MarkupTags.CSS_VALUE_LINETHROUGH);
+                write(Markup.CSS_VALUE_LINETHROUGH);
             }
             os.write(QUOTE);
         }

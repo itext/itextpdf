@@ -53,7 +53,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.ElementListener;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.TextElementArray;
-import com.lowagie.text.markup.MarkupParser;
+import com.lowagie.text.html.Markup;
 import com.lowagie.text.pdf.PdfPCell;
 /**
  *
@@ -101,7 +101,7 @@ public class IncCell implements TextElementArray {
             cell.setPadding(Float.parseFloat(value));
         cell.setUseDescender(true);
         value = props.getProperty("bgcolor");
-        cell.setBackgroundColor(MarkupParser.decodeColor(value));
+        cell.setBackgroundColor(Markup.decodeColor(value));
     }
     
     public boolean add(Object o) {

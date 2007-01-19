@@ -59,8 +59,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
 
-import com.lowagie.text.markup.MarkupParser;
-import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.Markup;
 import com.lowagie.text.pdf.HyphenationEvent;
 import com.lowagie.text.pdf.PdfAction;
 import com.lowagie.text.pdf.PdfAnnotation;
@@ -326,7 +325,7 @@ public class Chunk implements Element, MarkupAttributes {
 			setTextRise(Float.parseFloat(value + "f"));
 		}
 		if ((value = (String) attributes
-				.remove(MarkupTags.CSS_KEY_VERTICALALIGN)) != null
+				.remove(Markup.CSS_KEY_VERTICALALIGN)) != null
 				&& value.endsWith("%")) {
 			float p = Float.parseFloat(
 					value.substring(0, value.length() - 1) + "f") / 100f;
@@ -336,7 +335,7 @@ public class Chunk implements Element, MarkupAttributes {
 			setGenericTag(value);
 		}
 		if ((value = (String) attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
-			setBackground(MarkupParser.decodeColor(value));
+			setBackground(Markup.decodeColor(value));
 		}
 		if (attributes.size() > 0)
 			setMarkupAttributes(attributes);

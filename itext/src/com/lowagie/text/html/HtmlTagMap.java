@@ -54,7 +54,6 @@ import java.util.HashMap;
 
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.FontFactory;
-import com.lowagie.text.markup.MarkupTags;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
@@ -135,23 +134,23 @@ private static final long serialVersionUID = 5287430058473705350L;
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.I);
-        peer.addValue(ElementTags.STYLE, MarkupTags.CSS_VALUE_ITALIC);
+        peer.addValue(ElementTags.STYLE, Markup.CSS_VALUE_ITALIC);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.EM);
-        peer.addValue(ElementTags.STYLE, MarkupTags.CSS_VALUE_ITALIC);
+        peer.addValue(ElementTags.STYLE, Markup.CSS_VALUE_ITALIC);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.B);
-        peer.addValue(ElementTags.STYLE, MarkupTags.CSS_VALUE_BOLD);
+        peer.addValue(ElementTags.STYLE, Markup.CSS_VALUE_BOLD);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.STRONG);
-        peer.addValue(ElementTags.STYLE, MarkupTags.CSS_VALUE_BOLD);
+        peer.addValue(ElementTags.STYLE, Markup.CSS_VALUE_BOLD);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.S);
-        peer.addValue(ElementTags.STYLE, MarkupTags.CSS_VALUE_LINETHROUGH);
+        peer.addValue(ElementTags.STYLE, Markup.CSS_VALUE_LINETHROUGH);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.CODE);
@@ -160,11 +159,11 @@ private static final long serialVersionUID = 5287430058473705350L;
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.VAR);
         peer.addValue(ElementTags.FONT, FontFactory.COURIER);
-        peer.addValue(ElementTags.STYLE, MarkupTags.CSS_VALUE_ITALIC);
+        peer.addValue(ElementTags.STYLE, Markup.CSS_VALUE_ITALIC);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.PHRASE, HtmlTags.U);
-        peer.addValue(ElementTags.STYLE, MarkupTags.CSS_VALUE_UNDERLINE);
+        peer.addValue(ElementTags.STYLE, Markup.CSS_VALUE_UNDERLINE);
         put(peer.getAlias(), peer);
         
         peer = new HtmlPeer(ElementTags.CHUNK, HtmlTags.SUP);

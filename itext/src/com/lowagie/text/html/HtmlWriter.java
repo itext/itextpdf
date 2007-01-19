@@ -85,7 +85,6 @@ import com.lowagie.text.Row;
 import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
-import com.lowagie.text.markup.MarkupTags;
 import com.lowagie.text.pdf.BaseFont;
 
 /**
@@ -207,7 +206,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             write(" ");
             write(HtmlTags.STYLE);
             write("=\"");
-            writeCssProperty(MarkupTags.CSS_KEY_PAGE_BREAK_BEFORE, MarkupTags.CSS_VALUE_ALWAYS);
+            writeCssProperty(Markup.CSS_KEY_PAGE_BREAK_BEFORE, Markup.CSS_VALUE_ALWAYS);
             write("\" /");
             os.write(GT);
         }
@@ -320,7 +319,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 write(HtmlTags.JAVASCRIPT_ONUNLOAD, HtmlEncoder.encode(document.getJavaScript_onUnLoad()));
             }
             if (document.getHtmlStyleClass() != null) {
-                write(MarkupTags.HTML_ATTR_CSS_CLASS, document.getHtmlStyleClass());
+                write(Markup.HTML_ATTR_CSS_CLASS, document.getHtmlStyleClass());
             }
             os.write(GT);
             initHeader(); // line added by David Freels
@@ -457,7 +456,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
            * //-->
            * </script>
            */ 
-          write(HtmlTags.TYPE, MarkupTags.HTML_VALUE_JAVASCRIPT);
+          write(HtmlTags.TYPE, Markup.HTML_VALUE_JAVASCRIPT);
           os.write(GT);
           addTabs(2);
           write(new String(BEGINCOMMENT) + "\n");
@@ -653,7 +652,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 if (tag) {
                     // end tag
-                    writeEnd(MarkupTags.HTML_TAG_SPAN);
+                    writeEnd(Markup.HTML_TAG_SPAN);
                 }
                 return;
             }
@@ -661,11 +660,11 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Phrase phrase = (Phrase) element;
                 styleAttributes = new Properties();
-                if (phrase.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, phrase.leading() + "pt");
+                if (phrase.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, phrase.leading() + "pt");
                 
                 // start tag
                 addTabs(indent);
-                writeStart(MarkupTags.HTML_TAG_SPAN);
+                writeStart(Markup.HTML_TAG_SPAN);
                 if (hasMarkupAttributes(phrase)) {
                     writeMarkupAttributes(phrase);
                 }
@@ -678,7 +677,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 // end tag
                 addTabs(indent);
-                writeEnd(MarkupTags.HTML_TAG_SPAN);
+                writeEnd(Markup.HTML_TAG_SPAN);
                 currentfont.pop();
                 return;
             }
@@ -686,7 +685,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Anchor anchor = (Anchor) element;
                 styleAttributes = new Properties();
-                if (anchor.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, anchor.leading() + "pt");
+                if (anchor.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, anchor.leading() + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -717,7 +716,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Paragraph paragraph = (Paragraph) element;
                 styleAttributes = new Properties();
-                if (paragraph.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, paragraph.leading() + "pt");
+                if (paragraph.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, paragraph.leading() + "pt");
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
@@ -781,7 +780,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 ListItem listItem = (ListItem) element;
                 styleAttributes = new Properties();
-                if (listItem.leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, listItem.leading() + "pt");
+                if (listItem.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, listItem.leading() + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -1021,7 +1020,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 depth = 5;
             }
             Properties styleAttributes = new Properties();
-            if (section.title().leadingDefined()) styleAttributes.setProperty(MarkupTags.CSS_KEY_LINEHEIGHT, section.title().leading() + "pt");
+            if (section.title().leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, section.title().leading() + "pt");
             // start tag
             addTabs(indent);
             writeStart(HtmlTags.H[depth]);
@@ -1070,13 +1069,13 @@ public class HtmlWriter extends DocWriter implements DocListener {
             }
         }
         if (isOtherFont(font)) {
-            writeCssProperty(MarkupTags.CSS_KEY_FONTFAMILY, font.getFamilyname());
+            writeCssProperty(Markup.CSS_KEY_FONTFAMILY, font.getFamilyname());
             
             if (font.size() != Font.UNDEFINED) {
-                writeCssProperty(MarkupTags.CSS_KEY_FONTSIZE, font.size() + "pt");
+                writeCssProperty(Markup.CSS_KEY_FONTSIZE, font.size() + "pt");
             }
             if (font.color() != null) {
-                writeCssProperty(MarkupTags.CSS_KEY_COLOR, HtmlEncoder.encode(font.color()));
+                writeCssProperty(Markup.CSS_KEY_COLOR, HtmlEncoder.encode(font.color()));
             }
             
             int fontstyle = font.style();
@@ -1097,24 +1096,24 @@ public class HtmlWriter extends DocWriter implements DocListener {
             if (fontstyle != Font.UNDEFINED && fontstyle != Font.NORMAL) {
                 switch (fontstyle & Font.BOLDITALIC) {
                     case Font.BOLD:
-                        writeCssProperty(MarkupTags.CSS_KEY_FONTWEIGHT, MarkupTags.CSS_VALUE_BOLD);
+                        writeCssProperty(Markup.CSS_KEY_FONTWEIGHT, Markup.CSS_VALUE_BOLD);
                         break;
                     case Font.ITALIC:
-                        writeCssProperty(MarkupTags.CSS_KEY_FONTSTYLE, MarkupTags.CSS_VALUE_ITALIC);
+                        writeCssProperty(Markup.CSS_KEY_FONTSTYLE, Markup.CSS_VALUE_ITALIC);
                         break;
                     case Font.BOLDITALIC:
-                        writeCssProperty(MarkupTags.CSS_KEY_FONTWEIGHT, MarkupTags.CSS_VALUE_BOLD);
-                        writeCssProperty(MarkupTags.CSS_KEY_FONTSTYLE, MarkupTags.CSS_VALUE_ITALIC);
+                        writeCssProperty(Markup.CSS_KEY_FONTWEIGHT, Markup.CSS_VALUE_BOLD);
+                        writeCssProperty(Markup.CSS_KEY_FONTSTYLE, Markup.CSS_VALUE_ITALIC);
                         break;
                 }
                 
                 // CSS only supports one decoration tag so if both are specified
                 // only one of the two will display
                 if ((fontstyle & Font.UNDERLINE) > 0) {
-                    writeCssProperty(MarkupTags.CSS_KEY_TEXTDECORATION, MarkupTags.CSS_VALUE_UNDERLINE);
+                    writeCssProperty(Markup.CSS_KEY_TEXTDECORATION, Markup.CSS_VALUE_UNDERLINE);
                 }
                 if ((fontstyle & Font.STRIKETHRU) > 0) {
-                    writeCssProperty(MarkupTags.CSS_KEY_TEXTDECORATION, MarkupTags.CSS_VALUE_LINETHROUGH);
+                    writeCssProperty(Markup.CSS_KEY_TEXTDECORATION, Markup.CSS_VALUE_LINETHROUGH);
                 }
             }
         }
