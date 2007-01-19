@@ -60,6 +60,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 
 /** Applies extra content to the pages of a PDF document.
@@ -443,8 +444,31 @@ public class PdfStamper implements PdfViewerPreferences {
         stamper.addFileAttachment(description, fs);
     }
 
+    /**
+     * This is the most simple way to change a PDF into a
+     * portable collection. Choose one of the following names:
+     * <ul>
+     * <li>PdfName.D (detailed view)
+     * <li>PdfName.T (tiled view)
+     * <li>PdfName.H (hidden)
+     * </ul>
+     * Pass this name as a parameter and your PDF will be
+     * a portable collection with all the embedded and
+     * attached files as entries.
+     * @param initialView can be PdfName.D, PdfName.T or PdfName.H
+     */
     public void makePackage( PdfName initialView ) {
-    	stamper.makePackage( initialView );
+    	PdfCollection collection = new PdfCollection(0);
+    	collection.put(PdfName.VIEW, initialView);
+    	stamper.makePackage( collection );
+    }
+    
+    /**
+     * Adds or replaces the Collection Dictionary in the Catalog.
+     * @param	collection	the new collection dictionary.
+     */
+    public void makePackage(PdfCollection collection) {
+    	stamper.makePackage(collection);    	
     }
     
     /**

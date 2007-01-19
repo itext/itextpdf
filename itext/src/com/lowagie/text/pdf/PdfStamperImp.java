@@ -59,6 +59,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
@@ -1210,14 +1211,11 @@ class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
 
     /**
      * Adds or replaces the Collection Dictionary in the Catalog.
-     * @param	initialView	a name that defines the initial view of the collection.
+     * @param	collection	the new collection dictionary.
      */
-    void makePackage( PdfName initialView ) {
+    void makePackage( PdfCollection collection ) {
         PdfDictionary catalog = reader.getCatalog();
-    	PdfDictionary collections = new PdfDictionary();
-    	collections.put( PdfName.TYPE, PdfName.COLLECTION );
-       	collections.put( PdfName.VIEW, initialView );
-       	catalog.put( PdfName.COLLECTION, collections );
+       	catalog.put( PdfName.COLLECTION, collection );
     }
  
     void setOutlines() throws IOException {
