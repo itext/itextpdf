@@ -54,7 +54,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
 import com.lowagie.text.html.Markup;
 
@@ -85,7 +84,7 @@ import com.lowagie.text.html.Markup;
  * @see		Anchor
  */
 
-public class Phrase extends ArrayList implements TextElementArray, MarkupAttributes {
+public class Phrase extends ArrayList implements TextElementArray {
     
     // membervariables
     
@@ -285,7 +284,6 @@ private static final long serialVersionUID = 2643594602455068231L;
             }
             add(chunk);
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -569,42 +567,5 @@ private static final long serialVersionUID = 2643594602455068231L;
     
     public static boolean isTag(String tag) {
         return ElementTags.PHRASE.equals(tag);
-    }
-    
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
-    public void setMarkupAttribute(String name, String value) {
-		if (markupAttributes == null) markupAttributes = new Properties();
-        markupAttributes.put(name, value);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
- */
-    public void setMarkupAttributes(Properties markupAttributes) {
-        this.markupAttributes = markupAttributes;
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
-    public String getMarkupAttribute(String name) {
-        return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
- */
-    public Set getMarkupAttributeNames() {
-        return Chunk.getKeySet(markupAttributes);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
- */
-    public Properties getMarkupAttributes() {
-        return markupAttributes;
     }
 }

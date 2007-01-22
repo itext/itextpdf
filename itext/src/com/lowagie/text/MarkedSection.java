@@ -1,0 +1,301 @@
+/*
+ * $Id$
+ * $Name$
+ *
+ * Copyright 2007 by Bruno Lowagie.
+ *
+ * The contents of this file are subject to the Mozilla Public License Version 1.1
+ * (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is 'iText, a free JAVA-PDF library'.
+ *
+ * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
+ * the Initial Developer are Copyright (C) 1999-2007 by Bruno Lowagie.
+ * All Rights Reserved.
+ * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
+ * are Copyright (C) 2000-2007 by Paulo Soares. All Rights Reserved.
+ *
+ * Contributor(s): all the names of the contributors are added in the source code
+ * where applicable.
+ *
+ * Alternatively, the contents of this file may be used under the terms of the
+ * LGPL license (the "GNU LIBRARY GENERAL PUBLIC LICENSE"), in which case the
+ * provisions of LGPL are applicable instead of those above.  If you wish to
+ * allow use of your version of this file only under the terms of the LGPL
+ * License and not to allow others to use your version of this file under
+ * the MPL, indicate your decision by deleting the provisions above and
+ * replace them with the notice and other provisions required by the LGPL.
+ * If you do not delete the provisions above, a recipient may use your version
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE.
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the MPL as stated above or under the terms of the GNU
+ * Library General Public License as published by the Free Software Foundation;
+ * either version 2 of the License, or any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
+ * details.
+ *
+ * If you didn't download this code from the following link, you should check if
+ * you aren't using an obsolete version:
+ * http://www.lowagie.com/iText/
+ */
+
+package com.lowagie.text;
+
+import java.util.Collection;
+import java.util.Properties;
+
+/**
+ * Wrapper that allows to add properties to a Chapter/Section object.
+ * Before iText 1.5 every 'basic building block' implemented the MarkupAttributes interface.
+ * By setting attributes, you could add markup to the corresponding XML and/or HTML tag.
+ * This functionality was hardly used by anyone, so it was removed, and replaced by
+ * the MarkedObject functionality.
+ */
+
+public class MarkedSection extends MarkedObject {
+	
+	/**
+	 * Creates a MarkedObject with a Section or Chapter object.
+	 * @param section	the marked section
+	 */
+	public MarkedSection(Section section) {
+		super();
+		this.element = section;
+	}
+	
+	/**
+	 * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
+	 * to this <CODE>Section</CODE>.
+	 *
+	 * @param	index	index at which the specified element is to be inserted
+	 * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>=
+	 * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE> or <CODE>Table</CODE>
+	 */
+	 
+	public void add(int index, Object o) {
+		((Section)element).add(index, o);
+	}
+	    
+	/**
+	 * Adds a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
+	 * to this <CODE>Section</CODE>.
+	 *
+	 * @param	o   	an object of type <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or another <CODE>Section</CODE>
+	 * @return	a boolean
+	 * @throws	ClassCastException if the object is not a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE> or <CODE>Section</CODE>
+	 */
+	    
+	public boolean add(Object o) {
+		return ((Section)element).add(o);
+	}
+	    
+	/**
+	 * Adds a collection of <CODE>Element</CODE>s
+	 * to this <CODE>Section</CODE>.
+	 *
+	 * @param	collection	a collection of <CODE>Paragraph</CODE>s, <CODE>List</CODE>s and/or <CODE>Table</CODE>s
+	 * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
+	 * @throws	ClassCastException if one of the objects isn't a <CODE>Paragraph</CODE>, <CODE>List</CODE>, <CODE>Table</CODE>
+	 */
+	    
+	public boolean addAll(Collection collection) {
+		return ((Section)element).addAll(collection);
+	}
+	    
+	/**
+	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
+	 *
+	 * @param	indentation	the indentation of the new section
+	 * @param	title		the title of the new section
+	 * @param	numberDepth	the numberDepth of the section
+	 * @return  a new Section object
+	 */
+	    
+	public MarkedSection addSection(float indentation, Paragraph title, int numberDepth) {
+	    return new MarkedSection(((Section)element).addSection(indentation, title, numberDepth));
+	}
+	    
+	/**
+	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
+	 *
+	 * @param	indentation	the indentation of the new section
+	 * @param	title		the title of the new section
+	 * @return  a new Section object
+	 */
+	    
+	public MarkedSection addSection(float indentation, Paragraph title) {
+		return new MarkedSection(((Section)element).addSection(indentation, title));
+	}
+	    
+	/**
+	 * Creates a <CODE>Section</CODE>, add it to this <CODE>Section</CODE> and returns it.
+	 *
+	 * @param	title		the title of the new section
+	 * @param	numberDepth	the numberDepth of the section
+	 * @return  a new Section object
+	 */
+	public MarkedSection addSection(Paragraph title, int numberDepth) {
+		return new MarkedSection(((Section)element).addSection(title, numberDepth));
+	}
+	    
+	/**
+	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
+	 *
+	 * @param	title		the title of the new section
+	 * @return  a new Section object
+	 */
+	public MarkedSection addSection(Paragraph title) {
+		return new MarkedSection(((Section)element).addSection(title));
+	}
+	    
+	/**
+	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+	 *
+	 * @param	indentation	the indentation of the new section
+	 * @param	title		the title of the new section
+	 * @param	numberDepth	the numberDepth of the section
+	 * @return  a new Section object
+	 */
+	public MarkedSection addSection(float indentation, String title, int numberDepth) {
+		return new MarkedSection(((Section)element).addSection(indentation, title, numberDepth));
+	}
+	    
+	/**
+	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+	 *
+	 * @param	title		the title of the new section
+	 * @param	numberDepth	the numberDepth of the section
+	 * @return  a new Section object
+	 */
+	public MarkedSection addSection(String title, int numberDepth) {
+		return new MarkedSection(((Section)element).addSection(title, numberDepth));
+	}
+	    
+	/**
+	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+	 *
+	 * @param	indentation	the indentation of the new section
+	 * @param	title		the title of the new section
+	 * @return  a new Section object
+	 */
+	public MarkedSection addSection(float indentation, String title) {
+		return new MarkedSection(((Section)element).addSection(indentation, title));
+	}
+	    
+	/**
+	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
+	 *
+	 * @param	title		the title of the new section
+	 * @return  a new Section object
+	 */
+	public MarkedSection addSection(String title) {
+		return new MarkedSection(((Section)element).addSection(title));
+	}
+	    
+	/**
+	 * Creates a given <CODE>Section</CODE> following a set of attributes and adds it to this one.
+	 *
+	 * @param	attributes	the attributes
+	 * @return      a Section
+	 */
+	public MarkedSection addSection(Properties attributes) {
+		return new MarkedSection(((Section)element).addSection(attributes));
+	}
+	    
+	// public methods
+	    
+	/**
+	 * Alters the attributes of this <CODE>Section</CODE>.
+	 *
+	 * @param	attributes	the attributes
+	 */
+	    
+	public void set(Properties attributes) {
+		((Section)element).set(attributes);
+	}
+	    
+	/**
+	 * Sets the title of this section.
+	 *
+	 * @param	title	the new title
+	 */
+	    
+	public void setTitle(Paragraph title) {
+		((Section)element).setTitle(title);
+	}
+	    
+	/**
+	 * Sets the depth of the sectionnumbers that will be shown preceding the title.
+	 * <P>
+	 * If the numberdepth is 0, the sections will not be numbered. If the numberdepth
+	 * is 1, the section will be numbered with their own number. If the numberdepth is
+	 * higher (for instance x > 1), the numbers of x - 1 parents will be shown.
+	 *
+	 * @param	numberDepth		the new numberDepth
+	 */
+	public void setNumberDepth(int numberDepth) {
+		((Section)element).setNumberDepth(numberDepth);
+	}
+	    
+	/**
+	 * Sets the indentation of this <CODE>Section</CODE> on the left side.
+	 *
+	 * @param	indentation		the indentation
+	 */
+	public void setIndentationLeft(float indentation) {
+		((Section)element).setIndentationLeft(indentation);
+	}
+	    
+	/**
+	 * Sets the indentation of this <CODE>Section</CODE> on the right side.
+	 *
+	 * @param	indentation		the indentation
+	 */
+	    
+	public void setIndentationRight(float indentation) {
+		((Section)element).setIndentationRight(indentation);
+	}
+	    
+	/**
+	 * Sets the indentation of the content of this <CODE>Section</CODE>.
+	 *
+	 * @param	indentation		the indentation
+	 */
+	public void setIndentation(float indentation) {
+		((Section)element).setIndentation(indentation);
+	}
+	    
+	/** Setter for property bookmarkOpen.
+	 * @param bookmarkOpen false if the bookmark children are not
+	 * visible.
+	 */
+	public void setBookmarkOpen(boolean bookmarkOpen) {
+	 	((Section)element).setBookmarkOpen(bookmarkOpen);
+	}
+	    
+	/**
+	 * Setter for property triggerNewPage.
+	 * @param triggerNewPage true if a new page has to be triggered.
+	 */
+	public void setTriggerNewPage(boolean triggerNewPage) {
+	  	((Section)element).setTriggerNewPage(triggerNewPage);
+	}
+	    
+	/**
+	 * Sets the bookmark title. The bookmark title is the same as the section title but
+	 * can be changed with this method.
+	 * @param bookmarkTitle the bookmark title
+	 */    
+	public void setBookmarkTitle(String bookmarkTitle) {
+	  	((Section)element).setBookmarkTitle(bookmarkTitle);
+	}
+}

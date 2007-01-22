@@ -52,7 +52,6 @@ package com.lowagie.text;
 
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * A <CODE>Row</CODE> is part of a <CODE>Table</CODE>
@@ -70,7 +69,7 @@ import java.util.Set;
  * @see   Table
  */
 
-public class Row implements Element, MarkupAttributes {
+public class Row implements Element {
     
     // membervariables
     
@@ -429,42 +428,5 @@ public class Row implements Element, MarkupAttributes {
     
     public static boolean isTag(String tag) {
         return ElementTags.ROW.equals(tag);
-    }
-    
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
-    public void setMarkupAttribute(String name, String value) {
-        if (markupAttributes == null) markupAttributes = new Properties();
-        markupAttributes.put(name, value);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
- */
-    public void setMarkupAttributes(Properties markupAttributes) {
-        this.markupAttributes = markupAttributes;
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
-    public String getMarkupAttribute(String name) {
-        return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
- */
-    public Set getMarkupAttributeNames() {
-        return Chunk.getKeySet(markupAttributes);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
- */
-    public Properties getMarkupAttributes() {
-        return markupAttributes;
     }
 }

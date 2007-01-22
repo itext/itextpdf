@@ -1999,6 +1999,10 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
                     pageEmpty = false;
                     break;
                 }
+                case Element.MARKED: {
+                	element.process(this);
+                	break;
+                }
                 default:
                     return false;
             }

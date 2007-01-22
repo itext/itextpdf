@@ -75,7 +75,7 @@ import com.lowagie.text.html.Markup;
  * @see		Phrase
  */
 
-public class Anchor extends Phrase implements TextElementArray, MarkupAttributes {
+public class Anchor extends Phrase implements TextElementArray {
     
     // membervariables
     
@@ -208,7 +208,6 @@ private static final long serialVersionUID = -852278536049236911L;
         if ((value = (String)attributes.remove(ElementTags.REFERENCE)) != null) {
             setReference(value);
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

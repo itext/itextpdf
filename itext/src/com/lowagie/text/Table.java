@@ -156,7 +156,7 @@ import com.lowagie.text.pdf.PdfPTable;
  * @see         Cell
  */
 
-public class Table extends Rectangle implements Element, MarkupAttributes {
+public class Table extends Rectangle implements Element {
     
     // membervariables
     
@@ -396,7 +396,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.GRAYFILL)) != null) {
             setGrayFill(Float.parseFloat(value + "f"));
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -738,11 +737,6 @@ public class Table extends Rectangle implements Element, MarkupAttributes {
                 value = (String[])alternatingRowAttributes.get(name);
                 even.setProperty(name, value[0]);
                 odd.setProperty(name, value[1]);
-            }
-            Row row;
-            for (int i = lastHeaderRow + 1; i < rows.size(); i++) {
-                row = (Row)rows.get(i);
-                row.setMarkupAttributes(i % 2 == 0 ? even : odd);
             }
         }
     }

@@ -1,5 +1,8 @@
 /*
- * Copyright 2002 by Matt Benson.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -12,10 +15,10 @@
  * The Original Code is 'iText, a free JAVA-PDF library'.
  *
  * The Initial Developer of the Original Code is Bruno Lowagie. Portions created by
- * the Initial Developer are Copyright (C) 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * the Initial Developer are Copyright (C) 1999-2007 by Bruno Lowagie.
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
- * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
+ * are Copyright (C) 2000-2007 by Paulo Soares. All Rights Reserved.
  *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
@@ -47,56 +50,82 @@
 
 package com.lowagie.text;
 
-
+import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Set;
-
 
 /**
- * Defines the interface for an <CODE>Element</CODE> with markup attributes--
- * that is, random String-to-String properties for representation in markup
- * languages such as HTML and XML.
- *
- * @author Matt Benson (orangeherbert@users.sourceforge.net or gudnabrsam@yahoo.com)
+ * Wrapper that allows to add properties to 'basic building block' objects.
+ * Before iText 1.5 every 'basic building block' implemented the MarkupAttributes interface.
+ * By setting attributes, you could add markup to the corresponding XML and/or HTML tag.
+ * This functionality was hardly used by anyone, so it was removed, and replaced by
+ * the MarkedObject functionality.
  */
-public interface MarkupAttributes extends com.lowagie.text.Element {
-    
-/**
- * Sets the specified attribute.
- *
- * @param name    <CODE>String</CODE> attribute name.
- * @param value   <CODE>String</CODE> attribute value.
- */
-    public void setMarkupAttribute(String name, String value);
-    
-/**
- * Sets the markupAttributes.
- *
- * @param   markupAttributes    a <CODE>Properties</CODE>-object containing markupattributes 
- */
-    public void setMarkupAttributes(Properties markupAttributes);
-    
-/**
- * Returns the value of the specified attribute.
- *
- * @param name   <CODE>String</CODE> attribute name.
- * @return <CODE>String</CODE>.
- */
-    public String getMarkupAttribute(String name);
-    
-/**
- * Returns a <CODE>Set</CODE> of <CODE>String</CODE> attribute names for the
- * <CODE>MarkupAttributes</CODE> implementor.
- *
- * @return <CODE>Set</CODE>.
- */
-    public Set getMarkupAttributeNames();
-    
-/**
- * Return a <CODE>Properties</CODE>-object containing all the markupAttributes.
- *
- * @return <CODE>Properties</CODE>
- */
-    public Properties getMarkupAttributes();
-    
+
+public class MarkedObject implements Element {
+
+	/** The element that is wrapped in a MarkedObject. */
+	protected Element element;
+
+	/** Contains extra markupAttributes */
+	protected Properties markupAttributes = new Properties();
+	    
+	/**
+	 * This constructor is for internal use only.
+	 */
+	protected MarkedObject() {
+		element = null;
+	}
+	
+	/**
+	 * Creates a MarkedObject.
+	 */
+	public MarkedObject(Element element) {
+		this.element = element;
+	}
+	
+    /**
+     * Gets all the chunks in this element.
+     *
+     * @return  an <CODE>ArrayList</CODE>
+     */
+	public ArrayList getChunks() {
+		return element.getChunks();
+	}
+
+    /**
+     * Processes the element by adding it (or the different parts) to an
+     * <CODE>ElementListener</CODE>.
+     *
+     * @param       listener        an <CODE>ElementListener</CODE>
+     * @return <CODE>true</CODE> if the element was processed successfully
+     */
+	public boolean process(ElementListener listener) {
+        try {
+            return listener.add(element);
+        }
+        catch(DocumentException de) {
+            return false;
+        }
+	}
+	
+    /**
+     * Gets the type of the text element.
+     *
+     * @return  a type
+     */
+	public int type() {
+		return MARKED;
+	}
+
+	/**
+	 * @return the markupAttributes
+	 */
+	public Properties getMarkupAttributes() {
+		return markupAttributes;
+	}
+	
+	public void setMarkupAttribute(String key, String value) {
+		markupAttributes.setProperty(key, value);
+	}
+
 }
