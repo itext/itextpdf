@@ -78,6 +78,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.MarkedObject;
+import com.lowagie.text.MarkedSection;
 import com.lowagie.text.Meta;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -276,9 +277,25 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     writeComment("Creationdate: " + HtmlEncoder.encode(((Meta)element).content()));
                     return true;
                 case Element.MARKED:
-                	MarkedObject mo = (MarkedObject) element;
-                	markup.putAll(mo.getMarkupAttributes());
-                	return mo.process(this);
+                	if (element instanceof MarkedSection) {
+                		MarkedSection ms = (MarkedSection)element;
+                		addTabs(1);
+                        writeStart(HtmlTags.DIV);
+                        writeMarkupAttributes(ms.getMarkupAttributes());
+                        os.write(GT);
+                		MarkedObject mo = ((MarkedSection)element).title();
+                		if (mo != null) {
+                			mo.process(this);
+                		}
+                		ms.process(this);
+                        writeEnd(HtmlTags.DIV);
+                        return true;
+                	}
+                	else {
+                		MarkedObject mo = (MarkedObject) element;
+                		markup = mo.getMarkupAttributes();
+                    	return mo.process(this);
+                	}
                 default:
                     write(element, 2);
                     return true;

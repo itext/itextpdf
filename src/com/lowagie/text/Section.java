@@ -166,8 +166,10 @@ private static final long serialVersionUID = 3324172577544748043L;
     
     public boolean process(ElementListener listener) {
         try {
+        	Element element;
             for (Iterator i = iterator(); i.hasNext(); ) {
-                listener.add((Element) i.next());
+            	element = (Element)i.next();
+                listener.add(element);
             }
             return true;
         }
@@ -266,6 +268,15 @@ private static final long serialVersionUID = 3324172577544748043L;
                 section.setNumbers(++subsections, numbers);
                 return super.add(section);
             }
+            else if (o instanceof MarkedSection && ((MarkedObject)o).element.type() == Element.SECTION) {
+            	MarkedSection mo = (MarkedSection)o;
+            	Section section = (Section)mo.element;
+            	section.setNumbers(++subsections, numbers);
+            	return super.add(mo);
+            }
+            else if (element instanceof MarkedObject) {
+            	return super.add(o);
+            }
             else {
                 throw new ClassCastException(String.valueOf(element.type()));
             }
@@ -336,6 +347,15 @@ private static final long serialVersionUID = 3324172577544748043L;
         Section section = new Section(title, numberDepth);
         add(section);
         return section;
+    }
+    
+/**
+ * Adds a marked section. For use in class MarkedSection only!
+ */
+    public MarkedSection addMarkedSection() {
+    	MarkedSection section = new MarkedSection(new Section(null, numberDepth + 1));
+    	add(section);
+    	return section;
     }
     
 /**

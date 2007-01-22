@@ -357,6 +357,7 @@ private static final long serialVersionUID = 2643594602455068231L;
             else if (element.type() == Element.PHRASE ||
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
+            element.type() == Element.MARKED ||
             element.type() == Element.TABLE || // line added by David Freels
             element.type() == Element.GRAPHIC) {
                 super.add(index, element);
@@ -404,6 +405,7 @@ private static final long serialVersionUID = 2643594602455068231L;
                         }
                     }
                     return success;
+                case Element.MARKED:
                 case Element.ANCHOR:
                 case Element.ANNOTATION:
                 case Element.TABLE: // case added by David Freels
