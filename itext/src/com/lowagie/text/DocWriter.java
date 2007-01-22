@@ -462,8 +462,9 @@ public abstract class DocWriter implements DocListener {
     	String name;
     	while (attributeIterator.hasNext()) {
     		name = String.valueOf(attributeIterator.next());
-    		write(name, (String)markup.remove(name));
+    		write(name, markup.getProperty(name));
     	}
+    	markup.clear();
     	return true;
     }
 

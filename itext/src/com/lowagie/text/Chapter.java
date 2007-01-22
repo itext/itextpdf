@@ -84,6 +84,18 @@ public class Chapter extends Section implements TextElementArray {
 	
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
+	 * @param	number		the Chapter number
+     */
+    
+    public Chapter(int number) {
+        super(null, 1);
+        numbers = new ArrayList();
+        numbers.add(new Integer(number));
+        triggerNewPage = true;
+    }
+	
+	/**
+	 * Constructs a new <CODE>Chapter</CODE>.
 	 *
 	 * @param	title		the Chapter title (as a <CODE>Paragraph</CODE>)
 	 * @param	number		the Chapter number

@@ -51,6 +51,7 @@
 package com.lowagie.text;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Properties;
 
 /**
@@ -62,13 +63,20 @@ import java.util.Properties;
  */
 
 public class MarkedSection extends MarkedObject {
-	
+
+	/** This is the title of this section. */
+	protected MarkedObject title = null;
+	    
 	/**
 	 * Creates a MarkedObject with a Section or Chapter object.
 	 * @param section	the marked section
 	 */
 	public MarkedSection(Section section) {
 		super();
+		if (section.title != null) {
+			title = new MarkedObject(section.title);
+			section.setTitle(null);
+		}
 		this.element = section;
 	}
 	
@@ -97,7 +105,28 @@ public class MarkedSection extends MarkedObject {
 	public boolean add(Object o) {
 		return ((Section)element).add(o);
 	}
-	    
+
+    /**
+     * Processes the element by adding it (or the different parts) to an
+     * <CODE>ElementListener</CODE>.
+     *
+     * @param       listener        an <CODE>ElementListener</CODE>
+     * @return <CODE>true</CODE> if the element was processed successfully
+     */
+    public boolean process(ElementListener listener) {
+        try {
+        	Element element;
+            for (Iterator i = ((Section)this.element).iterator(); i.hasNext(); ) {
+            	element = (Element)i.next();
+                listener.add(element);
+            }
+            return true;
+        }
+        catch(DocumentException de) {
+            return false;
+        }
+    }
+	
 	/**
 	 * Adds a collection of <CODE>Element</CODE>s
 	 * to this <CODE>Section</CODE>.
@@ -115,100 +144,49 @@ public class MarkedSection extends MarkedObject {
 	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
 	 *
 	 * @param	indentation	the indentation of the new section
-	 * @param	title		the title of the new section
 	 * @param	numberDepth	the numberDepth of the section
 	 * @return  a new Section object
 	 */
 	    
-	public MarkedSection addSection(float indentation, Paragraph title, int numberDepth) {
-	    return new MarkedSection(((Section)element).addSection(indentation, title, numberDepth));
+	public MarkedSection addSection(float indentation, int numberDepth) {
+		MarkedSection section = ((Section)element).addMarkedSection();
+		section.setIndentation(indentation);
+		section.setNumberDepth(numberDepth);
+		return section;
 	}
 	    
 	/**
 	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
 	 *
 	 * @param	indentation	the indentation of the new section
-	 * @param	title		the title of the new section
 	 * @return  a new Section object
 	 */
 	    
-	public MarkedSection addSection(float indentation, Paragraph title) {
-		return new MarkedSection(((Section)element).addSection(indentation, title));
+	public MarkedSection addSection(float indentation) {
+		MarkedSection section = ((Section)element).addMarkedSection();
+		section.setIndentation(indentation);
+		return section;
 	}
 	    
 	/**
 	 * Creates a <CODE>Section</CODE>, add it to this <CODE>Section</CODE> and returns it.
 	 *
-	 * @param	title		the title of the new section
 	 * @param	numberDepth	the numberDepth of the section
 	 * @return  a new Section object
 	 */
-	public MarkedSection addSection(Paragraph title, int numberDepth) {
-		return new MarkedSection(((Section)element).addSection(title, numberDepth));
+	public MarkedSection addSection(int numberDepth) {
+		MarkedSection section = ((Section)element).addMarkedSection();
+		section.setNumberDepth(numberDepth);
+		return section;
 	}
 	    
 	/**
 	 * Creates a <CODE>Section</CODE>, adds it to this <CODE>Section</CODE> and returns it.
 	 *
-	 * @param	title		the title of the new section
 	 * @return  a new Section object
 	 */
-	public MarkedSection addSection(Paragraph title) {
-		return new MarkedSection(((Section)element).addSection(title));
-	}
-	    
-	/**
-	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
-	 *
-	 * @param	indentation	the indentation of the new section
-	 * @param	title		the title of the new section
-	 * @param	numberDepth	the numberDepth of the section
-	 * @return  a new Section object
-	 */
-	public MarkedSection addSection(float indentation, String title, int numberDepth) {
-		return new MarkedSection(((Section)element).addSection(indentation, title, numberDepth));
-	}
-	    
-	/**
-	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
-	 *
-	 * @param	title		the title of the new section
-	 * @param	numberDepth	the numberDepth of the section
-	 * @return  a new Section object
-	 */
-	public MarkedSection addSection(String title, int numberDepth) {
-		return new MarkedSection(((Section)element).addSection(title, numberDepth));
-	}
-	    
-	/**
-	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
-	 *
-	 * @param	indentation	the indentation of the new section
-	 * @param	title		the title of the new section
-	 * @return  a new Section object
-	 */
-	public MarkedSection addSection(float indentation, String title) {
-		return new MarkedSection(((Section)element).addSection(indentation, title));
-	}
-	    
-	/**
-	 * Adds a <CODE>Section</CODE> to this <CODE>Section</CODE> and returns it.
-	 *
-	 * @param	title		the title of the new section
-	 * @return  a new Section object
-	 */
-	public MarkedSection addSection(String title) {
-		return new MarkedSection(((Section)element).addSection(title));
-	}
-	    
-	/**
-	 * Creates a given <CODE>Section</CODE> following a set of attributes and adds it to this one.
-	 *
-	 * @param	attributes	the attributes
-	 * @return      a Section
-	 */
-	public MarkedSection addSection(Properties attributes) {
-		return new MarkedSection(((Section)element).addSection(attributes));
+	public MarkedSection addSection() {
+		return ((Section)element).addMarkedSection();
 	}
 	    
 	// public methods
@@ -228,11 +206,32 @@ public class MarkedSection extends MarkedObject {
 	 *
 	 * @param	title	the new title
 	 */
-	    
-	public void setTitle(Paragraph title) {
-		((Section)element).setTitle(title);
+	public void setTitle(MarkedObject title) {
+		if (title.element instanceof Paragraph)
+			this.title = title;
 	}
-	    
+	   
+	/**
+	 * Gets the title of this MarkedSection.
+	 */
+    public MarkedObject title() {
+        if (title == null) {
+            return null;
+        }
+        int depth = Math.min(((Section)element).numbers.size(), ((Section)element).numberDepth);
+        if (depth < 1) {
+            return title;
+        }
+        StringBuffer buf = new StringBuffer(" ");
+        for (int i = 0; i < depth; i++) {
+            buf.insert(0, ".");
+            buf.insert(0, ((Integer) ((Section)element).numbers.get(i)).intValue());
+        }
+        Paragraph result = new Paragraph((Paragraph)title.element);
+        result.add(0, new Chunk(buf.toString(), ((Paragraph)title.element).font()));
+        return new MarkedObject(result);
+    }
+	
 	/**
 	 * Sets the depth of the sectionnumbers that will be shown preceding the title.
 	 * <P>

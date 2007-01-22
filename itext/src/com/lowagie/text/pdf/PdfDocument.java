@@ -78,6 +78,8 @@ import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
+import com.lowagie.text.MarkedObject;
+import com.lowagie.text.MarkedSection;
 import com.lowagie.text.Meta;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -2000,7 +2002,15 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
                     break;
                 }
                 case Element.MARKED: {
-                	element.process(this);
+                	MarkedObject mo;
+                	if (element instanceof MarkedSection) {
+                		mo = ((MarkedSection)element).title();
+                		if (mo != null) {
+                			mo.process(this);
+                		}
+                	}
+                	mo = (MarkedObject)element;
+                	mo.process(this);
                 	break;
                 }
                 default:

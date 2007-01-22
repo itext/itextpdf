@@ -145,6 +145,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, Element, Tex
 				|| element.type() == Element.ANCHOR
 				|| element.type() == Element.CHUNK
 				|| element.type() == Element.LIST
+				|| element.type() == Element.MARKED
 				|| element.type() == Element.JPEG
 				|| element.type() == Element.IMGRAW
 				|| element.type() == Element.IMGTEMPLATE) {
