@@ -600,7 +600,6 @@ private static final long serialVersionUID = 3324172577544748043L;
             buf.insert(0, ((Integer) numbers.get(i)).intValue());
         }
         Paragraph result = new Paragraph(title);
-        result.setMarkupAttributes(title.getMarkupAttributes());
         result.add(0, new Chunk(buf.toString(), title.font()));
         return result;
     }

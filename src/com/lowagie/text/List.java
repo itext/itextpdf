@@ -53,7 +53,6 @@ package com.lowagie.text;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * A <CODE>List</CODE> contains several <CODE>ListItem</CODE>s.
@@ -100,7 +99,7 @@ import java.util.Set;
  * @see		ListItem
  */
 
-public class List implements TextElementArray, MarkupAttributes {
+public class List implements TextElementArray {
     
     // membervariables
 	/** a possible value for the numbered parameter */
@@ -212,7 +211,6 @@ public class List implements TextElementArray, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.parseFloat(value + "f"));
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -515,40 +513,5 @@ public class List implements TextElementArray, MarkupAttributes {
         }
         return result;
     }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
-    public void setMarkupAttribute(String name, String value) {
-		if (markupAttributes == null) markupAttributes = new Properties();
-        markupAttributes.put(name, value);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
- */
-    public void setMarkupAttributes(Properties markupAttributes) {
-        this.markupAttributes = markupAttributes;
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
-    public String getMarkupAttribute(String name) {
-        return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
- */
-    public Set getMarkupAttributeNames() {
-        return Chunk.getKeySet(markupAttributes);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
- */
-    public Properties getMarkupAttributes() {
-        return markupAttributes;
-    }
+
 }

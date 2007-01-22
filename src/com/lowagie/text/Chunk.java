@@ -87,7 +87,7 @@ import com.lowagie.text.pdf.PdfContentByte;
  * </BLOCKQUOTE>
  */
 
-public class Chunk implements Element, MarkupAttributes {
+public class Chunk implements Element {
 
 	// public static membervariables
 
@@ -337,8 +337,6 @@ public class Chunk implements Element, MarkupAttributes {
 		if ((value = (String) attributes.remove(ElementTags.BACKGROUNDCOLOR)) != null) {
 			setBackground(Markup.decodeColor(value));
 		}
-		if (attributes.size() > 0)
-			setMarkupAttributes(attributes);
 	}
 
 	// implementation of the Element-methods
@@ -882,45 +880,6 @@ public class Chunk implements Element, MarkupAttributes {
 
 	public static boolean isTag(String tag) {
 		return ElementTags.CHUNK.equals(tag);
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String,
-	 *      java.lang.String)
-	 */
-	public void setMarkupAttribute(String name, String value) {
-		if (markupAttributes == null)
-			markupAttributes = new Properties();
-		markupAttributes.put(name, value);
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
-	 */
-	public void setMarkupAttributes(Properties markupAttributes) {
-		this.markupAttributes = markupAttributes;
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
-	 */
-	public String getMarkupAttribute(String name) {
-		return (markupAttributes == null) ? null : String
-				.valueOf(markupAttributes.get(name));
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
-	 */
-	public Set getMarkupAttributeNames() {
-		return getKeySet(markupAttributes);
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
-	 */
-	public Properties getMarkupAttributes() {
-		return markupAttributes;
 	}
 
 	/**

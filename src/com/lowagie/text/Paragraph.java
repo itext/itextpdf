@@ -75,7 +75,7 @@ import com.lowagie.text.html.Markup;
  * @see		ListItem
  */
 
-public class Paragraph extends Phrase implements TextElementArray, MarkupAttributes {
+public class Paragraph extends Phrase implements TextElementArray {
     
     // membervariables
     
@@ -260,7 +260,6 @@ private static final long serialVersionUID = 7852314969733375514L;
         if ((value = (String)attributes.remove(ElementTags.KEEPTOGETHER)) != null) {
             keeptogether = Boolean.valueOf(value).booleanValue();
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

@@ -77,6 +77,7 @@ import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
+import com.lowagie.text.MarkedObject;
 import com.lowagie.text.Meta;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -147,6 +148,9 @@ public class HtmlWriter extends DocWriter implements DocListener {
     
 /** This is the textual part of the footer */
     protected HeaderFooter footer = null;
+    
+/** Store the markup properties of a MarkedObject. */
+    protected Properties markup = new Properties();
     
     // constructor
     
@@ -271,9 +275,13 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 case Element.CREATIONDATE:
                     writeComment("Creationdate: " + HtmlEncoder.encode(((Meta)element).content()));
                     return true;
-                    default:
-                        write(element, 2);
-                        return true;
+                case Element.MARKED:
+                	MarkedObject mo = (MarkedObject) element;
+                	markup.putAll(mo.getMarkupAttributes());
+                	return mo.process(this);
+                default:
+                    write(element, 2);
+                    return true;
             }
         }
         catch(IOException ioe) {
@@ -438,12 +446,12 @@ public class HtmlWriter extends DocWriter implements DocListener {
         addTabs(2);
         writeStart(HtmlTags.SCRIPT);
         write(HtmlTags.LANGUAGE, HtmlTags.JAVASCRIPT);
-        if (header.getMarkupAttribute(HtmlTags.URL) != null) {
+        if (markup.size() > 0) {
           /* JavaScript reference example:
            *
            * <script language="JavaScript" src="/myPath/MyFunctions.js"/>
            */ 
-          write(HtmlTags.URL, header.getMarkupAttribute(HtmlTags.URL));
+          writeMarkupAttributes(markup);
           os.write(GT);
           writeEnd(HtmlTags.SCRIPT);
         }
@@ -613,7 +621,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 //    styleAttributes = new Properties();
                 //    styleAttributes.setProperty(MarkupTags.CSS_VERTICALALIGN, "" + p + "%");
                 //}
-                boolean tag = isOtherFont(chunk.font()) || hasMarkupAttributes(chunk) || styleAttributes != null;
+                boolean tag = isOtherFont(chunk.font()) || markup.size() > 0 || styleAttributes != null;
                 if (tag) {
                     // start span tag
                     addTabs(indent);
@@ -621,9 +629,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                     if (isOtherFont(chunk.font())) {
                         write(chunk.font(), styleAttributes);
                     }
-                    if (hasMarkupAttributes(chunk)) {
-                        writeMarkupAttributes(chunk);
-                    }
+                    writeMarkupAttributes(markup);
                     os.write(GT);
                 }
                 if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
@@ -665,9 +671,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 // start tag
                 addTabs(indent);
                 writeStart(Markup.HTML_TAG_SPAN);
-                if (hasMarkupAttributes(phrase)) {
-                    writeMarkupAttributes(phrase);
-                }
+                writeMarkupAttributes(markup);
                 write(phrase.font(), styleAttributes);
                 os.write(GT);
                 currentfont.push(phrase.font());
@@ -696,9 +700,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (anchor.reference() != null) {
                     write(HtmlTags.REFERENCE, anchor.reference());
                 }
-                if (hasMarkupAttributes(anchor)) {
-                    writeMarkupAttributes(anchor);
-                }
+                writeMarkupAttributes(markup);
                 write(anchor.font(), styleAttributes);
                 os.write(GT);
                 currentfont.push(anchor.font());
@@ -720,9 +722,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
-                if (hasMarkupAttributes(paragraph)) {
-                    writeMarkupAttributes(paragraph);
-                }
+                writeMarkupAttributes(markup);
                 String alignment = HtmlEncoder.getAlignment(paragraph.alignment());
                 if (!"".equals(alignment)) {
                     write(HtmlTags.ALIGN, alignment);
@@ -758,9 +758,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 else {
                     writeStart(HtmlTags.UNORDEREDLIST);
                 }
-                if (hasMarkupAttributes(list)) {
-                    writeMarkupAttributes(list);
-                }
+                writeMarkupAttributes(markup);
                 os.write(GT);
                 // contents
                 for (Iterator i = list.getItems().iterator(); i.hasNext(); ) {
@@ -785,9 +783,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.LISTITEM);
-                if (hasMarkupAttributes(listItem)) {
-                    writeMarkupAttributes(listItem);
-                }
+                writeMarkupAttributes(markup);
                 write(listItem.font(), styleAttributes);
                 os.write(GT);
                 currentfont.push(listItem.font());
@@ -813,9 +809,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 else {
                     writeStart(HtmlTags.CELL);
                 }
-                if (hasMarkupAttributes(cell)) {
-                    writeMarkupAttributes(cell);
-                }
+                writeMarkupAttributes(markup);
                 if (cell.borderWidth() != Rectangle.UNDEFINED) {
                     write(HtmlTags.BORDERWIDTH, String.valueOf(cell.borderWidth()));
                 }
@@ -871,9 +865,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.ROW);
-                if (hasMarkupAttributes(row)) {
-                    writeMarkupAttributes(row);
-                }
+                writeMarkupAttributes(markup);
                 os.write(GT);
                 // contents
                 Element cell;
@@ -904,9 +896,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.TABLE);
-                if (hasMarkupAttributes(table)) {
-                    writeMarkupAttributes(table);
-                }
+                writeMarkupAttributes(markup);
                 os.write(SPACE);
                 write(HtmlTags.WIDTH);
                 os.write(EQUALS);
@@ -950,11 +940,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Annotation annotation = (Annotation) element;
                 writeComment(annotation.title() + ": " + annotation.content());
-                if (hasMarkupAttributes(annotation)) {
-                    os.write(BEGINCOMMENT);
-                    writeMarkupAttributes(annotation);
-                    os.write(ENDCOMMENT);
-                }
                 return;
             }
             case Element.IMGRAW:
@@ -993,9 +978,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 }
                 write(HtmlTags.PLAINWIDTH, String.valueOf(image.scaledWidth()));
                 write(HtmlTags.PLAINHEIGHT, String.valueOf(image.scaledHeight()));
-                if (hasMarkupAttributes(image)){
-                    writeMarkupAttributes(image);
-                }
+                writeMarkupAttributes(markup);
                 writeEnd();
                 return;
             }
@@ -1029,9 +1012,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             if (!"".equals(alignment)) {
                 write(HtmlTags.ALIGN, alignment);
             }
-            if (hasMarkupAttributes(section.title())) {
-                writeMarkupAttributes(section.title());
-            }
+            writeMarkupAttributes(markup);
             os.write(GT);
             currentfont.push(section.title().font());
             // contents

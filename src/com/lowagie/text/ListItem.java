@@ -101,7 +101,7 @@ import com.lowagie.text.html.Markup;
  * @see	Paragraph
  */
 
-public class ListItem extends Paragraph implements TextElementArray, MarkupAttributes {
+public class ListItem extends Paragraph implements TextElementArray {
     
     // membervariables
     
@@ -236,7 +236,6 @@ private static final long serialVersionUID = 1970670787169329006L;
         if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
             setAlignment(value);
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

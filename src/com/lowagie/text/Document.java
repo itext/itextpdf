@@ -258,7 +258,8 @@ public class Document implements DocListener {
 					|| type == Element.CHAPTER || type == Element.SECTION
 					|| type == Element.LIST || type == Element.LISTITEM
 					|| type == Element.RECTANGLE || type == Element.JPEG
-					|| type == Element.IMGRAW || type == Element.IMGTEMPLATE || type == Element.GRAPHIC)) {
+					|| type == Element.IMGRAW || type == Element.IMGTEMPLATE
+					|| type == Element.GRAPHIC || type == Element.MARKED)) {
 				throw new DocumentException(
 						"The document is open; you can only add Elements with content.");
 			}
@@ -266,7 +267,8 @@ public class Document implements DocListener {
 			if (!(type == Element.HEADER || type == Element.TITLE
 					|| type == Element.SUBJECT || type == Element.KEYWORDS
 					|| type == Element.AUTHOR || type == Element.PRODUCER
-					|| type == Element.CREATOR || type == Element.CREATIONDATE)) {
+					|| type == Element.CREATOR || type == Element.CREATIONDATE
+					|| type == Element.MARKED)) {
 				throw new DocumentException(
 						"The document is not open yet; you can only add Meta information.");
             }
