@@ -53,7 +53,6 @@ package com.lowagie.text.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -701,9 +700,6 @@ public class PdfReader implements PdfViewerPreferences {
                 
                 CMSEnvelopedData data = null;
                 try {
-                    FileOutputStream fout = new FileOutputStream("c:\\recip.pks");
-                    fout.write(recipient.getBytes());
-                    fout.close();
                     data = new CMSEnvelopedData(recipient.getBytes());
                 
                     Iterator recipientCertificatesIt = 

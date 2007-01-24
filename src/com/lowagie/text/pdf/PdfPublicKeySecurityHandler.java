@@ -43,7 +43,6 @@ package com.lowagie.text.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.FileOutputStream;
 
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
@@ -235,16 +234,12 @@ public class PdfPublicKeySecurityHandler {
     {
         
         String s = "1.2.840.113549.3.2";
-        //String s = "1.2.840.113549.3.7";
         
         AlgorithmParameterGenerator algorithmparametergenerator = AlgorithmParameterGenerator.getInstance(s);
         AlgorithmParameters algorithmparameters = algorithmparametergenerator.generateParameters();
         ByteArrayInputStream bytearrayinputstream = new ByteArrayInputStream(algorithmparameters.getEncoded("ASN.1"));
         ASN1InputStream asn1inputstream = new ASN1InputStream(bytearrayinputstream);
         DERObject derobject = asn1inputstream.readObject();
-                    FileOutputStream fout = new FileOutputStream("c:\\dero.pks");
-                    fout.write(derobject.getEncoded());
-                    fout.close();
         KeyGenerator keygenerator = KeyGenerator.getInstance(s);
         keygenerator.init(128);
         SecretKey secretkey = keygenerator.generateKey();
