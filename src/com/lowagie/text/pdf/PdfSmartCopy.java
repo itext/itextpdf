@@ -57,6 +57,7 @@ import java.util.HashMap;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import java.util.Arrays;
 
 /**
  * PdfSmartCopy has the same functionality as PdfCopy,
@@ -91,12 +92,11 @@ public class PdfSmartCopy extends PdfCopy {
      */
     protected PdfIndirectReference copyIndirect(PRIndirectReference in) throws IOException, BadPdfFormatException {
         PdfObject srcObj = PdfReader.getPdfObjectRelease(in);
-        String streamKey = null;
+        ByteStore streamKey = null;
         if (srcObj.type == PdfObject.STREAM) {
             byte[] streamContent = PdfReader.getStreamBytesRaw((PRStream) srcObj);
-            // we use a Strng version of the content stream as key for the cache.
-            // there are probably better ways to do this.
-            streamKey = new String(streamContent);
+            // Only the content is compared, probably the keys should also be compared
+            streamKey = new ByteStore(streamContent);
             PdfIndirectReference streamRef = (PdfIndirectReference) streamMap.get(streamKey);
             if (streamRef != null) {
                 return streamRef;
@@ -127,4 +127,28 @@ public class PdfSmartCopy extends PdfCopy {
         return theRef;
     }
 
+    static class ByteStore {
+        private byte[] b;
+        private int hash;
+        
+        ByteStore(byte[] b) {
+            this.b = b;
+        }
+
+        public boolean equals(Object obj) {
+            if (obj == null || !(obj instanceof byte[]))
+                return false;
+            return Arrays.equals(b, (byte[])obj);
+        }
+
+        public int hashCode() {
+            if (hash == 0) {
+                int len = b.length;
+                for (int k = 0; k < len; ++k) {
+                    hash = hash * 31 + (b[k] & 0xff);
+                }
+            }
+            return hash;
+        }
+    }
 }
