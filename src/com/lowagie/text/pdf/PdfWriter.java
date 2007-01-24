@@ -59,6 +59,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.security.cert.Certificate;
 
 import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
@@ -1887,6 +1888,33 @@ public class PdfWriter extends DocWriter implements PdfViewerPreferences {
     }
     
     /**
+     * Sets the certificate encryption options for this document. An array of one or more public certificates
+     * must be provided together with an array of the same size for the permissions for each certificate.
+     *  The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     * @param certs the public certificates to be used for the encryption
+     * @param permissions the user permissions for each of the certicates
+     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * @throws DocumentException if the document is already open
+     */
+    public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
+        if (pdf.isOpen())
+            throw new DocumentException("Encryption can only be added before opening the document.");
+        crypto = new PdfEncryption();
+        if (certs != null) {
+            for (int i=0; i < certs.length; i++) {
+                crypto.addRecipient(certs[i], permissions[i]);
+            }
+        }
+        crypto.setCryptoMode(encryptionType, 0);
+        crypto.getEncryptionDictionary();
+    }
+    
+    
+    /**
      * Adds an object to the PDF body.
      * @param object
      * @return a PdfIndirectObject
@@ -2078,7 +2106,7 @@ public class PdfWriter extends DocWriter implements PdfViewerPreferences {
     public void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
         pdf.addFileAttachment(description, fs);
     }
-
+    
     /** Adds a file attachment at the document level.
      * @param fs the file specification
      */    

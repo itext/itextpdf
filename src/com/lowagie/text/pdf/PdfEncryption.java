@@ -52,10 +52,13 @@ package com.lowagie.text.pdf;
 import com.lowagie.text.pdf.crypto.RC4Encryption;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
+import java.security.GeneralSecurityException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 
 import com.lowagie.text.ExceptionConverter;
-import java.io.ByteArrayOutputStream;
 
 /**
  *
@@ -92,6 +95,8 @@ public class PdfEncryption {
     byte ownerKey[] = new byte[32];
     /** The encryption key for the user */
     byte userKey[] = new byte[32];
+    /** The public key security handler for certificate encryption */
+    protected PdfPublicKeySecurityHandler publicKeyHandler = null;
     int permissions;
     byte documentID[];
     static long seq = System.currentTimeMillis();
@@ -109,6 +114,7 @@ public class PdfEncryption {
         catch (Exception e) {
             throw new ExceptionConverter(e);
         }
+        publicKeyHandler = new PdfPublicKeySecurityHandler(); 
     }
 
     public PdfEncryption(PdfEncryption enc) {
@@ -122,6 +128,7 @@ public class PdfEncryption {
         revision = enc.revision;
         keyLength = enc.keyLength;
         encryptMetadata = enc.encryptMetadata;
+        publicKeyHandler = enc.publicKeyHandler;
     }
 
     public void setCryptoMode(int mode, int kl) {
@@ -320,6 +327,11 @@ public class PdfEncryption {
         setupGlobalEncryptionKey(documentID, userPad, ownerKey, permissions); //step 3
         setupUserKey();
     }
+    
+    public void setupByEncryptionKey(byte[] key, int keylength) {
+        mkey = new byte[keylength/8];
+        System.arraycopy(key, 0, mkey, 0, mkey.length);
+    }    
 
     public void setHashKey(int number, int generation) {
         md5.reset();	//added by ujihara
@@ -353,38 +365,108 @@ public class PdfEncryption {
 
     public PdfDictionary getEncryptionDictionary() {
         PdfDictionary dic = new PdfDictionary();
-        dic.put(PdfName.FILTER, PdfName.STANDARD);
-        dic.put(PdfName.O, new PdfLiteral(PdfContentByte.escapeString(ownerKey)));
-        dic.put(PdfName.U, new PdfLiteral(PdfContentByte.escapeString(userKey)));
-        dic.put(PdfName.P, new PdfNumber(permissions));
-        dic.put(PdfName.R, new PdfNumber(revision));
-        if (revision == RC4_40) {
-            dic.put(PdfName.V, new PdfNumber(1));
-        }
-        else if (revision == RC4_128 && encryptMetadata) {
-            dic.put(PdfName.V, new PdfNumber(2));
-            dic.put(PdfName.LENGTH, new PdfNumber(128));
+        
+        if (publicKeyHandler.getRecipientsSize() > 0) {
+            PdfArray recipients = null;
             
+            dic.put(PdfName.FILTER, PdfName.PUBSEC);  
+            dic.put(PdfName.R, new PdfNumber(revision));	
+
+            try {
+                recipients = publicKeyHandler.getEncodedRecipients();
+            } catch (Exception f) {
+                throw new ExceptionConverter(f);
+            } 
+            
+            if (revision == RC4_40) {
+                dic.put(PdfName.V, new PdfNumber(1));
+                dic.put(PdfName.SUBFILTER, PdfName.ADBE_PKCS7_S4);
+                dic.put(PdfName.RECIPIENTS, recipients);
+            }
+            else if (revision == RC4_128 && encryptMetadata) {
+                dic.put(PdfName.V, new PdfNumber(2));
+                dic.put(PdfName.LENGTH, new PdfNumber(128));
+                dic.put(PdfName.SUBFILTER, PdfName.ADBE_PKCS7_S4);
+                dic.put(PdfName.RECIPIENTS, recipients);
+            }
+            else {               
+                dic.put(PdfName.R, new PdfNumber(AES_128));
+                dic.put(PdfName.V, new PdfNumber(4));
+                dic.put(PdfName.SUBFILTER, PdfName.ADBE_PKCS7_S5);
+                                
+                PdfDictionary stdcf = new PdfDictionary();
+                stdcf.put(PdfName.RECIPIENTS, recipients);                                                                    
+                if (!encryptMetadata)
+                    stdcf.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
+                
+                if (revision == AES_128)
+                    stdcf.put(PdfName.CFM, PdfName.AESV2);
+                else
+                    stdcf.put(PdfName.CFM, PdfName.V2);                  
+                PdfDictionary cf = new PdfDictionary();
+                cf.put(PdfName.DEFAULTCRYPTFILER, stdcf);                
+                dic.put(PdfName.CF, cf);
+                dic.put(PdfName.STRF, PdfName.DEFAULTCRYPTFILER);
+                dic.put(PdfName.STMF, PdfName.DEFAULTCRYPTFILER);                  
+            }            
+                         
+            MessageDigest md = null;
+            byte[] encodedRecipient = null;
+
+            try {
+                md = MessageDigest.getInstance("SHA-1");
+                md.update(publicKeyHandler.getSeed());            
+                for (int i=0; i<publicKeyHandler.getRecipientsSize(); i++)
+                {
+                    encodedRecipient = publicKeyHandler.getEncodedRecipient(i);
+                    md.update(encodedRecipient);
+                }
+                if (!encryptMetadata)
+                    md.update(new byte[]{(byte)255, (byte)255, (byte)255, (byte)255});
+            } catch (Exception f) {
+                throw new ExceptionConverter(f);
+            } 
+                    
+            byte[] mdResult = md.digest();
+            
+            setupByEncryptionKey(mdResult, keyLength);              
+        } else {
+            dic.put(PdfName.FILTER, PdfName.STANDARD);
+            dic.put(PdfName.O, new PdfLiteral(PdfContentByte.escapeString(ownerKey)));
+            dic.put(PdfName.U, new PdfLiteral(PdfContentByte.escapeString(userKey)));
+            dic.put(PdfName.P, new PdfNumber(permissions));
+            dic.put(PdfName.R, new PdfNumber(revision));
+            
+            if (revision == RC4_40) {
+                dic.put(PdfName.V, new PdfNumber(1));
+            }
+            else if (revision == RC4_128 && encryptMetadata) {
+                dic.put(PdfName.V, new PdfNumber(2));
+                dic.put(PdfName.LENGTH, new PdfNumber(128));
+                
+            }
+            else {
+                if (!encryptMetadata)
+                    dic.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
+                dic.put(PdfName.R, new PdfNumber(AES_128));
+                dic.put(PdfName.V, new PdfNumber(4));
+                dic.put(PdfName.LENGTH, new PdfNumber(128));
+                PdfDictionary stdcf = new PdfDictionary();
+                stdcf.put(PdfName.LENGTH, new PdfNumber(16));
+                stdcf.put(PdfName.AUTHEVENT, PdfName.DOCOPEN);
+                if (revision == AES_128)
+                    stdcf.put(PdfName.CFM, PdfName.AESV2);
+                else
+                    stdcf.put(PdfName.CFM, PdfName.V2);
+                PdfDictionary cf = new PdfDictionary();
+                cf.put(PdfName.STDCF, stdcf);
+                dic.put(PdfName.CF, cf);
+                dic.put(PdfName.STRF, PdfName.STDCF);
+                dic.put(PdfName.STMF, PdfName.STDCF);
+            }        
         }
-        else {
-            if (!encryptMetadata)
-                dic.put(PdfName.ENCRYPTMETADATA, PdfBoolean.PDFFALSE);
-            dic.put(PdfName.R, new PdfNumber(AES_128));
-            dic.put(PdfName.V, new PdfNumber(4));
-            dic.put(PdfName.LENGTH, new PdfNumber(128));
-            PdfDictionary stdcf = new PdfDictionary();
-            stdcf.put(PdfName.LENGTH, new PdfNumber(16));
-            stdcf.put(PdfName.AUTHEVENT, PdfName.DOCOPEN);
-            if (revision == AES_128)
-                stdcf.put(PdfName.CFM, PdfName.AESV2);
-            else
-                stdcf.put(PdfName.CFM, PdfName.V2);
-            PdfDictionary cf = new PdfDictionary();
-            cf.put(PdfName.STDCF, stdcf);
-            dic.put(PdfName.CF, cf);
-            dic.put(PdfName.STRF, PdfName.STDCF);
-            dic.put(PdfName.STMF, PdfName.STDCF);
-        }
+    
+        
         return dic;
     }
 
@@ -434,4 +516,9 @@ public class PdfEncryption {
             throw new ExceptionConverter(ex);
         }
     }
+    
+    public void addRecipient(Certificate cert, int permission) {
+        documentID = createDocumentId();
+        publicKeyHandler.addRecipient(new PdfPublicKeyRecipient(cert, permission));
+    }    
 }
