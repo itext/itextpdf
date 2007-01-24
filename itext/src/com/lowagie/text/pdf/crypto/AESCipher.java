@@ -49,6 +49,12 @@
 package com.lowagie.text.pdf.crypto;
 
 import com.lowagie.text.ExceptionConverter;
+import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.engines.AESFastEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
 
 /**
  * Creates an AES Cipher with CBC and padding PKCS5/7.

@@ -274,6 +274,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName DA = new PdfName("DA");
     /** A name */
+    public static final PdfName DATA = new PdfName("Data");
+    /** A name */
     public static final PdfName DC = new PdfName("DC");
     /** A name */
     public static final PdfName DCTDECODE = new PdfName("DCTDecode");
@@ -321,6 +323,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DIV = new PdfName("Div");
     /** A name */
     public static final PdfName DM = new PdfName("Dm");
+    /** A name */
+    public static final PdfName DOCMDP = new PdfName("DocMDP");
     /** A name */
     public static final PdfName DOCOPEN = new PdfName("DocOpen");
     /** A name */
@@ -798,6 +802,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName RECT = new PdfName("Rect");
     /** A name */
+    public static final PdfName REFERENCE = new PdfName("Reference");
+    /** A name */
     public static final PdfName REGISTRY = new PdfName("Registry");
     /** A name */
     public static final PdfName REGISTRYNAME = new PdfName("RegistryName");
@@ -847,6 +853,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SIG = new PdfName("Sig");
     /** A name */
     public static final PdfName SIGFLAGS = new PdfName("SigFlags");
+    /** A name */
+    public static final PdfName SIGREF = new PdfName("SigRef");
     /** A name */
     public static final PdfName SIMPLEX = new PdfName("Simplex");
     /** A name */
@@ -939,6 +947,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName TP = new PdfName("TP");
     /** A name */
     public static final PdfName TRANS = new PdfName("Trans");
+    /** A name */
+    public static final PdfName TRANSFORMPARAMS = new PdfName("TransformParams");
+    /** A name */
+    public static final PdfName TRANSFORMMETHOD = new PdfName("TransformMethod");
     /** A name */
     public static final PdfName TRANSPARENCY = new PdfName("Transparency");
     /** A name */

@@ -62,6 +62,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
+import java.security.cert.Certificate;
 
 /** Applies extra content to the pages of a PDF document.
  * This extra content can be all the objects allowed in PdfContentByte
@@ -307,12 +308,33 @@ public class PdfStamper implements PdfViewerPreferences {
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
-     * @throws DocumentException if the document is already open
+     * @throws DocumentException if anything was already written to the output
      */
     public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
         setEncryption(DocWriter.getISOBytes(userPassword), DocWriter.getISOBytes(ownerPassword), permissions, encryptionType);
     }
 
+    /**
+     * Sets the certificate encryption options for this document. An array of one or more public certificates
+     * must be provided together with an array of the same size for the permissions for each certificate.
+     *  The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     * @param certs the public certificates to be used for the encryption
+     * @param permissions the user permissions for each of the certicates
+     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * @throws DocumentException if the encryption was set too late
+     */
+     public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
+        if (stamper.isAppend())
+            throw new DocumentException("Append mode does not support changing the encryption status.");
+        if (stamper.isContentWritten())
+            throw new DocumentException("Content was already written to the output.");
+        stamper.setEncryption(certs, permissions, encryptionType);
+     }
+     
     /** Gets a page from other PDF document. Note that calling this method more than
      * once with the same parameters will retrieve the same object.
      * @param reader the PDF document where the page is
@@ -462,7 +484,7 @@ public class PdfStamper implements PdfViewerPreferences {
     	collection.put(PdfName.VIEW, initialView);
     	stamper.makePackage( collection );
     }
-    
+
     /**
      * Adds or replaces the Collection Dictionary in the Catalog.
      * @param	collection	the new collection dictionary.
