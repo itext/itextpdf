@@ -749,7 +749,7 @@ class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
                             app = new PdfAppearance((PdfIndirectReference)obj);
                         }
                         else {
-                            if (objReal.isDictionary()) {
+                            if (objReal != null && objReal.isDictionary()) {
                                 PdfName as = (PdfName)PdfReader.getPdfObject(merged.get(PdfName.AS));
                                 if (as != null) {
                                     PdfIndirectReference iref = (PdfIndirectReference)((PdfDictionary)objReal).get(as);
