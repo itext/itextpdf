@@ -58,7 +58,6 @@ import com.lowagie.text.Chunk;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Graphic;
 import com.lowagie.text.Image;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
@@ -442,7 +441,7 @@ public class ColumnText {
 				throw new IllegalArgumentException("Element not allowed.");
 			}
         }
-        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE && element.type() != Element.GRAPHIC)
+        else if (element.type() != Element.PARAGRAPH && element.type() != Element.LIST && element.type() != Element.PTABLE)
             throw new IllegalArgumentException("Element not allowed.");
         if (!composite) {
             composite = true;
@@ -1393,25 +1392,6 @@ public class ColumnText {
                     return NO_MORE_COLUMN;
                 }
             }
-            else if (element.type() == Element.GRAPHIC) {
-                if (!simulate) {
-                    Graphic gr = (Graphic)element;
-                    ByteBuffer bf = gr.getInternalBuffer();
-                    ByteBuffer store = null;
-                    if (bf.size() > 0) {
-                        store = new ByteBuffer();
-                        store.append(bf);
-                        bf.reset();
-                    }
-                    gr.processAttributes(leftX, minY, rightX, maxY, yLine);
-                    canvas.add(gr);
-                    bf.reset();
-                    if (store != null) {
-                        bf.append(store);
-                    }
-                }
-                compositeElements.removeFirst();
-            }
             else
                 compositeElements.removeFirst();
         }
@@ -1460,7 +1440,7 @@ public class ColumnText {
      * @return true or false
      */
     public boolean zeroHeightElement() {
-        return composite && !compositeElements.isEmpty() && ((Element)compositeElements.getFirst()).type() == Element.GRAPHIC;
+        return composite && !compositeElements.isEmpty();
     }
 
     /**

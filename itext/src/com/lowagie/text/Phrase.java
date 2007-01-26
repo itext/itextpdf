@@ -357,9 +357,8 @@ private static final long serialVersionUID = 2643594602455068231L;
             else if (element.type() == Element.PHRASE ||
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
-            element.type() == Element.MARKED ||
             element.type() == Element.TABLE || // line added by David Freels
-            element.type() == Element.GRAPHIC) {
+            element.type() == Element.MARKED) {
                 super.add(index, element);
             }
             else {
@@ -412,7 +411,6 @@ private static final long serialVersionUID = 2643594602455068231L;
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
                 	// This will only work for PDF!!! Not for RTF/HTML
                 case Element.LIST:
-                case Element.GRAPHIC: // suggested by Steven Balthazor
                 	return super.add(o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));

@@ -175,28 +175,6 @@ public abstract class DocWriter implements DocListener {
     }
 
 /**
- * Sets the <CODE>Watermark</CODE>.
- * <P>
- * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
- * derived from this abstract class if they actually support the use of
- * a <CODE>Watermark</CODE>.
- * 
- * @param watermark A watermark object
- * @return  <CODE>false</CODE> (because watermarks aren't supported by default).
- */
-
-    public boolean add(Watermark watermark) {
-        return false;
-    }
-
-/**
- * Removes the <CODE>Watermark</CODE> (if there is one).
- */
-
-    public void removeWatermark() {
-    }
-
-/**
  * Sets the margins.
  * <P>
  * This does nothing. Has to be overridden if needed.
