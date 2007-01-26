@@ -222,14 +222,17 @@ public class MarkedSection extends MarkedObject {
         if (depth < 1) {
             return title;
         }
-        StringBuffer buf = new StringBuffer(" ");
+        StringBuffer buf = new StringBuffer();
         for (int i = 0; i < depth; i++) {
             buf.insert(0, ".");
             buf.insert(0, ((Integer) ((Section)element).numbers.get(i)).intValue());
         }
+        if (buf.length() > 0) buf.append(" ");
         Paragraph result = new Paragraph((Paragraph)title.element);
         result.add(0, new Chunk(buf.toString(), ((Paragraph)title.element).font()));
-        return new MarkedObject(result);
+        MarkedObject mo = new MarkedObject(result);
+        mo.markupAttributes = title.markupAttributes;
+        return mo;
     }
 	
 	/**
