@@ -234,7 +234,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
             return false;
         }
         try {
-            
             switch(element.type()) {
                 case Element.HEADER:
                     try {
@@ -285,6 +284,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                         os.write(GT);
                 		MarkedObject mo = ((MarkedSection)element).title();
                 		if (mo != null) {
+                			markup = mo.getMarkupAttributes();
                 			mo.process(this);
                 		}
                 		ms.process(this);
@@ -617,6 +617,14 @@ public class HtmlWriter extends DocWriter implements DocListener {
     protected void write(Element element, int indent) throws IOException {
         Properties styleAttributes = null;
         switch(element.type()) {
+        	case Element.MARKED: {
+        		try {
+					add(element);
+				} catch (DocumentException e) {
+					e.printStackTrace();
+				}
+        		return;
+        	}
             case Element.CHUNK:
             {
                 Chunk chunk = (Chunk) element;
@@ -632,12 +640,6 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 if (attributes != null && attributes.get(Chunk.NEWPAGE) != null) {
                     return;
                 }
-                // This doesn't seem to work:
-                //if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
-                //    float p = (((Float)attributes.get(Chunk.SUBSUPSCRIPT)).floatValue() * 100f) / chunk.font().size();
-                //    styleAttributes = new Properties();
-                //    styleAttributes.setProperty(MarkupTags.CSS_VERTICALALIGN, "" + p + "%");
-                //}
                 boolean tag = isOtherFont(chunk.font()) || markup.size() > 0 || styleAttributes != null;
                 if (tag) {
                     // start span tag
@@ -749,7 +751,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 currentfont.push(paragraph.font());
                 // contents
                 for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
-                    write((Element) i.next(), indent + 1);
+                    write((Element)i.next(), indent + 1);
                 }
                 // end tag
                 addTabs(indent);
