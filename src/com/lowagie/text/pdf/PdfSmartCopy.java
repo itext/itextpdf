@@ -134,11 +134,16 @@ public class PdfSmartCopy extends PdfCopy {
         ByteStore(byte[] b) {
             this.b = b;
         }
-
+        
+        public byte[] getBytes() {
+            return b;
+        }
+        
         public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof byte[]))
+            if (obj == null || !(obj instanceof ByteStore)) {
                 return false;
-            return Arrays.equals(b, (byte[])obj);
+            }
+            return Arrays.equals(b, ((ByteStore) obj).getBytes());
         }
 
         public int hashCode() {
