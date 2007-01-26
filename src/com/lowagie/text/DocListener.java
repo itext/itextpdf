@@ -80,21 +80,6 @@ public interface DocListener extends ElementListener {
     public boolean setPageSize(Rectangle pageSize);
     
 /**
- * Signals that a <CODE>Watermark</CODE> was added to the <CODE>Document</CODE>.
- * 
- * @param watermark the Watermark object
- * @return	<CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
- */
-    
-    public boolean add(Watermark watermark);
-    
-/**
- * Signals that a <CODE>Watermark</CODE> was removed from the <CODE>Document</CODE>.
- */
-    
-    public void removeWatermark();
-    
-/**
  * Sets the margins.
  *
  * @param	marginLeft		the margin on the left

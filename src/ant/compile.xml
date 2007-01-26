@@ -9,6 +9,12 @@
 	
 	<property file=".ant.properties" />
 	
+	<path id="itext.classpath">
+	    <pathelement location="${itext.classes}"/>
+	    <pathelement path="${itext.bin}/bcmail-jdk14-135.jar"/>
+	    <pathelement path="${itext.bin}/bcprov-jdk14-135.jar"/>
+	</path>
+	
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <!-- Help                                                             -->
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -28,7 +34,9 @@
 
     <target name="compile" description="--> compiles the iText code">
         <mkdir dir="${itext.classes}" />
-        <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.classes}" />
+        <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.classes}">
+    	<classpath refid="itext.classpath"/>
+    	</javac>
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -37,7 +45,9 @@
 
     <target name="compile.debug" description="--> compiles the iText code for debugging">
         <mkdir dir="${itext.classes}" />
-        <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.classes}" listfiles="yes" debug="true" debuglevel="lines,vars,source" />
+        <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.classes}" listfiles="yes" debug="true" debuglevel="lines,vars,source">
+        	<classpath refid="itext.classpath"/>
+       	</javac>
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

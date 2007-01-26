@@ -124,9 +124,6 @@ public class Document implements DocListener {
 	/** The size of the page. */
     protected Rectangle pageSize;
     
-	/** The watermark on the pages. */
-    protected Watermark watermark = null;
-    
 	/** margin in x direction starting from the left */
     protected float marginLeft = 0;
     
@@ -259,7 +256,7 @@ public class Document implements DocListener {
 					|| type == Element.LIST || type == Element.LISTITEM
 					|| type == Element.RECTANGLE || type == Element.JPEG
 					|| type == Element.IMGRAW || type == Element.IMGTEMPLATE
-					|| type == Element.GRAPHIC || type == Element.MARKED)) {
+					|| type == Element.MARKED)) {
 				throw new DocumentException(
 						"The document is open; you can only add Elements with content.");
 			}
@@ -320,38 +317,6 @@ public class Document implements DocListener {
             listener.setPageSize(pageSize);
         }
         return true;
-    }
-    
-	/**
- * Sets the <CODE>Watermark</CODE>.
- *
-	 * @param watermark
-	 *            the watermark to add
-	 * @return <CODE>true</CODE> if the element was added, <CODE>false
-	 *         </CODE> if not.
- */
-    
-    public boolean add(Watermark watermark) {
-        this.watermark = watermark;
-        DocListener listener;
-		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-            listener = (DocListener) iterator.next();
-            listener.add(watermark);
-        }
-        return true;
-    }
-    
-	/**
- * Removes the <CODE>Watermark</CODE>.
- */
-    
-    public void removeWatermark() {
-        this.watermark = null;
-        DocListener listener;
-		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-            listener = (DocListener) iterator.next();
-            listener.removeWatermark();
-        }
     }
     
 	/**

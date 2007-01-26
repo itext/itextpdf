@@ -75,7 +75,6 @@ import com.lowagie.text.ElementTags;
 import com.lowagie.text.Entities;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
-import com.lowagie.text.Graphic;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
@@ -470,25 +469,6 @@ public class SAXiTextHandler extends DefaultHandler {
             } catch (EmptyStackException ese) {
                 try {
                     document.newPage();
-                } catch (DocumentException de) {
-                    throw new ExceptionConverter(de);
-                }
-            }
-            return;
-        }
-
-        // newpage
-        if (ElementTags.HORIZONTALRULE.equals(name)) {
-            TextElementArray current;
-            Graphic hr = new Graphic();
-            hr.setHorizontalLine(1.0f, 100.0f);
-            try {
-                current = (TextElementArray) stack.pop();
-                current.add(hr);
-                stack.push(current);
-            } catch (EmptyStackException ese) {
-                try {
-                    document.add(hr);
                 } catch (DocumentException de) {
                     throw new ExceptionConverter(de);
                 }

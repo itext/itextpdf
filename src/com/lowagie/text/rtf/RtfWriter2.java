@@ -61,7 +61,6 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.Watermark;
 import com.lowagie.text.rtf.direct.RtfImportMappings;
 import com.lowagie.text.rtf.direct.RtfParser;
 import com.lowagie.text.rtf.document.RtfDocument;
@@ -146,19 +145,6 @@ public class RtfWriter2 extends DocWriter implements DocListener {
      * This method is not supported in the RtfWriter
      */
     public void resetPageCount() {}
-
-    /**
-     * This method is not supported in the RtfWriter
-     *
-     * @param wm Unused
-     * @return <code>false</code>
-     */
-    public boolean add(Watermark wm) { return false; }
-    
-    /**
-     * This method is not supported in the RtfWriter
-     */
-    public void removeWatermark() {}
 
     /**
      * This method is not supported in the RtfWriter

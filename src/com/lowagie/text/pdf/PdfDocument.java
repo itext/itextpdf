@@ -73,7 +73,6 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.Graphic;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
@@ -87,7 +86,6 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
-import com.lowagie.text.Watermark;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
@@ -635,32 +633,6 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
             return;
         }
         super.setPageCount(pageN);
-    }
-    
-    /**
-     * Sets the <CODE>Watermark</CODE>.
-     *
-     * @param watermark the watermark to add
-     * @return <CODE>true</CODE> if the element was added, <CODE>false</CODE> if not.
-     */
-    
-    public boolean add(Watermark watermark) {
-        if (writer != null && writer.isPaused()) {
-            return false;
-        }
-        this.watermark = watermark;
-        return true;
-    }
-    
-    /**
-     * Removes the <CODE>Watermark</CODE>.
-     */
-    
-    public void removeWatermark() {
-        if (writer != null && writer.isPaused()) {
-            return;
-        }
-        this.watermark = null;
     }
     
     /**
@@ -1994,13 +1966,6 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
                     add((Image) element);
                     break;
                 }
-                case Element.GRAPHIC: {
-                    Graphic graphic = (Graphic) element;
-                    graphic.processAttributes(indentLeft(), indentBottom(), indentRight(), indentTop(), indentTop() - currentHeight);
-                    graphics.add(graphic);
-                    pageEmpty = false;
-                    break;
-                }
                 case Element.MARKED: {
                 	MarkedObject mo;
                 	if (element instanceof MarkedSection) {
@@ -2152,12 +2117,6 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
         || pageSize.hasBorders()
         || pageSize.borderColor() != null) {
             add(pageSize);
-        }
-        
-        // if there is a watermark, the watermark is added
-        if (watermark != null) {
-            float mt[] = watermark.matrix();
-            graphics.addImage(watermark, mt[0], mt[1], mt[2], mt[3], watermark.offsetX() - mt[4], watermark.offsetY() - mt[5]);
         }
         
         // if there is a footer, the footer is added
