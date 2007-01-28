@@ -1436,14 +1436,6 @@ public class ColumnText {
     }
     
     /**
-     * Checks if the element has a height of 0.
-     * @return true or false
-     */
-    public boolean zeroHeightElement() {
-        return composite && !compositeElements.isEmpty();
-    }
-
-    /**
      * Checks if UseAscender is enabled/disabled.
      * @return true is the adjustment of the first line height is based on max ascender.
      */
