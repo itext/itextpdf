@@ -48,17 +48,24 @@
  * http://www.lowagie.com/iText/
  */
 
-package com.lowagie.text;
+package com.lowagie.text.xml.simpleparser;
 
 import java.util.HashMap;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.ElementTags;
+import com.lowagie.text.Font;
 
 /**
  * This class contains entities that can be used in an entity tag.
  */
 
-public class Entities {
+public class EntitiesToSymbol {
     
-    /** This is a map that contains all possible id values of the entity tag. */
+    /**
+     * This is a map that contains all possible id values of the entity tag
+     * that can be translated to a character in font Symbol.
+     */
     public static final HashMap map;
     
     static {
@@ -363,16 +370,16 @@ public class Entities {
 /**
  * Looks for the corresponding symbol in the font Symbol.
  *
- * @param	c	the original ASCII-char
- * @return	the corresponding symbol in font Symbol
+ * @param	name	the name of the entity
+ * @return	the corresponding character in font Symbol
  */
     
-    public static char getCorrespondingSymbol(String c) {
-        Character character = (Character) map.get(c);
-        if (character == null) {
+    public static char getCorrespondingSymbol(String name) {
+        Character symbol = (Character) map.get(name);
+        if (symbol == null) {
             return (char)0;
         }
-        return character.charValue();
+        return symbol.charValue();
     }
     
 /**

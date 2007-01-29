@@ -54,8 +54,8 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.pdf.SimpleXMLDocHandler;
-import com.lowagie.text.pdf.SimpleXMLParser;
+import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
 
 /** Parses the xml hyphenation pattern.
  *

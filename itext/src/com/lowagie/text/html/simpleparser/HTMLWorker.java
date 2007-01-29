@@ -69,8 +69,8 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.SimpleXMLDocHandler;
-import com.lowagie.text.pdf.SimpleXMLParser;
+import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     

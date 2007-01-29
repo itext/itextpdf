@@ -61,6 +61,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
+
+import com.lowagie.text.xml.simpleparser.JavaEncodings;
+import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
 /**
  * Bookmark processing in a simple way. It has some limitations, mainly the only
  * action types supported are GoTo, GoToR, URI and Launch.
@@ -635,7 +639,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
      * @throws IOException on error
      */    
     public static void exportToXML(List list, OutputStream out, String encoding, boolean onlyASCII) throws IOException {
-        String jenc = SimpleXMLParser.getJavaEncoding(encoding);
+        String jenc = JavaEncodings.getJavaEncoding(encoding);
         Writer wrt = new BufferedWriter(new OutputStreamWriter(out, jenc));
         exportToXML(list, wrt, encoding, onlyASCII);
     }

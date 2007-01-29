@@ -44,7 +44,7 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.text.pdf;
+package com.lowagie.text.xml.simpleparser;
 
 /**
  * The handler for the events fired by <CODE>SimpleXMLParser</CODE>.
