@@ -68,18 +68,16 @@ import java.util.zip.InflaterInputStream;
 import java.util.Stack;
 import java.security.Key;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.cert.Certificate;
 
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
 import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.RecipientInformation;
 
 /** Reads a PDF document.
@@ -592,7 +590,7 @@ public class PdfReader implements PdfViewerPreferences {
 
         byte uValue[] = null;
         byte oValue[] = null;
-        int cryptoMode = PdfWriter.ENCRYPTION_RC4_40;
+        int cryptoMode = PdfEncryptionSettings.ENCRYPTION_RC4_40;
         int lengthValue = 0;  
         
         PdfObject filter = getPdfObjectRelease(enc.get(PdfName.FILTER));
@@ -623,7 +621,7 @@ public class PdfReader implements PdfViewerPreferences {
                 lengthValue = ( (PdfNumber) o).intValue();
                 if (lengthValue > 128 || lengthValue < 40 || lengthValue % 8 != 0)
                     throw new IOException("Illegal Length value.");
-                cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
+                cryptoMode = PdfEncryptionSettings.ENCRYPTION_RC4_128;
             }  else if (rValue == 4) {
                 PdfDictionary dic = (PdfDictionary)enc.get(PdfName.CF);
                 if (dic == null)
@@ -632,16 +630,16 @@ public class PdfReader implements PdfViewerPreferences {
                 if (dic == null)
                     throw new IOException("/StdCF not found (encryption)");
                 if (PdfName.V2.equals(dic.get(PdfName.CFM)))
-                    cryptoMode = PdfWriter.ENCRYPTION_RC4_128;
+                    cryptoMode = PdfEncryptionSettings.ENCRYPTION_RC4_128;
                 else if (PdfName.AESV2.equals(dic.get(PdfName.CFM)))
-                    cryptoMode = PdfWriter.ENCRYPTION_AES_128;
+                    cryptoMode = PdfEncryptionSettings.ENCRYPTION_AES_128;
                 else
                     throw new IOException("No compatible encryption found");
                 PdfObject em = enc.get(PdfName.ENCRYPTMETADATA);
                 if (em != null && em.toString().equals("false"))
-                    cryptoMode |= PdfWriter.DO_NOT_ENCRYPT_METADATA;
+                    cryptoMode |= PdfEncryptionSettings.DO_NOT_ENCRYPT_METADATA;
             } else {
-                cryptoMode = PdfWriter.ENCRYPTION_RC4_40;
+                cryptoMode = PdfEncryptionSettings.ENCRYPTION_RC4_40;
             }
         } else if (filter.equals(PdfName.PUBSEC)) {
             boolean foundRecipient = false;
@@ -688,7 +686,7 @@ public class PdfReader implements PdfViewerPreferences {
                 
                 recipients = (PdfArray)dic.get(PdfName.RECIPIENTS);                                    
             } else {
-                cryptoMode = PdfWriter.ENCRYPTION_RC4_40;
+                cryptoMode = PdfEncryptionSettings.ENCRYPTION_RC4_40;
                 lengthValue = 40;                
                 recipients = (PdfArray)enc.get(PdfName.RECIPIENTS);                
             }

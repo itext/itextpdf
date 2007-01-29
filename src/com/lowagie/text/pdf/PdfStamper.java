@@ -61,6 +61,7 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.collection.PdfCollection;
+import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import java.security.cert.Certificate;
 
@@ -73,7 +74,8 @@ import java.security.cert.Certificate;
  * flatten them. New fields can be added but not flattened.
  * @author Paulo Soares (psoares@consiste.pt)
  */
-public class PdfStamper implements PdfViewerPreferences {
+public class PdfStamper
+	implements PdfViewerPreferences, PdfEncryptionSettings {
     /**
      * The writer
      */    
