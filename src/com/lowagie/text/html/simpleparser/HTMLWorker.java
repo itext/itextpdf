@@ -574,7 +574,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     public void close() {
     }
     
-    public boolean newPage() throws DocumentException {
+    public boolean newPage() {
         return true;
     }
     

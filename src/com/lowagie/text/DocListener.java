@@ -105,7 +105,7 @@ public interface DocListener extends ElementListener {
  * @throws	DocumentException	when a document isn't open yet, or has been closed
  */
     
-    public boolean newPage() throws DocumentException;
+    public boolean newPage();
     
 /**
  * Changes the header of this document.

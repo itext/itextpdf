@@ -205,7 +205,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
  * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
-    public boolean newPage() throws DocumentException {
+    public boolean newPage() {
         try {
             writeStart(HtmlTags.DIV);
             write(" ");
@@ -216,7 +216,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             os.write(GT);
         }
         catch(IOException ioe) {
-            throw new DocumentException(ioe);
+            throw new ExceptionConverter(ioe);
         }
         return true;
     }

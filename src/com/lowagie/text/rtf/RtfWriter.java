@@ -72,6 +72,7 @@ import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Image;
@@ -785,14 +786,14 @@ public class RtfWriter extends DocWriter implements DocListener {
      * @return <code>true</code> if a new Page was begun.
      * @throws DocumentException if the Document was not open or had been closed.
      */
-    public boolean newPage() throws DocumentException {
+    public boolean newPage() {
         try {
             content.write(escape);
             content.write(newPage);
             content.write(escape);
             content.write(paragraph);
         } catch (IOException e) {
-            return false;
+            throw new ExceptionConverter(e);
         }
         return true;
     }
