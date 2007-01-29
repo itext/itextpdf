@@ -728,7 +728,7 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
      * @throws DocumentException on error
      */
     
-    public boolean newPage() throws DocumentException {
+    public boolean newPage() {
         lastElementType = -1;
         isNewpage = true;
         if (writer == null || (writer.getDirectContent().size() == 0 && writer.getDirectContentUnder().size() == 0 && (pageEmpty || writer.isPaused()))) {
@@ -746,74 +746,76 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
         imageIndentRight = 0;
         
         // we flush the arraylist with recently written lines
-        flushLines();
-        // we assemble the resources of this pages
-        pageResources.addDefaultColorDiff(writer.getDefaultColorspace());        
-        PdfDictionary resources = pageResources.getResources();
-        // we make a new page and add it to the document
-        if (writer.getPDFXConformance() != PdfWriter.PDFXNONE) {
-            if (thisBoxSize.containsKey("art") && thisBoxSize.containsKey("trim"))
-                throw new PdfXConformanceException("Only one of ArtBox or TrimBox can exist in the page.");
-            if (!thisBoxSize.containsKey("art") && !thisBoxSize.containsKey("trim")) {
-                if (thisBoxSize.containsKey("crop"))
-                    thisBoxSize.put("trim", thisBoxSize.get("crop"));
-                else
-                    thisBoxSize.put("trim", new PdfRectangle(pageSize, pageSize.getRotation()));
-            }
-        }
-        PdfPage page;
-        int rotation = pageSize.getRotation();
-        page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
-        // we add tag info
-        if (writer.isTagged())
+        try {
+        	flushLines();
+        	// we assemble the resources of this pages
+        	pageResources.addDefaultColorDiff(writer.getDefaultColorspace());        
+        	PdfDictionary resources = pageResources.getResources();
+        	// we make a new page and add it to the document
+        	if (writer.getPDFXConformance() != PdfWriter.PDFXNONE) {
+        		if (thisBoxSize.containsKey("art") && thisBoxSize.containsKey("trim"))
+        			throw new PdfXConformanceException("Only one of ArtBox or TrimBox can exist in the page.");
+        		if (!thisBoxSize.containsKey("art") && !thisBoxSize.containsKey("trim")) {
+        			if (thisBoxSize.containsKey("crop"))
+        				thisBoxSize.put("trim", thisBoxSize.get("crop"));
+        			else
+        				thisBoxSize.put("trim", new PdfRectangle(pageSize, pageSize.getRotation()));
+        		}
+        	}
+        	PdfPage page;
+        	int rotation = pageSize.getRotation();
+        	page = new PdfPage(new PdfRectangle(pageSize, rotation), thisBoxSize, resources, rotation);
+        	// we add tag info
+        	if (writer.isTagged())
 	             page.put(PdfName.STRUCTPARENTS, new PdfNumber(writer.getCurrentPageNumber() - 1));
-//      we add the transitions
-        if (this.transition!=null) {
-            page.put(PdfName.TRANS, this.transition.getTransitionDictionary());
-            transition = null;
+        	// we add the transitions
+        	if (this.transition!=null) {
+        		page.put(PdfName.TRANS, this.transition.getTransitionDictionary());
+        		transition = null;
+        	}
+        	if (this.duration>0) {
+        		page.put(PdfName.DUR,new PdfNumber(this.duration));
+        		duration = 0;
+        	}
+        	// we add the page object additional actions
+        	if (pageAA != null) {
+        		page.put(PdfName.AA, writer.addToBody(pageAA).getIndirectReference());
+        		pageAA = null;
+        	}
+        	// we check if the userunit is defined
+        	if (writer.getUserunit() > 0f) {
+        		page.put(PdfName.USERUNIT, new PdfNumber(writer.getUserunit()));
+        	}
+        	// we add the annotations
+        	if (!annotations.isEmpty()) {
+        		PdfArray array = rotateAnnotations();
+        		if (array.size() != 0)
+        			page.put(PdfName.ANNOTS, array);
+        	}
+        	// we add the thumbs
+        	if (thumb != null) {
+        		page.put(PdfName.THUMB, thumb);
+        		thumb = null;
+        	}
+        	if (!open || close) {
+        		throw new PdfException("The document isn't open.");
+        	}
+        	if (text.size() > textEmptySize)
+        		text.endText();
+        	else
+        		text = null;
+        	writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
+        	// we initialize the new page
+        	initPage();
         }
-        if (this.duration>0) {
-            page.put(PdfName.DUR,new PdfNumber(this.duration));
-            duration = 0;
+        catch(DocumentException de) {
+        	// maybe this never happens, but it's better to check.
+        	throw new ExceptionConverter(de);
         }
-        // we add the page object additional actions
-        if (pageAA != null) {
-            try {
-                page.put(PdfName.AA, writer.addToBody(pageAA).getIndirectReference());
-            }
-            catch (IOException ioe) {
-                throw new ExceptionConverter(ioe);
-            }
-            pageAA = null;
+        catch (IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
-        // we check if the userunit is defined
-        if (writer.getUserunit() > 0f) {
-	        page.put(PdfName.USERUNIT, new PdfNumber(writer.getUserunit()));
-	    }
-        // we add the annotations
-        if (!annotations.isEmpty()) {
-            PdfArray array = rotateAnnotations();
-            if (array.size() != 0)
-                page.put(PdfName.ANNOTS, array);
-        }
-        // we add the thumbs
-        if (thumb != null) {
-            page.put(PdfName.THUMB, thumb);
-            thumb = null;
-        }
-        if (!open || close) {
-            throw new PdfException("The document isn't open.");
-        }
-        if (text.size() > textEmptySize)
-            text.endText();
-        else
-            text = null;
-        writer.add(page, new PdfContents(writer.getDirectContentUnder(), graphics, text, writer.getDirectContent(), pageSize));
-        // we initialize the new page
-        initPage();
-        
         isNewpage = false;
-        
         return true;
     }
     

@@ -467,11 +467,7 @@ public class SAXiTextHandler extends DefaultHandler {
                 current.add(newPage);
                 stack.push(current);
             } catch (EmptyStackException ese) {
-                try {
-                    document.newPage();
-                } catch (DocumentException de) {
-                    throw new ExceptionConverter(de);
-                }
+                document.newPage();
             }
             return;
         }

@@ -357,7 +357,7 @@ public class Document implements DocListener {
 	 *             when a document isn't open yet, or has been closed
  */
     
-    public boolean newPage() throws DocumentException {
+    public boolean newPage() {
         if (!open || close) {
             return false;
         }

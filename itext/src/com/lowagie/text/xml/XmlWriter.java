@@ -323,7 +323,7 @@ public class XmlWriter extends DocWriter implements DocListener {
  * @throws  DocumentException when a document isn't open yet, or has been closed
  */
     
-    public boolean newPage() throws DocumentException {
+    public boolean newPage() {
         if (pause || !open) {
             return false;
         }
