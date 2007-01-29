@@ -2265,7 +2265,7 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
      * @throws DocumentException on error
      */
     
-    private void carriageReturn() throws DocumentException {
+    private void carriageReturn() {
         // the arraylist with lines may not be null
         if (lines == null) {
             lines = new ArrayList();
@@ -3126,8 +3126,7 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
 	 * Method added by Pelikan Stephan
 	 * @see com.lowagie.text.DocListener#clearTextWrap()
 	 */
-	public void clearTextWrap() throws DocumentException {
-		super.clearTextWrap();
+	public void clearTextWrap() {
 		float tmpHeight = imageEnd - currentHeight;
 		if (line != null) {
 			tmpHeight += line.height();

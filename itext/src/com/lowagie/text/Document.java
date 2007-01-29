@@ -836,19 +836,6 @@ public class Document implements DocListener {
     public String getHtmlStyleClass() {
         return this.htmlStyleClass;
     }
-
-	/**
- 	 * @see com.lowagie.text.DocListener#clearTextWrap()
-     */
-	public void clearTextWrap() throws DocumentException {
-		if (open && !close) {
-			DocListener listener;
-			for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-				listener = (DocListener) iterator.next();
-				listener.clearTextWrap();
-			}
-		}
-	}
     
     /**
      * Set the margin mirroring. It will mirror margins for odd/even pages.
