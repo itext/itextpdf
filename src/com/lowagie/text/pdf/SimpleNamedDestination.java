@@ -59,6 +59,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import com.lowagie.text.xml.simpleparser.JavaEncodings;
+import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
+
 /**
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -114,7 +118,7 @@ public class SimpleNamedDestination implements SimpleXMLDocHandler {
      * @throws IOException on error
      */
     public static void exportToXML(HashMap names, OutputStream out, String encoding, boolean onlyASCII) throws IOException {
-        String jenc = SimpleXMLParser.getJavaEncoding(encoding);
+        String jenc = JavaEncodings.getJavaEncoding(encoding);
         Writer wrt = new BufferedWriter(new OutputStreamWriter(out, jenc));
         exportToXML(names, wrt, encoding, onlyASCII);
     }
