@@ -462,13 +462,6 @@ public abstract class DocWriter implements DocListener {
         this.closeStream = closeStream;
     }
     
-    
-	/**
-	 * @see com.lowagie.text.DocListener#clearTextWrap()
-	 */
-	public void clearTextWrap() throws DocumentException {
-		// do nothing
-	}
     /**
      * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
      */

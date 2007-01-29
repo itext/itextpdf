@@ -2555,6 +2555,16 @@ public class PdfWriter extends DocWriter implements PdfViewerPreferences {
     public void setBoxSize(String boxName, Rectangle size) {
         pdf.setBoxSize(boxName, size);
     }
+    
+    
+    /**
+     * Clears text wrapping around images (if applicable).
+     * Method suggested by Pelikan Stephan
+     * @throws DocumentException
+     */
+    public void clearTextWrap() throws DocumentException {
+    	pdf.clearTextWrap();
+    }
 
     /**
      * Gives the size of a trim, art, crop or bleed box, or null if not defined.
