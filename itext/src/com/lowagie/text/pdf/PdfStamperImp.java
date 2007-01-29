@@ -60,10 +60,12 @@ import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.collection.PdfCollection;
+import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
-class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
+class PdfStamperImp extends PdfWriter
+	implements PdfViewerPreferences, PdfEncryptionSettings {
     HashMap readers2intrefs = new HashMap();
     HashMap readers2file = new HashMap();
     RandomAccessFileOrArray file;

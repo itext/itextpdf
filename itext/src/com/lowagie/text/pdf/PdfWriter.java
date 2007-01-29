@@ -73,6 +73,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.events.PdfPageEventForwarder;
+import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 
 /**
@@ -83,7 +84,8 @@ import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
  * added to this Document will be written to the outputstream.</P>
  */
 
-public class PdfWriter extends DocWriter implements PdfViewerPreferences {
+public class PdfWriter extends DocWriter
+	implements PdfViewerPreferences, PdfEncryptionSettings {
     
     // inner classes
     
@@ -574,35 +576,6 @@ public class PdfWriter extends DocWriter implements PdfViewerPreferences {
     }
     // static membervariables
     
-    /** The operation permitted when the document is opened with the user password */
-    public static final int AllowPrinting = 4 + 2048;
-    /** The operation permitted when the document is opened with the user password */
-    public static final int AllowModifyContents = 8;
-    /** The operation permitted when the document is opened with the user password */
-    public static final int AllowCopy = 16;
-    /** The operation permitted when the document is opened with the user password */
-    public static final int AllowModifyAnnotations = 32;
-    /** The operation permitted when the document is opened with the user password */
-    public static final int AllowFillIn = 256;
-    /** The operation permitted when the document is opened with the user password */
-    public static final int AllowScreenReaders = 512;
-    /** The operation permitted when the document is opened with the user password */
-    public static final int AllowAssembly = 1024;
-    /** The operation permitted when the document is opened with the user password */
-    public static final int AllowDegradedPrinting = 4;
-    /** Type of RC4 encryption strength*/
-    public static final boolean STRENGTH40BITS = false;
-    /** Type of RC4 encryption strength */
-    public static final boolean STRENGTH128BITS = true;
-    /** Type of encryption */
-    public static final int ENCRYPTION_RC4_40 = 0;
-    /** Type of encryption */
-    public static final int ENCRYPTION_RC4_128 = 1;
-    /** Type of encryption */
-    public static final int ENCRYPTION_AES_128 = 2;
-    static final int ENCRYPTION_MASK = 7;
-    /** Keep the metadata in clear text */
-    public static final int DO_NOT_ENCRYPT_METADATA = 8;
     /** action value */
     public static final PdfName DOCUMENT_CLOSE = PdfName.WC;
     /** action value */

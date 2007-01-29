@@ -56,7 +56,7 @@ import com.lowagie.text.pdf.PdfObject;
  * Viewer preferences are described in section 3.6.1 and 8.1 of the
  * PDF Reference 1.7 (Table 3.25 on p139-142 and Table 8.1 on p579-581).
  * They are explained in section 13.1 of the book 'iText in Action'.
- * The values of the different  * preferences were originally stored
+ * The values of the different  preferences were originally stored
  * in class PdfWriter, but they have been moved to this separate interface
  * for reasons of convenience.
  */

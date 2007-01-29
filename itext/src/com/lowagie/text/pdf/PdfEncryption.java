@@ -50,12 +50,12 @@
 package com.lowagie.text.pdf;
 
 import com.lowagie.text.pdf.crypto.RC4Encryption;
+import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
-import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 
 import com.lowagie.text.ExceptionConverter;
@@ -133,22 +133,22 @@ public class PdfEncryption {
 
     public void setCryptoMode(int mode, int kl) {
         cryptoMode = mode;
-        encryptMetadata = (mode & PdfWriter.DO_NOT_ENCRYPT_METADATA) == 0;
-        mode &= PdfWriter.ENCRYPTION_MASK;
+        encryptMetadata = (mode & PdfEncryptionSettings.DO_NOT_ENCRYPT_METADATA) == 0;
+        mode &= PdfEncryptionSettings.ENCRYPTION_MASK;
         switch (mode) {
-            case PdfWriter.ENCRYPTION_RC4_40:
+            case PdfEncryptionSettings.ENCRYPTION_RC4_40:
                 encryptMetadata = true;
                 keyLength = 40;
                 revision = RC4_40;
                 break;
-            case PdfWriter.ENCRYPTION_RC4_128:
+            case PdfEncryptionSettings.ENCRYPTION_RC4_128:
                 if (kl > 0)
                     keyLength = kl;
                 else
                     keyLength = 128;
                 revision = RC4_128;
                 break;
-            case PdfWriter.ENCRYPTION_AES_128:
+            case PdfEncryptionSettings.ENCRYPTION_AES_128:
                 keyLength = 128;
                 revision = AES_128;
                 break;
