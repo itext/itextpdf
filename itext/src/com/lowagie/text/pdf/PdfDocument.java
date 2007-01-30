@@ -88,6 +88,7 @@ import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
+import com.lowagie.text.pdf.internal.PdfVersionImp;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 import com.lowagie.text.xml.xmp.XmpWriter;
 

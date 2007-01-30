@@ -115,7 +115,7 @@ class PdfStamperImp extends PdfWriter
                 throw new DocumentException("Append mode requires a document without errors even if recovery was possible.");
             if (reader.isEncrypted())
                 crypto = new PdfEncryption(reader.getDecrypt());
-            HEADER = getISOBytes("\n");
+            pdf_version.setAppendmode(true);
             file.reOpen();
             byte buf[] = new byte[8192];
             int n;

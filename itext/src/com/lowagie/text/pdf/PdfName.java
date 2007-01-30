@@ -1014,6 +1014,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName VERISIGN_PPKVS = new PdfName("VeriSign.PPKVS");
     /** A name */
+	public static final PdfName VERSION = new PdfName("Version");
+    /** A name */
     public static final PdfName VIEW = new PdfName("View");
     /** A name */
     public static final PdfName VIEWAREA = new PdfName("ViewArea");
