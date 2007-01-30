@@ -9,6 +9,11 @@ import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 
+/**
+ * Stores the information concerning viewer preferences,
+ * and contains the business logic that allows you to set viewer preferences.
+ */
+
 public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 	
 	/** This value will hold the viewer preferences for the page layout and page mode. */

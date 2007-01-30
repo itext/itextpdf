@@ -74,7 +74,9 @@ import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.events.PdfPageEventForwarder;
 import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
+import com.lowagie.text.pdf.interfaces.PdfVersion;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
+import com.lowagie.text.pdf.internal.PdfVersionImp;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -85,7 +87,7 @@ import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
  */
 
 public class PdfWriter extends DocWriter
-	implements PdfViewerPreferences, PdfEncryptionSettings {
+	implements PdfViewerPreferences, PdfEncryptionSettings, PdfVersion {
     
     // inner classes
     
@@ -596,24 +598,14 @@ public class PdfWriter extends DocWriter
     /** signature value */
     public static final int SIGNATURE_APPEND_ONLY = 2;
     
-    /** possible PDF version */
-    public static final char VERSION_1_2 = '2';
-    /** possible PDF version */
-    public static final char VERSION_1_3 = '3';
-    /** possible PDF version */
-    public static final char VERSION_1_4 = '4';
-    /** possible PDF version */
-    public static final char VERSION_1_5 = '5';
-    /** possible PDF version */
-    public static final char VERSION_1_6 = '6';
+
     
-    private static final int VPOINT = 7;
-    /** this is the header of a PDF document */
-    protected byte[] HEADER = getISOBytes("%PDF-1.4\n%\u00e2\u00e3\u00cf\u00d3\n");
 
     protected int prevxref = 0;
     
     protected PdfPages root = new PdfPages(this);
+    
+    protected PdfVersionImp pdf_version = new PdfVersionImp();
     
     /** Dictionary, containing all the images of the PDF document */
     protected PdfDictionary imageDictionary = new PdfDictionary();
@@ -1005,7 +997,7 @@ public class PdfWriter extends DocWriter
     public void open() {
         super.open();
         try {
-            os.write(HEADER);
+        	pdf_version.writeHeader(os);
             body = new PdfBody(this);
             if (pdfxConformance == PDFX32002) {
                 PdfDictionary sec = new PdfDictionary();
@@ -1126,6 +1118,7 @@ public class PdfWriter extends DocWriter
             mi.put(PdfName.MARKED, PdfBoolean.PDFTRUE);
             catalog.put(PdfName.MARKINFO, mi);
         }
+        PdfVersionImp.setVersion(pdf_version, catalog);
         if (documentOCG.isEmpty())
             return catalog;
         fillOCProperties(false);
@@ -2161,15 +2154,25 @@ public class PdfWriter extends DocWriter
         addAnnotation(annot);
     }
     
-    /** Sets the PDF version. Must be used right before the document
-     * is opened. Valid options are VERSION_1_2, VERSION_1_3,
-     * VERSION_1_4, VERSION_1_5 and VERSION_1_6. VERSION_1_4 is the default.
+    /**
+     * Sets the PDF version.
+     * If used right before the document is opened (preferable),
+     * the version number will be written to the header;
+     * otherwise the version will be stored in the Catalog.
      * @param version the version number
      */
     public void setPdfVersion(char version) {
-        if (HEADER.length > VPOINT)
-            HEADER[VPOINT] = (byte)version;
+        pdf_version.setPdfVersion(version);
     }
+	/**
+	 * Sets the PDF version as it will appear in the Catalog.
+	 * Note that this only has effect if you use a later version
+	 * than the one that appears in the header; otherwise this
+	 * catalog entry will be ignored.
+	 */
+	public void setPdfVersion(PdfName version) {
+		pdf_version.setPdfVersion(version);
+	}
     
     /** Reorder the pages in the document. A <CODE>null</CODE> argument value
      * only returns the number of pages to process. It is
