@@ -77,6 +77,7 @@ import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 import com.lowagie.text.pdf.interfaces.PdfVersion;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfVersionImp;
+import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -381,32 +382,6 @@ public class PdfWriter extends DocWriter
         }
         
         /**
-         * Adds a <CODE>PdfResources</CODE> object to the body.
-         *
-         * @param		object			the <CODE>PdfResources</CODE>
-         * @return		a <CODE>PdfIndirectObject</CODE>
-         */
-        
-//        PdfIndirectObject add(PdfResources object) {
-//            return add(object);
-//        }
-        
-        /**
-         * Adds a <CODE>PdfPages</CODE> object to the body.
-         *
-         * @param		object			the root of the document
-         * @return		a <CODE>PdfIndirectObject</CODE>
-         */
-        
-//        PdfIndirectObject add(PdfPages object) throws IOException {
-//            PdfIndirectObject indirect = new PdfIndirectObject(PdfWriter.ROOT, object, writer);
-//            rootOffset = position;
-//            indirect.writeTo(writer.getOs());
-//            position = writer.getOs().getCounter();
-//            return indirect;
-//        }
-        
-        /**
          * Returns the offset of the Cross-Reference table.
          *
          * @return		an offset
@@ -605,8 +580,6 @@ public class PdfWriter extends DocWriter
     
     protected PdfPages root = new PdfPages(this);
     
-    protected PdfVersionImp pdf_version = new PdfVersionImp();
-    
     /** Dictionary, containing all the images of the PDF document */
     protected PdfDictionary imageDictionary = new PdfDictionary();
     
@@ -691,8 +664,6 @@ public class PdfWriter extends DocWriter
     
     /** The <CODE>PdfPageEvent</CODE> for this document. */
     private PdfPageEvent pageEvent;
-    
-    protected PdfEncryption crypto;
     
     protected HashMap importedPages = new HashMap();
     
@@ -1119,6 +1090,7 @@ public class PdfWriter extends DocWriter
             catalog.put(PdfName.MARKINFO, mi);
         }
         PdfVersionImp.setVersion(pdf_version, catalog);
+        PdfViewerPreferencesImp.setViewerPreferences(viewerPreferences, catalog);
         if (documentOCG.isEmpty())
             return catalog;
         fillOCProperties(false);
@@ -1755,130 +1727,12 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Sets the viewer preferences as the sum of several constants.
-     * @param preferences the viewer preferences
-     * @see PdfViewerPreferences#setViewerPreferences
-     */
-    
-    public void setViewerPreferences(int preferences) {
-        pdf.setViewerPreferences(preferences);
-    }
-    
-    /** Adds a viewer preference
-     * @param preferences the viewer preferences
-     * @see PdfViewerPreferences#addViewerPreference
-     */
-    
-    public void addViewerPreference(PdfName key, PdfObject value) {
-    	pdf.addViewerPreference(key, value);
-    }
-    
-    /**
      * Sets the Collection dictionary.
      * @param collection a dictionary of type PdfCollection
      */
     public void setCollection(PdfCollection collection) {
     	pdf.setCollection(collection);
     }
-    
-    /** Sets the encryption options for this document. The userPassword and the
-     *  ownerPassword can be null or have zero length. In this case the ownerPassword
-     *  is replaced by a random string. The open permissions for the document can be
-     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     *  The permissions can be combined by ORing them.
-     * @param userPassword the user password. Can be null or empty
-     * @param ownerPassword the owner password. Can be null or empty
-     * @param permissions the user permissions
-     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
-     * @throws DocumentException if the document is already open
-     */
-    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
-        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
-    }
-    
-    /** Sets the encryption options for this document. The userPassword and the
-     *  ownerPassword can be null or have zero length. In this case the ownerPassword
-     *  is replaced by a random string. The open permissions for the document can be
-     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     *  The permissions can be combined by ORing them.
-     * @param userPassword the user password. Can be null or empty
-     * @param ownerPassword the owner password. Can be null or empty
-     * @param permissions the user permissions
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
-     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     * @throws DocumentException if the document is already open
-     */
-    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
-        if (pdf.isOpen())
-            throw new DocumentException("Encryption can only be added before opening the document.");
-        crypto = new PdfEncryption();
-        crypto.setCryptoMode(encryptionType, 0);
-        crypto.setupAllKeys(userPassword, ownerPassword, permissions);
-    }
-    
-    /**
-     * Sets the encryption options for this document. The userPassword and the
-     *  ownerPassword can be null or have zero length. In this case the ownerPassword
-     *  is replaced by a random string. The open permissions for the document can be
-     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     *  The permissions can be combined by ORing them.
-     * @param strength <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
-     * @param userPassword the user password. Can be null or empty
-     * @param ownerPassword the owner password. Can be null or empty
-     * @param permissions the user permissions
-     * @throws DocumentException if the document is already open
-     */
-    public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
-        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength);
-    }
-    
-    /**
-     * Sets the encryption options for this document. The userPassword and the
-     *  ownerPassword can be null or have zero length. In this case the ownerPassword
-     *  is replaced by a random string. The open permissions for the document can be
-     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     *  The permissions can be combined by ORing them.
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
-     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     * @param userPassword the user password. Can be null or empty
-     * @param ownerPassword the owner password. Can be null or empty
-     * @param permissions the user permissions
-     * @throws DocumentException if the document is already open
-     */
-    public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
-        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, encryptionType);
-    }
-    
-    /**
-     * Sets the certificate encryption options for this document. An array of one or more public certificates
-     * must be provided together with an array of the same size for the permissions for each certificate.
-     *  The open permissions for the document can be
-     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     *  The permissions can be combined by ORing them.
-     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     * @param certs the public certificates to be used for the encryption
-     * @param permissions the user permissions for each of the certicates
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
-     * @throws DocumentException if the document is already open
-     */
-    public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
-        if (pdf.isOpen())
-            throw new DocumentException("Encryption can only be added before opening the document.");
-        crypto = new PdfEncryption();
-        if (certs != null) {
-            for (int i=0; i < certs.length; i++) {
-                crypto.addRecipient(certs[i], permissions[i]);
-            }
-        }
-        crypto.setCryptoMode(encryptionType, 0);
-        crypto.getEncryptionDictionary();
-    }
-    
     
     /**
      * Adds an object to the PDF body.
@@ -2153,26 +2007,6 @@ public class PdfWriter extends DocWriter
     void addAnnotation(PdfAnnotation annot, int page) {
         addAnnotation(annot);
     }
-    
-    /**
-     * Sets the PDF version.
-     * If used right before the document is opened (preferable),
-     * the version number will be written to the header;
-     * otherwise the version will be stored in the Catalog.
-     * @param version the version number
-     */
-    public void setPdfVersion(char version) {
-        pdf_version.setPdfVersion(version);
-    }
-	/**
-	 * Sets the PDF version as it will appear in the Catalog.
-	 * Note that this only has effect if you use a later version
-	 * than the one that appears in the header; otherwise this
-	 * catalog entry will be ignored.
-	 */
-	public void setPdfVersion(PdfName version) {
-		pdf_version.setPdfVersion(version);
-	}
     
     /** Reorder the pages in the document. A <CODE>null</CODE> argument value
      * only returns the number of pages to process. It is
@@ -2598,7 +2432,7 @@ public class PdfWriter extends DocWriter
      */
     public void setFullCompression() {
         this.fullCompression = true;
-        setPdfVersion(VERSION_1_5);
+        setAtLeastPdfVersion(VERSION_1_5);
     }
     
     /**
@@ -2662,7 +2496,7 @@ public class PdfWriter extends DocWriter
 	public void setUserunit(float userunit) throws DocumentException {
 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
 		this.userunit = userunit;
-        setPdfVersion(VERSION_1_6);
+        setAtLeastPdfVersion(VERSION_1_6);
 	}
     
 	/**
@@ -2726,5 +2560,132 @@ public class PdfWriter extends DocWriter
         if (tagged && structureTreeRoot == null)
             structureTreeRoot = new PdfStructureTreeRoot(this);
         return structureTreeRoot;
+    }
+    
+//	PdfVersion interface
+
+    /** Stores the version information for the header and the catalog. */
+    protected PdfVersionImp pdf_version = new PdfVersionImp();
+    
+    /**
+     * @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(char)
+     */
+    public void setPdfVersion(char version) {
+        pdf_version.setPdfVersion(version);
+    }
+    
+    /**
+     * @see com.lowagie.text.pdf.interfaces.PdfVersion#setAtLeastPdfVersion(char)
+     */
+    public void setAtLeastPdfVersion(char version) {
+    	pdf_version.setAtLeastPdfVersion(version);
+    }
+
+	/**
+	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(com.lowagie.text.pdf.PdfName)
+	 */
+	public void setPdfVersion(PdfName version) {
+		pdf_version.setPdfVersion(version);
+	}
+    
+//  PdfViewerPreferences interface
+	
+	/** Contains the Viewer preferences of this PDF document. */
+    protected PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
+
+    /** @see com.lowagie.text.pdf.interfaces.PdfViewerPreferences#setViewerPreferences(int) */
+    public void setViewerPreferences(int preferences) {
+        this.viewerPreferences.setViewerPreferences(preferences);
+    }
+
+    /** @see com.lowagie.text.pdf.interfaces.PdfViewerPreferences#addViewerPreference(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfObject) */
+    public void addViewerPreference(PdfName key, PdfObject value) {
+    	this.viewerPreferences.addViewerPreference(key, value);
+    }
+    
+//	PdfEncryptionSettings interface
+
+    /** Contains the business logic for cryptography. */
+    protected PdfEncryption crypto;
+    
+    /**
+     * @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(byte[], byte[], int, int)
+     */
+    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
+        if (pdf.isOpen())
+            throw new DocumentException("Encryption can only be added before opening the document.");
+        crypto = new PdfEncryption();
+        crypto.setCryptoMode(encryptionType, 0);
+        crypto.setupAllKeys(userPassword, ownerPassword, permissions);
+    }
+    
+    /**
+     * @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(java.security.cert.Certificate[], int[], int)
+     */
+    public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
+        if (pdf.isOpen())
+            throw new DocumentException("Encryption can only be added before opening the document.");
+        crypto = new PdfEncryption();
+        if (certs != null) {
+            for (int i=0; i < certs.length; i++) {
+                crypto.addRecipient(certs[i], permissions[i]);
+            }
+        }
+        crypto.setCryptoMode(encryptionType, 0);
+        crypto.getEncryptionDictionary();
+    }
+    
+    /** Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
+     * @throws DocumentException if the document is already open
+     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     */
+    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
+        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
+    }
+    
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param strength <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @throws DocumentException if the document is already open
+     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     */
+    public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength);
+    }
+    
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @throws DocumentException if the document is already open
+     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     */
+    public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, encryptionType);
     }
 }

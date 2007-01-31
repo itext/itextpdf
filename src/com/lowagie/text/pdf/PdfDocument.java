@@ -87,8 +87,6 @@ import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
-import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
-import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 import com.lowagie.text.xml.xmp.XmpWriter;
 
 /**
@@ -104,7 +102,7 @@ import com.lowagie.text.xml.xmp.XmpWriter;
  * @see		PdfWriter
  */
 
-class PdfDocument extends Document implements DocListener, PdfViewerPreferences {
+class PdfDocument extends Document implements DocListener {
     
     /**
      * <CODE>PdfInfo</CODE> is the PDF InfoDictionary.
@@ -319,15 +317,6 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
             }
         }
         
-        /** Sets the viewer preferences as the sum of several constants.
-         * @param preferences the viewer preferences
-         * @see PdfViewerPreferences#setViewerPreferences
-         */
-        
-        public void setViewerPreferences(PdfViewerPreferencesImp preferences) {
-            PdfViewerPreferencesImp.setViewerPreferences(preferences, this);
-        }
-        
         void setOpenAction(PdfAction action) {
             put(PdfName.OPENACTION, action);
         }
@@ -475,7 +464,6 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
     
     private HashMap documentFileAttachment = new HashMap();
     
-    private PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
     private PdfCollection collection;
     
     private String openActionName;
@@ -2417,7 +2405,6 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
         if (pageLabels != null)
             catalog.setPageLabels(pageLabels);
         catalog.addNames(localDestinations, documentJavaScript, documentFileAttachment, writer);
-        catalog.setViewerPreferences(viewerPreferences);
         if (collection != null) {
         	catalog.put(PdfName.COLLECTION, collection);
         }
@@ -2952,24 +2939,6 @@ class PdfDocument extends Document implements DocListener, PdfViewerPreferences 
      */
     void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury) {
         writer.addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, page)));
-    }
-    
-    /** Sets the viewer preferences as the sum of several constants.
-     * @param preferences the viewer preferences
-     * @see PdfViewerPreferences#setViewerPreferences
-     */
-    
-    public void setViewerPreferences(int preferences) {
-        this.viewerPreferences.setViewerPreferences(preferences);
-    }
-    
-    /** Adds a viewer preference
-     * @param preferences the viewer preferences
-     * @see PdfViewerPreferences#addViewerPreference
-     */
-    
-    public void addViewerPreference(PdfName key, PdfObject value) {
-    	this.viewerPreferences.addViewerPreference(key, value);
     }
 
     /**
