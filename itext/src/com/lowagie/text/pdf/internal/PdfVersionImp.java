@@ -75,10 +75,7 @@ public class PdfVersionImp implements PdfVersion {
 	protected PdfName catalog_version = null;
 	
 	/**
-	 * If the PDF Header hasn't been written yet,
-	 * this changes the version as it will appear in the PDF Header.
-	 * If the PDF header was already written to the OutputStream,
-	 * this changes the version as it will appear in the Catalog.
+	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(char)
 	 */
 	public void setPdfVersion(char version) {
 		if (headerWasWritten || appendmode) {
@@ -90,13 +87,21 @@ public class PdfVersionImp implements PdfVersion {
 	}
 	
 	/**
-	 * Sets the PDF version as it will appear in the Catalog.
-	 * Note that this only has effect if you use a later version
-	 * than the one that appears in the header; otherwise this
-	 * catalog entry will be ignored.
+	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#setAtLeastPdfVersion(char)
+	 */
+	public void setAtLeastPdfVersion(char version) {
+		if (version > header_version) {
+			setPdfVersion(version);
+		}
+	}
+	
+	/**
+	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(com.lowagie.text.pdf.PdfName)
 	 */
 	public void setPdfVersion(PdfName version) {
-		this.catalog_version = version;
+		if (catalog_version == null || catalog_version.compareTo(version) < 0) {
+			this.catalog_version = version;
+		}
 	}
 	
 	/**
