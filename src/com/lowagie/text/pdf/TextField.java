@@ -378,7 +378,8 @@ public class TextField extends BaseField {
             field.setMKRotation(rotation);
         if (fieldName != null) {
             field.setFieldName(fieldName);
-            field.setValueAsString(text);
+            if ((options & REQUIRED) == 0)
+            	field.setValueAsString(text);
             if (defaultText != null)
                 field.setDefaultValueAsString(defaultText);
             if ((options & READ_ONLY) != 0)
