@@ -56,7 +56,7 @@ import java.util.HashMap;
  * Translates a IANA encoding name to a Java encoding.
  */
 
-public class JavaEncodings {
+public class IanaToJava {
 
 	/** The object that maps IANA to Java encodings. */
     private static final HashMap map = new HashMap();
