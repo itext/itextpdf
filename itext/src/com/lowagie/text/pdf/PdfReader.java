@@ -2926,7 +2926,7 @@ public class PdfReader implements PdfViewerPreferences {
     }
     
     void setViewerPreferences(PdfViewerPreferencesImp vp) {
-    	PdfViewerPreferencesImp.setViewerPreferences(vp, catalog);
+    	vp.addToCatalog(catalog);
     }
 
     /**

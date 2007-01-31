@@ -141,7 +141,7 @@ public class SimpleXMLParser {
             if (decl != null)
                 encoding = decl;
         }
-        parse(doc, new InputStreamReader(in, JavaEncodings.getJavaEncoding(encoding)));
+        parse(doc, new InputStreamReader(in, IanaToJava.getJavaEncoding(encoding)));
     }
     
     private static String getDeclaredEncoding(String decl) {

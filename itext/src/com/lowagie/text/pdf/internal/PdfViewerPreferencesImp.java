@@ -176,48 +176,43 @@ public class PdfViewerPreferencesImp implements PdfViewerPreferences {
 	 * Adds the viewer preferences defined in the preferences parameter to a
 	 * PdfDictionary (more specifically the root or catalog of a PDF file).
 	 * 
-	 * @param viewerPreferences
 	 * @param catalog
 	 */
-	public static void setViewerPreferences(
-			PdfViewerPreferencesImp viewerPreferences, PdfDictionary catalog) {
-
-		int preferences = viewerPreferences.pageLayoutAndMode;
-		
+	public void addToCatalog(PdfDictionary catalog) {
 		// Page Layout
 		catalog.remove(PdfName.PAGELAYOUT);
-		if ((preferences & PageLayoutSinglePage) != 0)
+		if ((pageLayoutAndMode & PageLayoutSinglePage) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.SINGLEPAGE);
-		else if ((preferences & PageLayoutOneColumn) != 0)
+		else if ((pageLayoutAndMode & PageLayoutOneColumn) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.ONECOLUMN);
-		else if ((preferences & PageLayoutTwoColumnLeft) != 0)
+		else if ((pageLayoutAndMode & PageLayoutTwoColumnLeft) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNLEFT);
-		else if ((preferences & PageLayoutTwoColumnRight) != 0)
+		else if ((pageLayoutAndMode & PageLayoutTwoColumnRight) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.TWOCOLUMNRIGHT);
-		else if ((preferences & PageLayoutTwoPageLeft) != 0)
+		else if ((pageLayoutAndMode & PageLayoutTwoPageLeft) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGELEFT);
-		else if ((preferences & PageLayoutTwoPageRight) != 0)
+		else if ((pageLayoutAndMode & PageLayoutTwoPageRight) != 0)
 			catalog.put(PdfName.PAGELAYOUT, PdfName.TWOPAGERIGHT);
 
 		// Page Mode
 		catalog.remove(PdfName.PAGEMODE);
-		if ((preferences & PageModeUseNone) != 0)
+		if ((pageLayoutAndMode & PageModeUseNone) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USENONE);
-		else if ((preferences & PageModeUseOutlines) != 0)
+		else if ((pageLayoutAndMode & PageModeUseOutlines) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
-		else if ((preferences & PageModeUseThumbs) != 0)
+		else if ((pageLayoutAndMode & PageModeUseThumbs) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USETHUMBS);
-		else if ((preferences & PageModeFullScreen) != 0)
+		else if ((pageLayoutAndMode & PageModeFullScreen) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.FULLSCREEN);
-		else if ((preferences & PageModeUseOC) != 0)
+		else if ((pageLayoutAndMode & PageModeUseOC) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USEOC);
-		else if ((preferences & PageModeUseAttachments) != 0)
+		else if ((pageLayoutAndMode & PageModeUseAttachments) != 0)
 			catalog.put(PdfName.PAGEMODE, PdfName.USEATTACHMENTS);
 
 		// viewer preferences (Table 8.1 of the PDF Reference)
 		catalog.remove(PdfName.VIEWERPREFERENCES);
-		if (viewerPreferences.viewerPreferences.size() > 0) {
-			catalog.put(PdfName.VIEWERPREFERENCES, viewerPreferences.viewerPreferences);
+		if (viewerPreferences.size() > 0) {
+			catalog.put(PdfName.VIEWERPREFERENCES, viewerPreferences);
 		}
 	}
 

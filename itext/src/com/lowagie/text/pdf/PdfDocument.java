@@ -87,6 +87,7 @@ import com.lowagie.text.Section;
 import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
+import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 import com.lowagie.text.xml.xmp.XmpWriter;
 
 /**
@@ -237,6 +238,7 @@ class PdfDocument extends Document implements DocListener {
     static class PdfCatalog extends PdfDictionary {
         
         PdfWriter writer;
+        
         // constructors
         
         /**
@@ -250,22 +252,6 @@ class PdfDocument extends Document implements DocListener {
             super(CATALOG);
             this.writer = writer;
             put(PdfName.PAGES, pages);
-        }
-        
-        /**
-         * Constructs a <CODE>PdfCatalog</CODE>.
-         *
-         * @param		pages		an indirect reference to the root of the document's Pages tree.
-         * @param		outlines	an indirect reference to the outline tree.
-         * @param writer the writer the catalog applies to
-         */
-        
-        PdfCatalog(PdfIndirectReference pages, PdfIndirectReference outlines, PdfWriter writer) {
-            super(CATALOG);
-            this.writer = writer;
-            put(PdfName.PAGES, pages);
-            put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
-            put(PdfName.OUTLINES, outlines);
         }
         
         /**
@@ -331,15 +317,6 @@ class PdfDocument extends Document implements DocListener {
             } catch (Exception e) {
                 throw new ExceptionConverter(e);
             }
-        }
-        
-        
-        void setPageLabels(PdfPageLabels pageLabels) {
-            put(PdfName.PAGELABELS, pageLabels.getDictionary());
-        }
-        
-        void setAcroForm(PdfObject fields) {
-            put(PdfName.ACROFORM, fields);
         }
     }
     
@@ -442,34 +419,8 @@ class PdfDocument extends Document implements DocListener {
     /** This is an array containg references to some delayed annotations. */
     private ArrayList delayedAnnotations = new ArrayList();
     
-    /** This is the AcroForm object. */
-    PdfAcroForm acroForm;
-    
-    /** This is the root outline of the document. */
-    private PdfOutline rootOutline;
-    
-    /** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
-    private PdfOutline currentOutline;
-    
     /** The current active <CODE>PdfAction</CODE> when processing an <CODE>Anchor</CODE>. */
     private PdfAction currentAction = null;
-    
-    /**
-     * Stores the destinations keyed by name. Value is
-     * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
-     */
-    private TreeMap localDestinations = new TreeMap();
-    
-    private ArrayList documentJavaScript = new ArrayList();
-    
-    private HashMap documentFileAttachment = new HashMap();
-    
-    private PdfCollection collection;
-    
-    private String openActionName;
-    private PdfAction openActionAction;
-    private PdfDictionary additionalActions;
-    private PdfPageLabels pageLabels;
     
     private boolean isNewpage = false;
     private float paraIndent = 0;
@@ -493,8 +444,6 @@ class PdfDocument extends Document implements DocListener {
     
 /** The page transition */
     protected PdfTransition transition=null; 
-    
-    protected PdfDictionary pageAA = null;
     
     /** Holds value of property strictImageSequence. */
     private boolean strictImageSequence = false;    
@@ -2368,16 +2317,6 @@ class PdfDocument extends Document implements DocListener {
     // methods to retrieve information
     
     /**
-     * Gets the <CODE>PdfInfo</CODE>-object.
-     *
-     * @return	<CODE>PdfInfo</COPE>
-     */
-    
-    PdfInfo getInfo() {
-        return info;
-    }
-    
-    /**
      * Gets the <CODE>PdfCatalog</CODE>-object.
      *
      * @param pages an indirect reference to this document pages
@@ -2385,37 +2324,54 @@ class PdfDocument extends Document implements DocListener {
      */
     
     PdfCatalog getCatalog(PdfIndirectReference pages) {
-        PdfCatalog catalog;
+        PdfCatalog catalog = new PdfCatalog(pages, writer);
+        
+        // [C1] outlines
         if (rootOutline.getKids().size() > 0) {
-            catalog = new PdfCatalog(pages, rootOutline.indirectReference(), writer);
+            catalog.put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
+            catalog.put(PdfName.OUTLINES, rootOutline.indirectReference());
         }
-        else
-            catalog = new PdfCatalog(pages, writer);
+        
+        // [C2] version
+        writer.getPdfVersion().addToCatalog(catalog);
+        
+        // [C3] preferences
+        viewerPreferences.addToCatalog(catalog);
+        
+        // [C4] pagelabels
+        if (pageLabels != null) {
+            catalog.put(PdfName.PAGELABELS, pageLabels.getDictionary());
+        }
+        
+        // [C5] named objects
+        catalog.addNames(localDestinations, documentJavaScript, documentFileAttachment, writer);
+        
+        // [C6] actions
         if (openActionName != null) {
             PdfAction action = getLocalGotoAction(openActionName);
             catalog.setOpenAction(action);
         }
         else if (openActionAction != null)
             catalog.setOpenAction(openActionAction);
-        
         if (additionalActions != null)   {
             catalog.setAdditionalActions(additionalActions);
         }
         
-        if (pageLabels != null)
-            catalog.setPageLabels(pageLabels);
-        catalog.addNames(localDestinations, documentJavaScript, documentFileAttachment, writer);
+        // [C7] portable collections
         if (collection != null) {
         	catalog.put(PdfName.COLLECTION, collection);
         }
+
+        // [C9] AcroForm
         if (acroForm.isValid()) {
             try {
-                catalog.setAcroForm(writer.addToBody(acroForm).getIndirectReference());
+                catalog.put(PdfName.ACROFORM, writer.addToBody(acroForm).getIndirectReference());
             }
             catch (IOException e) {
                 throw new ExceptionConverter(e);
             }
         }
+        
         return catalog;
     }
     
@@ -2521,33 +2477,6 @@ class PdfDocument extends Document implements DocListener {
     
     float indentBottom() {
         return bottom(indentBottom);
-    }
-    
-    /**
-     * Adds a named outline to the document .
-     * @param outline the outline to be added
-     * @param name the name of this local destination
-     */
-    void addOutline(PdfOutline outline, String name) {
-        localDestination(name, outline.getPdfDestination());
-    }
-    
-    /**
-     * Gets the AcroForm object.
-     * @return the PdfAcroform object of the PdfDocument
-     */
-    
-    public PdfAcroForm getAcroForm() {
-        return acroForm;
-    }
-    
-    /**
-     * Gets the root outline. All the outlines must be created with a parent.
-     * The first level is created with this outline.
-     * @return the root outline
-     */
-    public PdfOutline getRootOutline() {
-        return rootOutline;
     }
         
     /**
@@ -2875,6 +2804,267 @@ class PdfDocument extends Document implements DocListener {
         annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, action));
     }
     
+    /**
+     * Implements a link to another document.
+     * @param filename the filename for the remote document
+     * @param name the name to jump to
+     * @param llx the lower left x corner of the activation area
+     * @param lly the lower left y corner of the activation area
+     * @param urx the upper right x corner of the activation area
+     * @param ury the upper right y corner of the activation area
+     */
+    void remoteGoto(String filename, String name, float llx, float lly, float urx, float ury) {
+        annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, name)));
+    }
+    
+    /**
+     * Implements a link to another document.
+     * @param filename the filename for the remote document
+     * @param page the page to jump to
+     * @param llx the lower left x corner of the activation area
+     * @param lly the lower left y corner of the activation area
+     * @param urx the upper right x corner of the activation area
+     * @param ury the upper right y corner of the activation area
+     */
+    void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury) {
+        writer.addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, page)));
+    }
+    
+    /** Implements an action in an area.
+     * @param action the <CODE>PdfAction</CODE>
+     * @param llx the lower left x corner of the activation area
+     * @param lly the lower left y corner of the activation area
+     * @param urx the upper right x corner of the activation area
+     * @param ury the upper right y corner of the activation area
+     */
+    void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
+        writer.addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, action));
+    }
+    
+    void setCropBoxSize(Rectangle crop) {
+        setBoxSize("crop", crop);
+    }
+    
+    void setBoxSize(String boxName, Rectangle size) {
+        if (size == null)
+            boxSize.remove(boxName);
+        else
+            boxSize.put(boxName, new PdfRectangle(size));
+    }
+    
+    /**
+     * Gives the size of a trim, art, crop or bleed box, or null if not defined.
+     * @param boxName crop, trim, art or bleed
+     */
+    Rectangle getBoxSize(String boxName) {
+    	PdfRectangle r = (PdfRectangle)thisBoxSize.get(boxName);
+    	if (r != null) return r.getRectangle();
+    	return null;
+    }
+    
+    void addFormFieldRaw(PdfFormField field) {
+        annotations.add(field);
+        ArrayList kids = field.getKids();
+        if (kids != null) {
+            for (int k = 0; k < kids.size(); ++k)
+                addFormFieldRaw((PdfFormField)kids.get(k));
+        }
+    }
+    
+    void addAnnotation(PdfAnnotation annot) {
+        pageEmpty = false;
+        if (annot.isForm()) {
+            PdfFormField field = (PdfFormField)annot;
+            if (field.getParent() == null)
+                addFormFieldRaw(field);
+        }
+        else
+            annotations.add(annot);
+    }
+    
+    /**
+     * Sets the display duration for the page (for presentations)
+     * @param seconds   the number of seconds to display the page
+     */
+    void setDuration(int seconds) {
+        if (seconds > 0)
+            this.duration=seconds;
+        else
+            this.duration=-1;
+    }
+    
+    /**
+     * Sets the transition for the page
+     * @param transition   the PdfTransition object
+     */
+    void setTransition(PdfTransition transition) {
+        this.transition=transition;
+    }
+    
+    /** Getter for property strictImageSequence.
+     * @return Value of property strictImageSequence.
+     *
+     */
+    boolean isStrictImageSequence() {
+        return this.strictImageSequence;
+    }
+    
+    /** Setter for property strictImageSequence.
+     * @param strictImageSequence New value of property strictImageSequence.
+     *
+     */
+    void setStrictImageSequence(boolean strictImageSequence) {
+        this.strictImageSequence = strictImageSequence;
+    }
+ 
+    void setPageEmpty(boolean pageEmpty) {
+        this.pageEmpty = pageEmpty;
+    }
+	/**
+	 * Method added by Pelikan Stephan
+	 * @see com.lowagie.text.DocListener#clearTextWrap()
+	 */
+	public void clearTextWrap() {
+		float tmpHeight = imageEnd - currentHeight;
+		if (line != null) {
+			tmpHeight += line.height();
+		}
+		if ((imageEnd > -1) && (tmpHeight > 0)) {
+			carriageReturn();
+			currentHeight += tmpHeight;
+		}
+	}
+
+    /**
+     * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
+     */
+    public boolean setMarginMirroring(boolean MarginMirroring) {
+        if (writer != null && writer.isPaused()) {
+            return false;
+        }
+        return super.setMarginMirroring(MarginMirroring);
+    }
+    
+    void setThumbnail(Image image) throws PdfException, DocumentException {
+        thumb = writer.getImageReference(writer.addDirectImageSimple(image));
+    }
+
+
+    static PdfAnnotation convertAnnotation(PdfWriter writer, Annotation annot) throws IOException {
+         switch(annot.annotationType()) {
+            case Annotation.URL_NET:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((URL) annot.attributes().get(Annotation.URL)));
+            case Annotation.URL_AS_STRING:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE)));
+            case Annotation.FILE_DEST:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), (String) annot.attributes().get(Annotation.DESTINATION)));
+            case Annotation.SCREEN:
+                boolean sparams[] = (boolean[])annot.attributes().get(Annotation.PARAMETERS);
+                String fname = (String) annot.attributes().get(Annotation.FILE);
+                String mimetype = (String) annot.attributes().get(Annotation.MIMETYPE);
+                PdfFileSpecification fs;
+                if (sparams[0])
+                    fs = PdfFileSpecification.fileEmbedded(writer, fname, fname, null);
+                else
+                    fs = PdfFileSpecification.fileExtern(writer, fname);
+                PdfAnnotation ann = PdfAnnotation.createScreen(writer, new Rectangle(annot.llx(), annot.lly(), annot.urx(), annot.ury()),
+                        fname, fs, mimetype, sparams[1]);
+                return ann;
+            case Annotation.FILE_PAGE:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), ((Integer) annot.attributes().get(Annotation.PAGE)).intValue()));
+            case Annotation.NAMED_DEST:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction(((Integer) annot.attributes().get(Annotation.NAMED)).intValue()));
+            case Annotation.LAUNCH:
+                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR)));
+            default:
+                PdfDocument doc = writer.getPdfDocument();
+                if (doc.line == null)
+                    return null;
+                PdfAnnotation an = new PdfAnnotation(writer, annot.llx(doc.indentRight() - doc.line.widthLeft()), annot.lly(doc.indentTop() - doc.currentHeight), annot.urx(doc.indentRight() - doc.line.widthLeft() + 20), annot.ury(doc.indentTop() - doc.currentHeight - 20), new PdfString(annot.title(), PdfObject.TEXT_UNICODE), new PdfString(annot.content(), PdfObject.TEXT_UNICODE));
+                return an;
+        }
+    }
+	
+	int getMarkPoint() {
+	    return markPoint;
+	}
+	 
+	void incMarkPoint() {
+	    ++markPoint;
+	}
+
+
+//	[P3] page level actions
+    
+    protected PdfDictionary pageAA = null;
+    void setPageAction(PdfName actionType, PdfAction action) {
+        if (pageAA == null) {
+            pageAA = new PdfDictionary();
+        }
+        pageAA.put(actionType, action);
+    }
+    
+//	[C1] outlines
+    
+    /** This is the root outline of the document. */
+    private PdfOutline rootOutline;
+    
+    /** This is the current <CODE>PdfOutline</CODE> in the hierarchy of outlines. */
+    private PdfOutline currentOutline;
+    
+    /**
+     * Adds a named outline to the document .
+     * @param outline the outline to be added
+     * @param name the name of this local destination
+     */
+    void addOutline(PdfOutline outline, String name) {
+        localDestination(name, outline.getPdfDestination());
+    }
+    
+    /**
+     * Gets the root outline. All the outlines must be created with a parent.
+     * The first level is created with this outline.
+     * @return the root outline
+     */
+    public PdfOutline getRootOutline() {
+        return rootOutline;
+    }
+    
+//	[C2] Version (dealt with in PdfWriter)    
+    
+//  [C3] PdfViewerPreferences interface
+	
+	/** Contains the Viewer preferences of this PDF document. */
+    protected PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
+    /** @see com.lowagie.text.pdf.interfaces.PdfViewerPreferences#setViewerPreferences(int) */
+    void setViewerPreferences(int preferences) {
+        this.viewerPreferences.setViewerPreferences(preferences);
+    }
+
+    /** @see com.lowagie.text.pdf.interfaces.PdfViewerPreferences#addViewerPreference(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfObject) */
+    void addViewerPreference(PdfName key, PdfObject value) {
+    	this.viewerPreferences.addViewerPreference(key, value);
+    }
+ 
+//	[C4] Page labels
+
+    protected PdfPageLabels pageLabels;
+    /**
+     * Sets the page labels
+     * @param pageLabels the page labels
+     */
+    void setPageLabels(PdfPageLabels pageLabels) {
+        this.pageLabels = pageLabels;
+    }
+    
+//	[C5] named objects: local destinations, javascript, embedded files
+    
+    /**
+     * Stores the destinations keyed by name. Value is
+     * <CODE>Object[]{PdfAction,PdfIndirectReference,PdfDestintion}</CODE>.
+     */
+    private TreeMap localDestinations = new TreeMap();
+    
     PdfAction getLocalGotoAction(String name) {
         PdfAction action;
         Object obj[] = (Object[])localDestinations.get(name);
@@ -2916,76 +3106,9 @@ class PdfDocument extends Document implements DocListener {
     }
     
     /**
-     * Implements a link to another document.
-     * @param filename the filename for the remote document
-     * @param name the name to jump to
-     * @param llx the lower left x corner of the activation area
-     * @param lly the lower left y corner of the activation area
-     * @param urx the upper right x corner of the activation area
-     * @param ury the upper right y corner of the activation area
+     * Stores a list of document level JavaScript actions.
      */
-    void remoteGoto(String filename, String name, float llx, float lly, float urx, float ury) {
-        annotations.add(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, name)));
-    }
-    
-    /**
-     * Implements a link to another document.
-     * @param filename the filename for the remote document
-     * @param page the page to jump to
-     * @param llx the lower left x corner of the activation area
-     * @param lly the lower left y corner of the activation area
-     * @param urx the upper right x corner of the activation area
-     * @param ury the upper right y corner of the activation area
-     */
-    void remoteGoto(String filename, int page, float llx, float lly, float urx, float ury) {
-        writer.addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, new PdfAction(filename, page)));
-    }
-
-    /**
-     * Sets the collection dictionary.
-     * @param collection a dictionary of type PdfCollection
-     */
-	public void setCollection(PdfCollection collection) {
-		this.collection = collection;
-	}
-    
-    /** Implements an action in an area.
-     * @param action the <CODE>PdfAction</CODE>
-     * @param llx the lower left x corner of the activation area
-     * @param lly the lower left y corner of the activation area
-     * @param urx the upper right x corner of the activation area
-     * @param ury the upper right y corner of the activation area
-     */
-    void setAction(PdfAction action, float llx, float lly, float urx, float ury) {
-        writer.addAnnotation(new PdfAnnotation(writer, llx, lly, urx, ury, action));
-    }
-    
-    void setOpenAction(String name) {
-        openActionName = name;
-        openActionAction = null;
-    }
-    
-    void setOpenAction(PdfAction action) {
-        openActionAction = action;
-        openActionName = null;
-    }
-    
-    void addAdditionalAction(PdfName actionType, PdfAction action)  {
-        if (additionalActions == null)  {
-            additionalActions = new PdfDictionary();
-        }
-        if (action == null)
-            additionalActions.remove(actionType);
-        else
-            additionalActions.put(actionType, action);
-        if (additionalActions.size() == 0)
-            additionalActions = null;
-    }
-    
-    void setPageLabels(PdfPageLabels pageLabels) {
-        this.pageLabels = pageLabels;
-    }
-    
+    private ArrayList documentJavaScript = new ArrayList();
     void addJavaScript(PdfAction js) {
         if (js.get(PdfName.JS) == null)
             throw new RuntimeException("Only JavaScript actions are allowed.");
@@ -2997,132 +3120,11 @@ class PdfDocument extends Document implements DocListener {
         }
     }
     
-    void setCropBoxSize(Rectangle crop) {
-        setBoxSize("crop", crop);
-    }
-    
-    void setBoxSize(String boxName, Rectangle size) {
-        if (size == null)
-            boxSize.remove(boxName);
-        else
-            boxSize.put(boxName, new PdfRectangle(size));
-    }
-    
-    void addCalculationOrder(PdfFormField formField) {
-        acroForm.addCalculationOrder(formField);
-    }
-    
-    /**
-     * Gives the size of a trim, art, crop or bleed box, or null if not defined.
-     * @param boxName crop, trim, art or bleed
-     */
-    Rectangle getBoxSize(String boxName) {
-    	PdfRectangle r = (PdfRectangle)thisBoxSize.get(boxName);
-    	if (r != null) return r.getRectangle();
-    	return null;
-    }
-    
-    void setSigFlags(int f) {
-        acroForm.setSigFlags(f);
-    }
-    
-    void addFormFieldRaw(PdfFormField field) {
-        annotations.add(field);
-        ArrayList kids = field.getKids();
-        if (kids != null) {
-            for (int k = 0; k < kids.size(); ++k)
-                addFormFieldRaw((PdfFormField)kids.get(k));
-        }
-    }
-    
-    void addAnnotation(PdfAnnotation annot) {
-        pageEmpty = false;
-        if (annot.isForm()) {
-            PdfFormField field = (PdfFormField)annot;
-            if (field.getParent() == null)
-                addFormFieldRaw(field);
-        }
-        else
-            annotations.add(annot);
-    }
-    
-    /**
-     * Sets the display duration for the page (for presentations)
-     * @param seconds   the number of seconds to display the page
-     */
-    void setDuration(int seconds) {
-        if (seconds > 0)
-            this.duration=seconds;
-        else
-            this.duration=-1;
-    }
-    
-    /**
-     * Sets the transition for the page
-     * @param transition   the PdfTransition object
-     */
-    void setTransition(PdfTransition transition) {
-        this.transition=transition;
-    }
-
-    void setPageAction(PdfName actionType, PdfAction action) {
-        if (pageAA == null) {
-            pageAA = new PdfDictionary();
-        }
-        pageAA.put(actionType, action);
-    }
-    
-    /** Getter for property strictImageSequence.
-     * @return Value of property strictImageSequence.
-     *
-     */
-    boolean isStrictImageSequence() {
-        return this.strictImageSequence;
-    }
-    
-    /** Setter for property strictImageSequence.
-     * @param strictImageSequence New value of property strictImageSequence.
-     *
-     */
-    void setStrictImageSequence(boolean strictImageSequence) {
-        this.strictImageSequence = strictImageSequence;
-    }
- 
-    void setPageEmpty(boolean pageEmpty) {
-        this.pageEmpty = pageEmpty;
-    }
-	/**
-	 * Method added by Pelikan Stephan
-	 * @see com.lowagie.text.DocListener#clearTextWrap()
-	 */
-	public void clearTextWrap() {
-		float tmpHeight = imageEnd - currentHeight;
-		if (line != null) {
-			tmpHeight += line.height();
-		}
-		if ((imageEnd > -1) && (tmpHeight > 0)) {
-			carriageReturn();
-			currentHeight += tmpHeight;
-		}
-	}
-    
     ArrayList getDocumentJavaScript() {
         return documentJavaScript;
     }
-
-    /**
-     * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
-     */
-    public boolean setMarginMirroring(boolean MarginMirroring) {
-        if (writer != null && writer.isPaused()) {
-            return false;
-        }
-        return super.setMarginMirroring(MarginMirroring);
-    }
     
-    void setThumbnail(Image image) throws PdfException, DocumentException {
-        thumb = writer.getImageReference(writer.addDirectImageSimple(image));
-    }
+    private HashMap documentFileAttachment = new HashMap();
 
     void addFileAttachment(String description, PdfFileSpecification fs) throws IOException {
         if (description == null) {
@@ -3149,61 +3151,78 @@ class PdfDocument extends Document implements DocListener {
     HashMap getDocumentFileAttachment() {
         return documentFileAttachment;
     }
-
-    static PdfAnnotation convertAnnotation(PdfWriter writer, Annotation annot) throws IOException {
-         switch(annot.annotationType()) {
-            case Annotation.URL_NET:
-                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((URL) annot.attributes().get(Annotation.URL)));
-            case Annotation.URL_AS_STRING:
-                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE)));
-            case Annotation.FILE_DEST:
-                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), (String) annot.attributes().get(Annotation.DESTINATION)));
-            case Annotation.SCREEN:
-                boolean sparams[] = (boolean[])annot.attributes().get(Annotation.PARAMETERS);
-                String fname = (String) annot.attributes().get(Annotation.FILE);
-                String mimetype = (String) annot.attributes().get(Annotation.MIMETYPE);
-                PdfFileSpecification fs;
-                if (sparams[0])
-                    fs = PdfFileSpecification.fileEmbedded(writer, fname, fname, null);
-                else
-                    fs = PdfFileSpecification.fileExtern(writer, fname);
-                PdfAnnotation ann = PdfAnnotation.createScreen(writer, new Rectangle(annot.llx(), annot.lly(), annot.urx(), annot.ury()),
-                        fname, fs, mimetype, sparams[1]);
-                return ann;
-            case Annotation.FILE_PAGE:
-                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.FILE), ((Integer) annot.attributes().get(Annotation.PAGE)).intValue()));
-            case Annotation.NAMED_DEST:
-                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction(((Integer) annot.attributes().get(Annotation.NAMED)).intValue()));
-            case Annotation.LAUNCH:
-                return new PdfAnnotation(writer, annot.llx(), annot.lly(), annot.urx(), annot.ury(), new PdfAction((String) annot.attributes().get(Annotation.APPLICATION),(String) annot.attributes().get(Annotation.PARAMETERS),(String) annot.attributes().get(Annotation.OPERATION),(String) annot.attributes().get(Annotation.DEFAULTDIR)));
-            default:
-                PdfDocument doc = writer.getPdfDocument();
-                if (doc.line == null)
-                    return null;
-                PdfAnnotation an = new PdfAnnotation(writer, annot.llx(doc.indentRight() - doc.line.widthLeft()), annot.lly(doc.indentTop() - doc.currentHeight), annot.urx(doc.indentRight() - doc.line.widthLeft() + 20), annot.ury(doc.indentTop() - doc.currentHeight - 20), new PdfString(annot.title(), PdfObject.TEXT_UNICODE), new PdfString(annot.content(), PdfObject.TEXT_UNICODE));
-                return an;
-        }
-    }
-    /**
-	 * @return an XmpMetadata byte array
-	 */
-	public byte[] createXmpMetadata() {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    try {
-	    	XmpWriter xmp = new XmpWriter(baos, getInfo());
-	        xmp.close();
-	    }
-	    catch(IOException ioe) {
-	        ioe.printStackTrace();
-	    }
-	    return baos.toByteArray();
-	}
 	
-	int getMarkPoint() {
-	    return markPoint;
+//	[C6] document level actions
+	
+    private String openActionName;
+    
+    void setOpenAction(String name) {
+        openActionName = name;
+        openActionAction = null;
+    }
+
+    private PdfAction openActionAction;
+    void setOpenAction(PdfAction action) {
+        openActionAction = action;
+        openActionName = null;
+    }
+
+    private PdfDictionary additionalActions;
+    void addAdditionalAction(PdfName actionType, PdfAction action)  {
+        if (additionalActions == null)  {
+            additionalActions = new PdfDictionary();
+        }
+        if (action == null)
+            additionalActions.remove(actionType);
+        else
+            additionalActions.put(actionType, action);
+        if (additionalActions.size() == 0)
+            additionalActions = null;
+    }
+    
+//	[C7] portable collections
+    
+    private PdfCollection collection;
+
+    /**
+     * Sets the collection dictionary.
+     * @param collection a dictionary of type PdfCollection
+     */
+	public void setCollection(PdfCollection collection) {
+		this.collection = collection;
 	}
-	 
-	void incMarkPoint() {
-	    ++markPoint;
-	}
+    
+//	[C8] Tagged PDF (dealt with in PdfWriter)
+//	[C9] OCG (dealt with in PdfWriter)
+//	[C10] Metadata
+    /**
+     * Gets the <CODE>PdfInfo</CODE>-object.
+     *
+     * @return	<CODE>PdfInfo</COPE>
+     */
+    
+    PdfInfo getInfo() {
+        return info;
+    }
+//	[C11] AcroForm
+    
+    /** This is the AcroForm object. */
+    PdfAcroForm acroForm;
+    
+    /**
+     * Gets the AcroForm object.
+     * @return the PdfAcroform object of the PdfDocument
+     */
+    
+    public PdfAcroForm getAcroForm() {
+        return acroForm;
+    }
+    
+    void setSigFlags(int f) {
+        acroForm.setSigFlags(f);
+    }
+    
+    void addCalculationOrder(PdfFormField formField) {
+        acroForm.addCalculationOrder(formField);
+    }
 }
