@@ -51,7 +51,6 @@
 package com.lowagie.text.pdf;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -88,7 +87,6 @@ import com.lowagie.text.SimpleTable;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
-import com.lowagie.text.xml.xmp.XmpWriter;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -2362,7 +2360,7 @@ class PdfDocument extends Document implements DocListener {
         	catalog.put(PdfName.COLLECTION, collection);
         }
 
-        // [C9] AcroForm
+        // [C8] AcroForm
         if (acroForm.isValid()) {
             try {
                 catalog.put(PdfName.ACROFORM, writer.addToBody(acroForm).getIndirectReference());

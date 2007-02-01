@@ -61,7 +61,7 @@ import com.lowagie.text.Image;
  * <CODE>PdfImage</CODE> is a <CODE>PdfStream</CODE> containing an image-<CODE>Dictionary</CODE> and -stream.
  */
 
-class PdfImage extends PdfStream {
+public class PdfImage extends PdfStream {
     
     static final int TRANSFERSIZE = 4096;
     // membervariables

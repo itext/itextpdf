@@ -62,6 +62,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.internal.PdfXConformanceImp;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -526,7 +527,7 @@ public class PdfContentByte {
      * @param   blue    the intensity of blue. A value between 0 and 1
      */
     private void HelperRGB(float red, float green, float blue) {
-        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_RGB, null);
+    	PdfXConformanceImp.checkPDFXConformance(writer, PdfWriter.PDFXKEY_RGB, null);
         if (red < 0)
             red = 0.0f;
         else if (red > 1.0f)
@@ -2154,7 +2155,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorStroke(Color color) {
-        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
+    	PdfXConformanceImp.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -2191,7 +2192,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorFill(Color color) {
-        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
+    	PdfXConformanceImp.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -2272,7 +2273,7 @@ public class PdfContentByte {
      * @param tint the tint if it is a spot color, ignored otherwise
      */
     void outputColorNumbers(Color color, float tint) {
-        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
+    	PdfXConformanceImp.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_RGB:

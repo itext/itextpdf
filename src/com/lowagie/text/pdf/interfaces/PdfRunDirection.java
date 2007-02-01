@@ -49,39 +49,29 @@
 
 package com.lowagie.text.pdf.interfaces;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfAction;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfTransition;
-
-/**
- * A PDF page can have an open and/or close action.
- */
-
-public interface PdfPageActions {
-    /** action value */
-    public static final PdfName PAGE_OPEN = PdfName.O;
-    /** action value */
-    public static final PdfName PAGE_CLOSE = PdfName.C;
+public interface PdfRunDirection {
     
-    /**
-     * Sets the open and close page additional action.
-     * @param actionType the action type. It can be <CODE>PdfWriter.PAGE_OPEN</CODE>
-     * or <CODE>PdfWriter.PAGE_CLOSE</CODE>
-     * @param action the action to perform
-     * @throws DocumentException if the action type is invalid
+    /** Use the default run direction. */    
+    public static final int RUN_DIRECTION_DEFAULT = 0;
+    /** Do not use bidirectional reordering. */    
+    public static final int RUN_DIRECTION_NO_BIDI = 1;
+    /** Use bidirectional reordering with left-to-right
+     * preferential run direction.
      */    
-    public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException;
-
-    /**
-     * Sets the display duration for the page (for presentations)
-     * @param seconds   the number of seconds to display the page
-     */
-    public void setDuration(int seconds);
+    public static final int RUN_DIRECTION_LTR = 2;
+    /** Use bidirectional reordering with right-to-left
+     * preferential run direction.
+     */    
+    public static final int RUN_DIRECTION_RTL = 3;
     
-    /**
-     * Sets the transition for the page
-     * @param transition   the Transition object
-     */
-    public void setTransition(PdfTransition transition);
+    /** Sets the run direction. This is only used as a placeholder
+     * as it does not affect anything.
+     * @param runDirection the run direction
+     */    
+    public void setRunDirection(int runDirection);
+    
+    /** Gets the run direction.
+     * @return the run direction
+     */    
+    public int getRunDirection();
 }
