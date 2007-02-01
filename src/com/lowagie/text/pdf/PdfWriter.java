@@ -1013,6 +1013,7 @@ public class PdfWriter extends DocWriter implements
             throw new ExceptionConverter(ioe);
         }
         page.add(object.getIndirectReference());
+        // [U5]
         if (group != null) {
             page.put(PdfName.GROUP, group);
             group = null;
@@ -1959,7 +1960,7 @@ public class PdfWriter extends DocWriter implements
         return documentProperties.containsKey(prop);
     }
 
-//	[F12] adding properties (OCG, marked content)
+//	[F12] tagged PDF
     
     protected boolean tagged = false;
     protected PdfStructureTreeRoot structureTreeRoot;

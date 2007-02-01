@@ -63,98 +63,99 @@ public interface DocListener extends ElementListener {
     
     // methods
     
-/**
- * Signals that the <CODE>Document</CODE> has been opened and that
- * <CODE>Elements</CODE> can be added.
- */
+	/**
+	 * Signals that the <CODE>Document</CODE> has been opened and that
+	 * <CODE>Elements</CODE> can be added.
+	 */
     
-    public void open();
+    public void open(); // [L1]
     
-/**
- * Sets the pagesize.
- *
- * @param	pageSize	the new pagesize
- * @return	a <CODE>boolean</CODE>
- */
+    /**
+     * Signals that the <CODE>Document</CODE> was closed and that no other
+     * <CODE>Elements</CODE> will be added.
+     * <P>
+     * The outputstream of every writer implementing <CODE>DocListener</CODE> will be closed.
+     */
+        
+    public void close(); // [L2] 
     
-    public boolean setPageSize(Rectangle pageSize);
+    /**
+     * Signals that an new page has to be started.
+     *
+     * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
+     * @throws	DocumentException	when a document isn't open yet, or has been closed
+     */
+        
+    public boolean newPage(); // [L3]
     
-/**
- * Sets the margins.
- *
- * @param	marginLeft		the margin on the left
- * @param	marginRight		the margin on the right
- * @param	marginTop		the margin on the top
- * @param	marginBottom	the margin on the bottom
- * @return	a <CODE>boolean</CODE>
- */
-    
-    public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom);
-    
+    /**
+     * Sets the pagesize.
+     *
+     * @param	pageSize	the new pagesize
+     * @return	a <CODE>boolean</CODE>
+     */
+        
+    public boolean setPageSize(Rectangle pageSize); // [L4]
+        
+    /**
+     * Sets the margins.
+     *
+     * @param	marginLeft		the margin on the left
+     * @param	marginRight		the margin on the right
+     * @param	marginTop		the margin on the top
+     * @param	marginBottom	the margin on the bottom
+     * @return	a <CODE>boolean</CODE>
+     */
+        
+    public boolean setMargins(float marginLeft, float marginRight, float marginTop, float marginBottom);  // [L5]
+        
     /**
      * Parameter that allows you to do margin mirroring (odd/even pages)
      * @param marginMirroring
      * @return true if succesfull
      */
-    public boolean setMarginMirroring(boolean marginMirroring);
+    public boolean setMarginMirroring(boolean marginMirroring); // [L6]
+        
+    /**
+     * Sets the page number.
+     *
+     * @param	pageN		the new page number
+     */
+        
+    public void setPageCount(int pageN); // [L7]
     
-/**
- * Signals that an new page has to be started.
- *
- * @return	<CODE>true</CODE> if the page was added, <CODE>false</CODE> if not.
- * @throws	DocumentException	when a document isn't open yet, or has been closed
- */
+    /**
+     * Sets the page number to 0.
+     */
+        
+    public void resetPageCount(); // [L8]
+
+    /**
+     * Changes the header of this document.
+     *
+     * @param	header		the new header
+     */
     
-    public boolean newPage();
+    public void setHeader(HeaderFooter header); // [L9]
     
-/**
- * Changes the header of this document.
- *
- * @param	header		the new header
- */
+    /**
+     * Resets the header of this document.
+     */
     
-    public void setHeader(HeaderFooter header);
+    public void resetHeader(); // [L10]
     
-/**
- * Resets the header of this document.
- */
+    /**
+     * Changes the footer of this document.
+     *
+     * @param	footer		the new footer
+     */
     
-    public void resetHeader();
+    public void setFooter(HeaderFooter footer); // [L11]
     
-/**
- * Changes the footer of this document.
- *
- * @param	footer		the new footer
- */
+    /**
+     * Resets the footer of this document.
+     */
     
-    public void setFooter(HeaderFooter footer);
-    
-/**
- * Resets the footer of this document.
- */
-    
-    public void resetFooter();
-    
-/**
- * Sets the page number to 0.
- */
-    
-    public void resetPageCount();
-    
-/**
- * Sets the page number.
- *
- * @param	pageN		the new page number
- */
-    
-    public void setPageCount(int pageN);
-    
-/**
- * Signals that the <CODE>Document</CODE> was closed and that no other
- * <CODE>Elements</CODE> will be added.
- * <P>
- * The outputstream of every writer implementing <CODE>DocListener</CODE> will be closed.
- */
-    
-    public void close();
+    public void resetFooter(); // [L12]
+
 }
