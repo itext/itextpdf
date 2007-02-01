@@ -321,6 +321,16 @@ public abstract class DocWriter implements DocListener {
     public void pause() {
         pause = true;
     }
+    
+    /**
+     * Checks if writing is paused.
+     *
+     * @return		<CODE>true</CODE> if writing temporarely has to be paused, <CODE>false</CODE> otherwise.
+     */
+    
+    public boolean isPaused() {
+        return pause;
+    }
 
 /**
  * Let the writer know that writing may be resumed.

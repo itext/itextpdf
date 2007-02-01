@@ -403,7 +403,7 @@ public class PdfCopy extends PdfWriter {
      */
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
-            PdfDictionary theCat = ((PdfDocument)document).getCatalog(rootObj);
+            PdfDictionary theCat = pdf.getCatalog(rootObj);
             if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
             if (newBookmarks == null || newBookmarks.isEmpty())
                 return theCat;

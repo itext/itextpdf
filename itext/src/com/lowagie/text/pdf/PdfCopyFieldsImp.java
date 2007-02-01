@@ -60,8 +60,6 @@ import java.util.StringTokenizer;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
-import com.lowagie.text.pdf.internal.PdfVersionImp;
-import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
 /**
  *
@@ -531,7 +529,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
-            PdfDictionary cat = ((PdfDocument)document).getCatalog(rootObj);
+            PdfDictionary cat = pdf.getCatalog(rootObj);
             if (form != null) {
                 PdfIndirectReference ref = addToBody(form).getIndirectReference();
                 cat.put(PdfName.ACROFORM, ref);

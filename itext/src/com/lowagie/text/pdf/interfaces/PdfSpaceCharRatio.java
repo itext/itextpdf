@@ -49,39 +49,10 @@
 
 package com.lowagie.text.pdf.interfaces;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfAction;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfTransition;
+public interface PdfSpaceCharRatio {
 
-/**
- * A PDF page can have an open and/or close action.
- */
-
-public interface PdfPageActions {
-    /** action value */
-    public static final PdfName PAGE_OPEN = PdfName.O;
-    /** action value */
-    public static final PdfName PAGE_CLOSE = PdfName.C;
-    
-    /**
-     * Sets the open and close page additional action.
-     * @param actionType the action type. It can be <CODE>PdfWriter.PAGE_OPEN</CODE>
-     * or <CODE>PdfWriter.PAGE_CLOSE</CODE>
-     * @param action the action to perform
-     * @throws DocumentException if the action type is invalid
-     */    
-    public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException;
-
-    /**
-     * Sets the display duration for the page (for presentations)
-     * @param seconds   the number of seconds to display the page
-     */
-    public void setDuration(int seconds);
-    
-    /**
-     * Sets the transition for the page
-     * @param transition   the Transition object
-     */
-    public void setTransition(PdfTransition transition);
+    /** The default space-char ratio. */    
+    public static final float SPACE_CHAR_RATIO_DEFAULT = 2.5f;
+    /** Disable the inter-character spacing. */    
+    public static final float NO_SPACE_CHAR_RATIO = 10000000f;
 }

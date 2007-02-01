@@ -49,39 +49,40 @@
 
 package com.lowagie.text.pdf.interfaces;
 
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfAction;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfTransition;
-
-/**
- * A PDF page can have an open and/or close action.
- */
-
-public interface PdfPageActions {
-    /** action value */
-    public static final PdfName PAGE_OPEN = PdfName.O;
-    /** action value */
-    public static final PdfName PAGE_CLOSE = PdfName.C;
+public interface PdfXConformance {
+    /** A PDF/X level. */
+    public static final int PDFXNONE = 0;
+    /** A PDF/X level. */
+    public static final int PDFX1A2001 = 1;
+    /** A PDF/X level. */
+    public static final int PDFX32002 = 2;
+    
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    static final int PDFXKEY_COLOR = 1;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    static final int PDFXKEY_CMYK = 2;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    static final int PDFXKEY_RGB = 3;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    static final int PDFXKEY_FONT = 4;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    static final int PDFXKEY_IMAGE = 5;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    static final int PDFXKEY_GSTATE = 6;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    static final int PDFXKEY_LAYER = 7;
     
     /**
-     * Sets the open and close page additional action.
-     * @param actionType the action type. It can be <CODE>PdfWriter.PAGE_OPEN</CODE>
-     * or <CODE>PdfWriter.PAGE_CLOSE</CODE>
-     * @param action the action to perform
-     * @throws DocumentException if the action type is invalid
+     * Sets the PDF/X conformance level.
+     * Allowed values are PDFX1A2001 and PDFX32002.
+     * It must be called before opening the document.
+     * @param pdfxConformance the conformance level
      */    
-    public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException;
+    public void setPDFXConformance(int pdfxConformance);
 
-    /**
-     * Sets the display duration for the page (for presentations)
-     * @param seconds   the number of seconds to display the page
-     */
-    public void setDuration(int seconds);
-    
-    /**
-     * Sets the transition for the page
-     * @param transition   the Transition object
-     */
-    public void setTransition(PdfTransition transition);
+	/**
+	 * Getter for the PDF/X Conformance value.
+	 * @return the pdfxConformance
+	 */
+	public int getPDFXConformance();
 }

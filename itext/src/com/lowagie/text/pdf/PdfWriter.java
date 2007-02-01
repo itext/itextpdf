@@ -79,7 +79,11 @@ import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 import com.lowagie.text.pdf.interfaces.PdfPageActions;
 import com.lowagie.text.pdf.interfaces.PdfVersion;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
+import com.lowagie.text.pdf.interfaces.PdfXConformance;
+import com.lowagie.text.pdf.interfaces.PdfRunDirection;
+import com.lowagie.text.pdf.interfaces.PdfSpaceCharRatio;
 import com.lowagie.text.pdf.internal.PdfVersionImp;
+import com.lowagie.text.pdf.internal.PdfXConformanceImp;
 import com.lowagie.text.xml.xmp.XmpWriter;
 
 /**
@@ -90,10 +94,17 @@ import com.lowagie.text.xml.xmp.XmpWriter;
  * added to this Document will be written to the outputstream.</P>
  */
 
-public class PdfWriter extends DocWriter
-	implements PdfViewerPreferences, PdfEncryptionSettings, PdfVersion, PdfDocumentActions, PdfPageActions {
+public class PdfWriter extends DocWriter implements
+	PdfViewerPreferences,
+	PdfEncryptionSettings,
+	PdfVersion,
+	PdfDocumentActions,
+	PdfPageActions,
+	PdfXConformance,
+	PdfRunDirection,
+	PdfSpaceCharRatio {
     
-    // inner classes
+// INNER CLASSES
     
     /**
      * This class generates the structure of a PDF document.
@@ -224,6 +235,8 @@ public class PdfWriter extends DocWriter
 			}
 
         }
+
+        private static final int OBJSINSTREAM = 200;
         
         // membervariables
         
@@ -233,6 +246,11 @@ public class PdfWriter extends DocWriter
         /** the current byteposition in the body. */
         private int position;
         private PdfWriter writer;
+        private ByteBuffer index;
+        private ByteBuffer streamObjects;
+        private int currentObjNum;
+        private int numObj = 0;
+        
         // constructors
         
         /**
@@ -247,18 +265,11 @@ public class PdfWriter extends DocWriter
             this.writer = writer;
         }
         
+        // methods
+        
         void setRefnum(int refnum) {
             this.refnum = refnum;
         }
-        
-        // methods
-        
-        private static final int OBJSINSTREAM = 200;
-        
-        private ByteBuffer index;
-        private ByteBuffer streamObjects;
-        private int currentObjNum;
-        private int numObj = 0;
         
         private PdfWriter.PdfBody.PdfCrossReference addToObjStm(PdfObject obj, int nObj) throws IOException {
             if (numObj >= OBJSINSTREAM)
@@ -554,104 +565,14 @@ public class PdfWriter extends DocWriter
             os.write(getISOBytes("\n%%EOF\n"));
         }
     }
-    
-    // member variables
 
-    protected int prevxref = 0;
+//	ESSENTIALS 
     
-    /** Dictionary, containing all the images of the PDF document */
-    protected PdfDictionary imageDictionary = new PdfDictionary();
+//	Construct a PdfWriter instance
     
-    /** This is the list with all the images in the document. */
-    private HashMap images = new HashMap();
-    
-    /** The form XObjects in this document. The key is the xref and the value
-        is Object[]{PdfName, template}.*/
-    protected HashMap formXObjects = new HashMap();
-    
-    /** The name counter for the form XObjects name. */
-    protected int formXObjectsCounter = 1;
-    
-    /** The font number counter for the fonts in the document. */
-    protected int fontNumber = 1;
-    
-    /** The color number counter for the colors in the document. */
-    protected int colorNumber = 1;
-    
-    /** The patten number counter for the colors in the document. */
-    protected int patternNumber = 1;
-    
-    /** The direct content in this document. */
-    protected PdfContentByte directContent;
-    
-    /** The direct content under in this document. */
-    protected PdfContentByte directContentUnder;
-    
-    /** The fonts of this document */
-    protected HashMap documentFonts = new HashMap();
-    
-    /** The colors of this document */
-    protected HashMap documentColors = new HashMap();
-    
-    /** The patterns of this document */
-    protected HashMap documentPatterns = new HashMap();
-    
-    protected HashMap documentShadings = new HashMap();
-    
-    protected HashMap documentShadingPatterns = new HashMap();
-    
-    protected ColorDetails patternColorspaceRGB;
-    protected ColorDetails patternColorspaceGRAY;
-    protected ColorDetails patternColorspaceCMYK;
-    protected HashMap documentSpotPatterns = new HashMap();
-    
-    protected HashMap documentExtGState = new HashMap();
-    
-    protected HashMap documentProperties = new HashMap();
-    
-    protected PdfDictionary defaultColorspace = new PdfDictionary();
-    
-    // membervariables
-    
-    /** body of the PDF document */
-    protected PdfBody body;
-    
-    /** the pdfdocument object. */
-    protected PdfDocument pdf;
-    
-    /** The <CODE>PdfPageEvent</CODE> for this document. */
-    private PdfPageEvent pageEvent;
-    
-    protected HashMap importedPages = new HashMap();
-    
-    protected PdfReaderInstance currentPdfReaderInstance;
-    
-    /** The default space-char ratio. */    
-    public static final float SPACE_CHAR_RATIO_DEFAULT = 2.5f;
-    /** Disable the inter-character spacing. */    
-    public static final float NO_SPACE_CHAR_RATIO = 10000000f;
-    
-    /** Use the default run direction. */    
-    public static final int RUN_DIRECTION_DEFAULT = 0;
-    /** Do not use bidirectional reordering. */    
-    public static final int RUN_DIRECTION_NO_BIDI = 1;
-    /** Use bidirectional reordering with left-to-right
-     * preferential run direction.
-     */    
-    public static final int RUN_DIRECTION_LTR = 2;
-    /** Use bidirectional reordering with right-to-left
-     * preferential run direction.
-     */    
-    public static final int RUN_DIRECTION_RTL = 3;
-    protected int runDirection = RUN_DIRECTION_NO_BIDI;
     /**
-     * The ratio between the extra word spacing and the extra character spacing.
-     * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
+     * Constructs a <CODE>PdfWriter</CODE>.
      */
-    private float spaceCharRatio = SPACE_CHAR_RATIO_DEFAULT;
-   
-    // constructor
-    
     protected PdfWriter() {
     }
     
@@ -672,10 +593,8 @@ public class PdfWriter extends DocWriter
         directContentUnder = new PdfContentByte(this);
     }
     
-    // get an instance of the PdfWriter
-    
     /**
-     * Gets an instance of the <CODE>PdfWriter</CODE>.
+     * Use this method to get an instance of the <CODE>PdfWriter</CODE>.
      *
      * @param	document	The <CODE>Document</CODE> that has to be written
      * @param	os	The <CODE>OutputStream</CODE> the writer has to write to.
@@ -693,7 +612,8 @@ public class PdfWriter extends DocWriter
         return writer;
     }
     
-    /** Gets an instance of the <CODE>PdfWriter</CODE>.
+    /**
+     * Use this method to get an instance of the <CODE>PdfWriter</CODE>.
      *
      * @return a new <CODE>PdfWriter</CODE>
      * @param document The <CODE>Document</CODE> that has to be written
@@ -711,477 +631,32 @@ public class PdfWriter extends DocWriter
         pdf.addWriter(writer);
         return writer;
     }
+
+//	the PdfDocument instance
     
-    // methods to write objects to the outputstream
-    
-    /**
-     * Adds an image to the document but not to the page resources. It is used with
-     * templates and <CODE>Document.add(Image)</CODE>.
-     * @param image the <CODE>Image</CODE> to add
-     * @return the name of the image added
-     * @throws PdfException on error
-     * @throws DocumentException on error
-     */
-    public PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
-        return addDirectImageSimple(image, null);
-    }
+    /** the pdfdocument object. */
+    protected PdfDocument pdf;
     
     /**
-     * Adds an image to the document but not to the page resources. It is used with
-     * templates and <CODE>Document.add(Image)</CODE>.
-     * @param image the <CODE>Image</CODE> to add
-     * @param fixedRef the reference to used. It may be <CODE>null</CODE>,
-     * a <CODE>PdfIndirectReference</CODE> or a <CODE>PRIndirectReference</CODE>.
-     * @return the name of the image added
-     * @throws PdfException on error
-     * @throws DocumentException on error
+     * Gets the <CODE>PdfDocument</CODE> associated with this writer.
+     * @return the <CODE>PdfDocument</CODE>
      */
-    public PdfName addDirectImageSimple(Image image, PdfIndirectReference fixedRef) throws PdfException, DocumentException {
-        PdfName name;
-        // if the images is already added, just retrieve the name
-        if (images.containsKey(image.getMySerialId())) {
-            name = (PdfName) images.get(image.getMySerialId());
-        }
-        // if it's a new image, add it to the document
-        else {
-            if (image.isImgTemplate()) {
-                name = new PdfName("img" + images.size());
-                if (image.templateData() == null) {
-                    if(image instanceof ImgWMF){
-                        try {
-                            ImgWMF wmf = (ImgWMF)image;
-                            wmf.readWMF(PdfTemplate.createTemplate(this, 0, 0));
-                        }
-                        catch (Exception e) {
-                            throw new DocumentException(e);
-                        }
-                    }else{
-                        try {
-                            ((ImgPostscript)image).readPostscript(PdfTemplate.createTemplate(this, 0, 0));
-                        }
-                        catch (Exception e) {
-                            throw new DocumentException(e);
-                        }
-                        
-                    }
-                }
-            }
-            else {
-                PdfIndirectReference dref = image.getDirectReference();
-                if (dref != null) {
-                    PdfName rname = new PdfName("img" + images.size());
-                    images.put(image.getMySerialId(), rname);
-                    imageDictionary.put(rname, dref);
-                    return rname;
-                }
-                Image maskImage = image.getImageMask();
-                PdfIndirectReference maskRef = null;
-                if (maskImage != null) {
-                    PdfName mname = (PdfName)images.get(maskImage.getMySerialId());
-                    maskRef = getImageReference(mname);
-                }
-                PdfImage i = new PdfImage(image, "img" + images.size(), maskRef);
-                if (image.hasICCProfile()) {
-                    PdfICCBased icc = new PdfICCBased(image.getICCProfile());
-                    PdfIndirectReference iccRef = add(icc);
-                    PdfArray iccArray = new PdfArray();
-                    iccArray.add(PdfName.ICCBASED);
-                    iccArray.add(iccRef);
-                    PdfObject colorspace = i.get(PdfName.COLORSPACE);
-                    if (colorspace != null && colorspace.isArray()) {
-                        ArrayList ar = ((PdfArray)colorspace).getArrayList();
-                        if (ar.size() > 1 && PdfName.INDEXED.equals(ar.get(0)))
-                            ar.set(1, iccArray);
-                        else
-                            i.put(PdfName.COLORSPACE, iccArray);
-                    }
-                    else
-                        i.put(PdfName.COLORSPACE, iccArray);
-                }
-                add(i, fixedRef);
-                name = i.name();
-            }
-            images.put(image.getMySerialId(), name);
-        }
-        return name;
+    
+    PdfDocument getPdfDocument() {
+        return pdf;
     }
 
     /**
-     * Writes a <CODE>PdfImage</CODE> to the outputstream.
-     *
-     * @param pdfImage the image to be added
-     * @return a <CODE>PdfIndirectReference</CODE> to the encapsulated image
-     * @throws PdfException when a document isn't open yet, or has been closed
-     */
-    
-    PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
-        if (! imageDictionary.contains(pdfImage.name())) {
-            checkPDFXConformance(this, PDFXKEY_IMAGE, pdfImage);
-            if (fixedRef instanceof PRIndirectReference) {
-                PRIndirectReference r2 = (PRIndirectReference)fixedRef;
-                fixedRef = new PdfIndirectReference(0, getNewObjectNumber(r2.getReader(), r2.getNumber(), r2.getGeneration()));
-            }
-            try {
-                if (fixedRef == null)
-                    fixedRef = addToBody(pdfImage).getIndirectReference();
-                else
-                    addToBody(pdfImage, fixedRef);
-            }
-            catch(IOException ioe) {
-                throw new ExceptionConverter(ioe);
-            }
-            imageDictionary.put(pdfImage.name(), fixedRef);
-            return fixedRef;
-        }
-        return (PdfIndirectReference) imageDictionary.get(pdfImage.name());
-    }
-    
-    protected PdfIndirectReference add(PdfICCBased icc) {
-        PdfIndirectObject object;
-        try {
-            object = addToBody(icc);
-        }
-        catch(IOException ioe) {
-            throw new ExceptionConverter(ioe);
-        }
-        return object.getIndirectReference();
-    }
-    
-    /**
-     * return the <CODE>PdfIndirectReference</CODE> to the image with a given name.
-     *
-     * @param name the name of the image
-     * @return a <CODE>PdfIndirectReference</CODE>
-     */
-    
-    PdfIndirectReference getImageReference(PdfName name) {
-        return (PdfIndirectReference) imageDictionary.get(name);
-    }
-    
-    // methods to open and close the writer
-    
-    /**
-     * Signals that the <CODE>Document</CODE> has been opened and that
-     * <CODE>Elements</CODE> can be added.
-     * <P>
-     * When this method is called, the PDF-document header is
-     * written to the outputstream.
-     */
-    
-    public void open() {
-        super.open();
-        try {
-        	pdf_version.writeHeader(os);
-            body = new PdfBody(this);
-            if (pdfxConformance == PDFX32002) {
-                PdfDictionary sec = new PdfDictionary();
-                sec.put(PdfName.GAMMA, new PdfArray(new float[]{2.2f,2.2f,2.2f}));
-                sec.put(PdfName.MATRIX, new PdfArray(new float[]{0.4124f,0.2126f,0.0193f,0.3576f,0.7152f,0.1192f,0.1805f,0.0722f,0.9505f}));
-                sec.put(PdfName.WHITEPOINT, new PdfArray(new float[]{0.9505f,1f,1.089f}));
-                PdfArray arr = new PdfArray(PdfName.CALRGB);
-                arr.add(sec);
-                setDefaultColorspace(PdfName.DEFAULTRGB, addToBody(arr).getIndirectReference());
-            }
-        }
-        catch(IOException ioe) {
-            throw new ExceptionConverter(ioe);
-        }
-    }
-    
-    protected PdfDictionary getCatalog(PdfIndirectReference rootObj)
-    {
-        PdfDictionary catalog = ((PdfDocument)document).getCatalog(rootObj);
-        if (tagged) {
-            try {
-                getStructureTreeRoot().buildTree();
-            }
-            catch (Exception e) {
-                throw new ExceptionConverter(e);
-            }
-            catalog.put(PdfName.STRUCTTREEROOT, structureTreeRoot.getReference());
-            PdfDictionary mi = new PdfDictionary();
-            mi.put(PdfName.MARKED, PdfBoolean.PDFTRUE);
-            catalog.put(PdfName.MARKINFO, mi);
-        }
-        // [C9] OCG
-        if (!documentOCG.isEmpty()) {
-        	fillOCProperties(false);
-        	catalog.put(PdfName.OCPROPERTIES, OCProperties);
-        }
-        return catalog;
+     * Use this method to get the info dictionary if you want to
+     * change it directly (add keys and values to the info dictionary).
+     * @return the info dictionary
+     */    
+    public PdfDictionary getInfo() {
+        return pdf.getInfo();
     }
 
-    protected void addSharedObjectsToBody() throws IOException {
-        // add the fonts
-        for (Iterator it = documentFonts.values().iterator(); it.hasNext();) {
-            FontDetails details = (FontDetails)it.next();
-            details.writeFont(this);
-        }
-        // add the form XObjects
-        for (Iterator it = formXObjects.values().iterator(); it.hasNext();) {
-            Object objs[] = (Object[])it.next();
-            PdfTemplate template = (PdfTemplate)objs[1];
-            if (template != null && template.getIndirectReference() instanceof PRIndirectReference)
-                continue;
-            if (template != null && template.getType() == PdfTemplate.TYPE_TEMPLATE) {
-                addToBody(template.getFormXObject(), template.getIndirectReference());
-            }
-        }
-        // add all the dependencies in the imported pages
-        for (Iterator it = importedPages.values().iterator(); it.hasNext();) {
-            currentPdfReaderInstance = (PdfReaderInstance)it.next();
-            currentPdfReaderInstance.writeAllPages();
-        }
-        currentPdfReaderInstance = null;
-        // add the color
-        for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
-            ColorDetails color = (ColorDetails)it.next();
-            addToBody(color.getSpotColor(this), color.getIndirectReference());
-        }
-        // add the pattern
-        for (Iterator it = documentPatterns.keySet().iterator(); it.hasNext();) {
-            PdfPatternPainter pat = (PdfPatternPainter)it.next();
-            addToBody(pat.getPattern(), pat.getIndirectReference());
-        }
-        // add the shading patterns
-        for (Iterator it = documentShadingPatterns.keySet().iterator(); it.hasNext();) {
-            PdfShadingPattern shadingPattern = (PdfShadingPattern)it.next();
-            shadingPattern.addToBody();
-        }
-        // add the shadings
-        for (Iterator it = documentShadings.keySet().iterator(); it.hasNext();) {
-            PdfShading shading = (PdfShading)it.next();
-            shading.addToBody();
-        }
-        // add the extgstate
-        for (Iterator it = documentExtGState.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
-            PdfDictionary gstate = (PdfDictionary) entry.getKey();
-            PdfObject obj[] = (PdfObject[]) entry.getValue();
-            addToBody(gstate, (PdfIndirectReference)obj[1]);
-        }
-        // add the properties
-        for (Iterator it = documentProperties.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
-            Object prop = entry.getKey();
-            PdfObject[] obj = (PdfObject[]) entry.getValue();
-            if (prop instanceof PdfLayerMembership){
-                PdfLayerMembership layer = (PdfLayerMembership)prop;
-                addToBody(layer.getPdfObject(), layer.getRef());
-            }
-            else if ((prop instanceof PdfDictionary) && !(prop instanceof PdfLayer)){
-                addToBody((PdfDictionary)prop, (PdfIndirectReference)obj[1]);
-            }
-        }
-        for (Iterator it = documentOCG.iterator(); it.hasNext();) {
-            PdfOCG layer = (PdfOCG)it.next();
-            addToBody(layer.getPdfObject(), layer.getRef());
-        }
-    }
-    
     /**
-     * Signals that the <CODE>Document</CODE> was closed and that no other
-     * <CODE>Elements</CODE> will be added.
-     * <P>
-     * The pages-tree is built and written to the outputstream.
-     * A Catalog is constructed, as well as an Info-object,
-     * the referencetable is composed and everything is written
-     * to the outputstream embedded in a Trailer.
-     */
-    
-    public synchronized void close() {
-        if (open) {
-            if ((currentPageNumber - 1) != pageReferences.size())
-                throw new RuntimeException("The page " + pageReferences.size() +
-                " was requested but the document has only " + (currentPageNumber - 1) + " pages.");
-            pdf.close();
-            try {
-                addSharedObjectsToBody();
-                // add the root to the body
-                PdfIndirectReference rootRef = root.writePageTree();
-                // make the catalog-object and add it to the body
-                PdfDictionary catalog = getCatalog(rootRef);
-                // if there is XMP data to add: add it
-                if (xmpMetadata != null) {
-                	PdfStream xmp = new PdfStream(xmpMetadata);
-                	xmp.put(PdfName.TYPE, PdfName.METADATA);
-                	xmp.put(PdfName.SUBTYPE, PdfName.XML);
-                    if (crypto != null && !crypto.isMetadataEncrypted()) {
-                        PdfArray ar = new PdfArray();
-                        ar.add(PdfName.CRYPT);
-                        xmp.put(PdfName.FILTER, ar);
-                    }
-                	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
-                }
-                // make pdfx conformant
-                PdfDictionary info = getInfo();
-                if (pdfxConformance != PDFXNONE) {
-                    if (info.get(PdfName.GTS_PDFXVERSION) == null) {
-                        if (pdfxConformance == PDFX1A2001) {
-                            info.put(PdfName.GTS_PDFXVERSION, new PdfString("PDF/X-1:2001"));
-                            info.put(new PdfName("GTS_PDFXConformance"), new PdfString("PDF/X-1a:2001"));
-                        }
-                        else if (pdfxConformance == PDFX32002)
-                            info.put(PdfName.GTS_PDFXVERSION, new PdfString("PDF/X-3:2002"));
-                    }
-                    if (info.get(PdfName.TITLE) == null) {
-                        info.put(PdfName.TITLE, new PdfString("Pdf document"));
-                    }
-                    if (info.get(PdfName.CREATOR) == null) {
-                        info.put(PdfName.CREATOR, new PdfString("Unknown"));
-                    }
-                    if (info.get(PdfName.TRAPPED) == null) {
-                        info.put(PdfName.TRAPPED, new PdfName("False"));
-                    }
-                    getExtraCatalog();
-                    if (extraCatalog.get(PdfName.OUTPUTINTENTS) == null) {
-                        PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
-                        out.put(PdfName.OUTPUTCONDITION, new PdfString("SWOP CGATS TR 001-1995"));
-                        out.put(PdfName.OUTPUTCONDITIONIDENTIFIER, new PdfString("CGATS TR 001"));
-                        out.put(PdfName.REGISTRYNAME, new PdfString("http://www.color.org"));
-                        out.put(PdfName.INFO, new PdfString(""));
-                        out.put(PdfName.S, PdfName.GTS_PDFX);
-                        extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
-                    }
-                }
-                if (extraCatalog != null) {
-                    catalog.mergeDifferent(extraCatalog);
-                }
-                PdfIndirectObject indirectCatalog = addToBody(catalog, false);
-                // add the info-object to the body
-                PdfIndirectObject infoObj = addToBody(info, false);
-                PdfIndirectReference encryption = null;
-                PdfObject fileID = null;
-                body.flushObjStm();
-                if (crypto != null) {
-                    PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
-                    encryption = encryptionObject.getIndirectReference();
-                    fileID = crypto.getFileID();
-                }
-                else
-                    fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
-                
-                // write the cross-reference table of the body
-                body.writeCrossReferenceTable(os, indirectCatalog.getIndirectReference(),
-                    infoObj.getIndirectReference(), encryption,  fileID, prevxref);
-
-                // make the trailer
-                if (fullCompression) {
-                    os.write(getISOBytes("startxref\n"));
-                    os.write(getISOBytes(String.valueOf(body.offset())));
-                    os.write(getISOBytes("\n%%EOF\n"));
-                }
-                else {
-                    PdfTrailer trailer = new PdfTrailer(body.size(),
-                    body.offset(),
-                    indirectCatalog.getIndirectReference(),
-                    infoObj.getIndirectReference(),
-                    encryption,
-                    fileID, prevxref);
-                    trailer.toPdf(this, os);
-                }
-                super.close();
-            }
-            catch(IOException ioe) {
-                throw new ExceptionConverter(ioe);
-            }
-        }
-    }
-    
-    // methods
-    
-    /**
-     * Sometimes it is necessary to know where the just added <CODE>Table</CODE> ends.
-     *
-     * For instance to avoid to add another table in a page that is ending up, because
-     * the new table will be probably splitted just after the header (it is an
-     * unpleasant effect, isn't it?).
-     *
-     * Added on September 8th, 2001
-     * by Francesco De Milato
-     * francesco.demilato@tiscalinet.it
-     * @param table the <CODE>Table</CODE>
-     * @return the bottom height of the just added table
-     */
-    
-    public float getTableBottom(Table table) {
-        return pdf.bottom(table) - pdf.indentBottom();
-    }
-    
-    /**
-	 * Gets a pre-rendered table.
-	 * (Contributed by dperezcar@fcc.es) 
-	 * @param table		Contains the table definition.  Its contents are deleted, after being pre-rendered.
-     * @return a PdfTable
-	 */
-	
-	public PdfTable getPdfTable(Table table) {
-		return pdf.getPdfTable(table, true);
-	}
-
-	/**
-	 * Row additions to the original {@link Table} used to build the {@link PdfTable} are processed and pre-rendered,
-	 * and then the contents are deleted. 
-	 * If the pre-rendered table doesn't fit, then it is fully rendered and its data discarded.  
-	 * There shouldn't be any column change in the underlying {@link Table} object.
-	 * (Contributed by dperezcar@fcc.es) 
-	 *
-	 * @param	table		The pre-rendered table obtained from {@link #getPdfTable(Table)} 
-	 * @return	true if the table is rendered and emptied.
-	 * @throws DocumentException
-	 * @see #getPdfTable(Table)
-	 */
-	
-	public boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {
-		return pdf.breakTableIfDoesntFit(table);
-	}
-    
-    /**
-     * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
-     *
-     * @param	table	the table that has to be checked
-     * @param	margin	a certain margin
-     * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
-     */
-    
-    public boolean fitsPage(Table table, float margin) {
-        return pdf.bottom(table) > pdf.indentBottom() + margin;
-    }
-    
-    /**
-     * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
-     *
-     * @param	table	the table that has to be checked
-     * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
-     */
-    
-    public boolean fitsPage(Table table) {
-        return fitsPage(table, 0);
-    }
-    
-    /**
-     * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
-     *
-     * @param	table	the table that has to be checked
-     * @param	margin	a certain margin
-     * @return	<CODE>true</CODE> if the <CODE>PdfPTable</CODE> fits the page, <CODE>false</CODE> otherwise.
-     */
-    public boolean fitsPage(PdfPTable table, float margin) {
-        return pdf.fitsPage(table, margin);
-    }
-    
-    /**
-     * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
-     *
-     * @param	table	the table that has to be checked
-     * @return	<CODE>true</CODE> if the <CODE>PdfPTable</CODE> fits the page, <CODE>false</CODE> otherwise.
-     */
-    public boolean fitsPage(PdfPTable table) {
-        return pdf.fitsPage(table, 0);
-    }
-    
-    /**
-     * Gets the current vertical page position.
+     * Use this method to get the current vertical page position.
      * @param ensureNewLine Tells whether a new line shall be enforced. This may cause side effects 
      *   for elements that do not terminate the lines they've started because those lines will get
      *   terminated. 
@@ -1191,19 +666,27 @@ public class PdfWriter extends DocWriter
         return pdf.getVerticalPosition(ensureNewLine);
     }
     
-    /**
-     * Checks if writing is paused.
-     *
-     * @return		<CODE>true</CODE> if writing temporarely has to be paused, <CODE>false</CODE> otherwise.
-     */
+//	the PdfDirectContentByte instances
     
-    boolean isPaused() {
-        return pause;
-    }
+/*
+ * You should see Direct Content as a canvas on which you can draw
+ * graphics and text. One canvas goes on top of the page (getDirectContent),
+ * the other goes underneath (getDirectContentUnder).
+ * You can always the same object throughout your document,
+ * even if you have moved to a new page. Whatever you add on
+ * the canvas will be displayed on top or under the current page.
+ */
+    
+    /** The direct content in this document. */
+    protected PdfContentByte directContent;
+    
+    /** The direct content under in this document. */
+    protected PdfContentByte directContentUnder;
     
     /**
-     * Gets the direct content for this document. There is only one direct content,
-     * multiple calls to this method will allways retrieve the same.
+     * Use this method to get the direct content for this document.
+     * There is only one direct content, multiple calls to this method
+     * will allways retrieve the same object.
      * @return the direct content
      */
     
@@ -1214,8 +697,9 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Gets the direct content under for this document. There is only one direct content,
-     * multiple calls to this method will allways retrieve the same.
+     * Use this method to get the direct content under for this document.
+     * There is only one direct content, multiple calls to this method
+     * will allways retrieve the same object.
      * @return the direct content
      */
     
@@ -1226,262 +710,26 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Resets all the direct contents to empty. This happens when a new page is started.
+     * Resets all the direct contents to empty.
+     * This happens when a new page is started.
      */
-    
     void resetContent() {
         directContent.reset();
         directContentUnder.reset();
     }
     
-    /** Gets the AcroForm object.
-     * @return the <CODE>PdfAcroForm</CODE>
-     */
+//	PDF body
     
-    public PdfAcroForm getAcroForm() {
-        return pdf.getAcroForm();
-    }
+/*
+ * A PDF file has 4 parts: a header, a body, a cross-reference table, and a trailer.
+ * The body contains all the PDF objects that make up the PDF document.
+ * Each element gets a reference (a set of numbers) and the byte position of
+ * every object is stored in the cross-reference table.
+ * Use these methods only if you know what you're doing.
+ */
     
-    /**
-     * Returns the outputStreamCounter.
-     * @return the outputStreamCounter
-     */
-    public OutputStreamCounter getOs() {
-        return os;
-    }
-        
-    /**
-     * Adds a <CODE>BaseFont</CODE> to the document but not to the page resources.
-     * It is used for templates.
-     * @param bf the <CODE>BaseFont</CODE> to add
-     * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
-     * and position 1 is an <CODE>PdfIndirectReference</CODE>
-     */
-    
-    FontDetails addSimple(BaseFont bf) {
-        if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
-            return new FontDetails(new PdfName("F" + (fontNumber++)), ((DocumentFont)bf).getIndirectReference(), bf);
-        }
-        FontDetails ret = (FontDetails)documentFonts.get(bf);
-        if (ret == null) {
-            checkPDFXConformance(this, PDFXKEY_FONT, bf);
-            ret = new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
-            documentFonts.put(bf, ret);
-        }
-        return ret;
-    }
-    
-    void eliminateFontSubset(PdfDictionary fonts) {
-        for (Iterator it = documentFonts.values().iterator(); it.hasNext();) {
-            FontDetails ft = (FontDetails)it.next();
-            if (fonts.get(ft.getFontName()) != null)
-                ft.setSubset(false);
-        }
-    }
-    
-    PdfName getColorspaceName() {
-        return new PdfName("CS" + (colorNumber++));
-    }
-    
-    /**
-     * Adds a <CODE>SpotColor</CODE> to the document but not to the page resources.
-     * @param spc the <CODE>SpotColor</CODE> to add
-     * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
-     * and position 1 is an <CODE>PdfIndirectReference</CODE>
-     */
-    
-    ColorDetails addSimple(PdfSpotColor spc) {
-        ColorDetails ret = (ColorDetails)documentColors.get(spc);
-        if (ret == null) {
-            ret = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), spc);
-            documentColors.put(spc, ret);
-        }
-        return ret;
-    }
-    
-    ColorDetails addSimplePatternColorspace(Color color) {
-        int type = ExtendedColor.getType(color);
-        if (type == ExtendedColor.TYPE_PATTERN || type == ExtendedColor.TYPE_SHADING)
-            throw new RuntimeException("An uncolored tile pattern can not have another pattern or shading as color.");
-        try {
-            switch (type) {
-                case ExtendedColor.TYPE_RGB:
-                    if (patternColorspaceRGB == null) {
-                        patternColorspaceRGB = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
-                        PdfArray array = new PdfArray(PdfName.PATTERN);
-                        array.add(PdfName.DEVICERGB);
-                        addToBody(array, patternColorspaceRGB.getIndirectReference());
-                    }
-                    return patternColorspaceRGB;
-                case ExtendedColor.TYPE_CMYK:
-                    if (patternColorspaceCMYK == null) {
-                        patternColorspaceCMYK = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
-                        PdfArray array = new PdfArray(PdfName.PATTERN);
-                        array.add(PdfName.DEVICECMYK);
-                        addToBody(array, patternColorspaceCMYK.getIndirectReference());
-                    }
-                    return patternColorspaceCMYK;
-                case ExtendedColor.TYPE_GRAY:
-                    if (patternColorspaceGRAY == null) {
-                        patternColorspaceGRAY = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
-                        PdfArray array = new PdfArray(PdfName.PATTERN);
-                        array.add(PdfName.DEVICEGRAY);
-                        addToBody(array, patternColorspaceGRAY.getIndirectReference());
-                    }
-                    return patternColorspaceGRAY;
-                case ExtendedColor.TYPE_SEPARATION: {
-                    ColorDetails details = addSimple(((SpotColor)color).getPdfSpotColor());
-                    ColorDetails patternDetails = (ColorDetails)documentSpotPatterns.get(details);
-                    if (patternDetails == null) {
-                        patternDetails = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
-                        PdfArray array = new PdfArray(PdfName.PATTERN);
-                        array.add(details.getIndirectReference());
-                        addToBody(array, patternDetails.getIndirectReference());
-                        documentSpotPatterns.put(details, patternDetails);
-                    }
-                    return patternDetails;
-                }
-                default:
-                    throw new RuntimeException("Invalid color type in PdfWriter.addSimplePatternColorspace().");
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-    
-    void addSimpleShadingPattern(PdfShadingPattern shading) {
-        if (!documentShadingPatterns.containsKey(shading)) {
-            shading.setName(patternNumber);
-            ++patternNumber;
-            documentShadingPatterns.put(shading, null);
-            addSimpleShading(shading.getShading());
-        }
-    }
-    
-    void addSimpleShading(PdfShading shading) {
-        if (!documentShadings.containsKey(shading)) {
-            documentShadings.put(shading, null);
-            shading.setName(documentShadings.size());
-        }
-    }
-    
-    PdfObject[] addSimpleExtGState(PdfDictionary gstate) {
-        if (!documentExtGState.containsKey(gstate)) {
-            checkPDFXConformance(this, PDFXKEY_GSTATE, gstate);
-            documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
-        }
-        return (PdfObject[])documentExtGState.get(gstate);
-    }
-    
-    PdfObject[] addSimpleProperty(Object prop, PdfIndirectReference refi) {
-        if (!documentProperties.containsKey(prop)) {
-            if (prop instanceof PdfOCG)
-                checkPDFXConformance(this, PDFXKEY_LAYER, null);
-            documentProperties.put(prop, new PdfObject[]{new PdfName("Pr" + (documentProperties.size() + 1)), refi});
-        }
-        return (PdfObject[])documentProperties.get(prop);
-    }
-
-    boolean propertyExists(Object prop) {
-        return documentProperties.containsKey(prop);
-    }
-    /**
-     * Gets the <CODE>PdfDocument</CODE> associated with this writer.
-     * @return the <CODE>PdfDocument</CODE>
-     */
-    
-    PdfDocument getPdfDocument() {
-        return pdf;
-    }
-    
-    /**
-     * Gets a <CODE>PdfIndirectReference</CODE> for an object that
-     * will be created in the future.
-     * @return the <CODE>PdfIndirectReference</CODE>
-     */
-    
-    public PdfIndirectReference getPdfIndirectReference() {
-        return body.getPdfIndirectReference();
-    }
-    
-    int getIndirectReferenceNumber() {
-        return body.getIndirectReferenceNumber();
-    }
-    
-    PdfName addSimplePattern(PdfPatternPainter painter) {
-        PdfName name = (PdfName)documentPatterns.get(painter);
-        try {
-            if ( name == null ) {
-                name = new PdfName("P" + patternNumber);
-                ++patternNumber;
-                documentPatterns.put(painter, name);
-            }
-        } catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
-        return name;
-    }
-    
-    /**
-     * Adds a template to the document but not to the page resources.
-     * @param template the template to add
-     * @param forcedName the template name, rather than a generated one. Can be null
-     * @return the <CODE>PdfName</CODE> for this template
-     */
-    
-    PdfName addDirectTemplateSimple(PdfTemplate template, PdfName forcedName) {
-        PdfIndirectReference ref = template.getIndirectReference();
-        Object obj[] = (Object[])formXObjects.get(ref);
-        PdfName name = null;
-        try {
-            if (obj == null) {
-                if (forcedName == null) {
-                    name = new PdfName("Xf" + formXObjectsCounter);
-                    ++formXObjectsCounter;
-                }
-                else
-                    name = forcedName;
-                if (template.getType() == PdfTemplate.TYPE_IMPORTED)
-                    template = null;
-                formXObjects.put(ref, new Object[]{name, template});
-            }
-            else
-                name = (PdfName)obj[0];
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
-        return name;
-    }
-    
-    /**
-     * Sets the <CODE>PdfPageEvent</CODE> for this document.
-     * @param event the <CODE>PdfPageEvent</CODE> for this document
-     */
-    
-    public void setPageEvent(PdfPageEvent event) {
-    	if (event == null) this.pageEvent = null;
-    	else if (this.pageEvent == null) this.pageEvent = event;
-    	else if (this.pageEvent instanceof PdfPageEventForwarder) ((PdfPageEventForwarder)this.pageEvent).addPageEvent(event);
-    	else {
-    		PdfPageEventForwarder forward = new PdfPageEventForwarder();
-    		forward.addPageEvent(this.pageEvent);
-    		forward.addPageEvent(event);
-    		this.pageEvent = forward;
-    	}
-    }
-    
-    /**
-     * Gets the <CODE>PdfPageEvent</CODE> for this document or <CODE>null</CODE>
-     * if none is set.
-     * @return the <CODE>PdfPageEvent</CODE> for this document or <CODE>null</CODE>
-     * if none is set
-     */
-    
-    public PdfPageEvent getPageEvent() {
-        return pageEvent;
-    }
+    /** body of the PDF document */
+    protected PdfBody body;
     
     /**
      * Adds the local destinations to the body of the document.
@@ -1504,17 +752,8 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Gets the current pagenumber of this document.
-     *
-     * @return a page number
-     */
-    
-    public int getPageNumber() {
-        return pdf.getPageNumber();
-    }
-    
-    /**
-     * Adds an object to the PDF body.
+     * Use this method to add a PDF object to the PDF body.
+     * Use this method only if you know what you're doing!
      * @param object
      * @return a PdfIndirectObject
      * @throws IOException
@@ -1525,7 +764,8 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Adds an object to the PDF body.
+     * Use this method to add a PDF object to the PDF body.
+     * Use this method only if you know what you're doing!
      * @param object
      * @param inObjStm
      * @return a PdfIndirectObject
@@ -1537,7 +777,8 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Adds an object to the PDF body.
+     * Use this method to add a PDF object to the PDF body.
+     * Use this method only if you know what you're doing!
      * @param object
      * @param ref
      * @return a PdfIndirectObject
@@ -1549,7 +790,8 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Adds an object to the PDF body.
+     * Use this method to add a PDF object to the PDF body.
+     * Use this method only if you know what you're doing!
      * @param object
      * @param ref
      * @param inObjStm
@@ -1562,7 +804,8 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Adds an object to the PDF body.
+     * Use this method to add a PDF object to the PDF body.
+     * Use this method only if you know what you're doing!
      * @param object
      * @param refNumber
      * @return a PdfIndirectObject
@@ -1574,7 +817,8 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Adds an object to the PDF body.
+     * Use this method to add a PDF object to the PDF body.
+     * Use this method only if you know what you're doing!
      * @param object
      * @param refNumber
      * @param inObjStm
@@ -1586,316 +830,106 @@ public class PdfWriter extends DocWriter
         return iobj;
     }
     
-    RandomAccessFileOrArray getReaderFile(PdfReader reader) {
-        return currentPdfReaderInstance.getReaderFile();
-    }
-    
-    protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
-        return currentPdfReaderInstance.getNewObjectNumber(number, generation);
-    }
-    
-    /** Gets a page from other PDF document. The page can be used as
-     * any other PdfTemplate. Note that calling this method more than
-     * once with the same parameters will retrieve the same object.
-     * @param reader the PDF document where the page is
-     * @param pageNumber the page number. The first page is 1
-     * @return the template representing the imported page
+    /**
+     * Use this to get an <CODE>PdfIndirectReference</CODE> for an object that
+     * will be created in the future.
+     * Use this method only if you know what you're doing!
+     * @return the <CODE>PdfIndirectReference</CODE>
      */
-    public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
-        PdfReaderInstance inst = (PdfReaderInstance)importedPages.get(reader);
-        if (inst == null) {
-            inst = reader.getPdfReaderInstance(this);
-            importedPages.put(reader, inst);
+    
+    public PdfIndirectReference getPdfIndirectReference() {
+        return body.getPdfIndirectReference();
+    }
+    
+    int getIndirectReferenceNumber() {
+        return body.getIndirectReferenceNumber();
+    }
+    
+    /**
+     * Returns the outputStreamCounter.
+     * @return the outputStreamCounter
+     */
+    OutputStreamCounter getOs() {
+        return os;
+    }
+
+
+//	PDF Catalog
+    
+/*
+ * The Catalog is also called the root object of the document.
+ * Whereas the Cross-Reference maps the objects number with the
+ * byte offset so that the viewer can find the objects, the
+ * Catalog tells the viewer the numbers of the objects needed
+ * to render the document.
+ */
+    
+    protected PdfDictionary getCatalog(PdfIndirectReference rootObj)
+    {
+        PdfDictionary catalog = pdf.getCatalog(rootObj);
+        // [F12] tagged PDF
+        if (tagged) {
+            try {
+                getStructureTreeRoot().buildTree();
+            }
+            catch (Exception e) {
+                throw new ExceptionConverter(e);
+            }
+            catalog.put(PdfName.STRUCTTREEROOT, structureTreeRoot.getReference());
+            PdfDictionary mi = new PdfDictionary();
+            mi.put(PdfName.MARKED, PdfBoolean.PDFTRUE);
+            catalog.put(PdfName.MARKINFO, mi);
         }
-        return inst.getImportedPage(pageNumber);
-    }
-    
-    /** Sets the crop box. The crop box should not be rotated even if the
-     * page is rotated. This change only takes effect in the next
-     * page.
-     * @param crop the crop box
-     */
-    public void setCropBoxSize(Rectangle crop) {
-        pdf.setCropBoxSize(crop);
-    }
-    
-    /** Adds a <CODE>PdfAnnotation</CODE> or a <CODE>PdfFormField</CODE>
-     * to the document. Only the top parent of a <CODE>PdfFormField</CODE>
-     * needs to be added.
-     * @param annot the <CODE>PdfAnnotation</CODE> or the <CODE>PdfFormField</CODE> to add
-     */
-    public void addAnnotation(PdfAnnotation annot) {
-        pdf.addAnnotation(annot);
-    }
-    
-    void addAnnotation(PdfAnnotation annot, int page) {
-        addAnnotation(annot);
-    }
-    
-    /** Gets the space/character extra spacing ratio for
-     * fully justified text.
-     * @return the space/character extra spacing ratio
-     */
-    public float getSpaceCharRatio() {
-        return spaceCharRatio;
-    }
-    
-    /** Sets the ratio between the extra word spacing and the extra character spacing
-     * when the text is fully justified.
-     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
-     * If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE> then the extra character spacing
-     * will be zero.
-     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
-     */
-    public void setSpaceCharRatio(float spaceCharRatio) {
-        if (spaceCharRatio < 0.001f)
-            this.spaceCharRatio = 0.001f;
-        else
-            this.spaceCharRatio = spaceCharRatio;
-    }
-    
-    /** Sets the run direction. This is only used as a placeholder
-     * as it does not affect anything.
-     * @param runDirection the run direction
-     */    
-    public void setRunDirection(int runDirection) {
-        if (runDirection < RUN_DIRECTION_NO_BIDI || runDirection > RUN_DIRECTION_RTL)
-            throw new RuntimeException("Invalid run direction: " + runDirection);
-        this.runDirection = runDirection;
-    }
-    
-    /** Gets the run direction.
-     * @return the run direction
-     */    
-    public int getRunDirection() {
-        return runDirection;
-    }
-
-    /**
-     * Sets the display duration for the page (for presentations)
-     * @param seconds   the number of seconds to display the page
-     */
-    public void setDuration(int seconds) {
-        pdf.setDuration(seconds);
-    }
-    
-    /**
-     * Sets the transition for the page
-     * @param transition   the Transition object
-     */
-    public void setTransition(PdfTransition transition) {
-        pdf.setTransition(transition);
-    }
-    
-    /** Writes the reader to the document and frees the memory used by it.
-     * The main use is when concatenating multiple documents to keep the
-     * memory usage restricted to the current appending document.
-     * @param reader the <CODE>PdfReader</CODE> to free
-     * @throws IOException on error
-     */    
-    public void freeReader(PdfReader reader) throws IOException {
-        currentPdfReaderInstance = (PdfReaderInstance)importedPages.get(reader);
-        if (currentPdfReaderInstance == null)
-            return;
-        currentPdfReaderInstance.writeAllPages();
-        currentPdfReaderInstance = null;
-        importedPages.remove(reader);
-    }
-    
-    /** Gets the current document size. This size only includes
-     * the data already writen to the output stream, it does not
-     * include templates or fonts. It is usefull if used with
-     * <CODE>freeReader()</CODE> when concatenating many documents
-     * and an idea of the current size is needed.
-     * @return the approximate size without fonts or templates
-     */    
-    public int getCurrentDocumentSize() {
-        return body.offset() + body.size() * 20 + 0x48;
-    }
-    
-    /** Getter for property strictImageSequence.
-     * @return value of property strictImageSequence
-     *
-     */
-    public boolean isStrictImageSequence() {
-        return pdf.isStrictImageSequence();
-    }
-    
-    /** Sets the image sequence to follow the text in strict order.
-     * @param strictImageSequence new value of property strictImageSequence
-     *
-     */
-    public void setStrictImageSequence(boolean strictImageSequence) {
-        pdf.setStrictImageSequence(strictImageSequence);
-    }
-    
-    /**
-     * If you use setPageEmpty(false), invoking newPage() after a blank page will add a newPage.
-     * @param pageEmpty the state
-     */
-    public void setPageEmpty(boolean pageEmpty) {
-        pdf.setPageEmpty(pageEmpty);
-    }
-
-    /** Gets the info dictionary for changing.
-     * @return the info dictionary
-     */    
-    public PdfDictionary getInfo() {
-        return ((PdfDocument)document).getInfo();
-    }
-
-    
-
-    
-    
-    private static String getNameString(PdfDictionary dic, PdfName key) {
-        PdfObject obj = PdfReader.getPdfObject(dic.get(key));
-        if (obj == null || !obj.isString())
-            return null;
-        return ((PdfString)obj).toUnicodeString();
-    }
-    
-    /**
-     * Copies the output intent dictionary from other document to this one.
-     * @param reader the other document
-     * @param checkExistence <CODE>true</CODE> to just check for the existence of a valid output intent
-     * dictionary, <CODE>false</CODE> to insert the dictionary if it exists
-     * @throws IOException on error
-     * @return <CODE>true</CODE> if the output intent dictionary exists, <CODE>false</CODE>
-     * otherwise
-     */    
-    public boolean setOutputIntents(PdfReader reader, boolean checkExistence) throws IOException {
-        PdfDictionary catalog = reader.getCatalog();
-        PdfArray outs = (PdfArray)PdfReader.getPdfObject(catalog.get(PdfName.OUTPUTINTENTS));
-        if (outs == null)
-            return false;
-        ArrayList arr = outs.getArrayList();
-        if (arr.isEmpty())
-            return false;
-        PdfDictionary out = (PdfDictionary)PdfReader.getPdfObject((PdfObject)arr.get(0));
-        PdfObject obj = PdfReader.getPdfObject(out.get(PdfName.S));
-        if (obj == null || !PdfName.GTS_PDFX.equals(obj))
-            return false;
-        if (checkExistence)
-            return true;
-        PRStream stream = (PRStream)PdfReader.getPdfObject(out.get(PdfName.DESTOUTPUTPROFILE));
-        byte destProfile[] = null;
-        if (stream != null) {
-            destProfile = PdfReader.getStreamBytes(stream);
+        // [F13] OCG
+        if (!documentOCG.isEmpty()) {
+        	fillOCProperties(false);
+        	catalog.put(PdfName.OCPROPERTIES, OCProperties);
         }
-        setOutputIntents(getNameString(out, PdfName.OUTPUTCONDITIONIDENTIFIER), getNameString(out, PdfName.OUTPUTCONDITION),
-            getNameString(out, PdfName.REGISTRYNAME), getNameString(out, PdfName.INFO), destProfile);
-        return true;
+        return catalog;
     }
     
+    /** Holds value of property extraCatalog this is used for Output Intents. */
+    protected PdfDictionary extraCatalog;
+    
     /**
-     * Sets the page box sizes. Allowed names are: "crop", "trim", "art" and "bleed".
-     * @param boxName the box size
-     * @param size the size
+     * Sets extra keys to the catalog.
+     * @return the catalog to change
      */    
-    public void setBoxSize(String boxName, Rectangle size) {
-        pdf.setBoxSize(boxName, size);
+    protected PdfDictionary getExtraCatalog() {
+        if (extraCatalog == null)
+            extraCatalog = new PdfDictionary();
+        return this.extraCatalog;
     }
     
+//	PdfPages
     
-    /**
-     * Clears text wrapping around images (if applicable).
-     * Method suggested by Pelikan Stephan
-     * @throws DocumentException
-     */
-    public void clearTextWrap() throws DocumentException {
-    	pdf.clearTextWrap();
-    }
-
-    /**
-     * Gives the size of a trim, art, crop or bleed box, or null if not defined.
-     * @param boxName crop, trim, art or bleed
-     */
-    public Rectangle getBoxSize(String boxName) {
-    	return pdf.getBoxSize(boxName);
-    }
-
-    /**
-     * Gives the size of the media box.
-     * @return a Rectangle
-     */
-    public Rectangle getPageSize() {
-    	return pdf.getPageSize();
-    }
-    /**
-     * Gets the default colorspaces.
-     * @return the default colorspaces
-     */    
-    public PdfDictionary getDefaultColorspace() {
-        return defaultColorspace;
-    }
-
-    /**
-     * Sets the default colorspace that will be applied to all the document.
-     * The colorspace is only applied if another colorspace with the same name
-     * is not present in the content.
-     * <p>
-     * The colorspace is applied immediately when creating templates and at the page
-     * end for the main document content.
-     * @param key the name of the colorspace. It can be <CODE>PdfName.DEFAULTGRAY</CODE>, <CODE>PdfName.DEFAULTRGB</CODE>
-     * or <CODE>PdfName.DEFAULTCMYK</CODE>
-     * @param cs the colorspace. A <CODE>null</CODE> or <CODE>PdfNull</CODE> removes any colorspace with the same name
-     */    
-    public void setDefaultColorspace(PdfName key, PdfObject cs) {
-        if (cs == null || cs.isNull())
-            defaultColorspace.remove(key);
-        defaultColorspace.put(key, cs);
-    }
+/*
+ * The page root keeps the complete page tree of the document.
+ * There's an entry in the Catalog that refers to the root
+ * of the page tree, the page tree contains the references
+ * to pages and other page trees.
+ */
     
-    /**
-     * Sets the the thumbnail image for the current page.
-     * @param image the image
-     * @throws PdfException on error
-     * @throws DocumentException or error
-     */    
-    public void setThumbnail(Image image) throws PdfException, DocumentException {
-        pdf.setThumbnail(image);
-    }
-    
-    /**
-     * Releases the memory used by a template by writing it to the output. The template
-     * can still be added to any content but changes to the template itself won't have
-     * any effect.
-     * @param tp the template to release
-     * @throws IOException on error
-     */    
-    public void releaseTemplate(PdfTemplate tp) throws IOException {
-        PdfIndirectReference ref = tp.getIndirectReference();
-        Object[] objs = (Object[])formXObjects.get(ref);
-        if (objs == null || objs[1] == null)
-            return;
-        PdfTemplate template = (PdfTemplate)objs[1];
-        if (template.getIndirectReference() instanceof PRIndirectReference)
-            return;
-        if (template.getType() == PdfTemplate.TYPE_TEMPLATE) {
-            addToBody(template.getFormXObject(), template.getIndirectReference());
-            objs[1] = null;
-        }
-    }
-
-    
-// Settings that are important at Page level.
-
-//	[P1] the page tree
+    /** The root of the page tree. */
     protected PdfPages root = new PdfPages(this);
+    /** The PdfIndirectReference to the pages. */
+    protected ArrayList pageReferences = new ArrayList();
+    /** The current page number. */
+    protected int currentPageNumber = 1;
 
     /**
-     * Sets the document in a suitable way to do page reordering.
+     * Use this method to make sure the page tree has a lineair structure
+     * (every leave is attached directly to the root).
+     * Use this method to allow page reordering with method reorderPages.
      */    
      public void setLinearPageMode() {
         root.setLinearMode(null);
     }
      
     /**
-     * Reorder the pages in the document. A <CODE>null</CODE> argument value
-     * only returns the number of pages to process. It is
-     * advisable to issue a <CODE>Document.newPage()</CODE>
-     * before using this method.
+     * Use this method to reorder the pages in the document.
+     * A <CODE>null</CODE> argument value only returns the number of pages to process.
+     * It is advisable to issue a <CODE>Document.newPage()</CODE> before using this method.
      * @return the total number of pages
      * @param order an array with the new page sequence. It must have the
      * same size as the number of pages.
@@ -1903,6 +937,56 @@ public class PdfWriter extends DocWriter
      */
     public int reorderPages(int order[]) throws DocumentException {
         return root.reorderPages(order);
+    }
+    
+    /**
+     * Use this method to get a reference to a page existing or not.
+     * If the page does not exist yet the reference will be created
+     * in advance. If on closing the document, a page number greater
+     * than the total number of pages was requested, an exception
+     * is thrown.
+     * @param page the page number. The first page is 1
+     * @return the reference to the page
+     */
+    public PdfIndirectReference getPageReference(int page) {
+        --page;
+        if (page < 0)
+            throw new IndexOutOfBoundsException("The page numbers start at 1.");
+        PdfIndirectReference ref;
+        if (page < pageReferences.size()) {
+            ref = (PdfIndirectReference)pageReferences.get(page);
+            if (ref == null) {
+                ref = body.getPdfIndirectReference();
+                pageReferences.set(page, ref);
+            }
+        }
+        else {
+            int empty = page - pageReferences.size();
+            for (int k = 0; k < empty; ++k)
+                pageReferences.add(null);
+            ref = body.getPdfIndirectReference();
+            pageReferences.add(ref);
+        }
+        return ref;
+    }
+    
+    /**
+     * Gets the pagenumber of this document.
+     * This number can be different from the real pagenumber,
+     * if you have (re)set the page number previously.
+     * @return a page number
+     */
+    
+    public int getPageNumber() {
+        return pdf.getPageNumber();
+    }
+    
+    PdfIndirectReference getCurrentPage() {
+        return getPageReference(currentPageNumber);
+    }
+    
+    int getCurrentPageNumber() {
+        return currentPageNumber;
     }
     
     /**
@@ -1937,117 +1021,243 @@ public class PdfWriter extends DocWriter
         currentPageNumber++;
         return null;
     }
-
-    /**
-     * A group attributes dictionary specifying the attributes
-     * of the page’s page group for use in the transparent
-     * imaging model
-     */
-    protected PdfDictionary group;
+    
+//	page events
+    
+/*
+ * Page events are specific for iText, not for PDF.
+ * Upon specific events (for instance when a page starts
+ * or ends), the corresponing method in the page event
+ * implementation that is added to the writer is invoked.
+ */
+    
+    /** The <CODE>PdfPageEvent</CODE> for this document. */
+    private PdfPageEvent pageEvent;
     
     /**
-     * Getter for property group.
-     * @return Value of property group.
+     * Sets the <CODE>PdfPageEvent</CODE> for this document.
+     * @param event the <CODE>PdfPageEvent</CODE> for this document
      */
-    public PdfDictionary getGroup() {
-        return this.group;
+    
+    public void setPageEvent(PdfPageEvent event) {
+    	if (event == null) this.pageEvent = null;
+    	else if (this.pageEvent == null) this.pageEvent = event;
+    	else if (this.pageEvent instanceof PdfPageEventForwarder) ((PdfPageEventForwarder)this.pageEvent).addPageEvent(event);
+    	else {
+    		PdfPageEventForwarder forward = new PdfPageEventForwarder();
+    		forward.addPageEvent(this.pageEvent);
+    		forward.addPageEvent(event);
+    		this.pageEvent = forward;
+    	}
     }
     
     /**
-     * Setter for property group.
-     * @param group New value of property group.
+     * Gets the <CODE>PdfPageEvent</CODE> for this document or <CODE>null</CODE>
+     * if none is set.
+     * @return the <CODE>PdfPageEvent</CODE> for this document or <CODE>null</CODE>
+     * if none is set
      */
-    public void setGroup(PdfDictionary group) {
-        this.group = group;
+    
+    public PdfPageEvent getPageEvent() {
+        return pageEvent;
     }
     
-//	[P2] page references and numbers    
+//	Open en Close method + method that create the PDF
 
-    /** The PdfIndirectReference to the pages. */
-    protected ArrayList pageReferences = new ArrayList();
-    protected int currentPageNumber = 1;
+    /** A number refering to the previous Cross-Reference Table. */
+    protected int prevxref = 0;
     
     /**
-     * Gets a reference to a page existing or not. If the page does not exist
-     * yet the reference will be created in advance. If on closing the document, a
-     * page number greater than the total number of pages was requested, an
-     * exception is thrown.
-     * @param page the page number. The first page is 1
-     * @return the reference to the page
+     * Signals that the <CODE>Document</CODE> has been opened and that
+     * <CODE>Elements</CODE> can be added.
+     * <P>
+     * When this method is called, the PDF-document header is
+     * written to the outputstream.
+     * @see com.lowagie.text.DocWriter#open()
      */
-    public PdfIndirectReference getPageReference(int page) {
-        --page;
-        if (page < 0)
-            throw new IndexOutOfBoundsException("The page numbers start at 1.");
-        PdfIndirectReference ref;
-        if (page < pageReferences.size()) {
-            ref = (PdfIndirectReference)pageReferences.get(page);
-            if (ref == null) {
-                ref = body.getPdfIndirectReference();
-                pageReferences.set(page, ref);
+    public void open() {
+        super.open();
+        try {
+        	pdf_version.writeHeader(os);
+            body = new PdfBody(this);
+            if (pdfxConformance.isPdfX32002()) {
+                PdfDictionary sec = new PdfDictionary();
+                sec.put(PdfName.GAMMA, new PdfArray(new float[]{2.2f,2.2f,2.2f}));
+                sec.put(PdfName.MATRIX, new PdfArray(new float[]{0.4124f,0.2126f,0.0193f,0.3576f,0.7152f,0.1192f,0.1805f,0.0722f,0.9505f}));
+                sec.put(PdfName.WHITEPOINT, new PdfArray(new float[]{0.9505f,1f,1.089f}));
+                PdfArray arr = new PdfArray(PdfName.CALRGB);
+                arr.add(sec);
+                setDefaultColorspace(PdfName.DEFAULTRGB, addToBody(arr).getIndirectReference());
             }
         }
-        else {
-            int empty = page - pageReferences.size();
-            for (int k = 0; k < empty; ++k)
-                pageReferences.add(null);
-            ref = body.getPdfIndirectReference();
-            pageReferences.add(ref);
+        catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
         }
-        return ref;
     }
     
-    PdfIndirectReference getCurrentPage() {
-        return getPageReference(currentPageNumber);
-    }
-    
-    int getCurrentPageNumber() {
-        return currentPageNumber;
-    }
-    
-//  [P3] page actions (open and close)
-     
-     /**
-      * @see com.lowagie.text.pdf.interfaces.PdfPagesActions#setPageAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction)
-      */
-     public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
-          if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
-              throw new DocumentException("Invalid page additional action type: " + actionType.toString());
-          pdf.setPageAction(actionType, action);
-      }
+    /**
+     * Signals that the <CODE>Document</CODE> was closed and that no other
+     * <CODE>Elements</CODE> will be added.
+     * <P>
+     * The pages-tree is built and written to the outputstream.
+     * A Catalog is constructed, as well as an Info-object,
+     * the referencetable is composed and everything is written
+     * to the outputstream embedded in a Trailer.
+     * @see com.lowagie.text.DocWriter#close()
+     */
+    public synchronized void close() {
+        if (open) {
+            if ((currentPageNumber - 1) != pageReferences.size())
+                throw new RuntimeException("The page " + pageReferences.size() +
+                " was requested but the document has only " + (currentPageNumber - 1) + " pages.");
+            pdf.close();
+            try {
+                addSharedObjectsToBody();
+                // add the root to the body
+                PdfIndirectReference rootRef = root.writePageTree();
+                // make the catalog-object and add it to the body
+                PdfDictionary catalog = getCatalog(rootRef);
+                // [C9] if there is XMP data to add: add it
+                if (xmpMetadata != null) {
+                	PdfStream xmp = new PdfStream(xmpMetadata);
+                	xmp.put(PdfName.TYPE, PdfName.METADATA);
+                	xmp.put(PdfName.SUBTYPE, PdfName.XML);
+                    if (crypto != null && !crypto.isMetadataEncrypted()) {
+                        PdfArray ar = new PdfArray();
+                        ar.add(PdfName.CRYPT);
+                        xmp.put(PdfName.FILTER, ar);
+                    }
+                	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
+                }
+                // [C10] make pdfx conformant
+                pdfxConformance.completeInfoDictionary(getInfo());
+                pdfxConformance.completeExtraCatalog(getExtraCatalog());
+                // [C11] Output Intents
+                if (extraCatalog != null) {
+                    catalog.mergeDifferent(extraCatalog);
+                }
+                
+                // add the Catalog to the body
+                PdfIndirectObject indirectCatalog = addToBody(catalog, false);
+                // add the info-object to the body
+                PdfIndirectObject infoObj = addToBody(getInfo(), false);
+                
+                // [F1] encryption
+                PdfIndirectReference encryption = null;
+                PdfObject fileID = null;
+                body.flushObjStm();
+                if (crypto != null) {
+                    PdfIndirectObject encryptionObject = addToBody(crypto.getEncryptionDictionary(), false);
+                    encryption = encryptionObject.getIndirectReference();
+                    fileID = crypto.getFileID();
+                }
+                else
+                    fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
+                
+                // write the cross-reference table of the body
+                body.writeCrossReferenceTable(os, indirectCatalog.getIndirectReference(),
+                    infoObj.getIndirectReference(), encryption,  fileID, prevxref);
 
-//	[P4] user units     
-     
-     protected float userunit = 0f;
- 	/**
- 	 * A UserUnit is a value that defines the default user space unit.
- 	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
- 	 * The maximum UserUnit is 75,000.
- 	 * Remark that this userunit only works starting with PDF1.6!
- 	 * @return Returns the userunit.
- 	 */
- 	public float getUserunit() {
- 		return userunit;
- 	}
- 	/**
-      * A UserUnit is a value that defines the default user space unit.
-      * The minimum UserUnit is 1 (1 unit = 1/72 inch).
-      * The maximum UserUnit is 75,000.
-      * Remark that this userunit only works starting with PDF1.6!
-      * @param userunit The userunit to set.
-      * @throws DocumentException on error
-      */
- 	public void setUserunit(float userunit) throws DocumentException {
- 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
- 		this.userunit = userunit;
-         setAtLeastPdfVersion(VERSION_1_6);
- 	}
+                // make the trailer
+                // [F2] full compression
+                if (fullCompression) {
+                    os.write(getISOBytes("startxref\n"));
+                    os.write(getISOBytes(String.valueOf(body.offset())));
+                    os.write(getISOBytes("\n%%EOF\n"));
+                }
+                else {
+                    PdfTrailer trailer = new PdfTrailer(body.size(),
+                    body.offset(),
+                    indirectCatalog.getIndirectReference(),
+                    infoObj.getIndirectReference(),
+                    encryption,
+                    fileID, prevxref);
+                    trailer.toPdf(this, os);
+                }
+                super.close();
+            }
+            catch(IOException ioe) {
+                throw new ExceptionConverter(ioe);
+            }
+        }
+    }
+    
+    protected void addSharedObjectsToBody() throws IOException {
+        // [F3] add the fonts
+        for (Iterator it = documentFonts.values().iterator(); it.hasNext();) {
+            FontDetails details = (FontDetails)it.next();
+            details.writeFont(this);
+        }
+        // [F4] add the form XObjects
+        for (Iterator it = formXObjects.values().iterator(); it.hasNext();) {
+            Object objs[] = (Object[])it.next();
+            PdfTemplate template = (PdfTemplate)objs[1];
+            if (template != null && template.getIndirectReference() instanceof PRIndirectReference)
+                continue;
+            if (template != null && template.getType() == PdfTemplate.TYPE_TEMPLATE) {
+                addToBody(template.getFormXObject(), template.getIndirectReference());
+            }
+        }
+        // [F5] add all the dependencies in the imported pages
+        for (Iterator it = importedPages.values().iterator(); it.hasNext();) {
+            currentPdfReaderInstance = (PdfReaderInstance)it.next();
+            currentPdfReaderInstance.writeAllPages();
+        }
+        currentPdfReaderInstance = null;
+        // [F6] add the spotcolors
+        for (Iterator it = documentColors.values().iterator(); it.hasNext();) {
+            ColorDetails color = (ColorDetails)it.next();
+            addToBody(color.getSpotColor(this), color.getIndirectReference());
+        }
+        // [F7] add the pattern
+        for (Iterator it = documentPatterns.keySet().iterator(); it.hasNext();) {
+            PdfPatternPainter pat = (PdfPatternPainter)it.next();
+            addToBody(pat.getPattern(), pat.getIndirectReference());
+        }
+        // [F8] add the shading patterns
+        for (Iterator it = documentShadingPatterns.keySet().iterator(); it.hasNext();) {
+            PdfShadingPattern shadingPattern = (PdfShadingPattern)it.next();
+            shadingPattern.addToBody();
+        }
+        // [F9] add the shadings
+        for (Iterator it = documentShadings.keySet().iterator(); it.hasNext();) {
+            PdfShading shading = (PdfShading)it.next();
+            shading.addToBody();
+        }
+        // [F10] add the extgstate
+        for (Iterator it = documentExtGState.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            PdfDictionary gstate = (PdfDictionary) entry.getKey();
+            PdfObject obj[] = (PdfObject[]) entry.getValue();
+            addToBody(gstate, (PdfIndirectReference)obj[1]);
+        }
+        // [F11] add the properties
+        for (Iterator it = documentProperties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            Object prop = entry.getKey();
+            PdfObject[] obj = (PdfObject[]) entry.getValue();
+            if (prop instanceof PdfLayerMembership){
+                PdfLayerMembership layer = (PdfLayerMembership)prop;
+                addToBody(layer.getPdfObject(), layer.getRef());
+            }
+            else if ((prop instanceof PdfDictionary) && !(prop instanceof PdfLayer)){
+                addToBody((PdfDictionary)prop, (PdfIndirectReference)obj[1]);
+            }
+        }
+        // [F13] add the OCG layers
+        for (Iterator it = documentOCG.iterator(); it.hasNext();) {
+            PdfOCG layer = (PdfOCG)it.next();
+            addToBody(layer.getPdfObject(), layer.getRef());
+        }
+    }
      
 // Root data for the PDF document (used when composing the Catalog)
      
 //  [C1] Outlines (bookmarks)
      
-     /** Gets the root outline.
+     /**
+      * Use this method to get the root outline
+      * and construct bookmarks.
       * @return the root outline
       */
      
@@ -2060,23 +1270,17 @@ public class PdfWriter extends DocWriter
     /** Stores the version information for the header and the catalog. */
     protected PdfVersionImp pdf_version = new PdfVersionImp();
     
-    /**
-     * @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(char)
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(char) */
     public void setPdfVersion(char version) {
         pdf_version.setPdfVersion(version);
     }
     
-    /**
-     * @see com.lowagie.text.pdf.interfaces.PdfVersion#setAtLeastPdfVersion(char)
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfVersion#setAtLeastPdfVersion(char) */
     public void setAtLeastPdfVersion(char version) {
     	pdf_version.setAtLeastPdfVersion(version);
     }
 
-	/**
-	 * @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(com.lowagie.text.pdf.PdfName)
-	 */
+	/** @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(com.lowagie.text.pdf.PdfName) */
 	public void setPdfVersion(PdfName version) {
 		pdf_version.setPdfVersion(version);
 	}
@@ -2103,7 +1307,7 @@ public class PdfWriter extends DocWriter
 //	[C4] Page labels
     
     /**
-     * Sets the page labels
+     * Use this method to add page labels
      * @param pageLabels the page labels
      */
     public void setPageLabels(PdfPageLabels pageLabels) {
@@ -2113,8 +1317,8 @@ public class PdfWriter extends DocWriter
 //	[C5] named objects: named destinations, javascript, embedded files
      
      /**
-      * Adds a JavaScript action at the document level. When the document
-      * opens all this JavaScript runs.
+      * Use this method to add a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
       * @param js The JavaScrip action
       */
      public void addJavaScript(PdfAction js) {
@@ -2122,8 +1326,8 @@ public class PdfWriter extends DocWriter
      }
      
      /**
-      * Adds a JavaScript action at the document level. When the document
-      * opens all this JavaScript runs.
+      * Use this method to add a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
       * @param code the JavaScript code
       * @param unicode select JavaScript unicode. Note that the internal
       * Acrobat JavaScript engine does not support unicode,
@@ -2134,15 +1338,16 @@ public class PdfWriter extends DocWriter
      }
      
      /**
-      * Adds a JavaScript action at the document level. When the document
-      * opens all this JavaScript runs.
+      * Use this method to adds a JavaScript action at the document level.
+      * When the document opens, all this JavaScript runs.
       * @param code the JavaScript code
       */
      public void addJavaScript(String code) {
          addJavaScript(code, false);
      }
      
-     /** Adds a file attachment at the document level.
+     /**
+      * Use this method to add a file attachment at the document level.
       * @param description the file description
       * @param fileStore an array with the file. If it's <CODE>null</CODE>
       * the file will be read from the disk
@@ -2155,7 +1360,8 @@ public class PdfWriter extends DocWriter
          addFileAttachment(description, PdfFileSpecification.fileEmbedded(this, file, fileDisplay, fileStore));
      }
 
-     /** Adds a file attachment at the document level.
+     /**
+      * Use this method to add a file attachment at the document level.
       * @param description the file description
       * @param fs the file specification
       */    
@@ -2163,7 +1369,8 @@ public class PdfWriter extends DocWriter
          pdf.addFileAttachment(description, fs);
      }
      
-     /** Adds a file attachment at the document level.
+     /**
+      * Use this method to add a file attachment at the document level.
       * @param fs the file specification
       */    
      public void addFileAttachment(PdfFileSpecification fs) throws IOException {
@@ -2172,23 +1379,17 @@ public class PdfWriter extends DocWriter
      
 // [C6] Actions (open and additional)
     
-    /**
-     * @see com.lowagie.text.pdf.interfaces.PdfDocumentActions#setOpenAction(java.lang.String)
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfDocumentActions#setOpenAction(java.lang.String) */
     public void setOpenAction(String name) {
          pdf.setOpenAction(name);
      }
 
-    /**
-     * @see com.lowagie.text.pdf.interfaces.PdfDocumentActions#setOpenAction(com.lowagie.text.pdf.PdfAction)
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfDocumentActions#setOpenAction(com.lowagie.text.pdf.PdfAction) */
     public void setOpenAction(PdfAction action) {
          pdf.setOpenAction(action);
      }
      
-    /**
-     * @see com.lowagie.text.pdf.interfaces.PdfDocumentActions#setAdditionalAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction)
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfDocumentActions#setAdditionalAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction) */
     public void setAdditionalAction(PdfName actionType, PdfAction action) throws DocumentException {
          if (!(actionType.equals(DOCUMENT_CLOSE) ||
          actionType.equals(WILL_SAVE) ||
@@ -2199,25 +1400,569 @@ public class PdfWriter extends DocWriter
          }
          pdf.addAdditionalAction(actionType, action);
      }
-
-//	[C8] Tagged PDF
-    
-    protected boolean tagged = false;
-    protected PdfStructureTreeRoot structureTreeRoot;
-    
     
 // 	[C7] portable collections
 
     /**
-     * Sets the Collection dictionary.
+     * Use this method to add the Collection dictionary.
      * @param collection a dictionary of type PdfCollection
      */
     public void setCollection(PdfCollection collection) {
     	setAtLeastPdfVersion(VERSION_1_7);
     	pdf.setCollection(collection);
     }
+    
+//	[C8] AcroForm
+    
+    /**
+     * Gets the AcroForm object.
+     * Use this method only if you know what you're doing!
+     * @return the <CODE>PdfAcroForm</CODE>
+     */
+    public PdfAcroForm getAcroForm() {
+        return pdf.getAcroForm();
+    }
+    
+    /**
+     * Use this methods to add a <CODE>PdfAnnotation</CODE> or a <CODE>PdfFormField</CODE>
+     * to the document. Only the top parent of a <CODE>PdfFormField</CODE>
+     * needs to be added.
+     * @param annot the <CODE>PdfAnnotation</CODE> or the <CODE>PdfFormField</CODE> to add
+     */
+    public void addAnnotation(PdfAnnotation annot) {
+        pdf.addAnnotation(annot);
+    }
+    
+    void addAnnotation(PdfAnnotation annot, int page) {
+        addAnnotation(annot);
+    }
+    
+    /**
+     * Use this method to adds the <CODE>PdfAnnotation</CODE>
+     * to the calculation order array.
+     * @param annot the <CODE>PdfAnnotation</CODE> to be added
+     */
+    public void addCalculationOrder(PdfFormField annot) {
+        pdf.addCalculationOrder(annot);
+    }
+    
+    /**
+     * Use this method to set the signature flags.
+     * @param f the flags. This flags are ORed with current ones
+     */
+    public void setSigFlags(int f) {
+        pdf.setSigFlags(f);
+    }
 
-//	[C8] Tagged PDF
+//	[C9] Metadata
+    
+    /** XMP Metadata for the document. */
+    protected byte[] xmpMetadata = null;
+    
+	/**
+	 * Use this method to set the XMP Metadata.
+	 * @param xmpMetadata The xmpMetadata to set.
+	 */
+	public void setXmpMetadata(byte[] xmpMetadata) {
+		this.xmpMetadata = xmpMetadata;
+	}
+	
+	/**
+	 * Use this method to creates XMP Metadata based
+	 * on the metadata in the PdfDocument.
+	 */
+	public void createXmpMetadata() {
+		setXmpMetadata(createXmpMetadataBytes());
+	}
+	
+    /**
+	 * @return an XmpMetadata byte array
+	 */
+	private byte[] createXmpMetadataBytes() {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    try {
+	    	XmpWriter xmp = new XmpWriter(baos, pdf.getInfo());
+	        xmp.close();
+	    }
+	    catch(IOException ioe) {
+	        ioe.printStackTrace();
+	    }
+	    return baos.toByteArray();
+	}
+    
+//	[C10] PDFX Conformance
+    
+    /** Stores the PDF/X level. */
+    private PdfXConformanceImp pdfxConformance = new PdfXConformanceImp();
+    
+    /** @see com.lowagie.text.pdf.interfaces.PdfXConformance#setPDFXConformance(int) */
+    public void setPDFXConformance(int pdfx) {
+        if (pdfxConformance.getPDFXConformance() == pdfx)
+            return;
+        if (pdf.isOpen())
+            throw new PdfXConformanceException("PDFX conformance can only be set before opening the document.");
+        if (crypto != null)
+            throw new PdfXConformanceException("A PDFX conforming document cannot be encrypted.");
+        if (pdfx!= PDFXNONE)
+            setPdfVersion(VERSION_1_3);
+        pdfxConformance.setPDFXConformance(pdfx);
+    }
+ 
+    /** @see com.lowagie.text.pdf.interfaces.PdfXConformance#getPDFXConformance() */
+    public int getPDFXConformance() {
+        return pdfxConformance.getPDFXConformance();
+    }
+     
+//	[C11] Output intents
+    
+    /**
+     * Use this method to set the values of the output intent dictionary.
+     * Null values are allowed to suppress any key.
+     * @param outputConditionIdentifier a value
+     * @param outputCondition a value
+     * @param registryName a value
+     * @param info a value
+     * @param destOutputProfile a value
+     * @throws IOException on error
+     */    
+    public void setOutputIntents(String outputConditionIdentifier, String outputCondition, String registryName, String info, byte destOutputProfile[]) throws IOException {
+        getExtraCatalog();
+        PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
+        if (outputCondition != null)
+            out.put(PdfName.OUTPUTCONDITION, new PdfString(outputCondition, PdfObject.TEXT_UNICODE));
+        if (outputConditionIdentifier != null)
+            out.put(PdfName.OUTPUTCONDITIONIDENTIFIER, new PdfString(outputConditionIdentifier, PdfObject.TEXT_UNICODE));
+        if (registryName != null)
+            out.put(PdfName.REGISTRYNAME, new PdfString(registryName, PdfObject.TEXT_UNICODE));
+        if (info != null)
+            out.put(PdfName.INFO, new PdfString(info, PdfObject.TEXT_UNICODE));
+        if (destOutputProfile != null) {
+            PdfStream stream = new PdfStream(destOutputProfile);
+            stream.flateCompress();
+            out.put(PdfName.DESTOUTPUTPROFILE, addToBody(stream).getIndirectReference());
+        }
+        out.put(PdfName.S, PdfName.GTS_PDFX);
+        extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+    }
+    
+    /**
+     * Use this method to copy the output intent dictionary
+     * from another document to this one.
+     * @param reader the other document
+     * @param checkExistence <CODE>true</CODE> to just check for the existence of a valid output intent
+     * dictionary, <CODE>false</CODE> to insert the dictionary if it exists
+     * @throws IOException on error
+     * @return <CODE>true</CODE> if the output intent dictionary exists, <CODE>false</CODE>
+     * otherwise
+     */    
+    public boolean setOutputIntents(PdfReader reader, boolean checkExistence) throws IOException {
+        PdfDictionary catalog = reader.getCatalog();
+        PdfArray outs = (PdfArray)PdfReader.getPdfObject(catalog.get(PdfName.OUTPUTINTENTS));
+        if (outs == null)
+            return false;
+        ArrayList arr = outs.getArrayList();
+        if (arr.isEmpty())
+            return false;
+        PdfDictionary out = (PdfDictionary)PdfReader.getPdfObject((PdfObject)arr.get(0));
+        PdfObject obj = PdfReader.getPdfObject(out.get(PdfName.S));
+        if (obj == null || !PdfName.GTS_PDFX.equals(obj))
+            return false;
+        if (checkExistence)
+            return true;
+        PRStream stream = (PRStream)PdfReader.getPdfObject(out.get(PdfName.DESTOUTPUTPROFILE));
+        byte destProfile[] = null;
+        if (stream != null) {
+            destProfile = PdfReader.getStreamBytes(stream);
+        }
+        setOutputIntents(getNameString(out, PdfName.OUTPUTCONDITIONIDENTIFIER), getNameString(out, PdfName.OUTPUTCONDITION),
+            getNameString(out, PdfName.REGISTRYNAME), getNameString(out, PdfName.INFO), destProfile);
+        return true;
+    }
+
+    private static String getNameString(PdfDictionary dic, PdfName key) {
+        PdfObject obj = PdfReader.getPdfObject(dic.get(key));
+        if (obj == null || !obj.isString())
+            return null;
+        return ((PdfString)obj).toUnicodeString();
+    }
+    
+// PDF Objects that have an impact on the PDF body
+    
+//	[F1] PdfEncryptionSettings interface
+
+    /** Contains the business logic for cryptography. */
+    protected PdfEncryption crypto;
+    PdfEncryption getEncryption() {
+        return crypto;
+    }
+    
+    /** @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(byte[], byte[], int, int) */
+    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
+        if (pdf.isOpen())
+            throw new DocumentException("Encryption can only be added before opening the document.");
+        crypto = new PdfEncryption();
+        crypto.setCryptoMode(encryptionType, 0);
+        crypto.setupAllKeys(userPassword, ownerPassword, permissions);
+    }
+    
+    /** @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(java.security.cert.Certificate[], int[], int) */
+    public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
+        if (pdf.isOpen())
+            throw new DocumentException("Encryption can only be added before opening the document.");
+        crypto = new PdfEncryption();
+        if (certs != null) {
+            for (int i=0; i < certs.length; i++) {
+                crypto.addRecipient(certs[i], permissions[i]);
+            }
+        }
+        crypto.setCryptoMode(encryptionType, 0);
+        crypto.getEncryptionDictionary();
+    }
+    
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
+     * @throws DocumentException if the document is already open
+     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     */
+    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
+        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
+    }
+    
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param strength <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @throws DocumentException if the document is already open
+     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     */
+    public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
+    }
+    
+    /**
+     * Sets the encryption options for this document. The userPassword and the
+     *  ownerPassword can be null or have zero length. In this case the ownerPassword
+     *  is replaced by a random string. The open permissions for the document can be
+     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
+     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
+     *  The permissions can be combined by ORing them.
+     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
+     * @param userPassword the user password. Can be null or empty
+     * @param ownerPassword the owner password. Can be null or empty
+     * @param permissions the user permissions
+     * @throws DocumentException if the document is already open
+     * @deprecated use the methods described in the PdfEncryptionSettings interface
+     */
+    public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, encryptionType);
+    }
+    
+//	[F2] compression
+
+    /** Holds value of property fullCompression. */
+    protected boolean fullCompression = false;
+
+    /**
+     * Use this method to find out if 1.5 compression is on.
+     * @return the 1.5 compression status
+     */
+    public boolean isFullCompression() {
+        return this.fullCompression;
+    }
+    
+    /**
+     * Use this method to set the document's compression to the
+     * PDF 1.5 mode with object streams and xref streams.
+     * It can be set at any time but once set it can't be unset.
+     * <p>
+     * If set before opening the document it will also set the pdf version to 1.5.
+     */
+    public void setFullCompression() {
+        this.fullCompression = true;
+        setAtLeastPdfVersion(VERSION_1_5);
+    }
+    
+//	[F3] adding fonts
+    
+    /** The fonts of this document */
+    protected HashMap documentFonts = new HashMap();
+    
+    /** The font number counter for the fonts in the document. */
+    protected int fontNumber = 1;
+    
+    /**
+     * Adds a <CODE>BaseFont</CODE> to the document but not to the page resources.
+     * It is used for templates.
+     * @param bf the <CODE>BaseFont</CODE> to add
+     * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
+     * and position 1 is an <CODE>PdfIndirectReference</CODE>
+     */
+    
+    FontDetails addSimple(BaseFont bf) {
+        if (bf.getFontType() == BaseFont.FONT_TYPE_DOCUMENT) {
+            return new FontDetails(new PdfName("F" + (fontNumber++)), ((DocumentFont)bf).getIndirectReference(), bf);
+        }
+        FontDetails ret = (FontDetails)documentFonts.get(bf);
+        if (ret == null) {
+            PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_FONT, bf);
+            ret = new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
+            documentFonts.put(bf, ret);
+        }
+        return ret;
+    }
+    
+    void eliminateFontSubset(PdfDictionary fonts) {
+        for (Iterator it = documentFonts.values().iterator(); it.hasNext();) {
+            FontDetails ft = (FontDetails)it.next();
+            if (fonts.get(ft.getFontName()) != null)
+                ft.setSubset(false);
+        }
+    } 
+    
+//	[F4] adding (and releasing) form XObjects
+    
+    /** The form XObjects in this document. The key is the xref and the value
+        is Object[]{PdfName, template}.*/
+    protected HashMap formXObjects = new HashMap();
+    
+    /** The name counter for the form XObjects name. */
+    protected int formXObjectsCounter = 1;
+    
+    /**
+     * Adds a template to the document but not to the page resources.
+     * @param template the template to add
+     * @param forcedName the template name, rather than a generated one. Can be null
+     * @return the <CODE>PdfName</CODE> for this template
+     */
+    
+    PdfName addDirectTemplateSimple(PdfTemplate template, PdfName forcedName) {
+        PdfIndirectReference ref = template.getIndirectReference();
+        Object obj[] = (Object[])formXObjects.get(ref);
+        PdfName name = null;
+        try {
+            if (obj == null) {
+                if (forcedName == null) {
+                    name = new PdfName("Xf" + formXObjectsCounter);
+                    ++formXObjectsCounter;
+                }
+                else
+                    name = forcedName;
+                if (template.getType() == PdfTemplate.TYPE_IMPORTED)
+                    template = null;
+                formXObjects.put(ref, new Object[]{name, template});
+            }
+            else
+                name = (PdfName)obj[0];
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+        return name;
+    }
+    
+    /**
+     * Use this method to releases the memory used by a template.
+     * This method writes the template to the output.
+     * The template can still be added to any content
+     * but changes to the template itself won't have any effect.
+     * @param tp the template to release
+     * @throws IOException on error
+     */    
+    public void releaseTemplate(PdfTemplate tp) throws IOException {
+        PdfIndirectReference ref = tp.getIndirectReference();
+        Object[] objs = (Object[])formXObjects.get(ref);
+        if (objs == null || objs[1] == null)
+            return;
+        PdfTemplate template = (PdfTemplate)objs[1];
+        if (template.getIndirectReference() instanceof PRIndirectReference)
+            return;
+        if (template.getType() == PdfTemplate.TYPE_TEMPLATE) {
+            addToBody(template.getFormXObject(), template.getIndirectReference());
+            objs[1] = null;
+        }
+    }
+    
+//	[F5] adding pages imported form other PDF documents
+    
+    protected HashMap importedPages = new HashMap();
+    
+    /**
+     * Use this method to get a page from other PDF document.
+     * The page can be used as any other PdfTemplate.
+     * Note that calling this method more than once with the same parameters
+     * will retrieve the same object.
+     * @param reader the PDF document where the page is
+     * @param pageNumber the page number. The first page is 1
+     * @return the template representing the imported page
+     */
+    public PdfImportedPage getImportedPage(PdfReader reader, int pageNumber) {
+        PdfReaderInstance inst = (PdfReaderInstance)importedPages.get(reader);
+        if (inst == null) {
+            inst = reader.getPdfReaderInstance(this);
+            importedPages.put(reader, inst);
+        }
+        return inst.getImportedPage(pageNumber);
+    }
+    
+    /**
+     * Use this method to writes the reader to the document
+     * and free the memory used by it.
+     * The main use is when concatenating multiple documents
+     * to keep the memory usage restricted to the current
+     * appending document.
+     * @param reader the <CODE>PdfReader</CODE> to free
+     * @throws IOException on error
+     */    
+    public void freeReader(PdfReader reader) throws IOException {
+        currentPdfReaderInstance = (PdfReaderInstance)importedPages.get(reader);
+        if (currentPdfReaderInstance == null)
+            return;
+        currentPdfReaderInstance.writeAllPages();
+        currentPdfReaderInstance = null;
+        importedPages.remove(reader);
+    }
+    
+    /**
+     * Use this method to gets the current document size. 
+     * This size only includes the data already writen
+     * to the output stream, it does not include templates or fonts.
+     * It is usefull if used with <CODE>freeReader()</CODE>
+     * when concatenating many documents and an idea of
+     * the current size is needed.
+     * @return the approximate size without fonts or templates
+     */    
+    public int getCurrentDocumentSize() {
+        return body.offset() + body.size() * 20 + 0x48;
+    }
+    
+    protected PdfReaderInstance currentPdfReaderInstance;
+    
+    protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
+        return currentPdfReaderInstance.getNewObjectNumber(number, generation);
+    }
+
+//	[F6] spot colors
+    
+    /** The colors of this document */
+    protected HashMap documentColors = new HashMap();
+    
+    /** The color number counter for the colors in the document. */
+    protected int colorNumber = 1;
+    
+    PdfName getColorspaceName() {
+        return new PdfName("CS" + (colorNumber++));
+    }
+    
+    /**
+     * Adds a <CODE>SpotColor</CODE> to the document but not to the page resources.
+     * @param spc the <CODE>SpotColor</CODE> to add
+     * @return an <CODE>Object[]</CODE> where position 0 is a <CODE>PdfName</CODE>
+     * and position 1 is an <CODE>PdfIndirectReference</CODE>
+     */    
+    ColorDetails addSimple(PdfSpotColor spc) {
+        ColorDetails ret = (ColorDetails)documentColors.get(spc);
+        if (ret == null) {
+            ret = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), spc);
+            documentColors.put(spc, ret);
+        }
+        return ret;
+    }
+
+//	[F7] document patterns
+    
+    /** The patterns of this document */
+    protected HashMap documentPatterns = new HashMap();
+    
+    /** The patten number counter for the colors in the document. */
+    protected int patternNumber = 1;
+    
+    PdfName addSimplePattern(PdfPatternPainter painter) {
+        PdfName name = (PdfName)documentPatterns.get(painter);
+        try {
+            if ( name == null ) {
+                name = new PdfName("P" + patternNumber);
+                ++patternNumber;
+                documentPatterns.put(painter, name);
+            }
+        } catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+        return name;
+    }
+    
+//	[F8] shading patterns
+    
+    protected HashMap documentShadingPatterns = new HashMap();
+    
+    void addSimpleShadingPattern(PdfShadingPattern shading) {
+        if (!documentShadingPatterns.containsKey(shading)) {
+            shading.setName(patternNumber);
+            ++patternNumber;
+            documentShadingPatterns.put(shading, null);
+            addSimpleShading(shading.getShading());
+        }
+    }
+
+//	[F9] document shadings
+    
+    protected HashMap documentShadings = new HashMap();
+    
+    void addSimpleShading(PdfShading shading) {
+        if (!documentShadings.containsKey(shading)) {
+            documentShadings.put(shading, null);
+            shading.setName(documentShadings.size());
+        }
+    }
+    
+// [F10] extended graphics state (for instance for transparency)
+
+    protected HashMap documentExtGState = new HashMap();
+    
+    PdfObject[] addSimpleExtGState(PdfDictionary gstate) {
+        if (!documentExtGState.containsKey(gstate)) {
+        	PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_GSTATE, gstate);
+            documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
+        }
+        return (PdfObject[])documentExtGState.get(gstate);
+    }
+
+//	[F11] adding properties (OCG, marked content)
+
+    protected HashMap documentProperties = new HashMap();
+    PdfObject[] addSimpleProperty(Object prop, PdfIndirectReference refi) {
+        if (!documentProperties.containsKey(prop)) {
+            if (prop instanceof PdfOCG)
+            	PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_LAYER, null);
+            documentProperties.put(prop, new PdfObject[]{new PdfName("Pr" + (documentProperties.size() + 1)), refi});
+        }
+        return (PdfObject[])documentProperties.get(prop);
+    }
+
+    boolean propertyExists(Object prop) {
+        return documentProperties.containsKey(prop);
+    }
+
+//	[F12] adding properties (OCG, marked content)
+    
+    protected boolean tagged = false;
+    protected PdfStructureTreeRoot structureTreeRoot;
     
     /**
      * Mark this document for tagging. It must be called before open.
@@ -2246,16 +1991,17 @@ public class PdfWriter extends DocWriter
         return structureTreeRoot;
     }
     
-//	[C9] Optional Content Groups    
+//	[F13] Optional Content Groups    
     protected HashSet documentOCG = new HashSet();
     protected ArrayList documentOCGorder = new ArrayList();
     protected PdfOCProperties OCProperties;
     protected PdfArray OCGRadioGroup = new PdfArray();
     
     /**
-     * Gets the <B>Optional Content Properties Dictionary</B>. Each call fills the dictionary with the current layer
-     * state. It's advisable to only call this method right before close and do any modifications
-     * at that time.
+     * Use this method to get the <B>Optional Content Properties Dictionary</B>.
+     * Each call fills the dictionary with the current layer state.
+     * It's advisable to only call this method right before close
+     * and do any modifications at that time.
      * @return the Optional Content Properties Dictionary
      */    
     public PdfOCProperties getOCProperties() {
@@ -2264,9 +2010,10 @@ public class PdfWriter extends DocWriter
     }
     
     /**
-     * Sets a collection of optional content groups whose states are intended to follow
-     * a "radio button" paradigm. That is, the state of at most one optional
-     * content group in the array should be ON at a time: if one group is turned
+     * Use this method to set a collection of optional content groups
+     * whose states are intended to follow a "radio button" paradigm.
+     * That is, the state of at most one optional content group
+     * in the array should be ON at a time: if one group is turned
      * ON, all others must be turned OFF.
      * @param group the radio group
      */    
@@ -2372,7 +2119,7 @@ public class PdfWriter extends DocWriter
     }
     
     void registerLayer(PdfOCG layer) {
-        checkPDFXConformance(this, PDFXKEY_LAYER, null);
+    	PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_LAYER, null);
         if (layer instanceof PdfLayer) {
             PdfLayer la = (PdfLayer)layer;
             if (la.getTitle() == null) {
@@ -2388,345 +2135,565 @@ public class PdfWriter extends DocWriter
         else
             throw new IllegalArgumentException("Only PdfLayer is accepted.");
     }
+    
+// Miscellaneous topics
+    
+//	[M1] Color settings
+    
+    protected PdfDictionary defaultColorspace = new PdfDictionary();
+    /**
+     * Use this method to get the default colorspaces.
+     * @return the default colorspaces
+     */    
+    public PdfDictionary getDefaultColorspace() {
+        return defaultColorspace;
+    }
 
-//	[C10] Metadata
-    
-    /** XMP Metadata for the document. */
-    protected byte[] xmpMetadata = null;
-	/**
-	 * Sets XMP Metadata.
-	 * @param xmpMetadata The xmpMetadata to set.
-	 */
-	public void setXmpMetadata(byte[] xmpMetadata) {
-		this.xmpMetadata = xmpMetadata;
-	}
-	
-	/**
-	 * Creates XMP Metadata based on the metadata in the PdfDocument.
-	 */
-	public void createXmpMetadata() {
-		setXmpMetadata(createXmpMetadataBytes());
-	}
     /**
-	 * @return an XmpMetadata byte array
-	 */
-	private byte[] createXmpMetadataBytes() {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    try {
-	    	XmpWriter xmp = new XmpWriter(baos, pdf.getInfo());
-	        xmp.close();
-	    }
-	    catch(IOException ioe) {
-	        ioe.printStackTrace();
-	    }
-	    return baos.toByteArray();
-	}
-    
-//	[C11] AcroForm
-    
-    /**
-     * Set the signature flags.
-     * @param f the flags. This flags are ORed with current ones
-     */
-    public void setSigFlags(int f) {
-        pdf.setSigFlags(f);
+     * Use this method to sets the default colorspace that will be applied
+     * to all the document. The colorspace is only applied if another colorspace
+     * with the same name is not present in the content.
+     * <p>
+     * The colorspace is applied immediately when creating templates and
+     * at the page end for the main document content.
+     * @param key the name of the colorspace. It can be <CODE>PdfName.DEFAULTGRAY</CODE>, <CODE>PdfName.DEFAULTRGB</CODE>
+     * or <CODE>PdfName.DEFAULTCMYK</CODE>
+     * @param cs the colorspace. A <CODE>null</CODE> or <CODE>PdfNull</CODE> removes any colorspace with the same name
+     */    
+    public void setDefaultColorspace(PdfName key, PdfObject cs) {
+        if (cs == null || cs.isNull())
+            defaultColorspace.remove(key);
+        defaultColorspace.put(key, cs);
     }
     
-    /**
-     * Adds the <CODE>PdfAnnotation</CODE> to the calculation order
-     * array.
-     * @param annot the <CODE>PdfAnnotation</CODE> to be added
-     */
-    public void addCalculationOrder(PdfFormField annot) {
-        pdf.addCalculationOrder(annot);
-    }
-     
-// Encryption and compression (used when he bytes are written to a File)
+//	[M2] spot patterns
     
-//	[F1] PdfEncryptionSettings interface
-
-    /** Contains the business logic for cryptography. */
-    protected PdfEncryption crypto;
-    PdfEncryption getEncryption() {
-        return crypto;
-    }
-    
-    /**
-     * @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(byte[], byte[], int, int)
-     */
-    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, int encryptionType) throws DocumentException {
-        if (pdf.isOpen())
-            throw new DocumentException("Encryption can only be added before opening the document.");
-        crypto = new PdfEncryption();
-        crypto.setCryptoMode(encryptionType, 0);
-        crypto.setupAllKeys(userPassword, ownerPassword, permissions);
-    }
-    
-    /**
-     * @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(java.security.cert.Certificate[], int[], int)
-     */
-    public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
-        if (pdf.isOpen())
-            throw new DocumentException("Encryption can only be added before opening the document.");
-        crypto = new PdfEncryption();
-        if (certs != null) {
-            for (int i=0; i < certs.length; i++) {
-                crypto.addRecipient(certs[i], permissions[i]);
+    protected HashMap documentSpotPatterns = new HashMap();
+    protected ColorDetails patternColorspaceRGB;
+    protected ColorDetails patternColorspaceGRAY;
+    protected ColorDetails patternColorspaceCMYK;
+   
+    ColorDetails addSimplePatternColorspace(Color color) {
+        int type = ExtendedColor.getType(color);
+        if (type == ExtendedColor.TYPE_PATTERN || type == ExtendedColor.TYPE_SHADING)
+            throw new RuntimeException("An uncolored tile pattern can not have another pattern or shading as color.");
+        try {
+            switch (type) {
+                case ExtendedColor.TYPE_RGB:
+                    if (patternColorspaceRGB == null) {
+                        patternColorspaceRGB = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
+                        PdfArray array = new PdfArray(PdfName.PATTERN);
+                        array.add(PdfName.DEVICERGB);
+                        addToBody(array, patternColorspaceRGB.getIndirectReference());
+                    }
+                    return patternColorspaceRGB;
+                case ExtendedColor.TYPE_CMYK:
+                    if (patternColorspaceCMYK == null) {
+                        patternColorspaceCMYK = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
+                        PdfArray array = new PdfArray(PdfName.PATTERN);
+                        array.add(PdfName.DEVICECMYK);
+                        addToBody(array, patternColorspaceCMYK.getIndirectReference());
+                    }
+                    return patternColorspaceCMYK;
+                case ExtendedColor.TYPE_GRAY:
+                    if (patternColorspaceGRAY == null) {
+                        patternColorspaceGRAY = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
+                        PdfArray array = new PdfArray(PdfName.PATTERN);
+                        array.add(PdfName.DEVICEGRAY);
+                        addToBody(array, patternColorspaceGRAY.getIndirectReference());
+                    }
+                    return patternColorspaceGRAY;
+                case ExtendedColor.TYPE_SEPARATION: {
+                    ColorDetails details = addSimple(((SpotColor)color).getPdfSpotColor());
+                    ColorDetails patternDetails = (ColorDetails)documentSpotPatterns.get(details);
+                    if (patternDetails == null) {
+                        patternDetails = new ColorDetails(getColorspaceName(), body.getPdfIndirectReference(), null);
+                        PdfArray array = new PdfArray(PdfName.PATTERN);
+                        array.add(details.getIndirectReference());
+                        addToBody(array, patternDetails.getIndirectReference());
+                        documentSpotPatterns.put(details, patternDetails);
+                    }
+                    return patternDetails;
+                }
+                default:
+                    throw new RuntimeException("Invalid color type in PdfWriter.addSimplePatternColorspace().");
             }
         }
-        crypto.setCryptoMode(encryptionType, 0);
-        crypto.getEncryptionDictionary();
-    }
-    
-    /** Sets the encryption options for this document. The userPassword and the
-     *  ownerPassword can be null or have zero length. In this case the ownerPassword
-     *  is replaced by a random string. The open permissions for the document can be
-     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     *  The permissions can be combined by ORing them.
-     * @param userPassword the user password. Can be null or empty
-     * @param ownerPassword the owner password. Can be null or empty
-     * @param permissions the user permissions
-     * @param strength128Bits <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
-     * @throws DocumentException if the document is already open
-     * @deprecated use the methods described in the PdfEncryptionSettings interface
-     */
-    public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
-        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
-    }
-    
-    /**
-     * Sets the encryption options for this document. The userPassword and the
-     *  ownerPassword can be null or have zero length. In this case the ownerPassword
-     *  is replaced by a random string. The open permissions for the document can be
-     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     *  The permissions can be combined by ORing them.
-     * @param strength <code>true</code> for 128 bit key length, <code>false</code> for 40 bit key length
-     * @param userPassword the user password. Can be null or empty
-     * @param ownerPassword the owner password. Can be null or empty
-     * @param permissions the user permissions
-     * @throws DocumentException if the document is already open
-     * @deprecated use the methods described in the PdfEncryptionSettings interface
-     */
-    public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
-        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
-    }
-    
-    /**
-     * Sets the encryption options for this document. The userPassword and the
-     *  ownerPassword can be null or have zero length. In this case the ownerPassword
-     *  is replaced by a random string. The open permissions for the document can be
-     *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
-     *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
-     *  The permissions can be combined by ORing them.
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
-     * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
-     * @param userPassword the user password. Can be null or empty
-     * @param ownerPassword the owner password. Can be null or empty
-     * @param permissions the user permissions
-     * @throws DocumentException if the document is already open
-     * @deprecated use the methods described in the PdfEncryptionSettings interface
-     */
-    public void setEncryption(int encryptionType, String userPassword, String ownerPassword, int permissions) throws DocumentException {
-        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, encryptionType);
-    }
-    
-//	[F2] compression
-
-    /**
-     * Holds value of property fullCompression.
-     */
-    protected boolean fullCompression = false;
-
-    /**
-     * Gets the 1.5 compression status.
-     * @return <code>true</code> if the 1.5 compression is on
-     */
-    public boolean isFullCompression() {
-        return this.fullCompression;
-    }
-    
-    /**
-     * Sets the document's compression to the new 1.5 mode with object streams and xref
-     * streams. It can be set at any time but once set it can't be unset.
-     * <p>
-     * If set before opening the document it will also set the pdf version to 1.5.
-     */
-    public void setFullCompression() {
-        this.fullCompression = true;
-        setAtLeastPdfVersion(VERSION_1_5);
-    }
-    
-//	[F3] PDFX Conformance
-    
-    // these will probably go into a seperate interface
-    // and the business logic will also probably go into another class
-    /** PDF/X value */
-    public static final int PDFXNONE = 0;
-    /** PDF/X value */
-    public static final int PDFX1A2001 = 1;
-    /** PDF/X value */
-    public static final int PDFX32002 = 2;
-
-    private int pdfxConformance = PDFXNONE;
-    
-    static final int PDFXKEY_COLOR = 1;
-    static final int PDFXKEY_CMYK = 2;
-    static final int PDFXKEY_RGB = 3;
-    static final int PDFXKEY_FONT = 4;
-    static final int PDFXKEY_IMAGE = 5;
-    static final int PDFXKEY_GSTATE = 6;
-    static final int PDFXKEY_LAYER = 7;
-    
-    
-    /**
-     * Sets the PDFX conformance level. Allowed values are PDFX1A2001 and PDFX32002. It
-     * must be called before opening the document.
-     * @param pdfxConformance the conformance level
-     */    
-    public void setPDFXConformance(int pdfxConformance) {
-        if (this.pdfxConformance == pdfxConformance)
-            return;
-        if (pdf.isOpen())
-            throw new PdfXConformanceException("PDFX conformance can only be set before opening the document.");
-        if (crypto != null)
-            throw new PdfXConformanceException("A PDFX conforming document cannot be encrypted.");
-        if (pdfxConformance != PDFXNONE)
-            setPdfVersion(VERSION_1_3);
-        this.pdfxConformance = pdfxConformance;
-    }
- 
-    /**
-     * Gets the PDFX conformance level.
-     * @return the PDFX conformance level
-     */    
-    public int getPDFXConformance() {
-        return pdfxConformance;
-    }
-    
-    static void checkPDFXConformance(PdfWriter writer, int key, Object obj1) {
-        if (writer == null || writer.pdfxConformance == PDFXNONE)
-            return;
-        int conf = writer.pdfxConformance;
-        switch (key) {
-            case PDFXKEY_COLOR:
-                switch (conf) {
-                    case PDFX1A2001:
-                        if (obj1 instanceof ExtendedColor) {
-                            ExtendedColor ec = (ExtendedColor)obj1;
-                            switch (ec.getType()) {
-                                case ExtendedColor.TYPE_CMYK:
-                                case ExtendedColor.TYPE_GRAY:
-                                    return;
-                                case ExtendedColor.TYPE_RGB:
-                                    throw new PdfXConformanceException("Colorspace RGB is not allowed.");
-                                case ExtendedColor.TYPE_SEPARATION:
-                                    SpotColor sc = (SpotColor)ec;
-                                    checkPDFXConformance(writer, PDFXKEY_COLOR, sc.getPdfSpotColor().getAlternativeCS());
-                                    break;
-                                case ExtendedColor.TYPE_SHADING:
-                                    ShadingColor xc = (ShadingColor)ec;
-                                    checkPDFXConformance(writer, PDFXKEY_COLOR, xc.getPdfShadingPattern().getShading().getColorSpace());
-                                    break;
-                                case ExtendedColor.TYPE_PATTERN:
-                                    PatternColor pc = (PatternColor)ec;
-                                    checkPDFXConformance(writer, PDFXKEY_COLOR, pc.getPainter().getDefaultColor());
-                                    break;
-                            }
-                        }
-                        else if (obj1 instanceof Color)
-                            throw new PdfXConformanceException("Colorspace RGB is not allowed.");
-                        break;
-                }
-                break;
-            case PDFXKEY_CMYK:
-                break;
-            case PDFXKEY_RGB:
-                if (conf == PDFX1A2001)
-                    throw new PdfXConformanceException("Colorspace RGB is not allowed.");
-                break;
-            case PDFXKEY_FONT:
-                if (!((BaseFont)obj1).isEmbedded())
-                    throw new PdfXConformanceException("All the fonts must be embedded.");
-                break;
-            case PDFXKEY_IMAGE:
-                PdfImage image = (PdfImage)obj1;
-                if (image.get(PdfName.SMASK) != null)
-                    throw new PdfXConformanceException("The /SMask key is not allowed in images.");
-                switch (conf) {
-                    case PDFX1A2001:
-                        PdfObject cs = image.get(PdfName.COLORSPACE);
-                        if (cs == null)
-                            return;
-                        if (cs.isName()) {
-                            if (PdfName.DEVICERGB.equals(cs))
-                                throw new PdfXConformanceException("Colorspace RGB is not allowed.");
-                        }
-                        else if (cs.isArray()) {
-                            if (PdfName.CALRGB.equals(((PdfArray)cs).getArrayList().get(0)))
-                                throw new PdfXConformanceException("Colorspace CalRGB is not allowed.");
-                        }
-                        break;
-                }
-                break;
-            case PDFXKEY_GSTATE:
-                PdfDictionary gs = (PdfDictionary)obj1;
-                PdfObject obj = gs.get(PdfName.BM);
-                if (obj != null && !PdfGState.BM_NORMAL.equals(obj) && !PdfGState.BM_COMPATIBLE.equals(obj))
-                    throw new PdfXConformanceException("Blend mode " + obj.toString() + " not allowed.");
-                obj = gs.get(PdfName.CA);
-                double v = 0.0;
-                if (obj != null && (v = ((PdfNumber)obj).doubleValue()) != 1.0)
-                    throw new PdfXConformanceException("Transparency is not allowed: /CA = " + v);
-                obj = gs.get(PdfName.ca);
-                v = 0.0;
-                if (obj != null && (v = ((PdfNumber)obj).doubleValue()) != 1.0)
-                    throw new PdfXConformanceException("Transparency is not allowed: /ca = " + v);
-                break;
-            case PDFXKEY_LAYER:
-                throw new PdfXConformanceException("Layers are not allowed.");
+        catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
     
-    /** Holds value of property extraCatalog. */
-    private PdfDictionary extraCatalog;
+//	[M3] Images
+
     /**
-     * Sets extra keys to the catalog.
-     * @return the catalog to change
-     */    
-    public PdfDictionary getExtraCatalog() {
-        if (extraCatalog == null)
-            extraCatalog = new PdfDictionary();
-        return this.extraCatalog;
+     * Use this method to get the strictImageSequence status.
+     * @return value of property strictImageSequence
+     */
+    public boolean isStrictImageSequence() {
+        return pdf.isStrictImageSequence();
     }
+    
     /**
-     * Sets the values of the output intent dictionary. Null values are allowed to
-     * suppress any key.
-     * @param outputConditionIdentifier a value
-     * @param outputCondition a value
-     * @param registryName a value
-     * @param info a value
-     * @param destOutputProfile a value
-     * @throws IOException on error
-     */    
-    public void setOutputIntents(String outputConditionIdentifier, String outputCondition, String registryName, String info, byte destOutputProfile[]) throws IOException {
-        getExtraCatalog();
-        PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
-        if (outputCondition != null)
-            out.put(PdfName.OUTPUTCONDITION, new PdfString(outputCondition, PdfObject.TEXT_UNICODE));
-        if (outputConditionIdentifier != null)
-            out.put(PdfName.OUTPUTCONDITIONIDENTIFIER, new PdfString(outputConditionIdentifier, PdfObject.TEXT_UNICODE));
-        if (registryName != null)
-            out.put(PdfName.REGISTRYNAME, new PdfString(registryName, PdfObject.TEXT_UNICODE));
-        if (info != null)
-            out.put(PdfName.INFO, new PdfString(info, PdfObject.TEXT_UNICODE));
-        if (destOutputProfile != null) {
-            PdfStream stream = new PdfStream(destOutputProfile);
-            stream.flateCompress();
-            out.put(PdfName.DESTOUTPUTPROFILE, addToBody(stream).getIndirectReference());
+     * Use this method to set the image sequence, so that it follows
+     * the text in strict order (or not).
+     * @param strictImageSequence new value of property strictImageSequence
+     *
+     */
+    public void setStrictImageSequence(boolean strictImageSequence) {
+        pdf.setStrictImageSequence(strictImageSequence);
+    }
+    
+    /**
+     * Use this method to clear text wrapping around images (if applicable).
+     * @throws DocumentException
+     */
+    public void clearTextWrap() throws DocumentException {
+    	pdf.clearTextWrap();
+    }
+    
+    /** Dictionary, containing all the images of the PDF document */
+    protected PdfDictionary imageDictionary = new PdfDictionary();
+    
+    /** This is the list with all the images in the document. */
+    private HashMap images = new HashMap();
+    
+    /**
+     * Use this method to adds an image to the document
+     * but not to the page resources. It is used with
+     * templates and <CODE>Document.add(Image)</CODE>.
+     * Use this method only if you know what you're doing!
+     * @param image the <CODE>Image</CODE> to add
+     * @return the name of the image added
+     * @throws PdfException on error
+     * @throws DocumentException on error
+     */
+    public PdfName addDirectImageSimple(Image image) throws PdfException, DocumentException {
+        return addDirectImageSimple(image, null);
+    }
+    
+    /**
+     * Adds an image to the document but not to the page resources.
+     * It is used with templates and <CODE>Document.add(Image)</CODE>.
+     * Use this method only if you know what you're doing!
+     * @param image the <CODE>Image</CODE> to add
+     * @param fixedRef the reference to used. It may be <CODE>null</CODE>,
+     * a <CODE>PdfIndirectReference</CODE> or a <CODE>PRIndirectReference</CODE>.
+     * @return the name of the image added
+     * @throws PdfException on error
+     * @throws DocumentException on error
+     */
+    public PdfName addDirectImageSimple(Image image, PdfIndirectReference fixedRef) throws PdfException, DocumentException {
+        PdfName name;
+        // if the images is already added, just retrieve the name
+        if (images.containsKey(image.getMySerialId())) {
+            name = (PdfName) images.get(image.getMySerialId());
         }
-        out.put(PdfName.S, PdfName.GTS_PDFX);
-        extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+        // if it's a new image, add it to the document
+        else {
+            if (image.isImgTemplate()) {
+                name = new PdfName("img" + images.size());
+                if (image.templateData() == null) {
+                    if(image instanceof ImgWMF){
+                        try {
+                            ImgWMF wmf = (ImgWMF)image;
+                            wmf.readWMF(PdfTemplate.createTemplate(this, 0, 0));
+                        }
+                        catch (Exception e) {
+                            throw new DocumentException(e);
+                        }
+                    }else{
+                        try {
+                            ((ImgPostscript)image).readPostscript(PdfTemplate.createTemplate(this, 0, 0));
+                        }
+                        catch (Exception e) {
+                            throw new DocumentException(e);
+                        }
+                        
+                    }
+                }
+            }
+            else {
+                PdfIndirectReference dref = image.getDirectReference();
+                if (dref != null) {
+                    PdfName rname = new PdfName("img" + images.size());
+                    images.put(image.getMySerialId(), rname);
+                    imageDictionary.put(rname, dref);
+                    return rname;
+                }
+                Image maskImage = image.getImageMask();
+                PdfIndirectReference maskRef = null;
+                if (maskImage != null) {
+                    PdfName mname = (PdfName)images.get(maskImage.getMySerialId());
+                    maskRef = getImageReference(mname);
+                }
+                PdfImage i = new PdfImage(image, "img" + images.size(), maskRef);
+                if (image.hasICCProfile()) {
+                    PdfICCBased icc = new PdfICCBased(image.getICCProfile());
+                    PdfIndirectReference iccRef = add(icc);
+                    PdfArray iccArray = new PdfArray();
+                    iccArray.add(PdfName.ICCBASED);
+                    iccArray.add(iccRef);
+                    PdfObject colorspace = i.get(PdfName.COLORSPACE);
+                    if (colorspace != null && colorspace.isArray()) {
+                        ArrayList ar = ((PdfArray)colorspace).getArrayList();
+                        if (ar.size() > 1 && PdfName.INDEXED.equals(ar.get(0)))
+                            ar.set(1, iccArray);
+                        else
+                            i.put(PdfName.COLORSPACE, iccArray);
+                    }
+                    else
+                        i.put(PdfName.COLORSPACE, iccArray);
+                }
+                add(i, fixedRef);
+                name = i.name();
+            }
+            images.put(image.getMySerialId(), name);
+        }
+        return name;
+    }
+
+    /**
+     * Writes a <CODE>PdfImage</CODE> to the outputstream.
+     *
+     * @param pdfImage the image to be added
+     * @return a <CODE>PdfIndirectReference</CODE> to the encapsulated image
+     * @throws PdfException when a document isn't open yet, or has been closed
+     */
+    
+    PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
+        if (! imageDictionary.contains(pdfImage.name())) {
+            PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_IMAGE, pdfImage);
+            if (fixedRef instanceof PRIndirectReference) {
+                PRIndirectReference r2 = (PRIndirectReference)fixedRef;
+                fixedRef = new PdfIndirectReference(0, getNewObjectNumber(r2.getReader(), r2.getNumber(), r2.getGeneration()));
+            }
+            try {
+                if (fixedRef == null)
+                    fixedRef = addToBody(pdfImage).getIndirectReference();
+                else
+                    addToBody(pdfImage, fixedRef);
+            }
+            catch(IOException ioe) {
+                throw new ExceptionConverter(ioe);
+            }
+            imageDictionary.put(pdfImage.name(), fixedRef);
+            return fixedRef;
+        }
+        return (PdfIndirectReference) imageDictionary.get(pdfImage.name());
+    }
+    
+    /**
+     * return the <CODE>PdfIndirectReference</CODE> to the image with a given name.
+     *
+     * @param name the name of the image
+     * @return a <CODE>PdfIndirectReference</CODE>
+     */
+    
+    PdfIndirectReference getImageReference(PdfName name) {
+        return (PdfIndirectReference) imageDictionary.get(name);
+    }
+    
+    protected PdfIndirectReference add(PdfICCBased icc) {
+        PdfIndirectObject object;
+        try {
+            object = addToBody(icc);
+        }
+        catch(IOException ioe) {
+            throw new ExceptionConverter(ioe);
+        }
+        return object.getIndirectReference();
+    }
+    
+//	User methods to change aspects of the page
+    
+//	[U1] page size
+
+    /**
+     * Use this method to get the size of the media box.
+     * @return a Rectangle
+     */
+    public Rectangle getPageSize() {
+    	return pdf.getPageSize();
+    }
+    
+    /**
+     * Use this method to set the crop box.
+     * The crop box should not be rotated even if the page is rotated.
+     * This change only takes effect in the next page.
+     * @param crop the crop box
+     */
+    public void setCropBoxSize(Rectangle crop) {
+        pdf.setCropBoxSize(crop);
+    }
+    
+    /**
+     * Use this method to set the page box sizes.
+     * Allowed names are: "crop", "trim", "art" and "bleed".
+     * @param boxName the box size
+     * @param size the size
+     */    
+    public void setBoxSize(String boxName, Rectangle size) {
+        pdf.setBoxSize(boxName, size);
+    }
+
+    /**
+     * Use this method to get the size of a trim, art, crop or bleed box,
+     * or null if not defined.
+     * @param boxName crop, trim, art or bleed
+     */
+    public Rectangle getBoxSize(String boxName) {
+    	return pdf.getBoxSize(boxName);
+    }
+    
+//	[U2] take care of empty pages
+    
+    /**
+     * Use this method to make sure a page is added,
+     * even if it's empty. If you use setPageEmpty(false),
+     * invoking newPage() after a blank page will add a newPage.
+     * @param pageEmpty the state
+     */
+    public void setPageEmpty(boolean pageEmpty) {
+        pdf.setPageEmpty(pageEmpty);
+    }
+    
+//  [U3] page actions (open and close)
+     
+     /** @see com.lowagie.text.pdf.interfaces.PdfPagesActions#setPageAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction) */
+     public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
+          if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
+              throw new DocumentException("Invalid page additional action type: " + actionType.toString());
+          pdf.setPageAction(actionType, action);
+      }
+     
+    /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setDuration(int) */
+    public void setDuration(int seconds) {
+         pdf.setDuration(seconds);
+     }
+     
+    /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setTransition(com.lowagie.text.pdf.PdfTransition) */
+    public void setTransition(PdfTransition transition) {
+         pdf.setTransition(transition);
+     }
+    
+//	[U4] Thumbnail image
+    
+    /**
+     * Use this method to set the thumbnail image for the current page.
+     * @param image the image
+     * @throws PdfException on error
+     * @throws DocumentException or error
+     */    
+    public void setThumbnail(Image image) throws PdfException, DocumentException {
+        pdf.setThumbnail(image);
+    }
+
+//	[U5] Transparency groups
+ 	
+    /**
+     * A group attributes dictionary specifying the attributes
+     * of the page’s page group for use in the transparent
+     * imaging model
+     */
+    protected PdfDictionary group;
+    
+    /**
+     * Use this method to get the group dictionary.
+     * @return Value of property group.
+     */
+    public PdfDictionary getGroup() {
+        return this.group;
+    }
+    
+    /**
+     * Use this method to set the group dictionary.
+     * @param group New value of property group.
+     */
+    public void setGroup(PdfDictionary group) {
+        this.group = group;
+    }
+    
+//	[U6] space char ratio
+
+    /**
+     * The ratio between the extra word spacing and the extra character spacing.
+     * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
+     */
+    private float spaceCharRatio = SPACE_CHAR_RATIO_DEFAULT;
+    
+    /**
+     * Use this method to gets the space/character extra spacing ratio
+     * for fully justified text.
+     * @return the space/character extra spacing ratio
+     */
+    public float getSpaceCharRatio() {
+        return spaceCharRatio;
+    }
+    
+    /**
+     * Use this method to set the ratio between the extra word spacing and
+     * the extra character spacing when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more
+     * than extra character spacing. If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE>
+     * then the extra character spacing will be zero.
+     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
+     */
+    public void setSpaceCharRatio(float spaceCharRatio) {
+        if (spaceCharRatio < 0.001f)
+            this.spaceCharRatio = 0.001f;
+        else
+            this.spaceCharRatio = spaceCharRatio;
+    }
+
+//	[U7] run direction (doesn't actually do anything)
+    
+    protected int runDirection = RUN_DIRECTION_NO_BIDI;
+    
+    /**
+     * Use this method to set the run direction.
+     * This is only used as a placeholder as it does not affect anything.
+     * @param runDirection the run direction
+     */    
+    public void setRunDirection(int runDirection) {
+        if (runDirection < RUN_DIRECTION_NO_BIDI || runDirection > RUN_DIRECTION_RTL)
+            throw new RuntimeException("Invalid run direction: " + runDirection);
+        this.runDirection = runDirection;
+    }
+    
+    /**
+     * Use this method to set the run direction.
+     * @return the run direction
+     */    
+    public int getRunDirection() {
+        return runDirection;
+    }
+     
+//	[U8] user units     
+     
+     protected float userunit = 0f;
+ 	/**
+ 	 * Use this method to get the user unit.
+ 	 * A user unit is a value that defines the default user space unit.
+ 	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+ 	 * The maximum UserUnit is 75,000.
+ 	 * Note that this userunit only works starting with PDF1.6!
+ 	 * @return Returns the userunit.
+ 	 */
+ 	public float getUserunit() {
+ 		return userunit;
+ 	}
+ 	/**
+ 	 * Use this method to set the user unit.
+     * A UserUnit is a value that defines the default user space unit.
+     * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+     * The maximum UserUnit is 75,000.
+     * Note that this userunit only works starting with PDF1.6!
+     * @param userunit The userunit to set.
+     * @throws DocumentException on error
+     */
+ 	public void setUserunit(float userunit) throws DocumentException {
+ 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
+ 		this.userunit = userunit;
+         setAtLeastPdfVersion(VERSION_1_6);
+ 	}
+    
+//	OLD TABLE METHODS; DO WE STILL NEED THEM?
+    
+    /**
+     * Sometimes it is necessary to know where the just added <CODE>Table</CODE> ends.
+     *
+     * For instance to avoid to add another table in a page that is ending up, because
+     * the new table will be probably splitted just after the header (it is an
+     * unpleasant effect, isn't it?).
+     *
+     * Added on September 8th, 2001
+     * by Francesco De Milato
+     * francesco.demilato@tiscalinet.it
+     * @param table the <CODE>Table</CODE>
+     * @return the bottom height of the just added table
+     * @deprecated	this method will probably disappear in one of the next releases
+     */
+    
+    public float getTableBottom(Table table) {
+        return pdf.bottom(table) - pdf.indentBottom();
+    }
+    
+    /**
+	 * Gets a pre-rendered table.
+	 * (Contributed by dperezcar@fcc.es) 
+	 * @param table		Contains the table definition.  Its contents are deleted, after being pre-rendered.
+     * @return a PdfTable
+     * @deprecated	this method will probably disappear in one of the next releases
+	 */
+	
+	public PdfTable getPdfTable(Table table) {
+		return pdf.getPdfTable(table, true);
+	}
+
+	/**
+	 * Row additions to the original {@link Table} used to build the {@link PdfTable} are processed and pre-rendered,
+	 * and then the contents are deleted. 
+	 * If the pre-rendered table doesn't fit, then it is fully rendered and its data discarded.  
+	 * There shouldn't be any column change in the underlying {@link Table} object.
+	 * (Contributed by dperezcar@fcc.es) 
+	 *
+	 * @param	table		The pre-rendered table obtained from {@link #getPdfTable(Table)} 
+	 * @return	true if the table is rendered and emptied.
+	 * @throws DocumentException
+	 * @see #getPdfTable(Table)
+     * @deprecated	this method will probably disappear in one of the next releases
+	 */
+	
+	public boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {
+		return pdf.breakTableIfDoesntFit(table);
+	}
+    
+    /**
+     * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
+     *
+     * @param	table	the table that has to be checked
+     * @param	margin	a certain margin
+     * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
+     * @deprecated	this method will probably disappear in one of the next releases
+     */
+    
+    public boolean fitsPage(Table table, float margin) {
+        return pdf.bottom(table) > pdf.indentBottom() + margin;
+    }
+    
+    /**
+     * Checks if a <CODE>Table</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
+     *
+     * @param	table	the table that has to be checked
+     * @return	<CODE>true</CODE> if the <CODE>Table</CODE> fits the page, <CODE>false</CODE> otherwise.
+     * @deprecated	this method will probably disappear in one of the next releases
+     */
+    
+    public boolean fitsPage(Table table) {
+        return fitsPage(table, 0);
+    }
+    
+    /**
+     * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
+     *
+     * @param	table	the table that has to be checked
+     * @param	margin	a certain margin
+     * @return	<CODE>true</CODE> if the <CODE>PdfPTable</CODE> fits the page, <CODE>false</CODE> otherwise.
+     * @deprecated	this method will probably disappear in one of the next releases
+     */
+    public boolean fitsPage(PdfPTable table, float margin) {
+        return pdf.fitsPage(table, margin);
+    }
+    
+    /**
+     * Checks if a <CODE>PdfPTable</CODE> fits the current page of the <CODE>PdfDocument</CODE>.
+     *
+     * @param	table	the table that has to be checked
+     * @return	<CODE>true</CODE> if the <CODE>PdfPTable</CODE> fits the page, <CODE>false</CODE> otherwise.
+     * @deprecated	this method will probably disappear in one of the next releases
+     */
+    public boolean fitsPage(PdfPTable table) {
+        return pdf.fitsPage(table, 0);
     }
 }
