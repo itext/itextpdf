@@ -1253,7 +1253,8 @@ class PdfStamperImp extends PdfWriter
     }
     
     /** Adds a viewer preference
-     * @param preferences the viewer preferences
+     * @param key a key for a viewer preference
+     * @param value the value for the viewer preference
      * @see PdfViewerPreferences#addViewerPreference
      */
     public void addViewerPreference(PdfName key, PdfObject value) {

@@ -110,7 +110,7 @@ public class PdfCollectionField extends PdfDictionary {
 	
 	/**
 	 * Returns a PdfObject that can be used as the value of a Collection Item.
-	 * @param String	value	the value that has to be changed into a PdfObject (PdfString, PdfDate or PdfNumber)	
+	 * @param v	value	the value that has to be changed into a PdfObject (PdfString, PdfDate or PdfNumber)	
 	 */
 	public PdfObject getValue(String v) {
 		switch(type) {

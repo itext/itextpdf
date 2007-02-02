@@ -2183,8 +2183,8 @@ public class PdfWriter extends DocWriter implements
     
 //  [U3] page actions (open and close)
      
-     /** @see com.lowagie.text.pdf.interfaces.PdfPagesActions#setPageAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction) */
-     public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
+    /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setPageAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction) */
+    public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
           if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
               throw new DocumentException("Invalid page additional action type: " + actionType.toString());
           pdf.setPageAction(actionType, action);

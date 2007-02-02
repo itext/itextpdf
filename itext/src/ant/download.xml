@@ -38,7 +38,7 @@
     <target name="download" depends="download.bin" description="--> downloads the most recent release of the code">
 	
         <mkdir dir="${itext.downloads}" />
-        <get src="http://itextdocs.lowagie.com/downloads/src.tar.gz" dest="${itext.downloads}/src.tar.gz" verbose="true" />
+        <get src="http://itext.ugent.be/library/downloads/src.tar.gz" dest="${itext.downloads}/src.tar.gz" verbose="true" />
 
         <mkdir dir="${itext.src}" />
         <gunzip src="${itext.downloads}/src.tar.gz" dest="${itext.downloads}/temp.tar" />
@@ -61,5 +61,7 @@
         <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/servlet.jar" dest="${itext.bin}/servlet.jar" verbose="true" />
         <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/jfreechart.jar" dest="${itext.bin}/jfreechart.jar" verbose="true" />
         <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/jcommon.jar" dest="${itext.bin}/jcommon.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bcmail-jdk14-135.jar" dest="${itext.bin}/bcmail-jdk14-135.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bcprov-jdk14-135.jar" dest="${itext.bin}/bcprov-jdk14-135.jar" verbose="true" />
     </target>
 </project>

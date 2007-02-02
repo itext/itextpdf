@@ -46,7 +46,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	
 	/**
 	 * Sets the value of the collection item.
-	 * @param value
+	 * @param d
 	 */
 	public void addItem(String key, PdfDate d) {
 		PdfName fieldname = new PdfName(key);
@@ -58,7 +58,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	
 	/**
 	 * Sets the value of the collection item.
-	 * @param value
+	 * @param n
 	 */
 	public void addItem(String key, PdfNumber n) {
 		PdfName fieldname = new PdfName(key);
@@ -70,7 +70,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	
 	/**
 	 * Sets the value of the collection item.
-	 * @param value
+	 * @param c
 	 */
 	public void addItem(String key, Calendar c) {
 		addItem(key, new PdfDate(c));
@@ -78,7 +78,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	
 	/**
 	 * Sets the value of the collection item.
-	 * @param value
+	 * @param i
 	 */
 	public void addItem(String key, int i) {
 		addItem(key, new PdfNumber(i));
@@ -86,7 +86,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	
 	/**
 	 * Sets the value of the collection item.
-	 * @param value
+	 * @param f
 	 */
 	public void addItem(String key, float f) {
 		addItem(key, new PdfNumber(f));
@@ -94,7 +94,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	
 	/**
 	 * Sets the value of the collection item.
-	 * @param value
+	 * @param d
 	 */
 	public void addItem(String key, double d) {
 		addItem(key, new PdfNumber(d));
