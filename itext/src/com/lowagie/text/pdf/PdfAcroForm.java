@@ -79,7 +79,7 @@ public class PdfAcroForm extends PdfDictionary {
 
     /** Creates new PdfAcroForm 
      * @param writer*/
-    PdfAcroForm(PdfWriter writer) {
+    public PdfAcroForm(PdfWriter writer) {
         super();
         this.writer = writer;
     }
@@ -89,7 +89,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ft
      */
 
-    void addFieldTemplates(HashMap ft) {
+    public void addFieldTemplates(HashMap ft) {
         fieldTemplates.putAll(ft);
     }
 
@@ -98,7 +98,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ref
      */
 
-    void addDocumentField(PdfIndirectReference ref) {
+    public void addDocumentField(PdfIndirectReference ref) {
         documentFields.add(ref);
     }
 
@@ -107,7 +107,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @return true if the Acroform is valid
      */
 
-    boolean isValid() {
+    public boolean isValid() {
         if (documentFields.size() == 0) return false;
         put(PdfName.FIELDS, documentFields);
         if (sigFlags != 0)

@@ -49,46 +49,40 @@
 
 package com.lowagie.text.pdf.interfaces;
 
-public interface PdfXConformance {
-    /** A PDF/X level. */
-    public static final int PDFXNONE = 0;
-    /** A PDF/X level. */
-    public static final int PDFX1A2001 = 1;
-    /** A PDF/X level. */
-    public static final int PDFX32002 = 2;
-    
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_COLOR = 1;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_CMYK = 2;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_RGB = 3;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_FONT = 4;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_IMAGE = 5;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_GSTATE = 6;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_LAYER = 7;
-    
-    /**
-     * Sets the PDF/X conformance level.
-     * Allowed values are PDFX1A2001 and PDFX32002.
-     * It must be called before opening the document.
-     * @param pdfxConformance the conformance level
-     */    
-    public void setPDFXConformance(int pdfxConformance);
+import com.lowagie.text.pdf.PdfAcroForm;
+import com.lowagie.text.pdf.PdfAnnotation;
+import com.lowagie.text.pdf.PdfFormField;
 
-	/**
-	 * Getter for the PDF/X Conformance value.
-	 * @return the pdfxConformance
-	 */
-	public int getPDFXConformance();
-	
+public interface PdfAnnotations {
+	/** signature value */
+	public static final int SIGNATURE_EXISTS = 1;
+	/** signature value */
+	public static final int SIGNATURE_APPEND_ONLY = 2;
+
     /**
-     * Checks if the PDF/X Conformance is necessary.
-     * @return true if the PDF has to be in conformance with any of the PDF/X specifications
+     * Use this methods to get the AcroForm object.
+     * Use this method only if you know what you're doing
+     * @return the PdfAcroform object of the PdfDocument
      */
-    public boolean isPdfX();
+    public PdfAcroForm getAcroForm();
+    
+    /**
+     * Use this methods to add a <CODE>PdfAnnotation</CODE> or a <CODE>PdfFormField</CODE>
+     * to the document. Only the top parent of a <CODE>PdfFormField</CODE>
+     * needs to be added.
+     * @param annot the <CODE>PdfAnnotation</CODE> or the <CODE>PdfFormField</CODE> to add
+     */
+    public void addAnnotation(PdfAnnotation annot);
+    /**
+     * Use this method to adds the <CODE>PdfAnnotation</CODE>
+     * to the calculation order array.
+     * @param annot the <CODE>PdfAnnotation</CODE> to be added
+     */
+    public void addCalculationOrder(PdfFormField annot);
+    
+    /**
+     * Use this method to set the signature flags.
+     * @param f the flags. This flags are ORed with current ones
+     */
+    public void setSigFlags(int f);
 }
