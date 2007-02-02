@@ -36,7 +36,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 	/**
 	 * If this dictionary refers to a child that is a document level attachment,
 	 * you need to specify the name that was used to attach the document.
-	 * @param	name	the name in the EmbeddedFiles name tree
+	 * @param	target	the name in the EmbeddedFiles name tree
 	 */
 	public void setEmbeddedFileName(String target) {
 		put(PdfName.N, new PdfString(target, null));
@@ -76,7 +76,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 	 * If this dictionary refers to a child that is a file attachment added to a page,
 	 * you need to specify the page with setFileAttachmentPage or setFileAttachmentPageName,
 	 * and then specify the index of the attachment added to this page (or use setFileAttachmentName).
-	 * @param name		the name of the attachment
+	 * @param annotation		the number of the attachment
 	 */
 	public void setFileAttachmentIndex(int annotation) {
 		put(PdfName.A, new PdfNumber(annotation));

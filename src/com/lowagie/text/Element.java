@@ -70,7 +70,6 @@ import java.util.ArrayList;
  * @see Cell
  * @see Chapter
  * @see Chunk
- * @see Graphic
  * @see Header
  * @see Image
  * @see Jpeg

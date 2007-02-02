@@ -505,7 +505,8 @@ public class PdfStamper
     }
     
     /** Adds a viewer preference
-     * @param preferences the viewer preferences
+     * @param key a key for a viewer preference
+     * @param value the value for the viewer preference
      * @see PdfViewerPreferences#addViewerPreference
      */
     

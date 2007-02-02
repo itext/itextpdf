@@ -2239,7 +2239,6 @@ class PdfDocument extends Document implements DocListener {
  
 	/**
 	 * Method added by Pelikan Stephan
-	 * @see com.lowagie.text.DocListener#clearTextWrap()
 	 */
 	public void clearTextWrap() {
 		float tmpHeight = imageEnd - currentHeight;
