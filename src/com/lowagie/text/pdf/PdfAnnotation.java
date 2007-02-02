@@ -153,7 +153,7 @@ public class PdfAnnotation extends PdfDictionary {
  * @param content
  */
     
-    PdfAnnotation(PdfWriter writer, float llx, float lly, float urx, float ury, PdfString title, PdfString content) {
+    public PdfAnnotation(PdfWriter writer, float llx, float lly, float urx, float ury, PdfString title, PdfString content) {
         this.writer = writer;
         put(PdfName.SUBTYPE, PdfName.TEXT);
         put(PdfName.T, title);
@@ -584,11 +584,11 @@ public class PdfAnnotation extends PdfDictionary {
     
     /** Setter for property used.
      */
-    void setUsed() {
+    public void setUsed() {
         used = true;
     }
     
-    HashMap getTemplates() {
+    public HashMap getTemplates() {
         return templates;
     }
     

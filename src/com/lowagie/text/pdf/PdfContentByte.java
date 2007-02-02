@@ -62,6 +62,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
 import com.lowagie.text.pdf.internal.PdfXConformanceImp;
 
 /**
@@ -1237,7 +1238,7 @@ public class PdfContentByte {
             }
             annot = new Annotation(annot);
             annot.setDimensions(llx, lly, urx, ury);
-            PdfAnnotation an = PdfDocument.convertAnnotation(writer, annot);
+            PdfAnnotation an = PdfAnnotationsImp.convertAnnotation(writer, annot, new Rectangle(llx, lly, urx, ury));
             if (an == null)
                 return;
             addAnnotation(an);

@@ -74,6 +74,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.collection.PdfCollection;
 import com.lowagie.text.pdf.events.PdfPageEventForwarder;
+import com.lowagie.text.pdf.interfaces.PdfAnnotations;
 import com.lowagie.text.pdf.interfaces.PdfDocumentActions;
 import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 import com.lowagie.text.pdf.interfaces.PdfPageActions;
@@ -102,7 +103,8 @@ public class PdfWriter extends DocWriter implements
 	PdfPageActions,
 	PdfXConformance,
 	PdfRunDirection,
-	PdfSpaceCharRatio {
+	PdfSpaceCharRatio,
+	PdfAnnotations {
     
 // INNER CLASSES
     
@@ -985,7 +987,7 @@ public class PdfWriter extends DocWriter implements
         return getPageReference(currentPageNumber);
     }
     
-    int getCurrentPageNumber() {
+    public int getCurrentPageNumber() {
         return currentPageNumber;
     }
     
@@ -1415,21 +1417,12 @@ public class PdfWriter extends DocWriter implements
     
 //	[C8] AcroForm
     
-    /**
-     * Gets the AcroForm object.
-     * Use this method only if you know what you're doing!
-     * @return the <CODE>PdfAcroForm</CODE>
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfAnnotations#getAcroForm() */
     public PdfAcroForm getAcroForm() {
         return pdf.getAcroForm();
     }
     
-    /**
-     * Use this methods to add a <CODE>PdfAnnotation</CODE> or a <CODE>PdfFormField</CODE>
-     * to the document. Only the top parent of a <CODE>PdfFormField</CODE>
-     * needs to be added.
-     * @param annot the <CODE>PdfAnnotation</CODE> or the <CODE>PdfFormField</CODE> to add
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfAnnotations#addAnnotation(com.lowagie.text.pdf.PdfAnnotation) */
     public void addAnnotation(PdfAnnotation annot) {
         pdf.addAnnotation(annot);
     }
@@ -1438,19 +1431,12 @@ public class PdfWriter extends DocWriter implements
         addAnnotation(annot);
     }
     
-    /**
-     * Use this method to adds the <CODE>PdfAnnotation</CODE>
-     * to the calculation order array.
-     * @param annot the <CODE>PdfAnnotation</CODE> to be added
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfAnnotations#addCalculationOrder(com.lowagie.text.pdf.PdfFormField) */
     public void addCalculationOrder(PdfFormField annot) {
         pdf.addCalculationOrder(annot);
     }
     
-    /**
-     * Use this method to set the signature flags.
-     * @param f the flags. This flags are ORed with current ones
-     */
+    /** @see com.lowagie.text.pdf.interfaces.PdfAnnotations#setSigFlags(int) */
     public void setSigFlags(int f) {
         pdf.setSigFlags(f);
     }
@@ -1512,6 +1498,11 @@ public class PdfWriter extends DocWriter implements
     /** @see com.lowagie.text.pdf.interfaces.PdfXConformance#getPDFXConformance() */
     public int getPDFXConformance() {
         return pdfxConformance.getPDFXConformance();
+    }
+    
+    /** @see com.lowagie.text.pdf.interfaces.PdfXConformance#isPdfX() */
+    public boolean isPdfX() {
+    	return pdfxConformance.isPdfX();
     }
      
 //	[C11] Output intents
@@ -2136,6 +2127,199 @@ public class PdfWriter extends DocWriter implements
         else
             throw new IllegalArgumentException("Only PdfLayer is accepted.");
     }
+
+//	User methods to change aspects of the page
+    
+//	[U1] page size
+
+    /**
+     * Use this method to get the size of the media box.
+     * @return a Rectangle
+     */
+    public Rectangle getPageSize() {
+    	return pdf.getPageSize();
+    }
+    
+    /**
+     * Use this method to set the crop box.
+     * The crop box should not be rotated even if the page is rotated.
+     * This change only takes effect in the next page.
+     * @param crop the crop box
+     */
+    public void setCropBoxSize(Rectangle crop) {
+        pdf.setCropBoxSize(crop);
+    }
+    
+    /**
+     * Use this method to set the page box sizes.
+     * Allowed names are: "crop", "trim", "art" and "bleed".
+     * @param boxName the box size
+     * @param size the size
+     */    
+    public void setBoxSize(String boxName, Rectangle size) {
+        pdf.setBoxSize(boxName, size);
+    }
+
+    /**
+     * Use this method to get the size of a trim, art, crop or bleed box,
+     * or null if not defined.
+     * @param boxName crop, trim, art or bleed
+     */
+    public Rectangle getBoxSize(String boxName) {
+    	return pdf.getBoxSize(boxName);
+    }
+    
+//	[U2] take care of empty pages
+    
+    /**
+     * Use this method to make sure a page is added,
+     * even if it's empty. If you use setPageEmpty(false),
+     * invoking newPage() after a blank page will add a newPage.
+     * @param pageEmpty the state
+     */
+    public void setPageEmpty(boolean pageEmpty) {
+        pdf.setPageEmpty(pageEmpty);
+    }
+    
+//  [U3] page actions (open and close)
+     
+     /** @see com.lowagie.text.pdf.interfaces.PdfPagesActions#setPageAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction) */
+     public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
+          if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
+              throw new DocumentException("Invalid page additional action type: " + actionType.toString());
+          pdf.setPageAction(actionType, action);
+      }
+     
+    /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setDuration(int) */
+    public void setDuration(int seconds) {
+         pdf.setDuration(seconds);
+     }
+     
+    /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setTransition(com.lowagie.text.pdf.PdfTransition) */
+    public void setTransition(PdfTransition transition) {
+         pdf.setTransition(transition);
+     }
+    
+//	[U4] Thumbnail image
+    
+    /**
+     * Use this method to set the thumbnail image for the current page.
+     * @param image the image
+     * @throws PdfException on error
+     * @throws DocumentException or error
+     */    
+    public void setThumbnail(Image image) throws PdfException, DocumentException {
+        pdf.setThumbnail(image);
+    }
+
+//	[U5] Transparency groups
+ 	
+    /**
+     * A group attributes dictionary specifying the attributes
+     * of the page’s page group for use in the transparent
+     * imaging model
+     */
+    protected PdfDictionary group;
+    
+    /**
+     * Use this method to get the group dictionary.
+     * @return Value of property group.
+     */
+    public PdfDictionary getGroup() {
+        return this.group;
+    }
+    
+    /**
+     * Use this method to set the group dictionary.
+     * @param group New value of property group.
+     */
+    public void setGroup(PdfDictionary group) {
+        this.group = group;
+    }
+    
+//	[U6] space char ratio
+
+    /**
+     * The ratio between the extra word spacing and the extra character spacing.
+     * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
+     */
+    private float spaceCharRatio = SPACE_CHAR_RATIO_DEFAULT;
+    
+    /**
+     * Use this method to gets the space/character extra spacing ratio
+     * for fully justified text.
+     * @return the space/character extra spacing ratio
+     */
+    public float getSpaceCharRatio() {
+        return spaceCharRatio;
+    }
+    
+    /**
+     * Use this method to set the ratio between the extra word spacing and
+     * the extra character spacing when the text is fully justified.
+     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more
+     * than extra character spacing. If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE>
+     * then the extra character spacing will be zero.
+     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
+     */
+    public void setSpaceCharRatio(float spaceCharRatio) {
+        if (spaceCharRatio < 0.001f)
+            this.spaceCharRatio = 0.001f;
+        else
+            this.spaceCharRatio = spaceCharRatio;
+    }
+
+//	[U7] run direction (doesn't actually do anything)
+    
+    protected int runDirection = RUN_DIRECTION_NO_BIDI;
+    
+    /**
+     * Use this method to set the run direction.
+     * This is only used as a placeholder as it does not affect anything.
+     * @param runDirection the run direction
+     */    
+    public void setRunDirection(int runDirection) {
+        if (runDirection < RUN_DIRECTION_NO_BIDI || runDirection > RUN_DIRECTION_RTL)
+            throw new RuntimeException("Invalid run direction: " + runDirection);
+        this.runDirection = runDirection;
+    }
+    
+    /**
+     * Use this method to set the run direction.
+     * @return the run direction
+     */    
+    public int getRunDirection() {
+        return runDirection;
+    }
+     
+//	[U8] user units     
+     
+     protected float userunit = 0f;
+ 	/**
+ 	 * Use this method to get the user unit.
+ 	 * A user unit is a value that defines the default user space unit.
+ 	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+ 	 * The maximum UserUnit is 75,000.
+ 	 * Note that this userunit only works starting with PDF1.6!
+ 	 * @return Returns the userunit.
+ 	 */
+ 	public float getUserunit() {
+ 		return userunit;
+ 	}
+ 	/**
+ 	 * Use this method to set the user unit.
+     * A UserUnit is a value that defines the default user space unit.
+     * The minimum UserUnit is 1 (1 unit = 1/72 inch).
+     * The maximum UserUnit is 75,000.
+     * Note that this userunit only works starting with PDF1.6!
+     * @param userunit The userunit to set.
+     * @throws DocumentException on error
+     */
+ 	public void setUserunit(float userunit) throws DocumentException {
+ 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
+ 		this.userunit = userunit;
+         setAtLeastPdfVersion(VERSION_1_6);
+ 	}
     
 // Miscellaneous topics
     
@@ -2406,200 +2590,7 @@ public class PdfWriter extends DocWriter implements
         return object.getIndirectReference();
     }
     
-//	User methods to change aspects of the page
-    
-//	[U1] page size
-
-    /**
-     * Use this method to get the size of the media box.
-     * @return a Rectangle
-     */
-    public Rectangle getPageSize() {
-    	return pdf.getPageSize();
-    }
-    
-    /**
-     * Use this method to set the crop box.
-     * The crop box should not be rotated even if the page is rotated.
-     * This change only takes effect in the next page.
-     * @param crop the crop box
-     */
-    public void setCropBoxSize(Rectangle crop) {
-        pdf.setCropBoxSize(crop);
-    }
-    
-    /**
-     * Use this method to set the page box sizes.
-     * Allowed names are: "crop", "trim", "art" and "bleed".
-     * @param boxName the box size
-     * @param size the size
-     */    
-    public void setBoxSize(String boxName, Rectangle size) {
-        pdf.setBoxSize(boxName, size);
-    }
-
-    /**
-     * Use this method to get the size of a trim, art, crop or bleed box,
-     * or null if not defined.
-     * @param boxName crop, trim, art or bleed
-     */
-    public Rectangle getBoxSize(String boxName) {
-    	return pdf.getBoxSize(boxName);
-    }
-    
-//	[U2] take care of empty pages
-    
-    /**
-     * Use this method to make sure a page is added,
-     * even if it's empty. If you use setPageEmpty(false),
-     * invoking newPage() after a blank page will add a newPage.
-     * @param pageEmpty the state
-     */
-    public void setPageEmpty(boolean pageEmpty) {
-        pdf.setPageEmpty(pageEmpty);
-    }
-    
-//  [U3] page actions (open and close)
-     
-     /** @see com.lowagie.text.pdf.interfaces.PdfPagesActions#setPageAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction) */
-     public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
-          if (!actionType.equals(PAGE_OPEN) && !actionType.equals(PAGE_CLOSE))
-              throw new DocumentException("Invalid page additional action type: " + actionType.toString());
-          pdf.setPageAction(actionType, action);
-      }
-     
-    /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setDuration(int) */
-    public void setDuration(int seconds) {
-         pdf.setDuration(seconds);
-     }
-     
-    /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setTransition(com.lowagie.text.pdf.PdfTransition) */
-    public void setTransition(PdfTransition transition) {
-         pdf.setTransition(transition);
-     }
-    
-//	[U4] Thumbnail image
-    
-    /**
-     * Use this method to set the thumbnail image for the current page.
-     * @param image the image
-     * @throws PdfException on error
-     * @throws DocumentException or error
-     */    
-    public void setThumbnail(Image image) throws PdfException, DocumentException {
-        pdf.setThumbnail(image);
-    }
-
-//	[U5] Transparency groups
- 	
-    /**
-     * A group attributes dictionary specifying the attributes
-     * of the page’s page group for use in the transparent
-     * imaging model
-     */
-    protected PdfDictionary group;
-    
-    /**
-     * Use this method to get the group dictionary.
-     * @return Value of property group.
-     */
-    public PdfDictionary getGroup() {
-        return this.group;
-    }
-    
-    /**
-     * Use this method to set the group dictionary.
-     * @param group New value of property group.
-     */
-    public void setGroup(PdfDictionary group) {
-        this.group = group;
-    }
-    
-//	[U6] space char ratio
-
-    /**
-     * The ratio between the extra word spacing and the extra character spacing.
-     * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
-     */
-    private float spaceCharRatio = SPACE_CHAR_RATIO_DEFAULT;
-    
-    /**
-     * Use this method to gets the space/character extra spacing ratio
-     * for fully justified text.
-     * @return the space/character extra spacing ratio
-     */
-    public float getSpaceCharRatio() {
-        return spaceCharRatio;
-    }
-    
-    /**
-     * Use this method to set the ratio between the extra word spacing and
-     * the extra character spacing when the text is fully justified.
-     * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more
-     * than extra character spacing. If the ratio is <CODE>PdfWriter.NO_SPACE_CHAR_RATIO</CODE>
-     * then the extra character spacing will be zero.
-     * @param spaceCharRatio the ratio between the extra word spacing and the extra character spacing
-     */
-    public void setSpaceCharRatio(float spaceCharRatio) {
-        if (spaceCharRatio < 0.001f)
-            this.spaceCharRatio = 0.001f;
-        else
-            this.spaceCharRatio = spaceCharRatio;
-    }
-
-//	[U7] run direction (doesn't actually do anything)
-    
-    protected int runDirection = RUN_DIRECTION_NO_BIDI;
-    
-    /**
-     * Use this method to set the run direction.
-     * This is only used as a placeholder as it does not affect anything.
-     * @param runDirection the run direction
-     */    
-    public void setRunDirection(int runDirection) {
-        if (runDirection < RUN_DIRECTION_NO_BIDI || runDirection > RUN_DIRECTION_RTL)
-            throw new RuntimeException("Invalid run direction: " + runDirection);
-        this.runDirection = runDirection;
-    }
-    
-    /**
-     * Use this method to set the run direction.
-     * @return the run direction
-     */    
-    public int getRunDirection() {
-        return runDirection;
-    }
-     
-//	[U8] user units     
-     
-     protected float userunit = 0f;
- 	/**
- 	 * Use this method to get the user unit.
- 	 * A user unit is a value that defines the default user space unit.
- 	 * The minimum UserUnit is 1 (1 unit = 1/72 inch).
- 	 * The maximum UserUnit is 75,000.
- 	 * Note that this userunit only works starting with PDF1.6!
- 	 * @return Returns the userunit.
- 	 */
- 	public float getUserunit() {
- 		return userunit;
- 	}
- 	/**
- 	 * Use this method to set the user unit.
-     * A UserUnit is a value that defines the default user space unit.
-     * The minimum UserUnit is 1 (1 unit = 1/72 inch).
-     * The maximum UserUnit is 75,000.
-     * Note that this userunit only works starting with PDF1.6!
-     * @param userunit The userunit to set.
-     * @throws DocumentException on error
-     */
- 	public void setUserunit(float userunit) throws DocumentException {
- 		if (userunit < 1f || userunit > 75000f) throw new DocumentException("UserUnit should be a value between 1 and 75000.");
- 		this.userunit = userunit;
-         setAtLeastPdfVersion(VERSION_1_6);
- 	}
-    
-//	OLD TABLE METHODS; DO WE STILL NEED THEM?
+//	[M4] Old table functionality; do we still need it?
     
     /**
      * Sometimes it is necessary to know where the just added <CODE>Table</CODE> ends.

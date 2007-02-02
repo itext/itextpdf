@@ -103,7 +103,7 @@ public class PdfXConformanceImp implements PdfXConformance {
      * @param obj1		the object that is checked for conformance
      */
     public static void checkPDFXConformance(PdfWriter writer, int key, Object obj1) {
-        if (writer == null || writer.getPDFXConformance() == PDFXNONE)
+        if (writer == null || !writer.isPdfX())
             return;
         int conf = writer.getPDFXConformance();
         switch (key) {
