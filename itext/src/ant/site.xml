@@ -64,7 +64,19 @@
 		<copy file="${itext.src.tutorial}/style.css" todir="${itext.tutorial}" overwrite="no" />
         <copy todir="${itext.examples}" overwrite="yes">
             <fileset dir="${itext.src.examples}">
-                <include name="**/*.java"/>
+            	<include name="**/*.java"/>	
+                <include name="**/*.xml"/>
+                <include name="**/*.tiff"/>
+        		<include name="**/*.tif"/>
+        		<include name="**/*.gif"/>
+        		<include name="**/*.bmp"/>
+        		<include name="**/*.wmf"/>
+        		<include name="**/*.jpg"/>
+        		<include name="**/*.png"/>
+                <include name="**/*.pdf"/>
+        		<include name="**/*.ps"/>
+        		<include name="**/*.otf"/>
+        		<include name="**/*.xfdf"/>
             </fileset>
         </copy>
         <copy todir="${itext.tutorial}/images" overwrite="yes">
@@ -92,9 +104,12 @@
 		<ant antfile="${itext.tutorial}/build.xml" inheritAll="false" />
         <mkdir dir="${itext.dist}" />
         <mkdir dir="${itext.downloads}" />
-        <tar tarfile="${itext.downloads}/tutorial.tar" basedir="${itext.build}" includes="tutorial/**, examples/**" />
+        <tar tarfile="${itext.downloads}/tutorial.tar" basedir="${itext.build}" includes="tutorial/**" />
         <gzip zipfile="${itext.dist}/tutorial.tar.gz" src="${itext.downloads}/tutorial.tar" />
         <delete file="${itext.downloads}/tutorial.tar" />
+        <tar tarfile="${itext.downloads}/examples.tar" basedir="${itext.build}" includes="examples/**" />
+        <gzip zipfile="${itext.dist}/examples.tar.gz" src="${itext.downloads}/examples.tar" />
+        <delete file="${itext.downloads}/examples.tar" />
     </target>
 
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
