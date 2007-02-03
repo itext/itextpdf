@@ -33,6 +33,9 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="compile" description="--> compiles the iText code">
+        <mkdir dir="${itext.bin}" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bcmail-jdk14-135.jar" dest="${itext.bin}/bcmail-jdk14-135.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bcprov-jdk14-135.jar" dest="${itext.bin}/bcprov-jdk14-135.jar" verbose="true" />
         <mkdir dir="${itext.classes}" />
         <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.classes}">
     	<classpath refid="itext.classpath"/>
@@ -44,6 +47,9 @@
     <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
     <target name="compile.debug" description="--> compiles the iText code for debugging">
+        <mkdir dir="${itext.bin}" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bcmail-jdk14-135.jar" dest="${itext.bin}/bcmail-jdk14-135.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bcprov-jdk14-135.jar" dest="${itext.bin}/bcprov-jdk14-135.jar" verbose="true" />
         <mkdir dir="${itext.classes}" />
         <javac source="1.4" target="1.4" srcdir="${itext.src}" destdir="${itext.classes}" listfiles="yes" debug="true" debuglevel="lines,vars,source">
         	<classpath refid="itext.classpath"/>
