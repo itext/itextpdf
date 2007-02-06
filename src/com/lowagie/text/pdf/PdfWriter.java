@@ -82,7 +82,6 @@ import com.lowagie.text.pdf.interfaces.PdfVersion;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.interfaces.PdfXConformance;
 import com.lowagie.text.pdf.interfaces.PdfRunDirection;
-import com.lowagie.text.pdf.interfaces.PdfSpaceCharRatio;
 import com.lowagie.text.pdf.internal.PdfVersionImp;
 import com.lowagie.text.pdf.internal.PdfXConformanceImp;
 import com.lowagie.text.xml.xmp.XmpWriter;
@@ -103,7 +102,6 @@ public class PdfWriter extends DocWriter implements
 	PdfPageActions,
 	PdfXConformance,
 	PdfRunDirection,
-	PdfSpaceCharRatio,
 	PdfAnnotations {
     
 // INNER CLASSES
@@ -1269,6 +1267,31 @@ public class PdfWriter extends DocWriter implements
      }
      
 //	[C2] PdfVersion interface
+     /** possible PDF version (header) */
+     public static final char VERSION_1_2 = '2';
+     /** possible PDF version (header) */
+     public static final char VERSION_1_3 = '3';
+     /** possible PDF version (header) */
+     public static final char VERSION_1_4 = '4';
+     /** possible PDF version (header) */
+     public static final char VERSION_1_5 = '5';
+     /** possible PDF version (header) */
+     public static final char VERSION_1_6 = '6';
+     /** possible PDF version (header) */
+     public static final char VERSION_1_7 = '7';
+     
+     /** possible PDF version (catalog) */
+     public static final PdfName PDF_VERSION_1_2 = new PdfName("1.2");
+     /** possible PDF version (catalog) */
+     public static final PdfName PDF_VERSION_1_3 = new PdfName("1.3");
+     /** possible PDF version (catalog) */
+     public static final PdfName PDF_VERSION_1_4 = new PdfName("1.4");
+     /** possible PDF version (catalog) */
+     public static final PdfName PDF_VERSION_1_5 = new PdfName("1.5");
+     /** possible PDF version (catalog) */
+     public static final PdfName PDF_VERSION_1_6 = new PdfName("1.6");
+     /** possible PDF version (catalog) */
+     public static final PdfName PDF_VERSION_1_7 = new PdfName("1.7");
 
     /** Stores the version information for the header and the catalog. */
     protected PdfVersionImp pdf_version = new PdfVersionImp();
@@ -1297,6 +1320,36 @@ public class PdfWriter extends DocWriter implements
     
 //  [C3] PdfViewerPreferences interface
 
+	// page layout (section 13.1.1 of "iText in Action")
+	
+    /** A viewer preference */
+	public static final int PageLayoutSinglePage = 1;
+	/** A viewer preference */
+	public static final int PageLayoutOneColumn = 2;
+	/** A viewer preference */
+	public static final int PageLayoutTwoColumnLeft = 4;
+	/** A viewer preference */
+	public static final int PageLayoutTwoColumnRight = 8;
+	/** A viewer preference */
+	public static final int PageLayoutTwoPageLeft = 16;
+	/** A viewer preference */
+	public static final int PageLayoutTwoPageRight = 32;
+
+	// page mode (section 13.1.2 of "iText in Action")
+	
+	/** A viewer preference */
+	public static final int PageModeUseNone = 64;
+	/** A viewer preference */
+	public static final int PageModeUseOutlines = 128;
+	/** A viewer preference */
+	public static final int PageModeUseThumbs = 256;
+	/** A viewer preference */
+	public static final int PageModeFullScreen = 512;
+	/** A viewer preference */
+	public static final int PageModeUseOC = 1024;
+	/** A viewer preference */
+	public static final int PageModeUseAttachments = 2048;
+	
     /** @see com.lowagie.text.pdf.interfaces.PdfViewerPreferences#setViewerPreferences(int) */
     public void setViewerPreferences(int preferences) {
         pdf.setViewerPreferences(preferences);
@@ -1381,7 +1434,18 @@ public class PdfWriter extends DocWriter implements
      }
      
 // [C6] Actions (open and additional)
-    
+
+     /** action value */
+     public static final PdfName DOCUMENT_CLOSE = PdfName.WC;
+     /** action value */
+     public static final PdfName WILL_SAVE = PdfName.WS;
+     /** action value */
+     public static final PdfName DID_SAVE = PdfName.DS;
+     /** action value */
+     public static final PdfName WILL_PRINT = PdfName.WP;
+     /** action value */
+     public static final PdfName DID_PRINT = PdfName.DP;
+     
     /** @see com.lowagie.text.pdf.interfaces.PdfDocumentActions#setOpenAction(java.lang.String) */
     public void setOpenAction(String name) {
          pdf.setOpenAction(name);
@@ -1416,7 +1480,12 @@ public class PdfWriter extends DocWriter implements
     }
     
 //	[C8] AcroForm
-    
+
+	/** signature value */
+	public static final int SIGNATURE_EXISTS = 1;
+	/** signature value */
+	public static final int SIGNATURE_APPEND_ONLY = 2;
+	
     /** @see com.lowagie.text.pdf.interfaces.PdfAnnotations#getAcroForm() */
     public PdfAcroForm getAcroForm() {
         return pdf.getAcroForm();
@@ -1478,6 +1547,12 @@ public class PdfWriter extends DocWriter implements
 	}
     
 //	[C10] PDFX Conformance
+    /** A PDF/X level. */
+    public static final int PDFXNONE = 0;
+    /** A PDF/X level. */
+    public static final int PDFX1A2001 = 1;
+    /** A PDF/X level. */
+    public static final int PDFX32002 = 2;
     
     /** Stores the PDF/X level. */
     private PdfXConformanceImp pdfxConformance = new PdfXConformanceImp();
@@ -1582,6 +1657,44 @@ public class PdfWriter extends DocWriter implements
     
 //	[F1] PdfEncryptionSettings interface
 
+	// types of encryption
+	
+    /** Type of encryption */
+    public static final int ENCRYPTION_RC4_40 = 0;
+    /** Type of encryption */
+    public static final int ENCRYPTION_RC4_128 = 1;
+    /** Type of encryption */
+    public static final int ENCRYPTION_AES_128 = 2;
+    /** Mask to separate the encryption type from the encryption mode. */
+    static final int ENCRYPTION_MASK = 7;
+    /** Add this to the mode to keep the metadata in clear text */
+    public static final int DO_NOT_ENCRYPT_METADATA = 8;
+    
+	// permissions
+	
+    /** The operation permitted when the document is opened with the user password */
+    public static final int AllowPrinting = 4 + 2048;
+    /** The operation permitted when the document is opened with the user password */
+    public static final int AllowModifyContents = 8;
+    /** The operation permitted when the document is opened with the user password */
+    public static final int AllowCopy = 16;
+    /** The operation permitted when the document is opened with the user password */
+    public static final int AllowModifyAnnotations = 32;
+    /** The operation permitted when the document is opened with the user password */
+    public static final int AllowFillIn = 256;
+    /** The operation permitted when the document is opened with the user password */
+    public static final int AllowScreenReaders = 512;
+    /** The operation permitted when the document is opened with the user password */
+    public static final int AllowAssembly = 1024;
+    /** The operation permitted when the document is opened with the user password */
+    public static final int AllowDegradedPrinting = 4;
+    
+    // Strength of the RC4 encryption (kept for historical reasons)
+    /** Type of RC4 encryption strength*/
+    public static final boolean STRENGTH40BITS = false;
+    /** Type of RC4 encryption strength */
+    public static final boolean STRENGTH128BITS = true;
+    
     /** Contains the business logic for cryptography. */
     protected PdfEncryption crypto;
     PdfEncryption getEncryption() {
@@ -1713,7 +1826,7 @@ public class PdfWriter extends DocWriter implements
         }
         FontDetails ret = (FontDetails)documentFonts.get(bf);
         if (ret == null) {
-            PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_FONT, bf);
+            PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_FONT, bf);
             ret = new FontDetails(new PdfName("F" + (fontNumber++)), body.getPdfIndirectReference(), bf);
             documentFonts.put(bf, ret);
         }
@@ -1929,7 +2042,7 @@ public class PdfWriter extends DocWriter implements
     
     PdfObject[] addSimpleExtGState(PdfDictionary gstate) {
         if (!documentExtGState.containsKey(gstate)) {
-        	PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_GSTATE, gstate);
+        	PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_GSTATE, gstate);
             documentExtGState.put(gstate, new PdfObject[]{new PdfName("GS" + (documentExtGState.size() + 1)), getPdfIndirectReference()});
         }
         return (PdfObject[])documentExtGState.get(gstate);
@@ -1941,7 +2054,7 @@ public class PdfWriter extends DocWriter implements
     PdfObject[] addSimpleProperty(Object prop, PdfIndirectReference refi) {
         if (!documentProperties.containsKey(prop)) {
             if (prop instanceof PdfOCG)
-            	PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_LAYER, null);
+            	PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_LAYER, null);
             documentProperties.put(prop, new PdfObject[]{new PdfName("Pr" + (documentProperties.size() + 1)), refi});
         }
         return (PdfObject[])documentProperties.get(prop);
@@ -2111,7 +2224,7 @@ public class PdfWriter extends DocWriter implements
     }
     
     void registerLayer(PdfOCG layer) {
-    	PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_LAYER, null);
+    	PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_LAYER, null);
         if (layer instanceof PdfLayer) {
             PdfLayer la = (PdfLayer)layer;
             if (la.getTitle() == null) {
@@ -2182,6 +2295,11 @@ public class PdfWriter extends DocWriter implements
     }
     
 //  [U3] page actions (open and close)
+    
+    /** action value */
+    public static final PdfName PAGE_OPEN = PdfName.O;
+    /** action value */
+    public static final PdfName PAGE_CLOSE = PdfName.C;
      
     /** @see com.lowagie.text.pdf.interfaces.PdfPageActions#setPageAction(com.lowagie.text.pdf.PdfName, com.lowagie.text.pdf.PdfAction) */
     public void setPageAction(PdfName actionType, PdfAction action) throws DocumentException {
@@ -2239,6 +2357,11 @@ public class PdfWriter extends DocWriter implements
     
 //	[U6] space char ratio
 
+    /** The default space-char ratio. */    
+    public static final float SPACE_CHAR_RATIO_DEFAULT = 2.5f;
+    /** Disable the inter-character spacing. */    
+    public static final float NO_SPACE_CHAR_RATIO = 10000000f;
+
     /**
      * The ratio between the extra word spacing and the extra character spacing.
      * Extra word spacing will grow <CODE>ratio</CODE> times more than extra character spacing.
@@ -2270,6 +2393,19 @@ public class PdfWriter extends DocWriter implements
     }
 
 //	[U7] run direction (doesn't actually do anything)
+    
+    /** Use the default run direction. */    
+    public static final int RUN_DIRECTION_DEFAULT = 0;
+    /** Do not use bidirectional reordering. */    
+    public static final int RUN_DIRECTION_NO_BIDI = 1;
+    /** Use bidirectional reordering with left-to-right
+     * preferential run direction.
+     */    
+    public static final int RUN_DIRECTION_LTR = 2;
+    /** Use bidirectional reordering with right-to-left
+     * preferential run direction.
+     */    
+    public static final int RUN_DIRECTION_RTL = 3;
     
     protected int runDirection = RUN_DIRECTION_NO_BIDI;
     
@@ -2548,7 +2684,7 @@ public class PdfWriter extends DocWriter implements
     
     PdfIndirectReference add(PdfImage pdfImage, PdfIndirectReference fixedRef) throws PdfException {
         if (! imageDictionary.contains(pdfImage.name())) {
-            PdfXConformanceImp.checkPDFXConformance(this, PDFXKEY_IMAGE, pdfImage);
+            PdfXConformanceImp.checkPDFXConformance(this, PdfXConformanceImp.PDFXKEY_IMAGE, pdfImage);
             if (fixedRef instanceof PRIndirectReference) {
                 PRIndirectReference r2 = (PRIndirectReference)fixedRef;
                 fixedRef = new PdfIndirectReference(0, getNewObjectNumber(r2.getReader(), r2.getNumber(), r2.getGeneration()));

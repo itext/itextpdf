@@ -21,10 +21,25 @@ import com.lowagie.text.pdf.interfaces.PdfXConformance;
 
 public class PdfXConformanceImp implements PdfXConformance {
 
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    public static final int PDFXKEY_COLOR = 1;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    public static final int PDFXKEY_CMYK = 2;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    public static final int PDFXKEY_RGB = 3;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    public static final int PDFXKEY_FONT = 4;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    public static final int PDFXKEY_IMAGE = 5;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    public static final int PDFXKEY_GSTATE = 6;
+    /** A key for an aspect that can be checked for PDF/X Conformance. */
+    public static final int PDFXKEY_LAYER = 7;
+    
     /**
      * The value indicating if the PDF has to be in conformance with PDF/X.
      */
-    protected int pdfxConformance = PDFXNONE;
+    protected int pdfxConformance = PdfWriter.PDFXNONE;
     
     /**
      * @see com.lowagie.text.pdf.interfaces.PdfXConformance#setPDFXConformance(int)
@@ -45,21 +60,21 @@ public class PdfXConformanceImp implements PdfXConformance {
      * @return true if the PDF has to be in conformance with any of the PDF/X specifications
      */
     public boolean isPdfX() {
-    	return pdfxConformance != PDFXNONE;
+    	return pdfxConformance != PdfWriter.PDFXNONE;
     }
     /**
      * Checks if the PDF has to be in conformance with PDF/X-1a:2001
      * @return true of the PDF has to be in conformance with PDF/X-1a:2001
      */
     public boolean isPdfX1A2001() {
-    	return pdfxConformance == PDFX1A2001;
+    	return pdfxConformance == PdfWriter.PDFX1A2001;
     }
     /**
      * Checks if the PDF has to be in conformance with PDF/X-3:2002
      * @return true of the PDF has to be in conformance with PDF/X-3:2002
      */
     public boolean isPdfX32002() {
-    	return pdfxConformance == PDFX32002;
+    	return pdfxConformance == PdfWriter.PDFX32002;
     }
     
     public void completeInfoDictionary(PdfDictionary info) {
@@ -109,7 +124,7 @@ public class PdfXConformanceImp implements PdfXConformance {
         switch (key) {
             case PDFXKEY_COLOR:
                 switch (conf) {
-                    case PDFX1A2001:
+                    case PdfWriter.PDFX1A2001:
                         if (obj1 instanceof ExtendedColor) {
                             ExtendedColor ec = (ExtendedColor)obj1;
                             switch (ec.getType()) {
@@ -140,7 +155,7 @@ public class PdfXConformanceImp implements PdfXConformance {
             case PDFXKEY_CMYK:
                 break;
             case PDFXKEY_RGB:
-                if (conf == PDFX1A2001)
+                if (conf == PdfWriter.PDFX1A2001)
                     throw new PdfXConformanceException("Colorspace RGB is not allowed.");
                 break;
             case PDFXKEY_FONT:
@@ -152,7 +167,7 @@ public class PdfXConformanceImp implements PdfXConformance {
                 if (image.get(PdfName.SMASK) != null)
                     throw new PdfXConformanceException("The /SMask key is not allowed in images.");
                 switch (conf) {
-                    case PDFX1A2001:
+                    case PdfWriter.PDFX1A2001:
                         PdfObject cs = image.get(PdfName.COLORSPACE);
                         if (cs == null)
                             return;

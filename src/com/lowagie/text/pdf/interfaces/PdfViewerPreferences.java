@@ -63,58 +63,6 @@ import com.lowagie.text.pdf.PdfObject;
 
 public interface PdfViewerPreferences {
 
-	// page layout (section 13.1.1 of "iText in Action")
-	
-    /** A viewer preference */
-	public static final int PageLayoutSinglePage = 1;
-	/** A viewer preference */
-	public static final int PageLayoutOneColumn = 2;
-	/** A viewer preference */
-	public static final int PageLayoutTwoColumnLeft = 4;
-	/** A viewer preference */
-	public static final int PageLayoutTwoColumnRight = 8;
-	/** A viewer preference */
-	public static final int PageLayoutTwoPageLeft = 16;
-	/** A viewer preference */
-	public static final int PageLayoutTwoPageRight = 32;
-
-	// page mode (section 13.1.2 of "iText in Action")
-	
-	/** A viewer preference */
-	public static final int PageModeUseNone = 64;
-	/** A viewer preference */
-	public static final int PageModeUseOutlines = 128;
-	/** A viewer preference */
-	public static final int PageModeUseThumbs = 256;
-	/** A viewer preference */
-	public static final int PageModeFullScreen = 512;
-	/** A viewer preference */
-	public static final int PageModeUseOC = 1024;
-	/** A viewer preference */
-	public static final int PageModeUseAttachments = 2048;
-
-	// viewer preferences PDF Reference table 8.1
-
-	final PdfName[] VIEWER_PREFERENCES = {
-		PdfName.HIDETOOLBAR,			// 0
-		PdfName.HIDEMENUBAR,            // 1
-		PdfName.HIDEWINDOWUI,           // 2
-		PdfName.FITWINDOW,              // 3
-		PdfName.CENTERWINDOW,			// 4
-		PdfName.DISPLAYDOCTITLE,		// 5
-		PdfName.NONFULLSCREENPAGEMODE,	// 6
-		PdfName.DIRECTION,				// 7
-		PdfName.VIEWAREA,				// 8
-		PdfName.VIEWCLIP,				// 9
-		PdfName.PRINTAREA,				// 10
-		PdfName.PRINTCLIP,				// 11
-		PdfName.PRINTSCALING,			// 12
-		PdfName.DUPLEX,					// 13
-		PdfName.PICKTRAYBYPDFSIZE,		// 14
-		PdfName.PRINTPAGERANGE,			// 15
-		PdfName.NUMCOPIES				// 16
-	};	
-
     /** A series of viewer preferences. */
     public static final PdfName NONFULLSCREENPAGEMODE_PREFERENCES[] = {
     	PdfName.USENONE, PdfName.USEOUTLINES, PdfName.USETHUMBS, PdfName.USEOC

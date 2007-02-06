@@ -54,7 +54,7 @@ import java.util.HashMap;
 
 import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * Encrypts a PDF document. It needs iText (http://www.lowagie.com/iText).
@@ -70,14 +70,14 @@ public class encrypt_pdf {
     private final static int STRENGTH = 5;
     private final static int MOREINFO = 6;
     private final static int permit[] = {
-    	PdfEncryptionSettings.AllowPrinting,
-    	PdfEncryptionSettings.AllowModifyContents,
-        PdfEncryptionSettings.AllowCopy,
-        PdfEncryptionSettings.AllowModifyAnnotations,
-        PdfEncryptionSettings.AllowFillIn,
-        PdfEncryptionSettings.AllowScreenReaders,
-        PdfEncryptionSettings.AllowAssembly,
-        PdfEncryptionSettings.AllowDegradedPrinting};
+    	PdfWriter.AllowPrinting,
+    	PdfWriter.AllowModifyContents,
+    	PdfWriter.AllowCopy,
+    	PdfWriter.AllowModifyAnnotations,
+    	PdfWriter.AllowFillIn,
+    	PdfWriter.AllowScreenReaders,
+    	PdfWriter.AllowAssembly,
+        PdfWriter.AllowDegradedPrinting};
 
     private static void usage() {
         System.out.println("usage: input_file output_file user_password owner_password permissions 128|40 [new info string pairs]");

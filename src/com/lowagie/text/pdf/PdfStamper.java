@@ -257,7 +257,7 @@ public class PdfStamper
             throw new DocumentException("Append mode does not support changing the encryption status.");
         if (stamper.isContentWritten())
             throw new DocumentException("Content was already written to the output.");
-        stamper.setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
+        stamper.setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? PdfWriter.ENCRYPTION_RC4_128 : PdfWriter.ENCRYPTION_RC4_40);
     }
 
     /** Sets the encryption options for this document. The userPassword and the

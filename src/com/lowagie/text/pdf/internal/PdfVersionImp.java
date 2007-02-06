@@ -55,6 +55,7 @@ import com.lowagie.text.DocWriter;
 import com.lowagie.text.pdf.OutputStreamCounter;
 import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.interfaces.PdfVersion;
 
 /**
@@ -64,13 +65,13 @@ import com.lowagie.text.pdf.interfaces.PdfVersion;
  */
 
 public class PdfVersionImp implements PdfVersion {
-
+	
 	/** Indicates if the header was already written. */
 	protected boolean headerWasWritten = false;
 	/** Indicates if we are working in append mode. */
 	protected boolean appendmode = false;
 	/** The version that was or will be written to the header. */
-	protected char header_version = VERSION_1_4;
+	protected char header_version = PdfWriter.VERSION_1_4;
 	/** The version that will be written to the catalog. */
 	protected PdfName catalog_version = null;
 	
@@ -133,20 +134,20 @@ public class PdfVersionImp implements PdfVersion {
 	 */
 	public PdfName getVersionAsName(char version) {
 		switch(version) {
-		case VERSION_1_2:
-			return PDF_VERSION_1_2;
-		case VERSION_1_3:
-			return PDF_VERSION_1_3;
-		case VERSION_1_4:
-			return PDF_VERSION_1_4;
-		case VERSION_1_5:
-			return PDF_VERSION_1_5;
-		case VERSION_1_6:
-			return PDF_VERSION_1_6;
-		case VERSION_1_7:
-			return PDF_VERSION_1_7;
+		case PdfWriter.VERSION_1_2:
+			return PdfWriter.PDF_VERSION_1_2;
+		case PdfWriter.VERSION_1_3:
+			return PdfWriter.PDF_VERSION_1_3;
+		case PdfWriter.VERSION_1_4:
+			return PdfWriter.PDF_VERSION_1_4;
+		case PdfWriter.VERSION_1_5:
+			return PdfWriter.PDF_VERSION_1_5;
+		case PdfWriter.VERSION_1_6:
+			return PdfWriter.PDF_VERSION_1_6;
+		case PdfWriter.VERSION_1_7:
+			return PdfWriter.PDF_VERSION_1_7;
 		default:
-			return PDF_VERSION_1_4;
+			return PdfWriter.PDF_VERSION_1_4;
 		}
 	}
 	

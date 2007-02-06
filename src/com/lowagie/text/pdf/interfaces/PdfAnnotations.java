@@ -54,10 +54,6 @@ import com.lowagie.text.pdf.PdfAnnotation;
 import com.lowagie.text.pdf.PdfFormField;
 
 public interface PdfAnnotations {
-	/** signature value */
-	public static final int SIGNATURE_EXISTS = 1;
-	/** signature value */
-	public static final int SIGNATURE_APPEND_ONLY = 2;
 
     /**
      * Use this methods to get the AcroForm object.

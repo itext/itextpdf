@@ -59,10 +59,6 @@ import com.lowagie.text.pdf.PdfTransition;
  */
 
 public interface PdfPageActions {
-    /** action value */
-    public static final PdfName PAGE_OPEN = PdfName.O;
-    /** action value */
-    public static final PdfName PAGE_CLOSE = PdfName.C;
     
     /**
      * Sets the open and close page additional action.

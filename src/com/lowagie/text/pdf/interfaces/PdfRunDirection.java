@@ -51,19 +51,6 @@ package com.lowagie.text.pdf.interfaces;
 
 public interface PdfRunDirection {
     
-    /** Use the default run direction. */    
-    public static final int RUN_DIRECTION_DEFAULT = 0;
-    /** Do not use bidirectional reordering. */    
-    public static final int RUN_DIRECTION_NO_BIDI = 1;
-    /** Use bidirectional reordering with left-to-right
-     * preferential run direction.
-     */    
-    public static final int RUN_DIRECTION_LTR = 2;
-    /** Use bidirectional reordering with right-to-left
-     * preferential run direction.
-     */    
-    public static final int RUN_DIRECTION_RTL = 3;
-    
     /** Sets the run direction. This is only used as a placeholder
      * as it does not affect anything.
      * @param runDirection the run direction
