@@ -62,7 +62,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import com.lowagie.text.xml.simpleparser.IanaToJava;
+import com.lowagie.text.xml.simpleparser.IanaEncodings;
 import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
 import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
 /**
@@ -639,7 +639,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
      * @throws IOException on error
      */    
     public static void exportToXML(List list, OutputStream out, String encoding, boolean onlyASCII) throws IOException {
-        String jenc = IanaToJava.getJavaEncoding(encoding);
+        String jenc = IanaEncodings.getJavaEncoding(encoding);
         Writer wrt = new BufferedWriter(new OutputStreamWriter(out, jenc));
         exportToXML(list, wrt, encoding, onlyASCII);
     }
