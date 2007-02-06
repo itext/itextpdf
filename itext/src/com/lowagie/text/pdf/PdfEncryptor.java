@@ -53,7 +53,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 
 import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 
 /** This class takes any PDF and returns exactly the same but
  * encrypted. All the content, links, outlines, etc, are kept.
@@ -217,14 +216,14 @@ public class PdfEncryptor {
      */
     public static String getPermissionsVerbose(int permissions) {
     	StringBuffer buf = new StringBuffer("Allowed:");
-    	if ((PdfEncryptionSettings.AllowPrinting & permissions) == PdfEncryptionSettings.AllowPrinting) buf.append(" Printing");
-        if ((PdfEncryptionSettings.AllowModifyContents & permissions) == PdfEncryptionSettings.AllowModifyContents) buf.append(" Modify contents");
-        if ((PdfEncryptionSettings.AllowCopy & permissions) == PdfEncryptionSettings.AllowCopy) buf.append(" Copy");
-        if ((PdfEncryptionSettings.AllowModifyAnnotations & permissions) == PdfEncryptionSettings.AllowModifyAnnotations) buf.append(" Modify annotations");
-        if ((PdfEncryptionSettings.AllowFillIn & permissions) == PdfEncryptionSettings.AllowFillIn) buf.append(" Fill in");
-        if ((PdfEncryptionSettings.AllowScreenReaders & permissions) == PdfEncryptionSettings.AllowScreenReaders) buf.append(" Screen readers");
-        if ((PdfEncryptionSettings.AllowAssembly & permissions) == PdfEncryptionSettings.AllowAssembly) buf.append(" Assembly");
-        if ((PdfEncryptionSettings.AllowDegradedPrinting & permissions) == PdfEncryptionSettings.AllowDegradedPrinting) buf.append(" Degraded printing");
+    	if ((PdfWriter.AllowPrinting & permissions) == PdfWriter.AllowPrinting) buf.append(" Printing");
+        if ((PdfWriter.AllowModifyContents & permissions) == PdfWriter.AllowModifyContents) buf.append(" Modify contents");
+        if ((PdfWriter.AllowCopy & permissions) == PdfWriter.AllowCopy) buf.append(" Copy");
+        if ((PdfWriter.AllowModifyAnnotations & permissions) == PdfWriter.AllowModifyAnnotations) buf.append(" Modify annotations");
+        if ((PdfWriter.AllowFillIn & permissions) == PdfWriter.AllowFillIn) buf.append(" Fill in");
+        if ((PdfWriter.AllowScreenReaders & permissions) == PdfWriter.AllowScreenReaders) buf.append(" Screen readers");
+        if ((PdfWriter.AllowAssembly & permissions) == PdfWriter.AllowAssembly) buf.append(" Assembly");
+        if ((PdfWriter.AllowDegradedPrinting & permissions) == PdfWriter.AllowDegradedPrinting) buf.append(" Degraded printing");
         return buf.toString();
     }
 }

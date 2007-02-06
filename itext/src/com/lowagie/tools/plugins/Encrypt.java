@@ -57,7 +57,7 @@ import javax.swing.JOptionPane;
 
 import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
+import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.tools.arguments.BitsetArgument;
 import com.lowagie.tools.arguments.FileArgument;
 import com.lowagie.tools.arguments.OptionArgument;
@@ -73,14 +73,14 @@ public class Encrypt extends AbstractTool {
 		addVersion("$Id$");
 	}
     private final static int PERMISSIONS[] = {
-    	PdfEncryptionSettings.AllowPrinting,
-    	PdfEncryptionSettings.AllowModifyContents,
-    	PdfEncryptionSettings.AllowCopy,
-    	PdfEncryptionSettings.AllowModifyAnnotations,
-    	PdfEncryptionSettings.AllowFillIn,
-    	PdfEncryptionSettings.AllowScreenReaders,
-    	PdfEncryptionSettings.AllowAssembly,
-    	PdfEncryptionSettings.AllowDegradedPrinting};
+    	PdfWriter.AllowPrinting,
+    	PdfWriter.AllowModifyContents,
+    	PdfWriter.AllowCopy,
+    	PdfWriter.AllowModifyAnnotations,
+    	PdfWriter.AllowFillIn,
+    	PdfWriter.AllowScreenReaders,
+    	PdfWriter.AllowAssembly,
+    	PdfWriter.AllowDegradedPrinting};
     private final static String PERMISSION_OPTIONS[] = {
     		"AllowPrinting",
 			"AllowModifyContents",

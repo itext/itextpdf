@@ -58,17 +58,6 @@ import com.lowagie.text.pdf.PdfName;
  */
 
 public interface PdfDocumentActions {
-    
-    /** action value */
-    public static final PdfName DOCUMENT_CLOSE = PdfName.WC;
-    /** action value */
-    public static final PdfName WILL_SAVE = PdfName.WS;
-    /** action value */
-    public static final PdfName DID_SAVE = PdfName.DS;
-    /** action value */
-    public static final PdfName WILL_PRINT = PdfName.WP;
-    /** action value */
-    public static final PdfName DID_PRINT = PdfName.DP;
 
     /**
      * When the document opens it will jump to the destination with

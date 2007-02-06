@@ -49,7 +49,6 @@
 
 package com.lowagie.text.pdf.interfaces;
 
-import com.lowagie.text.DocWriter;
 import com.lowagie.text.pdf.PdfName;
 
 /**
@@ -61,39 +60,6 @@ import com.lowagie.text.pdf.PdfName;
  */
 
 public interface PdfVersion {
-	
-    /** possible PDF version (header) */
-    public static final char VERSION_1_2 = '2';
-    /** possible PDF version (header) */
-    public static final char VERSION_1_3 = '3';
-    /** possible PDF version (header) */
-    public static final char VERSION_1_4 = '4';
-    /** possible PDF version (header) */
-    public static final char VERSION_1_5 = '5';
-    /** possible PDF version (header) */
-    public static final char VERSION_1_6 = '6';
-    /** possible PDF version (header) */
-    public static final char VERSION_1_7 = '7';
-    
-    /** possible PDF version (catalog) */
-    public static final PdfName PDF_VERSION_1_2 = new PdfName("1.2");
-    /** possible PDF version (catalog) */
-    public static final PdfName PDF_VERSION_1_3 = new PdfName("1.3");
-    /** possible PDF version (catalog) */
-    public static final PdfName PDF_VERSION_1_4 = new PdfName("1.4");
-    /** possible PDF version (catalog) */
-    public static final PdfName PDF_VERSION_1_5 = new PdfName("1.5");
-    /** possible PDF version (catalog) */
-    public static final PdfName PDF_VERSION_1_6 = new PdfName("1.6");
-    /** possible PDF version (catalog) */
-    public static final PdfName PDF_VERSION_1_7 = new PdfName("1.7");
-    
-    /** Contains different strings that are part of the header. */
-    public static final byte[][] HEADER = {
-    	DocWriter.getISOBytes("\n"),
-    	DocWriter.getISOBytes("%PDF-"),
-    	DocWriter.getISOBytes("\n%\u00e2\u00e3\u00cf\u00d3\n")
-    };
     
     /**
 	 * If the PDF Header hasn't been written yet,

@@ -50,27 +50,6 @@
 package com.lowagie.text.pdf.interfaces;
 
 public interface PdfXConformance {
-    /** A PDF/X level. */
-    public static final int PDFXNONE = 0;
-    /** A PDF/X level. */
-    public static final int PDFX1A2001 = 1;
-    /** A PDF/X level. */
-    public static final int PDFX32002 = 2;
-    
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_COLOR = 1;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_CMYK = 2;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_RGB = 3;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_FONT = 4;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_IMAGE = 5;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_GSTATE = 6;
-    /** A key for an aspect that can be checked for PDF/X Conformance. */
-    static final int PDFXKEY_LAYER = 7;
     
     /**
      * Sets the PDF/X conformance level.
