@@ -61,60 +61,7 @@ import com.lowagie.text.pdf.PdfObject;
  * for reasons of convenience.
  */
 
-public interface PdfViewerPreferences {
-
-    /** A series of viewer preferences. */
-    public static final PdfName NONFULLSCREENPAGEMODE_PREFERENCES[] = {
-    	PdfName.USENONE, PdfName.USEOUTLINES, PdfName.USETHUMBS, PdfName.USEOC
-    };
-    /** A series of viewer preferences. */
-    public static final PdfName DIRECTION_PREFERENCES[] = {
-    	PdfName.L2R, PdfName.R2L
-    };
-	/** A series of viewer preferences. */
-	public static final PdfName PAGE_BOUNDARIES[] = {
-		PdfName.MEDIABOX, PdfName.CROPBOX, PdfName.BLEEDBOX, PdfName.TRIMBOX, PdfName.ARTBOX
-	};
-	/** A series of viewer preferences */
-	public static final PdfName PRINTSCALING_PREFERENCES[] = {
-		PdfName.APPDEFAULT, PdfName.NONE
-	};
-	/** A series of viewer preferences. */
-	public static final PdfName DUPLEX_PREFERENCES[] = {
-		PdfName.SIMPLEX, PdfName.DUPLEXFLIPSHORTEDGE, PdfName.DUPLEXFLIPSHORTEDGE
-	};	
-	
-	// values for setting viewer preferences in iText versions older than 1.5.x
-	
-	/** A viewer preference */
-	public static final int HideToolbar = 1 << 12;
-	/** A viewer preference */
-	public static final int HideMenubar = 1 << 13;
-	/** A viewer preference */
-	public static final int HideWindowUI = 1 << 14;
-	/** A viewer preference */
-	public static final int FitWindow = 1 << 15;
-	/** A viewer preference */
-	public static final int CenterWindow = 1 << 16;
-	/** A viewer preference */
-	public static final int DisplayDocTitle = 1 << 17;
-
-	/** A viewer preference */
-	public static final int NonFullScreenPageModeUseNone = 1 << 18;
-	/** A viewer preference */
-	public static final int NonFullScreenPageModeUseOutlines = 1 << 19;
-	/** A viewer preference */
-	public static final int NonFullScreenPageModeUseThumbs = 1 << 20;
-	/** A viewer preference */
-	public static final int NonFullScreenPageModeUseOC = 1 << 21;
-
-	/** A viewer preference */
-	public static final int DirectionL2R = 1 << 22;
-	/** A viewer preference */
-	public static final int DirectionR2L = 1 << 23;
-
-	/** A viewer preference */
-	public static final int PrintScalingNone = 1 << 24;
+public interface PdfViewerPreferences {	
 		
     /**
      * Sets the page layout and page mode preferences by ORing one or two of these constants.

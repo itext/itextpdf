@@ -65,7 +65,14 @@ import com.lowagie.text.pdf.interfaces.PdfVersion;
  */
 
 public class PdfVersionImp implements PdfVersion {
-	
+    
+    /** Contains different strings that are part of the header. */
+    public static final byte[][] HEADER = {
+    	DocWriter.getISOBytes("\n"),
+    	DocWriter.getISOBytes("%PDF-"),
+    	DocWriter.getISOBytes("\n%\u00e2\u00e3\u00cf\u00d3\n")
+    };
+    
 	/** Indicates if the header was already written. */
 	protected boolean headerWasWritten = false;
 	/** Indicates if we are working in append mode. */

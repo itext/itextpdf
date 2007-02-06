@@ -49,7 +49,6 @@
 
 package com.lowagie.text.pdf.interfaces;
 
-import com.lowagie.text.DocWriter;
 import com.lowagie.text.pdf.PdfName;
 
 /**
@@ -61,13 +60,6 @@ import com.lowagie.text.pdf.PdfName;
  */
 
 public interface PdfVersion {
-    
-    /** Contains different strings that are part of the header. */
-    public static final byte[][] HEADER = {
-    	DocWriter.getISOBytes("\n"),
-    	DocWriter.getISOBytes("%PDF-"),
-    	DocWriter.getISOBytes("\n%\u00e2\u00e3\u00cf\u00d3\n")
-    };
     
     /**
 	 * If the PDF Header hasn't been written yet,

@@ -1350,6 +1350,38 @@ public class PdfWriter extends DocWriter implements
 	/** A viewer preference */
 	public static final int PageModeUseAttachments = 2048;
 	
+	// values for setting viewer preferences in iText versions older than 2.x
+	
+	/** A viewer preference */
+	public static final int HideToolbar = 1 << 12;
+	/** A viewer preference */
+	public static final int HideMenubar = 1 << 13;
+	/** A viewer preference */
+	public static final int HideWindowUI = 1 << 14;
+	/** A viewer preference */
+	public static final int FitWindow = 1 << 15;
+	/** A viewer preference */
+	public static final int CenterWindow = 1 << 16;
+	/** A viewer preference */
+	public static final int DisplayDocTitle = 1 << 17;
+
+	/** A viewer preference */
+	public static final int NonFullScreenPageModeUseNone = 1 << 18;
+	/** A viewer preference */
+	public static final int NonFullScreenPageModeUseOutlines = 1 << 19;
+	/** A viewer preference */
+	public static final int NonFullScreenPageModeUseThumbs = 1 << 20;
+	/** A viewer preference */
+	public static final int NonFullScreenPageModeUseOC = 1 << 21;
+
+	/** A viewer preference */
+	public static final int DirectionL2R = 1 << 22;
+	/** A viewer preference */
+	public static final int DirectionR2L = 1 << 23;
+
+	/** A viewer preference */
+	public static final int PrintScalingNone = 1 << 24;
+	
     /** @see com.lowagie.text.pdf.interfaces.PdfViewerPreferences#setViewerPreferences(int) */
     public void setViewerPreferences(int preferences) {
         pdf.setViewerPreferences(preferences);
