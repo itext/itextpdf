@@ -431,7 +431,7 @@ public class ElementTags {
     // methods
     
 /**
- * Translates the alignment value.
+ * Translates the alignment value to a String value.
  *
  * @param   alignment   the alignment value
  * @return  the translated value
@@ -461,4 +461,41 @@ public class ElementTags {
         }
     }
     
+ /**
+  * Translates a String value to an alignment value.
+  * (written by Norman Richards, integrated into iText by Bruno)
+  * @param	a String (one of the ALIGN_ constants of this class)
+  * @param	an alignment value (one of the ALIGN_ constants of the Element interface) 
+  */
+    public static int alignmentValue(String alignment) {
+        if (ALIGN_CENTER.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_CENTER;
+        }
+        if (ALIGN_LEFT.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_LEFT;
+        }
+        if (ALIGN_RIGHT.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_RIGHT;
+        }
+        if (ALIGN_JUSTIFIED.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_JUSTIFIED;
+        }
+        if (ALIGN_JUSTIFIED_ALL.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_JUSTIFIED_ALL;
+        }
+        if (ALIGN_TOP.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_TOP;
+        }
+        if (ALIGN_MIDDLE.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_MIDDLE;
+        }
+        if (ALIGN_BOTTOM.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_BOTTOM;
+        }
+        if (ALIGN_BASELINE.equalsIgnoreCase(alignment)) {
+            return Element.ALIGN_BASELINE;
+        }
+
+        return Element.ALIGN_UNDEFINED;
+    }
 }
