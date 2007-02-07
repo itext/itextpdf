@@ -50,6 +50,8 @@
 
 package com.lowagie.text;
 
+import java.lang.reflect.Field;
+
 /**
  * The <CODE>PageSize</CODE>-object contains a number of rectangles representing the most common papersizes.
  *
@@ -215,4 +217,32 @@ public class PageSize {
     
 /** This is the Penguin large paparback format. */
     public static final Rectangle PENGUIN_LARGE_PAPERBACK = new Rectangle(365,561);
+    
+    
+    /**
+     * This method returns a Rectangle based on a String.
+     * Possible values are the the names of a constant in this class
+     * (for instance "A4", "LETTER",...) or a value like "595 842"
+     */
+    public static Rectangle getRectangle(String name)  {
+    	name = name.trim().toUpperCase();
+    	int pos = name.indexOf(' ');
+        if (pos == -1) {
+            try {            
+                Field field = PageSize.class.getDeclaredField(name.toUpperCase());
+                return (Rectangle) field.get(null);
+            } catch (Exception e) {
+                throw new RuntimeException("Can't find page size " + name);          
+            }
+        }
+        else {
+        	try {
+        		String width = name.substring(0, pos);
+        		String height = name.substring(pos + 1);
+        		return new Rectangle(Float.parseFloat(width), Float.parseFloat(height));
+        	} catch(Exception e) {
+        		throw new RuntimeException(name + " is not a valid page size format; " + e.getMessage());
+        	}
+        }
+    }
 }
