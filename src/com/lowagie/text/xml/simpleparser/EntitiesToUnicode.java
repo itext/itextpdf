@@ -374,4 +374,46 @@ public class EntitiesToUnicode {
         else
             return c.charValue();
     }
+    
+    /**
+     * Translates a String with entities (&...;) to a String without entities,
+     * replacing the entity with the right (unicode) character.
+     */
+    public static String decodeString(String s) {
+    	int pos_amp = s.indexOf('&');
+    	if (pos_amp == -1) return s;
+    	
+    	int pos_sc;
+    	int pos_a;
+    	StringBuffer buf = new StringBuffer(s.substring(0, pos_amp));
+    	char replace;
+    	while (true) {
+    		pos_sc = s.indexOf(';', pos_amp);
+    		if (pos_sc == -1) {
+    			buf.append(s.substring(pos_amp));
+    			return buf.toString();
+    		}
+    		pos_a = s.indexOf('&', pos_amp + 1);
+    		while (pos_a != -1 && pos_a < pos_sc) {
+    			buf.append(s.substring(pos_amp, pos_a));
+    			pos_amp = pos_a;
+    			pos_a = s.indexOf('&', pos_amp + 1);
+    		}
+    		replace = decodeEntity(s.substring(pos_amp + 1, pos_sc));
+    		if (s.length() < pos_sc + 1) {
+    			return buf.toString();
+    		}
+    		if (replace == '\0') {
+    			buf.append(s.substring(pos_amp, pos_sc + 1));
+    		}
+    		else {
+    			buf.append(replace);
+    		}
+    		pos_amp = s.indexOf('&', pos_sc);
+    		if (pos_amp == -1) {
+    			buf.append(s.substring(pos_sc + 1));
+    			return buf.toString();
+    		}
+    	}
+    }
 }
