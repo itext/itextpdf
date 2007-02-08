@@ -100,14 +100,16 @@ public class PdfXConformanceImp implements PdfXConformance {
     }
     
     public void completeExtraCatalog(PdfDictionary extraCatalog) {
-        if (extraCatalog.get(PdfName.OUTPUTINTENTS) == null) {
-            PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
-            out.put(PdfName.OUTPUTCONDITION, new PdfString("SWOP CGATS TR 001-1995"));
-            out.put(PdfName.OUTPUTCONDITIONIDENTIFIER, new PdfString("CGATS TR 001"));
-            out.put(PdfName.REGISTRYNAME, new PdfString("http://www.color.org"));
-            out.put(PdfName.INFO, new PdfString(""));
-            out.put(PdfName.S, PdfName.GTS_PDFX);
-            extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+        if (isPdfX()) {
+            if (extraCatalog.get(PdfName.OUTPUTINTENTS) == null) {
+                PdfDictionary out = new PdfDictionary(PdfName.OUTPUTINTENT);
+                out.put(PdfName.OUTPUTCONDITION, new PdfString("SWOP CGATS TR 001-1995"));
+                out.put(PdfName.OUTPUTCONDITIONIDENTIFIER, new PdfString("CGATS TR 001"));
+                out.put(PdfName.REGISTRYNAME, new PdfString("http://www.color.org"));
+                out.put(PdfName.INFO, new PdfString(""));
+                out.put(PdfName.S, PdfName.GTS_PDFX);
+                extraCatalog.put(PdfName.OUTPUTINTENTS, new PdfArray(out));
+            }
         }
     }
     
