@@ -895,7 +895,7 @@ public class PdfWriter extends DocWriter implements
      * Sets extra keys to the catalog.
      * @return the catalog to change
      */    
-    protected PdfDictionary getExtraCatalog() {
+    public PdfDictionary getExtraCatalog() {
         if (extraCatalog == null)
             extraCatalog = new PdfDictionary();
         return this.extraCatalog;
@@ -1131,8 +1131,10 @@ public class PdfWriter extends DocWriter implements
                 	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
                 }
                 // [C10] make pdfx conformant
-                pdfxConformance.completeInfoDictionary(getInfo());
-                pdfxConformance.completeExtraCatalog(getExtraCatalog());
+                if (isPdfX()) {
+                    pdfxConformance.completeInfoDictionary(getInfo());
+                    pdfxConformance.completeExtraCatalog(getExtraCatalog());
+                }
                 // [C11] Output Intents
                 if (extraCatalog != null) {
                     catalog.mergeDifferent(extraCatalog);
@@ -1993,6 +1995,10 @@ public class PdfWriter extends DocWriter implements
     
     protected int getNewObjectNumber(PdfReader reader, int number, int generation) {
         return currentPdfReaderInstance.getNewObjectNumber(number, generation);
+    }
+
+    RandomAccessFileOrArray getReaderFile(PdfReader reader) {
+        return currentPdfReaderInstance.getReaderFile();
     }
 
 //	[F6] spot colors
