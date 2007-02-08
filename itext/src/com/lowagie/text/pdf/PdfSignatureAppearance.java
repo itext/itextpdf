@@ -108,6 +108,11 @@ public class PdfSignatureAppearance {
      */
     public static final PdfName WINCER_SIGNED = PdfName.ADOBE_PPKMS;
 
+    public static final int NOT_CERTIFIED = 0;
+    public static final int CERTIFIED_NO_CHANGES_ALLOWED = 1;
+    public static final int CERTIFIED_FORM_FILLING = 2;
+    public static final int CERTIFIED_FORM_FILLING_AND_ANNOTATIONS = 3;
+    
     private static final float TOP_SECTION = 0.3f;
     private static final float MARGIN = 2;
     private Rectangle rect;
@@ -869,28 +874,24 @@ public class PdfSignatureAppearance {
         AcroFields af = writer.getAcroFields();
         String name = getFieldName();
         boolean fieldExists = !(isInvisible() || isNewField());
-        int flags = 132;
+        int flags = PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_LOCKED;
         PdfIndirectReference refSig = writer.getPdfIndirectReference();
-        if (fieldExists && name.indexOf('.') >= 0) {
+        writer.setSigFlags(3);
+        if (fieldExists) {
             ArrayList widgets = af.getFieldItem(name).widgets;
             PdfDictionary widget = (PdfDictionary)widgets.get(0);
             writer.markUsed(widget);
             widget.put(PdfName.P, writer.getPageReference(getPage()));
             widget.put(PdfName.V, refSig);
+            PdfObject obj = PdfReader.getPdfObjectRelease(widget.get(PdfName.F));
+            if (obj != null && obj.isNumber())
+                flags = ((PdfNumber)obj).intValue() | PdfAnnotation.FLAGS_LOCKED;
+            widget.put(PdfName.F, new PdfNumber(flags));
             PdfDictionary ap = new PdfDictionary();
             ap.put(PdfName.N, getAppearance().getIndirectReference());
             widget.put(PdfName.AP, ap);
         }
         else {
-            if (fieldExists) {
-                flags = 0;
-                ArrayList merged = af.getFieldItem(name).merged;
-                PdfObject obj = PdfReader.getPdfObjectRelease(((PdfDictionary)merged.get(0)).get(PdfName.F));
-                if (obj != null && obj.isNumber())
-                    flags = ((PdfNumber)obj).intValue();
-                af.removeField(name);
-            }
-            writer.setSigFlags(3);
             PdfFormField sigField = PdfFormField.createSignature(writer);
             sigField.setFieldName(name);
             sigField.put(PdfName.V, refSig);
@@ -933,8 +934,9 @@ public class PdfSignatureAppearance {
             lit = new PdfLiteral(80);
             exclusionLocations.put(PdfName.BYTERANGE, lit);
             sigStandard.put(PdfName.BYTERANGE, lit);
-            if (certified)
+            if (certificationLevel > 0) {
                 addDocMDP(sigStandard);
+            }
             if (signatureEvent != null)
                 signatureEvent.getSignatureDictionary(sigStandard);
             writer.addToBody(sigStandard, refSig, false);
@@ -951,13 +953,13 @@ public class PdfSignatureAppearance {
                 exclusionLocations.put(key, lit);
                 cryptoDictionary.put(key, lit);
             }
-            if (certified)
+            if (certificationLevel > 0)
                 addDocMDP(cryptoDictionary);
             if (signatureEvent != null)
                 signatureEvent.getSignatureDictionary(cryptoDictionary);
             writer.addToBody(cryptoDictionary, refSig, false);
         }
-        if (certified) {
+        if (certificationLevel > 0) {
           // add DocMDP entry to root
              PdfDictionary docmdp = new PdfDictionary();
              docmdp.put(new PdfName("DocMDP"), refSig);
@@ -1076,17 +1078,24 @@ public class PdfSignatureAppearance {
     }
     
     private void addDocMDP(PdfDictionary crypto) {
-         PdfDictionary reference = new PdfDictionary();
-         PdfDictionary transformParams = new PdfDictionary();
-         transformParams.put(PdfName.P, new PdfNumber(1));
-         transformParams.put(PdfName.V, new PdfName("1.2"));
-         transformParams.put(PdfName.TYPE, new PdfName("TransformParams"));
-         reference.put(new PdfName("TransformMethod"), new PdfName("DocMDP"));
-         reference.put(PdfName.TYPE, new PdfName("SigRef"));
-         reference.put(new PdfName("TransformParams"), transformParams);
-         PdfArray types = new PdfArray();
-         types.add(reference);
-         crypto.put(new PdfName("Reference"), types);
+        PdfDictionary reference = new PdfDictionary();
+        PdfDictionary transformParams = new PdfDictionary();
+        transformParams.put(PdfName.P, new PdfNumber(certificationLevel));
+        transformParams.put(PdfName.V, new PdfName("1.2"));
+        transformParams.put(PdfName.TYPE, PdfName.TRANSFORMPARAMS);
+        reference.put(PdfName.TRANSFORMMETHOD, PdfName.DOCMDP);
+        reference.put(PdfName.TYPE, PdfName.SIGREF);
+        reference.put(PdfName.TRANSFORMPARAMS, transformParams);
+        reference.put(new PdfName("DigestValue"), new PdfString("aa"));
+        PdfArray loc = new PdfArray();
+        loc.add(new PdfNumber(0));
+        loc.add(new PdfNumber(0));
+        reference.put(new PdfName("DigestLocation"), loc);
+        reference.put(new PdfName("DigestMethod"), new PdfName("MD5"));
+        reference.put(PdfName.DATA, writer.reader.getTrailer().get(PdfName.ROOT));
+        PdfArray types = new PdfArray();
+        types.add(reference);
+        crypto.put(PdfName.REFERENCE, types);
     }
     
     /**
@@ -1422,24 +1431,22 @@ public class PdfSignatureAppearance {
         public void getSignatureDictionary(PdfDictionary sig);
     }
 
-    /**
-     * Holds value of property certified.
-     */
-    private boolean certified;
+    private int certificationLevel = NOT_CERTIFIED;
 
     /**
      * Gets the certified status of this document.
      * @return the certified status
      */
-    public boolean isCertified() {
-        return this.certified;
+    public int getCertificationLevel() {
+        return this.certificationLevel;
     }
 
     /**
-     * Sets the document type to certified instead of simply signed. The certified document doesn't allow any changes.
-     * @param certified <code>true</code> to certify the document, <code>false</code> to just apply a simple signature
+     * Sets the document type to certified instead of simply signed.
+     * @param certificationLevel the values can be: <code>NOT_CERTIFIED</code>, <code>CERTIFIED_NO_CHANGES_ALLOWED</code>,
+     * <code>CERTIFIED_FORM_FILLING</code> and <code>CERTIFIED_FORM_FILLING_AND_ANNOTATIONS</code>
      */
-    public void setCertified(boolean certified) {
-        this.certified = certified;
+    public void setCertificationLevel(int certificationLevel) {
+        this.certificationLevel = certificationLevel;
     }
 }
