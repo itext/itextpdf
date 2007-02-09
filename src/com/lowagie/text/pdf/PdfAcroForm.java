@@ -83,6 +83,10 @@ public class PdfAcroForm extends PdfDictionary {
         super();
         this.writer = writer;
     }
+    
+    public void setNeedAppearances(boolean value) {
+    	put(PdfName.NEEDAPPEARANCES, new PdfBoolean(value));
+    }
 
     /**
      * Adds fieldTemplates.
