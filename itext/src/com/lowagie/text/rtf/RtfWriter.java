@@ -744,8 +744,10 @@ public class RtfWriter extends DocWriter implements DocListener {
      * <code>OutputStream</code>
      */
     public void close() {
-        writeDocument();
-        super.close();
+        if (open) {
+            writeDocument();
+            super.close();
+        }
     }
 
     /**
