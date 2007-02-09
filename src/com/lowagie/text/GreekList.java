@@ -58,11 +58,6 @@ package com.lowagie.text;
 public class GreekList extends List {
 
 	/**
-	 * UpperCase or LowerCase
-	 */
-	protected boolean greeklower;
-
-	/**
 	 * Initialisierung
 	 * 
 	 * @param symbolIndent	indent
@@ -79,7 +74,7 @@ public class GreekList extends List {
 	 */
 	public GreekList(boolean greeklower, int symbolIndent) {
 		super(true, symbolIndent);
-		this.greeklower = greeklower;
+		lowercase = greeklower;
 		setGreekFont();
 	}
 
@@ -97,7 +92,7 @@ public class GreekList extends List {
 	 * @param greeklower
 	 */
 	public void setGreekLower(boolean greeklower) {
-		this.greeklower = greeklower;
+		this.lowercase = greeklower;
 	}
 
 	/**
@@ -106,7 +101,7 @@ public class GreekList extends List {
 	 * @return	<CODE>true</CODE> if the greek-letter is lowercase, <CODE>false</CODE> otherwise.
 	 */
 	public boolean isGreekLower() {
-		return greeklower;
+		return lowercase;
 	}
 
 	/**
@@ -119,19 +114,15 @@ public class GreekList extends List {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk;
-			int index;
-			if (greeklower) {
-				index = first + list.size() + 944;
-				if (index > 961) index++;
+			int index = first + list.size();
+			int[] greekValue = getGreekValue(index, lowercase);
+			chunk = SpecialSymbol.get((char)greekValue[0], symbol.font());
+			for (int i = 1; i < greekValue.length; i++) {
+				chunk.append(String.valueOf(SpecialSymbol.getCorrespondingSymbol((char) greekValue[i])));
 			}
-			else {
-				index = first + list.size() + 912;
-				if (index > 929) index++;
-			}
-			chunk = SpecialSymbol.get((char) index, symbol.font());
-			chunk.append(".");
+			chunk.append(". ");
 			item.setListSymbol(chunk);
-			item.setIndentationLeft(symbolIndent);
+			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);
 			list.add(item);
 		} else if (o instanceof List) {
@@ -144,4 +135,37 @@ public class GreekList extends List {
 		}
 		return false;
 	}
+
+	/**
+	 * Translates a number to a letter(combination).
+	 * 1-26 correspond with a-z, 27 is aa, 28 is ab, and so on,
+	 * aaa comes right after zz.
+	 * @param index	a number greater than 0
+	 * @return	a String corresponding with the index.
+	 */
+	    public static int[] getGreekValue(int index, boolean lowercase) {
+	    	if (index < 1) return new int[0];
+	    	index--;
+	    	
+	    	int bytes = 1;
+	    	int start = 0;
+	    	int symbols = 24;  
+	    	while(index >= symbols + start) {
+	    		bytes++;
+	    	    start += symbols;
+	    		symbols *= 24;
+	    	}
+	    	      
+	    	int c = index - start;
+	    	int[] value = new int[bytes];
+	    	while(bytes > 0) {
+	    		bytes--;
+	    		value[bytes] = (c % 24);
+	    		if (value[bytes] > 16) value[bytes]++;
+	    		value[bytes] += (lowercase ? 945 : 913);
+	    		c /= 24;
+	    	}
+	    	
+	    	return value;
+	    }
 }

@@ -58,11 +58,6 @@ package com.lowagie.text;
 public class RomanList extends List {
 
 	/**
-	 * UpperCase or LowerCase
-	 */
-	protected boolean romanlower;
-
-	/**
 	 * Initialization
 	 * 
 	 * @param symbolIndent	indent
@@ -78,7 +73,7 @@ public class RomanList extends List {
 	 */
 	public RomanList(boolean romanlower, int symbolIndent) {
 		super(true, symbolIndent);
-		this.romanlower = romanlower;
+		this.lowercase = romanlower;
 	}
 
 	/**
@@ -87,7 +82,7 @@ public class RomanList extends List {
 	 * @param romanlower
 	 */
 	public void setRomanLower(boolean romanlower) {
-		this.romanlower = romanlower;
+		this.lowercase = romanlower;
 	}
 
 	/**
@@ -96,7 +91,7 @@ public class RomanList extends List {
 	 * @return	<CODE>true</CODE> if the roman-letter is lowercase, <CODE>false</CODE> otherwise.
 	 */
 	public boolean isRomanLower() {
-		return romanlower;
+		return lowercase;
 	}
 
 	/**
@@ -109,13 +104,13 @@ public class RomanList extends List {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
 			Chunk chunk;
-			if (romanlower)
+			if (lowercase)
 				chunk = new Chunk(toRomanLowerCase(first + list.size()), symbol.font());
 			else
-				chunk = new Chunk(toRomanUppercase(first + list.size()), symbol.font());
-			chunk.append(".");
+				chunk = new Chunk(toRomanUpperCase(first + list.size()), symbol.font());
+			chunk.append(". ");
 			item.setListSymbol(chunk);
-			item.setIndentationLeft(symbolIndent);
+			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);
 			list.add(item);
 		} else if (o instanceof List) {
@@ -197,7 +192,7 @@ public class RomanList extends List {
 	 * @param number the original number
 	 * @return the roman number (upper case)
 	 */
-	public static String toRomanUppercase(int number) {
+	public static String toRomanUpperCase(int number) {
 		return toRomanLowerCase(number).toUpperCase();
 	}
 
