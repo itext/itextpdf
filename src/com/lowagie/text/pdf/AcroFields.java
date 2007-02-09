@@ -1741,9 +1741,13 @@ public class AcroFields {
             PdfString str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.M));
             if (str != null)
                 pk.setSignDate(PdfDate.decode(str.toString()));
-            str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.NAME));
-            if (str != null)
-                pk.setSignName(str.toUnicodeString());
+            PdfObject obj = PdfReader.getPdfObject(v.get(PdfName.NAME));
+            if (obj != null) {
+              if (obj.isString())
+                pk.setSignName(((PdfString)obj).toUnicodeString());
+              else if(obj.isName())
+                pk.setSignName(PdfName.decodeName(obj.toString()));
+            }
             str = (PdfString)PdfReader.getPdfObject(v.get(PdfName.REASON));
             if (str != null)
                 pk.setReason(str.toUnicodeString());
