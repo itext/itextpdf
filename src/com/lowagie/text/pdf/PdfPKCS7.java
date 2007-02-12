@@ -96,6 +96,9 @@ import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.DERString;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.DERUTCTime;
+import org.bouncycastle.jce.provider.X509CRLParser;
+import org.bouncycastle.jce.provider.X509CertParser;
+import org.bouncycastle.util.StreamParsingException;
 
 /**
  * This class does all the processing related to signing and verifying a PKCS#7
@@ -198,7 +201,7 @@ public class PdfPKCS7 {
      * @throws NoSuchProviderException on error
      * @throws NoSuchAlgorithmException on error
      */    
-    public PdfPKCS7(byte[] contentsKey, String provider) throws SecurityException, CRLException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException {
+    public PdfPKCS7(byte[] contentsKey, String provider) throws SecurityException, CRLException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, StreamParsingException {
         ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(contentsKey));
         
         //
@@ -241,13 +244,12 @@ public class PdfPKCS7 {
         }
         
         // the certificates and crls
-        CertificateFactory cf;
-        if (provider == null)
-            cf = CertificateFactory.getInstance("X.509");
-        else
-            cf = CertificateFactory.getInstance("X.509", provider);
-        certs = cf.generateCertificates(new ByteArrayInputStream(contentsKey));
-        crls = cf.generateCRLs(new ByteArrayInputStream(contentsKey));
+        X509CertParser cr = new X509CertParser();
+        cr.engineInit(new ByteArrayInputStream(contentsKey));
+        certs = cr.engineReadAll();
+        X509CRLParser cl = new X509CRLParser();
+        cl.engineInit(new ByteArrayInputStream(contentsKey));
+        crls = cl.engineReadAll();
         
         // the possible ID_PKCS7_DATA
         ASN1Sequence rsaData = (ASN1Sequence)content.getObjectAt(2);
