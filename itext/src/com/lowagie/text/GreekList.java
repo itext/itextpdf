@@ -56,9 +56,15 @@ package com.lowagie.text;
  */
 
 public class GreekList extends List {
-
 	/**
-	 * Initialisierung
+	 * Initialization
+	 */
+	public GreekList() {
+		super(true);
+		setGreekFont();
+	}
+	/**
+	 * Initialization
 	 * 
 	 * @param symbolIndent	indent
 	 */
