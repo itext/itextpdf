@@ -124,6 +124,7 @@ public class List implements TextElementArray {
     protected boolean lettered;
     protected boolean lowercase;
     protected boolean autoindent;
+    protected boolean alignindent;
     
 /** This variable indicates the first number of a numbered list. */
     protected int first = 1;
@@ -144,6 +145,35 @@ public class List implements TextElementArray {
     protected Properties markupAttributes;
     
     // constructors
+
+/**
+ * Constructs a <CODE>List</CODE>.
+ */
+    public List() {
+        this(false, false);
+    }
+    
+/**
+ * Constructs a <CODE>List</CODE>.
+ *
+ * @param	numbered		a boolean
+ */
+    public List(boolean numbered) {
+      	this(numbered, false);
+    }
+        
+/**
+ * Constructs a <CODE>List</CODE>.
+ *
+ * @param	numbered		a boolean
+ * @param lettered has the list to be 'numbered' with letters
+ */
+    public List(boolean numbered, boolean lettered) {
+    	this.numbered = numbered;
+        this.lettered = lettered;
+        this.autoindent = true;
+        this.alignindent = true;
+    }
     
 /**
  * Constructs a <CODE>List</CODE>.
@@ -157,9 +187,7 @@ public class List implements TextElementArray {
  */
     
     public List(boolean numbered, float symbolIndent) {
-        this.numbered = numbered;
-        this.lettered = false;
-        this.symbolIndent = symbolIndent;
+        this(numbered, false, symbolIndent);
     }
     
     /**
@@ -541,4 +569,16 @@ public class List implements TextElementArray {
             }
         }
     }
+	/**
+	 * @return the alignindent
+	 */
+	public boolean isAlignindent() {
+		return alignindent;
+	}
+	/**
+	 * @param alignindent the alignindent to set
+	 */
+	public void setAlignindent(boolean alignindent) {
+		this.alignindent = alignindent;
+	}
 }

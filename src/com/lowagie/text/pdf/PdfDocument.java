@@ -593,6 +593,9 @@ class PdfDocument extends Document implements DocListener {
                 case Element.LIST: {
                     // we cast the element to a List
                     List list = (List) element;
+                    if (list.isAlignindent()) {
+                    	list.normalizeIndentation();
+                    }
                     // we adjust the document
                     listIndentLeft += list.indentationLeft();
                     indentRight += list.indentationRight();

@@ -59,6 +59,13 @@ public class RomanList extends List {
 
 	/**
 	 * Initialization
+	 */
+	public RomanList() {
+		super(true);
+	}
+
+	/**
+	 * Initialization
 	 * 
 	 * @param symbolIndent	indent
 	 */
