@@ -49,18 +49,16 @@
  */
 package com.lowagie.tools;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.TreeSet;
+import java.text.*;
+import java.util.*;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.table.*;
 
-import com.lowagie.text.Document;
-import com.lowagie.tools.plugins.AbstractTool;
+import com.lowagie.text.*;
+import com.lowagie.tools.arguments.*;
+import com.lowagie.tools.plugins.*;
 
 /**
  * JFrame that shows the versions of all the plugins.
@@ -86,7 +84,72 @@ public class Versions extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new Versions();
+		Versions version = new Versions();
+		version.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		version.setVisible(true);
+	}
+
+	public TableModel getVersionTableModel(final ArrayList versionsarray) {
+		return new AbstractTableModel() {
+
+			private static final long serialVersionUID = 5105003782164682777L;
+
+			public int getColumnCount() {
+				return 3;
+			}
+
+			public int getRowCount() {
+				return versionsarray.size();
+			}
+
+			public Object getValueAt(int rowIndex, int columnIndex) {
+				String dummy;
+				switch (columnIndex) {
+				case 0:
+					dummy = versionsarray.get(rowIndex).toString();
+					return dummy.split(".java")[0];
+				case 1:
+					dummy = versionsarray.get(rowIndex).toString();
+					return dummy.split(" ")[1];
+				case 2:
+					DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					dummy = versionsarray.get(rowIndex).toString();
+					try {
+						return df.parse(dummy.split(" ")[2] + " "
+								+ dummy.split(" ")[3]);
+					} catch (ParseException ex) {
+						return null;
+					}
+				}
+				return versionsarray;
+			}
+
+			public String getColumnName(int column) {
+				switch (column) {
+				case 0:
+					return "Name";
+				case 1:
+					return "Version";
+				case 2:
+					return "Changed";
+				default:
+					return "";
+				}
+			}
+
+			public Class getColumnClass(int column) {
+				switch (column) {
+				case 0:
+					return String.class;
+				case 1:
+					return String.class;
+				case 2:
+					return java.util.Date.class;
+				default:
+					return null;
+				}
+			}
+		};
 	}
 
 	private void jbInit() throws Exception {
@@ -103,46 +166,46 @@ public class Versions extends JFrame {
 		}
 
 		sb.append("</html>");
-		jLabel1.setText(sb.toString());
-		jScrollPane1.setMinimumSize(new Dimension(160, 140));
-		this.getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+		jScrollPane2.setViewportView(jTable1);
+
+		this.getContentPane().add(jLabel2, java.awt.BorderLayout.NORTH);
+		this.getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
 		Properties properties = System.getProperties();
 		Runtime runtime = Runtime.getRuntime();
 		sb = new StringBuffer();
 		sb.append("<html>");
-		sb.append("<p>iText version: "
-				+ Document.getVersion() + "</p>");
-		sb.append("<p>java.version: "
-				+ properties.getProperty("java.version") + "</p>");
-		sb.append("<p>java.vendor: "
-				+ properties.getProperty("java.vendor") + "</p>");
+		sb.append("<p>iText version: " + Document.getVersion() + "</p>");
+		sb.append("<p>java.version: " + properties.getProperty("java.version")
+				+ "</p>");
+		sb.append("<p>java.vendor: " + properties.getProperty("java.vendor")
+				+ "</p>");
 		sb.append("<p>java.home: " + properties.getProperty("java.home")
 				+ "</p>");
-		sb.append("<p>java.freeMemory: "
-				+ runtime.freeMemory() + " bytes" + "</p>");
-		sb.append("<p>java.totalMemory: "
-				+ runtime.totalMemory() + " bytes" + "</p>");
+		sb.append("<p>java.freeMemory: " + runtime.freeMemory() + " bytes"
+				+ "</p>");
+		sb.append("<p>java.totalMemory: " + runtime.totalMemory() + " bytes"
+				+ "</p>");
 		sb.append("<p>user.home: " + properties.getProperty("user.home")
 				+ "</p>");
-		sb.append("<p>os.name: " + properties.getProperty("os.name")
-				+ "</p>");
-		sb.append("<p>os.arch: " + properties.getProperty("os.arch")
-				+ "</p>");
+		sb.append("<p>os.name: " + properties.getProperty("os.name") + "</p>");
+		sb.append("<p>os.arch: " + properties.getProperty("os.arch") + "</p>");
 		sb.append("<p>os.version: " + properties.getProperty("os.version")
 				+ "</p>");
 		sb.append("</html>");
 		jLabel2.setText(sb.toString());
-		jScrollPane1.setViewportView(jLabel1);
-		this.getContentPane().add(jLabel2, java.awt.BorderLayout.NORTH);
+		TableSorter sorter = new TableSorter(
+				getVersionTableModel(AbstractTool.versionsarray));
+		jTable1.setModel(sorter);
+		sorter.addMouseListenerToHeaderInTable(jTable1);
 		pack();
 	}
-
-	JLabel jLabel1 = new JLabel();
 
 	BorderLayout borderLayout1 = new BorderLayout();
 
 	JLabel jLabel2 = new JLabel();
 
-	JScrollPane jScrollPane1 = new JScrollPane();
-}
+	JScrollPane jScrollPane2 = new JScrollPane();
 
+	JTable jTable1 = new JTable();
+}
