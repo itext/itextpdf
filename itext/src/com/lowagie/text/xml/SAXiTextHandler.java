@@ -72,10 +72,8 @@ import com.lowagie.text.DocListener;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.ElementTags;
-import com.lowagie.text.Entities;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Font;
-import com.lowagie.text.Graphic;
 import com.lowagie.text.Image;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
@@ -90,6 +88,7 @@ import com.lowagie.text.Table;
 import com.lowagie.text.TextElementArray;
 import com.lowagie.text.html.HtmlTagMap;
 import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.xml.simpleparser.EntitiesToSymbol;
 
 /**
  * This class is a Handler that controls the iText XML to PDF conversion.
@@ -263,13 +262,13 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // symbols
-        if (Entities.isTag(name)) {
+        if (EntitiesToSymbol.isTag(name)) {
             Font f = new Font();
             if (currentChunk != null) {
                 handleEndingTags(ElementTags.CHUNK);
                 f = currentChunk.font();
             }
-            currentChunk = Entities.get(attributes.getProperty(ElementTags.ID),
+            currentChunk = EntitiesToSymbol.get(attributes.getProperty(ElementTags.ID),
                     f);
             return;
         }
@@ -468,30 +467,7 @@ public class SAXiTextHandler extends DefaultHandler {
                 current.add(newPage);
                 stack.push(current);
             } catch (EmptyStackException ese) {
-                try {
-                    document.newPage();
-                } catch (DocumentException de) {
-                    throw new ExceptionConverter(de);
-                }
-            }
-            return;
-        }
-
-        // newpage
-        if (ElementTags.HORIZONTALRULE.equals(name)) {
-            TextElementArray current;
-            Graphic hr = new Graphic();
-            hr.setHorizontalLine(1.0f, 100.0f);
-            try {
-                current = (TextElementArray) stack.pop();
-                current.add(hr);
-                stack.push(current);
-            } catch (EmptyStackException ese) {
-                try {
-                    document.add(hr);
-                } catch (DocumentException de) {
-                    throw new ExceptionConverter(de);
-                }
+                document.newPage();
             }
             return;
         }

@@ -151,7 +151,7 @@ public class HtmlEncoder {
                 buffer.append("&#").append((int)character).append(';');
             }
         }
-        return buffer.toString().trim();
+        return buffer.toString();
     }
     
 /**

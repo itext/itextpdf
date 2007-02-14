@@ -86,6 +86,10 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName ADBE_PKCS7_DETACHED = new PdfName("adbe.pkcs7.detached");
     /** A name */
+    public static final PdfName ADBE_PKCS7_S4 =new PdfName("adbe.pkcs7.s4");
+    /** A name */
+    public static final PdfName ADBE_PKCS7_S5 =new PdfName("adbe.pkcs7.s5");
+    /** A name */
     public static final PdfName ADBE_PKCS7_SHA1 = new PdfName("adbe.pkcs7.sha1");
     /** A name */
     public static final PdfName ADBE_X509_RSA_SHA1 = new PdfName("adbe.x509.rsa_sha1");
@@ -99,6 +103,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName AIS = new PdfName("AIS");
     /** A name */
     public static final PdfName ALLPAGES = new PdfName("AllPages");
+    /** A name */
+    public static final PdfName ALT = new PdfName("Alt");
     /** A name */
     public static final PdfName ALTERNATE = new PdfName("Alternate");
     /** A name */
@@ -202,6 +208,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName CHARPROCS = new PdfName("CharProcs");
     /** A name */
+    public static final PdfName CI = new PdfName("CI");
+    /** A name */
     public static final PdfName CIDFONTTYPE0 = new PdfName("CIDFontType0");
     /** A name */
     public static final PdfName CIDFONTTYPE2 = new PdfName("CIDFontType2");
@@ -219,6 +227,16 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName COLORSPACE = new PdfName("ColorSpace");
     /** A name */
     public static final PdfName COLLECTION = new PdfName("Collection");
+    /** A name */
+    public static final PdfName COLLECTIONFIELD = new PdfName("CollectionField");
+    /** A name */
+    public static final PdfName COLLECTIONITEM = new PdfName("CollectionItem");
+    /** A name */
+    public static final PdfName COLLECTIONSCHEMA = new PdfName("CollectionSchema");
+    /** A name */
+    public static final PdfName COLLECTIONSORT = new PdfName("CollectionSort");
+    /** A name */
+    public static final PdfName COLLECTIONSUBITEM = new PdfName("CollectionSubitem");
     /** A name */
     public static final PdfName COLUMNS = new PdfName("Columns");
     /** A name */
@@ -256,6 +274,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName DA = new PdfName("DA");
     /** A name */
+    public static final PdfName DATA = new PdfName("Data");
+    /** A name */
     public static final PdfName DC = new PdfName("DC");
     /** A name */
     public static final PdfName DCTDECODE = new PdfName("DCTDecode");
@@ -263,6 +283,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName DECODE = new PdfName("Decode");
     /** A name */
     public static final PdfName DECODEPARMS = new PdfName("DecodeParms");
+    /** A name */
+    public static final PdfName DEFAULTCRYPTFILER = new PdfName("DefaultCryptFilter");
     /** A name */
     public static final PdfName DEFAULTCMYK = new PdfName("DefaultCMYK");
     /** A name */
@@ -298,7 +320,11 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName DISPLAYDOCTITLE = new PdfName("DisplayDocTitle");
     /** A name */
+    public static final PdfName DIV = new PdfName("Div");
+    /** A name */
     public static final PdfName DM = new PdfName("Dm");
+    /** A name */
+    public static final PdfName DOCMDP = new PdfName("DocMDP");
     /** A name */
     public static final PdfName DOCOPEN = new PdfName("DocOpen");
     /** A name */
@@ -447,6 +473,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName GLITTER = new PdfName("Glitter");
     /** A name of an attribute. */
     public static final PdfName GOTO = new PdfName("GoTo");
+    /** A name of an attribute. */
+    public static final PdfName GOTOE = new PdfName("GoToE");
     /** A name of an attribute. */
     public static final PdfName GOTOR = new PdfName("GoToR");
     /** A name of an attribute. */
@@ -752,6 +780,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PS = new PdfName("PS");
     /** A name */
+    public static final PdfName PUBSEC = new PdfName("Adobe.PubSec");
+    /** A name */
     public static final PdfName Q = new PdfName("Q");
     /** A name */
     public static final PdfName QUADPOINTS = new PdfName("QuadPoints");
@@ -768,7 +798,11 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName REASON = new PdfName("Reason");
     /** A name */
+    public static final PdfName RECIPIENTS = new PdfName("Recipients");
+    /** A name */
     public static final PdfName RECT = new PdfName("Rect");
+    /** A name */
+    public static final PdfName REFERENCE = new PdfName("Reference");
     /** A name */
     public static final PdfName REGISTRY = new PdfName("Registry");
     /** A name */
@@ -800,7 +834,11 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName SATURATION = new PdfName("Saturation");
     /** A name */
+    public static final PdfName SCHEMA = new PdfName("Schema");
+    /** A name */
     public static final PdfName SCREEN = new PdfName("Screen");
+    /** A name */
+    public static final PdfName SECT = new PdfName("Sect");
     /** A name */
     public static final PdfName SEPARATION = new PdfName("Separation");
     /** A name */
@@ -816,6 +854,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName SIGFLAGS = new PdfName("SigFlags");
     /** A name */
+    public static final PdfName SIGREF = new PdfName("SigRef");
+    /** A name */
     public static final PdfName SIMPLEX = new PdfName("Simplex");
     /** A name */
     public static final PdfName SINGLEPAGE = new PdfName("SinglePage");
@@ -823,6 +863,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName SIZE = new PdfName("Size");
     /** A name */
     public static final PdfName SMASK = new PdfName("SMask");
+    /** A name */
+    public static final PdfName SORT = new PdfName("Sort");
+    /** A name */
+    public static final PdfName SPAN = new PdfName("Span");
     /** A name */
     public static final PdfName SPLIT = new PdfName("Split");
     /** A name */
@@ -904,6 +948,10 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName TRANS = new PdfName("Trans");
     /** A name */
+    public static final PdfName TRANSFORMPARAMS = new PdfName("TransformParams");
+    /** A name */
+    public static final PdfName TRANSFORMMETHOD = new PdfName("TransformMethod");
+    /** A name */
     public static final PdfName TRANSPARENCY = new PdfName("Transparency");
     /** A name */
     public static final PdfName TRAPPED = new PdfName("Trapped");
@@ -934,6 +982,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name of an attribute. */
     public static final PdfName U = new PdfName("U");
     /** A name of an attribute. */
+    public static final PdfName UF = new PdfName("UF");
+    /** A name of an attribute. */
     public static final PdfName UHC = new PdfName("UHC");
     /** A name of an attribute. */
     public static final PdfName UNDERLINE = new PdfName("Underline");
@@ -963,6 +1013,8 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName V2 = new PdfName("V2");
     /** A name */
     public static final PdfName VERISIGN_PPKVS = new PdfName("VeriSign.PPKVS");
+    /** A name */
+	public static final PdfName VERSION = new PdfName("Version");
     /** A name */
     public static final PdfName VIEW = new PdfName("View");
     /** A name */

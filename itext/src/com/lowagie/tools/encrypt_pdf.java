@@ -70,13 +70,13 @@ public class encrypt_pdf {
     private final static int STRENGTH = 5;
     private final static int MOREINFO = 6;
     private final static int permit[] = {
-        PdfWriter.AllowPrinting,
-        PdfWriter.AllowModifyContents,
-        PdfWriter.AllowCopy,
-        PdfWriter.AllowModifyAnnotations,
-        PdfWriter.AllowFillIn,
-        PdfWriter.AllowScreenReaders,
-        PdfWriter.AllowAssembly,
+    	PdfWriter.AllowPrinting,
+    	PdfWriter.AllowModifyContents,
+    	PdfWriter.AllowCopy,
+    	PdfWriter.AllowModifyAnnotations,
+    	PdfWriter.AllowFillIn,
+    	PdfWriter.AllowScreenReaders,
+    	PdfWriter.AllowAssembly,
         PdfWriter.AllowDegradedPrinting};
 
     private static void usage() {

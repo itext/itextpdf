@@ -116,7 +116,7 @@ public class ZapfDingbatsNumberList extends List {
 					chunk = new Chunk((char)(first + list.size() + 201), symbol.font());
 			}
 			item.setListSymbol(chunk);
-			item.setIndentationLeft(symbolIndent);
+			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);
 			list.add(item);
 		} else if (o instanceof List) {

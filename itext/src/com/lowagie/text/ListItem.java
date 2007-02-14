@@ -52,8 +52,7 @@ package com.lowagie.text;
 
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupParser;
-import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.Markup;
 
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
@@ -102,7 +101,7 @@ import com.lowagie.text.markup.MarkupTags;
  * @see	Paragraph
  */
 
-public class ListItem extends Paragraph implements TextElementArray, MarkupAttributes {
+public class ListItem extends Paragraph implements TextElementArray {
     
     // membervariables
     
@@ -225,8 +224,8 @@ private static final long serialVersionUID = 1970670787169329006L;
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.parseFloat(value + "f"));
         }
-        else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
-            setLeading(MarkupParser.parseLength(value));
+        else if ((value = (String)attributes.remove(Markup.CSS_KEY_LINEHEIGHT)) != null) {
+            setLeading(Markup.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONLEFT)) != null) {
             setIndentationLeft(Float.parseFloat(value + "f"));
@@ -237,7 +236,6 @@ private static final long serialVersionUID = 1970670787169329006L;
         if ((value = (String)attributes.remove(ElementTags.ALIGN)) != null) {
             setAlignment(value);
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -291,4 +289,20 @@ private static final long serialVersionUID = 1970670787169329006L;
     public static boolean isTag(String tag) {
         return ElementTags.LISTITEM.equals(tag);
     }
+    
+    /**
+     * Sets the indentation of this paragraph on the left side.
+     *
+     * @param	indentation		the new indentation
+     */
+        
+        public void setIndentationLeft(float indentation, boolean autoindent) {
+            if (autoindent) {
+        System.err.println(listSymbol().toString() + " " +  listSymbol().getWidthPoint());
+            	setIndentationLeft(listSymbol().getWidthPoint());
+            }
+            else {
+            	setIndentationLeft(indentation);
+            }
+        }
 }

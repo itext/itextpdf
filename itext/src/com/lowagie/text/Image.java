@@ -61,7 +61,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.Set;
 
 import com.lowagie.text.pdf.PRIndirectReference;
 import com.lowagie.text.pdf.PRTokeniser;
@@ -91,8 +90,7 @@ import com.lowagie.text.pdf.codec.TiffImage;
  * @see Rectangle
  */
 
-public abstract class Image extends Rectangle implements Element,
-		MarkupAttributes {
+public abstract class Image extends Rectangle implements Element {
 
 	// static membervariables
 
@@ -1002,8 +1000,6 @@ public abstract class Image extends Rectangle implements Element,
 		if ((value = (String) attributes.remove(ElementTags.ROTATION)) != null) {
 			image.setRotation(Float.parseFloat(value + "f"));
 		}
-		if (attributes.size() > 0)
-			image.setMarkupAttributes(attributes);
 		return image;
 	}
 
@@ -1751,44 +1747,6 @@ public abstract class Image extends Rectangle implements Element,
 	 */
 	public void setInterpolation(boolean interpolation) {
 		this.interpolation = interpolation;
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String,
-	 *      java.lang.String)
-	 */
-	public void setMarkupAttribute(String name, String value) {
-		if (markupAttributes == null) markupAttributes = new Properties();
-		markupAttributes.put(name, value);
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
-	 */
-	public void setMarkupAttributes(Properties markupAttributes) {
-		this.markupAttributes = markupAttributes;
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
-	 */
-	public String getMarkupAttribute(String name) {
-		return (markupAttributes == null) ? null : String
-				.valueOf(markupAttributes.get(name));
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
-	 */
-	public Set getMarkupAttributeNames() {
-		return Chunk.getKeySet(markupAttributes);
-	}
-
-	/**
-	 * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
-	 */
-	public Properties getMarkupAttributes() {
-		return markupAttributes;
 	}
 
 	/**

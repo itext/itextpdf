@@ -54,10 +54,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
-import com.lowagie.text.markup.MarkupParser;
-import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.Markup;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
@@ -86,7 +84,7 @@ import com.lowagie.text.markup.MarkupTags;
  * @see		Anchor
  */
 
-public class Phrase extends ArrayList implements TextElementArray, MarkupAttributes {
+public class Phrase extends ArrayList implements TextElementArray {
     
     // membervariables
     
@@ -276,8 +274,8 @@ private static final long serialVersionUID = 2643594602455068231L;
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.parseFloat(value + "f"));
         }
-        else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
-            setLeading(MarkupParser.parseLength(value));
+        else if ((value = (String)attributes.remove(Markup.CSS_KEY_LINEHEIGHT)) != null) {
+            setLeading(Markup.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
             Chunk chunk = new Chunk(value);
@@ -286,7 +284,6 @@ private static final long serialVersionUID = 2643594602455068231L;
             }
             add(chunk);
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -361,7 +358,7 @@ private static final long serialVersionUID = 2643594602455068231L;
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
             element.type() == Element.TABLE || // line added by David Freels
-            element.type() == Element.GRAPHIC) {
+            element.type() == Element.MARKED) {
                 super.add(index, element);
             }
             else {
@@ -407,13 +404,13 @@ private static final long serialVersionUID = 2643594602455068231L;
                         }
                     }
                     return success;
+                case Element.MARKED:
                 case Element.ANCHOR:
                 case Element.ANNOTATION:
                 case Element.TABLE: // case added by David Freels
                 case Element.PTABLE: // case added by mr. Karen Vardanyan
                 	// This will only work for PDF!!! Not for RTF/HTML
                 case Element.LIST:
-                case Element.GRAPHIC: // suggested by Steven Balthazor
                 	return super.add(o);
                     default:
                         throw new ClassCastException(String.valueOf(element.type()));
@@ -570,42 +567,5 @@ private static final long serialVersionUID = 2643594602455068231L;
     
     public static boolean isTag(String tag) {
         return ElementTags.PHRASE.equals(tag);
-    }
-    
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
-    public void setMarkupAttribute(String name, String value) {
-		if (markupAttributes == null) markupAttributes = new Properties();
-        markupAttributes.put(name, value);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
- */
-    public void setMarkupAttributes(Properties markupAttributes) {
-        this.markupAttributes = markupAttributes;
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
-    public String getMarkupAttribute(String name) {
-        return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
- */
-    public Set getMarkupAttributeNames() {
-        return Chunk.getKeySet(markupAttributes);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
- */
-    public Properties getMarkupAttributes() {
-        return markupAttributes;
     }
 }

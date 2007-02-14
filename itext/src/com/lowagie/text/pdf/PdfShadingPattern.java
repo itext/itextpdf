@@ -108,7 +108,7 @@ public class PdfShadingPattern extends PdfDictionary {
         return matrix;
     }
     
-    PdfShading getShading() {
+    public PdfShading getShading() {
         return shading;
     }
     

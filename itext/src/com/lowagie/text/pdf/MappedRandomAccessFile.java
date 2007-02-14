@@ -170,7 +170,8 @@ public class MappedRandomAccessFile {
     public void close() throws IOException {
         clean(mappedByteBuffer);
         mappedByteBuffer = null;
-        channel.close();
+        if (channel != null)
+            channel.close();
         channel = null;
     }
     

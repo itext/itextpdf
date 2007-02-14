@@ -55,6 +55,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import com.lowagie.text.ExceptionConverter;
+import com.lowagie.text.pdf.collection.PdfTargetDictionary;
 
 /**
  * A <CODE>PdfAction</CODE> defines an action that can be triggered from a PDF file.
@@ -497,6 +498,40 @@ public class PdfAction extends PdfDictionary {
         if (newWindow)
             action.put(PdfName.NEWWINDOW, PdfBoolean.PDFTRUE);
         return action;
+    }
+
+    /**
+     * Creates a GoToE action to an embedded file.
+     * @param filename	the root document of the target (null if the target is in the same document)
+     * @param dest the named destination
+     * @param isName if true sets the destination as a name, if false sets it as a String
+     * @return a GoToE action
+     */
+    public static PdfAction gotoEmbedded(String filename, PdfTargetDictionary target, String dest, boolean isName, boolean newWindow) {
+        if (isName)
+            return gotoEmbedded(filename, target, new PdfName(dest), newWindow);
+        else
+            return gotoEmbedded(filename, target, new PdfString(dest, null), newWindow);
+    }
+
+    /**
+     * Creates a GoToE action to an embedded file.
+     * @param filename	the root document of the target (null if the target is in the same document)
+     * @param target	a path to the target document of this action
+     * @param dest		the destination inside the target document, can be of type PdfDestination, PdfName, or PdfString
+     * @param newWindow	if true, the destination document should be opened in a new window
+     * @return a GoToE action
+     */
+    public static PdfAction gotoEmbedded(String filename, PdfTargetDictionary target, PdfObject dest, boolean newWindow) {
+    	PdfAction action = new PdfAction();
+    	action.put(PdfName.S, PdfName.GOTOE);
+    	action.put(PdfName.T, target);
+    	action.put(PdfName.D, dest);
+    	action.put(PdfName.NEWWINDOW, new PdfBoolean(newWindow));
+    	if (filename != null) {
+    		action.put(PdfName.F, new PdfString(filename));
+    	}
+    	return action;
     }
 
     /**

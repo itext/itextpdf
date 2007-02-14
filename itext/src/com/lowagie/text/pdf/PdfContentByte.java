@@ -62,6 +62,8 @@ import com.lowagie.text.Element;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.internal.PdfAnnotationsImp;
+import com.lowagie.text.pdf.internal.PdfXConformanceImp;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -526,7 +528,7 @@ public class PdfContentByte {
      * @param   blue    the intensity of blue. A value between 0 and 1
      */
     private void HelperRGB(float red, float green, float blue) {
-        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_RGB, null);
+    	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_RGB, null);
         if (red < 0)
             red = 0.0f;
         else if (red > 1.0f)
@@ -1236,7 +1238,7 @@ public class PdfContentByte {
             }
             annot = new Annotation(annot);
             annot.setDimensions(llx, lly, urx, ury);
-            PdfAnnotation an = PdfDocument.convertAnnotation(writer, annot);
+            PdfAnnotation an = PdfAnnotationsImp.convertAnnotation(writer, annot, new Rectangle(llx, lly, urx, ury));
             if (an == null)
                 return;
             addAnnotation(an);
@@ -1759,8 +1761,8 @@ public class PdfContentByte {
      * such that the curve goes from (x1, y1) to (x4, y4) with (x2, y2) and
      * (x3, y3) as their respective Bezier control points.
      * <P>
-     * Note: this code was taken from ReportLab (www.reportlab.com), an excelent
-     * PDF generator for Python.
+     * Note: this code was taken from ReportLab (www.reportlab.org), an excelent
+     * PDF generator for Python (BSD license: http://www.reportlab.org/devfaq.html#1.3 ).
      *
      * @param x1 a corner of the enclosing rectangle
      * @param y1 a corner of the enclosing rectangle
@@ -2154,7 +2156,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorStroke(Color color) {
-        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
+    	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -2191,7 +2193,7 @@ public class PdfContentByte {
      * @param color the color
      */
     public void setColorFill(Color color) {
-        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
+    	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_GRAY: {
@@ -2272,7 +2274,7 @@ public class PdfContentByte {
      * @param tint the tint if it is a spot color, ignored otherwise
      */
     void outputColorNumbers(Color color, float tint) {
-        PdfWriter.checkPDFXConformance(writer, PdfWriter.PDFXKEY_COLOR, color);
+    	PdfXConformanceImp.checkPDFXConformance(writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
         int type = ExtendedColor.getType(color);
         switch (type) {
             case ExtendedColor.TYPE_RGB:

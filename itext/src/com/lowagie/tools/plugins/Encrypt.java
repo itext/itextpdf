@@ -73,14 +73,14 @@ public class Encrypt extends AbstractTool {
 		addVersion("$Id$");
 	}
     private final static int PERMISSIONS[] = {
-            PdfWriter.AllowPrinting,
-            PdfWriter.AllowModifyContents,
-            PdfWriter.AllowCopy,
-            PdfWriter.AllowModifyAnnotations,
-            PdfWriter.AllowFillIn,
-            PdfWriter.AllowScreenReaders,
-            PdfWriter.AllowAssembly,
-            PdfWriter.AllowDegradedPrinting};
+    	PdfWriter.AllowPrinting,
+    	PdfWriter.AllowModifyContents,
+    	PdfWriter.AllowCopy,
+    	PdfWriter.AllowModifyAnnotations,
+    	PdfWriter.AllowFillIn,
+    	PdfWriter.AllowScreenReaders,
+    	PdfWriter.AllowAssembly,
+    	PdfWriter.AllowDegradedPrinting};
     private final static String PERMISSION_OPTIONS[] = {
     		"AllowPrinting",
 			"AllowModifyContents",

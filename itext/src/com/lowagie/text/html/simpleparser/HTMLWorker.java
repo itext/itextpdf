@@ -68,10 +68,9 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.TextElementArray;
-import com.lowagie.text.Watermark;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.SimpleXMLDocHandler;
-import com.lowagie.text.pdf.SimpleXMLParser;
+import com.lowagie.text.xml.simpleparser.SimpleXMLDocHandler;
+import com.lowagie.text.xml.simpleparser.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
     
@@ -569,24 +568,17 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
         return true;
     }
     
-    public boolean add(Watermark watermark) {
-        return true;
-    }
-    
     public void clearTextWrap() throws DocumentException {
     }
     
     public void close() {
     }
     
-    public boolean newPage() throws DocumentException {
+    public boolean newPage() {
         return true;
     }
     
     public void open() {
-    }
-    
-    public void removeWatermark() {
     }
     
     public void resetFooter() {

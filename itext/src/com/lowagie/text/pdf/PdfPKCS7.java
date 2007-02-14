@@ -51,7 +51,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -78,24 +77,28 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.lowagie.bc.asn1.ASN1EncodableVector;
-import com.lowagie.bc.asn1.ASN1InputStream;
-import com.lowagie.bc.asn1.ASN1OutputStream;
-import com.lowagie.bc.asn1.ASN1Sequence;
-import com.lowagie.bc.asn1.ASN1Set;
-import com.lowagie.bc.asn1.ASN1TaggedObject;
-import com.lowagie.bc.asn1.DERConstructedSet;
-import com.lowagie.bc.asn1.DERInteger;
-import com.lowagie.bc.asn1.DERNull;
-import com.lowagie.bc.asn1.DERObject;
-import com.lowagie.bc.asn1.DERObjectIdentifier;
-import com.lowagie.bc.asn1.DEROctetString;
-import com.lowagie.bc.asn1.DERSequence;
-import com.lowagie.bc.asn1.DERSet;
-import com.lowagie.bc.asn1.DERString;
-import com.lowagie.bc.asn1.DERTaggedObject;
-import com.lowagie.bc.asn1.DERUTCTime;
 import com.lowagie.text.ExceptionConverter;
+import java.math.BigInteger;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1OutputStream;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERConstructedSet;
+import org.bouncycastle.asn1.DERInteger;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.DERString;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.DERUTCTime;
+import org.bouncycastle.jce.provider.X509CRLParser;
+import org.bouncycastle.jce.provider.X509CertParser;
+import org.bouncycastle.util.StreamParsingException;
 
 /**
  * This class does all the processing related to signing and verifying a PKCS#7
@@ -198,7 +201,7 @@ public class PdfPKCS7 {
      * @throws NoSuchProviderException on error
      * @throws NoSuchAlgorithmException on error
      */    
-    public PdfPKCS7(byte[] contentsKey, String provider) throws SecurityException, CRLException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException {
+    public PdfPKCS7(byte[] contentsKey, String provider) throws SecurityException, CRLException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, StreamParsingException {
         ASN1InputStream din = new ASN1InputStream(new ByteArrayInputStream(contentsKey));
         
         //
@@ -241,13 +244,12 @@ public class PdfPKCS7 {
         }
         
         // the certificates and crls
-        CertificateFactory cf;
-        if (provider == null)
-            cf = CertificateFactory.getInstance("X.509");
-        else
-            cf = CertificateFactory.getInstance("X.509", provider);
-        certs = cf.generateCertificates(new ByteArrayInputStream(contentsKey));
-        crls = cf.generateCRLs(new ByteArrayInputStream(contentsKey));
+        X509CertParser cr = new X509CertParser();
+        cr.engineInit(new ByteArrayInputStream(contentsKey));
+        certs = cr.engineReadAll();
+        X509CRLParser cl = new X509CRLParser();
+        cl.engineInit(new ByteArrayInputStream(contentsKey));
+        crls = cl.engineReadAll();
         
         // the possible ID_PKCS7_DATA
         ASN1Sequence rsaData = (ASN1Sequence)content.getObjectAt(2);

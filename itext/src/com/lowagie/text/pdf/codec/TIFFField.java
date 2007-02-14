@@ -442,6 +442,8 @@ public class TIFFField extends Object implements Comparable, Serializable {
      * of type TIFF_RATIONAL.
      */
     public long[] getAsRational(int index) {
+        if (type == TIFF_LONG)
+            return getAsLongs();
         return ((long[][])data)[index];
     }
 

@@ -103,7 +103,7 @@ public class ZapfDingbatsList extends List {
 			ListItem item = (ListItem) o;
 			Chunk chunk = new Chunk((char)zn, symbol.font());
 			item.setListSymbol(chunk);
-			item.setIndentationLeft(symbolIndent);
+			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);
 			list.add(item);
 		} else if (o instanceof List) {

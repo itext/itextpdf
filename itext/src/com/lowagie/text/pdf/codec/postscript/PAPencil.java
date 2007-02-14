@@ -390,12 +390,7 @@ public class PAPencil {
     public void showpage(){
       PdfGraphics2D pdfg2d = (PdfGraphics2D) this.graphics;
         PdfContentByte cb = pdfg2d.getContent();
-      try {
         cb.getPdfWriter().newPage();
-      }
-      catch (com.lowagie.text.DocumentException ex) {
-        ex.printStackTrace();
-      }
     }
 
     public void show(String string) throws PainterException {

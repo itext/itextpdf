@@ -64,7 +64,7 @@ package com.lowagie.text;
  * </PRE></BLOCKQUOTE>
  */
 
-public class HeaderFooter extends Rectangle implements MarkupAttributes {
+public class HeaderFooter extends Rectangle {
     
     // membervariables
     

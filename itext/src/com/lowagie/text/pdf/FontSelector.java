@@ -119,7 +119,7 @@ public class FontSelector {
             }
         }
         if (sb.length() > 0) {
-            Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx));
+            Chunk ck = new Chunk(sb.toString(), (Font)fonts.get(lastidx == -1 ? 0 : lastidx));
             ret.add(ck);
         }
         return ret;

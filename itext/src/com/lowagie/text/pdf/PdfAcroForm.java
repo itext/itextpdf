@@ -79,9 +79,13 @@ public class PdfAcroForm extends PdfDictionary {
 
     /** Creates new PdfAcroForm 
      * @param writer*/
-    PdfAcroForm(PdfWriter writer) {
+    public PdfAcroForm(PdfWriter writer) {
         super();
         this.writer = writer;
+    }
+    
+    public void setNeedAppearances(boolean value) {
+    	put(PdfName.NEEDAPPEARANCES, new PdfBoolean(value));
     }
 
     /**
@@ -89,7 +93,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ft
      */
 
-    void addFieldTemplates(HashMap ft) {
+    public void addFieldTemplates(HashMap ft) {
         fieldTemplates.putAll(ft);
     }
 
@@ -98,7 +102,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ref
      */
 
-    void addDocumentField(PdfIndirectReference ref) {
+    public void addDocumentField(PdfIndirectReference ref) {
         documentFields.add(ref);
     }
 
@@ -107,7 +111,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @return true if the Acroform is valid
      */
 
-    boolean isValid() {
+    public boolean isValid() {
         if (documentFields.size() == 0) return false;
         put(PdfName.FIELDS, documentFields);
         if (sigFlags != 0)
@@ -214,8 +218,7 @@ public class PdfAcroForm extends PdfDictionary {
         PdfAction action = PdfAction.createSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT | PdfAction.SUBMIT_COORDINATES);
         PdfFormField button = new PdfFormField(writer, llx, lly, urx, ury, action);
         setButtonParams(button, PdfFormField.FF_PUSHBUTTON, name, null);
-        PdfContentByte cb = writer.getDirectContent();
-        PdfAppearance pa = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance pa = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         pa.add(appearance);
         button.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, pa);
         addFormField(button);
@@ -247,8 +250,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ury
      */
     public void drawButton(PdfFormField button, String caption, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
-        PdfContentByte cb = writer.getDirectContent();
-        PdfAppearance pa = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance pa = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         pa.drawButton(0f, 0f, urx - llx, ury - lly, caption, font, fontSize);
         button.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, pa);
     }
@@ -352,8 +354,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ury
      */
     public void drawSingleLineOfText(PdfFormField field, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
-        PdfContentByte cb = writer.getDirectContent();
-        PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tp = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         PdfAppearance tp2 = (PdfAppearance)tp.getDuplicate();
         tp2.setFontAndSize(font, fontSize);
         tp2.resetRGBColorFill();
@@ -386,8 +387,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ury
      */
     public void drawMultiLineOfText(PdfFormField field, String text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury) {
-        PdfContentByte cb = writer.getDirectContent();
-        PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tp = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         PdfAppearance tp2 = (PdfAppearance)tp.getDuplicate();
         tp2.setFontAndSize(font, fontSize);
         tp2.resetRGBColorFill();
@@ -475,8 +475,7 @@ public class PdfAcroForm extends PdfDictionary {
             throw new ExceptionConverter(e);
         }
         float size = (ury - lly);
-        PdfContentByte cb = writer.getDirectContent();
-        PdfAppearance tpOn = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tpOn = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         PdfAppearance tp2 = (PdfAppearance)tpOn.getDuplicate();
         tp2.setFontAndSize(font, size);
         tp2.resetRGBColorFill();
@@ -490,7 +489,7 @@ public class PdfAcroForm extends PdfDictionary {
         tpOn.endText();
         tpOn.restoreState();
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, value, tpOn);
-        PdfAppearance tpOff = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tpOff = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         tpOff.drawTextField(0f, 0f, urx - llx, ury - lly);
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, "Off", tpOff);
     }
@@ -548,11 +547,10 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ury
      */
     public void drawRadioAppearences(PdfFormField field, String value, float llx, float lly, float urx, float ury) {
-        PdfContentByte cb = writer.getDirectContent();
-        PdfAppearance tpOn = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tpOn = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         tpOn.drawRadioField(0f, 0f, urx - llx, ury - lly, true);
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, value, tpOn);
-        PdfAppearance tpOff = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tpOff = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         tpOff.drawRadioField(0f, 0f, urx - llx, ury - lly, false);
         field.setAppearance(PdfAnnotation.APPEARANCE_NORMAL, "Off", tpOff);
     }
@@ -725,8 +723,7 @@ public class PdfAcroForm extends PdfDictionary {
      */
     public void drawSignatureAppearences(PdfFormField field, 
                     float llx, float lly, float urx, float ury) {
-        PdfContentByte cb = writer.getDirectContent();
-        PdfAppearance tp = cb.createAppearance(urx - llx, ury - lly);
+        PdfAppearance tp = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         tp.setGrayFill(1.0f);
         tp.rectangle(0, 0, urx - llx, ury - lly);
         tp.fill();

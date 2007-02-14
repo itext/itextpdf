@@ -109,7 +109,7 @@ public class PdfShading {
         shading.put(PdfName.COLORSPACE, colorSpace);
     }
     
-    Color getColorSpace() {
+    public Color getColorSpace() {
         return cspace;
     }
     

@@ -65,11 +65,12 @@ import com.lowagie.text.Chapter;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Header;
+import com.lowagie.text.MarkedObject;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Section;
 import com.lowagie.text.html.HtmlTags;
 import com.lowagie.text.html.HtmlWriter;
-import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.Markup;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.SimpleBookmark;
 import com.lowagie.tools.Executable;
@@ -141,16 +142,16 @@ public class HtmlBookmarks extends AbstractTool {
 			if (keywords != null)
 				document.addSubject((String)description);
 			document.open();
-			Paragraph t;
+			MarkedObject t;
 			if (title == null)
-				t = new Paragraph("Index for " + src.getName());
+				t = new MarkedObject(new Paragraph("Index for " + src.getName()));
 			else
-				t = new Paragraph("Index for '" + title + "'");
-			t.setMarkupAttribute(MarkupTags.HTML_ATTR_CSS_CLASS, "title");
+				t = new MarkedObject(new Paragraph("Index for '" + title + "'"));
+			t.setMarkupAttribute(Markup.HTML_ATTR_CSS_CLASS, "title");
 			document.add(t);
 			if (description != null) {
-				Paragraph d = new Paragraph((String) description);
-				d.setMarkupAttribute(MarkupTags.HTML_ATTR_CSS_CLASS, "description");
+				MarkedObject d = new MarkedObject(new Paragraph((String) description));
+				d.setMarkupAttribute(Markup.HTML_ATTR_CSS_CLASS, "description");
 				document.add(d);
 			}
 			List list = SimpleBookmark.getBookmark(reader);

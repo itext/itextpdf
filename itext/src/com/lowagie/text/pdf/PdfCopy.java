@@ -336,6 +336,7 @@ public class PdfCopy extends PdfWriter {
         RefKey key = new RefKey(origRef);
         PdfIndirectReference pageRef;
         IndirectReferences iRef = (IndirectReferences)indirects.get(key);
+        iRef = null; // temporary hack to have multiple pages, may break is some cases
         // if we already have an iref for the page (we got here by another link)
         if (iRef != null) {
             pageRef = iRef.getRef();
@@ -402,7 +403,7 @@ public class PdfCopy extends PdfWriter {
      */
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
-            PdfDictionary theCat = ((PdfDocument)document).getCatalog(rootObj);
+            PdfDictionary theCat = pdf.getCatalog(rootObj);
             if (acroForm != null) theCat.put(PdfName.ACROFORM, acroForm);
             if (newBookmarks == null || newBookmarks.isEmpty())
                 return theCat;

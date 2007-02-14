@@ -529,7 +529,7 @@ class PdfCopyFieldsImp extends PdfWriter {
     
     protected PdfDictionary getCatalog(PdfIndirectReference rootObj) {
         try {
-            PdfDictionary cat = ((PdfDocument)document).getCatalog(rootObj);
+            PdfDictionary cat = pdf.getCatalog(rootObj);
             if (form != null) {
                 PdfIndirectReference ref = addToBody(form).getIndirectReference();
                 cat.put(PdfName.ACROFORM, ref);

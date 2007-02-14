@@ -53,7 +53,6 @@ package com.lowagie.text;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * A <CODE>List</CODE> contains several <CODE>ListItem</CODE>s.
@@ -100,7 +99,7 @@ import java.util.Set;
  * @see		ListItem
  */
 
-public class List implements TextElementArray, MarkupAttributes {
+public class List implements TextElementArray {
     
     // membervariables
 	/** a possible value for the numbered parameter */
@@ -111,6 +110,10 @@ public class List implements TextElementArray, MarkupAttributes {
 	public static final boolean NUMBERICAL = false;
 	/** a possible value for the lettered parameter */
 	public static final boolean ALPHABETICAL = true;
+	/** a possible value for the lettered parameter */
+	public static final boolean UPPERCASE = false;
+	/** a possible value for the lettered parameter */
+	public static final boolean LOWERCASE = true;
 	
     
 /** This is the <CODE>ArrayList</CODE> containing the different <CODE>ListItem</CODE>s. */
@@ -119,11 +122,12 @@ public class List implements TextElementArray, MarkupAttributes {
 /** This variable indicates if the list has to be numbered. */
     protected boolean numbered;
     protected boolean lettered;
+    protected boolean lowercase;
+    protected boolean autoindent;
+    protected boolean alignindent;
     
 /** This variable indicates the first number of a numbered list. */
     protected int first = 1;
-    protected char firstCh = 'A';
-    protected char lastCh  = 'Z';
     
 /** This is the listsymbol of a list that is not numbered. */
     protected Chunk symbol = new Chunk("-");
@@ -141,6 +145,35 @@ public class List implements TextElementArray, MarkupAttributes {
     protected Properties markupAttributes;
     
     // constructors
+
+/**
+ * Constructs a <CODE>List</CODE>.
+ */
+    public List() {
+        this(false, false);
+    }
+    
+/**
+ * Constructs a <CODE>List</CODE>.
+ *
+ * @param	numbered		a boolean
+ */
+    public List(boolean numbered) {
+      	this(numbered, false);
+    }
+        
+/**
+ * Constructs a <CODE>List</CODE>.
+ *
+ * @param	numbered		a boolean
+ * @param lettered has the list to be 'numbered' with letters
+ */
+    public List(boolean numbered, boolean lettered) {
+    	this.numbered = numbered;
+        this.lettered = lettered;
+        this.autoindent = true;
+        this.alignindent = true;
+    }
     
 /**
  * Constructs a <CODE>List</CODE>.
@@ -154,9 +187,7 @@ public class List implements TextElementArray, MarkupAttributes {
  */
     
     public List(boolean numbered, float symbolIndent) {
-        this.numbered = numbered;
-        this.lettered = false;
-        this.symbolIndent = symbolIndent;
+        this(numbered, false, symbolIndent);
     }
     
     /**
@@ -212,7 +243,6 @@ public class List implements TextElementArray, MarkupAttributes {
         if ((value = (String)attributes.remove(ElementTags.INDENTATIONRIGHT)) != null) {
             setIndentationRight(Float.parseFloat(value + "f"));
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods
@@ -275,17 +305,18 @@ public class List implements TextElementArray, MarkupAttributes {
             ListItem item = (ListItem) o;
             if (numbered || lettered) {
                 Chunk chunk;
+                int index = first + list.size();
                 if ( lettered )
-                    chunk = new Chunk(nextLetter(), symbol.font());
+                    chunk = new Chunk(lowercase ? getLowerCaseLetter(index) : getUpperCaseLetter(index) , symbol.font());
                 else
                     chunk = new Chunk(String.valueOf(first + list.size()), symbol.font());
-                chunk.append(".");
+                chunk.append(". ");
                 item.setListSymbol(chunk);
             }
             else {
                 item.setListSymbol(symbol);
             }
-            item.setIndentationLeft(symbolIndent);
+            item.setIndentationLeft(symbolIndent, autoindent);
             item.setIndentationRight(0);
             list.add(item);
         }
@@ -329,23 +360,6 @@ public class List implements TextElementArray, MarkupAttributes {
     
     public void setFirst(int first) {
         this.first = first;
-    }
-    
-    
-/**
- * Sets the Letter that has to come first in the list.
- *
- * @param	first		a letter
- */
-    
-    public void setFirst(char first) {
-        this.firstCh = first;
-        if ( Character.isLowerCase( this.firstCh )) {
-            this.lastCh = 'z';
-        }
-        else {
-            this.lastCh = 'Z';
-        }
     }
     
 /**
@@ -486,69 +500,85 @@ public class List implements TextElementArray, MarkupAttributes {
     }
 
 /**
- * Retrieves the next letter in the sequence
- *
- * @return  String contains the next character (A-Z or a-z)
+ * Translates a number to a letter(combination).
+ * 1-26 correspond with a-z, 27 is aa, 28 is ab, and so on,
+ * aaa comes right after zz.
+ * @param index	a number greater than 0
+ * @return	a String corresponding with the index.
  */
-    private String nextLetter() {
-        int num_in_list = listItemsInList(); //list.size();
-        int max_ival = (lastCh + 0);
-        int ival = (firstCh + num_in_list);
-        while ( ival > max_ival ) {
-            ival -= 26;
-        }
-        char[] new_char = new char[1];
-        new_char[0] = (char) ival;
-        String ret = new String( new_char );
-        return ret;
+    public static String getLowerCaseLetter(int index) {
+    	if (index < 1) return "";
+    	index--;
+    	
+    	int bytes = 1;
+    	int start = 0;
+    	int symbols = 26;  
+    	while(index >= symbols + start) {
+    		bytes++;
+    	    start += symbols;
+    		symbols *= 26;
+    	}
+    	      
+    	int c = index - start;
+    	char[] value = new char[bytes];
+    	while(bytes > 0) {
+    		value[--bytes] = (char)( 'a' + (c % 26));
+    		c /= 26;
+    	}
+    	
+    	return new String(value);
     }
-    
     /**
-     * Counts the number of ListItems in the list ommiting nested lists
-     *
-     * @return  Integer number of ListItems in the list
-     */
-    private int listItemsInList() {
-        int result = 0;
+     * Translates a number to a letter(combination).
+     * 1-26 correspond with A-Z, 27 is AA, 28 is AB, and so on,
+     * ZZ is followed by AAA.
+     * @param index	a number greater than 0
+     * @return	a String corresponding with the index.
+     */  
+    public static String getUpperCaseLetter(int index) {
+    	return getLowerCaseLetter(index).toUpperCase();
+    }
+
+	/**
+	 * @param uppercase the uppercase to set
+	 */
+	public void setLowerCase(boolean uppercase) {
+		this.lowercase = uppercase;
+	}
+
+	/**
+	 * @param autoindent the autoindent to set
+	 */
+	public void setAutoindent(boolean autoindent) {
+		this.autoindent = autoindent;
+	}
+	
+    public void normalizeIndentation() {
+        float max = 0;
+    	Element o;
         for (Iterator i = list.iterator(); i.hasNext(); ) {
-            if (!(i.next() instanceof List)) result++;
+        	o = (Element)i.next();
+            if (o instanceof ListItem) {
+            	max = Math.max(max, ((ListItem)o).indentationLeft());
+            }
         }
-        return result;
+        for (Iterator i = list.iterator(); i.hasNext(); ) {
+        	o = (Element)i.next();
+            if (o instanceof ListItem) {
+            	((ListItem)o).setIndentationLeft(max);
+            }
+        }
     }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttribute(java.lang.String, java.lang.String)
- */
-    public void setMarkupAttribute(String name, String value) {
-		if (markupAttributes == null) markupAttributes = new Properties();
-        markupAttributes.put(name, value);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#setMarkupAttributes(java.util.Properties)
- */
-    public void setMarkupAttributes(Properties markupAttributes) {
-        this.markupAttributes = markupAttributes;
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttribute(java.lang.String)
- */
-    public String getMarkupAttribute(String name) {
-        return (markupAttributes == null) ? null : String.valueOf(markupAttributes.get(name));
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributeNames()
- */
-    public Set getMarkupAttributeNames() {
-        return Chunk.getKeySet(markupAttributes);
-    }
-    
-/**
- * @see com.lowagie.text.MarkupAttributes#getMarkupAttributes()
- */
-    public Properties getMarkupAttributes() {
-        return markupAttributes;
-    }
+	/**
+	 * @return the alignindent
+	 */
+	public boolean isAlignindent() {
+		return alignindent;
+	}
+	/**
+	 * @param alignindent the alignindent to set
+	 */
+	public void setAlignindent(boolean alignindent) {
+		this.alignindent = alignindent;
+	}
 }

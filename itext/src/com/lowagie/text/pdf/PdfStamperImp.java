@@ -59,10 +59,13 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.ExceptionConverter;
 import com.lowagie.text.Image;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.collection.PdfCollection;
+import com.lowagie.text.pdf.interfaces.PdfEncryptionSettings;
 import com.lowagie.text.pdf.interfaces.PdfViewerPreferences;
 import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
-class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
+class PdfStamperImp extends PdfWriter
+	implements PdfViewerPreferences, PdfEncryptionSettings {
     HashMap readers2intrefs = new HashMap();
     HashMap readers2file = new HashMap();
     RandomAccessFileOrArray file;
@@ -112,7 +115,7 @@ class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
                 throw new DocumentException("Append mode requires a document without errors even if recovery was possible.");
             if (reader.isEncrypted())
                 crypto = new PdfEncryption(reader.getDecrypt());
-            HEADER = getISOBytes("\n");
+            pdf_version.setAppendmode(true);
             file.reOpen();
             byte buf[] = new byte[8192];
             int n;
@@ -748,7 +751,7 @@ class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
                             app = new PdfAppearance((PdfIndirectReference)obj);
                         }
                         else {
-                            if (objReal.isDictionary()) {
+                            if (objReal != null && objReal.isDictionary()) {
                                 PdfName as = (PdfName)PdfReader.getPdfObject(merged.get(PdfName.AS));
                                 if (as != null) {
                                     PdfIndirectReference iref = (PdfIndirectReference)((PdfDictionary)objReal).get(as);
@@ -1208,12 +1211,13 @@ class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
         names.put(PdfName.EMBEDDEDFILES, addToBody(tree).getIndirectReference());
     }
 
-    void makePackage( PdfName initialView ) {
+    /**
+     * Adds or replaces the Collection Dictionary in the Catalog.
+     * @param	collection	the new collection dictionary.
+     */
+    void makePackage( PdfCollection collection ) {
         PdfDictionary catalog = reader.getCatalog();
-    	PdfDictionary collections = new PdfDictionary();
-    	collections.put( PdfName.TYPE, PdfName.COLLECTION );
-       	collections.put( PdfName.VIEW, initialView );
-       	catalog.put( PdfName.COLLECTION, collections );
+       	catalog.put( PdfName.COLLECTION, collection );
     }
  
     void setOutlines() throws IOException {
@@ -1249,7 +1253,8 @@ class PdfStamperImp extends PdfWriter implements PdfViewerPreferences {
     }
     
     /** Adds a viewer preference
-     * @param preferences the viewer preferences
+     * @param key a key for a viewer preference
+     * @param value the value for the viewer preference
      * @see PdfViewerPreferences#addViewerPreference
      */
     public void addViewerPreference(PdfName key, PdfObject value) {

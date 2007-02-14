@@ -502,7 +502,7 @@ public class PdfPRow {
                             bry = cell.top() + yPos - maxHeight + cell.getEffectivePaddingBottom();
                         }
                     }
-                    if ((tly > bry || ct.zeroHeightElement()) && leftLimit < rightLimit) {
+                    if (tly > bry && leftLimit < rightLimit) {
                         ct.setSimpleColumn(leftLimit, bry - 0.001f,	rightLimit, tly);
                         if (cell.getRotation() == 180) {
                             float shx = leftLimit + rightLimit;

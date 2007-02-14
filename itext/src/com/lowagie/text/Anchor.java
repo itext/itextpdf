@@ -56,8 +56,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.lowagie.text.markup.MarkupParser;
-import com.lowagie.text.markup.MarkupTags;
+import com.lowagie.text.html.Markup;
 
 /**
  * An <CODE>Anchor</CODE> can be a reference or a destination of a reference.
@@ -76,7 +75,7 @@ import com.lowagie.text.markup.MarkupTags;
  * @see		Phrase
  */
 
-public class Anchor extends Phrase implements TextElementArray, MarkupAttributes {
+public class Anchor extends Phrase implements TextElementArray {
     
     // membervariables
     
@@ -200,8 +199,8 @@ private static final long serialVersionUID = -852278536049236911L;
         if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
             setLeading(Float.parseFloat(value + "f"));
         }
-        else if ((value = (String)attributes.remove(MarkupTags.CSS_KEY_LINEHEIGHT)) != null) {
-            setLeading(MarkupParser.parseLength(value));
+        else if ((value = (String)attributes.remove(Markup.CSS_KEY_LINEHEIGHT)) != null) {
+            setLeading(Markup.parseLength(value));
         }
         if ((value = (String)attributes.remove(ElementTags.NAME)) != null) {
             setName(value);
@@ -209,7 +208,6 @@ private static final long serialVersionUID = -852278536049236911L;
         if ((value = (String)attributes.remove(ElementTags.REFERENCE)) != null) {
             setReference(value);
         }
-        if (attributes.size() > 0) setMarkupAttributes(attributes);
     }
     
     // implementation of the Element-methods

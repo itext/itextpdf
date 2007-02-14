@@ -54,6 +54,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.Properties;
 
 import com.lowagie.text.pdf.OutputStreamCounter;
 
@@ -174,28 +175,6 @@ public abstract class DocWriter implements DocListener {
     }
 
 /**
- * Sets the <CODE>Watermark</CODE>.
- * <P>
- * This method should be overriden in the specific <CODE>DocWriter<CODE> classes
- * derived from this abstract class if they actually support the use of
- * a <CODE>Watermark</CODE>.
- * 
- * @param watermark A watermark object
- * @return  <CODE>false</CODE> (because watermarks aren't supported by default).
- */
-
-    public boolean add(Watermark watermark) {
-        return false;
-    }
-
-/**
- * Removes the <CODE>Watermark</CODE> (if there is one).
- */
-
-    public void removeWatermark() {
-    }
-
-/**
  * Sets the margins.
  * <P>
  * This does nothing. Has to be overridden if needed.
@@ -220,7 +199,7 @@ public abstract class DocWriter implements DocListener {
  * @throws  DocumentException when a document isn't open yet, or has been closed
  */
 
-    public boolean newPage() throws DocumentException {
+    public boolean newPage() {
         if (!open) {
             return false;
         }
@@ -342,6 +321,16 @@ public abstract class DocWriter implements DocListener {
     public void pause() {
         pause = true;
     }
+    
+    /**
+     * Checks if writing is paused.
+     *
+     * @return		<CODE>true</CODE> if writing temporarely has to be paused, <CODE>false</CODE> otherwise.
+     */
+    
+    public boolean isPaused() {
+        return pause;
+    }
 
 /**
  * Let the writer know that writing may be resumed.
@@ -450,32 +439,21 @@ public abstract class DocWriter implements DocListener {
 /**
  * Writes the markup attributes of the specified <CODE>MarkupAttributes</CODE>
  * object to the <CODE>OutputStream</CODE>.
- * @param mAtt   the <CODE>MarkupAttributes</CODE> to write.
+ * @param markup   a <CODE>Properties</CODE> collection to write.
  * @return true, if writing the markup attributes succeeded
  * @throws IOException
  */
-    protected boolean writeMarkupAttributes(MarkupAttributes mAtt)
-     throws IOException
-    {
-      Iterator attributeIterator = mAtt.getMarkupAttributeNames().iterator();
-      boolean result = attributeIterator.hasNext();
-      while (attributeIterator.hasNext()) {
-        String name = String.valueOf(attributeIterator.next());
-        write(name, mAtt.getMarkupAttribute(name));
-      }
-      return result;
-    }
-
-
-/**
- * Returns <CODE>true</CODE> if the specified <CODE>Element</CODE> implements
- * <CODE>MarkupAttributes</CODE> and has one or more attributes to write.
- * @param element   the <CODE>Element</CODE> to check.
- * @return <CODE>boolean</CODE>.
- */
-    protected static boolean hasMarkupAttributes(Element element) {
-      return (element instanceof MarkupAttributes &&
-       !(((MarkupAttributes)element).getMarkupAttributeNames().isEmpty()));
+    protected boolean writeMarkupAttributes(Properties markup)
+    throws IOException {
+    	if (markup == null) return false;
+    	Iterator attributeIterator = markup.keySet().iterator();
+    	String name;
+    	while (attributeIterator.hasNext()) {
+    		name = String.valueOf(attributeIterator.next());
+    		write(name, markup.getProperty(name));
+    	}
+    	markup.clear();
+    	return true;
     }
 
     /** Checks if the stream is to be closed on document close
@@ -494,13 +472,6 @@ public abstract class DocWriter implements DocListener {
         this.closeStream = closeStream;
     }
     
-    
-	/**
-	 * @see com.lowagie.text.DocListener#clearTextWrap()
-	 */
-	public void clearTextWrap() throws DocumentException {
-		// do nothing
-	}
     /**
      * @see com.lowagie.text.DocListener#setMarginMirroring(boolean)
      */
