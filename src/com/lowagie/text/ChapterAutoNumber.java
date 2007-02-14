@@ -56,10 +56,6 @@ package com.lowagie.text;
 public class ChapterAutoNumber extends Chapter {
 
     private static final long serialVersionUID = -9217457637987854167L;
-	/**
-     * the chapter number (for all instance)
-     */
-    private static int chapternumber = 0;
 
     /**
      * Create a new object.
@@ -67,7 +63,7 @@ public class ChapterAutoNumber extends Chapter {
      * @param para     the Chapter title (as a <CODE>Paragraph</CODE>)
      */
     public ChapterAutoNumber(final Paragraph para) {
-        super(para, ++chapternumber);
+        super(para, 0);
     }
 
     /**
@@ -76,7 +72,7 @@ public class ChapterAutoNumber extends Chapter {
      * @param title	    the Chapter title (as a <CODE>String</CODE>)
      */
     public ChapterAutoNumber(final String title) {
-        super(title, ++chapternumber);
+        super(title, 0);
     }
 
     /**

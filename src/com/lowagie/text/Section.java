@@ -695,4 +695,17 @@ private static final long serialVersionUID = 3324172577544748043L;
         this.bookmarkTitle = bookmarkTitle;
     }
     
+    /**
+     * Changes the Chapter number.
+     */
+    public void setChapterNumber(int number) {
+    	numbers.set(numbers.size() - 1, new Integer(number));
+    	Object s;
+    	for (Iterator i = iterator(); i.hasNext(); ) {
+    		s = i.next();
+    		if (s instanceof Section) {
+    			((Section)s).setChapterNumber(number);
+    		}
+    	}
+    }
 }
