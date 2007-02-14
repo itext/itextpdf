@@ -1102,7 +1102,6 @@ class PdfDocument extends Document implements DocListener {
         imageEnd = -1;
         imageIndentRight = 0;
         imageIndentLeft = 0;
-        leading = 16;
         indentBottom = 0;
         indentTop = 0;
         currentHeight = 0;
