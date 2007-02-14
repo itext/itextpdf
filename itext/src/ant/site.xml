@@ -65,7 +65,8 @@
         <copy todir="${itext.examples}" overwrite="yes">
             <fileset dir="${itext.src.examples}">
             	<include name="**/*.java"/>	
-                <include name="**/*.xml"/>
+                <include name="**/*.xml"/>	
+                <include name="**/*.mpg"/>
                 <include name="**/*.tiff"/>
         		<include name="**/*.tif"/>
         		<include name="**/*.gif"/>
