@@ -271,6 +271,12 @@ public class PdfLine {
         }
     }
     
+    /** Adds extra indentation to the left (for Paragraph.setFirstLineIndent). */
+    void setExtraIndent(float extra) {
+    	left += extra;
+    	width -= extra;
+    }
+    
     /**
      * Returns the width that is left, after a maximum of characters is added to the line.
      *
