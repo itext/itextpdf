@@ -464,8 +464,8 @@ public class ElementTags {
  /**
   * Translates a String value to an alignment value.
   * (written by Norman Richards, integrated into iText by Bruno)
-  * @param	a String (one of the ALIGN_ constants of this class)
-  * @param	an alignment value (one of the ALIGN_ constants of the Element interface) 
+  * @param	alignment a String (one of the ALIGN_ constants of this class)
+  * @return	an alignment value (one of the ALIGN_ constants of the Element interface) 
   */
     public static int alignmentValue(String alignment) {
         if (ALIGN_CENTER.equalsIgnoreCase(alignment)) {
