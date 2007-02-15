@@ -507,6 +507,7 @@ class PdfDocument extends Document implements DocListener {
                     }
                     else {
                     	paraIndent += paragraph.indentationLeft();
+                    	line.setExtraIndent(paragraph.getFirstLineIndent());
                     	element.process(this);
                     	paraIndent -= paragraph.indentationLeft();
                     }
