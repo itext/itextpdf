@@ -43,6 +43,25 @@
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
+ * 
+ * 
+ * Part of this code is based on <A HREF="http://www.javaworld.com/javatips/jw-javatip128_p.html">http://www.javaworld.com/javatips/jw-javatip128_p.html</A>.
+ *
+ * The code to recognize the encoding in this class and in the convenience class IanaEncodings was taken from Apache Xerces published under the following license:
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.lowagie.text.xml.simpleparser;
 
@@ -70,8 +89,6 @@ import java.util.Stack;
  * <li>It maps lines ending in <code>\r\n</code> and <code>\r</code> to <code>\n</code> on input, in accordance with the XML Specification, Section 2.11
  * </ul>
  * <p>
- * The code is based on <A HREF="http://www.javaworld.com/javatips/jw-javatip128_p.html">http://www.javaworld.com/javatips/jw-javatip128_p.html</A> with some extra
- * code from XERCES to recognize the encoding.
  */
 public class SimpleXMLParser {
     
@@ -602,7 +619,13 @@ public class SimpleXMLParser {
         }
         return sb.toString();
     }
-    
+    /**
+     * Returns the IANA encoding name that is auto-detected from
+     * the bytes specified, with the endian-ness of that encoding where appropriate.
+     * (method found in org.apache.xerces.impl.XMLEntityManager)
+     * @param b4    The first four bytes of the input.
+     * @return an IANA-encoding string
+     */
     private static String getEncodingName(byte[] b4) {
         
         // UTF-16, with BOM
