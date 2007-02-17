@@ -82,7 +82,7 @@ public class IntHashMap {
         /***
          * <p>Create a new entry with the given values.</p>
          *
-         * @param hash The code used to hash the object with
+         * @param hash The code used to hash the int with
          * @param key The key used to enter this in the table
          * @param value The value for this key
          * @param next A reference to the next entry in the table
@@ -100,7 +100,7 @@ public class IntHashMap {
      * factor, which is <code>20</code> and <code>0.75</code> respectively.</p>
      */
     public IntHashMap() {
-        this(20, 0.75f);
+        this(150, 0.75f);
     }
 
     /***
@@ -174,7 +174,7 @@ public class IntHashMap {
      *             <code>false</code> otherwise.
      * @throws  NullPointerException  if the value is <code>null</code>.
      * @see        #containsKey(int)
-     * @see        #containsValue(Object)
+     * @see        #containsValue(int)
      * @see        java.util.Map
      */
     public boolean contains(int value) {
@@ -207,20 +207,20 @@ public class IntHashMap {
     }
 
     /***
-     * <p>Tests if the specified object is a key in this hashtable.</p>
+     * <p>Tests if the specified int is a key in this hashtable.</p>
      *
      * @param  key  possible key.
-     * @return <code>true</code> if and only if the specified object is a
+     * @return <code>true</code> if and only if the specified int is a
      *    key in this hashtable, as determined by the <tt>equals</tt>
      *    method; <code>false</code> otherwise.
-     * @see #contains(Object)
+     * @see #contains(int)
      */
     public boolean containsKey(int key) {
         Entry tab[] = table;
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index]; e != null; e = e.next) {
-            if (e.hash == hash) {
+            if (e.hash == hash && e.key == key) {
                 return true;
             }
         }
@@ -234,14 +234,14 @@ public class IntHashMap {
      * @return  the value to which the key is mapped in this hashtable;
      *          <code>null</code> if the key is not mapped to any value in
      *          this hashtable.
-     * @see     #put(int, Object)
+     * @see     #put(int, int)
      */
     public int get(int key) {
         Entry tab[] = table;
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index]; e != null; e = e.next) {
-            if (e.hash == hash) {
+            if (e.hash == hash && e.key == key) {
                 return e.value;
             }
         }
@@ -300,7 +300,7 @@ public class IntHashMap {
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index]; e != null; e = e.next) {
-            if (e.hash == hash) {
+            if (e.hash == hash && e.key == key) {
                 int old = e.value;
                 e.value = value;
                 return old;
@@ -338,7 +338,7 @@ public class IntHashMap {
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index], prev = null; e != null; prev = e, e = e.next) {
-            if (e.hash == hash) {
+            if (e.hash == hash && e.key == key) {
                 if (prev != null) {
                     prev.next = e.next;
                 } else {
