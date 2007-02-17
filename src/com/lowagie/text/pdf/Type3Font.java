@@ -210,7 +210,7 @@ public class Type3Font extends BaseFont {
             throw new DocumentException("Not all the glyphs in the Type3 font are defined");
         IntHashtable inv = new IntHashtable();
         for (Iterator it = char2byte.getEntryIterator(); it.hasNext();) {
-            IntHashtable.IntHashtableEntry entry = (IntHashtable.IntHashtableEntry)it.next();
+            IntHashtable.Entry entry = (IntHashtable.Entry)it.next();
             inv.put(entry.getValue(), entry.getKey());
         }
         int[] invOrd = inv.toOrderedKeys();
