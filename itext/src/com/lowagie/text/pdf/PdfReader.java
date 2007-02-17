@@ -3141,7 +3141,7 @@ public class PdfReader implements PdfViewerPreferences {
                 else {
                     IntHashtable refs2 = new IntHashtable((refsp.size() + 1) * 2);
                     for (Iterator it = refsp.getEntryIterator(); it.hasNext();) {
-                        IntHashtable.IntHashtableEntry entry = (IntHashtable.IntHashtableEntry)it.next();
+                        IntHashtable.Entry entry = (IntHashtable.Entry)it.next();
                         int p = entry.getKey();
                         refs2.put(p >= pageNum ? p + 1 : p, entry.getValue());
                     }
