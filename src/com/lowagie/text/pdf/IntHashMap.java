@@ -76,7 +76,7 @@ public class IntHashMap {
     private static class Entry {
         int hash;
         int key;
-        Object value;
+        int value;
         Entry next;
 
         /***
@@ -87,7 +87,7 @@ public class IntHashMap {
          * @param value The value for this key
          * @param next A reference to the next entry in the table
          */
-        protected Entry(int hash, int key, Object value, Entry next) {
+        protected Entry(int hash, int key, int value, Entry next) {
             this.hash = hash;
             this.key = key;
             this.value = value;
@@ -177,15 +177,12 @@ public class IntHashMap {
      * @see        #containsValue(Object)
      * @see        java.util.Map
      */
-    public boolean contains(Object value) {
-        if (value == null) {
-            throw new NullPointerException();
-        }
+    public boolean contains(int value) {
 
         Entry tab[] = table;
         for (int i = tab.length; i-- > 0;) {
             for (Entry e = tab[i]; e != null; e = e.next) {
-                if (e.value.equals(value)) {
+                if (e.value == value) {
                     return true;
                 }
             }
@@ -205,7 +202,7 @@ public class IntHashMap {
      * @see    java.util.Map
      * @since JDK1.2
      */
-    public boolean containsValue(Object value) {
+    public boolean containsValue(int value) {
         return contains(value);
     }
 
@@ -239,7 +236,7 @@ public class IntHashMap {
      *          this hashtable.
      * @see     #put(int, Object)
      */
-    public Object get(int key) {
+    public int get(int key) {
         Entry tab[] = table;
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
@@ -248,7 +245,7 @@ public class IntHashMap {
                 return e.value;
             }
         }
-        return null;
+        return 0;
     }
 
     /***
@@ -297,14 +294,14 @@ public class IntHashMap {
      * @throws  NullPointerException  if the key is <code>null</code>.
      * @see     #get(int)
      */
-    public Object put(int key, Object value) {
+    public int put(int key, int value) {
         // Makes sure the key is not already in the hashtable.
         Entry tab[] = table;
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
         for (Entry e = tab[index]; e != null; e = e.next) {
             if (e.hash == hash) {
-                Object old = e.value;
+                int old = e.value;
                 e.value = value;
                 return old;
             }
@@ -322,7 +319,7 @@ public class IntHashMap {
          Entry e = new Entry(hash, key, value, tab[index]);
          tab[index] = e;
          count++;
-         return null;
+         return 0;
     }
 
     /***
@@ -336,7 +333,7 @@ public class IntHashMap {
      * @return  the value to which the key had been mapped in this hashtable,
      *          or <code>null</code> if the key did not have a mapping.
      */
-    public Object remove(int key) {
+    public int remove(int key) {
         Entry tab[] = table;
         int hash = key;
         int index = (hash & 0x7FFFFFFF) % tab.length;
@@ -348,12 +345,12 @@ public class IntHashMap {
                     tab[index] = e.next;
                 }
                 count--;
-                Object oldValue = e.value;
-                e.value = null;
+                int oldValue = e.value;
+                e.value = 0;
                 return oldValue;
             }
         }
-        return null;
+        return 0;
     }
 
     /***
