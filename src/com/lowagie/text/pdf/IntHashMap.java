@@ -1,7 +1,8 @@
 /*
  * This class is based on org.apache.IntHashMap.commons.lang
  * http://jakarta.apache.org/commons/lang/xref/org/apache/commons/lang/IntHashMap.html
- * It was adapted by Bruno Lowagie for use in iText.
+ * It was adapted by Bruno Lowagie for use in iText,
+ * reusing methods that were written by Paulo Soares.
  * Instead of being a hashtable that stores objects with an int as key,
  * it stores int values with an int as key.
  * 
@@ -28,6 +29,10 @@
 
 package com.lowagie.text.pdf;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /***
  * <p>A hash map that uses primitive ints for the key rather than objects.</p>
  *
@@ -38,11 +43,10 @@ package com.lowagie.text.pdf;
  * @author Justin Couch
  * @author Alex Chaffee (alex@apache.org)
  * @author Stephen Colebourne
- * @since 2.0
- * @version $Revision$
- * @see java.util.HashMap
+ * @author Bruno Lowagie (change Objects as keys into int values)
+ * @author Paulo Soares (added extra methods)
  */
-public class IntHashMap {
+public class IntHashMap implements Cloneable {
 
     /***
      * The hash table data.
@@ -68,32 +72,6 @@ public class IntHashMap {
      * @serial
      */
     private float loadFactor;
-
-    /***
-     * <p>Innerclass that acts as a datastructure to create a new entry in the
-     * table.</p>
-     */
-    private static class Entry {
-        int hash;
-        int key;
-        int value;
-        Entry next;
-
-        /***
-         * <p>Create a new entry with the given values.</p>
-         *
-         * @param hash The code used to hash the int with
-         * @param key The key used to enter this in the table
-         * @param value The value for this key
-         * @param next A reference to the next entry in the table
-         */
-        protected Entry(int hash, int key, int value, Entry next) {
-            this.hash = hash;
-            this.key = key;
-            this.value = value;
-            this.next = next;
-        }
-    }
 
     /***
      * <p>Constructs a new, empty hashtable with a default capacity and load
@@ -362,5 +340,136 @@ public class IntHashMap {
             tab[index] = null;
         }
         count = 0;
-	}     
+	}
+    
+    /***
+     * <p>Innerclass that acts as a datastructure to create a new entry in the
+     * table.</p>
+     */
+    private static class Entry {
+        int hash;
+        int key;
+        int value;
+        Entry next;
+
+        /***
+         * <p>Create a new entry with the given values.</p>
+         *
+         * @param hash The code used to hash the int with
+         * @param key The key used to enter this in the table
+         * @param value The value for this key
+         * @param next A reference to the next entry in the table
+         */
+        protected Entry(int hash, int key, int value, Entry next) {
+            this.hash = hash;
+            this.key = key;
+            this.value = value;
+            this.next = next;
+        }
+        
+        // extra methods for inner class Entry by Paulo
+        public int getKey() {
+        	return key;
+        }
+        public int getValue() {
+        	return value;
+        }
+        protected Object clone() {
+        	Entry entry = new Entry(hash, key, value, (next != null) ? (Entry)next.clone() : null);
+        	return entry;
+        }
+    }
+    
+    // extra inner class by Paulo
+    static class IntHashtableIterator implements Iterator {
+        int index;
+        Entry table[];
+        Entry entry;
+        
+        IntHashtableIterator(Entry table[]) {
+        	this.table = table;
+        	this.index = table.length;
+        }
+        public boolean hasNext() {
+        	if (entry != null) {
+        		return true;
+        	}
+        	while (index-- > 0) {
+        	    if ((entry = table[index]) != null) {
+        	        return true;
+        	    }
+        	}
+        	return false;
+        }
+        
+        public Object next() {
+            if (entry == null) {
+                while ((index-- > 0) && ((entry = table[index]) == null));
+            }
+            if (entry != null) {
+            	Entry e = entry;
+            	entry = e.next;
+            	return entry;
+            }
+        	throw new NoSuchElementException("IntHashtableIterator");
+        }
+        public void remove() {
+        	throw new UnsupportedOperationException("remove() not supported.");
+        }
+    }
+    
+// extra methods by Paulo Soares:
+
+    public Iterator getEntryIterator() {
+        return new IntHashtableIterator(table);
+    }
+    
+    public int[] toOrderedKeys() {
+    	int res[] = getKeys();
+    	Arrays.sort(res);
+    	return res;
+    }
+    
+    public int[] getKeys() {
+    	int res[] = new int[count];
+    	int ptr = 0;
+    	int index = table.length;
+    	Entry entry = null;
+    	while (true) {
+    		if (entry == null)
+    			while ((index-- > 0) && ((entry = table[index]) == null));
+    		if (entry == null)
+    			break;
+    		Entry e = entry;
+    		entry = e.next;
+    		res[ptr++] = e.key;
+    	}
+    	return res;
+    }
+    
+    public int getOneKey() {
+    	if (count == 0)
+    		return 0;
+    	int index = table.length;
+    	Entry entry = null;
+    	while ((index-- > 0) && ((entry = table[index]) == null));
+    	if (entry == null)
+    		return 0;
+    	return entry.key;
+    }
+    
+    public Object clone() {
+    	try {
+    		IntHashMap t = (IntHashMap)super.clone();
+    		t.table = new Entry[table.length];
+    		for (int i = table.length ; i-- > 0 ; ) {
+    			t.table[i] = (table[i] != null)
+    			? (Entry)table[i].clone() : null;
+    		}
+    		return t;
+    	} catch (CloneNotSupportedException e) {
+    		// this shouldn't happen, since we are Cloneable
+    		throw new InternalError();
+    	}
+    }
 }
