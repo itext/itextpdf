@@ -506,7 +506,8 @@ public class PdfPKCS7 {
     public String getDigestAlgorithm() {
         String dea = digestEncryptionAlgorithm;
         
-        if (digestEncryptionAlgorithm.equals(ID_RSA)) {
+        if (digestEncryptionAlgorithm.equals(ID_RSA) || digestEncryptionAlgorithm.equals(ID_MD5RSA)
+            || digestEncryptionAlgorithm.equals(ID_MD2RSA) || digestEncryptionAlgorithm.equals(ID_SHA1RSA)) {
             dea = "RSA";
         }
         else if (digestEncryptionAlgorithm.equals(ID_DSA)) {
