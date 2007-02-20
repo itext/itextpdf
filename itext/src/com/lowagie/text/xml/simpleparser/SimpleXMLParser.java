@@ -43,9 +43,6 @@
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
- * 
- * 
- * Part of this code is based on <A HREF="http://www.javaworld.com/javatips/jw-javatip128_p.html">http://www.javaworld.com/javatips/jw-javatip128_p.html</A>.
  *
  * The code to recognize the encoding in this class and in the convenience class IanaEncodings was taken from Apache Xerces published under the following license:
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -62,6 +59,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * 
+ * Part of this code is based on <A HREF="http://www.javaworld.com/javatips/jw-javatip128_p.html">http://www.javaworld.com/javatips/jw-javatip128_p.html</A>.
+ * The original author Steven Brandt gave his permission to use the code for free
+ * in a mail addressed to Bruno Lowagie.
  */
 package com.lowagie.text.xml.simpleparser;
 
