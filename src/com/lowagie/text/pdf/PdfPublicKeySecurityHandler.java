@@ -144,7 +144,6 @@ public class PdfPublicKeySecurityHandler {
             SecretKey sk = key.generateKey();            
             System.arraycopy(sk.getEncoded(), 0, seed, 0, SEED_LENGTH); // create the 20 bytes seed            
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("Debug: " + e.getMessage());
             seed = SecureRandom.getSeed(SEED_LENGTH); 
         }
     
