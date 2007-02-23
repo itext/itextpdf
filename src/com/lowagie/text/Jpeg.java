@@ -303,17 +303,18 @@ public class Jpeg extends Image implements Element {
                         continue;
                     }
                     if (marker == M_APPE) {
-                        len = getShort(is);
+                        len = getShort(is) - 2;
                         byte[] byteappe = new byte[len];
                         for (int k = 0; k < len; ++k) {
                             byteappe[k] = (byte)is.read();
                         }
-                        if (byteappe.length > 12) {
+                        if (byteappe.length >= 12) {
                             String appe = new String(byteappe, 0, 5, "ISO-8859-1");
                             if (appe.equals("Adobe")) {
                                 invert = true;
                             }
                         }
+                        continue;
                     }
                     firstPass = false;
                     int markertype = marker(marker);
