@@ -90,7 +90,7 @@ import com.lowagie.text.pdf.codec.TiffImage;
  * @see Rectangle
  */
 
-public abstract class Image extends Rectangle implements Element {
+public abstract class Image extends Rectangle {
 
 	// static membervariables
 

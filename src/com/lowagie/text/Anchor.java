@@ -75,7 +75,7 @@ import com.lowagie.text.html.Markup;
  * @see		Phrase
  */
 
-public class Anchor extends Phrase implements TextElementArray {
+public class Anchor extends Phrase {
     
     // membervariables
     

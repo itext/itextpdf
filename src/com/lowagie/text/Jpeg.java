@@ -63,7 +63,7 @@ import java.net.URL;
  * @see		Image
  */
 
-public class Jpeg extends Image implements Element {
+public class Jpeg extends Image {
     
     // public static final membervariables
     

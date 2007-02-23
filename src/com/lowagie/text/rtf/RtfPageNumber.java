@@ -64,10 +64,10 @@ import com.lowagie.text.Font;
  * This class is based on the RtfWriter-package from Mark Hall.
  * @author Steffen.Stundzig (Steffen.Stundzig@smb-tec.com)
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
- * @version $Revision$Date: 2006/09/12 12:16:35 $
+ * @version $Revision$Date: 2006/09/12 13:12:54 $
  * @deprecated Please move to the RtfWriter2 and associated classes. com.lowagie.text.rtf.field.RtfPageNumber replaces the functionality of this class.
  */
-public class RtfPageNumber extends GenericRtfField implements RtfField {
+public class RtfPageNumber extends GenericRtfField {
     private String content;
 
     /**

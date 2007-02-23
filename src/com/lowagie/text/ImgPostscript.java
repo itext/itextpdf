@@ -70,9 +70,7 @@ import com.lowagie.text.pdf.codec.postscript.MetaDoPS;
  * @see		Image
  */
 
-public class ImgPostscript
-extends Image
-implements Element {
+public class ImgPostscript extends Image {
 
     // Constructors
 

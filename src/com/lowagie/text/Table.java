@@ -156,7 +156,7 @@ import com.lowagie.text.pdf.PdfPTable;
  * @see         Cell
  */
 
-public class Table extends Rectangle implements Element {
+public class Table extends Rectangle {
     
     // membervariables
     

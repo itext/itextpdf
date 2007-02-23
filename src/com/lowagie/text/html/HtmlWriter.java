@@ -65,7 +65,6 @@ import com.lowagie.text.Annotation;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
-import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -117,7 +116,7 @@ import com.lowagie.text.pdf.BaseFont;
  * </PRE></BLOCKQUOTE>
  */
 
-public class HtmlWriter extends DocWriter implements DocListener {
+public class HtmlWriter extends DocWriter {
     
     // static membervariables (tags)
     
