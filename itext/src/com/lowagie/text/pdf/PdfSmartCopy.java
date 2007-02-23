@@ -94,9 +94,8 @@ public class PdfSmartCopy extends PdfCopy {
         PdfObject srcObj = PdfReader.getPdfObjectRelease(in);
         ByteStore streamKey = null;
         if (srcObj.type == PdfObject.STREAM) {
-            byte[] streamContent = PdfReader.getStreamBytesRaw((PRStream) srcObj);
-            // Only the content is compared, probably the keys should also be compared
-            streamKey = new ByteStore(streamContent);
+            // Only the content and the key names is compared, probably the key values should also be compared
+            streamKey = new ByteStore((PRStream)srcObj);
             PdfIndirectReference streamRef = (PdfIndirectReference) streamMap.get(streamKey);
             if (streamRef != null) {
                 return streamRef;
@@ -131,12 +130,22 @@ public class PdfSmartCopy extends PdfCopy {
         private byte[] b;
         private int hash;
         
-        ByteStore(byte[] b) {
-            this.b = b;
+        ByteStore(PRStream str) throws IOException {
+            byte[] streamContent = PdfReader.getStreamBytesRaw(str);
+            Object[] keys = str.getKeys().toArray();
+            Arrays.sort(keys);
+            ByteBuffer bb = new ByteBuffer();
+            for (int k = 0; k < keys.length; ++k) {
+                bb.append(keys[k].toString());
+            }
+            bb.append(streamContent);
+            this.b = bb.toByteArray();
         }
 
         public boolean equals(Object obj) {
             if (obj == null || !(obj instanceof ByteStore))
+                return false;
+            if (hashCode() != obj.hashCode())
                 return false;
             return Arrays.equals(b, ((ByteStore)obj).b);
         }
