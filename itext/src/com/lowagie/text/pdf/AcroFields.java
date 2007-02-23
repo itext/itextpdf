@@ -75,9 +75,9 @@ public class AcroFields {
     private int topFirst;
     private HashMap sigNames;
     private boolean append;
-    static private final int DA_FONT = 0;
-    static private final int DA_SIZE = 1;
-    static private final int DA_COLOR = 2;
+    public static final int DA_FONT = 0;
+    public static final int DA_SIZE = 1;
+    public static final int DA_COLOR = 2;
     private HashMap extensionFonts = new HashMap();
     private XfaForm xfa;
     /**
@@ -149,8 +149,6 @@ public class AcroFields {
             return;
         arrfds = null;
         for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
-            if ((k % 100) == 0)
-                System.out.println(k);
             PdfDictionary page = reader.getPageNRelease(k);
             PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
             if (annots == null)
@@ -457,7 +455,7 @@ public class AcroFields {
         return true;
     }
     
-    static private Object[] splitDAelements(String da) {
+    public static Object[] splitDAelements(String da) {
         try {
             PRTokeniser tk = new PRTokeniser(PdfEncodings.convertToBytes(da, null));
             ArrayList stack = new ArrayList();
@@ -509,7 +507,7 @@ public class AcroFields {
         }
     }
     
-    void decodeGenericDictionary(PdfDictionary merged, BaseField tx) throws IOException, DocumentException {
+    public void decodeGenericDictionary(PdfDictionary merged, BaseField tx) throws IOException, DocumentException {
         int flags = 0;
         // the text size and color
         PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
@@ -2101,34 +2099,5 @@ public class AcroFields {
             widgets.put(key, button.get(key));
         }
         return true;
-    }
-    /**
-     * Gets a new text field with all the properties of the already
-     * existing text field.
-     * @param field	the name of the text field
-     */
-    public TextField getNewTextFieldFromField(String field) {
-        try {
-            float[] pos = getFieldPositions(field);
-            Rectangle box = new Rectangle(pos[1], pos[2], pos[3], pos[4]);
-            TextField newTextField = new TextField(writer, box, null);
-            Item item = (Item)fields.get(field);
-            PdfDictionary dic = (PdfDictionary)item.merged.get(0);
-            decodeGenericDictionary(dic, newTextField);
-            if(newTextField.getFont() == null)
-            {
-                PdfString da = (PdfString)PdfReader.getPdfObject(dic.get(PdfName.DA));
-                if (da != null) 
-                {
-                    Object dab[] = splitDAelements(da.toUnicodeString());
-                    if (dab[DA_FONT] != null)
-                        newTextField.setText(String.valueOf(dab[DA_FONT]));
-                }
-            }
-            return newTextField;
-        }
-        catch (Exception e) {
-            throw new ExceptionConverter(e);
-        }
     }
 }
