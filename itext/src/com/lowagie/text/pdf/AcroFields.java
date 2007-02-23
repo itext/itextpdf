@@ -2102,4 +2102,33 @@ public class AcroFields {
         }
         return true;
     }
+    /**
+     * Gets a new text field with all the properties of the already
+     * existing text field.
+     * @param field	the name of the text field
+     */
+    public TextField getNewTextFieldFromField(String field) {
+        try {
+            float[] pos = getFieldPositions(field);
+            Rectangle box = new Rectangle(pos[1], pos[2], pos[3], pos[4]);
+            TextField newTextField = new TextField(writer, box, null);
+            Item item = (Item)fields.get(field);
+            PdfDictionary dic = (PdfDictionary)item.merged.get(0);
+            decodeGenericDictionary(dic, newTextField);
+            if(newTextField.getFont() == null)
+            {
+                PdfString da = (PdfString)PdfReader.getPdfObject(dic.get(PdfName.DA));
+                if (da != null) 
+                {
+                    Object dab[] = splitDAelements(da.toUnicodeString());
+                    if (dab[DA_FONT] != null)
+                        newTextField.setText(String.valueOf(dab[DA_FONT]));
+                }
+            }
+            return newTextField;
+        }
+        catch (Exception e) {
+            throw new ExceptionConverter(e);
+        }
+    }
 }
