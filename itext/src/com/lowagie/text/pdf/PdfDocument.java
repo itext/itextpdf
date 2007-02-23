@@ -65,7 +65,6 @@ import com.lowagie.text.Anchor;
 import com.lowagie.text.Annotation;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Chunk;
-import com.lowagie.text.DocListener;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
@@ -101,7 +100,7 @@ import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
  * @see		PdfWriter
  */
 
-class PdfDocument extends Document implements DocListener {
+class PdfDocument extends Document {
     
     /**
      * <CODE>PdfInfo</CODE> is the PDF InfoDictionary.

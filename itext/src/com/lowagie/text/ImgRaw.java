@@ -61,7 +61,7 @@ import java.net.URL;
  * @author  Paulo Soares
  */
 
-public class ImgRaw extends Image implements Element {
+public class ImgRaw extends Image {
 
     ImgRaw(Image image) {
         super(image);

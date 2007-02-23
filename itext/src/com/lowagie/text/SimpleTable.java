@@ -60,7 +60,7 @@ import com.lowagie.text.pdf.PdfPTableEvent;
  * Rectangle that can be used for Cells.
  * This Rectangle is padded and knows how to draw itself in a PdfPTable or PdfPcellEvent.
  */
-public class SimpleTable extends Rectangle implements PdfPTableEvent, Element, TextElementArray {
+public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElementArray {
 
 	/** the content of a Table. */
 	private ArrayList content = new ArrayList();

@@ -63,7 +63,7 @@ package com.lowagie.text;
  * @see		Meta
  */
 
-public class Header extends Meta implements Element {
+public class Header extends Meta {
     
     // membervariables
     

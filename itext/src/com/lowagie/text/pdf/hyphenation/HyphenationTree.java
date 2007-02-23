@@ -19,7 +19,6 @@
 package com.lowagie.text.pdf.hyphenation;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -31,7 +30,7 @@ import java.util.HashMap;
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
 public class HyphenationTree extends TernaryTree 
-            implements PatternConsumer, Serializable {
+            implements PatternConsumer {
 
     private static final long serialVersionUID = -7763254239309429432L;
 

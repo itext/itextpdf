@@ -101,7 +101,7 @@ import com.lowagie.text.html.Markup;
  * @see	Paragraph
  */
 
-public class ListItem extends Paragraph implements TextElementArray {
+public class ListItem extends Paragraph {
     
     // membervariables
     

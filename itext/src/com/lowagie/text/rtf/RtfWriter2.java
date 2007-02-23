@@ -54,7 +54,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 
-import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -73,7 +72,7 @@ import com.lowagie.text.rtf.text.RtfNewPage;
  * Version: $Id$
  * @author Mark Hall (mhall@edu.uni-klu.ac.at)
  */
-public class RtfWriter2 extends DocWriter implements DocListener {
+public class RtfWriter2 extends DocWriter {
     /**
      * The RtfDocument this RtfWriter is creating
      */
