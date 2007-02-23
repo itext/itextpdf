@@ -143,7 +143,7 @@ public class PdfSmartCopy extends PdfCopy {
         }
 
         public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof ByteStore))
+            if (!(obj instanceof ByteStore))
                 return false;
             if (hashCode() != obj.hashCode())
                 return false;

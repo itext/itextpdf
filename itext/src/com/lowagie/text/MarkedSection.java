@@ -227,7 +227,7 @@ public class MarkedSection extends MarkedObject {
             buf.insert(0, ".");
             buf.insert(0, ((Integer) ((Section)element).numbers.get(i)).intValue());
         }
-        if (buf.length() > 0) buf.append(" ");
+        if (buf.length() > 0) buf.append(' ');
         Paragraph result = new Paragraph((Paragraph)title.element);
         result.add(0, new Chunk(buf.toString(), ((Paragraph)title.element).font()));
         MarkedObject mo = new MarkedObject(result);

@@ -261,7 +261,7 @@ public class PdfStream extends PdfDictionary {
                     crypto = null;
                 else if (filter.isArray()) {
                     ArrayList af = ((PdfArray)filter).getArrayList();
-                    if (af.size() > 0 && PdfName.CRYPT.equals(af.get(0)))
+                    if (!af.isEmpty() && PdfName.CRYPT.equals(af.get(0)))
                         crypto = null;
                 }
             }
