@@ -355,31 +355,11 @@ public class SimpleXMLParser {
                     state = restoreState();
                     String cent = entity.toString();
                     entity.setLength(0);
-                    if(cent.startsWith("#x")) {
-                        try {
-                            char ci = (char)Integer.parseInt(cent.substring(2),16);
-                            text.append(ci);
-                        }
-                        catch (Exception es) {
-                            text.append('&').append(cent).append(';');
-                        }
-                    }
-                    else if(cent.startsWith("#")) {
-                        try {
-                            char ci = (char)Integer.parseInt(cent.substring(1));
-                            text.append(ci);
-                        }
-                        catch (Exception es) {
-                            text.append('&').append(cent).append(';');
-                        }
-                    }
-                    else {
-                        char ce = EntitiesToUnicode.decodeEntity(cent);
-                        if (ce == '\0')
-                            text.append('&').append(cent).append(';');
-                        else
-                        text.append(ce);
-                    }
+                    char ce = EntitiesToUnicode.decodeEntity(cent);
+                    if (ce == '\0')
+                    	text.append('&').append(cent).append(';');
+                    else
+                    	text.append(ce);
                 } else if ((character != '#' && (character < '0' || character > '9') && (character < 'a' || character > 'z')
                     && (character < 'A' || character > 'Z')) || entity.length() >= 7) {
                     state = restoreState();

@@ -368,7 +368,23 @@ public class EntitiesToUnicode {
      * @return	the corresponding unicode character
      */
     public static char decodeEntity(String name) {
-        Character c = (Character)map.get(name);
+    	if (name.startsWith("#x")) {
+    		try {
+    			return (char)Integer.parseInt(name.substring(2),16);
+    		}
+    		catch(NumberFormatException nfe) {
+    			return '\0';
+    		}
+    	}
+    	if (name.startsWith("#")) {
+    		try {
+    			return (char)Integer.parseInt(name.substring(1));
+    		}
+    		catch(NumberFormatException nfe) {
+    			return '\0';
+    		}
+    	}
+    	Character c = (Character)map.get(name);
         if (c == null)
             return '\0';
         else
