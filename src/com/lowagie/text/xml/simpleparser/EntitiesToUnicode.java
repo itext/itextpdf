@@ -430,6 +430,9 @@ public class EntitiesToUnicode {
     			buf.append(s.substring(pos_sc + 1));
     			return buf.toString();
     		}
+    		else {
+    			buf.append(s.substring(pos_sc + 1, pos_amp));
+    		}
     	}
     }
 }
