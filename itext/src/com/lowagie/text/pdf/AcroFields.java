@@ -1180,7 +1180,11 @@ public class AcroFields {
             if (name == null)
                 return false;
             String shortName = XfaForm.Xml2Som.getShortName(name);
-            xfa.setNodeText(xfa.findDatasetsNode(shortName), value);
+            Node xn = xfa.findDatasetsNode(shortName);
+            if (xn == null) {
+                xn = xfa.getDatasetsSom().insertNode(xfa.getDatasetsNode(), shortName);
+            }
+            xfa.setNodeText(xn, value);
         }
         Item item = (Item)fields.get(name);
         if (item == null)
