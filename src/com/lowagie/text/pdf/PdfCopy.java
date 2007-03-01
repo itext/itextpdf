@@ -89,8 +89,6 @@ public class PdfCopy extends PdfWriter {
     protected int currentObjectNum = 1;
     protected PdfReader reader;
     protected PdfIndirectReference acroForm;
-    protected PdfIndirectReference topPageParent;
-    protected ArrayList pageNumbersToRefs = new ArrayList();
     protected List newBookmarks;
     
     /**
@@ -135,10 +133,9 @@ public class PdfCopy extends PdfWriter {
         pdf.addWriter(this);
         indirectMap = new HashMap();
     }
+    
     public void open() {
         super.open();
-        topPageParent = getPdfIndirectReference();
-        root.setLinearMode(topPageParent);
     }
 
     /**
@@ -183,18 +180,23 @@ public class PdfCopy extends PdfWriter {
         if (iRef != null) {
             theRef = iRef.getRef();
             if (iRef.getCopied()) {
-                //	        System.out.println(">>> Value is " + theRef.toString());
                 return theRef;
             }
-            //	    System.out.println(">>> Fill in " + theRef.toString());
         }
         else {
             theRef = body.getPdfIndirectReference();
             iRef = new IndirectReferences(theRef);
             indirects.put(key, iRef);
         }
+        PdfObject obj = PdfReader.getPdfObjectRelease(in);
+        if (obj != null && obj.isDictionary()) {
+            PdfName type = (PdfName)((PdfDictionary)obj).get(PdfName.TYPE);
+            if (type != null && PdfName.PAGE.equals(type)) {
+                return theRef;
+            }
+        }
         iRef.setCopied();
-        PdfObject obj = copyObject(PdfReader.getPdfObjectRelease(in));
+        obj = copyObject(obj);
         addToBody(obj, theRef);
         return theRef;
     }
@@ -213,9 +215,7 @@ public class PdfCopy extends PdfWriter {
             PdfObject value = in.get(key);
             //	    System.out.println("Copy " + key);
             if (type != null && PdfName.PAGE.equals(type)) {
-                if (key.equals(PdfName.PARENT))
-                    out.put(PdfName.PARENT, topPageParent);
-                else if (!key.equals(PdfName.B))
+                if (!key.equals(PdfName.B) && !key.equals(PdfName.PARENT))
                     out.put(key, copyObject(value));
             }
             else
@@ -311,9 +311,7 @@ public class PdfCopy extends PdfWriter {
             indirects = new HashMap();
             indirectMap.put(reader,indirects);
             PdfDictionary catalog = reader.getCatalog();
-            PRIndirectReference ref = (PRIndirectReference)catalog.get(PdfName.PAGES);
-            indirects.put(new RefKey(ref), new IndirectReferences(topPageParent));
-            ref = null;
+            PRIndirectReference ref = null;
             PdfObject o = catalog.get(PdfName.ACROFORM);
             if (o == null || o.type() != PdfObject.INDIRECT)
                 return;
@@ -336,34 +334,21 @@ public class PdfCopy extends PdfWriter {
         RefKey key = new RefKey(origRef);
         PdfIndirectReference pageRef;
         IndirectReferences iRef = (IndirectReferences)indirects.get(key);
-        iRef = null; // temporary hack to have multiple pages, may break is some cases
-        // if we already have an iref for the page (we got here by another link)
-        if (iRef != null) {
-            pageRef = iRef.getRef();
+        if (iRef != null && !iRef.getCopied()) {
+            pageReferences.add(iRef.getRef());
+            iRef.setCopied();
         }
-        else {
-            pageRef = body.getPdfIndirectReference();
+        pageRef = getCurrentPage();
+        if (iRef == null) {
             iRef = new IndirectReferences(pageRef);
             indirects.put(key, iRef);
         }
-        pageReferences.add(pageRef);
+        iRef.setCopied();
+        PdfDictionary newPage = copyDictionary(thePage);
+        root.addPage(newPage);
         ++currentPageNumber;
-        if (! iRef.getCopied()) {
-            iRef.setCopied();
-            PdfDictionary newPage = copyDictionary(thePage);
-            newPage.put(PdfName.PARENT, topPageParent);
-            addToBody(newPage, pageRef);
-        }
-        root.addPage(pageRef);
-        pageNumbersToRefs.add(pageRef);
     }
     
-    public PdfIndirectReference getPageReference(int page) {
-        if (page < 0 || page > pageNumbersToRefs.size())
-            throw new IllegalArgumentException("Invalid page number " + page);
-        return (PdfIndirectReference)pageNumbersToRefs.get(page - 1);
-    }
-
     /**
      * Copy the acroform for an input document. Note that you can only have one,
      * we make no effort to merge them.
