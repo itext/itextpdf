@@ -144,6 +144,7 @@ public class RtfParagraph extends RtfPhrase {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(PARAGRAPH_DEFAULTS);
+            result.write(PLAIN);
 
             if(inTable) {
                 result.write(IN_TABLE);
@@ -152,6 +153,7 @@ public class RtfParagraph extends RtfPhrase {
             if(this.paragraphStyle != null) {
                 result.write(this.paragraphStyle.writeBegin());
             }
+            result.write("\\plain".getBytes());
             
             for(int i = 0; i < chunks.size(); i++) {
                 result.write(((RtfBasicElement) chunks.get(i)).write());
