@@ -77,6 +77,10 @@ public class RtfPhrase extends RtfElement {
      */
     public static final byte[] PARAGRAPH_DEFAULTS = "\\pard".getBytes();
     /**
+     * Constant for resetting of font settings to their defaults
+     */
+    public static final byte[] PLAIN = "\\plain".getBytes();
+    /**
      * Constant for phrase in a table indication
      */
     public static final byte[] IN_TABLE = "\\intbl".getBytes();
@@ -146,6 +150,7 @@ public class RtfPhrase extends RtfElement {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(PARAGRAPH_DEFAULTS);
+            result.write(PLAIN);
             if(inTable) {
                 result.write(IN_TABLE);
             }
