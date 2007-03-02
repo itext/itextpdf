@@ -88,6 +88,10 @@ public class RtfParagraphStyle extends RtfFont {
      */
     public static final byte[] ALIGN_JUSTIFY = "\\qj".getBytes();
     /**
+     * Constant for the first line indentation
+     */
+    public static final byte[] FIRST_LINE_INDENT = "\\fi".getBytes();
+    /**
      * Constant for left indentation
      */
     public static final byte[] INDENT_LEFT = "\\li".getBytes();
@@ -200,6 +204,10 @@ public class RtfParagraphStyle extends RtfFont {
      * The alignment of the paragraph.
      */
     private int alignment = Element.ALIGN_LEFT;
+    /**
+     * The indentation for the first line
+     */
+    private int firstLineIndent = 0;
     /**
      * The left indentation of the paragraph.
      */
@@ -339,6 +347,25 @@ public class RtfParagraphStyle extends RtfFont {
     public void setAlignment(int alignment) {
         this.modified = this.modified | MODIFIED_ALIGNMENT;
         this.alignment = alignment;
+    }
+    
+    /**
+     * Gets the first line indentation of this RtfParagraphStyle.
+     * 
+     * @return The first line indentation of this RtfParagraphStyle.
+     */
+    public int getFirstLineIndent() {
+        return this.firstLineIndent;
+    }
+    
+    /**
+     * Sets the first line indententation of this RtfParagraphStyle. It
+     * is relative to the left indentation.
+     * 
+     * @param firstLineIndent The first line indentation to use.
+     */
+    public void setFirstLineIndent(int firstLineIndent) {
+        this.firstLineIndent = firstLineIndent;
     }
     
     /**
@@ -595,6 +622,8 @@ public class RtfParagraphStyle extends RtfFont {
                     result.write(RtfParagraphStyle.ALIGN_JUSTIFY);
                     break;
             }
+            result.write(FIRST_LINE_INDENT);
+            result.write(intToByteArray(this.firstLineIndent));
             result.write(RtfParagraphStyle.INDENT_LEFT);
             result.write(intToByteArray(indentLeft));
             result.write(RtfParagraphStyle.INDENT_RIGHT);

@@ -101,6 +101,7 @@ public class RtfParagraph extends RtfPhrase {
             baseFont = new RtfFont(this.document, paragraph.font());
             this.paragraphStyle = new RtfParagraphStyle(this.document, this.document.getDocumentHeader().getRtfParagraphStyle("Normal"));
             this.paragraphStyle.setAlignment(paragraph.alignment());
+            this.paragraphStyle.setFirstLineIndent((int) (paragraph.getFirstLineIndent() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setIndentLeft((int) (paragraph.indentationLeft() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setIndentRight((int) (paragraph.indentationRight() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setSpacingBefore((int) (paragraph.spacingBefore() * RtfElement.TWIPS_FACTOR));
