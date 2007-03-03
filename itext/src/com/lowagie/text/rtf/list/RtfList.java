@@ -471,6 +471,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                 } else if(rtfElement instanceof RtfList) {
                     result.write(rtfElement.write());
                     result.write(writeListBeginning());
+                    result.write(writeListNumbers());
                     result.write("\n".getBytes());
                 }
             }
