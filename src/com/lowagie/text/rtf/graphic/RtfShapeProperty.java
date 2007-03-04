@@ -236,7 +236,8 @@ public class RtfShapeProperty extends RtfAddableElement {
         		}
         		break;
         	case PROPERTY_TYPE_COLOR:
-        		result.write(intToByteArray(((Color) this.value).getRGB()));
+                Color color = (Color) this.value;
+                result.write(intToByteArray(color.getRed() | (color.getGreen() << 8) | (color.getBlue() << 16)));
         		break;
         	case PROPERTY_TYPE_ARRAY:
         	    if(this.value instanceof int[]) {
