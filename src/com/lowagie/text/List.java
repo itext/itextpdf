@@ -429,6 +429,24 @@ public class List implements TextElementArray {
     public boolean isNumbered() {
         return numbered;
     }
+
+/**
+ * Checks if the list is lettered.
+ * 
+ * @return  <CODE>true</CODE> if the list is lettered, <CODE>false</CODE> otherwise.
+ */
+    public boolean isLettered() {
+        return lettered;
+    }
+
+/**
+ * Checks if the list lettering is lowercase.
+ * 
+ * @return  <CODE>true</CODE> if it is lowercase, <CODE>false</CODE> otherwise.
+ */
+    public boolean isLowerCase() {
+        return lowercase;
+    }
     
 /**
  * Gets the symbol indentation.
