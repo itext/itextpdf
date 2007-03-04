@@ -103,6 +103,6 @@ public class RtfTableOfContents extends RtfField {
      * @throws IOException
      */
     protected byte[] writeFieldResultContent() throws IOException {
-        return defaultText.getBytes();
+        return document.filterSpecialChar(defaultText, true, true).getBytes();
     }
 }
