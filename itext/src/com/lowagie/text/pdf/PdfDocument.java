@@ -478,7 +478,7 @@ class PdfDocument extends Document {
                     
                     // we adjust the parameters of the document
                     alignment = paragraph.alignment();
-                    leading = paragraph.leading();
+                    leading = paragraph.getTotalLeading();
                     carriageReturn();
                     
                     // we don't want to make orphans/widows
@@ -511,7 +511,7 @@ class PdfDocument extends Document {
                     	paraIndent -= paragraph.indentationLeft();
                     }
                     
-                    addSpacing(paragraph.spacingAfter(), paragraph.leading(), paragraph.font());
+                    addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.font());
 
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
@@ -616,7 +616,7 @@ class PdfDocument extends Document {
                     alignment = listItem.alignment();
                     listIndentLeft += listItem.indentationLeft();
                     indentRight += listItem.indentationRight();
-                    leading = listItem.leading();
+                    leading = listItem.getTotalLeading();
                     carriageReturn();
                     
                     // we prepare the current line to be able to show us the listsymbol
@@ -624,7 +624,7 @@ class PdfDocument extends Document {
                     // we process the item
                     element.process(this);
 
-                    addSpacing(listItem.spacingAfter(), listItem.leading(), listItem.font());
+                    addSpacing(listItem.spacingAfter(), listItem.getTotalLeading(), listItem.font());
                    
                     // if the last line is justified, it should be aligned to the left
                     if (line.hasToBeJustified()) {
@@ -2973,7 +2973,7 @@ class PdfDocument extends Document {
         // End added: Bonf (Marc Schneider) 2003-07-29
         // End Added by Edgar Leonardo Prieto Perilla
         footer.setPageNumber(pageN);
-        leading = footer.paragraph().leading();
+        leading = footer.paragraph().getTotalLeading();
         add(footer.paragraph());
         // adding the footer limits the height
         indentBottom = currentHeight;
@@ -3018,7 +3018,7 @@ class PdfDocument extends Document {
         // End added: Bonf
         // Begin added by Edgar Leonardo Prieto Perilla
 		header.setPageNumber(pageN);
-        leading = header.paragraph().leading();
+        leading = header.paragraph().getTotalLeading();
         text.moveText(0, leading);
         add(header.paragraph());
         newLine();

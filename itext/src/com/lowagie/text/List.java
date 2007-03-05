@@ -417,7 +417,7 @@ public class List implements TextElementArray {
             return -1;
         }
         ListItem item = (ListItem) list.get(0);
-        return item.leading();
+        return item.getTotalLeading();
     }
     
 /**
