@@ -492,6 +492,23 @@ private static final long serialVersionUID = 7852314969733375514L;
     }
     
     /**
+     * Gets the total leading.
+     * This method is based on the assumption that the
+     * font of the Paragraph is the font of all the elements
+     * that make part of the paragraph. This isn't necessarily
+     * true.
+     * @return the total leading (fixed and multiplied)
+     */
+    public float getTotalLeading() {
+    	float m = font == null ?
+    			Font.DEFAULTSIZE * multipliedLeading : font.leading(multipliedLeading);
+    	if (m > 0 && !leadingDefined()) {
+    		return m;
+    	}
+    	return leading() + m;
+    }
+    
+    /**
      * Getter for property firstLineIndent.
      * @return Value of property firstLineIndent.
      */
