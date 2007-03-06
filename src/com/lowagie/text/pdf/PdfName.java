@@ -990,6 +990,10 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name of an attribute. */
     public static final PdfName UNDERLINE = new PdfName("Underline");
     /** A name */
+    public static final PdfName UR = new PdfName("UR");
+    /** A name */
+    public static final PdfName UR3 = new PdfName("UR3");
+    /** A name */
     public static final PdfName URI = new PdfName("URI");
     /** A name */
     public static final PdfName URL = new PdfName("URL");

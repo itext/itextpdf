@@ -3300,6 +3300,12 @@ public class PdfReader implements PdfViewerPreferences {
      * confuse Acrobat and it's advisabe to remove them altogether.
      */
     public void removeUsageRights() {
-        catalog.remove(PdfName.PERMS);
+        PdfDictionary perms = (PdfDictionary)getPdfObject(catalog.get(PdfName.PERMS));
+        if (perms == null)
+            return;
+        perms.remove(PdfName.UR);
+        perms.remove(PdfName.UR3);
+        if (perms.size() == 0)
+            catalog.remove(PdfName.PERMS);
     }
 }
