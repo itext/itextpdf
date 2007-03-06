@@ -3308,4 +3308,36 @@ public class PdfReader implements PdfViewerPreferences {
         if (perms.size() == 0)
             catalog.remove(PdfName.PERMS);
     }
+    
+    /**
+     * Gets the certification level for this document. The return values can be <code>PdfSignatureAppearance.NOT_CERTIFIED</code>, 
+     * <code>PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED</code>,
+     * <code>PdfSignatureAppearance.CERTIFIED_FORM_FILLING</code> and
+     * <code>PdfSignatureAppearance.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS</code>.
+     * <p>
+     * No signature validation is made, use the methods availabe for that in <CODE>AcroFields</CODE>.
+     * </p>
+     * @return gets the certification level for this document
+     */
+    public int getCertificationLevel() {
+        PdfDictionary dic = (PdfDictionary)getPdfObject(catalog.get(PdfName.PERMS));
+        if (dic == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        dic = (PdfDictionary)getPdfObject(dic.get(PdfName.DOCMDP));
+        if (dic == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        PdfArray arr = (PdfArray)getPdfObject(dic.get(PdfName.REFERENCE));
+        if (arr == null || arr.size() == 0)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        dic = (PdfDictionary)getPdfObject((PdfObject)(arr.getArrayList().get(0)));
+        if (dic == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        dic = (PdfDictionary)getPdfObject(dic.get(PdfName.TRANSFORMPARAMS));
+        if (dic == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        PdfNumber p = (PdfNumber)getPdfObject(dic.get(PdfName.P));
+        if (p == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        return p.intValue();
+    } 
 }
