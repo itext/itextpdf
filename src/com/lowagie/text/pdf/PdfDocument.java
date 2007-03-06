@@ -114,8 +114,6 @@ class PdfDocument extends Document {
     
     public static class PdfInfo extends PdfDictionary {
         
-        // constructors
-        
         /**
          * Construct a <CODE>PdfInfo</CODE>-object.
          */
@@ -196,9 +194,7 @@ class PdfDocument extends Document {
          */
         
         void addProducer() {
-            // This line may only be changed by Bruno Lowagie or Paulo Soares
             put(PdfName.PRODUCER, new PdfString(getVersion()));
-            // Do not edit the line above!
         }
         
         /**
@@ -234,9 +230,8 @@ class PdfDocument extends Document {
     
     static class PdfCatalog extends PdfDictionary {
         
+    	/** The writer writing the PDF for which we are creating this catalog object. */
         PdfWriter writer;
-        
-        // constructors
         
         /**
          * Constructs a <CODE>PdfCatalog</CODE>.
@@ -300,12 +295,17 @@ class PdfDocument extends Document {
             }
         }
         
+        /**
+         * Adds an open action to the catalog.
+         * @param	action	the action that will be triggered upon opening the document
+         */
         void setOpenAction(PdfAction action) {
             put(PdfName.OPENACTION, action);
         }
         
         
-        /** Sets the document level additional actions.
+        /**
+         * Sets the document level additional actions.
          * @param actions   dictionary of actions
          */
         void setAdditionalActions(PdfDictionary actions) {
@@ -486,8 +486,8 @@ class PdfDocument extends Document {
                         newPage();
                     }
 
-                    indentLeft += paragraph.indentationLeft();
-                    indentRight += paragraph.indentationRight();
+                    indentation.indentLeft += paragraph.indentationLeft();
+                    indentation.indentRight += paragraph.indentationRight();
                     carriageReturn();
      
                     PdfPageEvent pageEvent = writer.getPageEvent();
@@ -505,10 +505,10 @@ class PdfDocument extends Document {
                         this.add(table);
                     }
                     else {
-                    	paraIndent += paragraph.indentationLeft();
+                    	indentation.paragraph += paragraph.indentationLeft();
                     	line.setExtraIndent(paragraph.getFirstLineIndent());
                     	element.process(this);
-                    	paraIndent -= paragraph.indentationLeft();
+                    	indentation.paragraph -= paragraph.indentationLeft();
                     }
                     
                     addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.font());
@@ -517,8 +517,8 @@ class PdfDocument extends Document {
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
                     
                     alignment = Element.ALIGN_LEFT;
-                    indentLeft -= paragraph.indentationLeft();
-                    indentRight -= paragraph.indentationRight();
+                    indentation.indentLeft -= paragraph.indentationLeft();
+                    indentation.indentRight -= paragraph.indentationRight();
                     carriageReturn();
                     break;
                 }
@@ -554,10 +554,10 @@ class PdfDocument extends Document {
                     
                     // some values are set
                     carriageReturn();
-                    indentLeft += section.indentationLeft();
-                    indentRight += section.indentationRight();
-                    sectionIndentLeft += section.indentationLeft();
-                    sectionIndentRight += section.indentationRight();
+                    indentation.indentLeft += section.indentationLeft();
+                    indentation.indentRight += section.indentationRight();
+                    indentation.sectionIndentLeft += section.indentationLeft();
+                    indentation.sectionIndentRight += section.indentationRight();
                     
                     PdfPageEvent pageEvent = writer.getPageEvent();
                     if (pageEvent != null)
@@ -572,15 +572,15 @@ class PdfDocument extends Document {
                         add(section.title());
                         isParagraph = true;
                     }
-                    indentLeft += section.indentation();
-                    sectionIndentLeft += section.indentation();
+                    indentation.indentLeft += section.indentation();
+                    indentation.sectionIndentLeft += section.indentation();
                     // we process the section
                     element.process(this);
                     // some parameters are set back to normal again
-                    indentLeft -= section.indentationLeft() + section.indentation();
-                    indentRight -= section.indentationRight();
-                    sectionIndentLeft -= section.indentationLeft() + section.indentation();
-                    sectionIndentRight -= section.indentationRight();
+                    indentation.indentLeft -= section.indentationLeft() + section.indentation();
+                    indentation.indentRight -= section.indentationRight();
+                    indentation.sectionIndentLeft -= section.indentationLeft() + section.indentation();
+                    indentation.sectionIndentRight -= section.indentationRight();
                     
                     if (pageEvent != null)
                         if (element.type() == Element.CHAPTER)
@@ -597,13 +597,13 @@ class PdfDocument extends Document {
                     	list.normalizeIndentation();
                     }
                     // we adjust the document
-                    listIndentLeft += list.indentationLeft();
-                    indentRight += list.indentationRight();
+                    indentation.listIndentLeft += list.indentationLeft();
+                    indentation.indentRight += list.indentationRight();
                     // we process the items in the list
                     element.process(this);
                     // some parameters are set back to normal again
-                    listIndentLeft -= list.indentationLeft();
-                    indentRight -= list.indentationRight();
+                    indentation.listIndentLeft -= list.indentationLeft();
+                    indentation.indentRight -= list.indentationRight();
                     break;
                 }
                 case Element.LISTITEM: {
@@ -614,8 +614,8 @@ class PdfDocument extends Document {
                    
                     // we adjust the document
                     alignment = listItem.alignment();
-                    listIndentLeft += listItem.indentationLeft();
-                    indentRight += listItem.indentationRight();
+                    indentation.listIndentLeft += listItem.indentationLeft();
+                    indentation.indentRight += listItem.indentationRight();
                     leading = listItem.getTotalLeading();
                     carriageReturn();
                     
@@ -632,8 +632,8 @@ class PdfDocument extends Document {
                     }
                     // some parameters are set back to normal again
                     carriageReturn();
-                    listIndentLeft -= listItem.indentationLeft();
-                    indentRight -= listItem.indentationRight();
+                    indentation.listIndentLeft -= listItem.indentationLeft();
+                    indentation.indentRight -= listItem.indentationRight();
                     break;
                 }
                 case Element.RECTANGLE: {
@@ -649,12 +649,12 @@ class PdfDocument extends Document {
 
                     // before every table, we add a new line and flush all lines
 
-                    indentLeft -= paraIndent + sectionIndentLeft;
-                    indentRight -= sectionIndentRight;
+                    indentation.indentLeft -= indentation.paragraph + indentation.sectionIndentLeft;
+                    indentation.indentRight -= indentation.sectionIndentRight;
                     ensureNewLine();
                     flushLines();
-                    indentLeft += paraIndent + sectionIndentLeft;
-                    indentRight += sectionIndentRight;
+                    indentation.indentLeft += indentation.paragraph + indentation.sectionIndentLeft;
+                    indentation.indentRight += indentation.sectionIndentRight;
                     
                     addPTable(ptable);
                     pageEmpty = false;
@@ -833,8 +833,8 @@ class PdfDocument extends Document {
         super.newPage();
         
         // the following 2 lines were added by Pelikan Stephan
-        imageIndentLeft = 0;
-        imageIndentRight = 0;
+        indentation.imageIndentLeft = 0;
+        indentation.imageIndentRight = 0;
         
         try {
             // we flush the arraylist with recently written lines
@@ -1100,10 +1100,10 @@ class PdfDocument extends Document {
         marginTop = nextMarginTop;
         marginBottom = nextMarginBottom;
         imageEnd = -1;
-        imageIndentRight = 0;
-        imageIndentLeft = 0;
-        indentBottom = 0;
-        indentTop = 0;
+        indentation.imageIndentRight = 0;
+        indentation.imageIndentLeft = 0;
+        indentation.indentBottom = 0;
+        indentation.indentTop = 0;
         currentHeight = 0;
         
         // backgroundcolors, etc...
@@ -1194,8 +1194,8 @@ class PdfDocument extends Document {
         }
         if (imageEnd > -1 && currentHeight > imageEnd) {
             imageEnd = -1;
-            imageIndentRight = 0;
-            imageIndentLeft = 0;
+            indentation.imageIndentRight = 0;
+            indentation.imageIndentLeft = 0;
         }
         // a new current line is constructed
         line = new PdfLine(indentLeft(), indentRight(), alignment, leading);
@@ -1213,7 +1213,7 @@ class PdfDocument extends Document {
         if (ensureNewLine) {
           ensureNewLine();
         }
-        return top() -  currentHeight - indentTop;
+        return top() -  currentHeight - indentation.indentTop;
     }
 
     /** Holds the type of the last element, that has been added to the document. */
@@ -1273,10 +1273,10 @@ class PdfDocument extends Document {
             
             if(isNewpage && newline) { // fix Ken@PDI
                 newline=false;
-                text.moveText(l.indentLeft() - indentLeft() + listIndentLeft + paraIndent,-l.height());
+                text.moveText(l.indentLeft() - indentLeft() + indentation.listIndentLeft + indentation.paragraph,-l.height());
             }
             else {
-                text.moveText(l.indentLeft() - indentLeft() + listIndentLeft, -l.height());
+                text.moveText(l.indentLeft() - indentLeft() + indentation.listIndentLeft, -l.height());
             }
             
             // is the line preceeded by a symbol?
@@ -1291,8 +1291,8 @@ class PdfDocument extends Document {
             currentFont = (PdfFont)currentValues[0];
             
             displacement += l.height();
-            if (indentLeft() - listIndentLeft != l.indentLeft()) {
-                text.moveText(indentLeft() - l.indentLeft() - listIndentLeft, 0);
+            if (indentLeft() - indentation.listIndentLeft != l.indentLeft()) {
+                text.moveText(indentLeft() - l.indentLeft() - indentation.listIndentLeft, 0);
             }
             
         }
@@ -1614,35 +1614,38 @@ class PdfDocument extends Document {
         currentValues[1] = new Float(lastBaseFactor);
     }
 
-    /** This represents the current indentation of the PDF Elements on the left side. */
-    private float indentLeft = 0;
-    
-    /** Indentation to the left caused by a paragraph. */
-    private float paraIndent = 0;
-    
-    /** Indentation to the left caused by a section. */
-    private float sectionIndentLeft = 0;
-    
-    /** This represents the current indentation of the PDF Elements on the left side. */
-    private float listIndentLeft = 0;
-    
-    /** This is the indentation caused by an image on the left. */
-    private float imageIndentLeft = 0;
-    
-    /** This represents the current indentation of the PDF Elements on the right side. */
-    private float indentRight = 0;
-    
-    /** Indentation to the right caused by a section. */
-    private float sectionIndentRight = 0;
-    
-    /** This is the indentation caused by an image on the right. */
-    private float imageIndentRight = 0;
-    
-    /** This represents the current indentation of the PDF Elements on the top side. */
-    private float indentTop = 0;
-    
-    /** This represents the current indentation of the PDF Elements on the bottom side. */
-    private float indentBottom = 0;
+    Indentation indentation = new Indentation();
+    class Indentation {
+        /** Indentation to the left caused by a paragraph. */
+    	float paragraph = 0;
+        
+        /** This represents the current indentation of the PDF Elements on the left side. */
+        private float indentLeft = 0;
+        
+        /** Indentation to the left caused by a section. */
+        private float sectionIndentLeft = 0;
+        
+        /** This represents the current indentation of the PDF Elements on the left side. */
+        private float listIndentLeft = 0;
+        
+        /** This is the indentation caused by an image on the left. */
+        private float imageIndentLeft = 0;
+        
+        /** This represents the current indentation of the PDF Elements on the right side. */
+        private float indentRight = 0;
+        
+        /** Indentation to the right caused by a section. */
+        private float sectionIndentRight = 0;
+        
+        /** This is the indentation caused by an image on the right. */
+        private float imageIndentRight = 0;
+        
+        /** This represents the current indentation of the PDF Elements on the top side. */
+        private float indentTop = 0;
+        
+        /** This represents the current indentation of the PDF Elements on the bottom side. */
+        private float indentBottom = 0;
+    }
     
     /**
      * Gets the indentation on the left side.
@@ -1651,7 +1654,7 @@ class PdfDocument extends Document {
      */
     
     private float indentLeft() {
-        return left(indentLeft + listIndentLeft + imageIndentLeft);
+        return left(indentation.indentLeft + indentation.listIndentLeft + indentation.imageIndentLeft);
     }
     
     /**
@@ -1661,7 +1664,7 @@ class PdfDocument extends Document {
      */
     
     private float indentRight() {
-        return right(indentRight + imageIndentRight);
+        return right(indentation.indentRight + indentation.imageIndentRight);
     }
     
     /**
@@ -1671,7 +1674,7 @@ class PdfDocument extends Document {
      */
     
     private float indentTop() {
-        return top(indentTop);
+        return top(indentation.indentTop);
     }
     
     /**
@@ -1681,7 +1684,7 @@ class PdfDocument extends Document {
      */
     
     float indentBottom() {
-        return bottom(indentBottom);
+        return bottom(indentation.indentBottom);
     }
     
     /**
@@ -2306,11 +2309,11 @@ class PdfDocument extends Document {
             }
             if ((image.alignment() & Image.RIGHT) == Image.RIGHT) {
             	// indentation suggested by Pelikan Stephan
-                imageIndentRight += image.scaledWidth() + image.indentationLeft();
+            	indentation.imageIndentRight += image.scaledWidth() + image.indentationLeft();
             }
             else {
             	// indentation suggested by Pelikan Stephan
-                imageIndentLeft += image.scaledWidth() + image.indentationRight();
+            	indentation.imageIndentLeft += image.scaledWidth() + image.indentationRight();
             }
         }
         else {
@@ -2636,7 +2639,7 @@ class PdfDocument extends Document {
 					somethingAdded = true;
 					newLine();
 					flushLines();
-					indentTop = currentHeight - leading;
+					indentation.indentTop = currentHeight - leading;
 					currentHeight = 0;
 				}
 				else {
@@ -2930,7 +2933,7 @@ class PdfDocument extends Document {
 	boolean breakTableIfDoesntFit(PdfTable table) throws DocumentException {
 		table.updateRowAdditions();
 		// Do we have any full page available?
-		if (!table.hasToFitPageTable() && table.bottom() <= indentBottom) {
+		if (!table.hasToFitPageTable() && table.bottom() <= indentation.indentBottom) {
 			// Then output that page
 			add(table, true);
 			return true;
@@ -2957,26 +2960,26 @@ class PdfDocument extends Document {
     	if (footer == null) return;
 		// Begin added by Edgar Leonardo Prieto Perilla
     	// Avoid footer identation
-    	float tmpIndentLeft = indentLeft;
-    	float tmpIndentRight = indentRight;
+    	float tmpIndentLeft = indentation.indentLeft;
+    	float tmpIndentRight = indentation.indentRight;
     	// Begin added: Bonf (Marc Schneider) 2003-07-29
-        float tmpListIndentLeft = listIndentLeft;
-        float tmpImageIndentLeft = imageIndentLeft;
-        float tmpImageIndentRight = imageIndentRight;
+        float tmpListIndentLeft = indentation.listIndentLeft;
+        float tmpImageIndentLeft = indentation.imageIndentLeft;
+        float tmpImageIndentRight = indentation.imageIndentRight;
         // End added: Bonf (Marc Schneider) 2003-07-29
 
-        indentLeft = indentRight = 0;
+        indentation.indentLeft = indentation.indentRight = 0;
         // Begin added: Bonf (Marc Schneider) 2003-07-29
-        listIndentLeft = 0;
-        imageIndentLeft = 0;
-        imageIndentRight = 0;
+        indentation.listIndentLeft = 0;
+        indentation.imageIndentLeft = 0;
+        indentation.imageIndentRight = 0;
         // End added: Bonf (Marc Schneider) 2003-07-29
         // End Added by Edgar Leonardo Prieto Perilla
         footer.setPageNumber(pageN);
         leading = footer.paragraph().getTotalLeading();
         add(footer.paragraph());
         // adding the footer limits the height
-        indentBottom = currentHeight;
+        indentation.indentBottom = currentHeight;
         text.moveText(left(), indentBottom());
         flushLines();
         text.moveText(-left(), -bottom());
@@ -2985,15 +2988,15 @@ class PdfDocument extends Document {
         footer.setLeft(left());
         footer.setRight(right());
         graphics.rectangle(footer);
-        indentBottom = currentHeight + leading * 2;
+        indentation.indentBottom = currentHeight + leading * 2;
         currentHeight = 0;
         // Begin added by Edgar Leonardo Prieto Perilla
-        indentLeft = tmpIndentLeft;
-        indentRight = tmpIndentRight;
+        indentation.indentLeft = tmpIndentLeft;
+        indentation.indentRight = tmpIndentRight;
         // Begin added: Bonf (Marc Schneider) 2003-07-29
-        listIndentLeft = tmpListIndentLeft;
-        imageIndentLeft = tmpImageIndentLeft;
-        imageIndentRight = tmpImageIndentRight;
+        indentation.listIndentLeft = tmpListIndentLeft;
+        indentation.imageIndentLeft = tmpImageIndentLeft;
+        indentation.imageIndentRight = tmpImageIndentRight;
         // End added: Bonf (Marc Schneider) 2003-07-29
         // End added by Edgar Leonardo Prieto Perilla
     }
@@ -3003,18 +3006,18 @@ class PdfDocument extends Document {
         if (header == null) return;
 		// Begin added by Edgar Leonardo Prieto Perilla
 		// Avoid header identation
-		float tmpIndentLeft = indentLeft;
-		float tmpIndentRight = indentRight;
+		float tmpIndentLeft = indentation.indentLeft;
+		float tmpIndentRight = indentation.indentRight;
         // Begin added: Bonf (Marc Schneider) 2003-07-29
-        float tmpListIndentLeft = listIndentLeft;
-        float tmpImageIndentLeft = imageIndentLeft;
-        float tmpImageIndentRight = imageIndentRight;
+        float tmpListIndentLeft = indentation.listIndentLeft;
+        float tmpImageIndentLeft = indentation.imageIndentLeft;
+        float tmpImageIndentRight = indentation.imageIndentRight;
         // End added: Bonf (Marc Schneider) 2003-07-29
-        indentLeft = indentRight = 0;
+        indentation.indentLeft = indentation.indentRight = 0;
         //  Added: Bonf
-        listIndentLeft = 0;
-        imageIndentLeft = 0;
-        imageIndentRight = 0;
+        indentation.listIndentLeft = 0;
+        indentation.imageIndentLeft = 0;
+        indentation.imageIndentRight = 0;
         // End added: Bonf
         // Begin added by Edgar Leonardo Prieto Perilla
 		header.setPageNumber(pageN);
@@ -3022,7 +3025,7 @@ class PdfDocument extends Document {
         text.moveText(0, leading);
         add(header.paragraph());
         newLine();
-        indentTop = currentHeight - leading;
+        indentation.indentTop = currentHeight - leading;
         header.setTop(top() + leading);
         header.setBottom(indentTop() + leading * 2 / 3);
         header.setLeft(left());
@@ -3032,12 +3035,12 @@ class PdfDocument extends Document {
         currentHeight = 0;
         // Begin added by Edgar Leonardo Prieto Perilla
         // Restore identation
-		indentLeft = tmpIndentLeft;
-		indentRight = tmpIndentRight;
+		indentation.indentLeft = tmpIndentLeft;
+		indentation.indentRight = tmpIndentRight;
         // Begin added: Bonf (Marc Schneider) 2003-07-29
-        listIndentLeft = tmpListIndentLeft;
-        imageIndentLeft = tmpImageIndentLeft;
-        imageIndentRight = tmpImageIndentRight;
+        indentation.listIndentLeft = tmpListIndentLeft;
+        indentation.imageIndentLeft = tmpImageIndentLeft;
+        indentation.imageIndentRight = tmpImageIndentRight;
         // End added: Bonf (Marc Schneider) 2003-07-29
 		// End Added by Edgar Leonardo Prieto Perilla
     }
