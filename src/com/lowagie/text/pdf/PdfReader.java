@@ -3293,4 +3293,13 @@ public class PdfReader implements PdfViewerPreferences {
             return null;
         return new PdfIndirectReference(0, cryptoRef.getNumber(), cryptoRef.getGeneration());
     }
+    
+    /**
+     * Removes any usage rights that this PDF may have. Only Adobe can grant usage rights
+     * and any PDF modified with iText will invalidate them. Invalidated usage rights may
+     * confuse Acrobat and it's advisabe to remove them altogether.
+     */
+    public void removeUsageRights() {
+        catalog.remove(PdfName.PERMS);
+    }
 }
