@@ -101,6 +101,7 @@ public class RtfParagraph extends RtfPhrase {
             baseFont = new RtfFont(this.document, paragraph.font());
             this.paragraphStyle = new RtfParagraphStyle(this.document, this.document.getDocumentHeader().getRtfParagraphStyle("Normal"));
             this.paragraphStyle.setAlignment(paragraph.alignment());
+            this.paragraphStyle.setFirstLineIndent((int) (paragraph.getFirstLineIndent() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setIndentLeft((int) (paragraph.indentationLeft() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setIndentRight((int) (paragraph.indentationRight() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setSpacingBefore((int) (paragraph.spacingBefore() * RtfElement.TWIPS_FACTOR));
@@ -144,6 +145,7 @@ public class RtfParagraph extends RtfPhrase {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         try {
             result.write(PARAGRAPH_DEFAULTS);
+            result.write(PLAIN);
 
             if(inTable) {
                 result.write(IN_TABLE);
@@ -152,6 +154,7 @@ public class RtfParagraph extends RtfPhrase {
             if(this.paragraphStyle != null) {
                 result.write(this.paragraphStyle.writeBegin());
             }
+            result.write("\\plain".getBytes());
             
             for(int i = 0; i < chunks.size(); i++) {
                 result.write(((RtfBasicElement) chunks.get(i)).write());

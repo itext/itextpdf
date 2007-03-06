@@ -82,7 +82,8 @@ public class XfaForm {
     private boolean changed;
     private Node datasetsNode;
     private Node templateNode;
-
+    public static final String XFA_DATA_SCHEMA = "http://www.xfa.org/schema/xfa-data/1.0/";
+    
     /**
      * An empty constructor to build on.
      */
@@ -294,6 +295,8 @@ public class XfaForm {
         while ((nc = n.getFirstChild()) != null) {
             n.removeChild(nc);
         }
+        if (n.getAttributes().getNamedItemNS(XFA_DATA_SCHEMA, "dataNode") != null)
+            n.getAttributes().removeNamedItemNS(XFA_DATA_SCHEMA, "dataNode");
         n.appendChild(domDocument.createTextNode(text));
         changed = true;
     }
@@ -706,8 +709,50 @@ public class XfaForm {
             processDatasetsInternal(n);
         }
 
+        /**
+         * Inserts a new <CODE>Node</CODE> that will match the short name.
+         * @param n the datasets top <CODE>Node</CODE>
+         * @param shortName the short name
+         * @return the new <CODE>Node</CODE> of the inserted name
+         */
+        public Node insertNode(Node n, String shortName) {
+            Stack2 stack = splitParts(shortName);
+            org.w3c.dom.Document doc = n.getOwnerDocument();
+            Node n2 = null;
+            n = n.getFirstChild();
+            for (int k = 0; k < stack.size(); ++k) {
+                String part = (String)stack.get(k);
+                int idx = part.lastIndexOf("[");
+                String name = part.substring(0, idx);
+                idx = Integer.parseInt(part.substring(idx + 1, part.length() - 1));
+                int found = -1;
+                for (n2 = n.getFirstChild(); n2 != null; n2 = n2.getNextSibling()) {
+                    if (n2.getNodeType() == Node.ELEMENT_NODE) {
+                        String s = escapeSom(n2.getLocalName());
+                        if (s.equals(name)) {
+                            ++found;
+                            if (found == idx)
+                                break;
+                        }
+                    }
+                }
+                for (; found < idx; ++found) {
+                    n2 = doc.createElementNS(null, name);
+                    n2 = n.appendChild(n2);
+                    Node attr = doc.createAttributeNS(XFA_DATA_SCHEMA, "dataNode");
+                    attr.setNodeValue("dataGroup");
+                    n2.getAttributes().setNamedItemNS(attr);
+                }
+                n = n2;
+            }
+            inverseSearchAdd(inverseSearch, stack, shortName);
+            name2Node.put(shortName, n2);
+            order.add(shortName);
+            return n2;
+        }
+        
         private static boolean hasChildren(Node n) {
-            Node dataNodeN = n.getAttributes().getNamedItemNS("http://www.xfa.org/schema/xfa-data/1.0/", "dataNode");
+            Node dataNodeN = n.getAttributes().getNamedItemNS(XFA_DATA_SCHEMA, "dataNode");
             if (dataNodeN != null) {
                 String dataNode = dataNodeN.getNodeValue();
                 if ("dataGroup".equals(dataNode))
@@ -991,5 +1036,13 @@ public class XfaForm {
      */
     public void setAcroFieldsSom(AcroFieldsSearch acroFieldsSom) {
         this.acroFieldsSom = acroFieldsSom;
+    }
+    
+    /**
+     * Gets the <CODE>Node</CODE> that corresponds to the datasets part.
+     * @return the <CODE>Node</CODE> that corresponds to the datasets part
+     */
+    public Node getDatasetsNode() {
+        return datasetsNode;
     }
 }

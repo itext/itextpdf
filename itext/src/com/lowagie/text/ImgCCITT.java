@@ -61,7 +61,7 @@ import java.net.URL;
  * @author  Paulo Soares
  */
 
-public class ImgCCITT extends Image implements Element {
+public class ImgCCITT extends Image {
     /** A table to do fast bit reversal.
      */    
     static final byte bitReversal[] = {

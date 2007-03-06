@@ -1,4 +1,11 @@
 /*
+ * The original version of this class was published in an article by professor Heinz Kabutz.
+ * Read http://www.javaspecialists.co.za/archive/newsletter.do?issue=033&print=yes&locale=en_US
+ * "This material from The Java(tm) Specialists' Newsletter by Maximum Solutions (South Africa).
+ * Please contact Maximum Solutions  for more information."
+ */
+
+/*
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.mozilla.org/MPL/

@@ -75,9 +75,9 @@ public class AcroFields {
     private int topFirst;
     private HashMap sigNames;
     private boolean append;
-    static private final int DA_FONT = 0;
-    static private final int DA_SIZE = 1;
-    static private final int DA_COLOR = 2;
+    public static final int DA_FONT = 0;
+    public static final int DA_SIZE = 1;
+    public static final int DA_COLOR = 2;
     private HashMap extensionFonts = new HashMap();
     private XfaForm xfa;
     /**
@@ -149,8 +149,6 @@ public class AcroFields {
             return;
         arrfds = null;
         for (int k = 1; k <= reader.getNumberOfPages(); ++k) {
-            if ((k % 100) == 0)
-                System.out.println(k);
             PdfDictionary page = reader.getPageNRelease(k);
             PdfArray annots = (PdfArray)PdfReader.getPdfObjectRelease(page.get(PdfName.ANNOTS), page);
             if (annots == null)
@@ -457,7 +455,7 @@ public class AcroFields {
         return true;
     }
     
-    static private Object[] splitDAelements(String da) {
+    public static Object[] splitDAelements(String da) {
         try {
             PRTokeniser tk = new PRTokeniser(PdfEncodings.convertToBytes(da, null));
             ArrayList stack = new ArrayList();
@@ -509,7 +507,7 @@ public class AcroFields {
         }
     }
     
-    void decodeGenericDictionary(PdfDictionary merged, BaseField tx) throws IOException, DocumentException {
+    public void decodeGenericDictionary(PdfDictionary merged, BaseField tx) throws IOException, DocumentException {
         int flags = 0;
         // the text size and color
         PdfString da = (PdfString)PdfReader.getPdfObject(merged.get(PdfName.DA));
@@ -1182,7 +1180,11 @@ public class AcroFields {
             if (name == null)
                 return false;
             String shortName = XfaForm.Xml2Som.getShortName(name);
-            xfa.setNodeText(xfa.findDatasetsNode(shortName), value);
+            Node xn = xfa.findDatasetsNode(shortName);
+            if (xn == null) {
+                xn = xfa.getDatasetsSom().insertNode(xfa.getDatasetsNode(), shortName);
+            }
+            xfa.setNodeText(xn, value);
         }
         Item item = (Item)fields.get(name);
         if (item == null)

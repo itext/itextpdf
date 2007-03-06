@@ -710,7 +710,12 @@ public class RtfFont extends Font implements RtfExtendedElement {
         if(dColor == null) {
             dColor = this.color();
         }
-
-        return new RtfFont(dFamilyname, dSize, dStyle, dColor);
+        
+        int dCharset = this.charset;
+        if(font instanceof RtfFont) {
+            dCharset = ((RtfFont) font).getCharset();
+        }
+        
+        return new RtfFont(dFamilyname, dSize, dStyle, dColor, dCharset);
     }
 }

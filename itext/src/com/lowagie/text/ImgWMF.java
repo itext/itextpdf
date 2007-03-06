@@ -67,7 +67,7 @@ import com.lowagie.text.pdf.codec.wmf.MetaDo;
  * @see		Image
  */
 
-public class ImgWMF extends Image implements Element {
+public class ImgWMF extends Image {
     
     // Constructors
     

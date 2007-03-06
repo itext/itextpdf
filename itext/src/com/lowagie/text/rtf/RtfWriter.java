@@ -67,7 +67,6 @@ import java.util.ListIterator;
 import com.lowagie.text.Anchor;
 import com.lowagie.text.Annotation;
 import com.lowagie.text.Chunk;
-import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -139,7 +138,7 @@ import com.lowagie.text.pdf.codec.wmf.MetaDo;
  * @author Raul Wegmann (raul.wegmann@uam.es)
  * @deprecated The RtfWriter is deprecated and will be removed from the iText library end of 2007
  */
-public class RtfWriter extends DocWriter implements DocListener {
+public class RtfWriter extends DocWriter {
     /**
      * Static Constants
      */

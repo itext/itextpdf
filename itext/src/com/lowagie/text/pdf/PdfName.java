@@ -744,6 +744,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName PERCEPTUAL = new PdfName("Perceptual");
     /** A name */
+    public static final PdfName PERMS = new PdfName("Perms");
+    /** A name */
     public static final PdfName PG = new PdfName("Pg");
     /** A name */
     public static final PdfName PICKTRAYBYPDFSIZE = new PdfName("PickTrayByPDFSize");
@@ -987,6 +989,10 @@ public class PdfName extends PdfObject implements Comparable{
     public static final PdfName UHC = new PdfName("UHC");
     /** A name of an attribute. */
     public static final PdfName UNDERLINE = new PdfName("Underline");
+    /** A name */
+    public static final PdfName UR = new PdfName("UR");
+    /** A name */
+    public static final PdfName UR3 = new PdfName("UR3");
     /** A name */
     public static final PdfName URI = new PdfName("URI");
     /** A name */

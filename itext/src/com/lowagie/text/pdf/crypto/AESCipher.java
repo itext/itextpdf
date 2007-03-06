@@ -91,7 +91,7 @@ public class AESCipher {
         try {
             n = bp.doFinal(outp, 0);
         } catch (Exception ex) {
-            throw new ExceptionConverter(ex);
+            return outp;
         }
         if (n != outp.length) {
             byte[] outp2 = new byte[n];

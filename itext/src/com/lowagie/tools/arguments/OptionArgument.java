@@ -137,7 +137,8 @@ public class OptionArgument extends ToolArgument {
 	 * @param description the description of the argument
 	 */
 	public OptionArgument(AbstractTool tool, String name, String description) {
-		super(tool, name, description, Entry.class.getName());
+		super(tool, name, description, null);
+        this.setClassname(new Entry("").getClass().getName());
 	}
 
 	/**

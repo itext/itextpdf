@@ -63,7 +63,7 @@ import com.lowagie.text.pdf.PdfTemplate;
  * @author  Paulo Soares
  */
 
-public class ImgTemplate extends Image implements Element {
+public class ImgTemplate extends Image {
     
     ImgTemplate(Image image) {
         super(image);

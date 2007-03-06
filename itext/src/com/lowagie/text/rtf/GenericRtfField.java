@@ -70,7 +70,7 @@ import com.lowagie.text.Font;
  * @since Mon Aug 19 14:50:39 2002
  * @deprecated Please move to the RtfWriter2 and associated classes.
  */
-public class GenericRtfField extends AbstractRtfField implements RtfField {
+public class GenericRtfField extends AbstractRtfField {
     /**
      * Field Initialization Stuff.
      */

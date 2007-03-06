@@ -102,7 +102,7 @@ public class Document implements DocListener {
     // membervariables
     
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
-	private static final String ITEXT_VERSION = "iText 2.0.0 (by lowagie.com)";
+	private static final String ITEXT_VERSION = "iText 2.0.1 (by lowagie.com)";
     
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
@@ -157,6 +157,9 @@ public class Document implements DocListener {
     
 	/** This is the textual part of the footer */
     protected HeaderFooter footer = null;
+    
+    /** This is a chapter number in case ChapterAutoNumber is used. */
+    protected int chapternumber = 0;
     
     // constructor
     
@@ -272,6 +275,10 @@ public class Document implements DocListener {
         }
         boolean success = false;
         DocListener listener;
+        if (element instanceof ChapterAutoNumber) {
+        	chapternumber++;
+        	((ChapterAutoNumber)element).setChapterNumber(chapternumber);
+        }
 		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
             listener = (DocListener) iterator.next();
             success |= listener.add(element);

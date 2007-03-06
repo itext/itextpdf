@@ -65,7 +65,6 @@ import com.lowagie.text.Annotation;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
-import com.lowagie.text.DocListener;
 import com.lowagie.text.DocWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -117,7 +116,7 @@ import com.lowagie.text.pdf.BaseFont;
  * </PRE></BLOCKQUOTE>
  */
 
-public class HtmlWriter extends DocWriter implements DocListener {
+public class HtmlWriter extends DocWriter {
     
     // static membervariables (tags)
     
@@ -737,7 +736,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 Paragraph paragraph = (Paragraph) element;
                 styleAttributes = new Properties();
-                if (paragraph.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, paragraph.leading() + "pt");
+                if (paragraph.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, paragraph.getTotalLeading() + "pt");
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
@@ -797,7 +796,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
             {
                 ListItem listItem = (ListItem) element;
                 styleAttributes = new Properties();
-                if (listItem.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, listItem.leading() + "pt");
+                if (listItem.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, listItem.getTotalLeading() + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -1022,7 +1021,7 @@ public class HtmlWriter extends DocWriter implements DocListener {
                 depth = 5;
             }
             Properties styleAttributes = new Properties();
-            if (section.title().leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, section.title().leading() + "pt");
+            if (section.title().leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, section.title().getTotalLeading() + "pt");
             // start tag
             addTabs(indent);
             writeStart(HtmlTags.H[depth]);
