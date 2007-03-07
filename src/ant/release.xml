@@ -67,10 +67,8 @@
         <copy file="${itext.bin}/iText.jar" todir="${itext.dist}" overwrite="yes" />
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-signed.jar" overwrite="yes"/>
 		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/itext-signed.jar" alias="itext" storepass="fdptext1" />
-		<copy file="${itext.bin}/bcmail-jdk14-135.jar" tofile="${itext.dist}/bcmail-signed.jar" overwrite="yes"/>
-		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/bcmail-signed.jar" alias="itext" storepass="fdptext1" />
-		<copy file="${itext.bin}/bcprov-jdk14-135.jar" tofile="${itext.dist}/bcprov-signed.jar" overwrite="yes"/>
-		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/bcprov-signed.jar" alias="itext" storepass="fdptext1" />
+		<copy file="${itext.bin}/bc.jar" tofile="${itext.dist}/bc-signed.jar" overwrite="yes"/>
+		<signjar keystore="${itext.bin}/.keystore" jar="${itext.dist}/bc-signed.jar" alias="itext" storepass="fdptext1" />
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.dist}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.bin}/iText.jar" tofile="${itext.sf}/itext-${releasenumber}.jar" overwrite="yes"/>
 		<copy file="${itext.dist}/src.zip" tofile="${itext.sf}/itext-src-${releasenumber}.zip" overwrite="yes"/>
