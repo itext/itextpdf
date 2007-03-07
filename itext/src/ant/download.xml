@@ -63,5 +63,6 @@
         <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/jcommon.jar" dest="${itext.bin}/jcommon.jar" verbose="true" />
         <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bcmail-jdk14-135.jar" dest="${itext.bin}/bcmail-jdk14-135.jar" verbose="true" />
         <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bcprov-jdk14-135.jar" dest="${itext.bin}/bcprov-jdk14-135.jar" verbose="true" />
+        <get usetimestamp="true" src="http://kent.dl.sourceforge.net/sourceforge/itext/bc.jar" dest="${itext.bin}/bc.jar" verbose="true" />
     </target>
 </project>
