@@ -1010,6 +1010,8 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName USER = new PdfName("User");
     /** A name */
+    public static final PdfName USERPROPERTIES = new PdfName("UserProperties");
+    /** A name */
     public static final PdfName USERUNIT = new PdfName("UserUnit");
     /** A name */
     public static final PdfName USETHUMBS = new PdfName("UseThumbs");
