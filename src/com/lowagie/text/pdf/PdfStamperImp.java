@@ -250,9 +250,8 @@ class PdfStamperImp extends PdfWriter {
             }
             fileID = crypto.getFileID();
         }
-        else {
-        	PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
-        }
+        else
+            fileID = PdfEncryption.createInfoId(PdfEncryption.createDocumentId());
         PRIndirectReference iRoot = (PRIndirectReference)reader.trailer.get(PdfName.ROOT);
         PdfIndirectReference root = new PdfIndirectReference(0, getNewObjectNumber(reader, iRoot.getNumber(), 0));
         PdfIndirectReference info = null;
