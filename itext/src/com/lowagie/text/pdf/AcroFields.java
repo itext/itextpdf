@@ -973,18 +973,18 @@ public class AcroFields {
      * Sets a field property. Valid property names are:
      * <p>
      * <ul>
-     * <li>flags - a set of flags specifying various characteristics of the field’s widget annotation.
-     * The value of this entry replaces that of the F entry in the form’s corresponding annotation dictionary.<br>
-     * <li>setflags - a set of flags to be set (turned on) in the F entry of the form’s corresponding
+     * <li>flags - a set of flags specifying various characteristics of the field's widget annotation.
+     * The value of this entry replaces that of the F entry in the form's corresponding annotation dictionary.<br>
+     * <li>setflags - a set of flags to be set (turned on) in the F entry of the form's corresponding
      * widget annotation dictionary. Bits equal to 1 cause the corresponding bits in F to be set to 1.<br>
-     * <li>clrflags - a set of flags to be cleared (turned off) in the F entry of the form’s corresponding
+     * <li>clrflags - a set of flags to be cleared (turned off) in the F entry of the form's corresponding
      * widget annotation dictionary. Bits equal to 1 cause the corresponding
      * bits in F to be set to 0.<br>
      * <li>fflags - a set of flags specifying various characteristics of the field. The value
-     * of this entry replaces that of the Ff entry in the form’s corresponding field dictionary.<br>
-     * <li>setfflags - a set of flags to be set (turned on) in the Ff entry of the form’s corresponding
+     * of this entry replaces that of the Ff entry in the form's corresponding field dictionary.<br>
+     * <li>setfflags - a set of flags to be set (turned on) in the Ff entry of the form's corresponding
      * field dictionary. Bits equal to 1 cause the corresponding bits in Ff to be set to 1.<br>
-     * <li>clrfflags - a set of flags to be cleared (turned off) in the Ff entry of the form’s corresponding
+     * <li>clrfflags - a set of flags to be cleared (turned off) in the Ff entry of the form's corresponding
      * field dictionary. Bits equal to 1 cause the corresponding bits in Ff
      * to be set to 0.<br>
      * </ul>
