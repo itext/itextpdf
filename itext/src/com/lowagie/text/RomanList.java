@@ -134,15 +134,15 @@ public class RomanList extends List {
 	// ****************************************************************************************
 
 	/*
-	 * Wandelt eine Integer-Zahl in römische Schreibweise um
+	 * Wandelt eine Integer-Zahl in roemische Schreibweise um
 	 *
 	 * Regeln: http://de.wikipedia.org/wiki/R%F6mische_Ziffern
 	 *  
-	 * 1. Die Ziffern werden addiert, wobei sie von groß nach klein sortiert sind:
+	 * 1. Die Ziffern werden addiert, wobei sie von gross nach klein sortiert sind:
 	 *
 	 *  XVII = 10+5+1+1=17 
 	 *
-	 * 2. Eine kleinere Ziffer, die links von einer größeren steht, wird abgezogen:
+	 * 2. Eine kleinere Ziffer, die links von einer groesseren steht, wird abgezogen:
 	 * 
 	 *  IV = 5-1=4 
 	 *  CM = 1000-100=900 
@@ -151,25 +151,25 @@ public class RomanList extends List {
 	 * 
 	 *  XL = 40 (und nicht XXXX) 
 	 *  IX = 9 (und nicht VIIII) 
-	 *  Diese "Subtraktionsschreibweise" ist erst im Mittelalter allgemein gebräuchlich geworden. 
-	 *  Vorher wurde oft "IIII" für "4" geshrieben. 
+	 *  Diese "Subtraktionsschreibweise" ist erst im Mittelalter allgemein gebraeuchlich geworden. 
+	 *  Vorher wurde oft "IIII" fuer "4" geshrieben. 
 	 *
-	 * 4. Bei mehreren möglichen Schreibweisen wird in der Regel der kürzesten der Vorzug gegeben:
+	 * 4. Bei mehreren moeglichen Schreibweisen wird in der Regel der kuerzesten der Vorzug gegeben:
 	 *
 	 *  IC = 99 (auch LXLIX) 
 	 *  IL = 49 (auch XLIX oder sogar XLVIV) 
 	 *  Andererseits gibt es die Vorschrift, nach der ein Symbol, das einen Wert von 10n darstellt, 
 	 *  nicht einem Symbol, das einen Wert von 10(n+1) darstellt, direkt voranstehen darf. 
-	 *  Nach dieser Regel wäre die Schreibweise "XCIX" für "99" der Schreibweise "IC" vorzuziehen. 
+	 *  Nach dieser Regel waere die Schreibweise "XCIX" fuer "99" der Schreibweise "IC" vorzuziehen. 
 	 *
-	 * 5. Die römischen Zahlen V, L und D können nicht größeren Zahlen voran gestellt werden:
+	 * 5. Die roemischen Zahlen V, L und D koennen nicht groesseren Zahlen voran gestellt werden:
 	 *
 	 *  XCV = 95 (nicht VC) 
 	 * 
-	 *  Zahlen über 3000 werden dargestellt durch Einkastung der Tausender: |IX|LIV=9054
+	 *  Zahlen ueber 3000 werden dargestellt durch Einkastung der Tausender: |IX|LIV=9054
 	 * 
 	 *
-	 * Zahlen größer als 3.000.000 werden durch Doppelstrich etc. dargestellt.
+	 * Zahlen groesser als 3.000.000 werden durch Doppelstrich etc. dargestellt.
 	 */
 
 	/**
@@ -219,7 +219,7 @@ public class RomanList extends List {
 			number = -number;
 		}
 
-		// größer 3000
+		// groesser 3000
 		if (number > 3000) {
 			// rekursiver Aufruf (ohne tausender-Bereich)
 			buf.append('|');
@@ -235,9 +235,9 @@ public class RomanList extends List {
 			// roman-array durchlaufen
 			RomanDigit dig = roman[pos];
 
-			// solange Zahl größer roman-Wert
+			// solange Zahl groesser roman-Wert
 			while (number >= dig.value) {
-				// Zeichen hinzufügen
+				// Zeichen hinzufuegen
 				buf.append(dig.digit);
 				// Wert des Zeichens abziehen
 				number -= dig.value;
@@ -251,9 +251,9 @@ public class RomanList extends List {
 			int j = pos;
 			while (!roman[++j].pre);
 
-			// neuer Wert größer
+			// neuer Wert groesser
 			if (number + roman[j].value >= dig.value) {
-				// hinzufügen
+				// hinzufuegen
 				buf.append(roman[j].digit).append(dig.digit);
 				// Wert vom Rest abziehen
 				number -= dig.value - roman[j].value;
