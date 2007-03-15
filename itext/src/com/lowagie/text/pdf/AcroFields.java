@@ -253,7 +253,7 @@ public class AcroFields {
     }
     
     private String[] getListOption(String fieldName, int idx) {
-        Item fd = (Item)fields.get(fieldName);
+        Item fd = getFieldItem(fieldName);
         if (fd == null)
             return null;
         PdfObject obj = PdfReader.getPdfObject(((PdfDictionary)fd.merged.get(0)).get(PdfName.OPT));
@@ -368,7 +368,7 @@ public class AcroFields {
      * @return the field type
      */    
     public int getFieldType(String fieldName) {
-        Item fd = (Item)fields.get(fieldName);
+        Item fd = getFieldItem(fieldName);
         if (fd == null)
             return FIELD_TYPE_NONE;
         PdfObject type = PdfReader.getPdfObject(((PdfDictionary)fd.merged.get(0)).get(PdfName.FT));
@@ -1331,7 +1331,26 @@ public class AcroFields {
      * does not exist
      */    
     public Item getFieldItem(String name) {
+        if (xfa.isXfaPresent()) {
+            name = xfa.findFieldName(name, this);
+            if (name == null)
+                return null;
+        }
         return (Item)fields.get(name);
+    }
+    
+    /**
+     * Gets the long XFA translated name.
+     * @param name the name of the field
+     * @return the long field name
+     */    
+    public String getTranslatedFieldName(String name) {
+        if (xfa.isXfaPresent()) {
+            String namex = xfa.findFieldName(name, this);
+            if (namex != null)
+                name = namex;
+        }
+        return name;
     }
     
     /**
@@ -1342,7 +1361,7 @@ public class AcroFields {
      * @return the positions or <CODE>null</CODE> if field does not exist
      */    
     public float[] getFieldPositions(String name) {
-        Item item = (Item)fields.get(name);
+        Item item = getFieldItem(name);
         if (item == null)
             return null;
         float ret[] = new float[item.page.size() * 5];
@@ -1443,7 +1462,7 @@ public class AcroFields {
      * @return <CODE>true</CODE> if the field exists, <CODE>false otherwise</CODE>
      */    
     public boolean removeField(String name, int page) {
-        Item item = (Item)fields.get(name);
+        Item item = getFieldItem(name);
         if (item == null)
             return false;
         PdfDictionary acroForm = (PdfDictionary)PdfReader.getPdfObject(reader.getCatalog().get(PdfName.ACROFORM), reader.getCatalog());
@@ -1646,6 +1665,7 @@ public class AcroFields {
      */    
     public PdfDictionary getSignatureDictionary(String name) {
         getSignatureNames();
+        name = getTranslatedFieldName(name);
         if (!sigNames.containsKey(name))
             return null;
         Item item = (Item)fields.get(name);
@@ -1661,6 +1681,7 @@ public class AcroFields {
      */    
     public boolean signatureCoversWholeDocument(String name) {
         getSignatureNames();
+        name = getTranslatedFieldName(name);
         if (!sigNames.containsKey(name))
             return false;
         return ((int[])sigNames.get(name))[0] == reader.getFileLength();
@@ -1813,6 +1834,7 @@ public class AcroFields {
      */    
     public int getRevision(String field) {
         getSignatureNames();
+        field = getTranslatedFieldName(field);
         if (!sigNames.containsKey(field))
             return 0;
         return ((int[])sigNames.get(field))[1];
@@ -1827,6 +1849,9 @@ public class AcroFields {
      */    
     public InputStream extractRevision(String field) throws IOException {
         getSignatureNames();
+        field = getTranslatedFieldName(field);
+        if (!sigNames.containsKey(field))
+            return null;
         int length = ((int[])sigNames.get(field))[0];
         RandomAccessFileOrArray raf = reader.getSafeFile();
         raf.reOpen();
@@ -2023,7 +2048,7 @@ public class AcroFields {
             float[] pos = getFieldPositions(field);
             Rectangle box = new Rectangle(pos[1], pos[2], pos[3], pos[4]);
             PushbuttonField newButton = new PushbuttonField(writer, box, null);
-            Item item = (Item)fields.get(field);
+            Item item = getFieldItem(field);
             PdfDictionary dic = (PdfDictionary)item.merged.get(0);
             decodeGenericDictionary(dic, newButton);
             PdfDictionary mk = (PdfDictionary)PdfReader.getPdfObject(dic.get(PdfName.MK));
@@ -2086,7 +2111,7 @@ public class AcroFields {
     public boolean replacePushbuttonField(String field, PdfFormField button) {
         if (getFieldType(field) != FIELD_TYPE_PUSHBUTTON)
             return false;
-        Item item = (Item)fields.get(field);
+        Item item = getFieldItem(field);
         PdfDictionary merged = (PdfDictionary)item.merged.get(0);
         PdfDictionary values = (PdfDictionary)item.values.get(0);
         PdfDictionary widgets = (PdfDictionary)item.widgets.get(0);
