@@ -622,16 +622,16 @@ public abstract class BaseField {
         this.options = options;
     }
     
-    /** Gets the maximum length of the field’s text, in characters.
-     * @return the maximum length of the field’s text, in characters.
+    /** Gets the maximum length of the field's text, in characters.
+     * @return the maximum length of the field's text, in characters.
      */
     public int getMaxCharacterLength() {
         return this.maxCharacterLength;
     }
     
-    /** Sets the maximum length of the field’s text, in characters.
+    /** Sets the maximum length of the field's text, in characters.
      * It is only meaningful for text fields.
-     * @param maxCharacterLength the maximum length of the field’s text, in characters
+     * @param maxCharacterLength the maximum length of the field's text, in characters
      */
     public void setMaxCharacterLength(int maxCharacterLength) {
         this.maxCharacterLength = maxCharacterLength;

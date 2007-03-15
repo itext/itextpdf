@@ -2374,7 +2374,7 @@ public class PdfWriter extends DocWriter implements
  	
     /**
      * A group attributes dictionary specifying the attributes
-     * of the page’s page group for use in the transparent
+     * of the page's page group for use in the transparent
      * imaging model
      */
     protected PdfDictionary group;
