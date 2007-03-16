@@ -12,6 +12,7 @@ Manipulate.Divide: com.lowagie.tools.plugins.Divide
 Manipulate.Burst: com.lowagie.tools.plugins.Burst
 Manipulate.SelectedPages: com.lowagie.tools.plugins.SelectedPages
 Manipulate.ReversePages: com.lowagie.tools.plugins.ReversePages
+Manipulate.CompressDecompress: com.lowagie.tools.plugins.CompressDecompressPageContent
 Bookmarks.Bookmarks2XML: com.lowagie.tools.plugins.Bookmarks2XML
 Bookmarks.XML2Bookmarks: com.lowagie.tools.plugins.XML2Bookmarks
 Properties.InspectPDF: com.lowagie.tools.plugins.InspectPDF
