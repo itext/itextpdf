@@ -103,7 +103,6 @@ public class PdfReader implements PdfViewerPreferences {
     private ArrayList xrefObj;
     PdfDictionary rootPages;
     protected PdfDictionary trailer;
-    //protected ArrayList pages;
     protected PdfDictionary catalog;
     protected PageRefs pageRefs;
     protected PRAcroForm acroForm = null;
@@ -120,7 +119,8 @@ public class PdfReader implements PdfViewerPreferences {
     protected byte password[] = null; //added by ujihara for decryption
     protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
     protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
-    protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption    
+    protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption
+    protected boolean ownerPasswordUsed;
     protected ArrayList strings = new ArrayList();
     protected boolean sharedStreams = true;
     protected boolean consolidateNamedDestinations = false;
@@ -288,6 +288,7 @@ public class PdfReader implements PdfViewerPreferences {
         this.objStmToOffset = reader.objStmToOffset;
         this.xref = reader.xref;
         this.cryptoRef = (PRIndirectReference)duplicatePdfObject(reader.cryptoRef, this);
+        this.ownerPasswordUsed = reader.ownerPasswordUsed;
     }
 
     /** Gets a new file instance of the original PDF
@@ -747,15 +748,17 @@ public class PdfReader implements PdfViewerPreferences {
 
         if (filter.equals(PdfName.STANDARD))
         {
-            //check by user password
-            decrypt.setupByUserPassword(documentID, password, oValue, pValue);
+            //check by owner password
+            decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue);
             if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
-                //check by owner password
-                decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue);
+                //check by user password
+                decrypt.setupByUserPassword(documentID, password, oValue, pValue);
                 if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
                     throw new IOException("Bad user password");
                 }
             }
+            else
+                ownerPasswordUsed = true;
         } else if (filter.equals(PdfName.PUBSEC)) {   
             decrypt.setupByEncryptionKey(encryptionKey, lengthValue);  
         }
@@ -3339,5 +3342,16 @@ public class PdfReader implements PdfViewerPreferences {
         if (p == null)
             return PdfSignatureAppearance.NOT_CERTIFIED;
         return p.intValue();
+    } 
+    
+    /**
+     * Checks if the document was opened with the owner password so that the end application
+     * can decide what level of access restrictions to apply. If the document is not encrypted
+     * it will return <CODE>true</CODE>.
+     * @return <CODE>true</CODE> if the document was opened with the owner password or if it's not encrypted,
+     * <CODE>false</CODE> if the document was opened with the user password
+     */
+    public boolean isOpenedWithFullPermissions() {
+        return !encrypted || ownerPasswordUsed;
     } 
 }
