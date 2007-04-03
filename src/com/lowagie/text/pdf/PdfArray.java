@@ -125,8 +125,6 @@ public class PdfArray extends PdfObject {
     
 /**
  * Returns the PDF representation of this <CODE>PdfArray</CODE>.
- *
- * @return		an array of <CODE>byte</CODE>s
  */
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
