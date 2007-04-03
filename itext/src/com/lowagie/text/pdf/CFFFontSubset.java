@@ -255,7 +255,6 @@ public class CFFFontSubset extends CFFFont {
 	/**
 	 * Read the FDSelect of the font and compute the array and its length
 	 * @param Font The index of the font being processed
-	 * @return The Processed FDSelect of the font
 	 */
 	protected void readFDSelect(int Font)
 	{

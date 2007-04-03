@@ -130,8 +130,6 @@ public class PdfDictionary extends PdfObject {
     
 /**
  * Returns the PDF representation of this <CODE>PdfDictionary</CODE>.
- *
- * @return		an array of <CODE>byte</CODE>
  */
     
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
