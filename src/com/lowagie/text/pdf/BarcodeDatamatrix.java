@@ -56,6 +56,7 @@ import java.awt.Color;
 import java.awt.image.MemoryImageSource;
 import java.util.Arrays;
 import java.io.UnsupportedEncodingException;
+import java.util.Hashtable;
 
 /**
  * A DataMatrix 2D barcode generator.
@@ -979,13 +980,22 @@ public class BarcodeDatamatrix {
         private int nrow;
         private int ncol;
         private short[] array;
+        private static final Hashtable cache = new Hashtable();
 
+        private Placement() {
+        }
+        
         static short[] doPlacement(int nrow, int ncol) {
+            Integer key = new Integer(nrow * 1000 + ncol);
+            short[] pc = (short[])cache.get(key);
+            if (pc != null)
+                return pc;
             Placement p = new Placement();
             p.nrow = nrow;
             p.ncol = ncol;
             p.array = new short[nrow * ncol];
             p.ecc200();
+            cache.put(key, p.array);
             return p.array;
         }
 
