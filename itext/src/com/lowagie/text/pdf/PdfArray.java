@@ -226,4 +226,77 @@ public class PdfArray extends PdfObject {
     public String toString() {
     	return arrayList.toString();
     }
+    
+    public PdfObject getAt( int idx ) {
+        return (PdfObject)arrayList.get(idx);
+    }
+    
+    public PdfObject getAtDirect( int idx ) {
+        return PdfReader.getPdfObject(getAt(idx));
+    }
+    
+    // more of the same like PdfDictionary. (MAS 2/17/06)
+    public PdfDictionary getAtDict(int idx) {
+        PdfDictionary dict = null;
+        PdfObject orig = getAtDirect(idx);
+        if (orig != null && orig.isDictionary())
+            dict = (PdfDictionary) orig;
+        return dict;
+    }
+    
+    public PdfArray getAtArray(int idx) {
+        PdfArray array = null;
+        PdfObject orig = getAtDirect(idx);
+        if (orig != null && orig.isArray())
+            array = (PdfArray) orig;
+        return array;
+    }
+    
+    public PdfStream getAtStream(int idx) {
+        PdfStream stream = null;
+        PdfObject orig = getAtDirect(idx);
+        if (orig != null && orig.isStream())
+            stream = (PdfStream) orig;
+        return stream;
+    }
+    
+    public PdfString getAtString(int idx) {
+        PdfString string = null;
+        PdfObject orig = getAtDirect(idx);
+        if (orig != null && orig.isString())
+            string = (PdfString) orig;
+        return string;
+    }
+    
+    public PdfNumber getAtNumber(int idx) {
+        PdfNumber number = null;
+        PdfObject orig = getAtDirect(idx);
+        if (orig != null && orig.isNumber())
+            number = (PdfNumber) orig;
+        return number;
+    }
+    
+    public PdfName getAtName(int idx) {
+        PdfName name = null;
+        PdfObject orig = getAtDirect(idx);
+        if (orig != null && orig.isName())
+            name = (PdfName) orig;
+        return name;
+    }
+    
+    public PdfBoolean getAtBoolean(int idx) {
+        PdfBoolean bool = null;
+        PdfObject orig = getAtDirect(idx);
+        if (orig != null && orig.isBoolean())
+            bool = (PdfBoolean) orig;
+        return bool;
+    }
+    
+    public PdfIndirectReference getAtIndirect(int idx) {
+        PdfIndirectReference ref = null;
+        PdfObject orig = getAt(idx); // not getDirect this time.
+        if (orig != null && orig.isIndirect())
+            ref = (PdfIndirectReference) orig;
+        return ref;
+    }
 }
