@@ -301,4 +301,87 @@ public class PdfDictionary extends PdfObject {
     public String toString() {
     	return "Dictionary of type: " + get(PdfName.TYPE);
     }
+    
+    /**
+     * This function behaves the same as 'get', but will never return an indirect reference,
+     * it will always look such references up and return the actual object.
+     * @param key 
+     * @return null, or a non-indirect object
+     */
+    public PdfObject getDirect(PdfName key) {
+        return PdfReader.getPdfObject(get(key));
+    }
+    
+    /**
+     * All the getAs functions will return either null, or the specified object type
+     * This function will automatically look up indirect references. There's one obvious
+     * exception, the one that will only return an indirect reference.  All direct objects
+     * come back as a null.
+     * Mark A Storer (2/17/06)
+     * @param key
+     * @return the appropriate object in its final type, or null
+     */
+    public PdfDictionary getAsDict(PdfName key) {
+        PdfDictionary dict = null;
+        PdfObject orig = getDirect(key);
+        if (orig != null && orig.isDictionary())
+            dict = (PdfDictionary) orig;
+        return dict;
+    }
+    
+    public PdfArray getAsArray(PdfName key) {
+        PdfArray array = null;
+        PdfObject orig = getDirect(key);
+        if (orig != null && orig.isArray())
+            array = (PdfArray) orig;
+        return array;
+    }
+    
+    public PdfStream getAsStream(PdfName key) {
+        PdfStream stream = null;
+        PdfObject orig = getDirect(key);
+        if (orig != null && orig.isStream())
+            stream = (PdfStream) orig;
+        return stream;
+    }
+    
+    public PdfString getAsString(PdfName key) {
+        PdfString string = null;
+        PdfObject orig = getDirect(key);
+        if (orig != null && orig.isString())
+            string = (PdfString) orig;
+        return string;
+    }
+    
+    public PdfNumber getAsNumber(PdfName key) {
+        PdfNumber number = null;
+        PdfObject orig = getDirect(key);
+        if (orig != null && orig.isNumber())
+            number = (PdfNumber) orig;
+        return number;
+    }
+    
+    public PdfName getAsName(PdfName key) {
+        PdfName name = null;
+        PdfObject orig = getDirect(key);
+        if (orig != null && orig.isName())
+            name = (PdfName) orig;
+        return name;
+    }
+    
+    public PdfBoolean getAsBoolean(PdfName key) {
+        PdfBoolean bool = null;
+        PdfObject orig = getDirect(key);
+        if (orig != null && orig.isBoolean())
+            bool = (PdfBoolean)orig;
+        return bool;
+    }
+    
+    public PdfIndirectReference getAsIndirect( PdfName key ) {
+        PdfIndirectReference ref = null;
+        PdfObject orig = get(key); // not getDirect this time.
+        if (orig != null && orig.isIndirect())
+            ref = (PdfIndirectReference) orig;
+        return ref;
+    }
 }
