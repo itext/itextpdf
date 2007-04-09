@@ -57,13 +57,24 @@ import com.lowagie.text.DocumentException;
  */
 public class Type3Font extends BaseFont {
     
-    private IntHashtable char2byte = new IntHashtable();
+	private boolean[] usedSlot;
     private IntHashtable widths3 = new IntHashtable();
     private HashMap char2glyph = new HashMap();
     private PdfWriter writer;
     private float llx = Float.NaN, lly, urx, ury;
     private PageResources pageResources = new PageResources();
     private boolean colorized;
+    
+    /**
+     * Creates a Type3 font.
+     * @param writer the writer
+     * @param chars an array of chars corresponding to the glyphs used (not used, prisent for compability only)
+     * @param colorized if <CODE>true</CODE> the font may specify color, if <CODE>false</CODE> no color commands are allowed
+     * and only images as masks can be used
+     */    
+    public Type3Font(PdfWriter writer, char[] chars, boolean colorized) {
+        this(writer, colorized);
+    }
     
     /**
      * Creates a Type3 font. This implementation assumes that the /FontMatrix is
@@ -75,7 +86,7 @@ public class Type3Font extends BaseFont {
      * Document document = new Document(PageSize.A4);
      * PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("type3.pdf"));
      * document.open();
-     * Type3Font t3 = new Type3Font(writer, new char[]{'a', 'b'}, false);
+     * Type3Font t3 = new Type3Font(writer, false);
      * PdfContentByte g = t3.defineGlyph('a', 1000, 0, 0, 750, 750);
      * g.rectangle(0, 0, 750, 750);
      * g.fill();
@@ -89,43 +100,19 @@ public class Type3Font extends BaseFont {
      * document.close();
      * </pre>
      * @param writer the writer
-     * @param chars an array of chars corresponding to the glyphs used
      * @param colorized if <CODE>true</CODE> the font may specify color, if <CODE>false</CODE> no color commands are allowed
      * and only images as masks can be used
      */    
-    public Type3Font(PdfWriter writer, char[] chars, boolean colorized) {
+    public Type3Font(PdfWriter writer, boolean colorized) {
         this.writer = writer;
         this.colorized = colorized;
         fontType = FONT_TYPE_T3;
-        if (chars.length == 0 || chars.length > 256)
-            throw new IllegalArgumentException("char array size must be > 0 and <= 256");
-        int count = 255;
-        boolean[] hits = new boolean[chars.length];
-        for (int k = 0; k < chars.length; ++k) {
-            char c = chars[k];
-            if (c >= 32 && c < 256) {
-                if (char2byte.containsKey(c))
-                    throw new IllegalArgumentException("duplicated char - " + (int)c + ", index " + k);
-                char2byte.put(c, c);
-                hits[k] = true;
-            }
-        }
-        for (int k = 0; k < hits.length; ++k) {
-            if (hits[k])
-                continue;
-            while (char2byte.containsKey(count)) {
-                --count;
-            }
-            char c = chars[k];
-            if (char2byte.containsKey(c))
-                throw new IllegalArgumentException("duplicated char - " + (int)c + ", index " + k);
-            char2byte.put(c, count--);
-        }
+        usedSlot = new boolean[256];
     }
     
     /**
-     * Defines a glyph.
-     * @param c the character to match this glyph. It must be one of those defined in the constructor
+     * Defines a glyph. If the character was already defined it will return the same content
+     * @param c the character to match this glyph.
      * @param wx the advance this character will have
      * @param llx the X lower left corner of the glyph bounding box. If the <CODE>colorize</CODE> option is
      * <CODE>true</CODE> the value is ignored
@@ -138,8 +125,9 @@ public class Type3Font extends BaseFont {
      * @return a content where the glyph can be defined
      */    
     public PdfContentByte defineGlyph(char c, float wx, float llx, float lly, float urx, float ury) {
-        if (!char2byte.containsKey(c))
+        if (c == 0 || c > 255)
             throw new IllegalArgumentException("The char " + (int)c + " doesn't belong in this Type3 font");
+        usedSlot[c] = true;
         Integer ck = new Integer((int)c);
         Type3Glyph glyph = (Type3Glyph)char2glyph.get(ck);
         if (glyph != null)
@@ -206,32 +194,38 @@ public class Type3Font extends BaseFont {
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object[] params) throws com.lowagie.text.DocumentException, java.io.IOException {
         if (this.writer != writer)
             throw new IllegalArgumentException("Type3 font used with the wrong PdfWriter");
-        if (char2byte.size() != widths3.size())
-            throw new DocumentException("Not all the glyphs in the Type3 font are defined");
-        IntHashtable inv = new IntHashtable();
-        for (Iterator it = char2byte.getEntryIterator(); it.hasNext();) {
-            IntHashtable.Entry entry = (IntHashtable.Entry)it.next();
-            inv.put(entry.getValue(), entry.getKey());
+        
+        // Get first & lastchar ...
+        int firstChar = 0;
+        while( firstChar < usedSlot.length && !usedSlot[firstChar] ) firstChar++;
+        
+        if ( firstChar == usedSlot.length ) {
+        	throw new DocumentException( "No glyphs defined for Type3 font" );
         }
-        int[] invOrd = inv.toOrderedKeys();
-        int firstChar = invOrd[0];
-        int lastChar = invOrd[invOrd.length - 1];
+        int lastChar = usedSlot.length - 1;
+        while( lastChar >= firstChar && !usedSlot[lastChar] ) lastChar--;
+        
         int[] widths = new int[lastChar - firstChar + 1];
-        for (int k = 0; k < widths.length; ++k) {
-            if (inv.containsKey(k + firstChar))
-                widths[k] = widths3.get(inv.get(k + firstChar));
+        int[] invOrd = new int[lastChar - firstChar + 1];
+        
+        int invOrdIndx = 0, w = 0;
+        for( int u = firstChar; u<=lastChar; u++, w++ ) {
+            if ( usedSlot[u] ) {
+                invOrd[invOrdIndx++] = u;
+                widths[w] = widths3.get(u);
+            }
         }
         PdfArray diffs = new PdfArray();
         PdfDictionary charprocs = new PdfDictionary();
         int last = -1;
-        for (int k = 0; k < invOrd.length; ++k) {
+        for (int k = 0; k < invOrdIndx; ++k) {
             int c = invOrd[k];
             if (c > last) {
                 last = c;
                 diffs.add(new PdfNumber(last));
             }
             ++last;
-            int c2 = inv.get(c);
+            int c2 = invOrd[k];
             String s = GlyphList.unicodeToName(c2);
             if (s == null)
                 s = "a" + c2;
@@ -262,14 +256,15 @@ public class Type3Font extends BaseFont {
         writer.addToBody(font, ref);
     }
     
+    
     byte[] convertToBytes(String text) {
         char[] cc = text.toCharArray();
         byte[] b = new byte[cc.length];
         int p = 0;
         for (int k = 0; k < cc.length; ++k) {
             char c = cc[k];
-            if (char2byte.containsKey(c))
-                b[p++] = (byte)char2byte.get(c);
+            if (charExists(c))
+                b[p++] = (byte)c;
         }
         if (b.length == p)
             return b;
@@ -297,7 +292,11 @@ public class Type3Font extends BaseFont {
     }
     
     public boolean charExists(char c) {
-        return char2byte.containsKey(c);
+        if ( c > 0 && c < 256 ) {
+            return( usedSlot[c] );
+        } else {
+            return( false );
+        }
     }
     
     public boolean setCharAdvance(char c, int advance) {
