@@ -174,7 +174,7 @@ public interface PdfViewerPreferences {
      * 			<li>PdfName.<b>CROPBOX</b>
      * 			<li>PdfName.<b>BLEEDBOX</b>
      * 			<li>PdfName.<b>TRIMBOX</b>
-     * 			<li>PdfName.<b>AREABOX</b>
+     * 			<li>PdfName.<b>ARTBOX</b>
      * 		</ul>
      * <li>In case the key is PdfName.<b>PRINTSCALING</b>, the value can be
      * 		<ul>
@@ -187,7 +187,7 @@ public interface PdfViewerPreferences {
      * 			<li>PdfName.<b>DUPLEXFLIPSHORTEDGE</b>
      * 			<li>PdfName.<b>DUPLEXFLIPLONGEDGE</b>
      * 		</ul>
-     * <li>In case the key is PdfName.<b>PickTrayBySize</b>, the value must be of type PdfBoolean.
+     * <li>In case the key is PdfName.<b>PICKTRAYBYPDFSIZE</b>, the value must be of type PdfBoolean.
      * <li>In case the key is PdfName.<b>PRINTPAGERANGE</b>, the value must be of type PdfArray.
      * <li>In case the key is PdfName.<b>NUMCOPIES</b>, the value must be of type PdfNumber.
      * <ul>
