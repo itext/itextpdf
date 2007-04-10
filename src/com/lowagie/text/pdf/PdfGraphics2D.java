@@ -753,7 +753,7 @@ public class PdfGraphics2D extends Graphics2D {
      * @see Graphics2D#getComposite()
      */
     public Composite getComposite() {
-        return null;
+        return composite;
     }
     
     /**
@@ -811,6 +811,7 @@ public class PdfGraphics2D extends Graphics2D {
         g2.followPath(new Area(new Rectangle2D.Float(0, 0, width, height)), CLIP);
         if (this.clip != null)
             g2.clip = new Area(this.clip);
+        g2.composite = composite;
         g2.stroke = stroke;
         g2.originalStroke = originalStroke;
         g2.strokeOne = (BasicStroke)g2.transformStroke(g2.strokeOne);
