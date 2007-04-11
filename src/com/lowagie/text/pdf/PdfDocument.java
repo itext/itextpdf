@@ -1615,7 +1615,7 @@ class PdfDocument extends Document {
     }
 
     Indentation indentation = new Indentation();
-    class Indentation {
+    public static class Indentation {
         /** Indentation to the left caused by a paragraph. */
     	float paragraph = 0;
         
