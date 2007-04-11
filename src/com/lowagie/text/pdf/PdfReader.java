@@ -3353,5 +3353,24 @@ public class PdfReader implements PdfViewerPreferences {
      */
     public boolean isOpenedWithFullPermissions() {
         return !encrypted || ownerPasswordUsed;
-    } 
+    }
+    
+    public int getCryptoMode() {
+    	if (decrypt == null) 
+    		return -1;
+    	else 
+    		return decrypt.getCryptoMode();
+    }
+    
+    public boolean isMetadataEncrypted() {
+    	if (decrypt == null) 
+    		return false; 
+    	else 
+    		return decrypt.isMetadataEncrypted();
+    }
+    
+    public byte[] computeUserPassword() {
+    	if (!encrypted || !ownerPasswordUsed) return null;
+    	return decrypt.computeUserPassword(password);
+    }
 }
