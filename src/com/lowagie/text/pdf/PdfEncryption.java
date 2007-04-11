@@ -552,10 +552,13 @@ public class PdfEncryption {
 	public byte[] computeUserPassword(byte[] ownerPassword) {
 		byte[] userPad = computeOwnerKey(ownerKey, padPassword(ownerPassword));
 		for (int i = 0; i < userPad.length; i++) {
+			boolean match = true;
 			for (int j = 0; j < userPad.length - i; j++) {
 				if (userPad[i + j] != pad[j])
-					continue;
+					match = false;
+					break;
 			}
+			if (!match) continue;
 			byte[] userPassword = new byte[i];
 			System.arraycopy(userPad, 0, userPassword, 0, i);
 			return userPassword;
