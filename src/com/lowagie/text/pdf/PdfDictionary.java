@@ -308,7 +308,7 @@ public class PdfDictionary extends PdfObject {
      * @param key 
      * @return null, or a non-indirect object
      */
-    public PdfObject getDirect(PdfName key) {
+    public PdfObject getDirectObject(PdfName key) {
         return PdfReader.getPdfObject(get(key));
     }
     
@@ -323,7 +323,7 @@ public class PdfDictionary extends PdfObject {
      */
     public PdfDictionary getAsDict(PdfName key) {
         PdfDictionary dict = null;
-        PdfObject orig = getDirect(key);
+        PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isDictionary())
             dict = (PdfDictionary) orig;
         return dict;
@@ -331,7 +331,7 @@ public class PdfDictionary extends PdfObject {
     
     public PdfArray getAsArray(PdfName key) {
         PdfArray array = null;
-        PdfObject orig = getDirect(key);
+        PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isArray())
             array = (PdfArray) orig;
         return array;
@@ -339,7 +339,7 @@ public class PdfDictionary extends PdfObject {
     
     public PdfStream getAsStream(PdfName key) {
         PdfStream stream = null;
-        PdfObject orig = getDirect(key);
+        PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isStream())
             stream = (PdfStream) orig;
         return stream;
@@ -347,7 +347,7 @@ public class PdfDictionary extends PdfObject {
     
     public PdfString getAsString(PdfName key) {
         PdfString string = null;
-        PdfObject orig = getDirect(key);
+        PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isString())
             string = (PdfString) orig;
         return string;
@@ -355,7 +355,7 @@ public class PdfDictionary extends PdfObject {
     
     public PdfNumber getAsNumber(PdfName key) {
         PdfNumber number = null;
-        PdfObject orig = getDirect(key);
+        PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isNumber())
             number = (PdfNumber) orig;
         return number;
@@ -363,7 +363,7 @@ public class PdfDictionary extends PdfObject {
     
     public PdfName getAsName(PdfName key) {
         PdfName name = null;
-        PdfObject orig = getDirect(key);
+        PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isName())
             name = (PdfName) orig;
         return name;
@@ -371,13 +371,13 @@ public class PdfDictionary extends PdfObject {
     
     public PdfBoolean getAsBoolean(PdfName key) {
         PdfBoolean bool = null;
-        PdfObject orig = getDirect(key);
+        PdfObject orig = getDirectObject(key);
         if (orig != null && orig.isBoolean())
             bool = (PdfBoolean)orig;
         return bool;
     }
     
-    public PdfIndirectReference getAsIndirect( PdfName key ) {
+    public PdfIndirectReference getAsIndirectObject( PdfName key ) {
         PdfIndirectReference ref = null;
         PdfObject orig = get(key); // not getDirect this time.
         if (orig != null && orig.isIndirect())
