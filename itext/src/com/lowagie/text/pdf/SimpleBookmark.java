@@ -730,7 +730,7 @@ public class SimpleBookmark implements SimpleXMLDocHandler {
                 return;
             }
             else
-                throw new RuntimeException("Root element is not Bookmark.");
+                throw new RuntimeException("Root element is not Bookmark: " + tag);
         }
         if (!tag.equals("Title"))
             throw new RuntimeException("Tag " + tag + " not allowed.");

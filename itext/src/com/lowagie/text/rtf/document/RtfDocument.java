@@ -215,6 +215,9 @@ public class RtfDocument extends RtfElement {
      * @return The converted String
      */
     public String filterSpecialChar(String str, boolean useHex, boolean softLineBreaks) {
+        if(str == null) {
+            return "";
+        }
         int length = str.length();
         int z = (int) 'z';
         StringBuffer ret = new StringBuffer(length);

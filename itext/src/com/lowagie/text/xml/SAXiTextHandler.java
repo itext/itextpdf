@@ -359,43 +359,9 @@ public class SAXiTextHandler extends DefaultHandler {
         if (Image.isTag(name)) {
             try {
                 Image img = Image.getInstance(attributes);
-                Object current;
                 try {
-                    // if there is an element on the stack...
-                    current = stack.pop();
-                    // ...and it's a Chapter or a Section, the Image can be
-                    // added directly
-                    if (current instanceof Chapter
-                            || current instanceof Section
-                            || current instanceof Cell) {
-                        ((TextElementArray) current).add(img);
-                        stack.push(current);
-                        return;
-                    }
-                    // ...if not, the Image is wrapped in a Chunk before it's
-                    // added
-                    else {
-                        Stack newStack = new Stack();
-                        try {
-                            while (!(current instanceof Chapter
-                                    || current instanceof Section || current instanceof Cell)) {
-                                newStack.push(current);
-                                if (current instanceof Anchor) {
-                                    img.setAnnotation(new Annotation(0, 0, 0,
-                                            0, ((Anchor) current).reference()));
-                                }
-                                current = stack.pop();
-                            }
-                            ((TextElementArray) current).add(img);
-                            stack.push(current);
-                        } catch (EmptyStackException ese) {
-                            document.add(img);
-                        }
-                        while (!newStack.empty()) {
-                            stack.push(newStack.pop());
-                        }
-                        return;
-                    }
+                	addImage(img);
+                    return;
                 } catch (EmptyStackException ese) {
                     // if there is no element on the stack, the Image is added
                     // to the document
@@ -536,6 +502,39 @@ public class SAXiTextHandler extends DefaultHandler {
 
     }
 
+    protected void addImage(Image img) throws EmptyStackException {
+        // if there is an element on the stack...
+        Object current = stack.pop();
+        // ...and it's a Chapter or a Section, the Image can be
+        // added directly
+        if (current instanceof Chapter
+                || current instanceof Section
+                || current instanceof Cell) {
+            ((TextElementArray) current).add(img);
+            stack.push(current);
+            return;
+        }
+        // ...if not, we need to to a lot of stuff
+        else {
+            Stack newStack = new Stack();
+            while (!(current instanceof Chapter
+                    || current instanceof Section || current instanceof Cell)) {
+                newStack.push(current);
+                if (current instanceof Anchor) {
+                    img.setAnnotation(new Annotation(0, 0, 0,
+                            0, ((Anchor) current).reference()));
+                }
+                current = stack.pop();
+            }
+            ((TextElementArray) current).add(img);
+            stack.push(current);
+            while (!newStack.empty()) {
+                stack.push(newStack.pop());
+            }
+            return;
+        }
+    }
+    
     /**
      * This method gets called when ignorable white space encountered.
      * 

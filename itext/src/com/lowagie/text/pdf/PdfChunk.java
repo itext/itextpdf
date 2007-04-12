@@ -396,7 +396,7 @@ public class PdfChunk implements SplitCharacter{
         }
         if (lastSpace > splitPosition && splitCharacter.isSplitCharacter(0, 0, 1, singleSpace, null))
             splitPosition = lastSpace;
-        if (hyphenationEvent != null && lastSpace < currentPosition) {
+        if (hyphenationEvent != null && lastSpace >= 0 && lastSpace < currentPosition) {
             int wordIdx = getWord(value, lastSpace);
             if (wordIdx > lastSpace) {
                 String pre = hyphenationEvent.getHyphenatedWordPre(value.substring(lastSpace, wordIdx), font.getFont(), font.size(), width - lastSpaceWidth);

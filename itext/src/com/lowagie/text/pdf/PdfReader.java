@@ -103,7 +103,6 @@ public class PdfReader implements PdfViewerPreferences {
     private ArrayList xrefObj;
     PdfDictionary rootPages;
     protected PdfDictionary trailer;
-    //protected ArrayList pages;
     protected PdfDictionary catalog;
     protected PageRefs pageRefs;
     protected PRAcroForm acroForm = null;
@@ -120,7 +119,8 @@ public class PdfReader implements PdfViewerPreferences {
     protected byte password[] = null; //added by ujihara for decryption
     protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
     protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
-    protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption    
+    protected String certificateKeyProvider = null; //added by Aiken Sam for certificate decryption
+    protected boolean ownerPasswordUsed;
     protected ArrayList strings = new ArrayList();
     protected boolean sharedStreams = true;
     protected boolean consolidateNamedDestinations = false;
@@ -288,6 +288,7 @@ public class PdfReader implements PdfViewerPreferences {
         this.objStmToOffset = reader.objStmToOffset;
         this.xref = reader.xref;
         this.cryptoRef = (PRIndirectReference)duplicatePdfObject(reader.cryptoRef, this);
+        this.ownerPasswordUsed = reader.ownerPasswordUsed;
     }
 
     /** Gets a new file instance of the original PDF
@@ -747,15 +748,17 @@ public class PdfReader implements PdfViewerPreferences {
 
         if (filter.equals(PdfName.STANDARD))
         {
-            //check by user password
-            decrypt.setupByUserPassword(documentID, password, oValue, pValue);
+            //check by owner password
+            decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue);
             if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
-                //check by owner password
-                decrypt.setupByOwnerPassword(documentID, password, uValue, oValue, pValue);
+                //check by user password
+                decrypt.setupByUserPassword(documentID, password, oValue, pValue);
                 if (!equalsArray(uValue, decrypt.userKey, (rValue == 3 || rValue == 4) ? 16 : 32)) {
                     throw new IOException("Bad user password");
                 }
             }
+            else
+                ownerPasswordUsed = true;
         } else if (filter.equals(PdfName.PUBSEC)) {   
             decrypt.setupByEncryptionKey(encryptionKey, lengthValue);  
         }
@@ -3307,5 +3310,67 @@ public class PdfReader implements PdfViewerPreferences {
         perms.remove(PdfName.UR3);
         if (perms.size() == 0)
             catalog.remove(PdfName.PERMS);
+    }
+    
+    /**
+     * Gets the certification level for this document. The return values can be <code>PdfSignatureAppearance.NOT_CERTIFIED</code>, 
+     * <code>PdfSignatureAppearance.CERTIFIED_NO_CHANGES_ALLOWED</code>,
+     * <code>PdfSignatureAppearance.CERTIFIED_FORM_FILLING</code> and
+     * <code>PdfSignatureAppearance.CERTIFIED_FORM_FILLING_AND_ANNOTATIONS</code>.
+     * <p>
+     * No signature validation is made, use the methods availabe for that in <CODE>AcroFields</CODE>.
+     * </p>
+     * @return gets the certification level for this document
+     */
+    public int getCertificationLevel() {
+        PdfDictionary dic = (PdfDictionary)getPdfObject(catalog.get(PdfName.PERMS));
+        if (dic == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        dic = (PdfDictionary)getPdfObject(dic.get(PdfName.DOCMDP));
+        if (dic == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        PdfArray arr = (PdfArray)getPdfObject(dic.get(PdfName.REFERENCE));
+        if (arr == null || arr.size() == 0)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        dic = (PdfDictionary)getPdfObject((PdfObject)(arr.getArrayList().get(0)));
+        if (dic == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        dic = (PdfDictionary)getPdfObject(dic.get(PdfName.TRANSFORMPARAMS));
+        if (dic == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        PdfNumber p = (PdfNumber)getPdfObject(dic.get(PdfName.P));
+        if (p == null)
+            return PdfSignatureAppearance.NOT_CERTIFIED;
+        return p.intValue();
+    } 
+    
+    /**
+     * Checks if the document was opened with the owner password so that the end application
+     * can decide what level of access restrictions to apply. If the document is not encrypted
+     * it will return <CODE>true</CODE>.
+     * @return <CODE>true</CODE> if the document was opened with the owner password or if it's not encrypted,
+     * <CODE>false</CODE> if the document was opened with the user password
+     */
+    public boolean isOpenedWithFullPermissions() {
+        return !encrypted || ownerPasswordUsed;
+    }
+    
+    public int getCryptoMode() {
+    	if (decrypt == null) 
+    		return -1;
+    	else 
+    		return decrypt.getCryptoMode();
+    }
+    
+    public boolean isMetadataEncrypted() {
+    	if (decrypt == null) 
+    		return false; 
+    	else 
+    		return decrypt.isMetadataEncrypted();
+    }
+    
+    public byte[] computeUserPassword() {
+    	if (!encrypted || !ownerPasswordUsed) return null;
+    	return decrypt.computeUserPassword(password);
     }
 }

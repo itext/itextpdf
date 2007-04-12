@@ -104,8 +104,14 @@ public class ChainedProperties {
                     int inc = Integer.parseInt(value.startsWith("+") ? value.substring(1) : value);
                     s += inc;
                 }
-                else
-                    s = Integer.parseInt(value) - 1;
+                else {
+                	try {
+                		s = Integer.parseInt(value) - 1;
+                	}
+                	catch(NumberFormatException nfe) {
+                		s = 0;
+                	}
+                }
                 if (s < 0)
                     s = 0;
                 else if (s >= fontSizes.length)

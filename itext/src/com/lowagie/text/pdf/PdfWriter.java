@@ -878,6 +878,8 @@ public class PdfWriter extends DocWriter implements
             catalog.put(PdfName.STRUCTTREEROOT, structureTreeRoot.getReference());
             PdfDictionary mi = new PdfDictionary();
             mi.put(PdfName.MARKED, PdfBoolean.PDFTRUE);
+            if (userProperties)
+                mi.put(PdfName.USERPROPERTIES, PdfBoolean.PDFTRUE);
             catalog.put(PdfName.MARKINFO, mi);
         }
         // [F13] OCG
@@ -2372,7 +2374,7 @@ public class PdfWriter extends DocWriter implements
  	
     /**
      * A group attributes dictionary specifying the attributes
-     * of the page’s page group for use in the transparent
+     * of the page's page group for use in the transparent
      * imaging model
      */
     protected PdfDictionary group;
@@ -2861,5 +2863,26 @@ public class PdfWriter extends DocWriter implements
      */
     public boolean fitsPage(PdfPTable table) {
         return pdf.fitsPage(table, 0);
+    }
+
+    /**
+     * A flag indicating the presence of structure elements that contain user properties attributes.
+     */
+    private boolean userProperties;
+
+    /**
+     * Gets the flag indicating the presence of structure elements that contain user properties attributes.
+     * @return the user properties flag
+     */
+    public boolean isUserProperties() {
+        return this.userProperties;
+    }
+
+    /**
+     * Sets the flag indicating the presence of structure elements that contain user properties attributes.
+     * @param userProperties the user properties flag
+     */
+    public void setUserProperties(boolean userProperties) {
+        this.userProperties = userProperties;
     }
 }

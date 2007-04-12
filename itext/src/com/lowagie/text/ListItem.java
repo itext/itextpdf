@@ -298,7 +298,6 @@ private static final long serialVersionUID = 1970670787169329006L;
         
         public void setIndentationLeft(float indentation, boolean autoindent) {
             if (autoindent) {
-        System.err.println(listSymbol().toString() + " " +  listSymbol().getWidthPoint());
             	setIndentationLeft(listSymbol().getWidthPoint());
             }
             else {
