@@ -47,63 +47,50 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-
 package com.lowagie.text;
 
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Set;
+
 /**
- * This is an <CODE>Element</CODE> that contains
- * some userdefined meta information about the document.
- * <P>
- * <B>Example:</B>
- * <BLOCKQUOTE><PRE>
- * <STRONG>Header header = new Header("inspired by", "William Shakespeare");</STRONG>
- * </PRE></BLOCKQUOTE>
- *
- * @see		Element
- * @see		Meta
+ * A collection of convenience methods that were present in many different iText
+ * classes.
  */
 
-public class Header extends Meta {
-    
-    // membervariables
-    
-	/** This is the content of this chunk of text. */
-    private StringBuffer name;
-    
-    // constructors
-    
-    /**
-     * Constructs a <CODE>Meta</CODE>.
-     *
-     * @param	name		the name of the meta-information
-     * @param	content		the content
-     */
-    
-    public Header(String name, String content) {
-        super(Element.HEADER, content);
-        this.name = new StringBuffer(name);
-    }
-    
-    // methods to retrieve information
+public class Utilities {
 
 	/**
-     * Returns the name of the meta information.
-     *
-     * @return	a <CODE>String</CODE>
-     */
-    public String getName() {
-        return name.toString();
-    }
-    
-    // deprecated
-    
-    /**
-	 * Returns the name of the meta information.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 * @deprecated Use {@link #getName()} instead
+	 * Gets the keys of a Hashtable
+	 * 
+	 * @param table
+	 *            a Hashtable
+	 * @return the keyset of a Hashtable (or an empty set if table is null)
 	 */
-	public String name() {
-		return getName();
+	public static Set getKeySet(Hashtable table) {
+		return (table == null) ? Collections.EMPTY_SET : table.keySet();
 	}
+
+	/**
+	 * Utility method to extend an array.
+	 * 
+	 * @param original
+	 *            the original array or <CODE>null</CODE>
+	 * @param item
+	 *            the item to be added to the array
+	 * @return a new array with the item appended
+	 */
+	public static Object[][] addToArray(Object original[][], Object item[]) {
+		if (original == null) {
+			original = new Object[1][];
+			original[0] = item;
+			return original;
+		} else {
+			Object original2[][] = new Object[original.length + 1][];
+			System.arraycopy(original, 0, original2, 0, original.length);
+			original2[original.length] = item;
+			return original2;
+		}
+	}
+
 }

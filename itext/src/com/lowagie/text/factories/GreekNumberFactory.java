@@ -2,7 +2,7 @@
  * $Id$
  * $Name$
  *
- * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -47,63 +47,84 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
+package com.lowagie.text.factories;
 
-package com.lowagie.text;
+import com.lowagie.text.SpecialSymbol;
 
 /**
- * This is an <CODE>Element</CODE> that contains
- * some userdefined meta information about the document.
- * <P>
- * <B>Example:</B>
- * <BLOCKQUOTE><PRE>
- * <STRONG>Header header = new Header("inspired by", "William Shakespeare");</STRONG>
- * </PRE></BLOCKQUOTE>
- *
- * @see		Element
- * @see		Meta
+ * This class can produce String combinations representing a number built with
+ * Greek letters (from alpha to omega, then alpha alpha, alpha beta, alpha gamma).
+ * We are aware of the fact that the original Greek numbering is different;
+ * See http://www.cogsci.indiana.edu/farg/harry/lan/grknum.htm#ancient
+ * but this isn't implemented yet; the main reason being the fact that we
+ * need a font that has the obsolete Greek characters qoppa and sampi.
  */
-
-public class Header extends Meta {
-    
-    // membervariables
-    
-	/** This is the content of this chunk of text. */
-    private StringBuffer name;
-    
-    // constructors
-    
-    /**
-     * Constructs a <CODE>Meta</CODE>.
-     *
-     * @param	name		the name of the meta-information
-     * @param	content		the content
-     */
-    
-    public Header(String name, String content) {
-        super(Element.HEADER, content);
-        this.name = new StringBuffer(name);
-    }
-    
-    // methods to retrieve information
-
-	/**
-     * Returns the name of the meta information.
-     *
-     * @return	a <CODE>String</CODE>
-     */
-    public String getName() {
-        return name.toString();
-    }
-    
-    // deprecated
-    
-    /**
-	 * Returns the name of the meta information.
-	 *
-	 * @return	a <CODE>String</CODE>
-	 * @deprecated Use {@link #getName()} instead
+public class GreekNumberFactory {
+	/** 
+	 * Changes an int into a lower case Greek letter combination.
+	 * @param index the original number
+	 * @return the letter combination
 	 */
-	public String name() {
-		return getName();
+	public static final String getString(int index) {
+		return getString(index, true);
+	}
+	
+	/** 
+	 * Changes an int into a lower case Greek letter combination.
+	 * @param index the original number
+	 * @return the letter combination
+	 */
+	public static final String getLowerCaseString(int index) {
+		return getString(index);		
+	}
+	
+	/** 
+	 * Changes an int into a upper case Greek letter combination.
+	 * @param index the original number
+	 * @return the letter combination
+	 */
+	public static final String getUpperCaseString(int index) {
+		return getString(index).toUpperCase();		
+	}
+
+	/** 
+	 * Changes an int into a Greek letter combination.
+	 * @param index the original number
+	 * @return the letter combination
+	 */
+	public static final String getString(int index, boolean lowercase) {
+		if (index < 1) return "";
+	    index--;
+	    	
+	    int bytes = 1;
+	    int start = 0;
+	    int symbols = 24;  
+	   	while(index >= symbols + start) {
+	   		bytes++;
+	   	    start += symbols;
+	   		symbols *= 24;
+	   	}
+	   	      
+	   	int c = index - start;
+	   	char[] value = new char[bytes];
+	   	while(bytes > 0) {
+	   		bytes--;
+	   		value[bytes] = (char)(c % 24);
+	   		if (value[bytes] > 16) value[bytes]++;
+	   		value[bytes] += (lowercase ? 945 : 913);
+	   		value[bytes] = SpecialSymbol.getCorrespondingSymbol(value[bytes]);
+	   		c /= 24;
+	   	}
+	   	
+	   	return String.valueOf(value);
+	}
+	
+	/**
+	 * Test this class using this main method.
+	 */
+	public static void main(String[] args) {
+		for (int i = 1; i < 1000; i++) {
+			System.out.println(getString(i));
+		}
 	}
 }

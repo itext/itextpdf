@@ -88,7 +88,7 @@ public class RtfAnchor extends RtfField {
      */
     public RtfAnchor(RtfDocument doc, Anchor anchor) {
         super(doc);
-        this.url = anchor.reference();
+        this.url = anchor.getReference();
         this.content = new RtfPhrase(doc, anchor);
     }
     

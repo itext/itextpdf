@@ -192,7 +192,7 @@ public class SpecialSymbol {
             case 961:
                 return 'r'; // rho
             case 962:
-                return 's'; // sigma
+                return 'V'; // sigma
             case 963:
                 return 's'; // sigma
             case 964:

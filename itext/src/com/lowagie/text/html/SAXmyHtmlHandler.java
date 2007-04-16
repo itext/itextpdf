@@ -235,7 +235,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
     public void endElement(String uri, String lname, String name) {
         // System.err.println("End: " + name);
     	name = name.toLowerCase();
-        if (Paragraph.isTag(name)) {
+        if (ElementTags.PARAGRAPH.equals(name)) {
             try {
                 document.add((Element) stack.pop());
                 return;
@@ -249,7 +249,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         }
         if (((HtmlTagMap) myTags).isTitle(name)) {
             if (currentChunk != null) {
-                bodyAttributes.put(ElementTags.TITLE, currentChunk.content());
+                bodyAttributes.put(ElementTags.TITLE, currentChunk.getContent());
             }
             return;
         }

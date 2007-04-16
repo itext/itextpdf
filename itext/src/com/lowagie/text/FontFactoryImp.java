@@ -237,14 +237,14 @@ public class FontFactoryImp {
         float size = Font.UNDEFINED;
         int style = Font.NORMAL;
         Color color = null;
-        String value = (String) attributes.remove(Markup.HTML_ATTR_STYLE);
+        String value = attributes.getProperty(Markup.HTML_ATTR_STYLE);
         if (value != null && value.length() > 0) {
             Properties styleAttributes = Markup.parseAttributes(value);
             if (styleAttributes.size() == 0) {
                 attributes.put(Markup.HTML_ATTR_STYLE, value);
             }
             else {
-                fontname = (String)styleAttributes.remove(Markup.CSS_KEY_FONTFAMILY);
+                fontname = styleAttributes.getProperty(Markup.CSS_KEY_FONTFAMILY);
                 if (fontname != null) {
                     String tmp;
                     while (fontname.indexOf(',') != -1) {
@@ -257,16 +257,16 @@ public class FontFactoryImp {
                         }
                     }
                 }
-                if ((value = (String)styleAttributes.remove(Markup.CSS_KEY_FONTSIZE)) != null) {
+                if ((value = styleAttributes.getProperty(Markup.CSS_KEY_FONTSIZE)) != null) {
                     size = Markup.parseLength(value);
                 }
-                if ((value = (String)styleAttributes.remove(Markup.CSS_KEY_FONTWEIGHT)) != null) {
+                if ((value = styleAttributes.getProperty(Markup.CSS_KEY_FONTWEIGHT)) != null) {
                     style |= Font.getStyleValue(value);
                 }
-                if ((value = (String)styleAttributes.remove(Markup.CSS_KEY_FONTSTYLE)) != null) {
+                if ((value = styleAttributes.getProperty(Markup.CSS_KEY_FONTSTYLE)) != null) {
                     style |= Font.getStyleValue(value);
                 }
-                if ((value = (String)styleAttributes.remove(Markup.CSS_KEY_COLOR)) != null) {
+                if ((value = styleAttributes.getProperty(Markup.CSS_KEY_COLOR)) != null) {
                     color = Markup.decodeColor(value);
                 }
                 attributes.putAll(styleAttributes);
@@ -276,27 +276,27 @@ public class FontFactoryImp {
                 }
             }
         }
-        if ((value = (String)attributes.remove(ElementTags.ENCODING)) != null) {
+        if ((value = attributes.getProperty(ElementTags.ENCODING)) != null) {
             encoding = value;
         }
-        if ("true".equals(attributes.remove(ElementTags.EMBEDDED))) {
+        if ("true".equals(attributes.getProperty(ElementTags.EMBEDDED))) {
             embedded = true;
         }
-        if ((value = (String)attributes.remove(ElementTags.FONT)) != null) {
+        if ((value = attributes.getProperty(ElementTags.FONT)) != null) {
             fontname = value;
         }
-        if ((value = (String)attributes.remove(ElementTags.SIZE)) != null) {
+        if ((value = attributes.getProperty(ElementTags.SIZE)) != null) {
             size = Float.parseFloat(value + "f");
         }
-        if ((value = (String)attributes.remove(Markup.HTML_ATTR_STYLE)) != null) {
+        if ((value = attributes.getProperty(Markup.HTML_ATTR_STYLE)) != null) {
             style |= Font.getStyleValue(value);
         }
-        if ((value = (String)attributes.remove(ElementTags.STYLE)) != null) {
+        if ((value = attributes.getProperty(ElementTags.STYLE)) != null) {
             style |= Font.getStyleValue(value);
         }
-        String r = (String)attributes.remove(ElementTags.RED);
-        String g = (String)attributes.remove(ElementTags.GREEN);
-        String b = (String)attributes.remove(ElementTags.BLUE);
+        String r = attributes.getProperty(ElementTags.RED);
+        String g = attributes.getProperty(ElementTags.GREEN);
+        String b = attributes.getProperty(ElementTags.BLUE);
         if (r != null || g != null || b != null) {
             int red = 0;
             int green = 0;
@@ -306,7 +306,7 @@ public class FontFactoryImp {
             if (b != null) blue = Integer.parseInt(b);
             color = new Color(red, green, blue);
         }
-        else if ((value = (String)attributes.remove(ElementTags.COLOR)) != null) {
+        else if ((value = attributes.getProperty(ElementTags.COLOR)) != null) {
             color = Markup.decodeColor(value);
         }
         if (fontname == null) {
@@ -635,7 +635,7 @@ public class FontFactoryImp {
  */
     
     public Set getRegisteredFonts() {
-        return Chunk.getKeySet(trueTypeFonts);
+        return Utilities.getKeySet(trueTypeFonts);
     }
     
 /**
@@ -644,7 +644,7 @@ public class FontFactoryImp {
  */
     
     public Set getRegisteredFamilies() {
-        return Chunk.getKeySet(fontFamilies);
+        return Utilities.getKeySet(fontFamilies);
     }
     
 /**

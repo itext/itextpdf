@@ -1100,12 +1100,12 @@ public class ColumnText {
                     if (compositeColumn == null) {
                         compositeColumn = new ColumnText(canvas);
                         compositeColumn.setUseAscender(firstPass ? useAscender : false);
-                        compositeColumn.setAlignment(para.alignment());
-                        compositeColumn.setIndent(para.indentationLeft() + para.getFirstLineIndent());
+                        compositeColumn.setAlignment(para.getAlignment());
+                        compositeColumn.setIndent(para.getIndentationLeft() + para.getFirstLineIndent());
                         compositeColumn.setExtraParagraphSpace(para.getExtraParagraphSpace());
-                        compositeColumn.setFollowingIndent(para.indentationLeft());
-                        compositeColumn.setRightIndent(para.indentationRight());
-                        compositeColumn.setLeading(para.leading(), para.getMultipliedLeading());
+                        compositeColumn.setFollowingIndent(para.getIndentationLeft());
+                        compositeColumn.setRightIndent(para.getIndentationRight());
+                        compositeColumn.setLeading(para.getLeading(), para.getMultipliedLeading());
                         compositeColumn.setRunDirection(runDirection);
                         compositeColumn.setArabicOptions(arabicOptions);
                         compositeColumn.setSpaceCharRatio(spaceCharRatio);
@@ -1154,7 +1154,7 @@ public class ColumnText {
                 com.lowagie.text.List list = (com.lowagie.text.List)element;
                 ArrayList items = list.getItems();
                 ListItem item = null;
-                float listIndentation = list.indentationLeft();
+                float listIndentation = list.getIndentationLeft();
                 int count = 0;
                 Stack stack = new Stack();
                 for (int k = 0; k < items.size(); ++k) {
@@ -1170,7 +1170,7 @@ public class ColumnText {
                         stack.push(new Object[]{list, new Integer(k), new Float(listIndentation)});
                         list = (com.lowagie.text.List)obj;
                         items = list.getItems();
-                        listIndentation += list.indentationLeft();
+                        listIndentation += list.getIndentationLeft();
                         k = -1;
                         continue;
                     }
@@ -1196,12 +1196,12 @@ public class ColumnText {
                         }
                         compositeColumn = new ColumnText(canvas);
                         compositeColumn.setUseAscender(firstPass ? useAscender : false);
-                        compositeColumn.setAlignment(item.alignment());
-                        compositeColumn.setIndent(item.indentationLeft() + listIndentation + item.getFirstLineIndent());
+                        compositeColumn.setAlignment(item.getAlignment());
+                        compositeColumn.setIndent(item.getIndentationLeft() + listIndentation + item.getFirstLineIndent());
                         compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
                         compositeColumn.setFollowingIndent(compositeColumn.getIndent());
-                        compositeColumn.setRightIndent(item.indentationRight() + list.indentationRight());
-                        compositeColumn.setLeading(item.leading(), item.getMultipliedLeading());
+                        compositeColumn.setRightIndent(item.getIndentationRight() + list.getIndentationRight());
+                        compositeColumn.setLeading(item.getLeading(), item.getMultipliedLeading());
                         compositeColumn.setRunDirection(runDirection);
                         compositeColumn.setArabicOptions(arabicOptions);
                         compositeColumn.setSpaceCharRatio(spaceCharRatio);
@@ -1239,7 +1239,7 @@ public class ColumnText {
                 descender = compositeColumn.descender;
                 if (!Float.isNaN(compositeColumn.firstLineY) && !compositeColumn.firstLineYDone) {
                     if (!simulate)
-                        showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.listSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
+                        showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
                     compositeColumn.firstLineYDone = true;
                 }
                 if ((status & NO_MORE_TEXT) != 0) {

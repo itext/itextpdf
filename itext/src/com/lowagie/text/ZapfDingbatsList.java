@@ -51,8 +51,7 @@ package com.lowagie.text;
  * A special-version of <CODE>LIST</CODE> whitch use zapfdingbats-letters.
  * 
  * @see com.lowagie.text.List
- * @version 2003-06-22
- * @author Michael Niedermair
+ * @author Michael Niedermair and Bruno Lowagie
  */
 
 public class ZapfDingbatsList extends List {
@@ -66,12 +65,24 @@ public class ZapfDingbatsList extends List {
 	 * Creates a ZapfDingbatsList
 	 * 
 	 * @param zn a char-number
+	 */
+	public ZapfDingbatsList(int zn) {
+		super(true);
+		this.zn = zn;
+		float fontsize = symbol.getFont().size();
+		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
+	}
+
+	/**
+	 * Creates a ZapfDingbatsList
+	 * 
+	 * @param zn a char-number
 	 * @param symbolIndent	indent
 	 */
 	public ZapfDingbatsList(int zn, int symbolIndent) {
 		super(true, symbolIndent);
 		this.zn = zn;
-		float fontsize = symbol.font().size();
+		float fontsize = symbol.getFont().size();
 		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
 	}
 
@@ -101,14 +112,15 @@ public class ZapfDingbatsList extends List {
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
-			Chunk chunk = new Chunk((char)zn, symbol.font());
+			Chunk chunk = new Chunk((char)zn, symbol.getFont());
+			chunk.append(" ");
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);
 			list.add(item);
 		} else if (o instanceof List) {
 			List nested = (List) o;
-			nested.setIndentationLeft(nested.indentationLeft() + symbolIndent);
+			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
 			first--;
 			return list.add(nested);
 		} else if (o instanceof String) {

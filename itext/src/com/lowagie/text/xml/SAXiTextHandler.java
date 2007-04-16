@@ -80,12 +80,12 @@ import com.lowagie.text.ListItem;
 import com.lowagie.text.Meta;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Row;
 import com.lowagie.text.Section;
 import com.lowagie.text.Table;
 import com.lowagie.text.TextElementArray;
+import com.lowagie.text.factories.ElementFactory;
 import com.lowagie.text.html.HtmlTagMap;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.xml.simpleparser.EntitiesToSymbol;
@@ -253,8 +253,8 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // chunks
-        if (Chunk.isTag(name)) {
-            currentChunk = new Chunk(attributes);
+        if (ElementTags.CHUNK.equals(name)) {
+            currentChunk = ElementFactory.getChunk(attributes);
             if (bf != null) {
             	currentChunk.setFont(new Font(this.bf));
             }
@@ -266,7 +266,7 @@ public class SAXiTextHandler extends DefaultHandler {
             Font f = new Font();
             if (currentChunk != null) {
                 handleEndingTags(ElementTags.CHUNK);
-                f = currentChunk.font();
+                f = currentChunk.getFont();
             }
             currentChunk = EntitiesToSymbol.get(attributes.getProperty(ElementTags.ID),
                     f);
@@ -274,31 +274,31 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // phrases
-        if (Phrase.isTag(name)) {
-            stack.push(new Phrase(attributes));
+        if (ElementTags.PHRASE.equals(name)) {
+            stack.push(ElementFactory.getPhrase(attributes));
             return;
         }
 
         // anchors
-        if (Anchor.isTag(name)) {
-            stack.push(new Anchor(attributes));
+        if (ElementTags.ANCHOR.equals(name)) {
+            stack.push(ElementFactory.getAnchor(attributes));
             return;
         }
 
         // paragraphs and titles
-        if (Paragraph.isTag(name) || Section.isTitle(name)) {
-            stack.push(new Paragraph(attributes));
+        if (ElementTags.PARAGRAPH.equals(name) || Section.isTitle(name)) {
+            stack.push(ElementFactory.getParagraph(attributes));
             return;
         }
 
         // lists
-        if (List.isTag(name)) {
-            stack.push(new List(attributes));
+        if (ElementTags.LIST.equals(name)) {
+            stack.push(ElementFactory.getList(attributes));
             return;
         }
-
+        
         // listitems
-        if (ListItem.isTag(name)) {
+        if (ElementTags.LISTITEM.equals(name)) {
             stack.push(new ListItem(attributes));
             return;
         }
@@ -522,7 +522,7 @@ public class SAXiTextHandler extends DefaultHandler {
                 newStack.push(current);
                 if (current instanceof Anchor) {
                     img.setAnnotation(new Annotation(0, 0, 0,
-                            0, ((Anchor) current).reference()));
+                            0, ((Anchor) current).getReference()));
                 }
                 current = stack.pop();
             }
@@ -688,13 +688,13 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // chunks
-            if (Chunk.isTag(name)) {
+            if (ElementTags.CHUNK.equals(name)) {
                 return;
             }
 
             // phrases, anchors, lists, tables
-            if (Phrase.isTag(name) || Anchor.isTag(name) || List.isTag(name)
-                    || Paragraph.isTag(name)) {
+            if (ElementTags.PHRASE.equals(name) || ElementTags.ANCHOR.equals(name) || ElementTags.LIST.equals(name)
+                    || ElementTags.PARAGRAPH.equals(name)) {
                 Element current = (Element) stack.pop();
                 try {
                     TextElementArray previous = (TextElementArray) stack.pop();
@@ -707,7 +707,7 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // listitems
-            if (ListItem.isTag(name)) {
+            if (ElementTags.LISTITEM.equals(name)) {
                 ListItem listItem = (ListItem) stack.pop();
                 List list = (List) stack.pop();
                 list.add(listItem);

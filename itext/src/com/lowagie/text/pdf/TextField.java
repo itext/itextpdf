@@ -105,7 +105,7 @@ public class TextField extends BaseField {
     
     private static void changeFontSize(Phrase p, float size) {
         for (int k = 0; k < p.size(); ++k) {
-            ((Chunk)p.get(k)).font().setSize(size);
+            ((Chunk)p.get(k)).getFont().setSize(size);
         }
     }
     
@@ -266,7 +266,7 @@ public class TextField extends BaseField {
                 app.beginText();
                 for (int k = 0; k < phrase.size(); ++k) {
                     Chunk ck = (Chunk)phrase.get(k);
-                    BaseFont bf = ck.font().getBaseFont();
+                    BaseFont bf = ck.getFont().getBaseFont();
                     app.setFontAndSize(bf, usize);
                     StringBuffer sb = ck.append("");
                     for (int j = 0; j < sb.length(); ++j) {

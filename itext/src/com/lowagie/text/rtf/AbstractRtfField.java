@@ -237,10 +237,19 @@ abstract class AbstractRtfField extends Chunk implements RtfField {
     }
 
     /**
+	 * empty implementation for Chunk.
+	 * @return an empty string
+	 * @deprecated Use {@link #getContent()} instead
+	 */
+	public final String content() {
+		return getContent();
+	}
+
+	/**
      * empty implementation for Chunk.
      * @return an empty string
      */
-    public final String content() {
+    public final String getContent() {
         return "";
     }
 

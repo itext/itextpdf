@@ -54,8 +54,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-import com.lowagie.text.List;
-import com.lowagie.text.RomanList;
+import com.lowagie.text.factories.RomanAlphabetFactory;
+import com.lowagie.text.factories.RomanNumberFactory;
 
 /** Page labels are used to identify each
  * page visually on the screen or in print.
@@ -218,16 +218,16 @@ public class PdfPageLabels {
 				labelstrings[i] = prefix + pagecount;
 				break;
 			case 'R':
-				labelstrings[i] = prefix + RomanList.toRomanUpperCase(pagecount);
+				labelstrings[i] = prefix + RomanNumberFactory.getUpperCaseString(pagecount);
 				break;
 			case 'r':
-				labelstrings[i] = prefix + RomanList.toRomanLowerCase(pagecount);
+				labelstrings[i] = prefix + RomanNumberFactory.getLowerCaseString(pagecount);
 				break;
 			case 'A':
-				labelstrings[i] = prefix + List.getUpperCaseLetter(pagecount);
+				labelstrings[i] = prefix + RomanAlphabetFactory.getUpperCaseString(pagecount);
 				break;
 			case 'a':
-				labelstrings[i] = prefix + List.getLowerCaseLetter(pagecount);
+				labelstrings[i] = prefix + RomanAlphabetFactory.getLowerCaseString(pagecount);
 				break;
 			}
 			pagecount++;

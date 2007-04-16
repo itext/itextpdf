@@ -112,7 +112,7 @@ public class RtfInfoElement extends RtfElement {
     public RtfInfoElement(RtfDocument doc, Meta meta) {
         super(doc);
         infoType = meta.type();
-        content = meta.content();
+        content = meta.getContent();
     }
     
     /**

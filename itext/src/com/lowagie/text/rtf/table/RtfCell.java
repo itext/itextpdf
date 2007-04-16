@@ -271,7 +271,7 @@ public class RtfCell extends Cell implements RtfExtendedElement {
                         }
                         // if horizontal alignment is undefined overwrite
                         // with that of enclosing cell
-                        if (element instanceof Paragraph && ((Paragraph) element).alignment() == Element.ALIGN_UNDEFINED) {
+                        if (element instanceof Paragraph && ((Paragraph) element).getAlignment() == Element.ALIGN_UNDEFINED) {
                             ((Paragraph) element).setAlignment(cell.horizontalAlignment());
                         }
 

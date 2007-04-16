@@ -229,7 +229,7 @@ public class MarkedSection extends MarkedObject {
         }
         if (buf.length() > 0) buf.append(' ');
         Paragraph result = new Paragraph((Paragraph)title.element);
-        result.add(0, new Chunk(buf.toString(), ((Paragraph)title.element).font()));
+        result.add(0, new Chunk(buf.toString(), ((Paragraph)title.element).getFont()));
         MarkedObject mo = new MarkedObject(result);
         mo.markupAttributes = title.markupAttributes;
         return mo;
