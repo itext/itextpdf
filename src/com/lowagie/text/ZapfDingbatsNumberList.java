@@ -121,7 +121,7 @@ public class ZapfDingbatsNumberList extends List {
 			list.add(item);
 		} else if (o instanceof List) {
 			List nested = (List) o;
-			nested.setIndentationLeft(nested.indentationLeft() + symbolIndent);
+			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
 			first--;
 			return list.add(nested);
 		} else if (o instanceof String) {

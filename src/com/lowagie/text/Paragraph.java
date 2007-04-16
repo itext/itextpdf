@@ -286,7 +286,7 @@ private static final long serialVersionUID = 7852314969733375514L;
     public boolean add(Object o) {
         if (o instanceof List) {
             List list = (List) o;
-            list.setIndentationLeft(list.indentationLeft() + indentationLeft);
+            list.setIndentationLeft(list.getIndentationLeft() + indentationLeft);
             list.setIndentationRight(indentationRight);
             return super.add(list);
         }

@@ -1,5 +1,8 @@
 /*
- * Copyright 2003 by Michael Niedermair.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -44,76 +47,84 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.text;
+
+package com.lowagie.text.factories;
 
 /**
- * 
- * A special-version of <CODE>LIST</CODE> whitch use zapfdingbats-letters.
- * 
- * @see com.lowagie.text.List
- * @version 2003-06-22
- * @author Michael Niedermair
+ * This class can produce String combinations representing a number.
+ * "a" to "z" represent 1 to 26, "AA" represents 27, "AB" represents 28,
+ * and so on; "ZZ" is followed by "AAA".
  */
-
-public class ZapfDingbatsList extends List {
-
-	/**
-	 * char-number in zapfdingbats
-	 */
-	protected int zn;
+public class RomanAlphabetFactory {
 
 	/**
-	 * Creates a ZapfDingbatsList
-	 * 
-	 * @param zn a char-number
-	 * @param symbolIndent	indent
+	 * Translates a positive integer (not equal to zero)
+	 * into a String using the letters 'a' to 'z';
+	 * 1 = a, 2 = b, ..., 26 = z, 27 = aa, 28 = ab,...
 	 */
-	public ZapfDingbatsList(int zn, int symbolIndent) {
-		super(true, symbolIndent);
-		this.zn = zn;
-		float fontsize = symbol.font().size();
-		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
+	public static final String getString(int index) {
+    	if (index < 1) throw new NumberFormatException(
+    			"You can't translate a negative number into an alphabetical value.");
+    	
+    	index--;
+    	int bytes = 1;
+    	int start = 0;
+    	int symbols = 26;  
+    	while(index >= symbols + start) {
+    		bytes++;
+    	    start += symbols;
+    		symbols *= 26;
+    	}
+    	      
+    	int c = index - start;
+    	char[] value = new char[bytes];
+    	while(bytes > 0) {
+    		value[--bytes] = (char)( 'a' + (c % 26));
+    		c /= 26;
+    	}
+    	
+    	return new String(value);
+	}
+	
+	/**
+	 * Translates a positive integer (not equal to zero)
+	 * into a String using the letters 'a' to 'z';
+	 * 1 = a, 2 = b, ..., 26 = z, 27 = aa, 28 = ab,...
+	 */
+	public static final String getLowerCaseString(int index) {
+		return getString(index);		
+	}
+	
+	/**
+	 * Translates a positive integer (not equal to zero)
+	 * into a String using the letters 'A' to 'Z';
+	 * 1 = A, 2 = B, ..., 26 = Z, 27 = AA, 28 = AB,...
+	 */
+	public static final String getUpperCaseString(int index) {
+		return getString(index).toUpperCase();		
 	}
 
+	
 	/**
-	 * set the char-number 
-	 * @param zn a char-number
+	 * Translates a positive integer (not equal to zero)
+	 * into a String using the letters 'a' to 'z'
+	 * (a = 1, b = 2, ..., z = 26, aa = 27, ab = 28,...).
 	 */
-	public void setCharNumber(int zn) {
-		this.zn = zn;
-	}
-
-	/**
-	 * get the char-number
-	 *
-	 * @return	char-number
-	 */
-	public int getCharNumber() {
-		return zn;
-	}
-
-	/**
-	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
-	 *
-	 * @param	o	the object to add.
-	 * @return true if adding the object succeeded
-	 */
-	public boolean add(Object o) {
-		if (o instanceof ListItem) {
-			ListItem item = (ListItem) o;
-			Chunk chunk = new Chunk((char)zn, symbol.font());
-			item.setListSymbol(chunk);
-			item.setIndentationLeft(symbolIndent, autoindent);
-			item.setIndentationRight(0);
-			list.add(item);
-		} else if (o instanceof List) {
-			List nested = (List) o;
-			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
-			first--;
-			return list.add(nested);
-		} else if (o instanceof String) {
-			return this.add(new ListItem((String) o));
+	public static final String getString(int index, boolean lowercase) {
+		if (lowercase) {
+			return getLowerCaseString(index);
 		}
-		return false;
+		else {
+			return getUpperCaseString(index);
+		}
+	}
+	
+	/**
+	 * Test this class using this main method.
+	 */
+	public static void main(String[] args) {
+		for (int i = 1; i < 32000; i++) {
+			System.out.println(getString(i));
+		}
 	}
 }

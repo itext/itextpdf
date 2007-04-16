@@ -1,5 +1,8 @@
 /*
- * Copyright 2003 by Michael Niedermair.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 2007 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -44,76 +47,63 @@
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
-package com.lowagie.text;
+package com.lowagie.text.factories;
+
+import java.util.Properties;
+
+import com.lowagie.text.Chunk;
+import com.lowagie.text.ElementTags;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.List;
 
 /**
- * 
- * A special-version of <CODE>LIST</CODE> whitch use zapfdingbats-letters.
- * 
- * @see com.lowagie.text.List
- * @version 2003-06-22
- * @author Michael Niedermair
+ * This class is able to create Element objects based on a list of properties.
  */
 
-public class ZapfDingbatsList extends List {
+public class ElementFactory {
 
-	/**
-	 * char-number in zapfdingbats
-	 */
-	protected int zn;
+	public static List getList(Properties attributes) {
+		List list = new List();
 
-	/**
-	 * Creates a ZapfDingbatsList
-	 * 
-	 * @param zn a char-number
-	 * @param symbolIndent	indent
-	 */
-	public ZapfDingbatsList(int zn, int symbolIndent) {
-		super(true, symbolIndent);
-		this.zn = zn;
-		float fontsize = symbol.font().size();
-		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
-	}
-
-	/**
-	 * set the char-number 
-	 * @param zn a char-number
-	 */
-	public void setCharNumber(int zn) {
-		this.zn = zn;
-	}
-
-	/**
-	 * get the char-number
-	 *
-	 * @return	char-number
-	 */
-	public int getCharNumber() {
-		return zn;
-	}
-
-	/**
-	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
-	 *
-	 * @param	o	the object to add.
-	 * @return true if adding the object succeeded
-	 */
-	public boolean add(Object o) {
-		if (o instanceof ListItem) {
-			ListItem item = (ListItem) o;
-			Chunk chunk = new Chunk((char)zn, symbol.font());
-			item.setListSymbol(chunk);
-			item.setIndentationLeft(symbolIndent, autoindent);
-			item.setIndentationRight(0);
-			list.add(item);
-		} else if (o instanceof List) {
-			List nested = (List) o;
-			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
-			first--;
-			return list.add(nested);
-		} else if (o instanceof String) {
-			return this.add(new ListItem((String) o));
+		list.setNumbered("true".equalsIgnoreCase(attributes.getProperty(ElementTags.NUMBERED)));
+		list.setLettered("true".equalsIgnoreCase(attributes.getProperty(ElementTags.LETTERED)));
+		list.setLowercase("true".equalsIgnoreCase(attributes.getProperty(ElementTags.LOWERCASE)));
+		list.setAutoindent("true".equalsIgnoreCase(attributes.getProperty(ElementTags.AUTO_INDENT_ITEMS)));
+		list.setAlignindent("true".equalsIgnoreCase(attributes.getProperty(ElementTags.ALIGN_INDENTATION_ITEMS)));
+		
+		String value;
+		
+        value = attributes.getProperty(ElementTags.FIRST);
+        if (value != null) {
+            char character = value.charAt(0);
+            if (Character.isLetter(character) ) {
+                list.setFirst(character);
+            }
+            else {
+                list.setFirst(Integer.parseInt(value));
+            }
+        }
+        
+		value= attributes.getProperty(ElementTags.LISTSYMBOL);
+		if (value != null) {
+			list.setListSymbol(new Chunk(value, FontFactory.getFont(attributes)));
 		}
-		return false;
+        
+        value = attributes.getProperty(ElementTags.INDENTATIONLEFT);
+        if (value != null) {
+            list.setIndentationLeft(Float.parseFloat(value + "f"));
+        }
+        
+        value = attributes.getProperty(ElementTags.INDENTATIONRIGHT);
+        if (value != null) {
+            list.setIndentationRight(Float.parseFloat(value + "f"));
+        }
+        
+        value = attributes.getProperty(ElementTags.SYMBOLINDENT);
+        if (value != null) {
+            list.setSymbolIndent(Float.parseFloat(value));
+        }
+        
+		return list;
 	}
 }

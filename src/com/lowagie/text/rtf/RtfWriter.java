@@ -1317,16 +1317,16 @@ public class RtfWriter extends DocWriter {
             }
             listtable.write(escape);
             listtable.write(firstIndent);
-            writeInt(listtable, (int) (list.indentationLeft() * TWIPSFACTOR * -1));
+            writeInt(listtable, (int) (list.getIndentationLeft() * TWIPSFACTOR * -1));
             listtable.write(escape);
             listtable.write(listIndent);
-            writeInt(listtable, (int) ((list.indentationLeft() + list.symbolIndent()) * TWIPSFACTOR));
+            writeInt(listtable, (int) ((list.getIndentationLeft() + list.getSymbolIndent()) * TWIPSFACTOR));
             listtable.write(escape);
             listtable.write(rightIndent);
-            writeInt(listtable, (int) (list.indentationRight() * TWIPSFACTOR));
+            writeInt(listtable, (int) (list.getIndentationRight() * TWIPSFACTOR));
             listtable.write(escape);
             listtable.write(tabStop);
-            writeInt(listtable, (int) (list.symbolIndent() * TWIPSFACTOR));
+            writeInt(listtable, (int) (list.getSymbolIndent() * TWIPSFACTOR));
             listtable.write(closeGroup);
             listtable.write((byte) '\n');
         }
@@ -1337,13 +1337,13 @@ public class RtfWriter extends DocWriter {
         out.write(alignLeft);
         out.write(escape);
         out.write(firstIndent);
-        writeInt(out, (int) (list.indentationLeft() * TWIPSFACTOR * -1));
+        writeInt(out, (int) (list.getIndentationLeft() * TWIPSFACTOR * -1));
         out.write(escape);
         out.write(listIndent);
-        writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * TWIPSFACTOR));
+        writeInt(out, (int) ((list.getIndentationLeft() + list.getSymbolIndent()) * TWIPSFACTOR));
         out.write(escape);
         out.write(rightIndent);
-        writeInt(out, (int) (list.indentationRight() * TWIPSFACTOR));
+        writeInt(out, (int) (list.getIndentationRight() * TWIPSFACTOR));
         out.write(escape);
         out.write(fontSize);
         writeInt(out, 20);
@@ -1379,13 +1379,13 @@ public class RtfWriter extends DocWriter {
                 }
                 out.write(escape);
                 out.write(firstIndent);
-                writeInt(out, (int) (list.indentationLeft() * TWIPSFACTOR * -1));
+                writeInt(out, (int) (list.getIndentationLeft() * TWIPSFACTOR * -1));
                 out.write(escape);
                 out.write(listIndent);
-                writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * TWIPSFACTOR));
+                writeInt(out, (int) ((list.getIndentationLeft() + list.getSymbolIndent()) * TWIPSFACTOR));
                 out.write(escape);
                 out.write(rightIndent);
-                writeInt(out, (int) (list.indentationRight() * TWIPSFACTOR));
+                writeInt(out, (int) (list.getIndentationRight() * TWIPSFACTOR));
                 out.write(delimiter);
                 if (list.isNumbered()) {
                     writeInt(out, count);
@@ -1409,13 +1409,13 @@ public class RtfWriter extends DocWriter {
                 out.write(alignLeft);
                 out.write(escape);
                 out.write(firstIndent);
-                writeInt(out, (int) (list.indentationLeft() * TWIPSFACTOR * -1));
+                writeInt(out, (int) (list.getIndentationLeft() * TWIPSFACTOR * -1));
                 out.write(escape);
                 out.write(listIndent);
-                writeInt(out, (int) ((list.indentationLeft() + list.symbolIndent()) * TWIPSFACTOR));
+                writeInt(out, (int) ((list.getIndentationLeft() + list.getSymbolIndent()) * TWIPSFACTOR));
                 out.write(escape);
                 out.write(rightIndent);
-                writeInt(out, (int) (list.indentationRight() * TWIPSFACTOR));
+                writeInt(out, (int) (list.getIndentationRight() * TWIPSFACTOR));
                 out.write(escape);
                 out.write(fontSize);
                 writeInt(out, 20);

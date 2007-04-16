@@ -428,6 +428,15 @@ public class ElementTags {
     /** the possible value of a tag */
     public static final String ORIENTATION  = "orientation";
     
+    /** a possible list attribute */
+	public static final String ALIGN_INDENTATION_ITEMS = "alignindent";
+	
+	/** a possible list attribute */
+	public static final String AUTO_INDENT_ITEMS = "autoindent";
+	
+	/** a possible list attribute */
+	public static final String LOWERCASE = "lowercase";
+    
     // methods
     
 /**

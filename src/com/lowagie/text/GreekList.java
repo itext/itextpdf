@@ -133,7 +133,7 @@ public class GreekList extends List {
 			list.add(item);
 		} else if (o instanceof List) {
 			List nested = (List) o;
-			nested.setIndentationLeft(nested.indentationLeft() + symbolIndent);
+			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
 			first--;
 			return list.add(nested);
 		} else if (o instanceof String) {
@@ -149,29 +149,29 @@ public class GreekList extends List {
 	 * @param index	a number greater than 0
 	 * @return	a String corresponding with the index.
 	 */
-	    public static int[] getGreekValue(int index, boolean lowercase) {
-	    	if (index < 1) return new int[0];
-	    	index--;
+	public static int[] getGreekValue(int index, boolean lowercase) {
+		if (index < 1) return new int[0];
+	    index--;
 	    	
-	    	int bytes = 1;
-	    	int start = 0;
-	    	int symbols = 24;  
-	    	while(index >= symbols + start) {
-	    		bytes++;
-	    	    start += symbols;
-	    		symbols *= 24;
-	    	}
-	    	      
-	    	int c = index - start;
-	    	int[] value = new int[bytes];
-	    	while(bytes > 0) {
-	    		bytes--;
-	    		value[bytes] = (c % 24);
-	    		if (value[bytes] > 16) value[bytes]++;
-	    		value[bytes] += (lowercase ? 945 : 913);
-	    		c /= 24;
-	    	}
-	    	
-	    	return value;
-	    }
+	    int bytes = 1;
+	    int start = 0;
+	    int symbols = 24;  
+	   	while(index >= symbols + start) {
+	   		bytes++;
+	   	    start += symbols;
+	   		symbols *= 24;
+	   	}
+	   	      
+	   	int c = index - start;
+	   	int[] value = new int[bytes];
+	   	while(bytes > 0) {
+	   		bytes--;
+	   		value[bytes] = (c % 24);
+	   		if (value[bytes] > 16) value[bytes]++;
+	   		value[bytes] += (lowercase ? 945 : 913);
+	   		c /= 24;
+	   	}
+	   	
+	   	return value;
+	 }
 }

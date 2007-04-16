@@ -597,13 +597,13 @@ class PdfDocument extends Document {
                     	list.normalizeIndentation();
                     }
                     // we adjust the document
-                    indentation.listIndentLeft += list.indentationLeft();
-                    indentation.indentRight += list.indentationRight();
+                    indentation.listIndentLeft += list.getIndentationLeft();
+                    indentation.indentRight += list.getIndentationRight();
                     // we process the items in the list
                     element.process(this);
                     // some parameters are set back to normal again
-                    indentation.listIndentLeft -= list.indentationLeft();
-                    indentation.indentRight -= list.indentationRight();
+                    indentation.listIndentLeft -= list.getIndentationLeft();
+                    indentation.indentRight -= list.getIndentationRight();
                     break;
                 }
                 case Element.LISTITEM: {

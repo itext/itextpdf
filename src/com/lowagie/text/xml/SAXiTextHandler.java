@@ -86,6 +86,7 @@ import com.lowagie.text.Row;
 import com.lowagie.text.Section;
 import com.lowagie.text.Table;
 import com.lowagie.text.TextElementArray;
+import com.lowagie.text.factories.ElementFactory;
 import com.lowagie.text.html.HtmlTagMap;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.xml.simpleparser.EntitiesToSymbol;
@@ -292,11 +293,11 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // lists
-        if (List.isTag(name)) {
-            stack.push(new List(attributes));
+        if (ElementTags.LIST.equals(name)) {
+            stack.push(ElementFactory.getList(attributes));
             return;
         }
-
+        
         // listitems
         if (ListItem.isTag(name)) {
             stack.push(new ListItem(attributes));
@@ -693,7 +694,7 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // phrases, anchors, lists, tables
-            if (Phrase.isTag(name) || Anchor.isTag(name) || List.isTag(name)
+            if (Phrase.isTag(name) || Anchor.isTag(name) || ElementTags.LIST.equals(name)
                     || Paragraph.isTag(name)) {
                 Element current = (Element) stack.pop();
                 try {

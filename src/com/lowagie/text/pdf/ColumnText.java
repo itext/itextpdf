@@ -1154,7 +1154,7 @@ public class ColumnText {
                 com.lowagie.text.List list = (com.lowagie.text.List)element;
                 ArrayList items = list.getItems();
                 ListItem item = null;
-                float listIndentation = list.indentationLeft();
+                float listIndentation = list.getIndentationLeft();
                 int count = 0;
                 Stack stack = new Stack();
                 for (int k = 0; k < items.size(); ++k) {
@@ -1170,7 +1170,7 @@ public class ColumnText {
                         stack.push(new Object[]{list, new Integer(k), new Float(listIndentation)});
                         list = (com.lowagie.text.List)obj;
                         items = list.getItems();
-                        listIndentation += list.indentationLeft();
+                        listIndentation += list.getIndentationLeft();
                         k = -1;
                         continue;
                     }
@@ -1200,7 +1200,7 @@ public class ColumnText {
                         compositeColumn.setIndent(item.indentationLeft() + listIndentation + item.getFirstLineIndent());
                         compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
                         compositeColumn.setFollowingIndent(compositeColumn.getIndent());
-                        compositeColumn.setRightIndent(item.indentationRight() + list.indentationRight());
+                        compositeColumn.setRightIndent(item.indentationRight() + list.getIndentationRight());
                         compositeColumn.setLeading(item.leading(), item.getMultipliedLeading());
                         compositeColumn.setRunDirection(runDirection);
                         compositeColumn.setArabicOptions(arabicOptions);

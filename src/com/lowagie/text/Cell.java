@@ -385,7 +385,7 @@ public class Cell extends Rectangle implements TextElementArray {
 				throw new BadElementException("You can't add listitems, rows or cells to a cell.");
 			case Element.LIST:
 				if (Float.isNaN(leading)) {
-					leading = ((List) element).leading();
+					leading = ((List) element).getTotalLeading();
 				}
 				if (((List) element).size() == 0) return;
 				arrayList.add(element);

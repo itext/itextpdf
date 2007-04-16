@@ -62,6 +62,8 @@ import com.lowagie.text.Font;
 import com.lowagie.text.List;
 import com.lowagie.text.ListItem;
 import com.lowagie.text.RomanList;
+import com.lowagie.text.factories.RomanAlphabetFactory;
+import com.lowagie.text.factories.RomanNumberFactory;
 import com.lowagie.text.rtf.RtfBasicElement;
 import com.lowagie.text.rtf.RtfElement;
 import com.lowagie.text.rtf.RtfExtendedElement;
@@ -230,21 +232,21 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         this.listNumber = document.getDocumentHeader().getListNumber(this);
         
         this.items = new ArrayList();
-        if(list.symbolIndent() > 0 && list.indentationLeft() > 0) {
-            this.firstIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR * -1);
-            this.leftIndent = (int) ((list.indentationLeft() + list.symbolIndent()) * RtfElement.TWIPS_FACTOR);
-        } else if(list.symbolIndent() > 0) {
-            this.firstIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR * -1);
-            this.leftIndent = (int) (list.symbolIndent() * RtfElement.TWIPS_FACTOR);
-        } else if(list.indentationLeft() > 0) {
+        if(list.getSymbolIndent() > 0 && list.getIndentationLeft() > 0) {
+            this.firstIndent = (int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR * -1);
+            this.leftIndent = (int) ((list.getIndentationLeft() + list.getSymbolIndent()) * RtfElement.TWIPS_FACTOR);
+        } else if(list.getSymbolIndent() > 0) {
+            this.firstIndent = (int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR * -1);
+            this.leftIndent = (int) (list.getSymbolIndent() * RtfElement.TWIPS_FACTOR);
+        } else if(list.getIndentationLeft() > 0) {
             this.firstIndent = 0;
-            this.leftIndent = (int) (list.indentationLeft() * RtfElement.TWIPS_FACTOR);
+            this.leftIndent = (int) (list.getIndentationLeft() * RtfElement.TWIPS_FACTOR);
         } else {
             this.firstIndent = 0;
             this.leftIndent = 0;
         }
-        this.rightIndent = (int) (list.indentationRight() * RtfElement.TWIPS_FACTOR);
-        this.symbolIndent = (int) ((list.symbolIndent() + list.indentationLeft()) * RtfElement.TWIPS_FACTOR);
+        this.rightIndent = (int) (list.getIndentationRight() * RtfElement.TWIPS_FACTOR);
+        this.symbolIndent = (int) ((list.getSymbolIndent() + list.getIndentationLeft()) * RtfElement.TWIPS_FACTOR);
         
         if(list instanceof RomanList) {
             if(((RomanList) list).isRomanLower()) {
@@ -255,7 +257,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
         } else if(list.isNumbered()) {
             this.listType = LIST_TYPE_NUMBERED;
         } else if(list.isLettered()) {
-            if(list.isLowerCase()) {
+            if(list.isLowercase()) {
                 this.listType = LIST_TYPE_LOWER_LETTERS;
             } else {
                 this.listType = LIST_TYPE_UPPER_LETTERS;
@@ -486,10 +488,10 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     if(this.listType != LIST_TYPE_BULLET) {
                         switch(this.listType) {
                             case LIST_TYPE_NUMBERED      : result.write(intToByteArray(itemNr)); break;
-                            case LIST_TYPE_UPPER_LETTERS : result.write(List.getUpperCaseLetter(itemNr).getBytes()); break;
-                            case LIST_TYPE_LOWER_LETTERS : result.write(List.getLowerCaseLetter(itemNr).getBytes()); break;
-                            case LIST_TYPE_UPPER_ROMAN   : result.write(RomanList.getUpperCaseLetter(itemNr).getBytes()); break;
-                            case LIST_TYPE_LOWER_ROMAN   : result.write(RomanList.getLowerCaseLetter(itemNr).getBytes()); break;
+                            case LIST_TYPE_UPPER_LETTERS : result.write(RomanAlphabetFactory.getUpperCaseString(itemNr).getBytes()); break;
+                            case LIST_TYPE_LOWER_LETTERS : result.write(RomanAlphabetFactory.getLowerCaseString(itemNr).getBytes()); break;
+                            case LIST_TYPE_UPPER_ROMAN   : result.write(RomanNumberFactory.getUpperCaseString(itemNr).getBytes()); break;
+                            case LIST_TYPE_LOWER_ROMAN   : result.write(RomanNumberFactory.getLowerCaseString(itemNr).getBytes()); break;
                         }
                         result.write(LIST_NUMBER_END);
                     } else {
