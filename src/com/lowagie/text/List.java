@@ -109,7 +109,7 @@ public class List implements TextElementArray {
 	/** a possible value for the numbered parameter */
 	public static final boolean UNORDERED = false;
 	/** a possible value for the lettered parameter */
-	public static final boolean NUMBERICAL = false;
+	public static final boolean NUMERICAL = false;
 	/** a possible value for the lettered parameter */
 	public static final boolean ALPHABETICAL = true;
 	/** a possible value for the lettered parameter */
@@ -123,15 +123,15 @@ public class List implements TextElementArray {
     protected ArrayList list = new ArrayList();
     
     /** Indicates if the list has to be numbered. */
-    protected boolean numbered;
+    protected boolean numbered = false;
     /** Indicates if the listsymbols are numerical or alphabetical. */
-    protected boolean lettered;
+    protected boolean lettered = false;
     /** Indicates if the listsymbols are lowercase or uppercase. */
-    protected boolean lowercase;
+    protected boolean lowercase = false;
     /** Indicates if the indentation has to be set automatically. */
-    protected boolean autoindent;
+    protected boolean autoindent = false;
     /** Indicates if the indentation of all the items has to be aligned. */
-    protected boolean alignindent;
+    protected boolean alignindent = false;
     
     /** This variable indicates the first number of a numbered list. */
     protected int first = 1;
@@ -507,8 +507,31 @@ public class List implements TextElementArray {
 		return symbolIndent;
 	}
     
-    // deprecated methods
+    // deprecated constructor and methods
+	/**
+     * Returns a <CODE>List</CODE> that has been constructed taking in account
+     * the value of some <VAR>attributes</VAR>.
+     *
+     * @param	attributes		Some attributes
+     * @deprecated use ElementFactory.getList(attributes);
+     */
 
+	public List(java.util.Properties attributes) {
+		this();
+		List l = com.lowagie.text.factories.ElementFactory.getList(attributes);
+		this.list = l.list;
+		this.numbered = l.numbered;
+		this.lettered = l.lettered;
+		this.lowercase = l.lowercase;
+		this.autoindent = l.autoindent;
+		this.alignindent = l.alignindent;
+		this.first = l.first;
+		this.symbol = l.symbol;
+		this.indentationLeft = l.indentationLeft;
+		this.indentationRight = l.indentationRight;
+		this.symbolIndent = l.symbolIndent;
+	}
+	
     /**
      * Checks if the list lettering is lowercase.
      * @return  <CODE>true</CODE> if it is lowercase, <CODE>false</CODE> otherwise.

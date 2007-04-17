@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 by Michael Niedermair.
+ * Copyright 2003 by Michael Niedermair and 2007 Bruno Lowagie
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -46,16 +46,19 @@
  */
 package com.lowagie.text;
 
+import com.lowagie.text.factories.GreekNumberFactory;
+
 /**
  * 
  * A special-version of <CODE>LIST</CODE> whitch use greek-letters.
  * 
  * @see com.lowagie.text.List
- * @version 2003-06-22
- * @author Michael Niedermair
  */
 
 public class GreekList extends List {
+
+// constructors
+	
 	/**
 	 * Initialization
 	 */
@@ -74,7 +77,7 @@ public class GreekList extends List {
 	}
 
 	/**
-	 * Initialisierung 
+	 * Initialization 
 	 * @param	greeklower		greek-char in lowercase   
 	 * @param 	symbolIndent	indent
 	 */
@@ -84,6 +87,8 @@ public class GreekList extends List {
 		setGreekFont();
 	}
 
+// helper method
+	
 	/**
 	 * change the font to SYMBOL
 	 */
@@ -92,24 +97,8 @@ public class GreekList extends List {
 		symbol.setFont(FontFactory.getFont(FontFactory.SYMBOL, fontsize, Font.NORMAL));
 	}
 
-	/**
-	 * set the greek-letters to lowercase otherwise to uppercase
-	 * 
-	 * @param greeklower
-	 */
-	public void setGreekLower(boolean greeklower) {
-		this.lowercase = greeklower;
-	}
-
-	/**
-	 * Checks if the list is greek-letter with lowercase
-	 *
-	 * @return	<CODE>true</CODE> if the greek-letter is lowercase, <CODE>false</CODE> otherwise.
-	 */
-	public boolean isGreekLower() {
-		return lowercase;
-	}
-
+// overridden method
+	
 	/**
 	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
 	 *
@@ -119,13 +108,7 @@ public class GreekList extends List {
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
-			Chunk chunk;
-			int index = first + list.size();
-			int[] greekValue = getGreekValue(index, lowercase);
-			chunk = SpecialSymbol.get((char)greekValue[0], symbol.font());
-			for (int i = 1; i < greekValue.length; i++) {
-				chunk.append(String.valueOf(SpecialSymbol.getCorrespondingSymbol((char) greekValue[i])));
-			}
+			Chunk chunk = new Chunk(GreekNumberFactory.getString(first + list.size(), lowercase), symbol.font());
 			chunk.append(". ");
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);
@@ -142,36 +125,43 @@ public class GreekList extends List {
 		return false;
 	}
 
+// deprecated methods
+	
 	/**
 	 * Translates a number to a letter(combination).
 	 * 1-26 correspond with a-z, 27 is aa, 28 is ab, and so on,
 	 * aaa comes right after zz.
 	 * @param index	a number greater than 0
 	 * @return	a String corresponding with the index.
+	 * @deprecated use GreekNumberFactory.getString(int, boolean)
 	 */
 	public static int[] getGreekValue(int index, boolean lowercase) {
-		if (index < 1) return new int[0];
-	    index--;
-	    	
-	    int bytes = 1;
-	    int start = 0;
-	    int symbols = 24;  
-	   	while(index >= symbols + start) {
-	   		bytes++;
-	   	    start += symbols;
-	   		symbols *= 24;
+	   	byte[] result = GreekNumberFactory.getString(index, lowercase).getBytes();
+	   	int n = result.length;
+	   	int[] r = new int[n];
+	   	for (int i = 0; i < n; i++) {
+	   		r[i] = result[i];
 	   	}
-	   	      
-	   	int c = index - start;
-	   	int[] value = new int[bytes];
-	   	while(bytes > 0) {
-	   		bytes--;
-	   		value[bytes] = (c % 24);
-	   		if (value[bytes] > 16) value[bytes]++;
-	   		value[bytes] += (lowercase ? 945 : 913);
-	   		c /= 24;
-	   	}
-	   	
-	   	return value;
+	   	return r;
 	 }
+
+	/**
+	 * set the greek-letters to lowercase otherwise to uppercase
+	 * 
+	 * @param greeklower
+	 * @deprecated use setLowercase(boolean)
+	 */
+	public void setGreekLower(boolean greeklower) {
+		setLowercase(greeklower);
+	}
+
+	/**
+	 * Checks if the list is greek-letter with lowercase
+	 *
+	 * @return	<CODE>true</CODE> if the greek-letter is lowercase, <CODE>false</CODE> otherwise.
+	 * @deprecated use isLowercase()
+	 */
+	public boolean isGreekLower() {
+		return isLowercase();
+	}
 }

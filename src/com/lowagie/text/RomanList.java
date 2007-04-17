@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 by Michael Niedermair.
+ * Copyright 2003 by Michael Niedermair and 2007 Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -53,12 +53,12 @@ import com.lowagie.text.factories.RomanNumberFactory;
  * A special-version of <CODE>LIST</CODE> which use roman-letters.
  * 
  * @see com.lowagie.text.List
- * @version 2003-06-22
- * @author Michael Niedermair
  */
 
 public class RomanList extends List {
 
+// constructors
+	
 	/**
 	 * Initialization
 	 */
@@ -77,32 +77,16 @@ public class RomanList extends List {
 
 	/**
 	 * Initialization 
-	 * @param	romanlower		roman-char in lowercase   
+	 * @param	lowercase		roman-char in lowercase   
 	 * @param 	symbolIndent	indent
 	 */
-	public RomanList(boolean romanlower, int symbolIndent) {
+	public RomanList(boolean lowercase, int symbolIndent) {
 		super(true, symbolIndent);
-		this.lowercase = romanlower;
+		this.lowercase = lowercase;
 	}
 
-	/**
-	 * set the roman-letters to lowercase otherwise to uppercase
-	 * 
-	 * @param romanlower
-	 */
-	public void setRomanLower(boolean romanlower) {
-		this.lowercase = romanlower;
-	}
-
-	/**
-	 * Checks if the list is roman-letter with lowercase
-	 *
-	 * @return	<CODE>true</CODE> if the roman-letter is lowercase, <CODE>false</CODE> otherwise.
-	 */
-	public boolean isRomanLower() {
-		return lowercase;
-	}
-
+// overridden method
+	
 	/**
 	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
 	 *
@@ -130,6 +114,8 @@ public class RomanList extends List {
 		return false;
 	}
 	
+// deprecated methods
+	
 	/**
 	 * @deprecated use RomanNumberFactory.getString(int)
 	 */
@@ -147,5 +133,25 @@ public class RomanList extends List {
 	 */
 	public static String toRomanUpperCase(int number) {
 		return RomanNumberFactory.getString(number, false);
+	}
+
+	/**
+	 * set the roman-letters to lowercase otherwise to uppercase
+	 * 
+	 * @param romanlower
+	 * @deprecated use setLowercase(boolean)
+	 */
+	public void setRomanLower(boolean romanlower) {
+		setLowercase(romanlower);
+	}
+
+	/**
+	 * Checks if the list is roman-letter with lowercase
+	 *
+	 * @return	<CODE>true</CODE> if the roman-letter is lowercase, <CODE>false</CODE> otherwise.
+	 * @deprecated use isLowercase()
+	 */
+	public boolean isRomanLower() {
+		return isLowercase();
 	}
 }
