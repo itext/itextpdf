@@ -712,11 +712,11 @@ public class HtmlWriter extends DocWriter {
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.ANCHOR);
-                if (anchor.name() != null) {
-                    write(HtmlTags.NAME, anchor.name());
+                if (anchor.getName() != null) {
+                    write(HtmlTags.NAME, anchor.getName());
                 }
-                if (anchor.reference() != null) {
-                    write(HtmlTags.REFERENCE, anchor.reference());
+                if (anchor.getReference() != null) {
+                    write(HtmlTags.REFERENCE, anchor.getReference());
                 }
                 writeMarkupAttributes(markup);
                 write(anchor.getFont(), styleAttributes);

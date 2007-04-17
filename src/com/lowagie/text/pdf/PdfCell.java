@@ -769,7 +769,7 @@ public class PdfCell extends Rectangle {
 
     protected void processActions(Element element, PdfAction action, ArrayList allActions) {
         if (element.type() == Element.ANCHOR) {
-            String url = ((Anchor) element).reference();
+            String url = ((Anchor) element).getReference();
             if (url != null) {
                 action = new PdfAction(url);
             }

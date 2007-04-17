@@ -1074,7 +1074,7 @@ public class RtfWriter extends DocWriter {
      * @throws IOException
      */
     private void writeAnchor(Anchor anchor, ByteArrayOutputStream out) throws IOException {
-        if (anchor.url() != null) {
+        if (anchor.getUrl() != null) {
             out.write(openGroup);
             out.write(escape);
             out.write(field);
@@ -1084,7 +1084,7 @@ public class RtfWriter extends DocWriter {
             out.write(openGroup);
             out.write(fieldHyperlink);
             out.write(delimiter);
-            out.write(anchor.url().toString().getBytes());
+            out.write(anchor.getUrl().toString().getBytes());
             out.write(closeGroup);
             out.write(closeGroup);
             out.write(openGroup);

@@ -280,14 +280,14 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // anchors
-        if (Anchor.isTag(name)) {
-            stack.push(new Anchor(attributes));
+        if (ElementTags.ANCHOR.equals(name)) {
+            stack.push(ElementFactory.getAnchor(attributes));
             return;
         }
 
         // paragraphs and titles
         if (ElementTags.PARAGRAPH.equals(name) || Section.isTitle(name)) {
-            stack.push(new Paragraph(attributes));
+            stack.push(ElementFactory.getParagraph(attributes));
             return;
         }
 
@@ -522,7 +522,7 @@ public class SAXiTextHandler extends DefaultHandler {
                 newStack.push(current);
                 if (current instanceof Anchor) {
                     img.setAnnotation(new Annotation(0, 0, 0,
-                            0, ((Anchor) current).reference()));
+                            0, ((Anchor) current).getReference()));
                 }
                 current = stack.pop();
             }
@@ -693,7 +693,7 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // phrases, anchors, lists, tables
-            if (ElementTags.PHRASE.equals(name) || Anchor.isTag(name) || ElementTags.LIST.equals(name)
+            if (ElementTags.PHRASE.equals(name) || ElementTags.ANCHOR.equals(name) || ElementTags.LIST.equals(name)
                     || ElementTags.PARAGRAPH.equals(name)) {
                 Element current = (Element) stack.pop();
                 try {

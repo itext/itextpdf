@@ -440,7 +440,7 @@ class PdfDocument extends Document {
                 }
                 case Element.ANCHOR: {
                     Anchor anchor = (Anchor) element;
-                    String url = anchor.reference();
+                    String url = anchor.getReference();
                     leading = anchor.getLeading();
                     if (url != null) {
                         anchorAction = new PdfAction(url);

@@ -51,6 +51,7 @@ package com.lowagie.text.factories;
 
 import java.util.Properties;
 
+import com.lowagie.text.Anchor;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.FontFactory;
@@ -138,6 +139,20 @@ public class ElementFactory {
             phrase.add(chunk);
         }
         return phrase;
+	}
+	
+	public static Anchor getAnchor(Properties attributes) {
+		Anchor anchor = new Anchor(getPhrase(attributes));
+		String value;
+        value = attributes.getProperty(ElementTags.NAME);
+        if (value != null) {
+            anchor.setName(value);
+        }
+        value = (String)attributes.remove(ElementTags.REFERENCE);
+        if (value != null) {
+            anchor.setReference(value);
+        }
+		return anchor;
 	}
 	
 	public static Paragraph getParagraph(Properties attributes) {
