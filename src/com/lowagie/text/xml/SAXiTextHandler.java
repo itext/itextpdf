@@ -80,7 +80,6 @@ import com.lowagie.text.ListItem;
 import com.lowagie.text.Meta;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Row;
 import com.lowagie.text.Section;
@@ -275,8 +274,8 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // phrases
-        if (Phrase.isTag(name)) {
-            stack.push(new Phrase(attributes));
+        if (ElementTags.PHRASE.equals(name)) {
+            stack.push(ElementFactory.getPhrase(attributes));
             return;
         }
 
@@ -287,7 +286,7 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // paragraphs and titles
-        if (Paragraph.isTag(name) || Section.isTitle(name)) {
+        if (ElementTags.PARAGRAPH.equals(name) || Section.isTitle(name)) {
             stack.push(new Paragraph(attributes));
             return;
         }
@@ -694,8 +693,8 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // phrases, anchors, lists, tables
-            if (Phrase.isTag(name) || Anchor.isTag(name) || ElementTags.LIST.equals(name)
-                    || Paragraph.isTag(name)) {
+            if (ElementTags.PHRASE.equals(name) || Anchor.isTag(name) || ElementTags.LIST.equals(name)
+                    || ElementTags.PARAGRAPH.equals(name)) {
                 Element current = (Element) stack.pop();
                 try {
                     TextElementArray previous = (TextElementArray) stack.pop();

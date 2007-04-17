@@ -966,7 +966,7 @@ public class RtfWriter extends DocWriter {
                 for (ListIterator li = sectionElement.title().getChunks().listIterator(); li.hasNext();) {
                     title.append(((Chunk) li.next()).content());
                 }
-                add(new RtfTOCEntry(title.toString(), sectionElement.title().font()));
+                add(new RtfTOCEntry(title.toString(), sectionElement.title().getFont()));
             } else {
                 add(sectionElement.title());
             }
@@ -999,7 +999,7 @@ public class RtfWriter extends DocWriter {
             out.write(escape);
             out.write(RtfCell.cellInTable);
         }
-        switch (paragraphElement.alignment()) {
+        switch (paragraphElement.getAlignment()) {
             case Element.ALIGN_LEFT:
                 out.write(escape);
                 out.write(alignLeft);
@@ -1020,14 +1020,14 @@ public class RtfWriter extends DocWriter {
         }
         out.write(escape);
         out.write(listIndent);
-        writeInt(out, (int) (paragraphElement.indentationLeft() * TWIPSFACTOR));
+        writeInt(out, (int) (paragraphElement.getIndentationLeft() * TWIPSFACTOR));
         out.write(escape);
         out.write(rightIndent);
-        writeInt(out, (int) (paragraphElement.indentationRight() * TWIPSFACTOR));
+        writeInt(out, (int) (paragraphElement.getIndentationRight() * TWIPSFACTOR));
         Iterator chunks = paragraphElement.getChunks().iterator();
         while (chunks.hasNext()) {
             Chunk ch = (Chunk) chunks.next();
-            ch.setFont(paragraphElement.font().difference(ch.getFont()));
+            ch.setFont(paragraphElement.getFont().difference(ch.getFont()));
         }
         ByteArrayOutputStream save = content;
         content = out;
@@ -1057,7 +1057,7 @@ public class RtfWriter extends DocWriter {
         Iterator chunks = phrase.getChunks().iterator();
         while (chunks.hasNext()) {
             Chunk ch = (Chunk) chunks.next();
-            ch.setFont(phrase.font().difference(ch.getFont()));
+            ch.setFont(phrase.getFont().difference(ch.getFont()));
         }
         ByteArrayOutputStream save = content;
         content = out;
@@ -2020,7 +2020,7 @@ public class RtfWriter extends DocWriter {
                         par.add(headerFooter.getBefore());
                     }
                     if (headerFooter.isNumbered()) {
-                        par.add(new RtfPageNumber("", headerFooter.getBefore().font()));
+                        par.add(new RtfPageNumber("", headerFooter.getBefore().getFont()));
                     }
                     if (headerFooter.getAfter() != null) {
                         par.add(headerFooter.getAfter());
@@ -2277,17 +2277,17 @@ public class RtfWriter extends DocWriter {
                 addFont(((Chunk) rhf.content()).getFont());
                 addColor(((Chunk) rhf.content()).getFont().color());
             } else if(rhf.content() instanceof Phrase) {
-                addFont(((Phrase) rhf.content()).font());
-                addColor(((Phrase) rhf.content()).font().color());
+                addFont(((Phrase) rhf.content()).getFont());
+                addColor(((Phrase) rhf.content()).getFont().color());
             }
         }
         if(hf.getBefore() != null) {
-            addFont(hf.getBefore().font());
-            addColor(hf.getBefore().font().color());
+            addFont(hf.getBefore().getFont());
+            addColor(hf.getBefore().getFont().color());
         }
         if(hf.getAfter() != null) {
-            addFont(hf.getAfter().font());
-            addColor(hf.getAfter().font().color());
+            addFont(hf.getAfter().getFont());
+            addColor(hf.getAfter().getFont().color());
         }
     }
 

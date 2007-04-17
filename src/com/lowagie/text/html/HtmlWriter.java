@@ -684,15 +684,15 @@ public class HtmlWriter extends DocWriter {
             {
                 Phrase phrase = (Phrase) element;
                 styleAttributes = new Properties();
-                if (phrase.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, phrase.leading() + "pt");
+                if (phrase.hasLeading()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, phrase.getLeading() + "pt");
                 
                 // start tag
                 addTabs(indent);
                 writeStart(Markup.HTML_TAG_SPAN);
                 writeMarkupAttributes(markup);
-                write(phrase.font(), styleAttributes);
+                write(phrase.getFont(), styleAttributes);
                 os.write(GT);
-                currentfont.push(phrase.font());
+                currentfont.push(phrase.getFont());
                 // contents
                 for (Iterator i = phrase.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
@@ -707,7 +707,7 @@ public class HtmlWriter extends DocWriter {
             {
                 Anchor anchor = (Anchor) element;
                 styleAttributes = new Properties();
-                if (anchor.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, anchor.leading() + "pt");
+                if (anchor.hasLeading()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, anchor.getLeading() + "pt");
                 
                 // start tag
                 addTabs(indent);
@@ -719,9 +719,9 @@ public class HtmlWriter extends DocWriter {
                     write(HtmlTags.REFERENCE, anchor.reference());
                 }
                 writeMarkupAttributes(markup);
-                write(anchor.font(), styleAttributes);
+                write(anchor.getFont(), styleAttributes);
                 os.write(GT);
-                currentfont.push(anchor.font());
+                currentfont.push(anchor.getFont());
                 // contents
                 for (Iterator i = anchor.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
@@ -736,18 +736,18 @@ public class HtmlWriter extends DocWriter {
             {
                 Paragraph paragraph = (Paragraph) element;
                 styleAttributes = new Properties();
-                if (paragraph.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, paragraph.getTotalLeading() + "pt");
+                if (paragraph.hasLeading()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, paragraph.getTotalLeading() + "pt");
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.DIV);
                 writeMarkupAttributes(markup);
-                String alignment = HtmlEncoder.getAlignment(paragraph.alignment());
+                String alignment = HtmlEncoder.getAlignment(paragraph.getAlignment());
                 if (!"".equals(alignment)) {
                     write(HtmlTags.ALIGN, alignment);
                 }
-                write(paragraph.font(), styleAttributes);
+                write(paragraph.getFont(), styleAttributes);
                 os.write(GT);
-                currentfont.push(paragraph.font());
+                currentfont.push(paragraph.getFont());
                 // contents
                 for (Iterator i = paragraph.iterator(); i.hasNext(); ) {
                     write((Element)i.next(), indent + 1);
@@ -796,15 +796,15 @@ public class HtmlWriter extends DocWriter {
             {
                 ListItem listItem = (ListItem) element;
                 styleAttributes = new Properties();
-                if (listItem.leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, listItem.getTotalLeading() + "pt");
+                if (listItem.hasLeading()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, listItem.getTotalLeading() + "pt");
                 
                 // start tag
                 addTabs(indent);
                 writeStart(HtmlTags.LISTITEM);
                 writeMarkupAttributes(markup);
-                write(listItem.font(), styleAttributes);
+                write(listItem.getFont(), styleAttributes);
                 os.write(GT);
-                currentfont.push(listItem.font());
+                currentfont.push(listItem.getFont());
                 // contents
                 for (Iterator i = listItem.iterator(); i.hasNext(); ) {
                     write((Element) i.next(), indent + 1);
@@ -1021,18 +1021,18 @@ public class HtmlWriter extends DocWriter {
                 depth = 5;
             }
             Properties styleAttributes = new Properties();
-            if (section.title().leadingDefined()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, section.title().getTotalLeading() + "pt");
+            if (section.title().hasLeading()) styleAttributes.setProperty(Markup.CSS_KEY_LINEHEIGHT, section.title().getTotalLeading() + "pt");
             // start tag
             addTabs(indent);
             writeStart(HtmlTags.H[depth]);
-            write(section.title().font(), styleAttributes);
-            String alignment = HtmlEncoder.getAlignment(section.title().alignment());
+            write(section.title().getFont(), styleAttributes);
+            String alignment = HtmlEncoder.getAlignment(section.title().getAlignment());
             if (!"".equals(alignment)) {
                 write(HtmlTags.ALIGN, alignment);
             }
             writeMarkupAttributes(markup);
             os.write(GT);
-            currentfont.push(section.title().font());
+            currentfont.push(section.title().getFont());
             // contents
             for (Iterator i = section.title().iterator(); i.hasNext(); ) {
                 write((Element)i.next(), indent + 1);

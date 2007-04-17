@@ -271,7 +271,7 @@ public class RtfList extends RtfElement implements RtfExtendedElement {
                     element = new ListItem((Chunk) element);
                 }
                 if(element instanceof ListItem) {
-                    this.alignment = ((ListItem) element).alignment();
+                    this.alignment = ((ListItem) element).getAlignment();
                 }
                 RtfBasicElement rtfElement = doc.getMapper().mapElement(element);
                 if(rtfElement instanceof RtfList) {

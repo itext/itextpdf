@@ -315,7 +315,7 @@ public class PdfLine {
     
     public void setListItem(ListItem listItem) {
         this.listSymbol = listItem.listSymbol();
-        this.symbolIndent = listItem.indentationLeft();
+        this.symbolIndent = listItem.getIndentationLeft();
     }
     
     /**

@@ -120,13 +120,13 @@ public class RtfPhrase extends RtfElement {
             return;
         }
         
-        if(phrase.leadingDefined()) {
-            this.lineLeading = (int) (phrase.leading() * RtfElement.TWIPS_FACTOR);
+        if(phrase.hasLeading()) {
+            this.lineLeading = (int) (phrase.getLeading() * RtfElement.TWIPS_FACTOR);
         } else {
             this.lineLeading = 0;
         }
         
-        RtfFont phraseFont = new RtfFont(null, phrase.font());
+        RtfFont phraseFont = new RtfFont(null, phrase.getFont());
         for(int i = 0; i < phrase.size(); i++) {
             Element chunk = (Element) phrase.get(i);
             if(chunk instanceof Chunk) {

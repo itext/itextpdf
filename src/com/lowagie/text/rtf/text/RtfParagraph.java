@@ -94,20 +94,20 @@ public class RtfParagraph extends RtfPhrase {
         super(doc);
         
         RtfFont baseFont = null;
-        if(paragraph.font() instanceof RtfParagraphStyle) {
-            this.paragraphStyle = this.document.getDocumentHeader().getRtfParagraphStyle(((RtfParagraphStyle) paragraph.font()).getStyleName());
+        if(paragraph.getFont() instanceof RtfParagraphStyle) {
+            this.paragraphStyle = this.document.getDocumentHeader().getRtfParagraphStyle(((RtfParagraphStyle) paragraph.getFont()).getStyleName());
             baseFont = this.paragraphStyle;
         } else {
-            baseFont = new RtfFont(this.document, paragraph.font());
+            baseFont = new RtfFont(this.document, paragraph.getFont());
             this.paragraphStyle = new RtfParagraphStyle(this.document, this.document.getDocumentHeader().getRtfParagraphStyle("Normal"));
-            this.paragraphStyle.setAlignment(paragraph.alignment());
+            this.paragraphStyle.setAlignment(paragraph.getAlignment());
             this.paragraphStyle.setFirstLineIndent((int) (paragraph.getFirstLineIndent() * RtfElement.TWIPS_FACTOR));
-            this.paragraphStyle.setIndentLeft((int) (paragraph.indentationLeft() * RtfElement.TWIPS_FACTOR));
-            this.paragraphStyle.setIndentRight((int) (paragraph.indentationRight() * RtfElement.TWIPS_FACTOR));
+            this.paragraphStyle.setIndentLeft((int) (paragraph.getIndentationLeft() * RtfElement.TWIPS_FACTOR));
+            this.paragraphStyle.setIndentRight((int) (paragraph.getIndentationRight() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setSpacingBefore((int) (paragraph.spacingBefore() * RtfElement.TWIPS_FACTOR));
             this.paragraphStyle.setSpacingAfter((int) (paragraph.spacingAfter() * RtfElement.TWIPS_FACTOR));
-            if(paragraph.leadingDefined()) {
-                this.paragraphStyle.setLineLeading((int) (paragraph.leading() * RtfElement.TWIPS_FACTOR));
+            if(paragraph.hasLeading()) {
+                this.paragraphStyle.setLineLeading((int) (paragraph.getLeading() * RtfElement.TWIPS_FACTOR));
             }
             this.paragraphStyle.setKeepTogether(paragraph.getKeepTogether());
         }

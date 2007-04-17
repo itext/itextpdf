@@ -441,7 +441,7 @@ class PdfDocument extends Document {
                 case Element.ANCHOR: {
                     Anchor anchor = (Anchor) element;
                     String url = anchor.reference();
-                    leading = anchor.leading();
+                    leading = anchor.getLeading();
                     if (url != null) {
                         anchorAction = new PdfAction(url);
                     }
@@ -465,7 +465,7 @@ class PdfDocument extends Document {
                 }
                 case Element.PHRASE: {
                     // we cast the element to a phrase and set the leading of the document
-                    leading = ((Phrase) element).leading();
+                    leading = ((Phrase) element).getLeading();
                     // we process the element
                     element.process(this);
                     break;
@@ -474,10 +474,10 @@ class PdfDocument extends Document {
                     // we cast the element to a paragraph
                     Paragraph paragraph = (Paragraph) element;
                     
-                    addSpacing(paragraph.spacingBefore(), leading, paragraph.font());
+                    addSpacing(paragraph.spacingBefore(), leading, paragraph.getFont());
                     
                     // we adjust the parameters of the document
-                    alignment = paragraph.alignment();
+                    alignment = paragraph.getAlignment();
                     leading = paragraph.getTotalLeading();
                     carriageReturn();
                     
@@ -486,8 +486,8 @@ class PdfDocument extends Document {
                         newPage();
                     }
 
-                    indentation.indentLeft += paragraph.indentationLeft();
-                    indentation.indentRight += paragraph.indentationRight();
+                    indentation.indentLeft += paragraph.getIndentationLeft();
+                    indentation.indentRight += paragraph.getIndentationRight();
                     carriageReturn();
      
                     PdfPageEvent pageEvent = writer.getPageEvent();
@@ -505,20 +505,20 @@ class PdfDocument extends Document {
                         this.add(table);
                     }
                     else {
-                    	indentation.paragraph += paragraph.indentationLeft();
+                    	indentation.paragraph += paragraph.getIndentationLeft();
                     	line.setExtraIndent(paragraph.getFirstLineIndent());
                     	element.process(this);
-                    	indentation.paragraph -= paragraph.indentationLeft();
+                    	indentation.paragraph -= paragraph.getIndentationLeft();
                     }
                     
-                    addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.font());
+                    addSpacing(paragraph.spacingAfter(), paragraph.getTotalLeading(), paragraph.getFont());
 
                     if (pageEvent != null && isParagraph)
                         pageEvent.onParagraphEnd(writer, this, indentTop() - currentHeight);
                     
                     alignment = Element.ALIGN_LEFT;
-                    indentation.indentLeft -= paragraph.indentationLeft();
-                    indentation.indentRight -= paragraph.indentationRight();
+                    indentation.indentLeft -= paragraph.getIndentationLeft();
+                    indentation.indentRight -= paragraph.getIndentationRight();
                     carriageReturn();
                     break;
                 }
@@ -610,12 +610,12 @@ class PdfDocument extends Document {
                     // we cast the element to a ListItem
                     ListItem listItem = (ListItem) element;
                     
-                    addSpacing(listItem.spacingBefore(), leading, listItem.font());
+                    addSpacing(listItem.spacingBefore(), leading, listItem.getFont());
                    
                     // we adjust the document
-                    alignment = listItem.alignment();
-                    indentation.listIndentLeft += listItem.indentationLeft();
-                    indentation.indentRight += listItem.indentationRight();
+                    alignment = listItem.getAlignment();
+                    indentation.listIndentLeft += listItem.getIndentationLeft();
+                    indentation.indentRight += listItem.getIndentationRight();
                     leading = listItem.getTotalLeading();
                     carriageReturn();
                     
@@ -624,7 +624,7 @@ class PdfDocument extends Document {
                     // we process the item
                     element.process(this);
 
-                    addSpacing(listItem.spacingAfter(), listItem.getTotalLeading(), listItem.font());
+                    addSpacing(listItem.spacingAfter(), listItem.getTotalLeading(), listItem.getFont());
                    
                     // if the last line is justified, it should be aligned to the left
                     if (line.hasToBeJustified()) {
@@ -632,8 +632,8 @@ class PdfDocument extends Document {
                     }
                     // some parameters are set back to normal again
                     carriageReturn();
-                    indentation.listIndentLeft -= listItem.indentationLeft();
-                    indentation.indentRight -= listItem.indentationRight();
+                    indentation.listIndentLeft -= listItem.getIndentationLeft();
+                    indentation.indentRight -= listItem.getIndentationRight();
                     break;
                 }
                 case Element.RECTANGLE: {

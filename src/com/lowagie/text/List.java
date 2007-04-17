@@ -290,7 +290,7 @@ public class List implements TextElementArray {
         for (Iterator i = list.iterator(); i.hasNext(); ) {
         	o = (Element)i.next();
             if (o instanceof ListItem) {
-            	max = Math.max(max, ((ListItem)o).indentationLeft());
+            	max = Math.max(max, ((ListItem)o).getIndentationLeft());
             }
         }
         for (Iterator i = list.iterator(); i.hasNext(); ) {

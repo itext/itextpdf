@@ -1100,12 +1100,12 @@ public class ColumnText {
                     if (compositeColumn == null) {
                         compositeColumn = new ColumnText(canvas);
                         compositeColumn.setUseAscender(firstPass ? useAscender : false);
-                        compositeColumn.setAlignment(para.alignment());
-                        compositeColumn.setIndent(para.indentationLeft() + para.getFirstLineIndent());
+                        compositeColumn.setAlignment(para.getAlignment());
+                        compositeColumn.setIndent(para.getIndentationLeft() + para.getFirstLineIndent());
                         compositeColumn.setExtraParagraphSpace(para.getExtraParagraphSpace());
-                        compositeColumn.setFollowingIndent(para.indentationLeft());
-                        compositeColumn.setRightIndent(para.indentationRight());
-                        compositeColumn.setLeading(para.leading(), para.getMultipliedLeading());
+                        compositeColumn.setFollowingIndent(para.getIndentationLeft());
+                        compositeColumn.setRightIndent(para.getIndentationRight());
+                        compositeColumn.setLeading(para.getLeading(), para.getMultipliedLeading());
                         compositeColumn.setRunDirection(runDirection);
                         compositeColumn.setArabicOptions(arabicOptions);
                         compositeColumn.setSpaceCharRatio(spaceCharRatio);
@@ -1196,12 +1196,12 @@ public class ColumnText {
                         }
                         compositeColumn = new ColumnText(canvas);
                         compositeColumn.setUseAscender(firstPass ? useAscender : false);
-                        compositeColumn.setAlignment(item.alignment());
-                        compositeColumn.setIndent(item.indentationLeft() + listIndentation + item.getFirstLineIndent());
+                        compositeColumn.setAlignment(item.getAlignment());
+                        compositeColumn.setIndent(item.getIndentationLeft() + listIndentation + item.getFirstLineIndent());
                         compositeColumn.setExtraParagraphSpace(item.getExtraParagraphSpace());
                         compositeColumn.setFollowingIndent(compositeColumn.getIndent());
-                        compositeColumn.setRightIndent(item.indentationRight() + list.getIndentationRight());
-                        compositeColumn.setLeading(item.leading(), item.getMultipliedLeading());
+                        compositeColumn.setRightIndent(item.getIndentationRight() + list.getIndentationRight());
+                        compositeColumn.setLeading(item.getLeading(), item.getMultipliedLeading());
                         compositeColumn.setRunDirection(runDirection);
                         compositeColumn.setArabicOptions(arabicOptions);
                         compositeColumn.setSpaceCharRatio(spaceCharRatio);

@@ -220,7 +220,7 @@ public class Cell extends Rectangle implements TextElementArray {
  		// Update by Benoit WIART <b.wiart@proxiad.com>
  		if(element instanceof Phrase) {
 			Phrase p = (Phrase)element;
-			leading = p.leading();
+			leading = p.getLeading();
 		}
 
 		// initializes the arraylist and adds an element
@@ -394,7 +394,7 @@ public class Cell extends Rectangle implements TextElementArray {
 			case Element.PARAGRAPH:
 			case Element.PHRASE:
 				if (Float.isNaN(leading)) {
-					leading = ((Phrase) element).leading();
+					leading = ((Phrase) element).getLeading();
 				}
 				if (((Phrase) element).isEmpty()) return;
 				arrayList.add(element);

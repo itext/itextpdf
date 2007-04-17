@@ -227,18 +227,18 @@ public class PdfCell extends Rectangle {
                     // we loop over all the listitems
                     for (Iterator items = ((List) element).getItems().iterator(); items.hasNext();) {
                         item = (ListItem) items.next();
-                        line = new PdfLine(left + item.indentationLeft(), right, alignment, item.leading());
+                        line = new PdfLine(left + item.getIndentationLeft(), right, alignment, item.getLeading());
                         line.setListItem(item);
                         for (Iterator j = item.getChunks().iterator(); j.hasNext();) {
                             chunk = new PdfChunk((Chunk) j.next(), (PdfAction) (allActions.get(aCounter++)));
                             while ((overflow = line.add(chunk)) != null) {
                                 addLine(line);
-                                line = new PdfLine(left + item.indentationLeft(), right, alignment, item.leading());
+                                line = new PdfLine(left + item.getIndentationLeft(), right, alignment, item.getLeading());
                                 chunk = overflow;
                             }
                             line.resetAlignment();
                             addLine(line);
-                            line = new PdfLine(left + item.indentationLeft(), right, alignment, leading);
+                            line = new PdfLine(left + item.getIndentationLeft(), right, alignment, leading);
                         }
                     }
                     line = new PdfLine(left, right, alignment, leading);
@@ -253,12 +253,12 @@ public class PdfCell extends Rectangle {
                     float currentLeft = left;
                     float currentRight = right;
                     if (element instanceof Phrase) {
-                        currentLineLeading = ((Phrase) element).leading();
+                        currentLineLeading = ((Phrase) element).getLeading();
                     }
                     if (element instanceof Paragraph) {
                         Paragraph p = (Paragraph) element;
-                        currentLeft += p.indentationLeft();
-                        currentRight -= p.indentationRight();
+                        currentLeft += p.getIndentationLeft();
+                        currentRight -= p.getIndentationRight();
                     }
                     if (line == null) {
                         line = new PdfLine(currentLeft, currentRight, alignment, currentLineLeading);

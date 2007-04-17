@@ -55,6 +55,8 @@ import com.lowagie.text.Chunk;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.List;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.html.Markup;
 
 /**
@@ -113,6 +115,47 @@ public class ElementFactory {
 			chunk.setBackground(Markup.decodeColor(value));
 		}
 		return chunk;
+	}
+	
+	public static Phrase getPhrase(Properties attributes) {
+		Phrase phrase = new Phrase();
+		phrase.setFont(FontFactory.getFont(attributes));
+        String value;
+        value = attributes.getProperty(ElementTags.LEADING);
+        if (value != null) {
+            phrase.setLeading(Float.parseFloat(value + "f"));
+        }
+        value = attributes.getProperty(Markup.CSS_KEY_LINEHEIGHT);
+        if (value != null) {
+            phrase.setLeading(Markup.parseLength(value));
+        }
+        value = attributes.getProperty(ElementTags.ITEXT);
+        if (value != null) {
+            Chunk chunk = new Chunk(value);
+            if ((value = attributes.getProperty(ElementTags.GENERICTAG)) != null) {
+                chunk.setGenericTag(value);
+            }
+            phrase.add(chunk);
+        }
+        return phrase;
+	}
+	
+	public static Paragraph getParagraph(Properties attributes) {
+		Paragraph paragraph = new Paragraph(getPhrase(attributes));
+        String value;
+        value = attributes.getProperty(ElementTags.ALIGN);
+        if (value != null) {
+            paragraph.setAlignment(value);
+        }
+        value = attributes.getProperty(ElementTags.INDENTATIONLEFT);
+        if (value != null) {
+            paragraph.setIndentationLeft(Float.parseFloat(value + "f"));
+        }
+        value = attributes.getProperty(ElementTags.INDENTATIONRIGHT);
+        if (value != null) {
+            paragraph.setIndentationRight(Float.parseFloat(value + "f"));
+        }
+		return paragraph;
 	}
 	
 	public static List getList(Properties attributes) {

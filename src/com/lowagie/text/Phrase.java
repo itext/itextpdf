@@ -55,8 +55,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.lowagie.text.html.Markup;
-
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
  * <P>
@@ -86,113 +84,104 @@ import com.lowagie.text.html.Markup;
 
 public class Phrase extends ArrayList implements TextElementArray {
     
-    // membervariables
-    
-private static final long serialVersionUID = 2643594602455068231L;
+    // constants
+	private static final long serialVersionUID = 2643594602455068231L;
 
-/** This is the leading of this phrase. */
+	// membervariables
+	/** This is the leading of this phrase. */
     protected float leading = Float.NaN;
     
-/** This is the font of this phrase. */
+    /** This is the font of this phrase. */
     protected Font font = new Font();
-
-/** Contains extra markupAttributes */
-    protected Properties markupAttributes;
     
     // constructors
     
-/**
- * Constructs a Phrase that can be used in the static getInstance() method.
- * @param	dummy	a dummy parameter
- */
-    private Phrase(boolean dummy) {
-    }
-    
-/**
- * Constructs a <CODE>Phrase</CODE> without specifying a leading.
- */
-    
+    /**
+     * Constructs a <CODE>Phrase</CODE> without specifying a leading.
+     */
     public Phrase() {
         this(16);
     }
     
-/**
- * Constructs a <CODE>Phrase</CODE> with a certain leading.
- *
- * @param	leading		the leading
- */
+    /**
+     * Copy constructor for <CODE>Phrase</CODE>.
+     */
+    public Phrase(Phrase phrase) {
+        super(phrase);
+        leading = phrase.getLeading();
+        font = phrase.getFont();
+    }
     
+    /**
+     * Constructs a <CODE>Phrase</CODE> with a certain leading.
+     *
+     * @param	leading		the leading
+     */
     public Phrase(float leading) {
         this.leading = leading;
     }
     
-/**
- * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>.
- *
- * @param	chunk		a <CODE>Chunk</CODE>
- */
-    
+    /**
+     * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>.
+     *
+     * @param	chunk		a <CODE>Chunk</CODE>
+     */
     public Phrase(Chunk chunk) {
         super.add(chunk);
         font = chunk.getFont();
     }
     
-/**
- * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>
- * and a certain leading.
- *
- * @param	leading	the leading
- * @param	chunk		a <CODE>Chunk</CODE>
- */
-    
+    /**
+     * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>
+     * and a certain leading.
+     *
+     * @param	leading	the leading
+     * @param	chunk		a <CODE>Chunk</CODE>
+     */
     public Phrase(float leading, Chunk chunk) {
         this(leading);
         super.add(chunk);
         font = chunk.getFont();
     }
     
-/**
- * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE>.
- *
- * @param	string		a <CODE>String</CODE>
- */
-    
+    /**
+     * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE>.
+     *
+     * @param	string		a <CODE>String</CODE>
+     */
     public Phrase(String string) {
         this(Float.NaN, string, new Font());
     }
     
-/**
- * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
- *
- * @param	string		a <CODE>String</CODE>
- * @param	font		a <CODE>Font</CODE>
- */
-    
+    /**
+     * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
+     *
+     * @param	string		a <CODE>String</CODE>
+     * @param	font		a <CODE>Font</CODE>
+     */
     public Phrase(String string, Font font) {
         this(Float.NaN, string, font);
         this.font = font;
     }
     
-/**
- * Constructs a <CODE>Phrase</CODE> with a certain leading and a certain <CODE>String</CODE>.
- *
- * @param	leading	the leading
- * @param	string		a <CODE>String</CODE>
- */
-    
+    /**
+     * Constructs a <CODE>Phrase</CODE> with a certain leading and a certain <CODE>String</CODE>.
+     *
+     * @param	leading	the leading
+     * @param	string		a <CODE>String</CODE>
+     */
     public Phrase(float leading, String string) {
         this(leading, string, new Font());
     }
     
-/**
- * Constructs a <CODE>Phrase</CODE> with a certain leading, a certain <CODE>String</CODE>
- * and a certain <CODE>Font</CODE>.
- *
- * @param	leading	the leading
- * @param	string		a <CODE>String</CODE>
- * @param	font		a <CODE>Font</CODE>
- */
-    
+    /**
+     * Constructs a <CODE>Phrase</CODE> with a certain leading, a certain <CODE>String</CODE>
+     * and a certain <CODE>Font</CODE>.
+     *
+     * @param	leading	the leading
+     * @param	string		a <CODE>String</CODE>
+     * @param	font		a <CODE>Font</CODE>
+     */
     public Phrase(float leading, String string, Font font) {
         this(leading);
         this.font = font;
@@ -202,100 +191,15 @@ private static final long serialVersionUID = 2643594602455068231L;
         }
     }
     
-    /**
-     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
-     * @param string
-     * @return a newly constructed Phrase
-     */
-    public static final Phrase getInstance(String string) {
-    	return getInstance(16, string, new Font());
-    }
-    
-    /**
-     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
-     * @param leading
-     * @param string
-     * @return a newly constructed Phrase
-     */
-    public static final Phrase getInstance(int leading, String string) {
-    	return getInstance(leading, string, new Font());
-    }
-    
-    /**
-     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
-     * @param leading
-     * @param string
-     * @param font
-     * @return a newly constructed Phrase
-     */
-    public static final Phrase getInstance(int leading, String string, Font font) {
-    	Phrase p = new Phrase(true);
-    	p.setLeading(leading);
-    	p.font = font;
-    	if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
-            int index;
-            while((index = SpecialSymbol.index(string)) > -1) {
-                if (index > 0) {
-                    String firstPart = string.substring(0, index);
-                    /* bugfix [ #461272 ] CODE CHANGE REQUIRED IN Phrase.java
-                       by Arekh Nambiar */
-                    ((ArrayList)p).add(new Chunk(firstPart, font));
-                    string = string.substring(index);
-                }
-                Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
-                StringBuffer buf = new StringBuffer();
-                buf.append(SpecialSymbol.getCorrespondingSymbol(string.charAt(0)));
-                string = string.substring(1);
-                while (SpecialSymbol.index(string) == 0) {
-                    buf.append(SpecialSymbol.getCorrespondingSymbol(string.charAt(0)));
-                    string = string.substring(1);
-                }
-                ((ArrayList)p).add(new Chunk(buf.toString(), symbol));
-            }
-        }
-    	/* bugfix by August Detlefsen */
-        if (string != null && string.length() != 0) {
-        	((ArrayList)p).add(new Chunk(string, font));
-        }
-    	return p;
-    }    
-    
-/**
- * Returns a <CODE>Phrase</CODE> that has been constructed taking in account
- * the value of some <VAR>attributes</VAR>.
- *
- * @param	attributes		Some attributes
- */
-    
-    public Phrase(Properties attributes) {
-        this("", FontFactory.getFont(attributes));
-        clear();
-        String value;
-        if ((value = (String)attributes.remove(ElementTags.LEADING)) != null) {
-            setLeading(Float.parseFloat(value + "f"));
-        }
-        else if ((value = (String)attributes.remove(Markup.CSS_KEY_LINEHEIGHT)) != null) {
-            setLeading(Markup.parseLength(value));
-        }
-        if ((value = (String)attributes.remove(ElementTags.ITEXT)) != null) {
-            Chunk chunk = new Chunk(value);
-            if ((value = (String)attributes.remove(ElementTags.GENERICTAG)) != null) {
-                chunk.setGenericTag(value);
-            }
-            add(chunk);
-        }
-    }
-    
     // implementation of the Element-methods
     
-/**
- * Processes the element by adding it (or the different parts) to an
- * <CODE>ElementListener</CODE>.
- *
- * @param	listener	an <CODE>ElementListener</CODE>
- * @return	<CODE>true</CODE> if the element was processed successfully
- */
-    
+    /**
+     * Processes the element by adding it (or the different parts) to an
+     * <CODE>ElementListener</CODE>.
+     *
+     * @param	listener	an <CODE>ElementListener</CODE>
+     * @return	<CODE>true</CODE> if the element was processed successfully
+     */
     public boolean process(ElementListener listener) {
         try {
             for (Iterator i = iterator(); i.hasNext(); ) {
@@ -308,22 +212,20 @@ private static final long serialVersionUID = 2643594602455068231L;
         }
     }
     
-/**
- * Gets the type of the text element.
- *
- * @return	a type
- */
-    
+    /**
+     * Gets the type of the text element.
+     *
+     * @return	a type
+     */    
     public int type() {
         return Element.PHRASE;
     }
     
-/**
- * Gets all the chunks in this element.
- *
- * @return	an <CODE>ArrayList</CODE>
- */
-    
+    /**
+     * Gets all the chunks in this element.
+     *
+     * @return	an <CODE>ArrayList</CODE>
+     */ 
     public ArrayList getChunks() {
         ArrayList tmp = new ArrayList();
         for (Iterator i = iterator(); i.hasNext(); ) {
@@ -334,15 +236,14 @@ private static final long serialVersionUID = 2643594602455068231L;
     
     // overriding some of the ArrayList-methods
     
-/**
- * Adds a <CODE>Chunk</CODE>, an <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
- * to this <CODE>Phrase</CODE>.
- *
- * @param	index	index at which the specified element is to be inserted
- * @param	o   	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
- * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
- */
-    
+    /**
+     * Adds a <CODE>Chunk</CODE>, an <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
+     * to this <CODE>Phrase</CODE>.
+     *
+     * @param	index	index at which the specified element is to be inserted
+     * @param	o   	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+     * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+     */
     public void add(int index, Object o) {
     	if (o == null) return;
         try {
@@ -370,15 +271,14 @@ private static final long serialVersionUID = 2643594602455068231L;
         }
     }
     
-/**
- * Adds a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
- * to this <CODE>Phrase</CODE>.
- *
- * @param	o	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
- * @return	a boolean
- * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
- */
-    
+    /**
+     * Adds a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
+     * to this <CODE>Phrase</CODE>.
+     *
+     * @param	o	an object of type <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+     * @return	a boolean
+     * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+     */
     public boolean add(Object o) {
     	if (o == null) return false;
         if (o instanceof String) {
@@ -421,16 +321,30 @@ private static final long serialVersionUID = 2643594602455068231L;
         }
     }
     
-/**
- * Adds a Chunk.
- * <p>
- * This method is a hack to solve a problem I had with phrases that were split between chunks
- * in the wrong place.
- * @param chunk a Chunk to add to the Phrase
- * @return true if adding the Chunk succeeded
- */
+    /**
+     * Adds a collection of <CODE>Chunk</CODE>s
+     * to this <CODE>Phrase</CODE>.
+     *
+     * @param	collection	a collection of <CODE>Chunk</CODE>s, <CODE>Anchor</CODE>s and <CODE>Phrase</CODE>s.
+     * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
+     * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
+     */
+    public boolean addAll(Collection collection) {
+        for (Iterator iterator = collection.iterator(); iterator.hasNext(); ) {
+            this.add(iterator.next());
+        }
+        return true;
+    }
     
-    private synchronized boolean addChunk(Chunk chunk) {
+    /**
+     * Adds a Chunk.
+     * <p>
+     * This method is a hack to solve a problem I had with phrases that were split between chunks
+     * in the wrong place.
+     * @param chunk a Chunk to add to the Phrase
+     * @return true if adding the Chunk succeeded
+     */
+    protected synchronized boolean addChunk(Chunk chunk) {
         if (!font.isStandardFont()) {
             chunk.setFont(font.difference(chunk.getFont()));
         }
@@ -448,53 +362,88 @@ private static final long serialVersionUID = 2643594602455068231L;
         return super.add(chunk);
     }
     
-/**
- * Adds a collection of <CODE>Chunk</CODE>s
- * to this <CODE>Phrase</CODE>.
- *
- * @param	collection	a collection of <CODE>Chunk</CODE>s, <CODE>Anchor</CODE>s and <CODE>Phrase</CODE>s.
- * @return	<CODE>true</CODE> if the action succeeded, <CODE>false</CODE> if not.
- * @throws	ClassCastException	when you try to add something that isn't a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or <CODE>Phrase</CODE>
- */
-    
-    public boolean addAll(Collection collection) {
-        for (Iterator iterator = collection.iterator(); iterator.hasNext(); ) {
-            this.add(iterator.next());
-        }
-        return true;
-    }
-    
-/**
- * Adds a <CODE>Object</CODE> to the <CODE>Paragraph</CODE>.
- *
- * @param	object		the object to add.
- */
-    
+    /**
+     * Adds a <CODE>Object</CODE> to the <CODE>Paragraph</CODE>.
+     *
+     * @param	object		the object to add.
+     */
     protected void addSpecial(Object object) {
         super.add(object);
     }
     
-    // methods
+    // other methods that change the member variables
     
-/**
- * Sets the leading of this phrase.
- *
- * @param	leading		the new leading
- */
+    /**
+     * Sets the leading of this phrase.
+     *
+     * @param	leading		the new leading
+     */
     
     public void setLeading(float leading) {
         this.leading = leading;
     }
     
+    /**
+     * Sets the main font of this phrase.
+     * @param font	the new font
+     */
+    public void setFont(Font font) {
+    	this.font = font;
+    }
+    
     // methods to retrieve information
+
+	/**
+     * Gets the leading of this phrase.
+     *
+     * @return	the linespacing
+     */
+    public float getLeading() {
+        if (Float.isNaN(leading)) {
+            return font.leading(1.5f);
+        }
+        return leading;
+    }
+
+    /**
+     * Checks you if the leading of this phrase is defined.
+     *
+     * @return	true if the leading is defined
+     */ 
+    public boolean hasLeading() {
+        if (Float.isNaN(leading)) {
+            return false;
+        }
+        return true;
+    }
+
+	/**
+     * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
+     *
+     * @return	a <CODE>Font</CODE>
+     */  
+    public Font getFont() {
+        return font;
+    }
     
-/**
- * Checks is this <CODE>Phrase</CODE> contains no or 1 empty <CODE>Chunk</CODE>.
- *
- * @return	<CODE>false</CODE> if the <CODE>Phrase</CODE>
- * contains more than one or more non-empty<CODE>Chunk</CODE>s.
- */
+    /**
+     * Returns the content as a String object.
+     * This method differs from toString because toString will return an ArrayList with the toString value of the Chunks in this Phrase.
+     */
+    public String content() {
+    	StringBuffer buf = new StringBuffer();
+    	for (Iterator i = getChunks().iterator(); i.hasNext(); ) {
+    		buf.append(i.next().toString());
+    	}
+    	return buf.toString();
+    }
     
+    /**
+     * Checks is this <CODE>Phrase</CODE> contains no or 1 empty <CODE>Chunk</CODE>.
+     *
+     * @return	<CODE>false</CODE> if the <CODE>Phrase</CODE>
+     * contains more than one or more non-empty<CODE>Chunk</CODE>s.
+     */
     public boolean isEmpty() {
         switch(size()) {
             case 0:
@@ -510,62 +459,107 @@ private static final long serialVersionUID = 2643594602455068231L;
         }
     }
     
-/**
- * Checks you if the leading of this phrase is defined.
- *
- * @return	true if the leading is defined
- */
+    // kept for historical reasons; people should use FontSelector
+    // eligable for deprecation, but the methods are mentioned in the book p277.
     
-    public boolean leadingDefined() {
-        if (Float.isNaN(leading)) {
-            return false;
-        }
-        return true;
+    /**
+     * Constructs a Phrase that can be used in the static getInstance() method.
+     * @param	dummy	a dummy parameter
+     */
+    private Phrase(boolean dummy) {
     }
     
-/**
- * Gets the leading of this phrase.
- *
- * @return	the linespacing
- */
-    
-    public float leading() {
-        if (Float.isNaN(leading)) {
-            return font.leading(1.5f);
-        }
-        return leading;
+    /**
+     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
+     * @param string
+     * @return a newly constructed Phrase
+     */
+    public static final Phrase getInstance(String string) {
+    	return getInstance(16, string, new Font());
     }
     
-/**
- * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
- *
- * @return	a <CODE>Font</CODE>
- */
+    /**
+     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
+     * @param leading
+     * @param string
+     * @return a newly constructed Phrase
+     */
+    public static final Phrase getInstance(int leading, String string) {
+    	return getInstance(leading, string, new Font());
+    }
     
+    /**
+     * Gets a special kind of Phrase that changes some characters into corresponding symbols.
+     * @param leading
+     * @param string
+     * @param font
+     * @return a newly constructed Phrase
+     */
+    public static final Phrase getInstance(int leading, String string, Font font) {
+    	Phrase p = new Phrase(true);
+    	p.setLeading(leading);
+    	p.font = font;
+    	if (font.family() != Font.SYMBOL && font.family() != Font.ZAPFDINGBATS && font.getBaseFont() == null) {
+            int index;
+            while((index = SpecialSymbol.index(string)) > -1) {
+                if (index > 0) {
+                    String firstPart = string.substring(0, index);
+                    ((ArrayList)p).add(new Chunk(firstPart, font));
+                    string = string.substring(index);
+                }
+                Font symbol = new Font(Font.SYMBOL, font.size(), font.style(), font.color());
+                StringBuffer buf = new StringBuffer();
+                buf.append(SpecialSymbol.getCorrespondingSymbol(string.charAt(0)));
+                string = string.substring(1);
+                while (SpecialSymbol.index(string) == 0) {
+                    buf.append(SpecialSymbol.getCorrespondingSymbol(string.charAt(0)));
+                    string = string.substring(1);
+                }
+                ((ArrayList)p).add(new Chunk(buf.toString(), symbol));
+            }
+        }
+        if (string != null && string.length() != 0) {
+        	((ArrayList)p).add(new Chunk(string, font));
+        }
+    	return p;
+    }
+    
+    // deprecated constructor and methods
+    
+    /**
+     * Returns a <CODE>Phrase</CODE> that has been constructed taking in account
+     * the value of some <VAR>attributes</VAR>.
+     *
+     * @param	attributes		Some attributes
+     */
+    public Phrase(Properties attributes) {
+        this(com.lowagie.text.factories.ElementFactory.getPhrase(attributes));
+    }
+    /**
+     * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
+     *
+     * @return	a <CODE>Font</CODE>
+     * @deprecated Use {@link #getFont()} instead
+     */  
     public Font font() {
-        return font;
+    	return getFont();
+    }    
+    /**
+     * Gets the leading of this phrase.
+     *
+     * @return	the linespacing
+     * @deprecated Use {@link #getLeading()} instead
+     */
+    public float leading() {
+    	return getLeading();
     }
-    
-/**
- * Returns the content as a String object.
- * This method differs from toString because toString will return an ArrayList with the toString value of the Chunks in this Phrase.
- */
-    public String content() {
-    	StringBuffer buf = new StringBuffer();
-    	for (Iterator i = getChunks().iterator(); i.hasNext(); ) {
-    		buf.append(i.next().toString());
-    	}
-    	return buf.toString();
-    }
-    
-/**
- * Checks if a given tag corresponds with this object.
- *
- * @param   tag     the given tag
- * @return  true if the tag corresponds
- */
-    
-    public static boolean isTag(String tag) {
-        return ElementTags.PHRASE.equals(tag);
+    /**
+     * Checks you if the leading of this phrase is defined.
+     *
+     * @return	true if the leading is defined
+     * @deprecated Use {@link #hasLeading()} instead
+     */
+    public boolean leadingDefined() {
+    	return hasLeading();
     }
 }
