@@ -115,7 +115,7 @@ public class RtfParagraph extends RtfPhrase {
         for(int i = 0; i < paragraph.size(); i++) {
             Element chunk = (Element) paragraph.get(i);
             if(chunk instanceof Chunk) {
-                ((Chunk) chunk).setFont(baseFont.difference(((Chunk) chunk).font()));
+                ((Chunk) chunk).setFont(baseFont.difference(((Chunk) chunk).getFont()));
             } else if(chunk instanceof RtfImage) {
                 ((RtfImage) chunks.get(i)).setAlignment(this.paragraphStyle.getAlignment());
             }

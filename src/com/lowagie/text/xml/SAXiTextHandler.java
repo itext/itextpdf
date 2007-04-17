@@ -254,8 +254,8 @@ public class SAXiTextHandler extends DefaultHandler {
         }
 
         // chunks
-        if (Chunk.isTag(name)) {
-            currentChunk = new Chunk(attributes);
+        if (ElementTags.CHUNK.equals(name)) {
+            currentChunk = ElementFactory.getChunk(attributes);
             if (bf != null) {
             	currentChunk.setFont(new Font(this.bf));
             }
@@ -267,7 +267,7 @@ public class SAXiTextHandler extends DefaultHandler {
             Font f = new Font();
             if (currentChunk != null) {
                 handleEndingTags(ElementTags.CHUNK);
-                f = currentChunk.font();
+                f = currentChunk.getFont();
             }
             currentChunk = EntitiesToSymbol.get(attributes.getProperty(ElementTags.ID),
                     f);
@@ -299,7 +299,7 @@ public class SAXiTextHandler extends DefaultHandler {
         }
         
         // listitems
-        if (ListItem.isTag(name)) {
+        if (ElementTags.LISTITEM.equals(name)) {
             stack.push(new ListItem(attributes));
             return;
         }
@@ -689,7 +689,7 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // chunks
-            if (Chunk.isTag(name)) {
+            if (ElementTags.CHUNK.equals(name)) {
                 return;
             }
 
@@ -708,7 +708,7 @@ public class SAXiTextHandler extends DefaultHandler {
             }
 
             // listitems
-            if (ListItem.isTag(name)) {
+            if (ElementTags.LISTITEM.equals(name)) {
                 ListItem listItem = (ListItem) stack.pop();
                 List list = (List) stack.pop();
                 list.add(listItem);

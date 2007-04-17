@@ -1,5 +1,8 @@
 /*
- * Copyright 2003 by Michael Niedermair.
+ * $Id$
+ * $Name$
+ *
+ * Copyright 1999, 2000, 2001, 2002 by Bruno Lowagie.
  *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
@@ -46,86 +49,48 @@
  */
 package com.lowagie.text;
 
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Set;
+
 /**
- * 
- * A special-version of <CODE>LIST</CODE> whitch use zapfdingbats-letters.
- * 
- * @see com.lowagie.text.List
- * @author Michael Niedermair and Bruno Lowagie
+ * A collection of convenience methods that were present in many different iText
+ * classes.
  */
 
-public class ZapfDingbatsList extends List {
+public class Utilities {
 
 	/**
-	 * char-number in zapfdingbats
-	 */
-	protected int zn;
-
-	/**
-	 * Creates a ZapfDingbatsList
+	 * Gets the keys of a Hashtable
 	 * 
-	 * @param zn a char-number
+	 * @param table
+	 *            a Hashtable
+	 * @return the keyset of a Hashtable (or an empty set if table is null)
 	 */
-	public ZapfDingbatsList(int zn) {
-		super(true);
-		this.zn = zn;
-		float fontsize = symbol.getFont().size();
-		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
+	public static Set getKeySet(Hashtable table) {
+		return (table == null) ? Collections.EMPTY_SET : table.keySet();
 	}
 
 	/**
-	 * Creates a ZapfDingbatsList
+	 * Utility method to extend an array.
 	 * 
-	 * @param zn a char-number
-	 * @param symbolIndent	indent
+	 * @param original
+	 *            the original array or <CODE>null</CODE>
+	 * @param item
+	 *            the item to be added to the array
+	 * @return a new array with the item appended
 	 */
-	public ZapfDingbatsList(int zn, int symbolIndent) {
-		super(true, symbolIndent);
-		this.zn = zn;
-		float fontsize = symbol.getFont().size();
-		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
-	}
-
-	/**
-	 * set the char-number 
-	 * @param zn a char-number
-	 */
-	public void setCharNumber(int zn) {
-		this.zn = zn;
-	}
-
-	/**
-	 * get the char-number
-	 *
-	 * @return	char-number
-	 */
-	public int getCharNumber() {
-		return zn;
-	}
-
-	/**
-	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
-	 *
-	 * @param	o	the object to add.
-	 * @return true if adding the object succeeded
-	 */
-	public boolean add(Object o) {
-		if (o instanceof ListItem) {
-			ListItem item = (ListItem) o;
-			Chunk chunk = new Chunk((char)zn, symbol.getFont());
-			chunk.append(" ");
-			item.setListSymbol(chunk);
-			item.setIndentationLeft(symbolIndent, autoindent);
-			item.setIndentationRight(0);
-			list.add(item);
-		} else if (o instanceof List) {
-			List nested = (List) o;
-			nested.setIndentationLeft(nested.getIndentationLeft() + symbolIndent);
-			first--;
-			return list.add(nested);
-		} else if (o instanceof String) {
-			return this.add(new ListItem((String) o));
+	public static Object[][] addToArray(Object original[][], Object item[]) {
+		if (original == null) {
+			original = new Object[1][];
+			original[0] = item;
+			return original;
+		} else {
+			Object original2[][] = new Object[original.length + 1][];
+			System.arraycopy(original, 0, original2, 0, original.length);
+			original2[original.length] = item;
+			return original2;
 		}
-		return false;
 	}
+
 }

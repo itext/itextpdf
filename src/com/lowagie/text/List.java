@@ -256,9 +256,9 @@ public class List implements TextElementArray {
                 Chunk chunk;
                 int index = first + list.size();
                 if ( lettered )
-                    chunk = new Chunk(RomanAlphabetFactory.getString(index, lowercase), symbol.font());
+                    chunk = new Chunk(RomanAlphabetFactory.getString(index, lowercase), symbol.getFont());
                 else
-                    chunk = new Chunk(String.valueOf(index), symbol.font());
+                    chunk = new Chunk(String.valueOf(index), symbol.getFont());
                 chunk.append(". ");
                 item.setListSymbol(chunk);
             }

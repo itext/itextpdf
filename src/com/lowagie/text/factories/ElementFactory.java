@@ -55,6 +55,7 @@ import com.lowagie.text.Chunk;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.List;
+import com.lowagie.text.html.Markup;
 
 /**
  * This class is able to create Element objects based on a list of properties.
@@ -62,6 +63,58 @@ import com.lowagie.text.List;
 
 public class ElementFactory {
 
+	public static Chunk getChunk(Properties attributes) {
+		Chunk chunk = new Chunk();
+		
+		chunk.setFont(FontFactory.getFont(attributes));
+		String value;
+		
+		value = attributes.getProperty(ElementTags.ITEXT);
+		if (value != null) {
+			chunk.append(value);
+		}
+		value = attributes.getProperty(ElementTags.LOCALGOTO);
+		if (value != null) {
+			chunk.setLocalGoto(value);
+		}
+		value = attributes.getProperty(ElementTags.REMOTEGOTO);
+		if (value != null) {
+			String page = attributes.getProperty(ElementTags.PAGE);
+			if (page != null) {
+				chunk.setRemoteGoto(value, Integer.parseInt(page));
+			}
+			else {
+				String destination = attributes.getProperty(ElementTags.DESTINATION);
+				if (destination != null) {
+					chunk.setRemoteGoto(value, destination);
+				}
+			}
+		}
+		value = attributes.getProperty(ElementTags.LOCALDESTINATION);
+		if (value != null) {
+			chunk.setLocalDestination(value);
+		}
+		value = attributes.getProperty(ElementTags.SUBSUPSCRIPT);
+		if (value != null) {
+			chunk.setTextRise(Float.parseFloat(value + "f"));
+		}
+		value = attributes.getProperty(Markup.CSS_KEY_VERTICALALIGN);
+		if (value != null && value.endsWith("%")) {
+			float p = Float.parseFloat(
+					value.substring(0, value.length() - 1) + "f") / 100f;
+			chunk.setTextRise(p * chunk.getFont().size());
+		}
+		value = attributes.getProperty(ElementTags.GENERICTAG);
+		if (value != null) {
+			chunk.setGenericTag(value);
+		}
+		value = attributes.getProperty(ElementTags.BACKGROUNDCOLOR);
+		if (value != null) {
+			chunk.setBackground(Markup.decodeColor(value));
+		}
+		return chunk;
+	}
+	
 	public static List getList(Properties attributes) {
 		List list = new List();
 

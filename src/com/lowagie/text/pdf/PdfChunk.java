@@ -59,6 +59,7 @@ import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.SplitCharacter;
+import com.lowagie.text.Utilities;
 
 /**
  * A <CODE>PdfChunk</CODE> is the PDF translation of a <CODE>Chunk</CODE>.
@@ -189,7 +190,7 @@ public class PdfChunk implements SplitCharacter{
         thisChunk[0] = this;
         value = chunk.content();
         
-        Font f = chunk.font();
+        Font f = chunk.getFont();
         float size = f.size();
         if (size == Font.UNDEFINED)
             size = 12;
@@ -230,12 +231,12 @@ public class PdfChunk implements SplitCharacter{
         }
         if (f.isUnderlined()) {
             Object obj[] = {null, new float[]{0, 1f / 15, 0, -1f / 3, 0}};
-            Object unders[][] = Chunk.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
+            Object unders[][] = Utilities.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
             attributes.put(Chunk.UNDERLINE, unders);
         }
         if (f.isStrikethru()) {
             Object obj[] = {null, new float[]{0, 1f / 15, 0, 1f / 3, 0}};
-            Object unders[][] = Chunk.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
+            Object unders[][] = Utilities.addToArray((Object[][])attributes.get(Chunk.UNDERLINE), obj);
             attributes.put(Chunk.UNDERLINE, unders);
         }
         if (action != null)

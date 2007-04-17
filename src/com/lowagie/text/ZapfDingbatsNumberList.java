@@ -51,8 +51,7 @@ package com.lowagie.text;
  * A special-version of <CODE>LIST</CODE> whitch use zapfdingbats-numbers (1..10).
  * 
  * @see com.lowagie.text.List
- * @version 2003-06-22
- * @author Michael Niedermair
+ * @author Michael Niedermair and Bruno Lowagie
  */
 
 public class ZapfDingbatsNumberList extends List {
@@ -67,10 +66,22 @@ public class ZapfDingbatsNumberList extends List {
 	 * @param type the type of list
 	 * @param symbolIndent	indent
 	 */
+	public ZapfDingbatsNumberList(int type) {
+		super(true);
+		this.type = type;
+		float fontsize = symbol.getFont().size();
+		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
+	}
+
+	/**
+	 * Creates a ZapdDingbatsNumberList
+	 * @param type the type of list
+	 * @param symbolIndent	indent
+	 */
 	public ZapfDingbatsNumberList(int type, int symbolIndent) {
 		super(true, symbolIndent);
 		this.type = type;
-		float fontsize = symbol.font().size();
+		float fontsize = symbol.getFont().size();
 		symbol.setFont(FontFactory.getFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL));
 	}
 
@@ -104,17 +115,18 @@ public class ZapfDingbatsNumberList extends List {
 			Chunk chunk;
 			switch (type ) {
 				case 0:
-					chunk = new Chunk((char)(first + list.size() + 171), symbol.font());
+					chunk = new Chunk((char)(first + list.size() + 171), symbol.getFont());
 					break;
 				case 1:
-					chunk = new Chunk((char)(first + list.size() + 181), symbol.font());
+					chunk = new Chunk((char)(first + list.size() + 181), symbol.getFont());
 					break;
 				case 2:
-					chunk = new Chunk((char)(first + list.size() + 191), symbol.font());
+					chunk = new Chunk((char)(first + list.size() + 191), symbol.getFont());
 					break;
 				default:
-					chunk = new Chunk((char)(first + list.size() + 201), symbol.font());
+					chunk = new Chunk((char)(first + list.size() + 201), symbol.getFont());
 			}
+			chunk.append(" ");
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);
 			item.setIndentationRight(0);

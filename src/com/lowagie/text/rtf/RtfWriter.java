@@ -1027,7 +1027,7 @@ public class RtfWriter extends DocWriter {
         Iterator chunks = paragraphElement.getChunks().iterator();
         while (chunks.hasNext()) {
             Chunk ch = (Chunk) chunks.next();
-            ch.setFont(paragraphElement.font().difference(ch.font()));
+            ch.setFont(paragraphElement.font().difference(ch.getFont()));
         }
         ByteArrayOutputStream save = content;
         content = out;
@@ -1057,7 +1057,7 @@ public class RtfWriter extends DocWriter {
         Iterator chunks = phrase.getChunks().iterator();
         while (chunks.hasNext()) {
             Chunk ch = (Chunk) chunks.next();
-            ch.setFont(phrase.font().difference(ch.font()));
+            ch.setFont(phrase.font().difference(ch.getFont()));
         }
         ByteArrayOutputStream save = content;
         content = out;
@@ -1124,7 +1124,7 @@ public class RtfWriter extends DocWriter {
 
 
     protected void writeInitialFontSignature(OutputStream out, Chunk chunk) throws IOException {
-        Font font = chunk.font();
+        Font font = chunk.getFont();
 
         out.write(escape);
         out.write(fontNumber);
@@ -1180,7 +1180,7 @@ public class RtfWriter extends DocWriter {
 
 
     protected void writeFinishingFontSignature(OutputStream out, Chunk chunk) throws IOException {
-        Font font = chunk.font();
+        Font font = chunk.getFont();
 
         if (font.isBold()) {
             out.write(escape);
@@ -2274,8 +2274,8 @@ public class RtfWriter extends DocWriter {
         if(hf instanceof RtfHeaderFooter) {
             RtfHeaderFooter rhf = (RtfHeaderFooter) hf;
             if(rhf.content() instanceof Chunk) {
-                addFont(((Chunk) rhf.content()).font());
-                addColor(((Chunk) rhf.content()).font().color());
+                addFont(((Chunk) rhf.content()).getFont());
+                addColor(((Chunk) rhf.content()).getFont().color());
             } else if(rhf.content() instanceof Phrase) {
                 addFont(((Phrase) rhf.content()).font());
                 addColor(((Phrase) rhf.content()).font().color());

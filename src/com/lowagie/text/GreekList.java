@@ -93,7 +93,7 @@ public class GreekList extends List {
 	 * change the font to SYMBOL
 	 */
 	protected void setGreekFont() {
-		float fontsize = symbol.font().size();
+		float fontsize = symbol.getFont().size();
 		symbol.setFont(FontFactory.getFont(FontFactory.SYMBOL, fontsize, Font.NORMAL));
 	}
 
@@ -108,7 +108,7 @@ public class GreekList extends List {
 	public boolean add(Object o) {
 		if (o instanceof ListItem) {
 			ListItem item = (ListItem) o;
-			Chunk chunk = new Chunk(GreekNumberFactory.getString(first + list.size(), lowercase), symbol.font());
+			Chunk chunk = new Chunk(GreekNumberFactory.getString(first + list.size(), lowercase), symbol.getFont());
 			chunk.append(". ");
 			item.setListSymbol(chunk);
 			item.setIndentationLeft(symbolIndent, autoindent);

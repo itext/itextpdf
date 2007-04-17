@@ -103,38 +103,37 @@ import com.lowagie.text.html.Markup;
 
 public class ListItem extends Paragraph {
     
-    // membervariables
-    
-private static final long serialVersionUID = 1970670787169329006L;
-/** this is the symbol that wil proceed the listitem. */
+    // constants
+	private static final long serialVersionUID = 1970670787169329006L;
+	
+	// member variables
+	
+	/** this is the symbol that wil precede the listitem. */
     private Chunk symbol;
     
     // constructors
     
-/**
- * Constructs a <CODE>ListItem</CODE>.
- */
-    
+    /**
+     * Constructs a <CODE>ListItem</CODE>.
+     */
     public ListItem() {
         super();
     }
     
-/**
- * Constructs a <CODE>ListItem</CODE> with a certain leading.
- *
- * @param	leading		the leading
- */
-    
+    /**
+     * Constructs a <CODE>ListItem</CODE> with a certain leading.
+     *
+     * @param	leading		the leading
+     */    
     public ListItem(float leading) {
         super(leading);
     }
     
-/**
- * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>.
- *
- * @param	chunk		a <CODE>Chunk</CODE>
- */
-    
+    /**
+     * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>.
+     *
+     * @param	chunk		a <CODE>Chunk</CODE>
+     */
     public ListItem(Chunk chunk) {
         super(chunk);
     }
@@ -261,7 +260,7 @@ private static final long serialVersionUID = 1970670787169329006L;
     public void setListSymbol(Chunk symbol) {
     	if (this.symbol == null) {
     		this.symbol = symbol;
-    		if (this.symbol.font().isStandardFont()) {
+    		if (this.symbol.getFont().isStandardFont()) {
     			this.symbol.setFont(font);
     		}
     	}
@@ -277,17 +276,6 @@ private static final long serialVersionUID = 1970670787169329006L;
     
     public Chunk listSymbol() {
         return symbol;
-    }
-    
-/**
- * Checks if a given tag corresponds with this object.
- *
- * @param   tag     the given tag
- * @return  true if the tag corresponds
- */
-    
-    public static boolean isTag(String tag) {
-        return ElementTags.LISTITEM.equals(tag);
     }
     
     /**

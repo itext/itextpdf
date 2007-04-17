@@ -130,7 +130,7 @@ public class RtfPhrase extends RtfElement {
         for(int i = 0; i < phrase.size(); i++) {
             Element chunk = (Element) phrase.get(i);
             if(chunk instanceof Chunk) {
-                ((Chunk) chunk).setFont(phraseFont.difference(((Chunk) chunk).font()));
+                ((Chunk) chunk).setFont(phraseFont.difference(((Chunk) chunk).getFont()));
             }
             try {
                 chunks.add(doc.getMapper().mapElement(chunk));

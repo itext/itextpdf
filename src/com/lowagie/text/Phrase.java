@@ -134,7 +134,7 @@ private static final long serialVersionUID = 2643594602455068231L;
     
     public Phrase(Chunk chunk) {
         super.add(chunk);
-        font = chunk.font();
+        font = chunk.getFont();
     }
     
 /**
@@ -148,7 +148,7 @@ private static final long serialVersionUID = 2643594602455068231L;
     public Phrase(float leading, Chunk chunk) {
         this(leading);
         super.add(chunk);
-        font = chunk.font();
+        font = chunk.getFont();
     }
     
 /**
@@ -350,7 +350,7 @@ private static final long serialVersionUID = 2643594602455068231L;
             if (element.type() == Element.CHUNK) {
                 Chunk chunk = (Chunk) element;
                 if (!font.isStandardFont()) {
-                    chunk.setFont(font.difference(chunk.font()));
+                    chunk.setFont(font.difference(chunk.getFont()));
                 }
                 super.add(index, chunk);
             }
@@ -432,12 +432,12 @@ private static final long serialVersionUID = 2643594602455068231L;
     
     private synchronized boolean addChunk(Chunk chunk) {
         if (!font.isStandardFont()) {
-            chunk.setFont(font.difference(chunk.font()));
+            chunk.setFont(font.difference(chunk.getFont()));
         }
         if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
-                if (!previous.hasAttributes() && previous.font().compareTo(chunk.font()) == 0 && !"".equals(previous.content().trim()) && !"".equals(chunk.content().trim())) {
+                if (!previous.hasAttributes() && previous.getFont().compareTo(chunk.getFont()) == 0 && !"".equals(previous.content().trim()) && !"".equals(chunk.content().trim())) {
                     previous.append(chunk.content());
                     return true;
                 }

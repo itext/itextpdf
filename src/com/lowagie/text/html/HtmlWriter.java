@@ -639,13 +639,13 @@ public class HtmlWriter extends DocWriter {
                 if (attributes != null && attributes.get(Chunk.NEWPAGE) != null) {
                     return;
                 }
-                boolean tag = isOtherFont(chunk.font()) || markup.size() > 0 || styleAttributes != null;
+                boolean tag = isOtherFont(chunk.getFont()) || markup.size() > 0 || styleAttributes != null;
                 if (tag) {
                     // start span tag
                     addTabs(indent);
                     writeStart(HtmlTags.SPAN);
-                    if (isOtherFont(chunk.font())) {
-                        write(chunk.font(), styleAttributes);
+                    if (isOtherFont(chunk.getFont())) {
+                        write(chunk.getFont(), styleAttributes);
                     }
                     writeMarkupAttributes(markup);
                     os.write(GT);
