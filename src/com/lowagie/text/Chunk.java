@@ -302,7 +302,7 @@ public class Chunk implements Element {
 	 * 
 	 * @return a <CODE>String</CODE>
 	 */
-	public String content() {
+	public String getContent() {
 		return content.toString();
 	}
 
@@ -312,7 +312,7 @@ public class Chunk implements Element {
 	 * @return a <CODE>String</CODE>
 	 */
 	public String toString() {
-		return content();
+		return getContent();
 	}
 
 	/**
@@ -336,7 +336,7 @@ public class Chunk implements Element {
 		if (getImage() != null) {
 			return getImage().scaledWidth();
 		}
-		return font.getCalculatedBaseFont(true).getWidthPoint(content(),
+		return font.getCalculatedBaseFont(true).getWidthPoint(getContent(),
 				font.getCalculatedSize())
 				* getHorizontalScaling();
 	}
@@ -798,6 +798,16 @@ public class Chunk implements Element {
 
 	public Chunk(Properties attributes) {
 		this(com.lowagie.text.factories.ElementFactory.getChunk(attributes));
+	}
+
+	/**
+	 * Returns the content of this <CODE>Chunk</CODE>.
+	 * 
+	 * @return a <CODE>String</CODE>
+	 * @deprecated Use {@link #getContent()} instead
+	 */
+	public String content() {
+		return getContent();
 	}
 
 	/**

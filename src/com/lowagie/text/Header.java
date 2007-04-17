@@ -67,17 +67,17 @@ public class Header extends Meta {
     
     // membervariables
     
-/** This is the content of this chunk of text. */
+	/** This is the content of this chunk of text. */
     private StringBuffer name;
     
     // constructors
     
-/**
- * Constructs a <CODE>Meta</CODE>.
- *
- * @param	name		the name of the meta-information
- * @param	content		the content
- */
+    /**
+     * Constructs a <CODE>Meta</CODE>.
+     *
+     * @param	name		the name of the meta-information
+     * @param	content		the content
+     */
     
     public Header(String name, String content) {
         super(Element.HEADER, content);
@@ -85,14 +85,25 @@ public class Header extends Meta {
     }
     
     // methods to retrieve information
-    
-/**
- * Returns the name of the meta information.
- *
- * @return	a <CODE>String</CODE>
- */
-    
-    public String name() {
+
+	/**
+     * Returns the name of the meta information.
+     *
+     * @return	a <CODE>String</CODE>
+     */
+    public String getName() {
         return name.toString();
     }
+    
+    // deprecated
+    
+    /**
+	 * Returns the name of the meta information.
+	 *
+	 * @return	a <CODE>String</CODE>
+	 * @deprecated Use {@link #getName()} instead
+	 */
+	public String name() {
+		return getName();
+	}
 }

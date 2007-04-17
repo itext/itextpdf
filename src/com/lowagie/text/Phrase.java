@@ -351,8 +351,8 @@ public class Phrase extends ArrayList implements TextElementArray {
         if (size() > 0 && !chunk.hasAttributes()) {
             try {
                 Chunk previous = (Chunk) get(size() - 1);
-                if (!previous.hasAttributes() && previous.getFont().compareTo(chunk.getFont()) == 0 && !"".equals(previous.content().trim()) && !"".equals(chunk.content().trim())) {
-                    previous.append(chunk.content());
+                if (!previous.hasAttributes() && previous.getFont().compareTo(chunk.getFont()) == 0 && !"".equals(previous.getContent().trim()) && !"".equals(chunk.getContent().trim())) {
+                    previous.append(chunk.getContent());
                     return true;
                 }
             }
@@ -425,12 +425,12 @@ public class Phrase extends ArrayList implements TextElementArray {
     public Font getFont() {
         return font;
     }
-    
-    /**
+
+	/**
      * Returns the content as a String object.
      * This method differs from toString because toString will return an ArrayList with the toString value of the Chunks in this Phrase.
      */
-    public String content() {
+    public String getContent() {
     	StringBuffer buf = new StringBuffer();
     	for (Iterator i = getChunks().iterator(); i.hasNext(); ) {
     		buf.append(i.next().toString());
@@ -562,4 +562,13 @@ public class Phrase extends ArrayList implements TextElementArray {
     public boolean leadingDefined() {
     	return hasLeading();
     }
+    
+    /**
+	 * Returns the content as a String object.
+	 * This method differs from toString because toString will return an ArrayList with the toString value of the Chunks in this Phrase.
+	 * @deprecated Use {@link #getContent()} instead
+	 */
+	public String content() {
+		return getContent();
+	}
 }
