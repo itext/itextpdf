@@ -1239,7 +1239,7 @@ public class ColumnText {
                 descender = compositeColumn.descender;
                 if (!Float.isNaN(compositeColumn.firstLineY) && !compositeColumn.firstLineYDone) {
                     if (!simulate)
-                        showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.listSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
+                        showTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.getListSymbol()), compositeColumn.leftX + listIndentation, compositeColumn.firstLineY, 0);
                     compositeColumn.firstLineYDone = true;
                 }
                 if ((status & NO_MORE_TEXT) != 0) {

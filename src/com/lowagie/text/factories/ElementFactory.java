@@ -56,6 +56,7 @@ import com.lowagie.text.Chunk;
 import com.lowagie.text.ElementTags;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.List;
+import com.lowagie.text.ListItem;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.html.Markup;
@@ -171,6 +172,11 @@ public class ElementFactory {
             paragraph.setIndentationRight(Float.parseFloat(value + "f"));
         }
 		return paragraph;
+	}
+	
+	public static ListItem getListItem(Properties attributes) {
+		ListItem item = new ListItem(getParagraph(attributes));
+		return item;
 	}
 	
 	public static List getList(Properties attributes) {
