@@ -49,7 +49,7 @@
 
 package com.lowagie.text.pdf;
 
-import com.lowagie.text.pdf.crypto.RC4Encryption;
+import com.lowagie.text.pdf.crypto.ARCFOUREncryption;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -118,7 +118,7 @@ public class PdfEncryption {
 
 	private int revision;
 
-	private RC4Encryption rc4 = new RC4Encryption();
+	private ARCFOUREncryption arcfour = new ARCFOUREncryption();
 
 	/** The generic key length. It may be 40 or 128. */
 	private int keyLength;
@@ -216,12 +216,12 @@ public class PdfEncryption {
 			for (int i = 0; i < 20; ++i) {
 				for (int j = 0; j < mkey.length; ++j)
 					mkey[j] = (byte) (digest[j] ^ i);
-				rc4.prepareRC4Key(mkey);
-				rc4.encryptRC4(ownerKey);
+				arcfour.prepareARCFOURKey(mkey);
+				arcfour.encryptARCFOUR(ownerKey);
 			}
 		} else {
-			rc4.prepareRC4Key(digest, 0, 5);
-			rc4.encryptRC4(userPad, ownerKey);
+			arcfour.prepareARCFOURKey(digest, 0, 5);
+			arcfour.encryptARCFOUR(userPad, ownerKey);
 		}
 
 		return ownerKey;
@@ -282,12 +282,12 @@ public class PdfEncryption {
 			for (int i = 0; i < 20; ++i) {
 				for (int j = 0; j < mkey.length; ++j)
 					digest[j] = (byte) (mkey[j] ^ i);
-				rc4.prepareRC4Key(digest, 0, mkey.length);
-				rc4.encryptRC4(userKey, 0, 16);
+				arcfour.prepareARCFOURKey(digest, 0, mkey.length);
+				arcfour.encryptARCFOUR(userKey, 0, 16);
 			}
 		} else {
-			rc4.prepareRC4Key(mkey);
-			rc4.encryptRC4(pad, userKey);
+			arcfour.prepareARCFOURKey(mkey);
+			arcfour.encryptARCFOUR(pad, userKey);
 		}
 	}
 

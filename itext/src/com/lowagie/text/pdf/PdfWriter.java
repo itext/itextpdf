@@ -1725,7 +1725,7 @@ public class PdfWriter extends DocWriter implements
     /** The operation permitted when the document is opened with the user password */
     public static final int AllowDegradedPrinting = 4;
     
-    // Strength of the RC4 encryption (kept for historical reasons)
+    // Strength of the encryption (kept for historical reasons)
     /** Type of RC4 encryption strength*/
     public static final boolean STRENGTH40BITS = false;
     /** Type of RC4 encryption strength */
