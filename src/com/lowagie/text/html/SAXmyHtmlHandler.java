@@ -249,7 +249,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
         }
         if (((HtmlTagMap) myTags).isTitle(name)) {
             if (currentChunk != null) {
-                bodyAttributes.put(ElementTags.TITLE, currentChunk.content());
+                bodyAttributes.put(ElementTags.TITLE, currentChunk.getContent());
             }
             return;
         }

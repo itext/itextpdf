@@ -964,7 +964,7 @@ public class RtfWriter extends DocWriter {
             if (writeTOC) {
                 StringBuffer title = new StringBuffer("");
                 for (ListIterator li = sectionElement.title().getChunks().listIterator(); li.hasNext();) {
-                    title.append(((Chunk) li.next()).content());
+                    title.append(((Chunk) li.next()).getContent());
                 }
                 add(new RtfTOCEntry(title.toString(), sectionElement.title().getFont()));
             } else {
@@ -1116,7 +1116,7 @@ public class RtfWriter extends DocWriter {
                 writeImage(chunk.getImage(), out);
             } else {
                 writeInitialFontSignature(out, chunk);
-                out.write(filterSpecialChar(chunk.content(), false).getBytes());
+                out.write(filterSpecialChar(chunk.getContent(), false).getBytes());
                 writeFinishingFontSignature(out, chunk);
             }
         }
@@ -1648,9 +1648,9 @@ public class RtfWriter extends DocWriter {
             info.write(metaName);
             info.write(delimiter);
             if (meta.type() == Meta.CREATIONDATE) {
-                writeFormatedDateTime(meta.content());
+                writeFormatedDateTime(meta.getContent());
             } else {
-                info.write(meta.content().getBytes());
+                info.write(meta.getContent().getBytes());
             }
         } finally {
             info.write(closeGroup);

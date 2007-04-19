@@ -388,22 +388,22 @@ class PdfDocument extends Document {
             switch(element.type()) {
                 // Information (headers)
                 case Element.HEADER:
-                    info.addkey(((Meta)element).name(), ((Meta)element).content());
+                    info.addkey(((Meta)element).getName(), ((Meta)element).getContent());
                     break;
                 case Element.TITLE:
-                    info.addTitle(((Meta)element).content());
+                    info.addTitle(((Meta)element).getContent());
                     break;
                 case Element.SUBJECT:
-                    info.addSubject(((Meta)element).content());
+                    info.addSubject(((Meta)element).getContent());
                     break;
                 case Element.KEYWORDS:
-                    info.addKeywords(((Meta)element).content());
+                    info.addKeywords(((Meta)element).getContent());
                     break;
                 case Element.AUTHOR:
-                    info.addAuthor(((Meta)element).content());
+                    info.addAuthor(((Meta)element).getContent());
                     break;
                 case Element.CREATOR:
-                    info.addCreator(((Meta)element).content());
+                    info.addCreator(((Meta)element).getContent());
                     break;
                 case Element.PRODUCER:
                     // you can not change the name of the producer

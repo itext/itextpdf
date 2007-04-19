@@ -237,10 +237,10 @@ public class HtmlWriter extends DocWriter {
                 case Element.HEADER:
                     try {
                         Header h = (Header) element;
-                        if (HtmlTags.STYLESHEET.equals(h.name())) {
+                        if (HtmlTags.STYLESHEET.equals(h.getName())) {
                             writeLink(h);
                         }
-                        else if (HtmlTags.JAVASCRIPT.equals(h.name())) {
+                        else if (HtmlTags.JAVASCRIPT.equals(h.getName())) {
                             writeJavaScript(h);
                         }
                         else {
@@ -261,18 +261,18 @@ public class HtmlWriter extends DocWriter {
                     writeStart(HtmlTags.TITLE);
                     os.write(GT);
                     addTabs(3);
-                    write(HtmlEncoder.encode(((Meta)element).content()));
+                    write(HtmlEncoder.encode(((Meta)element).getContent()));
                     addTabs(2);
                     writeEnd(HtmlTags.TITLE);
                     return true;
                 case Element.CREATOR:
-                    writeComment("Creator: " + HtmlEncoder.encode(((Meta)element).content()));
+                    writeComment("Creator: " + HtmlEncoder.encode(((Meta)element).getContent()));
                     return true;
                 case Element.PRODUCER:
-                    writeComment("Producer: " + HtmlEncoder.encode(((Meta)element).content()));
+                    writeComment("Producer: " + HtmlEncoder.encode(((Meta)element).getContent()));
                     return true;
                 case Element.CREATIONDATE:
-                    writeComment("Creationdate: " + HtmlEncoder.encode(((Meta)element).content()));
+                    writeComment("Creationdate: " + HtmlEncoder.encode(((Meta)element).getContent()));
                     return true;
                 case Element.MARKED:
                 	if (element instanceof MarkedSection) {
@@ -419,7 +419,7 @@ public class HtmlWriter extends DocWriter {
         writeStart(HtmlTags.META);
         switch(meta.type()) {
             case Element.HEADER:
-                write(HtmlTags.NAME, ((Header) meta).name());
+                write(HtmlTags.NAME, ((Header) meta).getName());
                 break;
             case Element.SUBJECT:
                 write(HtmlTags.NAME, HtmlTags.SUBJECT);
@@ -431,7 +431,7 @@ public class HtmlWriter extends DocWriter {
                 write(HtmlTags.NAME, HtmlTags.AUTHOR);
                 break;
         }
-        write(HtmlTags.CONTENT, HtmlEncoder.encode(meta.content()));
+        write(HtmlTags.CONTENT, HtmlEncoder.encode(meta.getContent()));
         writeEnd();
     }
     
@@ -445,9 +445,9 @@ public class HtmlWriter extends DocWriter {
     protected void writeLink(Header header) throws IOException {
         addTabs(2);
         writeStart(HtmlTags.LINK);
-        write(HtmlTags.REL, header.name());
+        write(HtmlTags.REL, header.getName());
         write(HtmlTags.TYPE, HtmlTags.TEXT_CSS);
-        write(HtmlTags.REFERENCE, header.content());
+        write(HtmlTags.REFERENCE, header.getContent());
         writeEnd();
     }
     
@@ -484,7 +484,7 @@ public class HtmlWriter extends DocWriter {
           os.write(GT);
           addTabs(2);
           write(new String(BEGINCOMMENT) + "\n");
-          write(header.content());
+          write(header.getContent());
           addTabs(2);
           write("//" + new String(ENDCOMMENT));
           addTabs(2);
@@ -661,7 +661,7 @@ public class HtmlWriter extends DocWriter {
                     os.write(GT);
                 }
                 // contents
-                write(HtmlEncoder.encode(chunk.content()));
+                write(HtmlEncoder.encode(chunk.getContent()));
                 if (attributes != null && attributes.get(Chunk.SUBSUPSCRIPT) != null) {
                     // end sup or sub tag
                     os.write(LT);
