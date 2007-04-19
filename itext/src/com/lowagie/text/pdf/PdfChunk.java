@@ -188,7 +188,7 @@ public class PdfChunk implements SplitCharacter{
     
     PdfChunk(Chunk chunk, PdfAction action) {
         thisChunk[0] = this;
-        value = chunk.content();
+        value = chunk.getContent();
         
         Font f = chunk.getFont();
         float size = f.size();
@@ -226,7 +226,7 @@ public class PdfChunk implements SplitCharacter{
                 }
             }
             if ("".equals(attr.get(Chunk.GENERICTAG))) {
-                attributes.put(Chunk.GENERICTAG, chunk.content());
+                attributes.put(Chunk.GENERICTAG, chunk.getContent());
             }
         }
         if (f.isUnderlined()) {
