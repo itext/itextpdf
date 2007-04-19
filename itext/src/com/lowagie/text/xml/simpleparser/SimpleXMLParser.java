@@ -63,6 +63,8 @@
  * Part of this code is based on the Quick-and-Dirty XML parser by Steven Brandt.
  * The code for the Quick-and-Dirty parser was published in JavaWorld (java tip 128).
  * Steven Brandt and JavaWorld gave permission to use the code for free.
+ * (Bruno Lowagie and Paulo Soares chose to use it under the MPL/LGPL in
+ * conformance with the rest of the code).
  * The original code can be found on this url: <A HREF="http://www.javaworld.com/javatips/jw-javatip128_p.html">http://www.javaworld.com/javatips/jw-javatip128_p.html</A>.
  * It was substantially refactored by Bruno Lowagie.
  * 
