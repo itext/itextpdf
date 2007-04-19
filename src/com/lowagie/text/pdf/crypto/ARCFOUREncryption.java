@@ -48,20 +48,20 @@
  */
 package com.lowagie.text.pdf.crypto;
 
-public class RC4Encryption {
+public class ARCFOUREncryption {
     private byte state[] = new byte[256];
     private int x;
     private int y;
 
-    /** Creates a new instance of RC4Encryption */
-    public RC4Encryption() {
+    /** Creates a new instance of ARCFOUREncryption */
+    public ARCFOUREncryption() {
     }
     
-    public void prepareRC4Key(byte key[]) {
-        prepareRC4Key(key, 0, key.length);
+    public void prepareARCFOURKey(byte key[]) {
+        prepareARCFOURKey(key, 0, key.length);
     }
 
-    public void prepareRC4Key(byte key[], int off, int len) {
+    public void prepareARCFOURKey(byte key[], int off, int len) {
         int index1 = 0;
         int index2 = 0;
         for (int k = 0; k < 256; ++k)
@@ -78,7 +78,7 @@ public class RC4Encryption {
         }
     }
 
-    public void encryptRC4(byte dataIn[], int off, int len, byte dataOut[], int offOut) {
+    public void encryptARCFOUR(byte dataIn[], int off, int len, byte dataOut[], int offOut) {
         int length = len + off;
         byte tmp;
         for (int k = off; k < length; ++k) {
@@ -91,15 +91,15 @@ public class RC4Encryption {
         }
     }
 
-    public void encryptRC4(byte data[], int off, int len) {
-        encryptRC4(data, off, len, data, off);
+    public void encryptARCFOUR(byte data[], int off, int len) {
+        encryptARCFOUR(data, off, len, data, off);
     }
 
-    public void encryptRC4(byte dataIn[], byte dataOut[]) {
-        encryptRC4(dataIn, 0, dataIn.length, dataOut, 0);
+    public void encryptARCFOUR(byte dataIn[], byte dataOut[]) {
+        encryptARCFOUR(dataIn, 0, dataIn.length, dataOut, 0);
     }
 
-    public void encryptRC4(byte data[]) {
-        encryptRC4(data, 0, data.length, data, 0);
+    public void encryptARCFOUR(byte data[]) {
+        encryptARCFOUR(data, 0, data.length, data, 0);
     }   
 }
