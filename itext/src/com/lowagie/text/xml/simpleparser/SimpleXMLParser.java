@@ -64,7 +64,12 @@
  * The code for the Quick-and-Dirty parser was published in JavaWorld (java tip 128).
  * Steven Brandt and JavaWorld gave permission to use the code for free.
  * The original code can be found on this url: <A HREF="http://www.javaworld.com/javatips/jw-javatip128_p.html">http://www.javaworld.com/javatips/jw-javatip128_p.html</A>.
- * It was substantially refactored by Bruno Lowagie. 
+ * It was substantially refactored by Bruno Lowagie.
+ * 
+ * The method 'private static String getEncodingName(byte[] b4)' was found
+ * in org.apache.xerces.impl.XMLEntityManager, originaly published by the
+ * Apache Software Foundation under the Apache Software License; now being
+ * used in iText under the MPL.
  */
 package com.lowagie.text.xml.simpleparser;
 
@@ -667,7 +672,9 @@ public class SimpleXMLParser {
     /**
      * Returns the IANA encoding name that is auto-detected from
      * the bytes specified, with the endian-ness of that encoding where appropriate.
-     * (method found in org.apache.xerces.impl.XMLEntityManager)
+     * (method found in org.apache.xerces.impl.XMLEntityManager, originaly published
+     * by the Apache Software Foundation under the Apache Software License; now being
+     * used in iText under the MPL)
      * @param b4    The first four bytes of the input.
      * @return an IANA-encoding string
      */

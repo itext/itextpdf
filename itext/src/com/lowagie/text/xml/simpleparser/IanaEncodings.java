@@ -49,7 +49,7 @@
  *
  * The values used in this class are based on class org.apache.xercis.util.EncodingMap
  * http://svn.apache.org/viewvc/xerces/java/trunk/src/org/apache/xerces/util/EncodingMap.java?view=markup
- * This class was published under the following license:
+ * This class was originally published under the following license:
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
