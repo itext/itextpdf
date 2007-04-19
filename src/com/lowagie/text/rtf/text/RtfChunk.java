@@ -128,7 +128,7 @@ public class RtfChunk extends RtfElement {
             this.background = new RtfColor(this.document, (Color) ((Object[]) chunk.getAttributes().get(Chunk.BACKGROUND))[0]);
         }
         font = new RtfFont(doc, chunk.getFont());
-        content = chunk.content();
+        content = chunk.getContent();
     }
     
     /**

@@ -104,7 +104,7 @@ public class RtfSection extends RtfElement {
                 while(it.hasNext()) {
                     Element element = (Element) it.next();
                     if(element.type() == Element.CHUNK) {
-                        titleText.append(((Chunk) element).content());
+                        titleText.append(((Chunk) element).getContent());
                     }
                 }
                 if(titleText.toString().trim().length() > 0) {
