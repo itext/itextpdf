@@ -1010,6 +1010,10 @@ class PdfStamperImp extends PdfWriter {
             acroForm.put(PdfName.FIELDS, fields);
             markUsed(acroForm);
         }
+        if (!acroForm.contains(PdfName.DA)) {
+            acroForm.put(PdfName.DA, new PdfString("/Helv 0 Tf 0 g "));
+            markUsed(acroForm);
+        }
         fields.add(ref);
         markUsed(fields);
     }
