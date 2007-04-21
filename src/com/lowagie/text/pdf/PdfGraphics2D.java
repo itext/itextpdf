@@ -371,6 +371,12 @@ public class PdfGraphics2D extends Graphics2D {
             cb.beginText();
             cb.setFontAndSize(baseFont, fontSize);
             cb.setTextMatrix((float)mx[0], (float)mx[1], (float)mx[2], (float)mx[3], (float)mx[4], (float)mx[5]);
+            Float fontTextAttributeWidth = (Float)font.getAttributes().get(TextAttribute.WIDTH);
+            fontTextAttributeWidth = (fontTextAttributeWidth == null)
+                                     ? TextAttribute.WIDTH_REGULAR
+                                     : fontTextAttributeWidth;
+            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
+                cb.setHorizontalScaling(100.0f / fontTextAttributeWidth.floatValue());
             double width = 0;
             if (font.getSize2D() > 0) {
                 float scale = 1000 / font.getSize2D();
@@ -384,6 +390,8 @@ public class PdfGraphics2D extends Graphics2D {
             if (s.length() > 1) {
                 cb.setCharacterSpacing(0);
             }
+            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth));
+                cb.setHorizontalScaling(100);
             cb.endText();
             setTransform(at);
             if(underline)
