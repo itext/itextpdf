@@ -75,7 +75,7 @@ package com.lowagie.text.pdf;
  * DOWNLOAD, INSTALL, COPY, DISTRIBUTE OR USE THE DATA FILES OR SOFTWARE.
  * 
  * COPYRIGHT AND PERMISSION NOTICE
- * Copyright © 1991-2007 Unicode, Inc. All rights reserved. Distributed under
+ * Copyright (C) 1991-2007 Unicode, Inc. All rights reserved. Distributed under
  * the Terms of Use in http://www.unicode.org/copyright.html.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
