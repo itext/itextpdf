@@ -62,51 +62,48 @@ import javax.swing.JProgressBar;
 
 public class ProgressDialog extends JDialog {
 
+	/** A serial version id */
 	private static final long serialVersionUID = -2215681126685955584L;
 
-	JPanel panel1 = new JPanel();
-
-	BorderLayout borderLayout1 = new BorderLayout();
-
-	JPanel jPanel1 = new JPanel();
-
-	BorderLayout borderLayout2 = new BorderLayout();
-
-	BorderLayout borderLayout3 = new BorderLayout();
-
-	JLabel jLabel1 = new JLabel();
-
-	JProgressBar jProgressBar1 = new JProgressBar();
-
+	/** The total number of pages to read. */
 	private int totalNumberOfPages;
-
+	/** The current page being read. */
 	private int currentPage;
+	/** Visualization of the progress (current page / total number of pages). */
+	JProgressBar progressbar = new JProgressBar();
 
+	/** Constructs a dialog with a progress bar showing how many pages have been read. */
 	public ProgressDialog(Frame frame, String title, boolean modal) {
 		super(frame, title, modal);
 		try {
-			jbInit();
+			initialize();
 			pack();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	public ProgressDialog() {
-		this(null, "", false);
-	}
+	/**
+	 * Initializes the dialog.
+	 */
+	private void initialize() throws Exception {
+		getContentPane().setLayout(new BorderLayout());
+		
+		JPanel master_panel = new JPanel();
+		master_panel.setLayout(new BorderLayout());
+		getContentPane().add(master_panel, BorderLayout.CENTER);
+		
+		JLabel label = new JLabel();
+		label.setText("PDF Analysis Progress");
+		this.getContentPane().add(label, BorderLayout.NORTH);
 
-	private void jbInit() throws Exception {
-		panel1.setLayout(borderLayout1);
-		this.getContentPane().setLayout(borderLayout2);
-		jPanel1.setLayout(borderLayout3);
-		jLabel1.setText("Analysefortschritt");
-		jProgressBar1.setStringPainted(true);
-		getContentPane().add(panel1, BorderLayout.CENTER);
-		panel1.add(jPanel1, BorderLayout.CENTER);
-		jPanel1.add(jProgressBar1, BorderLayout.CENTER);
-		this.getContentPane().add(jLabel1, BorderLayout.NORTH);
-		// Das Fenster zentrieren
+		progressbar.setStringPainted(true);
+		JPanel progress_panel = new JPanel();
+		progress_panel.setLayout(new BorderLayout());
+		master_panel.add(progress_panel, BorderLayout.CENTER);
+		progress_panel.add(progressbar, BorderLayout.CENTER);
+		
+		// Center the dialog
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = getSize();
 		if (frameSize.height > screenSize.height) {
@@ -119,21 +116,35 @@ public class ProgressDialog extends JDialog {
 				(screenSize.height - frameSize.height) / 2);
 	}
 
+	/**
+	 * Getter for the total number of pages.
+	 */
 	public int getTotalNumberOfPages() {
 		return totalNumberOfPages;
 	}
 
-	public void setTotalNumberOfPages(int anzahlseiten) {
-		this.totalNumberOfPages = anzahlseiten;
-		jProgressBar1.setMaximum(anzahlseiten);
+	/**
+	 * Setter for the total number of pages.
+	 * Also updates the progressbar.
+	 */
+	public void setTotalNumberOfPages(int total) {
+		this.totalNumberOfPages = total;
+		progressbar.setMaximum(total);
 	}
 
+	/**
+	 * Getter for the current page.
+	 */
 	public int getCurrentPage() {
 		return currentPage;
 	}
 
-	public void setCurrentPage(int aktuelleseite) {
-		this.currentPage = aktuelleseite;
-		jProgressBar1.setValue(aktuelleseite);
+	/**
+	 * Setter for the current page.
+	 * Also updates the progressbar.
+	 */
+	public void setCurrentPage(int current) {
+		this.currentPage = current;
+		progressbar.setValue(current);
 	}
 }
