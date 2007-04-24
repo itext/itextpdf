@@ -170,7 +170,7 @@ public class AnalyzePDF extends Thread implements TreeModel, ICommonAnalyzer {
 		PdfArray kidsPR = (PdfArray) PdfReader.getPdfObject(page
 				.get(PdfName.KIDS));
 		if (kidsPR == null) {
-			node.add(new Pagetreenode(page, pagecount, this, pdfreader));
+			node.add(new Pagenode(page, pagecount, this, pdfreader));
 			System.out.println("Page= " + (pagecount + 1));
 			pageInh.add(pagecount, page);
 			pagecount++;
