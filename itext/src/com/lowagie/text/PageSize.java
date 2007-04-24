@@ -180,7 +180,7 @@ public class PageSize {
     public static final Rectangle ID_2 = new Rectangle(297,210);
     
 /** This is the ISO 7810 ID-3 format (B7 rotated) */
-    public static final Rectangle ID_3 = new Rectangle(254,249);
+    public static final Rectangle ID_3 = new Rectangle(354,249);
     
 /** This is the ledger format */
     public static final Rectangle LEDGER = new Rectangle(1224,792);
