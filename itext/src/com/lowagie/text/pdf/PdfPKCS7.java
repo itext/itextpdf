@@ -170,14 +170,10 @@ public class PdfPKCS7 {
      * @throws NoSuchAlgorithmException on error
      * @throws IOException on error
      */    
-    public PdfPKCS7(byte[] contentsKey, byte[] certsKey, String provider) throws SecurityException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, IOException {
-        CertificateFactory cf;
-        if (provider == null)
-            cf = CertificateFactory.getInstance("X.509");
-        else
-            cf = CertificateFactory.getInstance("X.509", provider);
-        if (provider == null)
-            certs = cf.generateCertificates(new ByteArrayInputStream(certsKey));
+    public PdfPKCS7(byte[] contentsKey, byte[] certsKey, String provider) throws SecurityException, InvalidKeyException, CertificateException, NoSuchProviderException, NoSuchAlgorithmException, IOException, StreamParsingException {
+        X509CertParser cr = new X509CertParser();
+        cr.engineInit(new ByteArrayInputStream(contentsKey));
+        certs = cr.engineReadAll();
         signCert = (X509Certificate)certs.iterator().next();
         crls = new ArrayList();
         ASN1InputStream in = new ASN1InputStream(new ByteArrayInputStream(contentsKey));
