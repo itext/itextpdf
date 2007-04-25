@@ -44,7 +44,7 @@
  *
  * This class is based on a sample class by SUN.
  * The original copyright notice is as follows:
- * 
+ *
  * Copyright 1998 by Sun Microsystems, Inc.,
  * 901 San Antonio Road, Palo Alto, California, 94303, U.S.A.
  * All rights reserved.
@@ -54,14 +54,15 @@
  * shall not disclose such Confidential Information and shall use
  * it only in accordance with the terms of the license agreement
  * you entered into with Sun.
- * 
+ *
  * The license agreement can be found at this URL:
  * http://java.sun.com/products/java-media/2D/samples/samples-license.html
  * See also the file sun.txt in directory com.lowagie.text.pdf
  */
 
 package com.lowagie.text.pdf.codec.postscript;
-
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfGraphics2D;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -87,13 +88,12 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Stack;
 
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfGraphics2D;
+
 
 
 public class PAPencil {
 
-    static protected class State implements Cloneable {
+    static public class State implements Cloneable {
         public Stroke stroke;
         public Paint paint;
         public AffineTransform at;
@@ -173,7 +173,7 @@ public class PAPencil {
     /**
      * The current graphics state.
      */
-    protected State state;
+    public State state;
 
     /**
      * The stack of graphic states.
@@ -316,7 +316,7 @@ public class PAPencil {
             this.state.path.append(arc, true);
         }
     }
-    
+
     public void arcn(double cx, double cy, double r, double ang1, double ang2) {
         Arc2D.Float arc = new Arc2D.Float((float) ( cx - r ), (float)
         ( cy - r ), (float) r * 2f, (float) r * 2f,- (float) ang1, -(float) (
@@ -401,8 +401,9 @@ public class PAPencil {
 	if(currentPoint == null){
 	    throw new PainterException("no current point");
 	}
-        this.graphics.setTransform(new AffineTransform());
-        this.graphics.drawString(string, (float) tranformedPoint.getX(), (float) tranformedPoint.getY());
+        currentTransform.concatenate(AffineTransform.getScaleInstance(1,-1));
+        this.graphics.setTransform(currentTransform);
+       this.graphics.drawString(string, (float) currentPoint.getX(), (float) -currentPoint.getY());
         this.graphics.setTransform(currentTransform);
     }
 
