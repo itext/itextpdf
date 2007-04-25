@@ -449,8 +449,7 @@ public class RtfCell {
                     } else {
                         if(container != null) {
                             writer.addElement(container, os);
-                            container =null;
-                            container =null;
+                            container = null;
                         }
                         
                         
