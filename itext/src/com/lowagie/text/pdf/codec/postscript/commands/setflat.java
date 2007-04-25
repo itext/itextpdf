@@ -1,11 +1,12 @@
 package com.lowagie.text.pdf.codec.postscript.commands;
 
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfGraphics2D;
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfGraphics2D;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IUnaryExecute;
 
 public class setflat
     implements PACommand, IUnaryExecute, IPSLevel1 {

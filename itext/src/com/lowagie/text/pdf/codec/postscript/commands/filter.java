@@ -1,12 +1,13 @@
 package com.lowagie.text.pdf.codec.postscript.commands;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
 import com.lowagie.text.pdf.codec.postscript.PAToken;
-import java.io.InputStream;
-import java.io.IOException;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
 
 /**
  *

@@ -1,22 +1,23 @@
 package com.lowagie.text.pdf.codec.postscript.commands;
 
-import com.lowagie.text.pdf.codec.postscript.PACommand;
-import com.lowagie.text.DocumentException;
-import java.util.Map;
-import java.util.HashMap;
-import com.lowagie.text.pdf.codec.postscript.PainterException;
-import com.lowagie.text.BadElementException;
 import java.io.ByteArrayOutputStream;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.codec.postscript.PAToken;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import com.lowagie.text.pdf.PdfGraphics2D;
-import com.lowagie.text.pdf.codec.postscript.PAContext;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.Jpeg;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfGraphics2D;
+import com.lowagie.text.pdf.codec.postscript.PACommand;
+import com.lowagie.text.pdf.codec.postscript.PAContext;
+import com.lowagie.text.pdf.codec.postscript.PAToken;
+import com.lowagie.text.pdf.codec.postscript.PainterException;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
 
 public class image
     implements PACommand, IPSLevel1 {

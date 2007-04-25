@@ -3,7 +3,8 @@ package com.lowagie.text.pdf.codec.postscript.commands;
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
+import com.lowagie.text.pdf.codec.postscript.interfaces.ISenaryExecute;
 
 public class rcurveto
     implements PACommand, ISenaryExecute ,IPSLevel1{

@@ -1,11 +1,12 @@
 package com.lowagie.text.pdf.codec.postscript.commands;
 
+import java.awt.Color;
+
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import java.awt.geom.AffineTransform;
-import java.awt.Color;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
+import com.lowagie.text.pdf.codec.postscript.interfaces.ITernaryExecute;
 
 public class setrgbcolor
     implements PACommand, ITernaryExecute,IPSLevel1 {

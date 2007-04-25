@@ -2,10 +2,9 @@ package com.lowagie.text.pdf.codec.postscript.commands;
 
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
-import java.util.ArrayList;
-import java.awt.geom.AffineTransform;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IUnaryExecute;
 
 public class setfont
     implements PACommand, IUnaryExecute,IPSLevel1 {
