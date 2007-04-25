@@ -545,7 +545,6 @@ public class AcroFields {
                                                 porf = BaseFont.createFont("font.ttf", BaseFont.IDENTITY_H, true, false, PdfReader.getStreamBytes(prs), null);
                                             }
                                             catch (Exception e) {
-                                                porf = null;
                                             }
                                             extensionFonts.put(porkey, porf);
                                         }
