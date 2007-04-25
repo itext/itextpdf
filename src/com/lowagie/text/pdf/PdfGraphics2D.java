@@ -390,7 +390,7 @@ public class PdfGraphics2D extends Graphics2D {
             if (s.length() > 1) {
                 cb.setCharacterSpacing(0);
             }
-            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth));
+            if (!TextAttribute.WIDTH_REGULAR.equals(fontTextAttributeWidth))
                 cb.setHorizontalScaling(100);
             cb.endText();
             setTransform(at);
