@@ -1083,12 +1083,15 @@ class PdfStamperImp extends PdfWriter {
                         addDocumentField(field.getIndirectReference());
                 }
                 if (annot.isAnnotation()) {
-                    PdfArray annots = (PdfArray)PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
-                    if (annots == null) {
+                    PdfObject pdfobj = PdfReader.getPdfObject(pageN.get(PdfName.ANNOTS), pageN);
+                    PdfArray annots = null;
+                    if (pdfobj == null || !pdfobj.isArray()) {
                         annots = new PdfArray();
                         pageN.put(PdfName.ANNOTS, annots);
                         markUsed(pageN);
                     }
+                    else 
+                       annots = (PdfArray)pdfobj;
                     annots.add(annot.getIndirectReference());
                     markUsed(annots);
                     if (!annot.isUsed()) {
