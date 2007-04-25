@@ -247,50 +247,48 @@ public class RtfCell extends Cell implements RtfExtendedElement {
         
         this.cellPadding = (int) this.parentRow.getParentTable().getCellPadding();
         
-        if(cell != null) {
-            Iterator cellIterator = cell.getElements();
-            Paragraph container = null;
-            while(cellIterator.hasNext()) {
-                try {
-                    Element element = (Element) cellIterator.next();
-                    // should we wrap it in a paragraph
-                    if(!(element instanceof Paragraph) && !(element instanceof List)) {
-                        if(container != null) {
-                            container.add(element);
-                        } else {
-                            container = new Paragraph();
-                            container.setAlignment(cell.horizontalAlignment());
-                            container.add(element);
-                        }
+        Iterator cellIterator = cell.getElements();
+        Paragraph container = null;
+        while(cellIterator.hasNext()) {
+            try {
+                Element element = (Element) cellIterator.next();
+                // should we wrap it in a paragraph
+                if(!(element instanceof Paragraph) && !(element instanceof List)) {
+                    if(container != null) {
+                        container.add(element);
                     } else {
-                        if(container != null) {
-                            RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
-                            rtfElement.setInTable(true);
-                            this.content.add(rtfElement);
-                            container = null;
-                        }
-                        // if horizontal alignment is undefined overwrite
-                        // with that of enclosing cell
-                        if (element instanceof Paragraph && ((Paragraph) element).getAlignment() == Element.ALIGN_UNDEFINED) {
-                            ((Paragraph) element).setAlignment(cell.horizontalAlignment());
-                        }
-
-                        RtfBasicElement rtfElement = this.document.getMapper().mapElement(element);
+                        container = new Paragraph();
+                        container.setAlignment(cell.horizontalAlignment());
+                        container.add(element);
+                    }
+                } else {
+                    if(container != null) {
+                        RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
                         rtfElement.setInTable(true);
                         this.content.add(rtfElement);
+                        container = null;
                     }
-                } catch(DocumentException de) {
-                    de.printStackTrace();
-                }
-            }
-            if(container != null) {
-                try {
-                    RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
+                    // if horizontal alignment is undefined overwrite
+                    // with that of enclosing cell
+                    if (element instanceof Paragraph && ((Paragraph) element).getAlignment() == Element.ALIGN_UNDEFINED) {
+                        ((Paragraph) element).setAlignment(cell.horizontalAlignment());
+                    }
+
+                    RtfBasicElement rtfElement = this.document.getMapper().mapElement(element);
                     rtfElement.setInTable(true);
                     this.content.add(rtfElement);
-                } catch(DocumentException de) {
-                    de.printStackTrace();
                 }
+            } catch(DocumentException de) {
+                de.printStackTrace();
+            }
+        }
+        if(container != null) {
+            try {
+                RtfBasicElement rtfElement = this.document.getMapper().mapElement(container);
+                rtfElement.setInTable(true);
+                this.content.add(rtfElement);
+            } catch(DocumentException de) {
+                de.printStackTrace();
             }
         }
     }
