@@ -118,7 +118,7 @@ public class PAEngine extends Object {
 
     public void process(Object token) throws PainterException {
         if(token == null){
-            throw new IllegalStateException("Null token encountered; last unknown identifier was " + this.context.getLastUnknownIdentifier()+" at line "+this.context.poorscript.token.beginLine);
+            throw new IllegalStateException("offending command " + this.context.getLastUnknownIdentifier()+" at line "+this.context.poorscript.token.beginLine);
         }
         if(PAContext.DebugExecution){
           System.out.print("==>" + token.toString());

@@ -75,7 +75,8 @@ public class MetaDoPS {
   public void readAll() {
 
     cb.saveState();
-    java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
+//    java.awt.Graphics2D g2 = cb.createGraphicsShapes(PageSize.A4.
+    java.awt.Graphics2D g2 = cb.createGraphics(PageSize.A4.
         width(), PageSize.A4.height());
     try {
       PAContext context = new PAContext(g2,
@@ -94,7 +95,6 @@ public class MetaDoPS {
     }
     g2.dispose();
     cb.restoreState();
-
   }
 
 }

@@ -230,7 +230,7 @@ void parse(PAContext context) :
                        {
                                try {
                                  {if(PAContext.DebugExecution){System.out.print("\nparser ["+jj_input_stream.getBeginLine()+","+jj_input_stream.getBeginColumn()+"]"+context.engine.litMode()+":\""+x.image+"\"");System.out.flush();System.err.flush();}}
-                                     context.engine.process(x.image.substring(1, x.image.length() -1));
+                                     context.engine.process(new StringBuffer(x.image.substring(1, x.image.length() -1)));
                                } catch(PainterException e) {
                                      throw new ParseException(ExceptionString("string_literal",jj_input_stream,context,token,e));
                                 }
