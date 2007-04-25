@@ -117,7 +117,7 @@ public class PdfCopy extends PdfWriter {
             return this.gen == other.gen && this.num == other.num;
         }
         public String toString() {
-            return "" + num + " " + gen;
+            return Integer.toString(num) + ' ' + gen;
         }
     }
     
