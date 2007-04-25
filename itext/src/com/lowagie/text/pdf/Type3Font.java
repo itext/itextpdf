@@ -291,10 +291,10 @@ public class Type3Font extends BaseFont {
     }
     
     public boolean charExists(char c) {
-        if ( c > 0 && c < 256 ) {
-            return( usedSlot[c] );
+        if (c > 0 && c < 256) {
+            return usedSlot[c];
         } else {
-            return( false );
+            return false;
         }
     }
     
