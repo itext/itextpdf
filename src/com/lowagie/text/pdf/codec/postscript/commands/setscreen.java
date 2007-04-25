@@ -2,9 +2,9 @@ package com.lowagie.text.pdf.codec.postscript.commands;
 
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
-import java.awt.Color;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
+import com.lowagie.text.pdf.codec.postscript.interfaces.ITernaryExecute;
 
 public class setscreen
     implements PACommand, ITernaryExecute, IPSLevel1 {

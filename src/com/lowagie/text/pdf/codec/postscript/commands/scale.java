@@ -1,11 +1,14 @@
 package com.lowagie.text.pdf.codec.postscript.commands;
 
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
-import java.util.ArrayList;
-import java.awt.geom.AffineTransform;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IBinaryExecute;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
+import com.lowagie.text.pdf.codec.postscript.interfaces.ITernaryExecute;
 
 public class scale
     implements PACommand, IBinaryExecute, ITernaryExecute,IPSLevel1 {

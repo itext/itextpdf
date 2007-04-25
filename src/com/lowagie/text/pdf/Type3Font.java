@@ -48,7 +48,6 @@
 package com.lowagie.text.pdf;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import com.lowagie.text.DocumentException;
 

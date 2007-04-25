@@ -1,11 +1,13 @@
 package com.lowagie.text.pdf.codec.postscript.commands;
 
+import java.awt.BasicStroke;
+import java.awt.Stroke;
+
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import java.awt.BasicStroke;
-import java.awt.Stroke;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IUnaryExecute;
 
 public class setlinecap
     implements PACommand, IUnaryExecute ,IPSLevel1{

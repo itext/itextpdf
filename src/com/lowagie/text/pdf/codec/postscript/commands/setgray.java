@@ -1,10 +1,12 @@
 package com.lowagie.text.pdf.codec.postscript.commands;
 
+import java.awt.Color;
+
 import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
-import java.awt.Color;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IUnaryExecute;
 
 public class setgray
     implements PACommand, IUnaryExecute, IPSLevel1 {

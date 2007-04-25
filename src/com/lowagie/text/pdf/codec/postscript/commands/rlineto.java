@@ -4,7 +4,7 @@ import com.lowagie.text.pdf.codec.postscript.PACommand;
 import com.lowagie.text.pdf.codec.postscript.PAContext;
 import com.lowagie.text.pdf.codec.postscript.PainterException;
 import com.lowagie.text.pdf.codec.postscript.interfaces.IBinaryExecute;
-import com.lowagie.text.pdf.codec.postscript.interfaces.*;
+import com.lowagie.text.pdf.codec.postscript.interfaces.IPSLevel1;
 
 public class rlineto  implements PACommand, IBinaryExecute,IPSLevel1 {
   public rlineto() {
