@@ -65,7 +65,7 @@ public class PdfPatternPainter extends PdfTemplate {
      */
     
     private PdfPatternPainter() {
-        super(null);
+        super();
         type = TYPE_PATTERN;
     }
     
