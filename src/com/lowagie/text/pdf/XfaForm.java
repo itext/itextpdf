@@ -722,7 +722,7 @@ public class XfaForm {
             n = n.getFirstChild();
             for (int k = 0; k < stack.size(); ++k) {
                 String part = (String)stack.get(k);
-                int idx = part.lastIndexOf("[");
+                int idx = part.lastIndexOf('[');
                 String name = part.substring(0, idx);
                 idx = Integer.parseInt(part.substring(idx + 1, part.length() - 1));
                 int found = -1;
