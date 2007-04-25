@@ -244,9 +244,7 @@ public class PngImage {
             return img;
         }
         finally {
-            if (is != null) {
-                is.close();
-            }
+            is.close();
         }
     }
     

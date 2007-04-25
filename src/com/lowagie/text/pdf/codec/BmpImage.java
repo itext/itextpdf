@@ -234,9 +234,7 @@ public class BmpImage {
             return img;
         }
         finally {
-            if (is != null) {
-                is.close();
-            }
+            is.close();
         }
     }
 
