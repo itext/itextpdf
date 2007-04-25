@@ -139,9 +139,7 @@ public class GreekList extends List {
 	   	byte[] result = GreekNumberFactory.getString(index, lowercase).getBytes();
 	   	int n = result.length;
 	   	int[] r = new int[n];
-	   	for (int i = 0; i < n; i++) {
-	   		r[i] = result[i];
-	   	}
+	   	System.arraycopy(result, 0, r, 0, n);
 	   	return r;
 	 }
 
