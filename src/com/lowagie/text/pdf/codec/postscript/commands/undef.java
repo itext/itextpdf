@@ -28,7 +28,7 @@ public class undef implements PACommand, IBinaryExecute,IPSLevel1 {
      if (! (operand2 instanceof PAToken)) {
        throw new PainterException("undef: wrong arguments");
      }
-    this.execute(context, (HashMap) operand1, (PAToken) operand1);
+    this.execute(context, (HashMap) operand1, (PAToken) operand2);
   }
 
   public void execute(PAContext context,HashMap operand1, PAToken patoken) throws
