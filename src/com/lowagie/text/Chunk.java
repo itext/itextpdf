@@ -493,7 +493,7 @@ public class Chunk implements Element {
 	 * @return a displacement in points
 	 */
 	public float getTextRise() {
-		if (attributes.containsKey(SUBSUPSCRIPT)) {
+		if (attributes != null && attributes.containsKey(SUBSUPSCRIPT)) {
 			Float f = (Float) attributes.get(SUBSUPSCRIPT);
 			return f.floatValue();
 		}
