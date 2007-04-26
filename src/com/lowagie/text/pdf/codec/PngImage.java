@@ -236,16 +236,10 @@ public class PngImage {
      * @return the image
      */    
     public static Image getImage(byte data[]) throws IOException {
-        InputStream is = null;
-        try {
-            is = new ByteArrayInputStream(data);
-            Image img = getImage(is);
-            img.setOriginalData(data);
-            return img;
-        }
-        finally {
-            is.close();
-        }
+        ByteArrayInputStream is = new ByteArrayInputStream(data);
+        Image img = getImage(is);
+        img.setOriginalData(data);
+        return img;
     }
     
     boolean checkMarker(String s) {
