@@ -1696,9 +1696,9 @@ public class PdfWriter extends DocWriter implements
 	// types of encryption
 	
     /** Type of encryption */
-    public static final int ENCRYPTION_RC4_40 = 0;
+    public static final int ENCRYPTION_ARCFOUR_40 = 0;
     /** Type of encryption */
-    public static final int ENCRYPTION_RC4_128 = 1;
+    public static final int ENCRYPTION_ARCFOUR_128 = 1;
     /** Type of encryption */
     public static final int ENCRYPTION_AES_128 = 2;
     /** Mask to separate the encryption type from the encryption mode. */
@@ -1726,9 +1726,9 @@ public class PdfWriter extends DocWriter implements
     public static final int AllowDegradedPrinting = 4;
     
     // Strength of the encryption (kept for historical reasons)
-    /** Type of RC4 encryption strength*/
+    /** Type of ARCFOUR encryption strength*/
     public static final boolean STRENGTH40BITS = false;
-    /** Type of RC4 encryption strength */
+    /** Type of ARCFOUR encryption strength */
     public static final boolean STRENGTH128BITS = true;
     
     /** Contains the business logic for cryptography. */
@@ -1775,7 +1775,7 @@ public class PdfWriter extends DocWriter implements
      * @deprecated use the methods described in the PdfEncryptionSettings interface
      */
     public void setEncryption(byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException {
-        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
+        setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? ENCRYPTION_ARCFOUR_128 : ENCRYPTION_ARCFOUR_40);
     }
     
     /**
@@ -1793,7 +1793,7 @@ public class PdfWriter extends DocWriter implements
      * @deprecated use the methods described in the PdfEncryptionSettings interface
      */
     public void setEncryption(boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException {
-        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength ? ENCRYPTION_RC4_128 : ENCRYPTION_RC4_40);
+        setEncryption(getISOBytes(userPassword), getISOBytes(ownerPassword), permissions, strength ? ENCRYPTION_ARCFOUR_128 : ENCRYPTION_ARCFOUR_40);
     }
     
     /**
@@ -1803,7 +1803,7 @@ public class PdfWriter extends DocWriter implements
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
      *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      *  The permissions can be combined by ORing them.
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_RC4_40, ENCRYPTION_RC4_128 or ENCRYPTION_AES128.
+     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_ARCFOUR_40, ENCRYPTION_ARCFOUR_128 or ENCRYPTION_AES128.
      * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
