@@ -257,7 +257,7 @@ public class PdfStamper
             throw new DocumentException("Append mode does not support changing the encryption status.");
         if (stamper.isContentWritten())
             throw new DocumentException("Content was already written to the output.");
-        stamper.setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? PdfWriter.ENCRYPTION_ARCFOUR_128 : PdfWriter.ENCRYPTION_ARCFOUR_40);
+        stamper.setEncryption(userPassword, ownerPassword, permissions, strength128Bits ? PdfWriter.STANDARD_ENCRYPTION_128 : PdfWriter.STANDARD_ENCRYPTION_40);
     }
 
     /** Sets the encryption options for this document. The userPassword and the
@@ -269,7 +269,7 @@ public class PdfStamper
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
      * @param permissions the user permissions
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_ARCFOUR_40, ENCRYPTION_ARCFOUR_128 or ENCRYPTION_AES128.
+     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
      * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @throws DocumentException if the document is already open
      */
@@ -305,7 +305,7 @@ public class PdfStamper
      *  AllowPrinting, AllowModifyContents, AllowCopy, AllowModifyAnnotations,
      *  AllowFillIn, AllowScreenReaders, AllowAssembly and AllowDegradedPrinting.
      *  The permissions can be combined by ORing them.
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_ARCFOUR_40, ENCRYPTION_ARCFOUR_128 or ENCRYPTION_AES128.
+     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
      * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @param userPassword the user password. Can be null or empty
      * @param ownerPassword the owner password. Can be null or empty
@@ -326,7 +326,7 @@ public class PdfStamper
      * Optionally DO_NOT_ENCRYPT_METADATA can be ored to output the metadata in cleartext
      * @param certs the public certificates to be used for the encryption
      * @param permissions the user permissions for each of the certicates
-     * @param encryptionType the type of encryption. It can be one of ENCRYPTION_ARCFOUR_40, ENCRYPTION_ARCFOUR_128 or ENCRYPTION_AES128.
+     * @param encryptionType the type of encryption. It can be one of STANDARD_ENCRYPTION_40, STANDARD_ENCRYPTION_128 or ENCRYPTION_AES128.
      * @throws DocumentException if the encryption was set too late
      */
      public void setEncryption(Certificate[] certs, int[] permissions, int encryptionType) throws DocumentException {
