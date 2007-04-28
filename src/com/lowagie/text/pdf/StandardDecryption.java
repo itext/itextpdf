@@ -52,7 +52,7 @@ import com.lowagie.text.pdf.crypto.AESCipher;
 import com.lowagie.text.pdf.crypto.ARCFOUREncryption;
 
 public class StandardDecryption {
-    protected ARCFOUREncryption rc4;
+    protected ARCFOUREncryption arcfour;
     protected AESCipher cipher;
     private byte[] key;
     private static final int AES_128 = 4;
@@ -69,8 +69,8 @@ public class StandardDecryption {
             System.arraycopy(key, off, this.key, 0, len);
         }
         else {
-            rc4 = new ARCFOUREncryption();
-            rc4.prepareARCFOURKey(key, off, len);
+            arcfour = new ARCFOUREncryption();
+            arcfour.prepareARCFOURKey(key, off, len);
         }
     }
     
@@ -95,7 +95,7 @@ public class StandardDecryption {
         }
         else {
             byte[] b2 = new byte[len];
-            rc4.encryptARCFOUR(b, off, len, b2, 0);
+            arcfour.encryptARCFOUR(b, off, len, b2, 0);
             return b2;
         }
     }

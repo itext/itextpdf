@@ -57,7 +57,7 @@ import java.io.OutputStream;
 public class OutputStreamEncryption extends OutputStream {
     
     protected OutputStream out;
-    protected ARCFOUREncryption rc4;
+    protected ARCFOUREncryption arcfour;
     protected AESCipher cipher;
     private byte[] sb = new byte[1];
     private static final int AES_128 = 4;
@@ -77,8 +77,8 @@ public class OutputStreamEncryption extends OutputStream {
                 write(iv);
             }
             else {
-                rc4 = new ARCFOUREncryption();
-                rc4.prepareARCFOURKey(key, off, len);
+                arcfour = new ARCFOUREncryption();
+                arcfour.prepareARCFOURKey(key, off, len);
             }
         } catch (Exception ex) {
             throw new ExceptionConverter(ex);
@@ -193,7 +193,7 @@ public class OutputStreamEncryption extends OutputStream {
             byte[] b2 = new byte[Math.min(len, 4192)];
             while (len > 0) {
                 int sz = Math.min(len, b2.length);
-                rc4.encryptARCFOUR(b, off, sz, b2, 0);
+                arcfour.encryptARCFOUR(b, off, sz, b2, 0);
                 out.write(b2, 0, sz);
                 len -= sz;
                 off += sz;
