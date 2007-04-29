@@ -115,13 +115,20 @@ public class Tiff2Pdf extends AbstractTool {
             int comps = TiffImage.getNumberOfPages(ra);
 			boolean adjustSize = false;
 			Document document = new Document(PageSize.A4);
+            float width = PageSize.A4.width() - 40;
+            float height = PageSize.A4.height() - 120;
 			if ("ORIGINAL".equals(getValue("pagesize"))) {
 				Image img = TiffImage.getTiffImage(ra, 1);
+                if (img.getDpiX() > 0 && img.getDpiY() > 0) {
+                    img.scalePercent(7200f / img.getDpiX(), 7200f / img.getDpiY());
+                }
 				document.setPageSize(new Rectangle(img.scaledWidth(), img.scaledHeight()));
 				adjustSize = true;
 			}
 			else if ("LETTER".equals(getValue("pagesize"))) {
 				document.setPageSize(PageSize.LETTER);
+                width = PageSize.LETTER.width() - 40;
+                height = PageSize.LETTER.height() - 120;
 			}
 			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdf_file));
 			document.open();
@@ -129,6 +136,9 @@ public class Tiff2Pdf extends AbstractTool {
             for (int c = 0; c < comps; ++c) {
                 Image img = TiffImage.getTiffImage(ra, c + 1);
                 if (img != null) {
+                    if (img.getDpiX() > 0 && img.getDpiY() > 0) {
+                        img.scalePercent(7200f / img.getDpiX(), 7200f / img.getDpiY());
+                    }
                 	if (adjustSize) {
     					document.setPageSize(new Rectangle(img.scaledWidth(),
     							img.scaledHeight()));
@@ -136,8 +146,15 @@ public class Tiff2Pdf extends AbstractTool {
                 		img.setAbsolutePosition(0, 0);
                 	}
                 	else {
-                		if (img.scaledWidth() > 500 || img.scaledHeight() > 700) {
-                			img.scaleToFit(500, 700);
+                		if (img.scaledWidth() > width || img.scaledHeight() > height) {
+                            if (img.getDpiX() > 0 && img.getDpiY() > 0) {
+                                float adjx = width / img.scaledWidth();
+                                float adjy = height / img.scaledHeight();
+                                float adj = Math.min(adjx, adjy);
+                                img.scalePercent(7200f / img.getDpiX() * adj, 7200f / img.getDpiY() * adj);
+                            }
+                            else
+                                img.scaleToFit(width, height);
                 		}
                 		img.setAbsolutePosition(20, 20);
                         document.newPage();
