@@ -137,6 +137,7 @@ public class PdfPKCS7 {
     private static final String ID_MD2RSA = "1.2.840.113549.1.1.2";
     private static final String ID_MD5RSA = "1.2.840.113549.1.1.4";
     private static final String ID_SHA1RSA = "1.2.840.113549.1.1.5";
+    private static final String ID_ADBE_REVOCATION = "1.2.840.113583.1.1.8";
     /**
      * Holds value of property reason.
      */
@@ -856,6 +857,17 @@ public class PdfPKCS7 {
                 v.add(new DERObjectIdentifier(ID_MESSAGE_DIGEST));
                 v.add(new DERSet(new DEROctetString(secondDigest)));
                 attribute.add(new DERSequence(v));
+                if (!crls.isEmpty()) {
+                    v = new ASN1EncodableVector();
+                    v.add(new DERObjectIdentifier(ID_ADBE_REVOCATION));
+                    ASN1EncodableVector v2 = new ASN1EncodableVector();
+                    for (Iterator i = crls.iterator();i.hasNext();) {
+                        ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream((((X509CRL)i.next()).getEncoded())));
+                        v2.add(t.readObject());
+                    }
+                    v.add(new DERSet(new DERSequence(new DERTaggedObject(true, 0, new DERSequence(v2)))));
+                    attribute.add(new DERSequence(v));
+                }                
                 signerinfo.add(new DERTaggedObject(false, 0, new DERSet(attribute)));
             }
             // Add the digestEncryptionAlgorithm
@@ -951,6 +963,17 @@ public class PdfPKCS7 {
             v.add(new DERObjectIdentifier(ID_MESSAGE_DIGEST));
             v.add(new DERSet(new DEROctetString(secondDigest)));
             attribute.add(new DERSequence(v));
+            if (!crls.isEmpty()) {
+                v = new ASN1EncodableVector();
+                v.add(new DERObjectIdentifier(ID_ADBE_REVOCATION));
+                ASN1EncodableVector v2 = new ASN1EncodableVector();
+                for (Iterator i = crls.iterator();i.hasNext();) {
+                    ASN1InputStream t = new ASN1InputStream(new ByteArrayInputStream((((X509CRL)i.next()).getEncoded())));
+                    v2.add(t.readObject());
+                }
+                v.add(new DERSet(new DERSequence(new DERTaggedObject(true, 0, new DERSequence(v2)))));
+                attribute.add(new DERSequence(v));
+            }
             ByteArrayOutputStream   bOut = new ByteArrayOutputStream();
             
             ASN1OutputStream dout = new ASN1OutputStream(bOut);
