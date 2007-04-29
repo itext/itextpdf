@@ -64,7 +64,6 @@ public class ZapfDingbatsNumberList extends List {
 	/**
 	 * Creates a ZapdDingbatsNumberList
 	 * @param type the type of list
-	 * @param symbolIndent	indent
 	 */
 	public ZapfDingbatsNumberList(int type) {
 		super(true);
