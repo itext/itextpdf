@@ -40,7 +40,6 @@ public class LimitedHashMap
    *   mapping for key. A <tt>null</tt> return can also indicate that the map previously
    *   associated <tt>null</tt> with the specified key, if the implementation supports
    *   <tt>null</tt> values.
-   * @todo Implement this java.util.Map method
    */
   public Object put(Object key, Object value) {
     if (size() > MAX_ENTRIES) {
