@@ -4,14 +4,18 @@ import java.util.*;
 
 public class LimitedHashMap
     extends LinkedHashMap {
-  private int MAX_ENTRIES = 200;
+
+  private static final int DEFAULT_MAX_ENTRIES = 200;
+
+  private int maxEntries = DEFAULT_MAX_ENTRIES;
+
   public LimitedHashMap() {
     super();
   }
 
-  public LimitedHashMap(int MAX_ENTRIES) {
+  public LimitedHashMap(int maxEntries) {
     super();
-    this.MAX_ENTRIES=MAX_ENTRIES;
+    this.maxEntries = maxEntries;
   }
 
   public LimitedHashMap(int initialCapacity, float loadFactor) {
@@ -42,7 +46,7 @@ public class LimitedHashMap
    *   <tt>null</tt> values.
    */
   public Object put(Object key, Object value) {
-    if (size() > MAX_ENTRIES) {
+    if (size() > maxEntries) {
       throw new UnsupportedOperationException();
     }
     else {
