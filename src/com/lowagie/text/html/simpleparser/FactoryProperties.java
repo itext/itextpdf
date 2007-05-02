@@ -76,11 +76,14 @@ public class FactoryProperties {
     }
     
     public Chunk createChunk(String text, ChainedProperties props) {
-        Chunk ck = new Chunk(text, getFont(props));
+        Font font = getFont(props);
+        float size = font.size();
+        size /= 2;
+        Chunk ck = new Chunk(text, font);
         if (props.hasProperty("sub"))
-            ck.setTextRise(-6);
+            ck.setTextRise(-size);
         else if (props.hasProperty("sup"))
-            ck.setTextRise(6);
+            ck.setTextRise(size);
         return ck;
     }
     
