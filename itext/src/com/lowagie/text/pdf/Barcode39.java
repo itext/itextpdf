@@ -221,6 +221,9 @@ public class Barcode39 extends Barcode{
     public Rectangle getBarcodeSize() {
         float fontX = 0;
         float fontY = 0;
+        String fCode = code;
+        if (extended)
+            fCode = getCode39Ex(code);
         if (font != null) {
             if (baseline > 0)
                 fontY = baseline - font.getFontDescriptor(BaseFont.DESCENT, size);
@@ -228,15 +231,12 @@ public class Barcode39 extends Barcode{
                 fontY = -baseline + size;
             String fullCode = code;
             if (generateChecksum && checksumText)
-                fullCode += getChecksum(fullCode);
+                fullCode += getChecksum(fCode);
             if (startStopText)
                 fullCode = "*" + fullCode + "*";
             fontX = font.getWidthPoint(altText != null ? altText : fullCode, size);
         }
-        String fullCode = code;
-        if (extended)
-            fullCode = getCode39Ex(code);
-        int len = fullCode.length() + 2;
+        int len = fCode.length() + 2;
         if (generateChecksum)
             ++len;
         float fullWidth = len * (6 * x + 3 * x * n) + (len - 1) * x;
@@ -284,16 +284,16 @@ public class Barcode39 extends Barcode{
     public Rectangle placeBarcode(PdfContentByte cb, Color barColor, Color textColor) {
         String fullCode = code;
         float fontX = 0;
+        String bCode = code;
+        if (extended)
+            bCode = getCode39Ex(code);
         if (font != null) {
             if (generateChecksum && checksumText)
-                fullCode += getChecksum(fullCode);
+                fullCode += getChecksum(bCode);
             if (startStopText)
                 fullCode = "*" + fullCode + "*";
             fontX = font.getWidthPoint(fullCode = altText != null ? altText : fullCode, size);
         }
-        String bCode = code;
-        if (extended)
-            bCode = getCode39Ex(code);
         if (generateChecksum)
             bCode += getChecksum(bCode);
         int len = bCode.length() + 2;
