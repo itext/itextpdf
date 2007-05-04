@@ -121,9 +121,9 @@ public class RtfColorTableParser {
         if (stringMatches(ctrlWord, "\\red"))
             this.red = Integer.parseInt(ctrlWord.substring(4));
         else if (stringMatches(ctrlWord, "\\green"))
-            this.red = Integer.parseInt(ctrlWord.substring(6));
+            this.green = Integer.parseInt(ctrlWord.substring(6));
         else if (stringMatches(ctrlWord, "\\blue"))
-            this.red = Integer.parseInt(ctrlWord.substring(5));
+            this.blue = Integer.parseInt(ctrlWord.substring(5));
 	}
 	
 	/**
